@@ -1,12 +1,11 @@
 //
-// X509CertificateExEnumerator.cs - System.Security.Cryptography.X509Certificates.X509CertificateExEnumerator
+// System.Security.Cryptography.X509Certificates.X509Certificate2Enumerator class
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,26 +29,23 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
-	public sealed class X509CertificateExEnumerator : IEnumerator {
+	public sealed class X509Certificate2Enumerator : IEnumerator {
 
 		private IEnumerator enumerator;
 
-		internal X509CertificateExEnumerator (X509CertificateExCollection collection) 
+		internal X509Certificate2Enumerator (X509Certificate2Collection collection) 
 		{
 			enumerator = ((IEnumerable) collection).GetEnumerator ();
 		}
 
 		// properties
 
-		public X509CertificateEx Current {
-			get { return (X509CertificateEx) enumerator.Current; }
+		public X509Certificate2 Current {
+			get { return (X509Certificate2) enumerator.Current; }
 		}
 
 		object IEnumerator.Current {

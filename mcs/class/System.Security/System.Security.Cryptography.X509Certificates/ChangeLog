@@ -1,3 +1,10 @@
+2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateEx.cs, X509CertificateExCollection.cs, 
+	X509CertificateExEnumerator.cs, X509Chain.cs, X509ChainElement.cs,
+	X509ChainPolicy.cs, X509Store.cs: Changed all references of
+	X509CertificateEx to X509Certificate2 to match beta2.
+
 2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509BasicConstraintsExtension.cs: Completed implementation.

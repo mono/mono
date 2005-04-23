@@ -83,7 +83,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		// methods
 
 		[MonoTODO]
-		public bool Build (X509CertificateEx certificate)
+		public bool Build (X509Certificate2 certificate)
 		{
 			return false;
 		}

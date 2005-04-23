@@ -1,14 +1,13 @@
 //
-// X509CertificateExCollection.cs - System.Security.Cryptography.X509Certificates.X509CertificateExCollection
+// System.Security.Cryptography.X509Certificates.X509Certificate2Collection class
 //
-// Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //	Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-//
-
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,45 +31,44 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
-	public sealed class X509CertificateExCollection : X509CertificateCollection {
+	public sealed class X509Certificate2Collection : X509CertificateCollection {
 
 		// constructors
 
-		public X509CertificateExCollection () {}
+		public X509Certificate2Collection ()
+		{
+		}
 
-		public X509CertificateExCollection (X509CertificateExCollection certificates)
+		public X509Certificate2Collection (X509Certificate2Collection certificates)
 		{
 			AddRange (certificates);
 		}
 
-		public X509CertificateExCollection (X509CertificateEx[] certificates) 
+		public X509Certificate2Collection (X509Certificate2[] certificates) 
 		{
 			AddRange (certificates);
 		}
 
 		// properties
 
-		public new X509CertificateEx this [int index] {
+		public new X509Certificate2 this [int index] {
 			get {
 				if (index < 0)
 					throw new ArgumentOutOfRangeException ("negative index");
 				if (index >= InnerList.Count)
 					throw new ArgumentOutOfRangeException ("index >= Count");
-				return (X509CertificateEx) InnerList [index];
+				return (X509Certificate2) InnerList [index];
 			}
 			set { InnerList [index] = value; }
 		}
 
 		// methods
 
-		public int Add (X509CertificateEx certificate)
+		public int Add (X509Certificate2 certificate)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -79,7 +77,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		// note: transactional
-		public void AddRange (X509CertificateEx[] certificates) 
+		public void AddRange (X509Certificate2[] certificates) 
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificates");
@@ -89,7 +87,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		// note: transactional
-		public void AddRange (X509CertificateExCollection certificates) 
+		public void AddRange (X509Certificate2Collection certificates) 
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificates");
@@ -97,12 +95,12 @@ namespace System.Security.Cryptography.X509Certificates {
 			InnerList.AddRange (certificates);
 		}
 
-		public bool Contains (X509CertificateEx certificate) 
+		public bool Contains (X509Certificate2 certificate) 
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 
-			foreach (X509CertificateEx c in InnerList) {
+			foreach (X509Certificate2 c in InnerList) {
 				if (certificate.Equals (c))
 					return true;
 			}
@@ -119,12 +117,12 @@ namespace System.Security.Cryptography.X509Certificates {
 			return null;
 		}
 
-		public X509CertificateExCollection Find (X509FindType findType, object findValue, bool validOnly) 
+		public X509Certificate2Collection Find (X509FindType findType, object findValue, bool validOnly) 
 		{
 			return null;
 		}
 
-		public new X509CertificateExEnumerator GetEnumerator () 
+		public new X509Certificate2Enumerator GetEnumerator () 
 		{
 			return null;
 		}
@@ -145,7 +143,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
-		public void Insert (int index, X509CertificateEx certificate) 
+		public void Insert (int index, X509Certificate2 certificate) 
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -157,13 +155,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			InnerList.Insert (index, certificate);
 		}
 
-		public void Remove (X509CertificateEx certificate) 
+		public void Remove (X509Certificate2 certificate) 
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 
 			for (int i=0; i < InnerList.Count; i++) {
-				X509CertificateEx c = (X509CertificateEx) InnerList [i];
+				X509Certificate2 c = (X509Certificate2) InnerList [i];
 				if (certificate.Equals (c)) {
 					InnerList.RemoveAt (i);
 					// only first instance is removed
@@ -173,27 +171,27 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		// note: transactional
-		public void RemoveRange (X509CertificateEx[] certificates)
+		public void RemoveRange (X509Certificate2[] certificates)
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificate");
 		}
 
 		// note: transactional
-		public void RemoveRange (X509CertificateExCollection certificates) 
+		public void RemoveRange (X509Certificate2Collection certificates) 
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificate");
 		}
 
 		// note: UI
-		public X509CertificateExCollection Select (string title, string message, X509SelectionFlag selectionFlag)
+		public X509Certificate2Collection Select (string title, string message, X509SelectionFlag selectionFlag)
 		{
 			return null;
 		}
 
 		// note: UI
-		public X509CertificateExCollection Select (string title, string message, X509SelectionFlag selectionFlag, IntPtr hwndParent) 
+		public X509Certificate2Collection Select (string title, string message, X509SelectionFlag selectionFlag, IntPtr hwndParent) 
 		{
 			return null;
 		}

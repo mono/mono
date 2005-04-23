@@ -1,11 +1,11 @@
 //
-// X509CertificateEx.cs - System.Security.Cryptography.X509CertificateEx
+// System.Security.Cryptography.X509Certificate2 class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,7 +36,7 @@ using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	public class X509CertificateEx : X509Certificate {
+	public class X509Certificate2 : X509Certificate {
 
 		private bool _archived;
 		private X509ExtensionCollection _extensions;
@@ -48,49 +48,49 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// constructors
 
-		public X509CertificateEx () : base () 
+		public X509Certificate2 () : base () 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (byte[] rawData) : base (rawData) 
+		public X509Certificate2 (byte[] rawData) : base (rawData) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (byte[] rawData, string password) : base (rawData, password) 
+		public X509Certificate2 (byte[] rawData, string password) : base (rawData, password) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (string fileName) : base (fileName) 
+		public X509Certificate2 (string fileName) : base (fileName) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (string fileName, string password) 
+		public X509Certificate2 (string fileName, string password) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 			: base (fileName, password, keyStorageFlags) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (IntPtr handle) : base (handle) 
+		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509CertificateEx (X509CertificateEx certificate) 
+		public X509Certificate2 (X509Certificate2 certificate) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}

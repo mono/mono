@@ -2,11 +2,10 @@
 // X509ChainElement.cs - System.Security.Cryptography.X509Certificates.X509ChainElement
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,23 +29,21 @@
 
 #if NET_2_0
 
-using System;
-
 namespace System.Security.Cryptography.X509Certificates {
-
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
 
 	public class X509ChainElement {
 
 		// constructors
 
 		// only accessible from X509Chain.ChainElements
-		internal X509ChainElement () {}
+		internal X509ChainElement ()
+		{
+		}
 
 		// properties
 
 		[MonoTODO]
-		public X509CertificateEx Certificate {
+		public X509Certificate2 Certificate {
 			get { return null; }
 		}
 

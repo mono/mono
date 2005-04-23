@@ -1,11 +1,11 @@
 //
-// X509Store.cs - System.Security.Cryptography.X509Certificates.X509Store
+// System.Security.Cryptography.X509Certificates.X509Store class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,8 +29,6 @@
 
 #if NET_2_0
 
-using System;
-
 using Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -39,7 +37,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private string _name;
 		private StoreLocation _location;
-		private X509CertificateExCollection _certs;
+		private X509Certificate2Collection _certs;
 		private OpenFlags _flags;
 
 		// constructors
@@ -82,10 +80,10 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// properties
 
-		public X509CertificateExCollection Certificates {
+		public X509Certificate2Collection Certificates {
 			get { 
 				if (_certs == null)
-					_certs = new X509CertificateExCollection ();
+					_certs = new X509Certificate2Collection ();
 				return _certs; 
 			}
 		} 
@@ -115,7 +113,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[MonoTODO ("call Mono.Security.X509.X509Store*")]
-		public void Add (X509CertificateEx certificate)
+		public void Add (X509Certificate2 certificate)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -131,13 +129,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		public void AddRange (X509CertificateExCollection certificates)
+		public void AddRange (X509Certificate2Collection certificates)
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificates");
 
 			if (!ReadOnly) {
-				foreach (X509CertificateEx certificate in certificates) {
+				foreach (X509Certificate2 certificate in certificates) {
 					Add (certificate);
 				}
 			}
@@ -159,7 +157,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[MonoTODO ("call Mono.Security.X509.X509Store*")]
-		public void Remove (X509CertificateEx certificate) 
+		public void Remove (X509Certificate2 certificate) 
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -175,13 +173,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		public void RemoveRange (X509CertificateExCollection certificates) 
+		public void RemoveRange (X509Certificate2Collection certificates) 
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificates");
 
 			if (!this.ReadOnly) {
-				foreach (X509CertificateEx certificate in certificates) {
+				foreach (X509Certificate2 certificate in certificates) {
 					Remove (certificate);
 				}
 			}

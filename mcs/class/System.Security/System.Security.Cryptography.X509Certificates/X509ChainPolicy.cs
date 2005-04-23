@@ -1,5 +1,5 @@
 //
-// X509ChainPolicy.cs - System.Security.Cryptography.X509Certificates.X509ChainPolicy
+// System.Security.Cryptography.X509Certificates.X509ChainPolicy class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -35,7 +35,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private OidCollection _apps;
 		private OidCollection _cert;
-		private X509CertificateExCollection _store;
+		private X509Certificate2Collection _store;
 		private X509RevocationFlag _rflag;
 		private X509RevocationMode _mode;
 		private TimeSpan _timeout;
@@ -59,7 +59,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return _cert; }
 		}
 
-		public X509CertificateExCollection ExtraStore {
+		public X509Certificate2Collection ExtraStore {
 			get { return _store; }
 		}
 
@@ -94,7 +94,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			_apps = new OidCollection ();
 			_cert = new OidCollection ();
-			_store = new X509CertificateExCollection ();
+			_store = new X509Certificate2Collection ();
 			_rflag = X509RevocationFlag.ExcludeRoot;
 			_mode = X509RevocationMode.Online;
 			_timeout = new TimeSpan (0);
