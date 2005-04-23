@@ -1,3 +1,7 @@
+2005-04-23  Ankit Jain  <ankit@corewars.org>
+
+	* get.c : Revert Atsushi's earlier patch. Its already been fixed with r43342.
+
 2005-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* get.c : arraytype[,] should not be wrapped as 'arraytype[]'.
