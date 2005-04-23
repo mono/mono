@@ -1,3 +1,17 @@
+2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.[ch]: added function to set the shutting_down flag to TRUE.
+	* threads.c: remove interruption_mutex and use Interlocked instead. When
+	suspending all the threads, wait for all the suspended events at once.
+	If we're shutting down and get an APC that is going to be queued,
+	call mono_thread_execute_interruption immediately, as the thread might
+	be sleeping on a pthread condition or mutex.
+
+	* icall.c: call mono_runtime_set_shutting_down before suspending the
+	threads.
+
+	Fixes bug #74693. And now xsp is happier when exiting.
+
 2005-04-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_stack_walk): Fix #74690.
