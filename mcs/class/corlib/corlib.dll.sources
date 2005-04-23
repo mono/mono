@@ -536,6 +536,7 @@ System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs
 System.Runtime.ConstrainedExecution/PrePrepareMethodAttribute.cs
 System.Runtime.ConstrainedExecution/ReliabilityContractAttribute.cs
+System.Runtime.InteropServices/_Attribute.cs
 System.Runtime.InteropServices/_ConstructorInfo.cs
 System.Runtime.InteropServices/_EventInfo.cs
 System.Runtime.InteropServices/_Exception.cs
