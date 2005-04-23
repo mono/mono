@@ -1,3 +1,8 @@
+2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup/Makefile :
+	  monodis might not be in PATH. Use one from mono tree.
+
 2005-04-22  Raja R Harinath  <rharinath@novell.com>
 
 	* fixup/Makefile (install-local): Depend on $(the_lib).

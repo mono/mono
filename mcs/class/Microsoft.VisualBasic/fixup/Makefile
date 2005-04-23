@@ -5,7 +5,7 @@ DISTFILES = fixup.pl
 include ../../../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
-ILDISASM = monodis
+ILDISASM = ../../../../mono/mono/dis/monodis
 PERL = perl
 
 # ----------------------------------------------
