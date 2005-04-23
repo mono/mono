@@ -1,3 +1,9 @@
+2005-04-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* profiles/basic.make: Ensure that make dist works even if you
+	only have an old mono rpm installed. Essential for the new build
+	system.
+
 2005-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	* rules.make (INTERNAL_ILASM): Update.
