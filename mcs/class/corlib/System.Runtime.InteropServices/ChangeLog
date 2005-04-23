@@ -1,3 +1,7 @@
+2005-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* _Attribute.cs: New. Interface for attributes in 2.0.
+
 2005-04-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* DefaultCharSetAttribute.cs: Removed useless using.
