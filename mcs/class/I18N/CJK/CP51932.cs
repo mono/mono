@@ -253,32 +253,42 @@ public class CP51932 : Encoding
 		// Determine the total length of the converted string.
 		int length = 0;
 		int byteval;
+		int last = 0;
+
 		while (count > 0) {
 			byteval = bytes [index++];
 			--count;
-			++length;
 
-			if (byteval < 0x80) {
-				// Ordinary ASCII/Latin1 character, or the
-				// single-byte Yen or overline signs.
-				continue;
-			}
-			else if (byteval == 0xFF) {
-				if (count >= 2) {
-					count -= 2;
+			if (last == 0) {
+				if (byteval == 0x8F) {
+					if (byteval != 0) {
+						// Invalid second byte of a 3-byte character
+						// FIXME: What should we do?
+						last = 0;
+					}
+					// First byte in a triple-byte sequence
+					else
+						last = byteval;
+				} else if (byteval <= 0x7F) {
+					// Ordinary ASCII/Latin1/Control character.
 					++length;
+				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
+					// First byte in a double-byte sequence.
+					last = byteval;
 				} else {
-					count--;
-					++length; // "??" for invalid 3-byte character
+					// Invalid first byte. Let '?'
+					++length;
 				}
-				continue;
+			} else if (last == 0x8F) {
+				// 3-byte character
+				// FIXME: currently not supported yet
+				lastByte = 0;
+				++length;
+			} else {
+				// Second byte in a double-byte sequence.
+				lastByte = 0;
+				++length;
 			}
-			if(count == 0) {
-				// Missing second byte.
-				continue;
-			}
-			++index;
-			--count;
 		}
 
 		// Return the total length.
