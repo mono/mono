@@ -1,5 +1,8 @@
 2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* sysmath.c (ves_icall_System_Math_Round2): Use modf to decompose the
+	number into an integral and a decimal part. Fixes #70473.
+
 	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf): Ignore static fields. Fixes #74703.
 
 2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
