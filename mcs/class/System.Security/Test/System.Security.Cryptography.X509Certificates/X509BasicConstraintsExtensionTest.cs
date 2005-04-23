@@ -56,7 +56,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS bug reported as http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=34cdc5e9-c7f9-4f55-b390-288bfef6e44e
 		public void ConstructorEmpty_CertificateAuthority ()
 		{
 			X509BasicConstraintsExtension bc = new X509BasicConstraintsExtension ();
@@ -64,7 +63,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS bug reported as http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=34cdc5e9-c7f9-4f55-b390-288bfef6e44e
 		public void ConstructorEmpty_HasPathLengthConstraint ()
 		{
 			X509BasicConstraintsExtension bc = new X509BasicConstraintsExtension ();
@@ -72,7 +70,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS bug reported as http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=34cdc5e9-c7f9-4f55-b390-288bfef6e44e
 		public void ConstructorEmpty_PathLengthConstraint ()
 		{
 			X509BasicConstraintsExtension bc = new X509BasicConstraintsExtension ();
@@ -239,7 +236,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
-		public void WrongExtension_X509Extension_KeyUsages ()
+		public void WrongExtension_X509Extension_CertificateAuthority ()
 		{
 			X509Extension ex = new X509Extension ("1.2.3", new byte[0], true);
 			X509BasicConstraintsExtension bc = new X509BasicConstraintsExtension ();
@@ -257,8 +254,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void CopyFrom_Null ()
 		{
 			X509BasicConstraintsExtension bc = new X509BasicConstraintsExtension ();

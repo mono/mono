@@ -56,8 +56,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		[Category ("NotWorking")] // MS bug reported as http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=34cdc5e9-c7f9-4f55-b390-288bfef6e44e
 		public void ConstructorEmpty_EnhancedKeyUsages ()
 		{
 			X509EnhancedKeyUsageExtension eku = new X509EnhancedKeyUsageExtension ();
@@ -194,8 +192,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void CopyFrom_Null ()
 		{
 			X509EnhancedKeyUsageExtension eku = new X509EnhancedKeyUsageExtension ();

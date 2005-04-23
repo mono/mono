@@ -235,7 +235,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			AssertEquals ("Name", "NonExistingStore", xs.Name);
 			AssertNotNull ("Certificates", xs.Certificates);
 			xs.Open (OpenFlags.ReadOnly);
-			xs.Add (new X509CertificateEx ());
+			xs.Add (new X509Certificate2 ());
 			xs.Close ();
 		}
 
@@ -250,7 +250,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			AssertEquals ("Name", "NonExistingStore", xs.Name);
 			AssertNotNull ("Certificates", xs.Certificates);
 			xs.Open (OpenFlags.ReadWrite);
-			xs.Add (new X509CertificateEx ());
+			xs.Add (new X509Certificate2 ());
 			xs.Close ();
 		}
 	}

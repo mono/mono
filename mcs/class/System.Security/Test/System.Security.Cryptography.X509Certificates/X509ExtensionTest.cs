@@ -1,5 +1,6 @@
 //
-// X509ExtensionTest.cs - NUnit tests for X509Extension
+// X509ExtensionTest.cs 
+//	- NUnit tests for X509Extension
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -154,8 +155,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void CopyFrom_Null ()
 		{
 			X509Ex ex = new X509Ex ();

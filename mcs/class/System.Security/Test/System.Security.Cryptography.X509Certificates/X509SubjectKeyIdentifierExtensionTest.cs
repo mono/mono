@@ -56,11 +56,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS bug reported as http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=34cdc5e9-c7f9-4f55-b390-288bfef6e44e
 		public void ConstructorEmpty_SubjectKeyIdentifier ()
 		{
 			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ();
-			Assert.AreEqual (String.Empty, ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.IsNull (ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
 		}
 
 		[Test]
@@ -264,8 +263,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void CopyFrom_Null ()
 		{
 			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ();

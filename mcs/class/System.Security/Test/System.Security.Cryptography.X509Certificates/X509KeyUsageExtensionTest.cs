@@ -73,6 +73,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (fname, ku.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual ("Information Not Available", ku.Format (true), "Format(true)");
 			Assert.AreEqual ("Information Not Available", ku.Format (false), "Format(false)");
+			Assert.AreEqual (0, (int)ku.KeyUsages, "KeyUsages");
 		}
 
 		[Test]
@@ -141,7 +142,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void ConstructorKeyUsage_CRLSign ()
 		{
-			X509KeyUsageExtension ku = ValidateKeyUsage (X509KeyUsageFlags.CRLSign, "03-02-01-02");
+			X509KeyUsageExtension ku = ValidateKeyUsage (X509KeyUsageFlags.CrlSign, "03-02-01-02");
 			Assert.AreEqual ("Off-line CRL Signing, CRL Signing (02)", ku.Format (false), "CRLSign");
 
 			ku = ValidateKeyUsage (X509KeyUsageFlags.DataEncipherment, "03-02-04-10");
@@ -173,7 +174,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			ValidateKeyUsage (X509KeyUsageFlags.EncipherOnly | X509KeyUsageFlags.DecipherOnly, "03-03-07-01-80");
 			ValidateKeyUsage (X509KeyUsageFlags.NonRepudiation | X509KeyUsageFlags.DataEncipherment, "03-02-04-50");
 
-			ku = ValidateKeyUsage (X509KeyUsageFlags.CRLSign | X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.DecipherOnly |
+			ku = ValidateKeyUsage (X509KeyUsageFlags.CrlSign | X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.DecipherOnly |
 				X509KeyUsageFlags.DigitalSignature | X509KeyUsageFlags.EncipherOnly | X509KeyUsageFlags.KeyAgreement | 
 				X509KeyUsageFlags.KeyCertSign | X509KeyUsageFlags.KeyEncipherment | X509KeyUsageFlags.NonRepudiation, "03-03-07-FF-80");
 			Assert.AreEqual ("Digital Signature, Non-Repudiation, Key Encipherment, Data Encipherment, Key Agreement, Certificate Signing, Off-line CRL Signing, CRL Signing, Encipher Only, Decipher Only (ff 80)" + Environment.NewLine,
@@ -193,7 +194,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void WrongExtension_X509Extension ()
 		{
 			X509Extension ex = new X509Extension ("1.2.3", new byte [0], true);
-			X509KeyUsageExtension ku = new X509KeyUsageExtension (X509KeyUsageFlags.CRLSign, true);
+			X509KeyUsageExtension ku = new X509KeyUsageExtension (X509KeyUsageFlags.CrlSign, true);
 			ku.CopyFrom (ex);
 			Assert.IsTrue (ku.Critical, "Critical");
 			Assert.AreEqual (String.Empty, BitConverter.ToString (ku.RawData), "RawData");
@@ -216,13 +217,12 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void WrongAsnEncodedData ()
 		{
 			AsnEncodedData aed = new AsnEncodedData (new byte[0]);
-			X509KeyUsageExtension ku = new X509KeyUsageExtension (X509KeyUsageFlags.CRLSign, true);
+			X509KeyUsageExtension ku = new X509KeyUsageExtension (X509KeyUsageFlags.CrlSign, true);
 			ku.CopyFrom (aed); // note: not the same behaviour than using the constructor!
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		// [ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void CopyFrom_Null ()
 		{
 			X509KeyUsageExtension eku = new X509KeyUsageExtension ();
@@ -232,7 +232,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void CopyFrom_Self ()
 		{
-			X509KeyUsageExtension ku = new X509KeyUsageExtension (X509KeyUsageFlags.CRLSign, true);
+			X509KeyUsageExtension ku = new X509KeyUsageExtension (X509KeyUsageFlags.CrlSign, true);
 			Assert.IsTrue (ku.Critical, "Critical");
 			byte[] raw = ku.RawData;
 			Assert.AreEqual ("03-02-01-02", BitConverter.ToString (raw), "RawData");
@@ -243,7 +243,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (4, copy.RawData.Length, "RawData");	// original Oid ignored
 			Assert.AreEqual (oid, copy.Oid.Value, "Oid.Value");
 			Assert.AreEqual (fname, copy.Oid.FriendlyName, "Oid.FriendlyName");
-			Assert.AreEqual (X509KeyUsageFlags.CRLSign, copy.KeyUsages, "KeyUsages");
+			Assert.AreEqual (X509KeyUsageFlags.CrlSign, copy.KeyUsages, "KeyUsages");
 		}
 	}
 }

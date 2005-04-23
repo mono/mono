@@ -65,7 +65,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void ExtraStore () 
 		{
 			X509ChainPolicy cp = GetPolicy ();
-			cp.ExtraStore.Add (new X509CertificateEx ());
+			cp.ExtraStore.Add (new X509Certificate2 ());
 			AssertEquals ("ExtraStore", 1, cp.ExtraStore.Count);
 		}
 
@@ -143,7 +143,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509ChainPolicy cp = GetPolicy ();
 			cp.ApplicationPolicy.Add (new Oid (signingTimeOid));
 			cp.CertificatePolicy.Add (new Oid (signingTimeOid));
-			cp.ExtraStore.Add (new X509CertificateEx ());
+			cp.ExtraStore.Add (new X509Certificate2 ());
 			cp.RevocationFlag = X509RevocationFlag.EndCertificateOnly;
 			cp.RevocationMode = X509RevocationMode.NoCheck;
 			cp.UrlRetrievalTimeout = new TimeSpan (100);

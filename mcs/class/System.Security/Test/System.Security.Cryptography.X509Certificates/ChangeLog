@@ -1,3 +1,12 @@
+2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509BasicConstraintsExtensionTest.cs, X509ChainPolicyTest.cs,
+	X509EnhancedKeyUsageExtensionTest.cs, X509ExtensionTest.cs,
+	X509KeyUsageExtensionTest.cs, X509StoreTest.cs, 
+	X509SubjectKeyIdentifierExtensionTest.cs: Changed X509CertificateEx to
+	X509Certificate2 and re-activated some tests on Windows that were 
+	fixed in beta2.
+
 2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509BasicConstraintsExtensionTest.cs: New. Unit tests.
