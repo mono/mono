@@ -1,3 +1,7 @@
+2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf): Ignore static fields. Fixes #74703.
+
 2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : reflected the latest locale-builder output.
