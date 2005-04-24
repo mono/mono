@@ -41,7 +41,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal const string oid = "2.5.29.15";
 		internal const string friendlyName = "Key Usage";
 
-		internal const X509KeyUsageFlags all = X509KeyUsageFlags.EncipherOnly | X509KeyUsageFlags.CRLSign | 
+		internal const X509KeyUsageFlags all = X509KeyUsageFlags.EncipherOnly | X509KeyUsageFlags.CrlSign | 
 			X509KeyUsageFlags.KeyCertSign | X509KeyUsageFlags.KeyAgreement | X509KeyUsageFlags.DataEncipherment |
 			X509KeyUsageFlags.KeyEncipherment | X509KeyUsageFlags.NonRepudiation | 
 			X509KeyUsageFlags.DigitalSignature | X509KeyUsageFlags.DecipherOnly;
@@ -219,7 +219,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					sb.Append (", ");
 				sb.Append ("Certificate Signing");
 			}
-			if ((_keyUsages & X509KeyUsageFlags.CRLSign) != 0) {
+			if ((_keyUsages & X509KeyUsageFlags.CrlSign) != 0) {
 				if (sb.Length > 0)
 					sb.Append (", ");
 				sb.Append ("Off-line CRL Signing, CRL Signing");

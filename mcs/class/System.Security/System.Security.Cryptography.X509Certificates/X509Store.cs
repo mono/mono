@@ -68,6 +68,12 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
+		public X509Store (IntPtr storeHandle)
+		{
+			// CryptoAPI compatibility (unmanaged handle)
+			throw new NotSupportedException ();
+		}
+
 		[MonoTODO ("call Mono.Security.X509.X509Store*")]
 		public X509Store (string storeName, StoreLocation storeLocation)
 		{
@@ -100,6 +106,10 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return ((_flags & OpenFlags.ReadOnly) != OpenFlags.ReadOnly); }
 		}
 
+		public IntPtr StoreHandle {
+			get { return IntPtr.Zero; }
+		}
+
 		// methods
 
 		private static string StoreNameToString (StoreName sn) 
@@ -120,7 +130,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			if (!ReadOnly) {
 				try {
-					Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
+					// Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
 					// TODO
 				}
 				catch {
@@ -150,9 +160,9 @@ namespace System.Security.Cryptography.X509Certificates {
 		public void Open (OpenFlags flags)
 		{
 			_flags = flags;
-			bool readOnly = ((flags & OpenFlags.ReadOnly) == OpenFlags.ReadOnly);
+			/*bool readOnly = ((flags & OpenFlags.ReadOnly) == OpenFlags.ReadOnly);
 			bool create = !((flags & OpenFlags.OpenExistingOnly) == OpenFlags.OpenExistingOnly);
-			bool archive = ((flags & OpenFlags.IncludeArchived) == OpenFlags.IncludeArchived);
+			bool archive = ((flags & OpenFlags.IncludeArchived) == OpenFlags.IncludeArchived);*/
 			// TODO
 		}
 
@@ -164,7 +174,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			if (!ReadOnly) {
 				try {
-					Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
+					//Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
 					// TODO
 				}
 				catch {

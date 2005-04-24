@@ -1,3 +1,17 @@
+2005-04-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateEx.cs: Added new constructors and Import methods that
+	accept SecureString for passwords. Added new property HasPrivateKey and
+	Verify method.
+	* X509CertificateExCollection.cs: Added new constructor that accept a
+	single X509Certificate2.
+	* X509EnhancedKeyUsageExtension.cs: Fixed compiler warnings.
+	* X509KeyUsageExtension.cs: Fixed new enum name for CrlSign. 
+	* X509KeyUsageFlags.cs: Fixed values and removed [Serializable].
+	* X509NameType.cs: Fixed values and removed [Serializable].
+	* X509Store.cs: Added new constructor that accept an IntPtr and the 
+	StoreHandle property. Fixed compiler warnings.
+
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CertificateEx.cs, X509CertificateExCollection.cs, 

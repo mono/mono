@@ -63,7 +63,18 @@ namespace System.Security.Cryptography.X509Certificates {
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
+		public X509Certificate2 (byte[] rawData, SecureString password) : base (rawData, password) 
+		{
+			_cert = new MX.X509Certificate (this.RawData);
+		}
+
 		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+			: base (rawData, password, keyStorageFlags) 
+		{
+			_cert = new MX.X509Certificate (this.RawData);
+		}
+
+		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
@@ -79,7 +90,18 @@ namespace System.Security.Cryptography.X509Certificates {
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
+		public X509Certificate2 (string fileName, SecureString password) 
+		{
+			_cert = new MX.X509Certificate (this.RawData);
+		}
+
 		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+			: base (fileName, password, keyStorageFlags) 
+		{
+			_cert = new MX.X509Certificate (this.RawData);
+		}
+
+		public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (fileName, password, keyStorageFlags) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
@@ -90,7 +112,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			_cert = new MX.X509Certificate (this.RawData);
 		}
 
-		public X509Certificate2 (X509Certificate2 certificate) 
+		public X509Certificate2 (X509Certificate certificate) 
 		{
 			_cert = new MX.X509Certificate (this.RawData);
 		}
@@ -109,6 +131,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		public string FriendlyName {
 			get { return _name; }
 			set { _name = value; }
+		}
+
+		[MonoTODO]
+		public bool HasPrivateKey {
+			get { return false; }
 		}
 
 		[MonoTODO]
@@ -203,12 +230,22 @@ namespace System.Security.Cryptography.X509Certificates {
 			base.Import (rawData, password, keyStorageFlags);
 		}
 
+		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			base.Import (rawData, password, keyStorageFlags);
+		}
+
 		public override void Import (string fileName) 
 		{
 			base.Import (fileName);
 		}
 
 		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
+		{
+			base.Import (fileName, password, keyStorageFlags);
+		}
+
+		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
 			base.Import (fileName, password, keyStorageFlags);
 		}
@@ -230,6 +267,16 @@ namespace System.Security.Cryptography.X509Certificates {
 		public override string ToString (bool verbose)
 		{
 			return null;
+		}
+
+		[MonoTODO]
+		public bool Verify ()
+		{
+			X509Chain chain = new X509Chain ();
+			if (!chain.Build (this))
+				return false;
+			// TODO - check chain and other stuff ???
+			return true;
 		}
 
 		// static methods

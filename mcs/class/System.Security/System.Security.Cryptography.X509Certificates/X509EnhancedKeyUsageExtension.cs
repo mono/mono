@@ -160,8 +160,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (_enhKeyUsage.Count == 0)
 				return "Information Not Available";
 
-			bool first = false;
-			bool onebyte = true;
 			StringBuilder sb = new StringBuilder ();
 
 			for (int i=0; i < _enhKeyUsage.Count; i++) {

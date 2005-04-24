@@ -48,6 +48,11 @@ namespace System.Security.Cryptography.X509Certificates {
 			AddRange (certificates);
 		}
 
+		public X509Certificate2Collection (X509Certificate2 certificate) 
+		{
+			Add (certificate);
+		}
+
 		public X509Certificate2Collection (X509Certificate2[] certificates) 
 		{
 			AddRange (certificates);
