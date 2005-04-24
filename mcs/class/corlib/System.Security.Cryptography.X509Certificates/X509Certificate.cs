@@ -51,6 +51,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	// X509v1 certificates and non-authenticode (code signing) certs.
 	[Serializable]
 #if NET_2_0
+	[ComVisible (true)]
 	public class X509Certificate : IDeserializationCallback, ISerializable {
 #else
 	public class X509Certificate {
@@ -325,7 +326,10 @@ namespace System.Security.Cryptography.X509Certificates {
 			else
 				return 0;
 		}
-	
+
+#if NET_2_0
+		[Obsolete ("Use the Issuer property.")]
+#endif
 		public virtual string GetIssuerName () 
 		{
 			return x509.IssuerName;
@@ -346,6 +350,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			return tostr (x509.KeyAlgorithmParameters);
 		}
 	
+#if NET_2_0
+		[Obsolete ("Use the Subject property.")]
+#endif
 		public virtual string GetName ()
 		{
 			return x509.SubjectName;
@@ -438,6 +445,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 #if NET_2_0
+		public string Issuer {
+			get { return x509.IssuerName; }
+		}
+
+		public string Subject {
+			get { return x509.SubjectName; }
+		}
+
 		[ComVisible (false)]
 		public override bool Equals (object obj) 
 		{
@@ -462,7 +477,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[MonoTODO ("incomplete")]
-		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType, SecureString password)
 		{
 			return Export (contentType, password.GetBuffer ());
@@ -506,7 +520,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[MonoTODO ("incomplete")]
-		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (rawData, password.GetBuffer (), keyStorageFlags);
@@ -546,7 +559,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[MonoTODO ("incomplete")]
-		[ComVisible (false)]
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (fileName, password.GetBuffer (), keyStorageFlags);

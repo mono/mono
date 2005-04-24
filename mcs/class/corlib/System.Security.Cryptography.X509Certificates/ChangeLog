@@ -1,3 +1,10 @@
+2005-04-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Add [ComVisible (true)] to class, add new Issuer
+	and Subject properties. Removed some [ComVisible (false)] on methods.
+	* X509ContentType.cs: Add [ComVisible (true)] to enum.
+	* X509KeyStorageFlags.cs: Add [ComVisible (true)] to enum.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Added Demand for UnmanagedCode to ctor(IntPtr).
