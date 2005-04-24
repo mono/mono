@@ -316,6 +316,17 @@ namespace Cairo {
                         CairoAPI.cairo_clip (state);
                 }
 
+		public bool InStroke (double x, double y)
+		{
+			return CairoAPI.cairo_in_stroke (state, x, y);
+		}
+
+		public bool InFill (double x, double y)
+		{
+			return CairoAPI.cairo_in_fill (state, x, y);
+		}
+
+
 #region Modified state
 
                 public void SetTargetImage (

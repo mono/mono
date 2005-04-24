@@ -1,3 +1,7 @@
+2005-04-24  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Graphics.cs: Adds InStroke/InFill (patch from Pedro Kiefer)
+	* Cairo.cs  Adds InStroke/InFill (patch from Pedro Kiefer)
+
 2004-04-25  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Cairo.cs: fixes cairo_current_matrix signature

@@ -262,6 +262,12 @@ namespace Cairo {
                 public static extern double cairo_current_alpha (IntPtr cr);
 
 		[DllImport (CairoImp)]
+		public static extern bool cairo_in_stroke (IntPtr cr, double x, double y);
+
+		[DllImport (CairoImp)]
+		public static extern bool cairo_in_fill (IntPtr cr, double x, double y);
+
+		[DllImport (CairoImp)]
 		public static extern double cairo_current_tolerance (IntPtr cr);
 
 		[DllImport (CairoImp)]
