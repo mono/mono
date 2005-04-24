@@ -53,7 +53,7 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlEncElementUrl		= XmlEncNamespaceUrl + "Element";
 		public const string XmlEncEncryptedKeyUrl	= XmlEncNamespaceUrl + "EncryptedKey";
 		public const string XmlEncNamespaceUrl		= "http://www.w3.org/2001/04/xmlenc#";
-		public const string XmlEncRSA1_5Url		= XmlEncNamespaceUrl + "rsa-1_5";
+		public const string XmlEncRSA15Url		= XmlEncNamespaceUrl + "rsa-1_5";
 		public const string XmlEncRSAOAEPUrl		= XmlEncNamespaceUrl + "rsa-oaep-mgf1p";
 		public const string XmlEncSHA256Url		= XmlEncNamespaceUrl + "sha256";
 		public const string XmlEncSHA512Url		= XmlEncNamespaceUrl + "sha512";
@@ -165,7 +165,7 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			switch (encryptedKey.EncryptionMethod.KeyAlgorithm) {
-			case XmlEncRSA1_5Url:
+			case XmlEncRSA15Url:
 				return DecryptKey (encryptedKey.CipherData.CipherValue, (RSA) keyAlg, false);
 			case XmlEncRSAOAEPUrl:
 				return DecryptKey (encryptedKey.CipherData.CipherValue, (RSA) keyAlg, true);
@@ -353,7 +353,7 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			else if (keyAlg is RSA) 
-				return XmlEncRSA1_5Url;
+				return XmlEncRSA15Url;
 			else if (keyAlg is TripleDES)
 				return XmlEncTripleDESKeyWrapUrl;
 

@@ -34,7 +34,8 @@ using System.Collections;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
-	public sealed class EncryptionProperties : IList, ICollection, IEnumerable {
+
+	public sealed class EncryptionPropertyCollection : IList, ICollection, IEnumerable {
 
 		#region Fields
 		
@@ -44,7 +45,7 @@ namespace System.Security.Cryptography.Xml {
 	
 		#region Constructors
 
-		public EncryptionProperties ()
+		public EncryptionPropertyCollection ()
 		{
 			list = new ArrayList ();
 		}

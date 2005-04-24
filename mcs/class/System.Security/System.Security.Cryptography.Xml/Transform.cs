@@ -8,9 +8,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -79,15 +77,16 @@ namespace System.Security.Cryptography.Xml {
 
 #if NET_2_0
 		[MonoTODO]
+		[ComVisible (false)]
 		public XmlElement Context {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
+		[ComVisible (false)]
 		public Hashtable PropagatedNamespaces {
 			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
 		}
 #endif
 
@@ -95,6 +94,7 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Methods
 #if NET_2_0
+		[ComVisible (false)]
 		public virtual byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
 			return hash.ComputeHash ((Stream) GetOutput (typeof (Stream)));

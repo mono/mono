@@ -62,21 +62,21 @@ namespace System.Security.Cryptography.Xml {
 			set { this [index] = (EncryptedReference) value; }
 		}
 
-		public bool IsFixedSize {
-			get { return list.IsFixedSize; }
+		bool IList.IsFixedSize {
+			get { return false; }
 		}
 
-		public bool IsReadOnly {
-			get { return list.IsReadOnly; }
+		bool IList.IsReadOnly {
+			get { return false; }
 		}
 
 		public bool IsSynchronized {
 			get { return list.IsSynchronized; }
 		}
 
-		public EncryptedReference this [int oid] {
-			get { return (EncryptedReference) list [oid]; }
-			set { this [oid] = value; }
+		public EncryptedReference this [int index] {
+			get { return (EncryptedReference) list [index]; }
+			set { this [index] = value; }
 		}
 
 		public object SyncRoot {
@@ -112,6 +112,11 @@ namespace System.Security.Cryptography.Xml {
 		public IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
+		}
+
+		public EncryptedReference Item (int index)
+		{
+			return (EncryptedReference) list [index];
 		}
 
 		public int IndexOf (object value)

@@ -8,9 +8,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// (C) 2004 Novell Inc.
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +31,7 @@
 //
 
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
@@ -65,9 +64,9 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public KeyInfoX509Data (X509Certificate cert, X509IncludeOption includeOption)
 		{
-			
 		}
 #endif
 
@@ -105,14 +104,14 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddSubjectKeyId (byte[] subjectKeyId) 
 		{
-			SubjectKeyIdList.Add (subjectKeyId);
+			SubjectKeyIdList.Add (Convert.ToBase64String (subjectKeyId));
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[ComVisible (false)]
 		public void AddSubjectKeyId (string subjectKeyId)
 		{
-			throw new NotImplementedException ();
+			SubjectKeyIdList.Add (subjectKeyId);
 		}
 #endif
 
@@ -147,9 +146,9 @@ namespace System.Security.Cryptography.Xml {
 			}
 			// <X509SKI>
 			if (SubjectKeyIdList.Count > 0) {
-				foreach (byte[] skid in SubjectKeyIdList) {
+				foreach (string skid in SubjectKeyIdList) {
 					XmlElement ski = document.CreateElement (XmlSignature.ElementNames.X509SKI, XmlSignature.NamespaceURI);
-					ski.InnerText = Convert.ToBase64String (skid);
+					ski.InnerText = skid;
 					xel.AppendChild (ski);
 				}
 			}

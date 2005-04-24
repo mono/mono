@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +28,7 @@
 //
 
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
@@ -91,6 +90,7 @@ namespace System.Security.Cryptography.Xml {
 		public TransformChain TransformChain {
 			get { return chain; }
 #if NET_2_0
+			[ComVisible (false)]
 			set { chain = value; }
 #endif
 		}

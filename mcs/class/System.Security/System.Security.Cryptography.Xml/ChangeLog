@@ -1,3 +1,30 @@
+2005-04-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedInfo.cs: Added [ComVisible (false)] to new property.
+	* SignedXml.cs: Added [ComVisible (false)] to new properties and 
+	methods.
+	* ReferenceList.cs: Fixed members signatures for beta2.
+	* Reference.cs: Added [ComVisible (false)] to new set_TransformChain.
+	* EncryptedType.cs: Fix compilation with EncryptionPropertyCollection
+	changes.
+	* DataObject.cs: Fix compilation warnings.
+	* EncryptedKey.cs: Fix compilation with ReferenceList and 
+	EncryptionPropertyCollection changes.
+	* EncryptionProperties.cs: Class has been renamed to 
+	EncryptionPropertyCollection.
+	* Transform.cs: Added [ComVisible (false)] to new properties and 
+	methods.
+	* EncryptedXml.cs: Changed XmlEncRSA1_5Url to XmlEncRSA15Url.
+	* KeyInfoRetrievalMethod.cs: Added [ComVisible (false)] to Type 
+	property.
+	* KeyInfoX509Data.cs: Added [ComVisible (false)] to AddSubjectKeyId
+	(string) method and implemented it.
+	* EncryptedData.cs: Changed EncryptionProperties to new 
+	EncryptionPropertyCollection.
+	* XmlDsigC14NTransform.cs: Added [ComVisible (false)] to 
+	GetDigestedOutput method and added a basic implementation.
+	* X509IssuerSerial.cs: IssuerName and SerialNumber are now properties.
+
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EncryptedXml.cs, SignedXml.cs: Changed X509CertificateEx to 

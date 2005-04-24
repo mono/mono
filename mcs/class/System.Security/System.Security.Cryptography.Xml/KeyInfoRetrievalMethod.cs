@@ -2,13 +2,12 @@
 // KeyInfoRetrievalMethod.cs - KeyInfoRetrievalMethod implementation for XML Signature
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -38,12 +38,13 @@ namespace System.Security.Cryptography.Xml {
 
 		private string URI;
 		private XmlElement element;
-
 #if NET_2_0
-		string type;
+		private string type;
 #endif
 
-		public KeyInfoRetrievalMethod () {}
+		public KeyInfoRetrievalMethod ()
+		{
+		}
 
 		public KeyInfoRetrievalMethod (string strUri) 
 		{
@@ -57,6 +58,7 @@ namespace System.Security.Cryptography.Xml {
 			Type = strType;
 		}
 
+		[ComVisible (false)]
 		public string Type {
 			get { return type; }
 			set {

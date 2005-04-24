@@ -3,13 +3,11 @@
 // http://www.w3.org/2000/09/xmldsig#Object
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,9 +38,6 @@ namespace System.Security.Cryptography.Xml {
 	// required for "enveloping signatures"
 	public class DataObject {
 
-		private string id;
-		private string mimeType;
-		private string encoding;
 		private XmlElement element;
 		private bool propertyModified;
 
@@ -65,15 +60,12 @@ namespace System.Security.Cryptography.Xml {
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Object, XmlSignature.NamespaceURI);
 			if (id != null) {
-				this.id = id;
 				xel.SetAttribute (XmlSignature.AttributeNames.Id, id);
 			}
 			if (mimeType != null) {
-				this.mimeType = mimeType;
 				xel.SetAttribute (XmlSignature.AttributeNames.MimeType, mimeType);
 			}
 			if (encoding != null) {
-				this.encoding = encoding;
 				xel.SetAttribute (XmlSignature.AttributeNames.Encoding, encoding);
 			}
 			if (data != null) {

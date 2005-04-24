@@ -40,7 +40,7 @@ namespace System.Security.Cryptography.Xml {
 		CipherData cipherData;
 		string encoding;
 		EncryptionMethod encryptionMethod;
-		EncryptionProperties encryptionProperties;
+		EncryptionPropertyCollection encryptionProperties;
 		string id;
 		KeyInfo keyInfo;
 		string mimeType;
@@ -55,7 +55,7 @@ namespace System.Security.Cryptography.Xml {
 			cipherData = new CipherData ();
 			encoding = null;
 			encryptionMethod = null;
-			encryptionProperties = new EncryptionProperties ();
+			encryptionProperties = new EncryptionPropertyCollection ();
 			id = null;
 			keyInfo = new KeyInfo ();
 			mimeType = null;
@@ -81,7 +81,7 @@ namespace System.Security.Cryptography.Xml {
 			set { encryptionMethod = value; }
 		}
 
-		public virtual EncryptionProperties EncryptionProperties {
+		public virtual EncryptionPropertyCollection EncryptionProperties {
 			get { return encryptionProperties; }
 			set { encryptionProperties = value; }
 		}

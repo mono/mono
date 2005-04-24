@@ -96,7 +96,7 @@ namespace System.Security.Cryptography.Xml {
 				KeyInfo keyInfo = null;
 				CipherData cipherData = null;
 				EncryptionMethod = null;
-				EncryptionProperties = new EncryptionProperties ();
+				EncryptionProperties = new EncryptionPropertyCollection ();
 				Id = null;
 				Type = null;
 				MimeType = null;

@@ -46,11 +46,8 @@ namespace System.Security.Cryptography.Xml {
 		#region Constructors
 
 		public EncryptedKey ()
-			: base ()
 		{
-			CarriedKeyName = null;
-			Recipient = null;
-			ReferenceList = new ReferenceList ();
+			referenceList = new ReferenceList ();
 		}
 
 		#endregion // Constructors
@@ -69,7 +66,6 @@ namespace System.Security.Cryptography.Xml {
 
 		public ReferenceList ReferenceList {
 			get { return referenceList; }
-			set { referenceList = value; }
 		}
 
 		#endregion // Properties
@@ -150,8 +146,8 @@ namespace System.Security.Cryptography.Xml {
 				KeyInfo keyInfo = null;
 				CipherData cipherData = null;
 				EncryptionMethod = null;
-				EncryptionProperties = new EncryptionProperties ();
-				ReferenceList = new ReferenceList ();
+				EncryptionProperties.Clear ();
+				ReferenceList.Clear ();
 				CarriedKeyName = null;
 				Id = null;
 				Type = null;

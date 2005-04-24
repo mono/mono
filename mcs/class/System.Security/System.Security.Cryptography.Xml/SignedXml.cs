@@ -66,6 +66,7 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlDsigExcC14NWithCommentsTransformUrl	= XmlDsigExcC14NTransformUrl + "WithComments";
 		public const string XmlDsigXPathTransformUrl			= "http://www.w3.org/TR/1999/REC-xpath-19991116";
 		public const string XmlDsigXsltTransformUrl			= "http://www.w3.org/TR/1999/REC-xslt-19991116";
+		public const string XmlLicenseTransformUrl			= "urn:mpeg:mpeg21:2003:01-REL-R-NS:licenseTransform";
 
 		private EncryptedXml encryptedXml;
 #endif
@@ -110,6 +111,7 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public EncryptedXml EncryptedXml {
 			get { return encryptedXml; }
 			set { encryptedXml = value; }
@@ -588,6 +590,7 @@ namespace System.Security.Cryptography.Xml {
 
 #if NET_2_0
 		[MonoTODO]
+		[ComVisible (false)]
 		public bool CheckSignature (X509Certificate2 certificate, bool verifySignatureOnly)
 		{
 			throw new NotImplementedException ();

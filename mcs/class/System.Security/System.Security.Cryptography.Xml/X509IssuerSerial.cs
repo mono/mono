@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,13 +37,24 @@ namespace System.Security.Cryptography.Xml {
 	internal
 #endif
 	struct X509IssuerSerial {
-		public string IssuerName;
-		public string SerialNumber;
+
+		private string _issuerName;
+		private string _serialNumber;
 
 		internal X509IssuerSerial (string issuer, string serial) 
 		{
-			IssuerName = issuer;
-			SerialNumber = serial;
+			_issuerName = issuer;
+			_serialNumber = serial;
+		}
+
+		public string IssuerName {
+			get { return _issuerName; }
+			set { _issuerName = value; }
+		}
+
+		public string SerialNumber {
+			get { return _serialNumber; }
+			set { _serialNumber = value; }
 		}
 	}
 }
