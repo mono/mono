@@ -334,9 +334,10 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+#if false
 		protected override void OnPaint (PaintEventArgs pe)
 		{
-			base.OnPaint (e);
+			base.OnPaint (pe);
 
                         if (pe.ClipRectangle.Contains (up))
                                 DrawUp (pe.Graphics);
@@ -348,6 +349,7 @@ namespace System.Windows.Forms {
 		{
 			base.SetVisibleCore (state);
 		}
+#endif
 #endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
