@@ -275,6 +275,8 @@ public class CP51932 : Encoding
 				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
 					// First byte in a double-byte sequence.
 					last = byteval;
+				} else if (byteval == 0x87) {
+					// First byte in half-width katakana
 				} else {
 					// Invalid first byte. Let '?'
 					++length;
@@ -353,6 +355,9 @@ public class CP51932 : Encoding
 				} else if (byteval <= 0x7F) {
 					// Ordinary ASCII/Latin1/Control character.
 					chars [posn++] = (char) byteval;
+				} else if (byteval == 0x8E) {
+					// First byte of half-width Katakana
+					last = byteval;
 				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
 					// First byte in a double-byte sequence.
 					last = byteval;
@@ -360,6 +365,17 @@ public class CP51932 : Encoding
 					// Invalid first byte.
 					chars [posn++] = '?';
 				}
+			}
+			else if (last == 0x8E) {
+				if (byteval >= 0xA1 && byteval <= 0xDF) {
+					value = ((byteval - 0x40) |
+						(last + 0x71) << 8);
+					chars [posn++] = (char) value;
+				} else {
+					// Invalid second byte.
+					chars [posn++] = '?';
+				}
+				last =0;
 			}
 			else if (last == 0x8F) {
 				// 3-byte character

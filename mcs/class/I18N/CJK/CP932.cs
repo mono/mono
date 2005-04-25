@@ -286,13 +286,13 @@ public unsafe class CP932 : Encoding
 						value = ((int)(cjkToJis[value])) |
 								(((int)(cjkToJis[value + 1])) << 8);
 					}
-					else if(ch >= 0xFF01 && ch <= 0xFFEF)
+					else if(ch >= 0xFF01 && ch <= 0xFF60)
 					{
-						// This range contains extra characters,
-						// including half-width katakana.
-						value = (ch - 0xFF01) * 2;
-						value = ((int)(extraToJis[value])) |
-								(((int)(extraToJis[value + 1])) << 8);
+						value = ch - 0xFF00 + 0x20;
+					}
+					else if(ch >= 0xFF60 && ch <= 0xFFA0)
+					{
+						value = ch - 0xFF60 + 0xA0;
 					}
 					else
 					{
