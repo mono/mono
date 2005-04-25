@@ -1,5 +1,9 @@
 2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoImpl.cs, Collator.cs : conceptual stuff (not working).
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-char-mapping-source.cs : Now it generates
 	  ToWidthInsensitive() from combining category <wide> and <narrow>.
 	* MSCompatUnicodeTable.cs : added ToKanaTypeInsensitive() and
