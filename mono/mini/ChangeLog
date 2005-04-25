@@ -1,7 +1,17 @@
-2005-04-21  Zoltan Varga  <vargaz@freemail.hu>
+2005-04-25  Zoltan Varga  <vargaz@freemail.hu>
 
-	* linear-scan.c (mono_linear_scan): Disable the local->virtual reg
-	optimization for now.
+	* iltests.il: Add test for #74726.
+
+	* mini-amd64.c: Fix saving of registers in mul.ovf.un. Fixes #74726.
+
+2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* objects.cs: Add missing null casting test.
+
+2005-04-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c (mono_find_jit_info): Fix native offset calculation
+	in wrapper methods. Also rename 'address' variable to 'offset'.
 
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
@@ -29,51 +39,13 @@ Mon Apr 18 16:20:32 CEST 2005 Paolo Molaro <lupus@ximian.com>
 	* mini-exceptions.c (ves_icall_get_frame_info): Fix bug introduced
 	by the _MSC_VER stuff.
 
-2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini-amd64.h (MONO_ARCH_INST_REGPAIR_REG2): Fix warning.
-
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
-	
+
 	* inssel-long.brg: Fix #74588.
 
 	* cpu-amd64.md: Fix #74591.
 
 	* iltests.il: Add new regression tests.
-
-2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini-codegen.c (mono_local_regalloc): Fix handling of non-fixed register pairs.
-
-	* mini-sparc.h cpu-sparc.md mini-sparc.c: Handle the return values of calls using
-	fixed registers.
-
-	* mini-sparc.h (MONO_ARCH_INST_REGPAIR_REG2): Add macros needed by the new
-	allocator.
-
-	* mini-codegen.c (mono_local_regalloc): Fix warning.
-
-	* mini-codegen.c (alloc_int_reg): Fix bug in preferred register
-	allocation.
-
-	* mini-amd64.c (mono_arch_emit_this_vret_args): Fix warning.
-
-	* mini-amd64.h (MONO_ARCH_INST_IS_REGPAIR_REG2): Add macros needed
-	by the new allocator.
-	
-2005-04-15  Zoltan Varga  <vargaz@freemail.hu>
-	
-	* linear-scan.c (mono_linear_scan): Only enable the temporary->regvar
-	optimization if using the new allocator.
-
-	* cpu-pentium.md: Changes required by the new allocator.
-
-	* basic-long.cs: Fix test method name.
-
-	* mini-codegen.c: Add generalized support for register pairs and allocation
-	hints.
-
-	* mini-x86.h mini-x86.c: Use the xp register allocator on x86 too.
 
 2005-04-13  Zoltan Varga  <vargaz@freemail.hu>
 
@@ -271,12 +243,6 @@ Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini-amd64.c: Rework local register allocator to unify the fp+non fp
-	allocation. Also add handling for more corner cases.
-
-	* mini.c linear-scan.c: Promote local variables which are local to
-	a basic block to virtual registers.
-	
 	* mini-amd64.c (mono_arch_setup_jit_tls_data): Enable 
 	thread_tls_offset calculation.
 

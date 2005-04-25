@@ -33,6 +33,8 @@
 #undef DEBUG
 #undef DEBUG_REFS
 
+static void (*_wapi_handle_ops_get_close_func (WapiHandleType type))(gpointer, gpointer);
+
 static WapiHandleCapability handle_caps[WAPI_HANDLE_COUNT]={0};
 static struct _WapiHandleOps *handle_ops[WAPI_HANDLE_COUNT]={
 	NULL,
@@ -914,13 +916,22 @@ void _wapi_handle_unref (gpointer handle)
 #endif
 	
 	if(destroy==TRUE) {
+		/* Need to copy the handle info, reset the slot in the
+		 * array, and _only then_ call the close function to
+		 * avoid race conditions (eg file descriptors being
+		 * closed, and another file being opened getting the
+		 * same fd racing the memset())
+		 */
+		struct _WapiHandleUnshared handle_data;
 		WapiHandleType type = _WAPI_PRIVATE_HANDLES(idx).type;
+		void (*close_func)(gpointer, gpointer) = _wapi_handle_ops_get_close_func (type);
 
 #ifdef DEBUG
 		g_message ("%s: Destroying handle %p", __func__, handle);
 #endif
 		
-		_wapi_handle_ops_close (handle);
+		memcpy (&handle_data, &_WAPI_PRIVATE_HANDLES(idx),
+			sizeof (struct _WapiHandleUnshared));
 
 		memset (&_WAPI_PRIVATE_HANDLES(idx).u, '\0',
 			sizeof(_WAPI_PRIVATE_HANDLES(idx).u));
@@ -943,6 +954,10 @@ void _wapi_handle_unref (gpointer handle)
 		/* The garbage collector will take care of shared data
 		 * if this is a shared handle
 		 */
+		
+		if (close_func != NULL) {
+			close_func (handle, &handle_data.u);
+		}
 	}
 }
 
@@ -968,7 +983,17 @@ gboolean _wapi_handle_test_capabilities (gpointer handle,
 	return((handle_caps[type] & caps) != 0);
 }
 
-void _wapi_handle_ops_close (gpointer handle)
+static void (*_wapi_handle_ops_get_close_func (WapiHandleType type))(gpointer, gpointer)
+{
+	if (handle_ops[type] != NULL &&
+	    handle_ops[type]->close != NULL) {
+		return (handle_ops[type]->close);
+	}
+
+	return (NULL);
+}
+
+void _wapi_handle_ops_close (gpointer handle, gpointer data)
 {
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
@@ -977,7 +1002,7 @@ void _wapi_handle_ops_close (gpointer handle)
 
 	if (handle_ops[type] != NULL &&
 	    handle_ops[type]->close != NULL) {
-		handle_ops[type]->close (handle);
+		handle_ops[type]->close (handle, data);
 	}
 }
 
@@ -1227,44 +1252,35 @@ int _wapi_handle_timedwait_signal (struct timespec *timeout)
 int _wapi_handle_wait_signal_poll_share (void)
 {
 	struct timespec fake_timeout;
-	guint32 signal_count = _wapi_shared_layout->signal_count;
 	int ret;
 	
 #ifdef DEBUG
 	g_message ("%s: poll private and shared handles", __func__);
 #endif
 
-	while(1) {
-		_wapi_calc_timeout (&fake_timeout, 100);
+	_wapi_calc_timeout (&fake_timeout, 100);
 	
-		ret = mono_cond_timedwait (&_wapi_global_signal_cond,
-					   &_wapi_global_signal_mutex,
-					   &fake_timeout);
+	ret = mono_cond_timedwait (&_wapi_global_signal_cond,
+				   &_wapi_global_signal_mutex, &fake_timeout);
 	
-		/* Check the shared signal counter */
-		if (ret == ETIMEDOUT) {
-			if (signal_count != _wapi_shared_layout->signal_count) {
-#ifdef DEBUG
-				g_message ("%s: A shared handle was signalled",
-					   __func__);
-#endif
-
-				return (0);
-			}
-		} else {
-			/* This will be 0 indicating a private handle
-			 * was signalled, or an error
-			 */
-#ifdef DEBUG
-			g_message ("%s: returning: %d", __func__, ret);
-#endif
-
-			return (ret);
-		}
-
-		/* If timeout and no shared handle was signalled, go
-		 * round again
+	if (ret == ETIMEDOUT) {
+		/* This will cause the waiting thread to check signal
+		 * status for all handles
 		 */
+#ifdef DEBUG
+		g_message ("%s: poll timed out, returning success", __func__);
+#endif
+
+		return (0);
+	} else {
+		/* This will be 0 indicating a private handle was
+		 * signalled, or an error
+		 */
+#ifdef DEBUG
+		g_message ("%s: returning: %d", __func__, ret);
+#endif
+
+		return (ret);
 	}
 }
 
@@ -1520,7 +1536,7 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 {
 	DIR *proc_dir;
 	struct dirent *proc_entry;
-	gboolean found = FALSE;
+	gboolean found = FALSE, proc_fds = FALSE;
 	pid_t self = getpid();
 	int pid;
 	guint32 now = (guint32)(time(NULL) & 0xFFFFFFFF);
@@ -1567,6 +1583,8 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 				continue;
 			}
 			
+			proc_fds = TRUE;
+			
 			while ((fd_entry = readdir (fd_dir)) != NULL) {
 				char path[_POSIX_PATH_MAX];
 				struct stat link_stat;
@@ -1600,7 +1618,7 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 	
 	closedir (proc_dir);
 
-	if (found == FALSE) {
+	if (found == FALSE && proc_fds == TRUE) {
 		/* Blank out this entry, as it is stale */
 #ifdef DEBUG
 		g_message ("%s: Didn't find it, destroying entry", __func__);
@@ -1671,14 +1689,14 @@ void _wapi_handle_update_refs (void)
 				struct _WapiHandleSharedMetadata *shared_meta;
 				
 #ifdef DEBUG
-				g_message ("%s: (%d) handle 0x%x is SHARED", __func__,
-					   getpid (), i);
+				g_message ("%s: (%d) handle 0x%x is SHARED (%s)", __func__,
+					   getpid (), i * _WAPI_HANDLE_INITIAL_COUNT + k, _wapi_handle_typename[handle->type]);
 #endif
 
 				shared_meta = &_wapi_shared_layout->metadata[handle->u.shared.offset];
 
 #ifdef DEBUG
-				g_message ("%s: (%d) Updating timstamp of handle 0x%x",
+				g_message ("%s: (%d) Updating timestamp of handle 0x%x",
 					   __func__, getpid(),
 					   handle->u.shared.offset);
 #endif
@@ -1689,7 +1707,7 @@ void _wapi_handle_update_refs (void)
 				
 #ifdef DEBUG
 				g_message ("%s: (%d) handle 0x%x is FILE", __func__,
-					   getpid (), i);
+					   getpid (), i * _WAPI_HANDLE_INITIAL_COUNT + k);
 #endif
 				
 				g_assert (file_handle->share_info != NULL);

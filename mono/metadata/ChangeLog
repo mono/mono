@@ -1,3 +1,51 @@
+2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* sysmath.c (ves_icall_System_Math_Round2): Use modf to decompose the
+	number into an integral and a decimal part. Fixes #70473.
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf): Ignore static fields. Fixes #74703.
+
+2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : reflected the latest locale-builder output.
+
+2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: check for SuspendRequested too when deciding if
+	mono_thread_interruption_checkpoint should be called.
+
+2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.[ch]: added function to set the shutting_down flag to TRUE.
+	* threads.c: remove interruption_mutex and use Interlocked instead. When
+	suspending all the threads, wait for all the suspended events at once.
+	If we're shutting down and get an APC that is going to be queued,
+	call mono_thread_execute_interruption immediately, as the thread might
+	be sleeping on a pthread condition or mutex.
+
+	* icall.c: call mono_runtime_set_shutting_down before suspending the
+	threads.
+
+	Fixes bug #74693. And now xsp is happier when exiting.
+
+2005-04-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_stack_walk): Fix #74690.
+
+2005-04-22  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MonoDebugMethodJitInfo): Added
+	`MonoDebugMethodJitInfo *jit'.
+
+	* mono-debug.c (mono_debug_read_method): Cache the
+	MonoDebugMethodJitInfo in `address->jit'.
+	(mono_debug_free_method_jit_info): New public method.
+
+2005-04-22  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_is_assignable_from): Disallow
+	type parameter -> interface.
+
 2005-04-21  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_create): Turn an assertion into an error.

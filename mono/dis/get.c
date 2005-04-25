@@ -1291,6 +1291,7 @@ char*
 get_escaped_name (const char *name)
 {
 	const char *s;
+	char *tmp, *tmp2;
 
 	g_assert (key_table);
 
