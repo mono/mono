@@ -42,7 +42,6 @@ namespace System.Windows.Forms {
 		private bool			is_default;
 		internal bool			is_pressed;
 		internal bool			enter_state;
-		internal bool			redraw;
 		internal StringFormat		text_format;
 		#endregion	// Local Variables
 
@@ -78,17 +77,13 @@ namespace System.Windows.Forms {
 
 		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
 		internal void Redraw() {
-			redraw = true;
 			Refresh ();
 		}
 
 		// Derived classes should override Draw method and we dont want
 		// to break the control signature, hence this approach.
 		internal virtual void Draw (PaintEventArgs pevent) {
-			if (redraw) {
-				ThemeEngine.Current.DrawButtonBase(this.DeviceContext, pevent.ClipRectangle, this);
-				redraw = false;
-			}
+			ThemeEngine.Current.DrawButtonBase (pevent.Graphics, pevent.ClipRectangle, this);
 		}
 
 		internal virtual void HaveDoubleClick() {
@@ -114,7 +109,6 @@ namespace System.Windows.Forms {
 			is_entered	= false;
 			is_pressed	= false;
 			has_focus	= false;
-			redraw		= true;
 			text_format	= new StringFormat();
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
@@ -463,9 +457,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
-			Draw (pevent);
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 			base.OnPaint (pevent);
+			Draw (pevent);
 		}
 
 		protected override void OnParentChanged(EventArgs e) {

@@ -608,9 +608,9 @@ namespace System.Windows.Forms {
 		}
 		
 		// actually draw this control
-		internal void Draw (Rectangle clip_rect)
+		internal void Draw (Rectangle clip_rect, Graphics dc)
 		{			
-			ThemeEngine.Current.DrawDateTimePicker(DeviceContext, clip_rect, this);
+			ThemeEngine.Current.DrawDateTimePicker (dc, clip_rect, this);
 		}			
 		
 		// drop the calendar down
@@ -702,8 +702,7 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			Draw (pe.ClipRectangle);
-			pe.Graphics.DrawImage (ImageBuffer, 0, 0);
+			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 		
 		private string FormatValue () {

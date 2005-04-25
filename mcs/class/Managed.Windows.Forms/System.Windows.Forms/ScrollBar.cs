@@ -163,13 +163,7 @@ namespace System.Windows.Forms
 			base.MouseMove += new MouseEventHandler (OnMouseMoveSB);
 			base.Resize += new EventHandler (OnResizeSB);
 			base.TabStop = false;
-
-			if (ThemeEngine.Current.DoubleBufferingSupported == true) {
-				double_buffering = true;
-			} else {
-				double_buffering = false;
-			}
-
+                        
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 		}
@@ -482,7 +476,6 @@ namespace System.Windows.Forms
 					return;
 				}
 
-
 				case Msg.WM_ERASEBKGND:
 					m.Result = (IntPtr) 1; /// Disable background painting to avoid flickering
 					return;
@@ -556,11 +549,6 @@ namespace System.Windows.Forms
 				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 			}
 		}
-		
-		private void Draw (Rectangle clip)
-		{
-			ThemeEngine.Current.DrawScrollBar(DeviceContext, clip, this);
-		}
 
 		private void LargeIncrement ()
     		{			
@@ -610,12 +598,7 @@ namespace System.Windows.Forms
 			if (Paint != null) {
 				Paint (this, pevent);
 			}
-			
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
-
-			Draw (pevent.ClipRectangle);
-			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+			ThemeEngine.Current.DrawScrollBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}
 
 		private void OnTimer (Object source, EventArgs e)

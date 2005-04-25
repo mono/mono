@@ -156,7 +156,7 @@ namespace System.Windows.Forms
 				int tb_width = 0;
 		
 				// First we have to know the size of text + image
-				Drawing.SizeF tsize = this.DeviceContext.MeasureString (msgbox_text, this.Font);
+				Drawing.SizeF tsize = DeviceContext.MeasureString (msgbox_text, this.Font);
 
 				if (icon_image != null) {
 					tsize.Width += icon_image.Width + 10;

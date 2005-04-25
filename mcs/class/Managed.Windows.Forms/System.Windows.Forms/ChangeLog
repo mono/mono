@@ -1,3 +1,45 @@
+2005-04-25  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Double buffering is handled differently now. As per
+	the spec, the extra buffer is created in the WM_PAINT message and
+	passed down to the control's drawing code.
+	* GroupBox.cs:
+	* Label.cs:
+	* CheckBox.cs:
+	* ProgressBar.cs:
+	* RadioButton.cs:
+	* ColorDialog.cs:
+	* ComboBox.cs:
+	* PropertyGridView.cs:
+	* UpDownBase.cs:
+	* MessageBox.cs:
+	* MenuAPI.cs:
+	* ListView.cs:
+	* ButtonBase.cs:
+	* SizeGrip.cs:
+	* ScrollBar.cs:
+	* ListBox.cs:
+	* TrackBar.cs:
+	* ToolBar.cs:
+	* PictureBox.cs:
+	* DateTimePicker.cs:
+	* StatusBar.cs:
+	* TreeView.cs: Update to new double buffering system.
+	* MonthCalendar.cs: Uncomment block, as Capture is now
+	working. Update to new double buffering
+	* LinkLabel.cs: Lazy init the link collection. Update to new double buffering
+	* PaintEventArgs.cs: New internal method allows us to set the
+	graphics object. This is used for double buffering.
+	* ThemeWin32Classic.cs: Give the picture box drawing code a clip
+	rectangle. The internal paint_area var has been removed from
+	StatusBar. The clipping rect should be used instead.
+	* Theme.cs: Give the PictureBox drawing method a clipping rect.
+	* TabPage.cs: The RefreshTabs method was removed, so just call the
+	tab controls Refresh method now.
+	* TabControl.cs: Update to new double buffering. Make sure the
+	handle is created before sizing the tab pages, otherwise we will
+	get stuck in a loop.
+
 2005-04-24  Borja Sanchez Zamorano <borsanza@gmail.com>
 
 	* LinkLabel.cs: Fix typo, bug #74719; patch 

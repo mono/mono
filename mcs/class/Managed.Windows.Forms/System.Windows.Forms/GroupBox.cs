@@ -172,8 +172,7 @@ namespace System.Windows.Forms
 
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
-			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+			ThemeEngine.Current.DrawGroupBox (pevent.Graphics, ClientRectangle, this);
 		}
 
 		protected override bool ProcessMnemonic (char charCode)
@@ -206,14 +205,5 @@ namespace System.Windows.Forms
 		}
 				
 		#endregion Public Methods
-		
-		#region Private Methods
-
-		private void Draw ()
-		{			
-			ThemeEngine.Current.DrawGroupBox (DeviceContext, ClientRectangle, this);			
-		}
-		
-		#endregion // Private Methods
 	}
 }

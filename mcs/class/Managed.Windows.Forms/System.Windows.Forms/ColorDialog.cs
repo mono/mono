@@ -1652,15 +1652,7 @@ namespace System.Windows.Forms
 			
 			protected override void OnPaint( PaintEventArgs e )
 			{
-				Draw( e );
-				
-				base.OnPaint( e );
-			}
-			
-			private void Draw( PaintEventArgs e )
-			{
-				DeviceContext.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle );
-				e.Graphics.DrawImage( ImageBuffer, e.ClipRectangle, e.ClipRectangle, GraphicsUnit.Pixel );
+				e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle );
 				
 				ControlPaint.DrawBorder(
 					e.Graphics,
@@ -1675,6 +1667,8 @@ namespace System.Windows.Forms
 					Color.Black,
 					ButtonBorderStyle.Solid
 				);
+
+				base.OnPaint( e );
 			}
 			
 			public Color ColorToShow

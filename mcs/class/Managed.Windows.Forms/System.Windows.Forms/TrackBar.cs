@@ -521,11 +521,6 @@ namespace System.Windows.Forms
 			OnScroll (new EventArgs ());	
     		}
     		
-		private void Draw (Rectangle clip)
-		{					
-			ThemeEngine.Current.DrawTrackBar (DeviceContext, clip, this);			
-		}		
-
 		private void OnMouseUpTB (object sender, MouseEventArgs e)
 		{	
 			if (!Enabled) return;			
@@ -616,24 +611,17 @@ namespace System.Windows.Forms
 			}
     		}
 
-		
 		private void OnPaintTB (PaintEventArgs pevent)
 		{		
 			if (Paint != null) {
 				Paint (this, pevent);
 			}
-			
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;		
-
-			/* Copies memory drawing buffer to screen */
-			Draw (pevent.ClipRectangle);
-			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
-		}  
+			ThemeEngine.Current.DrawTrackBar (pevent.Graphics, pevent.ClipRectangle, this);
+		}
 
 		private void OnKeyDownTB (KeyEventArgs e) 
 		{			
-			switch (e.KeyCode) {			
+			switch (e.KeyCode) {
 			
 			case Keys.Down:
 			case Keys.Right:

@@ -214,12 +214,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 		#region Drawing Code
 		private void DoPaint (PaintEventArgs pevent) 
 		{
-			Draw(pevent.ClipRectangle);
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+			Draw (pevent.ClipRectangle, pevent.Graphics);
 		}
 
 		[MonoTODO("Do a better job of clipping")]
-		private void Draw (Rectangle clip) 
+		private void Draw (Rectangle clip, Graphics dc) 
 		{
 			if (redraw) {
 				
@@ -235,8 +234,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 				Rectangle fill = ClientRectangle;
 				// draw grid outline
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), fill);
-				DeviceContext.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(SystemColors.ControlDark),fill);
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), fill);
+				dc.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(SystemColors.ControlDark),fill);
 
 				int depth = 0;
 				int item_height = ROW_HEIGHT;
@@ -247,7 +246,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 				open_grid_item_count = 0;
 				foreach (GridItem grid_item in grid_items) {
-					DrawGridItem (grid_item, clip, ref depth, item_height, font, height, line_brush, text_brush, line_pen);
+					DrawGridItem (grid_item, dc, clip, ref depth, item_height, font, height, line_brush, text_brush, line_pen);
 					depth = 0;
 				}
 
@@ -277,7 +276,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		private void DrawGridItem (GridItem grid_item, Rectangle clip, ref int depth, int item_height,
+		private void DrawGridItem (GridItem grid_item, Graphics dc, Rectangle clip, ref int depth, int item_height,
 			Font font, int max_height, Brush line_brush, Brush text_brush, Pen line_pen) 
 		{
 
@@ -288,9 +287,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 			Rectangle labelRectangle = new Rectangle(indentRectangle.Right,y,label_column_width,ROW_HEIGHT);
 			Rectangle valueRectangle = new Rectangle(labelRectangle.Right,y,ClientRectangle.Right-labelRectangle.Right,ROW_HEIGHT);
 
-			DrawGridItemIndent(grid_item, line_brush, indentRectangle, grid_item.Expandable, grid_item.Expanded);
-			DrawGridItemLabel(grid_item, labelRectangle, line_pen, text_brush, Font, depth, line_brush);
-			DrawGridItemValue(grid_item, valueRectangle, line_pen, text_brush, new Font(Font, FontStyle.Bold), line_brush);
+			DrawGridItemIndent(grid_item, dc, line_brush, indentRectangle, grid_item.Expandable, grid_item.Expanded);
+			DrawGridItemLabel(grid_item, dc, labelRectangle, line_pen, text_brush, Font, depth, line_brush);
+			DrawGridItemValue(grid_item, dc, valueRectangle, line_pen, text_brush, new Font(Font, FontStyle.Bold), line_brush);
 
 			if (grid_item == property_grid.SelectedGridItem) {
 				if (grid_item.Value != null) {
@@ -310,33 +309,33 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (grid_item.Expanded) {
 				foreach (GridItem child_item in grid_item.GridItems) {
 					int tdepth = depth;
-					DrawGridItem(child_item, clip, ref tdepth, item_height, font, max_height, line_brush, text_brush, line_pen);
+					DrawGridItem(child_item, dc, clip, ref tdepth, item_height, font, max_height, line_brush, text_brush, line_pen);
 				}
 			}
 		}
 
-		private void DrawGridItemIndent (GridItem grid_item, Brush brush, Rectangle rect, bool showPlusMinus, bool expanded) 
+		private void DrawGridItemIndent (GridItem grid_item, Graphics dc, Brush brush, Rectangle rect, bool showPlusMinus, bool expanded) 
 		{
 
-			DeviceContext.FillRectangle(brush,rect);
+			dc.FillRectangle(brush,rect);
 
 			if (showPlusMinus) {
 				Rectangle plus_minus_rect = new Rectangle(rect.X+3,rect.Y+3,8,8);
 				grid_item.PlusMinusBounds = plus_minus_rect;
 
-				DeviceContext.DrawRectangle (SystemPens.ControlDark, plus_minus_rect);
+				dc.DrawRectangle (SystemPens.ControlDark, plus_minus_rect);
 
 				int middle = (plus_minus_rect.Bottom-plus_minus_rect.Top)/2 + plus_minus_rect.Top;
 				int x = plus_minus_rect.X;
-				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
 
 				if (!expanded) {
-					DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
+					dc.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
 				}
 			}
 		}
 
-		private void DrawGridItemLabel (GridItem grid_item, Rectangle rect, Pen pen, Brush brush, Font font, int depth, Brush line_brush) 
+		private void DrawGridItemLabel (GridItem grid_item, Graphics dc, Rectangle rect, Pen pen, Brush brush, Font font, int depth, Brush line_brush) 
 		{
 			Brush backBrush = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
 			Brush foreBrush = brush;
@@ -350,20 +349,20 @@ namespace System.Windows.Forms.PropertyGridInternal
 				foreBrush = brush;
 			}
 
-			DeviceContext.FillRectangle(backBrush,rect);
-			DeviceContext.DrawRectangle(pen,rect);
-			DeviceContext.DrawString(grid_item.Label,font,foreBrush,rect.Left + 5 + depth*V_INDENT,rect.Top+1);
+			dc.FillRectangle(backBrush,rect);
+			dc.DrawRectangle(pen,rect);
+			dc.DrawString(grid_item.Label,font,foreBrush,rect.Left + 5 + depth*V_INDENT,rect.Top+1);
 		}
 
 		[MonoTODO("GetEditor once the TypeDescriptor class is complete")]
-		private void DrawGridItemValue (GridItem grid_item, Rectangle rect, Pen pen, Brush brush, Font font, Brush line_brush) 
+		private void DrawGridItemValue (GridItem grid_item, Graphics dc, Rectangle rect, Pen pen, Brush brush, Font font, Brush line_brush) 
 		{
-			DeviceContext.FillRectangle((grid_item.GridItemType == GridItemType.Property) ? ThemeEngine.Current.ResPool.GetSolidBrush(BackColor) : line_brush,rect);
-			DeviceContext.DrawRectangle(pen,rect);
+			dc.FillRectangle((grid_item.GridItemType == GridItemType.Property) ? ThemeEngine.Current.ResPool.GetSolidBrush(BackColor) : line_brush,rect);
+			dc.DrawRectangle(pen,rect);
 
 			// PDB - added check to prevent crash with test app
 			if (grid_item.Value != null) {
-				DeviceContext.DrawString(grid_item.Value.ToString(),font,brush,rect.Left + 2,rect.Top+1);
+				dc.DrawString(grid_item.Value.ToString(),font,brush,rect.Left + 2,rect.Top+1);
 			}
 
 			if (grid_item == property_grid.SelectedGridItem) {

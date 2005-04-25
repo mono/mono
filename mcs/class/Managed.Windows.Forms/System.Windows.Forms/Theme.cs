@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 						
 			if (hatchbrushes.Contains (hash))
 				return (HatchBrush) hatchbrushes[hash];							
-			
+
 			HatchBrush brush = new HatchBrush (hatchStyle, foreColor, backColor);
 			hatchbrushes.Add (hash, brush);
 			return brush;
@@ -506,7 +506,7 @@ namespace System.Windows.Forms
 
 		#region PictureBox
 		// Drawing
-		public abstract void DrawPictureBox (Graphics dc, PictureBox pb);
+		public abstract void DrawPictureBox (Graphics dc, Rectangle clip, PictureBox pb);
 
 		// Sizing
 		public abstract Size PictureBoxDefaultSize{get;}

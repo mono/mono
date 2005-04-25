@@ -660,11 +660,9 @@ namespace System.Windows.Forms
 				return;
 
 			if (redraw) {
-				ThemeEngine.Current.DrawToolBar (this.DeviceContext, pevent.ClipRectangle, this);
+				ThemeEngine.Current.DrawToolBar (pevent.Graphics, pevent.ClipRectangle, this);
 				redraw = false;
 			}
-
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 
 			if (Paint != null) {
 				Paint (this, pevent);

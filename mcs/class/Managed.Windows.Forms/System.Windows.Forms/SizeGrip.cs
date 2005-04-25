@@ -66,13 +66,9 @@ namespace System.Windows.Forms {
 		protected override void OnPaint (PaintEventArgs pe) {
 			base.OnPaint (pe);
 
-			if (redraw) {
-				if (show_grip) {
-					ControlPaint.DrawSizeGrip(DeviceContext, BackColor, ClientRectangle);
-				}
+			if (redraw && show_grip) {
+                                ControlPaint.DrawSizeGrip (pe.Graphics, BackColor, ClientRectangle);
 			}
-
-			pe.Graphics.DrawImage(ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		protected override void OnSizeChanged (EventArgs e) {

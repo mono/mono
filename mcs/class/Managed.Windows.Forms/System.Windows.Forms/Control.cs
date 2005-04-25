@@ -107,11 +107,11 @@ namespace System.Windows.Forms
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
-		internal bool			double_buffering;
 		internal ContextMenu		context_menu;		// Context menu associated with the control
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
+		private bool			needs_redraw;
 
 		private ControlBindingsCollection data_bindings;
 
@@ -539,7 +539,6 @@ namespace System.Windows.Forms
 			causes_validation = true;
 			has_focus = false;
 			layout_suspended = 0;		
-			double_buffering = true;
 			mouse_clicks = 1;
 			tab_index = -1;
 			cursor = null;
@@ -645,7 +644,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal Bitmap ImageBuffer {
+		private Bitmap ImageBuffer {
 			get {
 				if (bmp_mem==null) {
 					CreateBuffers(this.Width, this.Height);
@@ -655,9 +654,6 @@ namespace System.Windows.Forms
 		}
 
 		internal void CreateBuffers (int width, int height) {
-			if (double_buffering == false)
-				return;
-
 			if (dc_mem != null) {
 				dc_mem.Dispose ();
 			}
@@ -674,13 +670,11 @@ namespace System.Windows.Forms
 
 			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			dc_mem = Graphics.FromImage (bmp_mem);
+			needs_redraw = true;
 		}
 
 		internal void InvalidateBuffers ()
 		{
-			if (double_buffering == false)
-				return;
-
 			if (dc_mem != null) {
 				dc_mem.Dispose ();
 			}
@@ -689,6 +683,7 @@ namespace System.Windows.Forms
 
 			dc_mem = null;
 			bmp_mem = null;
+			needs_redraw = true;
 		}
 
 		internal static void SetChildColor(Control parent) {
@@ -2526,6 +2521,7 @@ namespace System.Windows.Forms
 		}
 
 		public void Update() {
+			needs_redraw = true;
 			XplatUI.UpdateWindow(window.Handle);
 		}
 		#endregion	// Public Instance Methods
@@ -3175,11 +3171,29 @@ namespace System.Windows.Forms
 
 					paint_event = XplatUI.PaintEventStart(Handle);
 
+                                        if (!needs_redraw) {
+						// Just blit the previous image
+						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle);
+						needs_redraw = false;
+						return;
+					}
+
+					Graphics dc = null;
+					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+						dc = paint_event.SetGraphics (DeviceContext);
+					}
+
 					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) == (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
 						OnPaintBackground(paint_event);
 					}
 
 					OnPaint(paint_event);
+
+					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+						dc.DrawImage (ImageBuffer, paint_event.ClipRectangle);
+						paint_event.SetGraphics (dc);
+					}
+
 					XplatUI.PaintEventEnd(Handle);
 					
 					if (!GetStyle(ControlStyles.UserPaint)) {
@@ -3572,6 +3586,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInvalidated(InvalidateEventArgs e) {
+			needs_redraw = true;
 			if (Invalidated!=null) Invalidated(this, e);
 		}
 

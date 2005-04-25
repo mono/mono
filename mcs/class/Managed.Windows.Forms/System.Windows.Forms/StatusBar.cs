@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		private bool show_panels = false;
 		private bool sizing_grip = true;
 
-		internal Rectangle paint_area = new Rectangle ();
 		#endregion	// Fields
 
 		#region Public Constructors
@@ -229,9 +228,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
-
-			UpdateArea ();
-			Draw();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e) {
@@ -273,9 +269,7 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <= 0)
 				return;
 
-			UpdateArea ();
 			CalcPanelSizes ();
-			Draw ();
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -306,9 +300,8 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
-			UpdateArea ();
 			CalcPanelSizes ();
-			ThemeEngine.Current.DrawStatusBar (pevent.Graphics, this.ClientRectangle, this);
+			Draw (pevent.Graphics, pevent.ClipRectangle);
 		}
 
 		private void CalcPanelSizes ()
@@ -330,8 +323,6 @@ namespace System.Windows.Forms {
 					continue;
 				}
 				if (p.AutoSize == StatusBarPanelAutoSize.Contents) {
-					if (DeviceContext == null)
-						CreateBuffers (Width, Height);
 					int len = (int) (DeviceContext.MeasureString (p.Text, Font).Width + 0.5F);
 					p.Width = (int) (len * 1.5F);
 					taken += p.Width;
@@ -358,16 +349,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void UpdateArea ()
+		private void Draw (Graphics dc, Rectangle clip)
 		{
-			paint_area.X = paint_area.Y = 0;
-			paint_area.Width = Width;
-			paint_area.Height = Height;
-		}
-
-		private void Draw ()
-		{
-			ThemeEngine.Current.DrawStatusBar (DeviceContext, this.ClientRectangle, this);
+			ThemeEngine.Current.DrawStatusBar (dc, this.ClientRectangle, this);
 		}
 		#endregion	// Internal Methods
 

@@ -195,12 +195,7 @@ namespace System.Windows.Forms {
 		protected override void OnPaint (PaintEventArgs pe)
 		{
 			base.OnPaint (pe);
-
-			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
-				return;
-
-			Draw ();
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+                        ThemeEngine.Current.DrawPictureBox (pe.Graphics, pe.ClipRectangle, this);
 		}
 
 		protected override void OnVisibleChanged (EventArgs e)
@@ -281,14 +276,6 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
-		[MonoTODO ("Borders and stuff, and move into the Theme")]
-		private void Draw ()
-		{
-			if (redraw) {
-				ThemeEngine.Current.DrawPictureBox (DeviceContext, this);
-			}
-			redraw = false;
-		}
 		#endregion	// Private Methods
 
 		#region Public Instance Methods

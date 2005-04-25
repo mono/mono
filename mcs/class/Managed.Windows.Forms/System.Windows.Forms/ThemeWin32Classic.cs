@@ -2210,10 +2210,10 @@ namespace System.Windows.Forms
 		#endregion	// Panel
 
 		#region PictureBox
-		public override void DrawPictureBox (Graphics dc, PictureBox pb) {
+		public override void DrawPictureBox (Graphics dc, Rectangle clip, PictureBox pb) {
 			Rectangle client = pb.ClientRectangle;
 
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (pb.BackColor), client);
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (pb.BackColor), clip);
 
 			if (pb.Image != null) {
 				switch (pb.SizeMode) {
@@ -2589,8 +2589,10 @@ namespace System.Windows.Forms
 							scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - (scrollbutton_height * 2));
 					Rectangle intersect = Rectangle.Intersect (clip, r);
 
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), intersect);
+					if (intersect != Rectangle.Empty) {
+                                                Brush h = ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
+						dc.FillRectangle (h, intersect);
+                                        }
 					break;
 				}
 				case ScrollBar.ThumbMoving.Forward: {
@@ -2713,12 +2715,12 @@ namespace System.Windows.Forms
 		#endregion	// ScrollBar
 
 		#region StatusBar
-		public  override void DrawStatusBar (Graphics dc, Rectangle clip_rectangle, StatusBar sb) {
-			Rectangle	area	    = sb.paint_area;
-			int		horz_border = 2;
-			int		vert_border = 2;
+		public	override void DrawStatusBar (Graphics dc, Rectangle clip, StatusBar sb) {
+			Rectangle area = sb.ClientRectangle;
+			int horz_border = 2;
+			int vert_border = 2;
 
-			dc.FillRectangle (GetControlBackBrush (sb.BackColor), area);
+			dc.FillRectangle (GetControlBackBrush (sb.BackColor), clip);
 			
 			if (sb.Panels.Count == 0 && sb.Text != String.Empty) {
 				string text = sb.Text;
@@ -2735,7 +2737,8 @@ namespace System.Windows.Forms
 					}
 				}
 		
-				dc.DrawString (text, sb.Font, ResPool.GetSolidBrush (sb.ForeColor), new Rectangle(area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4), string_format);
+				dc.DrawString (text, sb.Font, ResPool.GetSolidBrush (sb.ForeColor),
+						new Rectangle(area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4), string_format);
 			} else if (sb.ShowPanels) {
 				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
 				int prev_x = area.X + horz_border;
@@ -2744,7 +2747,8 @@ namespace System.Windows.Forms
 					Rectangle pr = new Rectangle (prev_x, y,
 						sb.Panels [i].Width, area.Height);
 					prev_x += pr.Width + StatusBarHorzGapWidth;
-					DrawStatusBarPanel (dc, pr, i, br_forecolor, sb.Panels [i]);
+					if (pr.IntersectsWith (clip))
+						DrawStatusBarPanel (dc, pr, i, br_forecolor, sb.Panels [i]);
 				}
 			}
 

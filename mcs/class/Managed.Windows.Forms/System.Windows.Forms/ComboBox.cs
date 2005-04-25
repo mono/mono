@@ -930,7 +930,7 @@ namespace System.Windows.Forms
 			listbox_ctrl = new ComboListBox (this);			
 		}
 		
-		internal void Draw (Rectangle clip)
+		internal void Draw (Rectangle clip, Graphics dc)
 		{				
 			// No edit control, we paint the edit ourselfs
 			if (dropdown_style == ComboBoxStyle.DropDownList) {
@@ -943,24 +943,24 @@ namespace System.Windows.Forms
 					state |= DrawItemState.Focus;
 				}
 				
-				OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
+				OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
 							selected_index, state, ForeColor, BackColor));
 			}						
 			
 			if (clip.IntersectsWith (combobox_info.listbox_area) == true) {
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor), 
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor), 
 						combobox_info.listbox_area);
 			}
 			
 			if (CBoxInfo.show_button) {
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace),
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace),
 					combobox_info.button_rect);
 
-				ThemeEngine.Current.CPDrawComboButton (DeviceContext,
+				ThemeEngine.Current.CPDrawComboButton (dc,
 					combobox_info.button_rect, combobox_info.button_status);
 			}			
 			
-			ThemeEngine.Current.DrawComboBoxEditDecorations (DeviceContext, this, combobox_info.textarea);
+			ThemeEngine.Current.DrawComboBoxEditDecorations (dc, this, combobox_info.textarea);
 		}
 
 		internal void DropDownListBox ()
@@ -1066,8 +1066,7 @@ namespace System.Windows.Forms
     				return;
     				
     			/* Copies memory drawing buffer to screen*/
-			Draw (ClientRectangle);			
-			pevent.Graphics.DrawImage (ImageBuffer, ClientRectangle, ClientRectangle, GraphicsUnit.Pixel);
+			Draw (ClientRectangle, pevent.Graphics);			
 
 			if (Paint != null)
 				Paint (this, pevent);
@@ -1502,9 +1501,9 @@ namespace System.Windows.Forms
 				page_size = textarea_drawable.Height / (item_height - 2);				
 			}			
 
-			private void Draw (Rectangle clip)
+			private void Draw (Rectangle clip, Graphics dc)
 			{	
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 					(owner.BackColor), ClientRectangle);				
 
 				if (owner.Items.Count > 0) {
@@ -1528,12 +1527,12 @@ namespace System.Windows.Forms
 							}							
 						}
 							
-						owner.OnDrawItem (new DrawItemEventArgs (DeviceContext, owner.Font, item_rect,
+						owner.OnDrawItem (new DrawItemEventArgs (dc, owner.Font, item_rect,
 							i, state, owner.ForeColor, owner.BackColor));
 					}
 				}			
 				
-				ThemeEngine.Current.DrawComboListBoxDecorations (DeviceContext, owner, ClientRectangle);
+				ThemeEngine.Current.DrawComboListBoxDecorations (dc, owner, ClientRectangle);
 			}
 			
 			public int GetHighLightedIndex ()
@@ -1840,11 +1839,7 @@ namespace System.Windows.Forms
 
 			private void OnPaintPUW (Object o, PaintEventArgs pevent)
 			{
-				if (Width <= 0 || Height <=  0 || Visible == false)
-	    				return;
-
-				Draw (pevent.ClipRectangle);
-				pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+				Draw (pevent.ClipRectangle,pevent.Graphics);
 			}
 
 			public bool ShowWindow ()

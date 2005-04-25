@@ -49,7 +49,6 @@ namespace System.Windows.Forms {
 		private TabPageCollection tab_pages;
 		private bool show_tool_tips;
 		private TabSizeMode size_mode;
-		private bool redraw;
 		private Rectangle display_rect;
 		private bool show_slider = false;
 		private ButtonState right_slider_state;
@@ -381,8 +380,8 @@ namespace System.Windows.Forms {
 
 		protected override void CreateHandle ()
 		{
-			ResizeTabPages ();
 			base.CreateHandle ();
+			ResizeTabPages ();
 		}
 
 		protected override void Dispose (bool disposing)
@@ -836,35 +835,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal void RefreshTabs ()
-		{
-			Redraw (true);
-		}
-
 		private void PaintInternal (PaintEventArgs pe)
 		{
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
 				return;
 
-			Draw (pe.ClipRectangle);
-			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle,
-					pe.ClipRectangle, GraphicsUnit.Pixel);
+			Draw (pe.Graphics, pe.ClipRectangle);
 			// On MS the Paint event never seems to be raised
 		}
 
-		private void Redraw (bool recalculate)
+		private void Draw (Graphics dc, Rectangle clip)
 		{
-			if (recalculate) {
-				ResizeTabPages ();
-			}
-			redraw = true;
-			Refresh ();
-		}
-
-		private void Draw (Rectangle clip)
-		{
-			ThemeEngine.Current.DrawTabControl (DeviceContext, clip, this);
-			redraw = false;
+			ThemeEngine.Current.DrawTabControl (dc, clip, this);
 		}
 
 		private TabPage GetTab (int index)

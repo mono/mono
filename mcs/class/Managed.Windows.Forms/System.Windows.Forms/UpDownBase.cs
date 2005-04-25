@@ -71,10 +71,14 @@ namespace System.Windows.Forms {
 				this.updownbase = updownbase;
 			}
 
-			protected override void OnPaint (PaintEventArgs args)
+			protected override void OnPaint (PaintEventArgs pe)
 			{
-				Draw (args.ClipRectangle);
-				args.Graphics.DrawImage (ImageBuffer, 0, 0);
+				base.OnPaint (pe);
+
+				if (pe.ClipRectangle.Contains (up))
+					DrawUp (pe.Graphics);
+				if (pe.ClipRectangle.Contains (down))
+					DrawDown (pe.Graphics);
 			}
 
 			protected override void OnLayout (LayoutEventArgs args)
@@ -201,28 +205,20 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			void DrawUp ()
+			void DrawUp (Graphics dc)
 			{
 				ButtonState bs;
 
 				bs = mouse_in && up_pressed ? ButtonState.Pushed : ButtonState.Normal;
-				ThemeEngine.Current.CPDrawScrollButton (DeviceContext, up, ScrollButton.Up, bs);
+				ThemeEngine.Current.CPDrawScrollButton (dc, up, ScrollButton.Up, bs);
 			}
 			
-			void DrawDown ()
+			void DrawDown (Graphics dc)
 			{
 				ButtonState bs;
 
 				bs = mouse_in && down_pressed ? ButtonState.Pushed : ButtonState.Normal;
-				ThemeEngine.Current.CPDrawScrollButton (DeviceContext, down, ScrollButton.Down, bs);
-			}
-
-			void Draw (Rectangle clip)
-			{
-				if (clip.Contains (up))
-					DrawUp ();
-				if (clip.Contains (down))
-					DrawDown ();
+				ThemeEngine.Current.CPDrawScrollButton (dc, down, ScrollButton.Down, bs);
 			}
 
 			void IDisposable.Dispose ()
@@ -338,11 +334,14 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		protected override void OnPaint (PaintEventArgs e)
+		protected override void OnPaint (PaintEventArgs pe)
 		{
 			base.OnPaint (e);
-			ThemeEngine.Current.CPDrawBorderStyle (e.Graphics, ClientRectangle, BorderStyle.Fixed3D);
-			e.Graphics.DrawImage (ImageBuffer, 0, 0);
+
+                        if (pe.ClipRectangle.Contains (up))
+                                DrawUp (pe.Graphics);
+                        if (pe.ClipRectangle.Contains (down))
+                                DrawDown (pe.Graphics);
 		}
 
 		protected override void SetVisibleCore (bool state)

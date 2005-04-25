@@ -138,10 +138,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Draw (PaintEventArgs pe) {
-			if (redraw) {
-				ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
-				redraw = false;
-			}
+			ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
 		}
 
 		private void ReceivedFocus(object sender, EventArgs e) {

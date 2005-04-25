@@ -105,10 +105,7 @@ namespace System.Windows.Forms {
 
 		#region	Internal Methods
 		internal override void Draw (PaintEventArgs pe) {
-			if (redraw) {
-				ThemeEngine.Current.DrawCheckBox (this.DeviceContext, this.ClientRectangle, this);
-				redraw = false;
-			}
+			ThemeEngine.Current.DrawCheckBox (pe.Graphics, this.ClientRectangle, this);
 		}
 
 		internal override void HaveDoubleClick() {

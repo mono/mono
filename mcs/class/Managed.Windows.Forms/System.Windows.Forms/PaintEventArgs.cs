@@ -61,6 +61,15 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Methods
 
+                // Returns the previous graphics
+		internal Graphics SetGraphics (Graphics g)
+		{
+			Graphics res = graphics;
+			graphics = g;
+
+			return res;
+		}
+
 		#region Protected Instance Methods
 		~PaintEventArgs() {
 			Dispose(false);

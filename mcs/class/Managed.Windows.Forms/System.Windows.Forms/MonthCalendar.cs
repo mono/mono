@@ -1286,8 +1286,7 @@ namespace System.Windows.Forms {
 		}
 
 		// returns the rectangle for the year in the title
-		internal Rectangle GetYearNameRectangle (Rectangle title_rect, int calendar_index) {
-			
+		internal Rectangle GetYearNameRectangle (Rectangle title_rect, int calendar_index) {			
 			Graphics g = this.DeviceContext;
 			DateTime this_month = this.current_month.AddMonths (calendar_index);
 			Size title_text_size = g.MeasureString (this_month.ToString ("MMMM yyyy"), this.Font).ToSize ();
@@ -1404,7 +1403,7 @@ namespace System.Windows.Forms {
 // NOTE: i have diabled the if this.Capture because it doesn't work
 // when this.Capture works then need to renable the if in this section
 //			// now find out which area was click
-//			if (this.Capture) {
+			if (this.Capture) {
 				HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
 				// see if it was clicked on the prev or next mouse 
 				if (click_state [1] || click_state [2]) {
@@ -1422,9 +1421,9 @@ namespace System.Windows.Forms {
 						timer.Interval = 100;
 					}
 				}
-//			} else  {
-//				timer.Enabled = false;
-//			}
+			} else  {
+				timer.Enabled = false;
+			}
 		}
 		
 		// selects one of the buttons
@@ -1704,9 +1703,8 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			Draw (pe.ClipRectangle);
-			pe.Graphics.DrawImage (ImageBuffer, 0, 0);
-			
+			Draw (pe.ClipRectangle, pe.Graphics);
+
 			// fire the new paint handler
 			if (this.Paint != null) 
 			{
@@ -1812,9 +1810,9 @@ namespace System.Windows.Forms {
 				date_cell_size.Height);
 		}
 
-		internal void Draw (Rectangle clip_rect)
-		{			
-			ThemeEngine.Current.DrawMonthCalendar(DeviceContext, clip_rect, this);
+		internal void Draw (Rectangle clip_rect, Graphics dc)
+		{
+			ThemeEngine.Current.DrawMonthCalendar (dc, clip_rect, this);
 		}
 
 		#endregion 	//internal methods

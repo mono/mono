@@ -495,12 +495,9 @@ namespace System.Windows.Forms
     		}
 
     		protected override void OnPaint (PaintEventArgs pevent)
-    		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
-
-			Draw ();			
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+		{
+			ThemeEngine.Current.DrawLabel (pevent.Graphics, ClientRectangle, this);
+			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 		}
 
     		protected override void OnParentChanged (EventArgs e)
@@ -602,12 +599,6 @@ namespace System.Windows.Forms
 			SizeF size;
     		 	size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
     		 	preferred_width = (int) size.Width + 3;
-		}
-
-    		internal void Draw ()
-		{			
-			ThemeEngine.Current.DrawLabel(DeviceContext, ClientRectangle, this);
-			DrawImage (DeviceContext, Image, ClientRectangle, image_align);			
 		}
 
     		private void OnHandleCreatedLB (Object o, EventArgs e)

@@ -1203,7 +1203,7 @@ namespace System.Windows.Forms
 				return;
 
 			if (redraw) {
-				ThemeEngine.Current.DrawListView (this.DeviceContext,
+				ThemeEngine.Current.DrawListView (pe.Graphics,
 								  pe.ClipRectangle, this);
 				redraw = false;
 			}
@@ -1236,6 +1236,7 @@ namespace System.Windows.Forms
 			// We paint the column headers always at the top, in case
 			// of vertical scrolling. Therefore, we advance the painting
 			// by the amount equal to the column height.
+                        /*
 			if (this.view == View.Details &&
 			    this.Columns.Count > 0 &&
 			    this.header_style != ColumnHeaderStyle.None &&
@@ -1258,11 +1259,8 @@ namespace System.Windows.Forms
 				dstRect.Y += col_ht;
 				srcRect.Y += col_ht;
 			}
-
-			// Paint the items
-			pe.Graphics.DrawImage (this.ImageBuffer, dstRect,
-					       srcRect, GraphicsUnit.Pixel);
-
+                        */
+                        
 			// Draw the border of the list view
 			// The border is painted here separately, because
 			// our imagebuffer might be scrollable

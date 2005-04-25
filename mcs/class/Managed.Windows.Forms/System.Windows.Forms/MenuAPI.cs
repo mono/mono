@@ -865,11 +865,7 @@ namespace System.Windows.Forms
 
 		private void OnPaintPUW (Object o, PaintEventArgs pevent)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
-
-			Draw (pevent.ClipRectangle);
-			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+			ThemeEngine.Current.DrawPopupMenu  (pevent.Graphics, hMenu, pevent.ClipRectangle, ClientRectangle);
 		}
 		
 		public void HideWindow ()
@@ -970,11 +966,6 @@ namespace System.Windows.Forms
 
 			Width = menu.Width;
 			Height = menu.Height;			
-		}
-
-		private void Draw (Rectangle clip)
-		{
-			ThemeEngine.Current.DrawPopupMenu  (DeviceContext, hMenu, clip, ClientRectangle);
 		}
 	}
 

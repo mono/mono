@@ -714,12 +714,10 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
 				return;
 
-			Draw (pe.ClipRectangle);
-			
-			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 
-		private void Draw (Rectangle clip)
+		private void Draw (Rectangle clip, Graphics dc)
 		{
 			if (top_node == null && Nodes.Count > 0)
 				top_node = nodes [0];
@@ -730,7 +728,7 @@ namespace System.Windows.Forms {
 			add_vscroll = false;
 			add_hscroll = false;
 			
-			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), fill);
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
 
 			int depth = 0;
 			int item_height = ItemHeight;
@@ -739,7 +737,7 @@ namespace System.Windows.Forms {
 
 			open_node_count = 0;
 			foreach (TreeNode node in nodes) {
-				DrawNode (node, clip, ref depth, item_height, font, height);
+				DrawNode (node, dc, clip, ref depth, item_height, font, height);
 				depth = 0;
 			}
 
@@ -770,26 +768,26 @@ namespace System.Windows.Forms {
 			if (add_hscroll && add_vscroll) {
 				Rectangle corner = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
 				if (clip.IntersectsWith (corner))
-					DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), corner);
+					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), corner);
 			}
 		}
 
-		private void DrawNodePlusMinus (TreeNode node, Rectangle clip, int x, int y, int middle)
+		private void DrawNodePlusMinus (TreeNode node, Graphics dc, Rectangle clip, int x, int y, int middle)
 		{
 			if (!RectsIntersect (clip, x, middle - 4, 8, 8))
 				return;
 
-			DeviceContext.DrawRectangle (SystemPens.ControlDark, x, middle - 4, 8, 8);
+			dc.DrawRectangle (SystemPens.ControlDark, x, middle - 4, 8, 8);
 
 			if (node.IsExpanded) {
-				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
 			} else {
-				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle);
-				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle);
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
 			}
 		}
 
-		private void DrawNodeCheckBox (TreeNode node, Rectangle clip, int x, int y)
+		private void DrawNodeCheckBox (TreeNode node, Graphics dc, Rectangle clip, int x, int y)
 		{
 			int offset = (ItemHeight - 13);
 
@@ -797,20 +795,21 @@ namespace System.Windows.Forms {
 			if (!RectsIntersect (clip, x + 3, y + offset, 12, 12))
 				return;
 
-			DeviceContext.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 11, 11);
+			dc.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 11, 11);
 
 			if (node.Checked) {
 				Pen check_pen = new Pen (Color.Black, 1);
 
-				DeviceContext.DrawLine (check_pen, x + 6, y + offset + 5, x + 8, y + offset + 8);
-				DeviceContext.DrawLine (check_pen, x + 6, y + offset + 6, x + 8, y + offset + 9);
+				dc.DrawLine (check_pen, x + 6, y + offset + 5, x + 8, y + offset + 8);
+				dc.DrawLine (check_pen, x + 6, y + offset + 6, x + 8, y + offset + 9);
 
-				DeviceContext.DrawLine (check_pen, x + 7, y + offset + 8, x + 13, y + offset + 3);
-				DeviceContext.DrawLine (check_pen, x + 7, y + offset + 9, x + 13, y + offset + 4);
+				dc.DrawLine (check_pen, x + 7, y + offset + 8, x + 13, y + offset + 3);
+				dc.DrawLine (check_pen, x + 7, y + offset + 9, x + 13, y + offset + 4);
 			}
 		}
 
-		private void DrawNodeLines (TreeNode node, bool visible, Pen dash, int x, int y, int middle, int item_height, int node_count)
+		private void DrawNodeLines (TreeNode node, Graphics dc, bool visible, Pen dash, int x, int y,
+                                int middle, int item_height, int node_count)
 		{
 			int ladjust = 9; // left adjust
 			int radjust = 0; // right adjust
@@ -820,7 +819,7 @@ namespace System.Windows.Forms {
 			if (checkboxes)
 				radjust = 3;
 
-			DeviceContext.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
+			dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
 			//if (!visible)
 			//	return;
@@ -831,15 +830,15 @@ namespace System.Windows.Forms {
 						(node.PrevNode.Nodes.Count == 0 ? 0 : 4));
 				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
 				ly = node.PrevNode.Bounds.Bottom - (item_height / 2) + prevadjust;
-				DeviceContext.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
+				dc.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
 			} else if (node.Parent != null) {
 				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
 				ly = node.Parent.Bounds.Bottom - 1;
-				DeviceContext.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
+				dc.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
 			}
 		}
 
-		private void DrawNodeImage (TreeNode node, Rectangle clip, int x, int y)
+		private void DrawNodeImage (TreeNode node, Graphics dc, Rectangle clip, int x, int y)
 		{
 			Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, 
 					ImageList.ImageSize.Height);
@@ -847,10 +846,10 @@ namespace System.Windows.Forms {
 				return;
 
 			if (node.ImageIndex > -1 && ImageList != null && node.ImageIndex < ImageList.Images.Count) {
-				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
+				ImageList.Draw (dc, x, y + 2, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, node.ImageIndex);
 			} else if (ImageIndex > -1 && ImageList != null && ImageIndex < ImageList.Images.Count) {
-				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
+				ImageList.Draw (dc, x, y + 2, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, ImageIndex);
 			}
 		}
@@ -902,7 +901,7 @@ namespace System.Windows.Forms {
 			node.UpdateBounds (x, y, width, item_height);
 		}
 
-		private void DrawNode (TreeNode node, Rectangle clip, ref int depth, int item_height,
+		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height,
 				Font font, int max_height)
 		{
 			open_node_count++;
@@ -920,7 +919,7 @@ namespace System.Windows.Forms {
 				x += 5;
 				if (_n_count > 0) {
 					if (show_plus_minus && visible) {
-						DrawNodePlusMinus (node, clip, x, y, middle);
+						DrawNodePlusMinus (node, dc, clip, x, y, middle);
 					}
 				}
 				x += indent - 5; 
@@ -929,16 +928,16 @@ namespace System.Windows.Forms {
 			int ox = x;
 
 			if (visible && checkboxes) {
-				DrawNodeCheckBox (node, clip, ox, y);
+				DrawNodeCheckBox (node, dc, clip, ox, y);
 				ox += 19;
 			}
 
 			if (show_lines)
-				DrawNodeLines (node, visible, dash, x, y, middle, item_height, _n_count);
+				DrawNodeLines (node, dc, visible, dash, x, y, middle, item_height, _n_count);
 
 			if (visible && ImageList != null) {
 				if (visible)
-					DrawNodeImage (node, clip, ox, y);
+					DrawNodeImage (node, dc, clip, ox, y);
 				// MS leaves the space for the image if the ImageList is
 				// non null regardless of whether or not an image is drawn
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
@@ -957,19 +956,19 @@ namespace System.Windows.Forms {
 				Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
 				if (Focused) {
 					if (SelectedNode == node)
-						DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
+						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
 					if (focused_node == node) {
 						Pen dot_pen = new Pen (ThemeEngine.Current.ColorButtonHilight, 1);
 						dot_pen.DashStyle = DashStyle.Dot;
-						DeviceContext.DrawRectangle (new Pen (ThemeEngine.Current.ColorButtonDkShadow),
+						dc.DrawRectangle (new Pen (ThemeEngine.Current.ColorButtonDkShadow),
 								node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
-						DeviceContext.DrawRectangle (dot_pen, node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
+						dc.DrawRectangle (dot_pen, node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
 					}
 				} else {
 					if (!HideSelection && SelectedNode == node)
-						DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), node.Bounds);
+						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), node.Bounds);
 				}
-				DeviceContext.DrawString (node.Text, font, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
+				dc.DrawString (node.Text, font, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
 				y += item_height + 1;
 			} else if (visible && bounds_in_clip) {
 				DrawEditNode (node);
@@ -987,7 +986,7 @@ namespace System.Windows.Forms {
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
 					int tdepth = depth;
-					DrawNode (node.nodes [i], clip, ref tdepth, item_height, font, max_height);
+					DrawNode (node.nodes [i], dc, clip, ref tdepth, item_height, font, max_height);
 				}
 			}
 

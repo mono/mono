@@ -84,7 +84,6 @@ namespace System.Windows.Forms
 
 		public LinkLabel ()
 		{
-			link_collection = new LinkCollection (this);
 			LinkArea = new LinkArea (0, -1);
 			link_behavior = LinkBehavior.SystemDefault;
 			link_visited = false;
@@ -179,7 +178,11 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LinkLabel.LinkCollection Links {
-			get { return link_collection;}
+			get {
+                                if (link_collection == null)
+                                        link_collection = new LinkCollection (this);
+                                return link_collection;
+                        }
 		}
 
 		[DefaultValue (false)]
@@ -327,12 +330,9 @@ namespace System.Windows.Forms
 		}
 
 		protected override void OnPaint (PaintEventArgs pevent)
-    		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
-
-			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+		{
+			ThemeEngine.Current.DrawLinkLabel (pevent.Graphics, ClientRectangle, this);
+			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs e)
@@ -516,12 +516,6 @@ namespace System.Windows.Forms
 						color = LinkColor;
 
 			return color;
-		}
-
-		internal new void Draw ()
-		{
-			ThemeEngine.Current.DrawLinkLabel (DeviceContext, ClientRectangle, this);
-			DrawImage (DeviceContext, Image, ClientRectangle, image_align);
 		}
 
 		private void CreateLinkFont ()

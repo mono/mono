@@ -1021,7 +1021,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void Draw (Rectangle clip)
+		internal void Draw (Rectangle clip, Graphics dc)
 		{	
 			if (LBoxInfo.textdrawing_rect.Contains (clip) == false) {
 				// IntegralHeight has effect, we also have to paint the unused area
@@ -1029,11 +1029,11 @@ namespace System.Windows.Forms
 					Region area = new Region (ClientRectangle);
 					area.Exclude (listbox_info.client_rect);
 
-					DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor),
-						area.GetBounds (DeviceContext));
+					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor),
+						area.GetBounds (dc));
 				}
 
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);				
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);				
 			}					
 
 			if (Items.Count > 0) {
@@ -1056,12 +1056,12 @@ namespace System.Windows.Forms
 					if (has_focus == true && focused_item == i)
 						state |= DrawItemState.Focus;
 
-					OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
+					OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
 						i, state, ForeColor, BackColor));
 				}
 			}			
 			
-			ThemeEngine.Current.DrawListBoxDecorations (DeviceContext, this);
+			ThemeEngine.Current.DrawListBoxDecorations (dc, this);
 		}
 
 		// Converts a GetItemRectangle to a one that we can display
@@ -1413,14 +1413,11 @@ namespace System.Windows.Forms
 		{
 			if (Paint != null)
 				Paint (this, pevent);
-				
-			if (Width <= 0 || Height <=  0 || Visible == false || suspend_ctrlupdate == true)
+
+			if (suspend_ctrlupdate == true)
     				return;
 
-			/* Copies memory drawing buffer to screen*/
-			Draw (pevent.ClipRectangle);
-			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
-
+			Draw (pevent.ClipRectangle, pevent.Graphics);
 		}
 
 		internal void RellocateScrollBars ()

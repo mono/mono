@@ -405,19 +405,9 @@ namespace System.Windows.Forms
 			UpdateAreas ();
     		}
 
-		private void Draw (Rectangle clip)
-		{
-			ThemeEngine.Current.DrawProgressBar (DeviceContext, clip, this);
-		}
-
 		private void OnPaintPB (Object o, PaintEventArgs pevent)
 		{
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
-
-			/* Copies memory drawing buffer to screen*/
-			Draw (pevent.ClipRectangle);
-			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+                        ThemeEngine.Current.DrawProgressBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}		
 		
 		#endregion
