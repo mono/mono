@@ -1,3 +1,7 @@
+2005-04-25  Peter Bartok  <pbartok@novell.com>
+
+	* LinkLabel.cs: Length of LinkArea is not allowed to be negative
+
 2005-04-25  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Use the horizontal scrollbars height not width when

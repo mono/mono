@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 
 		public LinkLabel ()
 		{
-			LinkArea = new LinkArea (0, -1);
+			LinkArea = new LinkArea (0, 0);
 			link_behavior = LinkBehavior.SystemDefault;
 			link_visited = false;
 			link_click = false;
