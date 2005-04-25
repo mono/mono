@@ -1,3 +1,7 @@
+2005-04-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (RUNTIME): Add MONO_CFG_DIR.
+
 2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* objects.cs: Add missing null casting test.
