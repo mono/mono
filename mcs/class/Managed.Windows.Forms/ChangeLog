@@ -1,3 +1,8 @@
+2005-04-25  Jackson Harper  <jackson@ximian.com>
+
+	* System.Windows.Forms.dll.sources: Add CursorConvert.cs to the
+	build
+
 2005-04-09  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added FolderBrowserDialog.cs
