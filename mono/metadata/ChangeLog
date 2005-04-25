@@ -1,3 +1,11 @@
+2005-04-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_is_assignable_from): Call is_assignable_to for
+	dynamic types to prevent infinite loops. Fixes #74727.
+
+	* reflection.c (mono_reflection_call_is_assignable_from): Rename to
+	..._is_assignable_to.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security.c: Fixed #74698 where sysconf returned -1 on FreeBSD.
