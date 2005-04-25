@@ -1,3 +1,7 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedData.cs: Fix compiler warning (unused variable).
+
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptographicAttribute.cs: Renamed class to CryptographicAttribute

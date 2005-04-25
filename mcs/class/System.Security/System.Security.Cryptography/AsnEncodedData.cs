@@ -268,7 +268,6 @@ namespace System.Security.Cryptography {
 
 			StringBuilder sb = new StringBuilder ();
 
-			bool first = false;
 			if ((value & 0x80) == 0x80) {
 				sb.Append ("SSL Client Authentication");
 			}
