@@ -1,5 +1,12 @@
 2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Assembly.cs: Added some CAS security to avoid returning restricted
+	information to partially truster callers (e.g. code base). Added new
+	methods to get the Evidence and AssemblyName so that the security
+	runtime can bootstrap itself (without calling itself).
+
+2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* Assembly.cs: Added missing null check in GetObjectData.
 
 2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>

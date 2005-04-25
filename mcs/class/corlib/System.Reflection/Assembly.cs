@@ -73,9 +73,11 @@ namespace System.Reflection {
 		// compiler would silently insert the fields before _mono_assembly
 		//
 		public event ModuleResolveEventHandler ModuleResolve {
+			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			add {
 				resolve_event_holder.ModuleResolve += value;
 			}
+			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 			remove {
 				resolve_event_holder.ModuleResolve -= value;
 			}
@@ -83,7 +85,7 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_code_base ();
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_location ();
 
@@ -93,22 +95,26 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool get_global_assembly_cache ();
 
-		public virtual string CodeBase {
-			get {
-				return get_code_base ();
+		// SECURITY: this should be the only caller to icall get_code_base
+		private string GetCodeBase ()
+		{
+			string cb = get_code_base ();
+			if (SecurityManager.SecurityEnabled) {
+				// we cannot divulge local file informations
+				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
+					string file = cb.Substring (7);
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, file).Demand ();
+				}
 			}
+			return cb;
 		}
 
-		internal virtual string CopiedCodeBase {
-			get {
-				return get_code_base ();
-			}
-		} 
+		public virtual string CodeBase {
+			get { return GetCodeBase (); }
+		}
 
 		public virtual string EscapedCodeBase {
-			get {
-				return Uri.EscapeString (get_code_base (), false, true, true);
-			}
+			get { return Uri.EscapeString (GetCodeBase (), false, true, true); }
 		}
 
 		public virtual string FullName {
@@ -117,7 +123,7 @@ namespace System.Reflection {
 				// FIXME: This is wrong, but it gets us going
 				// in the compiler for now
 				//
-				return GetName (false).ToString ();
+				return ToString ();
 			}
 		}
 
@@ -127,16 +133,21 @@ namespace System.Reflection {
 		}
 
 		public virtual Evidence Evidence {
-			get {
-				// if the host (runtime) hasn't provided it's own evidence...
-				if (_evidence == null) {
-					// ... we will provide our own
-					lock (this) {
-						_evidence = Evidence.GetDefaultHostEvidence (this);
-					}
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
+			get { return UnprotectedGetEvidence (); }
+		}
+
+		// note: the security runtime requires evidences but may be unable to do so...
+		internal Evidence UnprotectedGetEvidence ()
+		{
+			// if the host (runtime) hasn't provided it's own evidence...
+			if (_evidence == null) {
+				// ... we will provide our own
+				lock (this) {
+					_evidence = Evidence.GetDefaultHostEvidence (this);
 				}
-				return _evidence;
 			}
+			return _evidence;
 		}
 
 		public bool GlobalAssemblyCache {
@@ -147,7 +158,12 @@ namespace System.Reflection {
 		
 		public virtual String Location {
 			get {
-				return get_location ();
+				string loc = get_location ();
+				if (SecurityManager.SecurityEnabled) {
+					// we cannot divulge local file informations
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
+				}
+				return loc;
 			}
 		}
 
@@ -160,6 +176,7 @@ namespace System.Reflection {
 		}
 #endif
 
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -312,9 +329,11 @@ namespace System.Reflection {
 		[MonoTODO ("true == not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
-			AssemblyName aname = new AssemblyName ();
-			FillName (this, aname);
-			return aname;
+			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
+			if (SecurityManager.SecurityEnabled) {
+				GetCodeBase (); // this will ensure the Demand is made
+			}
+			return UnprotectedGetName ();
 		}
 
 		public virtual AssemblyName GetName ()
@@ -322,9 +341,20 @@ namespace System.Reflection {
 			return GetName (false);
 		}
 
-		public override String ToString ()
+		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
+		internal AssemblyName UnprotectedGetName ()
 		{
-			return GetName ().ToString ();
+			AssemblyName aname = new AssemblyName ();
+			FillName (this, aname);
+			return aname;
+		}
+
+		public override string ToString ()
+		{
+			// note: ToString work without requiring CodeBase (so no checks are needed)
+			AssemblyName aname = new AssemblyName ();
+			FillName (this, aname);
+			return aname.ToString ();
 		}
 
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
@@ -500,6 +530,8 @@ namespace System.Reflection {
 		 * ie System/// will throw an exception. However ////System will not as that is canocolized
 		 * out of the name.
 		 */
+
+		// FIXME: LoadWithPartialName must look cache (no CAS) or read from disk (CAS)
 #if NET_2_0
 		[Obsolete ("")]
 		[ComVisible (false)]
@@ -738,8 +770,8 @@ namespace System.Reflection {
 				// Demand it's too late to evaluate the Minimum permission set as a 
 				// condition to load the assembly into the AppDomain
 				LoadAssemblyPermissions ();
-				_granted = SecurityManager.ResolvePolicy (Evidence, _minimum, _optional,
-					_refuse, out _denied);
+				_granted = SecurityManager.ResolvePolicy (UnprotectedGetEvidence (),
+					_minimum, _optional, _refuse, out _denied);
 			}
 #if false
 			Console.WriteLine ("*** ASSEMBLY RESOLVE INPUT ***");
