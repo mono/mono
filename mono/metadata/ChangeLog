@@ -1,3 +1,15 @@
+2005-04-25  Martin Baulig  <martin@ximian.com>
+
+	Upgrade to the latest .NET 2.x beta (Visual Studio 2005 Beta 2).
+
+	* domain.c
+	(supported_runtimes): Change "v2.0.40607" -> "v2.0.50215".
+
+	* row-indexes.h (MONO_GENERICPARAM_KIND): Removed.
+
+	* reflection.c (build_compressed_metadata): Set metadata header
+	version to 2.0.
+
 2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sysmath.c (ves_icall_System_Math_Round2): Use modf to decompose the
