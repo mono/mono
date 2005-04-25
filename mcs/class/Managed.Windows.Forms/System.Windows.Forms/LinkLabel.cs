@@ -151,7 +151,7 @@ namespace System.Windows.Forms
 			get { return link_area;}
 			set {
 
-				if (value.Start <0 || value.Length > 0)
+				if (value.Start <0 || value.Length < 0)
 					throw new ArgumentException ();
 
 				if (!value.IsEmpty)

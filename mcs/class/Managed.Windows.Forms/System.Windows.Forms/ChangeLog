@@ -1,3 +1,8 @@
+2005-04-24  Borja Sanchez Zamorano <borsanza@gmail.com>
+
+	* LinkLabel.cs: Fix typo, bug #74719; patch 
+	  from Borja Sanchez Zamorano
+
 2005-04-22  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: Implement Handle stuff.
