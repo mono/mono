@@ -1,5 +1,11 @@
 2005-04-25  Dick Porter  <dick@ximian.com>
 
+	* handles.c (_wapi_handle_check_share): Only consider mono
+	processes when looking to see if a file is still being held open,
+	while checking share permissions.
+
+2005-04-25  Dick Porter  <dick@ximian.com>
+
 	* sockets.c: 
 	* io.c: 
 	* wapi-private.h (struct _WapiHandleOps): 
