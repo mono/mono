@@ -1,3 +1,8 @@
+2005-04-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Check empty BaseURI before being used to
+	  resolve Uri. Patch by Heath Harrelson. Fixed bug #74704.
+
 2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlResolver.cs : throw ArgumentException in ResolveUri().

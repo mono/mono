@@ -1332,8 +1332,17 @@ namespace System.Xml
 
 			string baseUri = GetAttribute ("xml:base");
 			if (baseUri != null) {
-				if (this.resolver != null)
-					parserContext.BaseURI = resolver.ResolveUri (new Uri (BaseURI), baseUri).ToString ();
+				if (this.resolver != null) {
+					Uri buri =
+						BaseURI != String.Empty ?
+						new Uri (BaseURI) : null;
+					Uri uri = resolver.ResolveUri (
+						buri, baseUri);
+					parserContext.BaseURI = 
+						uri != null ? 
+						uri.ToString () :
+						String.Empty;
+				}
 				else
 					parserContext.BaseURI = baseUri;
 			}
