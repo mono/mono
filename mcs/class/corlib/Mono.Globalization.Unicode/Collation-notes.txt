@@ -1,0 +1,111 @@
+String collation
+
+* CompareInfo members
+
+	GetSortKey()
+		Compute sort key for every characters into byte[].
+		Use collation element table.
+	Compare()
+		Find first difference and compare it. "Larger/smaller" matters.
+	IsPrefix()
+		For each character in the target, examine if it matches from 
+		the head of the searchee and immediately return false if it 
+		didn't match.
+	IsSuffix()
+		For each character in the target, examine if it matches from 
+		the tail of the searchee. If it didn't match, continue to 
+		the start of the target if it really does not match in the next
+		character (hopefully limited to max size n).
+	IndexOf()
+		Find first match and process comparison to the end of the 
+		string to find
+
+* CompareOptions support
+
+	There are two kind of "ignorance" : ignorance which acts as stripper,
+	and ignorance acts as normalizer.
+
+	The strippers will "filter characters out" and there will be no
+	corresponding character elements in SortKey binaries.
+
+	Normalizers, on the other hand, will result in certain characters 
+	that is still in effect between irrelevant character and itself.
+	For example, with IgnoreKanaType Hiragana "A" and Katakana "A" are
+	not distinguished, but Hiragana "A" and Hiragana "I" are.
+
+	Actually, even without any IgnoreXXX flags (i.e. "None"), there are 
+	many characters that are excluded from results. I'd say it as
+	"completely ignorable" characters (as said in UCA).
+
+	For LCID 101/1125(div), '\ufdf2' is completely ignorable.
+	This rule even applies to CompareOptions.None.
+
+** Normalizers
+
+	IgnoreCase
+		Maybe culture-dependent TextInfo.ToLower() could be used.
+
+		Unlike ICU (specialCaseToLower()), even with tr-TR(LCID 31)
+		and IgnoreCase, I\u0307 is not regarded as equal to i.
+
+	IgnoreKanaType
+		We need ToHiragana() like ToLower(). See also "Notes".
+
+	IgnoreWidth
+		We need ToFullWidth(), which is likely to be culture
+		independent. See also "Notes".
+
+** Strippers
+
+	I already wrote all the required strippers which should be MS
+	compatible (at least with .NET 1.1 invariant culture).
+
+	IgnoreNonSpace
+		It is in a black box.
+		- Some Diacritic characters are covered by this flag.
+
+		There are some culture *dependent* characters:
+			LCID 90/1114(syr) : 64b, 652, 670
+
+	IgnoreSymbols
+		We need to implement our own Char.IsSymbol().
+		UnicodeCategory does not work.
+
+		There are some culture *dependent* characters:
+			LCID 17/1041(ja) : 2015
+			LCID 90/1114(syr) : 64b, 652
+
+** StringSort
+
+	Maybe use additional tailoring rule which says that non-alphabetic
+	characters does not take precedence.
+
+* CharacterIterator
+
+	The match evaluation could not be done only one character - the longest
+	possible sequence of characters in the tailored table (e.g. "ch" 
+	in Spanish) should be examined.
+
+* Collation element table tailoring
+
+	We will contain only the default element table and Chinese table.
+	(Japanese might be added too, since CLDR contains a large table for it)
+
+	Other rules are always "evaluated"; no physical expansion is done.
+
+* Notes
+
+	Since UCA Level 3 handles both casing and width, it is impossible to
+	use UCA variables for IgnoreWidth, at least with the default element
+	table.
+
+	IgnoreWidth/IgnoreSymbols is processed after Kana voice mark
+	decomposition (NFD).
+	This means, if there is a combined Kana characters, it will be first 
+	decomposed and then compared.
+
+	Microsoft implementation seems to have a serious problem that many,
+	many characters that are used in for each specific culture, such as
+	Myanmar, Mongolian, Cherokee, Etiopic, Tagalog, Khmer, are regarded as
+	"completely ignorable".
+

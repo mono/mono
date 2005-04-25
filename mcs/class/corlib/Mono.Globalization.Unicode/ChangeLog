@@ -1,0 +1,15 @@
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodePointIndexer.cs,
+	  Collation-notes.txt,
+	  CollationElementTable.template,
+	  CollationElementTableUtil.cs,
+	  create-char-mapping-source.cs,
+	  create-collation-element-table.cs,
+	  create-combining-class-source.cs,
+	  create-normalization-source.cs,
+	  Makefile,
+	  MSCompatUnicodeTable.cs,
+	  Normalization.template,
+	  NormalizationTableUtil.cs : initial checkin (to private branch).
+
