@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,11 +28,12 @@
 
 #if NET_2_0
 
-using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
-	public sealed class ApplicationTrust : ISecurityEncodable, ISecurityPolicyEncodable {
+	[ComVisible (true)]
+	public sealed class ApplicationTrust : ISecurityEncodable {
 
 		private ApplicationIdentity _appid;
 		private PolicyStatement _defaultPolicy;
@@ -76,19 +77,6 @@ namespace System.Security.Policy {
 		}
 
 		[MonoTODO ("incomplete")]
-		public override bool Equals (object obj) 
-		{
-			if (obj == null)
-				return false;
-			ApplicationTrust at = (obj as ApplicationTrust);
-			if (at == null)
-				return false;
-
-			// TODO
-			return false;
-		}
-
-		[MonoTODO ("incomplete")]
 		public void FromXml (SecurityElement element) 
 		{
 			if (element == null)
@@ -96,27 +84,10 @@ namespace System.Security.Policy {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("incomplete - is PolicyLevel used ?")]
-		public void FromXml (SecurityElement element, PolicyLevel level) 
-		{
-			FromXml (element);
-		}
-
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
-
 		[MonoTODO ("incomplete")]
 		public SecurityElement ToXml () 
 		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO ("incomplete - is PolicyLevel used ?")]
-		public SecurityElement ToXml (PolicyLevel level) 
-		{
-			return ToXml ();
 		}
 	}
 }

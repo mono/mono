@@ -45,6 +45,9 @@ namespace System.Security.Policy {
 
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class Evidence : ICollection, IEnumerable {
 	
 		private bool _locked;
@@ -277,7 +280,7 @@ namespace System.Security.Policy {
 			}
 
 			// strongnamed assemblies gets a StrongName evidence
-			AssemblyName an = a.GetName ();
+			AssemblyName an = a.UnprotectedGetName ();
 			byte[] pk = an.GetPublicKey ();
 			if ((pk != null) && (pk.Length > 0)) {
 				StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (pk);
@@ -299,14 +302,14 @@ namespace System.Security.Policy {
 #if NET_2_0
 			// assemblies loaded from the GAC also get a Gac evidence (new in Fx 2.0)
 			if (a.GlobalAssemblyCache) {
-				e.AddHost (new Gac ());
+				e.AddHost (new GacInstalled ());
 			}
 
 			// the current HostSecurityManager may add/remove some evidence
 			AppDomainManager dommgr = AppDomain.CurrentDomain.DomainManager;
 			if (dommgr != null) {
-				if ((dommgr.HostSecurityManager.Flags & HostSecurityManagerFlags.HostAssemblyEvidence) ==
-					HostSecurityManagerFlags.HostAssemblyEvidence) {
+				if ((dommgr.HostSecurityManager.Flags & HostSecurityManagerOptions.HostAssemblyEvidence) ==
+					HostSecurityManagerOptions.HostAssemblyEvidence) {
 					e = dommgr.HostSecurityManager.ProvideAssemblyEvidence (a, e);
 				}
 			}

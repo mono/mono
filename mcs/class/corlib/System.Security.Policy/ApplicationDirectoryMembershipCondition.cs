@@ -7,7 +7,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Nick Drochak, All rights reserved.
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,12 +33,16 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 using Mono.Security;
 
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ApplicationDirectoryMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
 
 		private readonly int version = 1;

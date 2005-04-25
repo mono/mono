@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,13 +35,15 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class NetCodeGroup : CodeGroup {
 
 #if NET_2_0
 		public static readonly string AbsentOriginScheme = String.Empty;
 		public static readonly string AnyOtherOriginScheme = "*";
 
-		private CodeGroupGrantScope _scope = CodeGroupGrantScope.Assembly;
 		private Hashtable _rules = new Hashtable ();
 		private int _hashcode;
 #endif
@@ -77,13 +79,6 @@ namespace System.Security.Policy {
 #endif
 		}
 
-#if NET_2_0
-		[ComVisible (false)]
-		public CodeGroupGrantScope Scope {
-			get { return _scope; }
-			set { _scope = value; }
-		}
-#endif
 
 		//
 		// Public Methods
@@ -264,4 +259,3 @@ namespace System.Security.Policy {
 #endif
 	}
 }
-

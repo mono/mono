@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Nick Drochak, All rights reserved.
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,11 +31,15 @@
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class CodeGroup {
 		PolicyStatement m_policy;
 		IMembershipCondition m_membershipCondition;
@@ -133,10 +137,11 @@ namespace System.Security.Policy {
 
 		public override bool Equals (object o)
 		{
-			if (!(o is CodeGroup))
+			CodeGroup cg = (o as CodeGroup);
+			if (cg == null)
 				return false;
 
-			return Equals ((CodeGroup)o, false);
+			return Equals (cg, false);
 		}
 
 		public bool Equals (CodeGroup cg, bool compareChildren)

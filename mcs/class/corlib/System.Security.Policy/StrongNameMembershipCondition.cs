@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Duncan Mak, Ximian Inc.
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,10 +30,14 @@
 
 using System.Globalization;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
         public sealed class StrongNameMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
 
 		private readonly int version = 1;

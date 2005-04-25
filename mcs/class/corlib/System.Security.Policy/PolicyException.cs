@@ -5,7 +5,7 @@
 //	Duncan Mak (duncan@ximian.com)
 //
 // 2002 (C) Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,40 +27,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace System.Security.Policy {
 
-	   [Serializable]
+	[Serializable]
 #if NET_2_0
-	   public class PolicyException : SystemException, _Exception {
+	[ComVisible (true)]
+	public class PolicyException : SystemException, _Exception {
 #else
-	   public class PolicyException : SystemException {
+	public class PolicyException : SystemException {
 #endif
-			 // Constructors
-			 public PolicyException ()
-				    : base (Locale.GetText ("Cannot run because of policy."))
-			 {
-			 }
+		// Constructors
+		public PolicyException ()
+			: base (Locale.GetText ("Cannot run because of policy."))
+		{
+		}
 
-			 public PolicyException (string message)
-				    : base (message)
-			 {
-			 }
+		public PolicyException (string message)
+			: base (message)
+		{
+		}
 			 
-			 protected PolicyException (SerializationInfo info,
-				    StreamingContext context)
-				    : base (info, context)
-			 {
-			 }
+		protected PolicyException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
 
-			 public PolicyException (string message, Exception innerException)
-				    :base (message, innerException)
-			 {
-			 }
-				    
-	   }
+		public PolicyException (string message, Exception innerException)
+			:base (message, innerException)
+		{
+		}
+	}
 }

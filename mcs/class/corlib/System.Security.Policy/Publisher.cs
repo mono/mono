@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,91 +29,95 @@
 
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
-[Serializable]
-public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
+	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 	
-	private X509Certificate m_cert;
+		private X509Certificate m_cert;
 
-	public Publisher (X509Certificate cert) 
-	{
-		if (cert == null)
-			throw new ArgumentNullException ("cert");
+		public Publisher (X509Certificate cert) 
+		{
+			if (cert == null)
+				throw new ArgumentNullException ("cert");
 #if NET_2_0
-		if (cert.GetHashCode () == 0)
-			throw new ArgumentException ("cert");
+			if (cert.GetHashCode () == 0)
+				throw new ArgumentException ("cert");
 #endif
-		m_cert = cert;
-	}
+			m_cert = cert;
+		}
 
-	public X509Certificate Certificate { 
-		get {
-			if (m_cert.GetHashCode () == 0) {
+		public X509Certificate Certificate { 
+			get {
+				if (m_cert.GetHashCode () == 0) {
 #if NET_2_0
-				throw new ArgumentException ("m_cert");
+					throw new ArgumentException ("m_cert");
 #else
-				throw new NullReferenceException ("m_cert");
-#endif
+					throw new NullReferenceException ("m_cert");
+#endif	
+				}
+				return m_cert; 
 			}
-			return m_cert; 
+		}
+
+		public object Copy () 
+		{
+			return new Publisher (m_cert);
+		}
+
+		public IPermission CreateIdentityPermission (Evidence evidence) 
+		{
+			return new PublisherIdentityPermission (m_cert);
+		}
+
+		public override bool Equals (object o) 
+		{
+			Publisher p = (o as Publisher);
+			if (p == null)
+				throw new ArgumentException ("not a Publisher");
+			return m_cert.Equals (p.Certificate);
+		}
+	
+		public override int GetHashCode () 
+		{
+			return m_cert.GetHashCode ();
+		}
+
+		public override string ToString ()
+		{
+			SecurityElement se = new SecurityElement ("System.Security.Policy.Publisher");
+			se.AddAttribute ("version", "1");
+			SecurityElement cert = new SecurityElement ("X509v3Certificate");
+			string data = m_cert.GetRawCertDataString ();
+			if (data != null)
+				cert.Text = data;
+			se.AddChild (cert);
+			return se.ToString ();
+		}
+
+		// interface IBuiltInEvidence
+
+		[MonoTODO]
+		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+		{
+			return (verbose ? 3 : 1) + m_cert.GetRawCertData ().Length;
+		}
+
+		[MonoTODO]
+		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+		{
+			return 0;
+		}
+
+		[MonoTODO]
+		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+		{
+			return 0;
 		}
 	}
-
-	public object Copy () 
-	{
-		return new Publisher (m_cert);
-	}
-
-	public IPermission CreateIdentityPermission (Evidence evidence) 
-	{
-		return new PublisherIdentityPermission (m_cert);
-	}
-
-	public override bool Equals (object o) 
-	{
-		if (!(o is Publisher))
-			throw new ArgumentException ("not a Publisher");
-		return m_cert.Equals ((o as Publisher).Certificate);
-	}
-	
-	public override int GetHashCode () 
-	{
-		return m_cert.GetHashCode ();
-	}
-
-	public override string ToString ()
-	{
-		SecurityElement se = new SecurityElement ("System.Security.Policy.Publisher");
-		se.AddAttribute ("version", "1");
-		SecurityElement cert = new SecurityElement ("X509v3Certificate");
-		string data = m_cert.GetRawCertDataString ();
-		if (data != null)
-			cert.Text = data;
-		se.AddChild (cert);
-		return se.ToString ();
-	}
-
-	// interface IBuiltInEvidence
-
-	[MonoTODO]
-	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
-	{
-		return (verbose ? 3 : 1) + m_cert.GetRawCertData ().Length;
-	}
-
-	[MonoTODO]
-	int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
-	{
-		return 0;
-	}
-
-	[MonoTODO]
-	int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
-	{
-		return 0;
-	}
-}
-
 }

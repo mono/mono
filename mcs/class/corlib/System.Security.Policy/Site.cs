@@ -7,7 +7,7 @@
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
 // Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,13 +31,17 @@
 
 using System.Globalization;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 using Mono.Security;
 
 namespace System.Security.Policy {
 
-        [Serializable]
-        public sealed class Site: IIdentityPermissionFactory, IBuiltInEvidence {
+	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public sealed class Site: IIdentityPermissionFactory, IBuiltInEvidence {
 
 		internal string origin_site;
 
@@ -139,11 +143,21 @@ namespace System.Security.Policy {
 					continue;
 				foreach (char c in part) {
 					int x = Convert.ToInt32 (c);
+#if NET_2_0
+					bool result = ((x == 33) || (x == 45)	// !-
+						|| (x >= 35 && x <= 41)		// #$%&'()
+						|| (x >= 48 && x <= 57)		// 0-9
+						|| (x >= 64 && x <= 90)		// @,A-Z
+						|| (x >= 94 && x <= 95)		// ^_
+						|| (x >= 97 && x <= 123)	// a-z{
+						|| (x >= 125 && x <= 126));	// }~
+#else
 					bool result = ((x == 45)		// -
 						|| (x >= 47 && x <= 57)		// /,0-9
 						|| (x >= 64 && x <= 90)		// @,A-Z
 						|| (x == 95)			// _
 						|| (x >= 97 && x <= 122));	// a-z
+#endif
 					if (!result)
 						return false;
 				}

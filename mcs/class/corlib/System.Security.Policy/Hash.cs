@@ -30,20 +30,22 @@
 //
 
 using System.IO;
-using System.Text;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Security.Policy {
 
-#if !NET_2_0
+[Serializable]
+#if NET_2_0
+[ComVisible (true)]
+#else
 [MonoTODO("This doesn't match the MS version perfectly.")]
 // but it does seems to works exactly like Fx 2.0 beta 1 !?!?!
 #endif
-
-[Serializable]
 public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	private Assembly assembly;

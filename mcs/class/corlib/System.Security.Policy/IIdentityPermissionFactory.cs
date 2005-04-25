@@ -1,11 +1,10 @@
+//
 // System.Security.Policy.IIdentityPermissionFactory
 //
 // Nick Drochak (ndrochak@gol.com)
 //
 // (C) 2001 Nick Drochak
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,10 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Security.Policy
-{
-	public interface IIdentityPermissionFactory
-	{
+using System.Runtime.InteropServices;
+
+namespace System.Security.Policy {
+
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public interface IIdentityPermissionFactory {
+
 		IPermission CreateIdentityPermission(Evidence evidence);
 	}
 }

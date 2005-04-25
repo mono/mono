@@ -7,7 +7,7 @@
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +30,17 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 using Mono.Security;
 
 namespace System.Security.Policy {
 
-        [Serializable]
+	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
         public sealed class Url: IIdentityPermissionFactory, IBuiltInEvidence {
 
                 private string origin_url;
@@ -66,14 +70,29 @@ namespace System.Security.Policy {
 
                 public override bool Equals (object o)
                 {
-			if (o is System.Security.Policy.Url)
-				return (String.Compare (((Url) o).Value, Value, true, CultureInfo.InvariantCulture) == 0);
-			return false;
+			Url u = (o as System.Security.Policy.Url);
+			if (u == null)
+				return false;
+
+			string url1 = u.Value;
+			string url2 = origin_url;
+#if NET_2_0
+			if (url1.IndexOf (Uri.SchemeDelimiter) < 0)
+				url1 = "file://" + url1;
+			if (url2.IndexOf (Uri.SchemeDelimiter) < 0)
+				url2 = "file://" + url2;
+#endif
+			return (String.Compare (url1, url2, true, CultureInfo.InvariantCulture) == 0);
                 }
 
                 public override int GetHashCode ()
                 {
-                        return origin_url.GetHashCode ();
+			string s = origin_url;
+#if NET_2_0
+			if (s.IndexOf (Uri.SchemeDelimiter) < 0)
+				s = "file://" + s;
+#endif
+                        return s.GetHashCode ();
                 }
 
                 public override string ToString ()
@@ -108,28 +127,50 @@ namespace System.Security.Policy {
 		}
 
 		// internal
-
-		internal string Prepare (string url) 
+#if NET_2_0
+		private string Prepare (string url) 
 		{
 			if (url == null)
 				throw new ArgumentNullException ("Url");
 			if (url == String.Empty)
 				throw new FormatException (Locale.GetText ("Invalid (empty) Url"));
 
-			// is a protocol specified
+			int protocolPos = url.IndexOf (Uri.SchemeDelimiter);	// '://'
+			if (protocolPos > 0) {
+				if (url.StartsWith ("file://")) {
+					// convert file url into uppercase
+					url = "file://" + url.Substring (7);
+				}
+				// don't escape and don't reduce (e.g. '.' and '..')
+				Uri uri = new Uri (url, false, false);
+				url = uri.ToString ();
+			}
+
+			int lastpos = url.Length - 1;
+			if (url [lastpos] == '/')
+				url = url.Substring (0, lastpos);
+
+			return url;
+		}
+#else
+		private string Prepare (string url) 
+		{
+			if (url == null)
+				throw new ArgumentNullException ("Url");
+			if (url == String.Empty)
+				throw new FormatException (Locale.GetText ("Invalid (empty) Url"));
+
 			int protocolPos = url.IndexOf (Uri.SchemeDelimiter);	// '://'
 			if (protocolPos > 0) {
 				if (url.StartsWith ("file://")) {
 					// convert file url into uppercase
 					url = "file://" + url.Substring (7).ToUpperInvariant ();
-				}
-				else {
+				} else {
 					// add a trailing slash if none (lonely one) is present
 					if (url.LastIndexOf ("/") == protocolPos + 2)
 						url += "/";
 				}
-			}
-			else {
+			} else {
 				// add file scheme (default) and convert url to uppercase
 				url = "file://" + url.ToUpperInvariant ();
 			}
@@ -145,5 +186,6 @@ namespace System.Security.Policy {
 
 			return url;
 		}
+#endif
        }
 }

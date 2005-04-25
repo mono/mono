@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
@@ -40,6 +41,7 @@ namespace System.Security.Policy {
 
 	[Serializable]
 #if NET_2_0
+	[ComVisible (true)]
 	public sealed class HashMembershipCondition : IMembershipCondition, IDeserializationCallback, ISerializable {
 #else
 	public sealed class HashMembershipCondition : IMembershipCondition {
@@ -123,12 +125,10 @@ namespace System.Security.Policy {
 
 		public override bool Equals (object o)
 		{
-			HashMembershipCondition other;
-			if (!(o is HashMembershipCondition))
+			HashMembershipCondition other = (o as HashMembershipCondition);
+			if (other == null)
 				return false;
 
-			other = (HashMembershipCondition)o;
-			
 			return ((other.HashAlgorithm == hash_algorithm) &&
 				Compare (hash_value, other.hash_value));
 		}

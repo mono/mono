@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +29,16 @@
 
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class PublisherMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
 
 		private readonly int version = 1;
@@ -46,7 +50,6 @@ namespace System.Security.Policy {
 		{
 		}
 
-		// LAMESPEC: Undocumented ArgumentNullException exception
 		public PublisherMembershipCondition (X509Certificate certificate) 
 		{
 			if (certificate == null)
@@ -62,7 +65,6 @@ namespace System.Security.Policy {
 			x509 = certificate;
 		}
 	
-		// LAMESPEC: Undocumented ArgumentNullException exception
 		public X509Certificate Certificate {
 			get { return x509; }
 			set { 
@@ -94,9 +96,10 @@ namespace System.Security.Policy {
 	
 		public override bool Equals (object o) 
 		{
-			if (!(o is PublisherMembershipCondition))
+			PublisherMembershipCondition pmc = (o as PublisherMembershipCondition);
+			if (pmc == null)
 				return false;
-			return x509.Equals ((o as PublisherMembershipCondition).Certificate);
+			return x509.Equals (pmc.Certificate);
 		}
 	
 		public void FromXml (SecurityElement e) 

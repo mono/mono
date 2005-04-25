@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,18 +28,19 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
+	[ComVisible (true)]
 	public class TrustManagerContext {
 
-		private bool _debug;
 		private bool _ignorePersistedDecision;
 		private bool _noPrompt;
 		private bool _keepAlive;
 		private bool _persist;
+		private ApplicationIdentity _previousId;
 		private TrustManagerUIContext _ui;
 
 		[MonoTODO]
@@ -50,7 +51,6 @@ namespace System.Security.Policy {
 
 		public TrustManagerContext (TrustManagerUIContext uiContext)
 		{
-			_debug = false;
 			_ignorePersistedDecision = false;
 			_noPrompt = false;
 			_keepAlive = false;
@@ -58,32 +58,32 @@ namespace System.Security.Policy {
 			_ui = uiContext;
 		}
 
-		public bool Debug {
-			get { return _debug; }
-			set { _debug = value; }
-		}
-
-		public bool IgnorePersistedDecision {
+		public virtual bool IgnorePersistedDecision {
 			get { return _ignorePersistedDecision; }
 			set { _ignorePersistedDecision = value; }
 		}
 
-		public bool NoPrompt {
-			get { return _noPrompt; }
-			set { _noPrompt = value; }
-		}
-
-		public bool KeepAlive {
+		public virtual bool KeepAlive {
 			get { return _keepAlive; }
 			set { _keepAlive = value; }
 		}
 
-		public bool Persist {
+		public virtual bool NoPrompt {
+			get { return _noPrompt; }
+			set { _noPrompt = value; }
+		}
+
+		public virtual bool Persist {
 			get { return _persist; }
 			set { _persist = value; }
 		}
 
-		public TrustManagerUIContext UIContext {
+		public virtual ApplicationIdentity PreviousApplicationIdentity {
+			get { return _previousId; }
+			set { _previousId = value; }
+		}
+
+		public virtual TrustManagerUIContext UIContext {
 			get { return _ui; }
 			set { _ui = value; }
 		}

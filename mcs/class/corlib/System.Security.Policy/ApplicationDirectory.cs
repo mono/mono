@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jackson Harper, All rights reserved.
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +30,7 @@
 
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using Mono.Security;
@@ -37,6 +38,9 @@ using Mono.Security;
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ApplicationDirectory : IBuiltInEvidence {
 		
 		private string directory;
@@ -110,9 +114,9 @@ namespace System.Security.Policy {
 		
 		public override bool Equals (object other)
 		{
-			if (null != other && (other is ApplicationDirectory)) {
-				ApplicationDirectory compare = (ApplicationDirectory) other;
-// FIXME: to duplicate (faulty ?) MS behaviour (see FDBK14362)
+			ApplicationDirectory compare = (other as ApplicationDirectory);
+			if (compare != null) {
+				// MS "by design" behaviour (see FDBK14362)
 				ThrowOnInvalid (compare.directory);
 				// no C14N or other mojo here (it's done elsewhere)
 				return (directory == compare.directory);
@@ -127,7 +131,7 @@ namespace System.Security.Policy {
 		
 		public override string ToString ()
 		{
-// FIXME: to duplicate (faulty ?) MS behaviour (see FDBK14362)
+			// MS "by design" behaviour (see FDBK14362)
 			ThrowOnInvalid (Directory);
 			SecurityElement element = new SecurityElement ("System.Security.Policy.ApplicationDirectory");
 			element.AddAttribute ("version", "1");

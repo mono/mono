@@ -30,22 +30,24 @@
 
 using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
+	[ComVisible (true)]
 	public sealed class ApplicationTrustCollection : ICollection, IEnumerable {
 
 		private ArrayList _list;
 
-		internal ApplicationTrustCollection ()
+		public ApplicationTrustCollection ()
 		{
 			_list = new ArrayList ();
 		}
 
-		// constants
+		// constants (from beta1 - still useful ?)
 
-		public const string ApplicationTrustProperty = "ApplicationTrust";
-		public const string InstallReferenceIdentifier = "{3f471841-eef2-47d6-89c0-d028f03a4ad5}";
+//		public const string ApplicationTrustProperty = "ApplicationTrust";
+//		public const string InstallReferenceIdentifier = "{3f471841-eef2-47d6-89c0-d028f03a4ad5}";
 
 		// properties
 

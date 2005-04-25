@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,14 +31,19 @@
 using System.IO;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 using Mono.Security;
 
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class Zone : IIdentityPermissionFactory, IBuiltInEvidence	{
-		SecurityZone zone;
+
+		private SecurityZone zone;
 		
 		public Zone (SecurityZone zone)
 		{
@@ -106,10 +111,11 @@ namespace System.Security.Policy {
 
 		public override bool Equals (object o)
 		{
-			if (!(o is Zone))
+			Zone z = (o as Zone);
+			if (z == null)
 				return false;
 
-			return (((Zone) o).zone == zone);
+			return (z.zone == zone);
 		}
 
 		public override int GetHashCode ()
@@ -132,7 +138,8 @@ namespace System.Security.Policy {
 			return 3;
 		}
 
-		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) {
+		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position)
+		{
 			int new_zone = (int) buffer [position++];
 			new_zone += buffer [position++];
 			return position;
@@ -147,4 +154,3 @@ namespace System.Security.Policy {
 		}
 	}
 }
-

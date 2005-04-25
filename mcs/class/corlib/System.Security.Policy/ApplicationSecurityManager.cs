@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,20 +28,16 @@
 
 #if NET_2_0
 
-using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
-	[Serializable]
+	[ComVisible (true)]
 	public static class ApplicationSecurityManager {
 
 		private const string config = "ApplicationTrust.config";
 
 		static private IApplicationTrustManager _appTrustManager;
-		static private ITrustManager _trustManager;
-		static private IDictionary _globalApps;
-		static private IDictionary _userApps;
-		static private ApplicationTrustCollection _machineAppTrusts;
 		static private ApplicationTrustCollection _userAppTrusts;
 
 		// properties
@@ -49,33 +45,6 @@ namespace System.Security.Policy {
 		[MonoTODO]
 		public static IApplicationTrustManager ApplicationTrustManager {
 			get { return _appTrustManager; }
-		}
-
-		[MonoTODO]
-		public static IDictionary GlobalApplications {
-			get { return _globalApps; }
-			set { _globalApps = value; }
-		}
-
-		[MonoTODO]
-		public static string GlobalApplicationsLocation {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public static ApplicationTrustCollection MachineApplicationTrusts {
-			get { return _machineAppTrusts; }
-		}
-
-		[MonoTODO]
-		public static IDictionary UserApplications {
-			get { return _userApps; }
-			set { _userApps = value; }
-		}
-
-		[MonoTODO]
-		public static string UserApplicationsLocation {
-			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
@@ -90,18 +59,6 @@ namespace System.Security.Policy {
 		{
 			if (activationContext == null)
 				throw new ArgumentNullException ("activationContext");
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static void Persist ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static PolicyStatement Resolve (Evidence evidence)
-		{
 			throw new NotImplementedException ();
 		}
 	}

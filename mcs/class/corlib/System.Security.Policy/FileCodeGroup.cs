@@ -5,7 +5,7 @@
 //   Nick Drochak (ndrochak@gol.com)
 //
 // (C) 2001 Nick Drochak, All rights reserved.
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,12 +34,12 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class FileCodeGroup : CodeGroup {
 
 		private FileIOPermissionAccess m_access;
-#if NET_2_0
-		private CodeGroupGrantScope _scope = CodeGroupGrantScope.Assembly;
-#endif
 
 		public FileCodeGroup (IMembershipCondition membershipCondition, FileIOPermissionAccess access) 
 			: base (membershipCondition, null)
@@ -122,14 +122,6 @@ namespace System.Security.Policy {
 		public override string PermissionSetName {
 			get { return "Same directory FileIO - " + m_access.ToString (); }
 		}
-
-#if NET_2_0
-		[ComVisible (false)]
-		public CodeGroupGrantScope Scope {
-			get { return _scope; }
-			set { _scope = value; }
-		}
-#endif
 
 		public override bool Equals (object o)
 		{

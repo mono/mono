@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,13 +28,13 @@
 
 #if NET_2_0
 
-using System.Collections;
-using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
-	public sealed class ApplicationSecurityInfo : ISecurityEncodable, ISecurityPolicyEncodable {
+	[ComVisible (true)]
+	public sealed class ApplicationSecurityInfo {
 
 		private ActivationContext _context;
 		private Evidence _evidence;
@@ -87,66 +87,6 @@ namespace System.Security.Policy {
 					throw new ArgumentNullException ("DeploymentId");
 				_deployid = value;
 			}
-		}
-
-		// methods
-
-		[MonoTODO]
-		public override bool Equals (object obj)
-		{
-			if (obj == null)
-				return false;
-			ApplicationSecurityInfo asi = (obj as ApplicationSecurityInfo);
-			if (asi == null)
-				return false;
-			// TODO
-			return false;
-		}
-
-		public void FromXml (SecurityElement element)
-		{
-			FromXml (element, null);
-		}
-
-		[MonoTODO]
-		public void FromXml (SecurityElement element, PolicyLevel level)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
-
-		[MonoTODO]
-		public bool IsInApplication (Evidence evidence)
-		{
-			if (evidence == null)
-				return false; // ???
-
-			IEnumerator e = evidence.GetHostEnumerator ();
-			while (e.MoveNext ()) {
-			}
-
-			e = evidence.GetAssemblyEnumerator ();
-			while (e.MoveNext ()) {
-			}
-
-			// we found them all!
-			return true;
-		}
-
-		public SecurityElement ToXml ()
-		{
-			return ToXml (null);
-		}
-
-		[MonoTODO]
-		public SecurityElement ToXml (PolicyLevel level)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

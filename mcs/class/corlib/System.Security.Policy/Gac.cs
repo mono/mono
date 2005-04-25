@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,19 +29,23 @@
 #if NET_2_0
 
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class Gac : IIdentityPermissionFactory, IBuiltInEvidence {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public sealed class GacInstalled : IIdentityPermissionFactory, IBuiltInEvidence {
 
-		public Gac ()
+		public GacInstalled ()
 		{
 		}
 
 		public object Copy ()
 		{
-			return (object) new Gac ();
+			return (object) new GacInstalled ();
 		}
 
 		public IPermission CreateIdentityPermission (Evidence evidence)
@@ -53,7 +57,7 @@ namespace System.Security.Policy {
 		{
 			if (o == null)
 				return false;
-			return (o is Gac);
+			return (o is GacInstalled);
 		}
 
 		public override int GetHashCode ()

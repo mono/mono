@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003, Ximian Inc.
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,11 +30,15 @@
 
 using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
 	[Serializable]
-        public sealed class ZoneMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+	public sealed class ZoneMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
 
 		private readonly int version = 1;
 

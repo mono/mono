@@ -1,3 +1,78 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2.
+	* ApplicationDirectory.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2. Removed FIXME - confirmed as "by design" by MS.
+	* ApplicationDirectoryMembershipCondition.cs: Added [ComVisible (true)]
+	in NET_2_0 to match beta2.
+	* ApplicationSecurityInfo.cs: Updated to match beta2.
+	* ApplicationSecurityManager.cs: Updated to match beta2.
+	* ApplicationTrust.cs: Updated to match beta2.
+	* ApplicationTrustCollection.cs: Updated to match beta2.
+	* ApplicationTrustEnumerator.cs: Added [ComVisible (true)] to match 
+	beta2.
+	* ApplicationVersionMatch.cs: Added [ComVisible (true)] to match beta2.
+	* CodeConnectAccess.cs: Added [ComVisible (true)] to match beta2.
+	* CodeGroup.cs: Added [ComVisible (true)] in NET_2_0 to match beta2. 
+	Reworked Equals to avoid multiple typecast.
+	* Evidence.cs: Updated to match beta2. Now use internal method 
+	Assembly.UnprotectedGetName during security manager initialization.
+	* FileCodeGroup.cs: Added [ComVisible (true)] in NET_2_0 to match 
+	beta2. Removed Scope property (didn't survive beta2).
+	* FirstMatchCodeGroup.cs: Added [ComVisible (true)] in NET_2_0 to 
+	match beta2.
+	* Gac.cs: Renamed class to GacInstalled. Added [ComVisible (true)] to
+	match beta2.
+	* GacMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to 
+	match beta2.
+	* Hash.cs: Added [ComVisible (true)] in NET_2_0 to match beta2.
+	* HashMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2. Reworked Equals to avoid multiple typecast.
+	* IApplicationTrustManager.cs: Added [ComVisible (true)] to match 
+	beta2.
+	* IIdentityPermissionFactory.cs: Added [ComVisible (true)] in NET_2_0
+	to match beta2.
+	* IMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2.
+	* NetCodeGroup.cs: Added [ComVisible (true)] in NET_2_0 to match 
+	beta2. Removed Scope property (didn't survive beta2).
+	* PermissionRequestEvidence.cs: Added [ComVisible (true)] in NET_2_0 
+	to match beta2.
+	* PolicyException.cs: Added [ComVisible (true)] in NET_2_0 to match 
+	beta2.
+	* PolicyLevel.cs: Added [ComVisible (true)] in NET_2_0 to match beta2.
+	* PolicyStatementAttribute.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2.
+	* PolicyStatement.cs: Added [ComVisible (true)] in NET_2_0 to match 
+	beta2.
+	* ProvideAssemblyEvidenceEventArgs.cs: Added [ComVisible (true)] to 
+	match beta2.
+	* Publisher.cs: Added [ComVisible (true)] in NET_2_0 to	match beta2. 
+	Reworked Equals to avoid multiple typecast.
+	* PublisherMembershipCondition.cs: Added [ComVisible (true)] in 
+	NET_2_0 to match beta2. Reworked Equals to avoid multiple typecast.
+	* Site.cs: Added [ComVisible (true)] in NET_2_0 to match beta2. Fixed
+	allowed characters accepted in site names (different in 2.0 from 1.x).
+	* SiteMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2.
+	* StrongName.cs: Added [ComVisible (true)] in NET_2_0 to match beta2.
+	* StrongNameMembershipCondition.cs: Added [ComVisible (true)] in 
+	NET_2_0 to match beta2.
+	* TrustManagerContext.cs: Updated to match beta2.
+	* TrustManagerUIContext.cs: Added [ComVisible (true)] to match beta2.
+	* UnionCodeGroup.cs: Added [ComVisible (true)] in NET_2_0 to match
+	beta2.
+	* Url.cs: Added [ComVisible (true)] in NET_2_0 to match beta2. Fixed
+	the difference in Url matching between 1.x and 2.0. Reworked Equals to
+	avoid multiple typecast.
+	* UrlMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to 
+	match beta2. Fixed the difference in Url matching between 1.x and 2.0.
+	* Zone.cs: Added [ComVisible (true)] in NET_2_0 to match beta2. 
+	Reworked Equals to avoid multiple typecast.
+	* ZoneMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to
+	match beta2.
+
 2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Hash.cs: Added Assert for FileIOPermission to GetData so it's 

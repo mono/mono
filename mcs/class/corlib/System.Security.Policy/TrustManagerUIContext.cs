@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,12 +28,11 @@
 
 #if NET_2_0
 
-using System;
-using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
-	[Serializable]
+	[ComVisible (true)]
 	public enum TrustManagerUIContext {
 		Install,
 		Upgrade,
