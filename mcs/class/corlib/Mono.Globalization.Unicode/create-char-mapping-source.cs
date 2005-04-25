@@ -63,6 +63,7 @@ namespace Mono.Globalization.Unicode
 		int [] mapIndex = new int [0x5000];
 
 		ArrayList mappings = new ArrayList ();
+		ArrayList widthSensitives = new ArrayList ();
 
 		public CharMappingGenerator ()
 		{
@@ -166,6 +167,19 @@ namespace Mono.Globalization.Unicode
 			Console.WriteLine ("	}");
 			Console.WriteLine ("	return 0;");
 			Console.WriteLine ("}");
+
+			// WidthSensitives
+			Console.WriteLine ("public static int ToWidthInsensitive (int i)");
+			Console.WriteLine ("{");
+			Console.WriteLine ("	if (i != 0x3000 && i < 0xFF00)");
+			Console.WriteLine ("		return i;");
+			Console.WriteLine ("	switch (i) {");
+			foreach (int i in widthSensitives)
+				Console.WriteLine ("	case 0x{0:X}:", i);
+			Console.WriteLine ("		return mappedChars [NormalizationTableUtil.MapIdx (i)];");
+			Console.WriteLine ("	}");
+			Console.WriteLine ("	return i;");
+			Console.WriteLine ("}");
 		}
 
 		private void DumpArray (int [] array, int count, bool getCP)
@@ -207,6 +221,12 @@ namespace Mono.Globalization.Unicode
 				if (combiningCategory.Length > 0)
 					mappedCharsValue = canon.Substring (combiningCategory.Length + 2).Trim ();
 				if (mappedCharsValue.Length > 0) {
+					switch (combiningCategory) {
+					case "narrow":
+					case "wide":
+						widthSensitives.Add (cp);
+						break;
+					}
 					mappings.Add (new CharMapping (cp,
 						mappedCharCount, 
 						combiningCategory.Length == 0));

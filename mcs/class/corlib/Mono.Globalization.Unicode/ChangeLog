@@ -1,5 +1,12 @@
 2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-char-mapping-source.cs : Now it generates
+	  ToWidthInsensitive() from combining category <wide> and <narrow>.
+	* MSCompatUnicodeTable.cs : added ToKanaTypeInsensitive() and
+	  ToWidthInsensitive() for IgnoreKanaType and IgnoreWidth.
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* README, LdmlReader.cs, DataStructures.txt : new files.
 
 2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>

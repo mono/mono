@@ -349,6 +349,20 @@ namespace Mono.Globalization.Unicode
 		// We can reuse IsIgnorableSymbol testcode 
 		// for IsIgnorableNonSpacing.
 		#endregion
+
+		public static int ToKanatypeInsensitive (int i)
+		{
+			// Note that IgnoreKanaType does not treat half-width
+			// katakana as equivalent to full-width ones.
+
+			// Thus, it is so simple ;-)
+			return (0x3041 <= i && i <= 0x3094) ? i + 0x60 : i;
+		}
+
+		public static int ToWidthInsensitive (int i)
+		{
+			return Normalization.ToWidthInsensitive (i);
+		}
 	}
 }
 
