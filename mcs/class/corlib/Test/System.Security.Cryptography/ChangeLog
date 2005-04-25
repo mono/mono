@@ -1,3 +1,14 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfigTest.cs: Check that ArgumentNullException is throw in
+	EncodeOID for 2.0. Comment test for RSA OID (2.0).
+	* DESTest.cs: Check that null keys throws CryptographicException in 
+	IsWeakKey and IsSemiWeakKey for 2.0.
+	* TripleDESTest.cs: Check that null keys throws CryptographicException
+	in IsWeakKey for 2.0.
+	* SymmetricAlgorithm2Test.cs: Check that a FeedbackSize of zero throws
+	a CryptographicException in 2.0.
+
 2005-04-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricAlgorithm2Test.cs: Added a test case where the FeedBackSize

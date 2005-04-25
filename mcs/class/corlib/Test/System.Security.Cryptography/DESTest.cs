@@ -1086,7 +1086,11 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (CryptographicException))]
+#else
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void IsWeakKey_Null () 
 		{
 			DES.IsWeakKey (null);
@@ -4189,7 +4193,11 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (CryptographicException))]
+#else
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void IsSemiWeakKey_Null () 
 		{
 			DES.IsSemiWeakKey (null);

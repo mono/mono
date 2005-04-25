@@ -145,6 +145,9 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (CryptographicException))]
+#endif
 		public void FeedbackZero ()
 		{
 			// thanks to Yakk for the sample

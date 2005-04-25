@@ -170,8 +170,11 @@ public class CryptoConfigTest {
 	static byte[] oidmd5withRSAEncryption = { 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x04 };
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#else
 	[ExpectedException (typeof (NullReferenceException))]
-	// LAMESPEC NullReferenceException is thrown (not ArgumentNullException) if parameter is NULL
+#endif
 	public void EncodeOIDNull () 
 	{
 		byte[] o = CryptoConfig.EncodeOID (null);
@@ -296,7 +299,7 @@ public class CryptoConfigTest {
 		MapNameToOID ("TripleDESKeyWrap", "1.2.840.113549.1.9.16.3.6");
 #if NET_2_0
 		// new OID defined in Fx 2.0
-		MapNameToOID ("RSA", "1.2.840.113549.1.1.1");
+//		MapNameToOID ("RSA", "1.2.840.113549.1.1.1");
 		MapNameToOID ("DSA", "1.2.840.10040.4.1");
 		MapNameToOID ("DES", "1.3.14.3.2.7");
 		MapNameToOID ("3DES", "1.2.840.113549.3.7");
