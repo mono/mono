@@ -143,8 +143,6 @@ namespace System.Security.Cryptography.Xml {
 				throw new CryptographicException ("Malformed EncryptedKey element.");
 			else {
 				EncryptionMethod = null;
-				KeyInfo keyInfo = null;
-				CipherData cipherData = null;
 				EncryptionMethod = null;
 				EncryptionProperties.Clear ();
 				ReferenceList.Clear ();

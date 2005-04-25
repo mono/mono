@@ -83,7 +83,6 @@ namespace System.Security.Cryptography.Xml {
 
 		public virtual EncryptionPropertyCollection EncryptionProperties {
 			get { return encryptionProperties; }
-			set { encryptionProperties = value; }
 		}
 
 		public virtual string Id {

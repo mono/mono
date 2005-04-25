@@ -1,3 +1,14 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptedData.cs: Avoid re-creating collection object on load.
+	* EncryptedKey.cs: Fix compiler warning (unused variables).
+	* EncryptedType.cs: Remove set on EncryptionProperties property.
+	* IRelDecryptor.cs: New. Interface for XrML support.
+	* SymmetricKeyWrap.cs: Comment unused static method Xor(byte[],int).
+	* XmlDecryptionTransform.cs: Fix compiler warning (unused variable).
+	* XmlDsigEnvelopedSignatureTransform.cs: Fix compiler warning.
+	* XmlLicenseTransform.cs: New. Class for XrML support.
+
 2005-04-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedInfo.cs: Added [ComVisible (false)] to new property.

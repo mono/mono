@@ -34,6 +34,7 @@ using System.IO;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
+
 	public class XmlDecryptionTransform : Transform {
 
 		#region Fields
@@ -43,7 +44,6 @@ namespace System.Security.Cryptography.Xml {
 		Type[] outputTypes;
 		object inputObj;
 		ArrayList exceptUris;
-		XmlNodeList innerXml;
 		object lockObject;
 
 		const string NamespaceUri = "http://www.w3.org/2002/07/decrypt#";
@@ -53,7 +53,6 @@ namespace System.Security.Cryptography.Xml {
 		#region Constructors
 	
 		public XmlDecryptionTransform ()
-			: base ()
 		{
 			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform;
 			encryptedXml = new EncryptedXml ();

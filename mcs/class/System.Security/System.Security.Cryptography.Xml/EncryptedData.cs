@@ -34,12 +34,12 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
+
 	public sealed class EncryptedData : EncryptedType {
 
 		#region Constructors
 
 		public EncryptedData ()
-			: base ()
 		{
 		}
 
@@ -93,10 +93,8 @@ namespace System.Security.Cryptography.Xml {
 				throw new CryptographicException ("Malformed EncryptedData element.");
 			else {
 				EncryptionMethod = null;
-				KeyInfo keyInfo = null;
-				CipherData cipherData = null;
 				EncryptionMethod = null;
-				EncryptionProperties = new EncryptionPropertyCollection ();
+				EncryptionProperties.Clear ();
 				Id = null;
 				Type = null;
 				MimeType = null;

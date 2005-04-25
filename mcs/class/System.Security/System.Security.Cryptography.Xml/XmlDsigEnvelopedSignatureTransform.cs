@@ -139,7 +139,7 @@ namespace System.Security.Cryptography.Xml {
 
 		private XmlNamespaceManager GetNamespaceManager (XmlNode n)
 		{
-			XmlDocument doc = n is XmlDocument ? n as XmlDocument : n.OwnerDocument;
+			XmlDocument doc = ((n is XmlDocument) ? (n as XmlDocument) : n.OwnerDocument);
 			XmlNamespaceManager nsmgr = new XmlNamespaceManager (doc.NameTable);
 			nsmgr.AddNamespace ("dsig", XmlSignature.NamespaceURI);
 			return nsmgr;

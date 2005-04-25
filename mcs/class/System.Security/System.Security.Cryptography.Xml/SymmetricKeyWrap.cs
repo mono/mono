@@ -355,13 +355,13 @@ namespace System.Security.Cryptography.Xml {
 			return output;
 		}
 
-		private static byte[] Xor (byte[] x, int n)
+/*		private static byte[] Xor (byte[] x, int n)
 		{
 			byte[] output = new Byte [x.Length];
 			for (int i = 0; i < x.Length; i += 1)
 				output [i] = (byte) ((int) x [i] ^ n);
 			return output;
-		}
+		}*/
 	}
 }
 
