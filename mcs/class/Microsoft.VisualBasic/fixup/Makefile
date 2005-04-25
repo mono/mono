@@ -5,7 +5,6 @@ DISTFILES = fixup.pl
 include ../../../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
-ILDISASM = ../../../../mono/mono/dis/monodis
 PERL = perl
 
 # ----------------------------------------------
@@ -24,21 +23,21 @@ ifdef NO_INSTALL
 GACUTIL = :
 else
 gacutil = $(topdir)/class/lib/net_1_1_bootstrap/gacutil.exe
-GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gacutil)
+GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
 endif
 
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
 sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
-SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(sn)
+SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q -R
 endif
 
 # ----------------------------------------------
 
 ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
-ILASM = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(ilasm)
+ILASM = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
 the_lib = $(PROFILE)/Microsoft.VisualBasic.dll
 the_il = $(the_lib:.dll=.il)
@@ -46,13 +45,13 @@ the_il = $(the_lib:.dll=.il)
 all-local: $(the_lib)
 
 $(the_lib): $(the_il) Microsoft.VisualBasic.VBUtils.resources
-	$(ILASM) /out:$@ $<
+	$(ILASM) $(IL_FLAGS) /out:$@ $<
 	$(SN) $(SNFLAGS) $@ $(topdir)/class/mono.snk
 
 $(the_il): $(topdir)/class/lib/$(PROFILE)/Microsoft.VisualBasic.dll fixup.pl
-	$(with_mono_path) $(ILDISASM) $< > t1 || { rm -f t1; exit 1; }
-	$(PERL) ./fixup.pl t1 > t2 && rm -f t1
-	mv t2 $@
+	$(with_mono_path) $(ILDISASM) $< > $(PROFILE)/t1 || { rm -f $(PROFILE)/t1; exit 1; }
+	$(PERL) ./fixup.pl $(PROFILE)/t1 > $(PROFILE)/t2 && rm -f $(PROFILE)/t1
+	mv $(PROFILE)/t2 $@
 
 Microsoft.VisualBasic.VBUtils.resources: ../Microsoft.VisualBasic/VBUtils.resources
 	cp $< $@

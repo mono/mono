@@ -61,10 +61,10 @@ $(MSTEST_RESULTS_ARCHIVE) :
 run-test : run-test-xslt run-test-ms
 
 run-test-xslt : xslttest.exe
-	$(RUNTIME) xslttest.exe --report:TestResult.xml --xml --details --outall
+	$(RUNTIME) $(RUNTIME_FLAGS) xslttest.exe --report:TestResult.xml --xml --details --outall
 
 run-test-ms : alltest.exe xmlnorm.exe
-	$(RUNTIME) ./alltest.exe $(TARGET_RESULTS)
+	$(RUNTIME) $(RUNTIME_FLAGS) ./alltest.exe $(TARGET_RESULTS)
 	mono ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
 	rm -rf testsuite/TESTS/$(TARGET_RESULTS)
 	mv testsuite/TESTS/norm-tmp testsuite/TESTS/$(TARGET_RESULTS)

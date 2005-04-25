@@ -5,15 +5,15 @@ PROFILE = default
 XMLDSIG_EXE_OPTIONS = --decent-reader
 
 run-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloped-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloped-dsa-c14n-1.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-b64-dsa-c14n-0.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-dsa-c14n-1.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1-40.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1-40-c14n-1.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1-c14n-1.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-rsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-rsa-c14n-1.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-external-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-b64-dsa-c14n-0.txt
-	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-external-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-dsa-c14n-0.txt
-	$(RUNTIME) xmldsig.exe $(XMLDSIG_EXE_OPTIONS)
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloped-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloped-dsa-c14n-1.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-b64-dsa-c14n-0.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-dsa-c14n-1.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1-40.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1-40-c14n-1.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-hmac-sha1-c14n-1.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-rsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-rsa-c14n-1.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-external-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-b64-dsa-c14n-0.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) c14n.exe merlin-xmldsig-twenty-three/signature-external-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-dsa-c14n-0.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) xmldsig.exe $(XMLDSIG_EXE_OPTIONS)
 
 ms-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	cp ../../../lib/$(PROFILE)/Mono.Security.dll .

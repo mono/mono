@@ -41,10 +41,10 @@ btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 mcs2.exe: $(PROGRAM)
-	$(TIME) $(RUNTIME) $(PROGRAM) $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) $(RUNTIME_FLAGS) $(PROGRAM) $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 mcs3.exe: mcs2.exe
-	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) $(RUNTIME_FLAGS) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 wc:
 	wc -l $(BUILT_SOURCES) `cat $(sourcefile)`
@@ -73,5 +73,5 @@ do-corlib:
 PROFILER=default
 
 profile : $(PROGRAM)
-	$(RUNTIME) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(BUILT_SOURCES) @$(response)
+	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(BUILT_SOURCES) @$(response)
 

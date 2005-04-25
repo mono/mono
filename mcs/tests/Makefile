@@ -165,7 +165,7 @@ bootstrap-cast.exe: gen-cast-test.cs
 	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
 casts.cs: bootstrap-cast.exe
-	$(with_mono_path) $(RUNTIME) $< >$@
+	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $< >$@
 
 casts-mcs.exe: casts.cs
 	$(CSCOMPILE) -target:exe /out:$@ $<
@@ -174,10 +174,10 @@ casts-boot.exe: casts.cs
 	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
 boot-casts.out: casts-boot.exe
-	$(with_mono_path) $(RUNTIME) $< >$@
+	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $< >$@
 
 mcs-casts.out: casts-mcs.exe
-	$(with_mono_path) $(RUNTIME) $< >$@
+	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $< >$@
 
 test-casts: boot-casts.out mcs-casts.out
 	cmp $^

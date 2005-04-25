@@ -27,7 +27,7 @@ run-test-local: run-cilc-test
 
 run-cilc-test: cilc.exe Demo.dll
 	rm -rf generated
-	$(RUNTIME) cilc.exe Demo.dll generated
+	$(RUNTIME) $(RUNTIME_FLAGS) cilc.exe Demo.dll generated
 	$(MAKE) -C generated
 	$(CCOMPILE) -Wall `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ldemo demo.c -o generated/demo
 

@@ -80,14 +80,14 @@ ifdef NO_INSTALL
 GACUTIL = :
 else
 gacutil = $(topdir)/class/lib/net_1_1_bootstrap/gacutil.exe
-GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gacutil)
+GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
 endif
 
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
 sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
-SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(sn)
+SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q -R
 endif
 

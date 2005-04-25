@@ -1,3 +1,11 @@
+2005-04-25  Raja R Harinath  <rharinath@novell.com>
+
+	* config-default.make (RUNTIME): Set to 'false'.
+	Reported by Ben Maurer.
+	* profiles/basic.make (MCS): Revert changes below.
+	* platforms/linux.make (ILDISASM): Define.
+	* platforms/win32.make (ILDIsASM): Likewise.
+
 2005-04-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* profiles/basic.make: Ensure that make dist works even if you

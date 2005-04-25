@@ -1,3 +1,8 @@
+2005-04-25  Raja R Harinath  <rharinath@novell.com>
+
+	* fixup/Makefile (ILDISASM): Remove.
+	($(the_il)): Create temporary files in profile directory.
+
 2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* fixup/Makefile :

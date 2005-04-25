@@ -62,7 +62,7 @@ run-mcs-tests:
 	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
 else
 run-mcs-tests: TestRunner-$(PROFILE).exe
-	$(with_mono_path) $(RUNTIME) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 endif
 
 clean-local:

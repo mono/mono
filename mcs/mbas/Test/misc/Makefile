@@ -7,7 +7,7 @@ LOCAL_MBAS_FLAGS = --verbosegetoptions --stacktrace
 test-local: WriteOK.exe
 
 run-test-local: WriteOK.exe
-	$(RUNTIME) --debug WriteOK.exe --sayho /about -say:this,that,those /say:what?
+	$(RUNTIME) $(RUNTIME_FLAGS) --debug WriteOK.exe --sayho /about -say:this,that,those /say:what?
 
 run-test-ondotnet-local: WriteOK.exe
 	./WriteOK.exe --sayho /about -say:this,that,those /say:what?
@@ -25,7 +25,7 @@ aspx_temp.dll: aspx_temp.vb
 
 profile: *.vb *.mbs Makefile
 	rm -f WriteOK.exe
-	$(MAKE) RUNTIME='$(RUNTIME) --profile' WriteOK.exe > profile
+	$(MAKE) RUNTIME_FLAGS='--profile' WriteOK.exe > profile
 
 clean-local:
 	-rm -f WriteOK.exe aspx_temp.dll x.exe

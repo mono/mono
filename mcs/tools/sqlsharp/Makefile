@@ -16,4 +16,4 @@ run-sqlsharp-test: $(PROGRAM)
 	$(TEST_RUNTIME) $(PROGRAM) -A $(PROGRAM) $(ARGS)
 
 run: $(PROGRAM)
-	$(RUNTIME) $(PROGRAM) $(ARGS)
+	$(RUNTIME) $(RUNTIME_FLAGS) $(PROGRAM) $(ARGS)

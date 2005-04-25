@@ -1,24 +1,7 @@
 # -*- makefile -*-
 
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
-
-#
-# If we are bootstrapping with an external mono -- for example, trying
-# to do `make basic' with an old mono RPM, we need to make sure that we don't
-# set MONO_PATH for an old runtime -- otherwise it will get a new corlib and
-# be fscked up. We do this by testing if the first word of runtime is the same
-# as external runtime -- if so, we make sure not to set the MONO_PATH on mcs.
-#
-
-ifeq ($(word 1, $(RUNTIME)),$(EXTERNAL_RUNTIME))
-USING_EXT_MONO = yes
-endif
-
-ifdef USING_EXT_MONO
-MCS = $(EXTERNAL_MCS)
-else
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
-endif
 
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:BOOTSTRAP_WITH_OLDLIB
 NO_SIGN_ASSEMBLY = yes

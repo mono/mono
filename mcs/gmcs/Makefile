@@ -5,7 +5,7 @@ include ../build/rules.make
 #uncomment to enable some debug stuff
 #DEBUG_FLAGS=/define:MCS_DEBUG
 
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe $(DEBUG_FLAGS)
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe $(DEBUG_FLAGS)
 
 BUILT_SOURCES = cs-parser.cs
 
@@ -40,10 +40,10 @@ gmcs2.exe: $(PROGRAM)
 	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(PROGRAM) -2 /target:exe /debug /out:$@ $^ $(DEBUG_FLAGS) 
 
 gmcs3.exe: gmcs2.exe
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) ./gmcs2.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) ./gmcs2.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
 
 gmcs4.exe: gmcs3.exe
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) ./gmcs3.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(RUNTIME) $(RUNTIME_FLAGS) ./gmcs3.exe $(USE_MCS_FLAGS) $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $^
 
 
 # Testing targets
@@ -68,9 +68,9 @@ FRIENDLY_TIME = $(shell which time) -f'%U seconds'
 
 do-time : mcs.exe
 	@ echo -n "Run 1:   "
-	 $(FRIENDLY_TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
+	 $(FRIENDLY_TIME) $(RUNTIME) $(RUNTIME_FLAGS) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
 	@ echo -n "Run 2:   "
-	@ $(FRIENDLY_TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:mcs3.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
+	@ $(FRIENDLY_TIME) $(RUNTIME) $(RUNTIME_FLAGS) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:mcs3.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
 	@ echo -n "corlib:  "
 	@ rm -f ../class/lib/mscorlib.dll
 	@ (cd ../class/corlib ; make BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null ) || (echo FAILED; exit 1)
@@ -84,5 +84,5 @@ PROFILER=default
 
 profile : gmcs2.exe
 	-rm -f gmcs3.exe
-	make gmcs3.exe RUNTIME="$(RUNTIME) --profile=$(PROFILER)"
+	make gmcs3.exe RUNTIME_FLAGS='--profile=$(PROFILER)'
 

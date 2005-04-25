@@ -31,7 +31,7 @@ $(thelib): MonoCultures.cs
 RUNTIME_FLAGS = --debug
 
 MonoCultures.cs: write-source.exe $(wildcard Data/*.xml)
-	$(RUNTIME) $<
+	$(RUNTIME) $(RUNTIME_FLAGS) $<
 
 write-source.exe: write-source.cs
 	$(CSCOMPILE) /target:exe /out:$@ $^

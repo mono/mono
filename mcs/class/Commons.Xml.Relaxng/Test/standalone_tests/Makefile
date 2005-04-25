@@ -34,10 +34,10 @@ relax-ng:
 	mkdir relax-ng
 
 test : relaxngtest.exe
-	$(RUNTIME) relaxngtest.exe
+	$(RUNTIME) $(RUNTIME_FLAGS) relaxngtest.exe
 
 anglia-test : anglia-test-runner.exe
-	$(RUNTIME) anglia-test-runner.exe
+	$(RUNTIME) $(RUNTIME_FLAGS) anglia-test-runner.exe
 
 # be careful to use it. This removes ALL files in xml-test-suite!
 clean :

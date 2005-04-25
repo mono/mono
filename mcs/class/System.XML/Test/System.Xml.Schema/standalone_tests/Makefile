@@ -25,11 +25,11 @@ xsd-test-suite:
 	mkdir xsd-test-suite
 
 run-test :
-	$(RUNTIME) xsdtest.exe --xml --reportsuccess --testall --details --report:TestResult.xml $(XSD_TEST_FLAGS)
+	$(RUNTIME) $(RUNTIME_FLAGS) xsdtest.exe --xml --reportsuccess --testall --details --report:TestResult.xml $(XSD_TEST_FLAGS)
 	@echo "SUCCESS: `grep -c \"OK\" TestResult.xml` NORMAL FAILURE: `grep -c should TestResult.xml` UNEXPECTED `grep -c unexpected TestResult.xml`"
 
 test-psci : xs-psci-compare.exe
-	$(RUNTIME) xs-psci-compare.exe xsd-test-suite/msxsdtest/tests-all.xml > psci-mono-msxsd.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) xs-psci-compare.exe xsd-test-suite/msxsdtest/tests-all.xml > psci-mono-msxsd.txt
 
 # be careful to use it. This removes ALL files in xsd-test-suite!
 # clean:

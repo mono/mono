@@ -21,18 +21,18 @@ xml-test-suite:
 	mkdir xml-test-suite
 
 test :
-	$(RUNTIME) xmltest.exe
+	$(RUNTIME) $(RUNTIME_FLAGS) xmltest.exe
 
 xrtest : xmlreader-result-ms.txt
-	$(RUNTIME) xrdump.exe > xmlreader-result-mono.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) xrdump.exe > xmlreader-result-mono.txt
 	diff xmlreader-result-ms.txt xmlreader-result-mono.txt
 
 domtest : dom-result-ms.txt
-	$(RUNTIME) domdump.exe > dom-result-mono.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) domdump.exe > dom-result-mono.txt
 	diff dom-result-ms.txt dom-result-mono.txt
 
 eventtest : event-result-ms.txt
-	$(RUNTIME) eventdump.exe > event-result-mono.txt
+	$(RUNTIME) $(RUNTIME_FLAGS) eventdump.exe > event-result-mono.txt
 	diff event-result-ms.txt event-result-mono.txt
 
 xmlreader-result-ms.txt dom-result-ms.txt event-result-ms.txt :

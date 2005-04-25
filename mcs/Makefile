@@ -14,7 +14,9 @@ centum_tests := \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
 	class/Mono.Posix \
+	class/Mono.Security \
 	class/System.Configuration.Install \
+	class/System.Runtime.Remoting \
 	class/System.Runtime.Serialization.Formatters.Soap \
 	class/System.Web.Services \
 	tests \
@@ -23,8 +25,6 @@ centum_tests := \
 
 default_centum_tests := \
 	class/corlib \
-	class/Mono.Security \
-	class/System.Runtime.Remoting \
 	$(centum_tests)
 
 net_2_0_centum_tests := $(centum_tests)
