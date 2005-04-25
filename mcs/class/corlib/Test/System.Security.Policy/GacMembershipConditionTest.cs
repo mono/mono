@@ -55,7 +55,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsFalse (gac.Check (e), "Check (empty)");
 			e.AddHost (new Zone (SecurityZone.MyComputer));
 			Assert.IsFalse (gac.Check (e), "Check (zone)");
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			e.AddAssembly (g);
 			Assert.IsFalse (gac.Check (e), "Check (gac-assembly)");
 			e.AddHost (g);

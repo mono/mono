@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,9 +51,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Url u = new Url (String.Empty);
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Url_NoProtocol () 
 		{
@@ -64,9 +62,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual ("file://INDEX.HTML", u.Value, "Value");
 #endif
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Url_WellKnownProtocol () 
 		{
@@ -102,9 +98,7 @@ namespace MonoTests.System.Security.Policy {
 			Url u = new Url ("http://www.go-mono.com/path/../newpath/index.html");
 			Assert.AreEqual ("http://www.go-mono.com/path/../newpath/index.html", u.Value, "Value");
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Url_GoMonoWebUrl () 
 		{
@@ -130,9 +124,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsFalse (u.Equals (u3), "!Equals");
 		}
 
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
@@ -168,9 +159,7 @@ namespace MonoTests.System.Security.Policy {
 			Url u = new Url ("http://www.go-mono.com");
 			Assert.IsFalse (u.Equals (null), "EqualsNull");
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Url_LoneStar () 
 		{

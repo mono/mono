@@ -55,9 +55,6 @@ namespace MonoTests.System.Security.Policy {
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
 			Assert.IsNotNull (cg.PermissionSetName, "PermissionSetName");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -69,9 +66,6 @@ namespace MonoTests.System.Security.Policy {
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
 			Assert.IsNotNull (cg.PermissionSetName, "PermissionSetName");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -83,9 +77,6 @@ namespace MonoTests.System.Security.Policy {
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
 			Assert.IsNotNull (cg.PermissionSetName, "PermissionSetName");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -97,9 +88,6 @@ namespace MonoTests.System.Security.Policy {
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
 			Assert.IsNotNull (cg.PermissionSetName, "PermissionSetName");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -111,9 +99,6 @@ namespace MonoTests.System.Security.Policy {
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
 			Assert.IsNotNull (cg.PermissionSetName, "PermissionSetName");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -125,9 +110,6 @@ namespace MonoTests.System.Security.Policy {
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
 			Assert.IsNotNull (cg.PermissionSetName, "PermissionSetName");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -186,9 +168,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (String.Empty, result.AttributeString, "AttributeString");
 			Assert.IsFalse (result.PermissionSet.IsUnrestricted (), "IsUnrestricted");
 			Assert.AreEqual (0, result.PermissionSet.Count, "Count");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]
@@ -200,9 +179,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (String.Empty, result.AttributeString, "AttributeString");
 			Assert.IsFalse (result.PermissionSet.IsUnrestricted (), "IsUnrestricted");
 			Assert.AreEqual (0, result.PermissionSet.Count, "Count");
-#if NET_2_0
-			Assert.AreEqual (CodeGroupGrantScope.Assembly, cg.Scope, "Scope");
-#endif
 		}
 
 		[Test]

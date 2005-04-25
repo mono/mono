@@ -1,3 +1,16 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileCodeGroupTest.cs: Revoved tests for Scope property (2.0).
+	* GacMembershipConditionTest.cs: Renamed Gac to GacInstalled (new name
+	* GacTest.cs: Renamed Gac to GacInstalled (new name in beta2).
+	in beta2).
+	* IBuiltInEvidenceTest.cs: Renamed Gac to GacInstalled (new name in 
+	beta2).
+	* SiteTest.cs: Removed [Catogery("NotWorking")] from some 2.0 tests.
+	* UrlTest.cs: Removed [Catogery("NotWorking")] from some 2.0 tests.
+	* UrlMembershipConditionTest.cs: Removed [Catogery("NotWorking")] from
+	some 2.0 tests.
+
 2005-03-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevelTest.cs: Remove non-corlib permission classes from the 

@@ -103,50 +103,50 @@ namespace MonoTests.System.Security.Policy {
 		}
 #if NET_2_0
 		[Test]
-		public void Gac_GetRequiredSize ()
+		public void GacInstalled_GetRequiredSize ()
 		{
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			Assert.AreEqual (1, GetRequiredSize (g, true), "GetRequiredSize-true");
 			Assert.AreEqual (1, GetRequiredSize (g, false), "GetRequiredSize-false");
 		}
 
 		[Test]
-		public void Gac_InitFromBuffer ()
+		public void GacInstalled_InitFromBuffer ()
 		{
 			char[] buffer = new char [2] { '\t', '\t' };
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			Assert.AreEqual (0, InitFromBuffer (g, buffer, 0), "InitFromBuffer-1");
 			Assert.AreEqual (1, InitFromBuffer (g, buffer, 1), "InitFromBuffer-2");
 		}
 
 		[Test]
-		public void Gac_InitFromBuffer_BadData ()
+		public void GacInstalled_InitFromBuffer_BadData ()
 		{
 			char [] buffer = new char [1] { '\r' };
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			Assert.AreEqual (0, InitFromBuffer (g, buffer, 0), "InitFromBuffer");
 		}
 
 		[Test]
-		public void Gac_InitFromBuffer_Null ()
+		public void GacInstalled_InitFromBuffer_Null ()
 		{
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			Assert.AreEqual (0, InitFromBuffer (g, null, 0), "InitFromBuffer");
 		}
 
 		[Test]
-		public void Gac_InitFromBuffer_OutOfRange ()
+		public void GacInstalled_InitFromBuffer_OutOfRange ()
 		{
 			char [] buffer = new char [1] { '\t' };
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			Assert.AreEqual (4, InitFromBuffer (g, buffer, 4), "InitFromBuffer");
 		}
 
 		[Test]
-		public void Gac_OutputToBuffer ()
+		public void GacInstalled_OutputToBuffer ()
 		{
 			char[] buffer = new char [2];
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			Assert.AreEqual (1, OutputToBuffer (g, buffer, 0, false), "OutputToBuffer-false");
 			Assert.AreEqual ('\t', buffer [0], "Buffer-false");
 			Assert.AreEqual (2, OutputToBuffer (g, buffer, 1, true), "OutputToBuffer-true");
@@ -155,18 +155,18 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
-		public void Gac_OutputToBuffer_Null ()
+		public void GacInstalled_OutputToBuffer_Null ()
 		{
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			OutputToBuffer (g, null, 0, false);
 		}
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
-		public void Gac_OutputToBuffer_OutOfRange ()
+		public void GacInstalled_OutputToBuffer_OutOfRange ()
 		{
 			char[] buffer = new char [1] { '\t' };
-			Gac g = new Gac ();
+			GacInstalled g = new GacInstalled ();
 			OutputToBuffer (g, buffer, 1, false);
 		}
 #endif
