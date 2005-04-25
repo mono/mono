@@ -311,8 +311,10 @@ class MakeBundle {
 		if (!autodeps)
 			return;
 		
-		foreach (AssemblyName an in a.GetReferencedAssemblies ())
-			QueueAssembly (files, an.CodeBase);
+		foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
+			a = Assembly.Load (an);
+			QueueAssembly (files, a.CodeBase);
+		}
 	}
 
 	static Assembly LoadAssembly (string assembly)

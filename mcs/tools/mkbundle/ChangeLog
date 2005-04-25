@@ -1,3 +1,8 @@
+2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mkbundle.cs: GetReferencedAssemblies () will not report CodeBase, so
+	load the assembly and get it from there. Fixes bug #74695.
+
 2004-04-09  James Willcox  <james@ximian.com>
 
 	* template.c: allocate the correct amount of memory for newargs
