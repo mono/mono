@@ -252,7 +252,7 @@ namespace System {
 #if NET_2_0
 				// FIXME: this is the version number for MS.NET 2.0 beta1. 
 				// It must be changed when the final version is released.
-				return new Version (2, 0, 40607, 16);
+				return new Version (2, 0, 50215, 16);
 #elif NET_1_1				    
 				return new Version (1, 1, 4322, 573);
 #else
