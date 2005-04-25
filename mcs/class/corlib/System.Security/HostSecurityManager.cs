@@ -45,8 +45,8 @@ namespace System.Security {
 			get { return null; }
 		}
 
-		public virtual HostSecurityManagerFlags Flags {
-			get { return HostSecurityManagerFlags.AllFlags; }
+		public virtual HostSecurityManagerOptions Flags {
+			get { return HostSecurityManagerOptions.AllFlags; }
 		}
 
 		[MonoTODO ("incomplete - docs talks about a System.Runtime.Hosting in corlib but it's not there (yet?)")]

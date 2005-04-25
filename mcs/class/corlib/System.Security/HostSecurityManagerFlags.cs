@@ -1,5 +1,5 @@
 //
-// System.Security.HostSecurityManagerFlags enumeration
+// System.Security.HostSecurityManagerOptions enumeration
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -32,7 +32,7 @@ namespace System.Security {
 
 	[Flags]
 	[Serializable]
-	public enum HostSecurityManagerFlags {
+	public enum HostSecurityManagerOptions {
 		None = 0,
 		HostAppDomainEvidence = 1,
 		HostPolicyLevel = 2,
