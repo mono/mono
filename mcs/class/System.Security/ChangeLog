@@ -1,3 +1,8 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Security.dll.sources: Added IRelDecryptor interface and 
+	XmlLicenseTransform class to System.Security.Cryptography.Xml (2.0).
+
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security.dll.sources: Added StorePermission and 
