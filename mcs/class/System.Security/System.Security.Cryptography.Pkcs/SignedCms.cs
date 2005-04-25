@@ -257,8 +257,8 @@ namespace System.Security.Cryptography.Pkcs {
 		[MonoTODO]
 		public byte[] Encode ()
 		{
-			Mono.Security.X509.X509Certificate x509 = null;
-/*			Cms.SignerInfo si = new Cms.SignerInfo ();
+/*			Mono.Security.X509.X509Certificate x509 = null;
+			Cms.SignerInfo si = new Cms.SignerInfo ();
 			switch (_type) {
 				case SubjectIdentifierType.SubjectKeyIdentifier:
 					si.SubjectKeyIdentifier = GetKeyIdentifier (x509);

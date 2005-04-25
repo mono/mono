@@ -1,3 +1,7 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedCms.cs: Fix compiler warning (unused variable).
+
 2005-04-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SubjectIdentifierType.cs: Removed (really) obsolete enum value and
