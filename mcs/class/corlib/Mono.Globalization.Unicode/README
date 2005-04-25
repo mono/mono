@@ -1,0 +1,13 @@
+
+This directory contains support for Unicode normalization and collation.
+
+This branch contains Normalization.cs and CollationElementTable.cs which
+can be built from generator executables and Unicode Character Database found
+at unicode.org (see Makefile for details).
+
+Many of the files in this directory are subject to change (for example,
+being rewritten to generate C header like char-conversions.h and
+culture-info-table.h).
+
+Atsushi Eno <atsushi@ximian.com>
+

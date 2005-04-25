@@ -1,5 +1,9 @@
 2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* README, LdmlReader.cs, DataStructures.txt : new files.
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CodePointIndexer.cs,
 	  Collation-notes.txt,
 	  CollationElementTable.template,
