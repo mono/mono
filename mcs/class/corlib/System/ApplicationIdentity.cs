@@ -28,9 +28,14 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+
 namespace System {
 
-	public sealed class ApplicationIdentity {
+	[Serializable]
+	[ComVisible (false)]
+	public sealed class ApplicationIdentity: ISerializable {
 
 		private string _fullName;
 		private string _codeBase;
@@ -46,7 +51,7 @@ namespace System {
 				_fullName = applicationIdentityFullName;
 		}
 
-		[MonoTODO ("URL but where does it comes from? manifest ?")]
+		[MonoTODO ("URL for deployment manifest")]
 		public string CodeBase {
 			get { return _codeBase; }
 		}
@@ -58,6 +63,13 @@ namespace System {
 		public override string ToString ()
 		{
 			return _fullName;
+		}
+
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
 		}
 	}
 }

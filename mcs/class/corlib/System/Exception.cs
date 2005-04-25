@@ -133,7 +133,7 @@ namespace System
 						if (st != null) {
 							MethodBase method = sf.GetMethod ();
 							if (method != null) {
-								source = method.DeclaringType.Assembly.GetName ().Name;
+								source = method.DeclaringType.Assembly.UnprotectedGetName ().Name;
 							}
 						}
 					}

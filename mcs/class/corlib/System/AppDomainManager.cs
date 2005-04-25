@@ -83,7 +83,7 @@ namespace System {
 			AppDomain ad = CreateDomainHelper (friendlyName, securityInfo, appDomainInfo);
 
 			// supply app domain policy ?
-			if ((HostSecurityManager.Flags & HostSecurityManagerFlags.HostPolicyLevel) == HostSecurityManagerFlags.HostPolicyLevel) {
+			if ((HostSecurityManager.Flags & HostSecurityManagerOptions.HostPolicyLevel) == HostSecurityManagerOptions.HostPolicyLevel) {
 				PolicyLevel pl = HostSecurityManager.DomainPolicy;
 				if (pl != null) {
 					ad.SetAppDomainPolicy (pl);

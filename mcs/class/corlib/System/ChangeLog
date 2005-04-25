@@ -1,3 +1,12 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActivationContext.cs: Updated for beta2.
+	* AppDomainManager.cs: Updated for beta2.
+	* ApplicationId.cs: Updated for beta2.
+	* ApplicationIdentity.cs: Updated for beta2.
+	* Exception.cs: Now use Assembly.UnprotectedGetName () as Exception 
+	doesn't	leak the code base from the returned AssemblyName.
+
 2005-04-25  Martin Baulig  <martin@ximian.com>
 
 	* Environment.cs (Environment.Version): Changed to 2.0.50215.

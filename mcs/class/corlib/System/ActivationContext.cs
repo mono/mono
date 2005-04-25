@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,13 +28,17 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+
 namespace System {
 
-	public sealed class ActivationContext : IDisposable {
+	[Serializable]
+	[ComVisible (false)]
+	public sealed class ActivationContext : IDisposable, ISerializable {
 
-		[Serializable]
 		public enum ContextForm {
-			Loose = 1,
+			Loose,
 			StoreBounded
 		}
 
@@ -102,6 +106,13 @@ namespace System {
 				}
 				_disposed = true;
 			}
+		}
+
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
 		}
 	}
 }
