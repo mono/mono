@@ -1,5 +1,10 @@
 2005-04-25  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Use the horizontal scrollbars height not width when
+	determining how much of the client area is available.
+
+2005-04-25  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Double buffering is handled differently now. As per
 	the spec, the extra buffer is created in the WM_PAINT message and
 	passed down to the control's drawing code.

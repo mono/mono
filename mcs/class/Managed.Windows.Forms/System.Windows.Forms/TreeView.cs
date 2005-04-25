@@ -749,8 +749,8 @@ namespace System.Windows.Forms {
 			if (add_vscroll)
 				add_hscroll = max_node_width > ClientRectangle.Width - ThemeEngine.Current.VScrollBarDefaultSize.Width;
 			if (add_hscroll)
-				add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Width;
-
+				add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Height;
+                        
 			if (add_hscroll) {
 				AddHorizontalScrollBar ();
 			} else if (hbar != null) {
