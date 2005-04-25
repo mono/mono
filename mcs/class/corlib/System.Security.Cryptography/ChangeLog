@@ -1,3 +1,14 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Removed RSA OID and added null check in EncodeOID
+	in NET_2_0 to match beta2.
+	* DES.cs: Added null check for IsWeakKey and IsSemiWeakKey in NET_2_0
+	to match beta2.
+	* SymmetricAlgorithm.cs: Throw CryptographicException when feedback is
+	zero in NET_2_0 to match beta2
+	* TripleDES.cs: Added null check for IsWeakKey in NET_2_0 to match 
+	beta2.
+
 2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Added Assert for FileIOPermission to LoadConfig so 

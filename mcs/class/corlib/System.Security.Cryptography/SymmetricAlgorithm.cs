@@ -99,7 +99,11 @@ namespace System.Security.Cryptography {
 		public virtual int FeedbackSize {
 			get { return this.FeedbackSizeValue; }
 			set {
+#if NET_2_0
+				if ((value <= 0) || (value > this.BlockSizeValue)) {
+#else
 				if (value > this.BlockSizeValue) {
+#endif
 					throw new CryptographicException (
 						Locale.GetText ("feedback size larger than block size"));
 				}

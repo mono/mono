@@ -86,6 +86,10 @@ public abstract class TripleDES : SymmetricAlgorithm {
 	//	if ( b == c ) then TripleDES == DES(a) (hence weak key)
 	public static bool IsWeakKey (byte[] rgbKey)
 	{
+#if NET_2_0
+		if (rgbKey == null)
+			throw new CryptographicException (Locale.GetText ("Null Key"));
+#endif
 		// 128 bits (16 bytes) is 3 DES with 2 keys
 		if (rgbKey.Length == 16) {
 			// weak if first half == second half

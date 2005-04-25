@@ -90,6 +90,10 @@ public abstract class DES : SymmetricAlgorithm {
 
 	public static bool IsWeakKey (byte[] rgbKey) 
 	{
+#if NET_2_0
+		if (rgbKey == null)
+			throw new CryptographicException (Locale.GetText ("Null Key"));
+#endif
 		if (rgbKey.Length != keySizeByte)
 			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
@@ -121,6 +125,10 @@ public abstract class DES : SymmetricAlgorithm {
 
 	public static bool IsSemiWeakKey (byte[] rgbKey)
 	{
+#if NET_2_0
+		if (rgbKey == null)
+			throw new CryptographicException (Locale.GetText ("Null Key"));
+#endif
 		if (rgbKey.Length != keySizeByte)
 			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 

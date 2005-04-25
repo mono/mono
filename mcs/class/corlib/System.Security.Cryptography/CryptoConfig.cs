@@ -115,7 +115,7 @@ public class CryptoConfig {
 	private const string oidSHA384 = "2.16.840.1.101.3.4.2.2";
 	private const string oidSHA512 = "2.16.840.1.101.3.4.2.3";
 	// new in 2.0
-	private const string oidRSA = "1.2.840.113549.1.1.1";
+//	private const string oidRSA = "1.2.840.113549.1.1.1";
 	private const string oidDSA = "1.2.840.10040.4.1";
 	private const string oidDES = "1.3.14.3.2.7";
 	private const string oid3DES = "1.2.840.113549.3.7";
@@ -344,7 +344,7 @@ public class CryptoConfig {
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
 
 #if NET_2_0
-		oid.Add (nameRSAa, oidRSA);
+//		oid.Add (nameRSAa, oidRSA);
 		oid.Add (nameDSAa, oidDSA);
 		oid.Add (nameDESa, oidDES);
 		oid.Add (name3DESa, oid3DES);
@@ -484,6 +484,10 @@ public class CryptoConfig {
 
 	public static byte[] EncodeOID (string str)
 	{
+#if NET_2_0
+		if (str == null)
+			throw new ArgumentNullException ("str");
+#endif
 		char[] delim = { '.' };
 		string[] parts = str.Split (delim);
 		// according to X.208 n is always at least 2
