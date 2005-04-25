@@ -4,10 +4,7 @@
 // Author: Duncan Mak (duncan@ximian.com)
 //
 // (C) 2002, Ximian, Inc. http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,11 +27,15 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace System.IO.IsolatedStorage
 {
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
         public class IsolatedStorageException : Exception
 	{
 		public IsolatedStorageException ()

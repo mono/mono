@@ -30,9 +30,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.IO.IsolatedStorage {
 
 	[Flags]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum IsolatedStorageScope {
 
 		None = 0,

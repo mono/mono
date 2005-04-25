@@ -30,12 +30,16 @@
 
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 
 namespace System.IO.IsolatedStorage {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class IsolatedStorage : MarshalByRefObject {
 
 		// Constructor
@@ -53,6 +57,7 @@ namespace System.IO.IsolatedStorage {
 
 #if NET_2_0
 		[MonoTODO ("requires manifest support")]
+		[ComVisible (false)]
 		public object ApplicationIdentity {
 			[SecurityPermission (SecurityAction.Demand, ControlPolicy=true)]
 			get {

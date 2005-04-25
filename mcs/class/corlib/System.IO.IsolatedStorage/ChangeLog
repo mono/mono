@@ -1,3 +1,14 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* INormalizeForIsolatedStorage.cs: Added [ComVisible(true)] for 2.0.
+	* IsolatedStorage.cs: Added [ComVisible(true)] for 2.0 except for new
+	property ApplicationIdentity.
+	* IsolatedStorageException.cs: Added [ComVisible(true)] for 2.0.
+	* IsolatedStorageFile.cs: Now calls UnprotectedGetEvidence to get the 
+	assembly evidences. Added [ComVisible(true)] for 2.0.
+	* IsolatedStorageFileStream.cs: Added [ComVisible(true)] for 2.0.
+	* IsolatedStorageScope.cs: Added [ComVisible(true)] for 2.0.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Added an assert for unrestricted file access

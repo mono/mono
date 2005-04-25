@@ -35,11 +35,15 @@ using System.Security;
 using System.Security.Permissions;
 
 #if NET_2_0
+using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 #endif
 
 namespace System.IO.IsolatedStorage {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class IsolatedStorageFileStream : FileStream {
 
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
@@ -57,7 +61,7 @@ namespace System.IO.IsolatedStorage {
 				StackFrame sf = new StackFrame (3); // skip self and constructor
 				isf = IsolatedStorageFile.GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly,
 					IsolatedStorageFile.GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence), 
-					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.Evidence));
+					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.UnprotectedGetEvidence ()));
 			}
 
 			// ensure that the _root_ isolated storage can be (and is) created.

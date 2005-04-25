@@ -30,6 +30,7 @@
 
 using System.Collections;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
 using System.Security.Cryptography;
@@ -45,6 +46,9 @@ namespace System.IO.IsolatedStorage {
 	// much as a directory
 
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	// FIXME: Further limit the assertion when imperative Assert is implemented
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable {
@@ -134,7 +138,8 @@ namespace System.IO.IsolatedStorage {
 				storageFile._domainIdentity = GetTypeFromEvidence (AppDomain.CurrentDomain.Evidence, domainEvidenceType);
 			}
 			if ((scope & IsolatedStorageScope.Assembly) != 0) {
-				storageFile._assemblyIdentity = GetTypeFromEvidence (Assembly.GetCallingAssembly ().Evidence, assemblyEvidenceType);
+				Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+				storageFile._assemblyIdentity = GetTypeFromEvidence (e, assemblyEvidenceType);
 			}
 			storageFile.PostInit ();
 			return storageFile;
@@ -176,7 +181,8 @@ namespace System.IO.IsolatedStorage {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
-			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -187,7 +193,8 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
-			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -207,7 +214,8 @@ namespace System.IO.IsolatedStorage {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
-			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -218,7 +226,8 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
-			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (Assembly.GetCallingAssembly ().Evidence);
+			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
 		}
