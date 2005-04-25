@@ -1,3 +1,10 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HostSecurityManagerTest.cs: Renamed HostSecurityManagerFlags to 
+	HostSecurityManagerOptions to match beta2.
+	* PermissionSetCollectionTest.cs: Removed "set" tests for the 
+	PermissionSets property (removed in beta2).
+
 2005-03-31  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecurityExceptionCas.cs: Added new tests for GetObjectData.

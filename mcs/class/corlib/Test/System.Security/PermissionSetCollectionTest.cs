@@ -311,24 +311,6 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-		public void PermissionSets_SetArrayList ()
-		{
-			PermissionSetCollection psc = new PermissionSetCollection ();
-			PermissionSet unr = new PermissionSet (PermissionState.Unrestricted);
-			psc.Add (unr);
-			Assert.AreEqual (1, psc.Count, "original ArrayList");
-			psc.PermissionSets = new ArrayList ();
-			Assert.AreEqual (0, psc.Count, "new ArrayList");
-		}
-
-		[Test]
-		public void PermissionSets_SetTestList ()
-		{
-			PermissionSetCollection psc = new PermissionSetCollection ();
-			psc.PermissionSets = new TestList ();
-		}
-
-		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void RemoveSet_Negative ()
 		{

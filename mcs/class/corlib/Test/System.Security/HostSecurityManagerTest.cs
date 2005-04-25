@@ -45,7 +45,7 @@ namespace MonoTests.System.Security {
 		{
 			HostSecurityManager hsm = new HostSecurityManager ();
 			Assert.IsNull (hsm.DomainPolicy, "DomainPolicy");
-			Assert.AreEqual (HostSecurityManagerFlags.AllFlags, hsm.Flags, "Flags");
+			Assert.AreEqual (HostSecurityManagerOptions.AllFlags, hsm.Flags, "Flags");
 		}
 
 		[Test]
