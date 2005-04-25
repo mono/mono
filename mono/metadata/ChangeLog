@@ -1,3 +1,7 @@
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security.c: Fixed #74698 where sysconf returned -1 on FreeBSD.
+
 2005-04-25  Martin Baulig  <martin@ximian.com>
 
 	Upgrade to the latest .NET 2.x beta (Visual Studio 2005 Beta 2).
