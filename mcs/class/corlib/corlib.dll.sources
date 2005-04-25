@@ -8,6 +8,9 @@ Microsoft.Win32/RegistryHive.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
 Microsoft.Win32.SafeHandles/SafeFileHandle.cs
+Mono.Globalization.Unicode/CodePointIndexer.cs
+Mono.Globalization.Unicode/Normalization.cs
+Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Math.Prime/ConfidenceFactor.cs

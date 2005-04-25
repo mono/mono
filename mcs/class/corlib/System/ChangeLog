@@ -1,3 +1,10 @@
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs : added IsNormalized() and Normalize() (NET_2_0). Note that
+	  you will have to build Normalization.cs which can be generated in
+	  Mono.Globalization.Unicode directory (automatic build is not supported
+	  and those generated sources will be checked in at a certain stage).
+
 2005-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Attribute.cs: Added _Attribute interface to NET_2_0 to reduce the 

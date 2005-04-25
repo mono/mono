@@ -35,6 +35,7 @@ using System.Text;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using Mono.Globalization.Unicode;
 
 namespace System
 {
@@ -669,6 +670,25 @@ namespace System
 			return IndexOf (value) != -1;
 		}
 
+		public bool IsNormalized ()
+		{
+			return IsNormalized (NormalizationForm.FormC);
+		}
+
+		public bool IsNormalized (NormalizationForm f)
+		{
+			switch (f) {
+			case NormalizationForm.FormKD:
+				return Normalization.IsNormalized (this, 3);
+			case NormalizationForm.FormKC:
+				return Normalization.IsNormalized (this, 2);
+			case NormalizationForm.FormD:
+				return Normalization.IsNormalized (this, 1);
+			default:
+				return Normalization.IsNormalized (this, 0);
+			}
+		}
+
 		public static bool IsNullOrEmpty (String value)
 		{
 			return (value == null) || (value.Length == 0);
@@ -682,6 +702,25 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex", "StartIndex must be less than the length of the string");
 
 			return Remove (startIndex, this.length - startIndex);
+		}
+
+		public string Normalize ()
+		{
+			return Normalize (NormalizationForm.FormC);
+		}
+
+		public string Normalize (NormalizationForm f)
+		{
+			switch (f) {
+			case NormalizationForm.FormKD:
+				return Normalization.Normalize (this, 3);
+			case NormalizationForm.FormKC:
+				return Normalization.Normalize (this, 2);
+			case NormalizationForm.FormD:
+				return Normalization.Normalize (this, 1);
+			default:
+				return Normalization.Normalize (this, 0);
+			}
 		}
 #endif
 

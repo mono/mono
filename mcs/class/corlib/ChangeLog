@@ -1,3 +1,8 @@
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib.dll.sources : added Normalization.cs, CodePointIndexer.cs and
+	  NormalizationTableUtil.cs in Mono.Globalization.Unicode.
+
 2005-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources : added System.Text/NormalizationForm.cs.
