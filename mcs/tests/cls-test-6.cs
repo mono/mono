@@ -44,6 +44,8 @@ public class CLSClass_2 {
     public CLSClass_2(int[,] b) {
     }
 
+    public void Test (int[,] b, int i) {}
+    public void Test (int[,,] b, bool b2) {}
 }
 
 public class X1 {

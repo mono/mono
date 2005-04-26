@@ -1,3 +1,7 @@
+2005-04-26  Marek Safar <marek.safar@seznam.cz>
+
+	* cls-test-6.cs: Put in a new test.
+
 2005-04-18  Raja R Harinath  <rharinath@novell.com>
 
 	* test-369.cs: New test based on #74481.
