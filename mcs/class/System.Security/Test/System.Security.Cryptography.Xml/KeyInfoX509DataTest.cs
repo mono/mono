@@ -2,9 +2,10 @@
 // KeyInfoX509DataTest.cs - NUnit Test Cases for KeyInfoX509Data
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -19,7 +20,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoX509DataTest : Assertion {
+	public class KeyInfoX509DataTest {
 
 		static byte[] cert = { 0x30,0x82,0x09,0xB9,0x30,0x82,0x09,0x22,0xA0,0x03,0x02,0x01,0x02,0x02,0x10,0x20,0x0B,0x35,0x5E,0xCE,0xC4,0xB0,0x63,0xB7,0xDE,0xC6,0x34,0xB9,0x70,0x34,0x44,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x04,0x05,0x00,0x30,0x62,0x31,0x11,0x30,0x0F,0x06,0x03,0x55,0x04,0x07,0x13,0x08,0x49,0x6E,0x74,0x65,0x72,0x6E,0x65,0x74,0x31,0x17,0x30,0x15,0x06,0x03,0x55,0x04,0x0A,0x13,0x0E,0x56,0x65,0x72,0x69,0x53,0x69,0x67,0x6E,0x2C,0x20,0x49,0x6E,0x63,0x2E,0x31,0x34,0x30,0x32,0x06,0x03,0x55,0x04,0x0B,
 			0x13,0x2B,0x56,0x65,0x72,0x69,0x53,0x69,0x67,0x6E,0x20,0x43,0x6C,0x61,0x73,0x73,0x20,0x31,0x20,0x43,0x41,0x20,0x2D,0x20,0x49,0x6E,0x64,0x69,0x76,0x69,0x64,0x75,0x61,0x6C,0x20,0x53,0x75,0x62,0x73,0x63,0x72,0x69,0x62,0x65,0x72,0x30,0x1E,0x17,0x0D,0x39,0x36,0x30,0x38,0x32,0x31,0x30,0x30,0x30,0x30,0x30,0x30,0x5A,0x17,0x0D,0x39,0x37,0x30,0x38,0x32,0x30,0x32,0x33,0x35,0x39,0x35,0x39,0x5A,0x30,0x82,0x01,0x0A,0x31,0x11,0x30,0x0F,0x06,0x03,0x55,0x04,0x07,0x13,0x08,0x49,0x6E,0x74,0x65,0x72,0x6E,0x65,0x74,
@@ -65,16 +66,74 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 		static byte[] x509crl = { 0x30, 0x82, 0x01, 0x05, 0x30, 0x72, 0x02, 0x01, 0x01, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x05, 0x30, 0x51, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13, 0x02, 0x55, 0x53, 0x31, 0x18, 0x30, 0x16, 0x06, 0x03, 0x55, 0x04, 0x0A, 0x13, 0x0F, 0x55, 0x2E, 0x53, 0x2E, 0x20, 0x47, 0x6F, 0x76, 0x65, 0x72, 0x6E, 0x6D, 0x65, 0x6E, 0x74, 0x31, 0x0C, 0x30, 0x0A, 0x06, 0x03, 0x55, 0x04, 0x0B, 0x13, 0x03, 0x44, 0x6F, 0x44, 0x31, 0x1A, 0x30, 0x18, 0x06, 0x03, 0x55, 0x04, 0x03, 0x13, 0x11, 0x41, 0x72, 0x6D, 0x65, 0x64, 0x20, 0x46, 0x6F, 0x72, 0x63, 0x65, 0x73, 0x20, 0x52, 0x6F, 0x6F, 0x74, 0x17, 0x0D, 0x30, 0x32, 0x31, 0x30, 0x31, 0x31, 0x31, 0x33, 0x31, 0x32, 0x35, 0x30, 0x5A, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x05, 0x03, 0x81, 0x81, 0x00, 0x7D, 0xA2, 0xD1, 0x19, 0x6D, 0x0F, 0x0F, 0xCB, 0xE4, 0xA3, 0xBE, 0xE0, 0x36, 0x0A, 0xF3, 0x4C, 0x9B, 0xAF, 0xE6, 0x4F, 0xF6, 0xE3, 0xAF, 0xCF, 0x55, 0xF3, 0xC6, 0xDB, 0xAB, 0x4C, 0x16, 0x32, 0xAA, 0x73, 0xAD, 0xCC, 0xDC, 0x32, 0x33, 0x60, 0xDF, 0x8B, 0xCC, 0x93, 0xB5, 0x4F, 0x6A, 0xEC, 0x70, 0x53, 0xAF, 0xCF, 0x07, 0x0F, 0xA0, 0xCD, 0x66, 0xAC, 0x00, 0x57, 0xC6, 0x5C, 0x5D, 0x21, 0xB1, 0xBD, 0x30, 0x89, 0x8E, 0x77, 0x8D, 0xD4, 0x69, 0x7E, 0xC0, 0x36, 0x7E, 0xD2, 0xD8, 0x20, 0x71, 0x08, 0x80, 0xD2, 0xCB, 0x74, 0x8B, 0xD8, 0x42, 0x17, 0x04, 0x99, 0x80, 0xA4, 0x52, 0x70, 0x2E, 0xC0, 0xE3, 0x8C, 0x0B, 0xFF, 0x79, 0xB7, 0x45, 0x77, 0xDC, 0xC5, 0xCF, 0x43, 0x98, 0x91, 0x7D, 0xF1, 0x01, 0xF7, 0x53, 0xD7, 0xC6, 0x51, 0x35, 0xF0, 0x89, 0xCC, 0xC1, 0xFF, 0xE2, 0x89 };
 
+#if NET_2_0
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void Constructor1 () 
+		public void Constructor_Empty () 
 		{
-			KeyInfoX509Data data1 = new KeyInfoX509Data ();
-			XmlElement invalid = data1.GetXml ();
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			Assert.IsNull (data.Certificates, "Certificates");
+			Assert.IsNull (data.CRL, "Certificates");
+			Assert.IsNull (data.IssuerSerials, "IssuerSerials");
+			Assert.IsNull (data.SubjectKeyIds, "SubjectKeyIds");
+			Assert.IsNull (data.SubjectNames, "SubjectNames");
+			Assert.AreEqual (data.GetXml ().OuterXml, "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />");
 		}
 
 		[Test]
-		public void Constructor2 () 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_X509Certificate_Null () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_X509CertificateByteArray_Null () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((byte[])null);
+		}
+#else
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Constructor_Empty () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			XmlElement invalid = data.GetXml ();
+		}
+
+		[Test]
+		public void Constructor_X509Certificate_Null () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotWorking")]
+		public void Constructor_X509Certificate_Null_GetXml () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
+			XmlElement invalid = data.GetXml ();
+			// note: even if we add a check in GetXml this will makes another unit 
+			// test fails. We clearly are not doing this the same way as MS does.
+		}
+
+		[Test]
+		public void Constructor_X509CertificateByteArray_Null () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((byte[])null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_X509CertificateByteArray_Null_GetXml () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((byte[])null);
+			XmlElement invalid = data.GetXml ();
+		}
+#endif
+		[Test]
+		public void Constructor_X509Certificate () 
 		{
 			KeyInfoX509Data data1 = new KeyInfoX509Data ();
 			KeyInfoX509Data data2 = new KeyInfoX509Data (cert);
@@ -82,14 +141,157 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement xel = data2.GetXml ();
 			string s = "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Certificate>MIIJuTCCCSKgAwIBAgIQIAs1Xs7EsGO33sY0uXA0RDANBgkqhkiG9w0BAQQFADBiMREwDwYDVQQHEwhJbnRlcm5ldDEXMBUGA1UEChMOVmVyaVNpZ24sIEluYy4xNDAyBgNVBAsTK1ZlcmlTaWduIENsYXNzIDEgQ0EgLSBJbmRpdmlkdWFsIFN1YnNjcmliZXIwHhcNOTYwODIxMDAwMDAwWhcNOTcwODIwMjM1OTU5WjCCAQoxETAPBgNVBAcTCEludGVybmV0MRcwFQYDVQQKEw5WZXJpU2lnbiwgSW5jLjE0MDIGA1UECxMrVmVyaVNpZ24gQ2xhc3MgMSBDQSAtIEluZGl2aWR1YWwgU3Vic2NyaWJlcjFGMEQGA1UECxM9d3d3LnZlcmlzaWduLmNvbS9yZXBvc2l0b3J5L0NQUyBJbmNvcnAuIGJ5IFJlZi4sTElBQi5MVEQoYyk5NjEmMCQGA1UECxMdRGlnaXRhbCBJRCBDbGFzcyAxIC0gTmV0c2NhcGUxFjAUBgNVBAMTDURhdmlkIFQuIEdyYXkxHjAcBgkqhkiG9w0BCQEWD2RhdmlkQGZvcm1hbC5pZTBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQDFgQei6w+4//j4HO4y/78SNWr5a8i+L/s+rwRRSqzdECmozUBbZh6Y7/JMd/qPhtEhZ5JESsSJyYPPiJ9v4jI1AgMBAAGjggcIMIIHBDAJBgNVHRMEAjAAMIICHwYDVR0DBIICFjCCAhIwggIOMIICCgYLYIZIAYb4RQEHAQEwggH5FoIBp1RoaXMgY2VydGlmaWNhdGUgaW5jb3Jwb3JhdGVzIGJ5IHJlZmVyZW5jZSwgYW5kIGl0cyB1c2UgaXMgc3RyaWN0bHkgc3ViamVjdCB0bywgdGhlIFZlcmlTaWduIENlcnRpZmljYXRpb24gUHJhY3RpY2UgU3RhdGVtZW50IChDUFMpLCBhdmFpbGFibGUgYXQ6IGh0dHBzOi8vd3d3LnZlcmlzaWduLmNvbS9DUFM7IGJ5IEUtbWFpbCBhdCBDUFMtcmVxdWVzdHNAdmVyaXNpZ24uY29tOyBvciBieSBtYWlsIGF0IFZlcmlTaWduLCBJbmMuLCAyNTkzIENvYXN0IEF2ZS4sIE1vdW50YWluIFZpZXcsIENBIDk0MDQzIFVTQSBUZWwuICsxICg0MTUpIDk2MS04ODMwIENvcHlyaWdodCAoYykgMTk5NiBWZXJpU2lnbiwgSW5jLiAgQWxsIFJpZ2h0cyBSZXNlcnZlZC4gQ0VSVEFJTiBXQVJSQU5USUVTIERJU0NMQUlNRUQgYW5kIExJQUJJTElUWSBMSU1JVEVELqAOBgxghkgBhvhFAQcBAQGhDgYMYIZIAYb4RQEHAQECMCwwKhYoaHR0cHM6Ly93d3cudmVyaXNpZ24uY29tL3JlcG9zaXRvcnkvQ1BTIDARBglghkgBhvhCAQEEBAMCB4AwNgYJYIZIAYb4QgEIBCkWJ2h0dHBzOi8vd3d3LnZlcmlzaWduLmNvbS9yZXBvc2l0b3J5L0NQUzCCBIcGCWCGSAGG+EIBDQSCBHgWggR0Q0FVVElPTjogV";
 			s += "GhlIENvbW1vbiBOYW1lIGluIHRoaXMgQ2xhc3MgMSBEaWdpdGFsIApJRCBpcyBub3QgYXV0aGVudGljYXRlZCBieSBWZXJpU2lnbi4gSXQgbWF5IGJlIHRoZQpob2xkZXIncyByZWFsIG5hbWUgb3IgYW4gYWxpYXMuIFZlcmlTaWduIGRvZXMgYXV0aC0KZW50aWNhdGUgdGhlIGUtbWFpbCBhZGRyZXNzIG9mIHRoZSBob2xkZXIuCgpUaGlzIGNlcnRpZmljYXRlIGluY29ycG9yYXRlcyBieSByZWZlcmVuY2UsIGFuZCAKaXRzIHVzZSBpcyBzdHJpY3RseSBzdWJqZWN0IHRvLCB0aGUgVmVyaVNpZ24gCkNlcnRpZmljYXRpb24gUHJhY3RpY2UgU3RhdGVtZW50IChDUFMpLCBhdmFpbGFibGUKaW4gdGhlIFZlcmlTaWduIHJlcG9zaXRvcnkgYXQ6IApodHRwczovL3d3dy52ZXJpc2lnbi5jb207IGJ5IEUtbWFpbCBhdApDUFMtcmVxdWVzdHNAdmVyaXNpZ24uY29tOyBvciBieSBtYWlsIGF0IFZlcmlTaWduLApJbmMuLCAyNTkzIENvYXN0IEF2ZS4sIE1vdW50YWluIFZpZXcsIENBIDk0MDQzIFVTQQoKQ29weXJpZ2h0IChjKTE5OTYgVmVyaVNpZ24sIEluYy4gIEFsbCBSaWdodHMgClJlc2VydmVkLiBDRVJUQUlOIFdBUlJBTlRJRVMgRElTQ0xBSU1FRCBBTkQgCkxJQUJJTElUWSBMSU1JVEVELgoKV0FSTklORzogVEhFIFVTRSBPRiBUSElTIENFUlRJRklDQVRFIElTIFNUUklDVExZClNVQkpFQ1QgVE8gVEhFIFZFUklTSUdOIENFUlRJRklDQVRJT04gUFJBQ1RJQ0UKU1RBVEVNRU5ULiAgVEhFIElTU1VJTkcgQVVUSE9SSVRZIERJU0NMQUlNUyBDRVJUQUlOCklNUExJRUQgQU5EIEVYUFJFU1MgV0FSUkFOVElFUywgSU5DTFVESU5HIFdBUlJBTlRJRVMKT0YgTUVSQ0hBTlRBQklMSVRZIE9SIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUgpQVVJQT1NFLCBBTkQgV0lMTCBOT1QgQkUgTElBQkxFIEZPUiBDT05TRVFVRU5USUFMLApQVU5JVElWRSwgQU5EIENFUlRBSU4gT1RIRVIgREFNQUdFUy4gU0VFIFRIRSBDUFMKRk9SIERFVEFJTFMuCgpDb250ZW50cyBvZiB0aGUgVmVyaVNpZ24gcmVnaXN0ZXJlZApub252ZXJpZmllZFN1YmplY3RBdHRyaWJ1dGVzIGV4dGVuc2lvbiB2YWx1ZSBzaGFsbCAKbm90IGJlIGNvbnNpZGVyZWQgYXMgYWNjdXJhdGUgaW5mb3JtYXRpb24gdmFsaWRhdGVkIApieSB0aGUgSUEuMA0GCSqGSIb3DQEBBAUAA4GBACs9RMcyWa7xX48/h+M+64Ew+KmW2wFCCwTvNwI/1CBhWMRKOjmz+9n4pcReM1oO+pNWL2/WYaKvpQwd4kFl80B1ZoPSWrS3VguODaEzE31Jw7EAaIN/tWbUMjL+i5pa1gFyMV2FkbyTm2VgJcYfvN1pRGLCsm9Gqy8gpW/aSGyc</X509Certificate></X509Data>";
-			AssertEquals ("1 cert", s, (data2.GetXml ().OuterXml));
+			Assert.AreEqual (s, (data2.GetXml ().OuterXml), "1 cert");
 
 			data1.LoadXml (xel);
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
 
 			X509Certificate x509 = new X509Certificate (cert);
 			KeyInfoX509Data data3 = new KeyInfoX509Data (x509);
-			AssertEquals ("data2==data3", (data2.GetXml ().OuterXml), (data3.GetXml ().OuterXml));
+			Assert.AreEqual ((data2.GetXml ().OuterXml), (data3.GetXml ().OuterXml), "data2==data3");
+		}
+
+#if NET_2_0
+		[Test]
+		public void Constructor_X509Certificate_X509IncludeOption () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data (new X509Certificate (cert), X509IncludeOption.EndCertOnly);
+			Assert.AreEqual (1, data.Certificates.Count, "Certificates");
+			Assert.IsNull (data.CRL, "Certificates");
+			Assert.IsNull (data.IssuerSerials, "IssuerSerials");
+			Assert.IsNull (data.SubjectKeyIds, "SubjectKeyIds");
+			Assert.IsNull (data.SubjectNames, "SubjectNames");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_X509CertificateNull_X509IncludeOption () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data (null, X509IncludeOption.EndCertOnly);
+		}
+
+		[Test]
+		public void Constructor_X509Certificate_X509IncludeOptionBad () 
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data (new X509Certificate (cert), (X509IncludeOption) Int32.MinValue);
+			Assert.IsNull (data.Certificates, "Certificates");
+			Assert.IsNull (data.CRL, "Certificates");
+			Assert.IsNull (data.IssuerSerials, "IssuerSerials");
+			Assert.IsNull (data.SubjectKeyIds, "SubjectKeyIds");
+			Assert.IsNull (data.SubjectNames, "SubjectNames");
+			Assert.AreEqual ("<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", data.GetXml ().OuterXml);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddCertificate_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddCertificate (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddIssuerSerial_Null_Serial ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddIssuerSerial (null, "serial");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // beta2 bug
+		[ExpectedException (typeof (NullReferenceException))]
+		public void AddIssuerSerial_Issuer_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddIssuerSerial ("issuer", null);
+		}
+#else
+		[Test]
+		public void AddCertificate_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddCertificate (null);
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void AddCertificate_Null_GetXml ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddCertificate (null);
+			XmlElement empty = data.GetXml ();
+		}
+
+		[Test]
+		public void AddIssuerSerial_Null_Serial ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddIssuerSerial (null, "serial");
+			XmlElement empty = data.GetXml ();
+			Assert.AreEqual (empty.OuterXml, "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509IssuerSerial><X509IssuerName></X509IssuerName><X509SerialNumber>serial</X509SerialNumber></X509IssuerSerial></X509Data>");
+		}
+
+		[Test]
+		public void AddIssuerSerial_Issuer_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddIssuerSerial ("issuer", null);
+			XmlElement empty = data.GetXml ();
+			Assert.AreEqual (empty.OuterXml, "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509IssuerSerial><X509IssuerName>issuer</X509IssuerName><X509SerialNumber></X509SerialNumber></X509IssuerSerial></X509Data>");
+		}
+#endif
+
+		[Test]
+		public void AddSubjectKeyId_Byte_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddSubjectKeyId ((byte[])null);
+			Assert.IsNull (data.Certificates, "Certificates");
+			Assert.IsNull (data.CRL, "Certificates");
+			Assert.IsNull (data.IssuerSerials, "IssuerSerials");
+			Assert.AreEqual (1, data.SubjectKeyIds.Count, "SubjectKeyIds");
+			Assert.IsNull (data.SubjectNames, "SubjectNames");
+// beta2 bug - throw an ArgumentNullException (a little too late)
+//			Assert.AreEqual ("<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", data.GetXml ().OuterXml);
+		}
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")] // beta2 bug
+		[ExpectedException (typeof (NullReferenceException))]
+		public void AddSubjectKeyId_String_Null ()
+		{
+			KeyInfoX509Data data1 = new KeyInfoX509Data ();
+			data1.AddSubjectKeyId ((string)null);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // beta2 bug
+		public void AddSubjectKeyId_String_BadHexData ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddSubjectKeyId ("Hello");
+			Assert.IsNull (data.Certificates, "Certificates");
+			Assert.IsNull (data.CRL, "Certificates");
+			Assert.IsNull (data.IssuerSerials, "IssuerSerials");
+			// looks like "garbage"
+			Assert.AreEqual (1, data.SubjectKeyIds.Count, "SubjectKeyIds");
+			Assert.IsNull (data.SubjectNames, "SubjectNames");
+		}
+#endif
+		[Test]
+		public void AddSubjectName_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ();
+			data.AddSubjectName (null);
+			Assert.IsNull (data.Certificates, "Certificates");
+			Assert.IsNull (data.CRL, "Certificates");
+			Assert.IsNull (data.IssuerSerials, "IssuerSerials");
+			Assert.IsNull (data.SubjectKeyIds, "SubjectKeyIds");
+			Assert.AreEqual (1, data.SubjectNames.Count, "SubjectNames");
+			Assert.IsNull (data.SubjectNames[0], "SubjectNames[0]");
+			Assert.AreEqual ("<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509SubjectName></X509SubjectName></X509Data>", data.GetXml ().OuterXml, "XML");
 		}
 
 		[Test]
@@ -101,7 +303,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement xel = data1.GetXml ();
 			data2.LoadXml (xel);
 
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
 			byte[] c = (data1.Certificates[0] as X509Certificate).GetRawCertData();
 			AssertCrypto.AssertEquals ("Certificate[0]", cert, c);
 
@@ -110,16 +312,16 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			data1.AddCertificate (x509);
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
 			c = (data1.Certificates [1] as X509Certificate).GetRawCertData();
-			AssertCrypto.AssertEquals ("Certificate[1]", cert2, c);
+			Assert.AreEqual (cert2, c, "Certificate[1]");
 
 			// add properties from a third X.509 certificate
 			x509 = new X509Certificate (cert3);
 			data1.AddIssuerSerial (x509.GetIssuerName (), x509.GetSerialNumberString ());
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
 			// TODO: The type of IssuerSerial isn't documented
 
 			// X509Certificate doesn't export SubjectKeyId so we must improvise
@@ -127,15 +329,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			data1.AddSubjectKeyId (skid);
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
-			AssertCrypto.AssertEquals ("SubjectKeyId", skid, (byte[]) data1.SubjectKeyIds[0]);
-
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
+			Assert.AreEqual (skid, (byte[])data1.SubjectKeyIds[0], "SubjectKeyId");
 			data1.AddSubjectName (x509.GetName ());
 			xel = data1.GetXml ();
 			data2.LoadXml (xel);
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
 			string s = (string) data1.SubjectNames [0];
-			AssertEquals ("SubjectName", x509.GetName (), s);
+			Assert.AreEqual (x509.GetName (), s, "SubjectName");
 		}
 
 		// There's a bug in the framework 1.0 where a CRL entry cannot be included
@@ -151,8 +352,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoX509Data data2 = new KeyInfoX509Data ();
 			data2.LoadXml (xel);
 
-			AssertEquals ("data1==data2", (data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml));
-			AssertCrypto.AssertEquals ("crl1==crl2", data1.CRL, data2.CRL);
+			Assert.AreEqual ((data1.GetXml ().OuterXml), (data2.GetXml ().OuterXml), "data1==data2");
+			Assert.AreEqual (data1.CRL, data2.CRL, "crl1==crl2");
 		}
 
 		[Test]
@@ -168,11 +369,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			// verify that proper XML is generated (equals to original)
 			string s = (data1.GetXml ().OuterXml);
-			AssertEquals ("Xml-Simple", simple, s);
+			Assert.AreEqual (simple, s, "Xml-Simple");
 
 			// verify that property is parsed correctly
 			byte[] c = (data1.Certificates[0] as X509Certificate).GetRawCertData();
-			AssertCrypto.AssertEquals ("Certificate[0]", cert, c);
+			Assert.AreEqual (cert, c, "Certificate[0]");
 
 			string complex = "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509IssuerSerial><X509IssuerName>C=US, O=U.S. Government, OU=DoD, CN=Armed Forces Root</X509IssuerName><X509SerialNumber>03</X509SerialNumber></X509IssuerSerial><X509SKI>3q3A3g==</X509SKI><X509SubjectName>C=US, O=U.S. Government, OU=DoD, CN=Armed Forces Root</X509SubjectName><X509Certificate>MIIJuTCCCSKgAwIBAgIQIAs1Xs7EsGO33sY0uXA0RDANBgkqhkiG9w0BAQQFADBiMREwDwYDVQQHEwhJbnRlcm5ldDEXMBUGA1UEChMOVmVyaVNpZ24sIEluYy4xNDAyBgNVBAsTK1ZlcmlTaWduIENsYXNzIDEgQ0EgLSBJbmRpdmlkdWFsIFN1YnNjcmliZXIwHhcNOTYwODIxMDAwMDAwWhcNOTcwODIwMjM1OTU5WjCCAQoxETAPBgNVBAcTCEludGVybmV0MRcwFQYDVQQKEw5WZXJpU2lnbiwgSW5jLjE0MDIGA1UECxMrVmVyaVNpZ24gQ2xhc3MgMSBDQSAtIEluZGl2aWR1YWwgU3Vic2NyaWJlcjFGMEQGA1UECxM9d3d3LnZlcmlzaWduLmNvbS9yZXBvc2l0b3J5L0NQUyBJbmNvcnAuIGJ5IFJlZi4sTElBQi5MVEQoYyk5NjEmMCQGA1UECxMdRGlnaXRhbCBJRCBDbGFzcyAxIC0gTmV0c2NhcGUxFjAUBgNVBAMTDURhdmlkIFQuIEdyYXkxHjAcBgkqhkiG9w0BCQEWD2RhdmlkQGZvcm1hbC5pZTBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQDFgQei6w+4//j4HO4y/78SNWr5a8i+L/s+rwRRSqzdECmozUBbZh6Y7/JMd/qPhtEhZ5JESsSJyYPPiJ9v4jI1AgMBAAGjggcIMIIHBDAJBgNVHRMEAjAAMIICHwYDVR0DBIICFjCCAhIwggIOMIICCgYLYIZIAYb4RQEHAQEwggH5FoIBp1RoaXMgY2VydGlmaWNhdGUgaW5jb3Jwb3JhdGVzIGJ5IHJlZmVyZW5jZSwgYW5kIGl0cyB1c2UgaXMgc3RyaWN0bHkgc3ViamVjdCB0bywgdGhlIFZlcmlTaWduIENlcnRpZmljYXRpb24gUHJhY3RpY2UgU3RhdGVtZW50IChDUFMpLCBhdmFpbGFibGUgYXQ6IGh0dHBzOi8vd3d3LnZlcmlzaWduLmNvbS9DUFM7IGJ5IEUtbWFpbCBhdCBDUFMtcmVxdWVzdHNAdmVyaXNpZ24uY29tOyBvciBieSBtYWlsIGF0IFZlcmlTaWduLCBJbmMuLCAyNTkzIENvYXN0IEF2ZS4sIE1vdW50YWluIFZpZXcsIENBIDk0MDQzIFVTQSBUZWwuICsxICg0MTUpIDk2MS04ODMwIENvcHlyaWdodCAoYykgMTk5NiBWZXJpU2lnbiwgSW5jLiAgQWxsIFJpZ2h0cyBSZXNlcnZlZC4gQ0VSVEFJTiBXQVJSQU5USUVTIERJU0NMQUlNRUQgYW5kIExJQUJJTElUWSBMSU1JVEVELq";
 			complex += "AOBgxghkgBhvhFAQcBAQGhDgYMYIZIAYb4RQEHAQECMCwwKhYoaHR0cHM6Ly93d3cudmVyaXNpZ24uY29tL3JlcG9zaXRvcnkvQ1BTIDARBglghkgBhvhCAQEEBAMCB4AwNgYJYIZIAYb4QgEIBCkWJ2h0dHBzOi8vd3d3LnZlcmlzaWduLmNvbS9yZXBvc2l0b3J5L0NQUzCCBIcGCWCGSAGG+EIBDQSCBHgWggR0Q0FVVElPTjogVGhlIENvbW1vbiBOYW1lIGluIHRoaXMgQ2xhc3MgMSBEaWdpdGFsIApJRCBpcyBub3QgYXV0aGVudGljYXRlZCBieSBWZXJpU2lnbi4gSXQgbWF5IGJlIHRoZQpob2xkZXIncyByZWFsIG5hbWUgb3IgYW4gYWxpYXMuIFZlcmlTaWduIGRvZXMgYXV0aC0KZW50aWNhdGUgdGhlIGUtbWFpbCBhZGRyZXNzIG9mIHRoZSBob2xkZXIuCgpUaGlzIGNlcnRpZmljYXRlIGluY29ycG9yYXRlcyBieSByZWZlcmVuY2UsIGFuZCAKaXRzIHVzZSBpcyBzdHJpY3RseSBzdWJqZWN0IHRvLCB0aGUgVmVyaVNpZ24gCkNlcnRpZmljYXRpb24gUHJhY3RpY2UgU3RhdGVtZW50IChDUFMpLCBhdmFpbGFibGUKaW4gdGhlIFZlcmlTaWduIHJlcG9zaXRvcnkgYXQ6IApodHRwczovL3d3dy52ZXJpc2lnbi5jb207IGJ5IEUtbWFpbCBhdApDUFMtcmVxdWVzdHNAdmVyaXNpZ24uY29tOyBvciBieSBtYWlsIGF0IFZlcmlTaWduLApJbmMuLCAyNTkzIENvYXN0IEF2ZS4sIE1vdW50YWluIFZpZXcsIENBIDk0MDQzIFVTQQoKQ29weXJpZ2h0IChjKTE5OTYgVmVyaVNpZ24sIEluYy4gIEFsbCBSaWdodHMgClJlc2VydmVkLiBDRVJUQUlOIFdBUlJBTlRJRVMgRElTQ0xBSU1FRCBBTkQgCkxJQUJJTElUWSBMSU1JVEVELgoKV0FSTklORzogVEhFIFVTRSBPRiBUSElTIENFUlRJRklDQVRFIElTIFNUUklDVExZClNVQkpFQ1QgVE8gVEhFIFZFUklTSUdOIENFUlRJRklDQVRJT04gUFJBQ1RJQ0UKU1RBVEVNRU5ULiAgVEhFIElTU1VJTkcgQVVUSE9SSVRZIERJU0NMQUlNUyBDRVJUQUlOCklNUExJRUQgQU5EIEVYUFJFU1MgV0FSUkFOVElFUywgSU5DTFVESU5HIFdBUlJBTlRJRVMKT0YgTUVSQ0hBTlRBQklMSVRZIE9SIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUgpQVVJQT1NFLCBBTkQgV0lMTCBOT1QgQkUgTElBQkxFIEZPUiBDT05TRVFVRU5USUFMLApQVU5JVElWRSwgQU5EIENFUlRBSU4gT1RIRVIgREFNQUdFUy4gU0VFIFRIRSBDUFMKRk9SIERFVEFJTFMuCgpDb250ZW50cyBvZiB0aGUgVmVyaVNpZ24gcmVnaXN0ZXJlZApub252ZXJpZmllZFN1YmplY3RBdHRyaWJ1dGVzIGV4dGVuc2lvbiB2YWx1ZSBzaGFsbCAKbm90IGJlIGNvbnNpZGVyZWQgYXMgYWNjdXJhdGUgaW5mb3JtYXRpb24gdmF";
@@ -181,14 +382,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoX509Data data2 = new KeyInfoX509Data ();
 			data2.LoadXml (doc.DocumentElement);
 			s = (data2.GetXml ().OuterXml);
-			AssertEquals ("Xml-Complex", complex, s);
+			Assert.AreEqual (complex, s, "Xml-Complex");
 
 			string crl = "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509CRL>HoIBBTByAgEBMAsGCSqGSIb3DQEBBTBRMQswCQYDVQQGEwJVUzEYMBYGA1UEChMPVS5TLiBHb3Zlcm5tZW50MQwwCgYDVQQLEwNEb0QxGjAYBgNVBAMTEUFybWVkIEZvcmNlcyBSb290Fw0wMjEwMTExMzEyNTBaMAsGCSqGSIb3DQEBBQOBgQB9otEZbQ8Py+SjvuA2CvNMm6/mT/bjr89V88bbq0wWMqpzrczcMjNg34vMk7VPauxwU6/PBw+gzWasAFfGXF0hsb0wiY53jdRpfsA2ftLYIHEIgNLLdIvYQhcEmYCkUnAuwOOMC/95t0V33MXPQ5iRffEB91PXxlE18InMwf/iiQ==</X509CRL></X509Data>";
 			doc.LoadXml (crl);
 			KeyInfoX509Data data3 = new KeyInfoX509Data ();
 			data3.LoadXml (doc.DocumentElement);
 			s = (data3.GetXml ().OuterXml);
-			AssertEquals ("Xml-Crl", crl, s);
+			Assert.AreEqual (crl, s, "Xml-Crl");
 		}
 
 		[Test]

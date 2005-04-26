@@ -1,3 +1,8 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyInfoX509DataTest.cs: Added new unit tests for NET_1_1 and updated
+	tests to work on NET_2_0.
+
 2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigC14NTransformTest.cs :
