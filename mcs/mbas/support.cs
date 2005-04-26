@@ -249,8 +249,6 @@ namespace Mono.MonoBASIC {
 			
 			if (p.ModFlags == Parameter.Modifier.REF)
 				tmp = "ref ";
-			else if (p.ModFlags == Parameter.Modifier.OUT)
-				tmp = "out ";
 			else if (p.ModFlags == Parameter.Modifier.PARAMS)
 				tmp = "params ";
 
@@ -273,7 +271,7 @@ namespace Mono.MonoBASIC {
 			else
 				mod = Parameters.FixedParameters [pos].ModFlags;
 
-			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
+			if ((mod & (Parameter.Modifier.REF )) != 0)
 				mod |= Parameter.Modifier.ISBYREF;
 
 			return mod;

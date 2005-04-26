@@ -3437,12 +3437,12 @@ namespace Mono.MonoBASIC {
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
-			is_out = (mod & Parameter.Modifier.OUT) != 0;
+			// is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 
-			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
+			/*  if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
-
+			*/
 			return this;
 		}
 
@@ -3450,12 +3450,12 @@ namespace Mono.MonoBASIC {
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
-			is_out = (mod & Parameter.Modifier.OUT) != 0;
+			// is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
-
+			/*
 			if (is_out && ec.DoFlowAnalysis)
 				ec.SetParameterAssigned (idx);
-
+			*/
 			return this;
 		}
 
@@ -3823,9 +3823,9 @@ namespace Mono.MonoBASIC {
 				Argument a = (Argument) arguments [i];
 
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					~(Parameter.Modifier.REF);
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					~(Parameter.Modifier.REF);
 
 				if (a_mod == p_mod) {
 
@@ -3865,9 +3865,9 @@ namespace Mono.MonoBASIC {
 		static ConversionType CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
 		{
 			Parameter.Modifier a_mod = a.GetParameterModifier () &
-				~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+				~(Parameter.Modifier.REF);
 			Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-				~(Parameter.Modifier.OUT | Parameter.Modifier.REF | Parameter.Modifier.OPTIONAL);
+				~(Parameter.Modifier.REF | Parameter.Modifier.OPTIONAL);
 
 			if (a_mod == p_mod ||
 				(a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
@@ -4375,9 +4375,9 @@ namespace Mono.MonoBASIC {
 				}
 
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					~(Parameter.Modifier.REF);
 				Parameter.Modifier p_mod = pd.ParameterModifier (j) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF | Parameter.Modifier.OPTIONAL);
+					~(Parameter.Modifier.REF | Parameter.Modifier.OPTIONAL);
 
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
@@ -4703,7 +4703,7 @@ namespace Mono.MonoBASIC {
 					return;
 				}
 
-				if ((a.ArgType == Argument.AType.Ref || a.ArgType == Argument.AType.Out) &&
+				if ((a.ArgType == Argument.AType.Ref ) &&
 					!(a.Expr is IMemoryLocation)) {
 					LocalTemporary tmp = new LocalTemporary (ec, pd.ParameterType (i));
 					

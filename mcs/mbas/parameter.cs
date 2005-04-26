@@ -28,7 +28,7 @@ namespace Mono.MonoBASIC {
 			NONE    = 0,
 			VAL 	= 0,
 			REF     = 1,
-			OUT     = 2,
+//			OUT     = 2,
 			PARAMS  = 4,
 			// This is a flag which says that it's either REF or OUT.
 			ISBYREF = 8,
@@ -129,8 +129,10 @@ namespace Mono.MonoBASIC {
 					return ParameterAttributes.None;
 				case Modifier.REF:
 					return ParameterAttributes.None;
+/*
 				case Modifier.OUT:
 					return ParameterAttributes.Out;
+*/
 				case Modifier.OPTIONAL:
 					return ParameterAttributes.Optional;
 				case Modifier.PARAMS:
@@ -561,7 +563,7 @@ namespace Mono.MonoBASIC {
 			Parameter p = FixedParameters [idx];
 			mod = p.ModFlags;
 
-			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
+			if ((mod & (Parameter.Modifier.REF )) != 0)
 				mod |= Parameter.Modifier.ISBYREF;
 
 			return p.ParameterType;

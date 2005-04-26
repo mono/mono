@@ -24,7 +24,6 @@ namespace Mono.MonoBASIC {
 		public enum AType : byte {
 			Expression,
 			Ref,
-			Out,
 			NoArg,
 			AddressOf
 		};
@@ -40,7 +39,7 @@ namespace Mono.MonoBASIC {
 
 		public Type Type {
 			get {
-				if (ArgType == AType.Ref || ArgType == AType.Out)
+				if (ArgType == AType.Ref )
 					return TypeManager.LookupType (Expr.Type.ToString () + "&");
 				else
 					return Expr.Type;
@@ -50,9 +49,6 @@ namespace Mono.MonoBASIC {
 		public Parameter.Modifier GetParameterModifier ()
 		{
 			switch (ArgType) {
-			case AType.Out:
-				return Parameter.Modifier.OUT | Parameter.Modifier.ISBYREF;
-
 			case AType.Ref:
 				return Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
 
@@ -63,8 +59,7 @@ namespace Mono.MonoBASIC {
 
 	        public static string FullDesc (Argument a)
 		{
-			return (a.ArgType == AType.Ref ? "ref " :
-				(a.ArgType == AType.Out ? "out " : "")) +
+			return (a.ArgType == AType.Ref ? "ref " : "") +
 				TypeManager.MonoBASIC_Name (a.Expr.Type);
 		}
 
@@ -97,9 +92,7 @@ namespace Mono.MonoBASIC {
 				Expr = Expr.ResolveLValue (ec, Expr);
 			} else */
 
-			if (ArgType == AType.Out)
-				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
-			else if (ArgType == AType.AddressOf) {
+			if (ArgType == AType.AddressOf) {
 				Expression temp_expr = Expr;
 				
 				if (temp_expr is SimpleName) {
@@ -150,12 +143,12 @@ namespace Mono.MonoBASIC {
 		public void Emit (EmitContext ec)
 		{
 			//
-			// Ref and Out parameters need to have their addresses taken.
+			// Ref  parameters need to have their addresses taken.
 			//
 			// ParameterReferences might already be references, so we want
 			// to pass just the value
 			//
-			if (ArgType == AType.Ref || ArgType == AType.Out){
+			if (ArgType == AType.Ref ){
 				AddressOp mode = AddressOp.Store;
 
 				if (ArgType == AType.Ref)

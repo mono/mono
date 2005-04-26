@@ -2039,8 +2039,8 @@ namespace Mono.MonoBASIC {
 			for (int i = 0; i < count; i++) {
 				Parameter.Modifier mod = param_info.ParameterModifier (i);
 
-				if ((mod & Parameter.Modifier.OUT) == 0)
-					continue;
+			//	if ((mod & Parameter.Modifier.OUT) == 0)
+			//		continue;
 
 				param_map [i] = ++num_params;
 

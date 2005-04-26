@@ -1,3 +1,10 @@
+2005-04-26 Manjula GHM <mmanjula@novell.com>
+	*support.cs
+      	*parameter.cs
+      	*argument.cs
+      	*expression.cs
+      	*statement.cs
+		"out" is not supported as Parameter Modifier in VB.NET
 2005-04-21 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs :
 		Fixed object to bool/float/double conversions
