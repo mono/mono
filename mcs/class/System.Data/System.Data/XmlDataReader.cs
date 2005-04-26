@@ -107,10 +107,10 @@ namespace System.Data
 			bool savedEnforceConstraints =
 				dataset.EnforceConstraints;
 			try {
-				dataset.EnforceConstraints = false;
-				reader.MoveToContent ();
+			dataset.EnforceConstraints = false;
+			reader.MoveToContent ();
 
-				if (mode == XmlReadMode.Fragment) {
+			if (mode == XmlReadMode.Fragment) {
 					while (reader.NodeType == XmlNodeType.Element && !reader.EOF) {
 						ReadTopLevelElement ();
 					}
@@ -153,16 +153,16 @@ namespace System.Data
 				reader.Skip ();
 			else if (mode == XmlReadMode.Fragment ||
 				IsTopLevelDataSet ()) {
-				int depth = reader.Depth;
-				reader.Read ();
-				reader.MoveToContent ();
-				do {
-					ReadDataSetContent ();
-				} while (reader.Depth > depth && !reader.EOF);
-				if (reader.NodeType == XmlNodeType.EndElement)
-					reader.ReadEndElement ();
-				reader.MoveToContent ();
-			}
+			int depth = reader.Depth;
+			reader.Read ();
+			reader.MoveToContent ();
+			do {
+				ReadDataSetContent ();
+			} while (reader.Depth > depth && !reader.EOF);
+			if (reader.NodeType == XmlNodeType.EndElement)
+				reader.ReadEndElement ();
+			reader.MoveToContent ();
+		}
 			else
 				ReadDataSetContent ();
 		}

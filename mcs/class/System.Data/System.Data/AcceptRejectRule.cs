@@ -40,9 +40,9 @@ namespace System.Data
 	/// </summary>
 	[Serializable]
 	public enum AcceptRejectRule
-	{
-		Cascade = 1,
-		None = 0
+	{		
+		None = 0,
+		Cascade = 1
 	}
 
 }

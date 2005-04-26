@@ -53,7 +53,6 @@ namespace System.Data {
 		//private bool beginInit = false;
 		
 		public event CollectionChangeEventHandler CollectionChanged;
-		internal event DelegateValidateRemoveConstraint ValidateRemoveConstraint;
 		private DataTable table;
 		
 		// Call this to set the "table" property of the UniqueConstraint class
@@ -162,37 +161,32 @@ namespace System.Data {
 				throw new ArgumentException("Constraint already belongs to another collection.");
 			
 			//check for duplicate name
-#if !NET_1_1
 			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
 				throw new DuplicateNameException("Constraint name already exists.");
-#endif
 	
 			// Check whether Constraint is UniqueConstraint and initailized with the special
-                        // constructor - UniqueConstraint( string, string[], bool );
-                        // If yes, It must be added via AddRange() only
-                        // Environment.StackTrace can help us 
+            // constructor - UniqueConstraint( string, string[], bool );
+            // If yes, It must be added via AddRange() only
+            // Environment.StackTrace can help us 
 			// FIXME: Is a different mechanism to do this?
-                        if (constraint is UniqueConstraint){
-                                if ((constraint as UniqueConstraint).DataColsNotValidated == true){
-                                        if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
-                                                throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
-                                        }
-                                }
-                        }
+            if (constraint is UniqueConstraint){
+                if ((constraint as UniqueConstraint).DataColsNotValidated == true){
+                    if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
+                        throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
+                    }
+                }
+            }
 
-			  if (constraint is ForeignKeyConstraint){
-                                if ((constraint as ForeignKeyConstraint).DataColsNotValidated == true){
-                                        if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
-                                                throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
-                                        }
-                                }
-                        }
-			try {
-				//Allow constraint to run validation rules and setup 
-				constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
-			} catch (ConstraintException ex) {
-				throw new ArgumentException (ex.Message, ex);
-			}
+			if (constraint is ForeignKeyConstraint){
+                if ((constraint as ForeignKeyConstraint).DataColsNotValidated == true){
+                    if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
+                        throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
+                    }
+                }
+            }
+
+			//Allow constraint to run validation rules and setup 
+			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup			
 
 			//Run Constraint to check existing data in table
 			// this is redundant, since AddToConstraintCollectionSetup 
@@ -213,13 +207,12 @@ namespace System.Data {
 			constraint.ConstraintCollection = this;
 			List.Add(constraint);
 
-			if (constraint is UniqueConstraint) 
-				((UniqueConstraint)constraint).UpdatePrimaryKey();
+			if (constraint is UniqueConstraint && ((UniqueConstraint)constraint).IsPrimaryKey) { 
+				table.PrimaryKey = ((UniqueConstraint)constraint).Columns;
+			}
 
 			OnCollectionChanged( new CollectionChangeEventArgs( CollectionChangeAction.Add, this) );
 		}
-
-	
 
 		public virtual Constraint Add(string name, DataColumn column, bool primaryKey) 
 		{
@@ -261,78 +254,61 @@ namespace System.Data {
 		public void AddRange(Constraint[] constraints) {
 
 			//When AddRange() occurs after BeginInit,
-                        //it does not add any elements to the collection until EndInit is called.
+            //it does not add any elements to the collection until EndInit is called.
 			if (this.table.fInitInProgress) {
 				// Keep reference so that they can be added when EndInit() is called.
-                                _mostRecentConstraints = constraints;
-                                return;
-                        }
+                    _mostRecentConstraints = constraints;
+                    return;
+            }
 
-                        if ( (constraints == null) || (constraints.Length == 0))
-                                return;
+			if ( (constraints == null) || (constraints.Length == 0))
+					return;
 
-                        // Check whether the constraint is UniqueConstraint
-                        // And whether it was initialized with the special ctor
-                        // i.e UniqueConstraint( string, string[], bool );
-                        for (int i = 0; i < constraints.Length; i++){
-                                if (constraints[i] is UniqueConstraint){
-                                        if (( constraints[i] as UniqueConstraint).DataColsNotValidated == true){
-                                                PostAddRange _postAddRange= new PostAddRange ((constraints[i] as UniqueConstraint).PostAddRange);
-                                                // UniqueConstraint.PostAddRange() validates whether all named
-                                                // columns exist in the table associated with this instance of
-                                                // ConstraintCollection.
-                                                _postAddRange (this.table);
-                                                                                                    
-                                        }
-                                }
+            // Check whether the constraint is UniqueConstraint
+            // And whether it was initialized with the special ctor
+            // i.e UniqueConstraint( string, string[], bool );
+            for (int i = 0; i < constraints.Length; i++){
+                if (constraints[i] is UniqueConstraint){
+                    if (( constraints[i] as UniqueConstraint).DataColsNotValidated == true){
+                            PostAddRange _postAddRange= new PostAddRange ((constraints[i] as UniqueConstraint).PostAddRange);
+                            // UniqueConstraint.PostAddRange() validates whether all named
+                            // columns exist in the table associated with this instance of
+                            // ConstraintCollection.
+                            _postAddRange (this.table);                                                                                    
+                    }
+                }
 				else if (constraints [i] is ForeignKeyConstraint){
-                                        if (( constraints [i] as ForeignKeyConstraint).DataColsNotValidated == true){
-                                                (constraints [i] as ForeignKeyConstraint).postAddRange (this.table);
-                                        }
-                                }
-	
+                        if (( constraints [i] as ForeignKeyConstraint).DataColsNotValidated == true){
+                            (constraints [i] as ForeignKeyConstraint).postAddRange (this.table);
                         }
-                                                                                                    
+					}
+                }
                         
-                        foreach (Constraint constraint in constraints)
-                                Add (constraint);
+                foreach (Constraint constraint in constraints)
+                        Add (constraint);
 
 		}
 
 		// Helper AddRange() - Call this function when EndInit is called
-                internal void PostEndInit()
-                {
-                        AddRange (_mostRecentConstraints);
-                }
+        internal void PostEndInit()
+        {
+			Constraint[] constraints = _mostRecentConstraints;
+			_mostRecentConstraints = null;
+			AddRange (constraints);
+        }
 
 
 		public bool CanRemove(Constraint constraint) 
 		{
-
-			//Rule A UniqueConstraint can't be removed if there is
-			//a foreign key relationship to that column
-
-			//not null 
-			//LAMESPEC: MSFT implementation throws and exception here
-			//spec says nothing about this
-			if (null == constraint) throw new ArgumentNullException("Constraint can't be null.");
-			
-			//LAMESPEC: spec says return false (which makes sense) and throw exception for False case (?).
-			//TODO: I may want to change how this is done
-			//maybe put a CanRemove on the Constraint class
-			//and have the Constraint fire this event
-
-			//discover if there is a related ForeignKey
-			string failReason ="";
-			return _canRemoveConstraint(constraint, ref failReason);
-			
+			return constraint.CanRemoveFromCollection(this, false);
 		}
 
 		public void Clear() 
-		{
+		{	
+			// Clear should also remove PrimaryKey
+			Table.PrimaryKey = null;
 			
 			//CanRemove? See Lamespec below.
-
 			//the Constraints have a reference to us
 			//and we listen to name change events 
 			//we should remove these before clearing
@@ -393,14 +369,8 @@ namespace System.Data {
 			//not null
 			if (null == constraint) throw new ArgumentNullException();
 
-			string failReason = "";
-			if (! _canRemoveConstraint(constraint, ref failReason) )
-			{
-				if (failReason != null || failReason != "")	
-					throw new ArgumentException(failReason);
-				else
-					throw new ArgumentException("Can't remove constraint.");		
-			}
+			if (!constraint.CanRemoveFromCollection(this, true))
+				return;
 				
 			constraint.RemoveFromConstraintCollectionCleanup(this);
 			List.Remove(constraint);
@@ -434,45 +404,5 @@ namespace System.Data {
 				CollectionChanged(this, ccevent);
 			}
 		}
-
-		private bool _canRemoveConstraint(Constraint constraint, ref string failReason )
-		{
-			bool cancel = false;
-			string tmp = "";
-			if (null != ValidateRemoveConstraint)
-			{
-				ValidateRemoveConstraint(this, constraint, ref cancel, ref tmp);
-			}
-			failReason = tmp;
-			return !cancel;
-		}
-
-		internal ICollection UniqueConstraints
-		{
-			get
-			{ 
-				return GetConstraintsCollection(typeof(UniqueConstraint));
-			}
-		}
-
-		internal ICollection ForeignKeyConstraints
-		{
-			get
-			{ 
-				return GetConstraintsCollection(typeof(ForeignKeyConstraint));
-			}
-		}
-
-		private ICollection GetConstraintsCollection (Type constraintType)
-		{
-			ArrayList cCollection = new ArrayList();
-			foreach (Constraint c in List) 
-			{
-				if (c.GetType() == constraintType)
-					cCollection.Add(c);
-			}
-			return cCollection;
-		}
-
 	}
 }

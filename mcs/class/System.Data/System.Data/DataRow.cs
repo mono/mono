@@ -41,6 +41,8 @@ using System.Collections;
 using System.Globalization;
 using System.Xml;
 
+using System.Data.Common;
+
 namespace System.Data {
 	/// <summary>
 	/// Represents a row of data in a DataTable.
@@ -58,11 +60,9 @@ namespace System.Data {
 
 		private ArrayList _columnErrors;
 		private string rowError;
-		private DataRowState rowState;
 		internal int xmlRowID = 0;
 		internal bool _nullConstraintViolation;
 		private string _nullConstraintMessage;
-		private bool editing = false;
 		private bool _hasParentCollection;
 		private bool _inChangingEvent;
 		private int _rowId;
@@ -84,22 +84,7 @@ namespace System.Data {
 			// Get the row id from the builder.
 			_rowId = builder._rowId;
 
-			_proposed = _table.RecordCache.NewRecord();
-			// Initialise the data columns of the row with the dafault values, if any 
-			// TODO : should proposed version be available immediately after record creation ?
-			foreach(DataColumn column in _table.Columns) {
-				column.DataContainer.CopyValue(_table.DefaultValuesRowIndex,_proposed);
-			}
-			
 			rowError = String.Empty;
-
-			//on first creating a DataRow it is always detached.
-			rowState = DataRowState.Detached;
-			
-			ArrayList aiColumns = _table.Columns.AutoIncrmentColumns;
-			foreach (DataColumn dc in aiColumns) {
-				this [dc] = dc.AutoIncrementValue();
-			}
 
 			// create mapped XmlDataElement
 			DataSet ds = _table.DataSet;
@@ -184,7 +169,7 @@ namespace System.Data {
 			set {
 				if (columnIndex < 0 || columnIndex > _table.Columns.Count)
 					throw new IndexOutOfRangeException ();
-				if (rowState == DataRowState.Deleted)
+				if (RowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 
 				DataColumn column = _table.Columns[columnIndex];
@@ -196,12 +181,12 @@ namespace System.Data {
 				
 				CheckValue (value, column);
 
-				bool orginalEditing = editing;
+				bool orginalEditing = Proposed >= 0;
 				if (!orginalEditing) {
 					BeginEdit ();
 				}
 				
-				column[_proposed] = value;
+				column[Proposed] = value;
 				_table.ChangedDataColumn (this, column, value);
 				if (!orginalEditing) {
 					EndEdit ();
@@ -242,25 +227,25 @@ namespace System.Data {
 				if (columnIndex < 0 || columnIndex > _table.Columns.Count)
 					throw new IndexOutOfRangeException ();
 				// Accessing deleted rows
-				if (!_inExpressionEvaluation && rowState == DataRowState.Deleted && version != DataRowVersion.Original)
+				if (!_inExpressionEvaluation && RowState == DataRowState.Deleted && version != DataRowVersion.Original)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 				
 				DataColumn column = _table.Columns[columnIndex];
-				if (column.Expression != String.Empty) {
-					object o = column.CompiledExpression.Eval (this);
-					return Convert.ChangeType (o, column.DataType);
-				}
-
-				if (rowState == DataRowState.Detached && version == DataRowVersion.Default && _proposed < 0)
-					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
-				
 				int recordIndex = IndexFromVersion(version);
 
-				if (recordIndex >= 0) {
+				if (column.Expression != String.Empty) {
+					object o = column.CompiledExpression.Eval (this);
+					if (o != null && o != DBNull.Value) {
+						o = Convert.ChangeType (o, column.DataType);
+					}
+					column[recordIndex] = o;
 					return column[recordIndex];
 				}
+
+				if (RowState == DataRowState.Detached && version == DataRowVersion.Default && Proposed < 0)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				
-				throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
+				return column[recordIndex];
 			}
 		}
 		
@@ -270,15 +255,15 @@ namespace System.Data {
 		public object[] ItemArray {
 			get { 
 				// row not in table
-				if (rowState == DataRowState.Detached)
+				if (RowState == DataRowState.Detached)
 					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Accessing deleted rows
-				if (rowState == DataRowState.Deleted)
+				if (RowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 				
 				object[] items = new object[_table.Columns.Count];
 				foreach(DataColumn column in _table.Columns) {
-					items[column.Ordinal] = column[_current];
+					items[column.Ordinal] = column[Current];
 				}
 				return items;
 			}
@@ -286,32 +271,28 @@ namespace System.Data {
 				if (value.Length > _table.Columns.Count)
 					throw new ArgumentException ();
 
-				if (rowState == DataRowState.Deleted)
+				if (RowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
 				
-				bool orginalEditing = editing;
-				if (!orginalEditing) { 
-					BeginEdit ();
-				}
-				object newVal = null;
+				BeginEdit ();
+
 				DataColumnChangeEventArgs e = new DataColumnChangeEventArgs();
 				foreach(DataColumn column in _table.Columns) {
 					int i = column.Ordinal;
-					newVal = (i < value.Length) ? value[i] : null;
+					object newVal = (i < value.Length) ? value[i] : null;
+
+					if (newVal == null)
+						continue;
 					
 					e.Initialize(this, column, newVal);
-					_table.RaiseOnColumnChanged(e);
 					CheckValue (e.ProposedValue, column);
-					column[_proposed] = e.ProposedValue;
+					_table.RaiseOnColumnChanging(e);
+					column[Proposed] = e.ProposedValue;
+					_table.RaiseOnColumnChanged(e);
 				}
-				if (!orginalEditing) {
-					EndEdit ();
-				}
+				
+				EndEdit ();
 			}
-		}
-
-		internal bool IsEditing {
-			get { return editing; }
 		}
 
 		/// <summary>
@@ -320,7 +301,24 @@ namespace System.Data {
 		/// </summary>
 		public DataRowState RowState {
 			get { 
-				return rowState; 
+				//return rowState; 
+				  if ((Original == -1) && (Current == -1))
+					{
+						return DataRowState.Detached;
+					}
+					if (Original == Current)
+					{
+						return DataRowState.Unchanged;
+					}
+					if (Original == -1)
+					{
+						return DataRowState.Added;
+					}
+					if (Current == -1)
+					{
+						return DataRowState.Deleted;
+					}
+					return DataRowState.Modified;
 			}
 		}
 
@@ -358,6 +356,48 @@ namespace System.Data {
 			}
 		}
 
+		internal int Original
+		{
+			get {
+				return _original;
+			}
+			set {
+				if (Table != null) {
+					//Table.RecordCache[_original] = null;
+					Table.RecordCache[value] = this;
+				}
+				_original = value;
+			}
+		}
+
+		internal int Current
+		{
+			get {
+				return _current;
+			}
+			set {
+				if (Table != null) {
+					//Table.RecordCache[_current] = null;
+					Table.RecordCache[value] = this;
+				}
+				_current = value;
+			}
+		}
+
+		internal int Proposed
+		{
+			get {
+				return _proposed;
+			}
+			set {
+				if (Table != null) {
+					//Table.RecordCache[_proposed] = null;
+					Table.RecordCache[value] = this;
+				}
+				_proposed = value;
+			}
+		}
+
 		#endregion
 
 		#region Methods
@@ -365,24 +405,58 @@ namespace System.Data {
 		//FIXME?: Couldn't find a way to set the RowState when adding the DataRow
 		//to a Datatable so I added this method. Delete if there is a better way.
 		internal void AttachRow() {
-			if (_current >= 0) {
-				Table.RecordCache.DisposeRecord(_current);
+			if (Proposed != -1) {
+				if (Current >= 0) {
+					Table.RecordCache.DisposeRecord(Current);
+				}
+				Current = Proposed;
+				Proposed = -1;
 			}
-			_current = _proposed;
-			_proposed = -1;
-			rowState = DataRowState.Added;
 		}
 
 		//FIXME?: Couldn't find a way to set the RowState when removing the DataRow
 		//from a Datatable so I added this method. Delete if there is a better way.
 		internal void DetachRow() {
-			if (_proposed >= 0) {
-				_table.RecordCache.DisposeRecord(_proposed);
-				_proposed = -1;
+			if (Proposed >= 0) {
+				_table.RecordCache.DisposeRecord(Proposed);
+				if (Proposed == Current) {
+					Current = -1;
+				}
+				if (Proposed == Original) {
+					Original = -1;
+				}
+				Proposed = -1;
 			}
+
+			if (Current >= 0) {
+				_table.RecordCache.DisposeRecord(Current);
+				if (Current == Original) {
+					Original = -1;
+				}
+				Current = -1;
+			}
+
+			if (Original >= 0) {
+				_table.RecordCache.DisposeRecord(Original);
+				Original = -1;
+			}
+
 			_rowId = -1;
 			_hasParentCollection = false;
-			rowState = DataRowState.Detached;
+		}
+
+		internal void ImportRecord(int record)
+		{
+			if (HasVersion(DataRowVersion.Proposed)) {
+				Table.RecordCache.DisposeRecord(Proposed);
+			}
+
+			Proposed = record;
+
+			foreach(DataColumn column in Table.Columns.AutoIncrmentColumns) {
+				column.UpdateAutoIncrementValue(column.DataContainer.GetInt64(Proposed));
+			}
+
 		}
 
 		private void CheckValue (object v, DataColumn col) 
@@ -406,43 +480,6 @@ namespace System.Data {
 			}
 		}
 
-		internal void SetValuesFromDataRecord(IDataRecord record, int[] mapping)
-		{
-//			bool orginalEditing = editing;
-//			if (!orginalEditing) { 
-//				BeginEdit ();
-//			}
-			
-			if (!HasVersion(DataRowVersion.Proposed)) {
-				_proposed = Table.RecordCache.NewRecord();
-			}
-
-			try {
-				for(int i=0; i < Table.Columns.Count; i++) {
-					DataColumn column = Table.Columns[i];
-                                        if (mapping [i] < 0) { // no mapping
-                                                if (! column.AutoIncrement)
-                                                        column.DataContainer [_proposed] = column.DefaultValue;
-                                                continue;
-                                        }
-
-					column.DataContainer.SetItemFromDataRecord(_proposed, record,mapping[i]);
-					if ( column.AutoIncrement ) { 
-						column.UpdateAutoIncrementValue(column.DataContainer.GetInt64(_proposed));
-					}
-				}
-			}
-			catch (Exception e){
-				Table.RecordCache.DisposeRecord(_proposed);
-				_proposed = -1;
-				throw e;
-			}
-
-//			if (!orginalEditing) {
-//				EndEdit ();
-//			}
-		}
-
 		/// <summary>
 		/// Gets or sets the custom error description for a row.
 		/// </summary>
@@ -457,33 +494,50 @@ namespace System.Data {
 
 		internal int IndexFromVersion(DataRowVersion version)
 		{
-			if (HasVersion(version))
-			{
-				int recordIndex;
-				switch (version) {
-					case DataRowVersion.Default:
-						if (editing || rowState == DataRowState.Detached) {
-							recordIndex = _proposed;
-						}
-						else {
-							recordIndex = _current;
-						}
-						break;
-					case DataRowVersion.Proposed:
-						recordIndex = _proposed;
-						break;
-					case DataRowVersion.Current:
-						recordIndex = _current;
-						break;
-					case DataRowVersion.Original:
-						recordIndex = _original;
-						break;
-					default:
-						throw new ArgumentException ();
-				}
-				return recordIndex;
+			switch (version) {
+				case DataRowVersion.Default:
+					if (Proposed >= 0)
+						return Proposed;
+
+					if (Current >= 0)
+						return Current;
+
+					if (Original < 0)
+						throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
+
+					throw new DeletedRowInaccessibleException("Deleted row information cannot be accessed through the row.");
+
+				case DataRowVersion.Proposed:
+					return AssertValidVersionIndex(version, Proposed);
+				case DataRowVersion.Current:
+					return AssertValidVersionIndex(version, Current);
+				case DataRowVersion.Original:
+					return AssertValidVersionIndex(version, Original);
+				default:
+					throw new DataException ("Version must be Original, Current, or Proposed.");
 			}
-			return -1;
+		}
+
+		private int AssertValidVersionIndex(DataRowVersion version, int index) {
+			if (index >= 0)
+				return index;
+
+			throw new VersionNotFoundException(String.Format("There is no {0} data to accces.", version));
+		}
+
+		internal DataRowVersion VersionFromIndex(int index) {
+			if (index < 0)
+				throw new ArgumentException("Index must not be negative.");
+
+			// the order of ifs matters
+			if (index == Current)
+				return DataRowVersion.Current;
+			if (index == Original)
+				return DataRowVersion.Original;
+			if (index == Proposed)
+				return DataRowVersion.Proposed;
+
+			throw new ArgumentException(String.Format("The index {0} does not belong to this row.", index)	);
 		}
 
 		internal XmlDataDocument.XmlDataElement DataElement {
@@ -496,13 +550,11 @@ namespace System.Data {
 			DataColumn column = _table.Columns[columnName];
 			_table.ChangingDataColumn (this, column, val);
 				
-			if (_original < 0 || _original == _current) { 
-				// This really creates a new record version if one does not exist
-				_original = Table.RecordCache.NewRecord();
+			if (Original < 0 || Original == Current) { 
+				Original = Table.RecordCache.NewRecord();
 			}
 			CheckValue (val, column);
-			column[_original] = val;
-			rowState = DataRowState.Modified;
+			column[Original] = val;
 		}
 
 		/// <summary>
@@ -512,12 +564,16 @@ namespace System.Data {
 		public void AcceptChanges () 
 		{
 			EndEdit(); // in case it hasn't been called
-			switch (rowState) {
+			CheckChildRows(DataRowAction.Commit);
+			switch (RowState) {
 				case DataRowState.Unchanged:
 					return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
-				rowState = DataRowState.Unchanged;
+					if (Original >= 0) {
+						Table.RecordCache.DisposeRecord(Original);
+					}
+					Original = Current;
 				break;
 			case DataRowState.Deleted:
 				_table.Rows.RemoveInternal (this);
@@ -526,11 +582,6 @@ namespace System.Data {
 			case DataRowState.Detached:
 				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
 			}
-			// Accept from detached
-			if (_original >= 0) {
-				Table.RecordCache.DisposeRecord(_original);
-			}
-			_original = _current;
 		}
 
 		/// <summary>
@@ -540,16 +591,17 @@ namespace System.Data {
 		{
 			if (_inChangingEvent)
                                 throw new InRowChangingEventException("Cannot call BeginEdit inside an OnRowChanging event.");
-			if (rowState == DataRowState.Deleted)
+			if (RowState == DataRowState.Deleted)
 				throw new DeletedRowInaccessibleException ();
+
 			if (!HasVersion (DataRowVersion.Proposed)) {
-				_proposed = Table.RecordCache.NewRecord();
-				foreach(DataColumn column in Table.Columns) {
-					column.DataContainer.CopyValue(_current,_proposed);
+				Proposed = Table.RecordCache.NewRecord();
+				int from = HasVersion(DataRowVersion.Current) ? Current : Table.DefaultValuesRowIndex;
+				for(int i = 0; i < Table.Columns.Count; i++){
+					DataColumn column = Table.Columns[i];
+					column.DataContainer.CopyValue(from,Proposed);
 				}
 			}
-			// setting editing to true stops validations on the row
-			editing = true;
 		}
 
 		/// <summary>
@@ -557,15 +609,13 @@ namespace System.Data {
 		/// </summary>
 		public void CancelEdit () 
 		{
-			 if (_inChangingEvent)
+			 if (_inChangingEvent) {
                                 throw new InRowChangingEventException("Cannot call CancelEdit inside an OnRowChanging event.");
-			editing = false;
+			 }
+
 			if (HasVersion (DataRowVersion.Proposed)) {
-				Table.RecordCache.DisposeRecord(_proposed);
-				_proposed = -1;
-				if (rowState == DataRowState.Modified) {
-				    rowState = DataRowState.Unchanged;
-				}
+				Table.RecordCache.DisposeRecord(Proposed);
+				Proposed = -1;
 			}
 		}
 
@@ -585,7 +635,7 @@ namespace System.Data {
 		public void Delete () 
 		{
 			_table.DeletingDataRow(this, DataRowAction.Delete);
-			switch (rowState) {
+			switch (RowState) {
 			case DataRowState.Added:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
@@ -601,8 +651,13 @@ namespace System.Data {
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
 				_table.DeleteRowFromIndexes (this);
-				rowState = DataRowState.Deleted;
 				break;
+			}
+			if (Current >= 0) {
+				if (Current != Original) {
+					_table.RecordCache.DisposeRecord(Current);
+				}
+				Current = -1;
 			}
 			_table.DeletedDataRow(this, DataRowAction.Delete);
 		}
@@ -624,16 +679,24 @@ namespace System.Data {
 				foreach (DataTable table in _table.DataSet.Tables)
 				{
 					// loop on all ForeignKeyConstrain of the table.
-					foreach (ForeignKeyConstraint fk in table.Constraints.ForeignKeyConstraints)
-					{
-						if (fk.RelatedTable == _table)
-						{
-							Rule rule;
-							if (action == DataRowAction.Delete)
-								rule = fk.DeleteRule;
-							else
-								rule = fk.UpdateRule;
-							CheckChildRows(fk, action, rule);
+					foreach (Constraint constraint in table.Constraints) {
+						if (constraint is ForeignKeyConstraint) { 
+							ForeignKeyConstraint fk = (ForeignKeyConstraint) constraint;
+							if (fk.RelatedTable == _table) {
+								switch (action) {
+									case DataRowAction.Delete:
+										CheckChildRows(fk, action, fk.DeleteRule);
+										break;
+									case DataRowAction.Commit:
+									case DataRowAction.Rollback:
+										if (fk.AcceptRejectRule != AcceptRejectRule.None)
+											CheckChildRows(fk, action, Rule.Cascade);
+										break;
+									default:
+										CheckChildRows(fk, action, fk.UpdateRule);
+										break;
+								}
+							}			
 						}			
 					}
 				}
@@ -642,7 +705,7 @@ namespace System.Data {
 
 		private void CheckChildRows(ForeignKeyConstraint fkc, DataRowAction action, Rule rule)
 		{				
-			DataRow[] childRows = GetChildRows(fkc, DataRowVersion.Default);
+			DataRow[] childRows = GetChildRows(fkc, DataRowVersion.Current);
 			switch (rule)
 			{
 				case Rule.Cascade:  // delete or change all relted rows.
@@ -651,18 +714,29 @@ namespace System.Data {
 						for (int j = 0; j < childRows.Length; j++)
 						{
 							// if action is delete we delete all child rows
-							if (action == DataRowAction.Delete)
-							{
+							switch(action) {
+								case DataRowAction.Delete: {
 								if (childRows[j].RowState != DataRowState.Deleted)
 									childRows[j].Delete();
+
+									break;
 							}
 							// if action is change we change the values in the child row
-							else if (action == DataRowAction.Change)
-							{
+								case DataRowAction.Change: {
 								// change only the values in the key columns
 								// set the childcolumn value to the new parent row value
 								for (int k = 0; k < fkc.Columns.Length; k++)
 									childRows[j][fkc.Columns[k]] = this[fkc.RelatedColumns[k], DataRowVersion.Proposed];
+
+									break;
+								}
+
+								case DataRowAction.Rollback: {
+									if (childRows[j].RowState != DataRowState.Unchanged)
+										childRows[j].RejectChanges ();
+
+									break;
+								}
 							}
 						}
 					}
@@ -721,15 +795,14 @@ namespace System.Data {
 		{
 			if (_inChangingEvent)
 				throw new InRowChangingEventException("Cannot call EndEdit inside an OnRowChanging event.");
-			if (rowState == DataRowState.Detached)
-			{
-				editing = false;
+
+			if (RowState == DataRowState.Detached)
 				return;
-			}
 			
-			CheckReadOnlyStatus();
 			if (HasVersion (DataRowVersion.Proposed))
 			{
+				CheckReadOnlyStatus();
+
 				_inChangingEvent = true;
 				try
 				{
@@ -739,51 +812,42 @@ namespace System.Data {
 				{
 					_inChangingEvent = false;
 				}
-				if (rowState == DataRowState.Unchanged)
-					rowState = DataRowState.Modified;
 				
 				//Calling next method validates UniqueConstraints
 				//and ForeignKeys.
+				bool rowValidated = false;
 				try
 				{
-					if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
+					if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad) {
 						_table.Rows.ValidateDataRowInternal(this);
+						rowValidated = true;
+					}
 				}
 				catch (Exception e)
 				{
-					editing = false;
-					Table.RecordCache.DisposeRecord(_proposed);
-					_proposed = -1;
+					Table.RecordCache.DisposeRecord(Proposed);
+					Proposed = -1;
 					throw e;
 				}
 
-				// Now we are going to check all child rows of current row.
-				// In the case the cascade is true the child rows will look up for
-				// parent row. since lookup in index is always on current,
-				// we have to move proposed version of current row to current
-				// in the case of check child row failure we are rolling 
-				// current row state back.
-				int backup = _current;
-				_current = _proposed;
-				bool editing_backup = editing;
-				editing = false;
-				try {
-					// check all child rows.
 					CheckChildRows(DataRowAction.Change);
-					_proposed = -1;
-					if (_original != backup) {
-						Table.RecordCache.DisposeRecord(backup);
+				if (Original != Current) {
+					Table.RecordCache.DisposeRecord(Current);
+				}
+
+				Current = Proposed;
+				Proposed = -1;
+
+				if (!rowValidated) {
+					// keep indexes updated even if there was no need to validate row
+					foreach(Index index in Table.Indexes) {
+						index.Update(this,Current); //FIXME: why Current ?!
 					}
 				}
-				catch (Exception ex) {
-					// if check child rows failed - rollback to previous state
-					// i.e. restore proposed and current versions
-					_proposed = _current;
-					_current = backup;
-					editing = editing_backup;
-					// since we failed - propagate an exception
-					throw ex;
-				}
+
+				// Note : row state must not be changed before all the job on indexes finished,
+				// since the indexes works with recods rather than with rows and the decision
+				// which of row records to choose depends on row state.
 				_table.ChangedDataRow(this, DataRowAction.Change);
 			}
 		}
@@ -812,9 +876,8 @@ namespace System.Data {
 		public DataRow[] GetChildRows (DataRelation relation, DataRowVersion version) 
 		{
 			if (relation == null)
-				return new DataRow[0];
+				return Table.NewRowArray(0);
 
-			//if (this.Table == null || RowState == DataRowState.Detached)
 			if (this.Table == null)
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
@@ -831,23 +894,34 @@ namespace System.Data {
 			DataColumn[] parentColumns = relation.ParentColumns;
 			DataColumn[] childColumns = relation.ChildColumns;
 			int numColumn = parentColumns.Length;
-			if (HasVersion(version))
-			{
-				object[] vals = new object[parentColumns.Length];
-				for (int i = 0; i < vals.Length; i++)
-					vals[i] = this[parentColumns[i], version];
-				
-				foreach (DataRow row in relation.ChildTable.Rows) 
-				{
-					bool allColumnsMatch = false;
-					if (row.HasVersion(DataRowVersion.Default))
-					{
-						allColumnsMatch = true;
-						for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) 
-						{
-							if (!vals[columnCnt].Equals(
-								row[childColumns[columnCnt], DataRowVersion.Default])) 
-							{
+			DataRow[] result = null;
+
+			int versionIndex = IndexFromVersion(version);
+			int tmpRecord = relation.ChildTable.RecordCache.NewRecord();
+
+			try {
+				for (int i = 0; i < numColumn; i++) {
+					// according to MSDN: the DataType value for both columns must be identical.
+					childColumns[i].DataContainer.CopyValue(parentColumns[i].DataContainer, versionIndex, tmpRecord);
+				}
+
+				Index index = relation.ChildTable.FindIndex(childColumns);
+
+				if (index != null) {
+					int[] records = index.FindAll(tmpRecord);
+					result = relation.ChildTable.NewRowArray(records.Length);
+					for(int i=0; i < records.Length; i++) {
+						result[i] = relation.ChildTable.RecordCache[records[i]];
+					}
+				}
+				else {
+					foreach (DataRow row in relation.ChildTable.Rows) {
+						bool allColumnsMatch = false;
+						if (row.HasVersion(DataRowVersion.Default)) {
+							allColumnsMatch = true;
+							int childIndex = row.IndexFromVersion(DataRowVersion.Default);
+							for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
+								if (childColumns[columnCnt].DataContainer.CompareValues(childIndex, tmpRecord) != 0) {
 								allColumnsMatch = false;
 								break;
 							}
@@ -855,11 +929,14 @@ namespace System.Data {
 					}
 					if (allColumnsMatch) rows.Add(row);
 				}
-			}else
-				throw new VersionNotFoundException("There is no " + version + " data to accces.");
+					result = relation.ChildTable.NewRowArray(rows.Count);
+					rows.CopyTo(result, 0);
+				}
+			}
+			finally {
+				relation.ChildTable.RecordCache.DisposeRecord(tmpRecord);
+			}			
 
-			DataRow[] result = relation.ChildTable.NewRowArray(rows.Count);
-			rows.CopyTo(result, 0);
 			return result;
 		}
 
@@ -878,25 +955,25 @@ namespace System.Data {
 			DataColumn[] parentColumns = fkc.RelatedColumns;
 			DataColumn[] childColumns = fkc.Columns;
 			int numColumn = parentColumns.Length;
-			if (HasVersion(version)) {
+
 				Index index = fkc.Index;
+
+			int curIndex = IndexFromVersion(version);
+			int tmpRecord = fkc.Table.RecordCache.NewRecord();
+			for (int i = 0; i < numColumn; i++) {
+				// according to MSDN: the DataType value for both columns must be identical.
+				childColumns[i].DataContainer.CopyValue(parentColumns[i].DataContainer, curIndex, tmpRecord);
+			}
+
+			try {
 				if (index != null) {
 					// get the child rows from the index
-					Node[] childNodes = index.FindAllSimple (parentColumns, IndexFromVersion(version));
-					for (int i = 0; i < childNodes.Length; i++) {
-						rows.Add (childNodes[i].Row);
+					int[] childRecords = index.FindAll(tmpRecord);
+					for (int i = 0; i < childRecords.Length; i++) {
+						rows.Add (childColumns[i].Table.RecordCache[childRecords[i]]);
 					}
 				}
 				else { // if there is no index we search manualy.
-					int curIndex = IndexFromVersion(DataRowVersion.Default);
-					int tmpRecord = fkc.Table.RecordCache.NewRecord();
-
-					try {
-						for (int i = 0; i < numColumn; i++) {
-							// according to MSDN: the DataType value for both columns must be identical.
-							childColumns[i].DataContainer.CopyValue(parentColumns[i].DataContainer, curIndex, tmpRecord);
-						}
-
 						foreach (DataRow row in fkc.Table.Rows) {
 							bool allColumnsMatch = false;
 							if (row.HasVersion(DataRowVersion.Default)) {
@@ -914,12 +991,10 @@ namespace System.Data {
 							}
 						}
 					}
+			}
 					finally {
 						fkc.Table.RecordCache.DisposeRecord(tmpRecord);
 					}
-				}
-			}else
-				throw new VersionNotFoundException("There is no " + version + " data to accces.");
 
 			DataRow[] result = fkc.Table.NewRowArray(rows.Count);
 			rows.CopyTo(result, 0);
@@ -931,7 +1006,14 @@ namespace System.Data {
 		/// </summary>
 		public string GetColumnError (DataColumn column) 
 		{
-			return GetColumnError (_table.Columns.IndexOf(column));
+			if (column == null)
+				throw new ArgumentNullException("column");
+
+			int index = _table.Columns.IndexOf(column);
+			if (index < 0)
+				throw new ArgumentException(String.Format("Column '{0}' does not belong to table {1}.", column.ColumnName, Table.TableName));
+
+			return GetColumnError (index);
 		}
 
 		/// <summary>
@@ -1037,7 +1119,7 @@ namespace System.Data {
 		{
 			// TODO: Caching for better preformance
 			if (relation == null)
-				return new DataRow[0];
+				return Table.NewRowArray(0);
 
 			if (this.Table == null)
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
@@ -1052,25 +1134,23 @@ namespace System.Data {
 			DataColumn[] parentColumns = relation.ParentColumns;
 			DataColumn[] childColumns = relation.ChildColumns;
 			int numColumn = parentColumns.Length;
-			if (HasVersion(version)) {
-				Index indx = relation.ParentTable.GetIndexByColumns (parentColumns);
-				if (indx != null && 
-    (Table == null || Table.DataSet == null || 
-     Table.DataSet.EnforceConstraints)) { // get the child rows from the index
-					Node[] childNodes = indx.FindAllSimple(childColumns, IndexFromVersion(version));
-					for (int i = 0; i < childNodes.Length; i++) {
-						rows.Add (childNodes[i].Row);
-					}
-				}
-				else { // no index so we have to search manualy.
-					int curIndex = IndexFromVersion(DataRowVersion.Default);
+
+			int curIndex = IndexFromVersion(version);
 					int tmpRecord = relation.ParentTable.RecordCache.NewRecord();
-					try {
 						for (int i = 0; i < numColumn; i++) {
 							// according to MSDN: the DataType value for both columns must be identical.
 							parentColumns[i].DataContainer.CopyValue(childColumns[i].DataContainer, curIndex, tmpRecord);
 						}
 
+			try {
+				Index index = relation.ParentTable.FindIndex(parentColumns);
+				if (index != null) { // get the parent rows from the index
+					int[] parentRecords = index.FindAll(tmpRecord);
+					for (int i = 0; i < parentRecords.Length; i++) {
+						rows.Add (parentColumns[i].Table.RecordCache[parentRecords[i]]);
+					}
+				}
+				else { // no index so we have to search manualy.
 						foreach (DataRow row in relation.ParentTable.Rows) {
 							bool allColumnsMatch = false;
 							if (row.HasVersion(DataRowVersion.Default)) {
@@ -1088,12 +1168,10 @@ namespace System.Data {
 							}
 						}
 					}
+			}
 					finally {
 						relation.ParentTable.RecordCache.DisposeRecord(tmpRecord);
 					}
-				}
-			}else
-				throw new VersionNotFoundException("There is no " + version + " data to accces.");
 
 			DataRow[] result = relation.ParentTable.NewRowArray(rows.Count);
 			rows.CopyTo(result, 0);
@@ -1116,25 +1194,16 @@ namespace System.Data {
 		{
 			switch (version) {
 				case DataRowVersion.Default:
-					if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
-						return false;
-					if (rowState == DataRowState.Detached)
-						return _proposed >= 0;
-					return true;
+					return (Proposed >= 0 || Current >= 0);
 				case DataRowVersion.Proposed:
-					if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
-						return false;
-					return _proposed >= 0;
+					return Proposed >= 0;
 				case DataRowVersion.Current:
-					if ((rowState == DataRowState.Deleted && !_inExpressionEvaluation) || rowState == DataRowState.Detached)
-						return false;
-					return _current >= 0;
+					return Current >= 0;
 				case DataRowVersion.Original:
-					if (rowState == DataRowState.Detached)
-						return false;
-					return _original >= 0;
+					return Original >= 0;
+				default:
+					return IndexFromVersion(version) >= 0;
 			}
-			return false;
 		}
 
 		/// <summary>
@@ -1168,6 +1237,7 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (DataColumn column, DataRowVersion version) 
 		{
+			object o = this[column,version];
 			return column.DataContainer.IsNull(IndexFromVersion(version));
 		}
 
@@ -1198,14 +1268,16 @@ namespace System.Data {
 			// If original is null, then nothing has happened since AcceptChanges
 			// was last called.  We have no "original" to go back to.
 			if (HasVersion(DataRowVersion.Original)) {
-				if (_current >= 0 ) {
-					Table.RecordCache.DisposeRecord(_current);
+				if (Current >= 0 && Current != Original) {
+					Table.RecordCache.DisposeRecord(Current);
 				}
-				_current = _original;
+				CheckChildRows(DataRowAction.Rollback);
+
+				Current = Original;
 			       
 				_table.ChangedDataRow (this, DataRowAction.Rollback);
 				CancelEdit ();
-				switch (rowState)
+				switch (RowState)
 				{
 					case DataRowState.Added:
 						_table.DeleteRowFromIndexes (this);
@@ -1214,10 +1286,8 @@ namespace System.Data {
 					case DataRowState.Modified:
 						if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
 							_table.Rows.ValidateDataRowInternal(this);
-						rowState = DataRowState.Unchanged;
 						break;
 					case DataRowState.Deleted:
-						rowState = DataRowState.Unchanged;
 						if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
 							_table.Rows.ValidateDataRowInternal(this);
 						break;
@@ -1230,7 +1300,7 @@ namespace System.Data {
 				// FIXME: I'm not realy sure, does this break something else, but
 				// if so: FIXME ;)
 				
-				if ((rowState & DataRowState.Added) > 0)
+				if ((RowState & DataRowState.Added) > 0)
 				{
 					_table.DeleteRowFromIndexes (this);
 					_table.Rows.RemoveInternal (this);
@@ -1292,47 +1362,44 @@ namespace System.Data {
 		/// </summary>
 		public void SetParentRow (DataRow parentRow, DataRelation relation) 
 		{
-			if (_table == null || parentRow.Table == null)
+			if (_table == null || parentRow.Table == null || RowState == DataRowState.Detached)
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (parentRow != null && _table.DataSet != parentRow.Table.DataSet)
 				throw new ArgumentException();
 			
 			BeginEdit();
-			if (relation == null)
-			{
-				foreach (DataRelation parentRel in _table.ParentRelations)
-				{
-					DataColumn[] childCols = parentRel.ChildColumns;
-					DataColumn[] parentCols = parentRel.ParentColumns;
-					
-					for (int i = 0; i < parentCols.Length; i++)
-					{
-						if (parentRow == null)
-							this[childCols[i].Ordinal] = DBNull.Value;
-						else
-							this[childCols[i].Ordinal] = parentRow[parentCols[i]];
-					}
-					
-				}
+
+			IEnumerable relations; 
+			if (relation == null) {
+				relations = _table.ParentRelations;
 			}
-			else
+			else {
+				relations = new DataRelation[] { relation };
+			}
+
+			foreach (DataRelation rel in relations)
 			{
-				DataColumn[] childCols = relation.ChildColumns;
-				DataColumn[] parentCols = relation.ParentColumns;
-					
+				DataColumn[] childCols = rel.ChildColumns;
+				DataColumn[] parentCols = rel.ParentColumns;
+				
 				for (int i = 0; i < parentCols.Length; i++)
 				{
-					if (parentRow == null)
-						this[childCols[i].Ordinal] = DBNull.Value;
-					else
-						this[childCols[i].Ordinal] = parentRow[parentCols[i]];
+					if (parentRow == null) {
+						childCols[i].DataContainer[Proposed] = DBNull.Value;
+					}
+					else {
+						int defaultIdx = parentRow.IndexFromVersion(DataRowVersion.Default);
+						childCols[i].DataContainer.CopyValue(parentCols[i].DataContainer,defaultIdx,Proposed);
+					}
 				}
+				
 			}
+
 			EndEdit();
 		}
 		
-		//Copy all values of this DataaRow to the row parameter.
+		//Copy all values of this DataRow to the row parameter.
 		internal void CopyValuesToRow(DataRow row)
 		{
 			if (row == null)
@@ -1346,44 +1413,64 @@ namespace System.Data {
 				if(targetColumn != null) {
 					int index = targetColumn.Ordinal;
 					if (HasVersion(DataRowVersion.Original)) {
-						if (row._original < 0) {
-							row._original = row.Table.RecordCache.NewRecord();
+						if (row.Original < 0) {
+							row.Original = row.Table.RecordCache.NewRecord();
 						}
-						object val = column[_original];
+						object val = column[Original];
 						row.CheckValue(val, targetColumn);
-						targetColumn[row._original] = val;
+						targetColumn[row.Original] = val;
 					}
+					else {
+						if (row.Original > 0) {
+							row.Table.RecordCache.DisposeRecord(row.Original);
+							row.Original = -1;
+						}
+					}
+
 					if (HasVersion(DataRowVersion.Current)) {
-						if (row._current < 0) {
-							row._current = row.Table.RecordCache.NewRecord();
+						if (row.Current < 0) {
+							row.Current = row.Table.RecordCache.NewRecord();
 						}
-						object val = column[_current];
+						object val = column[Current];
 						row.CheckValue(val, targetColumn);
-						targetColumn[row._current] = val;
+						targetColumn[row.Current] = val;
 					}
+					else {
+						if (row.Current > 0) {
+							row.Table.RecordCache.DisposeRecord(row.Current);
+							row.Current = -1;
+						}
+					}
+
 					if (HasVersion(DataRowVersion.Proposed)) {
-						if (row._proposed < 0) {
-							row._proposed = row.Table.RecordCache.NewRecord();
+						if (row.Proposed < 0) {
+							row.Proposed = row.Table.RecordCache.NewRecord();
 						}
-						object val = column[row._proposed];
+						object val = column[row.Proposed];
 						row.CheckValue(val, targetColumn);
-						targetColumn[row._proposed] = val;
+						targetColumn[row.Proposed] = val;
 					}
-					
-					//Saving the current value as the column value
-					object defaultVal = column [IndexFromVersion (DataRowVersion.Default)];
-					row [index] = defaultVal;
+					else {
+						if (row.Proposed > 0) {
+							row.Table.RecordCache.DisposeRecord(row.Proposed);
+							row.Proposed = -1;
+						}
+					}
 				}
 			}
-			CopyState(row);
+			if (HasErrors) {
+				CopyErrors(row);
+			}
 		}
 
-		// Copy row state - rowState and errors
-		internal void CopyState(DataRow row)
+		internal void CopyErrors(DataRow row)
 		{
-			row.rowState = RowState;
 			row.RowError = RowError;
-			row.ColumnErrors = (ArrayList)ColumnErrors.Clone();
+			DataColumn[] errorColumns = GetColumnsInError();
+			foreach(DataColumn col in errorColumns) {
+				DataColumn targetColumn = row.Table.Columns[col.ColumnName];
+				row.SetColumnError(targetColumn,GetColumnError(col));
+			}
 		}
 
 		internal bool IsRowChanged(DataRowState rowState) {
@@ -1435,21 +1522,15 @@ namespace System.Data {
 			}
 		}
 		
-		internal void CheckReadOnlyStatus()
-                {
-			if (HasVersion(DataRowVersion.Proposed)) {
+		internal void CheckReadOnlyStatus() {
 				int defaultIdx = IndexFromVersion(DataRowVersion.Default); 
 				foreach(DataColumn column in Table.Columns) {
-					if ((column.DataContainer.CompareValues(defaultIdx,_proposed) != 0) && column.ReadOnly) {
+				if ((column.DataContainer.CompareValues(defaultIdx,Proposed) != 0) && column.ReadOnly) {
         	                        throw new ReadOnlyException();
                         }
                 }
 			}                       
-                }
 	
 		#endregion // Methods
 	}
-
-	
-
 }

@@ -22,6 +22,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 
 namespace System.Data
 {
@@ -51,6 +52,9 @@ namespace System.Data
 			if(sourceTable == null)
 				throw new ArgumentNullException("sourceTable");
 
+			bool savedEnfoceConstraints = targetSet.EnforceConstraints;
+			targetSet.EnforceConstraints = false;
+
 			DataTable targetTable = null;
 			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction,ref targetTable)) {
 				return;
@@ -58,7 +62,13 @@ namespace System.Data
 			if (targetTable != null) {
 				checkColumnTypes(targetTable, sourceTable); // check that the colums datatype is the same
 				fillData(targetTable, sourceTable, preserveChanges);
-			}			
+			}
+			targetSet.EnforceConstraints = savedEnfoceConstraints;
+			
+			if (!targetSet.EnforceConstraints && targetTable != null) {
+				// indexes are still outdated
+				targetTable.ResetIndexes();
+			}
 		}
 
 		internal static void Merge(DataSet targetSet, DataRow[] sourceRows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
@@ -68,6 +78,10 @@ namespace System.Data
 			if(sourceRows == null)
 				throw new ArgumentNullException("sourceRows");
 
+			bool savedEnfoceConstraints = targetSet.EnforceConstraints;
+			targetSet.EnforceConstraints = false;
+
+			ArrayList targetTables = new ArrayList();
 			for (int i = 0; i < sourceRows.Length; i++) {
 				DataRow row = sourceRows[i];
 				DataTable sourceTable = row.Table;
@@ -78,7 +92,16 @@ namespace System.Data
 				if (targetTable != null) {
 					checkColumnTypes(targetTable, row.Table);
 					MergeRow(targetTable, row, preserveChanges);
+					if (!(targetTables.IndexOf(targetTable) >= 0)) {
+						targetTables.Add(targetTable);
+					}
 				}
+			}
+
+			targetSet.EnforceConstraints = savedEnfoceConstraints;
+
+			foreach(DataTable table in targetTables) {
+				table.ResetIndexes();
 			}
 		}
 
@@ -110,6 +133,7 @@ namespace System.Data
 			if (targetRow == null)
 			{ 
 				targetRow = targetTable.NewRow();
+				targetRow.Proposed = -1;
 				row.CopyValuesToRow(targetRow);
 				targetTable.Rows.Add(targetRow);
 			}
@@ -119,7 +143,6 @@ namespace System.Data
 			{
 				row.CopyValuesToRow(targetRow);
 			}
-
 		}
 			
 
@@ -138,6 +161,7 @@ namespace System.Data
 						DataColumn[] childColumns = ResolveColumns(sourceSet,targetTable,relation.ChildColumns);
 						if (parentColumns != null && childColumns != null) {
 							DataRelation newRelation = new DataRelation(relation.RelationName,parentColumns,childColumns);
+							newRelation.Nested = relation.Nested; 
 							targetSet.Relations.Add(newRelation);
 						}
 					}
@@ -150,33 +174,37 @@ namespace System.Data
 					DataTable targetTable = targetSet.Tables[sourceTable.TableName];
 
 					if (targetTable != null) {
-						foreach(UniqueConstraint uc in sourceTable.Constraints.UniqueConstraints) {
-							// TODO : add more precise condition (columns)
-							if ( !targetTable.Constraints.Contains(uc.ConstraintName) ) {		
-								DataColumn[] columns = ResolveColumns(sourceSet,targetTable,uc.Columns);
-								if (columns != null) {
-									UniqueConstraint newConstraint = new UniqueConstraint(uc.ConstraintName,columns,uc.IsPrimaryKey);
-									targetTable.Constraints.Add(newConstraint);
-								}
-							}
-							else {
-								// TODO : should we throw an exeption ?
-							}
-						}
+						foreach(Constraint constraint in sourceTable.Constraints) {
 
-						foreach(ForeignKeyConstraint fc in sourceTable.Constraints.ForeignKeyConstraints) {
-							// TODO : add more precise condition (columns)
-							if (!targetTable.Constraints.Contains(fc.ConstraintName)) {
-								DataColumn[] columns = ResolveColumns(sourceSet,targetTable,fc.Columns);
-								DataTable relatedTable = targetSet.Tables[fc.RelatedTable.TableName];
-								DataColumn[] relatedColumns = ResolveColumns(sourceSet,relatedTable,fc.RelatedColumns);
-								if (columns != null && relatedColumns != null) {
-									ForeignKeyConstraint newConstraint = new ForeignKeyConstraint(fc.ConstraintName,relatedColumns,columns);
-									targetTable.Constraints.Add(newConstraint);
+							if (constraint is UniqueConstraint) {
+								UniqueConstraint uc = (UniqueConstraint)constraint;
+								// FIXME : add more precise condition (columns)
+								if ( !targetTable.Constraints.Contains(uc.ConstraintName) ) {		
+									DataColumn[] columns = ResolveColumns(sourceSet,targetTable,uc.Columns);
+									if (columns != null) {
+										UniqueConstraint newConstraint = new UniqueConstraint(uc.ConstraintName,columns,uc.IsPrimaryKey);
+										targetTable.Constraints.Add(newConstraint);
+									}
+								}
+								else {
+									// FIXME : should we throw an exception ?
 								}
 							}
 							else {
-								// TODO : should we throw an exeption ?
+								ForeignKeyConstraint fc = (ForeignKeyConstraint)constraint;
+								// FIXME : add more precise condition (columns)
+								if (!targetTable.Constraints.Contains(fc.ConstraintName)) {
+									DataColumn[] columns = ResolveColumns(sourceSet,targetTable,fc.Columns);
+									DataTable relatedTable = targetSet.Tables[fc.RelatedTable.TableName];
+									DataColumn[] relatedColumns = ResolveColumns(sourceSet,relatedTable,fc.RelatedColumns);
+									if (columns != null && relatedColumns != null) {
+										ForeignKeyConstraint newConstraint = new ForeignKeyConstraint(fc.ConstraintName,relatedColumns,columns);
+										targetTable.Constraints.Add(newConstraint);
+									}
+								}
+								else {
+									// FIXME : should we throw an exception ?
+								}
 							}
 						}
 					}

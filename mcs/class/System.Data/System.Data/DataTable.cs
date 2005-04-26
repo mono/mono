@@ -8,6 +8,7 @@
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Tim Coleman (tim@timcoleman.com)
 //   Ville Palo <vi64pa@koti.soon.fi>
+//   Konstantin Triger <kostat@mainsoft.com>
 //
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
@@ -67,7 +68,7 @@ namespace System.Data {
 		private DataColumnCollection _columnCollection;
 		private ConstraintCollection _constraintCollection;
 		// never access it. Use DefaultView.
-		private DataView _defaultView;
+		private DataView _defaultView = null;
 
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
@@ -78,7 +79,7 @@ namespace System.Data {
 		private DataRelationCollection _childRelations; 
 		private DataRelationCollection _parentRelations;
 		private string _prefix;
-		private DataColumn[] _primaryKey;
+		private UniqueConstraint _primaryKeyConstraint;
 		private DataRowCollection _rows;
 		private ISite _site;
 		private string _tableName;
@@ -99,10 +100,11 @@ namespace System.Data {
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
 		private bool _virginCaseSensitive = true;
 		
+		private PropertyDescriptorCollection _propertyDescriptorsCache;
+		static DataColumn[] _emptyColumnArray = new DataColumn[0];
+		
 		#endregion //Fields
 		
-		private delegate void PostEndInit();
-
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with no arguments.
 		/// </summary>
@@ -116,7 +118,7 @@ namespace System.Data {
 			_nameSpace = null;
 			_caseSensitive = false;  	//default value
 			_displayExpression = null;
-			_primaryKey = null;
+			_primaryKeyConstraint = null;
 			_site = null;
 			_rows = new DataRowCollection (this);
 			_indexes = new ArrayList();
@@ -191,7 +193,12 @@ namespace System.Data {
 				}
 				_virginCaseSensitive = false;
 				_caseSensitive = value; 
+				ResetCaseSensitiveIndexes();
 			}
+		}
+		
+		internal ArrayList Indexes{
+			get { return _indexes; }
 		}
 
 		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv) 
@@ -283,8 +290,16 @@ namespace System.Data {
 		[DataSysDescription ("This is the default DataView for the table.")]
 		public DataView DefaultView {
 			get {
-				if (_defaultView == null)
-					_defaultView = new DataView (this);
+				if (_defaultView == null) {
+					lock(this){
+						if (_defaultView == null){
+							if (dataSet != null)
+								_defaultView = dataSet.DefaultViewManager.CreateDataView(this);
+							else
+								_defaultView = new DataView(this);
+						}
+					}
+				}
 				return _defaultView;
 			}
 		}
@@ -375,11 +390,16 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
 		public string Namespace {
-			get {
+			get
+			{
 				if (_nameSpace != null)
+				{
 					return _nameSpace;
-				else if (dataSet != null)
-					return dataSet.Namespace;
+				}
+				if (DataSet != null)
+				{
+					return DataSet.Namespace;
+				}
 				return String.Empty;
 			}
 			set { _nameSpace = value; }
@@ -427,12 +447,13 @@ namespace System.Data {
 		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 		public DataColumn[] PrimaryKey {
 			get {
-				UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint( Constraints);
-				if (null == uc) return new DataColumn[] {};
-				return uc.Columns;
+				if (_primaryKeyConstraint == null) { 
+					return new DataColumn[] {};
+				}
+				return _primaryKeyConstraint.Columns;
 			}
 			set {
-				UniqueConstraint oldPKConstraint = UniqueConstraint.GetPrimaryKeyConstraint( Constraints);
+				UniqueConstraint oldPKConstraint = _primaryKeyConstraint;
 				
 				// first check if value is the same as current PK.
 				if (oldPKConstraint != null && DataColumn.AreColumnSetsTheSame(value, oldPKConstraint.Columns))
@@ -440,57 +461,40 @@ namespace System.Data {
 
 				// remove PK Constraint
 				if(oldPKConstraint != null) {
+					_primaryKeyConstraint = null;
 					Constraints.Remove(oldPKConstraint);
 				}
 				
 				if (value != null) {
 					//Does constraint exist for these columns
-					UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
-						this.Constraints, (DataColumn[]) value);
+					UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(this.Constraints, (DataColumn[]) value);
 				
 					//if constraint doesn't exist for columns
 					//create new unique primary key constraint
 					if (null == uc) {
 						foreach (DataColumn Col in (DataColumn[]) value) {
-
 							if (Col.Table == null)
 								break;
 
 							if (Columns.IndexOf (Col) < 0)
 								throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
 						}
-
-
-						uc = new UniqueConstraint( (DataColumn[]) value, true);
-					
+						// create constraint with primary key indication set to false
+						// to avoid recursion
+						uc = new UniqueConstraint( (DataColumn[]) value, false);		
 						Constraints.Add (uc);
 					}
-					else { 
-						//set existing constraint as the new primary key
-						UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
-					}
 
-					// if we really supplied some columns fo primary key - 
-					// rebuild indexes fo all foreign key constraints
-					if(value.Length > 0) {
-						foreach(ForeignKeyConstraint constraint in this.Constraints.ForeignKeyConstraints){
-							try {
-								constraint.AssertConstraint();
-							} catch (ConstraintException ex) {
-								throw new ArgumentException (ex.Message, ex);
-							}
-						}
-					}
-				}
-				else {
-					// if primary key is null now - drop all the indexes for foreign key constraints
-					foreach(ForeignKeyConstraint constraint in this.Constraints.ForeignKeyConstraints){
-						Index index = constraint.Index;
-						constraint.Index = null;
-						this.DropIndex(index);
-					}
-				}
-				
+					//set the constraint as the new primary key
+						UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+					_primaryKeyConstraint = uc;
+				}				
+			}
+		}
+
+		internal UniqueConstraint PrimaryKeyConstraint {
+			get{
+				return _primaryKeyConstraint;
 			}
 		}
 
@@ -539,17 +543,51 @@ namespace System.Data {
 			}
 		}
 		
+		private DataRowBuilder RowBuilder
+		{
+			get
+			{
+				// initiate only one row builder.
+				if (_rowBuilder == null)
+					_rowBuilder = new DataRowBuilder (this, -1, 0);
+				else			
+					// new row get id -1.
+					_rowBuilder._rowId = -1;
+
+				return _rowBuilder;
+			}
+		}
+		
 		private bool EnforceConstraints {
 			get { return enforceConstraints; }
 			set {
 				if (value != enforceConstraints) {
 					if (value) {
-						// first assert all unique constraints
-						foreach (UniqueConstraint uc in this.Constraints.UniqueConstraints)
-						uc.AssertConstraint ();
-						// then assert all foreign keys
-						foreach (ForeignKeyConstraint fk in this.Constraints.ForeignKeyConstraints)
-							fk.AssertConstraint ();
+						// reset indexes since they may be outdated
+						ResetIndexes();
+
+						bool violatesConstraints = false;
+
+						//FIXME: use index for AllowDBNull
+						for (int i = 0; i < Columns.Count; i++) {
+							DataColumn column = Columns[i];
+							if (!column.AllowDBNull) {
+								for (int j = 0; j < Rows.Count; j++){
+									if (Rows[j].IsNull(column)) {
+										violatesConstraints = true;
+										Rows[j].RowError = String.Format("Column '{0}' does not allow DBNull.Value.", column.ColumnName);
+									}
+								}
+							}
+						}
+
+						if (violatesConstraints)
+							Constraint.ThrowConstraintException();
+
+						// assert all constraints
+						foreach (Constraint constraint in Constraints) {
+							constraint.AssertConstraint();
+						}
 					}
 					enforceConstraints = value;
 				}
@@ -566,25 +604,23 @@ namespace System.Data {
 					// according to MSDN: the DataType value for both columns must be identical.
 					columns[i].DataContainer.CopyValue(relatedColumns[i].DataContainer, curIndex, tmpRecord);
 				}
-
-				return RowsExist(columns, tmpRecord, relatedColumns.Length);
+				return RowsExist(columns, tmpRecord);
 			}
 			finally {
 				RecordCache.DisposeRecord(tmpRecord);
 			}
 		}
 
-		bool RowsExist(DataColumn[] columns, int index, int length)
+		bool RowsExist(DataColumn[] columns, int index)
 		{
 			bool rowsExist = false;
-			Index indx = this.GetIndexByColumns (columns);
+			Index indx = this.FindIndex(columns);
 
 			if (indx != null) { // lookup for a row in index			
-				rowsExist = (indx.FindSimple (index, length, false) != null);
+				rowsExist = (indx.Find(index) != -1);
 			} 
-			
-			if(indx == null || rowsExist == false) { 
-				// no index or rowExist= false, we have to perform full-table scan
+			else { 
+				// we have to perform full-table scan
  				// check that there is a parent for this row.
 				foreach (DataRow thisRow in this.Rows) {
 					if (thisRow.RowState != DataRowState.Deleted) {
@@ -664,7 +700,6 @@ namespace System.Data {
 				}
 				else {
 					//if table does not belong to any data set use EnforceConstraints of the table
-					this.dataTablePrevEnforceConstraints = this.EnforceConstraints;
 					this.EnforceConstraints = false;
 				}
 			}
@@ -703,6 +738,9 @@ namespace System.Data {
 
 			DataRow[] rows = Select(filter);
 			
+			if (rows == null || rows.Length == 0)
+				return DBNull.Value;
+			
 			Parser parser = new Parser (rows);
 			IExpression expr = parser.Compile (expression);
 			object obj = expr.Eval (rows[0]);
@@ -720,29 +758,38 @@ namespace System.Data {
 			copy._duringDataLoad = true;
 			foreach (DataRow row in Rows) {
 				DataRow newRow = copy.NewNotInitializedRow();
-				copy.Rows.Add(newRow);
+				copy.Rows.AddInternal(newRow);
 				CopyRow(row,newRow);
 			}
 			copy._duringDataLoad = false;		
+		
+			// rebuild copy indexes after loading all rows
+			copy.ResetIndexes();
 			return copy;
 		}
 
 		internal void CopyRow(DataRow fromRow,DataRow toRow)
 		{
-			fromRow.CopyState(toRow);
+			if (fromRow.HasErrors) {
+				fromRow.CopyErrors(toRow);
+			}
 
 			if (fromRow.HasVersion(DataRowVersion.Original)) {
-				toRow._original = toRow.Table.RecordCache.CopyRecord(this,fromRow._original,-1);
+				toRow.Original = toRow.Table.RecordCache.CopyRecord(this,fromRow.Original,-1);
 			}
 
 			if (fromRow.HasVersion(DataRowVersion.Current)) {
-				toRow._current = toRow.Table.RecordCache.CopyRecord(this,fromRow._current,-1);
+				if (fromRow.Original != fromRow.Current) {
+					toRow.Current = toRow.Table.RecordCache.CopyRecord(this,fromRow.Current,-1);
+				}
+				else {
+					toRow.Current = toRow.Original;
+				}
 			}
 		}
 
 		private void CopyProperties (DataTable Copy) 
 		{
-					
 			Copy.CaseSensitive = CaseSensitive;
 			Copy._virginCaseSensitive = _virginCaseSensitive;
 
@@ -767,19 +814,19 @@ namespace System.Data {
 			Copy.Site = Site;
 			Copy.TableName = TableName;
 
-
+			bool isEmpty = Copy.Columns.Count == 0;
 
 			// Copy columns
-			foreach (DataColumn Column in Columns) {
-				// When cloning a table, the columns may be added in the default
-			        // constructor.
-				if (!Copy.Columns.Contains(Column.ColumnName)) 							        Copy.Columns.Add (CopyColumn (Column));	
+			foreach (DataColumn column in Columns) {			
+				// When cloning a table, the columns may be added in the default constructor.
+				if (isEmpty || !Copy.Columns.Contains(column.ColumnName)) {
+					Copy.Columns.Add (column.Clone());	
+				}
 			}
 
 			CopyConstraints(Copy);
 			// add primary key to the copy
-			if (PrimaryKey.Length > 0)
-			{
+			if (PrimaryKey.Length > 0) {
 				DataColumn[] pColumns = new DataColumn[PrimaryKey.Length];
 				for (int i = 0; i < pColumns.Length; i++)
 					pColumns[i] = Copy.Columns[PrimaryKey[i].ColumnName];
@@ -816,8 +863,8 @@ namespace System.Data {
 		{
 			fInitInProgress = false;
 			// Add the constraints
-			PostEndInit _postEndInit = new PostEndInit (_constraintCollection.PostEndInit);
-			_postEndInit();
+			_constraintCollection.PostEndInit();
+			Columns.PostEndInit();
 		}
 
 		/// <summary>
@@ -826,30 +873,24 @@ namespace System.Data {
 		/// </summary>
 		public void EndLoadData() 
 		{
-			int i = 0;
-			if (this._duringDataLoad) 
-			{
-				
-				if (this.dataSet !=null)
-				{
-					//Getting back to previous EnforceConstraint state
-					this.dataSet.EnforceConstraints = this.dataSetPrevEnforceConstraints;
-				}
-				else {
-					//Getting back to the table's previous EnforceConstraint state
-					this.EnforceConstraints = this.dataTablePrevEnforceConstraints;
-				}
-
+			if (this._duringDataLoad) {
 				if(this._nullConstraintViolationDuringDataLoad) {
 					this._nullConstraintViolationDuringDataLoad = false;
 					throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 				}
+				
+				if (this.dataSet !=null) {
+					//Getting back to previous EnforceConstraint state
+					this.dataSet.InternalEnforceConstraints(this.dataSetPrevEnforceConstraints,true);
+				}
+				else {
+					//Getting back to the table's previous EnforceConstraint state
+					this.EnforceConstraints = true;
+				}
 
 				//Returning from loading mode, raising exceptions as usual
 				this._duringDataLoad = false;
-
 			}
-
 		}
 
 		/// <summary>
@@ -879,9 +920,9 @@ namespace System.Data {
 				if (row.IsRowChanged(rowStates)) {
 					if (copyTable == null)
 						copyTable = Clone();
-					DataRow newRow = copyTable.NewRow();
+					DataRow newRow = copyTable.NewNotInitializedRow();
 					row.CopyValuesToRow(newRow);
-					copyTable.Rows.Add (newRow);
+					copyTable.Rows.AddInternal (newRow);
 				}
 			}
 			 
@@ -908,7 +949,9 @@ namespace System.Data {
 					errors.Add(_rows[i]);
 			}
 			
-			return (DataRow[]) errors.ToArray(typeof(DataRow));
+			DataRow[] ret = NewRowArray(errors.Count);
+			errors.CopyTo(ret, 0);
+			return ret;
 		}
 	
 		/// <summary>
@@ -947,11 +990,29 @@ namespace System.Data {
 		/// </summary>
 		public void ImportRow (DataRow row) 
 		{
-			DataRow newRow = NewRow();
-			row.CopyValuesToRow (newRow);
-                        if (row.RowState != DataRowState.Detached)
-                                Rows.Add (newRow);
-			row.CopyState (newRow);
+			DataRow newRow = NewNotInitializedRow();
+			
+			if (row.HasVersion(DataRowVersion.Original)) {
+				if (!newRow.HasVersion(DataRowVersion.Original)) {
+					newRow.Original = RecordCache.NewRecord();
+				}				
+				int original = row.IndexFromVersion(DataRowVersion.Original);
+				RecordCache.CopyRecord(row.Table,original,newRow.Original);
+			}
+
+			if (row.HasVersion(DataRowVersion.Current)) {
+				if (!newRow.HasVersion(DataRowVersion.Current)) {
+					newRow.Current = RecordCache.NewRecord();
+				}				
+				int current = row.IndexFromVersion(DataRowVersion.Current);
+				RecordCache.CopyRecord(row.Table,current,newRow.Current);
+			}
+
+			Rows.AddInternal(newRow);		
+	
+			if (row.HasErrors) {
+				row.CopyErrors(newRow);
+			}
 		}
 
 		internal int DefaultValuesRowIndex
@@ -1017,26 +1078,21 @@ namespace System.Data {
 					row.AcceptChanges ();
 			}
 			else {
-				bool hasPrimaryValues = true;
-				// initiate an array that has the values of the primary keys.
-				object[] keyValues = new object[PrimaryKey.Length];
-				for (int i = 0; i < keyValues.Length && hasPrimaryValues; i++)
-				{
-					if(PrimaryKey[i].Ordinal < values.Length)
-						keyValues[i] = values[PrimaryKey[i].Ordinal];
-					else
-						hasPrimaryValues = false;
+				int newRecord = CreateRecord(values);
+				int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
+
+				if (existingRecord < 0) {
+					row = NewRowFromBuilder (RowBuilder);
+					row.Proposed = newRecord;
+					Rows.AddInternal(row);
 				}
-				
-				if (hasPrimaryValues){
-					// find the row in the table.
-					row = Rows.Find(keyValues);
+				else {
+					row = RecordCache[existingRecord];
+					row.BeginEdit();
+					row.ImportRecord(newRecord);
+					row.EndEdit();
+					
 				}
-				
-				if (row == null)
-					row = Rows.Add (values);
-				else
-					row.ItemArray = values;
 				
 				if (fAcceptChanges)
 					row.AcceptChanges ();
@@ -1045,54 +1101,54 @@ namespace System.Data {
 			return row;
 		}
 
-		internal DataRow LoadDataRow(IDataRecord record, int[] mapping, bool fAcceptChanges)
+		internal DataRow LoadDataRow(IDataRecord record, int[] mapping, int length, bool fAcceptChanges)
 		{
 			DataRow row = null;
-			if (PrimaryKey.Length == 0) {
-				row = NewRow();
-				row.SetValuesFromDataRecord(record, mapping);
-				Rows.Add (row);
-
-				if (fAcceptChanges) {
-					row.AcceptChanges();
-				}
-			}
-			else {
-				bool hasPrimaryValues = true;
 				int tmpRecord = this.RecordCache.NewRecord();
 				try {
-					for (int i = 0; i < PrimaryKey.Length && hasPrimaryValues; i++) {
-						DataColumn primaryKeyColumn = PrimaryKey[i];
-						int ordinal = primaryKeyColumn.Ordinal;
-						if(ordinal < mapping.Length) {
-							primaryKeyColumn.DataContainer.SetItemFromDataRecord(tmpRecord,record,mapping[ordinal]);
-						}
-						else {
+				RecordCache.ReadIDataRecord(tmpRecord,record,mapping,length);
+				if (PrimaryKey.Length != 0) {
+					bool hasPrimaryValues = true;
+					foreach(DataColumn col in PrimaryKey) {
+						if(!(col.Ordinal < mapping.Length)) {
 							hasPrimaryValues = false;
+							break;
 						}
 					}
 					
 					if (hasPrimaryValues) {
 						// find the row in the table.
-						row = Rows.Find(tmpRecord,PrimaryKey.Length);
+						row = Rows.Find(tmpRecord);
 					}
 				}
-				finally {
-					this.RecordCache.DisposeRecord(tmpRecord);
-				}
-
+					
+				bool shouldUpdateIndex = false;
 				if (row == null) {
-					row = NewRow();
-					row.SetValuesFromDataRecord(record, mapping);
-					Rows.Add (row);
+					row = NewNotInitializedRow();
+					row.ImportRecord(tmpRecord);
+					Rows.AddInternal (row);
+					shouldUpdateIndex = true;
 				}
 				else {
-					row.SetValuesFromDataRecord(record, mapping);
+					// Proposed = tmpRecord
+					row.ImportRecord(tmpRecord);
 				}
 				
 				if (fAcceptChanges) {
 					row.AcceptChanges();
 				}
+				
+				if (shouldUpdateIndex || !fAcceptChanges) {
+					// AcceptChanges not always updates indexes because it calls EndEdit
+					foreach(Index index in Indexes) {
+						index.Update(row,tmpRecord);
+					}
+				}
+
+			}
+			catch(Exception e) {
+				this.RecordCache.DisposeRecord(tmpRecord);
+				throw e;
 			}				
 			return row;
 		}
@@ -1128,13 +1184,51 @@ namespace System.Data {
 		/// </summary>
 		public DataRow NewRow () 
 		{
-			// initiate only one row builder.
-			if (_rowBuilder == null)
-				_rowBuilder = new DataRowBuilder (this, 0, 0);
-			
-			// new row get id -1.
-			_rowBuilder._rowId = -1;
+			EnsureDefaultValueRowIndex();
 
+			DataRow newRow = NewRowFromBuilder (RowBuilder);
+
+			newRow.Proposed = CreateRecord(null);
+			return newRow;
+		}
+
+		internal int CreateRecord(object[] values) {
+			int valCount = values != null ? values.Length : 0;
+			if (valCount > Columns.Count)
+				throw new ArgumentException("Input array is longer than the number of columns in this table.");
+
+			int index = RecordCache.NewRecord();
+
+			try {
+				for (int i = 0; i < valCount; i++) {
+					try {
+						Columns[i].DataContainer[index] = values[i];
+					}
+					catch(Exception e) {
+						throw new ArgumentException(e.Message +
+							String.Format("Couldn't store <{0}> in {1} Column.  Expected type is {2}.",
+							values[i], Columns[i].ColumnName, Columns[i].DataType.Name), e);
+					}
+				}
+
+				for(int i = valCount; i < Columns.Count; i++) {
+					DataColumn column = Columns[i];
+					if (column.AutoIncrement)
+						column.DataContainer[index] = column.AutoIncrementValue ();
+					else
+						column.DataContainer.CopyValue(DefaultValuesRowIndex, index);
+				}
+
+				return index;
+			}
+			catch {
+				RecordCache.DisposeRecord(index);
+				throw;
+			}
+		}
+
+		private void EnsureDefaultValueRowIndex()
+		{
 			// initialize default values row for the first time
 			if ( _defaultValuesRowIndex == -1 ) {
 				_defaultValuesRowIndex = RecordCache.NewRecord();
@@ -1142,8 +1236,6 @@ namespace System.Data {
 					column.DataContainer[_defaultValuesRowIndex] = column.DefaultValue;
 				}
 			}
-
-			return this.NewRowFromBuilder (_rowBuilder);
 		}
 
 		/// <summary>
@@ -1165,7 +1257,9 @@ namespace System.Data {
 		
 		internal DataRow NewNotInitializedRow()
 		{
-			return new DataRow(this,-1);
+			EnsureDefaultValueRowIndex();
+
+			return NewRowFromBuilder (RowBuilder);
 		}
 
 #if NET_2_0
@@ -1190,11 +1284,11 @@ namespace System.Data {
 			XmlTextReader reader = null;
 			try {
 				reader = new XmlTextReader (fileName);
-				ReadXmlSchema (reader);
+			ReadXmlSchema (reader);
 			} finally {
 				if (reader != null)
-					reader.Close ();
-			}
+			reader.Close ();
+		}
 		}
 
 		public void ReadXmlSchema (XmlReader reader)
@@ -1290,108 +1384,111 @@ namespace System.Data {
 			if (filterExpression == null)
 				filterExpression = String.Empty;
 
+			DataColumn[] columns = _emptyColumnArray;
+			ListSortDirection[] sorts = null;
+			if (sort != null && !sort.Equals(String.Empty))
+				columns = ParseSortString (this, sort, out sorts, false);
+
 			IExpression filter = null;
 			if (filterExpression != String.Empty) {
 				Parser parser = new Parser ();
 				filter = parser.Compile (filterExpression);
 			}
-			SortableColumn[] sortableColumns = null;
-			if (sort != null && !sort.Equals(String.Empty))
-				sortableColumns = SortableColumn.ParseSortString (this, sort, true);
 
-			return Select (filter, sortableColumns, recordStates);
-		}
+			Index index = FindIndex(columns, sorts, recordStates, filter);
+			if (index == null)
+				index = new Index(new Key(this,columns,sorts,recordStates,filter));
 
-		internal DataRow [] Select (IExpression filter, SortableColumn [] sortableColumns, DataViewRowState recordStates)
-		{
-			ArrayList rowList = new ArrayList();
-			int recordStateFilter = GetRowStateFilter(recordStates);
-			foreach (DataRow row in Rows) {
-				if (((int)row.RowState & recordStateFilter) != 0) {
-					if (filter != null && !filter.EvalBoolean (row))
-						continue;
-					rowList.Add (row);
-				}
-			}
-
-			DataRow[] dataRows = (DataRow[])rowList.ToArray(GetRowType ());
-
-			if (sortableColumns != null) {
-				RowSorter rowSorter = new RowSorter (this, sortableColumns);
-				dataRows = rowSorter.SortRows (dataRows);
-
-				sortableColumns = null;
-				rowSorter = null;
-			}
+			int[] records = index.GetAll();
+			DataRow[] dataRows = NewRowArray(index.Size);
+			for (int i = 0; i < dataRows.Length; i++)
+				dataRows[i] = RecordCache[records[i]];
 
 			return dataRows;
 		}
 
-		internal void AddIndex (Index index)
+		
+		private void AddIndex (Index index)
 		{
-			if (_indexes == null)
+			if (_indexes == null) {
 				_indexes = new ArrayList();
+			}
 
 			_indexes.Add (index);
 		}
 
-		internal void RemoveIndex (Index indx)
+		/// <summary>
+		/// Returns index corresponding to columns,sort,row state filter and unique values given.
+		/// If such an index not exists, creates a new one.
+		/// </summary>
+		/// <param name="columns">Columns set of the index to look for.</param>
+		/// <param name="sort">Columns sort order of the index to look for.</param>
+		/// <param name="rowState">Rpw state filter of the index to look for.</param>
+		/// <param name="unique">Uniqueness of the index to look for.</param>
+		/// <param name="strict">Indicates whenever the index found should correspond in its uniquness to the value of unique parameter specified.</param>
+		/// <param name="reset">Indicates whenever the already existing index should be forced to reset.</param>
+		/// <returns></returns>
+		internal Index GetIndex(DataColumn[] columns, ListSortDirection[] sort, DataViewRowState rowState, IExpression filter, bool reset)
 		{
-			_indexes.Remove (indx);
+			Index index = FindIndex(columns,sort,rowState,filter);
+			if (index == null ) {
+				index = new Index(new Key(this,columns,sort,rowState,filter));
+
+				AddIndex(index);
+			}
+			else if (reset) {
+				// reset existing index only if asked for this
+				index.Reset();
+			}
+			return index;
 		}
 
-		internal Index GetIndexByColumns (DataColumn[] columns)
+		internal Index FindIndex(DataColumn[] columns)
 		{
-			return GetIndexByColumns(columns,false,false);
+			return FindIndex(columns,null,DataViewRowState.None, null);
 		}
 
-//		internal Index GetIndexByColumnsExtended(DataColumn[] columns)
-//		{
-//			DataColumn[] pkColumns = this.PrimaryKey;
-//			if((pkColumns != null) && (pkColumns.Length > 0)) {
-//				DataColumn[] cols = new DataColumn[columns.Length + pkColumns.Length];					
-//				Array.Copy(columns,0,cols,0,columns.Length);
-//				Array.Copy(pkColumns,0,cols,columns.Length,pkColumns.Length);
-//
-//				return _getIndexByColumns(cols,false,false);
-//			} else {
-//				return null;
-//			}
-//		}
-
-		internal Index GetIndexByColumns (DataColumn[] columns, bool unique)
+		internal Index FindIndex(DataColumn[] columns, ListSortDirection[] sort, DataViewRowState rowState, IExpression filter)
 		{
-			return GetIndexByColumns(columns,unique,true);
-		}
-
-//		internal Index GetIndexByColumnsExtended(DataColumn[] columns, bool unique)
-//		{
-//			DataColumn[] pkColumns = this.PrimaryKey;
-//			if((pkColumns != null) && (pkColumns.Length > 0)) {
-//				DataColumn[] cols = new DataColumn[columns.Length + pkColumns.Length];					
-//				Array.Copy(columns,0,cols,0,columns.Length);
-//				Array.Copy(pkColumns,0,cols,columns.Length,pkColumns.Length);
-//
-//				return _getIndexByColumns(cols,unique,true);
-//			} else  {
-//				return null;
-//			}
-//		}
-
-		internal Index GetIndexByColumns(DataColumn[] columns, bool unique, bool useUnique)
-		{
-			if (_indexes != null) {
-				foreach (Index indx in _indexes) {
-					bool found = false;
-					if ((!useUnique) || ((useUnique)&& (indx.IsUnique))) {
-						found = DataColumn.AreColumnSetsTheSame (indx.Columns, columns);
+			if (Indexes != null) {
+				foreach (Index index in Indexes) {
+					if (index.Key.Equals(columns,sort,rowState, filter)) {
+						return index;
 					}
-					if (found)
-						return indx;
 				}
 			}
-
 			return null;
+		}
+
+		internal void ResetIndexes()
+		{
+			foreach(Index index in Indexes) {
+				index.Reset();
+			}
+		}
+
+		internal void ResetCaseSensitiveIndexes()
+		{
+			foreach(Index index in Indexes) {
+				bool containsStringcolumns = false;
+				foreach(DataColumn column in index.Key.Columns) {
+					if (column.DataType == typeof(string)) {
+						containsStringcolumns = true;
+						break;
+					}
+				}
+
+				if (containsStringcolumns) {
+					index.Reset();
+				}
+			}
+		}
+
+		internal void DropIndex(Index index)
+		{
+			if (index != null && index.RefCount == 0) {	
+				_indexes.Remove(index);
+			}
 		}
 
 		internal void DeleteRowFromIndexes (DataRow row)
@@ -1401,24 +1498,6 @@ namespace System.Data {
 					indx.Delete (row);
 				}
 			}
-		}
-
-		private static int GetRowStateFilter(DataViewRowState recordStates)
-		{
-			int flag = 0;
-
-			if ((recordStates & DataViewRowState.Added) != 0)
-				flag |= (int)DataRowState.Added;
-			if ((recordStates & DataViewRowState.Deleted) != 0)
-				flag |= (int)DataRowState.Deleted;
-			if ((recordStates & DataViewRowState.ModifiedCurrent) != 0)
-				flag |= (int)DataRowState.Modified;
-			if ((recordStates & DataViewRowState.ModifiedOriginal) != 0)
-				flag |= (int)DataRowState.Modified;
-			if ((recordStates & DataViewRowState.Unchanged) != 0)
-				flag |= (int)DataRowState.Unchanged;
-
-			return flag;
 		}
 
 		/// <summary>
@@ -1556,6 +1635,10 @@ namespace System.Data {
 			}
 		}
 
+		internal void RaiseOnColumnChanging (DataColumnChangeEventArgs e) {
+			OnColumnChanging(e);
+		}
+
 		/// <summary>
 		/// Raises the PropertyChanging event.
 		/// </summary>
@@ -1611,36 +1694,6 @@ namespace System.Data {
 				RowDeleting(this, e);
 			}
 		}
-
-		[MonoTODO]
-		private DataColumn CopyColumn (DataColumn Column) {
-			DataColumn Copy = new DataColumn ();
-
-			// Copy all the properties of column
-			Copy.Caption = Column.Caption;
-			Copy.ColumnMapping = Column.ColumnMapping;
-			Copy.ColumnName = Column.ColumnName;
-			//Copy.Container
-			Copy.DataType = Column.DataType;
-			Copy.DefaultValue = Column.DefaultValue;			
-			Copy.Expression = Column.Expression;
-			//Copy.ExtendedProperties
-			Copy.MaxLength = Column.MaxLength;
-			Copy.Namespace = Column.Namespace;
-			Copy.Prefix = Column.Prefix;
-			Copy.ReadOnly = Column.ReadOnly;
-			//Copy.Site
-			//we do not copy the unique value - it will be copyied when copying the constraints.
-			//Copy.Unique = Column.Unique;
-
-			// At least AutoIncrement must be set after DefaultValue
-			Copy.AllowDBNull = Column.AllowDBNull;
-			Copy.AutoIncrement = Column.AutoIncrement;
-			Copy.AutoIncrementSeed = Column.AutoIncrementSeed;
-			Copy.AutoIncrementStep = Column.AutoIncrementStep;
-			
-			return Copy;
-		}			
 
 		/// <summary>
 		/// Occurs when after a value has been changed for 
@@ -1704,204 +1757,17 @@ namespace System.Data {
 			UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
 		}
 
-		internal class RowSorter : IComparer 
+		internal static DataColumn[] ParseSortString (DataTable table, string sort, out ListSortDirection[] sortDirections, bool rejectNoResult)
 		{
-			private DataTable table;
-			private SortableColumn[] sortColumns;
+			DataColumn[] sortColumns = _emptyColumnArray;
+			sortDirections = null;
 			
-			internal RowSorter(DataTable table,
-					SortableColumn[] sortColumns) 
-			{
-				this.table = table;
-				this.sortColumns = sortColumns;
-			}
-
-			public SortableColumn[] SortColumns {
-				get {
-					return sortColumns;
-				}
-			}
-			
-			public DataRow[] SortRows (DataRow [] rowsToSort) 
-			{
-				Array.Sort (rowsToSort, this);
-				return rowsToSort;
-			}
-
-			int IComparer.Compare (object x, object y) 
-			{
-				if(x == null)
-					throw new SystemException ("Object to compare is null: x");
-				if(y == null)
-					throw new SystemException ("Object to compare is null: y");
-				if(!(x is DataRow))
-					throw new SystemException ("Object to compare is not DataRow: x is " + x.GetType().ToString());
-				if(!(y is DataRow))
-					throw new SystemException ("Object to compare is not DataRow: y is " + x.GetType().ToString());
-
-				if (x == y)
-					return 0;
-
-				DataRow rowx = (DataRow) x;
-				DataRow rowy = (DataRow) y;
-
-				for(int i = 0; i < sortColumns.Length; i++) {
-					SortableColumn sortColumn = sortColumns[i];
-					DataColumn dc = sortColumn.Column;
-
-					int result = dc.CompareValues(
-						rowx.IndexFromVersion(DataRowVersion.Default),
-						rowy.IndexFromVersion(DataRowVersion.Default));
-
-					if (result != 0) {
-						if (sortColumn.SortDirection == ListSortDirection.Ascending) {
-							return result;
-						}
-						else {
-							return -result;
-						}
-					}
-				}
-				return x.GetHashCode () - y.GetHashCode ();
-			}
-		}
-
-		/// <summary>
-		/// Creates new index for a table
-		/// </summary>
-		internal Index CreateIndex(string name, DataColumn[] columns, bool unique)
-		{
-			// first check whenever index exists on the columns
-			Index idx = this.GetIndexByColumns(columns);
-			if(idx != null) {
-			// if index on this columns already exists - return it
-				return idx;
-			}
-
-			// create new index
-			Index newIndex = new Index(name,this,columns,unique);
-
-			//InitializeIndex (newIndex);			
-
-			// add new index to table indexes
-			this.AddIndex(newIndex);
-			return newIndex;
-		}
-
-//		/// <summary>
-//		/// Creates new extended index for a table
-//		/// </summary>
-//		internal Index CreateIndexExtended(string name, DataColumn[] columns, bool unique)
-//		{
-//			// first check whenever extended index exists on the columns
-//			Index idx = this.GetIndexByColumnsExtended(columns);
-//			if(idx != null) {
-//				// if extended index on this columns already exists - return it
-//				return idx;
-//			}
-//
-//			DataColumn[] pkColumns = this.PrimaryKey;
-//			if((pkColumns != null) && (pkColumns.Length > 0)) {
-//				DataColumn[] cols = new DataColumn[columns.Length + pkColumns.Length];					
-//				Array.Copy(columns,0,cols,0,columns.Length);
-//				Array.Copy(pkColumns,0,cols,columns.Length,pkColumns.Length);
-//				return this.CreateIndex(name, cols, unique);
-//			} 
-//			else {
-//				throw new InvalidOperationException("Can not create extended index if the primary key is null or primary key does not contains any row");
-//			}
-//		}
-
-//		/// <summary>
-//		/// Drops extended index if it is not referenced anymore
-//		/// by any of table constraints
-//		/// </summary>
-//		internal void DropIndexExtended(DataColumn[] columns)
-//		{
-//			// first check whenever extended index exists on the columns
-//			Index index = this.GetIndexByColumnsExtended(columns);
-//			if(index == null) {
-//				// if no extended index on this columns exists - do nothing
-//				return;
-//			}
-//			this.DropIndex(index);
-//		}
-
-		/// <summary>
-		/// Drops index specified by columns if it is not referenced anymore
-		/// by any of table constraints
-		/// </summary>
-		internal void DropIndex(DataColumn[] columns)
-		{
-			// first check whenever index exists for the columns
-			Index index = this.GetIndexByColumns(columns);
-			if(index == null) {
-			// if no index on this columns already exists - do nothing
-				return;
-			}
-			this.DropIndex(index);
-		}
-
-		internal void DropIndex(Index index)
-		{
-			// loop through table constraints and checks 
-			foreach(Constraint constraint in Constraints) {
-				// if we found another reference to the index we do not remove the index.
-				if (index == constraint.Index)
-					return; 
-			}
-			
-			this.RemoveIndex(index);
-		}
-
-		internal void InitializeIndex (Index indx)
-		{
-			DataRow[] rows = new DataRow[this.Rows.Count];
-			this.Rows.CopyTo (rows, 0);
-			indx.Root = null;
-			// fill index with table rows
-			foreach(DataRow row in this.Rows) {
-				if(row.RowState != DataRowState.Deleted) {
-					indx.Insert(new Node(row), DataRowVersion.Default);
-				}
-			}
-		}
-	}
-
-	// to parse the sort string for DataTable:Select(expression,sort)
-	// into sortable columns (think ORDER BY, 
-	// such as, "customer ASC, price DESC" ), as well as DataView.Sort.
-	internal class SortableColumn 
-	{
-		private DataColumn col;
-		private ListSortDirection dir;
-
-		internal SortableColumn (DataColumn column, 
-					ListSortDirection direction) 
-		{
-			col = column;
-			dir = direction;
-		}
-
-		public DataColumn Column {
-			get {
-				return col;
-			}
-		}
-
-		public ListSortDirection SortDirection {
-			get {
-				return dir;
-			}
-		}
-
-		internal static SortableColumn[] ParseSortString (DataTable table, string sort, bool rejectNoResult)
-		{
-			SortableColumn[] sortColumns = null;
 			ArrayList columns = null;
+			ArrayList sorts = null;
 		
 			if (sort != null && !sort.Equals ("")) {
 				columns = new ArrayList ();
+				sorts = new ArrayList();
 				string[] columnExpression = sort.Trim ().Split (new char[1] {','});
 			
 				for (int c = 0; c < columnExpression.Length; c++) {
@@ -1923,22 +1789,31 @@ namespace System.Data {
 					default:
 						throw new IndexOutOfRangeException ("Could not find column: " + columnExpression[c]);
 					}
-					Int32 ord = 0;
-					try {
-						ord = Int32.Parse (columnName);
+
+					if (columnName.StartsWith("[") || columnName.EndsWith("]")) {
+						if (columnName.StartsWith("[") && columnName.EndsWith("]"))
+							columnName = columnName.Substring(1, columnName.Length - 2);
+						else
+							throw new ArgumentException(String.Format("{0} isn't a valid Sort string entry.", columnName));
+					}
+
+					DataColumn dc = table.Columns[columnName];
+					if (dc == null){
+						try {
+							dc = table.Columns[Int32.Parse (columnName)];
 					}
 					catch (FormatException) {
-						ord = -1;
+							throw new IndexOutOfRangeException("Cannot find column " + columnName);
 					}
-					DataColumn dc = null;
-					if (ord == -1)				
-						dc = table.Columns [columnName];
-					else
-						dc = table.Columns [ord];
-					SortableColumn sortCol = new SortableColumn (dc,sortDirection);
-					columns.Add (sortCol);
+					}
+
+					columns.Add (dc);
+					sorts.Add(sortDirection);
 				}	
-				sortColumns = (SortableColumn[]) columns.ToArray (typeof (SortableColumn));
+				sortColumns = (DataColumn[]) columns.ToArray (typeof (DataColumn));
+				sortDirections = new ListSortDirection[sorts.Count];
+				for (int i = 0; i < sortDirections.Length; i++)
+					sortDirections[i] = (ListSortDirection)sorts[i];
 			}		
 
 			if (rejectNoResult) {
@@ -1947,8 +1822,36 @@ namespace System.Data {
 				if (sortColumns.Length == 0)
 					throw new SystemException("sort expression result is 0");
 			}
+
 			return sortColumns;
 		}
-	}
 
+		private void UpdatePropertyDescriptorsCache()
+		{
+			PropertyDescriptor[] descriptors = new PropertyDescriptor[Columns.Count + ChildRelations.Count];
+			int index = 0;
+			foreach(DataColumn col in Columns) {
+				descriptors[index++] = new DataColumnPropertyDescriptor(col);
+			}
+
+			foreach(DataRelation rel in ChildRelations) {
+				descriptors[index++] = new DataRelationPropertyDescriptor(rel);
+			}
+
+			_propertyDescriptorsCache = new PropertyDescriptorCollection(descriptors);
+		}
+
+		internal PropertyDescriptorCollection GetPropertyDescriptorCollection()
+		{
+			if (_propertyDescriptorsCache == null) {
+				UpdatePropertyDescriptorsCache();
+			}
+
+			return _propertyDescriptorsCache;
+		}
+
+		internal void ResetPropertyDescriptorsCache() {
+			_propertyDescriptorsCache = null;
+		}
+	}
 }

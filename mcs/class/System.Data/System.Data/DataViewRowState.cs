@@ -48,8 +48,8 @@ namespace System.Data
 		Added = 4,
 		Deleted = 8,
 		ModifiedCurrent = 16,
-		CurrentRows = 22,
+		CurrentRows = Unchanged | Added | ModifiedCurrent,
 		ModifiedOriginal = 32,
-		OriginalRows = 42
+		OriginalRows = Unchanged | Deleted | ModifiedOriginal
 	}
 }

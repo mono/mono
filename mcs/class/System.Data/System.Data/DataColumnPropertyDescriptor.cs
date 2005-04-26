@@ -51,6 +51,15 @@ namespace System.Data
 			this.columnIndex = columnIndex;
 		}
 
+		public DataColumnPropertyDescriptor (DataColumn dc)
+			: base (dc.ColumnName, null) 
+		{
+			this.columnIndex = dc.Ordinal;
+			this.componentType = typeof(DataRowView);
+			this.propertyType = dc.DataType;
+			this.readOnly = dc.ReadOnly;
+		}
+
 		public void SetReadOnly (bool value) 
 		{
 			readOnly = value;
@@ -66,28 +75,29 @@ namespace System.Data
 			propertyType = type;
 		}
 
-		private PropertyInfo GetPropertyInfo () 
-		{
-			string defaultMemberName = "";
-			object[] attribs = componentType.GetCustomAttributes (true);
-						
-			for (int at = 0; at < attribs.Length; at++) {
-				if (attribs[at] is DefaultMemberAttribute) {
-					defaultMemberName = ((DefaultMemberAttribute) attribs[at]).MemberName;
-					break;
-				}
-			}
-
-			// FIXME: what do I do if a DefaultMemeberAttribute is not found?
-			//        should I try looking for DefaultPropertyAttribute?
-			if (defaultMemberName.Equals(""))
-				throw new SystemException("Default property not found.");
-
-			Type[] parmTypes = new Type[1];
-			parmTypes[0] = propertyType;
-			PropertyInfo propertyInfo = componentType.GetProperty (defaultMemberName, parmTypes);
-			return propertyInfo;
-		}
+		// FIXME :  current inplementation does not use this
+//		private PropertyInfo GetPropertyInfo () 
+//		{
+//			string defaultMemberName = "";
+//			object[] attribs = componentType.GetCustomAttributes (true);
+//						
+//			for (int at = 0; at < attribs.Length; at++) {
+//				if (attribs[at] is DefaultMemberAttribute) {
+//					defaultMemberName = ((DefaultMemberAttribute) attribs[at]).MemberName;
+//					break;
+//				}
+//			}
+//
+//			// FIXME: what do I do if a DefaultMemeberAttribute is not found?
+//			//        should I try looking for DefaultPropertyAttribute?
+//			if (defaultMemberName.Equals(""))
+//				throw new SystemException("Default property not found.");
+//
+//			Type[] parmTypes = new Type[1];
+//			parmTypes[0] = propertyType;
+//			PropertyInfo propertyInfo = componentType.GetProperty (defaultMemberName, parmTypes);
+//			return propertyInfo;
+//		}
 
 		public override object GetValue (object component) 
 		{

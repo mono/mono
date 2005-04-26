@@ -40,11 +40,11 @@ namespace System.Data
 	[Serializable]
 	public enum IsolationLevel
 	{
-		Unspecified = -1,
 		Chaos = 16,
 		ReadUncommitted = 256,
-		ReadCommitted = 4096,
+		ReadCommitted = 4096,		
 		RepeatableRead = 65536,
-		Serializable = 1048576
+		Serializable = 1048576,
+		Unspecified = -1
 	}
 }

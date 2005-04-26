@@ -9,6 +9,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //   Ville Palo <vi64pa@koti.soon.fi>
 //   Atsushi Enomoto <atsushi@ximian.com>
+//   Konstantin Triger <kostat@mainsoft.com>
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002, 2003
@@ -108,8 +109,14 @@ namespace System.Data {
 				caseSensitive = value; 
 				if (!caseSensitive) {
 					foreach (DataTable table in Tables) {
+						table.ResetCaseSensitiveIndexes();
 						foreach (Constraint c in table.Constraints)
 							c.AssertConstraint ();
+					}
+				}
+				else {
+					foreach (DataTable table in Tables) {
+						table.ResetCaseSensitiveIndexes();
 					}
 				}
 			}
@@ -138,19 +145,7 @@ namespace System.Data {
 		public bool EnforceConstraints {
 			get { return enforceConstraints; } 
 			set { 
-				if (value != enforceConstraints) {
-					enforceConstraints = value; 
-					if (value) {
-						foreach (DataTable table in Tables) {
-							// first assert all unique constraints
-							foreach (UniqueConstraint uc in table.Constraints.UniqueConstraints)
-								uc.AssertConstraint ();
-							// then assert all foreign keys
-							foreach (ForeignKeyConstraint fk in table.Constraints.ForeignKeyConstraints)
-								fk.AssertConstraint ();
-						}
-					}
-				}
+				InternalEnforceConstraints(value,true);
 			}
 		}
 
@@ -187,6 +182,28 @@ namespace System.Data {
 					locale = value;
 				}
 			}
+		}
+
+		internal void InternalEnforceConstraints(bool value,bool resetIndexes)
+		{
+				if (value != enforceConstraints) {
+					if (value) {
+						foreach (DataTable table in Tables) {
+							// FIXME : is that correct?
+							// By design  the indexes should be updated at this point.
+							// In Fill from BeginLoadData till EndLoadData indexes are not updated (reset in EndLoadData)
+							// In DataRow.EndEdit indexes are always updated.
+							if (resetIndexes) {
+								table.ResetIndexes();
+							}
+							// assert all constraints
+							foreach (Constraint constraint in table.Constraints)
+								constraint.AssertConstraint();
+						}
+					}
+
+					enforceConstraints = value;
+				}
 		}
 
 		public void Merge (DataRow[] rows)
@@ -496,8 +513,8 @@ namespace System.Data {
 			}
 		
 			DataRow newRow = copyTable.NewRow ();
-			row.CopyValuesToRow (newRow);
 			copyTable.Rows.Add (newRow);
+			row.CopyValuesToRow (newRow);			
 			newRow.XmlRowID = row.XmlRowID;
 			addedRows.Add (row,row);
 		}
@@ -1506,7 +1523,7 @@ namespace System.Data {
 			}
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
-
+		
 		private void DoWriteXmlSchema (XmlWriter writer)
 		{
 			if (writer.WriteState == WriteState.Start)
