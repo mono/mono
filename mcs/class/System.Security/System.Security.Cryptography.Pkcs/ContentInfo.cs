@@ -86,10 +86,9 @@ namespace System.Security.Cryptography.Pkcs {
 		[MonoTODO("Incomplete OID support")]
 		public static Oid GetContentType (byte[] encodedMessage)
 		{
-// FIXME: compatibility with fx 1.2.3400.0
 			if (encodedMessage == null)
-				throw new NullReferenceException ();
-//				throw new ArgumentNullException ("algorithm");
+				throw new ArgumentNullException ("algorithm");
+
 			try {
 				PKCS7.ContentInfo ci = new PKCS7.ContentInfo (encodedMessage);
 				switch (ci.ContentType) {

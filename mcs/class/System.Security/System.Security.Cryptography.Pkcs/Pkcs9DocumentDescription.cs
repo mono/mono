@@ -51,8 +51,7 @@ namespace System.Security.Cryptography.Pkcs {
 		public Pkcs9DocumentDescription (string documentDescription)
 		{
 			if (documentDescription == null)
-				throw new NullReferenceException ("documentName");
-// match MS			throw new ArgumentNullException ("documentName");
+				throw new ArgumentNullException ("documentName");
 
 			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
 			_desc = documentDescription;
@@ -71,6 +70,12 @@ namespace System.Security.Cryptography.Pkcs {
 
 		public string DocumentDescription {
 			get { return _desc; }
+		}
+
+		public override void CopyFrom (AsnEncodedData asnEncodedData)
+		{
+			base.CopyFrom (asnEncodedData);
+			Decode (this.RawData);
 		}
 
 		// internal stuff

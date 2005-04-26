@@ -71,6 +71,14 @@ namespace System.Security.Cryptography.Pkcs {
 			get { return _contentType; }
 		}
 
+		// methods
+
+		public override void CopyFrom (AsnEncodedData asnEncodedData)
+		{
+			base.CopyFrom (asnEncodedData);
+			Decode (this.RawData);
+		}
+
 		// internal stuff
 
 		internal void Decode (byte[] attribute)

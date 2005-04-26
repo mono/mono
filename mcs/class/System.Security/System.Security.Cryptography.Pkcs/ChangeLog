@@ -1,3 +1,16 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AlgorithmIdentifier.cs: Removed FIXME - seems "by design".
+	* ContentInfo.cs: Applied fix for ArgumentNullException (was fixed in 
+	beta2).
+	* Pkcs9ContentType.cs: Added new override for CopyFrom.
+	* Pkcs9DocumentDescription.cs: Added new override for CopyFrom. 
+	Applied fix for ArgumentNullException (was fixed in beta2).
+	* Pkcs9DocumentName.cs: Added new override for CopyFrom. 
+	Applied fix for ArgumentNullException (was fixed in beta2).
+	* Pkcs9MessageDigest.cs: Added new override for CopyFrom.
+	* Pkcs9SigningTime.cs: Added new override for CopyFrom.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedCms.cs: Fix compiler warning (unused variable).

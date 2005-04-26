@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,8 +29,6 @@
 
 #if NET_2_0
 
-using System;
-
 namespace System.Security.Cryptography.Pkcs {
 
 	public sealed class AlgorithmIdentifier {
@@ -41,16 +39,20 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// constructors
 
-		public AlgorithmIdentifier () : this (new Oid ("1.2.840.113549.3.7", "3des")) {}
+		public AlgorithmIdentifier ()
+		{
+			_oid = new Oid ("1.2.840.113549.3.7", "3des");
+			_params = new byte [0];
+		}
 
-		public AlgorithmIdentifier (Oid algorithm) : this (algorithm, 0) {}
+		public AlgorithmIdentifier (Oid algorithm)
+		{
+			_oid = algorithm;
+			_params = new byte [0];
+		}
 
 		public AlgorithmIdentifier (Oid algorithm, int keyLength)
 		{
-// FIXME: compatibility with fx 1.2.3400.0
-//			if (algorithm == null)
-//				throw new ArgumentNullException ("algorithm");
-
 			_oid = algorithm;
 			_length = keyLength;
 			_params = new byte [0];
