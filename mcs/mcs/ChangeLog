@@ -1,3 +1,8 @@
+2005-04-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* cs-parser.jay: Use the prefered version of -unsafe in error
+	message.
+
 2005-04-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* driver.cs (CompilerCallableEntryPoint.Invoke): Reset under any
