@@ -74,6 +74,8 @@ namespace TestRunner {
 			pi.Arguments = sb.ToString ();
 			Process p = Process.Start (pi);
 			output = p.StandardError.ReadToEnd ();
+			if (output.Length == 0)
+			    output = p.StandardOutput.ReadToEnd ();
 			p.WaitForExit ();
 			return p.ExitCode == 0;
 		}
@@ -138,7 +140,7 @@ namespace TestRunner {
 			ReadWrongErrors (wrong_errors_file);
 			ITester tester;
 			try {
-				Console.WriteLine ("Loading:" + mcs);
+				Console.WriteLine ("Loading: " + mcs);
 				tester = new ReflectionTester (Assembly.LoadFile (mcs));
 			}
 			catch (Exception) {
