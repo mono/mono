@@ -212,7 +212,9 @@ namespace Mono.ILASM {
                                                 next = reader.Peek ();
                                                 if (next == '.') {
                                                         reader.MarkLocation ();
+                                                        reader.Read ();
                                                         next = reader.Peek ();
+                                                        reader.Unread ('.');
                                                         if (IsIdChar ((char) next)) {
                                                                 string opTail = BuildId ();
                                                                 string full_str = String.Format ("{0}{1}", val, opTail);
@@ -322,15 +324,20 @@ namespace Mono.ILASM {
                 private string BuildId ()
                 {
                         StringBuilder idsb = new StringBuilder ();
-                        int ch;
+                        int ch, last;
 
+                        last = -1;
                         while ((ch = reader.Read ()) != -1) {
                                 if (IsIdChar ((char) ch) || ch == '.') {
                                         idsb.Append ((char) ch);
                                 } else {
                                         reader.Unread (ch);
+                                        // Never end an id on a DOT
+                                        if (last == '.')
+                                                reader.Unread (last);
                                         break;
                                 }
+                                last = ch;
                         }
 
                         return idsb.ToString ();
