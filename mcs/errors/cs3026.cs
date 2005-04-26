@@ -7,4 +7,5 @@ using System;
 
 public class Class {
 	protected volatile int V;
+	static void Main () {}
 }

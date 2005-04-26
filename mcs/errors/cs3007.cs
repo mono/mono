@@ -10,4 +10,6 @@ public class CLSClass {
 
     public CLSClass(bool[] b) {
     }
+
+    static void Main() {}
 }
