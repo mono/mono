@@ -64,7 +64,7 @@ public class LabelTest {
 		//<[Font: Name=Microsoft Sans Serif, Size=8.25, Units=3, GdiCharSet=0, GdiVerticalFont=False]>
 		Assert.AreEqual (SystemColors.ControlText , l.ForeColor  , "#33");
 
-		Assert.AreEqual (IWin32Window.Handle , l.Handle, "#34");
+		//Assert.AreEqual (IWin32Window.Handle , l.Handle, "#34");
 		Assert.AreEqual (false , l.HasChildren, "#35");
 		Assert.AreEqual (23 , l.Height, "#36");
 		

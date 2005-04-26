@@ -1,3 +1,7 @@
+2005-04-26  Ritvik Mayank  <mritvik@novell.com>
+
+	* System.Windows.Forms_test.dll.sources : Added LabelPropertyTest.cs for Label Test
+
 2005-04-25  Jackson Harper  <jackson@ximian.com>
 
 	* System.Windows.Forms.dll.sources: Add CursorConvert.cs to the
