@@ -108,6 +108,9 @@ namespace Mono.Data.SqlExpressions {
 		
 		private bool SkipWhiteSpace ()
 		{
+			if (pos >= input.Length)
+				return false;
+
 			while (Char.IsWhiteSpace (Current ())) {
 				if (!MoveNext ())
 					return false;
@@ -286,7 +289,8 @@ namespace Mono.Data.SqlExpressions {
 			if (!SkipWhiteSpace())
 				return false;
 			tok = ParseToken();
-			return MoveNext ();
+			MoveNext ();
+			return true;
 		}
 
 		/** classifies current token.
