@@ -61,7 +61,7 @@ namespace System.Data.Common {
 			this.closeReader = closeReader;
 			this.lookup = new FieldNameLookup ();
 			this.fieldCount = reader.FieldCount;
-			LoadSchema (reader.GetSchemaTable ());
+			LoadSchema ();
 		}
 
 		#endregion // Constructors
@@ -80,36 +80,21 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		private void LoadSchema (DataTable schemaTable)
+		private void LoadSchema ()
 		{
 			schema = new SchemaInfo [fieldCount];
-			int index = 0;
-			foreach (DataRow row in schemaTable.Rows) {
+
+			for(int i=0; i < fieldCount; i++) {
 				SchemaInfo columnSchema = new SchemaInfo ();
+				
+				lookup.Add (reader.GetName(i));
 
-				lookup.Add ((string) row["ColumnName"]);
+				columnSchema.ColumnName = reader.GetName(i);
+				columnSchema.ColumnOrdinal = i; 
+				columnSchema.DataTypeName = reader.GetDataTypeName (i);
+				columnSchema.FieldType = reader.GetFieldType (i);
 
-				columnSchema.AllowDBNull = (bool) row ["AllowDBNull"];
-				columnSchema.ColumnName = row ["ColumnName"].ToString ();
-				columnSchema.ColumnOrdinal = (int) row ["ColumnOrdinal"];
-				columnSchema.ColumnSize = (int) row ["ColumnSize"];
-				columnSchema.DataTypeName = reader.GetDataTypeName (index);
-				columnSchema.FieldType = reader.GetFieldType (index);
-				columnSchema.IsReadOnly = (bool) row ["IsReadOnly"];
-				columnSchema.TableName = row ["BaseTableName"].ToString ();
-
-				if (row ["NumericPrecision"] != DBNull.Value)
-					columnSchema.NumericPrecision = Convert.ToByte (row ["NumericPrecision"]);
-				else
-					columnSchema.NumericPrecision = Convert.ToByte (0);
-
-				if (row ["NumericScale"] != DBNull.Value)
-					columnSchema.NumericScale = Convert.ToByte (row ["NumericScale"]);
-				else
-					columnSchema.NumericScale = Convert.ToByte (0);
-
-				schema [index] = columnSchema;
-				index += 1;
+				schema [i] = columnSchema;
 			}
 		}
 

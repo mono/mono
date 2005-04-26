@@ -30,13 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+
 
 using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
-	public abstract class DbCommand : Component, IDbCommand, IDisposable
+	public abstract class DbCommand : Component, IDbCommand
 	{
 		protected DbCommand ()
 		{
@@ -47,7 +47,12 @@ namespace System.Data.Common {
 		public abstract string CommandText { get; set; }
 		public abstract int CommandTimeout { get; set; }
 		public abstract CommandType CommandType { get; set; }
+		public abstract IDbConnection Connection { get; set; }
+		public abstract IDataParameterCollection Parameters { get; }
+		public abstract IDbTransaction Transaction { get; set; }
+		public abstract UpdateRowSource UpdatedRowSource { get; set; }
 
+#if NET_2_0
 		public DbConnection Connection {
 			get { return DbConnection; }
 			set { DbConnection = value; }
@@ -86,13 +91,22 @@ namespace System.Data.Common {
 			set { DbTransaction = value; }
 		}
 
-		public abstract UpdateRowSource UpdatedRowSource { get; set; }
+#endif
 
 		#endregion // Properties
 
 		#region Methods
 
-		public abstract void Cancel ();
+		public abstract void Cancel();
+		public abstract int ExecuteNonQuery();
+		public abstract IDataReader ExecuteReader();
+		public abstract IDataReader ExecuteReader (CommandBehavior behavior);
+		public abstract object ExecuteScalar();
+		public abstract IDbDataParameter CreateParameter();
+		public abstract void Prepare ();
+
+#if NET_2_0
+
 		protected abstract DbParameter CreateDbParameter ();
 
 		public DbParameter CreateParameter ()
@@ -108,7 +122,6 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 
-		public abstract int ExecuteNonQuery ();
 		
                 public DbDataReader ExecutePageReader (CommandBehavior behavior, int startRecord, int maxRecords)
 		{
@@ -125,8 +138,6 @@ namespace System.Data.Common {
                         return ExecuteDbDataReader (behavior);
 		}
 
-		public abstract object ExecuteScalar ();
-
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return CreateParameter ();
@@ -142,11 +153,11 @@ namespace System.Data.Common {
 			return ExecuteReader (behavior);
 		}
 
-		public abstract void Prepare ();
+#endif
 		
 		#endregion // Methods
 
 	}
 }
 
-#endif
+

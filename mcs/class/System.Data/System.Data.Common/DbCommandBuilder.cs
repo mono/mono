@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+
 
 using System.ComponentModel;
 using System.Data;
@@ -228,4 +228,4 @@ namespace System.Data.Common {
 	}
 }
 
-#endif
+

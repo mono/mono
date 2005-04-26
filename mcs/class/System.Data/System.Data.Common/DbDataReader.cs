@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+
 
 using System.Collections;
 using System.Data;
@@ -55,7 +55,9 @@ namespace System.Data.Common {
 		public abstract object this [int index] { get; }
 		public abstract object this [string name] { get; }
 		public abstract int RecordsAffected { get; }
+#if NET_2_0
 		public abstract int VisibleFieldCount { get; }
+#endif
 
 		#endregion // Properties
 
@@ -69,18 +71,22 @@ namespace System.Data.Common {
 		public abstract char GetChar (int i);
 		public abstract long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length);
 
+#if NET_2_0
 		[MonoTODO]
 		public DbDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public abstract string GetDataTypeName (int i);
 		public abstract DateTime GetDateTime (int i);
 		public abstract decimal GetDecimal (int i);
 		public abstract double GetDouble (int i);
 		public abstract IEnumerator GetEnumerator ();
+#if NET_2_0
 		public abstract Type GetFieldProviderSpecificType (int i);
+#endif
 		public abstract Type GetFieldType (int i);
 		public abstract float GetFloat (int i);
 		public abstract Guid GetGuid (int i);
@@ -89,8 +95,12 @@ namespace System.Data.Common {
 		public abstract long GetInt64 (int i);
 		public abstract string GetName (int i);
 		public abstract int GetOrdinal (string name);
+
+#if NET_2_0
 		public abstract object GetProviderSpecificValue (int i);
 		public abstract int GetProviderSpecificValues (object[] values);
+#endif
+
 		public abstract DataTable GetSchemaTable ();
 		public abstract string GetString (int i);
 		public abstract object GetValue (int i);
@@ -109,4 +119,3 @@ namespace System.Data.Common {
 	}
 }
 
-#endif // NET_2_0

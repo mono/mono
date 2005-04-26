@@ -307,7 +307,6 @@ namespace System.Data.Common {
 				new DataColumnPropertyDescriptor[FieldCount];
 
 			DataColumnPropertyDescriptor descriptor;
-			DataColumn dataColumn;
 			for(int col = 0; col < FieldCount; col++) {
 				descriptor = new DataColumnPropertyDescriptor(
 					GetName(col), col, null);

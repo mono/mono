@@ -30,20 +30,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+
 
 using System.ComponentModel;
 using System.Data;
+#if MONO_ONLY
 using System.EnterpriseServices;
+#endif
 
 namespace System.Data.Common {
 	public abstract class DbConnection : Component, IDbConnection, IDisposable
 	{
-
-                #region Fields
-                bool disposed = false;
-                #endregion //Fields
-                
 		#region Constructors
 
 		protected DbConnection ()
@@ -67,16 +64,14 @@ namespace System.Data.Common {
 
 		protected abstract DbTransaction BeginDbTransaction (IsolationLevel isolationLevel);
 
-		[MonoTODO]
 		public DbTransaction BeginTransaction ()
 		{
-			throw new NotImplementedException ();
+			return BeginDbTransaction(IsolationLevel.ReadCommitted);
 		}
 
-		[MonoTODO]
 		public DbTransaction BeginTransaction (IsolationLevel isolationLevel)
 		{
-			throw new NotImplementedException ();
+			return BeginDbTransaction(isolationLevel);
 		}
 
 		public abstract void ChangeDatabase (string databaseName);
@@ -87,36 +82,21 @@ namespace System.Data.Common {
 			return CreateDbCommand ();
 		}
 
-                protected override void Dispose (bool disposing)
-		{
-                        if (!disposed) { 
-                                try {
-                                        if (disposing) {
-                                                // unmanaged cleanup
-                                        }
-
-                                        disposed = true;
-                                } finally {
-                                        base.Dispose (disposing);
-                                }
-                                
-			}
-		}
-
-
 		protected abstract DbCommand CreateDbCommand ();
 
-                [MonoTODO]
-                public virtual void EnlistTransaction (ITransaction transaction)
-                {
+#if NET_2_0
+        [MonoTODO]
+        public virtual void EnlistTransaction (ITransaction transaction)
+        {
 			throw new NotImplementedException ();                        
-                }
+        }
 
 		[MonoTODO]
 		public virtual void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[MonoTODO]
 		public virtual DataTable GetSchema ()
@@ -158,4 +138,3 @@ namespace System.Data.Common {
 	}
 }
 
-#endif

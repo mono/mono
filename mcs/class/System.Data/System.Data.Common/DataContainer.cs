@@ -95,21 +95,33 @@ namespace System.Data.Common
 				case TypeCode.Byte :
 					container = new ByteDataContainer();
 					break;
-				//case TypeCode.Char :
-				case TypeCode.DateTime :
-					container = new DateTimeDataContainer();
+				case TypeCode.Char :
+					container = new CharDataContainer();
 					break;
-				//case TypeCode.Decimal :
 				case TypeCode.Double :
 					container = new DoubleDataContainer();
 					break;
-				//case TypeCode.SByte :
+				case TypeCode.SByte :
+					container = new SByteDataContainer();
+					break;
 				case TypeCode.Single :
 					container = new SingleDataContainer();
 					break;
-				//case TypeCode.UInt16 :
-				//case TypeCode.UInt32 :
-				//case TypeCode.UInt64 :
+				case TypeCode.UInt16 :
+					container = new UInt16DataContainer();
+					break;
+				case TypeCode.UInt32 :
+					container = new UInt32DataContainer();
+					break;
+				case TypeCode.UInt64 :
+					container = new UInt64DataContainer();
+					break;
+				case TypeCode.DateTime :
+					container = new DateTimeDataContainer();
+					break;
+				case TypeCode.Decimal :
+					container = new DecimalDataContainer();
+					break;
 				default :
 					container = new ObjectDataContainer();
 					break;
@@ -164,13 +176,6 @@ namespace System.Data.Common
 			SetNull(index,false,isDbNull);
 		}
 
-		protected  bool CheckAndSetNull( int index, IDataRecord record, int field)
-		{
-			 bool isDbNull = record.IsDBNull(field);
-	    	         SetNull(index,false,isDbNull);
-			 return isDbNull;		
-		}
-
 		protected int CompareNulls(int index1, int index2)
 		{
 			bool null1 = IsNull(index1);
@@ -218,11 +223,7 @@ namespace System.Data.Common
 						SetValue(index,(short)value);
 					}
 					else {
-						try {
-							SetValue(index,Convert.ToInt16(value));
-						} catch (Exception ex) {
-							throw new ArgumentException (ex.Message, ex);
-						}
+						SetValue(index,Convert.ToInt16(value));
 					}
 					SetNull(index,value == null,isDbNull);
 				}
@@ -253,10 +254,14 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-					SetValue(index,record.GetInt16(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetInt16Safe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -276,26 +281,13 @@ namespace System.Data.Common
 				short s1 = _values[index1];
 				short s2 = _values[index2];
 
-				if ( s1 == 0 && s2 == 0 ) {
+				if ( s1 == 0 || s2 == 0 ) {
 					int cn = CompareNulls(index1, index2);
-					return cn;
+					if (cn != 0)
+						return cn;
 				}
 
-				bool b1 = IsNull(index1);
-				bool b2 = IsNull(index2);
-				
-				if ( s1 == 0 && b1 ) {
-					return -1;
-				}
-
-				if ( s2 == 0 && b2 ) {
-					return 1;
-				}
-
-				if ( s1 <= s2 ) {
-					return ( s1 != s2 ) ? -1 : 0;
-				}
-				return 1;
+				return s1 - s2;
 			}
 
 			internal override long GetInt64(int index)
@@ -365,10 +357,14 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetInt32(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetInt32Safe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -387,25 +383,15 @@ namespace System.Data.Common
 			{
 				int i1 = _values[index1];
 				int i2 = _values[index2];
-
-				if ( i1 == 0 && i2 == 0 ) {
-					int cn = CompareNulls(index1, index2);
-					return cn;
-				}
-
-				bool b1 = IsNull(index1);
-				bool b2 = IsNull(index2);
 				
-				if ( i1 == 0 && b1 ) {
-					return -1;
-				}
-
-				if ( i2 == 0 && b2 ) {
-					return 1;
+				if (i1 == 0 || i2 == 0) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0)
+						return cn;
 				}
 
 				if ( i1 <= i2 ) {
-					return ( i1 != i2 ) ? -1 : 0;
+					return ( i1 == i2 ) ? 0 : -1;
 				}
 				return 1;
 			}
@@ -477,10 +463,14 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetInt64(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetInt64Safe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -580,10 +570,14 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetFloat(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetFloatSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -683,10 +677,14 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetDouble(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetDoubleSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -786,10 +784,14 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetByte(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetByteSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -816,10 +818,7 @@ namespace System.Data.Common
 					}
 				}
 
-				if ( b1 <= b2 ) {
-					return ( b1 != b2 ) ? -1 : 0;
-				}
-				return 1;
+				return b1 - b2;
 			}
 
 			internal override long GetInt64(int index)
@@ -890,10 +889,13 @@ namespace System.Data.Common
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetBoolean(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetBooleanSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -932,7 +934,7 @@ namespace System.Data.Common
 			#endregion //Methods
 		}
 
-		class ObjectDataContainer : AbstractDataContainer
+		abstract class AbstractObjectDataContainer : AbstractDataContainer
 		{
 			#region Fields
 		
@@ -944,6 +946,9 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
+					if (IsNull(index)) 
+						return DBNull.Value;
+
 					return _values[index];
 				}
 				set {
@@ -978,14 +983,6 @@ namespace System.Data.Common
 				_values[index] = value;
 			}
 
-			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
-			{
-				// if exception thrown, it should be caught 
-				// in the  caller metho
-				SetValue(index,record.GetValue(field));
-				base.SetItemFromDataRecord(index,record,field);
-			}
-
 			internal override void CopyValue(int fromIndex, int toIndex)
 			{
 				base.CopyValue(fromIndex, toIndex);
@@ -995,27 +992,39 @@ namespace System.Data.Common
 			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
 			{
 				base.CopyValue(fromContainer, fromIndex, toIndex);
-				_values[toIndex] = ((ObjectDataContainer)fromContainer)._values[fromIndex];
+				_values[toIndex] = ((AbstractObjectDataContainer)fromContainer)._values[fromIndex];
 			}
 
 			internal override int CompareValues(int index1, int index2)
 			{
 				object obj1 = _values[index1];
 				object obj2 = _values[index2];
-				if(obj1 == obj2) {
+				if(obj1 == obj2) 
+				{
 					return 0;
 				}
-				else if (obj1 is IComparable) {
-					try {
-						return ((IComparable)obj1).CompareTo(obj2);
-					}
-					catch {
-						//just suppress
-					}
+				else
+				{
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) 
+						return cn;
 
-					if (obj2 is IComparable) {
-						obj2 = Convert.ChangeType(obj2, Type.GetTypeCode(obj1.GetType()));
-						return ((IComparable)obj1).CompareTo(obj2);
+					if (obj1 is IComparable) 
+					{
+						try 
+						{
+							return ((IComparable)obj1).CompareTo(obj2);
+						}
+						catch 
+						{
+							//just suppress
+						}
+
+						if (obj2 is IComparable) 
+						{
+							obj2 = Convert.ChangeType(obj2, Type.GetTypeCode(obj1.GetType()));
+							return ((IComparable)obj1).CompareTo(obj2);
+						}
 					}
 				}
 
@@ -1031,7 +1040,75 @@ namespace System.Data.Common
 	 
 		}
 
-		sealed class StringDataContainer : ObjectDataContainer
+		sealed class ObjectDataContainer : AbstractObjectDataContainer
+		{
+			#region Methods
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught 
+				// in the  caller method
+				SetValue(index,record.GetValue(field));
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			protected override void SetValue(int index, object value)
+			{
+				if(value != null && value != DBNull.Value && !Type.IsAssignableFrom(value.GetType()))
+					value = Convert.ChangeType(value, Type);
+
+				base.SetValue(index, value);
+			}
+			#endregion //Methods
+	 
+		}
+
+		sealed class DateTimeDataContainer : AbstractObjectDataContainer
+		{
+			#region Methods
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught 
+				// in the  caller method
+				base.SetValue(index,record.GetDateTime(field));
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			protected override void SetValue(int index, object value)
+			{
+				if (value != null && value != DBNull.Value)
+					value = Convert.ToDateTime(value);
+				base.SetValue(index, value);
+			}
+			#endregion //Methods
+	 
+		}
+
+		sealed class DecimalDataContainer : AbstractObjectDataContainer
+		{
+			#region Methods
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetDecimalSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			protected override void SetValue(int index, object value)
+			{
+				if (value != null && value != DBNull.Value)
+					value = Convert.ToDecimal(value);
+				base.SetValue(index, value);
+			}
+			#endregion //Methods
+	 
+		}
+
+		sealed class StringDataContainer : AbstractObjectDataContainer
 		{
 			#region Methods
 
@@ -1062,8 +1139,13 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				if (!CheckAndSetNull ( index, record,field))
-                                        SetValue(index,record.GetString(field));
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetStringSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override int CompareValues(int index1, int index2)
@@ -1085,44 +1167,530 @@ namespace System.Data.Common
 			#endregion //Methods 
 		}
 
-		sealed class DateTimeDataContainer : ObjectDataContainer
+		sealed class CharDataContainer : AbstractDataContainer
 		{
+			#region Fields
+		
+			char[] _values;
+
+			#endregion //Fields
+
+			#region Properties
+
+			internal override object this[int index] {
+				get {
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
+				}
+				set {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
+						SetValue(index,'\0');
+					}
+					else if( value is char ) {
+						SetValue(index,(char)value);
+					}
+					else {
+						SetValue(index,Convert.ToChar(value));
+					}
+					SetNull(index,value == null,isDbNull);
+				}
+			}
+
+			internal override int Capacity {
+				set {
+					base.Capacity = value;
+					if (_values == null) {
+						_values = new char[value];
+					}
+					else {
+						char[] tmp = new char[value];
+						Array.Copy(_values,0,tmp,0,_values.Length);
+						_values = tmp;
+					}
+				}
+			}
+
+			#endregion //Properties
+
 			#region Methods
 			
-			protected override void SetValue(int index, object value)
+			private void SetValue(int index, char value)
 			{
-				if ( value != null && value != DBNull.Value && !(value is DateTime)) {
-					value = Convert.ToDateTime(value);
-				}
-
-				base.SetValue(index,value);
+				_values[index] = value;
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
 			{
-				// if exception thrown, it should be caught 
-				// in the  caller method
-				if (!CheckAndSetNull(index,record,field))
-					base.SetValue(index,record.GetDateTime(field));
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,((ISafeDataRecord)record).GetCharSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			internal override void CopyValue(int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromIndex, toIndex);
+				_values[toIndex] = _values[fromIndex];
+			}
+
+			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromContainer, fromIndex, toIndex);
+				_values[toIndex] = ((CharDataContainer)fromContainer)._values[fromIndex];
 			}
 
 			internal override int CompareValues(int index1, int index2)
 			{
-				bool isNull1 = IsNull(index1);
-				bool isNull2 = IsNull(index2);
+				char c1 = _values[index1];
+				char c2 = _values[index2];
 
-				if (isNull1) {
-					return isNull2 ? 0 : -1;
+				if ( c1 == '\0' || c2 == '\0' ) 
+				{
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) 
+						return cn;
 				}
-				else {
-					if (isNull2) {
-						return 1;
-					}
-				}
-				return DateTime.Compare((DateTime)this[index1], (DateTime)this[index2]);
+
+				return c1 - c2;
 			}
 
-			#endregion //Methods 
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
+			}
+
+			#endregion //Methods
 		}
+
+		sealed class UInt16DataContainer : AbstractDataContainer
+		{
+			#region Fields
+		
+			ushort[] _values;
+
+			#endregion //Fields
+
+			#region Properties
+
+			internal override object this[int index] {
+				get {
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
+				}
+				set {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
+						SetValue(index,0);
+					}
+					else if( value is ushort ) {
+						SetValue(index,(ushort)value);
+					}
+					else {
+						SetValue(index,Convert.ToUInt16(value));
+					}
+					SetNull(index,value == null,isDbNull);
+				}
+			}
+
+			internal override int Capacity {
+				set {
+					base.Capacity = value;
+					if (_values == null) {
+						_values = new ushort[value];
+					}
+					else {
+						ushort[] tmp = new ushort[value];
+						Array.Copy(_values,0,tmp,0,_values.Length);
+						_values = tmp;
+					}
+				}
+			}
+
+			#endregion //Properties
+
+			#region Methods
+			
+			private void SetValue(int index, ushort value)
+			{
+				_values[index] = value;
+			}
+
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,(ushort)((ISafeDataRecord)record).GetInt16Safe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			internal override void CopyValue(int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromIndex, toIndex);
+				_values[toIndex] = _values[fromIndex];
+			}
+
+			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromContainer, fromIndex, toIndex);
+				_values[toIndex] = ((UInt16DataContainer)fromContainer)._values[fromIndex];
+			}
+
+			internal override int CompareValues(int index1, int index2)
+			{
+				ushort s1 = _values[index1];
+				ushort s2 = _values[index2];
+
+				if ( s1 == 0 || s2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0)
+						return cn;
+				}
+
+				return s1 - s2;
+			}
+
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
+			}
+
+			#endregion //Methods
+		}
+
+		sealed class UInt32DataContainer : AbstractDataContainer
+		{
+			#region Fields
+		
+			uint[] _values;
+
+			#endregion //Fields
+
+			#region Properties
+
+			internal override object this[int index] {
+				get {
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
+				}
+				set {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
+						SetValue(index,0);
+					}
+					else if( value is uint ) {
+						SetValue(index,(uint)value);
+					}
+					else {
+						SetValue(index,Convert.ToUInt32(value));
+					}
+					SetNull(index,value == null,isDbNull);
+				}
+			}
+
+			internal override int Capacity {
+				set {
+					base.Capacity = value;
+					if (_values == null) {
+						_values = new uint[value];
+					}
+					else {
+						uint[] tmp = new uint[value];
+						Array.Copy(_values,0,tmp,0,_values.Length);
+						_values = tmp;
+					}
+				}
+			}
+
+			#endregion //Properties
+
+			#region Methods
+			
+			private void SetValue(int index, uint value)
+			{
+				_values[index] = value;
+			}
+
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,(uint)((ISafeDataRecord)record).GetInt32Safe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			internal override void CopyValue(int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromIndex, toIndex);
+				_values[toIndex] = _values[fromIndex];
+			}
+
+			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromContainer, fromIndex, toIndex);
+				_values[toIndex] = ((UInt32DataContainer)fromContainer)._values[fromIndex];
+			}
+
+			internal override int CompareValues(int index1, int index2)
+			{
+				uint i1 = _values[index1];
+				uint i2 = _values[index2];
+
+				if ( i1 == 0 || i2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0)
+						return cn;
+				}
+
+				if ( i1 <= i2 ) {
+					return ( i1 != i2 ) ? -1 : 0;
+				}
+				return 1;
+			}
+
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
+			}
+
+			#endregion //Methods
+		}
+
+		sealed class UInt64DataContainer : AbstractDataContainer
+		{
+			#region Fields
+		
+			ulong[] _values;
+
+			#endregion //Fields
+
+			#region Properties
+
+			internal override object this[int index] {
+				get {
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
+				}
+				set {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
+						SetValue(index,0);
+					}
+					else if( value is ulong ) {
+						SetValue(index,(ulong)value);
+					}
+					else {
+						SetValue(index,Convert.ToUInt64(value));
+					}
+					SetNull(index,value == null,isDbNull);
+				}
+			}
+
+			internal override int Capacity {
+				set {
+					base.Capacity = value;
+					if (_values == null) {
+						_values = new ulong[value];
+					}
+					else {
+						ulong[] tmp = new ulong[value];
+						Array.Copy(_values,0,tmp,0,_values.Length);
+						_values = tmp;
+					}
+				}
+			}
+
+			#endregion //Properties
+
+			#region Methods
+			
+			private void SetValue(int index, ulong value)
+			{
+				_values[index] = value;
+			}
+
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,(ulong)((ISafeDataRecord)record).GetInt64Safe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			internal override void CopyValue(int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromIndex, toIndex);
+				_values[toIndex] = _values[fromIndex];
+			}
+
+			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromContainer, fromIndex, toIndex);
+				_values[toIndex] = ((UInt64DataContainer)fromContainer)._values[fromIndex];
+			}
+
+			internal override int CompareValues(int index1, int index2)
+			{
+				ulong l1 = _values[index1];
+				ulong l2 = _values[index2];
+
+				if ( l1 == 0 || l2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) {
+						return cn;
+					}
+				}
+
+				if ( l1 <= l2 ) {
+					return ( l1 != l2 ) ? -1 : 0;
+				}
+				return 1;
+			}
+
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToInt64(_values[index]);
+			}
+
+			#endregion //Methods
+		}
+
+
+		sealed class SByteDataContainer : AbstractDataContainer
+		{
+			#region Fields
+		
+			sbyte[] _values;
+
+			#endregion //Fields
+
+			#region Properties
+
+			internal override object this[int index] {
+				get {
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
+				}
+				set {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
+						SetValue(index,0);
+					}
+					else if( value is sbyte ) {
+						SetValue(index,(sbyte)value);
+					}
+					else {
+						SetValue(index,Convert.ToSByte(value));
+					}
+					SetNull(index,value == null,isDbNull);
+				}
+			}
+
+			internal override int Capacity {
+				set {
+					base.Capacity = value;
+					if (_values == null) {
+						_values = new sbyte[value];
+					}
+					else {
+						sbyte[] tmp = new sbyte[value];
+						Array.Copy(_values,0,tmp,0,_values.Length);
+						_values = tmp;
+					}
+				}
+			}
+
+			#endregion //Properties
+
+			#region Methods
+			
+			private void SetValue(int index, sbyte value)
+			{
+				_values[index] = value;
+			}
+
+			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
+			{
+				// if exception thrown, it should be caught in the  caller method
+				if (record is ISafeDataRecord) {
+					SetValue(index,(sbyte)((ISafeDataRecord)record).GetByteSafe(field));
+				}
+				else {
+					this[index] = record.GetValue(field);
+				}
+				base.SetItemFromDataRecord(index,record,field);
+			}
+
+			internal override void CopyValue(int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromIndex, toIndex);
+				_values[toIndex] = _values[fromIndex];
+			}
+
+			internal override void CopyValue(AbstractDataContainer fromContainer, int fromIndex, int toIndex)
+			{
+				base.CopyValue(fromContainer, fromIndex, toIndex);
+				_values[toIndex] = ((SByteDataContainer)fromContainer)._values[fromIndex];
+			}
+
+			internal override int CompareValues(int index1, int index2)
+			{
+				sbyte b1 = _values[index1];
+				sbyte b2 = _values[index2];
+
+				if ( b1 == 0 || b2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) {
+						return cn;
+					}
+				}
+
+				return b1 - b2;
+			}
+
+			internal override long GetInt64(int index)
+			{
+				return Convert.ToSByte(_values[index]);
+			}
+
+			#endregion //Methods
+		}
+
 	}
 }

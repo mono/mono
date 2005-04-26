@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+
 
 namespace System.Data.Common {
 	public abstract class DbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter
@@ -48,25 +48,27 @@ namespace System.Data.Common {
 
 		public abstract DbType DbType { get; set; }
 		public abstract ParameterDirection Direction { get; set; }
-		public abstract bool IsNullable { get; set; }
-		public abstract int Offset { get; set; }
 		public abstract string ParameterName { get; set; }
 		public abstract byte Precision { get; set; }
 		public abstract byte Scale { get; set; }
 		public abstract int Size { get; set; }
+		public abstract object Value { get; set; }
+		public abstract bool IsNullable { get; set; }
+		public abstract int Offset { get; set; }
 		public abstract string SourceColumn { get; set; }
 		public abstract DataRowVersion SourceVersion { get; set; }
-		public abstract object Value { get; set; }
 
 		#endregion // Properties
 
 		#region Methods
 
 		public abstract void CopyTo (DbParameter destination);
+
+#if NET_2_0
 		public abstract void ResetDbType ();
+#endif
 
 		#endregion // Methods
 	}
 }
 
-#endif // NET_2_0
