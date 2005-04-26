@@ -2680,7 +2680,7 @@ id			: ID
 			;
 
 comp_name		: id
-			| comp_name DOT id
+			| comp_name DOT comp_name
                           {
                                 $$ = (string) $1 + '.' + (string) $3;
                           }

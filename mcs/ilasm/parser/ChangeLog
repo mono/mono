@@ -1,3 +1,7 @@
+2005-04-26  Ankit Jain  <ankit@corewars.org>
+
+	* ILParser.jay (comp_name): Allow n.a.'b' . 
+
 2005-04-18  Ankit Jain  <ankit@corewars.org>
 
 	* ILParser.jay (manifestres_head): Read resource file and 
