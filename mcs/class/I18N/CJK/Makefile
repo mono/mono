@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = I18N.CJK.dll
+LIBRARY_USE_INTERMEDIATE_FILE = yes
 LOCAL_MCS_FLAGS = /unsafe /resource:big5.table /resource:gb2312.table /resource:jis.table /resource:ks.table /r:$(corlib) /r:I18N.dll
 NO_TEST = yes
 

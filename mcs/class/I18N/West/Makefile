@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = I18N.West.dll
+LIBRARY_USE_INTERMEDIATE_FILE = yes
 LOCAL_MCS_FLAGS = /r:$(corlib) /r:I18N.dll
 NO_TEST = yes
 
