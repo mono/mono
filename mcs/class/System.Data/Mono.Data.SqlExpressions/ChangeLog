@@ -1,3 +1,8 @@
+2005-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Tokenizer.cs: make it not rely in exceptions being thrown to know that
+	the array is entirely processed.
+
 2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Comparison.cs : allow comparison between guid and string.

@@ -98,14 +98,22 @@ namespace Mono.Data.SqlExpressions {
 			return input [pos + 1];
 		}
 
-		private void MoveNext() {
+		private bool MoveNext() {
 			pos++;
+			if (pos >= input.Length)
+				return false;
+
+			return true;
 		}
 		
-		private void SkipWhiteSpace ()
+		private bool SkipWhiteSpace ()
 		{
-			while (Char.IsWhiteSpace (Current ()))
-				MoveNext ();				
+			while (Char.IsWhiteSpace (Current ())) {
+				if (!MoveNext ())
+					return false;
+			}
+
+			return true;
 		}
 
 		private object ReadNumber ()
@@ -116,7 +124,8 @@ namespace Mono.Data.SqlExpressions {
 			char next;
 			while (Char.IsDigit (next = Next ()) || next == '.') {
 				sb.Append (next);
-				MoveNext ();
+				if (!MoveNext ())
+					break;
 			}
 
 			string str = sb.ToString ();
@@ -130,8 +139,11 @@ namespace Mono.Data.SqlExpressions {
 		private char ProcessEscapes(char c)
 		{
 			if (c == '\\') {
-				MoveNext();
-				c = Next();
+				if (MoveNext())
+					c = Next();
+				else
+					c = '\0';
+
 				switch (c) {
 				case 'n':
 					c = '\n';
@@ -160,8 +172,10 @@ namespace Mono.Data.SqlExpressions {
 			char next;
 			while ((next = Next ()) != terminator) {
 				sb.Append (ProcessEscapes (next));
-				MoveNext ();
+				if (!MoveNext ())
+					break;
 			}
+
 			MoveNext ();
 				
 			return sb.ToString ();
@@ -175,7 +189,8 @@ namespace Mono.Data.SqlExpressions {
 			char next;
 			while ((next = Next ()) == '_' || Char.IsLetterOrDigit (next) || next == '\\') {
 				sb.Append (ProcessEscapes (next));				
-				MoveNext ();
+				if (!MoveNext ())
+					break;
 			}
 
 			return sb.ToString ();
@@ -268,18 +283,10 @@ namespace Mono.Data.SqlExpressions {
 		  */
 		public bool advance ()
 		{
-			val = null;
-			tok = -1;
-			
-			try {
-				SkipWhiteSpace();
-				tok = ParseToken();
-				MoveNext();
-				return true;
-
-			} catch(IndexOutOfRangeException) {
+			if (!SkipWhiteSpace())
 				return false;
-			}
+			tok = ParseToken();
+			return MoveNext ();
 		}
 
 		/** classifies current token.
