@@ -264,7 +264,6 @@ namespace System.Web.UI
 
 			try {
 				assembly = Assembly.LoadWithPartialName (name);
-				string loc = assembly.Location;
 			} catch (Exception e) {
 				throw new ParseException (location, "Assembly " + name + " not found", e);
 			}

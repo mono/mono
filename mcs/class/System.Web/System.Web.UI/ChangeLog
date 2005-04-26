@@ -1,3 +1,8 @@
+2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs:
+	* SimpleWebHandlerParser.cs: removed values assigned and neved used.
+
 2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs:

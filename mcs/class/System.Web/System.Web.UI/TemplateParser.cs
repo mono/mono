@@ -373,11 +373,9 @@ namespace System.Web.UI
 			Assembly assembly = null;
 			try {
 				assembly = Assembly.Load (name);
-				string loc = assembly.Location;
 			} catch (Exception) {
 				try {
 					assembly = Assembly.LoadWithPartialName (name);
-					string loc = assembly.Location;
 				} catch (Exception e) {
 					ThrowParseException ("Assembly " + name + " not found", e);
 				}
