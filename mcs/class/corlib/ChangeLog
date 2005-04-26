@@ -1,3 +1,8 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added unit tests for System.Security.Policy.
+	ApplicationTrust class.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Do not include "old removed 2.0" (wrt beta2) in

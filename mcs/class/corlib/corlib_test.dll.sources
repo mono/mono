@@ -222,6 +222,7 @@ System.Security.Permissions/ZoneIdentityPermissionTest.cs
 System.Security.Policy/AllMembershipConditionTest.cs
 System.Security.Policy/ApplicationDirectoryMembershipConditionTest.cs
 System.Security.Policy/ApplicationDirectoryTest.cs
+System.Security.Policy/ApplicationTrustTest.cs
 System.Security.Policy/CodeGroupTest.cs
 System.Security.Policy/EvidenceTest.cs
 System.Security.Policy/FileCodeGroupTest.cs 
