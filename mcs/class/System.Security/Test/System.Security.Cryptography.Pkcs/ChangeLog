@@ -1,3 +1,10 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AlgorithmIdentifierTest.cs: Complete some test cases. Updated to 
+	NUnit 2.2 API.
+	* SignedCmsTest.cs: Added [Ignore] to 3 tests that now also fails
+	on beta2.
+
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CmsRecipientTest.cs, CmsSignerTest.cs, EnvelopedCmsTest.cs,

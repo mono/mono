@@ -38,7 +38,7 @@ using System.Security.Cryptography.Pkcs;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class AlgorithmIdentifierTest : Assertion {
+	public class AlgorithmIdentifierTest {
 
 		static string defaultOid = "1.2.840.113549.3.7";
 		static string defaultName = "3des";
@@ -48,10 +48,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorEmpty () 
 		{
 			AlgorithmIdentifier ai = new AlgorithmIdentifier ();
-			AssertEquals ("KeyLength", 0, ai.KeyLength);
-			AssertEquals ("Oid.FriendlyName", defaultName, ai.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, ai.Oid.Value);
-			AssertEquals ("Parameters", 0, ai.Parameters.Length);
+			Assert.AreEqual (0, ai.KeyLength, "KeyLength");
+			Assert.AreEqual (defaultName, ai.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (defaultOid, ai.Oid.Value, "Oid.Value");
+			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -59,9 +59,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			Oid o = new Oid (validOid);
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (o);
-			AssertEquals ("KeyLength", 0, ai.KeyLength);
-			AssertEquals ("Oid", validOid, ai.Oid.Value);
-			AssertEquals ("Parameters", 0, ai.Parameters.Length);
+			Assert.AreEqual (0, ai.KeyLength, "KeyLength");
+			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
+			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -69,6 +69,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorOidNull () 
 		{
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (null);
+			Assert.IsNull (ai.Oid, "Oid");
+			Assert.AreEqual (0, ai.KeyLength, "KeyLength");
+			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -76,9 +79,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			Oid o = new Oid (validOid);
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (o, 128);
-			AssertEquals ("KeyLength", 128, ai.KeyLength);
-			AssertEquals ("Oid", validOid, ai.Oid.Value);
-			AssertEquals ("Parameters", 0, ai.Parameters.Length);
+			Assert.AreEqual (128, ai.KeyLength, "KeyLength");
+			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
+			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -86,6 +89,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorOidNullKeyLength () 
 		{
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (null, 128);
+			Assert.IsNull (ai.Oid, "Oid");
+			Assert.AreEqual (128, ai.KeyLength, "KeyLength");
+			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -94,6 +100,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			Oid o = new Oid (validOid);
 			AlgorithmIdentifier ai = new AlgorithmIdentifier (o, -1);
+			Assert.AreEqual (-1, ai.KeyLength, "KeyLength");
+			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
+			Assert.AreEqual (0, ai.Parameters.Length, "Parameters");
 		}
 
 		[Test]
@@ -101,11 +110,11 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			AlgorithmIdentifier ai = new AlgorithmIdentifier ();
 			ai.KeyLength = Int32.MaxValue;
-			AssertEquals ("KeyLength-Max", Int32.MaxValue, ai.KeyLength);
+			Assert.AreEqual (Int32.MaxValue, ai.KeyLength, "KeyLength-Max");
 			ai.KeyLength = 0;
-			AssertEquals ("KeyLength-Zero", 0, ai.KeyLength);
+			Assert.AreEqual (0, ai.KeyLength, "KeyLength-Zero");
 			ai.KeyLength = Int32.MinValue;
-			AssertEquals ("KeyLength-Min", Int32.MinValue, ai.KeyLength);
+			Assert.AreEqual (Int32.MinValue, ai.KeyLength, "KeyLength-Min");
 		}
 
 		[Test]
@@ -113,9 +122,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			AlgorithmIdentifier ai = new AlgorithmIdentifier ();
 			ai.Oid = new Oid (validOid);
-			AssertEquals ("Oid", validOid, ai.Oid.Value);
+			Assert.AreEqual (validOid, ai.Oid.Value, "Oid");
 			ai.Oid = null;
-			AssertNull ("Oid", ai.Oid);
+			Assert.IsNull (ai.Oid, "Oid-Null");
 		}
 
 		[Test]
@@ -123,9 +132,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			AlgorithmIdentifier ai = new AlgorithmIdentifier ();
 			ai.Parameters = new byte[2] { 0x05, 0x00 }; // ASN.1 NULL
-			AssertEquals ("Oid", "05-00", BitConverter.ToString (ai.Parameters));
+			Assert.AreEqual ("05-00", BitConverter.ToString (ai.Parameters), "Parameters");
 			ai.Parameters = null;
-			AssertNull ("Parameters", ai.Parameters);
+			Assert.IsNull (ai.Parameters, "Parameters-Null");
 		}
 	}
 }
