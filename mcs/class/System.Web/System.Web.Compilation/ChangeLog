@@ -1,3 +1,8 @@
+2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: when checking languages, try to match other aliases
+	too (ie, 'cs' == 'c#').
+
 2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: check that DynamicBase directory exists before

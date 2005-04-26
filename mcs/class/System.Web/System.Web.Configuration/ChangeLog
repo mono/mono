@@ -1,3 +1,7 @@
+2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilerCollection.cs: added CompareLanguages method.
+
 2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfigurationHandler.cs: ensure TempDirectory is not empty

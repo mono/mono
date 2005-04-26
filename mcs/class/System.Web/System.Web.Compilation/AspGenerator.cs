@@ -33,6 +33,7 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
 using System.Web.Caching;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.Util;
@@ -624,7 +625,11 @@ namespace System.Web.Compilation
 			if (lang == null || lang == "")
 				return;
 
-			if (String.Compare (lang, tparser.Language, true) != 0) {
+			if (String.Compare (lang, tparser.Language, true) == 0)
+				return;
+
+			CompilationConfiguration cfg = CompilationConfiguration.GetInstance (HttpContext.Current); 
+			if (!cfg.Compilers.CompareLanguages (tparser.Language, lang)) {
 				throw new ParseException (Location,
 						String.Format ("Trying to mix language '{0}' and '{1}'.", 
 								tparser.Language, lang));

@@ -63,6 +63,11 @@ namespace System.Web.Configuration
 				}
 			}
 		}
+
+		public bool CompareLanguages (string lang1, string lang2)
+		{
+			return (this [lang1] == this [lang2]);
+		}
 	}
 #if false
 	public sealed class CompilerCollection : ConfigurationElementCollection
