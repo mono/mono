@@ -224,6 +224,8 @@ namespace Mono.Globalization.Unicode
 					switch (combiningCategory) {
 					case "narrow":
 					case "wide":
+					case "super":
+					case "sub":
 						widthSensitives.Add (cp);
 						break;
 					}

@@ -1,3 +1,10 @@
+2005-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : some updates.
+	* create-mapping-char-source.cs : superscripts and subscripts are also
+	  ignored in IgnoreWidth comparison.
+	* Makefile : tiny touch fix.
+
 2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoImpl.cs, Collator.cs : conceptual stuff (not working).

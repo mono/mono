@@ -1,10 +1,15 @@
 String collation
 
+* Summary
+
+	We are going to implement Windows-like collation, apart from ICU which
+	is conformant to Unicode specifications.
+
 * CompareInfo members
 
 	GetSortKey()
 		Compute sort key for every characters into byte[].
-		Use collation element table.
+		Use collation element table, but Windows specific ones.
 	Compare()
 		Find first difference and compare it. "Larger/smaller" matters.
 	IsPrefix()
@@ -34,8 +39,7 @@ String collation
 	not distinguished, but Hiragana "A" and Hiragana "I" are.
 
 	Actually, even without any IgnoreXXX flags (i.e. "None"), there are 
-	many characters that are excluded from results. I'd say it as
-	"completely ignorable" characters (as said in UCA).
+	many characters that are ignored ("completely ignorable").
 
 	For LCID 101/1125(div), '\ufdf2' is completely ignorable.
 	This rule even applies to CompareOptions.None.
@@ -49,10 +53,10 @@ String collation
 		and IgnoreCase, I\u0307 is not regarded as equal to i.
 
 	IgnoreKanaType
-		We need ToHiragana() like ToLower(). See also "Notes".
+		ToKanaTypeInsensitive(). See also "Notes".
 
 	IgnoreWidth
-		We need ToFullWidth(), which is likely to be culture
+		ToWidthInsensitive(), which is likely to be culture
 		independent. See also "Notes".
 
 ** Strippers
@@ -61,15 +65,15 @@ String collation
 	compatible (at least with .NET 1.1 invariant culture).
 
 	IgnoreNonSpace
-		It is in a black box.
-		- Some Diacritic characters are covered by this flag.
+		IsIgnorableNonSpacing().
+		Some Diacritic characters are covered by this flag.
 
 		There are some culture *dependent* characters:
 			LCID 90/1114(syr) : 64b, 652, 670
 
 	IgnoreSymbols
-		We need to implement our own Char.IsSymbol().
-		UnicodeCategory does not work.
+		IsIgnorableSymbol().
+		UnicodeCategory does not work here.
 
 		There are some culture *dependent* characters:
 			LCID 17/1041(ja) : 2015
@@ -88,16 +92,20 @@ String collation
 
 * Collation element table tailoring
 
+	Deprecated; We won't use collation element table from unicode.org.
+
 	We will contain only the default element table and Chinese table.
 	(Japanese might be added too, since CLDR contains a large table for it)
 
-	Other rules are always "evaluated"; no physical expansion is done.
+	Other rules are always "evaluated"; no physical expansion is done to
+	the table loaded in memory (it's too wasting).
 
 * Notes
 
 	Since UCA Level 3 handles both casing and width, it is impossible to
 	use UCA variables for IgnoreWidth, at least with the default element
-	table.
+	table. And IgnoreKanaType cannot be handled without case and width
+	insensitivity.
 
 	IgnoreWidth/IgnoreSymbols is processed after Kana voice mark
 	decomposition (NFD).
@@ -108,4 +116,102 @@ String collation
 	many characters that are used in for each specific culture, such as
 	Myanmar, Mongolian, Cherokee, Etiopic, Tagalog, Khmer, are regarded as
 	"completely ignorable".
+
+* MS collation design inference
+
+** sort key format
+
+	00 means the end of sort key.
+	01 means the end of the level.
+	02-FF means the value.
+
+	There are 5 levels.
+
+	- level 1: primary difference
+	  The first byte of level 1 means the category of the character.
+	- level 2: case sensitivity
+	- level 3: diacritic difference
+	- level 4: kana type (mostly at primary category 22)
+	- level 5: control characters etc.
+
+** default
+
+	So the problem is, how to detect diacritic. Maybe they are combined
+	similarly to what is specified in UCA.
+
+*** sort order categories
+
+	1 (0) specially ignored ones (Japanese, Tamil, Thai)
+
+	3099-309C, BCD, E47, E4C, FF9E, FF9F
+
+	2 (1) maybe nonspacing marks
+
+	2.1 control characters (specified as such in Unicode), except for
+	whitespaces (0009-000D).
+
+	2.2 0027,FF07 (')
+
+	2.3  minus sign, hyphen, dash
+	  minus signs: FE63, 207B (super), 208B (sub), 002D, 00FD (full-width)
+	  hyphens: 00AD (soft), 2010, 2011 (nonbreaking) ... Unicode HYPHEN?
+	  dashes, horizontal bars: FE58 ... Unicode DASH?
+
+	2.4 Arabic spacing and equivalents (64B-651, FE70-FE7F)
+	  They are part of nonspacing mark, but not equal.
+
+	2.5 Nonspacing marks mixed
+	  30D, 591-5C2, Mn:981-A3C, A4D, A70, A71, ABC, ABD ...
+
+	3 (7) space separators and some kind of marks
+
+	3.1 whitespaces, paragraph separator etc.
+
+	3.2 other marks ('!', '^', ...)
+
+	4 (8) mathmatical symbols
+
+	5 (9) some other symbols
+
+	6 (A) punctuations
+
+	7 (C) numbers
+
+	8 (E) latin letters (alphabets)
+
+	9 (F) greek letters
+
+	...
+
+	   (21) georgian letters
+
+	13 (22) japanese kana letters and symbols
+
+	14 (23) bopomofo letters
+
+	15 (24) syriac letters
+
+	16 (41-45) surrogate Pt.1
+
+	17 (52-7E) hangul
+
+	18 (9E-FE) CJK (kangxi etc.), PrivateUse mixed, surrogate Pt.2
+
+	19 (FE) CJK extensions (3400-)
+
+	20 (FF) Some supplemental Japanese/Arabic marks
+
+** Traditional Spanish
+
+	It has some combined characters as a unique character (like 'll').
+
+** Czech
+
+	Invariant culture also puts Czech unique character \u0161 between s
+	and t, unlike described here:
+	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C0.asp
+
+** Other locales
+
+	There are some character reorderings.
 

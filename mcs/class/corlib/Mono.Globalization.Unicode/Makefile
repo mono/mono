@@ -94,7 +94,7 @@ $(CB_CLASS_TABLE) :
 	if ! test -d UCD/extracted; then mkdir UCD/extracted; fi
 	wget http://www.unicode.org/Public/UNIDATA/extracted/DerivedCombiningClass.txt
 	mv DerivedCombiningClass.txt UCD/extracted/
-	touch UCD/DerivedCombiningClass.txt
+	touch UCD/extracted/DerivedCombiningClass.txt
 
 
 sample : 
