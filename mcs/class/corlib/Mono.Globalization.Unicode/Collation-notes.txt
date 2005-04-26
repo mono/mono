@@ -1,11 +1,11 @@
-String collation
+* String collation
 
-* Summary
+** Summary
 
 	We are going to implement Windows-like collation, apart from ICU which
 	is conformant to Unicode specifications.
 
-* CompareInfo members
+** How to implement CompareInfo members
 
 	GetSortKey()
 		Compute sort key for every characters into byte[].
@@ -25,7 +25,7 @@ String collation
 		Find first match and process comparison to the end of the 
 		string to find
 
-* CompareOptions support
+** How to support CompareOptions
 
 	There are two kind of "ignorance" : ignorance which acts as stripper,
 	and ignorance acts as normalizer.
@@ -44,7 +44,7 @@ String collation
 	For LCID 101/1125(div), '\ufdf2' is completely ignorable.
 	This rule even applies to CompareOptions.None.
 
-** Normalizers
+*** Normalizers
 
 	IgnoreCase
 		Maybe culture-dependent TextInfo.ToLower() could be used.
@@ -59,7 +59,7 @@ String collation
 		ToWidthInsensitive(), which is likely to be culture
 		independent. See also "Notes".
 
-** Strippers
+*** Strippers
 
 	I already wrote all the required strippers which should be MS
 	compatible (at least with .NET 1.1 invariant culture).
@@ -79,28 +79,21 @@ String collation
 			LCID 17/1041(ja) : 2015
 			LCID 90/1114(syr) : 64b, 652
 
-** StringSort
+*** StringSort
 
 	Maybe use additional tailoring rule which says that non-alphabetic
 	characters does not take precedence.
 
-* CharacterIterator
+** ICU and UCA
 
-	The match evaluation could not be done only one character - the longest
-	possible sequence of characters in the tailored table (e.g. "ch" 
-	in Spanish) should be examined.
+	First to note: we won't use collation element table from unicode.org.
 
-* Collation element table tailoring
+*** Collation element table tailoring
 
-	Deprecated; We won't use collation element table from unicode.org.
+	To understand why we don't use collation element table from UCA, you
+	can try to compare "A" and "a" in the invariant culture.)
 
-	We will contain only the default element table and Chinese table.
-	(Japanese might be added too, since CLDR contains a large table for it)
-
-	Other rules are always "evaluated"; no physical expansion is done to
-	the table loaded in memory (it's too wasting).
-
-* Notes
+** Notes
 
 	Since UCA Level 3 handles both casing and width, it is impossible to
 	use UCA variables for IgnoreWidth, at least with the default element
@@ -117,13 +110,15 @@ String collation
 	Myanmar, Mongolian, Cherokee, Etiopic, Tagalog, Khmer, are regarded as
 	"completely ignorable".
 
-* MS collation design inference
+** MS collation design inference
 
 ** sort key format
 
 	00 means the end of sort key.
 	01 means the end of the level.
 	02-FF means the value.
+	If less than or equal to 2 in followings in a level, then the sequence
+	of the level is terminated (1). 2 is the default.
 
 	There are 5 levels.
 
@@ -134,10 +129,60 @@ String collation
 	- level 4: kana type (mostly at primary category 22)
 	- level 5: control characters etc.
 
-** default
+** sort key table
 
-	So the problem is, how to detect diacritic. Maybe they are combined
-	similarly to what is specified in UCA.
+	Here is the simple sortkey dumper:
+
+	public static void Main (string [] args)
+	{
+		CultureInfo culture = args.Length > 0 ?
+			new CultureInfo (args [0]) :
+			CultureInfo.InvariantCulture;
+		CompareInfo ci = culture.CompareInfo;
+		for (int i = 0; i < char.MaxValue; i++) {
+			string s = new string ((char) i, 1);
+			if (ci.Compare (s, "") == 0)
+				continue; // ignored
+			byte [] data = ci.GetSortKey (s).KeyData;
+			foreach (byte b in data) {
+				Console.Write ("{0:X02}", b);
+				Console.Write (' ');
+			}
+			Console.WriteLine (" : {0:X}, {1} {2}",
+				i,
+				Char.GetUnicodeCategory ((char) i),
+				data [2] != 1 ? '!' : ' ');
+		}
+	}
+
+*** Combined characters
+
+	Some latin+diaeresis sequences are regarded as a single character for
+	each.
+
+	Maybe they are combined similarly to what is specified in UCA.
+
+*** Expanded characters
+
+	Some characters are expanded to two or more characters:
+
+	C6 (AE), E6 (ae), 1F1-1F3 (dz), 1C4-1C6 (Dz), FB00-FB06 (ff, fi),
+	132-133 (IJ), 1C7-1C9 (LJ), 1CA-1CC (NJ), 152-153 (OE),
+	DF (ss), FB06 (st), FB05 (\u017Ft), FE, DE, 5F0-5F2,
+	1113-115F (hangul)
+	(CJK extension is not really expanded)
+
+	They don't match with any of Unicode normalization.
+
+	Some alphabetic cultures have different mappings, but mostly small
+	(at least da-DK, lt-LT, fr-FR, es-ES have tiny differences).
+
+	Invariant culture also puts Czech unique character \u0161 between s
+	and t, unlike described here:
+	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C0.asp
+
+	zh-CHS, ko-KR and ja-JP have very different CJK mapping for each
+	(but might be just a matter of computation formula differences).
 
 *** sort order categories
 
@@ -160,58 +205,73 @@ String collation
 	2.4 Arabic spacing and equivalents (64B-651, FE70-FE7F)
 	  They are part of nonspacing mark, but not equal.
 
-	2.5 Nonspacing marks mixed
+	3 (1) Nonspacing marks mixed
 	  30D, 591-5C2, Mn:981-A3C, A4D, A70, A71, ABC, ABD ...
 
-	3 (7) space separators and some kind of marks
+	4 (7) space separators and some kind of marks
 
-	3.1 whitespaces, paragraph separator etc.
+	4.1 whitespaces, paragraph separator etc.
+	  (White_Space in PropList.txt)
 
-	3.2 other marks ('!', '^', ...)
+	4.2 other marks ('!', '^', ...)
 
-	4 (8) mathmatical symbols
+	5 (8) mathmatical symbols
 
-	5 (9) some other symbols
+	6 (9) some other symbols
 
-	6 (A) punctuations
+	7 (A) punctuations
 
-	7 (C) numbers
+	8 (C) numbers
 
-	8 (E) latin letters (alphabets)
+	9 (E) latin letters (alphabets)
+	  upper is 18, lower is 2 (default), diacritics are 19 or more.
 
-	9 (F) greek letters
+	10 (F) greek letters
 
 	...
 
 	   (21) georgian letters
 
-	13 (22) japanese kana letters and symbols
+	11 (22) japanese kana letters and symbols
 
-	14 (23) bopomofo letters
+	12 (23) bopomofo letters
 
-	15 (24) syriac letters
+	13 (24) syriac/thaana letters
 
-	16 (41-45) surrogate Pt.1
+	14 (41-45) surrogate Pt.1
 
-	17 (52-7E) hangul
+	15 (52-7E) hangul, mixing combined ones
+	   52 02 .. 7E C8
 
-	18 (9E-FE) CJK (kangxi etc.), PrivateUse mixed, surrogate Pt.2
+	16 (9E-FE) CJK (kangxi etc.), PrivateUse mixed, surrogate Pt.2
+	   9E 02 .. FE C1
 
-	19 (FE) CJK extensions (3400-)
+	17 (FE) CJK extensions (3400-)
+	   FE FF 10 02 .. FE FF 29 E9
 
-	20 (FF) Some supplemental Japanese/Arabic marks
+	18 (FF) Some supplemental Japanese/Arabic marks
 
-** Traditional Spanish
 
-	It has some combined characters as a unique character (like 'll').
+** Mono implementation plans
 
-** Czech
+*** sort key element table
 
-	Invariant culture also puts Czech unique character \u0161 between s
-	and t, unlike described here:
-	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C0.asp
+	We will contain our own collation element table which will be closer
+	to the one from Windows.
 
-** Other locales
+	Culture-dependent rules are always "evaluated"; no physical expansion
+	is done to the table loaded in memory (it's waste of memory).
 
-	There are some character reorderings.
+*** CharacterIterator
+
+	The match evaluation could not be done char by char - the longest
+	possible sequence of characters in the tailored table (e.g. "ch" 
+	in Spanish) should be examined. It will be like non-NFD detection.
+
+
+*** Reference materials
+
+	Developing International Software for Windows 95 and Windows NT
+	Appendix D Sort Order for Selected Languages
+	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24BF.asp
 
