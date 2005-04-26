@@ -1,3 +1,9 @@
+2005-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: when the day is active, modify the text of the literal
+	control that holds the number, not the text of the TableCell. Also call
+	OnDayRender before updating that text. Fixes bug #74718.
+
 2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataKey.cs: Added virtual TrackViewState and IsTrackingViewState

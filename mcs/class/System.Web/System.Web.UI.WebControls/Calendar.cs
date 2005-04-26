@@ -1066,19 +1066,18 @@ namespace System.Web.UI.WebControls
 
 					TableCell dayCell = new TableCell ();
 					dayCell.ApplyStyle (currentDayStyle);
-					dayCell.Controls.Add (new LiteralControl (dayString));
+					LiteralControl number = new LiteralControl (dayString);
+					dayCell.Controls.Add (number);
 					calDay.IsSelectable = isActive;
-					if (calDay.IsSelectable)
-						dayCell.Text = GetCalendarLinkText (
-									(begin + (crr * 7 + weekDay)).ToString (),
+					OnDayRender (dayCell, calDay);
+					if (isActive)
+						number.Text = GetCalendarLinkText ((begin + (crr * 7 + weekDay)).ToString (),
 									dayString,
 									currentDay.ToShortDateString (),
 									dayCell.ForeColor,
 									isActive);
 
-					OnDayRender (dayCell, calDay);
 					dayCell.RenderControl (writer);
-
 					currentDay = globCal.AddDays (currentDay, 1);
 				}
 				writer.Write("</tr>");
