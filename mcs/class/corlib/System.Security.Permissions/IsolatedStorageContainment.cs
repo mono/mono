@@ -9,7 +9,7 @@
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,9 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Security.Permissions {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum IsolatedStorageContainment
 	{
 		None = 0x00,
@@ -44,7 +49,7 @@ namespace System.Security.Permissions {
 		AdministerIsolatedStorageByUser = 0x70,
 		UnrestrictedIsolatedStorage = 0xF0,
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		ApplicationIsolationByUser = 0x25,
+		ApplicationIsolationByUser = 0x15,
 		DomainIsolationByMachine = 0x30,
 		AssemblyIsolationByMachine = 0x40,
 		ApplicationIsolationByMachine = 0x45,

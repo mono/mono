@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,10 +50,8 @@ namespace System.Security.Permissions {
 	// 11	12	StrongNameIdentityPermission
 	// 12	13	UrlIdentityPermission
 	// 13	14	ZoneIdentityPermission
-	// N/A	15	???
-	// N/A	16	GacIdentityPermission
-	// N/A	17	KeyContainerPermission
-	// N/A	18	DataProtectionPermission
+	// N/A	15	GacIdentityPermission
+	// N/A	16	KeyContainerPermission
 
 	internal enum BuiltInToken {
 		Environment = 0,
@@ -78,9 +76,8 @@ namespace System.Security.Permissions {
 		StrongNameIdentity = 12,
 		UrlIdentity = 13,
 		ZoneIdentity = 14,
-		GacIdentity = 16,
-		KeyContainer = 17,
-		DataProtection = 18,
+		GacIdentity = 15,
+		KeyContainer = 16,
 #endif
 	}
 }

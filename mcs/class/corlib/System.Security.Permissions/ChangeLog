@@ -1,3 +1,11 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IBuiltInPermission.cs: Fixed index values for GacIdentityPermission
+	and KeyContainerPermission. Removed DataProtectionPermission.
+	* IsolatedStorageContainment.cs: Fixed ApplicationIsolationByUser 
+	value to 0x15.
+	* UrlIdentityPermission.cs: Fixed differences between 1.x and 2.0.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermission.cs: Now use InsecureGetFullPath to add paths to 
