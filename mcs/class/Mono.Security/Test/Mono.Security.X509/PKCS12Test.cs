@@ -2,9 +2,10 @@
 // PKCS12Test.cs - NUnit tests for PKCS12
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -177,7 +178,7 @@ namespace MonoTests.Mono.Security.X509 {
 		public void Farscape_NoPassword_Explicit () 
 		{
 			// exported from MS certificate manager WITHOUT password
-			PKCS12 p12 = new PKCS12 (farscape_nopwd_pfx, null);
+			PKCS12 p12 = new PKCS12 (farscape_nopwd_pfx, (string)null);
 			RSA rsa = (RSA) p12.Keys [0];
 			X509Certificate x509 = p12.Certificates [0];
 			AssertEquals (rsa.ToXmlString (false), x509.RSA.ToXmlString (false));

@@ -1,3 +1,8 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12Test.cs: Fix a test for 2.0 (where the constructor could be
+	ambiguous).
+
 2004-05-12  Nick Drochak <ndrochak@ieee.org>
 
 	* PKCS12Test.cs: Do not exceed line length limit. 
