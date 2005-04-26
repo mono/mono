@@ -1,4 +1,7 @@
 2005-04-26 Manjula GHM <mmanjula@novell.com>
+      	*statement.cs
+		"out" is not supported as Parameter Modifier in VB.NET
+2005-04-26 Manjula GHM <mmanjula@novell.com>
 	*support.cs
       	*parameter.cs
       	*argument.cs

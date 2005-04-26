@@ -652,8 +652,6 @@ namespace Mono.MonoBASIC {
 
 			if (ec.CurrentBranching.InTryBlock ())
 				ec.CurrentBranching.AddFinallyVector (vector);
-			else
-				vector.CheckOutParameters (ec.CurrentBranching);
 
 			vector.Returns = FlowReturns.ALWAYS;
 			vector.Breaks = FlowReturns.ALWAYS;
@@ -1937,13 +1935,6 @@ namespace Mono.MonoBASIC {
 
 				Report.Debug (1, "MERGING FINALLY ORIGIN DONE", this);
 			}
-
-			public void CheckOutParameters (FlowBranching branching)
-			{
-				if (parameters != null)
-					branching.CheckOutParameters (parameters, branching.Location);
-			}
-
 			// <summary>
 			//   Performs an `or' operation on the locals and the parameters.
 			// </summary>
@@ -2127,50 +2118,6 @@ namespace Mono.MonoBASIC {
 			CurrentUsageVector.MergeFinallyOrigins (finally_vectors);
 		}
 
-		// <summary>
-		//   Check whether all `out' parameters have been assigned.
-		// </summary>
-		public void CheckOutParameters (MyBitVector parameters, Location loc)
-		{
-			if (InTryBlock ())
-				return;
-
-			for (int i = 0; i < param_map.Length; i++) {
-				int index = param_map [i];
-
-				if (index == 0)
-					continue;
-
-				if (parameters [index - 1])
-					continue;
-
-				// If it's a struct, we must ensure that all its fields have
-				// been assigned.  If the struct has any non-public fields, this
-				// can only be done by assigning the whole struct.
-
-				MyStructInfo struct_info = struct_params [index - 1];
-				if ((struct_info == null) || struct_info.HasNonPublicFields) {
-					Report.Error (
-						177, loc, "The out parameter `" +
-						param_info.ParameterName (i) + "' must be " +
-						"assigned before control leave the current method.");
-					param_map [i] = 0;
-					continue;
-				}
-
-
-				for (int j = 0; j < struct_info.Count; j++) {
-					if (!parameters [index + j]) {
-						Report.Error (
-							177, loc, "The out parameter `" +
-							param_info.ParameterName (i) + "' must be " +
-							"assigned before control leave the current method.");
-						param_map [i] = 0;
-						break;
-					}
-				}
-			}
-		}
 
 		// <summary>
 		//   Merge a child branching.
@@ -2207,8 +2154,6 @@ namespace Mono.MonoBASIC {
 			Report.Debug (1, "MERGING TOP BLOCK DONE", Location, vector);
 
 			if (vector.Breaks != FlowReturns.EXCEPTION) {
-				if (!vector.AlwaysBreaks)
-					CheckOutParameters (CurrentUsageVector.Parameters, Location);
 				return vector.AlwaysBreaks ? FlowReturns.ALWAYS : vector.Returns;
 			} else
 				return FlowReturns.EXCEPTION;
@@ -4834,11 +4779,6 @@ namespace Mono.MonoBASIC {
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 
 			Report.Debug (1, "END OF FINALLY", ec.CurrentBranching, returns, vector, f_vector);
-
-			if ((returns == FlowReturns.SOMETIMES) || (returns == FlowReturns.ALWAYS)) {
-				ec.CurrentBranching.CheckOutParameters (f_vector.Parameters, loc);
-			}
-
 			ec.CurrentBranching.CurrentUsageVector.Or (vector);
 
 			Report.Debug (1, "END OF TRY", ec.CurrentBranching);
