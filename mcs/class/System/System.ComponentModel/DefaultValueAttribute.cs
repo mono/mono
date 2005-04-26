@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
@@ -88,13 +89,10 @@ namespace System.ComponentModel
 
 		public DefaultValueAttribute (Type type, string value)
 		{
-			// TODO check if this implementation is correct
 			try {
-				DefaultValue = Convert.ChangeType (value, type);
-			}
-			catch {
-				DefaultValue = null;
-			}
+				TypeConverter converter = TypeDescriptor.GetConverter (type);
+				DefaultValue = converter.ConvertFromString (null, CultureInfo.InvariantCulture, value);
+			} catch { }
 		}
 
 		public object Value {

@@ -1,3 +1,9 @@
+2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultValueAttribute.cs: fixed the .ctor that takes a type and a
+	string. Previous implementation caused *lots* of exceptions being thrown
+	when processing WebControl types.
+
 2005-04-22  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* AttributeCollection.cs: When checking if the list contains an
