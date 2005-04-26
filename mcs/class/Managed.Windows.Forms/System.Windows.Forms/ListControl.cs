@@ -24,7 +24,7 @@
 //
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
 using System.Drawing;
@@ -39,10 +39,10 @@ namespace System.Windows.Forms
 		private object data_source;
 		private BindingMemberInfo value_member;
 		private string display_member;
-		private CurrencyManager data_manager;
+		protected CurrencyManager data_manager;
 
 		protected ListControl ()
-		{
+		{			
 			data_source = null;
 			value_member = new BindingMemberInfo (string.Empty);
 			display_member = string.Empty;
@@ -82,14 +82,16 @@ namespace System.Windows.Forms
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string DisplayMember {
-			get { return display_member; }
+			get { 
+				return display_member;				
+			}
 			set {
 				if (display_member == value) {
 					return;
 				}
 
 				display_member = value;
-				ConnectToDataSource ();
+				ConnectToDataSource ();				
 				OnDisplayMemberChanged (EventArgs.Empty);
 			}
 		}
@@ -107,16 +109,26 @@ namespace System.Windows.Forms
 			get {
 				if (data_manager == null) {
 					return null;
-				}
+				}				
 				
-				
-				object item  = data_manager.GetItem (SelectedIndex);				
-				object fil =  FilterItemOnProperty (item, ValueMember);
+				object item = data_manager.GetItem (SelectedIndex);
+				object fil = FilterItemOnProperty (item, ValueMember);
 				return fil;
 			}
-
 			set {
-
+				if (data_manager != null) {
+					
+					PropertyDescriptorCollection col = data_manager.GetItemProperties ();
+					PropertyDescriptor prop = col.Find (ValueMember, true);
+										
+					for (int i = 0; i < data_manager.Count; i++) {
+						 if (prop.GetValue (data_manager.GetItem (i)) == value) {
+						 	SelectedIndex = i;
+						 	return;
+						}
+					}
+					
+				}
 			}
 		}
 
@@ -125,8 +137,20 @@ namespace System.Windows.Forms
 		public string ValueMember  {
 			get { return value_member.BindingMember; }
 			set {
-				value_member = new BindingMemberInfo (value);
+				BindingMemberInfo new_value = new BindingMemberInfo (value);
+				
+				if (value_member.Equals (new_value)) {
+					return;
+				}
+				
+				value_member = new_value;
+				
+				if (display_member == string.Empty) {
+					DisplayMember = value_member.BindingMember;					
+				}
+				
 				ConnectToDataSource ();
+				OnValueMemberChanged (EventArgs.Empty);
 			}
 		}
 
@@ -158,12 +182,18 @@ namespace System.Windows.Forms
 				return item;
 			
 			return prop.GetValue (item);
-
 		}
 
 		public string GetItemText (object item)
 		{
-			 throw new NotImplementedException ();
+			if (data_manager != null) {
+				object fil = FilterItemOnProperty (item, DisplayMember);
+				if (fil != null) {
+					return fil.ToString ();
+				}
+			}
+								
+			return item.ToString ();			
 		}
 
 		protected CurrencyManager DataManager {
@@ -195,6 +225,8 @@ namespace System.Windows.Forms
 		protected override void OnBindingContextChanged (EventArgs e)
 		{
 			base.OnBindingContextChanged (e);
+			ConnectToDataSource ();
+			SetItemsCore (DataManager.List);
 		}
 
 		protected virtual void OnDataSourceChanged (EventArgs e)
@@ -238,6 +270,10 @@ namespace System.Windows.Forms
 		}
 
 		protected abstract void SetItemsCore (IList items);
+		
+		#endregion Public Methods
+		
+		#region Private Methods
 
 		internal void BindDataItems (IList items)
 		{
@@ -250,7 +286,7 @@ namespace System.Windows.Forms
 
 		private void ConnectToDataSource ()
 		{
-			if (data_source == null || display_member == string.Empty) {
+			if (data_source == null) {
 				data_manager = null;
 				return;
 			}
@@ -259,10 +295,17 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			data_manager = (CurrencyManager) BindingContext [data_source, display_member];
+			data_manager = (CurrencyManager) BindingContext [data_source, ValueMember];
+			data_manager.PositionChanged += new EventHandler (OnPositionChanged);			
+		}
+		
+		//TODO: See bug 74744
+		private void OnPositionChanged (object sender, EventArgs e)
+		{
+			
 		}
 
-		#endregion Public Methods
+		#endregion Private Methods	
 	}
 
 }

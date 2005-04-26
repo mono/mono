@@ -1,3 +1,11 @@
+2005-04-26  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: Databinding support fixes, fire missing events
+	* ListControl.cs: implement missing methods and properties, fixes
+	* ThemeWin32Classic.cs: Databiding support on Drawing
+	* CheckedListBox.cs: Databinding support fixes, fire missing events
+	* ListBox.cs: Databinding support fixes, fire missing events
+	
 2005-04-25  Peter Bartok  <pbartok@novell.com>
 
 	* LinkLabel.cs: Length of LinkArea is not allowed to be negative

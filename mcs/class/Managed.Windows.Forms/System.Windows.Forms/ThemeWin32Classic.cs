@@ -752,7 +752,7 @@ namespace System.Windows.Forms
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 				(back_color), item_rect);
 
-			e.Graphics.DrawString (ctrl.Items[e.Index].ToString (), e.Font,
+			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
 				item_rect, string_format);
 					
@@ -844,7 +844,7 @@ namespace System.Windows.Forms
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), e.Bounds);
 
 			if (e.Index != -1) {
-				e.Graphics.DrawString (ctrl.Items[e.Index].ToString (), e.Font,
+				e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
 					text_draw, string_format);
 			}
@@ -1091,7 +1091,7 @@ namespace System.Windows.Forms
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 				(back_color), e.Bounds);
 
-			e.Graphics.DrawString (ctrl.Items[e.Index].ToString (), e.Font,
+			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
 				e.Bounds, string_format);
 					

@@ -557,7 +557,7 @@ namespace System.Windows.Forms
 		public override string Text {
 			get {
 				if (SelectionMode != SelectionMode.None && SelectedIndex != -1)
-					return Items[SelectedIndex].ToString ();
+					return GetItemText (SelectedItem);
 
 				return base.Text;
 			}
@@ -664,7 +664,7 @@ namespace System.Windows.Forms
 		public int FindString (string s,  int startIndex)
 		{
 			for (int i = startIndex; i < Items.Count; i++) {
-				if ((Items[i].ToString ()).StartsWith (s))
+				if ((GetItemText (Items[i])).StartsWith (s))
 					return i;
 			}
 
@@ -679,7 +679,7 @@ namespace System.Windows.Forms
 		public int FindStringExact (string s,  int startIndex)
 		{
 			for (int i = startIndex; i < Items.Count; i++) {
-				if ((Items[i].ToString ()).Equals (s))
+				if ((GetItemText (Items[i])).Equals (s))
 					return i;
 			}
 
@@ -773,11 +773,14 @@ namespace System.Windows.Forms
 		protected override void OnDataSourceChanged (EventArgs e)
 		{
 			base.OnDataSourceChanged (e);
-
-			if (DataSource != null)
+			BindDataItems (items);			
+			
+			if (DataSource == null || DataManager == null) {
 				SelectedIndex = -1;
-
-			BindDataItems (items);
+			} 
+			else {
+				SelectedIndex = DataManager.Position;
+			}
 		}
 
 		protected override void OnDisplayMemberChanged (EventArgs e)
@@ -788,7 +791,7 @@ namespace System.Windows.Forms
 				return;
 
 			BindDataItems (items);
-			SelectedIndex = DataManager.Position;
+			base.Refresh ();
 		}
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
@@ -1638,7 +1641,7 @@ namespace System.Windows.Forms
 
 					SizeF size;
 					for (int i = 0; i < Items.Count; i++) {
-						size = DeviceContext.MeasureString (Items[i].ToString(), Font);
+						size = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
 
 						if ((int) size.Width > listbox_info.max_itemwidth)
 							listbox_info.max_itemwidth = (int) size.Width;
@@ -1649,7 +1652,7 @@ namespace System.Windows.Forms
 
 						SizeF size;
 						for (int i = first; i < last + 1; i++) {
-							size = DeviceContext.MeasureString (Items[i].ToString(), Font);
+							size = DeviceContext.MeasureString (GetItemText (Items[i]), Font);
 
 							if ((int) size.Width > listbox_info.max_itemwidth)
 								listbox_info.max_itemwidth = (int) size.Width;
@@ -1814,9 +1817,9 @@ namespace System.Windows.Forms
 				{
 					int index1 = ((ListBox.ListBoxItem) (a)).Index;
 					int index2 = ((ListBox.ListBoxItem) (b)).Index;
-					string str1 = owner.Items[index1].ToString ();
-					string str2 = owner.Items[index2].ToString ();					
-					return str1.CompareTo (str2);					
+					string str1 = owner.GetItemText (owner.Items[index1]);
+					string str2 = owner.GetItemText (owner.Items[index2]);
+					return str1.CompareTo (str2);
 				}
 			}
 
@@ -2032,8 +2035,8 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
 				return (ListBox.ListBoxItem) listbox_items[index];
-			}
-
+			}		
+			
 			internal void SetListBoxItem (ListBox.ListBoxItem item, int index)
 			{
 				if (index < 0 || index >= Count)

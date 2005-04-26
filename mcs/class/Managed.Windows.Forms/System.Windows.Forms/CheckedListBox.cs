@@ -24,7 +24,7 @@
 //
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
 using System.Drawing;
@@ -107,14 +107,14 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public new object DataSource {
 			get { return base.DataSource; }
-			set { DataSource = value; }
+			set { base.DataSource = value; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		public new string DisplayMember {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return base.DisplayMember; }
+			set { base.DisplayMember = value; }
 		}
 
 		[Browsable (false)]
@@ -175,7 +175,7 @@ namespace System.Windows.Forms
 
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
-			throw new NotImplementedException ();
+			return base.CreateAccessibilityInstance ();
 		}
 		
 		protected override ListBox.ObjectCollection CreateItemCollection ()

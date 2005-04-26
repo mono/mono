@@ -406,10 +406,11 @@ namespace System.Windows.Forms
     				selected_index = value;
     				
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
-    					SetControlText (Items[selected_index].ToString ());
+    					SetControlText (GetItemText (Items[selected_index]));
     				}
     				
     				OnSelectedIndexChanged  (new EventArgs ());
+    				OnSelectedValueChanged (new EventArgs ());
     				Refresh ();
 			}
 		}
@@ -436,7 +437,7 @@ namespace System.Windows.Forms
 				selected_index = index;
 				
 				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					SetControlText (Items[selected_index].ToString ());
+					SetControlText (GetItemText (Items[selected_index]));
     				}
 				
 				OnSelectedItemChanged  (new EventArgs ());
@@ -525,7 +526,7 @@ namespace System.Windows.Forms
 				}
 
 				if (SelectedItem != null)  {
-					return SelectedItem.ToString ();
+					return GetItemText (SelectedItem);
 				}
 								
 				return base.Text;				
@@ -544,7 +545,7 @@ namespace System.Windows.Forms
 				}
 				
 				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					textbox_ctrl.Text = value.ToString ();
+					textbox_ctrl.Text = GetItemText (value);
 				}				
 			}
 		}
@@ -602,7 +603,7 @@ namespace System.Windows.Forms
 		public int FindString (string s, int startIndex)
 		{
 			for (int i = startIndex; i < Items.Count; i++) {
-				if ((Items[i].ToString ()).StartsWith (s))
+				if ((GetItemText (Items[i])).StartsWith (s))
 					return i;
 			}
 
@@ -617,7 +618,7 @@ namespace System.Windows.Forms
 		public int FindStringExact (string s, int startIndex)
 		{
 			for (int i = startIndex; i < Items.Count; i++) {
-				if ((Items[i].ToString ()).Equals (s))
+				if ((GetItemText (Items[i])).Equals (s))
 					return i;
 			}
 
@@ -666,11 +667,14 @@ namespace System.Windows.Forms
 		protected override void OnDataSourceChanged (EventArgs e)
 		{
 			base.OnDataSourceChanged (e);
-
-			if (DataSource != null)
-				SelectedIndex = -1;
-
 			BindDataItems (items);
+			
+			if (DataSource == null || DataManager == null) {
+				SelectedIndex = -1;
+			} 
+			else {
+				SelectedIndex = DataManager.Position;
+			}
 		}
 
 		protected override void OnDisplayMemberChanged (EventArgs e)
@@ -1000,7 +1004,7 @@ namespace System.Windows.Forms
 		{			
 			for (int i = 0; i < Items.Count; i++) 
 			{				
-				if (String.Compare (Items[i].ToString (), 0, search, 0, search.Length, true) == 0)
+				if (String.Compare (GetItemText (Items[i]), 0, search, 0, search.Length, true) == 0)
 					return i;
 			}
 
@@ -1678,7 +1682,7 @@ namespace System.Windows.Forms
 					owner.OnSelectionChangeCommitted (new EventArgs ());
 					
 					if (owner.DropDownStyle == ComboBoxStyle.Simple) {
-						owner.SetControlText (owner.Items[item].ToString ());
+						owner.SetControlText (owner.GetItemText (owner.Items[item]));
 					}
 				}
 			}
