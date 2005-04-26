@@ -1,6 +1,12 @@
 2005-03-30 Satya Sudha K <ksathyasudha@novell.com>
            Sudharsan V <vsudharsan@novell.com>
 
+	* Testcases for Late binding
+	* Few negative testcases for typemembers
+
+2005-03-30 Satya Sudha K <ksathyasudha@novell.com>
+           Sudharsan V <vsudharsan@novell.com>
+
 	* Separate 'test-mbas.pl' scripts for 'tests' and 'errors'
 	* Under 'errors': taking the line no also into account while verifying errors
 
