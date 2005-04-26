@@ -3,7 +3,7 @@ COMPILER = $(BASCOMPILE)
 endif
 
 ifndef PATTERN
-PATTERN = ./*/*.vb
+PATTERN = *.vb
 endif
 
 COMPILER_FLAGS = /libpath:../../../../class/lib/default /imports:System
@@ -12,14 +12,14 @@ DISTFILES = $(wildcard README.tests) $(wildcard ./*/*.vb) $(wildcard *.make) $(w
 
 run-test-local: 
 	$(MAKE) clean-local
-	./test-mbas.pl --compiler='$(COMPILER)' --compilerflags='$(COMPILER_FLAGS)' --pattern='$(PATTERN)' --runtime='$(TEST_RUNTIME)'
+	./test-mbas.pl --compiler='$(COMPILER)' --compilerflags='$(COMPILER_FLAGS)' --pattern='./*/$(PATTERN)' --runtime='$(TEST_RUNTIME)'
 
 run-test-ondotnet-local:
 	$(MAKE) clean-local
-	./test-mbas.pl --compiler='$(COMPILER)' --compilerflags='$(COMPILER_FLAGS)' --pattern='$(PATTERN)' --runtime=
+	./test-mbas.pl --compiler='$(COMPILER)' --compilerflags='$(COMPILER_FLAGS)' --pattern='./*/$(PATTERN)' --runtime=
 
 clean-local:
-	rm -f *.exe *.log *.results
+	rm -f ./*/*.exe ./*/*.log ./*/*.results *.log
 
 all-local test-local install-local uninstall-local:
 	@:

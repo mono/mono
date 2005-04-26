@@ -1,3 +1,8 @@
+2005-04-26 Satya Sudha K <ksathyasudha@novell.com>
+	   Sudharsan V <vsudharsan@novell.com>
+
+	Added Makefiles to each of the newly added subdirectories.
+
 2005-04-05 Ritvik Mayank <mritvik@novell.com>
 	* test-mbas.make : Minor change .
 
