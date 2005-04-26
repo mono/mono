@@ -378,12 +378,6 @@ If set, tells mono NOT to attempt using native asynchronous I/O services. In
 that case, a default select/poll implementation is used. Currently only epoll()
 is supported.
 .TP
-.I "MONO_DISABLE_SHM"
-If this variable is set, it disables the shared memory part of the
-Windows I/O Emulation layer, and handles (files, events, mutexes,
-pipes) will not be shared across processes.  Process creation is also
-disabled.  This option is only available on Unix.
-.TP
 .I "MONO_EGD_SOCKET"
 For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
