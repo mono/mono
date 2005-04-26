@@ -67,9 +67,15 @@ namespace System.Security.Policy {
 			get { return (ApplicationTrust) _list [index]; }
 		}
 
-		[MonoTODO]
 		public ApplicationTrust this [string appFullName] {
-			get { return (ApplicationTrust) _list [0]; }
+			get {
+				for (int i=0; i < _list.Count; i++) {
+					ApplicationTrust at = (_list [i] as ApplicationTrust);
+					if (at.ApplicationIdentity.FullName == appFullName)
+						return at;
+				}
+				return null;
+			}
 		}
 
 		// methods
@@ -129,22 +135,32 @@ namespace System.Security.Policy {
 			_list.CopyTo (array, index);
 		}
 
-		[MonoTODO ("missing MatchExactVersion")]
 		public ApplicationTrustCollection Find (ApplicationIdentity applicationIdentity, ApplicationVersionMatch versionMatch)
 		{
+			if (applicationIdentity == null)
+				throw new ArgumentNullException ("applicationIdentity");
+
+			string fullname = applicationIdentity.FullName;
+
+			switch (versionMatch) {
+			case ApplicationVersionMatch.MatchAllVersions:
+				int pos = fullname.IndexOf (", Version=");
+				if (pos >= 0)
+					fullname = fullname.Substring (0, pos);
+				break;
+			case ApplicationVersionMatch.MatchExactVersion:
+				break;
+			default:
+				throw new ArgumentException ("versionMatch");
+			}
+
 			ApplicationTrustCollection coll = new ApplicationTrustCollection ();
 			foreach (ApplicationTrust t in _list) {
-				if (t.ApplicationIdentity.Equals (applicationIdentity)) {
-					switch (versionMatch) {
-					case ApplicationVersionMatch.MatchAllVersions:
-						coll.Add (t);
-						break;
-					case ApplicationVersionMatch.MatchExactVersion:
-						// TODO: version is encoded in a fullname ?
-						break;
-					}
+				if (t.ApplicationIdentity.FullName.StartsWith (fullname)) {
+					coll.Add (t);
 				}
 			}
+
 			return coll;
 		}
 
@@ -170,7 +186,6 @@ namespace System.Security.Policy {
 			RemoveAllInstances (trust);
 		}
 
-		[MonoTODO ("missing MatchExactVersion (relies on Find)")]
 		public void Remove (ApplicationIdentity applicationIdentity, ApplicationVersionMatch versionMatch)
 		{
 			ApplicationTrustCollection coll = Find (applicationIdentity, versionMatch);

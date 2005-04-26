@@ -28,7 +28,12 @@
 
 #if NET_2_0
 
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Permissions;
+
+using Mono.Security.Cryptography;
 
 namespace System.Security.Policy {
 
@@ -41,23 +46,33 @@ namespace System.Security.Policy {
 		private bool _trustrun;
 		private bool _persist;
 
-		[MonoTODO]
 		public ApplicationTrust ()
 		{
 		}
 
-		[MonoTODO]
 		public ApplicationTrust (ApplicationIdentity applicationIdentity)
-			: this ()
 		{
+			if (applicationIdentity == null)
+				throw new ArgumentNullException ("applicationIdentity");
+			_appid = applicationIdentity;
 		}
 
 		public ApplicationIdentity ApplicationIdentity {
 			get { return _appid; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("ApplicationIdentity");
+				_appid = value;
+			}
 		}
 
 		public PolicyStatement DefaultGrantSet {
-			get { return _defaultPolicy; }
+			get {
+				if (_defaultPolicy == null)
+					_defaultPolicy = GetDefaultGrantSet ();
+
+				return _defaultPolicy;
+			}
 			set { _defaultPolicy = value; }
 		}
 
@@ -76,18 +91,94 @@ namespace System.Security.Policy {
 			set { _persist = value; }
 		}
 
-		[MonoTODO ("incomplete")]
 		public void FromXml (SecurityElement element) 
 		{
 			if (element == null)
 				throw new ArgumentNullException ("element");
-			throw new NotImplementedException ();
+
+			if (element.Tag != "ApplicationTrust")
+				throw new ArgumentException ("element");
+
+			string s = element.Attribute ("FullName");
+			if (s != null)
+				_appid = new ApplicationIdentity (s);
+			else
+				_appid = null;
+
+			_defaultPolicy = null;
+			SecurityElement defaultGrant = element.SearchForChildByTag ("DefaultGrant");
+			if (defaultGrant != null) {
+				for (int i=0; i < defaultGrant.Children.Count; i++) {
+					SecurityElement se = (defaultGrant.Children [i] as SecurityElement);
+					if (se.Tag == "PolicyStatement") {
+						DefaultGrantSet.FromXml (se, null);
+						break;
+					}
+				}
+			}
+
+			if (!Boolean.TryParse (element.Attribute ("TrustedToRun"), out _trustrun))
+				_trustrun = false;
+
+			if (!Boolean.TryParse (element.Attribute ("Persist"), out _persist))
+				_persist = false;
+
+			_xtranfo = null;
+			SecurityElement xtra = element.SearchForChildByTag ("ExtraInfo");
+			if (xtra != null) {
+				s = xtra.Attribute ("Data");
+				if (s != null) {
+					byte[] data = CryptoConvert.FromHex (s);
+					using (MemoryStream ms = new MemoryStream (data)) {
+						BinaryFormatter bf = new BinaryFormatter ();
+						_xtranfo = bf.Deserialize (ms);
+					}
+				}
+			}
 		}
 
-		[MonoTODO ("incomplete")]
 		public SecurityElement ToXml () 
 		{
-			throw new NotImplementedException ();
+			SecurityElement se = new SecurityElement ("ApplicationTrust");
+			se.AddAttribute ("version", "1");
+
+			if (_appid != null) {
+				se.AddAttribute ("FullName", _appid.FullName);
+			}
+
+			if (_trustrun) {
+				se.AddAttribute ("TrustedToRun", "true");
+			}
+
+			if (_persist) {
+				se.AddAttribute ("Persist", "true");
+			}
+
+			SecurityElement defaultGrant = new SecurityElement ("DefaultGrant");
+			defaultGrant.AddChild (DefaultGrantSet.ToXml ());
+			se.AddChild (defaultGrant);
+
+			if (_xtranfo != null) {
+				byte[] data = null;
+				using (MemoryStream ms = new MemoryStream ()) {
+					BinaryFormatter bf = new BinaryFormatter ();
+					bf.Serialize (ms, _xtranfo);
+					data = ms.ToArray ();
+				}
+				SecurityElement xtra = new SecurityElement ("ExtraInfo");
+				xtra.AddAttribute ("Data", CryptoConvert.ToHex (data));
+				se.AddChild (xtra);
+			}
+
+			return se;
+		}
+
+		// internal stuff
+
+		private PolicyStatement GetDefaultGrantSet ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			return new PolicyStatement (ps);
 		}
 	}
 }

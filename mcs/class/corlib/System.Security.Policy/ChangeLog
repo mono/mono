@@ -1,3 +1,9 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationTrust.cs: Completed TODO. Added missing set for 
+	ApplicationIdentity property.
+	* ApplicationTrustCollection.cs: Completed TODO.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AllMembershipCondition.cs: Added [ComVisible (true)] in NET_2_0 to
