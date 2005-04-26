@@ -1,3 +1,9 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyInfoX509Data.cs: Fixed to work biwht unit tests on both NET_1_1 
+	and NET_2_0 (except for obvious beta2 bugs). ArraList are now only 
+	created when required.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EncryptedData.cs: Avoid re-creating collection object on load.

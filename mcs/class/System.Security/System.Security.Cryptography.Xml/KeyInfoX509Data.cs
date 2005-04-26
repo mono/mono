@@ -47,31 +47,67 @@ namespace System.Security.Cryptography.Xml {
 
 		public KeyInfoX509Data () 
 		{
-			IssuerSerialList = new ArrayList ();
-			SubjectKeyIdList = new ArrayList ();
-			SubjectNameList = new ArrayList ();
-			X509CertificateList = new ArrayList ();
 		}
 
-		public KeyInfoX509Data (byte[] rgbCert) : this ()
+		public KeyInfoX509Data (byte[] rgbCert)
 		{
+#if NET_2_0
+			if (rgbCert == null)
+				throw new ArgumentException ("rgbCert");
+#endif
 			AddCertificate (new X509Certificate (rgbCert));
 		}
 
-		public KeyInfoX509Data (X509Certificate cert) : this ()
+		public KeyInfoX509Data (X509Certificate cert)
 		{
 			AddCertificate (cert);
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public KeyInfoX509Data (X509Certificate cert, X509IncludeOption includeOption)
 		{
+			if (cert == null)
+				throw new ArgumentNullException ("cert");
+
+			switch (includeOption) {
+			case X509IncludeOption.None:
+			case X509IncludeOption.EndCertOnly:
+				AddCertificate (cert);
+				break;
+			case X509IncludeOption.ExcludeRoot:
+				AddCertificatesChainFrom (cert, false);
+				break;
+			case X509IncludeOption.WholeChain:
+				AddCertificatesChainFrom (cert, true);
+				break;
+			}
+		}
+
+		// this gets complicated because we must:
+		// 1. build the chain using a X509Certificate2 class;
+		// 2. test for root using the Mono.Security.X509.X509Certificate class;
+		// 3. add the certificates as X509Certificate instances;
+		private void AddCertificatesChainFrom (X509Certificate cert, bool root)
+		{
+			X509Chain chain = new X509Chain ();
+			chain.Build (new X509Certificate2 (cert));
+			foreach (X509ChainElement ce in chain.ChainElements) {
+				byte[] rawdata = ce.Certificate.RawData;
+				if (!root) {
+					// exclude root
+					Mono.Security.X509.X509Certificate mx = new Mono.Security.X509.X509Certificate (rawdata);
+					if (mx.IsSelfSigned)
+						rawdata = null;
+				}
+
+				if (rawdata != null)
+					AddCertificate (new X509Certificate (rawdata));
+			}
 		}
 #endif
 
 		public ArrayList Certificates {
-			get { return X509CertificateList.Count != 0 ? X509CertificateList : null; }
+			get { return X509CertificateList; }
 		}
 
 		public byte[] CRL {
@@ -80,59 +116,93 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 		public ArrayList IssuerSerials {
-			get { return IssuerSerialList.Count != 0 ? IssuerSerialList : null; }
+			get { return IssuerSerialList; }
 		}
 
 		public ArrayList SubjectKeyIds {
-			get { return SubjectKeyIdList.Count != 0 ? SubjectKeyIdList : null; }
+			get { return SubjectKeyIdList; }
 		}
 
 		public ArrayList SubjectNames {
-			get { return SubjectNameList.Count != 0 ? SubjectNameList : null; }
+			get { return SubjectNameList; }
 		}
 
 		public void AddCertificate (X509Certificate certificate) 
 		{
+#if NET_2_0
+			if (certificate == null)
+				throw new ArgumentNullException ("certificate");
+#endif
+			if (X509CertificateList == null)
+				X509CertificateList = new ArrayList ();
 			X509CertificateList.Add (certificate);
 		}
 
 		public void AddIssuerSerial (string issuerName, string serialNumber) 
 		{
+#if NET_2_0
+			if (issuerName == null)
+				throw new ArgumentException ("issuerName");
+#endif
+			if (IssuerSerialList == null)
+				IssuerSerialList = new ArrayList ();
+
 			X509IssuerSerial xis = new X509IssuerSerial (issuerName, serialNumber);
 			IssuerSerialList.Add (xis);
 		}
 
 		public void AddSubjectKeyId (byte[] subjectKeyId) 
 		{
-			SubjectKeyIdList.Add (Convert.ToBase64String (subjectKeyId));
+			if (SubjectKeyIdList == null)
+				SubjectKeyIdList = new ArrayList ();
+
+			SubjectKeyIdList.Add (subjectKeyId);
 		}
 
 #if NET_2_0
 		[ComVisible (false)]
 		public void AddSubjectKeyId (string subjectKeyId)
 		{
-			SubjectKeyIdList.Add (subjectKeyId);
+			if (SubjectKeyIdList == null)
+				SubjectKeyIdList = new ArrayList ();
+
+			byte[] id = null;
+			if (subjectKeyId != null)
+				id = Convert.FromBase64String (subjectKeyId);
+			SubjectKeyIdList.Add (id);
 		}
 #endif
 
 		public void AddSubjectName (string subjectName) 
 		{
+			if (SubjectNameList == null)
+				SubjectNameList = new ArrayList ();
+
 			SubjectNameList.Add (subjectName);
 		}
 
 		public override XmlElement GetXml () 
 		{
+#if !NET_2_0
 			// sanity check
-			int count = IssuerSerialList.Count + SubjectKeyIdList.Count + SubjectNameList.Count + X509CertificateList.Count;
+			int count = 0;
+			if (IssuerSerialList != null)
+				count += IssuerSerialList.Count;
+			if (SubjectKeyIdList != null)
+				count += SubjectKeyIdList.Count;
+			if (SubjectNameList != null)
+				count += SubjectNameList.Count;
+			if (X509CertificateList != null)
+				count += X509CertificateList.Count;
 			if ((x509crl == null) && (count == 0))
 				throw new CryptographicException ("value");
-
+#endif
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.X509Data, XmlSignature.NamespaceURI);
 			// FIXME: hack to match MS implementation
 			xel.SetAttribute ("xmlns", XmlSignature.NamespaceURI);
 			// <X509IssuerSerial>
-			if (IssuerSerialList.Count > 0) {
+			if ((IssuerSerialList != null) && (IssuerSerialList.Count > 0)) {
 				foreach (X509IssuerSerial iser in IssuerSerialList) {
 					XmlElement isl = document.CreateElement (XmlSignature.ElementNames.X509IssuerSerial, XmlSignature.NamespaceURI);
 					XmlElement xin = document.CreateElement (XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
@@ -145,15 +215,15 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			// <X509SKI>
-			if (SubjectKeyIdList.Count > 0) {
-				foreach (string skid in SubjectKeyIdList) {
+			if ((SubjectKeyIdList != null) && (SubjectKeyIdList.Count > 0)) {
+				foreach (byte[] skid in SubjectKeyIdList) {
 					XmlElement ski = document.CreateElement (XmlSignature.ElementNames.X509SKI, XmlSignature.NamespaceURI);
-					ski.InnerText = skid;
+					ski.InnerText = Convert.ToBase64String (skid);
 					xel.AppendChild (ski);
 				}
 			}
 			// <X509SubjectName>
-			if (SubjectNameList.Count > 0) {
+			if ((SubjectNameList != null) && (SubjectNameList.Count > 0)) {
 				foreach (string subject in SubjectNameList) {
 					XmlElement sn = document.CreateElement (XmlSignature.ElementNames.X509SubjectName, XmlSignature.NamespaceURI);
 					sn.InnerText = subject;
@@ -161,7 +231,7 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			// <X509Certificate>
-			if (X509CertificateList.Count > 0) {
+			if ((X509CertificateList != null) && (X509CertificateList.Count > 0)) {
 				foreach (X509Certificate x509 in X509CertificateList) {
 					XmlElement cert = document.CreateElement (XmlSignature.ElementNames.X509Certificate, XmlSignature.NamespaceURI);
 					cert.InnerText = Convert.ToBase64String (x509.GetRawCertData ());
@@ -182,10 +252,14 @@ namespace System.Security.Cryptography.Xml {
 			if (element == null)
 				throw new ArgumentNullException ("element");
 
-			IssuerSerialList.Clear ();
-			SubjectKeyIdList.Clear ();
-			SubjectNameList.Clear ();
-			X509CertificateList.Clear ();
+			if (IssuerSerialList != null)
+				IssuerSerialList.Clear ();
+			if (SubjectKeyIdList != null)
+				SubjectKeyIdList.Clear ();
+			if (SubjectNameList != null)
+				SubjectNameList.Clear ();
+			if (X509CertificateList != null)
+				X509CertificateList.Clear ();
 			x509crl = null;
 
 			if ((element.LocalName != XmlSignature.ElementNames.X509Data) || (element.NamespaceURI != XmlSignature.NamespaceURI))
