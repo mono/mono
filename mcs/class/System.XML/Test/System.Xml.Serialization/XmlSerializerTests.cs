@@ -716,6 +716,24 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals(Infoset("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceTwo>choice text</ChoiceTwo></Choices>"), WriterText);
 		}
 		
+		[Test]
+		public void TestSerializeNamesWithSpaces ()
+		{
+			TestSpace ts = new TestSpace();
+			ts.elem = 4;
+			ts.attr = 5;
+			Serialize (ts);
+			AssertEquals(Infoset("<Type_x0020_with_x0020_space xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' Attribute_x0020_with_x0020_space='5'><Element_x0020_with_x0020_space>4</Element_x0020_with_x0020_space></Type_x0020_with_x0020_space>"), WriterText);
+		}
+		
+		[Test]
+		public void TestSerializeReadOnlyProps ()
+		{
+			ReadOnlyProperties ts = new ReadOnlyProperties();
+			Serialize (ts);
+			AssertEquals(Infoset("<ReadOnlyProperties xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+		}
+		
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();

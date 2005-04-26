@@ -181,4 +181,27 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlIgnore]
 		public ItemChoiceType ItemType;
 	}
+	
+	[XmlType ("Type with space")]
+	public class TestSpace
+	{
+	   [XmlElement (ElementName = "Element with space")]
+	   public int elem;
+	    
+	   [XmlAttribute (AttributeName = "Attribute with space")]
+	   public int attr; 
+	}
+
+	[Serializable]
+	public class ReadOnlyProperties {
+		string[] strArr = new string[2] { "string1", "string2" };
+
+		public string[] StrArr {
+			get { return strArr; }
+		}
+		
+		public string dat {
+			get { return "fff"; }
+		} 
+	}
 }

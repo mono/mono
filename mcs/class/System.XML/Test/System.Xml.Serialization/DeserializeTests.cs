@@ -193,5 +193,13 @@ namespace MonoTests.System.XmlSerialization
 			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
 			Assertion.AssertEquals ("#2", ItemChoiceType.ChoiceTwo, ch.ItemType);
 		}
+		
+		[Test]
+		public void TestDeserializeNamesWithSpaces ()
+		{
+			TestSpace ts = (TestSpace) Deserialize (typeof(TestSpace), "<Type_x0020_with_x0020_space xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' Attribute_x0020_with_x0020_space='5'><Element_x0020_with_x0020_space>4</Element_x0020_with_x0020_space></Type_x0020_with_x0020_space>");
+			Assertion.AssertEquals ("#1", 4, ts.elem);
+			Assertion.AssertEquals ("#2", 5, ts.attr);
+		}
 	}
 }

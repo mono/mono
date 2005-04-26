@@ -1,3 +1,10 @@
+2005-04-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializerTests.cs:
+	* DeserializeTests.cs:
+	* XmlSerializerTestClasses.cs: Added tests for readonly properties and
+	elements with spaces on them.
+
 2005-03-30  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializerTests.cs:
