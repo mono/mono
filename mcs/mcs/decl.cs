@@ -1984,7 +1984,10 @@ namespace Mono.CSharp {
  					continue;
  		
 				MethodBase method_to_compare = (MethodBase)entry.Member;
- 				if (AttributeTester.AreOverloadedMethodParamsClsCompliant (method.ParameterTypes, TypeManager.GetArgumentTypes (method_to_compare)))
+				AttributeTester.Result result = AttributeTester.AreOverloadedMethodParamsClsCompliant (
+					method.ParameterTypes, TypeManager.GetArgumentTypes (method_to_compare));
+
+ 				if (result == AttributeTester.Result.Ok)
  					continue;
 
 				IMethodData md = TypeManager.GetMethod (method_to_compare);
@@ -1995,7 +1998,16 @@ namespace Mono.CSharp {
 					continue;
  		
  				Report.SymbolRelatedToPreviousError (entry.Member);
- 				Report.Error (3006, method.Location, "Overloaded method '{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
+				switch (result) {
+					case AttributeTester.Result.RefOutArrayError:
+						Report.Error (3006, method.Location, "Overloaded method '{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
+						continue;
+					case AttributeTester.Result.ArrayArrayError:
+						Report.Error (3007, method.Location, "Overloaded method '{0}' differing only by unnamed array types is not CLS-compliant", method.GetSignatureForError ());
+						continue;
+				}
+
+				throw new NotImplementedException (result.ToString ());
  			}
   		}
 	}

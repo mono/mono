@@ -3029,6 +3029,24 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if (ifaces != null) {
+				foreach (Type t in ifaces) {
+					if (AttributeTester.IsClsCompliant (t))
+						continue;
+
+					Report.SymbolRelatedToPreviousError (t);
+					Report.Warning (3027, 1, Location, "'{0}' is not CLS-compliant because base interface '{1}' is not CLS-compliant",
+						GetSignatureForError (), TypeManager.CSharpName (t));
+				}
+			}
+
+			return true;
+		}
 	}
 
 	public abstract class MethodCore : MemberBase {
@@ -5724,6 +5742,18 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if ((ModFlags & Modifiers.VOLATILE) != 0) {
+				Report.Warning (3026, 1, Location, "CLS-compliant field '{0}' cannot be volatile", GetSignatureForError ());
+			}
+
+			return true;
+		}
 	}
 
 	//
@@ -6412,18 +6442,6 @@ namespace Mono.CSharp {
 
 			Get.UpdateName (this);
 			Set.UpdateName (this);
-		}
-
-		protected override bool VerifyClsCompliance (DeclSpace ds)
-		{
-			if (!base.VerifyClsCompliance (ds))
-				return false;
-
-			if ((Get.ModFlags != ModFlags && !Get.IsDummy) || (Set.ModFlags != ModFlags && !Set.IsDummy)) {
-				Report.Error (3025, Get.ModFlags != ModFlags ? Get.Location : Set.Location,
-					"CLS-compliant accessors must have the same accessibility as their property");
-			}
-			return true;
 		}
 
 		public override string[] ValidAttributeTargets {

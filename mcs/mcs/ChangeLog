@@ -1,3 +1,15 @@
+2005-04-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (AreOverloadedMethodParamsClsCompliant): Add array
+	of arrays detection.
+
+	* class.cs (Interface.VerifyClsCompliance): Add base interfaces
+	verification.
+	(Field.VerifyClsCompliance): Volatile fields are not compliant.
+
+	* decl.cs (MemberCache.VerifyClsParameterConflict): Add array of
+	arrays report.
+
 2005-04-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* cs-parser.jay: Use the prefered version of -unsafe in error
