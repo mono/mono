@@ -61,6 +61,8 @@ namespace Mono.Security.X509 {
 		private string m_signaturealgo;
 		private byte[] m_signaturealgoparams;
 		private byte[] certhash;
+		private RSA _rsa;
+		private DSA _dsa;
 		
 		// from http://www.ietf.org/rfc/rfc2459.txt
 		//
@@ -224,30 +226,38 @@ namespace Mono.Security.X509 {
 		// public methods
 
 		public DSA DSA {
-			get { 
-				DSAParameters dsaParams = new DSAParameters ();
-				// for DSA m_publickey contains 1 ASN.1 integer - Y
-				ASN1 pubkey = new ASN1 (m_publickey);
-				if ((pubkey == null) || (pubkey.Tag != 0x02))
-					return null;
-				dsaParams.Y = GetUnsignedBigInteger (pubkey.Value);
+			get {
+				if (_dsa == null) {
+					DSAParameters dsaParams = new DSAParameters ();
+					// for DSA m_publickey contains 1 ASN.1 integer - Y
+					ASN1 pubkey = new ASN1 (m_publickey);
+					if ((pubkey == null) || (pubkey.Tag != 0x02))
+						return null;
+					dsaParams.Y = GetUnsignedBigInteger (pubkey.Value);
 
-				ASN1 param = new ASN1 (m_keyalgoparams);
-				if ((param == null) || (param.Tag != 0x30) || (param.Count < 3))
-					return null;
-				if ((param [0].Tag != 0x02) || (param [1].Tag != 0x02) || (param [2].Tag != 0x02))
-					return null;
-				dsaParams.P = GetUnsignedBigInteger (param [0].Value);
-				dsaParams.Q = GetUnsignedBigInteger (param [1].Value);
-				dsaParams.G = GetUnsignedBigInteger (param [2].Value);
+					ASN1 param = new ASN1 (m_keyalgoparams);
+					if ((param == null) || (param.Tag != 0x30) || (param.Count < 3))
+						return null;
+					if ((param [0].Tag != 0x02) || (param [1].Tag != 0x02) || (param [2].Tag != 0x02))
+						return null;
+					dsaParams.P = GetUnsignedBigInteger (param [0].Value);
+					dsaParams.Q = GetUnsignedBigInteger (param [1].Value);
+					dsaParams.G = GetUnsignedBigInteger (param [2].Value);
 
-				// BUG: MS BCL 1.0 can't import a key which 
-				// isn't the same size as the one present in
-				// the container.
-				DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
-				dsa.ImportParameters (dsaParams);
-				return (DSA) dsa; 
+					// BUG: MS BCL 1.0 can't import a key which 
+					// isn't the same size as the one present in
+					// the container.
+					_dsa = (DSA) new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
+					_dsa.ImportParameters (dsaParams);
+				}
+				return _dsa; 
 			}
+#if NET_2_0
+			set {
+				_dsa = value;
+				_rsa = null;
+			}
+#endif
 		}
 
 		public X509ExtensionCollection Extensions {
@@ -312,29 +322,37 @@ namespace Mono.Security.X509 {
 		}
 
 		public virtual RSA RSA {
-			get { 
-				RSAParameters rsaParams = new RSAParameters ();
-				// for RSA m_publickey contains 2 ASN.1 integers
-				// the modulus and the public exponent
-				ASN1 pubkey = new ASN1 (m_publickey);
-				ASN1 modulus = pubkey [0];
-				if ((modulus == null) || (modulus.Tag != 0x02))
-					return null;
-				ASN1 exponent = pubkey [1];
-				if (exponent.Tag != 0x02)
-					return null;
+			get {
+				if (_rsa == null) {
+					RSAParameters rsaParams = new RSAParameters ();
+					// for RSA m_publickey contains 2 ASN.1 integers
+					// the modulus and the public exponent
+					ASN1 pubkey = new ASN1 (m_publickey);
+					ASN1 modulus = pubkey [0];
+					if ((modulus == null) || (modulus.Tag != 0x02))
+						return null;
+					ASN1 exponent = pubkey [1];
+					if (exponent.Tag != 0x02)
+						return null;
 
-				rsaParams.Modulus = GetUnsignedBigInteger (modulus.Value);
-				rsaParams.Exponent = exponent.Value;
+					rsaParams.Modulus = GetUnsignedBigInteger (modulus.Value);
+					rsaParams.Exponent = exponent.Value;
 
-				// BUG: MS BCL 1.0 can't import a key which 
-				// isn't the same size as the one present in
-				// the container.
-				int keySize = (rsaParams.Modulus.Length << 3);
-				RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (keySize);
-				rsa.ImportParameters (rsaParams);
-				return (RSA)rsa; 
+					// BUG: MS BCL 1.0 can't import a key which 
+					// isn't the same size as the one present in
+					// the container.
+					int keySize = (rsaParams.Modulus.Length << 3);
+					_rsa = (RSA) new RSACryptoServiceProvider (keySize);
+					_rsa.ImportParameters (rsaParams);
+				}
+				return _rsa; 
 			}
+#if NET_2_0
+			set {
+				_dsa = null;
+				_rsa = value;
+			}
+#endif
 		}
 	        
 		public virtual byte[] RawData {

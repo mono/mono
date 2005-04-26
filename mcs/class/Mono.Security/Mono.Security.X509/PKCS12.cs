@@ -291,7 +291,12 @@ namespace Mono.Security.X509 {
 			_safeBags = new ArrayList ();
 		}
 
-		public PKCS12 (byte[] data) : this (data, null) {}
+		public PKCS12 (byte[] data)
+			: this ()
+		{
+			Password = null;
+			Decode (data);
+		}
 
 		/*
 		 * PFX ::= SEQUENCE {
@@ -316,10 +321,22 @@ namespace Mono.Security.X509 {
 		 *	bagAttributes SET OF PKCS12Attribute OPTIONAL
 		 * }
 		 */
-		public PKCS12 (byte[] data, string password) : this ()
+		public PKCS12 (byte[] data, string password)
+			: this ()
 		{
 			Password = password;
-
+			Decode (data);
+		}
+#if NET_2_0
+		public PKCS12 (byte[] data, byte[] password)
+			: this ()
+		{
+			_password = password;
+			Decode (data);
+		}
+#endif
+		private void Decode (byte[] data)
+		{
 			ASN1 pfx = new ASN1 (data);
 			if (pfx.Tag != 0x30)
 				throw new ArgumentException ("invalid data");

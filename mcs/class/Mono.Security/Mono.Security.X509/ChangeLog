@@ -1,3 +1,10 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: DSA and RSA properties are now cached. In 2.0
+	they also have a set accessor.
+	* PKCS12.cs: Modified code to allow providing the password as a byte
+	array (the new constructor is available in 2.0).
+
 2005-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Added support for multiple entries in a same set.
