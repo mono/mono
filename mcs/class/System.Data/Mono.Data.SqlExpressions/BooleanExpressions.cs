@@ -40,7 +40,10 @@ namespace Mono.Data.SqlExpressions {
 	
 		override public object Eval (DataRow row)
 		{
-			return !((bool)expr.Eval (row));
+			object o = expr.Eval (row);
+			if (o == DBNull.Value)
+				return o;
+			return !((bool)o);
 		}
 
 		override public bool EvalBoolean (DataRow row)

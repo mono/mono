@@ -46,5 +46,10 @@ namespace Mono.Data.SqlExpressions {
 		{
 			return val;
 		}
+
+		override public bool DependsOn(DataColumn other)
+		{
+			return false;
+		}
 	}
 }

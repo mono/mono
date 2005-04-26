@@ -45,7 +45,10 @@ namespace Mono.Data.SqlExpressions {
 		
 		override public object Eval (DataRow row)
 		{
-			bool val = (bool)expr.Eval (row);
+			object o = expr.Eval (row);
+			if (o == DBNull.Value)
+				return o;
+			bool val = (bool)o;
 			return (val ? trueExpr.Eval (row) : falseExpr.Eval (row));
 		}
 	}
@@ -79,7 +82,7 @@ namespace Mono.Data.SqlExpressions {
 		{
 			object val = expr.Eval (row);
 			
-			if (val.GetType () == targetType)
+			if (val == DBNull.Value || val.GetType () == targetType)
 				return val;
 
 			//--> String is always allowed			

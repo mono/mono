@@ -54,15 +54,16 @@ namespace Mono.Data.SqlExpressions {
 					return (op == Operation.NE);
 			}
 
-			switch(Compare (o1, o2, row.Table.CaseSensitive)) {
-			case -1:
+			int result = Compare (o1, o2, row.Table.CaseSensitive);
+			if (result < 0) {
 				return (op == Operation.NE || op == Operation.LE || op == Operation.LT);
-			case 0:
-			default:
-				return (op == Operation.EQ || op == Operation.LE || op == Operation.GE);
-			case 1:
+			}
+			if (result > 0) {
 				return (op == Operation.NE || op == Operation.GE || op == Operation.GT);
 			}
+			// result == 0
+			return (op == Operation.EQ || op == Operation.LE || op == Operation.GE);
+			
 		}
 			
 		internal static int Compare (IComparable o1, IComparable o2, bool caseSensitive)

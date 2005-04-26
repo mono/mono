@@ -37,12 +37,14 @@ using System.Data;
 namespace Mono.Data.SqlExpressions {
 	internal interface IExpression {
 		object Eval (DataRow row);
+		bool DependsOn(DataColumn other);
 
 		bool EvalBoolean (DataRow row);
 	}
 
 	internal abstract class BaseExpression : IExpression {
 		public abstract object Eval (DataRow row);
+		public abstract bool DependsOn(DataColumn other);
 
 		public virtual bool EvalBoolean (DataRow row)
 		{
@@ -58,6 +60,10 @@ namespace Mono.Data.SqlExpressions {
 		{
 			expr = e;
 		}
+
+		override public bool DependsOn(DataColumn other) {
+			return expr.DependsOn(other);
+		}
 	}
 	
 	internal abstract class BinaryExpression : BaseExpression {
@@ -67,6 +73,10 @@ namespace Mono.Data.SqlExpressions {
 		{
 			expr1 = e1;
 			expr2 = e2;
+		}
+		override public bool DependsOn(DataColumn other)
+		{
+			return expr1.DependsOn(other) || expr2.DependsOn(other);
 		}
 	}
 	
