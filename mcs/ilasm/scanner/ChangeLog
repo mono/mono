@@ -3,7 +3,7 @@
 	* ILTokenizer.cs (ILTokenizer.GetNextToken): Advance reader to look at
 	char after a '.' .
 	(ILTokenizer.BuildId): Never end an id on a DOT.
-	Patch by Harinath.
+	Parts of the patch from Harinath & Jackson.
 
 2004-12-02  Miguel de Icaza  <miguel@ximian.com>
 

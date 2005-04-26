@@ -333,8 +333,10 @@ namespace Mono.ILASM {
                                 } else {
                                         reader.Unread (ch);
                                         // Never end an id on a DOT
-                                        if (last == '.')
+                                        if (last == '.') {
                                                 reader.Unread (last);
+                                                idsb.Length -= 1;
+                                        }        
                                         break;
                                 }
                                 last = ch;
