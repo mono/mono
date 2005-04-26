@@ -18,7 +18,7 @@ End Class
 Public Class TypeMembers13
 	_<Test, ExpectedException (GetType (System.InvalidCastException))>
         Public Sub TestForException()	
-                Dim a as Object=new TestTypeMembers13()
+                Dim o as Object=new TestTypeMembers13()
 		    dim a as integer = o.fun(i := 2, a1 := "c")
         End Sub
 End Class 
