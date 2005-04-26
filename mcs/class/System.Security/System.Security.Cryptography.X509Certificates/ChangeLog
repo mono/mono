@@ -1,3 +1,8 @@
+2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateEx.cs: Used new features from Mono.Security.dll to 
+	load certificates and private keys from PKCS#12.
+
 2005-04-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CertificateEx.cs: Added new constructors and Import methods that

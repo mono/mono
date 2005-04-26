@@ -30,6 +30,7 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using System.Text;
 
 using MX = Mono.Security.X509;
@@ -152,11 +153,21 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public AsymmetricAlgorithm PrivateKey {
-			get { 
-				return _cert.RSA; 
+			get {
+				if (_cert.RSA != null)
+					return _cert.RSA; 
+				else if (_cert.DSA != null)
+					return _cert.DSA;
+				return null;
 			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set {
+				if (value is RSA)
+					_cert.RSA = (RSA) value;
+				else if (value is DSA)
+					_cert.DSA = (DSA) value;
+				else
+					throw new NotSupportedException ();
+			}
 		} 
 
 		public PublicKey PublicKey {
@@ -222,32 +233,66 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override void Import (byte[] rawData) 
 		{
-			base.Import (rawData);
+			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
+		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			base.Import (rawData, password, keyStorageFlags);
+			if (password == null) {
+				_cert = new Mono.Security.X509.X509Certificate (rawData);
+				// TODO - PKCS12 without password
+			} else {
+				// try PKCS#12
+				MX.PKCS12 pfx = new MX.PKCS12 (rawData, password);
+				if (pfx.Certificates.Count > 0) {
+					_cert = pfx.Certificates [0];
+				} else {
+					_cert = null;
+				}
+				if (pfx.Keys.Count > 0) {
+					_cert.RSA = (pfx.Keys [0] as RSA);
+					_cert.DSA = (pfx.Keys [0] as DSA);
+				}
+			}
 		}
 
+		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			base.Import (rawData, password, keyStorageFlags);
+			Import (rawData, (string) null, keyStorageFlags);
 		}
 
 		public override void Import (string fileName) 
 		{
-			base.Import (fileName);
+			byte[] rawData = Load (fileName);
+			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
+		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			base.Import (fileName, password, keyStorageFlags);
+			byte[] rawData = Load (fileName);
+			Import (rawData, password, keyStorageFlags);
 		}
 
+		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			base.Import (fileName, password, keyStorageFlags);
+			byte[] rawData = Load (fileName);
+			Import (rawData, (string)null, keyStorageFlags);
+		}
+
+		private byte[] Load (string fileName)
+		{
+			byte[] data = null;
+			using (FileStream fs = new FileStream (fileName, FileMode.Open)) {
+				data = new byte [fs.Length];
+				fs.Read (data, 0, data.Length);
+				fs.Close ();
+			}
+			return data;
 		}
 
 		public override void Reset () 
