@@ -226,7 +226,10 @@ namespace System.Windows.Forms
 		{
 			base.OnBindingContextChanged (e);
 			ConnectToDataSource ();
-			SetItemsCore (DataManager.List);
+
+			if (DataManager != null) {
+				SetItemsCore (DataManager.List);
+			}
 		}
 
 		protected virtual void OnDataSourceChanged (EventArgs e)
