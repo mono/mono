@@ -1,3 +1,8 @@
+2005-04-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionImporter.cs, SoapReflectionImporter.cs: ignore array
+	properties which are read only. Fixes bug #74723.
+
 2005-04-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlReflectionImporter.cs:

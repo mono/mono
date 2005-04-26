@@ -365,7 +365,7 @@ namespace System.Xml.Serialization {
 			foreach (PropertyInfo prop in properties)
 			{
 				if (!prop.CanRead) continue;
-				if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array)
+				if (!prop.CanWrite && (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray))
 					continue;
 					
 				SoapAttributes atts = attributeOverrides[type, prop.Name];

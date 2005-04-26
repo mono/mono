@@ -661,7 +661,7 @@ namespace System.Xml.Serialization {
 						XmlAttributes atts = attributeOverrides[type, prop.Name];
 						if (atts == null) atts = new XmlAttributes (prop);
 						if (atts.XmlIgnore) continue;
-						if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array) continue;
+						if (!prop.CanWrite && (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray)) continue;
 						XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
 						member.DeclaringType = prop.DeclaringType;
 						members.Add(member);
