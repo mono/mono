@@ -1,3 +1,8 @@
+2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistenceTest.cs: Upgrade to NUnit 2.2 API to use Ignore.
+	Now Ignore all tests that results in UnauthorizedAccessException.
+
 2004-12-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManagedTest.cs: New. Unit tests to validate RSA decryption when 
