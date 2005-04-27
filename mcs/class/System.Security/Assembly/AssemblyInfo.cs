@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,8 +41,8 @@ using System.Security;
 	[assembly: AssemblyVersion ("1.0.3300.0")]
 	[assembly: SatelliteContractVersion ("1.0.3300.0")]
 #elif (NET_2_0)
-        [assembly: AssemblyVersion ("2.0.3600.0")]
-	[assembly: SatelliteContractVersion ("2.0.3600.0")]
+        [assembly: AssemblyVersion ("2.0.0.0")]
+	[assembly: SatelliteContractVersion ("2.0.0.0")]
 #elif (NET_1_1)
 	[assembly: AssemblyVersion ("1.0.5000.0")]
 	[assembly: SatelliteContractVersion ("1.0.5000.0")]
@@ -57,10 +57,10 @@ using System.Security;
 
 #if NET_2_0
 [assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyCopyright ("Copyright (C) 2002-2004 Various Authors")]
-[assembly: AssemblyDefaultAlias ("")]
+[assembly: AssemblyCopyright ("Copyright (C) 2002-2005 Various Authors")]
+[assembly: AssemblyDefaultAlias ("System.Security.dll")]
 [assembly: AssemblyDescription ("System.Security.dll")]
-[assembly: AssemblyFileVersion ("")]
+[assembly: AssemblyFileVersion ("2.0.50215.44")]
 [assembly: AssemblyInformationalVersion ("")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyTitle ("System.Security.dll")]
