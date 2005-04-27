@@ -59,8 +59,6 @@ namespace MonoTests.Remoting
 		[Test]
 		public void TestNewContext ()
 		{
-			try
-			{
 			CallSeq.Init("TestNewContext");
 			CallSeq.Add (">> TestNewContext");
 			object[] at = new object[] { new ContextHookAttribute ("1",true)};
@@ -70,11 +68,6 @@ namespace MonoTests.Remoting
 			RunTestObject (list);
 			CallSeq.Add ("<< TestNewContext");
 			CallSeq.Check (Checks.seqNewContext,1);
-			}
-			catch (Exception eX)
-			{
-				Console.WriteLine (eX);
-			}
 		}
 
 		[Test]
@@ -300,9 +293,17 @@ namespace MonoTests.Remoting
 				"012 (d1,c1) IContributeServerContextSink(1.d1).GetServerContextSink",
 				"013 (d1,c1) --> ServerContextSink(1.d1) SyncProcessMessage .ctor",
 				"014 (d1,c1) --> ServerContextSink(x.d1) SyncProcessMessage .ctor",
-				"015 (d1,c1) List created",
+				
+				// Changed the order. I think this is a safe chenge, since it is
+				// not defined where the call to GetEnvoySink should be made.
+				"015 (d1,c1) IContributeEnvoySink(1.d1).GetEnvoySink",
+				"016 (d1,c1) IContributeEnvoySink(x.d1).GetEnvoySink",
+				"017 (d1,c1) List created",
+				
+/*				"015 (d1,c1) List created",
 				"016 (d1,c1) IContributeEnvoySink(1.d1).GetEnvoySink",
 				"017 (d1,c1) IContributeEnvoySink(x.d1).GetEnvoySink",
+*/				
 				"018 (d1,c1) <-- ServerContextSink(x.d1) SyncProcessMessage .ctor",
 				"019 (d1,c1) <-- ServerContextSink(1.d1) SyncProcessMessage .ctor",
 				"020 (d1,c0) <-> global DynamicSink Finish .ctor client:True",

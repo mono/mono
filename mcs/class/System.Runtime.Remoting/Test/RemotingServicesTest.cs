@@ -292,7 +292,7 @@ namespace MonoTests.Remoting
 			
 			Assert("#A06", RemotingServices.GetObjectUri(objMarshal) == null);
 			
-			ObjRef objRef = RemotingServices.Marshal(objMarshal);
+			RemotingServices.Marshal(objMarshal);
 			
 			Assert("#A07", RemotingServices.GetObjectUri(objMarshal) != null);
 			// TODO: uncomment when RemotingServices.Disconnect is implemented

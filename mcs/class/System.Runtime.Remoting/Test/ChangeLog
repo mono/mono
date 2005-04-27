@@ -1,3 +1,11 @@
+2005-04-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingServicesTest.cs: Fix warning.
+	* ContextsTest.cs: Removed unneeded exception catch.
+	Changed the order in which GetEnvoySink is called. I think 
+	this is a safe chenge, since it is not defined where the
+	call to GetEnvoySink should be made.
+
 2005-02-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpCalls.cs, TcpCalls.cs: Don't use a hardcoded port number for the
