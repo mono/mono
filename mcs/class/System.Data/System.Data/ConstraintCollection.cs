@@ -107,7 +107,7 @@ namespace System.Data {
 		private bool _isDuplicateConstraintName(string constraintName, Constraint excludeFromComparison) 
 		{
 			foreach (Constraint cst in List) {
-				if (String.Compare (constraintName, cst.ConstraintName, !Table.CaseSensitive) == 0  && cst != excludeFromComparison) 
+				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0  && cst != excludeFromComparison) 
 					return true;
 			}
 
