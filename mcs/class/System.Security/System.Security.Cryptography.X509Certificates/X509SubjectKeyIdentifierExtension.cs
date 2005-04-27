@@ -43,6 +43,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal const string friendlyName = "Subject Key Identifier";
 
 		private byte[] _subjectKeyIdentifier;
+		private string _ski;
 		private AsnDecodeStatus _status;
 
 		// constructors
@@ -107,9 +108,9 @@ namespace System.Security.Cryptography.X509Certificates {
 				switch (_status) {
 				case AsnDecodeStatus.Ok:
 				case AsnDecodeStatus.InformationNotAvailable:
-					if (_subjectKeyIdentifier == null)
-						return String.Empty;
-					return CryptoConvert.ToHex (_subjectKeyIdentifier);
+					if (_subjectKeyIdentifier != null)
+						_ski = CryptoConvert.ToHex (_subjectKeyIdentifier);
+					return _ski;
 				default:
 					throw new CryptographicException ("Badly encoded extension.");
 				}
@@ -121,8 +122,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public override void CopyFrom (AsnEncodedData encodedData)
 		{
 			if (encodedData == null)
-				throw new ArgumentException ("encodedData");
-// MS BUG			throw new ArgumentNullException ("encodedData");
+				throw new ArgumentNullException ("encodedData");
 
 			X509Extension ex = (encodedData as X509Extension);
 			if (ex == null)
@@ -183,6 +183,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if ((extension == null) || (extension.Length == 0))
 				return AsnDecodeStatus.BadAsn;
+			_ski = String.Empty;
 			if (extension [0] != 0x04)
 				return AsnDecodeStatus.BadTag;
 			if (extension.Length == 2)

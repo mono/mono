@@ -51,71 +51,71 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509Certificate2 () : base () 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = null;
 		}
 
 		public X509Certificate2 (byte[] rawData) : base (rawData) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (byte[] rawData, string password) : base (rawData, password) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password) : base (rawData, password) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (string fileName) : base (fileName) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (string fileName, string password) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (string fileName, SecureString password) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 			: base (fileName, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (fileName, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		public X509Certificate2 (X509Certificate certificate) 
 		{
-			_cert = new MX.X509Certificate (this.RawData);
+			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
 
 		// properties
@@ -180,7 +180,12 @@ namespace System.Security.Cryptography.X509Certificates {
 		} 
 
 		public byte[] RawData {
-			get { return base.GetRawCertData (); }
+			get {
+				if (_cert == null) {
+					throw new CryptographicException (Locale.GetText ("No certificate data."));
+				}
+				return base.GetRawCertData ();
+			}
 		} 
 
 		public string SerialNumber {

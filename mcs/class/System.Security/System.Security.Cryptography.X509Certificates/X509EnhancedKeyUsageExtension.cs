@@ -76,6 +76,8 @@ namespace System.Security.Cryptography.X509Certificates {
 				switch (_status) {
 				case AsnDecodeStatus.Ok:
 				case AsnDecodeStatus.InformationNotAvailable:
+					if (_enhKeyUsage == null)
+						_enhKeyUsage = new OidCollection ();
 					_enhKeyUsage.ReadOnly = true;
 					return _enhKeyUsage;
 				default:
@@ -89,8 +91,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public override void CopyFrom (AsnEncodedData asnEncodedData) 
 		{
 			if (asnEncodedData == null)
-				throw new ArgumentException ("encodedData");
-// MS BUG			throw new ArgumentNullException ("encodedData");
+				throw new ArgumentNullException ("encodedData");
 
 			X509Extension ex = (asnEncodedData as X509Extension);
 			if (ex == null)

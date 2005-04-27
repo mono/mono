@@ -130,6 +130,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			if (!ReadOnly) {
 				try {
+					new Mono.Security.X509.X509Certificate (certificate.RawData);
 					// Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
 					// TODO
 				}

@@ -92,8 +92,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public override void CopyFrom (AsnEncodedData encodedData)
 		{
 			if (encodedData == null)
-				throw new ArgumentException ("encodedData");
-// MS BUG			throw new ArgumentNullException ("encodedData");
+				throw new ArgumentNullException ("encodedData");
 
 			X509Extension ex = (encodedData as X509Extension);
 			if (ex == null)

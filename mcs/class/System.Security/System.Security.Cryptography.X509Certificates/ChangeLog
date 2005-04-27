@@ -1,3 +1,20 @@
+2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509BasicConstraintsExtension.cs: Now throw ArgumentNullException in 
+	CopyFrom (fixed in beta2).
+	* X509CertificateEx.cs: Throw a CryptographicException in the RawData
+	property if no certificate is loaded in the instance.
+	* X509EnhancedKeyUsageExtension.cs: Now throw ArgumentNullException in 
+	CopyFrom (fixed in beta2).
+	* X509Extension.cs: Now throw ArgumentNullException in CopyFrom (fixed
+	in beta2).
+	* X509KeyUsageExtension.cs: Now throw ArgumentNullException in 
+	CopyFrom (fixed in beta2).
+	* X509Store.cs: Re-added certificate creation to get the exception.
+	* X509SubjectKeyIdentifierExtension.cs: Throw ArgumentNullException in
+	CopyFrom (fixed in beta2). Fix SubjectKeyIdentifier to return an empty
+	string (not null) after (unsucessful) decoding.
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CertificateEx.cs: Used new features from Mono.Security.dll to 
