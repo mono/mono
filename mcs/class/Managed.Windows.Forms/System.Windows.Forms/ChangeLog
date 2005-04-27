@@ -1,5 +1,10 @@
 2005-04-27  Jackson Harper  <jackson@ximian.com>
 
+	* BindingManagerBase.cs: Attach the current/position changed
+	handlers to their respective events.
+
+2005-04-27  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Make sure that the first WM_PAINT does a full draw,
 	not just a blit.
 	* ThemeWin32Classic.cs: Don't fill the background for picture

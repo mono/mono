@@ -139,8 +139,15 @@ namespace System.Windows.Forms {
 		}
 
 		#region Events
-		public event EventHandler CurrentChanged;
-		public event EventHandler PositionChanged;
+		public event EventHandler CurrentChanged {
+			add { onCurrentChangedHandler += value; }
+			remove { onCurrentChangedHandler -= value; }
+		}
+
+		public event EventHandler PositionChanged {
+			add { onPositionChangedHandler += value; }
+			remove { onPositionChangedHandler -= value; }
+		}
 		#endregion	// Events
 	}
 }
