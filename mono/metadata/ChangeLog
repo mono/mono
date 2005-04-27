@@ -1,3 +1,7 @@
+2005-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: remove duplicate assignment from GetReferencedAssemblies.
+
 2005-04-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_is_assignable_from): Call is_assignable_to for
