@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Collections;
 
 namespace Mono.ILASM {
 
@@ -22,6 +23,7 @@ namespace Mono.ILASM {
                 private PEAPI.Type type;
 
                 private bool is_resolved;
+                private static Hashtable method_table = new Hashtable ();
 
                 public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name)
                 {
@@ -76,7 +78,14 @@ namespace Mono.ILASM {
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, ITypeRef[] param)
                 {
-                        return new TypeSpecMethodRef (this, ret_type, call_conv, name, param);
+                        string key = full_name + MethodDef.CreateSignature (ret_type, name, param) + sig_mod;
+                        TypeSpecMethodRef mr = method_table [key] as TypeSpecMethodRef;
+                        if (mr != null)
+                                return mr;
+
+                        mr = new TypeSpecMethodRef (this, ret_type, call_conv, name, param);
+                        method_table [key] = mr;
+                        return mr;
                 }
 
                 public IFieldRef GetFieldRef (ITypeRef ret_type, string name)

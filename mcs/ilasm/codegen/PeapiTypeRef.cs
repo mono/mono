@@ -12,6 +12,31 @@ using System;
 using System.Collections;
 
 namespace Mono.ILASM {
+        public class Pair {
+                private PEAPI.Type type;
+                private string sig;
+
+                public Pair (PEAPI.Type type, string sig)
+                {
+                        this.type = type;
+                        this.sig = sig;
+                }
+
+                public override int GetHashCode ()
+                {
+                        return type.GetHashCode () ^ sig.GetHashCode (); 
+                }
+
+                public override bool Equals (Object o)
+                {
+                        Pair p = o as Pair;
+
+                        if (p == null)
+                                return false;
+                        
+                        return (p.type == this.type && p.sig == this.sig);
+                }
+        }
 
         public class PeapiTypeRef  {
 
@@ -20,6 +45,8 @@ namespace Mono.ILASM {
                 private bool is_array;
                 private bool is_ref;
                 private bool use_type_spec;
+
+                private static Hashtable type_table = new Hashtable ();
 
                 public PeapiTypeRef (PEAPI.Type peapi_type)
                 {
@@ -52,14 +79,24 @@ namespace Mono.ILASM {
 
                 public void MakeArray ()
                 {
+                        PEAPI.Type type;
+
                         use_type_spec = true;
-                        peapi_type = new PEAPI.ZeroBasedArray (peapi_type);
                         is_array = true;
+
+                        Pair p = new Pair (peapi_type, "[]");
+                        type = type_table [p] as PEAPI.Type;
+                        if (type == null) {
+                                type = new PEAPI.ZeroBasedArray (peapi_type);
+                                type_table [p] = type;
+                        }
+                        peapi_type = type;
                 }
 
                 public void MakeBoundArray (ArrayList bound_list)
                 {
                         use_type_spec = true;
+                        is_array = true;
 
                         int dimen = bound_list.Count;
                         int[] lower_array = new int[dimen];
@@ -68,6 +105,29 @@ namespace Mono.ILASM {
                         bool size_set = false;
                         bool prev_lower_set = true;
                         bool prev_size_set = true;
+                        string sigmod = "";
+                        PEAPI.Type type;
+                        Pair p;
+
+                        sigmod += "[";
+                        for (int i=0; i<bound_list.Count; i++) {
+                                DictionaryEntry e = (DictionaryEntry) bound_list [i];
+                                if (e.Key != TypeRef.Ellipsis)
+                                        sigmod += e.Key;
+                                sigmod += "...";
+                                if (e.Value != TypeRef.Ellipsis)
+                                        sigmod += e.Value;
+                                if (i + 1 < bound_list.Count)
+                                        sigmod += ", ";
+                        }
+                        sigmod += "]";
+
+                        p = new Pair (peapi_type, sigmod);
+                        type = type_table [p] as PEAPI.Type;
+                        if (type != null) {
+                                peapi_type = type;
+                                return;
+                        }
 
                         // TODO: There should probably be an error reported if
                         // something like [3...,3...5] is done
@@ -98,32 +158,55 @@ namespace Mono.ILASM {
                         } else {
                                 peapi_type = new PEAPI.BoundArray (peapi_type, (uint) dimen);
                         }
-                        is_array = true;
+                        
+                        type_table [p] = peapi_type;
                 }
 
                 public void MakeManagedPointer ()
                 {
+                        PEAPI.Type type;
                         use_type_spec = true;
-
-                        peapi_type = new PEAPI.ManagedPointer (peapi_type);
                         is_ref = true;
+
+                        Pair p = new Pair (peapi_type, "&");
+                        type = type_table [p] as PEAPI.Type;
+                        if (type == null) {
+                                type = new PEAPI.ManagedPointer (peapi_type);
+                                type_table [p] = type;
+                        }
+                        peapi_type = type;
                 }
 
                 public void MakeUnmanagedPointer ()
                 {
+                        PEAPI.Type type;
                         use_type_spec = true;
 
-                        peapi_type = new PEAPI.UnmanagedPointer (peapi_type);
+                        Pair p = new Pair (peapi_type, "*");
+                        type = type_table [p] as PEAPI.Type;
+                        if (type == null) {
+                                type = new PEAPI.UnmanagedPointer (peapi_type);
+                                type_table [p] = type;
+                        }
+                        peapi_type = type;
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
                                 IClassRef klass)
                 {
-                        use_type_spec = true;
+			PEAPI.Type type;
 
-                        klass.Resolve (code_gen);
-                        peapi_type = new PEAPI.CustomModifiedType (peapi_type,
+                        use_type_spec = true;
+                        
+                        Pair p = new Pair (peapi_type, modifier.ToString ());
+                        type = type_table [p] as PEAPI.Type;
+                        if (type == null) {
+                                klass.Resolve (code_gen);
+                                type = new PEAPI.CustomModifiedType (peapi_type,
                                         modifier, klass.PeapiClass);
+                                type_table [p] = type;
+                        }
+                        peapi_type = type;
                 }
 
                 public void MakePinned ()

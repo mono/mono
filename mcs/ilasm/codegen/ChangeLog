@@ -1,3 +1,14 @@
+2005-04-27  Ankit Jain  <ankit@corewars.org>
+
+	* ExternTypeRefInst.cs (ExternTypeRefInst.GetMethodRef): Use method_table to avoid
+	creating duplicates.
+	* PrimitiveTypeRef.cs (PrimitiveTypeRef.GetMethodRef): Use method_table to avoid 
+	creating duplicates
+	* PeapiTypeRef.cs (Pair): New class. Tuple of PEAPI.Type and string.
+	(PeapiTypeRef.type_table): New.
+	(PeapiTypeRef.MakeArray, MakeBoundArray, MakeManagedPointer, MakeUnmanagedPointer,
+	MakeCustomModified): Use type_table to avoid creating duplicates.
+	
 2005-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InstrTable.cs :
