@@ -4,6 +4,9 @@
 	not just a blit.
 	* ThemeWin32Classic.cs: Don't fill the background for picture
 	boxes. This could overright user drawing.
+	* ComboBox.cs: Just fill the clipping rect not the entire client
+	rect when drawing the background. This prevents pieces of the
+	image buffer from getting overwritten and is theoretically faster.
 
 2005-04-26  Jordi Mas i Hernandez <jordi@ximian.com>
 

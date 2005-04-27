@@ -1508,7 +1508,7 @@ namespace System.Windows.Forms
 			private void Draw (Rectangle clip, Graphics dc)
 			{	
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(owner.BackColor), ClientRectangle);				
+					(owner.BackColor), clip);				
 
 				if (owner.Items.Count > 0) {
 					Rectangle item_rect;
