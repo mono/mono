@@ -1,4 +1,8 @@
-2005-04-08  Konstantin Triger <kostat@mainsoft.com>
+2005-04-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataRow.cs: Removed unneeded check of RowState
+
+2005-04-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConstraintCollection: throw DuplicateException only if names match exactly with Table's locale
 

@@ -1362,7 +1362,7 @@ namespace System.Data {
 		/// </summary>
 		public void SetParentRow (DataRow parentRow, DataRelation relation) 
 		{
-			if (_table == null || parentRow.Table == null || RowState == DataRowState.Detached)
+			if (_table == null || parentRow.Table == null)
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (parentRow != null && _table.DataSet != parentRow.Table.DataSet)
