@@ -1,3 +1,7 @@
+2005-04-27  Marek Safar <marek.safar@seznam.cz>
+
+	* test-294.cs: Add test based on #74378
+
 2005-04-26  Marek Safar <marek.safar@seznam.cz>
 
 	* cls-test-6.cs: Put in a new test.

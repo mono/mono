@@ -53,3 +53,14 @@ public class DerivedTest : Test
 class ObsoleteClass2: ObsoleteClass
 {
 }
+
+class ObsoleteClass3
+{
+    	public static readonly double XSmall = 0.6444444444444;
+
+	[Obsolete ("E1")]
+	public readonly double X_Small = XSmall;
+
+	[Obsolete ("E2")]
+	public static readonly double X_Small2 = XSmall;
+}
