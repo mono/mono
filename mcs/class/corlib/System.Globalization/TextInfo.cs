@@ -45,8 +45,6 @@ namespace System.Globalization {
 	[Serializable]
 	public class TextInfo: IDeserializationCallback
 	{
-		private delegate char CharConverter (char c);
-		
 		[StructLayout (LayoutKind.Sequential)]
 		struct Data {
 			public int ansi;
@@ -56,16 +54,19 @@ namespace System.Globalization {
 			public byte list_sep;
 		}
 
-		CharConverter toLower;
-		CharConverter toUpper;
-
 		int m_win32LangID;
 		int m_nDataItem;
 		bool m_useUserOverride;
 
 		[NonSerialized]
 		readonly CultureInfo ci;
-		
+
+		[NonSerialized]
+		readonly CultureInfo parentCulture;
+
+		[NonSerialized]
+		readonly bool handleDotI;
+
 		[NonSerialized]
 		readonly Data data;
 
@@ -79,8 +80,20 @@ namespace System.Globalization {
 				this.data = new Data ();
 				this.data.list_sep = (byte) '.';
 			}
-			toLower = new CharConverter (ToLower);
-			toUpper = new CharConverter (ToUpper);
+
+			CultureInfo tmp = ci;
+			while (tmp.Parent != null && tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
+				tmp = tmp.Parent;
+			parentCulture = tmp;
+
+			if (tmp != null) {
+				switch (tmp.LCID) {
+				case 44: // Azeri (az)
+				case 31: // Turkish (tr)
+					handleDotI = true;
+					break;
+				}
+			}
 		}
 
 		public virtual int ANSICodePage
@@ -216,19 +229,19 @@ namespace System.Globalization {
 		// (enumerable enough).
 		public virtual char ToLower (char c)
 		{
+			// quick ASCII range check
+			if (c < 0x40 || 0x60 < c && c < 128)
+				return c;
+			else if ('A' <= c && c <= 'Z' && (!handleDotI || c != 'I'))
+				return (char) (c + 0x20);
+
 			if (ci == null || ci.LCID == 0x7F)
 				return Char.ToLowerInvariant (c);
 
-			switch ((int) c) {
+			switch (c) {
 			case '\u0049': // Latin uppercase I
-				CultureInfo tmp = ci;
-				while (tmp.Parent != null && tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
-					tmp = tmp.Parent;
-				switch (tmp.LCID) {
-				case 44: // Azeri (az)
-				case 31: // Turkish (tr)
+				if (handleDotI)
 					return '\u0131'; // I becomes dotless i
-				}
 				break;
 			case '\u0130': // I-dotted
 				return '\u0069'; // i
@@ -258,19 +271,19 @@ namespace System.Globalization {
 
 		public virtual char ToUpper (char c)
 		{
+			// quick ASCII range check
+			if (c < 0x60)
+				return c;
+			else if ('a' <= c && c <= 'z' && (!handleDotI || c != 'i'))
+				return (char) (c - 0x20);
+
 			if (ci == null || ci.LCID == 0x7F)
 				return Char.ToUpperInvariant (c);
 
 			switch (c) {
 			case '\u0069': // Latin lowercase i
-				CultureInfo tmp = ci;
-				while (tmp.Parent != null && tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
-					tmp = tmp.Parent;
-				switch (tmp.LCID) {
-				case 44: // Azeri (az)
-				case 31: // Turkish (tr)
+				if (handleDotI)
 					return '\u0130'; // dotted capital I
-				}
 				break;
 			case '\u0131': // dotless i
 				return '\u0049'; // I
@@ -341,7 +354,24 @@ namespace System.Globalization {
 			// test with single character as a string input, but 
 			// there was no such conversion. So I think it just
 			// invokes ToLower(char).
-			return Transliterate (s, toLower);
+			if (s == null)
+				throw new ArgumentNullException ("string is null");
+			StringBuilder sb = null;
+			int start = 0;
+
+			for (int i = 0; i < s.Length; i++) {
+				if (s [i] != ToLower (s [i])) {
+					if (sb == null)
+						sb = new StringBuilder (s.Length);
+					sb.Append (s, start, i - start);
+					sb.Append (ToLower (s [i]));
+					start = i + 1;
+				}
+			}
+
+			if (sb != null && start < s.Length)
+				sb.Append (s, start, s.Length - start);
+			return sb == null ? s : sb.ToString ();
 		}
 
 		public virtual string ToUpper (string s)
@@ -351,21 +381,16 @@ namespace System.Globalization {
 			// it is only lt-LT culture where MS.NET does not
 			// handle any special transliteration. So I keep
 			// ToUpper() just as character conversion.
-			return Transliterate (s, toUpper);
-		}
-
-		private string Transliterate (string s, CharConverter convert)
-		{
 			if (s == null)
-				throw new ArgumentNullException("string is null");
+				throw new ArgumentNullException ("string is null");
 			StringBuilder sb = null;
 			int start = 0;
 			for (int i = 0; i < s.Length; i++) {
-				if (s [i] != convert (s [i])) {
+				if (s [i] != ToUpper (s [i])) {
 					if (sb == null)
 						sb = new StringBuilder (s.Length);
 					sb.Append (s, start, i - start);
-					sb.Append (convert (s [i]));
+					sb.Append (ToUpper (s [i]));
 					start = i + 1;
 				}
 			}

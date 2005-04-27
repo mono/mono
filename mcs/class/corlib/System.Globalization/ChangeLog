@@ -1,3 +1,8 @@
+2005-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfo.cs : Some performance fixes. Avoid delegate.
+	  Compute parent culture only once. Quick ASCII range check.
+
 2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextInfo.cs : extremely strict null check (which should not happen).
