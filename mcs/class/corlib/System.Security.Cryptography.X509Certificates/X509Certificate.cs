@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -206,7 +206,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO]
 		public X509Certificate (string fileName)
 		{
-			Import (fileName, (byte[])null, X509KeyStorageFlags.DefaultKeySet);
+			Import (fileName, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		[MonoTODO]
@@ -505,80 +505,67 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
-		[MonoTODO ("incomplete")]
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData)
 		{
-			Import (rawData, (byte[])null, X509KeyStorageFlags.DefaultKeySet);
+			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		[MonoTODO ("incomplete")]
+		[MonoTODO ("missing KeyStorageFlags support")]
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (rawData, Encoding.UTF8.GetBytes (password), keyStorageFlags);
+			if (password == null) {
+				x509 = new Mono.Security.X509.X509Certificate (rawData);
+				// TODO - PKCS12 without password
+			} else {
+				// try PKCS#12
+				PKCS12 pfx = new PKCS12 (rawData, password);
+				if (pfx.Certificates.Count > 0) {
+					x509 = pfx.Certificates [0];
+				} else {
+					x509 = null;
+				}
+			}
 		}
 
-		[MonoTODO ("incomplete")]
+		[MonoTODO ("SecureString is incomplete")]
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (rawData, password.GetBuffer (), keyStorageFlags);
+			Import (rawData, (string)null, keyStorageFlags);
 		}
 
-		[MonoTODO ("import!")]
-		internal void Import (byte[] rawData, byte[] password, X509KeyStorageFlags keyStorageFlags)
-		{
-			try {
-				if (password == null) {
-					x509 = new Mono.Security.X509.X509Certificate (rawData);
-				}
-				else {
-					// TODO
-					throw new NotSupportedException ();
-				}
-			}
-			finally {
-				// protect password
-				if (password != null)
-					Array.Clear (password, 0, password.Length);
-			}
-		}
-
-		[MonoTODO ("incomplete")]
 		[ComVisible (false)]
 		public virtual void Import (string fileName)
 		{
-			Import (fileName, (byte[])null, X509KeyStorageFlags.DefaultKeySet);
+			byte[] rawData = Load (fileName);
+			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		[MonoTODO ("incomplete - is the password UTF8, ASCII, Unicode ?")]
+		[MonoTODO ("missing KeyStorageFlags support")]
 		[ComVisible (false)]
 		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (fileName, Encoding.UTF8.GetBytes (password), keyStorageFlags);
+			byte[] rawData = Load (fileName);
+			Import (rawData, password, keyStorageFlags);
 		}
 
-		[MonoTODO ("incomplete")]
+		[MonoTODO ("SecureString is incomplete")]
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (fileName, password.GetBuffer (), keyStorageFlags);
+			byte[] rawData = Load (fileName);
+			Import (rawData, (string)null, keyStorageFlags);
 		}
 
-		internal void Import (string fileName, byte[] password, X509KeyStorageFlags keyStorageFlags)
+		private byte[] Load (string fileName)
 		{
-			try {
-				using (FileStream fs = new FileStream (fileName, FileMode.Open)) {
-					byte[] data = new byte [fs.Length];
-					fs.Read (data, 0, data.Length);
-					fs.Close ();
-					Import (data, password, keyStorageFlags);
-				}
+			byte[] data = null;
+			using (FileStream fs = new FileStream (fileName, FileMode.Open)) {
+				data = new byte [fs.Length];
+				fs.Read (data, 0, data.Length);
+				fs.Close ();
 			}
-			finally {
-				// protect password
-				if (password != null)
-					Array.Clear (password, 0, password.Length);
-			}
+			return data;
 		}
 
 		[MonoTODO]
