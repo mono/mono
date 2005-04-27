@@ -35,8 +35,8 @@ namespace System.Web.UI{
 public class HtmlTextWriter : System.IO.TextWriter {
 
 static HtmlTextWriter(){
-	HtmlTextWriter._tagKeyLookupTable = new Hashtable(97,CaseInsensitiveHashCodeProvider.Default,
-							  CaseInsensitiveComparer.Default);
+	HtmlTextWriter._tagKeyLookupTable = new Hashtable(97,CaseInsensitiveHashCodeProvider.DefaultInvariant,
+							  CaseInsensitiveComparer.DefaultInvariant);
 	HtmlTextWriter._tagNameLookupArray = new TagInformation[97];
 	HtmlTextWriter.RegisterTag("", HtmlTextWriterTag.Unknown, TagType.Other);
 	HtmlTextWriter.RegisterTag("a", HtmlTextWriterTag.A, TagType.Inline);
@@ -141,8 +141,8 @@ static HtmlTextWriter(){
 #else
 	HtmlTextWriter._attrNameLookupArray = new AttributeInformation[40];
 #endif
-	HtmlTextWriter._attrKeyLookupTable = new Hashtable (HtmlTextWriter._attrNameLookupArray.Length, 
-								CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+	HtmlTextWriter._attrKeyLookupTable = new Hashtable (HtmlTextWriter._attrNameLookupArray.Length,
+					CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 	HtmlTextWriter.RegisterAttribute("accesskey", HtmlTextWriterAttribute.Accesskey, true);
 	HtmlTextWriter.RegisterAttribute("align", HtmlTextWriterAttribute.Align, false);
 	HtmlTextWriter.RegisterAttribute("alt", HtmlTextWriterAttribute.Alt, true);
@@ -206,7 +206,7 @@ static HtmlTextWriter(){
 	HtmlTextWriter._styleNameLookupArray = new String[14];
 #endif
 	HtmlTextWriter._styleKeyLookupTable = new Hashtable (HtmlTextWriter._styleNameLookupArray.Length,
-								CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+				CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 	HtmlTextWriter.RegisterStyle("background-color", HtmlTextWriterStyle.BackgroundColor);
 	HtmlTextWriter.RegisterStyle("background-image", HtmlTextWriterStyle.BackgroundImage);
 	HtmlTextWriter.RegisterStyle("border-collapse", HtmlTextWriterStyle.BorderCollapse);

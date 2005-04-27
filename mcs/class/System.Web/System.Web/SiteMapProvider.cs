@@ -110,8 +110,8 @@ namespace System.Web {
 					lock (this) {
 						if (urlToNode == null) {
 							urlToNode = new Hashtable (
-								new CaseInsensitiveHashCodeProvider (),
-								new CaseInsensitiveComparer ()
+								CaseInsensitiveHashCodeProvider.DefaultInvariant,
+								CaseInsensitiveComparer.DefaultInvariant
 							);
 						}
 					}

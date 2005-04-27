@@ -39,8 +39,8 @@ namespace System.Web
 
 		static MimeTypes ()
 		{
-			mimeTypes = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						   CaseInsensitiveComparer.Default);
+			mimeTypes = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						   CaseInsensitiveComparer.DefaultInvariant);
 
 			mimeTypes.Add ("3dm", "x-world/x-3dmf");
                 	mimeTypes.Add ("3dmf", "x-world/x-3dmf");

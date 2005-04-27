@@ -86,7 +86,7 @@ namespace System.Web.Configuration
 
 		protected override bool CompareKeys (object key1, object key2)
 		{
-			return (0 == CaseInsensitiveComparer.Default.Compare ((string) key1, (string) key2));
+			return (0 == CaseInsensitiveComparer.DefaultInvariant.Compare ((string) key1, (string) key2));
 		}
 
 		protected override ConfigurationElement CreateNewElement ()

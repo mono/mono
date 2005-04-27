@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Web.Compilation
 {
@@ -72,8 +73,8 @@ namespace System.Web.Compilation
 		
 		private static void InitHash ()
 		{
-			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider ();
-			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer ();
+			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
+			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
 
 			directivesHash = new Hashtable (provider, comparer); 
 

@@ -42,8 +42,8 @@ namespace System.Web.Configuration
 
 		public CompilerCollection (CompilerCollection parent)
 		{
-			compilers = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						   CaseInsensitiveComparer.Default);
+			compilers = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						   CaseInsensitiveComparer.DefaultInvariant);
 
 			if (parent != null && parent.compilers != null) {
 				foreach (DictionaryEntry entry in parent.compilers)
@@ -121,7 +121,7 @@ namespace System.Web.Configuration
 
 		protected override bool CompareKeys (object key1, object key2)
 		{
-			return (0 == CaseInsensitiveComparer.Default.Compare ((string) key1, (string) key2));
+			return (0 == CaseInsensitiveComparer.DefaultInvariant.Compare ((string) key1, (string) key2));
 		}
 
 		protected override ConfigurationElement CreateNewElement ()

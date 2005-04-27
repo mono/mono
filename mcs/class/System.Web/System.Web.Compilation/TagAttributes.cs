@@ -51,8 +51,8 @@ namespace System.Web.Compilation
 
 		void MakeHash ()
 		{
-			atts_hash = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						   CaseInsensitiveComparer.Default);
+			atts_hash = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						   CaseInsensitiveComparer.DefaultInvariant);
 			for (int i = 0; i < keys.Count; i++) {
 				CheckServerKey (keys [i]);
 				atts_hash.Add (keys [i], values [i]);
@@ -158,8 +158,8 @@ namespace System.Web.Compilation
 				return atts_hash;
 
 			if (tmp_hash == null)
-				tmp_hash = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-							  CaseInsensitiveComparer.Default);
+				tmp_hash = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+							  CaseInsensitiveComparer.DefaultInvariant);
 			
 			tmp_hash.Clear ();
 			for (int i = keys.Count - 1; i >= 0; i--)

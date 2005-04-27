@@ -42,8 +42,8 @@ namespace System.Web.UI
 
 		static RootBuilder ()
 		{
-			htmlControls = new Hashtable (new CaseInsensitiveHashCodeProvider (),
-						      new CaseInsensitiveComparer ()); 
+			htmlControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						      CaseInsensitiveComparer.DefaultInvariant); 
 
 			htmlControls.Add ("A", typeof (HtmlAnchor));
 			htmlControls.Add ("BUTTON", typeof (HtmlButton));
@@ -60,8 +60,8 @@ namespace System.Web.UI
 			htmlControls.Add ("HEAD", typeof (HtmlHead));
 #endif
 
-			htmlInputControls = new Hashtable (new CaseInsensitiveHashCodeProvider (),
-							   new CaseInsensitiveComparer ());
+			htmlInputControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						      CaseInsensitiveComparer.DefaultInvariant); 
 
 			htmlInputControls.Add ("BUTTON", typeof (HtmlInputButton));
 			htmlInputControls.Add ("SUBMIT", typeof (HtmlInputButton));

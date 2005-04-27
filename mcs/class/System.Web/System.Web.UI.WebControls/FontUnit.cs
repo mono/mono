@@ -65,8 +65,8 @@ namespace System.Web.UI.WebControls
 
 		static FontUnit ()
 		{
-			sizeTable = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						   CaseInsensitiveComparer.Default);
+			sizeTable = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+						   CaseInsensitiveComparer.DefaultInvariant);
 			sizeTable.Add ("smaller", 2);
 			sizeTable.Add ("larger", 3);
 			sizeTable.Add ("xx-small", 4);
