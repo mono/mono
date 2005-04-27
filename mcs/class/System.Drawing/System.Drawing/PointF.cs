@@ -42,7 +42,7 @@ namespace System.Drawing
 	public struct PointF
 	{
 		// Private x and y coordinate fields.
-		private float cx, cy;
+		private float x, y;
 
 		// -----------------------
 		// Public Shared Members
@@ -130,8 +130,8 @@ namespace System.Drawing
 		
 		public PointF (float x, float y)
 		{
-			cx = x;
-			cy = y;
+			this.x = x;
+			this.y = y;
 		}
 
 		// -----------------------
@@ -149,7 +149,7 @@ namespace System.Drawing
 		[Browsable (false)]
 		public bool IsEmpty {
 			get {
-				return ((cx == 0.0) && (cy == 0.0));
+				return ((x == 0.0) && (y == 0.0));
 			}
 		}
 
@@ -163,10 +163,10 @@ namespace System.Drawing
 		
 		public float X {
 			get {
-				return cx;
+				return x;
 			}
 			set {
-				cx = value;
+				x = value;
 			}
 		}
 
@@ -180,10 +180,10 @@ namespace System.Drawing
 		
 		public float Y {
 			get {
-				return cy;
+				return y;
 			}
 			set {
-				cy = value;
+				y = value;
 			}
 		}
 
@@ -213,7 +213,7 @@ namespace System.Drawing
 		
 		public override int GetHashCode ()
 		{
-			return (int) cx ^ (int) cy;
+			return (int) x ^ (int) y;
 		}
 
 		/// <summary>
@@ -226,7 +226,7 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
-			return String.Format ("{{X={0}, Y={1}}}", cx, cy);
+			return String.Format ("{{X={0}, Y={1}}}", x, y);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2005-04-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* PointF.cs: Make serialization compatible with MS.
+
 2005-04-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* Graphics.cs:
