@@ -1,3 +1,7 @@
+2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableReader.cs: Implemented most of the TODO.
+
 2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* LoadOption.cs: Changed the enums. Keeping old values for

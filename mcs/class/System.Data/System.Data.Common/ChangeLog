@@ -1,3 +1,8 @@
+2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataReader.cs: Added static method to construct the schema
+	table with default schema. Could be reused in many places.
+
 2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs: Moved FillTable and BuildSchema as static

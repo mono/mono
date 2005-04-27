@@ -1,3 +1,7 @@
+2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableReaderTest.cs: Added Tests for DataTableReader class.
+
 2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableLoadRowTest.cs: Added. A test case for testing

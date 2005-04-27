@@ -1,3 +1,7 @@
+2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data_test.dll.sources: Added DataTableReaderTest.cs
+
 2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data_test.dll.sources: Added DataTableLoadRowTest.cs.

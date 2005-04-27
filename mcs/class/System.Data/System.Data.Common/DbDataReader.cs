@@ -105,6 +105,42 @@ namespace System.Data.Common {
 		public abstract bool NextResult ();
 		public abstract bool Read ();
 
+                internal static DataTable GetSchemaTableTemplate ()
+		{
+			Type booleanType        = Type.GetType ("System.Boolean");
+			Type stringType         = Type.GetType ("System.String");
+			Type intType            = Type.GetType ("System.Int32");
+			Type typeType           = Type.GetType ("System.Type");
+			Type shortType          = Type.GetType ("System.Int16");
+
+			DataTable schemaTable = new DataTable ("SchemaTable");
+			schemaTable.Columns.Add ("ColumnName",          stringType);
+			schemaTable.Columns.Add ("ColumnOrdinal",       intType);
+			schemaTable.Columns.Add ("ColumnSize",          intType);
+			schemaTable.Columns.Add ("NumericPrecision",    shortType);
+			schemaTable.Columns.Add ("NumericScale",        shortType);
+			schemaTable.Columns.Add ("IsUnique",            booleanType);
+			schemaTable.Columns.Add ("IsKey",               booleanType);
+			schemaTable.Columns.Add ("BaseServerName",      stringType);
+			schemaTable.Columns.Add ("BaseCatalogName",     stringType);
+			schemaTable.Columns.Add ("BaseColumnName",      stringType);
+			schemaTable.Columns.Add ("BaseSchemaName",      stringType);
+			schemaTable.Columns.Add ("BaseTableName",       stringType);
+			schemaTable.Columns.Add ("DataType",            typeType);
+			schemaTable.Columns.Add ("AllowDBNull",         booleanType);
+			schemaTable.Columns.Add ("ProviderType",        intType);
+			schemaTable.Columns.Add ("IsAliased",           booleanType);
+			schemaTable.Columns.Add ("IsExpression",        booleanType);
+			schemaTable.Columns.Add ("IsIdentity",          booleanType);
+			schemaTable.Columns.Add ("IsAutoIncrement",     booleanType);
+			schemaTable.Columns.Add ("IsRowVersion",        booleanType);
+			schemaTable.Columns.Add ("IsHidden",            booleanType);
+			schemaTable.Columns.Add ("IsLong",              booleanType);
+			schemaTable.Columns.Add ("IsReadOnly",          booleanType);
+
+			return schemaTable;
+		}
+
 		#endregion // Methods
 	}
 }
