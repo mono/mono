@@ -1,3 +1,12 @@
+2005-04-27  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #74378
+	* class.cs (EmitFieldInitializers): Use FieldExpr in initializer.
+	
+	* ecore.cs (FieldExpr): Add a new ctor with in_initializer.
+	(FieldExpr.DoResolve): Obsolete members are ignored for field
+	initializers.
+	
 2005-04-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (AreOverloadedMethodParamsClsCompliant): Add array

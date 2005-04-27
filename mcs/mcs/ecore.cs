@@ -2661,6 +2661,13 @@ namespace Mono.CSharp {
 
 		LocalTemporary temp;
 		bool prepared;
+		bool in_initializer;
+
+		public FieldExpr (FieldInfo fi, Location l, bool in_initializer):
+			this (fi, l)
+		{
+			this.in_initializer = in_initializer;
+		}
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -2829,18 +2836,20 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			ObsoleteAttribute oa;
-			FieldBase f = TypeManager.GetField (FieldInfo);
-			if (f != null) {
-				oa = f.GetObsoleteAttribute (f.Parent);
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
+			if (!in_initializer) {
+				ObsoleteAttribute oa;
+				FieldBase f = TypeManager.GetField (FieldInfo);
+				if (f != null) {
+					oa = f.GetObsoleteAttribute (f.Parent);
+					if (oa != null)
+						AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
                                 
-                        // To be sure that type is external because we do not register generated fields
-                        } else if (!(FieldInfo.DeclaringType is TypeBuilder)) {                                
-				oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
+					// To be sure that type is external because we do not register generated fields
+				} else if (!(FieldInfo.DeclaringType is TypeBuilder)) {                                
+					oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
+					if (oa != null)
+						AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
+				}
 			}
 
 			if (ec.CurrentAnonymousMethod != null){
