@@ -1,3 +1,8 @@
+2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added new classes in System.Security and some
+	support classes for X509Certificate (imported from Mono.Security.dll).
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added unit tests for System.Security.Policy.
