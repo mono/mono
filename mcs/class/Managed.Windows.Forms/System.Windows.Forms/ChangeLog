@@ -1,5 +1,12 @@
 2005-04-27  Jackson Harper  <jackson@ximian.com>
 
+	* X11Keyboard.cs: Initialize a default keyboard and give a warning
+	if a "correct" keyboard is not found. This will make us not crash,
+	but might give some users bad keyboard layouts...seems to be the
+	same thing rewind does.
+
+2005-04-27  Jackson Harper  <jackson@ximian.com>
+
 	* BindingManagerBase.cs: Attach the current/position changed
 	handlers to their respective events.
 

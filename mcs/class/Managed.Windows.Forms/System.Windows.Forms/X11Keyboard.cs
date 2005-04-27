@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		private int [] keyc2scan = new int [256];
 		private byte [] key_state_table = new byte [256];
 		private bool num_state, cap_state;
-		private KeyboardLayout layout;
+		private KeyboardLayout layout = KeyboardLayouts.Layouts [0];
 
 		// TODO
 		private int NumLockMask;
@@ -587,11 +587,11 @@ namespace System.Windows.Forms {
 			}
 
 			if (layout != null)  {
+                                this.layout = layout;
 				Console.WriteLine (Locale.GetText("Keyboard") + ": " + layout.Comment);
 			} else {
-				Console.WriteLine (Locale.GetText("Keyboard layout not recognized"));
+				Console.WriteLine (Locale.GetText("Keyboard layout not recognized, using default layout: " + layout.Comment));
 			}
-			this.layout = layout;
 		}
 
 		// TODO
