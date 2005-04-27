@@ -2,9 +2,10 @@
 // ProtectedMemoryTest.cs - NUnit Test Cases for ProtectedMemory
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -16,11 +17,8 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-	// References:
-	// a.	
-
 	[TestFixture]
-	public class ProtectedMemoryTest : Assertion {
+	public class ProtectedMemoryTest {
 
 		private void ProtectUnprotect (MemoryProtectionScope scope) 
 		{
@@ -29,13 +27,13 @@ namespace MonoTests.System.Security.Cryptography {
 			int total = 0;
 			for (int i=0; i < 16; i++)
 				total += data [i];
-			Assert ("Protect", (total != 0));
+			Assert.IsFalse ((total == 0), "Protect");
 
 			ProtectedMemory.Unprotect (data, scope);
 			total = 0;
 			for (int i=0; i < 16; i++)
 				total += data [i];
-			Assert ("Unprotect", (total == 0));
+			Assert.IsTrue ((total == 0), "Unprotect");
 		}
 
 		[Test]
@@ -47,7 +45,7 @@ namespace MonoTests.System.Security.Cryptography {
 				ProtectUnprotect (MemoryProtectionScope.SameProcess);
 			}
 			catch (PlatformNotSupportedException) {
-				Console.WriteLine ("Only supported under Windows XP and later");
+				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
 		}
 
@@ -60,7 +58,7 @@ namespace MonoTests.System.Security.Cryptography {
 				ProtectUnprotect (MemoryProtectionScope.SameLogon);
 			}
 			catch (PlatformNotSupportedException) {
-				Console.WriteLine ("Only supported under Windows XP and later");
+				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
 		}
 
@@ -73,7 +71,7 @@ namespace MonoTests.System.Security.Cryptography {
 				ProtectUnprotect (MemoryProtectionScope.CrossProcess);
 			}
 			catch (PlatformNotSupportedException) {
-				Console.WriteLine ("Only supported under Windows XP and later");
+				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
 		}
 

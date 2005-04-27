@@ -2,9 +2,10 @@
 // ProtectedDataTest.cs - NUnit Test Cases for ProtectedData
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -16,11 +17,8 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-	// References:
-	// a.	
-
 	[TestFixture]
-	public class ProtectedDataTest : Assertion {
+	public class ProtectedDataTest {
 
 		private void ProtectUnprotect (byte[] entropy, DataProtectionScope scope) 
 		{
@@ -29,13 +27,13 @@ namespace MonoTests.System.Security.Cryptography {
 			int total = 0;
 			for (int i=0; i < 16; i++)
 				total += encdata [i];
-			Assert ("Protect", (total != 0));
+			Assert.IsFalse ((total == 0), "Protect");
 
 			byte[] decdata = ProtectedData.Unprotect (encdata, entropy, scope);
 			total = 0;
 			for (int i=0; i < 16; i++)
 				total += decdata [i];
-			Assert ("Unprotect", (total == 0));
+			Assert.IsTrue ((total == 0), "Unprotect");
 		}
 
 		[Test]
@@ -48,7 +46,7 @@ namespace MonoTests.System.Security.Cryptography {
 				ProtectUnprotect (notMuchEntropy, DataProtectionScope.CurrentUser);
 			}
 			catch (PlatformNotSupportedException) {
-				Console.WriteLine ("Only supported under Windows 2000 and later");
+				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
 		}
 
@@ -62,7 +60,7 @@ namespace MonoTests.System.Security.Cryptography {
 				ProtectUnprotect (notMuchEntropy, DataProtectionScope.LocalMachine);
 			}
 			catch (PlatformNotSupportedException) {
-				Console.WriteLine ("Only supported under Windows 2000 and later");
+				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
 		}
 
@@ -83,7 +81,7 @@ namespace MonoTests.System.Security.Cryptography {
 				ProtectUnprotect (null, DataProtectionScope.LocalMachine);
 			}
 			catch (PlatformNotSupportedException) {
-				Console.WriteLine ("Only supported under Windows 2000 and later");
+				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
 		}
 
@@ -91,9 +89,14 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (CryptographicException))]
 		public void UnprotectNotProtectedData () 
 		{
-			byte[] baddata = new byte [16];
-			byte[] notMuchEntropy = new byte [16];
-			ProtectedData.Unprotect (baddata, notMuchEntropy, DataProtectionScope.CurrentUser);
+			try {
+				byte[] baddata = new byte [16];
+				byte[] notMuchEntropy = new byte [16];
+				ProtectedData.Unprotect (baddata, notMuchEntropy, DataProtectionScope.CurrentUser);
+			}
+			catch (PlatformNotSupportedException) {
+				Assert.Ignore ("Only supported under Windows 2000 and later");
+			}
 		}
 
 		[Test]

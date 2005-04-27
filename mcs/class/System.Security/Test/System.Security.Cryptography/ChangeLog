@@ -1,3 +1,10 @@
+2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ProtectedDataTest.cs: Updated to NUnit 2.2 API to use Ignore it the 
+	platform doesn't support ProtectedData.
+	* ProtectedMemoryTest.cs: Updated to NUnit 2.2 API to use Ignore it 
+	the platform doesn't support ProtectedData.
+
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptographicAttributeTest.cs: Changed class names to match beta2.
