@@ -2084,13 +2084,8 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                 else
                                         param_list = new ITypeRef[0];
 
-                                if (owner.UseTypeSpec) {
-                                        methref = new TypeSpecMethodRef (owner, (ITypeRef) $2,
-                                                (CallConv) $1, (string) $5, param_list);
-                                } else {
-                                        methref = owner.GetMethodRef ((ITypeRef) $2,
-                                                (CallConv) $1, (string) $5, param_list);
-                                }
+                                methref = owner.GetMethodRef ((ITypeRef) $2,
+                                        (CallConv) $1, (string) $5, param_list);
 
                                 $$ = methref;
                           }
