@@ -214,15 +214,15 @@ namespace Mono.ILASM {
                                                         reader.MarkLocation ();
                                                         reader.Read ();
                                                         next = reader.Peek ();
-                                                        reader.Unread ('.');
                                                         if (IsIdChar ((char) next)) {
                                                                 string opTail = BuildId ();
-                                                                string full_str = String.Format ("{0}{1}", val, opTail);
+                                                                string full_str = String.Format ("{0}.{1}", val, opTail);
                                                                 opcode = InstrTable.GetToken (full_str);
 
                                                                 if (opcode == null) {
                                                                         if (strBuilder.TokenId != Token.ID) {
                                                                                 reader.Unread (opTail.ToCharArray ());
+										reader.Unread ('.');
                                                                                 reader.RestoreLocation ();
                                                                                 res.val = val;
                                                                         } else {
@@ -236,7 +236,14 @@ namespace Mono.ILASM {
                                                                 }
 
                                                         } else if (Char.IsWhiteSpace ((char) next)) {
-                                                                val += '.';
+								// Handle 'tail.' and 'unaligned.'
+								opcode = InstrTable.GetToken (val + ".");
+								if (opcode != null) {
+									res = opcode;
+									break;
+								}
+								// Let the parser handle the dot
+								reader.Unread ('.');
                                                         }
                                                 }
                                                 opcode = InstrTable.GetToken (val);
