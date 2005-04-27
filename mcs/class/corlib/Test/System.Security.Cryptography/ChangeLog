@@ -1,3 +1,12 @@
+2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSACryptoServiceProviderTest.cs: Catch UnauthorizedAccessException
+	directly in UseMachineKeyStore (not just wrapped inside a 
+	CryptographicException). 
+	* RSACryptoServiceProviderTest.cs: Catch UnauthorizedAccessException
+	directly in UseMachineKeyStore (not just wrapped inside a 
+	CryptographicException). 
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Check that ArgumentNullException is throw in

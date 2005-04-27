@@ -1062,6 +1062,8 @@ public class RSACryptoServiceProviderTest : Assertion {
 			if (!(ce.InnerException is UnauthorizedAccessException))
 				throw;
 		}
+		catch (UnauthorizedAccessException) {
+		}
 	}
 #endif
 
