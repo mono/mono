@@ -111,7 +111,7 @@ namespace System.Windows.Forms
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
-		private bool			needs_redraw;
+		private bool			needs_redraw = true;
 
 		private ControlBindingsCollection data_bindings;
 
@@ -3171,7 +3171,7 @@ namespace System.Windows.Forms
 
 					paint_event = XplatUI.PaintEventStart(Handle);
 
-                                        if (!needs_redraw) {
+					if (!needs_redraw) {
 						// Just blit the previous image
 						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle);
 						needs_redraw = false;
@@ -3195,7 +3195,7 @@ namespace System.Windows.Forms
 					}
 
 					XplatUI.PaintEventEnd(Handle);
-					
+
 					if (!GetStyle(ControlStyles.UserPaint)) {
 						DefWndProc(ref m);
 					}

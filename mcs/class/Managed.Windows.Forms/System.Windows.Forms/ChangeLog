@@ -1,3 +1,8 @@
+2005-04-27  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Make sure that the first WM_PAINT does a full draw,
+	not just a blit.
+
 2005-04-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: Databinding support fixes, fire missing events
