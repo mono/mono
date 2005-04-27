@@ -2,6 +2,8 @@
 
 	* Control.cs: Make sure that the first WM_PAINT does a full draw,
 	not just a blit.
+	* ThemeWin32Classic.cs: Don't fill the background for picture
+	boxes. This could overright user drawing.
 
 2005-04-26  Jordi Mas i Hernandez <jordi@ximian.com>
 

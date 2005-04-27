@@ -2213,8 +2213,6 @@ namespace System.Windows.Forms
 		public override void DrawPictureBox (Graphics dc, Rectangle clip, PictureBox pb) {
 			Rectangle client = pb.ClientRectangle;
 
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (pb.BackColor), clip);
-
 			if (pb.Image != null) {
 				switch (pb.SizeMode) {
 				case PictureBoxSizeMode.StretchImage:
