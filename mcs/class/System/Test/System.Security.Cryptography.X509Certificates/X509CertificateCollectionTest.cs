@@ -225,11 +225,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-		// The last test depends on Equals () doing a reference comparison
-		// which is no longer true in 2.0
-#endif
 		public void IndexOf () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
@@ -242,7 +237,12 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 			// works by object reference (not value)
 			X509Certificate x = new X509Certificate (cert_a);
+			Assert ("!ReferenceEquals", !Object.ReferenceEquals (x509a, x));
+#if NET_2_0
+			AssertEquals ("A-x", 0, c.IndexOf (x));
+#else
 			AssertEquals ("A-x", -1, c.IndexOf (x));
+#endif
 		}
 
 		[Test]
@@ -279,20 +279,26 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#if NET_2_0
-		[Category ("NotWorking")]
-		// The last test depends on Equals () doing a reference comparison
-		// which is no longer true in 2.0
 #endif
 		public void Remove_ByValue () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
-			c.Add (x509a);
-			AssertEquals ("Read,Count==1", 1, c.Count);
+			X509Certificate x = null;
 
-			// works by object reference (not by value)
-			X509Certificate x = new X509Certificate (cert_a);
+			try {
+				// don't fail in this block
+				c.Add (x509a);
+				AssertEquals ("Read,Count==1", 1, c.Count);
+
+				// works by object reference (not by value)
+				x = new X509Certificate (cert_a);
+				Assert ("!ReferenceEquals", !Object.ReferenceEquals (x509a, x));
+			}
+			catch {}
+
+			// fail here! (well for 1.x)
 			c.Remove (x);
 			AssertEquals ("Remove-by-value,Count==0", 0, c.Count);
 		}
