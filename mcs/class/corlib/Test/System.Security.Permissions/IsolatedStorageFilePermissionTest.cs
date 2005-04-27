@@ -204,12 +204,12 @@ namespace MonoTests.System.Security.Permissions {
 			small.UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByUser;
 			small.UserQuota = 3;
 			union = (IsolatedStorageFilePermission)union.Union (small);
-			Assert.AreEqual (IsolatedStorageContainment.ApplicationIsolationByUser, union.UsageAllowed, "ApplicationIsolationByUser");
+			Assert.AreEqual (IsolatedStorageContainment.AssemblyIsolationByUser, union.UsageAllowed, "ApplicationIsolationByUser");
 			Assert.AreEqual (3, union.UserQuota, "3");
 			Assert.IsFalse (union.IsUnrestricted (), "IsUnrestricted-3");
 			Assert.IsTrue (small.IsSubsetOf (union), "IsSubset-3a");
 			Assert.IsTrue (empty.IsSubsetOf (union), "IsSubset-3b");
-			Assert.IsTrue (union.IsSubsetOf (small), "IsSubset-3c");
+			Assert.IsFalse (union.IsSubsetOf (small), "IsSubset-3c");
 			intersect = (IsolatedStorageFilePermission)union.Intersect (small);
 			Assert.AreEqual (small.UsageAllowed, intersect.UsageAllowed, "Intersect-UsageAllowed-3");
 			Assert.AreEqual (small.UserQuota, intersect.UserQuota, "Intersect-UserQuota-3");

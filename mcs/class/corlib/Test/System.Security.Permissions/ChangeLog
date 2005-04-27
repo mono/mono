@@ -1,3 +1,12 @@
+2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IBuiltInPermissionTest.cs: Fixed token index numbers wrt beta2.
+	* IsolatedStorageFilePermissionTest.cs: Change containment to match 
+	beta2.
+	* UrlIdentityPermissionTest.cs: Fixed test case for 2.0.
+	* ZoneIdentityPermissionAttributeTest.cs: Tag unrestricted test as
+	NotWorking.
+
 2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermissionTest.cs: Added a test case for a filename starting

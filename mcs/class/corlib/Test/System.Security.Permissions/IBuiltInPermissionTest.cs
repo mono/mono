@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -176,20 +176,18 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 #if NET_2_0
-		// FIXME: where's #15 ???
-
 		[Test]
 		public void GacIdentity ()
 		{
 			IPermission p = (IPermission) new GacIdentityPermission (PermissionState.None);
-			Assert.AreEqual (16, GetTokenIndex (p));
+			Assert.AreEqual (15, GetTokenIndex (p));
 		}
 
 		[Test]
 		public void KeyContainer ()
 		{
 			IPermission p = (IPermission)new KeyContainerPermission (PermissionState.None);
-			Assert.AreEqual (17, GetTokenIndex (p));
+			Assert.AreEqual (16, GetTokenIndex (p));
 		}
 #endif
 	}
