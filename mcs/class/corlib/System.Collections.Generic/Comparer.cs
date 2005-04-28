@@ -48,14 +48,14 @@ namespace System.Collections.Generic {
 			return obj.GetHashCode ();
 		}
 	
-		static DefaultComparer <T> _default;
+		static DefaultComparer _default;
 		
 		[MonoTODO ("This is going to make a really slow comparer. We need to speed this up if T : ICompareable<T> create a class with a where clause of T : ICompareable <T>")]
 		public static Comparer<T> Default {
 			get {
 				if (_default != null)
 					return _default;
-				return _default = new DefaultComparer<T> ();
+				return _default = new DefaultComparer ();
 			}
 		}
 	
@@ -97,7 +97,7 @@ namespace System.Collections.Generic {
 			throw new ArgumentException ();
 		}
 	
-		class DefaultComparer<T> : Comparer<T> {
+		class DefaultComparer : Comparer<T> {
 	
 			public override int Compare (T x, T y)
 			{

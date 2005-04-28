@@ -239,9 +239,9 @@ namespace System.Collections.Generic
 		}
 		
 
-		public Enumerator <T> GetEnumerator ()
+		public Enumerator GetEnumerator ()
 		{
-			return new Enumerator <T> (this);
+			return new Enumerator (this);
 		}
 
 		IEnumerator <T> IEnumerable<T>.GetEnumerator ()
@@ -254,7 +254,7 @@ namespace System.Collections.Generic
 			return GetEnumerator ();
 		}
 		
-		public struct Enumerator <T> : IEnumerator <T>, IEnumerator, IDisposable {
+		public struct Enumerator : IEnumerator <T>, IEnumerator, IDisposable {
 			const int NOT_STARTED = -2;
 			
 			// this MUST be -1, because we depend on it in move next.

@@ -1,3 +1,8 @@
+2005-04-28  Martin Baulig  <martin@ximian.com>
+
+	* Dictionary.cs, Queue.cs, Stack.cs, List.cs, Comparer.cs: Don't
+	duplicate type parameters in the nested classes.
+
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* List.cs: Fix ToArray () method. Fixes #74675.

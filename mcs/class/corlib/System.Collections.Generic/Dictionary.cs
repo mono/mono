@@ -370,11 +370,11 @@ namespace System.Collections.Generic {
 		}
 	
 		ICollection<K> IDictionary<K, V>.Keys {
-			get { return new HashKeyCollection<K> (this); }
+			get { return new HashKeyCollection (this); }
 		}
 	
 		ICollection<V> IDictionary<K, V>.Values {
-			get { return new HashValueCollection<V> (this); }
+			get { return new HashValueCollection (this); }
 		}
 		
 		bool IDictionary.IsFixedSize {
@@ -460,12 +460,12 @@ namespace System.Collections.Generic {
 	
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator<K, V> (this, EnumerationMode.DictionaryEntry);
+			return new Enumerator (this, EnumerationMode.DictionaryEntry);
 		}
 	
 		IEnumerator<KeyValuePair<K, V>> IEnumerable<KeyValuePair<K, V>>.GetEnumerator ()
 		{
-			return new Enumerator<K, V> (this);
+			return new Enumerator (this);
 		}
 	
 		/**
@@ -479,18 +479,18 @@ namespace System.Collections.Generic {
 	
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{
-			return new Enumerator<K, V> (this, EnumerationMode.DictionaryEntry);
+			return new Enumerator (this, EnumerationMode.DictionaryEntry);
 		}
 	
-		public Enumerator<K, V> GetEnumerator ()
+		public Enumerator GetEnumerator ()
 		{
-			return new Enumerator<K, V> (this, EnumerationMode.KeyValuePair);
+			return new Enumerator (this, EnumerationMode.KeyValuePair);
 		}
 	
 		public enum EnumerationMode { Key, Value, DictionaryEntry, KeyValuePair };
 	
 		[Serializable]
-		public struct Enumerator<K, V> : IEnumerator<KeyValuePair<K, V>>,
+		public struct Enumerator : IEnumerator<KeyValuePair<K,V>>,
 			IDisposable, IDictionaryEnumerator, IEnumerator
 		{
 			Dictionary<K, V> _dictionary;
@@ -605,7 +605,7 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
-		internal class HashKeyCollection<K> : ICollection<K>, IEnumerable<K>, ICollection {
+		internal class HashKeyCollection : ICollection<K>, IEnumerable<K>, ICollection {
 			Dictionary<K, V> _dictionary;
 	
 			public HashKeyCollection (Dictionary<K, V> dictionary)
@@ -655,19 +655,19 @@ namespace System.Collections.Generic {
 				}
 			}
 	
-			public Enumerator<K, V> GetEnumerator ()
+			public Enumerator GetEnumerator ()
 			{
-				return new Enumerator<K, V> (_dictionary);
+				return new Enumerator (_dictionary);
 			}
 	
 			IEnumerator<K> IEnumerable<K>.GetEnumerator ()
 			{
-				return new KeyEnumerator<K, V> (_dictionary);
+				return new KeyEnumerator (_dictionary);
 			}
 	
 			IEnumerator IEnumerable.GetEnumerator ()
 			{
-				return new Enumerator<K, V> (_dictionary, EnumerationMode.Key);
+				return new Enumerator (_dictionary, EnumerationMode.Key);
 			}
 	
 	
@@ -676,11 +676,11 @@ namespace System.Collections.Generic {
 			bool ICollection.IsSynchronized { get { return ((IDictionary) _dictionary).IsSynchronized; } }
 			object ICollection.SyncRoot { get { return ((IDictionary) _dictionary).SyncRoot; } }
 	
-			public struct KeyEnumerator<K, V> : IEnumerator<K>, IDisposable, IEnumerator {
+			public struct KeyEnumerator : IEnumerator<K>, IDisposable, IEnumerator {
 				IEnumerator _hostEnumerator;
 				internal KeyEnumerator (Dictionary<K, V> dictionary)
 				{
-					_hostEnumerator = new Enumerator<K, V> (dictionary, EnumerationMode.Key);
+					_hostEnumerator = new Enumerator (dictionary, EnumerationMode.Key);
 				}
 				
 				public void Dispose ()
@@ -712,7 +712,7 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
-		internal class HashValueCollection<V> : ICollection<V>, IEnumerable<V>, ICollection {
+		internal class HashValueCollection : ICollection<V>, IEnumerable<V>, ICollection {
 			Dictionary<K, V> _dictionary;
 	
 			public HashValueCollection (Dictionary<K, V> dictionary)
@@ -762,19 +762,19 @@ namespace System.Collections.Generic {
 				}
 			}
 	
-			public Enumerator<K, V> GetEnumerator ()
+			public Enumerator GetEnumerator ()
 			{
-				return new Enumerator<K, V> (_dictionary);
+				return new Enumerator (_dictionary);
 			}
 	
 			IEnumerator<V> IEnumerable<V>.GetEnumerator ()
 			{
-				return new ValueEnumerator<K, V> (_dictionary);
+				return new ValueEnumerator (_dictionary);
 			}
 	
 			IEnumerator IEnumerable.GetEnumerator ()
 			{
-				return new Enumerator<K, V> (_dictionary, EnumerationMode.Value);
+				return new Enumerator (_dictionary, EnumerationMode.Value);
 			}
 	
 	
@@ -783,12 +783,12 @@ namespace System.Collections.Generic {
 			bool ICollection.IsSynchronized { get { return ((IDictionary) _dictionary).IsSynchronized; } }
 			object ICollection.SyncRoot { get { return ((IDictionary) _dictionary).SyncRoot; } }
 	
-			public struct ValueEnumerator<K, V> : IEnumerator<V>, IDisposable, IEnumerator
+			public struct ValueEnumerator : IEnumerator<V>, IDisposable, IEnumerator
 			{
 				IEnumerator _hostEnumerator;
 				internal ValueEnumerator (Dictionary<K, V> dictionary)
 				{
-					_hostEnumerator = new Enumerator<K, V> (dictionary, EnumerationMode.Value);
+					_hostEnumerator = new Enumerator (dictionary, EnumerationMode.Value);
 				}
 				
 				public void Dispose ()
