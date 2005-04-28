@@ -1,5 +1,9 @@
 2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (mono_class_init): Applied patch from Ankit Jain 
+	(radical@gmail.com). Avoid pending init errors when a field refers
+	to a nested class using a typeref. Fixes #74734.
+
 	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): Fix
 	this for dynamic modules.
 
