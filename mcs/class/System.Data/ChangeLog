@@ -1,3 +1,7 @@
+2005-04-28  Konstantin Triger <kostat@mainsoft.com>  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataView.cs: Nullify an index when Closed
+
 2005-04-27  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataRow.cs: Removed unneeded check of RowState

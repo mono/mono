@@ -547,7 +547,7 @@ namespace System.Data
 		{
 			if (dataTable != null)
 				UnregisterEventHandlers ();
-			UpdateIndex (false);
+			Index = null;
 			rowCache = null;
 			isOpen = false;
 		}
