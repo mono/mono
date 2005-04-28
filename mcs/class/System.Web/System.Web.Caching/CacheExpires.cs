@@ -92,23 +92,6 @@ namespace System.Web.Caching {
 				_arrBuckets [objEntry.ExpiresBucket].Remove (objEntry);
 		}
 
-		internal void Update (CacheEntry objEntry, long ticksExpires) {
-			// If the entry doesn't have a expires time we assume that the entry is due to expire now.
-			int oldBucket = objEntry.ExpiresBucket;
-			int newBucket = GetHashBucket (ticksExpires);
-
-			if (oldBucket == CacheEntry.NoBucketHash)
-				return;
-
-			// Check if we need to move the item
-			if (oldBucket != newBucket) {
-				_arrBuckets [oldBucket].Remove (objEntry);
-				objEntry.Expires = ticksExpires;
-				_arrBuckets [newBucket].Add (objEntry);
-			} else
-				_arrBuckets [oldBucket].Update (objEntry, ticksExpires);
-		}
-
 		internal void GarbageCleanup (object State) {
 			int bucket;
 

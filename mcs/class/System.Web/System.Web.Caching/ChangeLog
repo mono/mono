@@ -1,3 +1,11 @@
+2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ExpiresBuckets.cs:
+	* Cache.cs:
+	* CacheExpires.cs: fix NullReferenceException thrown sometimes when
+	using sliding expiration and under high load. Patch by Eyal Alayuf from
+	Mainsoft.
+
 2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheDependency.cs: remove warnings.

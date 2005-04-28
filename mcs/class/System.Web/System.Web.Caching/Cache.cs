@@ -182,10 +182,9 @@ namespace System.Web.Caching {
 										pub,
 										enumPriority);
 
-			Interlocked.Increment (ref _nItems);
-
 			_lockEntries.AcquireWriterLock (-1);
 			try {
+				_nItems++;
 				if (_arrEntries.Contains (strKey)) {
 					if (overwrite)
 						objOldEntry = _arrEntries [strKey] as CacheEntry;
@@ -195,6 +194,16 @@ namespace System.Web.Caching {
 				
 				objEntry.Hit ();
 				_arrEntries [strKey] = objEntry;
+
+				// If we have any kind of expiration add into the CacheExpires
+				// Do this under the lock so no-one can retrieve the objEntry
+				// before it is fully initialized.
+				if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration) {
+					if (objEntry.HasSlidingExpiration)
+						objEntry.Expires = DateTime.UtcNow.Ticks + objEntry.SlidingExpiration;
+
+					_objExpires.Add (objEntry);
+				}
 			} finally {
 				_lockEntries.ReleaseLock ();
 			}
@@ -204,14 +213,6 @@ namespace System.Web.Caching {
 					_objExpires.Remove (objOldEntry);
 
 				objOldEntry.Close (CacheItemRemovedReason.Removed);
-			}
-
-			// If we have any kind of expiration add into the CacheExpires class
-			if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration) {
-				if (objEntry.HasSlidingExpiration)
-					objEntry.Expires = DateTime.UtcNow.Ticks + objEntry.SlidingExpiration;
-
-				_objExpires.Add (objEntry);
 			}
 
 			return objEntry.Item;
@@ -361,6 +362,7 @@ namespace System.Web.Caching {
 					return null;
 
 				_arrEntries.Remove (strKey);
+				_nItems--;
 			}
 			finally {
 				_lockEntries.ReleaseWriterLock ();
@@ -370,9 +372,6 @@ namespace System.Web.Caching {
 				_objExpires.Remove (objEntry);
 
 			objEntry.Close (enumReason);
-
-			Interlocked.Decrement (ref _nItems);
-
 			return objEntry.Item;
 		}
 
@@ -416,10 +415,7 @@ namespace System.Web.Caching {
 
 			objEntry.Hit ();
 			if (objEntry.HasSlidingExpiration) {
-				long ticksExpires = ticksNow + objEntry.SlidingExpiration;
-
-				_objExpires.Update (objEntry, ticksExpires);
-				objEntry.Expires = ticksExpires;
+				objEntry.Expires = ticksNow + objEntry.SlidingExpiration;
 			}
 
 			return objEntry;

@@ -88,8 +88,6 @@ namespace System.Web.Caching {
 			int intPos = 0;
 			do {
 				_arrEntries[intPos]._intNext = intPos + 1;
-				_arrEntries[intPos].TicksExpires = Cache.NoAbsoluteExpiration.Ticks;
-				
 				intPos++;
 			} while (intPos < _intSize);
 
@@ -116,7 +114,6 @@ namespace System.Web.Caching {
 				// Initialize positions for the rest of new elements.
 				for (int i = oldsize; i < _intSize; i++) {
 					newlist[i]._intNext = i + 1;
-					newlist[i].TicksExpires = Cache.NoAbsoluteExpiration.Ticks;
 				}
 
 				// Last item signals the expansion of the list.
@@ -147,7 +144,6 @@ namespace System.Web.Caching {
 					}
 				}
 			
-				_arrEntries[_intNext].TicksExpires = objEntry.Expires;
 				_arrEntries[_intNext].Entry = objEntry;
 
 				objEntry.ExpiresBucket = _byteID;
@@ -172,13 +168,11 @@ namespace System.Web.Caching {
 		/// </summary>
 		/// <param name="objEntry">Cache entry to be removed.</param>
 		internal void Remove(CacheEntry objEntry) {
-			// Check if this is our bucket
-			if (objEntry.ExpiresBucket != _byteID) return;
-			if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
-
 			_lock.AcquireWriterLock(-1);
 			try {
-				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
+				if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket)
+					return;
+
 				_intCount--;
 
 				// Push the index as a free one.
@@ -191,32 +185,6 @@ namespace System.Web.Caching {
 			}
 			finally {
 				//Releases both reader & writer locks
-				_lock.ReleaseWriterLock();
-			}
-		}
-
-		/// <summary>
-		/// Updates a cache entry in the expires bucket, this is called during a hit of an item if the 
-		/// cache item has a sliding expiration. The function is responsible for updating the cache
-		/// entry.
-		/// </summary>
-		/// <param name="objEntry">Cache entry to update.</param>
-		/// <param name="ticksExpires">New expiration value for the cache entry.</param>
-		internal void Update(CacheEntry objEntry, long ticksExpires) {
-			// Check if this is our bucket
-			if (objEntry.ExpiresBucket != _byteID) return;
-			if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
-
-			_lock.AcquireWriterLock(-1);
-			try {
-				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
-
-				// Proceed to update.
-				_arrEntries[objEntry.ExpiresIndex].TicksExpires = ticksExpires;
-				_arrEntries[objEntry.ExpiresIndex].Entry.Expires = ticksExpires;
-			}
-			finally {
-				//Releases both read & write locks
 				_lock.ReleaseWriterLock();
 			}
 		}
@@ -241,7 +209,7 @@ namespace System.Web.Caching {
 				do {
 					objEntry = _arrEntries [intPos];
 					if (null != objEntry.Entry && 
-						((objEntry.TicksExpires < ticksNow) || objEntry.Entry.ExpiresBucket != _byteID))
+						((objEntry.Entry.Expires < ticksNow) || objEntry.Entry.ExpiresBucket != _byteID))
 					{
 						if (null == removeList)
 							removeList = new ArrayList ();
@@ -264,6 +232,8 @@ namespace System.Web.Caching {
 					foreach (ExpiresEntry entry in removeList) { 
 						ExpiresEntry e = entry;
 						int id = entry.Entry.ExpiresIndex;
+						if (id == CacheEntry.NoIndexInBucket)
+							continue;
 
 						//push the index for reuse
 						_freeidx.Add (id);
@@ -657,4 +627,4 @@ namespace System.Web.Caching {
 		#endregion
 	}
 }
-	
+
