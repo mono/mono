@@ -239,7 +239,6 @@ struct _MonoThread {
 	GSList *appdomain_refs;
 	MonoBoolean interruption_requested;
 	gpointer suspend_event;
-	gpointer suspended_event;
 	gpointer resume_event;
 	MonoObject *synch_lock;
 	guint8* serialized_culture_info;
