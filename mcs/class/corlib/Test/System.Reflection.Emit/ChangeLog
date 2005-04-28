@@ -1,3 +1,7 @@
+2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilderTest.cs: Add test for GetModules ().
+
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilderTest.cs: Add test for parameter attributes.

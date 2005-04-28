@@ -524,6 +524,18 @@ public class AssemblyBuilderTest : Assertion
 		ab.Save ("def_module");
 	}
 
+	[Test]
+	public void GetModules ()
+	{
+		Module[] m;
+
+		m = ab.GetModules ();
+		Assert (m.Length >= 2);
+
+		// Test with no modules
+		AssemblyBuilder ab2 = genAssembly ();
+		m = ab2.GetModules ();
+	}
 }
 }
 
