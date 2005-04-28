@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,28 +28,31 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
-
 namespace System.Threading {
 
-	[ComVisible (false)]
+	[MonoTODO ("Useless until the runtime supports it")]
 	public class HostExecutionContext {
 
-		protected internal object state;
+		private object _state;
 
 		public HostExecutionContext ()
 		{
-			state = null;
+			_state = null;
 		}
 
 		public HostExecutionContext (object state)
 		{
-			this.state = state;
+			_state = state;
 		}
 
 		public virtual HostExecutionContext CreateCopy ()
 		{
-			return new HostExecutionContext (state);
+			return new HostExecutionContext (_state);
+		}
+
+		protected internal object State {
+			get { return _state; }
+			set { _state = value; }
 		}
 	}
 }

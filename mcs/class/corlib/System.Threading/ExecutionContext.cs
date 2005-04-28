@@ -1,12 +1,11 @@
 // 
 // System.Threading.ExecutionContext.cs
 //
-// Author:
-//   Lluis Sanchez (lluis@novell.com)
+// Authors:
+//	Lluis Sanchez (lluis@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,19 +27,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
+using System.Security.Permissions;
 
-namespace System.Threading 
-{
-	[ComVisible (false)]
+namespace System.Threading {
+
 	[Serializable]
-	public sealed class ExecutionContext : ISerializable
-	{
+#if NET_2_0
+	public sealed class ExecutionContext : ISerializable {
+#else
+	internal sealed class ExecutionContext : ISerializable {
+#endif
+		private SecurityContext _sc;
+		private bool _suppressFlow;
+		private bool _capture;
+
 		internal ExecutionContext ()
 		{
+		}
+
+		internal ExecutionContext (ExecutionContext ec)
+		{
+			if (ec._sc != null)
+				_sc = new SecurityContext (ec._sc);
+			_suppressFlow = ec._suppressFlow;
+			_capture = true;
 		}
 		
 		[MonoTODO]
@@ -49,55 +62,90 @@ namespace System.Threading
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public static ExecutionContext Capture()
+		public static ExecutionContext Capture ()
 		{
-			throw new NotImplementedException ();
+			ExecutionContext ec = Thread.CurrentThread.ExecutionContext;
+			if (ec.FlowSuppressed)
+				return null;
+
+			ExecutionContext capture = new ExecutionContext (ec);
+			capture.SecurityContext = SecurityContext.Capture ();
+			return capture;
 		}
 		
-		[MonoTODO]
-		public ExecutionContext CreateCopy()
+		public ExecutionContext CreateCopy ()
 		{
-			throw new NotImplementedException ();
+			if (!_capture)
+				throw new InvalidOperationException ();
+
+			return new ExecutionContext (this);
 		}
 
 		[MonoTODO]
+		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public static bool IsFlowSuppressed()
-		{
-			throw new NotImplementedException ();
+		// internal stuff
+
+		internal SecurityContext SecurityContext {
+			get {
+				if (_sc == null)
+					_sc = new SecurityContext ();
+				return _sc;
+			}
+			set { _sc = value; }
 		}
 
-		[MonoTODO]
-		public static void RestoreFlow()
+		internal bool FlowSuppressed {
+			get { return _suppressFlow; }
+			set { _suppressFlow = value; }
+		}
+
+#if NET_2_0
+		// Note: Previous to version 2.0 only the CompressedStack and (sometimes!) the WindowsIdentity
+		// were propagated to new threads. This is why ExecutionContext is internal in before NET_2_0.
+		// It also means that all newer context classes should be here (i.e. inside the #if NET_2_0).
+
+		public static bool IsFlowSuppressed ()
 		{
-			throw new NotImplementedException ();
+			return Thread.CurrentThread.ExecutionContext.FlowSuppressed;
+		}
+
+		public static void RestoreFlow ()
+		{
+			ExecutionContext ec = Thread.CurrentThread.ExecutionContext;
+			if (!ec.FlowSuppressed)
+				throw new InvalidOperationException ();
+
+			ec.FlowSuppressed = false;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("only the SecurityContext is considered")]
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callBack, object state)
 		{
-			throw new NotImplementedException ();
+			if (executionContext == null) {
+				throw new InvalidOperationException (Locale.GetText (
+					"Null ExecutionContext"));
+			}
+
+			// FIXME: supporting more than one context (the SecurityContext)
+			// will requires a rewrite of this method
+
+			SecurityContext.Run (executionContext.SecurityContext, callBack, state);
 		}
 		
-		[MonoTODO]
-		public static ExecutionContextSwitcher SetExecutionContext (ExecutionContext executionContext)
+		public static AsyncFlowControl SuppressFlow ()
 		{
-			throw new NotImplementedException ();
+			Thread t = Thread.CurrentThread;
+			t.ExecutionContext.FlowSuppressed = true;
+			return new AsyncFlowControl (t, AsyncFlowControlType.Execution);
 		}
-
-		[MonoTODO]
-		public static AsyncFlowControl SuppressFlow()
-		{
-			throw new NotImplementedException ();
-		}
-
+#endif
 	}
 }
-
-#endif

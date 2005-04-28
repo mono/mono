@@ -39,7 +39,6 @@ namespace System.Threading {
 
 #if NET_2_0
 	[Serializable]
-	[ComVisibleAttribute (false)]
 	public sealed class CompressedStack : ISerializable {
 #else
 	public class CompressedStack {
@@ -58,31 +57,36 @@ namespace System.Threading {
 				_list = (ArrayList) cs._list.Clone ();
 		}
 
-		~CompressedStack ()
+#if NET_2_0
+		[ComVisibleAttribute (false)]
+		public
+#else
+		internal
+#endif
+		CompressedStack CreateCopy ()
 		{
+			return new CompressedStack (this);
 		}
 
 #if NET_2_0
-		[ComVisibleAttribute (false)]
-		public CompressedStack CreateCopy ()
-		{
-			// FIXME: in 2.0 beta1 Object.ReferenceEquals (cs, cs.CreateCopy ()) == true !!!
-			return this;
-//			return new CompressedStack (this);
-		}
-
-		[MonoTODO ("incomplete")]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-		}
-
-		static public CompressedStack Capture ()
+		public
+#else
+		internal
+#endif
+		static CompressedStack Capture ()
 		{
 			CompressedStack cs = new CompressedStack (0);
 			cs._list = SecurityFrame.GetStack (1);
 			return cs;
+		}
+
+#if NET_2_0
+		[MonoTODO ("incomplete")]
+		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
@@ -95,19 +99,27 @@ namespace System.Threading {
 			return new CompressedStack (Thread.CurrentThread.GetCompressedStack ());
 		}
 
-		static public CompressedStackSwitcher SetCompressedStack (CompressedStack cs)
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
+		static public void Run (CompressedStack compressedStack, ContextCallback callback, object state)
 		{
+			if (compressedStack == null)
+				throw new ArgumentException ("compressedStack");
+
 			Thread t = Thread.CurrentThread;
-			CompressedStack ctcs = t.GetCompressedStack ();
-			if (ctcs != null) {
-				string msg = Locale.GetText ("You must Undo previous CompressedStack.");
-				throw new SecurityException (msg);
+			CompressedStack original = null;
+			try {
+				original = t.GetCompressedStack (); 
+				t.SetCompressedStack (compressedStack);
+				callback (state);
 			}
-			CompressedStackSwitcher csw = new CompressedStackSwitcher (ctcs, t);
-			t.SetCompressedStack (cs);
-			return csw;
+			finally {
+				if (original != null)
+					t.SetCompressedStack (original);
+			}
 		}
 #endif
+		// internal stuff
+
 		internal bool Equals (CompressedStack cs)
 		{
 			if (IsEmpty ())

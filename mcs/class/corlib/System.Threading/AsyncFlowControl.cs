@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,32 +28,53 @@
 
 #if NET_2_0
 
-using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace System.Threading {
 
-	[ComVisibleAttribute (false)]
+	internal enum AsyncFlowControlType {
+		None,
+		Execution,
+		Security
+	}
+
 	public struct AsyncFlowControl : IDisposable {
 
-		private bool _undo;
+		private Thread _t;
+		private AsyncFlowControlType _type;
 
-		[MonoTODO]
+		internal AsyncFlowControl (Thread t, AsyncFlowControlType type)
+		{
+			_t = t;
+			_type = type;
+		}
+
 		public void Undo ()
 		{
-			if (_undo) {
+			if (_t == null) {
 				throw new InvalidOperationException (Locale.GetText (
 					"Can only be called once."));
 			}
-			// TODO
-			_undo = true;
+			switch (_type) {
+			case AsyncFlowControlType.Execution:
+				ExecutionContext.RestoreFlow ();
+				break;
+			case AsyncFlowControlType.Security:
+				SecurityContext.RestoreFlow ();
+				break;
+			}
+			_t = null;
 		}
 
 		void IDisposable.Dispose () 
 		{
-			if (!_undo)
+			if (_t != null) {
 				Undo ();
+				_t = null;
+				_type = AsyncFlowControlType.None;
+			}
 		}
 	}
 }

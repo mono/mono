@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,12 +28,11 @@
 
 #if NET_2_0
 
+using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
 
 namespace System.Threading {
 
-	[ComVisible (false)]
 	public class HostExecutionContextManager {
 
 		public HostExecutionContextManager ()
@@ -48,13 +47,14 @@ namespace System.Threading {
 
 		[MonoTODO]
 		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
-		public virtual void Revert (HostExecutionContextSwitcher hostContextSwitcher)
+		public virtual void Revert (object previousState)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual HostExecutionContextSwitcher SetHostExecutionContext (HostExecutionContext hostExecutionContext)
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
+		public virtual object SetHostExecutionContext (HostExecutionContext hostExecutionContext)
 		{
 			throw new NotImplementedException ();
 		}
