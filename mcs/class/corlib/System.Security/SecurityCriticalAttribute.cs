@@ -28,18 +28,39 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
-
 namespace System.Security {
 
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface,
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
+		AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate,
 		AllowMultiple=false, Inherited=false)]
-	[ComVisible (false)]
+	[MonoTODO ("Not supported by the runtime")]
 	public sealed class SecurityCriticalAttribute : Attribute {
+
+		private SecurityCriticalScope _scope;
 
 		public SecurityCriticalAttribute ()
 			: base ()
 		{
+			_scope = SecurityCriticalScope.Explicit;
+		}
+
+		public SecurityCriticalAttribute (SecurityCriticalScope scope)
+			: base ()
+		{
+			switch (scope) {
+			case SecurityCriticalScope.Everything:
+				_scope = SecurityCriticalScope.Everything;
+				break;
+			default:
+				// that includes all bad enums values
+				_scope = SecurityCriticalScope.Explicit;
+				break;
+			}
+		}
+
+		public SecurityCriticalScope Scope {
+			get { return _scope; }
 		}
 	}
 }

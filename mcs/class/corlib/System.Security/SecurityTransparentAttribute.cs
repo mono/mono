@@ -28,13 +28,10 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
-
 namespace System.Security {
 
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface,
-		AllowMultiple=false, Inherited=false)]
-	[ComVisible (false)]
+	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
+	[MonoTODO ("Not supported by the runtime")]
 	public sealed class SecurityTransparentAttribute : Attribute {
 
 		public SecurityTransparentAttribute ()

@@ -29,11 +29,14 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Security {
 
 	[Serializable]
+	[ComVisible (true)]
+	[Obsolete ("seems the *Choice actions won't survive")]
 	public sealed class PermissionSetCollection : ICollection, IEnumerable {
 
 		private static string tagName = "PermissionSetCollection";
@@ -56,7 +59,6 @@ namespace System.Security {
 
 		public IList PermissionSets {
 			get { return _list; }
-			set { _list = value; }
 		}
 
 		public object SyncRoot {

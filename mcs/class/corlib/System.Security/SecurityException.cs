@@ -41,10 +41,9 @@ namespace System.Security {
 
 	[Serializable]
 #if NET_2_0
-	public class SecurityException : SystemException, _Exception {
-#else
-	public class SecurityException : SystemException {
+	[ComVisible (true)]
 #endif
+	public class SecurityException : SystemException {
 		// Fields
 		string permissionState;
 		Type permissionType;
@@ -89,13 +88,6 @@ namespace System.Security {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _method; }
 			set { _method = value; }
-		}
-
-		[Obsolete]
-		[ComVisible (false)]
-		public IPermission PermissionThatFailed {
-			get { return _permfailed; }
-			set { _permfailed = value; }
 		}
 
 		[ComVisible (false)]

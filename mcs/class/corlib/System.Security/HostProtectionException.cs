@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -36,14 +35,28 @@ using System.Security.Permissions;
 namespace System.Security {
 
 	[Serializable]
-	public class HostProtectionException : SystemException, _Exception {
+	[ComVisible (true)]
+	[MonoTODO ("Not supported in the runtime")]
+	public class HostProtectionException : SystemException {
 
-		private HostProtectionResource _inaccessible;
 		private HostProtectionResource _protected;
 		private HostProtectionResource _demanded;
 
-		public HostProtectionException (string message, HostProtectionResource inaccessibleResources, 
-			HostProtectionResource protectedResources, HostProtectionResource demandedRessources)
+		public HostProtectionException ()
+		{
+		}
+
+		public HostProtectionException (string message)
+			: base (message)
+		{
+		}
+
+		public HostProtectionException (string message, Exception e)
+			: base (message, e)
+		{
+		}
+
+		public HostProtectionException (string message, HostProtectionResource protectedResources, HostProtectionResource demandedRessources)
 			: base (message)
 		{
 		}
@@ -55,17 +68,10 @@ namespace System.Security {
 
 		public HostProtectionResource DemandedResources {
 			get { return _demanded; }
-			set { _demanded = value; }
-		}
-
-		public HostProtectionResource InaccessibleResources {
-			get { return _inaccessible; }
-			set { _inaccessible = value; }
 		}
 
 		public HostProtectionResource ProtectedResources {
 			get { return _protected; }
-			set { _protected = value; }
 		}
 
 		[MonoTODO]

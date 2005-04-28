@@ -1,3 +1,19 @@
+2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetCollection.cs: Updated wrt beta2. Seems this will be
+	removed before 2.0 final.
+	* HostProtectionException.cs: Updated wrt beta2. Added TODO as it 
+	isn't support by the runtime.
+	* SecurityContext.cs: Updated wrt beta2. Class is now internal in 
+	NET_1_1 to allow the compressed stack propagation to other threads.
+	* SecurityCriticalAttribute.cs: Added support for property Scope.
+	* SecurityException.cs: Removed PermitOnlySetInstance property to 
+	match beta2.
+	* SecurityTransparentAttribute.cs: Fixed AttributeUsage. Added TODO
+	as it isn't support by the runtime.
+	* SuppressUnmanagedCodeSecurityAttribute.cs: Added delegates to usage
+	in NET_2_0.
+
 2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityCriticalScope.cs: New. Enum introduced in 2.0 beta2.

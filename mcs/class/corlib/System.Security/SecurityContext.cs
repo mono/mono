@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,117 +26,144 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
-using System;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Threading;
 
 namespace System.Security {
 
-	[MonoTODO ("need to determine internals")]
-	[ComVisible (false)]
+#if NET_2_0
 	public sealed class SecurityContext {
-
-		static private bool _flowSuppressed;
-		static private bool _windowsIdentityFlowSuppressed;
-
-		private bool _usedForSetSecurityContext;
+#else
+	internal sealed class SecurityContext {
+#endif
+		private bool _capture;
 		private WindowsIdentity _winid;
 		private CompressedStack _stack;
+		private bool _suppressFlowWindowsIdentity;
+		private bool _suppressFlow;
 
 		internal SecurityContext ()
 		{
-			_usedForSetSecurityContext = false;
 		}
 
 		// copy constructor
 		internal SecurityContext (SecurityContext sc)
 		{
-			_usedForSetSecurityContext = sc._usedForSetSecurityContext;
+			_capture = true;
 			_winid = sc._winid;
-			_stack = sc._stack.CreateCopy ();
+			if (sc._stack != null)
+				_stack = sc._stack.CreateCopy ();
 		}
 
 		public SecurityContext CreateCopy ()
 		{
-			if (_usedForSetSecurityContext) {
-				throw new InvalidOperationException (Locale.GetText (
-					"SecurityContext used for SetSecurityContext"));
-			}
+			if (!_capture)
+				throw new InvalidOperationException ();
+
 			return new SecurityContext (this);
 		}
 
-// LAMESPEC: documented but not implemented (not shown by corcompare)
-#if false
-		public override bool Equals (object obj)
-		{
-			return false;
-		}
-
-		public override int GetHashCode ()
-		{
-			return 0;
-		}
-
-		public void Undo ()
-		{
-		}
-#endif
 		// static methods
 
 		static public SecurityContext Capture ()
 		{
-			return new SecurityContext ();
+			SecurityContext sc = Thread.CurrentThread.ExecutionContext.SecurityContext;
+			if (sc.FlowSuppressed)
+				return null;
+
+			SecurityContext capture = new SecurityContext ();
+			capture._capture = true;
+			capture._winid = WindowsIdentity.GetCurrent ();
+			capture._stack = CompressedStack.Capture ();
+			return capture;
 		}
+
+		// internal stuff
+
+		internal bool FlowSuppressed {
+			get { return _suppressFlow; }
+			set { _suppressFlow = value; }
+		}
+
+		internal bool WindowsIdentityFlowSuppressed {
+			get { return _suppressFlowWindowsIdentity; }
+			set { _suppressFlowWindowsIdentity = value; }
+		}
+
+		internal CompressedStack CompressedStack {
+			get { return _stack; }
+			set { _stack = value; }
+		}
+
+		internal WindowsIdentity WindowsIdentity {
+			get { return _winid; }
+			set { _winid = value; }
+		}
+
+#if NET_2_0
+		// Suppressing the SecurityContext flow wasn't required before 2.0
 
 		static public bool IsFlowSuppressed ()
 		{
-			return _flowSuppressed;
+			return Thread.CurrentThread.ExecutionContext.SecurityContext.FlowSuppressed;
 		} 
 
 		static public bool IsWindowsIdentityFlowSuppressed ()
 		{
-			return _windowsIdentityFlowSuppressed;
+			return Thread.CurrentThread.ExecutionContext.SecurityContext.WindowsIdentityFlowSuppressed;
 		}
 
 		static public void RestoreFlow ()
 		{
-			_flowSuppressed = false;
+			SecurityContext sc = Thread.CurrentThread.ExecutionContext.SecurityContext;
+			// if nothing is suppressed then throw
+			if (!sc.FlowSuppressed && !sc.WindowsIdentityFlowSuppressed)
+				throw new InvalidOperationException ();
+
+			sc.FlowSuppressed = false;
+			sc.WindowsIdentityFlowSuppressed = false;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		static public void Run (SecurityContext securityContext, ContextCallback callBack, object state)
 		{
 			if (securityContext == null) {
 				throw new InvalidOperationException (Locale.GetText (
 					"Null SecurityContext"));
 			}
-		}
 
-		static public SecurityContextSwitcher SetSecurityContext (SecurityContext securityContext)
-		{
-			if (securityContext == null) {
-				throw new InvalidOperationException (Locale.GetText (
-					"Null SecurityContext"));
+			SecurityContext sc = Thread.CurrentThread.ExecutionContext.SecurityContext;
+			IPrincipal original = Thread.CurrentPrincipal;
+			try {
+				if (sc.WindowsIdentity != null)
+					Thread.CurrentPrincipal = new WindowsPrincipal (sc.WindowsIdentity);
+
+				CompressedStack.Run (securityContext.CompressedStack, callBack, state);
 			}
-
-			securityContext._usedForSetSecurityContext = true;
-			return new SecurityContextSwitcher ();
+			finally {
+				if ((original != null) && (sc.WindowsIdentity != null))
+					Thread.CurrentPrincipal = original;
+			}
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		static public AsyncFlowControl SuppressFlow ()
 		{
-			_flowSuppressed = true;
-			return new AsyncFlowControl ();
+			Thread t = Thread.CurrentThread;
+			// suppress both flows
+			t.ExecutionContext.SecurityContext.FlowSuppressed = true;
+			t.ExecutionContext.SecurityContext.WindowsIdentityFlowSuppressed = true;
+			return new AsyncFlowControl (t, AsyncFlowControlType.Security);
 		}
 
 		static public AsyncFlowControl SuppressFlowWindowsIdentity ()
 		{
-			_windowsIdentityFlowSuppressed = true;
-			return new AsyncFlowControl ();
+			Thread t = Thread.CurrentThread;
+			t.ExecutionContext.SecurityContext.WindowsIdentityFlowSuppressed = true;
+			return new AsyncFlowControl (t, AsyncFlowControlType.Security);
 		}
+#endif
 	}
 }
-
-#endif
