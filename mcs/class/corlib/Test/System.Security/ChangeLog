@@ -1,3 +1,12 @@
+2005-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContextCas.cs: New. CAS unit tests for SecurityContext.
+	* SecurityContextTest.cs: New. Unit tests for SecurityContext.
+	* SecurityCriticalAttributeTest.cs: New. Unit tests for 
+	SecurityCriticalAttribute.
+	* SecurityTransparentAttributeTest.cs: New. Unit tests for 
+	SecurityTransparentAttribute.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HostSecurityManagerTest.cs: Renamed HostSecurityManagerFlags to 
