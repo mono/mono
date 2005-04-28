@@ -1,3 +1,10 @@
+2005-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompressedStackCas.cs: New. CAS unit tests for CompressedStack.
+	* CompressedStackTest.cs: New. Unit tests for CompressedStack.
+	* ExecutionContextCas.cs: New. CAS unit tests for ExecutionContext.
+	* ExecutionContextTest.cs: New. Unit tests for ExecutionContext.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MutexCas.cs: New. CAS unit tests for Mutex.
