@@ -1,5 +1,15 @@
 2005-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* Combobox: 
+		- Adjust control's height for non-simple comboboxes (bug fix)
+		- Remove dead code
+	* MenuAPI.cs: remove unused var
+	* ScrollBar.cs: remove unsed var
+		 
+	* ListBox.cs: unselect items when clearing
+
+2005-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* ListControl.cs: honors OnPositionChanged and default Selected Item
 	* ListBox.cs: unselect items when clearing
 

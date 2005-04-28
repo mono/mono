@@ -61,7 +61,7 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
 		private bool process_textchanged_event;
-		private bool has_focus;
+		private bool has_focus;		
 
 		internal class ComboBoxInfo
 		{
@@ -71,7 +71,7 @@ namespace System.Windows.Forms
 			internal Rectangle button_rect;
 			internal bool show_button;		/* Is the DropDown button shown? */
 			internal ButtonState button_status;	/* Drop button status */
-			internal Size listbox_size;
+			internal int original_height;		/* Control's height is recalculated for not Simple Styles */
 			internal Rectangle listbox_area;	/* ListBox area in Simple combox, not used in the rest */
 			internal bool droppeddown;		/* Is the associated ListBox dropped down? */
 
@@ -81,6 +81,7 @@ namespace System.Windows.Forms
 				show_button = false;
 				item_height = 0;
 				droppeddown = false;
+				original_height = -1;
 			}
 		}
 
@@ -231,7 +232,11 @@ namespace System.Windows.Forms
 				dropdown_style = value;					
 				
 				if (dropdown_style == ComboBoxStyle.Simple) {
-					CBoxInfo.show_button = false;					
+					CBoxInfo.show_button = false;
+					
+					if (combobox_info.original_height != -1)
+						Height = combobox_info.original_height;
+					
 					CreateComboListBox ();
 
 					if (IsHandleCreated == true) {
@@ -765,7 +770,8 @@ namespace System.Windows.Forms
 
 		protected override void OnResize (EventArgs e)
 		{
-			base.OnResize (e);			
+			base.OnResize (e);
+			AdjustHeightForDropDown ();
 			CalcTextArea ();			
 		}
 
@@ -877,8 +883,25 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
-		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) {
-			OnKeyPress(e);
+		
+		private void AdjustHeightForDropDown ()
+		{
+			if (dropdown_style == ComboBoxStyle.Simple) 
+				return;
+				
+			int new_height = combobox_info.item_height + ThemeEngine.Current.DrawComboBoxEditDecorationTop () +
+				ThemeEngine.Current.DrawComboBoxEditDecorationBottom () + 2;
+				
+			if (Height == new_height)
+				return;		
+				
+			combobox_info.original_height = Height;
+			Height = new_height;
+		}
+
+		private void textbox_ctrl_KeyPress(object sender, KeyPressEventArgs e) 
+		{
+			OnKeyPress (e);
 		}
 		
 		// Calcs the text area size
@@ -1405,13 +1428,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			#region Private Methods
-
-			protected override void CreateHandle ()
-			{			
-				base.CreateHandle ();				
-			}
-
+			#region Private Methods			
 			// Calcs the listbox area
 			internal void CalcListBoxArea ()
 			{				

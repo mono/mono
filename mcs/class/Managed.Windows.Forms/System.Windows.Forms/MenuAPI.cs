@@ -210,8 +210,7 @@ namespace System.Windows.Forms
 		// The Point object contains screen coordinates
 		static public bool TrackPopupMenu (IntPtr hTopMenu, IntPtr hMenu, Point pnt, bool bMenubar, Control Wnd)
 		{
-			TRACKER	tracker = new TRACKER ();			
-			MENU top_menu = GetMenuFromID (hTopMenu);
+			TRACKER	tracker = new TRACKER ();						
 			MENU menu = null;
 
 			if (hMenu == IntPtr.Zero)	// No submenus to track

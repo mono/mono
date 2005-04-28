@@ -1075,8 +1075,7 @@ namespace System.Windows.Forms
 		}    				
 		
     		private void UpdatePos (int newPos, bool update_thumbpos)
-    		{
-    			int old = position;
+    		{    			
 			int pos;
 
     			if (newPos < minimum)
