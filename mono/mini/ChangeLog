@@ -1,5 +1,8 @@
 2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (emit_call): Fix calls to native functions when the
+	runtime is compiled as a shared library. Fixes #74756.
+
 	* mini.c (mono_method_to_ir): Assert if ldsfld and friends are used
 	on a literal field. Fixes #74751.
 
