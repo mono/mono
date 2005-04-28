@@ -29,9 +29,12 @@
 
 using System;
 using Microsoft.Vsa;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.JScript {
 
+	[GuidAttribute ("ED4BAE22-2F3C-419a-B487-CF869E716B95")]
+	[ComVisibleAttribute (true)]
 	public interface IVsaScriptScope : IVsaItem {
 
 		IVsaScriptScope Parent { 

@@ -1151,7 +1151,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Args : AST {
+	internal class Args : AST {
 
 		internal ArrayList elems;
 		int num_of_args = -1;

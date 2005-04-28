@@ -83,5 +83,10 @@ namespace Microsoft.JScript {
 		internal Hashtable Elements {
 			get { return elems; }
 		}
+
+		protected void SpliceSlowly (uint start, uint deleteCount, object [] args, ArrayObject outArray, uint oldLength, uint newLength)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

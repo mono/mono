@@ -29,14 +29,19 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.JScript {
 
+	[GuidAttribute("5B807FA1-00CD-46ee-A493-FD80AC944715")]
+	[ComVisibleAttribute (true)]
 	public interface IRedirectOutput
 	{
 		void SetOutputStream (IMessageReceiver output);
 	}
 
+	[GuidAttribute ("F062C7FB-53BF-4f0d-B0F6-D66C5948E63F")]
+	[ComVisibleAttribute (true)]
 	public interface IMessageReceiver 
 	{
 		void Message (string strValue);

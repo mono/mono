@@ -40,9 +40,14 @@ namespace Microsoft.JScript {
 		internal ASTList elems;
 		int skip_count;
 
-		public ArrayLiteral (Context context, ASTList elems, int skip_count)
+		public ArrayLiteral (Context context, ASTList elems)
 		{
 			this.elems = elems;
+		}
+		
+		internal ArrayLiteral (Context context, ASTList elems, int skip_count)
+			: this (context, elems)
+		{
 			this.skip_count = skip_count;
 		}
 

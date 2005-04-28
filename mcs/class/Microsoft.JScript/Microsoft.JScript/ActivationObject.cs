@@ -29,10 +29,18 @@
 
 using System;
 using System.Reflection;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
 	public abstract class ActivationObject : ScriptObject, IActivationObject {
+
+		protected ArrayList field_table;
+
+		protected virtual JSVariableField CreateField (string name, FieldAttributes attrFlags, object value)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public virtual FieldInfo GetField (string name, int lexLevel)
 		{

@@ -38,7 +38,7 @@ namespace Microsoft.JScript {
 	public abstract class AST {
 
 		internal AST parent;
-		protected int line_number;
+		internal int line_number;
 
 		//
 		// Here the actual IL code generation happens.

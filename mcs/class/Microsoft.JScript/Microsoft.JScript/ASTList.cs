@@ -35,7 +35,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class ASTList : AST {
+	public sealed class ASTList : AST {
 
 		internal ArrayList elems;
 
@@ -52,16 +52,6 @@ namespace Microsoft.JScript {
 
 		internal int Size {
 			get { return elems.Count; }
-		}
-
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			foreach (AST ast in elems)
-				sb.Append (ast.ToString () + "\n");
-
-			return sb.ToString ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)

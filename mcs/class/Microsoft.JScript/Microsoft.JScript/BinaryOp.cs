@@ -32,7 +32,7 @@ namespace Microsoft.JScript {
 		internal AST left, right;
 		internal JSToken op;
 
-		protected BinaryOp (AST left, AST right, JSToken op)
+		internal BinaryOp (AST left, AST right, JSToken op)
 		{
 			this.left = left;
 			this.right = right;
