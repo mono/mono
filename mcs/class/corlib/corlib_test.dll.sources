@@ -249,9 +249,12 @@ System.Security.Principal/GenericIdentityTest.cs
 System.Security.Principal/GenericPrincipalTest.cs
 System.Security.Principal/WindowsIdentityTest.cs
 System.Security.Principal/WindowsPrincipalTest.cs
+System.Security/SecurityContextTest.cs
+System.Security/SecurityCriticalAttributeTest.cs
 System.Security/SecurityElementTest.cs
 System.Security/SecurityExceptionTest.cs
 System.Security/SecurityManagerTest.cs
+System.Security/SecurityTransparentAttributeTest.cs
 System/SingleTest.cs
 System/SingleFormatterTest.cs
 System/StringTest.cs
@@ -260,6 +263,8 @@ System.Text/StringBuilderTest.cs
 System.Text/UnicodeEncodingTest.cs
 System.Text/UTF7EncodingTest.cs
 System.Text/UTF8EncodingTest.cs
+System.Threading/CompressedStackTest.cs
+System.Threading/ExecutionContextTest.cs
 System.Threading/MutexTest.cs
 System.Threading/ThreadTest.cs
 System.Threading/ReaderWriterLockTest.cs
@@ -293,10 +298,13 @@ System.IO.IsolatedStorage/IsolatedStorageFileCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStreamCas.cs
 System.Reflection/ModuleCas.cs
 System.Reflection.Emit/MethodRentalCas.cs
+System.Security/SecurityContextCas.cs
 System.Security/SecurityExceptionCas.cs
 System.Security.Cryptography/CryptoAPITransformCas.cs
 System.Security.Cryptography/CryptoConfigCas.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCas.cs
+System.Threading/CompressedStackCas.cs
+System.Threading/ExecutionContextCas.cs
 System.Threading/MutexCas.cs
 System.Threading/ThreadCas.cs
 System.Threading/WaitHandleCas.cs
