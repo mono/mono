@@ -296,6 +296,7 @@ System.IO/FileStreamCas.cs
 System.IO/PathCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStreamCas.cs
+System.Reflection/AssemblyCas.cs
 System.Reflection/ModuleCas.cs
 System.Reflection.Emit/MethodRentalCas.cs
 System.Security/SecurityContextCas.cs
