@@ -88,12 +88,12 @@
 
 	First to note: we won't use collation element table from unicode.org.
 
-*** Collation element table tailoring
-
 	To understand why we don't use collation element table from UCA, you
-	can try to compare "A" and "a" in the invariant culture.)
+	can try to compare "A" and "a" in the invariant culture. Also try some
+	characters like C0 that are already combined. They are COMPLETELY
+	different form UCA default element table.
 
-** Notes
+	So, the data is completely different, but how about resolution rules?
 
 	Since UCA Level 3 handles both casing and width, it is impossible to
 	use UCA variables for IgnoreWidth, at least with the default element
@@ -101,18 +101,22 @@
 	insensitivity.
 
 	IgnoreWidth/IgnoreSymbols is processed after Kana voice mark
-	decomposition (NFD).
+	decomposition (something like NFD, but not equivalent. Example: \u304C
+	is completely equivalent to \u304B\u309B, which is not part of NFKD).
 	This means, if there is a combined Kana characters, it will be first 
 	decomposed and then compared.
+
+*** Microsoft design problem
 
 	Microsoft implementation seems to have a serious problem that many,
 	many characters that are used in for each specific culture, such as
 	Myanmar, Mongolian, Cherokee, Etiopic, Tagalog, Khmer, are regarded as
 	"completely ignorable".
 
+
 ** MS collation design inference
 
-** sort key format
+*** sort key format
 
 	00 means the end of sort key.
 	01 means the end of the level.
@@ -127,9 +131,9 @@
 	- level 2: case sensitivity
 	- level 3: diacritic difference
 	- level 4: kana type (mostly at primary category 22)
-	- level 5: control characters etc.
+	- level 5: identitcal difference (control characters etc.)
 
-** sort key table
+*** sort key table
 
 	Here is the simple sortkey dumper:
 
@@ -155,14 +159,24 @@
 		}
 	}
 
-*** Combined characters
+*** Composite character processing
 
-	Some latin+diaeresis sequences are regarded as a single character for
-	each.
+	Diacritics are not regarded as a base character when placed after 
+	(maybe some kind of) letters.
 
-	Maybe they are combined similarly to what is specified in UCA.
+	The behavior is diacritic character dependent. For example, Japanese
+	combination of a Kana character and a voice mark is compulsory (the
+	resulting sort key is regarded as identical to the corresponding
+	single character. Try \u304B\u309B with \u304C. It is invariant).
 
-*** Expanded characters
+	In French cultures, diacritic orderings are checked from right to left.
+
+	By default, there is no composite form.
+	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C2.asp
+
+	The correspoinding implementation will be namely "CharacterIterator".
+
+*** Expanded character processing
 
 	Some characters are expanded to two or more characters:
 
@@ -200,33 +214,85 @@
 	2.3  minus sign, hyphen, dash
 	  minus signs: FE63, 207B (super), 208B (sub), 002D, 00FD (full-width)
 	  hyphens: 00AD (soft), 2010, 2011 (nonbreaking) ... Unicode HYPHEN?
-	  dashes, horizontal bars: FE58 ... Unicode DASH?
+	  dashes, horizontal bars: FE58 ... UnicodeCategory.DashPunctuation
 
 	2.4 Arabic spacing and equivalents (64B-651, FE70-FE7F)
 	  They are part of nonspacing mark, but not equal.
 
-	3 (1) Nonspacing marks mixed
-	  30D, 591-5C2, Mn:981-A3C, A4D, A70, A71, ABC, ABD ...
+	3 (1) Nonspacing marks mixed.
+	  ModifierSymbol except for < 128
+	  NonSpacingMark which is ignorable (IsIgnorableNonSpacing())
+	  30D, CD5-CD6, ABD, 2B9-2C1, 2C8, 2CB-2CD, 591-5C2, Mn:981-A3C,
+	  A4D, A70, A71, ABC ...
+
+	  This part of MS table is buggy: \u0592 should not be equal to \u09BC
+	  Harmless solution: We should not mix those code (make sequential).
 
 	4 (7) space separators and some kind of marks
 
 	4.1 whitespaces, paragraph separator etc.
-	  (White_Space in PropList.txt)
+	  UnicodeCategory.SpaceSeparator : 20, 3000, A0, 9-D, 2000-200B
 
-	4.2 other marks ('!', '^', ...)
+	4.2 some OtherSymbols: 2422-2423
+
+	4.3 other marks ('!', '^', ...)
+	  Non-alpha-numeric < 0x7F except for '+' (math) and '-' (math/hyphen)
+	  some Punctuations: InitialQuote/FinalQuote/Open/Close/Connector
+	  some OtherSymbols: 2400-2424
+	  3003, 3006, 2D0, 10FB
+	  remaining Puncuations: 9xx, 7xx
+	  70F (Format)
 
 	5 (8) mathmatical symbols
+	  InitialQuotePunctuation and FinalQuotePunctuation in ASCII
+	  (not Quotation_Mark property in PropList.txt ; 22, 27)
 
-	6 (9) some other symbols
+	  byte area MathSymbol: 2B,3C,3D,3E,AB,B1,BB,D7,F7 except for AC
+	  MathSymbol (2044, 208A, 208C, 207A, 207C)
+	  OtherLetter (1C0-1C2)
+	  2200-22FF MathSymbol except for 221E (INF.)
 
-	7 (A) punctuations
+	6 (9) Arrows and Box drawings
+	  09 02 .. 09 7C : 2300-237A
+	  09 BC 01 03 .. : 25A0-AB, 25E7-EB, 25AC-B5, 25EC-EF, 25B6-B9,
+	  		   25BC-C3, 25BA-25BB, 25C4-25D8, 25E6, 25DA-25E5
+			   21*,25*,26*,27*
+	  2190- (non-codepoint order)
+	  	note that there are many compatibility equivalents
+	  2500- except for 266F (#)
+
+	7 (A) currency sumbols and some punctuations
+	  byte CurrencySymbols except for 24 ($)
+	  byte OtherSymbols (A7-B6) 
+	  ConnectorPunctuation - 2040 (i.e. FF65, 30FB)
+	  OtherPunct/ConnectorPunct/CurrencyCymbol 2020-20AC - 20AC
+	  OtherSymbol 3012-303F,3004,327F
+	  MathSymbol/OtherSymbol 2600-2767 (math = 266F)
+	  OtherSymbol 2440-244A, 2117
+	  20AC (CurrencySymbol)
 
 	8 (C) numbers
+	  all DecimalDigitNumber, LetterNumber, non-CJK OtherNumber
+	  9F8
+	  digits, in numeric order. We can use NET_2_0 CharUnicodeInfo.
+	  221E (INF.)
 
 	9 (E) latin letters (alphabets)
 	  upper is 18, lower is 2 (default), diacritics are 19 or more.
+	  F8-2B8 - (1BB-1BD, 1C0-1C3) but not sequential
+	  2E0-2E3
 
 	10 (F) greek letters
+	  0F: 386-3F2
+	  10: 400-4E9 exc. 482-486
+	  11: 531-586 exc. 559-55F
+	  12: 5D0-5F2
+	  13: 621-64A, 670-6D3, 6D5
+	  14: 901-963 exc. 93C-93D 950-954
+	  15: 982-9FA exc. NonSpacingMark DecimalDigitNumber OtherNumber
+	  16: A05-A74 exc. A3C A4D A66-A71
+	  17: A81-AE0 exc. ABC-ABD
+	  18: 
 
 	...
 
@@ -237,6 +303,7 @@
 	12 (23) bopomofo letters
 
 	13 (24) syriac/thaana letters
+	  710-72C exc. 711, 780-7A5
 
 	14 (41-45) surrogate Pt.1
 
@@ -252,21 +319,96 @@
 	18 (FF) Some supplemental Japanese/Arabic marks
 
 
+	- by UnicodeCategory -
+	DashPunctuation		1 1 1 1 (no exception)
+	DecimalDigitNumber	C (no exception)
+	EnclosingMark		1 E (no exception)
+	Format			7 (only 70F)
+	LetterNumber		C (no exception)
+	LineSeparator		7 (only 2028)
+	ParagraphSeparator	7 (only 2029)
+	PrivateUse
+	SpaceSeparator		7 (no exception)
+	Surrogate
+
+	OtherNumber		C(<3192), 9E-A7 (3124<)
+
+	Control			1 1 1 1 except for 9-D (7)
+	FinalQuotePunctuation	7 except for BB (8)
+	InitialQuotePunctuation	7 except for AB (8)
+	ClosePunctuation	7 except for 232A (9)
+	OpenPunctuation		7 except for 2329 (9)
+	ConnectorPunctuation	7 except for FF65, 30FB, 2040 (A)
+
+	OtherLetter		1, 7, 8 (1C0-1C2), C, 12-FF
+	MathSymbol		8, 9, 1 1 1 1, 7, A, C
+	OtherSymbol		7, 9, A, C, E, F, <22, 52<
+	CurrencySymbol		A except for FF69,24,FF04 (7) and 9F2,9F3 (15)
+
+	LowercaseLetter		E-11 except for B5 (A) and 1BD (C)
+	TitlecaseLetter		E (no exception)
+	UppercaseLetter		E,F,10,11,21 except for 1BC (C)
+	ModifierLetter		1, 7, E, 1F, FF
+	ModifierSymbol		1 1 1 1, 1, 7
+	NonSpacingMark		1 1 1 1, 1, 13-1F
+	OtherPunctuation	1, 7, A, 1F
+	SpacingCombiningMark	1, 14-22
+
+*** Culture dependent design
+
+**** Latin characters and NonSpacingMark order tailorings
+
+	div : FDF2 is 24 83 01 01 01 01 00
+	syr : some NonSpacingMarks are totally ignorable.
+	tt,kk,mk,az-AZ-Cyrl,uk : cyrillic difference
+	az,et,lt,lv,sl,tr,sv,ro,pl,no,is,hu,fi,es,da : latin difference
+	fr : 1C4-1C6.
+	sk,hr,cs : latin and NonSpacingMark differences
+
+	ja,ko : 5C
+
+**** CJK character order tailorings
+
+	There are five different CJK orderings:
+	default, ko(-KR), ja(-JP), zh-CHS and zh-TW
+
+	ko : CJK layout difference (52 -> 80)
+	ja,zh-CHS,zh-TW : dash (5C), CJK layout difference.
+
+	Target characters are : CJK misc (3190-), Parenthesized CJK
+	(3200-), CJK compat (3300-), CJK ideographs (4E00-),
+	CJK compat ideograph (F900-), Half/Full width compat (FF00-)
+
+	Additionally for Korean: Jamo (1100-), Hangle syllables (AC00)
+
+	Since they are mostly computational differences, we are not likely to
+	extend those character weights into constant tables.
+
+**** Accent evaluation order
+
+	French culture also has different accent ordering. Some other cultures
+	might also have different ones, but not obvious.
+
+
 ** Mono implementation plans
-
-*** sort key element table
-
-	We will contain our own collation element table which will be closer
-	to the one from Windows.
-
-	Culture-dependent rules are always "evaluated"; no physical expansion
-	is done to the table loaded in memory (it's waste of memory).
 
 *** CharacterIterator
 
 	The match evaluation could not be done char by char - the longest
 	possible sequence of characters in the tailored table (e.g. "ch" 
-	in Spanish) should be examined. It will be like non-NFD detection.
+	in Spanish) should be examined.
+
+	(Some examples can be seen in UTR#10).
+
+	This resolves combined characters and expanded characters.
+
+*** sort key element table
+
+	We will contain our own collation element table which is closer
+	to the one from Windows than UCA default element table.
+
+	Culture-dependent rules are always "evaluated"; no physical expansion
+	is done to the table loaded in memory (it's waste of memory).
 
 
 *** Reference materials
