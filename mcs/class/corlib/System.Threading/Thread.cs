@@ -109,6 +109,7 @@ namespace System.Threading
 		private IPrincipal _principal;
 
 		private CompressedStack _stack;
+		private ExecutionContext _ec;
 		
 		public static Context CurrentContext {
 			[SecurityPermission (SecurityAction.LinkDemand, Infrastructure=true)]
@@ -937,6 +938,14 @@ namespace System.Threading
 		internal CompressedStack GetCompressedStack ()
 		{
 			return _stack;
+		}
+
+		internal ExecutionContext ExecutionContext {
+			get {
+				if (_ec == null)
+					_ec = new ExecutionContext ();
+				return _ec;
+			}
 		}
 #endif
 	}

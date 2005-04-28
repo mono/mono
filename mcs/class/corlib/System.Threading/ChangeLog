@@ -1,5 +1,5 @@
-2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
 	* AsyncFlowControl.cs: Updated wrt beta2.
 	* ExecutionContext.cs: Updated wrt beta2. Class is now internal in 
 	NET_1_1 to allow the compressed stack propagation to other threads.
@@ -8,6 +8,7 @@
 	* ContextCallback.cs: Updated wrt beta2.
 	* HostExecutionContext.cs: Updated wrt beta2.
 	* HostExecutionContextManager.cs: Updated wrt beta2.
+	* Thread.cs: Added internal property to get the ExecutionContext.
 
 2005-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
