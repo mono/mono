@@ -1,5 +1,11 @@
 2005-04-28  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs: Don't fill the middle of progress
+	bars. This fills areas outside of the clip bounds that don't need
+	to be filled.
+
+2005-04-28  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Don't expose functionality to touch the image buffers.
 	* ProgressBar.cs:
 	* ListView.cs: We do not need to (and no longer can) manipulate

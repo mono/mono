@@ -2253,7 +2253,7 @@ namespace System.Windows.Forms
 			increment = block_width + space_betweenblocks;
 
 			/* Draw border */
-			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.All, ColorButtonFace);
+			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.All & ~Border3DSide.Middle, ColorButtonFace);
 			
 			/* Draw Blocks */
 			block_rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);
