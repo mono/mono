@@ -2,7 +2,7 @@
 
 	* BinaryOp.cs, ActivationObject.cs, expression.cs (Args),
 	ArrayLiteral.cs, ArrayObject.cs, IRedirectOutput.cs, ASTList.cs,
-	IVsaScriptScope.cs, ast.cs (AST): Changes for MS API compliance.
+	IVsaScriptScope.cs, ast.cs (AST), BinaryOp.cs: Changes for MS API compliance.
 
 2005-04-18  Cesar Lopez Nataren  <cnataren@novell.com>
 

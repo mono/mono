@@ -27,16 +27,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
+
 namespace Microsoft.JScript {
 	public abstract class BinaryOp : Exp {
-		internal AST left, right;
-		internal JSToken op;
+		protected AST operand1, operand2;
+		protected MethodInfo operatorMeth;
+		protected JSToken operatorTok;
+		protected Type type1, type2;
+
+		protected MethodInfo GetOperator (IReflect ir1, IReflect ir2)
+		{
+			throw new NotImplementedException ();
+		}
 
 		internal BinaryOp (AST left, AST right, JSToken op)
 		{
-			this.left = left;
-			this.right = right;
-			this.op = op;
+			operand1 = left;
+			operand2 = right;
+			operatorTok = op;
+		}
+
+		internal JSToken op {
+			get { return op; }
+		}
+
+		internal AST left {
+			get { return operand1; }
+		}
+
+		internal AST right {
+			get { return operand2; }
+			set { operand2 = value; }
 		}
 	}
 }
