@@ -1,3 +1,8 @@
+2005-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListControl.cs: honors OnPositionChanged and default Selected Item
+	* ListBox.cs: unselect items when clearing
+
 2005-04-27  Jackson Harper  <jackson@ximian.com>
 
 	* X11Keyboard.cs: Initialize a default keyboard and give a warning

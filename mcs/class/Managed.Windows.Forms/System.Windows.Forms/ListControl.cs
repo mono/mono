@@ -229,6 +229,7 @@ namespace System.Windows.Forms
 
 			if (DataManager != null) {
 				SetItemsCore (DataManager.List);
+				SelectedIndex = DataManager.Position;
 			}
 		}
 
@@ -300,12 +301,11 @@ namespace System.Windows.Forms
 			
 			data_manager = (CurrencyManager) BindingContext [data_source, ValueMember];
 			data_manager.PositionChanged += new EventHandler (OnPositionChanged);			
-		}
+		}		
 		
-		//TODO: See bug 74744
 		private void OnPositionChanged (object sender, EventArgs e)
-		{
-			
+		{			
+			SelectedIndex = data_manager.Position;
 		}
 
 		#endregion Private Methods	

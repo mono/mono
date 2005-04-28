@@ -1942,8 +1942,10 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+				owner.selected_index = -1;
+				owner.focused_item = -1;
 				object_items.Clear ();
-				listbox_items.Clear ();
+				listbox_items.Clear ();				
 				owner.UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 			}
 			public virtual bool Contains (object obj)
