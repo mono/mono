@@ -1,3 +1,8 @@
+2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): Fix
+	this for dynamic modules.
+
 2005-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threads.c: don't wait for threads that are in the process of aborting
