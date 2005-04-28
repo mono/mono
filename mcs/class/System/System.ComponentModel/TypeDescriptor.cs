@@ -351,10 +351,37 @@ public sealed class TypeDescriptor
 		}
 	}
 
-	[MonoTODO]
 	public static object GetEditor (Type componentType, Type editorBaseType)
 	{
-		throw new NotImplementedException ();
+		Type t = null;
+		object [] atts = componentType.GetCustomAttributes (typeof(EditorAttribute), true);
+		if (atts == null || atts.Length == 0)
+			return null;
+		
+		
+		foreach (EditorAttribute ea in atts)
+		{
+			t = GetTypeFromName (null, ea.EditorTypeName);
+			if (t.IsSubclassOf(editorBaseType))
+				break;
+		}
+
+		if (t != null) {
+			Exception exc = null;
+			try {
+				return Activator.CreateInstance (t);
+			} catch (MissingMethodException e) {
+				exc = e;
+			}
+
+			try {
+				return Activator.CreateInstance (t, new object [] {componentType});
+			} catch (MissingMethodException e) {
+				throw exc;
+			}
+		}
+
+		return null;    // No editor specified
 	}
 
 	public static object GetEditor (object component, Type editorBaseType)
@@ -757,4 +784,3 @@ public sealed class TypeDescriptor
 		}
 	}
 }
-
