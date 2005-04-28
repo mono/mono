@@ -842,10 +842,14 @@ namespace System.Threading
 			stack_size = maxStackSize;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("limited to CompressedStack support")]
 		public ExecutionContext ExecutionContext {
 			[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
-			get { throw new NotImplementedException (); }
+			get {
+				if (_ec == null)
+					_ec = new ExecutionContext ();
+				return _ec;
+			}
 		}
 
 		public int ManagedThreadId {
@@ -905,23 +909,6 @@ namespace System.Threading
 			}
 		}
 
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-		public CompressedStack GetCompressedStack ()
-		{
-			// Note: returns null if no CompressedStack has been set.
-			// However CompressedStack.GetCompressedStack returns an 
-			// (empty?) CompressedStack instance.
-			return _stack;
-		}
-
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-		public void SetCompressedStack (CompressedStack stack)
-		{
-			_stack = stack;
-		}
-
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
@@ -935,11 +922,6 @@ namespace System.Threading
 			Start ();
 		}
 #else
-		internal CompressedStack GetCompressedStack ()
-		{
-			return _stack;
-		}
-
 		internal ExecutionContext ExecutionContext {
 			get {
 				if (_ec == null)
@@ -948,6 +930,33 @@ namespace System.Threading
 			}
 		}
 #endif
+
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		CompressedStack GetCompressedStack ()
+		{
+			// Note: returns null if no CompressedStack has been set.
+			// However CompressedStack.GetCompressedStack returns an 
+			// (empty?) CompressedStack instance.
+			CompressedStack cs = ExecutionContext.SecurityContext.CompressedStack;
+			return ((cs == null) || cs.IsEmpty ()) ? null : cs;
+		}
+
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		void SetCompressedStack (CompressedStack stack)
+		{
+			ExecutionContext.SecurityContext.CompressedStack = stack;
+		}
 	}
 }
-

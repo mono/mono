@@ -1,3 +1,9 @@
+2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Added property to get the ExecutionContext in 2.0. Fixed
+	GetCompressedStack and made SetCompressedStack available (as internal)
+	before NET_2_0.
+
 2005-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* AsyncFlowControl.cs: Updated wrt beta2.
