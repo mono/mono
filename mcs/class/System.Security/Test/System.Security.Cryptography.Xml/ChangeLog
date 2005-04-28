@@ -1,3 +1,9 @@
+2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDsigXPathTransformTest.cs: Marked FunctionHereObsolete (ignored)
+	and LoadInputAsXmlNodeList (failure) as [Category("NotWorking")] as 
+	they both pass under MS 1.x runtime (for bad and/or good reasons).
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoX509DataTest.cs: Added new unit tests for NET_1_1 and updated

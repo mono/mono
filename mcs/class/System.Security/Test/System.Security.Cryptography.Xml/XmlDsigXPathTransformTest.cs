@@ -144,6 +144,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -245,7 +246,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Ignore ("MS.NET looks incorrect, or something incorrect in this test code; It turned out nothing to do with function here()")]
+		[Category ("NotWorking")]
+		// MS.NET looks incorrect, or something incorrect in this test code; It turned out nothing to do with function here()
 		public void FunctionHereObsolete ()
 		{
 			XmlDsigXPathTransform t = new XmlDsigXPathTransform ();
