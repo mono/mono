@@ -1,3 +1,8 @@
+2005-04-28 James Willcox <james@ximian.com>
+
+	* mkbundle.cs: Add --config-dir option
+	* template.c: same
+
 2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mkbundle.cs: GetReferencedAssemblies () will not report CodeBase, so

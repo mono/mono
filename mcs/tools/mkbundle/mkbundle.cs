@@ -25,6 +25,7 @@ class MakeBundle {
 	static bool compile_only = false;
 	static bool static_link = false;
 	static string config_file = null;
+	static string config_dir = null;
 	
 	static int Main (string [] args)
 	{
@@ -81,11 +82,20 @@ class MakeBundle {
 				static_link = true;
 				break;
 			case "--config":
-				if (i+1 == top){
+				if (i+1 == top) {
 					Help ();
 					return 1;
 				}
+
 				config_file = args [++i];
+				break;
+			case "--config-dir":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+
+				config_dir = args [++i];
 				break;
 			default:
 				sources.Add (args [i]);
@@ -209,7 +219,7 @@ class MakeBundle {
 						ts.Write ("\t.byte {0}\n", buffer [i]);
 					}
 				}
-				// null terminator 
+				// null terminator
 				ts.Write ("\t.byte 0\n");
 				ts.WriteLine ();
 			}
@@ -238,6 +248,11 @@ class MakeBundle {
 			if (config_file != null)
 				tc.WriteLine ("\tmono_config_parse_memory (&system_config);\n");
 			tc.WriteLine ("}\n");
+
+			if (config_dir != null)
+				tc.WriteLine ("static const char *config_dir = \"{0}\";", config_dir);
+			else
+				tc.WriteLine ("static const char *config_dir = NULL;");
 				      
 			StreamReader s = new StreamReader (Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
 			tc.Write (s.ReadToEnd ());
@@ -371,15 +386,16 @@ class MakeBundle {
 	{
 		Console.WriteLine ("Usage is: mkbundle [options] assembly1 [assembly2...]\n\n" +
 				   "Options:\n" +
-				   "    -c          Produce stub only, do not compile\n" +
-				   "    -o out      Specifies output filename\n" +
-				   "    -oo obj     Specifies output filename for helper object file" +
-				   "    -L path     Adds `path' to the search path for assemblies\n" +
-				   "    --nodeps    Turns off automatic dependency embedding (default)\n" +
-				   "    --deps      Turns on automatic dependency embedding\n" +
-				   "    --keeptemp  Keeps the temporary files\n" +
-				   "    --config F  Bundle system config file `F'\n" +
-				   "    --static    Statically link to mono libs\n");
+				   "    -c              Produce stub only, do not compile\n" +
+				   "    -o out          Specifies output filename\n" +
+				   "    -oo obj         Specifies output filename for helper object file\n" +
+				   "    -L path         Adds `path' to the search path for assemblies\n" +
+				   "    --nodeps        Turns off automatic dependency embedding (default)\n" +
+				   "    --deps          Turns on automatic dependency embedding\n" +
+				   "    --keeptemp      Keeps the temporary files\n" +
+				   "    --config F      Bundle system config file `F'\n" +
+				   "    --config-dir D  Set MONO_CFG_DIR to `D'\n" +
+				   "    --static        Statically link to mono libs\n");
 	}
 
 	[DllImport ("libc")]
