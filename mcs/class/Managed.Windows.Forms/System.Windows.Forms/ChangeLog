@@ -1,3 +1,10 @@
+2005-04-28  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Don't expose functionality to touch the image buffers.
+	* ProgressBar.cs:
+	* ListView.cs: We do not need to (and no longer can) manipulate
+	the image buffers directly. All of this is handled by Control.
+
 2005-04-28  Peter Bartok  <pbartok@novell.com>
 
 	* RichTextBoxSelectionAttribute.cs, RichTextBoxSelectionTypes.cs,

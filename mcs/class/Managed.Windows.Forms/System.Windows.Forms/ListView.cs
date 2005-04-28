@@ -877,11 +877,6 @@ namespace System.Windows.Forms
 						this.h_scroll.Visible = true;
 				}
 
-				// create big enough buffers
-				if (this.layout_wd > this.Width ||
-				    this.layout_ht > this.Height)
-					this.CreateBuffers (this.TotalWidth, this.TotalHeight);
-
 				if (this.h_scroll.Visible) {
 					this.h_scroll.Location = new Point (0, this.Height 
 									    - this.h_scroll.Height);

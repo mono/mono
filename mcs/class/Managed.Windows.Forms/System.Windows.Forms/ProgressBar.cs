@@ -364,9 +364,6 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);
 
 			UpdateAreas ();
-
-			CreateBuffers (Width, Height);
-			
 		}
 
 		public void PerformStep ()
