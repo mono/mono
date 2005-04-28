@@ -1,3 +1,8 @@
+2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Assert if ldsfld and friends are used
+	on a literal field. Fixes #74751.
+
 2005-04-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (RUNTIME): Add MONO_CFG_DIR.
