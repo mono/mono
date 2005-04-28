@@ -1,3 +1,15 @@
+2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c:
+	* handles-private.h: added _wapi_handle_forecch that loops through all
+	the handles and call a callback function when a handle of the given
+	type is found.
+
+	* sockets.c: no need to keep open sockets in an array, as we have them 
+	in the handles structure.
+
+	Fixes bug #74755.
+
 2005-04-28  Dick Porter  <dick@ximian.com>
 
 	* processes.c: Cope with handles that are only around for as long
