@@ -7,7 +7,20 @@
 	FormalParameterList.cs, FunctionDeclaration.cs, Equality.cs,
 	Closure.cs, Block.cs, Statement.cs, BooleanObject.cs,
 	LenientBooleanPrototype.cs, GlobalObject.cs, BooleanPrototype.cs,
-	CodeGenerator.cs: Changes for MS API compliance.
+	CodeGenerator.cs, LenientDateConstructor.cs,
+	LenientGlobalObject.cs, JSToken.cs, MethodInvoker.cs,
+	LenientRegExpPrototype.cs, NumericUnary.cs,
+	LenientArrayPrototype.cs, JSParser.cs, JSPropertyInfo.cs,
+	LenientVBArrayPrototype.cs, LenientStringPrototype.cs,
+	LenientObjectPrototype.cs, With.cs, ScriptBlock.cs, Expando.cs,
+	JSScanner.cs, LenientEnumeratorPrototype.cs, EvalErrorObject.cs,
+	VariableDeclaration.cs, Print.cs, LenientErrorPrototype.cs,
+	LenientBooleanPrototype.cs, LenientFunctionPrototype.cs, Literal.cs,
+	LenientMathObject.cs, LenientDatePrototype.cs,  Relational.cs,
+	Parser.cs, Throw.cs, VariableStatement.cs, RegExpObject.cs, Eval.cs,
+	SemanticAnalizer.cs, LenientStringConstructor.cs,
+	LenientNumberPrototype.cs, FieldAccessor.cs : Changes for MS API
+	compliance. 
 
 2005-04-18  Cesar Lopez Nataren  <cnataren@novell.com>
 
