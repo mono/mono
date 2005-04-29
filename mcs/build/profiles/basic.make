@@ -46,12 +46,11 @@ do-profile-check:
 	        exit 1; fi; fi
 
 $(PROFILE_CS): $(topdir)/build/profiles/basic.make
-	echo 'public class X { public static void Main () { System.Console.WriteLine ("OK"); } }' > $@
+	echo 'class X { static int Main () { return 0; } }' > $@
 
 $(PROFILE_EXE): $(PROFILE_CS)
 	$(EXTERNAL_MCS) /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(EXTERNAL_RUNTIME) $< > $@ 2>&1
-	set x `wc -l $@`; case $$2 in 1) :;; *) exit 1;; esac
-	grep '^OK$$' $@ > /dev/null
+	

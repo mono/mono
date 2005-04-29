@@ -1,3 +1,9 @@
+2005-04-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* profiles/basic.make: The test for mcs was broken on jails where
+	we got a warning due to /proc not being mounted. Remove hackish wc
+	usage.
+
 2005-04-25  Raja R Harinath  <rharinath@novell.com>
 
 	* config-default.make (RUNTIME): Set to 'false'.
