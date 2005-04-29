@@ -38,6 +38,7 @@
 
 using System;
 using MSG = System.Collections.Generic;
+using SC = System.Collections;
 
 // NOTE NOTE NOTE NOTE
 // This source file is used to produce both TreeSet<T> and TreeBag<T>
@@ -541,6 +542,16 @@ namespace C5
 				}
 			}
 
+			void SC.IEnumerator.Reset ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			object SC.IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
 
 			/// <summary>
 			/// Finalizer for enumeratir
@@ -653,6 +664,17 @@ namespace C5
 			}
 
 			#endregion
+
+			void SC.IEnumerator.Reset ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			object SC.IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
 
 			#region IDisposable Members
 
@@ -3892,6 +3914,16 @@ namespace C5
 					}
 				}
 
+				void SC.IEnumerator.Reset ()
+				{
+					throw new NotImplementedException ();
+				}
+
+				object SC.IEnumerator.Current {
+					get {
+						return Current;
+					}
+				}
 
 				[Tested]
 				public void Dispose()

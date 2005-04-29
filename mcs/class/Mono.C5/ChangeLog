@@ -1,3 +1,12 @@
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
+	Reflect latest API changes.
+
+	* Collections.cs (EnumerableBase): Explicitly implement
+	System.Collections.IEnumerable.GetEnumerator().	
+
+	* Makefile: Add `nowarn:169'.
+
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Removed `NO_TEST = yes'.

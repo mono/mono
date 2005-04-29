@@ -207,6 +207,11 @@ namespace C5
 		/// <returns>The enumerator</returns>
 		public abstract MSG.IEnumerator<T> GetEnumerator();
 
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+
 		/// <summary>
 		/// Count the number of items in an enumerable by enumeration
 		/// </summary>

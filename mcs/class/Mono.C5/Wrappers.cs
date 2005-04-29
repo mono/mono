@@ -23,6 +23,7 @@
 using System;
 using System.Diagnostics;
 using MSG = System.Collections.Generic;
+using SC = System.Collections;
 namespace C5
 {
 	/// <summary>
@@ -62,6 +63,15 @@ namespace C5
 		/// </summary>
 		/// <value>The current item of the wrapped enumerator.</value>
 		public T Current { get { return enumerator.Current; } }
+
+		void SC.IEnumerator.Reset ()
+		{
+			enumerator.Reset ();
+		}
+
+		object SC.IEnumerator.Current {
+			get { return enumerator.Current; }
+		}
 
 		#endregion
 
@@ -111,6 +121,9 @@ namespace C5
 		{ return new GuardedEnumerator<T>(enumerable.GetEnumerator()); }
 
 		#endregion
+
+		SC.IEnumerator SC.IEnumerable.GetEnumerator()
+		{ return GetEnumerator (); }
 	}
 
 

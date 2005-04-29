@@ -24,7 +24,7 @@ using System;
 using C5;
 using NUnit.Framework;
 using MSG = System.Collections.Generic;
-
+using C = System.Collections;
 
 namespace nunit
 {
@@ -149,6 +149,11 @@ namespace nunit
 		{
 			for (int i = 0; i < size; i++)
 				yield return f(i);
+		}
+
+		C.IEnumerator C.IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
 		public void Apply(Applier<int> a) { }
