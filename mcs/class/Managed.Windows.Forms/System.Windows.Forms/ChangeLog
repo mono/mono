@@ -1,3 +1,8 @@
+2005-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs: Remove some old debug code that was
+	causing flicker with the new double buffering code.
+
 2005-04-29  John BouAntoun  <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs, DateTimePicker.cs: Made monthcalendar dropdwon

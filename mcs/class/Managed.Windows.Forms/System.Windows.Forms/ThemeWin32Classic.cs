@@ -5096,9 +5096,7 @@ namespace System.Windows.Forms
 
 				return;
 			}			
-
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Color.Blue), area);
-			
+	
 			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X, area.Y, area.Width, 1);
 			dc.FillRectangle (ResPool.GetSolidBrush (ColorButtonFace), area.X, area.Y, 1, area.Height);
 
