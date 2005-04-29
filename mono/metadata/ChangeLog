@@ -1,3 +1,14 @@
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_type_get_name_recurse): Update to the new naming
+	schema from the latest .NET 2.x beta2.
+	(mono_class_setup_vtable_general): If we're a generic instance,
+	copy the vtable from our generic type definition and inflate all
+	the methods in it.
+
+	* loader.c (find_method): Update to the new naming schema from the
+	latest .NET 2.x beta2.
+
 2005-04-29  Raja R Harinath  <harinath@gmail.com>
 
 	* class.c (mono_class_init): Add a mono_loader_unlock to the
