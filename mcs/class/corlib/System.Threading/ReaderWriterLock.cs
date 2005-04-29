@@ -40,12 +40,11 @@ namespace System.Threading
 	public sealed class ReaderWriterLock
 	{
 		private int seq_num = 1;
-		private int state = 0;
-		private int readers = 0;
+		private int state;
+		private int readers;
 		private LockQueue writer_queue;
 		private Hashtable reader_locks;
 		private int writer_lock_owner;
-		private int readyWaitingReaders = 0;
 
 		public ReaderWriterLock()
 		{
@@ -92,10 +91,11 @@ namespace System.Threading
 					readers++;
 					try {
 						if (state < 0 || !writer_queue.IsEmpty) {
-							if (!Monitor.Wait (this, millisecondsTimeout))
-								throw new ApplicationException ("Timeout expired");
+							do {
+								if (!Monitor.Wait (this, millisecondsTimeout))
+									throw new ApplicationException ("Timeout expired");
+							} while (state < 0);
 						}
-						readyWaitingReaders--;
 					}
 					finally {
 						readers--;
@@ -132,9 +132,11 @@ namespace System.Threading
 				
 				// wait while there are reader locks or another writer lock, or
 				// other threads waiting for the writer lock
-				if (state != 0 || !writer_queue.IsEmpty || readers > 0) {
-					if (!writer_queue.Wait (millisecondsTimeout))
-						throw new ApplicationException ("Timeout expited");
+				if (state != 0 || !writer_queue.IsEmpty) {
+					do {
+						if (!writer_queue.Wait (millisecondsTimeout))
+							throw new ApplicationException ("Timeout expired");
+					} while (state != 0);
 				}
 
 				state = -initialLockCount;
@@ -163,7 +165,6 @@ namespace System.Threading
 				state = lockCookie.ReaderLocks;
 				reader_locks [Thread.CurrentThreadId] = state;
 				if (readers > 0) {
-					readyWaitingReaders = readers;
 					Monitor.PulseAll (this);
 				}
 				
@@ -200,6 +201,7 @@ namespace System.Threading
 						return;
 					}
 				}
+
 				throw new ApplicationException ("The thread does not have any reader or writer locks.");
 			}
 		}
@@ -214,7 +216,7 @@ namespace System.Threading
 				reader_locks [Thread.CurrentThreadId] = new_count;
 				
 			state -= releaseCount;
-			if (state == 0 && (readers == 0 || readyWaitingReaders <= 0) && !writer_queue.IsEmpty)
+			if (state == 0 && !writer_queue.IsEmpty)
 				writer_queue.Pulse ();
 		}
 
@@ -233,7 +235,6 @@ namespace System.Threading
 			state += releaseCount;
 			if (state == 0) {
 				if (readers > 0) {
-					readyWaitingReaders = readers;
 					Monitor.PulseAll (this);
 				}
 				else if (!writer_queue.IsEmpty)

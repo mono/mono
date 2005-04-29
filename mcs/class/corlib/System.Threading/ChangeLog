@@ -1,3 +1,9 @@
+2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ReaderWriterLock.cs: fix random ApplicationException errors. Tested
+	with the System.Web.Cache stress program. Patch by Eyal Alayuf
+	(Mainsoft). Fixes 74598.
+
 2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Added property to get the ExecutionContext in 2.0. Fixed
@@ -16,6 +22,7 @@
 	* HostExecutionContextManager.cs: Updated wrt beta2.
 	* Thread.cs: Added internal property to get the ExecutionContext.
 
+>>>>>>> .r43756
 2005-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Add some unused fields.
