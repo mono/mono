@@ -1752,6 +1752,17 @@ namespace System
 				return array [array.Count - 1 - idx];
 			}
 		}
+
+		void IEnumerator.Reset ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		object IEnumerator.Current {
+			get {
+				return Current;
+			}
+		}
 	}
 
 	internal class ReadOnlyArray <T> : ICollection <T>, IList <T>, IEnumerable <T>
@@ -1823,6 +1834,10 @@ namespace System
 
 		// IEnumerable<T> interface
 		public IEnumerator<T> GetEnumerator () {
+			return new ReadOnlyArrayEnumerator <T> (this);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () {
 			return new ReadOnlyArrayEnumerator <T> (this);
 		}
 	}
