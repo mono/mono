@@ -28,12 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class LenientDateConstructor : DateConstructor
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientDateConstructor : DateConstructor {
+
 		public new object parse;
 		public new object UTC;
 	}

@@ -109,7 +109,7 @@ namespace Microsoft.JScript {
 		Divide,
 		Modulo,
 		LastPPOperator = Modulo,
-		InstanceOf,
+		Instanceof,
 		In,
 		Assign,
 		PlusAssign,

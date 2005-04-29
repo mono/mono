@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class LenientVBArrayPrototype : VBArrayPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientVBArrayPrototype : VBArrayPrototype {
+
 		public new object constructor;
 		public new object dimensions;
 		public new object getItem;

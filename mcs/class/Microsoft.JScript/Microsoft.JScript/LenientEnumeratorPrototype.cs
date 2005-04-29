@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class LenientEnumeratorPrototype : EnumeratorPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientEnumeratorPrototype : EnumeratorPrototype {
+
 		public new object constructor;
 		public new object atEnd;
 		public new object item;

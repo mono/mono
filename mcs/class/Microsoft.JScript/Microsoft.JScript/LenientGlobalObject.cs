@@ -31,7 +31,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class LenientGlobalObject : GlobalObject {
+	public sealed class LenientGlobalObject : GlobalObject {
 
 		public new Object Infinity;
 		public new Object NaN;
@@ -48,6 +48,7 @@ namespace Microsoft.JScript {
 		public new Object isFinite;
 		public new Object parseInt;
 		public new Object parseFloat;
+		public new Object GetObject;
 		public new Object ScriptEngine;
 		public new Object ScriptEngineBuildVersion;
 		public new Object ScriptEngineMajorVersion;

@@ -32,7 +32,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class Print : AST {
+	internal class Print : AST {
 
 		internal AST exp;
 

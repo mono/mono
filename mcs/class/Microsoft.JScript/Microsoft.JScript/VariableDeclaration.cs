@@ -35,7 +35,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 	
-	public class VariableDeclaration : AST {
+	internal class VariableDeclaration : AST {
 
 		internal string id;
 		internal Type type;

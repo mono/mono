@@ -28,12 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class LenientRegExpPrototype : RegExpPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientRegExpPrototype : RegExpPrototype {
+
 		public new object constructor;
 		public new object compile;
 		public new object exec;

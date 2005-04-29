@@ -28,10 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public abstract class MethodInvoker
-	{
+namespace Microsoft.JScript {
+	public abstract class MethodInvoker {
 		public abstract object Invoke (object thisObj, object [] parameters);
 	}
 }

@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public class LenientObjectPrototype : ObjectPrototype
-	{
+namespace Microsoft.JScript {
+
+	public class LenientObjectPrototype : ObjectPrototype {
+
 		public new object constructor;
 		public new object hasOwnProperty;
 		public new object isPrototypeOf;

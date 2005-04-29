@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class LenientErrorPrototype : ErrorPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientErrorPrototype : ErrorPrototype {
+
 		public new object constructor;
 		public new object name;
 		public new object toString;

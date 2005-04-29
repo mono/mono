@@ -92,7 +92,7 @@ namespace Microsoft.JScript {
 		}
 
 
-		public bool GetEndOfLine ()
+		public bool GotEndOfLine ()
 		{
 			throw new NotImplementedException ();
 		}

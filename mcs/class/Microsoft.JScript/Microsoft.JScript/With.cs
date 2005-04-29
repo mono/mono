@@ -46,16 +46,6 @@ namespace Microsoft.JScript {
 			this.line_number = line_number;
 		}
 
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append (exp.ToString () + " ");
-			sb.Append (stm.ToString ());
-
-			return sb.ToString ();
-		}
-
 		public static Object JScriptWith (object withObj, VsaEngine engine)
 		{
 			throw new NotImplementedException ();

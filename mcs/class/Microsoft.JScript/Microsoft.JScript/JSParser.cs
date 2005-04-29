@@ -59,7 +59,7 @@ namespace Microsoft.JScript {
 		}
 
 
-		public void Tokenize ()
+		internal void Tokenize ()
 		{
 			throw new NotImplementedException ();
 		}

@@ -34,7 +34,7 @@ using System.Globalization;
 
 namespace Microsoft.JScript {
 
-	public sealed class JSPropertyInfo : PropertyInfo {
+	internal sealed class JSPropertyInfo : PropertyInfo {
 
 		PropertyAttributes attr;
 		string name;
