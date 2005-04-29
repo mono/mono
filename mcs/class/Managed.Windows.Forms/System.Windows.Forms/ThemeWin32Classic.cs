@@ -1105,7 +1105,7 @@ namespace System.Windows.Forms
 
 		#region ListView
 		// Drawing
-		public override void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control)
+		public override void DrawListView (Graphics dc, Rectangle clip, ListView control)
 		{
 			bool details = (control.View == View.Details);
 
@@ -1151,8 +1151,10 @@ namespace System.Windows.Forms
 			// In case of details view draw the items only if
 			// columns are non-zero
 			if (!details || control.Columns.Count > 0)
-				foreach (ListViewItem item in control.Items)
-					this.DrawListViewItem (dc, control, item);
+				foreach (ListViewItem item in control.Items) {
+					if (clip.IntersectsWith (item.EntireRect))
+						DrawListViewItem (dc, control, item);
+				}
 
 			// draw the gridlines
 			if (details && control.GridLines) {
