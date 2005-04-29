@@ -1,3 +1,7 @@
+2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: OnDayRender can toggle IsSelectable on our back.
+
 2005-04-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Calendar.cs: when the day is active, modify the text of the literal

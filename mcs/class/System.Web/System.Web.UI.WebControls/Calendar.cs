@@ -1070,7 +1070,7 @@ namespace System.Web.UI.WebControls
 					dayCell.Controls.Add (number);
 					calDay.IsSelectable = isActive;
 					OnDayRender (dayCell, calDay);
-					if (isActive)
+					if (calDay.IsSelectable)
 						number.Text = GetCalendarLinkText ((begin + (crr * 7 + weekDay)).ToString (),
 									dayString,
 									currentDay.ToShortDateString (),
