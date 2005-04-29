@@ -1,5 +1,10 @@
 2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BasicClient.cs: firefox/IE just send latin1, stripping the high byte
+	from unicode >= 256 characters.
+
+2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BasicClient.cs: use latin1 when encoding the username/domain/password.
 	Fixes bug #74745.
 

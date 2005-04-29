@@ -33,8 +33,6 @@ namespace System.Net
 {
 	class BasicClient : IAuthenticationModule
 	{
-		static Encoding Latin1 = Encoding.GetEncoding (28591);
-
 		public Authorization Authenticate (string challenge, WebRequest webRequest, ICredentials credentials)
 		{
 			if (credentials == null || challenge == null)
@@ -45,6 +43,16 @@ namespace System.Net
 				return null;
 
 			return InternalAuthenticate (webRequest, credentials);
+		}
+
+		static byte [] GetBytes (string str)
+		{
+			int i = str.Length;
+			byte [] result = new byte [i];
+			for (--i; i >= 0; i--)
+				result [i] = (byte) str [i];
+
+			return result;
 		}
 
 		static Authorization InternalAuthenticate (WebRequest webRequest, ICredentials credentials)
@@ -65,12 +73,11 @@ namespace System.Net
 			string domain = cred.Domain;
 			byte [] bytes;
 
-			// If Latin1 is not enough, see RFC 2047 to use other encodings.
 			// If domain is set, MS sends "domain\user:password". 
 			if (domain == null || domain == "" || domain.Trim () == "")
-				bytes = Latin1.GetBytes (userName + ":" + password);
+				bytes = GetBytes (userName + ":" + password);
 			else
-				bytes = Latin1.GetBytes (domain + "\\" + userName + ":" + password);
+				bytes = GetBytes (domain + "\\" + userName + ":" + password);
 
 			string auth = "Basic " + Convert.ToBase64String (bytes);
 			return new Authorization (auth);
