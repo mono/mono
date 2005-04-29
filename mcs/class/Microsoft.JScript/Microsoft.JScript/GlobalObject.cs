@@ -38,6 +38,27 @@ namespace Microsoft.JScript {
 		public const double NaN = Double.NaN;
 		public static readonly Empty undefined = null;
 
+		protected ActiveXObjectConstructor originalActiveXObjectField;
+		protected ArrayConstructor originalArrayField;
+		protected BooleanConstructor originalBooleanField;
+		protected DateConstructor originalDateField;
+		protected EnumeratorConstructor originalEnumeratorField;
+		protected ErrorConstructor originalErrorField;
+		protected ErrorConstructor originalEvalErrorField;
+		protected FunctionConstructor originalFunctionField;
+		protected NumberConstructor originalNumberField;
+		protected ObjectConstructor originalObjectField;
+		protected ObjectPrototype originalObjectPrototypeField;
+		protected ErrorConstructor originalRangeErrorField;
+		protected ErrorConstructor originalReferenceErrorField;
+		protected RegExpConstructor originalRegExpField;
+		protected StringConstructor originalStringField;
+		protected ErrorConstructor originalSyntaxErrorField;
+		protected ErrorConstructor originalTypeErrorField;
+		protected ErrorConstructor originalURIErrorField;
+		protected VBArrayConstructor originalVBArrayField;
+		
+		
 		public static ActiveXObjectConstructor ActiveXObject {
 			get { return ActiveXObjectConstructor.Ctr; }
 		}
@@ -493,6 +514,6 @@ namespace Microsoft.JScript {
 
 		public static Type @ushort {
 			get { throw new NotImplementedException (); }
-		}
+		}		
 	}
 }

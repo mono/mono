@@ -69,7 +69,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class CodeGenerator {
+	internal class CodeGenerator {
 
 		private static string MODULE = "JScript Module";
 

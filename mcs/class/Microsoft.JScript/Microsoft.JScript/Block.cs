@@ -62,17 +62,6 @@ namespace Microsoft.JScript {
 				elems.Add (e);
 		}
 
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			foreach (AST a in elems)
-				if (a != null)
-					sb.Append (a.ToString () + " ");
-
-			return sb.ToString ();
-		}
-
 		internal override void Emit (EmitContext ec)
 		{
 			int i, n = elems.Count;

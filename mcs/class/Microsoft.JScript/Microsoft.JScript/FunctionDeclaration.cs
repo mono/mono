@@ -76,11 +76,6 @@ namespace Microsoft.JScript {
 			return new Closure (f);
 		}
 
-		public override string ToString ()
-		{
-			return func_obj.ToString ();
-		}
-
 		internal void create_closure (EmitContext ec)
 		{
 			string name = func_obj.name;

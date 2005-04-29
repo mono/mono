@@ -92,21 +92,6 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append (left.ToString ());
-
-			if (op != JSToken.None)
-				sb.Append (op + " ");
-
-			if (right != null)
-				sb.Append (right.ToString ());
-
-			return sb.ToString ();
-		}
-
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;

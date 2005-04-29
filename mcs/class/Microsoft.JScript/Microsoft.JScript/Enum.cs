@@ -34,7 +34,7 @@ using System.Collections;
 
 namespace Microsoft.JScript {
 
-	public class Enum : AST {
+	internal class Enum : AST {
 
 		private ArrayList modifiers;
 		private string name;

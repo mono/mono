@@ -80,9 +80,14 @@ namespace Microsoft.JScript {
 					throw new Exception ("Unknown TypeCode, " + tc.ToString ());
 				}
 			}
-		}
+		}		
 
 		public new Type GetType ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected BooleanObject (ScriptObject prototype, Type subType)
 		{
 			throw new NotImplementedException ();
 		}

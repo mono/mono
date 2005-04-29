@@ -529,12 +529,12 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Clause : AST {
+	internal class Clause : AST {
 		internal AST exp;
 		internal ArrayList stm_list;
 		internal Label matched_block;
 
-		public Clause (AST parent)
+		internal Clause (AST parent)
 		{
 			this.parent = parent;
 			stm_list = new ArrayList ();

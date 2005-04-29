@@ -53,6 +53,11 @@ namespace Microsoft.JScript {
 			BooleanObject bo = thisObj as BooleanObject;
 			return bo.value;
 		}
+
+		protected BooleanPrototype (ObjectPrototype prototype, Type baseType)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

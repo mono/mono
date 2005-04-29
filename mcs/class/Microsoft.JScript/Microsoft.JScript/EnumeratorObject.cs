@@ -27,8 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+
 namespace Microsoft.JScript {
 
-	public class EnumeratorObject : JSObject
-	{}
+	public class EnumeratorObject : JSObject {
+		protected IEnumerator enumerator;
+		
+		protected void LoadObject()
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }

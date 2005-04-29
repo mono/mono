@@ -33,8 +33,8 @@ namespace Microsoft.JScript {
 
 	public class Closure : ScriptFunction {
 
-		public Object args;
-		public Object caller;
+		public object arguments;
+		public object caller;
 
 		public Closure (FunctionObject func)
 		{

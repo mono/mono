@@ -69,7 +69,7 @@ namespace Microsoft.JScript {
 		}
 	}
 			
-	public class FormalParameterList : AST {
+	internal class FormalParameterList : AST {
 
 		internal ArrayList ids;
 

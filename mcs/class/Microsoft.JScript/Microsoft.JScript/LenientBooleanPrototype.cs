@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Microsoft.JScript.Tmp
 {
 	public sealed class LenientBooleanPrototype : BooleanPrototype
@@ -35,5 +37,11 @@ namespace Microsoft.JScript.Tmp
 		public new object constructor;
 		public new object toString;
 		public new object valueOf;
+		
+		internal LenientBooleanPrototype ()
+			: base (null, null)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
