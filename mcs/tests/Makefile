@@ -126,12 +126,11 @@ TEST_SOURCES_net_2_0 = \
 	gen-111 gen-112 gen-113 gen-114 gen-115 gen-116 gen-117 gen-118 gen-119 gen-120 \
 	gen-121 gen-122 gen-123 gen-124 gen-125         gen-127 gen-128 gen-129 gen-130 \
 	gen-131 gen-132 gen-133 gen-134 gen-135 gen-136 gen-137 gen-138 gen-139 gen-140 \
-	gen-141 gen-142 gen-143 gen-144 gen-145	gen-146 gen-147 gen-148
-# Need mcs merge
-#	cond-attr fixed-buffer-dll fixed-buffer-exe
+	gen-141 gen-142 gen-143 gen-144 gen-145	gen-146 gen-147 gen-148 gen-149 gen-150 \
+	gen-151 gen-152									\
+	cond-attr fixed-buffer-dll fixed-buffer-exe
 
-# gen-72 fails after the runtime changes in r40305
-TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common) gen-72
+TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common)
 
 # These tests load User32.dll and/or Kernel32.dll
 TEST_SOURCES_win32 = test-67
