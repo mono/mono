@@ -422,7 +422,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Conditional : Exp {
+	internal class Conditional : Exp {
 
 		AST cond_exp, true_exp, false_exp;
 
@@ -487,7 +487,7 @@ namespace Microsoft.JScript {
 		void AddArg (AST arg);
 	}
 	
-	public class Call : Exp, ICallable {
+	internal class Call : Exp, ICallable {
 		
 		internal AST member_exp;		
 		internal Args args;
@@ -1282,7 +1282,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Expression : Exp {
+	internal class Expression : Exp {
 
 		internal ArrayList exprs;
 

@@ -2,7 +2,12 @@
 
 	* BinaryOp.cs, ActivationObject.cs, expression.cs (Args),
 	ArrayLiteral.cs, ArrayObject.cs, IRedirectOutput.cs, ASTList.cs,
-	IVsaScriptScope.cs, ast.cs (AST), BinaryOp.cs: Changes for MS API compliance.
+	IVsaScriptScope.cs, ast.cs (AST), BinaryOp.cs,
+	EnumeratorObject.cs, BreakOutOfFinally.cs, Enum.cs,
+	FormalParameterList.cs, FunctionDeclaration.cs, Equality.cs,
+	Closure.cs, Block.cs, Statement.cs, BooleanObject.cs,
+	LenientBooleanPrototype.cs, GlobalObject.cs, BooleanPrototype.cs,
+	CodeGenerator.cs: Changes for MS API compliance.
 
 2005-04-18  Cesar Lopez Nataren  <cnataren@novell.com>
 

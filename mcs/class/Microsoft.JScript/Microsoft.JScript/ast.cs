@@ -135,7 +135,7 @@ namespace Microsoft.JScript {
 			}
 		}
 
-		public  void Init (Block body, FormalParameterList p)
+		internal void Init (Block body, FormalParameterList p)
 		{
 			func_obj.body = body;
 			func_obj.parameters = p;
