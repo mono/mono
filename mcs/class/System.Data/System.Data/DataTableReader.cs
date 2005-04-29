@@ -42,8 +42,7 @@ namespace System.Data {
                 bool            _closed;
                 DataTable []    _tables;
                 IEnumerator     _enumerator;
-                bool            _first = true;
-                int             _current = 0;
+                int             _current = -1;
                 int             _index;
                 DataTable       _schemaTable;
 
@@ -64,7 +63,7 @@ namespace System.Data {
                         this._tables = dataTables;
                         _closed = false;
                         _index = 0;
-                        _current = 0;
+                        _current = -1;
                 }
 
                 #endregion // Constructors
@@ -76,11 +75,11 @@ namespace System.Data {
                 }
 
                 public override int FieldCount {
-                        get { return _tables [_index].Columns.Count; }
+                        get { return CurrentTable.Columns.Count; }
                 }
 
                 public override bool HasRows {
-                        get { return _tables [_index].Rows.Count > 0; }
+                        get { return CurrentTable.Rows.Count > 0; }
                 }
 
                 public override bool IsClosed {
@@ -90,6 +89,11 @@ namespace System.Data {
                 public override object this [int index] {
                         get { 
                                 Validate ();
+                                if (index < 0 || index >= FieldCount)
+                                        throw new ArgumentOutOfRangeException (String.Format ("index {0} is not" +
+                                                                                           "in the range",
+                                                                                           index)
+                                                                            );
                                 DataRow row = CurrentRow;
                                 if (row.RowState == DataRowState.Deleted)
                                         throw new InvalidOperationException ("Deleted Row's information cannot be accessed!");
@@ -201,7 +205,7 @@ namespace System.Data {
                 
                 public override Type GetFieldType (int i)
                 {
-                        Validate ();
+                        ValidateClosed ();
                         return CurrentTable.Columns [i].DataType;
                 }
                 
@@ -237,7 +241,7 @@ namespace System.Data {
                 
                 public override int GetOrdinal (string name)
                 {
-                        Validate ();
+                        ValidateClosed ();
                         DataColumn column = CurrentTable.Columns [name];
                         if (column == null)
                                 throw new ArgumentException (String.Format ("Column {0} is not found in the schema",
@@ -312,10 +316,19 @@ namespace System.Data {
 
                 private void Validate ()
                 {
+			ValidateClosed ();
+			if (_current == -1)
+                                throw new InvalidOperationException ("Invalid attempt to read before " + 
+                                                                     "Read is called");
+                }
+
+                private void ValidateClosed ()
+                {
                         if (IsClosed)
                                 throw new InvalidOperationException ("Invalid attempt to read when " + 
                                                                      "the reader is closed");
                 }
+                
                 
                 private bool MoveNext ()
                 {
@@ -328,23 +341,15 @@ namespace System.Data {
 
                 public override bool NextResult ()
                 {
-                        _current = 0;
+                        _current = -1;
                         _index++;
-                        _first = true;
                         _schemaTable = null;            // force to create fresh
                         return _index < _tables.Length;
                 }
 
                 public override bool Read ()
                 {       
-                        Validate ();
-                        if (_first) {
-                                _first = false;
-                                if (! HasRows)
-                                        return false;
-                                if (CurrentRow.RowState != DataRowState.Deleted)
-                                        return true;
-                        }
+                        ValidateClosed ();
                         return MoveNext ();
                 }
 

@@ -183,6 +183,14 @@ namespace MonoTests.System.Data.SqlClient
                         reader.Close ();
                         reader.Read ();
                 }
+
+                [Test]
+                public void GetOrdinalTest ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        Assert.AreEqual (1, reader.GetOrdinal ("name"), "#1 get ordinal should work even" +
+                                         " without calling Read");
+                }
                 #endregion // Positive Tests
                 
                 #region Negative Tests
@@ -205,6 +213,47 @@ namespace MonoTests.System.Data.SqlClient
                         DataTableReader reader = new DataTableReader (new DataTable [] {});
                         reader.Read ();
                 }
+
+		[Test]
+                [ExpectedException (typeof (InvalidOperationException))]
+		public void ReadAfterClosedTest ()
+		{
+                        DataTableReader reader = new DataTableReader (dt);
+			reader.Read ();
+			reader.Close ();
+                        reader.Read ();
+		}	
+
+		[Test]
+                [ExpectedException (typeof (InvalidOperationException))]
+		public void AccessAfterClosedTest ()
+		{
+                        DataTableReader reader = new DataTableReader (dt);
+			reader.Read ();
+			reader.Close ();
+			int i = (int) reader [0];
+			i++; // to supress warning
+		}
+
+                [Test]
+                [ExpectedException (typeof (InvalidOperationException))]
+		public void AccessBeforeReadTest ()
+		{
+                        DataTableReader reader = new DataTableReader (dt);
+			int i = (int) reader [0];
+			i++; // to supress warning
+		}
+
+                [Test]
+                [ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void InvalidIndexTest ()
+		{
+                        DataTableReader reader = new DataTableReader (dt);
+                        reader.Read ();
+			int i = (int) reader [90]; // kidding, ;-)
+			i++; // to supress warning
+		}
+
                 #endregion // Negative Tests
 
         }

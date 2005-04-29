@@ -1,3 +1,8 @@
+2005-04-29  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableReader.cs: removed use of _first. throw if given index
+	is out of range of columns.
+
 2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReader.cs: Implemented most of the TODO.
