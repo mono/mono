@@ -70,6 +70,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					     BindingFlags.Instance |
 					     BindingFlags.Public |
 					     BindingFlags.Static |
+					     BindingFlags.GetProperty |
 					     BindingFlags.InvokeMethod;
 
 			if (name == null) {
@@ -81,6 +82,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				throw new MissingMemberException ("Public Member '" + name + "' not found on type '" + objType + "'");
 			}
 
+			MemberInfo mi = GetMostDerivedMemberInfo (memberinfo);
+			if (mi.MemberType == MemberTypes.Field) {
+				FieldInfo fi = (FieldInfo) mi;
+				return fi.GetValue (o);
+			}
 			VBBinder binder = new VBBinder (CopyBack);
 			return binder.InvokeMember (name, flags, objType, objReflect, o, args, null, null, paramnames);
 		}
@@ -96,48 +102,67 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			bool OptimisticSet,
 			bool RValueBase) 
 		{
-			LateSet(o, objType, name, args, paramnames);
+			LateSet(o, objType, name, args, paramnames, null);
 		}
 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 
 		[System.Diagnostics.DebuggerHiddenAttribute] 
-		public static void LateSet(
-			object o,
-			Type objType,
-			string name,
-			object[] args,
-			string[] paramnames) {
-
-			BindingFlags invokeAttr;
+		public static void LateSet (object o,
+					    Type objType,
+					    string name,
+					    object[] args,
+					    string[] paramnames,
+					    bool[] CopyBack) {
 
 			if (objType == null) {
 				if (o == null)
 					throw new NullReferenceException();
 				objType = o.GetType();
 			}
-			Type[] typeArr = null;
-			if (args != null) {
-				typeArr = new Type[args.Length];
-				for (int i = 0; i < typeArr.Length; i++) {
-					typeArr[i] = args[i].GetType();
+
+			IReflect objReflect = (IReflect) objType;
+
+			BindingFlags flags = BindingFlags.FlattenHierarchy |
+					     BindingFlags.IgnoreCase |
+					     BindingFlags.Instance |
+					     BindingFlags.Public |
+					     BindingFlags.Static |
+					     BindingFlags.SetProperty |
+					     BindingFlags.InvokeMethod;
+
+			if (name == null) {
+				name = "";
+			}
+
+			MemberInfo [] memberinfo = objReflect.GetMember (name, flags);
+
+			if (memberinfo == null || memberinfo.Length == 0) {
+				throw new MissingMemberException ("Public Member '" + name + "' not found on type '" + objType + "'");
+			}
+
+			MemberInfo mi = GetMostDerivedMemberInfo (memberinfo);
+			if (mi.MemberType == MemberTypes.Field) {
+				FieldInfo fi = (FieldInfo) mi;
+				if (args == null || args.Length == 0) {
+					throw new MissingMemberException ("Public Member '" + name + "' not found on type '" + objType + "' that can be assigned the given set of arguments");
 				}
+
+				if (fi.IsInitOnly || fi.IsPrivate) {
+					throw new MissingMemberException ("Member '" + name + "' is a readonly field");
+				}
+
+				object value = null;
+				if (args.Length == 1)
+					value = args [0];
+
+				fi.SetValue (o, value);
+				return;
 			}
 
-			MemberInfo[] memberInfo = objType.GetMember(name);
-
-			if (((memberInfo == null) || (memberInfo.Length == 0))) {
-				throw new NullReferenceException();
-			}
-
-			if (memberInfo[0] is PropertyInfo) 
-				invokeAttr = BindingFlags.SetProperty;
-			else if (memberInfo[0] is FieldInfo) 
-				invokeAttr = BindingFlags.SetField;
-			else 
-				throw new NullReferenceException();
-
-			objType.InvokeMember(name, invokeAttr, null, o, args);
+			VBBinder binder = new VBBinder (null);
+			binder.InvokeMember (name, flags, objType, objReflect, o, args, null, null, paramnames);
 		}
+
 		//mono implmentation
 		//		[System.Diagnostics.DebuggerStepThroughAttribute] 
 		//		[System.Diagnostics.DebuggerHiddenAttribute] 
@@ -210,39 +235,28 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			//late binding for array
 
 			if (type.IsArray) {
-			// TODO: 
-			throw new NotImplementedException("LateBinding not implmented");
-				//int rank = ArrayStaticWrapper.get_Rank(o);
-				//if (rank != args.Length)
-				//	throw new RankException();
-				//int[] indices = new int[args.Length];
-				//for (int i = 0; i < indices.Length; i++)
-				//	indices[i] = IntegerType.FromObject(args[i]);
-				//return ArrayStaticWrapper.GetValue(o, indices);
+				Array objAsArray = (Array) o;
+				if (objAsArray.Rank != args.Length)
+					throw new RankException ();
+
+				int numArgs = args.Length;
+				int [] indexArray = new int [numArgs];
+				for (int index = 0; index < numArgs; index ++) 
+					indexArray [index] = IntegerType.FromObject (args [index]);
+				return objAsArray.GetValue (indexArray);
 			}
+
 			//late binding for default property
-			Type[] types = new Type[args.Length];
-			for (int i = 0; i < types.Length; i++) {
-				types[i] = args[i].GetType();
-			}
-			// TODO: 
-			//string defaultPropName;
-			throw new NotImplementedException("LateBinding not implmented");
-			//if (type is TypeInfo)
-			//	defaultPropName = getDefaultMemberName(type);
-			//else if (type == Type.StringType ||
-			//	type == Type.GetType("System.Text.StringBuilder"))
-			//	defaultPropName = "Chars";
-			//else
-			//	defaultPropName = "Item";
-			//PropertyInfo propertyInfo = null;
-			//if (defaultPropName != null)
-			//	propertyInfo = type.GetProperty(defaultPropName, types);
-			//if (propertyInfo != null) {
-			//	return propertyInfo.GetValue(o, args);
-			//}
-			//else
-			//	throw new NotSupportedException();
+			VBBinder binder = new VBBinder (null);
+			BindingFlags flags = BindingFlags.FlattenHierarchy |
+					     BindingFlags.IgnoreCase |
+					     BindingFlags.Instance |
+					     BindingFlags.Public |
+					     BindingFlags.Static |
+					     BindingFlags.GetProperty |
+					     BindingFlags.InvokeMethod;
+			IReflect objReflect = (IReflect) type;	
+			return binder.InvokeMember ("", flags, type, objReflect, o, args, null, null, paramnames);
 		}
 
 		private static string getDefaultMemberName(Type type) {
@@ -332,53 +346,33 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			string[] paramnames) {
 			if (o == null)
 				throw new NullReferenceException();
-			if (args == null)
+			if (args == null || args.Length == 0)
 				throw new NullReferenceException();
 			Type type = o.GetType();
 			//late binding for array
 			if (type.IsArray) {
-				// TODO: 
-				throw new NotImplementedException("LateBinding not implmented");
-				//int rank = ArrayStaticWrapper.get_Rank(o);
-				//if (rank != (args.Length - 1))
-				//	throw new RankException();
-				//int[] indices = new int[args.Length - 1];
-				//for (int i = 0; i < (indices.Length - 1); i++)
-				//	indices[i] = IntegerType.FromObject(args[i]);
-				//ArrayStaticWrapper.SetValue(o, args[args.Length - 1], indices);
-				//return;
+				Array array = (Array) o;
+				if (array.Rank != args.Length - 1) 
+					throw new RankException ();
+				object setValue = args [args.GetUpperBound (0)];
+				int [] indexArray = new int [args.GetUpperBound (0)];
+				for (int index = 0; index < indexArray.Length; index ++) {
+					indexArray [index] = IntegerType.FromObject (args [index]);
+				}
+				array.SetValue (setValue, indexArray);
+				return;
 			}
 			//late binding for default property
-			Type[] types = new Type[args.Length - 1];
-			for (int i = 0; i < types.Length; i++) {
-				// TODO: 
-				throw new NotImplementedException("LateBinding not implmented");
-				//types[i] = ObjectStaticWrapper.GetType(args[i]);
-				//System.out.println("in Set:" + types[i].get_FullName());
-			}
-			//string defaultPropName;
-				// TODO: 
-				throw new NotImplementedException("LateBinding not implmented");
-			//if (type is TypeInfo)
-			//	defaultPropName = getDefaultMemberName(type);
-			//else if (type == Type.StringType ||
-			//	type == Type.GetType("System.Text.StringBuilder"))
-			//	defaultPropName = "Chars";
-			//else
-			//	defaultPropName = "Item";
-			//PropertyInfo propertyInfo = null;
-			//if (defaultPropName != null)
-			//	propertyInfo = type.GetProperty(defaultPropName, types);
-			//if (propertyInfo != null) {
-			//	object newVal = args[args.Length - 1];
-			//	object[] Params = new object[args.Length - 1];
-
-			//	Array.Copy(args, 0, Params, 0, args.Length - 1);
-			//	// java System.arraycopy(args, 0, Params, 0, args.Length - 1);
-			//	propertyInfo.SetValue(o, newVal, Params);
-			//}
-			//else
-			//	throw new NotSupportedException();
+			VBBinder binder = new VBBinder (null);
+			BindingFlags flags = BindingFlags.FlattenHierarchy |
+					     BindingFlags.IgnoreCase |
+					     BindingFlags.Instance |
+					     BindingFlags.Public |
+					     BindingFlags.Static |
+					     BindingFlags.SetProperty |
+					     BindingFlags.InvokeMethod;
+			IReflect objReflect = (IReflect) type;	
+			binder.InvokeMember ("", flags, type, objReflect, o, args, null, null, paramnames);
 		}
 
 		[System.Diagnostics.DebuggerHiddenAttribute]
@@ -450,6 +444,17 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return binder.InvokeMember (name, flags, objType, objReflect, o, args, null, null, paramnames);
 		}
 
-		
+		private static MemberInfo GetMostDerivedMemberInfo (MemberInfo [] mi) 
+		{
+			if (mi == null || mi.Length == 0)
+				return null;
+			MemberInfo m = mi [0];
+			for (int index = 1; index < mi.Length; index ++) {
+				MemberInfo m1 = mi [index];
+				if (m1.DeclaringType.IsSubclassOf (m.DeclaringType))
+					m = m1;
+			}
+			return m;
+		}		
 	}
 }

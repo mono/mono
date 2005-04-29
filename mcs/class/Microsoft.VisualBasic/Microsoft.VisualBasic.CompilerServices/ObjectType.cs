@@ -1337,6 +1337,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		internal static bool ImplicitConversionExists (Type FromType, Type ToType) {
+			if (FromType == null)
+				return true;
+			if (ToType == typeof (object))
+				return true;
 			if (FromType.IsEnum)
 				FromType = GetTypeFromTypeCode (Type.GetTypeCode (FromType));
 			if (ToType.IsEnum)
@@ -1405,12 +1409,16 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		internal static bool IsWideningConversion(Type FromType, Type ToType) {
+			if (FromType == null)
+				return true;
 			TypeCode typeCode1 = Type.GetTypeCode(FromType);
 			TypeCode typeCode2 = Type.GetTypeCode(ToType);
 			
 			if (FromType == ToType)
 				return true;
 
+			if (ToType == typeof (object))
+				return true;
 			if (IsWiderNumeric (ToType, FromType))
 				return true;
 
@@ -1445,6 +1453,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					return false;
 			}
 			if (! ToType.IsValueType) {
+				Console.WriteLine ("Sudha--> {0} {1}" , FromType, ToType);
 				return ToType.IsAssignableFrom(FromType);
 			}
 			return false;
@@ -1453,6 +1462,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		//checked
 		[MonoTODO]
 		internal  static bool IsWiderNumeric(Type Type1, Type Type2) {
+			if (Type1 == null)
+				return true;
 			TypeCode typeCode1 = Type.GetTypeCode(Type1);
 			TypeCode typeCode2 = Type.GetTypeCode(Type2);
 			if (!Utils.IsNumericType(Type1) || !Utils.IsNumericType(Type2)) {
@@ -1850,7 +1861,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				case TypeCode.DateTime:
 					return null;
 				case TypeCode.String:
-					return null;
+					return "";
 				default:
 					return null;     
 			}        

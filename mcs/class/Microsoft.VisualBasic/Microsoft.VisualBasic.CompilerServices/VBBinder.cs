@@ -169,7 +169,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 				throw new AmbiguousMatchException ("No overloaded '" + this.objectType + "." + this.bindToName + "' can be called without a widening conversion");
 			}
 
-
 			if (mbase == null)
 				return null;
 
@@ -183,6 +182,10 @@ namespace Microsoft.VisualBasic.CompilerServices
 
 			for(int y = 0; y < numFixedParams; y++)
 			{
+				if (args [y] == null) {
+					count ++;
+					continue;
+				}
 				if((args [y] = ObjectType.CTypeHelper (args[y], pars[y].ParameterType)) != null)
 					count++;
 				else
@@ -358,8 +361,12 @@ namespace Microsoft.VisualBasic.CompilerServices
 			ConversionType ctype = ConversionType.None;
 			for (int index = 0; index < minParams; index ++) {
 				ConversionType currentCType = ConversionType.None;
-				Type type1 = args [index].GetType ();
+				Type type1 = null;
+				if (args [index] != null)
+					type1 = args [index].GetType ();
 				Type type2 = parameters [index].ParameterType;
+				if (type2.IsByRef)
+					type2 = type2.GetElementType ();
 				if (type1 == type2) {
 					currentCType = ConversionType.Exact;
 					if (ctype < currentCType) {
@@ -508,7 +515,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 
 			this.objectType = objType;
 			this.bindToName = name;
-			if (name == null) {
+			if (name == null || name.Equals ("")) {
 				// Must be a default property
 				Type t = objType;
 				while (t != null) {
@@ -522,11 +529,12 @@ namespace Microsoft.VisualBasic.CompilerServices
 				}
 			}
 
-			if (name == null) {
+			if (name == null || name.Equals ("")) {
 				throw new MissingMemberException ("No default members defined for type '" + objType + "'");
 			}
 
-			MemberInfo[] memberinfo = objReflect.GetMember (name, flags);
+			MemberInfo[] memberinfo = GetMembers (objReflect, objType, name, flags);
+
 			if (memberinfo == null || memberinfo.Length == 0) {
 				throw new MissingMemberException ("No member '" + name + "' defined for type '" + objType + "'");
 			}
@@ -575,12 +583,15 @@ namespace Microsoft.VisualBasic.CompilerServices
 				return true;
  
 			for (int index = 0; index < numFixedParams; index ++) {
-				Type argType = args [index].GetType ();
-				Type paramType = parameters [index].ParameterType;
-				if (paramType.IsByRef)
-					paramType = paramType.GetElementType ();
-				if (!ObjectType.ImplicitConversionExists (argType, paramType))
-					return false;
+				Type argType = null;
+				if (args [index] != null) {
+					argType = args [index].GetType ();
+					Type paramType = parameters [index].ParameterType;
+					if (paramType.IsByRef)
+						paramType = paramType.GetElementType ();
+					if (!ObjectType.ImplicitConversionExists (argType, paramType))
+						return false;
+				}
 			}
 
 			if (usesParamArray) {
@@ -646,6 +657,25 @@ namespace Microsoft.VisualBasic.CompilerServices
 				}
 			}
 			return newMemberList;
+		}
+
+		internal MemberInfo [] GetMembers (IReflect objReflect, Type objType, string name, BindingFlags invokeFlags) 
+		{
+			MemberInfo [] mi = objReflect.GetMember (name, invokeFlags);
+			if (mi == null || mi.Length == 0)
+				return null;
+
+			for (int index = 0; index < mi.Length; index ++)
+			{
+				if (mi [index].MemberType == MemberTypes.Property) {
+					PropertyInfo propinfo = (PropertyInfo) mi [index];
+					if ((invokeFlags & BindingFlags.GetProperty) == BindingFlags.GetProperty) 
+						mi [index] = propinfo.GetGetMethod ();
+					else if ((invokeFlags & BindingFlags.SetProperty) == BindingFlags.SetProperty)
+						mi [index] = propinfo.GetSetMethod ();
+				}
+			}
+			return mi;
 		}
 	}
 }
