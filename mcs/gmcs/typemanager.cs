@@ -2202,7 +2202,6 @@ public partial class TypeManager {
 	/// </summary>
 	public static Type [] GetInterfaces (Type t)
 	{
-		
 		Type [] cached = iface_cache [t] as Type [];
 		if (cached != null)
 			return cached;
@@ -2220,14 +2219,18 @@ public partial class TypeManager {
 		if (t.IsArray)
 			t = TypeManager.array_type;
 		
-		if (t is TypeBuilder){
+		if ((t is TypeBuilder) || t.IsGenericInstance) {
 			Type [] base_ifaces;
 			
 			if (t.BaseType == null)
 				base_ifaces = NoTypes;
 			else
 				base_ifaces = GetInterfaces (t.BaseType);
-			Type[] type_ifaces = (Type []) builder_to_ifaces [t];
+			Type[] type_ifaces;
+			if (t.IsGenericInstance)
+				type_ifaces = t.GetInterfaces ();
+			else
+				type_ifaces = (Type []) builder_to_ifaces [t];
 			if (type_ifaces == null)
 				type_ifaces = NoTypes;
 

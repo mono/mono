@@ -1,5 +1,10 @@
 2005-04-29  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.GetInterfaces): Correctly handle
+	generic instances.
+
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeManager.HasConstructorConstraint): Removed.
 
 	* expression.cs (New.DoResolve): Fix the CS0304 check.
