@@ -40,20 +40,6 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Generic {
 
-	// FIXME: This should be an unparametrized nested class of Dictionary<K,V>
-	[Serializable]
-	internal class Slot<K, V> {
-		public K Key;
-		public V Value;
-		public Slot<K, V> next;
-		public Slot (K Key, V Value, Slot<K, V> next)
-		{
-			this.Key = Key;
-			this.Value = Value;
-			this.next = next;
-		}
-	}
-
 	[Serializable, CLSCompliant (false)]
 	public class Dictionary<K, V> : IDictionary<K, V>,
 		//ICollection<KeyValuePair<K, V>>,
@@ -67,8 +53,6 @@ namespace System.Collections.Generic {
 		const int INITIAL_SIZE = 10;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 
-#if false
-		// FIXME: compiler bug prevents this from being used.
 		[Serializable]
 		internal class Slot {
 			public K Key;
@@ -81,9 +65,8 @@ namespace System.Collections.Generic {
 				this.next = next;
 			}
 		}
-#endif
 	
-		Slot<K, V> [] _table;
+		Slot [] _table;
 	
 		int _usedSlots;
 		float _loadFactor = DEFAULT_LOAD_FACTOR;
@@ -179,7 +162,7 @@ namespace System.Collections.Generic {
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
 			this._hcp = hcp;
-			_table = new Slot<K, V> [capacity];
+			_table = new Slot [capacity];
 			_loadFactor = loadFactor;
 			_threshold = (uint) (capacity * _loadFactor);
 			if (_threshold == 0 && capacity > 0)
@@ -224,14 +207,14 @@ namespace System.Collections.Generic {
 			if (_threshold == 0 && newSize > 0)
 				_threshold = 1;
 		
-			Slot<K, V> nextslot = null;
-			Slot<K, V> [] oldTable = _table;
+			Slot nextslot = null;
+			Slot [] oldTable = _table;
 			
-			_table = new Slot<K, V> [newSize];
+			_table = new Slot [newSize];
 
 			int index;
 			for (int i = 0; i < oldTable.Length; i++) {
-				for (Slot<K, V> slot = oldTable [i]; slot != null; slot = nextslot) {
+				for (Slot slot = oldTable [i]; slot != null; slot = nextslot) {
 					nextslot = slot.next;
 
 					index = DoHash (slot.Key);
@@ -271,7 +254,7 @@ namespace System.Collections.Generic {
 				index = DoHash (key);
 			}
 
-			_table [index] = new Slot<K, V> (key, value, _table [index]);
+			_table [index] = new Slot (key, value, _table [index]);
 			++_usedSlots;
 		}
 	
@@ -340,8 +323,8 @@ namespace System.Collections.Generic {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			int index = DoHash (key);
-			Slot<K, V> slot = _table [index];
-			Slot<K, V> prev = null;
+			Slot slot = _table [index];
+			Slot prev = null;
 
 			while (slot != null && !slot.Key.Equals (key)) {
 				prev = slot;
@@ -494,7 +477,7 @@ namespace System.Collections.Generic {
 			IDisposable, IDictionaryEnumerator, IEnumerator
 		{
 			Dictionary<K, V> _dictionary;
-			Slot<K, V> _current;
+			Slot _current;
 			int _index;
 			int _validNodeVisited;
 			bool _isValid;

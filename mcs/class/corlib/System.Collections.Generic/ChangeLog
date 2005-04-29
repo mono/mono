@@ -1,3 +1,9 @@
+2005-04-29  Raja R Harinath  <rharinath@novell.com>
+
+	Remove FIXME.
+	* Dictionary.cs (Slot<K,V>): Move to ...
+	(Dictionary<K,V>.Slot): ... here.
+
 2005-04-28  Martin Baulig  <martin@ximian.com>
 
 	* Dictionary.cs, Queue.cs, Stack.cs, List.cs, Comparer.cs: Don't
