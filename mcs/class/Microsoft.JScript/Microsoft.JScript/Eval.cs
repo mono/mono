@@ -40,6 +40,13 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+#if NET_1_1 || NET_2_0
+		public static object JScriptEvaluate (object source, object unsafeOption, VsaEngine engine)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		internal override bool Resolve (IdentificationTable context)
 		{
 			throw new NotImplementedException ();

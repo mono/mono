@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class LenientFunctionPrototype : FunctionPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientFunctionPrototype : FunctionPrototype {
+
 		public new object constructor;
 		public new object apply;
 		public new object call;

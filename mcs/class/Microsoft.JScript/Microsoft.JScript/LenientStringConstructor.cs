@@ -28,10 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public class LenientStringConstructor : StringConstructor
-	{
+namespace Microsoft.JScript {
+	public class LenientStringConstructor : StringConstructor {
 		public new object fromCharCode;
 	}
 }

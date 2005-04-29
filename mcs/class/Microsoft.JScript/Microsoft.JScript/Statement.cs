@@ -440,7 +440,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Switch : AST {	       
+	internal class Switch : AST {	       
 
 		internal AST exp;
 		internal ArrayList case_clauses;

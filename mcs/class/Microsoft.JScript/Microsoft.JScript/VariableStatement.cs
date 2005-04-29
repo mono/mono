@@ -34,7 +34,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class VariableStatement : AST {
+	internal class VariableStatement : AST {
 
 		internal ArrayList var_decls;
 

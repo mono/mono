@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace Microsoft.JScript {
 
-	public class SemanticAnalyser {
+	internal class SemanticAnalyser {
 
 		internal static bool print = true;
 		public static bool allow_member_expr_as_function_name;

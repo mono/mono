@@ -47,11 +47,6 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		public override string ToString ()
-		{
-			return expression.ToString ();
-		}
-
 		internal override bool Resolve (IdentificationTable context)
 		{
 			return expression.Resolve (context);

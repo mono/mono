@@ -28,12 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class LenientNumberPrototype : NumberPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientNumberPrototype : NumberPrototype {
+
 		public new object constructor;
 		public new object toExponential;
 		public new object toFixed;

@@ -30,10 +30,10 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class LenientBooleanPrototype : BooleanPrototype
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientBooleanPrototype : BooleanPrototype {
+
 		public new object constructor;
 		public new object toString;
 		public new object valueOf;

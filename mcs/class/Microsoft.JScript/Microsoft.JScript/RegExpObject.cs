@@ -38,7 +38,7 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		public string Source {
+		public string source {
 			get { throw new NotImplementedException (); }
 		}
 

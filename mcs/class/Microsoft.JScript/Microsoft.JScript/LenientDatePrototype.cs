@@ -28,12 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class LenientDatePrototype : DatePrototype
-	{  
+namespace Microsoft.JScript {
+
+	public sealed class LenientDatePrototype : DatePrototype {  
+
 		public new Object constructor;
 		public new Object getTime;
 		public new Object getYear;

@@ -59,21 +59,6 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append (left.ToString ());
-
-			if (op != JSToken.None)
-				sb.Append (op + " ");
-
-			if (right != null)
-				sb.Append (right.ToString ());
-
-			return sb.ToString ();
-		}
-
 		internal override bool Resolve (IdentificationTable context)
 		{
 			if (left != null)
@@ -98,7 +83,7 @@ namespace Microsoft.JScript {
 			if (op == JSToken.None &&  right == null) {
 				left.Emit (ec);
 				return;
-			} else if (op == JSToken.InstanceOf) {
+			} else if (op == JSToken.Instanceof) {
 				if (left != null)
 					left.Emit (ec);
 				if (right != null)

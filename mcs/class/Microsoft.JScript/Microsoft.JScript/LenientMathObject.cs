@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class LenientMathobject : MathObject
-	{
+namespace Microsoft.JScript {
+
+	public sealed class LenientMathObject : MathObject {
+
 		public new const double E = 2.7182818284590452354;
 		public new const double LN10 = 2.302585092994046;
 		public new const double LN2 = 0.6931471805599453;

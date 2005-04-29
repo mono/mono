@@ -100,7 +100,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class NumericLiteral : Exp {
+	internal class NumericLiteral : Exp {
 
 		double val;
 
@@ -139,7 +139,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class ObjectLiteral : Exp {
+	internal class ObjectLiteral : Exp {
 		
 		internal ArrayList elems;
 		
@@ -214,7 +214,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class PropertyName {
+	internal class PropertyName {
 		string name;
 		internal string Name {
 			get { return name; }

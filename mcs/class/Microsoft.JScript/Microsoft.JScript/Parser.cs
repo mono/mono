@@ -901,7 +901,7 @@ namespace Microsoft.JScript {
 			else if (tt == Token.MOD)
 				return JSToken.Modulo;
 			else if (tt == Token.INSTANCEOF)
-				return JSToken.InstanceOf;
+				return JSToken.Instanceof;
 			else if (tt == Token.LE)
 				return JSToken.LessThanEqual;
 			else if (tt == Token.LT)
