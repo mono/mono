@@ -1,5 +1,11 @@
 2005-02-28  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Makefile (TEST_MCS_FLAGS): Ignore warnings 0219 (variable declared and
+	  never used) and 0618 (member is obsolete): this is test code, which
+	  produces lots of unused variables and tests [Obsolete] members.
+
+2005-02-28  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Mono.Posix_test.dll.sources: Added Test/Mono.Unix/StdioFileStreamTest.cs.
 
 2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>

@@ -370,6 +370,38 @@ namespace MonoTests.System.IO
 			DeleteFile (path);
 		}
 
+		// HACK: the values for `fp.ToString()' assume glibc, and may change under
+		// a different C library (due to structure of fpos_t).
+		[Test]
+		public void PositionAfterWrite ()
+		{
+			string path = TempFolder + DSC + "FST.Position.Test";
+			DeleteFile (path);			
+
+			StdioFileStream stream = new StdioFileStream (path, FileMode.CreateNew, 
+				FileAccess.ReadWrite);
+
+			FilePosition fp;
+
+			Assert.AreEqual (0, stream.Position, "test #01");
+			Assert.AreEqual ("(Mono.Unix.FilePosition 00000000", 
+				(fp = stream.FilePosition).ToString().Substring (0, 32), "test#02");
+			fp.Dispose ();
+
+			byte[] message = new byte[]{
+				(byte) 'H', (byte) 'e', (byte) 'l', (byte) 'l', (byte) 'o', (byte) ' ',
+				(byte) 'W', (byte) 'o', (byte) 'r', (byte) 'l', (byte) 'd',
+			};
+
+			stream.Write (message, 0, message.Length);
+
+			Assert.AreEqual (11, stream.Position, "test #03");
+			Assert.AreEqual (message.Length, stream.Position, "test #04");
+			Assert.AreEqual ("(Mono.Unix.FilePosition 0B000000", 
+				(fp = stream.FilePosition).ToString().Substring (0, 32), "test#04");
+			fp.Dispose ();
+		}
+
 		[Test]
 		public void Seek ()
 		{
@@ -491,7 +523,6 @@ namespace MonoTests.System.IO
 
 			try { 
 				long l = stream.Length;
-				l = l;
 				Assert.Fail ();
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ObjectDisposedException), e.GetType (), "test#04");
@@ -499,7 +530,14 @@ namespace MonoTests.System.IO
 
 			try { 
 				long l = stream.Position;
-				l = l;
+				Assert.Fail ();
+			} catch (Exception e) {
+				Assert.AreEqual (typeof (ObjectDisposedException), e.GetType (), "test#05");
+			}
+
+			try { 
+				FilePosition fp = stream.FilePosition;
+				fp.Dispose ();
 				Assert.Fail ();
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ObjectDisposedException), e.GetType (), "test#05");
@@ -604,7 +642,6 @@ namespace MonoTests.System.IO
 			try {
 				stream = new StdioFileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
 				int readByte = stream.ReadByte ();
-				readByte = readByte;
 			} finally {
 				if (stream != null)
 					stream.Close();

@@ -176,6 +176,9 @@ namespace Mono.Unix {
 
 	public sealed class FilePosition : IDisposable {
 
+		private static readonly int FilePositionDumpSize = 
+			Stdlib.DumpFilePosition (null, new HandleRef (null, IntPtr.Zero), 0);
+
 		private HandleRef pos;
 
 		public FilePosition ()
@@ -204,9 +207,49 @@ namespace Mono.Unix {
 			}
 		}
 
+		public override string ToString ()
+		{
+			return "(" + base.ToString () + " " + GetDump () + ")";
+		}
+
+		private string GetDump ()
+		{
+			if (FilePositionDumpSize <= 0)
+				return "internal error";
+
+			StringBuilder buf = new StringBuilder (FilePositionDumpSize+1);
+
+			if (Stdlib.DumpFilePosition (buf, Handle, FilePositionDumpSize+1) <= 0)
+				return "internal error dumping fpos_t";
+
+			return buf.ToString ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+			return ToString().Equals (obj.ToString());
+		}
+
+		public override int GetHashCode ()
+		{
+			return ToString ().GetHashCode ();
+		}
+
 		~FilePosition ()
 		{
 			Cleanup ();
+		}
+
+		public static bool operator== (FilePosition lhs, FilePosition rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
+
+		public static bool operator!= (FilePosition lhs, FilePosition rhs)
+		{
+			return !Object.Equals (lhs, rhs);
 		}
 	}
 
@@ -410,6 +453,10 @@ namespace Mono.Unix {
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				EntryPoint="Mono_Posix_Stdlib_CreateFilePosition")]
 		internal static extern IntPtr CreateFilePosition ();
+
+		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
+				EntryPoint="Mono_Posix_Stdlib_DumpFilePosition")]
+		internal static extern int DumpFilePosition (StringBuilder buf, HandleRef handle, int len);
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				EntryPoint="Mono_Posix_Stdlib_EOF")]

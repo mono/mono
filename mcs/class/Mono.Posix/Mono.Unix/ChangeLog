@@ -1,3 +1,10 @@
+2005-04-29  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Make FilePosition slightly more useful by providing a
+	  ToString() override which dumps the fpos_t structure contents into a 
+	  hex string.  Add Equals(), GetHashCode(), operator==, and operator!=
+	  so FilePosition behaves like a value type.
+
 2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnixClient.cs:
