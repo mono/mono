@@ -1,3 +1,8 @@
+2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BasicClient.cs: use latin1 when encoding the username/domain/password.
+	Fixes bug #74745.
+
 2005-04-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: if the BeginRead/BeginWrite is completed
