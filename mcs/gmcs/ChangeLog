@@ -1,5 +1,11 @@
 2005-04-29  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (Constraints.ResolveTypes): Expand interfaces.
+
+	* anonymous.cs: Added support for anonymous generic methods.
+
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.GetInterfaces): Correctly handle
 	generic instances.
 

@@ -330,8 +330,23 @@ namespace Mono.CSharp {
 				list.Add (expr.Type);
 			}
 
-			iface_constraint_types = new Type [list.Count];
-			list.CopyTo (iface_constraint_types, 0);
+			ArrayList new_list = new ArrayList ();
+			foreach (Type iface in list) {
+				if (new_list.Contains (iface))
+					continue;
+
+				new_list.Add (iface);
+
+				Type [] implementing = TypeManager.GetInterfaces (iface);
+			
+				foreach (Type imp in implementing) {
+					if (!new_list.Contains (imp))
+						new_list.Add (imp);
+				}
+			}
+
+			iface_constraint_types = new Type [new_list.Count];
+			new_list.CopyTo (iface_constraint_types, 0);
 
 			if (class_constraint != null) {
 				TypeExpr te = class_constraint.ResolveAsTypeTerminal (ec);
@@ -509,6 +524,7 @@ namespace Mono.CSharp {
 		Constraints constraints;
 		Location loc;
 		GenericTypeParameterBuilder type;
+		Type[] iface_constraints;
 
 		public TypeParameter (TypeContainer parent, string name,
 				      Constraints constraints, Location loc)

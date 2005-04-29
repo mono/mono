@@ -47,6 +47,8 @@ namespace Mono.CSharp {
 		// The emit context for the anonymous method
 		public EmitContext aec;
 		public InternalParameters amp;
+		public string[] TypeParameters;
+		public Type[] TypeArguments;
 		bool unreachable;
 		
 		//
@@ -129,13 +131,33 @@ namespace Mono.CSharp {
 				current_type = null;
 			} 
 
+			string name = "<#AnonymousMethod>" + anonymous_method_count++;
+			MemberName member_name;
+
+			GenericMethod generic_method = null;
+			if (TypeParameters != null) {
+				TypeArguments args = new TypeArguments (loc);
+				foreach (string t in TypeParameters)
+					args.Add (new SimpleName (t, loc));
+
+				member_name = new MemberName (name, args);
+
+				generic_method = new GenericMethod (
+					ec.DeclSpace.NamespaceEntry,
+					(TypeContainer) ec.TypeContainer,
+					member_name, loc);
+
+				generic_method.SetParameterInfo (null);
+			} else
+				member_name = new MemberName (name);
+
 			method = new Method (
-				(TypeContainer) ec.TypeContainer, null,
+				(TypeContainer) ec.TypeContainer, generic_method,
 				new TypeExpression (return_type, loc),
-				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++),
+				method_modifiers, false, member_name,
 				Parameters, null, loc);
 			method.Block = Block;
-			
+
 			//
 			// Swap the TypeBuilder while we define the method, then restore
 			//
@@ -144,6 +166,7 @@ namespace Mono.CSharp {
 			bool res = method.Define ();
 			if (current_type != null)
 				ec.TypeContainer.TypeBuilder = current_type;
+
 			return res;
 		}
 		
@@ -167,6 +190,16 @@ namespace Mono.CSharp {
 			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (ec, delegate_type, loc);
 			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+
+			if (delegate_type.IsGenericInstance) {
+				TypeArguments = TypeManager.GetTypeArguments (delegate_type);
+
+				Type def = delegate_type.GetGenericTypeDefinition ();
+				Type[] tparam = TypeManager.GetTypeArguments (def);
+				TypeParameters = new string [tparam.Length];
+				for (int i = 0; i < tparam.Length; i++)
+					TypeParameters [i] = tparam [i].Name;
+			}
 
 			if (Parameters == null){
 				int i, j;
@@ -285,9 +318,13 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public MethodBuilder GetMethodBuilder ()
+		public MethodInfo GetMethodBuilder ()
 		{
-			return method.MethodData.MethodBuilder;
+			MethodInfo builder = method.MethodData.MethodBuilder;
+			if (TypeArguments != null)
+				return builder.BindGenericParameters (TypeArguments);
+			else
+				return builder;
 		}
 		
 		public bool EmitMethod (EmitContext ec)
@@ -295,10 +332,10 @@ namespace Mono.CSharp {
 			if (!CreateMethodHost (ec, invoke_mb.ReturnType))
 				return false;
 
-			MethodBuilder builder = GetMethodBuilder ();
+			MethodBuilder builder = method.MethodData.MethodBuilder;
 			ILGenerator ig = builder.GetILGenerator ();
 			aec.ig = ig;
-			
+
 			Parameters.LabelParameters (aec, builder, loc);
 
 			//
