@@ -1,3 +1,24 @@
+2005-04-28 James Willcox <james@ximian.com>
+
+	* mkbundle.cs: Add --config-dir option
+	* template.c: same
+
+2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mkbundle.cs: GetReferencedAssemblies () will not report CodeBase, so
+	load the assembly and get it from there. Fixes bug #74695.
+
+2004-04-09  James Willcox  <james@ximian.com>
+
+	* template.c: allocate the correct amount of memory for newargs
+
+2005-04-08  Miguel de Icaza  <miguel@novell.com>
+
+	* mkbundle.cs: Add support for bundling also a machine.config
+
+2004-04-08  James Willcox  <james@ximian.com>
+
+	* mkbundle.cs: add a --static flag for statically linking to libmono
 
 Wed Mar 16 18:11:47 CET 2005 Paolo Molaro <lupus@ximian.com>
 

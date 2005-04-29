@@ -23,6 +23,9 @@ class MakeBundle {
 	static bool autodeps = false;
 	static bool keeptemp = false;
 	static bool compile_only = false;
+	static bool static_link = false;
+	static string config_file = null;
+	static string config_dir = null;
 	
 	static int Main (string [] args)
 	{
@@ -32,7 +35,7 @@ class MakeBundle {
 		
 		for (int i = 0; i < top; i++){
 			switch (args [i]){
-			case "-h":
+			case "--help": case "-h": case "-?":
 				Help ();
 				return 1;
 
@@ -61,7 +64,7 @@ class MakeBundle {
 					Help (); 
 					return 1;
 				}
-				link_paths.Add (args [i]);
+				link_paths.Add (args [++i]);
 				break;
 
 			case "--nodeps":
@@ -75,7 +78,25 @@ class MakeBundle {
 			case "--keeptemp":
 				keeptemp = true;
 				break;
-				
+			case "--static":
+				static_link = true;
+				break;
+			case "--config":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+
+				config_file = args [++i];
+				break;
+			case "--config-dir":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+
+				config_dir = args [++i];
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
@@ -164,11 +185,11 @@ class MakeBundle {
 				c_bundle_names.Add ("assembly_bundle_" + encoded);
 
 				try {
-					FileStream config_file = File.OpenRead (fname + ".config");
+					FileStream cf = File.OpenRead (fname + ".config");
 					Console.WriteLine (" config from: " + fname + ".config");
 					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
-					WriteSymbol (ts, "assembly_config_" + encoded, config_file.Length);
-					while ((n = config_file.Read (buffer, 0, 8192)) != 0){
+					WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
+					while ((n = cf.Read (buffer, 0, 8192)) != 0){
 						for (int i = 0; i < n; i++){
 							ts.Write ("\t.byte {0}\n", buffer [i]);
 						}
@@ -178,8 +199,32 @@ class MakeBundle {
 				} catch (FileNotFoundException) {
 					/* we ignore if the config file doesn't exist */
 				}
+
+			}
+			if (config_file != null){
+				FileStream conf;
+				try {
+					conf = File.OpenRead (config_file);
+				} catch {
+					Error (String.Format ("Failure to open {0}", config_file));
+					return;
+				}
+				Console.WriteLine ("System config from: " + config_file);
+				tc.WriteLine ("extern const unsigned char system_config;");
+				WriteSymbol (ts, "system_config", config_file.Length);
+
+				int n;
+				while ((n = conf.Read (buffer, 0, 8192)) != 0){
+					for (int i = 0; i < n; i++){
+						ts.Write ("\t.byte {0}\n", buffer [i]);
+					}
+				}
+				// null terminator
+				ts.Write ("\t.byte 0\n");
+				ts.WriteLine ();
 			}
 			ts.Close ();
+			
 			Console.WriteLine ("Compiling:");
 			string cmd = String.Format ("as -o {0} {1} ", temp_o, temp_s);
 			Console.WriteLine (cmd);
@@ -200,7 +245,14 @@ class MakeBundle {
 			foreach (string[] ass in config_names){
 				tc.WriteLine ("\tmono_register_config_for_assembly (\"{0}\", assembly_config_{1});\n", ass [0], ass [1]);
 			}
+			if (config_file != null)
+				tc.WriteLine ("\tmono_config_parse_memory (&system_config);\n");
 			tc.WriteLine ("}\n");
+
+			if (config_dir != null)
+				tc.WriteLine ("static const char *config_dir = \"{0}\";", config_dir);
+			else
+				tc.WriteLine ("static const char *config_dir = NULL;");
 				      
 			StreamReader s = new StreamReader (Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
 			tc.Write (s.ReadToEnd ());
@@ -208,9 +260,19 @@ class MakeBundle {
 
 			if (compile_only)
 				return;
-			
-			cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
-					     temp_c, temp_o, output);
+
+			if (static_link)
+				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} " +
+						     "`pkg-config --libs-only-L mono` -Wl,-Bstatic " +
+						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lm //\" | " +
+						     "sed -e \"s/\\-ldl //\" | sed -e \"s/\\-lpthread //\"` " +
+						     "-Wl,-Bdynamic -ldl -lm -lrt {1}",
+						     temp_c, temp_o, output);
+			else
+				cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
+						     temp_c, temp_o, output);
+
+                            
 			Console.WriteLine (cmd);
 			ret = system (cmd);
 			if (ret != 0){
@@ -264,8 +326,10 @@ class MakeBundle {
 		if (!autodeps)
 			return;
 		
-		foreach (AssemblyName an in a.GetReferencedAssemblies ())
-			QueueAssembly (files, an.CodeBase);
+		foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
+			a = Assembly.Load (an);
+			QueueAssembly (files, a.CodeBase);
+		}
 	}
 
 	static Assembly LoadAssembly (string assembly)
@@ -322,13 +386,16 @@ class MakeBundle {
 	{
 		Console.WriteLine ("Usage is: mkbundle [options] assembly1 [assembly2...]\n\n" +
 				   "Options:\n" +
-				   "    -c          Produce stub only, do not compile\n" +
-				   "    -o out      Specifies output filename\n" +
-				   "    -oo obj     Specifies output filename for helper object file" +
-				   "    -L path     Adds `path' to the search path for assemblies\n" +
-				   "    --nodeps    Turns off automatic dependency embedding (default)\n" +
-				   "    --deps      Turns on automatic dependency embedding\n" +
-				   "    --keeptemp  Keeps the temporary files\n");
+				   "    -c              Produce stub only, do not compile\n" +
+				   "    -o out          Specifies output filename\n" +
+				   "    -oo obj         Specifies output filename for helper object file\n" +
+				   "    -L path         Adds `path' to the search path for assemblies\n" +
+				   "    --nodeps        Turns off automatic dependency embedding (default)\n" +
+				   "    --deps          Turns on automatic dependency embedding\n" +
+				   "    --keeptemp      Keeps the temporary files\n" +
+				   "    --config F      Bundle system config file `F'\n" +
+				   "    --config-dir D  Set MONO_CFG_DIR to `D'\n" +
+				   "    --static        Statically link to mono libs\n");
 	}
 
 	[DllImport ("libc")]
