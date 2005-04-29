@@ -112,6 +112,7 @@ TEST_EXCLUDES_common = test-50 test-120 a-parameter4
 TEST_SOURCES_net_2_0 = \
 	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe		\
 	gen-47-dll gen-47-exe gen-98-dll gen-98-exe					\
+	gen-156-dll gen-156-exe								\
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10  \
 	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20  \
 	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30  \
@@ -127,7 +128,7 @@ TEST_SOURCES_net_2_0 = \
 	gen-121 gen-122 gen-123 gen-124 gen-125         gen-127 gen-128 gen-129 gen-130 \
 	gen-131 gen-132 gen-133 gen-134 gen-135 gen-136 gen-137 gen-138 gen-139 gen-140 \
 	gen-141 gen-142 gen-143 gen-144 gen-145	gen-146 gen-147 gen-148 gen-149 gen-150 \
-	gen-151 gen-152									\
+	gen-151 gen-152	gen-153 gen-154 gen-155						\
 	cond-attr fixed-buffer-dll fixed-buffer-exe
 
 TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common)
