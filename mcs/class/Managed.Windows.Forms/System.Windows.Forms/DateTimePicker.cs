@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		#region Public variables
 		
 		// this class has to have the specified hour, minute and second, as it says in msdn
-		//public static readonly DateTime MaxDateTime = DateTime.Parse ("31 December 9998");//, 23:59:59");
 		public static readonly DateTime MaxDateTime = new DateTime (9998, 12, 31, 23, 59, 59);
 		public static readonly DateTime MinDateTime = new DateTime (1753, 1, 1);
 		
@@ -110,10 +109,11 @@ namespace System.Windows.Forms {
 			
 			month_calendar.DateSelected += new DateRangeEventHandler (MonthCalendarDateSelectedHandler);
 			KeyPress += new KeyPressEventHandler (KeyPressHandler);
-			LostFocus += new EventHandler (LostFocusHandler);
+//			LostFocus += new EventHandler (LostFocusHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);			
 			Paint += new PaintEventHandler (PaintHandler);
 			
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 		
 		#endregion
@@ -224,8 +224,7 @@ namespace System.Windows.Forms {
 				if (custom_format != value) {
 					custom_format = value;
 					if (this.Format == DateTimePickerFormat.Custom) {
-						// invalidate the value inside this control
-						this.Invalidate (date_area_rect);
+						// TODO: change the text value of the dtp						
 					}
 				}
 			}
@@ -240,7 +239,7 @@ namespace System.Windows.Forms {
 		public LeftRightAlignment DropDownAlign {
 			set {
 				if (drop_down_align != value) {
-					drop_down_align = value;					
+					drop_down_align = value;
 				}
 			}
 			get {
@@ -367,10 +366,12 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Text {
 			set {
+				// TODO: if the format is a custom format we need to do a custom parse here
 				DateTime parsed_value = DateTime.Parse (value);
 				if (date_value != parsed_value) {
 					Value = parsed_value;
-				} 
+				}
+				text = FormatValue (); 
 			}
 			get {
 				return text;
@@ -591,7 +592,7 @@ namespace System.Windows.Forms {
 				location.X = parent_control_rect.Right - child_size.Width;				
 			}
 			
-			Point screen_location = PointToScreen (location);
+			Point screen_location = PointToScreen (location);			
 // TODO: enable this part when screen comes into the classes
 /*			
 			Rectangle working_area = Screen.FromControl(this).WorkingArea;
@@ -629,9 +630,9 @@ namespace System.Windows.Forms {
 				align_area,
 				month_calendar.Size,
 				(this.DropDownAlign == LeftRightAlignment.Left));
-			
 			month_calendar.Show ();
 			month_calendar.Focus ();
+			month_calendar.Capture = true;	
 			
 			// fire any registered events
 			if (this.DropDown != null) {
@@ -644,6 +645,7 @@ namespace System.Windows.Forms {
 		{
 			this.is_drop_down_visible = false;
     		Invalidate (drop_down_arrow_rect);
+    		month_calendar.Capture = false;
     		if (month_calendar.Visible) {
     			month_calendar.Hide ();
     		}
@@ -658,21 +660,20 @@ namespace System.Windows.Forms {
 			e.Handled = true;
 		}
 		
-		// if we lose focus and the drop down is up, then close it
-		private void LostFocusHandler (object sender, EventArgs e) 
-		{
-			if (is_drop_down_visible && !month_calendar.Focused) {
-				this.HideMonthCalendar ();				
-			}			
-		}
+//		// if we lose focus and the drop down is up, then close it
+//		private void LostFocusHandler (object sender, EventArgs e) 
+//		{
+//			if (is_drop_down_visible && !month_calendar.Focused) {
+//				this.HideMonthCalendar ();				
+//			}			
+//		}
 		
 		// fired when a user clicks on the month calendar to select a date
 		private void MonthCalendarDateSelectedHandler (object sender, DateRangeEventArgs e)
 		{
 			this.Value = e.Start.Date.Add (this.Value.TimeOfDay);
 			this.HideMonthCalendar ();	
-			this.Focus ();		
-			System.Console.WriteLine("MonthCalendarDateSelectedHandler");
+			this.Focus ();			
 		} 
 
 		// to check if the mouse has come down on this control
@@ -688,8 +689,7 @@ namespace System.Windows.Forms {
 					DropDownMonthCalendar ();
     			} else {
     				// mouse down on this control anywhere else collapses it
-    				if (is_drop_down_visible) {
-    				System.Console.WriteLine("hiding cause of mouse down");
+    				if (is_drop_down_visible) {    				
     					HideMonthCalendar ();
     				}
     			} 
@@ -716,7 +716,7 @@ namespace System.Windows.Forms {
 					ret_value = date_value.ToShortDateString ();
 					break;
 				case DateTimePickerFormat.Time:
-					ret_value = date_value.ToShortDateString ();
+					ret_value = date_value.ToLongTimeString ();
 					break;
 				default:
 					ret_value = date_value.ToLongDateString ();

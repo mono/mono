@@ -25,7 +25,6 @@
 // REMAINING TODO:
 //	- get the date_cell_size and title_size to be pixel perfect match of SWF
 //	- show the year spin control
-//	- remove comments around the "if (this.Capture) {" in the TimerHandler method
 
 using System;
 using System.Collections;
@@ -165,7 +164,7 @@ namespace System.Windows.Forms {
 			SetUpContextMenu ();
 
 			// event handlers
-			LostFocus += new EventHandler (LostFocusHandler);
+//			LostFocus += new EventHandler (LostFocusHandler);
 			timer.Tick += new EventHandler (TimerHandler);
 			MouseMove += new MouseEventHandler (MouseMoveHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
@@ -1400,9 +1399,7 @@ namespace System.Windows.Forms {
 		
 		// raised on the timer, for mouse hold clicks
 		private void TimerHandler (object sender, EventArgs e) {
-// NOTE: i have diabled the if this.Capture because it doesn't work
-// when this.Capture works then need to renable the if in this section
-//			// now find out which area was click
+			// now find out which area was click
 			if (this.Capture) {
 				HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
 				// see if it was clicked on the prev or next mouse 
@@ -1487,15 +1484,15 @@ namespace System.Windows.Forms {
 			this.is_date_clicked = false;
 		}
 		
-		// need when in windowed mode
-		private void LostFocusHandler (object sender, EventArgs e) 
-		{
-			if (this.owner != null) {
-				if (this.Visible) {
-					this.owner.HideMonthCalendar ();
-				}
-			}
-		}
+//		// need when in windowed mode
+//		private void LostFocusHandler (object sender, EventArgs e) 
+//		{
+//			if (this.owner != null) {
+//				if (this.Visible) {
+//					this.owner.HideMonthCalendar ();
+//				}
+//			}
+//		}
 		
 		// occurs when mouse moves around control, used for selection
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
@@ -1533,8 +1530,18 @@ namespace System.Windows.Forms {
 				timer.Stop ();
 				timer.Enabled = false;
 			}
+			
+			Point point = new Point (e.X, e.Y);
+			// figure out if we are in drop down mode and a click happened outside us
+			if (this.owner != null) {
+				if (!this.ClientRectangle.Contains (point)) {
+					this.owner.HideMonthCalendar ();
+					return;					
+				}
+			}
+			
 			//establish where was hit
-			HitTestInfo hti = this.HitTest(e.X, e.Y);
+			HitTestInfo hti = this.HitTest(point);
 			switch (hti.HitArea) {
 				case HitArea.PrevMonthButton:
 				case HitArea.NextMonthButton:
@@ -1572,7 +1579,7 @@ namespace System.Windows.Forms {
 				default:
 					this.is_previous_clicked = false;
 					this.is_next_clicked = false;
-					this.is_date_clicked = false;
+					this.is_date_clicked = false;				
 					break;
 			}
 		}

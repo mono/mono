@@ -1,3 +1,9 @@
+2005-04-29  John BouAntoun  <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs, DateTimePicker.cs: Made monthcalendar dropdwon
+	behave like combobox and comboboxlist (still not sure if this is
+	correct though).
+
 2005-04-28  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Don't fill the middle of progress
