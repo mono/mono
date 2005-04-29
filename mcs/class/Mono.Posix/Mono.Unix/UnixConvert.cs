@@ -708,8 +708,6 @@ namespace Mono.Unix {
 
 		public static readonly DateTime LocalUnixEpoch = 
 			new DateTime (1970, 1, 1).ToLocalTime();
-		public static readonly long UtcOffset = 
-			(long) (DateTime.Now.Subtract (DateTime.UtcNow).TotalSeconds);
 
 		public static DateTime ToDateTime (long time)
 		{
@@ -723,10 +721,7 @@ namespace Mono.Unix {
 
 		public static DateTime FromTimeT (long time)
 		{
-			// Console.WriteLine ("** LocalUnixEpoch={0}; UtcOffset={1}; time={2}", LocalUnixEpoch, UtcOffset, time);
-
-			DateTime r = LocalUnixEpoch.AddSeconds (time + UtcOffset);
-			// Console.WriteLine ("** result={0}", r);
+			DateTime r = LocalUnixEpoch.AddSeconds (time);
 			return r;
 		}
 

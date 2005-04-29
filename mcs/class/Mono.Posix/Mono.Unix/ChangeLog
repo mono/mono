@@ -1,5 +1,12 @@
 2005-04-29  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixConvert.cs: Fix time_t -> DateTime conversions.  time_t should be
+	  assumed to be in the local time zone, so don't mess with UTC shifts.
+	  This allows Mono.Unix to produce sane output (e.g. identical to ls(1) or
+	  stat(1), instead of several hours different).
+
+2005-04-29  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: Make FilePosition slightly more useful by providing a
 	  ToString() override which dumps the fpos_t structure contents into a 
 	  hex string.  Add Equals(), GetHashCode(), operator==, and operator!=
