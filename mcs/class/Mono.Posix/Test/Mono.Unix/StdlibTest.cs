@@ -21,15 +21,15 @@ namespace MonoTests.Mono.Unix {
 	public class StdlibTest
 	{
 		private class SignalTest {
-			public Signum signalReceived;
+			public int signalReceived;
 
 			public void Handler (int sn)
 			{
-				signalReceived = UnixConvert.ToSignum (sn);
+				signalReceived = sn;
 			}
 		}
 
-		[Test, Ignore ("Sending Signals from inside Mono hangs the program")]
+		[Test]
 #if !NET_2_0
 		// .NET 1.1 marshals delegates as Stdcall functions, while signal(3)
 		// expects a Cdecl function.  Result: stack corruption.
@@ -45,27 +45,26 @@ namespace MonoTests.Mono.Unix {
 			st.Handler (9);
 
 			// Insert handler
-			SignalHandler oh = Stdlib.signal (Signum.SIGUSR1, 
+			SignalHandler oh = Stdlib.signal (Signum.SIGURG, 
 					new SignalHandler (st.Handler));
 
-			st.signalReceived = ~Signum.SIGUSR1;
+			st.signalReceived = ~UnixConvert.FromSignum (Signum.SIGURG);
 
 			// Send signal
-			Stdlib.raise (Signum.SIGUSR1);
+			Stdlib.raise (Signum.SIGURG);
 
-			Assert.IsTrue (st.signalReceived == Signum.SIGUSR1,
-					"#IH: Signal handler not invoked for SIGUSR1");
+			Assert.IsTrue (
+				UnixConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
+					"#IH: Signal handler not invoked for SIGURG");
 
 			// Reset old signal
-			Stdlib.signal (Signum.SIGUSR1, oh);
+			Stdlib.signal (Signum.SIGURG, oh);
 
-#if IGNORE
-			signalReceived = ~Signum.SIGUSR1;
-			Stdlib.raise (Signum.SIGUSR1);
+			st.signalReceived = UnixConvert.FromSignum (Signum.SIGUSR1);
+			Stdlib.raise (Signum.SIGURG);
 
-			Assert.IsFalse (signalReceived == Signum.SIGUSR1,
+			Assert.IsFalse (UnixConvert.ToSignum (st.signalReceived) == Signum.SIGURG,
 					"#IH: Signal Handler invoked when it should have been removed!");
-#endif
 		}
 
 		[Test]

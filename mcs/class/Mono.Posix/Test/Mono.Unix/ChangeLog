@@ -1,3 +1,14 @@
+2005-04-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* StdlibTest.cs: Calling a P/Invoke function from signal-handler context is
+	  *bad*, which is why I've had so much trouble getting consistent results
+	  getting this test to work -- it was broken by design.  Instead, just save
+	  the signum passed to the handler (which is reentrant safe), and compare
+	  the saved value with the expected value after the signal handler returns.
+	  This should always work.  Use SIGURG instead of SIGUSR1 because SIGURG is
+	  ignored by default (allowing us to call it without adding your own
+	  handler), unlike SIGUSR1 which terminates the program.
+
 2005-03-28  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* StdioFileStreamTest.cs: Added; based on MonoTests.System.IO.FileStreamTest.
