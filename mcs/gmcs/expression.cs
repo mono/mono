@@ -5975,7 +5975,9 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsGenericParameter) {
-				if (!TypeManager.HasConstructorConstraint (type)) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (type);
+
+				if ((gc == null) || (!gc.HasConstructorConstraint && !gc.IsValueType)) {
 					Error (304, String.Format (
 						       "Cannot create an instance of the " +
 						       "variable type '{0}' because it " +

@@ -1631,15 +1631,6 @@ namespace Mono.CSharp {
 			return (TypeParameter) builder_to_type_param [t];
 		}
 
-		public static bool HasConstructorConstraint (Type t)
-		{
-			GenericConstraints gc = GetTypeParameterConstraints (t);
-			if (gc == null)
-				return false;
-
-			return (gc.Attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0;
-		}
-
 		public static GenericConstraints GetTypeParameterConstraints (Type t)
 		{
 			if (!t.IsGenericParameter)
