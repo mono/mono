@@ -4061,7 +4061,9 @@ opt_variable_initializer
 variable_initializer
 	: expression
 	  {
-		$$ = $1;
+		Expression etmp = (Expression) $1;
+		etmp = SetValueRequiredFlag (etmp);
+		$$ = etmp;
 	  }
 	| array_initializer
 	  {
@@ -4362,15 +4364,11 @@ argument_list
 argument
 	: expression
 	  {
-		Expression expr = (Expression) $1;
-		expr = SetValueRequiredFlag (expr);
-		$$ = new Argument (expr, Argument.AType.Expression);
+		$$ = new Argument ((Expression) $1, Argument.AType.Expression);
 	  }
 	| BYREF variable_reference
 	  {
-		Expression expr = (Expression) $2;
-		expr = SetValueRequiredFlag (expr);
-		$$ = new Argument (expr, Argument.AType.Ref);
+		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
 	  }
 	| /* empty */
 	  {
@@ -4378,9 +4376,7 @@ argument
 	  }
 	| ADDRESSOF expression
 	  {
-		Expression expr = (Expression) $2;
-		expr = SetValueRequiredFlag (expr);
-		$$ = new Argument (expr, Argument.AType.AddressOf);
+		$$ = new Argument ((Expression) $2, Argument.AType.AddressOf);
 	  }
 	;
 
@@ -4639,72 +4635,57 @@ conditional_xor_expression
 assignment_expression
 	: prefixed_unary_expression ASSIGN _mark_ expression
 	  { 
-		Expression expr = SetValueRequiredFlag ((Expression) $4);
-		$$ = new Assign ((Expression) $1, expr, (Location)$3);
+		$$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
 	  }
 	| prefixed_unary_expression OP_EXP ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Exponentiation, (Expression) $1, expr, l);
+			Binary.Operator.Exponentiation, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression STAR ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, expr, l);
+			Binary.Operator.Multiply, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression DIV ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, expr, l);
+			Binary.Operator.Division, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression PLUS ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, expr, l);
+			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression MINUS ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, expr, l);
+			Binary.Operator.Subtraction, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.LeftShift, (Expression) $1, expr, l);
+			Binary.Operator.LeftShift, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.RightShift, (Expression) $1, expr, l);
+			Binary.Operator.RightShift, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression OP_CONCAT ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
 
 		// FIXME should be strings only
-		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, expr, l);
+			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression ASSIGN ADDRESSOF _mark_ expression
 	  { 
@@ -5588,11 +5569,37 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 	}
 }
 
-static Expression SetValueRequiredFlag (Expression expr) {
+public static Expression SetLeftHandFlag (Expression expr) {
+	if (expr is Invocation) {
+		Invocation e = (Invocation) expr;
+		e.IsLeftHand = true;
+		return e;
+	} else if (expr is MemberAccess) {
+		MemberAccess e = (MemberAccess) expr;
+		e.IsLeftHand = true;
+		return e;
+	}
+
+	return expr;
+}
+
+public static Expression SetValueRequiredFlag (Expression expr) {
 	if (expr is Invocation) {
 		Invocation e = (Invocation) expr;
 		e.IsRetvalRequired = true;
 		expr = e;
+		return expr;
+	}
+	if (expr is Binary) {
+		Binary binary = (Binary) expr;
+		binary.Left  = SetValueRequiredFlag (binary.Left);
+		binary.Right  = SetValueRequiredFlag (binary.Right);
+		return binary;	
+	}
+	if (expr is Unary) {
+		Unary unary = (Unary) expr;
+		unary.Expr = SetValueRequiredFlag (unary.Expr);
+		return unary;
 	}
 	return expr;
 }

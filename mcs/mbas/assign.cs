@@ -132,6 +132,10 @@ namespace Mono.MonoBASIC {
 
 		public Assign (Expression target, Expression source, Location l)
 		{
+			source = Parser.SetValueRequiredFlag (source);
+			target = Parser.SetLeftHandFlag (target);
+			if (target is MemberAccess)
+				((MemberAccess) target).IsLeftHand = true;
 			this.target = target;
 			this.source = this.real_source = source;
 			this.loc = l;
@@ -258,12 +262,48 @@ namespace Mono.MonoBASIC {
                         			return e;
                 			}
 				}
-	
 			}
-			target = target.ResolveLValue (ec, source);
 
-			if (target == null)
+			Expression tmpTarget = target.ResolveLValue (ec, source);
+			if (tmpTarget == null) {
+				// Case of LateBinding.
+				// Get the appropriate arguments, add the source as the last argument
+				Expression lateBindingExpr = null;
+				ArrayList arguments = null;
+				if (target is Invocation) {
+					lateBindingExpr = ((Invocation) target).Expr;
+					arguments = ((Invocation) target).Arguments;
+				}
+				if (target is MemberAccess) {
+					lateBindingExpr = target;
+				}
+				if (arguments == null)
+					arguments = new ArrayList ();
+
+				arguments.Add (new Argument (source, Argument.AType.Expression));
+
+				Expression etmp = lateBindingExpr;
+				Type exprType = lateBindingExpr.Type;
+				// Get the target of the invocation/memberAccess
+				if (exprType == null) {
+					if (etmp is Invocation)
+						etmp = ((Invocation) etmp).Expr;
+					if (etmp is MemberAccess)
+						etmp = ((MemberAccess) etmp).Expr;
+					exprType = etmp.Type;
+				}
+
+				if (exprType == TypeManager.object_type) {
+					StatementSequence tmp = new StatementSequence (ec.CurrentBlock, loc, lateBindingExpr, 
+										arguments, false, true);
+					tmp.GenerateLateBindingStatements ();
+					return tmp.Resolve (ec);
+				}
+
 				return null;
+			}
+
+			target = tmpTarget;
 
 			Type target_type = target.Type;
 			Type source_type = real_source.Type;

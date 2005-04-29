@@ -3303,6 +3303,21 @@ namespace Mono.MonoBASIC {
 			this.isRetValRequired = this.isLeftHandSide = false;
 		}
 
+		public ArrayList Arguments {
+			get {
+				return args;
+			}
+			set {
+				args = value;
+			}
+		}
+
+		public bool IsLeftHandSide {
+			set {
+				isLeftHandSide = value;
+			}
+		}
+
 		public Block StmtBlock {
 			get {
 				return stmtBlock;
@@ -3321,12 +3336,6 @@ namespace Mono.MonoBASIC {
 		public void GenerateLateBindingStatements ()
 		{
 			int argCount = 0;
-			// Arguments for call Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall
-			ArrayList invocationArgs = new ArrayList ();
-			invocationArgs.Add (new Argument (((MemberAccess)expr).Expr, Argument.AType.Expression));
-			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
-			invocationArgs.Add (new Argument (new StringLiteral (((MemberAccess)expr).Identifier), Argument.AType.Expression));
-			// __LateBindingArgs = new Object () {arg1, arg2 ...}
 			ArrayList arrayInitializers = new ArrayList ();
 			ArrayList originalArgs = new ArrayList ();
 			if (args != null) {
@@ -3338,19 +3347,47 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
+			// __LateBindingArgs = new Object () {arg1, arg2 ...}
 			ArrayCreation new_expr = new ArrayCreation (Parser.DecomposeQI ("System.Object",  loc), "[]", arrayInitializers, loc);
 			Assign assign_stmt = null;
 
 			LocalVariableReference v1 = new LocalVariableReference (stmtBlock, Block.lateBindingArgs, loc);
 			assign_stmt = new Assign (v1, new_expr, loc);
 			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
-			invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
-
 			// __LateBindingArgNames = nothing
 			//LocalVariableReference v2 = new LocalVariableReference (stmtBlock, Block.lateBindingArgNames, loc);
 			//assign_stmt = new Assign (v2, NullLiteral.Null, loc);
 			//stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
-
+			// Arguments for call Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall
+			Expression tempExpr = expr;
+			string memName = "";
+			bool isIndexerAccess = true;
+			if (expr is MemberAccess) {
+				tempExpr = ((MemberAccess)expr).Expr;
+				memName = ((MemberAccess)expr).Identifier;
+				isIndexerAccess = false;
+			} else if (expr is IndexerAccess) {
+				tempExpr = ((IndexerAccess) expr).Instance;
+			}
+			ArrayList invocationArgs = new ArrayList ();
+			if (isIndexerAccess) {
+				invocationArgs.Add (new Argument (tempExpr, Argument.AType.Expression));
+				invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
+				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+				Expression tmp = null;
+				if (!isLeftHandSide)
+					tmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", loc);
+				else
+					tmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", loc);
+				Invocation invStmt = new Invocation (tmp, invocationArgs, Location.Null);
+				invStmt.IsLateBinding = true;
+				stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) invStmt, loc));
+				return;
+			}
+			invocationArgs.Add (new Argument (tempExpr, Argument.AType.Expression));
+			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+			invocationArgs.Add (new Argument (new StringLiteral (memName), Argument.AType.Expression));
+			invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
 			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
 
 			// __LateBindingCopyBack = new Boolean (no_of_args) {}
@@ -3383,6 +3420,7 @@ namespace Mono.MonoBASIC {
 			Expression etmp = null;
 			if (isLeftHandSide) {
 				// LateSet
+				etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateSet", loc);
 			} else if (isRetValRequired) {
 				// Late Get
 				etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateGet", loc);

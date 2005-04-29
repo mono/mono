@@ -33,6 +33,7 @@ namespace Mono.MonoBASIC {
 		
 		public Argument (Expression expr, AType type)
 		{
+			expr = Parser.SetValueRequiredFlag (expr);
 			this.Expr = expr;
 			this.ArgType = type;
 		}

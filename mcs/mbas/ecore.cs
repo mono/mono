@@ -834,7 +834,8 @@ namespace Mono.MonoBASIC {
 				}
 
 				if ((expr_type != TypeManager.char_type) && 
-				    (expr_type != TypeManager.string_type))
+				    (expr_type != TypeManager.string_type) &&
+				    (expr_type != TypeManager.object_type))
 					return new NumericToBoolCast (expr, expr.Type);
 			}
 
@@ -4159,7 +4160,6 @@ namespace Mono.MonoBASIC {
 
 	public class BoolToNumericCast : EmptyCast 
 	{
-		Expression src;
 		Type target_type;
 		OpCode conv;
 		

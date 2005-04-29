@@ -361,6 +361,14 @@ namespace Mono.MonoBASIC {
 					return this;
 				}
 
+				if (expr_type == TypeManager.object_type) {
+					Expression etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.ObjectType.NotObj", Location.Null);
+					ArrayList arguments = new ArrayList ();
+					arguments.Add (new Argument (Expr, Argument.AType.Expression));
+					Expression e = new Invocation (etmp, arguments, loc);
+					return e.Resolve (ec);
+				}
+
 				break;
 			case Operator.AddressOf:
 				// Not required in VB ??
@@ -1698,6 +1706,8 @@ namespace Mono.MonoBASIC {
 
 		public Binary (Operator oper, Expression left, Expression right, Location loc)
 		{
+			left = Parser.SetValueRequiredFlag (left);
+			right = Parser.SetValueRequiredFlag (right);
 			this.oper = oper;
 			this.left = left;
 			this.right = right;
@@ -2092,9 +2102,11 @@ namespace Mono.MonoBASIC {
                                 // one from the other, then we catch the error there.
 
 				// If other type is a value type, convert it to object
-				if (l.IsValueType && r == TypeManager.object_type)
+				if (r == TypeManager.object_type &&
+				    (l.IsValueType || l == TypeManager.string_type))
 					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
-				if (r.IsValueType && l == TypeManager.object_type)
+				if (l == TypeManager.object_type &&
+				    (r.IsValueType || r == TypeManager.string_type))
 					right = ConvertImplicit (ec, right, TypeManager.object_type, loc);
 				if (left == null || right == null) {
 					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
@@ -2614,13 +2626,6 @@ namespace Mono.MonoBASIC {
 		{
 			left = left.Resolve (ec);
 			right = right.Resolve (ec);
-
-			if (left is Invocation) {
-				((Invocation) left).IsRetvalRequired = true;
-			}
-			if (right is Invocation) {
-				((Invocation) right).IsRetvalRequired = true;
-			}
 
 			if (left == null || right == null)
 				return null;
@@ -3585,6 +3590,9 @@ namespace Mono.MonoBASIC {
 		public Invocation (Expression expr, ArrayList arguments, Location l)
 		{
 			this.expr = expr;
+			if (this.expr is MemberAccess) {
+				((MemberAccess) this.expr).IsInvocation = true;
+			}
 			this.is_retval_required = false;
 			this.is_left_hand = false;
 			Arguments = arguments;
@@ -3595,6 +3603,15 @@ namespace Mono.MonoBASIC {
 		public Expression Expr {
 			get {
 				return expr;
+			}
+		}
+
+		public bool IsLeftHand {
+			get {
+				return is_left_hand;
+			}
+			set {
+				is_left_hand = value;
 			}
 		}
 
@@ -4438,6 +4455,8 @@ namespace Mono.MonoBASIC {
 			}	
 
 			if (temp == null) {
+				if (is_left_hand)
+					return null;
 				if (expr is MemberAccess) {
 					MemberAccess m = expr as MemberAccess;
 					if (m.Expr.Type == TypeManager.object_type) {
@@ -4597,42 +4616,25 @@ namespace Mono.MonoBASIC {
 					// We can't resolve now, but we
 					// have to try to access the array with a call
 					// to LateIndexGet/Set in the runtime
-					Expression lig_call_expr;
-
-					if (!is_left_hand)
-						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
-					else
-						lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexSet", Location.Null);
-					Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
-					ArrayList adims = new ArrayList();
-
-					ArrayList ainit = new ArrayList();
-					foreach (Argument a in Arguments)
-						ainit.Add ((Expression) a.Expr);
-
-					adims.Add ((Expression) new IntLiteral (Arguments.Count));
-
-					Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
-
-					ArrayList args = new ArrayList();
-					args.Add (new Argument(expr, Argument.AType.Expression));
-					args.Add (new Argument(oace, Argument.AType.Expression));
-					args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
-
-					Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
-					expr_to_return = lig_call.Resolve(ec);
-					expr_to_return.eclass = ExprClass.Variable;
+					if (! is_left_hand) {
+						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, 
+									loc, ia, Arguments, 
+									true, false);
+						etmp.GenerateLateBindingStatements();
+						return etmp.Resolve (ec);
+					}
+					return null;
 				}
 			}
 
 			return expr_to_return;
 		}
 
-        static void Error_WrongNumArguments (Location loc, String name, int arg_count)
-        {
-            Report.Error (1501, loc, "No overload for method `" + name + "' takes `" +
+        	static void Error_WrongNumArguments (Location loc, String name, int arg_count)
+        	{
+            		Report.Error (1501, loc, "No overload for method `" + name + "' takes `" +
                                       arg_count + "' arguments");
-        }
+        	}
 
 		// <summary>
 		//   Emits the list of arguments as an array
@@ -6096,12 +6098,40 @@ namespace Mono.MonoBASIC {
 		public readonly string Identifier;
 		Expression expr;
 		Expression member_lookup;
+		bool is_invocation;
+		bool is_left_hand;
 		
 		public MemberAccess (Expression expr, string id, Location l)
 		{
 			this.expr = expr;
 			Identifier = id;
 			loc = l;
+		}
+
+		public MemberAccess (Expression expr, string id, Location l, bool isInvocation)
+		{
+			this.expr = expr;
+			Identifier = id;
+			loc = l;
+			is_invocation = isInvocation;
+		}
+
+		public bool IsInvocation {
+			get {
+				return is_invocation;
+			}
+			set {
+				is_invocation = value;
+			}
+		}
+
+		public bool IsLeftHand {
+			get {
+				return is_left_hand;
+			}
+			set {
+				is_left_hand = value;
+			}
 		}
 
 		public Expression Expr {
@@ -6367,6 +6397,23 @@ namespace Mono.MonoBASIC {
 				if (lookup == null) {
 					if (expr_type != TypeManager.object_type)
 						Error (30456, "'" + expr_type + "' does not contain a definition for '" + Identifier + "'");
+					// If this came as a part of Invocation, 
+					// Since argumets are not known, return null, 
+					// let Invocation's Resolve take care
+					if (is_invocation)
+						return null;
+
+					else if (! is_left_hand) {
+						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, 
+										loc, this, null, 
+										true, is_left_hand);
+						etmp.GenerateLateBindingStatements();
+						return etmp.Resolve (ec);
+					} 
+
+					// if the expression is a left hand side of an assignment,
+					// return null, as we dont know the RHS
+					// Let assign take care of Late Binding
 					return null;
 				}
 				else
@@ -7096,9 +7143,10 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			Report.Error (21, loc,
-				      "Type '" + TypeManager.MonoBASIC_Name (lookup_type) +
-				      "' does not have any indexers defined");
+			if (lookup_type != TypeManager.object_type)
+				Report.Error (21, loc,
+					      "Type '" + TypeManager.MonoBASIC_Name (lookup_type) +
+					      "' does not have any indexers defined");
 			return null;
 		}
 	}
@@ -7135,6 +7183,18 @@ namespace Mono.MonoBASIC {
 			this.loc = loc;
 		}
 
+		public Expression Instance {
+			get {
+				return instance_expr;
+			}
+		}
+
+		public ArrayList Arguments {
+			get {
+				return arguments;
+			}
+		}
+
 		protected virtual bool CommonResolve (EmitContext ec)
 		{
 			indexer_type = instance_expr.Type;
@@ -7166,8 +7226,9 @@ namespace Mono.MonoBASIC {
 					ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
 
 			if (get == null){
-				Error (30524, "indexer can not be used in this context, because " +
-				       "it lacks a 'get' accessor");
+				if (instance_expr.Type != TypeManager.object_type)
+					Error (30524, "indexer can not be used in this context, because " +
+				   		"it lacks a 'get' accessor");
 				return null;
 			}
 
