@@ -1,3 +1,10 @@
+2005-04-29  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_check_share_by_pid): For systems that
+	don't have file descriptor info in /proc check that the original
+	opener of a file is still there, if a share violation would
+	otherwise happen.
+
 2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* handles.c:
