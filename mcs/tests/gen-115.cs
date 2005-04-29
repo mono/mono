@@ -10,6 +10,7 @@
 
 using System;
 using System.IO;                        // TextWriter
+using System.Collections;
 using System.Collections.Generic;       // IEnumerable<T>, IEnumerator<T>
 
 public delegate R Mapper<A,R>(A x);
@@ -171,6 +172,10 @@ public class LinkedList<T> : IMyList<T> {
     return new LinkedListEnumerator(this);
   }
 
+  IEnumerator IEnumerable.GetEnumerator() {
+    return new LinkedListEnumerator(this);
+  }
+
   private class LinkedListEnumerator : IEnumerator<T> {
     T curr;                     // The enumerator's current element
     bool valid;                 // Is the current element valid?
@@ -188,6 +193,10 @@ public class LinkedList<T> : IMyList<T> {
           throw new InvalidOperationException();
       }
     }
+
+    object IEnumerator.Current {
+      get { return Current; }
+    }
     
     public bool MoveNext() {
       if (next != null)  {
@@ -195,6 +204,10 @@ public class LinkedList<T> : IMyList<T> {
       } else 
         valid = false; 
       return valid;
+    }
+
+    public void Reset() {
+      throw new NotImplementedException ();
     }
 
     public void Dispose() {

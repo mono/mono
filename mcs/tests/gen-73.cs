@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 class MyList<T> : IEnumerable<T>
@@ -6,6 +7,11 @@ class MyList<T> : IEnumerable<T>
 	public IEnumerator<T> GetEnumerator ()
 	{
 		yield break;
+	}
+
+	IEnumerator IEnumerable.GetEnumerator ()
+	{
+		return GetEnumerator ();
 	}
 }
 
