@@ -1,7 +1,8 @@
 2005-04-29  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReader.cs: removed use of _first. throw if given index
-	is out of range of columns.
+	is out of range of columns. Copy DataTable [] to local array so
+	that not to be disturbed.
 
 2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
 

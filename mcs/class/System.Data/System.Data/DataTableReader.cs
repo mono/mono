@@ -60,7 +60,11 @@ namespace System.Data {
                             || dataTables.Length <= 0)
                                 throw new ArgumentException ("Cannot Create DataTable. Argument Empty!");
 
-                        this._tables = dataTables;
+                        this._tables = new DataTable [dataTables.Length];
+
+                        for (int i = 0; i < dataTables.Length; i++)
+                                this._tables [i] = dataTables [i];
+                        
                         _closed = false;
                         _index = 0;
                         _current = -1;
