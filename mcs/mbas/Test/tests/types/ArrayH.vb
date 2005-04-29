@@ -23,6 +23,7 @@ module m
 		if a4(1) <> False then	
 			Throw New System.Exception("Boolean array not working")
 		End if 
+		System.Console.WriteLine (a5(1) = nothing)
 		if a5(1) <> "" then	
 			Throw New System.Exception("String array not working")
 		End if 
