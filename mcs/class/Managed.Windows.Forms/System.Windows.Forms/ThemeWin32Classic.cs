@@ -1109,8 +1109,7 @@ namespace System.Windows.Forms
 		{
 			bool details = (control.View == View.Details);
 
-			// Clear the graphics context
-			dc.Clear (control.BackColor);
+			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), clip);
 
 			// border is drawn directly in the Paint method
 			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {

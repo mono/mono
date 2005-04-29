@@ -1,5 +1,10 @@
 2005-04-29  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs: Don't clear the GC that will clear the
+	entire image buffer. Just clear the clipping rectangle.
+
+2005-04-29  Jackson Harper  <jackson@ximian.com>
+
 	* ThemeWin32Classic.cs: Don't draw list view items that are
 	outside the clipping rectangle.
 
