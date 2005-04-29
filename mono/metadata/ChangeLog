@@ -1,3 +1,8 @@
+2005-04-29  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (mono_class_init): Add a mono_loader_unlock to the
+	#74734 fix.
+
 2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Environment_Exit): Remove the 
