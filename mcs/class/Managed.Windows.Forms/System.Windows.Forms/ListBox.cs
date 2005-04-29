@@ -22,13 +22,8 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
-// TODO:
-//	- Horizontal item scroll
-//	- Performance testing
-//
-//
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
 using System.Drawing;
@@ -1058,6 +1053,11 @@ namespace System.Windows.Forms
 					
 					if (has_focus == true && focused_item == i)
 						state |= DrawItemState.Focus;
+						
+					if (hscrollbar_ctrl != null && hscrollbar_ctrl.Visible) {
+						item_rect.X -= hscrollbar_ctrl.Value;
+						item_rect.Width += hscrollbar_ctrl.Value;
+					}
 
 					OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
 						i, state, ForeColor, BackColor));
@@ -1086,8 +1086,11 @@ namespace System.Windows.Forms
 		// Value Changed
 		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
-			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
-			LBoxInfo.last_item = LastVisibleItem ();
+			if (multicolumn) {
+				LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
+				LBoxInfo.last_item = LastVisibleItem ();
+			}
+			
 			base.Refresh ();
 		}
 
@@ -1711,8 +1714,9 @@ namespace System.Windows.Forms
 			} else { /* If large item*/
 
 				if (listbox_info.max_itemwidth > listbox_info.client_rect.Width && HorizontalScrollbar) {
-					show = true;
+					show = true;					
 					hscrollbar_ctrl.Maximum = listbox_info.max_itemwidth;
+					hscrollbar_ctrl.LargeChange = listbox_info.textdrawing_rect.Width;
 				}
 			}
 

@@ -1,3 +1,8 @@
+2005-04-29  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListBox.cs: added horizontal item scroll
+
+
 2005-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Remove some old debug code that was
