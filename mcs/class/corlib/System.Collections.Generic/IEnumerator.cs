@@ -39,11 +39,9 @@ namespace System.Collections.Generic
 {
 	[CLSCompliant(false)]
 	[ComVisible(false)]
-	public interface IEnumerator<T> : IDisposable
+	public interface IEnumerator<T> : IDisposable, IEnumerator
 	{
-		bool MoveNext ();
-
-		T Current {
+		new T Current {
 			get;
 		}
 	}

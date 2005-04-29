@@ -526,6 +526,11 @@ namespace System.Collections.Generic
 			{
 				return list.GetEnumerator ();
 			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return ((IEnumerable) list).GetEnumerator ();
+			}
 			
 			public int IndexOf (I item)
 			{
@@ -569,7 +574,7 @@ namespace System.Collections.Generic
 			}
 		}
 		
-		public struct Enumerator : IEnumerator <T>, IEnumerator, IDisposable {
+		public struct Enumerator : IEnumerator <T>, IDisposable {
 			const int NOT_STARTED = -2;
 			
 			// this MUST be -1, because we depend on it in move next.

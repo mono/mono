@@ -39,9 +39,9 @@ namespace System.Collections.Generic
 {
 	[CLSCompliant(false)]
 	[ComVisible(false)]
-	public interface IEnumerable<T>
+	public interface IEnumerable<T> : IEnumerable
 	{
-		IEnumerator<T> GetEnumerator ();
+		new IEnumerator<T> GetEnumerator ();
 	}
 }
 #endif

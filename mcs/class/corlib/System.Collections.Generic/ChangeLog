@@ -1,3 +1,10 @@
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
+	Reflect latest spec changes.
+
+	* IEnumerable.cs (IEnumerable<T>): Implement IEnumerable.
+	* IEnumerator.cs (IEnumerator<T>): Implement IEnumerator.
+
 2005-04-29  Raja R Harinath  <rharinath@novell.com>
 
 	Remove FIXME.
