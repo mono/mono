@@ -1,3 +1,8 @@
+2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c: register assemblies loaded from data (bundles) in the loaded
+	assemblies hash. Fixes bug #74772.
+
 2005-04-29  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_type_get_name_recurse): Update to the new naming
