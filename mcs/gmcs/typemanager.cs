@@ -911,41 +911,45 @@ public partial class TypeManager {
 		return mb.DeclaringType.FullName.Replace ('+', '.') + '.' + name;
 	}
 
-	static public string GetFullName (Type t)
+	private static void GetFullName_recursed (StringBuilder sb, Type t, bool recursed)
 	{
-		if (t.FullName == null)
-			return t.Name;
-
-		string name = t.FullName.Replace ('+', '.');
-
-		DeclSpace tc = LookupDeclSpace (t);
-		if ((tc != null) && tc.IsGeneric) {
-			TypeParameter[] tparam = tc.TypeParameters;
-
-			StringBuilder sb = new StringBuilder (name);
-			sb.Append ("<");
-			for (int i = 0; i < tparam.Length; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (tparam [i].Name);
-			}
-			sb.Append (">");
-			return sb.ToString ();
-		} else if (t.HasGenericArguments && !t.IsGenericInstance) {
-			Type[] tparam = t.GetGenericArguments ();
-
-			StringBuilder sb = new StringBuilder (name);
-			sb.Append ("<");
-			for (int i = 0; i < tparam.Length; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (tparam [i].Name);
-			}
-			sb.Append (">");
-			return sb.ToString ();
+		if (t.IsGenericParameter) {
+			sb.Append (t.Name);
+			return;
 		}
 
-		return name;
+		if (t.DeclaringType != null) {
+			GetFullName_recursed (sb, t.DeclaringType, true);
+			sb.Append (".");
+		}
+
+		if (!recursed) {
+			string ns = t.Namespace;
+			if ((ns != null) && (ns != "")) {
+				sb.Append (ns);
+				sb.Append (".");
+			}
+		}
+
+		sb.Append (SimpleName.RemoveGenericArity (t.Name));
+
+		Type[] args = GetTypeArguments (t);
+		if (args.Length > 0) {
+			sb.Append ("<");
+			for (int i = 0; i < args.Length; i++) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (GetFullName (args [i]));
+			}
+			sb.Append (">");
+		}
+	}
+
+	static public string GetFullName (Type t)
+	{
+		StringBuilder sb = new StringBuilder ();
+		GetFullName_recursed (sb, t, false);
+		return sb.ToString ();
 	}
 
 	/// <summary>

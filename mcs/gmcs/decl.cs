@@ -110,12 +110,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public string GetMethodName ()
-		{
-			if (Left != null)
-				return Left.GetTypeName () + "." + Name;
-			else
-				return Name;
+		public string MethodName {
+			get {
+				if (Left != null)
+					return Left.FullName + "." + Name;
+				else
+					return Name;
+			}
 		}
 
 		public static string MakeName (string name, TypeArguments args)
@@ -201,18 +202,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public string FullName {
+			get {
+				if (TypeArguments != null)
+					return Name + "<" + TypeArguments + ">";
+				else
+					return Name;
+			}
+		}
+
 		public override string ToString ()
 		{
-			string full_name;
-			if (TypeArguments != null)
-				full_name = Name + "<" + TypeArguments + ">";
-			else
-				full_name = Name;
-
 			if (Left != null)
-				return Left + "." + full_name;
+				return Left.FullName + "." + FullName;
 			else
-				return full_name;
+				return FullName;
 		}
 
 		public override bool Equals (object other)

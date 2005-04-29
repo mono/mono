@@ -1,3 +1,17 @@
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.GetFullName): Updated to the new
+	naming schema.
+
+	* class.cs (MethodCore.IsDuplicateImplementation): If we're an
+	explicit interface implementation, compare the interface types.
+	(MethodData.Define): Use the new naming scheme from the latest
+	.NET 2.x beta2.
+	(MemberBase.DoDefineBase): Resolve `InterfaceType' here.
+
+	* decl.cs (MemberName.GetMemberName): Removed.
+	(MemberName.MethodName, FullName): New properties.
+
 2005-04-25  Raja R Harinath  <rharinath@novell.com>
 
 	* gmcs.exe.config: Update v2.0.40607 -> v2.0.50215.

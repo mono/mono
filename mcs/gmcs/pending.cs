@@ -483,7 +483,7 @@ namespace Mono.CSharp {
 		{
 			MethodBuilder proxy;
 
-			string proxy_name = iface.Name + "." + iface_method.Name;
+			string proxy_name = TypeManager.GetFullName (iface) + "." + iface_method.Name;
 
 			proxy = container.TypeBuilder.DefineMethod (
 				proxy_name,

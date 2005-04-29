@@ -3748,6 +3748,9 @@ namespace Mono.CSharp {
 					equal = false;
 			}
 
+			if (IsExplicitImpl && (method.InterfaceType != InterfaceType))
+				equal = may_unify = false;
+
 			// TODO: make operator compatible with MethodCore to avoid this
 			if (this is Operator && method is Operator) {
 				if (MemberType != method.MemberType)
@@ -4135,8 +4138,12 @@ namespace Mono.CSharp {
 
 			MethodBuilder mb = null;
 			if (GenericMethod != null) {
-				string mname = MemberName.GetMethodName ();
-				mb = Parent.TypeBuilder.DefineGenericMethod (mname, flags);
+				string method_name = MemberName.Name;
+
+				if (IsExplicitImpl)
+					method_name = TypeManager.GetFullName (InterfaceType) + "." + method_name;
+
+				mb = Parent.TypeBuilder.DefineGenericMethod (method_name, flags);
 				if (!GenericMethod.Define (mb))
 					return false;
 			}
@@ -5037,14 +5044,8 @@ namespace Mono.CSharp {
 		{
 			MethodInfo implementing = null;
 
-			string prefix;
-			if (member.IsExplicitImpl)
-				prefix = member.InterfaceType.FullName + ".";
-			else
-				prefix = "";
-
 			string name = method.MethodName.Basename;
-			string method_name = prefix + name;
+			string method_name = method.MethodName.FullName;
 
 			Type[] ParameterTypes = method.ParameterTypes;
 
@@ -5060,11 +5061,12 @@ namespace Mono.CSharp {
 					if (implementing == null){
 						if (member is PropertyBase) {
 							Report.Error (550, method.Location, "'{0}' is an accessor not found in interface member '{1}'",
-								method.GetSignatureForError (container), member.Name);
+								      method.GetSignatureForError (container), member.Name);
 
 						} else {
-							Report.Error (539, method.Location,
-								"'{0}' in explicit interface declaration is not a member of interface", member.GetSignatureForError () );
+							Report.Error (539, method.Location, "'{0}' in explicit interface " +
+								      "declaration is not a member of interface",
+								      member.Name);
 						}
 						return false;
 					}
@@ -5074,7 +5076,8 @@ namespace Mono.CSharp {
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
 						return false;
 					}
-					method_name = member.InterfaceType.FullName + "." + name;
+
+					method_name = TypeManager.GetFullName (member.InterfaceType) + "." + method_name;
 				} else {
 					if (implementing != null && method is AbstractPropertyEventMethod && !implementing.IsSpecialName) {
 						Report.SymbolRelatedToPreviousError (implementing);
@@ -5183,7 +5186,6 @@ namespace Mono.CSharp {
 				if (member.IsExplicitImpl)
 					container.TypeBuilder.DefineMethodOverride (
 						builder, implementing);
-
 			}
 
 			TypeManager.RegisterMethod (builder, ParameterInfo, ParameterTypes);
@@ -5533,6 +5535,25 @@ namespace Mono.CSharp {
 				flags = Modifiers.MethodAttr (ModFlags);
 			}
 
+			if (IsExplicitImpl) {
+				Expression expr = MemberName.Left.GetTypeExpression (Location);
+				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec);
+				if (iface_texpr == null)
+					return false;
+
+				InterfaceType = iface_texpr.Type;
+
+				if (!InterfaceType.IsInterface) {
+					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
+					return false;
+				}
+
+				if (!Parent.VerifyImplements (InterfaceType, ShortName, Name, Location))
+					return false;
+				
+				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
+			}
+
 			return true;
 		}
 
@@ -5589,25 +5610,6 @@ namespace Mono.CSharp {
 
 			if (MemberType.IsPointer && !UnsafeOK (Parent))
 				return false;
-
-			if (IsExplicitImpl) {
-				Expression expr = MemberName.Left.GetTypeExpression (Location);
-				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec);
-				if (iface_texpr == null)
-					return false;
-
-				InterfaceType = iface_texpr.Type;
-
-				if (!InterfaceType.IsInterface) {
-					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", TypeManager.CSharpName (InterfaceType));
-					return false;
-				}
-
-				if (!Parent.VerifyImplements (InterfaceType, ShortName, Name, Location))
-					return false;
-				
-				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
-			}
 
 			return true;
 		}
