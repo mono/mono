@@ -1,5 +1,13 @@
 2005-04-29  Dick Porter  <dick@ximian.com>
 
+	* processes.c (EnumProcesses): Use a GArray instead of a GPtrArray
+	now it's storing pids not handles, also fixes memory leak caused
+	by unclear glib documentation.
+
+	* sockets.c (WSACleanup): Remove unused variable
+
+2005-04-29  Dick Porter  <dick@ximian.com>
+
 	* handles.c (_wapi_handle_check_share_by_pid): For systems that
 	don't have file descriptor info in /proc check that the original
 	opener of a file is still there, if a share violation would
