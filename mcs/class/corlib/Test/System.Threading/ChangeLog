@@ -1,3 +1,7 @@
+2005-04-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AutoResetEventTest.cs: test for AutoResetEvent.
+
 2005-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompressedStackCas.cs: New. CAS unit tests for CompressedStack.
