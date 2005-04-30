@@ -1,3 +1,8 @@
+2005-04-30  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* stdio.c: Add Mono_Posix_Stdlib_DumpFilePosition, which create a hex string
+	  "dump" of a fpos_t.  This is used for Mono.Unix.FilePosition.ToString().
+
 2005-04-19  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c, map.h: Added XattrFlags values, functions.

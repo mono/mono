@@ -175,6 +175,37 @@ Mono_Posix_Stdlib_fsetpos (FILE* stream, fpos_t *pos)
 	return fsetpos (stream, pos);
 }
 
+#define MPH_FPOS_LENGTH (sizeof(fpos_t)*2)
+
+int
+Mono_Posix_Stdlib_DumpFilePosition (char *dest, fpos_t *pos, gint32 len)
+{
+	char *destp;
+	unsigned char *posp, *pose;
+	int i;
+
+	if (dest == NULL)
+		return MPH_FPOS_LENGTH;
+
+	if (pos == NULL || len <= 0) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	posp = (unsigned char*) pos;
+	pose = posp + sizeof(*pos);
+	destp = dest;
+
+	for ( ; posp < pose && len > 1; destp += 2, ++posp, len -= 2) {
+		sprintf (destp, "%02X", *posp);
+	}
+
+	if (len)
+		dest[MPH_FPOS_LENGTH] = '\0';
+
+	return dest;
+}
+
 G_END_DECLS
 
 /*
