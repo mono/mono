@@ -1,3 +1,8 @@
+2005-04-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* threads.c: In mono_thread_suspend_all_other_threads, if a thread
+	has an abort request, convert it into a suspend request.
+
 2005-04-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): give a friendly
