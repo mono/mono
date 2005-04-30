@@ -2866,11 +2866,13 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldloc, val);
 			ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
 			ig.Emit (OpCodes.Stloc, val);
-		
+
 			int section_count = Sections.Count;
 			for (int section = 0; section < section_count; section++){
 				SwitchSection ss = (SwitchSection) Sections [section];
 				Label sec_begin = ig.DefineLabel ();
+
+				default_at_end = false;
 
 				if (pending_goto_end)
 					ig.Emit (OpCodes.Br, end_of_switch);

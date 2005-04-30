@@ -1,3 +1,8 @@
+2005-04-30  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Switch.SimpleSwitchEmit): Reset `default_at_end'
+	at the beginning of a SwitchSection.  Fix #73335.
+
 2005-04-27  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #74378
