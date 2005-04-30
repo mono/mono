@@ -1,3 +1,8 @@
+2005-04-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* events.c: calling Set on AutoResetEvent several times has the same
+	effect as calling it only once if no thread is waiting for it.
+
 2005-04-29  Dick Porter  <dick@ximian.com>
 
 	* processes.c (EnumProcesses): Use a GArray instead of a GPtrArray
