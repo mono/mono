@@ -4323,6 +4323,12 @@ if (rsrc != null)
 
     internal sealed override uint GetCodedIx(CIx code) { return 5; }
 
+    internal override uint SortKey ()
+    {
+        return (theClass.Row << MetaData.CIxShiftMap[(uint)CIx.TypeDefOrRef])
+                | theClass.GetCodedIx (CIx.TypeDefOrRef);
+    }
+
         }
   /**************************************************************************/  
         /// <summary>
@@ -5008,6 +5014,7 @@ CalcHeapSizes ();
         }*/
       }
       SortTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
+      SortTable(metaDataTables[(int)MDTable.InterfaceImpl]);
 
     }
 
@@ -5782,7 +5789,8 @@ CalcHeapSizes ();
                 }
 
     internal override uint SortKey() {
-      return eventOrProp.Row;
+      return (eventOrProp.Row << MetaData.CIxShiftMap [(uint)CIx.HasSemantics])
+              | eventOrProp.GetCodedIx (CIx.HasSemantics);
     }
 
     internal sealed override uint Size(MetaData md) {
