@@ -2179,11 +2179,13 @@ public partial class TypeManager {
 			if (texpr == null)
 				return null;
 
-			if (!new_ifaces.Contains (texpr.Type))
-				new_ifaces.Add (texpr.Type);
+			if (new_ifaces.Contains (texpr.Type))
+				continue;
+
+			new_ifaces.Add (texpr.Type);
 			
 			Type [] implementing = texpr.Type.GetInterfaces ();
-			
+
 			foreach (Type imp in implementing){
 				if (!new_ifaces.Contains (imp))
 					new_ifaces.Add (imp);

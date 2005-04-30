@@ -1,3 +1,11 @@
+2005-04-30  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs
+	(TypeManager.ExpandInterfaces): Don't add things twice.
+
+	* class.cs
+	(TypeContainer.VerifyClsCompliance): Allow generic instances.
+
 2005-04-29  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Constraints.ResolveTypes): Expand interfaces.
