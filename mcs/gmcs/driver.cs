@@ -711,7 +711,7 @@ namespace Mono.CSharp
 				
 			case "-o": 
 			case "--output":
-				Report.Warning (-29, "Compatibility: Use -out:FILE instead of --outout FILE or -o FILE");
+				Report.Warning (-29, "Compatibility: Use -out:FILE instead of --output FILE or -o FILE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
