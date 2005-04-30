@@ -4638,7 +4638,7 @@ unsafe_statement
 	{
 		if (!RootContext.Unsafe){
 			Report.Error (227, lexer.Location, 
-				"Unsafe code can only be used if --unsafe is used");
+				"Unsafe code can only be used if -unsafe is used");
 		}
 	} block {
 		$$ = new Unsafe ((Block) $3);
