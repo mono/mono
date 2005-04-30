@@ -1,3 +1,9 @@
+2005-04-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): give a friendly
+	warning for the usage of `UnmanagedFunctionPointerAttribute' which
+	is not supported yet.
+
 2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* image.c: register assemblies loaded from data (bundles) in the loaded
