@@ -1,3 +1,8 @@
+2005-04-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* TypeBuilderTest.cs: Don't write to a specific path in /tmp --
+	breaks multiple users.
+
 2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilderTest.cs: Add test for GetModules ().

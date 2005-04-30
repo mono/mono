@@ -389,6 +389,30 @@ public class TypeBuilderTest : Assertion
 		TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Sealed);
 		AssertEquals ("IsSealed works", true, tb2.IsSealed);
 	}
+	
+	static string CreateTempAssembly ()
+	{
+		FileStream f = null;
+		string path;
+		Random rnd;
+		int num = 0;
+
+		rnd = new Random ();
+		do {
+			num = rnd.Next ();
+			num++;
+			path = Path.Combine (Path.GetTempPath(), "tmp" + num.ToString("x") + ".dll");
+
+			try {
+				f = new FileStream (path, FileMode.CreateNew);
+			} catch {}
+		} while (f == null);
+		
+		f.Close();
+		
+		
+		return "tmp" + num.ToString("x") + ".dll";
+	}
 
 	[Test]
 	public void IsSerializable () {
@@ -402,8 +426,10 @@ public class TypeBuilderTest : Assertion
 		tb.SetCustomAttribute (new CustomAttributeBuilder (ctors[0], new object[0]));
 		Type createdType = tb.CreateType ();
 
-		assembly.Save ("TestAssembly.dll");
+		string an = CreateTempAssembly ();
+		assembly.Save (an);
 		AssertEquals (true, createdType.IsSerializable);
+		File.Delete (Path.Combine (Path.GetTempPath (), an));
 	}
 
 	[Test]
