@@ -1,3 +1,9 @@
+2005-04-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* Stdlib.cs: Comment out usage of `UnmanagedFunctionPointer'. It
+	isn't supported in the runtime -- it throws an assert -- so better
+	not to use it at all for now.
+
 2005-04-29  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixConvert.cs: Fix time_t -> DateTime conversions.  time_t should be
