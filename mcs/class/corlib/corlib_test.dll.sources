@@ -263,6 +263,7 @@ System.Text/StringBuilderTest.cs
 System.Text/UnicodeEncodingTest.cs
 System.Text/UTF7EncodingTest.cs
 System.Text/UTF8EncodingTest.cs
+System.Threading/AutoResetEventTest.cs
 System.Threading/CompressedStackTest.cs
 System.Threading/ExecutionContextTest.cs
 System.Threading/MutexTest.cs
