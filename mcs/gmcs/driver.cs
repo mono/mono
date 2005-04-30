@@ -116,6 +116,7 @@ namespace Mono.CSharp
 			output_file = null;
 			encoding = null;
 			using_default_encoder = true;
+			first_source = null;
 		}
 
 		public static void ShowTime (string msg)
@@ -1793,11 +1794,13 @@ namespace Mono.CSharp
 		public static bool InvokeCompiler (string [] args, TextWriter error)
 		{
 			Report.Stderr = error;
-			bool ret = Driver.MainDriver (args) && Report.Errors == 0;
-			Report.Stderr = Console.Error;
-
-			Reset ();
-			return ret;
+			try {
+				return Driver.MainDriver (args) && Report.Errors == 0;
+			}
+			finally {
+				Report.Stderr = Console.Error;
+				Reset ();
+			}
 		}
 		
 		static void Reset ()
