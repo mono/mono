@@ -2236,6 +2236,9 @@ event_decl		: D_ADDON method_ref
                                         (MethodRef) $2);
                           }
 			| customattr_decl
+                          {
+                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                          }
 			| extsource_spec
 			| language_decl
 			;
