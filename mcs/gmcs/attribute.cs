@@ -796,19 +796,32 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool CheckSecurityActionValidity (bool for_assembly)
 		{
-			SecurityAction action  = GetSecurityActionValue ();
+			SecurityAction action = GetSecurityActionValue ();
 
-			if ((action == SecurityAction.RequestMinimum || action == SecurityAction.RequestOptional || action == SecurityAction.RequestRefuse) && for_assembly)
-				return true;
-
-			if (!for_assembly) {
-				if (action < SecurityAction.Demand || action > SecurityAction.InheritanceDemand) {
-					Error_AttributeEmitError ("SecurityAction is out of range");
-					return false;
-				}
-
-				if ((action != SecurityAction.RequestMinimum && action != SecurityAction.RequestOptional && action != SecurityAction.RequestRefuse) && !for_assembly)
+			switch (action) {
+			case SecurityAction.Demand:
+			case SecurityAction.Assert:
+			case SecurityAction.Deny:
+			case SecurityAction.PermitOnly:
+			case SecurityAction.LinkDemand:
+			case SecurityAction.InheritanceDemand:
+			case SecurityAction.LinkDemandChoice:
+			case SecurityAction.InheritanceDemandChoice:
+			case SecurityAction.DemandChoice:
+				if (!for_assembly)
 					return true;
+				break;
+
+			case SecurityAction.RequestMinimum:
+			case SecurityAction.RequestOptional:
+			case SecurityAction.RequestRefuse:
+				if (for_assembly)
+					return true;
+				break;
+
+			default:
+				Error_AttributeEmitError ("SecurityAction is out of range X");
+				return false;
 			}
 
 			Error_AttributeEmitError (String.Concat ("SecurityAction '", action, "' is not valid for this declaration"));

@@ -1,5 +1,10 @@
 2005-04-30  Martin Baulig  <martin@ximian.com>
 
+	* attribute.cs (Attribute.CheckSecurityActionValidity): Correctly
+	handle the .NET 2.x security attributes.
+
+2005-04-30  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs
 	(TypeManager.ExpandInterfaces): Don't add things twice.
 
