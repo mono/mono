@@ -50,7 +50,7 @@ namespace Microsoft.JScript {
 		}
 
 		internal JSToken op {
-			get { return op; }
+			get { return operatorTok; }
 		}
 
 		internal AST left {
