@@ -1406,24 +1406,41 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public enum Result {
+			Ok,
+			RefOutArrayError,
+			ArrayArrayError
+		}
+
 		/// <summary>
 		/// Returns true if parameters of two compared methods are CLS-Compliant.
 		/// It tests differing only in ref or out, or in array rank.
 		/// </summary>
-		public static bool AreOverloadedMethodParamsClsCompliant (Type[] types_a, Type[] types_b) 
+		public static Result AreOverloadedMethodParamsClsCompliant (Type[] types_a, Type[] types_b) 
 		{
 			if (types_a == null || types_b == null)
-				return true;
+				return Result.Ok;
 
 			if (types_a.Length != types_b.Length)
-				return true;
+				return Result.Ok;
 
+			Result result = Result.Ok;
 			for (int i = 0; i < types_b.Length; ++i) {
 				Type aType = types_a [i];
 				Type bType = types_b [i];
 
-				if (aType.IsArray && bType.IsArray && aType.GetArrayRank () != bType.GetArrayRank () && aType.GetElementType () == bType.GetElementType ()) {
-					return false;
+				if (aType.IsArray && bType.IsArray) {
+					Type a_el_type = aType.GetElementType ();
+					Type b_el_type = bType.GetElementType ();
+					if (aType.GetArrayRank () != bType.GetArrayRank () && a_el_type == b_el_type) {
+						result = Result.RefOutArrayError;
+						continue;
+					}
+
+					if (a_el_type.IsArray || b_el_type.IsArray) {
+						result = Result.ArrayArrayError;
+						continue;
+					}
 				}
 
 				Type aBaseType = aType;
@@ -1442,12 +1459,12 @@ namespace Mono.CSharp {
 				}
 
 				if (aBaseType != bBaseType)
-					continue;
+					return Result.Ok;
 
 				if (is_either_ref_or_out)
-					return false;
+					result = Result.RefOutArrayError;
 			}
-			return true;
+			return result;
 		}
 
 		/// <summary>
