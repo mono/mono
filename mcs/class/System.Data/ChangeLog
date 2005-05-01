@@ -1,3 +1,7 @@
+2005-01-05  Konstantin Triger <kostat@mainsoft.com>
+	
+	* DbDataAdapter.cs: Rostore the Dispose logic
+
 2005-04-28  Konstantin Triger <kostat@mainsoft.com>  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataView.cs: Nullify an index when Closed

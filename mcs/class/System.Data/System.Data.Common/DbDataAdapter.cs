@@ -163,12 +163,24 @@ namespace System.Data.Common {
 		{
 			if (disposing) {
 				IDbDataAdapter da = (IDbDataAdapter) this;
+				if (da.SelectCommand != null) {
+					da.SelectCommand.Dispose();
 					da.SelectCommand = null;
+				}
+				if (da.InsertCommand != null) {
+					 da.InsertCommand.Dispose();
 					da.InsertCommand = null;
+				}
+				if (da.UpdateCommand != null) {
+					da.UpdateCommand.Dispose();
 					da.UpdateCommand = null;
+				}
+				if (da.DeleteCommand != null) {
+					da.DeleteCommand.Dispose();
 					da.DeleteCommand = null;
 				}
 			}
+		}
 
 #if NET_2_0
 		[MonoTODO]
