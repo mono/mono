@@ -1,3 +1,7 @@
+2005-05-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Handle changing the calling convention.
+
 2005-05-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* gc.c: In mono_gc_cleanup(), wait for 2 seconds, not 2000 seconds.
