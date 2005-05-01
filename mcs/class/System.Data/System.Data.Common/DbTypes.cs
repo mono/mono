@@ -4,6 +4,7 @@ namespace System.Data.Common
 {
 	public class DbTypes
 	{
+#if TARGET_JVM
 		#region java.sql.Types constants
 
 		internal enum JavaSqlTypes {
@@ -42,6 +43,7 @@ namespace System.Data.Common
 
 
 		#endregion // java.sql.Types constants
+#endif
 
 		#region .Net types constants
 
