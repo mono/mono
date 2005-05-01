@@ -1,6 +1,6 @@
 2005-01-05  Konstantin Triger <kostat@mainsoft.com>
 
-	* DbConnectionString.cs, DbConnectionOptions.cs: revert to r43344
+	* DbCommandOptionalFeatures.cs, DbConnectionString.cs, DbConnectionOptions.cs: revert to r43344
 
 2005-01-05  Konstantin Triger <kostat@mainsoft.com>
 	
