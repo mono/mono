@@ -1,3 +1,7 @@
+2005-05-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* gc.c: In mono_gc_cleanup(), wait for 2 seconds, not 2000 seconds.
+
 2005-04-30  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* threads.c: In mono_thread_suspend_all_other_threads, if a thread
