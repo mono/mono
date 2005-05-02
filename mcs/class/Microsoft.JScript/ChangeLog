@@ -1,3 +1,12 @@
+2005-05-02  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Microsoft.JScript.dll.sources: COMMemberInfo.cs,
+	IAuthorServices.cs, IColorizeText.cs, IDebugConvert.cs,
+	IDebuggerObject.cs, IDebugScriptScope.cs, IErrorHandler.cs,
+	IParseText.cs, ITokenColorInfo.cs, ITokenEnumerator.cs,
+	IVsaFullErrorInfo.cs, SourceState.cs, TokenColor.cs added to the
+	build. These are missing interfaces for COM interop.
+
 2005-02-05  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Microsoft.JScript.dll.sources: Nuke SymbolTable.cs
