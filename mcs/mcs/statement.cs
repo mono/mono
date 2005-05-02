@@ -1187,12 +1187,6 @@ namespace Mono.CSharp {
 		}
 		Flags flags;
 
-		public bool IsConstructor {
-			get {
-				return this_variable != null;
-			}
-		}
-
 		public bool Implicit {
 			get {
 				return (flags & Flags.Implicit) != 0;

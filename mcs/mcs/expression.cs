@@ -6831,9 +6831,7 @@ namespace Mono.CSharp {
 			if (!ResolveBase (ec))
 				return null;
 
-			bool is_ctor = (block == null) || block.IsConstructor;
-
-			if ((variable_info != null) && !is_ctor && !variable_info.IsAssigned (ec)) {
+			if ((variable_info != null) && !variable_info.IsAssigned (ec)) {
 				Error (188, "The this object cannot be used before all " +
 				       "of its fields are assigned to");
 				variable_info.SetAssigned (ec);
