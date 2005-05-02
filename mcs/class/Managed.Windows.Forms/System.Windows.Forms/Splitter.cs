@@ -480,6 +480,7 @@ namespace System.Windows.Forms
 
 			protected override void OnPaint(PaintEventArgs e)
 			{
+				//TODO: The HatchBrush should be cached
 				e.Graphics.FillRectangle(new HatchBrush(HatchStyle.SmallCheckerBoard, Color.White,Color.Black),ClientRectangle);
 				base.OnPaint (e);
 			}
