@@ -105,6 +105,9 @@ namespace System.Net.Sockets
 
 			public void Complete ()
 			{
+				if (operation != SocketOperation.Receive && Sock.disposed)
+					delayedException = new ObjectDisposedException (Sock.GetType ().ToString ());
+
 				IsCompleted = true;
 
 				Queue queue = null;
@@ -307,6 +310,11 @@ namespace System.Net.Sockets
 				// Actual send() done in the runtime
 				if (result.error == 0) {
 					UpdateSendValues (result.Total);
+					if (result.Sock.disposed) {
+						result.Complete ();
+						return;
+					}
+
 					if (result.Size > 0) {
 						SocketAsyncCall sac = new SocketAsyncCall (this.Send);
 						sac.BeginInvoke (null, result);
@@ -349,8 +357,6 @@ namespace System.Net.Sockets
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
 		internal bool blocking=true;
-		private int pendingEnds;
-		private int closeDelayed;
 		private Queue readQ = new Queue (2);
 		private Queue writeQ = new Queue (2);
 
@@ -367,6 +373,8 @@ namespace System.Net.Sockets
 		private bool connected=false;
 		/* true if we called Close_internal */
 		private bool closed;
+		internal bool disposed;
+		
 
 		/* Used in LocalEndPoint and RemoteEndPoint if the
 		 * Mono.Posix assembly is available
@@ -777,7 +785,6 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
 			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.Accept);
@@ -795,7 +802,6 @@ namespace System.Net.Sockets
 			if (end_point == null)
 				throw new ArgumentNullException ("end_point");
 
-			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.EndPoint = end_point;
 			int error = 0;
@@ -842,7 +848,6 @@ namespace System.Net.Sockets
 			if (size < 0 || offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
-			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req;
 			lock (readQ) {
 				req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
@@ -882,7 +887,6 @@ namespace System.Net.Sockets
 			if (offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
-			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req;
 			lock (readQ) {
 				req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveFrom);
@@ -919,7 +923,6 @@ namespace System.Net.Sockets
 			if (offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
-			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req;
 			lock (writeQ) {
 				req = new SocketAsyncResult (this, state, callback, SocketOperation.Send);
@@ -958,7 +961,6 @@ namespace System.Net.Sockets
 			if (offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
-			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req;
 			lock (writeQ) {
 				req = new SocketAsyncResult (this, state, callback, SocketOperation.SendTo);
@@ -1049,8 +1051,6 @@ namespace System.Net.Sockets
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
-			Interlocked.Decrement (ref pendingEnds);
-			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return req.Socket;
 		}
@@ -1069,8 +1069,6 @@ namespace System.Net.Sockets
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
-			Interlocked.Decrement (ref pendingEnds);
-			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 		}
 
@@ -1088,8 +1086,6 @@ namespace System.Net.Sockets
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
-			Interlocked.Decrement (ref pendingEnds);
-			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return req.Total;
 		}
@@ -1109,8 +1105,6 @@ namespace System.Net.Sockets
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
-			Interlocked.Decrement (ref pendingEnds);
-			CheckIfClose ();
  			req.CheckIfThrowDelayedException();
 			end_point = req.EndPoint;
 			return req.Total;
@@ -1130,8 +1124,6 @@ namespace System.Net.Sockets
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
-			Interlocked.Decrement (ref pendingEnds);
-			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return req.Total;
 		}
@@ -1150,26 +1142,8 @@ namespace System.Net.Sockets
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
-			Interlocked.Decrement (ref pendingEnds);
-			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
 			return req.Total;
-		}
-
-		void CheckIfClose ()
-		{
-			if (Interlocked.CompareExchange (ref closeDelayed, 0, 1) == 1 &&
-			    Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
-				closed = true;
-
-				int error;
-				
-				Close_internal(socket, out error);
-
-				if (error != 0) {
-					throw new SocketException (error);
-				}
-			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1696,35 +1670,22 @@ namespace System.Net.Sockets
 			return (int) socket; 
 		}
 
-		private bool disposed;
-		
-		protected virtual void Dispose(bool explicitDisposing) {
-			if (!disposed) {
+		protected virtual void Dispose (bool explicitDisposing)
+		{
+			if (disposed)
+				return;
+
+			disposed = true;
+			connected = false;
+			if ((int) socket != -1) {
 				int error;
-				
-				disposed = true;
-				connected = false;
-				if (!explicitDisposing) {
-					closed = true;
-					Close_internal (socket, out error);
+				closed = true;
+				IntPtr x = socket;
+				socket = (IntPtr) (-1);
+				Close_internal (x, out error);
 
-					if (error != 0) {
-						throw new SocketException (error);
-					}
-					
-					return;
-				}
-			
-				if (Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
-					closed = true;
-					Close_internal (socket, out error);
-
-					if (error != 0) {
-						throw new SocketException (error);
-					}
-				} else {
-					Interlocked.CompareExchange (ref closeDelayed, 1, 0);
-				}
+				if (error != 0)
+					throw new SocketException (error);
 			}
 		}
 

@@ -1,3 +1,10 @@
+2005-05-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: removed hack added to fix bug #53229 (more than a year ago)
+	that kept sockets opened until all AIO operations where finished. If
+	the socket is closed, Receive returns 0 in EndReceive, the rest throw
+	the ObjectDisposedException. Set the socket handle to -1 when closing.
+
 2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: Begin/End Send/SendTo guarantee that all bytes are written
