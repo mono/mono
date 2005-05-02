@@ -605,4 +605,17 @@ public class X
 			break;
 		}
 	}
+
+	static int test40 (int stop)
+	{
+		int service;
+
+		int pos = 0;
+		do {
+			service = 1;
+			break;
+		} while (pos < stop);
+
+		return service;
+	}
 }
