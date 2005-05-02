@@ -1,5 +1,14 @@
 2005-05-02  Martin Baulig  <martin@ximian.com>
 
+	Fix #70182.
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeJumpOrigins):
+	Also `And' the locals if the old vector is null.
+	(FlowBranching.UsageVector.BitVector.And): Allow `vector' being
+	null; in this case we basically reset all the variables.	
+
+2005-05-02  Martin Baulig  <martin@ximian.com>
+
 	Fix #74529.
 
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeBreakOrigins):

@@ -764,7 +764,8 @@ namespace Mono.CSharp
 
 				for (UsageVector vector = o_vectors; vector != null;
 				     vector = vector.Next) {
-					Report.Debug (1, "    MERGING JUMP ORIGIN", vector);
+					Report.Debug (1, "  MERGING JUMP ORIGIN", vector,
+						      first, locals, vector.Locals);
 
 					if (first) {
 						if (locals != null && vector.Locals != null)
@@ -774,13 +775,15 @@ namespace Mono.CSharp
 							parameters.Or (vector.parameters);
 						first = false;
 					} else {
-						if (locals != null && vector.Locals != null)
+						if (locals != null)
 							locals.And (vector.locals);
 						if (parameters != null)
 							parameters.And (vector.parameters);
 					}
 						
 					Reachability.And (ref reachability, vector.Reachability, true);
+
+					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
 				}
 
 				Report.Debug (1, "  MERGING JUMP ORIGINS DONE", this);
@@ -2196,7 +2199,12 @@ namespace Mono.CSharp
 		// </summary>
 		public void And (MyBitVector new_vector)
 		{
-			BitArray new_array = new_vector.Vector;
+			BitArray new_array;
+
+			if (new_vector != null)
+				new_array = new_vector.Vector;
+			else
+				new_array = new BitArray (Count, false);
 
 			initialize_vector ();
 
