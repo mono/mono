@@ -1,3 +1,9 @@
+2005-05-02  Miguel de Icaza  <miguel@novell.com>
+
+	* pthread_stop_world.c (GC_restart_handler, GC_suspend_handler):
+	Wrap the original routines into methods that preserve the value of
+	errno.  Fixes #74740
+
 2005-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* configure.in: Applied another freebsd patch from Bill Middleton (flashdict@gmail.com).

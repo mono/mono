@@ -101,7 +101,7 @@ word GC_stop_count;	/* Incremented at the beginning of GC_stop_world. */
 
 sem_t GC_suspend_ack_sem;
 
-void GC_suspend_handler(int sig)
+static void _GC_suspend_handler(int sig)
 {
     int dummy;
     pthread_t my_thread = pthread_self();
@@ -168,7 +168,14 @@ void GC_suspend_handler(int sig)
 #endif
 }
 
-void GC_restart_handler(int sig)
+void GC_suspend_handler(int sig)
+{
+	int old_errno = errno;
+	_GC_suspend_handler(sig);
+	errno = old_errno;
+}
+
+static void _GC_restart_handler(int sig)
 {
     pthread_t my_thread = pthread_self();
     GC_thread me;
@@ -268,6 +275,13 @@ static void pthread_push_all_stacks()
     }
     if (!found_me && !GC_in_thread_creation)
       ABORT("Collecting from unknown thread.");
+}
+
+void GC_restart_handler(int sig)
+{
+	int old_errno = errno;
+	_GC_restart_handler (sig);
+	errno = old_errno;
 }
 
 /* We hold allocation lock.  Should do exactly the right thing if the	*/
