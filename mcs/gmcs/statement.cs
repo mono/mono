@@ -349,6 +349,8 @@ namespace Mono.CSharp {
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
+			if (!infinite)
+				ec.CurrentBranching.CreateSibling ();
 
 			if (!Statement.Resolve (ec))
 				ok = false;

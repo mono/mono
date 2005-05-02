@@ -805,14 +805,14 @@ namespace Mono.CSharp
 				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
 			}
 
-			public void MergeBreakOrigins (UsageVector o_vectors)
+			public void MergeBreakOrigins (FlowBranching branching, UsageVector o_vectors)
 			{
 				Report.Debug (1, "  MERGING BREAK ORIGINS", this);
 
 				if (o_vectors == null)
 					return;
 
-				bool first = true;
+				bool first = branching.Infinite;
 
 				for (UsageVector vector = o_vectors; vector != null;
 				     vector = vector.Next) {
@@ -1348,7 +1348,7 @@ namespace Mono.CSharp
 		{
 			UsageVector vector = base.Merge ();
 
-			vector.MergeBreakOrigins (break_origins);
+			vector.MergeBreakOrigins (this, break_origins);
 
 			return vector;
 		}
