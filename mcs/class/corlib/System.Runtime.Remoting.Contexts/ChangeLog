@@ -1,3 +1,8 @@
+2005-05-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Context.cs: Remove process_id field to sync with the unmanaged
+	structure.
+
 2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Context.cs: Added NeedsContextSink property, which returns TRUE if

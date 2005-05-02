@@ -44,10 +44,11 @@ namespace System.Runtime.Remoting.Contexts {
 
 	public class Context 
 	{
+		#region Sync with domain-internals.h
 		int domain_id;
 		int context_id;
-		int process_id;
 		IntPtr static_data;
+		#endregion
 
 		// Default server context sink chain
 		static IMessageSink default_server_context_sink;
