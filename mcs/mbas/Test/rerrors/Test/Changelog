@@ -1,4 +1,48 @@
 
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+	    Patch submitted by Sudharsan V <vsudharsan@novell.com>
+	
+		Following Test cases are added
+	* ExpConversionStringtoDate2.vb
+	* ImpConversionStringtoInt2.vb
+	* ImpConversionDoubletoDecimal2.vb
+	* ExpConversionStringtoBool3.vb
+	* ImpConversionStringtoByte3.vb
+	* ExpConversionDoubletoInt1.vb
+	* ExpConversionDoubletoByte1.vb
+	* ExpConversionSingletoDecimal3.vb
+	* ImpConversionDecimaltoInt1.vb
+	* ExceptionHandling1.vb
+	* ImpConversionStringtoLong2.vb
+	* Scope1.vb
+	* ImpConversionStringtoByte2.vb
+	* ImpConversionSingletoInt1.vb
+	* ExpConversionStringtoDecimal2.vb
+	* ExpConversionStringtoByte3.vb
+	* ImpConversionSingletoByte1.vb
+	* ExpConversionSingletoDecimal2.vb
+	* ExpConversionStringtoDouble2.vb
+	* ExpConversionStringtoSingle2.vb
+	* ImpConversionDecimaltoByte1.vb
+	* ImpConversionDoubletoInt1.vb
+	* ExpConversionStringtoInt2.vb
+	* ExpConversionStringtoLong2.vb
+	* Override1.vb
+	* ExpConversionDoubletoDecimal2.vb
+	* ExpConversionStringtoByte2.vb
+	* ImpConversionStringtoDouble2.vb
+	* ImpConversionSingletoDecimal3.vb
+	* ImpConversionStringtoDate2.vb
+	* OptionalArgument1.vb
+
+		Removed the executable property from the following 
+	* Variables2.vb
+	* LikeOperator3.vb
+	* LikeOperator2.vb
+	* Variables1.vb
+	* LateBinding12.vb
+				
+
 2005-03-21  Ritvik Mayank  <mritvik@novell.com>
 	* LikeOperator3.vb : 
 	* Variables1.vb : 

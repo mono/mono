@@ -1,0 +1,14 @@
+
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+	    Patch submitted by Sudharsan V <vsudharsan@novell.com>
+		Following tests were modified
+	* ConstructorC.vb
+	* EventC.vb
+	* EventD.vb
+	* Interface.vb
+	* PropertyA.vb
+	* PropertyB.vb
+		Following tests were moved to rerrors
+	* OptionalArgFunction1.vb
+	* OptionalArgument1.vb
+	    

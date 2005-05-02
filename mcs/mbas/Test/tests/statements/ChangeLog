@@ -1,0 +1,10 @@
+
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+	    Patch submitted by Sudharsan V <vsudharsan@novell.com>
+		Following tests were modified
+	* BlockStatementsA.vb
+	* WithStatementA.vb
+	* WithStatementB.vb
+	* ForA.vb
+	    	Following tests were moved to rerrors 
+	* ExceptionHandlingB.vb	

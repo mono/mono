@@ -1,23 +1,14 @@
 Imports System
 Module LongLiteral
 	Sub Main()
-		Try
 			Dim a As Long
 			a=True
 			If a<>-1 Then
-				Console.WriteLine("#A1:LongLiteralA:Failed")
+				Throw new System.Exception("#A1:LongLiteralA:Failed")
 			End If
-		Catch e As Exception
-			Console.WriteLine(e.Message)
-		End Try
-		 Try
-                	Dim a As Long
-	                a=1.23
-        	        If a<>1 Then
-                	        Console.WriteLine("#A2:LongLiteralA:Failed")
-	                End If
-        	Catch e As Exception
-                	Console.WriteLine(e.Message)
-	        End Try
+                  a=1.23
+                  If a<>1 Then
+                	      Throw new System.Exception("#A2:LongLiteralA:Failed")
+	            End If
 	End Sub
 End Module

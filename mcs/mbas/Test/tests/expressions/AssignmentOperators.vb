@@ -23,12 +23,16 @@ Module M1
         Dim c As Byte = 3
         Dim d As Byte = 5
         d ^= c
-        Console.WriteLine(d)
+	  if d<>125 
+		throw new System.Exception("#A1 Assignment not proper")
+	  end if 			
 
         Dim s As Short = 5
         Dim i As Integer = 400001
         s   <<= i
-        Console.WriteLine(s)
+	  if s<>10
+		throw new System.Exception("#A2 Assignment not proper")
+	  end if 			
 
     End Function
 

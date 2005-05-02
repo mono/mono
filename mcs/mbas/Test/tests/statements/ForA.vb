@@ -17,7 +17,9 @@ Module ForA
                     If k = 3 Then
                         Exit For
                     End If
-                    Console.WriteLine("i: {0}  j: {1}  k: {2}", i, j, k)
+			  if i<>0 and j<>0 and k<>0
+	                    throw new System.Exception("#A1 For not working")
+			  end if
                 Next k
             Next
         Next i

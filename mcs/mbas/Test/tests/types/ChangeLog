@@ -1,3 +1,41 @@
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+            Patch submitted by Sudharsan V <vsudharsan@novell.com>
+		Following Tests were modified     
+	* BoolLiteralA.vb
+	* BoolLiteralTest.vb
+	* DecimalLiteralB.vb
+	* DecimalLiteral.vb
+	* DecimalTypeCharTestB.vb
+	* DecimalTypeCharTest.vb
+	* DoubleLiteralA.vb
+	* DoubleLiteralB.vb
+	* DoubleLiteral.vb
+	* DoubleTypeCharTestB.vb
+	* DoubleTypeCharTest.vb
+	* EnumC1.vb
+	* IntegerLiteral1Test.vb
+	* IntegerLiteral2Test.vb
+	* IntegerLiteralA.vb
+	* IntegerLiteralB.vb
+	* IntegerLiteralTestC4.vb
+	* IntegerLiteralTest.vb
+	* IntegerTypeCharTestB.vb
+	* IntegerTypeCharTest.vb
+	* LongLiteralA.vb
+	* LongLiteralB.vb
+	* LongTypeCharTestB.vb
+	* LongTypeCharTest.vb
+	* SingleLiteralA.vb
+	* SingleLiteralB.vb
+	* SingleLiteral.vb
+	* SingleTypeCharTestB.vb
+	* SingleTypeCharTest.vb
+	* StringLiteralsA.vb
+	* StringTypeCharTestB.vb
+	* StringTypeCharTest.vb
+			Following tests were moved to errors
+	* TypeValRefVoidA1.vb		
+
 2005-04-05 Ritvik Mayank <mritvik@novell.com>
 	* TypeValRefStringA.vb
 	* TypeValRefArrayA.vb

@@ -6,7 +6,9 @@ Imports System
 Module M3
 
     Sub main()
-        Console.WriteLine(f3())
+	  if f3()<>0
+		throw new System.Exception("#A Relational operator not wroking")
+	  end if
     End Sub
 
     Function f3() As Integer
@@ -50,8 +52,12 @@ Module M3
         If d1 = d2 Then arr(15) = False Else arr(15) = True
         If d1 <> d2 Then arr(16) = True Else arr(16) = False
 
-        For i As Integer = 0 To arr.GetUpperBound(0) 
-            Console.WriteLine("{0}: {1}", i, arr(i))
+	  dim s as string	
+	  For i As Integer = 0 To arr.GetUpperBound(0) 
+		if arr(i)<>true
+			s = "#A"+i.toString()+"Relational Operator Not working"
+			throw new System.Exception(s)			
+		end if
         Next
 
         For Each bval As Boolean In arr

@@ -14,15 +14,21 @@ Module LocalVariablesA
     Sub f2()
         Dim f2 As Integer = 1
         f2 = f2 + 1
-        Console.WriteLine(f2)
+	  if f2<>2	
+	        throw new System.Exception("#A1 Local Variables not working")
+	  end if
     End Sub
 
     Sub main()
         Dim a, b As Integer
         a = 10 : b = 32
-        Console.WriteLine("a: {0}  b: {1}", a, b)
+  	  if a<>10 and b<>32	 
+	        throw new System.Exception("#A2 Local Variables not working")
+	  end if
         swap(a, b)
-        Console.WriteLine("a: {0}  b: {1}", a, b)
+        if a<>10 and b<>32	
+	        throw new System.Exception("#A3 Local Variables not working")
+	  end if
         f2()
     End Sub
 

@@ -15,7 +15,9 @@ Module M
 
 	Sub Main()
 		p = 10
-		Console.WriteLine(p)
+		if p<>10 
+			throw new System.Exception("#A1 Property Not Working")
+		end if
 	End Sub
 
 End Module

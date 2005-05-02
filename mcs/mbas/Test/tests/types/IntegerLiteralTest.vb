@@ -2,7 +2,6 @@ imports System
 
 Module IntegerLiteralTest
     Sub Main()
-        Try
             Dim i As Integer
             Dim l As Long
             Dim s As Short
@@ -15,8 +14,5 @@ Module IntegerLiteralTest
             l = l + 100
             l = System.Int64.MaxValue
             l = System.Int64.MinValue
-        Catch e As Exception
-            Console.WriteLine(e.Message)
-        End Try
     End Sub
 End Module

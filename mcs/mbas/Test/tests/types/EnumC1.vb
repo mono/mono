@@ -7,7 +7,9 @@ Module M
 	End Enum
 
    Sub Main()
-	Console.WriteLine (E1.A)
+	if E1.A<> 2
+		throw new System.Exception("#A1 Enum not working")
+	end if
     End Sub
 
 	

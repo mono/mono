@@ -37,9 +37,15 @@ end class
 Module M
 	Sub Main()
 		B.y = 25
-		Console.WriteLine(B.y)
-		Console.WriteLine(A.x)
+		if B.y<>25
+			throw new System.Exception("#A1 Constructor not working")
+		end if
+		if A.x<>10
+			throw new System.Exception("#A2 Constructor not working")
+		end if
 		dim c as new B()
-		Console.WriteLine(c.z)
+		if C.z<>30
+			throw new System.Exception("#A3 Constructor not working")
+		end if
 	End Sub
 End Module

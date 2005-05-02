@@ -26,7 +26,9 @@ _12ab:  a = 8
         End If
 
 [class]: a = 0
-        Console.WriteLine(a)
+        if a<>0
+		throw new System.Exception("#A1 Block statements not working")
+	  end if
 
         ' label declaration always takes precedence in any ambiguous situation
 

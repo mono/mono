@@ -6,10 +6,14 @@
 'Cheks if the outer class members can be accessed using an object reference or not... of course works...
 Class A
 	Sub fun(i as Integer)
-		System.Console.WriteLine("Outer Integer {0}",i)
+		if i<>1
+			throw new System.Exception("#A1 Outer Integer")
+		End if
 	End Sub
 	Sub fun(i as String)
-		System.Console.WriteLine("Outer String {0}",i)
+		if i<>"Hello"
+			throw new System.Exception("#A2 Outer String ")
+		End if
 	End Sub
 	Class AB
 		Sub gun()

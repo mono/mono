@@ -1,3 +1,7 @@
+2005-05-02  Ritvik Mayank <mritvik@novell.vom>
+		
+		Removed Executable Property from the files
+
 2005-04-20 Ritvik Mayank <mritvik@novell.com>
 	* AttributeAssemblyFlag1.vb
 	* AttributeAssemblyCulture1.vb

@@ -2,7 +2,9 @@ Imports System
 
 Module M
     Sub main()
-        Console.WriteLine(f())
+	if f()<>0 
+        throw new System.Exception("#A1 Shift operator not working")
+	end if
     End Sub
 
     Function f()

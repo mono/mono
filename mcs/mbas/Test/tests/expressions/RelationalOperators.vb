@@ -82,10 +82,17 @@ Module M1
 
         If c = System.Decimal.MaxValue Then arr(17) = False Else arr(17) = True
 
-        Console.WriteLine("Array length: {0}", arr.GetUpperBound(0))
+	  if arr.GetUpperBound(0) <> 17
+		throw new System.Exception("#A UpperBound wrong")
+	  End if	
+	  dim j as integer = 0	
+	  dim s as string
         For i As Integer = 0 To arr.GetUpperBound(0)
-            Console.Write("i:  {0} ", i)
-            Console.WriteLine(arr(i))
+		if i<>j
+			s = "#A"+j.toString()+"Relational Operator Not working"
+			throw new System.Exception(s)			
+		end if
+		j = j + 1
         Next
 
         For Each bval As Boolean In arr

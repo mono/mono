@@ -13,6 +13,8 @@ Sub Main()
 	dim asm as System.Reflection.AssemblyName
 	dim i as integer
 	asm = System.Reflection.Assembly.GetCallingAssembly ().GetName ()
-	Console.WriteLine("Name = {0}", asm)
+	if asm.toString() <> "AttributeAssemblyName, Version=1.2.3.4, Culture=neutral, PublicKeyToken=null"			
+		throw new System.Exception("#A1 Atributes not working")
+	End If		
 End Sub
 End Module

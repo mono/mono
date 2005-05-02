@@ -1,0 +1,14 @@
+
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+	    Sudharsan V <vsudharsan@novell.com>	
+	
+		Modified the following test cases
+	* LocalVariablesA.vb
+	* ScopeB.vb
+	* ScopeC.vb
+		Moved the following to rerrors
+	* Scope1.vb
+	* Variables1.vb
+	* Override1.vb
+	* Inheritance2.vb
+	

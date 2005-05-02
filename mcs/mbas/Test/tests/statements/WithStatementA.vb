@@ -5,7 +5,19 @@ Module WithStatementA
         Public a1 As Integer = 10
         Friend a2 As String = "Hello"
         Sub f1()
-            Console.WriteLine("Class C1: {0} {1}", a1, a2)
+		dim flag as boolean = True
+		if a1=20 and a2="Hello World"
+			flag = false
+		end if
+		if a1=3 and a2="In nested With statement"
+			flag = false
+		end if
+		if a1=25 and a2="Me too"
+			flag = false
+		end if
+		if flag<>False
+			throw new System.Exception("#A WithStatement not working")			
+		end if
         End Sub
     End Class
 

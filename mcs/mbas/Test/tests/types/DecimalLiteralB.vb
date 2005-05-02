@@ -1,15 +1,9 @@
 Imports System
 Module DecimalLiteral
 	Sub Main()
-		Try
 			Dim a As Decimal=True
 			If a<>-1 Then
-                                Console.WriteLine("DecimalLiteralB:Failed")
-                        End If
-                                
-			
-		Catch e As Exception
-			Console.WriteLine(e.Message)
-		End Try
+                                Throw new System.Exception("DecimalLiteralB:Failed")
+                  End If
 	End Sub
 End Module

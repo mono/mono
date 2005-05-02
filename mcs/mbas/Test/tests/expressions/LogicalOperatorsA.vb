@@ -7,7 +7,12 @@ Module LogicalOperatorsA
         Dim a1, a2 As Integer
         a1 = f1() AndAlso f2()
         a2 = a1 OrElse f1()
-        Console.WriteLine("{0}  {1}", a1, a2)
+	  if a1<>0
+		throw new System.Exception("#A1 Logical Operator not working")
+	  End if
+	  if a2<>-1 
+		throw new System.Exception("#A2 Logical Operator not working")
+	  End if
     End Sub
 
     Function f1() As Integer

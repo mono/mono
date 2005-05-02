@@ -7,10 +7,10 @@
 
 Class A
 	Shared Sub fun(i as Integer)
-		System.Console.WriteLine("Outer Integer {0}",i)
+		throw new System.Exception("#A1 Outer Integer")
 	End Sub
 	Shared Sub fun(i as String)
-		System.Console.WriteLine("Outer String {0}",i)
+		throw new System.Exception("#A2 Outer String")
 	End Sub
 	Class AB
 		Sub gun()
@@ -18,7 +18,7 @@ Class A
 			fun(2)
 		End Sub
 		Shared Sub fun(i as Integer)
-			System.Console.WriteLine("Inner class Integer {0}",i)
+			'System.Console.WriteLine("Inner class Integer {0}",i)
 		End Sub
 	End Class
 End Class

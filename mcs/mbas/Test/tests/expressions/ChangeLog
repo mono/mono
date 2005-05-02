@@ -1,0 +1,15 @@
+												    2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+            Patch submitted by Sudharsan V <vsudharsan@novell.com>
+
+		Following Test cases were modified 
+	* RelationalOperatorsA.vb
+	* LikeOperator.vb
+	* LikeOperatorA.vb
+	* LogicalOperatorsA.vb
+	* ShiftOperators.vb
+	* ShiftOperatorsA.vb
+	* ArithmeticOperators.vb
+	* ArithmeticOperatorsA.vb
+	* RelationalOperators.vb
+	* ConcatenationOperator.vb
+	* AssignmentOperators.vb

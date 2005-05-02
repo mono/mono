@@ -1,0 +1,47 @@
+
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+	    Patch submitted by Sudharsan V <vsudharsan@novell.com>
+
+		Moved the following tests to rerrors
+	* ImpConversionDoubletoDecimalC.vb
+	* ExpConversionStringtoShortB.vb
+	* ImpConversionDoubletoByteA.vb
+	* ImpConversionSingletoDecimalB.vb
+	* ExpConversionSingletoIntA.vb
+	* ExpConversionStringtoDateB.vb
+	* ImpConversionStringtoIntB.vb
+	* ImpConversionDoubletoDecimalB.vb
+	* ExpConversionStringtoBoolC.vb
+	* ExpConversionDoubletoIntA.vb
+	* ImpConversionStringtoByteC.vb
+	* ExpConversionDoubletoByteA.vb
+	* ExpConversionSingletoDecimalC.vb
+	* ImpConversionDecimaltoIntA.vb
+	* ImpConversionStringtoLongB.vb
+	* ImpConversionStringtoByteB.vb
+	* ImpConversionSingletoIntA.vb
+	* ExpConversionStringtoDecimalB.vb
+	* ExpConversionDoubletoDecimalC.vb
+	* ExpConversionStringtoByteC.vb
+	* ImpConversionSingletoByteA.vb
+	* ExpConversionSingletoDecimalB.vb
+	* ExpConversionStringtoDoubleB.vb
+	* ExpConversionStringtoSingleB.vb
+	* ImpConversionDecimaltoByteA.vb
+	* ImpConversionDoubletoIntA.vb
+	* ExpConversionStringtoIntB.vb
+	* ExpConversionStringtoLongB.vb
+	* ExpConversionDoubletoDecimalB.vb
+	* ExpConversionStringtoByteB.vb
+	* ImpConversionSingletoDecimalC.vb
+	* ImpConversionStringtoDoubleB.vb
+	* ImpConversionStringtoDateB.vb
+	* ImpConversionStringtoSingleB.vb
+	* ExpConversionSingletoByteA.vb
+	* ImpConversionStringtoBoolC.vb
+	* ImpConversionStringtoDecimalB.vb
+	* ImpConversionStringtoShortB.vb  
+		
+		Modified the following test cases
+	* ImpConversionStringtoDateA.vb
+	* ImpConversionDatetoStringB.vb

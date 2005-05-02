@@ -17,7 +17,9 @@ Class C1
 	End Sub
 
 	Sub EH(i as Integer) Handles x.E
-		Console.WriteLine("event called : " + i)
+		if i<>10
+			throw new System.Exception("#A1 Event call FAils")
+		end if
 	End Sub
 End Class
 
