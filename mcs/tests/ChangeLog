@@ -1,3 +1,7 @@
+2005-05-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (BOOTSTRAP_MCS): Fix.
+
 2005-04-29  Martin Baulig  <martin@ximian.com>
 
 	* gen-73.cs, gen-115.cs: Reflect latest API changes.

@@ -20,7 +20,7 @@ endif
 ILASM = $(with_mono_path) $(INTERNAL_ILASM)
 
 ifeq (net_2_0, $(PROFILE))
-BOOTSTRAP_MCS = $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe
 endif
 
 # We don't want debugging info :-)
