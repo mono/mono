@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 		///   Whether we're control flow analysis enabled
 		/// </summary>
 		public bool DoFlowAnalysis;
-		
+
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
 		///   to store structures (used to compute the address of the structure
@@ -513,12 +513,16 @@ namespace Mono.CSharp {
 		{
 			FlowBranching.BranchingType type;
 
-			if (CurrentBranching.Type == FlowBranching.BranchingType.Switch)
+			if ((CurrentBranching != null) &&
+			    (CurrentBranching.Type == FlowBranching.BranchingType.Switch))
 				type = FlowBranching.BranchingType.SwitchSection;
 			else
 				type = FlowBranching.BranchingType.Block;
 
-			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, block, block.StartLocation);
+			DoFlowAnalysis = true;
+
+			current_flow_branching = FlowBranching.CreateBranching (
+				CurrentBranching, type, block, block.StartLocation);
 			return current_flow_branching;
 		}
 
@@ -681,10 +685,7 @@ namespace Mono.CSharp {
 #if PRODUCTION
 			try {
 #endif
-				int errors = Report.Errors;
-
-				block.ResolveMeta (block, this, ip);
-				if (Report.Errors != errors)
+				if (!block.ResolveMeta (this, ip))
 					return false;
 
 					bool old_do_flow_analysis = DoFlowAnalysis;
@@ -692,11 +693,10 @@ namespace Mono.CSharp {
 
 					if (anonymous_method_host != null)
 						current_flow_branching = FlowBranching.CreateBranching (
-						anonymous_method_host.CurrentBranching, FlowBranching.BranchingType.Block,
-						block, loc);
+						anonymous_method_host.CurrentBranching,
+						FlowBranching.BranchingType.Block, block, loc);
 					else 
-						current_flow_branching = FlowBranching.CreateBranching (
-							null, FlowBranching.BranchingType.Block, block, loc);
+					current_flow_branching = block.TopLevelBranching;
 
 					if (!block.Resolve (this)) {
 						current_flow_branching = null;

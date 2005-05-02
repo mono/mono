@@ -1187,6 +1187,12 @@ namespace Mono.CSharp {
 		}
 		Flags flags;
 
+		public bool IsConstructor {
+			get {
+				return this_variable != null;
+			}
+		}
+
 		public bool Implicit {
 			get {
 				return (flags & Flags.Implicit) != 0;
@@ -2113,6 +2119,7 @@ namespace Mono.CSharp {
 		//
 		public ToplevelBlock Container;
 		CaptureContext capture_context;
+		FlowBranching top_level_branching;
 
 		Hashtable capture_contexts;
 
@@ -2184,6 +2191,26 @@ namespace Mono.CSharp {
 			get {
 				return capture_context;
 			}
+		}
+
+		public FlowBranching TopLevelBranching {
+			get {
+				return top_level_branching;
+			}
+		}
+
+		public bool ResolveMeta (EmitContext ec, InternalParameters ip)
+		{
+			int errors = Report.Errors;
+
+			if (top_level_branching != null)
+				return true;
+
+			ResolveMeta (this, ec, ip);
+
+			top_level_branching = ec.StartFlowBranching (this);
+
+			return Report.Errors == errors;
 		}
 	}
 	
