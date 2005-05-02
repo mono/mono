@@ -7,7 +7,7 @@
 	(Constructor.Emit): Call `block.ResolveMeta ()' before resolving
 	our ConstructorInitializer.
 
-	* statement.cs (Block.IsConstructor): New public property.
+	* statement.cs
 	(TopLevelBlock.TopLevelBranching): New public property.
 	(TopLevelBlock.ResolveMeta): New public method; call ResolveMeta()
 	and create our `TopLevelBranching'.
@@ -15,9 +15,6 @@
 	* codegen.cs (EmitContext.ResolveTopBlock): If we're not an
 	anonymous method host, use `block.TopLevelBranching' rather than
 	creating a new branching.
-
-	* expression.cs (This.DoResolve): Don't report a CS0188 if we're
-	inside the constructor.
 
 2005-04-20  Miguel de Icaza  <miguel@novell.com>
 
