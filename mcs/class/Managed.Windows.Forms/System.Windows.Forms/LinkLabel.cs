@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 
 		public LinkLabel ()
 		{
-			LinkArea = new LinkArea (0, 0);
+			LinkArea = new LinkArea (0, -1);
 			link_behavior = LinkBehavior.SystemDefault;
 			link_visited = false;
 			link_click = false;
@@ -150,7 +150,7 @@ namespace System.Windows.Forms
 			get { return link_area;}
 			set {
 
-				if (value.Start <0 || value.Length < 0)
+				if (value.Start <0 || value.Length < -1)
 					throw new ArgumentException ();
 
 				if (!value.IsEmpty)

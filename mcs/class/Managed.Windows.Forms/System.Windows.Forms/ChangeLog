@@ -1,3 +1,7 @@
+2005-05-02  Peter Bartok  <pbartok@novell.com>
+
+	* LinkLabel.cs: Fixed the fixes from r43566 and 43521
+
 2005-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Don't clear the GC that will clear the
