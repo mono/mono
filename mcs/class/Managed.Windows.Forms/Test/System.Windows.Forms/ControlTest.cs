@@ -14,8 +14,6 @@ using System.Runtime.Remoting;
 
 using NUnit.Framework;
 
-namespace ControlsTest
-{
 [TestFixture]
 public class ControlTest
 {
@@ -74,7 +72,7 @@ public class ControlTest
             Assert.AreEqual(null, c.Parent, "#49");
             //Assert.AreEqual("Novell Mono MWF", c.ProductName, "#52");
             Assert.AreEqual("1.1.4322.573", c.ProductVersion, "#53");
-	    Assert.AreEqual(false, c.RecreatingHandle, "#54");
+            Assert.AreEqual(false, c.RecreatingHandle, "#54");
             Assert.AreEqual(null, c.Region, "#55");
             Assert.AreEqual(0, c.Right, "#56");
             Assert.AreEqual(RightToLeft.No, c.RightToLeft, "#57");
@@ -113,10 +111,13 @@ public class ControlTest
      	  Assert.AreEqual(AnchorStyles.Left , C1.Anchor, "#73");
      	
      	  C1.SetBounds(10, 20, 30, 40) ;
-     	  Assert.AreEqual( Rectangle.FromLTRB(10,20,30,40), C1.Bounds , "#74");
+     	  Assert.AreEqual( 20 ,C1.Bounds.Top , "#74a");
+     	  Assert.AreEqual( 10 ,C1.Bounds.Left , "#74b");
+     	  Assert.AreEqual( 30 ,C1.Bounds.Width , "#74c");
+     	  Assert.AreEqual( 40 ,C1.Bounds.Hight , "#74d");
      	
-     	  C1.SendToBack() ;
-     	  Assert.AreEqual( false , C1.Bounds , "#75");
+     	  //C1.SendToBack() ;
+     	  //Assert.AreEqual( false , C1.Bounds , "#75");
      	
 	}
 
@@ -137,7 +138,7 @@ public class ControlTest
      	   B.Dock = DockStyle.Left;
      	   B.ResumeLayout() ;
      	   //Assert.AreEqual(false, B.Size , "#75a");
-     	   Assert.AreEqual(false, B.Location , "#75b");
+     	   //Assert.AreEqual(false, B.Location , "#75b");
      	   Assert.AreEqual(AnchorStyles.Top | AnchorStyles.Left , B.Anchor , "#75c");
      	   Assert.AreEqual(DockStyle.None , B.Dock , "#75d");
      	
@@ -205,16 +206,6 @@ public class ControlTest
     	   r1.RectangleToScreen(M) ;
            Assert.AreEqual( null , r1.Region , "#86");
     
-    	}
-    
-	AutoResetEvent rs = new AutoResetEvent (false);
-	void Show (object o)
-    	{
-    	   Button N = new Button();
-	   N.Left = 10;
-       	   N.Top  = 12;
-	   N.Visible = true;
-       	   rs.Set ();
     	}
     
 	[Test]
@@ -493,18 +484,4 @@ public class ControlTest
             }
         }
 
-        [Test]
-        public void Test ()
-        {
-            Control c = null;
-            try {
-            } finally {
-                if (c != null)
-                    c.Dispose ();
-            }
-        }
-
-
    }
- 
-}

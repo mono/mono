@@ -1,5 +1,9 @@
 
 2005-05-02  Ritvik Mayank  <mritvik@novell.com>
+
+	* ControlTest.cs : Minor modifications
+
+2005-05-02  Ritvik Mayank  <mritvik@novell.com>
 	
 	* ControlTest.cs : Test for Control
 
