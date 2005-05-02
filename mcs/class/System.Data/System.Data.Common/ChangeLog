@@ -1,3 +1,26 @@
+2005-05-02 Konstantin Triger <kostat@mainsoft.com>
+
+	* DataContainer.cs: 
+		Added CharDataContainer, SByteDataContainer, UInt16DataContainer, UInt32DataContainer, UInt64DataContainer, DateTimeDataContainer, DecimalDataContainer
+		SetItemFromDataRecord: Changed to work with ISafeDataRecord or through GetValue to enable conversion
+		return DBNull.Value when the stored value is null
+	
+	* DbDataAdapter.cs:
+		Ensure correct order for LoadDataRow
+		Fixing schema creation
+		Use NewRowArray API
+	
+	* DbEnumerator.cs:
+		LoadSchema: Retrieve needed fields only
+	
+	* RecordCache.cs:
+		Added Rows-to-Records mapping
+		Added ReadIDataRecord method for correct handling of default/auto increment values
+	
+	* Added Index.cs: Index implementation
+	* Added Key.cs: Index descriptor implementation
+
+
 2005-04-18  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataAdapter.cs: Implemenetd OnFillError handler.
