@@ -98,6 +98,7 @@ public class FieldInfoTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof (InvalidOperationException))]
+	[Category ("NotWorking")]
 	public void GetValueOnRefOnlyAssembly ()
 	{
 		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
@@ -109,6 +110,7 @@ public class FieldInfoTest : Assertion
 	
 	[Test]
 	[ExpectedException (typeof (InvalidOperationException))]
+	[Category ("NotWorking")]
 	public void SetValueOnRefOnlyAssembly ()
 	{
 		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);

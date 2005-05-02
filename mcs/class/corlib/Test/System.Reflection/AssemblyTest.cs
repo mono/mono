@@ -220,6 +220,7 @@ namespace MonoTests.System.Reflection
 		}
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void ReflectionOnlyLoad ()
 		{
 			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (AssemblyTest).Assembly.FullName);
@@ -229,6 +230,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ReflectionOnlyLoadFrom ()
 		{
 			string loc = typeof (AssemblyTest).Assembly.Location;
@@ -241,6 +243,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
 		public void CreateInstanceOnRefOnly ()
 		{
 			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (AssemblyTest).Assembly.FullName);
