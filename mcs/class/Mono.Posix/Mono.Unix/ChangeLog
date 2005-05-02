@@ -1,3 +1,10 @@
+2005-05-02  Joe Shaw  <joeshaw@novell.com>
+
+	* UnixListener.cs (Init): Remove the call to Cleanup() and the
+	method itself, which was not supposed to be here.  We try to
+	connect to the socket if it exists instead of deleting it
+	undconditionally.
+
 2005-04-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* Stdlib.cs: Comment out usage of `UnmanagedFunctionPointer'. It

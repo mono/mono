@@ -43,7 +43,6 @@ namespace Mono.Unix {
  
 		void Init (UnixEndPoint ep)
 		{
-			Cleanup (ep);
 			listening = false;
 			string filename = ep.Filename;
 			if (File.Exists (filename)) {
@@ -165,13 +164,6 @@ namespace Mono.Unix {
 			if (disposed)
 				throw new ObjectDisposedException (GetType().FullName);
 		}        
-
-		static void Cleanup (UnixEndPoint ep)
-		{
-			string path = ((UnixEndPoint) ep).Filename;
-			if (File.Exists (path))
-				File.Delete (path);
-		}
 	}
 
 }
