@@ -1,5 +1,16 @@
 2005-05-02  Martin Baulig  <martin@ximian.com>
 
+	Fix #74529.
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeBreakOrigins):
+	Added `FlowBranching branching' argument; always `and' the
+	variables instead of `or'ing them unless we're an infinite loop.
+
+	* statement.cs (While.Resolve): Create a new sibling unless we're
+	infinite.	
+
+2005-05-02  Martin Baulig  <martin@ximian.com>
+
 	Fix #70140.
 
 	* class.cs (ConstructorInitializer.Resolve): Added `Block block'
