@@ -1,3 +1,8 @@
+2005-05-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaDataImporter.cs : XmlSchemaParicle might be XmlSchemaAny.
+	  This fixes bug #74784.
+
 2005-04-29  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReader.cs: removed use of _first. throw if given index

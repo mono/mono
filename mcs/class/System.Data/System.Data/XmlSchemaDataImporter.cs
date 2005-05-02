@@ -561,8 +561,9 @@ el.ElementType != schemaAnyType)
 				XmlSchemaElement el = p as XmlSchemaElement;
 				if (el != null)
 					ImportColumnElement (parent, el);
-				else
+				else if (p is XmlSchemaGroupBase)
 					ImportColumnGroupBase (parent, (XmlSchemaGroupBase) p);
+				// otherwise p is xs:any
 			}
 		}
 
