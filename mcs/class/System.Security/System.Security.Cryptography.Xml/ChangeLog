@@ -1,3 +1,10 @@
+2005-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXml.cs: Throw ArgumentNullException in AddObject and 
+	AddReference methods in 2.0.
+	* XmlDsigC14NTransform.cs: Throw ArgumentException when loading from
+	an unknown type in 2.0 (it was simply ignored in 1.x).
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoX509Data.cs: Fixed to work biwht unit tests on both NET_1_1 

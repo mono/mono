@@ -156,11 +156,19 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddObject (DataObject dataObject) 
 		{
+#if NET_2_0
+			if (dataObject == null)
+				throw new ArgumentNullException ("dataObject");
+#endif
 			m_signature.AddObject (dataObject);
 		}
 
 		public void AddReference (Reference reference) 
 		{
+#if NET_2_0
+			if (reference == null)
+				throw new ArgumentNullException ("reference");
+#endif
 			m_signature.SignedInfo.AddReference (reference);
 		}
 

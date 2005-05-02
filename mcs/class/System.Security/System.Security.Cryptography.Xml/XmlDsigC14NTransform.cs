@@ -134,7 +134,12 @@ namespace System.Security.Cryptography.Xml {
 				s = canonicalizer.Canonicalize ((obj as XmlDocument));
 			else if (obj is XmlNodeList)
 				s = canonicalizer.Canonicalize ((obj as XmlNodeList));
+#if NET_2_0
+			else
+				throw new ArgumentException ("obj");
+#else
 			// note: there is no default are other types won't throw an exception
+#endif
 		}
 	}
 }
