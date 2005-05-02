@@ -122,7 +122,7 @@ namespace Mono.CSharp {
 				throw new Exception ("The current_type is null");
 			
 			if (type_host == null)
-				throw new Exception ("Type host is null");
+				throw new Exception (String.Format ("Type host is null, Scope is {0}", Scope == null ? "null" : "Not null"));
 			
 			if (current_type == type_host && ec.IsStatic){
 				if (ec.IsStatic){
@@ -482,12 +482,33 @@ namespace Mono.CSharp {
 			return locals.Contains (li);
 		}
 		
-		public void AddChild (ScopeInfo si)
+		internal void AddChild (ScopeInfo si)
 		{
 			if (children.Contains (si))
 				return;
+
+			//
+			// If any of the current children should be a children of `si', move them there
+			//
+			ArrayList move_queue = null;
+			foreach (ScopeInfo child in children){
+				if (child.ScopeBlock.IsChildOf (si.ScopeBlock)){
+					if (move_queue == null)
+						move_queue = new ArrayList ();
+					move_queue.Add (child);
+					child.ParentScope = si;
+					si.AddChild (child);
+				}
+			}
+			
 			children.Add (si);
-		}
+
+			if (move_queue != null){
+				foreach (ScopeInfo child in move_queue){
+					children.Remove (child);
+				}
+			}
+		} 
 
 		static int indent = 0;
 
@@ -608,6 +629,9 @@ namespace Mono.CSharp {
 			if (inited)
 				return;
 
+			if (ScopeConstructor == null)
+				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
+			
 			ig.Emit (OpCodes.Newobj, (ConstructorInfo) ScopeConstructor);
 			ScopeInstance = ig.DeclareLocal (ScopeTypeBuilder);
 			ig.Emit (OpCodes.Stloc, ScopeInstance);
@@ -822,6 +846,7 @@ namespace Mono.CSharp {
 				topmost = scope;
 			} else {
 				// Link to parent
+				
 				for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
 					if (scopes [b.ID] != null){
 						LinkScope (scope, b.ID);
@@ -916,11 +941,16 @@ namespace Mono.CSharp {
 				// If the topmost ScopeInfo is not at the topblock level, insert
 				// a new ScopeInfo there.
 				//
+				// FIXME: This code probably should be evolved to be like the code
+				// in AddLocal
+				//
 				if (topmost.ScopeBlock != toplevel_owner){
 					ScopeInfo par_si = new ScopeInfo (this, toplevel_owner);
+					ScopeInfo old_top = topmost;
 					scopes [toplevel_owner.ID] = topmost;
 					topmost.ParentScope = par_si;
 					topmost = par_si;
+					topmost.AddChild (old_top);
 				}
 			}
 			
@@ -1037,10 +1067,18 @@ namespace Mono.CSharp {
 					if (si.ParentLink != null)
 						ig.Emit (OpCodes.Ldfld, si.ParentLink);
 					si = si.ParentScope;
-					if (si == null) 
+					if (si == null) {
+						si = am.Scope;
+						Console.WriteLine ("Target: {0} {1}", li.Block.ID, li.Name);
+						while (si.ScopeBlock.ID != li.Block.ID){
+							Console.WriteLine ("Trying: {0}", si.ScopeBlock.ID);
+							si = si.ParentScope;
+						}
+
 						throw new Exception (
 							     String.Format ("Never found block {0} starting at {1} while looking up {2}",
 									    li.Block.ID, am.Scope.ScopeBlock.ID, li.Name));
+					}
 				}
 			}
 		}

@@ -19,6 +19,12 @@
 	* expression.cs (This.DoResolve): Don't report a CS0188 if we're
 	inside the constructor.
 
+2005-04-20  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (ScopeInfo.AddChild): when adding a new child to
+	a ScopeInfo, if any of the current children is a child of the new
+	entry, move those children there.
+
 2005-04-30  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Switch.SimpleSwitchEmit): Reset `default_at_end'
