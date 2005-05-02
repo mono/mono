@@ -363,7 +363,23 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AsymmetricAlgorithm aa2 = sxe.PublicGetPublicKey ();
 			AssertNull ("Second Public Key is null", aa2);
 		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddObject_Null () 
+		{
+			SignedXml sx = new SignedXml ();
+			sx.AddObject (null);
+		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddReference_Null () 
+		{
+			SignedXml sx = new SignedXml ();
+			sx.AddReference (null);
+		}
+#else
 		[Test]
 		public void Add_Null () 
 		{
@@ -372,7 +388,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			sx.AddObject (null);
 			sx.AddReference (null);
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		public void GetXml_WithoutInfo () 

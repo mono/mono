@@ -1,3 +1,12 @@
+2005-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXmlTest.cs: AddObject and AddReference now throws 
+	ArgumentNullException in 2.0.
+	* XmlDsigC14NWithCommentsTransformTest.cs: InputType was fixed in 2.0.
+	* XmlDsigC14NTransformTest.cs: InputType was fixed in 2.0.
+	* XmlDsigXsltTransformTest.cs: Fixed tests for 2.0, InputType, Empty 
+	XSLT and invalid XSLT (new exception).
+
 2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDsigXPathTransformTest.cs: Marked FunctionHereObsolete (ignored)

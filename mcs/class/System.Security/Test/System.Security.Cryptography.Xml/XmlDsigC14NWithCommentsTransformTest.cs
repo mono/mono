@@ -92,7 +92,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AssertEquals ("Default InnerXml", null, xnl);
 		}
 
-		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
+		// LAMESPEC: input MUST be one of InputType - but no exception is thrown (not documented)
+#endif
 		public void LoadInputWithUnsupportedType () 
 		{
 			byte[] bad = { 0xBA, 0xD };
