@@ -1,3 +1,17 @@
+2005-05-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool-internals.h:
+	* Makefile.am: added threadpool-internals.h
+
+	* threadpool.c: call mono_unhandled_exception on exceptions not handled
+	that happen in threadpool threads (tested on MS).
+	(mono_thread_pool_remove_socket): new function that dispatch any pending
+	AIO call on a socket that is closing. By now only epoll really needs it,
+	as select/poll wake up when the socket closes.
+
+
+	* socket-io.c: call mono_thread_pool_remove_socket in Close_internal.
+
 2005-05-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Handle changing the calling convention.
