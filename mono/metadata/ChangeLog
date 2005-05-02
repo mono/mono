@@ -1,3 +1,8 @@
+
+Mon May 2 15:47:57 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: replace check for SocketAsyncCall class.
+
 2005-05-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool-internals.h:
