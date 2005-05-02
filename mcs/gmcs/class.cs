@@ -4429,13 +4429,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
+		public bool Resolve (ConstructorBuilder caller_builder, Block block, EmitContext ec)
 		{
 			Expression base_constructor_group;
 			Type t;
 			bool error = false;
 
-			ec.CurrentBlock = new ToplevelBlock (Block.Flags.Implicit, parameters, loc);
+			ec.CurrentBlock = block;
 
 			if (argument_list != null){
 				foreach (Argument a in argument_list){
@@ -4806,6 +4806,15 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			// If this is a non-static `struct' constructor and doesn't have any
+			// initializer, it must initialize all of the struct's fields.
+			if ((Parent.Kind == Kind.Struct) &&
+			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
+				Block.AddThisVariable (Parent, Location);
+
+			if (block != null)
+				block.ResolveMeta (ec, ParameterInfo);
+
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (
@@ -4817,7 +4826,8 @@ namespace Mono.CSharp {
 				// `this' access
 				//
 				ec.IsStatic = true;
-				if (Initializer != null && !Initializer.Resolve (ConstructorBuilder, ec))
+				if ((Initializer != null) &&
+				    !Initializer.Resolve (ConstructorBuilder, block, ec))
 					return;
 				ec.IsStatic = false;
 			}
@@ -4854,12 +4864,6 @@ namespace Mono.CSharp {
 
 			if (OptAttributes != null) 
 				OptAttributes.Emit (ec, this);
-
-			// If this is a non-static `struct' constructor and doesn't have any
-			// initializer, it must initialize all of the struct's fields.
-			if ((Parent.Kind == Kind.Struct) &&
-			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-				Block.AddThisVariable (Parent, Location);
 
 			ec.EmitTopBlock (block, ParameterInfo, Location);
 
