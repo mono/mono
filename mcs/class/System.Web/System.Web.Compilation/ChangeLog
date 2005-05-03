@@ -1,3 +1,8 @@
+2005-05-03  Lluis Sanchez Gual <lluis@novell.com>
+
+	* WebServiceCompiler.cs: Create the temp directory before
+	creating the web service source code file.
+
 2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: when checking languages, try to match other aliases
