@@ -3173,8 +3173,8 @@ namespace System.Windows.Forms
 
 					if (!needs_redraw) {
 						// Just blit the previous image
-						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle);
-						needs_redraw = false;
+						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
+						XplatUI.PaintEventEnd(Handle);
 						return;
 					}
 
@@ -3190,8 +3190,9 @@ namespace System.Windows.Forms
 					OnPaint(paint_event);
 
 					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-						dc.DrawImage (ImageBuffer, paint_event.ClipRectangle);
+						dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 						paint_event.SetGraphics (dc);
+						needs_redraw = false;
 					}
 
 					XplatUI.PaintEventEnd(Handle);
