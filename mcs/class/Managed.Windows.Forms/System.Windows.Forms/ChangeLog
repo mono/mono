@@ -1,5 +1,10 @@
 2005-05-03  Jackson Harper  <jackson@ximian.com>
 
+	* Splitter.cs: No decorations for the splitter form. Cache the
+	hatch brush.
+
+2005-05-03  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Use dashed lines to connect nodes. Use the
 	ControlPaint method for drawing the focus rect instead of doing
 	that in treeview.

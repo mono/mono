@@ -465,23 +465,40 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Class
-		public class SplitterForm : System.Windows.Forms.Form
+		public class SplitterForm : Form
 		{
+			private HatchBrush hatch;
+
 			public SplitterForm()
 			{
-			
 				SetStyle (ControlStyles.UserPaint, true);
 				SetStyle (ControlStyles.AllPaintingInWmPaint, true);
 
 				// TODO: This has to be here, or the form doesn't draw right
 				this.MinimumSize = new System.Drawing.Size(1, 1);
 				this.Text = "Form2";
+
+				hatch = new HatchBrush (HatchStyle.SmallCheckerBoard, Color.White, Color.Black);
+			}
+
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams cp;
+
+					cp = base.CreateParams;
+
+					cp.Style = (int)WindowStyles.WS_POPUP;
+					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+
+					cp.ExStyle = (int) WindowStyles.WS_EX_TOPMOST;
+ 
+					return cp;
+				}
 			}
 
 			protected override void OnPaint(PaintEventArgs e)
 			{
-				//TODO: The HatchBrush should be cached
-				e.Graphics.FillRectangle(new HatchBrush(HatchStyle.SmallCheckerBoard, Color.White,Color.Black),ClientRectangle);
+				e.Graphics.FillRectangle (hatch,ClientRectangle);
 				base.OnPaint (e);
 			}
 
