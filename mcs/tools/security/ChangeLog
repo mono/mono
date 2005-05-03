@@ -1,3 +1,7 @@
+2005-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Bump security tools version to 1.1.7.
+
 2005-03-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (install-local, uninstall-local): Disable when
