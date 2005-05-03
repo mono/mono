@@ -103,6 +103,24 @@ namespace System.Net.Sockets
 				}
 			}
 
+			void CompleteAllOnDispose (Queue queue)
+			{
+				object [] pending = queue.ToArray ();
+				queue.Clear ();
+
+				WaitCallback cb;
+				for (int i = 0; i < pending.Length; i++) {
+					SocketAsyncResult ares = (SocketAsyncResult) pending [i];
+					cb = new WaitCallback (ares.CompleteDisposed);
+					ThreadPool.QueueUserWorkItem (cb, null);
+				}
+			}
+
+			void CompleteDisposed (object unused)
+			{
+				Complete ();
+			}
+
 			public void Complete ()
 			{
 				if (operation != SocketOperation.Receive && Sock.disposed)
@@ -124,8 +142,12 @@ namespace System.Net.Sockets
 						queue.Dequeue (); // remove ourselves
 						if (queue.Count > 0) {
 							req = (SocketAsyncResult) queue.Peek ();
-							Worker worker = new Worker (req);
-							sac = GetDelegate (worker, req.operation);
+							if (!Sock.disposed) {
+								Worker worker = new Worker (req);
+								sac = GetDelegate (worker, req.operation);
+							} else {
+								CompleteAllOnDispose (queue);
+							}
 						}
 					}
 

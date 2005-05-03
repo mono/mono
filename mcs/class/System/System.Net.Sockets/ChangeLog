@@ -1,3 +1,8 @@
+2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: if there are outstanding aio requests and one of them gets
+	an ObjectDisposedException, throw the same exception for the rest.
+
 2005-05-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: removed hack added to fix bug #53229 (more than a year ago)
