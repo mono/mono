@@ -526,6 +526,14 @@ namespace Mono.CSharp {
 				return false;
 
 			MethodInfo base_method = (MethodInfo) list [0];
+
+			//
+			// FIXME: We shouldn't be creating proxies unconditionally.
+			//        The runtime can handle most cases.  
+			//
+			// 	  At worst, if we can't avoid creating the proxy, we
+			//	  may need to make the proxy use Callvirt.
+			//
 			if (!base_method.IsAbstract)
 				DefineProxy (iface_type, base_method, mi, args);
 			return true;
@@ -545,6 +553,10 @@ namespace Mono.CSharp {
 				Type type = pending_implementations [i].type;
 				int j = 0;
 
+				bool base_implements_type = type.IsInterface &&
+					container.TypeBuilder.BaseType != null &&
+					TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, type);
+
 				foreach (MethodInfo mi in pending_implementations [i].methods){
 					if (mi == null)
 						continue;
@@ -559,7 +571,7 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						if (BaseImplements (type, mi))
+						if (base_implements_type || BaseImplements (type, mi))
 							continue;
 
 						if (pending_implementations [i].optional)
