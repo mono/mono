@@ -1,5 +1,11 @@
 2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConnection.cs: removed a 'slightly' important line by mistake.
+	* WebConnectionStream.cs: if the transfer encoding is chunked, ignore
+	content-length header if present.
+
+2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebConnection.cs: no need to use an AutoResetEvent.
 	* WebConnectionStream.cs: don't start any more reads on the socket
 	after getting a 0 signalling the end. This fixes Ben's infamous foo.cs

@@ -67,8 +67,11 @@ namespace System.Net
 			pending = new ManualResetEvent (true);
 			this.request = cnc.Data.request;
 			this.cnc = cnc;
+			string contentType = cnc.Data.Headers ["Transfer-Encoding"];
+			bool chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
 			string clength = cnc.Data.Headers ["Content-Length"];
-			if (clength != null && clength != "") {
+			if (!chunkedRead && clength != null && clength != "") {
+
 				try {
 					contentLength = Int32.Parse (clength);
 				} catch {

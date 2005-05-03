@@ -581,6 +581,7 @@ namespace System.Net
 					Close (false);
 				}
 
+				busy = false;
 				SendNext ();
 			}
 		}
