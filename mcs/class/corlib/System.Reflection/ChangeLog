@@ -1,3 +1,8 @@
+2004-05-03  Lluis Sanchez  <lluis@ximian.com>
+
+	* Assembly.cs: Don't remove version and culture information from
+	the name, since it will be used by load_with_partial_name.
+
 2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Added some CAS security to avoid returning restricted
@@ -799,7 +804,7 @@ Sat Jul 10 15:48:34 CEST 2004 Paolo Molaro <lupus@ximian.com>
 	abstract; use an interncall in MonoMethod and a custom
 	implementation in MethodBuilder.	
 
-2003-10-17  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-17  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* MonoEvent.cs: implement ToString method as in MS.NET.
 

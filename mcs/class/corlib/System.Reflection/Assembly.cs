@@ -548,10 +548,6 @@ namespace System.Reflection {
 			if (partialName == null)
 				throw new NullReferenceException ();
 
-			int ci = partialName.IndexOf (',');
-			if (ci > 0)
-				partialName = partialName.Substring (0, ci);
-
 			return load_with_partial_name (partialName, securityEvidence);
 		}
 
