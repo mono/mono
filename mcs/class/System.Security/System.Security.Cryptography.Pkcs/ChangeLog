@@ -1,3 +1,17 @@
+2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CmsSigner.cs: Removed old FIXME.
+	* ContentInfo.cs: Better detection (but still less strict than MS).
+	* EnvelopedCms.cs: Avoid possible NullReferenceException in Encrypt.
+	* KeyTransRecipientInfo.cs: Minor editing updates.
+	* Pkcs9ContentType.cs: Added encoding/decoding of the content 
+	information (OID).
+	* Pkcs9MessageDigest.cs: Added encoding/decoding of the digest.
+	* SignedCms.cs: Version set to 0 (default). Serial numbers are 
+	reversed here (Fx isn't very consistant in this regard).
+	* SignerInfo.cs: Convert the hash name to an OID.
+	* SignerInfoCollection.cs: Completed class.
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AlgorithmIdentifier.cs: Removed FIXME - seems "by design".

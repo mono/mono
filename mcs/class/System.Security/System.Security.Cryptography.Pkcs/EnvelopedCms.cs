@@ -219,7 +219,7 @@ namespace System.Security.Cryptography.Pkcs {
 		[MonoTODO]
 		public void Encrypt () 
 		{
-			if ((_content.Content == null) || (_content.Content.Length == 0))
+			if ((_content == null) || (_content.Content == null) || (_content.Content.Length == 0))
 				throw new CryptographicException ("no content to encrypt");
 		}
 

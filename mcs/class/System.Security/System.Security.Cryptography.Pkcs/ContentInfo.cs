@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +28,6 @@
 //
 
 #if NET_2_0
-
-using System;
-using System.Security.Cryptography;
 
 using Mono.Security;
 
@@ -74,7 +71,7 @@ namespace System.Security.Cryptography.Pkcs {
 		// properties
 
 		public byte[] Content { 
-			get { return _content; }
+			get { return (byte[]) _content.Clone (); }
 		}
 
 		public Oid ContentType { 
@@ -83,7 +80,7 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// static methods
 
-		[MonoTODO("Incomplete OID support")]
+		[MonoTODO ("MS is stricter than us about the content structure")]
 		public static Oid GetContentType (byte[] encodedMessage)
 		{
 			if (encodedMessage == null)
@@ -92,15 +89,21 @@ namespace System.Security.Cryptography.Pkcs {
 			try {
 				PKCS7.ContentInfo ci = new PKCS7.ContentInfo (encodedMessage);
 				switch (ci.ContentType) {
-					// TODO - there are probably more - need testing
-					case PKCS7.Oid.signedData:
-						return new Oid (ci.ContentType);
-					default:
-						throw new CryptographicException ("Bad ASN1 - invalid OID");
+				case PKCS7.Oid.data:
+				case PKCS7.Oid.signedData:		// see SignedCms class
+				case PKCS7.Oid.envelopedData:		// see EnvelopedCms class
+				case PKCS7.Oid.digestedData:
+				case PKCS7.Oid.encryptedData:
+					return new Oid (ci.ContentType);
+				default:
+					// Note: the constructor will accept any "valid" OID (but that 
+					// doesn't mean it's a valid ContentType structure - ASN.1 wise).
+					string msg = Locale.GetText ("Bad ASN1 - invalid OID '{0}'");
+					throw new CryptographicException (String.Format (msg, ci.ContentType));
 				}
 			}
 			catch (Exception e) {
-				throw new CryptographicException ("Bad ASN1 - invalid structure", e);
+				throw new CryptographicException (Locale.GetText ("Bad ASN1 - invalid structure"), e);
 			}
 		}
 	}

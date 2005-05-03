@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography.Pkcs {
@@ -51,7 +50,7 @@ namespace System.Security.Cryptography.Pkcs {
 		}
 
 		public bool IsSynchronized {
-			get { return _list.IsSynchronized; }
+			get { return false; }	// as documented
 		}
 
 		public SignerInfo this [int index] {
@@ -71,12 +70,22 @@ namespace System.Security.Cryptography.Pkcs {
 
 		public void CopyTo (Array array, int index) 
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if ((index < 0) || (index >= array.Length))
+				throw new ArgumentOutOfRangeException ("index");
+
 			_list.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		public void CopyTo (SignerInfo[] array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if ((index < 0) || (index >= array.Length))
+				throw new ArgumentOutOfRangeException ("index");
+
+			_list.CopyTo (array, index);
 		}
 
 		public SignerInfoEnumerator GetEnumerator ()

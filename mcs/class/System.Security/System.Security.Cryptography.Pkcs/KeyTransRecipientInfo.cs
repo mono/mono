@@ -2,11 +2,10 @@
 // KeyTransRecipientInfo.cs - System.Security.Cryptography.Pkcs.KeyTransRecipientInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography.Pkcs {
@@ -42,7 +40,7 @@ namespace System.Security.Cryptography.Pkcs {
 		private SubjectIdentifier _recipientIdentifier;
 		private int _version;
 
-		// only accessible from EnvelopedPkcs7.RecipientInfos
+		// only accessible from EnvelopedCms.RecipientInfos
 		internal KeyTransRecipientInfo (byte[] encryptedKey, AlgorithmIdentifier keyEncryptionAlgorithm, SubjectIdentifier recipientIdentifier, int version)
 			: base (RecipientInfoType.KeyTransport)
 		{

@@ -30,15 +30,17 @@
 
 #if NET_2_0
 
+using Mono.Security;
+
 namespace System.Security.Cryptography.Pkcs {
 
-	[MonoTODO ("missing internals")]
 	public sealed class Pkcs9ContentType : Pkcs9AttributeObject {
 
 		internal const string oid = "1.2.840.113549.1.9.3";
 		internal const string friendlyName = "Content Type";
 
 		private Oid _contentType;
+		private byte[] _encoded;
 
 		// constructors
 
@@ -46,6 +48,7 @@ namespace System.Security.Cryptography.Pkcs {
 		{
 			// Pkcs9Attribute remove the "set" accessor on Oid :-(
 			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			_encoded = null;
 		}
 
 		internal Pkcs9ContentType (string contentType) 
@@ -53,6 +56,7 @@ namespace System.Security.Cryptography.Pkcs {
 			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
 			_contentType = new Oid (contentType);
 			RawData = Encode ();
+			_encoded = null;
 		}
 
 		internal Pkcs9ContentType (byte[] encodedContentType) 
@@ -68,7 +72,11 @@ namespace System.Security.Cryptography.Pkcs {
 		// properties
 
 		public Oid ContentType {
-			get { return _contentType; }
+			get {
+				if (_encoded != null)
+					Decode (_encoded);
+				return _contentType;
+			}
 		}
 
 		// methods
@@ -76,20 +84,26 @@ namespace System.Security.Cryptography.Pkcs {
 		public override void CopyFrom (AsnEncodedData asnEncodedData)
 		{
 			base.CopyFrom (asnEncodedData);
-			Decode (this.RawData);
+			_encoded = asnEncodedData.RawData;
 		}
 
 		// internal stuff
 
 		internal void Decode (byte[] attribute)
 		{
-			_contentType = null;
+			if ((attribute == null) || (attribute [0] != 0x06))
+				throw new CryptographicException (Locale.GetText ("Expected an OID."));
+
+			ASN1 oid = new ASN1 (attribute);
+			_contentType = new Oid (ASN1Convert.ToOid (oid));
+			_encoded = null;
 		}
 
-		// TODO
 		internal byte[] Encode ()
 		{
-			return null;
+			if (_contentType == null)
+				return null;
+			return ASN1Convert.FromOid (_contentType.Value).GetBytes ();
 		}
 	}
 }

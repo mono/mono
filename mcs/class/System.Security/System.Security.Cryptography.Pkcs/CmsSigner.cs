@@ -66,17 +66,11 @@ namespace System.Security.Cryptography.Pkcs {
 		public CmsSigner (SubjectIdentifierType signerIdentifierType, X509Certificate2 certificate) 
 			: this (signerIdentifierType)
 		{
-// FIXME: compatibility with fx 1.2.3400.0
-//			if (certificate == null)
-//				throw new ArgumentNullException ("certificate");
 			_certificate = certificate;
 		}
 
 		public CmsSigner (X509Certificate2 certificate) : this ()
 		{
-// FIXME: compatibility with fx 1.2.3400.0
-//			if (certificate == null)
-//				throw new ArgumentNullException ("certificate");
 			_certificate = certificate;
 		}
 

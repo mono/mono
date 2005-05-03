@@ -30,15 +30,17 @@
 
 #if NET_2_0
 
+using Mono.Security;
+
 namespace System.Security.Cryptography.Pkcs {
 
-	[MonoTODO ("missing internals")]
 	public sealed class Pkcs9MessageDigest : Pkcs9AttributeObject {
 
 		internal const string oid = "1.2.840.113549.1.9.4";
 		internal const string friendlyName = "Message Digest";
 
 		private byte[] _messageDigest;
+		private byte[] _encoded;
 
 		// constructors
 
@@ -46,6 +48,7 @@ namespace System.Security.Cryptography.Pkcs {
 		{
 			// Pkcs9Attribute remove the "set" accessor on Oid :-(
 			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			_encoded = null;
 		}
 
 		internal Pkcs9MessageDigest (byte[] messageDigest, bool encoded) 
@@ -67,7 +70,12 @@ namespace System.Security.Cryptography.Pkcs {
 		// properties
 
 		public byte[] MessageDigest {
-			get { return _messageDigest; }
+			get {
+				if (_encoded != null)
+					Decode (_encoded);
+				// FIXME: beta2 returns a reference
+				return _messageDigest;
+			}
 		}
 
 		// methods
@@ -75,21 +83,25 @@ namespace System.Security.Cryptography.Pkcs {
 		public override void CopyFrom (AsnEncodedData asnEncodedData)
 		{
 			base.CopyFrom (asnEncodedData);
-			Decode (this.RawData);
+			_encoded = asnEncodedData.RawData;
 		}
 
 		// internal stuff
 
 		internal void Decode (byte[] attribute)
 		{
-			// TODO
-			_messageDigest = null;
+			if ((attribute == null) || (attribute [0] != 0x04))
+				throw new CryptographicException (Locale.GetText ("Expected an OCTETSTRING."));
+
+			ASN1 md = new ASN1 (attribute);
+			_messageDigest = md.Value;
+			_encoded  = null;
 		}
 
 		internal byte[] Encode ()
 		{
-			// TODO
-			return null;
+			ASN1 md = new ASN1 (0x04, _messageDigest);
+			return md.GetBytes ();
 		}
 	}
 }

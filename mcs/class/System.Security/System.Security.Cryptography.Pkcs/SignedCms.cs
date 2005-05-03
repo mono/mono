@@ -73,21 +73,21 @@ namespace System.Security.Cryptography.Pkcs {
 		public SignedCms (SubjectIdentifierType signerIdentifierType) : this ()
 		{
 			_type = signerIdentifierType;
-			_version = ((_type == SubjectIdentifierType.SubjectKeyIdentifier) ? 2 : 0);
+			_version = 0;
 		}
 
 		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo content) 
 			: this (content, false) 
 		{
 			_type = signerIdentifierType;
-			_version = ((_type == SubjectIdentifierType.SubjectKeyIdentifier) ? 2 : 0);
+			_version = 0;
 		}
 
 		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo content, bool detached) 
 			: this (content, detached) 
 		{
 			_type = signerIdentifierType;
-			_version = ((_type == SubjectIdentifierType.SubjectKeyIdentifier) ? 2 : 0);
+			_version = 0;
 		}
 
 		// properties
@@ -158,11 +158,16 @@ namespace System.Security.Cryptography.Pkcs {
 			ComputeSignature ();
 		}
 
-		private string ToString (byte[] array) 
+		private string ToString (byte[] array, bool reverse) 
 		{
 			StringBuilder sb = new StringBuilder ();
-			foreach (byte b in array)
-				sb.Append (b.ToString ("X2"));
+			if (reverse) {
+				for (int i=array.Length - 1; i >= 0; i--)
+					sb.Append (array [i].ToString ("X2"));
+			} else {
+				for (int i=0; i < array.Length; i++)
+					sb.Append (array [i].ToString ("X2"));
+			}
 			return sb.ToString ();
 		}
 
@@ -213,12 +218,12 @@ namespace System.Security.Cryptography.Pkcs {
 				type = SubjectIdentifierType.IssuerAndSerialNumber;
 				X509IssuerSerial xis = new X509IssuerSerial ();
 				xis.IssuerName = sd.SignerInfo.IssuerName;
-				xis.SerialNumber = ToString (serial);
+				xis.SerialNumber = ToString (serial, true);
 				o = xis;
 				// TODO: move to a FindCertificate (issuer, serial, collection)
 				foreach (Mono.Security.X509.X509Certificate x in sd.Certificates) {
 					if (x.IssuerName == sd.SignerInfo.IssuerName) {
-						if (ToString (x.SerialNumber) == xis.SerialNumber) {
+						if (ToString (x.SerialNumber, true) == xis.SerialNumber) {
 							x509 = new X509Certificate2 (x.RawData);
 							break;
 						}
@@ -226,12 +231,12 @@ namespace System.Security.Cryptography.Pkcs {
 				}
 			}
 			else if (sd.SignerInfo.SubjectKeyIdentifier != null) {
-				string ski = ToString (sd.SignerInfo.SubjectKeyIdentifier);
+				string ski = ToString (sd.SignerInfo.SubjectKeyIdentifier, false);
 				type = SubjectIdentifierType.SubjectKeyIdentifier;
 				o = (object) ski;
 				// TODO: move to a FindCertificate (ski, collection)
 				foreach (Mono.Security.X509.X509Certificate x in sd.Certificates) {
-					if (ToString (GetKeyIdentifier (x)) == ski) {
+					if (ToString (GetKeyIdentifier (x), false) == ski) {
 						x509 = new X509Certificate2 (x.RawData);
 						break;
 					}
