@@ -1,3 +1,12 @@
+2005-05-03  Lluis Sanchez Gual <lluis@novell.com>
+
+	* appdomain.c: Moved methods for parsing and freeing assembly
+	names to assembly.c.
+	* assembly.c, domain-internals.h: Created public methods for parsing
+	assembly names. Fixed mono_assembly_load_with_partial_name:
+	it now finds the best match, taking into account the version,
+	token and culture specified in the partial name. Also return
+	the latest version if no version information is specified.
 
 Mon May 2 15:47:57 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
