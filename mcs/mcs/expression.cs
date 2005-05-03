@@ -3772,7 +3772,7 @@ namespace Mono.CSharp {
 				//
 				if (local_info.LocalBuilder == null)
 					throw new Exception ("This should not happen: both Field and Local are null");
-				
+
 				source.Emit (ec);
 				if (leave_copy)
 					ec.ig.Emit (OpCodes.Dup);
@@ -7926,8 +7926,22 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, address);
 			}
 		}
-	}
 
+		public void EmitGetLength (EmitContext ec, int dim)
+		{
+			int rank = ea.Expr.Type.GetArrayRank ();
+			ILGenerator ig = ec.ig;
+
+			ea.Expr.Emit (ec);
+			if (rank == 1) {
+				ig.Emit (OpCodes.Ldlen);
+				ig.Emit (OpCodes.Conv_I4);
+			} else {
+				IntLiteral.EmitInt (ig, dim);
+				ig.Emit (OpCodes.Callvirt, TypeManager.int_getlength_int);
+			}
+		}
+	}
 	
 	class Indexers {
 		public ArrayList Properties;
