@@ -1,3 +1,11 @@
+2005-05-03  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Microsoft.JScript.dll.sources: IWrappedMember.cs,
+	IVsaScriptCodeItem.cs, IDebugType.cs, IDefineEvent.cs,
+	IEngine2.cs, IMethodsCompletionInfo.cs, INeedEngine.cs,
+	IObjectCompletionInfo.cs, ISite2.cs, MemberInfoInitializer.cs
+	added to the build.
+
 2005-05-02  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Microsoft.JScript.dll.sources: COMMemberInfo.cs,
