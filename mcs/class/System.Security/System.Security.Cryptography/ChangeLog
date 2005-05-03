@@ -1,3 +1,7 @@
+2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedData.cs: Allow CopyFrom to work even without an OID.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsnEncodedData.cs: Fix compiler warning (unused variable).
