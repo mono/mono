@@ -1,3 +1,7 @@
+2005-05-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* os.c: Update from the official version.
+
 2005-04-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jni.c: Applied some freebsd patches from Bill Middleton <flashdict@gmail.com>.

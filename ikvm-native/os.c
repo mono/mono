@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2004 Jeroen Frijters
+  Copyright (C) 2004, 2005 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -57,6 +57,7 @@
 	}
 #else
 	#include <gmodule.h>
+	#include <sys/mman.h>
 	#include "jni.h"
 
 	JNIEXPORT void* JNICALL ikvm_LoadLibrary(char* psz)
@@ -79,5 +80,20 @@
 			return symbol;
 		else
 			return NULL;
+	}
+
+	JNIEXPORT void* JNICALL ikvm_mmap(int fd, jboolean writeable, jboolean copy_on_write, jlong position, jint size)
+	{
+		return mmap(0, size, writeable ? PROT_WRITE | PROT_READ : PROT_READ, copy_on_write ? MAP_PRIVATE : MAP_SHARED, fd, position);
+	}
+
+	JNIEXPORT int JNICALL ikvm_munmap(void* address, jint size)
+	{
+		return munmap(address, size);
+	}
+
+	JNIEXPORT int JNICALL ikvm_msync(void* address, jint size)
+	{
+		return msync(address, size, MS_SYNC);
 	}
 #endif
