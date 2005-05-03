@@ -93,6 +93,10 @@ namespace System.Security.Cryptography.Xml
 
 		public override object GetOutput () 
 		{
+#if NET_2_0
+			if (xnl == null)
+				throw new ArgumentNullException ("LoadInnerXml before transformation.");
+#endif
 			XmlResolver resolver = GetResolver ();
 
 			XslTransform xsl = new XslTransform ();
@@ -109,7 +113,11 @@ namespace System.Security.Cryptography.Xml
 #endif
 
 			if (inputDoc == null)
-				throw new NullReferenceException ("Load input document before transformation.");
+#if NET_2_0
+				throw new ArgumentNullException ("LoadInput before transformation.");
+#else
+				throw new NullReferenceException ("LoadInput before transformation.");
+#endif
 
 			MemoryStream stream = new MemoryStream ();
 			// only possible output: Stream
