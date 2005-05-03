@@ -1,3 +1,17 @@
+2005-05-03  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* ReturnOutOfFinally.cs, SyntaxErrorObject.cs, TypeReflector.cs,
+	JSPrototypeObject.cs, ReferenceErrorObject.cs, Namespace.cs,
+	expression.cs (Unary class), Binding.cs, ArrayWrapper.cs,
+	CmdLineOptionParser.cs, TypeErrorObject.cs, JSConstructor.cs,
+	TypedArray.cs, FunctionWrapper.cs, SuperTypeMembersSorter.cs,
+	ContinueOutOfFinally.cs, BlockScope.cs,
+	AssemblyCustomAttributeList.cs, VersionableAttribute.cs,
+	SimpleHashtable.cs, ResInfo.cs, Import.cs,
+	NotRecommendedAttribute.cs, CmdLineException.cs, DebugBreak.cs,
+	VBArrayObject.cs, CmdLineError.cs, TODOAttribute.cs,
+	RegExpMatch.cs, JScriptCodeProvider.cs, RangeErrorObject.cs,: Fixes for API compliance.
+
 2005-04-28  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* BinaryOp.cs, ActivationObject.cs, expression.cs (Args),
