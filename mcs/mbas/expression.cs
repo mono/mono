@@ -3575,6 +3575,9 @@ namespace Mono.MonoBASIC {
 		static Hashtable method_parameter_cache;
 		static MemberFilter CompareName;
 
+		static ArrayList tempvars; // For ByRef - different parameter and argument type
+		static bool is_byref_conversion = false; //For ByRef when it is converted 
+
 		static Invocation ()
 		{
 			method_parameter_cache = new PtrHashtable ();
@@ -3802,80 +3805,6 @@ namespace Mono.MonoBASIC {
 			return union;
 		}
 
-		/// <summary>
-		///  Determines is the candidate method, if a params method, is applicable
-		///  in its expanded form to the given set of arguments
-		/// </summary>
-		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
-		{
-			int arg_count;
-			
-			if (arguments == null)
-				arg_count = 0;
-			else
-				arg_count = arguments.Count;
-			
-			ParameterData pd = GetParameterData (candidate);
-			
-			int pd_count = pd.Count;
-
-			if (pd_count == 0)
-				return false;
-			
-			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
-				return false;
-			
-			if (pd_count - 1 > arg_count)
-				return false;
-			
-			if (pd_count == 1 && arg_count == 0)
-				return true;
-
-			//
-			// If we have come this far, the case which remains is when the number of parameters
-			// is less than or equal to the argument count.
-			//
-			for (int i = 0; i < pd_count - 1; ++i) {
-
-				Argument a = (Argument) arguments [i];
-
-				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.REF);
-				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.REF);
-
-				if (a_mod == p_mod) {
-
-					if (a_mod == Parameter.Modifier.NONE)
-						if (!ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
-							return false;
-										
-					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
-						Type pt = pd.ParameterType (i);
-
-						if (!pt.IsByRef)
-							pt = TypeManager.LookupType (pt.FullName + "&");
-						
-						if (pt != a.Type)
-							return false;
-					}
-				} else
-					return false;
-				
-			}
-
-			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
-
-			for (int i = pd_count - 1; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
-				
-				if (!StandardConversionExists (a.Expr, element_type))
-					return false;
-			}
-			
-			return true;
-		}
-
 
 		protected enum ConversionType { None, Widening, Narrowing };
 
@@ -3888,7 +3817,7 @@ namespace Mono.MonoBASIC {
 
 			if (a_mod == p_mod ||
 				(a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
-				if (a_mod == Parameter.Modifier.NONE) {
+				// if (a_mod == Parameter.Modifier.NONE) {
 					if (! WideningConversionExists (a.Expr, ptype) ) {
 
 						if (! NarrowingConversionExists (ec, a.Expr, ptype) )
@@ -3897,7 +3826,7 @@ namespace Mono.MonoBASIC {
 							return ConversionType.Narrowing;
 					} else
 						return ConversionType.Widening;
-				}
+				 // }
 				
 				if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 					Type pt = pd.ParameterType (i);
@@ -4196,7 +4125,6 @@ namespace Mono.MonoBASIC {
 			else
 				argument_count = Arguments.Count;
 
-			
 			if (method == null) {
 				//
 				// Okay so we have failed to find anything so we
@@ -4353,7 +4281,9 @@ namespace Mono.MonoBASIC {
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
 			    	chose_params_expanded)
 					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
-				if (a.Type != parameter_type){
+				// By pass conversion for foll. case and handle it in EmitArguments()
+
+				if (a.ArgType != Argument.AType.Ref && a.Type != parameter_type){
 					Expression conv;
 					
 					conv = ConvertImplicit (ec, a_expr, parameter_type, loc);
@@ -4424,7 +4354,6 @@ namespace Mono.MonoBASIC {
 				IndexerAccess ia = expr_to_return as IndexerAccess;
 				expr_to_return = ia.DoResolveLValue (ec, right_side);
 			}
-
 			return expr_to_return;
 		}
 
@@ -4452,7 +4381,7 @@ namespace Mono.MonoBASIC {
 				ec.InvokingOwnOverload = false;
 				flags = ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup;
 				temp = expr.Resolve (ec, flags);
-			}	
+			}
 
 			if (temp == null) {
 				if (is_left_hand)
@@ -4510,7 +4439,6 @@ namespace Mono.MonoBASIC {
 			{
 				MethodGroupExpr mg = (MethodGroupExpr) expr;
 				method = OverloadResolve (ec, mg, ref Arguments, loc);
-
 				if (method == null)
 				{
 					Error (30455,
@@ -4692,6 +4620,9 @@ namespace Mono.MonoBASIC {
 
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) arguments [i];
+				Type parameter_type = pd.ParameterType(i);
+				Type argtype = a.Type;
+				Type arg_expr_type = a.Expr.Type;
 
 				if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
 					//
@@ -4704,18 +4635,38 @@ namespace Mono.MonoBASIC {
 						EmitParams (ec, i, arguments);
 					return;
 				}
-
 				if ((a.ArgType == Argument.AType.Ref ) &&
-					!(a.Expr is IMemoryLocation)) {
-					LocalTemporary tmp = new LocalTemporary (ec, pd.ParameterType (i));
+					(parameter_type != arg_expr_type ||
+					 ! (a.Expr is IMemoryLocation))) {
 					
-					a.Expr.Emit (ec);
-					tmp.Store (ec);
-					a = new Argument (tmp, a.ArgType);
+					 LocalTemporary localtmp = new LocalTemporary (ec, parameter_type ); 
+
+					if((arg_expr_type != parameter_type) && (a.ArgType == Argument.AType.Ref)) {					 
+						Expression e = ConvertImplicit (ec, a.Expr, parameter_type, Location.Null);
+						is_byref_conversion = true;
+                                        	e.Emit (ec);
+					} else 
+						a.Expr.Emit (ec);
+					
+
+
+					if (tempvars == null)
+						tempvars = new ArrayList ();
+					if (a.Expr is IMemoryLocation && is_byref_conversion ) {
+						Expression conv;
+						if(argtype.IsByRef)
+							argtype = argtype.GetElementType();
+						conv = ConvertImplicit (ec, localtmp, argtype, Location.Null);
+						 tempvars.Add (new Assign (a.Expr, conv, Location.Null));
+
+					}
+                                       	localtmp.Store (ec);
+                                    	a = new Argument (localtmp, a.ArgType);
 				}
-					    
-				a.Emit (ec);
-			}
+                                a.Emit (ec);
+                        }
+
+
 
 			if (pd.Count > top &&
 			    pd.ParameterModifier (top) == Parameter.Modifier.PARAMS){
@@ -4912,7 +4863,14 @@ namespace Mono.MonoBASIC {
 				Type ret = ((MethodInfo)method).ReturnType;
 				if ((TypeManager.TypeToCoreType (ret) != TypeManager.void_type) && !this.is_latebinding) {
 					ec.ig.Emit (OpCodes.Pop);
+
+					if (tempvars != null) {
+						foreach (ExpressionStatement s in tempvars)
+							s.EmitStatement (ec);
+						tempvars.Clear ();
+					}
 				}
+				
 			}
 		}
 	}
