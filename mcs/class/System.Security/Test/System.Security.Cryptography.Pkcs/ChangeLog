@@ -1,3 +1,19 @@
+2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ContentInfoTest.cs: Addd test cases for data, envelopedData and 
+	other "bad" cases.
+	* EnvelopedCmsTest.cs: Added [Category ("NotWorking")] to tests for 
+	which Mono isn't complete enough to execute.
+	* KeyTransRecipientInfoTest.cs: Added test for EncryptedKey (reference 
+	not copy).
+	* Pkcs9ContentTypeTest.cs: Removed FIXME (fixed in beta2). Added 
+	CopyFrom tests.
+	* Pkcs9DocumentDescriptionTest.cs: Removed FIXME (fixed in beta2).
+	* Pkcs9MessageDigestTest.cs: Added CopyFrom tests.
+	* SignerInfoCollectionTest.cs: New. Tests for SignerInfoCollection.
+	* SignerInfoTest.cs: Mark some method/data internal so they can be 
+	reused for other tests.
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AlgorithmIdentifierTest.cs: Complete some test cases. Updated to 

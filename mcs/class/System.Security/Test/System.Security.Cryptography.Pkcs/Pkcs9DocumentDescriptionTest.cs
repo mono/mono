@@ -48,17 +48,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Assert.AreEqual ("1.3.6.1.4.1.311.88.2.2", dd.Oid.Value, "Oid.Value");
 			Assert.IsNull (dd.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.IsNull (dd.RawData, "RawData");
+			Assert.IsNull (dd.DocumentDescription, "DocumentDescription");
 			Assert.AreEqual (String.Empty, dd.Format (true), "Format(true)");
 			Assert.AreEqual (String.Empty, dd.Format (false), "Format(false)");
-		}
-
-		[Test]
-		// FIXME: throws a NullReferenceException in beta 1 - still true in Dec CTP
-		[Category ("NotDotNet")] // MS throws [ExpectedException (typeof (NullReferenceException))]
-		public void Constructor_Empty_MessageDigest ()
-		{
-			Pkcs9DocumentDescription dd = new Pkcs9DocumentDescription ();
-			Assert.IsNull (dd.DocumentDescription, "DocumentDescription");
 		}
 
 		[Test]

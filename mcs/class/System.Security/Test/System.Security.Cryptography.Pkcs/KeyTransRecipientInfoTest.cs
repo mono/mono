@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,6 +71,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void SubjectKeyIdentifier () 
 		{
 			KeyTransRecipientInfo ktri = GetKeyTransRecipientInfo (subjectKeyIdentifier);
@@ -83,6 +84,16 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AssertEquals ("RecipientIdentifier.Value", "02E1A73254AEFDC0A43236F6FE236A037228B1F7", (string)ktri.RecipientIdentifier.Value);
 			AssertEquals ("Type", RecipientInfoType.KeyTransport, ktri.Type);
 			AssertEquals ("Version", 2, ktri.Version);
+		}
+
+		[Test]
+		public void EncryptedKey_ModifyContent ()
+		{
+			KeyTransRecipientInfo ktri = GetKeyTransRecipientInfo (issuerAndSerialNumber);
+			AssertEquals ("EncryptedKey", "CA-4B-97-9C-AB-79-C6-DF-6A-27-C7-24-C4-5E-3B-31-AD-BC-25-E6-38-5E-79-26-0E-68-46-1D-21-81-38-92-EC-CB-7C-91-D6-09-38-91-CE-50-5B-70-31-B0-9F-FC-E2-EE-45-BC-4B-F8-9A-D9-EE-E7-4A-3D-CD-8D-FF-10-AB-C8-19-05-54-5E-40-7A-BE-2B-D7-22-97-F3-23-AF-50-F5-EB-43-06-C3-FB-17-CA-BD-AD-28-D8-10-0F-61-CE-F8-25-70-F6-C8-1E-7F-82-E5-94-EB-11-BF-B8-6F-EE-79-CD-63-DD-59-8D-25-0E-78-55-CE-21-BA-13-6B", BitConverter.ToString (ktri.EncryptedKey));
+			ktri.EncryptedKey[0] = 0x00;
+			AssertEquals ("EncryptedKey", "00-4B-97-9C-AB-79-C6-DF-6A-27-C7-24-C4-5E-3B-31-AD-BC-25-E6-38-5E-79-26-0E-68-46-1D-21-81-38-92-EC-CB-7C-91-D6-09-38-91-CE-50-5B-70-31-B0-9F-FC-E2-EE-45-BC-4B-F8-9A-D9-EE-E7-4A-3D-CD-8D-FF-10-AB-C8-19-05-54-5E-40-7A-BE-2B-D7-22-97-F3-23-AF-50-F5-EB-43-06-C3-FB-17-CA-BD-AD-28-D8-10-0F-61-CE-F8-25-70-F6-C8-1E-7F-82-E5-94-EB-11-BF-B8-6F-EE-79-CD-63-DD-59-8D-25-0E-78-55-CE-21-BA-13-6B", BitConverter.ToString (ktri.EncryptedKey));
+			// this is a reference (not a copy) of the key
 		}
 	}
 }
