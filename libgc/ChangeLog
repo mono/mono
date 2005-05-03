@@ -1,3 +1,8 @@
+
+Tue May 3 16:28:26 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* os_dep.c: remove usage of libc private symbol.
+
 2005-05-02  Miguel de Icaza  <miguel@novell.com>
 
 	* pthread_stop_world.c (GC_restart_handler, GC_suspend_handler):
