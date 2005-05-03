@@ -54,6 +54,7 @@ namespace System.Net
 		bool sendContinue = true;
 		bool useConnect;
 		object locker = new object ();
+		object hostE = new object ();
 #if NET_1_1
 		bool useNagle;
 #endif
@@ -187,7 +188,10 @@ namespace System.Net
 		internal IPHostEntry HostEntry
 		{
 			get {
-				if (host == null) {
+				lock (hostE) {
+					if (host != null)
+						return host;
+
 					string uriHost = uri.Host;
 
 					// There is no need to do DNS resolution on literal IP addresses

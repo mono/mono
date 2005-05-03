@@ -1,5 +1,9 @@
 2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ServicePoint.cs: HostEntry needs to be thread safe.
+
+2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebConnection.cs: removed a 'slightly' important line by mistake.
 	* WebConnectionStream.cs: if the transfer encoding is chunked, ignore
 	content-length header if present.
