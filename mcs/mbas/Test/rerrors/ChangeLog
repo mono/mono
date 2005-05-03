@@ -1,3 +1,6 @@
+2005-05-03  Ritvik Myank  <mritvik@novell.com>
+	* rerrors_btest.dll.sources: Added new test cases 
+	
 2005-04-26  Raja R Harinath  <rharinath@novell.com>
 
 	* rerrors_btest.dll.sources: Remove LateBinding10.vb and

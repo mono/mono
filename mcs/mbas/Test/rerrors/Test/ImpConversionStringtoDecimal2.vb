@@ -11,6 +11,7 @@ Imports Nunit.Framework
 <TestFixture>_
 Public Class ImpConversionStringtoDecimalB
 	_<Test, ExpectedException (GetType (System.InvalidCastException))>
+        Public Sub TestMismatchException ()
 			Dim a as Decimal
 			Dim b as String= "Program"
 			a = b 

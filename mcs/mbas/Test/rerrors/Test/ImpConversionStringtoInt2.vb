@@ -11,6 +11,7 @@ Imports Nunit.Framework
 <TestFixture>_
 Public Class ImpConversionStringtoIntegerB
 	_<Test, ExpectedException (GetType (System.InvalidCastException))>
+                Public Sub TestMismatchException ()
 			Dim a as Integer
 			Dim b as String= "Program"
 			a = b

@@ -16,7 +16,7 @@ Class P1
 End Class
 
 <TestFixture> _
-Public Class InheritanceM
+Public Class Inheritance111111
 	<Test, ExpectedException (GetType (System.InvalidCastException))> _
 	Sub Main()		
 		Dim a as P = new P()

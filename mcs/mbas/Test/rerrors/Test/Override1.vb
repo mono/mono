@@ -23,12 +23,6 @@ Class Inheritance12345
 	 Dim i as Integer
 End Class
 
-Module 
-        Sub Main()            
-	
-        End Sub
-End Module
-
 <TestFixture>_
 Public Class InheritanceM
 	_<Test, ExpectedException (GetType (System.MissingMemberException))>

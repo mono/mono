@@ -3,7 +3,7 @@ Imports Nunit.Framework
 
 Class TestWith
         Public a1 As Integer = 10
-        Friend a2 As String = "Hello"
+        friend a2 As String = "Hello"
         Sub f1()
             Console.WriteLine("Class C1: {0} {1}", a1, a2)
         End Sub
@@ -11,7 +11,7 @@ End Class
 
 <TestFixture>_
 Public Class WithStatement123
-	_<Test, ExpectedException (GetType (System.FieldAccessException))>
+	_<Test, ExpectedException (GetType (System.MissingMemberException))>
         Public Sub TestForException()	
         Dim a As Object =  New TestWith()
         With a

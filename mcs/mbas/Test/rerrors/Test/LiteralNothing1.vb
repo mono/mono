@@ -11,6 +11,6 @@ Public Class LiteralNothing1
                 Public Sub TestForException ()
 			Dim a2 As String="Hello"
 			a2=Nothing
-			Dim b As String=a.Substring(2)
+			Dim b As String= a2.Substring(2)
                 End Sub
 End Class

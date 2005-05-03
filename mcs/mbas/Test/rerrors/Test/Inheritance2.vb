@@ -19,11 +19,6 @@ Class Inheritance1234
         End Sub
 End Class
 
-Module 
-        Sub Main()
-       End Sub
-End Module
-
 <TestFixture>_
 Public Class Mismatch123
 	_<Test, ExpectedException (GetType (System.MissingMemberException))>
