@@ -53,8 +53,7 @@ namespace System.Net
 		Socket socket;
 		object socketLock = new object ();
 		WebExceptionStatus status;
-		bool busy;
-		WaitOrTimerCallback initConn;
+		WaitCallback initConn;
 		bool keepAlive;
 		byte [] buffer;
 		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
@@ -63,10 +62,10 @@ namespace System.Net
 		internal WebConnectionData Data;
 		bool chunkedRead;
 		ChunkStream chunkStream;
-		AutoResetEvent goAhead;
 		Queue queue;
 		bool reused;
 		int position;
+		bool busy;
 
 		bool ssl;
 		bool certsAvailable;
@@ -82,9 +81,8 @@ namespace System.Net
 			buffer = new byte [4096];
 			readState = ReadState.None;
 			Data = new WebConnectionData ();
-			initConn = new WaitOrTimerCallback (InitConnection);
+			initConn = new WaitCallback (InitConnection);
 			abortHandler = new EventHandler (Abort);
-			goAhead = new AutoResetEvent (true);
 			queue = group.Queue;
 		}
 
@@ -308,6 +306,7 @@ namespace System.Net
 			}
 
 			if (nread == 0) {
+				Environment.Exit (0);
 				cnc.HandleError (WebExceptionStatus.ReceiveFailure, null, "ReadDone2");
 				return;
 			}
@@ -509,15 +508,16 @@ namespace System.Net
 			return -1;
 		}
 		
-		void InitConnection (object state, bool notUsed)
+		void InitConnection (object state)
 		{
 			HttpWebRequest request = (HttpWebRequest) state;
 
 			if (status == WebExceptionStatus.RequestCanceled) {
-				busy = false;
-				Data = new WebConnectionData ();
-				goAhead.Set ();
-				SendNext ();
+				lock (this) {
+					busy = false;
+					Data = new WebConnectionData ();
+					SendNext ();
+				}
 				return;
 			}
 
@@ -546,8 +546,7 @@ namespace System.Net
 			lock (this) {
 				if (!busy) {
 					busy = true;
-					ThreadPool.RegisterWaitForSingleObject (goAhead, initConn,
-										request, -1, true);
+					ThreadPool.QueueUserWorkItem (initConn, request);
 				} else {
 					lock (queue) {
 						queue.Enqueue (request);
@@ -570,7 +569,6 @@ namespace System.Net
 		internal void NextRead ()
 		{
 			lock (this) {
-				busy = false;
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
 				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
@@ -584,12 +582,7 @@ namespace System.Net
 					Close (false);
 				}
 
-				goAhead.Set ();
-				lock (queue) {
-					if (queue.Count > 0) {
-						SendRequest ((HttpWebRequest) queue.Dequeue ());
-					}
-				}
+				SendNext ();
 			}
 		}
 		
@@ -679,7 +672,7 @@ namespace System.Net
 				IAsyncResult inner = wr.InnerAsyncResult;
 				if (inner != null && !(inner is WebAsyncResult))
 					nbytes = nstream.EndRead (inner);
-			} else {
+			} else if (!(nsAsync is WebAsyncResult)) {
 				nbytes = nstream.EndRead (nsAsync);
 				wr = (WebAsyncResult) result;
 			}
@@ -834,7 +827,6 @@ namespace System.Net
 		internal void Close (bool sendNext)
 		{
 			lock (this) {
-				busy = false;
 				if (nstream != null) {
 					try {
 						nstream.Close ();
@@ -849,7 +841,7 @@ namespace System.Net
 					socket = null;
 				}
 
-				goAhead.Set ();
+				busy = false;
 				if (sendNext)
 					SendNext ();
 			}

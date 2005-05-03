@@ -59,6 +59,7 @@ namespace System.Net
 		bool headersSent;
 		object locker = new object ();
 		bool initRead;
+		bool read_eof;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -133,8 +134,8 @@ namespace System.Net
 
 		internal void ReadAll ()
 		{
-			if (!isRead || totalRead >= contentLength || nextReadCalled) {
-				if (!nextReadCalled) {
+			if (!isRead || read_eof || totalRead >= contentLength || nextReadCalled) {
+				if (isRead && !nextReadCalled) {
 					nextReadCalled = true;
 					cnc.NextRead ();
 				}
@@ -233,6 +234,7 @@ namespace System.Net
 			AsyncCallback cb = new AsyncCallback (ReadCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, cb, null);
 			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+				nextReadCalled = true;
 				cnc.Close (true);
 				throw new IOException ("Read timed out.");
 			}
@@ -287,7 +289,12 @@ namespace System.Net
 			if (contentLength != Int32.MaxValue && contentLength - totalRead < size)
 				size = contentLength - totalRead;
 
-			result.InnerAsyncResult = cnc.BeginRead (buffer, offset, size, cb, result);
+			if (!read_eof) {
+				result.InnerAsyncResult = cnc.BeginRead (buffer, offset, size, cb, result);
+			} else {
+				result.SetCompleted (true, result.NBytes);
+				result.DoCallback ();
+			}
 			return result;
 		}
 
@@ -302,15 +309,24 @@ namespace System.Net
 			result.EndCalled = true;
 
 			if (!result.IsCompleted) {
-				int nbytes = cnc.EndRead (result);
-				bool finished = (nbytes == -1);
-				if (finished && result.NBytes > 0)
+				int nbytes = -1;
+				try {
+					nbytes = cnc.EndRead (result);
+				} catch (Exception) {
+					nextReadCalled = true;
+					cnc.Close (true);
+					throw;
+				}
+
+				if (nbytes < 0) {
 					nbytes = 0;
+					read_eof = true;
+				}
 
 				totalRead += nbytes;
 				result.SetCompleted (false, nbytes + result.NBytes);
 				result.DoCallback ();
-				if (finished || nbytes == 0)
+				if (nbytes == 0)
 					contentLength = totalRead;
 			}
 
@@ -425,6 +441,7 @@ namespace System.Net
 			AsyncCallback cb = new AsyncCallback (WriteCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, cb, null);
 			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+				nextReadCalled = true;
 				cnc.Close (true);
 				throw new IOException ("Write timed out.");
 			}
@@ -514,8 +531,10 @@ namespace System.Net
 				if (!nextReadCalled) {
 					CheckComplete ();
 					// If we have not read all the contents
-					if (!nextReadCalled)
+					if (!nextReadCalled) {
+						nextReadCalled = true;
 						cnc.Close (true);
+					}
 				}
 				return;
 			} else if (!allowBuffering) {

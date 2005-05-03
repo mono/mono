@@ -1,3 +1,10 @@
+2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: no need to use an AutoResetEvent.
+	* WebConnectionStream.cs: don't start any more reads on the socket
+	after getting a 0 signalling the end. This fixes Ben's infamous foo.cs
+	test.
+
 2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BasicClient.cs: firefox/IE just send latin1, stripping the high byte
