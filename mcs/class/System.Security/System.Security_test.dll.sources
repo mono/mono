@@ -18,6 +18,7 @@ System.Security.Cryptography.Pkcs/Pkcs9DocumentNameTest.cs
 System.Security.Cryptography.Pkcs/Pkcs9MessageDigestTest.cs
 System.Security.Cryptography.Pkcs/Pkcs9SigningTimeTest.cs
 System.Security.Cryptography.Pkcs/SignedCmsTest.cs
+System.Security.Cryptography.Pkcs/SignerInfoCollectionTest.cs
 System.Security.Cryptography.Pkcs/SignerInfoTest.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
