@@ -114,7 +114,7 @@ public class ControlTest
      	  Assert.AreEqual( 20 ,C1.Bounds.Top , "#74a");
      	  Assert.AreEqual( 10 ,C1.Bounds.Left , "#74b");
      	  Assert.AreEqual( 30 ,C1.Bounds.Width , "#74c");
-     	  Assert.AreEqual( 40 ,C1.Bounds.Hight , "#74d");
+     	  Assert.AreEqual( 40 ,C1.Bounds.Height , "#74d");
      	
      	  //C1.SendToBack() ;
      	  //Assert.AreEqual( false , C1.Bounds , "#75");
