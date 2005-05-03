@@ -306,7 +306,6 @@ namespace System.Net
 			}
 
 			if (nread == 0) {
-				Environment.Exit (0);
 				cnc.HandleError (WebExceptionStatus.ReceiveFailure, null, "ReadDone2");
 				return;
 			}
