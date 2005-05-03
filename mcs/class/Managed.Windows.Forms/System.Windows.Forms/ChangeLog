@@ -1,3 +1,8 @@
+2005-05-03  Jackson Harper  <jackson@ximian.com>
+
+	* ListView.cs: Calculate the scrollbar positioning on resize and
+	paint, so they get put in the correct place.
+
 2005-05-03  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* ColorDialogs.cs: The small color panels are now handled by

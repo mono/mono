@@ -155,7 +155,8 @@ namespace System.Windows.Forms
 			base.MouseUp += new MouseEventHandler(ListView_MouseUp);
 			base.MouseMove += new MouseEventHandler(ListView_MouseMove);
 			base.Paint += new PaintEventHandler (ListView_Paint);
-			
+			SizeChanged += new EventHandler (ListView_SizeChanged);
+
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 		#endregion	// Public Constructors
@@ -687,6 +688,65 @@ namespace System.Windows.Forms
 			text_size.Height += 2;
 		}
 
+		private void CalculateScrollBars ()
+		{
+			if (!this.scrollable || this.items.Count <= 0) {
+				h_scroll.Visible = false;
+				v_scroll.Visible = false;
+				return;
+			}
+
+			// making a scroll bar visible might make
+			// other scroll bar visible
+			if (layout_wd > this.Width) {
+				h_scroll.Visible = true;
+				if ((layout_ht + h_scroll.Height) > Height)
+					v_scroll.Visible = true;
+			} else if (layout_ht > Height) {
+				v_scroll.Visible = true;
+				if ((layout_wd + v_scroll.Width) > Width)
+					h_scroll.Visible = true;
+			}
+
+			if (h_scroll.Visible) {
+				h_scroll.Location = new Point (0, Height - h_scroll.Height);
+				h_scroll.Minimum = 0;
+
+				// if v_scroll is visible, adjust the maximum of the
+				// h_scroll to account for the width of v_scroll
+				if (v_scroll.Visible) {
+					h_scroll.Maximum = layout_wd + v_scroll.Width;
+					h_scroll.Width = Width - v_scroll.Width;
+				}
+				else {
+					h_scroll.Maximum = layout_wd;
+					h_scroll.Width = Width;
+				}
+   
+				h_scroll.LargeChange = Width;
+				h_scroll.SmallChange = Font.Height;
+			}
+
+			// vertical scrollbar
+			if (v_scroll.Visible) {
+				v_scroll.Location = new Point (Width - v_scroll.Width, 0);
+				v_scroll.Minimum = 0;
+
+				// if h_scroll is visible, adjust the maximum of the
+				// v_scroll to account for the height of h_scroll
+				if (h_scroll.Visible) {
+					v_scroll.Maximum = layout_ht + h_scroll.Height;
+					v_scroll.Height = Height - h_scroll.Height;
+				} else {
+					v_scroll.Maximum = layout_ht;
+					v_scroll.Height = Height;
+				}
+
+				v_scroll.LargeChange = Height;
+				v_scroll.SmallChange = Font.Height;
+			}
+		}
+
 		// Sets the location of every item on
 		// the ListView as per the view
 		private void CalculateListView (ListViewAlignment align)
@@ -861,67 +921,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			if (this.scrollable && this.items.Count > 0) {
-				// making a scroll bar visible might make
-				// other scroll bar visible
-				if (this.layout_wd > this.Width) {
-					this.h_scroll.Visible = true;
-					if ((this.layout_ht + this.h_scroll.Height) > this.Height)
-						this.v_scroll.Visible = true;
-				}
-				else if (this.layout_ht > this.Height) {
-					this.v_scroll.Visible = true;
-					if ((this.layout_wd + this.v_scroll.Width) > this.Width)
-						this.h_scroll.Visible = true;
-				}
-
-				if (this.h_scroll.Visible) {
-					this.h_scroll.Location = new Point (0, this.Height 
-									    - this.h_scroll.Height);
-					
-					this.h_scroll.Minimum = 0;
-
-					// if v_scroll is visible, adjust the maximum of the
-					// h_scroll to account for the width of v_scroll
-					if (this.v_scroll.Visible) {
-						this.h_scroll.Maximum = this.layout_wd + this.v_scroll.Width;
-						this.h_scroll.Width = this.Width - this.v_scroll.Width;
-					}
-					else {
-						this.h_scroll.Maximum = this.layout_wd;
-						this.h_scroll.Width = this.Width;
-					}
-   
-					this.h_scroll.LargeChange = this.Width;
-					this.h_scroll.SmallChange = this.Font.Height;
-				}
-
-				// vertical scrollbar
-				if (this.v_scroll.Visible) {
-					this.v_scroll.Location = new Point (this.Width 
-									    - this.v_scroll.Width, 0);
-
-					this.v_scroll.Minimum = 0;
-
-					// if h_scroll is visible, adjust the maximum of the
-					// v_scroll to account for the height of h_scroll
-					if (this.h_scroll.Visible) {
-						this.v_scroll.Maximum = this.layout_ht + this.h_scroll.Height;
-						this.v_scroll.Height = this.Height - this.h_scroll.Height;
-					}
-					else {
-						this.v_scroll.Maximum = this.layout_ht;
-						this.v_scroll.Height = this.Height;
-					}
-
-					this.v_scroll.LargeChange = this.Height;
-					this.v_scroll.SmallChange = this.Font.Height;
-				}
-			}
-			else {
-				this.h_scroll.Visible = false;
-				this.v_scroll.Visible = false;
-			}
+                        CalculateScrollBars ();
 		}		
 		
 
@@ -1195,6 +1195,8 @@ namespace System.Windows.Forms
 			    this.Visible == false || this.updating == true)
 				return;
 
+			CalculateScrollBars ();
+
 			ThemeEngine.Current.DrawListView (pe.Graphics,
 					pe.ClipRectangle, this);
 
@@ -1261,6 +1263,11 @@ namespace System.Windows.Forms
 			// Raise the Paint event
 			if (Paint != null)
 				Paint (this, pe);
+		}
+
+		private void ListView_SizeChanged (object sender, EventArgs e)
+		{
+			CalculateScrollBars ();
 		}
 
 		private void HorizontalScroller (object sender, EventArgs e)
