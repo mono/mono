@@ -1,5 +1,9 @@
 2005-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	* pending.cs (BaseImplements): Move the #74773 fix here.  This is
+	more conservative.
+	(VerifyPendingMethods): Revert change below.
+
 	* typemanager.cs (IsOverride, RegisterNonOverride): New.
 	* decl.cs (MemberCache.AddMethod): Register "non-override" methods
 	that used to trigger warning -28.  Remove warning -28.
