@@ -1,3 +1,9 @@
+2005-05-03  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* ColorDialogs.cs: The small color panels are now handled by
+	  SmallColorControl. This fixes drawing of the focus rectangle
+	  and adds a 3D border.
+
 2005-05-03  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs: Modified version of Jonathan Chamber's fix for
@@ -65,12 +71,12 @@
 2005-04-28  Peter Bartok  <pbartok@novell.com>
 
 	* RichTextBoxSelectionAttribute.cs, RichTextBoxSelectionTypes.cs,
-	  RichTextBoxScrollBars.cs, RichTextBoxStreamType.cs, 
+	  RichTextBoxScrollBars.cs, RichTextBoxStreamType.cs,
 	  RichTextBoxFinds.cs, RichTextBoxWordPunctuations.cs: Added
 
 2005-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* Combobox: 
+	* Combobox:
 		- Adjust control's height for non-simple comboboxes (bug fix)
 		- Remove dead code
 	* MenuAPI.cs: remove unused var
@@ -166,7 +172,7 @@
 
 2005-04-24  Borja Sanchez Zamorano <borsanza@gmail.com>
 
-	* LinkLabel.cs: Fix typo, bug #74719; patch 
+	* LinkLabel.cs: Fix typo, bug #74719; patch
 	  from Borja Sanchez Zamorano
 
 2005-04-22  Jackson Harper  <jackson@ximian.com>
