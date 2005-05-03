@@ -179,6 +179,7 @@ Microsoft.JScript/VBArrayConstructor.cs
 Microsoft.JScript/VBArrayObject.cs
 Microsoft.JScript/VBArrayPrototype.cs
 Microsoft.JScript/VersionableAttribute.cs
+Microsoft.JScript/VSAITEMTYPE2.cs
 Microsoft.JScript.Vsa/VsaEngine.cs
 Microsoft.JScript/With.cs
 Microsoft.JScript/VsaCodeItem.cs
