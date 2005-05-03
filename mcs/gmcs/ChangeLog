@@ -1,3 +1,12 @@
+2005-05-03  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (ArrayAccess.EmitGetLength): New public method.
+
+	* statement.cs (Foreach.ArrayForeach): New nested class.
+	(Foreach.TemporaryVariable): New nested class.
+	(Foreach.EmitArrayForeach): Removed; this is now in the new
+	ArrayForeach class.
+
 2005-05-02  Martin Baulig  <martin@ximian.com>
 
 	Fix #70182.

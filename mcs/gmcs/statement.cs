@@ -2098,6 +2098,11 @@ namespace Mono.CSharp {
 			} while (current != null);
 			return false;
 		}
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} ({1}:{2})", GetType (),ID, StartLocation);
+		}
 	}
 
 	//
@@ -4120,6 +4125,7 @@ namespace Mono.CSharp {
 		Type array_type, element_type;
 		Type var_type;
 		VariableStorage enumerator;
+		ArrayForeach array;
 		
 		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
@@ -4166,6 +4172,9 @@ namespace Mono.CSharp {
 				element_type = TypeManager.GetElementType (array_type);
 
 				empty = new EmptyExpression (element_type);
+
+				array = new ArrayForeach (type, variable, expr, statement, loc);
+				return array.Resolve (ec);
 			} else {
 				hm = ProbeCollectionType (ec, expr.Type);
 				if (hm == null){
@@ -4611,160 +4620,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		//
-		// FIXME: possible optimization.
-		// We might be able to avoid creating `empty' if the type is the sam
-		//
-		bool EmitArrayForeach (EmitContext ec)
-		{
-			int rank = array_type.GetArrayRank ();
-			ILGenerator ig = ec.ig;
-
-			VariableStorage copy = new VariableStorage (ec, array_type);
-			
-			//
-			// Make our copy of the array
-			//
-			copy.EmitThis (ig);
-			expr.Emit (ec);
-			copy.EmitStore (ig);
-			
-			if (rank == 1){
-				VariableStorage counter = new VariableStorage (ec,TypeManager.int32_type);
-
-				Label loop, test;
-
-				counter.EmitThis (ig);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				counter.EmitStore (ig);
-				test = ig.DefineLabel ();
-				ig.Emit (OpCodes.Br, test);
-
-				loop = ig.DefineLabel ();
-				ig.MarkLabel (loop);
-
-				if (ec.InIterator)
-					ig.Emit (OpCodes.Ldarg_0);
-				
-				copy.EmitThis (ig);
-				copy.EmitLoad (ig);
-				counter.EmitThis (ig);
-				counter.EmitLoad (ig);
-
-				//
-				// Load the value, we load the value using the underlying type,
-				// then we use the variable.EmitAssign to load using the proper cast.
-				//
-				ArrayAccess.EmitLoadOpcode (ig, element_type);
-				if (ec.InIterator){
-					conv.Emit (ec);
-					ig.Emit (OpCodes.Stfld, ((LocalVariableReference) variable).local_info.FieldBuilder);
-				} else 
-					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
-
-				statement.Emit (ec);
-
-				ig.MarkLabel (ec.LoopBegin);
-				counter.EmitThis (ig);
-				counter.EmitThis (ig);
-				counter.EmitLoad (ig);
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.Add);
-				counter.EmitStore (ig);
-
-				ig.MarkLabel (test);
-				counter.EmitThis (ig);
-				counter.EmitLoad (ig);
-				copy.EmitThis (ig);
-				copy.EmitLoad (ig);
-				ig.Emit (OpCodes.Ldlen);
-				ig.Emit (OpCodes.Conv_I4);
-				ig.Emit (OpCodes.Blt, loop);
-			} else {
-				VariableStorage [] dim_len   = new VariableStorage [rank];
-				VariableStorage [] dim_count = new VariableStorage [rank];
-				Label [] loop = new Label [rank];
-				Label [] test = new Label [rank];
-				int dim;
-				
-				for (dim = 0; dim < rank; dim++){
-					dim_len [dim] = new VariableStorage (ec, TypeManager.int32_type);
-					dim_count [dim] = new VariableStorage (ec, TypeManager.int32_type);
-					test [dim] = ig.DefineLabel ();
-					loop [dim] = ig.DefineLabel ();
-				}
-					
-				for (dim = 0; dim < rank; dim++){
-					dim_len [dim].EmitThis (ig);
-					copy.EmitThis (ig);
-					copy.EmitLoad (ig);
-					IntLiteral.EmitInt (ig, dim);
-					ig.Emit (OpCodes.Callvirt, TypeManager.int_getlength_int);
-					dim_len [dim].EmitStore (ig);
-					
-				}
-
-				for (dim = 0; dim < rank; dim++){
-					dim_count [dim].EmitThis (ig);
-					ig.Emit (OpCodes.Ldc_I4_0);
-					dim_count [dim].EmitStore (ig);
-					ig.Emit (OpCodes.Br, test [dim]);
-					ig.MarkLabel (loop [dim]);
-				}
-
-				if (ec.InIterator)
-					ig.Emit (OpCodes.Ldarg_0);
-				
-				copy.EmitThis (ig);
-				copy.EmitLoad (ig);
-				for (dim = 0; dim < rank; dim++){
-					dim_count [dim].EmitThis (ig);
-					dim_count [dim].EmitLoad (ig);
-				}
-
-				//
-				// FIXME: Maybe we can cache the computation of `get'?
-				//
-				Type [] args = new Type [rank];
-				MethodInfo get;
-
-				for (int i = 0; i < rank; i++)
-					args [i] = TypeManager.int32_type;
-
-				ModuleBuilder mb = CodeGen.Module.Builder;
-				get = mb.GetArrayMethod (
-					array_type, "Get",
-					CallingConventions.HasThis| CallingConventions.Standard,
-					var_type, args);
-				ig.Emit (OpCodes.Call, get);
-				if (ec.InIterator){
-					conv.Emit (ec);
-					ig.Emit (OpCodes.Stfld, ((LocalVariableReference) variable).local_info.FieldBuilder);
-				} else 
-					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
-				statement.Emit (ec);
-				ig.MarkLabel (ec.LoopBegin);
-				for (dim = rank - 1; dim >= 0; dim--){
-					dim_count [dim].EmitThis (ig);
-					dim_count [dim].EmitThis (ig);
-					dim_count [dim].EmitLoad (ig);
-					ig.Emit (OpCodes.Ldc_I4_1);
-					ig.Emit (OpCodes.Add);
-					dim_count [dim].EmitStore (ig);
-
-					ig.MarkLabel (test [dim]);
-					dim_count [dim].EmitThis (ig);
-					dim_count [dim].EmitLoad (ig);
-					dim_len [dim].EmitThis (ig);
-					dim_len [dim].EmitLoad (ig);
-					ig.Emit (OpCodes.Blt, loop [dim]);
-				}
-			}
-			ig.MarkLabel (ec.LoopEnd);
-			
-			return false;
-		}
-		
 		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -4776,10 +4631,218 @@ namespace Mono.CSharp {
 			if (hm != null)
 				EmitCollectionForeach (ec);
 			else
-				EmitArrayForeach (ec);
+				array.Emit (ec);
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
+		}
+
+		protected class TemporaryVariable : Expression
+		{
+			FieldBuilder fb;
+			LocalBuilder local;
+
+			public TemporaryVariable (Type type, Location loc)
+			{
+				this.type = type;
+				this.loc = loc;
+				eclass = ExprClass.Value;
+			}
+
+			static int count;
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				if (ec.InIterator) {
+					count++;
+					fb = ec.CurrentIterator.MapVariable (
+						"s_", count.ToString (), type);
+				} else
+					local = ec.ig.DeclareLocal (type);
+
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				if (fb != null) {
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldfld, fb);
+				} else {
+					ig.Emit (OpCodes.Ldloc, local);
+				}
+			}
+
+			public void Store (EmitContext ec, Expression right_side)
+			{
+				if (fb != null)
+					ec.ig.Emit (OpCodes.Ldarg_0);
+				right_side.Emit (ec);
+				if (fb == null)
+					ec.ig.Emit (OpCodes.Stloc, local);
+				else
+					ec.ig.Emit (OpCodes.Stfld, fb);
+			}
+
+			public void EmitThis (ILGenerator ig)
+			{
+				if (fb != null)
+					ig.Emit (OpCodes.Ldarg_0);
+			}
+
+			public void EmitStore (ILGenerator ig)
+			{
+				if (fb == null)
+					ig.Emit (OpCodes.Stloc, local);
+				else
+					ig.Emit (OpCodes.Stfld, fb);
+			}
+		}
+
+		protected class ArrayCounter : TemporaryVariable
+		{
+			public ArrayCounter (Location loc)
+				: base (TypeManager.int32_type, loc)
+			{ }
+
+			public void Initialize (EmitContext ec)
+			{
+				EmitThis (ec.ig);
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				EmitStore (ec.ig);
+			}
+
+			public void Increment (EmitContext ec)
+			{
+				EmitThis (ec.ig);
+				Emit (ec);
+				ec.ig.Emit (OpCodes.Ldc_I4_1);
+				ec.ig.Emit (OpCodes.Add);
+				EmitStore (ec.ig);
+			}
+		}
+
+		protected class ArrayForeach : Statement
+		{
+			Expression type, variable, expr, conv;
+			Statement statement;
+			Type array_type, element_type;
+			Type var_type;
+			TemporaryVariable[] lengths;
+			ArrayCounter[] counter;
+			int rank;
+
+			TemporaryVariable copy;
+			Expression access;
+
+			public ArrayForeach (Expression type, Expression var,
+					     Expression expr, Statement stmt, Location l)
+			{
+				this.type = type;
+				this.variable = var;
+				this.expr = expr;
+				statement = stmt;
+				loc = l;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{				
+				TypeExpr texpr = type.ResolveAsTypeTerminal (ec);
+				if (texpr == null)
+					return false;
+			
+				var_type = texpr.Type;
+
+				array_type = expr.Type;
+				element_type = TypeManager.GetElementType (array_type);
+				rank = array_type.GetArrayRank ();
+
+				copy = new TemporaryVariable (array_type, loc);
+				copy.Resolve (ec);
+
+				counter = new ArrayCounter [rank];
+				lengths = new TemporaryVariable [rank];
+
+				ArrayList list = new ArrayList ();
+				for (int i = 0; i < rank; i++) {
+					counter [i] = new ArrayCounter (loc);
+					counter [i].Resolve (ec);
+
+					lengths [i] = new TemporaryVariable (TypeManager.int32_type, loc);
+					lengths [i].Resolve (ec);
+
+					list.Add (counter [i]);
+				}
+
+				access = new ElementAccess (copy, list, loc).Resolve (ec);
+				if (access == null)
+					return false;
+
+				conv = Convert.ExplicitConversion (ec, access, var_type, loc);
+				if (conv == null)
+					return false;
+
+				bool ok = true;
+
+				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
+				ec.CurrentBranching.CreateSibling ();
+
+				variable = variable.ResolveLValue (ec, conv);
+				if (variable == null)
+					ok = false;
+
+				if (!statement.Resolve (ec))
+					ok = false;
+
+				ec.EndFlowBranching ();
+
+				return ok;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				copy.Store (ec, expr);
+
+				Label[] test = new Label [rank];
+				Label[] loop = new Label [rank];
+
+				for (int i = 0; i < rank; i++) {
+					test [i] = ig.DefineLabel ();
+					loop [i] = ig.DefineLabel ();
+
+					lengths [i].EmitThis (ig);
+					((ArrayAccess) access).EmitGetLength (ec, i);
+					lengths [i].EmitStore (ig);
+				}
+
+				for (int i = 0; i < rank; i++) {
+					counter [i].Initialize (ec);
+
+					ig.Emit (OpCodes.Br, test [i]);
+					ig.MarkLabel (loop [i]);
+				}
+
+				((IAssignMethod) variable).EmitAssign (ec, conv, false, false);
+
+				statement.Emit (ec);
+
+				ig.MarkLabel (ec.LoopBegin);
+
+				for (int i = rank - 1; i >= 0; i--){
+					counter [i].Increment (ec);
+
+					ig.MarkLabel (test [i]);
+					counter [i].Emit (ec);
+					lengths [i].Emit (ec);
+					ig.Emit (OpCodes.Blt, loop [i]);
+				}
+
+				ig.MarkLabel (ec.LoopEnd);
+			}
 		}
 	}
 }
