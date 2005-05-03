@@ -118,6 +118,7 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.UserPaint | ControlStyles.Selectable, true);
 
 			dash = new Pen (SystemColors.ControlLight, 1);
+			dash.DashStyle = DashStyle.Dash;
 		}
 
 		#endregion	// Public Constructors
@@ -957,16 +958,11 @@ namespace System.Windows.Forms {
 				if (Focused) {
 					if (SelectedNode == node)
 						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
-					if (focused_node == node) {
-						Pen dot_pen = new Pen (ThemeEngine.Current.ColorButtonHilight, 1);
-						dot_pen.DashStyle = DashStyle.Dot;
-						dc.DrawRectangle (new Pen (ThemeEngine.Current.ColorButtonDkShadow),
-								node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
-						dc.DrawRectangle (dot_pen, node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
-					}
+					if (focused_node == node)
+                                                ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
 				} else {
 					if (!HideSelection && SelectedNode == node)
-						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), node.Bounds);
+						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), r);
 				}
 				dc.DrawString (node.Text, font, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
 				y += item_height + 1;
