@@ -265,6 +265,14 @@ public class TypeManager {
 	static Hashtable method_params;
 
 	// <remarks>
+	//   It is not straightforward, using reflection, to determine if a method overrides another.
+	//   Oftentimes, a non-override is marked with both the 'virtual' and 'newslot' method attributes.
+	//   However, it's not always the case.  We use this table to store those non-override methods
+	//   that aren't so conveniently marked.
+	// <remarks>
+	static Hashtable method_non_override;
+
+	// <remarks>
 	//  Keeps track of methods
 	// </remarks>
 
@@ -404,6 +412,7 @@ public class TypeManager {
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_params = new PtrHashtable ();
+		method_non_override = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
@@ -1727,6 +1736,18 @@ public class TypeManager {
 		}
 
 		return (ParameterData) pd;
+	}
+
+	static public void RegisterNonOverride (MethodBase m)
+	{
+		method_non_override [m] = m;
+	}
+
+	static public bool IsOverride (MethodBase m)
+	{
+		return m.IsVirtual &&
+			(m.Attributes & MethodAttributes.NewSlot) == 0 &&
+			!method_non_override.Contains (m);
 	}
 
 	/// <summary>

@@ -1,3 +1,7 @@
+2005-05-03  Raja R Harinath  <rharinath@novell.com>
+
+	* errors.txt (warning -28): Remove.
+
 2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-1574-6.cs, cs-0419.cs : added new tests (bug #71603 and #71605).

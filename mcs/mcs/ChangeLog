@@ -1,5 +1,11 @@
 2005-05-03  Raja R Harinath  <rharinath@novell.com>
 
+	* typemanager.cs (IsOverride, RegisterNonOverride): New.
+	* decl.cs (MemberCache.AddMethod): Register "non-override" methods
+	that used to trigger warning -28.  Remove warning -28.
+	* expression.cs (Invocation.OverloadResolve): Use
+	TypeManager.IsOverride to distinguish override methods.
+
 	Fix #74773.
 	* pending.cs (VerifyPendingMethods): If a base type implements the
 	requested interface, don't bother checking individual methods of
