@@ -83,7 +83,7 @@ TEST_SOURCES_common = \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-12 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
-	2test-11 2test-12 2test-13 2test-14          2test-16 2test-17 2test-18 \
+	2test-11 2test-12 2test-13 2test-14          2test-16 2test-17 2test-18 2test-19 \
 	unsafe-1 unsafe-2 unsafe-3 unsafe-5 unsafe-6 unsafe-7 unsafe-8 unsafe-9 unsafe-10 \
 	mtest-1-dll mtest-1-exe \
 	mtest-2-dll mtest-2-exe \
