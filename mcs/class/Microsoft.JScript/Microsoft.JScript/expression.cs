@@ -43,7 +43,7 @@ namespace Microsoft.JScript {
 		internal abstract bool Resolve (IdentificationTable context, bool no_effect);
 	}
 	
-	public class Unary : UnaryOp {
+	internal class Unary : UnaryOp {
 
 		internal Unary (AST parent, JSToken oper)
 		{		

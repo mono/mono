@@ -30,7 +30,7 @@
 using Microsoft.JScript.Vsa;
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Import : AST {
 

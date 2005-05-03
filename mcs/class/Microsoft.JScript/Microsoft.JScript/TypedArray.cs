@@ -28,11 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Globalization;
+using System;
+using System.Reflection;
+using System.Globalization;
+
+namespace Microsoft.JScript {
 
 	public sealed class TypedArray : IReflect
 	{
@@ -84,7 +84,7 @@ namespace Microsoft.JScript.Tmp
 		}
 
 
-		public MethodInfo GetMethod (string name, BindingFlags bindAttr, Binder binder,
+		public MethodInfo GetMethod (string name, BindingFlags bindAttr, System.Reflection.Binder binder,
 					     Type [] types, ParameterModifier [] modifiers)
 		{
 			throw new NotImplementedException ();
@@ -103,7 +103,7 @@ namespace Microsoft.JScript.Tmp
 		}
 
 
-		public PropertyInfo GetProperty (string name, BindingFlags bindAttr, Binder binder,
+		public PropertyInfo GetProperty (string name, BindingFlags bindAttr, System.Reflection.Binder binder,
 						 Type returnType, Type [] types, 
 						 ParameterModifier [] modifiers)
 		{
@@ -117,7 +117,7 @@ namespace Microsoft.JScript.Tmp
 		}
 
 
-		public object InvokeMember (string name, BindingFlags flags, Binder binder,
+		public object InvokeMember (string name, BindingFlags flags, System.Reflection.Binder binder,
 					    object target, object [] args, 
 					    ParameterModifier [] modifiers, CultureInfo locale,
 					    string [] namedParameters)

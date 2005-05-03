@@ -28,11 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Globalization;
+using System;
+using System.Reflection;
+using System.Globalization;
+
+namespace Microsoft.JScript {
 
 	public sealed class JSConstructor : ConstructorInfo
 	{
@@ -75,14 +75,14 @@ namespace Microsoft.JScript.Tmp
 		}
 
 
-		public override object Invoke (BindingFlags options, Binder binder,
+		public override object Invoke (BindingFlags options, System.Reflection.Binder binder,
 					       object [] parameters, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}
 
 
-		public override object Invoke (object obj, BindingFlags options, Binder binder,
+		public override object Invoke (object obj, BindingFlags options, System.Reflection.Binder binder,
 					       object [] parameters, CultureInfo culture)
 		{
 			throw new NotImplementedException ();

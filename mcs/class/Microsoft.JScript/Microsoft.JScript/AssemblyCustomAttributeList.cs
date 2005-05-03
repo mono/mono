@@ -27,8 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
+namespace Microsoft.JScript {
 	public class AssemblyCustomAttributeList
 	{}
 }

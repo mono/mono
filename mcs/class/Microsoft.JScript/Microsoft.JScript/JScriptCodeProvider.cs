@@ -25,10 +25,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.CodeDom.Compiler;
+using System;
+using System.CodeDom.Compiler;
+
+namespace Microsoft.JScript {
 
 	[MonoTODO]
 	public class JScriptCodeProvider : CodeDomProvider

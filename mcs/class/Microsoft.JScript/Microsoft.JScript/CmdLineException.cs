@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Globalization;
+using System;
+using System.Globalization;
+
+namespace Microsoft.JScript {
 
 	public class CmdLineException : Exception
 	{
