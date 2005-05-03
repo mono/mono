@@ -587,8 +587,8 @@ namespace System
 			ConsoleDriver.SetWindowSize (width, height);
 		}
 
-		//FIXME
-		//public event ConsoleCancelEventHandler CancelKeyPress;
+		[MonoTODO ("Implement add/remove hooks")]
+		public static event ConsoleCancelEventHandler CancelKeyPress;
 #endif
 	}
 }
