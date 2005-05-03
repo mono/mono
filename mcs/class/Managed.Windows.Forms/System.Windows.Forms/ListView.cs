@@ -77,7 +77,6 @@ namespace System.Windows.Forms
 		private bool label_edit = false;
 		private bool label_wrap = true;
 		private bool multiselect = true;
-		private bool redraw = true;
 		private bool scrollable = true;
 		private SelectedIndexCollection selected_indices;
 		private SelectedListViewItemCollection selected_items;
@@ -578,7 +577,6 @@ namespace System.Windows.Forms
 			if (recalculate)
 				CalculateListView (this.alignment);
 
-			redraw = true;
 			Refresh ();
 		}
 
@@ -1197,11 +1195,8 @@ namespace System.Windows.Forms
 			    this.Visible == false || this.updating == true)
 				return;
 
-			if (redraw) {
-				ThemeEngine.Current.DrawListView (pe.Graphics,
-								  pe.ClipRectangle, this);
-				redraw = false;
-			}
+			ThemeEngine.Current.DrawListView (pe.Graphics,
+					pe.ClipRectangle, this);
 
 			// We paint on the screen as per the location set
 			// by the two scrollbars. In case of details view

@@ -1,5 +1,11 @@
 2005-05-03  Jackson Harper  <jackson@ximian.com>
 
+	* ListView.cs: Remove redraw variable. Control now handles whether
+	or not a redraw needs to be done, and will only raise the paint
+	event if redrawing is needed.
+
+2005-05-03  Jackson Harper  <jackson@ximian.com>
+
 	* Splitter.cs: No decorations for the splitter form. Cache the
 	hatch brush.
 
