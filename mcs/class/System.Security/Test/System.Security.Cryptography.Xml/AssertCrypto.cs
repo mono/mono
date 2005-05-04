@@ -2,9 +2,10 @@
 // MonoTests.System.Security.Cryptography.Xml.AssertCrypto.cs
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -38,6 +39,16 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
 			Assert (msg, a);
+		}
+
+		private const string xmldsig = " xmlns=\"http://www.w3.org/2000/09/xmldsig#\"";
+
+		// not to be used to test C14N output
+		static public void AssertXmlEquals (string msg, string expected, string actual)
+		{
+			expected = expected.Replace (xmldsig, String.Empty);
+			actual = actual.Replace (xmldsig, String.Empty);
+			AssertEquals (msg, expected, actual);
 		}
 	}
 }

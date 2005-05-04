@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -68,7 +68,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			key.FromXmlString (xmlDSA);
 			DSAKeyValue dsa = new DSAKeyValue (key);
 			info.AddClause (dsa);
-			AssertEquals ("dsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlDSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
+			AssertCrypto.AssertXmlEquals ("dsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlDSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
 			AssertEquals ("dsa count", 1, info.Count);
 		}
 
@@ -81,7 +81,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			key.FromXmlString (xmlRSA);
 			RSAKeyValue rsa = new RSAKeyValue (key);
 			info.AddClause (rsa);
-			AssertEquals ("rsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlRSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
+			AssertCrypto.AssertXmlEquals ("rsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlRSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
 			AssertEquals ("rsa count", 1, info.Count);
 		}
 
@@ -112,7 +112,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			X509Certificate x509 = new X509Certificate (cert);
 			KeyInfoX509Data x509data = new KeyInfoX509Data (x509);
 			info.AddClause (x509data);
-			AssertEquals ("X509Data", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Certificate>MIICHTCCAYYCARQwDQYJKoZIhvcNAQEEBQAwWDELMAkGA1UEBhMCQ0ExHzAdBgNVBAMTFktleXdpdG5lc3MgQ2FuYWRhIEluYy4xKDAmBgorBgEEASoCCwIBExhrZXl3aXRuZXNzQGtleXdpdG5lc3MuY2EwHhcNOTYwNTA3MDAwMDAwWhcNOTkwNTA3MDAwMDAwWjBYMQswCQYDVQQGEwJDQTEfMB0GA1UEAxMWS2V5d2l0bmVzcyBDYW5hZGEgSW5jLjEoMCYGCisGAQQBKgILAgETGGtleXdpdG5lc3NAa2V5d2l0bmVzcy5jYTCBnTANBgkqhkiG9w0BAQEFAAOBiwAwgYcCgYEAzSP6KuHtmPTp0JM+13qAAkzMwQKvXLYff/pXQm8w0SDFtSEHQCyphsLzZISuPYUu7YW9VLAYKO9q+BvnCxYfkyVPx/iOw7nKmIQOVdAv73h3xXIoX2C/GSvRcqK32D/glzRaAb0EnMh4Rc2TjRXydhARq7hbLp5S3YE+nGTIKZMCAQMwDQYJKoZIhvcNAQEEBQADgYEAMho1ur9DJ9a01Lh25eObTWzAhsl3NbprFi0TRkqwMlOhW1rpmeIMhogXTg3+gqxOR+/7/zms7jXI+lI3CkmtWa3iiqkcxl8f+G9zfs2gMegMvvVN2bKrihK2MHhoEXwN8UlNo/2y6f8d8JH6VIX/M5Dowb+km6RiRr1hElmYQYk=</X509Certificate></X509Data></KeyInfo>", (info.GetXml ().OuterXml));
+			AssertCrypto.AssertXmlEquals ("X509Data", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Certificate>MIICHTCCAYYCARQwDQYJKoZIhvcNAQEEBQAwWDELMAkGA1UEBhMCQ0ExHzAdBgNVBAMTFktleXdpdG5lc3MgQ2FuYWRhIEluYy4xKDAmBgorBgEEASoCCwIBExhrZXl3aXRuZXNzQGtleXdpdG5lc3MuY2EwHhcNOTYwNTA3MDAwMDAwWhcNOTkwNTA3MDAwMDAwWjBYMQswCQYDVQQGEwJDQTEfMB0GA1UEAxMWS2V5d2l0bmVzcyBDYW5hZGEgSW5jLjEoMCYGCisGAQQBKgILAgETGGtleXdpdG5lc3NAa2V5d2l0bmVzcy5jYTCBnTANBgkqhkiG9w0BAQEFAAOBiwAwgYcCgYEAzSP6KuHtmPTp0JM+13qAAkzMwQKvXLYff/pXQm8w0SDFtSEHQCyphsLzZISuPYUu7YW9VLAYKO9q+BvnCxYfkyVPx/iOw7nKmIQOVdAv73h3xXIoX2C/GSvRcqK32D/glzRaAb0EnMh4Rc2TjRXydhARq7hbLp5S3YE+nGTIKZMCAQMwDQYJKoZIhvcNAQEEBQADgYEAMho1ur9DJ9a01Lh25eObTWzAhsl3NbprFi0TRkqwMlOhW1rpmeIMhogXTg3+gqxOR+/7/zms7jXI+lI3CkmtWa3iiqkcxl8f+G9zfs2gMegMvvVN2bKrihK2MHhoEXwN8UlNo/2y6f8d8JH6VIX/M5Dowb+km6RiRr1hElmYQYk=</X509Certificate></X509Data></KeyInfo>", (info.GetXml ().OuterXml));
 			AssertEquals ("X509Data count", 1, info.Count);
 		}
 
@@ -150,7 +150,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 #endif
 			s += "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\">";
 			s += "<X509Certificate>MIICHTCCAYYCARQwDQYJKoZIhvcNAQEEBQAwWDELMAkGA1UEBhMCQ0ExHzAdBgNVBAMTFktleXdpdG5lc3MgQ2FuYWRhIEluYy4xKDAmBgorBgEEASoCCwIBExhrZXl3aXRuZXNzQGtleXdpdG5lc3MuY2EwHhcNOTYwNTA3MDAwMDAwWhcNOTkwNTA3MDAwMDAwWjBYMQswCQYDVQQGEwJDQTEfMB0GA1UEAxMWS2V5d2l0bmVzcyBDYW5hZGEgSW5jLjEoMCYGCisGAQQBKgILAgETGGtleXdpdG5lc3NAa2V5d2l0bmVzcy5jYTCBnTANBgkqhkiG9w0BAQEFAAOBiwAwgYcCgYEAzSP6KuHtmPTp0JM+13qAAkzMwQKvXLYff/pXQm8w0SDFtSEHQCyphsLzZISuPYUu7YW9VLAYKO9q+BvnCxYfkyVPx/iOw7nKmIQOVdAv73h3xXIoX2C/GSvRcqK32D/glzRaAb0EnMh4Rc2TjRXydhARq7hbLp5S3YE+nGTIKZMCAQMwDQYJKoZIhvcNAQEEBQADgYEAMho1ur9DJ9a01Lh25eObTWzAhsl3NbprFi0TRkqwMlOhW1rpmeIMhogXTg3+gqxOR+/7/zms7jXI+lI3CkmtWa3iiqkcxl8f+G9zfs2gMegMvvVN2bKrihK2MHhoEXwN8UlNo/2y6f8d8JH6VIX/M5Dowb+km6RiRr1hElmYQYk=</X509Certificate></X509Data></KeyInfo>";
-			AssertEquals ("Complex", s, (info.GetXml ().OuterXml));
+			AssertCrypto.AssertXmlEquals ("Complex", s, (info.GetXml ().OuterXml));
 			AssertEquals ("RetrievalMethod count", 5, info.Count);
 		}
 
@@ -164,7 +164,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			doc.LoadXml (value);
 			info.LoadXml (doc.DocumentElement);
 
-			AssertEquals ("Import", value, (info.GetXml ().OuterXml));
+			AssertCrypto.AssertXmlEquals ("Import", value, (info.GetXml ().OuterXml));
 			AssertEquals ("Import count", 5, info.Count);
 		}
 

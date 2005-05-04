@@ -2,9 +2,10 @@
 // SignedInfoTest.cs - NUnit Test Cases for SignedInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -146,6 +147,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		// urn:foo is'nt accepted when calling GetXml
+		[ExpectedException (typeof (CryptographicException))]
+		[Category ("NotWorking")]
+#endif
 		public void GetXmlWithSetProperty ()
 		{
 			XmlDocument doc = new XmlDocument ();

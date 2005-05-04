@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -72,6 +72,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("2.0 throws a NullReferenceException - reported as FDBK25892")]
+		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=02dd9730-d1ad-4170-8c82-36858c55fbe2
+#endif
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_XmlDocument_Null () 
 		{
@@ -93,7 +97,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
+#endif
 		public void Constructor_XmlElement_WithoutLoadXml () 
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -102,7 +108,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement xel = (XmlElement) xnl [0];
 
 			SignedXml sx = new SignedXml (doc.DocumentElement);
-			Assert ("!CheckSignature", sx.CheckSignature ());
+			Assert ("!CheckSignature", !sx.CheckSignature ());
 			// SignedXml (XmlElement) != SignedXml () + LoadXml (XmlElement)
 		}
 
@@ -231,8 +237,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// Compute the signature.
 			byte[] secretkey = Encoding.Default.GetBytes ("password");
 			HMACSHA1 hmac = new HMACSHA1 (secretkey);
-
+#if NET_2_0
+			AssertEquals ("KeyInfo", 0, signedXml.KeyInfo.Count);
+#else
 			AssertNull ("KeyInfo", signedXml.KeyInfo);
+#endif
 			AssertNull ("SignatureLength", signedXml.SignatureLength);
 			AssertNull ("SignatureMethod", signedXml.SignatureMethod);
 			AssertNull ("SignatureValue", signedXml.SignatureValue);
@@ -240,7 +249,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			signedXml.ComputeSignature (hmac);
 
+#if NET_2_0
+			AssertEquals ("KeyInfo", 0, signedXml.KeyInfo.Count);
+#else
 			AssertNull ("KeyInfo", signedXml.KeyInfo);
+#endif
 			AssertNull ("SignatureLength", signedXml.SignatureLength);
 			AssertEquals ("SignatureMethod", SignedXml.XmlDsigHMACSHA1Url, signedXml.SignatureMethod);
 			AssertEquals ("SignatureValue", 20, signedXml.SignatureValue.Length);
@@ -365,10 +378,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 #if NET_2_0
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		// [ExpectedException (typeof (ArgumentNullException))]
 		public void AddObject_Null () 
 		{
 			SignedXml sx = new SignedXml ();
+			// still no ArgumentNullExceptions for this one
 			sx.AddObject (null);
 		}
 
@@ -435,11 +449,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
+#endif
 		public void CheckSignatureEmpty ()
 		{
 			SignedXml sx = new SignedXml ();
-			sx.CheckSignature ();
+			Assert (!sx.CheckSignature ());
 		}
 	}
 }

@@ -2,9 +2,10 @@
 // KeyInfoRetrievalMethodTest.cs - NUnit Test Cases for KeyInfoRetrievalMethod
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -85,11 +86,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
 			// no exception is thrown
 			uri1.LoadXml (doc.DocumentElement);
+#if NET_2_0
+			AssertCrypto.AssertXmlEquals ("invalid", "<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+#elif NET_1_1
 			// note that URI="" is present (unlike a empty Uri)
-#if NET_1_0
-			AssertEquals("invalid", "<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
-#else
 			AssertEquals("invalid", "<RetrievalMethod URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+#else
+			// Fx 1.0 misnamed the tag name
+			AssertEquals("invalid", "<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
 #endif
 		}
 	}

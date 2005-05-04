@@ -1,3 +1,12 @@
+2005-05-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssertCrypto.cs: Added method to compare somewhat different but ok 
+	XML fragments (when the xmlns for xmldsig is on a different element).
+	* KeyInfoTest.cs, KeyInfoRetrievalMethodTest.cs, ReferenceTest.cs,
+	SignedInfoTest.cs, SignatureTest.cs, SignedXmlTest.cs, 
+	XmlDsigC14NTransformTest.cs, XmlDsigC14NWithCommentsTransformTest.cs,
+	XmlDsigXPathTransformTest.cs: Make all tests works under Fx 2.0 beta 2
+
 2005-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXmlTest.cs: AddObject and AddReference now throws 

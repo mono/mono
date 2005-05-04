@@ -138,6 +138,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")]
+		// see LoadInputAsXmlNodeList2 description
+#endif
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();

@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -15,6 +15,7 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using System.Xml.Xsl;
+using System.Xml.XPath;
 
 using NUnit.Framework;
 
@@ -85,6 +86,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore ("throws a NullReferenceException - but it's (kind of internal)")]
+#endif
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
@@ -123,6 +127,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void LoadInputAsXmlDocument () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -130,10 +137,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
+#if NET_2_0
+			AssertEquals (73, xnl.Count);
+#else
 			AssertEquals (47, xnl.Count);
+#endif
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (XPathException))]
+#endif
 		public void LoadInputAsXmlDocument_EmptyXPath () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -156,6 +170,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (XPathException))]
+#endif
 		public void LoadInputAsXmlNodeList_EmptyXPath () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -166,6 +183,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void LoadInputAsStream () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -177,10 +197,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
+#if NET_2_0
+			AssertEquals (73, xnl.Count);
+#else
 			AssertEquals (47, xnl.Count);
+#endif
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (XPathException))]
+#endif
 		public void LoadInputAsStream_EmptyXPath () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -248,6 +275,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		[Category ("NotWorking")]
 		// MS.NET looks incorrect, or something incorrect in this test code; It turned out nothing to do with function here()
+#if NET_2_0
+		[ExpectedException (typeof (XPathException))]
+#endif
 		public void FunctionHereObsolete ()
 		{
 			XmlDsigXPathTransform t = new XmlDsigXPathTransform ();
@@ -261,6 +291,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			doc.LoadXml ("<element a='b'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
+			// FX 2.0 throws at next line!
 			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
 			AssertEquals (0, nl.Count);
 

@@ -6,11 +6,12 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
 using System.IO;
+using System.Security;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
@@ -119,15 +120,34 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				sw.Write ("<!-- presence, not content, required -->");
 				sw.Close ();
 			}
-			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input);
+			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input, true);
 			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)", 
 				        C14NSpecExample1Output, res);
 	        }
 
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (SecurityException))]
+#endif
+		public void C14NSpecExample1_WithoutResolver ()
+		{
+			using (StreamWriter sw = new StreamWriter ("doc.dtd", false, Encoding.ASCII)) {
+				sw.Write ("<!-- presence, not content, required -->");
+				sw.Close ();
+			}
+#if NET_2_0
+			if (!SecurityManager.SecurityEnabled)
+				NUnit.Framework.Assert.Ignore ("SecurityManager isn't enabled.");
+#endif
+			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input, false);
+			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)",
+					C14NSpecExample1Output, res);
+		}
+
 	        [Test]
 	        public void C14NSpecExample2 ()
 	        {
-			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample2Input);
+			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample2Input, false);
 			AssertEquals ("Example 2 from c14n spec - Whitespace in Document Content (with comments)", 
 					C14NSpecExample2Output, res);
 		}
@@ -135,7 +155,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        [Test]
 	        public void C14NSpecExample3 ()
 	        {
-	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample3Input);
+	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample3Input, false);
 	    		AssertEquals ("Example 3 from c14n spec - Start and End Tags (with comments)", 
 	    			        C14NSpecExample3Output, res);
 	        }
@@ -143,7 +163,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        [Test]
 	        public void C14NSpecExample4 ()
 	        {
-	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample4Input);
+	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample4Input, false);
 	    		AssertEquals ("Example 4 from c14n spec - Character Modifications and Character References (with comments)", 
 	    			        C14NSpecExample4Output, res);
 	        }
@@ -157,7 +177,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 					sw.Close ();
 				}
 			}
-	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input);
+	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input, false);
 	    	    	AssertEquals ("Example 5 from c14n spec - Entity References (with comments)", 
 	    				C14NSpecExample5Output, res);
 	        }
@@ -165,12 +185,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        [Test]
 	        public void C14NSpecExample6 ()
 	        {
-	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample6Input);
+	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample6Input, false);
 	    	    	AssertEquals ("Example 6 from c14n spec - UTF-8 Encoding (with comments)", 
 	    				C14NSpecExample6Output, res);
 	        }
 
-		private string ExecuteXmlDSigC14NTransform (string InputXml)
+		private string ExecuteXmlDSigC14NTransform (string InputXml, bool resolver)
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
@@ -186,7 +206,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			vreader.ValidationType = ValidationType.None;
 			vreader.EntityHandling = EntityHandling.ExpandCharEntities;
 			doc.Load (vreader);
-
+#if NET_2_0
+			if (resolver)
+				transform.Resolver = new XmlUrlResolver ();
+#endif
 			transform.LoadInput (doc);
 			return Stream2String ((Stream)transform.GetOutput ());
 		}
