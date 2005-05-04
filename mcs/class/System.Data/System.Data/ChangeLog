@@ -1,5 +1,8 @@
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataRow.cs: AcceptChanges: raise row changing & row changed
+	events.
+
 	* DataRowCollection.cs: Clear : remove rows from indexes
 
 2005-05-02  Atsushi Enomoto  <atsushi@ximian.com>

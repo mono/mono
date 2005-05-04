@@ -590,6 +590,8 @@ namespace System.Data {
 		public void AcceptChanges () 
 		{
 			EndEdit(); // in case it hasn't been called
+
+                        _table.ChangingDataRow (this, DataRowAction.Commit);
 			switch (rowState) {
 				case DataRowState.Unchanged:
 					return;
@@ -607,6 +609,8 @@ namespace System.Data {
 			// Accept from detached
 			if (_original != _current)
 				Original = Current;
+
+                        _table.ChangedDataRow (this, DataRowAction.Commit);
 		}
 
 		/// <summary>

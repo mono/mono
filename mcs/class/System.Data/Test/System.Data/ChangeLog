@@ -1,8 +1,10 @@
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
-	* DataTableTest.cs: Added a test for DataTable. Should clear rows
-	from indexes as well. Simplified table creation for ClearReset
-	test.
+	* DataTableTest.cs: 
+	- Added a test for DataTable. Should clear rows from indexes as
+	well. Simplified table creation for ClearReset test.
+	- Added a test to check whether Commit RowChanging & RowChanged
+	event is fired.
 
 2005-04-29  Sureshkumar T  <tsureshkumar@novell.com>
 

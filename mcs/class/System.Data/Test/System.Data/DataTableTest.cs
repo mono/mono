@@ -1341,6 +1341,47 @@ namespace MonoTests.System.Data
                         MyDataTable dt = (MyDataTable)(dt1.Clone());
                         AssertEquals("A#01",2,MyDataTable.count);
                 }
+
+                DataRowAction rowActionChanging = DataRowAction.Nothing;
+                DataRowAction rowActionChanged  = DataRowAction.Nothing;
+                [Test]
+                public void AcceptChangesTest ()
+                {
+                        DataTable dt = new DataTable ("test");
+                        dt.Columns.Add ("id", typeof (int));
+                        dt.Columns.Add ("name", typeof (string));
+                        
+                        dt.Rows.Add (new object [] { 1, "mono 1" });
+
+                        dt.RowChanged  += new DataRowChangeEventHandler (OnRowChanged);
+                        dt.RowChanging += new DataRowChangeEventHandler (OnRowChanging);
+
+                        try {
+                                rowActionChanged = rowActionChanging = DataRowAction.Nothing;
+                                dt.AcceptChanges ();
+
+                                AssertEquals ("#1 should have fired event and set action to commit",
+                                              DataRowAction.Commit, rowActionChanging);
+                                AssertEquals ("#2 should have fired event and set action to commit",
+                                              DataRowAction.Commit, rowActionChanged);
+
+                        } finally {
+                                dt.RowChanged  -= new DataRowChangeEventHandler (OnRowChanged);
+                                dt.RowChanging -= new DataRowChangeEventHandler (OnRowChanging);
+
+                        }
+                }
+
+                public void OnRowChanging (object src, DataRowChangeEventArgs args)
+                {
+                        rowActionChanging = args.Action;
+                }
+                
+                public void OnRowChanged (object src, DataRowChangeEventArgs args)
+                {
+                        rowActionChanged = args.Action;
+                }
+                
                                                                                                     
         }
                                                                                                     
