@@ -2906,12 +2906,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!FieldInfo.IsInitOnly)
-				return this;
-
 			FieldBase fb = TypeManager.GetField (FieldInfo);
 			if (fb != null)
 				fb.SetAssigned ();
+
+			if (!FieldInfo.IsInitOnly)
+				return this;
 
 			//
 			// InitOnly fields can only be assigned in constructors

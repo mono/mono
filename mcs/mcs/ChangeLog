@@ -1,5 +1,9 @@
 2005-05-04  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (FieldExpr.DoResolveLValue): Always call fb.SetAssigned().
+
+2005-05-04  Martin Baulig  <martin@ximian.com>
+
 	Fix #74655.
 
 	* statement.cs (Switch.SimpleSwitchEmit): Always emit the default
