@@ -1,3 +1,8 @@
+2005-05-03  Geoff Norton  <gnorton@customerdna.com>
+
+	* sys-xattr.c:  Mac OS/X Tiger supports xattr but has a different API for supporting
+	resource forks.  Allow mono to build on Tiger.
+
 2005-04-30  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* stdio.c: Add Mono_Posix_Stdlib_DumpFilePosition, which create a hex string
