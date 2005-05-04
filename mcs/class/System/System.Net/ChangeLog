@@ -1,3 +1,9 @@
+2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: don't rethrow errors in Write, as the error will be
+	received by GetResponse*. The result is that the threadpool thread doing
+	this will not end up printing the exception. Fixes bug #74817.
+
 2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ServicePoint.cs: HostEntry needs to be thread safe.
