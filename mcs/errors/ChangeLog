@@ -1,3 +1,7 @@
+2005-05-04  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0122-13.cs: New test based on #64812.
+
 2005-05-03  Raja R Harinath  <rharinath@novell.com>
 
 	* errors.txt (warning -28): Remove.

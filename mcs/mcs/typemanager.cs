@@ -2437,11 +2437,10 @@ public class TypeManager {
 			if (invocation_type == null)
 				return false;
 
-			Debug.Assert (IsNestedFamilyAccessible (invocation_type, m.DeclaringType));
-
-			if (is_static)
+			if (is_static && qualifier_type == null)
+				// It resolved from a simple name, so it should be visible.
 				return true;
-			
+
 			// A nested class has access to all the protected members visible to its parent.
 			if (qualifier_type != null
 			    && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
@@ -2449,6 +2448,9 @@ public class TypeManager {
 
 			if (invocation_type == m.DeclaringType
 			    || invocation_type.IsSubclassOf (m.DeclaringType)) {
+				if (is_static)
+					return true;
+
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
@@ -2458,8 +2460,9 @@ public class TypeManager {
 					return true;
 			}
 
-			if (almost_match != null)
+			if (!is_static && almost_match != null)
 				almost_match.Add (m);
+
 			return false;
 		}
 		

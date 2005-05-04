@@ -1,3 +1,12 @@
+2005-05-04  Raja R Harinath  <rharinath@novell.com>
+	    Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #64812.
+	* typemanager.cs (Closure.CheckValidFamilyAccess): Don't blindly
+	allow access to all static members.
+
 2005-05-04  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (FieldExpr.DoResolveLValue): Always call fb.SetAssigned().
