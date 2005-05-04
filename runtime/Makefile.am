@@ -36,7 +36,7 @@ install: install-exec install-data
 # override automake
 install-exec: $(SUPPORT_FILES)
 	d=`pwd`; \
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes install-profiles
+	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
 
 # override automake
 install-data:
@@ -45,7 +45,7 @@ install-data:
 # override automake
 uninstall:
 	d=`pwd`; \
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes uninstall-profiles
+	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
 clean-local:
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
