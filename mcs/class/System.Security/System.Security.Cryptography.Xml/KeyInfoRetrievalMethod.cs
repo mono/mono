@@ -84,11 +84,14 @@ namespace System.Security.Cryptography.Xml {
 
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.RetrievalMethod, XmlSignature.NamespaceURI);
-			if (URI != null)
-				xel.SetAttribute (XmlSignature.AttributeNames.URI, URI);
 #if NET_2_0
+			if ((URI != null) && (URI.Length > 0))
+				xel.SetAttribute (XmlSignature.AttributeNames.URI, URI);
 			if (Type != null)
 				xel.SetAttribute (XmlSignature.AttributeNames.Type, Type);
+#else
+			if (URI != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.URI, URI);
 #endif
 			return xel;
 		}

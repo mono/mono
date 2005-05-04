@@ -8,9 +8,7 @@
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -100,9 +98,13 @@ namespace System.Security.Cryptography.Xml
 		[MonoTODO ("Evaluation of extension function here() results in different from MS.NET (is MS.NET really correct??).")]
 		public override object GetOutput () 
 		{
+#if NET_2_0
+			if (xpath == null)
+				throw new XPathException (Locale.GetText ("No XPath expression provided."));
+#else
 			if (xpath == null)
 				return new XmlDsigNodeList (new ArrayList ());
-
+#endif
 			// evaluate every time since input or xpath might have changed.
 			string x = null;
 			for (int i = 0; i < xpath.Count; i++) {

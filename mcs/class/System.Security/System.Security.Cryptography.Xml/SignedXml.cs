@@ -119,7 +119,13 @@ namespace System.Security.Cryptography.Xml {
 #endif
 
 		public KeyInfo KeyInfo {
-			get { return m_signature.KeyInfo; }
+			get {
+#if NET_2_0
+				if (m_signature.KeyInfo == null)
+					m_signature.KeyInfo = new KeyInfo ();
+#endif
+				return m_signature.KeyInfo;
+			}
 			set { m_signature.KeyInfo = value; }
 		}
 
@@ -156,10 +162,6 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddObject (DataObject dataObject) 
 		{
-#if NET_2_0
-			if (dataObject == null)
-				throw new ArgumentNullException ("dataObject");
-#endif
 			m_signature.AddObject (dataObject);
 		}
 
@@ -480,10 +482,14 @@ namespace System.Security.Cryptography.Xml {
 				// check with supplied key
 				if (!CheckSignatureWithKey (key))
 					return null;
-			}
-			else {
+			} else {
+#if NET_2_0
+				if (Signature.KeyInfo == null)
+					return null;
+#else
 				if (Signature.KeyInfo == null)
 					throw new CryptographicException ("At least one KeyInfo is required.");
+#endif
 				// no supplied key, iterates all KeyInfo
 				while ((key = GetPublicKey ()) != null) {
 					if (CheckSignatureWithKey (key)) {

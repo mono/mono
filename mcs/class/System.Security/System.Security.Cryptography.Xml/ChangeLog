@@ -1,3 +1,12 @@
+2005-05-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXml.cs: Return an empty (not null) KeyInfo by default and
+	don't throw a CryptographicException in CheckSignature (both NET_2_0).
+	* KeyInfoRetrievalMethod.cs: Don't include an empty URI attribute
+	in the XML output for NET_2_0.
+	* XmlDsigXPathTransform.cs: Throw an XPathException in NET_2_0 if no
+	xpath expression has been supplied to the transform.
+
 2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDsigXsltTransform.cs: Fixed 2 test cases (that nows throws 
