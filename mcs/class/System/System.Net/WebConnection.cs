@@ -245,6 +245,7 @@ namespace System.Net
 										request.ClientCertificates,
 										request, buffer};
 						nstream = (Stream) Activator.CreateInstance (sslStream, args);
+						certsAvailable = false;
 					}
 					// we also need to set ServicePoint.Certificate 
 					// and ServicePoint.ClientCertificate but this can
@@ -809,18 +810,20 @@ namespace System.Net
 				if (ssl && !certsAvailable)
 					GetCertificates ();
 			} catch (Exception e) {
-				if (e is WebException)
-					throw e;
-
 				WebExceptionStatus wes = WebExceptionStatus.SendFailure;
+				string msg = "Write";
+				if (e is WebException) {
+					HandleError (wes, e, msg);
+					return;
+				}
 
 				// if SSL is in use then check for TrustFailure
 				if (ssl && (bool) piTrustFailure.GetValue (nstream, null)) {
 					wes = WebExceptionStatus.TrustFailure;
+					msg = "Trust failure";
 				}
 
-				HandleError (wes, e, "Write");
-				throw new WebException ("Not connected", e, wes, null);
+				HandleError (wes, e, msg);
 			}
 		}
 
