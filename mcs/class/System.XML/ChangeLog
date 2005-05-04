@@ -1,3 +1,8 @@
+2005-05-04  Andrew Skiba  <andrews@mainsoft.com>
+
+	* System.XML.vmwcsproj: Added Visual MainWin C# project file for
+	building System.XML package for TARGET_JVM.
+	
 2005-04-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* System.Xml.dll.sources: Kill multiplexing hack.
