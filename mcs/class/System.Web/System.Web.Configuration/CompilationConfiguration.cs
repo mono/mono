@@ -94,7 +94,7 @@ namespace System.Web.Configuration
 			if (compiler.Provider != null)
 				return compiler.Provider;
 
-			Type t = Type.GetType (compiler.Type);
+			Type t = Type.GetType (compiler.Type, true);
 			compiler.Provider = Activator.CreateInstance (t) as CodeDomProvider;
 			return compiler.Provider;
 		}

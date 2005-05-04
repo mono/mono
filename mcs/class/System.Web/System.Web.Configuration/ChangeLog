@@ -1,3 +1,8 @@
+2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationConfiguration.cs: throw if we cannot load the type given
+	in the configuration file.
+
 2005-04-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilerCollection.cs: added CompareLanguages method.
