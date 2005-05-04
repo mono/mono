@@ -63,17 +63,20 @@ namespace MonoTests.System.Data.SqlClient
                 [Test]
                 public void CtorTest ()
                 {
-
                         dt.Rows [1].Delete ();
-
-                        int i = 0;
-
                         DataTableReader reader = new DataTableReader (dt);
-                        while (reader.Read ())
-                                i++;
-                        reader.Close ();
+                        try {
+                                
+                                int i = 0;
+                                while (reader.Read ())
+                                        i++;
+                                reader.Close ();
 
-                        Assert.AreEqual (2, i, "no. of rows iterated is wrong");
+                                Assert.AreEqual (2, i, "no. of rows iterated is wrong");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
@@ -82,10 +85,15 @@ namespace MonoTests.System.Data.SqlClient
                 {
 
                         DataTableReader reader = new DataTableReader (dt);
-                        reader.Read ();
-                        reader.Read (); // 2nd row
-                        dt.Rows [1].Delete ();
-                        string value = reader [1].ToString ();
+                        try {
+                                reader.Read ();
+                                reader.Read (); // 2nd row
+                                dt.Rows [1].Delete ();
+                                string value = reader [1].ToString ();
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
@@ -93,22 +101,32 @@ namespace MonoTests.System.Data.SqlClient
                 {
 
                         DataTableReader reader = new DataTableReader (dt);
-                        reader.Read (); // first row
-                        dt.Rows [1].Delete ();
-                        reader.Read (); // it should be 3rd row
-                        string value = reader [0].ToString ();
-                        Assert.AreEqual ("3", value, "#1 reader should have moved to 3rd row");
+                        try {
+                                reader.Read (); // first row
+                                dt.Rows [1].Delete ();
+                                reader.Read (); // it should be 3rd row
+                                string value = reader [0].ToString ();
+                                Assert.AreEqual ("3", value, "#1 reader should have moved to 3rd row");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
                 public void SeeTheModifiedTest ()
                 {
                         DataTableReader reader = new DataTableReader (dt);
-                        reader.Read (); // first row
-                        dt.Rows [1] ["name"] = "mono changed";
-                        reader.Read ();
-                        string value = reader [1].ToString ();
-                        Assert.AreEqual ("mono changed", value, "#2 reader should have moved to 3rd row");
+                        try {
+                                reader.Read (); // first row
+                                dt.Rows [1] ["name"] = "mono changed";
+                                reader.Read ();
+                                string value = reader [1].ToString ();
+                                Assert.AreEqual ("mono changed", value, "#2 reader should have moved to 3rd row");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
@@ -122,17 +140,22 @@ namespace MonoTests.System.Data.SqlClient
                         another.Rows.Add (new object [] {"test 3" });
 
                         DataTableReader reader = new DataTableReader (new DataTable [] { dt, another });
-                        DataTable schema = reader.GetSchemaTable ();
+                        try {
+                                DataTable schema = reader.GetSchemaTable ();
 
-                        Assert.AreEqual (dt.Columns.Count, schema.Rows.Count, "#1 should be same");
-                        Assert.AreEqual (dt.Columns [1].DataType.ToString (), schema.Rows [1] ["DataType"].ToString (), "#2 data type should match");
+                                Assert.AreEqual (dt.Columns.Count, schema.Rows.Count, "#1 should be same");
+                                Assert.AreEqual (dt.Columns [1].DataType.ToString (), schema.Rows [1] ["DataType"].ToString (), "#2 data type should match");
 
-                        reader.NextResult (); //schema should change here
-                        schema = reader.GetSchemaTable ();
+                                reader.NextResult (); //schema should change here
+                                schema = reader.GetSchemaTable ();
 
-                        Assert.AreEqual (another.Columns.Count, schema.Rows.Count, "#3 should be same");
-                        Assert.AreEqual (another.Columns [0].DataType.ToString (), schema.Rows [0] ["DataType"].ToString (), "#4 data type should match");
+                                Assert.AreEqual (another.Columns.Count, schema.Rows.Count, "#3 should be same");
+                                Assert.AreEqual (another.Columns [0].DataType.ToString (), schema.Rows [0] ["DataType"].ToString (), "#4 data type should match");
                         
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
@@ -147,13 +170,18 @@ namespace MonoTests.System.Data.SqlClient
                         DataTable [] collection = new DataTable [] { dt, dt1 } ; 
                         
                         DataTableReader reader = new DataTableReader (collection);
-                        int i = 0;
-                        do {
-                                while (reader.Read ())
-                                        i++;
-                        } while (reader.NextResult ());
+                        try {
+                                int i = 0;
+                                do {
+                                        while (reader.Read ())
+                                                i++;
+                                } while (reader.NextResult ());
                                                 
-                        Assert.AreEqual (5, i, "#1 rows should be of both the tables");
+                                Assert.AreEqual (5, i, "#1 rows should be of both the tables");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
@@ -163,13 +191,18 @@ namespace MonoTests.System.Data.SqlClient
                         dt.Rows [0] ["nullint"] = 333;
 
                         DataTableReader reader = new DataTableReader (dt);
-                        reader.Read ();
+                        try {
+                                reader.Read ();
                         
-                        int ordinal = reader.GetOrdinal ("nullint");
-                        // Get by name
-                        Assert.AreEqual (1, (int) reader ["id"], "#1 should be able to get by name");
-                        Assert.AreEqual (333, reader.GetInt32 (ordinal), "#2 should get int32");
-                        Assert.AreEqual ("System.Int32", reader.GetDataTypeName (ordinal), "#3 data type should match");
+                                int ordinal = reader.GetOrdinal ("nullint");
+                                // Get by name
+                                Assert.AreEqual (1, (int) reader ["id"], "#1 should be able to get by name");
+                                Assert.AreEqual (333, reader.GetInt32 (ordinal), "#2 should get int32");
+                                Assert.AreEqual ("System.Int32", reader.GetDataTypeName (ordinal), "#3 data type should match");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
@@ -177,21 +210,32 @@ namespace MonoTests.System.Data.SqlClient
                 public void CloseTest ()
                 {
                         DataTableReader reader = new DataTableReader (dt);
-                        int i = 0;
-                        while (reader.Read () && i < 1)
-                                i++;
-                        reader.Close ();
-                        reader.Read ();
+                        try {
+                                int i = 0;
+                                while (reader.Read () && i < 1)
+                                        i++;
+                                reader.Close ();
+                                reader.Read ();
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
                 [Test]
                 public void GetOrdinalTest ()
                 {
                         DataTableReader reader = new DataTableReader (dt);
-                        Assert.AreEqual (1, reader.GetOrdinal ("name"), "#1 get ordinal should work even" +
-                                         " without calling Read");
+                        try {
+                                Assert.AreEqual (1, reader.GetOrdinal ("name"), "#1 get ordinal should work even" +
+                                                 " without calling Read");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
                 #endregion // Positive Tests
+
                 
                 #region Negative Tests
                 [Test]
@@ -201,9 +245,14 @@ namespace MonoTests.System.Data.SqlClient
                         dt.AcceptChanges ();
                         
                         DataTableReader reader = new DataTableReader (dt);
+                        try {
                         
-                        Assert.AreEqual (false, reader.Read (), "#1 there are no rows");
-                        Assert.AreEqual (false, reader.NextResult (), "#2 there are no further resultsets");
+                                Assert.AreEqual (false, reader.Read (), "#1 there are no rows");
+                                Assert.AreEqual (false, reader.NextResult (), "#2 there are no further resultsets");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
                 
                 [Test]
@@ -211,7 +260,12 @@ namespace MonoTests.System.Data.SqlClient
                 public void NoTablesTest ()
                 {
                         DataTableReader reader = new DataTableReader (new DataTable [] {});
-                        reader.Read ();
+                        try {
+                                reader.Read ();
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
                 }
 
 		[Test]
@@ -219,9 +273,14 @@ namespace MonoTests.System.Data.SqlClient
 		public void ReadAfterClosedTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
-			reader.Read ();
-			reader.Close ();
-                        reader.Read ();
+                        try {
+                                reader.Read ();
+                                reader.Close ();
+                                reader.Read ();
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
 		}	
 
 		[Test]
@@ -229,10 +288,15 @@ namespace MonoTests.System.Data.SqlClient
 		public void AccessAfterClosedTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
-			reader.Read ();
-			reader.Close ();
-			int i = (int) reader [0];
-			i++; // to supress warning
+                        try {
+                                reader.Read ();
+                                reader.Close ();
+                                int i = (int) reader [0];
+                                i++; // to supress warning
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
 		}
 
                 [Test]
@@ -240,8 +304,13 @@ namespace MonoTests.System.Data.SqlClient
 		public void AccessBeforeReadTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
-			int i = (int) reader [0];
-			i++; // to supress warning
+                        try {
+                                int i = (int) reader [0];
+                                i++; // to supress warning
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
 		}
 
                 [Test]
@@ -249,11 +318,197 @@ namespace MonoTests.System.Data.SqlClient
 		public void InvalidIndexTest ()
 		{
                         DataTableReader reader = new DataTableReader (dt);
-                        reader.Read ();
-			int i = (int) reader [90]; // kidding, ;-)
-			i++; // to supress warning
+                        try {
+                                reader.Read ();
+                                int i = (int) reader [90]; // kidding, ;-)
+                                i++; // to supress warning
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
 		}
 
+                [Test]
+		public void DontSeeTheEarlierRowsTest ()
+		{
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+
+                                // insert a row at position 0
+                                DataRow r = dt.NewRow ();
+                                r [0] = 0;
+                                r [1] = "adhi bagavan";
+                                dt.Rows.InsertAt (r, 0);
+                        
+                                Assert.AreEqual (2, (int) reader.GetInt32 (0), "#1 should not alter the position");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+		}
+
+                [Test]
+                public void AddBeforePointTest ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                DataRow r = dt.NewRow ();
+                                r [0] = 0;
+                                r [1] = "adhi bagavan";
+                                dt.Rows.InsertAt (r, 0);
+                                dt.Rows.Add (new object [] { 4, "mono 4"}); // should not affect the counter
+                                Assert.AreEqual (2, (int) reader [0], "#1 should not affect the current position");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                }
+
+                [Test]
+                public void AddAtPointTest ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                DataRow r = dt.NewRow ();
+                                r [0] = 0;
+                                r [1] = "same point";
+                                dt.Rows.InsertAt (r, 1);
+                                dt.Rows.Add (new object [] { 4, "mono 4"}); // should not affect the counter
+                                Assert.AreEqual (2, (int) reader [0], "#1 should not affect the current position");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                }
+
+                [Test]
+                public void DeletePreviousAndAcceptChangesTest ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                dt.Rows [0].Delete ();
+                                dt.AcceptChanges ();
+                                Assert.AreEqual (2, (int) reader [0], "#1 should not affect the current position");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+
+                }
+
+                [Test]
+                public void DeleteCurrentAndAcceptChangesTest2 ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                dt.Rows [1].Delete (); // delete row, where reader points to
+                                dt.AcceptChanges (); // accept the action
+                                Assert.AreEqual (1, (int) reader [0], "#1 should point to the first row");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                }
+
+                [Test]
+                public void DeleteLastAndAcceptChangesTest2 ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                reader.Read (); // third row
+                                dt.Rows [2].Delete (); // delete row, where reader points to
+                                dt.AcceptChanges (); // accept the action
+                                Assert.AreEqual (2, (int) reader [0], "#1 should point to the first row");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                }
+
+                [Test]
+                public void ClearTest ()
+                {
+                        DataTableReader reader = null;
+                        try {
+                                reader = new DataTableReader (dt);
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                dt.Clear ();
+                                try {
+                                        int i = (int) reader [0];
+                                        i++; // supress warning
+                                        Assert.Fail("#1 should have thrown RowNotInTableException");
+                                } catch (RowNotInTableException) {}
+
+                                // clear and add test
+                                reader.Close ();
+                                reader = new DataTableReader (dt);
+                                reader.Read (); // first row
+                                reader.Read (); // second row
+                                dt.Clear ();
+                                dt.Rows.Add (new object [] {8, "mono 8"});
+                                dt.AcceptChanges ();
+                                bool success = reader.Read ();
+                                Assert.AreEqual (false, success, "#2 is always invalid");
+
+                                // clear when reader is not read yet
+                                reader.Close ();
+                                reader = new DataTableReader (dt);
+                                dt.Clear ();
+                                dt.Rows.Add (new object [] {8, "mono 8"});
+                                dt.AcceptChanges ();
+                                success = reader.Read ();
+                                Assert.AreEqual (true, success, "#3 should add");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                        
+                }
+
+                [Test]
+                public void MultipleDeleteTest ()
+                {
+                        dt.Rows.Add (new object [] {4, "mono 4"});
+                        dt.Rows.Add (new object [] {5, "mono 5"});
+                        dt.Rows.Add (new object [] {6, "mono 6"});
+                        dt.Rows.Add (new object [] {7, "mono 7"});
+                        dt.Rows.Add (new object [] {8, "mono 8"});
+                        dt.AcceptChanges ();
+                        
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                reader.Read ();
+                                reader.Read ();
+                                reader.Read ();
+                                reader.Read ();
+
+                                dt.Rows [3].Delete ();
+                                dt.Rows [1].Delete ();
+                                dt.Rows [2].Delete ();
+                                dt.Rows [0].Delete ();
+                                dt.Rows [6].Delete ();
+                                dt.AcceptChanges ();
+
+                                Assert.AreEqual (5, (int) reader [0], "#1 should keep pointing to 5");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                }
                 #endregion // Negative Tests
 
         }

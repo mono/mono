@@ -1,5 +1,8 @@
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataTableReader.cs: Added event handlers to make reader stable
+	when the datasource is modified.
+
 	* DataTable.cs: Clear (): Raise TableCleared event.
 
 	* DataTableClearEventArgs.cs: Args for DataTableClearEventHandler.

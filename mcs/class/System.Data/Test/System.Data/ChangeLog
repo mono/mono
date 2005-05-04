@@ -1,5 +1,11 @@
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataTableReaderTest.cs:
+	- reader.close in finally in all test cases.
+	- Added tests to check scenarios when the datasource is
+	modified/deleted/added.
+	- Added tests to check when the datatable is cleared.
+
 	* DataTableTest.cs: 
 	- Added a test for DataTable. Should clear rows from indexes as
 	well. Simplified table creation for ClearReset test.

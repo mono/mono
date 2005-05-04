@@ -41,10 +41,11 @@ namespace System.Data {
         {
                 bool            _closed;
                 DataTable []    _tables;
-                IEnumerator     _enumerator;
                 int             _current = -1;
                 int             _index;
                 DataTable       _schemaTable;
+                bool            _tableCleared = false;
+                bool            _subscribed = false;
 
                 #region Constructors
 
@@ -68,6 +69,9 @@ namespace System.Data {
                         _closed = false;
                         _index = 0;
                         _current = -1;
+                        _tableCleared = false;
+
+                        SubscribeEvents ();
                 }
 
                 #endregion // Constructors
@@ -137,9 +141,31 @@ namespace System.Data {
                 #endregion // Properties
 
                 #region Methods
+
+                private void SubscribeEvents ()
+                {
+                        if (_subscribed)        // avoid subscribing multiple times
+                                return;
+                        CurrentTable.TableCleared += new DataTableClearEventHandler (OnTableCleared);
+                        CurrentTable.RowChanged += new DataRowChangeEventHandler (OnRowChanged);
+                        _subscribed = true;
+                }
+
+                private void UnsubscribeEvents ()
+                {
+                        if (!_subscribed)       // avoid un-subscribing multiple times
+                                return;
+                        CurrentTable.TableCleared -= new DataTableClearEventHandler (OnTableCleared);
+                        CurrentTable.RowChanged -= new DataRowChangeEventHandler (OnRowChanged);
+                        _subscribed = false;
+                }
                 
                 public override void Close ()
                 {
+                        if (IsClosed)
+                                return;
+                        
+                        UnsubscribeEvents ();
                         _closed = true;
                 }
                 
@@ -321,9 +347,18 @@ namespace System.Data {
                 private void Validate ()
                 {
 			ValidateClosed ();
+
+                        if (_index >= _tables.Length)
+                                throw new InvalidOperationException ("Invalid attempt to read when " + 
+                                                                     "no data is present");
+
+                        if (_tableCleared)
+                                throw new RowNotInTableException ("The table is cleared, no rows are " +
+                                                                  "accessible");
+                        
 			if (_current == -1)
-                                throw new InvalidOperationException ("Invalid attempt to read before " + 
-                                                                     "Read is called");
+                                throw new InvalidOperationException ("DataReader is invalid " + 
+                                                                     "for the DataTable");
                 }
 
                 private void ValidateClosed ()
@@ -336,19 +371,33 @@ namespace System.Data {
                 
                 private bool MoveNext ()
                 {
+                        if (_index >= _tables.Length || _tableCleared)
+                                return false;
+                        
                         do {
                                 _current++;
                         } while (_current < CurrentTable.Rows.Count 
                                  && CurrentRow.RowState == DataRowState.Deleted);
+                        
                         return _current < CurrentTable.Rows.Count;
+
                 }
 
                 public override bool NextResult ()
                 {
-                        _current = -1;
+                        if ((_index + 1) >= _tables.Length) {
+                                UnsubscribeEvents ();
+                                _index = _tables.Length;     // to make any attempt invalid
+                                return false; // end of tables.
+                        }
+                        
+                        UnsubscribeEvents ();
                         _index++;
+                        _current = -1;
                         _schemaTable = null;            // force to create fresh
-                        return _index < _tables.Length;
+                        _tableCleared = false;
+                        SubscribeEvents ();
+                        return true;
                 }
 
                 public override bool Read ()
@@ -358,6 +407,46 @@ namespace System.Data {
                 }
 
                 #endregion // Methods
+
+                #region // Event Handlers
+
+                private void OnRowChanged (object src, DataRowChangeEventArgs args)
+                {
+                        DataRowAction action = args.Action;
+                        DataRow row = args.Row;
+                        if (action == DataRowAction.Add) {
+                                if (_tableCleared && _current != -1)
+                                        return;
+                                
+                                if (_current == -1 // yet to read
+                                    || (_current >= 0 && row.RowID > CurrentRow.RowID) // row added above
+                                    ) {
+                                        _tableCleared = false;
+                                        return; // no. movement required, if row added after current.
+                                }
+
+                                _current++;
+
+                        }
+                        
+                        if (action == DataRowAction.Commit 
+                            && row.RowState == DataRowState.Detached) {
+                                // FIXME : How to find whether the row deleted falls below 
+                                //  current row or above?.
+                                if (_current >= CurrentTable.Rows.Count) {
+                                        _current--;
+                                }
+                                
+                                
+                        }
+                }
+
+                private void OnTableCleared (object src, DataTableClearEventArgs args)
+                {
+                        _tableCleared = true;
+                }
+                
+                #endregion // Event Handlers
         }
 }
 
