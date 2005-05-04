@@ -158,6 +158,31 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
+		public bool Selectable {
+			get {
+				object o = ViewState ["Selectable"];
+				if (o != null) return (bool) o;
+				return true;
+			}
+			set {
+				ViewState ["Selectable"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		public string SelectableField {
+			get {
+				object o = ViewState ["SelectableField"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["SelectableField"] = value;
+			}
+		}
+
 		[DefaultValue ("")]
 		public string Target {
 			get {

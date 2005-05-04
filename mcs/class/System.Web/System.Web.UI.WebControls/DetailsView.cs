@@ -1279,19 +1279,19 @@ namespace System.Web.UI.WebControls
 		{
 			switch (eventName)
 			{
-				case "Page":
+				case DataControlCommands.PageCommandName:
 					int newIndex = -1;
 					switch (param) {
-						case "First":
+						case DataControlCommands.FirstPageCommandArgument:
 							newIndex = 0;
 							break;
-						case "Last":
+						case DataControlCommands.LastPageCommandArgument:
 							newIndex = PageCount - 1;
 							break;
-						case "Next":
+						case DataControlCommands.NextPageCommandArgument:
 							if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
 							break;
-						case "Prev":
+						case DataControlCommands.PreviousPageCommandArgument:
 							if (PageIndex > 0) newIndex = PageIndex - 1;
 							break;
 						default:
@@ -1301,45 +1301,45 @@ namespace System.Web.UI.WebControls
 					ShowPage (newIndex);
 					break;
 					
-				case "First":
+				case DataControlCommands.FirstPageCommandArgument:
 					ShowPage (0);
 					break;
 
-				case "Last":
+				case DataControlCommands.LastPageCommandArgument:
 					ShowPage (PageCount - 1);
 					break;
 					
-				case "Next":
+				case DataControlCommands.NextPageCommandArgument:
 					if (PageIndex < PageCount - 1)
 						ShowPage (PageIndex + 1);
 					break;
 
-				case "Prev":
+				case DataControlCommands.PreviousPageCommandArgument:
 					if (PageIndex > 0)
 						ShowPage (PageIndex - 1);
 					break;
 					
-				case "Edit":
+				case DataControlCommands.EditCommandName:
 					ChangeMode (DetailsViewMode.Edit);
 					break;
 					
-				case "New":
+				case DataControlCommands.NewCommandName:
 					ChangeMode (DetailsViewMode.Insert);
 					break;
 					
-				case "Update":
+				case DataControlCommands.UpdateCommandName:
 					UpdateItem (param, true);
 					break;
 					
-				case "Cancel":
+				case DataControlCommands.CancelCommandName:
 					CancelEdit ();
 					break;
 					
-				case "Delete":
+				case DataControlCommands.DeleteCommandName:
 					DeleteItem ();
 					break;
 					
-				case "Insert":
+				case DataControlCommands.InsertCommandName:
 					InsertItem (true);
 					break;
 			}

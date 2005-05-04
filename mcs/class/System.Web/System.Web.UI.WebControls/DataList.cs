@@ -209,9 +209,13 @@ namespace System.Web.UI.WebControls
 			set { footerTemplate = value; }
 		}
 
-		[DefaultValue (typeof (GridLines), "None")]
+		[DefaultValue (GridLines.None)]
 		public override GridLines GridLines {
-			get { return base.GridLines; }
+			get {
+				if (ControlStyleCreated)
+					return base.GridLines;
+				return GridLines.None;
+			}
 			set { base.GridLines = value; }
 		}
 
@@ -313,7 +317,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (typeof (RepeatDirection), "Vertical"), WebCategory ("Layout")]
+		[DefaultValue (RepeatDirection.Vertical), WebCategory ("Layout")]
 		[WebSysDescription ("Which direction should be used when filling the columns.")]
 		public virtual RepeatDirection RepeatDirection {
 			get {
@@ -334,7 +338,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (typeof (RepeatLayout), "Table"), WebCategory ("Layout")]
+		[DefaultValue (RepeatLayout.Table), WebCategory ("Layout")]
 		[WebSysDescription ("The type of layout - mechanism that is used.")]
 		public virtual RepeatLayout RepeatLayout {
 			get {

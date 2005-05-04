@@ -1,3 +1,28 @@
+2005-05-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataControlField.cs:
+	* CommandField.cs: 
+	* GridView.cs:
+	* FormView.cs:
+	* DataControlCommands.cs:
+	* DetailsView.cs: Use constants to identify commands.
+
+	* SubMenuStyle.cs: Use Unit instead of int for padding.
+	* SubMenuStyleCollection.cs: Implemented.
+	
+	* DataList.cs:
+	* Menu.cs: Added some missing methods and properties.
+	
+	* Literal.cs:
+	* DataGridPagerStyle.cs: Fixed default value attributes.
+	* ListControl.cs: Implemented IEditableTextControl interface.
+	
+	* MenuItemBinding.cs: Added Selectable property.
+	* CustomValidator.cs: removed interface.
+	
+	* MenuItem.cs: Added support for custom binding. 
+	* DropDownList.cs: Moved text properties to base class.
+
 2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Calendar.cs: OnDayRender can toggle IsSelectable on our back.

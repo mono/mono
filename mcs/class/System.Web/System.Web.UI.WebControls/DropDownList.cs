@@ -42,13 +42,9 @@ namespace System.Web.UI.WebControls
 	[ValidationProperty("SelectedItem")]
 	public class DropDownList : ListControl, IPostBackDataHandler
 #if NET_2_0
-		, ITextControl
+		, IEditableTextControl
 #endif
 	{
-#if NET_2_0
-		private static readonly object TextChangedEvent = new object();
-#endif
-		
 		public DropDownList(): base()
 		{
 		}
@@ -122,55 +118,6 @@ namespace System.Web.UI.WebControls
 				return String.Empty;
 			}
 			set {
-			}
-		}
-#endif
-
-#if NET_2_0
-
-		[MonoTODO ("Make sure that the following attributes are correct")]
-		[DefaultValue (null)]
-		[ThemeableAttribute (false)]
-		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string Text {
-			get {
-				if (SelectedItem != null) return SelectedItem.Text;
-				else return null;
-			}
-			set {
-				for (int n=0; n < Items.Count; n++) {
-					if (Items[n].Text == value) {
-						SelectedIndex = n;
-						return;
-					}
-				}
-				SelectedIndex = -1;
-			}
-		}
-		
-		[WebCategory ("Action")]
-		public event EventHandler TextChanged
-		{
-			add {
-				Events.AddHandler (TextChangedEvent, value);
-			}
-			remove {
-				Events.RemoveHandler (TextChangedEvent, value);
-			}
-		}
-		
-		protected override void OnSelectedIndexChanged (EventArgs e)
-		{
-			base.OnSelectedIndexChanged (e);
-			OnTextChanged (e);
-		}
-		
-		protected virtual void OnTextChanged (EventArgs e)
-		{
-			if (Events != null) {
-				EventHandler eh = (EventHandler)(Events[TextChangedEvent]);
-				if (eh != null)
-					eh (this, e);
 			}
 		}
 #endif

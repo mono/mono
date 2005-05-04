@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (typeof (PagerMode), "NextPrev"), WebCategory ("Misc")]
+		[DefaultValue (PagerMode.NextPrev), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The mode used for displaying multiple pages.")]
 		public PagerMode Mode
@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls
 #else
 		[Bindable (true)]
 #endif
-		[DefaultValue (">"), WebCategory ("Misc")]
+		[DefaultValue ("&gt;"), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The text for the 'next page' button.")]
 		public string NextPageText
@@ -126,7 +126,7 @@ namespace System.Web.UI.WebControls
 #else
 		[Bindable (true)]
 #endif
-		[DefaultValue ("<"), WebCategory ("Misc")]
+		[DefaultValue ("&lt;"), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The text for the 'previous page' button.")]
 		public string PrevPageText
@@ -175,7 +175,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (typeof (PagerPosition), "Bottom"), WebCategory ("Misc")]
+		[DefaultValue (PagerPosition.Bottom), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The position for the page display.")]
 		public PagerPosition Position

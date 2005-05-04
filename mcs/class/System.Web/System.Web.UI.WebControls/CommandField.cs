@@ -329,33 +329,33 @@ namespace System.Web.UI.WebControls {
 			if (cellType == DataControlCellType.DataCell)
 			{
 				if ((rowState & DataControlRowState.Edit) != 0) {
-					cell.Controls.Add (new DataControlButton (Control, UpdateText, UpdateImageUrl, "Update", index, false));
+					cell.Controls.Add (new DataControlButton (Control, UpdateText, UpdateImageUrl, DataControlCommands.UpdateCommandName, index, false));
 					if (ShowCancelButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, CancelText, CancelImageUrl, "Cancel", index, false));
+						cell.Controls.Add (new DataControlButton (Control, CancelText, CancelImageUrl, DataControlCommands.CancelCommandName, index, false));
 					}
 				} else if ((rowState & DataControlRowState.Insert) != 0) {
-					cell.Controls.Add (new DataControlButton (Control, InsertText, InsertImageUrl, "Insert", index, false));
+					cell.Controls.Add (new DataControlButton (Control, InsertText, InsertImageUrl, DataControlCommands.InsertCommandName, index, false));
 					if (ShowCancelButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, CancelText, CancelImageUrl, "Cancel", index, false));
+						cell.Controls.Add (new DataControlButton (Control, CancelText, CancelImageUrl, DataControlCommands.CancelCommandName, index, false));
 					}
 				} else {
 					if (ShowEditButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, EditText, EditImageUrl, "Edit", index, false));
+						cell.Controls.Add (new DataControlButton (Control, EditText, EditImageUrl, DataControlCommands.EditCommandName, index, false));
 					}
 					if (ShowDeleteButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, DeleteText, DeleteImageUrl, "Delete", index, false));
+						cell.Controls.Add (new DataControlButton (Control, DeleteText, DeleteImageUrl, DataControlCommands.DeleteCommandName, index, false));
 					}
 					if (ShowSelectButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, SelectText, SelectImageUrl, "Select", index, false));
+						cell.Controls.Add (new DataControlButton (Control, SelectText, SelectImageUrl, DataControlCommands.SelectCommandName, index, false));
 					}
 					if (ShowInsertButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, NewText, NewImageUrl, "New", index, false));
+						cell.Controls.Add (new DataControlButton (Control, NewText, NewImageUrl, DataControlCommands.NewCommandName, index, false));
 					}
 				}
 			} else

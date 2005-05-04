@@ -57,6 +57,7 @@ namespace System.Web.UI.WebControls
 
 		MenuItemStyleCollection levelMenuItemStyles;
 		MenuItemStyleCollection levelSelectedStyles;
+		SubMenuStyleCollection levelSubMenuStyles;
 		ITemplate staticItemTemplate;
 		ITemplate dynamicItemTemplate;
 		
@@ -68,10 +69,18 @@ namespace System.Web.UI.WebControls
 		ArrayList dynamicMenus;
 		
 		private static readonly object MenuItemClickEvent = new object();
+		private static readonly object MenuItemDataBoundEvent = new object();
+		
+		public static readonly string MenuItemClickCommandName = "Click";
 		
 		public event MenuEventHandler MenuItemClick {
 			add { Events.AddHandler (MenuItemClickEvent, value); }
 			remove { Events.RemoveHandler (MenuItemClickEvent, value); }
+		}
+		
+		public event MenuEventHandler MenuItemDataBound {
+			add { Events.AddHandler (MenuItemDataBoundEvent, value); }
+			remove { Events.RemoveHandler (MenuItemDataBoundEvent, value); }
 		}
 		
 		protected virtual void OnMenuItemClick (MenuEventArgs e)
@@ -81,10 +90,19 @@ namespace System.Web.UI.WebControls
 				if (eh != null) eh (this, e);
 			}
 		}
+		
+		protected virtual void OnMenuItemDataBound (MenuEventArgs e)
+		{
+			if (Events != null) {
+				MenuEventHandler eh = (MenuEventHandler) Events [MenuItemDataBoundEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
 
+	    [DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[Editor ("System.Web.UI.Design.MenuItemBindingsEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [MergablePropertyAttribute (false)]
 		public virtual MenuItemBindingCollection DataBindings {
 			get {
 				if (dataBindings == null) {
@@ -109,7 +127,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[ThemeableAttribute (false)]
+		[ThemeableAttribute (true)]
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -143,7 +161,7 @@ namespace System.Web.UI.WebControls
 		[UrlProperty]
 		[WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string StaticBottomSeparatorImageUrl {
+		public string StaticBottomSeparatorImageUrl {
 			get {
 				object o = ViewState ["sbsiu"];
 				if (o != null) return (string)o;
@@ -158,7 +176,7 @@ namespace System.Web.UI.WebControls
 		[UrlProperty]
 		[WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string StaticTopSeparatorImageUrl {
+		public string StaticTopSeparatorImageUrl {
 			get {
 				object o = ViewState ["stsiu"];
 				if (o != null) return (string)o;
@@ -196,7 +214,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("16px")]
-		[ThemeableAttribute (false)]
+		[ThemeableAttribute (true)]
 		public Unit StaticSubMenuIndent {
 			get {
 				object o = ViewState ["StaticSubMenuIndent"];
@@ -208,7 +226,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[ThemeableAttribute (false)]
+		[ThemeableAttribute (true)]
 		[DefaultValue (3)]
 		public virtual int MaximumDynamicDisplayLevels {
 			get {
@@ -270,9 +288,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+	    [DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Editor ("System.Web.UI.Design.MenuItemCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	    [MergablePropertyAttribute (false)]
 		public virtual MenuItemCollection Items {
 			get {
 				if (items == null) {
@@ -398,9 +417,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual MenuItemStyleCollection LevelMenuItemStyles {
 			get {
 				if (levelMenuItemStyles == null) {
@@ -412,8 +431,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual MenuItemStyleCollection LevelSelectedStyles {
 			get {
 				if (levelSelectedStyles == null) {
@@ -422,6 +443,21 @@ namespace System.Web.UI.WebControls
 						((IStateManager)levelSelectedStyles).TrackViewState();
 				}
 				return levelSelectedStyles;
+			}
+		}
+
+		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		public virtual SubMenuStyleCollection LevelSubMenuStyles {
+			get {
+				if (levelSubMenuStyles == null) {
+					levelSubMenuStyles = new SubMenuStyleCollection ();
+					if (IsTrackingViewState)
+						((IStateManager)levelSubMenuStyles).TrackViewState();
+				}
+				return levelSubMenuStyles;
 			}
 		}
 
@@ -458,7 +494,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string ScrollDownImageUrl {
+		public string ScrollDownImageUrl {
 			get {
 				object o = ViewState ["sdiu"];
 				if (o != null) return (string)o;
@@ -472,7 +508,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string ScrollUpImageUrl {
+		public string ScrollUpImageUrl {
 			get {
 				object o = ViewState ["suiu"];
 				if (o != null) return (string)o;
@@ -524,7 +560,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string StaticPopOutImageUrl {
+		public string StaticPopOutImageUrl {
 			get {
 				object o = ViewState ["spoiu"];
 				if (o != null) return (string)o;
@@ -644,7 +680,23 @@ namespace System.Web.UI.WebControls
 				MenuItem item = new MenuItem ();
 				item.Bind (hdata);
 				Items.Add (item);
+				OnMenuItemDataBound (new MenuEventArgs (item));
 			}
+		}
+		
+		protected void SetItemDataBound (MenuItem node, bool dataBound)
+		{
+			node.SetDataBound (dataBound);
+		}
+		
+		protected void SetItemDataPath (MenuItem node, string dataPath)
+		{
+			node.SetDataPath (dataPath);
+		}
+		
+		protected void SetItemDataItem (MenuItem node, object dataItem)
+		{
+			node.SetDataItem (dataItem);
 		}
 		
 		public void RaisePostBackEvent (string eventArgument)
@@ -696,6 +748,8 @@ namespace System.Web.UI.WebControls
 				((IStateManager)levelMenuItemStyles).TrackViewState();
 			if (levelSelectedStyles != null)
 				((IStateManager)levelSelectedStyles).TrackViewState();
+			if (levelSubMenuStyles != null)
+				((IStateManager)levelSubMenuStyles).TrackViewState();
 			if (dynamicSelectedStyle != null)
 				dynamicSelectedStyle.TrackViewState();
 			if (staticMenuItemStyle != null)
@@ -712,7 +766,7 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [13];
+			object[] states = new object [14];
 			states[0] = base.SaveViewState ();
 			states[1] = dataBindings == null ? null : ((IStateManager)dataBindings).SaveViewState();
 			states[2] = items == null ? null : ((IStateManager)items).SaveViewState();
@@ -726,6 +780,7 @@ namespace System.Web.UI.WebControls
 			states[10] = staticSelectedStyle == null ? null : staticSelectedStyle.SaveViewState();
 			states[11] = staticHoverStyle == null ? null : staticHoverStyle.SaveViewState();
 			states[12] = dynamicHoverStyle == null ? null : dynamicHoverStyle.SaveViewState();
+			states[13] = levelSubMenuStyles == null ? null : ((IStateManager)levelSubMenuStyles).SaveViewState();
 
 			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
@@ -767,6 +822,8 @@ namespace System.Web.UI.WebControls
 				StaticHoverStyle.LoadViewState (states[11]);
 			if (states[12] != null)
 				DynamicHoverStyle.LoadViewState (states[12]);
+			if (states[13] != null)
+				((IStateManager)LevelSubMenuStyles).LoadViewState(states[13]);
 		}
 		
 		protected override void OnInit (EventArgs e)
@@ -829,18 +886,23 @@ namespace System.Web.UI.WebControls
 		
 			if (staticMenuItemStyle != null)
 				RegisterItemStyle (staticMenuItemStyle);
-			if (staticSelectedStyle != null)
-				RegisterItemStyle (staticSelectedStyle);
 
 			if (dynamicMenuItemStyle != null)
 				RegisterItemStyle (dynamicMenuItemStyle);
-			if (dynamicSelectedStyle != null)
-				RegisterItemStyle (dynamicSelectedStyle);
+
+			if (levelSubMenuStyles != null)
+				foreach (Style style in levelSubMenuStyles)
+					RegisterItemStyle (style);
 
 			if (levelMenuItemStyles != null)
 				foreach (Style style in levelMenuItemStyles)
 					RegisterItemStyle (style);
 
+			if (staticSelectedStyle != null)
+				RegisterItemStyle (staticSelectedStyle);
+			if (dynamicSelectedStyle != null)
+				RegisterItemStyle (dynamicSelectedStyle);
+				
 			if (levelSelectedStyles != null)
 				foreach (Style style in levelSelectedStyles)
 					RegisterItemStyle (style);
@@ -883,7 +945,7 @@ namespace System.Web.UI.WebControls
 		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			RenderMenuBeginTagAttributes (writer, false);
+			RenderMenuBeginTagAttributes (writer, false, 0);
 		}
 		
 		public override void RenderBeginTag (HtmlTextWriter writer)
@@ -942,7 +1004,7 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("id", GetItemClientId (item, "cc"));	// Content
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			RenderMenu (writer, item.ChildItems, true, true);
+			RenderMenu (writer, item.ChildItems, true, true, item.Depth + 1);
 			
 			writer.RenderEndTag ();	// DIV Content
 			writer.RenderEndTag ();	// DIV Scroll container
@@ -966,25 +1028,33 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag ();	// DIV menu
 		}
 		
-		void RenderMenuBeginTagAttributes (HtmlTextWriter writer, bool dynamic)
+		void RenderMenuBeginTagAttributes (HtmlTextWriter writer, bool dynamic, int menuLevel)
 		{
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
 
+			string cls = string.Empty;
+			
 			if (!dynamic && staticMenuStyle != null)
-				writer.AddAttribute ("class", staticMenuStyle.RegisteredCssClass);
+				cls += staticMenuStyle.RegisteredCssClass + " ";
+				
+			if (levelSubMenuStyles != null && menuLevel < levelSubMenuStyles.Count)
+				cls += levelSubMenuStyles [menuLevel].RegisteredCssClass;
+			
+			if (cls.Length != 0)
+				writer.AddAttribute ("class", cls);
 		}
 		
-		void RenderMenu (HtmlTextWriter writer, MenuItemCollection items, bool vertical, bool dynamic)
+		void RenderMenu (HtmlTextWriter writer, MenuItemCollection items, bool vertical, bool dynamic, int menuLevel)
 		{
-			RenderMenuBeginTag (writer, dynamic);
+			RenderMenuBeginTag (writer, dynamic, menuLevel);
 			RenderMenuBody (writer, items, vertical, dynamic);
 			RenderMenuEndTag (writer);
 		}
 		
-		void RenderMenuBeginTag (HtmlTextWriter writer, bool dynamic)
+		void RenderMenuBeginTag (HtmlTextWriter writer, bool dynamic, int menuLevel)
 		{
-			RenderMenuBeginTagAttributes (writer, dynamic);
+			RenderMenuBeginTagAttributes (writer, dynamic, menuLevel);
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 		}
 		
@@ -1168,7 +1238,7 @@ namespace System.Web.UI.WebControls
 					if (dynamicChildren) dynamicMenus.Add (item);
 					else {
 						writer.AddAttribute ("width", "100%");
-						RenderMenu (writer, item.ChildItems, true, false);
+						RenderMenu (writer, item.ChildItems, true, false, item.Depth + 1);
 					}
 				}
 				
@@ -1180,7 +1250,7 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				if (displayChildren) {
 					if (dynamicChildren) dynamicMenus.Add (item);
-					else RenderMenu (writer, item.ChildItems, false, false);
+					else RenderMenu (writer, item.ChildItems, false, false, item.Depth + 1);
 				}
 				writer.RenderEndTag ();	// TD
 			}
@@ -1257,7 +1327,14 @@ namespace System.Web.UI.WebControls
 			
 		void RenderItemHref (HtmlTextWriter writer, MenuItem item)
 		{
-			if (item.NavigateUrl != "") {
+			if (!item.BranchEnabled) {
+				writer.AddAttribute ("disabled", "true");
+			}
+			else if (!item.Selectable) {
+				writer.AddAttribute ("href", "#");
+				writer.AddStyleAttribute ("cursor", "text");
+			}
+			else if (item.NavigateUrl != "") {
 				writer.AddAttribute ("href", item.NavigateUrl);
 				if (item.Target != "")
 					writer.AddAttribute ("target", item.Target);
@@ -1267,6 +1344,7 @@ namespace System.Web.UI.WebControls
 			else {
 				writer.AddAttribute ("href", GetClientEvent (item));
 			}
+
 		}
 		
 		string GetItemClientId (MenuItem item, string sufix)

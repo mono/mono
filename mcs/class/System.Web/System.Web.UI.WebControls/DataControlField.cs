@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
 			{
 				if (HeaderText.Length > 0 || HeaderImageUrl.Length > 0) {
 					if (sortingEnabled && SortExpression.Length > 0)
-						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, "Sort", SortExpression, true));
+						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, DataControlCommands.SortCommandName, SortExpression, true));
 					else
 						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, string.Empty, string.Empty, true));
 				}

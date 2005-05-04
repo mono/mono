@@ -99,6 +99,7 @@ namespace System.Web.UI.WebControls
 			set { literalMode = value; }
 		}
 
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override void Focus ()
 		{
 			throw new NotSupportedException ("The Literal control does not support the Focus operation"); 

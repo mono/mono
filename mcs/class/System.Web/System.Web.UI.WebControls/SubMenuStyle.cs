@@ -41,13 +41,21 @@ namespace System.Web.UI.WebControls
 		private static int HORZ_PADD = (0x01 << 16);
 		private static int VERT_PADD = (0x01 << 17);
 		
-		[DefaultValue (0)]
+		public SubMenuStyle ()
+		{
+		}
+		
+		public SubMenuStyle (StateBag bag): base (bag)
+		{
+		}
+		
+		[DefaultValue (typeof(Unit), "")]
 		[NotifyParentProperty (true)]
-		public int HorizontalPadding {
+		public Unit HorizontalPadding {
 			get {
 				if(IsSet(HORZ_PADD))
-					return (int)(ViewState["HorizontalPadding"]);
-				return 0;
+					return (Unit)(ViewState["HorizontalPadding"]);
+				return Unit.Empty;
 			}
 			set {
 				ViewState["HorizontalPadding"] = value;
@@ -55,13 +63,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0)]
+		[DefaultValue (typeof(Unit), "")]
 		[NotifyParentProperty (true)]
-		public int VerticalPadding {
+		public Unit VerticalPadding {
 			get {
 				if(IsSet(VERT_PADD))
-					return (int)(ViewState["VerticalPadding"]);
-				return 0;
+					return (Unit)(ViewState["VerticalPadding"]);
+				return Unit.Empty;
 			}
 			set {
 				ViewState["VerticalPadding"] = value;
@@ -69,10 +77,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected internal override bool IsEmpty {
-			get { return base.IsEmpty; }
-		}
-		
 		public override void CopyFrom (Style s)
 		{
 			if (s == null || s.IsEmpty)

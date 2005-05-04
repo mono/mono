@@ -51,12 +51,15 @@ namespace System.Web.UI.WebControls
 	[ParseChildren(true, "Items")]
 	public abstract class ListControl : 
 		#if NET_2_0
-			DataBoundControl
+			DataBoundControl, IEditableTextControl
 		#else
 			WebControl
 		#endif
 	{
 		private static readonly object SelectedIndexChangedEvent = new object();
+		#if NET_2_0
+		private static readonly object TextChangedEvent = new object();
+		#endif
 
 		#if !NET_2_0
 		private object dataSource;
@@ -286,8 +289,11 @@ namespace System.Web.UI.WebControls
 #if NET_1_1
 		#if NET_2_0
 	    [ThemeableAttribute (false)]
+		[Bindable (true, BindingDirection.TwoWay)]
+		#else
+		[Bindable (true)]
 		#endif
-		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
+		[DefaultValue (""), WebCategory ("Misc")]
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The value of the currently selected ListItem.")]
 		public virtual string SelectedValue {
@@ -400,6 +406,49 @@ namespace System.Web.UI.WebControls
 				Items[i].Selected = false;
 			}
 		}
+		
+#if NET_2_0
+
+	    [ThemeableAttribute (false)]
+	    [DefaultValueAttribute ("")]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+	    [BrowsableAttribute (false)]
+	    [WebCategoryAttribute ("Behavior")]
+		public string Text {
+			get {
+				if (SelectedItem != null) return SelectedItem.Text;
+				else return null;
+			}
+			set {
+				for (int n=0; n < Items.Count; n++) {
+					if (Items[n].Text == value) {
+						SelectedIndex = n;
+						return;
+					}
+				}
+				SelectedIndex = -1;
+			}
+		}
+		
+		public event EventHandler TextChanged
+		{
+			add {
+				Events.AddHandler (TextChangedEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (TextChangedEvent, value);
+			}
+		}
+		
+		protected virtual void OnTextChanged (EventArgs e)
+		{
+			if (Events != null) {
+				EventHandler eh = (EventHandler)(Events[TextChangedEvent]);
+				if (eh != null)
+					eh (this, e);
+			}
+		}
+#endif
 
 #if !NET_2_0
 		protected override void LoadViewState(object savedState)
@@ -523,6 +572,9 @@ namespace System.Web.UI.WebControls
 					if(eh!=null)
 						eh(this, e);
 				}
+#if NET_2_0
+			OnTextChanged (e);
+#endif
 		}
 
 		protected override void OnPreRender (EventArgs e)
