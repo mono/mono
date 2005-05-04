@@ -497,6 +497,22 @@ class X {
 			return 2;
 		}
 	}
+
+	// Bug #74655
+	static int tests_default_2 (string foo)
+	{
+		switch (foo) {
+		case "Hello":
+			break;
+		default:
+			return 1;
+		case "foo":
+			return 2;
+		case "Monkey":
+			break;
+		}
+		return 3;
+	}
 	
 	static int Main ()
 	{
@@ -615,6 +631,15 @@ class X {
 			return 45;
 		if (tests_default ("how") != 2)
 			return 46;
+
+		if (tests_default_2 ("Test") != 1)
+			return 47;
+		if (tests_default_2 ("foo") != 2)
+			return 48;
+		if (tests_default_2 ("Hello") != 3)
+			return 49;
+		if (tests_default_2 ("Monkey") != 3)
+			return 50;
 		
 		Console.WriteLine ("All tests pass");
 		return 0;
