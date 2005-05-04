@@ -1,3 +1,11 @@
+2005-05-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/DataControlCommands.cs
+		System.Web.UI.WebControls/SubMenuStyleCollection.cs
+	  and removed:
+		System.Web.UI.WebControls/ChildTable.cs
+	
 2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:

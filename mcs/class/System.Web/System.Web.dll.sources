@@ -276,7 +276,6 @@ System.Web.UI.WebControls/CalendarSelectionMode.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxField.cs
 System.Web.UI.WebControls/CheckBoxList.cs
-System.Web.UI.WebControls/ChildTable.cs
 System.Web.UI.WebControls/CollectionDataSource.cs
 System.Web.UI.WebControls/Content.cs
 System.Web.UI.WebControls/ContentControlBuilder.cs
@@ -299,6 +298,7 @@ System.Web.UI.WebControls/CustomValidator.cs
 System.Web.UI.WebControls/DataBoundControl.cs
 System.Web.UI.WebControls/DataControlButton.cs
 System.Web.UI.WebControls/DataControlCellType.cs
+System.Web.UI.WebControls/DataControlCommands.cs
 System.Web.UI.WebControls/DataControlField.cs
 System.Web.UI.WebControls/DataControlFieldCollection.cs
 System.Web.UI.WebControls/DataControlFieldCell.cs
@@ -535,6 +535,7 @@ System.Web.UI.WebControls/SqlDataSourceView.cs
 System.Web.UI.WebControls/StringArrayConverter.cs
 System.Web.UI.WebControls/Style.cs
 System.Web.UI.WebControls/SubMenuStyle.cs
+System.Web.UI.WebControls/SubMenuStyleCollection.cs
 System.Web.UI.WebControls/Table.cs
 System.Web.UI.WebControls/TableCaptionAlign.cs
 System.Web.UI.WebControls/TableCell.cs
