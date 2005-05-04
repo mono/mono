@@ -1,3 +1,13 @@
+2005-05-04  Martin Baulig  <martin@ximian.com>
+
+	Fix #70400.
+
+	* statement.cs (Switch): Replaced the `got_default' field with a
+	`default_section' one.
+	(Switch.CheckSwitch): Set `default_section' here.
+	(Switch.Resolve): If we're a constant switch and the constant is
+	not found, use the default section.
+
 2005-05-03  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (ArrayAccess.EmitGetLength): New public method.

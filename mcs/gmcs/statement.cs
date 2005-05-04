@@ -2327,11 +2327,11 @@ namespace Mono.CSharp {
 		//
 		// Computed
 		//
-		bool got_default;
 		Label default_target;
 		Expression new_expr;
 		bool is_constant;
 		SwitchSection constant_section;
+		SwitchSection default_section;
 
 		//
 		// The types allowed to be implicitly cast from
@@ -2348,7 +2348,7 @@ namespace Mono.CSharp {
 
 		public bool GotDefault {
 			get {
-				return got_default;
+				return default_section != null;
 			}
 		}
 
@@ -2453,8 +2453,6 @@ namespace Mono.CSharp {
 			bool error = false;
 			Elements = new Hashtable ();
 				
-			got_default = false;
-
 			if (TypeManager.IsEnumType (SwitchType)){
 				compare_type = TypeManager.EnumToUnderlying (SwitchType);
 			} else
@@ -2468,11 +2466,11 @@ namespace Mono.CSharp {
 					}
 
 					if (sl.Label == null){
-						if (got_default){
+						if (default_section != null){
 							Report.Error (152, sl.loc, Error152, "default");
 							error = true;
 						}
-						got_default = true;
+						default_section = ss;
 						continue;
 					}
 					
@@ -3012,6 +3010,8 @@ namespace Mono.CSharp {
 				SwitchLabel label = (SwitchLabel) Elements [key];
 
 				constant_section = FindSection (label);
+				if (constant_section == null)
+					constant_section = default_section;
 			}
 
 			bool first = true;
@@ -3031,11 +3031,11 @@ namespace Mono.CSharp {
 						return false;
 				} else {
 					if (!ss.Block.Resolve (ec))
-					return false;
+						return false;
 			}
 			}
 
-			if (!got_default)
+			if (default_section == null)
 				ec.CurrentBranching.CreateSibling (
 					null, FlowBranching.SiblingType.SwitchSection);
 
