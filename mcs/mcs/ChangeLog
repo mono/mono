@@ -1,5 +1,13 @@
 2005-05-04  Martin Baulig  <martin@ximian.com>
 
+	Fix #74655.
+
+	* statement.cs (Switch.SimpleSwitchEmit): Always emit the default
+	section at the end; make things work if `default' is not the last
+	section.	
+
+2005-05-04  Martin Baulig  <martin@ximian.com>
+
 	Fix #70400.
 
 	* statement.cs (Switch): Replaced the `got_default' field with a

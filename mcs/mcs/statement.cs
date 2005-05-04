@@ -2876,12 +2876,11 @@ namespace Mono.CSharp {
 			Label end_of_switch = ig.DefineLabel ();
 			Label next_test = ig.DefineLabel ();
 			Label null_target = ig.DefineLabel ();
-			bool default_found = false;
 			bool first_test = true;
 			bool pending_goto_end = false;
+			bool null_marked = false;
 			bool null_found;
-			bool default_at_end = false;
-			
+
 			ig.Emit (OpCodes.Ldloc, val);
 			
 			if (Elements.Contains (NullLiteral.Null)){
@@ -2896,15 +2895,18 @@ namespace Mono.CSharp {
 			int section_count = Sections.Count;
 			for (int section = 0; section < section_count; section++){
 				SwitchSection ss = (SwitchSection) Sections [section];
+
+				if (ss == default_section)
+					continue;
+
 				Label sec_begin = ig.DefineLabel ();
 
-				default_at_end = false;
+				ig.Emit (OpCodes.Nop);
 
 				if (pending_goto_end)
 					ig.Emit (OpCodes.Br, end_of_switch);
 
 				int label_count = ss.Labels.Count;
-				bool mark_default = false;
 				null_found = false;
 				for (int label = 0; label < label_count; label++){
 					SwitchLabel sl = (SwitchLabel) ss.Labels [label];
@@ -2917,12 +2919,7 @@ namespace Mono.CSharp {
 					//
 					// If we are the default target
 					//
-					if (sl.Label == null){
-						if (label+1 == label_count)
-							default_at_end = true;
-						mark_default = true;
-						default_found = true;
-					} else {
+					if (sl.Label != null){
 						object lit = sl.Converted;
 
 						if (lit is NullLiteral){
@@ -2946,24 +2943,24 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-				if (null_found)
+				if (null_found) {
 					ig.MarkLabel (null_target);
+					null_marked = true;
+				}
 				ig.MarkLabel (sec_begin);
 				foreach (SwitchLabel sl in ss.Labels)
 					ig.MarkLabel (sl.GetILLabelCode (ec));
 
-				if (mark_default)
-					ig.MarkLabel (default_target);
 				ss.Block.Emit (ec);
 				pending_goto_end = !ss.Block.HasRet;
 				first_test = false;
 			}
 			ig.MarkLabel (next_test);
-			if (default_found){
-				if (!default_at_end)
-					ig.Emit (OpCodes.Br, default_target);
-			} else 
-				ig.MarkLabel (default_target);
+			ig.MarkLabel (default_target);
+			if (!null_marked)
+				ig.MarkLabel (null_target);
+			if (default_section != null)
+				default_section.Block.Emit (ec);
 			ig.MarkLabel (end_of_switch);
 		}
 
