@@ -678,6 +678,10 @@ namespace System.Data {
 		public void Clear () {
                         // Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
+#if NET_2_0
+                        OnTableCleared (new DataTableClearEventArgs (this));
+#endif // NET_2_0
+
 		}
 
 		/// <summary>
@@ -1618,6 +1622,16 @@ namespace System.Data {
 			OnColumnChanged(e);
 		}
 
+#if NET_2_0
+                /// <summary>
+		/// Raises TableCleared Event and delegates to subscribers
+		/// </summary>
+		protected virtual void OnTableCleared (DataTableClearEventArgs e) {
+			if (TableCleared != null)
+				TableCleared (this, e);
+		}
+#endif // NET_2_0
+
 		/// <summary>
 		/// Raises the ColumnChanging event.
 		/// </summary>
@@ -1756,7 +1770,16 @@ namespace System.Data {
 		[DataCategory ("Data")]	
 		[DataSysDescription ("Occurs when a row in the table marked for deletion. Throw an exception to cancel the deletion.")]
 		public event DataRowChangeEventHandler RowDeleting;
-		
+
+#if NET_2_0
+		/// <summary>
+		/// Occurs after the Clear method is called on the datatable.
+		/// </summary>
+		[DataCategory ("Data")]	
+		[DataSysDescription ("Occurs when the rows in a table is cleared . Throw an exception to cancel the deletion.")]
+		public event DataTableClearEventHandler TableCleared;
+#endif // NET_2_0
+
 		#endregion // Events
 
 		/// <summary>

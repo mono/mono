@@ -37,6 +37,8 @@ System.Data/DataSet.cs
 System.Data/DataSysDescriptionAttribute.cs
 System.Data/DataTable.cs
 System.Data/DataTableCollection.cs
+System.Data/DataTableClearEventArgs.cs
+System.Data/DataTableClearEventHandler.cs
 System.Data/DataTableTypeConverter.cs
 System.Data/DataTablePropertyDescriptor.cs
 System.Data/DataTableReader.cs

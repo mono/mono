@@ -1,5 +1,12 @@
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataTable.cs: Clear (): Raise TableCleared event.
+
+	* DataTableClearEventArgs.cs: Args for DataTableClearEventHandler.
+
+	* DataTableClearEventHandler.cs: Handler for DataTable.TableClear
+	event.
+
 	* DataRow.cs: AcceptChanges: raise row changing & row changed
 	events.
 

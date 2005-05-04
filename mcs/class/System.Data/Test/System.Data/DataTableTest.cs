@@ -1212,8 +1212,15 @@ namespace MonoTests.System.Data
                         table.Rows.Add (new object [] { 4, "mono 4" });
 
                         table.AcceptChanges ();
+#if NET_2_0
+                        _tableClearedEventFired = false;
+                        table.TableCleared += new DataTableClearEventHandler (OnTableCleared);
+#endif // NET_2_0
                         
                         table.Clear ();
+#if NET_2_0
+                        AssertEquals ("#0 should have fired cleared event", true, _tableClearedEventFired);
+#endif // NET_2_0
                         
                         DataRow r = table.Rows.Find (1);
                         AssertEquals ("#1 should have cleared", true, r == null);
@@ -1222,6 +1229,13 @@ namespace MonoTests.System.Data
                         table.Rows.Add (new object [] { 2, "mono 2" });
                         AssertEquals ("#2 should add row", 1, table.Rows.Count);
                 }
+#if NET_2_0
+                private bool _tableClearedEventFired = false;
+                private void OnTableCleared (object src, DataTableClearEventArgs args)
+                {
+                        _tableClearedEventFired = true;
+                }
+#endif // NET_2_0
                 
 
 		[Test]

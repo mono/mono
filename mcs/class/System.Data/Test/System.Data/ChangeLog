@@ -5,6 +5,8 @@
 	well. Simplified table creation for ClearReset test.
 	- Added a test to check whether Commit RowChanging & RowChanged
 	event is fired.
+	- ClearTest () : added case for checking whether TableCleared
+	event is fired.
 
 2005-04-29  Sureshkumar T  <tsureshkumar@novell.com>
 

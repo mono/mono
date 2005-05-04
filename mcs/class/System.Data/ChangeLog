@@ -1,3 +1,8 @@
+2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: Added DataTableClearEventArgs.cs and
+	DataTableClearEventHandler.cs.
+
 2005-04-27  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data_test.dll.sources: Added DataTableReaderTest.cs
