@@ -3392,9 +3392,11 @@ namespace Mono.MonoBASIC {
 
 			// __LateBindingCopyBack = new Boolean (no_of_args) {}
 			bool isCopyBackRequired = false;
-			for (int i = 0; i < argCount; i++) {
-				if (!(((Argument)args[i]).Expr is Constant)) 
-					isCopyBackRequired = true;
+			if (!isLeftHandSide) {
+				for (int i = 0; i < argCount; i++) {
+					if (!(((Argument)args[i]).Expr is Constant)) 
+						isCopyBackRequired = true;
+				}
 			}
 
 			LocalVariableReference v3 = new LocalVariableReference (stmtBlock, Block.lateBindingCopyBack, loc);
@@ -3413,7 +3415,7 @@ namespace Mono.MonoBASIC {
 				assign_stmt = new Assign (v3, new_expr, loc);
 				stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
 				invocationArgs.Add (new Argument (v3, Argument.AType.Expression));
-			} else {
+			} else if (! isLeftHandSide) {
 				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
 			}
 
