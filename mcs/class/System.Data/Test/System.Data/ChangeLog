@@ -1,3 +1,9 @@
+2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableTest.cs: Added a test for DataTable. Should clear rows
+	from indexes as well. Simplified table creation for ClearReset
+	test.
+
 2005-04-29  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReaderTest.cs: Added few more tests.

@@ -1145,31 +1145,16 @@ namespace MonoTests.System.Data
 			DataSet set = new DataSet ();
 			set.Tables.Add (table);
 			set.Tables.Add (table1);
-                
-			DataColumn col = new DataColumn ();
-			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
-			table.Columns.Add (col);
-			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
-			table.Constraints.Add (uc);
-			table.CaseSensitive = false;
-                
-			col = new DataColumn ();
-			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
-			table.Columns.Add (col);
-                
-			col = new DataColumn ();
-			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
-			table1.Columns.Add (col);
-                
-			col = new DataColumn ();
-			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
-			table1.Columns.Add (col);
 
-			DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
+                        table.Columns.Add ("Id", typeof (int));
+                        table.Columns.Add ("Name", typeof (string));
+                        table.Constraints.Add (new UniqueConstraint ("UK1", table.Columns [0]));
+                        table.CaseSensitive = false;
+                        
+                        table1.Columns.Add ("Id", typeof (int));
+                        table1.Columns.Add ("Name", typeof (string));
+
+                        DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
 			set.Relations.Add (dr);
                 
 			DataRow row = table.NewRow ();
@@ -1194,13 +1179,13 @@ namespace MonoTests.System.Data
 			AssertEquals ("#CT02", 0, table.ChildRelations.Count);
 			AssertEquals ("#CT03", 0, table.ParentRelations.Count);
 			AssertEquals ("#CT04", 0, table.Constraints.Count);
-			table.Clear ();
 
 			table1.Reset ();
 			AssertEquals ("#A05", 0, table1.Rows.Count);
 			AssertEquals ("#A06", 0, table1.Constraints.Count);
 			AssertEquals ("#A07", 0, table1.ParentRelations.Count);
 		
+                        // clear test
 			table.Clear ();
 			AssertEquals ("#A08", 0, table.Rows.Count);
 #if NET_1_1
@@ -1209,7 +1194,35 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A09", 1, table.Constraints.Count);
 #endif
 			AssertEquals ("#A10", 0, table.ChildRelations.Count);
+
 		}
+
+                [Test]
+                public void ClearTest ()
+                {
+                        DataTable table = new DataTable ("test");
+                        table.Columns.Add ("id", typeof (int));
+                        table.Columns.Add ("name", typeof (string));
+                        
+                        table.PrimaryKey = new DataColumn [] { table.Columns [0] } ;
+                        
+                        table.Rows.Add (new object [] { 1, "mono 1" });
+                        table.Rows.Add (new object [] { 2, "mono 2" });
+                        table.Rows.Add (new object [] { 3, "mono 3" });
+                        table.Rows.Add (new object [] { 4, "mono 4" });
+
+                        table.AcceptChanges ();
+                        
+                        table.Clear ();
+                        
+                        DataRow r = table.Rows.Find (1);
+                        AssertEquals ("#1 should have cleared", true, r == null);
+
+                        // try adding new row. indexes should have cleared
+                        table.Rows.Add (new object [] { 2, "mono 2" });
+                        AssertEquals ("#2 should add row", 1, table.Rows.Count);
+                }
+                
 
 		[Test]
 		public void Serialize ()

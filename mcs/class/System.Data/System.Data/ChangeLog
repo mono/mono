@@ -1,3 +1,7 @@
+2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRowCollection.cs: Clear : remove rows from indexes
+
 2005-05-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaDataImporter.cs : XmlSchemaParicle might be XmlSchemaAny.

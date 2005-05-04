@@ -149,6 +149,10 @@ namespace System.Data
 					}
 				}
 			}
+                        // Remove from indexes
+                        for (int i = 0; i < this.Count; i++)
+                                this.table.DeleteRowFromIndexes (this [i]);
+
 			List.Clear ();
 		}
 
