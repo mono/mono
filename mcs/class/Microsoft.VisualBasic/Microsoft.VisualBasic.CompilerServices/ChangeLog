@@ -1,3 +1,7 @@
+2005-05-04  Satya Sudha K <ksathyasudha@novell.com>
+	* LateBinding.cs: Removed the 'CopyBack' param from the 'LateSet' method (to make it consistent with vbc)
+	* ObjectType.cs : Implemented the 'GetWidestType' method
+
 2005-04-29  Satya Sudha K <ksathyasudha@novell.com>
 	* LateBinding.cs: 
 	* VBBinder.cs  : 

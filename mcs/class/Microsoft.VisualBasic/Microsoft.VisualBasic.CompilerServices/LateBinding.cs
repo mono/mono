@@ -102,7 +102,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			bool OptimisticSet,
 			bool RValueBase) 
 		{
-			LateSet(o, objType, name, args, paramnames, null);
+			LateSet(o, objType, name, args, paramnames);
 		}
 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 
@@ -111,8 +111,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					    Type objType,
 					    string name,
 					    object[] args,
-					    string[] paramnames,
-					    bool[] CopyBack) {
+					    string[] paramnames) {
 
 			if (objType == null) {
 				if (o == null)

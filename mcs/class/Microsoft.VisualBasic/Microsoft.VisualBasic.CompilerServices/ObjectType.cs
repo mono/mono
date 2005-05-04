@@ -1007,14 +1007,96 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		//checked + string//make typecode
-		[MonoTODO]
 		internal static TypeCode GetWidestType(TypeCode type1, TypeCode type2) {
-			//int index1 = getVTypeFromTypeCode(type1);
-			//int index2 = getVTypeFromTypeCode(type2);
-			//return getTypeCodeFromVType(WiderType(index1,index2));
-			//TODO:
-			throw new NotImplementedException("GetWidest type nneds repair");
-			//return (TypeCode)getTypeCodeFromVType((int)WiderType[(int)type1,(int)type2]);
+			if (type1 == type2)
+				return type1;
+
+			if (type1 == TypeCode.Char || type2 == TypeCode.Char) {
+				if (type1 == TypeCode.Char && type2 == TypeCode.String)
+					return TypeCode.String;
+				if (type2 == TypeCode.Char && type1 == TypeCode.String)
+					return TypeCode.String;
+				return TypeCode.Empty;
+			}
+			if (type1 == TypeCode.DateTime || type2 == TypeCode.DateTime) {
+				if (type1 == TypeCode.String && type2 == TypeCode.DateTime)
+					return TypeCode.DateTime;
+				if (type2 == TypeCode.String && type1 == TypeCode.DateTime)
+					return TypeCode.DateTime;
+				return TypeCode.Empty;
+			}
+
+			switch (type1) {
+			case TypeCode.Boolean :
+				switch (type2) {
+				case TypeCode.Byte :
+					return type1;
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type2;
+			case TypeCode.Byte :
+				switch (type2) {
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type2;
+			case TypeCode.Int16 :
+				switch (type2) {
+				case TypeCode.Boolean:
+				case TypeCode.Byte:
+					return type1;
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type2;
+			case TypeCode.Int32 :
+				switch (type2) {
+				case TypeCode.Boolean:
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+					return type1;
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type2;
+			case TypeCode.Int64 :
+				switch (type2) {
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.Decimal:
+					return type1;
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type1;
+			case TypeCode.Decimal :
+				switch (type2) {
+				case TypeCode.Single:
+				case TypeCode.Double:
+					return type2;
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type1;
+			case TypeCode.Single :
+				switch (type2) {
+				case TypeCode.Double:
+					return type2;
+				case TypeCode.String:
+					return TypeCode.Double;
+				}
+				return type1;
+			case TypeCode.Double :
+				switch (type2) {
+				case TypeCode.String:
+					return type1;
+				}
+				return type1;
+			case TypeCode.String :
+				return TypeCode.Double;
+			}
+			return TypeCode.Object;
 		}
     
 		internal static TypeCode GetWidestType(object obj1, TypeCode typeCode2) {
