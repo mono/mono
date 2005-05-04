@@ -156,10 +156,13 @@ namespace System.Web {
 				return false;
 
 			if (method.GetParameters ().Length == 0)
-				method.Invoke (target, null);
-			else
-				method.Invoke (target, args);
+				args = null;
 
+			try {
+				method.Invoke (target, args);
+			} catch {
+				// Ignore any exception here
+			}
 			return true;
 		}
 

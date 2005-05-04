@@ -1,3 +1,8 @@
+2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: ignore any exception thrown when invoking
+	an application event.
+
 2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpBrowserCapabilities.cs: fix Win32 property.
