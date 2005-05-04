@@ -1,3 +1,7 @@
+2005-05-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_method_get_signature_full): Add locking here.
+
 2005-05-03  Lluis Sanchez Gual <lluis@novell.com>
 
 	* appdomain.c: Moved methods for parsing and freeing assembly
