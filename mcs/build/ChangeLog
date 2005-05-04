@@ -1,3 +1,8 @@
+2005-05-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* rules.make config-default.make: Use the install-sh script from the mono
+	directory by default.
+
 2005-04-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* profiles/basic.make: The test for mcs was broken on jails where

@@ -12,7 +12,6 @@ MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig
 CFLAGS = -g -O2
-INSTALL = /usr/bin/install
 prefix = /usr/local
 exec_prefix = $(prefix)
 mono_libdir = $(exec_prefix)/lib
