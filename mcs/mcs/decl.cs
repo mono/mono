@@ -747,17 +747,7 @@ namespace Mono.CSharp {
 		protected bool FamilyAccessible (Type check_type)
 		{
 			Type declaring = check_type.DeclaringType;
-			if (TypeBuilder == declaring ||
-			    TypeBuilder.IsSubclassOf (declaring))
-				return true;
-
-			if (NestedAccessible (check_type))
-				return true;
-
-			if (Parent == null || Parent == RootContext.Tree.Types)
-				return false;
-
-			return Parent.FamilyAccessible (check_type);
+			return TypeManager.IsNestedFamilyAccessible (TypeBuilder, declaring);
 		}
 
 		// Access level of a type.
