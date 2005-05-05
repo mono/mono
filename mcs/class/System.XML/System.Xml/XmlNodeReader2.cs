@@ -258,11 +258,6 @@ namespace System.Xml
 		{
 			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns);
 		}
-
-		public string LookupPrefix (string ns, bool atomizedNames)
-		{
-			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns, atomizedNames);
-		}
 #endif
 
 		public override void MoveToAttribute (int i)

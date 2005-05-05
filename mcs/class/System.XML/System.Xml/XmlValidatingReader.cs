@@ -418,18 +418,6 @@ namespace System.Xml
 				res.LookupNamespace (ns) :
 				null;
 		}
-
-		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
-		{
-			IXmlNamespaceResolver res = null;
-			if (validatingReader != null)
-				res = sourceReader as IXmlNamespaceResolver;
-			else
-				res = validatingReader as IXmlNamespaceResolver;
-			return res != null ?
-				res.LookupNamespace (ns, atomizedNames) :
-				null;
-		}
 #endif
 
 

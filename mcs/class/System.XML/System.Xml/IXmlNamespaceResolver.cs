@@ -49,12 +49,6 @@ namespace System.Xml
 
 		string LookupNamespace (string prefix);  
 
-		[Obsolete]
-		string LookupNamespace (string prefix, bool atomizedName);  
-
 		string LookupPrefix (string ns);  
-
-		[Obsolete]
-		string LookupPrefix (string ns, bool atomizedName);  
 	}
 }

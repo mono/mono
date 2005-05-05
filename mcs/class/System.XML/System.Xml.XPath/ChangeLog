@@ -1,5 +1,12 @@
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XPathAtomicValue.cs :
+	  it is now XmlAtomicValue and in sys.xml.schema.
+	* XPathNavigator.cs, Expression.cs :
+	  removed atomizedName related 2.0 members (deprecated).
+
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathExpression.cs : added static Compile().
 	* XPathNavigator.cs :
 	  Use XPathExpression.Compile() for now. 

@@ -198,12 +198,6 @@ namespace Mono.Xml
 			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
 			return res != null ? res.LookupPrefix (ns) : null;
 		}
-
-		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
-		{
-			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
-			return res != null ? res.LookupPrefix (ns, atomizedNames) : null;
-		}
 #endif
 
 		public override void MoveToAttribute (int i)

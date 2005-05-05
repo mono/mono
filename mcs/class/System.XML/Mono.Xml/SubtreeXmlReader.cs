@@ -174,11 +174,6 @@ namespace Mono.Xml
 			return nsResolver != null ? nsResolver.LookupPrefix (ns) : String.Empty;
 		}
 
-		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
-		{
-			return nsResolver != null ? nsResolver.LookupPrefix (ns, atomizedNames) : String.Empty;
-		}
-
 		public override bool MoveToFirstAttribute ()
 		{
 			return initial ? false : Reader.MoveToFirstAttribute ();

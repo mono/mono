@@ -155,7 +155,6 @@ System.Xml/XmlNodeArrayList.cs
 System.Xml/XmlInputStream.cs
 System.Xml/XmlParserInput.cs
 System.Xml.XPath/IXPathNavigable.cs
-System.Xml.XPath/XPathAtomicValue.cs
 System.Xml.XPath/XPathNavigator.cs
 System.Xml.XPath/XPathExpression.cs
 System.Xml.XPath/XPathItem.cs
@@ -184,6 +183,7 @@ System.Xml.Schema/BuiltInDatatype.cs
 System.Xml.Schema/IXmlSchemaInfo.cs
 System.Xml.Schema/SchemaDataValueType.cs
 System.Xml.Schema/ValidationEventArgs.cs
+System.Xml.Schema/XmlAtomicValue.cs
 System.Xml.Schema/XmlSchema.cs
 System.Xml.Schema/XmlSchemaAll.cs
 System.Xml.Schema/XmlSchemaAnnotated.cs

@@ -894,7 +894,7 @@ namespace System.Xml
 
 		public static XPathItem ItemToItem (XPathItem value, XmlSchemaType schemaTypeDest)
 		{
-			return new XPathAtomicValue (value.Value, schemaTypeDest);
+			return new XmlAtomicValue (value.Value, schemaTypeDest);
 		}
 
 		public static decimal ItemToNonNegativeInteger (XPathItem value)

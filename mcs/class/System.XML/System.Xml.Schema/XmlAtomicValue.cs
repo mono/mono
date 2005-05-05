@@ -1,5 +1,5 @@
 //
-// XPathAtomicValue.cs
+// XmlAtomicValue.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -32,11 +32,11 @@
 
 using System.Collections;
 using System.Xml;
-using System.Xml.Schema;
+using System.Xml.XPath;
 
-namespace System.Xml.XPath
+namespace System.Xml.Schema
 {
-	public sealed class XPathAtomicValue : XPathItem, ICloneable
+	public sealed class XmlAtomicValue : XPathItem, ICloneable
 	{
 		bool booleanValue;
 		DateTime dateTimeValue;
@@ -54,7 +54,7 @@ namespace System.Xml.XPath
 		#region Constructors
 
 		[MonoTODO]
-		public XPathAtomicValue (bool value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (bool value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -69,7 +69,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (DateTime value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (DateTime value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -84,7 +84,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (decimal value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (decimal value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -99,7 +99,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (double value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (double value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -114,7 +114,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (int value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (int value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -129,7 +129,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (long value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (long value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -144,7 +144,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (float value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (float value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -159,7 +159,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (string value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (string value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -176,7 +176,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue (object value, XmlSchemaType xmlType)
+		internal XmlAtomicValue (object value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
 		}
@@ -235,7 +235,7 @@ namespace System.Xml.XPath
 				return;
 			}
 
-			XPathAtomicValue another = value as XPathAtomicValue;
+			XmlAtomicValue another = value as XmlAtomicValue;
 			if (another != null) {
 				switch (another.xmlTypeCode) {
 				case XmlTypeCode.Boolean:
@@ -282,9 +282,9 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public XPathAtomicValue Clone ()
+		public XmlAtomicValue Clone ()
 		{
-			return new XPathAtomicValue (this, schemaType);
+			return new XmlAtomicValue (this, schemaType);
 		}
 
 		[MonoTODO]
@@ -319,7 +319,7 @@ namespace System.Xml.XPath
 
 		#region Properties
 
-		// As long as I tried, neither of such XPathAtomicValue created
+		// As long as I tried, neither of such XmlAtomicValue created
 		// with XmlText that contains atomic value, XmlElement that
 		// contains such XmlText, XmlDocument nor XPathNavigator 
 		// created from such nodes returned false. So it won't be 

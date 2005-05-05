@@ -1,3 +1,11 @@
+2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeReader2.cs, XmlTextReader2.cs, XmlValidatingReader.cs,
+	  XmlNamespaceManager.cs, IXmlNamespaceResolver.cs,
+	  DTDValidatingReader.cs : Removed most of "atomizedName" related
+	  stuff that are obsoleted in 2.0 beta2.
+	* XQueryConvert.cs : XPathAtomicValue -> XmlAtomicValue.
+
 2005-05-04  Andrew Skiba <andrews@mainsoft.com>
 
 	* IXmlNamespaceResolver.cs : mangle the interface method names when

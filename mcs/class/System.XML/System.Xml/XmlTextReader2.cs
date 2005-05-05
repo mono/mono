@@ -426,22 +426,12 @@ namespace System.Xml
 
 		public override string LookupNamespace (string prefix)
 		{
-			return Current.LookupNamespace (prefix, false);
-		}
-
-		public override string LookupNamespace (string prefix, bool atomizedName)
-		{
-			return ((IXmlNamespaceResolver) Current).LookupNamespace (prefix, atomizedName);
+			return Current.LookupNamespace (prefix);
 		}
 
 		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
-			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns, false);
-		}
-
-		public string LookupPrefix (string ns, bool atomizedName)
-		{
-			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns, atomizedName);
+			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns);
 		}
 
 		public override void MoveToAttribute (int i)

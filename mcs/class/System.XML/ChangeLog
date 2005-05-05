@@ -1,5 +1,9 @@
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Xml.dll.sources : XPathAtomicValue.cs -> XmlAtomicValue.cs.
+
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Xml.dll.sources : removed XmlValueConverter (obsoleted).
 	* System.Xml_test.dll.sources : removed XPathAtomicValue (obsoleted).
 

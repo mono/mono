@@ -202,15 +202,10 @@ namespace Mono.Xml.Schema
 
 		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
-			return ((IXmlNamespaceResolver) this).LookupPrefix (ns, false);
-		}
-
-		string IXmlNamespaceResolver.LookupPrefix (string ns, bool atomizedNames)
-		{
 			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
 			if (resolver == null)
 				throw new NotSupportedException ("The input XmlReader does not implement IXmlNamespaceResolver and thus this validating reader cannot execute namespace prefix lookup.");
-			return resolver.LookupPrefix (ns, atomizedNames);
+			return resolver.LookupPrefix (ns);
 		}
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.
@@ -1316,15 +1311,6 @@ namespace Mono.Xml.Schema
 		public override string LookupNamespace (string prefix)
 		{
 			return reader.LookupNamespace (prefix);
-		}
-
-		string IXmlNamespaceResolver.LookupNamespace (string prefix, bool atomizedNames)
-		{
-			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
-			if (res != null)
-				return res.LookupNamespace (prefix, atomizedNames);
-			else
-				return reader.LookupNamespace (prefix);
 		}
 
 		public override void MoveToAttribute (int i)

@@ -130,12 +130,7 @@ namespace System.Xml
 			AddNamespace (prefix, uri, false);
 		}
 
-#if NET_2_0
-		[Obsolete]
-		public virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
-#else
 		internal virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
-#endif
 		{
 			if (prefix == null)
 				throw new ArgumentNullException ("prefix", "Value cannot be null.");
@@ -245,13 +240,8 @@ namespace System.Xml
 		{
 			return HasNamespace (prefix, false);
 		}
-		
-#if NET_2_0
-		[Obsolete]
-		public virtual bool HasNamespace (string prefix, bool atomizedNames)
-#else
+
 		internal virtual bool HasNamespace (string prefix, bool atomizedNames)
-#endif
 		{
 			if (prefix == null || count == 0)
 				return false;
@@ -273,17 +263,7 @@ namespace System.Xml
 #endif
 		}
 
-#if NET_2_0
-		[Obsolete]
-		public virtual string LookupNamespace (string prefix, bool atomizedNames)
-#else
-		string IXmlNamespaceResolver.LookupNamespace (string prefix, bool atomizedNames)
-		{
-			return LookupNamespace (prefix, atomizedNames);
-		}
-
 		internal virtual string LookupNamespace (string prefix, bool atomizedNames)
-#endif
 		{
 			switch (prefix) {
 			case PrefixXmlns:
@@ -321,17 +301,7 @@ namespace System.Xml
 				return s1 == s2;
 		}
 
-#if NET_2_0
-		[Obsolete]
-		public string LookupPrefix (string uri, bool atomizedName)
-#else
-		string IXmlNamespaceResolver.LookupPrefix (string uri, bool atomizedName)
-		{
-			return LookupPrefix (uri, atomizedName);
-		}
-
 		internal string LookupPrefix (string uri, bool atomizedName)
-#endif
 		{
 			if (uri == null)
 				return null;
@@ -387,12 +357,7 @@ namespace System.Xml
 			RemoveNamespace (prefix, uri, false);
 		}
 
-#if NET_2_0
-		[Obsolete]
-		public virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
-#else
 		internal virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
-#endif
 		{
 			if (prefix == null)
 				throw new ArgumentNullException ("prefix");

@@ -1,3 +1,8 @@
+2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs :
+	  removed atomicName related 2.0 members (deprecated in beta2).
+
 2005-03-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : removed unused method which was warned.

@@ -202,9 +202,6 @@ namespace MonoTests.System.Xml
 			AssertNotNull (nsmgr.LookupPrefix ("urn:foo"));
 // FIXME: This returns registered URI inconsistently.
 //			AssertNull ("It is not atomized and thus should be failed", nsmgr.LookupPrefix ("urn:f" + suffix));
-#if NET_2_0
-			AssertNotNull ("Atomization should not matter.", nsmgr.LookupPrefix ("urn:f" + suffix, false));
-#endif
 		}
 
 #if NET_2_0

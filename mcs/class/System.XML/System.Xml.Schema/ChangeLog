@@ -1,5 +1,9 @@
 2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlAtomicValue.cs : moved from XPathAtomicValue, removed some stuff.
+
+2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaType.cs, XmlSchemaSimpleType.cs : removed ValueConverter.
 	* XmlSchemaDatatype.cs,
 	  XmlSchemaComplexType.cs : removed removed member in .net 2.0 beta2.
