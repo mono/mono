@@ -224,21 +224,11 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
 			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
 
-			nsmgr.RemoveNamespace ("foo", "urn:foo", false);
-			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (0, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (a).Count);
-
 			// default namespace
 			nsmgr.AddNamespace ("", "urn:empty");
 			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
 			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
 			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
-
-			nsmgr.RemoveNamespace ("", "urn:empty", false);
-			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (0, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (a).Count);
 
 			// PushScope
 			nsmgr.AddNamespace ("foo", "urn:foo");

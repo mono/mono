@@ -1,5 +1,9 @@
 2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNamespaceManagerTests.cs : removed more atomizedName tests.
+
+2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNamespaceManagerTests.cs : removed atomizedName related tests.
 
 2005-03-25  Atsushi Enomoto <atsushi@ximian.com>
