@@ -751,7 +751,13 @@ namespace Mono.CSharp {
 			    TypeBuilder.IsSubclassOf (declaring))
 				return true;
 
-			return NestedAccessible (check_type);
+			if (NestedAccessible (check_type))
+				return true;
+
+			if (Parent == null || Parent == RootContext.Tree.Types)
+				return false;
+
+			return Parent.FamilyAccessible (check_type);
 		}
 
 		// Access level of a type.
