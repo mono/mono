@@ -1,3 +1,11 @@
+2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-codegen.c: New file contaning the arch-independent local
+	register allocator. Not used by any architectures yet.
+
+	* mini.h linear-scan.c: Merge some changes from the 
+	mini-xp-local-regalloc branch.
+
 2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (emit_call): Fix calls to native functions when the
