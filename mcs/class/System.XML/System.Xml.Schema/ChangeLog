@@ -1,3 +1,9 @@
+2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaType.cs, XmlSchemaSimpleType.cs : removed ValueConverter.
+	* XmlSchemaDatatype.cs,
+	  XmlSchemaComplexType.cs : removed removed member in .net 2.0 beta2.
+
 2005-04-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSchemaParticle.cs: Set MaxOccurs to unbounded when set to

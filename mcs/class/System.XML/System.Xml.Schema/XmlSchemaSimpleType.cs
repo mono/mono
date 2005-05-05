@@ -197,7 +197,6 @@ namespace System.Xml.Schema
 			if (baseName != null)
 				st.BaseXmlSchemaTypeInternal = XmlSchemaType. GetBuiltInSimpleType (new XmlQualifiedName (baseName, ns2));
 			st.DatatypeInternal = XmlSchemaDatatype.FromName (st.QualifiedName);
-			st.ValueConverter = XmlSchemaType.BuildConverter (st.TypeCode);
 			return st;
 		}
 #endif
