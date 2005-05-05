@@ -1,3 +1,8 @@
+2005-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ReferenceTest.cs: Changed AddAllTransforms from Ignored to category
+	NotDotNet as the test seems to fail only under NUnit.
+
 2005-05-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssertCrypto.cs: Added method to compare somewhat different but ok 
