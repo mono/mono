@@ -29,6 +29,7 @@ ExpConversionStringtoInt2.vb
 ExpConversionStringtoLong2.vb
 ExpConversionStringtoShort2.vb
 ExpConversionStringtoSingle2.vb
+For1.vb
 ImpConversionDecimaltoByte1.vb
 ImpConversionDecimaltoInt1.vb
 ImpConversionDoubletoByte1.vb
