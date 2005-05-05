@@ -454,8 +454,9 @@ shared state data (files, events, mutexes, pipes).  By default Mono
 will store the ".wapi" directory in the users's home directory.
 .TP
 .I "MONO_THREADS_PER_CPU"
-Sets the maximum number of threads in the threadpool per CPU. The default is
-50 for non-windows systems and 25 for windows.
+The maximum number of threads in the general threadpool will be
+20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
+variable is 5.
 .TP
 .I "MONO_TRACE"
 If set, enables the System.Diagnostics.DefaultTraceListener, which will 
