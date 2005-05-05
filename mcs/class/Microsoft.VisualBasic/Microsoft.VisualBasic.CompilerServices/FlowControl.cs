@@ -66,8 +66,10 @@ namespace Microsoft.VisualBasic.CompilerServices
 		 */
 		public static bool ForNextCheckR4(float count, float limit, float StepValue) {
 			bool positiveStep = StepValue > 0.0F;
-			bool isCountSmallThenLimit = count <= limit;
-			return positiveStep? isCountSmallThenLimit : !isCountSmallThenLimit;
+			if (positiveStep)
+				return count <= limit;
+			else
+				return count >= limit;
 		}
     
 		/**
@@ -81,8 +83,10 @@ namespace Microsoft.VisualBasic.CompilerServices
 		 */
 		public static bool ForNextCheckR8(double count, double limit, double StepValue) {
 			bool positiveStep = StepValue > 0.0;
-			bool isCountSmallThenLimit = count <= limit;
-			return positiveStep? isCountSmallThenLimit : !isCountSmallThenLimit;
+			if (positiveStep)
+				return count <= limit;
+			else
+				return count >= limit;
 		}
 
 		/**
@@ -95,9 +99,11 @@ namespace Microsoft.VisualBasic.CompilerServices
 		 * @return boolean True of the for next loop can continue and false otherwise.
 		 */
 		public static bool ForNextCheckDec(Decimal count, Decimal limit, Decimal StepValue) {
-			bool positiveStep = StepValue.CompareTo(Decimal.Zero) < 0;
-			bool isCountSmallThenLimit = count.CompareTo(limit) >= 0;
-			return positiveStep? isCountSmallThenLimit : !isCountSmallThenLimit; 
+			bool positiveStep = StepValue.CompareTo(Decimal.Zero) > 0;
+			if (positiveStep)
+				return (count.CompareTo(limit) <= 0);
+			else 
+				return (limit.CompareTo(count) <= 0);
 		}
     
 		/**
@@ -370,8 +376,10 @@ namespace Microsoft.VisualBasic.CompilerServices
 			
 			if (iComparable != null) {
 				int i = iComparable.CompareTo(LoopFor.Limit);
-				bool isCountSmallThenLimit = i<=0;
-				return LoopFor.PositiveStep ? isCountSmallThenLimit : !isCountSmallThenLimit;
+				if (LoopFor.PositiveStep)
+					return i <= 0;
+				else
+					return i >= 0;
 			}
 			throw new ArgumentException("Argument_IComparable2 loop control variable"); // + Utils.VBFriendlyName(LoopFor.Counter)));
 				//TODO: verify this and the above are the same and remove.

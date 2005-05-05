@@ -1,3 +1,6 @@
+2005-05-05  Satya Sudha K <ksathyasudha@novell.com>
+	* FlowControl.cs : Fixed checks in the methods 'ForNextCheck*'
+
 2005-05-04  Satya Sudha K <ksathyasudha@novell.com>
 	* LateBinding.cs: Removed the 'CopyBack' param from the 'LateSet' method (to make it consistent with vbc)
 	* ObjectType.cs : Implemented the 'GetWidestType' method
