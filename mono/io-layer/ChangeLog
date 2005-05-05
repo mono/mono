@@ -1,3 +1,8 @@
+2005-05-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* handles.c: Always use polling in the waits, since
+	mono_cond_timedwait can't be interruped by the thread abort signal.
+
 2005-04-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* events.c: calling Set on AutoResetEvent several times has the same
