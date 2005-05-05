@@ -1,3 +1,7 @@
+2005-05-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* threads.c: Enable the wait for running threads when exiting.
+	* icall.c: Suspend all threads before exiting.
 
 Thu May 5 17:14:27 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
