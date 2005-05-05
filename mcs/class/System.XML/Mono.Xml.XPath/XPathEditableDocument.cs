@@ -764,12 +764,12 @@ namespace Mono.Xml.XPath
 			return document.CreateInsertionWriter (n, null);
 		}
 
-		public override bool DeleteSelf ()
+		public override void DeleteSelf ()
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
 			if (!navigator.MoveToNext ())
 				navigator.MoveToParent ();
-			return document.DeleteNode (n);
+			document.DeleteNode (n);
 		}
 
 		public override void SetValue (string value)
