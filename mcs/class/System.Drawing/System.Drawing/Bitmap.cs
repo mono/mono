@@ -154,7 +154,7 @@ namespace System.Drawing
 
 		public Bitmap (Type type, string resource)
 		{
-			using (Stream s = type.Assembly.GetManifestResourceStream (resource)){
+			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)){
 				if (s == null)
 					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
 

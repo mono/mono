@@ -1,3 +1,9 @@
+2005-05-05  Miguel de Icaza  <miguel@novell.com>
+
+	* Bitmap.cs, Icon.cs (constructor): Use
+	GetManifestResourceStream(Type,string) in the constructor that
+	takes a type. 
+
 2005-04-27  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* PointF.cs: Make serialization compatible with MS.
