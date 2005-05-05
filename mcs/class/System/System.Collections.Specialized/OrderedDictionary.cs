@@ -205,9 +205,11 @@ namespace System.Collections.Specialized
 		{
 			WriteCheck ();
 
-			hash.Remove (key);
-			int i = FindListEntry (key);
-			list.RemoveAt (i);
+			if (hash.Contains (key)) {
+				hash.Remove (key);
+				int i = FindListEntry (key);
+				list.RemoveAt (i);
+			}
 		}
 		
 		int FindListEntry (object key)
