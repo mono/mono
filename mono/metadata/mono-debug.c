@@ -74,8 +74,7 @@ mono_debug_init (MonoDebugFormat format)
 	mono_debug_format = format;
 	in_the_mono_debugger = format == MONO_DEBUG_FORMAT_DEBUGGER;
 
-	if (in_the_mono_debugger)
-		mono_debugger_initialize ();
+	mono_debugger_initialize (in_the_mono_debugger);
 
 	mono_debugger_lock ();
 
@@ -91,6 +90,8 @@ mono_debug_init (MonoDebugFormat format)
 	mono_debugger_start_class_init_func = mono_debug_start_add_type;
 	mono_debugger_class_init_func = mono_debug_add_type;
 	mono_install_assembly_load_hook (mono_debug_add_assembly, NULL);
+
+	mono_debugger_unlock ();
 }
 
 void

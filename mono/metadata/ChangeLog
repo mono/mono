@@ -1,3 +1,18 @@
+Thu May 5 17:14:27 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.c: unlock properly: the interface with the debugger will likely
+	need to change.
+
+Thu May 5 16:24:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug-debugger.c, mono-debug-debugger.h, mono-debug.c: remove thread
+	unsafe code in the debugger lock/unlock functions and always init the debugger
+	lock since it's use also when the debugger is not connected.
+
+2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_load_reference): Fix warning.
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: changed the default number of threads per cpu. From now
