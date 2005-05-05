@@ -1,3 +1,8 @@
+2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: changed the default number of threads per cpu. From now
+	on, the default will be 20 + (5 * number of cpus) instead of 50.
+
 2005-05-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_method_get_signature_full): Add locking here.
