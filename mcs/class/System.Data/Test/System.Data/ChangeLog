@@ -1,3 +1,8 @@
+2005-05-05  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableReaderTest.cs: Added a test to check when deleting the
+	first row.
+
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReaderTest.cs:

@@ -46,9 +46,9 @@ namespace System.Data {
                 DataTable       _schemaTable;
                 bool            _tableCleared = false;
                 bool            _subscribed = false;
+                DataRow         _rowRef;
 
                 #region Constructors
-
                 
                 public DataTableReader (DataTable dt)
                         : this (new DataTable[] {dt})
@@ -69,6 +69,7 @@ namespace System.Data {
                         _closed = false;
                         _index = 0;
                         _current = -1;
+                        _rowRef = null;
                         _tableCleared = false;
 
                         SubscribeEvents ();
@@ -379,6 +380,8 @@ namespace System.Data {
                         } while (_current < CurrentTable.Rows.Count 
                                  && CurrentRow.RowState == DataRowState.Deleted);
                         
+                        _rowRef = _current < CurrentTable.Rows.Count ? CurrentRow : null;
+
                         return _current < CurrentTable.Rows.Count;
 
                 }
@@ -394,6 +397,7 @@ namespace System.Data {
                         UnsubscribeEvents ();
                         _index++;
                         _current = -1;
+                        _rowRef = null;
                         _schemaTable = null;            // force to create fresh
                         _tableCleared = false;
                         SubscribeEvents ();
@@ -426,17 +430,32 @@ namespace System.Data {
                                 }
 
                                 _current++;
+                                _rowRef = CurrentRow;
 
                         }
                         
                         if (action == DataRowAction.Commit 
                             && row.RowState == DataRowState.Detached) {
-                                // FIXME : How to find whether the row deleted falls below 
-                                //  current row or above?.
+
+                                // if i am the row deleted, move one down
+                                if (_rowRef == row) {
+                                        _current --;
+                                        _rowRef = _current >= 0 ? CurrentRow : null;
+                                }
+
+                                // if the row deleted is the last row, move down
                                 if (_current >= CurrentTable.Rows.Count) {
                                         _current--;
+                                        _rowRef = _current >= 0 ? CurrentRow : null;
+                                        return;
                                 }
                                 
+                                // deleting a row below _current moves the row one down
+                                if (_current > 0 && _rowRef == CurrentTable.Rows [_current-1]) {
+                                        _current--;
+                                        _rowRef = CurrentRow;
+                                        return;
+                                }
                                 
                         }
                 }

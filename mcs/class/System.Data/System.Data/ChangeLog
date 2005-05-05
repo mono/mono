@@ -1,3 +1,8 @@
+2005-05-05  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableReader.cs: Implemented Delete handler and move the
+	current pointer accordingly.
+
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReader.cs: Added event handlers to make reader stable

@@ -421,6 +421,22 @@ namespace MonoTests.System.Data.SqlClient
                 }
 
                 [Test]
+                [ExpectedException (typeof (InvalidOperationException))]
+                public void DeleteFirstCurrentAndAcceptChangesTest ()
+                {
+                        DataTableReader reader = new DataTableReader (dt);
+                        try {
+                                reader.Read (); // first row
+                                dt.Rows [0].Delete (); // delete row, where reader points to
+                                dt.AcceptChanges (); // accept the action
+                                Assert.AreEqual (2, (int) reader [0], "#1 should point to the first row");
+                        } finally {
+                                if (reader != null && !reader.IsClosed)
+                                        reader.Close ();
+                        }
+                }
+
+                [Test]
                 public void DeleteLastAndAcceptChangesTest2 ()
                 {
                         DataTableReader reader = new DataTableReader (dt);
