@@ -29,6 +29,13 @@
 //
 
 using System.Collections;
+using Mono.Xml.XPath;
+
+#if NET_2_0
+using NSResolver = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
 
 namespace System.Xml.XPath
 {
@@ -65,6 +72,34 @@ namespace System.Xml.XPath
 		public abstract XPathExpression Clone ();
 
 		public abstract void SetContext (XmlNamespaceManager nsManager);
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static XPathExpression Compile (string xpath)
+		{
+			return Compile (xpath, null, null);
+		}
+
+#if NET_2_0
+		public static XPathExpression Compile (
+			string xpath, NSResolver nsmgr)
+		{
+			return Compile (xpath, nsmgr, null);
+		}
+#endif
+
+		internal static XPathExpression Compile (string xpath,
+			NSResolver nsmgr, System.Xml.Xsl.IStaticXsltContext ctx)
+		{
+			XPathParser parser = new XPathParser (ctx);
+			XPathExpression x = new CompiledExpression (
+				xpath, parser.Compile (xpath));
+			x.SetContext (nsmgr);
+			return x;
+		}
 
 #if NET_2_0
 		public abstract void SetContext (IXmlNamespaceResolver nsResolver);

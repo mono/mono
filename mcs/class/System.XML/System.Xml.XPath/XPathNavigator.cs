@@ -218,14 +218,12 @@ namespace System.Xml.XPath
 
 		public virtual XPathExpression Compile (string xpath)
 		{
-			XPathParser parser = new XPathParser ();
-			return new CompiledExpression (xpath, parser.Compile (xpath));
+			return XPathExpression.Compile (xpath);
 		}
 		
 		internal virtual XPathExpression Compile (string xpath, System.Xml.Xsl.IStaticXsltContext ctx)
 		{
-			XPathParser parser = new XPathParser (ctx);
-			return new CompiledExpression (xpath, parser.Compile (xpath));
+			return XPathExpression.Compile (xpath, null, ctx);
 		}
 
 		public virtual object Evaluate (string xpath)
@@ -987,33 +985,18 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public override decimal ValueAsDecimal {
-			get { return XQueryConvert.StringToDecimal (Value); }
-		}
-
-		[MonoTODO]
 		public override double ValueAsDouble {
 			get { return XQueryConvert.StringToDouble (Value); }
 		}
 
 		[MonoTODO]
-		public override int ValueAsInt32 {
+		public override int ValueAsInt {
 			get { return XQueryConvert.StringToInt (Value); }
 		}
 
 		[MonoTODO]
-		public override long ValueAsInt64 {
+		public override long ValueAsLong {
 			get { return XQueryConvert.StringToInteger (Value); }
-		}
-
-		[MonoTODO]
-		public override ICollection ValueAsList {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public override float ValueAsSingle {
-			get { return XQueryConvert.StringToFloat (Value); }
 		}
 
 		[MonoTODO]
@@ -1036,12 +1019,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
-		protected XmlReader GetValidatingReader (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaType schemaType)
-		{
-			throw new NotImplementedException ();
-		}
-
 
 
 
@@ -1059,33 +1036,28 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator AppendChild (
+		public virtual void AppendChild (
 			string xmlFragments)
 		{
 			// FIXME: should XmlParserContext be something?
-			return AppendChild (CreateFragmentReader (xmlFragments));
+			AppendChild (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator AppendChild (
+		public virtual void AppendChild (
 			XmlReader reader)
 		{
 			XmlWriter w = AppendChild ();
 			while (!reader.EOF)
 				w.WriteNode (reader, false);
 			w.Close ();
-			XPathNavigator nav = Clone ();
-			nav.MoveToFirstChild ();
-			while (nav.MoveToNext ())
-				;
-			return nav;
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator AppendChild (
+		public virtual void AppendChild (
 			XPathNavigator nav)
 		{
-			return AppendChild (new XPathNavigatorReader (nav));
+			AppendChild (new XPathNavigatorReader (nav));
 		}
 
 		public void AppendChildElement (string prefix, string name, string ns, string value)
@@ -1109,7 +1081,7 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		public virtual bool DeleteSelf ()
+		public virtual void DeleteSelf ()
 		{
 			throw new NotSupportedException ();
 		}
@@ -1123,26 +1095,23 @@ namespace System.Xml.XPath
 				return AppendChild ();
 		}
 
-		public virtual XPathNavigator InsertAfter (string xmlFragments)
+		public virtual void InsertAfter (string xmlFragments)
 		{
-			return InsertAfter (CreateFragmentReader (xmlFragments));
+			InsertAfter (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator InsertAfter (XmlReader reader)
+		public virtual void InsertAfter (XmlReader reader)
 		{
 			using (XmlWriter w = InsertAfter ()) {
 				w.WriteNode (reader, false);
 			}
-			XPathNavigator nav = Clone ();
-			nav.MoveToNext ();
-			return nav;
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator InsertAfter (XPathNavigator nav)
+		public virtual void InsertAfter (XPathNavigator nav)
 		{
-			return InsertAfter (new XPathNavigatorReader (nav));
+			InsertAfter (new XPathNavigatorReader (nav));
 		}
 
 		public virtual XmlWriter InsertBefore ()
@@ -1150,26 +1119,23 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		public virtual XPathNavigator InsertBefore (string xmlFragments)
+		public virtual void InsertBefore (string xmlFragments)
 		{
-			return InsertBefore (CreateFragmentReader (xmlFragments));
+			InsertBefore (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator InsertBefore (XmlReader reader)
+		public virtual void InsertBefore (XmlReader reader)
 		{
 			using (XmlWriter w = InsertBefore ()) {
 				w.WriteNode (reader, false);
 			}
-			XPathNavigator nav = Clone ();
-			nav.MoveToPrevious ();
-			return nav;
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator InsertBefore (XPathNavigator nav)
+		public virtual void InsertBefore (XPathNavigator nav)
 		{
-			return InsertBefore (new XPathNavigatorReader (nav));
+			InsertBefore (new XPathNavigatorReader (nav));
 		}
 
 		public virtual void InsertElementAfter (string prefix, 
@@ -1197,26 +1163,23 @@ namespace System.Xml.XPath
 				return InsertBefore ();
 		}
 
-		public virtual XPathNavigator PrependChild (string xmlFragments)
+		public virtual void PrependChild (string xmlFragments)
 		{
-			return PrependChild (CreateFragmentReader (xmlFragments));
+			PrependChild (CreateFragmentReader (xmlFragments));
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator PrependChild (XmlReader reader)
+		public virtual void PrependChild (XmlReader reader)
 		{
 			using (XmlWriter w = PrependChild ()) {
 				w.WriteNode (reader, false);
 			}
-			XPathNavigator nav = Clone ();
-			nav.MoveToFirstChild ();
-			return nav;
 		}
 
 		[MonoTODO]
-		public virtual XPathNavigator PrependChild (XPathNavigator nav)
+		public virtual void PrependChild (XPathNavigator nav)
 		{
-			return PrependChild (new XPathNavigatorReader (nav));
+			PrependChild (new XPathNavigatorReader (nav));
 		}
 
 		public virtual void PrependChildElement (string prefix, 
@@ -1228,22 +1191,22 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual bool ReplaceSelf (string xmlFragment)
+		public virtual void ReplaceSelf (string xmlFragment)
 		{
-			return ReplaceSelf (XmlReader.Create (new StringReader (xmlFragment)));
+			ReplaceSelf (XmlReader.Create (new StringReader (xmlFragment)));
 		}
 
 		[MonoTODO]
-		public virtual bool ReplaceSelf (XmlReader reader)
+		public virtual void ReplaceSelf (XmlReader reader)
 		{
 			InsertBefore (reader);
-			return DeleteSelf ();
+			DeleteSelf ();
 		}
 
 		[MonoTODO]
-		public virtual bool ReplaceSelf (XPathNavigator navigator)
+		public virtual void ReplaceSelf (XPathNavigator navigator)
 		{
-			return ReplaceSelf (new XPathNavigatorReader (navigator));
+			ReplaceSelf (new XPathNavigatorReader (navigator));
 		}
 
 		// Dunno the exact purpose, but maybe internal editor use

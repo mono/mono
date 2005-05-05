@@ -55,17 +55,11 @@ namespace System.Xml.XPath
 
 		public abstract DateTime ValueAsDateTime { get; }
 
-		public abstract decimal ValueAsDecimal { get; }
-
 		public abstract double ValueAsDouble { get; }
 
-		public abstract int ValueAsInt32 { get; }
+		public abstract int ValueAsInt { get; }
 
-		public abstract long ValueAsInt64 { get; }
-
-		public abstract ICollection ValueAsList { get; }
-
-		public abstract float ValueAsSingle { get; }
+		public abstract long ValueAsLong { get; }
 
 		public abstract Type ValueType { get; }
 

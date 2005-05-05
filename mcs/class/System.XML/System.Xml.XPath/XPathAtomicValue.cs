@@ -294,16 +294,13 @@ namespace System.Xml.XPath
 			case XmlTypeCode.Int:
 			case XmlTypeCode.Short:
 			case XmlTypeCode.UnsignedShort:
-				return ValueAsInt32;
-			case XmlTypeCode.Decimal:
-				return ValueAsDecimal;
+				return ValueAsInt;
 			case XmlTypeCode.Double:
-				return ValueAsDouble;
 			case XmlTypeCode.Float:
-				return ValueAsSingle;
+				return ValueAsDouble;
 			case XmlTypeCode.Long:
 			case XmlTypeCode.UnsignedInt:
-				return ValueAsInt64;
+				return ValueAsLong;
 			case XmlTypeCode.String:
 				return Value;
 			case XmlTypeCode.DateTime:
@@ -315,8 +312,6 @@ namespace System.Xml.XPath
 			case XmlTypeCode.QName:
 				return XmlQualifiedName.Parse (Value, nsResolver);
 			}
-			if (type.GetInterface ("System.Collections.ICollection") != null)
-				return ValueAsList;
 			throw new NotImplementedException ();
 		}
 
@@ -351,16 +346,13 @@ namespace System.Xml.XPath
 					return ValueAsBoolean;
 				case XmlTypeCode.DateTime:
 					return ValueAsDateTime;
-				case XmlTypeCode.Decimal:
-					return ValueAsDecimal;
+				case XmlTypeCode.Float:
 				case XmlTypeCode.Double:
 					return ValueAsDouble;
 				case XmlTypeCode.Long:
-					return ValueAsInt64;
+					return ValueAsLong;
 				case XmlTypeCode.Int:
-					return ValueAsInt32;
-				case XmlTypeCode.Float:
-					return ValueAsSingle;
+					return ValueAsInt;
 				case XmlTypeCode.String:
 					return Value;
 				}
@@ -379,20 +371,15 @@ namespace System.Xml.XPath
 				case XmlTypeCode.DateTime:
 					stringValue = XQueryConvert.DateTimeToString (ValueAsDateTime);
 					break;
-				case XmlTypeCode.Decimal:
-					stringValue = XQueryConvert.DecimalToString (ValueAsDecimal);
-					break;
+				case XmlTypeCode.Float:
 				case XmlTypeCode.Double:
 					stringValue = XQueryConvert.DoubleToString (ValueAsDouble);
 					break;
 				case XmlTypeCode.Long:
-					stringValue = XQueryConvert.IntegerToString (ValueAsInt64);
+					stringValue = XQueryConvert.IntegerToString (ValueAsLong);
 					break;
 				case XmlTypeCode.Int:
-					stringValue = XQueryConvert.IntToString (ValueAsInt32);
-					break;
-				case XmlTypeCode.Float:
-					stringValue = XQueryConvert.FloatToString (ValueAsSingle);
+					stringValue = XQueryConvert.IntToString (ValueAsInt);
 					break;
 				case XmlTypeCode.String:
 					return stringValue;
@@ -492,37 +479,6 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public override decimal ValueAsDecimal {
-			get {
-				switch (xmlTypeCode) {
-				case XmlTypeCode.Boolean:
-					return XQueryConvert.BooleanToDecimal (booleanValue);
-				case XmlTypeCode.Decimal:
-					return decimalValue;
-				case XmlTypeCode.Double:
-					return XQueryConvert.DoubleToDecimal (doubleValue);
-				case XmlTypeCode.Long:
-					return XQueryConvert.IntegerToDecimal (longValue);
-				case XmlTypeCode.Int:
-					return XQueryConvert.IntToDecimal (intValue);
-				case XmlTypeCode.Float:
-					return XQueryConvert.FloatToDecimal (floatValue);
-				case XmlTypeCode.String:
-					return XQueryConvert.StringToDecimal (stringValue);
-				case XmlTypeCode.None:
-				case XmlTypeCode.Item:
-				case XmlTypeCode.AnyAtomicType:
-					if (objectValue is decimal)
-						return (decimal) objectValue;
-					break;
-
-				}
-
-				throw new InvalidCastException (String.Format ("Conversion from {0} to {1} is not supported", schemaType.QualifiedName, XmlSchemaSimpleType.XsDecimal.QualifiedName));
-			}
-		}
-
-		[MonoTODO]
 		public override double ValueAsDouble {
 			get {
 				switch (xmlTypeCode) {
@@ -554,7 +510,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public override int ValueAsInt32 {
+		public override int ValueAsInt {
 			get {
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
@@ -585,7 +541,7 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public override long ValueAsInt64 {
+		public override long ValueAsLong {
 			get {
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
@@ -612,57 +568,6 @@ namespace System.Xml.XPath
 				}
 
 				throw new InvalidCastException (String.Format ("Conversion from {0} to {1} is not supported", schemaType.QualifiedName, XmlSchemaSimpleType.XsLong.QualifiedName));
-			}
-		}
-
-		[MonoTODO]
-		public override float ValueAsSingle {
-			get {
-				switch (xmlTypeCode) {
-				case XmlTypeCode.Boolean:
-					return XQueryConvert.BooleanToFloat (booleanValue);
-				case XmlTypeCode.Decimal:
-					return XQueryConvert.DecimalToFloat (decimalValue);
-				case XmlTypeCode.Double:
-					return XQueryConvert.DoubleToFloat (doubleValue);
-				case XmlTypeCode.Float:
-					return floatValue;
-				case XmlTypeCode.Int:
-					return XQueryConvert.FloatToInt (intValue);
-				case XmlTypeCode.Long:
-					return XQueryConvert.IntegerToFloat (longValue);
-				case XmlTypeCode.String:
-					return XQueryConvert.StringToFloat (stringValue);
-				case XmlTypeCode.None:
-				case XmlTypeCode.Item:
-				case XmlTypeCode.AnyAtomicType:
-					if (objectValue is float)
-						return (float) objectValue;
-					break;
-
-				}
-
-				throw new InvalidCastException (String.Format ("Conversion from {0} to {1} is not supported", schemaType.QualifiedName, XmlSchemaSimpleType.XsFloat.QualifiedName));
-			}
-		}
-
-		[MonoTODO]
-		public override ICollection ValueAsList {
-			get {
-				if (valueAsList != null)
-					return valueAsList;
-				if (objectValue is ICollection)
-					valueAsList = objectValue as ICollection;
-				else if (objectValue is Array)
-					valueAsList = new ArrayList ((Array) objectValue);
-				else if (xmlTypeCode != XmlTypeCode.None) {
-					ArrayList al = new ArrayList ();
-					al.Add (TypedValue);
-					valueAsList = al;
-				}
-				else
-					throw new NotImplementedException ();
-				return valueAsList;
 			}
 		}
 

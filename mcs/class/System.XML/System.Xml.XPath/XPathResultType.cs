@@ -30,9 +30,6 @@
 
 namespace System.Xml.XPath
 {
-#if NET_2_0
-	[Serializable]
-#endif
 	public enum XPathResultType
 	{
 		Number = 0,
