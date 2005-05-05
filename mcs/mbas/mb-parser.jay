@@ -4158,10 +4158,10 @@ primary_expression
 	| parenthesized_expression
 	| this_access
 	| base_access
-	| qualified_identifier _mark_
+	| qualified_identifier opt_type_character _mark_
 	  {
 		string name = (string) $1;
-		$$ = DecomposeQI (name, (Location)$2);
+		$$ = DecomposeQI (name, (Location)$3);
 	  }
 	| get_type_expression
 	| member_access

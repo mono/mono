@@ -1,3 +1,13 @@
+2005-05-05 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+        * mb-parser.jay : Correction to allow optional type caracters in some situations.
+        Now 6 more tests under mbas/Test/tests/types compile and 3 more compile and run.
+        Patch contributed by Brazilian MonoBASIC Team:
+                Aldo Monteiro do Nascimento <aldomonteiro@gmail.com>
+                Alessandro de Oliveira Binhara <binhara@psl-pr.softwarelivre.org>
+                Alexandre Rocha Lima e Marcondes <alexandre.marcondes@psl-pr.softwarelivre.org>
+                Ramiro Batista da Luz <ramiroluz@gmail.com>
+                Renato Suga <renatos@techresult.com.br>
+
 2005-05-05 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs
 	* mb-parser.jay:
