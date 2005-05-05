@@ -49,6 +49,11 @@ namespace System
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
+
+		static MonoEnumInfo ()
+		{
+		    	cache = Hashtable.Synchronized (new Hashtable ());
+		}
 		
 		private MonoEnumInfo (MonoEnumInfo other)
 		{
@@ -59,8 +64,6 @@ namespace System
 
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
-			if (cache == null)
-				cache = Hashtable.Synchronized (new Hashtable ());
 			lock (cache) {
 				if (cache.ContainsKey (enumType)) {
 					info = (MonoEnumInfo) cache [enumType];
