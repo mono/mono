@@ -273,8 +273,8 @@ namespace System.Collections.Generic
 		
 		public void Insert (int index, T item)
 		{
-			if ((uint) index < (uint) size)
-				throw new ArgumentOutOfRangeException ();
+			if ((uint) index > (uint) size)
+				throw new ArgumentOutOfRangeException ("index");
 			
 			Shift (index, 1);
 			this [index] = item;
