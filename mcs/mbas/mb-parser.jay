@@ -3328,37 +3328,27 @@ for_statement
   	  }
           _mark_ opt_identifier 
 	  {
-			string s = $3.ToString();
-			string s1 = "";
-			if ($16 != null)
-				s1 = $16.ToString();		
-			if (s1 != "" && s != s1)
-				{		
-					Report.Error(30070, (Location)$15, "Next Control Variable '"+s1+"' does not match with For Loop control variable '"+s+"'");    
-				}
+		string s = $3.ToString();
+		string s1 = "";
+		if ($16 != null)
+			s1 = $16.ToString();		
+		if (s1 != "" && s != s1) {		
+			Report.Error(30070, (Location)$15, "Next Control Variable '"+s1+"' does not match with For Loop control variable '"+s+"'");    
+		}
 
-			Block inner_statement = end_block();
-			Location l = (Location)$2;
-			Expression for_var = (Expression) DecomposeQI ((string)$3, l);
+		Block inner_statement = end_block();
+		Location l = (Location)$2;
+		Expression for_var = (Expression) DecomposeQI ((string)$3, l);
 			
-            Expression assign_expr = new Assign (for_var, (Expression) $6, l);
-            Expression test_expr =  new Binary (Binary.Operator.LessThanOrEqual,
-                                                            for_var, (Expression) $8, l);
-            Expression step_expr = new Assign (for_var, (Expression) new Binary (Binary.Operator.Addition,
-                                             for_var, (Expression) $9, l), l);
-
-            Statement assign_stmt = new StatementExpression ((ExpressionStatement) assign_expr, l);
-            Statement step_stmt = new StatementExpression ((ExpressionStatement) step_expr, l);
-
-            For f = new For (assign_stmt, test_expr, step_stmt, inner_statement, l);
-			if ($4 != null)
-			{
-				current_block.AddStatement (f);
-				$$ = end_block();
-			}
-			else
-				$$ = f;
-	  }
+		For f = new For (for_var, (Expression) $6, (Expression) $8, (Expression) $9, inner_statement, l);
+		if ($4 != null)
+		{
+			current_block.AddStatement (f);
+			$$ = end_block();
+		}
+		else
+			$$ = f;
+	}
 	;
 
 opt_step

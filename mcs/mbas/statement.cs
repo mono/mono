@@ -462,32 +462,180 @@ namespace Mono.MonoBASIC {
 	}
 
 	public class For : Statement {
-		Expression Test;
-		readonly Statement InitStatement;
-		readonly Statement Increment;
-		readonly Statement Statement;
+		Expression LoopControlVar;
+		Expression Start;
+		Expression Limit;
+		Expression StepValue;
+		Statement statement, Increment;
 		bool may_return, infinite, empty;
+		private Statement InitStatement;
+		// required when loop control var is of type 'Object'
+		Expression Test, AddnTest;
+		LocalTemporary ltmp;
+		bool is_lcv_object;
 		
-		public For (Statement initStatement,
-			    Expression test,
-			    Statement increment,
+		public For (Expression loopVar,
+			    Expression start,
+			    Expression limit,
+			    Expression stepVal,
 			    Statement statement,
 			    Location l)
 		{
-			InitStatement = initStatement;
-			Test = test;
-			Increment = increment;
-			Statement = statement;
+			LoopControlVar = loopVar;
+			Start = start;
+			Limit = limit;
+			StepValue = stepVal;
+			this.statement = statement;
 			loc = l;
+			ltmp = null;
+
+			InitStatement = new StatementExpression ((ExpressionStatement) (new Assign (LoopControlVar, Start, loc)), loc);
+			Increment = new StatementExpression (
+						(ExpressionStatement) (new CompoundAssign (Binary.Operator.Addition, 
+									LoopControlVar, StepValue, loc)), loc);
+			AddnTest = null;
+			is_lcv_object = false;
 		}
-		
 
 		public override bool Resolve (EmitContext ec)
 		{
 			bool ok = true;
 
+			LoopControlVar = LoopControlVar.Resolve (ec);
+			if (LoopControlVar == null)
+				return false;
+
+			Start = Start.Resolve (ec);
+			Limit = Limit.Resolve (ec);
+			StepValue = StepValue.Resolve (ec);
+			if (StepValue == null || Start == null || Limit == null)
+				return false;
+
+			double value = 0;
+			if (StepValue is Constant) {
+
+				value = GetValue (StepValue);
+				if (value > 0) // Positive Step value
+					Test = new Binary (Binary.Operator.LessThanOrEqual, LoopControlVar, Limit, loc);
+				else if (value < 0)
+					Test = new Binary (Binary.Operator.GreaterThanOrEqual, LoopControlVar, Limit, loc);
+			}
+
+			if (Start is Constant && Limit is Constant) {
+				if (value > 0)
+					AddnTest = ConstantFold.BinaryFold (ec, Binary.Operator.LessThanOrEqual,
+									    (Constant) Start, (Constant) Limit, loc);
+				else  if (value < 0)
+					AddnTest = ConstantFold.BinaryFold (ec, Binary.Operator.GreaterThanOrEqual,
+									    (Constant) Start, (Constant) Limit, loc);
+			}
+
+
+			string method_to_call = null;
+			Binary left, right;
+			left = right = null;
+
+			switch (Type.GetTypeCode (LoopControlVar.Type)) {
+			case TypeCode.Boolean :
+			case TypeCode.Char :
+			case TypeCode.DateTime :
+			case TypeCode.String :
+				Report.Error (30337,loc,"'For' loop control variable cannot be of type '" + LoopControlVar.Type + "'");
+				return false;
+			case TypeCode.Byte :
+				if (Test == null)
+					Test = new Binary (Binary.Operator.LessThanOrEqual, LoopControlVar, Limit, loc);
+				break;
+			case TypeCode.Int16 :
+				if (Test == null) {
+					left = new Binary (Binary.Operator.ExclusiveOr, 
+							   new Binary (Binary.Operator.RightShift, StepValue, new IntLiteral (15), loc),
+							   LoopControlVar, 
+							   loc);
+					right = new Binary (Binary.Operator.ExclusiveOr, 
+							    new Binary (Binary.Operator.RightShift, StepValue, new IntLiteral (15), loc),
+							    Limit, 
+							    loc);
+					Test = new Binary (Binary.Operator.LessThanOrEqual, left, right, loc);
+				}
+				break;
+			case TypeCode.Int32 :
+				if (Test == null) {
+					left = new Binary (Binary.Operator.ExclusiveOr, 
+							   new Binary (Binary.Operator.RightShift, StepValue, new IntLiteral (31), loc),
+							   LoopControlVar, 
+							   loc);
+					right = new Binary (Binary.Operator.ExclusiveOr, 
+							    new Binary (Binary.Operator.RightShift, StepValue, new IntLiteral (31), loc),
+							    Limit, 
+							    loc);
+					Test = new Binary (Binary.Operator.LessThanOrEqual, left, right, loc);
+				}
+				break;
+			case TypeCode.Int64 :
+				if (Test == null) {
+					left = new Binary (Binary.Operator.ExclusiveOr, 
+							   new Binary (Binary.Operator.RightShift, StepValue, new IntLiteral (63), loc),
+							   LoopControlVar, 
+							   loc);
+					right = new Binary (Binary.Operator.ExclusiveOr, 
+							    new Binary (Binary.Operator.RightShift, StepValue, new IntLiteral (63), loc),
+							    Limit, 
+							    loc);
+					Test = new Binary (Binary.Operator.LessThanOrEqual, left, right, loc);
+				}
+				break;
+			case TypeCode.Decimal :
+				method_to_call = "Microsoft.VisualBasic.CompilerServices.FlowControl.ForNextCheckDec";
+				break;
+			case TypeCode.Single :
+				method_to_call = "Microsoft.VisualBasic.CompilerServices.FlowControl.ForNextCheckR4";
+				break;
+			case TypeCode.Double :
+				method_to_call = "Microsoft.VisualBasic.CompilerServices.FlowControl.ForNextCheckR8";
+				break;
+			case TypeCode.Object :
+				is_lcv_object = true;
+				ArrayList initArgs = new ArrayList ();
+				initArgs.Add (new Argument (LoopControlVar, Argument.AType.Expression));
+				initArgs.Add (new Argument (Start, Argument.AType.Expression));
+				initArgs.Add (new Argument (Limit, Argument.AType.Expression));
+				initArgs.Add (new Argument (StepValue, Argument.AType.Expression));
+				ltmp = new LocalTemporary (ec, TypeManager.object_type);
+				initArgs.Add (new Argument (ltmp, Argument.AType.Ref));
+				initArgs.Add (new Argument (LoopControlVar, Argument.AType.Ref));
+				Expression sname  = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.FlowControl.ForLoopInitObj", loc);
+				AddnTest = new Invocation (sname, initArgs, loc);
+				//AddnTest = new Binary (Binary.Operator.Inequality, inv, new BoolLiteral (false), loc);
+				ArrayList args = new ArrayList ();
+				args.Add (new Argument (LoopControlVar, Argument.AType.Expression));
+				args.Add (new Argument (ltmp, Argument.AType.Expression));
+				args.Add (new Argument (LoopControlVar, Argument.AType.Ref));
+				sname  = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.FlowControl.ForNextCheckObj", loc);
+				Test = new Invocation (sname, args, loc);
+				//Test = new Binary (Binary.Operator.Inequality, inv, new BoolLiteral (false), loc);
+				break;
+			}
+
+			if (method_to_call != null && !method_to_call.Equals ("")) {
+				ArrayList args = null;
+				args = new ArrayList ();
+				args.Add (new Argument (LoopControlVar, Argument.AType.Expression));
+				args.Add (new Argument (Limit, Argument.AType.Expression));
+				args.Add (new Argument (StepValue, Argument.AType.Expression));
+				Expression sname = Parser.DecomposeQI (method_to_call, loc);
+				Test = new Invocation (sname, args, loc);
+				//Test = new Binary (Binary.Operator.Inequality, invocation, new BoolLiteral (false), loc);
+			}
+
 			if (InitStatement != null){
 				if (!InitStatement.Resolve (ec))
+					ok = false;
+			}
+
+			if (AddnTest != null) {
+				AddnTest = ResolveBoolean (ec, AddnTest, loc);
+				if (AddnTest == null)
 					ok = false;
 			}
 
@@ -499,7 +647,7 @@ namespace Mono.MonoBASIC {
 					BoolConstant bc = (BoolConstant) Test;
 
 					if (bc.Value == false){
-						Warning_DeadCodeFound (Statement.loc);
+						Warning_DeadCodeFound (statement.loc);
 						empty = true;
 					} else
 						infinite = true;
@@ -507,7 +655,7 @@ namespace Mono.MonoBASIC {
 			} else
 				infinite = true;
 
-			if (Increment != null){
+			if (Increment != null) {
 				if (!Increment.Resolve (ec))
 					ok = false;
 			}
@@ -516,7 +664,7 @@ namespace Mono.MonoBASIC {
 			if (!infinite)
 				ec.CurrentBranching.CreateSibling ();
 
-			if (!Statement.Resolve (ec))
+			if (!statement.Resolve (ec))
 				ok = false;
 
 			if (empty)
@@ -543,7 +691,7 @@ namespace Mono.MonoBASIC {
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
 			
-			if (InitStatement != null)
+			if (!is_lcv_object && InitStatement != null)
 				if (! (InitStatement is EmptyStatement))
 					InitStatement.Emit (ec);
 
@@ -552,12 +700,23 @@ namespace Mono.MonoBASIC {
 			ec.InLoop = true;
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
-			ig.Emit (OpCodes.Br, test);
+			if (AddnTest != null) {
+				if (AddnTest is BoolConstant) {
+					if (!((BoolConstant) AddnTest).Value)
+						// We can actually branch to the end of the loop,
+						// but vbc does it this way
+						ig.Emit (OpCodes.Br, test);
+				} else if (is_lcv_object)
+					EmitBoolExpression (ec, AddnTest, ec.LoopEnd, false);
+				else 
+					EmitBoolExpression (ec, AddnTest, test, false);
+			} else 
+				ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
-			Statement.Emit (ec);
+			statement.Emit (ec);
 
 			ig.MarkLabel (ec.LoopBegin);
-			if (!(Increment is EmptyStatement))
+			if (!is_lcv_object && !(Increment is EmptyStatement))
 				Increment.Emit (ec);
 
 			ig.MarkLabel (test);
@@ -579,6 +738,9 @@ namespace Mono.MonoBASIC {
 			//
  			// Inform whether we are infinite or not
 			//
+
+			if (ltmp != null)
+				ltmp.Release (ec);
 			if (Test != null){
 				if (Test is BoolConstant){
 					BoolConstant bc = (BoolConstant) Test;
@@ -589,6 +751,20 @@ namespace Mono.MonoBASIC {
 				return false;
 			} else
 				return may_return == false;
+		}
+
+		private double GetValue (Expression e) {
+			if (e is DoubleConstant)
+				return ((DoubleConstant) e).Value;
+			if (e is FloatConstant)
+				return (double)((FloatConstant) e).Value;
+			if (e is IntConstant)
+				return (double)((IntConstant) e).Value;
+			if (e is LongConstant)
+				return (double)((LongConstant) e).Value;
+			if (e is DecimalConstant)
+				return (double)((DecimalConstant) e).Value;
+			return 0;
 		}
 	}
 	
@@ -2710,7 +2886,7 @@ namespace Mono.MonoBASIC {
 				return isLateBindingRequired;
 			}
 			set {
-				isLateBindingRequired = true;
+				isLateBindingRequired = value;
 			}
 		}
 

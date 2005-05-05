@@ -1,3 +1,13 @@
+2005-05-05 Satya Sudha K <ksathyasudha@novell.com>
+	* statement.cs
+	* mb-parser.jay:
+		Changed the 'For' class to :
+		- Handle negative step values
+		- Supporting all types (numeric/object) of loop control variables
+
+	* expression.cs : Removed some unused methods
+	* ecore.cs      : Added float/double -> decimal conversion to NarrowingConversion
+
 2005-05-02 Manjula GHM <mmanjula@novell.com>
 	* expression.cs : Support Reference Parameter - when argument and parameter are different.
 

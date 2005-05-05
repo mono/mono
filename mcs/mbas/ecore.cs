@@ -1914,6 +1914,10 @@ namespace Mono.MonoBASIC {
 
 					return true;
 
+			} else if (target_type == TypeManager.decimal_type){
+				if (expr_type == TypeManager.float_type ||
+				    expr_type == TypeManager.double_type)
+					return true;
 			} else if (target_type == TypeManager.float_type){
 				//
 				// To float from double
@@ -2726,7 +2730,7 @@ namespace Mono.MonoBASIC {
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_CH);
 				if (real_target_type == TypeManager.float_type)
-					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_R4);
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
 			} 
 
 			// decimal is taken care of by the op_Explicit methods.

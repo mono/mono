@@ -724,14 +724,6 @@ namespace Mono.MonoBASIC {
 				"++" : "--";
 		}
 		
-		void Error23 (Type t)
-		{
-			Error (
-				30311, "Operator " + OperName (mode) + 
-				" cannot be applied to operand of type '" +
-				TypeManager.MonoBASIC_Name (t) + "'");
-		}
-
 		/// <summary>
 		///   Returns whether an object of type 't' can be incremented
 		///   or decremented with add/sub (ie, basically whether we can
@@ -2036,17 +2028,6 @@ namespace Mono.MonoBASIC {
 			return (oper == Operator.BitwiseOr ||
 				oper == Operator.BitwiseAnd ||
 				oper == Operator.ExclusiveOr);
-		}
-
-		bool IsNumericType (Type type) {
-			return (type == TypeManager.byte_type ||
-				type == TypeManager.sbyte_type ||
-				type == TypeManager.short_type ||
-				type == TypeManager.int32_type ||
-				type == TypeManager.int64_type ||
-				type == TypeManager.decimal_type ||
-				type == TypeManager.double_type ||
-				type == TypeManager.float_type);
 		}
 
 		Expression ResolveOperator (EmitContext ec)
