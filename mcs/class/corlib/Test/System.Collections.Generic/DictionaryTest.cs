@@ -250,10 +250,15 @@ namespace MonoTests.System.Collections.Generic {
 	
 			public MyTest (string name, int number)
 			{
-			Name = name;
-			RollNo = number;
+				Name = name;
+				RollNo = number;
 			}
-	
+
+			public override int GetHashCode ()
+			{
+				return Name.GetHashCode () ^ RollNo;
+			}
+
 			public override bool Equals (object obj)
 			{
 				MyTest myt = obj as MyTest;

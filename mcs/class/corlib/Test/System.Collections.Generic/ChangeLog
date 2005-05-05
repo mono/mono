@@ -1,3 +1,8 @@
+2005-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* DictionaryTest.cs (MyTest.GetHashCode): Add to silence a
+	compiler warning.
+
 2005-04-04  Raja R Harinath  <rharinath@novell.com>
 
 	* DictionaryTest.cs: Update.
