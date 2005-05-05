@@ -1,3 +1,12 @@
+2005-05-5  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Label.cs: fire events using OnAutoSizeChanged and OnTextAlignChanged
+	* LinkLabel.cs:
+		- Adds cursors
+		- Handles focus
+		- Implements LinkBehavior
+		- Fixes many issues
+
 2005-05-03  Jackson Harper  <jackson@ximian.com>
 
 	* ListView.cs: Calculate the scrollbar positioning on resize and

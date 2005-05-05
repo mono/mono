@@ -127,8 +127,7 @@ namespace System.Windows.Forms
     				CalcAutoSize ();
 				Refresh ();
 
-    				if (AutoSizeChanged != null)
-    					AutoSizeChanged (this, new EventArgs ());
+				OnAutoSizeChanged (new EventArgs ());    				
     			}
     		}
 
@@ -389,9 +388,7 @@ namespace System.Windows.Forms
 						break;
 					}
 
-					if (TextAlignChanged != null)
-    						TextAlignChanged (this, new EventArgs ());
-
+					OnTextAlignChanged (new EventArgs ());
     					Refresh();
 				}
 			}

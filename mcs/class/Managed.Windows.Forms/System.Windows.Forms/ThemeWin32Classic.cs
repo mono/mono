@@ -1000,28 +1000,28 @@ namespace System.Windows.Forms
 			Color color;
 
 			dc.FillRectangle (ResPool.GetSolidBrush (label.BackColor), clip_rectangle);
-			CPDrawBorderStyle (dc, label.ClientRectangle, label.BorderStyle);
-
-			if (label.Links.Count == 1 && label.Links[0].Start == 0 && label.Links[0].Length == -1) {
-
-				color = label.GetLinkColor (label.pieces[0], 0);
-				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (color),
-					label.ClientRectangle, label.string_format);
-				return;
-			}
+			CPDrawBorderStyle (dc, label.ClientRectangle, label.BorderStyle);						
 
 			for (int i = 0; i < label.num_pieces; i++) {
-
+				
+				if (clip_rectangle.IntersectsWith (label.pieces[i].rect) == false) {
+					continue;
+				}				
+				
 				color = label.GetLinkColor (label.pieces[i], i);
 
 				if (label.pieces[i].link == null)
-					dc.DrawString (label.pieces[i].text, label.Font, ResPool.GetSolidBrush (Color.Black),
-						label.pieces[i].rect.X, label.pieces[i].rect.Y, label.string_format);
+					dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (Color.Black),
+						label.pieces[i].rect.X, label.pieces[i].rect.Y);
 				else
-					dc.DrawString (label.pieces[i].text, label.link_font, ResPool.GetSolidBrush (color),
-						label.pieces[i].rect.X, label.pieces[i].rect.Y, label.string_format);
+					dc.DrawString (label.pieces[i].text, label.GetPieceFont (label.pieces[i]), ResPool.GetSolidBrush (color),
+						label.pieces[i].rect.X, label.pieces[i].rect.Y);
+						
+				if (label.pieces[i].focused) {					
+					CPDrawFocusRectangle (dc, label.pieces[i].rect, label.ForeColor, label.BackColor);
+				}
 			}			
-
+			
 		}
 		#endregion	// LinkLabel
 		#region ListBox
