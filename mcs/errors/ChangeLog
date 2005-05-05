@@ -1,3 +1,11 @@
+2005-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (%-lib.dll, %-module.dll): Build during 'make test' or
+	'make run-test'.
+
+	* cs0122-14.cs, cs0122-15.cs, CS0122-14-lib.cs, CS0122-15-lib.cs:
+	New tests based on #64812.
+
 2005-05-04  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0122-13.cs: New test based on #64812.

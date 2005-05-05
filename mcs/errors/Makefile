@@ -27,11 +27,15 @@ DISTFILES = \
 	generics-expect-no-error generics-expect-wrong-error \
 	$(wildcard known-issues-*)
 
-all-local: CS0118-2-lib.dll CS0122-10-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
+TEST_SUPPORT_FILES = \
+	CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll \
+	CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
 	CS3005-16-lib.dll CS3013-module.dll
 
-test-local: TestRunner-$(PROFILE).exe
+all-local:
+
+test-local: TestRunner-$(PROFILE).exe $(TEST_SUPPORT_FILES)
 
 run-test-ondotnet-local:
 
@@ -54,6 +58,8 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TEST_PATTERN = 'cs*.cs'
 endif
 
+run-mcs-tests: $(TEST_SUPPORT_FILES)
+
 ifeq (net_2_0, $(PROFILE))
 run-mcs-tests:
 	-rm -f gmcs.log
@@ -73,10 +79,10 @@ dist-local: dist-default
 install-local uninstall-local:
 
 %-lib.dll: %-lib.cs
-	$(BOOTSTRAP_MCS) /target:library /out:$@ $<
+	$(CSCOMPILE) /target:library /out:$@ $<
 
 %-module.dll: %-module.cs
-	$(BOOTSTRAP_MCS) /target:module /out:$@ $<
+	$(CSCOMPILE) /target:module /out:$@ $<
 
 TestRunner-$(PROFILE).exe: TestRunner.cs
 	$(CSCOMPILE) /out:$@ TestRunner.cs

@@ -1,3 +1,7 @@
+2005-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* test-374.cs: New test based on #64812.
+
 2005-05-04  Martin Baulig  <martin@ximian.com>
 
 	* test-49.cs: Add testcase from 74655.

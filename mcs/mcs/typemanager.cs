@@ -2442,21 +2442,17 @@ public class TypeManager {
 				return true;
 
 			// A nested class has access to all the protected members visible to its parent.
-			if (qualifier_type != null
-			    && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
+			if (qualifier_type != null && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
 				return true;
 
-			if (invocation_type == m.DeclaringType
-			    || invocation_type.IsSubclassOf (m.DeclaringType)) {
-				if (is_static)
-					return true;
-
+			if (invocation_type == m.DeclaringType || invocation_type.IsSubclassOf (m.DeclaringType)) {
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
-				if (qualifier_type == null
-				    || qualifier_type == invocation_type
-				    || qualifier_type.IsSubclassOf (invocation_type))
+				if (is_static ||
+				    qualifier_type == null ||
+				    qualifier_type == invocation_type ||
+				    qualifier_type.IsSubclassOf (invocation_type))
 					return true;
 			}
 
@@ -2493,21 +2489,20 @@ public class TypeManager {
 				MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 				if (ma == MethodAttributes.Private)
-					return private_ok || (invocation_type == m.DeclaringType) ||
+					return private_ok || invocation_type == m.DeclaringType ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
-				
-				// Assembly succeeds if we're in the same assembly.
-				if (ma == MethodAttributes.Assembly)
-					return (invocation_assembly == mb.DeclaringType.Assembly);
-				
-				// FamAndAssem requires that we not only derive, but we are on the same assembly.  
-				if (ma == MethodAttributes.FamANDAssem){
-					if (invocation_assembly != mb.DeclaringType.Assembly)
+
+				if (invocation_assembly == mb.DeclaringType.Assembly) {
+					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
+						return true;
+				} else {
+					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamANDAssem)
 						return false;
 				}
-				
-				// Family and FamANDAssem require that we derive.
-				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem))
+
+				if (ma == MethodAttributes.Family ||
+				    ma == MethodAttributes.FamANDAssem ||
+				    ma == MethodAttributes.FamORAssem)
 					return CheckValidFamilyAccess (mb.IsStatic, m);
 				
 				// Public.
@@ -2521,19 +2516,18 @@ public class TypeManager {
 				if (fa == FieldAttributes.Private)
 					return private_ok || (invocation_type == m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
-				
-				// Assembly succeeds if we're in the same assembly.
-				if (fa == FieldAttributes.Assembly)
-					return (invocation_assembly == fi.DeclaringType.Assembly);
-						
-				// FamAndAssem requires that we not only derive, but we are on the same assembly.  
-				if (fa == FieldAttributes.FamANDAssem){
-					if (invocation_assembly != fi.DeclaringType.Assembly)
+
+				if (invocation_assembly == fi.DeclaringType.Assembly) {
+					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamORAssem)
+						return true;
+				} else {
+					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamANDAssem)
 						return false;
 				}
-				
-				// Family and FamANDAssem require that we derive.
-				if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem))
+
+				if (fa == FieldAttributes.Family ||
+				    fa == FieldAttributes.FamANDAssem ||
+				    fa == FieldAttributes.FamORAssem)
 					return CheckValidFamilyAccess (fi.IsStatic, m);
 				
 				// Public.
