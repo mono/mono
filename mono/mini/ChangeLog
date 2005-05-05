@@ -1,8 +1,22 @@
-2005-04-25  Zoltan Varga  <vargaz@freemail.hu>
+2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
-	* iltests.il: Add test for #74726.
+	* mini-codegen.c: New file contaning the arch-independent local
+	register allocator. Not used by any architectures yet.
 
-	* mini-amd64.c: Fix saving of registers in mul.ovf.un. Fixes #74726.
+	* mini.h linear-scan.c: Merge some changes from the 
+	mini-xp-local-regalloc branch.
+
+2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (emit_call): Fix calls to native functions when the
+	runtime is compiled as a shared library. Fixes #74756.
+
+	* mini.c (mono_method_to_ir): Assert if ldsfld and friends are used
+	on a literal field. Fixes #74751.
+
+2005-04-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (RUNTIME): Add MONO_CFG_DIR.
 
 2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
 

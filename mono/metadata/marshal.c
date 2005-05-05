@@ -6147,8 +6147,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 				m.piinfo = &piinfo;
 				piinfo.piflags = (attr->call_conv << 8) | (attr->charset ? (attr->charset - 1) * 2 : 1) | attr->set_last_error;
 
-				/* FIXME: modify the calling convention */
-				g_assert_not_reached ();
+				csig->call_convention = attr->call_conv - 1;
 			}
 			if (!cinfo->cached)
 				mono_custom_attrs_free (cinfo);

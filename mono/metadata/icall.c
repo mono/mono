@@ -3532,7 +3532,6 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 		aname->minor = assem->aname.minor;
 		aname->build = assem->aname.build;
 		aname->revision = assem->aname.revision;
-		aname->revision = assem->aname.revision;
 		aname->hashalg = assem->aname.hash_alg;
 		aname->flags = assem->aname.flags;
 		aname->versioncompat = 1; /* SameMachine (default) */
@@ -3793,9 +3792,11 @@ ves_icall_System_Reflection_Assembly_GetModulesInternal (MonoReflectionAssembly 
 		real_module_count = module_count;
 
 		modules = g_new0 (MonoImage*, module_count);
-		for (i = 0; i < mono_array_length (assemblyb->modules); ++i) {
-			modules [i] = 
-				mono_array_get (assemblyb->modules, MonoReflectionModuleBuilder*, i)->module.image;
+		if (assemblyb->modules) {
+			for (i = 0; i < mono_array_length (assemblyb->modules); ++i) {
+				modules [i] = 
+					mono_array_get (assemblyb->modules, MonoReflectionModuleBuilder*, i)->module.image;
+			}
 		}
 	}
 	else {
@@ -5179,8 +5180,19 @@ ves_icall_System_Environment_Exit (int result)
 	MONO_ARCH_SAVE_REGS;
 
 	mono_runtime_set_shutting_down ();
+
 	/* Suspend all managed threads since the runtime is going away */
-	mono_thread_suspend_all_other_threads ();
+
+	/* 
+	 * Implementing correct suspension of all threads is very hard to do, so
+	 * skip it for the moment. This is not a problem, since the 
+	 * mini_cleanup function is also changed to return immediately without
+	 * freeing up the runtime data structures.
+	 * No waiting -> no hangs
+	 * No freeing -> no crashes
+	 * http://bugzilla.ximian.com/show_bug.cgi?id=71274
+	 */
+	//mono_thread_suspend_all_other_threads ();
 
 	mono_runtime_quit ();
 

@@ -1,3 +1,146 @@
+
+Thu May 5 17:14:27 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.c: unlock properly: the interface with the debugger will likely
+	need to change.
+
+Thu May 5 16:24:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug-debugger.c, mono-debug-debugger.h, mono-debug.c: remove thread
+	unsafe code in the debugger lock/unlock functions and always init the debugger
+	lock since it's use also when the debugger is not connected.
+
+2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_load_reference): Fix warning.
+
+2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: changed the default number of threads per cpu. From now
+	on, the default will be 20 + (5 * number of cpus) instead of 50.
+
+2005-05-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_method_get_signature_full): Add locking here.
+
+2005-05-03  Lluis Sanchez Gual <lluis@novell.com>
+
+	* appdomain.c: Moved methods for parsing and freeing assembly
+	names to assembly.c.
+	* assembly.c, domain-internals.h: Created public methods for parsing
+	assembly names. Fixed mono_assembly_load_with_partial_name:
+	it now finds the best match, taking into account the version,
+	token and culture specified in the partial name. Also return
+	the latest version if no version information is specified.
+
+Mon May 2 15:47:57 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: replace check for SocketAsyncCall class.
+
+2005-05-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool-internals.h:
+	* Makefile.am: added threadpool-internals.h
+
+	* threadpool.c: call mono_unhandled_exception on exceptions not handled
+	that happen in threadpool threads (tested on MS).
+	(mono_thread_pool_remove_socket): new function that dispatch any pending
+	AIO call on a socket that is closing. By now only epoll really needs it,
+	as select/poll wake up when the socket closes.
+
+
+	* socket-io.c: call mono_thread_pool_remove_socket in Close_internal.
+
+2005-05-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Handle changing the calling convention.
+
+2005-05-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* gc.c: In mono_gc_cleanup(), wait for 2 seconds, not 2000 seconds.
+
+2005-04-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* threads.c: In mono_thread_suspend_all_other_threads, if a thread
+	has an abort request, convert it into a suspend request.
+
+2005-04-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): give a friendly
+	warning for the usage of `UnmanagedFunctionPointerAttribute' which
+	is not supported yet.
+
+2005-04-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c: register assemblies loaded from data (bundles) in the loaded
+	assemblies hash. Fixes bug #74772.
+
+2005-04-29  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_type_get_name_recurse): Update to the new naming
+	schema from the latest .NET 2.x beta2.
+	(mono_class_setup_vtable_general): If we're a generic instance,
+	copy the vtable from our generic type definition and inflate all
+	the methods in it.
+
+	* loader.c (find_method): Update to the new naming schema from the
+	latest .NET 2.x beta2.
+
+2005-04-29  Raja R Harinath  <harinath@gmail.com>
+
+	* class.c (mono_class_init): Add a mono_loader_unlock to the
+	#74734 fix.
+
+2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Environment_Exit): Remove the 
+	suspend_all_other_threads () call for the time being, since it can hang.
+
+	* threads.c (mono_thread_manage): Similarly, disable the waiting for
+	the background threads to exit, since it can also hang.
+
+	* class.c (mono_class_init): Applied patch from Ankit Jain 
+	(radical@gmail.com). Avoid pending init errors when a field refers
+	to a nested class using a typeref. Fixes #74734.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): Fix
+	this for dynamic modules.
+
+2005-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threads.c: don't wait for threads that are in the process of aborting
+	or aborted. Set the 'shutting_down' flag before cleaning the threadpool
+	and waiting for background threads to finish. This makes xsp and
+	mod-mono-server exit without random length delays and/or hangs.
+
+2005-04-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: remove duplicate assignment from GetReferencedAssemblies.
+
+2005-04-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_is_assignable_from): Call is_assignable_to for
+	dynamic types to prevent infinite loops. Fixes #74727.
+
+	* reflection.c (mono_reflection_call_is_assignable_from): Rename to
+	..._is_assignable_to.
+
+2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security.c: Fixed #74698 where sysconf returned -1 on FreeBSD.
+
+2005-04-25  Martin Baulig  <martin@ximian.com>
+
+	Upgrade to the latest .NET 2.x beta (Visual Studio 2005 Beta 2).
+
+	* domain.c
+	(supported_runtimes): Change "v2.0.40607" -> "v2.0.50215".
+
+	* row-indexes.h (MONO_GENERICPARAM_KIND): Removed.
+
+	* reflection.c (build_compressed_metadata): Set metadata header
+	version to 2.0.
+
 2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sysmath.c (ves_icall_System_Math_Round2): Use modf to decompose the

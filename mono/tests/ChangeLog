@@ -1,3 +1,10 @@
+2005-05-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c (mono_test_marshal_cdecl_delegate): New test for changing the calling convention of
+	a delegate.
+
+	* pinvoke-2.cs: New file for 2.0 pinvoke tests.	
+
 2005-04-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (CSC): Use '-unsafe' instead of '--unsafe'.

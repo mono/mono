@@ -5179,6 +5179,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			field = mono_field_from_token (image, token, &klass, generic_context);
 			mono_class_init (klass);
 
+			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL));
+
 			if ((*ip) == CEE_STSFLD)
 				handle_loaded_temps (cfg, bblock, stack_start, sp);
 
@@ -9655,10 +9657,18 @@ SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
 {
 	gboolean running_managed;
 	MonoException *exc;
+	void *ji;
 	
-	GET_CONTEXT
+	GET_CONTEXT;
 
-	running_managed = (mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context(ctx)) != NULL);
+	/*
+	 * FIXME:
+	 * This is an async signal, so the code below must not call anything which
+	 * is not async safe. That includes the pthread locking functions. If we
+	 * know that we interrupted managed code, then locking is safe.
+	 */
+	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context(ctx));
+	running_managed = ji != NULL;
 	
 	exc = mono_thread_request_interruption (running_managed); 
 	if (!exc) return;
@@ -10106,6 +10116,19 @@ mini_cleanup (MonoDomain *domain)
 	 * and mono_runtime_cleanup will wait for other threads to finish).
 	 */
 	mono_domain_finalize (domain, 2000);
+
+	/*
+	 * Since the runtime does not suspend/abort running threads when exiting,
+	 * freeing up JIT structures could cause crashes in those threads. So skip 
+	 * that for the moment.
+	 */
+
+	/* 
+	 * This is not safe but people running profilers hopefully do not
+	 * use threads.
+	 */
+	mono_profiler_shutdown ();
+	return;
 
 	mono_runtime_cleanup (domain);
 

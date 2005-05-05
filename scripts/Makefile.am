@@ -42,7 +42,7 @@ bin2_SCRIPTS = gmcs wsdl2
 
 service_SCRIPTS = mono-service
 
-CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS)
+CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS) mono-service
 
 if USE_JIT
 MONO_INTERP = mono

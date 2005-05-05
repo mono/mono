@@ -370,16 +370,21 @@ gpointer _wapi_handle_new (WapiHandleType type, gpointer handle_specific)
 			_wapi_handle_collect ();
 			offset = _wapi_handle_new_shared (type,
 							  handle_specific);
-			/* FIXME: grow the arrays */
-			return (_WAPI_HANDLE_INVALID);
+			if (offset == 0) {
+				/* FIXME: grow the arrays */
+				return (_WAPI_HANDLE_INVALID);
+			}
 		}
 		
 		ref = _wapi_handle_new_shared_offset (offset);
 		if (ref == 0) {
 			_wapi_handle_collect ();
 			ref = _wapi_handle_new_shared_offset (offset);
-			/* FIXME: grow the arrays */
-			return (_WAPI_HANDLE_INVALID);
+
+			if (ref == 0) {
+				/* FIXME: grow the arrays */
+				return (_WAPI_HANDLE_INVALID);
+			}
 		}
 		
 		_WAPI_PRIVATE_HANDLES(handle_idx).u.shared.offset = ref;
@@ -392,9 +397,7 @@ gpointer _wapi_handle_new (WapiHandleType type, gpointer handle_specific)
 	return(handle);
 }
 
-gpointer _wapi_handle_new_for_existing_ns (WapiHandleType type,
-					   gpointer handle_specific,
-					   guint32 offset)
+gpointer _wapi_handle_new_from_offset (WapiHandleType type, guint32 offset)
 {
 	guint32 handle_idx = 0;
 	gpointer handle;
@@ -403,8 +406,8 @@ gpointer _wapi_handle_new_for_existing_ns (WapiHandleType type,
 	mono_once (&shared_init_once, shared_init);
 	
 #ifdef DEBUG
-	g_message ("%s: Creating new handle of type %s", __func__,
-		   _wapi_handle_typename[type]);
+	g_message ("%s: Creating new handle of type %s to offset %d", __func__,
+		   _wapi_handle_typename[type], offset);
 #endif
 
 	g_assert(!_WAPI_FD_HANDLE(type));
@@ -433,7 +436,7 @@ gpointer _wapi_handle_new_for_existing_ns (WapiHandleType type,
 	thr_ret = mono_mutex_lock (&scan_mutex);
 	g_assert (thr_ret == 0);
 	
-	while ((handle_idx = _wapi_handle_new_internal (type, handle_specific)) == 0) {
+	while ((handle_idx = _wapi_handle_new_internal (type, NULL)) == 0) {
 		/* Try and expand the array, and have another go */
 		int idx = SLOT_INDEX (_wapi_private_handle_count);
 		_wapi_private_handles [idx] = g_new0 (struct _WapiHandleUnshared,
@@ -502,57 +505,6 @@ gpointer _wapi_handle_new_fd (WapiHandleType type, int fd,
 	_wapi_handle_init (handle, type, handle_specific);
 
 	return(GUINT_TO_POINTER(fd));
-}
-
-gpointer _wapi_handle_new_from_offset (WapiHandleType type, int offset)
-{
-	guint32 handle_idx = 0;
-	gpointer handle;
-	int thr_ret;
-	struct _WapiHandle_shared_ref *ref;
-	struct _WapiHandleUnshared *handle_data;
-	
-	mono_once (&shared_init_once, shared_init);
-	
-#ifdef DEBUG
-	g_message ("%s: Creating new handle of type %s to offset %d", __func__,
-		   _wapi_handle_typename[type], offset);
-#endif
-
-	g_assert(_WAPI_SHARED_HANDLE(type));
-
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&scan_mutex);
-	thr_ret = mono_mutex_lock (&scan_mutex);
-	g_assert(thr_ret == 0);
-	
-	while ((handle_idx = _wapi_handle_new_internal (type, NULL)) == 0) {
-		/* Try and expand the array, and have another go */
-		int idx = SLOT_INDEX (_wapi_private_handle_count);
-		_wapi_private_handles [idx] = g_new0 (struct _WapiHandleUnshared,
-						_WAPI_HANDLE_INITIAL_COUNT);
-
-		_wapi_private_handle_count += _WAPI_HANDLE_INITIAL_COUNT;
-	}
-
-	thr_ret = mono_mutex_unlock (&scan_mutex);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
-				
-	/* Make sure we left the space for fd mappings */
-	g_assert (handle_idx >= _wapi_fd_reserve);
-
-	handle_data = &_WAPI_PRIVATE_HANDLES(handle_idx);
-	ref = &handle_data->u.shared;
-	ref->offset = offset;
-
-	handle = GUINT_TO_POINTER (handle_idx);
-			
-#ifdef DEBUG
-	g_message ("%s: Allocated new handle %p", __func__, handle);
-#endif
-
-	return (handle);
 }
 
 gboolean _wapi_lookup_handle (gpointer handle, WapiHandleType type,
@@ -682,8 +634,11 @@ gboolean _wapi_replace_handle (gpointer handle, WapiHandleType type,
 			_wapi_handle_collect ();
 			new_off = _wapi_handle_new_shared (type, 
 							   handle_specific);
-			/* FIXME: grow the arrays */
-			return (FALSE);
+
+			if (new_off == 0) {
+				/* FIXME: grow the arrays */
+				return (FALSE);
+			}
 		}
 		
 		shared_handle_data = &_wapi_shared_layout->handles[new_off];
@@ -707,9 +662,44 @@ gboolean _wapi_replace_handle (gpointer handle, WapiHandleType type,
 	return (TRUE);
 }
 
-/* This will only find shared handles that have already been opened by
- * this process.  To look up shared handles by name, use
- * _wapi_search_handle_namespace
+void
+_wapi_handle_foreach (WapiHandleType type,
+			gboolean (*on_each)(gpointer test, gpointer user),
+			gpointer user_data)
+{
+	struct _WapiHandleUnshared *handle_data = NULL;
+	gpointer ret = NULL;
+	guint32 i, k;
+	int thr_ret;
+
+	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
+			      (void *)&scan_mutex);
+	thr_ret = mono_mutex_lock (&scan_mutex);
+	g_assert (thr_ret == 0);
+
+	for (i = SLOT_INDEX (0); _wapi_private_handles [i] != NULL; i++) {
+		for (k = SLOT_OFFSET (0); k < _WAPI_HANDLE_INITIAL_COUNT; k++) {
+			handle_data = &_wapi_private_handles [i][k];
+		
+			if (handle_data->type == type) {
+				ret = GUINT_TO_POINTER (i * _WAPI_HANDLE_INITIAL_COUNT + k);
+				if (on_each (ret, user_data) == TRUE)
+					break;
+			}
+		}
+	}
+
+	thr_ret = mono_mutex_unlock (&scan_mutex);
+	g_assert (thr_ret == 0);
+	pthread_cleanup_pop (0);
+}
+
+/* This might list some shared handles twice if they are already
+ * opened by this process, and the check function returns FALSE the
+ * first time.  Shared handles that are created during the search are
+ * unreffed if the check function returns FALSE, so callers must not
+ * rely on the handle persisting (unless the check function returns
+ * TRUE)
  */
 gpointer _wapi_search_handle (WapiHandleType type,
 			      gboolean (*check)(gpointer test, gpointer user),
@@ -722,13 +712,13 @@ gpointer _wapi_search_handle (WapiHandleType type,
 	gboolean found = FALSE;
 
 
-	for(i = SLOT_INDEX (0); !found && _wapi_private_handles [i] != NULL; i++) {
+	for (i = SLOT_INDEX (0); !found && _wapi_private_handles [i] != NULL; i++) {
 		for (k = SLOT_OFFSET (0); k < _WAPI_HANDLE_INITIAL_COUNT; k++) {
 			handle_data = &_wapi_private_handles [i][k];
 		
-			if(handle_data->type == type) {
+			if (handle_data->type == type) {
 				ret = GUINT_TO_POINTER (i * _WAPI_HANDLE_INITIAL_COUNT + k);
-				if(check (ret, user_data) == TRUE) {
+				if (check (ret, user_data) == TRUE) {
 					found = TRUE;
 					break;
 				}
@@ -736,6 +726,48 @@ gpointer _wapi_search_handle (WapiHandleType type,
 		}
 	}
 
+	if (!found) {
+		/* Not found yet, so search the shared memory too */
+#ifdef DEBUG
+		g_message ("%s: Looking at other shared handles...", __func__);
+#endif
+
+		for (i = 0; i < _WAPI_HANDLE_INITIAL_COUNT; i++) {
+			struct _WapiHandleShared *shared;
+			struct _WapiHandleSharedMetadata *meta;
+			WapiHandleType shared_type;
+
+			_WAPI_HANDLE_COLLECTION_UNSAFE;
+
+			meta = &_wapi_shared_layout->metadata[i];
+			shared = &_wapi_shared_layout->handles[meta->offset];
+			shared_type = shared->type;
+			
+			_WAPI_HANDLE_COLLECTION_SAFE;
+			
+			if (shared_type == type) {
+				ret = _wapi_handle_new_from_offset (type, i);
+
+#ifdef DEBUG
+				g_message ("%s: Opened tmp handle %p (type %s) from offset %d", __func__, ret, _wapi_handle_typename[type], meta->offset);
+#endif
+
+				if (check (ret, user_data) == TRUE) {
+					found = TRUE;
+					handle_data = &_WAPI_PRIVATE_HANDLES(GPOINTER_TO_UINT(ret));
+					
+					break;
+				}
+				
+				/* This isn't the handle we're looking
+				 * for, so drop the reference we took
+				 * in _wapi_handle_new_from_offset ()
+				 */
+				_wapi_handle_unref (ret);
+			}
+		}
+	}
+	
 	if (!found) {
 		goto done;
 	}
@@ -1507,6 +1539,7 @@ gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
 			
 			file_share->device = device;
 			file_share->inode = inode;
+			file_share->opened_by_pid = getpid ();
 			file_share->sharemode = new_sharemode;
 			file_share->access = new_access;
 			file_share->handle_refs = 1;
@@ -1525,6 +1558,27 @@ gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
 	return(exists);
 }
 
+/* If we don't have the info in /proc, check if the process that
+ * opened this share info is still there (it's not a perfect method,
+ * due to pid reuse)
+ */
+static void _wapi_handle_check_share_by_pid (struct _WapiFileShare *share_info)
+{
+	if (kill (share_info->opened_by_pid, 0) == -1 &&
+	    (errno == ESRCH ||
+	     errno == EPERM)) {
+		/* It's gone completely (or there's a new process
+		 * owned by someone else) so mark this share info as
+		 * dead
+		 */
+#ifdef DEBUG
+		g_message ("%s: Didn't find it, destroying entry", __func__);
+#endif
+
+		memset (share_info, '\0', sizeof(struct _WapiFileShare));
+	}
+}
+
 /* Scan /proc/<pids>/fd/ for open file descriptors to the file in
  * question.  If there are none, reset the share info.
  *
@@ -1534,16 +1588,15 @@ gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
  */
 void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 {
-	DIR *proc_dir;
-	struct dirent *proc_entry;
 	gboolean found = FALSE, proc_fds = FALSE;
 	pid_t self = getpid();
 	int pid;
 	guint32 now = (guint32)(time(NULL) & 0xFFFFFFFF);
-	int thr_ret;
+	int thr_ret, i;
 	
-	proc_dir = opendir ("/proc");
-	if (proc_dir == NULL) {
+	/* If there is no /proc, there's nothing more we can do here */
+	if (access ("/proc", F_OK) == -1) {
+		_wapi_handle_check_share_by_pid (share_info);
 		return;
 	}
 	
@@ -1563,18 +1616,26 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 	} while (thr_ret == EBUSY);
 	g_assert (thr_ret == 0);
 
-	while ((proc_entry = readdir (proc_dir)) != NULL) {
-		/* We only care about numerically-named directories */
-		pid = atoi (proc_entry->d_name);
-		if (pid != 0) {
+	for (i = 0; i < _WAPI_HANDLE_INITIAL_COUNT; i++) {
+		struct _WapiHandleShared *shared;
+		struct _WapiHandleSharedMetadata *meta;
+		struct _WapiHandle_process *process_handle;
+
+		meta = &_wapi_shared_layout->metadata[i];
+		shared = &_wapi_shared_layout->handles[meta->offset];
+		
+		if (shared->type == WAPI_HANDLE_PROCESS) {
+			DIR *fd_dir;
+			struct dirent *fd_entry;
+			char subdir[_POSIX_PATH_MAX];
+
+			process_handle = &shared->u.process;
+			pid = process_handle->id;
+		
 			/* Look in /proc/<pid>/fd/ but ignore
 			 * /proc/<our pid>/fd/<fd>, as we have the
 			 * file open too
 			 */
-			DIR *fd_dir;
-			struct dirent *fd_entry;
-			char subdir[_POSIX_PATH_MAX];
-			
 			g_snprintf (subdir, _POSIX_PATH_MAX, "/proc/%d/fd",
 				    pid);
 			
@@ -1582,6 +1643,10 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 			if (fd_dir == NULL) {
 				continue;
 			}
+
+#ifdef DEBUG
+			g_message ("%s: Looking in %s", __func__, subdir);
+#endif
 			
 			proc_fds = TRUE;
 			
@@ -1615,10 +1680,10 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 			closedir (fd_dir);
 		}
 	}
-	
-	closedir (proc_dir);
 
-	if (found == FALSE && proc_fds == TRUE) {
+	if (proc_fds == FALSE) {
+		_wapi_handle_check_share_by_pid (share_info);
+	} else if (found == FALSE) {
 		/* Blank out this entry, as it is stale */
 #ifdef DEBUG
 		g_message ("%s: Didn't find it, destroying entry", __func__);
@@ -1645,9 +1710,11 @@ void _wapi_handle_dump (void)
 				continue;
 			}
 		
-			g_print ("%3x [%7s] %s %d ", i,
+			g_print ("%3x [%7s] %s %d ",
+				 i * _WAPI_HANDLE_INITIAL_COUNT + k,
 				 _wapi_handle_typename[handle_data->type],
-				 handle_data->signalled?"Sg":"Un", handle_data->ref);
+				 handle_data->signalled?"Sg":"Un",
+				 handle_data->ref);
 			handle_details[handle_data->type](&handle_data->u);
 			g_print ("\n");
 		}

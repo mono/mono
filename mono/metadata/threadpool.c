@@ -15,15 +15,15 @@
 #ifdef PLATFORM_WIN32
 #define WINVER 0x0500
 #define _WIN32_WINNT 0x0500
-#define THREADS_PER_CPU	25
-#else
-#define THREADS_PER_CPU	50
 #endif
+
+#define THREADS_PER_CPU	5 /* 20 + THREADS_PER_CPU * number of CPUs */
 
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/file-io.h>
 #include <mono/metadata/monitor.h>
@@ -53,9 +53,9 @@
 #undef EPOLL_DEBUG
 
 /* maximum number of worker threads */
-static int mono_max_worker_threads = THREADS_PER_CPU;
-static int mono_min_worker_threads = 0;
-static int mono_io_max_worker_threads = THREADS_PER_CPU * 2;
+static int mono_max_worker_threads;
+static int mono_min_worker_threads;
+static int mono_io_max_worker_threads;
 
 /* current number of worker threads */
 static int mono_worker_threads = 0;
@@ -125,6 +125,8 @@ enum {
 	AIO_OP_RECEIVEFROM,
 	AIO_OP_SEND,
 	AIO_OP_SENDTO,
+	AIO_OP_RECV_JUST_CALLBACK,
+	AIO_OP_SEND_JUST_CALLBACK,
 	AIO_OP_LAST
 };
 
@@ -172,9 +174,11 @@ get_event_from_state (MonoSocketAsyncResult *state)
 	switch (state->operation) {
 	case AIO_OP_ACCEPT:
 	case AIO_OP_RECEIVE:
+	case AIO_OP_RECV_JUST_CALLBACK:
 	case AIO_OP_RECEIVEFROM:
 		return MONO_POLLIN;
 	case AIO_OP_SEND:
+	case AIO_OP_SEND_JUST_CALLBACK:
 	case AIO_OP_SENDTO:
 	case AIO_OP_CONNECT:
 		return MONO_POLLOUT;
@@ -237,8 +241,13 @@ async_invoke_io_thread (gpointer data)
 
 			domain = ((MonoObject *)ar)->vtable->domain;
 			if (mono_domain_set (domain, FALSE)) {
+				ASyncCall *ac;
+
 				mono_thread_push_appdomain_ref (domain);
 				mono_async_invoke (ar);
+				ac = (ASyncCall *) ar->data;
+				if (ac->msg->exc != NULL)
+					mono_unhandled_exception (ac->msg->exc);
 				mono_thread_pop_appdomain_ref ();
 			}
 			InterlockedDecrement (&busy_io_worker_threads);
@@ -604,6 +613,44 @@ socket_io_epoll_main (gpointer p)
 }
 #endif
 
+/*
+ * select/poll wake up when a socket is closed, but epoll just removes
+ * the socket from its internal list without notification.
+ */
+void
+mono_thread_pool_remove_socket (int sock)
+{
+#ifdef HAVE_EPOLL
+	GSList *list, *next;
+	MonoSocketAsyncResult *state;
+
+	if (socket_io_data.epoll_disabled == TRUE || socket_io_data.inited == FALSE)
+		return;
+
+	EnterCriticalSection (&socket_io_data.io_lock);
+	list = g_hash_table_lookup (socket_io_data.sock_to_state, GINT_TO_POINTER (sock));
+	if (list) {
+		g_hash_table_remove (socket_io_data.sock_to_state, GINT_TO_POINTER (sock));
+	}
+	LeaveCriticalSection (&socket_io_data.io_lock);
+	
+	while (list) {
+		state = (MonoSocketAsyncResult *) list->data;
+		if (state->operation == AIO_OP_RECEIVE)
+			state->operation = AIO_OP_RECV_JUST_CALLBACK;
+		else if (state->operation == AIO_OP_SEND)
+			state->operation = AIO_OP_SEND_JUST_CALLBACK;
+
+		next = g_slist_remove_link (list, list);
+		list = process_io_event (list, MONO_POLLIN);
+		if (list)
+			process_io_event (list, MONO_POLLOUT);
+
+		list = next;
+	}
+#endif
+}
+
 #ifdef PLATFORM_WIN32
 static void
 connect_hack (gpointer x)
@@ -691,6 +738,9 @@ socket_io_init (SocketIOData *data)
 	g_assert (data->pipe [0] != INVALID_SOCKET);
 	closesocket (srv);
 #endif
+	mono_io_max_worker_threads = mono_max_worker_threads / 2;
+	if (mono_io_max_worker_threads < 10)
+		mono_io_max_worker_threads = 10;
 
 	data->sock_to_state = g_hash_table_new (g_direct_hash, g_direct_equal);
 
@@ -816,24 +866,21 @@ socket_io_filter (MonoObject *target, MonoObject *state)
 	if (target == NULL || state == NULL)
 		return FALSE;
 
-	klass = InterlockedCompareExchangePointer ((gpointer *) &socket_async_call_klass, NULL, NULL);
-	if (klass == NULL) {
-		MonoImage *system_assembly = mono_image_loaded ("System");
-
-		if (system_assembly == NULL)
-			return FALSE;
-
-		klass = mono_class_from_name (system_assembly, "System.Net.Sockets", "Socket/SocketAsyncCall");
-		if (klass == NULL) {
-			/* Should never happen... */
-			g_print ("socket_io_filter: SocketAsyncCall class not found.\n");
-			return FALSE;
-		}
-
-		InterlockedCompareExchangePointer ((gpointer *) &socket_async_call_klass, klass, NULL);
+	if (socket_async_call_klass == NULL) {
+		klass = target->vtable->klass;
+		/* Check if it's SocketAsyncCall in System
+		 * FIXME: check the assembly is signed correctly for extra care
+		 */
+		if (klass->name [0] == 'S' && strcmp (klass->name, "SocketAsyncCall") == 0 
+				&& strcmp (mono_image_get_name (klass->image), "System") == 0
+				&& klass->nested_in && strcmp (klass->nested_in->name, "Socket") == 0)
+			socket_async_call_klass = klass;
 	}
 
-	if (target->vtable->klass != klass)
+	/* return both when socket_async_call_klass has not been seen yet and when
+	 * the object is not an instance of the class.
+	 */
+	if (target->vtable->klass != socket_async_call_klass)
 		return FALSE;
 
 	op = sock_res->operation;
@@ -891,13 +938,13 @@ mono_thread_pool_init ()
 	ares_htable = mono_g_hash_table_new (NULL, NULL);
 	job_added = CreateSemaphore (NULL, 0, 0x7fffffff, NULL);
 	GetSystemInfo (&info);
-	if (getenv ("MONO_THREADS_PER_CPU") != NULL) {
-		threads_per_cpu = atoi (getenv ("MONO_THREADS_PER_CPU"));
+	if (g_getenv ("MONO_THREADS_PER_CPU") != NULL) {
+		threads_per_cpu = atoi (g_getenv ("MONO_THREADS_PER_CPU"));
 		if (threads_per_cpu <= 0)
 			threads_per_cpu = THREADS_PER_CPU;
 	}
 
-	mono_max_worker_threads = threads_per_cpu * info.dwNumberOfProcessors;
+	mono_max_worker_threads = 20 + threads_per_cpu * info.dwNumberOfProcessors;
 }
 
 MonoAsyncResult *
@@ -1084,8 +1131,13 @@ async_invoke_thread (gpointer data)
 			 * so we need to set the right domain here */
 			domain = ((MonoObject *)ar)->vtable->domain;
 			if (mono_domain_set (domain, FALSE)) {
+				ASyncCall *ac;
+
 				mono_thread_push_appdomain_ref (domain);
 				mono_async_invoke (ar);
+				ac = (ASyncCall *) ar->data;
+				if (ac->msg->exc != NULL)
+					mono_unhandled_exception (ac->msg->exc);
 				mono_thread_pop_appdomain_ref ();
 			}
 			InterlockedDecrement (&busy_worker_threads);

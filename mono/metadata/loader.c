@@ -189,16 +189,19 @@ static MonoMethod *
 find_method (MonoClass *klass, MonoClass *ic, const char* name, MonoMethodSignature *sig)
 {
 	int i;
-	char *qname, *fqname;
+	char *qname, *fqname, *class_name;
+	MonoMethod *result = NULL;
 
 	if (ic) {
-		qname = g_strconcat (ic->name, ".", name, NULL); 
+		class_name = mono_class_get_name_full (ic, FALSE, FALSE, FALSE);
+
+		qname = g_strconcat (class_name, ".", name, NULL); 
 		if (ic->name_space && ic->name_space [0])
-			fqname = g_strconcat (ic->name_space, ".", ic->name, ".", name, NULL);
+			fqname = g_strconcat (ic->name_space, ".", class_name, ".", name, NULL);
 		else
 			fqname = NULL;
 	} else
-		qname = fqname = NULL;
+		class_name = qname = fqname = NULL;
 
 	while (klass) {
 		mono_class_setup_methods (klass);
@@ -210,11 +213,15 @@ find_method (MonoClass *klass, MonoClass *ic, const char* name, MonoMethodSignat
 				continue;
 
 			if (sig->call_convention == MONO_CALL_VARARG) {
-				if (mono_metadata_signature_vararg_match (sig, mono_method_signature (m)))
-					return m;
+				if (mono_metadata_signature_vararg_match (sig, mono_method_signature (m))) {
+					result = m;
+					goto out;
+				}
 			} else {
-				if (mono_metadata_signature_equal (sig, mono_method_signature (m)))
-					return m;
+				if (mono_metadata_signature_equal (sig, mono_method_signature (m))) {
+					result = m;
+					goto out;
+				}
 			}
 		}
 
@@ -224,7 +231,11 @@ find_method (MonoClass *klass, MonoClass *ic, const char* name, MonoMethodSignat
 		klass = klass->parent;
 	}
 
-	return NULL;
+ out:
+	g_free (class_name);
+	g_free (fqname);
+	g_free (qname);
+	return result;
 }
 
 /*
@@ -236,7 +247,7 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 	int table = mono_metadata_token_table (token);
 	int idx = mono_metadata_token_index (token);
 	guint32 cols [MONO_MEMBERREF_SIZE];
-	MonoMethodSignature *sig;
+	MonoMethodSignature *sig, *prev_sig;
 	const char *ptr;
 
 	/* !table is for wrappers: we should really assign their own token to them */
@@ -259,13 +270,26 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 		/* FIXME: This might be incorrect for vararg methods */
 		return mono_method_signature (method);
 
-	if (!(sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (token)))) {
+	mono_loader_lock ();
+	sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (token));
+	mono_loader_unlock ();
+	if (!sig) {
 		mono_metadata_decode_row (&image->tables [MONO_TABLE_MEMBERREF], idx-1, cols, MONO_MEMBERREF_SIZE);
 	
 		ptr = mono_metadata_blob_heap (image, cols [MONO_MEMBERREF_SIGNATURE]);
 		mono_metadata_decode_blob_size (ptr, &ptr);
 		sig = mono_metadata_parse_method_signature_full (image, context, 0, ptr, NULL);
-		g_hash_table_insert (image->memberref_signatures, GUINT_TO_POINTER (token), sig);
+
+		mono_loader_lock ();
+		prev_sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (token));
+		if (prev_sig) {
+			/* Somebody got in before us */
+			/* FIXME: Free sig */
+			sig = prev_sig;
+		}
+		else
+			g_hash_table_insert (image->memberref_signatures, GUINT_TO_POINTER (token), sig);
+		mono_loader_unlock ();
 	}
 
 	sig = mono_class_inflate_generic_signature (image, sig, context);

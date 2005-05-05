@@ -1,3 +1,85 @@
+2005-04-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* events.c: calling Set on AutoResetEvent several times has the same
+	effect as calling it only once if no thread is waiting for it.
+
+2005-04-29  Dick Porter  <dick@ximian.com>
+
+	* processes.c (EnumProcesses): Use a GArray instead of a GPtrArray
+	now it's storing pids not handles, also fixes memory leak caused
+	by unclear glib documentation.
+
+	* sockets.c (WSACleanup): Remove unused variable
+
+2005-04-29  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_check_share_by_pid): For systems that
+	don't have file descriptor info in /proc check that the original
+	opener of a file is still there, if a share violation would
+	otherwise happen.
+
+2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c:
+	* handles-private.h: added _wapi_handle_forecch that loops through all
+	the handles and call a callback function when a handle of the given
+	type is found.
+
+	* sockets.c: no need to keep open sockets in an array, as we have them 
+	in the handles structure.
+
+	Fixes bug #74755.
+
+2005-04-28  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Cope with handles that are only around for as long
+	as the search is running.  If we're searching for process handles,
+	check to see if the process is still running and signal it if not.
+
+	* handles.c (_wapi_search_handle): Search in the shared space as
+	well.  Fixed bug 74752.
+
+	* mutexes.c:
+	* handles.c (_wapi_handle_new_from_offset):
+	_wapi_handle_new_for_existing_ns () was doing exactly the same as
+	this, so deleted it.
+
+2005-04-26  Dick Porter  <dick@ximian.com>
+
+	* handles.c: Fix stupid thinko where if a new shared handle is
+	created but a collection was needed to free some space, it
+	returned an error anyway.  Should fix the messages shown in bug
+	74659.
+
+2005-04-25  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_check_share): Only consider mono
+	processes when looking to see if a file is still being held open,
+	while checking share permissions.
+
+2005-04-25  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: 
+	* wapi-private.h (struct _WapiHandleOps): 
+	* handles.c (_wapi_handle_unref): When destroying handles, save
+	the handle data and call the close function only after the array
+	slot has been cleared.  This prevents race conditions with file
+	descriptors, fixing bug 74713.
+
+	* mutexes.c: Delete the handle close functions, they didn't do
+	anything anyway
+
+	* error.c (_wapi_get_win32_file_error): Add a mapping for EINTR so
+	the "Unknown error" g_warning doesn't get displayed.
+
+2005-04-25  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* threads.c: Make thread handles process-private for now to take
+	some of the space pressure off the shared memory, while I work on
+	a real fix.
+
 2005-04-21  Dick Porter  <dick@ximian.com>
 
 	* handles.c (_wapi_handle_check_share): Make sure there is a "fd"
