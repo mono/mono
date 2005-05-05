@@ -1,3 +1,7 @@
+2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_load_reference): Fix warning.
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: changed the default number of threads per cpu. From now
