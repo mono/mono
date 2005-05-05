@@ -1,3 +1,8 @@
+2005-05-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* mini.c: Re-enabled runtime cleanup, since running threads should
+	now properly stop when exiting.
+
 2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-codegen.c: New file contaning the arch-independent local
