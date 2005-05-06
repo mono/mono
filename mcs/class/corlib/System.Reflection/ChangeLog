@@ -1,3 +1,7 @@
+2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeData.cs MethodBody.cs: Remove CLSCompliant (false) attributes.
+
 2004-05-03  Lluis Sanchez  <lluis@ximian.com>
 
 	* Assembly.cs: Don't remove version and culture information from
