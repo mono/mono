@@ -1,3 +1,8 @@
+2005-05-06  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Add ArgumentsObject.cs to the build is used on code generated
+	when the implicit arguments object is used inside a method.
+
 2005-05-03  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Microsoft.JScript.dll.sources: IWrappedMember.cs,

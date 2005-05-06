@@ -4,6 +4,7 @@ Microsoft.JScript/ast.cs
 Microsoft.JScript/ASTList.cs
 Microsoft.JScript/ActivationObject.cs
 Microsoft.JScript/ActiveXObjectConstructor.cs
+Microsoft.JScript/ArgumentsObject.cs
 Microsoft.JScript/ArrayConstructor.cs
 Microsoft.JScript/ArrayLiteral.cs
 Microsoft.JScript/ArrayObject.cs
