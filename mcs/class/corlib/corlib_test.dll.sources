@@ -266,6 +266,7 @@ System.Text/UTF8EncodingTest.cs
 System.Threading/AutoResetEventTest.cs
 System.Threading/CompressedStackTest.cs
 System.Threading/ExecutionContextTest.cs
+System.Threading/MonitorTest.cs
 System.Threading/MutexTest.cs
 System.Threading/ThreadTest.cs
 System.Threading/ReaderWriterLockTest.cs

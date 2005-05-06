@@ -1,3 +1,7 @@
+2005-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonitorTest.cs: a pair of tests for Monitor.
+
 2005-04-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AutoResetEventTest.cs: test for AutoResetEvent.
