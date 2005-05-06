@@ -1,3 +1,17 @@
+2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/CircleHotSpot.cs
+		System.Web.UI.WebControls/HotSpot.cs
+		System.Web.UI.WebControls/HotSpotCollection.cs
+		System.Web.UI.WebControls/ImageMap.cs
+		System.Web.UI.WebControls/PolygonHotSpot.cs
+		System.Web.UI.WebControls/RectangleHotSpot.cs
+		System.Web.UI.WebControls/Wizard.cs
+		System.Web.UI.WebControls/WizardStep.cs
+		System.Web.UI.WebControls/WizardStepBase.cs
+		System.Web.UI.WebControls/WizardStepCollection.cs
+
 2005-05-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:

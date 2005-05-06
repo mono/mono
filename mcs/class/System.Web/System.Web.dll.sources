@@ -276,6 +276,7 @@ System.Web.UI.WebControls/CalendarSelectionMode.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxField.cs
 System.Web.UI.WebControls/CheckBoxList.cs
+System.Web.UI.WebControls/CircleHotSpot.cs
 System.Web.UI.WebControls/CollectionDataSource.cs
 System.Web.UI.WebControls/Content.cs
 System.Web.UI.WebControls/ContentControlBuilder.cs
@@ -418,6 +419,8 @@ System.Web.UI.WebControls/HierarchicalDataBoundControl.cs
 System.Web.UI.WebControls/HiddenField.cs
 System.Web.UI.WebControls/HorizontalAlign.cs
 System.Web.UI.WebControls/HorizontalAlignConverter.cs
+System.Web.UI.WebControls/HotSpot.cs
+System.Web.UI.WebControls/HotSpotCollection.cs
 System.Web.UI.WebControls/HotSpotMode.cs
 System.Web.UI.WebControls/HyperLink.cs
 System.Web.UI.WebControls/HyperLinkColumn.cs
@@ -433,6 +436,7 @@ System.Web.UI.WebControls/ImageAlign.cs
 System.Web.UI.WebControls/ImageButton.cs
 System.Web.UI.WebControls/ImageField.cs
 System.Web.UI.WebControls/ImageFieldMode.cs
+System.Web.UI.WebControls/ImageMap.cs
 System.Web.UI.WebControls/ImageMapEventArgs.cs
 System.Web.UI.WebControls/ImageMapEventHandler.cs
 System.Web.UI.WebControls/Label.cs
@@ -496,10 +500,12 @@ System.Web.UI.WebControls/ParameterCollection.cs
 System.Web.UI.WebControls/PathDirection.cs
 System.Web.UI.WebControls/PlaceHolder.cs
 System.Web.UI.WebControls/PlaceHolderControlBuilder.cs
+System.Web.UI.WebControls/PolygonHotSpot.cs
 System.Web.UI.WebControls/QueryStringParameter.cs
 System.Web.UI.WebControls/RadioButton.cs
 System.Web.UI.WebControls/RadioButtonList.cs
 System.Web.UI.WebControls/RangeValidator.cs
+System.Web.UI.WebControls/RectangleHotSpot.cs
 System.Web.UI.WebControls/RegularExpressionValidator.cs
 System.Web.UI.WebControls/RepeatDirection.cs
 System.Web.UI.WebControls/RepeatInfo.cs
@@ -584,8 +590,12 @@ System.Web.UI.WebControls/View.cs
 System.Web.UI.WebControls/ViewCollection.cs
 System.Web.UI.WebControls/WebColorConverter.cs
 System.Web.UI.WebControls/WebControl.cs
+System.Web.UI.WebControls/Wizard.cs
 System.Web.UI.WebControls/WizardNavigationEventArgs.cs
 System.Web.UI.WebControls/WizardNavigationEventHandler.cs
+System.Web.UI.WebControls/WizardStep.cs
+System.Web.UI.WebControls/WizardStepBase.cs
+System.Web.UI.WebControls/WizardStepCollection.cs
 System.Web.UI.WebControls/WizardStepType.cs
 System.Web.UI.WebControls/Xml.cs
 System.Web.UI.WebControls/XmlBuilder.cs
