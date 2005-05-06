@@ -1,3 +1,8 @@
+2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_image_fill_module_table): Initialize the
+	GENERATION field as well.
+
 2005-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* monitor.c: ignore calls to Monitor.Exit even if no one ever called
