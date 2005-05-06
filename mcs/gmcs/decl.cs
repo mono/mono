@@ -458,7 +458,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
 		/// </summary>
-		public override bool IsClsCompliaceRequired (DeclSpace container)
+		public override bool IsClsComplianceRequired (DeclSpace container)
 		{
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected virtual bool VerifyClsCompliance (DeclSpace ds)
 		{
-			if (!IsClsCompliaceRequired (ds)) {
+			if (!IsClsComplianceRequired (ds)) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly (ds))
 						Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
@@ -2321,7 +2321,7 @@ namespace Mono.CSharp {
 
 				// TODO: now we are ignoring CLSCompliance(false) on method from other assembly which is buggy.
 				// However it is exactly what csc does.
-				if (md != null && !md.IsClsCompliaceRequired (method.Parent))
+				if (md != null && !md.IsClsComplianceRequired (method.Parent))
 					continue;
  		
  				Report.SymbolRelatedToPreviousError (entry.Member);

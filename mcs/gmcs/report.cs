@@ -326,6 +326,8 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
+			if (type.IsGenericInstance)
+				type = type.GetGenericTypeDefinition ();
 			if (type is TypeBuilder) {
 				DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
 				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));

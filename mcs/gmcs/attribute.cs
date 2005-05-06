@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract AttributeTargets AttributeTargets { get; }
 
-		public abstract bool IsClsCompliaceRequired (DeclSpace ds);
+		public abstract bool IsClsComplianceRequired (DeclSpace ds);
 
 		/// <summary>
 		/// Gets list of valid attribute targets for explicit target declaration.
@@ -1066,7 +1066,7 @@ namespace Mono.CSharp {
 				return;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
-			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
+			if (ias.IsClsComplianceRequired (ec.DeclSpace)) {
 				if (Arguments == null)
 					return;
 
@@ -1576,7 +1576,7 @@ namespace Mono.CSharp {
 				if (!(de.Key is MemberName))
 					throw new InternalErrorException ("");
 				DeclSpace decl = (DeclSpace) de.Value;
-				if (!decl.IsClsCompliaceRequired (decl))
+				if (!decl.IsClsComplianceRequired (decl))
 					continue;
 
 				string lcase = decl.Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
@@ -1606,13 +1606,14 @@ namespace Mono.CSharp {
 
 		static bool AnalyzeTypeCompliance (Type type)
 		{
+			if (type.IsGenericInstance)
+				type = type.GetGenericTypeDefinition ();
 			DeclSpace ds = TypeManager.LookupDeclSpace (type);
-			if (ds != null) {
-				return ds.IsClsCompliaceRequired (ds.Parent);
-			}
+			if (ds != null)
+				return ds.IsClsComplianceRequired (ds.Parent);
 
-			if (type.IsGenericParameter || type.IsGenericInstance)
-				return false;
+			if (type.IsGenericParameter)
+				return true;
 
 			object[] CompliantAttribute = type.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
 			if (CompliantAttribute.Length == 0) 

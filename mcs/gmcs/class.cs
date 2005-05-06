@@ -2189,7 +2189,7 @@ namespace Mono.CSharp {
 			Emit ();
 
 			if (instance_constructors != null) {
-				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsCompliaceRequired (this)) {
+				if (TypeBuilder.IsSubclassOf (TypeManager.attribute_type) && RootContext.VerifyClsCompliance && IsClsComplianceRequired (this)) {
 					bool has_compliant_args = false;
 
 					foreach (Constructor c in instance_constructors) {
@@ -2440,7 +2440,7 @@ namespace Mono.CSharp {
 				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
 
-			if (!Parent.IsClsCompliaceRequired (ds)) {
+			if (!Parent.IsClsComplianceRequired (ds)) {
 				Report.Error (3018, Location, "'{0}' cannot be marked as CLS-Compliant because it is a member of non CLS-Compliant type '{1}'", 
 					GetSignatureForError (), Parent.GetSignatureForError ());
 			}
@@ -2460,7 +2460,7 @@ namespace Mono.CSharp {
 
 			foreach (DictionaryEntry entry in defined_names) {
 				MemberCore mc = (MemberCore)entry.Value;
-				if (!mc.IsClsCompliaceRequired (this))
+				if (!mc.IsClsComplianceRequired (this))
 					continue;
 
 				string name = (string)entry.Key;
@@ -3675,7 +3675,7 @@ namespace Mono.CSharp {
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds)) {
-				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsCompliaceRequired (ds)) {
+				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsComplianceRequired (ds)) {
 					Report.Error (3011, Location, "'{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
@@ -4973,7 +4973,7 @@ namespace Mono.CSharp {
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError (TypeContainer tc);
 		bool IsExcluded (EmitContext ec);
-		bool IsClsCompliaceRequired (DeclSpace ds);
+		bool IsClsComplianceRequired (DeclSpace ds);
 		void SetMemberIsUsed ();
 	}
 
@@ -5633,7 +5633,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (IsInterface && HasClsCompliantAttribute && ds.IsClsCompliaceRequired (ds)) {
+			if (IsInterface && HasClsCompliantAttribute && ds.IsClsComplianceRequired (ds)) {
 				Report.Error (3010, Location, "'{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
 			}
 			return false;
@@ -6370,7 +6370,7 @@ namespace Mono.CSharp {
 			method_data.Emit (container, this);
 		}
 
-		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired(DeclSpace ds)
 		{
 			return false;
 		}
@@ -6586,9 +6586,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool IsClsCompliaceRequired(DeclSpace ds)
+			public override bool IsClsComplianceRequired(DeclSpace ds)
 			{
-				return method.IsClsCompliaceRequired (ds);
+				return method.IsClsComplianceRequired (ds);
 			}
 
 			public InternalParameters ParameterInfo 
@@ -7306,9 +7306,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool IsClsCompliaceRequired(DeclSpace ds)
+			public override bool IsClsComplianceRequired(DeclSpace ds)
 			{
-				return method.IsClsCompliaceRequired (ds);
+				return method.IsClsComplianceRequired (ds);
 			}
 
 			public MethodBuilder Define (TypeContainer container, InternalParameters ip)
