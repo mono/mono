@@ -379,6 +379,9 @@ namespace System.Web.UI
 				} catch (Exception e) {
 					ThrowParseException ("Assembly " + name + " not found", e);
 				}
+
+				if (assembly == null)
+					ThrowParseException ("Assembly " + name + " not found", null);
 			}
 
 			AddAssembly (assembly, true);
