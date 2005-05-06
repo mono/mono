@@ -1,3 +1,13 @@
+2005-05-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Microsoft.VisualBasic.VBUtils.txt: Rename from ...
+	* Microsoft.VisualBasic/VBUtils.txt: ... this.
+	* Makefile (TXT_RES): Update.
+	(SUBDIRS): Remove.
+	(LIBRARY_NEEDS_POSTPROCESSING): Define.
+	(the_il, the_lib): New.  Move rules from fixup/Makefile.
+	* fixup/Makefile: Remove.
+
 2005-04-25  Raja R Harinath  <rharinath@novell.com>
 
 	* fixup/Makefile (ILDISASM): Remove.
