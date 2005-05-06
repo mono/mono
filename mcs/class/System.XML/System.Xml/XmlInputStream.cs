@@ -31,12 +31,12 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Xml;
+using System.Runtime.InteropServices;
 
 namespace System.Xml
 {
 	#region XmlStreamReader
-	internal class XmlStreamReader : StreamReader
+	internal class XmlStreamReader : NonBlockingStreamReader
 	{
 		XmlInputStream input;
 
@@ -64,6 +64,219 @@ namespace System.Xml
 			}
 		}
 
+	}
+	#endregion
+
+	#region NonBlockingStreamReader
+	// mostly copied from StreamReader.
+	internal class NonBlockingStreamReader : TextReader {
+
+		const int DefaultBufferSize = 1024;
+		const int DefaultFileBufferSize = 4096;
+		const int MinimumBufferSize = 128;
+
+		//
+		// The input buffer
+		//
+		byte [] input_buffer;
+
+		//
+		// The decoded buffer from the above input buffer
+		//
+		char [] decoded_buffer;
+
+		//
+		// Decoded bytes in decoded_buffer.
+		//
+		int decoded_count;
+
+		//
+		// Current position in the decoded_buffer
+		//
+		int pos;
+
+		//
+		// The buffer size that we are using
+		//
+		int buffer_size;
+
+		Encoding encoding;
+		Decoder decoder;
+
+		Stream base_stream;
+		bool mayBlock;
+
+		public NonBlockingStreamReader(Stream stream, Encoding encoding)
+		{
+			int buffer_size = DefaultBufferSize;
+			base_stream = stream;
+			input_buffer = new byte [buffer_size];
+			this.buffer_size = buffer_size;
+			this.encoding = encoding;
+			decoder = encoding.GetDecoder ();
+
+			decoded_buffer = new char [encoding.GetMaxCharCount (buffer_size)];
+			decoded_count = 0;
+			pos = 0;
+		}
+
+		public override void Close ()
+		{
+			Dispose (true);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing && base_stream != null)
+				base_stream.Close ();
+			
+			input_buffer = null;
+			decoded_buffer = null;
+			encoding = null;
+			decoder = null;
+			base_stream = null;
+			base.Dispose (disposing);
+		}
+
+		public void DiscardBufferedData ()
+		{
+			pos = decoded_count = 0;
+			mayBlock = false;
+		}
+		
+		// the buffer is empty, fill it again
+		private int ReadBuffer ()
+		{
+			pos = 0;
+			int cbEncoded = 0;
+
+			// keep looping until the decoder gives us some chars
+			decoded_count = 0;
+			int parse_start = 0;
+			do	
+			{
+				cbEncoded = base_stream.Read (input_buffer, 0, buffer_size);
+				
+				if (cbEncoded == 0)
+					return 0;
+
+				mayBlock = (cbEncoded < buffer_size);
+				decoded_count += decoder.GetChars (input_buffer, parse_start, cbEncoded, decoded_buffer, 0);
+				parse_start = 0;
+			} while (decoded_count == 0);
+
+			return decoded_count;
+		}
+
+		public override int Peek ()
+		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			if (pos >= decoded_count && (mayBlock || ReadBuffer () == 0))
+				return -1;
+
+			return decoded_buffer [pos];
+		}
+
+		public override int Read ()
+		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			if (pos >= decoded_count && ReadBuffer () == 0)
+				return -1;
+
+			return decoded_buffer [pos++];
+		}
+
+		public override int Read ([In, Out] char[] dest_buffer, int index, int count)
+		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			if (dest_buffer == null)
+				throw new ArgumentNullException ("dest_buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (index > dest_buffer.Length - count)
+				throw new ArgumentException ("index + count > dest_buffer.Length");
+
+			int chars_read = 0;
+//			while (count > 0)
+			{
+				if (pos >= decoded_count && ReadBuffer () == 0)
+					return chars_read > 0 ? chars_read : 0;
+
+				int cch = Math.Min (decoded_count - pos, count);
+				Array.Copy (decoded_buffer, pos, dest_buffer, index, cch);
+				pos += cch;
+				index += cch;
+				count -= cch;
+				chars_read += cch;
+			}
+			return chars_read;
+		}
+
+		public override string ReadLine()
+		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			
+			bool foundCR = false;
+			StringBuilder text = new StringBuilder ();
+
+			while (true) {
+				int c = Read ();
+
+				if (c == -1) {				// end of stream
+					if (text.Length == 0)
+						return null;
+
+					if (foundCR)
+						text.Length--;
+
+					break;
+				}
+
+				if (c == '\n') {			// newline
+					if ((text.Length > 0) && (text [text.Length - 1] == '\r'))
+						text.Length--;
+
+					foundCR = false;
+					break;
+				} else if (foundCR) {
+					pos--;
+					text.Length--;
+					break;
+				}
+
+				if (c == '\r')
+					foundCR = true;
+					
+
+				text.Append ((char) c);
+			}
+
+			return text.ToString ();
+		}
+
+		public override string ReadToEnd()
+		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+
+			StringBuilder text = new StringBuilder ();
+
+			int size = decoded_buffer.Length;
+			char [] buffer = new char [size];
+			int len;
+			
+			while ((len = Read (buffer, 0, size)) != 0)
+				text.Append (buffer, 0, len);
+
+			return text.ToString ();
+		}
 	}
 	#endregion
 

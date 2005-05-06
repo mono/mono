@@ -1,3 +1,8 @@
+2005-05-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlInputStream.cs : Now XmlStreamReader uses non-blocking TextReader
+	  that is mostly copied from StreamReader. It should fix bug #74161.
+
 2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeReader2.cs, XmlTextReader2.cs, XmlValidatingReader.cs,
