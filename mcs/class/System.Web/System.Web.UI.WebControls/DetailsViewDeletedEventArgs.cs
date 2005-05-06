@@ -39,7 +39,6 @@ namespace System.Web.UI.WebControls
 		private int rowsAffected;
 		private Exception e;
 		private bool exceptionHandled;
-		private bool keepEditMode;
 		private IOrderedDictionary keys;
 		private IOrderedDictionary values;
 		

@@ -1,3 +1,40 @@
+2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TreeNode.cs:
+	* TreeView.cs:
+	* Menu.cs: Implemented some new properties from beta 2.
+	
+	* DataControlButton.cs: Render the ControlStyle if it
+	is not empty.
+	
+	* UnitConverter.cs:
+	* FontUnitConverter.cs: Improved the conversion to InstanceDescriptor.
+	It will now generate an object creation, instead of a Parse call. 
+	
+	* GridViewCommandEventArgs.cs: Added missing property.
+	* SubMenuStyleCollection.cs: This class is not sealed.
+	* MultiView.cs: Set Visible=false to all views that are not
+	shown. This ensures that it's view state is saved. 
+	
+	* BaseDataBoundControl.cs:
+	* GridViewDeletedEventArgs.cs: Minor api fixes.
+	
+	* FormViewDeleteEventArgs.cs:
+	* DetailsViewDeletedEventArgs.cs:
+	* ListControl.cs: Fix warnings.
+	
+	* CircleHotSpot.cs
+	* HotSpot.cs
+	* HotSpotCollection.cs
+	* ImageMap.cs
+	* PolygonHotSpot.cs
+	* RectangleHotSpot.cs
+	* WizardStepCollection.cs : Implemented.
+	
+	* WizardStep.cs
+	* WizardStepBase.cs
+	* Wizard.cs: Initial implementation.
+
 2005-05-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataControlField.cs:

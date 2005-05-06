@@ -50,7 +50,11 @@ namespace System.Web.UI.WebControls
 		string path;
 		int depth = -1;
 		
+		bool dataBound;
+		string dataPath;
+		object dataItem;
 		IHierarchyData hierarchyData;
+
 		bool gotBinding;
 		TreeNodeBinding binding;
 		PropertyDescriptorCollection boundProperties;
@@ -133,15 +137,15 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (false)]
 		[Browsable (false)]
 		public bool DataBound {
-			get { return hierarchyData != null; }
+			get { return dataBound; }
 		}
 		
 		[DefaultValue (null)]
 		[Browsable (false)]
 		public object DataItem {
 			get {
-				if (hierarchyData == null) throw new InvalidOperationException ("TreeNode is not data bound.");
-				return hierarchyData.Item;
+				if (!dataBound) throw new InvalidOperationException ("TreeNode is not data bound.");
+				return dataItem;
 			}
 		}
 		
@@ -150,8 +154,8 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public string DataPath {
 			get {
-				if (hierarchyData == null) throw new InvalidOperationException ("TreeNode is not data bound.");
-				return hierarchyData.Path;
+				if (!dataBound) throw new InvalidOperationException ("TreeNode is not data bound.");
+				return dataPath;
 			}
 		}
 		
@@ -366,13 +370,13 @@ namespace System.Web.UI.WebControls
 						else if (bin.Text != "")
 							text = bin.Text;
 						else
-							text = hierarchyData.ToString ();
+							text = GetDefaultBoundText ();
 							
 						if (bin.FormatString.Length != 0)
 							text = string.Format (bin.FormatString, text);
 						return text;
 					}
-					return hierarchyData.ToString ();
+					return GetDefaultBoundText ();
 				}
 				return "";
 			}
@@ -416,7 +420,7 @@ namespace System.Web.UI.WebControls
 						if (bin.Value != "")
 							return bin.Value;
 					}
-					return hierarchyData.ToString ();
+					return GetDefaultBoundText ();
 				}
 				return "";
 			}
@@ -615,7 +619,7 @@ namespace System.Web.UI.WebControls
 		
 		public object Clone ()
 		{
-			TreeNode nod = new TreeNode ();
+			TreeNode nod = tree != null ? tree.CreateNode () : new TreeNode ();
 			foreach (DictionaryEntry e in ViewState)
 				nod.ViewState [(string)e.Key] = e.Value;
 				
@@ -628,8 +632,40 @@ namespace System.Web.UI.WebControls
 		internal void Bind (IHierarchyData hierarchyData)
 		{
 			this.hierarchyData = hierarchyData;
+			dataBound = true;
+			dataPath = hierarchyData.Path;
+			dataItem = hierarchyData.Item;
 		}
 		
+		internal void SetDataItem (object item)
+		{
+			dataItem = item;
+		}
+		
+		internal void SetDataPath (string path)
+		{
+			dataPath = path;
+		}
+		
+		internal void SetDataBound (bool bound)
+		{
+			dataBound = bound;
+		}
+		
+		string GetDefaultBoundText ()
+		{
+			if (hierarchyData != null) return hierarchyData.ToString ();
+			else if (dataItem != null) return dataItem.ToString ();
+			else return string.Empty;
+		}
+		
+		string GetDataItemType ()
+		{
+			if (hierarchyData != null) return hierarchyData.Type;
+			else if (dataItem != null) return dataItem.GetType().ToString ();
+			else return string.Empty;
+		}
+				
 		internal bool IsParentNode {
 			get { return ChildNodes.Count > 0 && Parent != null; }
 		}
@@ -646,35 +682,61 @@ namespace System.Web.UI.WebControls
 		{
 			if (tree == null) return null;
 			if (gotBinding) return binding;
-			binding = tree.FindBindingForNode (hierarchyData.Type, Depth);
+			binding = tree.FindBindingForNode (GetDataItemType (), Depth);
 			gotBinding = true;
 			return binding;
 		}
 		
 		object GetBoundPropertyValue (string name)
 		{
-			if (boundProperties == null)
-				boundProperties = TypeDescriptor.GetProperties (hierarchyData);
+			if (boundProperties == null) {
+				if (hierarchyData != null)
+					boundProperties = TypeDescriptor.GetProperties (hierarchyData);
+				else
+					boundProperties = TypeDescriptor.GetProperties (dataItem);
+			}
 			
 			PropertyDescriptor prop = boundProperties.Find (name, true);
 			if (prop == null)
 				throw new InvalidOperationException ("Property '" + name + "' not found in data bound item");
-			return prop.GetValue (hierarchyData);
+				
+			if (hierarchyData != null)
+				return prop.GetValue (hierarchyData);
+			else
+				return prop.GetValue (dataItem);
 		}
 
 		void FillBoundChildren ()
 		{
 			nodes = new TreeNodeCollection (this);
-			if (!hierarchyData.HasChildren) return;
+			if (hierarchyData == null || !hierarchyData.HasChildren) return;
 			if (tree.MaxDataBindDepth != -1 && Depth >= tree.MaxDataBindDepth) return;
 
 			IHierarchicalEnumerable e = hierarchyData.GetChildren ();
 			foreach (object obj in e) {
 				IHierarchyData hdata = e.GetHierarchyData (obj);
-				TreeNode node = new TreeNode ();
+				TreeNode node = tree != null ? tree.CreateNode () : new TreeNode ();
 				node.Bind (hdata);
 				nodes.Add (node);
 			}
+		}
+		
+		internal void BeginRenderText (HtmlTextWriter writer)
+		{
+			RenderPreText (writer);
+		}
+		
+		internal void EndRenderText (HtmlTextWriter writer)
+		{
+			RenderPostText (writer);
+		}
+		
+		protected virtual void RenderPreText (HtmlTextWriter writer)
+		{
+		}
+		
+		protected virtual void RenderPostText (HtmlTextWriter writer)
+		{
 		}
 	}
 }

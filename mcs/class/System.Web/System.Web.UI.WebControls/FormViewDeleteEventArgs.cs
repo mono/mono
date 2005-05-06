@@ -38,8 +38,6 @@ namespace System.Web.UI.WebControls
 	public class FormViewDeleteEventArgs : CancelEventArgs
 	{
 		private int rowIndex;
-		private Exception e;
-		private bool exceptionHandled;
 		private IOrderedDictionary keys;
 		private IOrderedDictionary values;
 		

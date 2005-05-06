@@ -1,10 +1,10 @@
 //
-// System.Web.UI.WebControls.GridViewCommandEventArgs.cs
+// System.Web.UI.WebControls.WizardStep
 //
 // Authors:
-//   Sanjay Gupta (gsanjay@novell.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -30,33 +30,17 @@
 
 #if NET_2_0
 
+using System;
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
-	public class GridViewCommandEventArgs : CommandEventArgs
+//	[ControlBuilderAttribute (typeof(WizardStepControlBuilder))]
+	[ToolboxItemAttribute ("")]
+	[BindableAttribute (false)]
+	public sealed class WizardStep: WizardStepBase 
 	{
-		private object source;
-		private GridViewRow row;
-		
-		public GridViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
-		{
-			this.source = source;
-			this.row = null;
-		}
-		
-		public GridViewCommandEventArgs (GridViewRow row, object source, CommandEventArgs arguments) : base (arguments)
-		{
-			this.source = source;
-			this.row = row;
-		}
-		
-		public object CommandSource {
-			get { return source; }
-		}
-		
-		internal GridViewRow Row {
-			get { return row; }
-		}
-	}
+	} 
 }
 
 #endif

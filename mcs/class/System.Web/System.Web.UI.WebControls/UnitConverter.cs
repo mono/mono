@@ -99,13 +99,14 @@ namespace System.Web.UI.WebControls
 #if NET_2_0
 			if (destinationType == typeof (InstanceDescriptor) && value is Unit) {
 				Unit s = (Unit) value;
-				MethodInfo met = typeof(Unit).GetMethod ("Parse", new Type[] {typeof(string)});
-				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+				ConstructorInfo ci = typeof(Unit).GetConstructor (new Type[] { typeof(double), typeof(UnitType) });
+				return new InstanceDescriptor (ci, new object[] { s.Value, s.Type });
 			}
 
 			if (destinationType == typeof (InstanceDescriptor) && value is string) {
-				MethodInfo met = typeof(Unit).GetMethod ("Parse", new Type[] {typeof(string)});
-				return new InstanceDescriptor (met, new object[] {value});
+				Unit s = Unit.Parse ((string)value, CultureInfo.InvariantCulture);
+				ConstructorInfo ci = typeof(Unit).GetConstructor (new Type[] { typeof(double), typeof(UnitType) });
+				return new InstanceDescriptor (ci, new object[] { s.Value, s.Type });
 			}
 #endif
 			

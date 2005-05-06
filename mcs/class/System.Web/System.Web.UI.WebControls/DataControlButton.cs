@@ -112,6 +112,8 @@ namespace System.Web.UI.WebControls
 						callScript = ccner.GetCallbackScript (this, CommandName + "$" + CommandArgument);
 				}
 			
+				ControlStyle.AddAttributesToRender (writer);
+				
 				if (ButtonType == ButtonType.Link || ButtonType == ButtonType.Image)
 				{
 					if (ImageUrl.Length > 0) {
@@ -153,6 +155,7 @@ namespace System.Web.UI.WebControls
 				}
 			} else {
 				if (ImageUrl.Length > 0) {
+					ControlStyle.AddAttributesToRender (writer);
 					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
 					if (Text.Length > 0)
 						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
@@ -160,7 +163,13 @@ namespace System.Web.UI.WebControls
 					writer.RenderEndTag ();
 				}
 				else {
-					writer.Write (Text);
+					if (!ControlStyle.IsEmpty) {
+						ControlStyle.AddAttributesToRender (writer);
+						writer.RenderBeginTag (HtmlTextWriterTag.Span);
+						writer.Write (Text);
+						writer.RenderEndTag ();
+					} else
+						writer.Write (Text);
 				}
 			}
 		}

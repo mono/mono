@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls
 				{
 					return FontUnit.Empty;
 				}
-				return FontUnit.Parse(val, culture);
+				return FontUnit.Parse(val, CultureInfo.InvariantCulture);
 			}
 			return base.ConvertFrom(context, culture, value);
 		}
@@ -93,18 +93,23 @@ namespace System.Web.UI.WebControls
 				{
 					return String.Empty;
 				}
-				return val.ToString(culture);
+				return val.ToString (culture);
 			}
 #if NET_2_0
-			if (destinationType == typeof (InstanceDescriptor) && value is FontUnit) {
-				FontUnit s = (FontUnit) value;
-				MethodInfo met = typeof(FontUnit).GetMethod ("Parse", new Type[] {typeof(string)});
-				return new InstanceDescriptor (met, new object[] {s.ToString ()});
-			}
+			if (destinationType == typeof (InstanceDescriptor)) {
+				if (value is string)
+					value = FontUnit.Parse ((string)value, CultureInfo.InvariantCulture);
 
-			if (destinationType == typeof (InstanceDescriptor) && value is string) {
-				MethodInfo met = typeof(FontUnit).GetMethod ("Parse", new Type[] {typeof(string)});
-				return new InstanceDescriptor (met, new object[] {value});
+				if (value is FontUnit) {
+					FontUnit s = (FontUnit) value;
+					if (s.Type == FontSize.AsUnit) {
+						ConstructorInfo ci = typeof(FontUnit).GetConstructor (new Type[] { typeof (Unit) });
+						return new InstanceDescriptor (ci, new object[] {s.Unit});
+					} else {
+						ConstructorInfo ci = typeof(FontUnit).GetConstructor (new Type[] { typeof (FontSize) });
+						return new InstanceDescriptor (ci, new object[] {s.Type});
+					}
+				}
 			}
 #endif
 			return base.ConvertTo(context, culture, value, destinationType);

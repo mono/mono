@@ -233,8 +233,9 @@ namespace System.Web.UI.WebControls
 		[WebCategory ("Data")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("Bindings for tree nodes.")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Editor ("System.Web.UI.Design.TreeViewBindingsEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	    [DefaultValueAttribute (null)]
+	    [MergablePropertyAttribute (false)]
 		public virtual TreeNodeBindingCollection DataBindings {
 			get {
 				if (dataBindings == null) {
@@ -399,10 +400,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[WebSysDescription ("The collection of nodes of the tree.")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Editor ("System.Web.UI.Design.TreeNodeCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+	    [DefaultValueAttribute (null)]
+	    [MergablePropertyAttribute (false)]
 		public virtual TreeNodeCollection Nodes {
 			get {
 				if (nodes == null) {
@@ -654,6 +655,39 @@ namespace System.Web.UI.WebControls
 			get { return HtmlTextWriterTag.Div; }
 		}
 		
+		protected internal virtual TreeNode CreateNode ()
+		{
+			return new TreeNode (this);
+		}
+		
+		public sealed override void DataBind ()
+		{
+			base.DataBind ();
+		}
+		
+		protected void SetNodeDataBound (TreeNode node, bool dataBound)
+		{
+			node.SetDataBound (dataBound);
+		}
+		
+		protected void SetNodeDataPath (TreeNode node, string dataPath)
+		{
+			node.SetDataPath (dataPath);
+		}
+		
+		protected void SetNodeDataItem (TreeNode node, object dataItem)
+		{
+			node.SetDataItem (dataItem);
+		}
+		
+		protected override void OnInit (EventArgs e)
+		{
+			if (!Page.IsPostBack && ExpandDepth != 0) {
+				foreach (TreeNode node in Nodes)
+					node.Expand (ExpandDepth - 1);
+			}
+		}
+		
 		internal void SetSelectedNode (TreeNode node, bool loading)
 		{
 			if (selectedNode == node) return;
@@ -767,7 +801,7 @@ namespace System.Web.UI.WebControls
 				((IStateManager)Nodes).LoadViewState(states[9]);
 		}
 
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			string[] args = eventArgument.Split ('|');
 			TreeNode node = FindNodeByPos (args[1]);
@@ -800,20 +834,11 @@ namespace System.Web.UI.WebControls
 			node.ToggleExpandState ();
 		}
 		
-		[MonoTODO]
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		protected virtual void RaisePostDataChangedEvent ()
 		{
-			Console.WriteLine ("LoadPostData " + postDataKey);
-			return true;
 		}
 		
-		[MonoTODO]
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
-		{
-			Console.WriteLine ("RaisePostDataChangedEvent");
-		}
-		
-		string ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
+		protected virtual string RaiseCallbackEvent (string eventArgs)
 		{
 			TreeNode node = FindNodeByPos (eventArgs);
 			ArrayList levelLines = new ArrayList ();
@@ -835,6 +860,26 @@ namespace System.Web.UI.WebControls
 			return res != "" ? res : "*";
 		}
 		
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		string ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
+		{
+			return RaiseCallbackEvent (eventArgs);
+		}
+		
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new EmptyControlCollection (this);
@@ -847,45 +892,44 @@ namespace System.Web.UI.WebControls
 			IHierarchicalEnumerable e = data.Select ();
 			foreach (object obj in e) {
 				IHierarchyData hdata = e.GetHierarchyData (obj);
-				TreeNode node = new TreeNode ();
+				TreeNode node = CreateNode ();
 				node.Bind (hdata);
 				Nodes.Add (node);
 			}
 		}
 		
-		protected override void OnLoad (EventArgs e)
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			EnsureDataBound ();
 			
-			if (!Page.IsPostBack && ExpandDepth != 0) {
-				foreach (TreeNode node in Nodes)
-					node.Expand (ExpandDepth - 1);
+			bool res = false;
+
+			if (ShowCheckBoxes != TreeNodeTypes.None) {
+				UnsetCheckStates (Nodes, postCollection);
+				SetCheckStates (postCollection);
+				res = true;
 			}
 			
-			if (Page.IsPostBack) {
-				if (ShowCheckBoxes != TreeNodeTypes.None) {
-					UnsetCheckStates (Nodes, Context.Request.Form);
-					SetCheckStates (Context.Request.Form);
+			if (EnableClientScript) {
+				string states = postCollection [ClientID + "_ExpandStates"];
+				if (states != null) {
+					string[] ids = states.Split ('|');
+					UnsetExpandStates (Nodes, ids);
+					SetExpandStates (ids);
 				}
-				
-				if (EnableClientScript) {
-					string states = Context.Request [ClientID + "_ExpandStates"];
-					if (states != null) {
-						string[] ids = states.Split ('|');
-						UnsetExpandStates (Nodes, ids);
-						SetExpandStates (ids);
-					}
-					else
-						UnsetExpandStates (Nodes, new string[0]);
-				}
+				else
+					UnsetExpandStates (Nodes, new string[0]);
+				res = true;
 			}
-			
-			base.OnLoad (e);
+			return res;
 		}
 		
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			
+			if (Page != null && Enabled)
+				Page.RegisterRequiresPostBack (this);
 			
 			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (typeof(TreeView), "TreeView.js")) {
 				string url = Page.ClientScript.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
@@ -959,6 +1003,21 @@ namespace System.Web.UI.WebControls
 			int num = Nodes.Count;
 			for (int n=0; n<num; n++)
 				RenderNode (writer, Nodes [n], 0, levelLines, n>0, n<num-1);
+		}
+		
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+		}
+		
+		public override void RenderBeginTag (HtmlTextWriter writer)
+		{
+			base.RenderBeginTag (writer);
+		}
+		
+		public override void RenderEndTag (HtmlTextWriter writer)
+		{
+			base.RenderEndTag (writer);
 		}
 		
  		void RenderNode (HtmlTextWriter writer, TreeNode node, int level, ArrayList levelLines, bool hasPrevious, bool hasNext)
@@ -1113,12 +1172,16 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute ("nowrap", "nowrap");
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
 			
+			node.BeginRenderText (writer);
+			
 			AddNodeStyle (writer, node, level);
 			if (clientExpand)
 				writer.AddAttribute ("id", GetNodeClientId (node, "txt"));
 			BeginNodeTag (writer, node, clientExpand);
 			writer.Write (node.Text);
 			writer.RenderEndTag ();	// style tag
+			
+			node.EndRenderText (writer);
 			
 			writer.RenderEndTag ();	// TD
 			

@@ -36,7 +36,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class SubMenuStyleCollection: StateManagedCollection
+	public class SubMenuStyleCollection: StateManagedCollection
 	{
 		static Type[] types = new Type[] { typeof (SubMenuStyle) };
 		

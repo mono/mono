@@ -1,10 +1,10 @@
 //
-// System.Web.UI.WebControls.GridViewCommandEventArgs.cs
+// System.Web.UI.WebControls.PolygonHotSpot.cs
 //
 // Authors:
-//   Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -30,31 +30,30 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
-	public class GridViewCommandEventArgs : CommandEventArgs
+	public sealed class PolygonHotSpot: HotSpot
 	{
-		private object source;
-		private GridViewRow row;
-		
-		public GridViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
+		public override string GetCoordinates ()
 		{
-			this.source = source;
-			this.row = null;
+			return Coordinates;
 		}
 		
-		public GridViewCommandEventArgs (GridViewRow row, object source, CommandEventArgs arguments) : base (arguments)
-		{
-			this.source = source;
-			this.row = row;
+		protected internal override string MarkupName {
+			get { return "poly"; }
 		}
 		
-		public object CommandSource {
-			get { return source; }
-		}
-		
-		internal GridViewRow Row {
-			get { return row; }
+	    [DefaultValueAttribute ("")]
+		public string Coordinates {
+			get {
+				object o = ViewState ["Coordinates"];
+				return o != null ? (string) o : string.Empty;
+			}
+			set {
+				ViewState ["Coordinates"] = value;
+			}
 		}
 	}
 }

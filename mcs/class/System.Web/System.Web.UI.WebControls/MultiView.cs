@@ -107,6 +107,8 @@ namespace System.Web.UI.WebControls
 
 				if (viewIndex != -1)
 					((View)Controls [viewIndex]).NotifyActivation (true);
+
+				UpdateViewVisibility ();
 			}
 		}
 		
@@ -152,21 +154,35 @@ namespace System.Web.UI.WebControls
 		{
 			initied = true;
 			Page.RegisterRequiresControlState (this);
-			ActiveViewIndex = initialIndex;
+			if (initialIndex != -1) {
+				ActiveViewIndex = initialIndex;
+				initialIndex = -1;
+			}
 			base.OnInit (e);
+		}
+		
+		void UpdateViewVisibility ()
+		{
+			for (int n=0; n<Views.Count; n++)
+				Views [n].Visible = (n == viewIndex);
 		}
 		
 		protected internal override void RemovedControl (Control ctl)
 		{
-			if (viewIndex >= Controls.Count)
+			if (viewIndex >= Controls.Count) {
 				viewIndex = Controls.Count - 1;
+				UpdateViewVisibility ();
+			}
 
 			base.RemovedControl (ctl);
 		}
 		
 		protected internal override void LoadControlState (object state)
 		{
-			if (state != null) viewIndex = (int)state;
+			if (state != null) {
+				viewIndex = (int)state;
+				UpdateViewVisibility ();
+			}
 			else viewIndex = -1;
 		}
 		
@@ -186,6 +202,7 @@ namespace System.Web.UI.WebControls
 		
 		protected override void Render (HtmlTextWriter writer)
 		{
+			if (!initied) viewIndex = initialIndex;
 			if (viewIndex != -1)
 				GetActiveView ().Render (writer);
 		}

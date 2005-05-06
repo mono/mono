@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 			this.exceptionHandled = false;
 		}
 		
-		public GridViewDeletedEventArgs (int affectedRows, Exception e, IOrderedDictionary keys, IOrderedDictionary values)
+		internal GridViewDeletedEventArgs (int affectedRows, Exception e, IOrderedDictionary keys, IOrderedDictionary values)
 		: this (affectedRows, e)
 		{
 			this.keys = keys;

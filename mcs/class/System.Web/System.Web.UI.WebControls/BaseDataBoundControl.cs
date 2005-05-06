@@ -100,7 +100,7 @@ namespace System.Web.UI.WebControls
 			OnDataBound (EventArgs.Empty);
 		}
 		
-		protected void EnsureDataBound ()
+		protected virtual void EnsureDataBound ()
 		{
 			if (RequiresDataBinding && IsBoundUsingDataSourceID)
 				DataBind ();

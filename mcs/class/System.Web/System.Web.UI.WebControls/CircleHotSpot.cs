@@ -1,10 +1,10 @@
 //
-// System.Web.UI.WebControls.GridViewCommandEventArgs.cs
+// System.Web.UI.WebControls.CircleHotSpot.cs
 //
 // Authors:
-//   Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -30,31 +30,52 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
-	public class GridViewCommandEventArgs : CommandEventArgs
+	public sealed class CircleHotSpot: HotSpot
 	{
-		private object source;
-		private GridViewRow row;
-		
-		public GridViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
+		public override string GetCoordinates ()
 		{
-			this.source = source;
-			this.row = null;
+			return X + "," + Y + "," + Radius;
 		}
 		
-		public GridViewCommandEventArgs (GridViewRow row, object source, CommandEventArgs arguments) : base (arguments)
-		{
-			this.source = source;
-			this.row = row;
+		protected internal override string MarkupName {
+			get { return "circle"; }
 		}
 		
-		public object CommandSource {
-			get { return source; }
+	    [DefaultValueAttribute (0)]
+		public int Radius {
+			get {
+				object o = ViewState ["Radius"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["Radius"] = value;
+			}
 		}
-		
-		internal GridViewRow Row {
-			get { return row; }
+
+	    [DefaultValueAttribute (0)]
+		public int X {
+			get {
+				object o = ViewState ["X"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["X"] = value;
+			}
+		}
+
+	    [DefaultValueAttribute (0)]
+		public int Y {
+			get {
+				object o = ViewState ["Y"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["Y"] = value;
+			}
 		}
 	}
 }

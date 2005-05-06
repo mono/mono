@@ -1,10 +1,10 @@
 //
-// System.Web.UI.WebControls.GridViewCommandEventArgs.cs
+// System.Web.UI.WebControls.RectangleHotSpot.cs
 //
 // Authors:
-//   Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -30,31 +30,63 @@
 
 #if NET_2_0
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
-	public class GridViewCommandEventArgs : CommandEventArgs
+	public sealed class RectangleHotSpot: HotSpot
 	{
-		private object source;
-		private GridViewRow row;
-		
-		public GridViewCommandEventArgs (object source, CommandEventArgs arguments) : base (arguments)
+		public override string GetCoordinates ()
 		{
-			this.source = source;
-			this.row = null;
+			return Left + "," + Top + "," + Right + "," + Bottom;
 		}
 		
-		public GridViewCommandEventArgs (GridViewRow row, object source, CommandEventArgs arguments) : base (arguments)
-		{
-			this.source = source;
-			this.row = row;
+		protected internal override string MarkupName {
+			get { return "rect"; }
 		}
 		
-		public object CommandSource {
-			get { return source; }
+	    [DefaultValueAttribute (0)]
+		public int Left {
+			get {
+				object o = ViewState ["Left"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["Left"] = value;
+			}
 		}
-		
-		internal GridViewRow Row {
-			get { return row; }
+
+	    [DefaultValueAttribute (0)]
+		public int Top {
+			get {
+				object o = ViewState ["Top"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["Top"] = value;
+			}
+		}
+
+	    [DefaultValueAttribute (0)]
+		public int Right {
+			get {
+				object o = ViewState ["Right"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["Right"] = value;
+			}
+		}
+
+	    [DefaultValueAttribute (0)]
+		public int Bottom {
+			get {
+				object o = ViewState ["Bottom"];
+				return o != null ? (int) o : 0;
+			}
+			set {
+				ViewState ["Bottom"] = value;
+			}
 		}
 	}
 }

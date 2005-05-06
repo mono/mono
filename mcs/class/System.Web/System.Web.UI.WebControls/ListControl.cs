@@ -598,6 +598,19 @@ namespace System.Web.UI.WebControls
 
 			return null;
 		}
+
+		private bool SaveSelectedIndicesViewState {
+			get {
+				if (Events[SelectedIndexChangedEvent] == null && Enabled && Visible) {
+					Type t = GetType();
+					// If I am a derivative, let it take of storing the selected indices.
+					if (t == typeof(DropDownList) || t == typeof(ListBox) ||
+					    t == typeof(CheckBoxList) || t == typeof(RadioButtonList))
+						return false;
+				}
+				return true;
+			}
+		}
 #else
 		protected override object SaveViewState()
 		{
@@ -615,19 +628,6 @@ namespace System.Web.UI.WebControls
 		{
 			base.TrackViewState();
 			Items.TrackViewState();
-		}
-
-		private bool SaveSelectedIndicesViewState {
-			get {
-				if (Events[SelectedIndexChangedEvent] == null && Enabled && Visible) {
-					Type t = GetType();
-					// If I am a derivative, let it take of storing the selected indices.
-					if (t == typeof(DropDownList) || t == typeof(ListBox) ||
-					    t == typeof(CheckBoxList) || t == typeof(RadioButtonList))
-						return false;
-				}
-				return true;
-			}
 		}
 		
 #if NET_2_0

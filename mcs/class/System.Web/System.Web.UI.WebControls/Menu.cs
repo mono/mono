@@ -142,6 +142,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+	    [DefaultValueAttribute ("")]
+		public virtual string DynamicItemFormatString {
+			get {
+				object o = ViewState ["DynamicItemFormatString"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState["DynamicItemFormatString"] = value;
+			}
+		}
+
 		[DefaultValue ("")]
 		[UrlProperty]
 		[WebCategory ("Appearance")]
@@ -210,6 +222,18 @@ namespace System.Web.UI.WebControls
 			set {
 				if (value < 1) throw new ArgumentOutOfRangeException ();
 				ViewState["StaticDisplayLevels"] = value;
+			}
+		}
+
+	    [DefaultValueAttribute ("")]
+		public virtual string StaticItemFormatString {
+			get {
+				object o = ViewState ["StaticItemFormatString"];
+				if (o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState["StaticItemFormatString"] = value;
 			}
 		}
 
@@ -433,7 +457,6 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual MenuItemStyleCollection LevelSelectedStyles {
 			get {
@@ -448,7 +471,6 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual SubMenuStyleCollection LevelSubMenuStyles {
 			get {
@@ -851,12 +873,24 @@ namespace System.Web.UI.WebControls
 				return null;
 		}
 		
-		[MonoTODO]
 		protected override void CreateChildControls ()
 		{
 			base.CreateChildControls ();
 		}
 		
+		protected override void EnsureDataBound ()
+		{
+			base.EnsureDataBound ();
+		}
+		
+		public override ControlCollection Controls {
+			get { return base.Controls; }
+		}
+		
+		public sealed override void DataBind ()
+		{
+			base.DataBind ();
+		}
 		
 		protected override void OnPreRender (EventArgs e)
 		{
@@ -1266,9 +1300,14 @@ namespace System.Web.UI.WebControls
 				MenuItemTemplateContainer cter = new MenuItemTemplateContainer (item.Index, item);
 				staticItemTemplate.InstantiateIn (cter);
 				cter.Render (writer);
+			} else if (isDynamicItem && DynamicItemFormatString.Length > 0) {
+				writer.Write (string.Format (DynamicItemFormatString, item.Text));
+			} else if (!isDynamicItem && StaticItemFormatString.Length > 0) {
+				writer.Write (string.Format (StaticItemFormatString, item.Text));
 			} else {
 				writer.Write (item.Text);
 			}
+			
 		}
 			
 		Unit GetItemSpacing (MenuItem item, bool dynamic)
@@ -1295,17 +1334,6 @@ namespace System.Web.UI.WebControls
 			else return StaticMenuItemStyle.ItemSpacing;
 		}
 		
-		
-		string GetItemSeparatorImage (MenuItem item, bool isDynamicItem)
-		{
-			if (item.SeparatorImageUrl != "") return item.SeparatorImageUrl;
-			if (isDynamicItem && DynamicTopSeparatorImageUrl != "")
-				return DynamicTopSeparatorImageUrl;
-			else  if (!isDynamicItem && StaticTopSeparatorImageUrl != "")
-				return StaticTopSeparatorImageUrl;
-			return null;
-		}
-			
 		string GetPopOutImage (MenuItem item, bool isDynamicItem)
 		{
 			if (item.PopOutImageUrl != "")
