@@ -1,3 +1,8 @@
+2005-05-06  Ankit Jain  <ankit@corewars.org>
+
+	* Microsoft.VisualBasic.dll.resources: Change resource argument to 
+	Microsoft.VisualBasic.VBUtils.resources .
+
 2005-05-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Microsoft.VisualBasic.VBUtils.txt: Rename from ...
