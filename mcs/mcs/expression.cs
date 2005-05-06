@@ -2731,11 +2731,26 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 
 			Constant rc = right as Constant;
-			if (rc != null & lc != null){
+
+			if (oper == Operator.BitwiseAnd) {
+				if (rc != null && rc.IsZeroInteger) {
+					return lc is EnumConstant ?
+						new EnumConstant (rc, lc.Type):
+						rc;
+				}
+
+				if (lc != null && lc.IsZeroInteger) {
+					return rc is EnumConstant ?
+						new EnumConstant (lc, rc.Type):
+						lc;
+				}
+			}
+
+			if (rc != null && lc != null){
 				Expression e = ConstantFold.BinaryFold (
 					ec, oper, lc, rc, loc);
-					if (e != null)
-						return e;
+				if (e != null)
+					return e;
 			}
 
 			return ResolveOperator (ec);
