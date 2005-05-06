@@ -2,7 +2,12 @@ thisdir = tools/corcompare
 SUBDIRS = 
 include ../../build/rules.make
 
-ALL_PROGRAMS = CorCompare.exe mono-api-info.exe mono-api-diff.exe
+ALL_PROGRAMS = $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
+
+ifeq (default, $(PROFILE))
+ALL_PROGRAMS += CorCompare.exe mono-api-info.exe mono-api-diff.exe
+endif
+
 EXTRA_DISTFILES = cormissing.xsl TODO transform.js mono-api.xsl
 CORCOMPARE_SOURCES = \
 	CompletionInfo.cs \
@@ -53,9 +58,11 @@ dist-local: dist-default
 CorCompare.exe: $(CORCOMPARE_SOURCES)
 	$(CSCOMPILE) -out:$@ $^
 
-mono-api-info.exe: $(APIINFO_SOURCES)
-	$(CSCOMPILE) -out:$@ $^
-
 mono-api-diff.exe: $(APIDIFF_SOURCES)
 	$(CSCOMPILE) -out:$@ $^
 
+$(topdir)/class/lib/$(PROFILE)/mono-api-info.exe: $(APIINFO_SOURCES)
+	$(CSCOMPILE) -out:$@ $^
+
+mono-api-info.exe: $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
+	cp $< $@

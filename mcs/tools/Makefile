@@ -6,7 +6,7 @@ SUBDIRS = \
 
 net_1_1_bootstrap_SUBDIRS = gacutil security
 
-net_2_0_SUBDIRS = wsdl
+net_2_0_SUBDIRS = corcompare wsdl
 
 include ../build/rules.make
 
