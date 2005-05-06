@@ -1,3 +1,7 @@
+2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c: Respect MONO_PATH when loading assemblies.
+
 2005-04-23  Ankit Jain  <ankit@corewars.org>
 
 	* get.c : Revert Atsushi's earlier patch. Its already been fixed with r43342.
