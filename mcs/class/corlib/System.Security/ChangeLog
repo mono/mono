@@ -1,3 +1,17 @@
+2005-05-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Reworked frames check to check only for
+	the stack modifiers. Throwing a SecurityException now calls Assembly.
+	UnprotectedGetName () to avoid throwing (recursively) other 
+	SecurityExceptions.
+	* PermissionSet.cs: Reworked frames check to include Assembly (moved) 
+	and AppDomain (new) transitions.
+	* SecurityFrame.cs: Added Domain member to match the runtime structure
+	definition. Removed debugging code (will be moved into the runtime 
+	later) as it can cause SecurityException is some cases.
+	* SecurityManager.cs: Added a method to check if a PermissionSet is
+	granted by an AppDomain.
+
 2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetCollection.cs: Updated wrt beta2. Seems this will be

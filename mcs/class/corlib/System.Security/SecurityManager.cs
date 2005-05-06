@@ -163,6 +163,39 @@ namespace System.Security {
 			return true;
 		}
 
+		internal static bool IsGranted (AppDomain ad, PermissionSet ps)
+		{
+			if ((ps == null) || ps.IsEmpty ())
+				return true;
+
+			PermissionSet granted = ad.GrantedPermissionSet;
+			if (granted == null)
+				return true;
+
+			foreach (IPermission p in ps) {
+				if (p is CodeAccessPermission) {
+					CodeAccessPermission grant = (CodeAccessPermission) granted.GetPermission (p.GetType ());
+					if (grant == null) {
+						if (!granted.IsUnrestricted () || !(p is IUnrestrictedPermission)) {
+							return p.IsSubsetOf (null);
+						}
+					} else if (!p.IsSubsetOf (grant)) {
+						return false;
+					}
+				} else {
+					// but non-CAS will throw on failure...
+					try {
+						p.Demand ();
+					}
+					catch (SecurityException) {
+						// ... so we catch
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
@@ -658,7 +691,7 @@ namespace System.Security {
 			IPermission failed = null;
 
 			if (a != null) {
-				an = a.GetName ();
+				an = a.UnprotectedGetName ();
 				granted = a.GrantedPermissionSet;
 				refused = a.DeniedPermissionSet;
 			}
@@ -695,7 +728,7 @@ namespace System.Security {
 			PermissionSet refused = null;
 
 			if (a != null) {
-				an = a.GetName ();
+				an = a.UnprotectedGetName ();
 				granted = a.GrantedPermissionSet;
 				refused = a.DeniedPermissionSet;
 			}

@@ -316,25 +316,9 @@ namespace System.Security {
 			return (String.Compare (value, Boolean.TrueString, true, CultureInfo.InvariantCulture) == 0);
 		}
 
-		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current)
+		internal bool ProcessFrame (SecurityFrame frame)
 		{ 
-			// however the "final" grant set is resolved by assembly, so
-			// there's no need to check it every time (just when we're 
-			// changing assemblies between frames).
-			if (frame.Assembly != current) {
-				current = frame.Assembly;
-				// 1. CheckDemand
-				if (!SecurityManager.IsGranted (current, this)) {
-					ThrowSecurityException (this, "Demand failed assembly permissions checks.",
-						current, frame.Method, SecurityAction.Demand, this);
-				}
-			}
-
-			// skip next steps if not Assert, Deny or PermitOnly are present
-			if (!frame.HasStackModifiers)
-				return false;	// continue the stack walk
-
-			// 2. CheckPermitOnly
+			// 1. CheckPermitOnly
 			if (frame.PermitOnly != null) {
 				// the demanded permission must be in one of the permitted...
 				bool permit = false;
@@ -346,22 +330,22 @@ namespace System.Security {
 				}
 				if (!permit) {
 					// ...or else we throw
-					ThrowSecurityException (this, "PermitOnly", current, frame.Method, SecurityAction.Demand, null);
+					ThrowSecurityException (this, "PermitOnly", frame, SecurityAction.Demand, null);
 				}
 			}
 
-			// 3. CheckDeny
+			// 2. CheckDeny
 			if (frame.Deny != null) {
 				// special case where everything is denied (i.e. no child to be processed)
 				if (frame.Deny.IsUnrestricted ())
-					ThrowSecurityException (this, "Deny", current, frame.Method, SecurityAction.Demand, null);
+					ThrowSecurityException (this, "Deny", frame, SecurityAction.Demand, null);
 				foreach (IPermission p in frame.Deny) {
 					if (!CheckDeny (p as CodeAccessPermission))
-						ThrowSecurityException (this, "Deny", current, frame.Method, SecurityAction.Demand, p);
+						ThrowSecurityException (this, "Deny", frame, SecurityAction.Demand, p);
 				}
 			}
 
-			// 4. CheckAssert
+			// 3. CheckAssert
 			if (frame.Assert != null) {
 				foreach (IPermission p in frame.Assert) {
 					if (CheckAssert (p as CodeAccessPermission)) {
@@ -390,12 +374,14 @@ namespace System.Security {
 			throw new ExecutionEngineException (String.Format (msg, stackmod));
 		}
 
-		internal static void ThrowSecurityException (object demanded, string message, Assembly a, MethodInfo mi, SecurityAction action, IPermission failed)
+		internal static void ThrowSecurityException (object demanded, string message, SecurityFrame frame,
+			SecurityAction action, IPermission failed)
 		{
+			Assembly a = frame.Assembly;
 			throw new SecurityException (Locale.GetText (message), 
-				a.GetName (), a.GrantedPermissionSet, 
-				a.DeniedPermissionSet, mi, action, demanded, 
-				failed, a.Evidence);
+				a.UnprotectedGetName (), a.GrantedPermissionSet, 
+				a.DeniedPermissionSet, frame.Method, action, demanded, 
+				failed, a.UnprotectedGetEvidence ());
 		}
 	}
 }

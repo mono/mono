@@ -43,6 +43,7 @@ namespace System.Security {
 
 	// Must match MonoSecurityFrame in /mono/mini/declsec.h
 	internal class RuntimeSecurityFrame {
+		public AppDomain domain;
 		public MethodInfo method;
 		public RuntimeDeclSecurityEntry assert;
 		public RuntimeDeclSecurityEntry deny;
@@ -51,6 +52,7 @@ namespace System.Security {
 
 	internal struct SecurityFrame {
 
+		private AppDomain _domain;
 		private MethodInfo _method;
 		private PermissionSet _assert;
 		private PermissionSet _deny;
@@ -64,6 +66,7 @@ namespace System.Security {
 
 		internal SecurityFrame (RuntimeSecurityFrame frame)
 		{
+			_domain = null;
 			_method = null;
 			_assert = null;
 			_deny = null;
@@ -73,6 +76,7 @@ namespace System.Security {
 
 		internal SecurityFrame (int skip)
 		{
+			_domain = null;
 			_method = null;
 			_assert = null;
 			_deny = null;
@@ -87,6 +91,7 @@ namespace System.Security {
 		// ends up making an icall
 		internal void InitFromRuntimeFrame (RuntimeSecurityFrame frame)
 		{
+			_domain = frame.domain;
 			_method = frame.method;
 
 			if (frame.assert.size > 0) {
@@ -102,6 +107,10 @@ namespace System.Security {
 
 		public Assembly Assembly {
 			get { return _method.ReflectedType.Assembly; }
+		}
+
+		public AppDomain Domain {
+			get { return _domain; }
 		}
 
 		public MethodInfo Method {
@@ -126,6 +135,8 @@ namespace System.Security {
 
 		public bool Equals (SecurityFrame sf)
 		{
+			if (!Object.ReferenceEquals (_domain, sf.Domain))
+				return false;
 			if (Assembly.ToString () != sf.Assembly.ToString ())
 				return false;
 			if (Method.ToString () != sf.Method.ToString ())
@@ -144,19 +155,14 @@ namespace System.Security {
 		static public ArrayList GetStack (int skipFrames)
 		{
 			Array stack = _GetSecurityStack (skipFrames+2);
-			ArrayList al = new ArrayList (stack.Length);
-			foreach (RuntimeSecurityFrame frame in stack) {
-				al.Add (new SecurityFrame (frame));
+			ArrayList al = new ArrayList ();
+			for (int i = 0; i < stack.Length; i++) {
+				object o = stack.GetValue (i);
+				// null are unused slots allocated in the runtime
+				if (o == null)
+					break;
+				al.Add (new SecurityFrame ((RuntimeSecurityFrame)o));
 			}
-			al.Reverse ();
-#if false
-			Console.WriteLine ("Stack Dump (skip {0})", skipFrames);
-			int i=1;
-			foreach (SecurityFrame f in al) {
-				Console.WriteLine ("\t{0}. {1}", i++, f.Method);
-			}
-			Console.WriteLine ("End Stack Dump");
-#endif
 			return al;
 		}
 	}
