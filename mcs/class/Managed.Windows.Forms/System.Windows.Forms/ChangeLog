@@ -1,3 +1,13 @@
+2005-05-06  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Redid Jackson's fix, it was causing a busy loop
+	* Screen.cs: Implemented
+	* HelpNavigator.cs: Added
+	* XplatUIWin32.cs: Added SystemParametersInfo call, fixed WorkArea
+	  property
+	* HelpProvider.cs: Implemented all we can do until we have a CHM
+	  help library (which means that "What's This" does work now)
+
 2005-05-06  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Fix waking up the main loop.

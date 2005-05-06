@@ -88,6 +88,10 @@ namespace System.Windows.Forms {
 			internal int		y;
 		}
 
+		internal enum SPIAction {
+			SPI_GETWORKAREA		= 0x0030
+		}
+
 		internal enum WindowPlacementFlags {
 			SW_HIDE			= 0,
 			SW_SHOWNORMAL       	= 1,
@@ -721,7 +725,12 @@ namespace System.Windows.Forms {
 
 		internal override Rectangle WorkingArea {
 			get {
-				return new Rectangle(0, 0, Win32GetSystemMetrics(SystemMetrics.SM_CXSCREEN), Win32GetSystemMetrics(SystemMetrics.SM_CYSCREEN));
+				RECT	rect;
+
+				rect = new RECT();
+				Win32SystemParametersInfo(SPIAction.SPI_GETWORKAREA, 0, ref rect, 0);
+				return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+				//return new Rectangle(0, 0, Win32GetSystemMetrics(SystemMetrics.SM.SM_CXSCREEN), Win32GetSystemMetrics(SystemMetrics.SM_CYSCREEN));
 			}
 		}
 		#endregion	// Static Properties
@@ -1859,6 +1868,9 @@ Console.WriteLine("Hit Clear background");
 
 		[DllImport ("user32.dll", EntryPoint="SendMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32SendMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+
+		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref RECT rect, uint fWinIni);
 		#endregion
 	}
 }

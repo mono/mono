@@ -51,6 +51,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
+using N = System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -94,6 +95,8 @@ namespace System.Windows.Forms {
 		private static X11Keyboard	Keyboard;		//
 		private static Socket		listen;			//
 		private static Socket		wake;			//
+		private static Socket		wake_receive;		//
+		private static byte[]		network_buffer;		//
 
 
 		// Focus tracking
@@ -286,8 +289,11 @@ namespace System.Windows.Forms {
 				listen.Listen(1);
 
 				// To wake up when a timer is ready
+				network_buffer = new byte[10];
+
 				wake = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 				wake.Connect(listen.LocalEndPoint);
+				wake_receive = listen.Accept();
 
 				#if __MonoCS__
 				pollfds = new Pollfd [2];
@@ -296,8 +302,8 @@ namespace System.Windows.Forms {
 				pollfds [0].events = PollEvents.POLLIN;
 
 				pollfds [1] = new Pollfd ();
-				pollfds [1].fd = wake.Handle.ToInt32 ();
-				pollfds [1].events = PollEvents.POLLOUT;
+				pollfds [1].fd = wake_receive.Handle.ToInt32 ();
+				pollfds [1].events = PollEvents.POLLIN;
 				#endif
 
 				Keyboard = new X11Keyboard(DisplayHandle);
@@ -779,6 +785,10 @@ namespace System.Windows.Forms {
 				if (timeout > 0) {
 					#if __MonoCS__
 					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
+					// Clean out buffer, so we're not busy-looping on the same data
+					if (pollfds[1].revents != 0) {
+						wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
+					}
 					#endif
 					lock (XlibLock) {
 						pending = XPending (DisplayHandle);
