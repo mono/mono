@@ -264,16 +264,24 @@ namespace System.Reflection {
 			return name;
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		public
-#else
-		internal
-#endif
-		Guid Mvid {
+		internal Guid MvId {
 			get {
 				return Mono_GetGuid (this);
 			}
 		}
+
+#if NET_2_0
+		Guid ModuleVersionId {
+			get {
+				return Mono_GetGuid (this);
+			}
+		}
+
+		public void GetPEKind (out PortableExecutableKind peKind, out ImageFileMachine machine) {
+			ModuleHandle.GetPEKind (out peKind, out machine);
+		}
+#endif
+  		
 
 #if NET_2_0
 		private Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
