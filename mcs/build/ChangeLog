@@ -4,6 +4,7 @@
 	(build_lib): Name of library built.  Default to $(the_lib) unless
 	preprocessing.
 	($(build_lib)): Rename from '$(the_lib)'.
+	($(makefrag)): Emit dependencies on $(build_lib).
 
 2005-05-04  Zoltan Varga  <vargaz@freemail.hu>
 

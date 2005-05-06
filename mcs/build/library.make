@@ -277,7 +277,7 @@ endif
 
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
-	@sed 's,^,$(the_lib): ,' $< >$@
+	@sed 's,^,$(build_lib): ,' $< >$@
 
 ifneq ($(response),$(sourcefile))
 $(response): $(sourcefile) $(PLATFORM_excludes)
