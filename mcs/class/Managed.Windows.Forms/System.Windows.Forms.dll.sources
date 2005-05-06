@@ -26,6 +26,7 @@ System.Windows.Forms/ArrangeDirection.cs
 System.Windows.Forms/ArrangeStartingPosition.cs
 System.Windows.Forms/AsyncMethodData.cs
 System.Windows.Forms/AsyncMethodResult.cs
+System.Windows.Forms/AxHost.cs
 System.Windows.Forms/BaseCollection.cs
 System.Windows.Forms/BindingContext.cs
 System.Windows.Forms/Binding.cs
@@ -103,6 +104,7 @@ System.Windows.Forms/DrawItemState.cs
 System.Windows.Forms/DrawMode.cs
 System.Windows.Forms/ErrorBlinkStyle.cs
 System.Windows.Forms/ErrorIconAlignment.cs
+System.Windows.Forms/ErrorProvider.cs
 System.Windows.Forms/FeatureSupport.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/FontDialog.cs
@@ -243,6 +245,12 @@ System.Windows.Forms/QueryAccessibilityHelpEventHandler.cs
 System.Windows.Forms/QueryContinueDragEventArgs.cs
 System.Windows.Forms/QueryContinueDragEventHandler.cs
 System.Windows.Forms/RadioButton.cs
+System.Windows.Forms/RichTextBoxFinds.cs
+System.Windows.Forms/RichTextBoxScrollBars.cs
+System.Windows.Forms/RichTextBoxSelectionAttribute.cs
+System.Windows.Forms/RichTextBoxSelectionTypes.cs
+System.Windows.Forms/RichTextBoxStreamType.cs
+System.Windows.Forms/RichTextBoxWordPunctuations.cs
 System.Windows.Forms/RightToLeft.cs
 System.Windows.Forms/SaveFileDialog.cs
 System.Windows.Forms/ScrollableControl.cs
