@@ -1,3 +1,10 @@
+2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: match MS behavior on SetSocketOption with a boolean
+	argument. MS 1.1 throws an ArgumentException, but 2.0 turns true/false
+	into 1/0 and works fine. Fixes bug #71753. Added checks for disposed
+	in the 3 SetSocketOption.
+
 2005-05-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: if there are outstanding aio requests and one of them gets

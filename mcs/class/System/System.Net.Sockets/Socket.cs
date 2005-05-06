@@ -1620,9 +1620,10 @@ namespace System.Net.Sockets
 								     byte [] byte_val, int int_val,
 								     out int error);
 
-		public void SetSocketOption(SocketOptionLevel level,
-					    SocketOptionName name,
-					    byte[] opt_value) {
+		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, byte[] opt_value)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
 			int error;
 			
 			SetSocketOption_internal(socket, level, name, null,
@@ -1633,9 +1634,11 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public void SetSocketOption(SocketOptionLevel level,
-					    SocketOptionName name,
-					    int opt_value) {
+		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, int opt_value)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			int error;
 			
 			SetSocketOption_internal(socket, level, name, null,
@@ -1646,32 +1649,39 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public void SetSocketOption(SocketOptionLevel level,
-					    SocketOptionName name,
-					    object opt_value) {
+		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, object opt_value)
+		{
+
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if(opt_value==null) {
 				throw new ArgumentNullException();
 			}
 			
 			int error;
-			
-			/* Passing a bool as the third parameter to
-			 * SetSocketOption causes this overload to be
-			 * used when in fact we want to pass the value
-			 * to the runtime as an int.
+			/* From MS documentation on SetSocketOption: "For an
+			 * option with a Boolean data type, specify a nonzero
+			 * value to enable the option, and a zero value to
+			 * disable the option."
+			 * Booleans are only handled in 2.0
 			 */
+
 			if (opt_value is System.Boolean) {
+#if NET_2_0
 				bool bool_val = (bool) opt_value;
 				int int_val = (bool_val) ? 1 : 0;
-				
+
 				SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
+#else
+				throw new ArgumentException ("Use an integer 1 (true) or 0 (false) instead of a boolean.", "opt_value");
+#endif
 			} else {
 				SetSocketOption_internal (socket, level, name, opt_value, null, 0, out error);
 			}
 
-			if (error != 0) {
+			if (error != 0)
 				throw new SocketException (error);
-			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
