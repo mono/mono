@@ -1629,15 +1629,6 @@ namespace Mono.CSharp {
 			return hash;
 		}
 
-		void ClearDeclaredOnly (Hashtable hash)
-		{
-			IDictionaryEnumerator it = hash.GetEnumerator ();
-			while (it.MoveNext ()) {
-				foreach (CacheEntry ce in (ArrayList) it.Value)
-					ce.EntryType &= ~EntryType.Declared;
-			}
-		}
-
 		/// <summary>
 		///   Add the contents of `cache' to the member_hash.
 		/// </summary>

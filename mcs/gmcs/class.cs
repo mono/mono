@@ -920,9 +920,7 @@ namespace Mono.CSharp {
 
 			c = new Constructor (constructor_parent, MemberName.Name, mods,
 					     Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (
-						     null, Parameters.EmptyReadOnlyParameters,
-						     Location),
+					     new ConstructorBaseInitializer (null, Location),
 					     Location);
 			
 			AddConstructor (c);
@@ -1292,11 +1290,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!CheckConstraints (ec)) {
-				error = true;
-				return null;
-			}
-
 			TypeExpr[] iface_exprs = GetClassBases (out base_type);
 			if (iface_exprs == null && base_type != null) {
 				InTransit = false;
@@ -1392,11 +1385,6 @@ namespace Mono.CSharp {
 			}
 
 			return TypeBuilder;
-		}
-
-		protected virtual bool CheckConstraints (EmitContext ec)
-		{
-			return true;
 		}
 
 		protected virtual bool DefineNestedTypes ()
@@ -4412,14 +4400,11 @@ namespace Mono.CSharp {
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
 		protected ConstructorInfo base_constructor;
-		Parameters parameters;
 		Location loc;
 		
-		public ConstructorInitializer (ArrayList argument_list, Parameters parameters,
-					       Location loc)
+		public ConstructorInitializer (ArrayList argument_list, Location loc)
 		{
 			this.argument_list = argument_list;
-			this.parameters = parameters;
 			this.loc = loc;
 		}
 
@@ -4571,8 +4556,8 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list, Parameters pars, Location l) :
-			base (argument_list, pars, l)
+		public ConstructorBaseInitializer (ArrayList argument_list, Location l) :
+			base (argument_list, l)
 		{
 		}
 
@@ -4596,8 +4581,8 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list, Parameters pars, Location l) :
-			base (argument_list, pars, l)
+		public ConstructorThisInitializer (ArrayList argument_list, Location l) :
+			base (argument_list, l)
 		{
 		}
 	}
@@ -4818,7 +4803,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (
-						null, Parameters.EmptyReadOnlyParameters, Location);
+						null, Location);
 
 
 				//
@@ -5018,8 +5003,6 @@ namespace Mono.CSharp {
 		protected MethodAttributes flags;
 		protected Type declaring_type;
 		protected MethodInfo parent_method;
-
-		EmitContext ec;
 
 		MethodBuilder builder = null;
 		public MethodBuilder MethodBuilder {
@@ -7434,8 +7417,6 @@ namespace Mono.CSharp {
 		public MyEventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
 
-		MethodData AddData, RemoveData;
-		
 		public Event (TypeContainer parent, Expression type, int mod_flags,
 			      bool is_iface, MemberName name, Object init, Attributes attrs,
 			      Location loc)

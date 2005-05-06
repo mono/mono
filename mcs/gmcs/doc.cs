@@ -486,8 +486,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		private static Type [] emptyParamList = new Type [0];
-
 		//
 		// Processes "see" or "seealso" elements.
 		// Checks cref attribute.

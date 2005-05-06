@@ -152,7 +152,7 @@ namespace Mono.CSharp {
 		TypeExpr class_constraint;
 		ArrayList iface_constraints;
 		ArrayList type_param_constraints;
-		int num_constraints, first_constraint;
+		int num_constraints;
 		Type class_constraint_type;
 		Type[] iface_constraint_types;
 		Type effective_base_type;
@@ -524,7 +524,6 @@ namespace Mono.CSharp {
 		Constraints constraints;
 		Location loc;
 		GenericTypeParameterBuilder type;
-		Type[] iface_constraints;
 
 		public TypeParameter (TypeContainer parent, string name,
 				      Constraints constraints, Location loc)
@@ -820,12 +819,10 @@ namespace Mono.CSharp {
 			Type class_constraint;
 			Type[] iface_constraints;
 			Type[] dargs;
-			Type declaring;
 
 			public InflatedConstraints (GenericConstraints gc, Type declaring)
 			{
 				this.gc = gc;
-				this.declaring = declaring;
 
 				dargs = TypeManager.GetTypeArguments (declaring);
 
@@ -2517,8 +2514,7 @@ namespace Mono.CSharp {
 
 		public class LiftedConditional : Lifted
 		{
-			Expression expr, true_expr, false_expr;
-			Unwrap unwrap;
+			Expression true_expr, false_expr;
 
 			public LiftedConditional (Expression expr, Expression true_expr, Expression false_expr,
 						  Location loc)

@@ -285,8 +285,6 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Parameters.ArrayParameter != null){
-				Parameter p = Parameters.ArrayParameter;
-
 				if (TypeManager.param_array_type == null && !RootContext.StdLib) {
 					Namespace system = Namespace.LookupNamespace ("System", true);
 					TypeExpr expr = system.Lookup (this, "ParamArrayAttribute", Location) as TypeExpr;

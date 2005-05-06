@@ -64,15 +64,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static Type TypeParam_EffectiveBaseType (EmitContext ec, Type t)
-		{
-			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (t);
-			if (gc == null)
-				return TypeManager.object_type;
-
-			return TypeParam_EffectiveBaseType (ec, gc);
-		}
-
 		static Type TypeParam_EffectiveBaseType (EmitContext ec, GenericConstraints gc)
 		{
 			ArrayList list = new ArrayList ();

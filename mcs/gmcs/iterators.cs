@@ -602,8 +602,7 @@ namespace Mono.CSharp {
 
 			Constructor ctor = new Constructor (
 				this, Name, Modifiers.PUBLIC, ctor_params,
-				new ConstructorBaseInitializer (
-					null, Parameters.EmptyReadOnlyParameters, Location),
+				new ConstructorBaseInitializer (null, Location),
 				Location);
 			AddConstructor (ctor);
 

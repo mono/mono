@@ -521,7 +521,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		bool parsing_less_than = false;
 		int parsing_generic_less_than = 0;
 
 		int is_punct (char c, ref bool doread)
@@ -2244,7 +2243,6 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 			}
 
-		is_punct_label:
 			if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
 				tokens_seen = true;
 				if (doread){

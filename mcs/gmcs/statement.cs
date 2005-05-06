@@ -4725,7 +4725,7 @@ namespace Mono.CSharp {
 		{
 			Expression type, variable, expr, conv;
 			Statement statement;
-			Type array_type, element_type;
+			Type array_type;
 			Type var_type;
 			TemporaryVariable[] lengths;
 			ArrayCounter[] counter;
@@ -4753,7 +4753,6 @@ namespace Mono.CSharp {
 				var_type = texpr.Type;
 
 				array_type = expr.Type;
-				element_type = TypeManager.GetElementType (array_type);
 				rank = array_type.GetArrayRank ();
 
 				copy = new TemporaryVariable (array_type, loc);

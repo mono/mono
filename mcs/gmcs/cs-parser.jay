@@ -2073,11 +2073,11 @@ opt_constructor_initializer
 constructor_initializer
 	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorBaseInitializer ((ArrayList) $4, current_local_parameters, lexer.Location);
+		$$ = new ConstructorBaseInitializer ((ArrayList) $4, lexer.Location);
 	  }
 	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorThisInitializer ((ArrayList) $4, current_local_parameters, lexer.Location);
+		$$ = new ConstructorThisInitializer ((ArrayList) $4, lexer.Location);
 	  }
 	| COLON error {
 		Report.Error (1018, lexer.Location, "Keyword this or base expected");

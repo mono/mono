@@ -2621,40 +2621,6 @@ public partial class TypeManager {
 		internal Assembly invocation_assembly;
 		internal IList almost_match;
 
-		private bool CheckValidFamilyAccess (bool is_static, MemberInfo m)
-		{
-			if (invocation_type == null)
-				return false;
-
-			Debug.Assert (IsNestedFamilyAccessible (invocation_type, m.DeclaringType));
-
-			if (is_static)
-				return true;
-			
-			// A nested class has access to all the protected members visible
-			// to its parent.
-			if (qualifier_type != null
-			    && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
-				return true;
-
-			if (invocation_type == m.DeclaringType
-			    || invocation_type.IsSubclassOf (m.DeclaringType)) {
-				// Although a derived class can access protected members of
-				// its base class it cannot do so through an instance of the
-				// base class (CS1540).
-				// => Ancestry should be: declaring_type ->* invocation_type
-				//      ->*  qualified_type
-				if (qualifier_type == null
-				    || qualifier_type == invocation_type
-				    || qualifier_type.IsSubclassOf (invocation_type))
-					return true;
-			}
-	
-			if (almost_match != null)
-				almost_match.Add (m);
-			return false;
-		}
-
 		bool Filter (MethodBase mb, object filter_criteria)
 		{
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
