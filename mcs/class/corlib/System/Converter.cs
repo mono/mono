@@ -27,7 +27,7 @@
 //
 #if NET_2_0
 namespace System {
-	[CLSCompliant (false)]
+	[CLSCompliant (true)]
 	public delegate D Converter <S,D> (S src);
 }
 #endif

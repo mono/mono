@@ -1,3 +1,8 @@
+2005-05-06  Martin Baulig  <martin@ximian.com>
+
+	* Predicate.cs, Action.cs, Comparision.cs, Converter.cs: Add
+	[CLSCompliant(true)] attribute.
+
 2005-05-04  Miguel de Icaza  <miguel@novell.com>
 
 	* Enum.cs (MonoEnumInfo): Based on a patch from James Willcox,
