@@ -28,14 +28,34 @@
 //
 
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	public abstract class Binding : AST
-	{
-		public static bool IsMissing (Object value)
+	public abstract class Binding : AST {
+
+		protected MemberInfo defaultMember;
+		protected bool isAssignmentToDefaultIndexedProperty;
+		protected bool isFullyResolved;
+		protected bool isNonVirtual;
+		protected string name;
+		
+		protected abstract Object GetObject ();
+		protected abstract void HandleNoSuchMemberError ();
+
+		protected void ResolveRHValue ()
 		{
 			throw new NotImplementedException ();
 		}
+
+		protected abstract void TranslateToILObject (ILGenerator il, Type obtype, bool noValue);
+
+		protected abstract void TranslateToILWithDupOfThisOb (ILGenerator il);
+
+		public static bool IsMissing (Object value)
+		{
+			throw new NotImplementedException ();
+		}	    
 	}
 }		
