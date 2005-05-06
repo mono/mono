@@ -574,8 +574,8 @@ namespace System.Windows.Forms
 		#endregion	// ToolBar
 
 		#region ToolTip
-		public abstract void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip tt);
-		public abstract Size ToolTipSize(ToolTip tt, string text);
+		public abstract void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control);
+		public abstract Size ToolTipSize(ToolTip.ToolTipWindow tt, string text);
 		#endregion	// ToolTip		
 		
 

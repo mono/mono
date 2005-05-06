@@ -457,8 +457,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
-			base.OnPaint (pevent);
 			Draw (pevent);
+			base.OnPaint (pevent);
 		}
 
 		protected override void OnParentChanged(EventArgs e) {

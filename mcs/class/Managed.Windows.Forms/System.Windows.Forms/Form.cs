@@ -574,7 +574,7 @@ namespace System.Windows.Forms {
 		[Localizable(false)]
 		public Size Size {
 			get {
-				return Size;
+				return base.Size;
 			}
 
 			set {

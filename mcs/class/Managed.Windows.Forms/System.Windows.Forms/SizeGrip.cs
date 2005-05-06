@@ -64,11 +64,10 @@ namespace System.Windows.Forms {
 
 		#region Methods
 		protected override void OnPaint (PaintEventArgs pe) {
-			base.OnPaint (pe);
-
 			if (redraw && show_grip) {
                                 ControlPaint.DrawSizeGrip (pe.Graphics, BackColor, ClientRectangle);
 			}
+			base.OnPaint (pe);
 		}
 
 		protected override void OnSizeChanged (EventArgs e) {

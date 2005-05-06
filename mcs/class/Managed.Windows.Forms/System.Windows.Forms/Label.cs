@@ -495,6 +495,7 @@ namespace System.Windows.Forms
 		{
 			ThemeEngine.Current.DrawLabel (pevent.Graphics, ClientRectangle, this);
 			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
+			base.OnPaint(pevent);
 		}
 
     		protected override void OnParentChanged (EventArgs e)

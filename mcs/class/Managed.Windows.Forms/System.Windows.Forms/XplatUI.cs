@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 41731; built: 2005/2/15 5:56:12]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44101; built: 2005/5/5 21:38:0]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";

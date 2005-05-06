@@ -73,12 +73,12 @@ namespace System.Windows.Forms {
 
 			protected override void OnPaint (PaintEventArgs pe)
 			{
-				base.OnPaint (pe);
-
 				if (pe.ClipRectangle.Contains (up))
 					DrawUp (pe.Graphics);
 				if (pe.ClipRectangle.Contains (down))
 					DrawDown (pe.Graphics);
+
+				base.OnPaint (pe);
 			}
 
 			protected override void OnLayout (LayoutEventArgs args)
@@ -337,12 +337,12 @@ namespace System.Windows.Forms {
 #if false
 		protected override void OnPaint (PaintEventArgs pe)
 		{
-			base.OnPaint (pe);
-
                         if (pe.ClipRectangle.Contains (up))
                                 DrawUp (pe.Graphics);
                         if (pe.ClipRectangle.Contains (down))
                                 DrawDown (pe.Graphics);
+
+			base.OnPaint (pe);
 		}
 
 		protected override void SetVisibleCore (bool state)

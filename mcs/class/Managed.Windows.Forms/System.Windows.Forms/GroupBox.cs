@@ -173,6 +173,7 @@ namespace System.Windows.Forms
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
 			ThemeEngine.Current.DrawGroupBox (pevent.Graphics, ClientRectangle, this);
+			base.OnPaint(pevent);
 		}
 
 		protected override bool ProcessMnemonic (char charCode)

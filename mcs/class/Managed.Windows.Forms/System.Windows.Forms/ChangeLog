@@ -1,4 +1,24 @@
-2005-05-5  Jordi Mas i Hernandez <jordi@ximian.com>
+2005-05-05  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs: Updated revision
+	* Form.cs: Removed enless loop
+	* GroupBox.cs (OnPaint): Added call to base.OnPaint()
+	* Label.cs (OnPaint): Added call to base.OnPaint()
+	* ToolTip.cs: Made ToolTipWindow reusable for other controls
+	* LinkLabel.cs (OnPaint): Added call to base.OnPaint()
+	* UpDownBase.cs (OnPaint): Moved base.OnPaint() call to end of method
+	* AxHost.cs: Added
+	* ButtonBase.cs: Moved base.OnPaint() call to end of method
+	* ThemeWin32Classic.cs: Replaced references to ToolTip with references
+	  to ToolTip.ToolTipWindow for drawing and size methods; this allows
+	  reuse of ToolTipWindow by other controls
+	* SizeGrip.cs: Moved base.OnPaint() call to end of method
+	* XplatUIX11.cs: Now clipping drawing area (experimental)
+	* PictureBox.cs: Moved base.OnPaint() call to end of method
+	* Theme.cs: Fixed ToolTip abstracts to match new format
+	* ErrorProvider.cs: Implemented
+
+2005-05-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Label.cs: fire events using OnAutoSizeChanged and OnTextAlignChanged
 	* LinkLabel.cs:

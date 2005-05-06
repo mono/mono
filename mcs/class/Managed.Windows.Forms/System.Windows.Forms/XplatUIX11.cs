@@ -47,6 +47,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
@@ -2527,8 +2528,8 @@ namespace System.Windows.Forms {
 				hwnd.erase_pending = false;
 			}
 
-
-			hwnd.client_dc  = Graphics.FromHwnd (hwnd.client_window);
+			hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
+			hwnd.client_dc.SetClip(hwnd.invalid);
 			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
 
 			return paint_event;

@@ -3415,19 +3415,16 @@ namespace System.Windows.Forms
 		#endregion	// ToolBar
 
 		#region ToolTip
-		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip tt) {
-			Control	control;
-
-			control = tt.tooltip_window;
+		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control) {
 			dc.FillRectangle(ResPool.GetSolidBrush(this.ColorInfoWindow), control.client_rect);
 			dc.DrawRectangle(ResPool.GetPen(this.ColorWindowFrame), 0, 0, control.Width-1, control.Height-1);
-			dc.DrawString(control.text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.client_rect, tt.tooltip_window.string_format);
+			dc.DrawString(control.text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.client_rect, control.string_format);
 		}
 
-		public override Size ToolTipSize(ToolTip tt, string text) {
+		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text) {
 			SizeF	sizef;
 
-			sizef = tt.tooltip_window.DeviceContext.MeasureString(text, tt.tooltip_window.Font);
+			sizef = tt.DeviceContext.MeasureString(text, tt.Font);
 			return new Size((int)sizef.Width+2, (int)sizef.Height+3);		// Need space for the border
 		}
 		#endregion	// ToolTip

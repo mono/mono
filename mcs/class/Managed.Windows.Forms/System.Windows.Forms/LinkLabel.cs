@@ -402,6 +402,7 @@ namespace System.Windows.Forms
 		{
 			ThemeEngine.Current.DrawLinkLabel (pevent.Graphics, pevent.ClipRectangle, this);
 			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
+			base.OnPaint(pevent);
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs e)

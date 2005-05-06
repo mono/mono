@@ -194,8 +194,8 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{
-			base.OnPaint (pe);
                         ThemeEngine.Current.DrawPictureBox (pe.Graphics, pe.ClipRectangle, this);
+			base.OnPaint (pe);
 		}
 
 		protected override void OnVisibleChanged (EventArgs e)

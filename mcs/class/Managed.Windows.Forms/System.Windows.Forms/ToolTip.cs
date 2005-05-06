@@ -105,7 +105,9 @@ namespace System.Windows.Forms {
 				// We don't do double-buffering on purpose:
 				// 1) we'd have to meddle with is_visible, it destroys the buffers if !visible
 				// 2) We don't draw much, no need to double buffer
-				ThemeEngine.Current.DrawToolTip(pevent.Graphics, ClientRectangle, owner);
+				ThemeEngine.Current.DrawToolTip(pevent.Graphics, ClientRectangle, this);
+
+				base.OnPaint(pevent);
 			}
 
 			protected override void Dispose(bool disposing) {
@@ -316,7 +318,6 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			// As of this writing, our MWF implementation had no clue what an active control was :-(
 			if (!show_always) {
 				if (((Control)sender).GetContainerControl().ActiveControl == null) {
 					return;
@@ -327,7 +328,7 @@ namespace System.Windows.Forms {
 			if (text != null) {
 				Size size;
 
-				size = ThemeEngine.Current.ToolTipSize(this, text);
+				size = ThemeEngine.Current.ToolTipSize(tooltip_window, text);
 				tooltip_window.Width = size.Width;
 				tooltip_window.Height = size.Height;
 				tooltip_window.Text = text;
