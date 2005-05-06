@@ -35,7 +35,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
-	[CLSCompliant(false)]
+	[CLSCompliant(true)]
 	[ComVisible(false)]
 	public interface IDictionary<K,V> : ICollection<KeyValuePair<K,V>> {
 		void Add (K key, V value);

@@ -1,3 +1,7 @@
+2005-05-06  Martin Baulig  <martin@ximian.com>
+
+	* *.cs: Add CLSCompliant(true) where missing.
+
 2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *.cs: Remove CLSCompliant(false) attributes.

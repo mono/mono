@@ -41,6 +41,7 @@ using System.Runtime.Serialization;
 namespace System.Collections.Generic {
 
 	[Serializable]
+	[CLSCompliant(true)]
 	public class Dictionary<K, V> : IDictionary<K, V>,
 		//ICollection<KeyValuePair<K, V>>,
 		IEnumerable<KeyValuePair<K, V>>,
