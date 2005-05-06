@@ -55,6 +55,8 @@ namespace Mono.GetOptions
 		private string appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
 		private string appAboutDetails = "Add a [assembly: Mono.About(\"Here goes the short about details\")] to your assembly";
 		private string appUsageComplement = "Add a [assembly: Mono.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
+		private string appAdditionalInfo = null;
+		private string appReportBugsTo = null;
 		private string[] appAuthors;
  
 		private ArrayList list = new ArrayList();
@@ -170,26 +172,38 @@ namespace Mono.GetOptions
 			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
 			GetAssemblyAttributeValue(typeof(Mono.AboutAttribute), ref appAboutDetails);
 			GetAssemblyAttributeValue(typeof(Mono.UsageComplementAttribute), ref appUsageComplement);
+			GetAssemblyAttributeValue(typeof(Mono.AdditionalInfoAttribute), ref appAdditionalInfo);
+			GetAssemblyAttributeValue(typeof(Mono.ReportBugsToAttribute), ref appReportBugsTo);
 			appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
-			if (appAuthors.Length == 0)
-			{
+			if (appAuthors.Length == 0) {
 				appAuthors = new String[1];
-				appAuthors[0] = "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly";
+				appAuthors[0] = "Add one or more [assembly: Mono.Author(\"Here goes the author name\")] to your assembly";
 			}
 
-			foreach(MemberInfo mi in optionBundle.GetType().GetMembers())
-			{
-				object[] attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
-				if (attribs != null && attribs.Length > 0) {
-					OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle);
-					list.Add(option);
-					HasSecondLevelHelp = HasSecondLevelHelp || option.SecondLevelHelp;
-				} else {
-					attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
-					if (attribs != null && attribs.Length > 0)
-						AddArgumentProcessor(mi);
+			foreach(MemberInfo mi in optionBundle.GetType().GetMembers()) {
+				object[] attribs = mi.GetCustomAttributes(typeof(KillOptionAttribute), true);
+				if (attribs == null || attribs.Length == 0) {
+					attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
+					if (attribs != null && attribs.Length > 0) {
+						OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle);
+						list.Add(option);
+						HasSecondLevelHelp = HasSecondLevelHelp || option.SecondLevelHelp;
+					} else if (mi.DeclaringType == mi.ReflectedType) { // not inherited
+						attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true); 
+						if (attribs != null && attribs.Length > 0)
+							AddArgumentProcessor(mi);
+					}
 				}
 			}
+			
+			if (argumentProcessor == null) // try to find a inherited one
+				foreach(MemberInfo mi in optionBundle.GetType().GetMembers()) 
+					if (mi.DeclaringType != mi.ReflectedType) { // inherited
+						object[] attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
+						if (attribs != null && attribs.Length > 0)
+							AddArgumentProcessor(mi);
+					}
+
 		}
 
 		public OptionList(Options optionBundle)
@@ -264,6 +278,11 @@ namespace Mono.GetOptions
 					}
 				}
 			}
+			if (appAdditionalInfo != null)
+				Console.WriteLine("\n{0}", appAdditionalInfo);
+			if (appReportBugsTo != null)
+				Console.WriteLine("\nPlease report bugs {0} <{1}>", (appReportBugsTo.IndexOf('@')>0)?"to":"at" , appReportBugsTo);
+				
 		}
 
 		private void ShowUsage()

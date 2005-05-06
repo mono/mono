@@ -9,6 +9,9 @@ NO_TEST = yes
 EXTRA_DISTFILES = \
 	Mono.GetOptions.csproj		\
 	GetOptTest/AssemblyInfo.cs	\
-	GetOptTest/GetOptTester.cs
+	GetOptTest/GetOptTester.cs \
+	Samples/Makefile \
+	Samples/mcat.exe.sources \
+	Samples/mcat.cs
 
 include ../../build/library.make

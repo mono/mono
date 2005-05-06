@@ -36,7 +36,7 @@ namespace Mono.GetOptions
 		public OptionsParsingMode ParsingMode;
 		public bool BreakSingleDashManyLettersIntoManyOptions;
 		public bool EndOptionProcessingWithDoubleDash;
-
+		
 		private OptionList optionParser;
 
 		public Options()
@@ -52,9 +52,9 @@ namespace Mono.GetOptions
 			ProcessArgs(args);
 		}
 		
-		public bool RunningOnWindows { get { return 128 != (int)Environment.OSVersion.Platform; } }
-
 		protected virtual void InitializeOtherDefaults() { } // Only subclasses may need to implement something here
+
+		public bool RunningOnWindows { get { return 128 != (int)Environment.OSVersion.Platform; } }
 
 		#region non-option arguments
 				
@@ -62,7 +62,7 @@ namespace Mono.GetOptions
 		public string[] RemainingArguments { get { return (string[])arguments.ToArray(typeof(string)); } }
 
 		[ArgumentProcessor]
-		protected virtual void DefaultArgumentProcessor(string argument)
+		public virtual void DefaultArgumentProcessor(string argument)
 		{
 			arguments.Add(argument);
 		}

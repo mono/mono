@@ -90,10 +90,12 @@ namespace Mono.GetOptions
 		private bool verboseParsing { get { return this.OptionBundle.VerboseParsingOfOptions; } }
 
 		private OptionsParsingMode parsingMode { get { return this.OptionBundle.ParsingMode; } } 
+		
+		private bool UseGNUFormat { get { return (parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash; } } 
 
 		private string linuxLongPrefix {
 			get { 
-				return (((parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash)? "--":"-"); 
+				return (UseGNUFormat? "--":"-"); 
 			} 
 		}
 		
@@ -139,9 +141,10 @@ namespace Mono.GetOptions
 				} else if (BooleanOption && VBCStyleBoolean) {
 					optionHelp += "[+|-]";
 				}
-				optionHelp += "\t" + this.ShortDescription;
+				optionHelp += "\t";
 				if (this.AlternateForm != string.Empty && this.AlternateForm != null)
-					optionHelp += " [short form: "+ shortPrefix + this.AlternateForm + "]";
+					optionHelp += "Also "+ shortPrefix + this.AlternateForm + (NeedsParameter?(":"+ParamName):"") +". ";
+				optionHelp += this.ShortDescription;
 			}
 			return optionHelp;
 		}
@@ -236,7 +239,13 @@ namespace Mono.GetOptions
 		internal string Key
 		{
 			get { 
-				return this.LongForm + " " + this.ShortForm; 
+				if (UseGNUFormat) {				
+					string ShortID = this.ShortForm.ToUpper();
+					if (ShortID == string.Empty)
+						ShortID = "ZZ";
+					return  ShortID + " " + this.LongForm; 
+				} else
+					return this.LongForm + " " + this.ShortForm; 
 			}
 		}
 
