@@ -1,3 +1,14 @@
+2005-05-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Keep the appdomain information in the structure. Added a 
+	missing "return	FALSE" for Unmanaged if FullTrust is set (or else the
+	value gets overwritten).
+	* declsec.h: Set the default MonoArray for the the stack to 6. Added
+	an MonoAppDomain member to MonoSecurityFrame.
+	* mini-exceptions.c: Do not use a glist to keep GC allocated objects
+	used in the stack walk. Now use a MonoArray which grow (double) when
+	it gets full.
+
 2005-05-05  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* mini.c: Re-enabled runtime cleanup, since running threads should
