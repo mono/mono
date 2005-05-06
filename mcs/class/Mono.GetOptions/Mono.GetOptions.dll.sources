@@ -11,3 +11,4 @@ Mono.GetOptions/OptionList.cs
 Mono.GetOptions/OptionDetails.cs
 Mono.GetOptions/Options.cs
 Mono.GetOptions/KillOptionAttribute.cs
+Mono.GetOptions.Useful/CommonCompilerOptions.cs

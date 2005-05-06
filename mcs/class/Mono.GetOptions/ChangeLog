@@ -1,3 +1,8 @@
+2005-05-06:3  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Adding Mono.GetOptions.Useful directory for new namespace
+	* Added Mono.GetOptions.Useful/CommonCompilerOptions.cs with useful option processing 
+	for compilers targetting the managed world. mbas is the first client.
+
 2005-05-06:2  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Adding Samples directory with mcat Sample (changed main Makefile but didn't add to the SUBDIRS)
 	* Mono.GetOptions/Options.cs, Mono.GetOptions/OptionList
