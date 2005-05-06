@@ -45,7 +45,6 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
-		[CLSCompliant (false)]
 		public IList<CustomAttributeTypedArgument> ConstructorArguments {
 			get {
 				throw new NotImplementedException ();
@@ -53,7 +52,6 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
-		[CLSCompliant (false)]
 		public IList<CustomAttributeNamedArgument> NamedArguments {
 			get {
 				throw new NotImplementedException ();
@@ -61,25 +59,21 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
-		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (Assembly yarget) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (MemberInfo target) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (Module target) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (ParameterInfo target) {
 			throw new NotImplementedException ();
 		}

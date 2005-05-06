@@ -48,14 +48,12 @@ namespace System.Reflection {
 		internal MethodBody () {
 		}
 
-		[CLSCompliant (false)]
 		public IList<ExceptionHandlingClause> ExceptionHandlingClauses {
 			get {
 				return Array.AsReadOnly<ExceptionHandlingClause> (clauses);
 			}
 		}
 
-		[CLSCompliant (false)]
 		public IList<LocalVariableInfo> LocalVariables {
 			get {
 				return Array.AsReadOnly<LocalVariableInfo> (locals);

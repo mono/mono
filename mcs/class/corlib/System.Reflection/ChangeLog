@@ -1,3 +1,8 @@
+2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBody.cs Module.cs CustomAttributeData.cs: Remove unnecessary
+	CLSCompliant attributes now that generics is CLS compliant.
+
 2004-05-03  Lluis Sanchez  <lluis@ximian.com>
 
 	* Assembly.cs: Don't remove version and culture information from
