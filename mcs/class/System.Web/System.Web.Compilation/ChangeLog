@@ -1,3 +1,8 @@
+2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspComponentFoundry.cs: tagnames have precedence over types in
+	assemblies when they use the same prefix. Fixes bug #71855.
+
 2005-05-03  Lluis Sanchez Gual <lluis@novell.com>
 
 	* WebServiceCompiler.cs: Create the temp directory before

@@ -173,6 +173,10 @@ namespace System.Web.Compilation
 			public override Type GetType (string componentName)
 			{
 				Type type = null;
+				Foundry foundry = tagnames [componentName] as Foundry;
+				if (foundry != null)
+					return foundry.GetType (componentName);
+
 				if (assemblyFoundry != null) {
 					try {
 						type = assemblyFoundry.GetType (componentName);
@@ -180,14 +184,9 @@ namespace System.Web.Compilation
 					} catch { }
 				}
 
-				Foundry foundry = tagnames [componentName] as Foundry;
-				if (foundry == null) {
-					string msg = String.Format ("Type {0} not registered for prefix {1}",
+				string msg = String.Format ("Type {0} not registered for prefix {1}",
 								     componentName, tagPrefix);
-					throw new ApplicationException (msg);
-				}
-
-				return foundry.GetType (componentName);
+				throw new ApplicationException (msg);
 			}
 		}
 	}
