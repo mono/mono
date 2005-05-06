@@ -64,11 +64,11 @@ namespace System.Runtime.Remoting.Contexts {
 		bool frozen;
 		
 		static int global_count;
-		static Hashtable namedSlots;
+		static Hashtable namedSlots = new Hashtable ();
 
 		static DynamicPropertyCollection global_dynamic_properties;
 		DynamicPropertyCollection context_dynamic_properties;
-		ContextCollbackObject callback_object = null;
+		ContextCallbackObject callback_object = null;
 		
 		public Context ()
 		{
@@ -331,15 +331,12 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public void DoCallBack (CrossContextDelegate deleg)
 		{
-			if (callback_object == null)
+			lock (this)
 			{
-				lock (this)
-				{
-					if (callback_object == null) {
-						Context oldContext = Context.SwitchToContext (this);
-						callback_object = new ContextCollbackObject ();
-						Context.SwitchToContext (oldContext);
-					}
+				if (callback_object == null) {
+					Context oldContext = Context.SwitchToContext (this);
+					callback_object = new ContextCallbackObject ();
+					Context.SwitchToContext (oldContext);
 				}
 			}
 			
@@ -353,15 +350,6 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
 		{
-			if (namedSlots == null)
-			{
-				lock (typeof(Context))
-				{
-					if (namedSlots == null)
-						namedSlots = new Hashtable ();
-				}
-			}
-			
 			lock (namedSlots.SyncRoot)
 			{
 				LocalDataStoreSlot slot = new LocalDataStoreSlot ();
@@ -372,8 +360,6 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public static void FreeNamedDataSlot (string name)
 		{
-			if (namedSlots == null) return;
-
 			lock (namedSlots.SyncRoot)
 			{
 				namedSlots.Remove (name);
@@ -393,10 +379,7 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public static LocalDataStoreSlot GetNamedDataSlot (string name)
 		{
-			if (namedSlots == null)
-				return AllocateNamedDataSlot (name);
-			
-			lock (namedSlots)
+			lock (namedSlots.SyncRoot)
 			{
 				LocalDataStoreSlot slot = namedSlots [name] as LocalDataStoreSlot;
 				if (slot == null) return AllocateNamedDataSlot (name);
@@ -496,7 +479,7 @@ namespace System.Runtime.Remoting.Contexts {
 		}
 	}
 	
-	class ContextCollbackObject: ContextBoundObject
+	class ContextCallbackObject: ContextBoundObject
 	{
 		public void DoCallBack (CrossContextDelegate deleg)
 		{
