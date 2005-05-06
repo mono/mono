@@ -1375,7 +1375,6 @@ namespace System
 			}
 		}
 #if NET_2_0
-		[CLSCompliant (false)]
 		public static void Resize <T> (ref T [] arr, int sz) {
 			if (sz < 0)
 				throw new ArgumentOutOfRangeException ();
@@ -1393,7 +1392,6 @@ namespace System
 			arr = a;
 		}
 		
-		[CLSCompliant (false)]
 		public static bool TrueForAll <T> (T [] array, Predicate <T> p)
 		{
 			if (array == null || p == null)
@@ -1405,7 +1403,6 @@ namespace System
 				
 			return true;
 		}
-		[CLSCompliant (false)]
 		public static void ForEach <T> (T [] array, Action <T> a)
 		{
 			if (array == null || a == null)
@@ -1415,7 +1412,6 @@ namespace System
 				a (t);
 		}
 		
-		[CLSCompliant (false)]
 		public static U [] ConvertAll <T, U> (T [] s, Converter <T, U> c)
 		{
 			if (s == null || c == null)
@@ -1429,7 +1425,6 @@ namespace System
 			return r;
 		}
 		
-		[CLSCompliant (false)]
 		public static int FindLastIndex <T> (T [] a, Predicate <T> c)
 		{
 			if (a == null)
@@ -1438,7 +1433,6 @@ namespace System
 			return FindLastIndex <T> (a, 0, a.Length, c);
 		}
 		
-		[CLSCompliant (false)]
 		public static int FindLastIndex <T> (T [] a, int idx, Predicate <T> c)
 		{
 			if (a == null)
@@ -1447,7 +1441,6 @@ namespace System
 			return FindLastIndex <T> (a, idx, a.Length - idx, c);
 		}
 		
-		[CLSCompliant (false)]
 		public static int FindLastIndex <T> (T [] a, int idx, int cnt, Predicate <T> c)
 		{
 			if (a == null || c == null)
@@ -1463,7 +1456,6 @@ namespace System
 			return -1;
 		}
 		
-		[CLSCompliant (false)]
 		public static int FindIndex <T> (T [] a, Predicate <T> c)
 		{
 			if (a == null)
@@ -1472,7 +1464,6 @@ namespace System
 			return FindIndex <T> (a, 0, a.Length, c);
 		}
 		
-		[CLSCompliant (false)]
 		public static int FindIndex <T> (T [] a, int idx, Predicate <T> c)
 		{
 			if (a == null)
@@ -1481,7 +1472,6 @@ namespace System
 			return FindIndex <T> (a, idx, a.Length - idx, c);
 		}
 		
-		[CLSCompliant (false)]
 		public static int FindIndex <T> (T [] a, int idx, int cnt, Predicate <T> c)
 		{
 			if (a == null || c == null)
@@ -1497,7 +1487,6 @@ namespace System
 			return -1;
 		}
 		
-		[CLSCompliant (false)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
 		public static int BinarySearch <T> (T [] array, T value)
 		{
@@ -1507,7 +1496,6 @@ namespace System
 			return BinarySearch <T> (array, 0, array.Length, value, null);
 		}
 		
-		[CLSCompliant (false)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
 		public static int BinarySearch <T> (T [] array, T value, IComparer <T> comparer)
 		{
@@ -1517,13 +1505,11 @@ namespace System
 			return BinarySearch <T> (array, 0, array.Length, value, comparer);
 		}
 		
-		[CLSCompliant (false)]
 		public static int BinarySearch <T> (T [] array, int offset, int length, T value)
 		{
 			return BinarySearch <T> (array, offset, length, value, null);
 		}
 		
-		[CLSCompliant (false)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
 		public static int BinarySearch <T> (T [] array, int index, int length, T value, IComparer <T> comparer)
 		{
@@ -1565,7 +1551,6 @@ namespace System
 			return ~iMin;
 		}
 		
-		[CLSCompliant (false)]
 		public static int IndexOf <T> (T [] array, T value)
 		{
 			if (array == null)
@@ -1574,7 +1559,6 @@ namespace System
 			return IndexOf (array, value, 0, array.Length);
 		}
 
-		[CLSCompliant (false)]
 		public static int IndexOf <T> (T [] array, T value, int startIndex)
 		{
 			if (array == null)
@@ -1583,7 +1567,6 @@ namespace System
 			return IndexOf (array, value, startIndex, array.Length - startIndex);
 		}
 
-		[CLSCompliant (false)]
 		public static int IndexOf <T> (T [] array, T value, int startIndex, int count)
 		{
 			if (array == null)
@@ -1602,7 +1585,6 @@ namespace System
 			return -1;
 		}
 		
-		[CLSCompliant (false)]
 		public static int LastIndexOf <T> (T [] array, T value)
 		{
 			if (array == null)
@@ -1611,7 +1593,6 @@ namespace System
 			return LastIndexOf (array, value, array.Length - 1);
 		}
 
-		[CLSCompliant (false)]
 		public static int LastIndexOf <T> (T [] array, T value, int startIndex)
 		{
 			if (array == null)
@@ -1620,7 +1601,6 @@ namespace System
 			return LastIndexOf (array, value, startIndex, startIndex + 1);
 		}
 
-		[CLSCompliant (false)]
 		public static int LastIndexOf <T> (T [] array, T value, int startIndex, int count)
 		{
 			if (array == null)
@@ -1637,7 +1617,6 @@ namespace System
 			return -1;
 		}
 		
-		[CLSCompliant (false)]
 		public static T [] FindAll <T> (T [] a, Predicate <T> p)
 		{
 			if (a == null || p == null)
@@ -1653,7 +1632,6 @@ namespace System
 			return a;
 		}
 
-		[CLSCompliant (false)]
 		public static bool Exists <T> (T [] a, Predicate <T> p)
 		{
 			if (a == null || p == null)
@@ -1665,7 +1643,6 @@ namespace System
 			return false;
 		}
 
-		[CLSCompliant (false)]
 		public static IList<T> AsReadOnly<T> (T[] array)
 		{
 			if (array == null)
@@ -1674,7 +1651,6 @@ namespace System
 		}
 		
 #if FIXME
-		[CLSCompliant (false)]
 		public static Nullable <T> Find <T> (T [] a, Predicate <T> p)
 		{
 			if (a == null || p == null)
@@ -1687,7 +1663,6 @@ namespace System
 			return default (Nullable <T>);
 		}
 		
-		[CLSCompliant (false)]
 		public static Nullable <T> FindLast <T> (T [] a, Predicate <T> p)
 		{
 			if (a == null || p == null)

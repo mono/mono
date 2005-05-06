@@ -1,3 +1,7 @@
+2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs: Remove CLSCompliant (false) attributes.
+
 2005-05-06  Martin Baulig  <martin@ximian.com>
 
 	* Predicate.cs, Action.cs, Comparision.cs, Converter.cs: Add
