@@ -222,7 +222,7 @@ namespace Mono.ILASM {
 
                         if (typedef != null) {
                                 // Class head is allready defined, we are just reopening the class
-                                current_typedef = typedef;
+                                current_customattrtarget = current_typedef = typedef;
                                 typedef_stack.Add (current_typedef);
 				typedef_stack_top++;
                                 return;

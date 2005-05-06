@@ -1,3 +1,10 @@
+2005-05-06  Ankit Jain  <ankit@corewars.org>
+
+	* MethodDef.cs (MethodDef.GetNamedParamPos): Param num starts from 1 for instance
+	methods.
+	* CodeGen.cs (CodeGen.BeginTypeDef): Set current_customattrtarget when reopening a
+	class.
+	
 2005-04-27  Ankit Jain  <ankit@corewars.org>
 
 	* ExternTypeRefInst.cs (ExternTypeRefInst.GetMethodRef): Use method_table to avoid
