@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-	[CLSCompliant(false)]
 	[ComVisible(false)]
 	public interface IEnumerator<T> : IDisposable, IEnumerator
 	{

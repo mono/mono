@@ -31,7 +31,6 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
-	[CLSCompliant(false)]
 	public abstract class Comparer<T> : IComparer<T>, System.Collections.IKeyComparer,
 		System.Collections.IComparer, System.Collections.IHashCodeProvider {
 	

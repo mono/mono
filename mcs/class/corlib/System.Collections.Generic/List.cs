@@ -39,7 +39,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-	[CLSCompliant(false)]
 	[ComVisible(false)]
 	public class List<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable
 	{

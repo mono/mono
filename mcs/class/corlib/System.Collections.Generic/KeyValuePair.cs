@@ -35,7 +35,6 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
-	[CLSCompliant(false)]
 	public struct KeyValuePair<K,V> {
 		K key;
 		V val;

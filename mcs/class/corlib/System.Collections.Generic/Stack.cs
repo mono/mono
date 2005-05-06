@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-	[CLSCompliant (false)]
 	[ComVisible (false)]
 	public class Stack <T> : ICollection <T>, IEnumerable <T>, ICollection, IEnumerable {
 		
