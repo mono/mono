@@ -2,6 +2,7 @@
 
 	* Makefile (ALL_PROGRAMS): Make 'mono-api-info.exe'
 	profile-dependent.
+	(uninstall-local): Use the basename.
 
 2005-04-13 Ankit Jain <ankit@corewars.org>
 

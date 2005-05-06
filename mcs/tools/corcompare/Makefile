@@ -43,7 +43,7 @@ install-local: $(ALL_PROGRAMS)
 
 uninstall-local:
 	for i in $(ALL_PROGRAMS) ; do \
-	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$i ; \
+	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/`basename $$i` ; \
 	done
 
 test-local:
