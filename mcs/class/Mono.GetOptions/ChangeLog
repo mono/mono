@@ -1,3 +1,14 @@
+2005-05-06  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/Options.cs
+		Added helper properties string FirstArgument, SecondArgument, ThirdArgument, FourthArgument,
+		FifthArgument and bool GotNoArguments
+		Added a helper property bool RunningOnWindows
+		Added new constructor Options(string[] args) and an overridable InitializeOtherDefaults method 
+		to allow one-line construction and options processing
+	* Mono.GetOptions/OptionDetails.cs 
+		Cleaning some logic to avoid throwing exceptions during option parsing
+		Corrected verbose message when setting a boolean option to show the real value being set
+
 2005-02-28  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions/OptionAttribute.cs, Mono.GetOptions/OptionDetails.cs, Mono.GetOptions/OptionList: 
 		Implemented support for vbc style booleans: /debug+ /debug- . Usage: [Option("debug", VBCStyleBoolean = true)]

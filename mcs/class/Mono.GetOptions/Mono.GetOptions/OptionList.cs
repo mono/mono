@@ -452,7 +452,7 @@ namespace Mono.GetOptions
 		
 		private void ProcessNonOption(string argument)
 		{
-			if (OptionDetails.Verbose)
+			if (optionBundle.VerboseParsingOfOptions)
 					Console.WriteLine("argument [" + argument + "]");							
 			if (argumentProcessor == null)
 				arguments.Add(argument);

@@ -64,6 +64,7 @@ namespace Mono.GetOptions
 		public string paramName = null;
 		public bool VBCStyleBoolean;
 		public bool SecondLevelHelp;
+		public bool Hidden;
 
 		private string ExtractParamName(string shortDescription)
 		{
@@ -84,15 +85,9 @@ namespace Mono.GetOptions
 			return shortDescription;
 		}
 
-		public string ParamName 
-		{
-			get 
-			{ 
-				return paramName;
-			}
-		}
+		public string ParamName { get { return paramName; } }
 				
-		public static bool Verbose = false;
+		private bool verboseParsing { get { return this.OptionBundle.VerboseParsingOfOptions; } }
 
 		private OptionsParsingMode parsingMode { get { return this.OptionBundle.ParsingMode; } } 
 
@@ -192,6 +187,7 @@ namespace Mono.GetOptions
 			this.MaxOccurs = 1;
 			this.VBCStyleBoolean = option.VBCStyleBoolean;
 			this.SecondLevelHelp = option.SecondLevelHelp;
+			this.Hidden = false; // TODO: check other attributes
 			
 			this.ParameterType = TypeOfMember(memberInfo);
 
@@ -270,22 +266,27 @@ namespace Mono.GetOptions
 			}
 		}
 
-		private void Occurred(int howMany)
+		private int HowManyBeforeExceedingMaxOccurs(int howMany)
 		{
+			if (MaxOccurs > 0 && (Occurs + howMany) > MaxOccurs) {
+				System.Console.Error.WriteLine("Option " + LongForm + " can be used at most " + MaxOccurs + " times. Ignoring extras...");
+				howMany = MaxOccurs - Occurs;
+			}
 			Occurs += howMany;
-
-			if (MaxOccurs > 0 && Occurs > MaxOccurs)
-				throw new IndexOutOfRangeException("Option " + ShortForm + " can be used at most " + MaxOccurs + " times");
+			return howMany;
 		}
+		
+		private bool AddingOneMoreExceedsMaxOccurs { get { return HowManyBeforeExceedingMaxOccurs(1) < 1; } }
 
 		private void DoIt(bool setValue)
 		{
 			if (!NeedsParameter)
 			{
-				Occurred(1);
+				if (AddingOneMoreExceedsMaxOccurs) 
+					return;
 
-				if (Verbose)
-					Console.WriteLine("<" + this.LongForm + "> set to [true]");
+				if (verboseParsing)
+					Console.WriteLine("<{0}> set to [{1}]", this.LongForm, setValue);
 
 				if (MemberInfo is FieldInfo)
 				{
@@ -311,14 +312,16 @@ namespace Mono.GetOptions
 
 			string[] parameterValues = parameterValue.Split(',');
 
-			Occurred(parameterValues.Length);
+			int waitingToBeProcessed = HowManyBeforeExceedingMaxOccurs(parameterValues.Length);
 
 			foreach (string parameter in parameterValues)
 			{
-
+				if (waitingToBeProcessed-- <= 0)
+					break;
+					
 				object convertedParameter = null;
 
-				if (Verbose)
+				if (verboseParsing)
 					Console.WriteLine("<" + this.LongForm + "> set to [" + parameter + "]");
 
 				if (Values != null && parameter != null) {
