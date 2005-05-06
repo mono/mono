@@ -84,6 +84,21 @@ namespace MonoTests.System.Net.Sockets
 			Assertion.AssertEquals ("BlockingStatus02",
 						block, false);
 		}
+
+		[Test]
+#if !NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void SetSocketOptionBoolean ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1);
+			Socket sock = new Socket (ep.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+			try {
+				sock.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+			} finally {
+				sock.Close ();
+			}
+		}
 	}
 
 }

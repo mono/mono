@@ -1,3 +1,7 @@
+2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SocketTest.cs: added test for setting a boolean socket option.
+
 2005-03-06  Nick Drochak  <ndrochak@ieee.org>
 
 	* TcpClientTest.cs: Choose a different port so test will pass on MS.NET
