@@ -1,3 +1,11 @@
+2005-05-05  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.resx, System.Windows.Forms.en.resx,
+	  System.Windows.Forms.de.resx: Added errorProvider icon
+	* System.Windows.Forms.resources.prebuilt, 
+	  System.Windows.Forms.en.resources.prebuilt,
+	  System.Windows.Forms.de.resources.prebuilt: Updated
+
 2005-03-16  Alexander Olk <xenomorph2@onlinehome.de>
 
 	* System.Windows.Forms.resx, System.Windows.Forms.en.resx,
