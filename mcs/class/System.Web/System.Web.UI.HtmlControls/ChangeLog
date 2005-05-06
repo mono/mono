@@ -1,3 +1,7 @@
+2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HtmlHead.cs: Fix warning.
+
 2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HtmlForm.cs: Use the new WriteSubmitStatements method from

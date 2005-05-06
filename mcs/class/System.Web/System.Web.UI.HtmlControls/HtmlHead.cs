@@ -98,7 +98,7 @@ namespace System.Web.UI.HtmlControls
 		
 		IStyleSheet IPageHeader.StyleSheet {
 			get {
-				if (styleSheet == null) styleSheet = new StyleSheetBag (Page);
+				if (styleSheet == null) styleSheet = new StyleSheetBag ();
 				return styleSheet;
 			}
 		}
@@ -112,7 +112,6 @@ namespace System.Web.UI.HtmlControls
 	internal class StyleSheetBag: IStyleSheet
 	{
 		ArrayList entries = new ArrayList ();
-		Page page;
 		
 		internal class StyleEntry
 		{
@@ -121,9 +120,8 @@ namespace System.Web.UI.HtmlControls
 			public IUrlResolutionService UrlResolver;
 		}
 		
-		public StyleSheetBag (Page page)
+		public StyleSheetBag ()
 		{
-			this.page = page;
 		}
 		
 		public void CreateStyleRule (Style style, string selection, IUrlResolutionService urlResolver)
