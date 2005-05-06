@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.WebParts.ConnectionPoint.cs
 //
 // Author: Sanjay Gupta (gsanjay@novell.com)
@@ -37,7 +37,6 @@ namespace System.Web.UI.WebControls.WebParts {
 		private string id = "default";
 		private Type interfaceType;
 		private Type controlType;
-		private Control control;
 		private MethodInfo callBackMethod;
 		
 		public const string DefaultID = "default";

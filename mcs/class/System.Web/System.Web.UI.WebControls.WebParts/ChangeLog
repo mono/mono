@@ -1,3 +1,7 @@
+2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ConnectionPoint.cs: Fix warning.
+
 2004-11-11  Martin Baulig  <martin@ximian.com>
 
 	* WebPart.cs: Don't use String.Empty in attributes.
