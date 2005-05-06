@@ -39,7 +39,7 @@ namespace System.Globalization
 	[Serializable]
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
-		static CultureInfo invariant_culture_info;
+		static volatile CultureInfo invariant_culture_info;
 
 		const int NumOptionalCalendars = 5;
 		const int CalendarTypeMask = 0xFF;
@@ -56,9 +56,9 @@ namespace System.Globalization
 		[NonSerialized]
 		int number_index;
 		bool m_useUserOverride;
-		NumberFormatInfo numInfo;
-		DateTimeFormatInfo dateTimeInfo;
-		TextInfo textInfo;
+		volatile NumberFormatInfo numInfo;
+		volatile DateTimeFormatInfo dateTimeInfo;
+		volatile TextInfo textInfo;
 		private string m_name;
 		
 		[NonSerialized]
@@ -75,7 +75,7 @@ namespace System.Globalization
 		private string icu_name;
 		[NonSerialized]
 		private string win3lang;
-		CompareInfo compareInfo;
+		volatile CompareInfo compareInfo;
 		[NonSerialized]
 		private unsafe readonly int *calendar_data;
 		[NonSerialized]
@@ -279,7 +279,13 @@ namespace System.Globalization
 			bool specific=((types & CultureTypes.SpecificCultures)!=0);
 			bool installed=((types & CultureTypes.InstalledWin32Cultures)!=0);  // TODO
 
-			return internal_get_cultures (neutral, specific, installed);
+			CultureInfo [] infos = internal_get_cultures (neutral, specific, installed);
+			// The runtime returns a NULL in the first position of the array when
+			// 'neutral' is true. We fill it in with the InvariantCulture.
+			if (neutral && infos.Length > 0 && infos [0] == null)
+				infos [0] = InvariantCulture;
+
+			return infos;
 		}
 
 		public override int GetHashCode()
@@ -501,8 +507,15 @@ namespace System.Globalization
 		static CultureInfo [] GetCultures (bool neutral, bool specific, bool installed)
 		{
 			CultureInfo [] cis = internal_get_cultures (neutral, specific, installed);
+
+			// The runtime returns a NULL in the first position of the array when
+			// 'neutral' is true. We fill it in with the InvariantCulture.
+			if (neutral && cis.Length > 0 && cis [0] == null)
+				cis [0] = InvariantCulture;
+
 			foreach (CultureInfo ci in cis)
 				ci.ConstructCalendars ();
+
 			return cis;
 		}
 

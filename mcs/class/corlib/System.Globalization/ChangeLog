@@ -1,3 +1,8 @@
+2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CultureInfo.cs: made a few variables 'volatile'. GetCultures now
+	returns the InvariantCulture in the array. Fixes bug #72081.
+
 2005-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextInfo.cs : Some performance fixes. Avoid delegate.
