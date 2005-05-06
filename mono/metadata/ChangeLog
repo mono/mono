@@ -1,3 +1,8 @@
+2005-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* monitor.c: ignore calls to Monitor.Exit even if no one ever called
+	Monitor.Enter on the object.
+
 2005-05-05  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* threads.c: Enable the wait for running threads when exiting.
