@@ -34,6 +34,7 @@ library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
 
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_lib = fixup/$(PROFILE)/$(LIBRARY_NAME)
+library_CLEAN_FILES += $(build_lib) $(build_lib:.dll=.pdb)
 else
 build_lib = $(the_lib)
 endif
