@@ -1,3 +1,7 @@
+2005-05-06  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Fix waking up the main loop.
+		
 2005-05-05  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs: Updated revision

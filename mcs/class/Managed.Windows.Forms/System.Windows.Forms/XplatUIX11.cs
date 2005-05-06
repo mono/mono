@@ -297,7 +297,7 @@ namespace System.Windows.Forms {
 
 				pollfds [1] = new Pollfd ();
 				pollfds [1].fd = wake.Handle.ToInt32 ();
-				pollfds [1].events = PollEvents.POLLIN;
+				pollfds [1].events = PollEvents.POLLOUT;
 				#endif
 
 				Keyboard = new X11Keyboard(DisplayHandle);
@@ -626,7 +626,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void WakeupMain () {
-			wake.BeginSend (new byte [] { 0xFF }, 0, 1, SocketFlags.None, null, null);
+			wake.Send (new byte [] { 0xFF });
 		}
 
 		private void AddExpose (XEvent xevent) {
