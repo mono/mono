@@ -13,6 +13,8 @@ LIB_MCS_FLAGS_RESOURCES = $(LIB_MCS_FLAGS)
 TXT_RES = Microsoft.VisualBasic.VBUtils.resources
 #RESX_RES = 
 
+with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" 
+
 ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
 ILASM = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 

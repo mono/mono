@@ -1,3 +1,7 @@
+2005-05-05  Raja R Harinath  <harinath@acm.org>
+
+	* Makefile (with_mono_path): Define.
+
 2005-05-06  Ankit Jain  <ankit@corewars.org>
 
 	* Microsoft.VisualBasic.dll.resources: Change resource argument to 
