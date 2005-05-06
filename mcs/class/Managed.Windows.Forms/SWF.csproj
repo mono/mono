@@ -729,6 +729,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\HelpNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\HelpProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\HorizontalAlignment.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1355,6 +1365,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\SaveFileDialog.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\Screen.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

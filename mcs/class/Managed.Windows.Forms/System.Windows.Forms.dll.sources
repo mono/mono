@@ -127,6 +127,8 @@ System.Windows.Forms/GridItemType.cs
 System.Windows.Forms/GroupBox.cs
 System.Windows.Forms/HelpEventArgs.cs
 System.Windows.Forms/HelpEventHandler.cs
+System.Windows.Forms/HelpNavigator.cs
+System.Windows.Forms/HelpProvider.cs
 System.Windows.Forms/HorizontalAlignment.cs
 System.Windows.Forms/HScrollBar.cs
 System.Windows.Forms/Hwnd.cs
@@ -253,6 +255,7 @@ System.Windows.Forms/RichTextBoxStreamType.cs
 System.Windows.Forms/RichTextBoxWordPunctuations.cs
 System.Windows.Forms/RightToLeft.cs
 System.Windows.Forms/SaveFileDialog.cs
+System.Windows.Forms/Screen.cs
 System.Windows.Forms/ScrollableControl.cs
 System.Windows.Forms/ScrollBar.cs
 System.Windows.Forms/ScrollBars.cs
