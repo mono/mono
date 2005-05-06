@@ -644,8 +644,7 @@ namespace System.Text {
 				int capacity = _str.Length;
 
 				// Try double buffer, if that doesn't work, set the length as capacity
-				if (size > capacity) 
-				{
+				if (size > capacity) {
 					
 					// The first time a string is appended, we just set _cached_str
 					// and _str to it. This allows us to do some optimizations.
@@ -660,6 +659,9 @@ namespace System.Text {
 					if (capacity >= Int32.MaxValue || capacity < 0)
 						capacity = Int32.MaxValue;
 
+					if (capacity > _maxCapacity && size <= _maxCapacity)
+						capacity = _maxCapacity;
+					
 					if (capacity > _maxCapacity)
 						throw new ArgumentOutOfRangeException ("size", "capacity was less than the current size.");
 				}

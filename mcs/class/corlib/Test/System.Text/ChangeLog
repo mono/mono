@@ -1,3 +1,7 @@
+2005-05-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilderTest.cs (MaxCapacity_Overflow3): Test for #72244.
+
 2005-01-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringBuilderTest.cs (CapacityFromString): This relies on impl

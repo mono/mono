@@ -442,7 +442,18 @@ namespace MonoTests.System.Text {
 		AssertEquals (2, sb.Capacity);
 		AssertEquals (3, sb.MaxCapacity);
 	}
-
+	
+	[Test]
+	public void MaxCapacity_Overflow3 ()
+	{
+		//
+		// When the capacity (4) gets doubled, it is greater than the
+		// max capacity. This makes sure that before throwing an exception
+		// we first attempt to go for a smaller size.
+		//
+		new StringBuilder(4, 7).Append ("foo").Append ("bar");
+		new StringBuilder(4, 6).Append ("foo").Append ("bar");
+	}
 	[Test]
 	public void CapacityFromString ()
 	{

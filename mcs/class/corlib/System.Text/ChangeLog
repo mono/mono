@@ -1,3 +1,10 @@
+2005-05-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilder.cs (InternalEnsureCapacity): It is possible that
+	the size we attempt to grow to is more than the max capacity, but
+	that a smaller size will do. In this case, don't throw an
+	exception. Fixes #72244
+
 2005-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NormalizationForm.cs : new file.
