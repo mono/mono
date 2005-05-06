@@ -1,3 +1,7 @@
+2005-05-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* FileTest.cs (OpenAppend): Test for #71088.
+
 2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DirectoryInfoTest.cs: added test for bug #53173.

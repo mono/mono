@@ -1473,6 +1473,16 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
+		
+		[Test]
+		public void OpenAppend ()
+		{
+			string fn = Path.GetTempFileName ();
+			using (FileStream s = File.Open (fn, FileMode.Append))
+				;
+			
+			DeleteFile (fn);
+		}
 
 		private void DeleteFile (string path)
 		{

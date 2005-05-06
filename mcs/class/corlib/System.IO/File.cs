@@ -297,7 +297,7 @@ namespace System.IO
 		
 		public static FileStream Open (string path, FileMode mode)
 		{	
-			return new FileStream (path, mode, FileAccess.ReadWrite, FileShare.None);
+			return new FileStream (path, mode, mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite, FileShare.None);
 		}
 		
 		public static FileStream Open (string path, FileMode mode, FileAccess access)

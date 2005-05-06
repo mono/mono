@@ -1,3 +1,8 @@
+2005-05-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* File.cs (Open): If a stream is opened with Append access, you
+	only want Write access. Fixes bug #71088.
+
 2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnexceptionalStreamWriter.cs: don't throw anything on Flush. Closes
