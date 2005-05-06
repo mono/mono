@@ -1,3 +1,6 @@
+2005-05-06 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+        * driver.cs : Refactored to use Mono.GetOptions.Useful.CommonCompilerOptions
+
 2005-05-05 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
         * mb-parser.jay : Correction to allow optional type caracters in some situations.
         Now 6 more tests under mbas/Test/tests/types compile and 3 more compile and run.
