@@ -1,3 +1,10 @@
+2005-05-06  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (LIBRARY_NEEDS_PREPROCESSING): New control.
+	(build_lib): Name of library built.  Default to $(the_lib) unless
+	preprocessing.
+	($(build_lib)): Rename from '$(the_lib)'.
+
 2005-05-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* rules.make config-default.make: Use the install-sh script from the mono

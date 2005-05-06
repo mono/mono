@@ -32,6 +32,12 @@ the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
 
+ifdef LIBRARY_NEEDS_POSTPROCESSING
+build_lib = fixup/$(PROFILE)/$(LIBRARY_NAME)
+else
+build_lib = $(the_lib)
+endif
+
 ifndef NO_TEST
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
 test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
@@ -214,6 +220,13 @@ dist-local: dist-default
 	for d in . $$subs ; do \
 	  case $$d in .) : ;; *) test ! -f $$d/ChangeLog || cp -p $$d/ChangeLog $(distdir)/$$d ;; esac ; done
 
+ifdef LIBRARY_NEEDS_POSTPROCESSING
+dist-local: dist-fixup
+FIXUP_PROFILES = default net_2_0
+dist-fixup:
+	$(MKINSTALLDIRS) $(distdir)/fixup $(FIXUP_PROFILES:=%=$(distdir)/fixup/%)
+endif
+
 ifndef LIBRARY_COMPILE
 LIBRARY_COMPILE = $(CSCOMPILE)
 endif
@@ -250,12 +263,12 @@ endif
 
 # The library
 
-$(the_lib): $(response) $(sn) $(BUILT_SOURCES)
+$(build_lib): $(response) $(sn) $(BUILT_SOURCES)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) $(BUILT_SOURCES_cmdline) @$(response)
-	$(SN) $(SNFLAGS) $(@F) $(LIBRARY_SNK)
-	mv $(@F) $@
-	test ! -f $(@F).mdb || mv $(@F).mdb $@.mdb
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
+	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
+	mv $(LIBRARY_NAME) $@
+	test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
