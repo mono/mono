@@ -29,12 +29,18 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace Microsoft.JScript {
 
 	public class BlockScope : ActivationObject
 	{
 		public BlockScope (ScriptObject parent, string name, int scopeId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override JSVariableField CreateField (string name, FieldAttributes attrFlags, object value)
 		{
 			throw new NotImplementedException ();
 		}
