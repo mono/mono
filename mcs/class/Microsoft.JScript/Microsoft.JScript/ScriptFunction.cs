@@ -29,24 +29,31 @@
 
 using System;
 using System.Reflection;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace Microsoft.JScript {
 
 	public abstract class ScriptFunction : JSObject {
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public Object CreateInstance  (params Object [] args)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs)]
 		public Object Invoke (Object thisOb, params Object [] args)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public override Object InvokeMember (string name, BindingFlags invokeAttr,
 						     System.Reflection.Binder binder, Object target, Object [] args,
 						     ParameterModifier [] modifiers, CultureInfo cultInfo,

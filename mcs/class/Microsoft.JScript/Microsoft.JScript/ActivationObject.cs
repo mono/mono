@@ -29,6 +29,7 @@
 
 using System;
 using System.Reflection;
+using System.Diagnostics;
 using System.Collections;
 
 namespace Microsoft.JScript {
@@ -72,6 +73,8 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public Object GetMemberValue (string name, int lexLevel)
 		{
 			throw new NotImplementedException ();

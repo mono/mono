@@ -1,3 +1,12 @@
+2005-05-07  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* MethodInvoker.cs, ScriptObject.cs, BitwiseBinary.cs,
+	ActivationObject.cs, PostOrPrefixOperator, StackFrame.cs,
+	NumericUnary.cs, JSConstructor.cs, Equality.cs, NumericBinary.cs,
+	Convert.cs, LateBinding.cs, Plus.cs, BitwiseBinary.cs,
+	JSMethodInfo.cs, Relational.cs,	ScriptFunction.cs : Add missing
+	debugger attributes.
+
 2005-05-06  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Binding.cs: add missing methods and fields.

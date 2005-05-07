@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics;
 
 namespace Microsoft.JScript {
 
@@ -39,7 +40,8 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public object EvaluateUnary (object v)
 		{
 			throw new NotImplementedException ();

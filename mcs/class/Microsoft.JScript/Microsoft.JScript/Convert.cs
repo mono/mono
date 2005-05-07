@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
@@ -76,24 +77,27 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static void ThrowTypeMismatch (object val)
 		{
 			throw new NotImplementedException ();
 		}
-
 
 		public static bool ToBoolean (double d)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static bool ToBoolean (object value)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static bool ToBoolean (object value, bool explicitConversion)
 		{
 			return false;
@@ -147,6 +151,8 @@ namespace Microsoft.JScript {
 			return Convert.ToString (obj, true);
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static string ToString (object value, bool explicitOK)
 		{
 			IConvertible ic = value as IConvertible;

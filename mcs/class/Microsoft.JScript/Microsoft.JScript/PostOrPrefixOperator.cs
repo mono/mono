@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
@@ -50,6 +51,8 @@ namespace Microsoft.JScript {
 			this.prefix = prefix;
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public object EvaluatePostOrPrefix (ref object v)
 		{
 			throw new NotImplementedException ();

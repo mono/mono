@@ -31,6 +31,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using Microsoft.JScript.Vsa;
 
@@ -99,6 +100,8 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public virtual Object InvokeMember (string name,  BindingFlags invokeAttr, 
 						    System.Reflection.Binder binder, Object target,
 						    Object[] args, ParameterModifier [] modifiers, 

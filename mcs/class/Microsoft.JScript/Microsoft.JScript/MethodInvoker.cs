@@ -28,8 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
+
 namespace Microsoft.JScript {
 	public abstract class MethodInvoker {
+
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public abstract object Invoke (object thisObj, object [] parameters);
 	}
 }

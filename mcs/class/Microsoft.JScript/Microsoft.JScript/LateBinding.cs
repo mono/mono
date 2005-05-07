@@ -31,6 +31,7 @@
 
 using System;
 using System.Reflection;
+using System.Diagnostics;
 using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
@@ -52,13 +53,16 @@ namespace Microsoft.JScript {
 		}
 
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public object Call (object [] arguments, bool construct, bool brackets,
 				    VsaEngine engine)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static object CallValue (object thisObj, object val, object [] arguments,
 						bool construct, bool brackets, VsaEngine engine)
 		{
@@ -83,7 +87,8 @@ namespace Microsoft.JScript {
 			return null;			
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static object CallValue2 (object val, object thisObj, object [] arguments,
 						 bool construct, bool brackets, VsaEngine engine)
 		{
@@ -102,19 +107,22 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public object GetNonMissingValue ()
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public object GetValue2 ()
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public static void SetIndexedPropertyValueStatic (object obj, object [] arguments,
 								  object value)
 		{
@@ -126,7 +134,8 @@ namespace Microsoft.JScript {
 				js_obj.AddField (o, value);
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public void SetValue (object value)
 		{
 			throw new NotImplementedException ();

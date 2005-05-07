@@ -30,6 +30,7 @@
 
 using System;
 using System.Reflection;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace Microsoft.JScript {
@@ -74,14 +75,16 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public override object Invoke (BindingFlags options, System.Reflection.Binder binder,
 					       object [] parameters, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public override object Invoke (object obj, BindingFlags options, System.Reflection.Binder binder,
 					       object [] parameters, CultureInfo culture)
 		{

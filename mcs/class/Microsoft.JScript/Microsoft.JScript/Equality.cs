@@ -31,6 +31,7 @@
 
 using System;
 using System.Text;
+using System.Diagnostics;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
@@ -47,6 +48,8 @@ namespace Microsoft.JScript {
 		{
 		}
 
+		[DebuggerStepThroughAttribute]
+		[DebuggerHiddenAttribute]
 		public bool EvaluateEquality (object v1, object v2)
 		{
 			IConvertible ic1 = v1 as IConvertible;
