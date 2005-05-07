@@ -36,20 +36,27 @@ namespace Mono.GetOptions
 		public OptionsParsingMode ParsingMode;
 		public bool BreakSingleDashManyLettersIntoManyOptions;
 		public bool EndOptionProcessingWithDoubleDash;
+		public bool DontSplitOnCommas;
 		
 		private OptionList optionParser;
 
-		public Options()
-		{
-			ParsingMode = OptionsParsingMode.Both;
-			BreakSingleDashManyLettersIntoManyOptions = false;
-			EndOptionProcessingWithDoubleDash = true;
-		}
+		public Options() : this(null) {}
+		
+		public Options(string[] args) : this(args, OptionsParsingMode.Both, false, true, false) {}
 
-		public Options(string[] args) : this()
+		public Options(string[] args, 
+					   OptionsParsingMode parsingMode, 
+					   bool breakSingleDashManyLettersIntoManyOptions, 
+					   bool endOptionProcessingWithDoubleDash,
+					   bool dontSplitOnCommas)
 		{
+			ParsingMode = parsingMode;
+			BreakSingleDashManyLettersIntoManyOptions = breakSingleDashManyLettersIntoManyOptions;
+			EndOptionProcessingWithDoubleDash = endOptionProcessingWithDoubleDash;
+			DontSplitOnCommas = dontSplitOnCommas;
 			InitializeOtherDefaults();
-			ProcessArgs(args);
+			if (args != null)
+				ProcessArgs(args);
 		}
 		
 		protected virtual void InitializeOtherDefaults() { } // Only subclasses may need to implement something here

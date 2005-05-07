@@ -38,9 +38,9 @@ namespace Mono.GetOptions
 	[Flags]
 	public enum OptionsParsingMode 
 	{ 
-		Linux   		= 1, 
-		Windows 		= 2,
-		Both    		= 3,
-		GNU_DoubleDash 	= 4
+		Linux   			= 1, 
+		Windows 			= 2,
+		Both    			= 3,
+		GNU_DoubleDash 		= 4
 	}
 }

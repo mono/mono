@@ -87,15 +87,17 @@ namespace Mono.GetOptions
 
 		public string ParamName { get { return paramName; } }
 				
-		private bool verboseParsing { get { return this.OptionBundle.VerboseParsingOfOptions; } }
+		private bool verboseParsing { get { return OptionBundle.VerboseParsingOfOptions; } }
 
-		private OptionsParsingMode parsingMode { get { return this.OptionBundle.ParsingMode; } } 
+		private OptionsParsingMode parsingMode { get { return OptionBundle.ParsingMode; } } 
 		
-		private bool UseGNUFormat { get { return (parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash; } } 
+		private bool useGNUFormat { get { return (parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash; } } 
+		
+		private bool dontSplitOnCommas { get { return OptionBundle.DontSplitOnCommas; } } 
 
 		private string linuxLongPrefix {
 			get { 
-				return (UseGNUFormat? "--":"-"); 
+				return (useGNUFormat? "--":"-"); 
 			} 
 		}
 		
@@ -239,7 +241,7 @@ namespace Mono.GetOptions
 		internal string Key
 		{
 			get { 
-				if (UseGNUFormat) {				
+				if (useGNUFormat) {				
 					string ShortID = this.ShortForm.ToUpper();
 					if (ShortID == string.Empty)
 						ShortID = "ZZ";
@@ -289,29 +291,24 @@ namespace Mono.GetOptions
 
 		private void DoIt(bool setValue)
 		{
-			if (!NeedsParameter)
+			if (AddingOneMoreExceedsMaxOccurs) 
+				return;
+
+			if (verboseParsing)
+				Console.WriteLine("<{0}> set to [{1}]", this.LongForm, setValue);
+
+			if (MemberInfo is FieldInfo)
 			{
-				if (AddingOneMoreExceedsMaxOccurs) 
-					return;
-
-				if (verboseParsing)
-					Console.WriteLine("<{0}> set to [{1}]", this.LongForm, setValue);
-
-				if (MemberInfo is FieldInfo)
-				{
-					((FieldInfo)MemberInfo).SetValue(OptionBundle, setValue);
-					return;
-				}
-				if (MemberInfo is PropertyInfo)
-				{
-					((PropertyInfo)MemberInfo).SetValue(OptionBundle, setValue, null);
-					return;
-				}
-				if ((WhatToDoNext)((MethodInfo)MemberInfo).Invoke(OptionBundle, null) == WhatToDoNext.AbandonProgram)
-					System.Environment.Exit(1);
-
+				((FieldInfo)MemberInfo).SetValue(OptionBundle, setValue);
 				return;
 			}
+			if (MemberInfo is PropertyInfo)
+			{
+				((PropertyInfo)MemberInfo).SetValue(OptionBundle, setValue, null);
+				return;
+			}
+			if ((WhatToDoNext)((MethodInfo)MemberInfo).Invoke(OptionBundle, null) == WhatToDoNext.AbandonProgram)
+				System.Environment.Exit(1);
 		}
 		
 		private void DoIt(string parameterValue)
@@ -319,7 +316,12 @@ namespace Mono.GetOptions
 			if (parameterValue == null)
 				parameterValue = "";
 
-			string[] parameterValues = parameterValue.Split(',');
+			string[] parameterValues;
+			
+			if (dontSplitOnCommas)
+				parameterValues = new string[] { parameterValue };
+			else
+				parameterValues = parameterValue.Split(',');
 
 			int waitingToBeProcessed = HowManyBeforeExceedingMaxOccurs(parameterValues.Length);
 

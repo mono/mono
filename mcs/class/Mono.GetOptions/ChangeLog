@@ -1,3 +1,8 @@
+2005-05-07  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/Options.cs: new constructor adds possibility to not break parameter values at commas
+	* Mono.GetOptions/OptionDetail.cs: check Options.DontSplitOnCommas when parsing values. 
+	* Mono.GetOptions.Useful/CommonCompilerOptions.cs ask base class to leave alone commas.
+
 2005-05-06:3  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Adding Mono.GetOptions.Useful directory for new namespace
 	* Added Mono.GetOptions.Useful/CommonCompilerOptions.cs with useful option processing 

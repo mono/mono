@@ -28,7 +28,6 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-//using System.IO;
 using System.Text;
 
 namespace Mono.GetOptions.Useful
@@ -50,6 +49,11 @@ namespace Mono.GetOptions.Useful
 	}
 	
 	public class CommonCompilerOptions : Options {
+	
+		public CommonCompilerOptions() : this(null) { }
+
+		public CommonCompilerOptions(string[] args) : base(args, OptionsParsingMode.Both, false, true, true) {}
+		
 		[Option(-1, "References packages listed. {packagelist}=package,...", "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
 		{
@@ -91,7 +95,7 @@ namespace Mono.GetOptions.Useful
 			return WhatToDoNext.GoAhead;
 		}	
 		
-		[Option("[Mono] Sets warning {level} (the highest is 4, the default)", "wlevel", SecondLevelHelp = true)]
+		[Option("Sets warning {level} (the highest is 4, the default)", "wlevel", SecondLevelHelp = true)]
 		public int WarningLevel = 4; 
 
 		// Output file options
@@ -125,7 +129,7 @@ namespace Mono.GetOptions.Useful
 		}
 
 
-		[Option("Specifies the TargetFileType {type} for the output file (exe [default], winexe, library, module)", 't', "TargetFileType")]
+		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", 't', "target")]
 		public WhatToDoNext SetTarget(string type)
 		{
 			switch (type.ToLower()) {
@@ -152,7 +156,7 @@ namespace Mono.GetOptions.Useful
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Specifies the {name} of the Class or Module that contains Sub Main or inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (TargetFileType=exe|winexe)",
+		[Option("Specifies the {name} of the Class or Module that contains Sub Main or inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (target=exe|winexe)",
 			'm', "main")]
 		public string MainClassName = null; 
 
@@ -175,7 +179,7 @@ namespace Mono.GetOptions.Useful
 		[Option(-1, "References metadata from the specified {assembly}", 'r', "reference")]
 		public string AddedReference { set { AssembliesToReference.Add(value); } }
 		
-		[Option("List of directories to search for metadata AssembliesToReference. {path-list}:path,...", "PathsToSearchForLibraries", "lib")]
+		[Option("List of directories to search for metadata AssembliesToReference. {path-list}:path,...", "libpath", "lib")]
 		public string AddedLibPath { set { foreach(string path in value.Split(',')) PathsToSearchForLibraries.Add(path); } }
 
 		// support for the Compact Framework
@@ -191,7 +195,7 @@ namespace Mono.GetOptions.Useful
 		public ArrayList EmbeddedResources = new ArrayList();
 		
 		//TODO: support -res:file[,id[,public|private]] what depends on changes at Mono.GetOptions
-		[Option(-1, "Adds the specified {file} as an embedded assembly resource", "resource", "res")]
+		[Option(-1, "Adds the specified file as an embedded assembly resource. {details}:file[,id[,public|private]]", "resource", "res")]
 		public string AddedResource { set { EmbeddedResources.Add(value); } }
 
 		public ArrayList LinkedResources = new ArrayList();
@@ -256,16 +260,16 @@ namespace Mono.GetOptions.Useful
 			} 
 		}
 		
-		[Option("[Mono] Don\'t assume the standard library", "nostdlib", SecondLevelHelp = true)]
+		[Option("Don\'t assume the standard library", "nostdlib", SecondLevelHelp = true)]
 		public bool NoStandardLibraries = false;
 
-		[Option("[Mono] Disables implicit AssembliesToReference to assemblies", "noconfig", SecondLevelHelp = true)]
+		[Option("Disables implicit references to assemblies", "noconfig", SecondLevelHelp = true)]
 		public bool NoConfig = false;
 		
-		[Option("[Mono] Allows unsafe code", "unsafe", SecondLevelHelp = true)]
+		[Option("Allows unsafe code", "unsafe", SecondLevelHelp = true)]
 		public bool AllowUnsafeCode = false;
 
-		[Option("[Mono] Debugger {arguments}", "debug-args", SecondLevelHelp = true)]
+		[Option("Debugger {arguments}", "debug-args", SecondLevelHelp = true)]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
 			DebugListOfArguments.AddRange(args.Split(','));
@@ -300,7 +304,7 @@ namespace Mono.GetOptions.Useful
 		// Compiler output options	
 		//------------------------------------------------------------------
 		
-		[Option("Do not display compiler copyright banner")]
+		[Option("Do not display compiler copyright banner", "nologo")]
 		public bool DontShowBanner = false;
 		
 		//TODO: Correct semantics
@@ -310,11 +314,11 @@ namespace Mono.GetOptions.Useful
 		[Option("Display verbose messages", 'v', "verbose",  SecondLevelHelp = true)] 
 		public bool Verbose = false;
 		
-		[Option("[IGNORED] Emit compiler output in UTF8 character encoding", SecondLevelHelp = true, VBCStyleBoolean = true)]
-		public bool utf8output;
+		[Option("[IGNORED] Emit compiler output in UTF8 character encoding", "utf8output", SecondLevelHelp = true, VBCStyleBoolean = true)]
+		public bool OutputInUTF8;
 
-//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
-		public string bugreport;
+//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}", "bugreport")]
+		public string CreateBugReport;
 
 		Hashtable sourceFiles = new Hashtable ();
 		public override void DefaultArgumentProcessor(string fileName)
@@ -326,6 +330,7 @@ namespace Mono.GetOptions.Useful
 				SourceFilesToCompile.Add(new FileToCompile(fileName, currentEncoding));
 				sourceFiles.Add(fileName, fileName);
 			}
+			base.DefaultArgumentProcessor(fileName);
 		}		
 
 		public ArrayList AssembliesToReference = new ArrayList();
