@@ -110,5 +110,12 @@ namespace Microsoft.JScript {
 		protected COMMemberInfo _comObject;
 		protected string _name;
 		protected static readonly ParameterInfo [] EmptyParams;
+
+#if NET_2_0
+		public sealed override Type [] GetGenericArguments ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
