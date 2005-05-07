@@ -1,3 +1,7 @@
+2005-05-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DoubleTest.cs : added test for #72955.
+
 2005-05-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* ArrayTest.cs: Test for #70725.

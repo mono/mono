@@ -1,3 +1,9 @@
+2005-05-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NumberFormatter.cs : roundtrip number is already rounded before
+	  FormatGeneral() and DefaultMaxPrecision was extraneous. This fixes
+	  bug #72955.
+
 2005-05-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* Array.cs (BinarySearch): Patch from kazuki to pass arguments to

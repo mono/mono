@@ -145,7 +145,7 @@ namespace System
 			case 'r':
 			case 'R':
 				if (ns.IsFloatingSource) {
-					return FormatGeneral (ns, ns.DefaultMaxPrecision, nfi, true);
+					return FormatGeneral (ns, ns.DefaultPrecision, nfi, true);
 				} else {
 					throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 				}
@@ -404,7 +404,7 @@ namespace System
 		{
 			return FormatGeneral (ns, -1, NumberFormatInfo.GetInstance (provider), true);
 		}
-		internal static string FormatGeneral (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper)
+		private static string FormatGeneral (NumberStore ns, int precision, NumberFormatInfo nfi, bool roundtrip)
 		{
 			if (ns.ZeroOnly)
 				return "0";
@@ -432,7 +432,7 @@ namespace System
 					ns.Divide10 (1);
 					exponent ++;
 				}
-			} else {
+			} else if (!roundtrip) {
 				ns.RoundDecimal (precision);
 			}
 
@@ -448,7 +448,7 @@ namespace System
 			}
 
 			if (expMode) {
-				if (upper)
+				if (roundtrip)
 					cb.Append ('E');
 				else
 					cb.Append ('e');
