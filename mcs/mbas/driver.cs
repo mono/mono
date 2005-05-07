@@ -13,7 +13,6 @@ namespace Mono.Languages {
 
 	using System;
 	using System.Collections;
-//	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
@@ -24,7 +23,6 @@ namespace Mono.Languages {
 	using Mono.GetOptions;
 	using Mono.GetOptions.Useful;
 
-	
 
 	enum OptionCompare {
 		Binary, Text
@@ -34,32 +32,32 @@ namespace Mono.Languages {
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
-	public class Driver : CommonCompilerOptions {
+	public class CompilerOptions : CommonCompilerOptions {
 
 		// Temporary options
 		//------------------------------------------------------------------
-		[Option("[Mono] Only parses the source file (for debugging the tokenizer)", "parse", SecondLevelHelp = true)]
-		public bool parse_only = false;
+		[Option("[IGNORED] Only parses the source file (for debugging the tokenizer)", "parse", SecondLevelHelp = true)]
+		public bool OnlyParse = false;
 
-		[Option("[IGNORED] Only tokenizes source files", SecondLevelHelp = true)]
-		public bool tokenize = false;
+		[Option("[IGNORED] Only tokenizes source files", "tokenize", SecondLevelHelp = true)]
+		public bool Tokenize = false;
 
-		[Option("[Mono] Shows stack trace at Error location", SecondLevelHelp = true)]
-		public bool stacktrace { set { Report.Stacktrace = value; } }
-
-		[Option("[Mono] Displays time stamps of various compiler events", SecondLevelHelp = true)]
-		public bool timestamp {
+		[Option("Shows stack trace at Error location", "stacktrace", SecondLevelHelp = true)]
+		public bool Stacktrace = false;
+		
+		[Option("Makes errors fatal", "fatal", SecondLevelHelp = true)]
+		public bool MakeErrorsFatal = false;
+		
+		[Option("Displays time stamps of various compiler events", "timestamp", SecondLevelHelp = true)]
+		public virtual bool PrintTimeStamps {
 			set
 			{
-				timestamps = true;
+				printTimeStamps = true;
 				last_time = DateTime.Now;
 				DebugListOfArguments.Add("timestamp");
 			}
 		}
-		
-		[Option("[Mono] Makes errors fatal", "fatal", SecondLevelHelp = true)]
-		public bool Fatal { set { Report.Fatal = value; } }
-		
+
 		// redefining some inherited options
 		//------------------------------------------------------------------
 		[Option("About the MonoBASIC compiler", "about")]
@@ -74,26 +72,30 @@ namespace Mono.Languages {
 		// language options
 		//------------------------------------------------------------------
 
-//		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables", VBCStyleBoolean = true)]
-		public bool optionexplicit { set { Mono.MonoBASIC.Parser.InitialOptionExplicit = value; } }
+		[Option("Require explicit declaration of variables", "optionexplicit", VBCStyleBoolean = true)]
+		public bool OptionExplicit = false;
 
-//		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics", VBCStyleBoolean = true)]
-		public bool optionstrict { set { Mono.MonoBASIC.Parser.InitialOptionStrict = value; } }
+		[Option("Enforce strict language semantics", "optionstrict", VBCStyleBoolean = true)]
+		public bool OptionStrict = false;
 		
-//		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
-		public bool optioncomparebinary { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = true; } }
+		[Option("Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
+		public bool OptionCompareBinary = true; 
 
-//		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
-		public bool optioncomparetext { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = false; } }
+		[Option("Specifies text-style string comparisons.", "optioncompare:text")]
+		public bool OptionCompareText { set { OptionCompareBinary = false; } }
 
-		ArrayList soft_AssembliesToReference = new ArrayList();
-		bool timestamps = false;
-
+		protected override void InitializeOtherDefaults() 
+		{ 
+			DefineSymbol = "__MonoBASIC__";
+			ImportNamespaces = "Microsoft.VisualBasic";
+		}
+		
+		private bool printTimeStamps = false;
 		//
 		// Last time we took the time
 		//
 		DateTime last_time;
-		void ShowTime (string msg)
+		public void ShowTime (string msg)
 		{
 			DateTime now = DateTime.Now;
 			TimeSpan span = now - last_time;
@@ -103,7 +105,37 @@ namespace Mono.Languages {
 				"[{0:00}:{1:000}] {2}",
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
-	       		
+	}
+
+	public class Driver : CompilerOptions {
+		       		
+		private void InitializeRootContextAndOthersFromOptions()
+		{
+			Report.Stacktrace = Stacktrace;
+			Report.WarningsAreErrors = WarningsAreErrors;
+			// TODO: change Report to receive the whole array
+			for(int i = 0; i < WarningsToIgnore.Length; i++)
+				Report.SetIgnoreWarning(WarningsToIgnore[i]);
+			Report.Fatal = MakeErrorsFatal;
+
+			RootContext.WarningLevel = WarningLevel;
+			RootContext.Checked = CheckedContext;
+			RootContext.MainClass = MainClassName;
+			RootContext.StdLib = !NoStandardLibraries;
+			RootContext.Unsafe = AllowUnsafeCode;
+			RootContext.RootNamespace = RootNamespace;
+			
+			// TODO: semantics are different and should be adjusted
+			GenericParser.yacc_verbose_flag = Verbose ? 1 : 0;
+			
+			Mono.MonoBASIC.Parser.InitialOptionExplicit = OptionExplicit;
+			Mono.MonoBASIC.Parser.InitialOptionStrict = OptionStrict;
+		    Mono.MonoBASIC.Parser.InitialOptionCompareBinary = OptionCompareBinary;
+		    Mono.MonoBASIC.Parser.ImportsList = Imports;
+		}
+		
+		public ArrayList AssembliesToReferenceSoftly = new ArrayList();		
+
 		public int LoadAssembly (string assembly, bool soft)
 		{
 			Assembly a;
@@ -226,21 +258,10 @@ namespace Mono.Languages {
 			foreach (string r in AssembliesToReference)
 				errors += LoadAssembly (r, false);
 
-			foreach (string r in soft_AssembliesToReference)
+			foreach (string r in AssembliesToReferenceSoftly)
 				errors += LoadAssembly (r, true);
 			
 			return errors;
-		}
-
-		void SetupDefaultDefines ()
-		{
-			Defines.Add ("__MonoBASIC__", "true");
-		}
-		
-		void SetupDefaultImports()
-		{
-			Mono.MonoBASIC.Parser.ImportsList = new ArrayList();
-			Mono.MonoBASIC.Parser.ImportsList.Add("Microsoft.VisualBasic");
 		}
 
 		//
@@ -356,7 +377,7 @@ namespace Mono.Languages {
 			
 			foreach (string def in default_config)
 				if (!(AssembliesToReference.Contains(def) || AssembliesToReference.Contains (def + ".dll")))
-					soft_AssembliesToReference.Add(def);
+					AssembliesToReferenceSoftly.Add(def);
 		}
 
 		void InitializeDebuggingSupport()
@@ -376,8 +397,7 @@ namespace Mono.Languages {
 			if (!NoConfig)
 				DefineDefaultConfig();
 
-			if (timestamps)
-				ShowTime("Loading referenced assemblies");
+			ShowTime("Loading referenced assemblies");
 
 			// Load assemblies required
 			if (LoadReferences() > 0) {
@@ -385,8 +405,7 @@ namespace Mono.Languages {
 				return false;
 			}
 
-			if (timestamps)
-				ShowTime("References loaded");
+						ShowTime("References loaded");
 
 			InitializeDebuggingSupport();
 
@@ -421,8 +440,7 @@ namespace Mono.Languages {
 			// types emitted from the user defined types
 			// or from the system ones.
 			//
-			if (timestamps)
-				ShowTime ("Initializing Core Types");
+			ShowTime("Initializing Core Types");
 
 			if (!RootContext.StdLib)
 				RootContext.ResolveCore ();
@@ -433,19 +451,16 @@ namespace Mono.Languages {
 			if (Report.Errors > 0)
 				return false;
 
-			if (timestamps)
-				ShowTime ("   Core Types done");
+			ShowTime("   Core Types done");
 
-			if (timestamps)
-				ShowTime ("Resolving tree");
+			ShowTime("Resolving tree");
 
 			// The second pass of the compiler
 			RootContext.ResolveTree ();
 			if (Report.Errors > 0)
 				return false;
 			
-			if (timestamps)
-				ShowTime ("Populate tree");
+			ShowTime("Populate tree");
 
 			if (!RootContext.StdLib)
 				RootContext.BootCorlib_PopulateCoreTypes();
@@ -532,29 +547,22 @@ namespace Mono.Languages {
 			//
 			// The code generator
 			//
-			if (timestamps)
-				ShowTime ("Emitting code");
+			ShowTime("Emitting code");
 			
-			
-
 			RootContext.EmitCode();
 			FixEntryPoint();
 			if (Report.Errors > 0)
 				return false;
 
-			if (timestamps)
-				ShowTime ("   done");
+			ShowTime("   done");
 
-
-			if (timestamps)
-				ShowTime ("Closing types");
+			ShowTime("Closing types");
 
 			RootContext.CloseTypes ();
 			if (Report.Errors > 0)
 				return false;
 
-			if (timestamps)
-				ShowTime ("   done");
+			ShowTime("   done");
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
 							
@@ -584,14 +592,12 @@ namespace Mono.Languages {
 			
 			CodeGen.Save(OutputFileName);
 
-			if (timestamps)
-				ShowTime ("Saved output");
+			ShowTime("Saved output");
 
 			
 			if (WantDebuggingSupport)  {
 				CodeGen.SaveSymbols ();
-				if (timestamps)
-					ShowTime ("Saved symbols");
+				ShowTime ("Saved symbols");
 			}
 
 			return true;
@@ -600,7 +606,7 @@ namespace Mono.Languages {
 		public void CompileAll()
 		{
 			try {
-				InitializeRootContextFromOptions();
+				InitializeRootContextAndOthersFromOptions();
 				
 				if (!ParseAll()) // Phase 1
 					return;
@@ -613,27 +619,6 @@ namespace Mono.Languages {
 			} catch (Exception ex) {
 				Error("Exception: " + ex.ToString());
 			}
-		}
-		
-		private void InitializeRootContextFromOptions()
-		{
-			Report.WarningsAreErrors = WarningsAreErrors;
-			// TODO: change Report to receive the whole array
-			for(int i = 0; i < WarningsToIgnore.Length; i++)
-				Report.SetIgnoreWarning(WarningsToIgnore[i]);
-
-			RootContext.WarningLevel = WarningLevel;
-			RootContext.Checked = CheckedContext;
-			RootContext.MainClass = MainClassName;
-			RootContext.StdLib = !NoStandardLibraries;
-			RootContext.Unsafe = AllowUnsafeCode;
-			RootContext.RootNamespace = RootNamespace;
-			
-			// TODO: semantics are different and should be adjusted
-			GenericParser.yacc_verbose_flag = Verbose ? 1 : 0;
-			
-			foreach(string importedNamespace in Imports)
-				Mono.MonoBASIC.Parser.ImportsList.Add(importedNamespace);
 		}
 		
 		private bool quiet { get { return DontShowBanner || SuccintErrorDisplay; } } 
@@ -649,14 +634,6 @@ namespace Mono.Languages {
 			}		
 		}
 		
-		protected void SetupDefaults()
-		{
-			SetupDefaultDefines();	
-			SetupDefaultImports();
-			Report.Stacktrace = false;
-			RootContext.Checked = true;
-		}		
-
 		bool ParseAll() // Phase 1
 		{
 			foreach(FileToCompile file in SourceFilesToCompile)
@@ -670,7 +647,6 @@ namespace Mono.Languages {
 		/// </summary>
 		int MainDriver(string [] args)
 		{
-			SetupDefaults();
 			ProcessArgs(args);
 			
 			if (SourceFilesToCompile.Count == 0) {

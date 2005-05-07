@@ -1,3 +1,6 @@
+2005-05-07 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : Oops, correcting some find-and-replace mishaps
+
 2005-05-06 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
         * driver.cs : Refactored to use Mono.GetOptions.Useful.CommonCompilerOptions
 
