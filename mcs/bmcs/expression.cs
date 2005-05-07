@@ -2301,6 +2301,45 @@ namespace Mono.CSharp {
 			right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (mask), loc);
 			right = right.DoResolve (ec);
 		}
+
+		void CheckIsArguments (EmitContext ec)
+		{
+				Type l = left.Type;
+				Type r = right.Type;
+				Type = TypeManager.bool_type;
+				
+				bool left_is_null = left is NullLiteral;
+				bool right_is_null = right is NullLiteral;
+
+				if (left_is_null || right_is_null)
+					return;
+
+				if (l.IsValueType || r.IsValueType) {
+					Error_OperatorCannotBeApplied ();
+					return;
+				}
+
+				
+				if (l == r)
+					return; 
+					
+				if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
+					return; 
+
+				if (!(Convert.WideningStandardConversionExists (ec, left, right.Type) ||
+				      Convert.WideningStandardConversionExists (ec, right, left.Type))){
+					Error_OperatorCannotBeApplied ();
+					return;
+				}
+
+				if (left.Type != TypeManager.object_type)
+					left = new EmptyCast (left, TypeManager.object_type);
+				if (right.Type != TypeManager.object_type)
+					right = new EmptyCast (right, TypeManager.object_type);
+
+				return;
+		}
+
 		
 #if false
 		Expression ResolveOperator (EmitContext ec)
@@ -3076,6 +3115,7 @@ namespace Mono.CSharp {
 				opcode = OpCodes.Shl;
 				break;
 
+			case Operator.Is:
 			case Operator.Equality:
 				opcode = OpCodes.Ceq;
 				break;
@@ -3285,7 +3325,7 @@ namespace Mono.CSharp {
 			Expression target_left_expr = left;
 			Expression target_right_expr = right;
 
-			if (IsShortCircuitedLogicalExpression)
+			if (IsShortCircuitedLogicalExpression || IsExpression)
 				return null;
 
 			if (l != TypeManager.object_type && r != TypeManager.object_type)
@@ -3362,6 +3402,11 @@ namespace Mono.CSharp {
 
 			if (IsShiftExpression) {
 				CheckShiftArguments (ec);
+				return;
+			}
+
+			if (IsExpression) {
+				CheckIsArguments (ec);
 				return;
 			}
 
@@ -3716,6 +3761,12 @@ namespace Mono.CSharp {
 					return true;
 
 				return false;
+			}
+		}
+
+		bool IsExpression {
+			get {
+				return (oper == Operator.Is);
 			}
 		}
 

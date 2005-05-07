@@ -1,4 +1,10 @@
-2005-05-01  Jambunathan K  <kjambunathan.devel@gmail.com>
+2005-05-08  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* expression.cs (Binary.CheckIsArguments): Added
+	(Binary.Emit, Binary.CheckArguments): Modified to support 'Is'
+	operator.
+	
+2005-05-08  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* convert.cs: 
 	* expression.cs: Miscellaneous fixes relating to
