@@ -160,5 +160,33 @@ namespace MonoTests.System.Xml.Xsl
 </xsl:stylesheet>";
 			xslt.Load (new XmlTextReader (script, XmlNodeType.Document, null));
 		}
+
+		[Test]
+		[Category ("NotWorking")] // it depends on "mcs" existence
+		public void CompilerWarningsShouldBeIgnored ()
+		{
+			string script = @"<xslt:stylesheet xmlns:xslt='http://www.w3.org/1999/XSL/Transform' version='1.0' xmlns:msxsl='urn:schemas-microsoft-com:xslt'
+    xmlns:stringutils='urn:schemas-sourceforge.net-blah'>
+    <xslt:output method='text' />
+    <msxsl:script language='C#' implements-prefix='stringutils'>
+    <![CDATA[
+        string PadRight( string str, int padding) {
+            return str.PadRight(padding);
+        }
+    ]]>
+    </msxsl:script>
+    <xslt:template match='project'>
+        <xslt:apply-templates select='target[string(@description) != &apos;&apos; ]'>
+            <xslt:sort select='@name' order='ascending' />
+        </xslt:apply-templates>
+    </xslt:template>
+    <xslt:template match='target'>
+        <xslt:value-of select='stringutils:PadRight(@name, 20)' />
+        <xslt:value-of select='@description' />
+    </xslt:template>
+</xslt:stylesheet>";
+			xslt.Load (new XmlTextReader (script, XmlNodeType.Document, null));
+			xslt.Transform (doc.CreateNavigator (), null, new XmlTextWriter (TextWriter.Null));
+		}
 	}
 }

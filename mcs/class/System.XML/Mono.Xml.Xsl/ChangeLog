@@ -1,3 +1,8 @@
+2005-05-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSXslScriptManager.cs : it should ignore compiler warnings. This
+	  fixes bug #74859.
+
 2005-04-07  Andrew Skiba  <andrews@mainsoft.com>
 
 	* XslDecimalFormat.jvm.cs : added

@@ -103,11 +103,14 @@ namespace Mono.Xml.Xsl
 			string source = SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code);
 
 			CompilerResults res = compiler.CompileAssemblyFromSource (parameters, source);
-			if (res.Errors.Count != 0)
-//				throw new XsltCompileException ("Stylesheet script compile error: \n" + FormatErrorMessage (res) /*+ "Code :\n" + source*/, null, scriptNode);
-				// Actually it should be XsltCompileException,
-				// but to match with silly MS implementation...
-				throw new XsltException ("Stylesheet script compile error: \n" + FormatErrorMessage (res) /*+ "Code :\n" + source*/, null, scriptNode);
+			foreach (CompilerError err in res.Errors)
+				if (!err.IsWarning)
+					// Actually it should be
+					// XsltCompileException, but to match 
+					// with silly MS implementation...
+//					throw new XsltCompileException ("Stylesheet script compile error: \n" + FormatErrorMessage (res) /*+ "Code :\n" + source*/, null, scriptNode);
+					throw new XsltException ("Stylesheet script compile error: \n" + FormatErrorMessage (res) /*+ "Code :\n" + source*/, null, scriptNode);
+
 			if (res.CompiledAssembly == null)
 				throw new XsltCompileException ("Cannot compile stylesheet script", null, scriptNode);
 			return res.CompiledAssembly.GetType ("GeneratedAssembly.Script" + classSuffix);
