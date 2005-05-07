@@ -777,13 +777,25 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock,
 							     out int error);
-		
+
+		Thread accept_thread;
 		public Socket Accept() {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			int error;
-			IntPtr sock=Accept_internal(socket, out error);
+			int error = 0;
+			IntPtr sock = (IntPtr) (-1);
+			accept_thread = Thread.CurrentThread;
+			try {
+				sock = Accept_internal(socket, out error);
+			} catch (ThreadAbortException the) {
+				if (disposed) {
+					Thread.ResetAbort ();
+					error = 10004;
+				}
+			} finally {
+				accept_thread = null;
+			}
 
 			if (error != 0) {
 				throw new SocketException (error);
@@ -1715,6 +1727,10 @@ namespace System.Net.Sockets
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
 				Close_internal (x, out error);
+				if (accept_thread != null) {
+					accept_thread.Abort ();
+					accept_thread = null;
+				}
 
 				if (error != 0)
 					throw new SocketException (error);

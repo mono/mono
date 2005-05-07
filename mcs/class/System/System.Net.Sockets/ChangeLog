@@ -1,3 +1,12 @@
+2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: see bug #74842, which is fixed with this patch for details
+	and test cases on the blocking behavior of accept() when close() is
+	called from another thread. The solution applied is to Abort the thread
+	that is blocking in Accept_internal() when someone calls Close (), then
+	reset the abort state if the socket is disposed and return the same
+	error as MS (10004 - interrupted).
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: match MS behavior on SetSocketOption with a boolean
