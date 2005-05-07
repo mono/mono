@@ -67,22 +67,29 @@ namespace System.Reflection {
 		public override MethodInfo GetAddMethod(bool nonPublic) {
 			MonoEventInfo info;
 			MonoEventInfo.get_event_info (this, out info);
-				
-			return info.add_method;
+			
+			
+			if (nonPublic || (info.add_method != null && info.add_method.IsPublic))
+				return info.add_method;
+			return null;
 		}
 
 		public override MethodInfo GetRaiseMethod( bool nonPublic) {
 			MonoEventInfo info;
 			MonoEventInfo.get_event_info (this, out info);
 				
-			return info.raise_method;
+			if (nonPublic || (info.raise_method != null && info.raise_method.IsPublic))
+				return info.raise_method;
+			return null;
 		}
 
 		public override MethodInfo GetRemoveMethod( bool nonPublic) {
 			MonoEventInfo info;
 			MonoEventInfo.get_event_info (this, out info);
-				
-			return info.remove_method;
+			
+			if (nonPublic || (info.remove_method != null && info.remove_method.IsPublic))
+				return info.remove_method;
+			return null;
 		}
 
 #if NET_2_0

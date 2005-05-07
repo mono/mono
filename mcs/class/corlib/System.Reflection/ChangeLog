@@ -1,3 +1,7 @@
+2005-05-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* MonoEvent.cs (Get*Method): Handle nonPublic. Fixes #64191.
+
 2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Update for beta 2.

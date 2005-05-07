@@ -1,3 +1,7 @@
+2005-05-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* EventInfoTest.cs: New file. Has a test case for #64191.
+
 2005-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyTest.cs, FieldInfoTest.cs, MethodInfoTest.cs: Disabled 
