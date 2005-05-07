@@ -244,7 +244,9 @@ namespace System.Web {
 
 		void DoUnload (object state)
 		{
-			AppDomain.Unload (AppDomain.CurrentDomain);
+			try { 
+				AppDomain.Unload (AppDomain.CurrentDomain);
+			} catch {}
 		}
 
 		internal void Dispose() {

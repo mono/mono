@@ -184,21 +184,15 @@ namespace System.Web
 		
 		private ArrayList GenerateHeaders ()
 		{
-			ArrayList oHeaders = new ArrayList (_Headers.ToArray ());
+			ArrayList oHeaders = new ArrayList (_Headers);
 
 			oHeaders.Add (new HttpResponseHeader ("X-Powered-By", "Mono"));
-			// save culture info, we need us info here
-			CultureInfo oSavedInfo = Thread.CurrentThread.CurrentCulture;
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ");
+			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ", CultureInfo.InvariantCulture);
 			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
 			oHeaders.Add (date_header);
 			
 			if (IsCached)
 				cached_response.DateHeader = date_header;
-
-			Thread.CurrentThread.CurrentCulture = oSavedInfo;
 
 			if (_lContentLength > 0) {
 				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentLength,

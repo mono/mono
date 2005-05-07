@@ -1,3 +1,12 @@
+2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: no need to save/restore the thread culture when
+	getting the Date header. According to Ben's profiling, this is a big
+	deal in performance.
+
+	* HttpRuntime.cs: ignore exceptions that might be thrown when unloading 
+	a domain.
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: ignore any exception thrown when invoking
