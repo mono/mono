@@ -27,7 +27,7 @@ namespace MonoTests.System.Globalization
 					return;
 			}
 
-			Assert (true);
+			Assert ("InvariantCulture not found in the array from GetCultures()", false);
 		}
 	}
 }
