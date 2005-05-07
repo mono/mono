@@ -102,6 +102,8 @@ guint32 _wapi_fd_reserve;
 mono_mutex_t _wapi_global_signal_mutex;
 pthread_cond_t _wapi_global_signal_cond;
 
+int _wapi_sem_id;
+
 static mono_mutex_t scan_mutex = MONO_MUTEX_INITIALIZER;
 
 static mono_once_t shared_init_once = MONO_ONCE_INIT;
@@ -119,10 +121,12 @@ static void shared_init (void)
 		_wapi_private_handle_count += _WAPI_HANDLE_INITIAL_COUNT;
 	} while(_wapi_fd_reserve > _wapi_private_handle_count);
 	
-	_wapi_shared_layout = _wapi_shm_attach ();
+	_wapi_shared_layout = _wapi_shm_attach (WAPI_SHM_DATA);
 	g_assert (_wapi_shared_layout != NULL);
+
+	_wapi_shm_semaphores_init ();
 	
-	_wapi_fileshare_layout = _wapi_fileshare_shm_attach ();
+	_wapi_fileshare_layout = _wapi_shm_attach (WAPI_SHM_FILESHARE);
 	g_assert (_wapi_fileshare_layout != NULL);
 	
 	_wapi_collection_init ();
@@ -138,7 +142,6 @@ static void _wapi_handle_init_shared_metadata (struct _WapiHandleSharedMetadata 
 {
 	meta->timestamp = (guint32)(time (NULL) & 0xFFFFFFFF);
 	meta->signalled = FALSE;
-	meta->checking = 0;
 }
 
 static void _wapi_handle_init_shared (struct _WapiHandleShared *handle,
@@ -811,30 +814,6 @@ done:
 	return(ret);
 }
 
-/* This signature makes it easier to use in pthread cleanup handlers */
-int _wapi_namespace_timestamp_release (gpointer nowptr)
-{
-	guint32 now = GPOINTER_TO_UINT(nowptr);
-	
-	return (_wapi_timestamp_release (&_wapi_shared_layout->namespace_check,
-					 now));
-}
-
-int _wapi_namespace_timestamp (guint32 now)
-{
-	int ret;
-	
-	do {
-		ret = _wapi_timestamp_exclusion (&_wapi_shared_layout->namespace_check, now);
-		/* sleep for a bit */
-		if (ret == EBUSY) {
-			_wapi_handle_spin (100);
-		}
-	} while (ret == EBUSY);
-	
-	return(ret);
-}
-
 /* Returns the offset of the metadata array, or -1 on error, or 0 for
  * not found (0 is not a valid offset)
  */
@@ -847,7 +826,6 @@ gint32 _wapi_search_handle_namespace (WapiHandleType type,
 	gint32 ret = 0;
 	
 	g_assert(_WAPI_SHARED_HANDLE(type));
-	g_assert(_wapi_shared_layout->namespace_check != 0);
 	
 #ifdef DEBUG
 	g_message ("%s: Lookup for handle named [%s] type %s", __func__,
@@ -1116,8 +1094,7 @@ gboolean _wapi_handle_count_signalled_handles (guint32 numhandles,
 					       gpointer *handles,
 					       gboolean waitall,
 					       guint32 *retcount,
-					       guint32 *lowest,
-					       guint32 *now)
+					       guint32 *lowest)
 {
 	guint32 count, i, iter=0;
 	gboolean ret;
@@ -1126,6 +1103,9 @@ gboolean _wapi_handle_count_signalled_handles (guint32 numhandles,
 	
 	/* Lock all the handles, with backoff */
 again:
+	thr_ret = _wapi_handle_lock_shared_handles ();
+	g_assert (thr_ret == 0);
+	
 	for(i=0; i<numhandles; i++) {
 		gpointer handle = handles[i];
 		guint32 idx = GPOINTER_TO_UINT(handle);
@@ -1134,15 +1114,9 @@ again:
 		g_message ("%s: attempting to lock %p", __func__, handle);
 #endif
 
-		*now = (guint32)(time(NULL) & 0xFFFFFFFF);
 		type = _WAPI_PRIVATE_HANDLES(idx).type;
 
-		if (_WAPI_SHARED_HANDLE(type)) {
-			thr_ret = _wapi_handle_shared_trylock_handle (handle,
-								      *now);
-		} else {
-			thr_ret = _wapi_handle_trylock_handle (handle);
-		}
+		thr_ret = _wapi_handle_trylock_handle (handle);
 		
 		if (thr_ret != 0) {
 			/* Bummer */
@@ -1152,16 +1126,14 @@ again:
 				   handle, strerror (thr_ret));
 #endif
 
+			thr_ret = _wapi_handle_unlock_shared_handles ();
+			g_assert (thr_ret == 0);
+			
 			while (i--) {
 				handle = handles[i];
 				idx = GPOINTER_TO_UINT(handle);
 
-				if (_WAPI_SHARED_HANDLE(type)) {
-					thr_ret = _wapi_handle_shared_unlock_handle (handle, *now);
-				} else {
-					thr_ret = _wapi_handle_unlock_handle (handle);
-				}
-				
+				thr_ret = _wapi_handle_unlock_handle (handle);
 				g_assert (thr_ret == 0);
 			}
 
@@ -1243,221 +1215,127 @@ again:
 	return(ret);
 }
 
-void _wapi_handle_unlock_handles (guint32 numhandles, gpointer *handles,
-				  guint32 now)
+void _wapi_handle_unlock_handles (guint32 numhandles, gpointer *handles)
 {
 	guint32 i;
 	int thr_ret;
 	
+	thr_ret = _wapi_handle_unlock_shared_handles ();
+	g_assert (thr_ret == 0);
+	
 	for(i=0; i<numhandles; i++) {
 		gpointer handle = handles[i];
-		guint32 idx = GPOINTER_TO_UINT(handle);
-		WapiHandleType type = _WAPI_PRIVATE_HANDLES(idx).type;
 		
 #ifdef DEBUG
 		g_message ("%s: unlocking handle %p", __func__, handle);
 #endif
 
-		if (_WAPI_SHARED_HANDLE(type)) {
-			thr_ret = _wapi_handle_shared_unlock_handle (handle,
-								     now);
-		} else {
-			thr_ret = _wapi_handle_unlock_handle (handle);
-		}
+		thr_ret = _wapi_handle_unlock_handle (handle);
 		g_assert (thr_ret == 0);
 	}
 }
 
+static int timedwait_signal_poll_cond (pthread_cond_t *cond, mono_mutex_t *mutex, struct timespec *timeout)
+{
+	struct timespec fake_timeout;
+	int ret;
+	
+	_wapi_calc_timeout (&fake_timeout, 100);
+	
+	if (timeout != NULL && ((fake_timeout.tv_sec > timeout->tv_sec) ||
+	   (fake_timeout.tv_sec == timeout->tv_sec &&
+		fake_timeout.tv_nsec > timeout->tv_nsec))) {
+		/* Real timeout is less than 100ms time */
+		ret=mono_cond_timedwait (cond, mutex, timeout);
+	} else {
+		ret=mono_cond_timedwait (cond, mutex, &fake_timeout);
+
+		/* Mask the fake timeout, this will cause
+		 * another poll if the cond was not really signaled
+		 */
+		if (ret==ETIMEDOUT) {
+			ret=0;
+		}
+	}
+	
+	return(ret);
+}
+
 int _wapi_handle_wait_signal (void)
 {
-	return(mono_cond_wait (&_wapi_global_signal_cond,
-			       &_wapi_global_signal_mutex));
+	return timedwait_signal_poll_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, NULL);
 }
 
 int _wapi_handle_timedwait_signal (struct timespec *timeout)
 {
-	return(mono_cond_timedwait (&_wapi_global_signal_cond,
-				    &_wapi_global_signal_mutex,
-				    timeout));
+	return timedwait_signal_poll_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, timeout);
 }
 
 int _wapi_handle_wait_signal_poll_share (void)
 {
-	struct timespec fake_timeout;
-	int ret;
-	
 #ifdef DEBUG
 	g_message ("%s: poll private and shared handles", __func__);
 #endif
-
-	_wapi_calc_timeout (&fake_timeout, 100);
 	
-	ret = mono_cond_timedwait (&_wapi_global_signal_cond,
-				   &_wapi_global_signal_mutex, &fake_timeout);
-	
-	if (ret == ETIMEDOUT) {
-		/* This will cause the waiting thread to check signal
-		 * status for all handles
-		 */
-#ifdef DEBUG
-		g_message ("%s: poll timed out, returning success", __func__);
-#endif
-
-		return (0);
-	} else {
-		/* This will be 0 indicating a private handle was
-		 * signalled, or an error
-		 */
-#ifdef DEBUG
-		g_message ("%s: returning: %d", __func__, ret);
-#endif
-
-		return (ret);
-	}
+	return timedwait_signal_poll_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, NULL);
 }
 
 int _wapi_handle_timedwait_signal_poll_share (struct timespec *timeout)
 {
-	struct timespec fake_timeout;
-	guint32 signal_count = _wapi_shared_layout->signal_count;
-	int ret;
-	
 #ifdef DEBUG
 	g_message ("%s: poll private and shared handles", __func__);
 #endif
 	
-	do {
-		_wapi_calc_timeout (&fake_timeout, 100);
-	
-		if ((fake_timeout.tv_sec > timeout->tv_sec) ||
-		    (fake_timeout.tv_sec == timeout->tv_sec &&
-		     fake_timeout.tv_nsec > timeout->tv_nsec)) {
-			/* Real timeout is less than 100ms time */
-
-#ifdef DEBUG
-			g_message ("%s: last few ms", __func__);
-#endif
-
-			ret = mono_cond_timedwait (&_wapi_global_signal_cond,
-						   &_wapi_global_signal_mutex,
-						   timeout);
-			/* If this times out, it will compare the
-			 * shared signal counter and then if that
-			 * hasn't increased will fall out of the
-			 * do-while loop.
-			 */
-			if (ret != ETIMEDOUT) {
-				/* Either a private handle was
-				 * signalled, or an error.
-				 */
-#ifdef DEBUG
-				g_message ("%s: returning: %d", __func__, ret);
-#endif
-				return (ret);
-			}
-		} else {
-			ret = mono_cond_timedwait (&_wapi_global_signal_cond,
-						   &_wapi_global_signal_mutex,
-						   &fake_timeout);
-
-			/* Mask the fake timeout, this will cause
-			 * another poll if the shared counter hasn't
-			 * changed
-			 */
-			if (ret == ETIMEDOUT) {
-				ret = 0;
-			} else {
-				/* Either a private handle was
-				 * signalled, or an error
-				 */
-#ifdef DEBUG
-				g_message ("%s: returning: %d", __func__, ret);
-#endif
-				return (ret);
-			}
-		}
-
-		/* No private handle was signalled, so check the
-		 * shared signal counter
-		 */
-		if (signal_count != _wapi_shared_layout->signal_count) {
-#ifdef DEBUG
-				g_message ("%s: A shared handle was signalled",
-					   __func__);
-#endif
-			return (0);
-		}
-	} while (ret != ETIMEDOUT);
-
-#ifdef DEBUG
-	g_message ("%s: returning ETIMEDOUT", __func__);
-#endif
-
-	return (ret);
+	return timedwait_signal_poll_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, timeout);
 }
 
 int _wapi_handle_wait_signal_handle (gpointer handle)
 {
-	guint32 idx = GPOINTER_TO_UINT(handle);
-	
 #ifdef DEBUG
 	g_message ("%s: waiting for %p", __func__, handle);
 #endif
 	
-	if (_WAPI_SHARED_HANDLE (_wapi_handle_type (handle))) {
-		while(1) {
-			if (WAPI_SHARED_HANDLE_METADATA(handle).signalled == TRUE) {
-				return (0);
-			}
-			
-			_wapi_handle_spin (100);
-		}
-	} else {
-		return(mono_cond_wait (&_WAPI_PRIVATE_HANDLES(idx).signal_cond,
-				       &_WAPI_PRIVATE_HANDLES(idx).signal_mutex));
-	}
+	return _wapi_handle_timedwait_signal_handle (handle, NULL);
 }
 
 int _wapi_handle_timedwait_signal_handle (gpointer handle,
 					  struct timespec *timeout)
 {
-	guint32 idx = GPOINTER_TO_UINT(handle);
-	
 #ifdef DEBUG
 	g_message ("%s: waiting for %p (type %s)", __func__, handle,
 		   _wapi_handle_typename[_wapi_handle_type (handle)]);
 #endif
 	
 	if (_WAPI_SHARED_HANDLE (_wapi_handle_type (handle))) {
-		struct timespec fake_timeout;
-
-		while (1) {
-			if (WAPI_SHARED_HANDLE_METADATA(handle).signalled == TRUE) {
-				return (0);
-			}
-		
+		if (WAPI_SHARED_HANDLE_METADATA(handle).signalled == TRUE) {
+			return (0);
+		}
+		if (timeout != NULL) {
+			struct timespec fake_timeout;
 			_wapi_calc_timeout (&fake_timeout, 100);
 		
 			if ((fake_timeout.tv_sec > timeout->tv_sec) ||
-			    (fake_timeout.tv_sec == timeout->tv_sec &&
-			     fake_timeout.tv_nsec > timeout->tv_nsec)) {
+				(fake_timeout.tv_sec == timeout->tv_sec &&
+				 fake_timeout.tv_nsec > timeout->tv_nsec)) {
 				/* FIXME: Real timeout is less than
 				 * 100ms time, but is it really worth
 				 * calculating to the exact ms?
 				 */
 				_wapi_handle_spin (100);
-				
+
 				if (WAPI_SHARED_HANDLE_METADATA(handle).signalled == TRUE) {
 					return (0);
 				} else {
 					return (ETIMEDOUT);
 				}
-			} else {
-				_wapi_handle_spin (100);
 			}
 		}
+		_wapi_handle_spin (100);
+		return (0);
+		
 	} else {
-		return(mono_cond_timedwait (&_WAPI_PRIVATE_HANDLES(idx).signal_cond, &_WAPI_PRIVATE_HANDLES(idx).signal_mutex, timeout));
+		guint32 idx = GPOINTER_TO_UINT(handle);
+		return timedwait_signal_poll_cond (&_WAPI_PRIVATE_HANDLES(idx).signal_cond, &_WAPI_PRIVATE_HANDLES(idx).signal_mutex, timeout);
 	}
 }
 
@@ -1479,14 +1357,7 @@ gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
 	_WAPI_HANDLE_COLLECTION_UNSAFE;
 	
 	/* Prevent new entries racing with us */
-	do {
-		now = (guint32)(time(NULL) & 0xFFFFFFFF);
-
-		thr_ret = _wapi_timestamp_exclusion (&_wapi_fileshare_layout->share_check, now);
-		if (thr_ret == EBUSY) {
-			_wapi_handle_spin (100);
-		}
-	} while (thr_ret == EBUSY);
+	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_SHARE);
 	g_assert (thr_ret == 0);
 	
 	/* If a linear scan gets too slow we'll have to fit a hash
@@ -1551,7 +1422,7 @@ gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
 		InterlockedExchange (&(*share_info)->timestamp, now);
 	}
 	
-	thr_ret = _wapi_timestamp_release (&_wapi_fileshare_layout->share_check, now);
+	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_SHARE);
 
 	_WAPI_HANDLE_COLLECTION_SAFE;
 
@@ -1591,7 +1462,6 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 	gboolean found = FALSE, proc_fds = FALSE;
 	pid_t self = getpid();
 	int pid;
-	guint32 now = (guint32)(time(NULL) & 0xFFFFFFFF);
 	int thr_ret, i;
 	
 	/* If there is no /proc, there's nothing more we can do here */
@@ -1606,14 +1476,7 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 	_WAPI_HANDLE_COLLECTION_UNSAFE;
 	
 	/* Prevent new entries racing with us */
-	do {
-		now = (guint32)(time(NULL) & 0xFFFFFFFF);
-
-		thr_ret = _wapi_timestamp_exclusion (&_wapi_fileshare_layout->share_check, now);
-		if (thr_ret == EBUSY) {
-			_wapi_handle_spin (100);
-		}
-	} while (thr_ret == EBUSY);
+	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_SHARE);
 	g_assert (thr_ret == 0);
 
 	for (i = 0; i < _WAPI_HANDLE_INITIAL_COUNT; i++) {
@@ -1692,7 +1555,7 @@ void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 		memset (share_info, '\0', sizeof(struct _WapiFileShare));
 	}
 
-	thr_ret = _wapi_timestamp_release (&_wapi_fileshare_layout->share_check, now);
+	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_SHARE);
 
 	_WAPI_HANDLE_COLLECTION_SAFE;
 }
@@ -1730,21 +1593,13 @@ static void _wapi_shared_details (gpointer handle_info)
 
 void _wapi_handle_update_refs (void)
 {
-	guint32 i, k, lock_now;
+	guint32 i, k;
 	int thr_ret;
 	
 	_WAPI_HANDLE_COLLECTION_UNSAFE;
 
 	/* Prevent file share entries racing with us */
-	do {
-		lock_now = (guint32)(time(NULL) & 0xFFFFFFFF);
-
-		thr_ret = _wapi_timestamp_exclusion (&_wapi_fileshare_layout->share_check, lock_now);
-
-		if (thr_ret == EBUSY) {
-			_wapi_handle_spin (100);
-		}
-	} while (thr_ret == EBUSY);
+	thr_ret = _wapi_shm_sem_lock (_WAPI_SHARED_SEM_SHARE);
 	g_assert(thr_ret == 0);
 
 	for(i = SLOT_INDEX (0); _wapi_private_handles [i] != NULL; i++) {
@@ -1790,6 +1645,7 @@ void _wapi_handle_update_refs (void)
 		}
 	}
 	
-	thr_ret = _wapi_timestamp_release (&_wapi_fileshare_layout->share_check, lock_now);
+	thr_ret = _wapi_shm_sem_unlock (_WAPI_SHARED_SEM_SHARE);
+
 	_WAPI_HANDLE_COLLECTION_SAFE;
 }
