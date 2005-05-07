@@ -1,3 +1,9 @@
+2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* metadata/socket-io.c: on windows, getsockopt/setsockopt for
+	send/receive timeout use an integer in milliseconds. We were using a
+	struct timeval.
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* locales.c:
