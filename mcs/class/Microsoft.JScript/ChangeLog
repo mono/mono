@@ -1,3 +1,8 @@
+2005-05-07  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* COMFieldInfo.cs, COMMethodInfo.cs, JSMethod.cs: added to the
+	build.
+
 2005-05-06  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Add ArgumentsObject.cs to the build is used on code generated

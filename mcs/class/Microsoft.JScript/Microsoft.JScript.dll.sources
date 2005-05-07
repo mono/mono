@@ -26,6 +26,8 @@ Microsoft.JScript/CmdLineException.cs
 Microsoft.JScript/CmdLineError.cs
 Microsoft.JScript/CmdLineOptionParser.cs
 Microsoft.JScript/CodeGenerator.cs
+Microsoft.JScript/COMFieldInfo.cs
+Microsoft.JScript/COMMethodInfo.cs
 Microsoft.JScript/COMMemberInfo.cs
 Microsoft.JScript/Context.cs
 Microsoft.JScript/ContinueOutOfFinally.cs
@@ -94,6 +96,7 @@ Microsoft.JScript/JSFieldInfo.cs
 Microsoft.JScript/JSFunctionAttribute.cs
 Microsoft.JScript/JSFunctionAttributeEnum.cs
 Microsoft.JScript/JSLocalField.cs
+Microsoft.JScript/JSMethod.cs
 Microsoft.JScript/JSMethodInfo.cs
 Microsoft.JScript/JSObject.cs
 Microsoft.JScript/JSParser.cs
