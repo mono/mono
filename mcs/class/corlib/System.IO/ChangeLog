@@ -1,3 +1,8 @@
+2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: if the pattern is just a file name and it exists, return
+	it right away. Fixes bug #72143.
+
 2005-05-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* File.cs (Open): If a stream is opened with Append access, you

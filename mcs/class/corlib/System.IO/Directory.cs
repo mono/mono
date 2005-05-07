@@ -413,6 +413,13 @@ namespace System.IO
 
 			MonoIOError error;
 			if (!MonoIO.ExistsDirectory (wildpath, out error)) {
+				if (error == MonoIOError.ERROR_SUCCESS) {
+					MonoIOError file_error;
+					if (MonoIO.ExistsFile (wildpath, out file_error)) {
+						return new string [] { wildpath };
+					}
+				}
+
 				if (error != MonoIOError.ERROR_PATH_NOT_FOUND)
 					throw MonoIO.GetException (wildpath, error);
 
