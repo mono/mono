@@ -2585,6 +2585,35 @@ public class ArrayTest : Assertion
 		byte[] array = new byte [16];
 		Array.Reverse (array, 8, Int32.MaxValue);
 	}
+	
+	public struct CharX : IComparable {
+		public char c;
+	
+		public CharX (char c)
+		{
+			this.c = c;
+		}
+	
+		public int CompareTo (object obj)
+		{
+			if (obj is CharX)
+				return c.CompareTo (((CharX) obj).c);
+			else
+				return c.CompareTo (obj);
+		}
+	}
+
+	[Test]
+	public void BinarySearch_ArgPassingOrder ()
+	{
+		//
+		// This tests that arguments are passed to the comprer in the correct
+		// order. The IComparable of the *array* elements must get called, not
+		// that of the search object.
+		//
+		CharX [] x = { new CharX ('a'), new CharX ('b'), new CharX ('c') };
+		AssertEquals (1, Array.BinarySearch (x, 'b'));
+	}
 
 #if NET_2_0
 	[Test]

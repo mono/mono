@@ -1,3 +1,7 @@
+2005-05-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* ArrayTest.cs: Test for #70725.
+
 2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MathTest.cs: Add new rounding test.

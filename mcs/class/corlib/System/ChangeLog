@@ -1,3 +1,8 @@
+2005-05-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* Array.cs (BinarySearch): Patch from kazuki to pass arguments to
+	the comparer in the same order as msft. Fixes #70725
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Enum.cs: the hashtable don't need to be synchronized any more, since

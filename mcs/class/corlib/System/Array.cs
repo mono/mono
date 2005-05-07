@@ -636,11 +636,11 @@ namespace System
 					int iMid = (iMin + iMax) / 2;
 					object elt = array.GetValueImpl (iMid);
 
-					iCmp = comparer.Compare (value, elt);
+					iCmp = comparer.Compare (elt, value);
 
 					if (iCmp == 0)
 						return iMid;
-					else if (iCmp < 0)
+					else if (iCmp > 0)
 						iMax = iMid - 1;
 					else
 						iMin = iMid + 1; // compensate for the rounding down
