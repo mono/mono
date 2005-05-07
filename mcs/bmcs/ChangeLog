@@ -1,3 +1,9 @@
+2005-05-01  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* convert.cs: 
+	* expression.cs: Miscellaneous fixes relating to
+	type conversions.
+
 2005-04-10  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* First cut changes for suporting Binary Operators. All changes

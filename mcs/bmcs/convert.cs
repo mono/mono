@@ -208,7 +208,7 @@ namespace Mono.CSharp {
 
 				// VB.NET specific: Convert Nothing to value types
 
-				Expression e = NothingToPrimitiveConstants (expr, target_type);
+				Expression e = NothingToPrimitiveTypes (expr, target_type);
 				if (e != null)
 					return e;
 
@@ -1476,7 +1476,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static public Constant NothingToPrimitiveConstants (Expression expr, Type target_type)
+		static public Constant NothingToPrimitiveTypes (Expression expr, Type target_type)
 		{
 			NullLiteral null_literal = (NullLiteral) expr;
 			Location loc = null_literal.Location;
@@ -1498,7 +1498,7 @@ namespace Mono.CSharp {
 			else if (real_target_type == TypeManager.int32_type)
 				retval = null_literal.ToInt (loc);
 			else if (real_target_type == TypeManager.int64_type)
-				null_literal.ToLong (loc);
+				retval = null_literal.ToLong (loc);
 			else if (real_target_type == TypeManager.decimal_type)
 				retval = null_literal.ToDecimal (loc);
 			else if (real_target_type == TypeManager.float_type)

@@ -1942,12 +1942,16 @@ namespace Mono.CSharp {
 		static string OperName (Operator oper)
 		{
 			switch (oper){
+			case Operator.Exponentiation:
+				return "^";
 			case Operator.Multiply:
 				return "*";
 			case Operator.Division:
 				return "/";
+			case Operator.IntegerDivision:
+				return "\\";
 			case Operator.Modulus:
-				return "%";
+				return "Mod";
 			case Operator.Addition:
 				return "+";
 			case Operator.Subtraction:
@@ -1965,15 +1969,17 @@ namespace Mono.CSharp {
 			case Operator.GreaterThanOrEqual:
 				return ">=";
 			case Operator.Equality:
-				return "==";
+				return "=";
 			case Operator.Inequality:
-				return "!=";
+				return "<>";
+			case Operator.Like:
+				return "Like";
 			case Operator.BitwiseAnd:
-				return "&";
+				return "And";
 			case Operator.BitwiseOr:
-				return "|";
+				return "Or";
 			case Operator.ExclusiveOr:
-				return "^";
+				return "Xor";
 			case Operator.LogicalOrElse:
 				return "OrElse";
 			case Operator.LogicalAndAlso:
@@ -2256,6 +2262,7 @@ namespace Mono.CSharp {
 		void CheckShiftArguments (EmitContext ec)
 		{
 			Expression e;
+			Type assumed_target_type = right.Type;
 
 			e = Convert.ImplicitVBConversion (ec, right, TypeManager.int32_type, Location);
 			if (e == null){
@@ -2273,7 +2280,8 @@ namespace Mono.CSharp {
 				}
 
 				left = target_left_expr;
-			}
+			} else if (left.Type == TypeManager.null_type)
+				left  = Convert.ImplicitVBConversion (ec, left, assumed_target_type, Location);
 
 			type = left.Type;
 
@@ -3138,6 +3146,8 @@ namespace Mono.CSharp {
 			Type l = left.Type;
 			Type r = right.Type;
 
+			//Console.WriteLine (OperName (oper) +"< "+  l + ", " + r + ">");
+
 			errors = Report.Errors;
 			ret_expr = HandleObjectOperands (ec);
 			if (Report.Errors > errors)
@@ -3207,11 +3217,19 @@ namespace Mono.CSharp {
 			if (IsShortCircuitedLogicalExpression)
 				return this;
 
+			if (oper == Operator.Like) {
+				Type = TypeManager.bool_type;
+				Expression compare_mode = new EnumConstant (new IntConstant ((int) RootContext.StringComparisonMode), 
+								      typeof (Microsoft.VisualBasic.CompareMethod));					
+				return new HelperMethodInvocation (ec, Location, TypeManager.bool_type, TypeManager.msvbcs_stringtype_strlike_string_string_comparemethod, left, right, compare_mode);
+			}
+
 
 			//
 			// Step 0: String concatenation (because overloading will get this wrong)
 			//
-			if (oper == Operator.Addition){
+			if (oper == Operator.Addition || oper == Operator.Concatenation){
+
 				//
 				// If any of the arguments is a string, cast to string
 				//
@@ -3220,13 +3238,8 @@ namespace Mono.CSharp {
 				if (left is StringConstant && right is StringConstant)
 					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value);
 
-				if (l == TypeManager.string_type || r == TypeManager.string_type) {
+				if (Type == TypeManager.string_type) {
 
-					if (r == TypeManager.void_type || l == TypeManager.void_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-					
 					// try to fold it in on the left
 					if (left is StringConcat) {
 
@@ -3354,16 +3367,26 @@ namespace Mono.CSharp {
 
 			while (true) {
 				++step;
+
+				if (step > 10)
+					throw new Exception ("FIXME: An Infinite loop when resolving <" + l + "> " + OperName (oper) + " <" + r + ">");
 				
-				// Console.WriteLine ("STEP " + step + ":");
-				// Console.WriteLine ("         left => " + target_left_expr_type + " right => " + target_right_expr_type);
+				//Console.WriteLine ("		STEP " + step + ":");
+				//Console.WriteLine ("		" + "<" + target_left_expr_type + ", " + target_right_expr_type + ">");
 				
 				if ((target_left_expr_type == target_right_expr_type) && 
 				    IsOperatorDefinedForType (target_left_expr_type)) {
-					left = target_left_expr;
-					right = target_right_expr;
-					type = target_left_expr_type;
-					break;
+
+					if (target_left_expr_type == TypeManager.null_type) {
+						target_left_expr = target_right_expr = new IntConstant (0);
+						Type = TypeManager.int32_type;
+						return;
+					} else {
+						left = target_left_expr;
+						right = target_right_expr;
+						type = target_left_expr_type;
+						return;
+					}
 				}
 
 				if ( !IsOperatorDefinedForType (target_left_expr_type)) {
@@ -3389,6 +3412,10 @@ namespace Mono.CSharp {
 					target_right_expr_type = target_right_expr.Type;
 					continue;
 				}
+
+				if (target_left_expr_type == TypeManager.null_type ||
+					target_right_expr_type == TypeManager.null_type)
+					break;
 
 				if (target_left_expr_type == TypeManager.string_type) {
 					Type target_type;
@@ -3436,15 +3463,19 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if ( !DoOperandPromotions(ec, target_left_expr, target_right_expr)) {
-					Error_OperatorCannotBeApplied();
-					return;
-				}
+				break;
 			}
+
+			if ( !DoOperandPromotions(ec, target_left_expr, target_right_expr))
+				Error_OperatorCannotBeApplied();
+
+			return;
 		}	
 
 		bool IsOperatorDefinedForType (Type t)
 		{
+			if (t == TypeManager.null_type)
+				return true;
 		
 			switch (oper) {
 
@@ -3467,6 +3498,12 @@ namespace Mono.CSharp {
 				    TypeManager.IsFixedNumericType (t))
 					return true;
 
+				break;
+
+			case Operator.LogicalAndAlso:
+			case Operator.LogicalOrElse:
+				if (t == TypeManager.bool_type)
+					return true;
 				break;
 
 			case Operator.RightShift:
@@ -3570,6 +3607,12 @@ namespace Mono.CSharp {
 			if (t1 == t2)
 				return t1;
 
+			if(t1 == TypeManager.null_type)
+				return t2;
+
+			if (t2 == TypeManager.null_type)
+				return t1;
+
 			if (t1 == TypeManager.date_type || t1 == TypeManager.char_type) {
 				if (t2 == TypeManager.string_type)
 					return t2;
@@ -3607,6 +3650,9 @@ namespace Mono.CSharp {
 			
 			Type target_type = GetWiderOfTypes(l, r);
 
+			//Console.WriteLine ("		DoingOperandPromotions");
+			//Console.WriteLine ("         left => " + l + " right => " + r);
+			//Console.WriteLine ("		target_type => " + target_type);
 
 			if (target_type == null) {
 				throw new Exception ("Types " + l + " " + r +" cannot be compared");
