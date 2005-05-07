@@ -79,6 +79,9 @@ namespace System
 
 			stdin  = new UnexceptionalStreamReader (OpenStandardInput (0), encoding);
 			stdin = TextReader.Synchronized (stdin);
+			GC.SuppressFinalize (stdout);
+			GC.SuppressFinalize (stderr);
+			GC.SuppressFinalize (stdin);
 		}
 
 #if !NET_2_0

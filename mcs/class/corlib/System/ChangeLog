@@ -1,3 +1,11 @@
+2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Enum.cs: the hashtable don't need to be synchronized any more, since
+	it's only accessed from withint a lock.
+
+	* Console.cs: stdin, stdout and stderr will never be finalized. Fixes
+	bug 74768.
+
 2005-05-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Array.cs: Remove CLSCompliant (false) attributes.

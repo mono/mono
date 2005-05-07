@@ -52,7 +52,7 @@ namespace System
 
 		static MonoEnumInfo ()
 		{
-		    	cache = Hashtable.Synchronized (new Hashtable ());
+		    	cache = new Hashtable ();
 		}
 		
 		private MonoEnumInfo (MonoEnumInfo other)
