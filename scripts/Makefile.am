@@ -25,7 +25,6 @@ bin_SCRIPTS = \
 	mono-find-provides	\
 	mono-find-requires	\
 	monop			\
-	monoresgen		\
 	permview		\
 	prj2make		\
 	resgen			\
