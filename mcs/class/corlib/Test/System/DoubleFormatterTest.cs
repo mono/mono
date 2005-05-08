@@ -929,7 +929,6 @@ namespace MonoTests.System {
 
 		// see bug #60110 for more details
 		[Test]
-		[Category("NotWorking")]
 		public void Roundtrip_ExactStringFormat () 
 		{
 			// here we check that the "R" output is "extactly" the same as MS implementation

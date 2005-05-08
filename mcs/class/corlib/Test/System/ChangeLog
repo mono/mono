@@ -1,3 +1,7 @@
+2005-05-08  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DoubleFormatterTest.cs: re-enabled test as bug #60110 is fixed.
+
 2005-05-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DoubleTest.cs : added test for #72955.
