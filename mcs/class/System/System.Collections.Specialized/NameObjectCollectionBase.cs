@@ -184,9 +184,14 @@ namespace System.Collections.Specialized
 		protected NameObjectCollectionBase():base()
 		{
 			m_readonly = false;
-			
+
+#if NET_1_0
 			m_hashprovider = CaseInsensitiveHashCodeProvider.Default;
 			m_comparer = CaseInsensitiveComparer.Default;
+#else
+			m_hashprovider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+			m_comparer = CaseInsensitiveComparer.DefaultInvariant;
+#endif
 			m_defCapacity = 0;
 			Init();
 			/*m_ItemsContainer = new Hashtable(m_hashprovider,m_comparer);
@@ -199,8 +204,13 @@ namespace System.Collections.Specialized
 		{
 			m_readonly = false;
 			
+#if NET_1_0
 			m_hashprovider = CaseInsensitiveHashCodeProvider.Default;
 			m_comparer = CaseInsensitiveComparer.Default;
+#else
+			m_hashprovider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+			m_comparer = CaseInsensitiveComparer.DefaultInvariant;
+#endif
 			m_defCapacity = capacity;
 			Init();
 			/*m_ItemsContainer = new Hashtable(m_defCapacity, m_hashprovider,m_comparer);

@@ -1,3 +1,8 @@
+2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NameObjectCollectionBase.cs: after 1.0, this uses DefaultInvariant for
+	the hash code provider and comparer, as Ben said.
+
 2005-05-05  Lluis Sanchez Gual <lluis@novell.com>
 
 	* OrderedDictionary.cs: Don't crash when removing an item
