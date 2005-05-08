@@ -22,9 +22,9 @@ test : xslttest.exe alltest.exe prepare
 
 prepare : $(TESTS) prepare-xslt prepare-mstest
 
-prepare-xslt : xslttest.exe $(XSLTTEST_RESULTS)
+prepare-xslt : xslttest.exe $(XSLTTEST_RESULTS) testsuite/TESTS/catalog-fixed.xml
 
-prepare-mstest : alltest.exe $(MSTEST_RESULTS)
+prepare-mstest : alltest.exe $(MSTEST_RESULTS) testsuite/TESTS/catalog-out.xml
 
 xslttest.exe : xslttest.cs
 	$(CSCOMPILE) xslttest.cs
@@ -35,19 +35,23 @@ xmlnorm.exe : XmlNormalizer.cs
 alltest.exe : alltest.cs
 	$(CSCOMPILE) alltest.cs
 
-# WARNING: It removes catalog.xml. If you want to keep catalog.xml, comment
-# "rm" and "patch" lines out.
+testsuite/TESTS/catalog-fixed.xml : testsuite/TESTS/catalog.xml catalog.sed
+	sed -f catalog.sed testsuite/TESTS/catalog.xml > testsuite/TESTS/catalog-fixed.xml
+
 $(TESTS) : $(TEST_ARCHIVE) simplify.xsl
-	rm -f testsuite/TESTS/catalog.xml
-	unzip -n $(TEST_ARCHIVE)
-	patch testsuite/TESTS/catalog.xml catalog.diff
-	xsltproc simplify.xsl testsuite/TESTS/catalog.xml > testsuite/TESTS/catalog-out.xml
+	unzip -un $(TEST_ARCHIVE)
+	touch $(TESTS)
+
+testsuite/TESTS/catalog-out.xml : testsuite/TESTS/catalog-fixed.xml simplify.xsl
+	xsltproc simplify.xsl testsuite/TESTS/catalog-fixed.xml > testsuite/TESTS/catalog-out.xml
 
 $(XSLTTEST_RESULTS) : $(XSLTTEST_RESULTS_ARCHIVE)
 	unzip -n -d $(XSLTTEST_RESULTS_ARCHIVE)
+	touch $(XSLTTEST_RESULTS)
 
 $(MSTEST_RESULTS) : $(MSTEST_RESULTS_ARCHIVE)
 	unzip -n -d testsuite/TESTS $(MSTEST_RESULTS_ARCHIVE)
+	touch $(MSTEST_RESULTS)
 
 $(TEST_ARCHIVE) :
 	wget http://www.oasis-open.org/committees/download.php/9584/$(TEST_ARCHIVE)
@@ -60,10 +64,10 @@ $(MSTEST_RESULTS_ARCHIVE) :
 
 run-test : run-test-xslt run-test-ms
 
-run-test-xslt : xslttest.exe
+run-test-xslt : xslttest.exe testsuite/TESTS/catalog-fixed.xml
 	$(RUNTIME) $(RUNTIME_FLAGS) xslttest.exe --report:TestResult.xml --xml --details --outall
 
-run-test-ms : alltest.exe xmlnorm.exe
+run-test-ms : alltest.exe xmlnorm.exe testsuite/TESTS/catalog-out.xml
 	$(RUNTIME) $(RUNTIME_FLAGS) ./alltest.exe $(TARGET_RESULTS)
 	mono ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
 	rm -rf testsuite/TESTS/$(TARGET_RESULTS)

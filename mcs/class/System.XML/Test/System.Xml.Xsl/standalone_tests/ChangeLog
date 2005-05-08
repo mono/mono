@@ -1,3 +1,12 @@
+2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
+
+	* catalog.diff : deleted, replaced by catalog.sed
+	* catalog.sed : added new file
+	* Makefile : now it does not exctract catalog every run; output
+	patched catalog into a different filename; breaked the extraction into
+	a separate target so it's done only when needed.
+	* xslttest.cs : open a patched catalog, not an original one
+	
 2005-03-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* xslttest.cs, alltest.cs : Now that xsl:key got improved, there is

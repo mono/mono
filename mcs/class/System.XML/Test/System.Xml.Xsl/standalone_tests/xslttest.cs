@@ -160,7 +160,7 @@ FileMatch:
 					+ explicitTarget);
 
 			XmlDocument whole = new XmlDocument ();
-			whole.Load (@"testsuite/TESTS/catalog.xml");
+			whole.Load (@"testsuite/TESTS/catalog-fixed.xml");
 
 			if (!listOutput)
 				Console.WriteLine ("Started: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
