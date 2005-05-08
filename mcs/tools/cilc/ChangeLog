@@ -1,3 +1,7 @@
+2005-05-08  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs: Add null check to NsToC and fix warnings.
+
 2005-01-20  Alp Toker  <alp@atoker.com>
 
   * cilc.cs: Name the glib handle getter helper method by namespace for now to

@@ -97,7 +97,10 @@ public class cilc
 
 		string line;
 		while ((line = p.StandardOutput.ReadLine ()) != null)
-			Console.Write (".");
+			if (verbose)
+				Console.WriteLine (line);
+			else
+				Console.Write (".");
 
 		Console.WriteLine ();
 
@@ -108,7 +111,8 @@ public class cilc
 		return p.ExitCode;
 	}
 
-	static string cflags;
+	static bool verbose = false;
+
 	static string extpkgs = "";
 	static string[] extsubpkgs = {};
 	static string[] extincludes = {};
@@ -155,8 +159,6 @@ public class cilc
 			m = re_type.Match (line);
 			if (m.Success) {
 				string G = m.Groups[2].Value;
-
-				bool dontgen = false;
 
 				if (!GIsValid (G))
 					continue;
@@ -818,10 +820,12 @@ public class cilc
 		NewG (CsTypeToFlat (t));
 	}
 
+	/*
 	static string NewG (Type t)
 	{
 		return NewG (CsTypeToFlat (t));
 	}
+	*/
 
 	static string CsTypeToG (Type t)
 	{
@@ -1005,7 +1009,6 @@ public class cilc
 		funcs_done.Add (myname);
 
 		//handle the parameters
-		string param_assign = "";
 		string mycsargs = "";
 
 		for (int i = 0 ; i < parameters.Length ; i++) {
@@ -1141,6 +1144,9 @@ public class cilc
 
 	static string NsToC (string s)
 	{
+		if (s == null)
+			return "";
+
 		s = s.Replace ('.', '_');
 		return CamelToC (s);
 	}
