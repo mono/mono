@@ -34,7 +34,7 @@
 
 using System.ComponentModel;
 using System.Data;
-#if MONO_ONLY
+#if !TARGET_JVM
 using System.EnterpriseServices;
 #endif
 
