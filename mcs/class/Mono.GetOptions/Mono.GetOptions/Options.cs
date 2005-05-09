@@ -61,7 +61,11 @@ namespace Mono.GetOptions
 		
 		protected virtual void InitializeOtherDefaults() { } // Only subclasses may need to implement something here
 
+#if NET_2_0
+		public bool RunningOnWindows { get { return PlatformID.Unix != Environment.OSVersion.Platform; } }
+#else
 		public bool RunningOnWindows { get { return 128 != (int)Environment.OSVersion.Platform; } }
+#endif
 
 		#region non-option arguments
 				
