@@ -1,3 +1,7 @@
+2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile : care of timestamps to make a minimal build
+
 2004-11-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltest.cs : reformat; easier to check.
