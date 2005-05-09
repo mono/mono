@@ -284,6 +284,7 @@ System/UIntPtrTest.cs
 System/VersionTest.cs
 System/ValueTypeTest.cs
 System/ActivatorCas.cs
+System/AppDomainCas.cs
 System/BadImageFormatExceptionCas.cs
 System/ConsoleCas.cs
 System/EnvironmentCas.cs
@@ -301,8 +302,12 @@ System.IO/PathCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStreamCas.cs
 System.Reflection/AssemblyCas.cs
+System.Reflection/AssemblyNameCas.cs
 System.Reflection/ModuleCas.cs
+System.Reflection/StrongNameKeyPairCas.cs
 System.Reflection.Emit/MethodRentalCas.cs
+System.Resources/ResourceReaderCas.cs
+System.Resources/ResourceSetCas.cs
 System.Security/SecurityContextCas.cs
 System.Security/SecurityExceptionCas.cs
 System.Security.Cryptography/CryptoAPITransformCas.cs

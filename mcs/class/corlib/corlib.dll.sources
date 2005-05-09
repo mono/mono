@@ -969,7 +969,6 @@ System.Security/PermissionSetCollection.cs
 System.Security/PolicyLevelType.cs
 System.Security/SecureString.cs
 System.Security/SecurityContext.cs
-System.Security/SecurityContextSwitcher.cs
 System.Security/SecurityCriticalAttribute.cs
 System.Security/SecurityCriticalScope.cs
 System.Security/SecurityElement.cs
