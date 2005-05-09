@@ -435,7 +435,11 @@ namespace System.Web {
 		public static bool IsOnUNCShare {
 			get {
 				// IsUnc broken under unix?
+#if NET_2_0
+				return (Environment.OSVersion.Platform != PlatformID.Unix &&
+#else
 				return (!((int) Environment.OSVersion.Platform == 128) &&
+#endif
 					new Uri ("file://" + ClrInstallDirectory).IsUnc);
 			}
 		}

@@ -1,3 +1,7 @@
+2005-05-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: PlatformID.Unix.
+
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: cleaned up the .ctors, fix IsClientConnected and just
