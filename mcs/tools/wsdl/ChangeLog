@@ -1,3 +1,8 @@
+2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoWSDL.cs, MonoWSDL2.cs :
+	  "file://"+windows_native_path is not a valid file URI.
+
 2005-04-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SampleGenerator.cs: Removed unused method.

@@ -131,7 +131,7 @@ namespace Mono.WebServices
 
 					string url = murl;
 					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
-						url = "file://" + Path.GetFullPath (url);
+						url = new Uri (Path.GetFullPath (url)).ToString ();
 
 					dcc.DiscoverAny (url);
 					dcc.ResolveAll ();
