@@ -72,13 +72,14 @@ run-test-ms : alltest.exe xmlnorm.exe testsuite/TESTS/catalog-fixed.xml
 	diff -r -q testsuite/TESTS/ExpectedResults testsuite/TESTS/$(TARGET_RESULTS) > diffreport.txt
 
 clean : clean-xslttest clean-mstest
+	rm -f xslttest.exe
 
-clean-xslttest :
+clean-xslttest : xslttest.exe
 	if (test -e testsuite) then \
-		find testsuite/TESTS -name *.out > output.lst; \
+		$(RUNTIME) ./xslttest.exe --list > output.lst; \
 		perl cleanup-output.pl; \
 	fi
-	rm -f xslttest.exe TestResult.xml output.lst
+	rm -f TestResult.xml output.lst
 
 clean-mstest :
 	rm -rf testsuite/TESTS/Reports
@@ -92,6 +93,6 @@ distclean :
 
 create-reference-output : clean-xslttest xslttest.exe
 	./xslttest.exe --generate
-	find testsuite/TESTS -name *.out > output.lst
+	./xslttest.exe --list > output.lst
 	zip xslttest-reference-output.zip -@ < output.lst
 

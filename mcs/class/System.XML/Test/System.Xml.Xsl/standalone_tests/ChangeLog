@@ -1,3 +1,9 @@
+2005-05-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile : now *.out does not match the all reference outputs, namely
+	  those from MSFT_Conformance_Tests (mostly *.txt).
+	  So use "xslttest.exe --list" instead of "find".
+
 2005-05-09  Andrew Skiba  <andrews@mainsoft.com>
 
 	* catalog.sed : fix more names in the catalog, add the missing
