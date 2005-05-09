@@ -83,6 +83,12 @@ $(UCA_TABLE) :
 	mv allkeys.txt UCA/
 	touch UCA/allkeys.txt
 
+$(LDML_RULES) :
+	if ! test -d LDML; then mkdir LDML; fi
+	wget "http://dev.icu-project.org/cgi-bin/viewcvs.cgi/*checkout*/icu/source/data/unidata/UCARules.txt?rev=HEAD&content-type=text/plain"
+	mv UCARules.txt* LDML/
+	touch LDML/UCARules.txt
+
 $(NORM_TABLE) :
 	if ! test -d UCD; then mkdir UCD; fi
 	wget http://www.unicode.org/Public/UNIDATA/DerivedNormalizationProps.txt

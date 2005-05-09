@@ -22,8 +22,12 @@
 		the start of the target if it really does not match in the next
 		character (hopefully limited to max size n).
 	IndexOf()
-		Find first match and process comparison to the end of the 
-		string to find
+		Find head match and process comparison to the end of the 
+		string to find.
+	LastIndexOf()
+		Find tail match and process comparison to the start of the 
+		string to find.
+
 
 ** How to support CompareOptions
 
@@ -121,15 +125,15 @@
 	00 means the end of sort key.
 	01 means the end of the level.
 	02-FF means the value.
-	If less than or equal to 2 in followings in a level, then the sequence
-	of the level is terminated (1). 2 is the default.
+	If less than 2 in the value at each level, then the sequence of the 
+	level is terminated (i.e. the sort key won't contain extraneous '2').
 
-	There are 5 levels.
+	There are 5 levels:
 
 	- level 1: primary difference
 	  The first byte of level 1 means the category of the character.
-	- level 2: case sensitivity
-	- level 3: diacritic difference
+	- level 2: diacritic difference
+	- level 3: case sensitivity
 	- level 4: kana type (mostly at primary category 22)
 	- level 5: identitcal difference (control characters etc.)
 
@@ -171,8 +175,11 @@
 
 	In French cultures, diacritic orderings are checked from right to left.
 
+	<del>
 	By default, there is no composite form.
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C2.asp
+	</del>
+	This is not true. \u00E6 is regarded as equivalent to "ae".
 
 	The correspoinding implementation will be namely "CharacterIterator".
 
@@ -356,9 +363,26 @@
 
 *** Culture dependent design
 
+	(To assure this section, run the simple dumper code shown above,
+	with all the supported cultures.)
+
+	For each sub culture (that has a parent culture), its collation
+	mapping is identical to that of its parent.
+
+	Additionally,
+
+	- zh-CHS = zh-CN = zh-SG = zh-MO
+	- zh-TW = zh-HK = zh-CHT
+	- da = no
+	- fi = sv
+	- hr = sr
+
+	(UCA implies that there are some cultures that sorts alphabets from
+	large to small, but as long as I see there is no such CultureInfo.)
+
 **** Latin characters and NonSpacingMark order tailorings
 
-	div : FDF2 is 24 83 01 01 01 01 00
+	div : FDF2 is 24 83 01 01 01 01 00 (only 1 difference)
 	syr : some NonSpacingMarks are totally ignorable.
 	tt,kk,mk,az-AZ-Cyrl,uk : cyrillic difference
 	az,et,lt,lv,sl,tr,sv,ro,pl,no,is,hu,fi,es,da : latin difference
@@ -386,11 +410,20 @@
 
 **** Accent evaluation order
 
-	French culture also has different accent ordering. Some other cultures
-	might also have different ones, but not obvious.
+	With French cultures, diacritical marks must be put *in front of the
+	character being decorated (aka French ordering).
+	French ordering does not affect only on some diacritics (Japanese
+	voice mark is not affected).
+
+	Some other cultures might also have different ones, but not obvious.
 
 
 ** Mono implementation plans
+
+*** CultureInfoImpl
+
+	CultureInfo contains many overloaded methods that are just for 
+	convenience. This class contains only required members.
 
 *** CharacterIterator
 
@@ -400,7 +433,18 @@
 
 	(Some examples can be seen in UTR#10).
 
-	This resolves combined characters and expanded characters.
+	It should work like TextElementEnumerator but should not result in a
+	bunch of string instances. The simple set of below is enough:
+
+	- MoveNext(),
+	- Index,
+	- ElementLength, and
+	- Reset()
+
+	They could be implemented as an internal virtual method of CompareInfo.
+
+	This resolves combined characters and expanded characters, including
+	French accent orderings.
 
 *** sort key element table
 
@@ -411,9 +455,25 @@
 	is done to the table loaded in memory (it's waste of memory).
 
 
-*** Reference materials
+** Reference materials
 
 	Developing International Software for Windows 95 and Windows NT
 	Appendix D Sort Order for Selected Languages
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24BF.asp
 
+	UTR#10 Unicode Collation Algorithm (It is still informative)
+	http://www.unicode.org/reports/tr10/
+
+	UAX#15 Unicode Normalization
+	http://www.unicode.org/reports/tr15/
+	especially its canonical/compatibility equivalent characters might
+	be informative to get those equivalent characters.
+	
+	To know which character can be expanded, Unicode Character Database
+	(UCD) is informative (it's informative but not normative to us)
+	http://www.unicode.org/Public/UNIDATA/UCD.html
+
+	Wine uses UCA default element table, but has windows-like character
+	filterings support in their LCMapString implementation:
+	http://cvs.winehq.com/cvsweb/wine/dlls/kernel/locale.c
+	http://cvs.winehq.com/cvsweb/wine/libs/unicode/sortkey.c

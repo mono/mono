@@ -53,20 +53,20 @@ namespace Mono.Globalization.Unicode
 		// with voice mark"included" or "separate", while half-width
 		// katakana are distinguished unless IgnoreWidth is specified.
 		// So maybe canonical normalization is done.
-		public bool IsIgnorable (int i)
+		public static bool IsIgnorable (int i, CompareOptions opt, CultureInfo ci)
 		{
 			if (MSCompatUnicodeTable.IsIgnorable (i))
 				return true;
-			if ((Options & CompareOptions.IgnoreWidth) != 0)
+			if ((opt & CompareOptions.IgnoreWidth) != 0)
 				i = MSCompatUnicodeTable.ToWidthInsensitive (i);
-			if ((Options & CompareOptions.IgnoreKanaType) != 0)
+			if ((opt & CompareOptions.IgnoreKanaType) != 0)
 				i = MSCompatUnicodeTable.ToKanaTypeInsensitive (i);
-			if ((Options & CompareOptions.IgnoreCase) != 0 && i <= char.MaxValue)
-				i = collator.Culture.ToLower ((char) i);
-			if ((Options & CompareOptions.IgnoreSymbols) != 0
+			if ((opt & CompareOptions.IgnoreCase) != 0 && i <= char.MaxValue)
+				i = ci.TextInfo.ToLower ((char) i);
+			if ((opt & CompareOptions.IgnoreSymbols) != 0
 				&& MSCompatUnicodeTable.IsIgnorableSymbol (i))
 				return true;
-			if ((Options & CompareOptions.IgnoreNonSpace) != 0
+			if ((opt & CompareOptions.IgnoreNonSpace) != 0
 				&& MSCompatUnicodeTable.IsIgnorableNonSpacing (i))
 				return true;
 			return false;
@@ -127,7 +127,7 @@ namespace Mono.Globalization.Unicode
 
 		public SortKey GetSortKey (string source)
 		{
-			string n = Norm.Normalize (source, 1);
+			string n = Normalize (source, 1);
 
 			throw new NotImplementedException ();
 		}

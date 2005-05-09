@@ -9,18 +9,31 @@ using Mono.Globalization.Collation;
 
 namespace System.Globalization
 {
-	internal class CompareInfo
+	internal class CompareInfoImpl : CompareInfo
 	{
 		CultureInfo culture;
 		Collator collator;
 
-		internal CompareInfo (CultureInfo ci)
+		internal CompareInfoImpl (CultureInfo ci)
 		{
 			culture = ci;
 			collator = new RuleBasedCollator (ci);
 		}
 
-		public override int Compare (
+		int CompareOrdinal (string string1, int offset1, int length1,
+			string string2, int offset2, int length2)
+		{
+			int min = length1 < length2 ? length1 : length2;
+			for (int i = 0; i < min; i++)
+				if (string1 [offset1 + i] != string2 [offset2 + i])
+					return ((int) string1 [offset1 + i]) 
+						- ((int) string2 [offset2 + i]);
+			return (length1 > min) ?
+				1 :
+				(length2 > min) ? -1 : 0;
+		}
+
+		public virtual int Compare (
 			string string1, int offset1, int length1,
 			string string2, int offset2, int length2,
 			CompareOptions options)
@@ -29,22 +42,32 @@ namespace System.Globalization
 			// FIXME: check array range
 
 			// quick ordinal comparison
-			if (options == CompareOptions.Ordinal) {
-				int min = length1 < length2 ? length1 : length2;
-				for (int i = 0; i < min; i++)
-					if (string1 [offset1 + i] != string2 [offset2 + i])
-						return ((int) string1 [offset1 + i]) 
-							- ((int) string2 [offset2 + i]);
-				return (length1 > min) ?
-					1 :
-					(length2 > min) ? -1 : 0;
-			}
+			if (options == CompareOptions.Ordinal)
+				return CompareOrdinal (string1, offset1,
+				length1, string2, offset2, length2);
 
 			return collator.Compare (string1, offset1, length1,
 				string2, offset2, length2, options);
 		}
 
-		public override SortKey GetSortKey (
+		public virtual int Compare (
+			string string1, int offset1, int length1,
+			string string2, int offset2, int length2,
+			CompareOptions options)
+		{
+			// FIXME: check allowed flags here.
+			// FIXME: check array range
+
+			// quick ordinal comparison
+			if (options == CompareOptions.Ordinal)
+				return CompareOrdinal (string1, offset1, length1,
+				string2, offset2, length2, options);
+
+			return collator.Compare (string1, offset1, length1,
+				string2, offset2, length2, options);
+		}
+
+		public virtual SortKey GetSortKey (
 			string source, CompareOptions options)
 		{
 			// FIXME: check allowed flags here.
@@ -52,18 +75,44 @@ namespace System.Globalization
 			return collator.GetSortKey (source, options);
 		}
 
-		public override int IndexOf (string source, char value,
+		public virtual int IndexOf (string source, char value,
 			int startIndex, int count, CompareOptions options)
 		{
-			return IndexOf (source, value.ToString (this.culture),
+			return collator.IndexOf (source, value,
 				startIndex, count, options);
 		}
 
-		public override int IndexOf (string source, string value,
+		public virtual int IndexOf (string source, string value,
 			int startIndex, int count, CompareOptions options)
 		{
-			return collator.IndexOf (
-				source, value, startIndex, count, options);
+			return collator.IndexOf (source, value,
+				startIndex, count, options);
+		}
+
+		public virtual int LastIndexOf (string source, char value,
+			int startIndex, int count, CompareOptions options)
+		{
+			return collator.LastIndexOf (source, value,
+				startIndex, count, options);
+		}
+
+		public virtual int LastIndexOf (string source, string value,
+			int startIndex, int count, CompareOptions options)
+		{
+			return collator.LastIndexOf (source, value,
+				startIndex, count, options);
+		}
+
+		public virtual bool IsPrefix (string source, string prefix,
+					     CompareOptions options)
+		{
+			return collator.IsPrefix (source, suffix, options);
+		}
+
+		public virtual bool IsSuffix (string source, string suffix,
+					     CompareOptions options)
+		{
+			return collator.IsSuffix (source, suffix, options);
 		}
 	}
 }
