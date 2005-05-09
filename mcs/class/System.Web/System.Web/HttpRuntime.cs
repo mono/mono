@@ -435,11 +435,11 @@ namespace System.Web {
 		public static bool IsOnUNCShare {
 			get {
 				// IsUnc broken under unix?
-#if NET_2_0
-				return (Environment.OSVersion.Platform != PlatformID.Unix &&
-#else
-				return (!((int) Environment.OSVersion.Platform == 128) &&
-#endif
+
+				// check for non-Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform != 4) && (platform != 128) &&
 					new Uri ("file://" + ClrInstallDirectory).IsUnc);
 			}
 		}
