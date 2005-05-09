@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+#if NET_2_0 || TARGET_JVM
 
 namespace System.Data {
 	public interface IDataReader2
@@ -43,4 +43,4 @@ namespace System.Data {
 	}
 }
 
-
+#endif

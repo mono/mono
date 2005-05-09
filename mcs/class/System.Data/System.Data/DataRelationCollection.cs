@@ -453,8 +453,7 @@ namespace System.Data {
 			return IndexOf(relationName, false);
 		}
 
-		// TODO: promoted from private by Mordechai due to converter bug.
-		protected int IndexOf (string name, bool error)
+		private int IndexOf (string name, bool error)
 		{
 			int count = 0, match = -1;
 			for (int i = 0; i < List.Count; i++)
