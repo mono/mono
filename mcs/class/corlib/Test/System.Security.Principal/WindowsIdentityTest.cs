@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -22,7 +22,11 @@ namespace MonoTests.System.Security.Principal {
 	public class WindowsIdentityTest : Assertion {
 
 		private bool IsPosix {
+#if NET_2_0
+			get { return (Environment.OSVersion.Platform == PlatformID.Unix); }
+#else
 			get { return ((int) Environment.OSVersion.Platform == 128); }
+#endif
 		}
 
 		// some features works only in Windows 2003 and later

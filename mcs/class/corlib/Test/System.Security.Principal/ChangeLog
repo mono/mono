@@ -1,3 +1,7 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsIdentityTest.cs: Fixed IsPosix for NET_2_0.
+
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WindowsIdentityTest.cs: Don't fail on Windows for some contructor 
