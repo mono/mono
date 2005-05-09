@@ -1,3 +1,11 @@
+2005-05-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (test-harness-run): Depend on $(TEST_HARNESS_EXTRAS).
+	* harness.mk: Substitute the current profile into the compiler
+	options where the string 'PROFILE' is used.
+	* test-377.cs, test-377-default-il.il, test-377-net_2_0-il.il:
+	New tests from #74852.
+
 2005-05-06  Marek Safar <marek.safar@seznam.cz>
 
 	* test-376.cs: New enum test.

@@ -1395,6 +1395,8 @@ namespace Mono.CSharp {
 			AddMethods (BindingFlags.Instance | BindingFlags.NonPublic, type);
 		}
 
+		static ArrayList overrides = new ArrayList ();
+
 		void AddMethods (BindingFlags bf, Type type)
 		{
 			MethodBase [] members = type.GetMethods (bf);
@@ -1415,14 +1417,19 @@ namespace Mono.CSharp {
 				while (curr.IsVirtual && (curr.Attributes & MethodAttributes.NewSlot) == 0) {
 					MethodInfo base_method = curr.GetBaseDefinition ();
 
-					if (base_method == curr) {
+					if (base_method == curr)
 						// Not every virtual function needs to have a NewSlot flag.
-						TypeManager.RegisterNonOverride (base_method);
 						break;
-					}
-					
+
+					overrides.Add (curr);
 					list.Add (new CacheEntry (null, base_method, MemberTypes.Method, bf));
 					curr = base_method;
+				}
+
+				if (overrides.Count > 0) {
+					for (int i = 0; i < overrides.Count; ++i)
+						TypeManager.RegisterOverride ((MethodBase) overrides [i], curr);
+					overrides.Clear ();
 				}
 
 				// Unfortunately, the elements returned by Type.GetMethods() aren't

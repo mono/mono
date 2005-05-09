@@ -17,7 +17,8 @@ ifeq (default, $(PROFILE))
 # means we can use --options, yay.
 MCS = $(with_mono_path) $(INTERNAL_MCS)
 endif
-ILASM = $(with_mono_path) $(INTERNAL_ILASM)
+ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
+ILASM = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
 ifeq (net_2_0, $(PROFILE))
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe
@@ -33,7 +34,7 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = test-336 test-369 cls-test-6 test-294 \
-	test-372 test-375 test-376
+	test-372 test-375 test-376 test-377
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -158,7 +159,7 @@ TEST_ORDERING = \
 # Some tests may require additional files to be available in the current directory.
 # To promote interoperability, we prefer that those files not be referred to with ../ or ..\\
 # To that end, we will copy those files to the test-harness directory, so that we can refer to simple filenames.
-TEST_HARNESS_EXTRAS = $(wildcard *.inc) test-74.cs test-353-2.cs test-361-2.cs
+TEST_HARNESS_EXTRAS = $(wildcard *.inc) test-74.cs test-353-2.cs test-361-2.cs test-377-$(PROFILE)-il.dll
 
 all-local install-local uninstall-local:
 
@@ -204,7 +205,7 @@ test-generics-2:
 
 clean-local:
 	-rm -fr dir-*
-	-rm -f *.exe *.netmodule *.out *.pdb casts.cs
+	-rm -f *.exe *.dll *.netmodule *.out *.pdb casts.cs
 
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
@@ -221,7 +222,7 @@ test-harness: xmldocdiff.exe
 
 exe_tests := $(filter %-exe, $(TEST_SOURCES))
 
-test-harness-run:
+test-harness-run: $(TEST_HARNESS_EXTRAS)
 	@-rm -f $(TEST_TAG).log
 	@-rm -fr dir-$(TEST_TAG)
 	@mkdir dir-$(TEST_TAG)
@@ -263,3 +264,6 @@ xml-doc-tests := $(filter xml-%, $(TEST_SOURCES))
 
 xmldocdiff.exe:
 	$(CSCOMPILE) xmldocdiff.cs
+
+%-il.dll: %-il.il
+	$(ILASM) /dll $<

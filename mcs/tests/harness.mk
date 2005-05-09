@@ -14,7 +14,7 @@ XMLDOCDIFF = $(TEST_RUNTIME) ../xmldocdiff.exe
 all-local $(STD_TARGETS:=-local):
 
 %.res:
-	@f=../$*.cs; options=`sed -n 's,^// Compiler options:,,p' $$f`; \
+	@f=../$*.cs; options=`sed -n 's,^// Compiler options:,,p' $$f | sed 's,PROFILE,$(PROFILE),g'`; \
 	case $$options in *-t:library*) ext=dll ;; *-t:module*) ext=netmodule ;; *) ext=exe ;; esac; \
 	testlogfile="$*.log" ; \
         echo '*** $(CSCOMPILE)' "$$options -out:$*.$$ext $$f" > $$testlogfile ; \
