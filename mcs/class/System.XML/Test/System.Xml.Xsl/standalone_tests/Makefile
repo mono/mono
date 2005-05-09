@@ -24,7 +24,7 @@ prepare : $(TESTS) prepare-xslt prepare-mstest
 
 prepare-xslt : xslttest.exe $(XSLTTEST_RESULTS) testsuite/TESTS/catalog-fixed.xml
 
-prepare-mstest : alltest.exe $(MSTEST_RESULTS) testsuite/TESTS/catalog-out.xml
+prepare-mstest : alltest.exe $(MSTEST_RESULTS) testsuite/TESTS/catalog-fixed.xml
 
 xslttest.exe : xslttest.cs
 	$(CSCOMPILE) xslttest.cs
@@ -41,9 +41,6 @@ testsuite/TESTS/catalog-fixed.xml : testsuite/TESTS/catalog.xml catalog.sed
 $(TESTS) : $(TEST_ARCHIVE) simplify.xsl
 	unzip -un $(TEST_ARCHIVE)
 	touch $(TESTS)
-
-testsuite/TESTS/catalog-out.xml : testsuite/TESTS/catalog-fixed.xml simplify.xsl
-	xsltproc simplify.xsl testsuite/TESTS/catalog-fixed.xml > testsuite/TESTS/catalog-out.xml
 
 $(XSLTTEST_RESULTS) : $(XSLTTEST_RESULTS_ARCHIVE)
 	unzip -n -d $(XSLTTEST_RESULTS_ARCHIVE)
@@ -67,7 +64,7 @@ run-test : run-test-xslt run-test-ms
 run-test-xslt : xslttest.exe testsuite/TESTS/catalog-fixed.xml
 	$(RUNTIME) $(RUNTIME_FLAGS) xslttest.exe --report:TestResult.xml --xml --details --outall
 
-run-test-ms : alltest.exe xmlnorm.exe testsuite/TESTS/catalog-out.xml
+run-test-ms : alltest.exe xmlnorm.exe testsuite/TESTS/catalog-fixed.xml
 	$(RUNTIME) $(RUNTIME_FLAGS) ./alltest.exe $(TARGET_RESULTS)
 	mono ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
 	rm -rf testsuite/TESTS/$(TARGET_RESULTS)

@@ -12,7 +12,7 @@ namespace simpleTests
 		static ArrayList excludedTests = new ArrayList (new string [] {
 });
 
-		static void Process (string id, string path, string data,
+		static void Process (string submitter, string id, string path, string data,
 			string stylesheet, string output, string resDirName)
 		{
 			string dirToCheck = Path.Combine(resDirName, path);
@@ -21,11 +21,12 @@ namespace simpleTests
 
 			string resFileName = Path.Combine ("../..", Path.Combine(dirToCheck, id + ".rst"));
 
-			// hacky!
-			if (path [0] >= 'a')
+ 			if (submitter == "Lotus")
 				Directory.SetCurrentDirectory (Path.Combine ("Xalan_Conformance_Tests", path));
-			else
+ 			else if (submitter == "Microsoft")
 				Directory.SetCurrentDirectory (Path.Combine ("MSFT_Conformance_Tests", path));
+  			else
+ 				return; //unknown directory
 
 #if NET_2_0
 			XslCompiledTransform xslt = new XslCompiledTransform();
@@ -34,6 +35,7 @@ namespace simpleTests
 #endif
 			StreamWriter strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
 			XmlTextWriter wr = new XmlTextWriter (strWr);
+			bool success = true;
 			try {
 				XmlDocument xml = new XmlDocument();
 				xml.Load (data);
@@ -47,9 +49,14 @@ namespace simpleTests
 				strWr.Close();
 				strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
 				strWr.Write("<exception>{0}</exception>", x.GetType().ToString());
+				success = false;
 			}
 			strWr.Flush();
 			strWr.Close();
+			if (success)
+				Console.Write (".");
+			else
+				Console.Write ("E");
 
 			Directory.SetCurrentDirectory ("../..");
 		}
@@ -76,28 +83,27 @@ namespace simpleTests
 						excludedTests.Add (s);
 				}
 			}
+			Directory.SetCurrentDirectory ("testsuite/TESTS/");
 
-			string pathPrefix = "testsuite/TESTS";
-			Directory.SetCurrentDirectory (pathPrefix);
 
 			XmlDocument catalog = new XmlDocument ();
-			catalog.Load ("catalog-out.xml");
-			XmlNodeList list = catalog.SelectNodes ("//tests/test");
-			foreach (XmlNode node in list) {
-				if (node.SelectSingleNode ("@ignore")!=null)
-					continue;
-				string id = node.SelectSingleNode ("@id").InnerText;
+			catalog.Load ("catalog-fixed.xml");
+			foreach (XmlElement testCase in catalog.SelectNodes ("test-suite/test-catalog/test-case[scenario/@operation='standard']")) {
+				string id = testCase.GetAttribute ("id");
 				// check if the test is excluded.
-				if (excludedTests.Contains (id))
+				if (excludedTests.Contains (id)) {
+					Console.Write ("N");
 					continue;
-				string path = node.SelectSingleNode ("path").InnerText;
-				string data = node.SelectSingleNode ("data").InnerText;
-				string stylesheet = node.SelectSingleNode ("stylesheet").InnerText;
-				string output = node.SelectSingleNode ("output").InnerText;
+				}
+				string submitter = testCase.SelectSingleNode ("./parent::test-catalog/@submitter").InnerText;
+				string path = testCase.SelectSingleNode ("file-path").InnerText;
+				string data = testCase.SelectSingleNode ("scenario/input-file[@role='principal-data']")
+					.InnerText;
+				string stylesheet = testCase.SelectSingleNode ("scenario/input-file[@role='principal-stylesheet']")
+					.InnerText;
+				string output = testCase.SelectSingleNode ("scenario/output-file").InnerText;
 
-				Console.Write ("Processing {0} ...", id);
-				Process (id, path, data, stylesheet, output, topdir);
-				Console.WriteLine ();
+				Process (submitter, id, path, data, stylesheet, output, topdir);
 			}
 		}
 	}

@@ -1,5 +1,12 @@
 2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
 
+	* catalog.sed : fix a bad dirname for Value-of tests
+	* Makefile, alltests.cs : make alltests.cs use the same catalog as
+	xslttest.cs and output '.' and 'E' for test results
+	* simplify.xsl : deleted
+
+2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
+
 	* catalog.sed : fix a typo
 
 2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
