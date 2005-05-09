@@ -1535,7 +1535,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					return false;
 			}
 			if (! ToType.IsValueType) {
-				Console.WriteLine ("Sudha--> {0} {1}" , FromType, ToType);
 				return ToType.IsAssignableFrom(FromType);
 			}
 			return false;

@@ -112,6 +112,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 			*/
 
 			ArrayList candidates = new ArrayList ();
+			// Get the list of all suitable methods
 			for (int index = 0; index < match.Length; index ++) {
 				if (IsApplicable (match [index], args))
 					candidates.Add (match [index]);
@@ -122,7 +123,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 			for (int index = 0; index < tempMatchList.Length; index ++)
 				filteredMatchList [index] = (MethodBase) tempMatchList [index];
 
-				
 			ConversionType bestMatch = ConversionType.None;
 			int numWideningConversions = 0, numNarrowingConversions = 0;
 			ArrayList narrowingConv = new ArrayList ();
@@ -176,37 +176,23 @@ namespace Microsoft.VisualBasic.CompilerServices
 			ParameterInfo[] pars = mbase.GetParameters ();
 			if (pars.Length == 0)
 				return mbase;
-			int numFixedParams = pars.Length;
-			if (UsesParamArray (mbase))
-				numFixedParams --;
+			int numFixedParams = CountStandardParams (pars);
 
-			for(int y = 0; y < numFixedParams; y++)
-			{
-				if (args [y] == null) {
-					count ++;
-					continue;
-				}
-				if((args [y] = ObjectType.CTypeHelper (args[y], pars[y].ParameterType)) != null)
-					count++;
-				else
-					break;
-			}
-
-
-			if (UsesParamArray (mbase)) {
+			if (UsesParamArray (pars)) {
 				int index = 0;
-				Type paramArrayType = pars [pars.GetUpperBound (0)].ParameterType;
-				Array paramArgs = Array.CreateInstance (paramArrayType.GetElementType (), args.Length - numFixedParams);
+				int paramArrayIndex = pars.GetUpperBound (0);
+				Type paramArrayType = pars [paramArrayIndex].ParameterType;
+				Array paramArgs = Array.CreateInstance (paramArrayType.GetElementType (), args.Length - paramArrayIndex);
 				bool isArgArray = false;
-				if (numFixedParams + 1 == args.Length) {
-					if (args [numFixedParams].GetType().IsArray) {
+				if (pars.GetUpperBound (0) + 1 == args.Length) {
+					if (args [pars.GetUpperBound (0)].GetType().IsArray) {
 						isArgArray = true;
 						count ++;
 					}
 				}
 
 				if (!isArgArray) {
-					for (int y = numFixedParams; y < args.Length; y ++) {
+					for (int y = paramArrayIndex; y < args.Length; y ++) {
 						Type dest_type = paramArrayType;
 						if (!args [y].GetType ().IsArray) {
 							dest_type = paramArrayType.GetElementType ();
@@ -214,27 +200,52 @@ namespace Microsoft.VisualBasic.CompilerServices
 						if((args [y] = ObjectType.CTypeHelper (args[y], dest_type)) != null) {
 							paramArgs.SetValue (args [y], index);
 						} else
-							break;
-						count++;
+							return null;
 						index ++;
 					}
 
 					object[] newArgs = new object [pars.Length];
-					Array.Copy (args, newArgs, numFixedParams);
+					Array.Copy (args, newArgs, paramArrayIndex);
 					newArgs [newArgs.GetUpperBound (0)] = paramArgs;
 					args = newArgs;
 				}
 			}
 
-			if (count != arguments.Length)
-				return null;
+			object[] newArguments = new object [pars.Length];
+			args.CopyTo (newArguments, 0);
+			int numExpectedArgs = pars.Length;
+			if (UsesParamArray (pars))
+				numExpectedArgs --;
+			for(int y = 0; y < numExpectedArgs; y++)
+			{
+				if (y < args.Length && (args [y] is Missing || args[y] == null))
+					newArguments [y] = pars [y].DefaultValue;
+				else if (y >= args.Length)
+					newArguments [y] = pars [y].DefaultValue;
+				else 
+					newArguments [y] = args [y];
+			}
+
+			for(int y = 0; y < numExpectedArgs; y++) {
+				if (newArguments [y] == null)
+					return null;
+
+				if((newArguments [y] = ObjectType.CTypeHelper (newArguments[y], pars[y].ParameterType)) == null)
+					return null;
+			}
+
+			((BinderState) state).args = newArguments;
 
 			if (byRefFlags == null || pars.Length == 0) {
 				return mbase;
 			}
 
-			for (int index = 0; index < pars.Length; index ++) {
-				ParameterInfo p = pars [index];
+			int paramIndex = 0;
+			for (int index = 0; index < byRefFlags.Length; index ++) {
+				paramIndex = index;
+				if (index >= pars.Length)
+					paramIndex = pars.GetUpperBound (0);
+				ParameterInfo p = pars [paramIndex];
 				if (p.ParameterType.IsByRef) {
 					if (byRefFlags [index] != false)
 						byRefFlags [index] = true;
@@ -255,11 +266,11 @@ namespace Microsoft.VisualBasic.CompilerServices
 			ParameterInfo[] candidateParams = candidate.GetParameters ();
 			int numParams = Math.Min (bestMatchParams.Length, candidateParams.Length);
 			int paramArrayIndex1 = -1, paramArrayIndex2 = -1;
-			if (UsesParamArray (bestMatch)) {
+			if (UsesParamArray (bestMatchParams)) {
 				paramArrayIndex1 = (bestMatchParams.Length > 0) ? (bestMatchParams.Length - 1) : -1;
 			}
 
-			if (UsesParamArray (candidate)) {
+			if (UsesParamArray (candidateParams)) {
 				paramArrayIndex2 = (candidateParams.Length > 0) ? (candidateParams.Length - 1) : -1;
 			}
 
@@ -319,9 +330,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 			return isBetter;
 		}
 
-		internal static bool UsesParamArray (MethodBase mb) {
-			ParameterInfo[] pars = mb.GetParameters ();
-			if (pars.Length == 0)
+		internal static bool UsesParamArray (ParameterInfo [] pars) {
+			if (pars == null || pars.Length == 0)
 				return false;
 			ParameterInfo lastParam = pars [pars.GetUpperBound (0)];
 			object[] attrs = lastParam.GetCustomAttributes (typeof (System.ParamArrayAttribute), false);
@@ -330,11 +340,32 @@ namespace Microsoft.VisualBasic.CompilerServices
 			return true;
 		}
 
+		/*
+		  Gets the number of parameters that are neither optional not ParamArray
+		*/
+		internal static int CountStandardParams (ParameterInfo [] pars) {
+			if (pars.Length == 0)
+				return 0;
+			int count = pars.Length;
+			for (int index = 0; index < pars.Length; index ++) {
+				ParameterInfo param = pars [index];
+				if (param.IsOptional)
+					return index;
+				if (index + 1 == pars.Length) {
+					object[] attrs = param.GetCustomAttributes (typeof (System.ParamArrayAttribute), false);
+					if (attrs != null && attrs.Length > 0)
+						return index;
+				}
+			}
+			return count;
+		}
+
 		private ConversionType GetConversionType (ParameterInfo[] parameters, object[] args) {
 			int numParams = parameters.Length;
 			int numArgs = args.Length;
 			int paramArrayIndex = -1;
-			int minParams = parameters.Length;
+			int numFixedParams = CountStandardParams (parameters);
+
 			if (numParams == 0) {
 				if (numArgs == 0)
 					return ConversionType.Exact;
@@ -342,70 +373,63 @@ namespace Microsoft.VisualBasic.CompilerServices
 					return ConversionType.None;
 			}
 
-			ParameterInfo lastParam = parameters [parameters.GetUpperBound (0)];
-			object[] attrs = lastParam.GetCustomAttributes (typeof (System.ParamArrayAttribute), false);
-			bool usesParamArray = false;
-			if (attrs != null && attrs.Length > 0) {
-				usesParamArray = true;
-				paramArrayIndex = parameters.GetUpperBound (0) - 1;
-				minParams --;
-			}
-			if (minParams == 0 && numArgs == 0)
+			bool usesParamArray = UsesParamArray (parameters);
+			if (numFixedParams == 0 && numArgs == 0)
 				return ConversionType.Exact;
-			if (numArgs < minParams)
+
+			if (numArgs < numFixedParams)
 				return ConversionType.None;
-			if (! usesParamArray && numArgs != numParams) {
-				return ConversionType.None;
-			}
 
 			ConversionType ctype = ConversionType.None;
-			for (int index = 0; index < minParams; index ++) {
+			bool isLastParam = false;
+			int paramIndex = 0;
+			for (int index = 0; index < numArgs; index ++) {
+				if (index < numFixedParams)
+					paramIndex = index;
+				else if (usesParamArray) {
+					paramIndex = parameters.GetUpperBound (0);
+					isLastParam = true;
+				}
+
 				ConversionType currentCType = ConversionType.None;
 				Type type1 = null;
 				if (args [index] != null)
 					type1 = args [index].GetType ();
-				Type type2 = parameters [index].ParameterType;
+				Type type2 = parameters [paramIndex].ParameterType;
 				if (type2.IsByRef)
 					type2 = type2.GetElementType ();
-				if (type1 == type2) {
-					currentCType = ConversionType.Exact;
-					if (ctype < currentCType) {
-						ctype = ConversionType.Exact;
-					}
-				} else if (ObjectType.IsWideningConversion (type1, type2)) {
-					currentCType = ConversionType.Widening;
-					if (ctype < currentCType)
-						ctype = ConversionType.Widening;
-				} else 
-					ctype = ConversionType.Narrowing;
-			}
-
-			if (usesParamArray) {
-				Type paramArrayType = lastParam.ParameterType;
-				if (paramArrayType.IsByRef)
-					paramArrayType = paramArrayType.GetElementType ();
-
-				for (int index = minParams; index < numArgs; index ++) {
-					ConversionType currentCType = ConversionType.None;
-					Type argType = args [index].GetType ();
-					if (argType.IsArray) {
-						if (argType.GetElementType () == paramArrayType.GetElementType ())
+				if (usesParamArray && isLastParam) {
+					if (type1.IsArray) {
+						if (type1.GetElementType () == type2.GetElementType ())
 							currentCType = ConversionType.Exact;
-						else if (ObjectType.IsWideningConversion (argType, paramArrayType))
+						else if (ObjectType.IsWideningConversion (type1, type2))
 							currentCType = ConversionType.Widening;
 						else 
 							currentCType = ConversionType.Narrowing;
 					} else {
-						Type elementType = paramArrayType.GetElementType ();
-						if (argType == elementType)
+						Type elementType = type2.GetElementType ();
+						if (type1 == elementType)
 							currentCType = ConversionType.Exact;
-						else if (ObjectType.IsWideningConversion (argType, elementType))
+						else if (ObjectType.IsWideningConversion (type1, elementType))
 							currentCType = ConversionType.Widening;
 						else 
 							currentCType = ConversionType.Narrowing;
 					}
 					if (currentCType == ConversionType.Narrowing || ctype < currentCType)
 						ctype = currentCType;
+
+				} else {
+					if (type1 == type2) {
+						currentCType = ConversionType.Exact;
+						if (ctype < currentCType) {
+							ctype = ConversionType.Exact;
+						}
+					} else if (ObjectType.IsWideningConversion (type1, type2)) {
+						currentCType = ConversionType.Widening;
+						if (ctype < currentCType)
+							ctype = ConversionType.Widening;
+					} else 
+						ctype = ConversionType.Narrowing;
 				}
 			}
 
@@ -549,8 +573,14 @@ namespace Microsoft.VisualBasic.CompilerServices
 				if (mbase == null) {
 					throw new MissingMemberException ("No member '" + name + "' defined for type '" + objType + "' which takes the given set of arguments");
 				}
+
+				object [] newArgs = args;
+				if (objState != null)
+					newArgs = ((BinderState) objState).args;
+
 				MethodInfo mi = (MethodInfo) mbase;
-				retVal =  mi.Invoke (target, args);
+				retVal =  mi.Invoke (target, newArgs);
+				Array.Copy (newArgs, args, args.Length);
 			}
 
 			if (objState != null && ((BinderState)objState).byRefFlags != null) {
@@ -560,55 +590,65 @@ namespace Microsoft.VisualBasic.CompilerServices
 			return retVal;
 		}
 
+		/*
+		 Determines whether a given method can be invoked with a given set of arguments
+		*/
 		private bool IsApplicable (MethodBase mb, object [] args) {
 			ParameterInfo [] parameters = mb.GetParameters ();
-			int numFixedParams = parameters.Length;
+			int numFixedParams = CountStandardParams (parameters);
+			int numParams = parameters.Length;
 			int argCount = 0;
 			if (args != null)
 				argCount = args.Length;
 
-			if (numFixedParams == 0)
-				return (argCount == 0);
-
-			ParameterInfo lastParam =  parameters [parameters.GetUpperBound (0)];
-			bool usesParamArray = UsesParamArray (mb);
-			if (usesParamArray)
-				numFixedParams --;
-			else if (numFixedParams != argCount)
-				return false;
-
+			if (numParams == numFixedParams) 	// No ParamArray or Optional params
+				if (argCount != numParams)
+					return false;
+			
 			if (argCount < numFixedParams)
 				return false;
-			if (argCount == 0 && numFixedParams == 0)
-				return true;
- 
-			for (int index = 0; index < numFixedParams; index ++) {
+
+			bool usesParamArray = UsesParamArray (parameters);
+			if (!usesParamArray && (argCount > numParams))
+				return false;
+
+			int paramIndex = 0;
+			bool isLastParam = false;
+			for (int index = 0; index < argCount; index ++) {
 				Type argType = null;
+				Type paramType = null;
+				isLastParam = false;
+				if (index < numFixedParams) 
+					paramIndex = index;
+				else if (usesParamArray) {
+					paramIndex = numParams - 1;
+					isLastParam = true;
+				}
+
+				paramType = parameters [paramIndex].ParameterType;
 				if (args [index] != null) {
 					argType = args [index].GetType ();
-					Type paramType = parameters [index].ParameterType;
-					if (paramType.IsByRef)
-						paramType = paramType.GetElementType ();
-					if (!ObjectType.ImplicitConversionExists (argType, paramType))
-						return false;
-				}
-			}
-
-			if (usesParamArray) {
-				Type paramArrayType = lastParam.ParameterType;
-
-				for (int index = numFixedParams; index < argCount; index ++) {
-					Type argType = args [index].GetType ();
-					if (!argType.IsArray) {
-						Type elementType = paramArrayType.GetElementType ();
-						if (!ObjectType.ImplicitConversionExists (argType, elementType))
-							return false;
+					if (usesParamArray && isLastParam) {
+						// ParamArray parameter of type 'T'. We can either have an 
+						// argument which is an array of type T, or 'n' number of 
+						// arguments that are of/convertible to type 'T'
+						if (!argType.IsArray) {
+							Type elementType = paramType.GetElementType ();
+							if (!ObjectType.ImplicitConversionExists (argType, elementType))
+								return false;
+						} else {
+							Type elementType = paramType.GetElementType ();
+							argType = argType.GetElementType ();
+							if (!elementType.IsAssignableFrom (argType))
+								return false;
+						}
 					} else {
-						Type elementType = paramArrayType.GetElementType ();
-						argType = argType.GetElementType ();
-						if (!elementType.IsAssignableFrom (argType))
+						if (paramType.IsByRef)
+							paramType = paramType.GetElementType ();
+						if (!ObjectType.ImplicitConversionExists (argType, paramType))
 							return false;
 					}
+	
 				}
 			}
 			return true;

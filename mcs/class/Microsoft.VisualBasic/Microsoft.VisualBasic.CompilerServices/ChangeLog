@@ -1,3 +1,6 @@
+2005-05-09  Satya Sudha K <ksathyasudha@novell.com>
+	* VBBinder.cs : Support for optional arguments in LateBinding
+
 2005-05-05  Satya Sudha K <ksathyasudha@novell.com>
 	* FlowControl.cs : Fixed checks in the methods 'ForNextCheck*'
 
