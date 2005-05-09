@@ -36,6 +36,7 @@ using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Metadata;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
 	internal sealed class SoapReader {
@@ -739,8 +740,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			tm.MemberInfos = FormatterServices.GetSerializableMembers (type, _context);
 			
 			tm.Indices	= new Hashtable();
-			for(int i = 0; i < tm.MemberInfos.Length; i++) 
-				tm.Indices.Add (tm.MemberInfos[i].Name, i);
+			for(int i = 0; i < tm.MemberInfos.Length; i++) {
+				SoapFieldAttribute at = (SoapFieldAttribute) InternalRemotingServices.GetCachedSoapAttribute (tm.MemberInfos[i]);
+				tm.Indices [XmlConvert.EncodeLocalName (at.XmlElementName)] = i;
+			}
 			
 			_fieldIndices[type] = tm;
 			return tm;

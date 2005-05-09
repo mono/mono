@@ -1,3 +1,9 @@
+2005-05-09  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapReader.cs:
+	* SoapWriter.cs: Use InternalRemotingServices.GetCachedSoapAttribute to
+	get the name of the fields being serialized. Fixed some warnings.
+
 2005-05-05  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapTypeMapper.cs: Added missing maps for primitive types and

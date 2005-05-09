@@ -32,6 +32,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Metadata;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
@@ -74,12 +75,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		private XmlTextWriter _xmlWriter;
 		private Queue _objectQueue = new Queue();
-		private Hashtable _prefixTable = new Hashtable();
 		private Hashtable _objectToIdTable = new Hashtable();
 		private ISurrogateSelector _surrogateSelector;
 		private SoapTypeMapper _mapper;
 		private StreamingContext _context;
-		private ISoapMessage _soapMessage = null;
 		private ObjectIDGenerator idGen = new ObjectIDGenerator();
 		private FormatterAssemblyStyle _assemblyFormat = FormatterAssemblyStyle.Full;
 		private FormatterTypeStyle _typeFormat = FormatterTypeStyle.TypesWhenNeeded;
@@ -103,7 +102,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter.Formatting = Formatting.Indented;
 			_surrogateSelector = selector;
 			_context = context;
-			_soapMessage = soapMessage;
 
 		}
 
@@ -298,7 +296,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Id(idGen.GetId(message, out firstTime));
 
 			string[] paramNames = message.ParamNames;
-			Type[] paramTypes = message.ParamTypes;
 			object[] paramValues = message.ParamValues;
 			int length = (paramNames != null)?paramNames.Length:0;
 			for(int i = 0; i < length; i++) 
@@ -380,18 +377,14 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			else
 			{
-				MemberInfo[] memberInfos = 
-					FormatterServices.GetSerializableMembers(currentType, _context);
-				object[] objectData =
-					FormatterServices.GetObjectData(currentObject, memberInfos);
-//				Array.Sort(memberInfos, objectData, this);
+				MemberInfo[] memberInfos = FormatterServices.GetSerializableMembers(currentType, _context);
+				object[] objectData = FormatterServices.GetObjectData(currentObject, memberInfos);
+				
 				for(int i = 0; i < memberInfos.Length; i++) 
 				{
-					FieldInfo fieldInfo = memberInfos[i] as FieldInfo;
-//					bool specifyEncoding = false;
-//					if(objectData[i] != null)
-//						 specifyEncoding = (objectData[i].GetType() != fieldInfo.FieldType);
-					_xmlWriter.WriteStartElement(fieldInfo.Name);
+					FieldInfo fieldInfo = (FieldInfo) memberInfos[i];
+					SoapFieldAttribute at = (SoapFieldAttribute) InternalRemotingServices.GetCachedSoapAttribute (fieldInfo);
+					_xmlWriter.WriteStartElement (XmlConvert.EncodeLocalName (at.XmlElementName));
 					SerializeComponent(
 						objectData[i], 
 						IsEncodingNeeded(objectData[i], fieldInfo.FieldType));
