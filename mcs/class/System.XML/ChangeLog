@@ -1,3 +1,7 @@
+2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : removed obsolete TypeTableEntry.cs.
+
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : XPathAtomicValue.cs -> XmlAtomicValue.cs.
