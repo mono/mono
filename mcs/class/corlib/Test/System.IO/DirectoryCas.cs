@@ -73,11 +73,12 @@ namespace MonoCasTests.System.IO {
 		}
 
 		private bool RunningOnWindows {
-#if NET_2_0
-			get { return (Environment.OSVersion.Platform != PlatformID.Unix); }
-#else
-			get { return ((int) Environment.OSVersion.Platform != 128); }
-#endif
+			get {
+				// check for non-Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform != 4) && (platform != 128));
+			}
 		}
 
 		// Partial Trust Tests - i.e. call "normal" unit with reduced privileges
