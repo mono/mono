@@ -73,7 +73,11 @@ namespace MonoCasTests.System.IO {
 		}
 
 		private bool RunningOnWindows {
-			get { return ((int) Environment.OSVersion.Platform == 128); }
+#if NET_2_0
+			get { return (Environment.OSVersion.Platform != PlatformID.Unix); }
+#else
+			get { return ((int) Environment.OSVersion.Platform != 128); }
+#endif
 		}
 
 		// Partial Trust Tests - i.e. call "normal" unit with reduced privileges
