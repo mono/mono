@@ -1,3 +1,8 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* pinvoke1-3.cs: Fixed RunningOnWindows to run under NET_2_0.
+	* Makefile: Changed --debug for -debug to avoid compiler warning.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* pinvoke1-3.cs: Changed RunningOnMono for RunningOnWindows as it's an
