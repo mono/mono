@@ -1,3 +1,7 @@
+2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MonoField.cs: Added a Clone method. This is needed for serialization.
+
 2005-05-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* MonoEvent.cs (Get*Method): Handle nonPublic. Fixes #64191.

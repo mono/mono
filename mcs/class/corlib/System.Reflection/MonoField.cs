@@ -124,6 +124,17 @@ namespace System.Reflection {
 			}
 			SetValueInternal (this, obj, val);
 		}
+		
+		internal MonoField Clone (string newName)
+		{
+			MonoField field = new MonoField ();
+			field.name = newName;
+			field.type = type;
+			field.attrs = attrs;
+			field.klass = klass;
+			field.fhandle = fhandle;
+			return field;
+		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MonoTODO]
