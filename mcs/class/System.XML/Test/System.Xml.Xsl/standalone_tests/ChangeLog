@@ -1,3 +1,7 @@
+2005-05-09  Andrew Skiba  <andrews@mainsoft.com>
+
+	* prepare.cs : delete an obsolete file
+
 2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
 
 	* catalog.sed : fix a bad dirname for Value-of tests
