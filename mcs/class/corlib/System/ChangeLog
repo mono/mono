@@ -1,3 +1,8 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Patch from Gonzalo to fix Environment.OSVersion.
+	Platform under NET_2_0 to return PlatformID.Unix. Fix bug #74841.
+
 2005-05-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NumberFormatter.cs : roundtrip number is already rounded before

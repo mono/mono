@@ -180,7 +180,12 @@ namespace System {
 			get {
 				if (os == null) {
 					Version v = Version.CreateFromString (GetOSVersionString ());
-					os = new OperatingSystem (Platform, v);
+					PlatformID p = Platform;
+#if NET_2_0
+					if ((int) p == 128)
+						p = PlatformID.Unix;
+#endif
+					os = new OperatingSystem (p, v);
 				}
 				return os;
 			}
