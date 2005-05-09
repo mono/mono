@@ -829,8 +829,11 @@ public class Page : TemplateControl, IHttpHandler
 			try {
 				UnloadRecursive (true);
 			} catch {}
-			Thread.CurrentThread.CurrentCulture = culture;
-			Thread.CurrentThread.CurrentUICulture = uiculture;
+			if (Thread.CurrentThread.CurrentCulture.Equals (culture) == false)
+				Thread.CurrentThread.CurrentCulture = culture;
+
+			if (Thread.CurrentThread.CurrentUICulture.Equals (uiculture) == false)
+				Thread.CurrentThread.CurrentUICulture = uiculture;
 		}
 	}
 	

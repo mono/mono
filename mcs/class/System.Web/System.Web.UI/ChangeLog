@@ -1,3 +1,8 @@
+2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: as setting CurrentCulture is slow, don't set it if the
+	culture has not changed since before the page started processing.
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: LoadWithPartialName returns null if the assembly is
