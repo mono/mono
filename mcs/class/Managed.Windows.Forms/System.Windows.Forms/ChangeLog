@@ -1,3 +1,7 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XplatUI.cs: Use PlatformID.Unix under NET_2_0. 
+
 2005-05-06  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Redid Jackson's fix, it was causing a busy loop

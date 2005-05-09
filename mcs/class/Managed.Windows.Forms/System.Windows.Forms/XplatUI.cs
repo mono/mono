@@ -82,7 +82,11 @@ namespace System.Windows.Forms {
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
 
+#if NET_2_0
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+#else
 			if (Environment.OSVersion.Platform == (PlatformID)128) {
+#endif
 				if (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null)
 					driver=XplatUIOSX.GetInstance();
 				else
