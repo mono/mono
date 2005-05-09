@@ -82,6 +82,7 @@ namespace System.Threading
 		private IntPtr appdomain_refs;
 		private bool interruption_requested;
 		private IntPtr suspend_event;
+		private IntPtr suspended_event;
 		private IntPtr resume_event;
 		private object synch_lock = new Object();
 		private IntPtr serialized_culture_info;
