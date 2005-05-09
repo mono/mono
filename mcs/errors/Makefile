@@ -60,16 +60,8 @@ endif
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 
-ifeq (net_2_0, $(PROFILE))
-run-mcs-tests:
-	-rm -f gmcs.log
-	@./do-tests.pl gmcs '$(CSCOMPILE)' "cs*.cs"
-	-rm -f generics.log
-	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
-else
 run-mcs-tests: TestRunner-$(PROFILE).exe
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
-endif
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk

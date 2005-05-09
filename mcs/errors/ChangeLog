@@ -1,3 +1,7 @@
+2005-05-09 Marek Safar <marek.safar@seznam.cz>
+
+	* Makefile: Use TestRunner under NET_2_0.
+
 2005-05-05  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (%-lib.dll, %-module.dll): Build during 'make test' or
