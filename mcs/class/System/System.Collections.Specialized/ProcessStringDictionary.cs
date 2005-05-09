@@ -43,7 +43,11 @@ namespace System.Collections.Specialized
 		{
 			IHashCodeProvider hash_provider = null;
 			IComparer comparer = null;
+#if NET_2_0
+			if (Environment.OSVersion.Platform != PlatformID.Unix) {
+#else
 			if ((int) Environment.OSVersion.Platform != 128) {
+#endif
 				hash_provider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
 				comparer = CaseInsensitiveComparer.DefaultInvariant;
 			}

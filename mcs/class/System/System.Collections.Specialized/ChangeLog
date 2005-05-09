@@ -1,3 +1,7 @@
+2005-05-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ProcessStringDictionary.cs: PlatformID for 2.0.
+
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NameObjectCollectionBase.cs: after 1.0, this uses DefaultInvariant for
