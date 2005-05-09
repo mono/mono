@@ -1,3 +1,8 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistence.cs: Use PlatformID.Unix under NET_2_0. 
+	* PKCS8.cs: In sync with corlib;
+
 2005-04-18  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Null.cs: New "null" symmetric encryption for debugging. This class 

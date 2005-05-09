@@ -317,8 +317,13 @@ namespace Mono.Security.Cryptography {
 		private static bool CanSecure (string path) 
 		{
 			// we assume POSIX filesystems can always be secured
+#if NET_2_0
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				return true;
+#else
 			if ((int) Environment.OSVersion.Platform == 128)
 				return true;
+#endif
 			// while we ask the runtime for Windows OS
 			return _CanSecure (Path.GetPathRoot (path));
 		}

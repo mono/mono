@@ -6,9 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,12 +33,16 @@ using System.Collections;
 using System.Security.Cryptography;
 using System.Text;
 
-using Mono.Security.Cryptography;
 using Mono.Security.X509;
 
 namespace Mono.Security.Cryptography {
 
-	public sealed class PKCS8 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	sealed class PKCS8 {
 
 		public enum KeyInfo {
 			PrivateKey,
