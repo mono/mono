@@ -1,3 +1,10 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CompressedStack.cs: GetCompressedStack is public before 2.0 but 
+	couldn't be seen with mono-api-info because of it's LinkDemand for
+	the ECMA public key. Stack capture occurs here if none exists on the
+	current thread.
+
 2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ReaderWriterLock.cs: fix random ApplicationException errors. Tested
@@ -22,7 +29,6 @@
 	* HostExecutionContextManager.cs: Updated wrt beta2.
 	* Thread.cs: Added internal property to get the ExecutionContext.
 
->>>>>>> .r43756
 2005-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Add some unused fields.

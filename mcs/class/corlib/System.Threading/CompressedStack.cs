@@ -80,15 +80,9 @@ namespace System.Threading {
 			return cs;
 		}
 
-#if NET_2_0
-		[MonoTODO ("incomplete")]
-		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-		}
-
+		// NOTE: This method doesn't show in the class library status page because
+		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
+		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		static public CompressedStack GetCompressedStack ()
@@ -96,7 +90,19 @@ namespace System.Threading {
 			// Note: CompressedStack.GetCompressedStack doesn't return null
 			// like Thread.CurrentThread.GetCompressedStack if no compressed
 			// stack is present.
-			return new CompressedStack (Thread.CurrentThread.GetCompressedStack ());
+			CompressedStack cs = Thread.CurrentThread.GetCompressedStack ();
+			if (cs == null)
+				cs = CompressedStack.Capture ();
+			return cs;
+		}
+
+#if NET_2_0
+		[MonoTODO ("incomplete")]
+		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
