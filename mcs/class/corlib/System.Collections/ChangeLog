@@ -1,3 +1,7 @@
+2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Stack.cs : empty_stack.CopyTo(empty_array, 0) should be allowed.
+
 2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Hashtable.cs: Add net 2.0 ReliabilityContractAttributes.

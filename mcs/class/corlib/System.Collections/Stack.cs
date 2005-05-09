@@ -222,7 +222,7 @@ namespace System.Collections {
 			}
 
 			if (array.Rank > 1 || 
-			    index >= array.Length || 
+			    array.Length > 0 && index >= array.Length || 
 			    count > array.Length - index) {
 				throw new ArgumentException();
 			}

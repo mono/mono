@@ -1,3 +1,7 @@
+2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StackTest.cs : test for CopyTo() on an empty stack.
+
 2005-01-05  Nick Drochak  <ndrochak@ieee.org>
 
 	* ComparerTest.cs: Modernize and fix line endings. Test is failing with

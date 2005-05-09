@@ -369,6 +369,13 @@ namespace MonoTests.System.Collections
 			}
 		}
 
+		public void TestEmptyCopyTo ()
+		{
+			Stack stack = new Stack ();
+			string [] arr = new string [0];
+			stack.CopyTo (arr, 0);
+		}
+
 		[SetUp]
                 protected  void SetUp()
                 {
