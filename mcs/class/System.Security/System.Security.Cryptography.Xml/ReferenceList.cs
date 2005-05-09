@@ -6,7 +6,7 @@
 //      Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2004
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,9 +31,11 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
+
 	public sealed class ReferenceList : IList, ICollection, IEnumerable {
 
 		#region Fields
@@ -74,6 +76,7 @@ namespace System.Security.Cryptography.Xml {
 			get { return list.IsSynchronized; }
 		}
 
+		[IndexerName ("ItemOf")]
 		public EncryptedReference this [int index] {
 			get { return (EncryptedReference) list [index]; }
 			set { this [index] = value; }

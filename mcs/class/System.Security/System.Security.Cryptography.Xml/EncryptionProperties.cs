@@ -6,7 +6,7 @@
 //      Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2004
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -75,6 +76,7 @@ namespace System.Security.Cryptography.Xml {
 			set { this [index] = (EncryptionProperty) value; }
 		}
 
+		[IndexerName ("ItemOf")]
 		public EncryptionProperty this [int index] {
 			get { return (EncryptionProperty) list [index]; }
 			set { list [index] = value; }
@@ -151,6 +153,11 @@ namespace System.Security.Cryptography.Xml {
 		public void Insert (int index, EncryptionProperty value)
 		{
 			list.Insert (index, value);
+		}
+
+		public EncryptionProperty Item (int index)
+		{
+			return (EncryptionProperty) list [index];
 		}
 
 		public void Remove (EncryptionProperty value)

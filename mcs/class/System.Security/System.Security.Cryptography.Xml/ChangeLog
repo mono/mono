@@ -1,3 +1,10 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptionProperties.cs: Added [IndexerName] attribute to rename 
+	"this" from Item to ItemOf. Added missing Item(int) method.
+	* ReferenceList.cs: Added [IndexerName] attribute to rename "this" 
+	from Item to ItemOf.
+
 2005-05-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Return an empty (not null) KeyInfo by default and
