@@ -1,3 +1,8 @@
+2005-05-09 Satya Sudha K <ksathyasudha@hotmail.com>
+	* parameter.cs : Support 'Optional ByRef' parameters
+	* statement.cs : Using 'System.Reflection.Missing.Value' in case of missing argument for 
+			 LateBinding cases
+		
 2005-05-07 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : Oops, correcting some find-and-replace mishaps
 

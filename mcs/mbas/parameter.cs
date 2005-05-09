@@ -123,7 +123,7 @@ namespace Mono.MonoBASIC {
 		
 		public ParameterAttributes Attributes {
 			get {
-				int flags = ((int) ModFlags) & ~((int) Parameter.Modifier.ISBYREF);
+				int flags = ((int) ModFlags) & ~((int) Parameter.Modifier.ISBYREF | (int) Parameter.Modifier.REF);
 				switch ((Modifier) flags) {
 				case Modifier.NONE:
 					return ParameterAttributes.None;

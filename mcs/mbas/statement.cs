@@ -3517,9 +3517,14 @@ namespace Mono.MonoBASIC {
 			if (args != null) {
 				//arrayInitializers = new ArrayList ();
 				argCount = args.Count;
-				foreach (Argument a in args) {
-					arrayInitializers.Add (a.Expr);
-					originalArgs.Add (a.Expr);
+				for (int index = 0; index < args.Count; index ++) {
+					Argument a = (Argument) args [index];
+					Expression argument = a.Expr;
+					if (a.ArgType == Argument.AType.NoArg) {
+						argument = Parser.DecomposeQI ("System.Reflection.Missing.Value", loc);
+					}
+					arrayInitializers.Add (argument);
+					originalArgs.Add (argument);
 				}
 			}
 
@@ -3581,7 +3586,8 @@ namespace Mono.MonoBASIC {
 				rank_specifier.Add (new IntLiteral (argCount));
 				arrayInitializers = new ArrayList ();
 				for (int i = 0; i < argCount; i++) {
-					if (((Argument)args[i]).Expr is Constant)
+					Argument a = (Argument) args [i];
+					if (a.Expr is Constant || a.ArgType == Argument.AType.NoArg)
 						arrayInitializers.Add (new BoolLiteral (false));
 					else 
 						arrayInitializers.Add (new BoolLiteral (true));
@@ -3612,6 +3618,8 @@ namespace Mono.MonoBASIC {
 
 			for (int i = 0; i< argCount; i ++) {
 				Expression thisArg = (Expression) originalArgs [i];
+				if (((Argument) args [i]).ArgType == Argument.AType.NoArg)
+					continue;
 				if (thisArg is Constant)
 					continue;
 				Expression intExpr = new IntLiteral (i);
