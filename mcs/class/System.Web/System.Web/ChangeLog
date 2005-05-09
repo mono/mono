@@ -1,3 +1,8 @@
+2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ReusableMemoryStream.cs:
+	* HttpWriter.cs: keep a pool of buffers to avoid allocations.
+
 2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: no need to save/restore the thread culture when

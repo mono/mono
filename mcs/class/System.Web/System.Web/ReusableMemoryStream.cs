@@ -146,9 +146,16 @@ namespace System.Web
 		{
 		}
 
-		public byte [] GetBuffer ()
+		public byte [] GetInternalBuffer ()
 		{
 			return internalBuffer;
+		}
+
+		public byte [] GetBuffer ()
+		{
+			byte [] b = new byte [length];
+			Buffer.BlockCopy (internalBuffer, 0, b, 0, length);
+			return b;
 		}
 
 		public override int Read ([In,Out] byte [] buffer, int offset, int count)

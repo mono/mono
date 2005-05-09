@@ -3,6 +3,8 @@
 //
 // Author:
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
 //
 
 //
@@ -26,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Web.Util;
@@ -47,21 +50,54 @@ namespace System.Web
 		Stream _OutputFilter;
 		HttpResponseStreamProxy _OutputProxy;
 
+		static Stack buffer_stack = new Stack ();
+
+		static ReusableMemoryStream AllocateStream ()
+		{
+			lock (buffer_stack) {
+				if (buffer_stack.Count != 0) {
+					byte [] b = (byte []) buffer_stack.Pop ();
+					return new ReusableMemoryStream (b);
+				}
+			}
+			return new ReusableMemoryStream (MaxBufferSize);
+		}
+
+		static void FreeStream (ReusableMemoryStream st)
+		{
+			lock (buffer_stack) {
+				buffer_stack.Push (st.GetInternalBuffer ());
+			}
+		}
+
+		static void FreeBuffer (byte [] buffer)
+		{
+			lock (buffer_stack) {
+				buffer_stack.Push (buffer);
+			}
+		}
+
 		internal HttpWriter (HttpResponse Response)
 		{
 			_Response = Response;
 
 			_Encoding = _Response.ContentEncoding;
-			_OutputStream = new ReusableMemoryStream (MaxBufferSize);
+			_OutputStream = AllocateStream ();
 			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 			_ResponseStream = new HttpResponseStream (this);
 		}  
 
 		internal void Dispose ()
 		{
-			_OutputHelper.Close ();
-			_OutputStream.Close ();
-			_OutputFilter.Close ();
+			if (_OutputHelper != null)
+				_OutputHelper.Close ();
+			if (_OutputStream != null) {
+				_OutputStream.Close ();
+				FreeStream (_OutputStream);
+			}
+
+			if (_OutputFilter != null)
+				_OutputFilter.Close ();
 		}
 
 		internal Stream GetActiveFilter ()
@@ -111,13 +147,14 @@ namespace System.Web
 					_OutputFilter.Close ();
 			} finally {
 				_OutputProxy.Active = false;
+				FreeBuffer (arrData);
 			}
 		}
 
 		internal void Clear ()
 		{
 			_OutputHelper.Close ();
-			_OutputStream = new ReusableMemoryStream (_OutputStream.GetBuffer ());
+			_OutputStream = new ReusableMemoryStream (_OutputStream.GetInternalBuffer ());
 			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 		}
 
@@ -127,7 +164,7 @@ namespace System.Web
 
 			int l = (int)_OutputStream.Length;
 			if (l > 0) {
-				byte [] arrContent = _OutputStream.GetBuffer ();
+				byte [] arrContent = _OutputStream.GetInternalBuffer ();
 				Handler.SendResponseFromMemory (arrContent, l);
 			}
 		}
