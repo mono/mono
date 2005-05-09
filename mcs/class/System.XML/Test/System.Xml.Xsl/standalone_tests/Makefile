@@ -38,7 +38,7 @@ alltest.exe : alltest.cs
 testsuite/TESTS/catalog-fixed.xml : testsuite/TESTS/catalog.xml catalog.sed
 	sed -f catalog.sed testsuite/TESTS/catalog.xml > testsuite/TESTS/catalog-fixed.xml
 
-$(TESTS) : $(TEST_ARCHIVE) simplify.xsl
+$(TESTS) : $(TEST_ARCHIVE)
 	unzip -un $(TEST_ARCHIVE)
 	touch $(TESTS)
 
