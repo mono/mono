@@ -1,3 +1,8 @@
+2005-05-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Mono.GetOptions.Useful/CommonCompilerOptions.cs (AddedReference):
+	Support multiple assemblies separated by commas.
+
 2005-05-07  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions/Options.cs: new constructor adds possibility to not break parameter values at commas
 	* Mono.GetOptions/OptionDetail.cs: check Options.DontSplitOnCommas when parsing values. 

@@ -176,8 +176,8 @@ namespace Mono.GetOptions.Useful
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option(-1, "References metadata from the specified {assembly}", 'r', "reference")]
-		public string AddedReference { set { AssembliesToReference.Add(value); } }
+		[Option(-1, "References metadata from the specified {assembly-list}. {assembly-list}:assembly,...", 'r', "reference")]
+		public string AddedReference { set { foreach (string assembly in value.Split(',')) AssembliesToReference.Add(assembly); } }
 		
 		[Option("List of directories to search for metadata AssembliesToReference. {path-list}:path,...", "libpath", "lib")]
 		public string AddedLibPath { set { foreach(string path in value.Split(',')) PathsToSearchForLibraries.Add(path); } }
