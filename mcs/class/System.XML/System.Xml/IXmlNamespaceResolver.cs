@@ -42,9 +42,6 @@ namespace System.Xml
 	internal interface IXmlNamespaceResolver
 #endif
 	{
-		[Obsolete]
-		XmlNameTable NameTable { get; } 
-
 		IDictionary GetNamespacesInScope (XmlNamespaceScope scope);
 
 		string LookupNamespace (string prefix);  

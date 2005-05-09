@@ -39,7 +39,7 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	public class XQueryConvert
+	internal class XQueryConvert
 	{
 		private XQueryConvert ()
 		{

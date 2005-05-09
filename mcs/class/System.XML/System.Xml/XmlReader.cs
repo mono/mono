@@ -935,6 +935,12 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public virtual long ReadElementContentAsLong ()
+		{
+			return XQueryConvert.StringToInteger (ReadElementString ());
+		}
+
+		[MonoTODO]
 		public virtual string ReadElementContentAsString ()
 		{
 			return ReadElementString ();

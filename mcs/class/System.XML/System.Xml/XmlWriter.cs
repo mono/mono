@@ -551,12 +551,6 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public virtual void WriteValue (Decimal value)
-		{
-			WriteString (XQueryConvert.DecimalToString (value));
-		}
-
-		[MonoTODO]
 		public virtual void WriteValue (double value)
 		{
 			WriteString (XQueryConvert.DoubleToString (value));
@@ -572,18 +566,6 @@ namespace System.Xml
 		public virtual void WriteValue (long value)
 		{
 			WriteString (XQueryConvert.IntegerToString (value));
-		}
-
-		[MonoTODO]
-		public virtual void WriteValue (Stream value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void WriteValue (TextReader value)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

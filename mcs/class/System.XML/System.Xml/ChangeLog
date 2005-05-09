@@ -1,3 +1,11 @@
+2005-05-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : added ReadElementContentAsLong().
+	* XmlWriter.cs : removed some obsolete WriteValue() overloads.
+	* XmlResolver.cs,
+	  IXmlNamespaceResolver.cs : removed deprecated 2.0 bits.
+	* XQueryConvert.cs : obsolete (yeah, now XQuery should be hidden).
+
 2005-05-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlInputStream.cs : Now XmlStreamReader uses non-blocking TextReader
