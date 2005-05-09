@@ -1,3 +1,10 @@
+2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* FormatterServices.cs: In GetSerializableMembers, private fields
+	from base classes must include the class name in the field name.
+	In this case, it now creates a clone of the field with the
+	modified name. This patch together with r44260 fixes bug #74760.
+
 2004-12-09  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjectManager.cs: When deserializing an object that implements

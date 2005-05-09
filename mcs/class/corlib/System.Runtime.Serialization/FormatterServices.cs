@@ -34,6 +34,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters;
+using System.Globalization;
 
 namespace System.Runtime.Serialization
 {
@@ -97,7 +98,7 @@ namespace System.Runtime.Serialization
 					throw new SerializationException (msg);
 				}
 
-				GetFields (t, fields);
+				GetFields (type, t, fields);
 				t = t.BaseType;
 			}
 
@@ -106,12 +107,19 @@ namespace System.Runtime.Serialization
 			return result;
 		}
 
-		private static void GetFields (Type type, ArrayList fields)
+		private static void GetFields (Type reflectedType, Type type, ArrayList fields)
 		{
 			FieldInfo [] fs = type.GetFields (fieldFlags);
 			foreach (FieldInfo field in fs)
-				if (!(field.IsNotSerialized))
-					fields.Add (field);
+				if (!(field.IsNotSerialized)) {
+					MonoField mf = field as MonoField;
+					if (mf != null) {
+						string fname = (reflectedType != type && !mf.IsPublic) ? type.Name + "+" + mf.Name : mf.Name;
+						fields.Add (mf.Clone (fname));
+					}
+					else
+						fields.Add (field);
+				}
 		}
 
 		public static Type GetTypeFromAssembly (Assembly assem, string name)
