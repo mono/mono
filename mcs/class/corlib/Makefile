@@ -51,7 +51,7 @@ test_against = $(PLATFORM_CORLIB)
 HAVE_CS_TESTS = $(plattestlib).sources
 
 ## for now, compiling the testsuite with CSC causes CS0583.  So compile with internal MCS
-TEST_COMPILE = $(INTERNAL_MCS) $(USE_MCS_FLAGS)
+TEST_COMPILE = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS) $(USE_MCS_FLAGS)
 endif
 
 ifdef PLATFORM_MONO_NATIVE

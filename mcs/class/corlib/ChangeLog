@@ -1,3 +1,7 @@
+2005-05-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_COMPILE): Set MONO_PATH.
+
 2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added new classes in System.Security and some
