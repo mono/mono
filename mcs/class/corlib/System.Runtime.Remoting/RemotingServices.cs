@@ -466,7 +466,7 @@ namespace System.Runtime.Remoting
 			string activationUrl = url + "/RemoteActivationService.rem";
 
 			string objectUri;
-			IMessageSink sink = GetClientChannelSinkChain (activationUrl, null, out objectUri);
+			GetClientChannelSinkChain (activationUrl, null, out objectUri);
 
 			RemotingProxy proxy = new RemotingProxy (objectType, activationUrl, activationAttributes);
 			return proxy.GetTransparentProxy();

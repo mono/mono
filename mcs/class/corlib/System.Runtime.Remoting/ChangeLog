@@ -1,3 +1,7 @@
+2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Fix warning.
+
 2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: Added several serialization methods needed by
