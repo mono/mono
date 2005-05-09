@@ -100,7 +100,7 @@ USAGE: mono xsdtest.exe options target-pattern
 	
 	void RunTest (string subdir)
 	{
-		string basePath = @"Xsd-Test-Suite" + SEP;
+		string basePath = @"xsd-test-suite" + SEP;
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (basePath + subdir + SEP + "tests-all.xml");
 

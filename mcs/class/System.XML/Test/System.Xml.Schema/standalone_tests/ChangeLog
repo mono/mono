@@ -1,3 +1,8 @@
+2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile : track the timestamp so tar does not run when not needed
+	* xsdtest.cs : fix the case of the directory name
+
 2004-01-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : report details.
