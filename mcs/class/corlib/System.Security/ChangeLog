@@ -1,3 +1,7 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* SecurityContext.cs: That was the wrong place to capture the stack.
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityContext.cs: Capture the CompressedStack when the current 
