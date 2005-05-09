@@ -344,7 +344,6 @@ namespace System.Runtime.Remoting.Messaging {
 		public override string ToString ()
 		{
 			string s = _typeName.Split(',')[0] + "." + _methodName + " (";
-			Type[] ts = (Type[]) MethodSignature;
 			if (_args != null)
 			{
 				for (int n=0; n<_args.Length; n++)
