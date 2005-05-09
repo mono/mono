@@ -22,11 +22,12 @@ namespace MonoTests.System.Security.Principal {
 	public class WindowsIdentityTest : Assertion {
 
 		private bool IsPosix {
-#if NET_2_0
-			get { return (Environment.OSVersion.Platform == PlatformID.Unix); }
-#else
-			get { return ((int) Environment.OSVersion.Platform == 128); }
-#endif
+			get {
+				// check for Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform == 4) || (platform == 128));
+			}
 		}
 
 		// some features works only in Windows 2003 and later
