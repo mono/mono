@@ -1295,11 +1295,10 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 			Graphics result = new Graphics (graphics);
 				
-#if NET_2_0
-			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-#else
-			if (Environment.OSVersion.Platform == (PlatformID) 128) {
-#endif
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform == 4) || (platform == 128)) {
 				Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
 				GDIPlus.GdipSetVisibleClip_linux (result.NativeObject, ref rect);
 			}

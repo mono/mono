@@ -192,11 +192,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	internal void InitFromStream (Stream stream)
 	{
-#if NET_2_0
-		if (Environment.OSVersion.Platform == PlatformID.Unix) {
-#else
-		if (Environment.OSVersion.Platform == (PlatformID) 128) {
-#endif
+		// check for Unix platforms - see FAQ for more details
+		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+		int platform = (int) Environment.OSVersion.Platform;
+		if ((platform == 4) || (platform == 128)) {
 			// Unix, with libgdiplus
 			// We use a custom API for this, because there's no easy way
 			// to get the Stream down to libgdiplus.  So, we wrap the stream
@@ -390,11 +389,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Status st;
 		Guid guid = encoder.Clsid;
 
-#if NET_2_0
-		if (Environment.OSVersion.Platform == PlatformID.Unix) {
-#else
-		if (Environment.OSVersion.Platform == (PlatformID) 128) {
-#endif
+		// check for Unix platforms - see FAQ for more details
+		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+		int platform = (int) Environment.OSVersion.Platform;
+		if ((platform == 4) || (platform == 128)) {
 			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
 			if (encoderParams == null) {
 				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,

@@ -47,11 +47,7 @@ namespace System.Drawing
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;
-#if NET_2_0
-		public static bool UseX11Drawable = (Environment.OSVersion.Platform == PlatformID.Unix);
-#else
-		public static bool UseX11Drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
-#endif
+		public static bool UseX11Drawable;
 		public static bool UseQuartzDrawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null);
 
 		#region gdiplus.dll functions
@@ -76,6 +72,11 @@ namespace System.Drawing
 
 		static GDIPlus ()
 		{
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			UseX11Drawable = ((platform == 4) || (platform == 128));
+
 			GdiplusStartupInput input = GdiplusStartupInput.MakeGdiplusStartupInput();
 			GdiplusStartupOutput output = GdiplusStartupOutput.MakeGdiplusStartupOutput();
 			GdiplusStartup (ref GdiPlusToken, ref input, ref output);
