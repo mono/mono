@@ -771,7 +771,7 @@ namespace System
 			if (str == null)
 				return String.Empty;
 			
-			byte [] data = Encoding.UTF8.GetBytes (str.ToCharArray ());
+			byte [] data = Encoding.UTF8.GetBytes (str);
 			StringBuilder s = new StringBuilder ();
 			int len = data.Length;	
 			for (int i = 0; i < len; i++) {
