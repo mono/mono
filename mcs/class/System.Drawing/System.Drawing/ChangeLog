@@ -1,3 +1,9 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Use PlatformID.Unix under NET_2_0. 
+	* Graphics.cs: Use PlatformID.Unix under NET_2_0. 
+	* Image.cs: Use PlatformID.Unix under NET_2_0. 
+
 2005-05-05  Miguel de Icaza  <miguel@novell.com>
 
 	* Bitmap.cs, Icon.cs (constructor): Use

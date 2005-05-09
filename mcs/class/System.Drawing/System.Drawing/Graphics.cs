@@ -1295,7 +1295,11 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 			Graphics result = new Graphics (graphics);
 				
-			if (Environment.OSVersion.Platform == (PlatformID) 128)  {
+#if NET_2_0
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+#else
+			if (Environment.OSVersion.Platform == (PlatformID) 128) {
+#endif
 				Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
 				GDIPlus.GdipSetVisibleClip_linux (result.NativeObject, ref rect);
 			}

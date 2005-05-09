@@ -47,7 +47,11 @@ namespace System.Drawing
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;
+#if NET_2_0
+		public static bool UseX11Drawable = (Environment.OSVersion.Platform == PlatformID.Unix);
+#else
 		public static bool UseX11Drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
+#endif
 		public static bool UseQuartzDrawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null);
 
 		#region gdiplus.dll functions

@@ -192,7 +192,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	internal void InitFromStream (Stream stream)
 	{
+#if NET_2_0
+		if (Environment.OSVersion.Platform == PlatformID.Unix) {
+#else
 		if (Environment.OSVersion.Platform == (PlatformID) 128) {
+#endif
 			// Unix, with libgdiplus
 			// We use a custom API for this, because there's no easy way
 			// to get the Stream down to libgdiplus.  So, we wrap the stream
@@ -386,7 +390,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Status st;
 		Guid guid = encoder.Clsid;
 
+#if NET_2_0
+		if (Environment.OSVersion.Platform == PlatformID.Unix) {
+#else
 		if (Environment.OSVersion.Platform == (PlatformID) 128) {
+#endif
 			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
 			if (encoderParams == null) {
 				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,
