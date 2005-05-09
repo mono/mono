@@ -82,11 +82,10 @@ namespace System.Windows.Forms {
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
 
-#if NET_2_0
-			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-#else
-			if (Environment.OSVersion.Platform == (PlatformID)128) {
-#endif
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform == 4) || (platform == 128)) {
 				if (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null)
 					driver=XplatUIOSX.GetInstance();
 				else
