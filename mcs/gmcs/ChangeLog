@@ -1,3 +1,7 @@
+2005-05-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (TypeManager): Moved InitGenerics to Reset method.
+
 2005-05-06  Martin Baulig  <martin@ximian.com>
 
 	* attribute.cs

@@ -386,7 +386,6 @@ public partial class TypeManager {
 
 		signature_filter = new MemberFilter (SignatureFilter);
 		InitExpressionTypes ();
-		InitGenerics ();
 	}
 
 	static public void Reset ()
@@ -412,6 +411,8 @@ public partial class TypeManager {
 		fieldbuilders_to_fields = new Hashtable ();
 		fields = new Hashtable ();
 		type_hash = new DoubleHash ();
+		
+		InitGenerics ();
 	}
 
 	public static void HandleDuplicate (string name, Type t)
