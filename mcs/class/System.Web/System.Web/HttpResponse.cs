@@ -93,54 +93,24 @@ namespace System.Web
 #endif
 
 		string app_path_mod = null;
-                
-		public HttpResponse (TextWriter output)
+ 
+ 		private HttpResponse ()
 		{
 			 _bBuffering = true;
-			 _bFlushing = false;
-			 _bHeadersSent = false;
-
 			 _Headers = new ArrayList ();
-
 			 _sContentType = "text/html";
-
 			 _iStatusCode = 200;
-			 _sCharset = null;
-			 _sCacheControl = null;
+		}
 
-			 _lContentLength = 0;
-			 _bSuppressContent = false;
-			 _bSuppressHeaders = false;
-			 _bClientDisconnected = false;
-
-			 _bChunked = false;
-
+		public HttpResponse (TextWriter output) : this ()
+		{
 			 _TextWriter = output;
 		}
 
-		internal HttpResponse (HttpWorkerRequest WorkerRequest, HttpContext Context)
+		internal HttpResponse (HttpWorkerRequest WorkerRequest, HttpContext Context) : this ()
 		{
 			 _Context = Context;
 			 _WorkerRequest = WorkerRequest;
-
-			 _bBuffering = true;
-			 _bFlushing = false;
-			 _bHeadersSent = false;
-
-			 _Headers = new ArrayList ();
-
-			 _sContentType = "text/html";
-
-			 _iStatusCode = 200;
-			 _sCharset = null;
-			 _sCacheControl = null;
-
-			 _lContentLength = 0;
-			 _bSuppressContent = false;
-			 _bSuppressHeaders = false;
-			 _bClientDisconnected = false;
-
-			 _bChunked = false;
 		}
 
 		internal void InitializeWriter ()
@@ -552,7 +522,7 @@ namespace System.Web
 				if (null != _WorkerRequest)
 					_bClientDisconnected = (!_WorkerRequest.IsClientConnected ());
 
-				return _bClientDisconnected;
+				return !_bClientDisconnected;
 			}
 		}
       
@@ -728,7 +698,7 @@ namespace System.Web
 
 			_iStatusCode = 200;
 			_sCharset = null;
-			_Headers = new ArrayList ();
+			_Headers.Clear ();
 			_sCacheControl = null;
 			_sTransferEncoding = null;
 

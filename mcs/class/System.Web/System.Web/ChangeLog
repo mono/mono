@@ -1,5 +1,11 @@
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpResponse.cs: cleaned up the .ctors, fix IsClientConnected and just
+	Clear the _Headers array instead of creating a new ArrayList in
+	ClearHeaders().
+
+2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: we had 2 variables to track client connection status.
 	Use only one. Increase the buffer size to 28KB when writing from a file.
 
