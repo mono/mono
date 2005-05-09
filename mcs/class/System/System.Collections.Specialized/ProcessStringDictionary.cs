@@ -43,11 +43,11 @@ namespace System.Collections.Specialized
 		{
 			IHashCodeProvider hash_provider = null;
 			IComparer comparer = null;
-#if NET_2_0
-			if (Environment.OSVersion.Platform != PlatformID.Unix) {
-#else
-			if ((int) Environment.OSVersion.Platform != 128) {
-#endif
+
+			// check for non-Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform != 4) && (platform != 128)) {
 				hash_provider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
 				comparer = CaseInsensitiveComparer.DefaultInvariant;
 			}
