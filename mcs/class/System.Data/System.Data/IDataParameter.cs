@@ -38,17 +38,22 @@ namespace System.Data
 	/// Represents a parameter to a Command object, and optionally, its mapping to DataSet columns; and is implemented by .NET data providers that access data sources.
 	/// </summary>
 	public interface IDataParameter
-	{	
+	{
+		
 		DbType DbType{get;set;}
+
 		ParameterDirection Direction{get;set;}
-		string SourceColumn{get;set;}
-		DataRowVersion SourceVersion {get;set;}
-		object Value {get;set;}
+
+		bool IsNullable{get;}
+
 		string ParameterName{get;set;}
 
-#if NET_2_0
-		bool IsNullable{get;}	
-#endif
+		string SourceColumn{get;set;}
+
+		DataRowVersion SourceVersion {get;set;}
+
+		object Value {get;set;}
+
 
 	}
 }
