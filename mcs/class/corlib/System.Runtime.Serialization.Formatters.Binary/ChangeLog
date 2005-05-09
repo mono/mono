@@ -1,3 +1,10 @@
+2005-05-09  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ObjectWriter.cs:
+	* CodeGenerator.cs: No need to add the class for inherited fields,
+	since FieldInfo objects returned by the GetSerializableMembers
+	method will already include the class name if needed.
+
 2005-03-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryCommon.cs: Added helper method for swapping bytes.

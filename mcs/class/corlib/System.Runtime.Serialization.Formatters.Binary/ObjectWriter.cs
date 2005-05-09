@@ -180,12 +180,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			writer.Write (members.Length);
 
 			// Names of fields
-			foreach (FieldInfo field in members) {
-				if (field.DeclaringType == InstanceType)
-					writer.Write (field.Name);
-				else
-					writer.Write (field.DeclaringType.Name + "+" + field.Name);
-			}
+			foreach (FieldInfo field in members)
+				writer.Write (field.Name);
 
 			if (writeTypes) {
 				// Types of fields
