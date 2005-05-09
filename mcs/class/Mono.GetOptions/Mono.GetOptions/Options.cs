@@ -61,11 +61,14 @@ namespace Mono.GetOptions
 		
 		protected virtual void InitializeOtherDefaults() { } // Only subclasses may need to implement something here
 
-#if NET_2_0
-		public bool RunningOnWindows { get { return PlatformID.Unix != Environment.OSVersion.Platform; } }
-#else
-		public bool RunningOnWindows { get { return 128 != (int)Environment.OSVersion.Platform; } }
-#endif
+		public bool RunningOnWindows {
+			get {
+				// check for non-Unix platforms - see FAQ for more details
+				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+				int platform = (int) Environment.OSVersion.Platform;
+				return ((platform != 4) && (platform != 128));
+			}
+		}
 
 		#region non-option arguments
 				
