@@ -1,3 +1,7 @@
+2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SynchronizationAttribute.cs: Make it serializable. Fixes bug #60228.
+
 2005-05-06  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Context.cs: Fix unsafe double-check locks.

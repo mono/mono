@@ -51,7 +51,9 @@ namespace System.Runtime.Remoting.Contexts
 		int _flag;
 		int _lockCount = 0;
 		
+		[NonSerialized]
 		Mutex _mutex = new Mutex (false);
+		[NonSerialized]
 		Thread _ownerThread;
 		
 		public SynchronizationAttribute ()
