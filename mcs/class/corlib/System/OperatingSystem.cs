@@ -87,7 +87,11 @@ namespace System
 				str = "Microsoft Windows CE";
 				break;
 #endif
+#if NET_2_0
+			case (int) System.PlatformID.Unix:
+#else
 			case 128 /* PlatformID.Unix */:
+#endif
 				str = "Unix";
 				break;
 			default:
