@@ -1,5 +1,10 @@
 2005-05-09  Andrew Skiba  <andrews@mainsoft.com>
 
+	* catalog.sed : fix more names in the catalog, add the missing
+	backslash before '+' in the sed rules
+
+2005-05-09  Andrew Skiba  <andrews@mainsoft.com>
+
 	* Makefile : delete an obsolete dependency from deleted
 	simplify.xsl
 
