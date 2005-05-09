@@ -256,39 +256,39 @@ namespace System.Web.Util
 			}
 			return false;
 		}
-
+		static char [] path_sep = {'\\', '/'};
+		
 		public static string Reduce (string path)
 		{
-			path = path.Replace ('\\','/');
-
-			string [] parts = path.Split ('/');
-			ArrayList result = new ArrayList ();
-			
+			string [] parts = path.Split (path_sep);
 			int end = parts.Length;
+			
+			int dest = 0;
+			
 			for (int i = 0; i < end; i++) {
 				string current = parts [i];
 				if (current == "." )
 					continue;
 
 				if (current == "..") {
-					if (result.Count == 0) {
+					if (dest == 0) {
 						if (i == 1) // see bug 52599
 							continue;
 
 						throw new HttpException ("Invalid path.");
 					}
 
-					result.RemoveAt (result.Count - 1);
+					dest --;
 					continue;
 				}
 
-				result.Add (current);
+				parts [dest++] = current;
 			}
 
-			if (result.Count == 0)
+			if (dest == 0)
 				return "/";
 
-			return String.Join ("/", (string []) result.ToArray (typeof (string)));
+			return String.Join ("/", parts, 0, dest);
 		}
 		
 		public static string GetDirectory(string url)

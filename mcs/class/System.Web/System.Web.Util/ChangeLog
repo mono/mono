@@ -1,3 +1,9 @@
+2005-05-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* UrlUtils.cs (Reduce): a more efficient impl that avoids an
+	arraylist, making an arraylist into an array, and a replace
+	operation.
+
 2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: made (Insert|Get|Remove)SessionId use the appRoot +
