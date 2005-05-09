@@ -1,3 +1,9 @@
+
+Mon May 9 16:29:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug-debugger.c: use the loader lock until the
+	code is reviewed and changed to avoid the deadlock (bug #74830).
+
 2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* metadata/socket-io.c: on windows, getsockopt/setsockopt for
