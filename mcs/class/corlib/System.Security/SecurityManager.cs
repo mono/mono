@@ -50,8 +50,16 @@ namespace System.Security {
 		public RuntimeDeclSecurityEntry choice;
 	}
 
+#if NET_2_0
+	[ComVisible (true)]
+	public static class SecurityManager {
+#else
 	public sealed class SecurityManager {
 
+		private SecurityManager ()
+		{
+		}
+#endif
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
 		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
@@ -63,10 +71,6 @@ namespace System.Security {
 			// lock(this) is bad
 			// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
 			_lockObject = new object ();
-		}
-
-		private SecurityManager ()
-		{
 		}
 
 		// properties

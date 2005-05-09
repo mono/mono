@@ -93,7 +93,11 @@ namespace System.Security {
 		}
 
 		internal CompressedStack CompressedStack {
-			get { return _stack; }
+			get {
+				if (_stack == null)
+					_stack = CompressedStack.Capture ();
+				return _stack;
+			}
 			set { _stack = value; }
 		}
 

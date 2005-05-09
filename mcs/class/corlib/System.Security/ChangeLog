@@ -1,3 +1,10 @@
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContext.cs: Capture the CompressedStack when the current 
+	context one is empty.
+	* SecurityManager.cs: Class is now static (2.0).
+	* SecurityTreatAsSafeAttribute.cs: Fixed AttributeTargets.
+
 2005-05-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Reworked frames check to check only for
