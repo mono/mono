@@ -65,7 +65,6 @@ namespace System.Web
 		DateTime _expiresAbsolute;
 		bool _expiresAbsoluteSet;
 
-		bool _ClientDisconnected;
 		bool closed;
 
 		string	_sContentType;
@@ -545,18 +544,15 @@ namespace System.Web
 			}
 		}
 
-		public bool IsClientConnected
-		{
+		public bool IsClientConnected {
 			get {
-				if (_ClientDisconnected)
+				if (_bClientDisconnected)
 					return false;
 
-				if (null != _WorkerRequest && (!_WorkerRequest.IsClientConnected ())) {
-					_ClientDisconnected = false;
-					return false;
-				}
+				if (null != _WorkerRequest)
+					_bClientDisconnected = (!_WorkerRequest.IsClientConnected ());
 
-				return true;
+				return _bClientDisconnected;
 			}
 		}
       
@@ -745,7 +741,6 @@ namespace System.Web
 		public void Close ()
 		{
 			if (closed && !_bClientDisconnected) {
-				_bClientDisconnected = false;
 				_WorkerRequest.CloseConnection ();
 				_bClientDisconnected = true;
 			}
@@ -1013,7 +1008,7 @@ namespace System.Web
 				if (readIntoMemory) {
 					WriteFromStream (fs, 0, size, size);
 				} else {
-					WriteFromStream (fs, 0, size, 8192);
+					WriteFromStream (fs, 0, size, 30702);
 				}
 			} finally {
 				if (fs != null)
@@ -1026,7 +1021,7 @@ namespace System.Web
 			FileStream fs = null;
 			try {
 				fs = File.OpenRead (filename);
-				WriteFromStream (fs, offset, size, 8192);
+				WriteFromStream (fs, offset, size, 30702);
 			} finally {
 				if (fs != null)
 					fs.Close ();
@@ -1038,7 +1033,7 @@ namespace System.Web
 			FileStream fs = null;
 			try {
 				fs = new FileStream (fileHandle, FileAccess.Read);
-				WriteFromStream (fs, offset, size, 8192);
+				WriteFromStream (fs, offset, size, 30702);
 			} finally {
 				if (fs != null)
 					fs.Close ();

@@ -1,5 +1,16 @@
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpResponse.cs: we had 2 variables to track client connection status.
+	Use only one. Increase the buffer size to 28KB when writing from a file.
+
+	* StaticFileHandler.cs: set the Content-Type before writing the file.
+	This allows flushing before all the content is written.
+
+	* HttpApplication.cs: use the variable instead of the property when
+	setting the Principal for the current process.
+
+2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ReusableMemoryStream.cs:
 	* HttpWriter.cs: keep a pool of buffers to avoid allocations.
 

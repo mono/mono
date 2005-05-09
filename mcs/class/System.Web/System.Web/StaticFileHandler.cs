@@ -65,18 +65,15 @@ namespace System.Web
 				DateTime lastWT = fi.LastWriteTime.ToUniversalTime ();
 				response.AddHeader ("Last-Modified", lastWT.ToString ("r"));
 
-				response.WriteFile (fileName);
 				response.ContentType = MimeTypes.GetMimeType (fileName);
+				response.WriteFile (fileName);
 			} catch (Exception) {
 				throw new HttpException (403, "Forbidden.");
 			}
 		}
 
-		public bool IsReusable
-		{
-			get {
-				return true;
-			}
+		public bool IsReusable {
+			get { return true; }
 		}
 	}
 }

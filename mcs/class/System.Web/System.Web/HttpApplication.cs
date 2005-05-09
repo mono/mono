@@ -1331,7 +1331,7 @@ namespace System.Web
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
 			HttpRuntime.TimeoutManager.Add (_Context);
-			SetPrincipal (Context.User);
+			SetPrincipal (_Context.User);
 		}
 
 		internal void OnStateExecuteLeave ()
