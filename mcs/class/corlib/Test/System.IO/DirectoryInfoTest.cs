@@ -565,7 +565,11 @@ namespace MonoTests.System.IO
  		[Test]
 		public void DirectoryNameWithSpace ()
 		{
+#if NET_2_0
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+#else
 			if ((int) Environment.OSVersion.Platform == 128) {
+#endif
 				DeleteDir ("this has a space at the end ");
 				string path = Path.Combine (TempFolder, "this has a space at the end ");
 				Directory.CreateDirectory (path);

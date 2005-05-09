@@ -1,8 +1,9 @@
-2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-05-09  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
 	* DirectoryCas.cs: Fixed IsRunningOnWindows (inversed logic). That
 	didn't change the tests as the SecurityException occurs before the
 	parameters are checked (when all goes well ;-). Fixed for NET_2_0 too.
+	* DirectoryInfoTest.cs: Fixed PlatformID.Unix for NET_2_0.
 
 2005-05-06  Ben Maurer  <bmaurer@ximian.com>
 
