@@ -1,3 +1,8 @@
+2005-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ProcessStringDictionary.cs: on non-windows system, don't make the
+	hashtable case-insensitive. Fixes bug #74796.
+
 2005-03-23  Lluis Sanchez Gual <lluis@novell.com>
 
 	* OrderedDictionary.cs: Fix bug in item setter.

@@ -41,8 +41,14 @@ namespace System.Collections.Specialized
 
 		public ProcessStringDictionary ()
 		{
-			table = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						CaseInsensitiveComparer.Default);
+			IHashCodeProvider hash_provider = null;
+			IComparer comparer = null;
+			if ((int) Environment.OSVersion.Platform != 128) {
+				hash_provider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
+				comparer = CaseInsensitiveComparer.DefaultInvariant;
+			}
+
+			table = new Hashtable (hash_provider, comparer);
 		}
 		
 		public override int Count {
