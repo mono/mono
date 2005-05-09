@@ -87,7 +87,7 @@ namespace System.Web.Services.Discovery {
 		[XmlAttribute("targetNamespace")]
 		public string TargetNamespace {
 			get { return targetNamespace; }
-			set { targetNamespace = targetNamespace; }
+			set { targetNamespace = value; }
 		}
 
 		[XmlIgnore]
