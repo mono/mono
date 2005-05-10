@@ -2655,106 +2655,36 @@ public partial class TypeManager {
 		internal Assembly invocation_assembly;
 		internal IList almost_match;
 
-		bool Filter (MethodBase mb, object filter_criteria)
+		private bool CheckValidFamilyAccess (bool is_static, MemberInfo m)
 		{
-			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
-
-			if (ma == MethodAttributes.Private)
-				return private_ok ||
-					IsPrivateAccessible (invocation_type, mb.DeclaringType) ||
-					IsNestedChildOf (invocation_type, mb.DeclaringType);
-
-			//
-			// FamAndAssem requires that we not only derivate, but we are on the
-			// same assembly.  
-			//
-			if (ma == MethodAttributes.FamANDAssem){
-				if (invocation_assembly != mb.DeclaringType.Assembly)
-					return false;
-			}
-
-			// Assembly and FamORAssem succeed if we're in the same assembly.
-			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
-				if (invocation_assembly == mb.DeclaringType.Assembly)
-					return true;
-			}
-
-			// We already know that we aren't in the same assembly.
-			if (ma == MethodAttributes.Assembly)
+			if (invocation_type == null)
 				return false;
 
-			// Family and FamANDAssem require that we derive.
-			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
-				if (invocation_type == null)
-					return false;
+			if (is_static && qualifier_type == null)
+				// It resolved from a simple name, so it should be visible.
+				return true;
 
-				if (!IsNestedFamilyAccessible (invocation_type, mb.DeclaringType))
-					return false;
+			// A nested class has access to all the protected members visible to its parent.
+			if (qualifier_type != null && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
+				return true;
 
+			if (IsNestedFamilyAccessible (invocation_type, m.DeclaringType)) {
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
-				if (!mb.IsStatic && (qualifier_type != null) &&
-				    !IsEqualGenericInstance (invocation_type, qualifier_type) &&
-				    TypeManager.IsFamilyAccessible (invocation_type, qualifier_type) &&
-				    !TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
-					return false;
+				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
 
-				return true;
-			}
-
-			// Public.
-			return true;
-		}
-
-		bool Filter (FieldInfo fi, object filter_criteria)
-		{
-			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
-
-			if (fa == FieldAttributes.Private)
-				return private_ok ||
-					IsPrivateAccessible (invocation_type, fi.DeclaringType) ||
-					IsNestedChildOf (invocation_type, fi.DeclaringType);
-
-			//
-			// FamAndAssem requires that we not only derivate, but we are on the
-			// same assembly.  
-			//
-			if (fa == FieldAttributes.FamANDAssem){
-				if (invocation_assembly != fi.DeclaringType.Assembly)
-					return false;
-			}
-
-			// Assembly and FamORAssem succeed if we're in the same assembly.
-			if ((fa == FieldAttributes.Assembly) || (fa == FieldAttributes.FamORAssem)){
-				if (invocation_assembly == fi.DeclaringType.Assembly)
+				if (is_static ||
+				    qualifier_type == null ||
+				    IsEqualGenericInstance (invocation_type, qualifier_type) ||
+				    !IsFamilyAccessible (invocation_type, qualifier_type) ||
+				    IsNestedChildOf (invocation_type, qualifier_type))
 					return true;
 			}
+	
+			if (!is_static && almost_match != null)
+				almost_match.Add (m);
 
-			// We already know that we aren't in the same assembly.
-			if (fa == FieldAttributes.Assembly)
-				return false;
-
-			// Family and FamANDAssem require that we derive.
-			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem)){
-				if (invocation_type == null)
-					return false;
-
-				if (!IsNestedFamilyAccessible (invocation_type, fi.DeclaringType))
-					return false;
-
-				// Although a derived class can access protected members of its base class
-				// it cannot do so through an instance of the base class (CS1540).
-				if (!fi.IsStatic && (qualifier_type != null) &&
-				    !IsEqualGenericInstance (invocation_type, qualifier_type) &&
-				    TypeManager.IsFamilyAccessible (invocation_type, qualifier_type) &&
-				    !TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
-					return false;
-
-				return true;
-			}
-
-			// Public.
-			return true;
+			return false;
 		}
 		
 		//
@@ -2780,11 +2710,57 @@ public partial class TypeManager {
 			// Ugly: we need to find out the type of `m', and depending
 			// on this, tell whether we accept or not
 			//
-			if (m is MethodBase)
-				return Filter ((MethodBase) m, filter_criteria);
+			if (m is MethodBase){
+				MethodBase mb = (MethodBase) m;
+				MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
-			if (m is FieldInfo)
-				return Filter ((FieldInfo) m, filter_criteria);
+				if (ma == MethodAttributes.Private)
+					return private_ok ||
+						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
+						IsNestedChildOf (invocation_type, m.DeclaringType);
+
+				if (invocation_assembly == mb.DeclaringType.Assembly) {
+					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
+						return true;
+				} else {
+					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamANDAssem)
+						return false;
+				}
+
+				if (ma == MethodAttributes.Family ||
+				    ma == MethodAttributes.FamANDAssem ||
+				    ma == MethodAttributes.FamORAssem)
+					return CheckValidFamilyAccess (mb.IsStatic, m);
+				
+				// Public.
+				return true;
+			}
+			
+			if (m is FieldInfo){
+				FieldInfo fi = (FieldInfo) m;
+				FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
+				
+				if (fa == FieldAttributes.Private)
+					return private_ok ||
+						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
+						IsNestedChildOf (invocation_type, m.DeclaringType);
+
+				if (invocation_assembly == fi.DeclaringType.Assembly) {
+					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamORAssem)
+						return true;
+				} else {
+					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamANDAssem)
+						return false;
+				}
+
+				if (fa == FieldAttributes.Family ||
+				    fa == FieldAttributes.FamANDAssem ||
+				    fa == FieldAttributes.FamORAssem)
+					return CheckValidFamilyAccess (fi.IsStatic, m);
+				
+				// Public.
+				return true;
+			}
 
 			//
 			// EventInfos and PropertyInfos, return true because they lack

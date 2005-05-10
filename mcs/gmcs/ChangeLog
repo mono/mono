@@ -1,3 +1,8 @@
+2005-05-11  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (Closure): Copy this from MCS and merge all the
+	GMCS-specific changes into it.
+
 2005-05-10  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Constraints.Resolve): Report CS0246 if we cannot
@@ -46,6 +51,15 @@
 	* attribute.cs
 	(Attributable.IsClsComplianceRequired): Fix typo in the method name.
 	(AttributeTester.AnalyzeTypeCompliance): Add generics support.
+
+2005-05-04  Raja R Harinath  <rharinath@novell.com>
+	    Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #64812.
+	* typemanager.cs (Closure.CheckValidFamilyAccess): Don't blindly
+	allow access to all static members.
 
 2005-05-04  Martin Baulig  <martin@ximian.com>
 
