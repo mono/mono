@@ -394,6 +394,10 @@ namespace System.Web.UI
 			atts.Remove ("CodeBehind");  // ignored
 			atts.Remove ("AspCompat"); // ignored
 
+#if NET_2_0
+			atts.Remove ("CodeFile"); // ignored
+#endif
+
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", "");
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);

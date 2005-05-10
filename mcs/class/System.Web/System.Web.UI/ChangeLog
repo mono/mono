@@ -1,3 +1,8 @@
+2005-05-09 Geoff Norotn <gnorton@customerdna.com>
+
+	* TemplateParser.cs: Silently remove the CodeFile attribute that ASP.NET 2.0
+	uses instead of codebehind.
+
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: as setting CurrentCulture is slow, don't set it if the
