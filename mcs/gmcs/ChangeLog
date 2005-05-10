@@ -42,6 +42,14 @@
 
 	* codegen.cs (EmitContext.ResolvingTypeTree): New public field.
 
+2005-05-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74852.
+	* decl.cs (MemberCache.AddMethods): Register override methods,
+	rather than non-override methods.
+	* typemanager.cs (RegisterOverride): New.
+	(IsOverride): Update.
+
 2005-05-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* typemanager.cs (TypeManager): Moved InitGenerics to Reset method.
