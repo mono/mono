@@ -1,7 +1,12 @@
 2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
 
-	* TestColor.cs: Added tests for GetHue, GetBrightness
-	and GetSaturation.
+	* Color.cs: Fix GetSaturation() again and remove
+	obsolete constants.
+
+2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
+
+	* Color.cs: New, correct implementations for GetHue(),
+	GetBrightness() and GetSaturation().
 
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 

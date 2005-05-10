@@ -50,8 +50,6 @@ namespace System.Drawing
 	[Serializable]
 	public struct Color
 	{
-		private const float	RGBMax = 255;
-		private const float	HLSMax = 240;
 		private static Hashtable namedColors;
 		private static Hashtable systemColors;
 		static Color [] knownColors;
@@ -307,6 +305,9 @@ namespace System.Drawing
 			byte minval = Math.Min (r, Math.Min (g, b));
 			byte maxval = Math.Max (r, Math.Max (g, b));
 			
+			if (maxval == minval)
+					return 0.0f;
+
 			int sum = maxval + minval;
 			if (sum > 255)
 				sum = 510 - sum;
