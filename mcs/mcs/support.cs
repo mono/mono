@@ -115,7 +115,7 @@ namespace Mono.CSharp {
 			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
-				if ((pi [pos].Attributes & ParameterAttributes.Out) != 0)
+				if ((pi [pos].Attributes & (ParameterAttributes.Out|ParameterAttributes.In)) == ParameterAttributes.Out)
 					return Parameter.Modifier.ISBYREF | Parameter.Modifier.OUT;
 				else
 					return Parameter.Modifier.ISBYREF | Parameter.Modifier.REF;
