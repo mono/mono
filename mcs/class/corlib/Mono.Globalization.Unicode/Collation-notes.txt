@@ -85,8 +85,7 @@
 
 *** StringSort
 
-	Maybe use additional tailoring rule which says that non-alphabetic
-	characters does not take precedence.
+	See "sort order categories" section.
 
 ** ICU and UCA
 
@@ -132,8 +131,8 @@
 
 	- level 1: primary difference
 	  The first byte of level 1 means the category of the character.
-	- level 2: diacritic difference
-	- level 3: case sensitivity
+	- level 2: diacritic difference, nonspacing-mark difference?
+	- level 3: case/width sensitivity
 	- level 4: kana type (mostly at primary category 22)
 	- level 5: identitcal difference (control characters etc.)
 
@@ -202,16 +201,31 @@
 	and t, unlike described here:
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C0.asp
 
-	zh-CHS, ko-KR and ja-JP have very different CJK mapping for each
-	(but might be just a matter of computation formula differences).
+*** default sort key table
 
-*** sort order categories
+**** StringSort
+
+	When CompareOptions.StringSort is specified, then it modifies
+	characters in category 2 from "1 1 1 1 80 07 06 xx" to
+	"06 xx yy zz" and some are case sensitive.
+	
+	To handle simply, it looks like the way to go that we compute those
+	character weights in StringSort and in case of !StringSort just
+	regard them as "1 1 1 1 ...".
+	However, actually there are only 3 characters (FF0D, 208B and 207B)
+	that has level 3 weights and usually None is used, we had better put
+	"1 1 1 1 ..." by default and compute them only when StringSort is
+	specified. It should be better for performance.
+
+	There seems no further difference between StringSort and None.
+
+**** character category details
 
 	1 (0) specially ignored ones (Japanese, Tamil, Thai)
 
 	3099-309C, BCD, E47, E4C, FF9E, FF9F
 
-	2 (1) maybe nonspacing marks
+	2 (1) maybe nonspacing marks, moved when StringSort
 
 	2.1 control characters (specified as such in Unicode), except for
 	whitespaces (0009-000D).
@@ -233,7 +247,8 @@
 	  A4D, A70, A71, ABC ...
 
 	  This part of MS table is buggy: \u0592 should not be equal to \u09BC
-	  Harmless solution: We should not mix those code (make sequential).
+	  Harmless solution: We should not mix those code (make things
+	  sequential and include those charactors from minor cultures here).
 
 	4 (7) space separators and some kind of marks
 
@@ -257,7 +272,7 @@
 	  byte area MathSymbol: 2B,3C,3D,3E,AB,B1,BB,D7,F7 except for AC
 	  MathSymbol (2044, 208A, 208C, 207A, 207C)
 	  OtherLetter (1C0-1C2)
-	  2200-22FF MathSymbol except for 221E (INF.)
+	  2200-22FF MathSymbol except for 221E (INF. ; regarded as a number)
 
 	6 (9) Arrows and Box drawings
 	  09 02 .. 09 7C : 2300-237A
@@ -307,26 +322,60 @@
 
 	11 (22) japanese kana letters and symbols
 
+	  Kana codes that are equivalent in context of IgnoreKanaType are
+	  differentiated at level 4. And there are FF that represents
+
+	  something like a delimiter. For example:
+	  - Katakana normal A, Half Width (FF71) : FF 02 C4 FF C4 FF 01 00
+	  - Katakana normal A, Full Width (30A2) : FF C4 FF 01 00
+	  - Hiragana normal A, Full Width (3042) : FF FF 01 00
+
+	  There is also 32D0 (normal katakana A with circle) that have
+	  diacritic difference.
+
+	  For primary weights, 'A' to 'O' are mapped to 22-26, 'Ka' to 'Ko'
+	  are to 2A-2E, 'Sa' to 'So' are to 32-36 ... and follows.
+
+	  After Kana characters, there are CJK compat characters.
+	  From 22 97 01 01 01 01 00 (3349) to 22 A6 01 01 01 01 00 (333B) are
+	  sorted in JIS table order (CP932.TXT). Others are unknown, but I
+	  don't think the order really matters.
+
 	12 (23) bopomofo letters
 
 	13 (24) syriac/thaana letters
-	  710-72C exc. 711, 780-7A5
+	  710-72C exc. 711, 780-7A5.
 
 	14 (41-45) surrogate Pt.1
 
-	15 (52-7E) hangul, mixing combined ones
-	   52 02 .. 7E C8
+	15 (52 02-7E C8) hangul, mixing combined ones
 
-	16 (9E-FE) CJK (kangxi etc.), PrivateUse mixed, surrogate Pt.2
-	   9E 02 .. FE C1
+	  It starts from 1100. After width-insensitive equivalents, those
+	  syllables (from AC00) follow (until AE4B). It follows kinda based
+	  on some formula (sometimes it looks not e.g. 1117).
 
-	17 (FE) CJK extensions (3400-)
-	   FE FF 10 02 .. FE FF 29 E9
+	16 (9E 02-F1 E4) CJK (kangxi etc.)
 
-	18 (FF) Some supplemental Japanese/Arabic marks
+	   4E00-. Ordered, condidering case/width equivalents.
 
+	17 (E5 02-FE 33) PrivateUse.
+
+	   In fact it overlaps to CJK characters (maybe layout design failure).
+
+	18 (F2 01-F2 31) surrogate Pt.2
+
+	   In fact it overlaps to PrivateUse (maybe layout design failure).
+
+	19 (FE FF 10 02 - FE FF 29 E9) CJK extensions
+
+	   3400-4DB5. Ordered, considering case/width equivalents.
+
+	20 (FF FF 01 01 01 01 00) Some supplemental Japanese/Arabic marks
+
+	   3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE, FE7C, FE7D, FF70
 
 	- by UnicodeCategory -
+
 	DashPunctuation		1 1 1 1 (no exception)
 	DecimalDigitNumber	C (no exception)
 	EnclosingMark		1 E (no exception)
@@ -366,13 +415,37 @@
 	(To assure this section, run the simple dumper code shown above,
 	with all the supported cultures.)
 
+**** primary cultures and non-primary cultures
+
+	This code is used to iterate character dump through all cultures,
+	using sort key dumper put above.
+
+	public static void Main ()
+	{
+		foreach (CultureInfo ci in CultureInfo.GetCultures (
+			CultureTypes.AllCultures)) {
+			ProcessStartInfo psi = new ProcessStartInfo ();
+			psi.FileName = "../allsortkey.exe";
+			psi.Arguments = ci.Name;
+			psi.RedirectStandardOutput = true;
+			psi.UseShellExecute = false;
+			Process p = new Process ();
+			p.StartInfo = psi;
+			p.Start ();
+			string s = p.StandardOutput.ReadToEnd ();
+			StreamWriter sw = new StreamWriter (ci.Name + ".txt", false, Encoding.UTF8);
+			sw.Write (s);
+			sw.Close ();
+		}
+	}
+
 	For each sub culture (that has a parent culture), its collation
-	mapping is identical to that of its parent.
+	mapping is identical to that of its parent, except for az-AZ-Cyrl.
 
 	Additionally,
 
-	- zh-CHS = zh-CN = zh-SG = zh-MO
-	- zh-TW = zh-HK = zh-CHT
+	- zh-CHS = zh-CN = zh-SG = zh-MO : pronounciation
+	- zh-TW = zh-HK = zh-CHT : stroke count
 	- da = no
 	- fi = sv
 	- hr = sr
@@ -393,8 +466,17 @@
 
 **** CJK character order tailorings
 
+	<how many tables?>
+
 	There are five different CJK orderings:
 	default, ko(-KR), ja(-JP), zh-CHS and zh-TW
+	They have very different CJK mapping for each.
+
+	Since they are mostly computational differences, we are not likely to
+	extend those character weights into constant tables unless they are
+	required (actually for Japanese it is partly required).
+
+	<what characters are variable?>
 
 	ko : CJK layout difference (52 -> 80)
 	ja,zh-CHS,zh-TW : dash (5C), CJK layout difference.
@@ -405,8 +487,14 @@
 
 	Additionally for Korean: Jamo (1100-), Hangle syllables (AC00)
 
-	Since they are mostly computational differences, we are not likely to
-	extend those character weights into constant tables.
+	<how do they constitute?>
+
+	Japanese CJK order looks based on JIS table order. Those characters
+	which are also in JIS table are moved to 80 xx. Those which are *not*
+	in JIS table are left as is (9E-FE).
+
+	Korean CJK order looks similar that respects KS C 5619. I guess
+	zh-CHS (GB2312) and zh-TW (CCCII) as well, but need more research.
 
 **** Accent evaluation order
 
@@ -444,15 +532,32 @@
 	They could be implemented as an internal virtual method of CompareInfo.
 
 	This resolves combined characters and expanded characters, including
-	French accent orderings.
+	French accent orderings. The iteration logic will be, however, only
+	one, and it will use culture-dependent character combination/expansion
+	tables.
 
 *** sort key element table
 
-	We will contain our own collation element table which is closer
-	to the one from Windows than UCA default element table.
+	We will contain *our own* collation element table which is closer
+	to the one from Windows than UCA default element table, but should
+	fix their bugs such as ignoring minor culture. We might provide
+	"discriminatory mode" that behaves closer to Windows (that ignores
+	some minor cultures).
 
-	Culture-dependent rules are always "evaluated"; no physical expansion
-	is done to the table loaded in memory (it's waste of memory).
+	Currently I plan not to contain following characters in the table
+	but compute on demand:
+
+	- PrivateUse
+	- Surrogate
+	- CJK unified, except for those which have equivalents
+	- Hangul Syllables
+
+	It will significantly save memory size.
+
+	Culture-dependent rules are always "evaluated", except for radical
+	character mapping differences (i.e. ja, kr, zh-*). Other than that,
+	no physical expansion is done to the table loaded in memory.
+	(It's waste of memory.)
 
 
 ** Reference materials

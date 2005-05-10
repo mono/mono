@@ -1,3 +1,8 @@
+2005-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more updates, being close to write sortkey
+	  generator code.
+
 2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoImpl.cs, Collator.cs : conceptual update
