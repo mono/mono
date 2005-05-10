@@ -123,7 +123,8 @@ namespace Mono.Languages {
 			RootContext.MainClass = MainClassName;
 			RootContext.StdLib = !NoStandardLibraries;
 			RootContext.Unsafe = AllowUnsafeCode;
-			RootContext.RootNamespace = RootNamespace;
+			if (RootNamespace != null)
+				RootContext.RootNamespace = RootNamespace;
 			
 			// TODO: semantics are different and should be adjusted
 			GenericParser.yacc_verbose_flag = Verbose ? 1 : 0;
