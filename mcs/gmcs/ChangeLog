@@ -78,6 +78,14 @@
 	(Foreach.EmitArrayForeach): Removed; this is now in the new
 	ArrayForeach class.
 
+2005-05-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74773.
+	* pending.cs (VerifyPendingMethods): If a base type implements the
+	requested interface, don't bother checking individual methods of
+	the base type.  As a side-effect, this prevents the creation of
+	unnecessary proxies.
+
 2005-05-02  Martin Baulig  <martin@ximian.com>
 
 	Fix #70182.
