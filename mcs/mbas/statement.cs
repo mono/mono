@@ -3452,7 +3452,7 @@ namespace Mono.MonoBASIC {
 
 	public class StatementSequence : Expression {
 		Block stmtBlock;
-		ArrayList args;
+		ArrayList args, originalArgs;
 		Expression expr;
 		bool isRetValRequired;
 		bool isLeftHandSide;
@@ -3473,6 +3473,14 @@ namespace Mono.MonoBASIC {
 		{
 			stmtBlock = new Block (parent);
 			args = a;
+			originalArgs = new ArrayList ();
+			if (args != null) {
+				for (int index = 0; index < a.Count; index ++) {
+					Argument argument = (Argument) args [index];
+					originalArgs.Add (new Argument (argument.Expr, argument.ArgType));
+				}
+			}
+
 			this.expr = expr;
 			stmtBlock.IsLateBindingRequired = true;
 			this.loc = loc;
@@ -3509,22 +3517,34 @@ namespace Mono.MonoBASIC {
 			return this;
 		}
 
+		public bool ResolveArguments (EmitContext ec) {
+		
+			if (Arguments != null)
+			{
+				for (int index = 0; index < Arguments.Count; index ++)
+				{
+					Argument a = (Argument) Arguments [index];
+					if (a.ArgType == Argument.AType.NoArg)
+						a = new Argument (Parser.DecomposeQI ("System.Reflection.Missing.Value", loc), Argument.AType.Expression);
+					if (!a.Resolve (ec, loc))
+						return false;				
+					Arguments [index] = a;
+				}
+			}
+			return true;
+		}
+			
 		public void GenerateLateBindingStatements ()
 		{
 			int argCount = 0;
 			ArrayList arrayInitializers = new ArrayList ();
-			ArrayList originalArgs = new ArrayList ();
 			if (args != null) {
 				//arrayInitializers = new ArrayList ();
 				argCount = args.Count;
 				for (int index = 0; index < args.Count; index ++) {
 					Argument a = (Argument) args [index];
 					Expression argument = a.Expr;
-					if (a.ArgType == Argument.AType.NoArg) {
-						argument = Parser.DecomposeQI ("System.Reflection.Missing.Value", loc);
-					}
 					arrayInitializers.Add (argument);
-					originalArgs.Add (argument);
 				}
 			}
 
@@ -3575,7 +3595,9 @@ namespace Mono.MonoBASIC {
 			bool isCopyBackRequired = false;
 			if (!isLeftHandSide) {
 				for (int i = 0; i < argCount; i++) {
-					if (!(((Argument)args[i]).Expr is Constant)) 
+					Argument origArg = (Argument) originalArgs [i];
+					Expression origExpr = origArg.Expr; 
+					if (!(origExpr is Constant || origArg.ArgType == Argument.AType.NoArg)) 
 						isCopyBackRequired = true;
 				}
 			}
@@ -3586,8 +3608,9 @@ namespace Mono.MonoBASIC {
 				rank_specifier.Add (new IntLiteral (argCount));
 				arrayInitializers = new ArrayList ();
 				for (int i = 0; i < argCount; i++) {
-					Argument a = (Argument) args [i];
-					if (a.Expr is Constant || a.ArgType == Argument.AType.NoArg)
+					Argument a = (Argument) originalArgs [i];
+					Expression origExpr = a.Expr;
+					if (origExpr is Constant || a.ArgType == Argument.AType.NoArg)
 						arrayInitializers.Add (new BoolLiteral (false));
 					else 
 						arrayInitializers.Add (new BoolLiteral (true));
@@ -3617,18 +3640,19 @@ namespace Mono.MonoBASIC {
 			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) inv_stmt, loc));
 
 			for (int i = 0; i< argCount; i ++) {
-				Expression thisArg = (Expression) originalArgs [i];
-				if (((Argument) args [i]).ArgType == Argument.AType.NoArg)
+				Argument arg = (Argument) originalArgs [i];
+				Expression origExpr = (Expression) arg.Expr;
+				if (arg.ArgType == Argument.AType.NoArg)
 					continue;
-				if (thisArg is Constant)
+				if (origExpr is Constant)
 					continue;
+
 				Expression intExpr = new IntLiteral (i);
 				ArrayList argsLocal = new ArrayList ();
 				argsLocal.Add (new Argument (intExpr, Argument.AType.Expression));
 				Expression indexExpr = new Invocation (new SimpleName (Block.lateBindingCopyBack, loc), argsLocal, loc);
-				Expression varRef = (Expression) (originalArgs [i]);
 				Expression value = new Invocation (new SimpleName (Block.lateBindingArgs, loc), argsLocal, loc);
-				assign_stmt = new Assign (varRef, value,  loc);
+				assign_stmt = new Assign (origExpr, value,  loc);
 				Expression boolExpr = new Binary (Binary.Operator.Inequality, indexExpr, new BoolLiteral (false), loc);
 				Statement ifStmt = new If (boolExpr, new StatementExpression ((ExpressionStatement) assign_stmt, loc), loc);
 				stmtBlock.AddStatement (ifStmt);

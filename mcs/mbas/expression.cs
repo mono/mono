@@ -4367,12 +4367,15 @@ namespace Mono.MonoBASIC {
 			if (temp == null) {
 				if (is_left_hand)
 					return null;
+			
 				if (expr is MemberAccess) {
 					MemberAccess m = expr as MemberAccess;
 					if (m.Expr.Type == TypeManager.object_type) {
 						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, 
 										loc, expr, Arguments, 
 										is_retval_required, is_left_hand);
+						if (!etmp.ResolveArguments (ec))
+							return null;
 						etmp.GenerateLateBindingStatements();
 						this.is_latebinding = true;
 						return etmp.Resolve (ec);
@@ -4529,6 +4532,8 @@ namespace Mono.MonoBASIC {
 						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, 
 									loc, ia, Arguments, 
 									true, false);
+						if (!etmp.ResolveArguments (ec))
+							return null;
 						etmp.GenerateLateBindingStatements();
 						return etmp.Resolve (ec);
 					}

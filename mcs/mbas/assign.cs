@@ -296,6 +296,8 @@ namespace Mono.MonoBASIC {
 				if (exprType == TypeManager.object_type) {
 					StatementSequence tmp = new StatementSequence (ec.CurrentBlock, loc, lateBindingExpr, 
 										arguments, false, true);
+					if (!tmp.ResolveArguments (ec))
+						return null;
 					tmp.GenerateLateBindingStatements ();
 					return tmp.Resolve (ec);
 				}
