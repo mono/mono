@@ -302,6 +302,8 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+			
+			base.OnClick (e);
 		}
 
 		protected override void OnHandleCreated(EventArgs e) {

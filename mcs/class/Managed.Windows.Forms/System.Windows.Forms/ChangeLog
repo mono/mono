@@ -1,3 +1,7 @@
+2005-05-10  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* CheckBox.cs: call base method to allow to fire OnClick event
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XplatUI.cs: Use PlatformID.Unix under NET_2_0. 
