@@ -410,15 +410,14 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
+			base.OnMouseWheel (e);
+			
 			if (!Enabled) return;
     			
 			if (e.Delta > 0)
 				SmallDecrement ();
 			else
-				SmallIncrement ();
-
-			base.OnMouseWheel (e);
-    					
+				SmallIncrement ();    					
 		}
 
 		protected virtual void OnScroll (EventArgs e) 

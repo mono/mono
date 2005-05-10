@@ -116,6 +116,8 @@ namespace System.Windows.Forms {
 
 			protected override void OnMouseUp (MouseEventArgs args)
 			{
+				base.OnMouseUp (args);
+				
 				if (Capture){
 					if (up_pressed){
 						up_pressed = false;

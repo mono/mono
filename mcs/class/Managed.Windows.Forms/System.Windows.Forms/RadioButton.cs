@@ -289,6 +289,8 @@ namespace System.Windows.Forms {
 			} else {
 				Checked = !Checked;
 			}
+			
+			base.OnClick (e);
 		}
 
 		protected override void OnEnter(EventArgs e) {

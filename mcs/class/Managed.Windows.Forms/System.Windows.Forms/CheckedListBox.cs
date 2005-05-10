@@ -316,6 +316,8 @@ namespace System.Windows.Forms
 
 		internal override void OnMouseDownLB (object sender, MouseEventArgs e)
 		{
+			base.OnMouseDownLB (sender, e);
+			
 			Rectangle hit_rect, item_rect;
 			CheckState value =  CheckState.Checked;
 			bool set_value = false;
@@ -349,7 +351,6 @@ namespace System.Windows.Forms
 			if (set_value)
 				SetItemCheckState (index, value);
 			
-			base.OnMouseDownLB (sender, e);
 		}
 
 		internal override void UpdateItemInfo (UpdateOperation operation, int first, int last)
