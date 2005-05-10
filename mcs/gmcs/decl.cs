@@ -908,7 +908,13 @@ namespace Mono.CSharp {
 			if (tb == declaring || TypeManager.IsFamilyAccessible (tb, declaring))
 				return true;
 
-			return NestedAccessible (tb, check_type);
+			if (NestedAccessible (tb, check_type))
+				return true;
+
+			if (Parent == null || Parent == RootContext.Tree.Types)
+				return false;
+
+			return Parent.FamilyAccessible (tb, check_type);
 		}
 
 		// Access level of a type.

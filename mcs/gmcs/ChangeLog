@@ -54,6 +54,11 @@
 
 2005-05-05  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #74797.
+	* decl.cs (DeclSpace.FamilyAccessible): Delegate accessibility
+	check to surrounding class.  A nested class can access everything
+	accessible by its surrounding class.
+
 	Fix reopened #64812.
 	* typemanager.cs (Closure.Filter): Introduce checks for 'protected
 	internal'.
