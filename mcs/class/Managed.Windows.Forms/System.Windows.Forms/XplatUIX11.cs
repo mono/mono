@@ -2589,7 +2589,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
-			bool	 pending;
+			bool	pending;
 
 			// FIXME - imlement filtering
 
@@ -2608,6 +2608,9 @@ namespace System.Windows.Forms {
 					pending = true;
 				}
 			}
+
+			CheckTimers(DateTime.Now);
+
 			if (!pending) {
 				return false;
 			}

@@ -1,5 +1,10 @@
 2005-05-10  Peter Bartok  <pbartok@novell.com>
 
+	* XplatUIX11.cs: Fix for #74902, check pending timers when peeking
+	  for messages
+
+2005-05-10  Peter Bartok  <pbartok@novell.com>
+
 	* DataFormats.cs: Implemented
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, 
 	  XplatUIX11.cs: Added Clipboard APIs
