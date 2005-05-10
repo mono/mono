@@ -2672,7 +2672,6 @@ public partial class TypeManager {
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
-
 				if (is_static ||
 				    qualifier_type == null ||
 				    IsEqualGenericInstance (invocation_type, qualifier_type) ||

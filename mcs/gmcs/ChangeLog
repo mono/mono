@@ -52,6 +52,12 @@
 	(Attributable.IsClsComplianceRequired): Fix typo in the method name.
 	(AttributeTester.AnalyzeTypeCompliance): Add generics support.
 
+2005-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	Fix reopened #64812.
+	* typemanager.cs (Closure.Filter): Introduce checks for 'protected
+	internal'.
+
 2005-05-04  Raja R Harinath  <rharinath@novell.com>
 	    Abin Thomas  <projectmonokochi@rediffmail.com>
 	    Anoob V E  <projectmonokochi@rediffmail.com>
