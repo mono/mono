@@ -4907,9 +4907,7 @@ namespace Mono.CSharp {
 				// We avoid doing the 'applicable' test here, since it'll anyway be applied
 				// to the base virtual function, and IsOverride is much faster than IsApplicable.
 				//
-				if (!me.IsBase &&
-				    methods [i].IsVirtual &&
-				    (methods [i].Attributes & MethodAttributes.NewSlot) == 0) {
+				if (!me.IsBase && TypeManager.IsOverride (methods [i])) {
 					if (candidate_overrides == null)
 						candidate_overrides = new ArrayList ();
 					candidate_overrides.Add (methods [i]);
@@ -5105,10 +5103,10 @@ namespace Mono.CSharp {
 			// If the method is a virtual function, pick an override closer to the LHS type.
 			//
 			if (!me.IsBase && method.IsVirtual) {
-				if ((method.Attributes & MethodAttributes.NewSlot) != MethodAttributes.NewSlot)
+				if (TypeManager.IsOverride (method))
 					throw new InternalErrorException (
 						"Should not happen.  An 'override' method took part in overload resolution: " + method);
-								    
+
 				if (candidate_overrides != null)
 					foreach (MethodBase candidate in candidate_overrides) {
 						if (IsOverride (candidate, method))

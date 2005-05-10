@@ -1728,15 +1728,6 @@ namespace Mono.CSharp {
 
 		void AddMethods (BindingFlags bf, Type type)
 		{
-			//
-			// Consider the case:
-			//
-			//   class X { public virtual int f() {} }
-			//   class Y : X {}
-			// 
-			// When processing 'Y', the method_cache will already have a copy of 'f', 
-			// with ReflectedType == X.  However, we want to ensure that its ReflectedType == Y
-			// 
 			MethodBase [] members = type.GetMethods (bf);
 
 			Array.Reverse (members);
@@ -1756,23 +1747,8 @@ namespace Mono.CSharp {
 					MethodInfo base_method = curr.GetBaseDefinition ();
 
 					if (base_method == curr) {
-						//
-						// Both mcs and CSC 1.1 seem to emit a somewhat broken
-						// ...Invoke () function for delegates: it's missing a 'newslot'.
-						// CSC 2.0 emits a 'newslot' for a delegate's Invoke.
-						//
-						// Also, CSC 1.1 appears to emit 'Finalize' without a newslot.
-						//
-						if ((curr.Name == "Invoke" && TypeManager.IsDelegateType (curr.DeclaringType)) ||
-						    (curr.Name == "Finalize" && curr.GetParameters().Length == 0 && curr.DeclaringType == TypeManager.object_type))
-							break;
-
-						Report.SymbolRelatedToPreviousError (base_method);
-						Report.Warning (-28, 
-								"The method '{0}' is marked 'override'," + 
-								" but doesn't appear to override any virtual or abstract method:" + 
-								" it may be ignored during overload resolution",
-								TypeManager.CSharpSignature (base_method));
+						// Not every virtual function needs to have a NewSlot flag.
+						TypeManager.RegisterNonOverride (base_method);
 						break;
 					}
 					
