@@ -1,5 +1,11 @@
 2005-05-10  Martin Baulig  <martin@ximian.com>
 
+	* support.cs (ReflectionParameters.ParameterModifier): Use
+	`Parameter.Modifier.REF' if we both have `ParameterAttributes.Out'
+	and `ParameterAttributes.In'.  Fixes #74884.
+
+2005-05-10  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.MemberLookup_FindMembers): Don't use
 	the cache if we're just looking for `MemberTypes.NestedType' in a
 	generic instance.
