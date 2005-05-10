@@ -1974,6 +1974,7 @@ namespace Mono.CSharp {
 	public class SimpleName : Expression {
 		public string Name;
 		public readonly TypeArguments Arguments;
+		bool in_transit;
 
 		public SimpleName (string name, Location l)
 		{
@@ -2145,6 +2146,10 @@ namespace Mono.CSharp {
 
 		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool intermediate)
 		{
+			if (in_transit)
+				return null;
+			in_transit = true;
+
 			Expression e = DoSimpleNameResolve (ec, right_side, intermediate);
 			if (e == null)
 				return null;

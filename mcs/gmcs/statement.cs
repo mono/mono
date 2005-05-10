@@ -1826,14 +1826,11 @@ namespace Mono.CSharp {
 
 					ec.CurrentBlock = this;
 					Expression e = cv.Resolve (ec);
-					if (e == null)
-						continue;
 
 					Constant ce = e as Constant;
 					if (ce == null){
 						Report.Error (133, vi.Location,
-							      "The expression being assigned to `" +
-							      name + "' must be constant (" + e + ")");
+							      "The expression being assigned to '{0}' must be constant", name);
 						continue;
 					}
 
