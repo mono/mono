@@ -4956,7 +4956,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
 			return new EmitContext (Parent, Location, ig_, null, ModFlags, true);
-			}
+		}
 
 		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
