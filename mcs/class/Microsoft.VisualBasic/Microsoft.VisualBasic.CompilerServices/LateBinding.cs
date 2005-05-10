@@ -85,8 +85,12 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			MemberInfo mi = GetMostDerivedMemberInfo (memberinfo);
 			if (mi.MemberType == MemberTypes.Field) {
 				FieldInfo fi = (FieldInfo) mi;
-				return fi.GetValue (o);
+				object ret = fi.GetValue (o);
+				if (args != null && args.Length > 0) 
+					return LateIndexGet (ret, args, paramnames);
+				return ret;
 			}
+
 			VBBinder binder = new VBBinder (CopyBack);
 			return binder.InvokeMember (name, flags, objType, objReflect, o, args, null, null, paramnames);
 		}

@@ -1,3 +1,7 @@
+2005-05-10  Satya Sudha K <ksathyasudha@novell.com>
+	* LateBinding.cs (LateGet) : 
+		Calling 'LateIndexGet' if the member resolves to a field, but arguments are not null
+
 2005-05-09  Satya Sudha K <ksathyasudha@novell.com>
 	* VBBinder.cs : Support for optional arguments in LateBinding
 
