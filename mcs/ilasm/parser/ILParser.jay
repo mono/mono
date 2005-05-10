@@ -721,8 +721,7 @@ type			: K_CLASS class_ref
 			| K_VALUETYPE OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
                                 ExternTypeRef ext_ref = codegen.ExternTable.GetTypeRef ((string) $3, (string) $5, true);
-                                ExternTypeRefInst inst = new ExternTypeRefInst (ext_ref, true);
-                                $$ = inst;
+                                $$ = ext_ref;
                           }
                         | K_VALUETYPE slashed_name
                           {

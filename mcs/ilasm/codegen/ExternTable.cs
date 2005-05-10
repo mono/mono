@@ -42,8 +42,11 @@ namespace Mono.ILASM {
                 {
                         ExternTypeRef type_ref = typeref_table [full_name] as ExternTypeRef;
                         
-                        if (type_ref != null)
+                        if (type_ref != null) {
+                                if (is_valuetype)
+                                        type_ref.MakeValueClass ();
                                 return type_ref;
+                        }        
                         
                         type_ref = new ExternTypeRef (this, full_name, is_valuetype, table);
                         typeref_table [full_name] = type_ref;

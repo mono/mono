@@ -1,3 +1,10 @@
+2005-05-10  Ankit Jain  <ankit@corewars.org>
+
+	Fix #74768.
+	* ILParser.jay (type): Emit TypeRefs instead of TypeSpecs for valuetypes,
+	so don't create ExternTypeRefInst.
+	Hack along with Hari.
+
 2005-04-30  Ankit Jain  <ankit@corewars.org>
 
 	* ILParser.jay (event_decl): Add custom attribute.

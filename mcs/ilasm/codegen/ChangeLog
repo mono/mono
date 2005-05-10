@@ -1,3 +1,9 @@
+2005-05-10  Ankit Jain  <ankit@corewars.org>
+
+	Fix #74768.
+	* ExternTable.cs (ExternRef.GetTypeRef): Make ValueClass if requested.
+	Hack alongwith Hari.
+
 2005-05-06  Ankit Jain  <ankit@corewars.org>
 
 	* MethodDef.cs (MethodDef.GetNamedParamPos): Param num starts from 1 for instance
