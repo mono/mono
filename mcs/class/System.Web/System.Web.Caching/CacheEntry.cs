@@ -36,8 +36,8 @@ namespace System.Web.Caching {
 	/// </summary>
 	internal class CacheEntry {
 		internal enum Flags {
-			Removed	= 0,
-			Public	= 1
+			Removed	= 1,
+			Public	= 2
 		}
 
 		private CacheItemPriority		_enumPriority;

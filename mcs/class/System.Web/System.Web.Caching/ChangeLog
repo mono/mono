@@ -1,3 +1,9 @@
+2005-05-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CacheEntry.cs: credits for this patch should go to mcs. it catched
+	that the code after 'if ((_enumFlags & Flags.Removed) != 0)' was
+	unreachable.
+
 2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ExpiresBuckets.cs:
