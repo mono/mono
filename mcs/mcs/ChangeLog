@@ -1,3 +1,9 @@
+2005-05-10  Martin Baulig  <martin@ximian.com>
+
+	* support.cs (ReflectionParameters.ParameterModifier): Use
+	`Parameter.Modifier.REF' if we both have `ParameterAttributes.Out'
+	and `ParameterAttributes.In'.  Fixes #74884.
+
 2005-05-10  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (Method.Define): Catch attempt for Finalizer declaration.
