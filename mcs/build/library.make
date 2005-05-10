@@ -225,7 +225,7 @@ ifdef LIBRARY_NEEDS_POSTPROCESSING
 dist-local: dist-fixup
 FIXUP_PROFILES = default net_2_0
 dist-fixup:
-	$(MKINSTALLDIRS) $(distdir)/fixup $(FIXUP_PROFILES:=%=$(distdir)/fixup/%)
+	$(MKINSTALLDIRS) $(distdir)/fixup $(FIXUP_PROFILES:%=$(distdir)/fixup/%)
 endif
 
 ifndef LIBRARY_COMPILE

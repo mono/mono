@@ -1,3 +1,7 @@
+2005-05-10  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (dist-fixup): Fix typo.
+
 2005-05-06  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (LIBRARY_NEEDS_PREPROCESSING): New control.
