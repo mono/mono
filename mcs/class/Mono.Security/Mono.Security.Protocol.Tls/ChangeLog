@@ -1,3 +1,8 @@
+2005-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SslClientStream.cs: check for the dispose in NetworkReadCallback.
+	Patch by Sebastien "Cryptoman" Pouliot.
+
 2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SslClientStream.cs: gotta call EndInvoke, not EndRead.

@@ -510,6 +510,9 @@ namespace Mono.Security.Protocol.Tls
 		// record and return are the records (may be more than one) we have
 		private void NetworkReadCallback (IAsyncResult result)
 		{
+			if (this.disposed)
+				return;
+
 			byte[] recbuf = (byte[])result.AsyncState;
 			int n = innerStream.EndRead (result);
 			if (n > 0)
