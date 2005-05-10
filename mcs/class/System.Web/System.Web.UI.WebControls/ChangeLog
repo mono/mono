@@ -1,3 +1,9 @@
+2005-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: cleanup in AutoCreateColumns. Don't throw at the end of
+	the method if the data source was en empty IEnumerator. Fixes
+	bug #74804.
+
 2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TreeNode.cs:

@@ -1501,92 +1501,90 @@ namespace System.Web.UI.WebControls
 		/// This method is called by CreateColumnSet when dataSource
 		/// is to be used and columns need to be generated automatically.
 		/// </summary>
-		private ArrayList AutoCreateColumns(PagedDataSource source)
+		private ArrayList AutoCreateColumns (PagedDataSource source)
 		{
-			if(source != null)
-			{
-				ArrayList retVal = new ArrayList();
-				PropertyDescriptorCollection props = source.GetItemProperties(new PropertyDescriptor[0]);
-				Type      prop_type;
-				BoundColumn b_col;
-				if(props == null)
-				{
-					object fitem = null;
-					prop_type   = null;
-					PropertyInfo prop_item =  source.DataSource.GetType().GetProperty("Item",
-					          BindingFlags.Instance | BindingFlags.Static |
-					          BindingFlags.Public, null, null,
-					          new Type[] { typeof(int) }, null);
-					
-					if(prop_item != null)
-					{
-						prop_type = prop_item.PropertyType;
+			if (source == null)
+				return null;
+
+			ArrayList retVal = null;
+			PropertyDescriptorCollection props = source.GetItemProperties (new PropertyDescriptor [0]);
+			bool empty_enumerator = false;
+			Type prop_type;
+			BoundColumn col;
+
+			if (props == null) {
+				object fitem = null;
+				prop_type   = null;
+				PropertyInfo prop_item =  source.DataSource.GetType ().GetProperty ("Item",
+					  BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public,
+					  null, null, new Type[] { typeof(int) }, null);
+				
+				if (prop_item != null)
+					prop_type = prop_item.PropertyType;
+
+				if (prop_type == null || prop_type == typeof (object)) {
+					IEnumerator en = source.GetEnumerator();
+					if (en.MoveNext ()) {
+						fitem = en.Current;
+						if (fitem != null)
+							prop_type = fitem.GetType ();
+					} else {
+						empty_enumerator = true;
 					}
-					if(prop_type == null || prop_type == typeof(object))
-					{
-						
-						IEnumerator en = source.GetEnumerator();
-						if(en.MoveNext())
-							fitem = en.Current;
-						if(fitem != null)
-						{
-							prop_type = fitem.GetType();
-						}
-						StoreEnumerator(en, fitem);
-					}
-					
-					if(fitem != null && fitem is ICustomTypeDescriptor)
-					{
-						props = TypeDescriptor.GetProperties(fitem);
-					} else if(prop_type != null) {
-						if(IsBindableType(prop_type))
-						{
-							b_col = new BoundColumn();
-							((IStateManager)b_col).TrackViewState();
-							b_col.HeaderText = "Item";
-							b_col.SortExpression = "Item";
-							b_col.DataField  = BoundColumn.thisExpr;
-							b_col.SetOwner(this);
-							retVal.Add(b_col);
-						} else
-						{
-							props = TypeDescriptor.GetProperties(prop_type);
-						}
-					}
-					
+
+					StoreEnumerator (en, fitem);
 				}
-				if(props != null && props.Count > 0)
-				{
-					//IEnumerable p_en = props.GetEnumerator();
-					try
-					{
-						foreach(PropertyDescriptor current in props)
-						{
-							if(IsBindableType(current.PropertyType))
-							{
-								b_col = new BoundColumn();
-								((IStateManager)b_col).TrackViewState();
-								b_col.HeaderText     = current.Name;
-								b_col.SortExpression = current.Name;
-								b_col.DataField      = current.Name;
-								b_col.ReadOnly     = current.IsReadOnly;
-								b_col.SetOwner(this);
-								retVal.Add(b_col);
-							}
-						}
-					} finally
-					{
-						if(props is IDisposable)
-							((IDisposable)props).Dispose();
+				
+				if (fitem is ICustomTypeDescriptor) {
+					props = TypeDescriptor.GetProperties (fitem);
+				} else if (prop_type != null) {
+					if (IsBindableType  (prop_type)) {
+						col = new BoundColumn ();
+						((IStateManager) col).TrackViewState ();
+						col.HeaderText = "Item";
+						col.SortExpression = "Item";
+						col.DataField  = BoundColumn.thisExpr;
+						col.SetOwner (this);
+						if (retVal == null)
+							retVal = new ArrayList ();
+						retVal.Add (col);
+					} else {
+						props = TypeDescriptor.GetProperties (prop_type);
 					}
 				}
-				if(retVal.Count > 0)
-				{
-					return retVal;
-				}
-				throw new HttpException(HttpRuntime.FormatResourceString("DataGrid_NoAutoGenColumns", ID));
 			}
-			return null;
+
+			if (props != null && props.Count > 0) {
+				try {
+					foreach (PropertyDescriptor current in props) {
+						if (!IsBindableType (current.PropertyType))
+							continue;
+
+						col = new BoundColumn ();
+						((IStateManager) col).TrackViewState ();
+						string name = current.Name;
+						col.HeaderText = name;
+						col.SortExpression = name;
+						col.DataField = name;
+						col.ReadOnly = current.IsReadOnly;
+						col.SetOwner (this);
+						if (retVal == null)
+							retVal = new ArrayList ();
+						retVal.Add (col);
+					}
+				} finally {
+					if (props is IDisposable)
+						((IDisposable) props).Dispose ();
+				}
+			}
+
+			if (retVal != null && retVal.Count > 0)
+				return retVal;
+
+			if (empty_enumerator)
+				return null;
+
+			throw new HttpException (HttpRuntime.FormatResourceString ("DataGrid_NoAutoGenColumns", ID));
 		}
 
 		internal void StoreEnumerator(IEnumerator source, object firstItem)
