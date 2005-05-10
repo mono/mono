@@ -199,9 +199,16 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				int errors = Report.Errors;
 				FullNamedExpression fn = ((Expression) obj).ResolveAsTypeStep (ec);
-				if (fn == null)
+
+				if (fn == null) {
+					if (errors != Report.Errors)
+						return false;
+
+					Report.Error (246, loc, "Cannot find type '{0}'", obj);
 					return false;
+				}
 
 				TypeExpr expr;
 				ConstructedType cexpr = fn as ConstructedType;
@@ -1503,7 +1510,6 @@ namespace Mono.CSharp {
 	public class DefaultValueExpression : Expression
 	{
 		Expression expr;
-		LocalTemporary temp_storage;
 
 		public DefaultValueExpression (Expression expr, Location loc)
 		{
@@ -1518,8 +1524,6 @@ namespace Mono.CSharp {
 				return null;
 
 			type = texpr.Type;
-			if (type.IsGenericParameter || TypeManager.IsValueType (type))
-				temp_storage = new LocalTemporary (ec, type);
 
 			eclass = ExprClass.Variable;
 			return this;
@@ -1527,7 +1531,9 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (temp_storage != null) {
+			if (type.IsGenericParameter || TypeManager.IsValueType (type)) {
+				LocalTemporary temp_storage = new LocalTemporary (ec, type);
+
 				temp_storage.AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.Emit (OpCodes.Initobj, type);
 				temp_storage.Emit (ec);

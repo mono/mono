@@ -1,5 +1,12 @@
 2005-05-10  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (Constraints.Resolve): Report CS0246 if we cannot
+	resolve the type; fixes #74864.
+	(DefaultValueExpression): Create the LocalTemporary in Emit(), not
+	in DoResolve(); fixes #74862.
+
+2005-05-10  Martin Baulig  <martin@ximian.com>
+
 	* support.cs (ReflectionParameters.ParameterModifier): Use
 	`Parameter.Modifier.REF' if we both have `ParameterAttributes.Out'
 	and `ParameterAttributes.In'.  Fixes #74884.
