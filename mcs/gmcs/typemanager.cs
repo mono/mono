@@ -1520,7 +1520,7 @@ public partial class TypeManager {
 	///   to check base classes and interfaces anymore.
 	/// </summary>
 	private static MemberInfo [] MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							    string name, out bool used_cache)
+							       string name, out bool used_cache)
 	{
 		MemberCache cache;
 
@@ -1575,6 +1575,18 @@ public partial class TypeManager {
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
 			return (MemberInfo []) list;
+		}
+
+		if (t.IsGenericInstance && (mt == MemberTypes.NestedType)) {
+			//
+			// This happens if we're resolving a class'es base class and interfaces
+			// in TypeContainer.DefineType().  At this time, the types aren't
+			// populated yet, so we can't use the cache.
+			//
+			MemberInfo[] info = t.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+							   FilterWithClosure_delegate, name);
+			used_cache = false;
+			return info;
 		}
 
 		//

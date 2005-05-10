@@ -1,3 +1,29 @@
+2005-05-10  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.MemberLookup_FindMembers): Don't use
+	the cache if we're just looking for `MemberTypes.NestedType' in a
+	generic instance.
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Don't check the
+	constraints if we're still resolving the type tree.
+	(Expression.MemberLookup): If we're resolving the type tree, only
+	look for `MemberTypes.NestedType' since we're only interested in
+	getting types.
+
+	* class.cs (TypeContainer.DefineType): Don't resolve the type
+	parameters here; do this later in ResolveType() after the type
+	tree has been resolved.
+	(TypeContainer.ResolveType): New public method; this is called
+	after the type tree is resolved and before the types are being
+	populated.  We resolve the generic constraints here.
+	(TypeContainer.DoDefineMember): Check the constraints on our base
+	class and interfaces.
+
+	* decl.cs (DeclSpace.ResolveBaseTypeExpr): Make this protected;
+	set the `ResolvingTypeTree' flag on the EmitContext.
+
+	* codegen.cs (EmitContext.ResolvingTypeTree): New public field.
+
 2005-05-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* typemanager.cs (TypeManager): Moved InitGenerics to Reset method.

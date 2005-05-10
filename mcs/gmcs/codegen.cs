@@ -312,6 +312,11 @@ namespace Mono.CSharp {
 		public bool IsFieldInitializer;
 
 		/// <summary>
+		///   We are resolving a class'es base class and interfaces.
+		/// </summary>
+		public bool ResolvingTypeTree;
+
+		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>

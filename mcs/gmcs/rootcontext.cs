@@ -523,6 +523,8 @@ namespace Mono.CSharp {
 			TypeContainer root = Tree.Types;
 
 			if (type_container_resolve_order != null){
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.ResolveType ();
 				if (RootContext.StdLib){
 					foreach (TypeContainer tc in type_container_resolve_order)
 						tc.DefineMembers (root);

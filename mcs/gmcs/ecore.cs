@@ -289,7 +289,7 @@ namespace Mono.CSharp {
 			}
 
 			ConstructedType ct = te as ConstructedType;
-			if ((ct != null) && !ct.CheckConstraints (ec))
+			if ((ct != null) && !ec.ResolvingTypeTree && !ct.CheckConstraints (ec))
 				return null;
 
 			return te;
@@ -580,7 +580,7 @@ namespace Mono.CSharp {
 			almostMatchedMembers.Clear ();
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
-				container_type, qualifier_type,queried_type, mt, bf, name,
+				container_type, qualifier_type, queried_type, mt, bf, name,
 				almostMatchedMembers);
 
 			if (mi == null)
@@ -620,8 +620,14 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type qualifier_type,
 						       Type queried_type, string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
-					     name, AllMemberTypes, AllBindingFlags, loc);
+			if (ec.ResolvingTypeTree)
+				return MemberLookup (ec, ec.ContainerType, qualifier_type,
+						     queried_type, name, MemberTypes.NestedType,
+						     AllBindingFlags, loc);
+			else
+				return MemberLookup (ec, ec.ContainerType, qualifier_type,
+						     queried_type, name, AllMemberTypes,
+						     AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type queried_type,

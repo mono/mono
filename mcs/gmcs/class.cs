@@ -453,6 +453,7 @@ namespace Mono.CSharp {
 		//
 		string base_class_name;
 		TypeExpr base_type;
+		TypeExpr[] iface_exprs;
 
 		ArrayList type_bases;
 
@@ -470,6 +471,7 @@ namespace Mono.CSharp {
 		public const string DefaultIndexerName = "Item";
 
 		Type GenericType;
+		GenericTypeParameterBuilder[] gen_params;
 
 		// This is used to catch recursive definitions in declarations.
 		protected bool InTransit;
@@ -1246,51 +1248,19 @@ namespace Mono.CSharp {
 				ec.ContainerType = TypeBuilder;
 			}
 
-			Expression current_type = null;
-
 			if (IsGeneric) {
 				string[] param_names = new string [TypeParameters.Length];
 				for (int i = 0; i < TypeParameters.Length; i++)
 					param_names [i] = TypeParameters [i].Name;
 
-				GenericTypeParameterBuilder[] gen_params;
 				gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].Define (gen_params [i]);
-
-				if (Parts != null) {
-					foreach (ClassPart part in Parts) {
-						if (!part.DefineTypeParameters ()) {
-							error = true;
-							return null;
-						}
-					}
-				} else {
-					foreach (TypeParameter type_param in CurrentTypeParameters) {
-						if (!type_param.Resolve (this)) {
-							error = true;
-							return null;
-						}
-					}
-
-					for (int i = offset; i < gen_params.Length; i++)
-						CurrentTypeParameters [i - offset].DefineConstraints ();
-
-					foreach (TypeParameter type_param in TypeParameters) {
-						if (!type_param.DefineType (ec)) {
-							error = true;
-							return null;
-						}
-					}
-
-					current_type = new ConstructedType (
-						TypeBuilder, TypeParameters, Location);
-				}
 			}
 
-			TypeExpr[] iface_exprs = GetClassBases (out base_type);
+			iface_exprs = GetClassBases (out base_type);
 			if (iface_exprs == null && base_type != null) {
 				InTransit = false;
 				return null;
@@ -1357,26 +1327,10 @@ namespace Mono.CSharp {
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
 
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
-					if (!type_param.CheckDependencies (ec)) {
-						error = true;
-						return null;
-					}
-			}
-
-			if (current_type != null) {
-				current_type = current_type.ResolveAsTypeTerminal (ec);
-				if (current_type == null) {
-					error = true;
-					return null;
-				}
-
-				CurrentType = current_type.Type;
-			}
-
 			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
+			else if (!ResolveType ())
+				return null;
 
 			InTransit = false;
 
@@ -1385,6 +1339,61 @@ namespace Mono.CSharp {
 			}
 
 			return TypeBuilder;
+		}
+
+		public bool ResolveType ()
+		{
+			if (!IsGeneric)
+				return true;
+
+			TypeExpr current_type = null;
+			if (Parts != null) {
+				foreach (ClassPart part in Parts) {
+					if (!part.DefineTypeParameters ()) {
+						error = true;
+						return false;
+					}
+				}
+			} else {
+				foreach (TypeParameter type_param in CurrentTypeParameters) {
+					if (!type_param.Resolve (this)) {
+						error = true;
+						return false;
+					}
+				}
+
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].DefineConstraints ();
+
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (!type_param.DefineType (ec)) {
+						error = true;
+						return false;
+					}
+				}
+
+				current_type = new ConstructedType (
+					TypeBuilder, TypeParameters, Location);
+			}
+
+			foreach (TypeParameter type_param in TypeParameters)
+				if (!type_param.CheckDependencies (ec)) {
+					error = true;
+					return false;
+				}
+
+			if (current_type != null) {
+				current_type = current_type.ResolveAsTypeTerminal (ec);
+				if (current_type == null) {
+					error = true;
+					return false;
+				}
+
+				CurrentType = current_type.Type;
+			}
+
+			return true;
 		}
 
 		protected virtual bool DefineNestedTypes ()
@@ -1463,6 +1472,20 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineMembers ()
 		{
+			if (iface_exprs != null) {
+				foreach (TypeExpr iface in iface_exprs) {
+					ConstructedType ct = iface as ConstructedType;
+					if ((ct != null) && !ct.CheckConstraints (ec))
+						return false;
+				}
+			}
+
+			if (base_type != null) {
+				ConstructedType ct = base_type as ConstructedType;
+				if ((ct != null) && !ct.CheckConstraints (ec))
+					return false;
+			}
+
  			if (IsTopLevel) {
  				if ((ModFlags & Modifiers.NEW) != 0)
  					Error_KeywordNotAllowed (Location);
@@ -2065,7 +2088,7 @@ namespace Mono.CSharp {
 			if (members == null)
 				return MemberList.Empty;
 			else
-			return new MemberList (members);
+				return new MemberList (members);
 		}
 
 		public override MemberCache MemberCache {
