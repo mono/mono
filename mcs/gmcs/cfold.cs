@@ -156,8 +156,9 @@ namespace Mono.CSharp {
 				}
 
 				bool need_check = (other is EnumConstant) ||
-					((oper != Binary.Operator.Addition) &&
-					 (oper != Binary.Operator.Subtraction));
+					!(oper == Binary.Operator.Addition || 
+					  oper == Binary.Operator.Subtraction ||
+					  (other.IsZeroInteger && other is IntConstant));
 
 				if (need_check &&
 				    !Convert.ImplicitConversionExists (ec, match, other.Type)) {
