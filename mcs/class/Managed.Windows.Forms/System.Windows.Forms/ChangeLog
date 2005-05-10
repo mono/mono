@@ -1,3 +1,11 @@
+2005-05-10  Peter Bartok  <pbartok@novell.com>
+
+	* DataFormats.cs: Implemented
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, 
+	  XplatUIX11.cs: Added Clipboard APIs
+	* XplatUIWin32.cs: Implemented Clipboard APIs
+	* FolderBrowserDialog.cs: Added missing event, attributes
+
 2005-05-10  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* CheckBox.cs: call base method to allow to fire OnClick event

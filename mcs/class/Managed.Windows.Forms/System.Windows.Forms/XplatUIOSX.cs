@@ -852,6 +852,32 @@ namespace System.Windows.Forms {
 			x = (int)(pt.x+wBounds.left);
 			y = (int)(pt.y+wBounds.top);
 		}
+
+		internal override void ClipboardClose(IntPtr handle) {
+			throw new NotImplementedException();
+		}
+
+		internal override int ClipboardGetID(IntPtr handle, string format) {
+			return 0;
+		}
+
+		internal override IntPtr ClipboardOpen() {
+			throw new NotImplementedException();
+
+			return new IntPtr ();
+		}
+
+		internal override bool ClipboardRetrieve(IntPtr handle, out object obj, out int type) {
+
+			obj = null;
+			type = 0;
+			throw new NotImplementedException();
+			return false;
+		}
+
+		internal override void ClipboardStore(IntPtr handle, object obj, int type) {
+			throw new NotImplementedException();
+		}
 		
 		internal override void CreateCaret (IntPtr hwnd, int width, int height) {
 			if (Caret.Hwnd != IntPtr.Zero)

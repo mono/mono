@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44101; built: 2005/5/5 21:38:0]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44278; built: 2005/4/9 9:44:53]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -275,6 +275,41 @@ namespace System.Windows.Forms {
 				Console.WriteLine("ClientToScreen({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
 			#endif
 			driver.ClientToScreen(handle, ref x, ref y);
+		}
+
+		internal static void ClipboardClose(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("ClipboardClose({0:X}): Called", handle.ToInt32());
+			#endif
+			driver.ClipboardOpen();
+		}
+
+		internal static int ClipboardGetID(IntPtr handle, string format) {
+			#if DriverDebug
+				Console.WriteLine("ClipboardGetID({0:X}, {1}): Called", handle.ToInt32(), format);
+			#endif
+			return driver.ClipboardGetID(handle, format);
+		}
+
+		internal static IntPtr ClipboardOpen() {
+			#if DriverDebug
+				Console.WriteLine("ClipboardOpen(): Called");
+			#endif
+			return driver.ClipboardOpen();
+		}
+
+		internal static void ClipboardStore(IntPtr handle, object obj, int type) {
+			#if DriverDebug
+				Console.WriteLine("ClipboardStore({0:X}, {1}, {2}): Called", handle.ToInt32(), obj, type);
+			#endif
+			driver.ClipboardStore(handle, obj, type);
+		}
+
+		internal static bool ClipboardRetrieve(IntPtr handle, out object obj, out int type) {
+			#if DriverDebug
+				Console.WriteLine("ClipboardRetrieve({0:X}, obj, type): Called", handle.ToInt32());
+			#endif
+			return driver.ClipboardRetrieve(handle, out obj, out type);
 		}
 
 		internal static IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {

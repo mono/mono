@@ -1603,6 +1603,30 @@ Console.WriteLine("Hit Clear background");
 			Win32DeleteObject(hbr);
 		}
 
+		internal override void ClipboardClose(IntPtr handle) {
+			Win32CloseClipboard();
+		}
+
+		internal override int ClipboardGetID(IntPtr handle, string format) {
+			return (int)Win32RegisterClipboardFormat(format);
+		}
+
+		internal override IntPtr ClipboardOpen() {
+			return new IntPtr(27051977);
+		}
+
+		internal override bool ClipboardRetrieve(IntPtr handle, out object obj, out int type) {
+
+			obj = null;
+			type = 0;
+			throw new NotImplementedException();
+			return false;
+		}
+
+		internal override void ClipboardStore(IntPtr handle, object obj, int type) {
+			throw new NotImplementedException();
+		}
+		
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -1871,6 +1895,18 @@ Console.WriteLine("Hit Clear background");
 
 		[DllImport ("user32.dll", EntryPoint="SystemParametersInfoW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32SystemParametersInfo(SPIAction uiAction, uint uiParam, ref RECT rect, uint fWinIni);
+
+		[DllImport ("user32.dll", EntryPoint="OpenClipboard", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32OpenClipboard(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="EmptyClipboard", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32EmptyClipboard();
+
+		[DllImport ("user32.dll", EntryPoint="RegisterClipboardFormatW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		private extern static uint Win32RegisterClipboardFormat(string format);
+
+		[DllImport ("user32.dll", EntryPoint="CloseClipboard", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32CloseClipboard();
 		#endregion
 	}
 }

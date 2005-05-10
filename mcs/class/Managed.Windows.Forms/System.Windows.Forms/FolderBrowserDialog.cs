@@ -40,8 +40,12 @@ using System.Threading;
 
 namespace System.Windows.Forms
 {
-	public class FolderBrowserDialog : CommonDialog
+	[DefaultEvent("HelpRequest")]
+	[DefaultProperty("SelectedPath")]
+	[Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, " + Consts.AssemblySystem_Design)]
+	public sealed class FolderBrowserDialog : CommonDialog
 	{
+		#region Local Variables
 		private string description = "";
 		private Environment.SpecialFolder rootFolder = Environment.SpecialFolder.Desktop;
 		private string selectedPath = "";
@@ -50,6 +54,7 @@ namespace System.Windows.Forms
 		private FolderBrowserDialogPanel folderBrowserDialogPanel;
 		
 		private bool treeViewFull = false;
+		#endregion	// Local Variables
 		
 		#region Public Constructors
 		public FolderBrowserDialog( )
@@ -67,6 +72,9 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
+		[Browsable(true)]
+		[DefaultValue("")]
+		[Localizable(true)]
 		public string Description
 		{
 			set
@@ -81,6 +89,9 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[Browsable(true)]
+		[DefaultValue(Environment.SpecialFolder.Desktop)]
+		[Localizable(false)]
 		public Environment.SpecialFolder RootFolder
 		{
 			set
@@ -95,6 +106,10 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[Browsable(true)]
+		[DefaultValue("")]
+		[Editor("System.Windows.Forms.Design.SelectedPathEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[Localizable(true)]
 		public string SelectedPath
 		{
 			set
@@ -108,7 +123,10 @@ namespace System.Windows.Forms
 				return selectedPath;
 			}
 		}
-		
+
+		[Browsable(true)]
+		[DefaultValue(true)]
+		[Localizable(false)]
 		public bool ShowNewFolderButton
 		{
 			set
@@ -158,7 +176,8 @@ namespace System.Windows.Forms
 			return true;
 		}
 		#endregion	// Public Instance Methods
-		
+
+		#region Internal Methods
 		internal class FolderBrowserDialogForm : DialogForm
 		{
 			internal FolderBrowserDialogForm( CommonDialog owner )
@@ -586,5 +605,12 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+		#endregion	// Internal Methods
+
+		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public event EventHandler HelpRequest;
+		#endregion
 	}
 }

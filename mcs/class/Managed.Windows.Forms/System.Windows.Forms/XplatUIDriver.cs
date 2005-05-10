@@ -198,6 +198,12 @@ namespace System.Windows.Forms {
 
 		internal abstract void EraseWindowBackground(IntPtr handle, IntPtr wParam);
 
+		internal abstract void ClipboardClose(IntPtr handle);
+		internal abstract IntPtr ClipboardOpen();
+		internal abstract int ClipboardGetID(IntPtr handle, string format);
+		internal abstract void ClipboardStore(IntPtr handle, object obj, int id);
+		internal abstract bool ClipboardRetrieve(IntPtr handle, out object obj, out int id);
+
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 
