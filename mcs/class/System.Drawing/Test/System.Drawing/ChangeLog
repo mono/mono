@@ -1,3 +1,8 @@
+2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
+
+	* TestColor.cs: Added tests for GetHue, GetBrightness
+	and GetSaturation.
+
 2005-02-24 Jordi Mas i Hernandez <jordi@ximan.com>
 	* TestRegion.cs: added new IsVisible cases
 

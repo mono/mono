@@ -5,9 +5,11 @@
 // 	Dennis Hayes (dennish@raytek.com)
 // 	Ben Houston  (ben@exocortex.org)
 // 	Gonzalo Paniagua (gonzalo@ximian.com)
+// 	Juraj Skripsky (juraj@hotfeet.ch)
 //
 // (C) 2002 Dennis Hayes
 // (c) 2002 Ximian, Inc. (http://www.ximiam.com)
+// (C) 2005 HotFeet GmbH (http://www.hotfeet.ch)
 //
 // TODO: Are the static/non static functions declared correctly
 
@@ -292,75 +294,50 @@ namespace System.Drawing
 			(colorA.myname != colorB.myname));
 		}
 
-		// This gives the right results, but the floats don't exactly match MS
-		// Should we cache those? Getting all three numbers will have us do a few calcs 3 times
-		public float GetBrightness (){
-			float	cMax;
-			float	cMin;
-
-			cMax = Math.Max(Math.Max(r, g), b);
-			cMin = Math.Min(Math.Min(r, g), b);
-
-			return (((cMax+cMin)*HLSMax)+RGBMax)/(2*RGBMax) / HLSMax;
+		public float GetBrightness ()
+		{
+			byte minval = Math.Min (r, Math.Min (g, b));
+			byte maxval = Math.Max (r, Math.Max (g, b));
+	
+			return (float)(maxval + minval) / 510;
 		}
 
-		public float GetSaturation (){
-			float	cMax;
-			float	cMin;
-			float	l;
+		public float GetSaturation ()
+		{
+			byte minval = Math.Min (r, Math.Min (g, b));
+			byte maxval = Math.Max (r, Math.Max (g, b));
+			
+			int sum = maxval + minval;
+			if (sum > 255)
+				sum = 510 - sum;
 
-			cMax = Math.Max(Math.Max(r, g), b);
-			cMin = Math.Min(Math.Min(r, g), b);
-
-			if (cMax==cMin) {		// Achromatic
-				return 0;
-			}
-
-			l = (((cMax+cMin)*HLSMax)+RGBMax)/(2*RGBMax);
-
-			if (l<=(HLSMax/2)) {
-				return (((cMax-cMin)*HLSMax)+((cMax+cMin)/2))/(cMax+cMin) / HLSMax;
-			} else {
-				return (((cMax-cMin)*HLSMax)+((2*RGBMax-cMax-cMin)/2))/(2*RGBMax-cMax-cMin) / HLSMax;
-			}
+			return (float)(maxval - minval) / sum;
 		}
 
-		public float GetHue (){
-			float	cMax;
-			float	cMin;
-			float	rDelta;
-			float	gDelta;
-			float	bDelta;
-			float	h;
+		public float GetHue ()
+		{
+			byte minval = Math.Min (r, Math.Min (g, b));
+			byte maxval = Math.Max (r, Math.Max (g, b));
+			
+			if (maxval == minval)
+					return 0.0f;
+			
+			float diff = (float)(maxval - minval);
+			float rnorm = (maxval - r) / diff;
+			float gnorm = (maxval - g) / diff;
+			float bnorm = (maxval - b) / diff;
+	
+			float hue = 0.0f;
+			if (r == maxval) 
+				hue = 60.0f * (6.0f + bnorm - gnorm);
+			if (g == maxval) 
+				hue = 60.0f * (2.0f + rnorm - bnorm);
+			if (b  == maxval) 
+				hue = 60.0f * (4.0f + gnorm - rnorm);
+			if (hue > 360.0f) 
+				hue = hue - 360.0f;
 
-			cMax = Math.Max(Math.Max(r, g), b);
-			cMin = Math.Min(Math.Min(r, g), b);
-
-			if (cMax==cMin) {		// Achromatic
-				return 0;
-			}
-
-			rDelta=(((cMax-r)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
-			gDelta=(((cMax-g)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
-			bDelta=(((cMax-b)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
-
-			if (r == cMax) {
-				h=bDelta - gDelta;
-			} else if (g == cMax) {
-				h=(HLSMax/3) + rDelta - bDelta;
-			} else { /* B == cMax */
-				h=((2*HLSMax)/3) + gDelta - rDelta;
-			}
-
-			if (h<0) {
-				h+=HLSMax;
-			}
-
-			if (h>HLSMax) {
-				h-=HLSMax;
-			}
-
-			return h * 360 / HLSMax;
+			return hue;
 		}
 		
 		// -----------------------

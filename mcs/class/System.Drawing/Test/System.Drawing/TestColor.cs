@@ -897,6 +897,23 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("#YellowGreen.G", 205, color.G);
 			AssertEquals ("#YellowGreen.B", 50, color.B);
 		}
+		
+		[Test]
+		public void TestHBSValues ()
+		{
+			AssertEquals ("BrightnessBlack", 0.0f, Color.Black.GetBrightness ());
+			AssertEquals ("BrightnessWhite", 1.0f, Color.White.GetBrightness ());
+		
+			Color c1 = Color.FromArgb (0, 13, 45, 7); //just some random color
+			AssertEquals ("Hue1",        110.5263f, c1.GetHue ());
+			AssertEquals ("Brightness1", 0.1019608f, c1.GetBrightness ());
+			AssertEquals ("Saturation1", 0.7307692f, c1.GetSaturation ());
+	
+			Color c2 = Color.FromArgb (0, 112, 75, 29); //another random color
+			AssertEquals ("Hue2",        33.25302f, c2.GetHue ());
+			AssertEquals ("Brightness2", 0.2764706f, c2.GetBrightness ());
+			AssertEquals ("Saturation2", 0.5886525f, c2.GetSaturation ());
+		}
 	}
 }
 
