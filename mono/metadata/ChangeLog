@@ -1,3 +1,7 @@
+2005-05-10  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_generic_class_initialize): Don't
+	call mono_class_setup_parent() here.
 
 Mon May 9 16:29:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
