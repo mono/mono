@@ -1,3 +1,7 @@
+2005-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* shared.c: don't display warnings after reboots.
+
 2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* sockets.c: on windows, getsockopt/setsockopt for send/receive timeout
