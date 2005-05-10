@@ -506,7 +506,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category("NotDotNet")]
+		// it used to be regarded as MS bug but it was not really.
 		public void TestPreserveEntityNotOnDotNet ()
 		{
 			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
@@ -520,8 +520,7 @@ namespace MonoTests.System.Xml
 			AssertEquals ("root", dvr.Name);
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
-			// MS BUG: it returns "entity string", however, entity should not be exanded.
-			AssertEquals ("&ent;", dvr.Value);
+			AssertEquals ("entity string", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
@@ -532,7 +531,7 @@ namespace MonoTests.System.Xml
 			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal &ent; value", dvr.Value);
+			AssertEquals ("internal entity string value", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.Text, dvr.NodeType);
@@ -560,7 +559,7 @@ namespace MonoTests.System.Xml
 			// foo
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("&ent;", dvr.Value);
+			AssertEquals ("entity string", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
@@ -571,7 +570,7 @@ namespace MonoTests.System.Xml
 			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal &ent; value", dvr.Value);
+			AssertEquals ("internal entity string value", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.Text, dvr.NodeType);

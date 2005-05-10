@@ -1,3 +1,9 @@
+2005-05-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : since namespace declarations might be
+	  resolved differently due to entity handling, it holds its own set
+	  of declared namespaces. NamespaceURI and LookupNamespace() use it.
+
 2005-05-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : added ReadElementContentAsLong().

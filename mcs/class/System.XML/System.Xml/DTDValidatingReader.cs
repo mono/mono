@@ -69,6 +69,7 @@ namespace Mono.Xml
 			attributeLocalNames = new Hashtable ();
 			attributeNamespaces = new Hashtable ();
 			attributePrefixes = new Hashtable ();
+			nsdecls = new Hashtable ();
 			this.validatingReader = validatingReader;
 			valueBuilder = new StringBuilder ();
 			idList = new ArrayList ();
@@ -104,6 +105,7 @@ namespace Mono.Xml
 		Hashtable attributeLocalNames;
 		Hashtable attributeNamespaces;
 		Hashtable attributePrefixes;
+		Hashtable nsdecls;
 		StringBuilder valueBuilder;
 		ArrayList idList;
 		ArrayList missingIDReferences;
@@ -188,7 +190,8 @@ namespace Mono.Xml
 
 		public override string LookupNamespace (string prefix)
 		{
-			// Does it mean anything with DTD?
+			if (nsdecls.Count > 0 && nsdecls [prefix] != null)
+				return (string) nsdecls [prefix];
 			return reader.LookupNamespace (prefix);
 		}
 
@@ -363,6 +366,7 @@ namespace Mono.Xml
 			attributeValues.Clear ();
 			attributeNamespaces.Clear ();
 			attributePrefixes.Clear ();
+			nsdecls.Clear ();
 			isWhitespace = false;
 			isSignificantWhitespace = false;
 			isText = false;
@@ -522,7 +526,12 @@ namespace Mono.Xml
 					// SetupValidityIgnorantAttributes ();
 					ValidateAttributes (null, false);
 				}
-
+				foreach (string attr in attributes)
+					if (attr == "xmlns" ||
+						String.CompareOrdinal (attr, 0, "xmlns", 0, 5) == 0)
+						nsdecls.Add (
+							attr == "xmlns" ? String.Empty : attributePrefixes [attr],
+							attributeValues [attr]);
 				// If it is empty element then directly check end element.
 				if (reader.IsEmptyElement)
 					goto case XmlNodeType.EndElement;
@@ -671,9 +680,11 @@ namespace Mono.Xml
 				attributePrefixes.Add (attrName, reader.Prefix);
 				XmlReader targetReader = reader;
 				string attrValue = null;
-				if (currentEntityHandling == EntityHandling.ExpandCharEntities)
-					attrValue = reader.Value;
-				else {
+				// It always resolves entity references on attributes (documented as such).
+//				if (currentEntityHandling == EntityHandling.ExpandCharEntities)
+//					attrValue = reader.Value;
+//				else
+				{
 					while (attributeValueEntityStack.Count >= 0) {
 						if (!targetReader.ReadAttributeValue ()) {
 							if (attributeValueEntityStack.Count > 0) {
@@ -1080,6 +1091,8 @@ namespace Mono.Xml
 					return (string) attributeNamespaces [currentAttribute];
 				else if (IsDefault)
 					return String.Empty;
+				else if (nsdecls.Count > 0 && nsdecls [Prefix] != null)
+					return (string) nsdecls [Prefix];
 				else
 					return reader.NamespaceURI;
 			}
