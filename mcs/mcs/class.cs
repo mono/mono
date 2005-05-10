@@ -3808,6 +3808,11 @@ namespace Mono.CSharp {
 			if (!MethodData.Define (Parent))
 				return false;
 
+			if (ReturnType == TypeManager.void_type && ParameterTypes.Length == 0 && 
+				Name == "Finalize" && !(this is Destructor)) {
+				Report.Warning (465, 1, Location, "Introducing a 'Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
+			}
+
 			//
 			// Setup iterator if we are one
 			//
