@@ -309,15 +309,27 @@ namespace Mono.CSharp {
 			else
 				type_name = TypeName.ToString ();
 
-			switch (ModFlags & unchecked (~Modifier.ISBYREF)) {
-				case Modifier.OUT:
-					return "out " + type_name;
-				case Modifier.PARAMS:
-					return "params " + type_name;
-				case Modifier.REF:
-					return "ref " + type_name;
-			}
+			string mod = GetModifierSignature (ModFlags);
+			if (mod.Length > 0)
+				return String.Concat (mod, " ", type_name);
+
 			return type_name;
+		}
+
+		public static string GetModifierSignature (Modifier mod)
+		{
+			switch (mod & unchecked (~Modifier.ISBYREF)) {
+				case Modifier.OUT:
+					return "out";
+				case Modifier.PARAMS:
+					return "params";
+				case Modifier.REF:
+					return "ref";
+				case Modifier.ARGLIST:
+					return "__arglist";
+				default:
+					return "";
+			}
 		}
 
 		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
