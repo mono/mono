@@ -3,3 +3,4 @@ System.Windows.Forms/TreeNodeTest.cs
 System.Windows.Forms/TreeViewTest.cs
 System.Windows.Forms/LabelPropertyTest.cs
 System.Windows.Forms/ControlTest.cs
+System.Windows.Forms/ControlEventTest.cs

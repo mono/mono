@@ -1,3 +1,8 @@
+2005-05-11  Ritvik Mayank  <mritvik@novell.com>
+
+	* System.Windows.Forms_test.dll.sources : Added ControlEventTest.cs
+	for Event Test
+
 2005-05-11  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added 
