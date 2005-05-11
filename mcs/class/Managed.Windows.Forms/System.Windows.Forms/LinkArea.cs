@@ -33,7 +33,8 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
-	[Serializable]	
+	[Serializable]
+	[TypeConverter("System.Windows.Forms.LinkArea+LinkAreaConverter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	public struct LinkArea
 	{
 		private int start;
