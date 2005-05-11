@@ -3791,6 +3791,11 @@ namespace Mono.MonoBASIC {
 
 		static ConversionType CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
 		{
+                       if (a.ArgType == Argument.AType.NoArg)  {
+                               //FIXME: Is Narrowing correct for this?
+                               return ConversionType.Narrowing;
+                       }
+
 			Parameter.Modifier a_mod = a.GetParameterModifier () &
 				~(Parameter.Modifier.REF);
 			Parameter.Modifier p_mod = pd.ParameterModifier (i) &
@@ -3909,7 +3914,7 @@ namespace Mono.MonoBASIC {
 							return ConversionType.None;
 					}
 
-					if ((mod & Parameter.Modifier.REF) != 0) {
+					if (a.ArgType != Argument.AType.NoArg && (mod & Parameter.Modifier.REF) != 0) {
 						a = new Argument (a.Expr, Argument.AType.Ref);
 						if (!a.Resolve(ec,Location.Null))
 							return ConversionType.None;
@@ -4188,6 +4193,11 @@ namespace Mono.MonoBASIC {
 				Type param_type = pd.ParameterType (i);
 
 				bool IsDelegate = TypeManager.IsDelegateType (param_type);
+				if (a.ArgType == Argument.AType.NoArg) {
+					a = new Argument (pd.DefaultValue (i), Argument.AType.Expression);
+					a.Resolve (ec, Location.Null);
+				}
+
 				if (IsDelegate)	{	
 					if (a.ArgType == Argument.AType.AddressOf) {
 						a = new Argument ((Expression) a.Expr, Argument.AType.Expression);

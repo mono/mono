@@ -1,3 +1,10 @@
+2005-05-11 Ankit Jain  <ankit@corewars.org>
+
+	* expression.cs (Invocation.CheckParameterAgainstArgument): Return ConversionType.Narrowing
+	for a NoArg argument.
+	(Invocation.IsApplicable): Don't create a REF type argument if it is NoArg.
+	(Invocation.ConstructArgumentList): Create argument with its DefaultValue for a NoArg.
+
 2005-05-10 Satya Sudha K <ksathyasudha@hotmail.com>
 	* statement.cs, expression.cs, assign.cs :
 		Patch to allow latebinding expressions to be specified as ByRef arguments 
