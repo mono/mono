@@ -1,12 +1,14 @@
+2005-05-11  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c, mono-debug-debugger.c: Revert Paolo's locking
+	changes as they're broken and completely fuck up the debugger.
+
+	* mono-debug.c (mono_debug_add_method): Properly unlock on error.
+
 2005-05-10  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_generic_class_initialize): Don't
 	call mono_class_setup_parent() here.
-
-Mon May 9 16:29:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
-
-	* mono-debug-debugger.c: use the loader lock until the
-	code is reviewed and changed to avoid the deadlock (bug #74830).
 
 2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
@@ -34,17 +36,6 @@ Mon May 9 16:29:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: Enable the wait for running threads when exiting.
 	* icall.c: Suspend all threads before exiting.
-
-Thu May 5 17:14:27 CEST 2005 Paolo Molaro <lupus@ximian.com>
-
-	* mono-debug.c: unlock properly: the interface with the debugger will likely
-	need to change.
-
-Thu May 5 16:24:43 CEST 2005 Paolo Molaro <lupus@ximian.com>
-
-	* mono-debug-debugger.c, mono-debug-debugger.h, mono-debug.c: remove thread
-	unsafe code in the debugger lock/unlock functions and always init the debugger
-	lock since it's use also when the debugger is not connected.
 
 2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
