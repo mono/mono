@@ -676,7 +676,8 @@ namespace System.Data {
 				DetachRow();
 				break;
 			case DataRowState.Deleted:
-				break;		
+                        case DataRowState.Detached:
+				break;
 			default:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
@@ -1450,9 +1451,13 @@ namespace System.Data {
 						targetColumn[row._proposed] = val;
 					}
 					
-					//Saving the current value as the column value
-					object defaultVal = column [IndexFromVersion (DataRowVersion.Default)];
-					row [index] = defaultVal;
+                                        int srcIndex = IndexFromVersion (DataRowVersion.Default);
+                                        if (srcIndex >= 0) {
+                                                //Saving the current value as the column value
+                                                // FIXME: no idea why is this required
+                                                object defaultVal = column [srcIndex];
+                                                row [index] = defaultVal;
+                                        }
 				}
 			}
 			CopyState(row);
@@ -1526,6 +1531,37 @@ namespace System.Data {
                 }
 			}                       
                 }
+
+                /// <summary>
+                ///     Internal method to get a value of the record. This is a utility 
+                ///    method to fetch a value without any restriction. The only exception is
+                ///    when the given index or record index is out of range. That has to be
+                ///    handled by the caller.
+                /// </summary>
+                internal object GetValue (int index, int record)
+                {
+                        return Table.Columns [index] [record];
+                }
+
+                /// <summary>
+                ///     Internal method to get a value of the record for a given version. 
+                ///    This is a utility to fetch a value without any restriction.
+                /// </summary>
+                /// <exception type="VersionNotFoundException">
+                ///     if the row does not have version will throw exception
+                /// </exception>
+                internal object GetValue (int index, DataRowVersion version)
+                {
+                        int record = IndexFromVersion (version); // returns -1 if version not found
+                        if (record < 0)
+                                throw new VersionNotFoundException (String.Format ("This row does not have" +
+                                                                                   " version {0}.",
+                                                                                   version)
+                                                                    );
+                        return GetValue (index, record);
+                }
+                
+
 	
 		#endregion // Methods
 

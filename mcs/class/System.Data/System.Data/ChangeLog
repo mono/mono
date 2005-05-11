@@ -1,3 +1,17 @@
+2005-05-11  Sureshkumar T  <tsureshkumar@novell.com>
+
+	fix for "import row does not import deleted records"
+
+	* UniqueConstraint.cs: Make a way to access value even from a
+	deleted record. deleted records are added to the collection by
+	ImportRow method.
+
+	* DataRow.cs:
+	- Added restriction-less methods GetValue to fetch a
+	value even if it is in deleted state.
+	- If a row is detached, don't try to delete it from indexes.
+	- sanity check for record_index in CopyValuesToRow method
+
 2005-05-05  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReader.cs: Implemented Delete handler and move the

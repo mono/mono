@@ -1076,41 +1076,72 @@ namespace MonoTests.System.Data
 			AssertEquals ("#A03", "Abc" , (table.Rows [0]) ["Name"]);
 			AssertEquals ("#A04", 2, table.Rows.Count);
 		}
-		[Test]
-		public void ImportRow ()
-		{
-			DataTable table = new DataTable ();
-			DataColumn col = new DataColumn ();
-			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
-			table.Columns.Add (col);
-
-			col = new DataColumn ();
-			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
-			table.Columns.Add (col);
-                        
-			DataRow row = table.NewRow ();
-			row ["Id"] = 147;
-			row ["name"] = "Abc";
-			table.Rows.Add (row);
-			table.AcceptChanges ();
-                                                                                                     
-			row = table.NewRow ();
-			row ["Id"] = 47;
-			row ["name"] = "Efg";
-			table.Rows.Add (row);
-
-			(table.Rows [0]) ["Name"] = "AaBbCc";
 		
-			table.ImportRow (table.Rows [0]);
-			table.ImportRow (table.Rows [1]);
+                [Test]
+                public void ImportRowTest ()
+                {
+                        // build source table
+                        DataTable src = new DataTable ();
+                        src.Columns.Add ("id", typeof (int));
+                        src.Columns.Add ("name", typeof (string));
 
-			AssertEquals ("#A01", 147, table.Rows [2]["Id"]);
-			AssertEquals ("#A02", 47, table.Rows [3]["Id"]);
-			AssertEquals ("#A03", DataRowState.Modified, table.Rows [2].RowState);
-			AssertEquals ("#A04", DataRowState.Added, table.Rows [3].RowState);
-		}
+                        src.PrimaryKey = new DataColumn [] {src.Columns [0]} ;
+
+                        src.Rows.Add (new object [] { 1, "mono 1" });
+                        src.Rows.Add (new object [] { 2, "mono 2" });
+                        src.Rows.Add (new object [] { 3, "mono 3" });
+                        src.AcceptChanges ();
+
+                        src.Rows [0] [1] = "mono changed 1";  // modify 1st row
+                        src.Rows [1].Delete ();              // delete 2nd row
+                        // 3rd row is unchanged
+                        src.Rows.Add (new object [] { 4, "mono 4" }); // add 4th row
+
+                        // build target table
+                        DataTable target = new DataTable ();
+                        target.Columns.Add ("id", typeof (int));
+                        target.Columns.Add ("name", typeof (string));
+
+                        target.PrimaryKey = new DataColumn [] {target.Columns [0]} ;
+
+                        // import all rows
+                        target.ImportRow (src.Rows [0]);     // import 1st row
+                        target.ImportRow (src.Rows [1]);     // import 2nd row
+                        target.ImportRow (src.Rows [2]);     // import 3rd row
+                        target.ImportRow (src.Rows [3]);     // import 4th row
+
+                        try {
+                                target.ImportRow (src.Rows [2]); // import 3rd row again
+                                Fail ("#AA1 Should have thrown exception violativ PK");
+                        } catch (ConstraintException e) {}
+
+                        // check row states
+                        AssertEquals ("#A1", src.Rows [0].RowState, target.Rows [0].RowState);
+                        AssertEquals ("#A2", src.Rows [1].RowState, target.Rows [1].RowState);
+                        AssertEquals ("#A3", src.Rows [2].RowState, target.Rows [2].RowState);
+                        AssertEquals ("#A4", src.Rows [3].RowState, target.Rows [3].RowState);
+
+                        // check for modified row (1st row)
+                        AssertEquals ("#B1", (string) src.Rows [0] [1], (string) target.Rows [0] [1]);
+                        AssertEquals ("#B2", (string) src.Rows [0] [1, DataRowVersion.Default], (string) target.Rows [0] [1, DataRowVersion.Default]);
+                        AssertEquals ("#B3", (string) src.Rows [0] [1, DataRowVersion.Original], (string) target.Rows [0] [1, DataRowVersion.Original]);
+                        AssertEquals ("#B4", (string) src.Rows [0] [1, DataRowVersion.Current], (string) target.Rows [0] [1, DataRowVersion.Current]);
+                        AssertEquals ("#B5", false, target.Rows [0].HasVersion(DataRowVersion.Proposed));
+
+                        // check for deleted row (2nd row)
+                        AssertEquals ("#C1", (string) src.Rows [1] [1, DataRowVersion.Original], (string) target.Rows [1] [1, DataRowVersion.Original]);
+
+                        // check for unchanged row (3rd row)
+                        AssertEquals ("#D1", (string) src.Rows [2] [1], (string) target.Rows [2] [1]);
+                        AssertEquals ("#D2", (string) src.Rows [2] [1, DataRowVersion.Default], (string) target.Rows [2] [1, DataRowVersion.Default]);
+                        AssertEquals ("#D3", (string) src.Rows [2] [1, DataRowVersion.Original], (string) target.Rows [2] [1, DataRowVersion.Original]);
+                        AssertEquals ("#D4", (string) src.Rows [2] [1, DataRowVersion.Current], (string) target.Rows [2] [1, DataRowVersion.Current]);
+
+                        // check for newly added row (4th row)
+                        AssertEquals ("#E1", (string) src.Rows [3] [1], (string) target.Rows [3] [1]);
+                        AssertEquals ("#E2", (string) src.Rows [3] [1, DataRowVersion.Default], (string) target.Rows [3] [1, DataRowVersion.Default]);
+                        AssertEquals ("#E3", (string) src.Rows [3] [1, DataRowVersion.Current], (string) target.Rows [3] [1, DataRowVersion.Current]);
+                }
 
                 [Test]
 		public void ImportRowDetachedTest ()

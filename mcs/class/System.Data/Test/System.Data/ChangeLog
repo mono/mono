@@ -1,3 +1,8 @@
+2005-05-11  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableTest.cs: revamped tests for ImportRow method. Checks
+	for all rowstates and pk violation of importing a deleted record.
+
 2005-05-05  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReaderTest.cs: Added a test to check when deleting the

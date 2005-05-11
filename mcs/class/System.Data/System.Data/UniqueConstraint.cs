@@ -476,7 +476,10 @@ namespace System.Data {
 			if (IsPrimaryKey) {
 				object val;
 				for (int i = 0; i < _dataColumns.Length; i++) {
-					val = row[_dataColumns[i]];
+                                        if (row.RowState == DataRowState.Deleted)
+                                                val = row.GetValue (i, DataRowVersion.Original);
+                                        else
+                                                val = row.GetValue (i, DataRowVersion.Default);
 					if (val == null || val == DBNull.Value)
 						throw new NoNullAllowedException("Column '" + _dataColumns[i].ColumnName + "' does not allow nulls.");
 				}
