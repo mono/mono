@@ -1,3 +1,8 @@
+2005-05-11  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug.h (MonoDebugMethodAddress): revert this part of the
+	last patch.
+
 2005-05-11  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MonoSymbolTable, MonoDebugMethodAddress): Changed
