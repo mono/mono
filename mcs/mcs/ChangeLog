@@ -1,3 +1,10 @@
+2005-05-11  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #74863.
+	
+	* class.cs (ConstructorInitializer.GetOverloadedConstructor): Removed.
+	(Constructor.GetObsoleteAttribute): Implemented correctly.
+
 2005-05-10  Martin Baulig  <martin@ximian.com>
 
 	* support.cs (ReflectionParameters.ParameterModifier): Use
