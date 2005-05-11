@@ -1,3 +1,13 @@
+2005-05-11  Peter Bartok  <pbartok@novell.com>
+
+	* ResXResourceSet.cs: Implemented
+	* ResXFileRef.cs: Implemented
+	* ResXNullRef.cs: Added missing attribute
+	* ResXResourceReader.cs: Implemented missing .ctor()s and other
+	  assorted fun stuff, should now be complete
+	* ResResourceWriter.cs: Implemented missing methods and added
+	  missing static fields
+
 2005-04-14  Jackson Harper  <jackson@ximian.com>
 
 	* ResXResourceReader.cs: Use serialization on values that have a

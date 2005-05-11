@@ -17,33 +17,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 // 	Duncan Mak	duncan@ximian.com
 //	Nick Drochak	ndrochak@gol.com
 //	Paolo Molaro	lupus@ximian.com
+//	Peter Bartok	pbartok@novell.com
 //
 
-// NOT COMPLETE
+// COMPLETE
 
+using System;
 using System.Collections;
-using System.Resources;
-using System.IO;
-using System.Xml;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Globalization;
+using System.IO;
+using System.Resources;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml;
 
 namespace System.Resources
 {
 	public class ResXResourceReader : IResourceReader, IDisposable
 	{
-		Stream stream;
-		XmlTextReader reader;
-		Hashtable hasht;
+		#region Local Variables
+		private Stream			stream;
+		private XmlTextReader		reader;
+		private Hashtable		hasht;
+		private ITypeResolutionService	typeresolver;
+		#endregion	// Local Variables
 
-		// Constructors
+		#region Constructors & Destructor
 		public ResXResourceReader (Stream stream)
 		{
 			if (stream == null)
@@ -55,6 +61,10 @@ namespace System.Resources
 			this.stream = stream;
 			basic_setup ();
 		}
+
+		public ResXResourceReader (Stream stream, ITypeResolutionService typeresolver) : this(stream) {
+			this.typeresolver = typeresolver;
+		}
 		
 		public ResXResourceReader (string fileName)
 		{
@@ -62,6 +72,28 @@ namespace System.Resources
 			basic_setup ();
 		}
 
+		public ResXResourceReader (string fileName, ITypeResolutionService typeresolver) : this(fileName) {
+			this.typeresolver = typeresolver;
+		}
+
+		public ResXResourceReader(TextReader reader) {
+			this.reader = new XmlTextReader(reader);
+			this.hasht = new Hashtable();
+
+			load_data();
+		}
+
+		public ResXResourceReader (TextReader reader, ITypeResolutionService typeresolver) : this(reader) {
+			this.typeresolver = typeresolver;
+		}
+
+		~ResXResourceReader() {
+			Dispose(false);
+		}
+		#endregion	// Constructors & Destructor
+
+
+		#region Private Methods
 		void basic_setup () {
 			reader = new XmlTextReader (stream);
 			hasht = new Hashtable ();
@@ -188,10 +220,27 @@ namespace System.Resources
 			}
 		}
 
+		private Type GetType(string type) {
+			if (typeresolver == null) {
+				return Type.GetType(type);
+			} else {
+				return typeresolver.GetType(type);
+			}
+		}
+		#endregion	// Private Methods
+
+		#region Public Methods
 		public void Close ()
 		{
-			stream.Close ();
-			stream = null;
+			if (stream != null) {
+				stream.Close ();
+				stream = null;
+			}
+
+			if (reader != null) {
+				reader.Close();
+				reader = null;
+			}
 		}
 		
 		public IDictionaryEnumerator GetEnumerator () {
@@ -208,12 +257,26 @@ namespace System.Resources
 			return ((IResourceReader) this).GetEnumerator();
 		}
 		
-		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
-			// FIXME: is this all we need to do?
-			Close();
+			Dispose(true);
 		}
+
+		protected virtual void Dispose(bool disposing) {
+			if (disposing) {
+				Close();
+			}
+		}
+
+		public static ResXResourceReader FromFileContents(string fileContents) {
+			return new ResXResourceReader(new StringReader(fileContents));
+		}
+
+		public static ResXResourceReader FromFileContents(string fileContents, ITypeResolutionService typeResolver) {
+			return new ResXResourceReader(new StringReader(fileContents), typeResolver);
+		}
+
+		#endregion	// Public Methods
 		
 	}  // public sealed class ResXResourceReader
 } // namespace System.Resources

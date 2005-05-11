@@ -17,11 +17,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Duncan Mak		duncan@ximian.com
 //	Gonzalo Paniagua Javier	gonzalo@ximian.com
+//	Peter Bartok		pbartok@novell.com
+//
+
+// COMPLETE
 
 using System.ComponentModel;
 using System.IO;
@@ -33,12 +37,25 @@ namespace System.Resources
 {
 	public class ResXResourceWriter : IResourceWriter, IDisposable
 	{
-		string filename;
-		Stream stream;
-		TextWriter textwriter;
-		XmlTextWriter writer;
-		bool written;
+		#region Local Variables
+		private string		filename;
+		private Stream		stream;
+		private TextWriter	textwriter;
+		private XmlTextWriter	writer;
+		private bool		written;
+		#endregion	// Local Variables
 
+		#region Static Fields
+		public static readonly string BinSerializedObjectMimeType	= "application/x-microsoft.net.object.binary.base64";
+		public static readonly string ByteArraySerializedObjectMimeType	= "application/x-microsoft.net.object.bytearray.base64";
+		public static readonly string DefaultSerializedObjectMimeType	= BinSerializedObjectMimeType;
+		public static readonly string ResMimeType			= "text/microsoft-resx";
+		public static readonly string ResourceSchema			= schema;
+		public static readonly string SoapSerializedObjectMimeType	= "application/x-microsoft.net.object.soap.base64";
+		public static readonly string Version				= "1.3";
+		#endregion	// Static Fields
+
+		#region Constructors & Destructor
 		public ResXResourceWriter (Stream stream)
 		{
 			if (stream == null)
@@ -65,7 +82,12 @@ namespace System.Resources
 
 			this.filename = fileName;
 		}
-		
+
+		~ResXResourceWriter() {
+			Dispose(false);
+		}
+		#endregion	// Constructors & Destructor
+
 		void InitWriter ()
 		{
 			if (filename != null) {
@@ -212,7 +234,7 @@ namespace System.Resources
 		
 		public void Dispose ()
 		{
-			Close ();
+			Dispose(true);
 		}
 
 		public void Generate ()
@@ -223,6 +245,12 @@ namespace System.Resources
 			written = true;
 			writer.WriteEndElement ();
 			writer.Flush ();
+		}
+
+		protected virtual void Dispose(bool disposing) {
+			if (disposing) {
+				Close();
+			}
 		}
 
 		static string schema = @"

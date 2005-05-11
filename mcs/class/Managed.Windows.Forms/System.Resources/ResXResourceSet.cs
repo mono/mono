@@ -17,18 +17,47 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
-// 	Geoff Norton	gnorton@customerdna.com
+//	Peter Bartok	(pbartok@novell.com)
+//
 //
 
-using System;
+// COMPLETE
 
-namespace System.Resources
-{
-	[Serializable]
-	internal class ResXNullRef
-	{
+using System;
+using System.IO;
+using System.Collections;
+
+namespace System.Resources {
+	public class ResXResourceSet : ResourceSet {
+		#region Local Variables
+
+		#endregion	// Local Variables
+
+		#region Public Constructors
+		public ResXResourceSet(Stream stream) {
+			this.Reader = new ResXResourceReader(stream);
+			this.Table = new Hashtable();
+			this.ReadResources();
+		}
+
+		public ResXResourceSet(string fileName) {
+			this.Reader = new ResXResourceReader(fileName);
+			this.Table = new Hashtable();
+			this.ReadResources();
+		}
+		#endregion	// Public Constructors
+
+		#region Public Instance Methods
+		public override Type GetDefaultReader() {
+			return typeof(ResXResourceReader);
+		}
+
+		public override Type GetDefaultWriter() {
+			return typeof(ResXResourceWriter);
+		}
+		#endregion	// Public Instance Methods
 	}
 }
