@@ -4125,66 +4125,6 @@ namespace Mono.CSharp {
 					Invocation.EmitCall (ec, true, false, ec.GetThis (loc), base_constructor, argument_list, loc);
 			}
 		}
-
-		/// <summary>
-		/// Method search for base ctor. (We do not cache it).
-		/// </summary>
-		Constructor GetOverloadedConstructor (TypeContainer tc)
-		{
-			if (tc.InstanceConstructors == null)
-				return null;
-
-			foreach (Constructor c in tc.InstanceConstructors) {
-				if (Arguments == null) {
-					if (c.ParameterTypes.Length == 0)
-						return c;
-
-					continue;
-				}
-
-				bool ok = true;
-
-				int count = c.ParameterInfo.Count;
-				if ((count > 0) &&
-				    c.ParameterInfo.ParameterModifier (count - 1) == Parameter.Modifier.PARAMS) {
-					for (int i = 0; i < count-1; i++)
-						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
-							ok = false;
-							break;
-						}
-				} else {
-					if (c.ParameterTypes.Length != Arguments.Count)
-						continue;
-
-					for (int i = 0; i < Arguments.Count; ++i)
-						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
-							ok = false;
-							break;
-						}
-				}
-
-				if (!ok)
-					continue;
-
-				return c;
-			}
-
-			return null;
-		}
-
-		//TODO: implement caching when it will be necessary
-		public virtual void CheckObsoleteAttribute (TypeContainer tc, Location loc)
-		{
-			Constructor ctor = GetOverloadedConstructor (tc);
-			if (ctor == null)
-				return;
-
-			ObsoleteAttribute oa = ctor.GetObsoleteAttribute (tc);
-			if (oa == null)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (oa, ctor.GetSignatureForError (), loc);
-		}
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
@@ -4192,24 +4132,6 @@ namespace Mono.CSharp {
 			base (argument_list, pars, l)
 		{
 		}
-
-		public override void CheckObsoleteAttribute(TypeContainer tc, Location loc) {
-			if (base_constructor == null)
-				return;
-
-			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.TypeBuilder.BaseType);
-			if (type_ds == null) {
-				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (base_constructor);
-
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (base_constructor), loc);
-
-				return;
-			}
-
-			base.CheckObsoleteAttribute (type_ds, loc);
-		}
-
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
@@ -4469,10 +4391,9 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Initializer != null) {
-				if (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent) == null)
-					Initializer.CheckObsoleteAttribute (Parent, Location);
-				else
+				if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute (Parent) != null)
 					ec.TestObsoleteMethodUsage = false;
+
 				Initializer.Emit (ec);
 			}
 			
@@ -4569,7 +4490,7 @@ namespace Mono.CSharp {
 
 		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
-			return null;
+			return GetObsoleteAttribute (Parent);
 		}
 
 		public bool IsExcluded(EmitContext ec)
