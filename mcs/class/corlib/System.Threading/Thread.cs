@@ -946,7 +946,7 @@ namespace System.Threading
 			// However CompressedStack.GetCompressedStack returns an 
 			// (empty?) CompressedStack instance.
 			CompressedStack cs = ExecutionContext.SecurityContext.CompressedStack;
-			return ((cs == null) || cs.IsEmpty ()) ? null : cs;
+			return ((cs == null) || cs.IsEmpty ()) ? null : cs.CreateCopy ();
 		}
 
 		// NOTE: This method doesn't show in the class library status page because
