@@ -1,5 +1,10 @@
 2005-05-11  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h (MonoSymbolTable, MonoDebugMethodAddress): Changed
+	to order of some fields to get proper alignment on 64-bit machines.
+
+2005-05-11  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.c, mono-debug-debugger.c: Revert Paolo's locking
 	changes as they're broken and completely fuck up the debugger.
 
