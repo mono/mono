@@ -1,3 +1,7 @@
+2005-05-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoWSDL.cs: enable auto redirection for 30x responses.
+
 2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoWSDL.cs, MonoWSDL2.cs :

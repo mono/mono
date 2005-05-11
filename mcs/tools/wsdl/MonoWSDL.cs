@@ -520,6 +520,7 @@ namespace Mono.WebServices
 				if (className == null)
 				{
 					DiscoveryClientProtocol dcc = CreateClient ();
+					dcc.AllowAutoRedirect = true;
 									
 					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
 						url = new Uri (Path.GetFullPath (url)).ToString ();
