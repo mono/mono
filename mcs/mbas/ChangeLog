@@ -1,5 +1,10 @@
 2005-05-11 Ankit Jain  <ankit@corewars.org>
 
+	* expression.cs (Invocation.CheckParameterAgainstArgument): Return ConversionType.Widening
+	for a NoArg argument. Fix earlier patch.
+
+2005-05-11 Ankit Jain  <ankit@corewars.org>
+
 	* expression.cs (Invocation.CheckParameterAgainstArgument): Return ConversionType.Narrowing
 	for a NoArg argument.
 	(Invocation.IsApplicable): Don't create a REF type argument if it is NoArg.

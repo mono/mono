@@ -3792,8 +3792,7 @@ namespace Mono.MonoBASIC {
 		static ConversionType CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
 		{
                        if (a.ArgType == Argument.AType.NoArg)  {
-                               //FIXME: Is Narrowing correct for this?
-                               return ConversionType.Narrowing;
+                               return ConversionType.Widening;
                        }
 
 			Parameter.Modifier a_mod = a.GetParameterModifier () &
