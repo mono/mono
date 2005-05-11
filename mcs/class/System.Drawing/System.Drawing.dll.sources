@@ -9,6 +9,8 @@ System.Drawing/carbonFunctions.cs
 System.Drawing/ColorConverter.cs
 System.Drawing/Color.cs
 System.Drawing/ColorTranslator.cs
+System.Drawing/ComIStreamMarshaler.cs
+System.Drawing/ComIStreamWrapper.cs
 System.Drawing/ContentAlignment.cs
 System.Drawing/Font.cs
 System.Drawing/FontConverter.cs
