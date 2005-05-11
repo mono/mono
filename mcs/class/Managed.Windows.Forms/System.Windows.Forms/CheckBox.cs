@@ -258,7 +258,12 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		protected override AccessibleObject CreateAccessibilityInstance() {
-			return base.CreateAccessibilityInstance ();
+			AccessibleObject	ao;
+
+			ao = base.CreateAccessibilityInstance ();
+			ao.role = AccessibleRole.CheckButton;
+
+			return ao;
 		}
 
 		protected virtual void OnAppearanceChanged(EventArgs e) {

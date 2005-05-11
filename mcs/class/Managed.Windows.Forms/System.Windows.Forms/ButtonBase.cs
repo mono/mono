@@ -338,11 +338,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
-		[MonoTODO("Finish setting properties of the AccessibleObject")]
 		protected override AccessibleObject CreateAccessibilityInstance() {
 			AccessibleObject ao;
-			ao=base.CreateAccessibilityInstance();
-			ao.description="Button";
+			ao = base.CreateAccessibilityInstance();
+			ao.description = "Button";
+			ao.role = AccessibleRole.PushButton;
 
 			return ao;
 		}

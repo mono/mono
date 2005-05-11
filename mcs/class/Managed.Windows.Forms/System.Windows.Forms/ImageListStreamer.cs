@@ -77,20 +77,20 @@ namespace System.Windows.Forms {
 			MemoryStream stream = new MemoryStream (decompressed);
 			BinaryReader reader = new BinaryReader (stream);
 
-			IntPtr hbmMask = IntPtr.Zero;
-			IntPtr hbmColor= IntPtr.Zero;
+			// IntPtr hbmMask = IntPtr.Zero;
+			// IntPtr hbmColor= IntPtr.Zero;
 
 			try {
 				// read image list header
-				ushort usMagic	 = reader.ReadUInt16 ();
-				ushort usVersion = reader.ReadUInt16 ();
+				reader.ReadUInt16 ();	// usMagic
+				reader.ReadUInt16 ();	// usVersion
 				ushort cCurImage = reader.ReadUInt16 ();
-				ushort cMaxImage = reader.ReadUInt16 ();
-				ushort cGrow	 = reader.ReadUInt16 ();
+				reader.ReadUInt16 ();	// cMaxImage
+				reader.ReadUInt16 ();	// cGrow
 				ushort cx	 = reader.ReadUInt16 ();
 				ushort cy	 = reader.ReadUInt16 ();
 				uint   bkcolor	 = reader.ReadUInt32 ();
-				ushort flags	 = reader.ReadUInt16 ();
+				reader.ReadUInt16 ();	// flags
 
 				short [] ovls = new short [4];
 				for (i = 0; i < ovls.Length; i++)

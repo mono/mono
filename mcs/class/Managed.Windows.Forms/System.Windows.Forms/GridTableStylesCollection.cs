@@ -29,6 +29,7 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[ListBindable(false)]
 	public class GridTableStylesCollection : BaseCollection, IList
 	{
 		private ArrayList items;

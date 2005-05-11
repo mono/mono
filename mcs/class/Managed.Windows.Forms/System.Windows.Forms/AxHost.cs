@@ -35,6 +35,7 @@ using System.Runtime.Serialization;
 
 
 namespace System.Windows.Forms {
+	[MonoTODO("Possibly implement this for Win32; find a way for Linux and Mac")]
 	[DefaultEvent("Enter")]
 	[Designer("System.Windows.Forms.Design.AxHostDesigner, " + Consts.AssemblySystem_Design)]
 	[DesignTimeVisible(false)]
@@ -51,12 +52,10 @@ namespace System.Windows.Forms {
 
 			#region AxHost.AxComponentEditor Class
 			public class AxComponentEditor : System.Windows.Forms.Design.WindowsFormsComponentEditor {
-				[MonoTODO]
 				public AxComponentEditor() {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public override bool EditComponent(ITypeDescriptorContext context, object obj, IWin32Window parent) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
@@ -83,17 +82,14 @@ namespace System.Windows.Forms {
 			#region AxHost.ConnectionPointCookie
 			[ComVisible(false)]
 			public class ConnectionPointCookie {
-				[MonoTODO]
 				public ConnectionPointCookie(object source, object sink, Type eventInterface) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public void Disconnect() {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				~ConnectionPointCookie() {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
@@ -102,12 +98,10 @@ namespace System.Windows.Forms {
 		
 			#region AxHost.InvalidActiveXStateException  Class
 			public class InvalidActiveXStateException : Exception {
-				[MonoTODO]
 				public InvalidActiveXStateException(string name, ActiveXInvokeKind kind) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public override string ToString() {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
@@ -118,12 +112,10 @@ namespace System.Windows.Forms {
 			[Serializable]
 			[TypeConverter("System.ComponentModel.TypeConverter, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 			public class State : ISerializable {
-				[MonoTODO]
 				public State(Stream ms, int storageType, bool manualUpdate, string licKey) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
@@ -133,12 +125,10 @@ namespace System.Windows.Forms {
 			#region AxHost.TypeLibraryTimeStampAttribute Class
 			[AttributeUsage(AttributeTargets.Assembly, Inherited=false)]
 			public sealed class TypeLibraryTimeStampAttribute : Attribute {
-				[MonoTODO]
 				public TypeLibraryTimeStampAttribute(string timestamp) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public DateTime Value {
 					get {
 						throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -149,27 +139,22 @@ namespace System.Windows.Forms {
 
 			#region AxHost.StateConverter Class
 			public class StateConverter : System.ComponentModel.TypeConverter {
-				[MonoTODO]
 				public StateConverter() {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
 
-				[MonoTODO]
 				public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");
 				}
@@ -190,7 +175,6 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override Color BackColor {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -203,7 +187,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override Image BackgroundImage {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -216,7 +199,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public ContainerControl ContainingControl {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -229,7 +211,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override ContextMenu ContextMenu {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -242,7 +223,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override Cursor Cursor {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -256,7 +236,6 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public bool EditMode {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -265,7 +244,6 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public new virtual bool Enabled {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -278,7 +256,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override Font Font {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -291,7 +268,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override Color ForeColor {
 			get { 
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -305,7 +281,6 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public bool HasAboutBox {
 			get { 
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -315,7 +290,6 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(null)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		[RefreshProperties(RefreshProperties.All)]
 		public AxHost.State OcxState {
 			get {
@@ -329,7 +303,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		[Localizable(true)]
 		public new virtual bool RightToLeft {
 			get {
@@ -341,7 +314,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public override ISite Site {
 			set {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -350,7 +322,6 @@ namespace System.Windows.Forms {
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override string Text {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -363,14 +334,12 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Constructors
 		
 		#region Protected Instance Properties
-		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
 		
-		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
@@ -379,81 +348,68 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Protected Static Methods
-		[MonoTODO]
 		[CLSCompliant(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static Color GetColorFromOleColor(uint color){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static Font GetFontFromIFont(object font){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static Font GetFontFromIFontDisp(object font){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static object GetIFontDispFromFont(Font font){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static object GetIFontFromFont(Font font){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static object GetIPictureDispFromPicture(Image image){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static object GetIPictureFromCursor(Cursor cursor){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static object GetIPictureFromPicture(Image image){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static double GetOADateFromTime(DateTime time){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[CLSCompliant(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static uint GetOleColorFromColor(Color color){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static Image GetPictureFromIPicture(object picture){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static Image GetPictureFromIPictureDisp(object picture){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static DateTime GetTimeFromOADate(double date){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
@@ -462,221 +418,181 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public void BeginInit() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		public void DoVerb(int verb){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public virtual void EndInit() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public object GetOcx() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		public bool HasPropertyPages() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public void InvokeEditMode(){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		public void MakeDirty(){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[MonoTODO]
 		public override bool PreProcessMessage(ref Message msg) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[MonoTODO]
 		public void ShowAboutBox() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		public void ShowPropertyPages() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		public void ShowPropertyPages(Control control) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		[MonoTODO]
 		protected virtual void AttachInterfaces() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void CreateHandle() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected virtual void CreateSink(){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void DestroyHandle() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected virtual void DetachSink(){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[MonoTODO]
 		protected override void Dispose(bool disposing) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override bool IsInputChar(char charCode) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void OnForeColorChanged(EventArgs e) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[MonoTODO]
 		protected virtual void OnInPlaceActive() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected override void OnLostFocus(EventArgs e) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override bool ProcessDialogKey(Keys keyData) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[MonoTODO]
 		protected override bool ProcessMnemonic(char charCode) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected bool PropsValid(){
 			throw new NotImplementedException("COM/ActiveX support is not implemented"); 
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseDown(short button, short shift, int x, int y){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseDown(short button, short shift, float x, float y){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseDown(object o1, object o2, object o3, object o4){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseMove(short button, short shift, int x, int y){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseMove(short button, short shift, float x, float y){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseMove(object o1, object o2, object o3, object o4){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseUp(short button, short shift, int x, int y){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseUp(short button, short shift, float x, float y){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		protected void RaiseOnMouseUp(object o1, object o2, object o3, object o4){
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
-		[MonoTODO]
 		protected void SetAboutBoxDelegate(AxHost.AboutBoxDelegate d) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void SetVisibleCore(bool value) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
-		[MonoTODO]
 		protected override void WndProc(ref Message m) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
@@ -684,7 +600,6 @@ namespace System.Windows.Forms {
 
 		#region	Private Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[MonoTODO]
 		private bool ShouldSerializeContainingControl() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
@@ -847,73 +762,61 @@ namespace System.Windows.Forms {
 
 		#region	Interfaces
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		string ICustomTypeDescriptor.GetClassName() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		string ICustomTypeDescriptor.GetComponentName() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		TypeConverter ICustomTypeDescriptor.GetConverter() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[MonoTODO]
 		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}

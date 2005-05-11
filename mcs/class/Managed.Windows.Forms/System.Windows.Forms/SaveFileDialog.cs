@@ -27,11 +27,13 @@
 // NOT COMPLETE - work in progress
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 
 namespace System.Windows.Forms
 {
+	[Designer("System.Windows.Forms.Design.SaveFileDialogDesigner, " + Consts.AssemblySystem_Design)]
 	public sealed class SaveFileDialog : FileDialog
 	{
 		#region Public Constructors
@@ -52,6 +54,7 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
+		[DefaultValue(false)]
 		public new bool CreatePrompt
 		{
 			set
@@ -65,6 +68,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(true)]
 		public new bool OverwritePrompt
 		{
 			set
@@ -107,12 +111,6 @@ namespace System.Windows.Forms
 			createPrompt = false;
 			OverwritePrompt = overwritePrompt;
 			CreatePrompt = createPrompt;
-		}
-		
-		[MonoTODO]
-		protected override bool RunDialog( IntPtr hwndOwner )
-		{
-			return base.RunDialog( hwndOwner );
 		}
 	}
 }

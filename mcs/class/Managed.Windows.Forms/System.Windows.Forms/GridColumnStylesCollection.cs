@@ -29,6 +29,8 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[Editor("System.Windows.Forms.Design.DataGridColumnCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+	[ListBindable(false)]
 	public class GridColumnStylesCollection : BaseCollection, IList
 	{
 		private ArrayList items;

@@ -567,7 +567,6 @@ namespace System.Windows.Forms
 					} else {
 						return link_font;
 					}
-					break;
 				}				
 				case LinkBehavior.HoverUnderline:
 				{

@@ -35,19 +35,32 @@ namespace System.Windows.Forms {
 		#region DataFormats.Format Subclass
 		public class Format {
 			#region Local Variables
-			private string	name;
-			private int	id;
-			private Format	next;
+			private static Format	formats;
+			private string		name;
+			private int		id;
+			private Format		next;
 			#endregion Local Variables
 
 			#region Public Constructors
 			public Format(string name, int ID) {
+				Format	f;
+
 				this.name = name;
 				this.id = ID;
-			}
 
-			internal Format(string name, int ID, Format after) : this(name, ID) {
-				after.next = this;
+				lock (typeof(DataFormats.Format)) {
+					if (formats == null) {
+						formats = this;
+					} else {
+						// Insert into the list of known/defined formats
+						f = formats;
+
+						while (f.next != null) {
+							f = f.next;
+						}
+						f.next = this;
+					}
+				}
 			}
 			#endregion	// Public Constructors
 
@@ -66,14 +79,44 @@ namespace System.Windows.Forms {
 			#endregion	// Public Instance Properties
 
 			#region Private Methods
-			internal static Format Find(Format f, int id) {
+			internal static Format Add(string name) {
+				Format f;
+
+				f = Find(name);
+				if (f == null) {
+					IntPtr cliphandle;
+
+					cliphandle = XplatUI.ClipboardOpen();
+					f = new Format(name, XplatUI.ClipboardGetID(cliphandle, name));
+					XplatUI.ClipboardClose(cliphandle);
+				}
+				return f;
+			}
+
+			internal static Format Add(int id) {
+				Format f;
+
+				f = Find(id);
+				if (f == null) {
+					f = new Format("Format"+id.ToString(), id);
+				}
+				return f;
+			}
+
+			internal static Format Find(int id) {
+				Format f;
+
+				f = formats;
 				while ((f != null) && (f.Id != id)) {
 					f = f.next;
 				}
 				return f;
 			}
 
-			internal static Format Find(Format f, string name) {
+			internal static Format Find(string name) {
+				Format f;
+
+				f = formats;
 				while ((f != null) && (!f.Name.Equals(name))) {
 					f = f.next;
 				}
@@ -86,7 +129,6 @@ namespace System.Windows.Forms {
 
 		#region Local Variables
 		private static bool	initialized = false;
-		private static Format	formats;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -124,15 +166,17 @@ namespace System.Windows.Forms {
 				Initialize();
 			}
 
-			return Format.Find(formats, ID);
+			return Format.Find(ID);
 		}
 
 		public static Format GetFormat(string format) {
+			Format	f;
+
 			if (!initialized) {
 				Initialize();
 			}
 
-			return Format.Find(formats, format);
+			return Format.Add(format);
 		}
 		#endregion	// Public Static Methods
 
@@ -140,33 +184,31 @@ namespace System.Windows.Forms {
 		private static void Initialize() {
 			lock (typeof(DataFormats.Format)) {
 				if (!initialized) {
-					Format	f;
 					IntPtr	cliphandle;
 
+					new Format(Text, 1);
+					new Format(Bitmap, 2);
+					new Format(MetafilePict, 3);
+					new Format(SymbolicLink, 4);
+					new Format(Dif, 5);
+					new Format(Tiff, 6);
+					new Format(OemText, 7);
+					new Format(Dib, 8);
+					new Format(Palette, 9);
+					new Format(PenData, 10);
+					new Format(Riff, 11);
+					new Format(WaveAudio, 12);
+					new Format(UnicodeText, 13);
+					new Format(EnhancedMetafile, 14);
+					new Format(FileDrop, 15);
+					new Format(Locale, 16);
+
 					cliphandle = XplatUI.ClipboardOpen();
-					formats = new DataFormats.Format(Text, 1);
-					f = new Format(Bitmap, 2, formats);
-					f = new Format(MetafilePict, 3, f);
-					f = new Format(SymbolicLink, 4, f);
-					f = new Format(Dif, 5, f);
-					f = new Format(Tiff, 6, f);
-					f = new Format(OemText, 7, f);
-					f = new Format(Dib, 8, f);
-					f = new Format(Palette, 9, f);
-					f = new Format(PenData, 10, f);
-					f = new Format(Riff, 11, f);
-					f = new Format(WaveAudio, 12, f);
-					f = new Format(UnicodeText, 13, f);
-					f = new Format(EnhancedMetafile, 14, f);
-					f = new Format(FileDrop, 15, f);
-					f = new Format(Locale, 16, f);
-
-					f = new Format(CommaSeparatedValue, XplatUI.ClipboardGetID(cliphandle, CommaSeparatedValue), f);
-					f = new Format(Html, XplatUI.ClipboardGetID(cliphandle, Html), f);
-					f = new Format(Rtf, XplatUI.ClipboardGetID(cliphandle, Rtf), f);
-					f = new Format(Serializable, XplatUI.ClipboardGetID(cliphandle, Serializable), f);
-					f = new Format(StringFormat, XplatUI.ClipboardGetID(cliphandle, StringFormat), f);
-
+					new Format(CommaSeparatedValue, XplatUI.ClipboardGetID(cliphandle, CommaSeparatedValue));
+					new Format(Html, XplatUI.ClipboardGetID(cliphandle, Html));
+					new Format(Rtf, XplatUI.ClipboardGetID(cliphandle, Rtf));
+					new Format(Serializable, XplatUI.ClipboardGetID(cliphandle, Serializable));
+					new Format(StringFormat, XplatUI.ClipboardGetID(cliphandle, StringFormat));
 					XplatUI.ClipboardClose(cliphandle);
 					
 				}

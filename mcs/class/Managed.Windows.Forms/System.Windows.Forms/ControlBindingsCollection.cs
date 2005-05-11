@@ -26,19 +26,44 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection;
 
 
 namespace System.Windows.Forms {
-
+	[DefaultEvent("CollectionChanged")]
+	[Editor("System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
+	[TypeConverter("System.Windows.Forms.Design.ControlBindingsConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 	public class ControlBindingsCollection : BindingsCollection {
-
+		#region	Fields
 		private Control control;
+		#endregion	// Fields
 
-		internal ControlBindingsCollection (Control control)
-		{
+		#region Constructors
+		internal ControlBindingsCollection (Control control) {
 			this.control = control;
 		}
+		#endregion	// Constructors
 
+		#region Public Instance Properties
+		public Control Control {
+			get {
+				return control;
+			}
+		}
+
+		public Binding this[string propertyName] {
+			get {
+				foreach (Binding b in base.List) {
+					if (b.PropertyName == propertyName) {
+						return b;
+					}
+				}
+				return null;
+			}
+		}
+		#endregion	// Public Instance Properties
+
+		#region Public Instance Methods
 		public new void Add (Binding binding)
 		{
 			AddCore (binding);
@@ -52,6 +77,28 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
+		public void Clear() {
+			base.Clear();
+		}
+
+		public void Remove(Binding binding) {
+			if (binding == null) {
+				throw new NullReferenceException("The binding is null");
+			}
+
+			base.Remove(binding);
+		}
+
+		public void RemoveAt(int index) {
+			if (index < 0 || index > base.List.Count) {
+				throw new ArgumentOutOfRangeException("index");
+			}
+
+			base.RemoveAt(index);
+		}
+		#endregion	// Public Instance Methods
+
+		#region Protected Instance Methods
 		protected override void AddCore (Binding binding)
 		{
 			if (binding == null)
@@ -63,6 +110,19 @@ namespace System.Windows.Forms {
 			binding.SetControl (control);
 			base.AddCore (binding);
 		}
+
+		protected override void ClearCore() {
+			base.ClearCore ();
+		}
+
+		protected override void RemoveCore(Binding dataBinding) {
+			if (dataBinding == null) {
+				throw new ArgumentNullException ("dataBinding");
+			}
+
+			base.RemoveCore (dataBinding);
+		}
+		#endregion	// Protected Instance Methods
 	}
 }
 

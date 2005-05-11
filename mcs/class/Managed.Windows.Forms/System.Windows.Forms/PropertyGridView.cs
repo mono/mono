@@ -339,7 +339,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			Brush backBrush = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
 			Brush foreBrush = brush;
-			bool selectedItem = false, expandable = false;
+			//bool selectedItem = false, expandable = false;
+
 			if (grid_item == property_grid.SelectedGridItem){
 				backBrush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilight);
 				foreBrush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilightText);

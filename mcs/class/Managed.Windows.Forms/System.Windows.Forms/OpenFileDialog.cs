@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //
@@ -27,12 +27,14 @@
 // NOT COMPLETE - work in progress
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 
 namespace System.Windows.Forms
 {
-	public class OpenFileDialog : FileDialog
+	[Designer("System.Windows.Forms.Design.OpenFileDialogDesigner, " + Consts.AssemblySystem_Design)]
+	public sealed class OpenFileDialog : FileDialog
 	{
 		#region Public Constructors
 		public OpenFileDialog( )
@@ -54,6 +56,7 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
+		[DefaultValue(true)]
 		public override bool CheckFileExists
 		{
 			get
@@ -67,6 +70,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public new bool Multiselect
 		{
 			get
@@ -80,6 +84,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public new bool ReadOnlyChecked
 		{
 			get
@@ -93,6 +98,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public new bool ShowReadOnly
 		{
 			get
@@ -127,12 +133,6 @@ namespace System.Windows.Forms
 			ReadOnlyChecked = readOnlyChecked;
 			showReadOnly = false;
 			ShowReadOnly = showReadOnly;
-		}
-		
-		[MonoTODO]
-		protected override bool RunDialog( IntPtr hwndOwner )
-		{
-			return base.RunDialog( hwndOwner );
 		}
 	}
 }

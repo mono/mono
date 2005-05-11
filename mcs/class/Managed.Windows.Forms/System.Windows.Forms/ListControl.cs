@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 		private object data_source;
 		private BindingMemberInfo value_member;
 		private string display_member;
-		protected CurrencyManager data_manager;
+		private CurrencyManager data_manager;
 
 		protected ListControl ()
 		{			

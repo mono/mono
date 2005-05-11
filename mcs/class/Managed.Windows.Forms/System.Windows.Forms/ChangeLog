@@ -1,3 +1,30 @@
+2005-05-10  Peter Bartok  <pbartok@novell.com>
+
+	* AccessibleObject.cs: 
+	  - Removed MonoTODO attribute on help, method is correct
+	  - Fixed Bounds property
+	* AxHost.cs: Moved MonoTODO
+	* ButtonBase.cs: Now setting AccessibleObject properties
+	* RadioButton.cs: Setting proper AccessibleObject role
+	* CheckBox.cs: Setting proper AccessibleObject role
+	* ControlBindingsCollection.cs: Added properties, methods and attributes
+	* DataFormats.cs: Fixed awkward internal API, and changed to enable
+	  userdefined DataFormats.Format items as well
+	* ListControl.cs: Removed data_member from the public eye
+	* OpenFileDialog.cs: 
+	  - Made class sealed
+	  - Added missing attributes
+	* SaveFileDialog.cs: Added missing attributes
+	* ImageListStreamer.cs: Fixed code that caused warnings
+	* LinkLabel.cs: Removed unreachable code
+	* TreeView.cs: Fixed code that caused warnings
+	* PropertyGridView.cs: Fixed code that caused warnings
+	* GridColumnStylesCollection.cs: Added missing attributes
+	* GridTableStylesCollection: Added missing attribute
+	* PropertyManager: Added .ctor
+	* SecurityIDType: Added
+	* DataObject.cs: Implemented class
+
 2005-05-11  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* RadioButton.cs: call base method to allow to fire OnClick event
@@ -5,6 +32,7 @@
 	* CheckedListBox.cs: call base method before returning
 	* TrackBar.cs: call base method before returning
 	
+
 2005-05-10  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Fix for #74902, check pending timers when peeking

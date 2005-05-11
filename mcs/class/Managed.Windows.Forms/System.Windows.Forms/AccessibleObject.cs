@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		public virtual Rectangle Bounds {
 			get {
-				return Rectangle.Empty;
+				return owner.Bounds;
 			}
 		}
 
@@ -188,7 +188,6 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		[MonoTODO("Integrate help into accessibility system")]
 		public virtual int GetHelpTopic(out string FileName) {
 
 			FileName = null;

@@ -725,7 +725,7 @@ namespace System.Windows.Forms {
 			// Decide if we need a scrollbar
 			int old_open_node_count = open_node_count;
 
-			Rectangle fill = ClientRectangle;
+			//Rectangle fill = ClientRectangle;
 			add_vscroll = false;
 			add_hscroll = false;
 			
@@ -841,8 +841,8 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeImage (TreeNode node, Graphics dc, Rectangle clip, int x, int y)
 		{
-			Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, 
-					ImageList.ImageSize.Height);
+			// Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height);
+
 			if (!RectsIntersect (clip, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
 				return;
 

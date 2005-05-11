@@ -35,6 +35,9 @@ namespace System.Windows.Forms {
 		private PropertyDescriptor prop_desc;
 		private bool binding_suspended;
 
+		public PropertyManager() {
+		}
+
 		internal PropertyManager (object data_source, string property_name)
 		{
 			this.data_source = data_source;

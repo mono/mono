@@ -272,7 +272,12 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		protected override AccessibleObject CreateAccessibilityInstance() {
-			return base.CreateAccessibilityInstance ();
+			AccessibleObject	ao;
+
+			ao = base.CreateAccessibilityInstance ();
+			ao.role = AccessibleRole.RadioButton;
+
+			return ao;
 		}
 
 		protected virtual void OnCheckedChanged(EventArgs e) {
