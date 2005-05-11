@@ -104,7 +104,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Resources\ResXFileRef.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Resources\ResXResourceReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Resources\ResXResourceSet.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -785,6 +795,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\IDataGridColumnStyleEditingNotificationService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\IDataGridEditingService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

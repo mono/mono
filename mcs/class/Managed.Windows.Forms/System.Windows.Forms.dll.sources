@@ -2,7 +2,9 @@ Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
 Assembly/Locale.cs
 System.Resources/ResXNullRef.cs
+System.Resources/ResXFileRef.cs
 System.Resources/ResXResourceReader.cs
+System.Resources/ResXResourceSet.cs
 System.Resources/ResXResourceWriter.cs
 System.Windows.Forms.Design/ComponentEditorForm.cs
 System.Windows.Forms.Design/ComponentEditorPage.cs
@@ -139,6 +141,7 @@ System.Windows.Forms/ICommandExecutor.cs
 System.Windows.Forms/IComponentEditorPageSite.cs
 System.Windows.Forms/IContainerControl.cs
 System.Windows.Forms/IDataGridColumnStyleEditingNotificationService.cs
+System.Windows.Forms/IDataGridEditingService.cs
 System.Windows.Forms/IDataObject.cs
 System.Windows.Forms/IFeatureSupport.cs
 System.Windows.Forms/IFileReaderService.cs
