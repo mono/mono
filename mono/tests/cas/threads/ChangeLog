@@ -1,3 +1,12 @@
+2005-05-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* delegate1-2.cs: New. Delegate based tests.
+	* Makefile: Updated for new tests.
+	* README: Updated for new tests.
+	* swf-control1.cs: New. Control.BeginInvoke test.
+	* swf-timer3-4.cs: New. Timer tests requiring SWF.
+	* timer1-2.cs: Changed to use ControlEvidence.
+
 2005-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChangeLog: New. Track changes in the tests.
