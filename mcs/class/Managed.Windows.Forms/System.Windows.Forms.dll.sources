@@ -79,6 +79,7 @@ System.Windows.Forms/CursorConverter.cs
 System.Windows.Forms/Cursors.cs
 System.Windows.Forms/DataFormats.cs
 System.Windows.Forms/DataGrid.cs
+System.Windows.Forms/DataGridDrawingLogic.cs
 System.Windows.Forms/DataGridBoolColumn.cs
 System.Windows.Forms/DataGridCell.cs
 System.Windows.Forms/DataGridColumnStyle.cs
