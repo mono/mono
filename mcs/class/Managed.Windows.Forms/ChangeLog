@@ -1,3 +1,9 @@
+2005-05-10  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added SecurityIDType.cs,
+	  DataObject.cs and DataFormats.cs
+	* SWF.csproj: Update
+
 2005-05-06  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added Screen.cs, HelpNavigator.cs

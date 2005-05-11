@@ -469,6 +469,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DataFormats.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DataGrid.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -510,6 +515,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridTextBoxColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DataObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1405,6 +1415,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ScrollEventType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SecurityIDType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
