@@ -24,6 +24,7 @@
 	* PropertyManager: Added .ctor
 	* SecurityIDType: Added
 	* DataObject.cs: Implemented class
+	* LinkArea.cs: Added missing attribute
 
 2005-05-11  Jordi Mas i Hernandez <jordi@ximian.com>
 
