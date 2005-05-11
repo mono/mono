@@ -256,6 +256,49 @@ namespace System.Windows.Forms {
 		#region kEventClassAccessibility constants
 		// TODO: We dont use these yet; fill if needed
 		#endregion
+
+		#region kEventParam constants
+
+		internal enum EventParamName : uint {
+			//	source: /System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers/CarbonEvents.h
+
+			/* Keyboard event parameter and types*/
+			kEventParamKeyMacCharCodes = 1801676914,	//	'kchr'
+	
+			/* Mouse event parameters and types*/
+			kEventParamMouseLocation = 1835822947,		//	'mloc', /* typeHIPoint*/
+			kEventParamMouseButton = 1835168878,		//	'mbtn'	/* type MouseButton*/
+
+			/* Generic toolbox parameters and types */
+			kEventParamCGContextRef = 1668183160,		//	'cntx'	/* typeCGContextRef*/
+			kEventParamRgnHandle = 1919381096,			//	'rgnh'
+
+			/* Control event parameters and types */
+			kEventParamControlPart = 1668313716,		//	'cprt'	/* typeControlPartCode*/
+
+			//	source: /System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/Headers/CarbonEventsCore.h
+			/* Core Event Types */
+			kEventParamDirectObject = 757935405,		//	'----' /* type varies depending on event*/
+		}
+
+		internal enum EventParamType : uint {
+
+			typeControlPartCode = 1668313716,			//	'cprt'	/* ControlPartCode*/
+
+			typeQDPoint = 1363439732,					//	'QDpt'
+
+			typeControlRef = 1668575852,				//	'ctrl'
+
+			typeCGContextRef = 1668183160,				//	'cntx'	/* CGContextRef*/
+
+			typeMouseButton = 1835168878,				//	'mbtn'	/* EventMouseButton*/
+
+			typeQDRgnHandle = 1919381096,				//	'rgnh'
+
+			typeChar = 1413830740,						//	'TEXT'
+		}
+
+		#endregion
 	}
 
 	internal enum WindowClass : uint {

@@ -1,3 +1,8 @@
+2005-05-11  Geoff Norton  <gnorton@customerdna.com>
+
+	* OSXStructs.cs:
+	  XplatUIOSX.cs: More cosmetic cleanup courtesy of Artyom Tyazhelov (Artyom.Tyazhelov@helmes.ee)
+
 2005-05-12  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: fixed some members

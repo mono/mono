@@ -263,7 +263,7 @@ namespace System.Windows.Forms {
 		private int ProcessKeyboardEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
 			MSG msg = new MSG ();
 			byte charCode = 0x00;
-			GetEventParameter (inEvent, 1801676914, 1413830740, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
+			GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamKeyMacCharCodes, OSXConstants.EventParamType.typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
 			IntPtr cntrl = IntPtr.Zero;
 			CheckError (GetKeyboardFocus (handle, ref cntrl), "GetKeyboardFocus()");
 			msg.hwnd = cntrl;
@@ -377,7 +377,7 @@ namespace System.Windows.Forms {
 				case OSXConstants.kEventMouseMoved: {
 					// Where is the mouse in global coordinates
 					QDPoint pt = new QDPoint ();
-					GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref pt);
+					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref pt);
 					
 					// Where is the mouse in the window
 					Rect window_bounds = new Rect ();
@@ -417,7 +417,7 @@ namespace System.Windows.Forms {
 		}
 					
 		private int ProcessControlEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
-			GetEventParameter (inEvent, 757935405, 1668575852, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref handle);
+			GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamDirectObject, OSXConstants.EventParamType.typeControlRef, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref handle);
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			MSG msg = new MSG ();
 					
@@ -429,7 +429,7 @@ namespace System.Windows.Forms {
 					
 					/*
 					IntPtr rgnhandle = IntPtr.Zero;
-					GetEventParameter (inEvent, 1919381096, 1919381096, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref rgnhandle);
+					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamRgnHandle, OSXConstants.EventParamType.typeQDRgnHandle, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref rgnhandle);
 					IntPtr duprgn = NewRgn ();
 					CopyRgn (rgnhandle, duprgn);
 					ClipRegions [hwnd.Handle] = duprgn;		
@@ -450,7 +450,7 @@ namespace System.Windows.Forms {
 					if (WindowBackgrounds [hwnd] != null) {
 						Color c = (Color)WindowBackgrounds [hwnd];
 						IntPtr contextref = IntPtr.Zero;
-						GetEventParameter (inEvent, 1668183160, 1668183160, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref contextref);
+						GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamCGContextRef, OSXConstants.EventParamType.typeCGContextRef, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref contextref);
 						CGContextSetRGBFillColor (contextref, (float)c.R/255, (float)c.G/255, (float)c.B/255, (float)c.A/255);
 						CGContextFillRect (contextref, bounds);
 					}
@@ -483,7 +483,7 @@ namespace System.Windows.Forms {
 				case OSXConstants.kEventControlTrack: {
 					// get the point that was hit
 					QDPoint point = new QDPoint ();
-					CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
+					CheckError (GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
 					MouseTrackingResult mousestatus = MouseTrackingResult.kMouseTrackingMouseDown;
 					IntPtr modifiers = IntPtr.Zero;
 					
@@ -551,7 +551,7 @@ namespace System.Windows.Forms {
 				case OSXConstants.kEventControlClick: {
 					// get the point that was hit
 					QDPoint point = new QDPoint ();
-					CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
+					CheckError (GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
 					QDPoint trackpoint = point;
 					int x = point.x;
 					int y = point.y;
@@ -561,7 +561,7 @@ namespace System.Windows.Forms {
 					
 					// which button was pressed?
 					ushort button = 0;
-					GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
+					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseButton, OSXConstants.EventParamType.typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
 					if (button == 2) {
 						point.x = (short)MousePosition.X;
 						point.y = (short)MousePosition.Y;
@@ -602,7 +602,7 @@ namespace System.Windows.Forms {
 				case OSXConstants.kEventControlSetFocusPart: {
 					// This handles setting focus
 					short pcode = 1;
-					GetEventParameter (inEvent, 1668313716, 1668313716, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (short)), IntPtr.Zero, ref pcode);
+					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamControlPart, OSXConstants.EventParamType.typeControlPartCode, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (short)), IntPtr.Zero, ref pcode);
 					switch (pcode) {
 						case 0:
 						case -1:
@@ -610,7 +610,7 @@ namespace System.Windows.Forms {
 							pcode = 0;
 							break;
 					}
-					SetEventParameter (inEvent, 1668313716, 1668313716, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
+					SetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamControlPart, OSXConstants.EventParamType.typeControlPartCode, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
 					return 0;
 				}
 			}
@@ -1907,19 +1907,19 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern uint GetEventKind (IntPtr eventRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref byte outData);
+		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref byte outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref IntPtr outData);
+		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref IntPtr outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref ushort outData);
+		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref ushort outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref short outData);
+		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref short outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref QDPoint outData);
+		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref QDPoint outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetEventParameter (IntPtr evt, uint inName, uint inType, uint bufSize, ref short outData);
+		static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref short outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetEventParameter (IntPtr evt, uint inName, uint inType, uint bufSize, ref IntPtr outData);
+		static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref IntPtr outData);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextFlush (IntPtr cgc);
