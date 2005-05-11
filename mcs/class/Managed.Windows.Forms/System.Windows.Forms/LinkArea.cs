@@ -30,13 +30,88 @@
 // COMPLETE
 
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Windows.Forms
 {
 	[Serializable]
-	[TypeConverter("System.Windows.Forms.LinkArea+LinkAreaConverter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[TypeConverter(typeof(LinkArea.LinkAreaConverter))]
 	public struct LinkArea
 	{
+		#region LinkAreaConverter Class
+		public class LinkAreaConverter : TypeConverter {
+			public LinkAreaConverter() {
+			}
+
+			public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) {
+				if (sourceType == typeof(string)) {
+					return true;
+				}
+				return base.CanConvertFrom(context, sourceType);
+			}
+
+			public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) {
+				if (destinationType == typeof(string)) {
+					return true;
+				}
+				return base.CanConvertTo(context, destinationType);
+			}
+
+			public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
+				string		s;
+				string[]	parts;
+				int		start;
+				int		length;
+
+				if ((value == null) || !(value is String)) {
+					return base.ConvertFrom (context, culture, value);
+				}
+
+				if (culture == null) {
+					culture = CultureInfo.CurrentCulture;
+				}
+
+				parts = ((string)value).Split(culture.TextInfo.ListSeparator.ToCharArray());
+				start = int.Parse(parts[0].Trim());
+				length = int.Parse(parts[1].Trim());
+				return new LinkArea(start, length);
+			}
+
+			public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
+				LinkArea	l;
+
+				if ((value == null) || !(value is LinkArea) || (destinationType != typeof(string))) {
+					return base.ConvertTo (context, culture, value, destinationType);
+				}
+
+				if (culture == null) {
+					culture = CultureInfo.CurrentCulture;
+				}
+
+				l = (LinkArea)value;
+
+
+				return l.Start.ToString() + culture.TextInfo.ListSeparator + l.Length.ToString();
+			}
+
+			public override object CreateInstance(ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) {
+				return new LinkArea((int)propertyValues["Start"], (int)propertyValues["Length"]);
+			}
+
+			public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) {
+				return true;
+			}
+
+			public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) {
+				return TypeDescriptor.GetProperties(typeof(LinkArea), attributes);
+			}
+
+			public override bool GetPropertiesSupported(ITypeDescriptorContext context) {
+				return true;
+			}
+		}		
+		#endregion	// LinkAreaConverter Class
+
 		private int start;
 		private int length;
 	

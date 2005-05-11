@@ -373,7 +373,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue(PropertySort.Categorized)]
+		[DefaultValue(PropertySort.CategorizedAlphabetical)]
 		public PropertySort PropertySort {
 			get {
 				return property_sort;

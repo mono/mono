@@ -1,3 +1,17 @@
+2005-05-11  Peter Bartok  <pbartok@novell.com>
+
+	* LinkArea.cs: Added and implemented LinkAreaTypeConverter class
+	* SelectionRangeConverter.cs: Implemented
+	* PropertyGrid.cs: Fixed attribute value
+	* Control.cs:
+	  - Invoke(): Don't call Begin/EndInvoke if it is not neccessary
+	  - Added Sebastien Pouliot's CAS Stack Propagation fixes
+	* XplatUIDriver.cs: Added new XplatUIDriverSupport class, for code
+	  that's common to all drivers. First methods to go there are
+	  Sebastien Pouliot's CAS Stack Propagation helper methods
+	* XplatUIWin32.cs, XplatUIX11.cs, AsyncMethodData.cs: Fixes by 
+	  Sebastien Pouliot for CAS Stack Propagation
+
 2005-05-11  Geoff Norton  <gnorton@customerdna.com>
 
 	* OSXStructs.cs:

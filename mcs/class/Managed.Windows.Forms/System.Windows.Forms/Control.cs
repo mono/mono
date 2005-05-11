@@ -41,6 +41,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 
 
@@ -630,6 +631,16 @@ namespace System.Windows.Forms
 			data.Method = method;
 			data.Args = args;
 			data.Result = new WeakReference (result);
+
+#if NET_2_0
+			if (!ExecutionContext.IsFlowSuppressed ()) {
+				data.Context = ExecutionContext.Capture ();
+			}
+#else
+			if (SecurityManager.SecurityEnabled) {
+				data.Stack = CompressedStack.GetCompressedStack ();
+			}
+#endif
 
 			XplatUI.SendAsyncMethod (data);
 			return result;
@@ -2178,6 +2189,10 @@ namespace System.Windows.Forms
 		}
 
 		public object Invoke (Delegate method, object[] args) {
+			if (!this.InvokeRequired) {
+				return method.DynamicInvoke(args);
+			}
+
 			IAsyncResult result = BeginInvoke (method, args);
 			return EndInvoke(result);
 		}

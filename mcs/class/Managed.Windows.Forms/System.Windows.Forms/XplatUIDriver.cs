@@ -17,16 +17,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
-//	Peter Bartok	pbartok@novell.com
-//
+//	Peter Bartok		pbartok@novell.com
+//	Sebastien Pouliot	sebastien@ximian.com
 //
 
 // COMPLETE
 
 using System.Drawing;
+using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	internal abstract class XplatUIDriver {
@@ -209,5 +211,67 @@ namespace System.Windows.Forms {
 		internal abstract int KeyboardDelay { get; } 
 		
 #endregion	// XplatUI Driver Methods
+	}
+
+	internal class XplatUIDriverSupport {
+		#region XplatUI Driver Support Methods
+#if NET_2_0
+		internal static void ExecutionCallback (object state)
+		{
+			AsyncMethodData data = (AsyncMethodData) state;
+			AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
+			object ret = data.Method.DynamicInvoke (data.Args);
+			if (result != null) {
+				result.Complete (ret);
+			}
+		}
+
+		internal static void ExecuteClientMessage (GCHandle gchandle)
+		{
+			AsyncMethodData data = (AsyncMethodData) gchandle.Target;
+			try {
+				if (data.Context == null) {
+					ExecutionCallback (data);
+				} else {
+					ExecutionContext.Run (data.Context, new ContextCallback (ExecutionCallback), data);
+				}
+			}
+			finally {
+				gchandle.Free ();
+			}
+		}
+#else
+		// for NET_1_0 and NET_1_1 no (public) ExecutionContext exists 
+		// so we must use the System.Threading.CompressedStack class
+		internal static void ExecuteClientMessage (GCHandle gchandle) {
+			AsyncMethodData data = (AsyncMethodData) gchandle.Target;
+			CompressedStack original = null;
+
+			// Stack is non-null only if the security manager is active
+			if (data.Stack != null) {
+				original = Thread.CurrentThread.GetCompressedStack ();
+				Thread.CurrentThread.SetCompressedStack (data.Stack);
+			}
+
+			try {
+				AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
+				object ret = data.Method.DynamicInvoke (data.Args);
+
+				if (result != null) {
+					result.Complete (ret);
+				}
+			}
+			finally {
+				if (data.Stack != null) {
+					// whatever occurs we must revert to the original compressed
+					// stack (null being a valid, empty, value in this case).
+					Thread.CurrentThread.SetCompressedStack (original);
+				}
+				gchandle.Free ();
+			}
+		}
+#endif
+		
+		#endregion	// XplatUI Driver Support Methods
 	}
 }

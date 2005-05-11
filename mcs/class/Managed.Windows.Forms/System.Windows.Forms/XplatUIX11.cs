@@ -2287,20 +2287,7 @@ namespace System.Windows.Forms {
 
 				case XEventName.ClientMessage: {
 					if (xevent.ClientMessageEvent.message_type == (IntPtr)AsyncAtom) {
-						GCHandle		gchandle;
-						AsyncMethodData		data;
-						AsyncMethodResult	result;
-						object			ret;
-
-						gchandle = (GCHandle)xevent.ClientMessageEvent.ptr1;
-						data = (AsyncMethodData)gchandle.Target;
-						result = data.Result.Target as AsyncMethodResult;
-						ret = data.Method.DynamicInvoke (data.Args);
-
-						if (result != null) {
-							result.Complete (ret);
-						}
-						gchandle.Free ();
+						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
 						break;
 					}
 

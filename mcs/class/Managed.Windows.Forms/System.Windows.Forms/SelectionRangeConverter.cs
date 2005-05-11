@@ -24,7 +24,7 @@
 //
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System.ComponentModel;
 using System.Globalization;
@@ -51,37 +51,59 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		[MonoTODO]
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
-			if (value is string) {
+			string		s;
+			string[]	parts;
+			DateTime	start;
+			DateTime	end;
 
+			if ((value == null) || !(value is String)) {
+				return base.ConvertFrom (context, culture, value);
 			}
-			return base.ConvertFrom (context, culture, value);
+
+			if (culture == null) {
+				culture = CultureInfo.CurrentCulture;
+			}
+
+			parts = ((string)value).Split(culture.TextInfo.ListSeparator.ToCharArray());
+
+			start = (DateTime)TypeDescriptor.GetConverter(typeof(DateTime)).ConvertFromString(context, culture, parts[0]);
+			end = (DateTime)TypeDescriptor.GetConverter(typeof(DateTime)).ConvertFromString(context, culture, parts[1]);
+
+			return new SelectionRange(start, end);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
-			return base.ConvertTo (context, culture, value, destinationType);
+			SelectionRange	s;
+
+			if ((value == null) || !(value is SelectionRange) || (destinationType != typeof(string))) {
+				return base.ConvertTo (context, culture, value, destinationType);
+			}
+
+			if (culture == null) {
+				culture = CultureInfo.CurrentCulture;
+			}
+
+			s = (SelectionRange)value;
+
+
+			return s.Start.ToShortDateString() + culture.TextInfo.ListSeparator + s.End.ToShortDateString();
 		}
 
-		[MonoTODO]
 		public override object CreateInstance(ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) {
-			return base.CreateInstance (context, propertyValues);
+			return new SelectionRange((DateTime)propertyValues["Start"], (DateTime)propertyValues["End"]);
 		}
 
-		[MonoTODO]
 		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) {
-			return base.GetCreateInstanceSupported (context);
+			return true;
 		}
 
-		[MonoTODO]
 		public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) {
-			return base.GetProperties(context, value, attributes);
+			return TypeDescriptor.GetProperties(typeof(SelectionRange), attributes);
 		}
 
-		[MonoTODO]
 		public override bool GetPropertiesSupported(ITypeDescriptorContext context) {
-			return base.GetPropertiesSupported(context);
+			return true;
 		}
 		#endregion	// Public Instance Methods
 	}

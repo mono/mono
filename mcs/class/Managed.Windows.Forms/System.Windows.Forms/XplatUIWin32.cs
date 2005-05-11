@@ -1058,14 +1058,7 @@ Console.WriteLine("Hit Clear background");
 				}
 
 				case Msg.WM_ASYNC_MESSAGE: {
-					GCHandle handle = (GCHandle)msg.lParam;
-					AsyncMethodData asyncdata = (AsyncMethodData) handle.Target;
-					AsyncMethodResult asyncresult = asyncdata.Result.Target as AsyncMethodResult;
-					object ret = asyncdata.Method.DynamicInvoke (asyncdata.Args);
-					if (asyncresult != null) {
-						asyncresult.Complete (ret);
-					}
-					handle.Free ();
+					XplatUIDriverSupport.ExecuteClientMessage((GCHandle)msg.lParam);
 					break;
 				}
 
