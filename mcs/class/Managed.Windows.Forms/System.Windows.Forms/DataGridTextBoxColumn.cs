@@ -49,6 +49,7 @@ namespace System.Windows.Forms
 		public DataGridTextBoxColumn (PropertyDescriptor prop) : base (prop)
 		{
 			format = string.Empty;
+			
 		}
 		
 		// TODO: What is isDefault for?
@@ -154,10 +155,9 @@ namespace System.Windows.Forms
 			
 		}
 		
-		[MonoTODO]
 		protected internal override int GetMinimumHeight ()
 		{
-			throw new NotImplementedException ();
+			return FontHeight + 3;
 		}
 		
 		[MonoTODO]
@@ -176,22 +176,21 @@ namespace System.Windows.Forms
 		protected void HideEditBox ()
 		{
 			
-		}
+		}	
 		
-		[MonoTODO]
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
 		{
-			
+			Paint (g, bounds, source, rowNum, false);
 		}
 		
-		[MonoTODO]
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight)
 		{
-			
+			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
+				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
 		}
 		
 		[MonoTODO]
-		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum,   Brush backBrush, Brush foreBrush, bool alignToRight)
+		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
 			
 		}
@@ -214,10 +213,9 @@ namespace System.Windows.Forms
 			
 		}
 		
-		[MonoTODO]
 		protected override void SetDataGridInColumn (DataGrid value)
 		{
-			
+			base.SetDataGridInColumn (value);			
 		}
 
 		[MonoTODO]

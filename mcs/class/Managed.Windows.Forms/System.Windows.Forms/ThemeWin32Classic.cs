@@ -856,6 +856,10 @@ namespace System.Windows.Forms
 		
 		#endregion ComboBox
 		
+		#region Datagrid
+		public override int DataGridPreferredColumnWidth { get { return 75;} }
+		#endregion // Datagrid
+		
 		#region DateTimePicker
 	
 		public override void DrawDateTimePicker (Graphics dc,  Rectangle clip_rectangle, DateTimePicker dtp) {

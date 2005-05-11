@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 		protected class DataGridColumnHeaderAccessibleObject : AccessibleObject
 		{
 			#region Local Variables
-			private DataGridColumnStyle owner;
+			private DataGridColumnStyle owner;			
 			#endregion
 
 			#region Constructors
@@ -115,6 +115,7 @@ namespace System.Windows.Forms
 		private PropertyDescriptor property_descriptor;
 		private bool read_only;
 		private int width;
+		private DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		#endregion	// Local Variables
 
@@ -141,6 +142,7 @@ namespace System.Windows.Forms
 			accesible_object = new DataGridColumnHeaderAccessibleObject (this);
 			read_only = false;
 			width = -1;
+			grid = null;
 			alignment = HorizontalAlignment.Left;
 		}
 
@@ -403,7 +405,7 @@ namespace System.Windows.Forms
 
 		protected virtual void SetDataGridInColumn (DataGrid value)
 		{
-
+			grid = value;
 		}
 
 		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string instantText)

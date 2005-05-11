@@ -129,8 +129,8 @@ namespace System.Windows.Forms
 		private Font caption_font;
 		private Color caption_forecolor;
 		private string caption_text;
-		private bool caption_visible;
-		private bool columnheaders_visible;
+		internal bool caption_visible;
+		internal bool columnheaders_visible;
 		private object datasource;
 		private string datamember;
 		private int firstvisible_column;
@@ -141,19 +141,19 @@ namespace System.Windows.Forms
 		private Color header_forecolor;
 		private Font header_font;
 		private Color link_color;
-		private Color link_hovercolor;		
+		private Color link_hovercolor;
 		private Color parentrowsback_color;
 		private Color parentrowsfore_color;
-		private bool parentrows_visible;
+		internal bool parentrows_visible;
 		private int preferredcolumn_width;
 		private int preferredrow_height;
 		private bool _readonly;
-		private bool rowheaders_visible;
+		internal bool rowheaders_visible;
 		private Color selection_backcolor;
 		private Color selection_forecolor;
 		private int rowheaders_width;
-		private int visiblecolumn_count;
-		private int visiblerow_count;
+		internal int visiblecolumn_count;
+		internal int visiblerow_count;
 		private int currentrow_index;
 		private GridTableStylesCollection styles_collection;
 		private DataGridParentRowsLabelStyle parentrowslabel_style;
@@ -162,12 +162,15 @@ namespace System.Windows.Forms
 		private Color backcolor;
 		private DataGridTableStyle default_style;
 		private DataGridTableStyle current_style;
+		internal HScrollBar horiz_scrollbar;
+		internal VScrollBar vert_scrollbar;
+		private DataGridDrawing grid_drawing;
+		internal int first_visiblerow;
 		#endregion // Local Variables
 
 		#region Public Constructors
 		public DataGrid ()
 		{
-			
 			allow_navigation = true;
 			allow_sorting = true;
 			alternating_backcolor = def_alternating_backcolor;
@@ -189,11 +192,11 @@ namespace System.Windows.Forms
 			header_forecolor = def_header_forecolor;
 			header_font = def_header_font;
 			link_color = def_link_color;
-			link_hovercolor = def_link_hovercolor;			
+			link_hovercolor = def_link_hovercolor;
 			parentrowsback_color = def_parentrowsback_color;
 			parentrowsfore_color = def_parentrowsfore_color;
 			parentrows_visible = true;
-			preferredcolumn_width = 75;
+			preferredcolumn_width = ThemeEngine.Current.DataGridPreferredColumnWidth;
 			preferredrow_height = 16;
 			_readonly = false ;
 			rowheaders_visible = true;
@@ -204,18 +207,25 @@ namespace System.Windows.Forms
 			visiblerow_count = 0;
 			current_cell = new DataGridCell ();
 			currentrow_index = -1;
+			first_visiblerow = 0;
 			forecolor = SystemColors.WindowText;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			backcolor = SystemColors.Window;
-			
+
 			default_style = new DataGridTableStyle (true);
 			styles_collection = new GridTableStylesCollection (this);
 			styles_collection.CollectionChanged += new CollectionChangeEventHandler (OnTableStylesCollectionChanged);
-			
+
 			SetCurrentStyle (default_style);
+
+			horiz_scrollbar = new HScrollBar ();
+			vert_scrollbar = new VScrollBar ();
+			grid_drawing = new DataGridDrawing (this);
 			
-		}		
-		
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+
+		}
+
 		#endregion	// Public Constructor
 
 		#region Public Instance Properties
@@ -315,10 +325,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_backcolor != value) {
 					caption_backcolor = value;
-
-					if (caption_visible) {
-						//TODO: Invalidate caption rect
-					}
+					grid_drawing.InvalidateCaption ();
 				}
 			}
 		}
@@ -332,10 +339,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_font!= null && !caption_font.Equals (value)) {
 					caption_font = value;
-
-					if (caption_visible) {
-						//TODO: Invalidate caption rect
-					}
+					grid_drawing.InvalidateCaption ();
 				}
 			}
 		}
@@ -348,10 +352,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_forecolor != value) {
 					caption_forecolor = value;
-
-					if (caption_visible) {
-						//TODO: Invalidate caption rect
-					}
+					grid_drawing.InvalidateCaption ();
 				}
 			}
 		}
@@ -364,10 +365,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_text != value) {
 					caption_text = value;
-
-					if (caption_visible) {
-						//TODO: Invalidate caption rect
-					}
+					grid_drawing.InvalidateCaption ();
 				}
 			}
 		}
@@ -380,8 +378,9 @@ namespace System.Windows.Forms
 			set {
 				if (caption_visible != value) {
 					caption_visible = value;
-					OnCaptionVisibleChanged (EventArgs.Empty);
+					grid_drawing.CalcGridAreas ();
 					Refresh ();
+					OnCaptionVisibleChanged (EventArgs.Empty);
 				}
 			}
 		}
@@ -394,6 +393,7 @@ namespace System.Windows.Forms
 			set {
 				if (columnheaders_visible != value) {
 					columnheaders_visible = value;
+					grid_drawing.CalcGridAreas ();
 					Refresh ();
 				}
 			}
@@ -564,7 +564,7 @@ namespace System.Windows.Forms
 
 		protected ScrollBar HorizScrollBar {
 			get {
-				throw new NotImplementedException ();
+				return horiz_scrollbar;
 			}
 		}
 
@@ -616,10 +616,10 @@ namespace System.Windows.Forms
 
 		protected internal CurrencyManager ListManager {
 			get {
-				if (BindingContext == null) {
+				if (BindingContext == null || DataSource  == null) {
 					return null;
 				}
-				
+
 				return (CurrencyManager) BindingContext [DataSource, DataMember];
 			}
 
@@ -669,6 +669,8 @@ namespace System.Windows.Forms
 					if (parentrows_visible) {
 						Refresh ();
 					}
+					
+					OnParentRowsLabelStyleChanged (EventArgs.Empty);
 				}
 			}
 		}
@@ -681,18 +683,24 @@ namespace System.Windows.Forms
 			set {
 				if (parentrows_visible != value) {
 					parentrows_visible = value;
-					OnParentRowsVisibleChanged (EventArgs.Empty);
+					grid_drawing.CalcGridAreas ();
 					Refresh ();
+					OnParentRowsVisibleChanged (EventArgs.Empty);
 				}
 			}
 		}
 
+		// Settting this property seems to have no effect.
 		public int PreferredColumnWidth {
 			get {
 				return preferredcolumn_width;
 			}
 
 			set {
+				if (value < 0) {
+					throw new ArgumentException ("PreferredColumnWidth is less than 0");
+				}
+				
 				if (preferredcolumn_width != value) {
 					preferredcolumn_width = value;
 					Refresh ();
@@ -708,6 +716,7 @@ namespace System.Windows.Forms
 			set {
 				if (preferredrow_height != value) {
 					preferredrow_height = value;
+					grid_drawing.CalcGridAreas ();
 					Refresh ();
 				}
 			}
@@ -735,6 +744,7 @@ namespace System.Windows.Forms
 			set {
 				if (rowheaders_visible != value) {
 					rowheaders_visible = value;
+					grid_drawing.CalcGridAreas ();
 					Refresh ();
 				}
 			}
@@ -748,6 +758,7 @@ namespace System.Windows.Forms
 			set {
 				if (rowheaders_width != value) {
 					rowheaders_width = value;
+					grid_drawing.CalcGridAreas ();
 					Refresh ();
 				}
 			}
@@ -803,7 +814,7 @@ namespace System.Windows.Forms
 
 		protected ScrollBar VertScrollBar {
 			get {
-				throw new NotImplementedException ();
+				return vert_scrollbar;
 			}
 		}
 
@@ -814,6 +825,7 @@ namespace System.Windows.Forms
 
 		}
 
+		// Calculated at DataGridDrawing.CalcRowsHeaders
 		public int VisibleRowCount {
 			get {
 				return visiblerow_count;
@@ -821,6 +833,41 @@ namespace System.Windows.Forms
 		}
 
 		#endregion	// Public Instance Properties
+
+		#region Private Instance Properties
+		internal DataGridTableStyle CurrentTableStyle {
+			get { 
+				return default_style;
+			}
+		}
+		
+		internal int FirstVisibleRow {
+			get { return first_visiblerow; }
+			set { first_visiblerow = value;}
+		}
+		
+		internal int RowsCount {
+			get {				
+				if (ListManager != null) {
+					return ListManager.Count;
+				}
+				
+				return 0;
+			}
+		}
+		
+		internal int RowHeight { 
+			get {
+				if (preferredrow_height > Font.Height + 3) {
+					return preferredrow_height;
+					
+				} else {
+					return Font.Height + 3;
+				}
+			}
+		}
+
+		#endregion Private Instance Properties
 
 		#region Public Instance Methods
 
@@ -863,12 +910,12 @@ namespace System.Windows.Forms
 		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop)
 		{
 			return CreateGridColumn (prop, false);
-		}		
+		}
 
 		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop, bool isDefault)
 		{
 			throw new NotImplementedException ();
-		}		
+		}
 
 		protected override void Dispose (bool disposing)
 		{
@@ -1033,7 +1080,8 @@ namespace System.Windows.Forms
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
-			base.OnHandleCreated (e);
+			base.OnHandleCreated (e);			
+			grid_drawing.CalcGridAreas ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1095,14 +1143,16 @@ namespace System.Windows.Forms
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{
-			base.OnPaint (pe);
+			//base.OnPaint (pe);
+			Console.WriteLine ("Datagrid.OnPaint");
+			grid_drawing.OnPaint (pe);
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs ebe)
 		{
 			base.OnPaintBackground (ebe);
 		}
-		
+
 		protected virtual void OnParentRowsLabelStyleChanged (EventArgs e)
 		{
 			if (ParentRowsLabelStyleChanged != null) {
@@ -1154,17 +1204,17 @@ namespace System.Windows.Forms
 		{
 			return base.ProcessDialogKey (keyData);
 		}
-		
+
 		protected bool ProcessGridKey (KeyEventArgs ke)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
 			return base.ProcessKeyPreview (ref m);
 		}
-		
+
 		protected bool ProcessTabKey (Keys keyData)
 		{
 			throw new NotImplementedException ();
@@ -1240,7 +1290,7 @@ namespace System.Windows.Forms
 			if (SetDataSource (dataSource) == false  && SetDataMember (dataMember) == false) {
 				return;
 			}
-			
+
 			SetNewDataSource ();
 		}
 
@@ -1326,7 +1376,6 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Private Instance Methods
-		
 
 		private bool SetDataMember (string member)
 		{
@@ -1352,23 +1401,26 @@ namespace System.Windows.Forms
 			OnDataSourceChanged (EventArgs.Empty);
 			return true;
 		}
-		
+
 		private void SetNewDataSource ()
 		{
-			// Create Table Style 
+			// Create Table Style
 			// Create columns Styles
 			// Bind data
 			
+			current_style.DataGrid = this;
+			current_style.CreateColumnsForTable ();
+			grid_drawing.CalcGridAreas ();
 		}
-				
+
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
 			Console.WriteLine ("Datagrid.TableStyles Collection Changed {0}, null {1}", e.Action,
 				e.Element == null);
-			/* 
+			/*
 				TODO: What's up if there are columns in the incoming TableStyle
 			*/
-			
+
 			switch (e.Action)  {
 				case CollectionChangeAction.Add: {
 					((DataGridTableStyle) e.Element).CreateColumnsForTable ();
@@ -1378,18 +1430,17 @@ namespace System.Windows.Forms
 					break;
 				case CollectionChangeAction.Refresh:
 					break;
-					
+
 				default:
 					break;
 			}
-			
+
 		}
-		
+
 		private void SetCurrentStyle (DataGridTableStyle style)
 		{
-			default_style = style;
+			current_style = style;
 		}
-		
 
 		#endregion Private Instance Methods
 

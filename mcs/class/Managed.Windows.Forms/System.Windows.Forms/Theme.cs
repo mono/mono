@@ -429,6 +429,10 @@ namespace System.Windows.Forms
 
 		#region Control
 		#endregion	// Control
+		
+		#region Datagrid
+		public abstract int DataGridPreferredColumnWidth { get; }
+		#endregion // Datagrid
 
 		#region DateTimePicker
 

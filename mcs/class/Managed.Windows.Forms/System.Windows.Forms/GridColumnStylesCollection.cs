@@ -258,10 +258,14 @@ namespace System.Windows.Forms
 		}
 		
 		private int FromColumnNameToIndex (string columnName)
-		{		
+		{	
 			for (int i = 0; i < items.Count; i++) {
 				DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-				if (column.MappingName == columnName) {
+
+				if (column.MappingName == null)
+					continue;
+
+				if (String.Compare (column.MappingName, columnName, true) == 0) {
 					return i;
 				}
 			}

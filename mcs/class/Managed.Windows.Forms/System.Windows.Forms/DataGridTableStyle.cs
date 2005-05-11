@@ -116,7 +116,7 @@ namespace System.Windows.Forms
 			header_font = def_header_font;
 			link_color = def_link_color;
 			link_hovercolor = def_link_hovercolor;
-			preferredcolumn_width = 75;
+			preferredcolumn_width = ThemeEngine.Current.DataGridPreferredColumnWidth;
 			preferredrow_height = ThemeEngine.Current.DefaultFont.Height + 3;
 			_readonly = false;
 			rowheaders_visible = true;
@@ -328,6 +328,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value < 0) {
+					throw new ArgumentException ("PreferredColumnWidth is less than 0");
+				}
+				
 				if (preferredcolumn_width != value) {
 					preferredcolumn_width = value;
 					OnPreferredColumnWidthChanged (EventArgs.Empty);
@@ -703,20 +707,21 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Protected Instance Methods
 		
-		#region Private Instance Properties
-		
+		#region Private Instance Properties		
 		// Create column styles for this TableStyle
 		internal void CreateColumnsForTable () 
 		{
 			CurrencyManager	mgr = null;			
 			
-			if (manager != null) {
+			/*if (manager != null) {
 				mgr = manager;
 			} else {
 				if (datagrid != null) {
 					mgr = datagrid.ListManager;
 				}
-			}
+			}*/
+
+			mgr = datagrid.ListManager;
 			
 			if (mgr == null) {
 				return;
@@ -726,16 +731,16 @@ namespace System.Windows.Forms
 			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();			
 			
 			for (int i = 0; i < propcol.Count; i++)
-			{
-				if (propcol[i].ComponentType.ToString () == "System.Data.DataRowView") {					
+			{				
+				// TODO: What to do with relations?
+				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {					
+					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
+					
+				} else {
 					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
 					st.MappingName = propcol[i].Name;
-					column_styles.Add (st);
-				}				
-				
-				// TODO: What to do with relations?
-				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {
-					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
+					st.Width = PreferredColumnWidth;
+					column_styles.Add (st);					
 				}				
 			}
 			

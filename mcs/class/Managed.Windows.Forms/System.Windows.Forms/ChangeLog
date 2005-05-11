@@ -1,3 +1,15 @@
+2005-05-12  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: fixed some members
+	* GridColumnStylesCollection.cs: indexed column is case insensitive 
+	* DataGridTableStyle.cs: fixes
+	* ThemeWin32Classic.cs: add new theme parameter
+	* Theme.cs: add new theme parameter
+	* DataGridDrawingLogic.cs: Datagrid's drawing logic 
+	* DataGrid.cs: fixes, new internal properties, etc.
+	* DataGridColumnStyle.cs: allows to set grid value
+	* 
+
 2005-05-10  Peter Bartok  <pbartok@novell.com>
 
 	* AccessibleObject.cs: 
