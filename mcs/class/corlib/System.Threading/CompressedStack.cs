@@ -91,8 +91,15 @@ namespace System.Threading {
 			// like Thread.CurrentThread.GetCompressedStack if no compressed
 			// stack is present.
 			CompressedStack cs = Thread.CurrentThread.GetCompressedStack ();
-			if (cs == null)
+			if (cs == null) {
 				cs = CompressedStack.Capture ();
+			} else {
+				// merge the existing compressed stack (from a previous Thread) with the current
+				// Thread stack so we can assign "all of it" to yet another Thread
+				CompressedStack newstack = CompressedStack.Capture ();
+				for (int i=0; i < newstack._list.Count; i++)
+					cs._list.Add (newstack._list [i]);
+			}
 			return cs;
 		}
 

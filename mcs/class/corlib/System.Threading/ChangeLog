@@ -1,3 +1,12 @@
+2005-05-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CompressedStack.cs: Allow merging of an existing CompressedStack
+	with the actual stack of the current Thread.
+	* Thread.cs: GetCompressedStack and SetCompressedStack are public 
+	before 2.0 but couldn't be seen with mono-api-info because of it's 
+	LinkDemand for the ECMA public key. Removed unused CompressedStack
+	private field (now part of the ExecutionContext).
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CompressedStack.cs: GetCompressedStack is public before 2.0 but 

@@ -108,7 +108,6 @@ namespace System.Threading
 		
 		private IPrincipal _principal;
 
-		private CompressedStack _stack;
 		private ExecutionContext _ec;
 		
 		public static Context CurrentContext {
@@ -931,9 +930,12 @@ namespace System.Threading
 		}
 #endif
 
+		// NOTE: This method doesn't show in the class library status page because
+		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
+		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-#if NET_2_0
+#if NET_1_1
 		public
 #else
 		internal
@@ -947,9 +949,12 @@ namespace System.Threading
 			return ((cs == null) || cs.IsEmpty ()) ? null : cs;
 		}
 
+		// NOTE: This method doesn't show in the class library status page because
+		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
+		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-#if NET_2_0
+#if NET_1_1
 		public
 #else
 		internal
