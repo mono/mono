@@ -530,7 +530,7 @@ namespace Mono.Xml
 					if (attr == "xmlns" ||
 						String.CompareOrdinal (attr, 0, "xmlns", 0, 5) == 0)
 						nsdecls.Add (
-							attr == "xmlns" ? String.Empty : attributePrefixes [attr],
+							attr == "xmlns" ? String.Empty : attributeLocalNames [attr],
 							attributeValues [attr]);
 				// If it is empty element then directly check end element.
 				if (reader.IsEmptyElement)

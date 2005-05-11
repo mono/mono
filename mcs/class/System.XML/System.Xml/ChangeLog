@@ -1,3 +1,7 @@
+2005-05-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : namespace storing was stupid.
+
 2005-05-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : since namespace declarations might be
