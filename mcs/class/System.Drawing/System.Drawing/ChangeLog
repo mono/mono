@@ -1,3 +1,10 @@
+2005-05-11 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* gdipFunctions.cs: add GdipLoadImageFromStream and GdipSaveImageToStream
+	* ComIStreamWrapper.cs: Kornel Pal COM Stream for Win32
+	* ComIStreamMarshaler.cs: Kornel Pal COM Stream for Win32 
+	* Image.cs: uses new Win32 Stream functions when need it
+
 2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
 
 	* Color.cs: Fix GetSaturation() again and remove

@@ -909,6 +909,13 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 		
+		// Stream functions for Win32 (original Win32 ones)
+		[DllImportAttribute("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
+		static internal extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] UCOMIStream stream, out IntPtr image);
+		
+		[DllImportAttribute("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
+		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] UCOMIStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
+				
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);
  
@@ -1717,12 +1724,13 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateFromXDrawable_linux (IntPtr drawable, IntPtr display, out IntPtr graphics);
 		
+		// Stream functions for non-Win32 (libgdiplus specific(
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetHeaderDelegate getHeader, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
 							StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr image);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
-			StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, ref Guid encoderClsID, IntPtr encoderParameters );
+			StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, ref Guid encoderClsID, IntPtr encoderParameters );		
 		
 #endregion
 	}
