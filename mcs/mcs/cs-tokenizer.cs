@@ -1196,6 +1196,9 @@ namespace Mono.CSharp
 			} else if (c == '\r'){
 				col = 0;
 				return;
+			} else if (c == -1){
+				arg = "";
+				return;
 			}
 			
 			static_cmd_arg.Length = 0;
@@ -1627,6 +1630,11 @@ namespace Mono.CSharp
 						Report.Error (1027, Location, "#endif directive expected");
 					else if (!region_directive && ((pop & REGION) != 0))
 						Report.Error (1038, Location, "#endregion directive expected");
+					
+					if (!region_directive && arg.Length != 0) {
+						Report.Error (1025, Location, 
+							"Single line comment, or end-of-line expected");
+					}
 					
 					if (ifstack.Count == 0)
 						return true;

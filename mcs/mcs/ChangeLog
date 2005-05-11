@@ -1,3 +1,18 @@
+2005-05-11  Duncan Mak  <duncan@novell.com>
+
+	* cs-tokenizer.cs (get_cmd_arg): Check that 'c' is not -1 before
+	continuing to process for 'arg'.
+	(handle_preprocessing_directive): Check the argument of the #endif
+	directive and report error CS1025 if there are any trailing
+	characters.
+
+	According to the C# spec, having even whitespace after the #endif
+	directive is illegal; however, because we call arg.TrimEnd ()
+	beforehand, we have the same behavior as csc, allowing whitespace
+	after the directive.
+
+	Fixes #74892.
+
 2005-05-11  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #74863.
