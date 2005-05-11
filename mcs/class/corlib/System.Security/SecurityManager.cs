@@ -95,7 +95,10 @@ namespace System.Security {
 
 		// methods
 
-#if NET_2_0
+#if NET_1_1
+		// NOTE: This method doesn't show in the class library status page because
+		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
+		// But it's there!
 		[MonoTODO]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey = "0x00000000000000000400000000000000")]
 		public static void GetZoneAndOrigin (out ArrayList zone, out ArrayList origin) 
