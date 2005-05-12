@@ -1,3 +1,10 @@
+2005-05-12  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #74920.
+	* typemanager.cs (unmanaged_enclosing_types): New.
+	(IsUnmanagedType): Avoid infloops by using
+	'unmanaged_enclosing_types' to talk with recursive invocations.
+
 2005-05-11  Duncan Mak  <duncan@novell.com>
 
 	* cs-tokenizer.cs (get_cmd_arg): Check that 'c' is not -1 before

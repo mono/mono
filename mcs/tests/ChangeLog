@@ -1,3 +1,7 @@
+2005-05-12  Raja R Harinath  <harinath@gmail.com>
+
+	* test-378.cs: New test from #74920.
+
 2005-05-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-harness-run): Depend on $(TEST_HARNESS_EXTRAS).
