@@ -1,3 +1,7 @@
+2005-05-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* shared.c: forgot to ignore a warning.
+
 2005-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* shared.c: don't display warnings after reboots.
