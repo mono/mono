@@ -1,6 +1,9 @@
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
-	* marshal9.cs: Add tests for marshalling null values.
+	* pinvoke3.cs libtest.c: Add test for [Out] marshalling of arrays.
+	Fix warnings.
+
+	* marshal9.cs libtest.c: Add tests for marshalling null values.
 
 	* Makefile.am pinvoke2.cs pinvoke10.cs pinvoke15.cs: Merge pinvoke10
 	and pinvoke15 into pinvoke2.
