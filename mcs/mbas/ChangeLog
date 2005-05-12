@@ -1,3 +1,8 @@
+2005-05-12:2 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : mcs having C# 2.0 features makes me slip some simplified delegate creation 
+		code, that breaks with csc in Windows (as pointed by Atsushi)
+	* CompilerOptions.cs : moved some delegate definitions outside the class for shorter name when using.
+
 2005-05-12 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : slimmed down, most non-specific code moved to new class/source CompilerOptions.
 		Also steps where individualized and put on a array of delegates for sequencial execution

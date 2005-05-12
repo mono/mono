@@ -75,7 +75,7 @@ namespace Mono.Languages {
 		
 		private bool LoadReferencedAssemblies()
 		{
-			return options.LoadReferencedAssemblies(TypeManager.AddAssembly);
+			return options.LoadReferencedAssemblies(new AssemblyAdder(TypeManager.AddAssembly));
 		}
 
 		private bool AdjustCodegenWhenTargetIsNetModule()
@@ -86,7 +86,7 @@ namespace Mono.Languages {
 		
 		private bool LoadAddedNetModules()
 		{
-			return options.LoadAddedNetModules(CodeGen.AssemblyBuilder, TypeManager.AddModule);
+			return options.LoadAddedNetModules(CodeGen.AssemblyBuilder, new ModuleAdder(TypeManager.AddModule));
 		}
 		
 		private bool InitializeCoreTypes()
@@ -274,21 +274,21 @@ namespace Mono.Languages {
 		private CompilerStep[] Steps {
 			get {
 				return new CompilerStep[] {
-					ParseAllSourceFiles,
-					InitializeDebuggingSupport,
-					LoadReferencedAssemblies,
-					AdjustCodegenWhenTargetIsNetModule,
-					LoadAddedNetModules,
-					InitializeCoreTypes,
-					ResolveTree,
-					PopulateCoreTypes,
-					PopulateTypes,
-					InitCodeHelpers,
-					EmitCode,
-					CloseTypes,
-					SetEntryPoint,
-					SaveOutput,
-					SaveDebugSymbols } ;
+					new CompilerStep(ParseAllSourceFiles),
+					new CompilerStep(InitializeDebuggingSupport),
+					new CompilerStep(LoadReferencedAssemblies),
+					new CompilerStep(AdjustCodegenWhenTargetIsNetModule),
+					new CompilerStep(LoadAddedNetModules),
+					new CompilerStep(InitializeCoreTypes),
+					new CompilerStep(ResolveTree),
+					new CompilerStep(PopulateCoreTypes),
+					new CompilerStep(PopulateTypes),
+					new CompilerStep(InitCodeHelpers),
+					new CompilerStep(EmitCode),
+					new CompilerStep(CloseTypes),
+					new CompilerStep(SetEntryPoint),
+					new CompilerStep(SaveOutput),
+					new CompilerStep(SaveDebugSymbols) } ;
 			}
 		}
 
@@ -297,7 +297,7 @@ namespace Mono.Languages {
 		/// </summary>
 		int MainDriver(string [] args)
 		{
-			options = new CompilerOptions(args, Report.Error);		
+			options = new CompilerOptions(args, new ErrorReporter(Report.Error));		
 			if (options.NothingToCompile)
 				return 2;		
 			try {

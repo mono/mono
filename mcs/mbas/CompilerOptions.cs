@@ -24,9 +24,15 @@ namespace Mono.MonoBASIC {
 	public enum OptionCompare {
 		Binary, Text
 	};
-	
-	public delegate void ErrorReporter(int num, string msg);
 
+	public enum InternalCompilerErrorReportAction { 
+		prompt, send, none 
+	}
+		
+	
+	public delegate void ErrorReporter (int num, string msg);
+	public delegate void ModuleAdder (System.Reflection.Module module);
+	public delegate void AssemblyAdder (Assembly loadedAssembly);				
 
 	/// <summary>
 	///    The compiler command line options processor.
@@ -122,8 +128,6 @@ namespace Mono.MonoBASIC {
 			errors++;
 		}
 		
-		public delegate void AssemblyAdder (Assembly loadedAssembly);
-		
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
@@ -149,8 +153,6 @@ namespace Mono.MonoBASIC {
 			ShowTime("References loaded");
 			return errors == 0;
 		}
-		
-		public delegate void ModuleAdder (System.Reflection.Module module);
 		
 		private void LoadModule (MethodInfo adder_method, AssemblyBuilder assemblyBuilder, ModuleAdder adder, string module, ref int errors)
 		{
@@ -324,6 +326,23 @@ namespace Mono.MonoBASIC {
 				foreach (string file in EmbeddedResources)
 					builder.AddResourceFile (file, file); // TODO: deal with resource IDs
 		}
+
+#if NET_2_0
+		[Option("Specify target CPU platform {ID}. ID can be x86, Itanium, x64 (AMD 64bit) or anycpu (the default).", "platform", SecondLevelHelp = true)]
+		public string TargetPlatform;
+		
+		[Option("What {action} (prompt | send | none) should be done when an internal compiler error occurs.\tThe default is none what just prints the error data in the compiler output", "errorreport", SecondLevelHelp = true)]
+		public InternalCompilerErrorReportAction HowToReportErrors = InternalCompilerErrorReportAction.none;
+		
+		[Option("Filealign internal blocks to the {blocksize} in bytes. Valid values are 512, 1024, 2048, 4096, and 8192.", "filealign", SecondLevelHelp = true)]
+		public int FileAlignBlockSize = 0; // 0 means use appropriate (not fixed) default		
+		
+		[Option("Generate documentation from xml commments.", "doc", SecondLevelHelp = true, VBCStyleBoolean = true)]
+		public bool GenerateXmlDocumentation = false;
+		
+		[Option("Generate documentation from xml commments to an specific {file}.", "docto", SecondLevelHelp = true)]
+		public string GenerateXmlDocumentationToFileName = null;
+#endif
 
 		// Temporary options
 		//------------------------------------------------------------------
