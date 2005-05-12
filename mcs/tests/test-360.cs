@@ -9,8 +9,8 @@ public class Application
 		}
 		else
 		{
-			string thisDoesnt = "not so";
-			System.Console.WriteLine(thisDoesnt);
+			// string thisDoesnt = "not so";
+			// System.Console.WriteLine(thisDoesnt);
 		}
 	}
 }
