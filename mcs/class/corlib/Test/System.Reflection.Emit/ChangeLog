@@ -1,3 +1,7 @@
+2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilderTest.cs: Add tests for bug #74906.
+
 2005-04-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* TypeBuilderTest.cs: Don't write to a specific path in /tmp --

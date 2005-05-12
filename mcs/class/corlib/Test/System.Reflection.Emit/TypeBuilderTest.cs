@@ -1820,5 +1820,23 @@ public class TypeBuilderTest : Assertion
 		// bug #73469
 		Assert ("02", typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void EmptyMethodBody () {
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+		tb.DefineMethod ("foo", MethodAttributes.Public, typeof (void), new Type [] {});
+		tb.CreateType ();
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void EmptyCtorBody () {
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+		tb.DefineConstructor (0, CallingConventions.Standard, null);
+		tb.CreateType ();
+	}
 }
 }
