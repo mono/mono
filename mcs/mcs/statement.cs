@@ -1917,6 +1917,7 @@ namespace Mono.CSharp {
 		}
 
 		bool unreachable_shown;
+		bool unreachable;
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -1936,8 +1937,6 @@ namespace Mono.CSharp {
 			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
 			// responsible for handling the situation.
 			//
-			bool unreachable = false;
-
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
@@ -2020,6 +2019,8 @@ namespace Mono.CSharp {
 
 			if (Implicit)
 				return Resolve (ec);
+
+			unreachable = true;
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			bool ok = Resolve (ec);
