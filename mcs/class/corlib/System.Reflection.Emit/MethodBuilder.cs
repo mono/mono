@@ -250,7 +250,7 @@ namespace System.Reflection.Emit {
 		}
 
 		internal void fixup () {
-			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && (iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall) == 0)) {
+			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
 				if ((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0))
 					throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
 			}

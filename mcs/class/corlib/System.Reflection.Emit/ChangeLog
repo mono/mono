@@ -1,5 +1,7 @@
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ConstructorBuilder.cs MethodBuilder.cs (fixup): Fix this.
+	
 	* ConstructorBuilder.cs MethodBuilder.cs (fixup): Throw an exception if a
 	method body is empty. Fixes #74906.
 
