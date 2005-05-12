@@ -1,3 +1,7 @@
+2005-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : zh-* cultures were missing.
+
 2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* threads.c: Added a new event background_change_event which is signaled
