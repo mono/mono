@@ -1,3 +1,7 @@
+2005-05-06  Miguel de Icaza  <miguel@novell.com>
+
+	* CultureInfo.cs: Eliminate double-check lock always init the invariant_culture_info.
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CultureInfo.cs: made a few variables 'volatile'. GetCultures now

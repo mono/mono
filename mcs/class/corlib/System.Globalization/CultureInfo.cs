@@ -94,19 +94,16 @@ namespace System.Globalization
 		
 		static public CultureInfo InvariantCulture {
 			get {
-				if (invariant_culture_info == null) {
-					lock (typeof (CultureInfo)) {
-						if (invariant_culture_info == null) {
-							invariant_culture_info = new CultureInfo (0x7f, false);
-							invariant_culture_info.m_isReadOnly = true;
-						}
-					}
-				}
-				
-				return(invariant_culture_info);
+				return invariant_culture_info;
 			}
 		}
 
+		static CultureInfo ()
+		{
+			invariant_culture_info = new CultureInfo (0x7f, false);
+			invariant_culture_info.m_isReadOnly = true;
+		}
+		
 		public static CultureInfo CreateSpecificCulture (string name)
 		{
 			if (name == null) {
