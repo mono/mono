@@ -620,6 +620,20 @@ namespace Mono.Unix {
 		XATTR_REPLACE = 2,
 	}
 
+	[Map][Flags]
+	public enum MountFlags : ulong {
+		ST_RDONLY      =    1,  // Mount read-only
+		ST_NOSUID      =    2,  // Ignore suid and sgid bits
+		ST_NODEV       =    4,  // Disallow access to device special files
+		ST_SYNCHRONOUS =   16,  // Writes are synced at once
+		ST_MANDLOCK    =   64,  // Allow mandatory locks on an FS
+		ST_WRITE       =  128,  // Write on file/directory/symlink
+		ST_APPEND      =  256,  // Append-only file
+		ST_IMMUTABLE   =  512,  // Immutable file
+		ST_NOATIME     = 1024,  // Do not update access times
+		ST_NODIRATIME  = 2048,  // Do not update directory access times
+	}
+
 	#endregion
 
 	#region Structures
@@ -666,7 +680,7 @@ namespace Mono.Unix {
 		public /* fsfilcnt_t */ ulong f_ffree;    // # free inodes
 		public /* fsfilcnt_t */ ulong f_favail;   // # free inodes for non-root
 		public                  ulong f_fsid;     // file system id
-		public                  ulong f_flag;     // mount flags
+		public MountFlags             f_flag;     // mount flags
 		public                  ulong f_namemax;  // maximum filename length
 	}
 

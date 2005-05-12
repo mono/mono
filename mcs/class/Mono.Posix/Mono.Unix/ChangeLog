@@ -1,3 +1,10 @@
+2005-05-12  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: The Statvfs structure should contain a MountFlags enumeration,
+	  not a ulong (we can "safely" do this since POSIX defines some values for
+	  f_flag, so we should be kind and expose them).
+	* UnixConvert.cs: Add MountFlags conversion functions.
+
 2005-05-02  Joe Shaw  <joeshaw@novell.com>
 
 	* UnixListener.cs (Init): Remove the call to Cleanup() and the

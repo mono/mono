@@ -695,6 +695,38 @@ namespace Mono.Unix {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMountFlags")]
+		private static extern int FromMountFlags (MountFlags value, out UInt64 rval);
+
+		public static bool TryFromMountFlags (MountFlags value, out UInt64 rval)
+		{
+			return FromMountFlags (value, out rval) == 0;
+		}
+
+		public static UInt64 FromMountFlags (MountFlags value)
+		{
+			UInt64 rval;
+			if (FromMountFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMountFlags")]
+		private static extern int ToMountFlags (UInt64 value, out MountFlags rval);
+
+		public static bool TryToMountFlags (UInt64 value, out MountFlags rval)
+		{
+			return ToMountFlags (value, out rval) == 0;
+		}
+
+		public static MountFlags ToMountFlags (UInt64 value)
+		{
+			MountFlags rval;
+			if (ToMountFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		//
 		// Non-generated exports
 		//
