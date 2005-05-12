@@ -109,8 +109,10 @@ namespace System.Xml.Serialization {
 			if (type == typeof (void))
 				throw new InvalidOperationException ("Type " + type.Name + " may not be serialized.");
 
+			string oldNs = initialDefaultNamespace;
 			if (defaultNamespace == null) defaultNamespace = initialDefaultNamespace;
 			if (defaultNamespace == null) defaultNamespace = string.Empty;
+			initialDefaultNamespace = defaultNamespace; 
 
 			XmlTypeMapping map;
 			switch (TypeTranslator.GetTypeData(type).SchemaType)
@@ -127,6 +129,8 @@ namespace System.Xml.Serialization {
 			map.Format = SerializationFormat.Encoded;
 			Type[] extraTypes = includedTypes != null ? (Type[])includedTypes.ToArray(typeof(Type)) : null;
 			map.Source = new SoapTypeSerializationSource (type, attributeOverrides, defaultNamespace, extraTypes);
+			
+			initialDefaultNamespace = oldNs;
 			return map;
 		}
 
