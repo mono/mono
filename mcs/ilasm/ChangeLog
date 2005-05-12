@@ -1,3 +1,9 @@
+2005-05-12  Ankit Jain  <ankit@corewars.org>
+
+	* Makefile (LOCAL_MCS_FLAGS): Use the in-tree PEAPI.dll as its public
+	interface has changed a bit, so avoid clash with older installed
+	dll.
+
 2005-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM): Make profile-specific.
