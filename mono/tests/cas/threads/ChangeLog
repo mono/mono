@@ -1,3 +1,9 @@
+2005-05-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* delegate1-2.cs: Updated to use ControlEvidence.
+	* swf-timer3.cs: Updated to execute the SWF message loop.
+	* README: fixed typos.
+
 2005-05-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* delegate1-2.cs: New. Delegate based tests.
