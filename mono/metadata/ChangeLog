@@ -1,8 +1,11 @@
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_marshal_custom): Add some error checking and call the
+	methods in the ICustomMarshaler interface. Fixes #74875.
+	
 	* marshal.c (emit_marshal_array): Implement [Out] marshalling in
 	native->managed wrappers.
-	
+
 2005-05-12  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.cs (mono_debugger_lock/unlock): Always lock
