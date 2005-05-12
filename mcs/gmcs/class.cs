@@ -3393,7 +3393,7 @@ namespace Mono.CSharp {
 					return false;
 
 				if ((ModFlags & Modifiers.NEW) == 0) {
-					if (MemberType != TypeManager.TypeToCoreType (base_ret_type)) {
+					if (!TypeManager.IsEqual (MemberType, TypeManager.TypeToCoreType (base_ret_type))) {
 						Report.SymbolRelatedToPreviousError (base_method);
 						if (this is PropertyBase) {
 							Report.Error (1715, Location, "'{0}': type must be '{1}' to match overridden member '{2}'", 
@@ -4541,10 +4541,14 @@ namespace Mono.CSharp {
 				bool ok = true;
 
 				int count = c.ParameterInfo.Count;
+				Report.Debug (64, "OVERLOADED CTOR", c, c.ParameterInfo,
+					      c.ParameterTypes, Arguments, count);
+
 				if ((count > 0) &&
 				    c.ParameterInfo.ParameterModifier (count - 1) == Parameter.Modifier.PARAMS) {
 					for (int i = 0; i < count-1; i++)
-						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
+						if ((i >= Arguments.Count) ||
+						    (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type)) {
 							ok = false;
 							break;
 						}

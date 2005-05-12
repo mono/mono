@@ -1,3 +1,9 @@
+2005-05-13  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Block.Resolve): Make the `bool unresolved' flag an
+	instance variable, not a local.  Fix #74873.
+	(Block.ResolveUnreachable): Set it to true here.
+
 2005-05-12  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (property_declaration): Pass the `current_class',
