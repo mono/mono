@@ -1,5 +1,7 @@
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal9.cs libtest.c: Add more tests.
+
 	* pinvoke3.cs libtest.c: Add test for [Out] marshalling of arrays.
 	Fix warnings.
 
