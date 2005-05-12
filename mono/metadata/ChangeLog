@@ -1,3 +1,11 @@
+2005-05-12  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.cs (mono_debugger_lock/unlock): Added
+	`gboolean use_loader_lock' argument; if true, also take the loader
+	lock.
+
+	* mono-debug.c: Properly lock when the debugger is not attached.
+
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_custom): Pass through NULL values without
