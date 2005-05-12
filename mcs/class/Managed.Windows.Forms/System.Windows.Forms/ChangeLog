@@ -1,3 +1,7 @@
+2005-05-11  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Avoid painting into invisible views.  Fixes #74926
+
 2005-05-11  Peter Bartok  <pbartok@novell.com>
 
 	* LinkArea.cs: Added and implemented LinkAreaTypeConverter class

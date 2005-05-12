@@ -424,9 +424,9 @@ namespace System.Windows.Forms {
 			switch (eventKind) {
 				case OSXConstants.kEventControlDraw: {
 					
-					if(!hwnd.visible)
+					if(!hwnd.visible || !HIViewIsVisible (handle))
 						return 0;
-					
+
 					/*
 					IntPtr rgnhandle = IntPtr.Zero;
 					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamRgnHandle, OSXConstants.EventParamType.typeQDRgnHandle, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref rgnhandle);
@@ -1295,7 +1295,7 @@ namespace System.Windows.Forms {
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
-			if (hwnd.visible) {
+			if (hwnd.visible && HIViewIsVisible (handle)) {
 				MSG msg = new MSG ();
 				msg.hwnd = hwnd.Handle;
 				msg.wParam = IntPtr.Zero;
@@ -1734,7 +1734,7 @@ namespace System.Windows.Forms {
 		internal override void UpdateWindow(IntPtr handle) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
-			if (hwnd.visible && !hwnd.expose_pending) {
+			if (hwnd.visible && HIViewIsVisible (handle) && !hwnd.expose_pending) {
 				MSG msg = new MSG ();
 				msg.message = Msg.WM_PAINT;
 				msg.hwnd = hwnd.Handle;
