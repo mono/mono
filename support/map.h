@@ -640,6 +640,19 @@ int Mono_Posix_ToPollEvents (short x, short *r);
 int Mono_Posix_FromXattrFlags (int x, int *r);
 int Mono_Posix_ToXattrFlags (int x, int *r);
 
+#define Mono_Posix_MountFlags_ST_RDONLY 0x00000001
+#define Mono_Posix_MountFlags_ST_NOSUID 0x00000002
+#define Mono_Posix_MountFlags_ST_NODEV 0x00000004
+#define Mono_Posix_MountFlags_ST_SYNCHRONOUS 0x00000010
+#define Mono_Posix_MountFlags_ST_MANDLOCK 0x00000040
+#define Mono_Posix_MountFlags_ST_WRITE 0x00000080
+#define Mono_Posix_MountFlags_ST_APPEND 0x00000100
+#define Mono_Posix_MountFlags_ST_IMMUTABLE 0x00000200
+#define Mono_Posix_MountFlags_ST_NOATIME 0x00000400
+#define Mono_Posix_MountFlags_ST_NODIRATIME 0x00000800
+int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
+int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
+
 G_END_DECLS
 
 #endif /* ndef INC_Mono_Posix_map_H */

@@ -6021,3 +6021,119 @@ int Mono_Posix_ToXattrFlags (int x, int *r)
 	return 0;
 }
 
+int Mono_Posix_FromMountFlags (guint64 x, guint64 *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_MountFlags_ST_RDONLY) == Mono_Posix_MountFlags_ST_RDONLY)
+#ifdef ST_RDONLY
+		*r |= ST_RDONLY;
+#else /* def ST_RDONLY */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_RDONLY */
+	if ((x & Mono_Posix_MountFlags_ST_NOSUID) == Mono_Posix_MountFlags_ST_NOSUID)
+#ifdef ST_NOSUID
+		*r |= ST_NOSUID;
+#else /* def ST_NOSUID */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_NOSUID */
+	if ((x & Mono_Posix_MountFlags_ST_NODEV) == Mono_Posix_MountFlags_ST_NODEV)
+#ifdef ST_NODEV
+		*r |= ST_NODEV;
+#else /* def ST_NODEV */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_NODEV */
+	if ((x & Mono_Posix_MountFlags_ST_SYNCHRONOUS) == Mono_Posix_MountFlags_ST_SYNCHRONOUS)
+#ifdef ST_SYNCHRONOUS
+		*r |= ST_SYNCHRONOUS;
+#else /* def ST_SYNCHRONOUS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_SYNCHRONOUS */
+	if ((x & Mono_Posix_MountFlags_ST_MANDLOCK) == Mono_Posix_MountFlags_ST_MANDLOCK)
+#ifdef ST_MANDLOCK
+		*r |= ST_MANDLOCK;
+#else /* def ST_MANDLOCK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_MANDLOCK */
+	if ((x & Mono_Posix_MountFlags_ST_WRITE) == Mono_Posix_MountFlags_ST_WRITE)
+#ifdef ST_WRITE
+		*r |= ST_WRITE;
+#else /* def ST_WRITE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_WRITE */
+	if ((x & Mono_Posix_MountFlags_ST_APPEND) == Mono_Posix_MountFlags_ST_APPEND)
+#ifdef ST_APPEND
+		*r |= ST_APPEND;
+#else /* def ST_APPEND */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_APPEND */
+	if ((x & Mono_Posix_MountFlags_ST_IMMUTABLE) == Mono_Posix_MountFlags_ST_IMMUTABLE)
+#ifdef ST_IMMUTABLE
+		*r |= ST_IMMUTABLE;
+#else /* def ST_IMMUTABLE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_IMMUTABLE */
+	if ((x & Mono_Posix_MountFlags_ST_NOATIME) == Mono_Posix_MountFlags_ST_NOATIME)
+#ifdef ST_NOATIME
+		*r |= ST_NOATIME;
+#else /* def ST_NOATIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_NOATIME */
+	if ((x & Mono_Posix_MountFlags_ST_NODIRATIME) == Mono_Posix_MountFlags_ST_NODIRATIME)
+#ifdef ST_NODIRATIME
+		*r |= ST_NODIRATIME;
+#else /* def ST_NODIRATIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_NODIRATIME */
+	return 0;
+}
+
+int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef ST_RDONLY
+	if ((x & ST_RDONLY) == ST_RDONLY)
+		*r |= Mono_Posix_MountFlags_ST_RDONLY;
+#endif /* ndef ST_RDONLY */
+#ifdef ST_NOSUID
+	if ((x & ST_NOSUID) == ST_NOSUID)
+		*r |= Mono_Posix_MountFlags_ST_NOSUID;
+#endif /* ndef ST_NOSUID */
+#ifdef ST_NODEV
+	if ((x & ST_NODEV) == ST_NODEV)
+		*r |= Mono_Posix_MountFlags_ST_NODEV;
+#endif /* ndef ST_NODEV */
+#ifdef ST_SYNCHRONOUS
+	if ((x & ST_SYNCHRONOUS) == ST_SYNCHRONOUS)
+		*r |= Mono_Posix_MountFlags_ST_SYNCHRONOUS;
+#endif /* ndef ST_SYNCHRONOUS */
+#ifdef ST_MANDLOCK
+	if ((x & ST_MANDLOCK) == ST_MANDLOCK)
+		*r |= Mono_Posix_MountFlags_ST_MANDLOCK;
+#endif /* ndef ST_MANDLOCK */
+#ifdef ST_WRITE
+	if ((x & ST_WRITE) == ST_WRITE)
+		*r |= Mono_Posix_MountFlags_ST_WRITE;
+#endif /* ndef ST_WRITE */
+#ifdef ST_APPEND
+	if ((x & ST_APPEND) == ST_APPEND)
+		*r |= Mono_Posix_MountFlags_ST_APPEND;
+#endif /* ndef ST_APPEND */
+#ifdef ST_IMMUTABLE
+	if ((x & ST_IMMUTABLE) == ST_IMMUTABLE)
+		*r |= Mono_Posix_MountFlags_ST_IMMUTABLE;
+#endif /* ndef ST_IMMUTABLE */
+#ifdef ST_NOATIME
+	if ((x & ST_NOATIME) == ST_NOATIME)
+		*r |= Mono_Posix_MountFlags_ST_NOATIME;
+#endif /* ndef ST_NOATIME */
+#ifdef ST_NODIRATIME
+	if ((x & ST_NODIRATIME) == ST_NODIRATIME)
+		*r |= Mono_Posix_MountFlags_ST_NODIRATIME;
+#endif /* ndef ST_NODIRATIME */
+	return 0;
+}
+

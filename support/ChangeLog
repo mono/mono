@@ -1,3 +1,10 @@
+2005-05-12  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c, map.h: Add FromMountFlags, ToMountFlags.  (MountFlags is used in
+	  `struct statvfs', which is POSIX).
+	* sys-statvfs.c: Use ToMountFlags to convert the OS flags value into the
+	  managed equivalent.
+
 2005-05-03  Geoff Norton  <gnorton@customerdna.com>
 
 	* sys-xattr.c:  Mac OS/X Tiger supports xattr but has a different API for supporting
