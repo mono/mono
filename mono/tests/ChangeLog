@@ -1,3 +1,8 @@
+2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs libtest.c: Add test for ftnptr->delegate conversion in
+	structures.
+
 2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* main-returns-background-change.cs: New test for changing the
