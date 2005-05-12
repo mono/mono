@@ -1,3 +1,9 @@
+2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Thread.cs: Moved all checks done inside sync_lock to unmanaged code.
+	Merged Thread_internal and Start_internal into a single icall, which
+	does all work.
+
 2005-05-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CompressedStack.cs: Allow merging of an existing CompressedStack
@@ -186,7 +192,7 @@ Thu Jan 13 18:15:32 CET 2005 Paolo Molaro <lupus@ximian.com>
 2004-07-15  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Hold a lock in GetNamedDataSlot.  Fixes bug 61582,
-	based on patch by Sébastien Robitaille
+	based on patch by Sbastien Robitaille
 	(sebastien.robitaille@croesus.com).  Also fix instances of
 	lock(typeof(Thread)) to lock a private object instead.
 

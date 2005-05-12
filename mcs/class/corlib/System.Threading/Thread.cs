@@ -80,6 +80,7 @@ namespace System.Threading
 		private IntPtr suspend_event;
 		private IntPtr suspended_event;
 		private IntPtr resume_event;
+		/* Don't lock on synch_lock in managed code, since it can result in deadlocks */
 		private object synch_lock = new Object();
 		private IntPtr serialized_culture_info;
 		private int serialized_culture_info_len;
@@ -488,7 +489,7 @@ namespace System.Threading
 
 		public bool IsAlive {
 			get {
-				ThreadState curstate=state;
+				ThreadState curstate = GetState ();
 				
 				if((curstate & ThreadState.Aborted) != 0 ||
 				   (curstate & ThreadState.Stopped) != 0 ||
@@ -502,18 +503,14 @@ namespace System.Threading
 
 		public bool IsBackground {
 			get {
-				if((state & ThreadState.Background) != 0) {
-					return(true);
-				} else {
-					return(false);
-				}
+				return (GetState () & ThreadState.Background) != 0;
 			}
 			
 			set {
-				if(value==true) {
-					set_state(ThreadState.Background);
+				if (value) {
+					SetState (ThreadState.Background);
 				} else {
-					clr_state(ThreadState.Background);
+					ClrState (ThreadState.Background);
 				}
 			}
 		}
@@ -535,13 +532,7 @@ namespace System.Threading
 			}
 			
 			set {
-				lock (synch_lock) {
-					if(Name!=null) {
-						throw new InvalidOperationException ("Thread.Name can only be set once.");
-					}
-				
-					SetName_internal (value);
-				}
+				SetName_internal (value);
 			}
 		}
 
@@ -557,7 +548,7 @@ namespace System.Threading
 
 		public ThreadState ThreadState {
 			get {
-				return(state);
+				return GetState ();
 			}
 		}
 
@@ -588,36 +579,27 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern bool Join_internal(int ms, IntPtr handle);
 		
-		public void Join() {
-			if((state & ThreadState.Unstarted) != 0) {
-				throw new ThreadStateException("Thread has not been started");
-			}
-				
+		public void Join()
+		{
 			Join_internal(Timeout.Infinite, system_thread_handle);
 		}
 
-		public bool Join(int millisecondsTimeout) {
+		public bool Join(int millisecondsTimeout)
+		{
 			if (millisecondsTimeout != Timeout.Infinite && millisecondsTimeout < 0)
 				throw new ArgumentException ("Timeout less than zero", "millisecondsTimeout");
-
-			if((state & ThreadState.Unstarted) != 0) {
-				throw new ThreadStateException("Thread has not been started");
-			}
 
 			return Join_internal(millisecondsTimeout, system_thread_handle);
 		}
 
-		public bool Join(TimeSpan timeout) {
+		public bool Join(TimeSpan timeout)
+		{
 			// LAMESPEC: says to throw ArgumentException too
 			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
 			
 			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
-			if((state & ThreadState.Unstarted) != 0) {
-				throw new ThreadStateException("Thread has not been started");
-			}
-
 			return Join_internal(ms, system_thread_handle);
 		}
 
@@ -637,12 +619,6 @@ namespace System.Threading
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Resume () 
 		{
-			if ((state & ThreadState.Unstarted) != 0 || !IsAlive || 
-				((state & ThreadState.Suspended) == 0 && (state & ThreadState.SuspendRequested) == 0)) 
-			{
-				throw new ThreadStateException("Thread has not been started, or is dead");
-			}
-			
 			Resume_internal ();
 		}
 
@@ -652,34 +628,10 @@ namespace System.Threading
 			throw new NotImplementedException ();
 		}
 
-		// Launches the thread
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void Start_internal(IntPtr handle);
-		
 		public void Start() {
-			lock(synch_lock) {
-				if((state & ThreadState.Unstarted) == 0) {
-					throw new ThreadStateException("Thread has already been started");
-				}
-				
-
-				// Thread_internal creates the new thread, but
-				// blocks it until Start() is called later.
-				system_thread_handle=Thread_internal(threadstart);
-
-				if (system_thread_handle == (IntPtr) 0) {
-					throw new SystemException ("Thread creation failed");
-				}
-
-				// Mark the thread state as Running
-				// (which is all bits
-				// cleared). Therefore just remove the
-				// Unstarted bit
-				clr_state(ThreadState.Unstarted);
-
-				// Launch this thread
-				Start_internal(system_thread_handle);
-			}
+			// Thread_internal creates and starts the new thread, 
+			if (Thread_internal(threadstart) == (IntPtr) 0)
+				throw new SystemException ("Thread creation failed.");
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -691,9 +643,6 @@ namespace System.Threading
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Suspend ()
 		{
-			if((state & ThreadState.Unstarted) != 0 || !IsAlive) {
-				throw new ThreadStateException("Thread has not been started, or is dead");
-			}
 			Suspend_internal ();
 		}
 
@@ -707,16 +656,14 @@ namespace System.Threading
 				Thread_free_internal(system_thread_handle);
 		}
 
-		private void set_state(ThreadState set) {
-			lock(synch_lock) {
-				state |= set;
-			}
-		}
-		private void clr_state(ThreadState clr) {
-			lock(synch_lock) {
-				state &= ~clr;
-			}
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern private void SetState (ThreadState set);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern private void ClrState (ThreadState clr);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern private ThreadState GetState ();
 
 #if NET_1_1
 		
