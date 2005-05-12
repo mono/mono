@@ -1,3 +1,12 @@
+2005-05-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-long.brg: Add missing ulong->{i1, i2} checked conversions.
+	Fixes #74925.
+
+	* basic-long.cs exceptions.cs: Add new tests. Fix some warnings.
+
+	* mini-amd64.c: Fix a warning.
+
 2005-05-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix stack space leakage
