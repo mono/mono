@@ -1,5 +1,8 @@
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_marshal_custom): Pass through NULL values without
+	calling the custom marshalling routines.
+	
 	* marshal.c (emit_ptr_to_object_conv): Implement ftnptr->delegate
 	conversion in structures. Fixes #74882.
 
