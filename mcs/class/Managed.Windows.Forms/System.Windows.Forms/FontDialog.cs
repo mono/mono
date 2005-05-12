@@ -27,12 +27,12 @@
 // NOT COMPLETE - work in progress
 
 // TODO:
-// - correct drawing of the selected font in examplePanel
 // - select values for font/style/size via the TextBoxes
 // - etc
 
 using System.ComponentModel;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace System.Windows.Forms
 {
@@ -110,13 +110,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool AllowSimulations
 		{
-			set
-			{
+			set {
 				allowSimulations = value;
 			}
 			
-			get
-			{
+			get {
 				return allowSimulations;
 			}
 		}
@@ -124,13 +122,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool AllowVectorFonts
 		{
-			set
-			{
+			set {
 				allowVectorFonts = value;
 			}
 			
-			get
-			{
+			get {
 				return allowVectorFonts;
 			}
 		}
@@ -138,13 +134,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool AllowVerticalFonts
 		{
-			set
-			{
+			set {
 				allowVerticalFonts = value;
 			}
 			
-			get
-			{
+			get {
 				return allowVerticalFonts;
 			}
 		}
@@ -152,13 +146,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool AllowScriptChange
 		{
-			set
-			{
+			set {
 				allowScriptChange = value;
 			}
 			
-			get
-			{
+			get {
 				return allowScriptChange;
 			}
 		}
@@ -166,13 +158,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool FixedPitchOnly
 		{
-			set
-			{
+			set {
 				fixedPitchOnly = value;
 			}
 			
-			get
-			{
+			get {
 				return fixedPitchOnly;
 			}
 		}
@@ -180,13 +170,11 @@ namespace System.Windows.Forms
 		[DefaultValue(0)]
 		public int MaxSize
 		{
-			set
-			{
+			set {
 				maxSize = value;
 			}
 			
-			get
-			{
+			get {
 				return maxSize;
 			}
 		}
@@ -194,13 +182,11 @@ namespace System.Windows.Forms
 		[DefaultValue(0)]
 		public int MinSize
 		{
-			set
-			{
+			set {
 				minSize = value;
 			}
 			
-			get
-			{
+			get {
 				return minSize;
 			}
 		}
@@ -208,13 +194,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool ScriptsOnly
 		{
-			set
-			{
+			set {
 				scriptsOnly = value;
 			}
 			
-			get
-			{
+			get {
 				return scriptsOnly;
 			}
 		}
@@ -222,13 +206,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool ShowApply
 		{
-			set
-			{
+			set {
 				showApply = value;
 			}
 			
-			get
-			{
+			get {
 				return showApply;
 			}
 		}
@@ -236,13 +218,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool ShowColor
 		{
-			set
-			{
+			set {
 				showColor = value;
 			}
 			
-			get
-			{
+			get {
 				return showColor;
 			}
 		}
@@ -250,13 +230,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool ShowEffects
 		{
-			set
-			{
+			set {
 				showEffects = value;
 			}
 			
-			get
-			{
+			get {
 				return showEffects;
 			}
 		}
@@ -264,13 +242,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool ShowHelp
 		{
-			set
-			{
+			set {
 				showHelp = value;
 			}
 			
-			get
-			{
+			get {
 				return showHelp;
 			}
 		}
@@ -362,10 +338,6 @@ namespace System.Windows.Forms
 		
 		private System.Collections.Hashtable fontHash = new System.Collections.Hashtable();
 		
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="fontDialog">A  FontDialog</param>
 		public FontDialogPanel( FontDialog fontDialog )
 		{
 			this.fontDialog = fontDialog;
@@ -552,6 +524,8 @@ namespace System.Windows.Forms
 			}
 			fontListBox.EndUpdate( );
 			
+			fontListBox.SelectedIndex = 0;
+			
 			// TODO: If Font is provided via FontDialog.Font property set correct font in FontListBox
 			currentFontName = fontListBox.Items[ 0 ].ToString( );
 			fontTextBox.Text = currentFontName;
@@ -567,40 +541,42 @@ namespace System.Windows.Forms
 			
 			currentColor = fontDialog.Color;
 			
-			UpdateFontStyleListBox();
+			UpdateFontStyleListBox( );
 			
 			fontstyleTextBox.Text = "Regular";
+			
+			fontstyleListBox.SelectedIndex = 0 ;
 			
 			sizeTextBox.Text = currentSize.ToString( );
 			
 			sizeListBox.Items.AddRange( new object[] {
-										   "8",
-										   "9",
-										   "10",
-										   "11",
-										   "12",
-										   "14",
-										   "16",
-										   "18",
-										   "20",
-										   "22",
-										   "24",
-										   "26",
-										   "28",
-										   "36",
-										   "48",
-										   "72" } );
+							   "8",
+							   "9",
+							   "10",
+							   "11",
+							   "12",
+							   "14",
+							   "16",
+							   "18",
+							   "20",
+							   "22",
+							   "24",
+							   "26",
+							   "28",
+							   "36",
+							   "48",
+							   "72" } );
 			
-			sizeListBox.SelectedIndex = 0;
+			sizeListBox.SelectedIndex = 4;
 			
 			if ( !fontDialog.ShowApply )
 				applyButton.Hide( );
 			if ( !fontDialog.ShowHelp )
 				helpButton.Hide( );
 			if ( !fontDialog.ShowEffects )
-				effectsGroupBox.Hide();
+				effectsGroupBox.Hide( );
 			if ( !fontDialog.ShowColor )
-				colorComboBox.Hide();
+				colorComboBox.Hide( );
 			
 			cancelButton.Click += new EventHandler( OnClickCancelButton );
 			okButton.Click += new EventHandler( OnClickOkButton );
@@ -614,50 +590,48 @@ namespace System.Windows.Forms
 		
 		public Color CurrentColor
 		{
-			set
-			{
+			set {
 				currentColor = value;
-				examplePanel.Invalidate();
+				examplePanel.Invalidate( );
 			}
 			
-			get
-			{
+			get {
 				return currentColor;
 			}
 		}
-
+		
 		private void UpdateFontStyleListBox( )
 		{
 			// don't know if that works, IsStyleAvailable returns true for all styles under X
 			
-			fontStyleArray.Clear();
+			fontStyleArray.Clear( );
 			
 			fontstyleListBox.BeginUpdate( );
 			
-			fontstyleListBox.Items.Clear();
+			fontstyleListBox.Items.Clear( );
 			
 			if ( currentFamily.IsStyleAvailable( FontStyle.Regular ) )
 			{
 				fontstyleListBox.Items.Add( "Regular" );
-				fontStyleArray.Add(0);
+				fontStyleArray.Add( 0 );
 			}
 			
 			if ( currentFamily.IsStyleAvailable( FontStyle.Bold ) )
 			{
 				fontstyleListBox.Items.Add( "Bold" );
-				fontStyleArray.Add(1);
+				fontStyleArray.Add( 1 );
 			}
 			
 			if ( currentFamily.IsStyleAvailable( FontStyle.Italic ) )
 			{
 				fontstyleListBox.Items.Add( "Italic" );
-				fontStyleArray.Add(2);
+				fontStyleArray.Add( 2 );
 			}
 			
 			if ( currentFamily.IsStyleAvailable( FontStyle.Bold ) && currentFamily.IsStyleAvailable( FontStyle.Italic ) )
 			{
 				fontstyleListBox.Items.Add( "Bold Italic" );
-				fontStyleArray.Add(3);
+				fontStyleArray.Add( 3 );
 			}
 			
 			fontstyleListBox.EndUpdate( );
@@ -684,23 +658,23 @@ namespace System.Windows.Forms
 		
 		void OnPaintExamplePanel( object sender, PaintEventArgs e )
 		{
-			SolidBrush brush = ThemeEngine.Current.ResPool.GetSolidBrush (currentColor);
+			SolidBrush brush = ThemeEngine.Current.ResPool.GetSolidBrush( currentColor );
 			
-			// FIXME: need to find a better algorithm to display the font
+			e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.Control ), 0, 0, 156, 40 );
 			
-			int x = ( examplePanel.Width / 2 ) - ( currentSize * 4 );
-			int y = ( examplePanel.Height / 2 ) - ( currentFont.Height / 2 );
+			string text = "AaBbYyZz";
 			
+			SizeF fontSizeF = e.Graphics.MeasureString( text, currentFont );
+			
+			int text_width = (int)fontSizeF.Width;
+			int text_height = (int)fontSizeF.Height;
+			
+			int x = ( examplePanel.Width / 2 ) - ( text_width / 2 );
 			if ( x < 0 ) x = 0;
-			if ( y < 0 ) y = 0;
 			
-			e.Graphics.DrawString( "AaBbYyZz", currentFont, brush, new Point( x, y ) );
+			int y = ( examplePanel.Height / 2 ) - ( text_height / 2 );
 			
-//			StringFormat strformat = new StringFormat();
-//			strformat.Alignment = StringAlignment.Center;
-//			strformat.Alignment = StringAlignment.Center;
-//
-//			e.Graphics.DrawString ("AaBbYyZz", currentFont, brush, new Rectangle(0, 0, examplePanel.Width, examplePanel.Height), strformat);
+			e.Graphics.DrawString( text, currentFont, brush, new Point( x, y ) );
 		}
 		
 		void OnSelectedIndexChangedFontListBox( object sender, EventArgs e )
@@ -711,7 +685,7 @@ namespace System.Windows.Forms
 				
 				fontTextBox.Text = currentFamily.Name;
 				
-				UpdateFontStyleListBox();
+				UpdateFontStyleListBox( );
 				
 				UpdateExamplePanel( );
 			}
@@ -733,7 +707,7 @@ namespace System.Windows.Forms
 		{
 			if ( fontstyleListBox.SelectedIndex != -1 )
 			{
-				switch ( (int)fontStyleArray[ fontstyleListBox.SelectedIndex] )
+				switch ( (int)fontStyleArray[ fontstyleListBox.SelectedIndex ] )
 				{
 					case 0:
 						currentFontStyle = FontStyle.Regular;
@@ -777,7 +751,7 @@ namespace System.Windows.Forms
 			
 			UpdateExamplePanel( );
 		}
-				
+		
 		private void UpdateExamplePanel( )
 		{
 			currentFont = new Font( currentFamily, currentSize, currentFontStyle );
@@ -836,23 +810,23 @@ namespace System.Windows.Forms
 				DrawMode = DrawMode.OwnerDrawFixed;
 				
 				Items.AddRange( new object[] {
-								   new ColorComboBoxItem( Color.Black, "Black" ),
-								   new ColorComboBoxItem( Color.DarkRed, "Dark-Red" ),
-								   new ColorComboBoxItem( Color.Green, "Green" ),
-								   new ColorComboBoxItem( Color.Olive, "Olive-Green" ), // color not correct
-								   new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ), // color not correct
-								   new ColorComboBoxItem( Color.Crimson, "Crimson" ),
-								   new ColorComboBoxItem( Color.Cyan, "Cyan" ),
-								   new ColorComboBoxItem( Color.Gray, "Gray" ),
-								   new ColorComboBoxItem( Color.Silver, "Silver" ),
-								   new ColorComboBoxItem( Color.Red, "Red" ),
-								   new ColorComboBoxItem( Color.YellowGreen, "Yellow-Green" ),
-								   new ColorComboBoxItem( Color.Yellow, "Yellow" ),
-								   new ColorComboBoxItem( Color.Blue, "Blue" ),
-								   new ColorComboBoxItem( Color.Purple, "Purple" ),
-								   new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ),
-								   new ColorComboBoxItem( Color.White, "White" ) }
-							   );
+						       new ColorComboBoxItem( Color.Black, "Black" ),
+						       new ColorComboBoxItem( Color.DarkRed, "Dark-Red" ),
+						       new ColorComboBoxItem( Color.Green, "Green" ),
+						       new ColorComboBoxItem( Color.Olive, "Olive-Green" ), // color not correct
+						       new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ), // color not correct
+						       new ColorComboBoxItem( Color.Crimson, "Crimson" ),
+						       new ColorComboBoxItem( Color.Cyan, "Cyan" ),
+						       new ColorComboBoxItem( Color.Gray, "Gray" ),
+						       new ColorComboBoxItem( Color.Silver, "Silver" ),
+						       new ColorComboBoxItem( Color.Red, "Red" ),
+						       new ColorComboBoxItem( Color.YellowGreen, "Yellow-Green" ),
+						       new ColorComboBoxItem( Color.Yellow, "Yellow" ),
+						       new ColorComboBoxItem( Color.Blue, "Blue" ),
+						       new ColorComboBoxItem( Color.Purple, "Purple" ),
+						       new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ),
+						       new ColorComboBoxItem( Color.White, "White" ) }
+					       );
 				
 				SelectedIndex = 0;
 			}
@@ -869,17 +843,17 @@ namespace System.Windows.Forms
 				
 				if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
 				{
-					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush ( Color.Blue ), e.Bounds ); // bot blue
-					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush ( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( Color.Blue ), e.Bounds ); // bot blue
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
 					e.Graphics.DrawRectangle( ThemeEngine.Current.ResPool.GetPen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
-					e.Graphics.DrawString( ccbi.Name, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush ( Color.White ), r );
+					e.Graphics.DrawString( ccbi.Name, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush( Color.White ), r );
 				}
 				else
 				{
-					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush (Color.White ), e.Bounds );
-					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush (ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( Color.White ), e.Bounds );
+					e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
 					e.Graphics.DrawRectangle( ThemeEngine.Current.ResPool.GetPen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
-					e.Graphics.DrawString( ccbi.Name, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black ), r );
+					e.Graphics.DrawString( ccbi.Name, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush( Color.Black ), r );
 				}
 			}
 			
@@ -893,5 +867,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-
-
