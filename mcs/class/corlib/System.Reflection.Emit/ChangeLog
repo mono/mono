@@ -1,3 +1,8 @@
+2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ConstructorBuilder.cs MethodBuilder.cs (fixup): Throw an exception if a
+	method body is empty. Fixes #74906.
+
 2005-04-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* TypeBuilder.cs (SetCustomAttribute): StructLayoutAttribute.CharSet
