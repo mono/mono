@@ -53,7 +53,7 @@ namespace Microsoft.VisualBasic
 {
 	[StandardModule] 
 	[StructLayout(LayoutKind.Auto)] 
-	public class Strings
+	public sealed class Strings
 	{
 		private Strings()
 		{

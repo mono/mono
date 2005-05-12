@@ -34,7 +34,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualBasic.CompilerServices {
-	[AttributeUsage(AttributeTargets.Class)] 
+	[AttributeUsage(AttributeTargets.Class, Inherited = false)] 
 	[EditorBrowsable(EditorBrowsableState.Never)] 
 	[StructLayout(LayoutKind.Auto)] 
 	[MonoTODO("What should it do?")]

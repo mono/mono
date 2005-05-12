@@ -1,3 +1,11 @@
+2005-05-12  Ankit Jain  <ankit@corewars.org>
+
+	* StandardModuleAttribute.cs (AttributeUsage)
+	OptionTextAttribute.cs (AttributeUsage)
+	OptionCompareAttribute.cs (AttributeUsage):
+		Set Inherited = false.
+	* ProjectData.cs : Sealed.	
+	
 2005-05-10  Satya Sudha K <ksathyasudha@novell.com>
 	* LateBinding.cs (LateGet) : 
 		Calling 'LateIndexGet' if the member resolves to a field, but arguments are not null

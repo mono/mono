@@ -35,7 +35,7 @@ using System;
 
 namespace Microsoft.VisualBasic {
 using Microsoft.VisualBasic.CompilerServices;        
-	[System.AttributeUsageAttribute(System.AttributeTargets.Field)] 
+	[System.AttributeUsageAttribute(System.AttributeTargets.Field, Inherited = false)] 
 	sealed public class VBFixedStringAttribute : System.Attribute {
 		// Declarations
 		private int _length; 

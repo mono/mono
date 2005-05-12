@@ -44,7 +44,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[MonoTODO]
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[StructLayout(LayoutKind.Auto)] 
-	public class ProjectData {
+	public sealed class ProjectData {
 
 		private ProjectData () {}
 

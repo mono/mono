@@ -1,3 +1,10 @@
+2005-05-12 Ankit Jain  <ankit@corewars.org>
+
+	* Strings.cs : Sealed.
+	* FileSystem.cs (FileSystem.FileGet): Add attributes Optional and
+	__DefaultArgumentValue to 'recordNumber' parameter.
+	* VBFixedStringAttribute.cs (AttributeUsage): Set Inherited = false.
+
 2005-03-27 Trent Lloyd <lathiat@bur.st>, Shane Mitchell <shane@extadi.com>
 
 	   * Information.cs(RGB): Change colour ordering, its BGR not RGB

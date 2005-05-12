@@ -35,7 +35,7 @@ using System.ComponentModel;
 //complete. matches Mainsoft code.
 namespace Microsoft.VisualBasic.CompilerServices
 {
-	[AttributeUsage(AttributeTargets.Class)] 
+	[AttributeUsage(AttributeTargets.Class, Inherited = false)] 
 	[EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class OptionTextAttribute : Attribute {
 	}

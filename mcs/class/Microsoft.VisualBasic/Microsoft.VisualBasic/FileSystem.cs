@@ -1034,7 +1034,7 @@ namespace Microsoft.VisualBasic
 		[MonoTODO]
 		public static void FileGet(int fileNumber, 
 						ref ValueType value, 
-						long recordNumber) 
+						[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			throw new NotImplementedException();
 		}

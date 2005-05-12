@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 //complete as per Mainsoft code
 namespace Microsoft.VisualBasic.CompilerServices {
 	[EditorBrowsable(EditorBrowsableState.Never)] 
-	[AttributeUsage(AttributeTargets.Parameter)] 
+	[AttributeUsage(AttributeTargets.Parameter, Inherited = false)] 
 	[StructLayout(LayoutKind.Auto)] 
 	sealed public class OptionCompareAttribute : Attribute {
 	}
