@@ -1,3 +1,8 @@
+2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* main-returns-background-change.cs: New test for changing the
+	background mode of a thread.
+
 2005-05-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c (mono_test_marshal_cdecl_delegate): New test for changing the calling convention of
