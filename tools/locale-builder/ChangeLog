@@ -1,3 +1,13 @@
+2005-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Entry.cs :
+	  build fix. Incorrectly allowed access to protected member.
+	* CultureInfoEntry.cs,
+	  Driver.cs :
+	  Handle language "zh-CHS" as special case, since there is no "zh".
+	* Makefile :
+	  use -debug+ instead of -g (convenient when verifying with csc).
+
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : set \n for writer's NewLine explicitly (otherwise it

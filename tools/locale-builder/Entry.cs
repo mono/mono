@@ -49,7 +49,7 @@ namespace Mono.Tools.LocaleBuilder {
 			}
 		}
 
-                protected static String EncodeStringIdx (string str)
+                internal static String EncodeStringIdx (string str)
                 {
                         if (str == null)
                                 return "0";

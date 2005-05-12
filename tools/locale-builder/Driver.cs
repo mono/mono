@@ -188,9 +188,14 @@ namespace Mono.Tools.LocaleBuilder {
 			return new XPathDocument (xtr);
 		}
 
+		private string GetShortName (string lang)
+		{
+			return lang == "zh-CHS" ? "zh" : lang;
+		}
+
                 private bool ParseLang (string lang)
 		{
-                        XPathDocument doc = GetXPathDocument (Path.Combine ("langs", lang + ".xml"));
+                        XPathDocument doc = GetXPathDocument (Path.Combine ("langs", GetShortName (lang) + ".xml"));
 			XPathNavigator nav = doc.CreateNavigator ();
                         CultureInfoEntry ci = new CultureInfoEntry ();
                         string lang_type, terr_type;
@@ -203,17 +208,17 @@ namespace Mono.Tools.LocaleBuilder {
                         ci.Language = (lang_type == String.Empty ? null : lang_type);
                         ci.Territory = (terr_type == String.Empty ? null : terr_type);
 
-			if (!LookupLcids (ci))
+			if (!LookupLcids (ci, true))
                                 return false;
 
-                        doc = GetXPathDocument (Path.Combine ("langs", Lang + ".xml"));
+                        doc = GetXPathDocument (Path.Combine ("langs", GetShortName (Lang) + ".xml"));
 			nav = doc.CreateNavigator ();
 			ci.DisplayName = LookupFullName (ci, nav);
                         
 			if (Lang == "en") {
 				ci.EnglishName = ci.DisplayName;
 			} else {
-				doc = GetXPathDocument (Path.Combine ("langs", Lang + ".xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", GetShortName (lang) + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.EnglishName = LookupFullName (ci, nav);
 			}
@@ -221,7 +226,7 @@ namespace Mono.Tools.LocaleBuilder {
 			if (ci.Language == Lang) {
 				ci.NativeName = ci.DisplayName;
 			} else {
-				doc = GetXPathDocument (Path.Combine ("langs", lang + ".xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", GetShortName (lang) + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.NativeName = LookupFullName (ci, nav);
 			}
@@ -266,7 +271,7 @@ namespace Mono.Tools.LocaleBuilder {
 			ci.Language = nav.Evaluate ("string (ldml/identity/language/@type)").ToString ();
 			ci.Territory = nav.Evaluate ("string (ldml/identity/territory/@type)").ToString ();
 
-                        if (!LookupLcids (ci))
+                        if (!LookupLcids (ci, false))
                                 return null;
 			LookupNames (ci);
 
@@ -287,7 +292,7 @@ namespace Mono.Tools.LocaleBuilder {
                         nav = doc.CreateNavigator ();
                         Lookup (nav, ci);
 
-			doc = GetXPathDocument (Path.Combine ("langs", ci.Language + ".xml"));
+			doc = GetXPathDocument (Path.Combine ("langs", GetShortName (ci.Language) + ".xml"));
 			nav = doc.CreateNavigator ();
 			Lookup (nav, ci);
 
@@ -320,7 +325,7 @@ namespace Mono.Tools.LocaleBuilder {
 
 		private void LookupNames (CultureInfoEntry ci)
 		{
-			XPathDocument doc = GetXPathDocument (Path.Combine ("langs", Lang + ".xml"));
+			XPathDocument doc = GetXPathDocument (Path.Combine ("langs", GetShortName (Lang) + ".xml"));
 			XPathNavigator nav = doc.CreateNavigator ();
 
 			ci.DisplayName = LookupFullName (ci, nav);
@@ -336,7 +341,7 @@ namespace Mono.Tools.LocaleBuilder {
 			if (ci.Language == Lang) {
 				ci.NativeName = ci.DisplayName;
 			} else {
-				doc = GetXPathDocument (Path.Combine ("langs", ci.Language + ".xml"));
+				doc = GetXPathDocument (Path.Combine ("langs", GetShortName (ci.Language) + ".xml"));
 				nav = doc.CreateNavigator ();
 				ci.NativeName = LookupFullName (ci, nav);
 			}
@@ -814,25 +819,30 @@ namespace Mono.Tools.LocaleBuilder {
                                 ci.NumberFormatEntry.CurrencySymbol = cur;
                 }
 
-		private bool LookupLcids (CultureInfoEntry ci)
+		private bool LookupLcids (CultureInfoEntry ci, bool lang)
 		{
 			XPathDocument doc = GetXPathDocument ("lcids.xml");
 			XPathNavigator nav = doc.CreateNavigator ();
-			string name = ci.Language;
+			string name = ci.Name;
+			// Language name does not always consist of locale name.
+			// (for zh-* it must be either zh-CHS or zh-CHT)
+			string langName = ci.Language;
 
-                        if (ci.Territory != null)
-                                name += "-" + ci.Territory;
+//                        if (ci.Territory != null)
+//                                name += "-" + ci.Territory;
 
 			XPathNodeIterator ni =(XPathNodeIterator) nav.Evaluate ("lcids/lcid[@name='"
-					+ name + "']");
+					+ (lang ? langName : name) + "']");
 			if (!ni.MoveNext ()) {
+				Console.WriteLine ("no lcid found for: {0} ({1}/{2})", name, ci.Language, ci.Territory);
                                 string file;
+
                                 if (ci.Territory != null) {
                                         file = Path.Combine ("locales", ci.Language + "_" + ci.Territory + ".xml");
                                         File.Delete (file);
                                         Console.WriteLine ("deleting file:  " + file);
                                 }
-				Console.WriteLine ("no lcid found for:	" + name);
+
 				return false;
 			}
 
@@ -864,7 +874,7 @@ namespace Mono.Tools.LocaleBuilder {
 			string ret;
 
 			ret = (string) nav.Evaluate ("string("+
-					pre + "languages/language[@type='" + ci.Language + "'])");
+					pre + "languages/language[@type='" + GetShortName (ci.Language) + "'])");
 
 			if (ci.Territory == null)
 				return ret;

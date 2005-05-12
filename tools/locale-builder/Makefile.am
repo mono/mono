@@ -1,7 +1,7 @@
 
 MCS = mcs
 RUNTIME = mono
-MCSFLAGS = -g
+MCSFLAGS = -debug+
 # To build a reduced mono runtime with support only for some locales, # run:
 # 	make minimal
 # To build with a single locale (en_US), run:

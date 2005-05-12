@@ -15,7 +15,8 @@ namespace Mono.Tools.LocaleBuilder {
 
         public class CultureInfoEntry : Entry {
 
-                public string Language;
+                string language;
+
                 public string Territory;
                 public string EnglishName;
                 public string DisplayName;
@@ -43,11 +44,20 @@ namespace Mono.Tools.LocaleBuilder {
                         NumberFormatEntry = new NumberFormatEntry ();
                 }
 
+                public string Language {
+                        get {
+                                return language;
+                        }
+                        set {
+                                language = (value == "zh") ? "zh-CHS" : value;
+                        }
+                }
+
                 public string Name {
                         get {
                                 if (Territory == null)
                                         return Language;
-                                return Language + "-" + Territory;
+                                return (Language.StartsWith ("zh") ? "zh" : Language) + "-" + Territory;
                         }
                 }
 
