@@ -53,7 +53,7 @@ namespace System.Runtime.Remoting
 		static string applicationID = null;
 		static string applicationName = null;
 		static string configFile = "";
-		static MiniParser parser = null; 
+		static SmallXmlParser parser = null; 
 		static string processGuid = null;
 		static bool defaultConfigRead = false;
 		static bool defaultDelayedConfigRead = false;
@@ -126,10 +126,11 @@ namespace System.Runtime.Remoting
 		{
 			try
 			{
-				MiniParser parser = new MiniParser ();
-				RReader rreader = new RReader (filename);
-				ConfigHandler handler = new ConfigHandler (false);
-				parser.Parse (rreader, handler);
+				SmallXmlParser parser = new SmallXmlParser ();
+				using (TextReader rreader = new StreamReader (filename)) {
+					ConfigHandler handler = new ConfigHandler (false);
+					parser.Parse (rreader, handler);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -143,10 +144,11 @@ namespace System.Runtime.Remoting
 			{
 				if (defaultDelayedConfigRead || defaultConfigRead) return;
 				
-				MiniParser parser = new MiniParser ();
-				RReader rreader = new RReader (Environment.GetMachineConfigPath ());
-				ConfigHandler handler = new ConfigHandler (true);
-				parser.Parse (rreader, handler);
+				SmallXmlParser parser = new SmallXmlParser ();
+				using (TextReader rreader = new StreamReader (Environment.GetMachineConfigPath ())) {
+					ConfigHandler handler = new ConfigHandler (true);
+					parser.Parse (rreader, handler);
+				}
 				defaultDelayedConfigRead = true;
 			}
 		}
@@ -385,33 +387,7 @@ namespace System.Runtime.Remoting
 	 * Internal classes used by RemotingConfiguration.Configure () *
 	 ***************************************************************/
 	 
-	internal class RReader : MiniParser.IReader {
-		private string xml; // custom remoting config file
-		private int pos;
-
-		public RReader (string filename)
-		{
-			try {
-				StreamReader sr = new StreamReader (filename);
-				xml = sr.ReadToEnd ();
-				sr.Close ();
-			}
-			catch {
-				xml = null;
-			}
-		}
-
-		public int Read () {
-			try {
-				return (int) xml[pos++];
-			}
-			catch {
-				return -1;
-			}
-		}
-	}
-	
-	internal class ConfigHandler : MiniParser.IHandler 
+	internal class ConfigHandler : SmallXmlParser.IContentHandler 
 	{
 		ArrayList typeEntries = new ArrayList ();
 		ArrayList channelInstances = new ArrayList ();
@@ -446,9 +422,13 @@ namespace System.Runtime.Remoting
 				return currentXmlPath.EndsWith (path);
 		}
 		
-		public void OnStartParsing (MiniParser parser) {}
+		public void OnStartParsing (SmallXmlParser parser) {}
 		
-		public void OnStartElement (string name, MiniParser.IAttrList attrs)
+		public void OnProcessingInstruction (string name, string text) {}
+
+		public void OnIgnorableWhitespace (string s) {}
+
+		public void OnStartElement (string name, SmallXmlParser.IAttrList attrs)
 		{
 			try
 			{
@@ -463,7 +443,7 @@ namespace System.Runtime.Remoting
 			}
 		}
 		
-		public void ParseElement (string name, MiniParser.IAttrList attrs)
+		public void ParseElement (string name, SmallXmlParser.IAttrList attrs)
 		{
 			if (currentProviderData != null)
 			{
@@ -608,7 +588,7 @@ namespace System.Runtime.Remoting
 			currentXmlPath = currentXmlPath.Substring (0, currentXmlPath.Length - name.Length - 1);
 		}
 		
-		void ReadCustomProviderData (string name, MiniParser.IAttrList attrs)
+		void ReadCustomProviderData (string name, SmallXmlParser.IAttrList attrs)
 		{
 			SinkProviderData parent = (SinkProviderData) currentProviderData.Peek ();
 			
@@ -620,7 +600,7 @@ namespace System.Runtime.Remoting
 			currentProviderData.Push (data);
 		}
 
-		void ReadLifetine (MiniParser.IAttrList attrs)
+		void ReadLifetine (SmallXmlParser.IAttrList attrs)
 		{
 			for (int i=0; i < attrs.Names.Length; ++i) {
 				switch (attrs.Names[i]) {
@@ -672,7 +652,7 @@ namespace System.Runtime.Remoting
 			throw new RemotingException ("Invalid time unit: " + unit);
 		}
 		
-		void ReadChannel (MiniParser.IAttrList attrs, bool isTemplate)
+		void ReadChannel (SmallXmlParser.IAttrList attrs, bool isTemplate)
 		{
 			ChannelData channel = new ChannelData ();
 			
@@ -705,7 +685,7 @@ namespace System.Runtime.Remoting
 			currentChannel = channel;
 		}
 		
-		ProviderData ReadProvider (string name, MiniParser.IAttrList attrs, bool isTemplate)
+		ProviderData ReadProvider (string name, SmallXmlParser.IAttrList attrs, bool isTemplate)
 		{
 			ProviderData prov = (name == "provider") ? new ProviderData () : new FormatterData ();
 			SinkProviderData data = new SinkProviderData ("root");
@@ -733,7 +713,7 @@ namespace System.Runtime.Remoting
 			return prov;
 		}
 		
-		void ReadClientActivated (MiniParser.IAttrList attrs)
+		void ReadClientActivated (SmallXmlParser.IAttrList attrs)
 		{
 			string type = GetNotNull (attrs, "type");
 			string assm = ExtractAssembly (ref type);
@@ -744,7 +724,7 @@ namespace System.Runtime.Remoting
 			typeEntries.Add (new ActivatedClientTypeEntry (type, assm, currentClientUrl));
 		}
 		
-		void ReadServiceActivated (MiniParser.IAttrList attrs)
+		void ReadServiceActivated (SmallXmlParser.IAttrList attrs)
 		{
 			string type = GetNotNull (attrs, "type");
 			string assm = ExtractAssembly (ref type);
@@ -752,7 +732,7 @@ namespace System.Runtime.Remoting
 			typeEntries.Add (new ActivatedServiceTypeEntry (type, assm));
 		}
 		
-		void ReadClientWellKnown (MiniParser.IAttrList attrs)
+		void ReadClientWellKnown (SmallXmlParser.IAttrList attrs)
 		{
 			string url = GetNotNull (attrs, "url");
 			string type = GetNotNull (attrs, "type");
@@ -761,7 +741,7 @@ namespace System.Runtime.Remoting
 			typeEntries.Add (new WellKnownClientTypeEntry (type, assm, url));
 		}
 		
-		void ReadServiceWellKnown (MiniParser.IAttrList attrs)
+		void ReadServiceWellKnown (SmallXmlParser.IAttrList attrs)
 		{
 			string objectUri = GetNotNull (attrs, "objectUri");
 			string smode = GetNotNull (attrs, "mode");
@@ -776,7 +756,7 @@ namespace System.Runtime.Remoting
 			typeEntries.Add (new WellKnownServiceTypeEntry (type, assm, objectUri, mode));
 		}
 		
-		void ReadInteropXml (MiniParser.IAttrList attrs, bool isElement)
+		void ReadInteropXml (SmallXmlParser.IAttrList attrs, bool isElement)
 		{
 			Type t = Type.GetType (GetNotNull (attrs, "clr"));
 			string[] xmlName = GetNotNull (attrs, "xml").Split (',');
@@ -787,7 +767,7 @@ namespace System.Runtime.Remoting
 			else SoapServices.RegisterInteropXmlType (localName, ns, t);
 		}
 		
-		void ReadPreload (MiniParser.IAttrList attrs)
+		void ReadPreload (SmallXmlParser.IAttrList attrs)
 		{
 			string type = attrs.GetValue ("type");
 			string assm = attrs.GetValue ("assembly");
@@ -803,7 +783,7 @@ namespace System.Runtime.Remoting
 				throw new RemotingException ("Either type or assembly attributes must be specified");
 		}
 					
-		string GetNotNull (MiniParser.IAttrList attrs, string name)
+		string GetNotNull (SmallXmlParser.IAttrList attrs, string name)
 		{
 			string value = attrs.GetValue (name);
 			if (value == null || value == "") 
@@ -823,7 +803,7 @@ namespace System.Runtime.Remoting
 		
 		public void OnChars (string ch) {}
 		
-		public void OnEndParsing (MiniParser parser)
+		public void OnEndParsing (SmallXmlParser parser)
 		{
 			RemotingConfiguration.RegisterChannels (channelInstances, onlyDelayedChannels);
 			if (appName != null) RemotingConfiguration.ApplicationName = appName;

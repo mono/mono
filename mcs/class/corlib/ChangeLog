@@ -1,3 +1,7 @@
+2005-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib.dll.sources: replaced MiniParser.cs with SmallXmlParser.cs.
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Removed SecurityContextSwitcher from build.

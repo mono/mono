@@ -96,7 +96,7 @@ namespace System.Security.Permissions {
 			try {
 				sp.LoadXml (xml);
 			}
-			catch (Mono.Xml.MiniParser.XMLError xe) {
+			catch (Mono.Xml.SmallXmlParserException xe) {
 				throw new XmlSyntaxException (xe.Line, xe.ToString ());
 			}
 			SecurityElement se = sp.ToXml ();

@@ -1,3 +1,8 @@
+2005-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmallXmlParser.cs,
+	  SecurityParser.cs : Use new SmallXmlParser.cs instead of MiniParser.
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MiniParser.cs: Fixed warning (l4) for unused variables. Removed

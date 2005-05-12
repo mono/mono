@@ -50,7 +50,7 @@ Mono.Security.X509/X520Attributes.cs
 Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
 Mono.Security.X509.Extensions/KeyUsageExtension.cs
 Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
-Mono.Xml/MiniParser.cs
+Mono.Xml/SmallXmlParser.cs
 Mono.Xml/SecurityParser.cs
 System/AccessViolationException.cs
 System/ActivationContext.cs
