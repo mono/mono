@@ -4541,8 +4541,6 @@ namespace Mono.CSharp {
 				bool ok = true;
 
 				int count = c.ParameterInfo.Count;
-				Report.Debug (64, "OVERLOADED CTOR", c, c.ParameterInfo,
-					      c.ParameterTypes, Arguments, count);
 
 				if ((count > 0) &&
 				    c.ParameterInfo.ParameterModifier (count - 1) == Parameter.Modifier.PARAMS) {
