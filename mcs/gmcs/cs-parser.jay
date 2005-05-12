@@ -1330,7 +1330,7 @@ property_declaration
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "a property can't have type arguments");
 
-		prop = new Property (current_container, (Expression) $3, (int) $2, false,
+		prop = new Property (current_class, (Expression) $3, (int) $2, false,
 				     name, (Attributes) $1, get_block, set_block, loc);
 		if (SimpleIteratorContainer.Simple.Yields)
 			prop.SetYields ();

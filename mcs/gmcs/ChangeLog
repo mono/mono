@@ -1,3 +1,8 @@
+2005-05-12  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (property_declaration): Pass the `current_class',
+	not the `current_container' to Property's .ctor.  Fixes #74912.
+
 2005-05-11  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (Closure): Copy this from MCS and merge all the
