@@ -5,6 +5,7 @@ attribute.cs
 cfold.cs
 class.cs
 codegen.cs
+CompilerOptions.cs
 constant.cs
 const.cs
 decl.cs

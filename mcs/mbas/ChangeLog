@@ -1,3 +1,12 @@
+2005-05-12 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : slimmed down, most non-specific code moved to new class/source CompilerOptions.
+		Also steps where individualized and put on a array of delegates for sequencial execution
+		with stop-on-first-blunder behavior. It is similar to the configurable pipeline of the
+		boo compiler.
+	* CompilerOptions.cs: added, refactored from inside driver.cs (some code/properties will migrate
+		further to Mono.GetOptions.Usefull.CommonCompilerOptions)
+	* mbas.exe.sources: added CompilerOptions.cs
+
 2005-05-11 Ankit Jain  <ankit@corewars.org>
 
 	* expression.cs (Invocation.CheckParameterAgainstArgument): Return ConversionType.Widening

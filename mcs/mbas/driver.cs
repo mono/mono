@@ -9,6 +9,10 @@
 // (C) 2002, 2003, 2004 Rafael Teixeira
 //
 
+/*
+
+*/
+
 namespace Mono.Languages {
 
 	using System;
@@ -20,428 +24,79 @@ namespace Mono.Languages {
 	using System.Reflection.Emit;
 
 	using Mono.MonoBASIC;
-	using Mono.GetOptions;
 	using Mono.GetOptions.Useful;
 
-
-	enum OptionCompare {
-		Binary, Text
-	};
-
+	public class Driver {
+		CompilerOptions options;
 		
-	/// <summary>
-	///    The compiler driver.
-	/// </summary>
-	public class CompilerOptions : CommonCompilerOptions {
-
-		// Temporary options
-		//------------------------------------------------------------------
-		[Option("[IGNORED] Only parses the source file (for debugging the tokenizer)", "parse", SecondLevelHelp = true)]
-		public bool OnlyParse = false;
-
-		[Option("[IGNORED] Only tokenizes source files", "tokenize", SecondLevelHelp = true)]
-		public bool Tokenize = false;
-
-		[Option("Shows stack trace at Error location", "stacktrace", SecondLevelHelp = true)]
-		public bool Stacktrace = false;
-		
-		[Option("Makes errors fatal", "fatal", SecondLevelHelp = true)]
-		public bool MakeErrorsFatal = false;
-		
-		[Option("Displays time stamps of various compiler events", "timestamp", SecondLevelHelp = true)]
-		public virtual bool PrintTimeStamps {
-			set
-			{
-				printTimeStamps = true;
-				last_time = DateTime.Now;
-				DebugListOfArguments.Add("timestamp");
-			}
-		}
-
-		// redefining some inherited options
-		//------------------------------------------------------------------
-		[Option("About the MonoBASIC compiler", "about")]
-		public override WhatToDoNext DoAbout()
-		{
-			return base.DoAbout();
-		}
-
-		[KillOption]
-		public override WhatToDoNext DoUsage() { return WhatToDoNext.GoAhead; }
-
-		// language options
-		//------------------------------------------------------------------
-
-		[Option("Require explicit declaration of variables", "optionexplicit", VBCStyleBoolean = true)]
-		public bool OptionExplicit = false;
-
-		[Option("Enforce strict language semantics", "optionstrict", VBCStyleBoolean = true)]
-		public bool OptionStrict = false;
-		
-		[Option("Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
-		public bool OptionCompareBinary = true; 
-
-		[Option("Specifies text-style string comparisons.", "optioncompare:text")]
-		public bool OptionCompareText { set { OptionCompareBinary = false; } }
-
-		protected override void InitializeOtherDefaults() 
-		{ 
-			DefineSymbol = "__MonoBASIC__";
-			ImportNamespaces = "Microsoft.VisualBasic";
-		}
-		
-		private bool printTimeStamps = false;
-		//
-		// Last time we took the time
-		//
-		DateTime last_time;
-		public void ShowTime (string msg)
-		{
-			DateTime now = DateTime.Now;
-			TimeSpan span = now - last_time;
-			last_time = now;
-
-			Console.WriteLine (
-				"[{0:00}:{1:000}] {2}",
-				(int) span.TotalSeconds, span.Milliseconds, msg);
-		}
-	}
-
-	public class Driver : CompilerOptions {
-		       		
 		private void InitializeRootContextAndOthersFromOptions()
 		{
-			Report.Stacktrace = Stacktrace;
-			Report.WarningsAreErrors = WarningsAreErrors;
+			Report.Stacktrace = options.Stacktrace;
+			Report.WarningsAreErrors = options.WarningsAreErrors;
 			// TODO: change Report to receive the whole array
-			for(int i = 0; i < WarningsToIgnore.Length; i++)
-				Report.SetIgnoreWarning(WarningsToIgnore[i]);
-			Report.Fatal = MakeErrorsFatal;
+			for(int i = 0; i < options.WarningsToIgnore.Length; i++)
+				Report.SetIgnoreWarning(options.WarningsToIgnore[i]);
+			Report.Fatal = options.MakeErrorsFatal;
 
-			RootContext.WarningLevel = WarningLevel;
-			RootContext.Checked = CheckedContext;
-			RootContext.MainClass = MainClassName;
-			RootContext.StdLib = !NoStandardLibraries;
-			RootContext.Unsafe = AllowUnsafeCode;
-			if (RootNamespace != null)
-				RootContext.RootNamespace = RootNamespace;
+			RootContext.WarningLevel = options.WarningLevel;
+			RootContext.Checked = options.CheckedContext;
+			RootContext.MainClass = options.MainClassName;
+			RootContext.StdLib = !options.NoStandardLibraries;
+			RootContext.Unsafe = options.AllowUnsafeCode;
+			if (options.RootNamespace != null)
+				RootContext.RootNamespace = options.RootNamespace;
 			
 			// TODO: semantics are different and should be adjusted
-			GenericParser.yacc_verbose_flag = Verbose ? 1 : 0;
+			GenericParser.yacc_verbose_flag = options.Verbose ? 1 : 0;
 			
-			Mono.MonoBASIC.Parser.InitialOptionExplicit = OptionExplicit;
-			Mono.MonoBASIC.Parser.InitialOptionStrict = OptionStrict;
-		    Mono.MonoBASIC.Parser.InitialOptionCompareBinary = OptionCompareBinary;
-		    Mono.MonoBASIC.Parser.ImportsList = Imports;
+			Mono.MonoBASIC.Parser.InitialOptionExplicit = options.OptionExplicit;
+			Mono.MonoBASIC.Parser.InitialOptionStrict = options.OptionStrict;
+		    Mono.MonoBASIC.Parser.InitialOptionCompareBinary = options.OptionCompareBinary;
+		    Mono.MonoBASIC.Parser.ImportsList = options.Imports;
 		}
 		
-		public ArrayList AssembliesToReferenceSoftly = new ArrayList();		
-
-		public int LoadAssembly (string assembly, bool soft)
+		bool ParseAllSourceFiles()
 		{
-			Assembly a;
-			string total_log = "";
-
-			try  {
-				char[] path_chars = { '/', '\\' };
-
-				if (assembly.IndexOfAny (path_chars) != -1)
-					a = Assembly.LoadFrom(assembly);
-				else {
-					string ass = assembly;
-					if (ass.EndsWith (".dll"))
-						ass = assembly.Substring (0, assembly.Length - 4);
-					a = Assembly.Load (ass);
-				}
-				TypeManager.AddAssembly (a);
-				return 0;
-			}
-			catch (FileNotFoundException) {
-				if (PathsToSearchForLibraries != null) {
-					foreach (string dir in PathsToSearchForLibraries) {
-						string full_path = dir + "/" + assembly + ".dll";
-
-						try  {
-							a = Assembly.LoadFrom (full_path);
-							TypeManager.AddAssembly (a);
-							return 0;
-						} 
-						catch (FileNotFoundException ff)  {
-							total_log += ff.FusionLog;
-							continue;
-						}
-					}
-				}
-				if (soft)
-					return 0;
-			}
-			catch (BadImageFormatException f)  {
-				Error ("// Bad file format while loading assembly");
-				Error ("Log: " + f.FusionLog);
-				return 1;
-			} catch (FileLoadException f){
-				Error ("File Load Exception: " + assembly);
-				Error ("Log: " + f.FusionLog);
-				return 1;
-			} catch (ArgumentNullException){
-				Error ("// Argument Null exception ");
-				return 1;
-			}
-			
-			Report.Error (6, "Can not find assembly `" + assembly + "'" );
-			Console.WriteLine ("Log: \n" + total_log);
-
-			return 0;
+			options.StartTime("Parsing Source Files");
+			foreach(FileToCompile file in options.SourceFilesToCompile)
+				GenericParser.Parse(file.Filename, file.Encoding);
+			options.ShowTime("   Done");
+			return (Report.Errors == 0);
 		}
-
-		public void LoadModule (MethodInfo adder_method, string module)
+		
+		private bool InitializeDebuggingSupport()
 		{
-			System.Reflection.Module m;
-			string total_log = "";
-
-			try {
-				try {
-					m = (System.Reflection.Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { module });
-				}
-				catch (TargetInvocationException ex) {
-					throw ex.InnerException;
-				}
-				TypeManager.AddModule (m);
-
-			} 
-			catch (FileNotFoundException) {
-				foreach (string dir in PathsToSearchForLibraries)	{
-					string full_path = Path.Combine (dir, module);
-					if (!module.EndsWith (".netmodule"))
-						full_path += ".netmodule";
-
-					try {
-						try {
-							m = (System.Reflection.Module) adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { full_path });
-						}
-						catch (TargetInvocationException ex) {
-							throw ex.InnerException;
-						}
-						TypeManager.AddModule (m);
-						return;
-					}
-					catch (FileNotFoundException ff) {
-						total_log += ff.FusionLog;
-						continue;
-					}
-				}
-				Report.Error (6, "Cannot find module `" + module + "'" );
-				Console.WriteLine ("Log: \n" + total_log);
-			}
-			catch (BadImageFormatException f) {
-				Report.Error(6, "Cannot load module (bad file format)" + f.FusionLog);
-			}
-			catch (FileLoadException f)	{
-				Report.Error(6, "Cannot load module " + f.FusionLog);
-			}
-			catch (ArgumentNullException) {
-				Report.Error(6, "Cannot load module (null argument)");
-			}
-		}
-
-		void Error(string message)
-		{
-			Console.WriteLine(message);
-		}
-
-		/// <summary>
-		///   Loads all assemblies referenced on the command line
-		/// </summary>
-		public int LoadReferences ()
-		{
-			int errors = 0;
-
-			foreach (string r in AssembliesToReference)
-				errors += LoadAssembly (r, false);
-
-			foreach (string r in AssembliesToReferenceSoftly)
-				errors += LoadAssembly (r, true);
-			
-			return errors;
-		}
-
-		//
-		// Given a path specification, splits the path from the file/pattern
-		//
-		void SplitPathAndPattern (string spec, out string path, out string pattern)
-		{
-			int p = spec.LastIndexOf ("/");
-			if (p != -1){
-				//
-				// Windows does not like /file.cs, switch that to:
-				// "\", "file.cs"
-				//
-				if (p == 0){
-					path = "\\";
-					pattern = spec.Substring (1);
-				} else {
-					path = spec.Substring (0, p);
-					pattern = spec.Substring (p + 1);
-				}
-				return;
-			}
-
-			p = spec.LastIndexOf ("\\");
-			if (p != -1){
-				path = spec.Substring (0, p);
-				pattern = spec.Substring (p + 1);
-				return;
-			}
-
-			path = ".";
-			pattern = spec;
-		}
-
-		bool AddFiles (string spec, bool recurse)
-		{
-			string path, pattern;
-
-			SplitPathAndPattern(spec, out path, out pattern);
-			if (pattern.IndexOf("*") == -1) {
-				DefaultArgumentProcessor(spec);
-				return true;
-			}
-
-			string [] files = null;
-			try {
-				files = Directory.GetFiles(path, pattern);
-			} catch (System.IO.DirectoryNotFoundException) {
-				Report.Error (2001, "Source file `" + spec + "' could not be found");
-				return false;
-			} catch (System.IO.IOException){
-				Report.Error (2001, "Source file `" + spec + "' could not be found");
-				return false;
-			}
-			foreach (string f in files)
-				DefaultArgumentProcessor (f);
-
-			if (!recurse)
-				return true;
-			
-			string [] dirs = null;
-
-			try {
-				dirs = Directory.GetDirectories(path);
-			} catch {
-			}
-			
-			foreach (string d in dirs) {
-					
-				// Don't include path in this string, as each
-				// directory entry already does
-				AddFiles (d + "/" + pattern, true);
-			}
-
+			string[] debug_args = new string [options.DebugListOfArguments.Count];
+			options.DebugListOfArguments.CopyTo(debug_args);
+			CodeGen.Init(options.OutputFileName, options.OutputFileName, options.WantDebuggingSupport, debug_args);
+			TypeManager.AddModule(CodeGen.ModuleBuilder);
 			return true;
 		}
-
-		void DefineDefaultConfig ()
+		
+		private bool LoadReferencedAssemblies()
 		{
-			//
-			// For now the "default config" is harcoded into the compiler
-			// we can move this outside later
-			//
-			string [] default_config = 
-			{
-				"System",
-				"System.Data",
-				"System.Xml",
-				"Microsoft.VisualBasic" , 
-#if EXTRA_DEFAULT_REFS
-				//
-				// Is it worth pre-loading all this stuff?
-				//
-				"Accessibility",
-				"System.Configuration.Install",
-				"System.Design",
-				"System.DirectoryServices",
-				"System.Drawing.Design",
-				"System.Drawing",
-				"System.EnterpriseServices",
-				"System.Management",
-				"System.Messaging",
-				"System.Runtime.Remoting",
-				"System.Runtime.Serialization.Formatters.Soap",
-				"System.Security",
-				"System.ServiceProcess",
-				"System.Web",
-				"System.Web.RegularExpressions",
-				"System.Web.Services" ,
-				"System.Windows.Forms"
-#endif
-			};
-			
-			foreach (string def in default_config)
-				if (!(AssembliesToReference.Contains(def) || AssembliesToReference.Contains (def + ".dll")))
-					AssembliesToReferenceSoftly.Add(def);
+			return options.LoadReferencedAssemblies(TypeManager.AddAssembly);
 		}
 
-		void InitializeDebuggingSupport()
+		private bool AdjustCodegenWhenTargetIsNetModule()
 		{
-			string[] debug_args = new string [DebugListOfArguments.Count];
-			DebugListOfArguments.CopyTo(debug_args);
-			CodeGen.Init(OutputFileName, OutputFileName, WantDebuggingSupport, debug_args);
-			TypeManager.AddModule(CodeGen.ModuleBuilder);
+			options.AdjustCodegenWhenTargetIsNetModule(CodeGen.AssemblyBuilder);
+			return true;
 		}
-
-		public bool ResolveAllTypes() // Phase 2
+		
+		private bool LoadAddedNetModules()
 		{
-			// Load Core Library for default compilation
-			if (RootContext.StdLib)
-				AssembliesToReference.Insert(0, "mscorlib");
-
-			if (!NoConfig)
-				DefineDefaultConfig();
-
-			ShowTime("Loading referenced assemblies");
-
-			// Load assemblies required
-			if (LoadReferences() > 0) {
-				Error ("Could not load one or more assemblies");
-				return false;
-			}
-
-						ShowTime("References loaded");
-
-			InitializeDebuggingSupport();
-
-			// TargetFileType is Module 
-			if (TargetFileType == TargetType.Module) {
-				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-				if (module_only == null) {
-					Report.Error (0, new Location (-1, -1), "Cannot use /TargetFileType:module on this runtime: try the Mono runtime instead.");
-					Environment.Exit (1);
-				}
-
-				MethodInfo set_method = module_only.GetSetMethod (true);
-				set_method.Invoke (CodeGen.AssemblyBuilder, BindingFlags.Default, null, new object[]{true}, null);
-
-				TypeManager.AddModule (CodeGen.ModuleBuilder);
-			}
-
-			if (NetModulesToAdd.Count > 0) {
-				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
-				if (adder_method == null) {
-					Report.Error (0, new Location (-1, -1), "Cannot use /addmodule on this runtime: Try the Mono runtime instead.");
-					Environment.Exit (1);
-				}
-
-				foreach (string module in NetModulesToAdd)
-					LoadModule (adder_method, module);
-			}
-
-
+			return options.LoadAddedNetModules(CodeGen.AssemblyBuilder, TypeManager.AddModule);
+		}
+		
+		private bool InitializeCoreTypes()
+		{
 			//
 			// Before emitting, we need to get the core
 			// types emitted from the user defined types
 			// or from the system ones.
 			//
-			ShowTime("Initializing Core Types");
+			options.StartTime("Initializing Core Types");
 
 			if (!RootContext.StdLib)
 				RootContext.ResolveCore ();
@@ -449,34 +104,51 @@ namespace Mono.Languages {
 				return false;
 			
 			TypeManager.InitCoreTypes();
-			if (Report.Errors > 0)
-				return false;
+				
+			options.ShowTime("Core Types Done");
+			return Report.Errors == 0;
+		}
 
-			ShowTime("   Core Types done");
-
-			ShowTime("Resolving tree");
-
-			// The second pass of the compiler
-			RootContext.ResolveTree ();
-			if (Report.Errors > 0)
-				return false;
-			
-			ShowTime("Populate tree");
-
-			if (!RootContext.StdLib)
+		private bool ResolveTree()
+		{
+			options.StartTime("Resolving tree");
+			RootContext.ResolveTree (); // The second pass of the compiler
+			options.ShowTime("Tree resolved");
+			return Report.Errors == 0;
+		}
+		
+		private bool PopulateCoreTypes()
+		{
+			if (!RootContext.StdLib) {
+				options.StartTime("Populate core types");
 				RootContext.BootCorlib_PopulateCoreTypes();
-			if (Report.Errors > 0)
-				return false;
-
+				options.ShowTime("   Done");
+			}
+			return Report.Errors == 0;
+		}
+						
+		private bool PopulateTypes()
+		{
+			options.StartTime("Populate types");
 			RootContext.PopulateTypes();
-			if (Report.Errors > 0)
-				return false;
-			
+			options.ShowTime("   Done");
+			return Report.Errors == 0;
+		}
+						
+		private bool InitCodeHelpers()
+		{
+			options.StartTime("Initialize code helpers");
 			TypeManager.InitCodeHelpers();
-			if (Report.Errors > 0)
-				return false;
-
-			return true;
+			options.ShowTime("   Done");
+			return Report.Errors == 0;
+		}
+						
+		string GetFQMainClass()
+		{	
+			if (RootContext.RootNamespace != "")
+				return RootContext.RootNamespace + "." + RootContext.MainClass;
+			else
+				return RootContext.MainClass;			
 		}
 		
 		bool IsSWFApp()
@@ -484,7 +156,7 @@ namespace Mono.Languages {
 			string mainclass = GetFQMainClass();
 			
 			if (mainclass != null) {
-				foreach (string r in AssembliesToReference) {
+				foreach (string r in options.AssembliesToReference) {
 					if (r.IndexOf ("System.Windows.Forms") >= 0) {
 						Type t = TypeManager.LookupType(mainclass);
 						if (t != null) 
@@ -496,17 +168,9 @@ namespace Mono.Languages {
 			return false;
 		}
 		
-		string GetFQMainClass()
-		{	
-			if (RootContext.RootNamespace != "")
-				return RootContext.RootNamespace + "." + RootContext.MainClass;
-			else
-				return RootContext.MainClass;			
-		}
-		
 		void FixEntryPoint()
 		{
-			if (TargetFileType == TargetType.Exe || TargetFileType == TargetType.WinExe) {
+			if (options.TargetFileType == TargetType.Exe || options.TargetFileType == TargetType.WinExe) {
 				MethodInfo ep = RootContext.EntryPoint;
 			
 				if (ep == null) {
@@ -542,105 +206,90 @@ namespace Mono.Languages {
 				}
 			}
 		}
-
-		bool GenerateAssembly()
+		
+		private bool EmitCode()
 		{
-			//
-			// The code generator
-			//
-			ShowTime("Emitting code");
-			
+			options.StartTime("Emitting code");			
 			RootContext.EmitCode();
 			FixEntryPoint();
-			if (Report.Errors > 0)
-				return false;
+			options.ShowTime("   Done");
+			return Report.Errors == 0;
+		}
 
-			ShowTime("   done");
-
-			ShowTime("Closing types");
-
+		private bool CloseTypes()
+		{
+			options.StartTime("Closing types");			
 			RootContext.CloseTypes ();
-			if (Report.Errors > 0)
-				return false;
+			options.ShowTime("   Done");
+			return Report.Errors == 0;
+		}
 
-			ShowTime("   done");
-
-			PEFileKinds k = PEFileKinds.ConsoleApplication;
-							
-			if (TargetFileType == TargetType.Library || TargetFileType == TargetType.Module)
-				k = PEFileKinds.Dll;
-			else if (TargetFileType == TargetType.Exe)
-				k = PEFileKinds.ConsoleApplication;
-			else if (TargetFileType == TargetType.WinExe)
-				k = PEFileKinds.WindowApplication;
-			
-			if (TargetFileType == TargetType.Exe || TargetFileType == TargetType.WinExe) {
+		private bool SetEntryPoint()
+		{
+			if (options.TargetFileType == TargetType.Exe || options.TargetFileType == TargetType.WinExe) {
+				options.StartTime("Setting entry point");			
 				MethodInfo ep = RootContext.EntryPoint;
 			
 				if (ep == null) {
-					Report.Error (30737, "Program " + OutputFileName +
-						" does not have an entry point defined");
+					Report.Error (30737, "Program " + options.OutputFileName + " does not have an entry point defined");
 					return false;
 				}
 							
-				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+				CodeGen.AssemblyBuilder.SetEntryPoint (ep, 
+					(options.TargetFileType == TargetType.Exe)?PEFileKinds.ConsoleApplication:PEFileKinds.WindowApplication);
+				options.ShowTime("   Done");
 			}
+			return Report.Errors == 0;
+		}
 
-			// Add the resources
-			if (EmbeddedResources != null)
-				foreach (string file in EmbeddedResources)
-						CodeGen.AssemblyBuilder.AddResourceFile (file, file);
-			
-			CodeGen.Save(OutputFileName);
+		private bool EmbedResources()
+		{
+			options.StartTime("Embedding resources");			
+			options.EmbedResources(CodeGen.AssemblyBuilder);
+			options.ShowTime("   Done");
+			return Report.Errors == 0;
+		}
 
-			ShowTime("Saved output");
+		private bool SaveOutput()
+		{
+			options.StartTime("Saving Output");			
+			CodeGen.Save(options.OutputFileName);
+			options.ShowTime("   Done");
+			return Report.Errors == 0;
+		}
 
-			
-			if (WantDebuggingSupport)  {
+
+		private bool SaveDebugSymbols()
+		{
+			if (options.WantDebuggingSupport)  {
+				options.StartTime("Saving Debug Symbols");			
 				CodeGen.SaveSymbols ();
-				ShowTime ("Saved symbols");
+				options.ShowTime ("   Done");
 			}
-
 			return true;
 		}
 
-		public void CompileAll()
-		{
-			try {
-				InitializeRootContextAndOthersFromOptions();
-				
-				if (!ParseAll()) // Phase 1
-					return;
-
-				if (!ResolveAllTypes()) // Phase 2
-					return;
-
-				GenerateAssembly(); // Phase 3 
-				
-			} catch (Exception ex) {
-				Error("Exception: " + ex.ToString());
+		delegate bool CompilerStep();
+		
+		private CompilerStep[] Steps {
+			get {
+				return new CompilerStep[] {
+					ParseAllSourceFiles,
+					InitializeDebuggingSupport,
+					LoadReferencedAssemblies,
+					AdjustCodegenWhenTargetIsNetModule,
+					LoadAddedNetModules,
+					InitializeCoreTypes,
+					ResolveTree,
+					PopulateCoreTypes,
+					PopulateTypes,
+					InitCodeHelpers,
+					EmitCode,
+					CloseTypes,
+					SetEntryPoint,
+					SaveOutput,
+					SaveDebugSymbols } ;
 			}
-		}
-		
-		private bool quiet { get { return DontShowBanner || SuccintErrorDisplay; } } 
-		
-		private void Banner()
-		{
-			if (!quiet) {
-				ShowBanner();
-				// TODO: remove next lines when the compiler has matured enough
-				Console.WriteLine ("--------");
-				Console.WriteLine ("THIS IS AN ALPHA SOFTWARE.");
-				Console.WriteLine ("--------");
-			}		
-		}
-		
-		bool ParseAll() // Phase 1
-		{
-			foreach(FileToCompile file in SourceFilesToCompile)
-				GenericParser.Parse(file.Filename, file.Encoding);
-
-			return (Report.Errors == 0);
 		}
 
 		/// <summary>
@@ -648,17 +297,20 @@ namespace Mono.Languages {
 		/// </summary>
 		int MainDriver(string [] args)
 		{
-			ProcessArgs(args);
-			
-			if (SourceFilesToCompile.Count == 0) {
-				if (!quiet) 
-					DoHelp();
-				return 2;
+			options = new CompilerOptions(args, Report.Error);		
+			if (options.NothingToCompile)
+				return 2;		
+			try {
+				InitializeRootContextAndOthersFromOptions();
+				
+				foreach(CompilerStep step in Steps)
+					if (!step())
+						break;
+						
+			} catch (Exception ex) {
+				Report.Error(0, "Exception: " + ex.ToString());
 			}
-
-			Banner();			
-			CompileAll();
-			return Report.ProcessResults(quiet);
+			return Report.ProcessResults(options.BeQuiet);
 		}
 
 		public static int Main (string[] args)
