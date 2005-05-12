@@ -1,3 +1,25 @@
+2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* threads.c: Added a new event background_change_event which is signaled
+	when a thread changes its background mode.
+	Moved here several checks previously done in managed code. The checks
+	require the thread lock, and using the thread lock in managed code
+	can result in deadlocks.
+	Merged Start_internal and Thread_internal into a single method. Now 
+	Thread_internal does all work of creating and starting a thread.
+	Added icalls for setting and getting the state of the object. Moved from
+	managed code to avoid locking there.
+	Added wait_for_tids_or_state_change() which is called instad of
+	wait_for_tids when waiting for non-backround threads to end. This method
+	will return if one of the threads ends or the background_change_event
+	is signaled.
+	* threadpool.c: use ves_icall_System_Threading_Thread_SetState() to set
+	the background mode. This method signals the background_change_event
+	event.
+	* icall.c:
+	* threads-types.h: Added icalls for ClrState, SetState and GetState, and
+	removed Start_internal.
+	
 2005-05-11  Chris Toshok  <toshok@ximian.com>
 
 	* mono-debug.h (MonoDebugMethodAddress): revert this part of the
