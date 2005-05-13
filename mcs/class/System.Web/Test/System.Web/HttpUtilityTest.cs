@@ -68,5 +68,17 @@ namespace MonoTests.System.Web {
 			windata = Encoding.Convert (Encoding.UTF8, win1251, utf8data);
 			Assert.AreEqual ("&#65308;script&#65310;", Encoding.ASCII.GetString (windata), "ok");
 		}
+
+		[Test]
+		public void UrlDecodeToBytes ()
+		{
+			byte[] bytes = HttpUtility.UrlDecodeToBytes ("%5c");
+			Assert.AreEqual (1, bytes.Length, "#1");
+			Assert.AreEqual (0x5c, bytes [0], "#2");
+			bytes = HttpUtility.UrlDecodeToBytes ("%5");
+			Assert.AreEqual (2, bytes.Length, "#3");
+			Assert.AreEqual (0x25, bytes [0], "#4");
+			Assert.AreEqual (0x25, bytes [0], "#5");
+		}
 	}
 }

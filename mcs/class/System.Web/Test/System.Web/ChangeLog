@@ -1,3 +1,7 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpUtilityTest.cs : test for url decode.
+
 2005-02-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* HttpRequestTest.cs: Added another XSS case that was found on ASP.NET

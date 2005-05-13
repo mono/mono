@@ -544,7 +544,7 @@ namespace System.Web {
 				if (c == '+')
 					c = ' ';
 				else if (c == '%' && i < end - 2) {
-					c = GetChar (bytes, i, 2);
+					c = GetChar (bytes, i + 1, 2);
 					i += 2;
 				}
 				result.WriteByte ((byte) c);
