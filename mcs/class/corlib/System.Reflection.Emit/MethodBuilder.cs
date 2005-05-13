@@ -87,6 +87,10 @@ namespace System.Reflection.Emit {
 			if ((attributes & MethodAttributes.Static) == 0)
  				this.call_conv |= CallingConventions.HasThis;
 			if (parameterTypes != null) {
+				for (int i = 0; i < parameterTypes.Length; ++i)
+					if (parameterTypes [i] == null)
+						throw new ArgumentException ("Elements of the parameterTypes array cannot be null", "parameterTypes");
+
 				this.parameters = new Type [parameterTypes.Length];
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}

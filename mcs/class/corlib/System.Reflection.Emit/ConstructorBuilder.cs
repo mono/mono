@@ -60,6 +60,10 @@ namespace System.Reflection.Emit {
 			attrs = attributes | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 			call_conv = callingConvention;
 			if (parameterTypes != null) {
+				for (int i = 0; i < parameterTypes.Length; ++i)
+					if (parameterTypes [i] == null)
+						throw new ArgumentException ("Elements of the parameterTypes array cannot be null", "parameterTypes");
+
 				this.parameters = new Type [parameterTypes.Length];
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
