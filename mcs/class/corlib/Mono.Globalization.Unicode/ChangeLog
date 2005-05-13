@@ -1,5 +1,11 @@
 2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : more updates.
+	* Collator.cs : rewrote from scratch. Some rough sketch for sortkey
+	  buffer, character iterator and collator methods. Not compiling.
+
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collator.cs : Am going to replace it with new one. No need for 
 	  CompareOptions-dependent Comparer.
 

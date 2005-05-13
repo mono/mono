@@ -2,14 +2,14 @@
 
 ** Summary
 
-	We are going to implement Windows-like collation, apart from ICU which
-	is conformant to Unicode specifications.
+	We are going to implement Windows-like collation, apart from ICU (that
+	implements UCA, Unicode Collation Algorithm).
 
 ** How to implement CompareInfo members
 
 	GetSortKey()
 		Compute sort key for every characters into byte[].
-		Use collation element table, but Windows specific ones.
+		Use collation element table, but Windows specific one.
 	Compare()
 		Find first difference and compare it. "Larger/smaller" matters.
 	IsPrefix()
@@ -17,17 +17,20 @@
 		the head of the searchee and immediately return false if it 
 		didn't match.
 	IsSuffix()
-		For each character in the target, examine if it matches from 
-		the tail of the searchee. If it didn't match, continue to 
-		the start of the target if it really does not match in the next
-		character (hopefully limited to max size n).
+		(TODO: revising. See Collator.cs for current idea.)
 	IndexOf()
-		Find head match and process comparison to the end of the 
-		string to find.
+		Try IsPrefix() to the end of the string to find.
 	LastIndexOf()
-		Find tail match and process comparison to the start of the 
-		string to find.
+		Try IsPrefix() from the end to the beginning of the string.
+		But start with the same length as the target and if IndexOf()
+		was not -1, then find the last one until IndexOf() returns -1.
 
+	For IndexOf() and LastIndexOf(), overloads of char argument and string 
+	argument will be unified by providng common CharacterIterator base.
+
+	We are not likely to provide reversed character iterator (it is
+	complex; handle context-aware composites and expansions).
+	http://blogs.msdn.com/michkap/archive/2005/03/16/396704.aspx
 
 ** How to support CompareOptions
 
@@ -36,7 +39,9 @@
 	characters" accompanied by CompareOptions. For example, ja-JP has
 	"\u3042\u30FC" equivalent to "\u3042\u3042" only when IgnoreNonSpace
 	is specified. I'll take those items from CLDR (those items which
-	has <reset before="..." />), case by case though.
+	has <reset before="..." />), case by case though. And surprisingly,
+	it is *not* culture dependent (that Japanese sorting happens on all
+	cultures).
 
 	There are two kind of "ignorance" : ignorance which acts as stripper,
 	and ignorance acts as normalizer.
@@ -126,13 +131,10 @@
 
 ** MS collation design inference
 
-*** sort key format
+*** Levels
 
-	00 means the end of sort key.
-	01 means the end of the level.
-	02-FF means the value.
-	If less than 2 in the value at each level, then the sequence of the 
-	level is terminated (i.e. the sort key won't contain extraneous '2').
+	Each character has several "weights". It is a common concept between
+	Windows and UCA.
 
 	There are 5 levels:
 
@@ -141,7 +143,25 @@
 	- level 2: diacritic difference, nonspacing-mark difference?
 	- level 3: case/width sensitivity
 	- level 4: kana type (mostly at primary category 22)
-	- level 5: identitcal difference (control characters etc.)
+	- level 5: miscellaneous differences:
+		+ variable weighting by StringSort
+		+ Japanese sequential Kana ordering
+
+	String comparison is done from level 1 to 5. The comparison won't
+	stop until either it found the primary difference, or it reached to
+	the end (thus upper level differences are returned).
+
+	For example, "e" is smaller than "E", but "eB" is bigger than "EA".
+	If the collator just returned case difference at first 'e' and 'E',
+	"eB" is still smaller than "EA".
+
+*** sort key format
+
+	00 means the end of sort key.
+	01 means the end of the level.
+	02-FF means the value.
+	If less than 2 in the value at each level, then the sequence of the 
+	level is terminated (i.e. the sort key won't contain extraneous '2').
 
 *** sort key table
 
