@@ -191,6 +191,11 @@ namespace System.Web.UI {
 			controls [count] = null;
 			owner.RemovedControl (ctrl);
 		}
+		
+		internal void SetReadonly (bool readOnly)
+		{
+			this.readOnly = readOnly;
+		}
 
 		// Almost the same as in ArrayList
 		sealed class SimpleEnumerator : IEnumerator

@@ -1,3 +1,7 @@
+2005-05-13  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ControlCollection.cs: Added internal setter for ReadOnly.
+
 2005-05-09 Geoff Norotn <gnorton@customerdna.com>
 
 	* TemplateParser.cs: Silently remove the CodeFile attribute that ASP.NET 2.0
