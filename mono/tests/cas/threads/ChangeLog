@@ -1,3 +1,7 @@
+2005-05-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* tpool1-2.cs: New. ThreadPool based tests.
+
 2005-05-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* delegate1-2.cs: Updated to use ControlEvidence.
