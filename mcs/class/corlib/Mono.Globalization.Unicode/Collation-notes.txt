@@ -31,6 +31,13 @@
 
 ** How to support CompareOptions
 
+	FIXME: for some cultures this logic is still incomplete. All culture
+	dependent collators must handle valid "replacement" of "one or more
+	characters" accompanied by CompareOptions. For example, ja-JP has
+	"\u3042\u30FC" equivalent to "\u3042\u3042" only when IgnoreNonSpace
+	is specified. I'll take those items from CLDR (those items which
+	has <reset before="..." />), case by case though.
+
 	There are two kind of "ignorance" : ignorance which acts as stripper,
 	and ignorance acts as normalizer.
 
@@ -162,7 +169,19 @@
 		}
 	}
 
-*** Composite character processing
+*** multiple character mappings
+
+	Some sequence of characters are considered as a "composite" that is
+	to be composed either as another character or another sequence of 
+	characters. Those "composite" might not have corresponding equivalent
+	character in sortkey.
+	Similarly, some single characters are expanded to a sequence of
+	characters.
+
+**** Composite character processing
+
+	There are some sequences of characters that are treated as another
+	character or another sequence of characters.
 
 	Diacritics are not regarded as a base character when placed after 
 	(maybe some kind of) letters.
@@ -174,15 +193,18 @@
 
 	In French cultures, diacritic orderings are checked from right to left.
 
-	<del>
 	By default, there is no composite form.
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C2.asp
-	</del>
-	This is not true. \u00E6 is regarded as equivalent to "ae".
+	(Note that composite is different from expansion.)
+
+	According to "Developing International Software" book, in Win32
+	lstrcmpi(), "sc" in hu-HU is treated as a single character, so if it is
+	compared against "Sc" (in IgnoreCase), "sc" won't match it. However
+	.NET (LCMapString) behaves differently.
 
 	The correspoinding implementation will be namely "CharacterIterator".
 
-*** Expanded character processing
+**** Expanded character processing
 
 	Some characters are expanded to two or more characters:
 
@@ -207,7 +229,7 @@
 
 	When CompareOptions.StringSort is specified, then it modifies
 	characters in category 2 from "1 1 1 1 80 07 06 xx" to
-	"06 xx yy zz" and some are case sensitive.
+	"06 xx yy zz" and some characters become case sensitive.
 	
 	To handle simply, it looks like the way to go that we compute those
 	character weights in StringSort and in case of !StringSort just
@@ -215,47 +237,85 @@
 	However, actually there are only 3 characters (FF0D, 208B and 207B)
 	that has level 3 weights and usually None is used, we had better put
 	"1 1 1 1 ..." by default and compute them only when StringSort is
-	specified. It should be better for performance.
+	specified. It would be better for performance.
 
-	There seems no further difference between StringSort and None.
+	There seems no further differences between StringSort and None.
 
 **** character category details
 
-	1 (0) specially ignored ones (Japanese, Tamil, Thai)
+	1 specially ignored ones (Japanese, Tamil, Thai)
 
-	3099-309C, BCD, E47, E4C, FF9E, FF9F
+		Unicode: 3099-309C, BCD, E47, E4C, FF9E, FF9F
+		SortKey: 01 01 01 01 00
 
-	2 (1) maybe nonspacing marks, moved when StringSort
+	2 variable weight characters
+	
+	They are either at 01 01 01 01 or 06, depending on StringSort. For
+	convenience, I use 06 to describe them.
 
 	2.1 control characters (specified as such in Unicode), except for
 	whitespaces (0009-000D).
 
-	2.2 0027,FF07 (')
+		Unicode: 0001-000F minus 0009-000D, 007F-009F
+		SortKey: 06 80 07 06 03 00 - 06 80 07 06 3D 00
+
+	2.2 Apostrophe
+		Unicode: 0027,FF07 (')
+		SortKey: 06 80 (and nonspace equivalent)
 
 	2.3  minus sign, hyphen, dash
 	  minus signs: FE63, 207B (super), 208B (sub), 002D, 00FD (full-width)
 	  hyphens: 00AD (soft), 2010, 2011 (nonbreaking) ... Unicode HYPHEN?
 	  dashes, horizontal bars: FE58 ... UnicodeCategory.DashPunctuation
 
+		SortKey: 06 81 - 06 90 (and nonspace equivalents)
+
 	2.4 Arabic spacing and equivalents (64B-651, FE70-FE7F)
 	  They are part of nonspacing mark, but not equal.
 
-	3 (1) Nonspacing marks mixed.
-	  ModifierSymbol except for < 128
+		SortKey: 06 A0 - 06 A7 (and nonspace equivalents)
+
+	3 nonprimary characters, mixed.
+
+	  ModifierSymbol, except for that are not in category 0 and "07" area
+	  (i.e. < 128) nor those equivalents
+
 	  NonSpacingMark which is ignorable (IsIgnorableNonSpacing())
-	  30D, CD5-CD6, ABD, 2B9-2C1, 2C8, 2CB-2CD, 591-5C2, Mn:981-A3C,
-	  A4D, A70, A71, ABC ...
+	  // 30D, CD5-CD6, ABD, 2B9-2C1, 2C8, 2CB-2CD, 591-5C2. NonSpacingMark in
+	  // 981-A3C. A4D, A70, A71, ABC ...
 
-	  This part of MS table is buggy: \u0592 should not be equal to \u09BC
-	  Harmless solution: We should not mix those code (make things
-	  sequential and include those charactors from minor cultures here).
+	  TODO: I need more insight to write table generator.
 
-	4 (7) space separators and some kind of marks
+	  SortKey: 01 03 01 - 01 B6 01
+
+	  This part of MS table design is problematic (buggy): \u0592 should
+	  not be equal to \u09BC.
+
+	  I guess, this buggy design is because Microsoft first thought that
+	  there won't be more than 255 characters in this area. Or they might be
+	  aware of the problem but prefer table optimization.
+
+	  Ideal solutions:
+
+	  1) We should not mix those code (make things sequential) and expands
+	     level 2 length to 2 bytes. Instead of having direct value, we
+	     could use index (pointer) to zero-terminating level 2 table.
+
+	  2) Include those charactors from minor cultures here.
+
+	  If in "discriminatory mode", those tables could be still provided
+	  as to be compatible to Windows.
+
+	4 space separators and some kind of marks
 
 	4.1 whitespaces, paragraph separator etc.
 	  UnicodeCategory.SpaceSeparator : 20, 3000, A0, 9-D, 2000-200B
 
+	  SortKey : 07 02 - 07 18
+
 	4.2 some OtherSymbols: 2422-2423
+	
+	  SortKey : 07 19 - 07 1A
 
 	4.3 other marks ('!', '^', ...)
 	  Non-alpha-numeric < 0x7F except for '+' (math) and '-' (math/hyphen)
@@ -265,7 +325,9 @@
 	  remaining Puncuations: 9xx, 7xx
 	  70F (Format)
 
-	5 (8) mathmatical symbols
+	  SortKey : 07 1B - 07 F0
+
+	5 mathmatical symbols
 	  InitialQuotePunctuation and FinalQuotePunctuation in ASCII
 	  (not Quotation_Mark property in PropList.txt ; 22, 27)
 
@@ -274,16 +336,22 @@
 	  OtherLetter (1C0-1C2)
 	  2200-22FF MathSymbol except for 221E (INF. ; regarded as a number)
 
-	6 (9) Arrows and Box drawings
+	  SortKey : 08 02 - 08 F8
+
+	6 Arrows and Box drawings
 	  09 02 .. 09 7C : 2300-237A
-	  09 BC 01 03 .. : 25A0-AB, 25E7-EB, 25AC-B5, 25EC-EF, 25B6-B9,
-	  		   25BC-C3, 25BA-25BB, 25C4-25D8, 25E6, 25DA-25E5
+	  09 BC ... 09 FE : 25A0-AB, 25E7-EB, 25AC-B5, 25EC-EF, 25B6-B9,
+			   25BC-C3, 25BA-25BB, 25C4-25D8, 25E6, 25DA-25E5
 			   21*,25*,26*,27*
 	  2190- (non-codepoint order)
-	  	note that there are many compatibility equivalents
+		note that there are many compatibility equivalents
 	  2500- except for 266F (#)
 
-	7 (A) currency sumbols and some punctuations
+	  SortKey : 09 02 - 09 7C, 09 BC 01 03 - 09 BC 01 13,
+		    09 {BD|BE|BF} 01 {03|04}, ...
+		    TODO: fill the patterns
+
+	7 currency sumbols and some punctuations
 	  byte CurrencySymbols except for 24 ($)
 	  byte OtherSymbols (A7-B6) 
 	  ConnectorPunctuation - 2040 (i.e. FF65, 30FB)
@@ -293,16 +361,33 @@
 	  OtherSymbol 2440-244A, 2117
 	  20AC (CurrencySymbol)
 
+	  Sortey : 0A 02 - 0A FB
+
 	8 (C) numbers
 	  all DecimalDigitNumber, LetterNumber, non-CJK OtherNumber
 	  9F8
 	  digits, in numeric order. We can use NET_2_0 CharUnicodeInfo.
 	  221E (INF.)
 
-	9 (E) latin letters (alphabets)
+	  SortKey : 0C 02 (9F8), 0C 03 - 0C E1 (normal numbers), 0C FF (INF.)
+
+	9 (E) latin letters (alphabets), mixing alphabetical symbols
 	  upper is 18, lower is 2 (default), diacritics are 19 or more.
 	  F8-2B8 - (1BB-1BD, 1C0-1C3) but not sequential
 	  2E0-2E3
+
+	  SortKey order is somewhat complex:
+
+	  - level 1: simple A to Z and alphabetical symbols mixed
+	  - level 2: diacritical differences
+	  - level 3: case differences
+
+	  For 'A' it is "0E 02", for 'B' "0E 09" ... 'Z' "0E A9", ezh "0E AA".
+	  0E B3 (1BE), 0E B4 (298)
+
+	  This ordering is nothing to do with European Ordering Rules (EOR).
+
+	  TODO: fill orders
 
 	10 (F) greek letters
 	  0F: 386-3F2
@@ -320,7 +405,7 @@
 
 	   (21) georgian letters
 
-	11 (22) japanese kana letters and symbols
+	11 (22) japanese kana letters and symbols, not in codepoint order
 
 	  Kana codes that are equivalent in context of IgnoreKanaType are
 	  differentiated at level 4. And there are FF that represents
@@ -341,10 +426,14 @@
 	  sorted in JIS table order (CP932.TXT). Others are unknown, but I
 	  don't think the order really matters.
 
+	  UCA DUCET also does not apply here.
+
 	12 (23) bopomofo letters
 
 	13 (24) syriac/thaana letters
 	  710-72C exc. 711, 780-7A5.
+
+	  Maybe we should add remaining minor-culture characters here.
 
 	14 (41-45) surrogate Pt.1
 
@@ -487,14 +576,21 @@
 
 	Additionally for Korean: Jamo (1100-), Hangle syllables (AC00)
 
-	<how do they constitute?>
+	<how do they consist of?>
 
 	Japanese CJK order looks based on JIS table order. Those characters
 	which are also in JIS table are moved to 80 xx. Those which are *not*
 	in JIS table are left as is (9E-FE).
 
-	Korean CJK order looks similar that respects KS C 5619. I guess
-	zh-CHS (GB2312) and zh-TW (CCCII) as well, but need more research.
+	Korean CJK order looks similar that respects KS C 5619.
+
+	For some Chinese such as zh-CHS, character order is based on pinyin.
+
+	And for remaining Chinese such as zh-TW, it is stroke count based.
+
+	CLDR of unicode.org has reference ordering of those characters, so
+	I am going to extract the sorting order data from it:
+	http://www.unicode.org/cldr/
 
 **** Accent evaluation order
 
@@ -538,7 +634,7 @@
 
 *** sort key element table
 
-	We will contain *our own* collation element table which is closer
+	We will create *our own* collation element table which is closer
 	to the one from Windows than UCA default element table, but should
 	fix their bugs such as ignoring minor culture. We might provide
 	"discriminatory mode" that behaves closer to Windows (that ignores
@@ -549,10 +645,11 @@
 
 	- PrivateUse
 	- Surrogate
-	- CJK unified, except for those which have equivalents
 	- Hangul Syllables
 
-	It will significantly save memory size.
+	For CJK unified ideographs, I have to make those culture-dependent
+	tables in memory. They will be in separate table.
+	Since they came from some classical encodings, they are not computed.
 
 	Culture-dependent rules are always "evaluated", except for radical
 	character mapping differences (i.e. ja, kr, zh-*). Other than that,
@@ -582,3 +679,6 @@
 	filterings support in their LCMapString implementation:
 	http://cvs.winehq.com/cvsweb/wine/dlls/kernel/locale.c
 	http://cvs.winehq.com/cvsweb/wine/libs/unicode/sortkey.c
+
+	Mimer has decent materials on culture specific collations:
+	http://developer.mimer.com/collations/

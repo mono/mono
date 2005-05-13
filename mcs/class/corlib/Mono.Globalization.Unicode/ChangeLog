@@ -1,3 +1,7 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : There seems a bit more complexity.
+
 2005-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : more updates, being close to write sortkey
