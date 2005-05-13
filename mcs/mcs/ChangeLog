@@ -1,3 +1,9 @@
+2005-05-13  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Block.Resolve): Revert change below.  Modify fix
+	for #74041 to initialize 'resolved' to false only for explicit
+	blocks.  Fixes #74873.
+
 2005-05-12  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #74920.
