@@ -1,5 +1,10 @@
 2005-05-13  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Block.Resolve, ResolveUnreachable): Correctly
+	handle unreachable blocks.
+
+2005-05-13  Martin Baulig  <martin@ximian.com>
+
 	* class.cs
 	(ConstructorInitializer.GetOverloadedConstructor): Don't crash.
 	(MethodCore.CheckCore): Use TypeManager.IsEqual(); fix #74904 and

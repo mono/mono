@@ -175,8 +175,8 @@ namespace Mono.CSharp {
 			
 					if ((FalseStatement != null) &&
 					    !FalseStatement.Resolve (ec))
-				return false;
-			}
+						return false;
+				}
 
 				return true;
 			}
@@ -1941,32 +1941,27 @@ namespace Mono.CSharp {
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
 
-				if (unreachable && !(s is LabeledStatement)) {
-					if (s == EmptyStatement.Value)
-						s.loc = EndLocation;
+				if (unreachable) {
+					if (s is Block)
+						((Block) s).unreachable = true;
 
-					if (!s.ResolveUnreachable (ec, !unreachable_shown))
-						ok = false;
-
-					if (s != EmptyStatement.Value)
+					if (!unreachable_shown && (RootContext.WarningLevel >= 2)) {
+						Report.Warning (
+							162, loc, "Unreachable code detected");
 						unreachable_shown = true;
-					else
-						s.loc = Location.Null;
-
-					if (ok && !(s is Block)) {
-						statements [ix] = EmptyStatement.Value;
-						continue;
 					}
 				}
 
-				if (s.Resolve (ec) == false) {
- 					ok = false;
+				if (!s.Resolve (ec)) {
+					ok = false;
 					statements [ix] = EmptyStatement.Value;
 					continue;
 				}
 
-				num_statements = ix + 1;
+				if (unreachable && !(s is LabeledStatement) && !(s is Block))
+					statements [ix] = EmptyStatement.Value;
 
+				num_statements = ix + 1;
 				if (s is LabeledStatement)
 					unreachable = false;
 				else
@@ -2013,14 +2008,10 @@ namespace Mono.CSharp {
 		public override bool ResolveUnreachable (EmitContext ec, bool warn)
 		{
 			unreachable_shown = true;
+			unreachable = true;
 
 			if (warn && (RootContext.WarningLevel >= 2))
 				Report.Warning (162, loc, "Unreachable code detected");
-
-			if (Implicit)
-				return Resolve (ec);
-
-			unreachable = true;
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			bool ok = Resolve (ec);
