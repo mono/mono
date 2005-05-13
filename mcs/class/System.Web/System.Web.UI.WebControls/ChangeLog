@@ -1,3 +1,10 @@
+2005-05-13  Lluis Sanchez Gual <lluis@novell.com>
+
+	* WizardStepBase.cs:
+	* WizardStep.cs: Added missing attributes.
+	* Wizard.cs: Implemented missing methods and properties. It can now
+	be considered feature complete.
+
 2005-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: cleanup in AutoCreateColumns. Don't throw at the end of

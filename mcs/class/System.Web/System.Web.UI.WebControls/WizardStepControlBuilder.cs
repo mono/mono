@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.WizardStep
+// System.Web.UI.WebControls.WizardStepControlBuilder
 //
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
@@ -30,15 +30,9 @@
 
 #if NET_2_0
 
-using System;
-using System.ComponentModel;
-
 namespace System.Web.UI.WebControls
 {
-	[ControlBuilderAttribute (typeof(WizardStepControlBuilder))]
-	[ToolboxItemAttribute ("")]
-	[BindableAttribute (false)]
-	public sealed class WizardStep: WizardStepBase 
+	public sealed class WizardStepControlBuilder: ControlBuilder
 	{
 	} 
 }

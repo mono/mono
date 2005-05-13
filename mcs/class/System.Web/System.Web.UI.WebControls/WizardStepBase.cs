@@ -35,13 +35,16 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-//	[ControlBuilderAttribute (typeof(WizardStepControlBuilder))]
+	[ControlBuilderAttribute (typeof(WizardStepControlBuilder))]
 	[BindableAttribute (false)]
 	[ToolboxItemAttribute ("")]
 	public abstract class WizardStepBase: View
 	{
 		Wizard wizard;
 		
+	    [DefaultValueAttribute (true)]
+	    [ThemeableAttribute (false)]
+	    [FilterableAttribute (false)]
 		public virtual bool AllowReturn {
 			get {
 				object v = ViewState ["AllowReturn"];
@@ -52,6 +55,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+	    [BrowsableAttribute (false)]
 		public string Name {
 			get {
 				if (Title.Length > 0) return Title;
@@ -60,6 +65,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+	    [DefaultValueAttribute (WizardStepType.Auto)]
 		public virtual WizardStepType StepType {
 			get {
 				object v = ViewState ["StepType"];
@@ -70,6 +76,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+	    [DefaultValueAttribute ("")]
+	    [LocalizableAttribute (true)]
 		public virtual string Title {
 			get {
 				object v = ViewState ["Title"];
@@ -80,6 +88,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+	    [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+	    [BrowsableAttribute (false)]
 		public Wizard Wizard {
 			get { return wizard; }
 		}
