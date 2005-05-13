@@ -1337,6 +1337,9 @@ tls			: /* EMPTY */   { $$ = false; }
 			;
 
 data_body		: OPEN_BRACE dataitem_list CLOSE_BRACE
+                          {
+                                $$ = $2;
+                          }
 			| dataitem
 			;
 
