@@ -1,3 +1,14 @@
+2005-05-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74934.
+	* expression.cs (BinaryResolveOperator): If one of the operands of
+	an equality comparison is 'null' and the other is a pointer type,
+	convert the null to a NullPointer.
+	* convert.cs (ImplicitReferenceConversion): If the expression is a
+	NullLiteral and the target type is a pointer type, return a
+	NullPointer instead.
+	(ImplicitConversionStandard): Likewise.
+
 2005-05-13  Marek Safar  <marek.safar@seznam.cz>
 	
 	* cs-parser.jay: Set readonly context based on special constructs.

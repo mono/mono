@@ -2274,7 +2274,7 @@ namespace Mono.CSharp {
 					
 					return this;
 				}
-				
+
 				// IntPtr equality
 				if (l == TypeManager.intptr_type && r == TypeManager.intptr_type) {
 					Type = TypeManager.bool_type;
@@ -2382,6 +2382,25 @@ namespace Mono.CSharp {
 					
 					type = TypeManager.bool_type;
 					return this;
+				}
+
+				if (l.IsPointer || r.IsPointer) {
+					if (l.IsPointer && r.IsPointer) {
+						type = TypeManager.bool_type;
+						return this;
+					}
+
+					if (l.IsPointer && r == TypeManager.null_type) {
+						right = new EmptyCast (NullPointer.Null, l);
+						type = TypeManager.bool_type;
+						return this;
+					}
+
+					if (r.IsPointer && l == TypeManager.null_type) {
+						left = new EmptyCast (NullPointer.Null, r);
+						type = TypeManager.bool_type;
+						return this;
+					}
 				}
 
 				//
@@ -2639,8 +2658,7 @@ namespace Mono.CSharp {
 			// Pointer comparison
 			//
 			if (l.IsPointer && r.IsPointer){
-				if (oper == Operator.Equality || oper == Operator.Inequality ||
-				    oper == Operator.LessThan || oper == Operator.LessThanOrEqual ||
+				if (oper == Operator.LessThan || oper == Operator.LessThanOrEqual ||
 				    oper == Operator.GreaterThan || oper == Operator.GreaterThanOrEqual){
 					type = TypeManager.bool_type;
 					return this;
