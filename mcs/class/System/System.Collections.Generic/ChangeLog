@@ -1,3 +1,7 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Queue.cs, Stack.cs: moved from mscorlib.dll
+
 2005-02-35  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Collections.cs: Changed the code inside IndexOf, for

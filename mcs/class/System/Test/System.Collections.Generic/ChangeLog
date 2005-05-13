@@ -1,0 +1,4 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* QueueTest.cs, StackTest.cs: moved from mscorlib test.
+

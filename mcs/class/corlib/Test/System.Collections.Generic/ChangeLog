@@ -1,3 +1,7 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* QueueTest.cs, StackTest.cs: They are now in System.dll
+
 2005-05-05  Raja R Harinath  <rharinath@novell.com>
 
 	* DictionaryTest.cs (MyTest.GetHashCode): Add to silence a

@@ -1,3 +1,7 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Queue.cs, Stack.cs: moved to System.dll
+
 2005-05-06  Martin Baulig  <martin@ximian.com>
 
 	* *.cs: Add CLSCompliant(true) where missing.

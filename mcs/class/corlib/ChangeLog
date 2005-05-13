@@ -1,3 +1,8 @@
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib_test.dll.sources,
+	  corlib.dll.sources: generic Queue.cs and Stack.cs are now in System.
+
 2005-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources: replaced MiniParser.cs with SmallXmlParser.cs.
