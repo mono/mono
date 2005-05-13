@@ -1,3 +1,16 @@
+2005-05-13  Marek Safar  <marek.safar@seznam.cz>
+	
+	* cs-parser.jay: Set readonly context based on special constructs.
+	
+	* expression.cs (LocalVariableReference.DoResolveBase): Improved
+	readonly variable error handling.
+	
+	* rootcontext.cs (EmitCode): Don't verify members when error
+	occurred.
+	
+	* statement.cs (LocalInfo): Add reaodnly context information.
+	(SetReadOnlyContext, GetReadOnlyContext): New methods.
+
 2005-05-13  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Resolve): Revert change below.  Modify fix
