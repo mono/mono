@@ -56,6 +56,7 @@ cs0647-15.cs NO ERROR # corlib bug 73143
 cs0652.cs NO ERROR
 cs0712.cs # new in GMCS
 cs1013.cs # new in GMCS
+cs1025.cs
 cs1501-5.cs
 cs1513.cs
 cs1518.cs
@@ -75,7 +76,10 @@ cs1620.cs
 cs1638.cs NO ERROR
 cs1641.cs
 cs1656.cs
+cs1656-2.cs
+cs1656-3.cs
 cs1657.cs
+cs1657-2.cs
 cs1666.cs NO ERROR
 cs2007.cs
 gcs0080.cs
