@@ -1,5 +1,8 @@
 2005-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MethodBuilder.cs (fixup): Take into account CreateMethodBody as
+	well.
+
 	* ConstructorBuilder.cs MethodBuilder.cs: Check that elements of
 	parameterTypes are not null. Fixes #74928.
 
