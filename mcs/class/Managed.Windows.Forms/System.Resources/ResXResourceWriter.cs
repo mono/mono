@@ -116,19 +116,45 @@ namespace System.Resources
 			writer.WriteEndElement ();
 		}
 
+		void WriteNiceBase64(byte[] value, int offset, int length) {
+			string		b64;
+			StringBuilder	sb;
+			int		pos;
+			int		inc;
+			string		ins;
+
+			b64 = Convert.ToBase64String(value, offset, length);
+
+			// Wild guess; two extra newlines, and one newline/tab pair for every 80 chars
+			sb = new StringBuilder(b64, b64.Length + ((b64.Length + 160) / 80) * 3);
+			pos = 0;
+			inc = 80 + Environment.NewLine.Length + 1;
+			ins = Environment.NewLine + "\t";
+			while (pos < sb.Length) {
+				sb.Insert(pos, ins);
+				pos += inc;
+			}
+			sb.Insert(sb.Length, Environment.NewLine);
+			writer.WriteString(sb.ToString());
+		}
+
 		void WriteBytes (string name, string typename, byte [] value, int offset, int length)
 		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", name);
+
 			if (typename != null) {
 				writer.WriteAttributeString ("type", typename);
+				writer.WriteAttributeString ("mimetype", "application/x-microsoft.net.object.bytearray.base64");
+				writer.WriteStartElement ("value");
+				WriteNiceBase64(value, offset, length);
 			} else {
 				writer.WriteAttributeString ("mimetype",
 						"application/x-microsoft.net.object.binary.base64");
+				writer.WriteStartElement ("value");
+				writer.WriteBase64 (value, offset, length);
 			}
 
-			writer.WriteStartElement ("value");
-			writer.WriteBase64 (value, offset, length);
 			writer.WriteEndElement ();
 			writer.WriteEndElement ();
 		}
@@ -181,9 +207,15 @@ namespace System.Resources
 				InitWriter ();
 
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
-			if (converter != null && converter.CanConvertTo (typeof (string))) {
+			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
 				string str = (string) converter.ConvertTo (value, typeof (string));
 				WriteString (name, str);
+				return;
+			}
+			
+			if (converter != null && converter.CanConvertTo (typeof (byte[])) && converter.CanConvertFrom (typeof (byte[]))) {
+				byte[] b = (byte[]) converter.ConvertTo (value, typeof (byte[]));
+				WriteBytes (name, value.GetType().AssemblyQualifiedName, b);
 				return;
 			}
 			

@@ -1,3 +1,15 @@
+2005-05-13  Peter Bartok  <pbartok@novell.com>
+
+	* ResXResourceWriter.cs: 
+	  - Fixed/Improved AddResource(), now only uses string converter if 
+	    the converter supports both directions
+	  - Added ability for AddResource(string, object) to detect if
+	    a byte[] converter is supported for the object, if so it now calls
+	    AddResource(string, byte[]) for those
+	  - WriteBytes: Changed to write it's base64 output as pretty 
+	    as Microsoft's, inserting newlines every 80 chars
+	  - WriteBytes: Added output of mimetype even if type is specified
+
 2005-05-11  Peter Bartok  <pbartok@novell.com>
 
 	* ResXResourceSet.cs: Implemented
