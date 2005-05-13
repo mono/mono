@@ -1,3 +1,7 @@
+2005-05-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoField.cs: Applied patch from Opened by Michael Meeks (michael@ximian.com). Improve exception message on binding failures.
+
 2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MonoField.cs: Added a Clone method. This is needed for serialization.

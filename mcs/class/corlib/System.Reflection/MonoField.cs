@@ -118,9 +118,11 @@ namespace System.Reflection {
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 			if (val != null) {
-				val = binder.ChangeType (val, type, culture);
-				if (val == null)
-					throw new ArgumentException ("Object type cannot be converted to target type.", "val");
+				object newVal;
+				newVal = binder.ChangeType (val, type, culture);
+				if (newVal == null)
+					throw new ArgumentException ("Object type " + val.GetType() + " cannot be converted to target type: " + type, "val");
+				val = newVal;
 			}
 			SetValueInternal (this, obj, val);
 		}
