@@ -1,3 +1,8 @@
+2005-05-13  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new file:
+		System.Web.UI.WebControls/WizardStepControlBuilder.cs
+	
 2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:

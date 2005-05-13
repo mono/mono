@@ -596,6 +596,7 @@ System.Web.UI.WebControls/WizardNavigationEventHandler.cs
 System.Web.UI.WebControls/WizardStep.cs
 System.Web.UI.WebControls/WizardStepBase.cs
 System.Web.UI.WebControls/WizardStepCollection.cs
+System.Web.UI.WebControls/WizardStepControlBuilder.cs
 System.Web.UI.WebControls/WizardStepType.cs
 System.Web.UI.WebControls/Xml.cs
 System.Web.UI.WebControls/XmlBuilder.cs
