@@ -152,10 +152,6 @@ namespace System
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			if (type.IsAbstract)
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-								type.FullName);
-
 			int length = 0;
 			if (args != null)
 				length = args.Length;
@@ -173,6 +169,15 @@ namespace System
 				throw new MissingMethodException (Locale.GetText ("Constructor not found. Class") +
 								type.FullName);
 			}
+
+			if (type.IsAbstract)
+#if NET_2_0
+				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+								type.FullName);
+#else
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+								type.FullName);
+#endif
 
 			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
@@ -195,10 +200,6 @@ namespace System
 			if (type == null)
 				throw new ArgumentNullException ("type");
 		
-			if (type.IsAbstract)
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
-								type.FullName);
-				
 			// It seems to apply the same rules documented for InvokeMember: "If the type of lookup
 			// is omitted, BindingFlags.Public | BindingFlags.Instance will apply".
 			if ((bindingAttr & _accessFlags) == 0)
@@ -224,6 +225,15 @@ namespace System
 								type.FullName);
 			}
 
+			if (type.IsAbstract)
+#if NET_2_0
+				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+					type.FullName);
+#else
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+					type.FullName);
+#endif
+
 			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
 				if (newOb != null)
@@ -239,8 +249,13 @@ namespace System
 				throw new ArgumentNullException ("type");
 		
 			if (type.IsAbstract)
+#if NET_2_0
+				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+								 type.FullName);
+#else
 				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
 								type.FullName);
+#endif
 
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 			if (nonPublic)

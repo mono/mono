@@ -1,3 +1,8 @@
+2005-05-13  Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* ActivatorTest.cs: Tests for exceptions thrown by CreateInstance
+	overloads if type is abstract.
+
 2005-05-08  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DoubleFormatterTest.cs: re-enabled test as bug #60110 is fixed.

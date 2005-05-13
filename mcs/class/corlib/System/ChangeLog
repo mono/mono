@@ -1,4 +1,9 @@
-2005-05-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2005-05-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Activator.cs: Match exceptions thrown by MS.NET for
+	CreateInstance overloads if type is abstract. Fixes bug #74861.
+
+2005-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* OperatingSystem.cs: PlatformID.Unix.
 

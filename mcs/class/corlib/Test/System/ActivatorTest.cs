@@ -91,6 +91,48 @@ namespace MonoTests.System
        // all the overriden functions using activationAttribute
       }
 
+    [Test]
+#if NET_2_0
+    [ExpectedException(typeof(MissingMethodException))]
+#else
+    [ExpectedException(typeof(MemberAccessException))]
+#endif
+    public void CreateInstanceAbstract1() {
+          Activator.CreateInstance(typeof(Type));
+    }
+
+    [Test]
+#if NET_2_0
+    [ExpectedException(typeof(MissingMethodException))]
+#else
+    [ExpectedException(typeof(MemberAccessException))]
+#endif
+    public void CreateInstanceAbstract2() {
+        Activator.CreateInstance(typeof(Type), true);
+    }
+
+    [Test]
+    [ExpectedException(typeof(MissingMethodException))]
+    public void CreateInstanceAbstract3() {
+        Activator.CreateInstance(typeof(Type), null, null);
+    }
+
+    [Test]
+    [ExpectedException(typeof(MissingMethodException))]
+    public void CreateInstanceAbstract4() {
+        Activator.CreateInstance(typeof(Type), BindingFlags.CreateInstance | (BindingFlags.Public | BindingFlags.Instance), null, null, CultureInfo.InvariantCulture, null);
+    }
+
+    [Test]
+#if NET_2_0
+    [ExpectedException(typeof(MissingMethodException))]
+#else
+    [ExpectedException(typeof(MemberAccessException))]
+#endif
+    public void CreateInstanceAbstract5() {
+        Activator.CreateInstance(typeof(Type), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture, null);
+    }
+
     // This method tests GetObject from the Activator class
     [Test]
       public void GetObject()
