@@ -1,3 +1,7 @@
+2005-05-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Forgot to set the event in the previous fix.
+
 2005-05-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SslClientStream.cs: check for the dispose in NetworkReadCallback.
