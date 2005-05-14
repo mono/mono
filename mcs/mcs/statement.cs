@@ -1943,6 +1943,7 @@ namespace Mono.CSharp {
 		}
 
 		bool unreachable_shown;
+		bool unreachable;
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -1956,18 +1957,13 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			//
-			// This flag is used to notate nested statements as unreachable from the beginning of this block.
-			// For the purposes of this resolution, it doesn't matter that the whole block is unreachable 
-			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
-			// responsible for handling the situation.
-			//
-			bool unreachable = Implicit ? unreachable_shown : false;
-
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
 
+				//
+				// Warn if we detect unreachable code.
+				//
 				if (unreachable) {
 					if (s is Block)
 						((Block) s).unreachable = true;
@@ -1978,6 +1974,14 @@ namespace Mono.CSharp {
 						unreachable_shown = true;
 					}
 				}
+
+				//
+				// Note that we're not using ResolveUnreachable() for unreachable
+				// statements here.  ResolveUnreachable() creates a temporary
+				// flow branching and kills it afterwards.  This leads to problems
+				// if you have two unreachable statements where the first one
+				// assigns a variable and the second one tries to access it.
+				//
 
 				if (!s.Resolve (ec)) {
 					ok = false;

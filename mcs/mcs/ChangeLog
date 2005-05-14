@@ -1,7 +1,8 @@
-2005-05-13  Martin Baulig  <martin@ximian.com>
+2005-05-14  Martin Baulig  <martin@ximian.com>
 
-	* statement.cs (Block.Resolve, ResolveUnreachable): Correctly
-	handle unreachable blocks.
+	* statement.cs (Block.Resolve): Correctly handle unreachable code;
+	do not call ResolveUnreachable() on unreachable statements in
+	here, see the comment in the source code.
 
 2005-05-13  Raja R Harinath  <rharinath@novell.com>
 
