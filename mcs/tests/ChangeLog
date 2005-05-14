@@ -1,3 +1,7 @@
+2005-05-14  Martin Baulig  <martin@ximian.com>
+
+	* test-381.cs: Slightly modified version of test-360.
+
 2005-05-13  Raja R Harinath  <rharinath@novell.com>
 
 	* test-380.cs: New test from #74934.
