@@ -1,5 +1,7 @@
 2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am: Only compile libmonoarch if the interpreter is compiled.
+
 	* ia64/ia64-codegen.h: Add IA64 code generation macros.
 
 	* Makefile.am: Add ia64 subdir.
