@@ -1,3 +1,8 @@
+2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c (mono_test_marshal_out_string_array_delegate): Fix 64
+	bit issues.
+
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal9.cs libtest.c: Add more tests.
