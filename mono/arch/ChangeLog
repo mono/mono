@@ -1,3 +1,9 @@
+2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h: Add IA64 code generation macros.
+
+	* Makefile.am: Add ia64 subdir.
+
 2005-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* alpha/tramp.c: Applied patch from Jakub Bogusz <qboosh@pld-linux.org>.
