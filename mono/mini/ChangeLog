@@ -1,3 +1,9 @@
+2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *-ia64.*: Add beginnings of IA64 backend.
+
+	* Makefile.am mini-arch.h mini-codegen.c: Add IA64 support.	
+
 2005-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-long.brg: Add missing ulong->{i1, i2} checked conversions.
