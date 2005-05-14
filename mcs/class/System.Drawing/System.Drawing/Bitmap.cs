@@ -78,30 +78,13 @@ namespace System.Drawing
 			
 		}
 
-		public Bitmap (Image original) : this (original.Width, original.Height, PixelFormat.Format32bppArgb)
-		{
-			BitmapFromImage(original, original.Size);
-		}
+		public Bitmap (Image original) : this (original, original.Width, original.Height) {}
 
 		public Bitmap (Stream stream)  : this (stream, false) {} 
 
 		public Bitmap (string filename) : this (filename, false) {}
 
-		public Bitmap (Image original, Size newSize)  : this (newSize.Width, newSize.Height, PixelFormat.Format32bppArgb)
-		{			
-			Status          status;
-			Graphics        g;
-
-			g=Graphics.FromImage(this);
-
-			status = GDIPlus.GdipDrawImageRectRectI(g.nativeObject, original.nativeObject,
-				0, 0, newSize.Width, newSize.Height,
-				0, 0, original.Width, original.Height,
-				GraphicsUnit.Pixel, IntPtr.Zero, null, IntPtr.Zero);
-			GDIPlus.CheckStatus (status);
-
-			g.Dispose();
-		}
+		public Bitmap (Image original, Size newSize)  : this(original, newSize.Width, newSize.Height) {}
 		
 		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
 		{			
@@ -112,26 +95,6 @@ namespace System.Drawing
 		{			
 			nativeObject = (IntPtr)bmp;			
 			
-		}
-		
-		internal void BitmapFromImage(Image original, Size newSize){
-			
-			if (original is Bitmap) {
-				
-				if (nativeObject!=IntPtr.Zero) 
-					Dispose();
-				
-				Bitmap bmpOriginal = (Bitmap) original;
-					
-				IntPtr bmp;
-				Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
-				GDIPlus.CheckStatus (s);
-				nativeObject = (IntPtr) bmp;
-				
-			}
-			else {
-				throw new NotImplementedException ();
-			}
 		}
 
 		void InitFromFile (string filename)
@@ -162,13 +125,12 @@ namespace System.Drawing
 			}
 		}
 
-		public Bitmap (Image original, int width, int heigth) 
+		public Bitmap (Image original, int width, int height)  : this(width, height, PixelFormat.Format32bppArgb)
 		{
-			Size newSize = new Size();
-			newSize.Height=heigth;
-			newSize.Width=width;
-			
-			BitmapFromImage(original,newSize);
+			Graphics graphics = Graphics.FromImage(this);
+
+			graphics.DrawImage(original, 0, 0, width, height);
+			graphics.Dispose();
 		}
 
 		public Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0)
@@ -319,18 +281,20 @@ namespace System.Drawing
 			// We have to draw always over a 32-bitmap surface that supports alpha channel
 			Bitmap	bmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 			Graphics gr = Graphics.FromImage(bmp);
-			Rectangle destRect = new Rectangle(0,0, Width, Height);
+			Rectangle destRect = new Rectangle(0, 0, Width, Height);
 			ImageAttributes imageAttr = new ImageAttributes();
 			
 			imageAttr.SetColorKey(transparentColor,	transparentColor);
 
-			gr.DrawImage (this, destRect, 0, 0, Width, Height, 	GraphicsUnit.Pixel, imageAttr);					
+			gr.DrawImage (this, destRect, 0, 0, Width, Height, GraphicsUnit.Pixel, imageAttr);					
 			
-			Size newSize = new Size();
-			newSize.Height=Height;
-			newSize.Width=Width;			
-			BitmapFromImage(bmp,newSize);			
-			
+			if (nativeObject != IntPtr.Zero)
+				Dispose();
+
+			IntPtr oldBmp = nativeObject;
+			nativeObject = bmp.nativeObject;
+			bmp.nativeObject = oldBmp;
+
 			gr.Dispose();
 			bmp.Dispose();
 			imageAttr.Dispose();

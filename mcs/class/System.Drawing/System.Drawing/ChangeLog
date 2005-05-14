@@ -1,3 +1,7 @@
+2005-05-14 Jordi Mas i Hernandez <jordi@ximian.com> <kornelpal@hotmail.com>
+
+	* Bitmap.cs: Kornél Pál's Bitmap class ctor and MakeTransparent leak fixes
+
 2005-05-11 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* gdipFunctions.cs: add GdipLoadImageFromStream and GdipSaveImageToStream
