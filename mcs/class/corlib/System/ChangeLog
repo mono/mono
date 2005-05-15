@@ -1,3 +1,8 @@
+2005-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : don't allow extraneous pattern characters also for
+	  non-exact parsing (ParseExact() was fine). Bug #74936 fixed
+
 2005-05-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Activator.cs: Match exceptions thrown by MS.NET for

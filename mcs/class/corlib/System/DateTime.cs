@@ -1233,7 +1233,7 @@ namespace System
 			if (pos == 0)
 				return false;
 
-			if (exact && pos < len)
+			if (pos < len)
 				return false;
 
 			if (s.Length != valuePos) // extraneous tail.

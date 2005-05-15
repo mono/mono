@@ -682,6 +682,30 @@ public class DateTimeTest : Assertion
 //		DateTime.Parse (s, null); currently am not sure if it works for _every_ culture.
 	}
 
+
+	[Test]
+	// bug #74936
+	public void TestParse4 ()
+	{
+		try {
+			DateTime.Parse("1");
+			Fail ("#1");
+		} catch (FormatException) {
+		}
+
+		try {
+			DateTime.Parse("1000");
+			Fail ("#1");
+		} catch (FormatException) {
+		}
+
+		try {
+			DateTime.Parse("8:");
+			Fail ("#1");
+		} catch (FormatException) {
+		}
+	}
+
 	[Test]
 	[ExpectedException(typeof (FormatException))]
 	public void ParseFormatException1 ()

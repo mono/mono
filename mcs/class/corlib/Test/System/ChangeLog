@@ -1,3 +1,7 @@
+2005-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : added Parse() test for bug #74936.
+
 2005-05-13  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* ActivatorTest.cs: Tests for exceptions thrown by CreateInstance
