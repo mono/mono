@@ -1,5 +1,9 @@
 2005-05-15  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ListBox.cs: Kazuki Oikawa's PreferredHeight and ItemHeight fixes
+		
+2005-05-15  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* ComboBox.cs: Fix item range comparation
 	* ListView.cs: Fix item range comparation
 

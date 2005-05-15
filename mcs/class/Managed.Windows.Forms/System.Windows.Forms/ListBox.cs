@@ -124,7 +124,6 @@ namespace System.Windows.Forms
 		private SelectionMode selection_mode;
 		private bool sorted;
 		private bool use_tabstops;
-		private int preferred_height;
 		private int top_index;
 		private int column_width_internal;
 		private VScrollBar vscrollbar_ctrl;
@@ -146,7 +145,6 @@ namespace System.Windows.Forms
 			horizontal_scrollbar = false;
 			integral_height = true;
 			multicolumn = false;
-			preferred_height = 7;
 			scroll_always_visible = false;
 			selected_index = -1;
 			focused_item = -1;
@@ -368,10 +366,17 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public virtual int ItemHeight {
-			get { return listbox_info.item_height; }
+			get {
+				if (draw_mode == DrawMode.Normal)
+					return FontHeight;
+				return listbox_info.item_height;
+			}
 			set {
 				if (value > 255)
 					throw new ArgumentOutOfRangeException ("The ItemHeight property was set beyond 255 pixels");
+
+				if (listbox_info.item_height == value)
+					return;
 
 				listbox_info.item_height = value;
 				CalcClientArea ();
@@ -409,7 +414,22 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
-			get { return preferred_height;}
+			get {
+				int itemsHeight = 0;
+				if (draw_mode == DrawMode.Normal)
+					itemsHeight = FontHeight * items.Count;
+				else if (draw_mode == DrawMode.OwnerDrawFixed)
+					itemsHeight = ItemHeight * items.Count;
+				else if (draw_mode == DrawMode.OwnerDrawVariable) {
+					for (int i = 0; i < items.Count; i++)
+						itemsHeight += items.GetListBoxItem (i).ItemHeight;
+				}
+				
+				itemsHeight += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
+				itemsHeight += ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle);
+				
+				return itemsHeight;
+			}
 		}
 
 		public override RightToLeft RightToLeft {
@@ -1984,7 +2004,7 @@ namespace System.Windows.Forms
 
 			public virtual void Insert (int index,  object item)
 			{
-				if (index < 0 || index >= Count)
+				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 					
 				int idx;
