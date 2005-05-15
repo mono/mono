@@ -436,9 +436,9 @@ namespace System.Data {
 
 		internal override void AssertConstraint(DataRow row)
 		{	
-			if (IsPrimaryKey) {
+			if (IsPrimaryKey && row.HasVersion(DataRowVersion.Default)) {
 				for (int i = 0; i < Columns.Length; i++) {
-					if (row.IsNull(i)) {
+					if (row.IsNull(Columns[i])) {
 						throw new NoNullAllowedException("Column '" + Columns[i].ColumnName + "' does not allow nulls.");
 					}
 				}

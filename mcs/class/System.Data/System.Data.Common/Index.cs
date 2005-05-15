@@ -395,7 +395,7 @@ namespace System.Data.Common
 
 			int oldIdx = FindIndex(oldRecord);
 
-			if( oldIdx == -1) {
+			if( oldIdx == -1 || Key.Table.RecordCache[Array[oldIdx]] != row ) {
 				Add(row,newRecord);
 				return;
 			}

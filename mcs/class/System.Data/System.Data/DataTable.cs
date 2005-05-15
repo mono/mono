@@ -1008,6 +1008,10 @@ namespace System.Data {
 				RecordCache.CopyRecord(row.Table,current,newRow.Current);
 			}
 
+			if (EnforceConstraints)
+				// we have to check that the new row doesn't colide with existing row
+				Rows.ValidateDataRowInternal(newRow);
+
 			Rows.AddInternal(newRow);		
 	
 			if (row.HasErrors) {

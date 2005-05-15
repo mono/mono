@@ -1,3 +1,9 @@
+2005-05-16 Konstantin Triger <kostat@mainsoft.com>
+
+	* UniqueConstraint.cs : IsNull check is relevant for rows having default row version.
+	* DataTable.cs : The row should be validated when imported
+	* DataRowCollection.cs : if the row does not contain Proposed neither Current version, it's irrelevant for validation
+
 2005-04-26 Boris Kirzner <borisk@mainsoft.com>
 
 	* UniqueConstraint.cs :

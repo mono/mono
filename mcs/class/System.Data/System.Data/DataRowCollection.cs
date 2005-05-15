@@ -329,6 +329,9 @@ namespace System.Data
 			row.CheckNullConstraints();
 
 			int newRecord = (row.Proposed >= 0) ? row.Proposed : row.Current;
+			if (newRecord < 0)
+				return;
+
 			foreach(Index index in table.Indexes) {
 				index.Update(row,newRecord);
 			}
