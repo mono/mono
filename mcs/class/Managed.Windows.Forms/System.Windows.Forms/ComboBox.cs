@@ -1264,7 +1264,7 @@ namespace System.Windows.Forms
 
 			public virtual void Insert (int index,  object item)
 			{
-				if (index < 0 || index >= Count)
+				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");					
 				
 				ObjectCollection new_items = new ObjectCollection (owner);				

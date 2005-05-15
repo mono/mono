@@ -1879,7 +1879,9 @@ namespace System.Windows.Forms
 
 			public void Insert (int index, ColumnHeader value)
 			{
-				if (index < 0 || index >= list.Count)
+				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
+				// but it's really only greater.
+				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("Index out of range.");
 
 				value.owner = this.owner;
@@ -2098,7 +2100,9 @@ namespace System.Windows.Forms
 
 			public ListViewItem Insert (int index, ListViewItem item)
 			{
-				if (index < 0 || index >= list.Count)
+				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
+				// but it's really only greater.
+				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("Index out of range.");
 
 				if (list.Contains (item))

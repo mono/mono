@@ -1,3 +1,8 @@
+2005-05-15  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: Fix item range comparation
+	* ListView.cs: Fix item range comparation
+
 2005-05-03  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FontDialog.cs:
