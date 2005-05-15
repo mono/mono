@@ -39,6 +39,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Data.Common;
 
 namespace System.Data {
 	[Serializable]
@@ -119,17 +120,20 @@ namespace System.Data {
 
 		//call once before adding a constraint to a collection
 		//will throw an exception to prevent the add if a rule is broken
-		internal virtual void AddToConstraintCollectionSetup (ConstraintCollection collection)
-		{
-		}
+		internal abstract void AddToConstraintCollectionSetup (ConstraintCollection collection);
 					
-		internal virtual void AssertConstraint ()
-		{
-		}
+		protected abstract bool IsConstraintViolated ();
 		
-		internal virtual void AssertConstraint (DataRow row)
-		{
+		internal static void ThrowConstraintException(){
+			throw new ConstraintException("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 		}
+
+		internal void AssertConstraint() {
+			if (IsConstraintViolated())
+				ThrowConstraintException();
+		}
+
+		internal abstract void AssertConstraint(DataRow row);
 
 		internal virtual void RollbackAssert (DataRow row)
 		{
@@ -137,9 +141,7 @@ namespace System.Data {
 
 		//call once before removing a constraint to a collection
 		//can throw an exception to prevent the removal
-		internal virtual void RemoveFromConstraintCollectionCleanup (ConstraintCollection collection)
-		{
-		}
+		internal abstract void RemoveFromConstraintCollectionCleanup (ConstraintCollection collection);
 
 		[MonoTODO]
 		protected void CheckStateForProperty ()
@@ -158,54 +160,21 @@ namespace System.Data {
 				return _index;
 			}
 			set {
+				if (_index != null) {
+					_index.RemoveRef();
+					Table.DropIndex(_index);
+				}
+
 				_index = value;
-			}
-		}
 
-		internal void UpdateIndex (DataRow row)
-		{
-			if (row.RowState == DataRowState.Detached || row.RowState == DataRowState.Unchanged)
-				Index.Insert (new Node (row), DataRowVersion.Default);
-			else if ((row.RowState == DataRowState.Modified) || (row.RowState == DataRowState.Added)) {
-				// first we check if the values of the key changed.
-				bool keyChanged = false;
-				for (int i = 0; i < Index.Columns.Length; i++) {
-					if (row[Index.Columns[i], DataRowVersion.Default] != row[Index.Columns[i], DataRowVersion.Current]) {
-						keyChanged = true;
-					}
-				}
-				// if key changed we first try to insert a new node 
-				// and,if succeded, we delete the row's old node.
-				if (keyChanged) 
-				{
-					// insert new node for the row
-					// note : may throw if not succeded
-					Index.Insert (new Node (row), DataRowVersion.Default);
-
-					// delete the row's node
-					Index.Delete(row);					
+				if (_index != null) {
+					_index.AddRef();
 				}
 			}
 		}
 
-		internal void RollbackIndex (DataRow row)
-		{
-			Node n = Index.Find(row, DataRowVersion.Default);
-			if ( n == null)
-				throw new ConstraintException("Row was not found in constraint index");
-
-			// first remove the node inserted as a result of last AssertConstraint on the row 
-			Index.Delete(n);
-			
-			// if the row is not detached we should add back to the index 
-			// node corresponding to row value before AssertConstraint was called
-			if(row.RowState != DataRowState.Detached){
-				// since index before we updated index was ok, insert should always suceed
-				// maybe we still need to try/catch here
-				Index.Insert(new Node(row), DataRowVersion.Current);
-			}
-		}
-
+		internal abstract bool IsColumnContained(DataColumn column);
+		internal abstract bool CanRemoveFromCollection(ConstraintCollection col, bool shouldThrow);
 
 		/// <summary>
 		/// Gets the ConstraintName, if there is one, as a string. 

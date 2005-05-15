@@ -1,4 +1,4 @@
-
+/*
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -29,7 +29,7 @@ namespace System.Data
 	/// <summary>
 	/// Summary description for Index.
 	/// </summary>
-	internal class Index 
+	internal class Index1 
 	{
 
 		// fields
@@ -41,7 +41,7 @@ namespace System.Data
 
 
 		
-		internal Index (string name, DataTable table, DataColumn[] columns,
+		internal Index1 (string name, DataTable table, DataColumn[] columns,
 			bool unique) 
 		{
 
@@ -753,4 +753,4 @@ namespace System.Data
 //			return sb.ToString();
 //		}
 	}
-}
+} */

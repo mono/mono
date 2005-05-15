@@ -6,19 +6,20 @@
 //    Tim Coleman (tim@timcoleman.com)
 //    Punit Todi (punits_mailbox@yahoo.com)
 //    Atsushi Enomoto <atsushi@ximian.com>
+//    Konstantin Triger (kostat@mainsoft.com)
 //
 // Copyright (C) Daniel Morgan, 2002, 2003
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002-2003		
-// (C) 2005 Novell, Inc
-//
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
+using System.Data.Common;
+using System.Globalization;
 using Mono.Data.SqlExpressions;
+using System.Text;
 
 namespace System.Data 
 {
@@ -35,15 +36,12 @@ namespace System.Data
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 	{
-		DataTable dataTable = null;
-		string rowFilter = "";
+		protected DataTable dataTable = null;
+		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
-		string sort = "";
-		SortableColumn [] sortedColumns = null;
+		string sort = String.Empty;
 		DataViewRowState rowState;
-		// DataRow -> DataRowView
-		UnsortedList addNewCache = new UnsortedList ();
-		OptionalSortedList rowViewPool = new OptionalSortedList ();
+		protected DataRowView[] rowCache = null;
 
 		// BeginInit() support
 		bool isInitPhase = false;
@@ -54,6 +52,7 @@ namespace System.Data
 		string initRowFilter;
 		DataViewRowState initRowState;
 
+		// FIXME: what are the default values?
 		bool allowNew = true; 
 		bool allowEdit = true;
 		bool allowDelete = true;
@@ -64,15 +63,14 @@ namespace System.Data
 
 		bool useDefaultSort = true;
 		
-		DataViewManager dataViewManager = null;
-
-		// These fields are used to store items temporarilly 
-		// during value change events.
-		DataRowView changingRowView;
-		int oldIndex;
-		int deletedIndex;
+		Index _index;
+		internal DataRow _lastAdded = null;
+		
+		private DataViewManager dataViewManager = null;
+		internal static ListChangedEventArgs ListResetEventArgs = new ListChangedEventArgs (ListChangedType.Reset,-1,-1);
 
 		#region Constructors
+
 		public DataView () 
 		{
 			rowState = DataViewRowState.CurrentRows;
@@ -82,19 +80,6 @@ namespace System.Data
 		public DataView (DataTable table)
 			: this (table, (DataViewManager) null)
 		{
-		}
-
-		// This ctor() is for DataRowView.CreateChildView() support,
-		// which does not expose precise RowFilter, Sort and so on.
-		internal DataView (DataTable table, DataRow [] rows)
-		{
-			dataTable = table;
-			rowState = DataViewRowState.CurrentRows;
-			RegisterEventHandlers ();
-
-			foreach (DataRow dr in rows)
-				rowViewPool.Add (dr, new DataRowView (this, dr));
-			isOpen = true;
 		}
 
 		internal DataView (DataTable table, DataViewManager manager)
@@ -123,7 +108,9 @@ namespace System.Data
 			Open ();
 		}
 		#endregion // Constructors
+
 		#region PublicProperties
+
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows deletes.")]
 		[DefaultValue (true)]
@@ -188,13 +175,19 @@ namespace System.Data
 		[Browsable (false)]
 		[DataSysDescription ("Returns the number of items currently in this view.")]
 		public int Count {
-			get { return rowViewPool.Count + addNewCache.Count; }
+			[MonoTODO]
+			get {
+				return rowCache.Length;
+			}
 		}
 
 		[Browsable (false)]
 		[DataSysDescription ("This returns a pointer to back to the DataViewManager that owns this DataSet (if any).")]
 		public DataViewManager DataViewManager {
-			get { return dataViewManager; }
+			[MonoTODO]
+			get {
+				return dataViewManager;
+			}
 		}
 
 		// Item indexer
@@ -202,14 +195,9 @@ namespace System.Data
 		// this IndexerNameAttribute
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public DataRowView this[int recordIndex] {
+			[MonoTODO]
 			get {
-				if (recordIndex >= rowViewPool.Count + addNewCache.Count)
-					throw new IndexOutOfRangeException ();
-
-				if (recordIndex < rowViewPool.Count)
-					return (DataRowView) rowViewPool.GetByIndex (recordIndex);
-				else
-					return (DataRowView) addNewCache.GetByIndex (recordIndex - rowViewPool.Count);
+				return rowCache [recordIndex];
 			}
 		}
 
@@ -218,6 +206,7 @@ namespace System.Data
 		[DefaultValue ("")]
 		public virtual string RowFilter {
 			get { return rowFilter; }
+			[MonoTODO]
 			set {
 				if (value == null)
 					value = String.Empty;
@@ -226,7 +215,8 @@ namespace System.Data
 					return;
 				}
 
-				if (rowFilter == value)
+				CultureInfo info = (Table != null) ? Table.Locale : CultureInfo.CurrentCulture;
+				if (String.Compare(rowFilter, value, false, info) == 0)
 					return;
 
 				if (value == String.Empty) 
@@ -286,7 +276,7 @@ namespace System.Data
 					/* sort is set to value specified */
 					useDefaultSort = false;
 					sort = value;
-					sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
+					//sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
 				if (!inEndInit)
 					UpdateIndex (true);
@@ -297,7 +287,6 @@ namespace System.Data
 		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]
-		[TypeConverter (typeof (DataTableTypeConverter))]
 		public DataTable Table {
 			get { return dataTable; }
 			set {
@@ -320,7 +309,6 @@ namespace System.Data
 					RegisterEventHandlers ();
 					OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, 0, 0));
 					sort = null;
-					sortedColumns = null;
 					rowFilter = null;
 					rowFilterExpr = null;
 					if (!inEndInit)
@@ -328,9 +316,12 @@ namespace System.Data
 				}
 			}
 		}
+
 		#endregion // PublicProperties
 		
 		#region	PublicMethods
+
+		[MonoTODO]
 		public virtual DataRowView AddNew() 
 		{
 			if (!IsOpen)
@@ -338,18 +329,42 @@ namespace System.Data
 			if (!AllowNew)
 				throw new DataException ("Cannot call AddNew on a DataView where AllowNew is false.");
 			
-			DataRow row = dataTable.NewRow ();
-			if (row == null)
-				throw new SystemException ("Row not created");
-			DataRowView rowView = new DataRowView (this, row, true);
-			addNewCache.Add (row, rowView);
+			if (_lastAdded != null) {
+				// FIXME : finish last added
+				CompleteLastAdded(true);
+			}
 
-			// DataRowView is added, but DataRow is still Detached.
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, rowViewPool.Count + addNewCache.Count - 1, -1));
-			return rowView;
+			_lastAdded = dataTable.NewRow ();
+			UpdateIndex(true);
+			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, Count - 1, -1));
+			 
+			return this[Count - 1];
 		}
 
-		public void BeginInit ()
+		internal void CompleteLastAdded(bool add)
+		{
+			DataRow dr = _lastAdded;
+
+			if (add) {
+				try {
+					dataTable.Rows.Add(_lastAdded);
+					OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, Count - 1, -1));
+					_lastAdded = null;
+				}
+				catch(Exception e) {
+					_lastAdded = dr;
+					throw e;
+				}
+			}
+			else {
+				_lastAdded.CancelEdit();
+				_lastAdded = null;
+				OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, Count - 1));
+			}
+		}
+
+		[MonoTODO]
+		public void BeginInit() 
 		{
 			initTable = Table;
 			initApplyDefaultSort = ApplyDefaultSort;
@@ -360,24 +375,37 @@ namespace System.Data
 			isInitPhase = true;
 		}
 
+		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
-			rowViewPool.CopyTo (array, index);
-			addNewCache.CopyTo (array, index + rowViewPool.Count);
+			if (index + rowCache.Length > array.Length) {
+				throw new IndexOutOfRangeException();
+			}
+
+			int row = 0;
+			for (; row < rowCache.Length && row < array.Length; row++) {
+				array.SetValue (rowCache[row], index + row);
+			}
 		}
 
 		public void Delete(int index) 
 		{
 			if (!IsOpen)
 				throw new DataException ("DataView is not open.");
+
+			if (_lastAdded != null && index == Count) {
+				CompleteLastAdded(false);
+				return;
+			}
+
 			if (!AllowDelete)
 				throw new DataException ("Cannot delete on a DataSource where AllowDelete is false.");
 			
-			if (index > rowViewPool.Count + addNewCache.Count)
+			if (index > rowCache.Length)
 				throw new IndexOutOfRangeException ("There is no row at " +
 						"position: " + index + ".");
-			DataRowView row = this [index];
-			DeleteRowView (row);
+			DataRowView row = rowCache [index];
+			row.Row.Delete();
 		}
 
 #if NET_2_0
@@ -388,7 +416,8 @@ namespace System.Data
 		}
 #endif
 
-		public void EndInit ()
+		[MonoTODO]
+		public void EndInit() 
 		{
 			isInitPhase = false;
 
@@ -405,141 +434,70 @@ namespace System.Data
 			UpdateIndex (true);
 		}
 
-		internal void CancelEditRowView (DataRowView rowView)
+		[MonoTODO]
+		public int Find(object key) 
 		{
-			int index = IndexOfRowView (rowView);
-			if (addNewCache.Contains (rowView.Row))
-				addNewCache.Remove (rowView.Row);
-			else
-				rowViewPool.Remove (rowView.Row);
-			if (index >= 0)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index, -1));
-			rowView.Row.CancelEdit ();
-		}
-
-		internal void DeleteRowView (DataRowView rowView)
-		{
-			int index = IndexOfRowView (rowView);
-			if (addNewCache.Contains (rowView.Row))
-				addNewCache.Remove (rowView.Row);
-			else
-				rowViewPool.Remove (rowView.Row);
-			if (index >= 0)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index, -1));
-			rowView.Row.Delete ();
-		}
-
-		internal void EndEditRowView (DataRowView rowView)
-		{
-			int index = IndexOfRow (rowView.Row);
-			addNewCache.Remove (rowView.Row);
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index, -1));
-
-			rowView.Row.EndEdit ();
-			if (rowView.Row.RowState == DataRowState.Detached)
-				Table.Rows.Add (rowView.Row);
-			int newIndex = int.MinValue;
-			if (rowFilterExpr == null || rowFilterExpr.EvalBoolean (rowView.Row))
-				newIndex = IndexOfRow (rowView.Row);
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, index));
-		}
-
-		private IExpression [] PrepareExpr (object [] key)
-		{
-			if (Sort == String.Empty)
-				throw new ArgumentException ("Find method depends on an explicit Sort property value.");
-			if (sortedColumns == null)
-				throw new SystemException ("sort expression result is null");
-			if (sortedColumns.Length == 0)
-				throw new SystemException ("sort expression result is 0");
-			if (sortedColumns.Length != key.Length)
-				throw new ArgumentException (String.Format ("Expecting {0} keys being indexed based on Sort property, but got {1} keys.", sortedColumns.Length, key.Length));
-
-			IExpression [] compExpr = new IExpression [sortedColumns.Length];
-			for (int i = 0; i < sortedColumns.Length; i++)
-				compExpr [i] = new Comparison (Operation.EQ,
-					new ColumnReference (sortedColumns [i].Column.ColumnName),
-					new Literal (key [i]));
-			return compExpr;
-		}
-
-		public int Find (object key) 
-		{
-			return Find (new object [] {key});
+			object [] keys = new object[] { key };
+			return Find(keys);
 		}
 		
-		public int Find (object[] key) 
+		[MonoTODO]
+		public int Find(object[] keys) 
 		{
-			IExpression [] compExpr = PrepareExpr (key);
-
-			// Find first match.
-			int r = 0;
-			IEnumerator e = GetEnumerator ();
-			bool hasNext = false;
-			for (; e.MoveNext (); r++) {
-				if (!hasNext)
-					hasNext = true;
-				if (!compExpr [0].EvalBoolean (((DataRowView) e.Current).Row))
-					continue;
-				break;
+			if (sort == null || sort == string.Empty) {
+				throw new ArgumentException ("Find finds a row based on a Sort order, and no Sort order is specified");
 			}
-			if (!hasNext)
-				return -1;
-			bool finish = false;
-			for (int c = 0; c < key.Length; c++)
-				if (!compExpr [c].EvalBoolean (((DataRowView) e.Current).Row))
-					return -1;
-			return r;
+
+			if (Index == null) {
+				UpdateIndex(true);
+			}
+
+			int index = -1; 				
+			try {
+				index = Index.FindIndex(keys);
+			}
+			catch(FormatException) {
+				// suppress exception
+			}
+			catch(InvalidCastException) {
+				// suppress exception
+			}
+			return index;
+		}
+		
+		[MonoTODO]
+		public DataRowView[] FindRows(object key) 
+		{
+			return FindRows(new object[] {key});
 		}
 
-		public DataRowView[] FindRows (object key) 
+		[MonoTODO]
+		public DataRowView[] FindRows(object[] keys) 
 		{
-			return FindRows (new object [] {key});
-		}
-
-		public DataRowView [] FindRows (object[] key) 
-		{
-			IExpression [] compExpr = PrepareExpr (key);
-
-			// Find first match.
-			int r = 0;
-			IEnumerator e = GetEnumerator ();
-			bool hasNext = false;
-			while (e.MoveNext ()) {
-				if (!hasNext)
-					hasNext = true;
-				if (!compExpr [0].EvalBoolean (((DataRowView) e.Current).Row))
-					continue;
-				break;
+			if (sort == null || sort == string.Empty) {
+				throw new ArgumentException ("Find finds a row based on a Sort order, and no Sort order is specified");
 			}
-			ArrayList al = new ArrayList ();
-			// Find first no-match from here.
-			do {
-				if (!hasNext)
-					break;
-				bool finish = false;
-				for (int c = 0; c < key.Length; c++) {
-					if (!compExpr [c].EvalBoolean (((DataRowView) e.Current).Row)) {
-						finish = true;
-						break;
-					}
-				}
-				if (finish)
-					break;
-				al.Add (e.Current);
-			} while (e.MoveNext ());
 
-			return (DataRowView []) al.ToArray (typeof (DataRowView));
+			if (Index == null) {
+				UpdateIndex(true);
+			}
+
+			int[] indexes = Index.FindAllIndexes(keys);
+
+			DataRowView[] rowViewArr = new DataRowView[indexes.Length];			
+			for (int r = 0; r < indexes.Length; r++) {
+				rowViewArr[r] = rowCache[indexes[r]];
+			}
+			return rowViewArr;
 		}
 
 		public IEnumerator GetEnumerator() 
 		{
-			ArrayList al = new ArrayList (rowViewPool.Count + addNewCache.Count);
-			al.AddRange (rowViewPool.Values);
-			al.AddRange (addNewCache.Values);
-			return new DataViewEnumerator ((DataRowView [])
-				al.ToArray (typeof (DataRowView)));
+			DataRowView[] dataRowViews = new DataRowView[Count];
+			CopyTo(dataRowViews,0);
+			return dataRowViews.GetEnumerator();
 		}
+
 		#endregion // PublicMethods
 		
 		[DataCategory ("Data")]
@@ -552,13 +510,32 @@ namespace System.Data
 			get { return isOpen; }
 		}
 
+		internal Index Index
+		{
+			get {
+				return _index;
+			}
+
+			set {
+				if (_index != null) {
+					_index.RemoveRef();
+					Table.DropIndex(_index);
+				}
+
+				_index = value;
+
+				if (_index != null) {
+					_index.AddRef();
+				}
+			}
+		}
+
 		protected void Close ()
 		{
 			if (dataTable != null)
 				UnregisterEventHandlers ();
-			UpdateIndex (false);
-			rowViewPool.Clear ();
-			addNewCache.Clear ();
+			Index = null;
+			rowCache = null;
 			isOpen = false;
 		}
 
@@ -575,16 +552,27 @@ namespace System.Data
 		{
 		}
 
-		protected virtual void OnListChanged (ListChangedEventArgs e) 
+		[MonoTODO]
+		protected virtual void OnListChanged(ListChangedEventArgs e) 
 		{
 			// Yes, under MS.NET, when it is overriden, the 
 			// events are not fired (even if it is essential
 			// to internal processing).
+			try {
 			if (ListChanged != null)
 				ListChanged (this, e);
+			} catch {
+			}
 		}
 
-		protected void Open () 
+		internal void ChangedList(ListChangedType listChangedType, int newIndex,int oldIndex)
+		{
+			ListChangedEventArgs e = new ListChangedEventArgs(listChangedType,newIndex,oldIndex);
+			OnListChanged(e);
+		}
+
+		[MonoTODO]
+		protected void Open() 
 		{
 			// I wonder if this comment is still valid, but keep
 			// in the meantime.
@@ -607,19 +595,21 @@ namespace System.Data
 			//        Otherwise, if getting a/the DataRowView(s),
 			//        Count, or other properties, then just use the
 			//        index cache.
-			if (dataTable != null) {
-				RegisterEventHandlers ();
-			}
+			//		dataTable.ColumnChanged  += new DataColumnChangeEventHandler(OnColumnChanged);
+			
 			UpdateIndex (true);
+			if (dataTable != null) {
+				RegisterEventHandlers();
+			}
 			isOpen = true;
 		}
 		
 		private void RegisterEventHandlers()
 		{
-			dataTable.ColumnChanging += new DataColumnChangeEventHandler(OnColumnChanging);
+			//dataTable.ColumnChanging += new DataColumnChangeEventHandler(OnColumnChanging);
 			dataTable.ColumnChanged  += new DataColumnChangeEventHandler(OnColumnChanged);
 			dataTable.RowChanged     += new DataRowChangeEventHandler(OnRowChanged);
-			dataTable.RowDeleting    += new DataRowChangeEventHandler(OnRowDeleting);
+			//dataTable.RowDeleting    += new DataRowChangeEventHandler(OnRowDeleting);
 			dataTable.RowDeleted     += new DataRowChangeEventHandler(OnRowDeleted);
 			dataTable.Columns.CollectionChanged += new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged += new CollectionChangeEventHandler(OnConstraintCollectionChanged);
@@ -627,10 +617,10 @@ namespace System.Data
 
 		private void UnregisterEventHandlers()
 		{
-			dataTable.ColumnChanging -= new DataColumnChangeEventHandler(OnColumnChanging);
+//			dataTable.ColumnChanging -= new DataColumnChangeEventHandler(OnColumnChanging);
 			dataTable.ColumnChanged  -= new DataColumnChangeEventHandler(OnColumnChanged);
 			dataTable.RowChanged     -= new DataRowChangeEventHandler(OnRowChanged);
-			dataTable.RowDeleting    -= new DataRowChangeEventHandler(OnRowDeleting);
+//			dataTable.RowDeleting    -= new DataRowChangeEventHandler(OnRowDeleting);
 			dataTable.RowDeleted     -= new DataRowChangeEventHandler(OnRowDeleted);
 			dataTable.Columns.CollectionChanged -= new CollectionChangeEventHandler(ColumnCollectionChanged);
 			dataTable.Constraints.CollectionChanged -= new CollectionChangeEventHandler(OnConstraintCollectionChanged);
@@ -640,82 +630,41 @@ namespace System.Data
 		// before the actual row value is changed; thus we can't use
 		// RowChanging which accepts "already modified" DataRow.
 
-		private void OnColumnChanging (object sender, DataColumnChangeEventArgs e)
-		{
-			changingRowView = (DataRowView) rowViewPool [e.Row];
-			if (changingRowView != null) {
-				oldIndex = rowViewPool.IndexOfKey (changingRowView.Row);
-				rowViewPool.Remove (changingRowView.Row);
-			}
-			else
-				oldIndex = int.MinValue;
+		private void OnColumnChanged(object sender, DataColumnChangeEventArgs args)
+		{	/* not used */
+			//UpdateIndex(true);
 		}
-
-		private void OnColumnChanged (object sender, DataColumnChangeEventArgs e)
+		
+		private void OnRowChanged(object sender, DataRowChangeEventArgs args)
 		{
-			if (changingRowView != null)
-				rowViewPool.Add (changingRowView.Row, changingRowView);
-			changingRowView = null;
-		}
-
-		private void OnRowChanged (object sender, DataRowChangeEventArgs args)
-		{
-			if (args.Row == null)
-				throw new SystemException ("Should not happen. Row is not supplied.");
-
-			int newIndex;
+			int oldIndex,newIndex;
+			oldIndex = newIndex = -1;
+			oldIndex = IndexOf (args.Row);
+			UpdateIndex (true);
+			newIndex = IndexOf (args.Row);
 
 			/* ItemAdded */
 			if(args.Action == DataRowAction.Add)
 			{
-				if (rowFilterExpr != null &&
-					!rowFilterExpr.EvalBoolean (args.Row))
-					return; // do nothing.
-				rowViewPool.Add (args.Row, new DataRowView (this, args.Row, false));
-				newIndex = IndexOfRow (args.Row);
 				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, newIndex, -1));
 			}
 				
 			/* ItemChanged or ItemMoved */
 			if (args.Action == DataRowAction.Change) {
-				DataRowView drv = (DataRowView) rowViewPool [args.Row];
-				if (rowFilterExpr != null &&
-					!rowFilterExpr.EvalBoolean (args.Row)) {
-					// RowView disappearing from this view.
-					if (drv != null) {
-						oldIndex = IndexOfRowView (drv);
-						rowViewPool.Remove (args.Row);
-						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, int.MinValue, oldIndex));
-					}
-					return;
-				}
-				else if (drv == null) {
-					// new RowView showing up in this view.
-					drv = new DataRowView (this, args.Row, false);
-					rowViewPool.Add (args.Row, drv);
-					newIndex = IndexOfRowView (drv);
-					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, int.MinValue));
-					return;
-				}
-				else {
-					newIndex = IndexOfRow (args.Row);
 					if (oldIndex == newIndex)
 						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, newIndex, -1));
 					else
 						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, oldIndex));
 				}
 			}
-		}
-
-		private void OnRowDeleting (object sender,
-			DataRowChangeEventArgs args)
-		{
-			deletedIndex = IndexOfRow (args.Row);
-		}
 
 		private void OnRowDeleted (object sender, DataRowChangeEventArgs args)
 		{
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, deletedIndex, -1));
+			/* ItemDeleted */
+			int newIndex;
+			newIndex = IndexOf (args.Row);
+			UpdateIndex (true);
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
 		}
 		
 		protected virtual void ColumnCollectionChanged (object sender, CollectionChangeEventArgs args)
@@ -746,15 +695,17 @@ namespace System.Data
 				if (ApplyDefaultSort == true && useDefaultSort == true)
 					PopulateDefaultSort ((UniqueConstraint) args.Element);
 			}
-
 			// UpdateIndex() is not invoked here.
 		}
 
 		// internal use by Mono
-		protected void Reset ()
+		protected void Reset() 
 		{
-			// TODO: what really happens? at least it does not Open, Close and Update Index.
-			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+			// TODO: what really happens?
+			Close ();
+			rowCache = null;
+			Open ();
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1 ));
 		}
 
 #if NET_2_0
@@ -770,11 +721,8 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 #endif
-
-		// internal use by Mono
-		protected void UpdateIndex () 
-		{
-			UpdateIndex (false);
+		protected void UpdateIndex() {
+			UpdateIndex(false);
 		}
 
 		// This is method is internal to 
@@ -785,40 +733,58 @@ namespace System.Data
 		// into the DataTable's DataRowCollection.
 		//
 		// I assume this is what UpdateIndex is used for
-		protected virtual void UpdateIndex (bool force) 
+		protected virtual void UpdateIndex(bool force) 
 		{
-			if (dataTable == null || !force)
+			if (Table == null) {
+				// FIXME
 				return;
-			DataRow[] rows = null;
-
-			// I guess, "force" parameter is used to indicate
-			// whether we should "query" against DataTable.
-			// For example, when adding a new row, we don't have
-			// to re-query.
-
-			// Handle sort by itself, considering AddNew rows.
-			rows = dataTable.Select (rowFilterExpr, null, RowStateFilter);
-
-			OptionalSortedList newPool = null;
-			if (sortedColumns != null)
-				newPool = new OptionalSortedList (
-					dataTable,
-					sortedColumns,
-					rows.Length + 3);
-			else
-				newPool = new OptionalSortedList (rows.Length + 3);
-
-			for (int r = 0; r < rows.Length; r++) {
-				DataRow dr = rows [r];
-				DataRowView rv = (DataRowView) rowViewPool [dr];
-				if (rv == null)
-					rv = new DataRowView (this, dr);
-				newPool.Add (dr, rv);
 			}
 
-			rowViewPool = newPool;
+			if (Index == null || force) {
+				ListSortDirection[] sortOrder = null;
+				DataColumn[] columns = DataTable.ParseSortString(Table, Sort, out sortOrder, false);
+				Index = dataTable.GetIndex(columns,sortOrder,RowStateFilter,FilterExpression,true);
+			}
+			else {
+				Index.Key.RowStateFilter = RowStateFilter;
+				Index.Reset();
+			}
+
+			int[] records = Index.GetAll();
+
+			if (records != null) {
+				InitDataRowViewArray(records,Index.Size);
+			}
+			else {
+				rowCache = new DataRowView[0];
+			}
 
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+		}
+
+		internal virtual IExpression FilterExpression
+		{
+			get {
+				return rowFilterExpr;
+			}
+		}
+
+		private void InitDataRowViewArray(int[] records,int size) 
+		{
+			if (_lastAdded != null) {
+				rowCache = new DataRowView[size + 1];	
+			}
+			else {
+				rowCache = new DataRowView[size];			
+			}
+
+			for (int r = 0; r < size; r++) {
+				rowCache[r] = new DataRowView (this, Table.RecordCache[records[r]],r);
+			}
+
+			if(_lastAdded != null) {
+				rowCache[size] = new DataRowView(this,_lastAdded,size);
+			}
 		}
 
 		[MonoTODO]
@@ -848,12 +814,6 @@ namespace System.Data
 			return "";
 		}
 
-		//int ICollection.Count { 
-		//	get {
-		//		return Count;
-		//	} 
-		//}
-
 		bool ICollection.IsSynchronized { 
 			[MonoTODO]
 			get {
@@ -868,11 +828,6 @@ namespace System.Data
 				return this;
 			}
 		}
-
-		//void ICollection.CopyTo (Array array, int index) 
-		//{
-		//	CopyTo (array, index);
-		//}
 
 		bool IList.IsFixedSize {
 			[MonoTODO]
@@ -915,35 +870,38 @@ namespace System.Data
 			DataRowView drv = value as DataRowView;
 			if (drv == null)
 				return false;
-			return rowViewPool.Contains (drv) || addNewCache.Contains (drv);
+
+			return drv.DataView == this;
 		}
 
 		int IList.IndexOf (object value) 
 		{
 			DataRowView drv = value as DataRowView;
-			if (drv == null)
-				return -1;
-			return IndexOfRowView (drv);
+			if (drv != null && drv.DataView == this) {
+				return drv.Index;
+			}
+
+			return -1;
 		}
-			
-		void IList.Insert (int index,object value) 
+
+		void IList.Insert(int index,object value) 
 		{
 			throw new ArgumentException ("Cannot insert external objects to this list.");
 		}
 
-		void IList.Remove (object value) 
+		void IList.Remove(object value) 
 		{
-			// LAMESPEC: MS.NET's behavior is weird. It raises
-			// events and*then* raises this exception.
-			throw new ArgumentException ("Cannot remove from this list.");
+			DataRowView drv = value as DataRowView;
+			if (drv != null && drv.DataView == this) {
+				((IList)this).RemoveAt(drv.Index);
+			}
+
+			throw new ArgumentException ("Cannot remove external objects to this list.");
 		}
 
-		void IList.RemoveAt (int index) 
+		void IList.RemoveAt(int index) 
 		{
-			DataRowView drv = this [index]; // might raise OutOfRangeException here.
-			if (drv == null)
-				throw new ArgumentException ("Cannot remove from this list.");
-			drv.Delete ();
+			Delete(index);
 		}
 
 		#region IBindingList implementation
@@ -954,6 +912,7 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		object IBindingList.AddNew () 
 		{
 			return this.AddNew ();
@@ -1049,36 +1008,15 @@ namespace System.Data
 		}
 
 		#endregion // IBindingList implementation
-		private int IndexOfRowView (DataRowView drv)
+		private int IndexOf(DataRow dr)
 		{
-			int i = rowViewPool.IndexOfValue (drv);
-			if (i >= 0)
+			for (int i=0; i < rowCache.Length; i++)
+				if (dr.Equals (rowCache [i].Row))
 				return i;
-			if (addNewCache.Count == 0)
-				return -1;
-			IEnumerator e = addNewCache.Values.GetEnumerator ();
-			for (i = 0; e.MoveNext (); i++)
-				if (((DataRowView) e.Current) == drv)
-					return rowViewPool.Count + i;
 			return -1;
 		}
-
-		private int IndexOfRow (DataRow dr)
-		{
-			int i = rowViewPool.IndexOfKey (dr);
-			if (i >= 0)
-				return i;
-			if (addNewCache.Count == 0)
-				return -1;
-			IEnumerator e = addNewCache.Keys.GetEnumerator ();
-			for (i = 0; e.MoveNext (); i++)
-				if (((DataRow) e.Current) == dr)
-					return rowViewPool.Count + i;
-			throw new SystemException ("Should not happen.");
-		}
-
-		private void PopulateDefaultSort ()
-		{
+		
+		private void PopulateDefaultSort () {
 			sort = "";
 			foreach (Constraint c in dataTable.Constraints) {
 				if (c is UniqueConstraint) {
@@ -1088,429 +1026,58 @@ namespace System.Data
 			}
 		}
 
-		private void PopulateDefaultSort (UniqueConstraint uc)
-		{
+		private void PopulateDefaultSort (UniqueConstraint uc) {
 			if (isInitPhase)
 				return;
 
-			sort = "";
-			sortedColumns = new SortableColumn [uc.Columns.Length];
-			int i = 0;
-			foreach (DataColumn dc in uc.Columns) {
-				sort += dc.ColumnName + ", ";
-				sortedColumns [i++] = new SortableColumn (dc, ListSortDirection.Ascending);
+			DataColumn[] columns = uc.Columns;
+			if (columns.Length == 0) {
+				sort = String.Empty;
+				return;
 			}
-			sort = sort.Substring (0, sort.Length - 2);
+
+			StringBuilder builder = new StringBuilder();
+			builder.Append(columns[0].ColumnName);
+			for (int i = 1; i<columns.Length; i++) {
+				builder.Append(", ");
+				builder.Append(columns[i].ColumnName);
+			}
+			sort = builder.ToString();
 		}
 		
-		private object [] GetSearchKey (DataRow dr)
+		// FIXME : complete the implementation
+		internal DataView CreateChildView (DataRelation relation,object[] keyValues)
 		{
-			if (sortedColumns == null) 
-				return null;
-			object [] keys = new object [sortedColumns.Length];
-			int i = 0;
-			foreach (SortableColumn sc in sortedColumns) {
-				keys [i] = dr [sc.Column];
-				i++;
+			if (relation == null || relation.ParentTable != Table) {
+				throw new ArgumentException("The relation is not parented to the table to which this DataView points.");
 			}
-			return keys;
+			return new RelatedDataView(relation.ChildColumns,keyValues);
 		}
 
-		private class DataViewEnumerator : IEnumerator 
+		// FIXME : complete the implementation
+		internal DataView CreateChildView (string name,object[] keyValues)
 		{
-			private DataRowView [] rows;
-			int on = -1;
+			DataRelation relation = Table.ChildRelations[name];
 
-			internal DataViewEnumerator (DataRowView [] dataRowViews) 
-			{
-				rows = dataRowViews;
+			if (relation != null) {
+				return CreateChildView(relation,keyValues);
 			}
 
-			public object Current {
-				get {
-					if (on == -1 || on >= rows.Length)
-						throw new InvalidOperationException ();
-					return rows [on];
-				}
-			}
-
-			public bool MoveNext () 
-			{
-				// It does not care about collection being changed.
-				if (on < rows.Length - 1) {
-					on++;
-					return true;
-				}
-
-				return false; // EOF
-			}
-
-			public void Reset () {
-				on = -1;
-			}
+			throw new ArgumentException("Relation " + name + " not found in the table");
 		}
 
-		private class RowViewFindComparer : IComparer 
-		{
-			private SortableColumn [] sortColumns;
-			private DataTable table;
-			public RowViewFindComparer (DataTable table, SortableColumn[] sortColumns) 
-			{
-				this.table = table;			
-				this.sortColumns = sortColumns;
-			}
+		private int GetRecord(int index) {
+			if (index < 0 || index >= Count)
+				throw new IndexOutOfRangeException(String.Format("There is no row at position {0}.", index));
 
-			public SortableColumn[] SortedColumns {
-				get {
-					return sortColumns;
-				}
-			}
-			
-			int IComparer.Compare (object x, object y) 
-			{
-				if(x == null)
-					throw new SystemException ("Object to compare is null: x");
-				if(y == null)
-					throw new SystemException ("Object to compare is null: y");
-				DataRowView rowView = (DataRowView) y;
-				object [] keys = (object [])x;
-				for(int i = 0; i < sortColumns.Length; i++) {
-					SortableColumn sortColumn = sortColumns [i];
-					DataColumn dc = sortColumn.Column;
-
-					IComparable row = (IComparable) rowView.Row [dc];
-					object key = keys [i];
-					
-					int result = CompareObjects (key,row);
-					if (result != 0) {
-						if (sortColumn.SortDirection == ListSortDirection.Ascending)
-							return result;
-						else 
-							return -result;
-					}
-				}
-				return 0;
-			}
-
-			private int CompareObjects (object a, object b) 
-			{
-				if (a == b)
-					return 0;
-				else if (a == null)
-					return -1;
-				else if (a == DBNull.Value)
-					return -1;
-				else if (b == null)
-					return 1;
-				else if (b == DBNull.Value)
-					return 1;
-
-				if((a is string) && (b is string)) {
-					a = ((string) a).ToUpper (table.Locale);
-					b = ((string) b).ToUpper (table.Locale);			
-				}
-
-				if (a is IComparable)
-					return ((a as IComparable).CompareTo (b));
-				else if (b is IComparable)
-					return -((b as IComparable).CompareTo (a));
-
-				throw new ArgumentException ("Neither a nor b IComparable");
-			}
+			return(index == Index.Size) ?
+				_lastAdded.IndexFromVersion(DataRowVersion.Default) :
+				Index.IndexToRecord(index);
 		}
 
-	}
-
-	internal class UnsortedList : IDictionary
-	{
-		Hashtable items;
-		ArrayList orders;
-
-		public UnsortedList ()
-		{
-			items = new Hashtable ();
-			orders = new ArrayList ();
-		}
-
-		public UnsortedList (int size)
-		{
-			items = new Hashtable (size);
-			orders = new ArrayList (size);
-		}
-
-		public void Add (object key, object value)
-		{
-			orders.Add (key);
-			items.Add (key, value);
-		}
-
-		public bool Contains (object key)
-		{
-			return orders.Contains (key);
-		}
-
-		public IDictionaryEnumerator GetEnumerator ()
-		{
-			return new UnsortedListDictionaryEnumerator (
-				orders, items);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return new UnsortedListDictionaryEnumerator (
-				orders, items);
-		}
-
-		public object GetByIndex (int i)
-		{
-			return items [orders [i]];
-		}
-
-		public int IndexOfKey (object key)
-		{
-			for (int i = orders.Count - 1; i >= 0; i--)
-				if (orders [i] == key)
-					return i;
-			return -1;
-		}
-
-		public int IndexOfValue (object value)
-		{
-			for (int i = orders.Count - 1; i >= 0; i--)
-				if (items [orders [i]] == value)
-					return i;
-			return -1;
-		}
-
-		public object this [object key] {
-			get { return items [key]; }
-			set { items [key] = value; }
-		}
-
-		public bool IsFixedSize {
-			get { return false; }
-		}
-
-		public bool IsReadOnly {
-			get { return false; }
-		}
-
-		public int Count {
-			get { return orders.Count; }
-		}
-
-		public object SyncRoot {
-			get { return this; }
-		}
-
-		public bool IsSynchronized {
-			get { return false; }
-		}
-
-		public ICollection Keys {
-			get { return orders; }
-		}
-
-		public ICollection Values {
-			get {
-				
-				return SortedValues;
-			}
-		}
-
-		public Array SortedValues {
-			get {
-				object [] results = new object [items.Count];
-				for (int i = 0; i < orders.Count; i++)
-					results [i] = items [orders [i]];
-				return results;
-			}
-		}
-
-		public void CopyTo (Array array, int index)
-		{
-			SortedValues.CopyTo (array, index);
-		}
-
-		public void Clear ()
-		{
-			orders.Clear ();
-			items.Clear ();
-		}
-
-		public void Remove (object o)
-		{
-			orders.Remove (o);
-			items.Remove (o);
-		}
-
-		internal class UnsortedListDictionaryEnumerator
-			: IEnumerator, IDictionaryEnumerator
-		{
-			ArrayList orders;
-			Hashtable items;
-			int index = -1;
-			DictionaryEntry current;
-
-			public UnsortedListDictionaryEnumerator (
-				ArrayList orders, Hashtable items)
-			{
-				this.orders = orders;
-				this.items = items;
-			}
-
-			public bool MoveNext ()
-			{
-				if (index + 1 == orders.Count)
-					return false;
-				index++;
-				object key = orders [index];
-				current = new DictionaryEntry (key, items [key]);
-				return true;
-			}
-
-			public DictionaryEntry Entry {
-				get { return current; }
-			}
-
-			public object Current {
-				get { return index < 0 ? (object) null : current; }
-			}
-
-			public object Key {
-				get { return index < 0 ? (object) null : current.Key; }
-			}
-
-			public object Value {
-				get { return index < 0 ? (object) null : current.Value; }
-			}
-
-			public void Reset ()
-			{
-				index = -1;
-			}
-		}
-	}
-
-	// Since IndexOf() is not always working fine, we cannot make
-	// full use of SortedList (because RowSorter depends on "current"
-	// value of the value.
-	internal class OptionalSortedList : IDictionary
-	{
-		SortedList sorted;
-		UnsortedList unsorted;
-
-		public OptionalSortedList ()
-		{
-			unsorted = new UnsortedList ();
-		}
-
-		public OptionalSortedList (int size)
-		{
-			unsorted = new UnsortedList (size);
-		}
-
-		public OptionalSortedList (DataTable table,
-			SortableColumn [] columns, int initSize)
-		{
-			sorted = new SortedList (new DataTable.RowSorter (
-				table, columns), initSize);
-		}
-
-		IDictionary Instance {
-			get { return sorted != null ? (IDictionary) sorted : unsorted; }
-		}
-
-		public void Add (object key, object value)
-		{
-			Instance.Add (key, value);
-		}
-
-		public bool Contains (object key)
-		{
-			return Instance.Contains (key);
-		}
-
-		public IDictionaryEnumerator GetEnumerator ()
-		{
-			return Instance.GetEnumerator ();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return Instance.GetEnumerator ();
-		}
-
-		public object GetByIndex (int i)
-		{
-			if (sorted != null)
-				return sorted.GetByIndex (i);
-			else
-				return unsorted.GetByIndex (i);
-		}
-
-		public int IndexOfKey (object key)
-		{
-			if (sorted != null)
-				return sorted.IndexOfKey (key);
-			else
-				return unsorted.IndexOfKey (key);
-		}
-
-		public int IndexOfValue (object value)
-		{
-			if (sorted != null)
-				return sorted.IndexOfValue (value);
-			else
-				return unsorted.IndexOfValue (value);
-		}
-
-		public object this [object key] {
-			get { return Instance [key]; }
-			set { Instance [key] = value; }
-		}
-
-		public bool IsFixedSize {
-			get { return Instance.IsFixedSize; }
-		}
-
-		public bool IsReadOnly {
-			get { return Instance.IsReadOnly; }
-		}
-
-		public int Count {
-			get { return Instance.Count; }
-		}
-
-		public object SyncRoot {
-			get { return Instance.SyncRoot; }
-		}
-
-		public bool IsSynchronized {
-			get { return Instance.IsSynchronized; }
-		}
-
-		public ICollection Keys {
-			get { return Instance.Keys; }
-		}
-
-		public ICollection Values {
-			get { return Instance.Values; }
-		}
-
-		public void CopyTo (Array array, int index)
-		{
-			Instance.CopyTo (array, index);
-		}
-
-		public void Clear ()
-		{
-			Instance.Clear ();
-		}
-
-		public void Remove (object o)
-		{
-			Instance.Remove (o);
+		internal DataRowVersion GetRowVersion(int index) {
+			int record = GetRecord(index);
+			return Table.RecordCache[record].VersionFromIndex(record);
 		}
 	}
 }

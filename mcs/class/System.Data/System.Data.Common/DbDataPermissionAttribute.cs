@@ -32,6 +32,7 @@
 
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Globalization;
 
 namespace System.Data.Common {
 

@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 namespace System.Data.Common {
 	public abstract class DbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
@@ -70,4 +70,4 @@ namespace System.Data.Common {
 	}
 }
 
-#endif // NET_2_0
+#endif

@@ -11,6 +11,26 @@
 
 	* System.Data_test.dll.sources: Added DataTableLoadRowTest.cs.
 
+2005-01-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* DbCommandOptionalFeatures.cs, DbConnectionString.cs, DbConnectionOptions.cs: revert to r43344
+
+2005-01-05  Konstantin Triger <kostat@mainsoft.com>
+	
+	* DbDataAdapter.cs: Rostore the Dispose logic
+
+2005-04-28  Konstantin Triger <kostat@mainsoft.com>  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataView.cs: Nullify an index when Closed
+
+2005-04-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataRow.cs: Removed unneeded check of RowState
+
+2005-04-27  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConstraintCollection: throw DuplicateException only if names match exactly with Table's locale
+
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add app_test_2.0.config.

@@ -43,6 +43,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Collections;
 using System.Data.Common;
+using System.Globalization;
 using Mono.Data.SqlExpressions;
 
 namespace System.Data {
@@ -77,18 +78,18 @@ namespace System.Data {
 		private long _nextAutoIncrementValue;
 		private string _caption;
 		private MappingType _columnMapping;
-		private string _columnName;
+		private string _columnName = String.Empty;
 		private object _defaultValue = DBNull.Value;
-		private string expression;
-		private IExpression compiledExpression;
+		private string _expression;
+		private IExpression _compiledExpression;
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
-		private int maxLength = -1; //-1 represents no length limit
-		private string nameSpace = String.Empty;
+		private int _maxLength = -1; //-1 represents no length limit
+		private string _nameSpace;
 		private int _ordinal = -1; //-1 represents not part of a collection
-		private string prefix = String.Empty;
-		private bool readOnly;
+		private string _prefix = String.Empty;
+		private bool _readOnly;
 		private DataTable _table;
-		private bool unique;
+		private bool _unique;
 		private AbstractDataContainer _dataContainer;
 
 		#endregion // Fields
@@ -221,12 +222,7 @@ namespace System.Data {
 							" default value exists for this column.");
 					}
 
-					//If the DataType of this Column isn't an Int
-					//Make it an int
-					TypeCode typeCode = Type.GetTypeCode(DataType);
-					if(typeCode != TypeCode.Int16 && 
-						typeCode != TypeCode.Int32 && 
-						typeCode != TypeCode.Int64)
+					if(!CanAutoIncrement(DataType))
 					{
 						DataType = typeof(Int32); 
 					}
@@ -331,13 +327,36 @@ namespace System.Data {
 		public string ColumnName
 		{
 			get {
-				return (_columnName == null ? String.Empty : _columnName);
+				return _columnName;
 			}
 			set {
-				//Both are checked after the column is part of the collection
-				//TODO: Check Name duplicate
-				//TODO: check Name != null
-				_columnName = value;
+				if (value == null)
+					value = String.Empty;
+
+				CultureInfo info = Table != null ? Table.Locale : CultureInfo.CurrentCulture;
+				if (String.Compare(value, _columnName, true, info) != 0) {
+					if (Table != null) {
+						if (value.Length == 0)
+							throw new ArgumentException("ColumnName is required when it is part of a DataTable.");
+
+						Table.Columns.RegisterName(value, this);
+						if (_columnName.Length > 0)
+							Table.Columns.UnregisterName(_columnName);
+					}
+
+					RaisePropertyChanging("ColumnName");
+					_columnName = value;
+
+					if (Table != null)
+						Table.ResetPropertyDescriptorsCache();
+				}
+				else if (String.Compare(value, _columnName, false, info) != 0) {
+					RaisePropertyChanging("ColumnName");
+					_columnName = value;
+
+					if (Table != null)
+						Table.ResetPropertyDescriptorsCache();
+				}
 			}
 		}
 
@@ -442,23 +461,55 @@ namespace System.Data {
 		public string Expression
 		{
 			get {
-				return expression;
+				return _expression;
 			}
 			set {
 				if (value == null)
 					value = String.Empty;
 					
-		 		if (value != String.Empty) {
+				if (value != String.Empty) 
+				{
+
+					if (AutoIncrement || Unique)
+						throw new ArgumentException("Cannot create an expression on a column that has AutoIncrement or Unique.");
+
+					if (Table != null)
+					{
+						for (int i = 0; i < Table.Constraints.Count; i++)
+						{
+							if (Table.Constraints[i].IsColumnContained(this))
+								throw new ArgumentException(String.Format("Cannot set Expression property on column {0}, because it is a part of a constraint.", ColumnName));
+						}
+					}
+
 					Parser parser = new Parser ();
-					compiledExpression = parser.Compile (value);
+					IExpression compiledExpression = parser.Compile (value);
+
+					if (Table != null)
+					{
+						if (compiledExpression.DependsOn(this))
+							throw new ArgumentException("Cannot set Expression property due to circular reference in the expression.");
+					}
+					
 					ReadOnly = true;
-   				}
-				expression = value;  
+					_compiledExpression = compiledExpression;
+				}
+				else
+				{
+					_compiledExpression = null;
+					if (Table != null)
+					{
+						int defaultValuesRowIndex = Table.DefaultValuesRowIndex;
+						if ( defaultValuesRowIndex != -1) 
+							DataContainer.FillValues(defaultValuesRowIndex);
+					}
+				}
+				_expression = value;  
 			}
 		}
 
 		internal IExpression CompiledExpression {
-			get { return compiledExpression; }
+			get { return _compiledExpression; }
 		}
 
 		[Browsable (false)]
@@ -478,14 +529,14 @@ namespace System.Data {
 		{
 			get {
 				//Default == -1 no max length
-				return maxLength;
+				return _maxLength;
 			}
 			set {
 				if (value >= 0 &&
 					_columnMapping == MappingType.SimpleContent)
 					throw new ArgumentException (String.Format ("Cannot set MaxLength property on '{0}' column which is mapped to SimpleContent.", ColumnName));
 				//only applies to string columns
-				maxLength = value;
+				_maxLength = value;
 			}
 		}
 
@@ -494,12 +545,18 @@ namespace System.Data {
 		public string Namespace
 		{
 			get {
-				return nameSpace;
+				if (_nameSpace != null)
+				{
+					return _nameSpace;
+				}
+				if ((Table != null) && (_columnMapping != MappingType.Attribute))
+				{
+					return Table.Namespace;
+				}
+				return String.Empty;
 			}
 			set {
-				if (value == null)
-					value = String.Empty;
-				nameSpace = value;
+				_nameSpace = value;
 			}
 		}
 
@@ -527,12 +584,12 @@ namespace System.Data {
 		public string Prefix
 		{
 			get {
-				return prefix;
+				return _prefix;
 			}
 			set {
 				if (value == null)
 					value = String.Empty;
-				prefix = value;
+				_prefix = value;
 			}
 		}
 
@@ -542,10 +599,10 @@ namespace System.Data {
 		public bool ReadOnly
 		{
 			get {
-				return readOnly;
+				return _readOnly;
 			}
 			set {
-				readOnly = value;
+				_readOnly = value;
 			}
 		}
 
@@ -567,16 +624,16 @@ namespace System.Data {
                 public bool Unique 
 		{
 			get {
-				return unique;
+				return _unique;
 			}
 			set {
 				//NOTE: In .NET 1.1 the Unique property
                                 //is left unchanged when it is added
                                 //to a UniqueConstraint
 
-				if(unique != value)
+				if(_unique != value)
 				{
-				unique = value;
+					_unique = value;
 
 					if( value )
 					{
@@ -603,9 +660,6 @@ namespace System.Data {
 									
 									if (cols.Length == 1 && cols[0] == this)
 									{
-										if (!cc.CanRemove(c))
-											throw new ArgumentException("Cannot remove unique constraint '" + c.ConstraintName + "'. Remove foreign key constraint first.");
-
 										cc.Remove(c);
 									}
 									
@@ -624,6 +678,18 @@ namespace System.Data {
 			}
 		}
 
+		internal static bool CanAutoIncrement(Type type) {
+			switch (Type.GetTypeCode(type)) {
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+				case TypeCode.Decimal:
+					return true;
+			}
+
+			return false;
+		}
+
 		#endregion // Properties
 
 		#region Methods
@@ -637,13 +703,40 @@ namespace System.Data {
 		protected void CheckUnique() {
 		}
 */
+		[MonoTODO]
+		internal DataColumn Clone() {
+			DataColumn copy = new DataColumn ();
+
+			// Copy all the properties of column
+			copy._allowDBNull = _allowDBNull;
+			copy._autoIncrement = _autoIncrement;
+			copy._autoIncrementSeed = _autoIncrementSeed;
+			copy._autoIncrementStep = _autoIncrementStep;
+			copy._caption = _caption;
+			copy._columnMapping = _columnMapping;
+			copy._columnName = _columnName;
+			//Copy.Container
+			copy.DataType = DataType;
+			copy._defaultValue = _defaultValue;			
+			copy._expression = _expression;
+			//Copy.ExtendedProperties
+			copy._maxLength = _maxLength;
+			copy._nameSpace = _nameSpace;
+			copy._prefix = _prefix;
+			copy._readOnly = _readOnly;
+			//Copy.Site
+			//we do not copy the unique value - it will be copyied when copying the constraints.
+			//Copy.Unique = Column.Unique;
+			
+			return copy;
+		}
 
 		/// <summary>
 		///  Sets unique true whithout creating Constraint
 		/// </summary>
 		internal void SetUnique() 
 		{
-			unique = true;
+			_unique = true;
 		}
 
 		[MonoTODO]
@@ -680,8 +773,8 @@ namespace System.Data {
 		/// otherwise, the ColumnName property.</returns>
 		public override string ToString()
 		{
-			if (expression != string.Empty)
-				return ColumnName + " + " + expression;
+			if (_expression != string.Empty)
+				return ColumnName + " + " + _expression;
 			
 			return ColumnName;
 		}
@@ -693,7 +786,7 @@ namespace System.Data {
             _table = table;
             // this will get called by DataTable
             // and DataColumnCollection
-            if(unique) {
+            if(_unique) {
                 // if the DataColumn is marked as Unique and then
 	            // added to a DataTable , then a UniqueConstraint
         	    // should be created
@@ -710,34 +803,39 @@ namespace System.Data {
 				DataContainer[defaultValuesRowIndex] = _defaultValue;
 				// Set all the values in data container to default
 				// it's cheaper that raise event on each row.
-				DataContainer.FillValues(_table.DefaultValuesRowIndex);
+				DataContainer.FillValues(defaultValuesRowIndex);
 			}
 		}
-
 		
 		// Returns true if all the same collumns are in columnSet and compareSet
 		internal static bool AreColumnSetsTheSame(DataColumn[] columnSet, DataColumn[] compareSet)
 		{
-			if (null == columnSet && null == compareSet) return true;
-			if (null == columnSet || null == compareSet) return false;
+			if (null == columnSet && null == compareSet) {
+				return true;
+			}
 
-			if (columnSet.Length != compareSet.Length) return false;
+			if (null == columnSet || null == compareSet) {
+				return false;
+			}
+
+			if (columnSet.Length != compareSet.Length) { 
+				return false;
+			}
 			
-			foreach (DataColumn col in columnSet)
-			{
+			foreach (DataColumn col in columnSet) {
 				bool matchFound = false;
-				foreach (DataColumn compare in compareSet)
-				{
-					if (col == compare)
-					{
+				foreach (DataColumn compare in compareSet) {
+					if (col == compare) {
 						matchFound = true;					
 					}
 				}
-				if (! matchFound) return false;
-			}
-			
+				if (! matchFound) {
+					return false;
+				}
+			}			
 			return true;
 		}
+
 		
 		internal int CompareValues (int index1, int index2)
 		{
@@ -751,7 +849,7 @@ namespace System.Data {
                 /// <returns>
                 ///     DataRelation if found otherwise null.
                 /// </returns>
-                internal DataRelation GetParentRelation ()
+        private DataRelation GetParentRelation ()
                 {
                         if (_table == null)
                                 return null;
@@ -769,7 +867,7 @@ namespace System.Data {
                 /// <returns>
                 ///     DataRelation if found otherwise null.
                 /// </returns>
-                internal DataRelation GetChildRelation ()
+        private DataRelation GetChildRelation ()
                 {
                         if (_table == null)
                                 return null;

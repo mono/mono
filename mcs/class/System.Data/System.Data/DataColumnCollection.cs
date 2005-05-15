@@ -52,6 +52,9 @@ namespace System.Data {
 		private int defaultColumnIndex = 1;
 		//table should be the DataTable this DataColumnCollection belongs to.
 		private DataTable parentTable = null;
+		// Keep reference to most recent columns passed to AddRange()
+		// so that they can be added when EndInit() is called.
+		DataColumn[] _mostRecentColumns = null;
 
 		// Internal Constructor.  This Class can only be created from other classes in this assembly.
 		internal DataColumnCollection(DataTable table):base()
@@ -66,6 +69,9 @@ namespace System.Data {
 		{
 			get
 			{
+				if (index < 0 || index > base.List.Count) {
+					throw new IndexOutOfRangeException("Cannot find column " + index + ".");
+				}
 				return (DataColumn) base.List[index];
 			}
 		}
@@ -132,7 +138,7 @@ namespace System.Data {
 			return column;
 		}
 
-		private void RegisterName(string name, DataColumn column)
+		internal void RegisterName(string name, DataColumn column)
 		{
 			if (columnFromName.Contains(name))
 				throw new DuplicateNameException("A DataColumn named '" + name + "' already belongs to this DataTable.");
@@ -149,7 +155,7 @@ namespace System.Data {
 			}
 		}
 
-		private void UnregisterName(string name)
+		internal void UnregisterName(string name)
 		{
 			if (columnFromName.Contains(name))
 				columnFromName.Remove(name);
@@ -291,11 +297,18 @@ namespace System.Data {
 		/// <param name="columns">The array of DataColumn objects to add to the collection.</param>
 		public void AddRange(DataColumn[] columns)
 		{
+			if (parentTable.fInitInProgress){
+				_mostRecentColumns = columns;
+				return;
+			}
+
+			if (columns == null)
+				return;
+
 			foreach (DataColumn column in columns)
 			{
 				Add(column);
 			}
-			return;
 		}
 
 		/// <summary>
@@ -307,32 +320,38 @@ namespace System.Data {
 		{
 						
 			//Check that the column does not have a null reference.
-			if (column == null)
-                                return false;
+			if (column == null) 
+			{
+                return false;
+			}
 
 			
 			//Check that the column is part of this collection.
-			if (!Contains(column.ColumnName))
+			if (parentTable != column.Table) 
 			{
 				return false;
 			}
 
+			parentTable.OnRemoveColumn(column);
 
+			UniqueConstraint primaryKey = parentTable.PrimaryKeyConstraint;
+			if (primaryKey != null && primaryKey.IsColumnContained(column))
+				return false;
 			
 			//Check if this column is part of a relationship. (this could probably be written better)
 			foreach (DataRelation childRelation in parentTable.ChildRelations)
 			{
-				foreach (DataColumn childColumn in childRelation.ChildColumns)
+				foreach (DataColumn childColumn in childRelation.ChildColumns) 
 				{
-					if (childColumn == column)
+					if (childColumn == column) 
 					{
 						return false;
 					}
 				}
 
-				foreach (DataColumn parentColumn in childRelation.ParentColumns)
+				foreach (DataColumn parentColumn in childRelation.ParentColumns) 
 				{
-					if (parentColumn == column)
+					if (parentColumn == column) 
 					{
 						return false;
 					}
@@ -340,66 +359,67 @@ namespace System.Data {
 			}
 
 			//Check if this column is part of a relationship. (this could probably be written better)
-			foreach (DataRelation parentRelation in parentTable.ParentRelations)
+			foreach (DataRelation parentRelation in parentTable.ParentRelations) 
 			{
-				foreach (DataColumn childColumn in parentRelation.ChildColumns)
+				foreach (DataColumn childColumn in parentRelation.ChildColumns) 
 				{
-					if (childColumn == column)
+					if (childColumn == column) 
 					{
 						return false;
 					}
 				}
 
-				foreach (DataColumn parentColumn in parentRelation.ParentColumns)
+				foreach (DataColumn parentColumn in parentRelation.ParentColumns) 
 				{
-					if (parentColumn == column)
+					if (parentColumn == column) 
 					{
 						return false;
 					}
 				}
+			}
+
+			//TODO: check constraints
+			for (int i = 0; i < parentTable.Constraints.Count; i++) {
+				if (parentTable.Constraints[i].IsColumnContained(column))
+					return false;
+			}
+
+			if (parentTable.DataSet != null) {
+				//FIXME: check whether some parent key in ForeignConstriants contains
+				// the column
 			}
 
 			
 			//Check if another column's expression depends on this column.
 			
-			foreach (DataColumn dataColumn in List)
+			foreach (DataColumn dataColumn in List) 
 			{
-				if (dataColumn.Expression.ToString().IndexOf(column.ColumnName) > 0)
+				if (dataColumn.CompiledExpression != null && 
+						dataColumn.CompiledExpression.DependsOn(column)) 
 				{
 					return false;
 				}
 			}
-			
-                        // check for part of pk
-                        UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint (parentTable.Constraints);
-                        if (uc != null && uc.Contains (column)) 
-                                throw new ArgumentException (String.Format ("Cannot remove column {0}, because" +
-                                                             " it is part of primarykey",
-                                                             column.ColumnName));
-                        // check for part of fk
-                        DataSet ds = parentTable.DataSet;
-                        
-                        if (ds != null) {
-                                foreach (DataTable t in ds.Tables) {
-                                        if (t == parentTable)
-                                                continue;
-                                        foreach (Constraint c in t.Constraints) {
-                                                if (! (c is ForeignKeyConstraint))
-                                                        continue;
-                                                ForeignKeyConstraint fk = (ForeignKeyConstraint) c;
-                                                if (fk.Contains (column, true)      // look in parent
-                                                    || fk.Contains (column, false)) // look in children
-                                                        throw new ArgumentException (String.Format ("Cannot remove column {0}, because" +
-                                                                                     " it is part of foreign key constraint",
-                                                                                     column.ColumnName));
-                                                
-                                        }
-                                        
-                                }
-                                
-                                
-                        }
-                        
+            // check for part of pk
+            UniqueConstraint uc = UniqueConstraint.GetPrimaryKeyConstraint (parentTable.Constraints);
+            if (uc != null && uc.IsColumnContained(column)) {
+               return false;
+			}
+            // check for part of fk
+            DataSet ds = parentTable.DataSet;            
+            if (ds != null) {
+                foreach (DataTable t in ds.Tables) {
+                    if (t == parentTable)
+                        continue;
+                    foreach (Constraint c in t.Constraints) {
+                        if (! (c is ForeignKeyConstraint))
+                            continue;
+                        ForeignKeyConstraint fk = (ForeignKeyConstraint) c;
+                        if (fk.IsColumnContained(column))
+                                return false;                        
+                    }                        
+                }                                        
+            }                    
 			return true;
 		}
 
@@ -410,19 +430,15 @@ namespace System.Data {
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this);
 
-
 			// FIXME: Hmm... This loop could look little nicer :)
 			foreach (DataColumn Col in List) {
-
 				foreach (DataRelation Rel in Col.Table.ParentRelations) {
-
 					foreach (DataColumn Col2 in Rel.ParentColumns) {
 						if (Object.ReferenceEquals (Col, Col2))
 							throw new ArgumentException ("Cannot remove this column, because " + 
 										     "it is part of the parent key for relationship " + 
 										     Rel.RelationName + ".");
 					}
-
 					foreach (DataColumn Col2 in Rel.ChildColumns) {
 						if (Object.ReferenceEquals (Col, Col2))
 							throw new ArgumentException ("Cannot remove this column, because " + 
@@ -433,14 +449,12 @@ namespace System.Data {
 				}
 
 				foreach (DataRelation Rel in Col.Table.ChildRelations) {
-
 					foreach (DataColumn Col2 in Rel.ParentColumns) {
 						if (Object.ReferenceEquals (Col, Col2))
 							throw new ArgumentException ("Cannot remove this column, because " + 
 										     "it is part of the parent key for relationship " + 
 										     Rel.RelationName + ".");
 					}
-
 					foreach (DataColumn Col2 in Rel.ChildColumns) {
 						if (Object.ReferenceEquals (Col, Col2))
 							throw new ArgumentException ("Cannot remove this column, because " + 
@@ -448,23 +462,19 @@ namespace System.Data {
 										     Rel.RelationName + ".");
 					}
 				}
-
 			}
 
-                        // whether all columns can be removed
-                        foreach (DataColumn col in this) {
-                                if (!CanRemove (col))
-                                        throw new ArgumentException ("Cannot remove column {0}", col.ColumnName);
-                        }
+            // whether all columns can be removed
+            foreach (DataColumn col in this) {
+                if (!CanRemove (col))
+                    throw new ArgumentException ("Cannot remove column {0}", col.ColumnName);
+            }
 
-			try {
-				columnFromName.Clear();
-				autoIncrement.Clear();
-				base.List.Clear();
-				OnCollectionChanged(e);
-			} catch (Exception ex) {
-				throw new ArgumentException (ex.Message, ex);
-			}
+			columnFromName.Clear();
+			autoIncrement.Clear();
+			base.List.Clear();
+			OnCollectionChanged(e);
+
 		}
 
 		/// <summary>
@@ -511,6 +521,7 @@ namespace System.Data {
 		/// <param name="ccevent">A CollectionChangeEventArgs that contains the event data.</param>
 		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
+			parentTable.ResetPropertyDescriptorsCache();
 			if (CollectionChanged != null) 
 			{
 				CollectionChanged(this, ccevent);
@@ -590,6 +601,13 @@ namespace System.Data {
 
 			DataColumn column = this[index];
 			Remove(column);
+		}
+
+		// Helper AddRange() - Call this function when EndInit is called
+		internal void PostEndInit() {
+			DataColumn[] cols = _mostRecentColumns;
+			_mostRecentColumns = null;
+			AddRange (cols);
 		}
 
 

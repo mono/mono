@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 namespace System.Data.Common {
 	public abstract class DbDataSourceEnumerator
@@ -52,4 +52,4 @@ namespace System.Data.Common {
 	}
 }
 
-#endif // NET_2_0
+#endif

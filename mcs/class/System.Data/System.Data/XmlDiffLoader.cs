@@ -118,7 +118,7 @@ namespace System.Data {
 		private void LoadCurrent (XmlReader reader) 
 		{
 			if (reader.IsEmptyElement) {
-				reader.Skip ();
+				reader.Skip();
 				return;
 			}
 			reader.ReadStartElement ();		// Dataset root

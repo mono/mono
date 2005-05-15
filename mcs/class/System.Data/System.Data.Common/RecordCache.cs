@@ -36,6 +36,7 @@ namespace System.Data.Common
 		int _nextFreeIndex = 0;
 		int _currentCapacity = 0;
 		DataTable _table;
+		DataRow[] _rowsToRecords;
 
 		#endregion // Fields
 
@@ -44,6 +45,7 @@ namespace System.Data.Common
 		internal RecordCache(DataTable table)
 		{
 			_table = table;
+			_rowsToRecords = table.NewRowArray(16);
 		}
 
 		#endregion //Constructors
@@ -54,6 +56,19 @@ namespace System.Data.Common
 		{
 			get {
 				return _currentCapacity;
+			}
+		}
+
+		internal DataRow this[int index]
+		{
+			get {
+				return _rowsToRecords[index];
+			}
+
+			set {
+				if (index >= 0) {
+					_rowsToRecords[index] = value;
+				}
 			}
 		}
 
@@ -76,6 +91,10 @@ namespace System.Data.Common
 					foreach(DataColumn col in cols) {
 						col.DataContainer.Capacity = _currentCapacity;
 					}
+
+					DataRow[] old = _rowsToRecords;
+					_rowsToRecords = _table.NewRowArray(_currentCapacity);
+					Array.Copy(old,0,_rowsToRecords,0,old.Length);
 				}
 				return _nextFreeIndex++;
 			}
@@ -86,9 +105,8 @@ namespace System.Data.Common
 			if ( index < 0 ) {
 				throw new ArgumentException();
 			}
-                        if (! _records.Contains (index)) {
-                                _records.Push(index);
-                        }
+			_records.Push(index);
+			this[index] = null;
 		}
 
 		internal int CopyRecord(DataTable fromTable,int fromRecordIndex,int toRecordIndex)
@@ -98,30 +116,49 @@ namespace System.Data.Common
 				recordIndex = NewRecord();
 			}
 
-			foreach(DataColumn fromColumn in fromTable.Columns) {
-				DataColumn column = _table.Columns[fromColumn.ColumnName];
-				if (column != null) {
-					column.DataContainer.CopyValue(fromColumn.DataContainer,fromRecordIndex,recordIndex);
+			try
+			{
+				foreach(DataColumn fromColumn in fromTable.Columns) 
+				{
+					DataColumn column = _table.Columns[fromColumn.ColumnName];
+					if (column != null) 
+					{
+						column.DataContainer.CopyValue(fromColumn.DataContainer,fromRecordIndex,recordIndex);
+					}
 				}
-			}
 
-			return recordIndex;
+				return recordIndex;
+			}
+			catch
+			{
+				if (toRecordIndex == -1)
+					DisposeRecord(recordIndex);
+
+				throw;
+			}
 		}
 
-                /// <summary>
-                ///     Compares two records in the given data table. The numbers are the offset
-                ///     into the container tables.
-                /// </summary>
-                internal static bool CompareRecords (DataTable table, int x, int y)
-                {
-                        foreach (DataColumn dc in table.Columns) {
-                                if (dc.DataContainer.CompareValues (x, y) != 0)
-                                        return false;
-                        }
-                        return true;
-                }
-                
-		#endregion // Methods
+		internal void ReadIDataRecord(int recordIndex, IDataRecord record, int[] mapping, int length)
+		{
+			if ( mapping.Length > _table.Columns.Count)
+				throw new ArgumentException ();
 
+			int i=0;
+			for(; i < length; i++) {
+				DataColumn column = _table.Columns[mapping[i]];
+				column.DataContainer.SetItemFromDataRecord(recordIndex, record,i);
+			}
+
+			for (; i < mapping.Length; i++)
+			{
+				DataColumn column = _table.Columns[mapping[i]];
+				if ( column.AutoIncrement ) 
+					column.DataContainer[recordIndex] = column.AutoIncrementValue ();
+				else
+					column.DataContainer[recordIndex] = column.DefaultValue;
+			}
+		}
+
+		#endregion // Methods
 	}
 }

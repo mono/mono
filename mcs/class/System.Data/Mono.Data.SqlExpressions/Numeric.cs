@@ -61,43 +61,51 @@ namespace Mono.Data.SqlExpressions {
 		}
 		
 		//(note: o1 and o2 must both be of type Int32/Int64/Decimal/Double)
-		internal static void ToSameType (ref IConvertible o1, ref IConvertible o2)
+		internal static TypeCode ToSameType (ref IConvertible o1, ref IConvertible o2)
 		{
 			TypeCode tc1 = o1.GetTypeCode();
 			TypeCode tc2 = o2.GetTypeCode();
 			
 			if (tc1 == tc2)
-				return;
+				return tc1;
+
+			if (tc1 == TypeCode.DBNull || tc2 == TypeCode.DBNull)
+				return TypeCode.DBNull;
+
 
 			// is it ok to make such assumptions about the order of an enum?
 			if (tc1 < tc2)
-				o1 = (IConvertible) Convert.ChangeType (o1, tc2);
+			{
+				o1 = (IConvertible)Convert.ChangeType (o1, tc2);
+				return tc2;
+			}
 			else
-				o2 = (IConvertible) Convert.ChangeType (o2, tc1);
+			{
+				o2 = (IConvertible)Convert.ChangeType (o2, tc1);
+				return tc1;
+			}
 		}
 		
 		internal static IConvertible Add (IConvertible o1, IConvertible o2)
 		{
-			ToSameType (ref o1, ref o2);
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
-				return (int)o1 + (int)o2;
+				return (long)((int)o1 + (int)o2);
 			case TypeCode.Int64:
 				return (long)o1 + (long)o2;
 			case TypeCode.Double:
 				return (double)o1 + (double)o2;
 			case TypeCode.Decimal:
 				return (decimal)o1 + (decimal)o2;
+			default:
+				return DBNull.Value;
 			}
 		}
 		
 		internal static IConvertible Subtract (IConvertible o1, IConvertible o2)
 		{
-			ToSameType (ref o1, ref o2);
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
 				return (int)o1 - (int)o2;
 			case TypeCode.Int64:
 				return (long)o1 - (long)o2;
@@ -105,15 +113,15 @@ namespace Mono.Data.SqlExpressions {
 				return (double)o1 - (double)o2;
 			case TypeCode.Decimal:
 				return (decimal)o1 - (decimal)o2;
+			default:
+				return DBNull.Value;
 			}
 		}
 		
 		internal static IConvertible Multiply (IConvertible o1, IConvertible o2)
 		{
-			ToSameType (ref o1, ref o2);
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
 				return (int)o1 * (int)o2;
 			case TypeCode.Int64:
 				return (long)o1 * (long)o2;
@@ -121,15 +129,15 @@ namespace Mono.Data.SqlExpressions {
 				return (double)o1 * (double)o2;
 			case TypeCode.Decimal:
 				return (decimal)o1 * (decimal)o2;
+			default:
+				return DBNull.Value;
 			}
 		}
 		
 		internal static IConvertible Divide (IConvertible o1, IConvertible o2)
 		{
-			ToSameType (ref o1, ref o2);
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
 				return (int)o1 / (int)o2;
 			case TypeCode.Int64:
 				return (long)o1 / (long)o2;
@@ -137,15 +145,15 @@ namespace Mono.Data.SqlExpressions {
 				return (double)o1 / (double)o2;
 			case TypeCode.Decimal:
 				return (decimal)o1 / (decimal)o2;
+			default:
+				return DBNull.Value;
 			}
 		}
 		
 		internal static IConvertible Modulo (IConvertible o1, IConvertible o2)
 		{
-			ToSameType (ref o1, ref o2);
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
 				return (int)o1 % (int)o2;
 			case TypeCode.Int64:
 				return (long)o1 % (long)o2;
@@ -153,6 +161,8 @@ namespace Mono.Data.SqlExpressions {
 				return (double)o1 % (double)o2;
 			case TypeCode.Decimal:
 				return (decimal)o1 % (decimal)o2;
+			default:
+				return DBNull.Value;
 			}
 		}
 		
@@ -160,7 +170,6 @@ namespace Mono.Data.SqlExpressions {
 		{
 			switch (o.GetTypeCode()) {
 			case TypeCode.Int32:
-			default:
 				return -((int)o);
 			case TypeCode.Int64:
 				return -((long)o);
@@ -168,14 +177,15 @@ namespace Mono.Data.SqlExpressions {
 				return -((double)o);
 			case TypeCode.Decimal:
 				return -((decimal)o);
+			default:
+				return DBNull.Value;
 			}
 		}
 		
 		internal static IConvertible Min (IConvertible o1, IConvertible o2)
 		{
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
 				return System.Math.Min ((int)o1, (int)o2);
 			case TypeCode.Int64:
 				return System.Math.Min ((long)o1, (long)o2);
@@ -183,14 +193,15 @@ namespace Mono.Data.SqlExpressions {
 				return System.Math.Min ((double)o1, (double)o2);
 			case TypeCode.Decimal:
 				return System.Math.Min ((decimal)o1, (decimal)o2);
+			default:
+				return DBNull.Value;
 			}
 		}
 
 		internal static IConvertible Max (IConvertible o1, IConvertible o2)
 		{
-			switch (o1.GetTypeCode()) {
+			switch (ToSameType (ref o1, ref o2)) {
 			case TypeCode.Int32:
-			default:
 				return System.Math.Max ((int)o1, (int)o2);
 			case TypeCode.Int64:
 				return System.Math.Max ((long)o1, (long)o2);
@@ -198,6 +209,8 @@ namespace Mono.Data.SqlExpressions {
 				return System.Math.Max ((double)o1, (double)o2);
 			case TypeCode.Decimal:
 				return System.Math.Max ((decimal)o1, (decimal)o2);
+			default:
+				return DBNull.Value;
 			}
 		}
 	}

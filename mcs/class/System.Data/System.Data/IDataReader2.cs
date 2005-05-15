@@ -30,15 +30,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 namespace System.Data {
 	public interface IDataReader2
 	{
 		#region Properties
-
+#if NET_2_0
 		bool HasRows { get; }
-
+#endif
 		#endregion // Properties
 	}
 }

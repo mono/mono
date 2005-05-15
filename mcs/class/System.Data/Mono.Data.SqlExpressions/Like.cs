@@ -60,7 +60,10 @@ namespace Mono.Data.SqlExpressions {
 
 		override public object Eval (DataRow row)
 		{
-			string str = (string)expr.Eval (row);
+			object o = expr.Eval (row);
+			if (o == DBNull.Value)
+				return o;
+			string str = (string)o;
 			string pattern = this.pattern;
 			if (!row.Table.CaseSensitive) {
 				str = str.ToLower();

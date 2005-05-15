@@ -50,7 +50,11 @@ namespace Mono.Data.SqlExpressions {
 		override public object Eval (DataRow row)
 		{
 			object obj1 = expr1.Eval (row);
+			if (obj1 == DBNull.Value)
+				return obj1;
 			object obj2 = expr2.Eval (row);
+			if (obj2 == DBNull.Value)
+				return obj2;
 		
 			if (op == Operation.ADD && (obj1 is string || obj2 is string))
 				return (obj1 != null ? obj1.ToString () : String.Empty) + (obj2 != null ? obj2.ToString () : String.Empty);

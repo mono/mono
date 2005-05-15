@@ -30,25 +30,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 namespace System.Data {
 	public interface IDataRecord2
 	{
 		#region Properties
 
+#if NET_2_0
 		int VisibleFieldCount { get; }
-
+#endif
 		#endregion // Properties
 
 		#region Methods
-
+#if NET_2_0
 		Type GetFieldProviderSpecificType (int i);
 		object GetProviderSpecificValue (int i);
 		int GetProviderSpecificValues (object[] values);
-
+#endif
 		#endregion // Methods
 	}
 }
 
 #endif
+
+

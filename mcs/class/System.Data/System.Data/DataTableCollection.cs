@@ -62,7 +62,11 @@ namespace System.Data {
 		#region Properties
 
 		public DataTable this[int index] {
-			get { return (DataTable)(List[index]); }
+			get {
+				if (index < 0 || index >= List.Count)
+					throw new IndexOutOfRangeException(String.Format("Cannot find table {0}", index));
+				return (DataTable)(List[index]);
+			}
 		}
 
 		public DataTable this[string name] {
@@ -96,7 +100,7 @@ namespace System.Data {
 
 		public virtual void Add (DataTable table) 
 		{
-			
+			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 			// check if the reference is a null reference
 			if(table == null)
 				throw new ArgumentNullException("table");
@@ -142,10 +146,15 @@ namespace System.Data {
 		}
 #endif
 
-		public void AddRange (DataTable[] tables) 
-		{
-			foreach (DataTable table in tables)
-				this.Add (table);
+		public void AddRange (DataTable[] tables) {
+			if (tables == null)
+				return;
+
+			for (int i = 0; i < tables.Length; i++){
+				DataTable table = tables[i];
+				if (table != null)
+					this.Add (table);
+			}
 		}
 
 		public bool CanRemove (DataTable table) 
@@ -175,7 +184,10 @@ namespace System.Data {
 
 		public void Remove (DataTable table) 
 		{
-			CanRemove(table, true);
+			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
+			if (CanRemove(table, true))
+				table.dataSet = null;
+
 			List.Remove(table);
 			table.dataSet = null;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
@@ -188,13 +200,7 @@ namespace System.Data {
 
 		public void RemoveAt (int index) 
 		{
-			if (( index < 0 ) || (index >=List.Count))
-				throw new IndexOutOfRangeException (String.Format ("There is no row at position {0}.", index));
-			DataTable t = this [index];	
-			CanRemove (t, true);
-			List.RemoveAt (index);
-			t.dataSet = null;
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, t));
+			Remove(this[index]);
 		}
 
 		#endregion

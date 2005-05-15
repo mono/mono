@@ -21,9 +21,11 @@ System.Data/DataColumnChangeEventHandler.cs
 System.Data/DataColumnCollection.cs
 System.Data/DataColumnPropertyDescriptor.cs
 System.Data/DataException.cs
+System.Data/RelatedDataView.cs
 System.Data/RelationshipConverter.cs
 System.Data/DataRelation.cs
 System.Data/DataRelationCollection.cs
+System.Data/DataRelationPropertyDescriptor.cs
 System.Data/DataRow.cs
 System.Data/DataRowAction.cs
 System.Data/DataRowBuilder.cs
@@ -79,11 +81,11 @@ System.Data/IDbDataParameter.cs
 System.Data/IDbExecutionContext.cs
 System.Data/IDbTransaction.cs
 System.Data/IGetTypedData.cs
-System.Data/Index.cs
 System.Data/InRowChangingEventException.cs
 System.Data/InternalDataCollectionBase.cs
 System.Data/InvalidConstraintException.cs
 System.Data/InvalidExpressionException.cs
+System.Data/ISafeDataRecord.cs
 System.Data/ISetTypedData.cs
 System.Data/IsolationLevel.cs
 System.Data/ITableMapping.cs
@@ -168,9 +170,12 @@ System.Data.Common/DbProviderFactory.cs
 System.Data.Common/DbProviderSupportedClasses.cs
 System.Data.Common/DbTable.cs
 System.Data.Common/DbTransaction.cs
+System.Data.Common/DbTypes.cs
 System.Data.Common/FieldNameLookup.cs
 System.Data.Common/GroupByBehavior.cs
 System.Data.Common/IdentifierCase.cs
+System.Data.Common/Index.cs
+System.Data.Common/Key.cs
 System.Data.Common/PermissionHelper.cs
 System.Data.Common/RecordCache.cs
 System.Data.Common/RowUpdatedEventArgs.cs

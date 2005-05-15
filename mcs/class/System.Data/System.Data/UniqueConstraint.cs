@@ -37,6 +37,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Data.Common;
 
 namespace System.Data {
 	[Editor]
@@ -45,9 +46,10 @@ namespace System.Data {
 	public class UniqueConstraint : Constraint 
 	{
 		private bool _isPrimaryKey = false;
-		private bool __isPrimaryKey = false;
+		private bool _belongsToCollection = false;
 		private DataTable _dataTable; //set by ctor except when unique case
 		
+		//FIXME: create a class which will wrap this collection
 		private DataColumn [] _dataColumns;
 
 		//TODO:provide helpers for this case
@@ -103,12 +105,12 @@ namespace System.Data {
 		{
 			 _dataColsNotValidated = true;
                                                                                                     
-                        //keep list of names to resolve later
-                        _dataColumnNames = columnNames;
-                                                                                                    
-                        base.ConstraintName = name;
-                                                                                                    
-                        _isPrimaryKey = isPrimaryKey;
+            //keep list of names to resolve later
+            _dataColumnNames = columnNames;
+                                                                                        
+            base.ConstraintName = name;
+                                                                                        
+            _isPrimaryKey = isPrimaryKey;
 
 		}
 
@@ -122,15 +124,13 @@ namespace System.Data {
 			//Set Constraint Name
 			base.ConstraintName = name;
 
-			__isPrimaryKey = isPrimaryKey;
+			_isPrimaryKey = isPrimaryKey;
 
 			//keep reference 
 			_dataColumns = new DataColumn [] {column};
 			
 			//Get table reference
-			_dataTable = column.Table;
-
-			
+			_dataTable = column.Table;			
 		}
 
 		//helpter ctor	
@@ -148,9 +148,7 @@ namespace System.Data {
 			_dataColumns = columns;
 
 			//PK?
-			__isPrimaryKey = isPrimaryKey;
-
-			
+			_isPrimaryKey = isPrimaryKey;			
 		}
 		
 		#endregion // Constructors
@@ -207,20 +205,6 @@ namespace System.Data {
 				throw new ArgumentException ("Column must belong to a table.");			
 		}
 
-		/// <summary>
-		///  If IsPrimaryKey is set to be true, this sets it true
-		/// </summary>
-		internal void UpdatePrimaryKey ()
-		{
-			_isPrimaryKey = __isPrimaryKey;
-			// if unique constraint defined on single column
-			// the column becomes unique
-			if (_dataColumns.Length == 1){
-				// use SetUnique - because updating Unique property causes loop
-				_dataColumns[0].SetUnique();
-			}
-		}
-
 		internal static void SetAsPrimaryKey(ConstraintCollection collection, UniqueConstraint newPrimaryKey)
 		{
 			//not null
@@ -267,47 +251,43 @@ namespace System.Data {
 			if (null == collection) throw new ArgumentNullException("Collection can't be null.");
 			if (null == columns ) return null;
 			
-			UniqueConstraint uniqueConstraint;
-			IEnumerator enumer = collection.GetEnumerator();
-			while (enumer.MoveNext())
-			{
-				uniqueConstraint = enumer.Current as UniqueConstraint;
-				if (uniqueConstraint != null)
-				{
-					if ( DataColumn.AreColumnSetsTheSame(uniqueConstraint.Columns, columns) )
-					{
-						return uniqueConstraint;
+			foreach(Constraint constraint in collection) {
+				if (constraint is UniqueConstraint) {
+					UniqueConstraint uc = constraint as UniqueConstraint;
+					if ( DataColumn.AreColumnSetsTheSame(uc.Columns, columns) ) {
+						return uc;
 					}
 				}
 			}
 			return null;
 		}
 
-		 internal bool DataColsNotValidated {
-                        
-			get { return (_dataColsNotValidated); 
+		internal bool DataColsNotValidated 
+		{               
+			get { 
+				return (_dataColsNotValidated); 
 			}
-                }
+		 }
 
 		// Helper Special Ctor
-                // Set the _dataTable property to the table to which this instance is bound when AddRange()
-                // is called with the special constructor.
-                // Validate whether the named columns exist in the _dataTable
-                internal void PostAddRange( DataTable _setTable ) {
-                
+        // Set the _dataTable property to the table to which this instance is bound when AddRange()
+        // is called with the special constructor.
+        // Validate whether the named columns exist in the _dataTable
+        internal void PostAddRange( DataTable _setTable ) 
+		{                
 			_dataTable = _setTable;
-                        DataColumn []cols = new DataColumn [_dataColumnNames.Length];
-                        int i = 0;
-                        foreach ( string _columnName in _dataColumnNames ){
-                                 if ( _setTable.Columns.Contains (_columnName) ){
-                                        cols [i] = _setTable.Columns [_columnName];
-                                        i++;
-                                        continue;
-                                }
-                                throw( new InvalidConstraintException ( "The named columns must exist in the table" ));
-                        }
-                        _dataColumns = cols;
-                }
+            DataColumn []cols = new DataColumn [_dataColumnNames.Length];
+            int i = 0;
+            foreach ( string _columnName in _dataColumnNames ) {
+                if ( _setTable.Columns.Contains (_columnName) ) {
+					cols [i] = _setTable.Columns [_columnName];
+					i++;
+					continue;
+				}
+				throw( new InvalidConstraintException ( "The named columns must exist in the table" ));
+            }
+            _dataColumns = cols;
+        }
 
 			
 		#endregion //Helpers
@@ -324,7 +304,12 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates if this constraint is a primary key.")]
 		public bool IsPrimaryKey {
-			get { return _isPrimaryKey; }
+			get { 
+				if (Table == null || (!_belongsToCollection)) {
+					return false;
+				}
+				return _isPrimaryKey; 
+			}
 		}
 
 		[DataCategory ("Data")]
@@ -373,10 +358,12 @@ namespace System.Data {
 			return hash ;
 		}
 		
-		[MonoTODO]
 		internal override void AddToConstraintCollectionSetup(
 				ConstraintCollection collection)
 		{
+			for (int i = 0; i < Columns.Length; i++)
+				if (Columns[i].Table != collection.Table)
+					throw new ArgumentException("These columns don't point to this table.");
 			//run Ctor rules again
 			_validateColumns(_dataColumns);
 			
@@ -386,111 +373,120 @@ namespace System.Data {
 					" columns. Existing ConstraintName is " + uc.ConstraintName);
 
 			//Allow only one primary key
-			if (this.IsPrimaryKey)
-			{
+			if (this.IsPrimaryKey) {
 				uc = GetPrimaryKeyConstraint(collection);
 				if (null != uc) uc._isPrimaryKey = false;
+			}
 
+			// if constraint is based on one column only
+			// this column becomes unique
+			if (_dataColumns.Length == 1) {
+				_dataColumns[0].SetUnique();
 			}
 					
 			//FIXME: ConstraintCollection calls AssertContraint() again rigth after calling
 			//this method, so that it is executed twice. Need to investigate which
 			// call to remove as that migth affect other parts of the classes.
-			AssertConstraint();
+			//AssertConstraint();
+			if (IsConstraintViolated())
+				throw new ArgumentException("These columns don't currently have unique values.");
+
+			_belongsToCollection = true;
 		}
 					
 		
 		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
-			Index index = this.Index;
-			this.Index = null;
-			// if a foreign key constraint references the same index - 
-			// change the index be to not unique.
-			// In this case we can not just drop the index
-			ICollection fkCollection = collection.ForeignKeyConstraints;
-			foreach (ForeignKeyConstraint fkc in fkCollection) {
-				if (index == fkc.Index) {
-					fkc.Index.SetUnique (false);
-					// this is not referencing the index anymore
-					return;
-				}
-			}
-			
-			// if we are here no one is using this index so we can remove it.
-			// There is no need calling drop index here
-			// since two unique constraints never references the same index
-			// and we already check that there is no foreign key constraint referencing it.
-			Table.RemoveIndex (index);
+			_belongsToCollection = false;
+			Index index = Index;
+			Index = null;
 		}
 
-		[MonoTODO]
-		internal override void AssertConstraint()
-		{			
-			if (_dataTable == null) return; //???
-			if (_dataColumns == null) return; //???		
-			
-			Index fromTableIndex = null;
+		protected override bool IsConstraintViolated()
+		{	
 			if (Index == null) {
-				fromTableIndex = Table.GetIndexByColumns (Columns);
-				if (fromTableIndex == null) {
-					Index = new Index (ConstraintName, _dataTable, _dataColumns, true);	
-				}
-				else {
-					fromTableIndex.SetUnique (true);
-					Index = fromTableIndex;
-				}
+				Index = Table.GetIndex(Columns,null,DataViewRowState.None,null,false);
 			}
 
-			try {
-				Table.InitializeIndex (Index);
+			if (Index.HasDuplicates) {
+				int[] dups = Index.Duplicates;
+				for (int i = 0; i < dups.Length; i++){
+					DataRow row = Table.RecordCache[dups[i]];
+					ArrayList columns = new ArrayList();
+					ArrayList values = new ArrayList();
+					foreach (DataColumn col in Columns){
+						columns.Add(col.ColumnName);
+						values.Add(row[col].ToString());
+					}
+
+					string columnNames = String.Join(",", (string[])columns.ToArray(typeof(string)));
+					string columnValues = String.Join(",", (string[])values.ToArray(typeof(string)));
+
+					row.RowError = String.Format("Column(s) '{0}' are constrained to be unique.  Value(s) '{1}' are already present", columnNames, columnValues);
+				}
+				// FIXME : check the exception to be thrown here
+				// throw new ConstraintException("These columns don't currently have unique values");
+				//throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
+				return true;
 			}
-			catch (ConstraintException) {
-#if NET_1_1
-				throw;
-#else
-				Index = null;
-				throw new ArgumentException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
-#endif
-			}
-			
-			// if there is no index with same columns - add the new index to the table.
-			if (fromTableIndex == null)
-				Table.AddIndex (Index);
+
+			return false;
 		}
 
-		[MonoTODO]
 		internal override void AssertConstraint(DataRow row)
-		{
-			if (_dataTable == null) return; //???
-			if (_dataColumns == null) return; //???
+		{	
+			if (IsPrimaryKey && row.HasVersion(DataRowVersion.Default)) {
+				for (int i = 0; i < Columns.Length; i++) {
+					if (row.IsNull(Columns[i])) {
+						throw new NoNullAllowedException("Column '" + Columns[i].ColumnName + "' does not allow nulls.");
+					}
+				}
+			}
 			
 			if (Index == null) {
-				Index = Table.GetIndexByColumns (Columns, true);
-				if (Index == null) {
-					Index = new Index (ConstraintName, _dataTable, _dataColumns, true);
-					Table.AddIndex (Index);
-				}
+				Index = Table.GetIndex(Columns,null,DataViewRowState.None,null,false);
 			}
 
-			if (IsPrimaryKey) {
-				object val;
-				for (int i = 0; i < _dataColumns.Length; i++) {
-                                        if (row.RowState == DataRowState.Deleted)
-                                                val = row.GetValue (i, DataRowVersion.Original);
-                                        else
-                                                val = row.GetValue (i, DataRowVersion.Default);
-					if (val == null || val == DBNull.Value)
-						throw new NoNullAllowedException("Column '" + _dataColumns[i].ColumnName + "' does not allow nulls.");
-				}
-			}
-
-			try {
-				UpdateIndex (row);
-			}
-			catch (ConstraintException) {
+			if (Index.HasDuplicates) {
 				throw new ConstraintException(GetErrorMessage(row));
 			}
+		}
+
+		internal override bool IsColumnContained(DataColumn column)
+		{
+			for (int i = 0; i < _dataColumns.Length; i++)
+				if (column == _dataColumns[i])
+					return true;
+
+			return false;
+		}
+
+		internal override bool CanRemoveFromCollection(ConstraintCollection col, bool shouldThrow){
+			if (Equals(col.Table.PrimaryKey)){
+				if (shouldThrow)
+					throw new ArgumentException("Cannot remove unique constraint since it's the primary key of a table.");
+
+				return false;
+			}
+
+			if (Table.DataSet != null){
+				foreach (DataTable table in Table.DataSet.Tables){
+					foreach (Constraint constraint in table.Constraints){
+						if (constraint is ForeignKeyConstraint)
+							if (((ForeignKeyConstraint)constraint).RelatedTable == Table){
+								if (shouldThrow)
+									throw new ArgumentException(
+										String.Format("Cannot remove unique constraint '{0}'. Remove foreign key constraint '{1}' first.",
+										ConstraintName, constraint.ConstraintName)
+										);
+								return false;
+							}
+					}
+				}
+			}
+
+			return true;
 		}
 
 		private string GetErrorMessage(DataRow row)
@@ -498,24 +494,18 @@ namespace System.Data {
 			int i;
 			 
 			System.Text.StringBuilder sb = new System.Text.StringBuilder(row[_dataColumns[0]].ToString());
-			for (i = 1; i < _dataColumns.Length; i++)
+			for (i = 1; i < _dataColumns.Length; i++) {
 				sb = sb.Append(", ").Append(row[_dataColumns[i].ColumnName]);
+			}
 			string valStr = sb.ToString();
 			sb = new System.Text.StringBuilder(_dataColumns[0].ColumnName);
-			for (i = 1; i < _dataColumns.Length; i++)
+			for (i = 1; i < _dataColumns.Length; i++) {
 				sb = sb.Append(", ").Append(_dataColumns[i].ColumnName);
+			}
 			string colStr = sb.ToString();
 			return "Column '" + colStr + "' is constrained to be unique.  Value '" + valStr + "' is already present.";
 		}
-		
-                internal bool Contains (DataColumn c)
-                {
-                        foreach (DataColumn col in Columns)
-                                if (c == col)
-                                        return true;
-                        return false;
-                }
-                
+			               
 		
 		#endregion // Methods
 

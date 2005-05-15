@@ -36,6 +36,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Data.Common;
 
 namespace System.Data
 {
@@ -61,7 +62,7 @@ namespace System.Data
 		public DataRow this[int index] 
 		{
 			get { 
-				if (index >= Count)
+				if (index < 0 || index >= Count)
 					throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 
 				return (DataRow) List[index]; 
@@ -92,11 +93,16 @@ namespace System.Data
 			if (row.RowID != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 			
+			row.BeginEdit();
 
 			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
-			
+
+			AddInternal(row);
+		}
+
+		internal void AddInternal(DataRow row) {
 			row.Table.ChangingDataRow (row, DataRowAction.Add);
 			row.HasParentCollection = true;
 			List.Add (row);
@@ -115,11 +121,13 @@ namespace System.Data
 		public virtual DataRow Add (object[] values) 
 #endif
 		{
-			if (values.Length > table.Columns.Count)
-				throw new ArgumentException ("The array is larger than the number of columns in the table.");
-			DataRow row = table.NewRow ();
-			row.ItemArray = values;
-			Add (row);
+			DataRow row = table.NewNotInitializedRow();
+			int newRecord = table.CreateRecord(values);
+			row.ImportRecord(newRecord);
+			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
+				// we have to check that the new row doesn't colide with existing row
+				ValidateDataRowInternal(row);
+			AddInternal (row);
 			return row;
 		}
 
@@ -171,10 +179,6 @@ namespace System.Data
 		/// </summary>
 		public bool Contains (object[] keys) 
 		{
-			if (table.PrimaryKey.Length != keys.Length)
-				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length + " value(s) for the key " + 
-							     "being indexed, but received " + keys.Length + " value(s).");
-
 			return Find (keys) != null;
 		}
 
@@ -183,254 +187,57 @@ namespace System.Data
 		/// </summary>
 		public DataRow Find (object key) 
 		{
-			return Find (key, // primary key value
-                                     true // ignore deleted records
-                                     );
+			return Find(new object[]{key});
+                }
+
+		/// <summary>
+		/// Gets the row containing the specified primary key values.
+		/// </summary>
+		public DataRow Find (object[] keys)
+		{
+			if (table.PrimaryKey.Length == 0)
+				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
+
+			if (keys == null)
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
+                                                                                                    
+			Index index = table.GetIndex(table.PrimaryKey,null,DataViewRowState.None,null,false);
+
+			int record = index.Find(keys);
+			return (record != -1) ? table.RecordCache[record] : null;
 		}
 
-                /// <summary>
-                ///     Searches records for the given primary key values.
-                /// </summary>
-                public DataRow Find (object [] keys)
-                {
-                        return Find (keys, // primary key values
-                                     true  // ignore deleted records
-                                     );
-                }
-                
-                /// <summary>
-                ///     Searches records for the given primary key values populated into
-                ///     a temporary cache index.
-                /// </summary>
-                internal DataRow Find (int index, int length)
-                {
-                        return Find (index,     // record to find
-                                     length,    // length of primary key
-                                     true       // ignore deleted records
-                                     );
-                }
-
-                /// <summary>
-                ///     Searches records for the given single primary key.
-                /// </summary>
-                /// <param name='key'>Primary key value to be searched </param>
-                /// <param name='ignoreDeleted'>
-                ///    Ignore the records with row state DataRowState.Deleted
-                ///    if true.
-                /// </param>
-                internal DataRow Find (object key, bool ignoreDeleted)
-                {
-                        if (table.PrimaryKey.Length == 0)
-				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
-			if (table.PrimaryKey.Length > 1)
-				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 1 value(s).");
-
-			if (key == null)
-#if NET_1_1
-				return null;
-#else
-				throw new ArgumentException("Expecting 1 value(s) for the key being indexed, but received 0 value(s).");
-#endif
-
-			DataColumn primaryKey = table.PrimaryKey[0];
-			Index primaryKeyIndex = table.GetIndexByColumns(table.PrimaryKey);
-			int tmpRecord = table.RecordCache.NewRecord();
-			try {
-				primaryKey.DataContainer[tmpRecord] = key;
-
-				// if we can search through index
-				if (primaryKeyIndex != null) {
-					// get the child rows from the index
-					Node node = primaryKeyIndex.FindSimple(tmpRecord,1,true);
-					if (node != null) {
-						return node.Row;
-					}
+		internal DataRow Find(int index)
+		{
+			DataColumn[] primaryKey = table.PrimaryKey;
+			Index primaryKeyIndex = table.FindIndex(primaryKey);
+			// if we can search through index
+			if (primaryKeyIndex != null) {
+				// get the child rows from the index
+				int record = primaryKeyIndex.Find(index);
+				if ( record != -1 ) {
+					return table.RecordCache[record];
 				}
-			
+			}
+			else {
 				//loop through all collection rows			
 				foreach (DataRow row in this) {
-					if (ignoreDeleted && row.RowState == DataRowState.Deleted)
-                                                continue;
-                                        int index = row.IndexFromVersion(DataRowVersion.Default);
-                                        if (row.RowState == DataRowState.Deleted)
-                                                index = row.Current;
-                                        if (primaryKey.DataContainer.CompareValues(index, tmpRecord) == 0) {
-                                                return row;
+					if (row.RowState != DataRowState.Deleted) {
+						int rowIndex = row.IndexFromVersion(DataRowVersion.Default);
+						bool match = true;
+						for (int columnCnt = 0; columnCnt < primaryKey.Length; ++columnCnt) { 
+							if (primaryKey[columnCnt].DataContainer.CompareValues(rowIndex, index) != 0) {
+								match = false;
+							}
+						}
+						if ( match ) {
+							return row;
+						}
 					}
 				}
-				return null;
-			}
-			finally {
-				table.RecordCache.DisposeRecord(tmpRecord);
-			}
-                }
-
-                /// <summary>
-                ///     Searches records for the given primary key values.
-                /// </summary>
-                /// <param name='keys'>Primary key values to be searched </param>
-                /// <param name='ignoreDeleted'>
-                ///    Ignore the records with row state DataRowState.Deleted
-                ///    if true.
-                /// </param>
-		internal DataRow Find (object[] keys, bool ignoreDeleted) 
-		{
-                        AssertFind (keys);
-
-			DataColumn[] primaryKey = table.PrimaryKey;
-			int tmpRecord = table.RecordCache.NewRecord();
-			try {
-				int numColumn = keys.Length;
-				for (int i = 0; i < numColumn; i++) {
-					// according to MSDN: the DataType value for both columns must be identical.
-					primaryKey[i].DataContainer[tmpRecord] = keys[i];
-				}
-				return Find(tmpRecord, numColumn, ignoreDeleted);
-			}
-			finally {
-				table.RecordCache.DisposeRecord(tmpRecord);
-			}
-		}
-
-                /// <summary>
-                ///     Searches records for the given primary key values and the 
-                ///     given version.
-                /// </summary>
-                /// <param name='keys'>Primary key values to be searched </param>
-                /// <param name='version'>
-                ///    Version of the rows to be searched for.
-                /// </param>
-                internal DataRow Find (object [] values, DataRowVersion version)
-                {
-                        AssertFind (values);
-                                                                                                    
-			DataColumn[] pk = table.PrimaryKey;
-			int temp = table.RecordCache.NewRecord();
-			try {
-				for (int i = 0; i < pk.Length; i++)
-					pk [i].DataContainer[temp] = values [i];
-				return Find(temp, version, false); // include deleted records also
-			}
-			finally {
-				table.RecordCache.DisposeRecord(temp);
-			}
-                }
-
-                /// <summary>
-                ///     Searches records for the given primary key values and the 
-                ///     given version.
-                /// </summary>
-                /// <param name='record'>index of the record which holds the values to be searchd.
-                /// </param>
-                /// <param name='version'>
-                ///    Version of the rows to be searched for.
-                /// </param>
-                /// <param name='ignoreDeleted'>Ignore the records with state Deleted </param>
-		private DataRow Find(int record, DataRowVersion version, bool ignoreDeleted)
-		{
-                        DataRow resultRow = null;
-                        if (version == DataRowVersion.Current) {
-                                // index engine holds only the current records.
-                                resultRow = IndexSearch (record);
-                                if (resultRow != null)
-                                        return resultRow;
-                        }
-
-			// fallback : loop through all collection rows			
-                        // if there is a matching record with state deleted, that won't be detected
-                        // in the above search. (deleted records are not part of index.
-			foreach (DataRow row in this) {
-				if (ignoreDeleted && row.RowState != DataRowState.Deleted) 
-                                        continue;
-                                
-                                int offset = row.IndexFromVersion(version);
-                                if (offset < 0)
-                                        continue;
-                                bool matching = true;
-                                for (int i = 0; matching && i < table.PrimaryKey.Length; i++) { 
-                                        if (table.PrimaryKey [i].DataContainer.CompareValues(offset, record) != 0)
-                                                matching = false;
-                                }
-                                if (matching) {
-                                        resultRow = row; 
-                                        break;
-                                }
-			}
-			return resultRow;
-
-                }
-
-                /// <summary>
-                ///     Searches records for the given primary key values and the 
-                ///     given version.
-                /// </summary>
-                /// <param name='index'> index of the record which holds the values to be searchd.
-                /// </param>
-                /// <param name='length'> length of primary keys </param>
-                /// <param name='ignoreDeleted'> Ignore the records with state Deleted </param>
-		private DataRow Find(int index, int length, bool ignoreDeleted)
-		{
-                        DataRow resultRow = IndexSearch (index);
-                        if (resultRow != null)
-                                return resultRow;
-                        
-			//loop through all collection rows			
-			foreach (DataRow row in this) {
-				if (ignoreDeleted && row.RowState != DataRowState.Deleted) 
-                                        continue;
-                                
-                                int rowIndex = row.IndexFromVersion(DataRowVersion.Default);
-                                if (row.RowState == DataRowState.Deleted)
-                                        rowIndex = row.Current;
-                                bool match = true;
-                                for (int columnCnt = 0; columnCnt < length; ++columnCnt) { 
-                                        if (table.PrimaryKey[columnCnt].DataContainer.CompareValues(rowIndex, index) != 0) {
-                                                match = false;
-                                        }
-                                }
-                                if ( match ) {
-                                        return row;
-                                }
 			}
 			return null;
 		}
-
-
-                /// <summary>
-                ///   Asserts the validity of the search.
-                /// </summary>
-                private void AssertFind (object [] values)
-                {
-                        if (table.PrimaryKey.Length == 0)
-                                throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
-
-			if (values == null)
-				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
-
-			if (table.PrimaryKey.Length != values.Length)
-				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received " + values.Length +  " value(s).");
-        
-                }
-
-                /// <summary>
-                ///   Search for the record using the index.
-                /// </summary>
-                private DataRow IndexSearch (int record)
-                {
-                        Index index = table.GetIndexByColumns(table.PrimaryKey);
-                        // search in index
-                        // priority is the non-deleted recrod
-			if (index != null) {
-				// get the child rows from the index
-				Node node = index.FindSimple(record,
-                                                             table.PrimaryKey.Length, 
-                                                             true
-                                                             );
-				if (node != null)
-					return node.Row;
-			}
-                        return null;
-                }                
 
 		/// <summary>
 		/// Inserts a new row into the collection at the specified location.
@@ -492,16 +299,18 @@ namespace System.Data
 		/// </summary>
 		public void Remove (DataRow row) 
 		{
-			if (row == null)
+			if (!List.Contains(row))
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			int index = List.IndexOf(row);
-			if (index < 0)
-				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			row.Delete();
-			// if the row was in added state it will be in Detached state after the
-			// delete operation, so we have to check it.
-			if (row.RowState != DataRowState.Detached)
-				row.AcceptChanges();
+
+			DataRowState state = row.RowState;
+			if (state != DataRowState.Deleted &&
+				state != DataRowState.Detached) {
+				row.Delete();
+				// if the row was in added state it will be in Detached state after the
+				// delete operation, so we have to check it.
+				if (row.RowState != DataRowState.Detached)
+					row.AcceptChanges();
+			}
 		}
 
 		/// <summary>
@@ -509,14 +318,7 @@ namespace System.Data
 		/// </summary>
 		public void RemoveAt (int index) 
 		{			
-			if (index < 0 || index >= List.Count)
-				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
-			DataRow row = (DataRow)List [index];
-			row.Delete();
-			// if the row was in added state it will be in Detached state after the
-			// delete operation, so we have to check it.
-			if (row.RowState != DataRowState.Detached)
-				row.AcceptChanges();
+			Remove(this[index]);
 		}
 
 		///<summary>
@@ -529,45 +331,26 @@ namespace System.Data
 			//first check for null violations.
 			row._nullConstraintViolation = true;
 			row.CheckNullConstraints();
-			// This validates constraints in the specific order : 
-			// first unique/primary keys first, then Foreignkeys, etc
-			ArrayList uniqueConstraintsDone = new ArrayList();
-			ArrayList foreignKeyConstraintsDone = new ArrayList();
-			try {
-				foreach(Constraint constraint in table.Constraints.UniqueConstraints) {
-					constraint.AssertConstraint(row);
-					uniqueConstraintsDone.Add(constraint);
-				}
-			
-				foreach(Constraint constraint in table.Constraints.ForeignKeyConstraints) {
-					constraint.AssertConstraint(row);
-					foreignKeyConstraintsDone.Add(constraint);
-				}
-			}
-			// if one of the AssertConstraint failed - we need to "rollback" all the changes
-			// caused by AssertCoinstraint calls already succeeded
-			catch(ConstraintException e) {
-				RollbackAsserts(row,foreignKeyConstraintsDone,uniqueConstraintsDone);
-				throw e;
-			}
-			catch(InvalidConstraintException e) {	
-				RollbackAsserts(row,foreignKeyConstraintsDone,uniqueConstraintsDone);
-				throw e;
-			}
-		}
 
-		private void RollbackAsserts(DataRow row,ICollection foreignKeyConstraintsDone,
-			ICollection uniqueConstraintsDone)
-		{
-			// if any of constraints assert failed - 
-			// we have to rollback all the asserts scceeded
-			// on order reverse to thier original execution
-			foreach(Constraint constraint in foreignKeyConstraintsDone) {
-				constraint.RollbackAssert(row);
+			int newRecord = (row.Proposed >= 0) ? row.Proposed : row.Current;
+			if (newRecord < 0)
+				return;
+
+			foreach(Index index in table.Indexes) {
+				index.Update(row,newRecord);
 			}
 
-			foreach(Constraint constraint in uniqueConstraintsDone) {
-				constraint.RollbackAssert(row);
+			foreach(Constraint constraint in table.Constraints) {
+				try {
+					constraint.AssertConstraint(row);
+				}
+				catch(Exception e) {
+					// remove row from indexes
+					foreach(Index index in table.Indexes) {
+						index.Delete(newRecord);
+					}
+					throw e;
+				}
 			}
 		}
 	}

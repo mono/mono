@@ -100,7 +100,7 @@ namespace Mono.Data.SqlExpressions {
 			switch (refTable) {
 			case ReferencedTable.Self:
 			default:
-				DataRow[] rows = new DataRow [row.Table.Rows.Count];
+				DataRow[] rows = row.Table.NewRowArray(row.Table.Rows.Count);
 				row.Table.Rows.CopyTo (rows, 0);
 				return rows;
 				
@@ -152,6 +152,11 @@ namespace Mono.Data.SqlExpressions {
 				throw new EvaluateException (String.Format ("Cannot find column [{0}].", columnName));
 			}
 			return Unify (val);
+		}
+
+		override public bool DependsOn(DataColumn other)
+		{
+			return refTable == ReferencedTable.Self && columnName == other.ColumnName;
 		}
 	}
 }

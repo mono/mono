@@ -200,7 +200,7 @@ namespace System.Data
 			xtr.Read ();
 			if (xtr.Name != "DataViewSettingCollectionString")
 				// easy way to throw the expected exception ;-)
-				xtr.ReadStartElement ("DataViewSettingCollectionString");
+			xtr.ReadStartElement ("DataViewSettingCollectionString");
 			if (xtr.IsEmptyElement)
 				return; // MS does not change the value.
 
@@ -388,9 +388,9 @@ namespace System.Data
 				
 			throw new NotImplementedException ();
 		}
-			
+	
 		string ITypedList.GetListName (PropertyDescriptor[] listAccessors)
-		{			
+		{
 			if (dataSet != null) {							
 				if (listAccessors == null || listAccessors.Length == 0) {
 					return  dataSet.DataSetName;
@@ -408,6 +408,22 @@ namespace System.Data
 
 		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e) 
 		{
+			ListChangedEventArgs args;
+
+			if (e.Action == CollectionChangeAction.Remove) {
+				args = null;
+			}
+			else if (e.Action == CollectionChangeAction.Refresh) {
+				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorChanged, null);
+			}
+			else if (e.Action == CollectionChangeAction.Add) {
+				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorAdded, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
+			}
+			else {
+				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
+			}
+
+			this.OnListChanged(args);
 		}
 
 		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e) 

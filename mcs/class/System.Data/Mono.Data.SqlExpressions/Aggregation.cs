@@ -97,9 +97,14 @@ namespace Mono.Data.SqlExpressions {
 			}
 			
 			if (result == null)
-				result = 0;
+				result = DBNull.Value;
 				
 			return result;
+		}
+
+		override public bool DependsOn(DataColumn other)
+		{
+			return column.DependsOn(other);
 		}
 		
 		private void Aggregate (IConvertible val)

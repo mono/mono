@@ -1,5 +1,5 @@
 // 
-// System.Data/DataSet.cs
+// System.Data/XmlConstants.cs
 //
 // Author:
 //   Stuart Caborn <stuart.caborn@virgin.net>

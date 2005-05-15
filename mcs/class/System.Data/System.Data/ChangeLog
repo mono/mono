@@ -68,6 +68,153 @@
 	* DataRowAction.cs: Added few more enums for .net 2.0. Sorted
 	alphabetically.
 
+2005-05-16 Konstantin Triger <kostat@mainsoft.com>
+
+	* UniqueConstraint.cs : IsNull check is relevant for rows having default row version.
+	* DataTable.cs : The row should be validated when imported
+	* DataRowCollection.cs : if the row does not contain Proposed neither Current version, it's irrelevant for validation
+
+2005-04-26 Boris Kirzner <borisk@mainsoft.com>
+
+	* UniqueConstraint.cs :
+		- Add indication whenever the constraint belongs to collection. 
+		- Calculation of IsPrimaryKey simplified.
+		- If constraint is based on single column, the column becomes unique.
+		- Use boolean IsConstraintViolated() instead of AssertConstraint().
+		- Use Index.Duplicates to proper exception message formatting.
+		- AssertConstraint(DataRow) changed to suite new indexes interface.
+		- Added CanRemoveFromCollection method.
+		- Contains() method renamed to IsColumnContained().
+	* RelatedDataView.cs : added new class.
+	* MergeManager.cs :
+		- Reset indexes after merge.
+		- Add new tables when row array is merged into dataset.
+		- Clean proposed record in MergeRow.
+		- Inherit nesting on creating new relations in target data set.
+		- Avoid double loop on constraints collection.
+	* Locale.cs : added new class.
+	* ISafeDataRecord.cs : added new interface.
+	* Index.cs : commented out. Index implementation moved to System.Data.Common.
+	* ForeignKeyConstraint.cs : 
+		- No more use of childColumnsExtended since new indexes allow duplicate records.
+		- Constraints can not be created on expression columns.
+		- Removed unnecessary delegation.
+		- Use boolean IsConstraintViolated() instead of AssertConstraint(). 
+		- Use proper exception message formatting.
+		- Contains() method renamed to IsColumnContained().
+	* DataViewRowState.cs : use enum members to simplify notation.
+	* MergeManager.cs : implemented RelationCollectionChanged().
+	* DataView.cs :  new implementation.
+	* DataTableCollection.cs : 
+		- Added boundary check in indexer.
+		- More accurate handling in AddRange().
+		- Raise event in Remove().
+	* DataTable.cs :
+		- Hold primary key as constraint.
+		- Added accurate handling of DefaultView.
+		- Hold DataRowBuilder per table.
+		- Proper exception messages if enforce Constraints is violated.
+		- If there is no rows, Compute() returns DBNull.
+		- Use DataRow properties instead of private members.
+		- CopyProperties() fixed.
+		- Raise proper events in EndInit().
+		- Proper order of violation checks in EndLoadData().
+		- Create array of rows using NewRowArray().
+		- ImportRow handles rows according to their versions.
+		- LoadDataRow make use of records (instead of raw object array).
+		- Added and implemented LoadDataRow() that gets IDataRecord as a parameter (used in Fill)
+		- Select() uses indexes filtering and sorting ability (instead of "loop-throw-sort" approach).
+		- Removed redundant RowSorter and Sortable column classes.
+		- ParseSortString() fixed to threat bracketed column names.
+		- Table holds collection of property descriptors.
+	* DataSet.cs :
+		- Reset table case sensitive indexes on CaseSensitive change.
+		- EnforceConstraints update logic moved to internal method (used by DataTable).
+		- InAddChangedRow first add row and than copy values for proper handling of default values.
+	* DataRowView.cs :
+		- Changed private member names to suite name convention.
+		- CancelEdit() fixed.
+		- CreateChildView() delegates to DataView.
+		- IsNew fixed.
+		- Proper exception messages in indexers.
+		- RowVersion uses DataView.
+		- GetProperties() delegates to corresponding table if needed.
+	* DataRowCollection.cs :
+		- Common Add() logic moved to AddInternal() (used also by DataTable).
+		- Removed redundant check from Contains().
+		- Dalegate Find() calls when possible.
+		- Remove() fixed.
+		- RomoveAt() delegates to Remove().
+		- Optimized constraints check in row validation.
+	* DataRelationPropertyDescriptor.cs : added new class.
+	* DataRelationCollection.cs :
+		- Indexers fixed.
+		- Fixed order of actions in AddCore().
+		- RemoveCore() also delegates to base.
+		- Add relation to dataset also in AddCore().
+		- Remove relation from dataset also in RemoveCore().
+		- InTransition hold a data relation so we can properly identify the "in transition" state.
+		- Added threat of parent and child table s property descriptors in Add().
+		- Common Add() logic moved to AddCore().
+		- Clear() fixed.
+		- Remove() threats "in transition" state properly.
+		- Remove methods delegate to single implementation.
+	* DataColumnPropertyDescriptior.cs :
+		- Added new constructor.
+		- Commented out redundant method.
+	* DataColumnCollection.cs :
+		- Boundary check in indexer.
+		- RegisterName and UnregisterName become internal (used also by DataColumn).
+		- Fixed AddRange().
+		- Fixed CanRemove().
+		- Rethrow correct exception in Clear();
+		- Change in collection resets parent table property descriptors.
+		- Added PostEndEdit() helper method (used by DataTable).
+	* DataColumn.cs :
+		- Private member names changed to suite name convention.
+		- Created method for CanAutoIncrement() logic.
+		- Proper handling of column name update.
+		- Proper exception messages on expression update.
+		- Proper namespace handling (delegates to table when needed).
+		- Removed redundant check in Unique update.
+		- Implemented internal Clone().
+		- GetParentRalation() and GetChildRelation() become private.
+	* Constraint.cs :
+		- Added abstract methods (implemented in UniqueConstraint and ForeignKeyConstraint).
+		- Simplified index update.
+	* ConstraintCollection.cs :
+		- Use Locale instead of CaseSensitive in column names comparison.
+		- Removed #ifdef
+		- Rethrow correct exception type in Add().
+		- Proper update of table primary key in Add().
+		- Delegate CanRemove() to constraint.
+		- Remove table primary key in Clear();
+		- Delegate "can remove" check to constraint in Remove().
+		- Removed unnecessary methods and properties.
+	* DataRow.cs :
+		- RowSate becomes calculated property.
+		- Use properties instead of private members where possible.
+		- Fixed indexer.
+		- Fixed order of actions in ItemArray update.
+		- Fixed DetachRow().
+		- Added ImportRecord() method.
+		- Removed redundant SetValuesFromDataRecord().
+		- Fixed IndexFromVersion().
+		- Added VersionFromIndex() method. Returns row version the passed record index corresponds to.
+		- Fixed AcceptChanges().
+		- Fixed creating proposed version in BeginEdit();
+		- Added record disposal in Delete().
+		- Fixed CheckChildRows().
+		- EndEdit() fixed. Checks for readonly. Uses straight flow instead of "try and fix if fail" approach.
+		- GetChildRows() and GetPrarentRows() rewrited. Use records and indexes for rows lookup.
+		- GetColumnError() delegates to another implementation.
+		- HasVersion() fixed.
+		- RejectCahnges checks on child rows before passing through.
+		- SetParentRow() fixed. Create relation collection if needed. Use typed data container value copy.
+		- CopyErrors() logic moved to separate method (used also by DataTable).
+	* ExpressionElement.cs : added new class.
+	* Res.cs : added new class.
+
 2005-04-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataViewManager.cs: implements TypedList.GetListName used in SWF

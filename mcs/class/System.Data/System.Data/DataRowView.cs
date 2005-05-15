@@ -43,27 +43,23 @@ namespace System.Data
 	/// <summary>
 	/// Represents a customized view of a DataRow exposed as a fully featured Windows Forms control.
 	/// </summary>
+	// FIXME: correct exceptions in this[] methods
 	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo
 	{
 		#region Fields
 
-		DataView dataView;
-		DataRow dataRow;
-		DataRowVersion rowVersion = DataRowVersion.Current;
-
-		bool isNew;
+		DataView _dataView;
+		DataRow _dataRow;
+		int _index = -1;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		internal DataRowView (DataView dataView, DataRow row) : this(dataView, row, false){
-		}
-
-		internal DataRowView (DataView dataView, DataRow row, bool isNew) {
-			this.dataView = dataView;
-			this.dataRow = row;
-			this.isNew = isNew;
+		internal DataRowView (DataView dataView, DataRow row, int index) {
+			_dataView = dataView;
+			_dataRow = row;
+			_index = index;
 		}
 
 		#endregion // Constructors
@@ -74,45 +70,65 @@ namespace System.Data
 		{
 			return (other != null &&
 					other is DataRowView && 
-					((DataRowView)other).dataRow != null && 
-					((DataRowView)other).dataRow.Equals(this.dataRow));
+					((DataRowView)other)._dataRow != null && 
+					((DataRowView)other)._dataRow.Equals(_dataRow));
 		}
 
 		public void BeginEdit ()
 		{
-			dataRow.BeginEdit ();
+			_dataRow.BeginEdit();
 		}
 
 		public void CancelEdit ()
 		{
-			dataView.CancelEditRowView (this);
-			isNew = false;
+			// FIXME:
+			if (this.Row == DataView._lastAdded) {
+				DataView.CompleteLastAdded(false);
+			}
+			else {
+				_dataRow.CancelEdit();
+			}
 		}
 
+		[MonoTODO]
 		public DataView CreateChildView (DataRelation relation)
 		{
 			if (relation == null)
 				throw new ArgumentException ("The relation is not parented to the table.");
-			return new DataView (relation.ChildTable,
-				dataRow.GetChildRows (relation));
+			// FIXME : provide more efficient implementation using records
+			object[] keyValues = new object[relation.ParentColumns.Length];
+			for(int i=0; i < relation.ParentColumns.Length; i++) {
+				keyValues[i] = this[relation.ParentColumns[i].Ordinal];
+			}
+			return DataView.CreateChildView(relation,keyValues);
 		}
 
 		public DataView CreateChildView (string name)
 		{
 			return CreateChildView (
-				dataRow.Table.ChildRelations [name]);
+				Row.Table.ChildRelations [name]);
 		}
 
 		public void Delete ()
 		{
-			dataView.DeleteRowView (this);
-			isNew = false;
+			DataView.Delete(_index);
 		}
 
 		public void EndEdit ()
 		{
-			dataView.EndEditRowView (this);
-			isNew = false;
+			// FIXME:
+			if (this.Row == DataView._lastAdded) {
+				DataView.CompleteLastAdded(true);
+			}
+			else {
+				_dataRow.EndEdit();
+			}
+		}
+
+		private void CheckAllowEdit()
+		{
+			if (!DataView.AllowEdit && (Row != DataView._lastAdded))
+				throw new DataException("Cannot edit on a DataSource where AllowEdit is false.");
 		}
 
 		#endregion // Methods
@@ -120,11 +136,11 @@ namespace System.Data
 		#region Properties
 		
 		public DataView DataView {
-			get { return dataView; }
+			get { return _dataView; }
 		}
 
 		public bool IsEdit {
-			get { return dataRow.IsEditing; }
+			get { return _dataRow.HasVersion(DataRowVersion.Proposed); }
 		}
 
 		// It becomes true when this instance is created by
@@ -132,18 +148,32 @@ namespace System.Data
 		// "Detached", and when this.EndEdit() is invoked, the row
 		// will be added to the table.
 		public bool IsNew {
-			get { return isNew; }
+			[MonoTODO]
+			get {
+				return Row == DataView._lastAdded;
+			}
 		}
 		
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public object this[string column] {
 			get {
-				DataColumn dc = dataView.Table.Columns[column];
-				return dataRow[dc, GetActualRowVersion ()];
+				DataColumn dc = _dataView.Table.Columns[column];
+
+				if (dc == null) {
+					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					throw new ArgumentException(error);
+				}
+				return _dataRow[dc, GetActualRowVersion ()];
 			}
 			set {
-				DataColumn dc = dataView.Table.Columns[column];
-				dataRow[dc] = value;
+				CheckAllowEdit();
+				DataColumn dc = _dataView.Table.Columns[column];
+
+				if (dc == null) {
+					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					throw new ArgumentException(error);
+				}
+				_dataRow[dc] = value;
 			}
 		}
 
@@ -151,19 +181,30 @@ namespace System.Data
 		// this IndexerNameAttribute
 		public object this[int column] {
 			get {
-				DataColumn dc = dataView.Table.Columns[column];
-				return dataRow[dc, GetActualRowVersion ()];
+				DataColumn dc = _dataView.Table.Columns[column];
+
+				if (dc == null) {
+					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					throw new ArgumentException(error);
+				}
+				return _dataRow[dc, GetActualRowVersion ()];
 			}
 			set {
-				DataColumn dc = dataView.Table.Columns[column];
-				dataRow[dc] = value;
+				CheckAllowEdit();
+				DataColumn dc = _dataView.Table.Columns[column];
+
+				if (dc == null) {
+					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					throw new ArgumentException(error);
+				}
+				_dataRow[dc] = value;
 
 			}
 		}
 
 		private DataRowVersion GetActualRowVersion ()
 		{
-			switch (dataView.RowStateFilter) {
+			switch (_dataView.RowStateFilter) {
 			case DataViewRowState.Added:
 				return DataRowVersion.Proposed;
 			case DataViewRowState.ModifiedOriginal:
@@ -178,20 +219,30 @@ namespace System.Data
 		}
 
 		public DataRow Row {
-			get { return dataRow; }
+			[MonoTODO]
+			get {
+				return _dataRow;
+			}
 		}
 
 		public DataRowVersion RowVersion {
 			[MonoTODO]
 			get {
-				return rowVersion;
+				DataRowVersion version = DataView.GetRowVersion(_index);
+				if (version != DataRowVersion.Original)
+					version = DataRowVersion.Current;
+
+				return version;
 			}
 		}
 
-		// It returns the hash code of the DataRow object.
-		public override int GetHashCode ()
-		{
-			return dataRow.GetHashCode ();
+		[MonoTODO]
+		public override int GetHashCode() {
+			return _dataRow.GetHashCode();
+		}	
+
+		internal int Index {
+			get { return _index; }
 		}
 
 		#endregion // Properties
@@ -257,8 +308,13 @@ namespace System.Data
 		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
-			ITypedList typedList = (ITypedList) dataView;
+			if (DataView == null) {
+				ITypedList typedList = (ITypedList) _dataView;
 			return typedList.GetItemProperties(new PropertyDescriptor[0]);
+			}
+			else {
+				return DataView.Table.GetPropertyDescriptorCollection();
+			}
 		}
 
 		[MonoTODO]

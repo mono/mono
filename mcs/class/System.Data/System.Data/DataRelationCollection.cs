@@ -64,31 +64,6 @@ namespace System.Data {
 				this.dataSet = dataSet;
 			}
 
-			/// <summary>
-			/// Gets the DataRelation object specified by name.
-			/// </summary>
-			public override DataRelation this [string name]
-			{
-				get {
-					int index = IndexOf (name, true);
-					return index < 0 ? null : (DataRelation) List[index];
-				}
-			}
-
-			/// <summary>
-			/// Gets the DataRelation object at the specified index.
-			/// </summary>
-			public override DataRelation this [int index]
-			{
-				get {
-					try {
-						return List [index] as DataRelation;
-					} catch (ArgumentOutOfRangeException e) {
-						throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
-					}
-				}
-			}
-
 			protected override DataSet GetDataSet()
 			{
 				return dataSet;
@@ -100,30 +75,25 @@ namespace System.Data {
 			/// <param name="relation">The relation to check.</param>
 			protected override void AddCore (DataRelation relation)
 			{
-				 if (relation.ChildTable.DataSet != this.dataSet 
+				if (relation.ChildTable.DataSet != this.dataSet 
                                      || relation.ParentTable.DataSet != this.dataSet)
 			           throw new DataException ();
-				 relation.SetDataSet (dataSet);
-				 relation.ParentTable.ChildRelations.Add (relation);
-				 relation.ChildTable.ParentRelations.Add (relation);
-                                 base.AddCore (relation);
-                        }
+				 				
+				base.AddCore (relation);
+				relation.ParentTable.ChildRelations.Add (relation);
+				relation.ChildTable.ParentRelations.Add (relation);                
+				relation.SetDataSet (dataSet);
+				relation.UpdateConstraints ();
+            }
 
 			public override void AddRange (DataRelation[] relations)
 			{
 				base.AddRange (relations);
 			}
 
-			public override void Clear ()
-			{
-				for (int i = 0; i < Count; i++)
-					RemoveCore(this[i]);
-
-				base.Clear();
-			}
-
 			protected override void RemoveCore (DataRelation relation)
 			{
+				base.RemoveCore(relation);
 				relation.SetDataSet (null);
 				relation.ParentTable.ChildRelations.Remove (relation);
 				relation.ChildTable.ParentRelations.Remove (relation);
@@ -153,31 +123,6 @@ namespace System.Data {
 				this.dataTable = dataTable;
 			}
 
-			/// <summary>
-			/// Gets the DataRelation object specified by name.
-			/// </summary>
-			public override DataRelation this [string name]
-			{
-				get {
-					int index = IndexOf (name, true);
-					return index < 0 ? null : (DataRelation) List[index];
-				}
-			}
-
-			/// <summary>
-			/// Gets the DataRelation object at the specified index.
-			/// </summary>
-			public override DataRelation this [int index]
-			{
-				get {
-					try {
-						return List [index] as DataRelation;
-					} catch (ArgumentOutOfRangeException e) {
-						throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
-					}
-				}
-			}
-
 			protected override DataSet GetDataSet()
 			{
 				return dataTable.DataSet;
@@ -189,22 +134,24 @@ namespace System.Data {
 			/// <param name="relation">The relation to check.</param>
 			protected override void AddCore (DataRelation relation)
 			{
-                                if (dataTable.ParentRelations == this && relation.ChildTable != dataTable)
-                                                throw new ArgumentException ("Cannot add a relation to this table's " +
-                                                                             "ParentRelations where this table is not" +
-                                                                             " the Child table.");
+                if (dataTable.ParentRelations == this && relation.ChildTable != dataTable)
+                    throw new ArgumentException ("Cannot add a relation to this table's " +
+													"ParentRelations where this table is not" +
+													" the Child table.");
 
-                                if (dataTable.ChildRelations == this && relation.ParentTable != dataTable)   
-                                                throw new ArgumentException("Cannot add a relation to this table's " +
-                                                                            "ChildRelations where this table is not" +
-                                                                            " the Parent table.");
-                                
-                                base.AddCore (relation);
+                if (dataTable.ChildRelations == this && relation.ParentTable != dataTable)   
+                    throw new ArgumentException("Cannot add a relation to this table's " +
+                                                "ChildRelations where this table is not" +
+                                                " the Parent table.");
+                
+				dataTable.DataSet.Relations.Add(relation);
+                base.AddCore (relation);
 
 			}
                         
 			protected override void RemoveCore (DataRelation relation)
 			{
+				relation.DataSet.Relations.Remove(relation);
 				base.RemoveCore (relation);
 			}
 
@@ -216,7 +163,7 @@ namespace System.Data {
 		}
 
 		private int defaultNameIndex;
-		private bool inTransition;
+		private DataRelation inTransition;
 		int index;
 
 		
@@ -226,19 +173,31 @@ namespace System.Data {
 		protected DataRelationCollection () 
 			: base ()
 		{
+			inTransition = null;
 			defaultNameIndex = 1;
-			inTransition = false;
 		}
 
 		/// <summary>
 		/// Gets the DataRelation object specified by name.
 		/// </summary>
-		public abstract DataRelation this[string name]{get;}
+		public DataRelation this [string name] {
+			get {
+				int index = IndexOf (name, true);
+				return index < 0 ? null : (DataRelation) List[index];
+			}
+		}
 
 		/// <summary>
 		/// Gets the DataRelation object at the specified index.
 		/// </summary>
-		public abstract DataRelation this[int index]{get;}
+		public DataRelation this [int index] {
+			get {
+				if (index < 0 || index >= List.Count)
+					throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
+
+				return (DataRelation)List [index];
+			}
+		}
 
 		
 		#region Add Methods
@@ -259,31 +218,30 @@ namespace System.Data {
 		[MonoTODO]
 		public void Add(DataRelation relation)
 		{
-                        if (relation == null) {
-				//TODO: Issue a good exception message.
-				throw new ArgumentNullException();
+            // To prevent endless recursion
+			if(inTransition == relation) {
+				return; 
 			}
-			if(List.IndexOf(relation) != -1) {
-				//TODO: Issue a good exception message.
-				throw new ArgumentException();
+			else { 
+				inTransition = relation; 
 			}
 
-			// check if the collection has a relation with the same name.
-			int tmp = IndexOf(relation.RelationName);
-			// if we found a relation with same name we have to check
-			// that it is the same case.
-			// indexof can return a table with different case letters.
-			if (tmp != -1 &&
-				relation.RelationName == this[tmp].RelationName)
-					throw new DuplicateNameException("A DataRelation named '" + relation.RelationName + "' already belongs to this DataSet.");
-                        
-
-			this.AddCore (relation);
-			if(relation.RelationName == string.Empty)
-				relation.RelationName = GenerateRelationName();
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-			//List.Add(relation);
-			OnCollectionChanged(e);
+			try
+			{
+				this.AddCore (relation);
+				if(relation.RelationName == string.Empty)
+					relation.RelationName = GenerateRelationName();
+			
+				relation.ParentTable.ResetPropertyDescriptorsCache();
+				relation.ChildTable.ResetPropertyDescriptorsCache();
+			
+				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+				OnCollectionChanged(e);
+			}
+			finally
+			{
+				inTransition = null;
+			}
 		}
 
 		private string GenerateRelationName()
@@ -411,7 +369,25 @@ namespace System.Data {
 		[MonoTODO]
 		protected virtual void AddCore(DataRelation relation)
 		{
-                        relation.UpdateConstraints ();
+			if (relation == null) {
+				//TODO: Issue a good exception message.
+				throw new ArgumentNullException();
+			}
+			if(List.IndexOf(relation) != -1) {
+				//TODO: Issue a good exception message.
+				throw new ArgumentException();
+			}
+
+			// check if the collection has a relation with the same name.
+			int tmp = IndexOf(relation.RelationName);
+			// if we found a relation with same name we have to check
+			// that it is the same case.
+			// indexof can return a table with different case letters.
+			if (tmp != -1 &&
+				relation.RelationName == this[tmp].RelationName)
+					throw new DuplicateNameException("A DataRelation named '" + relation.RelationName + "' already belongs to this DataSet.");
+                        
+			// Add to collection
 			List.Add(relation);
 		}
                 
@@ -421,6 +397,8 @@ namespace System.Data {
 		/// <param name="relations">The array of DataRelation objects to add to the collection.</param>
 		public virtual void AddRange(DataRelation[] relations)
 		{
+			if (relations == null)
+				return;
 			foreach (DataRelation relation in relations) Add(relation);
 		}
 
@@ -447,6 +425,9 @@ namespace System.Data {
 
 		public virtual void Clear()
 		{
+			for (int i = 0; i < Count; i++)
+				Remove(this[i]);
+
 			List.Clear();
 		}
 
@@ -507,37 +488,57 @@ namespace System.Data {
 
 		public void Remove (DataRelation relation)
 		{
+			// To prevent endless recursion
+			if(inTransition == relation) {
+				return; 
+			}
+			else { 
+				inTransition = relation; 
+			}
+
 			if (relation == null)
 				return;
 
-			 // check if the list doesnot contains this relation.
-                        if (!(List.Contains(relation)))
-                                throw new ArgumentException("Relation doesnot belong to this Collection.");
+			try
+			{
+				// check if the list doesnot contains this relation.
+				if (!(List.Contains(relation)))
+					throw new ArgumentException("Relation doesnot belong to this Collection.");
 
-			RemoveCore (relation);
-			List.Remove (relation);
-			string name = "Relation" + index;
-			if (relation.RelationName == name)
-				index--;
-			OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
+				RemoveCore (relation);
+				string name = "Relation" + index;
+				if (relation.RelationName == name)
+					index--;
+
+				OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
+			}
+			finally
+			{
+				inTransition = null;
+			}
 		}
 
 		public void Remove (string name)
 		{
-			Remove ((DataRelation) List[IndexOf (name)]);
+			DataRelation relation = this[name];
+			if (relation == null)
+				throw new ArgumentException("Relation doesnot belong to this Collection.");
+			Remove(relation);
 		}
 
 		public void RemoveAt (int index)
-		{
-			if (( index < 0 ) || (index >=List.Count))
-                                throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
-			Remove(this[index]);
+		{		
+			DataRelation relation = this[index];
+			if (relation == null)
+				throw new IndexOutOfRangeException(String.Format("Cannot find relation {0}", index));
+			Remove(relation);
 		}
 
 		[MonoTODO]
 		protected virtual void RemoveCore(DataRelation relation)
 		{
-			// TODO: What have to be done?
+			// Remove from collection
+			List.Remove(relation);
 		}
 
 		#region Events
