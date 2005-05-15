@@ -1,3 +1,7 @@
+2005-05-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Added (ignored) test case for bug #75958.
+
 2005-05-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* EventInfoTest.cs: New file. Has a test case for #64191.

@@ -218,6 +218,21 @@ namespace MonoTests.System.Reflection
 					an.VersionCompatibility, "VersionCompatibility");
 			}
 		}
+
+		[Test]
+		[Ignore("Bug #74958")]
+		public void Location_Empty() {
+			Assembly corlib = Assembly.LoadWithPartialName("mscorlib");
+
+			using (FileStream fs = File.OpenRead(corlib.Location)) {
+				byte[] buffer = new byte[fs.Length];
+				fs.Read(buffer, 0, buffer.Length);
+				Assembly compiledAssembly = Assembly.Load(buffer);
+				Assert.AreEqual(string.Empty, compiledAssembly.Location);
+				fs.Close();
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
