@@ -1,7 +1,8 @@
 //
 // System.Drawing.ComIStreamWrapper.cs
 //
-// Author: Kornél Pál <http://www.kornelpal.hu/>
+// Author:
+//   Kornél Pál <http://www.kornelpal.hu/>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -12,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -29,11 +30,20 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if NET_2_0
+using System.Runtime.InteropServices.ComTypes;
+using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+#endif
 
 namespace System.Drawing
 {
 	// Stream to IStream wrapper for COM interop
-	internal sealed class ComIStreamWrapper : UCOMIStream
+	internal sealed class ComIStreamWrapper :
+#if NET_2_0
+		IStream
+#else
+		UCOMIStream
+#endif
 	{
 		private const int STG_E_INVALIDFUNCTION = unchecked((int)0x80030001);
 
@@ -70,7 +80,7 @@ namespace System.Drawing
 			if (pcbRead != IntPtr.Zero)
 				Marshal.WriteInt32(pcbRead, read);
 		}
-		
+
 		public void Write(byte[] pv, int cb, IntPtr pcbWritten)
 		{
 			if (cb != 0)
@@ -83,7 +93,7 @@ namespace System.Drawing
 			if (pcbWritten != IntPtr.Zero)
 				Marshal.WriteInt32(pcbWritten, cb);
 		}
-		
+
 		public void Seek(long dlibMove, int dwOrigin, IntPtr plibNewPosition)
 		{
 			long newPosition = -1;
@@ -124,13 +134,19 @@ namespace System.Drawing
 			if (plibNewPosition != IntPtr.Zero)
 				Marshal.WriteInt64(plibNewPosition, newPosition);
 		}
-		
+
 		public void SetSize(long libNewSize)
 		{
 			baseStream.SetLength(libNewSize);
 		}
-		
-		public void CopyTo(UCOMIStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
+
+		public void CopyTo(
+#if NET_2_0
+			IStream
+#else
+			UCOMIStream
+#endif
+			pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 		{
 			byte[] buffer = new byte[4096];
 			long written = 0;
@@ -158,38 +174,43 @@ namespace System.Drawing
 			if (pcbWritten != IntPtr.Zero)
 				Marshal.WriteInt64(pcbWritten, written);
 		}
-		
+
 		public void Commit(int grfCommitFlags)
 		{
 			baseStream.Flush();
 		}
-		
+
 		public void Revert()
 		{
 			throw new ExternalException(null, STG_E_INVALIDFUNCTION);
 		}
-		
+
 		public void LockRegion(long libOffset, long cb, int dwLockType)
 		{
 			throw new ExternalException(null, STG_E_INVALIDFUNCTION);
 		}
-		
+
 		public void UnlockRegion(long libOffset, long cb, int dwLockType)
 		{
 			throw new ExternalException(null, STG_E_INVALIDFUNCTION);
 		}
-		
+
 		public void Stat(out STATSTG pstatstg, int grfStatFlag)
 		{
 			pstatstg = new STATSTG();
 			pstatstg.cbSize = baseStream.Length;
 		}
-		
-		public void Clone(out UCOMIStream ppstm)
+
+		public void Clone(out
+#if NET_2_0
+			IStream
+#else
+			UCOMIStream
+#endif
+			ppstm)
 		{
 			ppstm = null;
 			throw new ExternalException(null, STG_E_INVALIDFUNCTION);
 		}
-
 	}
 }

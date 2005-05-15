@@ -1,3 +1,9 @@
+2005-05-16 Jordi Mas i Hernandez <jordi@ximian.com> <kornelpal@hotmail.com>
+
+	* gdipFunctions.cs: Kornél Pál's IStream bug fixing
+	* ComIStreamWrapper.cs: Kornél Pál's IStream bug fixing
+	* ComIStreamMarshaler.cs: Kornél Pál's IStream bug fixing
+
 2005-05-14 Jordi Mas i Hernandez <jordi@ximian.com> <kornelpal@hotmail.com>
 
 	* Bitmap.cs: Kornél Pál's Bitmap class ctor and MakeTransparent leak fixes

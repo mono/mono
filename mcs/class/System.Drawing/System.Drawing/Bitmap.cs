@@ -288,9 +288,6 @@ namespace System.Drawing
 
 			gr.DrawImage (this, destRect, 0, 0, Width, Height, GraphicsUnit.Pixel, imageAttr);					
 			
-			if (nativeObject != IntPtr.Zero)
-				Dispose();
-
 			IntPtr oldBmp = nativeObject;
 			nativeObject = bmp.nativeObject;
 			bmp.nativeObject = oldBmp;

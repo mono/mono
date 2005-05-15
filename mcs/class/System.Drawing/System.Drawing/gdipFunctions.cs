@@ -32,6 +32,9 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+#if NET_2_0
+using System.Runtime.InteropServices.ComTypes;
+#endif
 using System.Text;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -910,11 +913,24 @@ namespace System.Drawing
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
 		
 		// Stream functions for Win32 (original Win32 ones)
-		[DllImportAttribute("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		static internal extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] UCOMIStream stream, out IntPtr image);
-		
-		[DllImportAttribute("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
-		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] UCOMIStream stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
+		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
+		internal static extern Status GdipLoadImageFromStream([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))]
+		#if NET_2_0
+		IStream
+		#else
+		UCOMIStream
+		#endif
+		stream, out IntPtr image);
+  		
+		[DllImport("gdiplus.dll", ExactSpelling=true, CharSet=CharSet.Unicode)]
+		internal static extern Status GdipSaveImageToStream(HandleRef image, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))]
+		#if NET_2_0
+		IStream
+		#else
+		UCOMIStream
+		#endif
+		stream, [In()] ref Guid clsidEncoder, HandleRef encoderParams);
+  		
 				
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCloneImage(IntPtr image, out IntPtr imageclone);

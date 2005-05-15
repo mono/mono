@@ -1,7 +1,8 @@
 //
 // System.Drawing.ComIStreamMarshaler.cs
 //
-// Author: Kornél Pál <http://www.kornelpal.hu/>
+// Author:
+//   Kornél Pál <http://www.kornelpal.hu/>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -12,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -29,20 +30,23 @@
 #define MAP_EX_TO_HR
 
 // Define to debug wrappers recursively
-// Mono does not support native to managed wrappers
 // #define RECURSIVE_WRAPPING
 
 using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if NET_2_0
+using System.Runtime.InteropServices.ComTypes;
+using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+#endif
 
 namespace System.Drawing
 {
 	// Mono does not implement COM interface marshaling
 	// This custom marshaler should be replaced with UnmanagedType.Interface
-	// Provides exact behaviour under Mono and .NET Framework
-	internal class ComIStreamMarshaler : ICustomMarshaler
+	// Provides identical behaviour under Mono and .NET Framework
+	internal sealed class ComIStreamMarshaler : ICustomMarshaler
 	{
 		private const int S_OK = 0x00000000;
 		private const int E_NOINTERFACE = unchecked((int)0x80004002);
@@ -50,18 +54,22 @@ namespace System.Drawing
 		private delegate int QueryInterfaceDelegate(IntPtr @this, [In()] ref Guid riid, IntPtr ppvObject);
 		private delegate int AddRefDelegate(IntPtr @this);
 		private delegate int ReleaseDelegate(IntPtr @this);
-		// Mono does not implement OutAttribute() with UnmanagedType.LPArray
-		private delegate int ReadDelegate(IntPtr @this, IntPtr pv, int cb, IntPtr pcbRead);
+		private delegate int ReadDelegate(IntPtr @this, [Out(), MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] pv, int cb, IntPtr pcbRead);
 		private delegate int WriteDelegate(IntPtr @this, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] pv, int cb, IntPtr pcbWritten);
 		private delegate int SeekDelegate(IntPtr @this, long dlibMove, int dwOrigin, IntPtr plibNewPosition);
 		private delegate int SetSizeDelegate(IntPtr @this, long libNewSize);
-		private delegate int CopyToDelegate(IntPtr @this, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] UCOMIStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
+		private delegate int CopyToDelegate(IntPtr @this, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))]
+#if NET_2_0
+			IStream
+#else
+			UCOMIStream
+#endif
+			pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
 		private delegate int CommitDelegate(IntPtr @this, int grfCommitFlags);
 		private delegate int RevertDelegate(IntPtr @this);
 		private delegate int LockRegionDelegate(IntPtr @this, long libOffset, long cb, int dwLockType);
 		private delegate int UnlockRegionDelegate(IntPtr @this, long libOffset, long cb, int dwLockType);
 		private delegate int StatDelegate(IntPtr @this, out STATSTG pstatstg, int grfStatFlag);
-		// Mono does not implement custom marshaling for ref (and out) parameters
 		private delegate int CloneDelegate(IntPtr @this, out IntPtr ppstm);
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -92,8 +100,15 @@ namespace System.Drawing
 
 		// Managed COM Callable Wrapper implementation
 		// Reference counting is thread safe
-		protected sealed class ManagedToNativeWrapper
+		private sealed class ManagedToNativeWrapper
 		{
+			// Mono does not implement Marshal.Release
+			[StructLayout(LayoutKind.Sequential)]
+			private sealed class ReleaseSlot
+			{
+				internal ReleaseDelegate Release;
+			}
+
 			private sealed class VtableDestructor
 			{
 				~VtableDestructor()
@@ -106,17 +121,22 @@ namespace System.Drawing
 			private static readonly Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
 			private static readonly Guid IID_IStream = new Guid("0000000C-0000-0000-C000-000000000046");
 			private static readonly MethodInfo exceptionGetHResult = typeof(Exception).GetProperty("HResult", BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.ExactBinding, null, typeof(int), new Type[] {}, null).GetGetMethod(true);
+			// Keeps delegates alive while they are marshaled
 			private static readonly IStreamVtbl managedVtable;
 			private static readonly IntPtr comVtable;
 			private static readonly VtableDestructor vtableDestructor;
 
-			private readonly UCOMIStream managedInterface;
-			// Keeps delegates alive while they are marshaled
+			private readonly
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				managedInterface;
 			private readonly IntPtr comInterface;
 			// Keeps the object alive when it has no managed references
 			private readonly GCHandle gcHandle;
-			private int comRefCount;
-			private int managedRefCount;
+			private int refCount = 1;
 
 			static ManagedToNativeWrapper()
 			{
@@ -144,14 +164,15 @@ namespace System.Drawing
 				vtableDestructor = new VtableDestructor();
 			}
 
-			private ManagedToNativeWrapper(UCOMIStream managedInterface, bool outParam)
+			private ManagedToNativeWrapper(
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				managedInterface)
 			{
 				IStreamInterface newInterface;
-
-				if (outParam)
-					comRefCount = 1;
-				else
-					managedRefCount = 1;
 
 				this.managedInterface = managedInterface;
 				gcHandle = GCHandle.Alloc(this);
@@ -175,28 +196,65 @@ namespace System.Drawing
 				GC.SuppressFinalize(this);
 			}
 
-			internal static IntPtr CreateInterface(UCOMIStream managedInterface, bool outParam)
+			internal static
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				GetUnderlyingInterface(IntPtr comInterface, bool outParam)
 			{
-				if (managedInterface == null)
-					return IntPtr.Zero;
+				if (Marshal.ReadIntPtr(comInterface) == comVtable)
+				{
+
+#if NET_2_0
+					IStream
+#else
+					UCOMIStream
+#endif
+						managedInterface = GetObject(comInterface).managedInterface;
+
+					if (outParam)
+						Release(comInterface);
+
+					return managedInterface;
+				}
 				else
-					return new ManagedToNativeWrapper(managedInterface, outParam).comInterface;
+					return null;
 			}
 
-			internal static void DisposeInterface(IntPtr @this)
+			internal static IntPtr CreateInterface(
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				managedInterface)
 			{
-				if (@this != IntPtr.Zero)
-				{
-					ManagedToNativeWrapper thisObject = GetObject(@this);
+				IntPtr comInterface;
 
-					lock (thisObject)
+				if (managedInterface == null)
+					return IntPtr.Zero;
+#if !RECURSIVE_WRAPPING
+				else if ((comInterface = NativeToManagedWrapper.GetUnderlyingInterface(managedInterface)) == IntPtr.Zero)
+#endif
+					comInterface = new ManagedToNativeWrapper(managedInterface).comInterface;
+
+				return comInterface;
+			}
+
+			internal static void DisposeInterface(IntPtr comInterface)
+			{
+				if (comInterface != IntPtr.Zero)
+				{
+					IntPtr vtable = Marshal.ReadIntPtr(comInterface);
+
+					if (vtable == comVtable)
+						ManagedToNativeWrapper.Release(comInterface);
+					else
 					{
-						if (thisObject.managedRefCount != 0)
-						{
-							thisObject.managedRefCount = 0;
-							if (thisObject.comRefCount == 0)
-								thisObject.Dispose();
-						}
+						ReleaseSlot releaseSlot = (ReleaseSlot)Marshal.PtrToStructure((IntPtr)((long)vtable + (long)(IntPtr.Size * 2)), typeof(ReleaseSlot));
+						releaseSlot.Release(comInterface);
 					}
 				}
 			}
@@ -248,7 +306,7 @@ namespace System.Drawing
 
 					lock (thisObject)
 					{
-						return ++thisObject.comRefCount + thisObject.managedRefCount;
+						return ++thisObject.refCount;
 					}
 #if MAP_EX_TO_HR
 				}
@@ -269,10 +327,10 @@ namespace System.Drawing
 
 					lock (thisObject)
 					{
-						if ((thisObject.comRefCount != 0) && (--thisObject.comRefCount == 0) && (thisObject.managedRefCount == 0))
+						if ((thisObject.refCount != 0) && (--thisObject.refCount == 0))
 							thisObject.Dispose();
 
-						return thisObject.comRefCount + thisObject.managedRefCount;
+						return thisObject.refCount;
 					}
 #if MAP_EX_TO_HR
 				}
@@ -283,17 +341,13 @@ namespace System.Drawing
 #endif
 			}
 
-			private static int Read(IntPtr @this, IntPtr pv, int cb, IntPtr pcbRead)
+			private static int Read(IntPtr @this, byte[] pv, int cb, IntPtr pcbRead)
 			{
 #if MAP_EX_TO_HR
 				try
 				{
 #endif
-					byte[] buffer = new byte[cb];
-
-					GetObject(@this).managedInterface.Read(buffer, cb, pcbRead);
-					Marshal.Copy(buffer, 0, pv, cb);
-
+					GetObject(@this).managedInterface.Read(pv, cb, pcbRead);
 					return S_OK;
 #if MAP_EX_TO_HR
 				}
@@ -355,7 +409,13 @@ namespace System.Drawing
 #endif
 			}
 
-			private static int CopyTo(IntPtr @this, UCOMIStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
+			private static int CopyTo(IntPtr @this,
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 			{
 #if MAP_EX_TO_HR
 				try
@@ -464,14 +524,19 @@ namespace System.Drawing
 				try
 				{
 #endif
-					UCOMIStream newInterface;
+#if NET_2_0
+					IStream
+#else
+					UCOMIStream
+#endif
+						newInterface;
 					IntPtr newWrapper;
 
 					ppstm = IntPtr.Zero;
 
 					GetObject(@this).managedInterface.Clone(out newInterface);
 
-					newWrapper = ManagedToNativeWrapper.CreateInterface(newInterface, true);
+					newWrapper = ManagedToNativeWrapper.CreateInterface(newInterface);
 					ppstm = newWrapper;
 					return S_OK;
 #if MAP_EX_TO_HR
@@ -486,7 +551,12 @@ namespace System.Drawing
 		}
 
 		// Managed Runtime Callable Wrapper implementation
-		protected sealed class NativeToManagedWrapper : UCOMIStream
+		private sealed class NativeToManagedWrapper :
+#if NET_2_0
+			IStream
+#else
+			UCOMIStream
+#endif
 		{
 			private readonly IntPtr comInterface;
 			private readonly IStreamVtbl managedVtable;
@@ -512,17 +582,65 @@ namespace System.Drawing
 				GC.SuppressFinalize(this);
 			}
 
-			internal static UCOMIStream CreateInterface(IntPtr comInterface, bool outParam)
+			internal static IntPtr GetUnderlyingInterface(
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				managedInterface)
 			{
-				if (comInterface == IntPtr.Zero)
-					return null;
+				if (managedInterface is NativeToManagedWrapper)
+				{
+					NativeToManagedWrapper wrapper = (NativeToManagedWrapper)managedInterface;
+
+					wrapper.managedVtable.AddRef(wrapper.comInterface);
+					return wrapper.comInterface;
+				}
 				else
-					return (UCOMIStream)new NativeToManagedWrapper(comInterface, outParam);
+					return IntPtr.Zero;
 			}
 
-			internal static void DisposeInterface(UCOMIStream managedInterface)
+			internal static
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				CreateInterface(IntPtr comInterface, bool outParam)
 			{
-				if (managedInterface != null)
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+					managedInterface;
+
+				if (comInterface == IntPtr.Zero)
+					return null;
+#if !RECURSIVE_WRAPPING
+				else if ((managedInterface = ManagedToNativeWrapper.GetUnderlyingInterface(comInterface, outParam)) == null)
+#endif
+					managedInterface = (
+#if NET_2_0
+						IStream
+#else
+						UCOMIStream
+#endif
+						)new NativeToManagedWrapper(comInterface, outParam);
+
+				return managedInterface;
+			}
+
+			internal static void DisposeInterface(
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				managedInterface)
+			{
+				if (managedInterface != null && managedInterface is NativeToManagedWrapper)
 					((NativeToManagedWrapper)managedInterface).Dispose();
 			}
 
@@ -535,17 +653,7 @@ namespace System.Drawing
 
 			public void Read(byte[] pv, int cb, IntPtr pcbRead)
 			{
-				IntPtr buffer = Marshal.AllocHGlobal(cb);
-
-				try
-				{
-					CheckHResult(managedVtable.Read(comInterface, buffer, cb, pcbRead));
-					Marshal.Copy(buffer, pv, 0, cb);
-				}
-				finally
-				{
-					Marshal.FreeHGlobal(buffer);
-				}
+				CheckHResult(managedVtable.Read(comInterface, pv, cb, pcbRead));
 			}
 
 			public void Write(byte[] pv, int cb, IntPtr pcbWritten)
@@ -563,7 +671,13 @@ namespace System.Drawing
 				CheckHResult(managedVtable.SetSize(comInterface, libNewSize));
 			}
 
-			public void CopyTo(UCOMIStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
+			public void CopyTo(
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 			{
 				CheckHResult(managedVtable.CopyTo(comInterface, pstm, cb, pcbRead, pcbWritten));
 			}
@@ -593,7 +707,13 @@ namespace System.Drawing
 				CheckHResult(managedVtable.Stat(comInterface, out pstatstg, grfStatFlag));
 			}
 
-			public void Clone(out UCOMIStream ppstm)
+			public void Clone(out
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				ppstm)
 			{
 				IntPtr newInterface;
 
@@ -603,8 +723,8 @@ namespace System.Drawing
 		}
 
 		private static readonly ComIStreamMarshaler defaultInstance = new ComIStreamMarshaler();
-		
-		protected ComIStreamMarshaler()
+
+		private ComIStreamMarshaler()
 		{
 		}
 
@@ -613,90 +733,51 @@ namespace System.Drawing
 			return defaultInstance;
 		}
 
-		// Mono calls this for null objects as well
-		public virtual IntPtr MarshalManagedToNative(object managedObj)
+		public IntPtr MarshalManagedToNative(object managedObj)
 		{
 #if RECURSIVE_WRAPPING
-			managedObj = NativeToManagedWrapper.CreateInterface(ManagedToNativeWrapper.CreateInterface((UCOMIStream)managedObj, true), true);
+			managedObj = NativeToManagedWrapper.CreateInterface(ManagedToNativeWrapper.CreateInterface((
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
 #endif
-			return ManagedToNativeWrapper.CreateInterface((UCOMIStream)managedObj, false);
+				)managedObj), true);
+#endif
+			return ManagedToNativeWrapper.CreateInterface((
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
+#endif
+				)managedObj);
 		}
 
-		// Mono calls this for IntPtr.Zero objects as well
-		public virtual void CleanUpNativeData(IntPtr pNativeData)
+		public void CleanUpNativeData(IntPtr pNativeData)
 		{
 			ManagedToNativeWrapper.DisposeInterface(pNativeData);
 		}
 
-		// Mono calls this for IntPtr.Zero objects as well
-		// Mono does not implement function pointer to Delegate marshaling
-		// This cannot be used on Mono
-		public virtual object MarshalNativeToManaged(IntPtr pNativeData)
+		public object MarshalNativeToManaged(IntPtr pNativeData)
 		{
 #if RECURSIVE_WRAPPING
-			pNativeData = ManagedToNativeWrapper.CreateInterface(NativeToManagedWrapper.CreateInterface(pNativeData, true), true);
+			pNativeData = ManagedToNativeWrapper.CreateInterface(NativeToManagedWrapper.CreateInterface(pNativeData, true));
 #endif
 			return NativeToManagedWrapper.CreateInterface(pNativeData, false);
 		}
 
-		// Mono calls this for null objects as well
-		public virtual void CleanUpManagedData(object managedObj)
+		public void CleanUpManagedData(object managedObj)
 		{
-			NativeToManagedWrapper.DisposeInterface((UCOMIStream)managedObj);
-		}
-
-		public virtual int GetNativeDataSize()
-		{
-			return -1;
-		}
-	}
-
-	// Mono does not support custom marshalers for ref (and out) parameters
-	internal sealed class ComIStreamOutMarshaler : ComIStreamMarshaler
-	{
-		private static readonly ComIStreamMarshaler defaultInstance = new ComIStreamOutMarshaler();
-		
-		private ComIStreamOutMarshaler()
-		{
-		}
-
-		private static ICustomMarshaler GetInstance(string cookie)
-		{
-			return defaultInstance;
-		}
-
-		// Mono calls this for null objects as well
-		public override IntPtr MarshalManagedToNative(object managedObj)
-		{
-#if RECURSIVE_WRAPPING
-			managedObj = NativeToManagedWrapper.CreateInterface(ManagedToNativeWrapper.CreateInterface((UCOMIStream)managedObj, true), true);
+			NativeToManagedWrapper.DisposeInterface((
+#if NET_2_0
+				IStream
+#else
+				UCOMIStream
 #endif
-			return ManagedToNativeWrapper.CreateInterface((UCOMIStream)managedObj, true);
+				)managedObj);
 		}
 
-		// Mono calls this for IntPtr.Zero objects as well
-		public override void CleanUpNativeData(IntPtr pNativeData)
-		{
-		}
-
-		// Mono calls this for IntPtr.Zero objects as well
-		// Mono does not implement function pointer to Delegate marshaling
-		// This cannot be used on Mono
-		public override object MarshalNativeToManaged(IntPtr pNativeData)
-		{
-#if RECURSIVE_WRAPPING
-			pNativeData = ManagedToNativeWrapper.CreateInterface(NativeToManagedWrapper.CreateInterface(pNativeData, true), true);
-#endif
-			return NativeToManagedWrapper.CreateInterface(pNativeData, true);
-		}
-
-		// Mono calls this for null objects as well
-		public override void CleanUpManagedData(object managedObj)
-		{
-			NativeToManagedWrapper.DisposeInterface((UCOMIStream)managedObj);
-		}
-
-		public override int GetNativeDataSize()
+		public int GetNativeDataSize()
 		{
 			return -1;
 		}
