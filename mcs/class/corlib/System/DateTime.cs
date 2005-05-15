@@ -1125,7 +1125,7 @@ namespace System
 						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, false, out num_parsed);
 					else
 					{
-						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, false, out num_parsed);
 						if (num_parsed < 0)
 							return false;
 						valuePos += num_parsed;
@@ -1290,7 +1290,6 @@ namespace System
 			result = new DateTime (year, month, day, hour, minute, second, 0);
 			result = result.AddSeconds(fractionalSeconds);
 
-//Console.WriteLine ("**** Parsed as {1} {0} {2}", new object [] {useutc ? "[u]" : "", format, use_localtime ? "[lt]" : ""});
 			if ((dayofweek != -1) && (dayofweek != (int) result.DayOfWeek))
 				throw new FormatException (Locale.GetText ("String was not recognized as valid DateTime because the day of week was incorrect."));
 

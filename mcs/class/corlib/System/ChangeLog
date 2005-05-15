@@ -1,5 +1,10 @@
 2005-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : for 'z' next_not_digit didn't work as expected.
+	  Fixed bug #74775.
+
+2005-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : don't allow extraneous pattern characters also for
 	  non-exact parsing (ParseExact() was fine). Bug #74936 fixed
 

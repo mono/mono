@@ -575,6 +575,16 @@ public class DateTimeTest : Assertion
 		// Bug 63376
 		t1 = DateTime.ParseExact ("18Aug2004 12:33:00", "ddMMMyyyy hh:mm:ss", new CultureInfo ("en-US"));
 		AssertEquals ("hh allows 12, though it's useless", 0, t1.Hour);
+
+		// Bug 74775
+		DateTime.ParseExact ("Tue, 12 Apr 2005 10:10:04 +0100",
+			"Tue, 12 Apr 2005 10:10:04 +0100", enUS);
+		try {
+			DateTime.ParseExact ("Tue, 12 Apr 2005 10:10:04 +00000",
+				"ddd, dd MMM yyyy HH':'mm':'ss zzz", enUS);
+			Fail ("z02");
+		} catch (FormatException) {
+		}
 	}
 
 	[Ignore ("need to fix tests that run on different timezones")]
