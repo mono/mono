@@ -1,3 +1,10 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileCodeGroup.cs: Now use PermissionSet.Union when resolving.
+	* NetCodeGroup.cs: Now use PermissionSet.Union when resolving.
+	* PolicyStatement.cs: Fix some minor behaviours wrt to new unit tests.
+	* UnionCodeGroup.cs: Now use PermissionSet.Union when resolving.
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationTrust.cs: Completed TODO. Added missing set for 

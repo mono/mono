@@ -49,31 +49,53 @@ namespace System.Security.Policy {
 
 		public PolicyStatement (PermissionSet perms, PolicyStatementAttribute attrs) 
 		{
-			this.perms = perms;
+			if (perms != null) {
+				this.perms = perms.Copy ();
+				this.perms.SetReadOnly (true);
+			}
 			this.attrs = attrs;
 		}
 		
 		public PermissionSet PermissionSet {
-			get { return perms; }
+			get {
+				if (perms == null) {
+					perms = new PermissionSet (PermissionState.None);
+					perms.SetReadOnly (true);
+				}
+				return perms;
+			}
 			set { perms = value; }
 		}
 		
 		public PolicyStatementAttribute Attributes {
 			get { return attrs; }
-			set { attrs = value; }
+			set {
+				// note: yes it's a flag but all possible values have a corresponding name
+				switch (value) {
+				case PolicyStatementAttribute.Nothing:
+				case PolicyStatementAttribute.Exclusive:
+				case PolicyStatementAttribute.LevelFinal:
+				case PolicyStatementAttribute.All:
+					attrs = value;
+					break;
+				default:
+					string msg = Locale.GetText ("Invalid value for {0}.");
+					throw new ArgumentException (String.Format (msg, "PolicyStatementAttribute"));
+				}
+			}
 		}
 
 		public string AttributeString {
 			get {
 				switch (attrs) {
-					case PolicyStatementAttribute.Exclusive:
-						return "Exclusive";
-					case PolicyStatementAttribute.LevelFinal:
-						return "LevelFinal";
-					case PolicyStatementAttribute.All:
-						return "Exclusive LevelFinal";
-					default:
-						return String.Empty;
+				case PolicyStatementAttribute.Exclusive:
+					return "Exclusive";
+				case PolicyStatementAttribute.LevelFinal:
+					return "LevelFinal";
+				case PolicyStatementAttribute.All:
+					return "Exclusive LevelFinal";
+				default:
+					return String.Empty;
 				}
 			}
 		}
@@ -92,16 +114,20 @@ namespace System.Security.Policy {
 
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
-			SecurityElement permissions = e.SearchForChildByTag ("PermissionSet");
+			if (e == null)
+				throw new ArgumentNullException ("e");
+			if (e.Tag != "PolicyStatement")
+				throw new ArgumentException (Locale.GetText ("Invalid tag."));
+
 
 			string attributes = e.Attribute ("Attributes");
-
-			if (attributes != null)
+			if (attributes != null) {
 				attrs = (PolicyStatementAttribute) Enum.Parse (
 					typeof (PolicyStatementAttribute), attributes);
-				
-			perms = new PermissionSet (PermissionState.None);
-			perms.FromXml (permissions);
+			}
+
+			SecurityElement permissions = e.SearchForChildByTag ("PermissionSet");
+			PermissionSet.FromXml (permissions);
 		}
 		
 		public SecurityElement ToXml ()
@@ -117,7 +143,7 @@ namespace System.Security.Policy {
 			if (attrs != PolicyStatementAttribute.Nothing)
 				element.AddAttribute ("Attributes", attrs.ToString ());
 			
-			element.AddChild (perms.ToXml ());
+			element.AddChild (PermissionSet.ToXml ());
 
 			return element;
 		}
@@ -132,14 +158,14 @@ namespace System.Security.Policy {
 			if (ps == null)
 				return false;
 
-			return (perms.Equals (obj) && (attrs == ps.attrs));
+			return (PermissionSet.Equals (obj) && (attrs == ps.attrs));
 		}
 
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			// return same hash code if two PolicyStatement are equals
-			return (perms.GetHashCode () ^ (int) attrs);
+			return (PermissionSet.GetHashCode () ^ (int) attrs);
 		}
 #endif
 

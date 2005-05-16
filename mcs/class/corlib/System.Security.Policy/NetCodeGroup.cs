@@ -201,18 +201,18 @@ namespace System.Security.Policy {
  			if (!MembershipCondition.Check (evidence))
 				return null;
 
-			PolicyStatement pst = this.PolicyStatement.Copy ();
-			
+			PermissionSet ps = this.PolicyStatement.PermissionSet.Copy ();
 			if (this.Children.Count > 0) {
 				foreach (CodeGroup child_cg in this.Children) {
 					PolicyStatement child_pst = child_cg.Resolve (evidence);
 					if (child_pst != null) {
-						foreach (IPermission perm in child_pst.PermissionSet) {
-							pst.PermissionSet.AddPermission (perm);
-						}
+						ps = ps.Union (child_pst.PermissionSet);
 					}
 				}
 			}
+
+			PolicyStatement pst = this.PolicyStatement.Copy ();
+			pst.PermissionSet = ps;
 			return pst;
 		}
 
