@@ -1,3 +1,7 @@
+2005-05-15 Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IComponent.cs: Fix attributes
+
 2005-04-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeDescriptor.cs: implemented GetEditor. Patch by Jonathan Chambers.
