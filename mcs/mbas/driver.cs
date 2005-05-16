@@ -9,10 +9,6 @@
 // (C) 2002, 2003, 2004 Rafael Teixeira
 //
 
-/*
-
-*/
-
 namespace Mono.Languages {
 
 	using System;
@@ -23,8 +19,10 @@ namespace Mono.Languages {
 	using System.Reflection;
 	using System.Reflection.Emit;
 
-	using Mono.MonoBASIC;
+	using Mono.GetOptions;
 	using Mono.GetOptions.Useful;
+
+	using Mono.MonoBASIC;
 
 	public class Driver {
 		CompilerOptions options;
@@ -75,7 +73,9 @@ namespace Mono.Languages {
 		
 		private bool LoadReferencedAssemblies()
 		{
-			return options.LoadReferencedAssemblies(new Mono.MonoBASIC.AssemblyAdder(TypeManager.AddAssembly));
+			return 
+				options.LoadReferencedAssemblies(
+					new Mono.GetOptions.Useful.AssemblyAdder(TypeManager.AddAssembly));
 		}
 
 		private bool AdjustCodegenWhenTargetIsNetModule()
@@ -86,7 +86,10 @@ namespace Mono.Languages {
 		
 		private bool LoadAddedNetModules()
 		{
-			return options.LoadAddedNetModules(CodeGen.AssemblyBuilder, new Mono.MonoBASIC.ModuleAdder(TypeManager.AddModule));
+			return 
+				options.LoadAddedNetModules(
+					CodeGen.AssemblyBuilder, 
+					new Mono.GetOptions.Useful.ModuleAdder(TypeManager.AddModule));
 		}
 		
 		private bool InitializeCoreTypes()
@@ -143,66 +146,41 @@ namespace Mono.Languages {
 			return Report.Errors == 0;
 		}
 						
-		string GetFQMainClass()
-		{	
-			if (RootContext.RootNamespace != "")
-				return RootContext.RootNamespace + "." + RootContext.MainClass;
-			else
-				return RootContext.MainClass;			
-		}
-		
-		bool IsSWFApp()
+		void CookUpEntryPointForWinFormsApplication(Type t)
 		{
-			string mainclass = GetFQMainClass();
-			
-			if (mainclass != null) {
-				foreach (string r in options.AssembliesToReference) {
-					if (r.IndexOf ("System.Windows.Forms") >= 0) {
-						Type t = TypeManager.LookupType(mainclass);
-						if (t != null) 
-							return t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
-						break;	
-					}	
-				}
-			}
-			return false;
+			Type SystemWindowsFormsFormType = TypeManager.LookupType ("System.Windows.Forms.Form");
+			if (SystemWindowsFormsFormType == null || !t.IsSubclassOf (SystemWindowsFormsFormType)) 
+				return;
+				
+			TypeBuilder tb = t as TypeBuilder;
+			MethodBuilder mb = tb.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, 
+				typeof(void), new Type[0]);
+
+			Type SystemWindowsFormsApplicationType = TypeManager.LookupType ("System.Windows.Forms.Application");
+			MethodInfo mi = SystemWindowsFormsApplicationType.GetMethod ("Run", new Type[] { SystemWindowsFormsFormType } );
+			ILGenerator ig = mb.GetILGenerator();
+			ConstructorInfo ci = TypeManager.GetConstructor (TypeManager.LookupType(t.FullName), new Type[0]);
+					
+			ig.Emit (OpCodes.Newobj, ci);
+			ig.Emit (OpCodes.Call, mi);
+			ig.Emit (OpCodes.Ret);
+
+			RootContext.EntryPoint = mb as MethodInfo;
 		}
 		
 		void FixEntryPoint()
 		{
 			if (options.TargetFileType == TargetType.Exe || options.TargetFileType == TargetType.WinExe) {
-				MethodInfo ep = RootContext.EntryPoint;
-			
-				if (ep == null) {
-					// If we don't have a valid entry point yet
-					// AND if System.Windows.Forms is included
-					// among the dependencies, we have to build
-					// a new entry point on-the-fly. Otherwise we
-					// won't be able to compile SWF code out of the box.
-
-					if (IsSWFApp())  {
-						Type t = TypeManager.LookupType(GetFQMainClass());
-						if (t != null) 
-						{							
-							TypeBuilder tb = t as TypeBuilder;
-							MethodBuilder mb = tb.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, 
-								typeof(void), new Type[0]);
-
-							Type SWFA = TypeManager.LookupType("System.Windows.Forms.Application");
-							Type SWFF = TypeManager.LookupType("System.Windows.Forms.Form");
-							Type[] args = new Type[1];
-							args[0] = SWFF;
-							MethodInfo mi = SWFA.GetMethod("Run", args);
-							ILGenerator ig = mb.GetILGenerator();
-							ConstructorInfo ci = TypeManager.GetConstructor (TypeManager.LookupType(t.FullName), new Type[0]);
-							
-							ig.Emit (OpCodes.Newobj, ci);
-							ig.Emit (OpCodes.Call, mi);
-							ig.Emit (OpCodes.Ret);
-
-							RootContext.EntryPoint = mb as MethodInfo;
-						}
-					}
+				if (RootContext.EntryPoint == null && RootContext.MainClass != null) {
+					// If we don't have a valid entry point yet AND if System.Windows.Forms is included
+					// among the dependencies, we have to build a new entry point on-the-fly for the specified
+					// main class.
+					// Otherwise we won't be able to compile SWF code out of the box.
+					Type t = TypeManager.LookupType(RootContext.MainClass);
+					if (t == null) 
+						Report.Error(-1, string.Format("Specified main class {0} doesn't exist", RootContext.MainClass));					
+					else
+						CookUpEntryPointForWinFormsApplication (t);
 				}
 			}
 		}
@@ -295,7 +273,7 @@ namespace Mono.Languages {
 		/// <summary>
 		///    Parses the arguments, and calls the compilation process.
 		/// </summary>
-		int MainDriver(string [] args)
+		int Execute(string [] args)
 		{
 			options = new CompilerOptions(args, new ErrorReporter(Report.Error));		
 			if (options.NothingToCompile)
@@ -315,11 +293,10 @@ namespace Mono.Languages {
 
 		public static int Main (string[] args)
 		{
-			Driver Exec = new Driver();
+			Driver driver = new Driver();
 			
-			return Exec.MainDriver(args);
+			return driver.Execute(args);
 		}
-
 
 	}
 }

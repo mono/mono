@@ -1,3 +1,10 @@
+2005-05-16 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : correcting/refactoring EntryPoint fixing as per #74955
+		adjusting references changed by Gonzalo to their new containing namespace.
+		small renaming refactorings to make things clearer.
+	* CompilerOptions.cs : refactored out all things that now live in 
+		Mono.GetOptions.Useful.CommonCompilerOptions
+
 2005-05-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* driver.cs: fix ambiguous reference.
