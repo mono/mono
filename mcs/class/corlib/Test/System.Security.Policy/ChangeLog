@@ -1,3 +1,7 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyStatementTest.cs: New. Unit tests for PolicyStatement.
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationTrustTest.cs: New. Unit tests for ApplicationTrust (2.0).
