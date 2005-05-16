@@ -1,5 +1,11 @@
-2005-05-09  Raja R Harinath  <rharinath@novell.com>
+2005-05-07  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions.Useful/CommonCompilerOptions.cs: some refactored code coming from
+	mbas' CompilerOptions. Added overridable string [] AssembliesToReferenceSoftly
+	* Mono.GetOptions/Options.cs: new constructor adds support to use a provided ErrorReporter
+	also added overridable string AdditionalBannerInfo readonly property 
+	* Mono.GetOptions/OptionList.cs: AdditionalBannerInfo is porcessed byt ShowBanner
 
+2005-05-09  Raja R Harinath  <rharinath@novell.com>
 	* Mono.GetOptions.Useful/CommonCompilerOptions.cs (AddedReference):
 	Support multiple assemblies separated by commas.
 

@@ -27,7 +27,10 @@
 //
 using System;
 using System.Collections;
+using System.IO;
 using System.Diagnostics;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace Mono.GetOptions.Useful
@@ -47,12 +50,21 @@ namespace Mono.GetOptions.Useful
 			this.Encoding = encoding;	
 		}
 	}
+
+	public enum InternalCompilerErrorReportAction { 
+		prompt, send, none 
+	}
+		
+	public delegate void ModuleAdder (System.Reflection.Module module);
+	public delegate void AssemblyAdder (Assembly loadedAssembly);
 	
 	public class CommonCompilerOptions : Options {
 	
-		public CommonCompilerOptions() : this(null) { }
+		public CommonCompilerOptions() : this(null, null) { }
 
-		public CommonCompilerOptions(string[] args) : base(args, OptionsParsingMode.Both, false, true, true) {}
+		public CommonCompilerOptions(string[] args) : this(args, null) {}
+
+		public CommonCompilerOptions(string[] args, ErrorReporter reportError) : base(args, OptionsParsingMode.Both, false, true, true, reportError) {}
 		
 		[Option(-1, "References packages listed. {packagelist}=package,...", "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
@@ -76,9 +88,9 @@ namespace Mono.GetOptions.Useful
 						try {
 							currentEncoding = Encoding.GetEncoding(int.Parse(value));
 						} catch (NotSupportedException) {
-							Console.WriteLine("Ignoring unsupported codepage number {0}.", value);
+							ReportError (0, string.Format("Ignoring unsupported codepage number {0}.", value));
 						} catch (Exception) {
-							Console.WriteLine("Ignoring unsupported codepage ID {0}.", value);
+							ReportError (0, string.Format("Ignoring unsupported codepage ID {0}.", value));
 						}
 						break;
 				}					
@@ -88,7 +100,7 @@ namespace Mono.GetOptions.Useful
 		private ArrayList warningsToIgnore = new ArrayList();
 		public int[] WarningsToIgnore { get { return (int[])warningsToIgnore.ToArray(typeof(int)); } }
 		
-		[Option("Ignores warning number {XXXX}", "ignorewarn", SecondLevelHelp = true)]
+		[Option(-1, "Ignores warning number {XXXX}", "ignorewarn", SecondLevelHelp = true)]
 		public WhatToDoNext SetIgnoreWarning(int warningNumber)
 		{
 			warningsToIgnore.Add(warningNumber);
@@ -355,17 +367,17 @@ namespace Mono.GetOptions.Useful
 			try {
 				p = Process.Start (pi);
 			} catch (Exception e) {
-				Console.WriteLine("Couldn't run pkg-config: " + e.Message);
+				ReportError (0, "Couldn't run pkg-config: " + e.Message);
 				return false;
 			}
 
 			if (p.StandardOutput == null){
-				Console.WriteLine("Specified package did not return any information");
+				ReportError (0, "Specified package did not return any information");
 			}
 			string pkgout = p.StandardOutput.ReadToEnd ();
 			p.WaitForExit ();
 			if (p.ExitCode != 0) {
-				Console.WriteLine("Error running pkg-config. Check the above output.");
+				ReportError (0, "Error running pkg-config. Check the above output.");
 				return false;
 			}
 			p.Close ();
@@ -381,7 +393,7 @@ namespace Mono.GetOptions.Useful
 						else
 							AddedReference = arg;
 					} catch (Exception e) {
-						Console.WriteLine("Something wrong with argument (" + arg + ") in 'pkg-config --libs' output: " + e.Message);
+						ReportError (0, "Something wrong with argument (" + arg + ") in 'pkg-config --libs' output: " + e.Message);
 						return false;
 					}
 				}
@@ -389,6 +401,336 @@ namespace Mono.GetOptions.Useful
 
 			return true;
 		}		
-	}
+		
+				private bool printTimeStamps = false;
+		//
+		// Last time we took the time
+		//
+		DateTime last_time;
+		public void StartTime (string msg)
+		{
+			if (!printTimeStamps)
+				return;
+				
+			last_time = DateTime.Now;
 
+			Console.WriteLine("[*] {0}", msg);
+		}
+
+		public void ShowTime (string msg)
+		{
+			if (!printTimeStamps)
+				return;
+				
+			DateTime now = DateTime.Now;
+			TimeSpan span = now - last_time;
+			last_time = now;
+
+			Console.WriteLine (
+				"[{0:00}:{1:000}] {2}",
+				(int) span.TotalSeconds, span.Milliseconds, msg);
+		}
+		
+		[Option("Displays time stamps of various compiler events", "timestamp", SecondLevelHelp = true)]
+		public virtual bool PrintTimeStamps {
+			set
+			{
+				printTimeStamps = true;
+				last_time = DateTime.Now;
+				DebugListOfArguments.Add("timestamp");
+			}
+		}
+
+		public bool BeQuiet { get { return DontShowBanner || SuccintErrorDisplay; } } 
+		
+				private void LoadAssembly (AssemblyAdder adder, string assemblyName, ref int errors, bool soft)
+		{
+			Assembly a = null;
+			string total_log = "";
+
+			try  {
+				char[] path_chars = { '/', '\\' };
+
+				if (assemblyName.IndexOfAny (path_chars) != -1)
+					a = Assembly.LoadFrom(assemblyName);
+				else {
+					string ass = assemblyName;
+					if (ass.EndsWith (".dll"))
+						ass = assemblyName.Substring (0, assemblyName.Length - 4);
+					a = Assembly.Load (ass);
+					adder(a);
+					return;
+				}
+			}
+			catch (FileNotFoundException) {
+				if (PathsToSearchForLibraries != null) {
+					foreach (string dir in PathsToSearchForLibraries) {
+						string full_path = Path.Combine(dir, assemblyName + ".dll");
+
+						try  {
+							a = Assembly.LoadFrom (full_path);
+							adder(a);
+							return;
+						} 
+						catch (FileNotFoundException ff)  {
+							total_log += ff.FusionLog;
+							continue;
+						}
+					}
+				}
+				if (soft)
+					return;
+					
+				ReportError (6, "Can not find assembly '" + assemblyName + "'\nLog: " + total_log);
+			}
+			catch (BadImageFormatException f)  {
+				ReportError (6, "Bad file format while loading assembly\nLog: " + f.FusionLog);
+			} catch (FileLoadException f){
+				ReportError (6, "File Load Exception: " + assemblyName + "\nLog: " + f.FusionLog);
+			} catch (ArgumentNullException){
+				ReportError (6, "Argument Null exception");
+			}
+						
+			errors++;
+		}
+		
+		public virtual string [] AssembliesToReferenceSoftly {
+			get {
+				// For now the "default config" is hardcoded we can move this outside later
+				return new string [] { "System", "System.Data", "System.Xml" };
+			}
+		}
+		
+		/// <summary>
+		///   Loads all assemblies referenced on the command line
+		/// </summary>
+		public bool LoadReferencedAssemblies (AssemblyAdder adder)
+		{
+			StartTime("Loading referenced assemblies");
+
+			int errors = 0;
+			int soft_errors = 0;
+			
+			// Load Core Library for default compilation
+			if (!NoStandardLibraries)
+				LoadAssembly(adder, "mscorlib", ref errors, false);
+
+			foreach (string r in AssembliesToReference)
+				LoadAssembly(adder, r, ref errors, false);
+
+			if (!NoConfig)
+				foreach (string r in AssembliesToReferenceSoftly)
+					if (!(AssembliesToReference.Contains(r) || AssembliesToReference.Contains (r + ".dll")))
+						LoadAssembly(adder, r, ref soft_errors, true);
+			
+			ShowTime("References loaded");
+			return errors == 0;
+		}
+		
+		private void LoadModule (MethodInfo adder_method, AssemblyBuilder assemblyBuilder, ModuleAdder adder, string module, ref int errors)
+		{
+			System.Reflection.Module m;
+			string total_log = "";
+
+			try {
+				try {
+					m = (System.Reflection.Module)adder_method.Invoke (assemblyBuilder, new object [] { module });
+				}
+				catch (TargetInvocationException ex) {
+					throw ex.InnerException;
+				}
+				adder(m);
+			} 
+			catch (FileNotFoundException) {
+				foreach (string dir in PathsToSearchForLibraries)	{
+					string full_path = Path.Combine (dir, module);
+					if (!module.EndsWith (".netmodule"))
+						full_path += ".netmodule";
+
+					try {
+						try {
+							m = (System.Reflection.Module) adder_method.Invoke (assemblyBuilder, new object [] { full_path });
+						}
+						catch (TargetInvocationException ex) {
+							throw ex.InnerException;
+						}
+						adder(m);
+						return;
+					}
+					catch (FileNotFoundException ff) {
+						total_log += ff.FusionLog;
+						continue;
+					}
+				}
+				ReportError (6, "Cannot find module `" + module + "'" );
+				Console.WriteLine ("Log: \n" + total_log);
+			}
+			catch (BadImageFormatException f) {
+				ReportError (6, "Cannot load module (bad file format)" + f.FusionLog);
+			}
+			catch (FileLoadException f)	{
+				ReportError (6, "Cannot load module " + f.FusionLog);
+			}
+			catch (ArgumentNullException) {
+				ReportError (6, "Cannot load module (null argument)");
+			}
+			errors++;
+		}
+
+		public void UnsupportedFeatureOnthisRuntime(string feature)
+		{
+			ReportError (0, string.Format("Cannot use {0} on this runtime: Try the Mono runtime instead.", feature));
+			Environment.Exit (1);
+		}
+
+		public bool LoadAddedNetModules(AssemblyBuilder assemblyBuilder, ModuleAdder adder)
+		{
+			int errors = 0;
+			
+			if (NetModulesToAdd.Count > 0) {
+				StartTime("Loading added netmodules");
+
+				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
+				if (adder_method == null)
+					UnsupportedFeatureOnthisRuntime("/addmodule");
+
+				foreach (string module in NetModulesToAdd)
+					LoadModule (adder_method, assemblyBuilder, adder, module, ref errors);
+					
+				ShowTime("   Done");
+			}
+			
+			return errors == 0;
+		}
+		
+		public void AdjustCodegenWhenTargetIsNetModule(AssemblyBuilder assemblyBuilder)
+		{
+			if (TargetFileType == TargetType.Module) {
+				StartTime("Adjusting AssemblyBuilder for NetModule target");
+				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				if (module_only == null)
+					UnsupportedFeatureOnthisRuntime("/target:module");
+
+				MethodInfo set_method = module_only.GetSetMethod (true);
+				set_method.Invoke (assemblyBuilder, BindingFlags.Default, null, new object[]{true}, null);
+				ShowTime("   Done");
+			}
+		}
+		
+		
+		//
+		// Given a path specification, splits the path from the file/pattern
+		//
+		void SplitPathAndPattern (string spec, out string path, out string pattern)
+		{
+			int p = spec.LastIndexOf ("/");
+			if (p != -1){
+				//
+				// Windows does not like /file.cs, switch that to:
+				// "\", "file.cs"
+				//
+				if (p == 0){
+					path = "\\";
+					pattern = spec.Substring (1);
+				} else {
+					path = spec.Substring (0, p);
+					pattern = spec.Substring (p + 1);
+				}
+				return;
+			}
+
+			p = spec.LastIndexOf ("\\");
+			if (p != -1){
+				path = spec.Substring (0, p);
+				pattern = spec.Substring (p + 1);
+				return;
+			}
+
+			path = ".";
+			pattern = spec;
+		}
+
+		bool AddFiles (string spec, bool recurse)
+		{
+			string path, pattern;
+
+			SplitPathAndPattern(spec, out path, out pattern);
+			if (pattern.IndexOf("*") == -1) {
+				DefaultArgumentProcessor(spec);
+				return true;
+			}
+
+			string [] files = null;
+			try {
+				files = Directory.GetFiles(path, pattern);
+			} catch (System.IO.DirectoryNotFoundException) {
+				ReportError (2001, "Source file '" + spec + "' could not be found");
+				return false;
+			} catch (System.IO.IOException){
+				ReportError (2001, "Source file '" + spec + "' could not be found");
+				return false;
+			}
+			foreach (string f in files)
+				DefaultArgumentProcessor (f);
+
+			if (!recurse)
+				return true;
+			
+			string [] dirs = null;
+
+			try {
+				dirs = Directory.GetDirectories(path);
+			} catch {
+			}
+			
+			foreach (string d in dirs) {
+					
+				// Don't include path in this string, as each
+				// directory entry already does
+				AddFiles (d + "/" + pattern, true);
+			}
+
+			return true;
+		}
+
+		public void EmbedResources(AssemblyBuilder builder)
+		{
+			if (EmbeddedResources != null)
+				foreach (string file in EmbeddedResources)
+					builder.AddResourceFile (file, file); // TODO: deal with resource IDs
+		}
+
+		public virtual bool NothingToCompile {
+			get {
+				if (SourceFilesToCompile.Count == 0) {
+					if (!BeQuiet) 
+						DoHelp();
+					return true;
+				}
+				if (!BeQuiet)
+					ShowBanner();
+				return false;
+			}
+		}
+
+	}
+	
+	public class CommonCompilerOptions2 : CommonCompilerOptions
+	{
+		[Option("Specify target CPU platform {ID}. ID can be x86, Itanium, x64 (AMD 64bit) or anycpu (the default).", "platform", SecondLevelHelp = true)]
+		public string TargetPlatform;
+		
+		[Option("What {action} (prompt | send | none) should be done when an internal compiler error occurs.\tThe default is none what just prints the error data in the compiler output", "errorreport", SecondLevelHelp = true)]
+		public InternalCompilerErrorReportAction HowToReportErrors = InternalCompilerErrorReportAction.none;
+		
+		[Option("Filealign internal blocks to the {blocksize} in bytes. Valid values are 512, 1024, 2048, 4096, and 8192.", "filealign", SecondLevelHelp = true)]
+		public int FileAlignBlockSize = 0; // 0 means use appropriate (not fixed) default		
+		
+		[Option("Generate documentation from xml commments.", "doc", SecondLevelHelp = true, VBCStyleBoolean = true)]
+		public bool GenerateXmlDocumentation = false;
+		
+		[Option("Generate documentation from xml commments to an specific {file}.", "docto", SecondLevelHelp = true)]
+		public string GenerateXmlDocumentationToFileName = null;
+	}
+	
 }

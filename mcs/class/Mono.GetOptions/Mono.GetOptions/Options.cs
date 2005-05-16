@@ -30,6 +30,8 @@ using System.Collections;
 
 namespace Mono.GetOptions
 {
+
+	public delegate void ErrorReporter (int num, string msg);
 	
 	public class Options
 	{
@@ -37,23 +39,36 @@ namespace Mono.GetOptions
 		public bool BreakSingleDashManyLettersIntoManyOptions;
 		public bool EndOptionProcessingWithDoubleDash;
 		public bool DontSplitOnCommas;
+		public ErrorReporter ReportError;
 		
 		private OptionList optionParser;
 
 		public Options() : this(null) {}
 		
-		public Options(string[] args) : this(args, OptionsParsingMode.Both, false, true, false) {}
+		public Options(string[] args) : this(args, OptionsParsingMode.Both, false, true, false, null) {}
 
 		public Options(string[] args, 
 					   OptionsParsingMode parsingMode, 
 					   bool breakSingleDashManyLettersIntoManyOptions, 
 					   bool endOptionProcessingWithDoubleDash,
-					   bool dontSplitOnCommas)
+					   bool dontSplitOnCommas) : 
+			this(args, OptionsParsingMode.Both, false, true, false, null) {}
+		
+		public Options(string[] args, 
+					   OptionsParsingMode parsingMode, 
+					   bool breakSingleDashManyLettersIntoManyOptions, 
+					   bool endOptionProcessingWithDoubleDash,
+					   bool dontSplitOnCommas,
+					   ErrorReporter reportError)
 		{
 			ParsingMode = parsingMode;
 			BreakSingleDashManyLettersIntoManyOptions = breakSingleDashManyLettersIntoManyOptions;
 			EndOptionProcessingWithDoubleDash = endOptionProcessingWithDoubleDash;
 			DontSplitOnCommas = dontSplitOnCommas;
+			if (reportError == null)
+				ReportError = new ErrorReporter(DefaultErrorReporter);
+			else
+				ReportError = reportError;
 			InitializeOtherDefaults();
 			if (args != null)
 				ProcessArgs(args);
@@ -94,9 +109,20 @@ namespace Mono.GetOptions
 		public void ProcessArgs(string[] args)
 		{
 			optionParser = new OptionList(this);
+			optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
 			optionParser.ProcessArgs(args);
 		}
 
+		private static void DefaultErrorReporter (int number, string message)
+		{
+			if (number > 0)
+				Console.WriteLine("Error {0}: {1}", number, message);
+			else
+				Console.WriteLine("Error: {0}", message);				
+		}
+		
+		public virtual string AdditionalBannerInfo { get { return null; } }
+		
 		public void ShowBanner()
 		{
 			optionParser.ShowBanner();

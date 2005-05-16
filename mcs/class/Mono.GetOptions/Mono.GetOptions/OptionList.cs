@@ -217,10 +217,15 @@ namespace Mono.GetOptions
 
 		private bool bannerAlreadyShown = false;
 		
+		internal string AdditionalBannerInfo;
+		
 		public void ShowBanner()
 		{
-			if (!bannerAlreadyShown)
+			if (!bannerAlreadyShown) {
 				Console.WriteLine(appTitle + "  " + appVersion + " - " + appCopyright); 
+				if (AdditionalBannerInfo != null)
+					Console.WriteLine(AdditionalBannerInfo);
+			}
 			bannerAlreadyShown = true;
 		}
 		
@@ -293,12 +298,6 @@ namespace Mono.GetOptions
 				Console.Write(option.ShortForm.Trim());
 			Console.WriteLine();
 			
-		}
-
-		private void ShowUsage(string errorMessage)
-		{
-			Console.WriteLine("ERROR: " + errorMessage.TrimEnd());
-			ShowUsage();
 		}
 
 		internal WhatToDoNext DoUsage()
