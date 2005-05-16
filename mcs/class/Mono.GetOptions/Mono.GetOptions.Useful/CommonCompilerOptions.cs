@@ -461,9 +461,9 @@ namespace Mono.GetOptions.Useful
 					if (ass.EndsWith (".dll"))
 						ass = assemblyName.Substring (0, assemblyName.Length - 4);
 					a = Assembly.Load (ass);
-					adder(a);
-					return;
 				}
+				adder(a);
+				return;
 			}
 			catch (FileNotFoundException) {
 				if (PathsToSearchForLibraries != null) {
