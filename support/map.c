@@ -34,6 +34,9 @@
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
 #endif
+#ifdef HAVE_SYS_STATVFS_H
+#include <sys/statvfs.h>
+#endif
 
 int Mono_Posix_FromError (int x, int *r)
 {

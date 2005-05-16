@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include "mph.h"
+#include "map.h"
 
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
