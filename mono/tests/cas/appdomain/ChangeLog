@@ -1,0 +1,9 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Track changes.
+	* Makefile: New. Build sandboxes and tests.
+	* makepol.cs: New.
+	* README: New. Instruction about the sandboxes and tests.
+	* sandbox.cs: New. Creates a policy (XML) restricted sandbox to 
+	execute assemblies.
+	* whoami.cs: New. Sample to run under a sandbox.
