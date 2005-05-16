@@ -75,7 +75,7 @@ namespace Mono.Languages {
 		
 		private bool LoadReferencedAssemblies()
 		{
-			return options.LoadReferencedAssemblies(new AssemblyAdder(TypeManager.AddAssembly));
+			return options.LoadReferencedAssemblies(new Mono.MonoBASIC.AssemblyAdder(TypeManager.AddAssembly));
 		}
 
 		private bool AdjustCodegenWhenTargetIsNetModule()
@@ -86,7 +86,7 @@ namespace Mono.Languages {
 		
 		private bool LoadAddedNetModules()
 		{
-			return options.LoadAddedNetModules(CodeGen.AssemblyBuilder, new ModuleAdder(TypeManager.AddModule));
+			return options.LoadAddedNetModules(CodeGen.AssemblyBuilder, new Mono.MonoBASIC.ModuleAdder(TypeManager.AddModule));
 		}
 		
 		private bool InitializeCoreTypes()
