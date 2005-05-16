@@ -143,9 +143,9 @@
 	- level 2: diacritic difference, nonspacing-mark difference?
 	- level 3: case/width sensitivity
 	- level 4: kana type (mostly at primary category 22)
-	- level 5: miscellaneous differences:
-		+ variable weighting by StringSort
-		+ Japanese sequential Kana ordering
+	- level 5: variable weighting (apostrophe, hyphens etc.)
+
+	The basic table is for level 1 to level 4. Level 5 is special.
 
 	String comparison is done from level 1 to 5. The comparison won't
 	stop until either it found the primary difference, or it reached to
@@ -155,13 +155,37 @@
 	If the collator just returned case difference at first 'e' and 'E',
 	"eB" is still smaller than "EA".
 
+**** level 5: variable weighting by StringSort
+
+	There are some characters that are treated specially. Namely they are
+	apostrophe and hyphens. The sortkeys for them is put after level 4
+	(thus here I write them as "level 5"). It has different sort key
+	format. See immediate below. There is no level 5 characters when 
+	StringSort is specified.
+
 *** sort key format
 
 	00 means the end of sort key.
 	01 means the end of the level.
 	02-FF means the value.
-	If less than 2 in the value at each level, then the sequence of the 
-	level is terminated (i.e. the sort key won't contain extraneous '2').
+	Actually '2' could be cut when all the following values are
+	also '2' (i.e. the sort key binary won't contain extraneous '2').
+
+	For level 5, MS has different key layout:
+
+	[offsetL]* [offsetM + 0x7F]? [3 + offsetS * 4] [6] [char-weight]
+
+	where all "offsetL" "offsetM" and "offsetS" represents the offset
+	from the previous level 5 character in the resulting string.
+	"offsetL" continues until the value is 0xFF.
+	"offsetM" is always larger than 0x80.
+
+	The actual offset is 8064 * numOffsetL + 63 * offsetM + offsetS
+
+	('3' may actually vary and/or represent another values but no idea.
+	At least 00, 01 and 02 are not acceptable since they are reserved.
+	02 is not reserved by definition above, but the key-size optimizer
+	uses it as a special mark, as mentioned above.)
 
 *** sort key table
 
@@ -250,14 +274,11 @@
 	When CompareOptions.StringSort is specified, then it modifies
 	characters in category 2 from "1 1 1 1 80 07 06 xx" to
 	"06 xx yy zz" and some characters become case sensitive.
-	
-	To handle simply, it looks like the way to go that we compute those
-	character weights in StringSort and in case of !StringSort just
-	regard them as "1 1 1 1 ...".
-	However, actually there are only 3 characters (FF0D, 208B and 207B)
-	that has level 3 weights and usually None is used, we had better put
-	"1 1 1 1 ..." by default and compute them only when StringSort is
-	specified. It would be better for performance.
+
+	For details, "level 5" description above.
+
+	To handle them simply, we introduce "category 0x01" (which never
+	happens in the actual sortkeys) for those variables in the table.
 
 	There seems no further differences between StringSort and None.
 

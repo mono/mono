@@ -33,10 +33,22 @@ namespace Mono.Globalization.Unicode
 	{
 		int l1, l2, l3, l4, l5;
 		byte [] l1b, l2b, l3b, l4b, l5b;
-		bool hasL2, hasL3, hasL4, hasL5;
+		int level5LastPos;
 
 		public SortKeyBuffer ()
 		{
+		}
+
+		public void Reset ()
+		{
+			l1 = l2 = l3 = l4 = l5 = 0;
+			level5LastPos = 0;
+		}
+
+		// It is used for CultureInfo.ClearCachedData().
+		internal void ClearBuffer ()
+		{
+			l1b = l2b = l3b = l4b = l5b = null;
 		}
 
 		internal void AdjustBufferSize (string s, int kanaWeight)
@@ -51,33 +63,47 @@ namespace Mono.Globalization.Unicode
 			// data (happens only in Japanese)
 			if (l4b == null || l4b.Length < s.Length)
 				l4b = new byte [s.Length * kanaWeight + 10];
-			if (l5b == null || l5b.Length < s.Length)
-				l5b = new byte [s.Length + 10];
+			if (l5b == null)
+				l5b = new byte [10];
 		}
 
-		internal void ClearBuffer ()
-		{
-			l1b = l2b = l3b = l4b = l5b = null;
-		}
-
-		// FIXME: it cannot handle variable weighting.
-		// Requires additional parameter.
-		internal void Append (byte [] table, int idx1, int idx2, int idx3, int idx4, int idx5)
+		// Append non-variable character.
+		internal void AppendNormal (byte [] table, int idx1, int idx2, int idx3, int idx4)
 		{
 			// idx1-4 points to CollationTable indexes
-			FillBuffer (table, idx1, ref l1b, ref l1);
-			FillBuffer (table, idx2, ref l2b, ref l2);
-			FillBuffer (table, idx3, ref l3b, ref l3);
-			FillBuffer (table, idx4, ref l4b, ref l4);
-			FillBuffer (table, idx5, ref l5b, ref l5);
+			while (table [idx1] != 0)
+				AppendBufferPrimitive (table [idx1++], ref l1b, ref l1);
+			while (table [idx2] != 0)
+				AppendBufferPrimitive (table [idx2++], ref l2b, ref l2);
+			while (table [idx3] != 0)
+				AppendBufferPrimitive (table [idx3++], ref l3b, ref l3);
+			while (table [idx4] != 0)
+				AppendBufferPrimitive (table [idx4++], ref l4b, ref l4);
 		}
 
-		private void FillBuffer (byte [] table, int idx, ref byte [] buf, ref int bidx)
+		// Append variable character.
+		internal void AppendLevel5 (byte [] table, int idx, int currentIndex)
 		{
-			while (table [idx] != 0) {
-				buf [bidx++] = table [idx++];
-				if (bidx < buf.Length)
-					continue;
+			// offset
+			int offsetValue = currentIndex - level5LastPos;
+			for (; offsetValue > 8064; offsetValue -= 8064)
+				AppendBufferPrimitive (0xFF, ref l5b, ref l5);
+			if (offsetValue > 63)
+				AppendBufferPrimitive ((byte) (offsetValue - 63 / 4 + 0x80), ref l5b, ref l5);
+			AppendBufferPrimitive ((byte) (offsetValue % 63), ref l5b, ref l5);
+
+			level5LastPos = currentIndex;
+
+			// sortkey value
+			idx++; // skip the "variable" mark: 01
+			while (table [idx] != 0)
+				AppendBufferPrimitive (table [idx++], ref buf, ref l5);
+		}
+
+		private void AppendBufferPrimitive (byte value, ref byte [] buf, ref int bidx)
+		{
+			buf [bidx++] = value;
+			if (bidx == buf.Length) {
 				byte [] tmp = new byte [bidx * 2];
 				Array.Copy (buf, tmp, buf.Length);
 				buf = tmp;
@@ -117,29 +143,23 @@ namespace Mono.Globalization.Unicode
 			Array.Copy (l1b, ret, l1);
 			ret [l1] = 1; // end-of-level mark
 			int cur = l1 + 1;
-			if (hasL2)
+			if (l2 > 0)
 				Array.Copy (l2b, 0, ret, cur, l2);
-			cur += l2b;
+			cur += l2;
 			ret [cur++] = 1; // end-of-level mark
-			if (hasL3)
+			if (l3 > 0)
 				Array.Copy (l3b, 0, ret, cur, l3);
-			cur += l3b;
+			cur += l3;
 			ret [cur++] = 1; // end-of-level mark
-			if (hasL4)
+			if (l4 > 0)
 				Array.Copy (l4b, 0, ret, cur, l4);
-			cur += l4b;
+			cur += l4;
 			ret [cur++] = 1; // end-of-level mark
-			if (hasL5)
+			if (l5 > 0)
 				Array.Copy (l5b, 0, ret, cur, l5);
-			cur += l5b;
+			cur += l5;
 			ret [cur++] = 0; // end-of-data mark
 			return ret;
-		}
-
-		public void Reset ()
-		{
-			l1 = l2 = l3 = l4 = l5 = 0;
-			hasL1 = hasL2 = hasL3 = hasL4 = hasL5 = false;
 		}
 	}
 
@@ -475,7 +495,7 @@ namespace Mono.Globalization.Unicode
 
 		#endregion
 
-		#region IsPrefix
+		#region IsPrefix(), IsSuffix()
 		//
 		// Create character iterator for both of the argument strings.
 		// Compare them until the end of the target. If there was a 
@@ -483,23 +503,31 @@ namespace Mono.Globalization.Unicode
 		//
 		public bool IsPrefix (string src, string target, CompareOptions opt)
 		{
+			bool dummy = false;
 			return IsPrefix (
 				new StringIterator (src, 0, src.Length, opt),
-				new StringIterator (target, 0, target.Length, opt));
+				new StringIterator (target, 0, target.Length, opt), dummy);
 		}
 
-		private bool IsPrefix (CharacterIterator src, CharacterIterator target)
+		private bool IsPrefix (StringIterator src,
+			CharacterIterator target, ref bool testSuffix)
 		{
 			int i = src.Current;
-			do {
-				if (CompareChar (src, target) != 0) {
-					src.MoveTo (i);
-					return false;
-				}
-				if (!target.MoveNext ())
-					return true;
-			} while (src.MoveNext ());
-			return false;
+			try {
+				do {
+					if (CompareChar (src, target) != 0) {
+						return false;
+					}
+					if (!target.MoveNext ()) {
+						if (testSuffix)
+							testSuffix = !src.MoveNext ();
+						return true;
+					}
+				} while (src.MoveNext ());
+				return false;
+			} finally {
+				src.MoveTo (i);
+			}
 		}
 
 		/*
@@ -519,11 +547,18 @@ namespace Mono.Globalization.Unicode
 		-->
 		
 		I think it could be implemented more easily and safely,
-		using LastIndexOf() and IsPrefix().
+		using LastIndexOf().
 		*/
 		public bool IsSuffix (string src, string target, CompareOptions opt)
 		{
-			// TODO: fill it.
+			StringIterator si = new StringIterator (src, 0, src.Length, opt);
+			StringIterator ti = new StringIterator (target, 0, target.Length, opt);
+
+			// FIXME: this is not effective at all.
+//			si.MoveTo (src.Length - target.Length);
+			bool suffixTest = true;
+			int last = LastIndexOf (si, ti, ref suffixTest);
+			return (last >= 0) && suffixTest;
 		}
 		#endregion
 
