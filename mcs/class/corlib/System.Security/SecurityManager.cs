@@ -146,16 +146,16 @@ namespace System.Security {
 			return true;
 		}
 
-		internal static bool IsGranted (Assembly a, PermissionSet ps, bool noncas)
+		internal static IPermission CheckPermissionSet (Assembly a, PermissionSet ps, bool noncas)
 		{
 			if (ps.IsEmpty ())
-				return true;
+				return null;
 
 			foreach (IPermission p in ps) {
 				// note: this may contains non CAS permissions
 				if ((!noncas) && (p is CodeAccessPermission)) {
 					if (!SecurityManager.IsGranted (a, p))
-						return false;
+						return p;
 				} else {
 					// but non-CAS will throw on failure...
 					try {
@@ -163,31 +163,34 @@ namespace System.Security {
 					}
 					catch (SecurityException) {
 						// ... so we catch
-						return false;
+						return p;
 					}
 				}
 			}
-			return true;
+			return null;
 		}
 
-		internal static bool IsGranted (AppDomain ad, PermissionSet ps)
+		internal static IPermission CheckPermissionSet (AppDomain ad, PermissionSet ps)
 		{
 			if ((ps == null) || ps.IsEmpty ())
-				return true;
+				return null;
 
 			PermissionSet granted = ad.GrantedPermissionSet;
 			if (granted == null)
-				return true;
+				return null;
+			if ((ad.GrantedPermissionSet.Count == 0) && ad.GrantedPermissionSet.IsUnrestricted ())
+				return null;
 
 			foreach (IPermission p in ps) {
 				if (p is CodeAccessPermission) {
 					CodeAccessPermission grant = (CodeAccessPermission) granted.GetPermission (p.GetType ());
 					if (grant == null) {
 						if (!granted.IsUnrestricted () || !(p is IUnrestrictedPermission)) {
-							return p.IsSubsetOf (null);
+							if (!p.IsSubsetOf (null))
+								return p;
 						}
 					} else if (!p.IsSubsetOf (grant)) {
-						return false;
+						return p;
 					}
 				} else {
 					// but non-CAS will throw on failure...
@@ -196,11 +199,11 @@ namespace System.Security {
 					}
 					catch (SecurityException) {
 						// ... so we catch
-						return false;
+						return p;
 					}
 				}
 			}
-			return true;
+			return null;
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -615,20 +618,20 @@ namespace System.Security {
 				bool result = true;
 				if (klass->cas.size > 0) {
 					ps = Decode (klass->cas.blob, klass->cas.size);
-					result = SecurityManager.IsGranted (a, ps, false);
+					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
 				}
 				if (result && (klass->noncas.size > 0)) {
 					ps = Decode (klass->noncas.blob, klass->noncas.size);
-					result = SecurityManager.IsGranted (a, ps, true);
+					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
 				}
 
 				if (result && (method->cas.size > 0)) {
 					ps = Decode (method->cas.blob, method->cas.size);
-					result = SecurityManager.IsGranted (a, ps, false);
+					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
 				}
 				if (result && (method->noncas.size > 0)) {
 					ps = Decode (method->noncas.blob, method->noncas.size);
-					result = SecurityManager.IsGranted (a, ps, true);
+					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
 				}
 #if NET_2_0
 				// success if one of the permission is granted
@@ -637,7 +640,7 @@ namespace System.Security {
 					if (psc.Count > 0) {
 						result = false;
 						foreach (PermissionSet pset in psc) {
-							if (SecurityManager.IsGranted (a, pset, false)) {
+							if (SecurityManager.CheckPermissionSet (a, pset, false) == null) {
 								result = true;
 								break;
 							}
@@ -649,7 +652,7 @@ namespace System.Security {
 					if (psc.Count > 0) {
 						result = false;
 						foreach (PermissionSet pset in psc) {
-							if (SecurityManager.IsGranted (a, pset, false)) {
+							if (SecurityManager.CheckPermissionSet (a, pset, false) == null) {
 								result = true;
 								break;
 							}
@@ -675,7 +678,7 @@ namespace System.Security {
 			}
 
 			try {
-				return SecurityManager.IsGranted (a, _fullTrust, false);
+				return (SecurityManager.CheckPermissionSet (a, _fullTrust, false) == null);
 			}
 			catch (SecurityException) {
 				return false;
@@ -767,11 +770,11 @@ namespace System.Security {
 				bool result = true;
 				if (actions->cas.size > 0) {
 					ps = Decode (actions->cas.blob, actions->cas.size);
-					result = SecurityManager.IsGranted (a, ps, false);
+					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
 				}
 				if (actions->noncas.size > 0) {
 					ps = Decode (actions->noncas.blob, actions->noncas.size);
-					result = SecurityManager.IsGranted (a, ps, true);
+					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
 				}
 #if NET_2_0
 				// success if one of the permission is granted
@@ -780,7 +783,7 @@ namespace System.Security {
 					if (psc.Count > 0) {
 						result = false;
 						foreach (PermissionSet pset in psc) {
-							if (SecurityManager.IsGranted (a, pset, false)) {
+							if (SecurityManager.CheckPermissionSet (a, pset, false) == null) {
 								result = true;
 								break;
 							}

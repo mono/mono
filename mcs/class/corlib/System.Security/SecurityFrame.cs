@@ -31,6 +31,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Security {
 
@@ -150,6 +151,21 @@ namespace System.Security {
 				return false;
 
 			return true;
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.AppendFormat ("Frame: {0}{1}", _method, Environment.NewLine);
+			sb.AppendFormat ("\tAppDomain: {0}{1}", Domain, Environment.NewLine);
+			sb.AppendFormat ("\tAssembly: {0}{1}", Assembly, Environment.NewLine);
+			if (_assert != null)
+				sb.AppendFormat ("\tAssert: {0}{1}", _assert, Environment.NewLine);
+			if (_deny != null)
+				sb.AppendFormat ("\tDeny: {0}{1}", _deny, Environment.NewLine);
+			if (_permitonly != null)
+				sb.AppendFormat ("\tPermitOnly: {0}{1}", _permitonly, Environment.NewLine);
+			return sb.ToString ();
 		}
 
 		static public ArrayList GetStack (int skipFrames)

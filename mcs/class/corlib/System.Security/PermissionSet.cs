@@ -57,6 +57,7 @@ namespace System.Security {
 		private int _hashcode;
 		private PolicyLevel _policyLevel;
 		private bool _declsec;
+		private bool _readOnly;
 
 		// constructors
 
@@ -112,8 +113,8 @@ namespace System.Security {
 
 		public virtual IPermission AddPermission (IPermission perm)
 		{
-			if (perm == null)
-				return null;
+			if ((perm == null) || _readOnly)
+				return perm;
 
 			// we don't add to an unrestricted permission set unless...
 			if (state == PermissionState.Unrestricted) {
@@ -504,7 +505,7 @@ namespace System.Security {
 				return true;
 			// the set may include some empty permissions
 			foreach (IPermission p in list) {
-				// empty == fully restricted == IsSubsetOg(null) == true
+				// empty == fully restricted == IsSubsetOf(null) == true
 				if (!p.IsSubsetOf (null))
 					return false;
 			}
@@ -518,7 +519,7 @@ namespace System.Security {
 
 		public virtual IPermission RemovePermission (Type permClass) 
 		{
-			if (permClass == null)
+			if ((permClass == null) || _readOnly)
 				return null;
 
 			foreach (object o in list) {
@@ -532,8 +533,8 @@ namespace System.Security {
 
 		public virtual IPermission SetPermission (IPermission perm) 
 		{
-			if (perm == null)
-				return null;
+			if ((perm == null) || _readOnly)
+				return perm;
 			if (perm is IUnrestrictedPermission)
 				state = PermissionState.None;
 			RemovePermission (perm.GetType ());
@@ -599,7 +600,9 @@ namespace System.Security {
 		}
 
 		public virtual bool IsReadOnly {
-			get { return false; } // always false
+			// always false (as documented) but the PermissionSet can be read-only
+			// e.g. in a PolicyStatement
+			get { return false; } 
 		}
 
 		public virtual object SyncRoot {
@@ -663,6 +666,11 @@ namespace System.Security {
 			set { _policyLevel = value; }
 		}
 
+		internal void SetReadOnly (bool value)
+		{
+			_readOnly = value;
+		}
+
 		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current, ref AppDomain domain)
 		{
 			if (IsUnrestricted ()) {
@@ -702,17 +710,19 @@ namespace System.Security {
 
 		internal void CheckAssembly (Assembly a, SecurityFrame frame)
 		{
-			if (!SecurityManager.IsGranted (a, this, false)) {
+			IPermission p = SecurityManager.CheckPermissionSet (a, this, false);
+			if (p != null) {
 				CodeAccessPermission.ThrowSecurityException (this, "Demand failed assembly permissions checks.",
-					frame, SecurityAction.Demand, null);
+					frame, SecurityAction.Demand, p);
 			}
 		}
 
 		internal void CheckAppDomain (AppDomain domain, SecurityFrame frame)
 		{
-			if (!SecurityManager.IsGranted (domain, this)) {
+			IPermission p = SecurityManager.CheckPermissionSet (domain, this);
+			if (p != null) {
 				CodeAccessPermission.ThrowSecurityException (this, "Demand failed appdomain permissions checks.",
-					frame, SecurityAction.Demand, null);
+					frame, SecurityAction.Demand, p);
 			}
 		}
 

@@ -1,3 +1,11 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSet.cs: Add support for "hidden" read-only mode (as used
+	by PolicyStatement).
+	* SecurityFrame.cs: Add some debugging code in the ToString method.
+	* SecurityManager.cs: Changed internal API so we can display the 
+	permission that failed in a PermissionSet (e.g. assembly or appdomain).
+
 2005-05-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: GetZoneAndOrigin is present in 1.1 too (but is 
