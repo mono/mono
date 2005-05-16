@@ -64,7 +64,10 @@ namespace Mono.GetOptions.Useful
 
 		public CommonCompilerOptions(string[] args) : this(args, null) {}
 
-		public CommonCompilerOptions(string[] args, ErrorReporter reportError) : base(args, OptionsParsingMode.Both, false, true, true, reportError) {}
+		public CommonCompilerOptions(string[] args, ErrorReporter reportError) : base(args, OptionsParsingMode.Both, false, true, true, reportError) 
+		{
+			PathsToSearchForLibraries.Add (Directory.GetCurrentDirectory ());
+		}
 		
 		[Option(-1, "References packages listed. {packagelist}=package,...", "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
@@ -443,7 +446,7 @@ namespace Mono.GetOptions.Useful
 
 		public bool BeQuiet { get { return DontShowBanner || SuccintErrorDisplay; } } 
 		
-				private void LoadAssembly (AssemblyAdder adder, string assemblyName, ref int errors, bool soft)
+		private void LoadAssembly (AssemblyAdder adder, string assemblyName, ref int errors, bool soft)
 		{
 			Assembly a = null;
 			string total_log = "";

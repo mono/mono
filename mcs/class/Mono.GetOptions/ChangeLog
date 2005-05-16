@@ -1,4 +1,8 @@
-2005-05-07  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+2005-05-16:2  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions.Useful/CommonCompilerOptions.cs: fix for #74954
+		current dir should be searched for referenced assemblies
+
+2005-05-16  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions.Useful/CommonCompilerOptions.cs: some refactored code coming from
 	mbas' CompilerOptions. Added overridable string [] AssembliesToReferenceSoftly
 	* Mono.GetOptions/Options.cs: new constructor adds support to use a provided ErrorReporter
