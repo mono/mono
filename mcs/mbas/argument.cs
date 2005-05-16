@@ -30,9 +30,16 @@ namespace Mono.MonoBASIC {
 
 		public AType ArgType;
 		public Expression Expr;
+		public string ParamName;
 		
 		public Argument (Expression expr, AType type)
+			: this ("", expr, type)
 		{
+		}
+
+		public Argument (string paramName, Expression expr, AType type)
+		{
+			this.ParamName = paramName;
 			expr = Parser.SetValueRequiredFlag (expr);
 			this.Expr = expr;
 			this.ArgType = type;

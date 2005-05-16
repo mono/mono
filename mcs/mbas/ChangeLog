@@ -1,3 +1,11 @@
+2005-05-16 Satya Sudha K <ksathyasudha@hotmail.com>
+	* parameter.cs : Converting the default value (for optional param) to param type.
+	* ecore.cs     : Fixed string <-> char constant conversions.
+	* expression.cs :
+	* argument.cs   :
+	* mb-parser.jay :
+			Support for named arguments
+		
 2005-05-12:2 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : mcs having C# 2.0 features makes me slip some simplified delegate creation 
 		code, that breaks with csc in Windows (as pointed by Atsushi)

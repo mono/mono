@@ -3558,10 +3558,13 @@ namespace Mono.MonoBASIC {
 
 		static ArrayList tempvars; // For ByRef - different parameter and argument type
 		static bool is_byref_conversion = false; //For ByRef when it is converted 
+		static CaseInsensitiveHashtable namedArgs = null;
+		static string errorMsg = "";
 
 		static Invocation ()
 		{
 			method_parameter_cache = new PtrHashtable ();
+			namedArgs = new CaseInsensitiveHashtable ();
 		}
 			
 		//
@@ -3875,8 +3878,8 @@ namespace Mono.MonoBASIC {
 				if (!HasArrayParameter (pd) && arg_count > pd_count)
 					return ConversionType.None;
 			}       
+
 			ConversionType result = ConversionType.Widening;
-			ArrayList newarglist = new ArrayList();
 			if (arg_count > 0) {
 				result = ConversionType.None;
 				int array_param_index = -1;
@@ -3928,7 +3931,6 @@ namespace Mono.MonoBASIC {
 					}
 					if (match == ConversionType.None)
 						match = CheckParameterAgainstArgument (ec, pd, i, a, param_type);
-					newarglist.Add (a);
 					if (match == ConversionType.None)
 						return ConversionType.None;
 					if (result == ConversionType.None)
@@ -3938,68 +3940,50 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-#if false
-			// We've found a candidate, so we exchange the dummy NoArg arguments
-			// with new arguments containing the default value for that parameter
+			return result;
+		}
 
-			ArrayList newarglist = new ArrayList();
-			for (int i = 0; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
-				Parameter p = null;
-
-				if (ps != null)
-					p = (Parameter) ps.FixedParameters[i];
-
-				if (a.ArgType == Argument.AType.NoArg){
-					a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
-					a.Resolve(ec, Location.Null);
-				}
-
-				// ToDo - This part is getting resolved second time within this function
-				// This is a costly operation
-				// The earlier resoved result should be used here.
-				// Has to be done during compiler optimization.
-				if (a.ArgType == Argument.AType.AddressOf) {
-					param_type = pd.ParameterType (i);
-					bool IsDelegate = TypeManager.IsDelegateType (param_type);
-
-					a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
-					ArrayList args = new ArrayList();
-					args.Add (a);
-					string param_name = pd.ParameterDesc(i).Replace('+', '.');
-					Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
-								
-					New temp_new = new New ((Expression)pname, args, Location.Null);
-					Expression del_temp = temp_new.DoResolve(ec);
-
-					if (del_temp == null)
-						return ConversionType.None;
-
-					a = new Argument (del_temp, Argument.AType.Expression);
-					if (!a.Resolve(ec, Location.Null))
-						return ConversionType.None;
-				}
-
-				if ((p != null) && ((p.ModFlags & Parameter.Modifier.REF) != 0)) {
-					a.ArgType = Argument.AType.Ref;
-					a.Resolve(ec, Location.Null);
-				} else if ((pd.ParameterModifier (i) & Parameter.Modifier.REF) != 0) {
-					a.ArgType = Argument.AType.Ref;
-					a.Resolve(ec, Location.Null);
-				}	
-				newarglist.Add(a);
-				int n = pd_count - arg_count;
-				if (n > 0) {
-					for (int x = 0; x < n; x++) {
-						Parameter op = (Parameter) ps.FixedParameters[x + arg_count];
-						Argument b = new Argument (op.ParameterInitializer, Argument.AType.Expression);
-						b.Resolve(ec, Location.Null);
-						newarglist.Add (b);
+		internal static ArrayList ReorderArguments (MethodBase mb, ArrayList Arguments, ref string ErrMsg)
+		{
+			ArrayList orderedArgs = new ArrayList ();
+			ParameterData pd = GetParameterData (mb);
+			bool error = false;
+			for (int index = 0; index < pd.Count; index ++) {
+				string paramName = pd.ParameterName (index);
+				if (namedArgs.Contains (paramName)) {
+					int argIndex = (int) namedArgs [paramName];
+					orderedArgs.Add (Arguments [argIndex]);
+				} else {
+					Parameter.Modifier p_mod = pd.ParameterModifier (index) & Parameter.Modifier.OPTIONAL;
+					if (p_mod == Parameter.Modifier.OPTIONAL)
+						orderedArgs.Add (new Argument (new EmptyExpression (), Argument.AType.NoArg));
+					 else {
+						error = true;
+						ErrMsg += "\n\t'" + mb + "': Argument not specified for parameter '" + paramName + "'";
 					}
 				}
 			}
-#endif
-			return result;
+
+			if (Arguments.Count > orderedArgs.Count) {
+				for (int argIndex = 0; argIndex < Arguments.Count; argIndex ++) {
+					string argName = ((Argument) Arguments [argIndex]).ParamName;
+					bool found = false;
+					for (int paramIndex = 0; paramIndex < pd.Count; paramIndex ++) {
+						string paramName = pd.ParameterName (paramIndex);
+						if (String.Compare (argName, paramName, true) == 0) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						error = true;
+						ErrMsg += "\n\t'" + mb + "': '" + argName + "' is not a parameter";
+					}
+				}
+			}
+			if (error)
+				return null;
+			return orderedArgs;
 		}
 		
 		static bool compare_name_filter (MemberInfo m, object filterCriteria)
@@ -4065,10 +4049,31 @@ namespace Mono.MonoBASIC {
 			Hashtable expanded_candidates = new Hashtable();
 			int narrow_count = 0;
 			bool narrowing_candidate = false;
+			errorMsg = "";
 
+			if (Arguments == null)
+				argument_count = 0;
+			else
+				argument_count = Arguments.Count;
+
+			namedArgs.Clear ();
+			if (!CheckNamedArguments (Arguments, loc))
+				return null;
+
+			if (!GetNamedArgPos (Arguments, loc))
+				return null;
+
+			ArrayList newarglist = Arguments;
 			foreach (MethodBase candidate in me.Methods){
 				bool candidate_expanded;
-				ConversionType m = IsApplicable (ec, Arguments, candidate, out candidate_expanded);
+				newarglist = Arguments;
+				if (argument_count > 0 && namedArgs.Count != 0) {
+					newarglist = ReorderArguments (candidate, Arguments, ref errorMsg);
+					if (newarglist == null)
+						continue;
+				}
+
+				ConversionType m = IsApplicable (ec, newarglist, candidate, out candidate_expanded);
 				if (candidate_expanded)
 					expanded_candidates [candidate] = candidate;
 				if (m == ConversionType.None)
@@ -4104,11 +4109,6 @@ namespace Mono.MonoBASIC {
 				candidates = null;
 			} else
 				narrow_count = 0;
-
-			if (Arguments == null)
-				argument_count = 0;
-			else
-				argument_count = Arguments.Count;
 
 			if (method == null) {
 				//
@@ -4150,6 +4150,7 @@ namespace Mono.MonoBASIC {
  					if (candidate == method)
  						continue;
 
+
 					if (BetterFunction (ec, Arguments, candidate, method,
 								false, loc) == Applicability.Better) {
  						Report.Error (
@@ -4169,7 +4170,15 @@ namespace Mono.MonoBASIC {
 
 			bool chose_params_expanded = expanded_candidates.Contains (method);
 
-			Arguments = ConstructArgumentList(ec, Arguments, method);
+			newarglist = Arguments;
+			if (argument_count > 0 && namedArgs.Count != 0) {
+				string err = "";
+				newarglist = ReorderArguments (method, Arguments, ref err);
+				if (newarglist == null)
+					return null;
+			}
+
+			Arguments = ConstructArgumentList(ec, newarglist, method);
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
 						   chose_params_expanded, null, loc))
 			{
@@ -4177,6 +4186,46 @@ namespace Mono.MonoBASIC {
 			}
 			else
 				return null;
+		}
+
+		internal static bool CheckNamedArguments (ArrayList Arguments, Location loc) 
+		{
+			if (Arguments == null || Arguments.Count == 0)
+				return true;
+			
+			bool namedArgFound = false;
+			for (int index = 0; index < Arguments.Count; index ++) {
+				Argument a = (Argument) Arguments [index];
+				if (a.ParamName == null || a.ParamName == "") {
+					if (namedArgFound) {
+						Report.Error (30241, loc,
+							"Named argument expected");
+						return false;
+					}
+				} else
+					namedArgFound = true;
+			}
+
+			return true;
+		}
+
+		internal static bool GetNamedArgPos (ArrayList Arguments, Location loc) 
+		{
+			namedArgs.Clear ();
+			if (Arguments == null || Arguments.Count == 0)
+				return true;
+			for (int index = 0; index < Arguments.Count; index ++) {
+				Argument a = (Argument) Arguments [index];
+				if (a.ParamName == null || a.ParamName == "")
+					// none of the args are named
+					return true;
+				if (namedArgs.Contains (a.ParamName)) {
+					Report.Error (30274, loc, "Parameter '" + a.ParamName +"'already has a matching argument");
+					return false;
+				}
+				namedArgs.Add (a.ParamName, index);
+			}
+			return true;
 		}
 
 		public static ArrayList ConstructArgumentList (EmitContext ec, ArrayList Arguments,	MethodBase method)
@@ -4435,7 +4484,7 @@ namespace Mono.MonoBASIC {
 				if (method == null)
 				{
 					Error (30455,
-						"Could not find any applicable function to invoke for this argument list");
+						"Could not find any applicable function to invoke for this argument list" + errorMsg);
 					return null;
 				}
 

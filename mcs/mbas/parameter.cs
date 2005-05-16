@@ -39,7 +39,7 @@ namespace Mono.MonoBASIC {
 		public readonly Modifier ModFlags;
 		public readonly string Name;
 		public Type parameter_type;
-		public readonly Expression ParameterInitializer;
+		public Expression ParameterInitializer;
 		public readonly bool IsOptional;
 
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
@@ -157,29 +157,47 @@ namespace Mono.MonoBASIC {
 			return ExternalType (ds, loc).FullName;
 		}
 
-		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
+		public bool DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
 		{
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
 			else 
 				builder = mb.DefineParameter (index, Attributes, Name);
 
-			if (ParameterInitializer != null)	{
+			if (ParameterInitializer != null) {
 				if (ParameterInitializer is MemberAccess) {
 					MemberAccess ma = ParameterInitializer as MemberAccess;
 
-					Expression const_ex = ma.Resolve(ec);
-					if (const_ex is EnumConstant)
-						builder.SetConstant (((EnumConstant) const_ex).Child.GetValue());
-					else
-						Report.Error(-1, "Internal error - Non supported argument type in optional parameter");
+					ParameterInitializer = ma.Resolve(ec);
+				} else 
+					ParameterInitializer = ParameterInitializer.Resolve (ec);
+
+				if (ParameterInitializer == null) {
+					Report.Error(-1, "Internal error - Non supported argument type in optional parameter");
+					return false;
 				}
-				else
-					builder.SetConstant (((Constant) ParameterInitializer).GetValue());
+
+				if (parameter_type != ParameterInitializer.Type) {
+					Expression conv = Expression.ConvertImplicit (ec, ParameterInitializer, parameter_type, loc);
+					if (conv == null) {
+						Report.Error (30439, loc, "Constant expression '" + ParameterInitializer + "' not representable as '" + parameter_type + "'");
+						return false;
+					}
+					ParameterInitializer = conv;
+				}
+
+				if (!(ParameterInitializer is Constant)) {
+					Report.Error (30059, loc, "Constant expression is required");
+					return false;
+				}
+
+				builder.SetConstant (((Constant) ParameterInitializer).GetValue());
+
 			}
 
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
+			return true;
 		}
 	}
 

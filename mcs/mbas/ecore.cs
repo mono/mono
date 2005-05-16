@@ -1283,6 +1283,7 @@ namespace Mono.MonoBASIC {
 			if (ImplicitReferenceConversionExists (expr, expr_type, target_type))
 				return true;
 			
+/*
 			if (expr is IntConstant){
 				int value = ((IntConstant) expr).Value;
 
@@ -1325,6 +1326,7 @@ namespace Mono.MonoBASIC {
 				if (v > 0)
 					return true;
 			}
+*/
 			
 			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
 				IntLiteral i = (IntLiteral) expr;
@@ -2353,6 +2355,12 @@ namespace Mono.MonoBASIC {
 
 			if (e != null)
 				return e;
+
+			if (expr is StringConstant && target_type == TypeManager.char_type)
+				return new CharConstant (((StringConstant) expr).Value [0]);
+
+			if (expr is CharConstant && target_type == TypeManager.string_type)
+				return new StringConstant (((CharConstant) expr).Value.ToString ());
 
 			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null)

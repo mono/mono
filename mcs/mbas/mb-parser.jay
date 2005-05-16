@@ -4368,6 +4368,10 @@ argument
 	  {
 		$$ = new Argument ((Expression) $2, Argument.AType.AddressOf);
 	  }
+	| identifier ATTR_ASSIGN expression 
+	  {
+		$$ = new Argument ((string) $1, (Expression) $3, Argument.AType.Expression);
+	  }
 	;
 
 variable_reference
