@@ -1,3 +1,8 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* FileCodeGroup.cs: Deal with null PolicyStatement.
+	* NetCodeGroup.cs: Deal with null PolicyStatement.
+
 2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileCodeGroup.cs: Now use PermissionSet.Union when resolving.

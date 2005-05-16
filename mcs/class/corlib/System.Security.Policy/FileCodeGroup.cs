@@ -77,7 +77,12 @@ namespace System.Security.Policy {
 			if (!MembershipCondition.Check (evidence))
 				return null;
 
-			PermissionSet ps = this.PolicyStatement.PermissionSet.Copy ();
+			PermissionSet ps = null;
+			if (this.PolicyStatement == null)
+				ps = new PermissionSet (PermissionState.None);
+			else
+				ps = this.PolicyStatement.PermissionSet.Copy ();
+
 			if (this.Children.Count > 0) {
 				foreach (CodeGroup child_cg in this.Children) {
 					PolicyStatement child_pst = child_cg.Resolve (evidence);
