@@ -1,3 +1,8 @@
+2005-05-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: make WriteByte work in all cases when no buffer is
+	being used. Fixes bug #74971.
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: if the pattern is just a file name and it exists, return

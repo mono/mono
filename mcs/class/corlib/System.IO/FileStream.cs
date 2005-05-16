@@ -374,6 +374,13 @@ namespace System.IO
 			if (buf_offset == buf_size)
 				FlushBuffer ();
 
+			if (buf_size == 0) { // No buffering
+				buf [0] = value;
+				buf_dirty = true;
+				FlushBuffer ();
+				return;
+			}
+
 			buf [buf_offset ++] = value;
 			if (buf_offset > buf_length)
 				buf_length = buf_offset;
