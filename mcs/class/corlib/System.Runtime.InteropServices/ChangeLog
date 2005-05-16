@@ -1,3 +1,37 @@
+2005-05-15  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* _Attribute.cs
+	* _ConstructorInfo.cs
+	* _EventInfo.cs
+	* _Exception.cs
+	* _FieldInfo.cs
+	* _MemberInfo.cs
+	* _MethodBase.cs
+	* _MethodInfo.cs
+	* _PropertyInfo.cs
+	* _Type.cs: Chance to .Net 1.1
+	* _Activator.cs
+	* _Assembly.cs
+	* _AssemblyBuilder.cs
+	* _AssemblyName.cs
+	* _ConstructorBuilder.cs
+	* _CustomAttributeBuilder.cs
+	* _EnumBuilder.cs
+	* _EventBuilder.cs
+	* _FieldBuilder.cs
+	* _ILGenerator.cs
+	* _LocalBuilder.cs
+	* _MethodBuilder.cs
+	* _MethodRental.cs
+	* _Module.cs
+	* _ModuleBuilder.cs
+	* _ParameterBuilder.cs
+	* _ParameterInfo.cs
+	* _PropertyBuilder.cs
+	* _SignatureHelper.cs
+	* _Thread.cs
+	* _TypeBuilder.cs: Added
+
 2005-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* _Attribute.cs: New. Interface for attributes in 2.0.

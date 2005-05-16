@@ -42,7 +42,7 @@ namespace System
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class Exception : ISerializable 
-#if NET_2_0
+#if NET_1_1
 	, _Exception
 #endif
 	{

@@ -5,7 +5,7 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_2_0
+#if NET_1_1
 
 using System;
 using System.Reflection;

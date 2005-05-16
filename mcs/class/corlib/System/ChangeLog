@@ -1,3 +1,7 @@
+2005-05-15  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* Attribute.cs:
+	* Exception.cs: .Net 1.1 already has these interfaces
 
 Mon May 16 18:23:49 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
