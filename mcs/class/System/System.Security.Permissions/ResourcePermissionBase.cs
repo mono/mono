@@ -117,8 +117,19 @@ namespace System.Security.Permissions {
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
+			_list.Clear ();
 			_unrestricted = PermissionHelper.IsUnrestricted (securityElement);
-			// TODO
+			if ((securityElement.Children == null) || (securityElement.Children.Count < 1))
+				return;
+
+			string[] names = new string [1];
+			foreach (SecurityElement child in securityElement.Children) {
+				// TODO: handle multiple names
+				names [0] = child.Attribute ("name");
+				int access = (int) Enum.Parse (PermissionAccessType, child.Attribute ("access"));
+				ResourcePermissionBaseEntry entry = new ResourcePermissionBaseEntry (access, names);
+				AddPermissionAccess (entry);
+			}
 		}
 
 		protected ResourcePermissionBaseEntry[] GetPermissionEntries ()
@@ -209,9 +220,11 @@ namespace System.Security.Permissions {
 			else {
 				foreach (ResourcePermissionBaseEntry entry in _list) {
 					SecurityElement container = se;
+					string access = Enum.Format (PermissionAccessType, entry.PermissionAccess, "g");
 					for (int i=0; i < _tags.Length; i++) {
 						SecurityElement child = new SecurityElement (_tags [i]);
 						child.AddAttribute ("name", entry.PermissionAccessPath [i]);
+						child.AddAttribute ("access", access);
 						container.AddChild (child);
 						child = container;
 					}

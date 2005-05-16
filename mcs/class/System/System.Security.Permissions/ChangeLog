@@ -1,3 +1,8 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourcePermissionBase.cs: Added "access" attribute in ToXml. Made 
+	FromXml a little better (simple cases) but not perfect (need samples).
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourcePermissionBase.cs: IsSubset(null) returns false in 1.1 while
