@@ -384,14 +384,6 @@ namespace System.Data {
 				return _original;
 			}
 			set {
-                                if (_original == value)
-                                        return;
-
-                                if (_original >= 0
-                                    && _current != _original
-                                    && _proposed != _original)
-                                        Table.RecordCache.DisposeRecord (_original);
-                                
 				if (Table != null) {
 					//Table.RecordCache[_original] = null;
 					Table.RecordCache[value] = this;
@@ -406,19 +398,10 @@ namespace System.Data {
 				return _current;
 			}
 			set {
-                                if (_current == value)
-                                        return;
-
-                                if (_current >= 0
-                                    && _proposed != _current
-                                    && _original != _current)
-                                        Table.RecordCache.DisposeRecord (_current);
-                                
 				if (Table != null) {
 					//Table.RecordCache[_current] = null;
 					Table.RecordCache[value] = this;
 				}
-
 				_current = value;
 			}
 		}
@@ -429,14 +412,6 @@ namespace System.Data {
 				return _proposed;
 			}
 			set {
-                                if (_proposed == value)
-                                        return;
-
-                                if (_proposed >= 0
-                                    && _current != _proposed
-                                    && _original != _proposed)
-                                        Table.RecordCache.DisposeRecord (_proposed);
-                                
 				if (Table != null) {
 					//Table.RecordCache[_proposed] = null;
 					Table.RecordCache[value] = this;
@@ -1600,14 +1575,18 @@ namespace System.Data {
                                 SetValue (i, values [i], temp);
 
                         if (is_new) { // new row
-                                Proposed = temp;
+                                if (HasVersion (DataRowVersion.Proposed) || RowState == DataRowState.Detached)
+                                        Proposed = temp;
+                                else
+                                        Current = temp;
+                                return;
                         }
 
                         if (loadOption == LoadOption.OverwriteChanges 
                             || (loadOption == LoadOption.PreserveChanges
                                 && RowState == DataRowState.Unchanged)) {
                                 Original = temp;
-                                if (Proposed >= 0)
+                                if (HasVersion (DataRowVersion.Proposed))
                                         Proposed = temp;
                                 else
                                         Current = temp;
@@ -1626,13 +1605,12 @@ namespace System.Data {
                         bool not_used = true;
                         // Upsert
                         if (RowState != DataRowState.Deleted) {
-                                int index = Proposed >=0 ? Proposed : Current;
-                                if (! RecordCache.CompareRecords (Table, index, temp)) {
-                                        if (Proposed >= 0)
+                                int index = HasVersion (DataRowVersion.Proposed) ? _proposed : _current;
+                                if (Table.CompareRecords (index, temp) != 0) {
+                                        if (HasVersion (DataRowVersion.Proposed))
                                                 Proposed = temp;
                                         else
                                                 Current = temp;
-
                                         not_used = false;
                                 }
                         }

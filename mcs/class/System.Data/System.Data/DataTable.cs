@@ -1203,20 +1203,20 @@ namespace System.Data {
                         
                         // Find Data DataRow
                         if (this.PrimaryKey.Length > 0) {
-                                object [] keyValues = new object [this.PrimaryKey.Length];
-                                for (int i = 0; i < keyValues.Length; i++)
-                                        keyValues [i] = values [this.PrimaryKey [i].Ordinal];
-                                
-                                Index index = GetIndex(PrimaryKey,null,DataViewRowState.OriginalRows,null,false);
-                                int found = index.Find (keyValues);
-                                row = found < 0 ? null : RecordCache [found];
-                                if (row == null) 
-                                        row = this.Rows.Find (keyValues);
+				int newRecord = CreateRecord(values);
+				try {
+					int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
+					if (existingRecord >= 0)
+						row = RecordCache[existingRecord];
+				}
+				finally {
+					RecordCache.DisposeRecord(newRecord);
+				}
                         }
                                 
                         // If not found, add new row
                         if (row == null) {
-                                row = NewRowFromBuilder (RowBuilder);
+                                row = this.NewRow ();
                                 new_row = true;
                         }
 
@@ -1233,7 +1233,7 @@ namespace System.Data {
                         }
 
                         if (new_row) {
-                                Rows.AddInternal(row);
+                                this.Rows.Add (row);
                                 if (loadOption == LoadOption.OverwriteChanges ||
                                     loadOption == LoadOption.PreserveChanges) {
                                         row.AcceptChanges ();
@@ -1320,6 +1320,18 @@ namespace System.Data {
 				}
 			}
 		}
+
+#if NET_2_0
+		internal int CompareRecords(int x, int y) {
+			for (int col = 0; col < Columns.Count; col++) {
+				int res = Columns[col].DataContainer.CompareValues (x, y);
+				if (res != 0)
+					return res;
+			}
+
+			return 0;
+		}
+#endif
 
 		/// <summary>
 		/// This member supports the .NET Framework infrastructure

@@ -1,3 +1,9 @@
+2005-05-16 Konstantin Triger <kostat@mainsoft.com>
+
+        * DataRow.cs, DataTable.cs: code under net_2_0 changed to use the new interface
+        * DataTable.cs: Added CompareRecords, which compares records in column order
+
+
 2005-05-16  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRow.cs:
