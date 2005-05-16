@@ -744,7 +744,7 @@ namespace Mono.Tools {
 			WriteLine ();
 			WriteLine ("Ignored Options:");
 			WriteLine ("-f");
-			WriteLine ("\tThe Mono gacutil ignores the -f option to maintian commandline compatibility with");
+			WriteLine ("\tThe Mono gacutil ignores the -f option to maintain commandline compatibility with");
 			WriteLine ("\tother gacutils. gacutil will always force the installation of a new assembly.");
 
 			WriteLine ();
