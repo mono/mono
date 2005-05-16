@@ -1,3 +1,6 @@
+2005-05-14  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* EventsTab.cs: Implementation start with many gaping holes
+
 2005-05-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* PropertyTab.cs: Implemented.

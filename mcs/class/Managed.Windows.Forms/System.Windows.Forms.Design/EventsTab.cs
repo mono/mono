@@ -21,19 +21,102 @@
 //
 // Authors:
 //	Dennis Hayes (dennish@raytek.com)
+//  Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
 
 // NOT COMPLETE
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.Windows.Forms.Design
 {
-	public class EventsTab
+	public class EventsTab : PropertyTab
 	{
+		[MonoTODO]
 		public EventsTab()
 		{
-			throw new NotImplementedException ();
 		}
+		
+		private IServiceProvider serviceProvider;
+
+		[MonoTODO]
+		public EventsTab(IServiceProvider serviceProvider)
+		{
+			this.serviceProvider = serviceProvider;
+		}
+
+		[MonoTODO("What value should we return?")]
+		public override string HelpKeyword 
+		{
+			get {
+				return TabName;				
+			}
+		}
+		
+		[MonoTODO("Localization")]
+		public override string TabName 
+		{
+			get {
+				return "Events";
+			}
+		}
+		
+		[MonoTODO("Test")]
+		public override PropertyDescriptorCollection GetProperties(
+			ITypeDescriptorContext context,
+			object component,
+			Attribute[] attributes)
+		{
+			IEventBindingService eventPropertySvc = null;
+			EventDescriptorCollection events;
+			
+			if (serviceProvider != null)
+				eventPropertySvc = (IEventBindingService)
+					serviceProvider.GetService(typeof(IEventBindingService));
+
+			if (eventPropertySvc == null)			 
+				return new PropertyDescriptorCollection(null);
+
+			if (attributes != null)			
+				events = TypeDescriptor.GetEvents(component, attributes);
+			else
+				events = TypeDescriptor.GetEvents(component);
+	 
+			// Return event properties for the event descriptors.
+			return eventPropertySvc.GetEventProperties(events);
+		}
+		
+		public override PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes)
+		{
+			return this.GetProperties(null, component, attributes);
+		}
+		
+		[MonoTODO]
+		public override bool CanExtend(object component)
+		{
+			return false;
+		}
+		
+		[MonoTODO("Test")]
+		public override PropertyDescriptor GetDefaultProperty(object component)
+		{
+			object[] attributes = component.GetType().GetCustomAttributes(typeof(DefaultEventAttribute), true);
+			if (attributes.Length > 0) {
+				DefaultEventAttribute defaultEvent = attributes[0] as DefaultEventAttribute;
+				if (defaultEvent != null && serviceProvider != null) {
+					IEventBindingService eventPropertySvc = (IEventBindingService)
+						serviceProvider.GetService(typeof(IEventBindingService));
+	
+					if (eventPropertySvc == null)
+						foreach (EventDescriptor ed in TypeDescriptor.GetEvents(component))
+							if (ed.Name == defaultEvent.Name)
+								return eventPropertySvc.GetEventProperty(ed);
+				}
+			}	
+			return null;
+		}
+
 	}
 }
