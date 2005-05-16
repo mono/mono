@@ -1,3 +1,8 @@
+2005-05-16  Konstantin Triger <kostat@mainsoft.com>
+
+	* Test/System.Data/DataSetTest.cs: performing correct cleanup
+	* System.Data_test.dll.sources: Including Mainsoft tests
+
 2005-05-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: Added DataTableClearEventArgs.cs and

@@ -49,12 +49,20 @@ namespace MonoTests.System.Data
         public class DataSetTest : DataSetAssertion
         {
         	string EOL = Environment.NewLine;
+		CultureInfo currentCultureBackup;
 
 		[SetUp]
                 public void GetReady()
                 {
+			currentCultureBackup = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("fi-FI");
                 }
+
+		[TearDown]
+		public void Teardown ()
+		{
+			Thread.CurrentThread.CurrentCulture = currentCultureBackup;
+		}
 
 		[Test]
 		public void Properties ()
