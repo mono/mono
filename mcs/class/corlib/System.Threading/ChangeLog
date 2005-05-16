@@ -1,3 +1,7 @@
+2005-05-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs: first check for null, then set in_currentculture.
+
 2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Thread.cs: Moved all checks done inside sync_lock to unmanaged code.

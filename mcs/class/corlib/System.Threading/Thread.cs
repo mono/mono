@@ -385,11 +385,10 @@ namespace System.Threading
 			
 			[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 			set {
-				in_currentculture = true;
-				
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
+				in_currentculture = true;
 				try {
 					BinaryFormatter bf = new BinaryFormatter();
 					MemoryStream ms = new MemoryStream ();
