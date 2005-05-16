@@ -46,6 +46,7 @@ public class TypeManager {
 	static public Type delegate_type;
 	static public Type multicast_delegate_type;
 	static public Type void_type;
+	static public Type null_type;
 	static public Type enumeration_type;
 	static public Type array_type;
 	static public Type runtime_handle_type;
@@ -61,6 +62,7 @@ public class TypeManager {
 	static public Type runtime_field_handle_type;
 	static public Type attribute_type;
 	static public Type attribute_usage_type;
+	static public Type decimal_constant_attribute_type;
 	static public Type dllimport_type;
 	static public Type unverifiable_code_type;
 	static public Type methodimpl_attr_type;
@@ -146,9 +148,11 @@ public class TypeManager {
 	//
 	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
+	static public ConstructorInfo void_decimal_ctor_int_arg;
 	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
 	static public ConstructorInfo default_member_ctor;
+	static public ConstructorInfo decimal_constant_attribute_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -863,6 +867,8 @@ public class TypeManager {
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		marshal_as_attr_type  = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
 		param_array_type      = CoreLookupType ("System.ParamArrayAttribute");
+		
+		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices.DecimalConstantAttribute");	
 
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
@@ -924,6 +930,8 @@ public class TypeManager {
 				Console.WriteLine ("Corlib compilation is not supported in Microsoft.NET due to bugs in it");
 			}
 		}
+
+		null_type = typeof (NullType);
 	}
 
 	//
@@ -1020,6 +1028,8 @@ public class TypeManager {
 		Type [] dec_arg = { int32_type, int32_type, int32_type, bool_type, byte_type };
 		void_decimal_ctor_five_args = GetConstructor (
 			decimal_type, dec_arg);
+		void_decimal_ctor_int_arg = GetConstructor (decimal_type, int_arg);
+
 		
 		// DateTime constructor
 		Type [] ticks_arg = { int64_type };
@@ -1036,6 +1046,10 @@ public class TypeManager {
 		
 		default_member_ctor = GetConstructor (
 			default_member_type, string_);
+
+		 decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
+                        { byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
+
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
@@ -1673,6 +1687,11 @@ public class TypeManager {
 
 	// This is a custom version of Convert.ChangeType() which works
 	// with the TypeBuilder defined types when compiling corlib.
+
+	// This function is used by DoDefineMember () in enum.cs
+	// After replacing it with ChangeType1() following function
+  	// can be removed
+	
 	public static object ChangeType (object value, Type conversionType)
 	{
 		if (!(value is IConvertible))
@@ -1723,6 +1742,66 @@ public class TypeManager {
 		else 
 			throw new InvalidCastException ();
 	}
+
+	static NumberFormatInfo nf_provider = CultureInfo.CurrentCulture.NumberFormat;
+
+	 public static object ChangeType1 (object value, Type conversionType, out bool error)
+        {
+                IConvertible convert_value = value as IConvertible;
+
+                if (convert_value == null){
+                        error = true;
+                        return null;
+                }
+
+                //
+                // We must use Type.Equals() here since `conversionType' is
+                // the TypeBuilder created version of a system type and not
+                // the system type itself.  You cannot use Type.GetTypeCode()
+                // on such a type - it'd always return TypeCode.Object.
+                //
+                error = false;
+                try {
+                        if (conversionType.Equals (typeof (Boolean)))
+                                return (object)(convert_value.ToBoolean (nf_provider));
+                        else if (conversionType.Equals (typeof (Byte)))
+                                return (object)(convert_value.ToByte (nf_provider));
+                        else if (conversionType.Equals (typeof (Char)))
+                                return (object)(convert_value.ToChar (nf_provider));
+                        else if (conversionType.Equals (typeof (DateTime)))
+                                return (object)(convert_value.ToDateTime (nf_provider));
+			 else if (conversionType.Equals (TypeManager.decimal_type)) // typeof (Decimal)))
+                                return (object)(convert_value.ToDecimal (nf_provider));
+                        else if (conversionType.Equals (typeof (Double)))
+                                return (object)(convert_value.ToDouble (nf_provider));
+                        else if (conversionType.Equals (typeof (Int16)))
+                                return (object)(convert_value.ToInt16 (nf_provider));
+                        else if (conversionType.Equals (typeof (Int32)))
+                                return (object)(convert_value.ToInt32 (nf_provider));
+                        else if (conversionType.Equals (typeof (Int64)))
+                                return (object)(convert_value.ToInt64 (nf_provider));
+                        else if (conversionType.Equals (typeof (SByte)))
+                                return (object)(convert_value.ToSByte (nf_provider));
+                        else if (conversionType.Equals (typeof (Single)))
+                                return (object)(convert_value.ToSingle (nf_provider));
+                        else if (conversionType.Equals (typeof (String)))
+                                return (object)(convert_value.ToString (nf_provider));
+                        else if (conversionType.Equals (typeof (UInt16)))
+                                return (object)(convert_value.ToUInt16 (nf_provider));
+                        else if (conversionType.Equals (typeof (UInt32)))
+                                return (object)(convert_value.ToUInt32 (nf_provider));
+                        else if (conversionType.Equals (typeof (UInt64)))
+                                return (object)(convert_value.ToUInt64 (nf_provider));
+                        else if (conversionType.Equals (typeof (Object)))
+                                return (object)(value);
+                        else
+                                error = true;
+                } catch {
+                        error = true;
+		}
+                return null;
+        }
+
 
 	//
 	// This is needed, because enumerations from assemblies

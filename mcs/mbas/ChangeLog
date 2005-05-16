@@ -1,3 +1,13 @@
+2005-05-16 Manjula GHM <mmanjula@novell.com>
+	* literal.cs: Declare NullType
+	* typemanager.cs: Invoke proper Decimal constructor
+      	* ecore.cs : Support Decimal type in literalized version
+        * const.cs : 
+        * constant.cs :
+      	* expression.cs :
+		Support Decimal constant declaration  and retrieval of Decimal structure 
+		members from corelib
+
 2005-05-16 Satya Sudha K <ksathyasudha@hotmail.com>
 	* parameter.cs : Converting the default value (for optional param) to param type.
 	* ecore.cs     : Fixed string <-> char constant conversions.

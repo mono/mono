@@ -6171,7 +6171,8 @@ namespace Mono.MonoBASIC {
 							      Expression left, Location loc,
 							      Expression left_original)
 		{
-			bool left_is_type, left_is_explicit;
+			 bool left_is_type, left_is_explicit;
+			
 
 			// If 'left' is null, then we're called from SimpleNameResolve and this is
 			// a member in the currently defining class.
@@ -6194,14 +6195,27 @@ namespace Mono.MonoBASIC {
 				
 				if (fi is FieldBuilder) {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
-					
 					if (c != null) {
-						//object o = c.LookupConstantValue (ec);
+                                        object o;
+                                        if (!c.LookupConstantValue (out o, ec))
+                                                return null;
+					
 						object real_value = ((Constant) c.Expr).GetValue ();
+                                         Expression exp = Constantify (real_value, fi.FieldType);
 
-						return Constantify (real_value, fi.FieldType);
-					}
+                                        return exp;
+                                	}
 				}
+				
+				  // IsInitOnly is because of MS compatibility, I don't know why but they emit decimal constant as InitOnly
+                        
+			if (fi.IsInitOnly && !(fi is FieldBuilder) && fi.FieldType == TypeManager.decimal_type) {
+                                object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
+                                if (attrs.Length == 1)
+                                        return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
+                        }
+
+
 
 				if (fi.IsLiteral) {
 					Type t = fi.FieldType;

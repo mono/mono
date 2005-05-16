@@ -504,6 +504,8 @@ namespace Mono.MonoBASIC {
 				return new CharConstant ((char)v);
 			else if (t == TypeManager.bool_type)
 				return new BoolConstant ((bool) v);
+			else if (t == TypeManager.decimal_type)
+				return new DecimalConstant ((decimal)v);
 			else if (TypeManager.IsEnumType (t)){
 				Constant e = Constantify (v, TypeManager.TypeToCoreType (v.GetType ()));
 

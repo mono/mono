@@ -117,6 +117,22 @@ namespace Mono.MonoBASIC {
 			return c;
 		}
 		
+		public DecimalConstant ToDecimal (Location loc)
+                {
+                        DecimalConstant c = ConvertToDecimal ();
+
+                        if (c == null)
+                                Error_CannotConvertImplicit (loc, Type, TypeManager.decimal_type);
+
+                        return c;
+                }
+
+                public virtual DecimalConstant ConvertToDecimal ()
+                {
+                        return null;
+                }
+
+		
 		public virtual DoubleConstant ConvertToDouble ()
 		{
 			return null;
@@ -914,27 +930,39 @@ namespace Mono.MonoBASIC {
 
 		public override void Emit (EmitContext ec)
 		{
-			int [] words = Decimal.GetBits (Value);
-			
-			//
-			// FIXME: we could optimize this, and call a better 
-			// constructor
-			//
+			 ILGenerator ig = ec.ig;
 
-			ILGenerator ig = ec.ig;
 			
-			IntConstant.EmitInt (ig, words [0]);
+                        int [] words = Decimal.GetBits (Value);
+                        int power = (words [3] >> 16) & 0xff;
+
+                        if (power == 0 && Value <= int.MaxValue && Value >= int.MinValue)
+                        {
+                                IntConstant.EmitInt (ig, (int)Value);
+                                ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
+
+                                return;
+                        }
+
+
+                        //
+                        // FIXME: we could optimize this, and call a better
+                        // constructor
+                        //
+
+                        IntConstant.EmitInt (ig, words [0]);
 			IntConstant.EmitInt (ig, words [1]);
-			IntConstant.EmitInt (ig, words [2]);
+                        IntConstant.EmitInt (ig, words [2]);
 
-			// sign
-			IntConstant.EmitInt (ig, words [3] >> 31);
+                        // sign
+                        IntConstant.EmitInt (ig, words [3] >> 31);
 
-			// power
-			IntConstant.EmitInt (ig, (words [3] >> 16) & 0xff);
+                        // power
+                        IntConstant.EmitInt (ig, power);
 
-			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
-		}
+                        ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
+                }
+
 	}
 
 	public class StringConstant : Constant {

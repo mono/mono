@@ -23,6 +23,17 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Mono.MonoBASIC {
+	
+	 //
+        // The NullType just exists to compare type equality, and for
+        // expressions that might have the `null type'
+        //
+        public class NullType {
+        }
+
+        //
+        // The null Literal constant
+        //
 
 	public class NullLiteral : Constant {
 		public static readonly NullLiteral Null;

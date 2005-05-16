@@ -17,6 +17,8 @@
 //     function aborts because it requires its argument to be of the same type
 //
 
+using System;
+
 namespace Mono.MonoBASIC {
 
 
@@ -30,6 +32,8 @@ namespace Mono.MonoBASIC {
 		public Expression Expr;
 		public FieldBuilder FieldBuilder;
 
+
+		bool resolved = false;
 		object ConstantValue = null;
 		Type type;
 
@@ -167,110 +171,197 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		/// <summary>
-		///  Looks up the value of a constant field. Defines it if it hasn't
-		///  already been. Similar to LookupEnumValue in spirit.
-		/// </summary>
-		public object LookupConstantValue (EmitContext ec)
-		{
-			if (ConstantValue != null)
-				return ConstantValue;
+		//
+                // Changes the type of the constant expression `expr' to the Type `type'
+                // Returns null on failure.
+                //
+                public static Constant ChangeType (Location loc, Constant expr, Type type, EmitContext ec)
+                {
+                        if (type == TypeManager.object_type)
+                                return expr;
 
-			if (in_transit) {
-				Report.Error (110, Location,
-					      "The evaluation of the constant value for `" +
-					      Name + "' involves a circular definition.");
-				return null;
-			}
+                        bool fail;
 
-			in_transit = true;
-			int errors = Report.Errors;
+                        // from the null type to any reference-type.
+                        if (expr.Type == TypeManager.null_type && !type.IsValueType && !TypeManager.IsEnumType (type))
+                                return NullLiteral.Null;
+                        
+			if (!Expression.ImplicitConversionExists (ec, expr, type)){
+                                Expression.Error_CannotConvertImplicit (loc, expr.Type, type);
+                                return null;
+			  }
 
-			Expr = Expr.Resolve (ec);
+                        // Special-case: The 0 literal can be converted to an enum value,
+                        // and ImplicitStandardConversionExists will return true in that case.
+                        if (expr.Type == TypeManager.int32_type && TypeManager.IsEnumType (type)){
+                                if (expr is IntLiteral && ((IntLiteral) expr).Value == 0)
+                                        return new EnumConstant (expr, type);
+                        }
 
-			in_transit = false;
+                        object constant_value = TypeManager.ChangeType1 (expr.GetValue (), type, out fail);
+                        if (fail){
+                                // Error_CannotImplicitConversion (loc, expr.Type, type);
 
-			if (Expr == null) {
-				if (errors == Report.Errors)
-					Report.Error (30059, Location, "A constant value is expected");
-				return null;
-			}
+                                //
+                                // We should always catch the error before this is ever
+                                // reached, by calling Convert.ImplicitStandardConversionExists
+                                //
+                                throw new Exception (
+                                                     String.Format ("LookupConstantValue: This should never be reached {0} {1}", expr.Type, type));
+                        }
 
-			if (!(Expr is Constant)) {
-				UnCheckedExpr un_expr = Expr as UnCheckedExpr;
-				CheckedExpr ch_expr = Expr as CheckedExpr;
+                        Constant retval;
+			if (type == TypeManager.int32_type)
+                                retval = new IntConstant ((int) constant_value);
+                        else if (type == TypeManager.uint32_type)
+                                retval = new UIntConstant ((uint) constant_value);
+                        else if (type == TypeManager.int64_type)
+                                retval = new LongConstant ((long) constant_value);
+                        else if (type == TypeManager.uint64_type)
+                                retval = new ULongConstant ((ulong) constant_value);
+                        else if (type == TypeManager.float_type)
+                                retval = new FloatConstant ((float) constant_value);
+                        else if (type == TypeManager.double_type)
+                                retval = new DoubleConstant ((double) constant_value);
+                        else if (type == TypeManager.string_type)
+                                retval = new StringConstant ((string) constant_value);
+                        else if (type == TypeManager.short_type)
+                                retval = new ShortConstant ((short) constant_value);
+                        else if (type == TypeManager.ushort_type)
+                                retval = new UShortConstant ((ushort) constant_value);
+                        else if (type == TypeManager.sbyte_type)
+                                retval = new SByteConstant ((sbyte) constant_value);
+                        else if (type == TypeManager.byte_type)
+                                retval = new ByteConstant ((byte) constant_value);
+                        else if (type == TypeManager.char_type)
+                                retval = new CharConstant ((char) constant_value);
+                        else if (type == TypeManager.bool_type)
+                                retval = new BoolConstant ((bool) constant_value);
+                        else if (type == TypeManager.decimal_type)
+                                retval = new DecimalConstant ((decimal) constant_value);
+                        else
+				 throw new Exception ("LookupConstantValue: Unhandled constant type: " + type);
 
-				if ((un_expr != null) && (un_expr.Expr is Constant))
-					Expr = un_expr.Expr;
-				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
-					Expr = ch_expr.Expr;
-				else 
-				{
-					Report.Error (30059, Location, "A constant value is expected");
-					return null;
-				}
-			}
+                        return retval;
+                }
+		
+		 /// <summary>
+                ///  Looks up the value of a constant field. Defines it if it hasn't
+                ///  already been. Similar to LookupEnumValue in spirit.
+                /// </summary>
+                public bool LookupConstantValue (out object value, EmitContext ec)
+                {
+                        if (resolved) {
+                                value = ConstantValue;
+                                return true;
+                        }
 
-			ConstantValue = ((Constant) Expr).GetValue ();
+                        if (in_transit) {
+                                Report.Error (110, Location,
+                                              "The evaluation of the constant value for `" +
+                                              Name + "' involves a circular definition.");
+                                value = null;
+                                return false;
+                        }
 
-			if (type != Expr.Type) {
-				try {
-					ConstantValue = TypeManager.ChangeType (ConstantValue, type);
-				} catch {
-					Expression.Error_CannotConvertImplicit (Location, Expr.Type, type);
-					return null;
-				}
+                        in_transit = true;
+                        int errors = Report.Errors;
 
-				if (type == TypeManager.int32_type)
-					Expr = new IntConstant ((int) ConstantValue);
-				else if (type == TypeManager.uint32_type)
-					Expr = new UIntConstant ((uint) ConstantValue);
-				else if (type == TypeManager.int64_type)
-					Expr = new LongConstant ((long) ConstantValue);
-				else if (type == TypeManager.uint64_type)
-					Expr = new ULongConstant ((ulong) ConstantValue);
-				else if (type == TypeManager.float_type)
-					Expr = new FloatConstant ((float) ConstantValue);
-				else if (type == TypeManager.double_type)
-					Expr = new DoubleConstant ((double) ConstantValue);
-				else if (type == TypeManager.string_type)
-					Expr = new StringConstant ((string) ConstantValue);
-				else if (type == TypeManager.short_type)
-					Expr = new ShortConstant ((short) ConstantValue);
-				else if (type == TypeManager.ushort_type)
-					Expr = new UShortConstant ((ushort) ConstantValue);
-				else if (type == TypeManager.sbyte_type)
-					Expr = new SByteConstant ((sbyte) ConstantValue);
-				else if (type == TypeManager.byte_type)
-					Expr = new ByteConstant ((byte) ConstantValue);
-				else if (type == TypeManager.char_type)
-					Expr = new CharConstant ((char) ConstantValue);
-				else if (type == TypeManager.bool_type)
-					Expr = new BoolConstant ((bool) ConstantValue);
-			}
+			 //
+                        // We might have cleared Expr ourselves in a recursive definition
+                        //
+                        if (Expr == null){
+                                value = null;
+                                return false;
+                        }
 
-			if (type.IsEnum){
-				//
-				// This sadly does not work for our user-defined enumerations types ;-(
-				//
-				try {
-					ConstantValue = System.Enum.ToObject (
-						type, ConstantValue);
-				} catch (ArgumentException){
-					Report.Error (
-						-16, Location,
-						".NET SDK 1.0 does not permit to create the constant "+
-						" field from a user-defined enumeration");
-				}
-			}
+                        Expr = Expr.Resolve (ec);
 
-			FieldBuilder.SetConstant (ConstantValue);
+                        in_transit = false;
 
-			if (!TypeManager.RegisterFieldValue (FieldBuilder, ConstantValue))
-				return null;
+                        if (Expr == null) {
+                                if (errors == Report.Errors)
+                                        Report.Error (150, Location, "A constant value is expected");
+                                value = null;
+                                return false;
+                        }
+
+                        Expression real_expr = Expr;
+
+                        Constant ce = Expr as Constant;
+                        if (ce == null){
+                                UnCheckedExpr un_expr = Expr as UnCheckedExpr;
+                                CheckedExpr ch_expr = Expr as CheckedExpr;
+                                EmptyCast ec_expr = Expr as EmptyCast;
+				 if ((un_expr != null) && (un_expr.Expr is Constant))
+                                        Expr = un_expr.Expr;
+                                else if ((ch_expr != null) && (ch_expr.Expr is Constant))
+                                        Expr = ch_expr.Expr;
+                                //else if ((ec_expr != null) && (ec_expr.Child is Constant))
+                                 //       Expr = ec_expr.Child;
+                                else if (Expr is ArrayCreation){
+                                        Report.Error (133, Location, "Arrays can not be constant");
+                                } else {
+                                        if (errors == Report.Errors)
+                                                Report.Error (150, Location, "A constant value is expected");
+                                        value = null;
+                                        return false;
+                                }
+
+                                ce = Expr as Constant;
+                        }
+
+                     //   if (MemberType != real_expr.Type) {
+			   if (type != Expr.Type) {
+
+                                ce = ChangeType (Location, ce, type, ec);
+                                if (ce == null){
+                                        value = null;
+                                        return false;
+                                }
+                                Expr = ce;
+                        }
 			
-			return ConstantValue;
-		}
+			if (ce != null)
+                                ConstantValue = ce.GetValue ();
+
+                        if (type.IsEnum){
+                                //
+                                // This sadly does not work for our user-defined enumerations types ;-(
+                                //
+                                try {
+                                        ConstantValue = System.Enum.ToObject (
+                                                type, ConstantValue);
+                                } catch (ArgumentException){
+                                        Report.Error (
+                                                -16, Location,
+                                                ".NET SDK 1.0 does not permit to create the constant "+
+                                                " field from a user-defined enumeration");
+                                }
+                        }
+
+                        if (ce is DecimalConstant) {
+                                Decimal d = ((DecimalConstant)ce).Value;
+                                int[] bits = Decimal.GetBits (d);
+                                object[] args = new object[] { (byte)(bits [3] >> 16), (byte)(bits [3] >> 31), (uint)bits [2], (uint)bits [1], (uint)bits [0] };
+                                CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.decimal_constant_attribute_ctor, args);
+                                FieldBuilder.SetCustomAttribute (cab);
+                        }
+			else{
+                                FieldBuilder.SetConstant (ConstantValue);
+                        }
+
+                        if (!TypeManager.RegisterFieldValue (FieldBuilder, ConstantValue))
+                                throw new Exception ("Cannot register const value");
+
+                        value = ConstantValue;
+                        resolved = true;
+                        return true;
+                }
+
+
+
+		
 		
 		
 		/// <summary>
@@ -279,7 +370,8 @@ namespace Mono.MonoBASIC {
 		public void EmitConstant (TypeContainer parent)
 		{
 			EmitContext ec = new EmitContext (parent, Location, null, type, ModFlags);
-			LookupConstantValue (ec);
+			object value;
+			 LookupConstantValue (out value,ec);
 			
 			return;
 		}
