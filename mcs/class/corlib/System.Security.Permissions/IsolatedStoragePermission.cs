@@ -29,11 +29,15 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
 	[Serializable]
 	[SecurityPermission (SecurityAction.InheritanceDemand, ControlEvidence = true, ControlPolicy = true)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class IsolatedStoragePermission : CodeAccessPermission, IUnrestrictedPermission	{
 
 		private const int version = 1;
@@ -85,8 +89,11 @@ namespace System.Security.Permissions {
 
 			if (m_allowed == IsolatedStorageContainment.UnrestrictedIsolatedStorage)
 				se.AddAttribute ("Unrestricted", "true");
-			else
+			else {
 				se.AddAttribute ("Allowed", m_allowed.ToString ());
+				if (m_userQuota > 0)
+					se.AddAttribute ("UserQuota", m_userQuota.ToString ());
+			}
 			
 			return se;
 		}
@@ -106,12 +113,19 @@ namespace System.Security.Permissions {
 
 			if (IsUnrestricted (esd)) {
 				UsageAllowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
-			}
-			else {
+			} else {
 				string a = esd.Attribute ("Allowed");
 				if (a != null) {
 					UsageAllowed = (IsolatedStorageContainment) Enum.Parse (
 						typeof (IsolatedStorageContainment), a);
+				}
+				a = esd.Attribute ("UserQuota");
+				if (a != null) {
+					try {
+						Int64.Parse (a, true, out m_userQuota);
+					}
+					catch (Exception) {
+					}
 				}
 			}
 		}
