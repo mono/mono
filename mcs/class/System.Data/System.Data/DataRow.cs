@@ -384,6 +384,14 @@ namespace System.Data {
 				return _original;
 			}
 			set {
+                                if (_original == value)
+                                        return;
+
+                                if (_original >= 0
+                                    && _current != _original
+                                    && _proposed != _original)
+                                        Table.RecordCache.DisposeRecord (_original);
+                                
 				if (Table != null) {
 					//Table.RecordCache[_original] = null;
 					Table.RecordCache[value] = this;
@@ -398,10 +406,19 @@ namespace System.Data {
 				return _current;
 			}
 			set {
+                                if (_current == value)
+                                        return;
+
+                                if (_current >= 0
+                                    && _proposed != _current
+                                    && _original != _current)
+                                        Table.RecordCache.DisposeRecord (_current);
+                                
 				if (Table != null) {
 					//Table.RecordCache[_current] = null;
 					Table.RecordCache[value] = this;
 				}
+
 				_current = value;
 			}
 		}
@@ -412,6 +429,14 @@ namespace System.Data {
 				return _proposed;
 			}
 			set {
+                                if (_proposed == value)
+                                        return;
+
+                                if (_proposed >= 0
+                                    && _current != _proposed
+                                    && _original != _proposed)
+                                        Table.RecordCache.DisposeRecord (_proposed);
+                                
 				if (Table != null) {
 					//Table.RecordCache[_proposed] = null;
 					Table.RecordCache[value] = this;
@@ -1575,30 +1600,24 @@ namespace System.Data {
                                 SetValue (i, values [i], temp);
 
                         if (is_new) { // new row
-                                if (editing || RowState == DataRowState.Detached)
-                                        Proposed = temp;
-                                else
-                                        Current = temp;
-                                return;
+                                Proposed = temp;
                         }
 
                         if (loadOption == LoadOption.OverwriteChanges 
                             || (loadOption == LoadOption.PreserveChanges
-                                && rowState == DataRowState.Unchanged)) {
+                                && RowState == DataRowState.Unchanged)) {
                                 Original = temp;
-                                if (editing)
+                                if (Proposed >= 0)
                                         Proposed = temp;
                                 else
                                         Current = temp;
-                                rowState = DataRowState.Unchanged;
                                 action = DataRowAction.ChangeCurrentAndOriginal;
                                 return;
                         }
 
                         if (loadOption == LoadOption.PreserveChanges) {
-                                if (rowState != DataRowState.Deleted) {
+                                if (RowState != DataRowState.Deleted) {
                                         Original = temp;
-                                        rowState = DataRowState.Modified;
                                         action   = DataRowAction.ChangeOriginal;
                                 }
                                 return;
@@ -1606,16 +1625,15 @@ namespace System.Data {
                                 
                         bool not_used = true;
                         // Upsert
-                        if (rowState != DataRowState.Deleted) {
-                                int index = editing ? _proposed : _current;
+                        if (RowState != DataRowState.Deleted) {
+                                int index = Proposed >=0 ? Proposed : Current;
                                 if (! RecordCache.CompareRecords (Table, index, temp)) {
-                                        if (editing)
+                                        if (Proposed >= 0)
                                                 Proposed = temp;
                                         else
                                                 Current = temp;
+
                                         not_used = false;
-                                        if (rowState == DataRowState.Unchanged)
-                                                rowState = DataRowState.Modified;
                                 }
                         }
                                 

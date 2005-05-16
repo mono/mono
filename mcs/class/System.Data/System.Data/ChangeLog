@@ -1,3 +1,9 @@
+2005-05-16  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs:
+	* DataTable.cs: quick fix to make build 2.0 profile (follow up for
+	check in 2005-05-16). Merge with previous changes.
+
 2005-05-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	fix for "import row does not import deleted records"

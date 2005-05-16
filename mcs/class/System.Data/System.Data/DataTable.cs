@@ -1206,14 +1206,17 @@ namespace System.Data {
                                 object [] keyValues = new object [this.PrimaryKey.Length];
                                 for (int i = 0; i < keyValues.Length; i++)
                                         keyValues [i] = values [this.PrimaryKey [i].Ordinal];
-                                row = this.Rows.Find (keyValues, DataRowVersion.Original );
+                                
+                                Index index = GetIndex(PrimaryKey,null,DataViewRowState.OriginalRows,null,false);
+                                int found = index.Find (keyValues);
+                                row = found < 0 ? null : RecordCache [found];
                                 if (row == null) 
-                                        row = this.Rows.Find (keyValues, DataRowVersion.Current);
+                                        row = this.Rows.Find (keyValues);
                         }
                                 
                         // If not found, add new row
                         if (row == null) {
-                                row = this.NewRow ();
+                                row = NewRowFromBuilder (RowBuilder);
                                 new_row = true;
                         }
 
@@ -1230,7 +1233,7 @@ namespace System.Data {
                         }
 
                         if (new_row) {
-                                this.Rows.Add (row);
+                                Rows.AddInternal(row);
                                 if (loadOption == LoadOption.OverwriteChanges ||
                                     loadOption == LoadOption.PreserveChanges) {
                                         row.AcceptChanges ();
