@@ -1205,9 +1205,15 @@ namespace System.Data {
                         if (this.PrimaryKey.Length > 0) {
 				int newRecord = CreateRecord(values);
 				try {
-					int existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
+					Index index = GetIndex(PrimaryKey,null,DataViewRowState.OriginalRows,null,false);
+					int existingRecord = index.Find(newRecord);
 					if (existingRecord >= 0)
 						row = RecordCache[existingRecord];
+					else {
+						existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
+						if (existingRecord >= 0)
+							row = RecordCache[existingRecord];
+					}
 				}
 				finally {
 					RecordCache.DisposeRecord(newRecord);
