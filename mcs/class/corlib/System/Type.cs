@@ -971,25 +971,6 @@ namespace System {
 			return FullName;
 		}
 
-		internal object[] GetPseudoCustomAttributes () {
-			int count = 0;
-
-			/* StructLayoutAttribute is not returned by MS.NET */
-
-			if (IsSerializable)
-				count ++;
-
-			if (count == 0)
-				return null;
-			object[] attrs = new object [count];
-			count = 0;
-
-			if (IsSerializable)
-				attrs [count ++] = new SerializableAttribute ();
-
-			return attrs;
-		}
-
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public abstract Type[] GetGenericArguments ();
 

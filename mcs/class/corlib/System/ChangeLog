@@ -1,3 +1,9 @@
+
+Mon May 16 18:23:49 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs, Type.cs: do not create a SerializableAttribute
+	object on GetCustomAttributes (fixes bug #74717).
+
 2005-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : for 'z' next_not_digit didn't work as expected.
