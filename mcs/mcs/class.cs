@@ -618,19 +618,8 @@ namespace Mono.CSharp {
 			
 			fields.Add (field);
 
-			if (field.HasInitializer){
-				if ((field.ModFlags & Modifiers.STATIC) != 0){
-					if (initialized_static_fields == null)
-						initialized_static_fields = new ArrayList ();
-			
-					initialized_static_fields.Add (field);
-				} else {
-					if (initialized_fields == null)
-						initialized_fields = new ArrayList ();
-							
-					initialized_fields.Add (field);
-				}
-			}
+			if (field.HasInitializer)
+				RegisterFieldForInitialization (field);
 			
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
 				have_nonstatic_fields = true;
@@ -858,6 +847,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public virtual void RegisterFieldForInitialization (FieldMember field)
+		{
+			if ((field.ModFlags & Modifiers.STATIC) != 0){
+				if (initialized_static_fields == null)
+					initialized_static_fields = new ArrayList ();
+
+				initialized_static_fields.Add (field);
+			} else {
+				if (initialized_fields == null)
+					initialized_fields = new ArrayList ();
+
+				initialized_fields.Add (field);
+			}
+		}
+
 		//
 		// Emits the instance field initializers
 		//
@@ -877,7 +881,7 @@ namespace Mono.CSharp {
 			if (fields == null)
 				return true;
 
-			foreach (Field f in fields){
+			foreach (FieldMember f in fields){
 				Expression e = f.GetInitializerExpression (ec);
 				if (e == null)
 					return false;
@@ -2611,6 +2615,12 @@ namespace Mono.CSharp {
 		{
 			return PartialContainer.VerifyImplements (
 				interface_type, full, name, loc);
+		}
+
+
+		public override void RegisterFieldForInitialization (FieldMember field)
+		{
+			PartialContainer.RegisterFieldForInitialization (field);
 		}
 
 		public override bool EmitFieldInitializers (EmitContext ec)

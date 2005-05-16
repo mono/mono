@@ -2745,8 +2745,12 @@ namespace Mono.CSharp {
 					return exp;
 				}
 			}
-			
-			// IsInitOnly is because of MS compatibility, I don't know why but they emit decimal constant as InitOnly
+
+			//
+			// Decimal constants cannot be encoded in the constant blob, and thus are marked
+			// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
+			// DecimalConstantAttribute metadata.
+			//
 			if (FieldInfo.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
 				object[] attrs = FieldInfo.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
 				if (attrs.Length == 1)

@@ -1,3 +1,17 @@
+2005-05-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-382.cs.  Emit values of decimal constants.
+	* class.cs (TypeContainer.RegisterFieldForInitialization): New.
+	Carved out of ...
+	(TypeContainer.AddField): ... this.
+	(TypeContainer.EmitFieldInitializers): Allow the list of fields
+	with initializers to include 'Const's.
+	(ClassPart.RegisterFieldForInitialization): Forward to
+	PartialContainer.
+	* const.cs (Const.Const): Pass initializer to base class.
+	(Const.Define): In case of decimal constants, register them for
+	initialization in a static constructor.
+
 2005-05-14  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.Resolve): Correctly handle unreachable code;
