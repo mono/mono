@@ -1,3 +1,8 @@
+2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Initialization wasn't threadsafe as the "checked" 
+	value was assigned at the start of the initialization.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Removed RSA OID and added null check in EncodeOID

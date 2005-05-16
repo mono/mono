@@ -220,7 +220,7 @@ public class CryptoConfig {
 
 	private static void Initialize () 
 	{
-		algorithms = new Hashtable ();
+		Hashtable algorithms = new Hashtable ();
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
 		// frlrfSystemSecurityCryptographyCryptoConfigClassTopic.asp
 		algorithms.Add (nameSHA1a, defaultSHA1);
@@ -316,7 +316,7 @@ public class CryptoConfig {
 		algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
 		algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
 
-		oid = new Hashtable ();
+		Hashtable oid = new Hashtable ();
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
 		oid.Add (defaultSHA1, oidSHA1);
@@ -355,6 +355,10 @@ public class CryptoConfig {
 		// Add/modify the config as specified by machine.config
 		string config = Environment.GetMachineConfigPath ();
 		LoadConfig (config);
+
+		// update
+		CryptoConfig.algorithms = algorithms;
+		CryptoConfig.oid = oid;
 	}
 
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
@@ -435,7 +439,9 @@ public class CryptoConfig {
 
 		if (algorithms == null) {
 			lock (lockObject) {
-				Initialize ();
+				if (algorithms == null) {
+					Initialize ();
+				}
 			}
 		}
 	
@@ -556,7 +562,9 @@ public class CryptoConfig {
 
 		if (oid == null) {
 			lock (lockObject) {
-				Initialize ();
+				if (oid == null) {
+					Initialize ();
+				}
 			}
 		}
 
