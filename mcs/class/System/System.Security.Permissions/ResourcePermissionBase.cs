@@ -220,11 +220,15 @@ namespace System.Security.Permissions {
 			else {
 				foreach (ResourcePermissionBaseEntry entry in _list) {
 					SecurityElement container = se;
-					string access = Enum.Format (PermissionAccessType, entry.PermissionAccess, "g");
+					string access = null;
+					if (PermissionAccessType != null)
+						access = Enum.Format (PermissionAccessType, entry.PermissionAccess, "g");
+
 					for (int i=0; i < _tags.Length; i++) {
 						SecurityElement child = new SecurityElement (_tags [i]);
 						child.AddAttribute ("name", entry.PermissionAccessPath [i]);
-						child.AddAttribute ("access", access);
+						if (access != null)
+							child.AddAttribute ("access", access);
 						container.AddChild (child);
 						child = container;
 					}
