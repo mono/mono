@@ -34,15 +34,6 @@
 
 ** How to support CompareOptions
 
-	FIXME: for some cultures this logic is still incomplete. All culture
-	dependent collators must handle valid "replacement" of "one or more
-	characters" accompanied by CompareOptions. For example, ja-JP has
-	"\u3042\u30FC" equivalent to "\u3042\u3042" only when IgnoreNonSpace
-	is specified. I'll take those items from CLDR (those items which
-	has <reset before="..." />), case by case though. And surprisingly,
-	it is *not* culture dependent (that Japanese sorting happens on all
-	cultures).
-
 	There are two kind of "ignorance" : ignorance which acts as stripper,
 	and ignorance acts as normalizer.
 
@@ -69,11 +60,25 @@
 		and IgnoreCase, I\u0307 is not regarded as equal to i.
 
 	IgnoreKanaType
-		ToKanaTypeInsensitive(). See also "Notes".
+		ToKanaTypeInsensitive(). Note that this does not cover the
+		whole "level 4" differences described later.
 
 	IgnoreWidth
 		ToWidthInsensitive(), which is likely to be culture
 		independent. See also "Notes".
+
+	IgnoreNonSpace (see also Strippers; this flag works in both sides)
+		For some cultures this logic is still incomplete. All culture-
+		dependent collators must handle valid "replacement" of "one or
+		more characters" which might be related to specific
+		CompareOptions.
+		For example, there is a Japanese text sorting rule that
+		however applies to InvariantCulture. Concretely to say,
+		"\u3042\u30FC" is equivalent to "\u3042\u3042" only when
+		IgnoreNonSpace is specified.
+
+		I'll take those items from CLDR (those items which has
+		<reset before="..." />), case by case though.
 
 *** Strippers
 
@@ -141,11 +146,10 @@
 	- level 1: primary difference
 	  The first byte of level 1 means the category of the character.
 	- level 2: diacritic difference, nonspacing-mark difference?
-	- level 3: case/width sensitivity
-	- level 4: kana type (mostly at primary category 22)
+	- level 3: case/width sensitivity, Japanese voice marks
+	- level 4: kana weight (all of them have primary category 22, at least
+	  in InvariantCulture)
 	- level 5: variable weighting (apostrophe, hyphens etc.)
-
-	The basic table is for level 1 to level 4. Level 5 is special.
 
 	String comparison is done from level 1 to 5. The comparison won't
 	stop until either it found the primary difference, or it reached to
@@ -171,7 +175,46 @@
 	Actually '2' could be cut when all the following values are
 	also '2' (i.e. the sort key binary won't contain extraneous '2').
 
-	For level 5, MS has different key layout:
+	Every level has different key layout.
+
+**** level 2
+
+	For Japanese voice mark, it just sums the count up.
+
+	For other letters, maybe there is a table.
+
+**** level 3
+
+	For Korean letters:
+		- 4: Jongseong
+		- 6: Half width
+		- 7: Compat
+
+	For other letters the value is 02 + flags:
+		- 1 (full-width)
+		- 4 (subscript)
+		- 6 (TODO: find out what this means)
+		- A (TODO: find out what this means)
+		- C (vertical? e.g. FE42)
+		- E (maybe superscript. TODO: 278A is not a superscript,
+		     so maybe it is wrong, or it is really just a combination
+		     of flags)
+		- 10 (upper)
+
+	Note that simple 02 could be omitted.
+
+**** level 4
+
+	Those sortkey data is collected only for Japanese (category 22)
+	characters.
+
+	There are 3 sections separated by FF. Each of them represents the
+	values for character by character:
+	- small letter type (kogaki moji); C4 (small) or E4 (normal)
+	- kana type; E4 (hiragana) or C4 (katakana)
+	- width; C5 (full) or C4 (half)
+
+**** level 5
 
 	[offsetL]* [offsetM + 0x7F]? [3 + offsetS * 4] [6] [char-weight]
 
@@ -222,10 +265,13 @@
 	Similarly, some single characters are expanded to a sequence of
 	characters.
 
-**** Composite character processing
+	The correspoinding implementation will be "CharacterIterator".
 
-	There are some sequences of characters that are treated as another
-	character or another sequence of characters.
+**** diacritic characters
+
+	Except for those variable-weighting characters, there are only
+	diacritical (or other kinds of nonspacing) characters that don't
+	have primary weights.
 
 	Diacritics are not regarded as a base character when placed after 
 	(maybe some kind of) letters.
@@ -237,6 +283,11 @@
 
 	In French cultures, diacritic orderings are checked from right to left.
 
+**** Composite character processing
+
+	There are some sequences of characters that are treated as another
+	character or another sequence of characters.
+
 	By default, there is no composite form.
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C2.asp
 	(Note that composite is different from expansion.)
@@ -245,8 +296,6 @@
 	lstrcmpi(), "sc" in hu-HU is treated as a single character, so if it is
 	compared against "Sc" (in IgnoreCase), "sc" won't match it. However
 	.NET (LCMapString) behaves differently.
-
-	The correspoinding implementation will be namely "CharacterIterator".
 
 **** Expanded character processing
 
@@ -405,30 +454,24 @@
 	  Sortey : 0A 02 - 0A FB
 
 	8 (C) numbers
-	  all DecimalDigitNumber, LetterNumber, non-CJK OtherNumber
-	  9F8
+	  all DecimalDigitNumber, LetterNumber, non-CJK OtherNumber.
+	  9F8.
 	  digits, in numeric order. We can use NET_2_0 CharUnicodeInfo.
-	  221E (INF.)
+	  221E. (INF.)
 
 	  SortKey : 0C 02 (9F8), 0C 03 - 0C E1 (normal numbers), 0C FF (INF.)
 
 	9 (E) latin letters (alphabets), mixing alphabetical symbols
-	  upper is 18, lower is 2 (default), diacritics are 19 or more.
-	  F8-2B8 - (1BB-1BD, 1C0-1C3) but not sequential
-	  2E0-2E3
+	  Alphabets, A to Z, mixing alphabetical symbols.
+	  F8-2B8 except for (1BB-1BD and 1C0-1C3), but not sequential.
+	  2E0-2E3.
 
-	  SortKey order is somewhat complex:
-
-	  - level 1: simple A to Z and alphabetical symbols mixed
-	  - level 2: diacritical differences
-	  - level 3: case differences
+	  TODO: fill diacritical orders.
 
 	  For 'A' it is "0E 02", for 'B' "0E 09" ... 'Z' "0E A9", ezh "0E AA".
 	  0E B3 (1BE), 0E B4 (298)
 
 	  This ordering is nothing to do with European Ordering Rules (EOR).
-
-	  TODO: fill orders
 
 	10 (F) greek letters
 	  0F: 386-3F2
@@ -448,13 +491,13 @@
 
 	11 (22) japanese kana letters and symbols, not in codepoint order
 
-	  Kana codes that are equivalent in context of IgnoreKanaType are
-	  differentiated at level 4. And there are FF that represents
-
-	  something like a delimiter. For example:
+	  For single character, the sortkeys look like:
 	  - Katakana normal A, Half Width (FF71) : FF 02 C4 FF C4 FF 01 00
 	  - Katakana normal A, Full Width (30A2) : FF C4 FF 01 00
 	  - Hiragana normal A, Full Width (3042) : FF FF 01 00
+
+	  Actually for level 4 weights, there is a different rule (see
+	  "level 4" format above).
 
 	  There is also 32D0 (normal katakana A with circle) that have
 	  diacritic difference.
@@ -650,6 +693,19 @@
 	CultureInfo contains many overloaded methods that are just for 
 	convenience. This class contains only required members.
 
+*** MSCompatUnicodeTable
+
+	Provides several character information:
+
+	- ignorable, ignorable nonspace, normalize width, normalize kanatype
+	- (has) nonspace normalization; for Japanese Kana collation
+	- (has) variable weighting
+	- (has) contraction/expansion
+	- default sortkey table
+	- culture dependent sortkey table
+	- culture dependent sortkey adjustment table
+	  (culture-specific modification)
+
 *** CharacterIterator
 
 	The match evaluation could not be done char by char - the longest
@@ -681,12 +737,16 @@
 	"discriminatory mode" that behaves closer to Windows (that ignores
 	some minor cultures).
 
+**** Characters in the table / characters computed
+
 	Currently I plan not to contain following characters in the table
 	but compute on demand:
 
 	- PrivateUse
 	- Surrogate
 	- Hangul Syllables
+
+**** CJK Unified Ideographs
 
 	For CJK unified ideographs, I have to make those culture-dependent
 	tables in memory. They will be in separate table.
@@ -696,6 +756,20 @@
 	character mapping differences (i.e. ja, kr, zh-*). Other than that,
 	no physical expansion is done to the table loaded in memory.
 	(It's waste of memory.)
+
+**** Level 4: Kana type
+
+	The table is not likely to contain level 4 (kanatype) properties for
+	the whole characters; It will be provided only for Japanese characters
+	and will be single byte information (flags).
+
+**** Level 3: Case properties
+
+	Case properties will be halfly computed and halfly stored as a byte
+	array (mostly for Latin characters), with limited areas of codepoint.
+
+	Note that Japanese voice mark is considered at level 3 but no need to
+	have maps.
 
 
 ** Reference materials

@@ -26,6 +26,11 @@ Classes
 
 */
 
+using System;
+using System.IO;
+using System.Globalization;
+
+
 namespace Mono.Globalization.Unicode
 {
 	// Internal sort key storage that is reused during GetSortKey.
@@ -97,7 +102,7 @@ namespace Mono.Globalization.Unicode
 			// sortkey value
 			idx++; // skip the "variable" mark: 01
 			while (table [idx] != 0)
-				AppendBufferPrimitive (table [idx++], ref buf, ref l5);
+				AppendBufferPrimitive (table [idx++], ref l5b, ref l5);
 		}
 
 		private void AppendBufferPrimitive (byte value, ref byte [] buf, ref int bidx)
@@ -178,7 +183,7 @@ namespace Mono.Globalization.Unicode
 		protected char Next;
 
 		public abstract bool MoveNext ();
-		public abstract bool Reset ();
+		public abstract void Reset ();
 	}
 
 	internal class StringIterator : CharacterIterator
@@ -202,8 +207,8 @@ namespace Mono.Globalization.Unicode
 
 		public override void Reset ()
 		{
-			current = start;
-			length = 0;
+			Current = start;
+			Length = 0;
 			Value = Next = '\0';
 		}
 
@@ -218,7 +223,7 @@ namespace Mono.Globalization.Unicode
 			Current += Length;
 			if (end <= Current)
 				return false;
-			coll.MoveIteratorNext (this);
+			Collator.MoveIteratorNext (this);
 			return true;
 		}
 
@@ -231,7 +236,7 @@ namespace Mono.Globalization.Unicode
 
 		internal void SetProp (int len, char c, char exp)
 		{
-			length = len;
+			Length = len;
 			Value = c;
 			Next = exp;
 		}
@@ -262,12 +267,12 @@ namespace Mono.Globalization.Unicode
 				Next = '\0';
 				return true;
 			}
-			coll.MoveIteratorNext (this);
+			Collator.MoveIteratorNext (this);
 			return true;
 		}
 	}
 
-	public class Collator
+	internal class Collator
 	{
 		static readonly Collator invariant;
 
@@ -320,9 +325,15 @@ namespace Mono.Globalization.Unicode
 			buf.ClearBuffer ();
 		}
 
-		public void CompareChar (CharacterIterator i1, CharacterIterator i2, ref int result, ref CompareOptions level)
+		// returns the level:
+		//	0: no difference
+		//	1: primary difference
+		//	2: diacritical difference
+		//	3: case difference
+		//	4: kanatype difference
+		//	5: variable weight difference
+		public int CompareChar (CharacterIterator i1, CharacterIterator i2)
 		{
-			// mhm, might be insufficient or extraneous
 		}
 
 		// Get character element length of the argument character in s at cur.
@@ -469,7 +480,7 @@ namespace Mono.Globalization.Unicode
 		}
 
 		private int LastIndexOf (StringIterator src,
-			CharacterIterator target)
+			CharacterIterator target, ref bool testSuffix)
 		{
 			int r = IndexOf (src, target);
 			if (r >= 0) { // further results might be found
@@ -486,7 +497,7 @@ namespace Mono.Globalization.Unicode
 					src.MoveNext ();
 					target.Reset ();
 					target.MoveNext ();
-					if (IsPrefix (src, target))
+					if (IsPrefix (src, target, ref testSuffix))
 						return src.Current;
 				}
 				return -1;
@@ -551,8 +562,8 @@ namespace Mono.Globalization.Unicode
 		*/
 		public bool IsSuffix (string src, string target, CompareOptions opt)
 		{
-			StringIterator si = new StringIterator (src, 0, src.Length, opt);
-			StringIterator ti = new StringIterator (target, 0, target.Length, opt);
+			StringIterator si = new StringIterator (src, 0, src.Length, opt, this);
+			StringIterator ti = new StringIterator (target, 0, target.Length, opt, this);
 
 			// FIXME: this is not effective at all.
 //			si.MoveTo (src.Length - target.Length);
@@ -593,6 +604,7 @@ namespace Mono.Globalization.Unicode
 		public int Compare (string s1, int start1, int len1,
 			string s2, int start2, int len2, CompareOptions opt)
 		{
+			/*
 			if (s1.Length < start1 + len1 ||
 				s2.Length < start2 + len2)
 				throw new ArgumentOutOfRangeException ("start and length must not be out of range of the string.");
@@ -641,6 +653,7 @@ namespace Mono.Globalization.Unicode
 			if (len1 == len2)
 				return 0;
 			return len2 > len1 ? 1 : -1;
+			*/
 		}
 		#endregion
 
@@ -652,9 +665,9 @@ namespace Mono.Globalization.Unicode
 		//	- Get corresponding sortkey indexes with options.
 		// Collect the results and return as a byte [] array.
 		//
-		public void GetSortKey (string s, CompareOptions opt)
+		public byte [] GetSortKey (string s, CompareOptions opt)
 		{
-			CharacterIterator iter = new CharacterIterator (s, opt);
+			StringIterator iter = new StringIterator (s, 0, s.Length, opt, this);
 			buf.AdjustBufferSize (s, culture.Name == "ja-JP" ? 4 : 1);
 			while (iter.MoveNext ())
 				GetSortKeyForChar (iter, buf);

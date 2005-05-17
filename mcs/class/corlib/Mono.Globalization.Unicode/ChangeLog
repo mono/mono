@@ -1,3 +1,15 @@
+2005-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Make it more readable. More analysis on
+	  level 3 and 4 sortkey structures.
+	* Collator.cs : some compilation fixes (not compilable yet).
+
+2005-05-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Analysis on variable-weighting (level 5)
+	  sortkey format.
+	* Collator.cs : updated corresponding part of level 5, and more.
+
 2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : more updates.
