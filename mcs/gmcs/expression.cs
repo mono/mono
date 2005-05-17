@@ -3713,10 +3713,10 @@ namespace Mono.CSharp {
 					Error (1604, "cannot assign to `" + Name + "' because it is readonly");
 					return null;
 				}
-				
+
 				if (variable_info != null)
 					variable_info.SetAssigned (ec);
-		}
+			}
 		
 			Expression e = Block.GetConstantExpression (Name);
 			if (e != null) {
@@ -4258,12 +4258,17 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec, Location loc)
 		{
+			bool old_do_flow_analysis = ec.DoFlowAnalysis;
+			ec.DoFlowAnalysis = true;
+
 			if (ArgType == AType.Ref) {
 				ec.InRefOutArgumentResolving = true;
 				Expr = Expr.Resolve (ec);
 				ec.InRefOutArgumentResolving = false;
-				if (Expr == null)
+				if (Expr == null) {
+					ec.DoFlowAnalysis = old_do_flow_analysis;
 					return false;
+				}
 
 				Expr = Expr.DoResolveLValue (ec, Expr);
 				if (Expr == null)
@@ -4278,6 +4283,8 @@ namespace Mono.CSharp {
 			}
 			else
 				Expr = Expr.Resolve (ec);
+
+			ec.DoFlowAnalysis = old_do_flow_analysis;
 
 			if (Expr == null)
 				return false;
