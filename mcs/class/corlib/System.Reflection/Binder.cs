@@ -170,7 +170,7 @@ namespace System.Reflection
 				Type vtype = value.GetType ();
 				if (type.IsByRef)
 					type = type.GetElementType ();
-				if (vtype == type || type.IsAssignableFrom (vtype))
+				if (vtype == type || type.IsInstanceOfType (value))
 					return value;
 				if (vtype.IsArray && type.IsArray){
 					if (IsArrayAssignable (vtype.GetElementType (), type.GetElementType ()))

@@ -1,3 +1,9 @@
+2005-05-17  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Binder.cs: Use IsInstanceOfType instead of IsAssignableFrom
+	since GetType() may not return the correct type if the object is
+	a remoting proxy. This fixes bug #74933.
+
 2005-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoField.cs: Applied patch from Opened by Michael Meeks (michael@ximian.com). Improve exception message on binding failures.
