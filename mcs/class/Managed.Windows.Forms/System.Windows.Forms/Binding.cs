@@ -233,7 +233,7 @@ namespace System.Windows.Forms {
 			ConvertEventArgs e = new ConvertEventArgs (data, data_type);
 
 			OnParse (e);
-			if (data_type.IsAssignableFrom (e.Value.GetType ()))
+			if (data_type.IsInstanceOfType (e.Value))
 				return e.Value;
 			if (e.Value == Convert.DBNull)
 				return e.Value;
@@ -249,7 +249,7 @@ namespace System.Windows.Forms {
 			ConvertEventArgs e = new ConvertEventArgs (data, data_type);
 
 			OnFormat (e);
-			if (data_type.IsAssignableFrom (e.Value.GetType ()))
+			if (data_type.IsInstanceOfType (e.Value))
 				return e.Value;
 
 			return ConvertData (data, data_type);
@@ -263,7 +263,7 @@ namespace System.Windows.Forms {
 
 			if (data is IConvertible) {
 				object res = Convert.ChangeType (data, data_type);
-				if (data_type.IsAssignableFrom (res.GetType ()))
+				if (data_type.IsInstanceOfType (res))
 					return res;
 			}
 
