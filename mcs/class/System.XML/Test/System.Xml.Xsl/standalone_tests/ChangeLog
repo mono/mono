@@ -1,5 +1,11 @@
 2005-05-17  Andrew Skiba  <andrews@mainsoft.com>
 
+	* xslttest.cs : xsl:message is always printed on stdout. So to clean
+	our output from	those messages I output everything to stderr and send
+	stdout to /dev/null
+
+2005-05-17  Andrew Skiba  <andrews@mainsoft.com>
+
 	* xslttest.cs : output the list of failed tests
 
 2005-05-17  Andrew Skiba  <andrews@mainsoft.com>

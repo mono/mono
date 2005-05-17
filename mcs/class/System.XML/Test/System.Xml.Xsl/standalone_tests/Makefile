@@ -62,7 +62,8 @@ $(MSTEST_RESULTS_ARCHIVE) :
 run-test : run-test-xslt run-test-ms
 
 run-test-xslt : xslttest.exe testsuite/TESTS/catalog-fixed.xml
-	$(RUNTIME) $(RUNTIME_FLAGS) xslttest.exe --report:TestResult.xml --xml --details --outall
+	# Redirect stdout to /dev/null because it has only xsl:message garbage
+	$(RUNTIME) $(RUNTIME_FLAGS) xslttest.exe --report:TestResult.xml --xml --details --outall >/dev/null
 
 run-test-ms : alltest.exe xmlnorm.exe testsuite/TESTS/catalog-fixed.xml
 	$(RUNTIME) $(RUNTIME_FLAGS) ./alltest.exe $(TARGET_RESULTS)

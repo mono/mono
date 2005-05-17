@@ -39,7 +39,7 @@ namespace XsltTest
 		
 		static void Usage ()
 		{
-			Console.WriteLine (@"
+			Console.Error.WriteLine (@"
 mono xslttest.exe [options] [targetFileMatch] -report:reportfile
 
 Options:
@@ -131,7 +131,7 @@ FileMatch:
 						string reportFile = arg.Substring (9);
 						if (reportFile.Length < 0) {
 							Usage ();
-							Console.WriteLine ("Error: --report option requires filename.");
+							Console.Error.WriteLine ("Error: --report option requires filename.");
 							return;
 						}
 						reportOutput = new StreamWriter (reportFile);
@@ -166,7 +166,7 @@ FileMatch:
 			}
 
 			if (explicitTarget != null)
-				Console.WriteLine ("The specified target is "
+				Console.Error.WriteLine ("The specified target is "
 					+ explicitTarget);
 
 			XmlDocument whole = new XmlDocument ();
@@ -180,7 +180,7 @@ FileMatch:
 				ProcessTestCase (testCase);
 
 			if (!listOutput)
-				Console.WriteLine ("Finished: " 
+				Console.Error.WriteLine ("Finished: " 
 						+ DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
 
 			if (reportAsXml)
@@ -232,7 +232,7 @@ FileMatch:
 
 			if (listOutput) {
 				if (outfile != null)
-					Console.WriteLine (outfile);
+					Console.Error.WriteLine (outfile);
 				return;
 			}
 
