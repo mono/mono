@@ -28,6 +28,7 @@ namespace XsltTest
 		static TextWriter reportOutput = Console.Out;
 		static XmlTextWriter reportXmlWriter;
 		static StreamWriter missingFiles = new StreamWriter ("missing.lst");
+		static StreamWriter failedTests = new StreamWriter ("failed.lst");
 #endregion
 
 		static XsltTest ()
@@ -242,7 +243,6 @@ FileMatch:
 			if (skipTargets.Contains (stylesheetBase))
 				return;
 
-			XmlTextReader stylextr = new XmlTextReader (stylesheet);
 			if (useDomStyle) {
 				XmlDocument styledoc = new XmlDocument ();
 				if (whitespaceStyle)
@@ -302,6 +302,8 @@ FileMatch:
 				Console.Error.Write (".");
 				return;
 			}
+ 			failedTests.WriteLine (testid + "\t" + message);
+ 			failedTests.Flush ();
 			if (reportAsXml) {
 				reportXmlWriter.WriteStartElement ("testcase");
 				reportXmlWriter.WriteAttributeString ("id", testid);

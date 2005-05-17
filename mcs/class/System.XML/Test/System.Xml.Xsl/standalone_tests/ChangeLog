@@ -1,5 +1,9 @@
 2005-05-17  Andrew Skiba  <andrews@mainsoft.com>
 
+	* xslttest.cs : output the list of failed tests
+
+2005-05-17  Andrew Skiba  <andrews@mainsoft.com>
+
 	* xslttest.cs : output progress symbols (".", "e", etc.), some
 	clean-up and refactoring.
 	
