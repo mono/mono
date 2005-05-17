@@ -1668,11 +1668,17 @@ public partial class TypeManager {
 		return t == null_type;
 	}
 	
+	static Stack unmanaged_enclosing_types = new Stack (4);
+
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//
 	public static bool IsUnmanagedType (Type t)
 	{
+		// Avoid infloops in the case of: unsafe struct Foo { Foo *x; }
+		if (unmanaged_enclosing_types.Contains (t))
+			return true;
+
 		// builtins that are not unmanaged types
 		if (t == TypeManager.object_type || t == TypeManager.string_type)
 			return false;
@@ -1691,34 +1697,39 @@ public partial class TypeManager {
 		if (!IsValueType (t))
 			return false;
 
+		unmanaged_enclosing_types.Push (t);
+
+		bool retval = true;
+
 		if (t is TypeBuilder){
 			TypeContainer tc = LookupTypeContainer (t);
-			if (tc.Fields == null)
-				return true;
-			foreach (Field f in tc.Fields){
-				// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
-				if ((f.ModFlags & Modifiers.STATIC) != 0)
-					continue;
-				if (f.MemberType == null)
-					continue;
-				if (!IsUnmanagedType (f.MemberType)){
-					Report.SymbolRelatedToPreviousError (f.Location, CSharpName (t) + "." + f.Name);
-					return false;
+			if (tc.Fields != null){
+				foreach (Field f in tc.Fields){
+					// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
+					if ((f.ModFlags & Modifiers.STATIC) != 0)
+						continue;
+					if (f.MemberType == null)
+						continue;
+					if (!IsUnmanagedType (f.MemberType)){
+						Report.SymbolRelatedToPreviousError (f.Location, CSharpName (t) + "." + f.Name);
+						retval = false;
+					}
 				}
 			}
-			return true;
-		}
-		
-		FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-		foreach (FieldInfo f in fields){
-			if (!IsUnmanagedType (f.FieldType)){
-				Report.SymbolRelatedToPreviousError (f);
-				return false;
+		} else {
+			FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			
+			foreach (FieldInfo f in fields){
+				if (!IsUnmanagedType (f.FieldType)){
+					Report.SymbolRelatedToPreviousError (f);
+					retval = false;
+				}
 			}
 		}
 
-		return true;
+		unmanaged_enclosing_types.Pop ();
+
+		return retval;
 	}
 		
 	public static bool IsValueType (Type t)
