@@ -142,7 +142,7 @@ namespace System.Runtime.Serialization
 						
 			SerializationEntry entry = (SerializationEntry) serialized [name];
 
-			if (entry.Value != null && !type.IsAssignableFrom (entry.Value.GetType()))
+			if (entry.Value != null && !type.IsInstanceOfType (entry.Value))
 				return converter.Convert (entry.Value, type);
 			else
 				return entry.Value;

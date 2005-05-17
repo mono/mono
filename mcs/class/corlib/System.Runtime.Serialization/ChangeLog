@@ -1,3 +1,9 @@
+2005-05-17  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationInfo.cs: Use IsInstanceOfType instead of IsAssignableFrom
+	since GetType() may not return the correct type if the object is
+	a remoting proxy.
+
 2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* FormatterServices.cs: In GetSerializableMembers, private fields
