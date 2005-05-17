@@ -3710,7 +3710,13 @@ namespace Mono.CSharp {
 			VariableInfo variable_info = local_info.VariableInfo;
 			if (lvalue_right_side != null){
 				if (is_readonly){
-					Error (1604, "cannot assign to `" + Name + "' because it is readonly");
+					if (lvalue_right_side is LocalVariableReference || lvalue_right_side == EmptyExpression.Null)
+						Report.Error (1657, loc, "Cannot pass '{0}' with '{1}' modifier because it is a '{2}'",
+							Name, lvalue_right_side == EmptyExpression.Null ? "out" : "ref",
+							local_info.GetReadOnlyContext ());
+					else
+						Report.Error (1656, loc, "Cannot assign to '{0}' because it is a '{1}'",
+							Name, local_info.GetReadOnlyContext ());
 					return null;
 				}
 

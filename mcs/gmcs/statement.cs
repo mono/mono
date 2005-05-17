@@ -1012,8 +1012,15 @@ namespace Mono.CSharp {
 			AddressTaken = 32
 		}
 
-		Flags flags;
+		public enum ReadOnlyContext: byte {
+			Using,
+			Foreach,
+			Fixed
+		}
 
+		Flags flags;
+		ReadOnlyContext ro_context;
+		
 		public LocalInfo (Expression type, string name, Block block, Location l)
 		{
 			Type = type;
@@ -1126,9 +1133,28 @@ namespace Mono.CSharp {
 			get {
 				return (flags & Flags.ReadOnly) != 0;
 			}
-			set {
-				flags = value ? (flags | Flags.ReadOnly) : (unchecked (flags & ~Flags.ReadOnly));
+		}
+
+		public void SetReadOnlyContext (ReadOnlyContext context)
+		{
+			flags |= Flags.ReadOnly;
+			ro_context = context;
+		}
+
+		public string GetReadOnlyContext ()
+		{
+			if (!ReadOnly)
+				throw new InternalErrorException ("Variable is not readonly");
+
+			switch (ro_context) {
+				case ReadOnlyContext.Fixed:
+					return "fixed variable";
+				case ReadOnlyContext.Foreach:
+					return "foreach iteration variable";
+				case ReadOnlyContext.Using:
+					return "using variable";
 			}
+			throw new NotImplementedException ();
 		}
 
 		//
@@ -3408,7 +3434,7 @@ namespace Mono.CSharp {
 				Expression e = (Expression) p.Second;
 
 				vi.VariableInfo.SetAssigned (ec);
-				vi.ReadOnly = true;
+				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
 
 				//
 				// The rules for the possible declarators are pretty wise,

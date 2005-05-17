@@ -4362,7 +4362,7 @@ foreach_statement
 
 		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, l);
 		if (vi != null) {
-			vi.ReadOnly = true;
+			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Foreach);
 
 			// Get a writable reference to this read-only variable.
 			//
@@ -4666,7 +4666,7 @@ fixed_statement
 			if (v == null)
 				continue;
 
-			v.ReadOnly = true;
+			v.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
 			v.Pinned = true;
 			p.First = v;
 			list [i] = p;
@@ -4750,7 +4750,7 @@ using_statement
 				LocalInfo vi = current_block.AddVariable (type, decl.identifier, decl.Location);
 				if (vi == null)
 					continue;
-				vi.ReadOnly = true;
+				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Using);
 
 				Expression expr;
 				if (decl.expression_or_array_initializer is Expression){
