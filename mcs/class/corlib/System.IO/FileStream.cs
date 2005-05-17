@@ -377,6 +377,7 @@ namespace System.IO
 			if (buf_size == 0) { // No buffering
 				buf [0] = value;
 				buf_dirty = true;
+				buf_length = 1;
 				FlushBuffer ();
 				return;
 			}

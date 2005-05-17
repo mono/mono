@@ -1,3 +1,8 @@
+
+Tue May 17 10:54:18 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* FileStream.cs: complete fix for #74971.
+
 2005-05-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: make WriteByte work in all cases when no buffer is
