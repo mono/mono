@@ -10,6 +10,7 @@ namespace XsltTest
 {
 	public class XsltTest
 	{
+#region static Vars
 		static bool noExclude;
 		static bool reportDetails;
 		static bool reportAsXml;
@@ -22,16 +23,19 @@ namespace XsltTest
 		static bool stopImmediately;
 		static bool outputAll;
 		static readonly ArrayList skipTargets;
+		static readonly ArrayList knownFailures = new ArrayList (new string [] { });
 		static string explicitTarget;
 		static TextWriter reportOutput = Console.Out;
 		static XmlTextWriter reportXmlWriter;
+		static StreamWriter missingFiles = new StreamWriter ("missing.lst");
+#endregion
 
 		static XsltTest ()
 		{
 			skipTargets = new ArrayList (new string [] {
 			}); 
 		}
-
+		
 		static void Usage ()
 		{
 			Console.WriteLine (@"
@@ -73,7 +77,7 @@ FileMatch:
 			}
 		}
 
-		static void RunMain (string [] args)
+		static void ParseOptions (string [] args)
 		{
 			foreach (string arg in args) {
 				switch (arg) {
@@ -140,9 +144,14 @@ FileMatch:
 					break;
 				}
 			}
-
+		}
+			
+		static void RunMain (string [] args)
+		{
+			ParseOptions (args);
 			if (!noExclude) {
-				foreach (string s_ in new StreamReader ("ignore.lst").ReadToEnd ().Split ("\n".ToCharArray ())) {
+				foreach (string s_ in new StreamReader ("ignore.lst").ReadToEnd ()
+						.Split ("\n".ToCharArray ())) {
 					string s = s_.Trim ();
 					if (s.Length > 0)
 						skipTargets.Add (s);
@@ -163,44 +172,59 @@ FileMatch:
 			whole.Load (@"testsuite/TESTS/catalog-fixed.xml");
 
 			if (!listOutput)
-				Console.WriteLine ("Started: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
+				Console.Error.WriteLine ("Started: " 
+						+ DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
 
-			foreach (XmlElement testCase in whole.SelectNodes (
-				"test-suite/test-catalog/test-case")) {
-				string stylesheetBase = null;
-				string testid = testCase.GetAttribute ("id");
-				if (skipTargets.Contains (testid))
-					continue;
-				try {
-					string filePath = testCase.SelectSingleNode ("file-path").InnerText;
-					// hack hack
-					string testAuthorDir =
-						filePath [0] >= 'a' ?
-						"Xalan_Conformance_Tests" :
-						"MSFT_Conformance_Tests";
-					string path = @"testsuite/TESTS/" + testAuthorDir + "/" + filePath + "/";
-					foreach (XmlElement scenario in 
-						testCase.SelectNodes ("scenario")) {
-						RunTest (scenario, path, stylesheetBase);
-					}
-				} catch (Exception ex) {
-					if (stopImmediately)
-						throw;
-					Report (testCase, "Exception: " + testCase.GetAttribute ("id") + ": " + ex.Message);
-				}
-			}
+			foreach (XmlElement testCase in whole.SelectNodes ("test-suite/test-catalog/test-case"))
+				ProcessTestCase (testCase);
+
 			if (!listOutput)
-				Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
+				Console.WriteLine ("Finished: " 
+						+ DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
 
 			if (reportAsXml)
 				reportXmlWriter.WriteEndElement (); // test-results
 		}
+		
+		static void ProcessTestCase (XmlElement testCase)
+		{
+			string stylesheetBase = null;
+			string testid = testCase.GetAttribute ("id");
+			if (skipTargets.Contains (testid))
+				return;
+			try {
+				string submitter = testCase.SelectSingleNode ("./parent::test-catalog/@submitter")
+					.InnerText;
+				string filePath = testCase.SelectSingleNode ("file-path").InnerText;
+				string testAuthorDir;
+				if (submitter == "Lotus")
+					testAuthorDir =  "Xalan_Conformance_Tests";
+				else if (submitter == "Microsoft")
+					testAuthorDir =  "MSFT_Conformance_Tests";
+				else
+					return; //unknown directory
 
-		static void RunTest (XmlElement scenario, string path, string stylesheetBase)
+				string path = @"testsuite/TESTS/" + testAuthorDir + "/" + filePath + "/";
+				foreach (XmlElement scenario in 
+						testCase.SelectNodes ("scenario[@operation='standard']")) {
+					RunTest (testid, scenario, path, stylesheetBase);
+				}
+			} catch (Exception ex) {
+				if (stopImmediately)
+					throw;
+				Report (false, testid, "Exception: " + ex.Message);
+			}
+		}
+
+		static void RunTest (string testid, XmlElement scenario, string path, string stylesheetBase)
 		{
 			stylesheetBase = scenario.SelectSingleNode ("input-file[@role='principal-stylesheet']").InnerText;
-			string id = scenario.ParentNode.Attributes ["id"].Value;
 			string stylesheet = path + stylesheetBase;
+			
+			if (!File.Exists (stylesheet)) {
+				missingFiles.WriteLine (stylesheet);
+				missingFiles.Flush ();
+			}
 			string srcxml = path + scenario.SelectSingleNode ("input-file[@role='principal-data']").InnerText;
 			XmlNode outputNode = scenario.SelectSingleNode ("output-file[@role='principal']");
 			string outfile = outputNode != null ? path + outputNode.InnerText : null;
@@ -213,24 +237,24 @@ FileMatch:
 
 			XslTransform trans = new XslTransform ();
 
-			if (explicitTarget != null && id.IndexOf (explicitTarget) < 0)
+			if (explicitTarget != null && testid.IndexOf (explicitTarget) < 0)
 				return;
 			if (skipTargets.Contains (stylesheetBase))
 				return;
 
 			XmlTextReader stylextr = new XmlTextReader (stylesheet);
-			XmlValidatingReader stylexvr = new XmlValidatingReader (stylextr);
 			if (useDomStyle) {
 				XmlDocument styledoc = new XmlDocument ();
 				if (whitespaceStyle)
 					styledoc.PreserveWhitespace = true;
 				styledoc.Load (stylesheet);
-				trans.Load (styledoc);
+				trans.Load (styledoc, null, null);
 			} else
 				trans.Load (new XPathDocument (
-					stylesheet,
-					whitespaceStyle ? XmlSpace.Preserve :
-					XmlSpace.Default));
+							stylesheet,
+							whitespaceStyle ? XmlSpace.Preserve :
+							XmlSpace.Default),
+						null, null);
 
 			XmlTextReader xtr = new XmlTextReader (srcxml);
 			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
@@ -248,7 +272,7 @@ FileMatch:
 					XmlSpace.Default);
 			}
 			StringWriter sw = new StringWriter ();
-			trans.Transform (input, null, sw);
+			trans.Transform (input, null, sw, null);
 			if (generateOutput) {
 				StreamWriter fw = new StreamWriter (outfile,
 					false, Encoding.UTF8);
@@ -260,41 +284,45 @@ FileMatch:
 
 			if (!File.Exists (outfile)) {
 				// Reference output file does not exist.
+				Report (true, testid, "No reference file found");
 				return;
 			}
 			StreamReader sr = new StreamReader (outfile);
 			string reference_out = sr.ReadToEnd ();
 			string actual_out = sw.ToString ();
 			if (reference_out != actual_out)
-				Report (scenario.ParentNode as XmlElement, 
-					reference_out, actual_out);
+				Report (false, testid, reference_out, actual_out);
 			else if (outputAll)
-				Report (scenario.ParentNode as XmlElement,
-					"OK");
+				Report (true, testid, "OK");
 		}
 
-		static void Report (XmlElement testcase, string message)
+		static void Report (bool passed, string testid, string message)
 		{
+			if (passed) {
+				Console.Error.Write (".");
+				return;
+			}
 			if (reportAsXml) {
 				reportXmlWriter.WriteStartElement ("testcase");
-				reportXmlWriter.WriteAttributeString ("id",
-					testcase.GetAttribute ("id"));
+				reportXmlWriter.WriteAttributeString ("id", testid);
 				reportXmlWriter.WriteString (message);
 				reportXmlWriter.WriteEndElement ();
+				if (knownFailures.Contains (testid))
+					Console.Error.Write ("k");
+				else
+					Console.Error.Write ("E");
 			}
 			else
 				reportOutput.WriteLine (message);
 		}
 
-		static void Report (XmlElement testCase,
-			string reference_out, string actual_out)
+		static void Report (bool passed, string testid, string reference_out, string actual_out)
 		{
-			string baseMessage = reportAsXml ? "Different." :
-				"Different: " + testCase.GetAttribute ("id");
+			string baseMessage = reportAsXml ? "Different." : "Different: " + testid;
 			if (!reportDetails)
-				Report (testCase, baseMessage);
+				Report (passed, testid, baseMessage);
 			else
-				Report (testCase, baseMessage +
+				Report (passed, testid, baseMessage +
 					"\n Actual*****\n" + 
 					actual_out + 
 					"\n-------------------\nReference*****\n" + 

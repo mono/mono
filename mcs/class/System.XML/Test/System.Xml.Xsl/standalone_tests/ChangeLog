@@ -1,3 +1,8 @@
+2005-05-17  Andrew Skiba  <andrews@mainsoft.com>
+
+	* xslttest.cs : output progress symbols (".", "e", etc.), some
+	clean-up and refactoring.
+	
 2005-05-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Makefile : now *.out does not match the all reference outputs, namely
