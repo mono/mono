@@ -3558,13 +3558,11 @@ namespace Mono.MonoBASIC {
 
 		static ArrayList tempvars; // For ByRef - different parameter and argument type
 		static bool is_byref_conversion = false; //For ByRef when it is converted 
-		static CaseInsensitiveHashtable namedArgs = null;
 		static string errorMsg = "";
 
 		static Invocation ()
 		{
 			method_parameter_cache = new PtrHashtable ();
-			namedArgs = new CaseInsensitiveHashtable ();
 		}
 			
 		//
@@ -3943,7 +3941,11 @@ namespace Mono.MonoBASIC {
 			return result;
 		}
 
-		internal static ArrayList ReorderArguments (MethodBase mb, ArrayList Arguments, ref string ErrMsg)
+		internal static ArrayList ReorderArguments (MethodBase mb,
+							    ArrayList Arguments,
+							    CaseInsensitiveHashtable namedArgs,
+							    ref string ErrMsg,
+							    Location loc)
 		{
 			ArrayList orderedArgs = new ArrayList ();
 			ParameterData pd = GetParameterData (mb);
@@ -3951,15 +3953,20 @@ namespace Mono.MonoBASIC {
 			for (int index = 0; index < pd.Count; index ++) {
 				string paramName = pd.ParameterName (index);
 				if (namedArgs.Contains (paramName)) {
+					if ((pd.ParameterModifier (index) & Parameter.Modifier.PARAMS) == Parameter.Modifier.PARAMS) {
+						error = true;
+						ErrMsg += "\n\t'" + FullMethodDesc (mb) + "': Named argument cannot match a ParamArray parameter";
+						continue;
+					}
 					int argIndex = (int) namedArgs [paramName];
 					orderedArgs.Add (Arguments [argIndex]);
 				} else {
 					Parameter.Modifier p_mod = pd.ParameterModifier (index) & Parameter.Modifier.OPTIONAL;
 					if (p_mod == Parameter.Modifier.OPTIONAL)
-						orderedArgs.Add (new Argument (new EmptyExpression (), Argument.AType.NoArg));
+						orderedArgs.Add (new Argument (pd.ParameterName (index), new EmptyExpression (), Argument.AType.NoArg));
 					 else {
 						error = true;
-						ErrMsg += "\n\t'" + mb + "': Argument not specified for parameter '" + paramName + "'";
+						ErrMsg += "\n\t'" + FullMethodDesc (mb) + "': Argument not specified for parameter '" + paramName + "'";
 					}
 				}
 			}
@@ -3977,7 +3984,7 @@ namespace Mono.MonoBASIC {
 					}
 					if (!found) {
 						error = true;
-						ErrMsg += "\n\t'" + mb + "': '" + argName + "' is not a parameter";
+						ErrMsg += "\n\t'" + FullMethodDesc (mb) + "': '" + argName + "' is not a parameter";
 					}
 				}
 			}
@@ -4050,17 +4057,17 @@ namespace Mono.MonoBASIC {
 			int narrow_count = 0;
 			bool narrowing_candidate = false;
 			errorMsg = "";
+			CaseInsensitiveHashtable namedArgs = new CaseInsensitiveHashtable ();
 
 			if (Arguments == null)
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
 
-			namedArgs.Clear ();
 			if (!CheckNamedArguments (Arguments, loc))
 				return null;
 
-			if (!GetNamedArgPos (Arguments, loc))
+			if (!GetNamedArgPos (Arguments, ref namedArgs, loc))
 				return null;
 
 			ArrayList newarglist = Arguments;
@@ -4068,7 +4075,7 @@ namespace Mono.MonoBASIC {
 				bool candidate_expanded;
 				newarglist = Arguments;
 				if (argument_count > 0 && namedArgs.Count != 0) {
-					newarglist = ReorderArguments (candidate, Arguments, ref errorMsg);
+					newarglist = ReorderArguments (candidate, Arguments, namedArgs, ref errorMsg, loc);
 					if (newarglist == null)
 						continue;
 				}
@@ -4173,12 +4180,12 @@ namespace Mono.MonoBASIC {
 			newarglist = Arguments;
 			if (argument_count > 0 && namedArgs.Count != 0) {
 				string err = "";
-				newarglist = ReorderArguments (method, Arguments, ref err);
+				newarglist = ReorderArguments (method, Arguments, namedArgs, ref err, loc);
 				if (newarglist == null)
 					return null;
 			}
 
-			Arguments = ConstructArgumentList(ec, newarglist, method);
+			Arguments = ConstructArgumentList(ec, newarglist, namedArgs, method);
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
 						   chose_params_expanded, null, loc))
 			{
@@ -4209,7 +4216,7 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		internal static bool GetNamedArgPos (ArrayList Arguments, Location loc) 
+		internal static bool GetNamedArgPos (ArrayList Arguments, ref CaseInsensitiveHashtable namedArgs, Location loc) 
 		{
 			namedArgs.Clear ();
 			if (Arguments == null || Arguments.Count == 0)
@@ -4228,21 +4235,23 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 
-		public static ArrayList ConstructArgumentList (EmitContext ec, ArrayList Arguments,	MethodBase method)
+		public static ArrayList ConstructArgumentList (EmitContext ec, ArrayList Arguments, CaseInsensitiveHashtable namedArgs, MethodBase method)
 		{
 			ArrayList newarglist = new ArrayList();
 			int arg_count = Arguments == null ? 0 : Arguments.Count;
 
 			ParameterData pd = GetParameterData (method);
-			
-
+			bool argNamesGiven = (namedArgs.Count > 0);
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = (Argument) Arguments [i];
 				Type param_type = pd.ParameterType (i);
 
 				bool IsDelegate = TypeManager.IsDelegateType (param_type);
 				if (a.ArgType == Argument.AType.NoArg) {
-					a = new Argument (pd.DefaultValue (i), Argument.AType.Expression);
+					if (argNamesGiven)
+						a = new Argument (pd.ParameterName (i), pd.DefaultValue (i), Argument.AType.Expression);
+					else
+						a = new Argument (pd.DefaultValue (i), Argument.AType.Expression);
 					a.Resolve (ec, Location.Null);
 				}
 
@@ -4273,7 +4282,11 @@ namespace Mono.MonoBASIC {
 
 			for (int i = arg_count; i < pd.Count; i++) {
 				Expression e = pd.DefaultValue (i);
-				Argument a = new Argument (e, Argument.AType.Expression);
+				Argument a = null;
+				if (argNamesGiven)
+					a = new Argument (e, Argument.AType.Expression);
+				else
+					a = new Argument (pd.ParameterName (i), e, Argument.AType.Expression);
 				if ((pd.ParameterModifier (i) & Parameter.Modifier.REF) != 0)
 					a.ArgType = Argument.AType.Ref;
 				e.Resolve (ec);

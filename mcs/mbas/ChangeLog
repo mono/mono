@@ -1,3 +1,8 @@
+2005-05-16 Satya Sudha K <ksathyasudha@hotmail.com>
+	* expressions.cs :
+		- Disallowing named arguments for 'ParamArray' parameters
+		- Creating named arguments (to replace missing arguments), in case other arguments are also named
+
 2005-05-16 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : correcting/refactoring EntryPoint fixing as per #74955
 		adjusting references changed by Gonzalo to their new containing namespace.
