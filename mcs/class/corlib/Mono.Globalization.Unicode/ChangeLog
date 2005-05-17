@@ -1,5 +1,10 @@
 2005-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : Japanese voice mark is level 2, and Hangul
+	  properties are level 3.
+
+2005-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : Make it more readable. More analysis on
 	  level 3 and 4 sortkey structures.
 	* Collator.cs : some compilation fixes (not compilable yet).

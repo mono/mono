@@ -145,8 +145,8 @@
 
 	- level 1: primary difference
 	  The first byte of level 1 means the category of the character.
-	- level 2: diacritic difference, nonspacing-mark difference?
-	- level 3: case/width sensitivity, Japanese voice marks
+	- level 2: diacritic difference, including Japanese voice mark countup
+	- level 3: case/width sensitivity, and Hangul properties
 	- level 4: kana weight (all of them have primary category 22, at least
 	  in InvariantCulture)
 	- level 5: variable weighting (apostrophe, hyphens etc.)
@@ -768,7 +768,14 @@
 	Case properties will be halfly computed and halfly stored as a byte
 	array (mostly for Latin characters), with limited areas of codepoint.
 
-	Note that Japanese voice mark is considered at level 3 but no need to
+	For Hangul characters, it will be computed by codepoint areas.
+
+**** Level 2: Diacritical properties
+
+	The table will be composed as two byte for a character. Actually when
+	MS compatible (discriminatory) mode, the second byte will be always 0.
+
+	Note that Japanese voice mark is considered at level 2 but no need to
 	have maps.
 
 
