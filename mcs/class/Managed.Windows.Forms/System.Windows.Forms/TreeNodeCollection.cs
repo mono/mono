@@ -73,12 +73,12 @@ namespace System.Windows.Forms {
 
 		object IList.this [int index] {
 			get {
-				if (index < 0 || index > Count)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				return nodes [index];
 			}
 			set {
-				if (index < 0 || index > Count)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				TreeNode node = (TreeNode) value;
 				SetData (node);
@@ -88,12 +88,12 @@ namespace System.Windows.Forms {
 
 		public virtual TreeNode this [int index] {
 			get {
-				if (index < 0 || index > Count)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				return nodes [index];
 			}
 			set {
-				if (index < 0 || index > Count)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				SetData (value);
 				nodes [index] = value;

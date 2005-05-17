@@ -1,3 +1,7 @@
+2005-05-17  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* TreeNodeCollection.cs: fixes get/set item ranges
+	
 2005-05-15  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs: Kazuki Oikawa's PreferredHeight and ItemHeight fixes
