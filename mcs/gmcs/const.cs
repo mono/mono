@@ -44,7 +44,7 @@ namespace Mono.CSharp {
 		public Const (TypeContainer parent, Expression constant_type, string name,
 			      Expression expr, int mod_flags, Attributes attrs, Location loc)
 			: base (parent, constant_type, mod_flags, AllowedModifiers,
-				new MemberName (name), null, attrs, loc)
+				new MemberName (name), expr, attrs, loc)
 		{
 			Expr = expr;
 			ModFlags |= Modifiers.STATIC;
@@ -98,9 +98,10 @@ namespace Mono.CSharp {
 			}
 
 			FieldAttributes field_attr = FieldAttributes.Static | Modifiers.FieldAttr (ModFlags);
-			// I don't know why but they emit decimal constant as InitOnly
+			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
 			if (ttype == TypeManager.decimal_type) {
 				field_attr |= FieldAttributes.InitOnly;
+				Parent.RegisterFieldForInitialization (this);
 			}
 			else {
 				field_attr |= FieldAttributes.Literal;
