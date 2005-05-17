@@ -1,3 +1,9 @@
+2005-05-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c: Generalize the existing uses of the MONO_DEBUG env variable
+	and add a new one: aborting when a SIGSEGV is raised while in unmanaged code.
+	Fixes #74742.
+
 2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *-ia64.*: Add beginnings of IA64 backend.
