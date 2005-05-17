@@ -962,22 +962,6 @@ namespace Mono.MonoBASIC {
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);	
-			} else if (expr_type == TypeManager.char_type){
-				//
-				// From char to ushort, int, uint, long, ulong, float, double
-				// 
-				if ((real_target_type == TypeManager.ushort_type) ||
-				    (real_target_type == TypeManager.int32_type) ||
-				    (real_target_type == TypeManager.uint32_type))
-					return new EmptyCast (expr, target_type);
-				if (real_target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 			} else if (expr_type == TypeManager.string_type){
 
 				if (real_target_type == TypeManager.bool_type)
@@ -1025,8 +1009,6 @@ namespace Mono.MonoBASIC {
 					return RTConversionExpression(ec, "System.Convert", ".ToSingle", expr, loc);
 				if (real_target_type == TypeManager.double_type)
 					return RTConversionExpression(ec, "System.Convert", ".ToDouble", expr, loc);
-				if (real_target_type == TypeManager.char_type)
-					return RTConversionExpression(ec, "System.Convert", ".ToChar", expr, loc);
       			}
 
 			return null;
@@ -1251,21 +1233,6 @@ namespace Mono.MonoBASIC {
 				    (target_type == TypeManager.decimal_type))
 					return true;
 				    
-			} else if (expr_type == TypeManager.char_type){
-				//
-				// From char to ushort, int, uint, long, ulong, float, double
-				// 
-				if ((target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.string_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
 			} else if (expr_type == TypeManager.decimal_type) {
 				if (target_type == TypeManager.float_type ||
 				    target_type == TypeManager.double_type)
@@ -1902,22 +1869,6 @@ namespace Mono.MonoBASIC {
 				    (expr_type == TypeManager.decimal_type))
 					return true;
 				    
-			} else if (target_type == TypeManager.char_type){
-				//
-				// To char from ushort, int, uint, long, ulong, float, double, decimal,string
-				// 
-				if ((expr_type == TypeManager.ushort_type) ||
-				    (expr_type == TypeManager.int32_type) ||
-				    (expr_type == TypeManager.uint32_type) ||
-				    (expr_type == TypeManager.uint64_type) ||
-				    (expr_type == TypeManager.int64_type) ||
-				    (expr_type == TypeManager.float_type) ||
-				    (expr_type == TypeManager.double_type) ||
-				    (expr_type == TypeManager.decimal_type) ||
-				    (expr_type == TypeManager.string_type))
-
-					return true;
-
 			} else if (target_type == TypeManager.decimal_type){
 				if (expr_type == TypeManager.float_type ||
 				    expr_type == TypeManager.double_type)
@@ -2092,30 +2043,6 @@ namespace Mono.MonoBASIC {
 					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
 					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I8);
 				}
-				    
-			} else if (target_type == TypeManager.char_type){
-				//
-				// To char from ushort, int, uint, long, ulong, float, double
-				// 
-				if (expr_type == TypeManager.ushort_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_CH);
-				if (expr_type == TypeManager.int32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_CH);
-				if (expr_type == TypeManager.uint32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_CH);
-				if (expr_type == TypeManager.uint64_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_CH);
-				if (expr_type == TypeManager.int64_type) 
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_CH);
-
-				if (expr_type == TypeManager.float_type) {
-					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_CH);
-				}
-				if (expr_type == TypeManager.double_type) {
-					Expression rounded_expr = RTConversionExpression(ec, "System.Math", ".Round", expr, loc);
-					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_CH);
-				}
 
 			} else if (target_type == TypeManager.float_type){
 				//
@@ -2240,9 +2167,16 @@ namespace Mono.MonoBASIC {
 					}
 					break;	
 				case TypeCode.Byte:
-					// Ok, this *is* broken
-					e = RTConversionExpression(ec, "ByteType.FromObject", expr, loc);
-					break;	
+					
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "BooleanType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "ByteType.FromObject", expr, loc);
+							break;	
+					}
+					break;
 				case TypeCode.Boolean:	
 					switch (src_type) {						
 						case TypeCode.String:				
@@ -2567,16 +2501,12 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_U4);
 				if (real_target_type == TypeManager.uint64_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_U8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_CH);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to sbyte and char
 				//
 				if (real_target_type == TypeManager.sbyte_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U1_I1);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U1_CH);
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to sbyte, byte, ushort, uint, ulong, char
@@ -2591,8 +2521,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U4);
 				if (real_target_type == TypeManager.uint64_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_CH);
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to sbyte, byte, short, char
@@ -2603,8 +2531,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_U1);
 				if (real_target_type == TypeManager.short_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_I2);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_CH);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to sbyte, byte, short, ushort, uint, ulong, char
@@ -2621,8 +2547,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U4);
 				if (real_target_type == TypeManager.uint64_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_CH);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to sbyte, byte, short, ushort, int, char
@@ -2637,8 +2561,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_U2);
 				if (real_target_type == TypeManager.int32_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_I4);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_CH);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long to sbyte, byte, short, ushort, int, uint, ulong, char
@@ -2657,8 +2579,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U4);
 				if (real_target_type == TypeManager.uint64_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_CH);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
 				// From ulong to sbyte, byte, short, ushort, int, uint, long, char
@@ -2677,18 +2597,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_U4);
 				if (real_target_type == TypeManager.int64_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_I8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_CH);
-			} else if (expr_type == TypeManager.char_type){
-				//
-				// From char to sbyte, byte, short
-				//
-				if (real_target_type == TypeManager.sbyte_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.CH_I1);
-				if (real_target_type == TypeManager.byte_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.CH_U1);
-				if (real_target_type == TypeManager.short_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.CH_I2);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// From float to sbyte, byte, short,
@@ -2712,8 +2620,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_I8);
 				if (real_target_type == TypeManager.uint64_type)
 					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_U8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R4_CH);
 			} else if (expr_type == TypeManager.double_type){
 				//
 				// From double to byte, byte, short,
@@ -2737,8 +2643,6 @@ namespace Mono.MonoBASIC {
 					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_I8);
 				if (real_target_type == TypeManager.uint64_type)
 					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_U8);
-				if (real_target_type == TypeManager.char_type)
-					return new ConvCast (ec, rounded_expr, target_type, ConvCast.Mode.R8_CH);
 				if (real_target_type == TypeManager.float_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
 			} 
@@ -3208,9 +3112,6 @@ namespace Mono.MonoBASIC {
 				if (target_type == TypeManager.uint32_type){
 					if (v >= 0)
 						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
 						return (byte) v;
@@ -3237,9 +3138,6 @@ namespace Mono.MonoBASIC {
 				if (target_type == TypeManager.int32_type){
 					if (v <= Int32.MaxValue)
 						return (int) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v <= Byte.MaxValue)
 						return (byte) v;
@@ -3266,9 +3164,6 @@ namespace Mono.MonoBASIC {
 				} else if (target_type == TypeManager.uint32_type){
 					if (v >= 0 && v <= UInt32.MaxValue)
 						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
 						return (byte) v;
@@ -3295,9 +3190,6 @@ namespace Mono.MonoBASIC {
 				} else if (target_type == TypeManager.uint32_type){
 					if (v <= UInt32.MaxValue)
 						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
 						return (byte) v;
@@ -3322,8 +3214,6 @@ namespace Mono.MonoBASIC {
 					return (int) v;
 				else if (target_type == TypeManager.uint32_type)
 					return (uint) v;
-				else if (target_type == TypeManager.char_type)
-					return (char) v;
 				else if (target_type == TypeManager.sbyte_type){
 					if (v <= SByte.MaxValue)
 						return (sbyte) v;
@@ -3344,9 +3234,6 @@ namespace Mono.MonoBASIC {
 				else if (target_type == TypeManager.uint32_type){
 					if (v >= 0)
 						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= 0)
-						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= 0)
 						return (byte) v;
@@ -3370,9 +3257,6 @@ namespace Mono.MonoBASIC {
 				} else if (target_type == TypeManager.uint32_type){
 					if (v >= 0)
 						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= 0)
-						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
 						return (byte) v;
@@ -3395,10 +3279,7 @@ namespace Mono.MonoBASIC {
 					return (int) v;
 				else if (target_type == TypeManager.uint32_type)
 					return (uint) v;
-				else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
+				else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
 						return (byte) v;
 				} else if (target_type == TypeManager.sbyte_type){
@@ -3447,9 +3328,6 @@ namespace Mono.MonoBASIC {
                                 } else if (target_type == TypeManager.byte_type){
                                         if (v >= Byte.MinValue && v <= Byte.MaxValue)
 						return new ByteConstant ((byte) System.Math.Round (v));
-                                } else if (target_type == TypeManager.char_type){
-                                        if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
                                 } else if (target_type == TypeManager.short_type){
                                         if (v >= Int16.MinValue && v <= Int16.MaxValue)
 						return new ShortConstant ((short) System.Math.Round (v));

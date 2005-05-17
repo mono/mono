@@ -1,4 +1,7 @@
-2005-05-16 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-17 Satya Sudha K <ksathyasudha@hotmail.com>
+	* ecore.cs : Removed char <-> numeric/date conversions as they are not supported in vbc
+
+2005-05-17 Satya Sudha K <ksathyasudha@hotmail.com>
 	* expressions.cs :
 		- Disallowing named arguments for 'ParamArray' parameters
 		- Creating named arguments (to replace missing arguments), in case other arguments are also named
