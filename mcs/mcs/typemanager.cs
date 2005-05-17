@@ -98,6 +98,7 @@ public class TypeManager {
 	static public Type field_offset_attribute_type;
 	static public Type security_attr_type;
 	static public Type required_attr_type;
+	static public Type guid_attr_type;
 
 	/// 
 	/// .NET 2.0
@@ -1090,6 +1091,7 @@ public class TypeManager {
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
 		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
 		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices.RequiredAttributeAttribute");
+		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
 
 		//
 		// .NET 2.0

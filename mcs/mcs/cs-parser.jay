@@ -394,8 +394,6 @@ namespace_body
 	  opt_using_directives
 	  opt_namespace_member_declarations
 	  CLOSE_BRACE
-	  {
-	  }
 	;
 
 opt_using_directives
@@ -954,7 +952,8 @@ variable_declarators
 	: variable_declarator 
 	  {
 		ArrayList decl = new ArrayList (4);
-		decl.Add ($1);
+		if ($1 != null)
+			decl.Add ($1);
 		$$ = decl;
 	  }
 	| variable_declarators COMMA variable_declarator
@@ -977,7 +976,8 @@ variable_declarator
 	| IDENTIFIER OPEN_BRACKET opt_expression CLOSE_BRACKET
 	  {
 		Report.Error (650, lexer.Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
-			"To declare a fixed buffer field, use the fixed keyword before the field type");
+			"To declare a fixed size buffer field, use the fixed keyword before the field type");
+		$$ = null;
 	  }
 	;
 
@@ -1199,6 +1199,14 @@ fixed_parameter
 	  IDENTIFIER
 	  {
 		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
+	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
+	  IDENTIFIER OPEN_BRACKET CLOSE_BRACKET
+	  {
+		Report.Error (1552, lexer.Location, "Array type specifier, [], must appear before parameter name");
+		$$ = null;
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
@@ -1814,7 +1822,12 @@ operator_declarator
 		Report.Error (1534, lexer.Location, "Overloaded binary operator '{0}' takes two parameters", $3);
 		$$ = null;
 	}
-
+	| type OPERATOR overloadable_operator 
+	  OPEN_PARENS CLOSE_PARENS
+	{
+		Report.Error (1535, lexer.Location, "Overloaded unary operator '{0}' takes one parameter", $3);
+		$$ = null;
+	}
 	;
 
 overloadable_operator

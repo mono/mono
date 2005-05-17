@@ -391,7 +391,8 @@ namespace Mono.CSharp {
 				"System.NotSupportedException",
 				"System.MarshalByRefObject",
 				"System.Security.CodeAccessPermission",
-				"System.Runtime.CompilerServices.RequiredAttributeAttribute"
+				"System.Runtime.CompilerServices.RequiredAttributeAttribute",
+				"System.Runtime.InteropServices.GuidAttribute"
 			};
 
 			foreach (string cname in classes_second_stage)
