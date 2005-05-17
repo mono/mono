@@ -56,7 +56,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 						myAsmName.Name = "__MetadataTypes";
 					   
 						AssemblyBuilder myAsmBuilder = myDomain.DefineInternalDynamicAssembly (myAsmName, AssemblyBuilderAccess.Run);
-						_module = myAsmBuilder.DefineDynamicModule("__MetadataTypesModule", true);
+						_module = myAsmBuilder.DefineDynamicModule("__MetadataTypesModule", false);
 					}
 				}
 			}

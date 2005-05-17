@@ -1,3 +1,7 @@
+2005-05-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CodeGenerator.cs: Don't generate debug info here.
+
 2005-05-09  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjectWriter.cs:
