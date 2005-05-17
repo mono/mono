@@ -78,6 +78,7 @@ LikeOperator3.vb
 LiteralNothing1.vb
 LogicalOperators1.vb
 LongLiteral1.vb
+NamedArguments1.vb
 OptionalArgFunction1.vb
 OptionalArgument1.vb
 Override1.vb
