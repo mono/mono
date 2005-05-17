@@ -1,7 +1,6 @@
 // Compiler options: -doc:dummy.xml -warn:2 -warnaserror
 namespace Testing
 {
-	/// test class
 	public class Test
 	{
 		public static void Main ()
