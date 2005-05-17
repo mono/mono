@@ -92,7 +92,7 @@ namespace System.Runtime.Remoting {
 			uri = RemotingServices.GetObjectUri(mbr);
 			typeInfo = new TypeInfo(type);
 
-			if (!type.IsAssignableFrom (mbr.GetType()))
+			if (!type.IsInstanceOfType (mbr))
 				throw new RemotingException ("The server object type cannot be cast to the requested type " + type.FullName + ".");
 
 			UpdateChannelInfo();
