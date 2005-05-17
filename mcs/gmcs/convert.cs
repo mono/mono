@@ -192,7 +192,7 @@ namespace Mono.CSharp {
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type){
 				if (target_type.IsPointer)
-					return new EmptyCast (expr, target_type);
+					return new EmptyCast (NullPointer.Null, target_type);
 					
 				if (!target_type.IsValueType)
 					return new NullCast (expr, target_type);
@@ -1294,7 +1294,7 @@ namespace Mono.CSharp {
 				
 				if (target_type.IsPointer) {
 					if (expr_type == TypeManager.null_type)
-						return new EmptyCast (expr, target_type);
+						return new EmptyCast (NullPointer.Null, target_type);
 
 					if (expr_type == TypeManager.void_ptr_type)
 						return new EmptyCast (expr, target_type);
