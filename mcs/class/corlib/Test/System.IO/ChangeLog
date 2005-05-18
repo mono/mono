@@ -1,3 +1,10 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StreamCas.cs: New. CAS unit tests to test stack propagation for 
+	BeginRead and BeginWrite.
+	* FileStreamCas.cs: Added tests to test stack propagation for 
+	BeginRead and BeginWrite.
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* DirectoryCas.cs: Fixed IsRunningOnWindows (inversed logic). That
