@@ -291,7 +291,7 @@ namespace System.Net
 		{
 			string response = String.Format ("{0}:{1}:", HA1 (username, password), Nonce);
 			if (QOP != null)
-				response += String.Format ("{0}:{1}:{2}:", _nc.ToString ("x8"), CNonce, QOP);
+				response += String.Format ("{0}:{1}:{2}:", _nc.ToString ("X8"), CNonce, QOP);
 			response += HA2 (webRequest);
 			return HashToHexString (response);
 		}

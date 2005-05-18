@@ -1,3 +1,8 @@
+2005-05-04 James Willcox  <james@ximian.com>
+
+	* DigestClient.cs: convert to a hex string with "X8" consistently
+	for nc-value
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: don't rethrow errors in Write, as the error will be
