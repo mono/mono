@@ -1,3 +1,8 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DeflateStream.cs: Fixed some changed/missing exceptions.
+	* GzipStream.cs: Renamed to GZipStream (from beta2).
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	* DeflateStream.cs, GzipStream.cs, CompressionMode.cs: Make class public.

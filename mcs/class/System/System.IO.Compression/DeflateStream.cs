@@ -68,7 +68,19 @@ namespace System.IO.Compression {
 		delegate int  ReadMethod (byte[] array, int offset, int count);
 		delegate void WriteMethod(byte[] array, int offset, int count);
 
-		internal DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen, bool gzip) {
+		internal DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen, bool gzip)
+		{
+			if (compressedStream == null)
+				throw new ArgumentNullException ("compressedStream");
+
+			switch (mode) {
+			case CompressionMode.Compress:
+			case CompressionMode.Decompress:
+				break;
+			default:
+				throw new ArgumentException ("mode");
+			}
+
 			this.compressedStream = compressedStream;
 			this.mode = mode;
 			this.leaveOpen = leaveOpen;
@@ -96,7 +108,7 @@ namespace System.IO.Compression {
 		public override void Close () {
 			FlushInternal (true);
 
-			if (mode == CompressionMode.Decompress && compressedStream.CanSeek) {
+			if (/*mode == CompressionMode.Decompress &&*/ compressedStream.CanSeek) {
 				int avail_in = z_stream_get_avail_in (z_stream);
 				if (avail_in != 0) {
 					compressedStream.Seek (- avail_in, SeekOrigin.Current);
@@ -115,7 +127,6 @@ namespace System.IO.Compression {
 		}
 
 		private int ReadInternal(byte[] array, int offset, int count) {
-
 			int buffer_size;
 			if (finished)
 				return 0;
@@ -173,10 +184,12 @@ namespace System.IO.Compression {
 
 		public override int Read (byte[] dest, int dest_offset, int count)
 		{
+			if (!open)
+				throw new ObjectDisposedException ("DeflateStream");
 			if (dest == null)
 				throw new ArgumentNullException ("Destination array is null.");
 			if (!CanRead)
-				throw new NotSupportedException ("Stream does not support reading.");
+				throw new InvalidOperationException ("Stream does not support reading.");
 			int len = dest.Length;
 			if (dest_offset < 0 || count < 0)
 				throw new ArgumentException ("Dest or count is negative.");
@@ -231,6 +244,9 @@ namespace System.IO.Compression {
 
 		public override void Write (byte[] src, int src_offset, int count)
 		{
+			if (!open)
+				throw new ObjectDisposedException ("DeflateStream");
+
 			if (src == null)
 				throw new ArgumentNullException ("src");
 
@@ -246,7 +262,11 @@ namespace System.IO.Compression {
 			WriteInternal (src, src_offset, count);
 		}
 
-		private void FlushInternal (bool finish) {
+		private void FlushInternal (bool finish) 
+		{
+			if (!open)
+				throw new ObjectDisposedException ("DeflateStream");
+
 			int avail_out;
 			ZReturnConsts ret_val;
 
@@ -289,6 +309,9 @@ namespace System.IO.Compression {
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int count,
 							AsyncCallback cback, object state)
 		{
+			if (!open)
+				throw new ObjectDisposedException ("DeflateStream");
+
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
 
@@ -311,8 +334,11 @@ namespace System.IO.Compression {
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int count,
 							AsyncCallback cback, object state)
 		{
+			if (!open)
+				throw new ObjectDisposedException ("DeflateStream");
+
 			if (!CanWrite)
-				throw new NotSupportedException ("This stream does not support writing");
+				throw new InvalidOperationException ("This stream does not support writing");
 
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
