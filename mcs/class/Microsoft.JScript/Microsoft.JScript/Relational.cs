@@ -130,43 +130,41 @@ namespace Microsoft.JScript {
 				left.Emit (ec);
 			if (right != null)
 				right.Emit (ec);
-
+			
 			ig.Emit (OpCodes.Call, t.GetMethod ("EvaluateRelational"));
 
-			if (no_effect) {
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Conv_R8);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Conv_R8);
 
-				Label a, b;
-				a = ig.DefineLabel ();
-				b = ig.DefineLabel ();
+			Label a, b;
+			a = ig.DefineLabel ();
+			b = ig.DefineLabel ();
 				
-				switch (op) {
-				case JSToken.GreaterThan:
-					ig.Emit (OpCodes.Bgt_S, a);
-					break;
-				case JSToken.LessThan:
-					ig.Emit (OpCodes.Blt_S, a);
-					break;
-				case JSToken.LessThanEqual:
-					ig.Emit (OpCodes.Ble_S, a);
-					break;
-				case JSToken.GreaterThanEqual:
-					ig.Emit (OpCodes.Bge_S, a);
-					break;
-				}			
+			switch (op) {
+			case JSToken.GreaterThan:
+				ig.Emit (OpCodes.Bgt_S, a);
+				break;
+			case JSToken.LessThan:
+				ig.Emit (OpCodes.Blt_S, a);
+				break;
+			case JSToken.LessThanEqual:
+				ig.Emit (OpCodes.Ble_S, a);
+				break;
+			case JSToken.GreaterThanEqual:
+				ig.Emit (OpCodes.Bge_S, a);
+				break;
+			}			
 
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Br_S, b);
-				ig.MarkLabel (a);
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.MarkLabel (b);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Br_S, b);
+			ig.MarkLabel (a);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.MarkLabel (b);
 
-				if (no_effect)
-					ig.Emit (OpCodes.Pop);
-				else
-					ig.Emit (OpCodes.Box, typeof (bool));
-			} 
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
+			else
+				ig.Emit (OpCodes.Box, typeof (bool));
 		}
 	}
 }
