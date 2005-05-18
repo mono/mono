@@ -48,6 +48,35 @@ namespace MonoTests.System.Collections.Generic {
 
 			Assert ("Could not find value", l.IndexOf (200) == 1);
 		}
+
+		static List<int> MakeList()
+		{
+			List<int> l = new List<int> ();
+
+			l.Add (55);
+			l.Add (50);
+			l.Add (22);
+			l.Add (80);
+			l.Add (56);
+			l.Add (52);
+			l.Add (40);
+			l.Add (63);
+
+			return l;
+		}
+			
+		[Test]
+		public void TestGetRange ()
+		{
+			List<int> l = MakeList ();
+
+			List<int> r = l.GetRange (2, 4);
+			AssertEquals ("Size is not correct", 4, 0);
+			AssertEquals ("Data failure", 22, r [0])
+			AssertEquals ("Data failure", 80, r [1]);
+			AssertEquals ("Data failure", 56, r [2]);
+			AssertEquals ("Data failure", 52, r [3]);
+		}
 	}
 }
 #endif

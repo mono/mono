@@ -1,6 +1,8 @@
 2005-05-18  Miguel de Icaza  <miguel@novell.com>
 
-	* List.cs: Do not do lazy loading of data.  Not worth adding an
+	* List.cs (GetRange): Implement.
+
+	Do not do lazy loading of data.  Not worth adding an
 	extra check, and not worth the bugs. 
 
 	This decision wont be discussed until: a) a full List regression

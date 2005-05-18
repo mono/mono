@@ -234,10 +234,16 @@ namespace System.Collections.Generic
 			return new Enumerator (this);
 		}
 		
-		[MonoTODO]
 		public List <T> GetRange (int index, int count)
 		{
-			throw new NotImplementedException ();
+			CheckRange (index, count);
+			List<T> result = new List<T> (count);
+
+			result.size = count;
+			for (int i = 0; i < count; i++)
+				result.data [i] = data [i+index];
+
+			return result;
 		}
 		
 		public int IndexOf (T item)
