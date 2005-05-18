@@ -1,3 +1,8 @@
+2005-05-18  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataProtectionPermissionAttribute.cs: fixes flag cleaning logical operation
+	* StorePermissionAttribute.cs: fixes flag cleaning logical operation
+	
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* StorePermission.cs: New. CAS permission to access certificate stores.

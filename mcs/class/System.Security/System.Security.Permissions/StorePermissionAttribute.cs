@@ -66,7 +66,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.AddToStore;
 				}
 				else {
-					_flags &= StorePermissionFlags.AddToStore;
+					_flags &= ~StorePermissionFlags.AddToStore;
 				}
 			}
 		}
@@ -78,7 +78,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.CreateStore;
 				}
 				else {
-					_flags &= StorePermissionFlags.CreateStore;
+					_flags &= ~StorePermissionFlags.CreateStore;
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.DeleteStore;
 				}
 				else {
-					_flags &= StorePermissionFlags.DeleteStore;
+					_flags &= ~StorePermissionFlags.DeleteStore;
 				}
 			}
 		}
@@ -102,7 +102,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.EnumerateCertificates;
 				}
 				else {
-					_flags &= StorePermissionFlags.EnumerateCertificates;
+					_flags &= ~StorePermissionFlags.EnumerateCertificates;
 				}
 			}
 		}
@@ -114,7 +114,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.EnumerateStores;
 				}
 				else {
-					_flags &= StorePermissionFlags.EnumerateStores;
+					_flags &= ~StorePermissionFlags.EnumerateStores;
 				}
 			}
 		}
@@ -126,7 +126,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.OpenStore;
 				}
 				else {
-					_flags &= StorePermissionFlags.OpenStore;
+					_flags &= ~StorePermissionFlags.OpenStore;
 				}
 			}
 		}
@@ -138,7 +138,7 @@ namespace System.Security.Permissions {
 					_flags |= StorePermissionFlags.RemoveFromStore;
 				}
 				else {
-					_flags &= StorePermissionFlags.RemoveFromStore;
+					_flags &= ~StorePermissionFlags.RemoveFromStore;
 				}
 			}
 		}

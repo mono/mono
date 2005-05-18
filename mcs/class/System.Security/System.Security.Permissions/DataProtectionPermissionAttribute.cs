@@ -66,7 +66,7 @@ namespace System.Security.Permissions {
 					_flags |= DataProtectionPermissionFlags.ProtectData;
 				}
 				else {
-					_flags &= DataProtectionPermissionFlags.ProtectData;
+					_flags &= ~DataProtectionPermissionFlags.ProtectData;
 				}
 			}
 		}
@@ -78,7 +78,7 @@ namespace System.Security.Permissions {
 					_flags |= DataProtectionPermissionFlags.UnprotectData;
 				}
 				else {
-					_flags &= DataProtectionPermissionFlags.UnprotectData;
+					_flags &= ~DataProtectionPermissionFlags.UnprotectData;
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace System.Security.Permissions {
 					_flags |= DataProtectionPermissionFlags.ProtectMemory;
 				}
 				else {
-					_flags &= DataProtectionPermissionFlags.ProtectMemory;
+					_flags &= ~DataProtectionPermissionFlags.ProtectMemory;
 				}
 			}
 		}
@@ -102,7 +102,7 @@ namespace System.Security.Permissions {
 					_flags |= DataProtectionPermissionFlags.UnprotectMemory;
 				}
 				else {
-					_flags &= DataProtectionPermissionFlags.UnprotectMemory;
+					_flags &= ~DataProtectionPermissionFlags.UnprotectMemory;
 				}
 			}
 		}
