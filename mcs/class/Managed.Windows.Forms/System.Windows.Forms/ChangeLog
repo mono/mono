@@ -1,4 +1,7 @@
 2005-05-18 Jonathan S. Chambers <jonathan.chambers@ansys.com>
+	* PropertyGridView.cs: Fixed compiler warnings.
+
+2005-05-18 Jonathan S. Chambers <jonathan.chambers@ansys.com>
 	* PropertyGrid.cs: Added some event calls
 	* PropertyGridView.cs: Change drawing code to use double buffering
 	* PropertyGridTextBox.cs: Changed Text property name
