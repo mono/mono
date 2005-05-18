@@ -32,7 +32,7 @@ namespace MonoTests.System.Collections.Generic {
 			bool errorThrown = false;
 			try {
 				l.IndexOf (0, 0, 4);
-			} catch (ArgumentNullException){
+			} catch (ArgumentOutOfRangeException){
 				errorThrown = true;
 			}
 			Assert ("Out of range count exception not thrown", errorThrown);
