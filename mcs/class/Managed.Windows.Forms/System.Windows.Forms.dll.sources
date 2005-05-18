@@ -51,6 +51,7 @@ System.Windows.Forms/CheckBox.cs
 System.Windows.Forms/CheckedListBox.cs
 System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
+System.Windows.Forms/Clipboard.cs
 System.Windows.Forms/ColorDialog.cs
 System.Windows.Forms/ColumnClickEventArgs.cs
 System.Windows.Forms/ColumnClickEventHandler.cs

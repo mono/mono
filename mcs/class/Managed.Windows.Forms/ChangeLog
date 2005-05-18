@@ -1,3 +1,8 @@
+2005-05-18  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added Clipboard.cs
+	* SWF.csproj: Update
+
 2005-05-11  Ritvik Mayank  <mritvik@novell.com>
 
 	* System.Windows.Forms_test.dll.sources : Added ControlEventTest.cs

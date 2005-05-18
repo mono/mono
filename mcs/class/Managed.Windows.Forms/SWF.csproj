@@ -349,6 +349,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\Clipboard.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ColorDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -485,6 +490,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGrid.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DataGridDrawingLogic.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
