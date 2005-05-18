@@ -437,11 +437,9 @@ public class CryptoConfig {
 		if (name == null)
 			throw new ArgumentNullException ("name");
 
-		if (algorithms == null) {
-			lock (lockObject) {
-				if (algorithms == null) {
-					Initialize ();
-				}
+		lock (lockObject) {
+			if (algorithms == null) {
+				Initialize ();
 			}
 		}
 	
@@ -560,11 +558,9 @@ public class CryptoConfig {
 		if (name == null)
 			throw new ArgumentNullException ("name");
 
-		if (oid == null) {
-			lock (lockObject) {
-				if (oid == null) {
-					Initialize ();
-				}
+		lock (lockObject) {
+			if (oid == null) {
+				Initialize ();
 			}
 		}
 

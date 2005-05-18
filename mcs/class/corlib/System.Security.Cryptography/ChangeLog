@@ -1,3 +1,8 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Changed lock pattern to second version of
+	http://www.skeet.org.uk/csharp/singleton.html
+
 2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Initialization wasn't threadsafe as the "checked" 
