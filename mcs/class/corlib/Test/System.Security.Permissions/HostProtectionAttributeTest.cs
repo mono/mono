@@ -149,6 +149,112 @@ namespace MonoTests.System.Security.Permissions {
 			new HostProtectionAttribute (SecurityAction.RequestRefuse);
 		}
 
+		private HostProtectionAttribute Empty () 
+		{
+			HostProtectionAttribute a = new HostProtectionAttribute ();
+			a.Synchronization = false;
+			a.SharedState = false;
+			a.ExternalProcessMgmt = false;
+			a.SelfAffectingProcessMgmt = false;
+			a.ExternalThreading = false;
+			a.SelfAffectingThreading = false;
+			a.SecurityInfrastructure = false;
+			a.UI = false;
+			a.MayLeakOnAbort = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+			return a;
+		}
+
+		[Test]
+		public void Synchronization () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.Synchronization = true;
+			Assert.AreEqual (HostProtectionResource.Synchronization, a.Resources, "Resources=Synchronization");
+			a.Synchronization = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void SharedState () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.SharedState = true;
+			Assert.AreEqual (HostProtectionResource.SharedState, a.Resources, "Resources=SharedState");
+			a.SharedState = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void ExternalProcessMgmt () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.ExternalProcessMgmt = true;
+			Assert.AreEqual (HostProtectionResource.ExternalProcessMgmt, a.Resources, "Resources=ExternalProcessMgmt");
+			a.ExternalProcessMgmt = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void SelfAffectingProcessMgmt () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.SelfAffectingProcessMgmt = true;
+			Assert.AreEqual (HostProtectionResource.SelfAffectingProcessMgmt, a.Resources, "Resources=SelfAffectingProcessMgmt");
+			a.SelfAffectingProcessMgmt = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void ExternalThreading () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.ExternalThreading = true;
+			Assert.AreEqual (HostProtectionResource.ExternalThreading, a.Resources, "Resources=ExternalThreading");
+			a.ExternalThreading = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void SelfAffectingThreading () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.SelfAffectingThreading = true;
+			Assert.AreEqual (HostProtectionResource.SelfAffectingThreading, a.Resources, "Resources=SelfAffectingThreading");
+			a.SelfAffectingThreading = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void SecurityInfrastructure () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.SecurityInfrastructure = true;
+			Assert.AreEqual (HostProtectionResource.SecurityInfrastructure, a.Resources, "Resources=SecurityInfrastructure");
+			a.SecurityInfrastructure = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void UI () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.UI = true;
+			Assert.AreEqual (HostProtectionResource.UI, a.Resources, "Resources=UI");
+			a.UI = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
+		[Test]
+		public void MayLeakOnAbort () 
+		{
+			HostProtectionAttribute a = Empty ();
+			a.MayLeakOnAbort = true;
+			Assert.AreEqual (HostProtectionResource.MayLeakOnAbort, a.Resources, "Resources=MayLeakOnAbort");
+			a.MayLeakOnAbort = false;
+			Assert.AreEqual (HostProtectionResource.None, a.Resources, "Resources=None");
+		}
+
 		[Test]
 		public void Properties () 
 		{
@@ -202,6 +308,51 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (expected, hpa.Resources, "+UI");
 
 			Assert.IsFalse (hpa.Unrestricted, "Unrestricted");
+
+			hpa.ExternalProcessMgmt = false;
+			expected &= ~HostProtectionResource.ExternalProcessMgmt;
+			Assert.AreEqual (expected, hpa.Resources, "-ExternalProcessMgmt");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-10");
+
+			hpa.ExternalThreading = false;
+			expected &= ~HostProtectionResource.ExternalThreading;
+			Assert.AreEqual (expected, hpa.Resources, "+ExternalThreading");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-11");
+
+			hpa.MayLeakOnAbort = false;
+			expected &= ~HostProtectionResource.MayLeakOnAbort;
+			Assert.AreEqual (expected, hpa.Resources, "+MayLeakOnAbort");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-12");
+
+			hpa.SecurityInfrastructure = false;
+			expected &= ~HostProtectionResource.SecurityInfrastructure;
+			Assert.AreEqual (expected, hpa.Resources, "+SecurityInfrastructure");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-13");
+
+			hpa.SelfAffectingProcessMgmt = false;
+			expected &= ~HostProtectionResource.SelfAffectingProcessMgmt;
+			Assert.AreEqual (expected, hpa.Resources, "+SelfAffectingProcessMgmt");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-14");
+
+			hpa.SelfAffectingThreading = false;
+			expected &= ~HostProtectionResource.SelfAffectingThreading;
+			Assert.AreEqual (expected, hpa.Resources, "+SelfAffectingThreading");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-15");
+
+			hpa.SharedState = false;
+			expected &= ~HostProtectionResource.SharedState;
+			Assert.AreEqual (expected, hpa.Resources, "+SharedState");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-16");
+
+			hpa.Synchronization = false;
+			expected &= ~HostProtectionResource.Synchronization;
+			Assert.AreEqual (expected, hpa.Resources, "+Synchronization");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-17");
+
+			hpa.UI = false;
+			expected &= ~HostProtectionResource.UI;
+			Assert.AreEqual (expected, hpa.Resources, "+UI");
+			Assert.IsFalse (hpa.Unrestricted, "Unrestricted-18");
 		}
 
 		[Test]

@@ -1,3 +1,10 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostProtectionAttributeTest.cs: Added tests to check for individual 
+	removal of flags.
+	* SecurityPermissionAttributeTest.cs: Added tests to check for 
+	individual removal of flags.
+
 2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IBuiltInPermissionTest.cs: Fixed token index numbers wrt beta2.

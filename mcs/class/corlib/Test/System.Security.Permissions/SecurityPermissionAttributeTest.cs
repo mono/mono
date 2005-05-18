@@ -134,6 +134,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.Assertion = true;
 			Assert.AreEqual (SecurityPermissionFlag.Assertion, a.Flags, "Flags=Assertion");
+			a.Assertion = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 #if NET_2_0
 		[Test]
@@ -142,6 +144,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.BindingRedirects = true;
 			Assert.AreEqual (SecurityPermissionFlag.BindingRedirects, a.Flags, "Flags=BindingRedirects");
+			a.BindingRedirects = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 #endif
 		[Test]
@@ -150,6 +154,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlAppDomain = true;
 			Assert.AreEqual (SecurityPermissionFlag.ControlAppDomain, a.Flags, "Flags=ControlAppDomain");
+			a.ControlAppDomain = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -158,6 +164,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlDomainPolicy = true;
 			Assert.AreEqual (SecurityPermissionFlag.ControlDomainPolicy, a.Flags, "Flags=ControlDomainPolicy");
+			a.ControlDomainPolicy = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -166,6 +174,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlEvidence = true;
 			Assert.AreEqual (SecurityPermissionFlag.ControlEvidence, a.Flags, "Flags=ControlEvidence");
+			a.ControlEvidence = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -174,6 +184,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlPolicy = true;
 			Assert.AreEqual (SecurityPermissionFlag.ControlPolicy, a.Flags, "Flags=ControlPolicy");
+			a.ControlPolicy = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -182,6 +194,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlPrincipal = true;
 			Assert.AreEqual (SecurityPermissionFlag.ControlPrincipal, a.Flags, "Flags=ControlPrincipal");
+			a.ControlPrincipal = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -190,6 +204,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlThread = true;
 			Assert.AreEqual (SecurityPermissionFlag.ControlThread, a.Flags, "Flags=ControlThread");
+			a.ControlThread = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -198,6 +214,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.Execution = true;
 			Assert.AreEqual (SecurityPermissionFlag.Execution, a.Flags, "Flags=Execution");
+			a.Execution = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -206,6 +224,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.Infrastructure = true;
 			Assert.AreEqual (SecurityPermissionFlag.Infrastructure, a.Flags, "Flags=Infrastructure");
+			a.Infrastructure = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -214,6 +234,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.RemotingConfiguration = true;
 			Assert.AreEqual (SecurityPermissionFlag.RemotingConfiguration, a.Flags, "Flags=RemotingConfiguration");
+			a.RemotingConfiguration = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -222,6 +244,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.SerializationFormatter = true;
 			Assert.AreEqual (SecurityPermissionFlag.SerializationFormatter, a.Flags, "Flags=SerializationFormatter");
+			a.SerializationFormatter = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -230,6 +254,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.SkipVerification = true;
 			Assert.AreEqual (SecurityPermissionFlag.SkipVerification, a.Flags, "Flags=SkipVerification");
+			a.SkipVerification = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -238,6 +264,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = Empty ();
 			a.UnmanagedCode = true;
 			Assert.AreEqual (SecurityPermissionFlag.UnmanagedCode, a.Flags, "Flags=UnmanagedCode");
+			a.UnmanagedCode = false;
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -284,8 +312,39 @@ namespace MonoTests.System.Security.Permissions {
 			a.Flags |= SecurityPermissionFlag.SkipVerification;
 			Assert.IsTrue (a.SkipVerification, "SkipVerification");
 			a.Flags |= SecurityPermissionFlag.UnmanagedCode;
+
 			Assert.IsTrue (a.UnmanagedCode, "UnmanagedCode");
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
+
+			a.Flags &= ~SecurityPermissionFlag.Assertion;
+			Assert.IsFalse (a.Assertion, "Assertion-False");
+#if NET_2_0
+			a.Flags &= ~SecurityPermissionFlag.BindingRedirects;
+			Assert.IsFalse (a.BindingRedirects, "BindingRedirects-False");
+#endif
+			a.Flags &= ~SecurityPermissionFlag.ControlAppDomain;
+			Assert.IsFalse (a.ControlAppDomain, "ControlAppDomain-False");
+			a.Flags &= ~SecurityPermissionFlag.ControlDomainPolicy;
+			Assert.IsFalse (a.ControlDomainPolicy, "ControlDomainPolicy-False");
+			a.Flags &= ~SecurityPermissionFlag.ControlEvidence;
+			Assert.IsFalse (a.ControlEvidence, "ControlEvidence-False");
+			a.Flags &= ~SecurityPermissionFlag.ControlPolicy;
+			Assert.IsFalse (a.ControlPolicy, "ControlPolicy-False");
+			a.Flags &= ~SecurityPermissionFlag.ControlPrincipal;
+			Assert.IsFalse (a.ControlPrincipal, "ControlPrincipal-False");
+			a.Flags &= ~SecurityPermissionFlag.ControlThread;
+			Assert.IsFalse (a.ControlThread, "ControlThread-False");
+			a.Flags &= ~SecurityPermissionFlag.Execution;
+			Assert.IsFalse (a.Execution, "Execution-False");
+			a.Flags &= ~SecurityPermissionFlag.Infrastructure;
+			Assert.IsFalse (a.Infrastructure, "Infrastructure-False");
+			a.Flags &= ~SecurityPermissionFlag.RemotingConfiguration;
+			Assert.IsFalse (a.RemotingConfiguration, "RemotingConfiguration-False");
+			a.Flags &= ~SecurityPermissionFlag.SerializationFormatter;
+			Assert.IsFalse (a.SerializationFormatter, "SerializationFormatter-False");
+			a.Flags &= ~SecurityPermissionFlag.SkipVerification;
+			Assert.IsFalse (a.SkipVerification, "SkipVerification-False");
+			a.Flags &= ~SecurityPermissionFlag.UnmanagedCode;
 		}
 
 		[Test]
