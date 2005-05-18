@@ -1,5 +1,19 @@
 2005-05-18  Martin Baulig  <martin@ximian.com>
 
+	Fix #74978.
+
+	* flowanalysis.cs
+	(FlowBranching.Reachability): Add non-static public And() and Or()
+	methods.
+	(FlowBranchingSwitch): New class; do the `break_origins' thing
+	like in FlowBranchingLoop.
+	(FlowBranching.UsageVector.MergeBreakOrigins): Also merge the
+	reachability, not just locals and parameters.
+	(FlowBranching.MergeChild): Remove some of the hacks for loop and
+	switch; MergeBreakOrigins() now takes care of that.
+
+2005-05-18  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
 	a loop and may leave it, reset the barrier; fixes #74974.
 
