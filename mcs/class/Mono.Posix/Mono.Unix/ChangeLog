@@ -1,5 +1,9 @@
 2005-05-18  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: Correct Mono_Posix_Stdlib_InvokeSignalHandler export.
+
+2005-05-18  Jonathan Pryor <jonpryor@vt.edu>
+
 	* make-map.cs: Process the Mono.Posix namespace as well as Mono.Unix; add
 	  mapping for Boolean => int for native type conversion.
 

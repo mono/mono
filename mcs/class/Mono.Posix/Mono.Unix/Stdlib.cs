@@ -349,7 +349,7 @@ namespace Mono.Unix {
 		// <signal.h>
 		//
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
-				EntryPoint="Mono_Posix_Syscall_InvokeSignalHandler")]
+				EntryPoint="Mono_Posix_Stdlib_InvokeSignalHandler")]
 		internal static extern void InvokeSignalHandler (int signum, IntPtr handler);
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
