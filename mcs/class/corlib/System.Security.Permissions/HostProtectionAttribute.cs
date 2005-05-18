@@ -60,7 +60,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.ExternalProcessMgmt;
 				}
 				else {
-					_resources &= HostProtectionResource.ExternalProcessMgmt;
+					_resources &= ~HostProtectionResource.ExternalProcessMgmt;
 				}
 			}
 		}
@@ -72,7 +72,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.ExternalThreading;
 				}
 				else {
-					_resources &= HostProtectionResource.ExternalThreading;
+					_resources &= ~HostProtectionResource.ExternalThreading;
 				}
 			}
 		}
@@ -84,7 +84,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.MayLeakOnAbort;
 				}
 				else {
-					_resources &= HostProtectionResource.MayLeakOnAbort;
+					_resources &= ~HostProtectionResource.MayLeakOnAbort;
 				}
 			}
 		}
@@ -96,7 +96,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.SecurityInfrastructure;
 				}
 				else {
-					_resources &= HostProtectionResource.SecurityInfrastructure;
+					_resources &= ~HostProtectionResource.SecurityInfrastructure;
 				}
 			}
 		}
@@ -108,7 +108,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.SelfAffectingProcessMgmt;
 				}
 				else {
-					_resources &= HostProtectionResource.SelfAffectingProcessMgmt;
+					_resources &= ~HostProtectionResource.SelfAffectingProcessMgmt;
 				}
 			}
 		}
@@ -120,7 +120,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.SelfAffectingThreading;
 				}
 				else {
-					_resources &= HostProtectionResource.SelfAffectingThreading;
+					_resources &= ~HostProtectionResource.SelfAffectingThreading;
 				}
 			}
 		}
@@ -132,7 +132,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.SharedState;
 				}
 				else {
-					_resources &= HostProtectionResource.SharedState;
+					_resources &= ~HostProtectionResource.SharedState;
 				}
 			}
 		}
@@ -144,7 +144,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.Synchronization;
 				}
 				else {
-					_resources &= HostProtectionResource.Synchronization;
+					_resources &= ~HostProtectionResource.Synchronization;
 				}
 			}
 		}
@@ -156,7 +156,7 @@ namespace System.Security.Permissions {
 					_resources |= HostProtectionResource.UI;
 				}
 				else {
-					_resources &= HostProtectionResource.UI;
+					_resources &= ~HostProtectionResource.UI;
 				}
 			}
 		}

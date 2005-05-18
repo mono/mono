@@ -1,3 +1,10 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostProtectionAttribute.cs: Fixes flag cleaning logical 
+	operation (found by Jordi).
+	* SecurityPermissionAttribute.cs: Fixes flag cleaning logical 
+	operation (this is the original sinner ;-).
+
 2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStoragePermission.cs: Added UserQuota attribute in XML.

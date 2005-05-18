@@ -63,7 +63,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.Assertion;
 				}
 				else{
-					m_Flags &= SecurityPermissionFlag.Assertion;
+					m_Flags &= ~SecurityPermissionFlag.Assertion;
 				}
 			}
 		}
@@ -77,7 +77,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.BindingRedirects;
 				}
 				else{
-					m_Flags &= SecurityPermissionFlag.BindingRedirects;
+					m_Flags &= ~SecurityPermissionFlag.BindingRedirects;
 				}
 			}
 		}
@@ -91,7 +91,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.ControlAppDomain;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.ControlAppDomain;
+					m_Flags &= ~SecurityPermissionFlag.ControlAppDomain;
 				}
 			}
 		}
@@ -105,7 +105,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.ControlDomainPolicy;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.ControlDomainPolicy;
+					m_Flags &= ~SecurityPermissionFlag.ControlDomainPolicy;
 				}
 			}
 		}
@@ -119,7 +119,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.ControlEvidence;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.ControlEvidence;
+					m_Flags &= ~SecurityPermissionFlag.ControlEvidence;
 				}
 			}
 		}
@@ -133,7 +133,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.ControlPolicy;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.ControlPolicy;
+					m_Flags &= ~SecurityPermissionFlag.ControlPolicy;
 				}
 			}
 		}
@@ -147,7 +147,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.ControlPrincipal;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.ControlPrincipal;
+					m_Flags &= ~SecurityPermissionFlag.ControlPrincipal;
 				}
 			}
 		}
@@ -161,7 +161,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.ControlThread;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.ControlThread;
+					m_Flags &= ~SecurityPermissionFlag.ControlThread;
 				}
 			}
 		}
@@ -175,7 +175,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.Execution;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.Execution;
+					m_Flags &= ~SecurityPermissionFlag.Execution;
 				}
 			}
 		}
@@ -189,7 +189,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.Infrastructure;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.Infrastructure;
+					m_Flags &= ~SecurityPermissionFlag.Infrastructure;
 				}
 			}
 		}
@@ -203,7 +203,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.RemotingConfiguration;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.RemotingConfiguration;
+					m_Flags &= ~SecurityPermissionFlag.RemotingConfiguration;
 				}
 			}
 		}
@@ -217,7 +217,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.SerializationFormatter;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.SerializationFormatter;
+					m_Flags &= ~SecurityPermissionFlag.SerializationFormatter;
 				}
 			}
 		}
@@ -231,7 +231,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.SkipVerification;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.SkipVerification;
+					m_Flags &= ~SecurityPermissionFlag.SkipVerification;
 				}
 			}
 		}
@@ -245,7 +245,7 @@ namespace System.Security.Permissions {
 					m_Flags |= SecurityPermissionFlag.UnmanagedCode;
 				}
 				else {
-					m_Flags &= SecurityPermissionFlag.UnmanagedCode;
+					m_Flags &= ~SecurityPermissionFlag.UnmanagedCode;
 				}
 			}
 		}
