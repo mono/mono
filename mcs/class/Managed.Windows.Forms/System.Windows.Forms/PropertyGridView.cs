@@ -114,7 +114,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			// Decide if we need a scrollbar
-			bool add_vscroll = false;
 			open_grid_item_count = 0;
 
 			// draw grid outline
@@ -131,12 +130,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			DrawGrid(e, yLoc);
 			
 			
-			int depth = 0;
-			int item_height = ROW_HEIGHT;
-			Font font = Font;
-			int height = ClientRectangle.Height;
 
-			add_vscroll = (yLoc) > ClientRectangle.Height;
 
 			if (property_grid.SelectedGridItem != null && property_grid.SelectedGridItem.GridItemType == GridItemType.Property) 
 			{
@@ -531,13 +525,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		public void CloseDropDown()
 		{
-			int i = 0;
 			// TODO:  Add PropertyGrid.CloseDropDown implementation
 		}
 
 		public void DropDownControl(Control control)
 		{
-			int i = 0;
 			// TODO:  Add PropertyGrid.DropDownControl implementation
 		}
 
