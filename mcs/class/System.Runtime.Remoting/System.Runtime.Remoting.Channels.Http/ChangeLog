@@ -1,3 +1,8 @@
+2005-05-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HttpServerChannel.cs: Catch exceptions thrown in the server thread.
+	In StopListening, wait for the server thread to stop before returning.
+
 2005-01-25  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpServer.cs: Use a single stream for in an out stream, since they
@@ -47,12 +52,12 @@
 
 	* HttpServer.cs: Removed dead code.
 
-﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpClientChannel.cs: Set the RequestUri transport header before sending 
 	  the request.
 
-﻿2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
+2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpRemotingHandlerFactory.cs: Loading of remoting configuration moved
 	  to System.Web.Configuraiton.

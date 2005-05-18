@@ -181,12 +181,14 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		internal void Listen()
 		{
-			while(true)
-			{
-				Socket socket = _tcpListener.AcceptSocket();
-				RequestArguments request = new RequestArguments (socket, _transportSink);
-				threadPool.RunThread (new ThreadStart (request.Process));
-			}
+			try {
+				while(true)
+				{
+					Socket socket = _tcpListener.AcceptSocket();
+					RequestArguments request = new RequestArguments (socket, _transportSink);
+					threadPool.RunThread (new ThreadStart (request.Process));
+				}
+			} catch {}
 		}
 		
 
@@ -225,6 +227,8 @@ namespace System.Runtime.Remoting.Channels.Http
 				_listenerThread.Abort ();
 				_tcpListener.Stop();
 				threadPool.Free ();
+				_listenerThread.Join ();
+				_listenerThread = null;
 			}
 
 			_bListening = false;
