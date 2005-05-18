@@ -107,6 +107,9 @@ namespace System.Drawing
 
 		public Bitmap (Stream stream, bool useIcm)
 		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+
 			InitFromStream (stream);
 		}
 

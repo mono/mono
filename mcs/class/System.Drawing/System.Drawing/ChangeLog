@@ -1,3 +1,7 @@
+2005-05-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* Bitmap.cs: Add null check into ctor.
+
 2005-05-16 Jordi Mas i Hernandez <jordi@ximian.com> <kornelpal@hotmail.com>
 
 	* gdipFunctions.cs: Kornél Pál's IStream bug fixing
