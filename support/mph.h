@@ -35,6 +35,8 @@
 #include <stdint.h>             /* for SIZE_MAX */
 #endif
 
+#include "map-icalls.h"
+
 #if __APPLE__ || __BSD__ || __FreeBSD__
 #define MPH_ON_BSD
 #endif

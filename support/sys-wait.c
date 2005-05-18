@@ -12,6 +12,7 @@
 
 #include <glib/gtypes.h>
 
+#include "mph.h"
 #include "map.h"
 
 G_BEGIN_DECLS

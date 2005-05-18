@@ -10,28 +10,29 @@ G_BEGIN_DECLS
 
 typedef void (*mph_sighandler_t)(int);
 
-mph_sighandler_t
+void*
 Mono_Posix_Stdlib_SIG_DFL (void)
 {
 	return SIG_DFL;
 }
 
-mph_sighandler_t
+void*
 Mono_Posix_Stdlib_SIG_ERR (void)
 {
 	return SIG_ERR;
 }
 
-mph_sighandler_t
+void*
 Mono_Posix_Stdlib_SIG_IGN (void)
 {
 	return SIG_IGN;
 }
 
 void
-Mono_Posix_Stdlib_InvokeSignalHandler (int signum, mph_sighandler_t handler)
+Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void *handler)
 {
-	handler (signum);
+	mph_sighandler_t _h = (mph_sighandler_t) handler;
+	_h (signum);
 }
 
 G_END_DECLS

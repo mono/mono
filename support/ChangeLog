@@ -1,3 +1,26 @@
+2005-05-18  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map-icalls.h: Added; auto-generated file which contains Mono_Posix_*
+	  declarations for DllImport functions in Mono.Posix.dll.  This ensure
+	  consistency between Mono.Posix.dll and MonoPosixHelper.so.
+	* mph.h: Add include for map-icalls.h, to ensure that all MonoPosixHelper
+	  exports have correct prototypes.
+	* dirent.c, grp.c, macros.c, pwd.c, signal.c, stdio.c, sys-stat.c, 
+	  sys-time.c, utime.c: Correct prototypes to match map-icalls.h.  Alas, this
+	  "loses" information -- FILE* becomes void*, etc. -- but no semantics or
+	  ABI should be changed (except for Mono_Posix_Syscall_utime).  Some
+	  structure names also changed to match the generated names; since the
+	  structures are private, this shouldn't break anything.
+	* errno.c: Remove Mono_Posix_Syscall_SetLastError so we don't get a warning
+	  about a missing prototype.  This was never in a stable release.
+	* old-map.c: Include mph.h for prototype checking.
+	* unistd.c: SeekFlags conversion is now done in managed code so that a short
+	  isn't passed as a parameter; Correct prototypes to match map-icalls.h.
+	* sys-xattr.c: fix lsetxattr/fsetxattr confusion; Correct prototypes to 
+	  match map-icalls.h.
+	* sys-sendfile.c: Move mph.h include so that HAVE_SYS_SENDFILE_H is used.
+	* sys-wait.c: Include mph.h so that prototypes are checked.
+
 2005-05-16  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* sys-statvfs.c: Include "map.h" for Mono_Posix_ToMountFlags prototype.

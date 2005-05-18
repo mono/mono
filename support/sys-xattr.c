@@ -23,7 +23,7 @@
 G_BEGIN_DECLS
 
 gint32
-Mono_Posix_Syscall_setxattr (const char *path, const char *name, char *value, mph_size_t size, gint32 flags)
+Mono_Posix_Syscall_setxattr (const char *path, const char *name, void *value, mph_size_t size, gint32 flags)
 {
 	int _flags;
 	mph_return_if_size_t_overflow (size);
@@ -40,7 +40,7 @@ Mono_Posix_Syscall_setxattr (const char *path, const char *name, char *value, mp
 
 #if !__APPLE__
 gint32
-Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, char *value, mph_size_t size, gint32 flags)
+Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, void *value, mph_size_t size, gint32 flags)
 {
 	int _flags;
 	mph_return_if_size_t_overflow (size);
@@ -53,7 +53,7 @@ Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, char *value, m
 #endif
 
 gint32
-Mono_Posix_Syscall_fsetxattr (int fd, const char *name, char *value, mph_size_t size, gint32 flags)
+Mono_Posix_Syscall_fsetxattr (int fd, const char *name, void *value, mph_size_t size, gint32 flags)
 {
 	int _flags;
 	mph_return_if_size_t_overflow (size);
@@ -64,7 +64,7 @@ Mono_Posix_Syscall_fsetxattr (int fd, const char *name, char *value, mph_size_t 
 #if __APPLE__
 	return fsetxattr (fd, name, value, (size_t) size, 0, _flags);
 #else
-	return lsetxattr (fd, name, value, (size_t) size, _flags);
+	return fsetxattr (fd, name, value, (size_t) size, _flags);
 #endif
 
 }
@@ -101,33 +101,33 @@ Mono_Posix_Syscall_fgetxattr (int fd, const char *name, void *value, mph_size_t 
 }
 
 mph_ssize_t
-Mono_Posix_Syscall_listxattr (const char *path, char *list, mph_size_t size)
+Mono_Posix_Syscall_listxattr (const char *path, void *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 #if __APPLE__
-	return listxattr (path, list, (size_t) size, 0);
+	return listxattr (path, (char *) list, (size_t) size, 0);
 #else
-	return listxattr (path, list, (size_t) size);
+	return listxattr (path, (char *) list, (size_t) size);
 #endif
 }
 
 #if !__APPLE__
 mph_ssize_t
-Mono_Posix_Syscall_llistxattr (const char *path, char *list, mph_size_t size)
+Mono_Posix_Syscall_llistxattr (const char *path, void *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
-	return llistxattr (path, list, (size_t) size);
+	return llistxattr (path, (char *) list, (size_t) size);
 }
 #endif
 
 mph_ssize_t
-Mono_Posix_Syscall_flistxattr (int fd, char *list, mph_size_t size)
+Mono_Posix_Syscall_flistxattr (int fd, void *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 #if __APPLE__
-	return flistxattr (fd, list, (size_t) size, 0);
+	return flistxattr (fd, (char *) list, (size_t) size, 0);
 #else
-	return flistxattr (fd, list, (size_t) size);
+	return flistxattr (fd, (char *) list, (size_t) size);
 #endif
 }
 

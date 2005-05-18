@@ -119,7 +119,7 @@ Mono_Posix_Syscall_getpwuid (mph_uid_t uid, struct Mono_Posix_Syscall__Passwd *p
 gint32
 Mono_Posix_Syscall_getpwnam_r (const char *name, 
 	struct Mono_Posix_Syscall__Passwd *pwbuf,
-	struct passwd **pwbufp)
+	void **pwbufp)
 {
 	char *buf, *buf2;
 	size_t buflen;
@@ -143,7 +143,7 @@ Mono_Posix_Syscall_getpwnam_r (const char *name,
 		}
 		buf = buf2;
 		errno = 0;
-	} while ((r = getpwnam_r (name, &_pwbuf, buf, buflen, pwbufp)) && 
+	} while ((r = getpwnam_r (name, &_pwbuf, buf, buflen, (struct passwd**) pwbufp)) && 
 			recheck_range (r));
 
 	if (r == 0 && !(*pwbufp))
@@ -162,7 +162,7 @@ Mono_Posix_Syscall_getpwnam_r (const char *name,
 gint32
 Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 	struct Mono_Posix_Syscall__Passwd *pwbuf,
-	struct passwd **pwbufp)
+	void **pwbufp)
 {
 	char *buf, *buf2;
 	size_t buflen;
@@ -186,7 +186,7 @@ Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 		}
 		buf = buf2;
 		errno = 0;
-	} while ((r = getpwuid_r (uid, &_pwbuf, buf, buflen, pwbufp)) && 
+	} while ((r = getpwuid_r (uid, &_pwbuf, buf, buflen, (struct passwd**) pwbufp)) && 
 			recheck_range (r));
 
 	if (r == 0 && copy_passwd (pwbuf, &_pwbuf) == -1)
@@ -221,7 +221,7 @@ Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd *pwbuf)
 
 #ifdef HAVE_FGETPWENT
 gint32
-Mono_Posix_Syscall_fgetpwent (FILE *stream, struct Mono_Posix_Syscall__Passwd *pwbuf)
+Mono_Posix_Syscall_fgetpwent (void *stream, struct Mono_Posix_Syscall__Passwd *pwbuf)
 {
 	struct passwd *pw;
 
@@ -231,7 +231,7 @@ Mono_Posix_Syscall_fgetpwent (FILE *stream, struct Mono_Posix_Syscall__Passwd *p
 	}
 
 	errno = 0;
-	pw = fgetpwent (stream);
+	pw = fgetpwent ((FILE*) stream);
 	if (pw == NULL)
 		return -1;
 

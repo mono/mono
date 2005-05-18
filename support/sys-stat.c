@@ -22,7 +22,7 @@
 
 G_BEGIN_DECLS
 
-struct Mono_Posix_Syscall_Stat {
+struct Mono_Posix_Stat {
 	/* dev_t */     mph_dev_t     st_dev;     /* device */
 	/* ino_t */     mph_ino_t     st_ino;     /* inode */
 	/* mode_t */    guint32       st_mode;    /* protection */
@@ -44,7 +44,7 @@ struct Mono_Posix_Syscall_Stat {
 };
 
 static int
-copy_stat (struct Mono_Posix_Syscall_Stat *to, struct stat *from)
+copy_stat (struct Mono_Posix_Stat *to, struct stat *from)
 {
 	if (Mono_Posix_ToFilePermissions (from->st_mode, &to->st_mode) == -1)
 		return -1;
@@ -64,7 +64,7 @@ copy_stat (struct Mono_Posix_Syscall_Stat *to, struct stat *from)
 }
 
 gint32
-Mono_Posix_Syscall_stat (const char *file_name, struct Mono_Posix_Syscall_Stat *buf)
+Mono_Posix_Syscall_stat (const char *file_name, struct Mono_Posix_Stat *buf)
 {
 	int r;
 	struct stat _buf;
@@ -80,7 +80,7 @@ Mono_Posix_Syscall_stat (const char *file_name, struct Mono_Posix_Syscall_Stat *
 }
 
 gint32
-Mono_Posix_Syscall_fstat (int filedes, struct Mono_Posix_Syscall_Stat *buf)
+Mono_Posix_Syscall_fstat (int filedes, struct Mono_Posix_Stat *buf)
 {
 	int r;
 	struct stat _buf;
@@ -96,7 +96,7 @@ Mono_Posix_Syscall_fstat (int filedes, struct Mono_Posix_Syscall_Stat *buf)
 }
 
 gint32
-Mono_Posix_Syscall_lstat (const char *file_name, struct Mono_Posix_Syscall_Stat *buf)
+Mono_Posix_Syscall_lstat (const char *file_name, struct Mono_Posix_Stat *buf)
 {
 	int r;
 	struct stat _buf;

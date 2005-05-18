@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <poll.h>
+#include "mph.h"
 #include "old-map.h"
 int map_Mono_Posix_OpenFlags (int x)
 {

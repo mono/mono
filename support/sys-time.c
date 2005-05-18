@@ -16,20 +16,20 @@
 
 G_BEGIN_DECLS
 
-struct Mono_Posix_Syscall_Timeval {
+struct Mono_Posix_Timeval {
 	/* time_t */      mph_time_t  tv_sec;   /* seconds */
 	/* suseconds_t */ gint64      tv_usec;  /* microseconds */
 };
 
-struct Mono_Posix_Syscall_Timezone {
+struct Mono_Posix_Timezone {
 	int tz_minuteswest;  /* minutes W of Greenwich */
 	int tz_dsttime;      /* ignored */
 };
 
 gint32
 Mono_Posix_Syscall_gettimeofday (
-	struct Mono_Posix_Syscall_Timeval *tv,
-	struct Mono_Posix_Syscall_Timezone *tz)
+	struct Mono_Posix_Timeval *tv,
+	void *tz)
 {
 	struct timeval _tv;
 	struct timezone _tz;
@@ -43,8 +43,9 @@ Mono_Posix_Syscall_gettimeofday (
 			tv->tv_usec = _tv.tv_usec;
 		}
 		if (tz) {
-			tz->tz_minuteswest = _tz.tz_minuteswest;
-			tz->tz_dsttime     = 0;
+			struct Mono_Posix_Timezone *tz_ = (struct Mono_Posix_Timezone *) tz;
+			tz_->tz_minuteswest = _tz.tz_minuteswest;
+			tz_->tz_dsttime     = 0;
 		}
 	}
 
@@ -53,8 +54,8 @@ Mono_Posix_Syscall_gettimeofday (
 
 gint32
 Mono_Posix_Syscall_settimeofday (
-	const struct Mono_Posix_Syscall_Timeval *tv,
-	const struct Mono_Posix_Syscall_Timezone *tz)
+	struct Mono_Posix_Timeval *tv,
+	struct Mono_Posix_Timezone *tz)
 {
 	struct timeval _tv   = {0};
 	struct timeval *ptv  = NULL;
@@ -80,7 +81,7 @@ Mono_Posix_Syscall_settimeofday (
 
 gint32
 Mono_Posix_Syscall_utimes (const char *filename,
-	struct Mono_Posix_Syscall_Timeval *tv)
+	struct Mono_Posix_Timeval *tv)
 {
 	struct timeval _tv;
 	struct timeval *ptv = NULL;

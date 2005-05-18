@@ -152,7 +152,7 @@ Mono_Posix_Syscall_getgrgid (mph_gid_t gid, struct Mono_Posix_Syscall__Group *gb
 gint32
 Mono_Posix_Syscall_getgrnam_r (const char *name, 
 	struct Mono_Posix_Syscall__Group *gbuf,
-	struct group **gbufp)
+	void **gbufp)
 {
 	char *buf, *buf2;
 	size_t buflen;
@@ -176,7 +176,7 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 		}
 		buf = buf2;
 		errno = 0;
-	} while ((r = getgrnam_r (name, &_grbuf, buf, buflen, gbufp)) && 
+	} while ((r = getgrnam_r (name, &_grbuf, buf, buflen, (struct group**) gbufp)) && 
 			recheck_range (r));
 
 	/* On Solaris, this function returns 0 even if the entry was not found */
@@ -195,7 +195,7 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 gint32
 Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 	struct Mono_Posix_Syscall__Group *gbuf,
-	struct group **gbufp)
+	void **gbufp)
 {
 	char *buf, *buf2;
 	size_t buflen;
@@ -219,7 +219,7 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 		}
 		buf = buf2;
 		errno = 0;
-	} while ((r = getgrgid_r (gid, &_grbuf, buf, buflen, gbufp)) && 
+	} while ((r = getgrgid_r (gid, &_grbuf, buf, buflen, (struct group**) gbufp)) && 
 			recheck_range (r));
 
 	/* On Solaris, this function returns 0 even if the entry was not found */
@@ -258,7 +258,7 @@ Mono_Posix_Syscall_getgrent (struct Mono_Posix_Syscall__Group *grbuf)
 
 #ifdef HAVE_FGETGRENT
 gint32
-Mono_Posix_Syscall_fgetgrent (FILE *stream, struct Mono_Posix_Syscall__Group *grbuf)
+Mono_Posix_Syscall_fgetgrent (void *stream, struct Mono_Posix_Syscall__Group *grbuf)
 {
 	struct group *gr;
 
@@ -268,7 +268,7 @@ Mono_Posix_Syscall_fgetgrent (FILE *stream, struct Mono_Posix_Syscall__Group *gr
 	}
 
 	errno = 0;
-	gr = fgetgrent (stream);
+	gr = fgetgrent ((FILE*) stream);
 	if (gr == NULL)
 		return -1;
 

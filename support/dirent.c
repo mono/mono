@@ -26,21 +26,21 @@ struct Mono_Posix_Syscall__Dirent {
 };
 
 gint32
-Mono_Posix_Syscall_seekdir (DIR *dir, mph_off_t offset)
+Mono_Posix_Syscall_seekdir (void *dir, mph_off_t offset)
 {
 	mph_return_if_off_t_overflow (offset);
 
 	errno = 0;
 
-	seekdir (dir, (off_t) offset);
+	seekdir ((DIR*) dir, (off_t) offset);
 
 	return errno != 0;
 }
 
 mph_off_t
-Mono_Posix_Syscall_telldir (DIR *dir)
+Mono_Posix_Syscall_telldir (void *dir)
 {
-	return telldir (dir);
+	return telldir ((DIR*) dir);
 }
 
 static void
@@ -63,7 +63,7 @@ copy_dirent (struct Mono_Posix_Syscall__Dirent *to, struct dirent *from)
 }
 
 gint32
-Mono_Posix_Syscall_readdir (DIR *dirp, struct Mono_Posix_Syscall__Dirent *entry)
+Mono_Posix_Syscall_readdir (void *dirp, struct Mono_Posix_Syscall__Dirent *entry)
 {
 	struct dirent *d;
 
@@ -84,7 +84,7 @@ Mono_Posix_Syscall_readdir (DIR *dirp, struct Mono_Posix_Syscall__Dirent *entry)
 }
 
 gint32
-Mono_Posix_Syscall_readdir_r (DIR *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
+Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
 {
 	struct dirent _entry;
 	int r;

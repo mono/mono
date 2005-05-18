@@ -10,11 +10,11 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#include "mph.h"
+
 #ifdef HAVE_SYS_SENDFILE_H
 #include <sys/sendfile.h>
 #endif /* ndef HAVE_SYS_SENDFILE_H */
-
-#include "mph.h"
 
 G_BEGIN_DECLS
 

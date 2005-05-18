@@ -27,11 +27,7 @@ G_BEGIN_DECLS
 mph_off_t
 Mono_Posix_Syscall_lseek (gint32 fd, mph_off_t offset, gint32 whence)
 {
-	short _whence;
 	mph_return_if_off_t_overflow (offset);
-	if (Mono_Posix_FromSeekFlags (whence, &_whence) == -1)
-		return -1;
-	whence = _whence;
 
 	return lseek (fd, offset, whence);
 }
@@ -44,7 +40,7 @@ Mono_Posix_Syscall_read (gint32 fd, void *buf, mph_size_t count)
 }
 
 mph_ssize_t
-Mono_Posix_Syscall_write (gint32 fd, const void *buf, mph_size_t count)
+Mono_Posix_Syscall_write (gint32 fd, void *buf, mph_size_t count)
 {
 	mph_return_if_size_t_overflow (count);
 	return write (fd, buf, (size_t) count);
@@ -60,7 +56,7 @@ Mono_Posix_Syscall_pread (gint32 fd, void *buf, mph_size_t count, mph_off_t offs
 }
 
 mph_ssize_t
-Mono_Posix_Syscall_pwrite (gint32 fd, const void *buf, mph_size_t count, mph_off_t offset)
+Mono_Posix_Syscall_pwrite (gint32 fd, void *buf, mph_size_t count, mph_off_t offset)
 {
 	mph_return_if_size_t_overflow (count);
 	mph_return_if_off_t_overflow (offset);
@@ -86,7 +82,7 @@ Mono_Posix_Syscall_pipe (gint32 *reading, gint32 *writing)
 	return r;
 }
 
-char*
+void*
 Mono_Posix_Syscall_getcwd (char *buf, mph_size_t size)
 {
 	mph_return_val_if_size_t_overflow (size, NULL);
@@ -102,7 +98,7 @@ Mono_Posix_Syscall_fpathconf (int filedes, int name)
 }
 
 gint64
-Mono_Posix_Syscall_pathconf (char *path, int name)
+Mono_Posix_Syscall_pathconf (const char *path, int name)
 {
 	if (Mono_Posix_FromPathConf (name, &name) == -1)
 		return -1;
@@ -117,7 +113,7 @@ Mono_Posix_Syscall_sysconf (int name)
 	return sysconf (name);
 }
 
-gint64
+mph_size_t
 Mono_Posix_Syscall_confstr (int name, char *buf, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);

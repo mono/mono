@@ -1,3 +1,4 @@
+#include "mph.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -39,7 +40,7 @@ int wstopsig (int status)
 	return WSTOPSIG (status);
 }
 
-int helper_Mono_Posix_Stat(char *filename, int dereference, 
+int helper_Mono_Posix_Stat(const char *filename, int dereference, 
 	int *device,
 	int *inode,
 	int *mode,
@@ -80,19 +81,19 @@ int helper_Mono_Posix_Stat(char *filename, int dereference,
 	return 0;
 }
 
-char *helper_Mono_Posix_GetUserName(int uid) {
+const char *helper_Mono_Posix_GetUserName(int uid) {
 	struct passwd *p = getpwuid(uid);
 	if (p == NULL) return NULL;
 	return strdup (p->pw_name);
 }
-char *helper_Mono_Posix_GetGroupName(int gid) {
+const char *helper_Mono_Posix_GetGroupName(int gid) {
 	struct group *p = getgrgid(gid);
 	if (p == NULL) return NULL;
 	return strdup (p->gr_name);
 }
 
-char *helper_Mono_Posix_readdir(DIR *dir) {
-	struct dirent* e = readdir(dir);
+const char *helper_Mono_Posix_readdir(void *dir) {
+	struct dirent* e = readdir((DIR*) dir);
 	if (e == NULL) return NULL;
 	return strdup (e->d_name);
 }

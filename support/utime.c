@@ -20,12 +20,13 @@ struct Mono_Posix_Utimbuf {
 };
 
 gint32
-Mono_Posix_Syscall_utime (const char *filename, struct Mono_Posix_Utimbuf *buf)
+Mono_Posix_Syscall_utime (const char *filename, struct Mono_Posix_Utimbuf *buf, 
+		int use_buf)
 {
 	struct utimbuf _buf;
 	struct utimbuf *pbuf = NULL;
 
-	if (buf) {
+	if (buf && use_buf) {
 		_buf.actime  = buf->actime;
 		_buf.modtime = buf->modtime;
 		pbuf = &_buf;
