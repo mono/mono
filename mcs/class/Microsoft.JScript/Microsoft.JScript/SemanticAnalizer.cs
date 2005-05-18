@@ -45,6 +45,9 @@ namespace Microsoft.JScript {
 		private static Hashtable obj_ctrs;
 		private static Hashtable prototypes;
 		internal static Hashtable methods_with_eval = new Hashtable ();
+		internal static Hashtable methods_with_outter_scope_refs = new Hashtable ();
+		internal static Hashtable methods_with_vars_used_nested = new Hashtable ();
+
 		//
 		// Type to GlobalObject
 		//
@@ -201,5 +204,40 @@ namespace Microsoft.JScript {
 			object val = methods_with_eval [name];
 			return val != null;
 		}
+
+		internal static void AddMethodReferenceOutterScopeVar (string name, VariableDeclaration decl)
+		{
+			object contained = methods_with_outter_scope_refs [name];
+			if (contained == null)
+				methods_with_outter_scope_refs.Add (name, decl);
+		}
+
+		internal static void AddMethodVarsUsedNested (string name, VariableDeclaration decl)
+		{
+			object contained = methods_with_vars_used_nested [name];
+			if (contained == null)
+				methods_with_vars_used_nested.Add (name, decl);
+		}
+
+		internal static bool MethodReferenceOutterScopeVar (string name)
+		{
+			return OutterScopeVar (name) != null;
+		}
+
+		internal static VariableDeclaration OutterScopeVar (string name)
+		{
+			return (VariableDeclaration) methods_with_outter_scope_refs [name];
+		}
+
+		internal static bool MethodVarsUsedNested (string name)
+		{
+			bool r = VarUsedNested (name) != null;
+			return r;
+		}
+
+		internal static VariableDeclaration VarUsedNested (string name)
+		{
+			return (VariableDeclaration) methods_with_vars_used_nested [name];
+		}		
 	}
 }

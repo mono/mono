@@ -596,16 +596,21 @@ namespace Microsoft.JScript {
 					
 					args.Emit (ec);
 
-					if (eval)
+					if (eval) {
+#if (!NET_1_0)
+						ec.ig.Emit (OpCodes.Ldnull);
+#endif
 						CodeGenerator.load_engine (in_func, ec.ig);
-
+					}
 					member_exp.Emit (ec);
-
+					
 					if (eval && no_effect && in_func)
 						ec.ig.Emit (OpCodes.Pop);
 
-					if (eval && in_func)
+					if (eval && in_func) {
 						set_local_vars (ec.ig);
+						return;
+					}
 				} else if (IsConstructorProperty (binding)) {
  					member_exp.Emit (ec);
  					EmitBuiltInArgs (ec);
@@ -615,9 +620,18 @@ namespace Microsoft.JScript {
 				Function function = binding as Function;
 				MethodBuilder method = (MethodBuilder) TypeManager.Get (function.func_obj.name);
 				
-				if (SemanticAnalyser.MethodContainsEval (function.func_obj.name))
+				if (SemanticAnalyser.MethodContainsEval (function.func_obj.name) ||
+				    SemanticAnalyser.MethodReferenceOutterScopeVar (function.func_obj.name) ||
+				    SemanticAnalyser.MethodVarsUsedNested (function.func_obj.name)) {
+					if (InFunction)
+						CodeGenerator.load_local_vars (ec.ig, true);
 					emit_late_call (ec);
-				else {
+					if (no_effect)
+						ec.ig.Emit (OpCodes.Pop);
+					if (InFunction)
+						set_local_vars (ec.ig);
+					return;
+				} else {
 					emit_func_call (method, ec);
 					return;
 				}
@@ -917,7 +931,7 @@ namespace Microsoft.JScript {
 			return bind.Name == "eval";
 		}
 
-		private void set_local_vars (ILGenerator ig)
+		internal void set_local_vars (ILGenerator ig)
 		{
 			int n = 0;
 			Type stack_frame = typeof (StackFrame);
@@ -941,6 +955,7 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Stloc, (LocalBuilder) local);
 				}
 			}
+			ig.Emit (OpCodes.Pop);
 		}
 	}
 
@@ -954,12 +969,20 @@ namespace Microsoft.JScript {
 		internal AST binding;
 		internal bool assign;
 		AST right_side;
-		MemberInfo [] members = null;
+		
+		int lexical_difference;
+		const int MINIMUM_DIFFERENCE = 1;
+		bool no_field;
+		LocalBuilder local_builder;
 
 		internal Identifier (AST parent, string id)
 		{
 			this.parent = parent;
 			this.name = Symbol.CreateSymbol (id);
+		}
+
+		bool NeedParents {
+			get { return lexical_difference >= MINIMUM_DIFFERENCE && no_field; }
 		}
 
 		public override string ToString ()
@@ -970,9 +993,20 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool contained = context.Contains (this.name);
-			if (contained)
+			if (contained) {
 				binding = (AST) context.Get (this.name);
-			else
+				if (binding is VariableDeclaration) {
+					VariableDeclaration decl = (VariableDeclaration) binding;
+					lexical_difference = context.depth - decl.lexical_depth;
+					no_field = decl.lexical_depth != 0;
+					if (no_field && lexical_difference > 0 && !context.CatchScope) {
+						Function container_func = GetContainerFunction;
+						SemanticAnalyser.AddMethodReferenceOutterScopeVar (container_func.func_obj.name, decl);
+						context.Enter (Symbol.CreateSymbol (decl.id), decl);
+						SemanticAnalyser.AddMethodVarsUsedNested (decl.GetContainerFunction.func_obj.name, decl);
+					}
+				}
+			} else
 				throw new Exception ("variable not found: " +  name);
 			return true;
 		}
@@ -1044,19 +1078,29 @@ namespace Microsoft.JScript {
 				else
 					ig.Emit (OpCodes.Ldarg_S, f.pos);
 			} else if (binding is VariableDeclaration || binding is Try || binding is Catch) {
-				FieldInfo field_info = extract_field_info (binding);
-				LocalBuilder local_builder = extract_local_builder (binding);
+				if (NeedParents) {
+					CodeGenerator.emit_parents (InFunction, lexical_difference, ig);
+					store_stack_frame_into_locals (ec.ig);
+					if (this.local_builder != null)
+						if (assign)
+							ig.Emit (OpCodes.Stloc, local_builder);
+						else
+							ig.Emit (OpCodes.Ldloc, local_builder);
+				} else {
+					FieldInfo field_info = extract_field_info (binding);
+					LocalBuilder local_builder = extract_local_builder (binding);
 				
-				if (field_info != null) {
-					if (assign)
-						ig.Emit (OpCodes.Stsfld, field_info);
-					else
-						ig.Emit (OpCodes.Ldsfld, field_info);
-				} else if (local_builder != null) {
-					if (assign)
-						ig.Emit (OpCodes.Stloc, local_builder);
-					else
-						ig.Emit (OpCodes.Ldloc, local_builder);
+					if (field_info != null) {
+						if (assign)
+							ig.Emit (OpCodes.Stsfld, field_info);
+						else
+							ig.Emit (OpCodes.Ldsfld, field_info);
+					} else if (local_builder != null) {
+						if (assign)
+							ig.Emit (OpCodes.Stloc, local_builder);
+						else
+							ig.Emit (OpCodes.Ldloc, local_builder);
+					}
 				}
 			} else if (binding is BuiltIn)
 				binding.Emit (ec);
@@ -1148,6 +1192,42 @@ namespace Microsoft.JScript {
 			else if (a is Catch)
 				r = ((Catch) a).local_builder;
 			return r;
+		}
+		
+		//
+		// FIXME: Only must store the extern variables which are used.
+		//
+		internal void store_stack_frame_into_locals (ILGenerator ig)
+		{
+			ig.Emit (OpCodes.Dup);
+
+			Type stack_frame = typeof (StackFrame);
+			ig.Emit (OpCodes.Castclass, stack_frame);
+			ig.Emit (OpCodes.Ldfld, stack_frame.GetField ("localVars"));
+			
+			DictionaryEntry [] locals = TypeManager.LocalsAtDepth (((VariableDeclaration) binding).lexical_depth);
+
+			int i = 0;
+			LocalBuilder local = null;
+
+			foreach (DictionaryEntry entry in locals) {
+				if (entry.Value is LocalBuilder) {
+					local = ig.DeclareLocal (typeof (object));
+					if (entry.Key == name.Value)
+						this.local_builder = local;
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldc_I4, i++);
+					ig.Emit (OpCodes.Ldelem_Ref);
+					ig.Emit (OpCodes.Stloc, (LocalBuilder) local);
+				}
+			}
+			ig.Emit (OpCodes.Pop);
+
+			//
+			// FIXME: what does it determine this?
+			//
+			ig.Emit (OpCodes.Call, typeof (ScriptObject).GetMethod ("GetParent"));
+			ig.Emit (OpCodes.Pop);			
 		}
 	}
 
@@ -1735,7 +1815,13 @@ namespace Microsoft.JScript {
 				
 			/* function properties of the Global Object */
 			case "eval":
-				ig.Emit (OpCodes.Call, typeof (Eval).GetMethod ("JScriptEvaluate"));
+				Type [] method_args = null;
+#if NET_1_0
+				method_args = new Type [] {typeof (object), typeof (VsaEngine)};
+#else
+				method_args = new Type [] {typeof (object), typeof (object), typeof (VsaEngine)};
+#endif
+				ig.Emit (OpCodes.Call, typeof (Eval).GetMethod ("JScriptEvaluate", method_args));
 				break;
 			case "parseInt":				
 				ig.Emit (OpCodes.Call, go.GetMethod ("parseInt"));

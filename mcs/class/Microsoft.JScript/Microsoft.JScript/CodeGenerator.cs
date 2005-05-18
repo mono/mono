@@ -36,6 +36,7 @@ using System.Reflection.Emit;
 using System.Threading;
 using Microsoft.JScript.Vsa;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -507,11 +508,11 @@ namespace Microsoft.JScript {
 			Type stack_frame = typeof (StackFrame);
 
 			CodeGenerator.load_engine (inFunction, ig);
-
+						
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			ig.Emit (OpCodes.Castclass, stack_frame);
 			ig.Emit (OpCodes.Ldfld, stack_frame.GetField ("localVars"));
-
+			
 			object [] locals = TypeManager.CurrentLocals;
 			n = locals != null ? locals.Length : 0;
 			object local = null;
@@ -522,10 +523,46 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Dup);
 					ig.Emit (OpCodes.Ldc_I4, i);
 					ig.Emit (OpCodes.Ldloc, (LocalBuilder) local);
-					ig.Emit (OpCodes.Stelem_Ref);				
+					ig.Emit (OpCodes.Stelem_Ref);
 				}
 			}
 			ig.Emit (OpCodes.Pop);
+		}
+			
+		internal static void locals_to_stack_frame (ILGenerator ig, int lexical_depth, int lexical_difference, bool inFunction)
+		{
+			CodeGenerator.emit_parents (inFunction, lexical_difference, ig);
+			ig.Emit (OpCodes.Dup);
+			
+			Type stack_frame = typeof (StackFrame);
+			ig.Emit (OpCodes.Castclass, stack_frame);
+			ig.Emit (OpCodes.Ldfld, stack_frame.GetField ("localVars"));
+			
+			DictionaryEntry [] locals = TypeManager.LocalsAtDepth (lexical_depth);
+
+			int i = 0;
+			foreach (DictionaryEntry entry in locals) {
+				if (entry.Value is LocalBuilder) {
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldc_I4, i);
+					ig.Emit (OpCodes.Ldloc, (short) i++);
+					ig.Emit (OpCodes.Stelem_Ref);
+				}
+			}
+			ig.Emit (OpCodes.Pop);
+			//
+			// FIXME: what determine this?
+			//
+			ig.Emit (OpCodes.Call, typeof (ScriptObject).GetMethod ("GetParent"));
+			ig.Emit (OpCodes.Pop);
+		}
+
+		internal static void emit_parents (bool inFunction, int lexical_difference, ILGenerator ig)
+		{
+			CodeGenerator.load_engine (inFunction, ig);
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			for (int i = 0; i < lexical_difference; i++)
+				ig.Emit (OpCodes.Call, typeof (ScriptObject).GetMethod ("GetParent"));
 		}
 	}
 }

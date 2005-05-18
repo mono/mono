@@ -40,6 +40,8 @@ namespace Microsoft.JScript {
 	
 	public class FunctionDeclaration : Function {
 
+		private int lexical_depth;
+
 		internal FunctionDeclaration ()
 		{
 		}
@@ -118,9 +120,19 @@ namespace Microsoft.JScript {
 			ec.ig = this.ig;
 			func_obj.body.Emit (ec);
 
-			if (SemanticAnalyser.MethodContainsEval (func_obj.name))
+			string func_name = func_obj.name;
+			
+			if (SemanticAnalyser.MethodContainsEval (func_name))
 				CodeGenerator.load_local_vars (ec.ig, true);
-
+			else {
+				VariableDeclaration decl = SemanticAnalyser.OutterScopeVar (func_name);
+				if (decl == null) {
+					decl = SemanticAnalyser.VarUsedNested (func_name);
+					if (decl != null)
+						CodeGenerator.load_local_vars (ec.ig, InFunction);
+				} else
+					CodeGenerator.locals_to_stack_frame (ec.ig, decl.lexical_depth, lexical_depth - decl.lexical_depth, true);
+			}
 			this.ig.Emit (OpCodes.Ret);
 			ec.ig = old_ig;
 			TypeManager.EndScope ();
@@ -144,7 +156,8 @@ namespace Microsoft.JScript {
 			// If we have en eval method call, we have to 
 			// save the loca vars in the stack
 			//
-			if (SemanticAnalyser.MethodContainsEval (func_obj.name))
+			if (SemanticAnalyser.MethodContainsEval (name) ||
+			    SemanticAnalyser.MethodVarsUsedNested (name))
 				ig.Emit (OpCodes.Ldc_I4_1);
 			else
 				ig.Emit (OpCodes.Ldc_I4_0);
@@ -219,7 +232,8 @@ namespace Microsoft.JScript {
 			func_decl.Init (this.parent, this.func_obj.name, this.func_obj.parameters, this.func_obj.type_annot, this.func_obj.body);
 
 			context.BeginScope ();
-			
+			lexical_depth = context.depth;
+
 			FormalParameterList p = func_obj.parameters;
 
 			if (p != null)
@@ -231,7 +245,6 @@ namespace Microsoft.JScript {
 				body.Resolve (context);
 
 			locals = context.CurrentLocals;
-			
 			context.EndScope ();
 			return true;
 		}		

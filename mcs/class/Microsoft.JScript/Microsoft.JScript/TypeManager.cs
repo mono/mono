@@ -73,5 +73,10 @@ namespace Microsoft.JScript {
 		internal static object [] CurrentLocals {
 			get { return infos.CurrentLocals; }
 		}
+
+		internal static DictionaryEntry [] LocalsAtDepth (int n)
+		{
+			return infos.LocalsAtDepth (n);
+		}
 	}
 }

@@ -45,6 +45,9 @@ namespace Microsoft.JScript {
 		internal FieldInfo field_info;
 		internal LocalBuilder local_builder;
 
+		internal int lexical_depth;
+		internal Function func_decl;
+
 		internal VariableDeclaration (AST parent, string id, string t, AST init)
 		{
 			this.parent = parent;
@@ -128,6 +131,8 @@ namespace Microsoft.JScript {
 			bool r = true;
  			if (val != null)
  				r = val.Resolve (context);
+			lexical_depth = context.depth;
+			func_decl = GetContainerFunction;
 			return r;
 		}
 	}

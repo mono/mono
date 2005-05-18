@@ -118,13 +118,20 @@ namespace Microsoft.JScript {
 		private Hashtable dict = new Hashtable ();
 		private Symbol top;
 		private Binder marks;
-
-		Stack current_locals;
+		private Stack locals;
+		private bool previous_scope = false;
+		private bool catch_scope = false;
+		internal bool CatchScope {
+			get { return catch_scope; }
+		}
+		
+		internal int depth;
 
 		internal IdentificationTable ()
 		{
-			current_locals = new Stack ();
-			current_locals.Push (new Hashtable ());
+			locals = new Stack ();
+			locals.Push (new Hashtable ());
+			depth = 0;
 		}
 
 		internal bool Contains (Symbol key)
@@ -173,7 +180,7 @@ namespace Microsoft.JScript {
 				//
 				top = key;					
 			}
-			((Hashtable) current_locals.Peek ()).Add (key.Value, "");
+			((Hashtable) locals.Peek ()).Add (key.Value, value);
 		}
 
 		/// <summary>
@@ -189,15 +196,24 @@ namespace Microsoft.JScript {
 					dict.Remove (key);
 		}
 
+		internal void BeginScope ()
+		{
+			BeginScope (false);
+		}
+		
 		/// <summary>
 		/// Remembers the current state of the table
 		/// </summary>
-		internal void BeginScope ()
+		internal void BeginScope (bool catchScope)
 		{
+			previous_scope = catch_scope;
+			catch_scope = catchScope;
+			
 			marks = new Binder (null, top, marks);
 			top = null;
 
-			current_locals.Push (new Hashtable ());
+			locals.Push (new Hashtable ());
+			depth++;
 		}
 
 		/// <summary>
@@ -237,7 +253,10 @@ namespace Microsoft.JScript {
 			// delete the latest scope mark
 			//
 			marks = marks.Tail;
-			current_locals.Pop ();
+			locals.Pop ();
+
+			depth--;
+			catch_scope = previous_scope;
 		}
 
 		internal object [] CurrentLocals {
@@ -252,16 +271,22 @@ namespace Microsoft.JScript {
 				}
 				if (stack.Count == 0)
 					return null;
-				object [] locals = new object [stack.Count];
-				stack.CopyTo (locals, 0);
-				return locals;
+
+				object [] res = new object [stack.Count];
+				stack.CopyTo (res, 0);
+				return res;
 			}
 		}
 
 		internal bool InCurrentScope (Symbol id) 
 		{
-			Hashtable hash = (Hashtable) current_locals.Peek ();
-			return hash.ContainsKey (id.Value) && hash [id.Value] == "";
+			Hashtable hash = (Hashtable) locals.Peek ();
+			return hash.ContainsKey (id.Value) && hash [id.Value] != null;
+		}
+
+		internal void AddToCurrentLocals (string name, object o)
+		{
+			((Hashtable) locals.Peek ()).Add (name, o);
 		}
 
 		internal void BuildGlobalEnv ()
@@ -308,6 +333,16 @@ namespace Microsoft.JScript {
 			Enter (Symbol.CreateSymbol ("SyntaxError"), new BuiltIn ("SyntaxError", true, true));
 			Enter (Symbol.CreateSymbol ("TypeError"), new BuiltIn ("TypeError", true, true));
 			Enter (Symbol.CreateSymbol ("URIError"), new BuiltIn ("URIError", true, true));
+		}
+
+		internal DictionaryEntry [] LocalsAtDepth (int depth)
+		{
+			object [] hashes = new object [locals.Count];
+			locals.CopyTo (hashes, 0);
+			Hashtable hash = (Hashtable) hashes [locals.Count - depth - 1];
+			DictionaryEntry [] _locals = new DictionaryEntry [hash.Count];
+			hash.CopyTo (_locals, 0);
+			return _locals;
 		}
 	}
 }
