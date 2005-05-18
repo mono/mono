@@ -934,27 +934,27 @@ namespace System.Web.UI.WebControls
 			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (typeof(TreeView), "TreeView.js")) {
 				string url = Page.ClientScript.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
 				Page.ClientScript.RegisterClientScriptInclude (typeof(TreeView), "TreeView.js", url);
-				
-				string ctree = ClientID + "_data";
-				string script = string.Format ("var {0} = new Object ();\n", ctree);
-				script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
-				
-				if (ShowExpandCollapse) {
-					bool defaultImages = ShowLines || ImageSet != TreeViewImageSet.Custom || (ExpandImageUrl == "" && CollapseImageUrl == "");
-					script += string.Format ("{0}.defaultImages = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (defaultImages));
-					ImageStyle imageStyle = GetImageStyle ();
-					if (!defaultImages) {
-						script += string.Format ("{0}.expandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)));
-						script += string.Format ("{0}.collapseImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
-					}
-					if (PopulateNodesFromClient)
-						script += string.Format ("{0}.noExpandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
-				}
-				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
-				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
-				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
-				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 			}
+				
+			string ctree = ClientID + "_data";
+			string script = string.Format ("var {0} = new Object ();\n", ctree);
+			script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
+			
+			if (ShowExpandCollapse) {
+				bool defaultImages = ShowLines || ImageSet != TreeViewImageSet.Custom || (ExpandImageUrl == "" && CollapseImageUrl == "");
+				script += string.Format ("{0}.defaultImages = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (defaultImages));
+				ImageStyle imageStyle = GetImageStyle ();
+				if (!defaultImages) {
+					script += string.Format ("{0}.expandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)));
+					script += string.Format ("{0}.collapseImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
+				}
+				if (PopulateNodesFromClient)
+					script += string.Format ("{0}.noExpandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
+			}
+			script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
+			script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
+			script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
+			Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 
 			if (EnableClientScript) {
 				Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
