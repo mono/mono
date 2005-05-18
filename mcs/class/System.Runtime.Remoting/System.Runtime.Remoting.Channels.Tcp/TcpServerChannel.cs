@@ -241,9 +241,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (server_thread == null) return;
 			
 			server_thread.Abort ();
-			server_thread = null;
 			listener.Stop ();
 			threadPool.Free ();
+			server_thread.Join ();
+			server_thread = null;
 		}
 	}
 

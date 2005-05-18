@@ -1,3 +1,8 @@
+2005-05-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TcpServerChannel.cs: In StopListening, wait for the server thread
+	to stop before returning. This fixes bug #74962.
+
 2005-01-25  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TcpServerTransportSink.cs: Set IPAddress and ConnectionId
@@ -64,22 +69,22 @@
 	* TcpClientTransportSink.cs, TcpClientTransportSinkProvider.cs,
 	  TcpServerTransportSink.cs: Made internal.
 
-﻿2004-04-16  Lluis Sanchez Gual  <lluis@ximian.com>
+2004-04-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpClientChannel.cs: Initialize the sink provider in the default
 	  constructor.
 
-﻿2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpServerChannel.cs: In the ProcessMessages() loop, moved the closing of
 	  the stream to the finally block, so it is called if the thread is aborted.
 
-﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpClientTransportSink.cs: Set the RequestUri transport header before 
 	  sending the request.
 
-﻿2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
+2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpClientTransportSink.cs: Release the connection after sending an
 	  OneWay call. This fixes bug #54671.
