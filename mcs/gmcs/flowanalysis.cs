@@ -168,10 +168,15 @@ namespace Mono.CSharp
 					return;
 				}
 
+				a.And (b, do_break);
+			}
+
+			public void And (Reachability b, bool do_break)
+			{
 				//
 				// `break' does not "break" in a Switch or a LoopBlock
 				//
-				bool a_breaks = do_break && a.AlwaysBreaks;
+				bool a_breaks = do_break && AlwaysBreaks;
 				bool b_breaks = do_break && b.AlwaysBreaks;
 
 				bool a_has_barrier, b_has_barrier;
@@ -180,55 +185,55 @@ namespace Mono.CSharp
 					// This is the normal case: the code following a barrier
 					// cannot be reached.
 					//
-					a_has_barrier = a.AlwaysHasBarrier;
+					a_has_barrier = AlwaysHasBarrier;
 					b_has_barrier = b.AlwaysHasBarrier;
 				} else {
 					//
 					// Special case for Switch and LoopBlocks: we can reach the
 					// code after the barrier via the `break'.
 					//
-					a_has_barrier = !a.AlwaysBreaks && a.AlwaysHasBarrier;
+					a_has_barrier = !AlwaysBreaks && AlwaysHasBarrier;
 					b_has_barrier = !b.AlwaysBreaks && b.AlwaysHasBarrier;
 				}
 
-				bool a_unreachable = a_breaks || a.AlwaysThrows || a_has_barrier;
+				bool a_unreachable = a_breaks || AlwaysThrows || a_has_barrier;
 				bool b_unreachable = b_breaks || b.AlwaysThrows || b_has_barrier;
 
 				//
 				// Do all code paths always return ?
 				//
-				if (a.AlwaysReturns) {
+				if (AlwaysReturns) {
 					if (b.AlwaysReturns || b_unreachable)
-						a.returns = FlowReturns.Always;
+						returns = FlowReturns.Always;
 					else
-						a.returns = FlowReturns.Sometimes;
+						returns = FlowReturns.Sometimes;
 				} else if (b.AlwaysReturns) {
-					if (a.AlwaysReturns || a_unreachable)
-						a.returns = FlowReturns.Always;
+					if (AlwaysReturns || a_unreachable)
+						returns = FlowReturns.Always;
 					else
-						a.returns = FlowReturns.Sometimes;
-				} else if (!a.MayReturn) {
+						returns = FlowReturns.Sometimes;
+				} else if (!MayReturn) {
 					if (b.MayReturn)
-						a.returns = FlowReturns.Sometimes;
+						returns = FlowReturns.Sometimes;
 					else
-						a.returns = FlowReturns.Never;
+						returns = FlowReturns.Never;
 				} else if (!b.MayReturn) {
-					if (a.MayReturn)
-						a.returns = FlowReturns.Sometimes;
+					if (MayReturn)
+						returns = FlowReturns.Sometimes;
 					else
-						a.returns = FlowReturns.Never;
+						returns = FlowReturns.Never;
 				}
 
-				a.breaks = AndFlowReturns (a.breaks, b.breaks);
-				a.throws = AndFlowReturns (a.throws, b.throws);
-				a.barrier = AndFlowReturns (a.barrier, b.barrier);
+				breaks = AndFlowReturns (breaks, b.breaks);
+				throws = AndFlowReturns (throws, b.throws);
+				barrier = AndFlowReturns (barrier, b.barrier);
 
 				if (a_unreachable && b_unreachable)
-					a.barrier = FlowReturns.Always;
+					barrier = FlowReturns.Always;
 				else if (a_unreachable || b_unreachable)
-					a.barrier = FlowReturns.Sometimes;
+					barrier = FlowReturns.Sometimes;
 				else
-					a.barrier = FlowReturns.Never;
+					barrier = FlowReturns.Never;
 			}
 
 			public void Or (Reachability b)
@@ -367,7 +372,7 @@ namespace Mono.CSharp
 				throw new InvalidOperationException ();
 
 			case BranchingType.Switch:
-				return new FlowBranchingBlock (parent, type, SiblingType.SwitchSection, block, loc);
+				return new FlowBranchingSwitch (parent, block, loc);
 
 			case BranchingType.SwitchSection:
 				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
@@ -650,15 +655,6 @@ namespace Mono.CSharp
 						}
 
 						new_r.SetBarrier ();
-					} else {
-						if (new_r.Returns == FlowReturns.Always) {
-							// We're either finite or we may leave the loop.
-							new_r.SetReturnsSometimes ();
-						}
-						if (new_r.Throws == FlowReturns.Always) {
-							// We're either finite or we may leave the loop.
-							new_r.SetThrowsSometimes ();
-						}
 					}
 
 					if (may_leave_loop)
@@ -822,7 +818,7 @@ namespace Mono.CSharp
 
 				for (UsageVector vector = o_vectors; vector != null;
 				     vector = vector.Next) {
-					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
+					Report.Debug (1, "    MERGING BREAK ORIGIN", vector, first);
 
 					if (first) {
 						if (locals != null && vector.Locals != null)
@@ -837,6 +833,8 @@ namespace Mono.CSharp
 						if (parameters != null)
 							parameters.And (vector.parameters);
 					}
+
+					reachability.And (vector.Reachability, false);
 				}
 
 				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
@@ -1341,6 +1339,31 @@ namespace Mono.CSharp
 
 		public FlowBranchingLoop (FlowBranching parent, Block block, Location loc)
 			: base (parent, BranchingType.Loop, SiblingType.Conditional, block, loc)
+		{ }
+
+		public override void AddBreakVector (UsageVector vector)
+		{
+			vector = vector.Clone ();
+			vector.Next = break_origins;
+			break_origins = vector;
+		}
+
+		protected override UsageVector Merge ()
+		{
+			UsageVector vector = base.Merge ();
+
+			vector.MergeBreakOrigins (this, break_origins);
+
+			return vector;
+		}
+	}
+
+	public class FlowBranchingSwitch : FlowBranchingBlock
+	{
+		UsageVector break_origins;
+
+		public FlowBranchingSwitch (FlowBranching parent, Block block, Location loc)
+			: base (parent, BranchingType.Switch, SiblingType.SwitchSection, block, loc)
 		{ }
 
 		public override void AddBreakVector (UsageVector vector)

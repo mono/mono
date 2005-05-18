@@ -355,8 +355,8 @@ namespace Mono.CSharp {
 			if (!Statement.Resolve (ec))
 				ok = false;
 
-				ec.CurrentBranching.Infinite = infinite;
-				ec.EndFlowBranching ();
+			ec.CurrentBranching.Infinite = infinite;
+			ec.EndFlowBranching ();
 
 			return ok;
 		}
@@ -568,7 +568,7 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			if (ec.ReturnType == null){
-			if (Expr != null){
+				if (Expr != null){
 					if (ec.CurrentAnonymousMethod != null){
 						Report.Error (1662, loc, String.Format (
 							"Anonymous method could not be converted to delegate " +
@@ -917,7 +917,7 @@ namespace Mono.CSharp {
 			} else if (ec.CurrentBranching.InTryOrCatch (false))
 				ec.CurrentBranching.AddFinallyVector (
 					ec.CurrentBranching.CurrentUsageVector);
-			else if (ec.CurrentBranching.InLoop ())
+			else if (ec.CurrentBranching.InLoop () || ec.CurrentBranching.InSwitch ())
 				ec.CurrentBranching.AddBreakVector (
 					ec.CurrentBranching.CurrentUsageVector);
 
