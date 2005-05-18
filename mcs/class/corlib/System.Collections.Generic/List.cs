@@ -50,6 +50,7 @@ namespace System.Collections.Generic
 		
 		public List ()
 		{
+			data = new T [DefaultCapacity];
 		}
 		
 		public List (IEnumerable <T> collection)
@@ -64,9 +65,7 @@ namespace System.Collections.Generic
 		
 		public void Add (T item)
 		{
-			if (data == null)
-				Capacity = DefaultCapacity;
-			else if (size == data.Length)
+			if (size == data.Length)
 				Capacity = Math.Max (Capacity * 2, DefaultCapacity);
 			
 			data [size ++] = item;
@@ -74,8 +73,11 @@ namespace System.Collections.Generic
 		
 		public void CheckRange (int idx, int count)
 		{
-			if (idx < 0 || count < 0 || idx > size - count)
-				throw new ArgumentOutOfRangeException ();
+			if (idx < 0)
+				throw new ArgumentOutOfRangeException ("index must be equal or larger than zero");
+			
+			if (count < 0 || idx > size - count)
+				throw new ArgumentOutOfRangeException ("Count must refer to an element in the list");
 		}
 		
 		[MonoTODO ("PERFORMANCE: fix if it is an IList <T>")]
@@ -108,9 +110,6 @@ namespace System.Collections.Generic
 		
 		public void Clear ()
 		{
-			if (data == null)
-				return;
-			
 			Array.Clear (data, 0, data.Length);
 		}
 		
@@ -254,9 +253,6 @@ namespace System.Collections.Generic
 		public int IndexOf (T item, int index, int count)
 		{
 			CheckRange (index, count);
-			if (data == null)
-				return -1;
-			
 			return Array.IndexOf (data, item, index, count);
 		}
 		
@@ -299,9 +295,6 @@ namespace System.Collections.Generic
 		public int LastIndexOf (T item, int index, int count)
 		{
 			CheckRange (index, count);
-			if (data == null)
-				return -1;
-			
 			return Array.LastIndexOf (data, item, index, count);
 		}
 		
@@ -396,8 +389,6 @@ namespace System.Collections.Generic
 		
 		public int Capacity {
 			get { 
-				if (data == null)
-					return DefaultCapacity;
 				return data.Length;
 			}
 			set {
@@ -425,7 +416,7 @@ namespace System.Collections.Generic
 			}
 		}
 		
-#region Interface Crap
+#region Interface implementations.
 		IEnumerator <T> IEnumerable <T>.GetEnumerator()
 		{
 			return GetEnumerator ();
