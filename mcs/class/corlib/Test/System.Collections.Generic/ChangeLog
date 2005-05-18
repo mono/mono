@@ -1,3 +1,7 @@
+2005-05-18  Miguel de Icaza  <miguel@novell.com>
+
+	* ListTest.cs: Added.
+
 2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* QueueTest.cs, StackTest.cs: They are now in System.dll
