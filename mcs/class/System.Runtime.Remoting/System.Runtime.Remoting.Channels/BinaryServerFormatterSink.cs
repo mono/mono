@@ -140,17 +140,27 @@ namespace System.Runtime.Remoting.Channels {
 				responseHeaders = null;
 				responseStream = null;
 			}
-
+			
 			if (res == ServerProcessing.Complete)
 			{
-				responseStream = null;
-				responseHeaders = new TransportHeaders();
+				for (int n=0; n<3; n++) {
+					responseStream = null;
+					responseHeaders = new TransportHeaders();
 
-				if (sinkStack != null) responseStream = sinkStack.GetResponseStream (responseMsg, responseHeaders);
-				if (responseStream == null) responseStream = new MemoryStream();
+					if (sinkStack != null) responseStream = sinkStack.GetResponseStream (responseMsg, responseHeaders);
+					if (responseStream == null) responseStream = new MemoryStream();
 
-				_binaryCore.Serializer.Serialize (responseStream, responseMsg);
+					try {
+						_binaryCore.Serializer.Serialize (responseStream, responseMsg);
+						break;
+					} catch (Exception ex) {
+						if (n == 2) throw ex;
+						else responseMsg = new ReturnMessage (ex, (IMethodCallMessage)requestMsg);
+					}
+				}
+				
 				if (responseStream is MemoryStream) responseStream.Position = 0;
+				
 
 				sinkStack.Pop (this);
 			}
