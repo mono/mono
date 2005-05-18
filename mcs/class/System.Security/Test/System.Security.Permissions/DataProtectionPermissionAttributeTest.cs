@@ -111,6 +111,8 @@ namespace MonoTests.System.Security.Permissions {
 			DataProtectionPermissionAttribute a = Empty ();
 			a.ProtectData = true;
 			Assert.AreEqual (DataProtectionPermissionFlags.ProtectData, a.Flags, "Flags=ProtectData");
+			a.ProtectData = false;
+			Assert.AreEqual (DataProtectionPermissionFlags.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -119,6 +121,8 @@ namespace MonoTests.System.Security.Permissions {
 			DataProtectionPermissionAttribute a = Empty ();
 			a.UnprotectData = true;
 			Assert.AreEqual (DataProtectionPermissionFlags.UnprotectData, a.Flags, "Flags=UnprotectData");
+			a.UnprotectData = false;
+			Assert.AreEqual (DataProtectionPermissionFlags.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -127,6 +131,8 @@ namespace MonoTests.System.Security.Permissions {
 			DataProtectionPermissionAttribute a = Empty ();
 			a.ProtectMemory = true;
 			Assert.AreEqual (DataProtectionPermissionFlags.ProtectMemory, a.Flags, "Flags=ProtectMemory");
+			a.ProtectMemory = false;
+			Assert.AreEqual (DataProtectionPermissionFlags.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -135,6 +141,8 @@ namespace MonoTests.System.Security.Permissions {
 			DataProtectionPermissionAttribute a = Empty ();
 			a.UnprotectMemory = true;
 			Assert.AreEqual (DataProtectionPermissionFlags.UnprotectMemory, a.Flags, "Flags=UnprotectMemory");
+			a.UnprotectMemory = false;
+			Assert.AreEqual (DataProtectionPermissionFlags.NoFlags, a.Flags, "Flags=NoFlags");
 		}
 
 		[Test]
@@ -162,7 +170,15 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (a.UnprotectMemory, "UnprotectMemory");
 
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
-			Assert.AreEqual (DataProtectionPermissionFlags.AllFlags, a.Flags, "Flags");
+			Assert.AreEqual (DataProtectionPermissionFlags.AllFlags, a.Flags, "Flags=AllFlags");
+
+			a.Flags &= ~DataProtectionPermissionFlags.ProtectData;
+			Assert.IsFalse (a.ProtectData, "ProtectData");
+			a.Flags &= ~DataProtectionPermissionFlags.ProtectMemory;
+			Assert.IsFalse (a.ProtectMemory, "ProtectMemory");
+			a.Flags &= ~DataProtectionPermissionFlags.UnprotectData;
+			Assert.IsFalse (a.UnprotectData, "UnprotectData");
+			a.Flags &= ~DataProtectionPermissionFlags.UnprotectMemory;
 		}
 
 		[Test]
