@@ -84,7 +84,6 @@ namespace Microsoft.JScript {
 			} else {
 				return null;
 			}
-			return null;			
 		}
 
 		[DebuggerStepThroughAttribute]
