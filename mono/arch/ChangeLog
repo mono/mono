@@ -1,3 +1,7 @@
+2005-05-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h ia64/codegen.c: Ongoing ia64 work.
+
 2005-05-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ia64/ia64-codegen.h (ia64_codegen_init): Rename macro parameter.
