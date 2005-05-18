@@ -207,7 +207,7 @@ namespace Microsoft.JScript {
 				return ((FormalParam) ast).id;
 			else if (ast is FunctionDeclaration || ast is FunctionExpression)
 				return ((Function) ast).func_obj.name;
-			else throw new Exception ("GetName unknown type");
+			else throw new Exception ("GetName unknown type " + ast.GetType ().ToString ());
 		}
 	}
 }
