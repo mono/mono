@@ -5,6 +5,26 @@
 	We are going to implement Windows-like collation, apart from ICU (that
 	implements UCA, Unicode Collation Algorithm).
 
+
+** Tasks
+
+	* create collation element table(s)
+		- infer how Windows collation element table is composed
+		- infer how Windows sortkey is structured
+		- design data structures
+		- write table generator source(s)
+	* create culture-specific sortkey modifiers
+		- data structures
+		- data
+	* implement collation methods
+		- sortkey collector methods
+		- character iterator models and comparison methods
+		- string search optimizations
+
+	TODO: add "progress" information on these list items; currently many
+	of them are half-baked.
+
+
 ** How to implement CompareInfo members
 
 	GetSortKey()
@@ -17,20 +37,27 @@
 		the head of the searchee and immediately return false if it 
 		didn't match.
 	IsSuffix()
-		(TODO: revising. See Collator.cs for current idea.)
+		For each character in the target, examine if it matches
+		form the tail of the searchee and immediately return false if
+		it didn't match. It uses reversal element query.
 	IndexOf()
 		Try IsPrefix() to the end of the string to find.
 	LastIndexOf()
-		Try IsPrefix() from the end to the beginning of the string.
-		But start with the same length as the target and if IndexOf()
-		was not -1, then find the last one until IndexOf() returns -1.
+		Try IsSuffix() from the end of the string to find.
+		It uses reversal element query.
 
 	For IndexOf() and LastIndexOf(), overloads of char argument and string 
 	argument will be unified by providng common CharacterIterator base.
 
-	We are not likely to provide reversed character iterator (it is
-	complex; handle context-aware composites and expansions).
-	http://blogs.msdn.com/michkap/archive/2005/03/16/396704.aspx
+	For GetSortKey(), Compare(), IsPrefix() and IndexOf(), it uses forward
+	iteration, which moves forward and don't stop until either it finds
+	next "primary" character or it reached the end of the string, checking
+	HasContractHead(char) for composite.
+
+	For IsSuffix() and LastIndexOf(), it uses backward iteration, which
+	moves backward and don't stop until either it finds "primary"
+	characters or it reached the beginning of the string, checking
+	HasContractTail(char) for composite.
 
 ** How to support CompareOptions
 
@@ -151,6 +178,10 @@
 	  in InvariantCulture)
 	- level 5: variable weighting (apostrophe, hyphens etc.)
 
+	Note that these levels does not digitally match IgnoreXXX flags. Thus
+	it is not OK that we omit some levels of sortkey values in reflection
+	to CompareOptions.
+
 	String comparison is done from level 1 to 5. The comparison won't
 	stop until either it found the primary difference, or it reached to
 	the end (thus upper level differences are returned).
@@ -208,10 +239,16 @@
 	Those sortkey data is collected only for Japanese (category 22)
 	characters.
 
-	There are 3 sections separated by FF. Each of them represents the
-	values for character by character:
+	There are 3 sections each of them ends by FF. Each of them represents
+	the values for character by character:
 	- small letter type (kogaki moji); C4 (small) or E4 (normal)
-	- kana type; E4 (hiragana) or C4 (katakana)
+	- category middle section:
+		+ dash mark 4 (\u309D,\u309E,\u30FD,\u30FE), 5 (\u30FC)
+		  LAMESPEC: those characters of value '4' differs in level 2
+		  wrt voice marks, but does not differetiate kana types (bug).
+		  It is ignored when IgnoreNonSpace applies.
+		+ 0x02.
+		+ kana type: E4 (hiragana) or C4 (katakana)
 	- width; C5 (full) or C4 (half)
 
 **** level 5
@@ -292,10 +329,17 @@
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C2.asp
 	(Note that composite is different from expansion.)
 
+	<del>
 	According to "Developing International Software" book, in Win32
 	lstrcmpi(), "sc" in hu-HU is treated as a single character, so if it is
 	compared against "Sc" (in IgnoreCase), "sc" won't match it. However
 	.NET (LCMapString) behaves differently.
+	</del>
+	It is wrong. It is "cs" that is treated specially, and also applies to
+	LCMapString collation.
+
+	Note that composite characters is likely to not have equivalent
+	codepoint.
 
 **** Expanded character processing
 
@@ -698,9 +742,10 @@
 	Provides several character information:
 
 	- ignorable, ignorable nonspace, normalize width, normalize kanatype
-	- (has) nonspace normalization; for Japanese Kana collation
+	- level 4 sortkey provision method(s)
 	- (has) variable weighting
-	- (has) contraction/expansion
+	- (has) contraction, both from head and tail
+	- (has) expansion
 	- default sortkey table
 	- culture dependent sortkey table
 	- culture dependent sortkey adjustment table
@@ -718,7 +763,8 @@
 	bunch of string instances. The simple set of below is enough:
 
 	- MoveNext(),
-	- Index,
+	- MoveBack(),
+	- Current,
 	- ElementLength, and
 	- Reset()
 
@@ -728,6 +774,37 @@
 	French accent orderings. The iteration logic will be, however, only
 	one, and it will use culture-dependent character combination/expansion
 	tables.
+
+**** character comparison
+
+	Since composite character is likely to *not have* equivalent
+	codepoint, character comparison could not just be done by expecting
+	"resulting char" value.
+	In contrast, since composite character is likely to *do have*
+	equivalent codepoint, character comparison could not also just be done
+	by comparing "source char" value.
+
+	Collator.CompareChar() compares character elements in two character 
+	iterators and returns the difference "level". The returned value is
+	used either to check equality or save difference level (see Compare()
+	description for details).
+
+	Character iterator comparison is first done by codepoints i.e. it
+	first detects where the codepoints differ.
+
+	From where those codepoints differ, for each iterators it adjusts the
+	position so that it represents exactly one character element. That is,
+	find primary character as the start of the range and the last
+	nonprimary character as the end of the range.
+
+	Once the comparer adjusted the character iterator to be valid
+	comparison position, further comparison is done by following steps:
+
+	Then, return comparison results of sortkeys of n(s, l, f), where
+	function n returns keys for such s, l, f that:
+	- s : the source character (or string) of character iterator,
+	- l : the comparison level
+	- f : CompareOption (note that it is different from level)
 
 *** sort key element table
 
@@ -766,7 +843,8 @@
 **** Level 3: Case properties
 
 	Case properties will be halfly computed and halfly stored as a byte
-	array (mostly for Latin characters), with limited areas of codepoint.
+	array (mostly for Latin characters), with limited areas of codepoint
+	(cp < 3120 || FE00 < cp).
 
 	For Hangul characters, it will be computed by codepoint areas.
 

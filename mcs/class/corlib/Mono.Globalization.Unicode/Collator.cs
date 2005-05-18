@@ -56,7 +56,7 @@ namespace Mono.Globalization.Unicode
 			l1b = l2b = l3b = l4b = l5b = null;
 		}
 
-		internal void AdjustBufferSize (string s, int kanaWeight)
+		internal void AdjustBufferSize (string s)
 		{
 			if (l1b == null || l1b.Length < s.Length)
 				l1b = new byte [s.Length * 2 + 10];
@@ -64,10 +64,12 @@ namespace Mono.Globalization.Unicode
 				l2b = new byte [s.Length + 10];
 			if (l3b == null || l3b.Length < s.Length)
 				l3b = new byte [s.Length + 10];
-			// For level 4 in Japanese it might spend large key
-			// data (happens only in Japanese)
-			if (l4b == null || l4b.Length < s.Length)
-				l4b = new byte [s.Length * kanaWeight + 10];
+			// This weight is used only in Japanese text.
+			// We could expand the initial length as well as
+			// primary length (actually x3), but even in ja-JP
+			// most of the compared strings won't be Japanese.
+			if (l4b == null)
+				l5b = new byte [10];
 			if (l5b == null)
 				l5b = new byte [10];
 		}
@@ -82,11 +84,14 @@ namespace Mono.Globalization.Unicode
 				AppendBufferPrimitive (table [idx2++], ref l2b, ref l2);
 			while (table [idx3] != 0)
 				AppendBufferPrimitive (table [idx3++], ref l3b, ref l3);
-			while (table [idx4] != 0)
-				AppendBufferPrimitive (table [idx4++], ref l4b, ref l4);
+			// level 4 weight is added only for Japanese kana.
+			if (idx4 > 0)
+				while (table [idx4] != 0)
+					AppendBufferPrimitive (table [idx4++],
+						ref l4b, ref l4);
 		}
 
-		// Append variable character.
+		// Append variable-weight character.
 		internal void AppendLevel5 (byte [] table, int idx, int currentIndex)
 		{
 			// offset
@@ -179,8 +184,15 @@ namespace Mono.Globalization.Unicode
 		protected readonly CompareOptions Options;
 		protected readonly Collator Collator;
 
+		// MinValue: does not have a valid value
 		protected char Value;
-		protected char Next;
+
+		// extensions are collected to char[] in both default table
+		// and culture-dependent table.
+		protected char [] ExtensionTable;
+		protected int ExtensionStart; // -1 when no extension
+		protected int ExtensionEnd;
+		protected int ExtensionCurrent;
 
 		public abstract bool MoveNext ();
 		public abstract void Reset ();
@@ -214,16 +226,34 @@ namespace Mono.Globalization.Unicode
 
 		public override bool MoveNext ()
 		{
-			if (Next != '\0') {
-				Value = Next;
-				Next = '\0';
-				return true;
+			if (ExtensionStart > 0) {
+				if (ExtensionCurrent++ < ExtensionEnd)
+					return true;
+				ExtensionStart = -1;
 			}
 
 			Current += Length;
-			if (end <= Current)
+			if (end <= Current) // actually '<' must not happen.
 				return false;
+			// mhm, it might be better to have it inside this type.
 			Collator.MoveIteratorNext (this);
+			return true;
+		}
+
+		public override bool MoveBack ()
+		{
+			if (ExtensionStart > 0) {
+				if (ExtensionCurrent++ >= 0)
+					return true;
+				ExtensionStart = -1;
+			}
+
+			// we cannot adjust Current here but should do it
+			// inside MoveIteratorBack().
+			if (start >= Current) // actually '>' must not happen
+				return false;
+			// mhm, it might be better to have it inside this type.
+			Collator.MoveIteratorBack (this);
 			return true;
 		}
 
@@ -262,13 +292,27 @@ namespace Mono.Globalization.Unicode
 		{
 			if (done)
 				return false;
-			if (Next != '\0') {
-				Value = Next;
-				Next = '\0';
-				return true;
+			if (ExtensionStart > 0) {
+				if (ExtensionCurrent++ < ExtensionEnd)
+					return true;
+				ExtensionStart = -1;
 			}
-			Collator.MoveIteratorNext (this);
-			return true;
+			return Collator.MoveIteratorNext (this);
+		}
+
+		public override bool MoveBack ()
+		{
+			if (done)
+				return false;
+			if (ExtensionStart > 0) {
+				if (ExtensionCurrent-- >= 0)
+					return true;
+				ExtensionStart = -1;
+			}
+			if (ExtensionStart > 0) {
+				if (Extension
+
+			return Collator.MoveIteratorBack (this);
 		}
 	}
 
@@ -668,7 +712,7 @@ namespace Mono.Globalization.Unicode
 		public byte [] GetSortKey (string s, CompareOptions opt)
 		{
 			StringIterator iter = new StringIterator (s, 0, s.Length, opt, this);
-			buf.AdjustBufferSize (s, culture.Name == "ja-JP" ? 4 : 1);
+			buf.AdjustBufferSize (s);
 			while (iter.MoveNext ())
 				GetSortKeyForChar (iter, buf);
 			return buf.GetResultAndReset ();
