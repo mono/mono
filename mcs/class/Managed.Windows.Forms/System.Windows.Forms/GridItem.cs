@@ -105,5 +105,11 @@ namespace System.Windows.Forms
 			set;
 		}
 
+		internal abstract Rectangle Bounds 
+		{
+			get;
+			set;
+		}
+
 	}
 }

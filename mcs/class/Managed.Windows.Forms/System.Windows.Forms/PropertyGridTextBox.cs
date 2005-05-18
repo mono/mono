@@ -13,6 +13,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		public PropertyGridTextBox() {
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+			dropdown_button.Paint+=new PaintEventHandler(dropdown_button_Paint);
 
 			// TODO: Add any initialization after the InitializeComponent call
 
@@ -59,7 +60,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			this.dropdown_button.Name = "dropdown_button";
 			this.dropdown_button.Size = new System.Drawing.Size(16, 16);
 			this.dropdown_button.TabIndex = 2;
-			this.dropdown_button.Text = "P";
 			this.dropdown_button.Visible = false;
 			this.dropdown_button.Click += new System.EventHandler(this.dropdown_button_Click);
 			// 
@@ -129,7 +129,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		public string TextBoxText {
+		public new string Text {
 			get {
 				return textbox.Text;
 			}
@@ -138,5 +138,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
+		private void dropdown_button_Paint(object sender, PaintEventArgs e)
+		{
+			ThemeEngine.Current.CPDrawComboButton(e.Graphics, dropdown_button.ClientRectangle, dropdown_button.ButtonState);
+		}
 	}
 }

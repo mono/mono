@@ -78,6 +78,7 @@ namespace System.Windows.Forms
 		private ContextMenu context_menu;
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
+		private object current_property_value;
 
 
 		#endregion	// Private Members
@@ -101,6 +102,7 @@ namespace System.Windows.Forms
 
 			help_panel = new Panel();
 			help_panel.Dock = DockStyle.Bottom;
+			help_panel.DockPadding.All = 3;
 			help_panel.Height = 50;
 
 			help_description_label = new Label();
@@ -192,12 +194,6 @@ namespace System.Windows.Forms
 			//FontChanged+=new EventHandler(RedrawEvent);
 			//SizeChanged+=new EventHandler(RedrawEvent);
 
-			
-			SetStyle(ControlStyles.UserPaint, true);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.ResizeRedraw, true);
-			SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
-
 			UpdateToolBarButtons();
 		}
 		#endregion	// Constructors
@@ -220,6 +216,16 @@ namespace System.Windows.Forms
 				browsable_attributes = value;
 			}
 		}
+		
+		[MonoTODO()]
+		public override bool AutoScroll {
+			get {
+				return base.AutoScroll;
+			}
+			set {
+				base.AutoScroll = value;
+			}
+		}
 
 		public override Color BackColor {
 			get {
@@ -231,6 +237,16 @@ namespace System.Windows.Forms
 					return;
 				}
 				base.BackColor = value;
+			}
+		}
+		
+		[MonoTODO()]
+		public override Image BackgroundImage {
+			get {
+				return base.BackgroundImage;
+			}		
+			set {
+				base.BackgroundImage = value;
 			}
 		}
 
@@ -297,6 +313,24 @@ namespace System.Windows.Forms
 		public Point ContextMenuDefaultLocation {
 			get {
 				return context_menu_default_location;
+			}
+		}
+		
+		[MonoTODO()]
+		public new Control.ControlCollection Controls {
+			get {
+				return base.Controls;
+			}
+		}
+		
+		[MonoTODO()]
+		public override Color ForeColor 
+		{
+			get {
+				return base.ForeColor;
+			}
+			set {
+				base.ForeColor = value;
 			}
 		}
 
@@ -391,7 +425,8 @@ namespace System.Windows.Forms
 				property_sort = value;
 				
 				ReflectObjects();
-				property_grid_view.Redraw();
+				Console.WriteLine("PropertySort");
+				property_grid_view.Refresh();
 				
 				if (PropertySortChanged != null) {
 					PropertySortChanged(this, EventArgs.Empty);
@@ -426,10 +461,24 @@ namespace System.Windows.Forms
 				this.help_title_label.Text = selected_grid_item.Label;
 				if (selected_grid_item.PropertyDescriptor != null)
 					this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
-				property_grid_view.Redraw();
-				if (SelectedGridItemChanged != null) {
-					SelectedGridItemChanged(this, new SelectedGridItemChangedEventArgs( oldItem, selected_grid_item));
-				}
+					
+				Console.WriteLine("SelectedGridItem");
+				current_property_value = value.Value;
+				if (oldItem != null && oldItem.PropertyDescriptor != null)
+					oldItem.PropertyDescriptor.RemoveValueChanged(SelectedObject, new EventHandler(HandlePropertyValueChanged));
+				if (selected_grid_item.PropertyDescriptor != null)
+					selected_grid_item.PropertyDescriptor.AddValueChanged(SelectedObject, new EventHandler(HandlePropertyValueChanged));
+				OnSelectedGridItemChanged(new SelectedGridItemChangedEventArgs( oldItem, selected_grid_item));
+				
+			}
+		}
+
+		private void HandlePropertyValueChanged(object sender, EventArgs e)
+		{
+			if (PropertyValueChanged != null) 
+			{
+				PropertyValueChanged(this, new PropertyValueChangedEventArgs( selected_grid_item, current_property_value));
+				current_property_value = selected_grid_item.Value;
 			}
 		}
 
@@ -443,7 +492,8 @@ namespace System.Windows.Forms
 			set {
 				selected_objects = new object[] {value};
 				ReflectObjects();
-				property_grid_view.Redraw();
+				Console.WriteLine("SelectedObject");
+				property_grid_view.Refresh();
 			}
 		}
 
@@ -537,9 +587,22 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		protected virtual Type DefaultTabType {
 			get {
 				throw new NotImplementedException();
+			}
+		}
+		
+		protected bool DrawFlatToolbar {
+			get {
+				return (toolbar.Appearance == ToolBarAppearance.Flat);
+			}			
+			set {
+				if (value) 
+					toolbar.Appearance = ToolBarAppearance.Flat;
+				else
+					toolbar.Appearance = ToolBarAppearance.Normal;
 			}
 		}
 
@@ -552,6 +615,12 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
+		
+		protected override void Dispose(bool val)
+		{
+			base.Dispose();
+		}
+		
 		[MonoTODO]
 		public void CollapseAllGridItems () 
 		{
@@ -576,16 +645,25 @@ namespace System.Windows.Forms
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public void ResetSelectedProperty() 
 		{
-			throw new NotImplementedException();
+			if (selected_grid_item == null || selected_grid_item.PropertyDescriptor == null)
+				return;
+			object[] attr = selected_grid_item.PropertyDescriptor.PropertyType.GetCustomAttributes(typeof(DefaultValueAttribute),true);
+			if (attr.Length > 0)
+				selected_grid_item.PropertyDescriptor.SetValue(SelectedObject,attr[0]);
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
 		[MonoTODO]
 		protected virtual PropertyTab CreatePropertyTab(Type tabType) 
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		protected void OnComComponentNameChanged(ComponentRenameEventArgs e)
 		{
 			throw new NotImplementedException();
 		}
@@ -625,6 +703,11 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseUp (e);
 		}
+		
+		[MonoTODO]
+		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e)
+		{
+		}
 
 		protected override void OnPaint (PaintEventArgs pevent) 
 		{
@@ -651,7 +734,10 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected virtual void OnSelectedGridItemChanged (SelectedGridItemChangedEventArgs e) 
 		{
-			throw new NotImplementedException();
+			if (SelectedGridItemChanged != null) 
+			{
+				SelectedGridItemChanged(this, e);
+			}
 		}
 
 		[MonoTODO]
@@ -679,6 +765,12 @@ namespace System.Windows.Forms
 		{
 			base.ScaleCore (dx, dy);
 		}
+		
+		[MonoTODO]
+		protected void ShowEventsButton(bool value)
+		{
+			throw new NotImplementedException();
+		}
 
 		protected override void WndProc (ref Message m) 
 		{
@@ -692,6 +784,9 @@ namespace System.Windows.Forms
 		public event PropertyValueChangedEventHandler PropertyValueChanged;
 		public event SelectedGridItemChangedEventHandler SelectedGridItemChanged;
 		public event EventHandler SelectedObjectsChanged;
+		
+		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler ForeColorChanged;
 		#endregion
 
 		#region Com2Interop.IComPropertyBrowser Interface
@@ -797,6 +892,30 @@ namespace System.Windows.Forms
 			}
 
 			#endregion
+			
+			#region Public Instance Methods
+			[MonoTODO]
+			public void AddTabType(System.Type propertyTabType)
+			{
+				throw new NotImplementedException();
+			}
+			[MonoTODO]
+			public void AddTabType(System.Type propertyTabType,
+				System.ComponentModel.PropertyTabScope tabScope)
+			{
+				throw new NotImplementedException();
+			}
+			[MonoTODO]
+			public void Clear(System.ComponentModel.PropertyTabScope tabScope)
+			{
+				throw new NotImplementedException();
+			}
+			[MonoTODO]
+			public void RemoveTabType(System.Type propertyTabType)
+			{
+				throw new NotImplementedException();
+			}
+			#endregion
 		}
 		#endregion	// PropertyTabCollection Class
 
@@ -812,7 +931,8 @@ namespace System.Windows.Forms
 			}
 			UpdateToolBarButtons();
 			ReflectObjects();
-			property_grid_view.Redraw();
+			Console.WriteLine("toolbar_ButtonClick");
+			property_grid_view.Refresh();
 		}
 
 		internal void UpdateToolBarButtons () 
@@ -882,5 +1002,6 @@ namespace System.Windows.Forms
 		}
 
 		#endregion	// Private Helper Methods
+
 	}
 }

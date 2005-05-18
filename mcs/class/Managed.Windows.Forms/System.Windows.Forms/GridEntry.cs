@@ -43,11 +43,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private string label;
 		private int top;
 		private Rectangle plus_minus_bounds;
+		private Rectangle bounds;
 		#endregion	// Local Variables
 
 		#region  Contructors
 		public GridEntry() : base() {
 			plus_minus_bounds = new Rectangle(0,0,0,0);
+			bounds = new Rectangle(0,0,0,0);
 			top = -1;
 			grid_items = new GridItemCollection();
 		}
@@ -145,6 +147,18 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 			set{
 				plus_minus_bounds = value;
+			}
+		}
+
+		internal override Rectangle Bounds
+		{
+			get
+			{
+				return bounds;
+			}
+			set
+			{
+				bounds = value;
 			}
 		}
 
