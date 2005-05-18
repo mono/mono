@@ -1,6 +1,6 @@
 /* -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 //
-// GzipStreamTest.cs - NUnit Test Cases for the System.IO.Compression.GzipStream class
+// GZipStreamTest.cs - NUnit Test Cases for the System.IO.Compression.GZipStream class
 //
 // Authors:
 // 	Christopher James Lahey  <clahey@ximian.com>
@@ -18,7 +18,7 @@ using System.IO.Compression;
 namespace MonoTests.System.IO.Compression
 {
 	[TestFixture]
-	public class GzipStreamTest : Assertion
+	public class GZipStreamTest : Assertion
 	{
 		private static void CopyStream (Stream src, Stream dest)
 		{
@@ -45,6 +45,20 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_Null ()
+		{
+			GZipStream ds = new GZipStream (null, CompressionMode.Compress);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_InvalidCompressionMode ()
+		{
+			GZipStream ds = new GZipStream (new MemoryStream (), (CompressionMode)Int32.MinValue);
+		}
+
+		[Test]
 		[Category("NotWorking")] // #72143
 		public void CheckCompressDecompress () {
 			byte [] data = new byte[100000];
@@ -53,12 +67,12 @@ namespace MonoTests.System.IO.Compression
 			}
 			MemoryStream dataStream = new MemoryStream (data);
 			MemoryStream backing = new MemoryStream ();
-			GzipStream compressing = new GzipStream (backing, CompressionMode.Compress, true);
+			GZipStream compressing = new GZipStream (backing, CompressionMode.Compress, true);
 			CopyStream (dataStream, compressing);
 			dataStream.Close();
 			compressing.Close();
 			backing.Seek (0, SeekOrigin.Begin);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			MemoryStream output = new MemoryStream ();
 			CopyStream (decompressing, output);
 			Assert (compare_buffers (data, output.GetBuffer(), (int) output.Length));
@@ -70,7 +84,7 @@ namespace MonoTests.System.IO.Compression
 		public void CheckDecompress () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			StreamReader reader = new StreamReader (decompressing);
 			AssertEquals (reader.ReadLine (), "Hello");
 			decompressing.Close();
@@ -81,28 +95,26 @@ namespace MonoTests.System.IO.Compression
 		public void CheckNullRead () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.Read (null, 0, 20);
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category("NotWorking")] // #72143
 		public void CheckCompressingRead () {
 			byte [] dummy = new byte[20];
 			MemoryStream backing = new MemoryStream ();
-			GzipStream compressing = new GzipStream (backing, CompressionMode.Compress);
+			GZipStream compressing = new GZipStream (backing, CompressionMode.Compress);
 			compressing.Read (dummy, 0, 20);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		[Category("NotWorking")] // #72143
+		[ExpectedException (typeof (ArgumentException))]
 		public void CheckRangeRead () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			byte [] dummy = new byte[20];
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.Read (dummy, 10, 20);
 		}
 
@@ -112,18 +124,17 @@ namespace MonoTests.System.IO.Compression
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0x11, 0x78, 0x89, 0x91, 0xbe, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			byte [] dummy = new byte[20];
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.Read (dummy, 0, 20);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		[Category("NotWorking")] // #72143
 		public void CheckClosedRead () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			byte [] dummy = new byte[20];
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.Close ();
 			decompressing.Read (dummy, 0, 20);
 		}
@@ -133,7 +144,7 @@ namespace MonoTests.System.IO.Compression
 		[Category("NotWorking")] // #72143
 		public void CheckClosedFlush () {
 			MemoryStream backing = new MemoryStream ();
-			GzipStream compressing = new GzipStream (backing, CompressionMode.Compress);
+			GZipStream compressing = new GZipStream (backing, CompressionMode.Compress);
 			compressing.Close ();
 			compressing.Flush ();
 		}
@@ -143,7 +154,7 @@ namespace MonoTests.System.IO.Compression
 		public void CheckSeek () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.Seek (20, SeekOrigin.Current);
 		}
 
@@ -152,7 +163,7 @@ namespace MonoTests.System.IO.Compression
 		public void CheckSetLength () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.SetLength (20);
 		}
 
@@ -160,24 +171,23 @@ namespace MonoTests.System.IO.Compression
 		public void CheckGetCanSeekProp () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
-			AssertEquals (decompressing.CanSeek, false);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
+			AssertEquals (false, decompressing.CanSeek);
 		}
 
 		[Test]
 		public void CheckGetCanReadProp () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
-			AssertEquals (decompressing.CanRead, true);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
+			AssertEquals (true, decompressing.CanRead);
 		}
 
 		[Test]
-		[Category("NotWorking")] // #72143
 		public void CheckGetCanWriteProp () {
 			MemoryStream backing = new MemoryStream ();
-			GzipStream compressing = new GzipStream (backing, CompressionMode.Decompress);
-			AssertEquals (compressing.CanWrite, true);
+			GZipStream compressing = new GZipStream (backing, CompressionMode.Decompress);
+			AssertEquals (false, compressing.CanWrite);
 		}
 
 		[Test]
@@ -185,7 +195,7 @@ namespace MonoTests.System.IO.Compression
 		public void CheckSetLengthProp () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			decompressing.SetLength (20);
 		}
 
@@ -194,7 +204,7 @@ namespace MonoTests.System.IO.Compression
 		public void CheckGetLengthProp () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			long length = decompressing.Length;
 		}
 
@@ -203,7 +213,7 @@ namespace MonoTests.System.IO.Compression
 		public void CheckGetPositionProp () {
 			byte [] data = {0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00, 0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00, 0x16, 0x35, 0x96, 0x31, 0x06, 0x00, 0x00, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
-			GzipStream decompressing = new GzipStream (backing, CompressionMode.Decompress);
+			GZipStream decompressing = new GZipStream (backing, CompressionMode.Decompress);
 			long position = decompressing.Position;
 		}
 	}
