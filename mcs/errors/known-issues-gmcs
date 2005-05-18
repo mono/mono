@@ -63,11 +63,6 @@ cs1552.cs
 cs1586.cs
 cs1638.cs NO ERROR
 cs1641.cs
-cs1656.cs
-cs1656-2.cs
-cs1656-3.cs
-cs1657.cs
-cs1657-2.cs
 cs1666.cs NO ERROR
 cs2007.cs
 gcs0080.cs
@@ -76,5 +71,3 @@ gcs0694.cs NO ERROR
 gcs0698.cs NO ERROR
 gcs1644-2.cs NO ERROR
 
-cs0208-9.cs IGNORE # not yet merged
-cs1025.cs NO ERROR # not yet merged
