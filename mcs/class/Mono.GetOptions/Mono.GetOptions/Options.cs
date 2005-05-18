@@ -88,7 +88,7 @@ namespace Mono.GetOptions
 		#region non-option arguments
 				
 		private ArrayList arguments = new ArrayList();
-		public string[] RemainingArguments { get { return (string[])arguments.ToArray(typeof(string)); } }
+		public string[] RemainingArguments;
 
 		[ArgumentProcessor]
 		public virtual void DefaultArgumentProcessor(string argument)
@@ -111,6 +111,7 @@ namespace Mono.GetOptions
 			optionParser = new OptionList(this);
 			optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
 			optionParser.ProcessArgs(args);
+			RemainingArguments = (string[])arguments.ToArray(typeof(string));
 		}
 
 		private static void DefaultErrorReporter (int number, string message)

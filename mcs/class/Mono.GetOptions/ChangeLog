@@ -1,3 +1,6 @@
+2005-05-18  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/Options.cs: Reverting ABI change on RemainingArguments (will break packaged MonoDevelop 0.7)
+	
 2005-05-16:3  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions.Useful/CommonCompilerOptions.cs: fix for #74954 part 2
 		"Ensure assembly is added to TypeManager if path separator characters are part of assembly name"
