@@ -7,6 +7,11 @@
 	(Foreach.EmitArrayForeach): Removed; this is now in the new
 	ArrayForeach class.
 
+2005-05-18  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	a loop and may leave it, reset the barrier; fixes #74974.
+
 2005-05-03  Raja R Harinath  <rharinath@novell.com>
 
 	* pending.cs (BaseImplements): Move the #74773 fix here.  This is
@@ -1608,6 +1613,20 @@
 	delegates in static class.
 
 2005-01-24  Martin Baulig  <martin@ximian.com>
+
+	Fix #74978.
+
+	* flowanalysis.cs
+	(FlowBranching.Reachability): Add non-static public And() and Or()
+	methods.
+	(FlowBranchingSwitch): New class; do the `break_origins' thing
+	like in FlowBranchingLoop.
+	(FlowBranching.UsageVector.MergeBreakOrigins): Also merge the
+	reachability, not just locals and parameters.
+	(FlowBranching.MergeChild): Remove some of the hacks for loop and
+	switch; MergeBreakOrigins() now takes care of that.
+
+2005-05-18  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
 	merging an implicit block, just use its reachability.

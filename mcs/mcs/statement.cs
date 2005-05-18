@@ -917,7 +917,7 @@ namespace Mono.CSharp {
 			} else if (ec.CurrentBranching.InTryOrCatch (false))
 				ec.CurrentBranching.AddFinallyVector (
 					ec.CurrentBranching.CurrentUsageVector);
-			else if (ec.CurrentBranching.InLoop ())
+			else if (ec.CurrentBranching.InLoop () || ec.CurrentBranching.InSwitch ())
 				ec.CurrentBranching.AddBreakVector (
 					ec.CurrentBranching.CurrentUsageVector);
 
