@@ -33,8 +33,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = test-336 test-369 cls-test-6 test-294 \
-	test-372 test-375 test-376 test-377 test-378 test-360 test-380 test-382
+NEW_TEST_SOURCES_common = test-336 test-369
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -72,17 +71,17 @@ TEST_SOURCES_common = \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
 	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 test-289 test-290 \
-	test-291 test-292 test-293          test-295 test-296 test-297 test-298 test-299 test-300 \
+	test-291 test-292 test-293 test-294 test-295 test-296 test-297 test-298 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307          test-309 test-310 \
 	test-311 test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
 	test-321          test-323 test-324 test-325 test-326 test-327 test-328 test-329 test-330 \
 	test-331 test-332 test-333 test-334 test-335 	      test-337 test-338 test-339 test-340 \
 	test-341 test-342 test-343 test-344 test-345 test-346 test-347 test-348 test-349 test-350 \
-	test-351 test-352 test-353 test-354 test-355 test-356 test-357 test-358 test-359	  \
+	test-351 test-352 test-353 test-354 test-355 test-356 test-357 test-358 test-359 test-360 \
 	test-361 test-362 test-363 test-364 test-365 test-366 test-367 test-368          test-370 \
-	test-371	  test-373 test-374					test-379	  \
+	test-371 test-372 test-373 test-374 test-375 test-376 test-377 test-378	test-379 test-380 \
 	test-381 test-382 test-383 test-384 test-385						  \
-	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-7 cls-test-10  \
+	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-12 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
 	2test-11 2test-12 2test-13 2test-14          2test-16 2test-17 2test-18 \
