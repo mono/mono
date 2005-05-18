@@ -1,3 +1,7 @@
+2005-05-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h (ia64_codegen_init): Rename macro parameter.
+
 2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am: Only compile libmonoarch if the interpreter is compiled.
