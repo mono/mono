@@ -57,10 +57,10 @@ namespace Mono.Unix {
 	//            know which error translator is being used.
 	internal class ErrorMarshal
 	{
-		public delegate string ErrorTranslator (Error errno);
+		internal delegate string ErrorTranslator (Error errno);
 
-		public static readonly ErrorTranslator Translate;
-		public static readonly bool HaveStrerror_r;
+		internal static readonly ErrorTranslator Translate;
+		internal static readonly bool HaveStrerror_r;
 
 		static ErrorMarshal ()
 		{

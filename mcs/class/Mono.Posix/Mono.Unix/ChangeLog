@@ -1,3 +1,28 @@
+2005-05-18  Jonathan Pryor <jonpryor@vt.edu>
+
+	* make-map.cs: Add a MphPrototypeFileGenerator, which looks for DllImport
+	  methods across all types and generates a C header file declaration for
+	  those methods.  This allows us to ensure consistency between
+	  Mono.Posix.dll and MonoPosixHelper.so.  Rename WrapperFileGenerator to
+		ConvertFileGenerator (it generates UnixConvert).
+	* MapAttribute.cs, IncludeAttribute.cs: Make these internal -- there's no
+	  reason for external users to even know these exist.
+	* StdioFileStream.cs: Move GC.SuppressFinalize call to be last Dispose()
+	  call.  This follows current design guidelines, and allows an exception to
+	  be thrown from Dispose() without un-registering the finalizer.
+	* Syscall.cs: Change method declarations to match MonoPosixHelper, etc.
+	   - posix_fallocate(P) takes a size_t
+	   - mis-spelled settimeofday(2), sethostname(2)
+	   - exec(2) can be public; it's safe to call
+	   - change lseek(2) so int's are passed to MonoPosixHelper.so, not shorts
+	   - We can't allow two incompatible prototypes to exist (since C allows
+	     only one prototype, and we're cross-checking prototypes now).  Change
+	     utime(2) so only one prototype is needed.
+	* UnixMarshal.cs: ErrorMarshal.ErrorTranslator and ErrorMarshal.Translate
+	  shouldn't be public; make them internal.
+	* UnixStream.cs: Remove `unsafe` code block when a "safe" alternative works;
+	  Close() should also call GC.SuppressFinalize.
+
 2005-05-12  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: The Statvfs structure should contain a MountFlags enumeration,

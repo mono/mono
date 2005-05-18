@@ -1293,7 +1293,7 @@ namespace Mono.Unix {
 		//    int posix_fallocate(int fd, off_t offset, size_t len);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_posix_fallocate")]
-		public static extern int posix_fallocate (int fd, long offset, long len);
+		public static extern int posix_fallocate (int fd, long offset, ulong len);
 		#endregion
 
 		#region <fstab.h> Declarations
@@ -1993,7 +1993,7 @@ namespace Mono.Unix {
 		}
 
 		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
+				EntryPoint="Mono_Posix_Syscall_settimeofday")]
 		public static extern int settimeofday (ref Timeval tv, ref Timezone tz);
 
 		[DllImport (MPH, SetLastError=true,
@@ -2222,7 +2222,13 @@ namespace Mono.Unix {
 		//    off_t lseek(int filedes, off_t offset, int whence);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_lseek")]
-		public static extern long lseek (int fd, long offset, SeekFlags whence);
+		private static extern long sys_lseek (int fd, long offset, int whence);
+
+		public static long lseek (int fd, long offset, SeekFlags whence)
+		{
+			short _whence = UnixConvert.FromSeekFlags (whence);
+			return sys_lseek (fd, offset, _whence);
+		}
 
     [DllImport (LIBC, SetLastError=true)]
 		public static extern int close (int fd);
@@ -2343,13 +2349,13 @@ namespace Mono.Unix {
 
 		// TODO: does Mono marshal arrays properly?
 		[DllImport (LIBC, SetLastError=true)]
-		private static extern int execve (string path, string[] argv, string[] envp);
+		public static extern int execve (string path, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
-		private static extern int fexecve (int fd, string[] argv, string[] envp);
+		public static extern int fexecve (int fd, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
-		private static extern int execv (string path, string[] argv);
+		public static extern int execv (string path, string[] argv);
 
 		// TODO: execle, execl, execlp
 		[DllImport (LIBC, SetLastError=true)]
@@ -2611,7 +2617,7 @@ namespace Mono.Unix {
 		// sethostname(2)
 		//    int gethostname(const char *name, size_t len);
 		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_gethostname")]
+				EntryPoint="Mono_Posix_Syscall_sethostname")]
 		public static extern int sethostname (string name, ulong len);
 
 		public static int sethostname (string name)
@@ -2773,15 +2779,17 @@ namespace Mono.Unix {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_utime")]
-		public static extern int utime (string filename, ref Utimbuf buf);
+		private static extern int sys_utime (string filename, ref Utimbuf buf, int use_buf);
 
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_utime")]
-		private static extern int utime (string filename, IntPtr buf);
+		public static int utime (string filename, ref Utimbuf buf)
+		{
+			return sys_utime (filename, ref buf, 1);
+		}
 
 		public static int utime (string filename)
 		{
-			return utime (filename, IntPtr.Zero);
+			Utimbuf buf = new Utimbuf ();
+			return sys_utime (filename, ref buf, 0);
 		}
 		#endregion
 	}

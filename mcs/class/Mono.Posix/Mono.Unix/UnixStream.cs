@@ -55,14 +55,12 @@ namespace Mono.Unix {
 			long offset = Syscall.lseek (fileDescriptor, 0, SeekFlags.SEEK_CUR);
 			if (offset != -1)
 				canSeek = true;
-			unsafe {
-				long read = Syscall.read (fileDescriptor, null, 0);
-				if (read != -1)
-					canRead = true;
-				long write = Syscall.write (fileDescriptor, null, 0);
-				if (write != -1)
-					canWrite = true;  
-			}
+			long read = Syscall.read (fileDescriptor, IntPtr.Zero, 0);
+			if (read != -1)
+				canRead = true;
+			long write = Syscall.write (fileDescriptor, IntPtr.Zero, 0);
+			if (write != -1)
+				canWrite = true;  
 		}
 
 		private void AssertNotDisposed ()
@@ -391,6 +389,7 @@ namespace Mono.Unix {
 			} while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			fileDescriptor = InvalidFileDescriptor;
+			GC.SuppressFinalize (this);
 		}
 		
 		void IDisposable.Dispose ()

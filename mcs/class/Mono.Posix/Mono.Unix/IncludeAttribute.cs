@@ -32,7 +32,7 @@ using System;
 namespace Mono.Unix {
 
 	[AttributeUsage (AttributeTargets.Assembly)]
-	public class IncludeAttribute : Attribute {
+	internal class IncludeAttribute : Attribute {
 		string [] includes;
 		string [] defines;
 		

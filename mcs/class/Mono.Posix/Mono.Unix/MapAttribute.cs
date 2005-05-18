@@ -31,6 +31,6 @@ using System;
 namespace Mono.Unix {
 
 	[AttributeUsage (AttributeTargets.Enum)]
-	public class MapAttribute : Attribute {
+	internal class MapAttribute : Attribute {
 	}
 }

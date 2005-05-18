@@ -357,8 +357,6 @@ namespace Mono.Unix {
 			if (file == InvalidFileStream)
 				return;
 
-			GC.SuppressFinalize (this);
-				
 			Flush ();
 			if (owner) {
 				int r = Stdlib.fclose (file);
@@ -369,6 +367,8 @@ namespace Mono.Unix {
 			canRead = false;
 			canSeek = false;
 			canWrite = false;
+
+			GC.SuppressFinalize (this);
 		}
 		
 		private bool canSeek  = false;
