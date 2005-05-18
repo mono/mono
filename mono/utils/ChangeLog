@@ -1,3 +1,7 @@
+2005-05-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.c: Align code on a 16 byte boundary on ia64.
+
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-digest.h mono-sha1.c mono-md5.c: Fix some gcc 4.0 warnings.
