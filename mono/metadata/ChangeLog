@@ -1,3 +1,7 @@
+2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : zh-CHT related workaround.
+
 2005-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_custom): Add some error checking and call the
