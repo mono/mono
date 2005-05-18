@@ -20,6 +20,7 @@
 	    all known formats
 	  - Switched initialization method to allow drivers to assign their
 	    own IDs even for the MS predefined clipboard IDs
+	* XplatUI.cs: Updated to final clipboard interface
 
 2005-05-18 Jonathan S. Chambers <jonathan.chambers@ansys.com>
 	* PropertyGridView.cs: Fixed compiler warnings.

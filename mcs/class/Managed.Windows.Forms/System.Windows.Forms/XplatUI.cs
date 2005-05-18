@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44278; built: 2005/4/9 9:44:53]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44278; built: 2005/4/10 23:33:54]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -277,11 +277,18 @@ namespace System.Windows.Forms {
 			driver.ClientToScreen(handle, ref x, ref y);
 		}
 
+		internal static int[] ClipboardAvailableFormats(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("ClipboardAvailableTypes({0:X}): Called", handle.ToInt32());
+			#endif
+			return driver.ClipboardAvailableFormats(handle);
+		}
+
 		internal static void ClipboardClose(IntPtr handle) {
 			#if DriverDebug
 				Console.WriteLine("ClipboardClose({0:X}): Called", handle.ToInt32());
 			#endif
-			driver.ClipboardOpen();
+			driver.ClipboardClose(handle);
 		}
 
 		internal static int ClipboardGetID(IntPtr handle, string format) {
@@ -298,18 +305,18 @@ namespace System.Windows.Forms {
 			return driver.ClipboardOpen();
 		}
 
-		internal static void ClipboardStore(IntPtr handle, object obj, int type) {
+		internal static void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
 			#if DriverDebug
-				Console.WriteLine("ClipboardStore({0:X}, {1}, {2}): Called", handle.ToInt32(), obj, type);
+				Console.WriteLine("ClipboardStore({0:X}, {1}, {2}): Called", handle.ToInt32(), obj, (ClipboardFormat)type, converter);
 			#endif
-			driver.ClipboardStore(handle, obj, type);
+			driver.ClipboardStore(handle, obj, type, converter);
 		}
 
-		internal static bool ClipboardRetrieve(IntPtr handle, out object obj, out int type) {
+		internal static object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
 			#if DriverDebug
-				Console.WriteLine("ClipboardRetrieve({0:X}, obj, type): Called", handle.ToInt32());
+				Console.WriteLine("ClipboardRetrieve({0:X}, type, {1}): Called", handle.ToInt32(), converter);
 			#endif
-			return driver.ClipboardRetrieve(handle, out obj, out type);
+			return driver.ClipboardRetrieve(handle, type, converter);
 		}
 
 		internal static IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
@@ -752,6 +759,11 @@ namespace System.Windows.Forms {
 			XplatUIX11.Where();
 		}
 		#endregion	// Public Static Methods
+
+		#region	Delegates
+		public delegate bool ClipboardToObject(int type, IntPtr data, out object obj);
+		public delegate bool ObjectToClipboard(ref int type, object obj, out byte[] data);
+		#endregion	// Delegates
 
 	}
 }
