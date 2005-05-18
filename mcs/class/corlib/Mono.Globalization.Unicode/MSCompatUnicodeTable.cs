@@ -363,6 +363,65 @@ namespace Mono.Globalization.Unicode
 		{
 			return Normalization.ToWidthInsensitive (i);
 		}
+
+		#region Level 4 properties (Kana)
+
+		public static byte GetJapaneseDashType (char c)
+		{
+			switch (c) {
+			case '\u309D':
+			case '\u309E':
+			case '\u30FD':
+			case '\u30FE':
+			case '\uFF70':
+				return 4;
+			case '\u30FC':
+				return 5;
+			}
+			return 0;
+		}
+
+		public static bool IsHalfWidthKana (char c)
+		{
+			return '\uFF66' <= c && c <= '\uFF9D';
+		}
+
+		public static bool IsHiragana (char c)
+		{
+			return '\u3041' <= c && c <= '\u3094';
+		}
+
+		public static bool IsJapaneseSmallLetter (char c)
+		{
+			if ('\uFF67' <= c && c <= '\FF6F')
+				return true;
+			if ('\u3040' < c && c < '\u30FA') {
+				switch (c) {
+				case '\u3041':
+				case '\u3043':
+				case '\u3045':
+				case '\u3047':
+				case '\u3049':
+				case '\u3083':
+				case '\u3085':
+				case '\u3087':
+				case '\u308E':
+				case '\u30A1':
+				case '\u30A3':
+				case '\u30A5':
+				case '\u30A7':
+				case '\u30A9':
+				case '\u30E3':
+				case '\u30E5':
+				case '\u30E7':
+				case '\u30EE':
+					return true;
+				}
+			}
+			return false;
+		}
+
+		#endregion\
 	}
 }
 

@@ -1,3 +1,17 @@
+2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.cs : part of level 4 weight implementation.
+
+2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt :
+	  Added task list.
+	  Revised comparison methods; backward iteration is possible.
+	  More on char-by-char comparison.
+	  Level 4 comparison is actually a bit more complex.
+	  Misc corrections.
+	* Collator.cs : some conceptual updates wrt above.
+
 2005-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : Japanese voice mark is level 2, and Hangul
