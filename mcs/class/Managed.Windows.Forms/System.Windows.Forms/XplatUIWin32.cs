@@ -29,9 +29,11 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -55,6 +57,7 @@ namespace System.Windows.Forms {
 		internal static bool		themes_enabled;
 		private Hashtable		timer_list;
 		private static Queue		message_queue;
+		private static IntPtr 		clip_magic = new IntPtr(27051977);
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -505,6 +508,26 @@ namespace System.Windows.Forms {
 			internal POINT			ptMinTrackSize;
 			internal POINT			ptMaxTrackSize;
 		}
+
+		[Flags]
+		private enum GAllocFlags : uint {
+			GMEM_FIXED			= 0x0000,
+			GMEM_MOVEABLE			= 0x0002,
+			GMEM_NOCOMPACT			= 0x0010,
+			GMEM_NODISCARD			= 0x0020,
+			GMEM_ZEROINIT			= 0x0040,
+			GMEM_MODIFY			= 0x0080,
+			GMEM_DISCARDABLE		= 0x0100,
+			GMEM_NOT_BANKED			= 0x1000,
+			GMEM_SHARE          		= 0x2000,
+			GMEM_DDESHARE			= 0x2000,
+			GMEM_NOTIFY			= 0x4000,
+			GMEM_LOWER			= GMEM_NOT_BANKED,
+			GMEM_VALID_FLAGS		= 0x7F72,
+			GMEM_INVALID_HANDLE 		= 0x8000,
+			GHND                		= (GMEM_MOVEABLE | GMEM_ZEROINIT),
+			GPTR                		= (GMEM_FIXED | GMEM_ZEROINIT)
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -585,6 +608,92 @@ namespace System.Windows.Forms {
 			message_queue.Enqueue(message);
 
 			return true;
+		}
+
+		private static String AnsiToString(IntPtr ansi_data) {
+			return (string)Marshal.PtrToStringAnsi(ansi_data);
+		}
+
+		private static String UnicodeToString(IntPtr unicode_data) {
+			return (string)Marshal.PtrToStringUni(unicode_data);
+		}
+
+		private static Image DIBtoImage(IntPtr dib_data) {
+			MemoryStream		ms;
+			byte[]			header;
+			byte[]			buffer;
+			Bitmap			bmp;
+			BITMAPINFOHEADER	bmi;
+			int			ncolors;
+			int			palettesize;
+			int			imagesize;
+			int			size;
+			int			offset;
+
+			header = new byte[54];	// Size of a BMP file header, without palette
+			// Grab the header
+			header[0] = (byte)'B';
+			header[1] = (byte)'M';
+			// 2, 3, 4 and 5 = unsigned int size
+			// 6, 7, 8 and 9 = reserved
+			// 10, 11, 12 and 13 = offset to image data
+
+			// Create a fake BMP header
+			bmi = (BITMAPINFOHEADER)Marshal.PtrToStructure(dib_data, typeof(BITMAPINFOHEADER));
+
+			ncolors = (int)bmi.biClrUsed;
+			if (ncolors == 0) {
+				if (bmi.biBitCount != 24) {
+					ncolors = (int)(1 << bmi.biBitCount);
+				}
+			}
+			palettesize = ncolors * 4;
+
+			imagesize = (int)bmi.biSizeImage;
+			if (imagesize == 0) {
+				imagesize = (int)(((((bmi.biWidth * bmi.biBitCount) + 31) & ~31) >> 3) * bmi.biHeight);
+			}
+
+			size = 54 + palettesize + imagesize;
+			offset = 54 + palettesize;
+			buffer = new byte[size];
+
+			// Copy the fake BMP file header
+			header[2] = (byte)size;
+			header[3] = (byte)(size >> 8);
+			header[4] = (byte)(size >> 16);
+			header[5] = (byte)(size >> 24);
+
+			header[10] = (byte)offset;
+			header[11] = (byte)(offset >> 8);
+			header[12] = (byte)(offset >> 16);
+			header[13] = (byte)(offset >> 24);
+
+			Array.Copy(header, 0, buffer, 0, 14);
+
+			for (int i = 14; i < size; i++) {
+				buffer[i] = Marshal.ReadByte(dib_data, i - 14);
+			}
+
+			ms = new MemoryStream(buffer, 0, size, false);
+			bmp = new Bitmap(ms);
+			ms.Close();
+			return bmp;
+		}
+
+		private static byte[] ImageToDIB(Image image) {
+			MemoryStream	ms;
+			byte[]		buffer;
+			byte[]		retbuf;
+
+			ms = new MemoryStream();
+			image.Save(ms, ImageFormat.Bmp);
+			buffer = ms.GetBuffer();
+
+			// Filter out the file header
+			retbuf = new byte[buffer.Length];
+			Array.Copy(buffer, 14, retbuf, 0, buffer.Length - 14);
+			return retbuf;
 		}
 		#endregion	// Private Support Methods
 
@@ -1597,27 +1706,183 @@ Console.WriteLine("Hit Clear background");
 		}
 
 		internal override void ClipboardClose(IntPtr handle) {
+			if (handle != clip_magic) {
+				throw new ArgumentException("handle is not a valid clipboard handle");
+			}
 			Win32CloseClipboard();
 		}
 
 		internal override int ClipboardGetID(IntPtr handle, string format) {
+			if (handle != clip_magic) {
+				throw new ArgumentException("handle is not a valid clipboard handle");
+			}
+			if (format == "Text" ) return 1;
+			else if (format == "Bitmap" ) return 2;
+			else if (format == "MetaFilePict" ) return 3;
+			else if (format == "SymbolicLink" ) return 4;
+			else if (format == "DataInterchangeFormat" ) return 5;
+			else if (format == "Tiff" ) return 6;
+			else if (format == "OEMText" ) return 7;
+			else if (format == "DeviceIndependentBitmap" ) return 8;
+			else if (format == "Palette" ) return 9;
+			else if (format == "PenData" ) return 10;
+			else if (format == "RiffAudio" ) return 11;
+			else if (format == "WaveAudio" ) return 12;
+			else if (format == "UnicodeText" ) return 13;
+			else if (format == "EnhancedMetafile" ) return 14;
+			else if (format == "FileDrop" ) return 15;
+			else if (format == "Locale" ) return 16;
+
 			return (int)Win32RegisterClipboardFormat(format);
 		}
 
 		internal override IntPtr ClipboardOpen() {
-			return new IntPtr(27051977);
+			Win32OpenClipboard(FosterParent);
+			return clip_magic;
 		}
 
-		internal override bool ClipboardRetrieve(IntPtr handle, out object obj, out int type) {
+		internal override int[] ClipboardAvailableFormats(IntPtr handle) {
+			uint	format;
+			int[]	result;
+			int	count;
+
+			if (handle != clip_magic) {
+				return null;
+			}
+
+			// Count first
+			count = 0;
+			format = 0;
+			do {
+				format = Win32EnumClipboardFormats(format);
+				if (format != 0) {
+					count++;
+				}
+			} while (format != 0);
+
+			// Now assign
+			result = new int[count];
+			count = 0;
+			format = 0;
+			do {
+				format = Win32EnumClipboardFormats(format);
+				if (format != 0) {
+					result[count++] = (int)format;
+				}
+			} while (format != 0);
+
+			return result;
+		}
+
+
+		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
+			IntPtr	hmem;
+			IntPtr	data;
+			object	obj;
+
+			if (handle != clip_magic) {
+				throw new ArgumentException("handle is not a valid clipboard handle");
+			}
+
+			hmem = Win32GetClipboardData((uint)type);
+			if (hmem == IntPtr.Zero) {
+				return null;
+			}
+
+			data = Win32GlobalLock(hmem);
+			if (data == IntPtr.Zero) {
+				uint error = Win32GetLastError();
+				Console.WriteLine("Error: {0}", error);
+				return null;
+			}
 
 			obj = null;
-			type = 0;
-			throw new NotImplementedException();
-			return false;
+
+			switch ((ClipboardFormats)type) {
+				case ClipboardFormats.CF_TEXT: {
+					obj = AnsiToString(data);
+					break;
+				}
+
+				case ClipboardFormats.CF_DIB: {
+					obj = DIBtoImage(data);
+					break;
+				}
+
+				case ClipboardFormats.CF_UNICODETEXT: {
+					obj = UnicodeToString(data);
+					break;
+				}
+
+				default: {
+					if (converter != null && !converter(type, data, out obj)) {
+						obj = null;
+					}
+					break;
+				}
+			}
+			Win32GlobalUnlock(hmem);
+
+			return obj;
+
 		}
 
-		internal override void ClipboardStore(IntPtr handle, object obj, int type) {
-			throw new NotImplementedException();
+		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
+			byte[]	data;
+			IntPtr	hmem;
+			IntPtr	hmem_ptr;
+
+			if (handle != clip_magic) {
+				throw new ArgumentException("handle is not a valid clipboard handle");
+			}
+
+			if (obj == null) {
+				// Just clear it
+				Win32EmptyClipboard();
+				return;
+			}
+
+			if (type == -1) {
+				if (obj is string) {
+					type = (int)ClipboardFormats.CF_UNICODETEXT;
+				} else if (obj is Image) {
+					type = (int)ClipboardFormats.CF_DIB;
+				}
+			}
+
+			switch((ClipboardFormats)type) {
+				case ClipboardFormats.CF_UNICODETEXT: {
+					hmem = Marshal.StringToHGlobalUni((string)obj);
+					Win32EmptyClipboard();
+					Win32SetClipboardData((uint)type, hmem);
+					return;
+				}
+
+				case ClipboardFormats.CF_DIB: {
+					data = ImageToDIB((Image)obj);
+
+					hmem = Win32GlobalAlloc(GAllocFlags.GMEM_MOVEABLE | GAllocFlags.GMEM_DDESHARE, data.Length);
+					hmem_ptr = Win32GlobalLock(hmem);
+					Marshal.Copy(data, 0, hmem_ptr, data.Length);
+					Win32GlobalUnlock(hmem);
+					Win32EmptyClipboard();
+					Win32SetClipboardData((uint)type, hmem);
+					return;
+				}
+
+				default: {
+					if (converter != null && converter(ref type, obj, out data)) {
+						hmem = Win32GlobalAlloc(GAllocFlags.GMEM_MOVEABLE | GAllocFlags.GMEM_DDESHARE, data.Length);
+						hmem_ptr = Win32GlobalLock(hmem);
+						Marshal.Copy(data, 0, hmem_ptr, data.Length);
+						Win32GlobalUnlock(hmem);
+						Win32EmptyClipboard();
+						Win32SetClipboardData((uint)type, hmem);
+					}
+					return;
+				}
+			}
+			return;
 		}
 		
 		internal override int KeyboardSpeed {
@@ -1900,6 +2165,30 @@ Console.WriteLine("Hit Clear background");
 
 		[DllImport ("user32.dll", EntryPoint="CloseClipboard", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32CloseClipboard();
+
+		[DllImport ("user32.dll", EntryPoint="EnumClipboardFormats", CallingConvention=CallingConvention.StdCall)]
+		private extern static uint Win32EnumClipboardFormats(uint format);
+
+		[DllImport ("user32.dll", EntryPoint="GetClipboardData", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetClipboardData(uint format);
+
+		[DllImport ("user32.dll", EntryPoint="SetClipboardData", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32SetClipboardData(uint format, IntPtr handle);
+
+		[DllImport ("kernel32.dll", EntryPoint="GlobalAlloc", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GlobalAlloc(GAllocFlags Flags, int dwBytes);
+
+		[DllImport ("kernel32.dll", EntryPoint="GlobalFree", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GlobalFree(IntPtr hMem);
+
+		[DllImport ("kernel32.dll", EntryPoint="GlobalLock", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GlobalLock(IntPtr hMem);
+
+		[DllImport ("kernel32.dll", EntryPoint="GlobalUnlock", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32GlobalUnlock(IntPtr hMem);
+
+		[DllImport ("kernel32.dll", EntryPoint="CopyMemory", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32CopyMemory(IntPtr destination, IntPtr source, int length);
 		#endregion
 	}
 }

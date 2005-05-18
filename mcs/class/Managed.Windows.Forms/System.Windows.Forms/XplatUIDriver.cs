@@ -203,8 +203,9 @@ namespace System.Windows.Forms {
 		internal abstract void ClipboardClose(IntPtr handle);
 		internal abstract IntPtr ClipboardOpen();
 		internal abstract int ClipboardGetID(IntPtr handle, string format);
-		internal abstract void ClipboardStore(IntPtr handle, object obj, int id);
-		internal abstract bool ClipboardRetrieve(IntPtr handle, out object obj, out int id);
+		internal abstract void ClipboardStore(IntPtr handle, object obj, int id, XplatUI.ObjectToClipboard converter);
+		internal abstract int[] ClipboardAvailableFormats(IntPtr handle);
+		internal abstract object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter);
 
 		// System information
 		internal abstract int KeyboardSpeed { get; } 

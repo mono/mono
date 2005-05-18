@@ -36,11 +36,10 @@ namespace System.Windows.Forms {
 		#region DataObject.Entry Class
 		private class Entry {
 			#region Local Variables
-			private static Entry	entries;
-			private string		type;
-			private object		data;
-			private bool		autoconvert;
-			private Entry		next;
+			private string	type;
+			private object	data;
+			private bool	autoconvert;
+			internal Entry	next;
 			#endregion	// Local Variables
 
 			#region Constructors
@@ -50,41 +49,10 @@ namespace System.Windows.Forms {
 				this.type = type;
 				this.data = data;
 				this.autoconvert = autoconvert;
-
-				lock (typeof(DataObject.Entry)) {
-					if (entries == null) {
-						entries = this;
-					} else {
-						// Insert into the list of known/defined formats
-						e = entries;
-
-						while (e.next != null) {
-							e = e.next;
-						}
-						e.next = this;
-					}
-				}
 			}
 			#endregion	// Constructors
 
 			#region Properties
-			public static int Count {
-				get {
-					int	result;
-					Entry	e;
-
-					result = 0;
-					e = entries;
-
-					while (e != null) {
-						result++;
-						e = e.next;
-					}
-
-					return result;
-				}
-			}
-
 			public object Data {
 				get {
 					return data;
@@ -93,24 +61,34 @@ namespace System.Windows.Forms {
 			#endregion	// Properties
 
 			#region Methods
-			public static Entry Find(string type) {
-				Entry e;
+			public static int Count(Entry entries) {
+				int	result;
 
-				e = entries;
-				while (e != null) {
-					if (e.type.Equals(type)) {
-						return e;
+				result = 0;
+
+				while (entries != null) {
+					result++;
+					entries = entries.next;
+				}
+
+				return result;
+			}
+
+			public static Entry Find(Entry entries, string type) {
+				while (entries != null) {
+					if (entries.type.Equals(type)) {
+						return entries;
 					}
-					e = e.next;
+					entries = entries.next;
 				}
 
 				return null;
 			}
 
-			public static Entry FindConvertible(string type) {
+			public static Entry FindConvertible(Entry entries, string type) {
 				Entry e;
 
-				e = Find(type);
+				e = Find(entries, type);
 				if (e != null) {
 					return e;
 				}
@@ -138,13 +116,13 @@ namespace System.Windows.Forms {
 				return null;
 			}
 
-			public static string[] Entries(bool convertible) {
+			public static string[] Entries(Entry entries, bool convertible) {
 				Entry		e;
 				ArrayList	list;
 				string[]	result;
 
 				// Initially store into something that we can grow easily
-				list = new ArrayList(Entry.Count);
+				list = new ArrayList(Entry.Count(entries));
 				e = entries;
 
 				while (e != null) {
@@ -154,15 +132,15 @@ namespace System.Windows.Forms {
 
 				if (convertible) {
 					// Add the convertibles
-					if ((Entry.Find(DataFormats.Text) != null) && (Entry.Find(DataFormats.UnicodeText) == null)) {
+					if ((Entry.Find(entries, DataFormats.Text) != null) && (Entry.Find(entries, DataFormats.UnicodeText) == null)) {
 						list.Add(DataFormats.UnicodeText);
 					}
 
-					if ((Entry.Find(DataFormats.Text) == null) && (Entry.Find(DataFormats.UnicodeText) != null)) {
+					if ((Entry.Find(entries, DataFormats.Text) == null) && (Entry.Find(entries, DataFormats.UnicodeText) != null)) {
 						list.Add(DataFormats.Text);
 					}
 
-					if (((Entry.Find(DataFormats.Text) != null) || (Entry.Find(DataFormats.UnicodeText) != null)) && (Entry.Find(DataFormats.StringFormat) == null)) {
+					if (((Entry.Find(entries, DataFormats.Text) != null) || (Entry.Find(entries, DataFormats.UnicodeText) != null)) && (Entry.Find(entries, DataFormats.StringFormat) == null)) {
 						list.Add(DataFormats.StringFormat);
 					}
 				}
@@ -180,10 +158,12 @@ namespace System.Windows.Forms {
 		#endregion	// DataObject.Entry class
 
 		#region Local Variables
+		private Entry	entries;
 		#endregion	// Local Variables
 
 		#region Public Constructors
 		public DataObject() {
+			entries = null;
 		}
 
 		public DataObject(object data) {
@@ -202,9 +182,9 @@ namespace System.Windows.Forms {
 
 		public virtual object GetData(string format, bool autoConvert) {
 			if (autoConvert) {
-				return Entry.FindConvertible(format).Data;
+				return Entry.FindConvertible(entries, format).Data;
 			} else {
-				return Entry.Find(format).Data;
+				return Entry.Find(entries, format).Data;
 			}
 		}
 
@@ -218,9 +198,9 @@ namespace System.Windows.Forms {
 
 		public virtual bool GetDataPresent(string format, bool autoConvert) {
 			if (autoConvert) {
-				return Entry.FindConvertible(format) != null;
+				return Entry.FindConvertible(entries, format) != null;
 			} else {
-				return Entry.Find(format) != null;
+				return Entry.Find(entries, format) != null;
 			}
 		}
 
@@ -233,7 +213,7 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual string[] GetFormats(bool autoConvert) {
-			return Entry.Entries(autoConvert);
+			return Entry.Entries(entries, autoConvert);
 		}
 
 		public virtual void SetData(object data) {
@@ -241,7 +221,24 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual void SetData(string format, bool autoConvert, object data) {
-			new DataObject.Entry(format, data, autoConvert);
+			Entry	entry;
+			Entry	e;
+
+			entry = new DataObject.Entry(format, data, autoConvert);
+
+			lock (this) {
+				if (entries == null) {
+					entries = entry;
+				} else {
+					// Insert into the list of known/defined formats
+					e = entries;
+
+					while (e.next != null) {
+						e = e.next;
+					}
+					e.next = entry;
+				}
+			}
 		}
 
 		public virtual void SetData(string format, object data) {

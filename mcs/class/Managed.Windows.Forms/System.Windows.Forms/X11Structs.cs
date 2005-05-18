@@ -395,7 +395,7 @@ namespace System.Windows.Forms {
 		internal bool		send_event;
 		internal IntPtr		display;
 		internal IntPtr		window;
-		internal IntPtr		selection;
+		internal int		selection;
 		internal IntPtr		time;
 	}
 
@@ -407,9 +407,9 @@ namespace System.Windows.Forms {
 		internal IntPtr		display;
 		internal IntPtr		owner;
 		internal IntPtr		requestor;
-		internal IntPtr		selection;
-		internal IntPtr		target;
-		internal IntPtr		property;
+		internal int		selection;
+		internal int		target;
+		internal int		property;
 		internal IntPtr		time;
 	}
 
@@ -420,9 +420,9 @@ namespace System.Windows.Forms {
 		internal bool		send_event;
 		internal IntPtr		display;
 		internal IntPtr		requestor;
-		internal IntPtr		selection;
-		internal IntPtr		target;
-		internal IntPtr		property;
+		internal int		selection;
+		internal int		target;
+		internal int		property;
 		internal IntPtr		time;
 	}
 
@@ -1392,6 +1392,12 @@ namespace System.Windows.Forms {
 		_NET_WM_STATE_MODAL,
 		_NET_WM_CONTEXT_HELP,
 
+		CLIPBOARD,
+		DIB,
+		OEMTEXT,
+		UNICODETEXT,
+		TARGETS,
+
 		LAST_NET_ATOM
 	}
 
@@ -1431,6 +1437,15 @@ namespace System.Windows.Forms {
 		internal bool		Confined;		// Is the current grab (if any) confined to grab_area?
 		internal IntPtr		Hwnd;			// The window that is grabbed
 		internal Rectangle	Area;			// The area the current grab is confined to
+	}
+
+	internal struct ClipboardStruct {
+		internal object		Item;			// Object on the clipboard
+		internal object		Type;			// Type if object on the clipboard
+		internal ArrayList	Formats;		// list of formats available in the clipboard
+		internal bool		Retrieving;		// true if we are requesting an item
+		internal bool		Enumerating;		// true if we are enumerating through all known types
+		internal XplatUI.ObjectToClipboard Converter;
 	}
 
 	internal delegate int  XErrorHandler(IntPtr DisplayHandle, ref XErrorEvent error_event);

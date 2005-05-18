@@ -336,24 +336,7 @@ namespace System.Windows.Forms {
 
 		public override Rectangle DisplayRectangle {
 			get {
-				Rectangle	rect;
-
-				rect = base.DisplayRectangle;
-
-				if (vscroll_visible) {
-					rect.Width -= vscrollbar.Width;
-					if (rect.Width < 0) {
-						rect.Width = 0;
-					}
-				}
-
-				if (hscroll_visible) {
-					rect.Height -= hscrollbar.Height;
-					if (rect.Height < 0) {
-						rect.Height = 0;
-					}
-				}
-				return rect;
+				return new Rectangle(-scroll_position.X, -scroll_position.Y, auto_scroll_min_size.Width, auto_scroll_min_size.Height);
 			}
 		}
 

@@ -1,3 +1,26 @@
+2005-05-18  Peter Bartok  <pbartok@novell.com>
+
+	* DataObject.cs: Entries are not global but particular to the 
+	  DataObject, now it behaves that way
+	* XplatUIWin32.cs: Implemented Clipboard methods
+	* Clipboard.cs: Implemented
+	* ScrollableControl.cs (DisplayRectangle): Fixed calculation
+	* XplatUIOSX.cs: Updated to final clipboard prototypes
+	* XplatUIX11.cs: Implemented Clipboard methods
+	* XplatUIDriver.cs: Updated to final clipboard prototypes
+	* XplatUIStructs.cs: 
+	  - Added BITMAPINFOHEADER struct 
+	  - Added ClipboardFormats enum
+	* X11Structs.cs: 
+	  - Added ClipboardStruct
+	  - Added Atom enum items for clipboard types
+	  - Fixed atom types for Selection event structures
+	* DataFormats.cs: 
+	  - Added internal properties and methods for drivers to enumerate 
+	    all known formats
+	  - Switched initialization method to allow drivers to assign their
+	    own IDs even for the MS predefined clipboard IDs
+
 2005-05-18 Jonathan S. Chambers <jonathan.chambers@ansys.com>
 	* PropertyGridView.cs: Fixed compiler warnings.
 
@@ -7,7 +30,6 @@
 	* PropertyGridTextBox.cs: Changed Text property name
 	* GridItem.cs: Added Bounds property.
 	* GridEntry.cs: Added Bounds property.
-
 
 2005-05-17  Lluis Sanchez Gual  <lluis@novell.com>
 

@@ -853,6 +853,10 @@ namespace System.Windows.Forms {
 			y = (int)(pt.y+wBounds.top);
 		}
 
+		internal override int[] ClipboardAvailableFormats(IntPtr handle) {
+			return null;
+		}
+
 		internal override void ClipboardClose(IntPtr handle) {
 			throw new NotImplementedException();
 		}
@@ -867,15 +871,12 @@ namespace System.Windows.Forms {
 			return new IntPtr ();
 		}
 
-		internal override bool ClipboardRetrieve(IntPtr handle, out object obj, out int type) {
-
-			obj = null;
-			type = 0;
+		internal override object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter) {
 			throw new NotImplementedException();
-			return false;
+			return null;
 		}
 
-		internal override void ClipboardStore(IntPtr handle, object obj, int type) {
+		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
 			throw new NotImplementedException();
 		}
 		

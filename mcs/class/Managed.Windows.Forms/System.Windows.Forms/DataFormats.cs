@@ -76,6 +76,12 @@ namespace System.Windows.Forms {
 					return this.name;
 				}
 			}
+
+			internal Format Next {
+				get {
+					return this.next;
+				}
+			}
 			#endregion	// Public Instance Properties
 
 			#region Private Methods
@@ -121,6 +127,12 @@ namespace System.Windows.Forms {
 					f = f.next;
 				}
 				return f;
+			}
+
+			internal static Format List {
+				get {
+					return formats;
+				}
 			}
 			#endregion	// Private Methods
 
@@ -186,29 +198,30 @@ namespace System.Windows.Forms {
 				if (!initialized) {
 					IntPtr	cliphandle;
 
-					new Format(Text, 1);
-					new Format(Bitmap, 2);
-					new Format(MetafilePict, 3);
-					new Format(SymbolicLink, 4);
-					new Format(Dif, 5);
-					new Format(Tiff, 6);
-					new Format(OemText, 7);
-					new Format(Dib, 8);
-					new Format(Palette, 9);
-					new Format(PenData, 10);
-					new Format(Riff, 11);
-					new Format(WaveAudio, 12);
-					new Format(UnicodeText, 13);
-					new Format(EnhancedMetafile, 14);
-					new Format(FileDrop, 15);
-					new Format(Locale, 16);
-
 					cliphandle = XplatUI.ClipboardOpen();
+
+					new Format(Text, XplatUI.ClipboardGetID(cliphandle, Text));
+					new Format(Bitmap, XplatUI.ClipboardGetID(cliphandle, Bitmap));
+					new Format(MetafilePict, XplatUI.ClipboardGetID(cliphandle, MetafilePict));
+					new Format(SymbolicLink, XplatUI.ClipboardGetID(cliphandle, SymbolicLink));
+					new Format(Dif, XplatUI.ClipboardGetID(cliphandle, Dif)) ;
+					new Format(Tiff, XplatUI.ClipboardGetID(cliphandle, Tiff));
+					new Format(OemText, XplatUI.ClipboardGetID(cliphandle, OemText));
+					new Format(Dib, XplatUI.ClipboardGetID(cliphandle, Dib));
+					new Format(Palette, XplatUI.ClipboardGetID(cliphandle, Palette));
+					new Format(PenData, XplatUI.ClipboardGetID(cliphandle, PenData));
+					new Format(Riff, XplatUI.ClipboardGetID(cliphandle, Riff));
+					new Format(WaveAudio, XplatUI.ClipboardGetID(cliphandle, WaveAudio));
+					new Format(UnicodeText, XplatUI.ClipboardGetID(cliphandle, UnicodeText));
+					new Format(EnhancedMetafile, XplatUI.ClipboardGetID(cliphandle, EnhancedMetafile));
+					new Format(FileDrop, XplatUI.ClipboardGetID(cliphandle, FileDrop));
+					new Format(Locale, XplatUI.ClipboardGetID(cliphandle, Locale));
 					new Format(CommaSeparatedValue, XplatUI.ClipboardGetID(cliphandle, CommaSeparatedValue));
 					new Format(Html, XplatUI.ClipboardGetID(cliphandle, Html));
 					new Format(Rtf, XplatUI.ClipboardGetID(cliphandle, Rtf));
 					new Format(Serializable, XplatUI.ClipboardGetID(cliphandle, Serializable));
 					new Format(StringFormat, XplatUI.ClipboardGetID(cliphandle, StringFormat));
+
 					XplatUI.ClipboardClose(cliphandle);
 					
 				}
