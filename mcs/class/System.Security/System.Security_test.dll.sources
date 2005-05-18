@@ -50,3 +50,4 @@ System.Security.Cryptography.Xml/XmlDsigC14NWithCommentsTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXPathTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransformTest.cs
 System.Security.Permissions/DataProtectionPermissionAttributeTest.cs
+System.Security.Permissions/StorePermissionAttributeTest.cs

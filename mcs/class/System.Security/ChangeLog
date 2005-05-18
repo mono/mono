@@ -1,3 +1,8 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Security_test.dll.sources: Added unit tests for System.
+	Security.Permissions.StorePermissionAttribute class.
+
 2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security_test.dll.sources: Added unit tests for System.
