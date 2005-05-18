@@ -35,6 +35,7 @@ using System.IO.IsolatedStorage;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
+using System.Threading;
 
 #if NET_2_0
 using Microsoft.Win32.SafeHandles;
@@ -45,6 +46,23 @@ namespace MonoCasTests.System.IO.IsolatedStorage {
 	[TestFixture]
 	[Category ("CAS")]
 	public class IsolatedStorageFileStreamCas {
+
+		private const int timeout = 30000;
+		private string message;
+
+		static ManualResetEvent reset;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			reset = new ManualResetEvent (false);
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
+		{
+			reset.Close ();
+		}
 
 		[SetUp]
 		public void SetUp ()
@@ -257,5 +275,73 @@ namespace MonoCasTests.System.IO.IsolatedStorage {
 			}
 		}
 #endif
+
+		// async tests (for stack propagation)
+
+		private void ReadCallback (IAsyncResult ar)
+		{
+			IsolatedStorageFileStream s = (IsolatedStorageFileStream)ar.AsyncState;
+			s.EndRead (ar);
+			try {
+				// can we do something bad here ?
+				Assert.IsNotNull (Environment.GetEnvironmentVariable ("USERNAME"));
+				message = "Expected a SecurityException";
+			}
+			catch (SecurityException) {
+				message = null;
+				reset.Set ();
+			}
+			catch (Exception e) {
+				message = e.ToString ();
+			}
+		}
+
+		[Test]
+		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		public void AsyncRead ()
+		{
+			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("cas-AsyncRead", FileMode.Create);
+			message = "AsyncRead";
+			reset.Reset ();
+			IAsyncResult r = isfs.BeginRead (new byte[0], 0, 0, new AsyncCallback (ReadCallback), isfs);
+			Assert.IsNotNull (r, "IAsyncResult");
+			if (!reset.WaitOne (timeout, true))
+				Assert.Ignore ("Timeout");
+			Assert.IsNull (message, message);
+			isfs.Close ();
+		}
+
+		private void WriteCallback (IAsyncResult ar)
+		{
+			IsolatedStorageFileStream s = (IsolatedStorageFileStream)ar.AsyncState;
+			s.EndWrite (ar);
+			try {
+				// can we do something bad here ?
+				Assert.IsNotNull (Environment.GetEnvironmentVariable ("USERNAME"));
+				message = "Expected a SecurityException";
+			}
+			catch (SecurityException) {
+				message = null;
+				reset.Set ();
+			}
+			catch (Exception e) {
+				message = e.ToString ();
+			}
+		}
+
+		[Test]
+		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		public void AsyncWrite ()
+		{
+			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("cas-AsyncWrite", FileMode.Create);
+			message = "AsyncWrite";
+			reset.Reset ();
+			IAsyncResult r = isfs.BeginWrite (new byte[0], 0, 0, new AsyncCallback (WriteCallback), isfs);
+			Assert.IsNotNull (r, "IAsyncResult");
+			if (!reset.WaitOne (timeout, true))
+				Assert.Ignore ("Timeout");
+			Assert.IsNull (message, message);
+			isfs.Close ();
+		}
 	}
 }
