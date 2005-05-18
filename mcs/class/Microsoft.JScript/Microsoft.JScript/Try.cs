@@ -71,7 +71,7 @@ namespace Microsoft.JScript {
 			
 			if (catch_blocks != null && catch_blocks.Count > 0) {
 				foreach (Catch c in catch_blocks) {
-					context.BeginScope ();
+					context.BeginScope (true);
 					context.Enter (Symbol.CreateSymbol (c.id), c);
 					r &= c.Resolve (context);
 					context.EndScope ();
