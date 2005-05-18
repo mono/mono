@@ -1,3 +1,29 @@
+2005-05-17  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalizer.cs: Add methods_with_outter_scope_refs and
+	methods_with_vars_used_nested hashtables.
+	AddMethodReferenceOutterScopeVar,  AddMethodVarsUsedNested,
+	MethodReferenceOutterScopeVar. OutterScopeVar,
+	MethodVarsUsedNested and VarUsedNested.
+	* CodeGenerator.cs: Add locals_to_stack_frame method and emit_parents.
+	* TypeManager.cs: Add LocalsAtDepth.
+	* VariableDeclaration.cs: keep track of the lexical depth of
+	current declaration.
+	* FunctionDeclaration.cs: take care of outter scope variables uses.
+	* IdentificationTable.cs: keep track of Catch statement opened blocks.
+	* expression.cs: take care of eval's Net_1_0 and greater
+	versions. Implement the use of variables in nested scopes. For it,
+	we track the variable's scope level and we compare it with the
+	level in which appears if there's a difference supperior to one
+	and the variables wasn't not declared in the global scope we
+	proceed to generate the code that keep tracks of the state of the
+	variables through a StackFrame, in which we copy the local vars
+	prior to the invocation to the nested method which uses a outter
+	scope variable,	then we copy back the variables in the StackFrame
+	into de local vars when the invocation finishes.
+	
+	* Try.cs: open a scope indicating that's for a catch block.
+
 2005-05-07  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* MethodInvoker.cs, ScriptObject.cs, BitwiseBinary.cs,
