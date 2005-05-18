@@ -1,3 +1,8 @@
+2005-05-18  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	a loop and may leave it, reset the barrier; fixes #74974.
+
 2005-05-17  Marek Safar  <marek.safar@seznam.cz>
 	
 	* attribute.cs (Attribute.ResolveArguments): GuidAttribute check
