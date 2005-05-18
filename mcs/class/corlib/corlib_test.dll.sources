@@ -298,6 +298,7 @@ System.IO/FileLoadExceptionCas.cs
 System.IO/FileNotFoundExceptionCas.cs
 System.IO/FileStreamCas.cs
 System.IO/PathCas.cs
+System.IO/StreamCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileCas.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStreamCas.cs
 System.Reflection/AssemblyCas.cs

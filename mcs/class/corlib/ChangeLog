@@ -1,3 +1,7 @@
+2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added new CAS tests for System.IO.Stream.
+
 2005-05-15  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* corlib.dll.sources: added various files for System.Runtime.InteropServices
