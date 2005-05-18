@@ -106,6 +106,7 @@ Microsoft.JScript/JSScanner.cs
 Microsoft.JScript/JSToken.cs
 Microsoft.JScript/JSVariableField.cs
 Microsoft.JScript/JScriptCodeProvider.cs
+Microsoft.JScript/JScriptCodeGenerator.cs
 Microsoft.JScript/JScriptException.cs
 Microsoft.JScript/LateBinding.cs
 Microsoft.JScript/LenientArrayPrototype.cs

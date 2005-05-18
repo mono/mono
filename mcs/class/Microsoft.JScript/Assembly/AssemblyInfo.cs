@@ -31,26 +31,28 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Resources;
 
-/* TODO COMPLETE INFORMATION
-
-#if (NET_1_0)
-	[assembly: AssemblyVersion ("1.0.3300.0")]
+#if (NET_2_0)
+	[assembly: AssemblyVersion ("8.0.3600.0")]
+//	[assembly: CLSCompliant (true)]
+#elif (NET_1_1)
+	[assembly: AssemblyVersion("7.0.5000.0")]
+	[assembly: SatelliteContractVersion("7.0.5000.0")]
+	[assembly: TypeLibVersion(7, 1)]
+#else
+	[assembly: AssemblyVersion("7.0.3300.0")]
+	[assembly: SatelliteContractVersion("7.0.3300.0")]
 #endif
-#if (NET_1_1)
-	[assembly: AssemblyVersion ("1.0.5000.0")]
-#endif
 
-[assembly: AssemblyTitle ("")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyTitle ("Microsoft.JScript")]
+[assembly: AssemblyDescription("Microsoft.JScript.dll")]
+[assembly: AssemblyCompany("MONO development team")]
+[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 
-[assembly: CLSCompliant (true)]
-[assembly: AssemblyFileVersion ("0.0.0.1")]
+[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: AllowPartiallyTrustedCallers()]
 
-[assembly: ComVisible (false)]
-
-*/
-
-[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
-

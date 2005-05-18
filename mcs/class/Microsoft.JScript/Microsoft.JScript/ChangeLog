@@ -1,3 +1,9 @@
+2005-05-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* JScriptCodeGenerator.cs: Stubbed.
+	
+	* JScriptCodeProvider.cs: Implemented.
+
 2005-05-17  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalizer.cs: Add methods_with_outter_scope_refs and

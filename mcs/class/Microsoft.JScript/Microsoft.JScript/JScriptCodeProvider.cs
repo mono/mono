@@ -30,35 +30,29 @@ using System.CodeDom.Compiler;
 
 namespace Microsoft.JScript {
 
-	[MonoTODO]
 	public class JScriptCodeProvider : CodeDomProvider
 	{
-		[MonoTODO]
+		JScriptCodeGenerator code_gen;
+
 		public JScriptCodeProvider ()
 		{
-			throw new NotImplementedException ();
+			code_gen = new JScriptCodeGenerator ();
 		}
 
-
-		[MonoTODO]
 		public override string FileExtension {
 			get {
-				throw new NotImplementedException ();
+				return "js";
 			}
 		}
 
-
-		[MonoTODO]
 		public override ICodeCompiler CreateCompiler ()
 		{
-			throw new NotImplementedException ();
+			return code_gen;
 		}
-
 		
-		[MonoTODO]
 		public override ICodeGenerator CreateGenerator ()
 		{
-			throw new NotImplementedException ();
+			return code_gen;
 		}		
 	}
 }

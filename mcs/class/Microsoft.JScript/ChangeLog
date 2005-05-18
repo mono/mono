@@ -1,3 +1,7 @@
+2005-05-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* Microsoft.JScript.dll.sources: Added JScriptCodeGenerator.cs
+
 2005-05-07  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* COMFieldInfo.cs, COMMethodInfo.cs, JSMethod.cs: added to the
