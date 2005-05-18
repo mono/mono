@@ -87,7 +87,7 @@ class MakeMap {
 			
 		foreach (Type t in exported_types) {
 			string ns = t.Namespace;
-			if (ns == null || ns != "Mono.Unix")
+			if (ns == null || !ns.StartsWith ("Mono"))
 				continue;
 			string fn = GetNativeName (t.FullName);
 			ns = GetNativeName (ns);
@@ -154,6 +154,7 @@ abstract class FileGenerator {
 		string type = null;
 
 		switch (ut) {
+			case "Boolean":       type = "int";             break;
 			case "Byte":          type = "unsigned char";   break;
 			case "SByte":         type = "signed char";     break;
 			case "Int16":         type = "short";           break;

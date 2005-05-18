@@ -1,5 +1,10 @@
 2005-05-18  Jonathan Pryor <jonpryor@vt.edu>
 
+	* make-map.cs: Process the Mono.Posix namespace as well as Mono.Unix; add
+	  mapping for Boolean => int for native type conversion.
+
+2005-05-18  Jonathan Pryor <jonpryor@vt.edu>
+
 	* make-map.cs: Add a MphPrototypeFileGenerator, which looks for DllImport
 	  methods across all types and generates a C header file declaration for
 	  those methods.  This allows us to ensure consistency between
