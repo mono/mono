@@ -1,3 +1,8 @@
+2005-05-18  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	a loop and may leave it, reset the barrier; fixes #74974.
+
 2005-05-16  Raja R Harinath  <rharinath@novell.com>
 
 	Fix test-382.cs.  Emit values of decimal constants.

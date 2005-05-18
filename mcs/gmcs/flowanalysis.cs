@@ -647,19 +647,22 @@ namespace Mono.CSharp
 							// then we do always return (or stay in the
 							// loop forever).
 							new_r.SetReturns ();
-			}
+						}
 
 						new_r.SetBarrier ();
 					} else {
 						if (new_r.Returns == FlowReturns.Always) {
 							// We're either finite or we may leave the loop.
 							new_r.SetReturnsSometimes ();
-			}
+						}
 						if (new_r.Throws == FlowReturns.Always) {
 							// We're either finite or we may leave the loop.
 							new_r.SetThrowsSometimes ();
 						}
-			}
+					}
+
+					if (may_leave_loop)
+						new_r.ResetBarrier ();
 				} else if (branching.Type == BranchingType.Switch) {
 					if (new_r.MayBreak || new_r.MayReturn)
 						new_r.ResetBarrier ();
