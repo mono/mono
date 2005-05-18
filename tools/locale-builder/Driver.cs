@@ -243,6 +243,16 @@ namespace Mono.Tools.LocaleBuilder {
 
                 private void ParseLocale (string locale)
                 {
+			#region Workaround
+			// FIXME: We should enable zh-TW and zh-HK when
+			// zh-CHT got working.
+			switch (locale) {
+			case "zh_TW":
+			case "zh_HK":
+				return;
+			}
+			#endregion
+
                         CultureInfoEntry ci;
 
                         ci = LookupCulture (locale);
