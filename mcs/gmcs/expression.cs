@@ -2259,22 +2259,22 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// This is used to check if a test 'x == null' can be optimized to a reference equals,
+		// i.e., not invoke op_Equality.
+		//
+		static bool EqualsNullIsReferenceEquals (Type t)
+		{
+			return t == TypeManager.object_type || t == TypeManager.string_type ||
+				t == TypeManager.delegate_type || t.IsSubclassOf (TypeManager.delegate_type);
+		}
+
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
 			Type r = right.Type;
 
-			//
-			// Special cases: string or type parameter comapred to null
-			//
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if ((!TypeManager.IsValueType (l) && r == TypeManager.null_type) ||
-				    (!TypeManager.IsValueType (r) && l == TypeManager.null_type)) {
-					Type = TypeManager.bool_type;
-					
-					return this;
-				}
-
 				if (l.IsGenericParameter && (right is NullLiteral)) {
 					if (l.BaseType == TypeManager.value_type) {
 						Error_OperatorCannotBeApplied ();
@@ -2294,6 +2294,16 @@ namespace Mono.CSharp {
 
 					right = new BoxedCast (right);
 					Type = TypeManager.bool_type;
+					return this;
+				}
+
+				//
+				// Optimize out call to op_Equality in a few cases.
+				//
+				if ((l == TypeManager.null_type && EqualsNullIsReferenceEquals (r)) ||
+				    (r == TypeManager.null_type && EqualsNullIsReferenceEquals (l))) {
+					Type = TypeManager.bool_type;
+					
 					return this;
 				}
 
@@ -2404,15 +2414,6 @@ namespace Mono.CSharp {
 					
 					type = TypeManager.bool_type;
 					return this;
-				}
-
-				bool left_is_null = left is NullLiteral;
-				bool right_is_null = right is NullLiteral;
-				if (left_is_null || right_is_null) {
-					if (oper == Operator.Equality)
-						return new BoolLiteral (left_is_null == right_is_null);
-					else
-						return new BoolLiteral (left_is_null != right_is_null);
 				}
 
 				if (l.IsPointer || r.IsPointer) {
