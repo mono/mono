@@ -71,8 +71,8 @@ namespace MonoTests.System.Collections.Generic {
 			List<int> l = MakeList ();
 
 			List<int> r = l.GetRange (2, 4);
-			AssertEquals ("Size is not correct", 4, 0);
-			AssertEquals ("Data failure", 22, r [0])
+			AssertEquals ("Size is not correct", 4, r.Count);
+			AssertEquals ("Data failure", 22, r [0]);
 			AssertEquals ("Data failure", 80, r [1]);
 			AssertEquals ("Data failure", 56, r [2]);
 			AssertEquals ("Data failure", 52, r [3]);
