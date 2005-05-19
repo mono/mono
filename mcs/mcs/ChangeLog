@@ -1,3 +1,11 @@
+2005-05-19  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (ToplevelBlock.GetParameterReference)
+	(ToplevelBlock.IsParameterReference,ToplevelBlock.IsLocalParameter):
+	Move here from class Block.
+	* ecore.cs (SimpleName.SimpleNameResolve): Update to changes.
+	* expression.cs (ParameterReference.DoResolveBase): Likewise.
+
 2005-05-18  Martin Baulig  <martin@ximian.com>
 
 	Fix #74978.

@@ -2041,7 +2041,7 @@ namespace Mono.CSharp {
 						return var.Resolve (ec);
 				}
 
-				ParameterReference pref = current_block.GetParameterReference (Name, loc);
+				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);
 				if (pref != null) {
 					if (right_side != null)
 						return pref.ResolveLValue (ec, right_side);
