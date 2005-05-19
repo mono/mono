@@ -1,3 +1,12 @@
+2005-05-19  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs
+	(ImplicitDelegateCreation.Check): Added `bool check_only' argument
+	to disable error reporting.
+
+	* convert.cs (Convert.ImplicitStandardConversionExists): Use it
+	here since we don't want to report an error; see the new test-336.cs.
+
 2005-05-19  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (ToplevelBlock.GetParameterReference)

@@ -767,7 +767,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
+		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg,
+							     bool check_only)
 		{
 			foreach (MethodInfo mi in mg.Methods){
 				delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
@@ -777,7 +778,8 @@ namespace Mono.CSharp {
 			}
 			
 			if (delegate_method == null) {
-				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
+				if (!check_only)
+					Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
 				return null;
 			}
 			
@@ -846,12 +848,13 @@ namespace Mono.CSharp {
 		{
 			return this;
 		}
-		
-		static public Expression Create (EmitContext ec, MethodGroupExpr mge, Type target_type, Location loc)
+
+		static public Expression Create (EmitContext ec, MethodGroupExpr mge,
+						 Type target_type, bool check_only, Location loc)
 		{
 			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, loc);
 			if (d.ResolveConstructorMethod (ec))
-				return d.ResolveMethodGroupExpr (ec, mge);
+				return d.ResolveMethodGroupExpr (ec, mge, check_only);
 			else
 				return null;
 		}
@@ -896,7 +899,7 @@ namespace Mono.CSharp {
 
 			MethodGroupExpr mg = e as MethodGroupExpr;
 			if (mg != null)
-				return ResolveMethodGroupExpr (ec, mg);
+				return ResolveMethodGroupExpr (ec, mg, false);
 
 			Type e_type = e.Type;
 
