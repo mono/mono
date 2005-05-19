@@ -17,7 +17,6 @@ cs0121-3.cs NO ERROR
 cs0122-12.cs
 cs0133-3.cs IGNORE
 cs0146.cs NO ERROR
-cs0161-2.cs NO ERROR # new in GMCS
 cs0201.cs
 cs0202.cs # new in GMCS
 cs0229.cs NO ERROR
