@@ -236,19 +236,29 @@
 		- 8 Final form in presentation form B in FE82-FEF2
 		- 18 Medial form in presentation form B in FE8C-FEF4
 
+		Grep "ISOLATED", "FINAL" or "MEDIAL" against UnicodeData.txt
+		(and filter by codepoints).
+		or alternatively, see DerivedDecompositionType.txt.
+
 		- 22 6A9 (TODO: what is it?)
 		- 28 6AA (TODO: what is it?)
 
 	For other letters:
-		- 1 Fullwidth
-		- 2 Subscript, TODO: some Arabic characters?
+		- 1 Fullwidth. UnicodeData.txt has <full>.
+		- 2 Subscript. UnicodeData.txt has <sub>.
 		- 8 Small capital, 03C2 (TODO: why?),
 		    2104, 212B(flag=1A) (TODO: why?)
+		    grep "SMALL CAPITAL" against UnicodeData.txt.
 		- C only FE42. TODO: what is this?
-		- E Superscripts
-		- 10 Uppercase
+		- E Superscripts. UnicodeData.txt has <super>.
+		- 10 Uppercase.
+		     DerivedCoreProperties.txt has Uppercase property.
 
 	Note that simple 02 (value is 00) could be omitted.
+
+	Summary: at least 7 bits are required as to represent a table -
+	smallCapital, uppercase, normalization forms (2 bits:full/sub/super),
+	arabic forms (2 bits:isolated/medial/final)
 
 **** level 4
 
@@ -759,6 +769,7 @@
 
 	- ignorable, ignorable nonspace, normalize width, normalize kanatype
 	- level 4 sortkey provision method(s)
+	- bool HasLevel3(char)
 	- bool HasVariableWeight(char)
 
 	- bool HasContractionAsHead(char)

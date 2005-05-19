@@ -364,6 +364,82 @@ namespace Mono.Globalization.Unicode
 			return Normalization.ToWidthInsensitive (i);
 		}
 
+		#region Level 3 properties (Case/Width)
+
+		public static byte GetLevel3WeightRaw (char c) // add 2 for sortkey value
+		{
+			// Korean
+			if (0x1100 <= c && c <= 0x11F9)
+				return 2;
+			if (0xFFA0 <= c && c <= 0xFFDC)
+				return 4;
+			if (0x3130 <= c && c <= 0x3164)
+				return 5;
+			// numbers
+			if (0x2776 <= c && c <= 0x277F)
+				return 4;
+			if (0x2780 <= c && c <= 0x2789)
+				return 8;
+			if (0x2776 <= c && c <= 0x2793)
+				return 0xC;
+			if (0x2160 <= c && c <= 0x216F)
+				return 0x10;
+			if (0x2181 <= c && c <= 0x2182)
+				return 0x10;
+			// Arabic
+			if (0x2135 <= c && c <= 0x2138)
+				return 4;
+			if (0xFE80 <= c && c <= 0xFE8E)
+				return GetArabicFormInPresentationB (c);
+
+			// actually I dunno the reason why they have weights.
+			switch (c) {
+			case 0x01BC:
+				return 0x10;
+			case 0x06A9:
+				return 0x20;
+			case 0x06AA:
+				return 0x28;
+			}
+
+			byte ret = 0;
+			switch (c) {
+			case 0x03C2:
+			case 0x2104:
+			case 0x212B:
+				ret |= 8;
+				break;
+			case 0xFE42:
+				ret |= 0xC;
+				break;
+			}
+
+			// misc
+			switch (GetNormalizationType (c)) {
+			case 1: // <full>
+				ret |= 1;
+				break;
+			case 2: // <sub>
+				ret |= 1;
+				break;
+			case 3: // <super>
+				ret |= 0xE;
+				break;
+			}
+			if (IsSmallCapital (c)) // grep "SMALL CAPITAL"
+				ret |= 8;
+			if (IsUppercase (c)) // DerivedCoreProperties
+				ret |= 0x10;
+
+			return ret;
+		}
+
+		// TODO: implement GetArabicFormInRepresentationD(),
+		// GetNormalizationType(), IsSmallCapital() and IsUppercase().
+		// (They can be easily to be generated.)
+
+		#endregion
+
 		#region Level 4 properties (Kana)
 
 		public static byte GetJapaneseDashType (char c)
