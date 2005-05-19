@@ -9,7 +9,7 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 # Here, we define a bunch of variables.
 
 corlib_flags = /unsafe /nostdlib
-LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -d:INSIDE_CORLIB
+LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB
 
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
