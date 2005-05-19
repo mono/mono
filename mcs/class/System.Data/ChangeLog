@@ -1,3 +1,9 @@
+2005-05-19 Umadevi S <sumadevi@novell.com>
+
+	* System.Data.dll.sources: Added SqlBulkCopyOptions.cs,SqlBulkCopyColumnMapping.cs,
+			SqlNotificationAuthType.cs,SqlNotificationTransports.cs,
+			SqlRowsCopiedEventArgs.cs, SqlRowsCopiedEventHandler.cs
+
 2005-05-16  Konstantin Triger <kostat@mainsoft.com>
 
 	* Test/System.Data/DataSetTest.cs: performing correct cleanup

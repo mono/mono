@@ -330,6 +330,12 @@ System.Data.SqlClient/SQLDebugging.cs
 System.Data.SqlClient/SqlClientFactory.cs
 System.Data.SqlClient/SqlConnectionFactory.cs
 System.Data.SqlClient/SqlDataSourceEnumerator.cs
+System.Data.SqlClient/SqlBulkCopyOptions.cs
+System.Data.SqlClient/SqlBulkCopyColumnMapping.cs
+System.Data.SqlClient/SqlNotificationAuthType.cs
+System.Data.SqlClient/SqlNotificationTransports.cs
+System.Data.SqlClient/SqlRowsCopiedEventHandler.cs
+System.Data.SqlClient/SqlRowsCopiedEventArgs.cs
 System.Data/XmlDataLoader.cs
 System.Data/XmlSchemaDataImporter.cs
 System.Data/XmlSchemaWriter.cs
