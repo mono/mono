@@ -1667,6 +1667,11 @@ public partial class TypeManager {
 	{
 		return t == null_type;
 	}
+
+	public static bool IsAttributeType (Type t)
+	{
+		return (t == attribute_type) || t.IsSubclassOf (attribute_type);
+	}
 	
 	static Stack unmanaged_enclosing_types = new Stack (4);
 

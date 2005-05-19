@@ -1071,16 +1071,6 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (IsGeneric && base_class.Type.IsSubclassOf (TypeManager.attribute_type)){
-					Report.Error (
-						698, base_class.Location,
-						"A generic type cannot derive from `{0}' " +
-						"because it is an attribute class",
-						base_class.Name);
-					error = true;
-					return null;
-				}
-
 				if (base_class.Type.IsArray || base_class.Type.IsPointer) {
 					Report.Error (1521, base_class.Location, "Invalid base type");
 					return null;
@@ -1300,6 +1290,15 @@ namespace Mono.CSharp {
 				}
 
 				ptype = base_type.Type;
+
+				if (IsGeneric && TypeManager.IsAttributeType (ptype)) {
+					Report.Error (698, base_type.Location,
+						      "A generic type cannot derive from `{0}' " +
+						      "because it is an attribute class",
+						      base_type.Name);
+					error = true;
+					return null;
+				}
 			}
 
 			if (ptype != null)
