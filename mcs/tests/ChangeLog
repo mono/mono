@@ -1,3 +1,7 @@
+2005-05-20  Martin Baulig  <martin@ximian.com>
+
+	* test-336.cs: Replaced with a working test.
+
 2005-05-18  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Updated after the last merging.

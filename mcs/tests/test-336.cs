@@ -1,17 +1,21 @@
 using System;
-using System.Threading;
 
-class A {
-	static void X () {
-		Console.WriteLine ();
-	}
-	static void Main () {
-		Thread t = new Thread (X);
+public delegate void Foo ();
+public delegate void Bar (int x);
+
+class X
+{
+	public X (Foo foo)
+	{ }
+
+	public X (Bar bar)
+	{ }
+
+	static void Test ()
+	{ }
+
+	static void Main ()
+	{
+		X x = new X (Test);
 	}
 }
-
-
-
-
-
-
