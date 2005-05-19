@@ -354,7 +354,7 @@ public class CryptoConfig {
 
 		// Add/modify the config as specified by machine.config
 		string config = Environment.GetMachineConfigPath ();
-		LoadConfig (config);
+		LoadConfig (config, algorithms, oid);
 
 		// update
 		CryptoConfig.algorithms = algorithms;
@@ -362,7 +362,7 @@ public class CryptoConfig {
 	}
 
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
-	private static void LoadConfig (string filename) 
+	private static void LoadConfig (string filename, Hashtable algorithms, Hashtable oid)
 	{
 		if (!File.Exists (filename))
 			return;

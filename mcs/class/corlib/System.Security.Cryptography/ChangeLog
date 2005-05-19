@@ -1,3 +1,8 @@
+2005-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Don't use the global hashtables until the 
+	initialization is complete.
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Changed lock pattern to second version of
