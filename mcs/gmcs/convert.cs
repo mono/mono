@@ -706,7 +706,8 @@ namespace Mono.CSharp {
 						// This should not happen frequently, so we can create an object
 						// to test compatibility
 						//
-						Expression c = ImplicitDelegateCreation.Create (ec, mg, target_type, Location.Null);
+						Expression c = ImplicitDelegateCreation.Create (
+							ec, mg, target_type, true, Location.Null);
 						return c != null;
 					}
 				}
@@ -1253,7 +1254,8 @@ namespace Mono.CSharp {
 				if (RootContext.Version != LanguageVersion.ISO_1){
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
-						return ImplicitDelegateCreation.Create (ec, mg, target_type, loc);
+						return ImplicitDelegateCreation.Create (
+							ec, mg, target_type, false, loc);
 				}
 			}
 
