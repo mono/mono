@@ -1,3 +1,11 @@
+2005-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsCas.cs: New. CAS unit tests for Dns.
+	* DnsTest.cs: Fixed the wrong End* method being used in AsyncResolve.
+	* FileWebRequestCas.cs: New. CAS unit tests for FileWebRequest.
+	* HttpWebRequestCas.cs: New. CAS unit tests for HttpWebRequest.
+	* WebRequestTest.cs: Added tests to validate exceptions.
+
 2005-03-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequestTest.cs: added cookie handling test.

@@ -34,7 +34,8 @@ public class DnsTest : Assertion {
                 noneExistingSite = "www.unlikely.novell.com";
         private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
         
-        private void Callback(IAsyncResult ar) { 
+	private void GetHostByNameCallback (IAsyncResult ar)
+	{
                 IPHostEntry h;
                 h = Dns.EndGetHostByName(ar);
                 SubTestValidIPHostEntry(h);
@@ -43,18 +44,24 @@ public class DnsTest : Assertion {
 	[Test]
         public void AsyncGetHostByName(){
                 IAsyncResult r;
-                r = Dns.BeginGetHostByName(site1Name, new AsyncCallback(Callback), null);
+                r = Dns.BeginGetHostByName (site1Name, new AsyncCallback (GetHostByNameCallback), null);
                 
 		IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 		IPHostEntry entry = Dns.EndGetHostByName (async);                
 		SubTestValidIPHostEntry(entry);
 		AssertEquals ("#1", "www.go-mono.com", entry.HostName);
         }
+
+	private void ResolveCallback (IAsyncResult ar)
+	{
+		IPHostEntry h = Dns.EndResolve (ar);
+		SubTestValidIPHostEntry (h);
+	}
         
 	[Test]
         public void AsyncResolve() {
                 IAsyncResult r;
-                r = Dns.BeginResolve(site1Name, new AsyncCallback(Callback), null);
+                r = Dns.BeginResolve (site1Name, new AsyncCallback (ResolveCallback), null);
 
 		IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 		IPHostEntry entry = Dns.EndResolve (async);                

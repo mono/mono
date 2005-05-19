@@ -2,26 +2,193 @@
 // WebRequestTest.cs - NUnit Test Cases for System.Net.WebRequest
 //
 // Authors:
-//   Lawrence Pit (loz@cable.a2000.nl)
-//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//	Lawrence Pit (loz@cable.a2000.nl)
+//	Martin Willemoes Hansen (mwh@sysrq.dk)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Net;
 using System.Collections;
-using System.Security;
-using System.Security.Permissions;
+using System.Runtime.Serialization;
 
-namespace MonoTests.System.Net
-{
+namespace MonoTests.System.Net {
 
-[TestFixture]
-public class WebRequestTest
-{
-        [Test]
+	// WebRequest is abstract
+
+	public class NonAbstractWebRequest : WebRequest
+	{
+
+		public NonAbstractWebRequest ()
+		{
+		}
+
+		public NonAbstractWebRequest (SerializationInfo si, StreamingContext sc)
+			: base (si, sc)
+		{
+		}
+	}
+
+	[TestFixture]
+	public class WebRequestTest {
+
+		private void Callback (IAsyncResult ar)
+		{
+			Assert.Fail ("Callback");
+		}
+
+		[Test]
+		public void SerializationConstructor ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest (null, new StreamingContext ());
+			Assert.IsNotNull (w);
+		}
+
+		// properties (only test 'get'ter)
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void ConnectionGroupName ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.ConnectionGroupName);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void ContentLength ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.ContentLength);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void ContentType ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.ContentType);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Credentials ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.Credentials);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Headers ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.Headers);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Method ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.Method);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void PreAuthenticate ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsTrue (w.PreAuthenticate);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Proxy ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.Proxy);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void RequestUri ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.RequestUri);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Timeout ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			Assert.IsNull (w.Timeout);
+		}
+
+		// methods
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Abort ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			w.Abort ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void BeginGetRequestStream ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			IAsyncResult r = w.BeginGetRequestStream (new AsyncCallback (Callback), w);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void BeginGetResponse ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			IAsyncResult r = w.BeginGetResponse (new AsyncCallback (Callback), w);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void EndGetRequestStream ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			w.EndGetRequestStream (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void EndGetResponse ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			w.EndGetResponse (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void GetRequestStream ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			w.GetRequestStream ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void GetResponse ()
+		{
+			NonAbstractWebRequest w = new NonAbstractWebRequest ();
+			w.GetResponse ();
+		}
+
+	[Test]
         public void All ()
         {
 		WebRequest req = WebRequest.Create ("http://www.contoso.com");
