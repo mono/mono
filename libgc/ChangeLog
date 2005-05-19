@@ -1,3 +1,6 @@
+2005-05-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Handle i386-*-linux* as well. Fixes #74960.	
 
 Tue May 3 16:28:26 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
