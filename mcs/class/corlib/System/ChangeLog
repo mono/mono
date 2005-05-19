@@ -1,3 +1,8 @@
+2005-05-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Console.cs (Readline) [NET_2_0]: Avoid "uninitialized variable"
+	error.
+
 2005-05-19  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs: Removed warning.

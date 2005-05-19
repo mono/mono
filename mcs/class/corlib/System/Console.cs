@@ -421,7 +421,7 @@ namespace System
 #if NET_2_0
 		public static string ReadLine ()
 		{
-			bool prevEcho;
+			bool prevEcho = false;
 			if (ConsoleDriver.Initialized) {
 				prevEcho = ConsoleDriver.Echo;
 				ConsoleDriver.Echo = true;
