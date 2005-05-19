@@ -19,9 +19,7 @@ cs0201.cs
 cs0202.cs # new in GMCS
 cs0229.cs NO ERROR
 cs0229-2.cs
-cs0231.cs # new in GMCS; grammar issue
 cs0245.cs
-cs0257.cs # new in GMCS; grammar issue
 cs0266.cs
 cs0266-2.cs NO ERROR
 cs0266-3.cs
@@ -62,7 +60,7 @@ cs1638.cs NO ERROR
 cs1641.cs
 cs1666.cs NO ERROR
 cs2007.cs
-gcs0080.cs # grammar issue
+cs0146.cs
+gcs0146.cs
 gcs0694.cs NO ERROR
-gcs0698.cs NO ERROR
 gcs1644-2.cs NO ERROR
