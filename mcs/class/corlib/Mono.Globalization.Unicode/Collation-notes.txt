@@ -216,23 +216,39 @@
 
 **** level 3
 
+	The actual values are + 2 (e.g. for Hangul Normal Jamo, the value is 4)
+
 	For Korean letters:
-		- 4: Jongseong
-		- 6: Half width
-		- 7: Compat
+		- 2: Normal Jamo (1100-11F9)
+		- 4: Half width? (FFA0-FFDC) and Compatibility Jamo? (3165-318E)
+		- 5: Compatibility Jamo (3130-3164)?
+		     TODO: Learn about Korean characters.
 
-	For other letters the value is 02 + flags:
-		- 1 (full-width)
-		- 4 (subscript)
-		- 6 (TODO: find out what this means)
-		- A (TODO: find out what this means)
-		- C (vertical? e.g. FE42)
-		- E (maybe superscript. TODO: 278A is not a superscript,
-		     so maybe it is wrong, or it is really just a combination
-		     of flags)
-		- 10 (upper)
+	For numbers:
+		- 4 circled inverse (2776-277F)
+		- 8 circled sans serif (2780-2789)
+		- C circled inverse && sans serif (278A-2793)
+		- 18 Roman, 1BC (TODO: why?)
 
-	Note that simple 02 could be omitted.
+	For Arabic letters:
+		- 2 Isolated form in presentation form B in FE80-FE8D
+		- 4 Alef/Bet/Gimel/Dalet (2135-2138)
+		- 8 Final form in presentation form B in FE82-FEF2
+		- 18 Medial form in presentation form B in FE8C-FEF4
+
+		- 22 6A9 (TODO: what is it?)
+		- 28 6AA (TODO: what is it?)
+
+	For other letters:
+		- 1 Fullwidth
+		- 2 Subscript, TODO: some Arabic characters?
+		- 8 Small capital, 03C2 (TODO: why?),
+		    2104, 212B(flag=1A) (TODO: why?)
+		- C only FE42. TODO: what is this?
+		- E Superscripts
+		- 10 Uppercase
+
+	Note that simple 02 (value is 00) could be omitted.
 
 **** level 4
 
@@ -243,11 +259,11 @@
 	the values for character by character:
 	- small letter type (kogaki moji); C4 (small) or E4 (normal)
 	- category middle section:
-		+ dash mark 4 (\u309D,\u309E,\u30FD,\u30FE), 5 (\u30FC)
+		+ dash mark 4 (\u309D,\u309E,\u30FD,\u30FE,\uFF70), 5 (\u30FC)
 		  LAMESPEC: those characters of value '4' differs in level 2
 		  wrt voice marks, but does not differetiate kana types (bug).
 		  It is ignored when IgnoreNonSpace applies.
-		+ 0x02.
+		'0x02'
 		+ kana type: E4 (hiragana) or C4 (katakana)
 	- width; C5 (full) or C4 (half)
 
@@ -743,11 +759,18 @@
 
 	- ignorable, ignorable nonspace, normalize width, normalize kanatype
 	- level 4 sortkey provision method(s)
-	- (has) variable weighting
-	- (has) contraction, both from head and tail
-	- (has) expansion
+	- bool HasVariableWeight(char)
+
+	- bool HasContractionAsHead(char)
+	- bool HasContractionAsTail(char)
+	- int IndexToContraction(char)
+	- char [] ContractionTable
+	- bool HasExpansion(char)
+	- int IndexToExpansion(char)
+	- char [] ExpansionTable
+
 	- default sortkey table
-	- culture dependent sortkey table
+	- culture dependent CJK table
 	- culture dependent sortkey adjustment table
 	  (culture-specific modification)
 
@@ -842,18 +865,17 @@
 
 **** Level 3: Case properties
 
-	Case properties will be halfly computed and halfly stored as a byte
-	array (mostly for Latin characters), with limited areas of codepoint
-	(cp < 3120 || FE00 < cp).
+	Case properties will be stored as a byte array, with limited areas of
+	codepoint (cp < 3120 || FE00 < cp).
 
 	For Hangul characters, it will be computed by codepoint areas.
 
 **** Level 2: Diacritical properties
 
-	The table will be composed as two byte for a character. Actually when
+	The table will be composed as two bytes for a character. Actually when
 	MS compatible (discriminatory) mode, the second byte will be always 0.
 
-	Note that Japanese voice mark is considered at level 2 but no need to
+	Note that Japanese voice marks are considered at level 2 but no need to
 	have maps.
 
 
