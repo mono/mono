@@ -1,3 +1,9 @@
+2005-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebRequest.cs: Throw NotImplementedException (not NotSupported
+	Exception) for stuff that should have been abstract. No exception
+	is thrown by the serialization constructor.
+
 2005-05-04 James Willcox  <james@ximian.com>
 
 	* DigestClient.cs: convert to a hex string with "X8" consistently

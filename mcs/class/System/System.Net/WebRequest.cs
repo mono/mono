@@ -47,79 +47,80 @@ namespace System.Net
 			ConfigurationSettings.GetConfig ("system.net/webRequestModules");
 		}
 		
-		protected WebRequest () { }		
+		protected WebRequest () 
+		{
+		}
 		
 		protected WebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
-			throw new NotSupportedException ();
 		}
 		
 		// Properties
 		
 		public virtual string ConnectionGroupName { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual long ContentLength { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual string ContentType { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual ICredentials Credentials { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual WebHeaderCollection Headers { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual string Method { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual bool PreAuthenticate { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual IWebProxy Proxy { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		public virtual Uri RequestUri { 
-			get { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
 		}
 		
 		public virtual int Timeout { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 		
 		// Methods
 		
 		public virtual void Abort()
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 		
 		public virtual IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 		
 		public virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 
 		public static WebRequest Create (string requestUriString) 
@@ -145,22 +146,22 @@ namespace System.Net
 
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 		
 		public virtual WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 		
 		public virtual Stream GetRequestStream()
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 		
 		public virtual WebResponse GetResponse()
 		{
-			throw new NotSupportedException ();
+			throw new NotImplementedException ();
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
