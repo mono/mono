@@ -83,7 +83,7 @@ namespace System.Windows.Forms {
 				alignment = value;
 				if (alignment == TabAlignment.Left || alignment == TabAlignment.Right)
 					multiline = true;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace System.Windows.Forms {
 				if (appearance == value)
 					return;
 				appearance = value;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -126,7 +126,7 @@ namespace System.Windows.Forms {
 				if (draw_mode == value)
 					return;
 				draw_mode = value;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace System.Windows.Forms {
 				if (hottrack == value)
 					return;
 				hottrack = value;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 				if (value.Height < 0 || value.Width < 0)
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'ItemSize'.");
 				item_size = value;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -176,7 +176,7 @@ namespace System.Windows.Forms {
 				multiline = value;
 				if (!multiline && alignment == TabAlignment.Left || alignment == TabAlignment.Right)
 					alignment = TabAlignment.Top;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -189,7 +189,7 @@ namespace System.Windows.Forms {
 				if (padding == value)
 					return;
 				padding = value;
-				Refresh ();
+				Redraw ();
 			}
 
 		}
@@ -275,7 +275,7 @@ namespace System.Windows.Forms {
 				if (show_tool_tips == value)
 					return;
 				show_tool_tips = value;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace System.Windows.Forms {
 				if (size_mode == value)
 					return;
 				size_mode = value;
-				Refresh ();
+				Redraw ();
 			}
 		}
 
@@ -737,7 +737,7 @@ namespace System.Windows.Forms {
  
 				if (SizeMode == TabSizeMode.Fixed) {
 					width = item_size.Width;
-				} else {
+				} else {                                        
 					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
 				}
 
@@ -857,6 +857,12 @@ namespace System.Windows.Forms {
 		private void SetTab (int index, TabPage value)
 		{
 			((IList) Controls).Insert (index, value);
+			Redraw ();
+		}
+
+		internal void Redraw ()
+		{
+			ResizeTabPages ();
 			Refresh ();
 		}
 

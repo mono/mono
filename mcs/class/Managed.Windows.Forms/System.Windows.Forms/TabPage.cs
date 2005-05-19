@@ -50,7 +50,7 @@ namespace System.Windows.Forms {
 
 		public TabPage (string text) : base ()
 		{
-			Text = text;
+			base.Text = text;
 		}
 
 		#endregion	// Public Constructors
@@ -110,7 +110,7 @@ namespace System.Windows.Forms {
 		public override string Text {
 			get { return base.Text; }
 			set {
-				if (value == Text)
+				if (value == base.Text)
 					return;
 				base.Text = value;
 				UpdateOwner ();
@@ -176,7 +176,7 @@ namespace System.Windows.Forms {
 		private void UpdateOwner ()
 		{
 			if (Owner != null) {
-				Owner.Refresh ();
+				Owner.Redraw ();
 			}
 		}
 
