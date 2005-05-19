@@ -1,3 +1,8 @@
+2005-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Do not report Obsolete warnings when compiling unit tests.
+	* System_test.dll.sources: Added new CAS unit tests to the build.
+
 2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System_test.dll.sources,

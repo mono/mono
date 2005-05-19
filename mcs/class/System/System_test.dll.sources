@@ -65,3 +65,8 @@ System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs
 System.Web/AspNetHostingPermissionAttributeTest.cs
 System.Web/AspNetHostingPermissionTest.cs
+System.IO.Compression/DeflateStreamCas.cs
+System.IO.Compression/GZipStreamCas.cs
+System.Net/DnsCas.cs
+System.Net/FileWebRequestCas.cs
+System.Net/HttpWebRequestCas.cs
