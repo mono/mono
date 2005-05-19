@@ -46,6 +46,11 @@ namespace System.Windows.Forms {
 			UpdateEditText ();
 		}
 		
+		#region Events
+		public new event EventHandler TextChanged;
+		public event EventHandler ValueChanged;
+		#endregion Events
+		
 #region ISupportInitialize methods
 
 		//
@@ -80,7 +85,7 @@ namespace System.Windows.Forms {
 				ParseEditText ();
 
 			if (updown_value-increment >= min){
-				updown_value -= increment;
+				Value -= increment;
 				UpdateEditText ();
 			}
 		}
@@ -91,7 +96,7 @@ namespace System.Windows.Forms {
 				ParseEditText ();
 
 			if (updown_value + increment <= max){
-				updown_value += increment;
+				Value += increment;
 				UpdateEditText ();
 			}
 		}
@@ -135,6 +140,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (updown_value ==  value) {
+					return;
+				}
+				
 				if (on_init){
 					updown_value = value;
 					return;
@@ -145,6 +154,7 @@ namespace System.Windows.Forms {
 						String.Format ("Value {0} not within boundaries [{1}, {2}]", value, min, max));
 				
 				updown_value = value;
+				OnValueChanged (EventArgs.Empty);
 				Text = updown_value.ToString (format);
 			}
 		}
@@ -249,7 +259,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
-		{
+		{			
 			// TODO: What to do?
 		}
 
@@ -265,7 +275,11 @@ namespace System.Windows.Forms {
 			// TODO: Apparently we must validate digit input here
 		}
 #endregion
-		
+		protected virtual void OnValueChanged (EventArgs e)
+		{
+			if (ValueChanged != null)
+				ValueChanged (this, e);
+		}
 
 		public override string ToString ()
 		{

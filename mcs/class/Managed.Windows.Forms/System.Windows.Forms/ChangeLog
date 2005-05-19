@@ -1,6 +1,10 @@
-2005-05-19  Jackson Harper  <jackson@ximian.com>
+2005-05-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* ThemeWin32Classic.cs: Draw the text for button tabs.
+	* UpDownBase.cs:
+		- Calc preferred height properly
+		- Implement missing properties
+		
+	* NumericUpDown.cs: Implement missing events
 
 2005-05-19  Jackson Harper  <jackson@ximian.com>
 

@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 			
 			internal Spinner (UpDownBase updownbase)
 			{
-				this.updownbase = updownbase;
+				this.updownbase = updownbase;				
 			}
 
 			protected override void OnPaint (PaintEventArgs pe)
@@ -234,8 +234,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		BorderStyle border_style = BorderStyle.Fixed3D;
-		int desired_height = 0;
+		BorderStyle border_style = BorderStyle.Fixed3D;		
 		TextBox entry;
 		Spinner spinner;
 		int border;
@@ -243,15 +242,14 @@ namespace System.Windows.Forms {
 		LeftRightAlignment updown_align = LeftRightAlignment.Right;
 		bool changing_text = false;
 		bool user_edit = false;
-		bool intercept = true;
+		bool intercept = true;		
 		
 		public UpDownBase () : base ()
 		{
 			SuspendLayout ();
 
 			entry = new TextBox ();
-			entry.Font = Font;
-			entry.Size = new Size (120, Font.Height);
+			entry.Font = Font;			
 			entry.LostFocus += new EventHandler (EntryOnLostFocus);
 			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
 			entry.KeyDown += new KeyEventHandler (OnTextBoxKeyDown);
@@ -313,15 +311,13 @@ namespace System.Windows.Forms {
 		{
 			base.OnFontChanged (e);
 
-			entry.Font = Font;
-			desired_height = entry.Height;
-			Height = desired_height;
+			entry.Font = Font;			
+			Height = PreferredHeight;
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
-			base.OnHandleCreated (e);
-			desired_height = entry.Height;
+			base.OnHandleCreated (e);			
 		}
 				
 		protected override void OnLayout (LayoutEventArgs args)
@@ -365,7 +361,7 @@ namespace System.Windows.Forms {
 			//
 			// Force the size to be our height.
 			//
-			base.SetBoundsCore (x, y, width, desired_height, specified);
+			base.SetBoundsCore (x, y, width, PreferredHeight, specified);
 		}
 		
 		protected override void Dispose (bool disposing)
@@ -536,6 +532,14 @@ namespace System.Windows.Forms {
 				return base.CreateParams;
 			}
 		}
+		
+		protected override Size DefaultSize {
+			get { return new Size (120, PreferredHeight);}
+		}
+				
+		public new DockPaddingEdges DockPadding {
+			get { return base.DockPadding; }
+		}
 
 		protected bool UserEdit {
 			get {
@@ -618,6 +622,34 @@ namespace System.Windows.Forms {
 
 			set {
 				intercept = value;
+			}
+		}
+		
+		public int PreferredHeight {
+			get {
+				if (entry == null)
+					return Height + 3;
+				
+				return entry.Height + 3;
+			}
+		}		
+		
+		public HorizontalAlignment TextAlign {
+			get {
+				return entry.TextAlign;
+			}
+			
+			set {
+				if (value == entry.TextAlign)
+					return;
+					
+				if (value != HorizontalAlignment.Right && value != HorizontalAlignment.Left
+					&& value != HorizontalAlignment.Center) {
+					throw new InvalidEnumArgumentException ("The value assigned is not one of the HorizontalAlignment values.");
+						
+				}
+				
+				entry.TextAlign = value;
 			}
 		}
 #endregion
