@@ -1,5 +1,9 @@
 2005-05-20  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay: Fix CS0080 check; add CS0231 and CS0257 from MCS.
+
+2005-05-20  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.DefineType): Fix CS0698 check.
 
 	* typemanager.cs (TypeManager.IsAttributeType): New public method.

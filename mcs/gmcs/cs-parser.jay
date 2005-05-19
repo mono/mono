@@ -756,9 +756,13 @@ struct_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  STRUCT member_name
+	  STRUCT
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
+	  member_name
 	  { 
-		MemberName name = MakeName ((MemberName) $5);
+		MemberName name = MakeName ((MemberName) $6);
 		bool partial = (bool) $3;
 
 		if (partial) {
@@ -777,18 +781,16 @@ struct_declaration
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name, current_class);
 		}
-
-		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
 
-		if ($7 != null)
-			current_class.Bases = (ArrayList) $7;
+		if ($8 != null)
+			current_class.Bases = (ArrayList) $8;
 
-		current_class.SetParameterInfo ((ArrayList) $8);
+		current_class.SetParameterInfo ((ArrayList) $9);
 
 		if (RootContext.Documentation != null)
 			current_class.DocComment = Lexer.consume_doc_comment ();
@@ -1202,6 +1204,16 @@ formal_parameter_list
 
 		$$ = new Parameters (pars, true, lexer.Location);
 	  }
+	| parameter_array COMMA fixed_parameters
+	  {
+		Report.Error (231, lexer.Location, "A params parameter must be the last parameter in a formal parameter list");
+		$$ = null;
+	  }
+	| ARGLIST COMMA fixed_parameters
+	  {
+		Report.Error (257, lexer.Location, "An __arglist parameter must be the last parameter in a formal parameter list");
+		$$ = null;
+	  }
 	| parameter_array 
 	  {
 		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
@@ -1456,9 +1468,13 @@ interface_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  INTERFACE member_name
+	  INTERFACE
 	  {
-		MemberName name = MakeName ((MemberName) $5);
+		lexer.ConstraintsParsing = true;
+	  }
+	  member_name
+	  {
+		MemberName name = MakeName ((MemberName) $6);
 		bool partial = (bool) $3;
 
 		if (partial) {
@@ -1477,18 +1493,16 @@ interface_declaration
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name, current_class);
 		}
-
-		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
 
-		if ($7 != null)
-			current_class.Bases = (ArrayList) $7;
+		if ($8 != null)
+			current_class.Bases = (ArrayList) $8;
 
-		current_class.SetParameterInfo ((ArrayList) $8);
+		current_class.SetParameterInfo ((ArrayList) $9);
 
 		if (RootContext.Documentation != null) {
 			current_class.DocComment = Lexer.consume_doc_comment ();
@@ -2499,13 +2513,17 @@ enum_member_declaration
 delegate_declaration
 	: opt_attributes
 	  opt_modifiers
-	  DELEGATE type member_name
+	  DELEGATE
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
+	  type member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Location l = lexer.Location;
-		MemberName name = MakeName ((MemberName) $5);
-		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
-					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
+		MemberName name = MakeName ((MemberName) $6);
+		Delegate del = new Delegate (current_namespace, current_class, (Expression) $5,
+					     (int) $2, name, (Parameters) $8, (Attributes) $1, l);
 
 		if (RootContext.Documentation != null) {
 			del.DocComment = Lexer.consume_doc_comment ();
@@ -2516,8 +2534,6 @@ delegate_declaration
 		RootContext.Tree.RecordDecl (name, del);
 
 		current_delegate = del;
-
-		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
 	  {
@@ -2525,7 +2541,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		current_delegate.SetParameterInfo ((ArrayList) $9);
+		current_delegate.SetParameterInfo ((ArrayList) $10);
 		$$ = current_delegate;
 
 		current_delegate = null;
@@ -3649,9 +3665,13 @@ class_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  CLASS member_name
+	  CLASS
 	  {
-		MemberName name = MakeName ((MemberName) $5);
+		lexer.ConstraintsParsing = true;
+	  }
+	  member_name
+	  {
+		MemberName name = MakeName ((MemberName) $6);
 		bool partial = (bool) $3;
 		int mod_flags = (int) $2;
 
@@ -3677,24 +3697,22 @@ class_declaration
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name, current_class);
 		}
-
-		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
 
-		if ($7 != null) {
+		if ($8 != null) {
 			if (current_class.Name == "System.Object") {
 				Report.Error (537, current_class.Location,
 					      "The class System.Object cannot have a base " +
 					      "class or implement an interface.");
 			}
-			current_class.Bases = (ArrayList) $7;
+			current_class.Bases = (ArrayList) $8;
 		}
 
-		current_class.SetParameterInfo ((ArrayList) $8);
+		current_class.SetParameterInfo ((ArrayList) $9);
 
 		if (RootContext.Documentation != null) {
 			current_class.DocComment = Lexer.consume_doc_comment ();
