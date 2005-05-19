@@ -418,21 +418,28 @@ namespace System
 			return stdin.Read ();
 		}
 
+#if NET_2_0
 		public static string ReadLine ()
 		{
-#if NET_2_0
 			bool prevEcho;
 			if (ConsoleDriver.Initialized) {
 				prevEcho = ConsoleDriver.Echo;
 				ConsoleDriver.Echo = true;
 			}
-#endif
-			return stdin.ReadLine ();
-#if NET_2_0
+
+			string ret = stdin.ReadLine ();
 			if (ConsoleDriver.Initialized)
 				ConsoleDriver.Echo = prevEcho;
-#endif
+
+			return ret;
 		}
+#else
+		public static string ReadLine ()
+		{
+			return stdin.ReadLine ();
+		}
+
+#endif
 
 #if NET_2_0
 		// On windows, for en-US the Default is Windows-1252, while input/output is IBM437

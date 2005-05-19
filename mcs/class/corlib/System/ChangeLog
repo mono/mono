@@ -1,3 +1,8 @@
+2005-05-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Console.cs: fix error in the 2_0 side and split ReadLine in 2, one
+	for each framework version.
+
 2005-05-15  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* Attribute.cs:
