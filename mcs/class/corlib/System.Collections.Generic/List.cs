@@ -277,6 +277,8 @@ namespace System.Collections.Generic
 			if ((uint) index > (uint) size)
 				throw new ArgumentOutOfRangeException ("index");
 			
+			if (size == data.Length)
+				 Capacity = Math.Max (Capacity * 2, DefaultCapacity);
 			Shift (index, 1);
 			this [index] = item;
 				

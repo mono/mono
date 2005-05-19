@@ -1,3 +1,7 @@
+2005-05-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* List.cs (Insert): Resize the array before the shift if needed
+
 2005-05-18  Miguel de Icaza  <miguel@novell.com>
 
 	* List.cs (GetRange): Implement.
