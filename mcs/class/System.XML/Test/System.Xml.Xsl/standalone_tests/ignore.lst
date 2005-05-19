@@ -113,3 +113,5 @@ XSLTFunctions_DocumentFunctionNoArg
 XSLTFunctions_ElementAvailFunctionTrueTest
 XSLTFunctions_specialCharInPattern
 
+Keys_PerfRepro2
+Keys_PerfRepro3

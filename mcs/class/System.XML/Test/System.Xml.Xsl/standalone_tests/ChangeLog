@@ -1,3 +1,12 @@
+2005-05-19  Andrew Skiba  <andrews@mainsoft.com>
+
+	* ignore.lst : ignore 2 performance tests, as we don't time them
+	anyway
+	* Makefile : store dom results in separate place, remove mainsoft
+	testssuite, handle reference results better
+	* xslttest.cs : improve reporting, improve path handling, store
+	results in different place
+	
 2005-05-17  Andrew Skiba  <andrews@mainsoft.com>
 
 	* xslttest.cs : xsl:message is always printed on stdout. So to clean

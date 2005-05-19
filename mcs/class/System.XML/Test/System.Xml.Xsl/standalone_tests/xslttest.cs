@@ -17,7 +17,7 @@ namespace XsltTest
 		static bool useDomStyle;
 		static bool useDomInstance;
 		static bool generateOutput;
-		static bool listOutput;
+		static string outputDir;
 		static bool whitespaceStyle;
 		static bool whitespaceInstance;
 		static bool stopImmediately;
@@ -31,6 +31,14 @@ namespace XsltTest
 		static StreamWriter failedTests = new StreamWriter ("failed.lst");
 #endregion
 
+		enum TestResult
+		{
+			Crash,		//exception
+			Failure,	//no exception but output is different
+			Unknown,	//no exception but expected result is unknown
+			Success,	//no exception and output is as expected
+		};
+		
 		static XsltTest ()
 		{
 			skipTargets = new ArrayList (new string [] {
@@ -50,7 +58,6 @@ Options:
 	--generate	Generate output files specified in catalog.
 			Use this feature only when you want to update
 			reference output.
-	--list		Print output list to console.
 	--noExclude	Don't exclude meaningless comparison testcases.
 	--outall	Output fine results as OK (omitted by default).
 	--stoponerror	Stops the test process and throw detailed
@@ -101,9 +108,6 @@ FileMatch:
 				case "--generate":
 					generateOutput = true;
 					break;
-				case "--list":
-					listOutput = true;
-					break;
 				case "--noExclude":
 					noExclude = true;
 					break;
@@ -145,6 +149,10 @@ FileMatch:
 					break;
 				}
 			}
+			if (useDomStyle || useDomInstance)
+				outputDir = "domresults";
+			else
+				outputDir = "results";
 		}
 			
 		static void RunMain (string [] args)
@@ -172,16 +180,8 @@ FileMatch:
 			XmlDocument whole = new XmlDocument ();
 			whole.Load (@"testsuite/TESTS/catalog-fixed.xml");
 
-			if (!listOutput)
-				Console.Error.WriteLine ("Started: " 
-						+ DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
-
 			foreach (XmlElement testCase in whole.SelectNodes ("test-suite/test-catalog/test-case"))
 				ProcessTestCase (testCase);
-
-			if (!listOutput)
-				Console.Error.WriteLine ("Finished: " 
-						+ DateTime.Now.ToString ("yyyyMMdd-HHmmss.fff"));
 
 			if (reportAsXml)
 				reportXmlWriter.WriteEndElement (); // test-results
@@ -205,36 +205,39 @@ FileMatch:
 				else
 					return; //unknown directory
 
-				string path = @"testsuite/TESTS/" + testAuthorDir + "/" + filePath + "/";
+				string relPath = Path.Combine (testAuthorDir, filePath);
+				string path = Path.Combine ("testsuite/TESTS", relPath);
+				string outputPath = Path.Combine (outputDir, relPath);
+				if (!Directory.Exists (outputPath))
+					Directory.CreateDirectory (outputPath);
 				foreach (XmlElement scenario in 
 						testCase.SelectNodes ("scenario[@operation='standard']")) {
-					RunTest (testid, scenario, path, stylesheetBase);
+					RunTest (testid, scenario, path, outputPath, stylesheetBase);
 				}
 			} catch (Exception ex) {
 				if (stopImmediately)
 					throw;
-				Report (false, testid, "Exception: " + ex.Message);
+				Report (TestResult.Crash, testid, "Exception: " + ex.Message);
 			}
 		}
 
-		static void RunTest (string testid, XmlElement scenario, string path, string stylesheetBase)
+		static void RunTest (string testid, XmlElement scenario, string path, string outputPath,
+				     string stylesheetBase)
 		{
-			stylesheetBase = scenario.SelectSingleNode ("input-file[@role='principal-stylesheet']").InnerText;
-			string stylesheet = path + stylesheetBase;
+			stylesheetBase = scenario.SelectSingleNode ("input-file[@role='principal-stylesheet']")
+				.InnerText;
+			string stylesheet = Path.Combine (path, stylesheetBase);
 			
 			if (!File.Exists (stylesheet)) {
 				missingFiles.WriteLine (stylesheet);
 				missingFiles.Flush ();
 			}
-			string srcxml = path + scenario.SelectSingleNode ("input-file[@role='principal-data']").InnerText;
+			string srcxml = Path.Combine (path,
+				scenario.SelectSingleNode ("input-file[@role='principal-data']").InnerText);
 			XmlNode outputNode = scenario.SelectSingleNode ("output-file[@role='principal']");
-			string outfile = outputNode != null ? path + outputNode.InnerText : null;
-
-			if (listOutput) {
-				if (outfile != null)
-					Console.Error.WriteLine (outfile);
-				return;
-			}
+			string outfile = null;
+			if (outputNode != null) 
+				outfile = Path.Combine (outputPath, outputNode.InnerText);
 
 			XslTransform trans = new XslTransform ();
 
@@ -276,55 +279,63 @@ FileMatch:
 			if (generateOutput) {
 				StreamWriter fw = new StreamWriter (outfile,
 					false, Encoding.UTF8);
-				fw.Write (sw.ToString ());
 				fw.Close ();
+				Report (TestResult.Success, testid, "Created reference result");
 				// ... and don't run comparison
 				return;
 			}
 
 			if (!File.Exists (outfile)) {
 				// Reference output file does not exist.
-				Report (true, testid, "No reference file found");
+				Report (TestResult.Unknown, testid, "No reference file found");
 				return;
 			}
 			StreamReader sr = new StreamReader (outfile);
-			string reference_out = sr.ReadToEnd ();
-			string actual_out = sw.ToString ();
+			string reference_out = sr.ReadToEnd ().Replace ("\r\n","\n");
+			string actual_out = sw.ToString ().Replace ("\r\n","\n");
+
 			if (reference_out != actual_out)
-				Report (false, testid, reference_out, actual_out);
+				Report (TestResult.Failure, testid, reference_out, actual_out);
 			else if (outputAll)
-				Report (true, testid, "OK");
+				Report (TestResult.Success, testid, "OK");
 		}
 
-		static void Report (bool passed, string testid, string message)
+		static void Report (TestResult res, string testid, string message)
 		{
-			if (passed) {
+			if (TestResult.Success == res) {
 				Console.Error.Write (".");
 				return;
 			}
- 			failedTests.WriteLine (testid + "\t" + message);
+			else if (TestResult.Unknown == res) {
+				Console.Error.Write ("?");
+				return;
+			}
+ 			
+			failedTests.WriteLine (testid + "\t" + message);
  			failedTests.Flush ();
+			
 			if (reportAsXml) {
 				reportXmlWriter.WriteStartElement ("testcase");
 				reportXmlWriter.WriteAttributeString ("id", testid);
 				reportXmlWriter.WriteString (message);
 				reportXmlWriter.WriteEndElement ();
-				if (knownFailures.Contains (testid))
-					Console.Error.Write ("k");
-				else
-					Console.Error.Write ("E");
 			}
+			
+			if (knownFailures.Contains (testid))
+				Console.Error.Write ("k");
+			else if (TestResult.Crash == res)
+				Console.Error.Write ("E");
 			else
-				reportOutput.WriteLine (message);
+				Console.Error.Write ("e");
 		}
 
-		static void Report (bool passed, string testid, string reference_out, string actual_out)
+		static void Report (TestResult res, string testid, string reference_out, string actual_out)
 		{
 			string baseMessage = reportAsXml ? "Different." : "Different: " + testid;
 			if (!reportDetails)
-				Report (passed, testid, baseMessage);
+				Report (res, testid, baseMessage);
 			else
-				Report (passed, testid, baseMessage +
+				Report (res, testid, baseMessage +
 					"\n Actual*****\n" + 
 					actual_out + 
 					"\n-------------------\nReference*****\n" + 

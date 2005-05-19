@@ -1,99 +1,77 @@
 #
-# "make" prepares automated download and build for both existing xslttest
-# and MainSoft tests.
+# "make" prepares automated download and build for all tests.
 #
 # "make run-test" executes both existing xslttest and MainSoft's new test
 # and reports the total diff numbers:
 #
-#	- For xslttest, it is "TestResult.xml" and
-#	- For MainSoft test, it is "diffreport.txt"
+#	- For xslttest, it is "TestResult.xml" and the list of the failed tests
+#	is in failed.lst
 #
 
-RUNTIME = mono --debug
+.SUFFIXES: .cs .exe
+
+RUNTIME = mono
 CSCOMPILE = mcs
-TESTS = testsuite/TESTS/Xalan_Conformance_Tests/whitespace/whitespace35.xsl
-TARGET_RESULTS = Results
-MSTEST_RESULTS = testsuite/TESTS/ExpectedResults
+
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
-XSLTTEST_RESULTS_ARCHIVE = xslttest-reference-output.zip
-MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults-20050214.zip
+CATALOG = testsuite/TESTS/catalog.xml
+FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
-test : xslttest.exe alltest.exe prepare
+TEST_EXE = xslttest.exe
+TEST_FLAGS = --report:TestResult.xml --xml --details --outall $(TEST_DOM) 
 
-prepare : $(TESTS) prepare-xslt prepare-mstest
+ifdef TEST_DOM
+REFERENCE_RESULTS_NAME = domresults
+else
+REFERENCE_RESULTS_NAME = results
+endif
+REFERENCE_RESULTS_ARCHIVE = xslt-reference-$(REFERENCE_RESULTS_NAME).tar.gz
+REFERENCE_RESULTS_URL = http://svn.myrealbox.com/source/trunk/release/$(REFERENCE_RESULTS_ARCHIVE)
+REFERENCE_RESULTS = $(REFERENCE_RESULTS_NAME)/timestamp
 
-prepare-xslt : xslttest.exe $(XSLTTEST_RESULTS) testsuite/TESTS/catalog-fixed.xml
+test : $(TEST_EXE) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
 
-prepare-mstest : alltest.exe $(MSTEST_RESULTS) testsuite/TESTS/catalog-fixed.xml
+run-test : $(TEST_EXE) $(FIXED_CATALOG)
+	# Redirect stdout to /dev/null because it has only xsl:message garbage
+	$(RUNTIME) $(RUNTIME_FLAGS) $(TEST_EXE) $(TEST_FLAGS) >/dev/null
 
-xslttest.exe : xslttest.cs
-	$(CSCOMPILE) xslttest.cs
+clean :
+	rm -f TestResult.xml failed.lst missing.lst
+	rm -f $(TEST_EXE)
 
-xmlnorm.exe : XmlNormalizer.cs
-	$(CSCOMPILE) XmlNormalizer.cs -out:xmlnorm.exe
+# Be careful to use it!
+distclean : clean
+	rm -rf testsuite
+	rm -f $(TEST_ARCHIVE) $(REFERENCE_RESULTS_ARCHIVE) $(REFERENCE_LIST)
 
-alltest.exe : alltest.cs
-	$(CSCOMPILE) alltest.cs
+# Check that we are running on MS.NET - otherwise the reference output can be
+# created on mono - and we will compare mono with mono
+must-be-dotnet:
+	uname | grep CYGWIN || uname | grep Windows
+	
+create-reference-output : must-be-dotnet $(TEST_EXE)
+	./$(TEST_EXE) $(TEST_DOM) --generate
+	cd $(REFERENCE_RESULTS_NAME); echo "$(TEST_DOM)" > generate_options # Must cd to work with any path separator
+	tar -c $(REFERENCE_RESULTS_NAME) | gzip > $(REFERENCE_RESULTS_ARCHIVE)
+	echo "Now you can upload $(REFERENCE_RESULTS_ARCHIVE) to $(REFERENCE_RESULTS_URL)"
 
-testsuite/TESTS/catalog-fixed.xml : testsuite/TESTS/catalog.xml catalog.sed
-	sed -f catalog.sed testsuite/TESTS/catalog.xml > testsuite/TESTS/catalog-fixed.xml
+.cs.exe :
+	$(CSCOMPILE) $<
 
-$(TESTS) : $(TEST_ARCHIVE)
+$(FIXED_CATALOG) : $(CATALOG) catalog.sed
+	sed -f catalog.sed $(CATALOG) > $(FIXED_CATALOG)
+
+$(CATALOG) : $(TEST_ARCHIVE)
 	unzip -un $(TEST_ARCHIVE)
-	touch $(TESTS)
-
-$(XSLTTEST_RESULTS) : $(XSLTTEST_RESULTS_ARCHIVE)
-	unzip -n -d $(XSLTTEST_RESULTS_ARCHIVE)
-	touch $(XSLTTEST_RESULTS)
-
-$(MSTEST_RESULTS) : $(MSTEST_RESULTS_ARCHIVE)
-	unzip -n -d testsuite/TESTS $(MSTEST_RESULTS_ARCHIVE)
-	touch $(MSTEST_RESULTS)
+	touch $(CATALOG)
 
 $(TEST_ARCHIVE) :
 	wget http://www.oasis-open.org/committees/download.php/9584/$(TEST_ARCHIVE)
 
-$(XSLTTEST_RESULTS_ARCHIVE) :
-	wget http://monkey.workarea.jp/mono/xml/$(XSLTTEST_RESULTS_ARCHIVE)
+$(REFERENCE_RESULTS) : $(REFERENCE_RESULTS_ARCHIVE)
+	tar -xzf $<
+	touch $@
 
-$(MSTEST_RESULTS_ARCHIVE) :
-	wget http://monkey.workarea.jp/mono/xml/$(MSTEST_RESULTS_ARCHIVE)
-
-run-test : run-test-xslt run-test-ms
-
-run-test-xslt : xslttest.exe testsuite/TESTS/catalog-fixed.xml
-	# Redirect stdout to /dev/null because it has only xsl:message garbage
-	$(RUNTIME) $(RUNTIME_FLAGS) xslttest.exe --report:TestResult.xml --xml --details --outall >/dev/null
-
-run-test-ms : alltest.exe xmlnorm.exe testsuite/TESTS/catalog-fixed.xml
-	$(RUNTIME) $(RUNTIME_FLAGS) ./alltest.exe $(TARGET_RESULTS)
-	mono ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
-	rm -rf testsuite/TESTS/$(TARGET_RESULTS)
-	mv testsuite/TESTS/norm-tmp testsuite/TESTS/$(TARGET_RESULTS)
-	diff -r -q testsuite/TESTS/ExpectedResults testsuite/TESTS/$(TARGET_RESULTS) > diffreport.txt
-
-clean : clean-xslttest clean-mstest
-	rm -f xslttest.exe
-
-clean-xslttest : xslttest.exe
-	if (test -e testsuite) then \
-		$(RUNTIME) ./xslttest.exe --list > output.lst; \
-		perl cleanup-output.pl; \
-	fi
-	rm -f TestResult.xml output.lst
-
-clean-mstest :
-	rm -rf testsuite/TESTS/Reports
-	rm -f diffreport.txt alltest.exe xmlnorm.exe
-
-# Be careful to use it!
-distclean :
-	make clean
-	rm -rf testsuite
-	rm -f $(TEST_ARCHIVE) $(XSLTTEST_RESULTS_ARCHIVE) $(MSTEST_RESULTS_ARCHIVE)
-
-create-reference-output : clean-xslttest xslttest.exe
-	./xslttest.exe --generate
-	./xslttest.exe --list > output.lst
-	zip xslttest-reference-output.zip -@ < output.lst
+$(REFERENCE_RESULTS_ARCHIVE) :
+	wget $(REFERENCE_RESULTS_URL)
 
