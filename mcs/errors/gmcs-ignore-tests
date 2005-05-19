@@ -1,3 +1,0 @@
-# These cause ICEs or crashes, and aren't well handled
-# by the *-expect-* mechanism
-

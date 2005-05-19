@@ -1,3 +1,10 @@
+2005-05-20  Martin Baulig  <martin@ximian.com>
+
+	* mcs-known-issues, gmcs-known-issues: Updated.
+
+	* *-expect-*, *-ignore-*: Removed; we don't need them anymore with
+	the new test runner.
+
 2005-05-09 Marek Safar <marek.safar@seznam.cz>
 
 	* Makefile: Use TestRunner under NET_2_0.
