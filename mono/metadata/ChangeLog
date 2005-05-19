@@ -1,3 +1,7 @@
+2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : updated (real hacky solution for zh-CHT).
+
 2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : zh-CHT related workaround.

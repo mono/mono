@@ -15,6 +15,11 @@ namespace Mono.Tools.LocaleBuilder {
 
         public class CultureInfoEntry : Entry {
 
+		public static CultureInfoEntry ShallowCopy (CultureInfoEntry e)
+		{
+			return (CultureInfoEntry) e.MemberwiseClone ();
+		}
+
                 string language;
 
                 public string Territory;

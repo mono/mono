@@ -89,6 +89,25 @@ namespace Mono.Tools.LocaleBuilder {
                                 }
 			}
 
+			/* FIXME: This is hacky.
+			 * Since there is only langs/zh.xml while there are
+			 * two "zh" languages (CHS and CHT), there should be
+			 * different language profiles and we are not likely
+			 * to add lang/* files. So here I just clone zh-CHS
+			 * as zh-CHT
+			 */
+			 foreach (CultureInfoEntry e in cultures) {
+			 	if (e.Name == "zh-CHS") {
+					CultureInfoEntry t =
+						CultureInfoEntry.ShallowCopy (e);
+					t.Language = "zh-CHT";
+					LookupLcids (t, true);
+					cultures.Add (t);
+					break;
+				}
+			 }
+
+
                         /**
                          * Dump each table individually. Using StringBuilders
                          * because it is easier to debug, should switch to just
@@ -243,16 +262,6 @@ namespace Mono.Tools.LocaleBuilder {
 
                 private void ParseLocale (string locale)
                 {
-			#region Workaround
-			// FIXME: We should enable zh-TW and zh-HK when
-			// zh-CHT got working.
-			switch (locale) {
-			case "zh_TW":
-			case "zh_HK":
-				return;
-			}
-			#endregion
-
                         CultureInfoEntry ci;
 
                         ci = LookupCulture (locale);
