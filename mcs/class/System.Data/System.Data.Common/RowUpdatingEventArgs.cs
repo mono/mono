@@ -43,6 +43,7 @@ namespace System.Data.Common {
 		DataTableMapping tableMapping;
 		UpdateStatus status;
 		Exception errors;
+		
 
 		#endregion // Fields
 
@@ -88,6 +89,19 @@ namespace System.Data.Common {
 		public DataTableMapping TableMapping {
 			get { return tableMapping; }
 		}
+
+		#if NET_2_0
+		
+		protected virtual IDbCommand BaseCommand {
+			get {
+			return this.command;
+			}	
+			set {
+			this.command = value;
+			}
+		}
+
+		#endif
 
 		#endregion // Properties
 	}
