@@ -753,7 +753,14 @@ namespace System.Windows.Forms
 		internal static int HighOrder (int param) {
 			return (param >> 16);
 		}
-		
+
+		// This method exists so controls overriding OnPaintBackground can have default background painting done
+		internal void PaintControlBackground (PaintEventArgs pevent)
+		{
+			if (background_image != null)
+				pevent.Graphics.DrawImage (background_image, new Point (0, 0));
+		}
+
 		internal static MouseButtons FromParamToMouseButtons (int param) {		
 			MouseButtons buttons = MouseButtons.None;
 					
@@ -3197,7 +3204,7 @@ namespace System.Windows.Forms
 						dc = paint_event.SetGraphics (DeviceContext);
 					}
 
-					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) == (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
+					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) != (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
 						OnPaintBackground(paint_event);
 					}
 
@@ -3693,7 +3700,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaintBackground(PaintEventArgs pevent) {
-			// Override me!
+			PaintControlBackground (pevent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
