@@ -36,10 +36,12 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
 #if NET_2_0
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 #endif
+
 namespace System
 {
 
@@ -360,30 +362,6 @@ namespace System
 		}
 #endif
 
-//		// This function is currently unused, but just in case we need it later on ... */
-//		internal int IndexToPos (int[] idxs)
-//		{
-//			if (idxs == null)
-//				throw new ArgumentNullException ("idxs");
-//
-//			if ((idxs.Rank != 1) || (idxs.Length != Rank))
-//				throw new ArgumentException ();
-//
-//			if ((idxs [0] < GetLowerBound (0)) || (idxs [0] > GetUpperBound (0)))
-//				throw new IndexOutOfRangeException();
-//
-//			int pos = idxs [0] - GetLowerBound (0);
-//			for (int i = 1; i < Rank; i++) {
-//				if ((idxs [i] < GetLowerBound (i)) || (idxs [i] > GetUpperBound (i)))
-//					throw new IndexOutOfRangeException();
-//
-//				pos *= GetLength (i);
-//				pos += idxs [i] - GetLowerBound (i);
-//			}
-//
-//			return pos;
-//		}
-
 		public void SetValue (object value, int index)
 		{
 			if (Rank != 1)
@@ -527,7 +505,7 @@ namespace System
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
-#endif
+#endif 
 		public static int BinarySearch (Array array, object value)
 		{
 			if (array == null)
@@ -1071,6 +1049,7 @@ namespace System
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
 #endif
+
 		public static void Sort (Array keys, Array items, int index, int length, IComparer comparer)
 		{
 			if (keys == null)
@@ -1089,8 +1068,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
 					"Value has to be >= 0."));
 
-			if (keys.Length - (index + keys.GetLowerBound (0)) < length
-				|| (items != null && index > items.Length - length))
+			if (keys.Length - (index + keys.GetLowerBound (0)) < length || (items != null && index > items.Length - length))
 				throw new ArgumentException ();
 
 			if (length <= 1)
@@ -1374,144 +1352,156 @@ namespace System
 				return MemberwiseClone ();
 			}
 		}
+
 #if NET_2_0
-		public static void Resize <T> (ref T [] arr, int sz) {
-			if (sz < 0)
+		public static void Resize <T> (ref T [] array, int newSize) {
+			if (newSize < 0)
 				throw new ArgumentOutOfRangeException ();
 			
-			if (arr == null) {
-				arr = new T [sz];
+			if (array == null) {
+				array = new T [newSize];
 				return;
 			}
 			
-			if (arr.Length == sz)
+			if (array.Length == newSize)
 				return;
 			
-			T [] a = new T [sz];
-			Array.Copy (arr, a, Math.Min (sz, arr.Length));
-			arr = a;
+			T [] a = new T [newSize];
+			Array.Copy (array, a, Math.Min (newSize, array.Length));
+			array = a;
 		}
 		
-		public static bool TrueForAll <T> (T [] array, Predicate <T> p)
+		public static bool TrueForAll <T> (T [] array, Predicate <T> match)
 		{
-			if (array == null || p == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
 			foreach (T t in array)
-				if (! p (t))
+				if (! match (t))
 					return false;
 				
 			return true;
 		}
-		public static void ForEach <T> (T [] array, Action <T> a)
+		
+		public static void ForEach<T> (T [] array, Action <T> action)
 		{
-			if (array == null || a == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (action == null)
+				throw new ArgumentNullException ("action");
 			
 			foreach (T t in array)
-				a (t);
+				action (t);
 		}
 		
-		public static U [] ConvertAll <T, U> (T [] s, Converter <T, U> c)
+		public static TOutput[] ConvertAll<TInput, TOutput> (TInput [] array, Converter<TInput, TOutput> converter)
 		{
-			if (s == null || c == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (converter == null)
+				throw new ArgumentNullException ("converter");
 			
-			U [] r = new U [s.Length];
+			TOutput [] output = new TOutput [array.Length];
+			for (int i = 0; i < array.Length; i ++)
+				output [i] = converter (array [i]);
 			
-			for (int i = 0; i < s.Length; i ++)
-				r [i] = c (s [i]);
-			
-			return r;
+			return output;
 		}
 		
-		public static int FindLastIndex <T> (T [] a, Predicate <T> c)
+		public static int FindLastIndex<T> (T [] array, Predicate <T> match)
 		{
-			if (a == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			
-			return FindLastIndex <T> (a, 0, a.Length, c);
+			return FindLastIndex<T> (array, 0, array.Length, match);
 		}
 		
-		public static int FindLastIndex <T> (T [] a, int idx, Predicate <T> c)
+		public static int FindLastIndex<T> (T [] array, int startIndex, Predicate<T> match)
 		{
-			if (a == null)
+			if (array == null)
 				throw new ArgumentNullException ();
 			
-			return FindLastIndex <T> (a, idx, a.Length - idx, c);
+			return FindLastIndex<T> (array, startIndex, array.Length - startIndex, match);
 		}
 		
-		public static int FindLastIndex <T> (T [] a, int idx, int cnt, Predicate <T> c)
+		public static int FindLastIndex<T> (T [] array, int startIndex, int count, Predicate<T> match)
 		{
-			if (a == null || c == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			if (idx > a.Length || idx + cnt > a.Length)
+			if (startIndex > array.Length || startIndex + count > array.Length)
 				throw new ArgumentOutOfRangeException ();
 			
-			for (int i = idx + cnt - 1; i >= idx; i --)
-				if (c (a [i]))
+			for (int i = startIndex + count - 1; i >= startIndex; i--)
+				if (match (array [i]))
 					return i;
 				
 			return -1;
 		}
 		
-		public static int FindIndex <T> (T [] a, Predicate <T> c)
+		public static int FindIndex<T> (T [] array, Predicate<T> match)
 		{
-			if (a == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			
-			return FindIndex <T> (a, 0, a.Length, c);
+			return FindIndex<T> (array, 0, array.Length, match);
 		}
 		
-		public static int FindIndex <T> (T [] a, int idx, Predicate <T> c)
+		public static int FindIndex<T> (T [] array, int startIndex, Predicate<T> match)
 		{
-			if (a == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			
-			return FindIndex <T> (a, idx, a.Length - idx, c);
+			return FindIndex<T> (array, startIndex, array.Length - startIndex, match);
 		}
 		
-		public static int FindIndex <T> (T [] a, int idx, int cnt, Predicate <T> c)
+		public static int FindIndex<T> (T [] array, int startIndex, int count, Predicate<T> match)
 		{
-			if (a == null || c == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			
-			if (idx > a.Length || idx + cnt > a.Length)
+			if (match == null)
+				throw new ArgumentNullException ("match");
+			
+			if (startIndex > array.Length || startIndex + count > array.Length)
 				throw new ArgumentOutOfRangeException ();
 			
-			for (int i = idx; i < idx + cnt; i ++)
-				if (c (a [i]))
+			for (int i = startIndex; i < startIndex + count; i ++)
+				if (match (array [i]))
 					return i;
 				
 			return -1;
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
-		public static int BinarySearch <T> (T [] array, T value)
+		public static int BinarySearch<T> (T [] array, T value)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			
-			return BinarySearch <T> (array, 0, array.Length, value, null);
+			return BinarySearch<T> (array, 0, array.Length, value, null);
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
-		public static int BinarySearch <T> (T [] array, T value, IComparer <T> comparer)
+		public static int BinarySearch<T> (T [] array, T value, IComparer<T> comparer)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			
-			return BinarySearch <T> (array, 0, array.Length, value, comparer);
+			return BinarySearch<T> (array, 0, array.Length, value, comparer);
 		}
 		
-		public static int BinarySearch <T> (T [] array, int offset, int length, T value)
+		public static int BinarySearch<T> (T [] array, int offset, int length, T value)
 		{
-			return BinarySearch <T> (array, offset, length, value, null);
+			return BinarySearch<T> (array, offset, length, value, null);
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
-		public static int BinarySearch <T> (T [] array, int index, int length, T value, IComparer <T> comparer)
+		public static int BinarySearch<T> (T [] array, int index, int length, T value, IComparer<T> comparer)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1543,15 +1533,14 @@ namespace System
 					else
 						iMin = iMid + 1; // compensate for the rounding down
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("Comparer threw an exception."), e);
 			}
 
 			return ~iMin;
 		}
 		
-		public static int IndexOf <T> (T [] array, T value)
+		public static int IndexOf<T> (T [] array, T value)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1559,7 +1548,7 @@ namespace System
 			return IndexOf (array, value, 0, array.Length);
 		}
 
-		public static int IndexOf <T> (T [] array, T value, int startIndex)
+		public static int IndexOf<T> (T [] array, T value, int startIndex)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1567,7 +1556,7 @@ namespace System
 			return IndexOf (array, value, startIndex, array.Length - startIndex);
 		}
 
-		public static int IndexOf <T> (T [] array, T value, int startIndex, int count)
+		public static int IndexOf<T> (T [] array, T value, int startIndex, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1585,7 +1574,7 @@ namespace System
 			return -1;
 		}
 		
-		public static int LastIndexOf <T> (T [] array, T value)
+		public static int LastIndexOf<T> (T [] array, T value)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1593,7 +1582,7 @@ namespace System
 			return LastIndexOf (array, value, array.Length - 1);
 		}
 
-		public static int LastIndexOf <T> (T [] array, T value, int startIndex)
+		public static int LastIndexOf<T> (T [] array, T value, int startIndex)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1601,7 +1590,7 @@ namespace System
 			return LastIndexOf (array, value, startIndex, startIndex + 1);
 		}
 
-		public static int LastIndexOf <T> (T [] array, T value, int startIndex, int count)
+		public static int LastIndexOf<T> (T [] array, T value, int startIndex, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1617,28 +1606,34 @@ namespace System
 			return -1;
 		}
 		
-		public static T [] FindAll <T> (T [] a, Predicate <T> p)
+		public static T [] FindAll<T> (T [] array, Predicate <T> match)
 		{
-			if (a == null || p == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
 			int pos = 0;
-			T [] d = new T [a.Length];
-			foreach (T t in a)
-				if (p (t))
-					d [pos ++] = t;
+			T [] d = new T [array.Length];
+			foreach (T t in array)
+				if (match (t))
+					d [pos++] = t;
 			
-			Resize <T> (ref a, pos);
-			return a;
+			Resize <T> (ref d, pos);
+			return d;
 		}
 
-		public static bool Exists <T> (T [] a, Predicate <T> p)
+		public static bool Exists<T> (T [] array, Predicate <T> match)
 		{
-			if (a == null || p == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			foreach (T t in a)
-				if (p (t))
+			foreach (T t in array)
+				if (match (t))
 					return true;
 			return false;
 		}
@@ -1647,49 +1642,55 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			return new ReadOnlyArray <T> (array);
+			return new ReadOnlyArray<T> (array);
 		}
-		
-#if FIXME
-		public static Nullable <T> Find <T> (T [] a, Predicate <T> p)
+
+		[CLSCompliant (false)]
+		public static Nullable<T> Find<T> (T [] array, Predicate<T> match)
 		{
-			if (a == null || p == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			foreach (T t in a)
-				if (p (t))
+			foreach (T t in array)
+				if (match (t))
 					return new Nullable <T> (t);
 				
 			return default (Nullable <T>);
 		}
 		
-		public static Nullable <T> FindLast <T> (T [] a, Predicate <T> p)
+		[CLSCompliant (false)]
+		public static Nullable<T> FindLast<T> (T [] array, Predicate <T> match)
 		{
-			if (a == null || p == null)
-				throw new ArgumentNullException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			for (int i = a.Length - 1; i >= 0; i--)
-				if (p (a [i]))
-					return new Nullable <T> (a [i]);
+			for (int i = array.Length - 1; i >= 0; i--)
+				if (match (array [i]))
+					return new Nullable <T> (array [i]);
 				
 			return default (Nullable <T>);
 		}
-#endif
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]		
-#endif
-		// Fixme: wtf is constrained about this
+		//
+		// The constrained copy should guarantee that if there is an exception thrown
+		// during the copy, the destination array remains unchanged.
+		// This is related to System.Runtime.Reliability.CER
 		public static void ConstrainedCopy (Array s, int s_i, Array d, int d_i, int c)
 		{
 			Copy (s, s_i, d, d_i, c);
-		}		
-#endif
+		}
+#endif 
 	}
 
-
 #if NET_2_0
-		
+
 	internal struct ReadOnlyArrayEnumerator <T> : IEnumerator <T> {
 		const int NOT_STARTED = -2;
 			

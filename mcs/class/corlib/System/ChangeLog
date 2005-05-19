@@ -1,3 +1,15 @@
+2005-05-19  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Removed warning.
+
+	* Array.cs (Resize<T>, TrueForAll<T>, ConvertAll<TInput,TOutput>,
+	FindLastIndex<T>: Parameter names are normative. 	
+	Fix coding style ("Method<T>" not "Method <T>")
+	Throw argument exceptions per argument.
+	
+	(FindAll): Fix bug, actually return the values that were computed,
+	not a short version of the original array.
+	
 2005-05-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Console.cs: fix error in the 2_0 side and split ReadLine in 2, one

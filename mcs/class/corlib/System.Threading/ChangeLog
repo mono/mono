@@ -1,3 +1,7 @@
+2005-05-19  Miguel de Icaza  <miguel@novell.com>
+
+	* Thread.cs: REmove warnings.
+
 2005-05-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Thread.cs: first check for null, then set in_currentculture.

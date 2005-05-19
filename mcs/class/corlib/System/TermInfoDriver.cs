@@ -590,7 +590,6 @@ namespace System {
 		{
 			InitKeys ();
 			object o = null;
-			bool first = true;
 			while (o == null) {
 				o = GetKeyFromBuffer (true);
 				if (o == null) {
@@ -604,8 +603,6 @@ namespace System {
 							AddToBuffer (stdin.ReadByte ());
 					}
 				}
-
-				first = false;
 			}
 
 			return (ConsoleKeyInfo) o;

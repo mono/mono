@@ -284,7 +284,7 @@ namespace System.Threading
 
 		[MonoTODO]
 #if NET_2_0
-		[Obsolete ("")]
+		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
 #endif
 		public ApartmentState ApartmentState {
 			get {
@@ -827,6 +827,17 @@ namespace System.Threading
 			throw new NotImplementedException ();
 		}
 
+		//
+		// We disable warning 618, because we are accessing the
+		// empty property ApartmentState which produces an Obsolete
+		// message, but since its an empty routine needed for 1.x
+		// we use it.
+		//
+		// Maybe we should later turn these into internal methods for 1.x
+		// instead and have the property call these.
+		
+		
+#pragma warning disable 618
 		[MonoTODO]
 		public ApartmentState GetApartmentState ()
 		{
@@ -853,7 +864,8 @@ namespace System.Threading
 				return false;
 			}
 		}
-
+#pragma warning restore 618
+		
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
