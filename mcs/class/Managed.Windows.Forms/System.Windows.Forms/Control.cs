@@ -758,7 +758,7 @@ namespace System.Windows.Forms
 		internal void PaintControlBackground (PaintEventArgs pevent)
 		{
 			if (background_image != null)
-				pevent.Graphics.DrawImage (background_image, new Point (0, 0));
+				pevent.Graphics.DrawImage (background_image, 0, 0);
 		}
 
 		internal static MouseButtons FromParamToMouseButtons (int param) {		
