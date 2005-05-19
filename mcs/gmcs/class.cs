@@ -1210,6 +1210,8 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
+			InTransit = true;
+
 			try {
 				if (IsTopLevel){
 					if (TypeManager.NamespaceClash (Name, Location)) {
@@ -1298,11 +1300,6 @@ namespace Mono.CSharp {
 				}
 
 				ptype = base_type.Type;
-			}
-
-			if (!CheckRecursiveDefinition ()) {
-				InTransit = false;
-				return null;
 			}
 
 			if (ptype != null)
@@ -1425,32 +1422,6 @@ namespace Mono.CSharp {
 						return false;
 			}
 
-			return true;
-		}
-
-		protected bool CheckRecursiveDefinition ()
-		{
-			if (InTransit) {
-				Report.Error (146, Location,
-					      "Class definition is circular: `{0}'",
-					      GetSignatureForError ());
-				error = true;
-				return false;
-			}
-
-			InTransit = true;
-
-			Type parent = ptype;
-			if (parent != null) {
-				if (parent.IsGenericInstance)
-					parent = parent.GetGenericTypeDefinition ();
-
-				TypeContainer ptc = TypeManager.LookupTypeContainer (parent);
-				if ((ptc != null) && !ptc.CheckRecursiveDefinition ())
-					return false;
-			}
-
-			InTransit = false;
 			return true;
 		}
 
