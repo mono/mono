@@ -1,3 +1,8 @@
+2005-05-19  Peter Bartok  <pbartok@novell.com>
+
+	* ScrollableControl.cs (DisplayRectangle): Undid my last change until
+	  I can investigate, apparently I broke FileDialog
+
 2005-05-19  Marek Safar  <marek.safar@seznam.cz>
 
 	* AxHost.cs: Some simple properties.
