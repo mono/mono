@@ -36,9 +36,9 @@ namespace System.Data.SqlClient
 	/// Provides additional infoatmion about the different notifications that can be 
 	/// received by the dependency event handler
 	/// </summary>
-	[Serializable]
 	public enum SqlNotificationInfo {
-
+		
+		AlreadyChanged = -1,
 		Alter = 5,
 		Delete = 3,
 		Drop = 4,
@@ -51,7 +51,6 @@ namespace System.Data.SqlClient
 		Restart = 6,
 		Truncate = 0,
 		Update = 2
-
 	}
 
 }

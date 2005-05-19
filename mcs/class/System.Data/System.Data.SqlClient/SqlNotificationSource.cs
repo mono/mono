@@ -35,9 +35,9 @@ namespace System.Data.SqlClient
 	/// <summary>
 	/// Indicates the source of the notification received by the dependency event handler
 	/// </summary>
-	[Serializable]
 	public enum SqlNotificationSource {
 
+		Client = -1,
 		Data = 0,
 		Database = 3,
 		Environment = 6,

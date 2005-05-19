@@ -36,7 +36,6 @@ namespace System.Data.SqlClient
 	/// Describes the differnt notification types that can be received by the dependency
 	/// event handler.
 	/// </summary>
-	[Serializable]
 	public enum SqlNotificationType {
 
 		Change = 0,

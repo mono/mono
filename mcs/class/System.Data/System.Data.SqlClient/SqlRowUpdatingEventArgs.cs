@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Umadevi S (sumadevi@novell.com)
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
@@ -56,6 +57,16 @@ namespace System.Data.SqlClient {
 			set { base.Command = value; }
 		}
 
+		#if NET_2_0
+			
+	//public IDbCommand BaseCommand {
+	//		get {
+//			return base.command
+
+//		}	
+		
+
+		#endif
 		#endregion // Properties
 	}
 }
