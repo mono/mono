@@ -162,8 +162,11 @@ namespace System.Windows.Forms {
 			#endregion	// AxHost.StateConverter Class
 		#endregion	// AxHost Subclasses
 
+		string text;
+
 		#region Protected Constructors
 		protected AxHost(string clsid) {
+			text = "";
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
@@ -324,11 +327,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return text;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				text = value;
 			}
 		}
 		#endregion	// Protected Constructors
@@ -342,7 +345,7 @@ namespace System.Windows.Forms {
 		
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return new Size (75, 23);
 			}
 		}
 		#endregion	// Protected Instance Properties

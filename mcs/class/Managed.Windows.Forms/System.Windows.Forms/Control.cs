@@ -552,6 +552,7 @@ namespace System.Windows.Forms
 			text = string.Empty;
 			name = string.Empty;			
 
+			window = new ControlNativeWindow(this);
 			child_controls = CreateControlsInstance();
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
@@ -1602,8 +1603,9 @@ namespace System.Windows.Forms
 				}
 
 				if (parent!=value) {
-					if (parent!=null) {
+					if (value==null) {
 						parent.Controls.Remove(this);
+						return;
 					}
 
 					parent=value;
@@ -2568,14 +2570,11 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			if (window==null) {
-				window = new ControlNativeWindow(this);
-				window.CreateHandle(CreateParams);
+			window.CreateHandle(CreateParams);
 
-				// Find out where the window manager placed us
-				UpdateBounds();
-				UpdateStyles();
-			}
+			// Find out where the window manager placed us
+			UpdateBounds();
+			UpdateStyles();
 
 			if (window.Handle!=IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {

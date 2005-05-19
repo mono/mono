@@ -437,33 +437,38 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				Line	line;
+				if (value == base.Text)
+					return;
 
-				if (multiline) {
-					string[]	lines;
+				if (value != null) {
+					Line	line;
 
-					lines = value.Split(new char[] {'\n'});
-					for (int i = 0; i < lines.Length; i++) {
-						if (lines[i].EndsWith("\r")) {
-							lines[i] = lines[i].Substring(0, lines[i].Length - 1);
+					if (multiline) {
+						string[]	lines;
+
+						lines = value.Split(new char[] {'\n'});
+						for (int i = 0; i < lines.Length; i++) {
+							if (lines[i].EndsWith("\r")) {
+								lines[i] = lines[i].Substring(0, lines[i].Length - 1);
+							}
 						}
+						this.Lines = lines;
+
+						line = document.GetLine(1);
+						document.SetSelectionStart(line, 0);
+
+						line = document.GetLine(document.Lines);
+						document.SetSelectionEnd(line, line.text.Length);
+						document.PositionCaret(line, line.text.Length);
+					} else {
+						document.Clear();
+						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
+						document.RecalculateDocument(CreateGraphics());
+						line = document.GetLine(1);
+						document.SetSelectionStart(line, 0);
+						document.SetSelectionEnd(line, value.Length);
+						document.PositionCaret(line, value.Length);
 					}
-					this.Lines = lines;
-
-					line = document.GetLine(1);
-					document.SetSelectionStart(line, 0);
-
-					line = document.GetLine(document.Lines);
-					document.SetSelectionEnd(line, line.text.Length);
-					document.PositionCaret(line, line.text.Length);
-				} else {
-					document.Clear();
-					document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
-					document.RecalculateDocument(CreateGraphics());
-					line = document.GetLine(1);
-					document.SetSelectionStart(line, 0);
-					document.SetSelectionEnd(line, value.Length);
-					document.PositionCaret(line, value.Length);
 				}
 				base.Text = value;
 				OnTextChanged(EventArgs.Empty);
@@ -560,8 +565,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Clear() {
-			// FIXME
-			throw new NotImplementedException();
+			Text = null;
 		}
 
 		public void ClearUndo() {

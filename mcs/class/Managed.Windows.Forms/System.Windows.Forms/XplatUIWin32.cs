@@ -1646,7 +1646,8 @@ Console.WriteLine("Hit Clear background");
 
 
 		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
-			throw new NotImplementedException();
+			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, 
+				SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE);
 		}
 
 		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {

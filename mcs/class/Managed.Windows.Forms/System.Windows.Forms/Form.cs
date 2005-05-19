@@ -71,6 +71,8 @@ namespace System.Windows.Forms {
 		private SizeGripStyle		size_grip_style;
 		private Rectangle		maximized_bounds;
 		private Rectangle		default_maximized_bounds;
+		Color				transparency_key;
+
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
@@ -127,6 +129,7 @@ namespace System.Windows.Forms {
 			maximized_bounds = Rectangle.Empty;
 			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
+			transparency_key = Color.Empty;
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -662,6 +665,18 @@ namespace System.Windows.Forms {
 					topmost = value;
 					XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, value);
 				}
+			}
+		}
+
+		public Color TransparencyKey {
+			get {
+				return transparency_key;
+			}
+
+			set {
+				AllowTransparency = true;
+				transparency_key = value;
+				// TODO: change window attributes; a new driver call
 			}
 		}
 
