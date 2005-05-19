@@ -2998,6 +2998,16 @@ namespace System.Windows.Forms
 				}
 
 				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
+
+                                
+				StringFormat string_format = new StringFormat ();
+				string_format.Alignment = StringAlignment.Center;
+				string_format.LineAlignment = StringAlignment.Center;
+				string_format.FormatFlags = StringFormatFlags.NoWrap;
+
+				interior.Y++;
+				dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
+				interior.Y--;
 			} else {
 				Pen light = ResPool.GetPen (ControlPaint.LightLight (tab.BackColor));
 

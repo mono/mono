@@ -1,5 +1,9 @@
 2005-05-19  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs: Draw the text for button tabs.
+
+2005-05-19  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Paint control background images. Fix typo where
 	PaintControlBackground was not getting called correctly.
 
