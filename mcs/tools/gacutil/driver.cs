@@ -97,17 +97,16 @@ namespace Mono.Tools {
 					case "-package":
 					case "/package":
 						package = args [++i];
-						break;
+						continue;
 					case "-root":
 					case "/root":
 						root = args [++i];
-						break;
+						continue;
 					case "-gacdir":
 					case "/gacdir":
 						gacdir = args [++i];
-						break;
+						continue;
 					}
-					continue;
 				}
 				if (name == null)
 					name = args [i];
