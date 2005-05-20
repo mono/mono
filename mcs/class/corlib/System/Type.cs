@@ -454,16 +454,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static TypeCode GetTypeCodeInternal (Type type);
-
-		public static TypeCode GetTypeCode (Type type) {
-			type = type.UnderlyingSystemType;
-
-			if (!type.IsSystemType)
-				return Type.GetTypeCode (typeof (object));
-			else
-				return GetTypeCodeInternal (type);
-		}
+		public extern static TypeCode GetTypeCode (Type type);
 
 		[MonoTODO]
 		public static Type GetTypeFromCLSID (Guid clsid)
@@ -528,7 +519,7 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_assignable_from (Type a, Type b);
-
+		
 		public virtual bool IsSubclassOf (Type c)
 		{
 			if (c == null)
@@ -587,21 +578,6 @@ namespace System {
 
 			if (c is TypeBuilder)
 				return ((TypeBuilder)c).IsAssignableTo (this);
-
-			/* Handle user defined type classes */
-			if (!IsSystemType) {
-				Type systemType = UnderlyingSystemType;
-				if (!systemType.IsSystemType)
-					return false;
-				return systemType.IsAssignableFrom (c);
-			}
-
-			if (!c.IsSystemType) {
-				Type underlyingType = c.UnderlyingSystemType;
-				if (!underlyingType.IsSystemType)
-					return false;
-				return IsAssignableFrom (underlyingType);
-			}
 
 			return type_is_assignable_from (this, c);
 		}
@@ -725,13 +701,6 @@ namespace System {
 		                                             CallingConventions callConvention, Type[] types,
 		                                             ParameterModifier[] modifiers);
 
-		internal MethodInfo GetMethodImplInternal (string name, BindingFlags bindingAttr, Binder binder,
-															CallingConventions callConvention, Type[] types,
-															ParameterModifier[] modifiers)
-		{
-			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
-		}
-
 		public MethodInfo[] GetMethods ()
 		{
 			return GetMethods (DefaultBindingFlags);
@@ -812,12 +781,6 @@ namespace System {
 
 		protected abstract PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder,
 		                                                 Type returnType, Type[] types, ParameterModifier[] modifiers);
-
-		internal PropertyInfo GetPropertyImplInternal (string name, BindingFlags bindingAttr, Binder binder,
-													   Type returnType, Type[] types, ParameterModifier[] modifiers)
-		{
-			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
-		}
 
 		protected abstract ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
 								       Binder binder,
@@ -1006,12 +969,6 @@ namespace System {
 		public override string ToString()
 		{
 			return FullName;
-		}
-
-		internal bool IsSystemType {
-			get {
-				return _impl.Value != IntPtr.Zero;
-			}
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0

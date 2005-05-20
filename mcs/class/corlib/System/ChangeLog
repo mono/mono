@@ -1,3 +1,9 @@
+2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs Array.cs: Revert this as it breaks the build.
+	
+	* Type.cs Array.cs: Improve support for user defined Type subclasses.
+
 2005-05-19  Ben Maurer  <bmaurer@ximian.com>
 
 	* Delegate.cs (Equals): Use `as' to protect in the case where !

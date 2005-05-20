@@ -388,22 +388,25 @@ namespace System
 		public static Array CreateInstance (Type elementType, int length)
 		{
 			int[] lengths = {length};
+			int[] bounds = null;
 
-			return CreateInstance (elementType, lengths);
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
 		public static Array CreateInstance (Type elementType, int length1, int length2)
 		{
 			int[] lengths = {length1, length2};
+			int[] bounds = null;
 
-			return CreateInstance (elementType, lengths);
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
 		public static Array CreateInstance (Type elementType, int length1, int length2, int length3)
 		{
 			int[] lengths = {length1, length2, length3};
+			int[] bounds = null;
 
-			return CreateInstance (elementType, lengths);
+			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
 		public static Array CreateInstance (Type elementType, int[] lengths)
@@ -417,10 +420,6 @@ namespace System
 				throw new TypeLoadException ();
 
 			int[] bounds = null;
-
-			elementType = elementType.UnderlyingSystemType;
-			if (!elementType.IsSystemType)
-				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
@@ -433,10 +432,6 @@ namespace System
 				throw new ArgumentNullException ("lengths");
 			if (bounds == null)
 				throw new ArgumentNullException ("bounds");
-
-			elementType = elementType.UnderlyingSystemType;
-			if (!elementType.IsSystemType)
-				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 
 			if (lengths.Length < 1)
 				throw new ArgumentException (Locale.GetText ("Arrays must contain >= 1 elements."));
