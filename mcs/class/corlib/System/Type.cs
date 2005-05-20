@@ -454,7 +454,12 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static TypeCode GetTypeCode (Type type);
+		public extern static TypeCode GetTypeCodeInternal (Type type);
+
+		public static TypeCode GetTypeCode (Type type)
+		{
+			return GetTypeCodeInternal (type);
+		}
 
 		[MonoTODO]
 		public static Type GetTypeFromCLSID (Guid clsid)
