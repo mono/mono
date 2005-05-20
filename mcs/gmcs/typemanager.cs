@@ -2438,7 +2438,6 @@ public partial class TypeManager {
 					t == TypeManager.int64_type ||
 					t == TypeManager.uint64_type)
 				return t;
-			throw new Exception ("Unhandled typecode in enum " + " from " + t.AssemblyQualifiedName);
 		}
 		TypeCode tc = Type.GetTypeCode (t);
 

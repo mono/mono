@@ -1,3 +1,8 @@
+2005-05-20  Miguel de Icaza  <miguel@novell.com>
+
+	* typemanager.cs: Do not throw an exception in the TypeBuilder
+	case, we take care of it on the TypeCode.
+
 2005-05-17  Marek Safar  <marek.safar@seznam.cz>
 	
 	* attribute.cs (Attribute.ResolveArguments): GuidAttribute check
