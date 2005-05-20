@@ -857,7 +857,20 @@ namespace System.Windows.Forms
 		#endregion ComboBox
 		
 		#region Datagrid
-		public override int DataGridPreferredColumnWidth { get { return 75;} }
+		public override int DataGridPreferredColumnWidth { get { return 75;} }		
+		public override Color DataGridAlternatingBackColor { get { return ColorWindow;} }
+		public override Color DataGridBackgroundColor { get  { return ColorWindow;} }
+		public override Color DataGridCaptionBackColor { get  { return ColorActiveTitle;} }
+		public override Color DataGridCaptionForeColor { get  { return SystemColors.ActiveCaptionText;} }
+		public override Color DataGridGridLineColor { get { return SystemColors.Control;} }
+		public override Color DataGridHeaderBackColor { get  { return SystemColors.Control;} }
+		public override Color DataGridHeaderForeColor { get  { return SystemColors.ControlText;} }
+		public override Color DataGridLinkColor { get  { return SystemColors.HotTrack;} }
+		public override Color DataGridLinkHoverColor { get  { return SystemColors.HotTrack;} }
+		public override Color DataGridParentRowsBackColor { get  { return SystemColors.Control;} }
+		public override Color DataGridParentRowsForeColor { get  { return SystemColors.WindowText;} }
+		public override Color DataGridSelectionBackColor { get  { return ColorActiveTitle;} }
+		public override Color DataGridSelectionForeColor { get  { return ColorTitleText;} }
 		#endregion // Datagrid
 		
 		#region DateTimePicker
@@ -3627,6 +3640,8 @@ namespace System.Windows.Forms
 				}
 			}
 			
+			outside.Dispose ();
+			
 		}
 
 		/* 
@@ -3812,7 +3827,9 @@ namespace System.Windows.Forms
 								area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
 					}			
 				}
-			}			
+			}
+			
+			outside.Dispose ();			
 		}
 
 		public override void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb) 

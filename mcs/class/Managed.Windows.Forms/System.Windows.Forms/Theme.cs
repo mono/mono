@@ -432,6 +432,21 @@ namespace System.Windows.Forms
 		
 		#region Datagrid
 		public abstract int DataGridPreferredColumnWidth { get; }
+		
+		// Default colours
+		public abstract Color DataGridAlternatingBackColor { get; }		
+		public abstract Color DataGridBackgroundColor { get; }
+		public abstract Color DataGridCaptionBackColor { get; }
+		public abstract Color DataGridCaptionForeColor { get; }		
+		public abstract Color DataGridGridLineColor { get; }
+		public abstract Color DataGridHeaderBackColor { get; }
+		public abstract Color DataGridHeaderForeColor { get; }
+		public abstract Color DataGridLinkColor { get; }
+		public abstract Color DataGridLinkHoverColor { get; }
+		public abstract Color DataGridParentRowsBackColor { get; }
+		public abstract Color DataGridParentRowsForeColor { get; }
+		public abstract Color DataGridSelectionBackColor { get; }
+		public abstract Color DataGridSelectionForeColor { get; }
 		#endregion // Datagrid
 
 		#region DateTimePicker

@@ -115,7 +115,7 @@ namespace System.Windows.Forms
 		private PropertyDescriptor property_descriptor;
 		private bool read_only;
 		private int width;
-		private DataGrid grid;
+		protected DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		#endregion	// Local Variables
 
@@ -153,7 +153,7 @@ namespace System.Windows.Forms
 			get {
 				return alignment;
 			}
-			set {
+			set {				
 				if (value != alignment) {
 					alignment = value;
 
@@ -199,6 +199,7 @@ namespace System.Windows.Forms
 			set {
 				if (value != header_text) {
 					header_text = value;
+					table_style.DataGrid.Invalidate ();
 
 					if (HeaderTextChanged != null) {
 						HeaderTextChanged (this, EventArgs.Empty);
@@ -243,7 +244,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value != property_descriptor) {
-					property_descriptor = value;
+					property_descriptor = value;					
 
 					if (PropertyDescriptorChanged != null) {
 						PropertyDescriptorChanged (this, EventArgs.Empty);
@@ -259,7 +260,8 @@ namespace System.Windows.Forms
 			set {
 				if (value != read_only) {
 					read_only = value;
-
+					table_style.DataGrid.CalcAreasAndInvalidate ();
+					
 					if (ReadOnlyChanged != null) {
 						ReadOnlyChanged (this, EventArgs.Empty);
 					}
@@ -274,6 +276,7 @@ namespace System.Windows.Forms
 			set {
 				if (value != width) {
 					width = value;
+					table_style.DataGrid.CalcAreasAndInvalidate ();
 
 					if (WidthChanged != null) {
 						WidthChanged (this, EventArgs.Empty);
@@ -299,10 +302,16 @@ namespace System.Windows.Forms
 
 		}
 
-		[MonoTODO]
+		
 		protected void CheckValidDataSource (CurrencyManager value)
 		{
-
+			if (value == null) {
+				throw new ArgumentNullException ("CurrencyManager cannot be null");
+			}
+			
+			if (property_descriptor == null) {
+				throw new ApplicationException ("	The PropertyDescriptor for this column is a null reference");
+			}
 		}
 
 		[MonoTODO]
@@ -350,11 +359,11 @@ namespace System.Windows.Forms
 		{
 
 		}
-
-		[MonoTODO]
+		
 		protected internal virtual object GetColumnValueAtRow (CurrencyManager source, int rowNum)
 		{
-			throw new NotImplementedException ();
+			CheckValidDataSource (source);
+			return property_descriptor.GetValue (source.GetItem (rowNum));
 		}
 
 		protected internal abstract int GetMinimumHeight ();
@@ -400,7 +409,7 @@ namespace System.Windows.Forms
 
 		protected virtual void SetDataGrid (DataGrid value)
 		{
-
+			grid = value;
 		}
 
 		protected virtual void SetDataGridInColumn (DataGrid value)

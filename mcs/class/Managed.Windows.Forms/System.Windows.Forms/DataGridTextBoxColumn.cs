@@ -37,7 +37,8 @@ namespace System.Windows.Forms
 	{
 		#region	Local Variables
 		private string format;
-		private IFormatProvider format_provider;		
+		private IFormatProvider format_provider;
+		private StringFormat string_format =  new StringFormat ();
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -55,7 +56,7 @@ namespace System.Windows.Forms
 		// TODO: What is isDefault for?
 		public DataGridTextBoxColumn (PropertyDescriptor prop,  bool isDefault) : base (prop)
 		{
-			
+			format = string.Empty;
 		}
 		
 		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format) : base (prop)
@@ -188,23 +189,31 @@ namespace System.Windows.Forms
 			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
 				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
 		}
-		
-		[MonoTODO]
+				
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
+			object obj;
+			obj = GetColumnValueAtRow (source, rowNum);
 			
+			PaintText (g, bounds, obj.ToString (),  backBrush, foreBrush, alignToRight);
 		}
-		
-		[MonoTODO]
+				
 		protected void PaintText (Graphics g, Rectangle bounds, string text,  bool alignToRight)
 		{
 			
-		}
+		}		
 		
-		[MonoTODO]
-		protected void PaintText (Graphics g, Rectangle textBounds, string text, Brush backBrush,  Brush foreBrush, bool alignToRight)
-		{
+		protected void PaintText (Graphics g, Rectangle textBounds, string text, Brush backBrush, Brush foreBrush, bool alignToRight)
+		{			
+			if (alignToRight == true) {
+				string_format.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
+			} else {
+				string_format.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
+			}
 			
+			string_format.FormatFlags |= StringFormatFlags.NoWrap;
+			
+			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);	
 		}
 		
 		[MonoTODO]

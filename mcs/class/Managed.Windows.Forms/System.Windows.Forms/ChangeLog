@@ -1,3 +1,13 @@
+2005-05-20  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: Basic painting methods
+	* DataGridTableStyle.cs: Set table style in the column
+	* ThemeWin32Classic.cs: Use Theme for colors
+	* DataGridDrawingLogic.cs: Implement more drawing
+	* DataGrid.cs: drawing, theming, enhacements, fixes
+	* DataGridColumnStyle.cs: fixes, drawing
+	* Theme.cs: theming for Datagrid
+
 2005-05-20  Peter Bartok  <pbartok@novell.com>
 
 	* Cursor.cs: Implemented GetObjectData() method

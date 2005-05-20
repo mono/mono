@@ -738,8 +738,9 @@ namespace System.Windows.Forms
 					
 				} else {
 					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
+					st.TableStyle = this;
 					st.MappingName = propcol[i].Name;
-					st.Width = PreferredColumnWidth;
+					st.Width = PreferredColumnWidth;					
 					column_styles.Add (st);					
 				}				
 			}

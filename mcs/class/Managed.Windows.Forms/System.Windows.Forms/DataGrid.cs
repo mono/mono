@@ -104,21 +104,21 @@ namespace System.Windows.Forms
 
 		}
 
-		#region	Local Variables
-		private static readonly Color	def_alternating_backcolor = SystemColors.Window;
-		private static readonly Color	def_background_color = SystemColors.Window;
-		private static readonly Color	def_caption_backcolor = SystemColors.ActiveCaption;
-		private static readonly Color	def_caption_forecolor = SystemColors.ActiveCaptionText;
-		private static readonly Color	def_gridline_color = SystemColors.Control;
-		private static readonly Color	def_header_backcolor = SystemColors.Control;
+		#region	Local Variables				
+		private static readonly Color	def_alternating_backcolor = ThemeEngine.Current.DataGridAlternatingBackColor;
+		private static readonly Color	def_background_color = ThemeEngine.Current.DataGridBackgroundColor;
+		private static readonly Color	def_caption_backcolor = ThemeEngine.Current.DataGridCaptionBackColor;
+		private static readonly Color	def_caption_forecolor = ThemeEngine.Current.DataGridCaptionForeColor;
+		private static readonly Color	def_gridline_color = ThemeEngine.Current.DataGridGridLineColor;
+		private static readonly Color	def_header_backcolor = ThemeEngine.Current.DataGridHeaderBackColor;
 		private static readonly Font	def_header_font = ThemeEngine.Current.DefaultFont;
-		private static readonly Color	def_header_forecolor = SystemColors.ControlText;
-		private static readonly Color	def_link_hovercolor = SystemColors.HotTrack;
-		private static readonly Color	def_parentrowsback_color = SystemColors.Control;
-		private static readonly Color	def_parentrowsfore_color = SystemColors.WindowText;
-		private static readonly Color	def_selection_backcolor = SystemColors.ActiveCaption;
-		private static readonly Color	def_selection_forecolor = SystemColors.ActiveCaptionText;
-		private static readonly Color	def_link_color = SystemColors.HotTrack;
+		private static readonly Color	def_header_forecolor = ThemeEngine.Current.DataGridHeaderForeColor;
+		private static readonly Color	def_link_hovercolor = ThemeEngine.Current.DataGridLinkHoverColor;
+		private static readonly Color	def_parentrowsback_color = ThemeEngine.Current.DataGridParentRowsBackColor;
+		private static readonly Color	def_parentrowsfore_color = ThemeEngine.Current.DataGridParentRowsForeColor;
+		private static readonly Color	def_selection_backcolor = ThemeEngine.Current.DataGridSelectionBackColor;
+		private static readonly Color	def_selection_forecolor = ThemeEngine.Current.DataGridSelectionForeColor;
+		private static readonly Color	def_link_color = ThemeEngine.Current.DataGridLinkColor;
 
 		private bool allow_navigation;
 		private bool allow_sorting;
@@ -177,7 +177,7 @@ namespace System.Windows.Forms
 			background_color = def_background_color;
 			border_style = BorderStyle.Fixed3D;
 			caption_backcolor = def_caption_backcolor;
-			caption_font = ThemeEngine.Current.DefaultFont;
+			caption_font = null;
 			caption_forecolor = def_caption_forecolor;
 			caption_text = string.Empty;
 			caption_visible = true;
@@ -195,7 +195,7 @@ namespace System.Windows.Forms
 			link_hovercolor = def_link_hovercolor;
 			parentrowsback_color = def_parentrowsback_color;
 			parentrowsfore_color = def_parentrowsfore_color;
-			parentrows_visible = true;
+			parentrows_visible = false; // should be true (temp)
 			preferredcolumn_width = ThemeEngine.Current.DataGridPreferredColumnWidth;
 			preferredrow_height = 16;
 			_readonly = false ;
@@ -216,10 +216,11 @@ namespace System.Windows.Forms
 			styles_collection = new GridTableStylesCollection (this);
 			styles_collection.CollectionChanged += new CollectionChangeEventHandler (OnTableStylesCollectionChanged);
 
-			SetCurrentStyle (default_style);
+			CurrentTableStyle = default_style;
 
 			horiz_scrollbar = new HScrollBar ();
 			vert_scrollbar = new VScrollBar ();
+			vert_scrollbar.ValueChanged += new EventHandler (OnVerticalScrollEvent);
 			grid_drawing = new DataGridDrawing (this);
 			
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
@@ -330,9 +331,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-
 		public Font CaptionFont {
 			get {
+				if (caption_font == null) {
+					return Font;
+				}
+				
 				return caption_font;
 			}
 
@@ -837,7 +841,10 @@ namespace System.Windows.Forms
 		#region Private Instance Properties
 		internal DataGridTableStyle CurrentTableStyle {
 			get { 
-				return default_style;
+				return current_style;
+			}
+			set {
+				current_style = value;
 			}
 		}
 		
@@ -1071,6 +1078,7 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
+			grid_drawing.CalcGridAreas ();
 		}
 
 		protected override void OnForeColorChanged (EventArgs e)
@@ -1142,9 +1150,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override void OnPaint (PaintEventArgs pe)
-		{
-			//base.OnPaint (pe);
-			Console.WriteLine ("Datagrid.OnPaint");
+		{						
 			grid_drawing.OnPaint (pe);
 		}
 
@@ -1376,6 +1382,12 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Private Instance Methods
+		
+		internal void CalcAreasAndInvalidate ()
+		{
+			grid_drawing.CalcGridAreas ();
+			Invalidate ();
+		}
 
 		private bool SetDataMember (string member)
 		{
@@ -1421,6 +1433,8 @@ namespace System.Windows.Forms
 				TODO: What's up if there are columns in the incoming TableStyle
 			*/
 
+			CurrentTableStyle = (DataGridTableStyle)e.Element;
+
 			switch (e.Action)  {
 				case CollectionChangeAction.Add: {
 					((DataGridTableStyle) e.Element).CreateColumnsForTable ();
@@ -1436,12 +1450,39 @@ namespace System.Windows.Forms
 			}
 
 		}
+		
+		private void OnVerticalScrollEvent (object sender, EventArgs e)
+		{			
+			if (vert_scrollbar.Value == first_visiblerow) {
+				return;
+			}
+			
+			if (vert_scrollbar.Value > first_visiblerow ) { // Scrolldown 
+				int scrolled_rows = vert_scrollbar.Value - first_visiblerow;
+				int pixels = scrolled_rows * RowHeight;
+				Rectangle invalidate = new Rectangle ();
+				
+				invalidate.X =  grid_drawing.CellsArea.X;
+				invalidate.Y =  grid_drawing.CellsArea.Y + grid_drawing.CellsArea.Height - pixels;
+				invalidate.Width = grid_drawing.CellsArea.Width;
+				invalidate.Height = pixels;				
 
-		private void SetCurrentStyle (DataGridTableStyle style)
-		{
-			current_style = style;
+				first_visiblerow =  vert_scrollbar.Value; 
+				grid_drawing.UpdateVisibleRowCount ();
+				
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, - pixels, false);
+				Invalidate (invalidate);				
+				
+				//
+			} else { // Scrollup
+				
+			}
+			
+			
+			
+			//Refresh ();
 		}
-
+		
 		#endregion Private Instance Methods
 
 
