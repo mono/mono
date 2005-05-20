@@ -1,4 +1,14 @@
-2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+2005-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : started level 2 weight analysis.
+
+2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Additional information on how to create
+	  level 3 tables.
+	* MSCompatUnicodeTable.cs : implemented part of GetLevel3Weight().
+
+2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : More case weight (level 3) analysis. I'm
 	  likely to just write table generator.

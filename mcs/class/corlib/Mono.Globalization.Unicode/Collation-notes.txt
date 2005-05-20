@@ -210,9 +210,12 @@
 
 **** level 2
 
-	For Japanese voice mark, it just sums the count up.
+	For Japanese voice marks, it just sums the count up.
 
-	For other letters, maybe there is a table.
+	There also seems special rule for Thai (E01-E4F) e.g. E47 works like
+	Japanese voice marks.
+
+	For other letters, there will be a table.
 
 **** level 3
 
@@ -355,15 +358,6 @@
 	http://www.microsoft.com/globaldev/dis_v1/disv1.asp?DID=dis33d&File=S24C2.asp
 	(Note that composite is different from expansion.)
 
-	<del>
-	According to "Developing International Software" book, in Win32
-	lstrcmpi(), "sc" in hu-HU is treated as a single character, so if it is
-	compared against "Sc" (in IgnoreCase), "sc" won't match it. However
-	.NET (LCMapString) behaves differently.
-	</del>
-	It is wrong. It is "cs" that is treated specially, and also applies to
-	LCMapString collation.
-
 	Note that composite characters is likely to not have equivalent
 	codepoint.
 
@@ -400,6 +394,142 @@
 	happens in the actual sortkeys) for those variables in the table.
 
 	There seems no further differences between StringSort and None.
+
+**** level 2 details
+
+	Known value maps:
+		-08: Some arabic presentation form B (FE8D-FEEE)
+		-0A: Korean parenthesized numbers (3200-321C)
+		-0C: Korean circled numbers (3260-327B)
+
+		<primary category 0E : diacritics>
+		Characters in non "0E" category are out of scope.
+		They could be grepped in UnicodeData.txt.
+		-0E: acute
+		-0F: grave
+		-10: dot above
+		-11: middle dot
+		-12: circumflex
+		-13: diaresis
+		-14: caron
+		     Note that 1C4-1C6 are covered but they are also expanded.
+		-15: breve (cyrillic are also covered? at least 4C1/4C2 are.)
+		-16: dialytika and tonos (category 0F though)
+		-17: macron
+		-19: tilde
+		-1A: ring above | 212B
+		-1B: ogonek ("WITH OGONEK;")
+		-1C: cedilla (WITH CEDILLA;")
+		-1D: double acute | acute and dot above
+		-1E: stroke, except for 0E[1F] and cp{19B, 1BE} |
+		     circumflex and acute | 18B,18C,19A,289
+		     (i.e. they not one-to-one mapping. Neither that every
+		     "stroke" are mapped to 1E, nor not every 1E are mapped to
+		     "stroke".)
+		-1F: diaresis and acute | with circumflex and grave | l slash
+			beware "symbol slash"
+		-20: diaresis and grave | 19B,19F
+		-21: breve and acute | D8,F8
+		-22: caron and dot above | breve and grave
+		-23: macron and acute
+		-24: macron and grave
+		-25: diaresis and caron | dot above and macron | tilde and acute
+		-26: ring above and acute
+		-28: diaresis and macron | cedilla and acute |
+		     macron and diaresis
+		-29: circumflex and tilde
+		-2A: tilde and diaresis
+		-2B: stroke and acute
+		-2C: breve and tilde
+		-2F: cedilla and breve
+		-30: ogonek and macron
+		-43: hook, except for cp{192,1B2,25A,25D,27B,28B,2B1,2B5} |
+		     left hook | with hook above except for cp{1EF6,1EF7} |
+		     27D,284
+		-44: double grave | 1EF6,1EF7
+		-46: inverted breve
+		-48: preceded by apostrophe (actually only 149)
+		-52: horn
+		-55: line below | circumflex and hook above
+		-57: palatal hook (actually only 1AB)
+		-58: dot below except for cp{1EA0,1EA1}
+		-59: "retroflex" (without "WITH") | diaresis below | 1EA0,1EA1
+		-5A: ring below | 1E76,1E77
+		-60: circumflex below except for cp{1E76,1E77} | horn and acute
+		-61: breve below | horn and grave
+		-63: tilde below | 2125
+		-68: D0,F0,182,183 | dot below and dot above
+		-69: right half ring | horn and tilde
+		-6A: circumflex and dot below
+		-6D: breve and dot below
+		-6E: dot below and macron
+		-95: horn and hook above
+		-AA: horn and dot
+
+		(for 01-0D and 7B-8A, they are not related to diacritics.)
+
+		<category BlahBlahNumbers from 0100 to 1000>
+		-38: Arabic-Indic numbers (660-669)
+		-39: extended Arabic-Indic numbers (6F0-6F9)
+		-3A: Devanagari numbers (966-96F)
+		-3B: Bengali numbers (9E6-9EF)
+		-3C: Bengali currency enumerators (9F4-9F9)
+		-3D: Gurmukhi numbers (A66-A6F)
+		-3E: Gujarati numbesr (AE6-AEF)
+		-3F: Oriya digit numbers (B66-B6F)
+		-40: Tamil numbers (BE7-BF2)
+		-41: Telugu numbers (C66-C6F)
+		-42: Kannada numbers (CE6-CEF)
+		-43: Malayam numbers (D66-D6F)
+		-44: Thai numbers (E50-E59)
+		-45: Lao numbers (ED0-ED9)
+		<miscellaneous numbers>
+		-47: Roman numbers (2160-2182)
+		-4E: Hangchou numbers (3021-3029)
+
+		-E0[64]: 2107 (Eurer)
+		-E0[87]: some Tone letters (TONE TWO / TONE SIX)
+		-EE: Circled-
+			numbers#1 (2460-2473)
+			latin (24B6-24EA)
+			numbers#2 (2776-2793)
+			katakana (32D0-32FE),
+		-F3: Parenthesized enumerations (2470-2487,249C-24B5)
+		-F4: Numbers with dot (2488-249B)
+
+		-DD-F0: 20D0-20E1
+
+		<miscellaneous>
+		-483-486 -> 01[94-97]
+		-559,55A -> 01[98,99]
+		-711 -> 01[9A]
+
+		-258,25C-25E,285,286,29A,297 -> 0E[80-86,88]
+		-27F,2B3-2B6 -> 0E 8A[80-84]
+
+		-346-348,2BE-2C5,2CE-2CF -> 01[74-7F]
+		-2D1-2D3,2DE,2E4-2E9 -> 01[81-8A]
+
+		-342,343 -> 01[8D,8E]
+		-345 -> 01[90]
+
+		-740-742 -> 01[8D-8F]
+		-747,748,732,735,738,739,73C,73F,743-746,730 -> 01[90,91,94-9F]
+		-731,733,734,736,737,73A,73B,73D,73E,749,74A,7A6-7A9
+		 -> 01[A0-AA,AC-AF]
+		-7AA-7B0 -> 01[B0-B6]
+
+		-3D3 -> 44
+		-476,477 -> 46
+		-591-5C2 except for 5BA,5BE -> 01[03-33] in order
+		-215F -> 03
+
+		No further patterns for >= 80
+
+		TODO: Below are not done yet:
+			- x < 0x80 in non-"0E" part
+			- 03 <= x <= 0D in "0E" part
+			- 7B <= x <= 7F in "0E" part
 
 **** character category details
 
@@ -501,8 +631,9 @@
 	6 Arrows and Box drawings
 	  09 02 .. 09 7C : 2300-237A
 	  09 BC ... 09 FE : 25A0-AB, 25E7-EB, 25AC-B5, 25EC-EF, 25B6-B9,
-			   25BC-C3, 25BA-25BB, 25C4-25D8, 25E6, 25DA-25E5
-			   21*,25*,26*,27*
+			25BC-C3, 25BA-25BB, 25C4-25D8, 25E6, 25DA-25E5
+			21*,25*,26*,27*
+			This area contains level 2 values.
 	  2190- (non-codepoint order)
 		note that there are many compatibility equivalents
 	  2500- except for 266F (#)
@@ -712,12 +843,11 @@
 	<how many tables?>
 
 	There are five different CJK orderings:
-	default, ko(-KR), ja(-JP), zh-CHS and zh-TW
+	default, ko(-KR), ja(-JP), zh-CHS and zh-CHT
 	They have very different CJK mapping for each.
 
-	Since they are mostly computational differences, we are not likely to
-	extend those character weights into constant tables unless they are
-	required (actually for Japanese it is partly required).
+	Since they seems based on traditional encodings, we are likely to
+	provide other constant tables and switch depending on the culture.
 
 	<what characters are variable?>
 
@@ -748,7 +878,7 @@
 
 **** Accent evaluation order
 
-	With French cultures, diacritical marks must be put *in front of the
+	With French cultures, diacritical marks must be put in front of the
 	character being decorated (aka French ordering).
 	French ordering does not affect only on some diacritics (Japanese
 	voice mark is not affected).
