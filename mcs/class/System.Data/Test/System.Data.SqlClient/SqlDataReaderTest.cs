@@ -3,6 +3,7 @@
 //                          SqlDataReader class
 // Author:
 //      Umadevi S (sumadevi@novell.com)
+//      Kornél Pál <http://www.kornelpal.hu/>
 //
 // Copyright (c) 2004 Novell Inc., and the individuals listed
 // on the ChangeLog entries.
@@ -85,44 +86,54 @@ namespace MonoTests.System.Data.SqlClient
 
 	 }		
 
-	 [Test]
-	  /**
-	  The below test expects a table table4 with a bigint column.
-	  **/	
-          public void ReadBingIntTest () {
-		try    {
-				string createquery = "select * from table4;";
+		[Test]
+		public void ReadBingIntTest() 
+		{
+			try 
+			{
+				string createquery = "SELECT CAST(548967465189498 AS bigint) AS Value";
 				SqlCommand cmd = new SqlCommand();
 				cmd.Connection = conn;
 				cmd.CommandText = createquery;
 				SqlDataReader r = cmd.ExecuteReader();
-				using (r)
+				using (r) 
 				{
-					if (r.Read())
+					if (r.Read()) 
 					{
-						//long id = r.GetInt64(0);
-						// the above will not work since we are using Tds70 due to which Bigint is mapped to decimal, change this when we use tds8
-						decimal id = r.GetDecimal(0);
-						Assert.AreEqual(123456,id);
+						long id = 0;
+						try 
+						{
+							id = r.GetInt64(0);
+						}
+						catch (Exception e) 
+						{
+							Assert.Fail("A#01 Got an exception in GetInt64");
+						}
+						Assert.AreEqual(548967465189498, id);
+						try 
+						{
+							id = r.GetSqlInt64(0).Value;
+						}
+						catch (Exception e) 
+						{
+							Assert.Fail("A#02 Got an exception in GetSqlInt64");
+						}
+						Assert.AreEqual(548967465189498, id);
 					}
-
+					else
+						Assert.Fail("A#03 No rows returned");
 				}
-                        }
-		catch  (Exception e) {
-			Assert.Fail("A#01 Got an exception");
-			//Console.WriteLine(e.StackTrace);
-			
+			}
+			catch (Exception e) 
+			{
+				Assert.Fail("A#04 Got an exception");
+				//Console.WriteLine(e.StackTrace);
+			}
+			finally 
+			{ 
+				// try/catch is necessary to gracefully close connections
+				CloseConnection();
+			}
 		}
-                 
-		finally { // try/catch is necessary to gracefully close connections
-                       
-                        CloseConnection ();
-                }
-          }
-
-
-
-	
-	
-    }
+  }
 }

@@ -1,3 +1,9 @@
+2005-05-20 Kornél Pál <http://www.kornelpal.hu/>
+	
+	* Fixed Bug #53169 - SqlDataReader incorrectly returns bigint as decimal
+		Note: The fix works around the limitations of TDS 7.0 to avoid this
+		difference between Mono and .NET Framework TDS 8.0 should be used instead.
+
 2005-05-20 Umadevi S <sumadevi@novell.com>
 	
 	* Fixed Bug 74948 - SqlParameter also takes DBNull Value.
@@ -315,7 +321,7 @@ these
 
 	* SqlCommand.cs (ExecuteNonQuery): Return
 	Connection.Tds.RecordsAffected if it is successful.  Patch from
-	J�rg Rosenkranz <joergr@voelcker.com>.
+	Jörg Rosenkranz <joergr@voelcker.com>.
 
 	This is part of a fix to bug #40315.
 

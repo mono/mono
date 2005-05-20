@@ -1,3 +1,7 @@
+2005-05-20 Kornél Pál <http://www.kornelpal.hu/>
+	
+	* SqlDataReaderTest.cs: Corrected and extended bigint test
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlClientPermissionTest.cs, SqlClientPermissionAttributeTest.cs:
