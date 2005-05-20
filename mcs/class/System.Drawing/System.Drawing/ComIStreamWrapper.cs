@@ -4,6 +4,10 @@
 // Author:
 //   Kornél Pál <http://www.kornelpal.hu/>
 //
+// Copyright (C) 2005 Kornél Pál
+//
+
+//
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,17 +37,14 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 using System.Runtime.InteropServices.ComTypes;
 using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+#else
+using IStream = System.Runtime.InteropServices.UCOMIStream;
 #endif
 
 namespace System.Drawing
 {
 	// Stream to IStream wrapper for COM interop
-	internal sealed class ComIStreamWrapper :
-#if NET_2_0
-		IStream
-#else
-		UCOMIStream
-#endif
+	internal sealed class ComIStreamWrapper : IStream
 	{
 		private const int STG_E_INVALIDFUNCTION = unchecked((int)0x80030001);
 
@@ -140,13 +141,7 @@ namespace System.Drawing
 			baseStream.SetLength(libNewSize);
 		}
 
-		public void CopyTo(
-#if NET_2_0
-			IStream
-#else
-			UCOMIStream
-#endif
-			pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
+		public void CopyTo(IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 		{
 			byte[] buffer = new byte[4096];
 			long written = 0;
@@ -201,13 +196,7 @@ namespace System.Drawing
 			pstatstg.cbSize = baseStream.Length;
 		}
 
-		public void Clone(out
-#if NET_2_0
-			IStream
-#else
-			UCOMIStream
-#endif
-			ppstm)
+		public void Clone(out IStream ppstm)
 		{
 			ppstm = null;
 			throw new ExternalException(null, STG_E_INVALIDFUNCTION);

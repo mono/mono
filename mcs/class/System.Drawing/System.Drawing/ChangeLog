@@ -1,3 +1,9 @@
+2005-05-16 Kornél Pál <kornelpal@hotmail.com>
+
+	* gdipFunctions.cs: Modified conditional compilation syntax
+	* ComIStreamWrapper.cs: Modified conditional compilation syntax
+	* ComIStreamMarshaler.cs: Modified conditional compilation syntax
+
 2005-05-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* Bitmap.cs: Add null check into ctor.

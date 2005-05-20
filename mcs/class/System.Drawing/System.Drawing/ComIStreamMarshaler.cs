@@ -4,6 +4,10 @@
 // Author:
 //   Kornél Pál <http://www.kornelpal.hu/>
 //
+// Copyright (C) 2005 Kornél Pál
+//
+
+//
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -39,6 +43,8 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 using System.Runtime.InteropServices.ComTypes;
 using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
+#else
+using IStream = System.Runtime.InteropServices.UCOMIStream;
 #endif
 
 namespace System.Drawing
@@ -58,13 +64,7 @@ namespace System.Drawing
 		private delegate int WriteDelegate(IntPtr @this, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] pv, int cb, IntPtr pcbWritten);
 		private delegate int SeekDelegate(IntPtr @this, long dlibMove, int dwOrigin, IntPtr plibNewPosition);
 		private delegate int SetSizeDelegate(IntPtr @this, long libNewSize);
-		private delegate int CopyToDelegate(IntPtr @this, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))]
-#if NET_2_0
-			IStream
-#else
-			UCOMIStream
-#endif
-			pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
+		private delegate int CopyToDelegate(IntPtr @this, [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(ComIStreamMarshaler))] IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);
 		private delegate int CommitDelegate(IntPtr @this, int grfCommitFlags);
 		private delegate int RevertDelegate(IntPtr @this);
 		private delegate int LockRegionDelegate(IntPtr @this, long libOffset, long cb, int dwLockType);
@@ -126,13 +126,7 @@ namespace System.Drawing
 			private static readonly IntPtr comVtable;
 			private static readonly VtableDestructor vtableDestructor;
 
-			private readonly
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				managedInterface;
+			private readonly IStream managedInterface;
 			private readonly IntPtr comInterface;
 			// Keeps the object alive when it has no managed references
 			private readonly GCHandle gcHandle;
@@ -164,13 +158,7 @@ namespace System.Drawing
 				vtableDestructor = new VtableDestructor();
 			}
 
-			private ManagedToNativeWrapper(
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				managedInterface)
+			private ManagedToNativeWrapper(IStream managedInterface)
 			{
 				IStreamInterface newInterface;
 
@@ -196,23 +184,11 @@ namespace System.Drawing
 				GC.SuppressFinalize(this);
 			}
 
-			internal static
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				GetUnderlyingInterface(IntPtr comInterface, bool outParam)
+			internal static IStream GetUnderlyingInterface(IntPtr comInterface, bool outParam)
 			{
 				if (Marshal.ReadIntPtr(comInterface) == comVtable)
 				{
-
-#if NET_2_0
-					IStream
-#else
-					UCOMIStream
-#endif
-						managedInterface = GetObject(comInterface).managedInterface;
+					IStream managedInterface = GetObject(comInterface).managedInterface;
 
 					if (outParam)
 						Release(comInterface);
@@ -223,13 +199,7 @@ namespace System.Drawing
 					return null;
 			}
 
-			internal static IntPtr CreateInterface(
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				managedInterface)
+			internal static IntPtr CreateInterface(IStream managedInterface)
 			{
 				IntPtr comInterface;
 
@@ -409,13 +379,7 @@ namespace System.Drawing
 #endif
 			}
 
-			private static int CopyTo(IntPtr @this,
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
+			private static int CopyTo(IntPtr @this, IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 			{
 #if MAP_EX_TO_HR
 				try
@@ -524,12 +488,7 @@ namespace System.Drawing
 				try
 				{
 #endif
-#if NET_2_0
-					IStream
-#else
-					UCOMIStream
-#endif
-						newInterface;
+					IStream newInterface;
 					IntPtr newWrapper;
 
 					ppstm = IntPtr.Zero;
@@ -551,12 +510,7 @@ namespace System.Drawing
 		}
 
 		// Managed Runtime Callable Wrapper implementation
-		private sealed class NativeToManagedWrapper :
-#if NET_2_0
-			IStream
-#else
-			UCOMIStream
-#endif
+		private sealed class NativeToManagedWrapper : IStream
 		{
 			private readonly IntPtr comInterface;
 			private readonly IStreamVtbl managedVtable;
@@ -582,13 +536,7 @@ namespace System.Drawing
 				GC.SuppressFinalize(this);
 			}
 
-			internal static IntPtr GetUnderlyingInterface(
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				managedInterface)
+			internal static IntPtr GetUnderlyingInterface(IStream managedInterface)
 			{
 				if (managedInterface is NativeToManagedWrapper)
 				{
@@ -601,44 +549,21 @@ namespace System.Drawing
 					return IntPtr.Zero;
 			}
 
-			internal static
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				CreateInterface(IntPtr comInterface, bool outParam)
+			internal static IStream CreateInterface(IntPtr comInterface, bool outParam)
 			{
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-					managedInterface;
+				IStream managedInterface;
 
 				if (comInterface == IntPtr.Zero)
 					return null;
 #if !RECURSIVE_WRAPPING
 				else if ((managedInterface = ManagedToNativeWrapper.GetUnderlyingInterface(comInterface, outParam)) == null)
 #endif
-					managedInterface = (
-#if NET_2_0
-						IStream
-#else
-						UCOMIStream
-#endif
-						)new NativeToManagedWrapper(comInterface, outParam);
+					managedInterface = (IStream)new NativeToManagedWrapper(comInterface, outParam);
 
 				return managedInterface;
 			}
 
-			internal static void DisposeInterface(
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				managedInterface)
+			internal static void DisposeInterface(IStream managedInterface)
 			{
 				if (managedInterface != null && managedInterface is NativeToManagedWrapper)
 					((NativeToManagedWrapper)managedInterface).Dispose();
@@ -671,13 +596,7 @@ namespace System.Drawing
 				CheckHResult(managedVtable.SetSize(comInterface, libNewSize));
 			}
 
-			public void CopyTo(
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
+			public void CopyTo(IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 			{
 				CheckHResult(managedVtable.CopyTo(comInterface, pstm, cb, pcbRead, pcbWritten));
 			}
@@ -707,13 +626,7 @@ namespace System.Drawing
 				CheckHResult(managedVtable.Stat(comInterface, out pstatstg, grfStatFlag));
 			}
 
-			public void Clone(out
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				ppstm)
+			public void Clone(out IStream ppstm)
 			{
 				IntPtr newInterface;
 
@@ -736,21 +649,9 @@ namespace System.Drawing
 		public IntPtr MarshalManagedToNative(object managedObj)
 		{
 #if RECURSIVE_WRAPPING
-			managedObj = NativeToManagedWrapper.CreateInterface(ManagedToNativeWrapper.CreateInterface((
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
+			managedObj = NativeToManagedWrapper.CreateInterface(ManagedToNativeWrapper.CreateInterface((IStream)managedObj), true);
 #endif
-				)managedObj), true);
-#endif
-			return ManagedToNativeWrapper.CreateInterface((
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				)managedObj);
+			return ManagedToNativeWrapper.CreateInterface((IStream)managedObj);
 		}
 
 		public void CleanUpNativeData(IntPtr pNativeData)
@@ -768,13 +669,7 @@ namespace System.Drawing
 
 		public void CleanUpManagedData(object managedObj)
 		{
-			NativeToManagedWrapper.DisposeInterface((
-#if NET_2_0
-				IStream
-#else
-				UCOMIStream
-#endif
-				)managedObj);
+			NativeToManagedWrapper.DisposeInterface((IStream)managedObj);
 		}
 
 		public int GetNativeDataSize()
