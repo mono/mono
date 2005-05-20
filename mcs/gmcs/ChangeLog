@@ -1,5 +1,10 @@
 2005-05-20  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (New.DoResolve): Move the CS0712 check above the
+	CS0144 check; otherwise it can never be reached.
+
+2005-05-20  Martin Baulig  <martin@ximian.com>
+
 	* cs-parser.jay: Fix CS0080 check; add CS0231 and CS0257 from MCS.
 
 2005-05-20  Martin Baulig  <martin@ximian.com>

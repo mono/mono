@@ -6055,13 +6055,13 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			if (type.IsInterface || type.IsAbstract){
-				Error (144, "It is not possible to create instances of interfaces or abstract classes");
+			if (type.IsAbstract && type.IsSealed) {
+				Report.Error (712, loc, "Cannot create an instance of the static class '{0}'", TypeManager.CSharpName (type));
 				return null;
 			}
 
-			if (type.IsAbstract && type.IsSealed) {
-				Report.Error (712, loc, "Cannot create an instance of the static class '{0}'", TypeManager.CSharpName (type));
+			if (type.IsInterface || type.IsAbstract){
+				Error (144, "It is not possible to create instances of interfaces or abstract classes");
 				return null;
 			}
 
