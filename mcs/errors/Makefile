@@ -22,9 +22,6 @@ DISTFILES = \
 	$(wildcard *.inc)	\
 	$(wildcard *.pub)	\
 	$(wildcard *.response)	\
-	mcs-expect-no-error mcs-expect-wrong-error mcs-ignore-tests \
-	gmcs-expect-no-error gmcs-expect-wrong-error gmcs-ignore-tests \
-	generics-expect-no-error generics-expect-wrong-error \
 	$(wildcard known-issues-*)
 
 TEST_SUPPORT_FILES = \
