@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void RemoveAt(int index) {
-			if (index < 0 || index > base.List.Count) {
+			if (index < 0 || index >= base.List.Count) {
 				throw new ArgumentOutOfRangeException("index");
 			}
 

@@ -1,5 +1,10 @@
 2005-05-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ComboBox.cs: fixes OnSelectedItemChanged
+	* ControlBindingsCollection.cs: fixes item range check
+
+2005-05-20  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* UpDownBase.cs:
 		- Calc preferred height properly
 		- Implement missing properties

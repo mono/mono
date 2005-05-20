@@ -416,6 +416,7 @@ namespace System.Windows.Forms
     				
     				OnSelectedIndexChanged  (new EventArgs ());
     				OnSelectedValueChanged (new EventArgs ());
+    				OnSelectedItemChanged (new EventArgs ());
     				Refresh ();
 			}
 		}
@@ -785,8 +786,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnSelectedItemChanged (EventArgs e)
 		{
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged (this, e);
+			
 		}
 
 		protected override void OnSelectedValueChanged (EventArgs e)
@@ -950,6 +950,8 @@ namespace System.Windows.Forms
 					combobox_info.textarea.Height);
 				listbox_ctrl.CalcListBoxArea ();
 			}
+			
+			area.Dispose ();
 		}
 
 		private void CreateComboListBox ()
