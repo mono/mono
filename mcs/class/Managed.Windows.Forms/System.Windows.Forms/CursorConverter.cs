@@ -30,6 +30,8 @@ using System.Drawing.Imaging;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 
 namespace System.Windows.Forms {
@@ -54,7 +56,6 @@ namespace System.Windows.Forms {
 			return base.CanConvertTo (context, dest_type);
 		}
 
-		[MonoTODO ("Waiting on Cursor::.ctor (Stream)")]
 		public override object ConvertFrom (ITypeDescriptorContext context,
 				CultureInfo culture, object value)
 		{
@@ -67,32 +68,30 @@ namespace System.Windows.Forms {
 			}			 
 		}
 
-		[MonoTODO ("Waiting on Cursor::Draw")]
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture,
 				object value, Type dest_type)
 		{
 			if (dest_type == null)
 				throw new ArgumentNullException ("destinationType");
 
+			if ( !(value is Cursor)) {
+				throw new ArgumentException("object must be of class Cursor", "value");
+			}
+
 			if (dest_type == typeof (byte [])) {
-				
-				if (value == null)
+				Cursor			c;
+				SerializationInfo	si;
+
+				if (value == null) {
 					return new byte [0];
-
-				using (MemoryStream s = new MemoryStream ()) {
-					Cursor val = value as Cursor;
-					
-					Bitmap b = new Bitmap (val.Size.Width, val.Size.Height);
-					using (Graphics g  = Graphics.FromImage (b)) {
-						// This isn't implemented in Cursor yet
-
-						// Rectangle r = new Rectangle (0, 0,
-						// val.Size.Width, val.Size.Height);
-						//	  val.Draw (g, r);
-					}
-					b.Save (s, ImageFormat.Bmp);
-					return s.ToArray ();
 				}
+
+				c = (Cursor)value;
+
+				si = new SerializationInfo(typeof(Cursor), new FormatterConverter());
+				((ISerializable)c).GetObjectData(si, new StreamingContext(StreamingContextStates.Remoting));
+
+				return (byte[])si.GetValue("CursorData", typeof(byte[]));
 			}
 			return base.ConvertTo (context, culture, value, dest_type);
 		}

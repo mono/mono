@@ -1,3 +1,7 @@
+2005-05-20  Peter Bartok  <pbartok@novell.com>
+
+	* CursorConverter.cs (ConvertTo): Switched to use Cursor.GetObjectData
+
 2005-05-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: Basic painting methods
