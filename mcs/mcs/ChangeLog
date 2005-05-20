@@ -1,3 +1,8 @@
+2005-05-20  Miguel de Icaza  <miguel@novell.com>
+
+	* typemanager.cs (EnumToUnderlying): Do not throw if we do not
+	know the type at this stage, just break through.   Fixes #75008 
+
 2005-05-19  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs
