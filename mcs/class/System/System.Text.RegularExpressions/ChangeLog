@@ -1,5 +1,12 @@
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #74735.
+	* replace.cs (ReplacementEvaluator.Compile): Allow CompileTerm to
+	fail and yet have advanced the pointer.  Append the scanned-over
+	portion to the "literal" being built.
+	(ReplacementEvaluator.CompileTerm): Don't throw any exceptions.
+	If a term cannot be recognized, just return null.
+
 	* compiler.cs (InterpreterFactory.GroupCount): Fix.  The 0'th
 	index corresponds to Opcode.Info.
 

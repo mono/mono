@@ -63,6 +63,7 @@ System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexTrial.cs
 System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs
+System.Text.RegularExpressions/RegexReplace.cs
 System.Web/AspNetHostingPermissionAttributeTest.cs
 System.Web/AspNetHostingPermissionTest.cs
 System.IO.Compression/DeflateStreamCas.cs

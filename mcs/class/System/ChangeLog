@@ -1,5 +1,8 @@
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
+	* System_test.dll.sources: Add
+	System.Text.RegularExpressions/RegexReplace.cs.
+
 	* System.dll.sources: Update to reflect split-up of
 	System.Text.RegularExpressions/match.cs.
 

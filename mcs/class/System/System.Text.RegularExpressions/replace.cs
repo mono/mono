@@ -67,12 +67,27 @@ namespace System.Text.RegularExpressions {
 			while (ptr < replacement.Length) {
 				c = replacement[ptr ++];
 
-				if (c == '$') {
-					if (replacement[ptr] != '$') 
-						term = CompileTerm (replacement, ref ptr);
-					else
-						++ ptr;
+				if (c != '$') {
+					literal.Append (c);
+					continue;
 				}
+
+				// If the '$' was the last character, just emit it as is
+				if (ptr == replacement.Length) {
+					literal.Append (c);
+					break;
+				}
+
+				// If we saw a '$$'
+				if (replacement[ptr] == '$') {
+					literal.Append (c);
+					++ ptr;
+					continue;
+				}
+
+				int saveptr = ptr - 1;
+
+				term = CompileTerm (replacement, ref ptr);
 
 				if (term != null) {
 					term.Literal = literal.ToString ();
@@ -80,9 +95,10 @@ namespace System.Text.RegularExpressions {
 
 					term = null;
 					literal.Length = 0;
+				} else {
+					// If 'CompileTerm' couldn't identify it, don't abort, simply copy it over.
+					literal.Append (replacement, saveptr, ptr - saveptr);
 				}
-				else
-					literal.Append (c);
 			}
 
 			if (term == null && literal.Length > 0) {
@@ -96,7 +112,7 @@ namespace System.Text.RegularExpressions {
 			if (Char.IsDigit (c)) {		// numbered group
 				int n = Parser.ParseDecimal (str, ref ptr);
 				if (n < 0 || n > regex.GroupCount)
-					throw new ArgumentException ("Bad group number.");
+					return null;
 				
 				return new Term (TermOp.Match, n);
 			}
@@ -105,14 +121,33 @@ namespace System.Text.RegularExpressions {
 
 			switch (c) {
 			case '{': {			// named group
-				string name = Parser.ParseName (str, ref ptr);
-				if (str[ptr ++] != '}' || name == null)
-					throw new ArgumentException ("Bad group name.");
-				
-				int n = regex.GroupNumberFromName (name);
-				
-				if (n < 0)
-					throw new ArgumentException ("Bad group name.");
+				string name;
+				int n = -1;
+
+				try {
+					// The parser is written such that there are few explicit range checks
+					// and depends on 'IndexOutOfRangeException' being thrown.
+
+					if (Char.IsDigit (str [ptr])) {
+						n = Parser.ParseDecimal (str, ref ptr);
+						name = "";
+					} else {
+						name = Parser.ParseName (str, ref ptr);
+					}
+				} catch (IndexOutOfRangeException) {
+					ptr = str.Length;
+					return null;
+				}
+
+				if (ptr == str.Length || str[ptr] != '}' || name == null)
+					return null;
+				++ptr; 			// Swallow the '}'
+
+				if (name != "")
+					n = regex.GroupNumberFromName (name);
+
+				if (n < 0 || n > regex.GroupCount)
+					return null;
 
 				return new Term (TermOp.Match, n);
 			}
@@ -133,7 +168,7 @@ namespace System.Text.RegularExpressions {
 				return new Term (TermOp.All, 0);
 
 			default:
-				throw new ArgumentException ("Bad replacement pattern.");
+				return null;
 			}
 		}
 
