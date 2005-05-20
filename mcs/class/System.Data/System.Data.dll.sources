@@ -168,6 +168,7 @@ System.Data.Common/ConnectionStringsSectionHandler.cs
 System.Data.Common/DbProviderFactories.cs
 System.Data.Common/DbProviderFactory.cs
 System.Data.Common/DbProviderSupportedClasses.cs
+System.Data.Common/DbProviderSpecificTypePropertyAttribute.cs
 System.Data.Common/DbTable.cs
 System.Data.Common/DbTransaction.cs
 System.Data.Common/DbTypes.cs
