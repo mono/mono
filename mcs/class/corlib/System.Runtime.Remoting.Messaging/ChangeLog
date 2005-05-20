@@ -1,3 +1,8 @@
+2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsyncResult.cs: Added new fields (required for stack propagation) to
+	match runtime structure.
+
 2005-05-09  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MethodCall.cs: Fix warning.
