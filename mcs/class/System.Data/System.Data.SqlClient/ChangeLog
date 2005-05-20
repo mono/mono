@@ -1,3 +1,9 @@
+2005-05-20 Umadevi S <sumadevi@novell.com>
+
+	* Continuing on implementation for bulkcopy and notification
+		Added files SqlNotificationEventArgs.cs, OnChangeEventHandler.cs
+		Modified SqlRowUpdatingEventArgs.cs
+
 2005-05-19 Umadevi S <sumadevi@novell.com>
 	
 	* For implementation of bulkcopy and notifications added files

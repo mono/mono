@@ -1,10 +1,7 @@
 //
-// System.Data.SqlClient.SqlRowUpdatingEventArgs.cs
+// System.Data.SqlClient.SqlNotificationEventArgs.cs
 //
 // Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
-//   Tim Coleman (tim@timcoleman.com)
 //   Umadevi S (sumadevi@novell.com)
 //
 // (C) Ximian, Inc 2002
@@ -34,45 +31,57 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 using System.Data;
 using System.Data.Common;
 
 namespace System.Data.SqlClient {
-	public sealed class SqlRowUpdatingEventArgs : RowUpdatingEventArgs
+	public class SqlNotificationEventArgs : EventArgs
 	{
+		#region Fields
+
+		private SqlNotificationType type;
+		private SqlNotificationInfo info;
+		private SqlNotificationSource source;		
+
+		#endregion //Fields
+
+
 		#region Constructors
 
-		public SqlRowUpdatingEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
-			: base (row, command, statementType, tableMapping)
-		{
+		public SqlNotificationEventArgs( SqlNotificationType type, SqlNotificationInfo info,						SqlNotificationSource source) {
+			this.type = type;
+			this.info = info;
+			this.source = source;
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		public new SqlCommand Command {
-			get { return (SqlCommand) base.Command; }
-			set { base.Command = value; }
+		public SqlNotificationType Type {
+			get {
+				return this.type;	
+			}
 		}
 
-		#if NET_2_0
-			
-		protected override IDbCommand BaseCommand {
+		public SqlNotificationInfo Info {
 			get {
-				return base.BaseCommand;
+				return this.info;
 			}
-			set {
-				base.BaseCommand = value as SqlCommand;
+		}
+
+		public SqlNotificationSource Source {
+			get {
+				return this.source;
 			}
-			
 
-		}	
-		
-
-		#endif
+		}
 
 		#endregion // Properties
 	}
 }
+
+#endif
