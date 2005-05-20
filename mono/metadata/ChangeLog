@@ -1,3 +1,19 @@
+2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class-internals.h: Added executioncontext_class field to 
+	MonoDefaults structure.
+	* domain.c: Cache System.Threading.ExecutionContext class in 
+	mono_defaults.
+	* object.c: Capture the ExecutionContext for asynchroneous calls in
+	 mono_async_result_new.
+	* object-internals.h: Added execution_context and original_context 
+	fields to MonoAsyncResult. Added execution_context to MonoThread.
+	* security-manager.c|.h: Added mono_get_context_capture_method to 
+	return the capture method (if required by the security manager or by
+	the framework version used).
+	* threadpool.c: Apply capture (if present) ExecutionContext in 
+	mono_async_invoke and revert to original context after it completes.
+
 2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : updated (real hacky solution for zh-CHT).
