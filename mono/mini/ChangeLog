@@ -1,3 +1,7 @@
+2005-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *ia64*: Ongoing IA64 work.
+
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* basic.cs: Add tests for add.ovf. Fix warnings.
