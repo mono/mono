@@ -1,3 +1,7 @@
+2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* basic.cs: Add tests for add.ovf. Fix warnings.
+
 2005-05-18  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.c (mono_main): Avoid crash if no argument is passed to
