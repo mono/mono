@@ -1,5 +1,8 @@
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
+	* compiler.cs (InterpreterFactory.GroupCount): Fix.  The 0'th
+	index corresponds to Opcode.Info.
+
 	* parser.cs (Parser.Unescape): If the string doesn't contain any
 	'\' character, don't allocate a new string.
 

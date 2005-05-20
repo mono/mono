@@ -93,7 +93,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public int GroupCount {
-			get { return pattern[0]; }
+			get { return pattern[1]; }
 		}
 
 		public IDictionary Mapping {
