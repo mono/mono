@@ -196,46 +196,42 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		IntPtr imagePtr;
 		Status st;
 		
+		// Seeking required
+		if (!stream.CanSeek) {
+			byte[] buffer = new byte[256];
+			int index = 0;
+			int count;
+
+			do {
+				if (buffer.Length < index + 256) {
+					byte[] newBuffer = new byte[buffer.Length * 2];
+					Array.Copy(buffer, newBuffer, buffer.Length);
+					buffer = newBuffer;
+				}
+				count = stream.Read(buffer, index, 256);
+				index += count;
+			}
+			while (count != 0);
+
+			stream = new MemoryStream(buffer, 0, index);
+		}
+
 		// check for Unix platforms - see FAQ for more details
 		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 		int platform = (int) Environment.OSVersion.Platform;
 		if ((platform == 4) || (platform == 128)) {
-
 			// Unix, with libgdiplus
 			// We use a custom API for this, because there's no easy way
 			// to get the Stream down to libgdiplus.  So, we wrap the stream
 			// with a set of delegates.
 			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
-			
 
-			st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetHeaderDelegate, sh.GetBytesDelegate, sh.PutBytesDelegate,
-									sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate,
-										     out imagePtr);		
+			st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetHeaderDelegate, sh.GetBytesDelegate,
+				sh.PutBytesDelegate, sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, out imagePtr);
 		} else {
-				// this is MS-land
-
-				// GDI+ requires seeking
-				if (!stream.CanSeek) {
-					byte[] buffer = new byte[256];
-					int index = 0;
-					int count;
-
-					do {
-						if (buffer.Length < index + 256) {
-							byte[] newBuffer = new byte[buffer.Length * 2];
-							Array.Copy(buffer, newBuffer, buffer.Length);
-							buffer = newBuffer;
-						}
-						count = stream.Read(buffer, index, 256);
-						index += count;
-					}
-					while (count != 0);
-
-					stream = new MemoryStream(buffer, 0, index);
-				}
-
-				st = GDIPlus.GdipLoadImageFromStream(new ComIStreamWrapper(stream), out imagePtr);
-			}
+			// this is MS-land
+			st = GDIPlus.GdipLoadImageFromStream(new ComIStreamWrapper(stream), out imagePtr);
+		}
 
 		GDIPlus.CheckStatus (st);
 		nativeObject = imagePtr;

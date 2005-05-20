@@ -1,5 +1,6 @@
 2005-05-16 Kornél Pál <kornelpal@hotmail.com>
 
+	* Image.cs: Uses MemoryStream wrapping on all platforms if needed
 	* gdipFunctions.cs: Modified conditional compilation syntax
 	* ComIStreamWrapper.cs: Modified conditional compilation syntax
 	* ComIStreamMarshaler.cs: Modified conditional compilation syntax
