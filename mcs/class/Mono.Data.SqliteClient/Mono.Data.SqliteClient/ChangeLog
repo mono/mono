@@ -1,5 +1,8 @@
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
 
-	* SqliteConnection.cs: SetConnectionString: trim white spaces,
-	ignore empty connection string options.
+	* SqliteConnection.cs:
+	- SetConnectionString: trim white spaces, ignore empty connection
+	string options.
+	- SetConnectionString: if file://,db_file starts from pos 7 not 6.
+
 

@@ -6,5 +6,3 @@ create table test (
 insert into test values (1, "mono test 1");
 insert into test values (2, "mono test 2");
 insert into test values (3, "mono test 3");
-
-select * from test;

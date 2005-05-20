@@ -141,7 +141,7 @@ namespace Mono.Data.SqliteClient
 					string tvalue_lc = arg_pieces[1].ToLower ().Trim ();
 					if (token == "uri") {
 						if (tvalue_lc.StartsWith ("file://")) {
-							db_file = tvalue.Substring (6);
+							db_file = tvalue.Substring (7);
 						} else if (tvalue_lc.StartsWith ("file:")) {
 							db_file = tvalue.Substring (5);
 						} else if (tvalue_lc.StartsWith ("/")) {

@@ -1,7 +1,8 @@
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* test.sql: script to create a test db.
+	* SqliteConnectionTest.cs: Added. Tests for SqliteConnection.
+	* SqliteDataReaderTest.cs: Added. Tests for SqliteDataReader.
 
-	* SqliteConnectionTest.cs: Added. Tests for SqliteConnection
-	class.
+
 

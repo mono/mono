@@ -1,6 +1,9 @@
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
+	    Raja R Harinath <rharinath@novell.com>
 
-	* Makefile: Test suite started.
+	* Makefile:
+	- Test suite started.
+	- Create sqlite3 db testdb from script Test/test.sql.
 	* Mono.Data.SqliteClient_test.dll.sources: Added. Test files.
 
 2004-11-17  Geoff Norton  <gnorton@customerdna.com>

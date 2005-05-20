@@ -66,6 +66,7 @@ namespace MonoTests.Mono.Data.SqliteClient
                 }
 
                 [Test]
+                [Ignore ("opening a connection should not create db! though, leave for now")]
                 public void OpenTest ()
                 {
                         try {
