@@ -1,5 +1,7 @@
 2005-05-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix warning.
+
 	* driver.c: Always print failed tests.
 
 	* mini-codegen.c: Use cfg->frame_reg instead of a macro for the
