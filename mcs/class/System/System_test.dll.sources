@@ -71,3 +71,6 @@ System.IO.Compression/GZipStreamCas.cs
 System.Net/DnsCas.cs
 System.Net/FileWebRequestCas.cs
 System.Net/HttpWebRequestCas.cs
+System.Net.Sockets/NetworkStreamCas.cs
+System.Net.Sockets/SocketCas.cs
+System.Net.Sockets/TcpClientCas.cs

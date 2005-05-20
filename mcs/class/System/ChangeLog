@@ -1,3 +1,8 @@
+2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Added new CAS unit tests for NetworkStream,
+	Socket and TcpClient to the build (stack propagation in async calls).
+
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
 	* System_test.dll.sources: Add
