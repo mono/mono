@@ -16,7 +16,7 @@ Module M
 Public i as integer
         Sub Main()
 		   dim o as Object = new C()
-		   dim a as integer = o.fun(i := 2, a1 := "a")
+		   dim a as integer = o.fun(a1 := "a", i := 2)
 		   if a<>10 or i=2 then
 			throw new System.Exception("#A1 - Binding not proper")
 		   end if
