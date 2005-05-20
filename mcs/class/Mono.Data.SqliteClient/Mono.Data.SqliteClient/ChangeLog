@@ -1,0 +1,5 @@
+2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqliteConnection.cs: SetConnectionString: trim white spaces,
+	ignore empty connection string options.
+

@@ -127,15 +127,18 @@ namespace Mono.Data.SqliteClient
 				db_mode = 0644;
 				
 				string[] conn_pieces = connstring.Split (',');
-				foreach (string piece in conn_pieces) {
-					piece.Trim ();
+                                for (int i = 0; i < conn_pieces.Length; i++) {
+					string piece = conn_pieces [i].Trim ();
+                                        if (piece.Length == 0) { // ignore empty elements
+                                                continue;
+                                        }
 					string[] arg_pieces = piece.Split ('=');
 					if (arg_pieces.Length != 2) {
 						throw new InvalidOperationException ("Invalid connection string");
 					}
-					string token = arg_pieces[0].ToLower ();
-					string tvalue = arg_pieces[1];
-					string tvalue_lc = arg_pieces[1].ToLower ();
+					string token = arg_pieces[0].ToLower ().Trim ();
+					string tvalue = arg_pieces[1].Trim ();
+					string tvalue_lc = arg_pieces[1].ToLower ().Trim ();
 					if (token == "uri") {
 						if (tvalue_lc.StartsWith ("file://")) {
 							db_file = tvalue.Substring (6);
