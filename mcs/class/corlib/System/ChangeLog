@@ -1,3 +1,8 @@
+2005-05-19  Ben Maurer  <bmaurer@ximian.com>
+
+	* Delegate.cs (Equals): Use `as' to protect in the case where !
+	(obj is Delegate)
+
 2005-05-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Console.cs (Readline) [NET_2_0]: Avoid "uninitialized variable"

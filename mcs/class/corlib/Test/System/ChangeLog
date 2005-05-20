@@ -1,3 +1,7 @@
+2005-05-19  Ben Maurer  <bmaurer@ximian.com>
+
+	* MulticastDelegate.cs: Test for equals where !(obj is Delegate)
+
 2005-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : Added bug #74775 case to TestParseExact().

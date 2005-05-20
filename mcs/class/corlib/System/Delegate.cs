@@ -245,10 +245,11 @@ namespace System
 
 		public override bool Equals (object obj)
 		{
-			if (obj == null)
+			Delegate d = obj as Delegate;
+			
+			if (d == null)
 				return false;
-
-			Delegate d = (Delegate) obj;
+			
 			// Do not compare method_ptr, since it can point to a trampoline
 			if ((d.target_type == target_type) && (d.m_target == m_target) &&
 				(d.method_name == method_name) && (d.method_info == method_info))

@@ -74,6 +74,11 @@ public class MulticastDelegateTest : TestCase {
 		del1 += delc;
 		del2 = dela + del2;
 		AssertEquals( "#A03", true, del1 == del2 );
+		
+		object o = new object ();
+		
+		AssertEquals ("#A04", false, dela.Equals (o));
+		
 	}
 
 	public void TestCombineRemove()
