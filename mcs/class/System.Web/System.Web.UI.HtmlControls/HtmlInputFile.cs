@@ -52,7 +52,7 @@ namespace System.Web.UI.HtmlControls{
 				return -1;
 			}
 			set{
-				Attributes["accept"] = AttributeToString(value);
+				Attributes["maxlength"] = AttributeToString(value);
 			}
 		}
 		
