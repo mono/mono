@@ -1657,49 +1657,6 @@ namespace Mono.CSharp {
 			return e != null;
 		}
 		
-		//
-		// Returns a `ParameterReference' for the given name, or null if there
-		// is no such parameter
-		//
-		public ParameterReference GetParameterReference (string name, Location loc)
-		{
-			Parameter par;
-			int idx;
-
-			for (Block b = this; b != null; b = b.Toplevel.Parent) {
-				Parameters pars = b.Toplevel.Parameters;
-				par = pars.GetParameterByName (name, out idx);
-				if (par != null)
-					return new ParameterReference (pars, this, idx, name, loc);
-			}
-			return null;
-		}
-
-		//
-		// Whether the parameter named `name' is local to this block, 
-		// or false, if the parameter belongs to an encompassing block.
-		//
-		public bool IsLocalParameter (string name)
-		{
-			return Toplevel.Parameters.GetParameterByName (name) != null;
-		}
-		
-		//
-		// Whether the `name' is a parameter reference
-		//
-		public bool IsParameterReference (string name)
-		{
-			Parameter par;
-			int idx;
-
-			for (Block b = this; b != null; b = b.Toplevel.Parent) {
-				par = b.Toplevel.Parameters.GetParameterByName (name, out idx);
-				if (par != null)
-					return true;
-			}
-			return false;
-		}
-
 		/// <returns>
 		///   A list of labels that were not used within this block
 		/// </returns>
@@ -2213,6 +2170,48 @@ namespace Mono.CSharp {
 			get {
 				return top_level_branching;
 			}
+		}
+
+		//
+		// Returns a `ParameterReference' for the given name, or null if there
+		// is no such parameter
+		//
+		public ParameterReference GetParameterReference (string name, Location loc)
+		{
+			Parameter par;
+			int idx;
+
+			for (ToplevelBlock t = this; t != null; t = t.Container) {
+				Parameters pars = t.Parameters;
+				par = pars.GetParameterByName (name, out idx);
+				if (par != null)
+					return new ParameterReference (pars, this, idx, name, loc);
+			}
+			return null;
+		}
+
+		//
+		// Whether the parameter named `name' is local to this block, 
+		// or false, if the parameter belongs to an encompassing block.
+		//
+		public bool IsLocalParameter (string name)
+		{
+			return Parameters.GetParameterByName (name) != null;
+		}
+		
+		//
+		// Whether the `name' is a parameter reference
+		//
+		public bool IsParameterReference (string name)
+		{
+			Parameter par;
+			int idx;
+
+			for (ToplevelBlock t = this; t != null; t = t.Container) {
+				if (t.IsLocalParameter (name))
+					return true;
+			}
+			return false;
 		}
 
 		public bool ResolveMeta (EmitContext ec, InternalParameters ip)

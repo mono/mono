@@ -3998,7 +3998,7 @@ namespace Mono.CSharp {
 				// flag it for capturing
 				//
 				//Console.WriteLine ("Is parameter `{0}' local? {1}", name, block.IsLocalParameter (name));
-				if (!block.IsLocalParameter (name)){
+				if (!block.Toplevel.IsLocalParameter (name)){
 					ec.CaptureParameter (name, type, idx);
 				}
 			}

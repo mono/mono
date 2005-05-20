@@ -322,6 +322,7 @@ namespace Mono.CSharp {
 				//
 				"System.Collections.Generic.IEnumerator`1",
 				"System.Collections.Generic.IEnumerable`1",
+				"System.INullableValue"
 			};
 
 			foreach (string iname in interfaces_first_stage)
