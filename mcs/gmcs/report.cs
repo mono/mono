@@ -393,8 +393,12 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, Location loc, string format, params object[] args)
 		{
-			ErrorMessage e = new ErrorMessage ();
-			e.Print (code, loc, String.Format (format, args));
+			Error (code, loc, String.Format (format, args));
+		}
+
+		static public void Error (int code, Location loc, string error)
+		{
+			new ErrorMessage ().Print (code, loc, error);
 		}
 
 		static public void SetIgnoreWarning (int code)

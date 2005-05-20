@@ -537,6 +537,25 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+
+			// Here we do the checks which should be done by corlib or by runtime.
+			// However Zoltan doesn't like it and every Mono compiler has to do it again.
+			
+			if (Type == TypeManager.guid_attr_type) {
+				try {
+					new Guid ((string)pos_values [0]);
+				}
+				catch (Exception e) {
+					Error_AttributeEmitError (e.Message);
+				}
+			}
+// TODO: reenable
+//			if (Type == TypeManager.methodimpl_attr_type &&
+//				pos_values.Length == 1 && ((Argument)pos_args [0]).Type == TypeManager.short_type &&
+//				!System.Enum.IsDefined (TypeManager.method_impl_options, pos_values [0])) {
+//					Error_AttributeEmitError ("Incorrect argument value.");
+//			}
+
 			//
 			// Now we perform some checks on the positional args as they
 			// cannot be null for a constructor which expects a parameter

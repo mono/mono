@@ -1,3 +1,15 @@
+2005-05-17  Marek Safar  <marek.safar@seznam.cz>
+	
+	* attribute.cs (Attribute.ResolveArguments): GuidAttribute check
+	is back.
+	
+	* cs-parser.jay: Catch more lexical errors.
+	
+	* report.cs: Add one more Error method.
+	
+	* rootcontext.cs,
+	* typemanager.cs: Register System.Runtime.InteropServices.GuidAttribute
+
 2005-05-20  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.CircularDepException): Removed.
