@@ -1,3 +1,9 @@
+2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContext.cs: Includes more methods in NET_1_1 to enable 
+	ThreadPool.UnsafeQueueUserWorkItem to work properly (i.e. without
+	stack propagation).
+
 2005-05-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSet.cs: Add support for "hidden" read-only mode (as used

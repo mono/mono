@@ -102,7 +102,6 @@ namespace System.Security {
 			set { _winid = value; }
 		}
 
-#if NET_2_0
 		// Suppressing the SecurityContext flow wasn't required before 2.0
 
 		static public bool IsFlowSuppressed ()
@@ -125,7 +124,7 @@ namespace System.Security {
 			sc.FlowSuppressed = false;
 			sc.WindowsIdentityFlowSuppressed = false;
 		}
-
+#if NET_2_0
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		static public void Run (SecurityContext securityContext, ContextCallback callBack, object state)
 		{
@@ -147,7 +146,7 @@ namespace System.Security {
 					Thread.CurrentPrincipal = original;
 			}
 		}
-
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		static public AsyncFlowControl SuppressFlow ()
 		{
@@ -164,6 +163,5 @@ namespace System.Security {
 			t.ExecutionContext.SecurityContext.WindowsIdentityFlowSuppressed = true;
 			return new AsyncFlowControl (t, AsyncFlowControlType.Security);
 		}
-#endif
 	}
 }
