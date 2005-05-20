@@ -50,7 +50,7 @@ namespace System.Text.RegularExpressions {
 		public string Evaluate (Match match) {
 			StringBuilder result = new StringBuilder ();
 			foreach (Term term in terms)
-				result.Append (term.GetResult (match));
+				term.AppendResult (match, result);
 
 			return result.ToString ();
 		}
@@ -165,27 +165,31 @@ namespace System.Text.RegularExpressions {
 				set { literal = value; }
 			}
 
-			public string GetResult (Match match) {
+			public void AppendResult (Match match, StringBuilder sb) {
 				Group group = match.Groups[arg];
-			
+
+				sb.Append (literal);
 				switch (op) {
 				case TermOp.None:
-					return literal;
+					break;
 
 				case TermOp.Match:
-					return literal + group.Value;
+					sb.Append (group.Text, group.Index, group.Length);
+					break;
 
 				case TermOp.PreMatch:
-					return literal + group.Text.Substring (0, group.Index);
+					sb.Append (group.Text, 0, group.Index);
+					break;
 
 				case TermOp.PostMatch:
-					return literal + group.Text.Substring (group.Index + group.Length);
+					int matchend = group.Index + group.Length;
+					sb.Append (group.Text, matchend, group.Text.Length - matchend);
+					break;
 
 				case TermOp.All:
-					return literal + group.Text;
+					sb.Append (group.Text);
+					break;
 				}
-
-				return "";
 			}
 		
 			public TermOp op;		// term type

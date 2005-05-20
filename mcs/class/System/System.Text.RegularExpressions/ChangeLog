@@ -1,5 +1,10 @@
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
+	* replace.cs (ReplacementEvalutator.Term.AppendResult): Renamed
+	from GetResult.  Modified to append to a passed-in StringBuilder
+	rather than return a string.
+	(ReplacementEvaluator.Evaluate): Update.
+	
 	* Capture.cs, Group.cs, Match.cs: New files split out of ...
 	* match.cs: ... this.  Remove.
 
