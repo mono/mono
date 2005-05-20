@@ -1,3 +1,8 @@
+2005-05-20  Miguel de Icaza  <miguel@novell.com>
+
+	* TypeBuilder.cs (UnderlyingSystemType): should always return this
+	according to Zoltan.  Old code left there, but should probably be removed.
+
 2005-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilder.cs (fixup): Take into account CreateMethodBody as

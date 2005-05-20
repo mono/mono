@@ -168,8 +168,17 @@ namespace System.Reflection.Emit {
 		[MonoTODO]
 		public override Type UnderlyingSystemType {
 			get {
-				// This should return the type itself for non-enum types but 
-				// that breaks mcs.
+
+				// Return this as requested by Zoltan.
+				
+				return this;
+
+#if false
+				// Dont know what to do with the rest, should be killed:
+				// See bug: 75008.
+				//
+				////// This should return the type itself for non-enum types but 
+				////// that breaks mcs.
 				if (fields != null) {
 					foreach (FieldBuilder f in fields) {
 						if ((f != null) && (f.Attributes & FieldAttributes.Static) == 0)
@@ -177,6 +186,7 @@ namespace System.Reflection.Emit {
 					}
 				}
 				throw new InvalidOperationException ("Underlying type information on enumeration is not specified.");
+#endif
 			}
 		}
 
