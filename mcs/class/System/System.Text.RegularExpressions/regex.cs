@@ -356,20 +356,24 @@ namespace System.Text.RegularExpressions {
 			int ptr = startat;
 			int counter = count;
 
-			result.Append (input.Substring (0, ptr));
+			result.Append (input, 0, ptr);
 
 			Match m = Match (input, startat);
 			while (m.Success) {
 				if (count != -1)
 					if(counter -- <= 0)
 						break;
-				result.Append (input.Substring (ptr, m.Index - ptr));
+				result.Append (input, ptr, m.Index - ptr);
 				result.Append (evaluator (m));
 
 				ptr = m.Index + m.Length;
 				m = m.NextMatch ();
 			}
-			result.Append (input.Substring (ptr));
+			
+			if (ptr == 0)
+				return input;
+			
+			result.Append (input, ptr, input.Length - ptr);
 
 			return result.ToString ();
 		}

@@ -1,3 +1,7 @@
+2005-05-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* regex.cs: Some memory allocation optimizations.
+
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74735.
