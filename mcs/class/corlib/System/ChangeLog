@@ -1,8 +1,12 @@
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Type.cs: Add some helper methods needed by other classes.
+
+	* Array.cs: Improve support for user defined Type subclasses.	
+	
 	* Type.cs: Rename GetTypeCode icall to GetTypeCodeInternal and add a managed
 	wrapper function, not used yet.
-	
+
 	* Type.cs Array.cs: Revert this as it breaks the build.
 
 	* Type.cs Array.cs: Improve support for user defined Type subclasses.

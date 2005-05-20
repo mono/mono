@@ -706,6 +706,13 @@ namespace System {
 		                                             CallingConventions callConvention, Type[] types,
 		                                             ParameterModifier[] modifiers);
 
+		internal MethodInfo GetMethodImplInternal (string name, BindingFlags bindingAttr, Binder binder,
+															CallingConventions callConvention, Type[] types,
+															ParameterModifier[] modifiers)
+		{
+			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
+		}
+
 		public MethodInfo[] GetMethods ()
 		{
 			return GetMethods (DefaultBindingFlags);
@@ -786,6 +793,12 @@ namespace System {
 
 		protected abstract PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder,
 		                                                 Type returnType, Type[] types, ParameterModifier[] modifiers);
+
+		internal PropertyInfo GetPropertyImplInternal (string name, BindingFlags bindingAttr, Binder binder,
+													   Type returnType, Type[] types, ParameterModifier[] modifiers)
+		{
+			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
+		}
 
 		protected abstract ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
 								       Binder binder,
@@ -974,6 +987,12 @@ namespace System {
 		public override string ToString()
 		{
 			return FullName;
+		}
+
+		internal bool IsSystemType {
+			get {
+				return _impl.Value != IntPtr.Zero;
+			}
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
