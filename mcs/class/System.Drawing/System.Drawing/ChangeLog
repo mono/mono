@@ -1,4 +1,4 @@
-2005-05-16 Kornél Pál <kornelpal@hotmail.com>
+2005-05-20 Kornél Pál <kornelpal@hotmail.com>
 
 	* Image.cs: Uses MemoryStream wrapping on all platforms if needed
 	* gdipFunctions.cs: Modified conditional compilation syntax
