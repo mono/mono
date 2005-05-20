@@ -1,3 +1,7 @@
+2005-05-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseDataList.cs: implemented 2.0 Caption property.
+
 2005-05-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TreeView.cs: Always render the startup script. This fixes

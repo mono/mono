@@ -143,6 +143,20 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
+		[DefaultValue ("")]
+		[WebCategory ("Accessibility")]
+		[WebSysDescription ("Caption")]
+		public virtual string Caption {
+			get {
+				object o = ViewState ["Caption"];
+				return (o != null) ? (string) o : "";
+			}
+
+			set { ViewState ["Caption"] = value; }
+		}
+#endif
+
+#if NET_2_0
 	    [ThemeableAttribute (false)]
 #endif
 		[DefaultValue("")]
