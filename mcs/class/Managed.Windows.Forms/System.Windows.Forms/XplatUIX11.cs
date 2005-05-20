@@ -1754,7 +1754,7 @@ namespace System.Windows.Forms {
 						// Black
 						// cursor_bits[y * width / 8 + x / 8] &= (byte)~((1 << (x % 8)));	// The bit already is 0
 						mask_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
-					} else if (!and && xor) {
+					} else if (and && !xor) {
 						// White
 						cursor_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
 						mask_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
@@ -2025,6 +2025,11 @@ namespace System.Windows.Forms {
 
 		internal override void DoEvents() {
 			MSG msg = new MSG ();
+
+			if (OverrideCursorHandle != IntPtr.Zero) {
+				Cursor.Current = null;
+			}
+
 			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
 				if (msg.message == Msg.WM_PAINT) {
 					TranslateMessage (ref msg);

@@ -69,6 +69,7 @@ namespace System.Windows.Forms {
 			get {
 				if (app_starting == null) {
 					app_starting = new Cursor(XplatUI.DefineStdCursor(StdCursor.AppStarting));
+					app_starting.name = "AppStarting";
 				}
 				return app_starting;
 			}
@@ -78,6 +79,7 @@ namespace System.Windows.Forms {
 			get {
 				if (arrow == null) {
 					arrow = new Cursor(XplatUI.DefineStdCursor(StdCursor.Arrow));
+					arrow.name = "Arrow";
 				}
 				return arrow;
 			}
@@ -87,6 +89,7 @@ namespace System.Windows.Forms {
 			get {
 				if (cross == null) {
 					cross = new Cursor(XplatUI.DefineStdCursor(StdCursor.Cross));
+					cross.name = "Cross";
 				}
 				return cross;
 			}
@@ -96,6 +99,7 @@ namespace System.Windows.Forms {
 			get {
 				if (def == null) {
 					def = new Cursor(XplatUI.DefineStdCursor(StdCursor.Default));
+					def.name = "Default";
 				}
 				return def;
 			}
@@ -105,6 +109,7 @@ namespace System.Windows.Forms {
 			get {
 				if (hand == null) {
 					hand = new Cursor(XplatUI.DefineStdCursor(StdCursor.Hand));
+					hand.name = "Hand";
 				}
 				return hand;
 			}
@@ -114,6 +119,7 @@ namespace System.Windows.Forms {
 			get {
 				if (help == null) {
 					help = new Cursor(XplatUI.DefineStdCursor(StdCursor.Help));
+					help.name = "Help";
 				}
 				return help;
 			}
@@ -123,6 +129,7 @@ namespace System.Windows.Forms {
 			get {
 				if (hsplit == null) {
 					hsplit = new Cursor(XplatUI.DefineStdCursor(StdCursor.HSplit));
+					hsplit.name = "HSplit";
 				}
 				return hsplit;
 			}
@@ -132,6 +139,7 @@ namespace System.Windows.Forms {
 			get {
 				if (ibeam == null) {
 					ibeam = new Cursor(XplatUI.DefineStdCursor(StdCursor.IBeam));
+					ibeam.name = "IBeam";
 				}
 				return ibeam;
 			}
@@ -141,6 +149,7 @@ namespace System.Windows.Forms {
 			get {
 				if (no == null) {
 					no = new Cursor(XplatUI.DefineStdCursor(StdCursor.No));
+					no.name = "No";
 				}
 				return no;
 			}
@@ -150,6 +159,7 @@ namespace System.Windows.Forms {
 			get {
 				if (no_move_2d == null) {
 					no_move_2d = new Cursor(XplatUI.DefineStdCursor(StdCursor.NoMove2D));
+					no_move_2d.name = "NoMove2D";
 				}
 				return no_move_2d;
 			}
@@ -159,6 +169,7 @@ namespace System.Windows.Forms {
 			get {
 				if (no_move_horiz == null) {
 					no_move_horiz = new Cursor(XplatUI.DefineStdCursor(StdCursor.NoMoveHoriz));
+					no_move_horiz.name = "NoMoveHoriz";
 				}
 				return no_move_horiz;
 			}
@@ -168,6 +179,7 @@ namespace System.Windows.Forms {
 			get {
 				if (no_move_vert == null) {
 					no_move_vert = new Cursor(XplatUI.DefineStdCursor(StdCursor.NoMoveVert));
+					no_move_vert.name = "NoMoveVert";
 				}
 				return no_move_vert;
 			}
@@ -177,6 +189,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_east == null) {
 					pan_east = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanEast));
+					pan_east.name = "PanEast";
 				}
 				return pan_east;
 			}
@@ -189,6 +202,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_ne == null) {
 					pan_ne = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanNE));
+					pan_ne.name = "PanNE";
 				}
 				return pan_ne;
 			}
@@ -199,6 +213,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_north == null) {
 					pan_north = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanNorth));
+					pan_north.name = "PanNorth";
 				}
 				return pan_north;
 			}
@@ -208,6 +223,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_nw == null) {
 					pan_nw = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanNW));
+					pan_nw.name = "PanNW";
 				}
 				return pan_nw;
 			}
@@ -217,6 +233,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_se == null) {
 					pan_se = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanSE));
+					pan_se.name = "PanSE";
 				}
 				return pan_se;
 			}
@@ -226,6 +243,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_south == null) {
 					pan_south = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanSouth));
+					pan_south.name = "PanSouth";
 				}
 				return pan_south;
 			}
@@ -235,6 +253,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_sw == null) {
 					pan_sw = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanSW));
+					pan_sw.name = "PanSW";
 				}
 				return pan_sw;
 			}
@@ -244,6 +263,7 @@ namespace System.Windows.Forms {
 			get {
 				if (pan_west == null) {
 					pan_west = new Cursor(XplatUI.DefineStdCursor(StdCursor.PanWest));
+					pan_west.name = "PanWest";
 				}
 				return pan_west;
 			}
@@ -253,6 +273,7 @@ namespace System.Windows.Forms {
 			get {
 				if (size_all == null) {
 					size_all = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeAll));
+					size_all.name = "SizeAll";
 				}
 				return size_all;
 			}
@@ -262,6 +283,7 @@ namespace System.Windows.Forms {
 			get {
 				if (size_nesw == null) {
 					size_nesw = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNESW));
+					size_nesw.name = "SizeNESW";
 				}
 				return size_nesw;
 			}
@@ -271,6 +293,7 @@ namespace System.Windows.Forms {
 			get {
 				if (size_ns == null) {
 					size_ns = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNS));
+					size_ns.name = "SizeNS";
 				}
 				return size_ns;
 			}
@@ -280,6 +303,7 @@ namespace System.Windows.Forms {
 			get {
 				if (size_nwse == null) {
 					size_nwse = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeNWSE));
+					size_nwse.name = "SizeNWSE";
 				}
 				return size_nwse;
 			}
@@ -289,6 +313,7 @@ namespace System.Windows.Forms {
 			get {
 				if (size_we == null) {
 					size_we = new Cursor(XplatUI.DefineStdCursor(StdCursor.SizeWE));
+					size_we.name = "SizeWE";
 				}
 				return size_we;
 			}
@@ -298,6 +323,7 @@ namespace System.Windows.Forms {
 			get {
 				if (up_arrow == null) {
 					up_arrow = new Cursor(XplatUI.DefineStdCursor(StdCursor.UpArrow));
+					up_arrow.name = "UpArrow";
 				}
 				return up_arrow;
 			}
@@ -307,6 +333,7 @@ namespace System.Windows.Forms {
 			get {
 				if (vsplit == null) {
 					vsplit = new Cursor(XplatUI.DefineStdCursor(StdCursor.VSplit));
+					vsplit.name = "VSplit";
 				}
 				return vsplit;
 			}
@@ -316,6 +343,7 @@ namespace System.Windows.Forms {
 			get {
 				if (wait_cursor == null) {
 					wait_cursor = new Cursor(XplatUI.DefineStdCursor(StdCursor.WaitCursor));
+					wait_cursor.name = "WaitCursor";
 				}
 				return wait_cursor;
 			}

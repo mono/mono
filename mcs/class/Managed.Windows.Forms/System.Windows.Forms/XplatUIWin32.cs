@@ -1113,6 +1113,10 @@ Console.WriteLine("Hit Clear background");
 		internal override void DoEvents() {
 			MSG msg = new MSG();
 
+			if (override_cursor != IntPtr.Zero) {
+				Cursor.Current = null;
+			}
+
 			while (Win32PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)!=true) {
 				if (msg.message==Msg.WM_PAINT) {
 					XplatUI.TranslateMessage(ref msg);
@@ -1368,7 +1372,7 @@ Console.WriteLine("Hit Clear background");
 				}
 			}
 
-			cursor = Win32CreateCursor(IntPtr.Zero, xHotSpot, yHotSpot, width, height, cursor_bits, mask_bits);
+			cursor = Win32CreateCursor(IntPtr.Zero, xHotSpot, yHotSpot, width, height, mask_bits, cursor_bits);
 
 			return cursor;
 		}

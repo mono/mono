@@ -1,3 +1,22 @@
+2005-05-20  Peter Bartok  <pbartok@novell.com>
+
+	* Cursors.cs: Added setting of cursor name
+	* Cursor.cs: 
+	  - Implemented constructors
+	  - Implemented Draw and DrawStretched
+	  - Implemented Current property
+	  - Implemented == and != operators
+	  - Implemented Dispose()
+	  - Implemented ToString
+	  - Added missing attributes
+	* XplatUIX11.cs:
+	  - Added missing reset for OverrideCursor when DoEvents is called
+	  - Fixed creation of cursor, logic was wrong
+	* XplatUIWin32.cs:
+	  - Added missing reset for OverrideCursor when DoEvents is called
+	  - Fixed creation of cursor, bit arrays were swapped
+	* Clipboard.cs: Removed obsolete MonoTODO attribute
+
 2005-05-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: fixes OnSelectedItemChanged

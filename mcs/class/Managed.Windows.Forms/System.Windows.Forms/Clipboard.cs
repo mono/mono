@@ -57,7 +57,6 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Static Methods
-		[MonoTODO]
 		public static IDataObject GetDataObject() {
 			DataObject		clipboard;
 			IntPtr			clipboard_handle;
