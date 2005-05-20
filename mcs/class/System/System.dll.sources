@@ -625,14 +625,16 @@ System.Security.Permissions/ResourcePermissionBase.cs
 System.Security.Permissions/ResourcePermissionBaseEntry.cs
 System.Text.RegularExpressions/arch.cs
 System.Text.RegularExpressions/cache.cs
+System.Text.RegularExpressions/Capture.cs
 System.Text.RegularExpressions/CaptureCollection.cs
 System.Text.RegularExpressions/category.cs
 System.Text.RegularExpressions/compiler.cs
 System.Text.RegularExpressions/debug.cs
+System.Text.RegularExpressions/Group.cs
 System.Text.RegularExpressions/GroupCollection.cs
 System.Text.RegularExpressions/interpreter.cs
 System.Text.RegularExpressions/interval.cs
-System.Text.RegularExpressions/match.cs
+System.Text.RegularExpressions/Match.cs
 System.Text.RegularExpressions/MatchCollection.cs
 System.Text.RegularExpressions/parser.cs
 System.Text.RegularExpressions/quicksearch.cs

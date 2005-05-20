@@ -1,3 +1,8 @@
+2005-05-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Capture.cs, Group.cs, Match.cs: New files split out of ...
+	* match.cs: ... this.  Remove.
+
 2005-02-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* parser.cs: stuff inside {} might not be a quantifier. Fixes
