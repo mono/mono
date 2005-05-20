@@ -1,3 +1,6 @@
+2005-05-20 Umadevi S <sumadevi@novell.com>
+	* System.Data.dll.sources :Added SqlNotificationEventArgs.cs,OnChangeEventHandler.cs
+
 2005-05-19 Umadevi S <sumadevi@novell.com>
 
 	* System.Data.dll.sources: Added SqlBulkCopyOptions.cs,SqlBulkCopyColumnMapping.cs,

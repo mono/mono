@@ -336,6 +336,8 @@ System.Data.SqlClient/SqlNotificationAuthType.cs
 System.Data.SqlClient/SqlNotificationTransports.cs
 System.Data.SqlClient/SqlRowsCopiedEventHandler.cs
 System.Data.SqlClient/SqlRowsCopiedEventArgs.cs
+System.Data.SqlClient/SqlNotificationEventArgs.cs
+System.Data.SqlClient/OnChangeEventHandler.cs
 System.Data/XmlDataLoader.cs
 System.Data/XmlSchemaDataImporter.cs
 System.Data/XmlSchemaWriter.cs
