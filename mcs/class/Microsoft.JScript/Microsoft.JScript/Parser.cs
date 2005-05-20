@@ -6,6 +6,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2004, Cesar Lopez Nataren
+// Copyright (C) 2005, Novell Inc (http://novell.com)
 //
 
 //
@@ -301,10 +302,10 @@ namespace Microsoft.JScript {
 				func = new FunctionDeclaration (parent, name);
 			else if (func_type == FunctionType.Expression)
 				func = new FunctionExpression (parent, name);
-			else if (func_type == FunctionType.ExpressionStatement) {
-				// FIXME: set it to something meaningful
-				func = null;
-			} else func = null;
+			else if (func_type == FunctionType.ExpressionStatement)
+				throw new NotImplementedException ();
+			else
+				throw new Exception ("Unknown FunctionType");
 			return func;
 		}
 

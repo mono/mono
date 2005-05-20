@@ -1,3 +1,10 @@
+2005-05-19  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Parser.cs: Throw NotImplementedException for function
+	declarations that appear inside other statements
+	(FunctionType.ExpressionStatement declarations). Fix the
+	NullReferenceException from #74970. But now exposes #75002.
+
 2005-05-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* JScriptCodeGenerator.cs: Stubbed.
