@@ -13,7 +13,8 @@ MPH_C_SOURCE =   \
 	mph.h          \
 	signal.c       \
 	stdio.c        \
-	stdlib.c
+	stdlib.c		\
+	map-icalls.h
 
 # Source code which helps implement POSIX and other related Unix standards,
 # and *may* be portable between Unix platforms.
