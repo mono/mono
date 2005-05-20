@@ -311,13 +311,54 @@ namespace System.Windows.Forms {
 			throw new FormatException("Cannot convert custom cursors to string.");
 		}
 
-		[MonoTODO]
 		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context) {
-			throw new NotImplementedException();
+			MemoryStream	ms;
+			BinaryWriter	wr;
+			CursorImage	ci;
+
+			ms = new MemoryStream();
+			wr = new BinaryWriter(ms);
+			ci = cursor_data[this.id];
+
+			// Build the headers, first the CursorDir
+			wr.Write((ushort)0);	// Reserved
+			wr.Write((ushort)2);	// Resource type
+			wr.Write((ushort)1);	// Count
+
+			// Next the CursorEntry
+			wr.Write((byte)cursor_dir.idEntries[this.id].width);
+			wr.Write((byte)cursor_dir.idEntries[this.id].height);
+			wr.Write((byte)cursor_dir.idEntries[this.id].colorCount);
+			wr.Write((byte)cursor_dir.idEntries[this.id].reserved);
+			wr.Write((ushort)cursor_dir.idEntries[this.id].xHotspot);
+			wr.Write((ushort)cursor_dir.idEntries[this.id].yHotspot);
+			wr.Write((uint)(40 + (ci.cursorColors.Length * 4) + ci.cursorXOR.Length + ci.cursorAND.Length));
+			wr.Write((uint)(6 + 16));	// CursorDir + CursorEntry size
+
+			// Then the CursorInfoHeader
+			wr.Write(ci.cursorHeader.biSize);
+			wr.Write(ci.cursorHeader.biWidth);
+			wr.Write(ci.cursorHeader.biHeight);
+			wr.Write(ci.cursorHeader.biPlanes);
+			wr.Write(ci.cursorHeader.biBitCount);
+			wr.Write(ci.cursorHeader.biCompression);
+			wr.Write(ci.cursorHeader.biSizeImage);
+			wr.Write(ci.cursorHeader.biXPelsPerMeter);
+			wr.Write(ci.cursorHeader.biYPelsPerMeter);
+			wr.Write(ci.cursorHeader.biClrUsed);
+			wr.Write(ci.cursorHeader.biClrImportant);
+			for (int i = 0; i < ci.cursorColors.Length; i++) {
+				wr.Write(ci.cursorColors[i]);
+			}
+			wr.Write(ci.cursorXOR);
+			wr.Write(ci.cursorAND);
+			wr.Flush();
+
+			si.AddValue ("CursorData", ms.ToArray());
 		}
 		#endregion	// Public Instance Methods
 
-		#region Private Methods
+		#region Private Methods		  w
 		private void InitFromStream(Stream stream) {
 			ushort		entry_count;
 			CursorEntry	ce;

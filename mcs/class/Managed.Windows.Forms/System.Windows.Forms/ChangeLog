@@ -1,5 +1,9 @@
 2005-05-20  Peter Bartok  <pbartok@novell.com>
 
+	* Cursor.cs: Implemented GetObjectData() method
+
+2005-05-20  Peter Bartok  <pbartok@novell.com>
+
 	* Cursors.cs: Added setting of cursor name
 	* Cursor.cs: 
 	  - Implemented constructors
