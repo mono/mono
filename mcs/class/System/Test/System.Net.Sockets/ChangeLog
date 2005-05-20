@@ -1,3 +1,11 @@
+2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NetworkStreamCas.cs: New. CAS unit tests for NetworkStream.
+	* SocketCas.cs: New. CAS unit tests for Socket.
+	* SocketTest.cs: Make some fields public so they can be reused.
+	* TcpClientCas.cs: New. CAS unit tests for TcpClient (currently 
+	commented as the Begin* methods aren't yet implemented).
+
 2005-05-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SocketTest.cs: added test for setting a boolean socket option.

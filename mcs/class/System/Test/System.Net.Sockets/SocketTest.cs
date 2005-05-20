@@ -1,4 +1,4 @@
-// System.Net.Sockets.TcpClientTest.cs
+// System.Net.Sockets.SocketTest.cs
 //
 // Authors:
 //    Brad Fitzpatrick (brad@danga.com)
@@ -17,12 +17,16 @@ namespace MonoTests.System.Net.Sockets
 	[TestFixture]
 	public class SocketTest
 	{
+		// note: also used in SocketCas tests
+		public const string BogusAddress = "192.168.244.244";
+		public const int BogusPort = 23483;
+
 		[Test]
 		[Category ("InetAccess")]
 		public void EndConnect ()
 		{
-		    IPAddress ipOne = IPAddress.Parse ("192.168.244.244");   // something bogus
-		    IPEndPoint ipEP = new IPEndPoint (ipOne, 23483);  // something bogus
+		    IPAddress ipOne = IPAddress.Parse (BogusAddress);
+		    IPEndPoint ipEP = new IPEndPoint (ipOne, BogusPort);
 		    Socket sock = new Socket (ipEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 		    IAsyncResult ar = sock.BeginConnect (ipEP, null, null);
 		    bool gotException = false;
