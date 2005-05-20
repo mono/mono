@@ -1,3 +1,8 @@
+2005-05-20  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Allow test for bug #75958 to pass on .NET 2.0
+	Beta 2.
+
 2005-05-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Added (ignored) test case for bug #75958.

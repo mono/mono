@@ -35,6 +35,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.Serialization;
 using System.Security;
 
@@ -222,14 +223,29 @@ namespace MonoTests.System.Reflection
 		[Test]
 		[Ignore("Bug #74958")]
 		public void Location_Empty() {
-			Assembly corlib = Assembly.LoadWithPartialName("mscorlib");
+			string assemblyFileName = Path.Combine (
+				Path.GetTempPath (), "AssemblyLocation.dll");
 
-			using (FileStream fs = File.OpenRead(corlib.Location)) {
-				byte[] buffer = new byte[fs.Length];
-				fs.Read(buffer, 0, buffer.Length);
-				Assembly compiledAssembly = Assembly.Load(buffer);
-				Assert.AreEqual(string.Empty, compiledAssembly.Location);
-				fs.Close();
+			try {
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "AssemblyLocation";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+					AssemblyBuilderAccess.Save,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence);
+				ab.Save (Path.GetFileName (assemblyFileName));
+
+				using (FileStream fs = File.OpenRead(assemblyFileName)) {
+					byte[] buffer = new byte[fs.Length];
+					fs.Read(buffer, 0, buffer.Length);
+					Assembly assembly = Assembly.Load(buffer);
+					Assert.AreEqual(string.Empty, assembly.Location);
+					fs.Close();
+				}
+			} finally {
+				File.Delete (assemblyFileName);
 			}
 		}
 
