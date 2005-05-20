@@ -1,5 +1,8 @@
 2005-05-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-codegen.c: Use cfg->frame_reg instead of a macro for the
+	frame pointer.
+
 	* *ia64*: Ongoing IA64 work.
 
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
