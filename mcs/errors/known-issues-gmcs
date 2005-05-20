@@ -27,7 +27,7 @@ cs0428.cs
 cs0525.cs
 cs0526.cs
 cs0531.cs # new in GMCS; grammar issue
-cs0547-2.cs
+cs0547-2.cs # new in GMCS; grammar issue
 cs0547.cs
 cs0548-4.cs
 cs0548.cs
@@ -39,21 +39,19 @@ cs0642-3.cs
 cs0642-4.cs
 cs0642-5.cs NO ERROR
 cs0642-6.cs NO ERROR
-cs0647.cs NO ERROR
 cs0647-15.cs NO ERROR # corlib bug 73143
 cs0652.cs NO ERROR
-cs0712.cs # new in GMCS
-cs1013.cs # new in GMCS
+cs1013.cs # new in GMCS; grammar issue
 cs1501-5.cs
 cs1513.cs
 cs1518.cs
 cs1525.cs
 cs1528.cs
-cs1535.cs
+cs1535.cs # new in GMCS; grammar issue
 cs1540-2.cs # new in GMCS
 cs1540-3.cs NO ERROR # new in GMCS
 cs1540-5.cs NO ERROR # new in GMCS
-cs1552.cs
+cs1552.cs # new in GMCS; grammar issue
 cs1586.cs
 cs1638.cs NO ERROR
 cs1641.cs
@@ -61,3 +59,5 @@ cs1666.cs NO ERROR
 cs2007.cs
 gcs0694.cs NO ERROR
 gcs1644-2.cs NO ERROR
+
+cs0647.cs NO ERROR # not yet merged
