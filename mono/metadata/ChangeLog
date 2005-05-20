@@ -1,3 +1,9 @@
+2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_type_Equals): Turn the g_print into an assert.
+
+	* icall.c (ves_icall_type_GetTypeCode): Rename the icall to GetTypeCodeInternal.
+
 2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class-internals.h: Added executioncontext_class field to 
