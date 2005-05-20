@@ -1,5 +1,7 @@
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeDelegator.cs: Revert this as it breaks the build.
+	
 	* TypeDelegator.cs: Implement some methods.
 
 2005-05-19  Satya Sudha K  <ksathyasudha@novell.com>
