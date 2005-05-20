@@ -1,5 +1,7 @@
 thisdir = class/Microsoft.VisualBasic
 
+SUBDIRS = Test/standalone
+
 include ../../build/rules.make
 
 LIBRARY = Microsoft.VisualBasic.dll

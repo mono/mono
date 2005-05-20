@@ -1,3 +1,8 @@
+2005-05-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (SUBDIRS): Add Test/standalone.
+	* Test/standalone/Makefile: Add.
+
 2005-05-05  Raja R Harinath  <harinath@acm.org>
 
 	* Makefile (with_mono_path): Define.
