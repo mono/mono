@@ -1,5 +1,12 @@
 2005-05-20  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.CircularDepException): Removed.
+	(TypeContainer.DefineType): Removed the `InTransit' stuff.
+	(TypeContainer.CheckRecursiveDefinition): Check for circular class
+	(CS0146) and interface (CS0529) dependencies here.
+
+2005-05-20  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (New.DoResolve): Move the CS0712 check above the
 	CS0144 check; otherwise it can never be reached.
 

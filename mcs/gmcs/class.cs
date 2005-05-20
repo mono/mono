@@ -59,15 +59,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class TypeContainer : DeclSpace, IMemberContainer {
 
-		protected class CircularDepException: Exception
-		{
-			public TypeContainer Container;
-			public CircularDepException (TypeContainer tc)
-			{
-				Container = tc;
-			}
-		}
-
  		public class MemberCoreArrayList: ArrayList
  		{
 			/// <summary>
@@ -473,9 +464,6 @@ namespace Mono.CSharp {
 		Type GenericType;
 		GenericTypeParameterBuilder[] gen_params;
 
-		// This is used to catch recursive definitions in declarations.
-		protected bool InTransit;
-		
 		public TypeContainer (NamespaceEntry ns, TypeContainer parent, MemberName name,
 				      Attributes attrs, Kind kind, Location l)
 			: base (ns, parent, name, attrs, l)
@@ -1203,7 +1191,7 @@ namespace Mono.CSharp {
 			try {
 				if (IsTopLevel){
 					if (TypeManager.NamespaceClash (Name, Location)) {
-						InTransit = false;
+						error = true;
 						return null;
 					}
 
@@ -1213,7 +1201,7 @@ namespace Mono.CSharp {
 				} else {
 					TypeBuilder builder = Parent.TypeBuilder;
 					if (builder == null) {
-						InTransit = false;
+						error = true;
 						return null;
 					}
 
@@ -1222,7 +1210,7 @@ namespace Mono.CSharp {
 				}
 			} catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "static classes");
-				InTransit = false;
+				error = true;
 				return null;
 			}
 
@@ -1255,7 +1243,7 @@ namespace Mono.CSharp {
 
 			iface_exprs = GetClassBases (out base_type);
 			if (iface_exprs == null && base_type != null) {
-				InTransit = false;
+				error = true;
 				return null;
 			}
 
@@ -1283,7 +1271,7 @@ namespace Mono.CSharp {
 				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
 				ptype = base_type.ResolveType (TypeResolveEmitContext);
 				if (ptype == null) {
-					InTransit = false;
+					error = true;
 					return null;
 				}
 
@@ -1299,8 +1287,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!CheckRecursiveDefinition ()) {
-				InTransit = false;
+			if (!CheckRecursiveDefinition (this)) {
+				error = true;
 				return null;
 			}
 
@@ -1314,7 +1302,7 @@ namespace Mono.CSharp {
 				TypeResolveEmitContext.ContainerType = TypeBuilder;
 				ifaces = TypeManager.ExpandInterfaces (TypeResolveEmitContext, iface_exprs);
 				if (ifaces == null) {
-					InTransit = false;
+					error = true;
 					return null;
 				}
 
@@ -1331,12 +1319,13 @@ namespace Mono.CSharp {
 
 			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
-			else if (!ResolveType ())
+			else if (!ResolveType ()) {
+				error = true;
 				return null;
-
-			InTransit = false;
+			}
 
 			if (!DefineNestedTypes ()) {
+				error = true;
 				return null;
 			}
 
@@ -1427,17 +1416,26 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected bool CheckRecursiveDefinition ()
+		TypeContainer InTransit;
+
+		protected bool CheckRecursiveDefinition (TypeContainer tc)
 		{
-			if (InTransit) {
-				Report.Error (146, Location,
-					      "Class definition is circular: `{0}'",
-					      GetSignatureForError ());
-				error = true;
+			if (InTransit != null) {
+				Report.SymbolRelatedToPreviousError (this);
+				if (this is Interface)
+					Report.Error (
+						529, tc.Location, "Inherited interface '{0}' causes a " +
+						"cycle in the interface hierarchy of '{1}'",
+						GetSignatureForError (), tc.GetSignatureForError ());
+				else
+					Report.Error (
+						146, tc.Location, "Circular base class dependency " +
+						"involving '{0}' and '{1}'",
+						tc.GetSignatureForError (), GetSignatureForError ());
 				return false;
 			}
 
-			InTransit = true;
+			InTransit = tc;
 
 			Type parent = ptype;
 			if (parent != null) {
@@ -1445,11 +1443,24 @@ namespace Mono.CSharp {
 					parent = parent.GetGenericTypeDefinition ();
 
 				TypeContainer ptc = TypeManager.LookupTypeContainer (parent);
-				if ((ptc != null) && !ptc.CheckRecursiveDefinition ())
+				if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 					return false;
 			}
 
-			InTransit = false;
+			if (iface_exprs != null) {
+				foreach (TypeExpr iface in iface_exprs) {
+					Type itype = iface.Type;
+
+					if (itype.IsGenericInstance)
+						itype = itype.GetGenericTypeDefinition ();
+
+					TypeContainer ptc = TypeManager.LookupTypeContainer (itype);
+					if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
+						return false;
+				}
+			}
+
+			InTransit = null;
 			return true;
 		}
 
@@ -3051,8 +3062,6 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
 
-		bool WasTransitError;
-
 		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
 			      Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, Kind.Class, l)
@@ -3093,12 +3102,6 @@ namespace Mono.CSharp {
 
 		public override TypeBuilder DefineType()
 		{
-			if (InTransit) {
-				if (WasTransitError)
-					return null;
-				throw new CircularDepException (this);
-			}
-
 			if ((ModFlags & Modifiers.ABSTRACT) == Modifiers.ABSTRACT && (ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) != 0) {
 				Report.Error (418, Location, "'{0}': an abstract class cannot be sealed or static", GetSignatureForError ());
 				return null;
@@ -3107,16 +3110,7 @@ namespace Mono.CSharp {
 			int accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			ModFlags = Modifiers.Check (AllowedModifiersProp, ModFlags, accmods, Location);
 
-			try {
-				return base.DefineType ();
-			}
-			catch (CircularDepException e) {
-				Report.SymbolRelatedToPreviousError (e.Container);
-				Report.Error (146, Location, "Circular base class dependency involving '{0}' and '{1}'",
-					GetSignatureForError (), e.Container.GetSignatureForError ());
-				WasTransitError = true;
-				return null;
-			}
+			return base.DefineType ();
 		}
 
 		/// Search for at least one defined condition in ConditionalAttribute of attribute class
@@ -3200,32 +3194,12 @@ namespace Mono.CSharp {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
-
-		public override TypeBuilder DefineType()
-		{
-			if (InTransit) {
-				InTransit = false;
-				throw new CircularDepException (this);
-			}
-
-			try {
-				return base.DefineType ();
-			}
-			catch (CircularDepException e) {
-				InTransit = false;
-				Report.SymbolRelatedToPreviousError (this);
-				Error_TypeInListIsNotInterface (e.Container.Location, GetSignatureForError ());
-				return null;
-			}
-		}
 	}
 
 	/// <summary>
 	///   Interfaces
 	/// </summary>
 	public class Interface : TypeContainer, IMemberContainer {
-
-		bool WasTransitError;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -3265,26 +3239,6 @@ namespace Mono.CSharp {
 		protected override TypeAttributes TypeAttr {
 			get {
 				return base.TypeAttr | DefaultTypeAttributes;
-			}
-		}
-
-		public override TypeBuilder DefineType()
-		{
-			if (InTransit) {
-				if (WasTransitError) 
-					return null;
-				throw new CircularDepException (this);
-			}
-
-			try {
-				return base.DefineType ();
-			}
-			catch (CircularDepException e) {
-				Report.SymbolRelatedToPreviousError (e.Container);
-				Report.Error (529, Location, "Inherited interface '{0}' causes a cycle in the interface hierarchy of '{1}'",
-					e.Container.GetSignatureForError (), GetSignatureForError ());
-				WasTransitError = true;
-				return null;
 			}
 		}
 
