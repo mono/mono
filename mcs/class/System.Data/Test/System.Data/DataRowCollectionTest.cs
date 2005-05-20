@@ -213,6 +213,40 @@ namespace MonoTests.System.Data
 				AssertEquals ("test#28", typeof(ArgumentException), e.GetType ());
 			}
 		}
+
+                [Test]
+                public void Add_ByValuesNullTest ()
+                {
+                        DataTable t = new DataTable ("test");
+                        t.Columns.Add ("id", typeof (int));
+                        t.Columns.Add ("name", typeof (string));
+                        t.Columns.Add ("nullable", typeof (string));
+
+                        t.Columns [0].AutoIncrement = true;
+                        t.Columns [0].AutoIncrementSeed = 10;
+                        t.Columns [0].AutoIncrementStep = 5;
+
+                        t.Columns [1].DefaultValue = "testme";
+                        
+
+                        // null test & missing columns
+                        DataRow r = t.Rows.Add (new object [] { null, null});
+                        AssertEquals ("#ABV1", 10, (int) r [0]);
+                        AssertEquals ("#ABV2", "testme", (string) r [1]);
+                        AssertEquals ("#ABV3", DBNull.Value, r [2]);
+
+                        // dbNull test
+                        r = t.Rows.Add (new object [] { DBNull.Value, DBNull.Value, DBNull.Value});
+                        AssertEquals ("#ABV4", DBNull.Value, r [0]);
+                        AssertEquals ("#ABV5", DBNull.Value, r [1]);
+                        AssertEquals ("#ABV6", DBNull.Value, r [2]);
+
+                        // ai test & no default value test
+                        r = t.Rows.Add (new object [] { null, null, null});
+                        AssertEquals ("#ABV7", 15, (int) r [0]);
+                        AssertEquals ("#ABV8", "testme", (string) r [1]);
+                        AssertEquals ("#ABV9", DBNull.Value, r [2]);
+                }
 		
 		[Test]
 		public void Clear ()

@@ -1,3 +1,8 @@
+2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRowCollectionTest.cs: Added a test to check Rows.Add (values
+	[]) with null in the collection.
+
 2005-05-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableTest.cs: revamped tests for ImportRow method. Checks

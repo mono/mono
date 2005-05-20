@@ -1291,7 +1291,16 @@ namespace System.Data {
 			try {
 				for (int i = 0; i < valCount; i++) {
 					try {
-						Columns[i].DataContainer[index] = values[i];
+                                                if (values [i] != null) {
+                                                        Columns[i].DataContainer[index] = values [i];
+                                                        continue;
+                                                }
+                                                
+                                                DataColumn column = Columns [i];
+                                                if (column.AutoIncrement)
+                                                        column.DataContainer[index] = column.AutoIncrementValue ();
+                                                else
+                                                        column.DataContainer.CopyValue(DefaultValuesRowIndex, index);                                                        
 					}
 					catch(Exception e) {
 						throw new ArgumentException(e.Message +

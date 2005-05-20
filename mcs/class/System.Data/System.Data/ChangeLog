@@ -1,3 +1,8 @@
+2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTable.cs: CreateRecord :value should be set to auto
+	increment value or default value if the given value is null.
+
 2005-05-16 Konstantin Triger <kostat@mainsoft.com>
 
 	* DataTable.cs: In DataTable.LoadDataRow with LoadOption - reverting the search order back to Original -> Current (by Suresh request)
