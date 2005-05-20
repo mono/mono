@@ -1,3 +1,8 @@
+2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Makefile: Test suite started.
+	* Mono.Data.SqliteClient_test.dll.sources: Added. Test files.
+
 2004-11-17  Geoff Norton  <gnorton@customerdna.com>
 
 	* Mono.Data.SqliteClient/Sqlite.cs:
