@@ -89,16 +89,14 @@ namespace System.Reflection {
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.GetAttributeFlagsImpl ();
+			return typeImpl.Attributes;
 		}
 		
 		protected override ConstructorInfo GetConstructorImpl (
-			BindingFlags bindingAttr, Binder binder, CallingConventions cc,
+			BindingFlags bindingAttr, Binder binder, CallingConventions callConvention,
 			Type[] types, ParameterModifier[] modifiers)
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.GetConstructorImpl (bindingAttr, binder, callConvention, types, modifiers);
+			return typeImpl.GetConstructor (bindingAttr, binder, callConvention, types, modifiers);
 		}
 
 		public override ConstructorInfo[] GetConstructors( BindingFlags bindingAttr)
@@ -173,8 +171,7 @@ namespace System.Reflection {
 
 		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
+			return typeImpl.GetMethodImplInternal (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
 		public override MethodInfo[] GetMethods( BindingFlags bindingAttr)
@@ -199,14 +196,12 @@ namespace System.Reflection {
 
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.GetPropertyImpl (name, bindingAttr, bindingAttr, returnType, types, modifiers);
+			return typeImpl.GetPropertyImplInternal (name, bindingAttr, binder, returnType, types, modifiers);
 		}
 
 		protected override bool HasElementTypeImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.HasElementTypeImpl ();
+			return typeImpl.HasElementType;
 		}
 
 		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
@@ -215,20 +210,17 @@ namespace System.Reflection {
 
 		protected override bool IsArrayImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.IsArrayImpl ();
+			return typeImpl.IsArray;
 		}
 
 		protected override bool IsByRefImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.IsByRefImpl ();
+			return typeImpl.IsByRef;
 		}
 
 		protected override bool IsCOMObjectImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.IsCOMObjectImpl ();
+			return typeImpl.IsCOMObject;
 		}
 
 		public override bool IsDefined( Type attributeType, bool inherit) {
@@ -237,21 +229,19 @@ namespace System.Reflection {
 
 		protected override bool IsPointerImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.IsPointerImpl ();
+			return typeImpl.IsPointer;
 		}
 
 		protected override bool IsPrimitiveImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.IsPrimitiveImpl ();
+			return typeImpl.IsPrimitive;
 		}
 
 		protected override bool IsValueTypeImpl()
 		{
-			throw new NotImplementedException ();
-			//return typeImpl.IsValueTypeImpl ();
+			return typeImpl.IsValueType;
 		}
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override Type[] GetGenericArguments ()
 		{
