@@ -1,3 +1,8 @@
+2005-05-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (centum_tests): Add System.Web and move corlib from ...
+	(default_centum_tests): ... here.
+
 2005-04-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (centum_tests): Add Mono.Security and

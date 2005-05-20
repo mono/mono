@@ -10,6 +10,7 @@ net_2_0_SUBDIRS := jay gmcs class nunit20 tests errors tools
 
 # List of test subdirs that should pass 100%
 centum_tests := \
+	class/corlib \
 	class/Commons.Xml.Relaxng \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
@@ -18,14 +19,13 @@ centum_tests := \
 	class/System.Configuration.Install \
 	class/System.Runtime.Remoting \
 	class/System.Runtime.Serialization.Formatters.Soap \
+	class/System.Web \
 	class/System.Web.Services \
 	tests \
 	errors
 #	class/System
 
-default_centum_tests := \
-	class/corlib \
-	$(centum_tests)
+default_centum_tests := $(centum_tests)
 
 net_2_0_centum_tests := $(centum_tests)
 
