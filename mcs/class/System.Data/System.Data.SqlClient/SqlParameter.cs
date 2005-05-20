@@ -6,6 +6,7 @@
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //   Diego Caravana (diego@toth.it)
+//   Umadevi S (sumadevi@novell.com)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
@@ -42,6 +43,7 @@ using System.Data;
 using System.Data.Common;
 #if NET_2_0
 using System.Data.ProviderBase;
+using System.Data.SqlTypes;
 #endif // NET_2_0
 using System.Runtime.InteropServices;
 using System.Text;
@@ -163,11 +165,13 @@ namespace System.Data.SqlClient {
 			set { container = value; }
 		}
 
+#if NET_1_1	
 		[Browsable (false)]
-		[DataCategory ("Data")]
 		[DataSysDescription ("The parameter generic type.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[RefreshProperties (RefreshProperties.All)]
+#endif		                                         
+		[DataCategory ("Data")]
 		public 
 #if NET_2_0
 		override
@@ -181,8 +185,13 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("Input, output, or bidirectional parameter.")]
 		[DefaultValue (ParameterDirection.Input)]
+#endif
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -214,11 +223,13 @@ namespace System.Data.SqlClient {
 			set { metaParameter.ParameterName = value; }
 		}
 
+#if NET_1_1
 		[Browsable (false)]
 		[DataSysDescription ("a design-time property used for strongly typed code-generation.")]
 		[DefaultValue (false)]
 		[DesignOnly (true)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
+#endif
 		public 
 #if NET_2_0
 		override
@@ -230,8 +241,13 @@ namespace System.Data.SqlClient {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("Offset in variable length data types.")]
 		[DefaultValue (0)]
+#endif
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -240,9 +256,11 @@ namespace System.Data.SqlClient {
 			get { return offset; }
 			set { offset = value; }
 		}
-		
+	
+#if NET_1_1	
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -253,8 +271,14 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
+#endif
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif		
 		public 
 #if NET_2_0
 		override
@@ -265,8 +289,14 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
+#endif
+#if NET_2_0
+		[Browsable (false)]
+                [EditorBrowsable (EditorBrowsableState.Never)]
+#endif
                 public 
 #if NET_2_0
 		override
@@ -277,8 +307,10 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-		[DataSysDescription ("Size of variable length datatypes (strings & arrays).")]
+#if NET_1_1
+		[DataSysDescription ("Size of variable length data types (strings & arrays).")]
 		[DefaultValue (0)]
+#endif
                 public 
 #if NET_2_0
 		override
@@ -289,8 +321,10 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
 		[DefaultValue ("")]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -301,8 +335,10 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
 		[DefaultValue (DataRowVersion.Current)]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -313,9 +349,14 @@ namespace System.Data.SqlClient {
 		}
 		
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("The parameter native type.")]
 		[DefaultValue (SqlDbType.NVarChar)]
+#endif
 		[RefreshProperties (RefreshProperties.All)]
+#if NET_2_0
+		[DbProviderSpecificTypeProperty(true)]
+#endif
 		public SqlDbType SqlDbType {
 			get { return sqlDbType; }
 			set { 
@@ -325,9 +366,14 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
+#if NET_1_1
 		[DataSysDescription ("Value of the parameter.")]
 		[DefaultValue (null)]
+#endif
 	        [TypeConverterAttribute (typeof (StringConverter))]
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.All)]		
+#endif
 		public 
 #if NET_2_0
 		override
@@ -340,6 +386,11 @@ namespace System.Data.SqlClient {
 				metaParameter.Value = value; 
 			}
 		}
+
+#if NET_2_0
+//		public SqlCompareOptions CompareInfo{
+
+#endif
 
 		#endregion // Properties
 
@@ -398,6 +449,10 @@ namespace System.Data.SqlClient {
 			case "System.Object":
 				SetSqlDbType (SqlDbType.Variant);
 				break;
+			case "System.DBNull":
+				SetSqlDbType(SqlDbType.Variant); // variant can contain numeric,
+								//string,binary or data and also nul								    //values, so we can later resolve 									// it to correct type.	
+				break;	
 			default:
 				throw new ArgumentException (exception);				
 			}

@@ -1,4 +1,9 @@
 2005-05-20 Umadevi S <sumadevi@novell.com>
+	
+	* Fixed Bug 74948 - SqlParameter also takes DBNull Value.
+		Correct some attributes stuff of 1.1 and 2.0 for SqlParameter.cs
+
+2005-05-20 Umadevi S <sumadevi@novell.com>
 
 	* Continuing on implementation for bulkcopy and notification
 		Added files SqlNotificationEventArgs.cs, OnChangeEventHandler.cs
