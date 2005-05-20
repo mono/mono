@@ -106,7 +106,6 @@ namespace System.Threading {
 			set { _suppressFlow = value; }
 		}
 
-#if NET_2_0
 		// Note: Previous to version 2.0 only the CompressedStack and (sometimes!) the WindowsIdentity
 		// were propagated to new threads. This is why ExecutionContext is internal in before NET_2_0.
 		// It also means that all newer context classes should be here (i.e. inside the #if NET_2_0).
@@ -124,7 +123,7 @@ namespace System.Threading {
 
 			ec.FlowSuppressed = false;
 		}
-		
+#if NET_2_0
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callBack, object state)
@@ -139,13 +138,12 @@ namespace System.Threading {
 
 			SecurityContext.Run (executionContext.SecurityContext, callBack, state);
 		}
-		
+#endif
 		public static AsyncFlowControl SuppressFlow ()
 		{
 			Thread t = Thread.CurrentThread;
 			t.ExecutionContext.FlowSuppressed = true;
 			return new AsyncFlowControl (t, AsyncFlowControlType.Execution);
 		}
-#endif
 	}
 }

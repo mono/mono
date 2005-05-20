@@ -77,6 +77,13 @@ namespace System.Threading {
 		{
 			CompressedStack cs = new CompressedStack (0);
 			cs._list = SecurityFrame.GetStack (1);
+
+			// include any current CompressedStack inside the new Capture
+			CompressedStack currentCs = Thread.CurrentThread.GetCompressedStack ();
+			if (currentCs != null) {
+				for (int i=0; i < currentCs._list.Count; i++)
+					cs._list.Add (currentCs._list [i]);
+			}
 			return cs;
 		}
 

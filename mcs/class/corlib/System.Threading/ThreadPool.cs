@@ -32,17 +32,21 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 
 namespace System.Threading {
 
+#if NET_2_0
+	public static class ThreadPool {
+#else
 	public sealed class ThreadPool {
 
 		private ThreadPool ()
 		{
 			/* nothing to do */
 		}
-
+#endif
 		public static bool BindHandle (IntPtr osHandle)
 		{
 			return true;
@@ -132,10 +136,19 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callback, object state)
 		{
-			IAsyncResult ar = callback.BeginInvoke (state, null, null);
-			if (ar == null)
-				return false;
-			return true;
+			// no stack propagation here (that's why it's unsafe and requires extra security permissions)
+			IAsyncResult ar = null;
+			try {
+				if (!ExecutionContext.IsFlowSuppressed ())
+					ExecutionContext.SuppressFlow (); // on current thread only
+
+				ar = callback.BeginInvoke (state, null, null);
+			}
+			finally {
+				if (ExecutionContext.IsFlowSuppressed ())
+					ExecutionContext.RestoreFlow ();
+			}
+			return (ar != null);
 		}
 		
 		[MonoTODO]

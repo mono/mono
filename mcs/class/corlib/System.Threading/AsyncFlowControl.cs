@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -40,8 +38,11 @@ namespace System.Threading {
 		Security
 	}
 
+#if NET_2_0
 	public struct AsyncFlowControl : IDisposable {
-
+#else
+	internal struct AsyncFlowControl : IDisposable {
+#endif
 		private Thread _t;
 		private AsyncFlowControlType _type;
 
@@ -78,5 +79,3 @@ namespace System.Threading {
 		}
 	}
 }
-
-#endif

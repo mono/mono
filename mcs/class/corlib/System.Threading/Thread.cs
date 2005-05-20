@@ -86,6 +86,7 @@ namespace System.Threading
 		private int serialized_culture_info_len;
 		private IntPtr serialized_ui_culture_info;
 		private int serialized_ui_culture_info_len;
+		private ExecutionContext _ec;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
@@ -97,7 +98,6 @@ namespace System.Threading
 		private IntPtr unused5;
 		private IntPtr unused6;
 		private IntPtr unused7;
-		private IntPtr unused8;
 		#endregion
 
 		[ThreadStatic] 
@@ -109,8 +109,6 @@ namespace System.Threading
 		
 		private IPrincipal _principal;
 
-		private ExecutionContext _ec;
-		
 		public static Context CurrentContext {
 			[SecurityPermission (SecurityAction.LinkDemand, Infrastructure=true)]
 			get {
@@ -628,6 +626,17 @@ namespace System.Threading
 		}
 
 		public void Start() {
+			// propagate informations from the original thread to the new thread
+#if NET_2_0
+			if (!ExecutionContext.IsFlowSuppressed ())
+				_ec = ExecutionContext.Capture ();
+#else
+			// before 2.0 this was only used for security (mostly CAS) so we
+			// do this only if the security manager is active
+			if (SecurityManager.SecurityEnabled)
+				_ec = ExecutionContext.Capture ();
+#endif
+
 			// Thread_internal creates and starts the new thread, 
 			if (Thread_internal(threadstart) == (IntPtr) 0)
 				throw new SystemException ("Thread creation failed.");

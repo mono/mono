@@ -1,3 +1,18 @@
+2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsyncFlowControl.cs: Now available, as internal, in NET_1_1. This is
+	required to get some methods from SecurityContext and ExecutionContext
+	working.
+	* CompressedStack.cs: Now includes the current CompressedStack in a new
+	Capture.
+	* ExecutionContext.cs: Includes more methods in NET_1_1 to enable 
+	ThreadPool.UnsafeQueueUserWorkItem to work properly (i.e. without
+	stack propagation).
+	* Thread.cs: Made ExecutionContext field accessible from the runtime.
+	Added stack propagation when Thread.Start is called.
+	* ThreadPool.cs: QueueUserWorkItem now does stack propagation (done in
+	the runtime), so I "fixed" UnsafeQueueUserWorkItem not to do so.
+
 2005-05-19  Miguel de Icaza  <miguel@novell.com>
 
 	* Thread.cs: REmove warnings.
