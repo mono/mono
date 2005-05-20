@@ -1,8 +1,11 @@
 2005-05-20  Raja R Harinath  <rharinath@novell.com>
 
-	* replace.cs (ReplacementEvalutator.Term.AppendResult): Renamed
-	from GetResult.  Modified to append to a passed-in StringBuilder
-	rather than return a string.
+	* parser.cs (Parser.Unescape): If the string doesn't contain any
+	'\' character, don't allocate a new string.
+
+	* replace.cs (ReplacementEvalutator.Term.AppendResult): Rename
+	from GetResult.  Append to a passed-in StringBuilder rather than
+	return a string.
 	(ReplacementEvaluator.Evaluate): Update.
 	
 	* Capture.cs, Group.cs, Match.cs: New files split out of ...

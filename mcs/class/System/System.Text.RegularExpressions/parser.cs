@@ -115,6 +115,8 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public static string Unescape (string str) {
+			if (str.IndexOf ('\\') == -1)
+				return str;
 			return new Parser ().ParseString (str);
 		}
 
