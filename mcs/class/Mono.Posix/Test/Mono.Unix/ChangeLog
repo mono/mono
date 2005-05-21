@@ -1,3 +1,8 @@
+2005-05-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* UnixUserTest.cs, UnixGroupTest.cs: Disable tests that might not
+	work on a Solaris box with NIS. Bug #72293.
+
 2005-04-29  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* StdioFileStreamTest.cs: Add FilePosition tests; remove `var = var` 

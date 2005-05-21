@@ -39,6 +39,10 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		// According to bug 72293, this may not work:
+		// On systems with NIS, it is possible to have multiple users in the passwd
+		// file with the same name, so the assertion above no longer holds.
+		[Category ("NotWorking")]
 		public void ReentrantConstructors ()
 		{
 			ArrayList user_ids = new ArrayList (4);
