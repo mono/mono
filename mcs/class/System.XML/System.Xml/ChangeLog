@@ -1,3 +1,8 @@
+2005-05-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlImplementation.cs : added new NET_2_0 ctor.
+	  Let's check corcompare:-/
+
 2005-05-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : namespace storing was stupid.

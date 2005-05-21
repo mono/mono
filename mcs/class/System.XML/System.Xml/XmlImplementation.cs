@@ -34,8 +34,18 @@ namespace System.Xml
 	{
 		#region Constructor
 		public XmlImplementation ()
+			: this (new NameTable ())
 		{
-			InternalNameTable = new NameTable ();
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		XmlImplementation (XmlNameTable nameTable)
+		{
+			InternalNameTable = nameTable;
 		}
 		#endregion
 
