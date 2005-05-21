@@ -683,9 +683,10 @@ namespace Mono.Xml
 			else {
 				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
 				SetLineInfo (ct);
-				foreach (DTDAttributeDefinition a in
-					Attributes.Definitions)
-					ct.Attributes.Add (a.CreateXsdAttribute ());
+				if (Attributes != null)
+					foreach (DTDAttributeDefinition a in
+						Attributes.Definitions)
+						ct.Attributes.Add (a.CreateXsdAttribute ());
 				if (IsMixedContent)
 					ct.IsMixed = true;
 				ct.Particle = ContentModel.CreateXsdParticle ();
@@ -829,12 +830,14 @@ namespace Mono.Xml
 					new XmlSchemaSimpleTypeRestriction ();
 				SetLineInfo (r);
 				r.BaseTypeName = qname;
-				foreach (string name in enumeratedNotations) {
-					XmlSchemaEnumerationFacet f =
-						new XmlSchemaEnumerationFacet ();
-					SetLineInfo (f);
-					r.Facets.Add (f);
-					f.Value = name;
+				if (enumeratedNotations != null) {
+					foreach (string name in enumeratedNotations) {
+						XmlSchemaEnumerationFacet f =
+							new XmlSchemaEnumerationFacet ();
+						SetLineInfo (f);
+						r.Facets.Add (f);
+						f.Value = name;
+					}
 				}
 			}
 			else if (qname != XmlQualifiedName.Empty)

@@ -1,5 +1,10 @@
 2005-05-21  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDObjectModel.cs : For simple type restriction creation it failed
+	  when there is no enumerations (largely failed).
+
+2005-05-21  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlImplementation.cs : added new NET_2_0 ctor.
 	  Let's check corcompare:-/
 
