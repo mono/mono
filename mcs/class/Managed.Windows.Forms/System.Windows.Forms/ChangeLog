@@ -50,6 +50,17 @@
 
 2005-05-19  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: New method that resizes the tab pages before
+	redrawing them. This as needed as the control is double buffered
+	and sizing will not be recalculated unless ResizeTabPages is
+	called.
+	* TabPage.cs: Set base.Text instead of Text in the constructor so
+	that UpdateOwner does not get called. Use the new Redraw method of
+	TabControl instead of Refresh so the sizing is recalculated.
+	* ThemeWin32Classic.cs: Draw the text for button tabs.
+
+2005-05-19  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Paint control background images. Fix typo where
 	PaintControlBackground was not getting called correctly.
 
