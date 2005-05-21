@@ -1,3 +1,8 @@
+2004-10-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* StringTest.cs: Added test for issue with replacing of null chars
+	(bug #67395).
+
 2005-05-19  Ben Maurer  <bmaurer@ximian.com>
 
 	* MulticastDelegate.cs: Test for equals where !(obj is Delegate)

@@ -1237,6 +1237,10 @@ public class StringTest : Assertion
 		// Test overlapping matches (bug #54988)
         string s2 = "...aaaaaaa.bbbbbbbbb,............ccccccc.u...";
 		AssertEquals ("..aaaaaaa.bbbbbbbbb,......ccccccc.u..", s2.Replace("..", "."));
+
+		// Test replacing null characters (bug #67395)
+		AssertEquals ("should not strip content after nullchar",
+			"is this ok ?", "is \0 ok ?".Replace ("\0", "this"));
 	}
 
 	public void TestSplit() {
