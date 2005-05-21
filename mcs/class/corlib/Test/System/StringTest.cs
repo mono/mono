@@ -590,6 +590,9 @@ public class StringTest : Assertion
 			     -1, s1.IndexOf("rig", 2, 3));
 		AssertEquals("stepped limited string index 5",
 			     2, s1.IndexOf("", 2, 3));
+		
+		string s2 = "QBitArray::bitarr_data"; 
+		AssertEquals ("bug #62160", 9, s2.IndexOf ("::"));
 	}
 
 	[Test]
@@ -976,6 +979,9 @@ public class StringTest : Assertion
 			     10, s1.LastIndexOf("rig", s1.Length-2, 15));
 		AssertEquals("stepped limited string index #4",
 			     -1, s1.LastIndexOf("rig", s1.Length-2, 3));
+			     
+		string s2 = "QBitArray::bitarr_data"; 
+		AssertEquals ("bug #62160", 9, s2.LastIndexOf ("::"));    
 	}
 
 	[Test]

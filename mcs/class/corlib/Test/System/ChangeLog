@@ -1,3 +1,7 @@
+2005-05-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringTest.cs: Add a test for bug #62160
+
 2004-10-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StringTest.cs: Added test for issue with replacing of null chars
