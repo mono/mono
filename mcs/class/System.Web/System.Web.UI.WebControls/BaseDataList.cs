@@ -142,7 +142,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		[WebCategory ("Accessibility")]
 		[WebSysDescription ("Caption")]
@@ -154,7 +153,6 @@ namespace System.Web.UI.WebControls
 
 			set { ViewState ["Caption"] = value; }
 		}
-#endif
 
 #if NET_2_0
 	    [ThemeableAttribute (false)]
