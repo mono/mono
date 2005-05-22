@@ -224,7 +224,8 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
 
-            CheckHaveResultSet();
+            if (!HaveResultSet())
+	    	return false;
 
             if (_rowIndex < _currentResultset.Count)
             {
