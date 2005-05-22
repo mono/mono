@@ -9,4 +9,7 @@
 	<dllmap dll="db2cli" target="libdb2_36@libsuffix@"/>
 	<dllmap dll="msvcrt" target="@LIBC@"/>
 	<dllmap dll="MonoPosixHelper" target="libMonoPosixHelper@libsuffix@"/>
+	<dllmap dll="sqlite" target="@SQLITE@">
+	<dllmap dll="sqlite3" target="@SQLITE3@">
+	<dllmap dll="libX11" target="@X11@">
 </configuration>
