@@ -137,7 +137,14 @@ namespace System.Data {
 			}
 			set {
 				if ( !(value == null && AutoIncrement) ) {
-					DataContainer[index] = value;
+					try {
+						DataContainer[index] = value;
+					}
+					catch(Exception e) {
+						throw new ArgumentException(e.Message +
+							String.Format("Couldn't store <{0}> in {1} Column.  Expected type is {2}.",
+							value, ColumnName, DataType.Name), e);
+					}
 				}
 
 				if ( AutoIncrement && !DataContainer.IsNull(index) ) {
@@ -289,6 +296,13 @@ namespace System.Data {
 		internal long GetAutoIncrementValue ()
 		{
 			return _nextAutoIncrementValue;
+		}
+
+		internal void SetDefaultValue(int index) {
+			if (AutoIncrement)
+				this[index] = _nextAutoIncrementValue;
+			else
+				DataContainer.CopyValue(Table.DefaultValuesRowIndex, index);
 		}
 
 		[DataCategory ("Data")]

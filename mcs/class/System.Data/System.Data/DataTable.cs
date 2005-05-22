@@ -1289,32 +1289,17 @@ namespace System.Data {
 			int index = RecordCache.NewRecord();
 
 			try {
+				
 				for (int i = 0; i < valCount; i++) {
-					try {
-                                                if (values [i] != null) {
-                                                        Columns[i].DataContainer[index] = values [i];
-                                                        continue;
-                                                }
-                                                
-                                                DataColumn column = Columns [i];
-                                                if (column.AutoIncrement)
-                                                        column.DataContainer[index] = column.AutoIncrementValue ();
-                                                else
-                                                        column.DataContainer.CopyValue(DefaultValuesRowIndex, index);                                                        
-					}
-					catch(Exception e) {
-						throw new ArgumentException(e.Message +
-							String.Format("Couldn't store <{0}> in {1} Column.  Expected type is {2}.",
-							values[i], Columns[i].ColumnName, Columns[i].DataType.Name), e);
-					}
+					object value = values[i];
+					if (value == null)
+						Columns[i].SetDefaultValue(index);
+					else
+						Columns[i][index] = values[i];
 				}
 
 				for(int i = valCount; i < Columns.Count; i++) {
-					DataColumn column = Columns[i];
-					if (column.AutoIncrement)
-						column.DataContainer[index] = column.AutoIncrementValue ();
-					else
-						column.DataContainer.CopyValue(DefaultValuesRowIndex, index);
+					Columns[i].SetDefaultValue(index);
 				}
 
 				return index;
