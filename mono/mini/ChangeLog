@@ -1,5 +1,7 @@
 2005-05-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* *-ia64.*: Ongoing IA64 work.
+
 	* basic.cs objects.cs: Move tests accessing static variables as well.
 
 	* basic.cs objects.cs: Move test_0_pin_string to objects.cs.
