@@ -1,0 +1,3 @@
+2005-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthenticationTest.cs: New. Unit tests for FormsAuthentication.

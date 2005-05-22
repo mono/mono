@@ -1,3 +1,7 @@
+2005-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Web_test.dll.sources: Added tests for FormsAuthentication.
+
 2005-05-13  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new file:

@@ -1,5 +1,6 @@
 System.Web/HttpRequestTest.cs
 System.Web/HttpServerUtilityTest.cs
 System.Web/HttpUtilityTest.cs
+System.Web.Security/FormsAuthenticationTest.cs
 System.Web.UI/TestUrlPropertyAttribute.cs
 System.Web.UI.WebControls/TestControlIDConverter.cs
