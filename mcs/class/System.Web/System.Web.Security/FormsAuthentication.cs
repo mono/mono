@@ -237,9 +237,9 @@ namespace System.Web.Security
 
 			byte [] bytes;
 			if (String.Compare (passwordFormat, "MD5", true) == 0) {
-				bytes = MD5.Create ().ComputeHash (Encoding.ASCII.GetBytes (password));
+				bytes = MD5.Create ().ComputeHash (Encoding.UTF8.GetBytes (password));
 			} else if (String.Compare (passwordFormat, "SHA1", true) == 0) {
-				bytes = SHA1.Create ().ComputeHash (Encoding.ASCII.GetBytes (password));
+				bytes = SHA1.Create ().ComputeHash (Encoding.UTF8.GetBytes (password));
 			} else {
 				throw new ArgumentException ("The format must be either MD5 or SHA1", "passwordFormat");
 			}

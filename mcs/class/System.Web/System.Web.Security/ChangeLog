@@ -1,3 +1,8 @@
+2005-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthentication.cs: Hash the UTF8 representation of the password
+	strings (to be compatible with Microsoft implementation).
+
 2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs:
