@@ -1,3 +1,8 @@
+2005-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaInference.cs : When doing lax inference, set minOccurs="0"
+	  of those elements in a sequence. Fixed misspellings.
+
 2005-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAtomicValue.cs : moved from XPathAtomicValue, removed some stuff.

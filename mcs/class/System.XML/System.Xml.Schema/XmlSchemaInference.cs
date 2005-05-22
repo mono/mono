@@ -108,11 +108,11 @@ namespace System.Xml.Schema
 	{
 		public static XmlSchemaSet Process (XmlReader xmlReader, 
 			XmlSchemaSet schemas,
-			bool laxOccurence,
+			bool laxOccurrence,
 			bool laxTypeInference)
 		{
 			XsdInference impl = new XsdInference (xmlReader,
-				schemas, laxOccurence, laxTypeInference);
+				schemas, laxOccurrence, laxTypeInference);
 			impl.Run ();
 			return impl.schemas;
 		}
@@ -179,7 +179,7 @@ namespace System.Xml.Schema
 
 		XmlReader source;
 		XmlSchemaSet schemas;
-		bool laxOccurence;
+		bool laxOccurrence;
 		bool laxTypeInference;
 
 		Hashtable newElements = new Hashtable ();
@@ -187,12 +187,12 @@ namespace System.Xml.Schema
 
 		private XsdInference (XmlReader xmlReader, 
 			XmlSchemaSet schemas, 
-			bool laxOccurence, 
+			bool laxOccurrence, 
 			bool laxTypeInference)
 		{
 			this.source = xmlReader;
 			this.schemas = schemas;
-			this.laxOccurence = laxOccurence;
+			this.laxOccurrence = laxOccurrence;
 			this.laxTypeInference = laxTypeInference;
 		}
 
@@ -360,7 +360,7 @@ namespace System.Xml.Schema
 				attr.SchemaTypeName =
 					InferSimpleType (source.Value);
 			}
-			if (!laxOccurence &&
+			if (!laxOccurrence &&
 				(isNewTypeDefinition || mergedRequired))
 				attr.Use = Use.Required;
 			else
@@ -822,11 +822,15 @@ namespace System.Xml.Schema
 				QName name = new QName (source.LocalName,
 					source.NamespaceURI);
 				Element nel = CreateElement (name);
+				if (laxOccurrence)
+					nel.MinOccurs = 0;
 				InferElement (nel, ns, true);
 				if (ns == name.Namespace)
 					s.Items.Add (nel);
 				else {
 					Element re = new Element ();
+					if (laxOccurrence)
+						re.MinOccurs = 0;
 					re.RefName = name;
 					s.Items.Add (re);
 				}
@@ -888,7 +892,7 @@ namespace System.Xml.Schema
 		private Choice ToSequenceOfChoice (Sequence s)
 		{
 			Choice c = new Choice ();
-			if (laxOccurence)
+			if (laxOccurrence)
 				c.MinOccurs = 0;
 			c.MaxOccursString = "unbounded";
 			foreach (Particle p in s.Items)
@@ -927,7 +931,7 @@ namespace System.Xml.Schema
 		private Sequence CreateSequence ()
 		{
 			Sequence s = new Sequence ();
-			if (laxOccurence)
+			if (laxOccurrence)
 				s.MinOccurs = 0;
 			return s;
 		}
