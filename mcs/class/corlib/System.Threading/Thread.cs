@@ -141,7 +141,7 @@ namespace System.Threading
 		
 		public static Thread CurrentThread {
 #if NET_2_0
-			[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 			get {
 				return(CurrentThread_internal());
@@ -798,7 +798,7 @@ namespace System.Threading
 
 		[MonoTODO ("limited to CompressedStack support")]
 		public ExecutionContext ExecutionContext {
-			[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
 				if (_ec == null)
 					_ec = new ExecutionContext ();
@@ -811,14 +811,14 @@ namespace System.Threading
 		}
 
 		[MonoTODO]
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginCriticalRegion ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EndCriticalRegion ()
 		{
 			throw new NotImplementedException ();

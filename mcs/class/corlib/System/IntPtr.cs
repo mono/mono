@@ -113,7 +113,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public int ToInt32 ()
 		{
@@ -121,7 +121,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public long ToInt64 ()
 		{
@@ -143,7 +143,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static bool operator == (IntPtr a, IntPtr b)
 		{
@@ -151,7 +151,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static bool operator != (IntPtr a, IntPtr b)
 		{
@@ -159,7 +159,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static explicit operator IntPtr (int value)
 		{
@@ -167,7 +167,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static explicit operator IntPtr (long value)
 		{
@@ -175,7 +175,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif		
 		[CLSCompliant (false)]
 		unsafe public static explicit operator IntPtr (void *value)

@@ -23,19 +23,19 @@ namespace System.Runtime.InteropServices
 			handle = invalidHandleValue;
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		~CriticalHandle ()
 		{
 			Dispose ();
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Close ()
 		{
 			Dispose ();
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void Dispose ()
 		{
 			if (_disposed)
@@ -52,28 +52,28 @@ namespace System.Runtime.InteropServices
 			}
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected abstract bool ReleaseHandle ();
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		protected void SetHandle (IntPtr handle)
 		{
 			this.handle = handle;
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void SetHandleAsInvalid()
 		{
 			_disposed = true;
 		}
 
 		public bool IsClosed {
-			[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get { return _disposed; }
 		}
 
 		public abstract bool IsInvalid {
-			[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get;
 		}
 	}

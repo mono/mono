@@ -23,19 +23,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
+
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.ConstrainedExecution
 {
+	[ComVisible (false)]
         public abstract class CriticalFinalizerObject
         {
                 protected CriticalFinalizerObject ()
                 {
                 }
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		~CriticalFinalizerObject ()
 		{
 		}

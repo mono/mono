@@ -58,7 +58,7 @@ namespace System
 		// Properties
 		public int Length {
 #if NET_2_0
-			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			get {
 				int length = this.GetLength (0);
@@ -74,7 +74,7 @@ namespace System
 		[ComVisible (false)]
 		public long LongLength {
 #if NET_2_0
-			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			get { return Length; }
 		}
@@ -82,7 +82,7 @@ namespace System
 
 		public int Rank {
 #if NET_2_0
-			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 			get {
 				return this.GetRank ();
@@ -127,7 +127,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		int IList.IndexOf (object value)
 		{
@@ -182,7 +182,7 @@ namespace System
 #endif
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int GetLowerBound (int dimension);
@@ -244,7 +244,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public int GetUpperBound (int dimension)
 		{
@@ -509,7 +509,7 @@ namespace System
 #endif
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif 
 		public static int BinarySearch (Array array, object value)
 		{
@@ -529,7 +529,7 @@ namespace System
 		}
 
 #if NET_2_0
-	[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+	[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int BinarySearch (Array array, object value, IComparer comparer)
 		{
@@ -547,7 +547,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int BinarySearch (Array array, int index, int length, object value)
 		{
@@ -575,7 +575,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int BinarySearch (Array array, int index, int length, object value, IComparer comparer)
 		{
@@ -637,7 +637,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static void Clear (Array array, int index, int length)
 		{
@@ -665,7 +665,7 @@ namespace System
 		public virtual extern object Clone ();
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Copy (Array sourceArray, Array destinationArray, int length)
 		{
@@ -682,7 +682,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
@@ -756,7 +756,7 @@ namespace System
 
 #if NET_1_1
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Copy (Array sourceArray, long sourceIndex, Array destinationArray,
 		                         long destinationIndex, long length)
@@ -783,7 +783,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Copy (Array sourceArray, Array destinationArray, long length)
 		{
@@ -796,7 +796,7 @@ namespace System
 #endif
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int IndexOf (Array array, object value)
 		{
@@ -807,7 +807,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int IndexOf (Array array, object value, int startIndex)
 		{
@@ -818,7 +818,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int IndexOf (Array array, object value, int startIndex, int count)
 		{
@@ -850,7 +850,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int LastIndexOf (Array array, object value)
 		{
@@ -861,7 +861,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int LastIndexOf (Array array, object value, int startIndex)
 		{
@@ -872,7 +872,7 @@ namespace System
 		}
 		
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int LastIndexOf (Array array, object value, int startIndex, int count)
 		{
@@ -912,7 +912,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Reverse (Array array)
 		{
@@ -923,7 +923,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Reverse (Array array, int index, int length)
 		{
@@ -984,7 +984,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array array)
 		{
@@ -995,7 +995,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array keys, Array items)
 		{
@@ -1006,7 +1006,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array array, IComparer comparer)
 		{
@@ -1017,7 +1017,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array array, int index, int length)
 		{
@@ -1025,7 +1025,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array keys, Array items, IComparer comparer)
 		{
@@ -1036,7 +1036,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array keys, Array items, int index, int length)
 		{
@@ -1044,7 +1044,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 		public static void Sort (Array array, int index, int length, IComparer comparer)
 		{
@@ -1052,7 +1052,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
 
 		public static void Sort (Array keys, Array items, int index, int length, IComparer comparer)
@@ -1482,7 +1482,7 @@ namespace System
 			return -1;
 		}
 		
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch<T> (T [] array, T value)
 		{
 			if (array == null)
@@ -1491,7 +1491,7 @@ namespace System
 			return BinarySearch<T> (array, 0, array.Length, value, null);
 		}
 		
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch<T> (T [] array, T value, IComparer<T> comparer)
 		{
 			if (array == null)
@@ -1505,7 +1505,7 @@ namespace System
 			return BinarySearch<T> (array, offset, length, value, null);
 		}
 		
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch<T> (T [] array, int index, int length, T value, IComparer<T> comparer)
 		{
 			if (array == null)
@@ -1682,7 +1682,7 @@ namespace System
 			return default (Nullable <T>);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]		
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]		
 		//
 		// The constrained copy should guarantee that if there is an exception thrown
 		// during the copy, the destination array remains unchanged.

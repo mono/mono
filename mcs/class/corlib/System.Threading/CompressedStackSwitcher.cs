@@ -65,7 +65,7 @@ namespace System.Threading {
 			// (even between executions).
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void Undo ()
 		{
 			if ((_cs != null) && (_t != null)) {

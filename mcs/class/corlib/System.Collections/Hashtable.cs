@@ -375,7 +375,7 @@ namespace System.Collections {
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public virtual void Clear ()
 		{
@@ -400,7 +400,7 @@ namespace System.Collections {
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public virtual void Remove (Object key)
 		{

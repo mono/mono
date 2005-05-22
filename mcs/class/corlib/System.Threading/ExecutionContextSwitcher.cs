@@ -63,7 +63,7 @@ namespace System.Threading
 		}
 		
 		[MonoTODO]
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void Undo ()
 		{
 			throw new NotImplementedException ();

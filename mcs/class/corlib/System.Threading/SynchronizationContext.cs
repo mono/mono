@@ -95,7 +95,7 @@ namespace System.Threading
 
 		[MonoTODO]
 		[CLSCompliant (false)]
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected static int WaitHelper (IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
 		{
 			throw new NotImplementedException ();

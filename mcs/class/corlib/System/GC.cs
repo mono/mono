@@ -95,7 +95,7 @@ namespace System
 		public extern static void ReRegisterForFinalize (object obj);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void SuppressFinalize (object obj);

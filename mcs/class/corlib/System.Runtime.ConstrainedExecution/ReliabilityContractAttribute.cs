@@ -23,34 +23,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
-
-using System.Runtime.InteropServices;
 
 namespace System.Runtime.ConstrainedExecution
 {
 	[AttributeUsage ((AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
 		AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Interface), Inherited=false)]
-	[ComVisible (false)]
         public sealed class ReliabilityContractAttribute : Attribute
         {
                 Consistency consistency;
-                CER cer;
+                Cer cer;
                 
                 public ReliabilityContractAttribute ()
                 {
                 }
 
-                public ReliabilityContractAttribute (Consistency consistency, CER cer)
+                public ReliabilityContractAttribute (Consistency consistency, Cer cer)
                 {
                         this.consistency = consistency;
                         this.cer = cer;
                 }
 
-                public CER CER {
+                public Cer Cer {
                         get { return cer; }
 			set { cer = value; }
                 }

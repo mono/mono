@@ -472,20 +472,20 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static int ReadInt32 (IntPtr ptr) {
 			return ReadInt32 (ptr, 0);
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int ReadInt32 (IntPtr ptr, int ofs);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
 		public static int ReadInt32 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs) {
@@ -493,20 +493,20 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static long ReadInt64 (IntPtr ptr) {
 			return ReadInt64 (ptr, 0);
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long ReadInt64 (IntPtr ptr, int ofs);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
 		public static long ReadInt64 ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
@@ -514,20 +514,20 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static IntPtr ReadIntPtr (IntPtr ptr) {
 			return ReadIntPtr (ptr, 0);
 		}
 		
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr ReadIntPtr (IntPtr ptr, int ofs);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
 		public static IntPtr ReadIntPtr ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
@@ -543,7 +543,7 @@ namespace System.Runtime.InteropServices
 		public extern static IntPtr ReAllocHGlobal (IntPtr pv, IntPtr cb);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		[MonoTODO]
 		public static int Release (IntPtr pUnk) {
@@ -647,7 +647,7 @@ namespace System.Runtime.InteropServices
 #endif
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);

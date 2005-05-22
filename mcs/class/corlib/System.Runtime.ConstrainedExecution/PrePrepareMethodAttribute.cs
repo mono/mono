@@ -28,12 +28,9 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
-
 namespace System.Runtime.ConstrainedExecution
 {
 	[AttributeUsage ((AttributeTargets.Constructor | AttributeTargets.Method), Inherited=false)]
-	[ComVisible (false)]
         public sealed class PrePrepareMethodAttribute : Attribute
         {
                 public PrePrepareMethodAttribute ()

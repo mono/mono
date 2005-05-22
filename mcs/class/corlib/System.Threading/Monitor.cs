@@ -50,7 +50,7 @@ namespace System.Threading
 		private extern static bool Monitor_try_enter(object obj, int ms);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static void Enter(object obj) {
 			if(obj==null) {
@@ -68,7 +68,7 @@ namespace System.Threading
 		private extern static void Monitor_exit(object obj);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static void Exit(object obj) {
 			if(obj==null) {

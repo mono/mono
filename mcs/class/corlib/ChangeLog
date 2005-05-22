@@ -1,3 +1,7 @@
+2005-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Renamed CER to Cer to match 2.0 beta2.
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added new CAS tests for System.IO.Stream.

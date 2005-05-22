@@ -86,7 +86,7 @@ namespace System.Runtime.CompilerServices
 
 #if NET_2_0
 		[MonoTODO]
-		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void PrepareConstrainedRegions () {
 			throw new NotImplementedException ();
 		}

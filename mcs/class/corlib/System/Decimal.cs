@@ -655,7 +655,7 @@ namespace System
         }
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
         public static int Compare(Decimal d1, Decimal d2) 
         {
