@@ -1,3 +1,8 @@
+2005-05-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* BitConverter.cs: Speed this up, fixing 74014. Patch from
+	`Aleksandar Dezelin'.
+
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs: Add some helper methods needed by other classes.

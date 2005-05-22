@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Text;
+
 namespace System
 {
 	public sealed class BitConverter
@@ -282,12 +284,12 @@ namespace System
 			if (startIndex > value.Length - length)
 				throw new ArgumentException ("startIndex + length > value.Length");
 
-			string ret = "";
+			StringBuilder builder = new StringBuilder(length * 3 - 1);
 			int end = startIndex + length;
 
 			for (int i = startIndex; i < end; i++) {
 				if (i > startIndex)
-					ret = ret + '-';
+					builder.Append('-');
 				
 				char high = (char)((value[i] >> 4) & 0x0f);
 				char low = (char)(value[i] & 0x0f);
@@ -305,10 +307,11 @@ namespace System
 					low -= (char) 10;
 					low += 'A';
 				}
-				ret = ret + high + low;
+				builder.Append(high);
+				builder.Append(low);
 			}
 
-			return ret;
+			return builder.ToString ();
 		}
 	}
 }
