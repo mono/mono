@@ -1,3 +1,7 @@
+2005-05-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* basic.cs objects.cs: Move test_0_pin_string to objects.cs.
+
 2005-05-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (SIG_HANDLER_SIGNATURE): Fix warning.
