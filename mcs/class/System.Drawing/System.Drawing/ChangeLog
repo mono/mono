@@ -1,3 +1,8 @@
+2005-03-22  Peter Bartok  <pbartok@novell.com>
+
+	* Graphics.cs: Fixed bug #74762, DrawString was crashing on s.Length
+	  if s was null.
+
 2005-05-20 Kornél Pál <kornelpal@hotmail.com>
 
 	* Image.cs: Uses MemoryStream wrapping on all platforms if needed
