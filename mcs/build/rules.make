@@ -98,16 +98,18 @@ include $(topdir)/build/profiles/$(PROFILE).make
 ifdef OVERRIDE_TARGET_ALL
 all: all.override
 else
-all: all.real
+all: do-all
 endif
-
-all.real: all-recursive
-	$(MAKE) all-local
 
 STD_TARGETS = test run-test run-test-ondotnet clean install uninstall
 
-$(STD_TARGETS): %: %-recursive
-	$(MAKE) $@-local
+$(STD_TARGETS): %: do-%
+
+do-run-test:
+	ok=:; $(MAKE) run-test-recursive || ok=false; $(MAKE) run-test-local || ok=false; $$ok
+
+do-%: %-recursive
+	$(MAKE) $*-local
 
 # The way this is set up, any profile-specific subdirs list should
 # be listed _before_ including rules.make.  However, the default

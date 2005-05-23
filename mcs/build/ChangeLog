@@ -1,3 +1,14 @@
+2005-05-23  Raja R Harinath  <rharinath@novell.com>
+
+	* rules.make (STD_TARGETS): Make them all go through an
+	indirection.
+	(all): Indirect through do-all.
+	(all.real): Remove.
+	(do-%): New pattern fallback.  Performs the standard behaviour:
+	%-recursive, and then %-local.
+	(do-run-test): New.  Make '-k' more useful.
+	Reported by Ritvik Mayank.
+
 2005-05-10  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (dist-fixup): Fix typo.
