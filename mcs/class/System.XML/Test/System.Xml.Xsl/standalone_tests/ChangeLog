@@ -1,3 +1,8 @@
+2005-05-23  Andrew Skiba  <andrews@mainsoft.com>
+
+	* xslttest.cs : wrap streams with using {...} so the file descriptors
+	are closed at time
+
 2005-05-22  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile : permit to create reference results on Mono; change
