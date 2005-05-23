@@ -1,3 +1,10 @@
+2005-05-22  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile : permit to create reference results on Mono; change
+	comments in Makefile, so they are not printed during the
+	build
+	* xslttest.cs : forgot to write the generated results
+
 2005-05-19  Andrew Skiba  <andrews@mainsoft.com>
 
 	* ignore.lst : ignore 2 performance tests, as we don't time them

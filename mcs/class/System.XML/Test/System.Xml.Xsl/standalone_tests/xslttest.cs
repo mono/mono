@@ -279,6 +279,7 @@ FileMatch:
 			if (generateOutput) {
 				StreamWriter fw = new StreamWriter (outfile,
 					false, Encoding.UTF8);
+				fw.Write (sw.ToString ());
 				fw.Close ();
 				Report (TestResult.Success, testid, "Created reference result");
 				// ... and don't run comparison
