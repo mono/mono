@@ -1,3 +1,6 @@
+2005-05-23 Satya Sudha K <ksathyasudha@hotmail.com>
+	* statement.cs : Support named arguments in late binding
+
 2005-05-17 Satya Sudha K <ksathyasudha@hotmail.com>
 	* ecore.cs : Removed char <-> numeric/date conversions as they are not supported in vbc
 

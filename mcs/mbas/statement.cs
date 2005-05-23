@@ -3519,11 +3519,19 @@ namespace Mono.MonoBASIC {
 
 		public bool ResolveArguments (EmitContext ec) {
 		
+			bool argNamesFound = false;
 			if (Arguments != null)
 			{
 				for (int index = 0; index < Arguments.Count; index ++)
 				{
 					Argument a = (Argument) Arguments [index];
+					if (a.ParamName == null || a.ParamName == "") {
+						if (argNamesFound) {
+							Report.Error (30241, loc, "Named Argument expected");
+							return false;
+						}
+					} else
+						argNamesFound = true;
 					if (a.ArgType == Argument.AType.NoArg)
 						a = new Argument (Parser.DecomposeQI ("System.Reflection.Missing.Value", loc), Argument.AType.Expression);
 					if (!a.Resolve (ec, loc))
@@ -3538,6 +3546,7 @@ namespace Mono.MonoBASIC {
 		{
 			int argCount = 0;
 			ArrayList arrayInitializers = new ArrayList ();
+			ArrayList ArgumentNames = null;
 			if (args != null) {
 				//arrayInitializers = new ArrayList ();
 				argCount = args.Count;
@@ -3545,6 +3554,11 @@ namespace Mono.MonoBASIC {
 					Argument a = (Argument) args [index];
 					Expression argument = a.Expr;
 					arrayInitializers.Add (argument);
+					if (a.ParamName != null && a.ParamName != "") {
+						if (ArgumentNames == null)
+							ArgumentNames = new ArrayList ();
+						ArgumentNames.Add (new StringLiteral (a.ParamName));
+					}
 				}
 			}
 
@@ -3555,11 +3569,15 @@ namespace Mono.MonoBASIC {
 			LocalVariableReference v1 = new LocalVariableReference (stmtBlock, Block.lateBindingArgs, loc);
 			assign_stmt = new Assign (v1, new_expr, loc);
 			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
-			// __LateBindingArgNames = nothing
-			//LocalVariableReference v2 = new LocalVariableReference (stmtBlock, Block.lateBindingArgNames, loc);
-			//assign_stmt = new Assign (v2, NullLiteral.Null, loc);
-			//stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
-			// Arguments for call Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall
+			// __LateBindingArgNames = new string () { argument names}
+			LocalVariableReference v2 = null;
+			if (ArgumentNames != null && ArgumentNames.Count > 0) {
+			 	new_expr = new ArrayCreation (Parser.DecomposeQI ("System.String",  loc), "[]", ArgumentNames, loc);
+				v2 = new LocalVariableReference (stmtBlock, Block.lateBindingArgNames, loc);
+				assign_stmt = new Assign (v2, new_expr, loc);
+				stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
+			}
+
 			Expression tempExpr = expr;
 			string memName = "";
 			bool isIndexerAccess = true;
@@ -3570,6 +3588,7 @@ namespace Mono.MonoBASIC {
 			} else if (expr is IndexerAccess) {
 				tempExpr = ((IndexerAccess) expr).Instance;
 			}
+
 			ArrayList invocationArgs = new ArrayList ();
 			if (isIndexerAccess) {
 				invocationArgs.Add (new Argument (tempExpr, Argument.AType.Expression));
@@ -3589,7 +3608,10 @@ namespace Mono.MonoBASIC {
 			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
 			invocationArgs.Add (new Argument (new StringLiteral (memName), Argument.AType.Expression));
 			invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
-			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+			if (ArgumentNames != null && ArgumentNames.Count > 0)
+				invocationArgs.Add (new Argument (v2, Argument.AType.Expression));
+			else
+				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
 
 			// __LateBindingCopyBack = new Boolean (no_of_args) {}
 			bool isCopyBackRequired = false;
@@ -3610,7 +3632,7 @@ namespace Mono.MonoBASIC {
 				for (int i = 0; i < argCount; i++) {
 					Argument a = (Argument) originalArgs [i];
 					Expression origExpr = a.Expr;
-					if (origExpr is Constant || a.ArgType == Argument.AType.NoArg)
+					if (origExpr is Constant || a.ArgType == Argument.AType.NoArg || origExpr is New)
 						arrayInitializers.Add (new BoolLiteral (false));
 					else 
 						arrayInitializers.Add (new BoolLiteral (true));
@@ -3645,6 +3667,8 @@ namespace Mono.MonoBASIC {
 				if (arg.ArgType == Argument.AType.NoArg)
 					continue;
 				if (origExpr is Constant)
+					continue;
+				if (origExpr is New)
 					continue;
 
 				Expression intExpr = new IntLiteral (i);
