@@ -1,4 +1,8 @@
 2005-05-23 Satya Sudha K <ksathyasudha@hotmail.com>
+	* statement.cs : Copying back the arguments (matching 'ByRef' parameters) in the reverse 
+			 order (starting with the last argument backwards) as done by vbc
+
+2005-05-23 Satya Sudha K <ksathyasudha@hotmail.com>
 	* statement.cs : Support named arguments in late binding
 
 2005-05-17 Satya Sudha K <ksathyasudha@hotmail.com>

@@ -3661,7 +3661,7 @@ namespace Mono.MonoBASIC {
 			inv_stmt.IsLateBinding = true;
 			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) inv_stmt, loc));
 
-			for (int i = 0; i< argCount; i ++) {
+			for (int i = argCount - 1; i >= 0; i --) {
 				Argument arg = (Argument) originalArgs [i];
 				Expression origExpr = (Expression) arg.Expr;
 				if (arg.ArgType == Argument.AType.NoArg)
