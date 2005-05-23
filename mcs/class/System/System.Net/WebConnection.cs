@@ -126,9 +126,12 @@ namespace System.Net
 						status = WebExceptionStatus.Success;
 						break;
 					} catch (SocketException) {
-						socket.Close();
-						socket = null;
-						status = WebExceptionStatus.ConnectFailure;
+						// This might be null if the request is aborted
+						if (socket != null) {
+							socket.Close();
+							socket = null;
+							status = WebExceptionStatus.ConnectFailure;
+						}
 					}
 				}
 			}
@@ -526,8 +529,10 @@ namespace System.Net
 			Data.request = request;
 			Connect ();
 			if (status != WebExceptionStatus.Success) {
-				request.SetWriteStreamError (status);
-				Close (true);
+				if (status != WebExceptionStatus.RequestCanceled) {
+					request.SetWriteStreamError (status);
+					Close (true);
+				}
 				return;
 			}
 			
@@ -546,6 +551,7 @@ namespace System.Net
 			lock (this) {
 				if (!busy) {
 					busy = true;
+					status = WebExceptionStatus.Success;
 					ThreadPool.QueueUserWorkItem (initConn, request);
 				} else {
 					lock (queue) {

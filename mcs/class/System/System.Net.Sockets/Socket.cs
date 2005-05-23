@@ -778,14 +778,14 @@ namespace System.Net.Sockets
 		private extern static IntPtr Accept_internal(IntPtr sock,
 							     out int error);
 
-		Thread accept_thread;
+		Thread blocking_thread;
 		public Socket Accept() {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error = 0;
 			IntPtr sock = (IntPtr) (-1);
-			accept_thread = Thread.CurrentThread;
+			blocking_thread = Thread.CurrentThread;
 			try {
 				sock = Accept_internal(socket, out error);
 			} catch (ThreadAbortException the) {
@@ -794,7 +794,7 @@ namespace System.Net.Sockets
 					error = 10004;
 				}
 			} finally {
-				accept_thread = null;
+				blocking_thread = null;
 			}
 
 			if (error != 0) {
@@ -805,10 +805,6 @@ namespace System.Net.Sockets
 						     this.SocketType,
 						     this.ProtocolType, sock);
 
-			// The MS runtime (really the OS, we suspect)
-			// sets newly accepted sockets to have the
-			// same Blocking status as the listening
-			// socket
 			accepted.Blocking = this.Blocking;
 			return(accepted);
 		}
@@ -1060,10 +1056,21 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("remote_end");
 			}
 
-			int error;
-			
 			SocketAddress serial = remote_end.Serialize ();
-			Connect_internal(socket, serial, out error);
+			int error = 0;
+
+			blocking_thread = Thread.CurrentThread;
+			try {
+				Connect_internal (socket, serial, out error);
+			} catch (ThreadAbortException the) {
+				if (disposed) {
+					Thread.ResetAbort ();
+					error = 10004;
+				}
+			} finally {
+				blocking_thread = null;
+			}
+
 			if (error != 0) {
 				throw new SocketException (error);
 			}
@@ -1727,9 +1734,9 @@ namespace System.Net.Sockets
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
 				Close_internal (x, out error);
-				if (accept_thread != null) {
-					accept_thread.Abort ();
-					accept_thread = null;
+				if (blocking_thread != null) {
+					blocking_thread.Abort ();
+					blocking_thread = null;
 				}
 
 				if (error != 0)

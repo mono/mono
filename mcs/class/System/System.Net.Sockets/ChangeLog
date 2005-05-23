@@ -1,3 +1,8 @@
+2005-05-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: apply the same hack on blocking Connect calls as the one
+	used in Accept.
+
 2005-05-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: see bug #74842, which is fixed with this patch for details

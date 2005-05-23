@@ -1,3 +1,9 @@
+2005-05-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: prevent 2 nullrefs when the aborting during
+	Connect() and reset the status to Success before starting a new
+	request.
+
 2005-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebRequest.cs: Throw NotImplementedException (not NotSupported
