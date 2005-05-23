@@ -40,6 +40,7 @@ using Form = System.Xml.Schema.XmlSchemaForm;
 using Use = System.Xml.Schema.XmlSchemaUse;
 using SOMList = System.Xml.Schema.XmlSchemaObjectCollection;
 using SOMObject = System.Xml.Schema.XmlSchemaObject;
+using Import = System.Xml.Schema.XmlSchemaImport;
 using Element = System.Xml.Schema.XmlSchemaElement;
 using Attr = System.Xml.Schema.XmlSchemaAttribute;
 using AttrGroup = System.Xml.Schema.XmlSchemaAttributeGroup;
@@ -217,8 +218,27 @@ namespace System.Xml.Schema
 			else
 				InferElement (el, qname.Namespace, false);
 
-			// finally compile again.
-			schemas.Compile ();
+			// FIXME: compile again.
+//			foreach (XmlSchema schema in schemas.Schemas ())
+//				schemas.Reprocess (schema);
+		}
+
+		private void AddImport (string current, string import)
+		{
+			foreach (XmlSchema schema in schemas.Schemas (current)) {
+				bool exists = false;
+				foreach (XmlSchemaExternal e in schema.Includes) {
+					Import imp = e as Import;
+					if (imp != null &&
+						imp.Namespace == import)
+						exists = true;
+				}
+				if (exists)
+					continue;
+				Import newimp = new Import ();
+				newimp.Namespace = import;
+				schema.Includes.Add (newimp);
+			}
 		}
 
 		private void IncludeXmlAttributes ()
@@ -317,7 +337,7 @@ namespace System.Xml.Schema
 				Attr attr = table [attrName] as Attr;
 				if (attr == null) {
 					attList.Add (InferNewAttribute (
-						attrName, isNew));
+						attrName, isNew, ns));
 				} else {
 					table.Remove (attrName);
 					if (attr.RefName != null &&
@@ -335,7 +355,7 @@ namespace System.Xml.Schema
 		}
 
 		private XmlSchemaAttribute InferNewAttribute (
-			QName attrName, bool isNewTypeDefinition)
+			QName attrName, bool isNewTypeDefinition, string ns)
 		{
 			Attr attr = null;
 			bool mergedRequired = false;
@@ -353,6 +373,7 @@ namespace System.Xml.Schema
 				}
 				attr = new Attr ();
 				attr.RefName = attrName;
+				AddImport (ns, attrName.Namespace);
 			} else {
 				// local attribute
 				attr = new Attr ();
@@ -780,9 +801,11 @@ namespace System.Xml.Schema
 			Element nel = new Element ();
 			if (source.NamespaceURI == ns)
 				nel.Name = source.LocalName;
-			else
+			else {
 				nel.RefName = new QName (source.LocalName,
 					source.NamespaceURI);
+				AddImport (ns, source.NamespaceURI);
+			}
 			InferElement (nel, source.NamespaceURI, true);
 			c.Items.Add (nel);
 		}
@@ -832,6 +855,7 @@ namespace System.Xml.Schema
 					if (laxOccurrence)
 						re.MinOccurs = 0;
 					re.RefName = name;
+					AddImport (ns, name.Namespace);
 					s.Items.Add (re);
 				}
 				consumed = true;
