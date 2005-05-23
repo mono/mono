@@ -129,6 +129,31 @@ namespace Mono.GetOptions
 				var = result[0].ToString();
 		}
 
+		private void ExtractEntryAssemblyInfo(Type optionsType)
+		{
+			entry = optionsType.Assembly;
+			Console.WriteLine("Entry Assembly from some Mono.GetOptions.Options subclass[{1}]: {0}", entry.FullName, optionsType.FullName);
+			if (entry == this.GetType().Assembly)	{		
+				entry = Assembly.GetEntryAssembly();
+				Console.WriteLine("Entry Assembly from Reflection: {0}", entry.FullName);
+			}
+
+			appExeName = entry.GetName().Name;
+			appVersion = entry.GetName().Version.ToString();
+			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
+			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref appCopyright);
+			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
+			GetAssemblyAttributeValue(typeof(Mono.AboutAttribute), ref appAboutDetails);
+			GetAssemblyAttributeValue(typeof(Mono.UsageComplementAttribute), ref appUsageComplement);
+			GetAssemblyAttributeValue(typeof(Mono.AdditionalInfoAttribute), ref appAdditionalInfo);
+			GetAssemblyAttributeValue(typeof(Mono.ReportBugsToAttribute), ref appReportBugsTo);
+			appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
+			if (appAuthors.Length == 0) {
+				appAuthors = new String[1];
+				appAuthors[0] = "Add one or more [assembly: Mono.Author(\"Here goes the author name\")] to your assembly";
+			}		
+		}
+
 		#endregion
 
 		#region Constructors
@@ -153,34 +178,20 @@ namespace Mono.GetOptions
 				throw new NotSupportedException("Argument processor marked member isn't a method");
 		}
 
-		private void Initialize(Options optionBundle)
+		public OptionList(Options optionBundle)
 		{
 			if (optionBundle == null)
 				throw new ArgumentNullException("optionBundle");
 
-			entry = Assembly.GetEntryAssembly();
-			appExeName = entry.GetName().Name;
-			appVersion = entry.GetName().Version.ToString();
-
+			Type optionsType = optionBundle.GetType();
 			this.optionBundle = optionBundle; 
 			this.parsingMode = optionBundle.ParsingMode ;
 			this.breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
 			this.endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
+			
+			ExtractEntryAssemblyInfo(optionsType);
 
-			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
-			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref appCopyright);
-			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
-			GetAssemblyAttributeValue(typeof(Mono.AboutAttribute), ref appAboutDetails);
-			GetAssemblyAttributeValue(typeof(Mono.UsageComplementAttribute), ref appUsageComplement);
-			GetAssemblyAttributeValue(typeof(Mono.AdditionalInfoAttribute), ref appAdditionalInfo);
-			GetAssemblyAttributeValue(typeof(Mono.ReportBugsToAttribute), ref appReportBugsTo);
-			appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
-			if (appAuthors.Length == 0) {
-				appAuthors = new String[1];
-				appAuthors[0] = "Add one or more [assembly: Mono.Author(\"Here goes the author name\")] to your assembly";
-			}
-
-			foreach(MemberInfo mi in optionBundle.GetType().GetMembers()) {
+			foreach(MemberInfo mi in optionsType.GetMembers()) {
 				object[] attribs = mi.GetCustomAttributes(typeof(KillOptionAttribute), true);
 				if (attribs == null || attribs.Length == 0) {
 					attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
@@ -196,19 +207,13 @@ namespace Mono.GetOptions
 				}
 			}
 			
-			if (argumentProcessor == null) // try to find a inherited one
-				foreach(MemberInfo mi in optionBundle.GetType().GetMembers()) 
+			if (argumentProcessor == null) // try to find an inherited one
+				foreach(MemberInfo mi in optionsType.GetMembers()) 
 					if (mi.DeclaringType != mi.ReflectedType) { // inherited
 						object[] attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
 						if (attribs != null && attribs.Length > 0)
 							AddArgumentProcessor(mi);
 					}
-
-		}
-
-		public OptionList(Options optionBundle)
-		{
-			Initialize(optionBundle);
 		}
 
 		#endregion

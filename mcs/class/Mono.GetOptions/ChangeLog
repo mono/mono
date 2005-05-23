@@ -1,3 +1,8 @@
+2005-05-23  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/Options.cs: To make code using Mono.GetOptions Unit-Testable, as suggested by 
+	  Rodrigo 'Bamboo' Oliveira, assume the assembly with the Options-derived class to be the "entry" one
+	  instead of the one pointed by Reflection, unless some Mono.GetOptions provided class is used directly
+	
 2005-05-18  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions/Options.cs: Reverting ABI change on RemainingArguments (will break packaged MonoDevelop 0.7)
 	
