@@ -1,3 +1,6 @@
+2005-05-23:2  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/OptionList.cs: Oops, forgot some debugging messages
+	 
 2005-05-23  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions/Options.cs: To make code using Mono.GetOptions Unit-Testable, as suggested by 
 	  Rodrigo 'Bamboo' Oliveira, assume the assembly with the Options-derived class to be the "entry" one

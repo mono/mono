@@ -132,10 +132,8 @@ namespace Mono.GetOptions
 		private void ExtractEntryAssemblyInfo(Type optionsType)
 		{
 			entry = optionsType.Assembly;
-			Console.WriteLine("Entry Assembly from some Mono.GetOptions.Options subclass[{1}]: {0}", entry.FullName, optionsType.FullName);
 			if (entry == this.GetType().Assembly)	{		
 				entry = Assembly.GetEntryAssembly();
-				Console.WriteLine("Entry Assembly from Reflection: {0}", entry.FullName);
 			}
 
 			appExeName = entry.GetName().Name;
