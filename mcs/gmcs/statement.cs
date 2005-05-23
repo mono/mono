@@ -3114,7 +3114,7 @@ namespace Mono.CSharp {
 		{
 			if (emit_finally)
 				ec.ig.BeginFinallyBlock ();
-			else
+			else if (ec.InIterator)
 				ec.CurrentIterator.MarkFinally (ec, parent_vectors);
 			EmitFinally (ec);
 		}
@@ -3751,10 +3751,16 @@ namespace Mono.CSharp {
 				if (!Fini.Resolve (ec))
 					ok = false;
 				ec.InFinally = was_finally;
+
+				if (!ec.InIterator)
+					need_exc_block = true;
 			}
 
-			ResolveFinally (branching);
-			need_exc_block |= emit_finally;
+			if (ec.InIterator) {
+				ResolveFinally (branching);
+				need_exc_block |= emit_finally;
+			} else
+				emit_finally = Fini != null;
 
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
@@ -3812,9 +3818,8 @@ namespace Mono.CSharp {
 
 		public override void EmitFinally (EmitContext ec)
 		{
-			if (Fini != null){
+			if (Fini != null)
 				Fini.Emit (ec);
-			}
 		}
 
 		public bool HasCatch
