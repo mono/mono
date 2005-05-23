@@ -1,3 +1,7 @@
+2005-05-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.Query : removed the whole directory (removed from .net 2.0)
+
 2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : removed obsolete TypeTableEntry.cs.
