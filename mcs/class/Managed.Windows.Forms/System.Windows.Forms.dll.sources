@@ -131,6 +131,7 @@ System.Windows.Forms/GridItem.cs
 System.Windows.Forms/GridItemCollection.cs
 System.Windows.Forms/GridItemType.cs
 System.Windows.Forms/GroupBox.cs
+System.Windows.Forms/Help.cs
 System.Windows.Forms/HelpEventArgs.cs
 System.Windows.Forms/HelpEventHandler.cs
 System.Windows.Forms/HelpNavigator.cs

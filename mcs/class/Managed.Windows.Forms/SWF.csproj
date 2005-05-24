@@ -749,6 +749,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\Help.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\HelpEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
