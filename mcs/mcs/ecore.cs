@@ -1382,6 +1382,104 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 	}
+	/// <summary>
+	/// 	This is a numeric cast to a Decimal
+	/// </summary>
+	public class CastToDecimal : EmptyCast {
+
+		MethodInfo conversion_operator;
+
+		public CastToDecimal (EmitContext ec, Expression child)
+			: this (ec, child, false)
+		{
+		}
+
+		public CastToDecimal (EmitContext ec, Expression child, bool find_explicit)
+			: base (child, TypeManager.decimal_type)
+		{
+			conversion_operator = GetConversionOperator (ec, find_explicit);
+
+			if (conversion_operator == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
+		}
+
+		// Returns the implicit operator that converts from
+		// 'child.Type' to System.Decimal.
+		MethodInfo GetConversionOperator (EmitContext ec, bool find_explicit)
+		{
+			string operator_name = "op_Implicit";
+
+			if (find_explicit)
+				operator_name = "op_Explicit";
+			
+			MethodGroupExpr opers = Expression.MethodLookup (
+				ec, type, operator_name, loc) as MethodGroupExpr;
+
+			if (opers == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
+			
+			foreach (MethodInfo oper in opers.Methods) {
+				ParameterData pd = TypeManager.GetParameterData (oper);
+
+				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
+					return oper;
+			}
+
+			return null;
+		}
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			child.Emit (ec);
+
+			ig.Emit (OpCodes.Call, conversion_operator);
+		}
+	}
+	/// <summary>
+	/// 	This is an explicit numeric cast from a Decimal
+	/// </summary>
+	public class CastFromDecimal : EmptyCast
+	{
+		MethodInfo conversion_operator;
+		public CastFromDecimal (EmitContext ec, Expression child, Type return_type)
+			: base (child, return_type)
+		{
+			if (child.Type != TypeManager.decimal_type)
+				throw new InternalErrorException (
+					"The expected type is Decimal, instead it is " + child.Type.FullName);
+
+			conversion_operator = GetConversionOperator (ec);
+			if (conversion_operator == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
+		}
+
+		// Returns the explicit operator that converts from an
+		// express of type System.Decimal to 'type'.
+		MethodInfo GetConversionOperator (EmitContext ec)
+		{				
+			MethodGroupExpr opers = Expression.MethodLookup (
+				ec, child.Type, "op_Explicit", loc) as MethodGroupExpr;
+
+			if (opers == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
+			
+			foreach (MethodInfo oper in opers.Methods) {
+				ParameterData pd = TypeManager.GetParameterData (oper);
+
+				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
+					return oper;
+			}
+
+			return null;
+		}
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			child.Emit (ec);
+
+			ig.Emit (OpCodes.Call, conversion_operator);
+		}
+	}
 
         //
 	// We need to special case this since an empty cast of

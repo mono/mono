@@ -303,7 +303,7 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.sbyte_type){
 				//
-				// From sbyte to short, int, long, float, double.
+				// From sbyte to short, int, long, float, double, decimal
 				//
 				if (real_target_type == TypeManager.int32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
@@ -315,9 +315,11 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.short_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.byte_type){
 				//
-				// From byte to short, ushort, int, uint, long, ulong, float, double
+				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
 				// 
 				if ((real_target_type == TypeManager.short_type) ||
 				    (real_target_type == TypeManager.ushort_type) ||
@@ -333,9 +335,12 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
+				
 			} else if (expr_type == TypeManager.short_type){
 				//
-				// From short to int, long, float, double
+				// From short to int, long, float, double, decimal
 				// 
 				if (real_target_type == TypeManager.int32_type)
 					return new EmptyCast (expr, target_type);
@@ -345,9 +350,12 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
+				
 			} else if (expr_type == TypeManager.ushort_type){
 				//
-				// From ushort to int, uint, long, ulong, float, double
+				// From ushort to int, uint, long, ulong, float, double, decimal
 				//
 				if (real_target_type == TypeManager.uint32_type)
 					return new EmptyCast (expr, target_type);
@@ -362,9 +370,11 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.int32_type){
 				//
-				// From int to long, float, double
+				// From int to long, float, double, decimal
 				//
 				if (real_target_type == TypeManager.int64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
@@ -372,9 +382,11 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
-				// From uint to long, ulong, float, double
+				// From uint to long, ulong, float, double, decimal
 				//
 				if (real_target_type == TypeManager.int64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
@@ -386,6 +398,8 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
 							       OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long/ulong to float, double
@@ -393,7 +407,9 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);	
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
 				// From ulong to float, double
@@ -403,10 +419,12 @@ namespace Mono.CSharp {
 							       OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
-							       OpCodes.Conv_R4);	
+							       OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.char_type){
 				//
-				// From char to ushort, int, uint, long, ulong, float, double
+				// From char to ushort, int, uint, long, ulong, float, double, decimal
 				// 
 				if ((real_target_type == TypeManager.ushort_type) ||
 				    (real_target_type == TypeManager.int32_type) ||
@@ -420,6 +438,8 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// float to double
@@ -477,7 +497,7 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.sbyte_type){
 				//
-				// From sbyte to short, int, long, float, double.
+				// From sbyte to short, int, long, float, double, decimal
 				//
 				if ((target_type == TypeManager.int32_type) || 
 				    (target_type == TypeManager.int64_type) ||
@@ -489,7 +509,7 @@ namespace Mono.CSharp {
 				
 			} else if (expr_type == TypeManager.byte_type){
 				//
-				// From byte to short, ushort, int, uint, long, ulong, float, double
+				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
 				// 
 				if ((target_type == TypeManager.short_type) ||
 				    (target_type == TypeManager.ushort_type) ||
@@ -504,7 +524,7 @@ namespace Mono.CSharp {
 	
 			} else if (expr_type == TypeManager.short_type){
 				//
-				// From short to int, long, float, double
+				// From short to int, long, double, float, decimal
 				// 
 				if ((target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.int64_type) ||
@@ -515,7 +535,7 @@ namespace Mono.CSharp {
 					
 			} else if (expr_type == TypeManager.ushort_type){
 				//
-				// From ushort to int, uint, long, ulong, float, double
+				// From ushort to int, uint, long, ulong, double, float, decimal
 				//
 				if ((target_type == TypeManager.uint32_type) ||
 				    (target_type == TypeManager.uint64_type) ||
@@ -528,7 +548,7 @@ namespace Mono.CSharp {
 				    
 			} else if (expr_type == TypeManager.int32_type){
 				//
-				// From int to long, float, double
+				// From int to long, double, float, decimal
 				//
 				if ((target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
@@ -538,7 +558,7 @@ namespace Mono.CSharp {
 					
 			} else if (expr_type == TypeManager.uint32_type){
 				//
-				// From uint to long, ulong, float, double
+				// From uint to long, ulong, double, float, decimal
 				//
 				if ((target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.uint64_type) ||
@@ -550,7 +570,7 @@ namespace Mono.CSharp {
 			} else if ((expr_type == TypeManager.uint64_type) ||
 				   (expr_type == TypeManager.int64_type)) {
 				//
-				// From long/ulong to float, double
+				// From long/ulong to double, float, decimal
 				//
 				if ((target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type) ||
@@ -559,7 +579,7 @@ namespace Mono.CSharp {
 				    
 			} else if (expr_type == TypeManager.char_type){
 				//
-				// From char to ushort, int, uint, long, ulong, float, double
+				// From char to ushort, int, uint, ulong, long, float, double, decimal
 				// 
 				if ((target_type == TypeManager.ushort_type) ||
 				    (target_type == TypeManager.int32_type) ||
@@ -1496,9 +1516,11 @@ namespace Mono.CSharp {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_CH);
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr, true);
 			} else if (expr_type == TypeManager.double_type){
 				//
-				// From double to byte, byte, short,
+				// From double to sbyte, byte, short,
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
@@ -1522,10 +1544,24 @@ namespace Mono.CSharp {
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_CH);
 				if (real_target_type == TypeManager.float_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
-			} 
-
-			// decimal is taken care of by the op_Explicit methods.
-
+				if (real_target_type == TypeManager.decimal_type)
+					return new CastToDecimal (ec, expr, true);
+			} else if (expr_type == TypeManager.decimal_type) {
+				//
+				// From decimal to short, ushort, int, uint,
+				// long, ulong, char, double or float
+				//
+				if (real_target_type == TypeManager.short_type)
+				if (real_target_type == TypeManager.ushort_type)
+				if (real_target_type == TypeManager.int32_type)
+				if (real_target_type == TypeManager.uint32_type)
+				if (real_target_type == TypeManager.int64_type)
+				if (real_target_type == TypeManager.uint64_type)
+				if (real_target_type == TypeManager.char_type)
+				if (real_target_type == TypeManager.double_type)
+				if (real_target_type == TypeManager.float_type)
+					return new CastFromDecimal (ec, expr, target_type);
+			}
 			return null;
 		}
 
@@ -1858,7 +1894,7 @@ namespace Mono.CSharp {
 					      TypeManager.CSharpName (target_type) + "'");
 				return null;
 			}
-				
+
 			Error_CannotConvertType (loc, original_expr_type, target_type);
 			return null;
 		}

@@ -1,3 +1,7 @@
+2005-05-24  Duncan Mak  <duncan@novell.com>
+
+	* test-386.cs: New test from #68711.
+
 2005-05-20  Martin Baulig  <martin@ximian.com>
 
 	* test-336.cs: Replaced with a working test.
