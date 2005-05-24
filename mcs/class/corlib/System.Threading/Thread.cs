@@ -846,7 +846,6 @@ namespace System.Threading
 		// instead and have the property call these.
 		
 		
-#pragma warning disable 618
 		[MonoTODO]
 		public ApartmentState GetApartmentState ()
 		{
@@ -873,7 +872,6 @@ namespace System.Threading
 				return false;
 			}
 		}
-#pragma warning restore 618
 		
 		[ComVisible (false)]
 		public override int GetHashCode ()

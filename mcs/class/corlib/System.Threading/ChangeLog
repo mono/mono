@@ -1,3 +1,7 @@
+2005-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Removed #pragma which aren't supported by CSC 7.x.
+
 2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsyncFlowControl.cs: Now available, as internal, in NET_1_1. This is
