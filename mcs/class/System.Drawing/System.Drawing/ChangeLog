@@ -1,3 +1,7 @@
+2005-05-24 Kornél Pál <kornelpal@hotmail.com>
+
+	* Graphics.cs: Revised DrawString methods
+
 2005-03-22  Peter Bartok  <pbartok@novell.com>
 
 	* Graphics.cs: Fixed bug #74762, DrawString was crashing on s.Length

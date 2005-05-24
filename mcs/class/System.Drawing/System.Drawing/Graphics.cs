@@ -787,77 +787,43 @@ namespace System.Drawing
 		}
 
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
-		{			
-
-			if (s == null) {
-				return;
-			}
-
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);
-			GDIPlus.CheckStatus (status);
+		{
+			DrawString (s, font, brush, layoutRectangle, null);
 		}
-		
+
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
-			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
-
-			if (s == null) {
-				return;
-			}
-
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, IntPtr.Zero, brush.nativeObject);
-			GDIPlus.CheckStatus (status);
+			DrawString (s, font, brush, new RectangleF (point.X, point.Y, 0, 0), null);
 		}
-		
+
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
-			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
-
-			if (s == null) {
-				return;
-			}
-
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref rc, format.NativeObject, brush.nativeObject);
-			GDIPlus.CheckStatus (status);
-		}
-		
-		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
-		{
-			if (s == null) {
-				return;
-			}
-
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, format.NativeObject, brush.nativeObject);
-			GDIPlus.CheckStatus (status);
+			DrawString(s, font, brush, new RectangleF(point.X, point.Y, 0, 0), format);
 		}
 
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			RectangleF rc = new RectangleF (x, y, 0, 0);
-			
-			if (s == null) {
-				return;
-			}
-
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, 
-				ref rc, IntPtr.Zero, brush.nativeObject);
-			GDIPlus.CheckStatus (status);
+			DrawString (s, font, brush, new RectangleF (x, y, 0, 0), null);
 		}
 
 		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format)
 		{
-			RectangleF rc = new RectangleF (x, y, 0, 0);
+			DrawString (s, font, brush, new RectangleF(x, y, 0, 0), format);
+		}
 
-			if (s == null) {
+		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
+		{
+			if (font == null)
+				throw new ArgumentNullException ("font");
+			if (brush == null)
+				throw new ArgumentNullException ("brush");
+			if (s == null || s.Length == 0)
 				return;
-			}
 
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject,
-				ref rc, format.NativeObject, brush.nativeObject);
+			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, format != null ? format.NativeObject : IntPtr.Zero, brush.nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void EndContainer (GraphicsContainer container)
 		{
 			Status status = GDIPlus.GdipEndContainer(nativeObject, container.NativeObject);
