@@ -1,3 +1,9 @@
+2005-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CriticialFinalizerObject.cs: Changed ComVisible to true.
+	* ReliabilityContractAttribute.cs: Default constructor is obsolete.
+	Properties don't have setters.
+
 2005-03-04  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* PrePrepareMethodAttribute.cs:

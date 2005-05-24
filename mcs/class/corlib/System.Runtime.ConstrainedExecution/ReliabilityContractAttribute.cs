@@ -36,7 +36,8 @@ namespace System.Runtime.ConstrainedExecution
         {
                 Consistency consistency;
                 Cer cer;
-                
+
+		[Obsolete ()]
                 public ReliabilityContractAttribute ()
                 {
                 }
@@ -49,14 +50,10 @@ namespace System.Runtime.ConstrainedExecution
 
                 public Cer Cer {
                         get { return cer; }
-			set { cer = value; }
                 }
 
                 public Consistency ConsistencyGuarantee {
-
-                        get { return consistency; }
-
-                        set { consistency = value; }
+			get { return consistency; }
                 }
         }
 }
