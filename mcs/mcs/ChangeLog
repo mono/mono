@@ -10,6 +10,8 @@
 	conversions to System.Decimal.
 	(ExplicitNumericConversion): handle explicit conversions to
 	System.Decimal.
+
+	This fixes #68711.
 	
 2005-05-20  Miguel de Icaza  <miguel@novell.com>
 
