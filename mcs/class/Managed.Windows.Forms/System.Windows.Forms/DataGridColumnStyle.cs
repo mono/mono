@@ -26,13 +26,16 @@
 
 // NOT COMPLETE
 
-using System.ComponentModel;
 using System.Drawing;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
+	[DesignTimeVisible(false)]
+	[DefaultProperty("Header")]
+	[ToolboxItem(false)]
 	public abstract class DataGridColumnStyle : Component, IDataGridColumnStyleEditingNotificationService
 	{
 		[ComVisible(true)]
@@ -115,7 +118,7 @@ namespace System.Windows.Forms
 		private PropertyDescriptor property_descriptor;
 		private bool read_only;
 		private int width;
-		protected DataGrid grid;
+		internal protected DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		#endregion	// Local Variables
 
@@ -149,6 +152,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Instance Properties
+		[Localizable(true)]
+		[DefaultValue(HorizontalAlignment.Left)]
 		public virtual HorizontalAlignment Alignment {
 			get {
 				return alignment;
@@ -164,6 +169,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public virtual DataGridTableStyle DataGridTableStyle {
 			get {
 				return table_style;
@@ -186,12 +192,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public AccessibleObject HeaderAccessibleObject {
 			get {
 				return accesible_object;
 			}
 		}
 
+		[Localizable(true)]
 		public virtual string HeaderText {
 			get {
 				return header_text;
@@ -208,6 +216,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Editor("System.Windows.Forms.Design.DataGridColumnStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[Localizable(true)]
 		public string MappingName {
 			get {
 				return mapping_name;
@@ -223,6 +233,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
 		public virtual string NullText {
 			get {
 				return null_text;
@@ -238,6 +249,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[DefaultValue(null)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual PropertyDescriptor PropertyDescriptor {
 			get {
 				return property_descriptor;
@@ -253,6 +267,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public virtual bool ReadOnly  {
 			get {
 				return read_only;
@@ -269,6 +284,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(100)]
+		[Localizable(true)]
 		public virtual int Width {
 			get {
 				return width;
@@ -431,6 +448,9 @@ namespace System.Windows.Forms
 		public event EventHandler HeaderTextChanged;
 		public event EventHandler MappingNameChanged;
 		public event EventHandler NullTextChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler PropertyDescriptorChanged;
 		public event EventHandler ReadOnlyChanged;
 		public event EventHandler WidthChanged;

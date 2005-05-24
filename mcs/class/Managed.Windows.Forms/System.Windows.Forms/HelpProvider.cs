@@ -34,10 +34,10 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	[ToolboxItemFilter("System.Windows.Forms")]
-	[ProvideProperty("HelpString", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("HelpKeyword", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("HelpNavigator", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	[ProvideProperty("ShowHelp", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("HelpNavigator", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("HelpKeyword", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("HelpString", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	public class HelpProvider : Component, IExtenderProvider {
 		#region HelpProperty Class
 		private class HelpProperty {

@@ -86,6 +86,7 @@ System.Windows.Forms/DataGridCell.cs
 System.Windows.Forms/DataGridColumnStyle.cs
 System.Windows.Forms/DataGridLineStyle.cs
 System.Windows.Forms/DataGridParentRowsLabelStyle.cs
+System.Windows.Forms/DataGridPreferredColumnWidthTypeConverter.cs
 System.Windows.Forms/DataGridTableStyle.cs
 System.Windows.Forms/DataGridTextBox.cs
 System.Windows.Forms/DataGridTextBoxColumn.cs

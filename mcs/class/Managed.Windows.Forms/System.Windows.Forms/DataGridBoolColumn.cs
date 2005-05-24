@@ -69,6 +69,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Instance Properties
+		[DefaultValue(true)]
 		public bool AllowNull {
 			get {
 				return allownull;
@@ -84,6 +85,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
 		public object FalseValue {
 			get {
 				return falsevalue;
@@ -99,6 +101,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
 		public object NullValue {
 			get {
 				return nullvalue;
@@ -110,6 +113,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[TypeConverter(typeof(System.ComponentModel.StringConverter))]
 		public object TrueValue {
 			get {
 				return truevalue;

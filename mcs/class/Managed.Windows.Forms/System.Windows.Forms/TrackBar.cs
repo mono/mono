@@ -43,7 +43,7 @@ using System.Timers;
 
 namespace System.Windows.Forms
 {	
-	[Designer("System.Windows.Forms.Design.TrackBarDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.TrackBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultEvent ("Scroll")]
 	[DefaultProperty("Value")]
 	public class TrackBar : Control, ISupportInitialize

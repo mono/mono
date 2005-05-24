@@ -33,7 +33,7 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("TabPages")]
-	[Designer("System.Windows.Forms.Design.TabControlDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.TabControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class TabControl : Control {
 		#region Fields
 		private int selected_index = -1;

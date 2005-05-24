@@ -33,6 +33,9 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty("GridEditName")]
+	[DesignTimeVisible(false)]
+	[ToolboxItem(false)]
 	public class DataGridTextBox : TextBox
 	{
 

@@ -73,6 +73,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Instance Properties
+		[Editor("System.Windows.Forms.Design.DataGridColumnStyleFormatEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string Format {
 			get {
 				return format;
@@ -83,7 +84,9 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IFormatProvider FormatInfo {
 			get {
 				return format_provider;
@@ -94,7 +97,8 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
+		[DefaultValue(null)]
 		public PropertyDescriptor PropertyDescriptor {
 			set { 
 				base.PropertyDescriptor = value;
@@ -111,6 +115,7 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO]
+		[Browsable(false)]
 		public virtual TextBox TextBox {
 			get {
 				return null;

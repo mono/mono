@@ -34,7 +34,7 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	[DefaultProperty("Text")]
 	[DefaultEvent("MouseDown")]
-	[Designer ("System.Windows.Forms.Design.NotifyIconDesigner, " + Consts.AssemblySystem_Design, (string)null)]
+	[Designer ("System.Windows.Forms.Design.NotifyIconDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public sealed class NotifyIcon : System.ComponentModel.Component {
 		#region Local Variables

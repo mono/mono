@@ -1,5 +1,20 @@
 2005-05-24  Peter Bartok  <pbartok@novell.com>
 
+	* OpenFileDialog.cs, Form.cs, Menu.cs, GroupBox.cs, UserControl.cs,
+	  Label.cs, DataGridTextBoxColumn.cs, PropertyGrid.cs, ErrorProvider.cs
+	  Splitter.cs, Control.cs, FontDialog.cs, TabPage.cs, 
+	  FolderBrowserDialog.cs, HelpProvider.cs, DataGridTableStyle.cs,
+	  NotifyIcon.cs, FileDialog.cs, ListView.cs, SaveFileDialog.cs,
+	  ToolBarButton.cs, ImageList.cs, DataGridBoolColumn.cs, Panel.cs,
+	  DataGrid.cs, DataGridTextBox.cs, ListBox.cs, TrackBar.cs,
+	  AxHost.cs, TabControl.cs, ScrollableControl.cs, ToolBar.cs,
+	  DataGridColumnStyle.cs, PictureBox.cs, DateTimePicker.cs,
+	  StatusBar.cs, MonthCalendar.cs, TreeView.cs: Added 
+	  missing attributes, etc
+	* DataGridPreferredColumnWidthTypeConverter.cs: Added
+
+2005-05-24  Peter Bartok  <pbartok@novell.com>
+
 	* Help.cs: Added, implemented trivial functions, throws up MessageBox
 	  when user tries to get help
 	* DataObject.cs, DataFormats.cs, LinkArea.cs, 

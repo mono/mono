@@ -49,7 +49,7 @@ namespace System.Windows.Forms
 {
 	[DefaultEvent ("SelectedIndexChanged")]
 	[DefaultProperty ("Items")]
-	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, (string)null)]
+	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ListView : Control
 	{
 		private ItemActivation activation = ItemActivation.Standard;

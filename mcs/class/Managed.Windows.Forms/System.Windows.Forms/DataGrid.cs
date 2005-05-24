@@ -35,7 +35,10 @@ using System.Collections;
 
 namespace System.Windows.Forms
 {
-	public class DataGrid : Control
+	[DefaultEvent("Navigate")]
+	[DefaultProperty("DataSource")]
+	[Designer("System.Windows.Forms.Design.DataGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	public class DataGrid : Control, ISupportInitialize, IDataGridEditingService
 	{
 		[Flags]
 		[Serializable]
@@ -231,6 +234,7 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 
+		[DefaultValue(true)]
 		public bool AllowNavigation {
 			get {
 				return allow_navigation;
@@ -244,6 +248,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool AllowSorting {
 			get {
 				return allow_sorting;
@@ -294,6 +299,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Image BackgroundImage {
 			get {
 				return base.BackgroundImage;
@@ -304,6 +311,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-504)]
+		[DefaultValue(BorderStyle.Fixed3D)]
 		public BorderStyle BorderStyle {
 			get {
 				return border_style;
@@ -331,6 +340,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[AmbientValue(null)]
 		public Font CaptionFont {
 			get {
 				if (caption_font == null) {
@@ -361,6 +372,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue("")]
 		public string CaptionText {
 			get {
 				return caption_text;
@@ -374,6 +387,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool CaptionVisible {
 			get {
 				return caption_visible;
@@ -389,6 +403,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool ColumnHeadersVisible {
 			get {
 				return columnheaders_visible;
@@ -403,6 +418,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridCell CurrentCell {
 			get {
 				return current_cell;
@@ -416,6 +433,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentRowIndex {
 			get {
 				return currentrow_index;
@@ -429,6 +448,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Cursor Cursor {
 			get {
 				return base.Cursor;
@@ -438,6 +459,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(null)]
+		[Editor ("System.Windows.Forms.Design.DataMemberListEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string DataMember {
 			get { return datamember; }
 			set {
@@ -448,6 +471,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(null)]
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public object DataSource {
 			get {
 				return datasource;
@@ -467,12 +493,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public int FirstVisibleColumn {
 			get {
 				return firstvisible_column;
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool FlatMode {
 			get {
 				return flatmode;
@@ -514,6 +542,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(DataGridLineStyle.Solid)]
 		public DataGridLineStyle GridLineStyle {
 			get {
 				return gridline_style;
@@ -605,6 +634,8 @@ namespace System.Windows.Forms
 		}
 
 		[ComVisible(false)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public Color LinkHoverColor {
 			get {
 				return link_hovercolor;
@@ -618,6 +649,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected internal CurrencyManager ListManager {
 			get {
 				if (BindingContext == null || DataSource  == null) {
@@ -662,6 +695,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(DataGridParentRowsLabelStyle.Both)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridParentRowsLabelStyle ParentRowsLabelStyle {
 			get {
 				return parentrowslabel_style;
@@ -679,6 +714,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool ParentRowsVisible {
 			get {
 				return parentrows_visible;
@@ -695,6 +731,8 @@ namespace System.Windows.Forms
 		}
 
 		// Settting this property seems to have no effect.
+		[DefaultValue(75)]
+		[TypeConverter(typeof(DataGridPreferredColumnWidthTypeConverter))]
 		public int PreferredColumnWidth {
 			get {
 				return preferredcolumn_width;
@@ -726,6 +764,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool ReadOnly {
 			get {
 				return _readonly;
@@ -740,6 +779,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool RowHeadersVisible {
 			get {
 				return rowheaders_visible;
@@ -754,6 +794,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(35)]
 		public int RowHeaderWidth {
 			get {
 				return rowheaders_width;
@@ -803,10 +844,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public GridTableStylesCollection TableStyles {
 			get { return styles_collection; }
 		}
 
+		[Bindable(false)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
 			get {
 				return base.Text;
@@ -816,12 +863,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected ScrollBar VertScrollBar {
 			get {
 				return vert_scrollbar;
 			}
 		}
 
+		[Browsable(false)]
 		public int VisibleColumnCount {
 			get {
 				return visiblecolumn_count;
@@ -830,6 +880,7 @@ namespace System.Windows.Forms
 		}
 
 		// Calculated at DataGridDrawing.CalcRowsHeaders
+		[Browsable(false)]
 		public int VisibleRowCount {
 			get {
 				return visiblerow_count;
@@ -1490,11 +1541,19 @@ namespace System.Windows.Forms
 		public event EventHandler AllowNavigationChanged;
 		public event EventHandler BackButtonClick;
 		public event EventHandler BackgroundColorChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+
 		public event EventHandler BorderStyleChanged;
 		public event EventHandler CaptionVisibleChanged;
 		public event EventHandler CurrentCellChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler CursorChanged;
+
 		public event EventHandler DataSourceChanged;
 		public event EventHandler FlatModeChanged;
 		public event NavigateEventHandler Navigate;
@@ -1504,6 +1563,9 @@ namespace System.Windows.Forms
 		protected event EventHandler RowHeaderClick;
 		public event EventHandler Scroll;
 		public event EventHandler ShowParentDetailsButtonClick;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged;
 		#endregion	// Events
 	}

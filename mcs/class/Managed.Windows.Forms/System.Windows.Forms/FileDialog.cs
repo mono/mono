@@ -39,6 +39,8 @@ using System.Collections.Specialized;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty("FileName")]
+	[DefaultEvent("FileOk")]
 	public abstract class FileDialog : CommonDialog
 	{
 		internal enum FileDialogType
@@ -77,7 +79,11 @@ namespace System.Windows.Forms
 		private bool showHiddenFiles = false;
 		
 		internal FileDialogType fileDialogType;
-		
+
+		internal FileDialog() : base() {
+		}
+
+		[DefaultValue(true)]
 		public bool AddExtension
 		{
 			get
@@ -90,7 +96,8 @@ namespace System.Windows.Forms
 				addExtension = value;
 			}
 		}
-		
+
+		[DefaultValue(false)]
 		public virtual bool CheckFileExists
 		{
 			get
@@ -104,6 +111,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(true)]
 		public bool CheckPathExists
 		{
 			get
@@ -117,6 +125,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue("")]
 		public string DefaultExt
 		{
 			get
@@ -141,6 +150,7 @@ namespace System.Windows.Forms
 		// DerefenceLinks is true or false
 		// if the selected file is a link FileDialog
 		// always returns the link
+		[DefaultValue(true)]
 		public bool DereferenceLinks
 		{
 			get
@@ -154,6 +164,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue("")]
 		public string FileName
 		{
 			get
@@ -166,7 +177,9 @@ namespace System.Windows.Forms
 				fileName = value;
 			}
 		}
-		
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string[] FileNames
 		{
 			get
@@ -177,7 +190,9 @@ namespace System.Windows.Forms
 				return null;
 			}
 		}
-		
+
+		[DefaultValue("")]
+		[Localizable(true)]		
 		public string Filter
 		{
 			get
@@ -197,7 +212,8 @@ namespace System.Windows.Forms
 				fileDialogPanel.UpdateFilters( );
 			}
 		}
-		
+
+		[DefaultValue(1)]
 		public int FilterIndex
 		{
 			get
@@ -210,7 +226,8 @@ namespace System.Windows.Forms
 				filterIndex = value;
 			}
 		}
-		
+
+		[DefaultValue("")]
 		public string InitialDirectory
 		{
 			get
@@ -224,6 +241,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public bool RestoreDirectory
 		{
 			get
@@ -237,6 +255,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public bool ShowHelp
 		{
 			get
@@ -251,6 +270,8 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue("")]
+		[Localizable(true)]
 		public string Title
 		{
 			get
@@ -277,6 +298,7 @@ namespace System.Windows.Forms
 		// - trailing periods or spaces
 		// - case sensitive
 		// - etc...
+		[DefaultValue(true)]
 		public bool ValidateNames
 		{
 			get
@@ -359,7 +381,8 @@ namespace System.Windows.Forms
 		}
 		
 		// extension to MS.NET framework...
-		public bool ShowHiddenFiles
+		// Must keep this internal, otherwise our signature doesn't match MS
+		internal bool ShowHiddenFiles
 		{
 			set
 			{

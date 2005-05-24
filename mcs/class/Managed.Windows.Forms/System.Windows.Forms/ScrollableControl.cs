@@ -32,7 +32,7 @@ using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms {
-	[Designer ("System.Windows.Forms.Design.ScrollableControlDesigner, " + Consts.AssemblySystem_Design, (string)null)]
+	[Designer ("System.Windows.Forms.Design.ScrollableControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ScrollableControl : Control {
 		#region Local Variables
 		private bool			auto_vscroll;

@@ -524,6 +524,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DataGridPreferredColumnWidthTypeConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DataGridTableStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

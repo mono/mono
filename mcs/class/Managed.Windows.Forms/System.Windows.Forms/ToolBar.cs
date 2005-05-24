@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 {	
 	[DefaultEvent ("ButtonClick")]
 	[DefaultProperty ("Buttons")]
-	[Designer ("System.Windows.Forms.Design.ToolBarDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer ("System.Windows.Forms.Design.ToolBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ToolBar : Control
 	{
 		#region Instance Variables

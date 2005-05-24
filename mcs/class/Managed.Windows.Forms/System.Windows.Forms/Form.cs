@@ -405,7 +405,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue(typeof(Size), "{Width=0, Height=0}")]
+		[DefaultValue("{Width=0, Height=0}")]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public Size MaximumSize {
@@ -497,7 +497,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue(typeof(Size), "{Width=0, Height=0}")]
+		[DefaultValue("{Width=0, Height=0}")]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public Size MinimumSize {

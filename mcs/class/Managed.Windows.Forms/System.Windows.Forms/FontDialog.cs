@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 namespace System.Windows.Forms
 {
 	[DefaultProperty( "Font" )]
+	[DefaultEvent("Apply")]
 	public class FontDialog : CommonDialog
 	{
 		private FontDialogPanel fontDialogPanel;
@@ -95,7 +96,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[DefaultValue("Black")]
 		public Color Color
 		{
 			set {

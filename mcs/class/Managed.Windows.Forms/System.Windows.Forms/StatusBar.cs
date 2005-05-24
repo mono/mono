@@ -36,7 +36,7 @@ using System.Drawing.Imaging;
 
 namespace System.Windows.Forms {
 	[DefaultEvent("PanelClick")]
-	[Designer("System.Windows.Forms.Design.StatusBarDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.StatusBarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Text")]
 	public class StatusBar : Control {
 		#region Fields

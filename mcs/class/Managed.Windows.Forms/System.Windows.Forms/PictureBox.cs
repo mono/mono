@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Image")]
-	[Designer("System.Windows.Forms.Design.PictureBoxDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.PictureBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class PictureBox : Control {
 
 		private Image image;

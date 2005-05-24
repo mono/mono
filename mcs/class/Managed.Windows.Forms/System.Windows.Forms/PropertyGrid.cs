@@ -37,7 +37,7 @@ using System.Windows.Forms.PropertyGridInternal;
 
 namespace System.Windows.Forms
 {
-	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser
 	{
 		#region Private Members
@@ -217,7 +217,9 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[MonoTODO()]
+		[MonoTODO]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool AutoScroll {
 			get {
 				return base.AutoScroll;
@@ -241,6 +243,8 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO()]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get {
 				return base.BackgroundImage;
@@ -317,6 +321,9 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO()]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Control.ControlCollection Controls {
 			get {
 				return base.Controls;
@@ -324,6 +331,8 @@ namespace System.Windows.Forms
 		}
 		
 		[MonoTODO()]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color ForeColor 
 		{
 			get {
@@ -785,7 +794,12 @@ namespace System.Windows.Forms
 		public event SelectedGridItemChangedEventHandler SelectedGridItemChanged;
 		public event EventHandler SelectedObjectsChanged;
 		
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler ForeColorChanged;
 		#endregion
 

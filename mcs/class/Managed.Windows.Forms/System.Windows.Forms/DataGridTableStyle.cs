@@ -33,10 +33,13 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Data;
 using System.Xml;
+using System.Runtime.Serialization;
 
 namespace System.Windows.Forms
 {
-	public class DataGridTableStyle : Component
+	[DesignTimeVisible(false)]
+	[ToolboxItem(false)]
+	public class DataGridTableStyle : Component, IDataGridEditingService
 	{
 		public static DataGridTableStyle DefaultTableStyle = new DataGridTableStyle (true);
 		
@@ -129,6 +132,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Instance Properties
+		[DefaultValue(true)]
 		public bool AllowSorting {
 			get {
 				return allow_sorting;
@@ -168,6 +172,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool ColumnHeadersVisible {
 			get {
 				return columnheaders_visible;
@@ -181,6 +186,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public virtual DataGrid DataGrid {
 			get {
 				return datagrid;
@@ -206,6 +212,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Localizable(true)]
 		public virtual GridColumnStylesCollection GridColumnStyles {
 			get { return column_styles; }
 		}
@@ -223,6 +231,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(DataGridLineStyle.Solid)]
 		public DataGridLineStyle GridLineStyle {
 			get {
 				return gridline_style;
@@ -249,6 +258,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[AmbientValue(null)]
+		[Localizable(true)]
 		public Font HeaderFont {
 			get {
 				if (header_font != null)
@@ -296,6 +307,8 @@ namespace System.Windows.Forms
 		}
 
 		[ComVisible(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false)]
 		public Color LinkHoverColor {
 			get {
 				return link_hovercolor;
@@ -309,6 +322,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Editor("System.Windows.Forms.Design.DataGridTableStyleMappingNameEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string MappingName {
 			get {
 				return mapping_name;
@@ -322,6 +336,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(75)]
+		[TypeConverter(typeof(DataGridPreferredColumnWidthTypeConverter))]
+		[Localizable(true)]
 		public int PreferredColumnWidth {
 			get {
 				return preferredcolumn_width;
@@ -339,6 +356,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
 		public int PreferredRowHeight {
 			get {
 				return preferredrow_height;
@@ -352,6 +370,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool ReadOnly {
 			get {
 				return _readonly;
@@ -365,6 +384,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool RowHeadersVisible {
 			get {
 				return rowheaders_visible;
@@ -378,6 +398,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(35)]
+		[Localizable(true)]
 		public int RowHeaderWidth {
 			get {
 				return rowheaders_width;
@@ -404,6 +426,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Description("The foreground color for the current data grid row")]
 		public Color SelectionForeColor  {
 			get {
 				return selection_forecolor;

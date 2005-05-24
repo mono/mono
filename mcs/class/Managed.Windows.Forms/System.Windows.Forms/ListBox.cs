@@ -38,7 +38,7 @@ namespace System.Windows.Forms
 {
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
-	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, (string)null)]
+	[Designer ("System.Windows.Forms.Design.ListBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ListBox : ListControl
 	{
 		public const int DefaultItemHeight = 13;

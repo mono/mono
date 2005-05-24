@@ -39,7 +39,7 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 	[DefaultEvent("ValueChanged")]
 	[DefaultProperty("Value")]
-	[Designer("System.Windows.Forms.Design.DateTimePickerDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.DateTimePickerDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class DateTimePicker : Control {
 
 		#region Public variables

@@ -33,7 +33,7 @@ using System.Drawing.Imaging;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Images")]
-	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	[TypeConverter("System.Windows.Forms.ImageListConverter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	public sealed class ImageList : System.ComponentModel.Component {

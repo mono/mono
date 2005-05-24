@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace System.Windows.Forms 
 {
 	[DefaultEvent("SplitterMoved")]
-	[Designer("System.Windows.Forms.Design.SplitterDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.SplitterDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Dock")]
 	public class Splitter : Control, IMessageFilter 
 	{

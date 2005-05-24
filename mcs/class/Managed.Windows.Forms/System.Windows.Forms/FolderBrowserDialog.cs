@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 {
 	[DefaultEvent("HelpRequest")]
 	[DefaultProperty("SelectedPath")]
-	[Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public sealed class FolderBrowserDialog : CommonDialog
 	{
 		#region Local Variables

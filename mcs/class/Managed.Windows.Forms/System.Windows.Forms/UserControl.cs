@@ -35,8 +35,8 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	[DefaultEvent("Load")]
 	[DesignerCategory("UserControl")]
+	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[Designer("System.Windows.Forms.Design.UserControlDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
-	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design)]
 	public class UserControl : ContainerControl {
 		#region Public Constructors
 		public UserControl() {

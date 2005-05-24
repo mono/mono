@@ -33,9 +33,9 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	[ToolboxItemFilter("System.Windows.Forms")]
-	[ProvideProperty("Error", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	[ProvideProperty("IconAlignment", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("Error", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 	public class ErrorProvider : Component, IExtenderProvider {
 		#region Private Classes
 		private class ErrorProperty {

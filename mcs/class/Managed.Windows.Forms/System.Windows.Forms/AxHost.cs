@@ -33,11 +33,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-
 namespace System.Windows.Forms {
 	[MonoTODO("Possibly implement this for Win32; find a way for Linux and Mac")]
 	[DefaultEvent("Enter")]
-	[Designer("System.Windows.Forms.Design.AxHostDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.AxHostDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
 	public abstract class AxHost : Control, ISupportInitialize, ICustomTypeDescriptor {

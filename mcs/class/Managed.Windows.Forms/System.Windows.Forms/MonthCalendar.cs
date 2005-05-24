@@ -36,7 +36,7 @@ using System.Windows.Forms;
 namespace System.Windows.Forms {
 	[DefaultProperty("SelectionRange")]
 	[DefaultEvent("DateChanged")]
-	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, (string)null)]
+	[Designer ("System.Windows.Forms.Design.MonthCalendarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class MonthCalendar : Control {
 		#region Local variables
 		DateTime []		annually_bolded_dates;

@@ -40,7 +40,7 @@ using System.Drawing.Imaging;
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Text")]
-	[Designer ("System.Windows.Forms.Design.ToolBarButtonDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer ("System.Windows.Forms.Design.ToolBarButtonDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
 	public class ToolBarButton : Component

@@ -33,7 +33,7 @@ using System.IO;
 
 namespace System.Windows.Forms
 {
-	[Designer("System.Windows.Forms.Design.SaveFileDialogDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.SaveFileDialogDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public sealed class SaveFileDialog : FileDialog
 	{
 		#region Public Constructors

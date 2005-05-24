@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-	[Designer ("Microsoft.VisualStudio.Windows.Forms.MenuDesigner, Microsoft.VisualStudio, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", (string)null)]
+	[Designer ("Microsoft.VisualStudio.Windows.Forms.MenuDesigner, Microsoft.VisualStudio, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	[ListBindable(false)]
 	public abstract class Menu : Component

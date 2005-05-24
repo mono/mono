@@ -1,5 +1,11 @@
 2005-05-24  Peter Bartok  <pbartok@novell.com>
 
+	* System.Windows.Forms.dll.sources: Added 
+	  DataGridPreferredColumnWidthTypeConverter.cs
+	* SWF.csproj: Updated
+
+2005-05-24  Peter Bartok  <pbartok@novell.com>
+
 	* System.Windows.Forms.dll.sources: Added Help.cs
 	* SWF.csproj: Updated
 

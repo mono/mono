@@ -47,7 +47,7 @@ using System.Threading;
 
 namespace System.Windows.Forms
 {
-	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design)]
+	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty("Text")]
 	[DefaultEvent("Click")]
 	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
