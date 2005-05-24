@@ -867,13 +867,10 @@ namespace System.Windows.Forms {
 
 		internal override IntPtr ClipboardOpen() {
 			throw new NotImplementedException();
-
-			return new IntPtr ();
 		}
 
 		internal override object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter) {
 			throw new NotImplementedException();
-			return null;
 		}
 
 		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {

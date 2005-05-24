@@ -182,8 +182,6 @@ namespace System.Windows.Forms {
 		}
 
 		public static Format GetFormat(string format) {
-			Format	f;
-
 			if (!initialized) {
 				Initialize();
 			}

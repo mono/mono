@@ -1,3 +1,13 @@
+2005-05-24  Peter Bartok  <pbartok@novell.com>
+
+	* Help.cs: Added, implemented trivial functions, throws up MessageBox
+	  when user tries to get help
+	* DataObject.cs, DataFormats.cs, LinkArea.cs, 
+	  SelectionRangeConverter.cs, Clipboard.cs : Removed unused variables 
+	  to suppress warnings
+	* XplatUIWin32.cs, XplatUIOSX.cs, XplatUIX11.cs: Removed unused code to 
+	  avoid unreachable code warning
+
 2005-05-20  Peter Bartok  <pbartok@novell.com>
 
 	* CursorConverter.cs (ConvertTo): Switched to use Cursor.GetObjectData

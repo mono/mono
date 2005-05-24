@@ -901,7 +901,6 @@ namespace System.Windows.Forms {
 						} else if (Clipboard.Item is string) {
 							IntPtr	buffer;
 							int	buflen;
-							byte	b;
 
 							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
 							buflen = 0;
@@ -1533,8 +1532,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
-			int	target_type;
-
 			XConvertSelection(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], type, type, FosterParent, IntPtr.Zero);
 
 			Clipboard.Retrieving = true;

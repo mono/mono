@@ -52,7 +52,6 @@ namespace System.Windows.Forms {
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
-			string		s;
 			string[]	parts;
 			DateTime	start;
 			DateTime	end;

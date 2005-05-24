@@ -44,8 +44,6 @@ namespace System.Windows.Forms {
 
 			#region Constructors
 			internal Entry(string type, object data, bool autoconvert) {
-				Entry	e;
-
 				this.type = type;
 				this.data = data;
 				this.autoconvert = autoconvert;

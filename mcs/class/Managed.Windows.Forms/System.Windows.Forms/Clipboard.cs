@@ -60,7 +60,6 @@ namespace System.Windows.Forms {
 		public static IDataObject GetDataObject() {
 			DataObject		clipboard;
 			IntPtr			clipboard_handle;
-			IntPtr			retrieve_handle;
 			int[]			native_formats;
 			DataFormats.Format	item_format;
 			object			managed_clipboard_item;

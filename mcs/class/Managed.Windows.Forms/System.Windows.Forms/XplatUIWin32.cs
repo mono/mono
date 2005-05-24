@@ -1887,7 +1887,6 @@ Console.WriteLine("Hit Clear background");
 					return;
 				}
 			}
-			return;
 		}
 		
 		internal override int KeyboardSpeed {
