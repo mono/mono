@@ -914,24 +914,33 @@ namespace System
 				} else if (chars[pos] == '%') {
 					pos++;
 					continue;
-				} else if (Char.IsWhiteSpace (s [valuePos])) {
+				} else if (Char.IsWhiteSpace (s [valuePos]) ||
+					s [valuePos] == ',' && Char.IsWhiteSpace (chars [pos])) {
 					valuePos++;
-
-					if (Char.IsWhiteSpace (chars[pos])) {
+					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0) {
+						if (!Char.IsWhiteSpace (chars[pos]))
+							return false;
 						pos++;
 						continue;
 					}
 
-					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0)
-						return false;
 					int ws = valuePos;
 					while (ws < s.Length) {
-						if (Char.IsWhiteSpace (s [ws]))
+						if (Char.IsWhiteSpace (s [ws]) || s [ws] == ',')
 							ws++;
 						else
 							break;
 					}
 					valuePos = ws;
+					ws = pos;
+					while (ws < chars.Length) {
+						if (Char.IsWhiteSpace (chars [ws]) || chars [ws] == ',')
+							ws++;
+						else
+							break;
+					}
+					pos = ws;
+					continue;
 				}
 
 

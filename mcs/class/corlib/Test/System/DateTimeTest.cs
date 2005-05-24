@@ -717,6 +717,26 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
+	// bug #71289
+	public void TestParse5 ()
+	{
+		DateTime.Parse ("Sat,,,,,, 01 Oct 1994 03:00:00",
+			CultureInfo.InvariantCulture);
+		// more example...
+		DateTime.Parse ("Sat,,, 01,,, Oct,,, ,,,1994 03:00:00",
+			CultureInfo.InvariantCulture);
+#if NET_2_0
+		try {
+			// ',' after 03 is not allowed.
+			DateTime.Parse ("Sat,,, 01,,, Oct,,, ,,,1994 03,:00:00",
+			CultureInfo.InvariantCulture);
+			Fail ("Should fail here.");
+		} catch (FormatException) {
+		}
+#endif
+	}
+
+	[Test]
 	[ExpectedException(typeof (FormatException))]
 	public void ParseFormatException1 ()
 	{

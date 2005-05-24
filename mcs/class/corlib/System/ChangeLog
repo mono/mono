@@ -1,3 +1,8 @@
+2005-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : Allow ',' where whitespaces are allowed.
+	  Fixed bug #71289.
+
 2005-05-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* BitConverter.cs: Speed this up, fixing 74014. Patch from

@@ -1,3 +1,7 @@
+2005-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : testcase for #71289.
+
 2005-05-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringTest.cs: Add a test for bug #62160
