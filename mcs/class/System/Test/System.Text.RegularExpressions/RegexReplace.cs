@@ -61,6 +61,8 @@ namespace MonoTests.System.Text.RegularExpressions {
 			new testcase ("text",	"(?<foo>e)(?<foo>x)", 	"${foo}$1$2",		"txx$2t" 	),
 			new testcase ("text",	"(e)(?<foo>x)", 	"${foo}$1$2",		"txext" 	),
 			new testcase ("text",	"(?<foo>e)(x)", 	"${foo}$1$2",		"texet" 	),
+			new testcase ("text",	"(e)(?<foo>x)", 	"${foo}$1$2$+",		"txexxt" 	),
+			new testcase ("text",	"(?<foo>e)(x)", 	"${foo}$1$2$+",		"texeet" 	),
 		};
 
 		[Test]

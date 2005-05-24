@@ -1,3 +1,8 @@
+2005-05-24  Raja R Harinath  <rharinath@novell.com>
+
+	* replace.cs (ReplacementEvaluator.CompileTerm): Fix group
+	returned by $+.
+
 2005-05-20  Ben Maurer  <bmaurer@ximian.com>
 
 	* regex.cs: Some memory allocation optimizations.

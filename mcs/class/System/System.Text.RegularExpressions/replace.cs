@@ -162,7 +162,7 @@ namespace System.Text.RegularExpressions {
 				return new Term (TermOp.PostMatch, 0);
 
 			case '+':			// last group
-				return new Term (TermOp.Match, regex.GroupCount - 1);
+				return new Term (TermOp.Match, regex.GroupCount);
 
 			case '_':			// entire text
 				return new Term (TermOp.All, 0);
