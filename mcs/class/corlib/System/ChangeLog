@@ -1,5 +1,11 @@
 2005-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : HH should not always block tt. Fixed bug #60912.
+	  Reset num after whitespace parsing.
+	  Added "M/d/yyyy HH':'mm':'ss tt" as an invariant pattern.
+
+2005-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : Allow ',' where whitespaces are allowed.
 	  Fixed bug #71289.
 

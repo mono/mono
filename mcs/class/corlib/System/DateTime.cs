@@ -112,6 +112,9 @@ namespace System
 			// FIXME: 1078(af-ZA) and 1079(ka-GE) reject it
 			"yyyy/MM/dd HH':'mm':'ssZ", 
 
+			// bug #60912
+			"M/d/yyyy HH':'mm':'ss tt",
+
 			// DayOfTheWeek, dd full_month_name yyyy
 			// FIXME: 1054(th-TH) rejects it
 			"dddd, dd MMMM yyyy",
@@ -917,6 +920,7 @@ namespace System
 				} else if (Char.IsWhiteSpace (s [valuePos]) ||
 					s [valuePos] == ',' && Char.IsWhiteSpace (chars [pos])) {
 					valuePos++;
+					num = 0;
 					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0) {
 						if (!Char.IsWhiteSpace (chars[pos]))
 							return false;
@@ -943,11 +947,11 @@ namespace System
 					continue;
 				}
 
-
 				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num])) {
 					num++;
 					continue;
 				}
+
 
 				int num_parsed = 0;
 
@@ -1054,7 +1058,7 @@ namespace System
 					if (hour >= 24)
 						return false;
 
-					ampm = -2;
+//					ampm = -2;
 					break;
 				case 'm':
 					if (minute != -1)

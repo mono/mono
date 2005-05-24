@@ -363,8 +363,16 @@ public class DateTimeTest : Assertion
 		AssertEquals ("D07e", 25, t1.Minute);
 		AssertEquals ("D07f", 13, t1.Second);
 	}
-	
-	
+
+	[Test]
+	// bug #60912, modified hour as 13:00
+	public void TestParseExact4 ()
+	{
+		string s = "6/28/2004 13:00:00 AM";
+		string f = "M/d/yyyy HH':'mm':'ss tt";
+		DateTime.ParseExact (s, f, CultureInfo.InvariantCulture);
+	}
+
 	public void TestParseExact ()
 	{
 		// Standard patterns
