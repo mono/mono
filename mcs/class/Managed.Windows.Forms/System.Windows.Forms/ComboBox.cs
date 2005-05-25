@@ -40,7 +40,7 @@ namespace System.Windows.Forms
 
 	[DefaultProperty("Items")]
 	[DefaultEvent("SelectedIndexChanged")]
-	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, (string)null)]
+	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ComboBox : ListControl
 	{
 		private DrawMode draw_mode;
