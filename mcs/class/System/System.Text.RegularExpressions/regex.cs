@@ -44,6 +44,8 @@ namespace System.Text.RegularExpressions {
 	
 	public delegate string MatchEvaluator (Match match);
 
+	delegate void MatchAppendEvaluator (Match match, StringBuilder sb);
+
 	[Flags]
 	public enum RegexOptions {
 		None				= 0x000,
@@ -350,7 +352,20 @@ namespace System.Text.RegularExpressions {
 				return Replace (input, evaluator, count, 0);
 		}
 
+		class Adapter
+		{
+			MatchEvaluator ev;
+			public Adapter (MatchEvaluator ev) { this.ev = ev; }
+			public void Evaluate (Match m, StringBuilder sb) { sb.Append (ev (m)); }
+		}
+
 		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
+		{
+			Adapter a = new Adapter (evaluator);
+			return Replace (input, new MatchAppendEvaluator (a.Evaluate), count, startat);
+		}
+
+		string Replace (string input, MatchAppendEvaluator evaluator, int count, int startat)
 		{
 			StringBuilder result = new StringBuilder ();
 			int ptr = startat;
@@ -364,7 +379,7 @@ namespace System.Text.RegularExpressions {
 					if(counter -- <= 0)
 						break;
 				result.Append (input, ptr, m.Index - ptr);
-				result.Append (evaluator (m));
+				evaluator (m, result);
 
 				ptr = m.Index + m.Length;
 				m = m.NextMatch ();
@@ -394,7 +409,7 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, string replacement, int count, int startat) {
 			ReplacementEvaluator ev = new ReplacementEvaluator (this, replacement);
-			return Replace (input, new MatchEvaluator (ev.Evaluate), count, startat);
+			return Replace (input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat);
 		}
 
 		// split methods

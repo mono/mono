@@ -1,3 +1,17 @@
+2005-05-25  Raja R Harinath  <rharinath@novell.com>
+
+	* replace.cs (ReplacementEvaluator.Compile): Rewrite to avoid
+	creating several intermediate strings.  Simplify internal
+	intermediate representation.
+	(ReplacementEvaluator.EvaluateAppend): New.  Version of Evaluate
+	that builds the result directly on a passed-in StringBuilder.
+	(ReplacementEvaluator.Evaluate): Just a wrapper around
+	EvaluateAppend.
+	* regex.cs (MatchAppendEvaluator): New internal delegate.
+	(Regex.Replace): Use MatchAppendEvaluator.
+	(Regex.Adapter): New class used to adapt a MatchEvaluator to a
+	MatchAppendEvaluator.
+
 2005-05-24  Raja R Harinath  <rharinath@novell.com>
 
 	* replace.cs (ReplacementEvaluator.CompileTerm): Fix group
