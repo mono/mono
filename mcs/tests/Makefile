@@ -33,7 +33,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common =
+NEW_TEST_SOURCES_common = test-386
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -80,7 +80,7 @@ TEST_SOURCES_common = \
 	test-351 test-352 test-353 test-354 test-355 test-356 test-357 test-358 test-359 test-360 \
 	test-361 test-362 test-363 test-364 test-365 test-366 test-367 test-368 test-369 test-370 \
 	test-371 test-372 test-373 test-374 test-375 test-376 test-377 test-378	test-379 test-380 \
-	test-381 test-382 test-383 test-384 test-385 test-386					  \
+	test-381 test-382 test-383 test-384 test-385 						  \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-12 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
