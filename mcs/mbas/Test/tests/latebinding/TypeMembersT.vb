@@ -20,7 +20,7 @@ Module M
 		dim o as object = new C()
 		dim o1 as object = new B()
 		o1.fun(o.a, 1)
-		if o.a(1)<>2 then
+		if o.a(1) <> 0 then
 			throw new System.Exception("LateBinding Not Working ")
 		end if
 	End Sub
