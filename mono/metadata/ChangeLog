@@ -1,3 +1,8 @@
+2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_InternalInvoke): Avoid type checks on this if
+	the method is static. Fixes #75029.
+
 2005-05-25  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* reflection.c: Update the table_idx field of method builders after
