@@ -1,3 +1,6 @@
+2005-05-25  Satya Sudha K <ksathyasudha@novell.com>
+	* ObjectType.cs : Some fixes to Narrowing conversions
+
 2005-05-23  Satya Sudha K <ksathyasudha@novell.com>
 	* VBBinder.cs : Support for named arguments
 

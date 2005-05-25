@@ -174,7 +174,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 						numWideningConversions ++;
 					mbase = filteredMatchList [x];
 				} else if (bestMatch == ctype) {
-					if (bestMatch == ConversionType.Widening) {
+					if (bestMatch == ConversionType.Widening || bestMatch == ConversionType.Exact) {
 						// Got a widening conversion before also.
 						// Find the best among the two
 						int closestMatch = GetClosestMatch (mbase, filteredMatchList [x], args.Length);
@@ -195,7 +195,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 				//TODO : print the methods too
 				throw new AmbiguousMatchException ("No overloaded '" + this.objectType + "." + this.bindToName + "' can be called without a narrowing conversion");
 			}
-			if ((bestMatch == ConversionType.Widening) && numWideningConversions > 1) {
+
+			if ((bestMatch == ConversionType.Widening || bestMatch == ConversionType.Exact) && numWideningConversions > 1) {
 				//TODO : print the methods too
 				throw new AmbiguousMatchException ("No overloaded '" + this.objectType + "." + this.bindToName + "' can be called without a widening conversion");
 			}

@@ -1447,6 +1447,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 			if (FromType == typeof (object)) // Object can be converted to any type
 				return true;
+
+			if (FromType.IsArray || ToType.IsArray)
+				return false;
+
 			TypeCode src_type = Type.GetTypeCode (FromType);
 			TypeCode dest_type = Type.GetTypeCode (ToType);
 			switch (dest_type) {
@@ -1505,16 +1509,13 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				return true;
 
 			if (typeCode2 == TypeCode.String) {
-				if (FromType == typeof (char[]))
+				if (typeCode1 == TypeCode.Char || FromType == typeof (char[]))
 					return true;
 				return false;
 			}
 
-			if (typeCode1 == TypeCode.String) {
-				if (typeCode2 == TypeCode.Char)
-					return true;
+			if (typeCode1 == TypeCode.String)
 				return false;
-			}
 
 			if (typeCode1 == TypeCode.DateTime || typeCode2 == TypeCode.DateTime)
 				return false;
