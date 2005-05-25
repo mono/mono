@@ -1,3 +1,7 @@
+2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.dll.sources: Add System.Reflection.TypeDelegatorTest.
+
 2005-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Renamed CER to Cer to match 2.0 beta2.
