@@ -1,5 +1,12 @@
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : Added minimum digit parameter to ParseNumber() to
+	  reject 2 digit years for "yyyy".
+	  Use GetAllDateTimePatterns() instead of constant string.
+	  Fixed bug #72788.
+
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : next_not_digit prevented some valid parse.
 	  Just remove it, since now we pass max length to ParseNumber() and
 	  thus it is not needed anymore. Fixed bug 63137.

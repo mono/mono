@@ -730,9 +730,9 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
-	// bug #71289
 	public void TestParse5 ()
 	{
+		// bug #71289
 		DateTime.Parse ("Sat,,,,,, 01 Oct 1994 03:00:00",
 			CultureInfo.InvariantCulture);
 		// more example...
@@ -747,6 +747,19 @@ public class DateTimeTest : Assertion
 		} catch (FormatException) {
 		}
 #endif
+
+		// bug #72788
+		DateTime dt = DateTime.Parse ("21/02/05", new CultureInfo ("fr-FR"));
+		AssertEquals (2005, dt.Year);
+		AssertEquals (02, dt.Month);
+		AssertEquals (21, dt.Day);
+
+		// don't allow 2 digit years where we require 4.
+		try {
+			DateTime.ParseExact ("05", "yyyy", CultureInfo.InvariantCulture);
+			Fail ("Reject 2 digit years for yyyy");
+		} catch (FormatException) {
+		}
 	}
 
 	[Test]

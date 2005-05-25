@@ -1,5 +1,10 @@
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : added testcase for #72788. Test that assures we
+	  reject 2 digit years for "yyyy".
+
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : removed some NotWorking (they are working).
 	  Added testcase for #63137.
 
