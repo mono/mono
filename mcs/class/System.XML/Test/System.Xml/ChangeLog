@@ -1,3 +1,7 @@
+2005-05-25  Andrew Skiba  <andrews@mainsoft.com>
+
+	* W3C : directory added
+
 2005-05-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlValidatingReaderTests.cs : fixed TestPreserveEntityNotOnDotNet()
