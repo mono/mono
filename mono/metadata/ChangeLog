@@ -1,3 +1,9 @@
+2005-05-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* reflection.c: Update the table_idx field of method builders after
+	saving the module, since it can change. This is a workaround for
+	bug #74914. 
+
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : update (additional French date format).
