@@ -1,3 +1,7 @@
+2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs: Improve support for user defined type subclasses.
+
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : Added minimum digit parameter to ParseNumber() to

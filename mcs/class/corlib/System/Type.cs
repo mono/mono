@@ -212,7 +212,7 @@ namespace System {
 					return true;
 				if (IsInterface)
 					return false;
-				return !type_is_subtype_of (this, typeof (System.ValueType), false);
+				return !is_subtype_of (this, typeof (System.ValueType), false);
 			}
 		}
 
@@ -230,7 +230,7 @@ namespace System {
 
 		public bool IsEnum {
 			get {
-				return type_is_subtype_of (this, typeof (System.Enum), false) &&
+				return is_subtype_of (this, typeof (System.Enum), false) &&
 					this != typeof (System.Enum);
 			}
 		}
@@ -335,7 +335,7 @@ namespace System {
 			get {
 				// Enums and delegates are always serializable
 				return (Attributes & TypeAttributes.Serializable) != 0 || IsEnum || 
-					type_is_subtype_of (this, typeof (System.Delegate), false);
+					is_subtype_of (this, typeof (System.Delegate), false);
 			}
 		}
 
@@ -456,9 +456,13 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static TypeCode GetTypeCodeInternal (Type type);
 
-		public static TypeCode GetTypeCode (Type type)
-		{
-			return GetTypeCodeInternal (type);
+		public static TypeCode GetTypeCode (Type type) {
+			type = type.UnderlyingSystemType;
+
+			if (!type.IsSystemType)
+				return Type.GetTypeCode (typeof (object));
+			else
+				return GetTypeCodeInternal (type);
 		}
 
 		[MonoTODO]
@@ -524,13 +528,24 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_assignable_from (Type a, Type b);
-		
+
+		internal static bool is_subtype_of (Type a, Type b, bool check_interfaces)
+		{
+			a = a.UnderlyingSystemType;
+			b = b.UnderlyingSystemType;
+
+			if (!a.IsSystemType || !b.IsSystemType)
+				return false;
+			else
+				return type_is_subtype_of (a, b, check_interfaces);
+		}
+
 		public virtual bool IsSubclassOf (Type c)
 		{
 			if (c == null)
 				return false;
 
-			return (this != c) && type_is_subtype_of (this, c, false);
+			return (this != c) && is_subtype_of (this, c, false);
 		}
 
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
@@ -583,6 +598,21 @@ namespace System {
 
 			if (c is TypeBuilder)
 				return ((TypeBuilder)c).IsAssignableTo (this);
+
+			/* Handle user defined type classes */
+			if (!IsSystemType) {
+				Type systemType = UnderlyingSystemType;
+				if (!systemType.IsSystemType)
+					return false;
+				return systemType.IsAssignableFrom (c);
+			}
+
+			if (!c.IsSystemType) {
+				Type underlyingType = c.UnderlyingSystemType;
+				if (!underlyingType.IsSystemType)
+					return false;
+				return IsAssignableFrom (underlyingType);
+			}
 
 			return type_is_assignable_from (this, c);
 		}
