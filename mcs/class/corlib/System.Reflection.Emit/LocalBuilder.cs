@@ -62,6 +62,8 @@ namespace System.Reflection.Emit {
 #endif
 		
 		internal ILGenerator ilgen;
+		int startOffset;
+		int endOffset;
 
 		internal LocalBuilder (Type t, ILGenerator ilgen)
 		{
@@ -71,7 +73,9 @@ namespace System.Reflection.Emit {
 
 		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
 		{
-			// nop
+			name = lname;
+			this.startOffset = startOffset;
+			this.endOffset = endOffset;
 		}
 
 		public void SetLocalSymInfo (string lname)
@@ -104,5 +108,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 #endif
+
+		internal string Name {
+			get { return name; }
+		}
+		
+		internal int StartOffset {
+			get { return startOffset; }
+		}
+		
+		internal int EndOffset {
+			get { return endOffset; }
+		}
 	}
 }

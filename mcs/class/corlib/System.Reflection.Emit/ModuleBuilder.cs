@@ -64,6 +64,7 @@ namespace System.Reflection.Emit {
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
 		ArrayList resource_writers = null;
+		ISymbolWriter symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -82,6 +83,18 @@ namespace System.Reflection.Emit {
 			basic_init (this);
 
 			CreateGlobalType ();
+			
+			if (emitSymbolInfo) {
+				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
+				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
+				if (t != null) {
+					symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+					string fileName = fqname;
+					if (assemblyb.AssemblyDir != null)
+						fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
+					symbolWriter.Initialize (IntPtr.Zero, fileName, true);
+				}
+			}
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -396,11 +409,15 @@ namespace System.Reflection.Emit {
 		}
 
 		public ISymbolWriter GetSymWriter () {
-			return null;
+			return symbolWriter;
 		}
 
-		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType) {
-			return null;
+		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType)
+		{
+			if (symbolWriter != null)
+				return symbolWriter.DefineDocument (url, language, languageVendor, documentType);
+			else
+				return null;
 		}
 
 		public override Type [] GetTypes ()
@@ -635,6 +652,12 @@ namespace System.Reflection.Emit {
 			// The constant 0x80000000 is internal to Mono, it means `make executable'
 			//
 			File.SetAttributes (fileName, (FileAttributes) (unchecked ((int) 0x80000000)));
+			
+			if (types != null && symbolWriter != null) {
+				for (int i = 0; i < num_types; ++i)
+					types [i].GenerateDebugInfo (symbolWriter);
+				symbolWriter.Close ();
+			}
 		}
 
 		internal string FileName {
@@ -685,3 +708,4 @@ namespace System.Reflection.Emit {
 		}
 	}
 }
+

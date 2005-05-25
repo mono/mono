@@ -133,7 +133,7 @@ namespace System.Reflection.Emit {
 				// FIXME: Check enums and TypeBuilders as well
 				if (fieldValues [i] != null)
 					// IsEnum does not seem to work on TypeBuilders
-					if (!(fi.FieldType is TypeBuilder) && !fi.FieldType.IsEnum && !fi.FieldType.IsAssignableFrom (fieldValues [i].GetType ())) {
+					if (!(fi.FieldType is TypeBuilder) && !fi.FieldType.IsEnum && !fi.FieldType.IsInstanceOfType (fieldValues [i])) {
 						//
 						// mcs allways uses object[] for array types and
 						// MS.NET allows this
@@ -154,7 +154,7 @@ namespace System.Reflection.Emit {
 				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
 					throw new ArgumentException ("Property '" + pi.Name + "' does not belong to the same class as the constructor");
 				if (propertyValues [i] != null) {
-					if (!(pi.PropertyType is TypeBuilder) && !pi.PropertyType.IsEnum && !pi.PropertyType.IsAssignableFrom (propertyValues [i].GetType ()))
+					if (!(pi.PropertyType is TypeBuilder) && !pi.PropertyType.IsEnum && !pi.PropertyType.IsInstanceOfType (propertyValues [i]))
 						if (!pi.PropertyType.IsArray)
 							throw new ArgumentException ("Value of property '" + pi.Name + "' does not match property type: " + pi.PropertyType + " -> " + propertyValues [i]);
 				}
@@ -168,7 +168,7 @@ namespace System.Reflection.Emit {
 					if (!IsValidType (paramType))
 						throw new ArgumentException ("Argument " + i + " does not have a valid type.");
 					if (constructorArgs [i] != null)
-						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsAssignableFrom (constructorArgs [i].GetType ()))
+						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsInstanceOfType (constructorArgs [i]))
 							if (!paramType.IsArray)
 								throw new ArgumentException ("Value of argument " + i + " does not match parameter type: " + paramType + " -> " + constructorArgs [i]);
 				}

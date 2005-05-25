@@ -40,6 +40,7 @@ using System.Globalization;
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
+using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
 
@@ -676,11 +677,30 @@ namespace System.Reflection.Emit {
 				foreach (ConstructorBuilder ctor in ctors) 
 					ctor.fixup ();
 			}
-
+			
 			created = create_runtime_class (this);
 			if (created != null)
 				return created;
 			return this;
+		}
+
+		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
+		{
+			symbolWriter.OpenNamespace (this.Namespace);
+
+			if (methods != null) {
+				for (int i = 0; i < num_methods; ++i) {
+					MethodBuilder metb = (MethodBuilder) methods[i]; 
+					metb.GenerateDebugInfo (symbolWriter);
+				}
+			}
+
+			if (ctors != null) {
+				foreach (ConstructorBuilder ctor in ctors)
+					ctor.GenerateDebugInfo (symbolWriter);
+			}
+			
+			symbolWriter.CloseNamespace ();
 		}
 
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)

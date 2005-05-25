@@ -1,3 +1,17 @@
+2005-05-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ModuleBuilder.cs: Implemented DefineDocument(). Generate debug
+	info when saving the module.
+	* ILGenerator.cs: Keep marked sequence points in a list.
+	Added a GenerateDebugInfo method, which dumps the info collected
+	during code generation.
+	* TypeBuilder.cs:
+	* ConstructorBuilder.cs:
+	* MethodBuilder.cs: Added method for generating debug info.
+	* LocalBuilder.cs: Added StartOffset and EndOffset properties.
+	* CustomAttributeBuilder.cs: Use IsInstanceOfType instead of
+	IsAssignableFrom when possible.
+
 2005-05-20  Miguel de Icaza  <miguel@novell.com>
 
 	* TypeBuilder.cs (UnderlyingSystemType): should always return this

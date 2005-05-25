@@ -203,6 +203,8 @@ namespace System.Reflection.Emit {
 		
 		const int defaultFixupSize = 8;
 		const int defaultLabelsSize = 8;
+		ArrayList sequencePointLists;
+		SequencePointList currentSequence;
 
 		internal ILGenerator (Module m, TokenGenerator token_gen, int size)
 		{
@@ -218,7 +220,7 @@ namespace System.Reflection.Emit {
 			open_blocks = new Stack ();
 			this.token_gen = token_gen;
 		}
-
+		
 		private void add_token_fixup (MemberInfo mi)
 		{
 			if (num_token_fixups == token_fixups.Length) {
@@ -840,7 +842,45 @@ namespace System.Reflection.Emit {
 
 		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
 						       int startColumn, int endLine, int endColumn)
-		{ }
+		{
+			if (currentSequence == null || currentSequence.Document != document) {
+				if (sequencePointLists == null)
+					sequencePointLists = new ArrayList ();
+				currentSequence = new SequencePointList (document);
+				sequencePointLists.Add (currentSequence);
+			}
+			
+			currentSequence.AddSequencePoint (code_len, startLine, startColumn, endLine, endColumn);
+		}
+		
+		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
+		{
+			if (sequencePointLists != null) {
+				SequencePointList first = (SequencePointList) sequencePointLists [0];
+				SequencePointList last = (SequencePointList) sequencePointLists [sequencePointLists.Count - 1];
+				symbolWriter.SetMethodSourceRange (first.Document, first.StartLine, first.StartColumn, last.Document, last.EndLine, last.EndColumn);
+				
+				foreach (SequencePointList list in sequencePointLists)
+					symbolWriter.DefineSequencePoints (list.Document, list.GetOffsets(), list.GetLines(), list.GetColumns(), list.GetEndLines(), list.GetEndColumns());
+				
+				if (locals != null) {
+					foreach (LocalBuilder local in locals) {
+						if (local.Name != null && local.Name.Length > 0) {
+							SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (module);
+							sighelper.AddArgument (local.LocalType);
+							byte[] signature = sighelper.GetSignature ();
+							symbolWriter.DefineLocalVariable (local.Name, FieldAttributes.Public, signature, SymAddressKind.ILOffset, local.position, 0, 0, local.StartOffset, local.EndOffset);
+						}
+					}
+				}
+				sequencePointLists = null;
+			}
+		}
+		
+		internal bool HasDebugInfo
+		{
+			get { return sequencePointLists != null; }
+		}
 
 		public virtual void ThrowException (Type exceptionType)
 		{
@@ -883,5 +923,94 @@ namespace System.Reflection.Emit {
 		{
 			return ig.code_len;
 		}
+	}
+	
+	internal class SequencePointList
+	{
+		ISymbolDocumentWriter doc;
+		SequencePoint[] points;
+		int count;
+		const int arrayGrow = 10;
+		
+		public SequencePointList (ISymbolDocumentWriter doc)
+		{
+			this.doc = doc;
+		}
+		
+		public ISymbolDocumentWriter Document {
+			get { return doc; }
+		}
+		
+		public int[] GetOffsets()
+		{
+			int[] data = new int [count];
+			for (int n=0; n<count; n++) data [n] = points[n].Offset;
+			return data; 
+		}
+		public int[] GetLines()
+		{
+			int[] data = new int [count];
+			for (int n=0; n<count; n++) data [n] = points[n].Line;
+			return data; 
+		}
+		public int[] GetColumns()
+		{
+			int[] data = new int [count];
+			for (int n=0; n<count; n++) data [n] = points[n].Col;
+			return data; 
+		}
+		public int[] GetEndLines()
+		{
+			int[] data = new int [count];
+			for (int n=0; n<count; n++) data [n] = points[n].EndLine;
+			return data; 
+		}
+		public int[] GetEndColumns()
+		{
+			int[] data = new int [count];
+			for (int n=0; n<count; n++) data [n] = points[n].EndCol;
+			return data; 
+		}
+		public int StartLine {
+			get { return points[0].Line; }
+		}
+		public int EndLine {
+			get { return points[count - 1].Line; }
+		}
+		public int StartColumn {
+			get { return points[0].Col; }
+		}
+		public int EndColumn {
+			get { return points[count - 1].Col; }
+		}
+		
+		public void AddSequencePoint (int offset, int line, int col, int endLine, int endCol)
+		{
+			SequencePoint s = new SequencePoint ();
+			s.Offset = offset;
+			s.Line = line;
+			s.Col = col;
+			s.EndLine = endLine;
+			s.EndCol = endCol;
+			
+			if (points == null) {
+				points = new SequencePoint [arrayGrow];
+			} else if (count >= points.Length) {
+				SequencePoint[] temp = new SequencePoint [count + arrayGrow];
+				Array.Copy (points, temp, points.Length);
+				points = temp;
+			}
+			
+			points [count] = s;
+			count++;
+		}
+	}
+	
+	struct SequencePoint {
+		public int Offset;
+		public int Line;
+		public int Col;
+		public int EndLine;
+		public int EndCol;
 	}
 }
