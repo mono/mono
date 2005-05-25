@@ -3,3 +3,4 @@ Assembly/Locale.cs
 MonoSymbolWriter.cs
 MonoSymbolTable.cs
 MonoSymbolFile.cs
+SymbolWriterImpl.cs
