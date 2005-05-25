@@ -229,7 +229,7 @@ namespace System.Reflection.Emit
 
 		public override Type UnderlyingSystemType {
 			get {
-				return null;
+				return this;
 			}
 		}
 
