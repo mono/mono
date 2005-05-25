@@ -1,3 +1,6 @@
+2005-05-25 Umadevi S <sumadevi@novell.com>
+	* System.Data.dll.sources : Added DbException.cs, SqlClientMetaDataCollectionNames.cs
+
 2005-05-20 Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources: Added DbProviderSpecificTypePropertyAttribute.cs
 

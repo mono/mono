@@ -160,6 +160,7 @@ System.Data.Common/DbDataRecord.cs
 System.Data.Common/DbDataSourceEnumerator.cs
 System.Data.Common/DbDataUpdatableRecord.cs
 System.Data.Common/DbEnumerator.cs
+System.Data.Common/DbException.cs
 System.Data.Common/DbParameterCollection.cs
 System.Data.Common/DbParameter.cs
 System.Data.Common/DbProviderConfigurationHandler.cs
@@ -305,6 +306,7 @@ System.Data.SqlClient/SqlNotificationSource.cs
 System.Data.SqlClient/ISqlNotificationReceiver.cs
 System.Data.SqlClient/SqlAsyncState.cs
 System.Data.SqlClient/SqlAsyncResult.cs
+System.Data.SqlClient/SqlClientMetaDataCollectionNames.cs
 System.Data.SqlClient/SqlClientPermission.cs
 System.Data.SqlClient/SqlClientPermissionAttribute.cs
 System.Data.SqlClient/SqlCommand.cs
