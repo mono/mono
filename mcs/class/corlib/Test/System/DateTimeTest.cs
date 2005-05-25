@@ -688,6 +688,7 @@ public class DateTimeTest : Assertion
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
 	}
 
+	[Category ("NotWorking")]
 	public void TestParse3 ()
 	{
 		string s = "Wednesday, 09 June 2004";

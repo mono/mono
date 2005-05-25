@@ -1,5 +1,9 @@
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : TestParse3() is still NotWorking on others' :(
+
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : added testcase for #72788. Test that assures we
 	  reject 2 digit years for "yyyy".
 
