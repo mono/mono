@@ -1,3 +1,7 @@
+2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StackTrace.cs: Add an internal ctor which skips unmanaged frames.
+
 2005-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackFrame.cs: Moved documentation comments (XML) to monodoc. 
