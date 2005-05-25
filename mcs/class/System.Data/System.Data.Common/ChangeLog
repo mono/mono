@@ -70,6 +70,9 @@
 	* DbDataAdapter.cs: Update: If  SourceColumn is null, do not set
 	value for the parameter.
 
+2005-05-25 Umadevi S <sumadevi@novell.com>
+	* Added DbException.cs
+
 2005-03-23  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs: For Update, disable ReadOnly constraint
