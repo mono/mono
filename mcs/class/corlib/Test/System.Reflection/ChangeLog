@@ -1,5 +1,7 @@
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeDelegatorTest.cs: New file.
+
 	* MethodInfoTest.cs: Add a test for bug #75029.
 
 2005-05-20  Gert Driesen <drieseng@users.sourceforge.net>
