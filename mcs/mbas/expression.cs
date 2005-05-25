@@ -3845,16 +3845,26 @@ namespace Mono.MonoBASIC {
 			return count;
 		}
 
+		static ConversionType IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate,
+						    out bool expanded)
+		{
+			bool objectArgsPresent;
+			return IsApplicable (ec, arguments, candidate, out expanded, out objectArgsPresent);
+		}
+
 		/// <summary>
 		///  Determines if the candidate method is applicable (section 14.4.2.1)
 		///  to the given set of arguments
 		/// </summary>
-		static ConversionType IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate, out bool expanded)
+		static ConversionType IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate,
+						    out bool expanded, out bool objectArgsPresent)
 		{
 			int arg_count;
 			Type param_type;
 
-			expanded = false;
+			expanded = objectArgsPresent = false;
+			int num_narr_conv = 0;		// Count the narrowing conversion not involving object
+							// arguments
 			
 			if (arguments == null)
 				arg_count = 0;
@@ -3931,12 +3941,22 @@ namespace Mono.MonoBASIC {
 						match = CheckParameterAgainstArgument (ec, pd, i, a, param_type);
 					if (match == ConversionType.None)
 						return ConversionType.None;
-					if (result == ConversionType.None)
+
+					if (match == ConversionType.Narrowing) {
 						result = match;
-					else if (match == ConversionType.Narrowing)
-						result = ConversionType.Narrowing;					
+						if (a.Expr.Type == TypeManager.object_type)
+							objectArgsPresent = true;
+						else {
+							objectArgsPresent = false;
+							num_narr_conv ++;
+						}
+					} else if (result == ConversionType.None)
+						result = match;
 				}
 			}
+
+			if (num_narr_conv > 0)	// There were narrowing conversions other than those for object arguments
+				objectArgsPresent = false;
 
 			return result;
 		}
@@ -3998,6 +4018,13 @@ namespace Mono.MonoBASIC {
 			return (m.Name == ((string) filterCriteria));
 		}
 
+		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
+							  ref ArrayList Arguments, Location loc)
+		{
+			bool isLateBindingRequired;
+			return OverloadResolve (ec, me, ref Arguments, loc, out isLateBindingRequired);	
+		}
+
 		// We need an overload for OverloadResolve because Invocation.DoResolve
 		// must pass Arguments by reference, since a later call to IsApplicable
 		// can change the argument list if optional parameters are defined
@@ -4043,20 +4070,29 @@ namespace Mono.MonoBASIC {
 		///   loc: The location if we want an error to be reported, or a Null
 		///        location for "probing" purposes.
 		///
+		///   isLateBindingRequired : Flag to indicate that this method call is
+		///                           is a candidate for late binding. Set to true if
+		///                           there is atleast one object argument and we get
+		///                           * Two or more candidates that require widening conv
+		///                           * Two or more candidates require narrowing conversions
+		///                             (for object arguments **only**)
 		///   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
 		///            that is the best match of me on Arguments.
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ref ArrayList Arguments, Location loc)
+							  ref ArrayList Arguments, Location loc,
+							  out bool isLateBindingRequired)
 		{
 			MethodBase method = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
+			ArrayList lateBindingCandidates = new ArrayList ();
 			Hashtable expanded_candidates = new Hashtable();
 			int narrow_count = 0;
 			bool narrowing_candidate = false;
 			errorMsg = "";
+			isLateBindingRequired = false;
 			CaseInsensitiveHashtable namedArgs = new CaseInsensitiveHashtable ();
 
 			if (Arguments == null)
@@ -4072,7 +4108,7 @@ namespace Mono.MonoBASIC {
 
 			ArrayList newarglist = Arguments;
 			foreach (MethodBase candidate in me.Methods){
-				bool candidate_expanded;
+				bool candidate_expanded, object_args_present;
 				newarglist = Arguments;
 				if (argument_count > 0 && namedArgs.Count != 0) {
 					newarglist = ReorderArguments (candidate, Arguments, namedArgs, ref errorMsg, loc);
@@ -4080,12 +4116,15 @@ namespace Mono.MonoBASIC {
 						continue;
 				}
 
-				ConversionType m = IsApplicable (ec, newarglist, candidate, out candidate_expanded);
+				ConversionType m = IsApplicable (ec, newarglist, candidate, out candidate_expanded, out object_args_present);
 				if (candidate_expanded)
 					expanded_candidates [candidate] = candidate;
 				if (m == ConversionType.None)
 					continue;
 				else if (m == ConversionType.Narrowing) {
+					if (object_args_present)   // if the narrowing conversion was due 
+								   // to the argument being an object
+						lateBindingCandidates.Add (candidate);
 					if (method == null) {
 						method = candidate;
 						narrowing_candidate = true;
@@ -4107,15 +4146,23 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (candidates.Count == 0) {
-				if (narrow_count > 1)
-					method = null;
-				else if (narrow_count == 1)
+				if (lateBindingCandidates.Count > 1) {
+					isLateBindingRequired = true;
+					return null;
+				}
+
+				if (narrow_count > 1) {
+					if (lateBindingCandidates.Count == 1)
+						method = (MethodBase) lateBindingCandidates [0];
+					else 
+						method = null;
+				} else if (narrow_count == 1)
 					candidates = null;
 			} else if (candidates.Count == 1) {
 				method = (MethodBase)candidates [0];
 				candidates = null;
 			} else
-				narrow_count = 0;
+				narrow_count  = 0;
 
 			if (method == null) {
 				//
@@ -4493,9 +4540,20 @@ namespace Mono.MonoBASIC {
 			if (expr is MethodGroupExpr) 
 			{
 				MethodGroupExpr mg = (MethodGroupExpr) expr;
-				method = OverloadResolve (ec, mg, ref Arguments, loc);
+				bool isLateBindingRequired = false;
+				method = OverloadResolve (ec, mg, ref Arguments, loc, out isLateBindingRequired);
 				if (method == null)
 				{
+					if (isLateBindingRequired) {
+						Expression type_expr = new TypeOf (Parser.DecomposeQI (mg.DeclaringType.Name, loc), loc);
+						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, 
+									loc, null, mg.Name, type_expr, 
+									Arguments, is_retval_required, is_left_hand);
+						if (! etmp.ResolveArguments (ec))
+							return null;
+						etmp.GenerateLateBindingStatements ();
+						return etmp.Resolve (ec);
+					}
 					Error (30455,
 						"Could not find any applicable function to invoke for this argument list" + errorMsg);
 					return null;

@@ -3456,10 +3456,24 @@ namespace Mono.MonoBASIC {
 		Expression expr;
 		bool isRetValRequired;
 		bool isLeftHandSide;
+		bool isIndexerAccess;
+		string memberName;
+		Expression type_expr;
 
 		public StatementSequence (Block parent, Location loc, Expression expr) 
 			: this (parent, loc, expr, null)
 		{ }
+
+		public StatementSequence (Block parent, Location loc, Expression expr, string name, 
+					  Expression type_expr, ArrayList a, bool isRetValRequired,
+					  bool isLeftHandSide) 
+			: this (parent, loc, expr, a)
+		{
+			this.memberName = name;
+			this.type_expr = type_expr;
+			this.isRetValRequired = isRetValRequired;
+			this.isLeftHandSide = isLeftHandSide;
+		}
 
 		public StatementSequence (Block parent, Location loc, Expression expr, ArrayList a,
 					  bool isRetValRequired, bool isLeftHandSide) 
@@ -3467,6 +3481,15 @@ namespace Mono.MonoBASIC {
 		{
 			this.isRetValRequired = isRetValRequired;
 			this.isLeftHandSide = isLeftHandSide;
+			if (expr is MemberAccess) {
+				this.expr = ((MemberAccess)expr).Expr;
+				this.memberName = ((MemberAccess)expr).Identifier;
+				this.isIndexerAccess = false;
+			} else if (expr is IndexerAccess) {
+				this.expr = ((IndexerAccess) expr).Instance;
+				this.memberName = "";
+				this.isIndexerAccess = true;
+			}
 		}
 
 		public StatementSequence (Block parent, Location loc, Expression expr, ArrayList a) 
@@ -3485,6 +3508,8 @@ namespace Mono.MonoBASIC {
 			stmtBlock.IsLateBindingRequired = true;
 			this.loc = loc;
 			this.isRetValRequired = this.isLeftHandSide = false;
+			this.memberName = "";
+			this.type_expr = null;
 		}
 
 		public ArrayList Arguments {
@@ -3578,20 +3603,12 @@ namespace Mono.MonoBASIC {
 				stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
 			}
 
-			Expression tempExpr = expr;
-			string memName = "";
-			bool isIndexerAccess = true;
-			if (expr is MemberAccess) {
-				tempExpr = ((MemberAccess)expr).Expr;
-				memName = ((MemberAccess)expr).Identifier;
-				isIndexerAccess = false;
-			} else if (expr is IndexerAccess) {
-				tempExpr = ((IndexerAccess) expr).Instance;
-			}
+			//string memName = "";
+			//bool isIndexerAccess = true;
 
 			ArrayList invocationArgs = new ArrayList ();
-			if (isIndexerAccess) {
-				invocationArgs.Add (new Argument (tempExpr, Argument.AType.Expression));
+			if (isIndexerAccess || memberName == "") {
+				invocationArgs.Add (new Argument (expr, Argument.AType.Expression));
 				invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
 				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
 				Expression tmp = null;
@@ -3604,9 +3621,16 @@ namespace Mono.MonoBASIC {
 				stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) invStmt, loc));
 				return;
 			}
-			invocationArgs.Add (new Argument (tempExpr, Argument.AType.Expression));
-			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
-			invocationArgs.Add (new Argument (new StringLiteral (memName), Argument.AType.Expression));
+
+			if (expr != null)
+				invocationArgs.Add (new Argument (expr, Argument.AType.Expression));
+			else
+				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+			if (type_expr != null)
+				invocationArgs.Add (new Argument (type_expr, Argument.AType.Expression));
+			else
+				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+			invocationArgs.Add (new Argument (new StringLiteral (memberName), Argument.AType.Expression));
 			invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
 			if (ArgumentNames != null && ArgumentNames.Count > 0)
 				invocationArgs.Add (new Argument (v2, Argument.AType.Expression));

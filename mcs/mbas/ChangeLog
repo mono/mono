@@ -1,3 +1,9 @@
+2005-05-24 Satya Sudha K <ksathyasudha@hotmail.com>
+	* statement.cs : Added few more members like 'memberName' and 'type_expr' to the 'StatementSequence'
+			 class. Added an appropriate constructor for the same.
+	* expression.cs: Late binding for method invocations involving object arguments
+			 
+
 2005-05-23 Satya Sudha K <ksathyasudha@hotmail.com>
 	* statement.cs : Copying back the arguments (matching 'ByRef' parameters) in the reverse 
 			 order (starting with the last argument backwards) as done by vbc
