@@ -1,5 +1,7 @@
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Exception.cs: Use the new StackTrace ctor.
+
 	* Type.cs: Improve support for user defined type subclasses.
 
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>

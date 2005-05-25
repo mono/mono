@@ -155,7 +155,7 @@ namespace System
 					return null;
 
 				if (stack_trace == null) {
-					StackTrace st = new StackTrace (this, true);
+					StackTrace st = new StackTrace (this, 0, true, true);
 
 					StringBuilder sb = new StringBuilder ();
 
