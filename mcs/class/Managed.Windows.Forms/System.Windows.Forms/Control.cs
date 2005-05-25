@@ -747,11 +747,11 @@ namespace System.Windows.Forms
 		}
 
 		internal static int LowOrder (int param) {
-			return (param & 0xffff);
+			return ((int)(short)(param & 0xffff));
 		}
 
 		internal static int HighOrder (int param) {
-			return (param >> 16);
+			return ((int)(short)(param >> 16));
 		}
 
 		// This method exists so controls overriding OnPaintBackground can have default background painting done

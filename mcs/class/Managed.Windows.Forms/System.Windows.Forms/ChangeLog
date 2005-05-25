@@ -1,3 +1,6 @@
+2005-05-24 Jonathan S. Chambers <jonathan.chambers@ansys.com>
+	* Control.cs: Fixed LowOrder and HighOrder to preserve sign.
+
 2005-05-24  Peter Bartok  <pbartok@novell.com>
 
 	* OpenFileDialog.cs, Form.cs, Menu.cs, GroupBox.cs, UserControl.cs,
