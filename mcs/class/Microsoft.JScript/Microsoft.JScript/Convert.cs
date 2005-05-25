@@ -42,7 +42,6 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-
 		public static double CheckIfDoubleIsInteger (double d)
 		{
 			if (d == Math.Round (d))
@@ -217,6 +216,11 @@ namespace Microsoft.JScript {
 				return TypeCode.Object;
 			else 
 				return  ic.GetTypeCode ();
+		}
+
+		internal static IConvertible GetIConvertible (object obj)
+		{
+			return obj as IConvertible;
 		}
 	}
 }
