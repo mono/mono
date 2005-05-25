@@ -733,7 +733,6 @@ namespace System
 						  int digits,
 						  bool leadingzero,
 						  bool sloppy_parsing,
-						  bool next_not_digit,
 						  out int num_parsed)
 		{
 			int number = 0, i;
@@ -756,14 +755,6 @@ namespace System
 			if (s.Length - valuePos < digits) {
 				num_parsed = -1;
 				return 0;
-			}
-
-			if (s.Length - valuePos > digits &&
-			    next_not_digit &&
-			    Char.IsDigit (s[digits + valuePos])) {
-				/* More digits left over */
-				num_parsed = -1;
-				return(0);
 			}
 
 			for (i = valuePos; i < digits + valuePos; i++) {
@@ -854,7 +845,6 @@ namespace System
 			double fractionalSeconds = -1;
 			int ampm = -1;
 			int tzsign = -1, tzoffset = -1, tzoffmin = -1;
-			bool next_not_digit;
 
 			result = new DateTime (0);
 			while (pos+num < len)
@@ -955,34 +945,15 @@ namespace System
 
 				int num_parsed = 0;
 
-				if (pos+num+1 < len) {
-					char next_char = chars[pos+num+1];
-					
-					next_not_digit = !(next_char == 'd' ||
-							   next_char == 'M' ||
-							   next_char == 'y' ||
-							   next_char == 'h' ||
-							   next_char == 'H' ||
-							   next_char == 'm' ||
-							   next_char == 's' ||
-							   next_char == 'f' ||
-							   next_char == 'z' ||
-							   next_char == '"' ||
-							   next_char == '\'' ||
-							   Char.IsDigit (next_char));
-				} else {
-					next_not_digit = true;
-				}
-				
 				switch (chars[pos])
 				{
 				case 'd':
 					if (day != -1)
 						return false;
 					if (num == 0)
-						day = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						day = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						day = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						day = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
 						dayofweek = _ParseEnum (s, valuePos, dfi.AbbreviatedDayNames, out num_parsed);
 					else
@@ -995,9 +966,9 @@ namespace System
 					if (month != -1)
 						return false;
 					if (num == 0)
-						month = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						month = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						month = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						month = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
 						month = _ParseEnum (s, valuePos, dfi.AbbreviatedMonthNames , out num_parsed) + 1;
 					else
@@ -1011,14 +982,14 @@ namespace System
 						return false;
 
 					if (num == 0) {
-						year = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						year = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					} else if (num < 3) {
-						year = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						year = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 					} else {
-						year = _ParseNumber (s, valuePos, 4, false, sloppy_parsing, next_not_digit, out num_parsed);
+						year = _ParseNumber (s, valuePos, 4, false, sloppy_parsing, out num_parsed);
 						if ((year >= 1000) && (num_parsed == 4) && (!longYear) && (s.Length > 4 + valuePos)) {
 							int np = 0;
-							int ly = _ParseNumber (s, valuePos, 5, false, sloppy_parsing, next_not_digit, out np);
+							int ly = _ParseNumber (s, valuePos, 5, false, sloppy_parsing, out np);
 							longYear = (ly > 9999);
 						}
 						num = 3;
@@ -1032,10 +1003,10 @@ namespace System
 					if (hour != -1)
 						return false;
 					if (num == 0)
-						hour = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						hour = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						hour = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						hour = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 
@@ -1049,10 +1020,10 @@ namespace System
 					if ((hour != -1) || (ampm >= 0))
 						return false;
 					if (num == 0)
-						hour = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						hour = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						hour = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						hour = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (hour >= 24)
@@ -1064,10 +1035,10 @@ namespace System
 					if (minute != -1)
 						return false;
 					if (num == 0)
-						minute = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						minute = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						minute = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						minute = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (minute >= 60)
@@ -1078,10 +1049,10 @@ namespace System
 					if (second != -1)
 						return false;
 					if (num == 0)
-						second = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						second = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else
 					{
-						second = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, next_not_digit, out num_parsed);
+						second = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 						num = 1;
 					}
 					if (second >= 60)
@@ -1092,7 +1063,7 @@ namespace System
 					if (fractionalSeconds != -1)
 						return false;
 					num = Math.Min (num, 6);
-					double decimalNumber = (double) _ParseNumber (s, valuePos, num+1, true, sloppy_parsing, next_not_digit, out num_parsed);
+					double decimalNumber = (double) _ParseNumber (s, valuePos, num+1, true, sloppy_parsing, out num_parsed);
 					if (num_parsed == -1)
 						return false;
 
@@ -1133,12 +1104,12 @@ namespace System
 						return false;
 					valuePos++;
 					if (num == 0)
-						tzoffset = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, next_not_digit, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 2, false, sloppy_parsing, out num_parsed);
 					else if (num == 1)
-						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, false, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 					else
 					{
-						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, false, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 						if (num_parsed < 0)
 							return false;
 						valuePos += num_parsed;
@@ -1147,7 +1118,7 @@ namespace System
 						else if (!_ParseString (s, valuePos, 0, dfi.TimeSeparator, out num_parsed))
 							return false;
 						valuePos += num_parsed;
-						tzoffmin = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, false, out num_parsed);
+						tzoffmin = _ParseNumber (s, valuePos, 2, true, sloppy_parsing, out num_parsed);
 						if (num_parsed < 0)
 							return false;
 						num = 2;

@@ -1,3 +1,9 @@
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : next_not_digit prevented some valid parse.
+	  Just remove it, since now we pass max length to ParseNumber() and
+	  thus it is not needed anymore. Fixed bug 63137.
+
 2005-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : HH should not always block tt. Fixed bug #60912.

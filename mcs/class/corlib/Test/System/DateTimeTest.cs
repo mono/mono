@@ -353,7 +353,6 @@ public class DateTimeTest : Assertion
 
 	}
 
-	[Category ("NotWorking")]
 	public void TestParseExact3 ()
 	{
 		DateTime t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
@@ -365,12 +364,18 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
-	// bug #60912, modified hour as 13:00
 	public void TestParseExact4 ()
 	{
+		// bug #60912, modified hour as 13:00
 		string s = "6/28/2004 13:00:00 AM";
 		string f = "M/d/yyyy HH':'mm':'ss tt";
 		DateTime.ParseExact (s, f, CultureInfo.InvariantCulture);
+
+		// bug #63137
+		DateTime.ParseExact ("Wed, 12 May 2004 20:51:09 +0200",
+			@"ddd, d MMM yyyy H:m:s zzz",
+			CultureInfo.CreateSpecificCulture("en-us"),
+			DateTimeStyles.AllowInnerWhite);
 	}
 
 	public void TestParseExact ()
@@ -763,7 +768,6 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void ParseAllowsQueerString ()
 	{
 		DateTime.Parse ("Sat,,,,,, 01 Oct 1994 03:00:00", CultureInfo.InvariantCulture);
