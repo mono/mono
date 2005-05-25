@@ -1,3 +1,7 @@
+2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodInfoTest.cs: Add a test for bug #75029.
+
 2005-05-20  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Allow test for bug #75958 to pass on .NET 2.0

@@ -83,6 +83,19 @@ namespace MonoTests.System.Reflection
 		}
 #endif
 
+		public static int foo (int i, int j)
+		{
+			return i + j;
+		}
+
+		[Test]
+		public void StaticInvokeWithObject ()
+		{
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("foo");
+			
+			mi.Invoke (new Object (), new object [] { 1, 2 });
+		}
+
 		[Test]
 		public void ByRefInvoke ()
 		{
