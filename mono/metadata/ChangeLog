@@ -1,3 +1,7 @@
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : update (additional French date format).
+
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_type_Equals): Revert last change.
