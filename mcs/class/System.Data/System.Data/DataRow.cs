@@ -590,14 +590,14 @@ namespace System.Data {
                         _table.ChangingDataRow (this, DataRowAction.Commit);
 			CheckChildRows(DataRowAction.Commit);
 			switch (RowState) {
-				case DataRowState.Unchanged:
+                        case DataRowState.Unchanged:
 					return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
-					if (Original >= 0) {
-						Table.RecordCache.DisposeRecord(Original);
-					}
-					Original = Current;
+                                if (Original >= 0) {
+                                        Table.RecordCache.DisposeRecord(Original);
+                                }
+                                Original = Current;
 				break;
 			case DataRowState.Deleted:
 				_table.Rows.RemoveInternal (this);
@@ -1566,57 +1566,65 @@ namespace System.Data {
                 ///    mentioned in the DataTable.Load (IDataReader, LoadOption) method.
                 /// </summary>
                 [MonoTODO ("Raise necessary Events")]
-                internal void Load (object [] values, LoadOption loadOption, bool is_new)
+                internal void Load (object [] values, LoadOption loadOption)
                 {
+                        Index index = null;
                         DataRowAction action = DataRowAction.Change;
 
-                        int temp = Table.RecordCache.NewRecord ();
-                        for (int i = 0 ; i < Table.Columns.Count; i++)
-                                SetValue (i, values [i], temp);
-
-                        if (is_new) { // new row
-                                if (HasVersion (DataRowVersion.Proposed) || RowState == DataRowState.Detached)
-                                        Proposed = temp;
-                                else
-                                        Current = temp;
-                                return;
-                        }
+                        int temp = -1;
 
                         if (loadOption == LoadOption.OverwriteChanges 
                             || (loadOption == LoadOption.PreserveChanges
                                 && RowState == DataRowState.Unchanged)) {
+				temp = Table.CreateRecord (values);
+                                if (HasVersion (DataRowVersion.Original) && Current != Original)
+                                        Table.RecordCache.DisposeRecord (Original);
                                 Original = temp;
-                                if (HasVersion (DataRowVersion.Proposed))
-                                        Proposed = temp;
-                                else
-                                        Current = temp;
+                                // update the pk index
+                                index = Table.GetIndex(Table.PrimaryKey,null,DataViewRowState.None,null,false);
+                                if (index != null)
+                                        index.Update (this, temp);
+
+                                if (HasVersion (DataRowVersion.Current))
+                                        Table.RecordCache.DisposeRecord (Current);
+                                Current = temp;
                                 action = DataRowAction.ChangeCurrentAndOriginal;
                                 return;
                         }
 
                         if (loadOption == LoadOption.PreserveChanges) {
-                                if (RowState != DataRowState.Deleted) {
-                                        Original = temp;
-                                        action   = DataRowAction.ChangeOriginal;
-                                }
+				if (RowState == DataRowState.Deleted)
+					return;
+				temp = Table.CreateRecord (values);
+				if (HasVersion (DataRowVersion.Original) && Current != Original)
+					Table.RecordCache.DisposeRecord (Original);
+				Original = temp;
+				action   = DataRowAction.ChangeOriginal;
                                 return;
                         }
                                 
-                        bool not_used = true;
                         // Upsert
                         if (RowState != DataRowState.Deleted) {
-                                int index = HasVersion (DataRowVersion.Proposed) ? _proposed : _current;
-                                if (Table.CompareRecords (index, temp) != 0) {
-                                        if (HasVersion (DataRowVersion.Proposed))
-                                                Proposed = temp;
-                                        else
-                                                Current = temp;
-                                        not_used = false;
-                                }
+                                int rindex = HasVersion (DataRowVersion.Proposed) ? Proposed : Current;
+				temp = Table.CreateRecord (values);
+				if (Table.CompareRecords (rindex, temp) != 0) {
+                                        if (HasVersion (DataRowVersion.Proposed)) {
+                                                Table.RecordCache.DisposeRecord (Proposed);
+                                                Proposed = -1;
+                                        }
+                                        
+                                        // update the pk index
+                                        index = Table.GetIndex(Table.PrimaryKey,null,DataViewRowState.None,null,false);
+                                        if (index != null)
+                                                index.Update (this, temp);
+
+                                        if (Original != Current)
+                                                Table.RecordCache.DisposeRecord (Current);
+                                        Current = temp;
+                                } else
+					Table.RecordCache.DisposeRecord (temp);
                         }
-                                
-                        if (not_used)
-                                Table.RecordCache.DisposeRecord (temp);
+
                 }
 #endif // NET_2_0
 	}

@@ -271,6 +271,16 @@ namespace MonoTests.System.Data.SqlClient
                         Assert.AreEqual (25, dt.Rows [3] [0], "#2 current should be ai");
                         Assert.AreEqual (25, dt.Rows [3] [0, DataRowVersion.Original], "#3 original should be ai");
 
+			dt.LoadDataRow (new object [] {25, 20, "mono test"}, LoadOption.Upsert);
+			dt.LoadDataRow (new object [] {25, 20, "mono test 2"}, LoadOption.Upsert);
+			dt.LoadDataRow (new object [] {null, 20, "mono test aaa"}, LoadOption.Upsert);
+			
+			Assert.AreEqual (5, dt.Rows.Count, "#4 has not added a new row");
+			Assert.AreEqual (25, dt.Rows [3] [0], "#5 current should be ai");
+			Assert.AreEqual (25, dt.Rows [3] [0, DataRowVersion.Original], "#6 original should be ai");
+
+			Assert.AreEqual (30, dt.Rows [4] [0], "#7 current should be ai");
+
                 }
         }
 }

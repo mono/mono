@@ -1199,31 +1199,45 @@ namespace System.Data {
 		public DataRow LoadDataRow (object [] values, LoadOption loadOption)
 		{
                         DataRow row  = null;
-                        bool new_row = false;
                         
                         // Find Data DataRow
                         if (this.PrimaryKey.Length > 0) {
-				int newRecord = CreateRecord(values);
-				try {
-					Index index = GetIndex(PrimaryKey,null,DataViewRowState.OriginalRows,null,false);
-					int existingRecord = index.Find(newRecord);
+                                Index index = FindIndex (PrimaryKey,null,DataViewRowState.OriginalRows,null);
+				if (index == null)
+					index = new Index (new Key(this, PrimaryKey,null,DataViewRowState.OriginalRows,null));
+
+				object [] keys = new object [PrimaryKey.Length];
+				for (int i=0; i < PrimaryKey.Length; i++)
+					keys [i] = values [PrimaryKey [i].Ordinal];
+
+				int existingRecord = index.Find(keys);
+				if (existingRecord >= 0)
+					row = RecordCache[existingRecord];
+				else {                                           
+					existingRecord = _primaryKeyConstraint.Index.Find(keys);
 					if (existingRecord >= 0)
 						row = RecordCache[existingRecord];
-					else {
-						existingRecord = _primaryKeyConstraint.Index.Find(newRecord);
-						if (existingRecord >= 0)
-							row = RecordCache[existingRecord];
-					}
-				}
-				finally {
-					RecordCache.DisposeRecord(newRecord);
 				}
                         }
                                 
                         // If not found, add new row
-                        if (row == null) {
-                                row = this.NewRow ();
-                                new_row = true;
+                        if (row == null 
+                            || (row.RowState == DataRowState.Deleted
+                                && loadOption == LoadOption.Upsert)) {
+                                row = NewNotInitializedRow ();
+                                row.ImportRecord (CreateRecord(values));
+
+                                if (EnforceConstraints) 
+                                        // we have to check that the new row doesn't colide with existing row
+                                        Rows.ValidateDataRowInternal(row); // this adds to index ;-)
+                                     
+                                Rows.AddInternal(row);		
+	
+                                if (loadOption == LoadOption.OverwriteChanges ||
+                                    loadOption == LoadOption.PreserveChanges) {
+                                        row.AcceptChanges ();
+                                }
+                                return row;
                         }
 
                         bool deleted = row.RowState == DataRowState.Deleted;
@@ -1231,20 +1245,7 @@ namespace System.Data {
                         if (deleted && loadOption == LoadOption.OverwriteChanges)
                                 row.RejectChanges ();                        
 
-                        row.Load (values, loadOption, new_row);
-
-                        if (deleted && loadOption == LoadOption.Upsert) {
-                                row = this.NewRow ();
-                                row.Load (values, loadOption, new_row = true);
-                        }
-
-                        if (new_row) {
-                                this.Rows.Add (row);
-                                if (loadOption == LoadOption.OverwriteChanges ||
-                                    loadOption == LoadOption.PreserveChanges) {
-                                        row.AcceptChanges ();
-                                }
-                        }
+                        row.Load (values, loadOption);
 
                         return row;
 		}

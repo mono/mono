@@ -1,3 +1,9 @@
+2005-05-25  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTable.cs: Reworked DataTable.LoadDataRow method after
+	regressions caused by Index redesign.
+	* DataRow.cs: Load : reworked.
+
 2005-05-25 Konstantin Triger <kostat@mainsoft.com>
 
 	* ISafeDataRecord.cs: Added GetDateTimeSafe method, the interface was made derived from IDataRecord

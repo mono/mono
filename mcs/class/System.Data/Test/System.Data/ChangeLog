@@ -1,3 +1,9 @@
+2005-05-25  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableLoadRowTest.cs: Added  additional cases for
+	AutoIncrementTest to gauge any side effect with auto
+	incrementing in case of upsert.
+
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRowCollectionTest.cs: Added a test to check Rows.Add (values
