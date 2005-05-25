@@ -159,7 +159,7 @@ namespace System.Reflection {
 		public virtual String Location {
 			get {
 				string loc = get_location ();
-				if (SecurityManager.SecurityEnabled) {
+				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
 				}
