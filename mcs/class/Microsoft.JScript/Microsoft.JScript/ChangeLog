@@ -1,8 +1,3 @@
-2005-05-25 Efren Serra <efren.serra.ctr@metnet.navy.mil>
-
-	* BitwiseBinary.cs: Implement EvaluateBitwiseBinary. Add DoOp.
-	* Convert.cs: Add GetIConvertible method.
-
 2005-05-19  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Parser.cs: Throw NotImplementedException for function
