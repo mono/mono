@@ -1,3 +1,7 @@
+2005-05-25 Konstantin Triger <kostat@mainsoft.com>
+
+	* ISafeDataRecord.cs: Added GetDateTimeSafe method, the interface was made derived from IDataRecord
+
 2005-05-22 Konstantin Triger <kostat@mainsoft.com>
 
 	* DataTable.cs, DataColumn.cs: in continuation to the previous fix - moving the common logic to 1 function and throwing the correct exception in any flow

@@ -8,7 +8,7 @@ using System;
 
 namespace System.Data
 {
-	internal interface ISafeDataRecord
+	internal interface ISafeDataRecord : IDataRecord
 	{
 		bool GetBooleanSafe(int i);
 
@@ -24,7 +24,7 @@ namespace System.Data
 
 		//string GetDataTypeName(int i);
 
-		//DateTime GetDateTime(int i);
+		DateTime GetDateTimeSafe(int i);
 
 		decimal GetDecimalSafe(int i);
 
