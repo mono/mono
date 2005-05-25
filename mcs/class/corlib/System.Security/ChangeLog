@@ -1,3 +1,9 @@
+2005-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityException.cs: PermissionState isn't always serialized 
+	(depending on the security policy) so it cannot always be deserialized
+	too (and this must work without throwing exceptions).
+
 2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityContext.cs: Includes more methods in NET_1_1 to enable 

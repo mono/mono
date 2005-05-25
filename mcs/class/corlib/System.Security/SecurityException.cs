@@ -182,7 +182,15 @@ namespace System.Security {
 			: base (info, context)
 		{
 			base.HResult = unchecked ((int)0x8013150A);
-			permissionState = info.GetString ("PermissionState");
+			// depending on the security policy the info about PermissionState may
+			// not be available (but the serializable must work)
+			SerializationInfoEnumerator e = info.GetEnumerator ();
+			while (e.MoveNext ()) {
+				if (e.Name == "PermissionState") {
+					permissionState = (string) e.Value;
+					break;
+				}
+			}
 		}
 		
 		public SecurityException (string message, Exception inner) 
