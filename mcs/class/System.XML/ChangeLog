@@ -1,3 +1,7 @@
+2005-05-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Remove System.Xml.Query/skeleton-2.0.cs.
+
 2005-05-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.Query : removed the whole directory (removed from .net 2.0)

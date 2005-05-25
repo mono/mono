@@ -40,7 +40,6 @@ EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
 	System.Xml.XPath/Parser.jay	\
-	System.Xml.Query/skeleton-2.0.cs	\
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
 	Test/MonoMicro.Test.csproj	\
