@@ -6,6 +6,7 @@
 				<dateFormats>
 					<dateFormatLength type="short">
 						<extraPatterns>
+							<pattern>d/MM/yyyy</pattern>
 							<pattern>d/MM/yy</pattern>
 						</extraPatterns>
 					</dateFormatLength >

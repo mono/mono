@@ -1,3 +1,7 @@
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : update (more French date format; #72788).
+
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_InternalInvoke): Avoid type checks on this if
