@@ -10,7 +10,7 @@ namespace Mono.Globalization.Unicode
 		{
 			switch (i) {
 			case 0:
-			// No idea why each of those is ignored.
+			// No idea why they are ignored.
 			case 0x2df: case 0x387:
 			case 0x3d7: case 0x3d8: case 0x3d9:
 			case 0x3f3: case 0x3f4: case 0x3f5: case 0x3f6:
@@ -28,9 +28,14 @@ namespace Mono.Globalization.Unicode
 			case 0xfffc: case 0xfffd:
 				return true;
 			// exceptional characters filtered by the 
-			// following conditions (no idea why though).
-			case 0x4d8: case 0x4d9: case 0x4e8: case 0x4e9:
-			case 0x70f: case 0x3036: case 0x303f:
+			// following conditions. Originally those exceptional
+			// ranges are incorrect (they should not be ignored)
+			// and most of those characters are unfortunately in
+			// those ranges.
+			case 0x4d8: case 0x4d9:
+			case 0x4e8: case 0x4e9:
+			case 0x70f:
+			case 0x3036: case 0x303f:
 			case 0x337b: case 0xfb1e:
 				return false;
 			}
@@ -364,83 +369,100 @@ namespace Mono.Globalization.Unicode
 			return Normalization.ToWidthInsensitive (i);
 		}
 
-		#region Level 3 properties (Case/Width)
+		#region Utilities
 
-		public static byte GetLevel3WeightRaw (char c) // add 2 for sortkey value
+		public static void GetPrimaryWeight (char c, bool variable,
+			out byte category, out byte value)
 		{
-			// Korean
-			if (0x1100 <= c && c <= 0x11F9)
-				return 2;
-			if (0xFFA0 <= c && c <= 0xFFDC)
-				return 4;
-			if (0x3130 <= c && c <= 0x3164)
-				return 5;
-			// numbers
-			if (0x2776 <= c && c <= 0x277F)
-				return 4;
-			if (0x2780 <= c && c <= 0x2789)
-				return 8;
-			if (0x2776 <= c && c <= 0x2793)
-				return 0xC;
-			if (0x2160 <= c && c <= 0x216F)
-				return 0x10;
-			if (0x2181 <= c && c <= 0x2182)
-				return 0x10;
-			// Arabic
-			if (0x2135 <= c && c <= 0x2138)
-				return 4;
-			if (0xFE80 <= c && c <= 0xFE8E)
-				return GetArabicFormInPresentationB (c);
-
-			// actually I dunno the reason why they have weights.
-			switch (c) {
-			case 0x01BC:
-				return 0x10;
-			case 0x06A9:
-				return 0x20;
-			case 0x06AA:
-				return 0x28;
-			}
-
-			byte ret = 0;
-			switch (c) {
-			case 0x03C2:
-			case 0x2104:
-			case 0x212B:
-				ret |= 8;
-				break;
-			case 0xFE42:
-				ret |= 0xC;
-				break;
-			}
-
-			// misc
-			switch (GetNormalizationType (c)) {
-			case 1: // <full>
-				ret |= 1;
-				break;
-			case 2: // <sub>
-				ret |= 1;
-				break;
-			case 3: // <super>
-				ret |= 0xE;
-				break;
-			}
-			if (IsSmallCapital (c)) // grep "SMALL CAPITAL"
-				ret |= 8;
-			if (IsUppercase (c)) // DerivedCoreProperties
-				ret |= 0x10;
-
-			return ret;
 		}
 
-		// TODO: implement GetArabicFormInRepresentationD(),
-		// GetNormalizationType(), IsSmallCapital() and IsUppercase().
-		// (They can be easily to be generated.)
-
+		public static string GetExpansion (char c)
+		{
+			switch (c) {
+			case '\u00C6':
+				return "AE";
+			case '\u00DE':
+				return "TH";
+			case '\u00DF':
+				return "ss";
+			case '\u00E6':
+				return "ae";
+			case '\u00FE':
+				return "th";
+			case '\u0132':
+				return "IJ";
+			case '\u0133':
+				return "ij";
+			case '\u0152':
+				return "OE";
+			case '\u0153':
+				return "oe";
+			case '\u01C4':
+				return "DZ\u030C"; // surprisingly Windows works fine here
+			case '\u01C5':
+				return "Dz\u030C";
+			case '\u01C6':
+				return "dz\u030C";
+			case '\u01C7':
+				return "LJ";
+			case '\u01C8':
+				return "Lj";
+			case '\u01C9':
+				return "lj";
+			case '\u01CA':
+				return "NJ";
+			case '\u01CB':
+				return "Nj";
+			case '\u01CC':
+				return "nj";
+			case '\u01E2':
+				return "A\u0304E\u0304"; // LAMESPEC: should be \u00C6\u0304
+			case '\u01E3':
+				return "a\u0304e\u0304"; // LAMESPEC: should be \u00E6\u0304
+			case '\u01F1':
+				return "DZ";
+			case '\u01F2':
+				return "Dz";
+			case '\u01F3':
+				return "dz";
+			case '\u01FC':
+				return "A\u0301E\u0301"; // LAMESPEC: should be \u00C6\u0301
+			case '\u01FD':
+				return "a\u0301e\u0301"; // LAMESPEC: should be \u00C6\u0301
+			case '\u05F0':
+				return "\u05D5\u05D5";
+			case '\u05F1':
+				return "\u05D5\u05D9";
+			case '\u05F2':
+				return "\u05D9\u05D9";
+			case '\uFB00':
+				return "ff";
+			case '\uFB01':
+				return "fi";
+			case '\uFB02':
+				return "fl";
+			}
+//			if ('\u1113' <= c && c <= '\u115F') Korean Jamo
+//				return true;
+			return null;
+		}
 		#endregion
 
+
 		#region Level 4 properties (Kana)
+
+		public static bool HasSpecialWeight (char c)
+		{
+			if (c < '\u3041')
+				return false;
+			else if (c < '\u3100')
+				return true;
+			else if (c < '\uFF60')
+				return false;
+			else if (c < '\uFF9F')
+				return true;
+			return true;
+		}
 
 		public static byte GetJapaneseDashType (char c)
 		{
@@ -497,7 +519,25 @@ namespace Mono.Globalization.Unicode
 			return false;
 		}
 
-		#endregion\
+		#endregion
+
+
+		// 0 means no primary weight. 6 means variable weight
+		// For expanded character the value is 0.
+		// Those arrays will be split into blocks (<3400 and >F800)
+		byte [] categories;
+		byte [] level1;
+		byte [] level2;
+		byte [] level3;
+		// level 4 is computed.
+
+		// public static bool HasSpecialWeight (char c)
+		// { return level1 [(int) c] == 6; }
+
+		//
+		// Maybe autogenerated code or icall to fill array runs here
+		//
 	}
 }
+
 

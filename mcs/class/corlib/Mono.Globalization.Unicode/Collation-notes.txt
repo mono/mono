@@ -210,12 +210,22 @@
 
 **** level 2
 
+	<del>
 	For Japanese voice marks, it just sums the count up.
 
 	There also seems special rule for Thai (E01-E4F) e.g. E47 works like
 	Japanese voice marks.
 
 	For other letters, there will be a table.
+	</del>
+
+	It looks like all level 2 keys are just accumulated, however without
+	considering overflow. It sometimes makes sense (e.g. diaeresis and
+	acute) but it causes many conflicts (e.g. "A\u0308\u0301" and "\u1EA6"
+	are incorrectly regarded as equal).
+
+	Anyways since Japanese voice mark has level 2 value as 1 it just
+	looked like the sum of voice marks.
 
 **** level 3
 
@@ -404,7 +414,7 @@
 
 		<primary category 0E : diacritics>
 		Characters in non "0E" category are out of scope.
-		They could be grepped in UnicodeData.txt.
+		They can be grepped in UnicodeData.txt.
 		-0E: acute
 		-0F: grave
 		-10: dot above
@@ -535,6 +545,7 @@
 
 	1 specially ignored ones (Japanese, Tamil, Thai)
 
+		IdentifyBy: constants
 		Unicode: 3099-309C, BCD, E47, E4C, FF9E, FF9F
 		SortKey: 01 01 01 01 00
 
@@ -546,21 +557,25 @@
 	2.1 control characters (specified as such in Unicode), except for
 	whitespaces (0009-000D).
 
+		ProcessAfter: 4.1
+		IdentifyBy: UnicodeCategory.Control
 		Unicode: 0001-000F minus 0009-000D, 007F-009F
-		SortKey: 06 80 07 06 03 00 - 06 80 07 06 3D 00
+		SortKey: 06 03 - 06 3D
 
 	2.2 Apostrophe
+		IdentifyBy: constant
 		Unicode: 0027,FF07 (')
-		SortKey: 06 80 (and nonspace equivalent)
+		SortKey: 06 80 (and width insensitive equivalents)
 
 	2.3  minus sign, hyphen, dash
 	  minus signs: FE63, 207B (super), 208B (sub), 002D, 00FD (full-width)
 	  hyphens: 00AD (soft), 2010, 2011 (nonbreaking) ... Unicode HYPHEN?
 	  dashes, horizontal bars: FE58 ... UnicodeCategory.DashPunctuation
 
+		IdentifyBy: UnicodeCategory.DashPunctuation
 		SortKey: 06 81 - 06 90 (and nonspace equivalents)
 
-	2.4 Arabic spacing and equivalents (64B-651, FE70-FE7F)
+	2.4 Arabic spacing and equivalents (64B-652, FE70-FE7F)
 	  They are part of nonspacing mark, but not equal.
 
 		SortKey: 06 A0 - 06 A7 (and nonspace equivalents)
@@ -571,7 +586,7 @@
 	  (i.e. < 128) nor those equivalents
 
 	  NonSpacingMark which is ignorable (IsIgnorableNonSpacing())
-	  // 30D, CD5-CD6, ABD, 2B9-2C1, 2C8, 2CB-2CD, 591-5C2. NonSpacingMark in
+	  // 30D, CD5-CD6, ABD, 2B9-2C5, 2C8, 2CB-2CD, 591-5C2. NonSpacingMark in
 	  // 981-A3C. A4D, A70, A71, ABC ...
 
 	  TODO: I need more insight to write table generator.
@@ -596,6 +611,11 @@
 	  If in "discriminatory mode", those tables could be still provided
 	  as to be compatible to Windows.
 
+	  Additionally there seems some bugs around Modifier letter collection.
+	  For example, 2C6 should be nonspacing diacritical character but it
+	  is regarded as a primary character. The same applies to Mandarin
+	  tone marks (2C9-2CB) (and there's a plenty of such characters).
+
 	4 space separators and some kind of marks
 
 	4.1 whitespaces, paragraph separator etc.
@@ -607,8 +627,12 @@
 	
 	  SortKey : 07 19 - 07 1A
 
-	4.3 other marks ('!', '^', ...)
-	  Non-alpha-numeric < 0x7F except for '+' (math) and '-' (math/hyphen)
+	4.3 ASCII compatible marks ('!', '^', ...)
+	  Non-alpha-numeric < 0x7F except for [[+-<=>']]
+	  small compatibility equivalents -> itself, wide
+
+	4.3 other marks
+	  FIXME: how to identify them?
 	  some Punctuations: InitialQuote/FinalQuote/Open/Close/Connector
 	  some OtherSymbols: 2400-2424
 	  3003, 3006, 2D0, 10FB
@@ -622,7 +646,7 @@
 	  (not Quotation_Mark property in PropList.txt ; 22, 27)
 
 	  byte area MathSymbol: 2B,3C,3D,3E,AB,B1,BB,D7,F7 except for AC
-	  MathSymbol (2044, 208A, 208C, 207A, 207C)
+	  some MathSymbol (2044, 208A, 208C, 207A, 207C)
 	  OtherLetter (1C0-1C2)
 	  2200-22FF MathSymbol except for 221E (INF. ; regarded as a number)
 
@@ -630,6 +654,7 @@
 
 	6 Arrows and Box drawings
 	  09 02 .. 09 7C : 2300-237A
+			only primary differences
 	  09 BC ... 09 FE : 25A0-AB, 25E7-EB, 25AC-B5, 25EC-EF, 25B6-B9,
 			25BC-C3, 25BA-25BB, 25C4-25D8, 25E6, 25DA-25E5
 			21*,25*,26*,27*
@@ -674,17 +699,24 @@
 
 	  This ordering is nothing to do with European Ordering Rules (EOR).
 
-	10 (F) greek letters
-	  0F: 386-3F2
-	  10: 400-4E9 exc. 482-486
-	  11: 531-586 exc. 559-55F
-	  12: 5D0-5F2
-	  13: 621-64A, 670-6D3, 6D5
+	10 culture dependent letters (general)
+	  0F: 386-3F2 ... Greek and Coptic
+		386-3CF: 0F 02 - 0F 19 (consider primary equivalents)
+		3D0-3EF: 0F 40 - 0F 54
+	  10: 400-4E9 ... Cyrillic.
+		For 400-45F and 4B1, they are mostly UCA DUCET order.
+		After that 460-481 follows, by codepoint.
+		(490-4FF except for 4B1 and Cyrillic supplementary are unused.)
+	  11: 531-586 ... Armenian.
+		Simply sorted by codepoint (handle case).
+	  12: 5D0-5F2 ... Hebrew
+		Codepoint order (handle case).
+	  13: 621-6D5 plus 670 (NonSpacingMark) ... Arabic
+
 	  14: 901-963 exc. 93C-93D 950-954
 	  15: 982-9FA exc. NonSpacingMark DecimalDigitNumber OtherNumber
 	  16: A05-A74 exc. A3C A4D A66-A71
 	  17: A81-AE0 exc. ABC-ABD
-	  18: 
 
 	...
 
@@ -744,13 +776,14 @@
 
 	   3400-4DB5. Ordered, considering case/width equivalents.
 
-	20 (FF FF 01 01 01 01 00) Some supplemental Japanese/Arabic marks
+	20 (FF FF 01 01 01 01 00) Some Japanese/Arabic extenders
+	   Actually FE7C and FE7D are not extender in Unicode (PropList.txt)
 
 	   3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE, FE7C, FE7D, FF70
 
 	- by UnicodeCategory -
 
-	DashPunctuation		1 1 1 1 (no exception)
+	DashPunctuation		6 (no exception)
 	DecimalDigitNumber	C (no exception)
 	EnclosingMark		1 E (no exception)
 	Format			7 (only 70F)
@@ -763,7 +796,7 @@
 
 	OtherNumber		C(<3192), 9E-A7 (3124<)
 
-	Control			1 1 1 1 except for 9-D (7)
+	Control			6 except for 9-D (7)
 	FinalQuotePunctuation	7 except for BB (8)
 	InitialQuotePunctuation	7 except for AB (8)
 	ClosePunctuation	7 except for 232A (9)
@@ -771,7 +804,7 @@
 	ConnectorPunctuation	7 except for FF65, 30FB, 2040 (A)
 
 	OtherLetter		1, 7, 8 (1C0-1C2), C, 12-FF
-	MathSymbol		8, 9, 1 1 1 1, 7, A, C
+	MathSymbol		8, 9, 6, 7, A, C
 	OtherSymbol		7, 9, A, C, E, F, <22, 52<
 	CurrencySymbol		A except for FF69,24,FF04 (7) and 9F2,9F3 (15)
 
@@ -779,8 +812,8 @@
 	TitlecaseLetter		E (no exception)
 	UppercaseLetter		E,F,10,11,21 except for 1BC (C)
 	ModifierLetter		1, 7, E, 1F, FF
-	ModifierSymbol		1 1 1 1, 1, 7
-	NonSpacingMark		1 1 1 1, 1, 13-1F
+	ModifierSymbol		1, 6, 7
+	NonSpacingMark		1, 6, 13-1F
 	OtherPunctuation	1, 7, A, 1F
 	SpacingCombiningMark	1, 14-22
 
@@ -1037,6 +1070,9 @@
 	To know which character can be expanded, Unicode Character Database
 	(UCD) is informative (it's informative but not normative to us)
 	http://www.unicode.org/Public/UNIDATA/UCD.html
+
+	Decent char-by-char explaination is available here:
+	http://www.fileformat.info/info/unicode/
 
 	Wine uses UCA default element table, but has windows-like character
 	filterings support in their LCMapString implementation:
