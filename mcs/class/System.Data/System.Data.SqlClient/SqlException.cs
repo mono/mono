@@ -37,12 +37,19 @@ using Mono.Data.Tds.Protocol;
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Runtime.Serialization;
 using System.Text;
 
 namespace System.Data.SqlClient {
-	[Serializable]
-	public sealed class SqlException : SystemException
+	[SerializableAttribute()]
+
+	public sealed class SqlException
+#if NET_2_0
+	 : DbException
+#else
+	 : SystemException
+#endif //NET_1_1
 	{
 		#region Fields
 

@@ -45,7 +45,7 @@ namespace System.Data.SqlClient
 		KeepIdentity = 1,
 		KeepNulls = 8,
 		TableLock = 4,
-		UseInternalTranscation = 32
+		UseInternalTransaction = 32
 	}
 
 }

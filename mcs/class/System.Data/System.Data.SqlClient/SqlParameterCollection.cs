@@ -6,6 +6,7 @@
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //   Diego Caravana (diego@toth.it)
+//   Umadevi S (sumadevi@novell.com)
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
@@ -74,9 +75,12 @@ namespace System.Data.SqlClient {
 		#endregion // Constructors
 
 		#region Properties
-
+#if ONLY_1_1 || ONLY_1_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
+#endif
+
+
 		public 
 #if NET_2_0
 		override
@@ -84,6 +88,34 @@ namespace System.Data.SqlClient {
 	 int Count {
 			get { return list.Count; }			  
 		}
+
+#if NET_2_0
+		public override bool IsFixedSize {
+			get {
+				return list.IsFixedSize;
+			}	
+		}
+
+		public override bool IsReadOnly {
+			get {
+				return list.IsReadOnly;
+			}
+		}
+
+		public override bool IsSynchronized {
+			get {
+				return list.IsSynchronized;
+			}
+		}
+
+		public override object SyncRoot {
+			get {
+				return list.SyncRoot;
+			}
+		}
+	
+
+#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
@@ -125,6 +157,32 @@ namespace System.Data.SqlClient {
 			}			  
 		}
 
+#if NET_2_0
+		protected  DbParameter GetParameter (int index)
+		{
+			throw new NotImplementedException();
+		}
+
+		 protected  void SetParameter (int index, DbParameter value)
+		{
+                        throw new NotImplementedException();
+                }
+		/*public IEnumerator GetEnumerator ()
+			 {
+                        throw new NotImplementedException();
+                }*/
+
+
+		protected override Type ItemType 
+		{ 
+			get {
+				throw new NotImplementedException();
+			}
+
+		 }                                                          
+
+                                                                                                    
+#endif
 		object IList.this [int index] {
 			get { return (SqlParameter) this [index]; }
 			set { this [index] = (SqlParameter) value; }
@@ -145,6 +203,8 @@ namespace System.Data.SqlClient {
 		object ICollection.SyncRoot {
 			get { return list.SyncRoot; }
 		}
+
+
 
 		internal TdsMetaParameterCollection MetaParameters {
 			get { return metaParameters; }
@@ -233,6 +293,15 @@ namespace System.Data.SqlClient {
 					return true;
 			return false;
 		}
+#if NET_2_0
+
+	 	public bool Contains (SqlParameter value) {
+	
+			return (this.IndexOf(value) != -1);
+		}	
+
+#endif // NET_2_0
+
 
 		public 
 #if NET_2_0
@@ -276,6 +345,13 @@ namespace System.Data.SqlClient {
 
 		}
 
+#if NET_2_0
+		public int IndexOf (SqlParameter value) {
+				return list.IndexOf(value);
+		}
+		
+#endif // NET_2_0
+
 		public 
 #if NET_2_0
 		override
@@ -285,18 +361,41 @@ namespace System.Data.SqlClient {
 			list.Insert (index, value);
 		}
 
+#if NET_2_0
+	   	public void Insert (int index, SqlParameter value) {
+			list.Insert (index,value);
+		}
+
+#endif //NET_2_0	
+
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
 	 void Remove (object value)
 		{
+			//TODO : this neds validation to check if the object is a 
+			// sqlparameter.
+					
 			((SqlParameter) value).Container = null;
 			
 			metaParameters.Remove (((SqlParameter) value).MetaParameter);
 			list.Remove (value);
 		}
 
+
+#if NET_2_0
+		public void Remove (SqlParameter value) {
+	
+			//both this and the above code are the same. but need to work with
+			// 1.1!
+			value.Container = null;
+			metaParameters.Remove (value.MetaParameter);
+			list.Remove (value);
+
+		}
+
+#endif //NET_2_0 
 		public 
 #if NET_2_0
 		override
@@ -317,18 +416,31 @@ namespace System.Data.SqlClient {
 			RemoveAt (IndexOf (parameterName));
 		}
 
-                [MonoTODO]
-                protected 
 #if NET_2_0
-		override
-#endif // NET_2_0
-	 Type ItemType
-                {
-                        get {throw new NotImplementedException ();}
-                        
-                }
+		public override void AddRange (Array values) {
+		
+			if (values == null)
+				throw new ArgumentNullException("The argument passed was null");
+			foreach ( object value in values) {
+			   if (!(value is SqlParameter))
+                       		throw new InvalidCastException ("Element in the array parameter was not an SqlParameter.");                                                                     
+			   SqlParameter param = (SqlParameter) value;	
+		           if (param.Container != null)
+                                throw new ArgumentException ("An SqlParameter specified in the array is already added to this or another SqlParameterCollection.");
+                                                                                                    
+                        param.Container = this;
+                        list.Add (param);
+                        metaParameters.Add (param.MetaParameter);
+                        }
+	
+		}		
 
-
+		public void AddRange (SqlParameter[] values) {
+		
+			this.AddRange(values);	
+		}
+#endif
+        
 		#endregion // Methods	
 	}
 }

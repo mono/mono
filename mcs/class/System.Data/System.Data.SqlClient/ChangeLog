@@ -1,3 +1,9 @@
+2005-05-24 Umadevi S <sumadevi@novell.com>
+	* fixed some 2.0 and 1.0 specific fields/attributes for various classes.
+	* Added SqlClientMetaDataCollectionNames.cs, Implemented some 2.0
+	properties for SqlParameterCollection for the bulkcopy feature.
+	
+
 2005-05-20 Kornél Pál <http://www.kornelpal.hu/>
 	
 	* Fixed Bug #53169 - SqlDataReader incorrectly returns bigint as decimal

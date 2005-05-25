@@ -92,7 +92,7 @@ namespace System.Data.SqlClient
 		}
 	}
 	
-	public String SoruceColumn {
+	public String SourceColumn {
                 get {
                         if (this.sourceColumn != null)
                                 return sourceColumn;

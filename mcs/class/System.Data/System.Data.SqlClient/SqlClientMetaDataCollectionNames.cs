@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlNotificationTransports.cs
+// System.Data.SqlClient.SqlClientMetaDataCollectionNames.cs
 //
 // Author:
 //   Umadevi S <sumadevi@novell.com>
@@ -33,20 +33,30 @@
 namespace System.Data.SqlClient
 {
 	/// <summary>
-	/// Describes the differnt transports that can be used between the client and the server.
+	/// Collection names
 	/// </summary>
-	[Flags]
-	[Serializable]
-	public enum SqlNotificationTransports {
+	//note : MS documentation has it as public sealed abstract.!
+	public sealed class SqlClientMetaDataCollectionNames {
 
-		Any = -1,
-		Http = 2,
-		None = 0,
-		Tcp = 1
+	public static readonly string Columns;
+	public static readonly string Databases;
+	public static readonly string ForeignKeys;
+	public static readonly string IndexColumns;
+	public static readonly string Indexes;
+	public static readonly string Parameters;
+	public static readonly string ProcedureColumns;
+	public static readonly string Procedures;
+	public static readonly string Tables;
+	public static readonly string UserDefinedTypes;
+	public static readonly string Users;
+	public static readonly string ViewColumns;
+	public static readonly string Views;
+		
+	
 	}
 
 }
 
-#endif
 
+#endif
 

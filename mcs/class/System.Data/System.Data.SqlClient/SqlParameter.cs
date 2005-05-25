@@ -165,7 +165,7 @@ namespace System.Data.SqlClient {
 			set { container = value; }
 		}
 
-#if NET_1_1	
+#if ONLY_1_0 || ONLY_1_1	
 		[Browsable (false)]
 		[DataSysDescription ("The parameter generic type.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -185,7 +185,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("Input, output, or bidirectional parameter.")]
 		[DefaultValue (ParameterDirection.Input)]
 #endif
@@ -223,7 +223,7 @@ namespace System.Data.SqlClient {
 			set { metaParameter.ParameterName = value; }
 		}
 
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[Browsable (false)]
 		[DataSysDescription ("a design-time property used for strongly typed code-generation.")]
 		[DefaultValue (false)]
@@ -241,7 +241,7 @@ namespace System.Data.SqlClient {
 
 		[Browsable (false)]
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("Offset in variable length data types.")]
 		[DefaultValue (0)]
 #endif
@@ -257,7 +257,7 @@ namespace System.Data.SqlClient {
 			set { offset = value; }
 		}
 	
-#if NET_1_1	
+#if ONLY_1_0 || ONLY_1_1	
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
 #endif
@@ -271,7 +271,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
 #endif
@@ -289,7 +289,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
 #endif
@@ -307,7 +307,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("Size of variable length data types (strings & arrays).")]
 		[DefaultValue (0)]
 #endif
@@ -321,7 +321,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
 		[DefaultValue ("")]
 #endif
@@ -335,7 +335,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
 		[DefaultValue (DataRowVersion.Current)]
 #endif
@@ -349,7 +349,7 @@ namespace System.Data.SqlClient {
 		}
 		
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("The parameter native type.")]
 		[DefaultValue (SqlDbType.NVarChar)]
 #endif
@@ -366,7 +366,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[DataCategory ("Data")]
-#if NET_1_1
+#if ONLY_1_0 || ONLY_1_1
 		[DataSysDescription ("Value of the parameter.")]
 		[DefaultValue (null)]
 #endif
@@ -387,10 +387,10 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-#if NET_2_0
+//#if NET_2_0
 //		public SqlCompareOptions CompareInfo{
 
-#endif
+//#endif
 
 		#endregion // Properties
 
