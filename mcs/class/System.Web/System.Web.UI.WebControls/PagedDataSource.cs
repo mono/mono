@@ -278,8 +278,8 @@ namespace System.Web.UI.WebControls
 					if(!IsPagingEnabled)
 						return 1;
                                         
-					int total = DataSourceCount;
-					return (total + pageSize - 1)/pageSize;
+					int total = (DataSourceCount + pageSize - 1) / pageSize;
+					return (total > 0 ? total : 1);
 				}
 				return 0;
 			}

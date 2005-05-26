@@ -1,3 +1,8 @@
+2005-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagedDataSource.cs: patch by Suresh Kumar that makes PageCount return
+	1 when there's a datasource and 0 pages. Closes bug #73864.
+
 2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataListItem.cs:
