@@ -443,6 +443,15 @@ namespace MonoTests.System.Collections {
 				AssertEquals("Exception's ParamName must be \"queue\"", "queue", e.ParamName);
 			}
 		}
+		
+		[Test]
+		public void TestAlwaysGrows() 
+		{
+			// In bug #61919 the grow () method might not always grow (if the size
+			// was 0, or due to rounding).
+			Queue queue = new Queue (new Queue());
+			queue.Enqueue(1);
+		}
 
 		[Test]
 		public void SynchronizedClone () 

@@ -1,3 +1,7 @@
+2005-05-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* QueueTest.cs: New test.
+
 2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StackTest.cs : test for CopyTo() on an empty stack.
