@@ -1,3 +1,7 @@
+2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* monoburg.vcproj: Project file for monobug.
+
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* monoburg.y (yyparsetail): Handle the case when the burg file does
