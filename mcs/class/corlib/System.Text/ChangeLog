@@ -1,3 +1,9 @@
+2005-05-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilder.cs: Remove = null inits on fields, saves a few
+	instructions. When we compare _cached_str == _str, we are only
+	interested in pointer based equality, so just do that.
+
 2005-05-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringBuilder.cs (InternalEnsureCapacity): It is possible that

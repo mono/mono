@@ -45,8 +45,8 @@ namespace System.Text {
 	public sealed class StringBuilder 
 	{
 		private int _length;
-		private string _str = null;
-		private string _cached_str = null;
+		private string _str;
+		private string _cached_str;
 		
 		private int _maxCapacity = Int32.MaxValue;
 		private const int constDefaultCapacity = 16;
@@ -639,8 +639,7 @@ namespace System.Text {
 	
 		private void InternalEnsureCapacity (int size) 
 		{
-			if (size > _str.Length || _cached_str == _str) 
-			{
+			if (size > _str.Length || (object) _cached_str == (object) _str) {
 				int capacity = _str.Length;
 
 				// Try double buffer, if that doesn't work, set the length as capacity
@@ -649,7 +648,7 @@ namespace System.Text {
 					// The first time a string is appended, we just set _cached_str
 					// and _str to it. This allows us to do some optimizations.
 					// Below, we take this into account.
-					if (_cached_str == _str && capacity < constDefaultCapacity)
+					if ((object) _cached_str == (object) _str && capacity < constDefaultCapacity)
 						capacity = constDefaultCapacity;
 					
 					capacity = capacity << 1;
