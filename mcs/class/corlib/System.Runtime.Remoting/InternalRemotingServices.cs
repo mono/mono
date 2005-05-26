@@ -41,7 +41,7 @@ namespace System.Runtime.Remoting
 {
 	public class InternalRemotingServices 
 	{
-		static Hashtable _soapAttributes;
+		static Hashtable _soapAttributes = new Hashtable ();
 		
 		public InternalRemotingServices ()
 		{
@@ -55,18 +55,8 @@ namespace System.Runtime.Remoting
 		}
 		
 		public static SoapAttribute GetCachedSoapAttribute (object reflectionObject)
-		{
-			if (_soapAttributes == null)
-			{
-				lock (typeof(InternalRemotingServices))
-				{
-					if (_soapAttributes == null)
-						_soapAttributes = new Hashtable ();
-				}
-			}
-			
-			lock (_soapAttributes.SyncRoot)
-			{
+		{			
+			lock (_soapAttributes.SyncRoot) {
 				SoapAttribute att = _soapAttributes [reflectionObject] as SoapAttribute;
 				if (att != null) return att;
 				
