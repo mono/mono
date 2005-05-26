@@ -126,7 +126,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void AdjustFormScrollbars(bool displayScrollbars) {
-			// Internal MS
+			base.AdjustFormScrollbars(displayScrollbars);
 		}
 
 		protected override void Dispose(bool disposing) {

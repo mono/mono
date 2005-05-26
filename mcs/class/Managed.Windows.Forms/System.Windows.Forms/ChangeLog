@@ -1,3 +1,7 @@
+2005-05-26  Peter Bartok  <pbartok@novell.com>
+
+	* ContainerControl.cs: Pass AdjustFormScrollbars() call on to base
+
 2005-05-24 Jonathan S. Chambers <jonathan.chambers@ansys.com>
 	* Control.cs: Fixed LowOrder and HighOrder to preserve sign.
 
