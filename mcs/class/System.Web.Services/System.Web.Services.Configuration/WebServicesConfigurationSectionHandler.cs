@@ -47,7 +47,7 @@ namespace System.Web.Services.Configuration
 	
 	class WSConfig
 	{
-		static WSConfig instance;
+		volatile static WSConfig instance;
 		WSProtocol protocols;
 		string wsdlHelpPage;
 		string filePath;
@@ -55,6 +55,7 @@ namespace System.Web.Services.Configuration
 		ArrayList extensionImporterTypes = new ArrayList();
 		ArrayList extensionReflectorTypes = new ArrayList();
 		ArrayList formatExtensionTypes = new ArrayList();
+		static readonly object lockobj = new object ();
 		
 		public WSConfig (WSConfig parent, object context)
 		{
@@ -142,7 +143,7 @@ namespace System.Web.Services.Configuration
 				if (instance != null)
 					return instance;
 
-				lock (typeof (WSConfig)) {
+				lock (lockobj) {
 					if (instance != null)
 						return instance;
 
