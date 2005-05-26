@@ -39,6 +39,7 @@ namespace System.Data.SqlClient {
 		#region Fields
 		internal static SqlConnectionFactory Instance; // singleton
                 private static DbProviderFactory _providerFactory;
+		static readonly object lockobj = new object ();
 		#endregion // Fields
 
 		#region Constructors
@@ -58,17 +59,15 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-                // create singleton connection factory.
-                internal static DbConnectionFactory GetSingleton (DbProviderFactory pvdrFactory)
-                {
-                        lock (typeof (SqlConnectionFactory)) 
-                                {
-                                        if (Instance == null)
-                                                Instance = new SqlConnectionFactory (pvdrFactory);
-                                        return Instance;
-                                }
-                }
-                
+		// create singleton connection factory.
+		internal static DbConnectionFactory GetSingleton (DbProviderFactory pvdrFactory)
+		{
+			lock (lockobj) {
+				if (Instance == null)
+					Instance = new SqlConnectionFactory (pvdrFactory);
+				return Instance;
+			}
+		}
 
 
 		[MonoTODO]

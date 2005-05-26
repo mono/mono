@@ -243,36 +243,31 @@ namespace System.Data.Odbc
 
                 static OdbcTypeConverter ()
                 {
-                        lock (typeof (OdbcTypeConverter)) {
-                                if (OdbcTypeMap == null) {
-                                        OdbcTypeMap = new MapCollection ();
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.BigInt,		SQL_C_TYPE.SBIGINT,		SQL_TYPE.BIGINT	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Binary,		SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Bit,		SQL_C_TYPE.BIT,		        SQL_TYPE.BIT	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Char,            SQL_C_TYPE.CHAR,		SQL_TYPE.CHAR	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Date,		SQL_C_TYPE.TYPE_DATE,		SQL_TYPE.TYPE_DATE  ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.DateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Decimal,		SQL_C_TYPE.NUMERIC,		SQL_TYPE.NUMERIC    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Double,		SQL_C_TYPE.DOUBLE,		SQL_TYPE.DOUBLE	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Image,		SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Int,		SQL_C_TYPE.LONG,		SQL_TYPE.INTEGER    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.NChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WCHAR	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.NText,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WLONGVARCHAR));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Numeric,		SQL_C_TYPE.NUMERIC,		SQL_TYPE.NUMERIC    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.NVarChar,	SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Real,		SQL_C_TYPE.FLOAT,		SQL_TYPE.REAL	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.SmallDateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.SmallInt,	SQL_C_TYPE.SHORT,		SQL_TYPE.SMALLINT   ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Text,		SQL_C_TYPE.WCHAR,		SQL_TYPE.LONGVARCHAR));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Time,		SQL_C_TYPE.TYPE_TIME,		SQL_TYPE.TYPE_TIME  ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.Timestamp,	SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.TinyInt,		SQL_C_TYPE.UTINYINT,		SQL_TYPE.TINYINT    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.UniqueIdentifier,SQL_C_TYPE.GUID,		SQL_TYPE.GUID	    ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.VarBinary,	SQL_C_TYPE.BINARY,		SQL_TYPE.VARBINARY  ));
-                                        OdbcTypeMap.Add (new TypeMap (OdbcType.VarChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-                                }
-                                
-                        }
+			OdbcTypeMap = new MapCollection ();
+			OdbcTypeMap.Add (new TypeMap (OdbcType.BigInt,		SQL_C_TYPE.SBIGINT,		SQL_TYPE.BIGINT	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Binary,		SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Bit,		SQL_C_TYPE.BIT,		        SQL_TYPE.BIT	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Char,            SQL_C_TYPE.CHAR,		SQL_TYPE.CHAR	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Date,		SQL_C_TYPE.TYPE_DATE,		SQL_TYPE.TYPE_DATE  ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.DateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Decimal,		SQL_C_TYPE.NUMERIC,		SQL_TYPE.NUMERIC    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Double,		SQL_C_TYPE.DOUBLE,		SQL_TYPE.DOUBLE	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Image,		SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Int,		SQL_C_TYPE.LONG,		SQL_TYPE.INTEGER    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.NChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WCHAR	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.NText,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WLONGVARCHAR));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Numeric,		SQL_C_TYPE.NUMERIC,		SQL_TYPE.NUMERIC    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.NVarChar,	SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Real,		SQL_C_TYPE.FLOAT,		SQL_TYPE.REAL	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.SmallDateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.SmallInt,	SQL_C_TYPE.SHORT,		SQL_TYPE.SMALLINT   ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Text,		SQL_C_TYPE.WCHAR,		SQL_TYPE.LONGVARCHAR));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Time,		SQL_C_TYPE.TYPE_TIME,		SQL_TYPE.TYPE_TIME  ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Timestamp,	SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.TinyInt,		SQL_C_TYPE.UTINYINT,		SQL_TYPE.TINYINT    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.UniqueIdentifier,SQL_C_TYPE.GUID,		SQL_TYPE.GUID	    ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.VarBinary,	SQL_C_TYPE.BINARY,		SQL_TYPE.VARBINARY  ));
+			OdbcTypeMap.Add (new TypeMap (OdbcType.VarChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
                 }
                 
                 public static SQL_C_TYPE ConvertToSqlCType (OdbcType type)

@@ -143,11 +143,19 @@ namespace System.Web
 	
 	class CapabilitiesLoader : MarshalByRefObject
 	{
-		static bool loaded;
+		static volatile bool loaded;
 		static ICollection alldata;
 		static Hashtable defaultCaps;
+		static readonly object lockobj = new object ();
 		private CapabilitiesLoader () {}
 
+		static CapabilitiesLoader ()
+		{
+			defaultCaps = new Hashtable ();
+			defaultCaps.Add ("frames", "True");
+			defaultCaps.Add ("tables", "True");
+		}
+			
 		public static Hashtable GetCapabilities (string userAgent)
 		{
 			Init ();
@@ -155,15 +163,14 @@ namespace System.Web
 				userAgent = userAgent.Trim ();
 
 			if (alldata == null || userAgent == null || userAgent == "")
-				return DefaultCapabilities;
+				return defaultCaps;
 
 			foreach (BrowserData bd in alldata) {
-				if (bd.IsMatch (userAgent)) {
+				if (bd.IsMatch (userAgent))
 					return bd.GetProperties (new Hashtable ());
-				}
 			}
 			
-			return DefaultCapabilities;
+			return defaultCaps;
 		}
 
 		static void Init ()
@@ -171,7 +178,7 @@ namespace System.Web
 			if (loaded)
 				return;
 
-			lock (typeof (CapabilitiesLoader)) {
+			lock (lockobj) {
 				if (loaded)
 					return;
 
@@ -238,20 +245,6 @@ namespace System.Web
 			while ((str = input.ReadLine ()) != null && str.Length != 0) {
 				string [] keyvalue = str.Split (eq, 2);
 				data.Add (keyvalue [0], keyvalue [1]);
-			}
-		}
-
-		static Hashtable DefaultCapabilities {
-			get {
-				lock (typeof (CapabilitiesLoader)) {
-					if (defaultCaps != null)
-						return defaultCaps;
-
-					defaultCaps = new Hashtable ();
-					defaultCaps.Add ("frames", "True");
-					defaultCaps.Add ("tables", "True");
-					return defaultCaps;
-				}
 			}
 		}
 	}

@@ -201,10 +201,12 @@ namespace Mono.Security.Cryptography {
 
 		// private static stuff
 
+		static object lockobj = new object ();
+		
 		private static string UserPath {
 			get {
-				if ((_userPath == null) || (!_userPathExists)) {
-					lock (typeof (KeyPairPersistence)) {
+				lock (lockobj) {
+					if ((_userPath == null) || (!_userPathExists)) {
 						_userPath = Path.Combine (
 							Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
 							".mono");
@@ -235,8 +237,8 @@ namespace Mono.Security.Cryptography {
 
 		private static string MachinePath {
 			get {
-				if ((_machinePath == null) || (!_machinePathExists)) {
-					lock (typeof (KeyPairPersistence)) {
+				lock (lockobj) {
+					if ((_machinePath == null) || (!_machinePathExists)) {
 						_machinePath = Path.Combine (
 							Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
 							".mono");

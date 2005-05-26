@@ -38,9 +38,10 @@ namespace System.Web.Configuration
 {
 	class WebControlsConfig
 	{
-		static WebControlsConfig instance;
+		volatile static WebControlsConfig instance;
 		string scriptsVDir;
 		string configFilePath;
+		static readonly object lockobj = new object ();
 		
 		public WebControlsConfig (WebControlsConfig parent, object context)
 		{
@@ -87,7 +88,7 @@ namespace System.Web.Configuration
 				if (instance != null)
 					return instance;
 
-				lock (typeof (WebControlsConfig)) {
+				lock (lockobj) {
 					if (instance != null)
 						return instance;
 

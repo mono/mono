@@ -43,30 +43,27 @@ namespace System.Data.Odbc
         {
                 #region Fields
                 public static readonly OdbcFactory Instance;
+		static readonly object lockobj = new object ();
                 #endregion //Fields
 
                 #region Constructors
-                /// <remarks>
-                /// public static variable Instance should hold the the singleton instance 
-                /// based on the knowledge that custom factories without this instance variable
-                /// ms.net  throws exception 
-                /// <pre>
-                /// System.InvalidOperationException: The requested .Net Framework Data 
-                ///             Provider's implementation does not have an Instance field 
-                ///             of a System.Data.Common.DbProviderFactory derived type.
-                ///     at System.Data.Common.DbProviderFactories.GetFactory(DataRow providerRow)
-                ///     at System.Data.Common.DbProviderFactories.GetFactory(String providerInvariantName)
-                /// </pre>
-                /// </remarks>
-                static OdbcFactory() 
-                {
-                        lock (typeof (OdbcFactory)) 
-                                {
-                                        if (Instance == null)
-                                                Instance = new OdbcFactory ();
-                                }
-                        
-                }
+		/// <remarks>
+		/// public static variable Instance should hold the the singleton instance 
+		/// based on the knowledge that custom factories without this instance variable
+		/// ms.net  throws exception 
+		/// <pre>
+		/// System.InvalidOperationException: The requested .Net Framework Data 
+		///             Provider's implementation does not have an Instance field 
+		///             of a System.Data.Common.DbProviderFactory derived type.
+		///     at System.Data.Common.DbProviderFactories.GetFactory(DataRow providerRow)
+		///     at System.Data.Common.DbProviderFactories.GetFactory(String providerInvariantName)
+		/// </pre>
+		/// </remarks>
+		static OdbcFactory() 
+		{
+			if (Instance == null)
+				Instance = new OdbcFactory ();                       
+		}
                 
                 private OdbcFactory()
                 {

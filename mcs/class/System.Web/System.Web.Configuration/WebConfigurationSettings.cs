@@ -45,14 +45,15 @@ namespace System.Web.Configuration
 		static WebDefaultConfig config;
 		static string machineConfigPath;
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
-			
+		static readonly object lockobj = new object ();
+		
 		private WebConfigurationSettings ()
 		{
 		}
 
 		public static void Init ()
 		{
-			lock (typeof (WebConfigurationSettings)) {
+			lock (lockobj) {
 				if (config != null)
 					return;
 
@@ -88,7 +89,7 @@ namespace System.Web.Configuration
 
 		public static string MachineConfigPath {
 			get {
-				lock (typeof (WebConfigurationSettings)) {
+				lock (lockobj) {
 					if (machineConfigPath != null)
 						return machineConfigPath;
 

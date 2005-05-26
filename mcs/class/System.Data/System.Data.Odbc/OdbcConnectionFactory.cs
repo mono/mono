@@ -39,6 +39,7 @@ namespace System.Data.Odbc {
 		#region Fields
 		internal static OdbcConnectionFactory Instance; // singleton
                 private static DbProviderFactory _providerFactory;
+		static readonly object lockobj = new object ();
 		#endregion // Fields
 
 		#region Constructors
@@ -61,7 +62,7 @@ namespace System.Data.Odbc {
                 // create singleton connection factory.
                 internal static OdbcConnectionFactory GetSingleton (OdbcFactory pvdrFactory)
                 {
-                        lock (typeof (OdbcConnectionFactory)) 
+                        lock (lockobj) 
                                 {
                                         if (Instance == null)
                                                 Instance = new OdbcConnectionFactory (pvdrFactory);

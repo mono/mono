@@ -48,7 +48,7 @@ namespace Cairo {
                 private Surface (IntPtr ptr, bool owns)
                 {
                         surface = ptr;
-			lock (typeof (Surface)){
+			lock (surfaces.SyncRoot){
 				surfaces [ptr] = this;
 			}
 			if (!owns)
@@ -57,7 +57,7 @@ namespace Cairo {
 
 		static internal Surface LookupExternalSurface (IntPtr p)
 		{
-			lock (typeof (Surface)){
+			lock (surfaces.SyncRoot){
 				object o = surfaces [p];
 				if (o == null){
 					return new Surface (p, false);
@@ -124,7 +124,7 @@ namespace Cairo {
 		{
 			if (surface == (IntPtr) 0)
 				return;
-			lock (typeof (Surface)){
+			lock (surfaces.SyncRoot){
 				surfaces.Remove (surface);
 			}
 			CairoAPI.cairo_surface_destroy (surface);
