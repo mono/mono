@@ -1,3 +1,8 @@
+2005-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* processes.c: make ExitCode be valid even if the user didn't call
+	WaitForExit() and is just polling on HasExited.
+
 2005-05-17  Dick Porter  <dick@ximian.com>
 
 	* io.c (file_getfilesize): Clear the error value, so that files
