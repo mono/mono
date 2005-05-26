@@ -84,6 +84,12 @@ namespace System.Threading
 		{
 			d (state);
 		}
+
+		[Obsolete ("does not exists anymore in 2.0 beta2")]
+		public virtual void SendOrPost (SendOrPostCallback d, object state)
+		{
+			Send (d, state);
+		}
 		
 		[MonoTODO]
 		public static void SetSynchronizationContext (SynchronizationContext syncContext)
