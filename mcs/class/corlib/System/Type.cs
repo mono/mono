@@ -230,6 +230,10 @@ namespace System {
 
 		public bool IsEnum {
 			get {
+				// This hack is needed because EnumBuilder's UnderlyingSystemType returns the enum's basetype
+				if (this is EnumBuilder)
+					return true;
+
 				return is_subtype_of (this, typeof (System.Enum), false) &&
 					this != typeof (System.Enum);
 			}

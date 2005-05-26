@@ -1,3 +1,7 @@
+2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs (IsEnum): Special case EnumBuilder here.
+
 2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoType.cs: Changed call from GetName to UnprotectedGetName to
