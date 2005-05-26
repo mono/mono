@@ -1,3 +1,7 @@
+2005-05-26  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* MdiClient.cs: Add missing Localizable attribute to BackgroundImage property 
+		as per status page, guessing it should be set to true
+
 2005-05-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: Draws text and basic text formatting

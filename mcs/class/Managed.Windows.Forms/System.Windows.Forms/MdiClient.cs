@@ -73,6 +73,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[Localizable(true)]
 		public override System.Drawing.Image BackgroundImage {
 			get {
 				return base.BackgroundImage;
