@@ -49,21 +49,10 @@ namespace System.Reflection
 		public abstract MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers);
 		public abstract PropertyInfo SelectProperty( BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers);
 
-		static Binder default_binder;
+		static Binder default_binder = new Default ();
 
 		internal static Binder DefaultBinder {
 			get {
-				if (null == default_binder)
-				{
-					lock (typeof (Binder)) 
-					{
-						if (default_binder == null)
-							default_binder = new Default ();
-
-						return default_binder;
-					}
-				}
-
 				return default_binder;
 			}
 		}
