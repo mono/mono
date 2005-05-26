@@ -1,4 +1,6 @@
 2005-05-26 Manjula GHM <mmanjula@novell.com>
+	* typemanager.cs : Fix Enum conversion for two level assignment and added few more cases
+2005-05-26 Manjula GHM <mmanjula@novell.com>
 	* statement.cs : Fix problem w.r.t 'Exit Sub' 
 2005-05-24 Satya Sudha K <ksathyasudha@hotmail.com>
 	* statement.cs : Added few more members like 'memberName' and 'type_expr' to the 'StatementSequence'

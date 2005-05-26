@@ -3,6 +3,7 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
+//         Manjula GHM     (mmanjula@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -1828,9 +1829,26 @@ public class TypeManager {
 					t == TypeManager.int32_type ||
 					t == TypeManager.uint32_type ||
 					t == TypeManager.int64_type ||
+					t == TypeManager.float_type ||
+					t == TypeManager.double_type ||
+					t == TypeManager.decimal_type ||
 					t == TypeManager.uint64_type)
 				return t;
-			throw new Exception ("Unhandled typecode in enum " + " from " + t.AssemblyQualifiedName);
+			// Following line is commented out to handle case like 
+			// Module M
+        		// Enum E
+                	//	A
+              		//	B
+        		// End Enum
+        		// Sub Main
+                	//	Dim e1 As E
+                	//	Dim i As Integer
+                	// 	e1 = E.A
+           		//	i = e1
+        		// End Sub
+			// End Module
+
+			// throw new Exception ("Unhandled typecode in enum " + " from " + t.AssemblyQualifiedName);
 		}
 		TypeCode tc = Type.GetTypeCode (t);
 
@@ -1855,6 +1873,12 @@ public class TypeManager {
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
+		case TypeCode.Single:
+			return TypeManager.float_type;
+		case TypeCode.Double:
+			return TypeManager.double_type;
+		case TypeCode.Decimal:
+			return TypeManager.decimal_type;
 		}
 		throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
 	}
