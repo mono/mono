@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
+//  (C) 2003 Ben Maurer
+//  (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -36,7 +38,7 @@ using System.Configuration.Provider;
 using System.Web.UI;
 
 namespace System.Web {
-	public class SiteMapProviderCollection : ProviderCollection
+	public sealed class SiteMapProviderCollection : ProviderCollection
 	{
 		public SiteMapProviderCollection () {}
 		
@@ -44,22 +46,27 @@ namespace System.Web {
 		{
 			if (provider == null)
 				throw new ArgumentNullException ("provider");
-			if ((provider as SiteMapProvider) == null)
+			if (!(provider is SiteMapProvider))
 				throw new InvalidOperationException(String.Format ("{0} must implement {1} to act as a site map provider", provider.GetType (), typeof (SiteMapProvider)));
-			
+			if (this [provider.Name] != null)
+				throw new ArgumentException ("Duplicate site map providers");
 			base.Add (provider);
 		}
 		
-		public virtual void AddArray (ProviderBase[] providerArray)
-		{			
-			foreach (ProviderBase p in providerArray) {
-				if (this [p.Name] != null)
-					throw new ArgumentException ("Duplicate site map providers");
-				Add (p);
-			}
+		public void Add (SiteMapProvider provider)
+		{
+			Add ((ProviderBase)provider);
 		}
 		
-		public new SiteMapProvider this [string name] { get { return (SiteMapProvider) base [name]; } }
+		public void AddArray (SiteMapProvider[] providerArray)
+		{
+			foreach (SiteMapProvider p in providerArray)
+				Add (p);
+		}
+		
+		public new SiteMapProvider this [string name] {
+			get { return (SiteMapProvider) base [name]; }
+		}
 	}
 }
 #endif

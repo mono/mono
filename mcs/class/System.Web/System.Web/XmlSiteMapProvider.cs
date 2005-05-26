@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -37,10 +39,15 @@ using System.Xml;
 using System.Web.Util;
 using System.IO;
 
-namespace System.Web {
-	public class XmlSiteMapProvider : SiteMapProvider, IDisposable {
+namespace System.Web
+{
+	public class XmlSiteMapProvider : StaticSiteMapProvider, IDisposable
+	{
 		static readonly char [] seperators = { ';', ',' };
 		bool building;
+		string file;
+		SiteMapNode root = null;
+		FileSystemWatcher watcher;
 		
 		public override SiteMapNode BuildSiteMap ()
 		{
@@ -52,15 +59,23 @@ namespace System.Web {
 				return null;
 			
 			lock (this) {
-				building = true;
-				if (root != null)
-					return root;
-				XmlDocument d = new XmlDocument ();
-				d.Load (file);
-				
-				root = BuildSiteMapRecursive (d.SelectSingleNode ("/siteMap/siteMapNode"));
-				AddNode (root);
-				building = false;
+				try {
+					building = true;
+					if (root != null)
+						return root;
+					XmlDocument d = new XmlDocument ();
+					d.Load (file);
+					
+					XmlNode nod = d.DocumentElement ["siteMapNode"];
+					if (nod == null)
+						throw new HttpException ("Invalid site map file: " + Path.GetFileName (file));
+						
+					root = BuildSiteMapRecursive (nod);
+						
+					AddNode (root);
+				} finally {
+					building = false;
+				}
 				return root;
 			}
 		}
@@ -78,7 +93,6 @@ namespace System.Web {
 		[MonoTODO]
 		SiteMapNode BuildSiteMapRecursive (XmlNode xmlNode)
 		{
-
 			if (xmlNode.Name != "siteMapNode")
 				throw new ConfigurationException ("incorrect element name", xmlNode);
 			
@@ -98,7 +112,7 @@ namespace System.Web {
 				string roles = GetOptionalAttribute (xmlNode, "roles");
 				
 				ArrayList keywordsList = new ArrayList ();
-				if (keywords != null) {
+				if (keywords != null && keywords.Length > 0) {
 					foreach (string s in keywords.Split (seperators)) {
 						string ss = s.Trim ();
 						if (ss.Length > 0)
@@ -107,7 +121,7 @@ namespace System.Web {
 				}
 				
 				ArrayList rolesList = new ArrayList ();
-				if (roles != null) {
+				if (roles != null && roles.Length > 0) {
 					foreach (string s in roles.Split (seperators)) {
 						string ss = s.Trim ();
 						if (ss.Length > 0)
@@ -115,10 +129,10 @@ namespace System.Web {
 					}
 				}
 				
-				SiteMapNode node = new SiteMapNode (this, null, url, title, description,
+				SiteMapNode node = new SiteMapNode (this, url, url, title, description,
 					/*ArrayList.ReadOnly (keywordsList), */ArrayList.ReadOnly (rolesList), null,
-					null); // TODO what do they want for attributes
-				
+					null, null); // TODO what do they want for attributes
+					
 				foreach (XmlNode child in xmlNode.ChildNodes) {
 					if (child.NodeType != XmlNodeType.Element)
 						continue;
@@ -135,10 +149,9 @@ namespace System.Web {
 			root = null;
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
-			// what do i do?
+			watcher.Dispose ();
 		}
 		
 		[MonoTODO]
@@ -160,6 +173,19 @@ namespace System.Web {
 				file = Path.Combine(HttpRuntime.AppDomainAppPath, file);
 			else
 				file = UrlUtils.ResolvePhysicalPathFromAppAbsolute (file);
+				
+			if (File.Exists (file)) {
+				watcher = new FileSystemWatcher ();
+				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
+				watcher.Filter = Path.GetFileName (file);
+				watcher.Changed += new FileSystemEventHandler (OnFileChanged);
+				watcher.EnableRaisingEvents = true;
+			}
+		}
+		
+		void OnFileChanged (object sender, FileSystemEventArgs args)
+		{
+			Clear ();
 		}
 
 		public override SiteMapNode RootNode {
@@ -169,8 +195,10 @@ namespace System.Web {
 			}
 		}
 		
-		string file;
-		SiteMapNode root = null;
+		protected internal override SiteMapNode GetRootNodeCore ()
+		{
+			return BuildSiteMap ();
+		}
 	}
 
 }

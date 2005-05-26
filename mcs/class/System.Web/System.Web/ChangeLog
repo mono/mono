@@ -1,3 +1,16 @@
+2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SiteMapNodeCollection.cs: Implemented missing methods. The collection
+	does not inherit from CollectionBase any more.
+	* SiteMapNode.cs: Track api changes.
+	* SiteMapProvider.cs: Moved several methods to the new
+	StaticSiteMapProvider class. Other fixes.
+	* XmlSiteMapProvider.cs: Watch changes in the xml files. Other fixes.
+	* SiteMapProviderCollection.cs: Minor fixes.
+	* SiteMap.cs: Added missing event. Avoid double check lock.
+	* StaticSiteMapProvider.cs: New class that implements some of the
+	funtionality of SiteMapProvider.
+
 2005-05-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* MimeTypes.cs: Remove extra spaces, they were typos. Fixes 75049.
@@ -376,7 +389,7 @@
 	* HttpContext.cs: reverting Pedro's patch and sending mail with test
 	to mono-devel.
 
-2004-06-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2004-06-09  Pedro Martnez Juli  <yoros@wanadoo.es>
 
 	* HttpContext: User property returns its own "user" value because
 	the context can walk through different Threads. When "User" property
@@ -440,7 +453,7 @@
 2004-06-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWorkerRequest.cs: the hashtables are now case-insensitive. Thanks
-	to Markus Kräutner.
+	to Markus Krutner.
 
 2004-05-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
@@ -1664,7 +1677,7 @@
 
 	* HttpServerUtility.cs: Fix build breaker.
 
-2002-03-28  Wictor Wilén  <wictor@iBizkit.se>
+2002-03-28  Wictor Wiln  <wictor@iBizkit.se>
 
 	* HttpServerUtils.cs : Added some more functionality
 	

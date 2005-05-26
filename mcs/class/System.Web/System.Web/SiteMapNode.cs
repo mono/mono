@@ -41,14 +41,16 @@ namespace System.Web {
 	
 		private SiteMapNode () {}
 		
-		public SiteMapNode (SiteMapProvider provider, string key) : this (provider, key, null, null, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url) : this (provider, key, url, null, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url, string title) : this (provider, key, url, title, null, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description) : this (provider, key, url, title, description, null, null, null) {}
-		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description, IList roles, NameValueCollection attributes, NameValueCollection resourceKeys)
+		public SiteMapNode (SiteMapProvider provider, string key) : this (provider, key, null, null, null, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url) : this (provider, key, url, null, null, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url, string title) : this (provider, key, url, title, null, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description) : this (provider, key, url, title, description, null, null, null, null) {}
+		public SiteMapNode (SiteMapProvider provider, string key, string url, string title, string description, IList roles, NameValueCollection attributes, NameValueCollection explicitResourceKeys, string implicitResourceKey)
 		{
 			if (provider == null)
 				throw new ArgumentNullException ("provider");
+			if (key == null)
+				throw new ArgumentNullException ("key");
 			
 			this.provider = provider;
 			this.key = key;
@@ -57,7 +59,8 @@ namespace System.Web {
 			this.description = description;
 			this.roles = roles;
 			this.attributes = attributes;
-			this.resourceKeys = resourceKeys;
+			this.resourceKeys = explicitResourceKeys;
+			this.implicitResourceKey = implicitResourceKey;
 		}
 
 		public SiteMapDataSourceView GetDataSourceView (SiteMapDataSource owner, string viewName)
@@ -70,10 +73,9 @@ namespace System.Web {
 			return new SiteMapHierarchicalDataSourceView (this);
 		}
 		
-		[MonoTODO]
 		public bool IsAccessibleToUser (System.Web.HttpContext ctx)
 		{
-			throw new NotImplementedException ();
+			return provider.IsAccessibleToUser (ctx, this);
 		}
 		
 		public override string ToString()
@@ -81,7 +83,9 @@ namespace System.Web {
 			return Title;
 		}
 
-		public virtual bool HasChildNodes { get { return ChildNodes != null && ChildNodes.Count != 0; } }
+		public virtual bool HasChildNodes {
+			get { return ChildNodes != null && ChildNodes.Count != 0; }
+		}
 
 		public SiteMapNodeCollection GetAllNodes ()
 		{
@@ -161,10 +165,15 @@ namespace System.Web {
 			}
 		}
 		
-		[MonoTODO ("set")]
 		public virtual SiteMapNodeCollection ChildNodes {
-			get { return provider.GetChildNodes (this); } 
-			set { CheckWritable (); }
+			get {
+				if (childNodes != null) return childNodes;
+				return provider.GetChildNodes (this);
+			} 
+			set {
+				CheckWritable ();
+				childNodes = value;
+			}
 		}
 
 		public virtual SiteMapNode RootNode { get { return provider.RootProvider.RootNode; }  }
@@ -179,7 +188,7 @@ namespace System.Web {
 		}
 		
 		[MonoTODO]
-		protected string GetExplicitResourceString (string attributeName, bool b)
+		protected string GetExplicitResourceString (string attributeName, string defaultValue, bool throwIfNotFound)
 		{
 			return null;
 		}
@@ -196,12 +205,17 @@ namespace System.Web {
 			get {
 				string val = null;
 				if (provider.EnableLocalization) {
-					val = GetExplicitResourceString (key, true);
+					val = GetExplicitResourceString (key, null, true);
 					if (val == null) val = GetImplicitResourceString (key);
 				}
 				if (val != null) return null;
 				if (attributes != null) return attributes [key];
 				return null;
+			}
+			set {
+				CheckWritable ();
+				if (attributes == null) attributes = new NameValueCollection ();
+				attributes [key] = value;
 			}
 		}
 		
@@ -275,6 +289,7 @@ namespace System.Web {
 			set { CheckWritable (); attributes = value; }
 		}
 		
+		[Localizable (true)]
 		public virtual string Description {
 			get { return description != null ? description : ""; }
 			set { CheckWritable (); description = value; }
@@ -344,6 +359,8 @@ namespace System.Web {
 		bool readOnly;
 		string resourceKey;
 		SiteMapNode parent;
+		string implicitResourceKey;
+		SiteMapNodeCollection childNodes;
 		#endregion
 		
 	}

@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 //  (C) 2003 Ben Maurer
+//  (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -33,13 +35,82 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
-namespace System.Web {
-	public class SiteMapNodeCollection : CollectionBase, IHierarchicalEnumerable {
-		public SiteMapNodeCollection () {}
-		public SiteMapNodeCollection (SiteMapNode value) { Add (value); }
-		public SiteMapNodeCollection (SiteMapNode[] values) { AddRangeInternal (values); }
-		public SiteMapNodeCollection (SiteMapNodeCollection values) { AddRangeInternal (values); }
+namespace System.Web
+{
+	public class SiteMapNodeCollection : IList, IHierarchicalEnumerable
+	{
+		ArrayList list;
+		internal static SiteMapNodeCollection EmptyList;
+		
+		static SiteMapNodeCollection ()
+		{
+			EmptyList = new SiteMapNodeCollection ();
+			EmptyList.list = ArrayList.ReadOnly (new ArrayList ());
+		}
+		
+		public SiteMapNodeCollection ()
+		{
+		}
+		
+		public SiteMapNodeCollection (int capacity)
+		{
+			list = new ArrayList (capacity);
+		}
+		
+		public SiteMapNodeCollection (SiteMapNode value)
+		{
+			Add (value);
+		}
+		
+		public SiteMapNodeCollection (SiteMapNode[] values)
+		{
+			AddRangeInternal (values);
+		}
+		
+		public SiteMapNodeCollection (SiteMapNodeCollection values)
+		{
+			AddRangeInternal (values);
+		}
+		
+		internal static SiteMapNodeCollection EmptyCollection {
+			get { return EmptyList; }
+		}
+		
+		ArrayList List {
+			get {
+				if (list == null) list = new ArrayList ();
+				return list;
+			}
+		}
+		
+		public virtual int Count {
+			get { return list == null ? 0 : list.Count; }
+		}
+		
+		public virtual bool IsSynchronized {
+			get { return false; }
+		}
+		
+		public virtual object SyncRoot {
+			get { return this; }
+		}
+		
+		public virtual IEnumerator GetEnumerator ()
+		{
+			return list != null ? list.GetEnumerator () : Type.EmptyTypes.GetEnumerator ();
+		}
+		
+		public virtual void Clear ()
+		{
+			if (list != null) list.Clear ();
+		}
+		
+		public virtual void RemoveAt (int index)
+		{
+			List.RemoveAt (index);
+		}
 		
 		public virtual int Add (SiteMapNode value)
 		{
@@ -50,22 +121,22 @@ namespace System.Web {
 		
 		public virtual void AddRange (System.Web.SiteMapNode[] value)
 		{
-			this.OnAddRange (value);
 			this.AddRangeInternal (value);
 		}
 		
 		public virtual void AddRange (SiteMapNodeCollection value)
 		{
-			this.OnAddRange (value);
 			this.AddRangeInternal (value);
 		}
 		
-		private void AddRangeInternal (IList value)
+		internal virtual void AddRangeInternal (IList value)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			this.InnerList.AddRange (value);
+
+			List.AddRange (value);
 		}
+
 		public bool Contains (SiteMapNode value)
 		{
 			return this.List.Contains (value);
@@ -75,11 +146,6 @@ namespace System.Web {
 		{
 			this.List.CopyTo (array, index);
 		}
-		
-//		public SiteMapDataSourceView GetDataSourceView ()
-//		{
-//			return new SiteMapDataSourceView (this);
-//		}
 		
 		public int IndexOf (SiteMapNode value)
 		{
@@ -91,20 +157,20 @@ namespace System.Web {
 			this.List.Insert (index, value);
 		}
 		
-		protected virtual void OnAddRange (IList value)
+		protected virtual void OnValidate (object value)
 		{
-		}
-		
-		protected override void OnValidate (object value)
-		{
-			base.OnValidate (value);
-			if (value as SiteMapNode == null)
+			if (!(value is SiteMapNode))
 				throw new ArgumentException ("Invalid type");
 		}
-		
+
 		public static SiteMapNodeCollection ReadOnly (SiteMapNodeCollection collection)
 		{
-			return new ReadOnlySiteMapNodeCollection (collection);
+			SiteMapNodeCollection col = new SiteMapNodeCollection ();
+			if (collection.list != null)
+				col.list = ArrayList.ReadOnly (collection.list);
+			else
+				col.list = ArrayList.ReadOnly (new ArrayList ());
+			return col;
 		}
 		
 		public virtual void Remove (SiteMapNode value)
@@ -112,9 +178,19 @@ namespace System.Web {
 			this.List.Remove (value);
 		}
 		
-		IHierarchyData System.Web.UI.IHierarchicalEnumerable.GetHierarchyData (object enumeratedItem)
+		public virtual IHierarchyData GetHierarchyData (object enumeratedItem)
 		{
 			return enumeratedItem as IHierarchyData;
+		}
+		
+		public SiteMapDataSourceView GetDataSourceView (SiteMapDataSource owner, string viewName)
+		{
+			return new SiteMapDataSourceView (owner, viewName, this);
+		}
+		
+		public SiteMapHierarchicalDataSourceView GetHierarchicalDataSourceView ()
+		{
+			return new SiteMapHierarchicalDataSourceView (this);
 		}
 		
 		public virtual SiteMapNode this [int index] {
@@ -127,21 +203,46 @@ namespace System.Web {
 		}
 
 		public virtual bool IsReadOnly {
-			get { return List.IsReadOnly; }
+			get { return list != null && list.IsReadOnly; }
 		}
-
-		private class ReadOnlySiteMapNodeCollection : SiteMapNodeCollection {
-			
-			internal ReadOnlySiteMapNodeCollection (SiteMapNodeCollection collection) : base (collection) {}
-
-			protected override void OnAddRange (IList value) { throw new NotSupportedException ("Readonly collection"); }
-			protected override void OnClear () { throw new NotSupportedException ("Readonly collection"); }
-			protected override void OnInsert (int index, object value) { throw new NotSupportedException ("Readonly collection"); }
-			protected override void OnRemove (int index, object value) { throw new NotSupportedException ("Readonly collection"); }
-			protected override void OnSet (int index, object oldValue, object newValue) { throw new NotSupportedException ("Readonly collection"); }
-			public override bool IsReadOnly { get { return true; } }
+		
+		object IList.this [int index] {
+			get { return List [index]; }
+			set { OnValidate (value); List [index] = value; }
 		}
-		 
+		
+		int IList.Add (object value)
+		{
+			OnValidate (value);
+			return List.Add (value);
+		}
+		
+		bool IList.Contains (object value)
+		{
+			return List.Contains (value);
+		}
+		
+		int IList.IndexOf (object value)
+		{
+			return List.IndexOf (value);
+		}
+		
+		void IList.Insert (int index, object value)
+		{
+			OnValidate (value);
+			List.Insert (index, value);
+		}
+		
+		void IList.Remove (object value)
+		{
+			OnValidate (value);
+			List.Remove (value);
+		}
+		
+		void ICollection.CopyTo (Array array, int index)
+		{
+			List.CopyTo (array, index);
+		}
 	}
 }
 #endif

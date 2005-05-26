@@ -35,7 +35,7 @@ using System.Text;
 using System.Configuration.Provider;
 
 namespace System.Web {
-	public sealed class SiteMap {
+	public abstract class SiteMap {
 	
 		internal SiteMap ()
 		{
@@ -44,16 +44,14 @@ namespace System.Web {
 		[MonoTODO ("Get everything from the config")]
 		private static void Init ()
 		{
-			if (provider == null) {
-				lock (locker) {
-					if (provider == null) {
-						providers = new SiteMapProviderCollection ();
-						provider = new XmlSiteMapProvider ();
-						NameValueCollection attributes = new NameValueCollection ();
-						attributes.Add ("siteMapFile", "app.sitemap");
-						((ProviderBase)provider).Initialize ("AspNetXmlSiteMapProvider", attributes);
-						providers.Add ((ProviderBase)provider);
-					}
+			lock (locker) {
+				if (provider == null) {
+					providers = new SiteMapProviderCollection ();
+					provider = new XmlSiteMapProvider ();
+					NameValueCollection attributes = new NameValueCollection ();
+					attributes.Add ("siteMapFile", "Web.sitemap");
+					((ProviderBase)provider).Initialize ("AspNetXmlSiteMapProvider", attributes);
+					providers.Add ((ProviderBase)provider);
 				}
 			}
 		}
@@ -76,6 +74,11 @@ namespace System.Web {
 				Init ();
 				return providers;
 			}
+		}
+		
+		public event SiteMapResolveEventHandler SiteMapResolve {
+			add { Provider.SiteMapResolve += value; }
+			remove { Provider.SiteMapResolve -= value; }
 		}
 		
 		static SiteMapProvider provider;

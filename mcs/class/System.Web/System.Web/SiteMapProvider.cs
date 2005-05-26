@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -40,214 +42,200 @@ namespace System.Web {
 	public abstract class SiteMapProvider : ProviderBase {
 		
 		bool enableLocalization;
+		SiteMapProvider parentProvider;
+		SiteMapProvider rootProviderCache;
+		bool securityTrimming;
+		object resolveLock = new Object();
+		bool resolving;
 		
-		public void AddNode (SiteMapNode node)
+		protected virtual void AddNode (SiteMapNode node)
 		{
 			AddNode (node, null);
 		}
 		
-		public void AddNode (SiteMapNode node, SiteMapNode parentNode)
+		internal protected virtual void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
 			if (node == null)
 				throw new ArgumentNullException ("node");
-			
-			lock (this) {
-				string url = node.Url;
-				if (url != null && url.Length > 0) {
-					
-					
-						if (UrlUtils.IsRelativeUrl (url))
-							url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
-						else
-							url = UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
-						
-						if (FindSiteMapNode (url) != null)
-							throw new InvalidOperationException ();
-					
-					UrlToNode [url] = node;
-				}
-				
-				if (parentNode != null) {
-					NodeToParent [node] = parentNode;
-					if (NodeToChildren [parentNode] == null)
-						NodeToChildren [parentNode] = new SiteMapNodeCollection ();
-					
-					((SiteMapNodeCollection) NodeToChildren [parentNode]).Add (node);
-				}
-			}
-		}
-		
-		Hashtable nodeToParent;
-		Hashtable NodeToParent {
-			get {
-				if (nodeToParent == null) {
-					lock (this) {
-						if (nodeToParent == null)
-							nodeToParent = new Hashtable ();
-					}
-				}
-				return nodeToParent;
-			}
-		}
-		
-		Hashtable nodeToChildren;
-		Hashtable NodeToChildren {
-			get {
-				if (nodeToChildren == null) {
-					lock (this) {
-						if (nodeToChildren == null)
-							nodeToChildren = new Hashtable ();
-					}
-				}
-				return nodeToChildren;
-			}
-		}
-		
-		Hashtable urlToNode;
-		Hashtable UrlToNode {
-			get {
-				if (urlToNode == null) {
-					lock (this) {
-						if (urlToNode == null) {
-							urlToNode = new Hashtable (
-								CaseInsensitiveHashCodeProvider.DefaultInvariant,
-								CaseInsensitiveComparer.DefaultInvariant
-							);
-						}
-					}
-				}
-				return urlToNode;
-			}
-		}
-		
-		protected virtual void Clear ()
-		{
-			lock (this) {
-				if (urlToNode != null)
-					urlToNode.Clear ();
-				if (nodeToChildren != null)
-					nodeToChildren.Clear ();
-				if (nodeToParent != null)
-					nodeToParent.Clear ();
-			}
 		}
 
-		public virtual SiteMapNode FindSiteMapNode (string rawUrl)
+		public virtual SiteMapNode FindSiteMapNode (HttpContext context)
 		{
-			if (rawUrl == null)
-				throw new ArgumentNullException ("rawUrl");
+			if (context == null)
+				throw new ArgumentNullException ("context");
 			
-			if (rawUrl.Length > 0) {
-				this.BuildSiteMap();
-				rawUrl = UrlUtils.ResolveVirtualPathFromAppAbsolute (rawUrl);
-				return (SiteMapNode) UrlToNode [rawUrl];
-			}
-			return null;
+			SiteMapNode ret = this.FindSiteMapNode (context.Request.RawUrl);
+			if (ret == null)
+				ret = this.FindSiteMapNode (context.Request.Path);
+			return ret;
 		}
+
+		public abstract SiteMapNode FindSiteMapNode (string rawUrl);
 		
-		public virtual SiteMapNodeCollection GetChildNodes (SiteMapNode node)
+		public virtual SiteMapNode FindSiteMapNodeFromKey (string key)
 		{
-			if (node == null)
-				throw new ArgumentNullException ("node");
-			
-			this.BuildSiteMap();
-			SiteMapNodeCollection ret = (SiteMapNodeCollection) NodeToChildren [node];
-			
-			if (ret != null)
-				return SiteMapNodeCollection.ReadOnly (ret);
+			if (key == null)
+				throw new ArgumentNullException ("key");
 			
 			return null;
 		}
+
+		public abstract SiteMapNodeCollection GetChildNodes (SiteMapNode node);
 		
-		public virtual SiteMapNode GetParentNode(SiteMapNode node) {
-			if (node == null)
-				throw new ArgumentNullException ("node");
-			this.BuildSiteMap();
-			return (SiteMapNode) NodeToParent [node];
+		public abstract SiteMapNode GetParentNode (SiteMapNode node);
+		
+		public virtual SiteMapNode GetCurrentNodeAndHintAncestorNodes (int upLevel)
+		{
+			if (upLevel < -1) throw new ArgumentOutOfRangeException ("upLevel");
+
+			return CurrentNode;
 		}
 		
-		public void RemoveNode (SiteMapNode node)
+		public virtual SiteMapNode GetCurrentNodeAndHintNeighborhoodNodes (int upLevel, int downLevel)
 		{
-	
+			if (upLevel < -1) throw new ArgumentOutOfRangeException ("upLevel");
+			if (downLevel < -1) throw new ArgumentOutOfRangeException ("downLevel");
+			
+			return CurrentNode;
+		}
+		
+		public virtual SiteMapNode GetParentNodeRelativeToCurrentNodeAndHintDownFromParent (int walkupLevels, int relativeDepthFromWalkup)
+		{
+			if (walkupLevels < 0) throw new ArgumentOutOfRangeException ("walkupLevels");
+			if (relativeDepthFromWalkup < 0) throw new ArgumentOutOfRangeException ("relativeDepthFromWalkup");
+			
+			SiteMapNode node = GetCurrentNodeAndHintAncestorNodes (walkupLevels);
+			for (int n=0; n<walkupLevels && node != null; n++)
+				node = GetParentNode (node);
+				
+			if (node == null) return null;
+
+			HintNeighborhoodNodes (node, 0, relativeDepthFromWalkup);
+			return node;
+		}
+		
+		public virtual SiteMapNode GetParentNodeRelativeToNodeAndHintDownFromParent (SiteMapNode node, int walkupLevels, int relativeDepthFromWalkup)
+		{
+			if (walkupLevels < 0) throw new ArgumentOutOfRangeException ("walkupLevels");
+			if (relativeDepthFromWalkup < 0) throw new ArgumentOutOfRangeException ("relativeDepthFromWalkup");
+			if (node == null) throw new ArgumentNullException ("node");
+			
+			HintAncestorNodes (node, walkupLevels);
+			for (int n=0; n<walkupLevels && node != null; n++)
+				node = GetParentNode (node);
+				
+			if (node == null) return null;
+			
+			HintNeighborhoodNodes (node, 0, relativeDepthFromWalkup);
+			return node;
+		}
+		
+		protected internal abstract SiteMapNode GetRootNodeCore ();
+		
+		protected static SiteMapNode GetRootNodeCoreFromProvider (SiteMapProvider provider)
+		{
+			return provider.GetRootNodeCore ();
+		}
+		
+		public virtual void HintAncestorNodes (SiteMapNode node, int upLevel)
+		{
+			if (upLevel < -1) throw new ArgumentOutOfRangeException ("upLevel");
+			if (node == null) throw new ArgumentNullException ("node");
+		}
+		
+		public virtual void HintNeighborhoodNodes (SiteMapNode node, int upLevel, int downLevel)
+		{
+			if (upLevel < -1) throw new ArgumentOutOfRangeException ("upLevel");
+			if (downLevel < -1) throw new ArgumentOutOfRangeException ("downLevel");
+			if (node == null) throw new ArgumentNullException ("node");
+		}
+		
+		public virtual void RemoveNode (SiteMapNode node)
+		{
 			if (node == null)
 				throw new ArgumentNullException("node");
-			
-			lock (this) {
-				SiteMapNode parent = (SiteMapNode) NodeToParent [node];
-				if (NodeToParent.Contains (node))
-					NodeToParent.Remove (node);
-				
-				if (node.Url != null && node.Url.Length > 0 && UrlToNode.Contains (node.Url))
-					UrlToNode.Remove (node.Url);
-				
-				if (parent != null) {
-					SiteMapNodeCollection siblings = (SiteMapNodeCollection) NodeToChildren [node];
-					if (siblings != null && siblings.Contains (node))
-						siblings.Remove (node);
-				}
-			}
 		}
 
 		public override void Initialize (string name, NameValueCollection attributes)
-		{ 
-			if (attributes != null)
-				description = attributes ["description"];
+		{
+			base.Initialize (name, attributes);
+			if (attributes["securityTrimmingEnabled"] != null)
+				securityTrimming = (bool) Convert.ChangeType (attributes ["securityTrimmingEnabled"], typeof(bool));
+		}
 		
+		[MonoTODO]
+		public virtual bool IsAccessibleToUser (HttpContext context, SiteMapNode node)
+		{
+			return true;
 		}
 		
 		public virtual SiteMapNode CurrentNode {
 			get {
-				SiteMapNode ret;
-				
 				if (HttpContext.Current != null) {
-					ret = this.FindSiteMapNode (HttpContext.Current.Request.RawUrl);
-					if (ret == null)
-						ret = this.FindSiteMapNode (HttpContext.Current.Request.Path);
-
-					return ret;
-				}
-				
-				return null;
+					SiteMapNode ret = ResolveSiteMapNode (HttpContext.Current);
+					if (ret != null) return ret;
+					return FindSiteMapNode (HttpContext.Current);
+				} else
+					return null;
 			}
 		}
 		
-		string description;
-		public virtual string Description {
-			get { return description != null ? description : "SiteMapProvider"; }
-		}
-		
-		SiteMapProvider parentProvider;
 		public virtual SiteMapProvider ParentProvider {
 			get { return parentProvider; }
 			set { parentProvider = value; }
 		}
 		
-		SiteMapProvider rootProviderCache;
 		public virtual SiteMapProvider RootProvider {
 			get {
-				if (rootProviderCache == null) {
-					lock (this) {
-						if (rootProviderCache == null) {
-							SiteMapProvider current = this;
-							while (current.ParentProvider != null)
-								current = current.ParentProvider;
-							
-							rootProviderCache = current;
-						}
+				lock (this) {
+					if (rootProviderCache == null) {
+						SiteMapProvider current = this;
+						while (current.ParentProvider != null)
+							current = current.ParentProvider;
+						
+						rootProviderCache = current;
 					}
 				}
 				return rootProviderCache;
 			}
 		}
 		
+		protected SiteMapNode ResolveSiteMapNode (HttpContext context)
+		{
+			SiteMapResolveEventArgs args = new SiteMapResolveEventArgs (context, this);
+			if (SiteMapResolve != null) {
+				lock (resolveLock) {
+					if (resolving) return null;
+					resolving = true;
+					SiteMapNode r = SiteMapResolve (this, args);
+					resolving = false;
+					return r;
+				}
+			}
+			else
+				return null;
+		}
+		
 		public bool EnableLocalization {
 			get { return enableLocalization; }
 			set { enableLocalization = value; }
 		}
+		
+		public bool SecurityTrimmingEnabled {
+			get { return securityTrimming; }
+		}
 
-		public abstract SiteMapNode BuildSiteMap ();
-		public abstract SiteMapNode RootNode { get; }
+		public virtual SiteMapNode RootNode {
+			get {
+				SiteMapNode node = GetRootNodeCore ();
+				if (IsAccessibleToUser (HttpContext.Current, node))
+					return node;
+				else
+					return null;
+			}
+		}
 	
+		public event SiteMapResolveEventHandler SiteMapResolve;
 	}
 }
 #endif
