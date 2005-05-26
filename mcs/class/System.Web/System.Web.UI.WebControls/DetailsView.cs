@@ -872,6 +872,10 @@ namespace System.Web.UI.WebControls
 			get { return PageIndex; }
 		}		
 	
+		int IDataItemContainer.DisplayIndex {
+			get { return PageIndex; }
+		}		
+	
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(Guid);

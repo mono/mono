@@ -840,6 +840,9 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual string RaiseCallbackEvent (string eventArgs)
 		{
+			RequiresDataBinding = true;
+			EnsureDataBound ();
+			
 			TreeNode node = FindNodeByPos (eventArgs);
 			ArrayList levelLines = new ArrayList ();
 			TreeNode nd = node;
@@ -900,6 +903,7 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+			RequiresDataBinding = true;
 			EnsureDataBound ();
 			
 			bool res = false;

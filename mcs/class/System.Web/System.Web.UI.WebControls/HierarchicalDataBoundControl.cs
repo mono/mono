@@ -86,6 +86,9 @@ namespace System.Web.UI.WebControls
 
 		protected override void OnLoad (EventArgs e)
 		{
+			if (IsBoundUsingDataSourceID && (!Page.IsPostBack || !EnableViewState))
+				RequiresDataBinding = true;
+		
 			IHierarchicalDataSource ds = GetDataSource ();
 			if (ds != null && DataSourceID != "")
 				ds.DataSourceChanged += new EventHandler (OnDataSourceChanged);

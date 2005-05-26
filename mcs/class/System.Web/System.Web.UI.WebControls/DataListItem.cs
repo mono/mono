@@ -85,6 +85,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		int IDataItemContainer.DataItemIndex {
+			get { return itemIndex; }
+		}
+
+		int IDataItemContainer.DisplayIndex {
+			get { return itemIndex; }
+		}
+#endif
+
 		public virtual void RenderItem (HtmlTextWriter writer, bool extractRows, bool tableLayout)
 		{
 			if (extractRows){

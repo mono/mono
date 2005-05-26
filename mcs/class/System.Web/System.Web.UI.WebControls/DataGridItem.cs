@@ -90,6 +90,16 @@ namespace System.Web.UI.WebControls
 				return itemType;
 			}
 		}
+		
+#if NET_2_0
+		int IDataItemContainer.DataItemIndex {
+			get { return dataSetIndex; }
+		}
+
+		int IDataItemContainer.DisplayIndex {
+			get { return itemIndex; }
+		}
+#endif
 
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{

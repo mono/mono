@@ -35,19 +35,21 @@ namespace System.Web.UI.WebControls
 {
 	public class SiteMapHierarchicalDataSourceView : HierarchicalDataSourceView
 	{
-		public SiteMapHierarchicalDataSourceView (SiteMapNode node) : this (new SiteMapNodeCollection (node)) {}
+		SiteMapNodeCollection collection;
+		
+		public SiteMapHierarchicalDataSourceView (SiteMapNode node) : this (new SiteMapNodeCollection (node))
+		{
+		}
+		
 		public SiteMapHierarchicalDataSourceView (SiteMapNodeCollection collection)
 		{
 			this.collection = collection;
 		}
 
-		[MonoTODO]
 		public override IHierarchicalEnumerable Select ()
 		{
-			throw new NotImplementedException ();
+			return collection;
 		}
-
-		SiteMapNodeCollection collection;
 	}
 }
 #endif

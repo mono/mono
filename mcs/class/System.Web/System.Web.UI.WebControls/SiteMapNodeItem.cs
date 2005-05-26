@@ -1,12 +1,10 @@
 //
-// System.Web.UI.WebControls.CollectionDataSource
+// System.Web.UI.WebControls.SiteMapNodeItem.cs
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc.
-//
-
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,59 +25,55 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+//
 
 #if NET_2_0
-using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using System.Xml;
-using System.Xml.Xsl;
-using System.ComponentModel;
-using System.IO;
 
 namespace System.Web.UI.WebControls
 {
-	internal class CollectionDataSource : IDataSource
+	public class SiteMapNodeItem: WebControl, IDataItemContainer, INamingContainer
 	{
-		static readonly string[] names = new string [0];
-		IEnumerable collection;
+		int itemIndex;
+		SiteMapNodeItemType itemType;
+		SiteMapNode node;
 		
-		public CollectionDataSource (IEnumerable collection)
+		public SiteMapNodeItem (int itemIndex, SiteMapNodeItemType itemType)
 		{
-			this.collection = collection;
+			this.itemIndex = itemIndex;
+			SetItemType (itemType);
 		}
 		
-		public event EventHandler DataSourceChanged {
-			add {}
-			remove {}
+		protected internal virtual void SetItemType (SiteMapNodeItemType itemType)
+		{
+			this.itemType = itemType;
 		}
 		
-		public DataSourceView GetView (string viewName)
-		{
-			return new CollectionDataSourceView (this, viewName, collection);
+		public virtual int ItemIndex {
+			get { return itemIndex; }
 		}
 		
-		public ICollection GetViewNames ()
-		{
-			return names;
-		}
-	}
-	
-	internal class CollectionDataSourceView: DataSourceView
-	{
-		IEnumerable collection;
-
-		public CollectionDataSourceView (IDataSource owner, string viewName, IEnumerable collection)
-		: base (owner, viewName)
-		{
-			this.collection = collection;
+		public virtual SiteMapNodeItemType ItemType {
+			get { return itemType; }
 		}
 		
-		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
-		{
-			return collection;
+		public virtual SiteMapNode SiteMapNode {
+			get { return node; }
+			set { node = value; }
+		}
+		
+		object IDataItemContainer.DataItem {
+			get { return node; }
+		}
+		
+		int IDataItemContainer.DataItemIndex {
+			get { return itemIndex; }
+		}
+		
+		int IDataItemContainer.DisplayIndex {
+			get { return itemIndex; }
 		}
 	}
 }
-#endif
 
+#endif

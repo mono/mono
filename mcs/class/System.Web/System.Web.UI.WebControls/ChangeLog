@@ -1,3 +1,31 @@
+2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataListItem.cs:
+	* GridViewRow.cs:
+	* DataGridItem.cs:
+	* RepeaterItem.cs:
+	* FormView.cs:
+	* MenuItemTemplateContainer.cs:
+	* DetailsView.cs: Track changes in the IDataItemContainer interface.
+	
+	* CommandField.cs: Added CausesValidation property. Set that
+	property value to all buttons of the field.
+	
+	* SqlDataSourceView.cs:
+	* CollectionDataSource.cs:
+	* XmlDataSourceView.cs: Properly initialize the base class.
+	
+	* SiteMapDataSource.cs:
+	* SiteMapHierarchicalDataSourceView.cs:
+	* SiteMapNodeItem.cs:
+	* SiteMapDataSourceView.cs:
+	* SiteMapPath.cs: Mostly implemented.
+	
+	* HierarchicalDataBoundControl.cs: Always bind the control when the
+	page is loaded for the first time.
+	
+	* TreeView.cs: Properly bind the control when loaded from a callback.
+
 2005-05-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* BaseDataList.cs: Caption is in 1.1 too, though not

@@ -4,6 +4,7 @@
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
 // (C) 2004 Novell, Inc. (http://www.novell.com)
@@ -36,32 +37,33 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Web.UI;
 
-namespace System.Web.UI.WebControls {
-	public class SiteMapDataSourceView : DataSourceView {
-		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNode node) : this (owner, viewName, new SiteMapNodeCollection (node)) {}
+namespace System.Web.UI.WebControls
+{
+	public class SiteMapDataSourceView : DataSourceView
+	{
+		SiteMapNodeCollection collection;
+		
+		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNode node)
+		: this (owner, viewName, new SiteMapNodeCollection (node))
+		{
+		}
+		
 		public SiteMapDataSourceView (SiteMapDataSource owner, string viewName, SiteMapNodeCollection collection)
+		: base (owner, viewName)
 		{
 			this.collection = collection;
-			this.viewName = viewName;
-			this.owner = owner;
 		}
 		
-		[MonoTODO]
 		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
-			throw new NotImplementedException ();
+			return ExecuteSelect (arguments);
 		}
 
-		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
+		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
-			throw new NotImplementedException ();
+			arguments.RaiseUnsupportedCapabilitiesError (this);
+			return collection;
 		}
-		
-		SiteMapNodeCollection collection;
-		string viewName;
-		SiteMapDataSource owner;
 	}
 }
 #endif

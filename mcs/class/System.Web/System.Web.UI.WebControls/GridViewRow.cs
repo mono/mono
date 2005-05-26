@@ -83,13 +83,13 @@ namespace System.Web.UI.WebControls
 			get { return DataItem; }
 		}
 		
-/*		int IDataItemContainer.DataItemIndex {
+		int IDataItemContainer.DataItemIndex {
 			get { return DataItemIndex; }
 		}
 		
 		int IDataItemContainer.DisplayIndex {
 			get { return RowIndex; }
-		}*/	
+		}
 		
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{

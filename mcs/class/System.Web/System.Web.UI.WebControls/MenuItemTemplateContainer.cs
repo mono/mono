@@ -64,7 +64,15 @@ namespace System.Web.UI.WebControls
 			set { dataItem = value; }
 		}
 		
-		public object ItemIndex {
+		public int ItemIndex {
+			get { return index; }
+		}
+		
+		int IDataItemContainer.DataItemIndex {
+			get { return index; }
+		}
+
+		int IDataItemContainer.DisplayIndex {
 			get { return index; }
 		}
 	}

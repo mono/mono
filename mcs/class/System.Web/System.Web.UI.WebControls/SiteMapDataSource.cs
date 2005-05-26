@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Web.UI;
+using System.Web.Util;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
@@ -42,35 +43,157 @@ namespace System.Web.UI.WebControls
 	[ParseChildrenAttribute (true)]
 	public class SiteMapDataSource : HierarchicalDataSourceControl, IDataSource, IListSource
 	{
-		[MonoTODO]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
-		public DataSourceView GetView (string viewName)
+		static string[] emptyNames = new string[] { string.Empty };
+		
+		SiteMapProvider provider;
+		
+		public virtual ICollection GetViewNames ()
 		{
-			throw new NotImplementedException ();
+			return emptyNames;
 		}
 		
-		[MonoTODO]
-		public ICollection GetViewNames ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		public IList GetList ()
 		{
-			throw new NotImplementedException ();
+			return ListSourceHelper.GetList (this);
 		}
 		
-		[MonoTODO]
+	    [BrowsableAttribute (false)]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public bool ContainsListCollection {
-			get { throw new NotImplementedException (); }
+			get { return ListSourceHelper.ContainsListCollection (this); }
 		}
 		
-		[MonoTODO]
-		public event EventHandler DataSourceChanged {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
+		event EventHandler IDataSource.DataSourceChanged {
+			add { ((IHierarchicalDataSource)this).DataSourceChanged += value; }
+			remove { ((IHierarchicalDataSource)this).DataSourceChanged -= value; }
+		}
+		
+	    [BrowsableAttribute (false)]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public SiteMapProvider Provider {
+			get {
+				if (provider == null) {
+					if (this.SiteMapProvider.Length == 0) {
+						provider = SiteMap.Provider;
+						if (provider == null)
+							throw new HttpException ("There is no default provider configured for the site.");
+					} else {
+						provider = SiteMap.Providers [this.SiteMapProvider];
+						if (provider == null)
+							throw new HttpException ("SiteMap provider '" + this.SiteMapProvider + "' not found.");
+					}
+				}
+				return provider;
+			}
+			set {
+				provider = value;
+				OnDataSourceChanged (EventArgs.Empty);
+			}
+		}
+		
+	    [DefaultValueAttribute ("")]
+		public string SiteMapProvider {
+			get {
+				object o = ViewState ["SiteMapProvider"];
+				if (o != null) return (string) o;
+				else return string.Empty;
+			}
+			set {
+				ViewState ["SiteMapProvider"] = value;
+				OnDataSourceChanged (EventArgs.Empty);
+			}
+		}
+		
+	    [DefaultValueAttribute ("")]
+	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [UrlPropertyAttribute]
+		public string StartingNodeUrl {
+			get {
+				object o = ViewState ["StartingNodeUrl"];
+				if (o != null) return (string) o;
+				else return string.Empty;
+			}
+			set {
+				ViewState ["StartingNodeUrl"] = value;
+				OnDataSourceChanged (EventArgs.Empty);
+			}
+		}
+		
+	    [DefaultValueAttribute (false)]
+		public bool StartFromCurrentNode {
+			get {
+				object o = ViewState ["StartFromCurrentNode"];
+				if (o != null) return (bool) o;
+				else return false;
+			}
+			set {
+				ViewState ["StartFromCurrentNode"] = value;
+				OnDataSourceChanged (EventArgs.Empty);
+			}
+		}
+		
+	    [DefaultValueAttribute (true)]
+		public bool ShowStartingNode {
+			get {
+				object o = ViewState ["ShowStartingNode"];
+				if (o != null) return (bool) o;
+				else return true;
+			}
+			set {
+				ViewState ["ShowStartingNode"] = value;
+				OnDataSourceChanged (EventArgs.Empty);
+			}
+		}
+
+		public DataSourceView GetView (string viewName)
+		{
+			SiteMapNode node = GetStartNode (viewName);
+			if (node == null)
+				return new SiteMapDataSourceView (this, viewName, SiteMapNodeCollection.EmptyList);
+			else if (ShowStartingNode)
+				return new SiteMapDataSourceView (this, viewName, node);
+			else
+				return new SiteMapDataSourceView (this, viewName, node.ChildNodes);
+		}
+
+		protected override HierarchicalDataSourceView GetHierarchicalView (string viewPath)
+		{
+			SiteMapNode node = GetStartNode (viewPath);
+			if (node == null)
+				return new SiteMapHierarchicalDataSourceView (SiteMapNodeCollection.EmptyList);
+			else if (ShowStartingNode || node == null)
+				return new SiteMapHierarchicalDataSourceView (node);
+			else
+				return new SiteMapHierarchicalDataSourceView (node.ChildNodes);
+		}
+		
+		SiteMapNode GetStartNode (string viewPath)
+		{
+			if (viewPath != null && viewPath.Length != 0) {
+				string url = MapUrl (StartingNodeUrl);
+				return Provider.FindSiteMapNode (url);
+			}
+			else if (StartFromCurrentNode) {
+				if (StartingNodeUrl.Length != 0)
+					throw new InvalidOperationException ("StartingNodeUrl can't be set if StartFromCurrentNode is set to true.");
+				return Provider.CurrentNode;
+			}
+			else if (StartingNodeUrl.Length != 0) {
+				string url = MapUrl (StartingNodeUrl);
+				SiteMapNode node = Provider.FindSiteMapNode (url);
+				if (node == null) throw new ArgumentException ("Can't find a site map node for the url: " + StartingNodeUrl);
+				return node;
+			}
+			else
+				return Provider.RootNode;
+		}
+		
+		string MapUrl (string url)
+		{
+			if (UrlUtils.IsRelativeUrl (url))
+				return UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
+			else
+				return UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
 		}
 	}
 }

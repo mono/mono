@@ -42,6 +42,7 @@ namespace System.Web.UI.WebControls
 		ArrayList nodes;
 	
 		public XmlDataSourceView (XmlDataSource owner, string name, XmlNodeList nodes)
+		: base (owner, name)
 		{
 			// Why do they pass owner?
 			this.name = name;

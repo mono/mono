@@ -46,6 +46,7 @@ namespace System.Web.UI.WebControls {
 		HttpContext context;
 
 		public SqlDataSourceView (SqlDataSource owner, string name, HttpContext context)
+		: base (owner, name)
 		{
 			this.owner = owner;
 			this.name = name;
