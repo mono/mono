@@ -408,5 +408,34 @@ namespace System.IO
 		}
 
 		#endregion
+
+#if NET_2_0
+		//
+		// The documentation for this method is most likely wrong, it
+		// talks about doing a "binary read", but the remarks say
+		// that this "detects the encoding".
+		//
+		// This can not detect and do anything useful with the encoding
+		// since the result is a byte [] not a char [].
+		//
+		public static byte [] ReadAllBytes (string path)
+		{
+			using (FileStream s = Open (path, FileMode.Open, FileAccess.Read, FileShare.Read)){
+				long size = s.Length;
+
+				//
+				// Is this worth supporting?
+				// 
+				if (size > Int32.MaxValue)
+					throw new ArgumentException ("Reading more than 4gigs with this call is not supported");
+				
+				byte [] result = new byte [s.Length];
+
+				s.Read (result, 0, (int) size);
+
+				return result;
+			}
+		}
+#endif
 	}
 }

@@ -1,3 +1,8 @@
+2005-05-26  Miguel de Icaza  <miguel@novell.com>
+
+	* Dictionary.cs: Remove the `Hash' name from the Dictionary
+	internal classes, make them public.
+
 2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Dictionary.cs: Fix a warning.

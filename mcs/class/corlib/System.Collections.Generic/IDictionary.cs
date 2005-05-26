@@ -35,9 +35,14 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
+
 	[CLSCompliant(true)]
 	[ComVisible(false)]
-	public interface IDictionary<K,V> : ICollection<KeyValuePair<K,V>> {
+	public interface IDictionary<K,V>
+		: ICollection<KeyValuePair<K,V>>
+		// , IEnumerable<KeyValuePair<K,V>>
+	{
+		
 		void Add (K key, V value);
 		bool ContainsKey (K key);
 		bool Remove (K key);

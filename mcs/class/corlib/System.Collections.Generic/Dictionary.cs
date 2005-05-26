@@ -224,7 +224,7 @@ namespace System.Collections.Generic {
 				}
 			}
 		}
-	
+
 		protected virtual int GetHash (K key)
 		{
 			//IComparer<K> hcp = this._hcp;
@@ -270,7 +270,13 @@ namespace System.Collections.Generic {
 			int spot = (int) ((uint) h % size);
 			return spot;
 		}
-	
+
+		public IComparer<K> Comparer {
+			get {
+				return _hcp;
+			}
+		}
+		
 		public void Clear ()
 		{
 			for (int i = 0; i < _table.Length; i++)
@@ -354,11 +360,27 @@ namespace System.Collections.Generic {
 		}
 	
 		ICollection<K> IDictionary<K, V>.Keys {
-			get { return new HashKeyCollection (this); }
+			get {
+				return Keys;
+			}
 		}
 	
 		ICollection<V> IDictionary<K, V>.Values {
-			get { return new HashValueCollection (this); }
+			get {
+				return Values;
+			}
+		}
+
+		public KeyCollection Keys {
+			get {
+				return new KeyCollection (this);
+			}
+		}
+
+		public ValueCollection Values {
+			get {
+				return new ValueCollection (this);
+			}
 		}
 		
 		bool IDictionary.IsFixedSize {
@@ -589,10 +611,10 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
-		internal class HashKeyCollection : ICollection<K>, IEnumerable<K>, ICollection {
+		public class KeyCollection : ICollection<K>, IEnumerable<K>, ICollection {
 			Dictionary<K, V> _dictionary;
 	
-			public HashKeyCollection (Dictionary<K, V> dictionary)
+			public KeyCollection (Dictionary<K, V> dictionary)
 			{
 				_dictionary = dictionary;
 			}
@@ -696,10 +718,10 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
-		internal class HashValueCollection : ICollection<V>, IEnumerable<V>, ICollection {
+		public class ValueCollection : ICollection<V>, IEnumerable<V>, ICollection, IEnumerable {
 			Dictionary<K, V> _dictionary;
 	
-			public HashValueCollection (Dictionary<K, V> dictionary)
+			public ValueCollection (Dictionary<K, V> dictionary)
 			{
 				_dictionary = dictionary;
 			}
@@ -803,7 +825,6 @@ namespace System.Collections.Generic {
 	
 			}
 		}
-	
 	
 		static bool TestPrime (int x)
 		{
