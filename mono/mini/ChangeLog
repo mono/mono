@@ -1,3 +1,10 @@
+2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* iltests.il: Add a new test.
+
+	* mini.c (mono_method_to_ir): Initialize valuetypes when created using
+	newobj. Fixes #75042.
+
 2005-05-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *-ia64.*: Ongoing IA64 work.
