@@ -1156,6 +1156,7 @@ System.Security.Policy/ApplicationTrustEnumerator.cs
 System.Security.Policy/ApplicationVersionMatch.cs
 System.Security.Policy/CodeConnectAccess.cs
 System.Security.Policy/CodeGroup.cs
+System.Security.Policy/DefaultPolicies.cs
 System.Security.Policy/Evidence.cs
 System.Security.Policy/FileCodeGroup.cs
 System.Security.Policy/FirstMatchCodeGroup.cs
