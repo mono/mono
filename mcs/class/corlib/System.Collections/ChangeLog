@@ -1,3 +1,7 @@
+2005-05-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* Queue.cs (grow): fix 61919.
+
 2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Stack.cs : empty_stack.CopyTo(empty_array, 0) should be allowed.

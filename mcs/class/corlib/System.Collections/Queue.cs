@@ -208,6 +208,8 @@ namespace System.Collections {
 
 		private void grow () {
 			int newCapacity = (_array.Length * _growFactor) / 100;
+			if (newCapacity < _array.Length + 1)
+				newCapacity = _array.Length + 1;
 			object[] newContents = new object[newCapacity];
 			CopyTo (newContents, 0);
 			_array = newContents;
