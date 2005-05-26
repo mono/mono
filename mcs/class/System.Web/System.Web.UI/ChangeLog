@@ -1,3 +1,11 @@
+2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataSourceView.cs: Fix api.
+	* NonVisualControlAttribute.cs: Implemented.
+	* IDataItemContainer.cs: Added missing properties.
+	* Control.cs: Added new EnableTheming and SkinID properties.
+	* HierarchicalDataSourceControl.cs: Implemented missing methods.
+
 2005-05-13  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ControlCollection.cs: Added internal setter for ReadOnly.

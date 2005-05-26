@@ -97,6 +97,9 @@ namespace System.Web.UI
 		const int VIEWSTATE_LOADED	= 1 << 13;
 		const int LOADED		= 1 << 14;
 		const int PRERENDERED		= 1 << 15;
+#if NET_2_0
+		const int ENABLE_THEMING	= 1 << 15;
+#endif
 		/*************/
 		
 		static Control ()
@@ -810,19 +813,24 @@ namespace System.Web.UI
 		}
 
 
-                public virtual bool HasControls ()
-                {
-                        return (_controls != null && _controls.Count > 0);
-                }
+		public virtual bool HasControls ()
+		{
+		    return (_controls != null && _controls.Count > 0);
+		}
 
-                public void RenderControl(HtmlTextWriter writer)
-                {
-                        if ((stateMask & VISIBLE) != 0)
-                                Render(writer);
-                }
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void RenderControl (HtmlTextWriter writer)
+		{
+		    if ((stateMask & VISIBLE) != 0)
+		            Render(writer);
+		}
 
-                public string ResolveUrl(string relativeUrl)
-                {
+		public string ResolveUrl (string relativeUrl)
+		{
 			if (relativeUrl == null)
 				throw new ArgumentNullException ("relativeUrl");
 
@@ -1043,6 +1051,21 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
+
+		string skinId = string.Empty;
+		
+		public virtual bool EnableTheming
+		{
+			get { return (stateMask & ENABLE_THEMING) != 0; }
+			set { SetMask (ENABLE_THEMING, value); }
+		}
+		
+		public virtual string SkinID
+		{
+			get { return skinId; }
+			set { skinId = value; }
+		}
+		
 		protected string GetWebResourceUrl (string resourceName)
 		{
 			return Page.ClientScript.GetWebResourceUrl (GetType(), resourceName); 

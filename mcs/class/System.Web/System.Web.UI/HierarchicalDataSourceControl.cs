@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
+//  (C) 2003 Ben Maurer
+//  (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -32,9 +34,18 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
-namespace System.Web.UI {
-	public abstract class HierarchicalDataSourceControl : Control, IHierarchicalDataSource {
+namespace System.Web.UI
+{
+	[NonVisualControlAttribute]
+	[DesignerAttribute ("System.Web.UI.Design.HierarchicalDataSourceDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+//	[ControlBuilderAttribute (typeof(DataSourceControlBuilder))]
+	[BindableAttribute (false)]
+	public abstract class HierarchicalDataSourceControl : Control, IHierarchicalDataSource
+	{
+		static object dataSourceChanged = new object ();
+
 		protected HierarchicalDataSourceControl()
 		{
 		}
@@ -49,15 +60,42 @@ namespace System.Web.UI {
 			return this.GetHierarchicalView (viewPath);
 		}
 		
-		//public override bool EnablePersonalization { get; set; }
-		//public override bool EnableTheming { get; set; }
-		//public override string SkinID { get; set; }
+		public override bool EnableTheming {
+			get { return false; }
+			set { throw new NotSupportedException (); }
+		}
+		
+		public override string SkinID {
+			get { return string.Empty; }
+			set { throw new NotSupportedException (); }
+		}
+		
 		public override bool Visible { 
 			get { return false; }
 			set { throw new NotSupportedException (); }
 		}
 
-		static object dataSourceChanged = new object ();
+		protected override ControlCollection CreateControlCollection ()
+		{
+			return new EmptyControlCollection (this);
+		}
+		
+		public override Control FindControl (string id)
+		{
+			if (id == ID) return this;
+			else return null;
+		}
+		
+		public override bool HasControls ()
+		{
+			return false;
+		}
+		
+		public override void Focus ()
+		{
+			throw new NotSupportedException ();
+		}
+		
 		event EventHandler System.Web.UI.IHierarchicalDataSource.DataSourceChanged {
 			add { Events.AddHandler (dataSourceChanged, value); }
 			remove { Events.RemoveHandler (dataSourceChanged, value); }
@@ -68,6 +106,11 @@ namespace System.Web.UI {
 			EventHandler eh = Events [dataSourceChanged] as EventHandler;
 			if (eh != null)
 				eh (this, e);
+		}
+		
+		public override void RenderControl (HtmlTextWriter writer)
+		{
+			// nop
 		}
 	}
 	

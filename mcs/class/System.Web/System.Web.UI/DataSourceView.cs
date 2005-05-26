@@ -42,12 +42,7 @@ namespace System.Web.UI {
 		IDataSource dataSourceOwner;
 		string viewName = String.Empty;
 
-		[MonoTODO ("Extra method to keep things compiling")]
-		protected DataSourceView()
-		{			
-		}
-
-		protected DataSourceView(IDataSource owner, string viewName)
+		protected DataSourceView (IDataSource owner, string viewName)
 		{
 			this.dataSourceOwner = owner;
 			this.viewName = viewName;
@@ -147,7 +142,7 @@ namespace System.Web.UI {
 			callBack (selectList);
 		}
 
-		public virtual int Update(IDictionary keys, IDictionary values,
+		public virtual void Update(IDictionary keys, IDictionary values,
 			IDictionary oldValues, DataSourceViewOperationCallback callBack)
 		{
 			if (callBack == null)
@@ -163,8 +158,6 @@ namespace System.Web.UI {
 
 			if (!callBack (rowAffected, passOn) && passOn != null)
 				throw passOn;
-
-			return rowAffected;
 		} 
 		
 		public virtual bool CanDelete { get { return false; } }
