@@ -1,3 +1,9 @@
+2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoType.cs: Changed call from GetName to UnprotectedGetName to
+	allow call to work with serialization under a restrictive policy.
+	The code path (the protected information) isn't being used.
+
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Exception.cs: Use the new StackTrace ctor.

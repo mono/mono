@@ -445,7 +445,7 @@ namespace System
 
 		public override string AssemblyQualifiedName {
 			get {
-				return getFullName (false) + ", " + Assembly.GetName ().ToString ();
+				return getFullName (false) + ", " + Assembly.UnprotectedGetName ().ToString ();
 			}
 		}
 
