@@ -1,3 +1,13 @@
+2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Fix typo for PermitOnly. Added ComVisible 
+	attribute for NET_2_0 profile.
+	* PermissionSet.cs: Changed static string to const. Added ComVisible 
+	attribute for NET_2_0 profile.
+	* SecurityContext.cs: Capture the identity token but don't create a 
+	WindowsIdentity instance unless required (e.g. Run). This requires 
+	less privileges (so it runs better that way under CAS).
+
 2005-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityException.cs: PermissionState isn't always serialized 

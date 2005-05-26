@@ -46,9 +46,12 @@ namespace System.Security {
 	[Serializable]
 	// Microsoft public key - i.e. only MS signed assembly can inherit from PermissionSet (1.x) or (2.0) FullTrust assemblies
 	[StrongNameIdentityPermission (SecurityAction.InheritanceDemand, PublicKey="002400000480000094000000060200000024000052534131000400000100010007D1FA57C4AED9F0A32E84AA0FAEFD0DE9E8FD6AEC8F87FB03766C834C99921EB23BE79AD9D5DCC1DD9AD236132102900B723CF980957FC4E177108FC607774F29E8320E92EA05ECE4E821C0A5EFE8F1645C4C0C93C1AB99285D622CAA652C1DFAD63D745D6F2DE5F17E5EAF0FC4963D261C8A12436518206DC093344D5AD293")]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class PermissionSet: ISecurityEncodable, ICollection, IEnumerable, IStackWalk, IDeserializationCallback {
 
-		private static string tagName = "PermissionSet";
+		private const string tagName = "PermissionSet";
 		private const int version = 1;
 		private static object[] psNone = new object [1] { PermissionState.None };
 

@@ -43,6 +43,9 @@ namespace System.Security {
 
 	[Serializable]
 	[SecurityPermission (SecurityAction.InheritanceDemand, ControlEvidence = true, ControlPolicy = true)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
 		protected CodeAccessPermission ()
@@ -176,7 +179,7 @@ namespace System.Security {
 				// TODO
 				throw new NotSupportedException ("Currently only declarative Deny are supported.");
 			}
-			if ((sf.PermitOnly != null) && sf.PermitOnly.DeclarativeSecurity) {
+			if ((sf.PermitOnly != null) && !sf.PermitOnly.DeclarativeSecurity) {
 				revert = true;
 				// TODO
 				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");

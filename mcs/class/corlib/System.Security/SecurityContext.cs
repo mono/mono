@@ -39,7 +39,7 @@ namespace System.Security {
 	internal sealed class SecurityContext {
 #endif
 		private bool _capture;
-		private WindowsIdentity _winid;
+		private IntPtr _winid;
 		private CompressedStack _stack;
 		private bool _suppressFlowWindowsIdentity;
 		private bool _suppressFlow;
@@ -75,7 +75,7 @@ namespace System.Security {
 
 			SecurityContext capture = new SecurityContext ();
 			capture._capture = true;
-			capture._winid = WindowsIdentity.GetCurrent ();
+			capture._winid = WindowsIdentity.GetCurrentToken ();
 			capture._stack = CompressedStack.Capture ();
 			return capture;
 		}
@@ -97,7 +97,7 @@ namespace System.Security {
 			set { _stack = value; }
 		}
 
-		internal WindowsIdentity WindowsIdentity {
+		internal IntPtr IdentityToken {
 			get { return _winid; }
 			set { _winid = value; }
 		}
@@ -125,6 +125,8 @@ namespace System.Security {
 			sc.WindowsIdentityFlowSuppressed = false;
 		}
 #if NET_2_0
+		// if you got the context then you can use it
+		[SecurityPermission (SecurityAction.Assert, ControlPrincipal = true)]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		static public void Run (SecurityContext securityContext, ContextCallback callBack, object state)
 		{
@@ -136,13 +138,14 @@ namespace System.Security {
 			SecurityContext sc = Thread.CurrentThread.ExecutionContext.SecurityContext;
 			IPrincipal original = Thread.CurrentPrincipal;
 			try {
-				if (sc.WindowsIdentity != null)
-					Thread.CurrentPrincipal = new WindowsPrincipal (sc.WindowsIdentity);
+				if (sc.IdentityToken != IntPtr.Zero) {
+					Thread.CurrentPrincipal = new WindowsPrincipal (new WindowsIdentity (sc.IdentityToken));
+				}
 
 				CompressedStack.Run (securityContext.CompressedStack, callBack, state);
 			}
 			finally {
-				if ((original != null) && (sc.WindowsIdentity != null))
+				if ((original != null) && (sc.IdentityToken != IntPtr.Zero))
 					Thread.CurrentPrincipal = original;
 			}
 		}
