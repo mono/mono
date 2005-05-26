@@ -97,7 +97,7 @@ namespace System.Web.UI {
 			foreach (string key in bag.Keys) {
 				string value = bag [key] as string;
 				if (value != null)
-					writer.WriteAttribute (key, value);
+					writer.WriteAttribute (key, value, true);
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+2005-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AttributeCollection.cs: html-encode attribute values. Fixes
+	bug #73771.
+
 2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataSourceView.cs: Fix api.
