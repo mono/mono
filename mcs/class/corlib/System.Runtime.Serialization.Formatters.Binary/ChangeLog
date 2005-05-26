@@ -1,3 +1,8 @@
+2005-05-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* CodeGenerator.cs: Move module creation to cctor to kill double
+	checked locking and typeof locking.
+
 2005-05-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CodeGenerator.cs: Don't generate debug info here.

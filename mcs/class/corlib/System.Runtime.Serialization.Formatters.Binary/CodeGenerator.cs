@@ -44,23 +44,18 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		
 		static ModuleBuilder _module;
 		
-		static public Type GenerateMetadataType (Type type, StreamingContext context)
+		static CodeGenerator ()
 		{
-			if (_module == null)
-			{
-				lock (typeof (ObjectWriter))
-				{
-					if (_module == null) {
-						AppDomain myDomain = System.Threading.Thread.GetDomain();
-						AssemblyName myAsmName = new AssemblyName();
-						myAsmName.Name = "__MetadataTypes";
-					   
-						AssemblyBuilder myAsmBuilder = myDomain.DefineInternalDynamicAssembly (myAsmName, AssemblyBuilderAccess.Run);
-						_module = myAsmBuilder.DefineDynamicModule("__MetadataTypesModule", false);
-					}
-				}
-			}
-			
+			AppDomain myDomain = System.Threading.Thread.GetDomain();
+			AssemblyName myAsmName = new AssemblyName();
+			myAsmName.Name = "__MetadataTypes";
+		   
+			AssemblyBuilder myAsmBuilder = myDomain.DefineInternalDynamicAssembly (myAsmName, AssemblyBuilderAccess.Run);
+			_module = myAsmBuilder.DefineDynamicModule("__MetadataTypesModule", false);
+		}
+		
+		static public Type GenerateMetadataType (Type type, StreamingContext context)
+		{		
 			string name = type.Name + "__TypeMetadata";
 			string sufix = "";
 			int n = 0;
@@ -82,7 +77,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			
 			parameters = new Type[0];
 
-    		ConstructorBuilder ctor = typeBuilder.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, parameters);
+			ConstructorBuilder ctor = typeBuilder.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, parameters);
 			ConstructorInfo baseCtor = typeof(ClrTypeMetadata).GetConstructor (new Type[] { typeof(Type) });
 			gen = ctor.GetILGenerator();
 
