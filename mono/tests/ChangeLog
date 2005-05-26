@@ -1,3 +1,7 @@
+2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (TestDriver.dll): Fix a warning.
+
 2005-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c (mono_test_marshal_out_string_array_delegate): Fix 64
