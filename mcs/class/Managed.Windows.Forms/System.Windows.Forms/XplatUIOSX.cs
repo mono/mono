@@ -100,6 +100,8 @@ namespace System.Windows.Forms {
 		// Timers
 		private ArrayList TimerList;
 		
+		static readonly object lockobj = new object ();
+		
 		// Event Handlers
 		internal override event EventHandler Idle;
 
@@ -124,7 +126,7 @@ namespace System.Windows.Forms {
 		#region Singleton specific code
 		
 		public static XplatUIOSX GetInstance() {
-			lock (typeof (XplatUIOSX)) {
+			lock (lockobj) {
 				if (Instance == null) {
 					Instance = new XplatUIOSX ();
 				}

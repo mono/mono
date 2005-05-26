@@ -32,37 +32,30 @@ using System.Text;
 
 namespace System.Windows.Forms {
 	public class DataFormats {
-		#region DataFormats.Format Subclass
 		public class Format {
-			#region Local Variables
+			static readonly object lockobj = new object ();
+			
 			private static Format	formats;
 			private string		name;
 			private int		id;
 			private Format		next;
-			#endregion Local Variables
 
-			#region Public Constructors
-			public Format(string name, int ID) {
-				Format	f;
-
+			public Format (string name, int ID)
+			{
 				this.name = name;
 				this.id = ID;
-
-				lock (typeof(DataFormats.Format)) {
-					if (formats == null) {
+				
+				lock (lockobj) {
+					if (formats == null)
 						formats = this;
-					} else {
-						// Insert into the list of known/defined formats
-						f = formats;
-
-						while (f.next != null) {
+					else {
+						Format f = formats;
+						while (f.next != null)
 							f = f.next;
-						}
 						f.next = this;
 					}
 				}
 			}
-			#endregion	// Public Constructors
 
 			#region Public Instance Properties
 			public int Id {
@@ -137,17 +130,9 @@ namespace System.Windows.Forms {
 			#endregion	// Private Methods
 
 		}
-		#endregion	// DataFormats.Format Subclass
-
-		#region Local Variables
-		private static bool	initialized = false;
-		#endregion	// Local Variables
-
-		#region Constructors
-		private DataFormats() {
-		}
-		#endregion	// Constructors
-
+		
+		private DataFormats () {}
+		
 		#region Public Static Fields
 		public static readonly string Bitmap			= "Bitmap";
 		public static readonly string CommaSeparatedValue	= "Csv";
@@ -172,60 +157,43 @@ namespace System.Windows.Forms {
 		public static readonly string WaveAudio			= "WaveAudio";
 		#endregion	// Public Static Fields
 
-		#region Public Static Methods
-		public static Format GetFormat(int ID) {
-			if (!initialized) {
-				Initialize();
-			}
-
-			return Format.Find(ID);
+		public static Format GetFormat (int ID)
+		{
+			return Format.Find (ID);
 		}
 
-		public static Format GetFormat(string format) {
-			if (!initialized) {
-				Initialize();
-			}
-
-			return Format.Add(format);
+		public static Format GetFormat (string format)
+		{
+			return Format.Add (format);
 		}
-		#endregion	// Public Static Methods
+		
+		static DataFormats ()
+		{
+			IntPtr cliphandle = XplatUI.ClipboardOpen();
 
-		#region Private Methods
-		private static void Initialize() {
-			lock (typeof(DataFormats.Format)) {
-				if (!initialized) {
-					IntPtr	cliphandle;
+			new Format (Text, XplatUI.ClipboardGetID (cliphandle, Text));
+			new Format (Bitmap, XplatUI.ClipboardGetID (cliphandle, Bitmap));
+			new Format (MetafilePict, XplatUI.ClipboardGetID (cliphandle, MetafilePict));
+			new Format (SymbolicLink, XplatUI.ClipboardGetID (cliphandle, SymbolicLink));
+			new Format (Dif, XplatUI.ClipboardGetID (cliphandle, Dif)) ;
+			new Format (Tiff, XplatUI.ClipboardGetID (cliphandle, Tiff));
+			new Format (OemText, XplatUI.ClipboardGetID (cliphandle, OemText));
+			new Format (Dib, XplatUI.ClipboardGetID (cliphandle, Dib));
+			new Format (Palette, XplatUI.ClipboardGetID (cliphandle, Palette));
+			new Format (PenData, XplatUI.ClipboardGetID (cliphandle, PenData));
+			new Format (Riff, XplatUI.ClipboardGetID (cliphandle, Riff));
+			new Format (WaveAudio, XplatUI.ClipboardGetID (cliphandle, WaveAudio));
+			new Format (UnicodeText, XplatUI.ClipboardGetID (cliphandle, UnicodeText));
+			new Format (EnhancedMetafile, XplatUI.ClipboardGetID (cliphandle, EnhancedMetafile));
+			new Format (FileDrop, XplatUI.ClipboardGetID (cliphandle, FileDrop));
+			new Format (Locale, XplatUI.ClipboardGetID (cliphandle, Locale));
+			new Format (CommaSeparatedValue, XplatUI.ClipboardGetID (cliphandle, CommaSeparatedValue));
+			new Format (Html, XplatUI.ClipboardGetID (cliphandle, Html));
+			new Format (Rtf, XplatUI.ClipboardGetID (cliphandle, Rtf));
+			new Format (Serializable, XplatUI.ClipboardGetID (cliphandle, Serializable));
+			new Format (StringFormat, XplatUI.ClipboardGetID (cliphandle, StringFormat));
 
-					cliphandle = XplatUI.ClipboardOpen();
-
-					new Format(Text, XplatUI.ClipboardGetID(cliphandle, Text));
-					new Format(Bitmap, XplatUI.ClipboardGetID(cliphandle, Bitmap));
-					new Format(MetafilePict, XplatUI.ClipboardGetID(cliphandle, MetafilePict));
-					new Format(SymbolicLink, XplatUI.ClipboardGetID(cliphandle, SymbolicLink));
-					new Format(Dif, XplatUI.ClipboardGetID(cliphandle, Dif)) ;
-					new Format(Tiff, XplatUI.ClipboardGetID(cliphandle, Tiff));
-					new Format(OemText, XplatUI.ClipboardGetID(cliphandle, OemText));
-					new Format(Dib, XplatUI.ClipboardGetID(cliphandle, Dib));
-					new Format(Palette, XplatUI.ClipboardGetID(cliphandle, Palette));
-					new Format(PenData, XplatUI.ClipboardGetID(cliphandle, PenData));
-					new Format(Riff, XplatUI.ClipboardGetID(cliphandle, Riff));
-					new Format(WaveAudio, XplatUI.ClipboardGetID(cliphandle, WaveAudio));
-					new Format(UnicodeText, XplatUI.ClipboardGetID(cliphandle, UnicodeText));
-					new Format(EnhancedMetafile, XplatUI.ClipboardGetID(cliphandle, EnhancedMetafile));
-					new Format(FileDrop, XplatUI.ClipboardGetID(cliphandle, FileDrop));
-					new Format(Locale, XplatUI.ClipboardGetID(cliphandle, Locale));
-					new Format(CommaSeparatedValue, XplatUI.ClipboardGetID(cliphandle, CommaSeparatedValue));
-					new Format(Html, XplatUI.ClipboardGetID(cliphandle, Html));
-					new Format(Rtf, XplatUI.ClipboardGetID(cliphandle, Rtf));
-					new Format(Serializable, XplatUI.ClipboardGetID(cliphandle, Serializable));
-					new Format(StringFormat, XplatUI.ClipboardGetID(cliphandle, StringFormat));
-
-					XplatUI.ClipboardClose(cliphandle);
-					
-				}
-				initialized = true;
-			}
+			XplatUI.ClipboardClose (cliphandle);
 		}
-		#endregion	// Private Methods
 	}
 }

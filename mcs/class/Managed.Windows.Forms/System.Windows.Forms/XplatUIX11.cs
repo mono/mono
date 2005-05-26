@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 	internal class XplatUIX11 : XplatUIDriver {
 		#region Local Variables
 		// General
-		private static XplatUIX11	Instance;
+		static volatile XplatUIX11	Instance;
 		private static int		RefCount;
 		private static object		XlibLock;		// Our locking object
 		private static bool		ThemesEnabled;
@@ -143,18 +143,21 @@ namespace System.Windows.Forms {
 		// 'Constants'
 		private static int		DoubleClickInterval;	// msec; max interval between clicks to count as double click
 
-		private static readonly EventMask  SelectInputMask =	EventMask.ButtonPressMask | 
-									EventMask.ButtonReleaseMask | 
-									EventMask.KeyPressMask | 
-									EventMask.KeyReleaseMask | 
-									EventMask.EnterWindowMask | 
-									EventMask.LeaveWindowMask |
-									EventMask.ExposureMask |
-									EventMask.FocusChangeMask |
-									EventMask.PointerMotionMask | 
-									EventMask.VisibilityChangeMask |
-									EventMask.SubstructureNotifyMask |
-									EventMask.StructureNotifyMask;
+		const EventMask SelectInputMask = EventMask.ButtonPressMask | 
+		                                  EventMask.ButtonReleaseMask | 
+		                                  EventMask.KeyPressMask | 
+		                                  EventMask.KeyReleaseMask | 
+		                                  EventMask.EnterWindowMask | 
+		                                  EventMask.LeaveWindowMask |
+		                                  EventMask.ExposureMask |
+		                                  EventMask.FocusChangeMask |
+		                                  EventMask.PointerMotionMask | 
+		                                  EventMask.VisibilityChangeMask |
+		                                  EventMask.SubstructureNotifyMask |
+		                                  EventMask.StructureNotifyMask;
+		
+		static readonly object lockobj = new object ();
+		
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -186,7 +189,7 @@ namespace System.Windows.Forms {
 
 		#region Singleton Specific Code
 		public static XplatUIX11 GetInstance() {
-			lock (typeof(XplatUIX11)) {
+			lock (lockobj) {
 				if (Instance == null) {
 					Instance=new XplatUIX11();
 				}
