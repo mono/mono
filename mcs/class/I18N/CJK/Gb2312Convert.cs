@@ -43,12 +43,12 @@ namespace I18N.CJK
 		
 		// The one and only GB2312 conversion object in the system.
 		private static Gb2312Convert convert;
-		
+		static readonly object lockobj = new object ();
 		// Get the primary GB2312 conversion object.
 		public static Gb2312Convert Convert
 		{
 			get {
-				lock (typeof (Gb2312Convert)) {
+				lock (lockobj) {
 					if (convert == null) {
 						convert = new Gb2312Convert ();
 					}

@@ -47,6 +47,7 @@ public class Manager
 	private Hashtable handlers;		// List of all handler classes.
 	private Hashtable active;		// Currently active handlers.
 	private Hashtable assemblies;	// Currently loaded region assemblies.
+	static readonly object lockobj = new object ();
 
 	// Constructor.
 	private Manager()
@@ -63,7 +64,7 @@ public class Manager
 			{
 				get
 				{
-					lock(typeof(Manager))
+					lock(lockobj)
 					{
 						if(manager == null)
 						{

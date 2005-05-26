@@ -71,13 +71,13 @@ internal unsafe sealed class JISConvert
 
 	// The one and only JIS conversion object in the system.
 	private static JISConvert convert;
-
+	static readonly object lockobj = new object ();
 	// Get the primary JIS conversion object.
 	public static JISConvert Convert
 			{
 				get
 				{
-					lock(typeof(JISConvert))
+					lock(lockobj)
 					{
 						if(convert != null)
 						{
