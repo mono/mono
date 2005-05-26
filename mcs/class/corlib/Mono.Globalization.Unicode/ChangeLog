@@ -1,3 +1,8 @@
+2005-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more analysis on "letters".
+	* create-mscompat-collation-table.cs : more proof of concepts.
+
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : more info. Started letter sortkey analysis

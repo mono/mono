@@ -230,6 +230,171 @@ namespace Mono.Globalization.Unicode
 					AddLetterMap ((char) i, 0x12, true);
 
 			// Arabic
+			fillIndex [0x13] = 0x3;
+			/*
+			FIXME: I still need more love on presentation form B
+			*/
+			fillIndex [0x13] = 0x84;
+			for (int i = 0x0674; i < 0x06D6; i++)
+				if (Char.IsLetter ((char) i))
+					AddLetterMap ((char) i, 0x13, true);
+
+			// Devanagari
+			for (int i = 0x0901; i < 0x0905; i++) {
+				if (Char.IsLetter ((char) i)) {
+					AddLetterMap ((char) i, 0x14, false);
+					fillIndex [0x14] += 2;
+				}
+			}
+			for (int i = 0x0905; i < 0x093A; i++) {
+				if (Char.IsLetter ((char) i)) {
+					AddLetterMap ((char) i, 0x14, false);
+					fillIndex [0x14] += 4;
+				}
+			}
+			for (int i = 0x093E; i < 0x094F; i++) {
+				if (Char.IsLetter ((char) i)) {
+					AddLetterMap ((char) i, 0x14, false);
+					fillIndex [0x14] += 2;
+				}
+			}
+
+			// Bengali
+			fillIndex [0x15] = 02;
+			for (int i = 0x0980; i < 0x9FF; i++) {
+				if (i == 0x09E0)
+					fillIndex [0x15] = 0x3B;
+				switch (Char.GetUnicodeCategory ((char) i)) {
+				case NonSpacingMark:
+				case DecimalDigitNumber:
+				case OtherNumber:
+					continue;
+				}
+				AddLetterMap ((char) i, 0x15, true);
+			}
+
+			// Gurmukhi
+			fillIndex [0x16] = 02;
+			// FIXME: orderedGurmukhi needed from UCA
+			for (int i = 0; i < orderedGurmukhi.Length; i++) {
+				char c = orderedGurmukhi [i];
+				if (c == '\u0A3C' || c == '\u0A4D' ||
+					'\u0A66' <= c && c <= '\u0A71')
+					continue;
+				AddLetterMap (c, 0x16, false);
+				fillIndex [0x16] += 4;
+			}
+
+			// Gujarati
+			fillIndex [0x17] = 02;
+			// FIXME: orderedGujarati needed from UCA
+			for (int i = 0; i < orderedGujarati.Length; i++) {
+				char c = orderedGujarati [i];
+				AddLetterMap (c, 0x17, false);
+				fillIndex [0x17] += 4;
+			}
+
+			// Oriya
+			fillIndex [0x18] = 02;
+			for (int i = 0x0B00; i < 0x0B7F; i++) {
+				switch (Char.GetUnicodeCategory ((char) i)) {
+				case NonSpacingMark:
+				case DecimalDigitNumber:
+					continue;
+				}
+				AddLetterMap ((char) i, 0x18, true);
+			}
+
+			// Tamil
+			fillIndex [0x19] = 2;
+			AddCharMap ('\u0BD7', 0x19, false);
+			fillIndex [0x19] = 0xA;
+			// vowels
+			for (int i = 0x0BD7; i < 0x0B94; i++) {
+				if (Char.IsLetter ((char) i) {
+					AddCharMap ((char) i, 0x19, false);
+					fillIndex [0x19] += 2;
+				}
+			}
+			// special vowel
+			fillIndex [0x19] = 0x24;
+			AddCharMap ('\u0B94', 0x19, false);
+			fillIndex [0x19] = 0x26;
+			// FIXME: we need to have constant array for Tamil
+			// consonants. Windows have almost similar sequence
+			// to TAM from tamilnet but a bit different in Grantha
+			for (int i = 0; i < orderedTamil.Length; i++) {
+				char c = orderedGujarati [i];
+				AddLetterMap (c, 0x19, false);
+				fillIndex [0x19] += 4;
+			}
+
+			// Telugu
+			fillIndex [0x1A] = 0x4;
+			for (int i = 0x0C00; i < 0x0C62; i++) {
+				if (i == 0x0C55 || i == 0x0C56)
+					continue; // skip
+				AddCharMap ((char) i, 0x1A, false);
+				fillIndex [0x1A] += 3;
+				char supp = (i == 0x0C0B) ? '\u0C60':
+					i == 0x0C0C ? '\u0C61' : char.MinValue;
+				if (supp == char.MinValue)
+					continue;
+				AddCharMap (supp, 0x1A, false);
+				fillIndex [0x1A] += 3;
+			}
+
+			// Kannada
+			fillIndex [0x1B] = 4;
+			for (int i = 0x0C80; i < 0x0CE5; i++) {
+				if (i == 0x0CD5 || i == 0x0CD6)
+					continue; // ignore
+				AddCharMap ((char) i, 0x1B, false);
+				fillIndex [0x1B] += 3;
+			}
+			
+			// Malayalam
+			fillIndex [0x1C] = 2;
+			for (int i = 0x0D02; i < 0x0D61; i++)
+				if (!IsIgnorable ((char) i))
+					AddCharMap ((char) i, 0x1C, true);
+
+			// Thai ... note that it breaks 0x1E wall after E2B!
+			// Also, all Thai characters have level 2 value 3.
+			fillIndex [0x1E] = 2;
+			for (int i = 0xE44; i < 0xE48; i++)
+				AddThaiCharMap ((char) i, 0x1E, true);
+			for (int i = 0xE01; i < 0xE2B; i++) {
+				AddThaiCharMap ((char) i, 0x1E, false);
+				fillIndex [0x1E] += 6;
+			}
+			fillIndex [0x1F] = 5;
+			for (int i = 0xE2B; i < 0xE30; i++) {
+				AddThaiCharMap ((char) i, 0x1F, false);
+				fillIndex [0x1F] += 6;
+			}
+			for (int i = 0xE30; i < 0xE3B; i++)
+				AddThaiCharMap ((char) i, 0x1F, true);
+			// some Thai characters remains.
+			char [] specialThai = new char [] {'\u0E45', '\u0E46',
+				'\u0E4E', '\u0E4F', '\u0E5A', '\u0E5B'};
+			foreach (char c in specialThai)
+				AddThaiCharMap (c, 0x1F, true);
+
+			// Lao
+			fillIndex [0x1F] = 2;
+			for (int i = 0xE80; i < 0xEDF; i++)
+				if (Char.IsLetter ((char) i))
+					AddCharMap ((char) i, 0x1F, true);
+
+			// Georgian
+			// FIXME: we need an array in UCA order.
+			fillIndex [0x21] = 5;
+			for (int i = 0; i < orderedGeorgian.Length; i++) {
+				char c = orderedGeorgian [i];
+				AddLetterMap (c, 0x21, false);
+				fillIndex [0x21] += 5;
+			}
 
 			#endregion
 		}

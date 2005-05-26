@@ -701,26 +701,79 @@
 
 	10 culture dependent letters (general)
 	  0F: 386-3F2 ... Greek and Coptic
-		386-3CF: 0F 02 - 0F 19 (consider primary equivalents)
-		3D0-3EF: 0F 40 - 0F 54
+		386-3CF: [0F 02] - [0F 19] (consider primary equivalents)
+		3D0-3EF: [0F 40] - [0F 54]
 	  10: 400-4E9 ... Cyrillic.
 		For 400-45F and 4B1, they are mostly UCA DUCET order.
 		After that 460-481 follows, by codepoint.
 		(490-4FF except for 4B1 and Cyrillic supplementary are unused.)
 	  11: 531-586 ... Armenian.
 		Simply sorted by codepoint (handle case).
-	  12: 5D0-5F2 ... Hebrew
+	  12: 5D0-5F2 ... Hebrew.
 		Codepoint order (handle case).
 	  13: 621-6D5 plus 670 (NonSpacingMark) ... Arabic
+		Area 1:
+		They look like ordered by Arabic Presentation Form B except
+		for FE95, and considering diacritical equivalents maybe based
+		on the primary character area (621-6D5).
+		There are still some special characters: 67E,686,698,6AF ...
+		which might not have equivalent characters (I wonder how they
+		are inserted into the presentation form B map).
+		Area 2:
+		674-6D5 : by codepoint from [13 84].
+	  14: 901-963 exc. 93A-93D 950-954 ... Devanagari.
+		For <905 codepoint order, x2 from [14 04].
+		For 905-939 codepoint order, x4 from [14 0B].
+		For 93E-94D codepoint order, x2 from [14 DA].
+	  15: 982-9FA ... Bengali. Actually all UnicodeCategories except for
+		NonSpacingMark, DecimalDigitNumber and OtherNumber.
+		For <9E0 simple codepoint order from [15 02].
+		For >9E0 simple codepoint order from [15 3B].
+	  16: A05-A74 exc. A3C A4D A66-A71 ... Gurmukhi.
+		The same as UCA order, x4 from [16 04].
+	  17: A81-AE0 exc. ABC-ABD ... Gujarati.
+		Mostly equivalent to UCA, but insert {AB3,A81-A83} before AB9,
+		x4 from [17 04].
+	  18: B00-B70 ... Oriya
+		All but NonSpacingMark and DecimalDigitNumber, by codepoint.
+	  19: B80-BFF ... Tamil
+		BD7 is special : [19 02].
+		B82-B93 (vowels) : x2 from [19 0A].
+		B94 (vowel AU) : [19 24]
+		For consonant order Windows has native Tamil order which is
+		different from UCA.
+		http://www.nationmaster.com/encyclopedia/Tamil-alphabet
+		(The order is still different in "Grantha" order from TAM.)
+		So, we should just hold constant array for consonants.
+		And put them in order, x4 form [19 26].
+	  1A: C00-C61 ... Telugu.
+		C55 and C56 are ignored (C5x line and remaining part of C6x
+		line just look like ignored).
+		C60 and C61 are specially placed. C60 after C0B, C61 after C0C.
+		Except for above, by codepoint, x3 from [1A 04].
+	  1B: C80-CE5 ... Kannada.
+		CD5,CD6 (and CE6-CEF: DecimalDigitNumber) are ignored.
+		by codepoint, 3x from [1B 04].
+	  1C: D02-D40 ... Malayalam.
+		by simple codepoint from [1C 02].
+	  (1D: Sinhala ... totally ignored?)
+	  1E: E00-E44 ... Thai.
+		preceding vowels (E40-E44) by codepoint [1E 02 - 1E 06]
+		consonants (E01-E2A) by codepoint, x6 from [1E 07].
+	  1F: E2B-E5B,E80-EDF ... Thai / Lao. (Thai breaks the category wall.)
+		Thai:
+		remaining consonants (E2B-E2E) by codepoint, x6 from [1E 07].
+		remaining vowels (E2F-E3A) by codepoint.
+		E45,E46,E4E,E4F,E5A,E5B
+		Lao:
+		E80-EDF by codepoint from [1F 02].
+	  21: 10A0-10FF ... Georgian
+		Mostly equal to UCA order, but swap 10E3 <-> 10F3,
+		x5 from [21 05].
 
-	  14: 901-963 exc. 93C-93D 950-954
-	  15: 982-9FA exc. NonSpacingMark DecimalDigitNumber OtherNumber
-	  16: A05-A74 exc. A3C A4D A66-A71
-	  17: A81-AE0 exc. ABC-ABD
-
-	...
-
-	   (21) georgian letters
+	  (Tibetan, Limbu, Tagalog, Hanunoo, Buhid, Tagbanwa, Myanmar, Kumer,
+	  Tai-Le, Mongolian, Cherokee, Canadian-Aboriginal, Ogham, Runic
+	  are ignored)
 
 	11 (22) japanese kana letters and symbols, not in codepoint order
 
