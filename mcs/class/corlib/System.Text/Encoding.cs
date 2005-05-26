@@ -226,7 +226,7 @@ public abstract class Encoding
 	// Returns NULL if the method failed.
 	private static Object InvokeI18N (String name, params Object[] args)
 	{
-		lock (typeof(Encoding)) {
+		lock (lockobj) {
 			// Bail out if we previously detected that there
 			// is insufficent engine support for I18N handling.
 			if (i18nDisabled) {
@@ -573,22 +573,24 @@ public abstract class Encoding
 #endif // !ECMA_COMPAT
 
 	// Storage for standard encoding objects.
-	private static Encoding asciiEncoding = null;
-	private static Encoding bigEndianEncoding = null;
-	private static Encoding defaultEncoding = null;
-	private static Encoding utf7Encoding = null;
-	private static Encoding utf8EncodingWithMarkers = null;
-	private static Encoding utf8EncodingWithoutMarkers = null;
-	private static Encoding unicodeEncoding = null;
-	private static Encoding isoLatin1Encoding = null;
-	private static Encoding unixConsoleEncoding = null;
+	static volatile Encoding asciiEncoding;
+	static volatile Encoding bigEndianEncoding;
+	static volatile Encoding defaultEncoding;
+	static volatile Encoding utf7Encoding;
+	static volatile Encoding utf8EncodingWithMarkers;
+	static volatile Encoding utf8EncodingWithoutMarkers;
+	static volatile Encoding unicodeEncoding;
+	static volatile Encoding isoLatin1Encoding;
+	static volatile Encoding unixConsoleEncoding;
+	
+	static readonly object lockobj = new object ();
 
 	// Get the standard ASCII encoding object.
 	public static Encoding ASCII
 	{
 		get {
 			if (asciiEncoding == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (asciiEncoding == null) {
 						asciiEncoding = new ASCIIEncoding ();
 					}
@@ -604,7 +606,7 @@ public abstract class Encoding
 	{
 		get {
 			if (bigEndianEncoding == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (bigEndianEncoding == null) {
 						bigEndianEncoding = new UnicodeEncoding (true, true);
 					}
@@ -623,7 +625,7 @@ public abstract class Encoding
 	{
 		get {
 			if (defaultEncoding == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (defaultEncoding == null) {
 						// See if the underlying system knows what
 						// code page handler we should be using.
@@ -662,7 +664,7 @@ public abstract class Encoding
 	{
 		get {
 			if (isoLatin1Encoding == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (isoLatin1Encoding == null) {
 						isoLatin1Encoding = new Latin1Encoding ();
 					}
@@ -683,7 +685,7 @@ public abstract class Encoding
 	{
 		get {
 			if (utf7Encoding == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (utf7Encoding == null) {
 						utf7Encoding = new UTF7Encoding ();
 					}
@@ -699,7 +701,7 @@ public abstract class Encoding
 	{
 		get {
 			if (utf8EncodingWithMarkers == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (utf8EncodingWithMarkers == null) {
 						utf8EncodingWithMarkers = new UTF8Encoding (true);
 					}
@@ -716,7 +718,7 @@ public abstract class Encoding
 	internal static Encoding UTF8Unmarked {
 		get {
 			if (utf8EncodingWithoutMarkers == null) {
-				lock (typeof (Encoding)){
+				lock (lockobj){
 					if (utf8EncodingWithoutMarkers == null){
 						utf8EncodingWithoutMarkers = new UTF8Encoding (false, false);
 					}
@@ -732,7 +734,7 @@ public abstract class Encoding
 	{
 		get {
 			if (unicodeEncoding == null) {
-				lock (typeof(Encoding)) {
+				lock (lockobj) {
 					if (unicodeEncoding == null) {
 						unicodeEncoding = new UnicodeEncoding (false, true);
 					}

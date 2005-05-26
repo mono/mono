@@ -1,5 +1,8 @@
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
+	* Encoding.cs: Use static object for locking. `volatile' to
+	prevent double checked locking error.
+
 	* StringBuilder.cs: Remove = null inits on fields, saves a few
 	instructions. When we compare _cached_str == _str, we are only
 	interested in pointer based equality, so just do that.
