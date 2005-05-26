@@ -1,3 +1,8 @@
+2005-05-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* TrackingServices.cs: Lock on arraylist syncroot rather than
+	typeof.
+
 2003-11-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* EnterpriseServicesHelper.cs: Added to CVS.

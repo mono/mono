@@ -46,7 +46,7 @@ namespace System.Runtime.Remoting.Services {
 			if (null == handler)
 				throw new ArgumentNullException("handler");
 
-			lock (typeof(TrackingServices)) {
+			lock (_handlers.SyncRoot) {
 				if (-1 != _handlers.IndexOf(handler))
 					throw new RemotingException("handler already registered");
 
@@ -58,7 +58,7 @@ namespace System.Runtime.Remoting.Services {
 			if (null == handler)
 				throw new ArgumentNullException("handler");
 
-			lock (typeof(TrackingServices)) {
+			lock (_handlers.SyncRoot) {
 				int idx = _handlers.IndexOf(handler);
 				if (idx == -1)
 					throw new RemotingException("handler is not registered");
@@ -69,7 +69,7 @@ namespace System.Runtime.Remoting.Services {
     
 		public static ITrackingHandler[] RegisteredHandlers {
 			get {
-				lock (typeof(TrackingServices)) {
+				lock (_handlers.SyncRoot) {
 					if (_handlers.Count == 0)
 						return new ITrackingHandler[0];
 
