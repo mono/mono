@@ -15,6 +15,7 @@ cs0118.cs
 cs0119.cs
 cs0121-3.cs NO ERROR
 cs0122-12.cs
+cs0173-3.cs
 cs0201.cs
 cs0202.cs # new in GMCS
 cs0229.cs NO ERROR
@@ -47,11 +48,9 @@ cs1513.cs
 cs1518.cs
 cs1525.cs
 cs1528.cs
-cs1535.cs # new in GMCS; grammar issue
 cs1540-2.cs # new in GMCS
 cs1540-3.cs NO ERROR # new in GMCS
 cs1540-5.cs NO ERROR # new in GMCS
-cs1552.cs # new in GMCS; grammar issue
 cs1586.cs
 cs1638.cs NO ERROR
 cs1641.cs
@@ -59,5 +58,3 @@ cs1666.cs NO ERROR
 cs2007.cs
 gcs0694.cs NO ERROR
 gcs1644-2.cs NO ERROR
-
-cs0647.cs NO ERROR # not yet merged

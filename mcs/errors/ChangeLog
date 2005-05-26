@@ -1,3 +1,9 @@
+2005-05-26  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0173-3.cs: Rename from cs0172-2.cs.  CSC 1.1 reports CS0173,
+	CSC 2.0.40607 reports CS0172.  CS0173 is somewhat more appropriate
+	since the conversion is ambiguous.
+
 2005-05-20  Martin Baulig  <martin@ximian.com>
 
 	* mcs-known-issues, gmcs-known-issues: Updated.

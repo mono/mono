@@ -1,3 +1,8 @@
+2005-05-26  Duncan Mak  <duncan@novell.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* test-387.cs: New test from #54928.
+
 2005-05-24  Duncan Mak  <duncan@novell.com>
 
 	* test-386.cs: New test from #68711.
