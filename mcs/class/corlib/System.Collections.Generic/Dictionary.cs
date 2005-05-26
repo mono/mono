@@ -227,7 +227,7 @@ namespace System.Collections.Generic {
 	
 		protected virtual int GetHash (K key)
 		{
-			IComparer<K> hcp = this._hcp;
+			//IComparer<K> hcp = this._hcp;
 			
 			return key.GetHashCode ();
 			/*

@@ -41,6 +41,7 @@ namespace System.Collections.Generic {
 		void Add (K key, V value);
 		bool ContainsKey (K key);
 		bool Remove (K key);
+		bool TryGetValue (K key, out V value);
 		V this[K key] { get; set; }
 		ICollection<K> Keys { get; }
 		ICollection<V> Values { get; }

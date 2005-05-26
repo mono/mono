@@ -1,3 +1,9 @@
+2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Dictionary.cs: Fix a warning.
+
+	* IDictionary.cs: Add missing TryGetValue method.
+
 2005-05-19  Geoff Norton  <gnorton@customerdna.com>
 
 	* List.cs (Insert): Resize the array before the shift if needed
