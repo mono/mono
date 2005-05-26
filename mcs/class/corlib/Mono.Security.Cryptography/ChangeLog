@@ -1,3 +1,8 @@
+2005-05-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* KeyPairPersistence.cs: Lock *before* checking if things are null
+	to prevent race conditions. Also, do not lock on typeof object.
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistence.cs: Use PlatformID.Unix under NET_2_0. 
