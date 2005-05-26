@@ -462,7 +462,18 @@ namespace System.Windows.Forms
 			}
 			
 			if (DataGridTextBoxColumn.CanRenderType (prop.PropertyType)) {
-				return new DataGridTextBoxColumn (prop, isDefault);
+				
+				// At least to special cases with formats
+				if (prop.PropertyType.Equals (typeof (DateTime))) {
+					return new DataGridTextBoxColumn (prop, "d", isDefault);					
+				}
+				
+				if (prop.PropertyType.Equals (typeof (Int32)) ||
+					prop.PropertyType.Equals (typeof (Int16))) {
+					return new DataGridTextBoxColumn (prop, "G", isDefault);					
+				}
+				
+				return new DataGridTextBoxColumn (prop, isDefault);				
 			}
 			
 			throw new NotImplementedException ();
@@ -763,6 +774,7 @@ namespace System.Windows.Forms
 					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
 					st.TableStyle = this;
 					st.MappingName = propcol[i].Name;
+					st.HeaderText = propcol[i].Name;
 					st.Width = PreferredColumnWidth;					
 					column_styles.Add (st);					
 				}				

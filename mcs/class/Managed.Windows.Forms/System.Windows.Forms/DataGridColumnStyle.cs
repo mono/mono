@@ -120,6 +120,7 @@ namespace System.Windows.Forms
 		private int width;
 		internal protected DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
+		private StringFormat string_format_hdr;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -147,6 +148,9 @@ namespace System.Windows.Forms
 			width = -1;
 			grid = null;
 			alignment = HorizontalAlignment.Left;
+			string_format_hdr = new StringFormat ();
+			string_format_hdr.FormatFlags |= StringFormatFlags.NoWrap;
+			string_format_hdr.LineAlignment  = StringAlignment.Center;
 		}
 
 		#endregion
@@ -327,7 +331,7 @@ namespace System.Windows.Forms
 			}
 			
 			if (property_descriptor == null) {
-				throw new ApplicationException ("	The PropertyDescriptor for this column is a null reference");
+				throw new ApplicationException ("The PropertyDescriptor for this column is a null reference");
 			}
 		}
 
@@ -378,7 +382,7 @@ namespace System.Windows.Forms
 		}
 		
 		protected internal virtual object GetColumnValueAtRow (CurrencyManager source, int rowNum)
-		{
+		{			
 			CheckValidDataSource (source);
 			return property_descriptor.GetValue (source.GetItem (rowNum));
 		}
@@ -438,8 +442,37 @@ namespace System.Windows.Forms
 		{
 
 		}
-
 		#endregion	// Public Instance Methods
+		
+		#region Private Instance Methods		
+		protected internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
+		{	
+			// Background
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.DataGrid.ParentRowsBackColor), 
+				bounds);
+			
+			// Paint Borders			
+			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),			
+				bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
+			
+			if (colNum == 0) {	
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height);
+			} else {
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					bounds.X, bounds.Y + 2, bounds.X, bounds.Y + bounds.Height - 2);
+			}
+			
+			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				bounds.X + bounds.Width - 1, bounds.Y + 2 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 2);
+			
+			bounds.X += 3;
+			bounds.Width -=	3;
+			g.DrawString (HeaderText, DataGridTableStyle.DataGrid.Font, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), 
+				bounds, string_format_hdr);
+		}
+		
+		#endregion Private Instance Methods
 
 
 		#region Events

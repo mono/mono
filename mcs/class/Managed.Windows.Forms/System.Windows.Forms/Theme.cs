@@ -432,6 +432,8 @@ namespace System.Windows.Forms
 		
 		#region Datagrid
 		public abstract int DataGridPreferredColumnWidth { get; }
+		public abstract int DataGridMinimumColumnCheckBoxHeight { get; }
+		public abstract int DataGridMinimumColumnCheckBoxWidth { get; }
 		
 		// Default colours
 		public abstract Color DataGridAlternatingBackColor { get; }		

@@ -1,3 +1,14 @@
+2005-05-26  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: Draws text and basic text formatting
+	* DataGridTableStyle.cs: set proper formatting text, def header text
+	* ThemeWin32Classic.cs: new themable paramaters
+	* DataGridBoolColumn.cs: paint check box, get data, fixes
+	* DataGridDrawingLogic.cs: huge improvements in painting, fixes, new methods
+	* DataGrid.cs: fixes properties, implements vertical and horizontal scrolling
+	* DataGridColumnStyle.cs: fixes
+	* Theme.cs: new themable paramaters
+		
 2005-05-26  Peter Bartok  <pbartok@novell.com>
 
 	* ContainerControl.cs: Pass AdjustFormScrollbars() call on to base

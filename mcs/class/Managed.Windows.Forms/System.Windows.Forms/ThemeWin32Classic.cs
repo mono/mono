@@ -857,7 +857,9 @@ namespace System.Windows.Forms
 		#endregion ComboBox
 		
 		#region Datagrid
-		public override int DataGridPreferredColumnWidth { get { return 75;} }		
+		public override int DataGridPreferredColumnWidth { get { return 75;} }
+		public override int DataGridMinimumColumnCheckBoxHeight { get { return 16;} }
+		public override int DataGridMinimumColumnCheckBoxWidth { get { return 16;} }
 		public override Color DataGridAlternatingBackColor { get { return ColorWindow;} }
 		public override Color DataGridBackgroundColor { get  { return ColorWindow;} }
 		public override Color DataGridCaptionBackColor { get  { return ColorActiveTitle;} }

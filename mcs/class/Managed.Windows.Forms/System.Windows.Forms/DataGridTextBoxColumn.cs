@@ -200,12 +200,13 @@ namespace System.Windows.Forms
 			object obj;
 			obj = GetColumnValueAtRow (source, rowNum);
 			
-			PaintText (g, bounds, obj.ToString (),  backBrush, foreBrush, alignToRight);
+			PaintText (g, bounds, GetFormattedString (obj),  backBrush, foreBrush, alignToRight);
 		}
 				
-		protected void PaintText (Graphics g, Rectangle bounds, string text,  bool alignToRight)
+		protected void PaintText (Graphics g, Rectangle bounds, string text, bool alignToRight)
 		{
-			
+			PaintText (g, bounds, text,  ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
+				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
 		}		
 		
 		protected void PaintText (Graphics g, Rectangle textBounds, string text, Brush backBrush, Brush foreBrush, bool alignToRight)
@@ -214,10 +215,9 @@ namespace System.Windows.Forms
 				string_format.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 			} else {
 				string_format.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
-			}
+			}			
 			
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
-			
 			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);	
 		}
 		
@@ -247,6 +247,16 @@ namespace System.Windows.Forms
 		internal static bool CanRenderType (Type type)
 		{			
 			return (type != typeof (Boolean));
+		}
+		
+		private string GetFormattedString (object obj)
+		{										
+			if (format != null && obj as IFormattable != null) {
+				return ((IFormattable)obj).ToString (format, format_provider);
+			}	
+						
+			return obj.ToString ();
+			
 		}
 		#endregion Private Instance Methods	
 

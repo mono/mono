@@ -160,47 +160,58 @@ namespace System.Windows.Forms
 		{
 
 		}
-
-		[MonoTODO]
+		
 		protected internal override object GetColumnValueAtRow (CurrencyManager lm, int row)
 		{
-			throw new NotImplementedException ();
+			object obj = base.GetColumnValueAtRow (lm, row);
+			
+			if (obj.Equals (truevalue)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
-
-		[MonoTODO]
+		
 		protected internal override int GetMinimumHeight ()
 		{
-			throw new NotImplementedException ();
+			return ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight;
 		}
-
-		[MonoTODO]
+		
 		protected internal override int GetPreferredHeight (Graphics g, object value)
 		{
-			throw new NotImplementedException ();
+			return ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight;
 		}
 
-		[MonoTODO]
 		protected internal override Size GetPreferredSize (Graphics g, object value)
 		{
-			throw new NotImplementedException ();
+			return new Size (ThemeEngine.Current.DataGridMinimumColumnCheckBoxWidth, ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight);
 		}
-
-		[MonoTODO]
+		
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
 		{
-
+			Paint (g, bounds, source, rowNum, false);
 		}
-
-		[MonoTODO]
-		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum,   bool alignToRight)
+		
+		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight)
 		{
-
+			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
+				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
 		}
-
-		[MonoTODO]
-		protected internal override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
+		
+		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
-
+			Size chkbox_size = GetPreferredSize (g, null);
+			Rectangle rect = new Rectangle ();
+			chkbox_size.Width -= 2;
+			chkbox_size.Height -= 2;			
+			rect.X = bounds.X + ((bounds.Width - chkbox_size.Width) / 2);
+			rect.Y = bounds.Y + ((bounds.Height - chkbox_size.Height) / 2);
+			rect.Width = chkbox_size.Width;
+			rect.Height = chkbox_size.Height;
+			
+			bool value = (bool) GetColumnValueAtRow (source, rowNum);
+			ThemeEngine.Current.CPDrawCheckBox (g, rect, value == true ? ButtonState.Checked : ButtonState.Normal);
 		}
 
 		[MonoTODO]

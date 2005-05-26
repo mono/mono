@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 		private bool allow_sorting;
 		private Color alternating_backcolor;
 		private Color background_color;
-		private BorderStyle border_style;
+		internal BorderStyle border_style;
 		private Color caption_backcolor;
 		private Font caption_font;
 		private Color caption_forecolor;
@@ -157,6 +157,7 @@ namespace System.Windows.Forms
 		private int rowheaders_width;
 		internal int visiblecolumn_count;
 		internal int visiblerow_count;
+		internal int first_visiblecolumn;
 		private int currentrow_index;
 		private GridTableStylesCollection styles_collection;
 		private DataGridParentRowsLabelStyle parentrowslabel_style;
@@ -169,6 +170,7 @@ namespace System.Windows.Forms
 		internal VScrollBar vert_scrollbar;
 		private DataGridDrawing grid_drawing;
 		internal int first_visiblerow;
+		internal int horz_pixeloffset;
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -207,10 +209,12 @@ namespace System.Windows.Forms
 			selection_forecolor = def_selection_forecolor;
 			rowheaders_width = 35;
 			visiblecolumn_count = 0;
-			visiblerow_count = 0;
+			visiblerow_count = 0;			
 			current_cell = new DataGridCell ();
 			currentrow_index = -1;
 			first_visiblerow = 0;
+			first_visiblecolumn = 0;
+			horz_pixeloffset = 0;
 			forecolor = SystemColors.WindowText;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			backcolor = SystemColors.Window;
@@ -222,6 +226,7 @@ namespace System.Windows.Forms
 			CurrentTableStyle = default_style;
 
 			horiz_scrollbar = new HScrollBar ();
+			horiz_scrollbar.Scroll += new ScrollEventHandler  (OnHorizontalScrollEvent);			
 			vert_scrollbar = new VScrollBar ();
 			vert_scrollbar.ValueChanged += new EventHandler (OnVerticalScrollEvent);
 			grid_drawing = new DataGridDrawing (this);
@@ -321,6 +326,7 @@ namespace System.Windows.Forms
 			set {
 				 if (border_style != value) {
 					border_style = value;
+					grid_drawing.CalcGridAreas ();
 					OnBorderStyleChanged (EventArgs.Empty);
 					Refresh ();
 				}
@@ -352,10 +358,13 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (caption_font!= null && !caption_font.Equals (value)) {
-					caption_font = value;
-					grid_drawing.InvalidateCaption ();
+				if (caption_font != null && caption_font.Equals (value)) {
+					return;
 				}
+				
+				caption_font = value;
+				grid_drawing.CalcGridAreas ();
+				Refresh ();				
 			}
 		}
 
@@ -535,6 +544,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value == Color.Empty) {
+					throw new ArgumentNullException ("Color.Empty value is invalid.");
+				}
+				
 				if (gridline_color != value) {
 					gridline_color = value;
 					Refresh ();
@@ -562,6 +575,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value == Color.Empty) {
+					throw new ArgumentNullException ("Color.Empty value is invalid.");
+				}
+				
 				if (header_backcolor != value) {
 					header_backcolor = value;
 					Refresh ();
@@ -876,7 +893,6 @@ namespace System.Windows.Forms
 			get {
 				return visiblecolumn_count;
 			}
-
 		}
 
 		// Calculated at DataGridDrawing.CalcRowsHeaders
@@ -898,7 +914,7 @@ namespace System.Windows.Forms
 				current_style = value;
 			}
 		}
-		
+				
 		internal int FirstVisibleRow {
 			get { return first_visiblerow; }
 			set { first_visiblerow = value;}
@@ -1199,10 +1215,10 @@ namespace System.Windows.Forms
 				Navigate (this, e);
 			}
 		}
-
+		
 		protected override void OnPaint (PaintEventArgs pe)
-		{						
-			grid_drawing.OnPaint (pe);
+		{			
+			grid_drawing.OnPaint (pe);			
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs ebe)
@@ -1475,6 +1491,58 @@ namespace System.Windows.Forms
 			current_style.CreateColumnsForTable ();
 			grid_drawing.CalcGridAreas ();
 		}
+		
+		private void OnHorizontalScrollEvent (object sender, ScrollEventArgs e)
+		{
+			if (horiz_scrollbar.Value == horz_pixeloffset ||
+				e.Type == ScrollEventType.EndScroll) {
+				return;
+			}
+			
+			Rectangle invalidate = new Rectangle ();
+			Rectangle invalidate_column = new Rectangle ();
+			
+			if (horiz_scrollbar.Value > horz_pixeloffset) { // ScrollRight
+				int pixels = horiz_scrollbar.Value - horz_pixeloffset;
+				
+				// Columns header
+				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X + grid_drawing.ColumnsHeadersArea.Width - pixels;
+				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
+				invalidate_column.Width = pixels;
+				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, -pixels, 0, false);
+				
+				// Cells												
+				invalidate.X = grid_drawing.CellsArea.X + grid_drawing.CellsArea.Width - pixels;
+				invalidate.Y = grid_drawing.CellsArea.Y;
+				invalidate.Width = pixels;
+				invalidate.Height = grid_drawing.CellsArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, -pixels, 0, false);				
+				
+			} else {				
+				int pixels = horz_pixeloffset - horiz_scrollbar.Value;
+				
+				// Columns header
+				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X;
+				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
+				invalidate_column.Width = pixels;
+				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, pixels, 0, false);
+				
+				// Cells				
+				invalidate.X =  grid_drawing.CellsArea.X;
+				invalidate.Y =  grid_drawing.CellsArea.Y;
+				invalidate.Width = pixels;
+				invalidate.Height = grid_drawing.CellsArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, pixels, 0, false);				
+			}
+			
+			horz_pixeloffset = horiz_scrollbar.Value;
+			grid_drawing.UpdateVisibleColumn ();
+			Invalidate (invalidate_column);
+			Invalidate (invalidate);
+			
+		}
 
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
@@ -1508,30 +1576,35 @@ namespace System.Windows.Forms
 				return;
 			}
 			
+			Rectangle invalidate = new Rectangle ();
+			
 			if (vert_scrollbar.Value > first_visiblerow ) { // Scrolldown 
 				int scrolled_rows = vert_scrollbar.Value - first_visiblerow;
-				int pixels = scrolled_rows * RowHeight;
-				Rectangle invalidate = new Rectangle ();
+				int pixels = scrolled_rows * RowHeight;		
 				
 				invalidate.X =  grid_drawing.CellsArea.X;
 				invalidate.Y =  grid_drawing.CellsArea.Y + grid_drawing.CellsArea.Height - pixels;
 				invalidate.Width = grid_drawing.CellsArea.Width;
 				invalidate.Height = pixels;				
 
-				first_visiblerow =  vert_scrollbar.Value; 
-				grid_drawing.UpdateVisibleRowCount ();
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, -pixels, false);				
 				
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, - pixels, false);
-				Invalidate (invalidate);				
+			} else { // ScrollUp
+				int scrolled_rows = first_visiblerow - vert_scrollbar.Value;
+				int pixels = scrolled_rows * RowHeight;				
 				
-				//
-			} else { // Scrollup
+				invalidate.X =  grid_drawing.CellsArea.X;
+				invalidate.Y =  grid_drawing.CellsArea.Y;
+				invalidate.Width = grid_drawing.CellsArea.Width;
+				invalidate.Height = pixels;				
 				
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, pixels, false);								
 			}
 			
-			
-			
-			//Refresh ();
+			first_visiblerow =  vert_scrollbar.Value; 
+			grid_drawing.UpdateVisibleRowCount ();
+			Invalidate (invalidate);
+			Invalidate (grid_drawing.RowsHeadersArea);
 		}
 		
 		#endregion Private Instance Methods
