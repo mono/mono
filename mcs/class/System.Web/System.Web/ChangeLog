@@ -1,3 +1,7 @@
+2005-05-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* MimeTypes.cs: Remove extra spaces, they were typos. Fixes 75049.
+
 2005-05-13 Atsushi Enomoto <atsishi@ximian.com>
 
 	* HttpUtility.cs : UrlDecodeToBytes() incorrectly decoded escaped 
