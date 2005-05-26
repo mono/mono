@@ -1,3 +1,12 @@
+2005-05-26  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DefaultPolicies.cs: New. Creates the default security policies. 
+	Permissions outside corlib are commented due to a bug with CAS when 
+	loading them.
+	* PolicyLevel.cs: Fixed TODO for Recover method and for reserved names
+	in RemoveNamedPermissionSet method. Moved IsReserved method to new 
+	DefaultPolicies class.
+
 2005-05-16  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* FileCodeGroup.cs: Deal with null PolicyStatement.

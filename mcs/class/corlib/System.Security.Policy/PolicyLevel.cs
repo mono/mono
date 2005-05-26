@@ -214,7 +214,7 @@ namespace System.Security.Policy {
 				throw new ArgumentNullException ("name");
 			if (pSet == null)
 				throw new ArgumentNullException ("pSet");
-			if (IsReserved (name))
+			if (DefaultPolicies.ReservedNames.IsReserved (name))
 				throw new ArgumentException (Locale.GetText ("Reserved name"));
 
 			foreach (NamedPermissionSet n in named_permission_sets) {
@@ -299,10 +299,26 @@ namespace System.Security.Policy {
                         return null;
                 }
 
-                [MonoTODO]
                 public void Recover ()
                 {
-                        throw new NotImplementedException ();
+			if (_location == null) {
+				string msg = Locale.GetText ("Only file based policies may be recovered.");
+				throw new PolicyException (msg);
+			}
+
+			string backup = _location + ".backup";
+			if (!File.Exists (backup)) {
+				string msg = Locale.GetText ("No policy backup exists.");
+				throw new PolicyException (msg);
+			}
+
+			try {
+				File.Copy (backup, _location, true);
+			}
+			catch (Exception e) {
+				string msg = Locale.GetText ("Couldn't replace the policy file with it's backup.");
+				throw new PolicyException (msg, e);
+			}
                 }
 
                 public void RemoveFullTrustAssembly (StrongName sn)
@@ -335,11 +351,12 @@ namespace System.Security.Policy {
 			return RemoveNamedPermissionSet (permSet.Name);
                 }
 
-		[MonoTODO ("Check for reserved names")]
 		public NamedPermissionSet RemoveNamedPermissionSet (string name)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (DefaultPolicies.ReservedNames.IsReserved (name))
+				throw new ArgumentException (Locale.GetText ("Reserved name"));
 
 			foreach (NamedPermissionSet nps in named_permission_sets) {
 				if (name == nps.Name) {
@@ -372,13 +389,13 @@ namespace System.Security.Policy {
 				LoadFromFile (_location);
 			}
 			else {
-				named_permission_sets.Add (new NamedPermissionSet ("LocalIntranet"));
-				named_permission_sets.Add (new NamedPermissionSet ("Internet"));
-				named_permission_sets.Add (new NamedPermissionSet ("SkipVerification"));
-				named_permission_sets.Add (new NamedPermissionSet ("Execution"));
-				named_permission_sets.Add (new NamedPermissionSet ("Nothing"));
-				named_permission_sets.Add (new NamedPermissionSet ("Everything"));
-				named_permission_sets.Add (new NamedPermissionSet ("FullTrust"));
+				named_permission_sets.Add (DefaultPolicies.LocalIntranet);
+				named_permission_sets.Add (DefaultPolicies.Internet);
+				named_permission_sets.Add (DefaultPolicies.SkipVerification);
+				named_permission_sets.Add (DefaultPolicies.Execution);
+				named_permission_sets.Add (DefaultPolicies.Nothing);
+				named_permission_sets.Add (DefaultPolicies.Everything);
+				named_permission_sets.Add (DefaultPolicies.FullTrust);
 			}
                 }
 
@@ -451,23 +468,6 @@ namespace System.Security.Policy {
 
 		// internal stuff
 
-		internal bool IsReserved (string name) 
-		{
-			switch (name) {
-				case "FullTrust":
-				case "LocalIntranet":
-				case "Internet":
-				case "SkipVerification":
-				case "Execution":
-				case "Nothing":
-				case "Everything":
-					// FIXME: Are there others ?
-					return true;
-				default:
-					return false;
-			}
-		}
-
 		// NOTE: Callers are expected to check for ControlPolicy
 		internal void Save ()
 		{
@@ -477,9 +477,18 @@ namespace System.Security.Policy {
 			}
 
 			if (_location != null) {
-				using (StreamWriter sw = new StreamWriter (_location)) {
-					sw.Write (ToXml ().ToString ());
-					sw.Close ();
+				try {
+					if (File.Exists (_location)) {
+						File.Copy (_location, _location + ".backup", true);
+					}
+				}
+				catch (Exception) {
+				}
+				finally {
+					using (StreamWriter sw = new StreamWriter (_location)) {
+						sw.Write (ToXml ().ToString ());
+						sw.Close ();
+					}
 				}
 			}
 		}
@@ -505,6 +514,15 @@ namespace System.Security.Policy {
 				root_code_group.Name = "All_Code";
 				break;
 			}
+
+			named_permission_sets.Clear ();
+			named_permission_sets.Add (DefaultPolicies.LocalIntranet);
+			named_permission_sets.Add (DefaultPolicies.Internet);
+			named_permission_sets.Add (DefaultPolicies.SkipVerification);
+			named_permission_sets.Add (DefaultPolicies.Execution);
+			named_permission_sets.Add (DefaultPolicies.Nothing);
+			named_permission_sets.Add (DefaultPolicies.Everything);
+			named_permission_sets.Add (DefaultPolicies.FullTrust);
 		}
 
 		internal string ResolveClassName (string className)
