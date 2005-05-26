@@ -1,3 +1,8 @@
+2005-05-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* Conversion.cs (Val): Do a correct impl of Val (char). Fixes bug
+	#67810.
+
 2005-05-12 Ankit Jain  <ankit@corewars.org>
 
 	* Strings.cs : Sealed.

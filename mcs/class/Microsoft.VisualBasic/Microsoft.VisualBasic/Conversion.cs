@@ -683,13 +683,10 @@ namespace Microsoft.VisualBasic {
 		}
 
 		// Val on a char type is pretty simple  '9' = 9, 'a' = exception
-		public static int Val (char Expression) {
-			if (char.IsDigit(Expression)) {
-				return Expression - '0';
-			} 
-			else {
-				throw new ArgumentException();
-			}
+		public static int Val (char c) {
+			if (c >= '0' && c <= '9')
+				return c - '0';
+			return 0;
 		}
 
 		// if it's an object, and we can't convert 
