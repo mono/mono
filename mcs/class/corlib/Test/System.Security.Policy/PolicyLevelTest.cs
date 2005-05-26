@@ -33,6 +33,7 @@ using System.IO;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
+using System.Text;
 
 namespace MonoTests.System.Security.Policy {
 
@@ -349,9 +350,37 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void Recover () 
+		[ExpectedException (typeof (PolicyException))]
+		public void Recover_LoadPolicyLevelFromFile ()
 		{
-			// note: may be dangerous to test
+			string temp = Path.GetTempFileName ();
+			using (FileStream fs = File.OpenWrite (temp)) {
+				// that way we're sure that no back exists
+				byte[] data = Encoding.UTF8.GetBytes (minimal);
+				fs.Write (data, 0, data.Length);
+				fs.Close ();
+			}
+			PolicyLevel pl = SecurityManager.LoadPolicyLevelFromFile (temp, PolicyLevelType.User);
+			pl.Recover ();
+			// can't recover if no backup exists
+		}
+
+		[Test]
+		[ExpectedException (typeof (PolicyException))]
+		public void Recover_LoadPolicyLevelFromString () 
+		{
+			PolicyLevel pl = SecurityManager.LoadPolicyLevelFromString (minimal, PolicyLevelType.Enterprise);
+			pl.Recover ();
+			// can't recover as it's not file based
+		}
+
+		[Test]
+		[ExpectedException (typeof (PolicyException))]
+		public void Recover_AppDomainLevel ()
+		{
+			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
+			pl.Recover ();
+			// can't recover as it's not file based
 		}
 
 		[Test]
@@ -471,6 +500,62 @@ namespace MonoTests.System.Security.Policy {
 		{
 			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
 			pl.RemoveNamedPermissionSet ("Mono");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_FullTrust_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("FullTrust");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_LocalIntranet_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("LocalIntranet");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_Internet_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("Internet");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_SkipVerification_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("SkipVerification");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_Execution_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("Execution");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_Nothing_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("Nothing");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RemoveNamedPermissionSet_Everything_ReservedName ()
+		{
+			PolicyLevel pl = Load (minimal, PolicyLevelType.Machine);
+			pl.RemoveNamedPermissionSet ("Everything");
 		}
 
 		[Test]
