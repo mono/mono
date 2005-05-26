@@ -36,8 +36,10 @@ namespace System.ComponentModel
 {
 	public sealed class LicenseManager
 	{
-		private static LicenseContext mycontext = null;
-		private static object contextLockUser = null;
+		static LicenseContext mycontext;
+		static object contextLockUser;
+		
+		static object lockObject = new object ();
 
 		private LicenseManager ()
 		{
@@ -45,7 +47,7 @@ namespace System.ComponentModel
 
 		public static LicenseContext CurrentContext {
 			get {
-				lock (typeof(LicenseManager)) {
+				lock (lockObject) {
 					//Tests indicate a System.ComponentModel.Design.RuntimeLicenseContext should be returned.
 					if  (mycontext==null)
 						mycontext = new Design.RuntimeLicenseContext();
@@ -53,7 +55,7 @@ namespace System.ComponentModel
 				}
 			} 
 			set { 
-				lock (typeof(LicenseManager)) {
+				lock (lockObject) {
 					if (contextLockUser==null) {
 						mycontext = value;
 					} else {
@@ -80,17 +82,17 @@ namespace System.ComponentModel
 							object[] args)
 		{
 			object newObject = null;
-			lock (typeof (LicenseManager)) {
-				object lockObject = new object ();
+			lock (lockObject) {
+				object contextUser = new object ();
 				LicenseContext oldContext = CurrentContext;
 				CurrentContext = creationContext;
-				LockContext (lockObject);
+				LockContext (contextUser);
 				try {
 					newObject = Activator.CreateInstance (type, args);
 				} catch (Reflection.TargetInvocationException exception) {
 					throw exception.InnerException;
 				} finally {
-					UnlockContext (lockObject);
+					UnlockContext (contextUser);
 					CurrentContext = oldContext;
 				}
 			}
@@ -131,14 +133,14 @@ namespace System.ComponentModel
 
 		public static void LockContext (object contextUser)
 		{
-			lock (typeof (LicenseManager)) {
+			lock (lockObject) {
 				contextLockUser = contextUser;
 			}
 		}
 
 		public static void UnlockContext (object contextUser)
 		{
-			lock (typeof(LicenseManager)) {
+			lock (lockObject) {
 				//Ignore if we're not locked
 				if (contextLockUser == null)
 					return;

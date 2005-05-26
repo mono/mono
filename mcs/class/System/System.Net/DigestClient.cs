@@ -360,21 +360,15 @@ namespace System.Net
 	class DigestClient : IAuthenticationModule
 	{
 
-		static Hashtable cache;
-
-		public DigestClient () {}
-
+		static readonly Hashtable cache = Hashtable.Synchronized (new Hashtable ());
+		
 		static Hashtable Cache {
 			get {
-				lock (typeof (DigestClient)) {
-					if (cache == null) {
-						cache = Hashtable.Synchronized (new Hashtable ());
-					} else {
-						CheckExpired (cache.Count);
-					}
-
-					return cache;
+				lock (cache.SyncRoot) {
+					CheckExpired (cache.Count);
 				}
+				
+				return cache;
 			}
 		}
 

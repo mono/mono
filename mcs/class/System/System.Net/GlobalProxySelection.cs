@@ -36,7 +36,8 @@ namespace System.Net
 {
 	public class GlobalProxySelection
 	{
-		private static IWebProxy proxy;
+		volatile static IWebProxy proxy;
+		static readonly object lockobj = new object ();
 		
 		// Constructors
 		public GlobalProxySelection() { }
@@ -48,7 +49,7 @@ namespace System.Net
 			if (proxy != null)
 				return proxy;
 
-			lock (typeof (GlobalProxySelection)) {
+			lock (lockobj) {
 				if (proxy != null)
 					return proxy;
 
@@ -68,9 +69,7 @@ namespace System.Net
 				if (value == null)
 					throw new ArgumentNullException ("GlobalProxySelection.Select",
 							"null IWebProxy not allowed. Use GetEmptyWebProxy ()");
-
-				lock (typeof (GlobalProxySelection))
-					proxy = value; 
+				proxy = value; 
 			}
 		}
 		

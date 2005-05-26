@@ -131,7 +131,7 @@ namespace MonoTests.System.ComponentModel
 #endif
 		public void Test () 
 		{
-			object lockObject = typeof (LicenseManager);
+			object lockObject = new object ();
 			//**DEFAULT CONTEXT & LicenseUsageMode**
 			//Get CurrentContext, check default type
 			AssertEquals ("LicenseManager #1", "System.ComponentModel.Design.RuntimeLicenseContext", LicenseManager.CurrentContext.GetType().ToString());

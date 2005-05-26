@@ -93,32 +93,31 @@ namespace System.IO {
 		{
 		}
 		
+		// Locked by caller
 		public static bool GetInstance (out IFileWatcher watcher)
 		{
-			lock (typeof (KeventWatcher)) {
-				if (failed == true) {
-					watcher = null;
-					return false;
-				}
+			if (failed == true) {
+				watcher = null;
+				return false;
+			}
 
-				if (instance != null) {
-					watcher = instance;
-					return true;
-				}
-
-				watches = Hashtable.Synchronized (new Hashtable ());
-				requests = Hashtable.Synchronized (new Hashtable ());
-				conn = kqueue();
-				if (conn == -1) {
-					failed = true;
-					watcher = null;
-					return false;
-				}
-
-				instance = new KeventWatcher ();
+			if (instance != null) {
 				watcher = instance;
 				return true;
 			}
+
+			watches = Hashtable.Synchronized (new Hashtable ());
+			requests = Hashtable.Synchronized (new Hashtable ());
+			conn = kqueue();
+			if (conn == -1) {
+				failed = true;
+				watcher = null;
+				return false;
+			}
+
+			instance = new KeventWatcher ();
+			watcher = instance;
+			return true;
 		}
 		
 		public void StartDispatching (FileSystemWatcher fsw)

@@ -46,19 +46,14 @@ namespace System.Configuration
 {
 	public sealed class ConfigurationSettings
 	{
-		static IConfigurationSystem config;
-			
+		static IConfigurationSystem config = DefaultConfig.GetInstance ();
+		static object lockobj = new object ();
 		private ConfigurationSettings ()
 		{
 		}
 
 		public static object GetConfig (string sectionName)
 		{
-			lock (typeof (ConfigurationSettings)) {
-				if (config == null)
-					config = DefaultConfig.GetInstance ();
-			}
-
 			return config.GetConfig (sectionName);
 		}
 
@@ -98,10 +93,7 @@ namespace System.Configuration
 			if (newSystem == null)
 				throw new ArgumentNullException ("newSystem");
 
-			lock (typeof (ConfigurationSettings)) {
-				if (config == null)
-					config = DefaultConfig.GetInstance ();
-
+			lock (lockobj) {
 				IConfigurationSystem old = config;
 				config = newSystem;
 				return old;
@@ -115,20 +107,15 @@ namespace System.Configuration
 	//
 	class DefaultConfig : IConfigurationSystem
 	{
-		static DefaultConfig instance;
+		static readonly DefaultConfig instance = new DefaultConfig ();
 		ConfigurationData config;
-
+		
 		private DefaultConfig ()
 		{
 		}
 
 		public static DefaultConfig GetInstance ()
 		{
-			lock (typeof (DefaultConfig)) {
-				if (instance == null)
-					instance = new DefaultConfig ();
-			}
-
 			return instance;
 		}
 

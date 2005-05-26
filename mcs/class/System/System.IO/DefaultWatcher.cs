@@ -63,18 +63,17 @@ namespace System.IO {
 		{
 		}
 		
+		// Locked by caller
 		public static bool GetInstance (out IFileWatcher watcher)
 		{
-			lock (typeof (DefaultWatcher)) {
-				if (instance != null) {
-					watcher = instance;
-					return true;
-				}
-
-				instance = new DefaultWatcher ();
+			if (instance != null) {
 				watcher = instance;
 				return true;
 			}
+
+			instance = new DefaultWatcher ();
+			watcher = instance;
+			return true;
 		}
 		
 		public void StartDispatching (FileSystemWatcher fsw)

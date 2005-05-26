@@ -37,12 +37,13 @@ namespace System.ComponentModel {
 	public class CategoryAttribute : Attribute
 	{
 		private string category;
-		private bool IsLocalized = false;
+		private bool IsLocalized;
 
-		static CategoryAttribute action, appearance, behaviour, data,   def;
-		static CategoryAttribute design, drag_drop,  focus,     format, key;
-		static CategoryAttribute layout, mouse,      window_style;
+		static volatile CategoryAttribute action, appearance, behaviour, data,   def;
+		static volatile CategoryAttribute design, drag_drop,  focus,     format, key;
+		static volatile CategoryAttribute layout, mouse,      window_style;
 
+		static object lockobj = new object ();
 
 		public CategoryAttribute ()
 		{
@@ -60,7 +61,7 @@ namespace System.ComponentModel {
 				if (action != null)
 					return action;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (action == null)
 						action = new CategoryAttribute ("Action");
 				}
@@ -73,7 +74,7 @@ namespace System.ComponentModel {
 				if (appearance != null)
 					return appearance;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (appearance == null)
 						appearance = new CategoryAttribute ("Appearance");
 				}
@@ -86,7 +87,7 @@ namespace System.ComponentModel {
 				if (behaviour != null)
 					return behaviour;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (behaviour == null)
 						behaviour = new CategoryAttribute ("Behavior");
 				}
@@ -99,7 +100,7 @@ namespace System.ComponentModel {
 				if (data != null)
 					return data;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (data == null)
 						data = new CategoryAttribute ("Data");
 				}
@@ -112,7 +113,7 @@ namespace System.ComponentModel {
 				if (def != null)
 					return def;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (def == null)
 						def = new CategoryAttribute ();
 				}
@@ -125,7 +126,7 @@ namespace System.ComponentModel {
 				if (design != null)
 					return design;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (design == null)
 						design = new CategoryAttribute ("Design");
 				}
@@ -138,7 +139,7 @@ namespace System.ComponentModel {
 				if (drag_drop != null)
 					return drag_drop;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (drag_drop == null)
 						drag_drop = new CategoryAttribute ("Drag Drop");
 				}
@@ -151,7 +152,7 @@ namespace System.ComponentModel {
 				if (focus != null)
 					return focus;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (focus == null)
 						focus = new CategoryAttribute ("Focus");
 				}
@@ -164,7 +165,7 @@ namespace System.ComponentModel {
 				if (format != null)
 					return format;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (format == null)
 						format = new CategoryAttribute ("Format");
 				}
@@ -177,7 +178,7 @@ namespace System.ComponentModel {
 				if (key != null)
 					return key;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (key == null)
 						key = new CategoryAttribute ("Key");
 				}
@@ -190,7 +191,7 @@ namespace System.ComponentModel {
 				if (layout != null)
 					return layout;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (layout == null)
 						layout = new CategoryAttribute ("Layout");
 				}
@@ -203,7 +204,7 @@ namespace System.ComponentModel {
 				if (mouse != null)
 					return mouse;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (mouse == null)
 						mouse = new CategoryAttribute ("Mouse");
 				}
@@ -216,7 +217,7 @@ namespace System.ComponentModel {
 				if (window_style != null)
 					return window_style;
 
-				lock (typeof (CategoryAttribute)) {
+				lock (lockobj) {
 					if (window_style == null)
 						window_style = new CategoryAttribute ("Window Style");
 				}

@@ -35,6 +35,7 @@ namespace System.IO {
 		{
 		}
 		
+		// Locked by caller
 		public static bool GetInstance (out IFileWatcher watcher)
 		{
 			throw new NotSupportedException ();

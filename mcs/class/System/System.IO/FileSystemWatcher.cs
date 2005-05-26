@@ -57,6 +57,7 @@ namespace System.IO {
 		bool disposed;
 		string mangledFilter;
 		static IFileWatcher watcher;
+		static object lockobj = new object ();
 
 		#endregion // Fields
 
@@ -104,7 +105,7 @@ namespace System.IO {
 
 		void InitWatcher ()
 		{
-			lock (typeof (FileSystemWatcher)) {
+			lock (lockobj) {
 				if (watcher != null)
 					return;
 
