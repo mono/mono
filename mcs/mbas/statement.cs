@@ -1274,8 +1274,12 @@ namespace Mono.MonoBASIC {
 					}
 					ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
 				} else {
-					ec.ig.Emit (OpCodes.Ldloc_0);
-					ec.ig.Emit (OpCodes.Ret);
+					if(type == ExitType.SUB) {   
+                                                ec.ig.Emit (OpCodes.Ret);
+                                        } else {
+						ec.ig.Emit (OpCodes.Ldloc_0);
+						ec.ig.Emit (OpCodes.Ret);
+				      	}
 
 				}
 
