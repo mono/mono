@@ -528,8 +528,12 @@ System.Web.UI.WebControls/SessionParameter.cs
 System.Web.UI.WebControls/SiteMapDataSource.cs
 System.Web.UI.WebControls/SiteMapDataSourceView.cs
 System.Web.UI.WebControls/SiteMapHierarchicalDataSourceView.cs
+System.Web.UI.WebControls/SiteMapNodeItem.cs
+System.Web.UI.WebControls/SiteMapNodeItemEventArgs.cs
+System.Web.UI.WebControls/SiteMapNodeItemEventHandler.cs
 System.Web.UI.WebControls/SiteMapNodeItemType.cs
 System.Web.UI.WebControls/SiteMapNodeType.cs
+System.Web.UI.WebControls/SiteMapPath.cs
 System.Web.UI.WebControls/SortDirection.cs
 System.Web.UI.WebControls/SqlDataSource.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventArgs.cs
@@ -748,6 +752,7 @@ System.Web.UI/LiteralControl.cs
 System.Web.UI/LosFormatter.cs
 System.Web.UI/MasterPage.cs
 System.Web.UI/MasterPageParser.cs
+System.Web.UI/NonVisualControlAttribute.cs
 System.Web.UI/ObjectConverter.cs
 System.Web.UI/ObjectStateFormatter.cs
 System.Web.UI/ObjectTag.cs
@@ -893,6 +898,7 @@ System.Web/SiteMapProvider.cs
 System.Web/SiteMapProviderCollection.cs
 System.Web/SiteMapResolveEventArgs.cs
 System.Web/StaticFileHandler.cs
+System.Web/StaticSiteMapProvider.cs
 System.Web/TODOAttribute.cs
 System.Web/TimeoutManager.cs
 System.Web/TraceContext.cs

@@ -1,3 +1,13 @@
+2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/SiteMapNodeItem.cs
+		System.Web.UI.WebControls/SiteMapNodeItemEventArgs.cs
+		System.Web.UI.WebControls/SiteMapNodeItemEventHandler.cs
+		System.Web.UI.WebControls/SiteMapPath.cs
+		System.Web.UI/NonVisualControlAttribute.cs
+		System.Web/StaticSiteMapProvider.cs
+
 2005-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Web_test.dll.sources: Added tests for FormsAuthentication.
