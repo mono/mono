@@ -328,6 +328,8 @@ namespace System.Threading
 		 */
 		private static bool in_currentculture=false;
 
+		static object culture_lock = new object ();
+		
 		/*
 		 * Thread objects are shared between appdomains, and CurrentCulture
 		 * should always return an object in the calling appdomain. See bug
@@ -349,7 +351,7 @@ namespace System.Threading
 
 				byte[] arr = GetSerializedCurrentCulture ();
 				if (arr == null) {
-					lock (typeof (Thread)) {
+					lock (culture_lock) {
 						in_currentculture=true;
 						culture = CultureInfo.ConstructCurrentCulture ();
 						//
@@ -373,8 +375,7 @@ namespace System.Threading
 					MemoryStream ms = new MemoryStream (arr);
 					culture = (CultureInfo)bf.Deserialize (ms);
 					SetCachedCurrentCulture (culture);
-				}
-				finally {
+				} finally {
 					in_currentculture = false;
 				}
 
@@ -412,7 +413,7 @@ namespace System.Threading
 
 				byte[] arr = GetSerializedCurrentUICulture ();
 				if (arr == null) {
-					lock (typeof (Thread)) {
+					lock (culture_lock) {
 						in_currentculture=true;
 						/* We don't
 						 * distinguish
