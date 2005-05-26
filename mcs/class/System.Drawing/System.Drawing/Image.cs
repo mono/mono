@@ -75,6 +75,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			}
 		}
 	}
+
+	private static bool IsIndexedPixelFormat(PixelFormat pixfmt)
+	{
+		return ((pixfmt & PixelFormat.Indexed) != 0);
+	}
+
 	
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
@@ -526,43 +532,57 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[Browsable (false)]
 	public ColorPalette Palette {
 		get {							
-			int size = 0;
-			IntPtr palbuff;
-			
-			Status status = GDIPlus.GdipGetImagePaletteSize (nativeObject, out  size);
-			GDIPlus.CheckStatus (status);			
-						
-			palbuff = Marshal.AllocHGlobal (size);
-			
-			try {				
-				status = GDIPlus.GdipGetImagePalette (nativeObject, palbuff, size);
-				GDIPlus.CheckStatus (status);
-						
-				ColorPalette colpal = new ColorPalette ();
-				colpal.setFromGDIPalette (palbuff);
-				
-				return colpal;
-			}
-			
-			finally {
-				Marshal.FreeHGlobal (palbuff);
-			}
-			
+			return retrieveGDIPalette();
 		}
 		set {
-			IntPtr palbuff = value.getGDIPalette ();
-			
-			try {
-				Status status = GDIPlus.GdipSetImagePalette (nativeObject, palbuff);
-				GDIPlus.CheckStatus (status);	
-			}
-			
-			finally {
-				Marshal.FreeHGlobal (palbuff);
-			}
-			
+			storeGDIPalette(value);
 		}
 	}
+
+	internal ColorPalette retrieveGDIPalette()
+	{
+		ColorPalette ret = new ColorPalette();
+		if (!IsIndexedPixelFormat (PixelFormat)) {
+			return ret;
+		}
+		Status st;
+		int bytes;
+
+		st = GDIPlus.GdipGetImagePaletteSize (nativeObject, out bytes);
+		GDIPlus.CheckStatus (st);
+		IntPtr palette_data = Marshal.AllocHGlobal (bytes);
+		try {
+			st = GDIPlus.GdipGetImagePalette (nativeObject, palette_data, bytes);
+			GDIPlus.CheckStatus (st);
+			ret.setFromGDIPalette (palette_data);
+			return ret;
+		}
+
+		finally {
+			Marshal.FreeHGlobal (palette_data);
+		}
+	}
+
+	internal void storeGDIPalette(ColorPalette palette)
+	{
+		if (palette == null) {
+			throw new ArgumentNullException("palette");
+		}
+		IntPtr palette_data = palette.getGDIPalette();
+		if (palette_data == IntPtr.Zero) {
+			return;
+		}
+
+		try {
+			Status st = GDIPlus.GdipSetImagePalette (nativeObject, palette_data);
+			GDIPlus.CheckStatus (st);
+		}
+
+		finally {
+			Marshal.FreeHGlobal(palette_data);
+		}
+	}
+
 		
 	public SizeF PhysicalDimension {
 		get {

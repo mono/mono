@@ -1,3 +1,20 @@
+2005-05-25  Jonathan Gilbert  <logic@deltaq.org>
+
+	* Image.cs: Added retrieveGDIPalette () and storeGDIPalette ()
+	  and modified the Palette property to call them. This non-
+	  persistent behaviour was discovered by trial and error with
+	  Microsoft's implementation. In fact, the Palette property
+	  does not behave like a property at all! It is the only way an
+	  instance of System.Drawing.Imaging.ColorPalette can be created,
+	  and it reflects a backing store that is only updated when the
+	  property 'set' method is called. Also updated Clone () since
+	  the palette is no longer cached at image load time.
+	* Image.cs: Added IsIndexedPixelFormat () in the same vein as
+	  Image::IsAlphaPixelFormat and Image::IsCanonicalPixelFormat.
+	  As such a function is not listed in MSDN nor given in
+	  Microsoft's implementation, I have made it a private function
+	  within the class that uses it.
+
 2005-05-24 Kornél Pál <kornelpal@hotmail.com>
 
 	* Graphics.cs: Revised DrawString methods
