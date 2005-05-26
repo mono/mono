@@ -1,3 +1,9 @@
+2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SynchronizationContext.cs: Updated to beta2 API so it doesn't depend
+	on the switcher structure anymore (which will be removed from the 
+	build).
+
 2005-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Removed #pragma which aren't supported by CSC 7.x.

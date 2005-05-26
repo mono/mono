@@ -4,9 +4,7 @@
 // Author:
 //   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Novell, Inc., 2004
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,7 +33,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Threading 
 {
-	[ComVisibleAttribute (false)]
 	public class SynchronizationContext
 	{
 		[ThreadStatic]
@@ -59,6 +56,24 @@ namespace System.Threading
 		{
 			return new SynchronizationContext (this);
 		}
+
+		[MonoTODO]
+		public bool IsWaitNotificationRequired ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void OperationCompleted ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void OperationStarted ()
+		{
+			throw new NotImplementedException ();
+		}
 		
 		public virtual void Post (SendOrPostCallback d, object state)
 		{
@@ -70,24 +85,20 @@ namespace System.Threading
 			d (state);
 		}
 		
-		public virtual void SendOrPost (SendOrPostCallback d, object state)
-		{
-			Send (d, state);
-		}
-
 		[MonoTODO]
-		public virtual void SendOrPost (SendOrPostCallback d, object state, ExecutionContext ec)
+		public static void SetSynchronizationContext (SynchronizationContext syncContext)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
-		public static SynchronizationContextSwitcher SetSynchronizationContext (SynchronizationContext syncContext)
+		protected void SetWaitNotificationRequired ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[CLSCompliant (false)]
+		[PrePrepareMethod ()]
 		public virtual int Wait (IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
 		{
 			return WaitHelper (waitHandles, waitAll, millisecondsTimeout);
@@ -96,6 +107,7 @@ namespace System.Threading
 		[MonoTODO]
 		[CLSCompliant (false)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[PrePrepareMethod ()]
 		protected static int WaitHelper (IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
 		{
 			throw new NotImplementedException ();
