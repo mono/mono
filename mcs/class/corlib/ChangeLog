@@ -1,3 +1,12 @@
+2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Removed the *Switcher structures from the build
+	(NET_2_0) as they aren't part of the public API (beta2) anymore.
+		- System.Threading/CompressedStackSwitcher.cs
+		- System.Threading/ExecutionContextSwitcher.cs
+		- System.Threading/HostExecutionContextSwitcher.cs
+		 -System.Threading/SynchronizationContextSwitcher.cs
+
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib_test.dll.sources: Add System.Reflection.TypeDelegatorTest.
