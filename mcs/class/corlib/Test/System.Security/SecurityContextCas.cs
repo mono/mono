@@ -35,7 +35,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoCasTests.System.Threading {
+namespace MonoCasTests.System.Security {
 
 	[TestFixture]
 	[Category ("CAS")]

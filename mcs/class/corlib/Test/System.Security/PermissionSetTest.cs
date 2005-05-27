@@ -60,9 +60,6 @@ namespace MonoTests.System.Security {
 			AssertEquals ("PermissionStateUnrestricted.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
 		}
 
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void PermissionSetNull () 
 		{
@@ -134,9 +131,6 @@ namespace MonoTests.System.Security {
 			AssertEquals ("0", 0, ps.Count);
 		}
 
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void AddPermission_SetUnrestricted ()
 		{
@@ -237,7 +231,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotDotNet")] // Don't know why it doesn't work under Fx 1.1
+		[Ignore ("Don't know why it doesn't work under Fx 1.1")]
 #endif
 		public void ConvertPermissionSet_BinaryToBinary ()
 		{
@@ -252,7 +246,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotDotNet")] // Don't know why it doesn't work under Fx 1.1
+		[Ignore ("Don't know why it doesn't work under Fx 1.1")]
 #endif
 		public void ConvertPermissionSet_XmlToBinary ()
 		{
@@ -315,9 +309,7 @@ namespace MonoTests.System.Security {
 			Assert ("3.State", !copy.IsUnrestricted ());
 			AssertEquals ("3.Count", 2, copy.Count);
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Copy_Unrestricted ()
 		{
@@ -471,9 +463,7 @@ namespace MonoTests.System.Security {
 			ps2.FromXml (se);
 			Assert ("FromXml-Unrestricted.IsUnrestricted", ps2.IsUnrestricted ());
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void FromXmlOne () 
 		{
@@ -504,7 +494,9 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-#if !NET_2_0
+#if NET_2_0
+		[ExpectedException (typeof (TypeLoadException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
 #endif
 		public void FromXml_PermissionWithoutNamespace ()
@@ -521,16 +513,12 @@ namespace MonoTests.System.Security {
 
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.FromXml (se);
-#if NET_2_0
-			// not enough information but:
-			// a. it doesn't fail
-			// b. it does work for policies
-			AssertEquals ("Count", 0, ps.Count);
-#endif
 		}
 
 		[Test]
-#if !NET_2_0
+#if NET_2_0
+		[ExpectedException (typeof (TypeLoadException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
 #endif
 		public void FromXml_PermissionOutsideCorlib ()
@@ -547,12 +535,6 @@ namespace MonoTests.System.Security {
 
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.FromXml (se);
-#if NET_2_0
-			// not enough information but:
-			// a. it doesn't fail
-			// b. it does work for policies
-			AssertEquals ("Count", 0, ps.Count);
-#endif
 		}
 
 		[Test]
@@ -658,9 +640,7 @@ namespace MonoTests.System.Security {
 			Compare ("PS1 N Unrestricted", ps1.Intersect (ups1), false, 1);
 			Compare ("Unrestricted N PS1", ups1.Intersect (ps1), false, 1);
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Intersect_OneNonIUnrestrictedPermission ()
 		{
@@ -704,9 +684,7 @@ namespace MonoTests.System.Security {
 			AssertEquals ("Count==1", 1, ps.Count);
 			Assert ("Zip.IsEmpty", ps.IsEmpty ());	// yes empty!
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void IsEmpty_Unrestricted ()
 		{
@@ -760,9 +738,7 @@ namespace MonoTests.System.Security {
 			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
 			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void IsSubset_OneNonIUnrestrictedPermission ()
 		{
@@ -815,9 +791,7 @@ namespace MonoTests.System.Security {
 			AssertEquals ("Flags", sp.Flags, removed.Flags);
 			AssertNull ("Empty-Again", ps.RemovePermission (typeof (SecurityPermission)));
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void RemovePermission_Unrestricted ()
 		{
@@ -873,9 +847,7 @@ namespace MonoTests.System.Security {
 			AssertEquals ("ZoneIdentityPermission", 2, ps.Count);
 			AssertEquals ("SecurityZone", SecurityZone.Intranet, zipr.SecurityZone);
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void SetPermission_Unrestricted ()
 		{
@@ -971,9 +943,7 @@ namespace MonoTests.System.Security {
 			Compare ("PS1 U Unrestricted", ps1.Union (ups1), true, 0);
 			Compare ("Unrestricted U PS1", ups1.Union (ps1), true, 0);
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+
 		[Test]
 		public void Union_OneNonIUnrestrictedPermission ()
 		{
@@ -1012,24 +982,7 @@ namespace MonoTests.System.Security {
 			Compare ("UPS2+ZIP U UPS1", ups2.Union (ups1), true, 1);
 #endif
 		}
-#if NET_2_0
-		[Test]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (ExecutionEngineException))]
-		public void RevertAssert_WithoutAssertion ()
-		{
-			PermissionSet.RevertAssert ();
-		}
 
-		[Category ("NotWorking")]
-		[Test]
-		public void RevertAssert_WithAssertion ()
-		{
-			PermissionSet ups = new PermissionSet (PermissionState.Unrestricted);
-			ups.Assert ();
-			PermissionSet.RevertAssert ();
-		}
-#endif
 		[Test]
 		public void Assert_NonCasPermission ()
 		{

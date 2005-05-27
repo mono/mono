@@ -1,4 +1,12 @@
-2005-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+2005-05-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NamedPermissionSetTest.cs: Re-enable the "NotWorking" unit test.
+	* PermissionSetCas.cs: New. Moved RevertAssert unit tests from 
+	PermissionSetTest to here as they require --security to work.
+	* PermissionSetTest.cs: Re-enable the "NotWorking" NET_2_0 unit tests.
+	* SecurityContextCas.cs: Fixed namespace.
+
+2005-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityContextCas.cs: New. CAS unit tests for SecurityContext.
 	* SecurityContextTest.cs: New. Unit tests for SecurityContext.
