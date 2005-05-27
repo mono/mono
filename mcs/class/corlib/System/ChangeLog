@@ -1,3 +1,7 @@
+2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* Environment.cs: bump corlib version for bug #75060.
+
 2005-05-27  Raja R Harinath  <rharinath@novell.com>
 
 	* Environment.cs (ExpandEnvironmentVariables): Rewrite

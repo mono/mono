@@ -58,7 +58,8 @@ namespace System.Reflection.Emit {
 		private MethodInfo override_method;
 		private string pi_dll;
 		private string pi_entry;
-		private CharSet ncharset; /* this also encodes set_last_error etc */
+		private CharSet charset;
+		private uint extra_flags; /* this encodes set_last_error etc */
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
 		private bool init_locals = true;
@@ -107,7 +108,7 @@ namespace System.Reflection.Emit {
 			pi_dll = dllName;
 			pi_entry = entryName;
 			native_cc = nativeCConv;
-			ncharset = nativeCharset;
+			charset = nativeCharset;
 		}
 
 		public bool InitLocals {
@@ -148,14 +149,28 @@ namespace System.Reflection.Emit {
 		/* Used by mcs */
 		internal bool BestFitMapping {
 			set {
-				ncharset = (CharSet)(((int)ncharset & ~0x30) | (value ? 0x10 : 0x20));
+				extra_flags = (uint) ((extra_flags & ~0x30) | (value ? 0x10 : 0x20));
 			}
 		}
 
 		/* Used by mcs */
 		internal bool ThrowOnUnmappableChar {
 			set {
-				ncharset = (CharSet)(((int)ncharset & ~0x3000) | (value ? 0x1000 : 0x2000));
+				extra_flags = (uint) ((extra_flags & ~0x3000) | (value ? 0x1000 : 0x2000));
+			}
+		}
+
+		/* Used by mcs */
+		internal bool ExactSpelling {
+			set {
+				extra_flags = (uint) ((extra_flags & ~0x01) | (value ? 0x01 : 0x00));
+			}
+		}
+
+		/* Used by mcs */
+		internal bool SetLastError {
+			set {
+				extra_flags = (uint) ((extra_flags & ~0x40) | (value ? 0x40 : 0x00));
 			}
 		}
 

@@ -1,3 +1,9 @@
+2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* MethodBuilder.cs: Add extra_flags field to encode P/Invoke
+	bits that can't be specified via MethodBuilder directly; fixes
+	#75060.
+
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* GenericTypeParameterBuilder.cs: Return this in UnderlyingSystemType.
