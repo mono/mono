@@ -60,13 +60,18 @@ namespace System.Web.SessionState {
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
 		{
-			if (context.Session == null || context.Session.IsReadOnly)
+			HttpSessionState session = context.Session;
+			if (session == null || session.IsReadOnly)
 				return;
 			
-			string id = context.Session.SessionID;
-			SessionDictionary dict = context.Session.SessionDictionary;
-			HttpStaticObjectsCollection sobjs = context.Session.StaticObjects;
-			state_server.Update (id, dict.ToByteArray (), sobjs.ToByteArray ());
+			string id = session.SessionID;
+			if (!session._abandoned) {
+				SessionDictionary dict = session.SessionDictionary;
+				HttpStaticObjectsCollection sobjs = session.StaticObjects;
+				state_server.Update (id, dict.ToByteArray (), sobjs.ToByteArray ());
+			} else {
+				state_server.Remove (id);
+			}
 		}
 
 		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,

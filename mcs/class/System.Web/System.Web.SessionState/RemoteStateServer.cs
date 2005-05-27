@@ -70,6 +70,11 @@ namespace System.Web.SessionState {
 			item.Touch ();
 			return item;
 		}
+
+		internal void Remove (string id)
+		{
+			table.Remove (id);
+		}
 	}
 }
 

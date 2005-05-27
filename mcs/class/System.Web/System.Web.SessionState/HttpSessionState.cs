@@ -46,7 +46,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 	private bool _isCookieless;
 	private SessionStateMode _mode;
 	private bool _isReadonly;
-	private bool _abandoned;
+	internal bool _abandoned;
 
 	internal HttpSessionState (string id,
 				   SessionDictionary dict,

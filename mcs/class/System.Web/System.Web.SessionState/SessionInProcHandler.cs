@@ -50,7 +50,14 @@ namespace System.Web.SessionState
 			this.config = config;
 		}
 
-		public void UpdateHandler (HttpContext context, SessionStateModule module) { }
+		public void UpdateHandler (HttpContext context, SessionStateModule module)
+		{
+			HttpSessionState session = context.Session;
+			if (session == null || session.IsReadOnly || !session._abandoned)
+				return;
+
+			HttpRuntime.Cache.Remove ("@@@InProc@" + session.SessionID);
+		}
 
 		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,
 							bool required, bool read_only, ref bool isNew)

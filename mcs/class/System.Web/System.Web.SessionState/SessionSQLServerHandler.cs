@@ -81,13 +81,17 @@ namespace System.Web.SessionState {
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
 		{
-			if (context.Session == null || context.Session.IsReadOnly)
+			HttpSessionState session = context.Session;
+			if (session == null || session.IsReadOnly)
 				return;
 
-			string id = context.Session.SessionID;
-			SessionDictionary dict = context.Session.SessionDictionary;
-
-			UpdateSession (id, dict);
+			string id = session.SessionID;
+			if (!session._abandoned) {
+				SessionDictionary dict = session.SessionDictionary;
+				UpdateSession (id, dict);
+			} else {
+				DeleteSession (id);
+			}
 		}
 
 		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,
@@ -215,6 +219,18 @@ namespace System.Web.SessionState {
 			param.Add (CreateParam (command, DbType.Binary, ":SessionData",
 								dict.ToByteArray ()));
 
+			command.ExecuteNonQuery ();
+		}
+
+		private void DeleteSession (string id)
+		{
+			IDbCommand command = cnc.CreateCommand ();
+			IDataParameterCollection param;
+
+			string update = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
+			command.CommandText = update;
+			param = command.Parameters;
+			param.Add (CreateParam (command, DbType.String, ":SessionID", id));
 			command.ExecuteNonQuery ();
 		}
 
