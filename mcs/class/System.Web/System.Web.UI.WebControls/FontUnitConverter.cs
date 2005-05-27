@@ -45,8 +45,8 @@ namespace System.Web.UI.WebControls
 {
 	public class FontUnitConverter : TypeConverter
 	{
-		static StandardValuesCollection valuesCollection;
-		static string creatingValues = "creating value collection";
+		static volatile StandardValuesCollection valuesCollection;
+		static readonly object lockobj = new object ();
 
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls
 			if (valuesCollection != null)
 				return valuesCollection;
 
-			lock (creatingValues) {
+			lock (lockobj) {
 				if (valuesCollection != null)
 					return valuesCollection;
 
