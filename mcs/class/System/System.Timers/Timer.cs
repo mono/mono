@@ -131,7 +131,7 @@ namespace System.Timers
 
 		public void Close ()
 		{
-			StopTimer ();
+			Enabled = false;
 		}
 
 		public void EndInit ()

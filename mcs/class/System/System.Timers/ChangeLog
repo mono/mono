@@ -1,3 +1,7 @@
+2005-05-27  Kornél Pál <kornelpal@hotmail.com>
+
+	* Timer.cs: Fixed bug #75068 - Close() does not disable the timer
+
 2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Timer.cs: The timer thread must be a background thread. 
