@@ -930,14 +930,15 @@ namespace System
 					// pad formatted string and append to result
 
 					if (width > str.length) {
-						string pad = new String (' ', width - str.length);
+						const char padchar = ' ';
+						int padlen = width - str.length;
 
 						if (left_align) {
 							result.Append (str);
-							result.Append (pad);
+							result.Append (padchar, padlen);
 						}
 						else {
-							result.Append (pad);
+							result.Append (padchar, padlen);
 							result.Append (str);
 						}
 					}
@@ -956,7 +957,7 @@ namespace System
 			}
 
 			if (start < format.length)
-				result.Append (format.Substring (start));
+				result.Append (format, start, format.Length - start);
 		}
 
 		public unsafe static String Copy (String str)

@@ -1,3 +1,11 @@
+2005-05-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Environment.cs (ExpandEnvironmentVariables): Rewrite
+	sb.Append (s.SubString (a, b)) to sb.Append (s, a, b).
+	* String.cs (FormatHelper): Rewrite sb.Append (s.SubString (a)) to
+	sb.Append (s, a, s.Length - a).  Avoid allocating 'pad' string --
+	StringBuilder has an appropriate Append overload.
+
 2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs (IsEnum): Special case EnumBuilder here.

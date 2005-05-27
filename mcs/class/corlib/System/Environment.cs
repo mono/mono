@@ -338,7 +338,7 @@ namespace System {
 				else
 					textLen = off1 - oldOff2;
 				if(off1 >= oldOff2 || off1 == -1)
-					result.Append (name.Substring (oldOff2+1, textLen));
+					result.Append (name, oldOff2+1, textLen);
 			} while (off2 > -1 && off2 < len);
 				
 			return result.ToString ();
