@@ -2,7 +2,7 @@
 Fri May 27 14:45:56 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: register a new weak link only if the object is non-null
-	(fixes bug#75061).
+	(fixes bug#75047).
 
 2005-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
