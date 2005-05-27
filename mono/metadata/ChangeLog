@@ -1,3 +1,8 @@
+2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* appdomain.c, verify.c, object-internals.h, reflection.c:
+	bumped corlib number to 36, and added new extra_flags field
+	to ReflectionMethodBuilder and friends.  Fixes #75060.
 
 Fri May 27 14:45:56 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
