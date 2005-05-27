@@ -131,7 +131,14 @@ namespace Mono.Data.Tds {
 				break;
 			case "varchar":
 			case "varbinary":
-				result.Append (String.Format ("({0})", Size > 0 ? Size : GetActualSize ()));
+				//A size of 0 is not allowed in declarations.
+				int size = Size;
+				if (size <= 0) {
+					size = GetActualSize ();
+					if (size <= 0)
+						size = 1;
+				}
+				result.Append (String.Format ("({0})", size));
 				break;
 			case "nvarchar":
 				result.Append (String.Format ("({0})", Size > 0 ? Size : 4000));

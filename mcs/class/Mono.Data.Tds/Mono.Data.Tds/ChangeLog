@@ -1,0 +1,5 @@
+2005-05-27  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* TdsMetaParameter.cs: Prepare: in SQL, a variable declaration
+	with size 0 is not allowed. fixes #62978.
+
