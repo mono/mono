@@ -234,7 +234,7 @@ namespace Mono.CSharp {
 				
 				for (; i < top; i++) {
 					p = Parameters.FixedParameters [i];
-					p.DefineParameter (ec, InvokeBuilder, null, i + 1, Location);
+					p.DefineParameter (ec, InvokeBuilder, null, i + 1);
 
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
 						out_params++;
@@ -296,12 +296,12 @@ namespace Mono.CSharp {
 				for (i = 0 ; i < top; i++) {
 					p = Parameters.FixedParameters [i];
 
-					p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1, Location);
+					p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1);
 				}
 			}
 			if (Parameters.ArrayParameter != null){
 				Parameter p = Parameters.ArrayParameter;
-				p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1, Location);
+				p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1);
 
 				i++;
 			}
@@ -383,7 +383,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				Parameters.LabelParameters (ec, InvokeBuilder, Location);
+				Parameters.LabelParameters (ec, InvokeBuilder);
 				OptAttributes.Emit (ec, this);
 			}
 

@@ -298,7 +298,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = builder.GetILGenerator ();
 			aec.ig = ig;
 			
-			Parameters.LabelParameters (aec, builder, loc);
+			Parameters.LabelParameters (aec, builder);
 
 			//
 			// Adjust based on the computed state of the

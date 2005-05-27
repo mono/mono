@@ -128,8 +128,6 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Represents a single method parameter
 	/// </summary>
-
-	//TODO: Add location member to this or base class for better error location and all methods simplification.
 	public class Parameter : ParameterBase {
 		[Flags]
 		public enum Modifier : byte {
@@ -305,7 +303,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
+		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
 			ParameterAttributes par_attr = Attributes;
 					
@@ -593,9 +591,8 @@ namespace Mono.CSharp {
 		// The method's attributes are passed in because we need to extract
 		// the "return:" attribute from there to apply on the return type
 		//
-		public void LabelParameters (EmitContext ec,
-			MethodBase builder,
-			Location loc) {
+		public void LabelParameters (EmitContext ec, MethodBase builder)
+		{
 			//
 			// Define each type attribute (in/out/ref) and
 			// the argument names.
@@ -607,7 +604,7 @@ namespace Mono.CSharp {
 
 			if (FixedParameters != null) {
 				for (i = 0; i < FixedParameters.Length; i++) {
-					FixedParameters [i].DefineParameter (ec, mb, cb, i + 1, loc);
+					FixedParameters [i].DefineParameter (ec, mb, cb, i + 1);
 				}
 			}
 
