@@ -2534,6 +2534,11 @@ constructor_declaration
 	  { 
 		Constructor c = (Constructor) $1;
 		c.Block = (Block) end_block();
+
+//To support "Sub New()" add default modifier "public"
+
+		if(current_modifiers ==0)
+			current_modifiers = Modifiers.PUBLIC;
 		c.ModFlags = (int) current_modifiers;
 		c.OptAttributes = current_attributes;
 		

@@ -1,3 +1,5 @@
+2005-05-27 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay : To support "Sub New()" without modifier	
 2005-05-26 Manjula GHM <mmanjula@novell.com>
 	* typemanager.cs : Fix Enum conversion for two level assignment and added few more cases
 2005-05-26 Manjula GHM <mmanjula@novell.com>
