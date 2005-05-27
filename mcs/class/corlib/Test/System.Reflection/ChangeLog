@@ -1,3 +1,7 @@
+2005-05-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodInfoTest.cs: Reenable the pseudo attribute test.
+
 2005-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeDelegatorTest.cs: New file.

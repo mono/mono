@@ -42,9 +42,7 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest : Assertion
 	{
-		//		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
-		// bug #73161
-		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true)]
+		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 		public static extern void dllImportMethod ();
 
 		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
@@ -56,7 +54,6 @@ namespace MonoTests.System.Reflection
 		}
 
 #if NET_2_0
-		[Category ("NotWorking")]
 		[Test]
 		public void PseudoCustomAttributes ()
 		{
