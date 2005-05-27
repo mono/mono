@@ -344,21 +344,14 @@ public class DateTimeTest : Assertion
 		AssertEquals("C32", " d", t1.ToString (" \\d"));
 	}
 
-	[Ignore ("need a better way to handle these tests with them running on different timezones")]
-	public void TestParseExact2 () 
-	{
-		DateTime t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
-		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
-		AssertEquals ("D07d", 04 + TimeZone.CurrentTimeZone.GetUtcOffset(t1).Hours, t1.Hour);
-
-	}
-
 	public void TestParseExact3 ()
 	{
 		DateTime t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
 		AssertEquals ("D07a", 2002, t1.Year);
 		AssertEquals ("D07b", 02, t1.Month);
 		AssertEquals ("D07c", 25, t1.Day);
+		AssertEquals ("D07d", 04, t1.Hour);
 		AssertEquals ("D07e", 25, t1.Minute);
 		AssertEquals ("D07f", 13, t1.Second);
 	}

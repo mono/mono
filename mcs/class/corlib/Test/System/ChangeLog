@@ -1,3 +1,9 @@
+2005-05-27  Raja R Harinath  <rharinath@novell.com>
+
+	* DateTimeTest.cs (TestParseExact2): Remove.  Merge into ...
+	(TestParseExact3): ... here.  Fix to convert the parsed DateTime
+	to UTC before comparing values.
+
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : TestParse3() is still NotWorking on others' :(
