@@ -260,10 +260,14 @@ namespace System.Security {
 			case PermissionState.None:
 				break;
 			case PermissionState.Unrestricted:
+#if NET_2_0
+				// unrestricted permissions are possible for identiy permissions
+#else
 				if (!allowUnrestricted) {
 					msg = Locale.GetText ("Unrestricted isn't not allowed for identity permissions.");
 					throw new ArgumentException (msg, "state");
 				}
+#endif
 				break;
 			default:
 				msg = String.Format (Locale.GetText ("Invalid enum {0}"), state);

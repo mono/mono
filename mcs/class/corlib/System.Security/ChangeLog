@@ -1,3 +1,14 @@
+2005-05-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Allow unrestricted identity permissions in
+	2.0.
+	* PermissionBuilder.cs: New. Internal class to help create permission
+	instances from XML or with a fully qualified name. This class also 
+	deals with unification.
+	* PermissionSet.cs: Use PermissionBuilder to create permissions in 
+	FromXml method. Many 2.0 fixes (mostly to support unrestricted 
+	identity permissions)
+
 2005-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Fix typo for PermitOnly. Added ComVisible 

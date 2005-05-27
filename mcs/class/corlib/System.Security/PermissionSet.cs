@@ -53,7 +53,7 @@ namespace System.Security {
 
 		private const string tagName = "PermissionSet";
 		private const int version = 1;
-		private static object[] psNone = new object [1] { PermissionState.None };
+		private static object[] psUnrestricted = new object [1] { PermissionState.Unrestricted };
 
 		private PermissionState state;
 		private ArrayList list;
@@ -82,13 +82,16 @@ namespace System.Security {
 			// LAMESPEC: This would be handled by the compiler.  No way permSet is not a PermissionSet.
 			//if (!(permSet is PermissionSet))
 			//	throw new System.ArgumentException(); // permSet is not an instance of System.Security.PermissionSet.
-			if (permSet == null)
-				state = PermissionState.Unrestricted;
-			else {
+			if (permSet != null) {
 				state = permSet.state;
 				foreach (IPermission p in permSet.list)
 					list.Add (p);
 			}
+#if !NET_2_0
+			else {
+				state = PermissionState.Unrestricted;
+			}
+#endif
 		}
 
 		internal PermissionSet (string xml)
@@ -121,13 +124,17 @@ namespace System.Security {
 
 			// we don't add to an unrestricted permission set unless...
 			if (state == PermissionState.Unrestricted) {
+#if NET_2_0
+				// identity permissions can be unrestricted under 2.x
+				{
+#else
 				// we're adding identity permission as they don't support unrestricted
 				if (perm is IUnrestrictedPermission) {
+#endif
 					// we return the union of the permission with unrestricted
 					// which results in a permission of the same type initialized 
 					// with PermissionState.Unrestricted
-					object[] args = new object [1] { PermissionState.Unrestricted };
-					return (IPermission) Activator.CreateInstance (perm.GetType (), args);
+					return (IPermission) Activator.CreateInstance (perm.GetType (), psUnrestricted);
 				}
 			}
 
@@ -273,7 +280,6 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("adjust class version with current runtime - unification")]
 		public virtual void FromXml (SecurityElement et)
 		{
 			if (et == null)
@@ -283,12 +289,19 @@ namespace System.Security {
 				throw new ArgumentException (msg, "et");
 			}
 
-			if (CodeAccessPermission.IsUnrestricted (et))
-				state = PermissionState.Unrestricted;
-			else
-				state = PermissionState.None;
-
 			list.Clear ();
+
+			if (CodeAccessPermission.IsUnrestricted (et)) {
+				state = PermissionState.Unrestricted;
+#if NET_2_0
+				// no need to continue for an unrestricted permission
+				// because identity permissions now "supports" unrestricted
+				return;
+#endif
+			} else {
+				state = PermissionState.None;
+			}
+
 			if (et.Children != null) {
 				foreach (SecurityElement se in et.Children) {
 					string className = se.Attribute ("class");
@@ -300,20 +313,8 @@ namespace System.Security {
 						// policy class names do not have to be fully qualified
 						className = Resolver.ResolveClassName (className);
 					}
-					// TODO: adjust class version with current runtime (unification)
-					// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
-					Type classType = Type.GetType (className);
-					if (classType != null) {
-						IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
-						p.FromXml (se);
-						list.Add (p);
-					}
-#if !NET_2_0
-					else {
-						string msg = Locale.GetText ("Can't create an instance of permission class {0}.");
-						throw new ArgumentException (String.Format (msg, se.Attribute ("class")));
-					}
-#endif
+
+					list.Add (PermissionBuilder.Create (className, se));
 				}
 			}
 		}
@@ -492,7 +493,12 @@ namespace System.Security {
 					// add intersection for this type
 					intersect.AddPermission (p.Intersect (i));
 				}
+#if NET_2_0
+				// unrestricted is possible for indentity permissions
+				else if (unrestricted) {
+#else
 				else if (unrestricted && (p is IUnrestrictedPermission)) {
+#endif
 					intersect.AddPermission (p);
 				}
 				// or reject!
@@ -538,8 +544,17 @@ namespace System.Security {
 		{
 			if ((perm == null) || _readOnly)
 				return perm;
+#if NET_2_0
+			IUnrestrictedPermission u = (perm as IUnrestrictedPermission);
+			if (u == null) {
+				state = PermissionState.None;
+			} else {
+				state = u.IsUnrestricted () ? state : PermissionState.None;
+			}
+#else
 			if (perm is IUnrestrictedPermission)
 				state = PermissionState.None;
+#endif
 			RemovePermission (perm.GetType ());
 			list.Add (perm);
 			return perm;
@@ -630,6 +645,8 @@ namespace System.Security {
 				return false;
 			PermissionSet ps = (obj as PermissionSet);
 			if (ps == null)
+				return false;
+			if (state != ps.state)
 				return false;
 			if (list.Count != ps.Count)
 				return false;
