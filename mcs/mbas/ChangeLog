@@ -1,9 +1,19 @@
+2005-05-27 Satya Sudha K <ksathyasudha@hotmail.com>
+	* statement.cs :
+	* mb-parser.jay :
+		- Supporting all kinds of case clauses (like 'A To B', 'Is >= 30')
+ 		- Expressions of all primitive types can now be specified as 'Select' 
+		  and 'Case' expressions
+
 2005-05-27 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay : To support "Sub New()" without modifier	
+
 2005-05-26 Manjula GHM <mmanjula@novell.com>
 	* typemanager.cs : Fix Enum conversion for two level assignment and added few more cases
+
 2005-05-26 Manjula GHM <mmanjula@novell.com>
 	* statement.cs : Fix problem w.r.t 'Exit Sub' 
+
 2005-05-24 Satya Sudha K <ksathyasudha@hotmail.com>
 	* statement.cs : Added few more members like 'memberName' and 'type_expr' to the 'StatementSequence'
 			 class. Added an appropriate constructor for the same.

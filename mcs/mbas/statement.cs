@@ -3645,7 +3645,7 @@ namespace Mono.MonoBASIC {
 			bool isCopyBackRequired = false;
 			if (!isLeftHandSide) {
 				for (int i = 0; i < argCount; i++) {
-					Argument origArg = (Argument) originalArgs [i];
+					Argument origArg = (Argument) Arguments [i];
 					Expression origExpr = origArg.Expr; 
 					if (!(origExpr is Constant || origArg.ArgType == Argument.AType.NoArg)) 
 						isCopyBackRequired = true;
@@ -3658,7 +3658,7 @@ namespace Mono.MonoBASIC {
 				rank_specifier.Add (new IntLiteral (argCount));
 				arrayInitializers = new ArrayList ();
 				for (int i = 0; i < argCount; i++) {
-					Argument a = (Argument) originalArgs [i];
+					Argument a = (Argument) Arguments [i];
 					Expression origExpr = a.Expr;
 					if (origExpr is Constant || a.ArgType == Argument.AType.NoArg || origExpr is New)
 						arrayInitializers.Add (new BoolLiteral (false));
@@ -3689,6 +3689,9 @@ namespace Mono.MonoBASIC {
 			inv_stmt.IsLateBinding = true;
 			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) inv_stmt, loc));
 
+			if (! isCopyBackRequired)
+				return;
+
 			for (int i = argCount - 1; i >= 0; i --) {
 				Argument arg = (Argument) originalArgs [i];
 				Expression origExpr = (Expression) arg.Expr;
@@ -3714,13 +3717,18 @@ namespace Mono.MonoBASIC {
 		public override void Emit (EmitContext ec)
 		{
 			stmtBlock.Emit (ec);
-			//ec.ig.Emit (OpCodes.Ldloc_0);
 		}
 	}
 
 	public class SwitchLabel {
-		Expression label;
-		object converted;
+		public enum LabelType : byte {
+			Operator, Range, Label, Else
+		}
+
+		Expression label, start, end;
+		LabelType label_type;
+		Expression label_condition, start_condition, end_condition;
+		Binary.Operator oper;
 		public Location loc;
 		public Label ILLabel;
 		public Label ILLabelCode;
@@ -3728,10 +3736,23 @@ namespace Mono.MonoBASIC {
 		//
 		// if expr == null, then it is the default case.
 		//
-		public SwitchLabel (Expression expr, Location l)
+		public SwitchLabel (Expression start, Expression end, LabelType ltype, Binary.Operator oper, Location l) {
+			this.start = start;
+			this.end = end;
+			this.label_type = ltype;
+			this.oper = oper;
+			this.loc = l;
+			label_condition = start_condition = end_condition = null;
+		}
+
+		public SwitchLabel (Expression expr, LabelType ltype, Binary.Operator oper, Location l)
 		{
 			label = expr;
+			start = end = null;
+			label_condition = start_condition = end_condition = null;
 			loc = l;
+			this.label_type = ltype;
+			this.oper = oper;
 		}
 
 		public Expression Label {
@@ -3740,9 +3761,27 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
-		public object Converted {
+		public LabelType Type {
 			get {
-				return converted;
+				return label_type;
+			}
+		}
+
+		public Expression ConditionStart {
+			get {
+				return start_condition;
+			}
+		}
+
+		public Expression ConditionEnd {
+			get {
+				return end_condition;
+			}
+		}
+
+		public Expression ConditionLabel {
+			get {
+				return label_condition;
 			}
 		}
 
@@ -3750,37 +3789,55 @@ namespace Mono.MonoBASIC {
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
-		public bool ResolveAndReduce (EmitContext ec, Type required_type)
+		public bool ResolveAndReduce (EmitContext ec, Expression expr)
 		{
 			ILLabel = ec.ig.DefineLabel ();
 			ILLabelCode = ec.ig.DefineLabel ();
 
-			if (label == null)
+			Expression e = null;
+			switch (label_type) {
+			case LabelType.Label :
+				if (label == null)
+					return false;
+				e = label.Resolve (ec);
+				if (e != null)
+					e = Expression.ConvertImplicit (ec, e, expr.Type, loc);
+				if (e == null)
+					return false;
+				label_condition = new Binary (Binary.Operator.Equality, expr, e, loc);
+				if ((label_condition = label_condition.DoResolve (ec)) == null)
+					return false;
 				return true;
-			
-			Expression e = label.Resolve (ec);
+			case LabelType.Operator :
+				e = label.Resolve (ec);
+				label_condition = new Binary (oper, expr, e, loc);
+				if ((label_condition = label_condition.DoResolve (ec)) == null)
+					return false;
+				return true;
+			case LabelType.Range :
+				if (start == null || end == null)
+					return false;
+				e = start.Resolve (ec);
+				if (e != null)
+					e = Expression.ConvertImplicit (ec, e, expr.Type, loc);
+				if (e == null)
+					return false;
+				start_condition = new Binary (Binary.Operator.GreaterThanOrEqual, expr, e, loc);
+				start_condition = start_condition.Resolve (ec);
+				e = end.Resolve (ec);
+				if (e != null)
+					e = Expression.ConvertImplicit (ec, e, expr.Type, loc);
+				if (e == null)
+					return false;
+				end_condition = new Binary (Binary.Operator.LessThanOrEqual, expr, e, loc);
+				end_condition = end_condition.Resolve (ec);
+				if (start_condition == null || end_condition == null)
+					return false;
+				return true;
 
-			if (e == null)
-				return false;
-
-			if (!(e is Constant)){
-				Console.WriteLine ("Value is: " + label);
-				Report.Error (150, loc, "A constant value is expected");
-				return false;
+			case LabelType.Else :
+				break;
 			}
-
-			if (e is StringConstant || e is NullLiteral){
-				if (required_type == TypeManager.string_type){
-					converted = e;
-					ILLabel = ec.ig.DefineLabel ();
-					return true;
-				}
-			}
-
-			converted = Expression.ConvertIntLiteral ((Constant) e, required_type, loc);
-			if (converted == null)
-				return false;
-
 			return true;
 		}
 	}
@@ -3822,7 +3879,7 @@ namespace Mono.MonoBASIC {
 		// The types allowed to be implicitly cast from
 		// on the governing type
 		//
-		static Type [] allowed_types;
+		//static Type [] allowed_types;
 		
 		public Switch (Expression e, ArrayList sects, Location l)
 		{
@@ -3851,20 +3908,21 @@ namespace Mono.MonoBASIC {
 		//
 		Expression SwitchGoverningType (EmitContext ec, Type t)
 		{
-			if (t == TypeManager.int32_type ||
-			    t == TypeManager.uint32_type ||
-			    t == TypeManager.char_type ||
-			    t == TypeManager.byte_type ||
-			    t == TypeManager.sbyte_type ||
-			    t == TypeManager.ushort_type ||
+			if (t == TypeManager.byte_type ||
 			    t == TypeManager.short_type ||
-			    t == TypeManager.uint64_type ||
+			    t == TypeManager.int32_type ||
 			    t == TypeManager.int64_type ||
+			    t == TypeManager.decimal_type ||
+			    t == TypeManager.float_type ||
+			    t == TypeManager.double_type ||
+			    t == TypeManager.date_type ||
+			    t == TypeManager.char_type ||
+			    t == TypeManager.object_type ||
 			    t == TypeManager.string_type ||
 				t == TypeManager.bool_type ||
 				t.IsSubclassOf (TypeManager.enum_type))
 				return Expr;
-
+/*
 			if (allowed_types == null){
 				allowed_types = new Type [] {
 					TypeManager.sbyte_type,
@@ -3904,6 +3962,8 @@ namespace Mono.MonoBASIC {
 					converted = e;
 			}
 			return converted;
+*/
+			return null;
 		}
 
 		void error152 (string n)
@@ -3933,125 +3993,22 @@ namespace Mono.MonoBASIC {
 			} else
 				compare_type = SwitchType;
 			
-			foreach (SwitchSection ss in Sections){
-				foreach (SwitchLabel sl in ss.Labels){
-					if (!sl.ResolveAndReduce (ec, SwitchType)){
+			for (int secIndex = 0; secIndex < Sections.Count; secIndex ++) {
+				SwitchSection ss = (SwitchSection) Sections [secIndex];
+				for (int labelIndex = 0; labelIndex < ss.Labels.Count; labelIndex ++) {
+					SwitchLabel sl  = (SwitchLabel) ss.Labels [labelIndex];
+					if (!sl.ResolveAndReduce (ec, Expr)){
 						error = true;
 						continue;
 					}
 
-					if (sl.Label == null){
+					if (sl.Type == SwitchLabel.LabelType.Else){
 						if (got_default){
 							error152 ("default");
 							error = true;
 						}
 						got_default = true;
 						continue;
-					}
-					
-					object key = sl.Converted;
-
-					if (key is Constant)
-						key = ((Constant) key).GetValue ();
-
-					if (key == null)
-						key = NullLiteral.Null;
-					
-					string lname = null;
-					if (compare_type == TypeManager.uint64_type){
-						ulong v = (ulong) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.int64_type){
-						long v = (long) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.uint32_type){
-						uint v = (uint) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.char_type){
-						char v = (char) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.byte_type){
-						byte v = (byte) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.sbyte_type){
-						sbyte v = (sbyte) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.short_type){
-						short v = (short) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.ushort_type){
-						ushort v = (ushort) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.string_type){
-						if (key is NullLiteral){
-							if (Elements.Contains (NullLiteral.Null))
-								lname = "null";
-							else
-								Elements.Add (NullLiteral.Null, null);
-						} else {
-							string s = (string) key;
-
-							if (Elements.Contains (s))
-								lname = s;
-							else
-								Elements.Add (s, sl);
-						}
-					} else if (compare_type == TypeManager.int32_type) {
-						int v = (int) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.bool_type) {
-						bool v = (bool) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					}
-					else
-					{
-						throw new Exception ("Unknown switch type!" +
-								     SwitchType + " " + compare_type);
-					}
-
-					if (lname != null){
-						error152 ("case + " + lname);
-						error = true;
 					}
 				}
 			}
@@ -4137,6 +4094,7 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
+/*
 		/// <summary>
 		/// This method emits code for a lookup-based switch statement (non-string)
 		/// Basically it groups the cases into blocks that are at least half full,
@@ -4448,6 +4406,7 @@ namespace Mono.MonoBASIC {
 			
 			return all_return;
 		}
+*/
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -4457,7 +4416,7 @@ namespace Mono.MonoBASIC {
 
 			new_expr = SwitchGoverningType (ec, Expr.Type);
 			if (new_expr == null){
-				Report.Error (151, loc, "An integer type or string was expected for switch");
+				Report.Error (30338, loc, "'Select' expression cannot be of type '" + Expr.Type +"'");
 				return false;
 			}
 
@@ -4496,15 +4455,7 @@ namespace Mono.MonoBASIC {
 		
 		protected override bool DoEmit (EmitContext ec)
 		{
-			// Store variable for comparission purposes
-			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
-			new_expr.Emit (ec);
-			ec.ig.Emit (OpCodes.Stloc, value);
-
 			ILGenerator ig = ec.ig;
-
-			default_target = ig.DefineLabel ();
-
 			//
 			// Setup the codegen context
 			//
@@ -4514,12 +4465,47 @@ namespace Mono.MonoBASIC {
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.Switch = this;
 
-			// Emit Code.
-			bool all_return;
-			if (SwitchType == TypeManager.string_type)
-				all_return = SimpleSwitchEmit (ec, value);
-			else
-				all_return = TableSwitchEmit (ec, value);
+			for (int secIndex = 0; secIndex < Sections.Count; secIndex ++) {
+				SwitchSection section = (SwitchSection) Sections [secIndex];
+				Label sLabel = ig.DefineLabel ();
+				Label lLabel = ig.DefineLabel ();
+				ArrayList Labels = section.Labels;
+				for (int labelIndex = 0; labelIndex < Labels.Count; labelIndex ++) {
+					SwitchLabel sl = (SwitchLabel) Labels [labelIndex];
+					switch (sl.Type) {
+					case SwitchLabel.LabelType.Range :
+						if (labelIndex + 1 == Labels.Count) {
+							EmitBoolExpression (ec, sl.ConditionStart, sLabel, false);
+							EmitBoolExpression (ec, sl.ConditionEnd, sLabel, false);
+							ig.Emit (OpCodes.Br, lLabel);
+						} else {
+							Label newLabel = ig.DefineLabel ();
+							EmitBoolExpression (ec, sl.ConditionStart, newLabel, false);
+							EmitBoolExpression (ec, sl.ConditionEnd, newLabel, false);
+							ig.Emit (OpCodes.Br, lLabel);
+							ig.MarkLabel (newLabel);
+						}
+						break;
+					case SwitchLabel.LabelType.Else :
+						// Nothing to be done here
+						break;
+					case SwitchLabel.LabelType.Operator :
+						EmitBoolExpression (ec, sl.ConditionLabel, lLabel, true);
+						if (labelIndex + 1 == Labels.Count)
+							ig.Emit (OpCodes.Br, sLabel);
+						break;
+					case SwitchLabel.LabelType.Label :
+						EmitBoolExpression (ec, sl.ConditionLabel, lLabel, true);
+						if (labelIndex + 1 == Labels.Count)
+							ig.Emit (OpCodes.Br, sLabel);
+						break;
+					}
+
+				}
+				ig.MarkLabel (lLabel);
+				section.Block.Emit (ec);
+				ig.MarkLabel (sLabel);
+			}
 
 			// Restore context state. 
 			ig.MarkLabel (ec.LoopEnd);
@@ -4529,8 +4515,7 @@ namespace Mono.MonoBASIC {
 			//
 			ec.LoopEnd = old_end;
 			ec.Switch = old_switch;
-			
-			return all_return;
+			return true;
 		}
 	}
 

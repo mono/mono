@@ -3630,7 +3630,7 @@ case_section
 		topmost.statements.Add (new Break (lexer.Location));
 		
 		ArrayList a = new ArrayList();
-		a.Add (new SwitchLabel (null, lexer.Location));			
+		a.Add (new SwitchLabel (null, SwitchLabel.LabelType.Else, Binary.Operator.TOP, lexer.Location));			
 	  	$$ = new SwitchSection ((ArrayList) a, topmost);	  	
 	  }
 	;	  
@@ -3638,20 +3638,14 @@ case_section
 case_clauses
 	: case_clause
 	  {
-                if ($1 is ArrayList) //From expression TO expression 
-                         $$ = $1;
-		else {
-
-			ArrayList labels = new ArrayList ();
-
-			labels.Add ($1);
-			$$ = labels;
-		}
+		ArrayList labels = new ArrayList ();
+		labels.Add ($1);
+		$$ = labels;
 	  }	
 	| case_clauses COMMA case_clause
 	  {
 		ArrayList labels = (ArrayList) ($1);
-		labels.Add ($2);
+		labels.Add ($3);
 
 		$$ = labels;
 	  }	
@@ -3659,27 +3653,17 @@ case_clauses
 	
 case_clause
 	: opt_is comparison_operator expression
+	  {
+	  	$$ = new SwitchLabel ((Expression) $3, SwitchLabel.LabelType.Operator, (Binary.Operator) $2, lexer.Location);
+	  }
 	| expression
 	  {
-	  	$$ = new SwitchLabel ((Expression) $1, lexer.Location);
+	  	$$ = new SwitchLabel ((Expression) $1, SwitchLabel.LabelType.Label, Binary.Operator.TOP, lexer.Location);
 	  }
 	| expression TO expression
         {
-		//FIXME: need to handle when expressions are character strings.
-               	Constant start = (Constant) $1;
-               	Constant end = (Constant) $3;
-               	int i = 0, s = 0, e = 0;
-               	Location l = lexer.Location ;
-               	ArrayList labels = new ArrayList ();
-
-               	if (start != null) 
-                       	s = (int) start.GetValue ();
-               	if(end != null) 
-                       	e = (int) end.GetValue ();
-               	for(i = s; i <= e; i++) {
-                       	labels.Add(new SwitchLabel ((Expression)new IntLiteral(i), l));
-               	}
-               	$$ = labels;
+	  	$$ = new SwitchLabel ((Expression) $1, (Expression) $3, SwitchLabel.LabelType.Range,
+					 Binary.Operator.TOP, lexer.Location);
         }
 
 	;
@@ -3690,11 +3674,30 @@ opt_is
 	;
 
 comparison_operator
-	: OP_LT
+	: OP_LT 
+	  {
+		$$ = Binary.Operator.LessThan;
+	  }
 	| OP_GT
+	  {
+		$$ = Binary.Operator.GreaterThan;
+	  }
+	| OP_GE
+	  {
+		$$ = Binary.Operator.GreaterThanOrEqual;
+	  }
 	| OP_LE
+	  {
+		$$ = Binary.Operator.LessThanOrEqual;
+	  }
 	| OP_NE
-	/*| OP_EQ */
+	  {
+		$$ = Binary.Operator.Inequality;
+	  }
+	| ASSIGN
+	  {
+		$$ = Binary.Operator.Equality;
+	  }
 	;
 
 opt_case
