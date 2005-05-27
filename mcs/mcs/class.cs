@@ -5983,7 +5983,7 @@ namespace Mono.CSharp {
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
-						param_attr = new ImplicitParameter (method_data.MethodBuilder);
+						param_attr = new ImplicitParameter (method_data.MethodBuilder, method.Location);
 
 					param_attr.ApplyAttributeBuilder (a, cb);
 					return;
@@ -5995,8 +5995,8 @@ namespace Mono.CSharp {
 			protected virtual InternalParameters GetParameterInfo (EmitContext ec)
 			{
 				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (method.Type, "value", Parameter.Modifier.NONE, null);
-				Parameters parameters = new Parameters (parms, null, method.Location);
+				parms [0] = new Parameter (method.Type, "value", Parameter.Modifier.NONE, null, method.Location);
+				Parameters parameters = new Parameters (parms, null);
 
 				bool old_unsafe = ec.InUnsafe;
 				ec.InUnsafe = InUnsafe;
@@ -6781,7 +6781,7 @@ namespace Mono.CSharp {
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
-						param_attr = new ImplicitParameter (method_data.MethodBuilder);
+						param_attr = new ImplicitParameter (method_data.MethodBuilder, method.Location);
 
 					param_attr.ApplyAttributeBuilder (a, cb);
 					return;
@@ -6965,8 +6965,8 @@ namespace Mono.CSharp {
 			ec.InUnsafe = InUnsafe;
 
 			Parameter [] parms = new Parameter [1];
-			parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
-			Parameters parameters = new Parameters (parms, null, Location);
+			parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null, Location);
+			Parameters parameters = new Parameters (parms, null);
 			Type [] types = parameters.GetParameterInfo (ec);
 			InternalParameters ip = new InternalParameters (types, parameters);
 
@@ -7130,9 +7130,9 @@ namespace Mono.CSharp {
 
 				fixed_parms.CopyTo (tmp, 0);
 				tmp [fixed_parms.Length] = new Parameter (
-					method.Type, "value", Parameter.Modifier.NONE, null);
+					method.Type, "value", Parameter.Modifier.NONE, null, method.Location);
 
-				Parameters set_formal_params = new Parameters (tmp, null, method.Location);
+				Parameters set_formal_params = new Parameters (tmp, null);
 				Type [] types = set_formal_params.GetParameterInfo (ec);
 				
 				return new InternalParameters (types, set_formal_params);

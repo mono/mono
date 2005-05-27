@@ -22,10 +22,12 @@ namespace Mono.CSharp {
 	public abstract class ParameterBase : Attributable {
 
 		protected ParameterBuilder builder;
+		public readonly Location Location;
 
-		public ParameterBase (Attributes attrs)
+		public ParameterBase (Attributes attrs, Location loc)
 			: base (attrs)
 		{
+			Location = loc;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -57,7 +59,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class ReturnParameter: ParameterBase {
 		public ReturnParameter (MethodBuilder mb, Location location):
-			base (null)
+			base (null, location)
 		{
 			try {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
@@ -101,8 +103,8 @@ namespace Mono.CSharp {
 	/// of the 'set' method in properties, and the 'add' and 'remove' methods in events.
 	/// </summary>
 	public class ImplicitParameter: ParameterBase {
-		public ImplicitParameter (MethodBuilder mb):
-			base (null)
+		public ImplicitParameter (MethodBuilder mb, Location loc):
+			base (null, loc)
 		{
 			builder = mb.DefineParameter (1, ParameterAttributes.None, "");			
 		}
@@ -149,8 +151,8 @@ namespace Mono.CSharp {
 
 		EmitContext ec;  // because ApplyAtrribute doesn't have ec
 		
-		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
-			: base (attrs)
+		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
+			: base (attrs, loc)
 		{
 			Name = name;
 			ModFlags = mod;
@@ -186,7 +188,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
-		public bool Resolve (EmitContext ec, Location l)
+		public bool Resolve (EmitContext ec)
 		{
 			this.ec = ec;
 
@@ -197,19 +199,19 @@ namespace Mono.CSharp {
 			parameter_type = texpr.ResolveType (ec);
 			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
-				Report.Error (721, l, "'{0}': static types cannot be used as parameters", GetSignatureForError ());
+				Report.Error (721, Location, "'{0}': static types cannot be used as parameters", GetSignatureForError ());
 				return false;
 			}
 
 			if (parameter_type == TypeManager.void_type){
-				Report.Error (1536, l, "Invalid parameter type 'void'");
+				Report.Error (1536, Location, "Invalid parameter type 'void'");
 				return false;
 			}
 
 			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
 				if (parameter_type == TypeManager.typed_reference_type ||
 				    parameter_type == TypeManager.arg_iterator_type){
-					Report.Error (1601, l,
+					Report.Error (1601, Location,
 						      "out or ref parameter can not be of type TypedReference or ArgIterator");
 					return false;
 				}
@@ -260,10 +262,10 @@ namespace Mono.CSharp {
 		///   Returns the signature for this parameter evaluating it on the
 		///   @tc context
 		/// </summary>
-		public string GetSignature (EmitContext ec, Location loc)
+		public string GetSignature (EmitContext ec)
 		{
 			if (parameter_type == null){
-				if (!Resolve (ec, loc))
+				if (!Resolve (ec))
 					return null;
 			}
 
@@ -333,22 +335,19 @@ namespace Mono.CSharp {
 		public readonly bool HasArglist;
 		string signature;
 		Type [] types;
-		Location loc;
 		
 		static Parameters empty_parameters;
 		
-		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter, Location l)
+		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter)
 		{
 			FixedParameters = fixed_parameters;
 			ArrayParameter  = array_parameter;
-			loc = l;
 		}
 
-		public Parameters (Parameter [] fixed_parameters, bool has_arglist, Location l)
+		public Parameters (Parameter [] fixed_parameters, bool has_arglist)
 		{
 			FixedParameters = fixed_parameters;
 			HasArglist = has_arglist;
-			loc = l;
 		}
 
 		/// <summary>
@@ -358,7 +357,7 @@ namespace Mono.CSharp {
 		public static Parameters EmptyReadOnlyParameters {
 			get {
 				if (empty_parameters == null)
-					empty_parameters = new Parameters (null, null, Location.Null);
+					empty_parameters = new Parameters (null, null);
 			
 				return empty_parameters;
 			}
@@ -370,10 +369,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Location Location {
-			get { return loc; }
-		}
-		
 		public void ComputeSignature (EmitContext ec)
 		{
 			signature = "";
@@ -381,7 +376,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < FixedParameters.Length; i++){
 					Parameter par = FixedParameters [i];
 					
-					signature += par.GetSignature (ec, loc);
+					signature += par.GetSignature (ec);
 				}
 			}
 			//
@@ -390,7 +385,7 @@ namespace Mono.CSharp {
 			//
 		}
 
-		void Error_DuplicateParameterName (string name)
+		void Error_DuplicateParameterName (string name, Location loc)
 		{
 			Report.Error (
 				100, loc, "The parameter name `" + name + "' is a duplicate");
@@ -412,12 +407,14 @@ namespace Mono.CSharp {
 				for (j = i + 1; j < count; j++){
 					if (base_name != FixedParameters [j].Name)
 						continue;
-					Error_DuplicateParameterName (base_name);
+					Error_DuplicateParameterName (base_name,
+						FixedParameters [i].Location);
 					return false;
 				}
 
 				if (base_name == array_par_name){
-					Error_DuplicateParameterName (base_name);
+					Error_DuplicateParameterName (base_name,
+						FixedParameters [i].Location);
 					return false;
 				}
 			}
@@ -496,7 +493,7 @@ namespace Mono.CSharp {
 				foreach (Parameter p in FixedParameters){
 					Type t = null;
 					
-					if (p.Resolve (ec, loc))
+					if (p.Resolve (ec))
 						t = p.ExternalType ();
 					else
 						failed = true;
@@ -507,7 +504,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (extra > 0){
-				if (ArrayParameter.Resolve (ec, loc))
+				if (ArrayParameter.Resolve (ec))
 					types [i] = ArrayParameter.ExternalType ();
 				else 
 					failed = true;

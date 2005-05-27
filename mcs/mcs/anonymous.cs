@@ -186,7 +186,7 @@ namespace Mono.CSharp {
 						continue;
 					fixedpars [j] = new Parameter (
 						new TypeExpression (invoke_pd.ParameterType (i), loc),
-						"+" + j, invoke_pd.ParameterModifier (i), null);
+						"+" + j, invoke_pd.ParameterModifier (i), null, loc);
 					j++;
 				}
 				
@@ -194,10 +194,10 @@ namespace Mono.CSharp {
 				if (params_idx != -1){
 					variable = new Parameter (
 						new TypeExpression (invoke_pd.ParameterType (params_idx), loc),
-						"+" + params_idx, invoke_pd.ParameterModifier (params_idx), null);
+						"+" + params_idx, invoke_pd.ParameterModifier (params_idx), null, loc);
 				}
 
-				Parameters = new Parameters (fixedpars, variable, loc);
+				Parameters = new Parameters (fixedpars, variable);
 			}
 			
 			//

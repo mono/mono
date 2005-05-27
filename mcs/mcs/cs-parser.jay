@@ -1135,7 +1135,7 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-	  	$$ = new Parameters (pars, null, lexer.Location); 
+	  	$$ = new Parameters (pars, null); 
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
@@ -1144,7 +1144,7 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new Parameters (pars, (Parameter) $3, lexer.Location); 
+		$$ = new Parameters (pars, (Parameter) $3); 
 	  }
 	| fixed_parameters COMMA ARGLIST
 	  {
@@ -1153,7 +1153,7 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new Parameters (pars, true, lexer.Location);
+		$$ = new Parameters (pars, true);
 	  }
 	| parameter_array COMMA fixed_parameters
 	  {
@@ -1167,11 +1167,11 @@ formal_parameter_list
 	  }
 	| parameter_array 
 	  {
-		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
+		$$ = new Parameters (null, (Parameter) $1);
 	  }
 	| ARGLIST
 	  {
-		$$ = new Parameters (null, true, lexer.Location);
+		$$ = new Parameters (null, true);
 	  }
 	;
 
@@ -1198,7 +1198,7 @@ fixed_parameter
 	  type
 	  IDENTIFIER
 	  {
-		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
+		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
@@ -1247,7 +1247,7 @@ parameter_modifier
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
-		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
+		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1, lexer.Location);
 		note ("type must be a single-dimension array type"); 
 	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
@@ -1375,12 +1375,12 @@ set_accessor_declaration
 		Parameter [] args;
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null);
+			Parameter.Modifier.NONE, null, lexer.Location);
 
 		if (parsing_indexer == false) {
 			args  = new Parameter [1];
 			args [0] = implicit_value_parameter;
-			current_local_parameters = new Parameters (args, null, lexer.Location);
+			current_local_parameters = new Parameters (args, null);
 		} else {
 			Parameter [] fpars = indexer_parameters.FixedParameters;
 
@@ -1393,7 +1393,7 @@ set_accessor_declaration
 			} else 
 				args = null;
 			current_local_parameters = new Parameters (
-				args, indexer_parameters.ArrayParameter, lexer.Location);
+				args, indexer_parameters.ArrayParameter);
 		}
 		
 		lexer.PropertyParsing = false;
@@ -1727,13 +1727,13 @@ operator_declaration
 		
 		Parameter [] param_list = new Parameter [decl.arg2type != null ? 2 : 1];
 
-		param_list[0] = new Parameter (decl.arg1type, decl.arg1name, Parameter.Modifier.NONE, null);
+		param_list[0] = new Parameter (decl.arg1type, decl.arg1name, Parameter.Modifier.NONE, null, decl.location);
 		if (decl.arg2type != null)
-			param_list[1] = new Parameter (decl.arg2type, decl.arg2name, Parameter.Modifier.NONE, null);
+			param_list[1] = new Parameter (decl.arg2type, decl.arg2name, Parameter.Modifier.NONE, null, decl.location);
 
 		Operator op = new Operator (
 			current_class, decl.optype, decl.ret_type, (int) $2, 
-			new Parameters (param_list, null, decl.location),
+			new Parameters (param_list, null),
 			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
 		if (RootContext.Documentation != null) {
@@ -1772,9 +1772,9 @@ operator_declarator
 		Parameter [] pars = new Parameter [1];
 		Expression type = (Expression) $5;
 
-		pars [0] = new Parameter (type, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter (type, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
 
-		current_local_parameters = new Parameters (pars, null, lexer.Location);
+		current_local_parameters = new Parameters (pars, null);
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1797,10 +1797,10 @@ operator_declarator
 		Expression typeL = (Expression) $5;
 		Expression typeR = (Expression) $8;
 
-	       pars [0] = new Parameter (typeL, (string) $6, Parameter.Modifier.NONE, null);
-	       pars [1] = new Parameter (typeR, (string) $9, Parameter.Modifier.NONE, null);
+	       pars [0] = new Parameter (typeL, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
+	       pars [1] = new Parameter (typeR, (string) $9, Parameter.Modifier.NONE, null, lexer.Location);
 
-	       current_local_parameters = new Parameters (pars, null, lexer.Location);
+	       current_local_parameters = new Parameters (pars, null);
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1863,9 +1863,9 @@ conversion_operator_declarator
 	  {
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
 
-		current_local_parameters = new Parameters (pars, null, lexer.Location);  
+		current_local_parameters = new Parameters (pars, null);  
 		  
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1879,9 +1879,9 @@ conversion_operator_declarator
 	  {
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null);
+		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
 
-		current_local_parameters = new Parameters (pars, null, lexer.Location);  
+		current_local_parameters = new Parameters (pars, null);  
 		  
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -2036,7 +2036,7 @@ destructor_declaration
                         
 			Method d = new Destructor (
 				current_class, TypeManager.system_void_expr, m, "Finalize", 
-				new Parameters (null, null, l), (Attributes) $1, l);
+				new Parameters (null, null), (Attributes) $1, l);
 			if (RootContext.Documentation != null)
 				d.DocComment = ConsumeStoredComment ();
 		  
@@ -2143,11 +2143,11 @@ add_accessor_declaration
 		Parameter [] args = new Parameter [1];
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null);
+			Parameter.Modifier.NONE, null, lexer.Location);
 
 		args [0] = implicit_value_parameter;
 		
-		current_local_parameters = new Parameters (args, null, lexer.Location);  
+		current_local_parameters = new Parameters (args, null);  
 		lexer.EventParsing = false;
 	  }
           block
@@ -2171,11 +2171,11 @@ remove_accessor_declaration
 		Parameter [] args = new Parameter [1];
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null);
+			Parameter.Modifier.NONE, null, lexer.Location);
 
 		args [0] = implicit_value_parameter;
 		
-		current_local_parameters = new Parameters (args, null, lexer.Location);  
+		current_local_parameters = new Parameters (args, null);  
 		lexer.EventParsing = false;
 	  }
           block
@@ -3047,7 +3047,7 @@ anonymous_method_signature
 			ArrayList par_list = (ArrayList) $2;
 			Parameter [] pars = new Parameter [par_list.Count];
 			par_list.CopyTo (pars);
-			$$ = new Parameters (pars, null, lexer.Location);
+			$$ = new Parameters (pars, null);
 		}
 	  }
 	;
@@ -3074,7 +3074,7 @@ anonymous_method_parameter_list
 
 anonymous_method_parameter
 	: opt_parameter_modifier type IDENTIFIER {
-		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null);
+		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null, lexer.Location);
 	  }
 	| PARAMS type IDENTIFIER {
 		Report.Error (1670, lexer.Location, "params modifier not allowed in anonymous method declaration");

@@ -517,10 +517,11 @@ namespace Mono.CSharp {
 			if (!is_static)
 				list.Add (new Parameter (
 					new TypeExpression (container.TypeBuilder, Location),
-					"this", Parameter.Modifier.NONE, null));
+					"this", Parameter.Modifier.NONE,
+					null, Location));
 			list.Add (new Parameter (
 				TypeManager.system_boolean_expr, "initialized",
-				Parameter.Modifier.NONE, null));
+				Parameter.Modifier.NONE, null, Location));
 
 			Parameter[] old_fixed = parameters.Parameters.FixedParameters;
 			if (old_fixed != null)
@@ -530,8 +531,7 @@ namespace Mono.CSharp {
 			list.CopyTo (fixed_params);
 
 			ctor_params = new Parameters (
-				fixed_params, parameters.Parameters.ArrayParameter,
-				Location);
+				fixed_params, parameters.Parameters.ArrayParameter);
 
 			Constructor ctor = new Constructor (
 				this, Name, Modifiers.PUBLIC, ctor_params,
