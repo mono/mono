@@ -1,3 +1,9 @@
+2005-05-27  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DefaultPolicies.cs: Refactored code to use the new PermissionBuilder
+	class. Removed references to SWF WebBrowserPermission as it is 
+	documented as obsolete and will be removed before 2.0 final.
+
 2005-05-26  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DefaultPolicies.cs: New. Creates the default security policies. 

@@ -76,6 +76,35 @@ namespace System.Security.Policy {
 			}
 		}
 
+#if NET_2_0
+		private const string DnsPermissionClass = "System.Net.DnsPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string PrintingPermissionClass = "System.Drawing.Printing.PrintingPermission, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string SocketPermissionClass = "System.Net.SocketPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string WebPermissionClass = "System.Net.WebPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string PerformanceCounterPermissionClass = "System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string DirectoryServicesPermissionClass = "System.DirectoryServices.DirectoryServicesPermission, System.DirectoryServices, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string MessageQueuePermissionClass = "System.Messaging.MessageQueuePermission, System.Messaging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, System.ServiceProcess, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+
+		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+#else
+		private const string DnsPermissionClass = "System.Net.DnsPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string PrintingPermissionClass = "System.Drawing.Printing.PrintingPermission, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string SocketPermissionClass = "System.Net.SocketPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string WebPermissionClass = "System.Net.WebPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string PerformanceCounterPermissionClass = "System.Diagnostics.PerformanceCounterPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string DirectoryServicesPermissionClass = "System.DirectoryServices.DirectoryServicesPermission, System.DirectoryServices, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string MessageQueuePermissionClass = "System.Messaging.MessageQueuePermission, System.Messaging, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, System.ServiceProcess, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#endif
+
 		private static NamedPermissionSet _fullTrust;
 		private static NamedPermissionSet _localIntranet;
 		private static NamedPermissionSet _internet;
@@ -193,24 +222,15 @@ namespace System.Security.Policy {
 
 			nps.AddPermission (new UIPermission (PermissionState.Unrestricted));
 
-			// DnsPermission requires stuff outside corlib (System), switching to XML
-/*			SecurityElement se = nps.ToXml ();
-#if NET_2_0
-			se.AddChild (Unrestricted ("System.Net.DnsPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-#else
-			se.AddChild (Unrestricted ("System.Net.DnsPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-#endif
+			// DnsPermission requires stuff outside corlib (System)
+			nps.AddPermission (PermissionBuilder.Create (DnsPermissionClass, PermissionState.Unrestricted));
 
 			// PrintingPermission requires stuff outside corlib (System.Drawing)
-			se.AddChild (PrintingPermission ("DefaultPrinting"));
-#if NET_2_0
-			se.AddChild (Unrestricted ("System.Windows.Forms.WebBrowserPermission, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-#else
+			nps.AddPermission (PermissionBuilder.Create (PrintingPermission ("SafePrinting")));
+#if !NET_2_0
 			// EventLogPermission requires stuff outside corlib (System)
-			se.AddChild (EventLogPermission (".", "Instrument"));
+			nps.AddPermission (PermissionBuilder.Create (EventLogPermission (".", "Instrument")));
 #endif
-			// switching back to PermissionSet
-			nps.FromXml (se);*/
 			return nps;
 		}
 
@@ -228,14 +248,8 @@ namespace System.Security.Policy {
 
 			nps.AddPermission (new UIPermission (UIPermissionWindow.SafeTopLevelWindows, UIPermissionClipboard.OwnClipboard));
 
-			// PrintingPermission requires stuff outside corlib (System.Drawing), switching to XML
-/*			SecurityElement se = nps.ToXml ();
-			se.AddChild (PrintingPermission ("SafePrinting"));
-#if NET_2_0
-			se.AddChild (Unrestricted ("System.Windows.Forms.WebBrowserPermission, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-#endif
-			// switching back to PermissionSet
-			nps.FromXml (se);*/
+			// PrintingPermission requires stuff outside corlib (System.Drawing)
+			nps.AddPermission (PermissionBuilder.Create (PrintingPermission ("SafePrinting")));
 			return nps;
 		}
 
@@ -279,49 +293,30 @@ namespace System.Security.Policy {
 
 			nps.AddPermission (new UIPermission (PermissionState.Unrestricted));
 
-			// others requires stuff outside corlib, switching to XML
-/*			SecurityElement se = nps.ToXml ();
+			// others requires stuff outside corlib
+			nps.AddPermission (PermissionBuilder.Create (DnsPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (PrintingPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (EventLogPermissionClass, PermissionState.Unrestricted));
+
+			nps.AddPermission (PermissionBuilder.Create (SocketPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (WebPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (PerformanceCounterPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (DirectoryServicesPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (MessageQueuePermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (ServiceControllerPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (OleDbPermissionClass, PermissionState.Unrestricted));
+			nps.AddPermission (PermissionBuilder.Create (SqlClientPermissionClass, PermissionState.Unrestricted));
 #if NET_2_0
-			se.AddChild (Unrestricted ("System.Net.DnsPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Drawing.Printing.PrintingPermission, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-			se.AddChild (Unrestricted ("System.Diagnostics.EventLogPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Net.SocketPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Net.WebPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Data.OleDb.OleDbPermission, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Data.SqlClient.SqlClientPermission, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-
-			se.AddChild (Unrestricted ("System.Windows.Forms.WebBrowserPermission, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Security.Permissions.DataProtectionPermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-			se.AddChild (Unrestricted ("System.Security.Permissions.StorePermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-#else
-			se.AddChild (Unrestricted ("System.Net.DnsPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Drawing.Printing.PrintingPermission, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-			se.AddChild (Unrestricted ("System.Diagnostics.EventLogPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Net.SocketPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Net.WebPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Diagnostics.PerformanceCounterPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.DirectoryServices.DirectoryServicesPermission, System.DirectoryServices, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-			se.AddChild (Unrestricted ("System.Messaging.MessageQueuePermission, System.Messaging, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-			se.AddChild (Unrestricted ("System.ServiceProcess.ServiceControllerPermission, System.ServiceProcess, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-			se.AddChild (Unrestricted ("System.Data.OleDb.OleDbPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-			se.AddChild (Unrestricted ("System.Data.SqlClient.SqlClientPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
+//			nps.AddPermission (PermissionBuilder.Create (DataProtectionPermissionClass, PermissionState.Unrestricted));
+//			nps.AddPermission (PermissionBuilder.Create (StorePermissionClass, PermissionState.Unrestricted));
 #endif
-
-			// switching back to PermissionSet
-			nps.FromXml (se);*/
 			return nps;
 		}
-
 
 		private static SecurityElement PrintingPermission (string level)
 		{
 			SecurityElement se = new SecurityElement ("IPermission");
-#if NET_2_0
-			se.AddAttribute ("class", "System.Drawing.Printing.PrintingPermission, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-#else
-			se.AddAttribute ("class", "System.Drawing.Printing.PrintingPermission, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-#endif
+			se.AddAttribute ("class", PrintingPermissionClass);
 			se.AddAttribute ("version", "1");
 			se.AddAttribute ("Level", level);
 			return se;
@@ -330,11 +325,7 @@ namespace System.Security.Policy {
 		private static SecurityElement EventLogPermission (string name, string access)
 		{
 			SecurityElement se = new SecurityElement ("IPermission");
-#if NET_2_0
-			se.AddAttribute ("class", "System.Diagnostics.EventLogPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-#else
-			se.AddAttribute ("class", "System.Diagnostics.EventLogPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-#endif
+			se.AddAttribute ("class", EventLogPermissionClass);
 			se.AddAttribute ("version", "1");
 
 			SecurityElement child = new SecurityElement ("Machine");
@@ -342,15 +333,6 @@ namespace System.Security.Policy {
 			child.AddAttribute ("access", access);
 
 			se.AddChild (child);
-			return se;
-		}
-
-		private static SecurityElement Unrestricted (string className)
-		{
-			SecurityElement se = new SecurityElement ("IPermission");
-			se.AddAttribute ("class", className);
-			se.AddAttribute ("version", "1");
-			se.AddAttribute ("Unrestricted", "true");
 			return se;
 		}
 	}
