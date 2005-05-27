@@ -179,11 +179,15 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual object GetData(string format, bool autoConvert) {
+			Entry e;
 			if (autoConvert) {
-				return Entry.FindConvertible(entries, format).Data;
+				e = Entry.FindConvertible(entries, format);
 			} else {
-				return Entry.Find(entries, format).Data;
+				e = Entry.Find(entries, format);
 			}
+			if (e == null)
+				return null;
+			return e.Data;
 		}
 
 		public virtual object GetData(Type format) {
