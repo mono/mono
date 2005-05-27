@@ -1,3 +1,10 @@
+2005-05-27  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* corlib.dll.sources: Added internal System.Security.PermissionBuilder
+	class to the build.
+	* corlib_test.dll.sources: Added CAS unit tests for System.Security.
+	PermissionSet class.
+
 2005-05-26  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* corlib.dll.sources: Removed the *Switcher structures from the build

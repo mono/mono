@@ -985,6 +985,7 @@ System.Security/ISecurityEncodable.cs
 System.Security/ISecurityPolicyEncodable.cs
 System.Security/IStackWalk.cs
 System.Security/NamedPermissionSet.cs
+System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PermissionSetCollection.cs
 System.Security/PolicyLevelType.cs
