@@ -1,6 +1,8 @@
 2005-05-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *-ia64.*: Ongoing IA64 work.
+
+	* *-ia64.*: Ongoing IA64 work.
 	
 	* mini-ia64.c: Ongoing IA64 work.
 
