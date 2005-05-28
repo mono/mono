@@ -1,3 +1,7 @@
+2005-05-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* objects.cs basic-long.cs: Move some tests to objects.cs.
+
 2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *-ia64.*: Ongoing IA64 work.
