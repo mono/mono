@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System.Reflection;
+using System.Runtime.Hosting;
 using System.Security;
 using System.Security.Policy;
 using System.Threading;

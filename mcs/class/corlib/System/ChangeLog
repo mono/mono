@@ -1,3 +1,11 @@
+2005-05-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainSetup.cs: Added new 2,0 constructors and the 
+	ActivationArguments property.
+	* AppDomainManager.cs: Added using System.Runtime.Hosting as it is the
+	new location for the ApplicationActivator class.
+	* ApplicationActivator.cs: Moved to System.Runtime.Hosting namespace.
+
 2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* Environment.cs: bump corlib version for bug #75060.

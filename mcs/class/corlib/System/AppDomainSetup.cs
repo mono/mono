@@ -5,10 +5,7 @@
 //   Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +31,10 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+#if NET_2_0
+using System.Runtime.Hosting;
+#endif
+
 namespace System
 {
 	[Serializable]
@@ -56,6 +57,9 @@ namespace System
 		private LoaderOptimization loader_optimization;
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
+#if NET_2_0
+		private ActivationArguments _activationArguments;
+#endif
 
 		public AppDomainSetup ()
 		{
@@ -79,6 +83,25 @@ namespace System
 			disallow_binding_redirects = setup.disallow_binding_redirects;
 			disallow_code_downloads = setup.disallow_code_downloads;
 		}
+
+#if NET_2_0
+		public AppDomainSetup (ActivationArguments activationArguments)
+		{
+			_activationArguments = activationArguments;
+		}
+
+		[MonoTODO ("LAMESPEC")]
+		public AppDomainSetup (ActivationContext activationContext)
+		{
+			if (activationContext == null)
+				throw new ArgumentNullException ("activationContext");
+
+			// _activationArguments = activationContext.ActivationArguments;
+
+			// LAMESPEC: beta2 docs says that the context supplies a 
+			// ActivationArguments object which isn't the case!
+		}
+#endif
 
 		static string GetAppBase (string appBase)
 		{
@@ -236,6 +259,13 @@ namespace System
 			set {
 				disallow_code_downloads = value;
 			}
+		}
+#endif
+
+#if NET_2_0
+		public ActivationArguments ActivationArguments {
+			get { return _activationArguments; }
+			set { _activationArguments = value; }
 		}
 #endif
 	}
