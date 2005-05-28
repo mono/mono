@@ -29,11 +29,14 @@
 #if NET_2_0
 
 using System.Reflection;
+using System.Runtime.Hosting;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 
 namespace System.Security {
 
 	[Serializable]
+	[ComVisible (true)]
 	public class HostSecurityManager {
 
 		public HostSecurityManager ()
@@ -49,14 +52,34 @@ namespace System.Security {
 			get { return HostSecurityManagerOptions.AllFlags; }
 		}
 
-		[MonoTODO ("incomplete - docs talks about a System.Runtime.Hosting in corlib but it's not there (yet?)")]
 		public virtual ApplicationTrust DetermineApplicationTrust (Evidence applicationEvidence, Evidence activatorEvidence, TrustManagerContext context)
 		{
 			if (applicationEvidence == null)
 				throw new ArgumentNullException ("applicationEvidence");
-			// TODO extract the ActivationContext from the ActivationArguments (inside the applicationEvidence)
-			ActivationContext ac = null;
-			ApplicationSecurityManager.DetermineApplicationTrust (ac, context);
+
+			ActivationArguments aa = null;
+			foreach (object o in applicationEvidence) {
+				aa = (o as ActivationArguments);
+				if (aa != null)
+					break;
+			}
+
+			if (aa == null) {
+				string msg = Locale.GetText ("No {0} found in {1}.");
+				throw new ArgumentException (string.Format (msg, "ActivationArguments", "Evidence"), "applicationEvidence");
+			}
+			if (aa.ActivationContext == null) {
+				string msg = Locale.GetText ("No {0} found in {1}.");
+				throw new ArgumentException (string.Format (msg, "ActivationContext", "ActivationArguments"), "applicationEvidence");
+			}
+
+			// FIXME: this part is still untested
+			if (ApplicationSecurityManager.DetermineApplicationTrust (aa.ActivationContext, context)) {
+				if (aa.ApplicationIdentity == null)
+					return new ApplicationTrust ();
+				else
+					return new ApplicationTrust (aa.ApplicationIdentity);
+			}
 			return null;
 		}
 

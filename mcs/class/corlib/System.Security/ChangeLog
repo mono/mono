@@ -1,3 +1,8 @@
+2005-05-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostSecurityManager.cs: Added check for ActivationArguments in 
+	application evidences.
+
 2005-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Allow unrestricted identity permissions in
