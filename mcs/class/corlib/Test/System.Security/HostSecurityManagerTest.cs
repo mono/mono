@@ -31,7 +31,6 @@
 using NUnit.Framework;
 using System;
 using System.Reflection;
-//using System.Runtime.Hosting;
 using System.Security;
 using System.Security.Policy;
 
@@ -57,18 +56,14 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DetermineApplicationTrust_Evidence_Null_TrustManagerContext ()
 		{
 			HostSecurityManager hsm = new HostSecurityManager ();
-			Evidence app = new Evidence ();
-			//app.AddHost (new ActivationArgument ());
-			hsm.DetermineApplicationTrust (app, null, new TrustManagerContext ());
+			hsm.DetermineApplicationTrust (new Evidence (), null, new TrustManagerContext ());
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DetermineApplicationTrust_Evidence_Evidence_Null ()
 		{
