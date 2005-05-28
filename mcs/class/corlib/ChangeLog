@@ -1,3 +1,9 @@
+2005-05-28  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* corlib.dll.sources: Added System.Runtime.Hosting namespace with 
+	ActivationArguments and ApplicationActivator classes. Removed 
+	ApplicationActivator from System namespace.
+
 2005-05-27  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* corlib.dll.sources: Added internal System.Security.PermissionBuilder

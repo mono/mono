@@ -60,7 +60,6 @@ System/AppDomainInitializer.cs
 System/AppDomainManager.cs
 System/AppDomainSetup.cs
 System/AppDomainUnloadedException.cs
-System/ApplicationActivator.cs
 System/ApplicationException.cs
 System/ApplicationId.cs
 System/ApplicationIdentity.cs
@@ -538,6 +537,8 @@ System.Runtime.ConstrainedExecution/CER.cs
 System.Runtime.ConstrainedExecution/Consistency.cs
 System.Runtime.ConstrainedExecution/PrePrepareMethodAttribute.cs
 System.Runtime.ConstrainedExecution/ReliabilityContractAttribute.cs
+System.Runtime.Hosting/ActivationArguments.cs
+System.Runtime.Hosting/ApplicationActivator.cs
 System.Runtime.InteropServices/_Activator.cs
 System.Runtime.InteropServices/_Assembly.cs
 System.Runtime.InteropServices/_AssemblyBuilder.cs
