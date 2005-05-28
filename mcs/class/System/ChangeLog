@@ -1,3 +1,7 @@
+2005-05-28  Kornél Pál <kornelpal@hotmail.com>
+
+	* System_test.dll.sources: Added TimerTest.cs.
+
 2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System_test.dll.sources: Added new CAS unit tests for NetworkStream,
@@ -451,11 +455,11 @@
 
 	* list list.unix: Removed Compiler classes that are being moved to their own assembly
 
-2002-12-05 Alejandro S�nchez Acosta  <raciel@gnome.org>
+2002-12-05 Alejandro Sánchez Acosta  <raciel@gnome.org>
 
 	* list.unix: updated.
 
-2002-11-30 Alejandro S�nchez Acosta  <raciel@es.gnu.org>
+2002-11-30 Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 
 	* list.unix: Changed.
 	* System.ComponentModel.Design: Added
