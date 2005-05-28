@@ -131,8 +131,8 @@ namespace System.IO {
 					data.SubDirs = new Hashtable ();
 
 				data.Enabled = true;
+				StartMonitoringDirectory (data);
 				lock (this) {
-					StartMonitoringDirectory (data);
 					watches [fsw] = data;
 					requests [data.Request.ReqNum] = data;
 					stop = false;
@@ -223,6 +223,7 @@ namespace System.IO {
 
 		void ProcessEvents ()
 		{
+			ArrayList newdirs = null;
 			lock (this) {
 				do {
 					int code;
@@ -285,6 +286,9 @@ namespace System.IO {
 						}
 
 						if (fa == FileAction.Added && Directory.Exists (datadir)) {
+							if (newdirs == null)
+								newdirs = new ArrayList (4);
+
 							FAMData fd = new FAMData ();
 							fd.FSW = fsw;
 							fd.Directory = datadir;
@@ -292,15 +296,8 @@ namespace System.IO {
 							fd.IncludeSubdirs = true;
 							fd.SubDirs = new Hashtable ();
 							fd.Enabled = true;
-
-							lock (instance) {
-								StartMonitoringDirectory (fd);
-							}
-
-							lock (data) {
-								data.SubDirs [datadir] = fd;
-							}
-
+							newdirs.Add (fd);
+							newdirs.Add (data);
 							requests [fd.Request.ReqNum] = fd;
 						}
 					}
@@ -316,6 +313,20 @@ namespace System.IO {
 						}
 					}
 				} while (FAMPending (ref conn) > 0);
+			}
+
+
+			if (newdirs != null) {
+				int count = newdirs.Count;
+				for (int n = 0; n < count; n++) {
+					FAMData newdir = (FAMData) newdirs [n];
+					FAMData parent = (FAMData) newdirs [n + 1];
+					StartMonitoringDirectory (newdir);
+					lock (parent) {
+						parent.SubDirs [newdir.Directory] = newdir;
+					}
+				}
+				newdirs.Clear ();
 			}
 		}
 
