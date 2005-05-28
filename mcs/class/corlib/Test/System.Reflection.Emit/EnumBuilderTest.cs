@@ -239,7 +239,6 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[Test]
 		[ExpectedException (typeof(ArgumentNullException))]
-		[Category("NotWorking")]
 		public void TestGetConstructorNullElementType ()
 		{
 			EnumBuilder enumBuilder = GenerateEnum ();
