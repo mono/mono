@@ -1,0 +1,3 @@
+2005-05-28  Kornél Pál <kornelpal@hotmail.com>
+
+	* TimerTest.cs: New test file for System.Timers.Timer.
