@@ -821,7 +821,11 @@ namespace System {
 				throw new ArgumentNullException ("name");
 			if (types == null)
 				throw new ArgumentNullException ("types");
-
+			
+			foreach (Type t in types)
+				if (t == null)
+					throw new ArgumentNullException ("types");
+			
 			return GetPropertyImpl (name, bindingAttr, binder, returnType, types, modifiers);
 		}
 
@@ -871,15 +875,13 @@ namespace System {
 
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
-			return GetConstructorImpl (
-				DefaultBindingFlags, null, CallingConventions.Any, types, null);
+			return GetConstructor (DefaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
 						       Type[] types, ParameterModifier[] modifiers)
 		{
-			return GetConstructorImpl (
-				bindingAttr, binder, CallingConventions.Any, types, modifiers);
+			return GetConstructor (bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
@@ -888,6 +890,10 @@ namespace System {
 		{
 			if (types == null)
 				throw new ArgumentNullException ("types");
+			
+			foreach (Type t in types)
+				if (t == null)
+					throw new ArgumentNullException ("types");
 
 			return GetConstructorImpl (bindingAttr, binder, callConvention, types, modifiers);
 		}
