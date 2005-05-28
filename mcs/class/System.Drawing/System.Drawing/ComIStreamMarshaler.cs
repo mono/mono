@@ -214,7 +214,7 @@ namespace System.Drawing
 				return comInterface;
 			}
 
-			internal static void DisposeInterface(IntPtr comInterface)
+			internal static void ReleaseInterface(IntPtr comInterface)
 			{
 				if (comInterface != IntPtr.Zero)
 				{
@@ -565,7 +565,7 @@ namespace System.Drawing
 				return managedInterface;
 			}
 
-			internal static void DisposeInterface(IStream managedInterface)
+			internal static void ReleaseInterface(IStream managedInterface)
 			{
 				if (managedInterface is NativeToManagedWrapper)
 					((NativeToManagedWrapper)managedInterface).Dispose(true);
@@ -658,7 +658,7 @@ namespace System.Drawing
 
 		public void CleanUpNativeData(IntPtr pNativeData)
 		{
-			ManagedToNativeWrapper.DisposeInterface(pNativeData);
+			ManagedToNativeWrapper.ReleaseInterface(pNativeData);
 		}
 
 		public object MarshalNativeToManaged(IntPtr pNativeData)
@@ -671,7 +671,7 @@ namespace System.Drawing
 
 		public void CleanUpManagedData(object managedObj)
 		{
-			NativeToManagedWrapper.DisposeInterface((IStream)managedObj);
+			NativeToManagedWrapper.ReleaseInterface((IStream)managedObj);
 		}
 
 		public int GetNativeDataSize()
