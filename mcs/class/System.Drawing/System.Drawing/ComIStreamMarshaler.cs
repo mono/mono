@@ -174,14 +174,15 @@ namespace System.Drawing
 
 			~ManagedToNativeWrapper()
 			{
-				Dispose();
+				Dispose(false);
 			}
 
-			private void Dispose()
+			private void Dispose(bool disposing)
 			{
 				Marshal.FreeHGlobal(comInterface);
 				gcHandle.Free();
-				GC.SuppressFinalize(this);
+				if (disposing)
+					GC.SuppressFinalize(this);
 			}
 
 			internal static IStream GetUnderlyingInterface(IntPtr comInterface, bool outParam)
@@ -199,7 +200,7 @@ namespace System.Drawing
 					return null;
 			}
 
-			internal static IntPtr CreateInterface(IStream managedInterface)
+			internal static IntPtr GetInterface(IStream managedInterface)
 			{
 				IntPtr comInterface;
 
@@ -220,7 +221,7 @@ namespace System.Drawing
 					IntPtr vtable = Marshal.ReadIntPtr(comInterface);
 
 					if (vtable == comVtable)
-						ManagedToNativeWrapper.Release(comInterface);
+						Release(comInterface);
 					else
 					{
 						ReleaseSlot releaseSlot = (ReleaseSlot)Marshal.PtrToStructure((IntPtr)((long)vtable + (long)(IntPtr.Size * 2)), typeof(ReleaseSlot));
@@ -298,7 +299,7 @@ namespace System.Drawing
 					lock (thisObject)
 					{
 						if ((thisObject.refCount != 0) && (--thisObject.refCount == 0))
-							thisObject.Dispose();
+							thisObject.Dispose(true);
 
 						return thisObject.refCount;
 					}
@@ -495,7 +496,7 @@ namespace System.Drawing
 
 					GetObject(@this).managedInterface.Clone(out newInterface);
 
-					newWrapper = ManagedToNativeWrapper.CreateInterface(newInterface);
+					newWrapper = ManagedToNativeWrapper.GetInterface(newInterface);
 					ppstm = newWrapper;
 					return S_OK;
 #if MAP_EX_TO_HR
@@ -527,13 +528,14 @@ namespace System.Drawing
 
 			~NativeToManagedWrapper()
 			{
-				Dispose();
+				Dispose(false);
 			}
 
-			private void Dispose()
+			private void Dispose(bool disposing)
 			{
 				managedVtable.Release(comInterface);
-				GC.SuppressFinalize(this);
+				if (disposing)
+					GC.SuppressFinalize(this);
 			}
 
 			internal static IntPtr GetUnderlyingInterface(IStream managedInterface)
@@ -549,7 +551,7 @@ namespace System.Drawing
 					return IntPtr.Zero;
 			}
 
-			internal static IStream CreateInterface(IntPtr comInterface, bool outParam)
+			internal static IStream GetInterface(IntPtr comInterface, bool outParam)
 			{
 				IStream managedInterface;
 
@@ -565,73 +567,73 @@ namespace System.Drawing
 
 			internal static void DisposeInterface(IStream managedInterface)
 			{
-				if (managedInterface != null && managedInterface is NativeToManagedWrapper)
-					((NativeToManagedWrapper)managedInterface).Dispose();
+				if (managedInterface is NativeToManagedWrapper)
+					((NativeToManagedWrapper)managedInterface).Dispose(true);
 			}
 
 			// Mono does not implement Marshal.ThrowExceptionForHR
-			private static void CheckHResult(int result)
+			private static void ThrowExceptionForHR(int result)
 			{
-				if (result != S_OK)
+				if (result < 0)
 					throw new COMException(null, result);
 			}
 
 			public void Read(byte[] pv, int cb, IntPtr pcbRead)
 			{
-				CheckHResult(managedVtable.Read(comInterface, pv, cb, pcbRead));
+				ThrowExceptionForHR(managedVtable.Read(comInterface, pv, cb, pcbRead));
 			}
 
 			public void Write(byte[] pv, int cb, IntPtr pcbWritten)
 			{
-				CheckHResult(managedVtable.Write(comInterface, pv, cb, pcbWritten));
+				ThrowExceptionForHR(managedVtable.Write(comInterface, pv, cb, pcbWritten));
 			}
 
 			public void Seek(long dlibMove, int dwOrigin, IntPtr plibNewPosition)
 			{
-				CheckHResult(managedVtable.Seek(comInterface, dlibMove, dwOrigin, plibNewPosition));
+				ThrowExceptionForHR(managedVtable.Seek(comInterface, dlibMove, dwOrigin, plibNewPosition));
 			}
 
 			public void SetSize(long libNewSize)
 			{
-				CheckHResult(managedVtable.SetSize(comInterface, libNewSize));
+				ThrowExceptionForHR(managedVtable.SetSize(comInterface, libNewSize));
 			}
 
 			public void CopyTo(IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 			{
-				CheckHResult(managedVtable.CopyTo(comInterface, pstm, cb, pcbRead, pcbWritten));
+				ThrowExceptionForHR(managedVtable.CopyTo(comInterface, pstm, cb, pcbRead, pcbWritten));
 			}
 
 			public void Commit(int grfCommitFlags)
 			{
-				CheckHResult(managedVtable.Commit(comInterface, grfCommitFlags));
+				ThrowExceptionForHR(managedVtable.Commit(comInterface, grfCommitFlags));
 			}
 
 			public void Revert()
 			{
-				CheckHResult(managedVtable.Revert(comInterface));
+				ThrowExceptionForHR(managedVtable.Revert(comInterface));
 			}
 
 			public void LockRegion(long libOffset, long cb, int dwLockType)
 			{
-				CheckHResult(managedVtable.LockRegion(comInterface, libOffset, cb, dwLockType));
+				ThrowExceptionForHR(managedVtable.LockRegion(comInterface, libOffset, cb, dwLockType));
 			}
 
 			public void UnlockRegion(long libOffset, long cb, int dwLockType)
 			{
-				CheckHResult(managedVtable.UnlockRegion(comInterface, libOffset, cb, dwLockType));
+				ThrowExceptionForHR(managedVtable.UnlockRegion(comInterface, libOffset, cb, dwLockType));
 			}
 
 			public void Stat(out STATSTG pstatstg, int grfStatFlag)
 			{
-				CheckHResult(managedVtable.Stat(comInterface, out pstatstg, grfStatFlag));
+				ThrowExceptionForHR(managedVtable.Stat(comInterface, out pstatstg, grfStatFlag));
 			}
 
 			public void Clone(out IStream ppstm)
 			{
 				IntPtr newInterface;
 
-				CheckHResult(managedVtable.Clone(comInterface, out newInterface));
-				ppstm = NativeToManagedWrapper.CreateInterface(newInterface, true);
+				ThrowExceptionForHR(managedVtable.Clone(comInterface, out newInterface));
+				ppstm = NativeToManagedWrapper.GetInterface(newInterface, true);
 			}
 		}
 
@@ -649,9 +651,9 @@ namespace System.Drawing
 		public IntPtr MarshalManagedToNative(object managedObj)
 		{
 #if RECURSIVE_WRAPPING
-			managedObj = NativeToManagedWrapper.CreateInterface(ManagedToNativeWrapper.CreateInterface((IStream)managedObj), true);
+			managedObj = NativeToManagedWrapper.GetInterface(ManagedToNativeWrapper.GetInterface((IStream)managedObj), true);
 #endif
-			return ManagedToNativeWrapper.CreateInterface((IStream)managedObj);
+			return ManagedToNativeWrapper.GetInterface((IStream)managedObj);
 		}
 
 		public void CleanUpNativeData(IntPtr pNativeData)
@@ -662,9 +664,9 @@ namespace System.Drawing
 		public object MarshalNativeToManaged(IntPtr pNativeData)
 		{
 #if RECURSIVE_WRAPPING
-			pNativeData = ManagedToNativeWrapper.CreateInterface(NativeToManagedWrapper.CreateInterface(pNativeData, true));
+			pNativeData = ManagedToNativeWrapper.GetInterface(NativeToManagedWrapper.GetInterface(pNativeData, true));
 #endif
-			return NativeToManagedWrapper.CreateInterface(pNativeData, false);
+			return NativeToManagedWrapper.GetInterface(pNativeData, false);
 		}
 
 		public void CleanUpManagedData(object managedObj)

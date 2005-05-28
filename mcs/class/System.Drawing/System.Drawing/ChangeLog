@@ -1,3 +1,8 @@
+2005-05-28  Kornél Pál <kornelpal@hotmail.com>
+
+	* ComIStreamMarshaler.cs: GC.SuppressFinalize(this) is not called in
+	  destructors. Some methods renamed.
+
 2005-05-25  Jonathan Gilbert  <logic@deltaq.org>
 
 	* Image.cs: Added retrieveGDIPalette () and storeGDIPalette ()
@@ -15,7 +20,7 @@
 	  Microsoft's implementation, I have made it a private function
 	  within the class that uses it.
 
-2005-05-24 Kornél Pál <kornelpal@hotmail.com>
+2005-05-24  Kornél Pál <kornelpal@hotmail.com>
 
 	* Graphics.cs: Revised DrawString methods
 
@@ -24,7 +29,7 @@
 	* Graphics.cs: Fixed bug #74762, DrawString was crashing on s.Length
 	  if s was null.
 
-2005-05-20 Kornél Pál <kornelpal@hotmail.com>
+2005-05-20  Kornél Pál <kornelpal@hotmail.com>
 
 	* Image.cs: Uses MemoryStream wrapping on all platforms if needed
 	* gdipFunctions.cs: Modified conditional compilation syntax
