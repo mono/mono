@@ -490,14 +490,10 @@ namespace System.Drawing
 				{
 #endif
 					IStream newInterface;
-					IntPtr newWrapper;
 
 					ppstm = IntPtr.Zero;
-
 					GetObject(@this).managedInterface.Clone(out newInterface);
-
-					newWrapper = ManagedToNativeWrapper.GetInterface(newInterface);
-					ppstm = newWrapper;
+					ppstm = ManagedToNativeWrapper.GetInterface(newInterface);
 					return S_OK;
 #if MAP_EX_TO_HR
 				}
@@ -518,10 +514,8 @@ namespace System.Drawing
 
 			private NativeToManagedWrapper(IntPtr comInterface, bool outParam)
 			{
-				IntPtr comVtable = Marshal.ReadIntPtr(comInterface);
-
 				this.comInterface = comInterface;
-				managedVtable = (IStreamVtbl)Marshal.PtrToStructure(comVtable, typeof(IStreamVtbl));
+				managedVtable = (IStreamVtbl)Marshal.PtrToStructure(Marshal.ReadIntPtr(comInterface), typeof(IStreamVtbl));
 				if (!outParam)
 					managedVtable.AddRef(comInterface);
 			}

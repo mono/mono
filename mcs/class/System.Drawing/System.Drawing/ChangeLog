@@ -1,7 +1,7 @@
 2005-05-28  Kornél Pál <kornelpal@hotmail.com>
 
 	* ComIStreamMarshaler.cs: GC.SuppressFinalize(this) is not called in
-	  destructors. Some methods renamed.
+	  destructors. Some methods renamed. Removed unnecessary variables.
 
 2005-05-25  Jonathan Gilbert  <logic@deltaq.org>
 
