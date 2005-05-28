@@ -1,5 +1,9 @@
 2005-05-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* *-ia64.* jit-icalls.c mini-codegen.c: Ongoing IA64 work.
+
+2005-05-28  Zoltan Varga  <vargaz@freemail.hu>
+
 	* objects.cs basic-calls.cs: Move some tests to objects.cs.
 	
 	* objects.cs basic-long.cs: Move some tests to objects.cs.
