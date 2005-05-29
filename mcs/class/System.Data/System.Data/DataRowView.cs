@@ -90,17 +90,9 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		public DataView CreateChildView (DataRelation relation)
 		{
-			if (relation == null)
-				throw new ArgumentException ("The relation is not parented to the table.");
-			// FIXME : provide more efficient implementation using records
-			object[] keyValues = new object[relation.ParentColumns.Length];
-			for(int i=0; i < relation.ParentColumns.Length; i++) {
-				keyValues[i] = this[relation.ParentColumns[i].Ordinal];
-			}
-			return DataView.CreateChildView(relation,keyValues);
+			return DataView.CreateChildView(relation,_index);
 		}
 
 		public DataView CreateChildView (string name)

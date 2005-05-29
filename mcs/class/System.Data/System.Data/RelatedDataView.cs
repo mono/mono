@@ -28,10 +28,11 @@ namespace System.Data
 		internal RelatedDataView(DataColumn[] relatedColumns,object[] keyValues)
 		{
 			dataTable = relatedColumns[0].Table;
+			rowState = DataViewRowState.CurrentRows;
 			_columns = relatedColumns;
 			_keyValues = keyValues;
 
-			UpdateIndex(true);
+			Open();
 		}
 
 		#endregion // Constructors

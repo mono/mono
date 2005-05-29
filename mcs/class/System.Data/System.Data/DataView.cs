@@ -40,7 +40,7 @@ namespace System.Data
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
-		DataViewRowState rowState;
+		protected DataViewRowState rowState;
 		protected DataRowView[] rowCache = null;
 
 		// BeginInit() support
@@ -1045,25 +1045,18 @@ namespace System.Data
 			sort = builder.ToString();
 		}
 		
-		// FIXME : complete the implementation
-		internal DataView CreateChildView (DataRelation relation,object[] keyValues)
+		internal DataView CreateChildView (DataRelation relation, int index)
 		{
 			if (relation == null || relation.ParentTable != Table) {
 				throw new ArgumentException("The relation is not parented to the table to which this DataView points.");
 			}
+
+			int record = GetRecord(index);
+			object[] keyValues = new object[relation.ParentColumns.Length];
+			for(int i=0; i < relation.ParentColumns.Length; i++)
+				keyValues [i] = relation.ParentColumns [i][record];
+
 			return new RelatedDataView(relation.ChildColumns,keyValues);
-		}
-
-		// FIXME : complete the implementation
-		internal DataView CreateChildView (string name,object[] keyValues)
-		{
-			DataRelation relation = Table.ChildRelations[name];
-
-			if (relation != null) {
-				return CreateChildView(relation,keyValues);
-			}
-
-			throw new ArgumentException("Relation " + name + " not found in the table");
 		}
 
 		private int GetRecord(int index) {
