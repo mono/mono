@@ -1,3 +1,8 @@
+2005-05-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItemCollection.cs: Patch from Curtis (eto@shaw.ca) that fixes
+	FindByText. Closes bug #74205.
+
 2005-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PagedDataSource.cs: patch by Suresh Kumar that makes PageCount return

@@ -147,27 +147,23 @@ namespace System.Web.UI.WebControls
 			items.CopyTo(array, index);
 		}
 
-		public ListItem FindByText(string text)
+		public ListItem FindByText (string text)
 		{
-			int i=-1;
-			foreach(object current in items)
-			{
-				i++;
-				if(((ListItem)current).Text == text)
-					break;
+			foreach (ListItem current in items) {
+				if (current.Text == text)
+					return current;
 			}
-			return (i==-1 ? null : (ListItem)items[i]);
+
+			return null;
 		}
 
-		public ListItem FindByValue(string value)
+		public ListItem FindByValue (string value)
 		{
-			foreach(ListItem current in items)
-			{
-				if(current.Value == value)
-				{
+			foreach (ListItem current in items) {
+				if (current.Value == value)
 					return current;
-				}
 			}
+
 			return null;
 		}
 
