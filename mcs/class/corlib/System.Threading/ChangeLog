@@ -1,3 +1,8 @@
+2005-05-29  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Timer.cs: Added new constructor for 2.0 and ComVisible attribute.
+	* Timeout.cs: This is a static class in 2.0 and ComVisible attribute.
+
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* Thread.cs: Use a static object for a lock rather than
