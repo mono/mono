@@ -72,10 +72,12 @@ namespace System.Data.Common {
 			set { Transaction = (DbTransaction) value; }
 		}
 
+#if NET_2_0
 		[MonoTODO]
 		public virtual DbCommandOptionalFeatures OptionalFeatures { 
 			get { throw new NotImplementedException (); }
 		}
+#endif
 
 		public DbParameterCollection Parameters {
 			get { return DbParameterCollection; }

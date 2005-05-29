@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//	 Boris Kirzner (borisk@mainsoft.com)
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -30,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 using System.Collections;
 using System.Data.Common;
@@ -60,9 +61,9 @@ namespace System.Data.ProviderBase {
 			get { return behavior; }
 		}
 
-		[MonoTODO]
 		public override int Depth {
-			get { throw new NotImplementedException (); }
+			// default value to be overriden by user
+			get { return 0; }
 		}
 
 		[MonoTODO]
@@ -80,7 +81,9 @@ namespace System.Data.ProviderBase {
 			get { throw new NotImplementedException (); }
 		}
 
+#if NET_2_0
 		protected abstract bool IsValidRow { get; }
+#endif
 
 		[MonoTODO]
 		public override object this [[Optional] int index] {
@@ -131,10 +134,9 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Dispose ()
 		{
-			throw new NotImplementedException ();
+			Close ();
 		}
 
 		[MonoTODO]
@@ -197,10 +199,10 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			bool closeReader = (CommandBehavior & CommandBehavior.CloseConnection) != 0;
+			return new DbEnumerator (this , closeReader);
 		}
 
 		[MonoTODO]

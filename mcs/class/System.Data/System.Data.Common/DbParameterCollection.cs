@@ -56,25 +56,29 @@ namespace System.Data.Common {
 			set { this [parameterName] = (DbParameter) value; }
 		}
 
-		object IList.this [int objA] {
-			get { return this [objA]; }
-			set { this [objA] = (DbParameter) value; }
+		object IList.this [int index] {
+			get { return this [index]; }
+			set { this [index] = (DbParameter) value; }
 		}
 
 		public abstract bool IsFixedSize { get; }
 		public abstract bool IsReadOnly { get; }
 		public abstract bool IsSynchronized { get; }
 
-		[MonoTODO]
-		public DbParameter this [string ulAdd] { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public DbParameter this [string parameterName] { 
+			get { 
+				int index = IndexOf (parameterName);
+				return this [index];
+			}
+			set { 
+                int index = IndexOf (parameterName);
+				this [index] = value;
+			}
 		}
 
-		[MonoTODO]
-		public DbParameter this [[Optional] int ulAdd] { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public DbParameter this [[Optional] int index] { 
+			get { return GetParameter (index); }
+			set { SetParameter (index,value); }
 		}
 
 		public abstract object SyncRoot { get; } 
@@ -84,8 +88,12 @@ namespace System.Data.Common {
 		#region Methods
 
 		public abstract int Add (object value);
+
+#if NET_2_0
 		public abstract void AddRange (Array values);
 		protected abstract int CheckName (string parameterName);
+#endif
+
 		public abstract void Clear ();
 		public abstract bool Contains (object value);
 		public abstract bool Contains (string value);

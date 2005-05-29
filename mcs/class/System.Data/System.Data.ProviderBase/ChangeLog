@@ -1,3 +1,24 @@
+2005-05-29 Boris Kirzner <borisk@mainsoft.com>
+	* DbCommandBase.cs 
+		- Private members names changed.
+		- Implemented ExsecuteScalar, ExecuteNonQuery, PropertyChanging and ResetCommandTimeout.
+		- Implemented copy ctor.
+	* DbDataReaderBase.cs
+		- Implemented Depth property.
+		- Added #ifdef NET_2_0 on ISValidRow (not used in TARGET_JVM).
+		- Implemented Dispose and GetEnumerator methods.
+	* DbParameterBase.cs
+		- Private members names changed.
+		- Implemented copy ctor.
+		- Reimplemented Direction, ParameterName, Size and SourceColumn properties.
+		- Added #ifdef NET_2_0 on methods not used in TARGET_JVM
+		- Implemented CopyTo and ShouldSerializeSize methods
+		- Added internal Parent property (used by DbParameterCollectionBase)
+	* DbParameterCollectionBase.cs
+		- Private members names changed.
+		- Re/Implemented public methods and added private ones.
+	* DbStringManager.cs - removed.
+	
 2005-03-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbConnectionBase.cs : Implemented OnStateChange.

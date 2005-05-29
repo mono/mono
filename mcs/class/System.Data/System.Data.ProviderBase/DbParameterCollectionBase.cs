@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//	 Boris Kirzner (borisk@mainsoft.com)
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -30,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 using System.Collections;
 using System.Data.Common;
@@ -40,16 +41,15 @@ namespace System.Data.ProviderBase {
 	{
 		#region Fields
 
-		ArrayList list;
+		ArrayList _list;
 
 		#endregion // Fields
 
 		#region Constructors
 	
-		[MonoTODO]
 		protected DbParameterBaseCollection ()
 		{
-			list = new ArrayList ();
+			_list = new ArrayList ();
 		}
 
 		#endregion // Constructors
@@ -57,30 +57,32 @@ namespace System.Data.ProviderBase {
 		#region Properties
 
 		public override int Count {
-			get { return list.Count; }
+			get { return _list.Count; }
 		}
 
 		public override bool IsFixedSize {
-			get { return list.IsFixedSize; }
+			get { return _list.IsFixedSize; }
 		}
 
 		public override bool IsReadOnly {
-			get { return list.IsReadOnly; }
+			get { return _list.IsReadOnly; }
 		}
 
 		public override bool IsSynchronized {
-			get { return list.IsSynchronized; }
+			get { return _list.IsSynchronized; }
 		}
 
 		protected abstract Type ItemType { get; }
 
+#if NET_2_0
 		[MonoTODO]
 		protected virtual string ParameterNamePrefix {
 			get { throw new NotImplementedException (); }
 		}
+#endif
 
 		public override object SyncRoot {
-			get { return list.SyncRoot; }
+			get { return _list.SyncRoot; }
 		}
 
 		#endregion // Properties
@@ -89,10 +91,12 @@ namespace System.Data.ProviderBase {
 
 		public override int Add (object value)
 		{
-			ValidateType (value);
-                        return list.Add (value);
+            Validate (-1, value);
+            ((DbParameterBase)value).Parent = this;
+                        return _list.Add (value);
 		}
 
+#if NET_2_0
 		public override void AddRange (Array values)
 		{
 			foreach (object value in values)
@@ -104,105 +108,176 @@ namespace System.Data.ProviderBase {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public override void Clear ()
 		{
-			list.Clear ();
+            if (_list != null && Count != 0) {
+				for (int i = 0; i < _list.Count; i++) {
+					((DbParameterBase)_list [i]).Parent = null;
+				}
+				_list.Clear ();
+            }
 		}
 
 		public override bool Contains (object value)
 		{
-			return list.Contains (value);
+            if (IndexOf (value) != -1)
+                return true;
+            else
+                return false;
 		}
 
-		[MonoTODO]
 		public override bool Contains (string value)
 		{
-			throw new NotImplementedException ();
+            if (IndexOf (value) != -1)
+                return true;
+            else
+                return false;
 		}
 
 		public override void CopyTo (Array array, int index)
 		{
-			list.CopyTo (array, index);
+			_list.CopyTo (array, index);
 		}
 
 		public override IEnumerator GetEnumerator ()
 		{
-			return list.GetEnumerator ();
+			return _list.GetEnumerator ();
 		}
 
 		protected override DbParameter GetParameter (int index)
 		{
-			return (DbParameter) list [index];
+			return (DbParameter) _list [index];
 		}
 
 		public override int IndexOf (object value)
 		{
-			return list.IndexOf (value);
+            ValidateType (value);
+			return _list.IndexOf (value);
 		}
 
-		[MonoTODO]
 		public override int IndexOf (string parameterName)
 		{
-			throw new NotImplementedException ();
+            if (_list == null)
+                return -1;
+
+            for (int i = 0; i < _list.Count; i++) {
+                string name = ((DbParameterBase)_list [i]).ParameterName;
+                if (name == parameterName) {
+                    return i;
+                }
+            }
+            return -1;
 		}
 
+#if NET_2_0
 		[MonoTODO]
 		protected internal static int IndexOf (IEnumerable items, string parameterName)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public override void Insert (int index, object value)
 		{
-			list.Insert (index, value);
+			Validate(-1, (DbParameterBase)value);
+			((DbParameterBase)value).Parent = this;
+			_list.Insert (index, value);
 		}
 
+#if NET_2_0
 		[MonoTODO]
 		protected virtual void OnChange ()
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public override void Remove (object value)
 		{
-			list.Remove (value);
+            ValidateType (value);
+			int index = IndexOf (value);
+            RemoveIndex (index);
 		}
 
 		public override void RemoveAt (int index)
 		{
-			list.RemoveAt (index);
+			RemoveIndex (index);
 		}
 
-		[MonoTODO]
 		public override void RemoveAt (string parameterName)
 		{
-			throw new NotImplementedException ();
+            int index = IndexOf (parameterName);
+            RemoveIndex (index);
 		}
 
 		protected override void SetParameter (int index, DbParameter value)
 		{
-			list [index] = value;
+			Replace (index, value);
 		}
 
-		[MonoTODO]
 		protected virtual void Validate (int index, object value)
 		{
-			throw new NotImplementedException ();
-		}
+			ValidateType (value);
+			DbParameterBase parameter = (DbParameterBase) value;
+
+            if (parameter.Parent != null) {
+                if (parameter.Parent.Equals (this)) {
+                    if (IndexOf (parameter) != index)
+                        throw ExceptionHelper.CollectionAlreadyContains (ItemType,"ParameterName",parameter.ParameterName,this);                    
+                }
+                else {
+					// FIXME :  The OleDbParameter with ParameterName 'MyParam2' is already contained by another OleDbParameterCollection.
+                    throw new ArgumentException ("");
+                }
+            }
+
+            if (parameter.ParameterName == null  || parameter.ParameterName == String.Empty) {
+				int newIndex = 1;
+				string parameterName;
+				
+				do {
+					parameterName = "Parameter" + newIndex;
+					newIndex++;
+				}
+				while(IndexOf (parameterName) != -1);
+
+                parameter.ParameterName = parameterName;
+            }
+		}		
 
 		protected virtual void ValidateType (object value)
 		{
+			if (value == null)
+                throw ExceptionHelper.CollectionNoNullsAllowed (this,ItemType);
+
 			Type objectType = value.GetType ();
 			Type itemType = ItemType;
 
-			if (objectType != itemType)
-			{
+			if (itemType.IsInstanceOfType(objectType)) {
 				Type thisType = this.GetType ();
 				string err = String.Format ("The {0} only accepts non-null {1} type objects, not {2} objects.", thisType.Name, itemType.Name, objectType.Name);
 				throw new InvalidCastException (err);
 			}
 		}
+
+		private void RemoveIndex (int index)
+        {
+			DbParameterBase oldItem = (DbParameterBase)_list [index];
+            oldItem.Parent = null;
+            _list.RemoveAt (index);
+        }		
+
+		private void Replace (int index, DbParameter value)
+        {
+            Validate (index, value);
+            DbParameterBase oldItem = (DbParameterBase)this [index];
+            oldItem.Parent = null;
+
+            ((DbParameterBase)value).Parent = this;
+            _list [index] = value;
+        }
 
 		#endregion // Methods
 	}

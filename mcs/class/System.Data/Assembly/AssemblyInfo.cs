@@ -60,7 +60,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
 
+#if !TARGET_JVM
 [assembly: CLSCompliant(true)]
+#endif
 [assembly: AssemblyDefaultAlias("System.Data.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
@@ -69,4 +71,6 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: AssemblyDelaySign(true)]
+#if !TARGET_JVM
 [assembly: AssemblyKeyFile("../ecma.pub")]
+#endif

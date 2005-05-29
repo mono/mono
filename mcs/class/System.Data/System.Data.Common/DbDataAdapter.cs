@@ -889,7 +889,7 @@ namespace System.Data.Common {
 						break;
 					case UpdateStatus.ErrorsOccurred :
 						if (argsUpdating.Errors == null) {
-							argsUpdating.Errors = new DataException("RowUpdatedEvent: Errors occurred; no additional is information available.");
+							argsUpdating.Errors = ExceptionHelper.RowUpdatedError();
 						}
 						row.RowError += argsUpdating.Errors.Message;
 						if (!ContinueUpdateOnError) {
@@ -902,14 +902,14 @@ namespace System.Data.Common {
 						updateCount++;
 						continue;
 					default :
-						throw new ArgumentException(String.Format("Invalid UpdateStatus: {0}",argsUpdating.Status));
+						throw ExceptionHelper.InvalidUpdateStatus(argsUpdating.Status);
 				}
 
 				command = argsUpdating.Command;					
 				IDataReader reader = null;
 				try {								
 					if (command == null) {
-						throw new InvalidOperationException("ADP_UpdateRequiresCommand" + command);
+						throw ExceptionHelper.UpdateRequiresCommand(commandName);
 					}				
 				
 					CommandBehavior commandBehavior = CommandBehavior.Default;
@@ -999,7 +999,7 @@ namespace System.Data.Common {
                             break;
                     case UpdateStatus.ErrorsOccurred:
                             if (updatedArgs.Errors == null) {
-								updatedArgs.Errors = new DataException("RowUpdatedEvent: Errors occurred; no additional is information available.");
+								updatedArgs.Errors = ExceptionHelper.RowUpdatedError();
 							}
 							row.RowError += updatedArgs.Errors.Message;
 							if (!ContinueUpdateOnError) {

@@ -1,3 +1,9 @@
+2005-05-29 Boris Kirzner <borisk@mainsoft.com>
+	* DbCommand.cs - added #ifdef NET_2_0 on DbCommandOptionalFeatures (not used in TARGET_JVM). 
+	* ExceptionHelper.cs - removed java references. Exceptions created on formatted text messages. Code styling fixes.
+	* DbParameterCollection.cs - implemented indexer properties.
+	* DbDataAdapter.cs - delagate exceptions creating to ExceptionHelper.
+	
 2005-05-25 Konstantin Triger <kostat@mainsoft.com>
 
       * DataContainer.cs: Correcting the order - first the record is queried whether the value it contains is null, and only if not the value is fetched

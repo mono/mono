@@ -1,3 +1,6 @@
+2005-05-29 BorisKirzner <borisk@mainsoft.com>
+	* System.Data.dll.sources: Added ExceptionHelper.cs
+	
 2005-05-29 Eyal Alaluf <eyala@mainsoft.com>
 	* System.Data_tests.dll.sources: Unified Mainsoft ConstraintCollection tests into one test in Test/System.Data
 

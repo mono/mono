@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//	 Boris Kirzner (borisk@mainsoft.com)
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -30,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 using System.Data.Common;
 
@@ -39,11 +40,11 @@ namespace System.Data.ProviderBase {
 	{
 		#region Fields
 		
-		string commandText;
-		int commandTimeout;
-		CommandType commandType;
-		bool designTimeVisible;
-		UpdateRowSource updatedRowSource;
+		string _commandText;
+		int _commandTimeout;
+		CommandType _commandType;
+		bool _designTimeVisible;
+		UpdateRowSource _updatedRowSource;
 
 		#endregion // Fields
 
@@ -51,15 +52,20 @@ namespace System.Data.ProviderBase {
 		
 		protected DbCommandBase ()
 		{
-			CommandText = String.Empty;
-			CommandTimeout = 30;
-			CommandType = CommandType.Text;
-			DesignTimeVisible = true;
-			UpdatedRowSource = UpdateRowSource.Both;
+			_commandText = String.Empty;
+			_commandTimeout = 30;
+			_commandType = CommandType.Text;
+			_designTimeVisible = true;
+			_updatedRowSource = UpdateRowSource.Both;
 		}
 
 		protected DbCommandBase (DbCommandBase from)
 		{
+			_commandText = from._commandText;
+			_commandTimeout = from._commandTimeout;
+			_commandType = from._commandType;
+			_updatedRowSource = from._updatedRowSource;
+			_designTimeVisible = from._designTimeVisible;
 		}
 
 		#endregion // Constructors
@@ -67,28 +73,27 @@ namespace System.Data.ProviderBase {
 		#region Properties
 
 		public override string CommandText {
-			get { return commandText; }
-			set { commandText = value; }
+			get { return _commandText; }
+			set { _commandText = value; }
 		}
-
 		public override int CommandTimeout {
-			get { return commandTimeout; }
-			set { commandTimeout = value; }
+			get { return _commandTimeout; }
+			set { _commandTimeout = value; }
 		}
 
 		public override CommandType CommandType {
-			get { return commandType; }
-			set { commandType = value; }
+			get { return _commandType; }
+			set { _commandType = value; }
 		}
 
 		public override bool DesignTimeVisible {
-			get { return designTimeVisible; }
-			set { designTimeVisible = value; }
-		}
+			get { return _designTimeVisible; }
+			set { _designTimeVisible = value; }
+		}	
 
 		public override UpdateRowSource UpdatedRowSource {
-			get { return updatedRowSource; }
-			set { updatedRowSource = value; }
+			get { return _updatedRowSource; }
+			set { _updatedRowSource = value; }
 		}
 
 		#endregion // Properties
@@ -101,25 +106,34 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public override int ExecuteNonQuery ()
 		{
-			DbDataReader reader = ExecuteReader ();
-			reader.Close ();
+			IDataReader reader = null;
+			try {
+				reader = ExecuteReader ();
+			}
+			finally {
+				if (reader != null)
+					reader.Close ();				
+			}
 			return reader.RecordsAffected;
 		}
 
 		public override object ExecuteScalar ()
 		{
-                        object val = null;
-                        DbDataReader reader=ExecuteReader();
+			IDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SequentialAccess);
+			
 			try {
-				if (reader.Read ())
-					val=reader[0];
+				do {
+					if (reader.FieldCount > 0 && reader.Read ())
+						return reader.GetValue (0);			
+				}
+				while (reader.NextResult ());
+				return null;
 			} finally {
 				reader.Close();
 			}
-                        return val;
 		}
 
 		[MonoTODO]
@@ -128,16 +142,13 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void PropertyChanging ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void ResetCommandTimeout ()
 		{
-			throw new NotImplementedException ();
+			_commandTimeout = 30;
 		}
 
 		[MonoTODO]

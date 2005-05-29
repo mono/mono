@@ -4,6 +4,7 @@
 // Author:
 //   Sureshkumar T (tsureshkumar@novell.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Boris Kirzner <borisk@mainsoft.com>
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -30,25 +31,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 
 using System.Data.Common;
 
 namespace System.Data.ProviderBase {
 	public abstract class DbParameterBase : DbParameter
 	{
-
                 #region Fields
-                string _name;
+		string _parameterName;
                 ParameterDirection _direction = ParameterDirection.Input;
-                bool _isNullable = false;
 		int _size;
+#if NET_2_0
 		byte _precision;
 		byte _scale;
-                object _paramValue;
-                int _offset;
 		DataRowVersion _sourceVersion;
+#endif
+		object _value;
+		bool _isNullable;
+		int _offset;
 		string _sourceColumn;
+		DbParameterCollection _parent = null;
 
                 #endregion // Fields
 
@@ -59,11 +62,17 @@ namespace System.Data.ProviderBase {
 		{
 		}
 
-		[MonoTODO]
 		protected DbParameterBase (DbParameterBase source)
 		{
-		}
+			if (source == null) 
+				throw ExceptionHelper.ArgumentNull ("source");
 
+			source.CopyTo (this);
+			ICloneable cloneable = source._value as ICloneable;
+			if (cloneable != null)
+				_value = cloneable.Clone ();
+		}
+        
 		#endregion // Constructors
 
 		#region Properties
@@ -73,9 +82,24 @@ namespace System.Data.ProviderBase {
 			get { throw new NotImplementedException (); }
 		}
 
-                public override ParameterDirection Direction {
+		public override ParameterDirection Direction {
 			get { return _direction; }
-			set { _direction = value; }
+			set {
+				if (_direction != value) {
+					switch (value) {
+							case ParameterDirection.Input:
+							case ParameterDirection.Output:
+							case ParameterDirection.InputOutput:
+							case ParameterDirection.ReturnValue:
+							{
+								PropertyChanging ();
+								_direction = value;
+								return;
+							}
+					}
+					throw ExceptionHelper.InvalidParameterDirection (value);
+				}
+			}
 		}
 
 		public override bool IsNullable {
@@ -90,10 +114,21 @@ namespace System.Data.ProviderBase {
 		}
 
 		public override string ParameterName {
-			get { return _name; }
-			set { _name = value; }
+			get {
+				if (_parameterName == null)
+						return String.Empty;
+
+				return _parameterName;
+			}
+			set {
+				if (_parameterName != value) {
+					PropertyChanging ();
+					_parameterName = value;
+				}
+			}
 		}
 
+#if NET_2_0
 		public override byte Precision {
 			get { return _precision; }
 			set { _precision = value; }
@@ -105,28 +140,51 @@ namespace System.Data.ProviderBase {
 			set { _scale = value; }
 
 		}
+#endif
 
 		public override int Size {
 			get { return _size; }
-			set { _size = value; }
+
+			set {
+				if (_size != value) {
+					if (value < -1)
+						throw ExceptionHelper.InvalidSizeValue (value);
+
+					PropertyChanging ();
+					_size = value;
+				}
+			}
 		}
 
 		
 		public override string SourceColumn {
-			get { return _sourceColumn; }
-			set { _sourceColumn = value; }
+			get { 
+				if (_sourceColumn == null)
+					return String.Empty;
+
+				return _sourceColumn;
+			}
+
+			set	{ _sourceColumn = value; }
 		}
 
-		
+#if NET_2_0		
 		public override DataRowVersion SourceVersion {
 			get { return _sourceVersion; }
 			set { _sourceVersion = value; }
 		}
+#endif		
 
 		
 		public override object Value {
-			get { return _paramValue; }
-			set { _paramValue = value; }
+			get { return _value; }
+			set { _value = value; }
+		}
+
+		internal DbParameterCollection Parent
+		{
+			get { return _parent; }
+			set { _parent = value; }
 		}
 
 		#endregion // Properties
@@ -136,14 +194,28 @@ namespace System.Data.ProviderBase {
 		[MonoTODO]
 		public override void CopyTo (DbParameter destination)
 		{
-			throw new NotImplementedException ();
-		}
+			if (destination == null)
+				throw ExceptionHelper.ArgumentNull ("destination");
 
-		[MonoTODO]
+			DbParameterBase t = (DbParameterBase)destination;
+			t._parameterName = _parameterName;			
+			t._size = _size;
+			t._offset = _offset;
+			t._isNullable = _isNullable;
+			t._sourceColumn = _sourceColumn;
+			t._direction = _direction;
+
+			if (_value is ICloneable)
+                t._value = ((ICloneable) _value).Clone ();
+            else
+                t._value = this._value;
+		}		
+
 		public virtual void PropertyChanging ()
 		{
-			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
 
 		[MonoTODO]
 		protected void ResetCoercedValue ()
@@ -174,13 +246,14 @@ namespace System.Data.ProviderBase {
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+#endif	
+	
 		protected bool ShouldSerializeSize ()
 		{
-			throw new NotImplementedException ();
+			return (_size != 0);
 		}
 
+#if NET_2_0
 		[MonoTODO]
 		public override string ToString ()
 		{
@@ -204,6 +277,7 @@ namespace System.Data.ProviderBase {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		#endregion // Methods
 	}

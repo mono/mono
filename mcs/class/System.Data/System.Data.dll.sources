@@ -173,6 +173,7 @@ System.Data.Common/DbProviderSpecificTypePropertyAttribute.cs
 System.Data.Common/DbTable.cs
 System.Data.Common/DbTransaction.cs
 System.Data.Common/DbTypes.cs
+System.Data.Common/ExceptionHelper.cs
 System.Data.Common/FieldNameLookup.cs
 System.Data.Common/GroupByBehavior.cs
 System.Data.Common/IdentifierCase.cs
