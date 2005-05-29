@@ -1,5 +1,7 @@
 2005-05-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-long.brg: Fix LSHR_IMM rule.
+
 	* *-ia64.*: Ongoing IA64 work.
 
 	* *-ia64.*: Ongoing IA64 work.
