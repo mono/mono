@@ -1,3 +1,6 @@
+2005-05-29  Eyal Alaluf <eyala@mainsoft.com>
+	* ConstraintCollectionTest2.cs - New file containing Mainsoft ConstraintCollection tests.
+
 2005-05-25  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableLoadRowTest.cs: Added  additional cases for

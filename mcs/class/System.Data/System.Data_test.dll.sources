@@ -1,3 +1,4 @@
+System.Data.Test.Utils/DataProvider.cs
 System.Data.SqlTypes/SqlBinaryTest.cs
 System.Data.SqlTypes/SqlBooleanTest.cs
 System.Data.SqlTypes/SqlByteTest.cs
@@ -14,6 +15,7 @@ System.Data.SqlTypes/SqlStringTest.cs
 System.Xml/XmlDataDocumentTest.cs
 System.Xml/XmlDataDocumentTest2.cs
 System.Data/ConstraintCollectionTest.cs
+System.Data/ConstraintCollectionTest2.cs
 System.Data/ConstraintTest.cs
 System.Data/DataColumnCollectionTest.cs
 System.Data/DataColumnTest.cs
@@ -59,20 +61,6 @@ System.Data.Tests.Mainsoft/GHTUtils/GHTValueGen.cs
 System.Data.Tests.Mainsoft/GHTUtils/HttpClientBase.cs
 System.Data.Tests.Mainsoft/GHTUtils/ObjectTester.cs
 System.Data.Tests.Mainsoft/GHTUtils/XmlUtils.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_add_CollectionChanged_C.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_CanRemove_C.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_Clear.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_CollectionChanged.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_Contains_S.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_CopyTo_AI.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_Count.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_GetEnumerator.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_IndexOf_C.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_IndexOf_S.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_IsReadOnly.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_IsSynchronized.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_Remove_C.cs
-System.Data.Tests.Mainsoft/System.Data/ConstraintCollection/ConstraintCollection_Remove_S.cs
 System.Data.Tests.Mainsoft/System.Data/ConstraintException/ConstraintException_Generate.cs
 System.Data.Tests.Mainsoft/System.Data/DataColumn/DataColumn_AllowDBNull.cs
 System.Data.Tests.Mainsoft/System.Data/DataColumn/DataColumn_AutoIncrement.cs

@@ -1,3 +1,6 @@
+2005-05-26  Eyal Alaluf <eyala@mainsoft.com>
+	* Added System.Data.Test.Utils - Keeps utilities comon for all tests
+
 2005-02-15  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* MySqlTestBed.cs: fix for namespace collision MonoTests.System &

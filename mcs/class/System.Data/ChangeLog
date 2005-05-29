@@ -1,3 +1,6 @@
+2005-05-29 Eyal Alaluf <eyala@mainsoft.com>
+	* System.Data_tests.dll.sources: Unified Mainsoft ConstraintCollection tests into one test in Test/System.Data
+
 2005-05-25 Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources : Added DbException.cs, SqlClientMetaDataCollectionNames.cs
 
