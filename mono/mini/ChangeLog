@@ -1,5 +1,7 @@
 2005-05-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* genmdesc.c: Make the generated array non-static.
+
 	* inssel-long.brg: Fix LSHR_IMM rule.
 
 	* *-ia64.*: Ongoing IA64 work.
