@@ -1635,7 +1635,15 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string ProductName {
 			get {
-				return "Novell Mono MWF";
+                                Type t = typeof (AssemblyProductAttribute);
+                                Assembly assembly = GetType().Module.Assembly;
+                                object [] attrs = assembly.GetCustomAttributes (t, false);
+                                AssemblyProductAttribute a = null;
+                                // On MS we get a NullRefException if product attribute is not
+                                // set. 
+                              	if (attrs != null && attrs.Length > 0)
+					a = (AssemblyProductAttribute) attrs [0];
+				return a.Product;
 			}
 		}
 
@@ -1644,7 +1652,12 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string ProductVersion {
 			get {
-				return "1.1.4322.573";
+				Type t = typeof (AssemblyVersionAttribute);
+				Assembly assembly = GetType().Module.Assembly;
+				object [] attrs = assembly.GetCustomAttributes (t, false);
+				if (attrs == null || attrs.Length < 1)
+					return "1.0.0.0";
+				return ((AssemblyVersionAttribute)attrs [0]).Version;
 			}
 		}
 
