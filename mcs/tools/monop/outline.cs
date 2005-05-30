@@ -564,6 +564,9 @@ public class Outline {
 	
 	bool ShowMember (MemberInfo mi)
 	{
+		if (mi.MemberType == MemberTypes.Constructor && ((MethodBase) mi).IsStatic)
+			return false;
+		
 		if (options.ShowPrivate)
 			return true;
 		

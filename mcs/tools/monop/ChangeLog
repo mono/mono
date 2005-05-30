@@ -1,3 +1,8 @@
+2005-05-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* outline.cs: Don't show static constructors: they are cctors,
+	which are uninteresting.
+
 2005-01-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* outline.cs (OutlineProperty) handle mixed accessability.
