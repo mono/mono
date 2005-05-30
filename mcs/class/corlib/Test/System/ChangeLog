@@ -1,3 +1,8 @@
+2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActivatorTest.cs: Updated current tests (which weren't executed 
+	since ...) and added more to test exceptions and unification.
+
 2005-05-27  Raja R Harinath  <rharinath@novell.com>
 
 	* DateTimeTest.cs (TestParseExact2): Remove.  Merge into ...

@@ -1,184 +1,319 @@
+//
+// ActivatorTest.cs - NUnit Test Cases for System.Activator
+//
+// Authors:
+//	Nick Drochak <ndrochak@gol.com>
+//	Gert Driesen <drieseng@users.sourceforge.net>
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+//
+
 using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Tcp;
+using System.Security;
+using System.Security.Permissions;
+
 using NUnit.Framework;
 
-// The class in this namespace is used by the
-// main test class
-namespace MonoTests.System.ActivatorTestInternal
-  {
-  // We need a COM class to test the Activator class
-  [ComVisible(true)]
-    
-  public class COMTest: MarshalByRefObject
-    {
-    public COMTest()
-      {
-      id = 0;
-      }
-    // This property is visible
-    [ComVisible(true)]
-      public int Id
-      {
-      get { return id; }
-      set { id = value; }
-      }
-    
-    public COMTest(int id)
-      {
-      this.id = id;
-      }
-    
-    private int id;
-    public bool constructorFlag = false;
-    }
-  } // MonoTests.System.ActivatorTestInternal namespace
+// The class in this namespace is used by the main test class
+namespace MonoTests.System.ActivatorTestInternal {
 
-namespace MonoTests.System
-  {
-  using MonoTests.System.ActivatorTestInternal;
+	// We need a COM class to test the Activator class
+	[ComVisible (true)]
+	public class COMTest : MarshalByRefObject {
 
-  [TestFixture]
-  public class ActivatorTest
-    {
-    public ActivatorTest()
-      {}
-    
-    [Test]
-      [Ignore("Activator.CreateComInstanceForm is not yet implemented")]
-      // This test is ignored for the moment because 
-      // CreateComInstanceFrom() is not implemented yet
-      // by the mono Activator class
-      public void CreateComInstanceFrom()
-      {
-      ObjectHandle objHandle = Activator.CreateComInstanceFrom(strAssembly ,
-"COMTest");
-      COMTest objCOMTest = (COMTest) objHandle.Unwrap();
-      objCOMTest.Id = 10;
-      Assertion.AssertEquals("#A01",10,objCOMTest.Id);
-      }
+		private int id;
+		public bool constructorFlag = false;
 
-    [Test]
-      // This method tests CreateInstance()
-      public void CreateInstance()
-      {
-      COMTest objCOMTest;
-      // object CreateInstance(Type type)
-      objCOMTest = (COMTest) Activator.CreateInstance(typeof(COMTest));
-      Assertion.AssertEquals("#A02",
-"MonoTests.System.ActivatorTestInternal.COMTest",
-(objCOMTest.GetType()).ToString());
-      // ObjectHandle CreateInstance(string, string) 
-       ObjectHandle objHandle;
-       objHandle = Activator.CreateInstance(null ,
-"MonoTests.System.ActivatorTestInternal.COMTest");
-       objCOMTest = (COMTest) objHandle.Unwrap();
-       objCOMTest.Id = 2;
-       Assertion.AssertEquals("#A03", 2, objCOMTest.Id);
-      // object CreateInstance(Type, bool)
-       objCOMTest = (COMTest) Activator.CreateInstance((typeof(COMTest)), false);
-       Assertion.AssertEquals("#A04",
-"MonoTests.System.ActivatorTestInternal.COMTest",
-(objCOMTest.GetType()).ToString());
-//       // object CreateInstance(Type, object[])
-       object[] objArray = new object[1];
-       objArray[0] = 7;
-       objCOMTest = (COMTest) Activator.CreateInstance((typeof(COMTest)), objArray);
-       Assertion.AssertEquals("#A05", 7, objCOMTest.Id);
-       // Todo: Implemente the test methods for
-       // all the overriden functions using activationAttribute
-      }
+		public COMTest ()
+		{
+			id = 0;
+		}
 
-    [Test]
+		public COMTest (int id)
+		{
+			this.id = id;
+		}
+
+		// This property is visible
+		[ComVisible (true)]
+		public int Id {
+			get { return id; }
+			set { id = value; }
+		}
+	}
+
+	[ComVisible (false)]
+	public class NonCOMTest : COMTest {
+	}
+}
+
+namespace MonoTests.System {
+
+	using MonoTests.System.ActivatorTestInternal;
+
+	[TestFixture]
+	public class ActivatorTest {
+
+		private string corlibLocation = typeof (string).Assembly.Location;
+		private string testLocation = typeof (ActivatorTest).Assembly.Location;
+
+		[Test]
+		[Ignore ("doesn't even work on MS runtime")]
+		// This test is ignored for the moment because CreateComInstanceFrom() is not 
+		// implemented yet by the mono Activator class
+		public void CreateComInstanceFrom ()
+		{
+			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.COMTest");
+			COMTest objCOMTest = (COMTest) objHandle.Unwrap ();
+			objCOMTest.Id = 10;
+			Assert.AreEqual (10, objCOMTest.Id, "#A01");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateComInstanceFrom_AssemblyNull ()
+		{
+			ObjectHandle objHandle = Activator.CreateComInstanceFrom (null, "MonoTests.System.ActivatorTestInternal.COMTest");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateComInstanceFrom_AssemblyEmpty ()
+		{
+			ObjectHandle objHandle = Activator.CreateComInstanceFrom (String.Empty, "MonoTests.System.ActivatorTestInternal.COMTest");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		[Category ("NotWorking")]
+		public void CreateComInstanceFrom_AssemblyNotFound ()
+		{
+			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation + "1", "MonoTests.System.ActivatorTestInternal.COMTest");
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		[Category ("NotWorking")]
+		public void CreateComInstanceFrom_TypeNameNotComVisible ()
+		{
+			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.NonCOMTest");
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		[Category ("NotWorking")]
+		public void CreateComInstanceFrom_TypeNameDoesNotExists ()
+		{
+			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.DoesntExistsCOMTest");
+		}
+
+		[Test]
+		public void CreateInstance_Type()
+		{
+			COMTest objCOMTest = (COMTest) Activator.CreateInstance (typeof (COMTest));
+			Assert.AreEqual ("MonoTests.System.ActivatorTestInternal.COMTest", (objCOMTest.GetType ()).ToString (), "#A02");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateInstance_TypeNull ()
+		{
+			Activator.CreateInstance ((Type)null);
+		}
+
+		[Test]
+		public void CreateInstance_StringString ()
+		{
+			ObjectHandle objHandle = Activator.CreateInstance (null, "MonoTests.System.ActivatorTestInternal.COMTest");
+			COMTest objCOMTest = (COMTest)objHandle.Unwrap ();
+			objCOMTest.Id = 2;
+			Assert.AreEqual (2, objCOMTest.Id, "#A03");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateInstance_StringNull ()
+		{
+			Activator.CreateInstance ((string)null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void CreateInstance_StringTypeNameDoesNotExists ()
+		{
+			Activator.CreateInstance ((string)null, "MonoTests.System.ActivatorTestInternal.DoesntExistsCOMTest");
+		}
+
+		[Test]
+		public void CreateInstance_TypeBool ()
+		{
+			COMTest objCOMTest = (COMTest)Activator.CreateInstance (typeof (COMTest), false);
+			Assert.AreEqual ("MonoTests.System.ActivatorTestInternal.COMTest", objCOMTest.GetType ().ToString (), "#A04");
+		}
+
+		[Test]
+		public void CreateInstance_TypeObjectArray ()
+		{
+			object[] objArray = new object[1] { 7 };
+			COMTest objCOMTest = (COMTest)Activator.CreateInstance (typeof (COMTest), objArray);
+			Assert.AreEqual (7, objCOMTest.Id, "#A05");
+		}
+
+		// TODO: Implemente the test methods for all the overriden functions using activationAttribute
+
+		[Test]
 #if NET_2_0
-    [ExpectedException(typeof(MissingMethodException))]
+		[ExpectedException(typeof(MissingMethodException))]
 #else
-    [ExpectedException(typeof(MemberAccessException))]
+		[ExpectedException(typeof(MemberAccessException))]
 #endif
-    public void CreateInstanceAbstract1() {
-          Activator.CreateInstance(typeof(Type));
-    }
+		public void CreateInstanceAbstract1 () 
+		{
+			Activator.CreateInstance (typeof (Type));
+		}
 
-    [Test]
+		[Test]
 #if NET_2_0
-    [ExpectedException(typeof(MissingMethodException))]
+		[ExpectedException(typeof(MissingMethodException))]
 #else
-    [ExpectedException(typeof(MemberAccessException))]
+		[ExpectedException(typeof(MemberAccessException))]
 #endif
-    public void CreateInstanceAbstract2() {
-        Activator.CreateInstance(typeof(Type), true);
-    }
+		public void CreateInstanceAbstract2 () 
+		{
+			Activator.CreateInstance (typeof (Type), true);
+		}
 
-    [Test]
-    [ExpectedException(typeof(MissingMethodException))]
-    public void CreateInstanceAbstract3() {
-        Activator.CreateInstance(typeof(Type), null, null);
-    }
+		[Test]
+		[ExpectedException(typeof(MissingMethodException))]
+		public void CreateInstanceAbstract3 () 
+		{
+			Activator.CreateInstance (typeof (Type), null, null);
+		}
 
-    [Test]
-    [ExpectedException(typeof(MissingMethodException))]
-    public void CreateInstanceAbstract4() {
-        Activator.CreateInstance(typeof(Type), BindingFlags.CreateInstance | (BindingFlags.Public | BindingFlags.Instance), null, null, CultureInfo.InvariantCulture, null);
-    }
+		[Test]
+		[ExpectedException(typeof(MissingMethodException))]
+		public void CreateInstanceAbstract4() 
+		{
+			Activator.CreateInstance (typeof (Type), BindingFlags.CreateInstance | (BindingFlags.Public | BindingFlags.Instance), null, null, CultureInfo.InvariantCulture, null);
+		}
 
-    [Test]
+		[Test]
 #if NET_2_0
-    [ExpectedException(typeof(MissingMethodException))]
+		[ExpectedException (typeof (MissingMethodException))]
 #else
-    [ExpectedException(typeof(MemberAccessException))]
+		[ExpectedException (typeof (MemberAccessException))]
 #endif
-    public void CreateInstanceAbstract5() {
-        Activator.CreateInstance(typeof(Type), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture, null);
-    }
+		public void CreateInstanceAbstract5 () 
+		{
+			Activator.CreateInstance (typeof (Type), BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture, null);
+		}
 
-    // This method tests GetObject from the Activator class
-    [Test]
-      public void GetObject()
-      {
-      // object GetObject(Type, string)
-      
-      // This will provide a COMTest object on  tcp://localhost:1234/COMTestUri
-      COMTest objCOMTest = new COMTest(8);
-      TcpChannel chnServer = new TcpChannel(1234);
-      ChannelServices.RegisterChannel(chnServer);
-      RemotingServices.SetObjectUriForMarshal(objCOMTest, "COMTestUri");
-      RemotingServices.Marshal(objCOMTest);
-      
-      // This will get the remoting object
-      object objRem = Activator.GetObject(typeof(COMTest),
-"tcp://localhost:1234/COMTestUri");
-      Assertion.Assert("#A07",objRem != null);
-      COMTest remCOMTest = (COMTest) objRem;
-      Assertion.AssertEquals("#A08", 8, remCOMTest.Id);
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetObject_TypeNull ()
+		{
+			Activator.GetObject (null, "tcp://localhost:1234/COMTestUri");
+		}
 
-      ChannelServices.UnregisterChannel(chnServer);
-       // Todo: Implemente the test methods for
-       // all the overriden function using activationAttribute
-      }
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetObject_UrlNull ()
+		{
+			Activator.GetObject (typeof (COMTest), null);
+		}
 
-    // This method tests the CreateInstanceFrom methods
-    // of the Activator class
-    [Test]
-      public void CreateInstanceFrom()
-      {
-      ObjectHandle objHandle;
-      objHandle = Activator.CreateInstanceFrom(strAssembly ,
-"MonoTests.System.ActivatorTestInternal.COMTest");
-      Assertion.Assert("#A09", objHandle != null);
-		objHandle.Unwrap();
-       // Todo: Implement the test methods for
-       // all the overriden function using activationAttribute
-      }
-    
-    // The name of the assembly file is incorrect.
-    // I used it to test these classes but you should
-    // replace it with the name of the mono tests assembly file
-    // The name of the assembly is used to get an object through
-    // Activator.CreateInstance(), Activator.CreateComInstanceFrom()...
-    private string strAssembly = "corlib_test.dll";
-    
-    }
-  
-  }
+/* This test is now executed in System.Runtime.Remoting unit tests 
+		[Test]
+		public void GetObject ()
+		{
+			// This will provide a COMTest object on  tcp://localhost:1234/COMTestUri
+			COMTest objCOMTest = new COMTest (8);
+			TcpChannel chnServer = new TcpChannel (1234);
+			ChannelServices.RegisterChannel (chnServer);
+			RemotingServices.SetObjectUriForMarshal (objCOMTest, "COMTestUri");
+			RemotingServices.Marshal (objCOMTest);
+
+			// This will get the remoting object
+			object objRem = Activator.GetObject (typeof (COMTest), "tcp://localhost:1234/COMTestUri");
+			Assert.IsNotNull (objRem, "#A07");
+			COMTest remCOMTest = (COMTest) objRem;
+			Assert.AreEqual (8, remCOMTest.Id, "#A08");
+
+			ChannelServices.UnregisterChannel(chnServer);
+		}
+*/
+		// TODO: Implemente the test methods for all the overriden function using activationAttribute
+
+		[Test]
+		public void CreateInstanceFrom ()
+		{
+			ObjectHandle objHandle = Activator.CreateInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.COMTest");
+			Assert.IsNotNull (objHandle, "#A09");
+			objHandle.Unwrap ();
+			// TODO: Implement the test methods for all the overriden function using activationAttribute
+		}
+
+		// note: this only ensure that the ECMA key support unification (more test required, outside corlib, for other keys, like MS final).
+		private const string CorlibPermissionPattern = "System.Security.Permissions.FileDialogPermission, mscorlib, Version={0}, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string SystemPermissionPattern = "System.Net.DnsPermission, System, Version={0}, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		private const string fx10version = "1.0.3300.0";
+		private const string fx11version = "1.0.5000.0";
+		private const string fx20version = "2.0.0.0";
+
+		private static object[] psNone = new object [1] { PermissionState.None };
+
+		private void Unification (string fullname)
+		{
+			Type t = Type.GetType (fullname);
+			IPermission p = (IPermission)Activator.CreateInstance (t, psNone);
+			string currentVersion = typeof (string).Assembly.GetName ().Version.ToString ();
+			Assert.IsTrue ((p.ToString ().IndexOf (currentVersion) > 0), currentVersion);
+		}
+
+		[Test]
+		public void Unification_FromFx10 ()
+		{
+			Unification (String.Format (CorlibPermissionPattern, fx10version));
+			Unification (String.Format (SystemPermissionPattern, fx10version));
+		}
+
+		[Test]
+		public void Unification_FromFx11 ()
+		{
+			Unification (String.Format (CorlibPermissionPattern, fx11version));
+			Unification (String.Format (SystemPermissionPattern, fx11version));
+		}
+
+		[Test]
+		public void Unification_FromFx20 ()
+		{
+			Unification (String.Format (CorlibPermissionPattern, fx20version));
+			Unification (String.Format (SystemPermissionPattern, fx20version));
+		}
+
+		[Test]
+		public void Unification_FromFx99_Corlib ()
+		{
+			Unification (String.Format (CorlibPermissionPattern, "9.99.999.9999"));
+#if NET_1_1
+			Unification (String.Format (SystemPermissionPattern, "9.99.999.9999"));
+#endif
+		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void Unification_FromFx99_System ()
+		{
+			Assert.IsNull (Type.GetType (String.Format (SystemPermissionPattern, "9.99.999.9999")));
+		}
+#endif
+	}
+}
