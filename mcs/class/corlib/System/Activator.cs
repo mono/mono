@@ -60,6 +60,9 @@ namespace System
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
 
+			if (assemblyName.Length == 0)
+				throw new ArgumentException ("assemblyName");
+
 			throw new NotImplementedException();
 		}
 
@@ -73,6 +76,9 @@ namespace System
 
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
+
+			if (assemblyName.Length == 0)
+				throw new ArgumentException ("assemblyName");
 
 			throw new NotImplementedException();
 		}
@@ -277,12 +283,18 @@ namespace System
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
 		public static object GetObject (Type type, string url)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
 			return RemotingServices.Connect (type, url);
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
 		public static object GetObject (Type type, string url, object state)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
 			return RemotingServices.Connect (type, url, state);
 		}
 

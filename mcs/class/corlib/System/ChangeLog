@@ -1,3 +1,7 @@
+2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Activator.cs: Added missing validation on parameters.
+
 2005-05-28  Ben Maurer  <bmaurer@ximian.com>
 
 	* Type.cs: Check that the arguments of the `types' array are
