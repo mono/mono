@@ -1,3 +1,8 @@
+2005-05-30  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Literal.cs: (RegExpLiteral.Emit): Take care of attributes. "g" is
+	global, "i" is case-insensitive and "m" is multi-line.
+
 2005-05-19  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Parser.cs: Throw NotImplementedException for function

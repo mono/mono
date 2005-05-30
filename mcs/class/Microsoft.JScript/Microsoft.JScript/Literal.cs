@@ -226,6 +226,10 @@ namespace Microsoft.JScript {
 		internal string re;
 		internal string flags;
 
+		const char IGNORE_CASE = 'i';
+		const char GLOBAL = 'g';
+		const char MULTI_LINE = 'm';
+		
 		internal RegExpLiteral (AST parent, string re, string flags)
 		{
 			this.parent = parent;
@@ -255,16 +259,24 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("GetOriginalRegExpConstructor"));
 			ig.Emit (OpCodes.Ldstr, re);
 
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.Emit (OpCodes.Ldc_I4_0);
-
+			emit_flag (ig, flags.IndexOfAny (new char [] {IGNORE_CASE}) > -1);
+			emit_flag (ig, flags.IndexOfAny (new char [] {GLOBAL}) > -1);
+			emit_flag (ig, flags.IndexOfAny (new char [] {MULTI_LINE}) > -1);
+			
 			ig.Emit (OpCodes.Call, typeof (RegExpConstructor).GetMethod ("Construct"));
 			ig.Emit (OpCodes.Castclass, typeof (RegExpObject));
 			ig.Emit (OpCodes.Stsfld, field);
 
 			ig.MarkLabel (label);			
 			ig.Emit (OpCodes.Ldsfld, field);
+		}
+
+		void emit_flag (ILGenerator ig, bool cond)
+		{
+ 			if (cond)
+				ig.Emit (OpCodes.Ldc_I4_1);
+			else
+				ig.Emit (OpCodes.Ldc_I4_0);
 		}
 	}		
 }
