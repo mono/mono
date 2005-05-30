@@ -114,38 +114,43 @@ namespace System.Net {
 			return he;
 		}
 
-		public static IPHostEntry GetHostByAddress(IPAddress address) 
+		public static IPHostEntry GetHostByAddress(IPAddress address)
 		{
 			if (address == null)
-				throw new ArgumentNullException();
-			return GetHostByAddress (address.ToString());
+				throw new ArgumentNullException ("address");
+
+			return GetHostByAddressFromString (address.ToString (), false);
 		}
 
-		public static IPHostEntry GetHostByAddress(string address) 
+		public static IPHostEntry GetHostByAddress(string address)
 		{
 			if (address == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ("address");
 
+			return GetHostByAddressFromString (address, true);
+		}
+
+		static IPHostEntry GetHostByAddressFromString (string address, bool parse)
+		{
 			// Undocumented MS behavior: when called with IF_ANY,
 			// this should return the local host
-			if (address.Equals ("0.0.0.0"))
-				return GetHostByAddress ("127.0.0.1");
+			if (address.Equals ("0.0.0.0")) {
+				address = "127.0.0.1";
+				parse = false;
+			}
 
-			/// Must check the IP format, might send an exception if 
-			/// invalid string.
-			IPAddress.Parse(address);
+			// Must check the IP format, might send an exception if invalid string.
+			if (parse)
+				IPAddress.Parse(address);
 
 			string h_name;
 			string[] h_aliases, h_addrlist;
 
-			bool ret = GetHostByAddr_internal(address, out h_name,
-				out h_aliases,
-				out h_addrlist);
+			bool ret = GetHostByAddr_internal(address, out h_name, out h_aliases, out h_addrlist);
 			if (!ret)
 				throw new SocketException(11001);
 
-			return(hostent_to_IPHostEntry(h_name, h_aliases,
-				h_addrlist));
+			return (hostent_to_IPHostEntry (h_name, h_aliases, h_addrlist));
 		}
 
 		public static IPHostEntry GetHostByName(string hostName) 

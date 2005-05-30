@@ -1,3 +1,7 @@
+2005-05-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Dns.cs: don't parse the address when it comes from an IPAddress.
+
 2005-05-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: prevent 2 nullrefs when the aborting during
