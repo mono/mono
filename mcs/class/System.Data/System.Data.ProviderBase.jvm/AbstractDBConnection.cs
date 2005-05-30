@@ -949,7 +949,7 @@ namespace System.Data.Common
 		internal void ValidateBeginTransaction()
 		{
 			if (State != ConnectionState.Open) {
-				throw new InvalidOperationException(Res.GetString("ADP_OpenConnectionRequired_BeginTransaction", new object[] {"BeginTransaction", State}));
+				throw new InvalidOperationException(String.Format("{0} requires an open and available Connection. The connection's current state is {1}.", new object[] {"BeginTransaction", State}));
 			}
 
 			if (!JdbcConnection.getAutoCommit()) {

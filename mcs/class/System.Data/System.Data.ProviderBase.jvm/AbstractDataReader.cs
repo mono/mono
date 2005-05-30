@@ -17,6 +17,7 @@ using java.sql;
 namespace System.Data.Common
 {
 	public abstract class AbstractDataReader : DbDataReaderBase, ISafeDataRecord {
+
 		#region Fields
 
 		private ResultSetMetaData _resultsMetaData;
@@ -27,6 +28,7 @@ namespace System.Data.Common
 		private IReaderCacheContainer[] _readerCache;
 		private int _currentCacheFilledPosition; 
 		private Stack _resultSetStack = new Stack();
+		private bool _isClosed = false;
 
 		[Flags]
 		private enum ReaderState { Uninitialized = 0, Empty = 1, HasRows = 2, FirstRed = 4, Eof = 8, Fetching = 16 };
@@ -237,6 +239,10 @@ namespace System.Data.Common
 				}
 				return _readerCache;
 			}
+		}
+
+		public override bool IsClosed {
+			get { return _isClosed; }
 		}
 
 		#endregion // Properties
@@ -472,6 +478,16 @@ namespace System.Data.Common
 		{
 			FillReaderCache(columnIndex);
 			return ((DateTimeReaderCacheContainer)ReaderCache[columnIndex]).GetDateTime();
+		}
+
+		public DateTime GetDateTimeSafe(int columnIndex)
+		{
+			if (ReaderCache[columnIndex] is DateTimeReaderCacheContainer) {
+				return GetDateTime(columnIndex);
+			}
+			else {
+				return Convert.ToDateTime(GetValue(columnIndex));
+			}
 		}
 
 		public virtual TimeSpan GetTimeSpan(int columnIndex)
@@ -1101,17 +1117,6 @@ namespace System.Data.Common
 			if(table == null || column == null || dbMetaData == null)
 				return;
 
-			ResultSet indexInfoRes = dbMetaData.getIndexInfo(catalog,schema,table,true,false);
-			try {
-				while(indexInfoRes.next()) {
-					if(indexInfoRes.getString("COLUMN_NAME") == column)
-						row [(int)SCHEMA_TABLE.IsUnique] = true;
-				}
-			}
-			finally {
-				indexInfoRes.close();
-			}
-
 			ResultSet versionCol = dbMetaData.getVersionColumns(catalog, schema, table);
 			try {
 				while(versionCol.next()) {
@@ -1127,15 +1132,90 @@ namespace System.Data.Common
 				versionCol.close();
 			}
 
-			ResultSet bestRowId = dbMetaData.getBestRowIdentifier(catalog, schema, table, DatabaseMetaData__Finals.bestRowTemporary, false);
+			ResultSet primaryKeys = dbMetaData.getPrimaryKeys(catalog,schema,table);
+			bool primaryKeyExists = false;
+			int columnCount = 0;
 			try {
-				while(bestRowId.next()) {
-					if(bestRowId.getString("COLUMN_NAME") == column)
+				while(primaryKeys.next()) {
+					columnCount++;
+					if(primaryKeys.getString("COLUMN_NAME") == column) {
 						row [(int)SCHEMA_TABLE.IsKey] = true;
+						primaryKeyExists = true;
+					}
+				}
+				// column constitutes a key by itself, so it should be marked as unique 
+				if ((columnCount == 1) && (((bool)row [(int)SCHEMA_TABLE.IsKey]) == true)) {
+					row [(int)SCHEMA_TABLE.IsUnique] = true;
 				}
 			}
 			finally {
-				bestRowId.close();
+				primaryKeys.close();
+			}
+
+			ResultSet indexInfoRes = dbMetaData.getIndexInfo(catalog,schema,table,true,false);
+			string currentIndexName = null;
+			columnCount = 0;
+			bool belongsToCurrentIndex = false;
+			bool atFirstIndex = true;
+			bool uniqueKeyExists = false;
+			try {
+				while(indexInfoRes.next()) {
+					if (indexInfoRes.getShort("TYPE") ==  DatabaseMetaData__Finals.tableIndexStatistic) {
+						// index of type tableIndexStatistic identifies table statistics - ignore it
+						continue;
+					}
+					
+					uniqueKeyExists = true;
+					string iname = indexInfoRes.getString("INDEX_NAME");
+					if (currentIndexName == iname) {
+						// we're within the rows of the same index 
+						columnCount++;
+					}
+					else {
+						// we jump to row of new index 
+						if (belongsToCurrentIndex && columnCount == 1) {
+							// there is a constraint of type UNIQUE that applies only to this column
+							row [(int)SCHEMA_TABLE.IsUnique] = true;
+						}
+
+						if (currentIndexName != null) {
+							atFirstIndex = false;
+						}
+						currentIndexName = iname;
+						columnCount = 1;
+						belongsToCurrentIndex = false;
+					}
+
+					if(indexInfoRes.getString("COLUMN_NAME") == column) {
+						// FIXME : this will cause "spare" columns marked as IsKey. Needs future investigation.
+						// only the first index we met should be marked as a key
+						//if (atFirstIndex) {
+							row [(int)SCHEMA_TABLE.IsKey] = true;
+						//}
+						belongsToCurrentIndex = true;						
+					}
+				}
+				// the column appears in the last index, which is single-column
+				if (belongsToCurrentIndex && columnCount == 1) {
+					// there is a constraint of type UNIQUE that applies only to this column
+					row [(int)SCHEMA_TABLE.IsUnique] = true;
+				}
+			}
+			finally {
+				indexInfoRes.close();
+			}			
+
+			if(!primaryKeyExists && !uniqueKeyExists) {
+				ResultSet bestRowId = dbMetaData.getBestRowIdentifier(catalog, schema, table, DatabaseMetaData__Finals.bestRowTemporary, false);
+				try {
+					while(bestRowId.next()) {
+						if(bestRowId.getString("COLUMN_NAME") == column)
+							row [(int)SCHEMA_TABLE.IsKey] = true;
+					}
+				}
+				finally {
+					bestRowId.close();
+				}
 			}
 		}
 

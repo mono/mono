@@ -1,0 +1,263 @@
+//
+// System.Data.OleDb.OleDbCommand
+//
+// Author:
+//   Boris Kirzner (borisk@mainsoft.com)
+//
+
+using System;
+using System.Collections;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Data;
+using System.Data.Common;
+using System.Data.ProviderBase;
+
+using java.sql;
+// Cannot use this because it makes ArrayList ambiguous reference
+//using java.util;
+
+namespace System.Data.OleDb
+{
+	public sealed class OleDbCommand : AbstractDbCommand, IDbCommand, ICloneable
+	{
+
+		#region Fields
+
+		internal static readonly int oracleTypeRefCursor = java.sql.Types.OTHER;
+		private static readonly int _oracleRefCursor = -10; // oracle.jdbc.OracleTypes.CURSOR
+		private int _currentParameterIndex = 0;
+		private ResultSet _currentRefCursor;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		static OleDbCommand()
+		{
+			try {
+				java.lang.Class OracleTypesClass = java.lang.Class.forName("oracle.jdbc.OracleTypes");
+				_oracleRefCursor = OracleTypesClass.getField("CURSOR").getInt(null);
+			}
+			catch(java.lang.ClassNotFoundException e) {
+				// oracle driver is not in classpath - just continue
+			}
+		}
+
+		/**
+		 * Initializes a new instance of the OleDbCommand class.
+		 * The base constructor initializes all fields to their default values.
+		 * The following table shows initial property values for an instance of SqlCommand.
+		 */
+		public OleDbCommand() : this(null, null, null)
+		{
+		}
+
+		public OleDbCommand(OleDbConnection connection) : this(null, connection, null)
+		{
+		}
+
+		/**
+		 * Initializes a new instance of the OleDbCommand class with the text of the query.
+		 * @param cmdText The text of the query.
+		 */
+		public OleDbCommand(String cmdText) : this(cmdText, null, null)
+		{
+		}
+
+		/**
+		 * Initializes a new instance of the OleDbCommand class with the text of the query and a SqlConnection.
+		 * @param cmdText The text of the query.
+		 * @param connection A SqlConnection that represents the connection to an instance of SQL Server.
+		 */
+		public OleDbCommand(String cmdText, OleDbConnection connection) : this(cmdText, connection, null)
+		{
+		}
+
+		/**
+		 * Initializes a new instance of the OleDbCommand class with the text of the query, a SqlConnection, and the Transaction.
+		 * @param cmdText The text of the query.
+		 * @param connection A SqlConnection that represents the connection to an instance of SQL Server.
+		 * @param transaction The SqlTransaction in which the OleDbCommand executes.
+		 */
+		public OleDbCommand(
+			String cmdText,
+			OleDbConnection connection,
+			OleDbTransaction transaction)
+			: base(cmdText, connection, transaction)
+		{
+		}
+
+		#endregion // Constructors
+
+		#region Properties
+
+		public new OleDbConnection Connection
+		{
+			get { return (OleDbConnection)base.Connection; }
+			set { base.Connection = (AbstractDBConnection)value; }
+		}
+
+		public new OleDbParameterCollection Parameters
+		{
+			get { 
+				if (_parameters == null) {
+					_parameters = CreateParameterCollection(this);
+				}
+				return (OleDbParameterCollection)_parameters; 
+			}
+		}
+
+		public new OleDbTransaction Transaction
+		{
+			get { return (OleDbTransaction)base.Transaction; }
+			set { base.Transaction = (DbTransaction)value; }
+		}
+
+		internal override ResultSet CurrentResultSet
+		{
+			get { 
+				try {
+					ResultSet resultSet = base.CurrentResultSet;
+ 
+					if (resultSet != null) {
+						return resultSet;						
+					}
+					return CurrentRefCursor;
+				}
+				catch(SQLException e) {
+					throw new Exception(e.Message, e);
+				}
+			}
+		}
+
+		private ResultSet CurrentRefCursor
+		{
+			get {
+				if (_currentParameterIndex < 0) {
+					NextRefCursor();
+				}
+				if (_currentRefCursor == null && _currentParameterIndex < InternalParameters.Count) {
+					_currentRefCursor = (ResultSet)((CallableStatement)_statement).getObject(_currentParameterIndex + 1);
+				}
+				return _currentRefCursor;
+			}
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		public new OleDbDataReader ExecuteReader()
+		{
+			return (OleDbDataReader)ExecuteReader(CommandBehavior.Default);
+		}
+
+		public new OleDbDataReader ExecuteReader(CommandBehavior behavior)
+		{
+			return (OleDbDataReader)base.ExecuteReader(behavior);
+		}
+
+		public new OleDbParameter CreateParameter()
+		{
+			return (OleDbParameter)CreateParameterInternal();
+		} 
+
+		protected override void CheckParameters()
+		{
+			for(int i = 0; i < Parameters.Count; i++) {
+				OleDbParameter parameter = (OleDbParameter)Parameters[i];
+				if ((parameter.OleDbType == OleDbType.Empty) || (parameter.OleDbType == OleDbType.Error)) {
+					throw ExceptionHelper.ParametersNotInitialized(i,parameter.ParameterName,parameter.OleDbType.ToString());
+				}
+
+				if (((parameter.OleDbType == OleDbType.Char) || (parameter.OleDbType == OleDbType.Binary) ||
+					(parameter.OleDbType == OleDbType.VarWChar) || (parameter.OleDbType == OleDbType.VarBinary) ||
+					(parameter.OleDbType == OleDbType.VarNumeric)) && (parameter.Size == 0)) {
+					throw ExceptionHelper.WrongParameterSize("OleDb");
+				}
+			}
+		}
+
+		protected override DbParameter CreateParameterInternal()
+		{
+			return new OleDbParameter();
+		}
+
+		protected override DbParameterCollection CreateParameterCollection(AbstractDbCommand parent)
+		{
+			return new OleDbParameterCollection((OleDbCommand)parent);
+		}
+
+		public object Clone()
+		{
+			OleDbCommand clone = new OleDbCommand();
+			CopyTo(clone);
+			return clone;
+		}
+
+		protected override void PrepareInternalParameters()
+		{
+			InternalParameters.Clear();
+			_currentParameterIndex = -1;
+		}
+
+		protected override void BindOutputParameter(AbstractDbParameter parameter, int parameterIndex)
+		{
+			CallableStatement callableStatement = ((CallableStatement)_statement);
+			if (((OleDbParameter)parameter).IsOracleRefCursor) {
+				callableStatement.registerOutParameter(++parameterIndex, _oracleRefCursor);
+			}
+			else {
+				base.BindOutputParameter(parameter, parameterIndex);
+			}
+		}
+
+		protected override bool SkipParameter(DbParameter parameter)
+		{
+			return ((OleDbParameter)parameter).IsOracleRefCursor;
+		}
+
+		internal override bool NextResultSet()
+		{
+			try { 
+				bool hasMoreResults = base.NextResultSet();
+
+				if (hasMoreResults) {
+					return true;
+				}
+				else {
+					return NextRefCursor();
+				}
+			}
+			catch (SQLException e) {
+				throw CreateException(e);
+			}
+		}
+
+		private bool NextRefCursor()
+		{
+			_currentRefCursor = null;
+			// FIXME : should we count all parameters or only out ones?
+			for (_currentParameterIndex++;InternalParameters.Count > _currentParameterIndex;_currentParameterIndex++) {
+				if (((OleDbParameter)InternalParameters[_currentParameterIndex]).IsOracleRefCursor) {
+					return true;						
+				}
+			}
+			return false;
+		}
+
+		protected override DbDataReader CreateReader()
+		{
+			return new OleDbDataReader(this);
+		}
+
+		protected override SystemException CreateException(SQLException e)
+		{
+			return new OleDbException(e,Connection);		
+		}
+
+		#endregion // Methods
+      
+	}
+}

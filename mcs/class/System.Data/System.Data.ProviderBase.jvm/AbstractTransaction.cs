@@ -112,6 +112,7 @@ namespace System.Data.Common
             try
             {
                 _connection.JdbcConnection.rollback();
+				_connection.JdbcConnection.setAutoCommit(true);
 				_connection = null;
             }
             catch (SQLException exp)
