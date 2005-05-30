@@ -1,4 +1,13 @@
 2005-05-30 BorisKirzner <borisk@mainsoft.com>
+		* System.Data.SqlClient.jvm
+		* System.Data.Configuration.jvm
+		* System.Data.ProviderBase.jvm
+		* System.Data.SqlTypes.jvm
+		* System.Data.OleDb.jvm
+			Added copyrigth information to all sources.
+	
+
+2005-05-30 BorisKirzner <borisk@mainsoft.com>
 	* System.Data : new folders added :
 		- System.Data.SqlClient.jvm
 		- System.Data.Configuration.jvm

@@ -6,6 +6,7 @@
 //	 Boris Kirzner (borisk@mainsoft.com)
 //
 // Copyright (C) Tim Coleman, 2003
+// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 //
 
 //

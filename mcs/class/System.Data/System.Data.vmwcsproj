@@ -223,7 +223,6 @@
 				<File RelPath="System.Data.Configuration.jvm\ObjectNameResolutionSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Configuration.jvm\ObjectNameResolver.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Configuration.jvm\ObjectNameResolversCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.OleDb.jvm\libgda.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbCommand.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbCommandBuilder.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbConnection.cs" SubType="Component" BuildAction="Compile"/>
@@ -237,7 +236,6 @@
 				<File RelPath="System.Data.OleDb.jvm\OleDbInfoMessageEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbInfoMessageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbLiteral.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.OleDb.jvm\OleDbOracleDataReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbPermission.cs" SubType="Code" BuildAction="Compile"/>
@@ -247,7 +245,6 @@
 				<File RelPath="System.Data.OleDb.jvm\OleDbRowUpdatingEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbRowUpdatingEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbSchemaGuid.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.OleDb.jvm\OleDbStringManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbTransaction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.OleDb.jvm\OleDbType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.ProviderBase\ChangeLog" BuildAction="None"/>
@@ -299,13 +296,12 @@
 				<File RelPath="System.Data.SqlClient.jvm\SqlInfoMessageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlParameter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlParameterCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlParameterConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlResultSet.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlParameterConverter.cs" BuildAction="Compile"/>
+				<File RelPath="System.Data.SqlClient.jvm\SqlResultSet.cs" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatingEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlRowUpdatingEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data.SqlClient.jvm\SqlStringManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlTransaction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlClient.jvm\SqlXmlTextReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.SqlTypes.jvm\INullable.cs" SubType="Code" BuildAction="Compile"/>
