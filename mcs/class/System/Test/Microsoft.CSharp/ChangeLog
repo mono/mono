@@ -1,3 +1,8 @@
+2005-05-30  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGeneratorTest.cs: Added tests for GenerateInMemory
+	compiler parameter.
+
 2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* CodeGeneratorIdentifierTest.cs : [TestFixture] was missing.

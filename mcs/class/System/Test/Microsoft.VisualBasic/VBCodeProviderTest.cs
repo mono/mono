@@ -13,6 +13,7 @@
 using NUnit.Framework;
 using System;
 using Microsoft.VisualBasic;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Collections.Specialized;
@@ -140,6 +141,21 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch {}
 		}
 
+		// NOTE: This test does not clean-up the generated assemblies
+		[Test]
+		public void CompileAssembly_InMemory ()
+		{
+			// NOT in memory
+			CompilerResults results = CompileAssembly (false);
+			Assert ("#1", results.CompiledAssembly.Location.Length != 0);
+			AssertNotNull ("#2", results.PathToAssembly);
+
+			// in memory
+			results = CompileAssembly (true);
+			AssertEquals ("#3", string.Empty, results.CompiledAssembly.Location);
+			AssertNull ("#4", results.PathToAssembly);
+		}
+
 		[Test]
 		public void CreateGenerator()
 		{
@@ -183,5 +199,15 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 		}
 
+		private CompilerResults CompileAssembly(bool inMemory) {
+			CompilerParameters options = new CompilerParameters();
+			options.GenerateExecutable = false;
+			options.GenerateInMemory = inMemory;
+
+			VBCodeProvider codeProvider = new VBCodeProvider();
+			ICodeCompiler compiler = codeProvider.CreateCompiler();
+			return compiler.CompileAssemblyFromDom(options,
+								new CodeCompileUnit());
+		}
 	}
 }

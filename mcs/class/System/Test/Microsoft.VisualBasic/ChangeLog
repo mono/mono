@@ -1,3 +1,8 @@
+2005-05-30  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeProviderTest.cs: Added tests for GenerateInMemory
+	compiler parameter.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	* VBCodeProviderTest.cs: Change namespace to

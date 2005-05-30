@@ -1,3 +1,7 @@
+2005-05-30  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CSharpCodeProviderTest.cs
+
 2005-05-28  Kornél Pál <kornelpal@hotmail.com>
 
 	* System_test.dll.sources: Added TimerTest.cs.
