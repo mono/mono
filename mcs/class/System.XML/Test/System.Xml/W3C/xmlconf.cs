@@ -6,29 +6,24 @@ using System.ComponentModel;
 using System.Reflection;
 
 namespace XmlConfTest {
-	class CommandLineOptionAttribute:Attribute{
-		char _short;
-		string _long; //FIXME: use long form, too
-		public CommandLineOptionAttribute (char a_short, string a_long):base() {
-			_short = a_short;
-			_long = a_long;
-		}
-			
-		public CommandLineOptionAttribute (char a_short):this (a_short, null) {
-		}
-
-		public override string ToString() {
-			return _short.ToString();
-		}
-	}
-
 	class XmlConfTest {
-		static int Main (string[] args)
-		{
-			if (!new XmlConfTest(args).Run ())
-				return 1;
-			else
-				return 0;
+		
+		#region Command Line Options Handling
+
+		class CommandLineOptionAttribute:Attribute{
+			char _short;
+			string _long; //FIXME: use long form, too
+			public CommandLineOptionAttribute (char a_short, string a_long):base() {
+				_short = a_short;
+				_long = a_long;
+			}
+			
+			public CommandLineOptionAttribute (char a_short):this (a_short, null) {
+			}
+
+			public override string ToString() {
+				return _short.ToString();
+			}
 		}
 
 		static void PrintUsage () {
@@ -52,13 +47,6 @@ namespace XmlConfTest {
 			return h;
 		}
 
-		string [] _args;
-
-		ArrayList slowTests = new ArrayList ();
-		[CommandLineOptionAttribute ('s')]
-		[Description ("do run slow tests (skipped by default)")]
-		bool runSlow = false;
-
 		public bool ParseOptions () {
 			if (_args.Length < 1)
 				return true;
@@ -80,23 +68,70 @@ namespace XmlConfTest {
 			}
 			return true;
 		}
+		#endregion
 
+		string [] _args;
+
+		#region statistics fields
+		int totalCount = 0;
+		int performedCount = 0;
+		int passedCount = 0;
+		int failedCount = 0;
+		int regressionsCount = 0; //failures not listed in knownFailures.lst
+		int fixedCount = 0; //tested known to fail that passed
+		#endregion
+
+
+		#region test list fields
+		ArrayList slowTests = new ArrayList ();
+		ArrayList igroredTests = new ArrayList ();
+		ArrayList knownFailures = new ArrayList ();
+		StreamWriter failedList;
+		StreamWriter fixedList;
+		#endregion
+
+		#region command line option fields
+		[CommandLineOption ('s')]
+		[Description ("do run slow tests (skipped by default)")]
+		bool runSlow = false;
+
+		[CommandLineOption ('i')]
+		[Description ("do run tests being ignored by default")]
+		bool runIgnored = false;
+		#endregion
+
+		static int Main (string[] args)
+		{
+			if (!new XmlConfTest(args).Run ())
+				return 1;
+			else
+				return 0;
+		}
+
+		#region ReadStrings ()
 		static void ReadStrings (ArrayList array, string filename)
 		{
-			if (File.Exists (filename))
-				using (StreamReader reader = new StreamReader (filename)) {
-					foreach (string s_ in reader.ReadToEnd ().Split ("\n".ToCharArray ())) {
-						string s = s_.Trim ();
-						if (s.Length > 0)
-							array.Add (s);
-					}
+			if (!File.Exists (filename))
+				return;
+
+			using (StreamReader reader = new StreamReader (filename)) {
+				foreach (string s_ in reader.ReadToEnd ().Split ("\n".ToCharArray ())) {
+					string s = s_.Trim ();
+					if (s.Length > 0)
+						array.Add (s);
 				}
+			}
 		}
+		#endregion
 
 		XmlConfTest (string [] args)
 		{
 			_args = args;
+			failedList = new StreamWriter ("failed.lst", false);
+			fixedList = new StreamWriter ("fixed.lst", false);
 			ReadStrings (slowTests, "slow.lst");
+			ReadStrings (igroredTests, "ignored.lst");
+			ReadStrings (knownFailures, "knownFailures.lst");
 		}
 
 		bool Run ()
@@ -109,9 +144,18 @@ namespace XmlConfTest {
 			catalog.Load (@"xmlconf\xmlconf.xml");
 			
 			foreach (XmlElement test in catalog.SelectNodes ("//TEST")) {
+				++totalCount;
+
 				string testId = test.GetAttribute ("ID");
-				if (!runSlow && slowTests.Contains (testId))
+				
+				if (!runSlow && slowTests.Contains (testId)) {
 					continue;
+				}
+
+				if (!runIgnored && igroredTests.Contains (testId)) {
+					continue;
+				}
+
 				DateTime start = DateTime.Now;
 				res &= PerformTest (test);	
 				TimeSpan span = DateTime.Now - start;
@@ -122,11 +166,22 @@ namespace XmlConfTest {
 						wr.WriteLine (testId);
 				}
 			}
+
+			Console.Error.WriteLine ("\n*********");
+			Console.Error.WriteLine ("Total:{0}", totalCount);
+			Console.Error.WriteLine ("Performed:{0}", performedCount);
+			Console.Error.WriteLine ("Passed:{0}", passedCount);
+			Console.Error.WriteLine ("Failed:{0}", failedCount);
+			Console.Error.WriteLine ("Regressions:{0}", regressionsCount);
+			Console.Error.WriteLine ("Fixed:{0}", fixedCount);
+
 			return res;
 		}
 
 		bool PerformTest (XmlElement test)
 		{
+			++performedCount;
+
 			string type = test.GetAttribute ("TYPE");
 			if (type == "error")
 				return true; //save time
@@ -168,7 +223,7 @@ namespace XmlConfTest {
 			case "not-wf":
 				return !nonValidatingPassed && !validatingPassed;
 			case "error":
-				return true;
+				return true; //readers can optionally accept or reject errors
 			default:
 				throw new ArgumentException ("Bad test type", "type");
 			}
@@ -176,12 +231,32 @@ namespace XmlConfTest {
 
 		void Report (XmlElement test, bool isok, bool nonValidatingPassed, bool validatingPassed)
 		{
+			string testId = test.GetAttribute ("ID");
+
 			if (isok) {
+				++passedCount;
+				if (knownFailures.Contains (testId)) {
+					++fixedCount;
+					fixedList.WriteLine (testId);
+				}
+
 				Console.Error.Write (".");
 				return;
 			}
 
+			++failedCount;
+
+			if (knownFailures.Contains (testId)) {
+				Console.Error.Write ("k");
+				return;
+			}
+
+			++regressionsCount;
 			Console.Error.Write ("E");
+			failedList.Write ("*** Test failed:\t{0}\ttype:{1}\tnonValidatingPassed:{2},validatingPassed:{3}\t",
+				testId, test.GetAttribute ("TYPE"), nonValidatingPassed, validatingPassed);
+			failedList.WriteLine (test.InnerXml);
+			failedList.Flush ();
 		}
 	}
 }

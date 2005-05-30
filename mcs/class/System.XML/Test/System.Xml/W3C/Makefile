@@ -1,7 +1,15 @@
+.SUFFIXES: .cs .exe
+
+RUNTIME=mono
+CSCOMPILE=mcs
 TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
+TEST_PROG=xmlconf.exe
 
-all:
+test: $(TEST_PROG)
+
+run-test: test
+	$(RUNTIME) $(TEST_PROG)
 
 test_archive: $(TEST_ARCHIVE)
 
@@ -12,3 +20,7 @@ $(TEST_ARCHIVE):
 
 $(TEST_CATALOG): $(TEST_ARCHIVE)
 	unzip -un $(TEST_ARCHIVE)
+
+.cs.exe :
+	$(CSCOMPILE) $<
+
