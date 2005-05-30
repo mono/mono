@@ -1,3 +1,10 @@
+2005-05-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: when resolving the addresses for the same
+	host returned by gethostname(), get the local IPs from the interface
+	list. Loopback addresses are discarded if the are interfaces up with
+	non-loopback ones. Fixes bug #63265.
+
 2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* appdomain.c, verify.c, object-internals.h, reflection.c:
