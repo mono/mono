@@ -221,7 +221,7 @@ namespace System.Xml.Serialization {
 
 			if (atts.XmlType != null)
 			{
-				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty && typeData.SchemaType != SchemaTypes.Enum)
+				if (atts.XmlType.Namespace != null && typeData.SchemaType != SchemaTypes.Enum)
 					typeNamespace = atts.XmlType.Namespace;
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
@@ -236,13 +236,13 @@ namespace System.Xml.Serialization {
 			{
 				if (root.ElementName != null && root.ElementName != String.Empty)
 					elementName = XmlConvert.EncodeLocalName(root.ElementName);
-				if (root.Namespace != null && root.Namespace != String.Empty)
+				if (root.Namespace != null)
 					rootNamespace = root.Namespace;
 				nullable = root.IsNullable;
 			}
 
 			if (rootNamespace == null) rootNamespace = "";
-			if (typeNamespace == null || typeNamespace.Length == 0) typeNamespace = rootNamespace;
+			if (typeNamespace == null) typeNamespace = rootNamespace;
 			
 			XmlTypeMapping map;
 			if (typeData.SchemaType == SchemaTypes.XmlSerializable)

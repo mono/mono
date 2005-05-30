@@ -1,3 +1,8 @@
+2005-05-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionImporter.cs: Don't ignore type namespaces explicitely
+	set to the default namespace. This fixes bug #73035.
+
 2005-05-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SoapReflectionImporter.cs: In ImportTypeMap, make sure that all
