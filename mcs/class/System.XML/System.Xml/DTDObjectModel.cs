@@ -1021,7 +1021,6 @@ namespace Mono.Xml
 				s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
 				XmlTextReaderImpl xtr = new XmlTextReaderImpl (absPath, s, Root.NameTable);
 				// Don't skip Text declaration here. LiteralEntityValue contains it. See spec 4.5
-				this.BaseURI = absPath;
 				LiteralEntityValue = xtr.GetRemainder ().ReadToEnd ();
 
 				Root.ExternalResources.Add (absPath, LiteralEntityValue);

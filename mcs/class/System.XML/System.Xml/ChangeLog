@@ -1,3 +1,8 @@
+2005-05-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : in DTDEntityBase.Resolve() don't overwrite
+	  BaseURI which results in incorrect URI resolution.
+
 2005-05-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : For simple type restriction creation it failed
