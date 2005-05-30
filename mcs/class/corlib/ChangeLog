@@ -1,3 +1,8 @@
+2005-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Added (re-added?) the System.Activator unit
+	tests.
+
 2005-05-28  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* corlib.dll.sources: Added System.Runtime.Hosting namespace with 

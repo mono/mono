@@ -1,4 +1,5 @@
 Microsoft.Win32/RegistryKeyTest.cs
+System/ActivatorTest.cs
 System/AppDomainSetupTest.cs
 System/AppDomainTest.cs
 System/ApplicationIdentityTest.cs
