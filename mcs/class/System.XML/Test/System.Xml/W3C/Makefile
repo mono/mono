@@ -1,6 +1,7 @@
 .SUFFIXES: .cs .exe
 
 RUNTIME=mono
+XMLCONF_OPTIONS=
 CSCOMPILE=mcs
 TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
@@ -9,7 +10,7 @@ TEST_PROG=xmlconf.exe
 test: $(TEST_PROG)
 
 run-test: test
-	$(RUNTIME) $(TEST_PROG)
+	$(RUNTIME) $(TEST_PROG) $(XMLCONF_OPTIONS)
 
 test_archive: $(TEST_ARCHIVE)
 

@@ -1,5 +1,9 @@
 2005-05-30  Andrew Skiba  <andrews@mainsoft.com>
 
+	* Makefile, xmlconf.cs, README : support for regressions tracking
+
+2005-05-30  Andrew Skiba  <andrews@mainsoft.com>
+
 	* net-failed.lst : added a list of tests that fail on dot net
 	* Makefile : compiles on mono
 	* xmlconf.cs : commit it before I ruin it with new changes
