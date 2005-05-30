@@ -1,3 +1,8 @@
+2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetTest.cs: Added unification tests for permissions inside
+	an ECMA signed assembly.
+
 2005-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostSecurityManagerTest.cs: Remove NotWorking from tests.

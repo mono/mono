@@ -1015,5 +1015,44 @@ namespace MonoTests.System.Security {
 			ps.PermitOnly ();
 			// it's simply ignored
 		}
+
+		// note: this only ensure that the ECMA key support unification (more test required, outside corlib, for other keys, like MS final).
+		private const string PermissionPattern = "<PermissionSet class=\"System.Security.PermissionSet\" version=\"1\"><IPermission class=\"System.Security.Permissions.FileDialogPermission, mscorlib, Version={0}, Culture=neutral, PublicKeyToken=b77a5c561934e089\" version=\"1\" Access=\"Open\"/></PermissionSet>";
+		private const string fx10version = "1.0.3300.0";
+		private const string fx11version = "1.0.5000.0";
+		private const string fx20version = "2.0.0.0";
+
+		private void Unification (string xml)
+		{
+			PermissionSetAttribute psa = new PermissionSetAttribute (SecurityAction.Assert);
+			psa.XML = xml;
+			string pset = psa.CreatePermissionSet ().ToString ();
+			string currentVersion = typeof (string).Assembly.GetName ().Version.ToString ();
+			Assert (currentVersion, pset.IndexOf (currentVersion) > 0);
+		}
+
+		[Test]
+		public void Unification_FromFx10 ()
+		{
+			Unification (String.Format (PermissionPattern, fx10version));
+		}
+
+		[Test]
+		public void Unification_FromFx11 ()
+		{
+			Unification (String.Format (PermissionPattern, fx11version));
+		}
+
+		[Test]
+		public void Unification_FromFx20 ()
+		{
+			Unification (String.Format (PermissionPattern, fx20version));
+		}
+
+		[Test]
+		public void Unification_FromFx99 ()
+		{
+			Unification (String.Format (PermissionPattern, "9.99.999.9999"));
+		}
 	}
 }
