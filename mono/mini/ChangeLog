@@ -1,3 +1,7 @@
+2005-05-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ia64.c: Ongoing IA64 work.
+
 2005-05-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* genmdesc.c: Make the generated array non-static.
