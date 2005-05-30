@@ -1,3 +1,7 @@
+2005-05-30  Andrew Skiba  <andrews@mainsoft.com>
+
+	* xmlconf.cs : added. Compiles and runs on dot net, still misses many features.
+
 2005-05-25  Andrew Skiba  <andrews@mainsoft.com>
 
 	* README : added
