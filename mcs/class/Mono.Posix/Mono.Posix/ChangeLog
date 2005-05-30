@@ -1,3 +1,11 @@
+2005-05-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* Syscall.cs (UnixEpoch): The DateTime for the start of the epoch
+	may not have the same offset from GMT as does the result of
+	addition. Therefore, do not convert the static reference point,
+	rather convert the date we generate. Fixes bug 74266. Patch from
+	fabrice@bellet.info (Fabrice Bellet).
+
 2005-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UnixEndPoint.cs: get the correct bytes when building the filename from

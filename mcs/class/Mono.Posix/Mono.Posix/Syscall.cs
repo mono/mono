@@ -548,10 +548,10 @@ namespace Mono.Posix {
 		public readonly DateTime MTime;
 		public readonly DateTime CTime;
 		
-		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1).ToLocalTime();
+		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
 		
 		public static DateTime UnixToDateTime(long unix) {
-			return UnixEpoch.Add(TimeSpan.FromSeconds(unix));
+			return UnixEpoch.Add(TimeSpan.FromSeconds(unix)).ToLocalTime();
 		}
 
 		internal Stat(
