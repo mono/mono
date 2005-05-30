@@ -1,4 +1,8 @@
-2005-05-27 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-30 Satya Sudha K <ksathyasudha@novell.com>
+	* statement.cs : 'For Each' statement : Wrapping the body of the For loop inside an exception block 
+			 if the enumerator implements 'IDisposable' interface
+
+2005-05-27 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs :
 	* mb-parser.jay :
 		- Supporting all kinds of case clauses (like 'A To B', 'Is >= 30')
@@ -14,23 +18,23 @@
 2005-05-26 Manjula GHM <mmanjula@novell.com>
 	* statement.cs : Fix problem w.r.t 'Exit Sub' 
 
-2005-05-24 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-24 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs : Added few more members like 'memberName' and 'type_expr' to the 'StatementSequence'
 			 class. Added an appropriate constructor for the same.
 	* expression.cs: Late binding for method invocations involving object arguments
 			 
 
-2005-05-23 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-23 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs : Copying back the arguments (matching 'ByRef' parameters) in the reverse 
 			 order (starting with the last argument backwards) as done by vbc
 
-2005-05-23 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-23 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs : Support named arguments in late binding
 
-2005-05-17 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-17 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs : Removed char <-> numeric/date conversions as they are not supported in vbc
 
-2005-05-17 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-17 Satya Sudha K <ksathyasudha@novell.com>
 	* expressions.cs :
 		- Disallowing named arguments for 'ParamArray' parameters
 		- Creating named arguments (to replace missing arguments), in case other arguments are also named
@@ -56,7 +60,7 @@
 		Support Decimal constant declaration  and retrieval of Decimal structure 
 		members from corelib
 
-2005-05-16 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-16 Satya Sudha K <ksathyasudha@novell.com>
 	* parameter.cs : Converting the default value (for optional param) to param type.
 	* ecore.cs     : Fixed string <-> char constant conversions.
 	* expression.cs :
@@ -90,7 +94,7 @@
 	(Invocation.IsApplicable): Don't create a REF type argument if it is NoArg.
 	(Invocation.ConstructArgumentList): Create argument with its DefaultValue for a NoArg.
 
-2005-05-10 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-10 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs, expression.cs, assign.cs :
 		Patch to allow latebinding expressions to be specified as ByRef arguments 
 		
@@ -99,7 +103,7 @@
 	* driver.cs (InitializeRootContextAndOthersFromOptions):
 	Overwrite RootContext.RootNamespace only if there's a value.
 
-2005-05-09 Satya Sudha K <ksathyasudha@hotmail.com>
+2005-05-09 Satya Sudha K <ksathyasudha@novell.com>
 	* parameter.cs : Support 'Optional ByRef' parameters
 	* statement.cs : Using 'System.Reflection.Missing.Value' in case of missing argument for 
 			 LateBinding cases

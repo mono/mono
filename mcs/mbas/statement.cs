@@ -5372,7 +5372,7 @@ namespace Mono.MonoBASIC {
 	}
 
 	/// <summary>
-	///   Implementation of the foreach C# statement
+	///   Implementation of the for each statement
 	/// </summary>
 	public class Foreach : Statement {
 		Expression type;
@@ -5463,8 +5463,7 @@ namespace Mono.MonoBASIC {
 			if (!statement.Resolve (ec))
 				return false;
 
-			//FlowReturns returns = ec.EndFlowBranching ();
-
+			FlowReturns returns = ec.EndFlowBranching ();
 			return true;
 		}
 		
@@ -5737,8 +5736,10 @@ namespace Mono.MonoBASIC {
 			//
 			bool old_in_try = ec.InTry;
 
-			if (hm.is_disposable)
+			if (hm.is_disposable) {
+				ig.BeginExceptionBlock ();
 				ec.InTry = true;
+			}
 			
 			Label end_try = ig.DefineLabel ();
 			
