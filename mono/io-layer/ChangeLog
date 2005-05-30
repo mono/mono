@@ -1,3 +1,7 @@
+2005-05-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* atomic.h: Add IA64 atomic ops.
+
 2005-05-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* processes.c: make ExitCode be valid even if the user didn't call
