@@ -1,3 +1,11 @@
+2005-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Description on ICU is very incorrect. Now it
+	  became more rational and sane.
+	* create-mscompat-collation-table.cs : fixed some indexes.
+	* Makefile : added "mstablegen" target.
+	* MSCompatUnicodeTable.cs : removed GetPrimaryWeight(). Minor fix.
+
 2005-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : more analysis on "letters".

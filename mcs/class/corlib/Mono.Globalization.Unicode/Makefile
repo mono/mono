@@ -70,6 +70,17 @@ CANON_EQUIV_GENERATOR_SOURCES = \
 $(CANON_EQUIV_FILENAME).exe : $(CANON_EQUIV_GENERATOR_SOURCES)
 	$(CSCOMPILE) $(CANON_EQUIV_GENERATOR_SOURCES)
 
+mstablegen : $(CREATE_MSCOMPAT_TABLE_SOURCES)
+	$(CSCOMPILE) $(CREATE_MSCOMPAT_TABLE_SOURCES)
+
+CREATE_MSCOMPAT_TABLE_SOURCES = \
+	create-mscompat-collation-table.cs \
+	MSCompatUnicodeTable.cs \
+	Normalization.cs \
+	NormalizationTableUtil.cs \
+	CodePointIndexer.cs \
+	CollationElementTable.cs \
+	CollationElementTableUtil.cs
 
 $(UCD_TABLE) :
 	if ! test -d UCD; then mkdir UCD; fi

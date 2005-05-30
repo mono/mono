@@ -135,17 +135,20 @@
 
 	First to note: we won't use collation element table from unicode.org.
 
-	To understand why we don't use collation element table from UCA, you
-	can try to compare "A" and "a" in the invariant culture. Also try some
-	characters like C0 that are already combined. They are COMPLETELY
-	different form UCA default element table.
-
-	So, the data is completely different, but how about resolution rules?
-
-	Since UCA Level 3 handles both casing and width, it is impossible to
-	use UCA variables for IgnoreWidth, at least with the default element
-	table. And IgnoreKanaType cannot be handled without case and width
-	insensitivity.
+	There are many differences between ICU/UCA and Windows despite they
+	look so similar; having collation keys in different levels, culture
+	dependent composition, etc. In the history, Windows collation is 
+	designed before UCA was specified, so basically Windows is obsolete
+	in this area. 
+	
+	- Logic: Unlike UCA it has no concept of "blocked" combining marks,
+	  and combining marks are never considered as an independent character
+	  (thus combining in Windows is buggy).
+	- Data: It is based on old Unicode standard. It ignores minor
+	  cultures. Character property values differ as well as those from
+	  the default Unicode collation element table (DUCET). In a few
+	  cultures Windows collation is close to the native language (e.g.
+	  Tamil, while it does not conform to TAM).
 
 	IgnoreWidth/IgnoreSymbols is processed after Kana voice mark
 	decomposition (something like NFD, but not equivalent. Example: \u304C
@@ -746,6 +749,7 @@
 		(The order is still different in "Grantha" order from TAM.)
 		So, we should just hold constant array for consonants.
 		And put them in order, x4 form [19 26].
+		BBE-BCC : SpacingCombiningMark and BC0 ... x2 from [19 82].
 	  1A: C00-C61 ... Telugu.
 		C55 and C56 are ignored (C5x line and remaining part of C6x
 		line just look like ignored).
@@ -770,10 +774,6 @@
 	  21: 10A0-10FF ... Georgian
 		Mostly equal to UCA order, but swap 10E3 <-> 10F3,
 		x5 from [21 05].
-
-	  (Tibetan, Limbu, Tagalog, Hanunoo, Buhid, Tagbanwa, Myanmar, Kumer,
-	  Tai-Le, Mongolian, Cherokee, Canadian-Aboriginal, Ogham, Runic
-	  are ignored)
 
 	11 (22) japanese kana letters and symbols, not in codepoint order
 
@@ -803,7 +803,9 @@
 	13 (24) syriac/thaana letters
 	  710-72C exc. 711, 780-7A5.
 
-	  Maybe we should add remaining minor-culture characters here.
+	(Maybe we should add remaining minor-culture characters here. Tibetan,
+	Limbu, Tagalog, Hanunoo, Buhid, Tagbanwa, Myanmar, Kumer, Tai-Le,
+	Mongolian, Cherokee, Canadian-Aboriginal, Ogham, Runic are ignored)
 
 	14 (41-45) surrogate Pt.1
 

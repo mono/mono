@@ -371,11 +371,6 @@ namespace Mono.Globalization.Unicode
 
 		#region Utilities
 
-		public static void GetPrimaryWeight (char c, bool variable,
-			out byte category, out byte value)
-		{
-		}
-
 		public static string GetExpansion (char c)
 		{
 			switch (c) {
@@ -491,7 +486,7 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsJapaneseSmallLetter (char c)
 		{
-			if ('\uFF67' <= c && c <= '\FF6F')
+			if ('\uFF67' <= c && c <= '\uFF6F')
 				return true;
 			if ('\u3040' < c && c < '\u30FA') {
 				switch (c) {

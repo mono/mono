@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Globalization;
 
@@ -33,10 +34,30 @@ namespace Mono.Globalization.Unicode
 {
 	internal class MSCompatSortKeyTableGenerator
 	{
-		public static void Main ()
+		public static void Main (string [] args)
 		{
-			new MSCompatSortKeyTableGenerator ().Run ();
+			new MSCompatSortKeyTableGenerator ().Run (args);
 		}
+
+		const int DecompositionFull = 1; // fixed
+		const int DecompositionSub = 2; // fixed
+		const int DecompositionSmall = 3;
+		const int DecompositionIsolated = 4;
+		const int DecompositionInitial = 5;
+		const int DecompositionFinal = 6;
+		const int DecompositionMedial = 7;
+		const int DecompositionNoBreak = 8;
+		const int DecompositionCompat = 9;
+		const int DecompositionFraction = 0xA;
+		const int DecompositionFont = 0xB;
+		const int DecompositionCircle = 0xC;
+		const int DecompositionSquare = 0xD;
+		const int DecompositionSuper = 0xE; // fixed
+		const int DecompositionWide = 0xF;
+		const int DecompositionNarrow = 0x10;
+		const int DecompositionVertical = 0x11;
+
+		TextWriter Result = Console.Out;
 
 		byte [] fillIndex = new byte [255]; // by category
 		CharMapEntry [] map = new CharMapEntry [char.MaxValue + 1];
@@ -51,13 +72,315 @@ namespace Mono.Globalization.Unicode
 			'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
 			'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 			'\u0292', '\u01BE', '\u0298'};
-		byte [] alphaWeights = new byte [] {2, 9, 0xA, 0x1A, 0x21,
-			0x23, 0x25, 0x2C, 0x32, 0x35, 0x36, 0x48, 0x51, 0x70,
-			0x7C, 0x7E, 0x89, 0x8A, 0x91, 0x99, 0x9F, 0xA2, 0xA4,
-			0xA6, 0xA9, 0xAA, 0xB3, 0xB4};
+		byte [] alphaWeights = new byte [] {
+			2, 9, 0xA, 0x1A, 0x21,
+			0x23, 0x25, 0x2C, 0x32, 0x35,
+			0x36, 0x48, 0x51, 0x70, 0x7C,
+			0x7E, 0x89, 0x8A, 0x91, 0x99,
+			0x9F, 0xA2, 0xA4, 0xA6, 0xA7,
+			0xA9, 0xAA, 0xB3, 0xB4};
 
+		bool [] isSmallCapital = new bool [char.MaxValue + 1];
+		bool [] isUppercase = new bool [char.MaxValue + 1];
+		byte [] decompType = new byte [char.MaxValue + 1];
+		int [] decompIndex = new int [char.MaxValue + 1];
+		int [] decompLength = new int [char.MaxValue + 1];
+		int [] decompValues;
+		decimal [] decimalValue = new decimal [char.MaxValue + 1];
 
-		public void Run ()
+		char [] orderedCyrillic;
+		char [] orderedGurmukhi;
+		char [] orderedGujarati;
+		char [] orderedGeorgian;
+		static readonly char [] orderedTamilConsonants = new char [] {
+			// based on traditional Tamil consonants, except for
+			// Grantha (which Microsoft breaks traditionailism).
+			'\u0B99', '\u0B9A', '\u0B9E', '\u0B9F', '\u0BA3',
+			'\u0BA4', '\u0BA8', '\u0BAA', '\u0BAE', '\u0BAF',
+			'\u0BB0', '\u0BB2', '\u0BB5', '\u0BB4', '\u0BB3',
+			'\u0BB1', '\u0BA9', '\u0B9C', '\u0BB8', '\u0BB7',
+			'\u0BB9'};
+
+		void Run (string [] args)
+		{
+			string unidata = args.Length > 0 ?
+				args [0] : "UCD/UnicodeData.txt";
+			string derivCoreProps = args.Length > 1 ?
+				args [1] : "UCD/DerivedCoreProperties.txt";
+			string scripts = args.Length > 2 ?
+				args [2] : "UCD/Scripts.txt";
+			ParseSources (unidata, derivCoreProps, scripts);
+			Console.Error.WriteLine ("parse done.");
+			Generate ();
+			Console.Error.WriteLine ("generation done.");
+			Serialize ();
+			Console.Error.WriteLine ("serialization done.");
+		}
+
+		void Serialize ()
+		{
+			Result.WriteLine ("int [] categories = new int [] {");
+			for (int i = 0; i < map.Length; i++) {
+				Result.Write ("{0:X02},", map [i].Category);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF);
+			}
+			Result.WriteLine ("};");
+
+			Result.WriteLine ("int [] level1 = new int [] {");
+			for (int i = 0; i < map.Length; i++) {
+				Result.Write ("{0:X02},", map [i].Level1);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF);
+			}
+			Result.WriteLine ("};");
+
+			Result.WriteLine ("int [] level2 = new int [] {");
+			for (int i = 0; i < map.Length; i++) {
+				Result.Write ("{0:X02},", map [i].Level2);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF);
+			}
+			Result.WriteLine ("};");
+		}
+
+		#region Parse
+
+		void ParseSources (string unidata, string derivedCoreProp, string scripts)
+		{
+			ParseUnidata (unidata);
+			ParseDerivedCoreProperties (derivedCoreProp);
+			ParseScripts (scripts);
+		}
+
+		void ParseUnidata (string filename)
+		{
+			ArrayList decompValues = new ArrayList ();
+			using (StreamReader unidata =
+				new StreamReader (filename)) {
+				for (int line = 1; unidata.Peek () >= 0; line++) {
+					try {
+						ProcessUnidataLine (unidata.ReadLine (), decompValues);
+					} catch (Exception) {
+						Console.Error.WriteLine ("**** At line " + line);
+						throw;
+					}
+				}
+			}
+			this.decompValues = (int [])
+				decompValues.ToArray (typeof (int));
+		}
+		
+		void ProcessUnidataLine (string s, ArrayList decompValues)
+		{
+			int idx = s.IndexOf ('#');
+			if (idx >= 0)
+				s = s.Substring (0, idx);
+			idx = s.IndexOf (';');
+			if (idx < 0)
+				return;
+			int cp = int.Parse (s.Substring (0, idx), NumberStyles.HexNumber);
+			string [] values = s.Substring (idx + 1).Split (';');
+
+			// FIXME: use index
+			if (cp > char.MaxValue)
+				return;
+
+			// isSmallCapital
+			if (s.IndexOf ("SMALL CAPITAL") > 0)
+				isSmallCapital [cp] = true;
+
+			// normalizationType
+			string decomp = values [4];
+			idx = decomp.IndexOf ('<');
+			if (idx >= 0) {
+				switch (decomp.Substring (idx + 1, decomp.IndexOf ('>') - 1)) {
+				case "full":
+					decompType [cp] = DecompositionFull;
+					break;
+				case "sub":
+					decompType [cp] = DecompositionSub;
+					break;
+				case "super":
+					decompType [cp] = DecompositionSuper;
+					break;
+				case "small":
+					decompType [cp] = DecompositionSmall;
+					break;
+				case "isolated":
+					decompType [cp] = DecompositionIsolated;
+					break;
+				case "initial":
+					decompType [cp] = DecompositionInitial;
+					break;
+				case "final":
+					decompType [cp] = DecompositionFinal;
+					break;
+				case "medial":
+					decompType [cp] = DecompositionMedial;
+					break;
+				case "noBreak":
+					decompType [cp] = DecompositionNoBreak;
+					break;
+				case "compat":
+					decompType [cp] = DecompositionCompat;
+					break;
+				case "fraction":
+					decompType [cp] = DecompositionFraction;
+					break;
+				case "font":
+					decompType [cp] = DecompositionFont;
+					break;
+				case "circle":
+					decompType [cp] = DecompositionCircle;
+					break;
+				case "square":
+					decompType [cp] = DecompositionSquare;
+					break;
+				case "wide":
+					decompType [cp] = DecompositionWide;
+					break;
+				case "narrow":
+					decompType [cp] = DecompositionNarrow;
+					break;
+				case "vertical":
+					decompType [cp] = DecompositionVertical;
+					break;
+				default:
+					throw new Exception ("Support NFKD type : " + decomp);
+				}
+			}
+			decomp = idx < 0 ? decomp : decomp.Substring (decomp.IndexOf ('>') + 2);
+			if (decomp.Length > 0) {
+				string [] velems = decomp.Split (' ');
+				decompIndex [cp] = decompValues.Count;
+				foreach (string v in velems)
+					decompValues.Add (int.Parse (v, NumberStyles.HexNumber));
+				decompLength [cp] = velems.Length;
+			}
+			// numeric values
+			if (values [5].Length > 0)
+				decimalValue [cp] = decimal.Parse (values [5]);
+			else if (values [6].Length > 0)
+				decimalValue [cp] = decimal.Parse (values [6]);
+			else if (values [7].Length > 0) {
+				idx = values [7].IndexOf ('/');
+				if (idx > 0)
+					decimalValue [cp] = 
+						decimal.Parse (values [7].Substring (0, idx))
+						/ decimal.Parse (values [7].Substring (idx + 1));
+			}
+		}
+
+		void ParseDerivedCoreProperties (string filename)
+		{
+			// IsUppercase
+			using (StreamReader file =
+				new StreamReader (filename)) {
+				for (int line = 1; file.Peek () >= 0; line++) {
+					try {
+						ProcessDerivedCorePropLine (file.ReadLine ());
+					} catch (Exception) {
+						Console.Error.WriteLine ("**** At line " + line);
+						throw;
+					}
+				}
+			}
+		}
+
+		void ProcessDerivedCorePropLine (string s)
+		{
+			int idx = s.IndexOf ('#');
+			if (idx >= 0)
+				s = s.Substring (0, idx);
+			idx = s.IndexOf (';');
+			if (idx < 0)
+				return;
+			string cpspec = s.Substring (0, idx);
+			idx = cpspec.IndexOf ("..");
+			NumberStyles nf = NumberStyles.HexNumber |
+				NumberStyles.AllowTrailingWhite;
+			int cp = int.Parse (idx < 0 ? cpspec : cpspec.Substring (0, idx), nf);
+			int cpEnd = idx < 0 ? cp : int.Parse (cpspec.Substring (idx + 2), nf);
+			string value = s.Substring (cpspec.Length + 1).Trim ();
+
+			// FIXME: use index
+			if (cp > char.MaxValue)
+				return;
+
+			switch (value) {
+			case "Uppercase":
+				for (int x = cp; x <= cpEnd; x++)
+					isUppercase [x] = true;
+				break;
+			}
+		}
+
+		void ParseScripts (string filename)
+		{
+			ArrayList cyrillic = new ArrayList ();
+			ArrayList gurmukhi = new ArrayList ();
+			ArrayList gujarati = new ArrayList ();
+			ArrayList georgian = new ArrayList ();
+
+			using (StreamReader file =
+				new StreamReader (filename)) {
+				while (file.Peek () >= 0) {
+					string s = file.ReadLine ();
+					int idx = s.IndexOf ('#');
+					if (idx >= 0)
+						s = s.Substring (0, idx);
+					idx = s.IndexOf (';');
+					if (idx < 0)
+						continue;
+
+					string cpspec = s.Substring (0, idx);
+					idx = cpspec.IndexOf ("..");
+					NumberStyles nf = NumberStyles.HexNumber |
+						NumberStyles.AllowTrailingWhite;
+					int cp = int.Parse (idx < 0 ? cpspec : cpspec.Substring (0, idx), nf);
+					int cpEnd = idx < 0 ? cp : int.Parse (cpspec.Substring (idx + 2), nf);
+					string value = s.Substring (cpspec.Length + 1).Trim ();
+
+					// FIXME: use index
+					if (cp > char.MaxValue)
+						continue;
+
+					switch (value) {
+					case "cyrillic":
+						for (int x = cp; x <= cpEnd; x++)
+							cyrillic.Add ((char) x);
+						break;
+					case "Gurmukhi":
+						for (int x = cp; x <= cpEnd; x++)
+							gurmukhi.Add ((char) x);
+						break;
+					case "Gujarati":
+						for (int x = cp; x <= cpEnd; x++)
+							gujarati.Add ((char) x);
+						break;
+					case "Georgia":
+						for (int x = cp; x <= cpEnd; x++)
+							georgian.Add ((char) x);
+						break;
+					}
+				}
+			}
+			cyrillic.Sort (UCAComparer.Instance);
+			gurmukhi.Sort (UCAComparer.Instance);
+			gujarati.Sort (UCAComparer.Instance);
+			georgian.Sort (UCAComparer.Instance);
+			orderedCyrillic = (char []) cyrillic.ToArray (typeof (char));
+			orderedGurmukhi = (char []) gurmukhi.ToArray (typeof (char));
+			orderedGujarati = (char []) gujarati.ToArray (typeof (char));
+			orderedGeorgian = (char []) georgian.ToArray (typeof (char));
+		}
+
+		#endregion
+
+		#region Generate
+
+		void Generate ()
 		{
 			UnicodeCategory uc;
 
@@ -76,7 +399,7 @@ namespace Mono.Globalization.Unicode
 				uc = Char.GetUnicodeCategory (c);
 				if (uc == UnicodeCategory.Control &&
 					!Char.IsWhiteSpace (c))
-					AddCharMap (c, 6, true);
+					AddCharMap (c, 6, 1);
 			}
 
 			// Apostrophe 06 80
@@ -88,18 +411,18 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < 65536; i++) {
 				if (Char.GetUnicodeCategory ((char) i)
 					== UnicodeCategory.DashPunctuation)
-					AddCharMapGroup ((char) i, 6, true, true);
+					AddCharMapGroup ((char) i, 6, true, 1);
 			}
 
 			// Arabic variable weight chars 06 A0 -
 			fillIndex [6] = 0xA0;
 			// vowels
 			for (int i = 0x64B; i <= 0x650; i++)
-				AddCharMapGroup ((char) i, 6, true, true);
+				AddCharMapGroup ((char) i, 6, true, 1);
 			// sukun
-			AddCharMapGroup ('\u0652', 6, false, true);
+			AddCharMapGroup ('\u0652', 6, false, 1);
 			// shadda
-			AddCharMapGroup ('\u0651', 6, false, true);
+			AddCharMapGroup ('\u0651', 6, false, 1);
 			#endregion
 
 
@@ -111,28 +434,28 @@ namespace Mono.Globalization.Unicode
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
 			// overflow of level 2 unless we start before 0xDD).
-			fillIndex [1] = 0xDC;
+			fillIndex [0x1] = 0xDC;
 			for (int i = 0x20d0; i <= 0x20e1; i++)
-				AddCharMap ((char) i, 1, true);
+				AddCharMap ((char) i, 0x1, 1);
 			#endregion
 
 
 			#region Whitespaces // 07 03 -
-			fillIndex [7] = 0x3;
-			AddCharMapGroup (' ', 7, false, true);
-			AddCharMap ('\u00A0', 7, true);
+			fillIndex [0x7] = 0x3;
+			AddCharMapGroup (' ', 0x7, false, 1);
+			AddCharMap ('\u00A0', 0x7, 1);
 			for (int i = 9; i <= 0xD; i++)
-				AddCharMap ((char) i, 7, true);
+				AddCharMap ((char) i, 0x7, 1);
 			for (int i = 0x2000; i <= 0x200B; i++)
-				AddCharMap ((char) i, 7, true);
-			AddCharMapGroup ('\u2028', 7, false, true);
-			AddCharMapGroup ('\u2029', 7, false, true);
+				AddCharMap ((char) i, 0x7, 1);
+			AddCharMapGroup ('\u2028', 0x7, false, 1);
+			AddCharMapGroup ('\u2029', 0x7, false, 1);
 
 			// LAMESPEC: Windows developers seem to have thought 
 			// that those characters are kind of whitespaces,
 			// while they aren't.
-			AddCharMapGroup ('\u2422', 7, false, true); // blank symbol
-			AddCharMapGroup ('\u2423', 7, false, true); // open box
+			AddCharMapGroup ('\u2422', 0x7, false, 1); // blank symbol
+			AddCharMapGroup ('\u2423', 0x7, false, 1); // open box
 			#endregion
 
 
@@ -142,19 +465,24 @@ namespace Mono.Globalization.Unicode
 				if (Char.IsLetterOrDigit ((char) i)
 					|| "+-<=>'".IndexOf ((char) i) >= 0)
 					continue; // they are not added here.
-				AddCharMapGroup ((char) i, 7, false, true);
+				AddCharMapGroup ((char) i, 0x7, false, 1);
 			}
 			#endregion
 
 
 			// FIXME: for 07 xx we need more love.
 
+			// FIXME: implement 08
+
+			// FIXME: implement 09
+
+			// FIXME: implement 0A
 
 			#region Numbers // 0C 02 - 0C E1
-			fillIndex [9] = 2;
+			fillIndex [0xC] = 2;
 
 			// 9F8 : Bengali "one less than the denominator"
-			AddCharMap ('\u09F8', 9, true);
+			AddCharMap ('\u09F8', 0xC, 1);
 
 			ArrayList numbers = new ArrayList ();
 			for (int i = 0; i < 65536; i++)
@@ -163,23 +491,22 @@ namespace Mono.Globalization.Unicode
 
 			ArrayList numberValues = new ArrayList ();
 			foreach (int i in numbers)
-				numberValues.Add (new DictionaryEntry (i, CharUnicodeInfo.GetDecimalValue ((char) i)));
+				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
 			numberValues.Sort (DictionaryValueComparer.Instance);
 			decimal prevValue = -1;
 			foreach (DictionaryEntry de in numberValues) {
 				decimal currValue = (decimal) de.Value;
 				if (prevValue < currValue) {
 					prevValue = currValue;
-					fillIndex [9] += 1;
+					fillIndex [0xC] += 1;
 				}
-				AddCharMap ((char) ((int) de.Key), 9, false);
+				AddCharMap ((char) ((int) de.Key), 0xC, 1);
 			}
 
 			// 221E: infinity
-			fillIndex [9] = 0xFF;
-			AddCharMap ('\u221E', 9, true);
+			fillIndex [0xC] = 0xFF;
+			AddCharMap ('\u221E', 0xC, 1);
 			#endregion
-
 
 			#region Latin alphabets
 			for (int i = 0; i < alphabets.Length; i++) {
@@ -193,11 +520,11 @@ namespace Mono.Globalization.Unicode
 			fillIndex [0xF] = 02;
 			for (int i = 0x0380; i < 0x03CF; i++)
 				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0xF, true);
+					AddLetterMap ((char) i, 0xF, 1);
 			fillIndex [0xF] = 0x40;
 			for (int i = 0x03D0; i < 0x0400; i++)
 				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0xF, true);
+					AddLetterMap ((char) i, 0xF, 1);
 
 			// Cyrillic - UCA order w/ some modification
 			fillIndex [0x10] = 0x3;
@@ -205,29 +532,25 @@ namespace Mono.Globalization.Unicode
 			// table which is moslty from UCA DUCET.
 			for (int i = 0; i < orderedCyrillic.Length; i++) {
 				char c = orderedCyrillic [i];
-				if (Char.IsLetter (c)) {
-					AddLetterMap (c, 0x10, false);
-					fillIndex [0x10] += 3;
-				}
+				if (Char.IsLetter (c))
+					AddLetterMap (c, 0x10, 3);
 			}
 			for (int i = 0x0460; i < 0x0481; i++) {
-				if (Char.IsLetter ((char) i)) {
-					AddLetterMap ((char) i, 0x10, false);
-					fillIndex [0x10] += 3;
-				}
+				if (Char.IsLetter ((char) i))
+					AddLetterMap ((char) i, 0x10, 3);
 			}
 
 			// Armenian
 			fillIndex [0x11] = 0x3;
 			for (int i = 0x0531; i < 0x0586; i++)
 				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0x11, true);
+					AddLetterMap ((char) i, 0x11, 1);
 
 			// Hebrew
 			fillIndex [0x12] = 0x3;
 			for (int i = 0x05D0; i < 0x05FF; i++)
 				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0x12, true);
+					AddLetterMap ((char) i, 0x12, 1);
 
 			// Arabic
 			fillIndex [0x13] = 0x3;
@@ -237,27 +560,18 @@ namespace Mono.Globalization.Unicode
 			fillIndex [0x13] = 0x84;
 			for (int i = 0x0674; i < 0x06D6; i++)
 				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0x13, true);
+					AddLetterMap ((char) i, 0x13, 1);
 
 			// Devanagari
-			for (int i = 0x0901; i < 0x0905; i++) {
-				if (Char.IsLetter ((char) i)) {
-					AddLetterMap ((char) i, 0x14, false);
-					fillIndex [0x14] += 2;
-				}
-			}
-			for (int i = 0x0905; i < 0x093A; i++) {
-				if (Char.IsLetter ((char) i)) {
-					AddLetterMap ((char) i, 0x14, false);
-					fillIndex [0x14] += 4;
-				}
-			}
-			for (int i = 0x093E; i < 0x094F; i++) {
-				if (Char.IsLetter ((char) i)) {
-					AddLetterMap ((char) i, 0x14, false);
-					fillIndex [0x14] += 2;
-				}
-			}
+			for (int i = 0x0901; i < 0x0905; i++)
+				if (Char.IsLetter ((char) i))
+					AddLetterMap ((char) i, 0x14, 2);
+			for (int i = 0x0905; i < 0x093A; i++)
+				if (Char.IsLetter ((char) i))
+					AddLetterMap ((char) i, 0x14, 4);
+			for (int i = 0x093E; i < 0x094F; i++)
+				if (Char.IsLetter ((char) i))
+					AddLetterMap ((char) i, 0x14, 2);
 
 			// Bengali
 			fillIndex [0x15] = 02;
@@ -265,12 +579,12 @@ namespace Mono.Globalization.Unicode
 				if (i == 0x09E0)
 					fillIndex [0x15] = 0x3B;
 				switch (Char.GetUnicodeCategory ((char) i)) {
-				case NonSpacingMark:
-				case DecimalDigitNumber:
-				case OtherNumber:
+				case UnicodeCategory.NonSpacingMark:
+				case UnicodeCategory.DecimalDigitNumber:
+				case UnicodeCategory.OtherNumber:
 					continue;
 				}
-				AddLetterMap ((char) i, 0x15, true);
+				AddLetterMap ((char) i, 0x15, 1);
 			}
 
 			// Gurmukhi
@@ -281,67 +595,62 @@ namespace Mono.Globalization.Unicode
 				if (c == '\u0A3C' || c == '\u0A4D' ||
 					'\u0A66' <= c && c <= '\u0A71')
 					continue;
-				AddLetterMap (c, 0x16, false);
-				fillIndex [0x16] += 4;
+				AddLetterMap (c, 0x16, 4);
 			}
 
 			// Gujarati
 			fillIndex [0x17] = 02;
 			// FIXME: orderedGujarati needed from UCA
-			for (int i = 0; i < orderedGujarati.Length; i++) {
-				char c = orderedGujarati [i];
-				AddLetterMap (c, 0x17, false);
-				fillIndex [0x17] += 4;
-			}
+			for (int i = 0; i < orderedGujarati.Length; i++)
+				AddLetterMap (orderedGujarati [i], 0x17, 4);
 
 			// Oriya
 			fillIndex [0x18] = 02;
 			for (int i = 0x0B00; i < 0x0B7F; i++) {
 				switch (Char.GetUnicodeCategory ((char) i)) {
-				case NonSpacingMark:
-				case DecimalDigitNumber:
+				case UnicodeCategory.NonSpacingMark:
+				case UnicodeCategory.DecimalDigitNumber:
 					continue;
 				}
-				AddLetterMap ((char) i, 0x18, true);
+				AddLetterMap ((char) i, 0x18, 1);
 			}
 
 			// Tamil
 			fillIndex [0x19] = 2;
-			AddCharMap ('\u0BD7', 0x19, false);
+			AddCharMap ('\u0BD7', 0x19, 0);
 			fillIndex [0x19] = 0xA;
 			// vowels
-			for (int i = 0x0BD7; i < 0x0B94; i++) {
-				if (Char.IsLetter ((char) i) {
-					AddCharMap ((char) i, 0x19, false);
-					fillIndex [0x19] += 2;
-				}
-			}
+			for (int i = 0x0BD7; i < 0x0B94; i++)
+				if (Char.IsLetter ((char) i))
+					AddCharMap ((char) i, 0x19, 2);
 			// special vowel
 			fillIndex [0x19] = 0x24;
-			AddCharMap ('\u0B94', 0x19, false);
+			AddCharMap ('\u0B94', 0x19, 0);
 			fillIndex [0x19] = 0x26;
 			// FIXME: we need to have constant array for Tamil
 			// consonants. Windows have almost similar sequence
 			// to TAM from tamilnet but a bit different in Grantha
-			for (int i = 0; i < orderedTamil.Length; i++) {
-				char c = orderedGujarati [i];
-				AddLetterMap (c, 0x19, false);
-				fillIndex [0x19] += 4;
-			}
+			for (int i = 0; i < orderedTamilConsonants.Length; i++)
+				AddLetterMap (orderedTamilConsonants [i], 0x19, 4);
+			// combining marks
+			fillIndex [0x19] = 0x82;
+			for (int i = 0x0BBE; i < 0x0BCD; i++)
+				if (Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.SpacingCombiningMark
+					|| i == 0x0BC0)
+					AddLetterMap ((char) i, 0x19, 2);
 
 			// Telugu
 			fillIndex [0x1A] = 0x4;
 			for (int i = 0x0C00; i < 0x0C62; i++) {
 				if (i == 0x0C55 || i == 0x0C56)
 					continue; // skip
-				AddCharMap ((char) i, 0x1A, false);
-				fillIndex [0x1A] += 3;
+				AddCharMap ((char) i, 0x1A, 3);
 				char supp = (i == 0x0C0B) ? '\u0C60':
 					i == 0x0C0C ? '\u0C61' : char.MinValue;
 				if (supp == char.MinValue)
 					continue;
-				AddCharMap (supp, 0x1A, false);
-				fillIndex [0x1A] += 3;
+				AddCharMap (supp, 0x1A, 3);
 			}
 
 			// Kannada
@@ -349,116 +658,131 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0x0C80; i < 0x0CE5; i++) {
 				if (i == 0x0CD5 || i == 0x0CD6)
 					continue; // ignore
-				AddCharMap ((char) i, 0x1B, false);
-				fillIndex [0x1B] += 3;
+				AddCharMap ((char) i, 0x1B, 3);
 			}
 			
 			// Malayalam
 			fillIndex [0x1C] = 2;
 			for (int i = 0x0D02; i < 0x0D61; i++)
-				if (!IsIgnorable ((char) i))
-					AddCharMap ((char) i, 0x1C, true);
+				if (!MSCompatUnicodeTable.IsIgnorable ((char) i))
+					AddCharMap ((char) i, 0x1C, 1);
 
 			// Thai ... note that it breaks 0x1E wall after E2B!
 			// Also, all Thai characters have level 2 value 3.
 			fillIndex [0x1E] = 2;
 			for (int i = 0xE44; i < 0xE48; i++)
-				AddThaiCharMap ((char) i, 0x1E, true);
-			for (int i = 0xE01; i < 0xE2B; i++) {
-				AddThaiCharMap ((char) i, 0x1E, false);
-				fillIndex [0x1E] += 6;
-			}
+				AddCharMap ((char) i, 0x1E, 1, 3);
+			for (int i = 0xE01; i < 0xE2B; i++)
+				AddCharMap ((char) i, 0x1E, 6, 0);
 			fillIndex [0x1F] = 5;
-			for (int i = 0xE2B; i < 0xE30; i++) {
-				AddThaiCharMap ((char) i, 0x1F, false);
-				fillIndex [0x1F] += 6;
-			}
+			for (int i = 0xE2B; i < 0xE30; i++)
+				AddCharMap ((char) i, 0x1F, 6, 0);
 			for (int i = 0xE30; i < 0xE3B; i++)
-				AddThaiCharMap ((char) i, 0x1F, true);
+				AddCharMap ((char) i, 0x1F, 1, 3);
 			// some Thai characters remains.
 			char [] specialThai = new char [] {'\u0E45', '\u0E46',
 				'\u0E4E', '\u0E4F', '\u0E5A', '\u0E5B'};
 			foreach (char c in specialThai)
-				AddThaiCharMap (c, 0x1F, true);
+				AddCharMap (c, 0x1F, 1);
 
 			// Lao
 			fillIndex [0x1F] = 2;
 			for (int i = 0xE80; i < 0xEDF; i++)
 				if (Char.IsLetter ((char) i))
-					AddCharMap ((char) i, 0x1F, true);
+					AddCharMap ((char) i, 0x1F, 1);
 
 			// Georgian
 			// FIXME: we need an array in UCA order.
 			fillIndex [0x21] = 5;
-			for (int i = 0; i < orderedGeorgian.Length; i++) {
-				char c = orderedGeorgian [i];
-				AddLetterMap (c, 0x21, false);
-				fillIndex [0x21] += 5;
-			}
+			for (int i = 0; i < orderedGeorgian.Length; i++)
+				AddLetterMap (orderedGeorgian [i], 0x21, 5);
 
 			#endregion
 		}
 
 		private void AddAlphaMap (char c, byte category, byte alphaWeight)
 		{
-			throw new NotImplementedException ();
+// FIXME: implement
+//			throw new NotImplementedException ();
 		}
 
-		class DictionaryValueComparer : IComparer
+		private void AddLetterMap (char c, byte category, int updateCount)
 		{
-			public static readonly DictionaryValueComparer Instance
-				= new DictionaryValueComparer ();
-
-			private DictionaryValueComparer ()
-			{
-			}
-
-			public /*static*/ int Compare (object o1, object o2)
-			{
-				DictionaryEntry e1 = (DictionaryEntry) o1;
-				DictionaryEntry e2 = (DictionaryEntry) o2;
-				// FIXME: in case of 0, compare decomposition categories
-				return Decimal.Compare ((decimal) e1.Value, (decimal) e2.Value);
-			}
+// FIXME: implement
+//			throw new NotImplementedException ();
 		}
-
-		private void AddCharMapGroup (char c, byte category, bool tail, bool updateIndexForSelf)
+		private void AddCharMap (char c, byte category, byte increment)
 		{
-			// <small> update index
-			char c2 = tail ?
-				MSCompatGenerated.ToSmallFormTail (c) :
-				MSCompatGenerated.ToSmallForm (c);
-			if (c2 > char.MinValue)
-				AddCharMap (c2, category, true);
-			// itself
-			AddCharMap (c, category, updateIndexForSelf);
-			// <full>
-			c2 = tail ?
-				MSCompatGenerated.ToFullWidthTail (c) :
-				MSCompatGenerated.ToFullWidth (c);
-			if (c2 > char.MinValue)
-				AddCharMapGroup (c2, category, tail, false);
+			AddCharMap (c, category, increment, 1);
 		}
-
-		private void AddCharMap (char c, byte category, bool increment)
+		
+		private void AddCharMap (char c, byte category, byte increment, byte level2)
 		{
 			map [(int) c] = new CharMapEntry (category,
-				category == 1 ? (byte) 1 : fillIndex [category],
-				category != 1 ? fillIndex [category] : (byte) 1);
-			if (increment)
-				fillIndex [category] += 1;
+				category == 1 ? level2 : fillIndex [category],
+				category != 1 ? fillIndex [category] : level2);
+			fillIndex [category] += increment;
 		}
+
+		private void AddCharMapGroup (char c, byte category, bool tail, byte updateCount)
+		{
+			// <small> updates index
+			char c2 = tail ?
+				ToSmallFormTail (c) :
+				ToSmallForm (c);
+			if (c2 != c)
+				AddCharMap (c2, category, updateCount);
+			// itself
+			AddCharMap (c, category, updateCount);
+			// <full>
+			c2 = tail ?
+				ToFullWidthTail (c) :
+				ToFullWidth (c);
+			if (c2 != c)
+				AddCharMapGroup (c2, category, tail, 0);
+			// FIXME: add more
+		}
+
+		char ToFullWidth (char c)
+		{
+			return ToDecomposed (c, DecompositionFull, false);
+		}
+
+		char ToFullWidthTail (char c)
+		{
+			return ToDecomposed (c, DecompositionFull, true);
+		}
+
+		char ToSmallForm (char c)
+		{
+			return ToDecomposed (c, DecompositionSmall, false);
+		}
+
+		char ToSmallFormTail (char c)
+		{
+			return ToDecomposed (c, DecompositionSmall, true);
+		}
+
+		char ToDecomposed (char c, byte d, bool tail)
+		{
+			if (decompType [(int) c] == d)
+				return (char) decompValues [decompIndex [(int) c]];
+			else
+				return c;
+		}
+
+		#endregion
 
 		#region Level 3 properties (Case/Width)
 
-		public static byte GetLevel3WeightRaw (char c) // add 2 for sortkey value
+		private byte GetLevel3WeightRaw (char c) // add 2 for sortkey value
 		{
 			// Korean
-			if ('\u1100' <= c && c <= '\u11F9)
+			if ('\u1100' <= c && c <= '\u11F9')
 				return 2;
-			if ('\uFFA0' <= c && c <= '\uFFDC)
+			if ('\uFFA0' <= c && c <= '\uFFDC')
 				return 4;
-			if ('\u3130' <= c && c <= '\u3164)
+			if ('\u3130' <= c && c <= '\u3164')
 				return 5;
 			// numbers
 			if ('\u2776' <= c && c <= '\u277F')
@@ -475,7 +799,7 @@ namespace Mono.Globalization.Unicode
 			if ('\u2135' <= c && c <= '\u2138')
 				return 4;
 			if ('\uFE80' <= c && c <= '\uFE8E')
-				return MSCompatGenerated.GetArabicFormInPresentationB (c);
+				return GetArabicFormInPresentationB (c);
 
 			// actually I dunno the reason why they have weights.
 			switch (c) {
@@ -500,23 +824,42 @@ namespace Mono.Globalization.Unicode
 			}
 
 			// misc
-			switch (MSCompatGenerated.GetNormalizationType (c)) {
-			case 1: // <full>
-				ret |= 1;
-				break;
-			case 2: // <sub>
-				ret |= 2;
-				break;
-			case 3: // <super>
-				ret |= 0xE;
+			switch (decompType [(int) c]) {
+			case DecompositionFull: // <full>
+			case DecompositionSub: // <sub>
+			case DecompositionSuper: // <super>
+				ret |= decompType [(int) c];
 				break;
 			}
-			if (MSCompatGenerated.IsSmallCapital (c)) // grep "SMALL CAPITAL"
+			if (isSmallCapital [(int) c]) // grep "SMALL CAPITAL"
 				ret |= 8;
-			if (MSCompatGenerated.IsUppercase (c)) // DerivedCoreProperties
+			if (isUppercase [(int) c]) // DerivedCoreProperties
 				ret |= 0x10;
 
 			return ret;
+		}
+
+		// 2(Isolated)/8(Final)/0x18(Medial)
+		private byte GetArabicFormInPresentationB (char c)
+		{
+			if ('\u2135' <= c && c <= '\u2138')
+				return 4;
+			c = ToArabicPresentationFormB (c);
+			switch (decompType [(int) c]) {
+			case DecompositionIsolated:
+				return 2;
+			case DecompositionFinal:
+				return 8;
+			case DecompositionMedial:
+				return 0x18;
+			}
+			return 0;
+		}
+
+		// find Presentation Form B equivalents
+		private char ToArabicPresentationFormB (char c)
+		{
+			throw new NotImplementedException ();
 		}
 
 		// TODO: implement GetArabicFormInRepresentationD(),
@@ -524,7 +867,6 @@ namespace Mono.Globalization.Unicode
 		// (They can be easily to be generated.)
 
 		#endregion
-
 	}
 
 	internal struct CharMapEntry
@@ -540,6 +882,63 @@ namespace Mono.Globalization.Unicode
 			Level1 = level1;
 			Level2 = level2;
 			Defined = true;
+		}
+	}
+
+
+	class DictionaryValueComparer : IComparer
+	{
+		public static readonly DictionaryValueComparer Instance
+			= new DictionaryValueComparer ();
+
+		private DictionaryValueComparer ()
+		{
+		}
+
+		public /*static*/ int Compare (object o1, object o2)
+		{
+			DictionaryEntry e1 = (DictionaryEntry) o1;
+			DictionaryEntry e2 = (DictionaryEntry) o2;
+			// FIXME: in case of 0, compare decomposition categories
+			return Decimal.Compare ((decimal) e1.Value, (decimal) e2.Value);
+		}
+	}
+
+	class UCAComparer : IComparer
+	{
+		public static readonly UCAComparer Instance
+			= new UCAComparer ();
+
+		private UCAComparer ()
+		{
+		}
+
+		public int Compare (object o1, object o2)
+		{
+			char i1 = (char) o1;
+			char i2 = (char) o2;
+
+			int l1 = CollationElementTable.GetSortKeyCount (i1);
+			int l2 = CollationElementTable.GetSortKeyCount (i2);
+			int l = l1 > l2 ? l2 : l1;
+
+			for (int i = 0; i < l; i++) {
+				SortKeyValue k1 = CollationElementTable.GetSortKey (i1, i);
+				SortKeyValue k2 = CollationElementTable.GetSortKey (i2, i);
+				int v = k1.Primary.CompareTo (k2.Primary);
+				if (v != 0)
+					return v;
+				v = k1.Secondary.CompareTo (k2.Secondary);
+				if (v != 0)
+					return v;
+				v = k1.Thirtiary.CompareTo (k2.Thirtiary);
+				if (v != 0)
+					return v;
+				v = k1.Quarternary.CompareTo (k2.Quarternary);
+				if (v != 0)
+					return v;
+			}
+			return l2 - l1;
 		}
 	}
 }
