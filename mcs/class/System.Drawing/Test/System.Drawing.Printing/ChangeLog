@@ -1,3 +1,8 @@
+2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingPermissionTest.cs: Added tests for unification as this 
+	assembly is signed by the "MS final" key (not the ECMA key).
+
 2004-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingPermissionAttributeTest.cs: New. Unit tests for Printing

@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +28,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Drawing.Printing;
 using System.Security;
 using System.Security.Permissions;
@@ -423,5 +424,55 @@ namespace MonoTests.System.Drawing.Printing {
 			w.AddAttribute ("class", se.Attribute ("class"));
 			pp.FromXml (w);
 		}
+
+		// Unification tests (with the MS final key)
+		// note: corlib already test the ECMA key support for unification
+		private const string PermissionPattern = "<PermissionSet class=\"System.Security.PermissionSet\" version=\"1\"><IPermission class=\"System.Drawing.Printing.PrintingPermission, System.Drawing, Version={0}, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" version=\"1\" Level=\"NoPrinting\"/></PermissionSet>";
+		private const string fx10version = "1.0.3300.0";
+		private const string fx11version = "1.0.5000.0";
+		private const string fx20version = "2.0.0.0";
+
+		private void Unification (string xml)
+		{
+			PermissionSetAttribute psa = new PermissionSetAttribute (SecurityAction.Assert);
+			psa.XML = xml;
+			string pset = psa.CreatePermissionSet ().ToString ();
+			string currentVersion = typeof (string).Assembly.GetName ().Version.ToString ();
+			Assert.IsTrue ((pset.IndexOf (currentVersion) > 0), currentVersion);
+		}
+
+		[Test]
+		public void Unification_FromFx10 ()
+		{
+			Unification (String.Format (PermissionPattern, fx10version));
+		}
+
+		[Test]
+		public void Unification_FromFx11 ()
+		{
+			Unification (String.Format (PermissionPattern, fx11version));
+		}
+
+		[Test]
+		public void Unification_FromFx20 ()
+		{
+			Unification (String.Format (PermissionPattern, fx20version));
+		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (FileLoadException))]
+		public void Unification_FromFx99 ()
+		{
+			Type.GetType (String.Format (PermissionPattern, "9.99.999.9999"));
+		}
+#else
+		[Test]
+		public void Unification_FromFx99 ()
+		{
+			Unification (String.Format (PermissionPattern, "9.99.999.9999"));
+		}
+#endif
 	}
 }
