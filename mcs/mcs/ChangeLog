@@ -1,3 +1,11 @@
+2005-05-30  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75088.
+	* ecore.cs (Expression.MemberLookupFailed): Add CS0122 check in
+	the "almostMatchedMember" case too.
+	* typemanager.cs (Closure.CheckValidFamilyAccess): Add anything
+	that failed the accessibility checks to 'almost_match'.
+
 2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* attribute.cs: Use internal MethodBuilder methods to set

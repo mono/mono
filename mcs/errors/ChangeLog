@@ -1,3 +1,7 @@
+2005-05-30  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0122-16.cs: New test from #75088.
+
 2005-05-26  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0173-3.cs: Rename from cs0172-2.cs.  CSC 1.1 reports CS0173,

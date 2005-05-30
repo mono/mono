@@ -2470,7 +2470,7 @@ public class TypeManager {
 					return true;
 			}
 
-			if (!is_static && almost_match != null)
+			if (almost_match != null)
 				almost_match.Add (m);
 
 			return false;
