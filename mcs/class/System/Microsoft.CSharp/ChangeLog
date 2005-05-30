@@ -1,4 +1,11 @@
-2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2005-05-29  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeCompiler.cs: Load compiled assembly from byte array
+	if GenerateInMemory compiler parameter is set, set PathToAssembly
+	if compilation succeeded and GenerateInMemory is false.
+	Fixes bug #74959.
+
+2005-04-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: fix problem with the output CS8028.
 

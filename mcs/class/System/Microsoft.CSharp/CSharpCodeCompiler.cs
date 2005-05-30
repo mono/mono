@@ -176,10 +176,21 @@ namespace Mono.CSharp
 					if (!error.IsWarning) loadIt=false;
 				}
 			}
-			if (loadIt)
-				results.CompiledAssembly=Assembly.LoadFrom(options.OutputAssembly);
-			else
-				results.CompiledAssembly=null;
+			if (loadIt) {
+				if (options.GenerateInMemory) {
+					using (FileStream fs = File.OpenRead(options.OutputAssembly)) {
+						byte[] buffer = new byte[fs.Length];
+						fs.Read(buffer, 0, buffer.Length);
+						results.CompiledAssembly = Assembly.Load(buffer, null, options.Evidence);
+						fs.Close();
+					}
+				} else {
+					results.CompiledAssembly = Assembly.LoadFrom(options.OutputAssembly);
+					results.PathToAssembly = options.OutputAssembly;
+				}
+			} else {
+				results.CompiledAssembly = null;
+			}
 
 			return results;
 		}

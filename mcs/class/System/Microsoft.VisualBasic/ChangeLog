@@ -1,4 +1,11 @@
-2005-04-20 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+2005-05-29  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeCompiler.cs: Load compiled assembly from byte array if
+	GenerateInMemory compiler parameter is set, set PathToAssembly
+	if compilation succeeded and GenerateInMemory is false.
+	Fixes bug #74959.
+
+2005-04-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* VBCodeGenerator.cs: Better logic for OptionStrict/Explicit generation
 
 2004-12-27  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
