@@ -1,3 +1,7 @@
+2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.h, map.c, map-icalls.h: Rename LockFlags to LockfCommand.
+
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (MPH_C_SOURCE): Add map-icalls.h. Fixes #75012.
