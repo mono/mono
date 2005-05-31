@@ -217,7 +217,9 @@ namespace Microsoft.JScript {
 				if (type == typeof (double))
 					ig.Emit (OpCodes.Ldc_R8, (double) value);
 				break;
+			case MemberTypes.Property:
 			default:
+
 				throw new NotImplementedException ();
 			}
 			emit_box (ig, minfo);
@@ -1059,7 +1061,7 @@ namespace Microsoft.JScript {
 				return false;
 
 			bool contains_method;
-			contains_method = SemanticAnalyser.object_contains_method (
+			contains_method = SemanticAnalyser.object_contains (
 					   SemanticAnalyser.map_to_ctr (obj_name), prop_name);
 			if (!contains_method)
 				throw new Exception ("error: JS0438: Object doesn't support this property or method");

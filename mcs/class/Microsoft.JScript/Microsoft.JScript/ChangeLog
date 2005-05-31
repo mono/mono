@@ -1,3 +1,12 @@
+2005-05-31  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalizer.cs: Add the global, non-constructable RegExp
+	constructor object to obj_ctrs so we can type-check its property
+	access as well as fixing the break showed at #74681 now the raise
+	the proper error code. Renamed method object_contains_method to
+	object_contains, and now we filter on instance members too.
+	* expression.cs: use new API from SemanticAnalizer.
+
 2005-05-30  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Literal.cs: (RegExpLiteral.Emit): Take care of attributes. "g" is

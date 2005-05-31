@@ -62,6 +62,7 @@ namespace Microsoft.JScript {
 			obj_ctrs.Add ("Math", typeof (MathObject));
 			obj_ctrs.Add ("Number", typeof (NumberConstructor));
 			obj_ctrs.Add ("String", typeof (StringConstructor));
+			obj_ctrs.Add ("RegExp", typeof (RegExpConstructor));
 
 			prototypes = new Hashtable ();
 			prototypes.Add (typeof (object), typeof (ObjectPrototype));
@@ -159,9 +160,9 @@ namespace Microsoft.JScript {
 		// We assume type is a valid native object
 		// type. Search for method name.
 		//
-		internal static bool object_contains_method (Type type, string name)
+		internal static bool object_contains (Type type, string name)
 		{
-			return contains (type, name, BindingFlags.Public | BindingFlags.Static);
+			return contains (type, name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static);
 		}
 
 		internal static Type map_to_ctr (string type_name)
