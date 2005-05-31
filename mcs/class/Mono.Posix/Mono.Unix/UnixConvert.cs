@@ -599,34 +599,34 @@ namespace Mono.Unix {
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_FromLockFlags")]
-		private static extern int FromLockFlags (LockFlags value, out Int32 rval);
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromLockfCommand")]
+		private static extern int FromLockfCommand (LockfCommand value, out Int32 rval);
 
-		public static bool TryFromLockFlags (LockFlags value, out Int32 rval)
+		public static bool TryFromLockfCommand (LockfCommand value, out Int32 rval)
 		{
-			return FromLockFlags (value, out rval) == 0;
+			return FromLockfCommand (value, out rval) == 0;
 		}
 
-		public static Int32 FromLockFlags (LockFlags value)
+		public static Int32 FromLockfCommand (LockfCommand value)
 		{
 			Int32 rval;
-			if (FromLockFlags (value, out rval) == -1)
+			if (FromLockfCommand (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_ToLockFlags")]
-		private static extern int ToLockFlags (Int32 value, out LockFlags rval);
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToLockfCommand")]
+		private static extern int ToLockfCommand (Int32 value, out LockfCommand rval);
 
-		public static bool TryToLockFlags (Int32 value, out LockFlags rval)
+		public static bool TryToLockfCommand (Int32 value, out LockfCommand rval)
 		{
-			return ToLockFlags (value, out rval) == 0;
+			return ToLockfCommand (value, out rval) == 0;
 		}
 
-		public static LockFlags ToLockFlags (Int32 value)
+		public static LockfCommand ToLockfCommand (Int32 value)
 		{
-			LockFlags rval;
-			if (ToLockFlags (value, out rval) == -1)
+			LockfCommand rval;
+			if (ToLockfCommand (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}

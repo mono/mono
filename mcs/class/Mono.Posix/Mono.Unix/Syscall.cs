@@ -591,7 +591,7 @@ namespace Mono.Unix {
 	}
 
 	[Map]
-	public enum LockFlags : int {
+	public enum LockfCommand : int {
 		F_ULOCK = 0, // Unlock a previously locked region.
 		F_LOCK  = 1, // Lock a region for exclusive use.
 		F_TLOCK = 2, // Test and lock a region for exclusive use.
@@ -2738,7 +2738,7 @@ namespace Mono.Unix {
 		//    int lockf(int fd, int cmd, off_t len);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_lockf")]
-		public static extern int lockf (int fd, LockFlags cmd, long len);
+		public static extern int lockf (int fd, LockfCommand cmd, long len);
 
 		[DllImport (CRYPT, SetLastError=true, EntryPoint="crypt")]
 		private static extern IntPtr sys_crypt (string key, string salt);
