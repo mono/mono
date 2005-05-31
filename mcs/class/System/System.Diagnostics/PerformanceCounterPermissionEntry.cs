@@ -7,8 +7,7 @@
 //
 // (C) 2002
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +36,9 @@ namespace System.Diagnostics {
 	[Serializable]
 	public class PerformanceCounterPermissionEntry {
 
+#if NET_2_0
+		private const PerformanceCounterPermissionAccess All = (PerformanceCounterPermissionAccess) 0x07;
+#endif
 		private PerformanceCounterPermissionAccess permissionAccess;
 		private string machineName;
 		private string categoryName;
@@ -44,6 +46,12 @@ namespace System.Diagnostics {
 		public PerformanceCounterPermissionEntry (PerformanceCounterPermissionAccess permissionAccess,
 			string machineName, string categoryName)
 		{
+#if NET_2_0
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+			if ((permissionAccess | All) != All)
+				throw new ArgumentException ("permissionAccess");
+#endif
 			ResourcePermissionBase.ValidateMachineName (machineName);
 			if (categoryName == null)
 				throw new ArgumentNullException ("categoryName");
