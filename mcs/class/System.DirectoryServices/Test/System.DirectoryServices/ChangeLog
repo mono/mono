@@ -1,3 +1,8 @@
+2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryServicesPermissionTest.cs: Fx 2.0 now has better arguments
+	checking (i.e. FDBK15131 was fixed).
+
 2005-04-07  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DirectoryServicesDirectoryEntryTest.cs: 
