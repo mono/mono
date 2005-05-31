@@ -97,6 +97,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			requestHeaders [CommonTransportKeys.IPAddress] = connection.ClientAddress;
 			requestHeaders [CommonTransportKeys.ConnectionId] = connection.Id;
 
+			string uri = (string) requestHeaders [CommonTransportKeys.RequestUri];
+			TcpChannel.ParseChannelUrl (uri, out uri);
+			
+			if (uri != null)
+				requestHeaders [CommonTransportKeys.RequestUri] = uri;
+			
 			// Pushes the connection object together with the sink. This information
 			// will be used for sending the response in an async call.
 
