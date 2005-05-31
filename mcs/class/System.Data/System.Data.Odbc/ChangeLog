@@ -1,3 +1,8 @@
+2005-05-31  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameter.cs: setBuffer (): for numeric type, the buffer
+	parameter should be a packed decimal struct. fixes bug #75041.
+
 2005-04-05  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameter.cs: SqlBindParameter requires the last parameter

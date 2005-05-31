@@ -310,7 +310,22 @@ namespace System.Data.Odbc
 			// Load buffer with new value
 			if (odbcType == OdbcType.Int)
                                 intbuf = Value == null ? new int () : (int) Value;
-                        else {
+			else if (odbcType == OdbcType.Numeric
+				 || odbcType == OdbcType.Decimal) {
+				// for numeric, the buffer is a packed decimal struct.
+				// ref http://www.it-faq.pl/mskb/181/254.HTM
+				if (Value == null)
+					Value = (decimal) 0;
+				int [] bits = Decimal.GetBits (Convert.ToDecimal (Value));
+				buffer = new byte [19]; // ref sqltypes.h
+
+				buffer [0] = Precision;
+				buffer [1] = (byte) ((bits [3] & 0x00FF0000) >> 16); // scale
+				buffer [2] = (byte) ((bits [3] & 0x80000000) > 0 ? 2 : 1); //sign
+				Buffer.BlockCopy (bits, 0, buffer, 3, 12); // copy data
+				for (int j = 16; j < 19; j++) // pad with 0
+					buffer [j] = 0;
+                        } else {
 				string paramValueString = Value.ToString();
 				// Treat everything else as a string
 				// Init string buffer
