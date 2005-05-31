@@ -1,3 +1,14 @@
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Now it dumps level1 to 3 values.
+	  ToWidthInsensitive() is implemented here, using an array (which is
+	  to be optimized using CodePointIndexer).
+	* MSCompatUnicodeTable.cs : renamed as MSCompatUnicodeTable.template
+	* MSCompatUnicodeTable.template : now it is used to generate
+	  MSCompatUnicodeTable.cs which got ready to be used.
+	* Makefile : added MSCompatUnicodeTable.cs build support. Now it
+	  supports "make normalization" and "make collation".
+
 2005-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : Description on ICU is very incorrect. Now it

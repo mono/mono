@@ -3,26 +3,28 @@
 // There are two kind of sort keys : which are computed and which are laid out
 // as an indexed array. Computed sort keys are:
 //
-//	- CJK, which largely vary depending on LCID (namely kr,jp,zh-CHS,zh-TW)
+//	- CJK, which largely vary depending on LCID
+//	  (namely kr, jp, zh-CHS and zh-CHT)
 //	- Surrogate
 //	- PrivateUse
 //
 // Also, for composite characters it should prepare different index table.
 //
-// Except for them, it should use precomputed index array.
+// It is possible to "compute" level 3 weights, they are still dumped to
+// an array to avoid execution cost.
 //
 
 //
 // * sortkey getter signature
 //
-//	int GetSortKey (string s, int index, byte [] buf)
+//	int GetSortKey (string s, int index, SortKeyBuffer buf)
 //	Stores sort key for corresponding character element into buf and
 //	returns the length of the consumed _source_ character element in s.
 //
-// * character length to consume; default implementation
+// * character length to consume
 //
-//	If there is a diacritic after the base character, they are consumed
-//	and they are considered as a part of the character element.
+//	If there are characters whose primary weight is 0, they are consumed
+//	and considered as a part of the character element.
 //
 
 using System;
@@ -94,7 +96,8 @@ namespace Mono.Globalization.Unicode
 		char [] orderedGeorgian;
 		static readonly char [] orderedTamilConsonants = new char [] {
 			// based on traditional Tamil consonants, except for
-			// Grantha (which Microsoft breaks traditionailism).
+			// Grantha (where Microsoft breaks traditionalism).
+			// http://www.angelfire.com/empire/thamizh/padanGaL
 			'\u0B99', '\u0B9A', '\u0B9E', '\u0B9F', '\u0BA3',
 			'\u0BA4', '\u0BA8', '\u0BAA', '\u0BAE', '\u0BAF',
 			'\u0BB0', '\u0BB2', '\u0BB5', '\u0BB4', '\u0BB3',
@@ -119,29 +122,86 @@ namespace Mono.Globalization.Unicode
 
 		void Serialize ()
 		{
+			// Primary category
 			Result.WriteLine ("int [] categories = new int [] {");
 			for (int i = 0; i < map.Length; i++) {
-				Result.Write ("{0:X02},", map [i].Category);
+				byte value = map [i].Category;
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X02},", value);
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
 			Result.WriteLine ("};");
+			Result.WriteLine ();
 
-			Result.WriteLine ("int [] level1 = new int [] {");
+			// Primary weight value
+			Result.WriteLine ("static int [] level1 = new int [] {");
 			for (int i = 0; i < map.Length; i++) {
-				Result.Write ("{0:X02},", map [i].Level1);
+				byte value = map [i].Level1;
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X02},", value);
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
 			Result.WriteLine ("};");
+			Result.WriteLine ();
 
-			Result.WriteLine ("int [] level2 = new int [] {");
+			// Secondary weight
+			Result.WriteLine ("static int [] level2 = new int [] {");
 			for (int i = 0; i < map.Length; i++) {
-				Result.Write ("{0:X02},", map [i].Level2);
+				int value = map [i].Level2;
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X02},", value);
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
 			Result.WriteLine ("};");
+			Result.WriteLine ();
+
+			// Thirtiary weight
+			Result.WriteLine ("static byte [] level3 = new byte [] {");
+			for (int i = 0; i < map.Length; i++) {
+				byte value = ComputeLevel3WeightRaw ((char) i);
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X02},", value);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF);
+			}
+			Result.WriteLine ("};");
+			Result.WriteLine ();
+
+			// Width insensitivity mappings
+			// (for now it is more lightweight than dumping the
+			// entire NFKD table).
+			Result.WriteLine ("static int [] widthInsensitives = new int [] {");
+			for (int i = 0; i < char.MaxValue; i++) {
+				int value = 0;
+				switch (decompType [i]) {
+				case DecompositionNarrow:
+				case DecompositionWide:
+				case DecompositionSuper:
+				case DecompositionSub:
+					// they are always 1 char
+					value = decompValues [decompIndex [i]];
+					break;
+				}
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X04},", value);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF);
+			}
+			Result.WriteLine ("};");
+			Result.WriteLine ();
 		}
 
 		#region Parse
@@ -664,7 +724,11 @@ namespace Mono.Globalization.Unicode
 			// Malayalam
 			fillIndex [0x1C] = 2;
 			for (int i = 0x0D02; i < 0x0D61; i++)
-				if (!MSCompatUnicodeTable.IsIgnorable ((char) i))
+				// FIXME: I avoided MSCompatUnicodeTable usage
+				// here (it results in recursion). So check if
+				// using NonSpacingMark makes sense or not.
+				if (Char.GetUnicodeCategory ((char) i) != UnicodeCategory.NonSpacingMark)
+//				if (!MSCompatUnicodeTable.IsIgnorable ((char) i))
 					AddCharMap ((char) i, 0x1C, 1);
 
 			// Thai ... note that it breaks 0x1E wall after E2B!
@@ -700,17 +764,45 @@ namespace Mono.Globalization.Unicode
 			#endregion
 		}
 
+		// Reset fillIndex to fixed value and call AddLetterMap().
 		private void AddAlphaMap (char c, byte category, byte alphaWeight)
 		{
-// FIXME: implement
-//			throw new NotImplementedException ();
+			fillIndex [category] = alphaWeight;
+			AddLetterMap (c, category, 0);
 		}
 
-		private void AddLetterMap (char c, byte category, int updateCount)
+		private void AddLetterMap (char c, byte category, byte updateCount)
 		{
 // FIXME: implement
 //			throw new NotImplementedException ();
+
+			char c2;
+
+			// process lowerletter recursively (if not defined).
+			c2 = Char.ToLower (c, CultureInfo.InvariantCulture);
+			if (c2 != c && !map [(int) c2].Defined)
+				AddLetterMap (c2, category, updateCount);
+
+			// <small> updates index
+			c2 = ToSmallForm (c);
+			if (c2 != c)
+				AddCharMap (c2, category, updateCount);
+			// itself
+			AddCharMap (c, category, updateCount);
+			// <full>
+			c2 = ToFullWidth (c);
+			if (c2 != c)
+				AddCharMapGroup (c2, category, false, 0);
+
+			// FIXME: implement decorated characters w/ diacritical
+			// marks.
+
+			// process upperletter recursively (if not defined).
+			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
+			if (c2 != c && !map [(int) c2].Defined)
+				AddLetterMap (c2, category, updateCount);
 		}
+
 		private void AddCharMap (char c, byte category, byte increment)
 		{
 			AddCharMap (c, category, increment, 1);
@@ -765,17 +857,19 @@ namespace Mono.Globalization.Unicode
 
 		char ToDecomposed (char c, byte d, bool tail)
 		{
-			if (decompType [(int) c] == d)
-				return (char) decompValues [decompIndex [(int) c]];
-			else
+			if (decompType [(int) c] != d)
 				return c;
+			int idx = decompIndex [(int) c];
+			if (tail)
+				idx += decompLength [(int) c] - 1;
+			return (char) decompValues [idx];
 		}
 
 		#endregion
 
 		#region Level 3 properties (Case/Width)
 
-		private byte GetLevel3WeightRaw (char c) // add 2 for sortkey value
+		private byte ComputeLevel3WeightRaw (char c) // add 2 for sortkey value
 		{
 			// Korean
 			if ('\u1100' <= c && c <= '\u11F9')
@@ -798,8 +892,17 @@ namespace Mono.Globalization.Unicode
 			// Arabic
 			if ('\u2135' <= c && c <= '\u2138')
 				return 4;
-			if ('\uFE80' <= c && c <= '\uFE8E')
-				return GetArabicFormInPresentationB (c);
+			if ('\uFE80' <= c && c < '\uFE8E') {
+				// 2(Isolated)/8(Final)/0x18(Medial)
+				switch (decompType [(int) c]) {
+				case DecompositionIsolated:
+					return 2;
+				case DecompositionFinal:
+					return 8;
+				case DecompositionMedial:
+					return 0x18;
+				}
+			}
 
 			// actually I dunno the reason why they have weights.
 			switch (c) {
@@ -837,29 +940,6 @@ namespace Mono.Globalization.Unicode
 				ret |= 0x10;
 
 			return ret;
-		}
-
-		// 2(Isolated)/8(Final)/0x18(Medial)
-		private byte GetArabicFormInPresentationB (char c)
-		{
-			if ('\u2135' <= c && c <= '\u2138')
-				return 4;
-			c = ToArabicPresentationFormB (c);
-			switch (decompType [(int) c]) {
-			case DecompositionIsolated:
-				return 2;
-			case DecompositionFinal:
-				return 8;
-			case DecompositionMedial:
-				return 0x18;
-			}
-			return 0;
-		}
-
-		// find Presentation Form B equivalents
-		private char ToArabicPresentationFormB (char c)
-		{
-			throw new NotImplementedException ();
 		}
 
 		// TODO: implement GetArabicFormInRepresentationD(),

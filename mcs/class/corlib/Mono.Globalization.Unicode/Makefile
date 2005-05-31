@@ -10,21 +10,29 @@ NORM_FILENAME = create-normalization-source
 COLL_ELEM_FILENAME = create-collation-element-table
 COMBINING_FILENAME = create-combining-class-source
 CANON_EQUIV_FILENAME = create-char-mapping-source
+MSTABLEGEN = create-mscompat-collation-table
+MSCOMPAT_FILENAME = MSCompatUnicodeTable.cs
 
-all : CollationElementTable.cs Normalization.cs
+all : table normalization
+
+normalization: Normalization.cs
+
+collation : MSCompatUnicodeTable.cs 
 
 distclean :
 	make clean
 	rm $(UCA_TABLE) $(NORM_TABLE) $(CB_CLASS_TABLE)
 
-
-clean : clean-collation clean-normalization
+clean : clean-collation clean-normalization clean-mscompat
 
 clean-collation :
 	rm -f CollationElementTable.cs $(COLL_ELEM_FILENAME).exe*
 
 clean-normalization :
 	rm -f Normalization.cs $(NORM_FILENAME).exe* $(COMBINING_FILENAME).exe* $(CANON_EQUIV_FILENAME).exe*
+
+clean-mscompat :
+	rm -f MSCompatUnicodeTable.cs $(MSTABLEGEN).exe*
 
 
 # collation element table
@@ -70,14 +78,11 @@ CANON_EQUIV_GENERATOR_SOURCES = \
 $(CANON_EQUIV_FILENAME).exe : $(CANON_EQUIV_GENERATOR_SOURCES)
 	$(CSCOMPILE) $(CANON_EQUIV_GENERATOR_SOURCES)
 
-mstablegen : $(CREATE_MSCOMPAT_TABLE_SOURCES)
+$(MSTABLEGEN).exe : $(CREATE_MSCOMPAT_TABLE_SOURCES)
 	$(CSCOMPILE) $(CREATE_MSCOMPAT_TABLE_SOURCES)
 
 CREATE_MSCOMPAT_TABLE_SOURCES = \
 	create-mscompat-collation-table.cs \
-	MSCompatUnicodeTable.cs \
-	Normalization.cs \
-	NormalizationTableUtil.cs \
 	CodePointIndexer.cs \
 	CollationElementTable.cs \
 	CollationElementTableUtil.cs
@@ -113,6 +118,13 @@ $(CB_CLASS_TABLE) :
 	mv DerivedCombiningClass.txt UCD/extracted/
 	touch UCD/extracted/DerivedCombiningClass.txt
 
+#MSCompatUnicodeTable.cs
+
+$(MSCOMPAT_FILENAME) : MSCompatUnicodeTable.template CollationElementTable.cs $(MSTABLEGEN).exe
+	cat MSCompatUnicodeTable.template > $(MSCOMPAT_FILENAME)
+	$(RUNTIME) $(MSTABLEGEN).exe >> $(MSCOMPAT_FILENAME)
+	echo "	}" >> $(MSCOMPAT_FILENAME)
+	echo "}" >> $(MSCOMPAT_FILENAME)
 
 sample : 
 	$(CSCOMPILE) normtest.cs Normalization.cs NormalizationTableUtil.cs CodePointIndexer.cs
