@@ -868,7 +868,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 			} else if (expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess){
-				expr = expr.ResolveLValue (ec, this);
+				expr = expr.ResolveLValue (ec, this, Location);
 				if (expr == null)
 					return null;
 			} else {
@@ -7603,7 +7603,7 @@ namespace Mono.CSharp {
 
 			Type t = Expr.Type;
 			if (t.IsArray)
-				return (new ArrayAccess (this, loc)).ResolveLValue (ec, right_side);
+				return (new ArrayAccess (this, loc)).DoResolveLValue (ec, right_side);
 
 			if (t.IsPointer)
 				return MakePointerAccess (ec, Expr.Type);
@@ -7625,7 +7625,7 @@ namespace Mono.CSharp {
 					return MakePointerAccess (ec, ff.ElementType);
 				}
 			}
-			return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
+			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
 		}
 		
 		public override void Emit (EmitContext ec)
