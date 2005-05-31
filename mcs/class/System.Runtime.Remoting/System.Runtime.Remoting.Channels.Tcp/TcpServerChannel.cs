@@ -46,7 +46,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		string host = null;
 		int priority = 1;
 		bool supressChannelData = false;
-		bool useIpAddress = false;
+		bool useIpAddress = true;
 		
 		IPAddress bindAddress = IPAddress.Any;
 		Thread server_thread = null;
@@ -255,13 +255,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		Socket _socket;
 		TcpServerTransportSink _sink;
 		Stream _stream;
-		TcpServerChannel _serverChannel;
 
 		byte[] _buffer = new byte[TcpMessageIO.DefaultStreamBufferSize];
 
 		public ClientConnection (TcpServerChannel serverChannel, Socket socket, TcpServerTransportSink sink)
 		{
-			_serverChannel = serverChannel;
 			_socket = socket;
 			_sink = sink;
 			_id = _count++;

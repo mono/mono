@@ -40,14 +40,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 	internal class TcpClientTransportSink : IClientChannelSink
 	{
 		string _host;
-		string _url;
 		int _port;
 		
 		public TcpClientTransportSink (string url)
 		{
 			string objectUri;
 			_host = TcpChannel.ParseTcpURL (url, out objectUri, out _port);
-			_url = url;
 		}
 
 		public IDictionary Properties
