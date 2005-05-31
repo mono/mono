@@ -1,5 +1,9 @@
 2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : minor fixes. Added warning lines to generated sources.
+
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-char-mapping-source.cs :
 	  Removed ToWidthInsensitive() generation.
 
