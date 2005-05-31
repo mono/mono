@@ -125,6 +125,7 @@ namespace System.ServiceProcess {
 			}
 		}
 
+#if NET_2_0
 		private static char[] invalidServiceNameChars = new char[] { '/', '\\' };
 
 		internal static void ValidateServiceName (string name)
@@ -137,5 +138,13 @@ namespace System.ServiceProcess {
 				throw new ArgumentException (msg, "ServiceName");
 			}
 		}
+#else
+		internal static void ValidateServiceName (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("ServiceName");
+			// FIXME: maybe other checks are required (but not documented)
+		}
+#endif
 	}
 }
