@@ -5806,30 +5806,30 @@ int Mono_Posix_ToConfStr (int x, int *r)
 	errno = EINVAL; return -1;
 }
 
-int Mono_Posix_FromLockFlags (int x, int *r)
+int Mono_Posix_FromLockfCommand (int x, int *r)
 {
 	*r = 0;
 	if (x == 0)
 		return 0;
-	if (x == Mono_Posix_LockFlags_F_ULOCK)
+	if (x == Mono_Posix_LockfCommand_F_ULOCK)
 #ifdef F_ULOCK
 		{*r = F_ULOCK; return 0;}
 #else /* def F_ULOCK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef F_ULOCK */
-	if (x == Mono_Posix_LockFlags_F_LOCK)
+	if (x == Mono_Posix_LockfCommand_F_LOCK)
 #ifdef F_LOCK
 		{*r = F_LOCK; return 0;}
 #else /* def F_LOCK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef F_LOCK */
-	if (x == Mono_Posix_LockFlags_F_TLOCK)
+	if (x == Mono_Posix_LockfCommand_F_TLOCK)
 #ifdef F_TLOCK
 		{*r = F_TLOCK; return 0;}
 #else /* def F_TLOCK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef F_TLOCK */
-	if (x == Mono_Posix_LockFlags_F_TEST)
+	if (x == Mono_Posix_LockfCommand_F_TEST)
 #ifdef F_TEST
 		{*r = F_TEST; return 0;}
 #else /* def F_TEST */
@@ -5838,26 +5838,26 @@ int Mono_Posix_FromLockFlags (int x, int *r)
 	errno = EINVAL; return -1;
 }
 
-int Mono_Posix_ToLockFlags (int x, int *r)
+int Mono_Posix_ToLockfCommand (int x, int *r)
 {
 	*r = 0;
 	if (x == 0)
 		return 0;
 #ifdef F_ULOCK
 	if (x == F_ULOCK)
-		{*r = Mono_Posix_LockFlags_F_ULOCK; return 0;}
+		{*r = Mono_Posix_LockfCommand_F_ULOCK; return 0;}
 #endif /* ndef F_ULOCK */
 #ifdef F_LOCK
 	if (x == F_LOCK)
-		{*r = Mono_Posix_LockFlags_F_LOCK; return 0;}
+		{*r = Mono_Posix_LockfCommand_F_LOCK; return 0;}
 #endif /* ndef F_LOCK */
 #ifdef F_TLOCK
 	if (x == F_TLOCK)
-		{*r = Mono_Posix_LockFlags_F_TLOCK; return 0;}
+		{*r = Mono_Posix_LockfCommand_F_TLOCK; return 0;}
 #endif /* ndef F_TLOCK */
 #ifdef F_TEST
 	if (x == F_TEST)
-		{*r = Mono_Posix_LockFlags_F_TEST; return 0;}
+		{*r = Mono_Posix_LockfCommand_F_TEST; return 0;}
 #endif /* ndef F_TEST */
 	errno = EINVAL; return -1;
 }
