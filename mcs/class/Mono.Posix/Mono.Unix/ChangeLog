@@ -1,3 +1,8 @@
+2005-05-31  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs, UnixConvert.cs: Rename LockFlags to LockfCommand.  This is a more 
+	  consistent naming, and it's more correct (they weren't flags in the first place).
+
 2005-05-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Correct Mono_Posix_Stdlib_InvokeSignalHandler export.
