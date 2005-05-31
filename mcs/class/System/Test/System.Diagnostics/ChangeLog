@@ -1,3 +1,13 @@
+2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogPermissionAttributeTest.cs: Character #133 is refused into
+	machine names for 2.0.
+	* EventLogPermissionTest.csFx 2.0 now has better arguments checking 
+	(i.e. FDBK15131 was fixed).
+	* PerformanceCounterPermissionAttributeTest.cs
+	* PerformanceCounterPermissionTest.cs: Fx 2.0 now has better arguments
+	checking (i.e. FDBK15131 was fixed).
+
 2005-02-22  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* TraceTest.cs: Add multi-thread test for #69964.

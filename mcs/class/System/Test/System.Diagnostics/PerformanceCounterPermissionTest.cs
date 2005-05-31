@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -88,8 +88,9 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-// strange as ancestors does the checking (reported as FDBK15131)
-//		[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void PermissionState_Bad ()
 		{
 			PermissionState ps = (PermissionState)77;
@@ -105,7 +106,11 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Constructor_MachineName_Null ()
 		{
 			PerformanceCounterPermission pcp = new PerformanceCounterPermission (PerformanceCounterPermissionAccess.None, null, String.Empty);
@@ -119,6 +124,9 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void PerformanceCounterPermissionAccesss_Bad ()
 		{
 			PerformanceCounterPermissionAccess pcpa = (PerformanceCounterPermissionAccess)Int32.MinValue;
@@ -362,9 +370,12 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-// Problem inherited from ResourcePermissionBase
-//		[ExpectedException (typeof (ArgumentNullException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
+		// Problem inherited from ResourcePermissionBase
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void FromXml_Null ()
 		{
 			PerformanceCounterPermission pcp = new PerformanceCounterPermission (PermissionState.None);
@@ -372,6 +383,9 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongTag ()
 		{
 			PerformanceCounterPermission pcp = new PerformanceCounterPermission (PermissionState.None);
@@ -383,6 +397,9 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongTagCase ()
 		{
 			PerformanceCounterPermission pcp = new PerformanceCounterPermission (PermissionState.None);
