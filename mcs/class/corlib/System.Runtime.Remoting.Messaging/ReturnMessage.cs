@@ -64,8 +64,10 @@ namespace System.Runtime.Remoting.Messaging
 			_args = outArgs;
 			_outArgsCount = outArgCount;
 			_callCtx = callCtx;
-			_uri = request.Uri;
-			_methodBase = request.MethodBase;
+			if (request != null) {
+				_uri = request.Uri;
+				_methodBase = request.MethodBase;
+			}
 			if (_args == null) _args = new object [outArgCount];
 		}
 
@@ -92,7 +94,8 @@ namespace System.Runtime.Remoting.Messaging
 		
 		public bool HasVarArgs {
 			get {
-				return (MethodBase.CallingConvention | CallingConventions.VarArgs) != 0;
+				if (_methodBase == null) return false;
+				else return (_methodBase.CallingConvention | CallingConventions.VarArgs) != 0;
 			}
 		}
 

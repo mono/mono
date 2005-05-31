@@ -48,9 +48,15 @@ namespace System.Runtime.Remoting.Messaging {
 		public MethodReturnMessageWrapper (IMethodReturnMessage msg)
 			: base (msg)
 		{
-			_args = ((IMethodCallMessage)WrappedMessage).Args;
-			_exception = msg.Exception;
-			_outArgInfo = new ArgInfo (msg.MethodBase, ArgInfoType.Out);
+			if (msg.Exception != null) {
+				_exception = msg.Exception;
+				_args = new object[0];
+			} else {
+				_args = msg.Args;
+				_return = msg.ReturnValue;
+				if (msg.MethodBase != null)
+					_outArgInfo = new ArgInfo (msg.MethodBase, ArgInfoType.Out);
+			}
 		}
 
 		public virtual int ArgCount {
@@ -89,11 +95,11 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		public virtual int OutArgCount {
-			get { return _outArgInfo.GetInOutArgCount(); }
+			get { return _outArgInfo != null ? _outArgInfo.GetInOutArgCount() : 0; }
 		}
 
 		public virtual object[] OutArgs {
-			get { return _outArgInfo.GetInOutArgs (_args); }
+			get { return _outArgInfo != null ? _outArgInfo.GetInOutArgs (_args) : _args; }
 		}
 
 		public virtual IDictionary Properties 

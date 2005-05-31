@@ -1,3 +1,9 @@
+2005-05-31  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ReturnMessage.cs: Added some null checks.
+	* MethodReturnMessageWrapper.cs: Added some null checks. Fixed
+	incorrect cast in the constructor.
+
 2005-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsyncResult.cs: Added new fields (required for stack propagation) to
