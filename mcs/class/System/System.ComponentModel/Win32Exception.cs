@@ -132,6 +132,9 @@ namespace System.ComponentModel
 			case 10048:
 				message = Locale.GetText ("Address already in use");
 				break;
+			case 10049:
+				message = Locale.GetText ("The requested address is not valid in this context");
+				break;
 			case 10050:
 				message = Locale.GetText ("Network subsystem is down");
 				break;
