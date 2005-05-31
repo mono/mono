@@ -1,3 +1,9 @@
+2005-05-30  Jackson Harper  <jackson@ximian.com>
+
+	* DataFormat.cs: We can't statically initialize this stuff because
+	it calls into the xplatui and could create a loop. So we lazy init
+	it.
+
 2005-05-28  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Proper implementation of Product(Name/Version).

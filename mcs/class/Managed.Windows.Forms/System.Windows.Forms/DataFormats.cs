@@ -157,18 +157,32 @@ namespace System.Windows.Forms {
 		public static readonly string WaveAudio			= "WaveAudio";
 		#endregion	// Public Static Fields
 
+		private static object lock_object = new object ();
+		private static bool initialized;
+
 		public static Format GetFormat (int ID)
 		{
-			return Format.Find (ID);
+			lock (lock_object) {
+				if (!initialized)
+					Init ();
+				return Format.Find (ID);
+			}
 		}
 
 		public static Format GetFormat (string format)
 		{
-			return Format.Add (format);
+			lock (lock_object) {
+				if (!initialized)
+					Init ();
+				return Format.Add (format);
+			}
 		}
-		
-		static DataFormats ()
+
+		// Assumes we are locked on the lock_object when it is called
+		private static void Init ()
 		{
+			if (initialized)
+				return;
 			IntPtr cliphandle = XplatUI.ClipboardOpen();
 
 			new Format (Text, XplatUI.ClipboardGetID (cliphandle, Text));
@@ -194,6 +208,8 @@ namespace System.Windows.Forms {
 			new Format (StringFormat, XplatUI.ClipboardGetID (cliphandle, StringFormat));
 
 			XplatUI.ClipboardClose (cliphandle);
+
+			initialized = true;
 		}
 	}
 }
