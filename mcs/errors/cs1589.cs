@@ -1,4 +1,4 @@
-// Compiler options: -doc:xml-025.xml -warn:1 -warnaserror
+// Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 
 namespace Testing
 {

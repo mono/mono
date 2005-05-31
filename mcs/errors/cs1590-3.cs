@@ -1,4 +1,4 @@
-// Compiler options: -doc:xml-024.xml -warn:1 -warnaserror
+// Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 // Invalid XML 'include' element; Missing 'file' attribute
 
 namespace Testing
