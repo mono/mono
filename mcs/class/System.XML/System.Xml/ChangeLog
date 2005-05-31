@@ -1,3 +1,8 @@
+2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : Last BaseURI exposed this hidden bug via
+	  sys.security tests.
+
 2005-05-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : in DTDEntityBase.Resolve() don't overwrite

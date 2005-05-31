@@ -7,6 +7,7 @@
 // (C)2003 Atsushi Enomoto
 //
 using System;
+using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
@@ -813,6 +814,43 @@ namespace MonoTests.System.Xml
 			r.Read ();
 			r.Read ();
 			AssertEquals (refOut, r.ReadOuterXml ());
+		}
+
+		[Test]
+		// imported testcase from sys.security which had regression.
+		public void ResolveEntityAndBaseURI ()
+		{
+			try {
+				using (TextWriter w = File.CreateText ("world.txt")) {
+					w.WriteLine ("world");
+				}
+
+				string xml =  "<!DOCTYPE doc [\n" +
+					"<!ATTLIST doc attrExtEnt ENTITY #IMPLIED>\n" +
+					"<!ENTITY ent1 \"Hello\">\n" +
+					"<!ENTITY ent2 SYSTEM \"world.txt\">\n" +
+					"<!ENTITY entExt SYSTEM \"earth.gif\" NDATA gif>\n" +
+					"<!NOTATION gif SYSTEM \"viewgif.exe\">\n" +
+					"]>\n" +
+					"<doc attrExtEnt=\"entExt\">\n" +
+					"   &ent1;, &ent2;!\n" +
+					"</doc>\n" +
+					"\n" +
+					"<!-- Let world.txt contain \"world\" (excluding the quotes) -->\n";
+
+				XmlValidatingReader xvr =
+					new XmlValidatingReader (
+					xml, XmlNodeType.Document, null);
+				xvr.ValidationType = ValidationType.None;
+				xvr.EntityHandling =
+					EntityHandling.ExpandCharEntities;
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (xvr);
+
+			} finally {
+				if (File.Exists ("world.txt"))
+					File.Delete ("world.txt");
+			}
 		}
 	}
 }

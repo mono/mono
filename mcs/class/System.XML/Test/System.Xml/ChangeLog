@@ -1,3 +1,8 @@
+2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlValidatingReaderTests.cs : added ResolveEntityAndBaseURI() which
+	  is imported from sys.security.
+
 2005-05-25  Andrew Skiba  <andrews@mainsoft.com>
 
 	* W3C : directory added
