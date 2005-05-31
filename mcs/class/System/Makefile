@@ -1,7 +1,6 @@
 thisdir = class/System
 SUBDIRS =
 include ../../build/rules.make
-export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/System
 
 LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
