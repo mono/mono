@@ -1,3 +1,8 @@
+2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourcePermissionBase.cs: Added more parameter checking for 2.0
+	* PermissionHelper.cs: Identity permissions can be unrestricted in 2.0
+
 2005-05-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourcePermissionBase.cs: PermissionAccessType "could" be null. Fix
