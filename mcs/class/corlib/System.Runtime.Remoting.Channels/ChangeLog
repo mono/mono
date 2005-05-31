@@ -1,3 +1,7 @@
+2005-05-31  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TransportHeaders.cs: This collection turns out to be case insensitive.
+
 2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CrossAppDomainChannel.cs: Remove call to ResetDataStoreStatus ().
