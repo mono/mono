@@ -1,3 +1,8 @@
+2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourcePermissionBaseTest.cs: Fx 2.0 now has better arguments
+	checking (i.e. FDBK15131 was fixed).
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourcePermissionBaseEntryTest.cs: New. Unit tests for 

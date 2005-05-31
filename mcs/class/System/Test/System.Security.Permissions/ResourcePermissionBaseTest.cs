@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -123,6 +123,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void Constructor_Invalid ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ((PermissionState)Int32.MaxValue);
@@ -279,9 +282,11 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-// MS bug - reported as FDBK15052
-//		[ExpectedException (typeof (ArgumentNullException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void FromXml_Null ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -289,7 +294,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		//[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongTag ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -299,7 +306,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		//[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongTagCase ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -335,7 +344,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		//[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongVersion ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -377,8 +388,6 @@ namespace MonoTests.System.Security.Permissions {
 			entries = rp.GetPermissionEntries ();
 			Assert.AreEqual (0, entries.Length, "Count==0");
 		}
-
-		// Intersect
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
