@@ -1,3 +1,7 @@
+2005-05-31  Joanthan Pryor  <jonpryor@vt.edu>
+
+	* Makefile (SUBDIRS): Add mono-shlib-cop to the build.
+
 2005-05-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_2_0_SUBDIRS): Add 'corcompare'.

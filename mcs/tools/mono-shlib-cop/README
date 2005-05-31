@@ -1,0 +1,4 @@
+mono-shlib-cop is a program to check unmanaged assembly dependencies.
+  - Does the unmanaged dependency exist?
+	- Is it a non-devel dependency (e.g. is foo.so.1 used instead of foo.so?)
+

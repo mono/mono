@@ -2,7 +2,8 @@ thisdir = tools
 SUBDIRS = \
 	al cilc corcompare ictool mono-xsd security wsdl genxs sqlsharp		\
 	disco soapsuds browsercaps-updater monop gacutil mono-rpm-helpers	\
-	resgen macpack mkbundle dtd2xsd mjs prj2make mono-service
+	resgen macpack mkbundle dtd2xsd mjs prj2make mono-service \
+	mono-shlib-cop
 
 net_1_1_bootstrap_SUBDIRS = gacutil security
 

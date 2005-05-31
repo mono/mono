@@ -1,0 +1,9 @@
+2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile: Added
+	* README: Added
+	* ChangeLog: Added
+	* mono-shlib-cop.exe.sources: Added
+	* mono-shlib-cop.exe: Added
+
+# vim: noexpandtab
