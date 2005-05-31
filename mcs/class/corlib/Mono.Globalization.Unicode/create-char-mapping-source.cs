@@ -63,7 +63,6 @@ namespace Mono.Globalization.Unicode
 		int [] mapIndex = new int [0x5000];
 
 		ArrayList mappings = new ArrayList ();
-		ArrayList widthSensitives = new ArrayList ();
 
 		public CharMappingGenerator ()
 		{
@@ -167,19 +166,6 @@ namespace Mono.Globalization.Unicode
 			Console.WriteLine ("	}");
 			Console.WriteLine ("	return 0;");
 			Console.WriteLine ("}");
-
-			// WidthSensitives
-			Console.WriteLine ("public static int ToWidthInsensitive (int i)");
-			Console.WriteLine ("{");
-			Console.WriteLine ("	if (i != 0x3000 && i < 0xFF00)");
-			Console.WriteLine ("		return i;");
-			Console.WriteLine ("	switch (i) {");
-			foreach (int i in widthSensitives)
-				Console.WriteLine ("	case 0x{0:X}:", i);
-			Console.WriteLine ("		return mappedChars [NormalizationTableUtil.MapIdx (i)];");
-			Console.WriteLine ("	}");
-			Console.WriteLine ("	return i;");
-			Console.WriteLine ("}");
 		}
 
 		private void DumpArray (int [] array, int count, bool getCP)
@@ -216,19 +202,12 @@ namespace Mono.Globalization.Unicode
 
 				string [] values = line.Substring (n + 1).Split (';');
 				string canon = values [4];
+//if (values [2] != "0") Console.Error.WriteLine ("----- {0:X03} : {1:x}", int.Parse (values [2]), cp);
 				string combiningCategory = canon.IndexOf ('>') < 0 ? "" : canon.Substring (1, canon.IndexOf ('>') - 1);
 				string mappedCharsValue = canon;
 				if (combiningCategory.Length > 0)
 					mappedCharsValue = canon.Substring (combiningCategory.Length + 2).Trim ();
 				if (mappedCharsValue.Length > 0) {
-					switch (combiningCategory) {
-					case "narrow":
-					case "wide":
-					case "super":
-					case "sub":
-						widthSensitives.Add (cp);
-						break;
-					}
 					mappings.Add (new CharMapping (cp,
 						mappedCharCount, 
 						combiningCategory.Length == 0));
