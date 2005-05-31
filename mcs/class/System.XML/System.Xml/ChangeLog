@@ -1,5 +1,12 @@
 2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDReader.cs :
+	  make sure to close parser input before parser stack pop.
+	* DTDValidatingReader.cs : ditto.
+	* DTDObjectModel.cs : Fixed another incorrect null BaseURI check.
+
+2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader.cs : Last BaseURI exposed this hidden bug via
 	  sys.security tests.
 

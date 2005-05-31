@@ -262,7 +262,7 @@ namespace Mono.Xml
 				return null;
 
 			if (entity.SystemId != null) {
-				Uri baseUri = entity.BaseURI == null ? null : new Uri (entity.BaseURI);
+				Uri baseUri = entity.BaseURI == String.Empty ? null : new Uri (entity.BaseURI);
 				Stream stream = resolver.GetEntity (resolver.ResolveUri (baseUri, entity.SystemId), null, typeof (Stream)) as Stream;
 				return new XmlTextReaderImpl (stream, XmlNodeType.Element, context);
 			}

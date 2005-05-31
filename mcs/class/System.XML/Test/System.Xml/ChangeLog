@@ -1,5 +1,9 @@
 2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReaderTests.cs : let's test external DTD as well.
+
+2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReaderTests.cs : added ResolveEntityAndBaseURI() which
 	  is imported from sys.security.
 

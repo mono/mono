@@ -1610,10 +1610,13 @@ namespace System.Xml
 					throw NotWFError ("Nested inclusion is not allowed: " + url);
 			}
 			parserInputStack.Push (currentInput);
+			Stream s = null;
 			try {
-				Stream s = DTD.Resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
+				s = DTD.Resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
 				currentInput = new XmlParserInput (new XmlStreamReader (s), absPath);
 			} catch (Exception ex) { // FIXME: (wishlist) Bad exception catch ;-(
+				if (s != null)
+					s.Close ();
 				int line = currentInput == null ? 0 : currentInput.LineNumber;
 				int col = currentInput == null ? 0 : currentInput.LinePosition;
 				string bu = (currentInput == null) ? String.Empty : currentInput.BaseURI;
@@ -1625,6 +1628,7 @@ namespace System.Xml
 
 		private void PopParserInput ()
 		{
+			currentInput.Close ();
 			currentInput = parserInputStack.Pop () as XmlParserInput;
 		}
 

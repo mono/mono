@@ -396,6 +396,7 @@ namespace Mono.Xml
 				nextEntityReader = null;
 				return ReadContent ();
 			} else if (reader.EOF && entityReaderStack.Count > 0) {
+				reader.Close ();
 				reader = entityReaderStack.Pop () as XmlReader;
 				entityReaderDepthStack.Pop ();
 				sourceTextReader = reader as XmlTextReader;

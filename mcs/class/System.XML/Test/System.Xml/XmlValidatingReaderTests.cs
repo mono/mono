@@ -824,8 +824,11 @@ namespace MonoTests.System.Xml
 				using (TextWriter w = File.CreateText ("world.txt")) {
 					w.WriteLine ("world");
 				}
+				using (TextWriter w = File.CreateText ("doc.dtd")) {
+					w.WriteLine ("<!-- dummy -->");
+				}
 
-				string xml =  "<!DOCTYPE doc [\n" +
+				string xml =  "<!DOCTYPE doc SYSTEM \"doc.dtd\" [\n" +
 					"<!ATTLIST doc attrExtEnt ENTITY #IMPLIED>\n" +
 					"<!ENTITY ent1 \"Hello\">\n" +
 					"<!ENTITY ent2 SYSTEM \"world.txt\">\n" +
@@ -850,6 +853,8 @@ namespace MonoTests.System.Xml
 			} finally {
 				if (File.Exists ("world.txt"))
 					File.Delete ("world.txt");
+				if (File.Exists ("doc.dtd"))
+					File.Delete ("doc.dtd");
 			}
 		}
 	}
