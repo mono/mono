@@ -1,3 +1,6 @@
+2005-05-31 Boris Kirzner <borisk@mainsoft.com>
+		* System.Data_test.dll.sources : added System.Data.Tests.Mainsoft/System.Data/RowNotInTableException/RowNotInTableException_Generate.cs
+		
 2005-05-30 BorisKirzner <borisk@mainsoft.com>
 		* System.Data.SqlClient.jvm
 		* System.Data.Configuration.jvm

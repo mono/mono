@@ -334,6 +334,7 @@ System.Data.Tests.Mainsoft/System.Data/InRowChangingEventException/InRowChanging
 System.Data.Tests.Mainsoft/System.Data/InvalidConstraintException/InvalidConstraintException_Generate.cs
 System.Data.Tests.Mainsoft/System.Data/NoNullAllowedException/NoNullAllowedException_Generate.cs
 System.Data.Tests.Mainsoft/System.Data/ReadOnlyException/ReadOnlyException_Generate.cs
+System.Data.Tests.Mainsoft/System.Data/RowNotInTableException/RowNotInTableException_Generate.cs
 System.Data.Tests.Mainsoft/System.Data/SyntaxErrorException/SyntaxErrorException_Generate.cs
 System.Data.Tests.Mainsoft/System.Data/UniqueConstraint/UniqueConstraint_Columns.cs
 System.Data.Tests.Mainsoft/System.Data/UniqueConstraint/UniqueConstraint_constraintName.cs

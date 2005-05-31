@@ -1393,6 +1393,11 @@ namespace System.Data {
 
 			if (parentRow != null && _table.DataSet != parentRow.Table.DataSet)
 				throw new ArgumentException();
+
+			if (RowState == DataRowState.Detached && !HasVersion(DataRowVersion.Default)) {
+				// the row should have default data to access, i.e. we can do this for the newly created row, but not for the row once deleted from the table
+				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
+			}
 			
 			BeginEdit();
 
