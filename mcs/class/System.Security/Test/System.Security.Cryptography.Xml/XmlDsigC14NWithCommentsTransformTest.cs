@@ -50,6 +50,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 					File.Delete ("world.txt");
 			}
 			catch {}
+			if (File.Exists ("doc.dtd"))
+				throw new Exception ("File.Delete() is not working.");
+			if (File.Exists ("world.txt"))
+				throw new Exception ("File.Delete() is not working.");
 		}
 
 		[Test]

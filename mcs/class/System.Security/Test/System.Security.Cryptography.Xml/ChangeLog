@@ -1,3 +1,8 @@
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigC14NWithCommentsTransformTest.cs : added File.Delete()
+	  sanity check on CleanUp().
+
 2005-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ReferenceTest.cs: Changed AddAllTransforms from Ignored to category
