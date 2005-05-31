@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -136,6 +136,9 @@ namespace MonoTests.System.ServiceProcess {
 						case 13:
 						case 32:
 						case 92:
+#if NET_2_0
+						case 133:
+#endif
 						case 160:
 							// known invalid chars
 							break;
@@ -158,7 +161,9 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void ServiceName_Empty ()
 		{
 			ServiceControllerPermissionAttribute a = new ServiceControllerPermissionAttribute (SecurityAction.Assert);

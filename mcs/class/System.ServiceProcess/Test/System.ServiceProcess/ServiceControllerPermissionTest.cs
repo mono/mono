@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -83,8 +83,9 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-// strange as ancestors does the checking (reported as FDBK15131)
-//		[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void PermissionState_Bad ()
 		{
 			PermissionState ps = (PermissionState)77;
@@ -213,7 +214,11 @@ namespace MonoTests.System.ServiceProcess {
 		public void IsSubset_Null ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);
+#if NET_2_0
 			Assert.IsTrue (scp.IsSubsetOf (null), "null");
+#else
+			Assert.IsFalse (scp.IsSubsetOf (null), "null");
+#endif
 		}
 
 		[Test]
@@ -332,9 +337,12 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-// Problem inherited from ResourcePermissionBase
-//		[ExpectedException (typeof (ArgumentNullException))]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
+		// Problem inherited from ResourcePermissionBase
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void FromXml_Null ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);
@@ -342,6 +350,9 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongTag ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);
@@ -353,6 +364,9 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongTagCase ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);

@@ -1,3 +1,11 @@
+2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ServiceControllerPermissionAttributeTest.cs: Character #133 isn't
+	valid in machine names for 2.0. An empt service name is acceptable 
+	before 2.0.
+	* ServiceControllerPermissionTest.cs: 2.0 has better parameters
+	checking (since FDBK15131 was fixed).
+
 2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ServiceControllerPermissionAttributeTest.cs: New. Unit tests for
