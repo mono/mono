@@ -84,16 +84,77 @@ namespace Mono.Globalization.Unicode
 
 		bool [] isSmallCapital = new bool [char.MaxValue + 1];
 		bool [] isUppercase = new bool [char.MaxValue + 1];
+
 		byte [] decompType = new byte [char.MaxValue + 1];
 		int [] decompIndex = new int [char.MaxValue + 1];
 		int [] decompLength = new int [char.MaxValue + 1];
 		int [] decompValues;
 		decimal [] decimalValue = new decimal [char.MaxValue + 1];
 
+		byte [] diacritical = new byte [char.MaxValue + 1];
+
+		string [] diacritics = new string [] {
+			" ACUTE;", " GRAVE;", " DOT ABOVE;", " MIDDLE DOT;",
+			" CIRCUMFLEX;", " DIAERESIS;", " CARON;", " BREVE;",
+			" DIALYTIKA AND TONOS;", " MACRON;", " TILDE;", " RING ABOVE;",
+			" OGONEK;", " CEDILLA;",
+			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
+			" STROKE;", " CIRCUMFLEX AND ACUTE;",
+			" DIAERESIS AND ACUTE;", "WITH CIRCUMFLEX AND GRAVE;", " L SLASH;",
+			" DIAERESIS AND GRAVE;",
+			" BREVE AND ACUTE;",
+			" CARON AND DOT ABOVE;", " BREVE AND GRAVE;",
+			" MACRON AND ACUTE;",
+			" MACRON AND GRAVE;",
+			" DIAERESIS AND CARON", " DOT ABOVE AND MACRON", " TILDE AND ACUTE",
+			" RING ABOVE AND ACUTE",
+			" DIAERESIS AND MACRON", " CEDILLA AND ACUTE", " MACRON AND DIAERESIS",
+			" CIRCUMFLEX AND TILDE",
+			" TILDE AND DIAERESIS",
+			" STROKE AND ACUTE",
+			" BREVE AND TILDE",
+			" CEDILLA AND BREVE",
+			" OGONEK AND MACRON",
+			" HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
+			" DOUBLE GRAVE;",
+			" INVERTED BREVE",
+			" PRECEDED BY APOSTROPHE",
+			" HORN;",
+			" LINE BELOW;", " CIRCUMFLEX AND HOOK ABOVE",
+			" PALATAL HOOK",
+			" DOT BELOW;",
+			" RETROFLEX;", "DIAERESIS BELOW",
+			" RING BELOW",
+			" CIRCUMFLEX BELOW", "HORN AND ACUTE",
+			" BREVE BELOW;", " HORN AND GRAVE",
+			" TILDE BELOW",
+			" DOT BELOW AND DOT ABOVE",
+			" RIGHT HALF RING", " HORN AND TILDE",
+			" CIRCUMFLEX AND DOT BELOW",
+			" BREVE AND DOT BELOW",
+			" DOT BELOW AND MACRON",
+			" HORN AND HOOK ABOVE",
+			" HORN AND DOT",
+			};
+		byte [] diacriticWeights = new byte [] {
+			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+			0x17, 0x19, 0x1A, 0x1B, 0x1C,
+			0x1D, 0x1D, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
+			0x20, 0x21, 0x22, 0x22, 0x23, 0x24,
+			0x25, 0x25, 0x25, 0x26, 0x28, 0x28, 0x28,
+			0x29, 0x2A, 0x2B, 0x2C, 0x2F, 0x30,
+			0x43, 0x43, 0x43, 0x44, 0x46, 0x48,
+			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x5A,
+			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 
+			0x69, 0x69, 0x6A, 0x6D, 0x6E,
+			0x95, 0xAA
+			};
+
 		char [] orderedCyrillic;
 		char [] orderedGurmukhi;
 		char [] orderedGujarati;
 		char [] orderedGeorgian;
+
 		static readonly char [] orderedTamilConsonants = new char [] {
 			// based on traditional Tamil consonants, except for
 			// Grantha (where Microsoft breaks traditionalism).
@@ -154,6 +215,8 @@ namespace Mono.Globalization.Unicode
 			Result.WriteLine ("static int [] level2 = new int [] {");
 			for (int i = 0; i < map.Length; i++) {
 				int value = map [i].Level2;
+				if (map [i].Category == 0xE)
+					value |= diacritical [i];
 				if (value == 0)
 					Result.Write ("0,");
 				else
@@ -249,6 +312,10 @@ namespace Mono.Globalization.Unicode
 			// isSmallCapital
 			if (s.IndexOf ("SMALL CAPITAL") > 0)
 				isSmallCapital [cp] = true;
+
+			for (int d = 0; d < diacritics.Length; d++)
+				if (s.IndexOf (diacritics [d]) > 0)
+					diacritical [cp] |= diacriticWeights [d];
 
 			// normalizationType
 			string decomp = values [4];
@@ -951,10 +1018,10 @@ namespace Mono.Globalization.Unicode
 
 	internal struct CharMapEntry
 	{
-		public readonly byte Category;
-		public readonly byte Level1;
-		public readonly byte Level2; // It is always single byte.
-		public readonly bool Defined;
+		public byte Category;
+		public byte Level1;
+		public byte Level2; // It is always single byte.
+		public bool Defined;
 
 		public CharMapEntry (byte category, byte level1, byte level2)
 		{

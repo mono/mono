@@ -1,5 +1,11 @@
 2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : wrong comment cleanup and spelling fixes.
+	* create-mscompat-collation-table.cs : added diacritic support for
+	  Latin letters (as long as covered in primary weight).
+
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : minor fixes. Added warning lines to generated sources.
 
 2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>

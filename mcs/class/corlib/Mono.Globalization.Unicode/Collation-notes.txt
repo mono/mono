@@ -213,15 +213,6 @@
 
 **** level 2
 
-	<del>
-	For Japanese voice marks, it just sums the count up.
-
-	There also seems special rule for Thai (E01-E4F) e.g. E47 works like
-	Japanese voice marks.
-
-	For other letters, there will be a table.
-	</del>
-
 	It looks like all level 2 keys are just accumulated, however without
 	considering overflow. It sometimes makes sense (e.g. diaeresis and
 	acute) but it causes many conflicts (e.g. "A\u0308\u0301" and "\u1EA6"
@@ -251,11 +242,9 @@
 		- 4 Alef/Bet/Gimel/Dalet (2135-2138)
 		- 8 Final form in presentation form B in FE82-FEF2
 		- 18 Medial form in presentation form B in FE8C-FEF4
-
-		Grep "ISOLATED", "FINAL" or "MEDIAL" against UnicodeData.txt
-		(and filter by codepoints).
-		or alternatively, see DerivedDecompositionType.txt.
-
+		     Grep "ISOLATED", "FINAL" or "MEDIAL" on UnicodeData.txt
+		     (and filter by codepoints).
+		     or alternatively, see DerivedDecompositionType.txt.
 		- 22 6A9 (TODO: what is it?)
 		- 28 6AA (TODO: what is it?)
 
@@ -423,7 +412,7 @@
 		-10: dot above
 		-11: middle dot
 		-12: circumflex
-		-13: diaresis
+		-13: diaeresis
 		-14: caron
 		     Note that 1C4-1C6 are covered but they are also expanded.
 		-15: breve (cyrillic are also covered? at least 4C1/4C2 are.)
@@ -439,19 +428,19 @@
 		     (i.e. they not one-to-one mapping. Neither that every
 		     "stroke" are mapped to 1E, nor not every 1E are mapped to
 		     "stroke".)
-		-1F: diaresis and acute | with circumflex and grave | l slash
+		-1F: diaeresis and acute | with circumflex and grave | l slash
 			beware "symbol slash"
-		-20: diaresis and grave | 19B,19F
+		-20: diaeresis and grave | 19B,19F
 		-21: breve and acute | D8,F8
 		-22: caron and dot above | breve and grave
 		-23: macron and acute
 		-24: macron and grave
-		-25: diaresis and caron | dot above and macron | tilde and acute
+		-25: diaeresis and caron | dot above and macron | tilde and acute
 		-26: ring above and acute
-		-28: diaresis and macron | cedilla and acute |
-		     macron and diaresis
+		-28: diaeresis and macron | cedilla and acute |
+		     macron and diaeresis
 		-29: circumflex and tilde
-		-2A: tilde and diaresis
+		-2A: tilde and diaeresis
 		-2B: stroke and acute
 		-2C: breve and tilde
 		-2F: cedilla and breve
@@ -466,7 +455,7 @@
 		-55: line below | circumflex and hook above
 		-57: palatal hook (actually only 1AB)
 		-58: dot below except for cp{1EA0,1EA1}
-		-59: "retroflex" (without "WITH") | diaresis below | 1EA0,1EA1
+		-59: "retroflex" (without "WITH") | diaeresis below | 1EA0,1EA1
 		-5A: ring below | 1E76,1E77
 		-60: circumflex below except for cp{1E76,1E77} | horn and acute
 		-61: breve below | horn and grave
