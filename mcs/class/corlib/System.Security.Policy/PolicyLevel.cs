@@ -55,6 +55,8 @@ namespace System.Security.Policy {
 		private string _location;
 		private PolicyLevelType _type;
 		private Hashtable fullNames;
+		private bool loaded;
+		private SecurityElement xml;
 
 		internal PolicyLevel (string label, PolicyLevelType type)
                 {
@@ -64,16 +66,10 @@ namespace System.Security.Policy {
                         named_permission_sets = new ArrayList ();
                 }
 
-		internal PolicyLevel (string label, PolicyLevelType type, string filename)
-			: this (label, type)
-                {
-			LoadFromFile (filename);
-		}
-
-		internal void LoadFromFile (string filename) 
+		internal void LoadFromFile (string filename)
 		{
-			bool loaded = false;
 			try {
+				loaded = false;
 				// check for policy file
 				if (!File.Exists (filename)) {
 					// if it doesn't exist use the default configuration (like Fx 2.0)
@@ -87,32 +83,50 @@ namespace System.Security.Policy {
 				// load security policy configuration
 				if (File.Exists (filename)) {
 					using (StreamReader sr = File.OpenText (filename)) {
-						LoadFromString (sr.ReadToEnd ());
+						xml = FromString (sr.ReadToEnd ());
+						FromXml1 (xml);
 					}
 					loaded = true;
-				}
-				else {
-					CreateFromHardcodedDefault (_type);
-					loaded = true;
-					Save ();
+				} else {
+					CreateDefaultLevel (_type);
 				}
 			}
 			catch {
-				// this can fail in many ways include
+				// this can fail in many ways including...
 				// * can't lookup policy (path discovery);
 				// * can't copy default file to policy
 				// * can't read policy file;
-				// * can't save hardcoded policy to filename
 				// * can't decode policy file
 				if (!loaded)
-					CreateFromHardcodedDefault (_type);
+					CreateDefaultLevel (_type);
 			}
 			finally {
 				_location = filename;
 			}
 		}
 
+		internal void Initialize ()
+		{
+			if (loaded) {
+				FromXml2 (xml);
+			} else {
+				CreateDefaultNamedPermissionSets ();
+				try {
+					Save ();
+				}
+				catch {
+					// this can fail in many ways including...
+					// * can't save hardcoded policy to filename
+				}
+			}
+		}
+
 		internal void LoadFromString (string xml) 
+		{
+			FromXml (FromString (xml));
+		}
+
+		private SecurityElement FromString (string xml) 
 		{
 			SecurityParser parser = new SecurityParser ();
 			parser.LoadXml (xml);
@@ -130,13 +144,12 @@ namespace System.Security.Policy {
 			if (policy.Tag != "policy")
 				throw new ArgumentException (Locale.GetText ("missing <policy> tag"));
 			SecurityElement policyLevel = (SecurityElement) policy.Children [0];
-			FromXml (policyLevel);
+			return policyLevel;
 		}
 
 		// properties
 
-		public IList FullTrustAssemblies
-		{
+		public IList FullTrustAssemblies {
 			get { return full_trust_assemblies; }
 		}
 
@@ -238,14 +251,21 @@ namespace System.Security.Policy {
                         return pl;
                 }
 
-                public void FromXml (SecurityElement e)
-                {
-                        if (e == null)
-                                throw new ArgumentNullException ("e");
+
+		public void FromXml (SecurityElement e)
+		{
+			if (e == null)
+				throw new ArgumentNullException ("e");
 // MS doesn't throw an exception for this case
 //			if (e.Tag != "PolicyLevel")
 //				throw new ArgumentException (Locale.GetText ("Invalid XML"));
 
+			FromXml1 (e);
+			FromXml2 (e);
+		}
+
+		internal void FromXml1 (SecurityElement e)
+		{
 			SecurityElement sc = e.SearchForChildByTag ("SecurityClasses");
 			if ((sc != null) && (sc.Children != null) && (sc.Children.Count > 0)) {
 				fullNames = new Hashtable (sc.Children.Count);
@@ -253,24 +273,6 @@ namespace System.Security.Policy {
 					fullNames.Add (se.Attributes ["Name"], se.Attributes ["Description"]);
 				}
 			}
-
-			SecurityElement nps = e.SearchForChildByTag ("NamedPermissionSets");
-			if ((nps != null) && (nps.Children != null) && (nps.Children.Count > 0)) {
-				named_permission_sets.Clear ();
-				foreach (SecurityElement se in nps.Children) {
-					NamedPermissionSet n = new NamedPermissionSet ();
-					n.Resolver = this;
-					n.FromXml (se);
-					named_permission_sets.Add (n);
-				}
-			}
-
-			SecurityElement cg = e.SearchForChildByTag ("CodeGroup");
-			if ((cg != null) && (cg.Children != null) && (cg.Children.Count > 0)) {
-				root_code_group = CodeGroup.CreateFromXml (cg, this);
-			}
-			else
-				throw new ArgumentException (Locale.GetText ("Missing Root CodeGroup"));
 
 			SecurityElement fta = e.SearchForChildByTag ("FullTrustAssemblies");
 			if ((fta != null) && (fta.Children != null) && (fta.Children.Count > 0)) {
@@ -283,6 +285,27 @@ namespace System.Security.Policy {
 						throw new ArgumentException (Locale.GetText ("Invalid XML - must be StrongNameMembershipCondition"));
 					// we directly use StrongNameMembershipCondition
 					full_trust_assemblies.Add (new StrongNameMembershipCondition (se));
+				}
+			}
+
+			SecurityElement cg = e.SearchForChildByTag ("CodeGroup");
+			if ((cg != null) && (cg.Children != null) && (cg.Children.Count > 0)) {
+				root_code_group = CodeGroup.CreateFromXml (cg, this);
+			}
+			else
+				throw new ArgumentException (Locale.GetText ("Missing Root CodeGroup"));
+		}
+
+		internal void FromXml2 (SecurityElement e)
+		{
+			SecurityElement nps = e.SearchForChildByTag ("NamedPermissionSets");
+			if ((nps != null) && (nps.Children != null) && (nps.Children.Count > 0)) {
+				named_permission_sets.Clear ();
+				foreach (SecurityElement se in nps.Children) {
+					NamedPermissionSet n = new NamedPermissionSet ();
+					n.Resolver = this;
+					n.FromXml (se);
+					named_permission_sets.Add (n);
 				}
 			}
 		}
@@ -493,10 +516,10 @@ namespace System.Security.Policy {
 			}
 		}
 
-		// TODO : hardcode defaults in case 
+		// Hardcode defaults in case 
 		// (a) the specified policy file doesn't exists; and
 		// (b) no corresponding default policy file exists
-		internal void CreateFromHardcodedDefault (PolicyLevelType type) 
+		internal void CreateDefaultLevel (PolicyLevelType type) 
 		{
 			PolicyStatement psu = new PolicyStatement (new PermissionSet (PermissionState.Unrestricted));
 
@@ -515,6 +538,19 @@ namespace System.Security.Policy {
 				break;
 			}
 
+			// (default) assemblies that are fully trusted during policy resolution
+			full_trust_assemblies.Clear ();
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("mscorlib", DefaultPolicies.Key.Ecma));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System", DefaultPolicies.Key.Ecma));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Data", DefaultPolicies.Key.Ecma));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.DirectoryServices", DefaultPolicies.Key.MsFinal));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Drawing", DefaultPolicies.Key.Ecma));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Messaging", DefaultPolicies.Key.MsFinal));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.ServiceProcess", DefaultPolicies.Key.MsFinal));
+		}
+
+		internal void CreateDefaultNamedPermissionSets () 
+		{
 			named_permission_sets.Clear ();
 			named_permission_sets.Add (DefaultPolicies.LocalIntranet);
 			named_permission_sets.Add (DefaultPolicies.Internet);
@@ -533,6 +569,19 @@ namespace System.Security.Policy {
 					return (string) name;
 			}
 			return className;
+		}
+
+		internal bool IsFullTrustAssembly (Assembly a)
+		{
+			AssemblyName an = a.GetName ();
+			StrongNamePublicKeyBlob snpkb = new StrongNamePublicKeyBlob (an.GetPublicKey ());
+			StrongNameMembershipCondition snMC = new StrongNameMembershipCondition (snpkb, an.Name, an.Version);
+			foreach (StrongNameMembershipCondition sn in full_trust_assemblies) {
+				if (sn.Equals (snMC)) {
+					return true;
+				}
+			}
+			return false;
 		}
         }
 }

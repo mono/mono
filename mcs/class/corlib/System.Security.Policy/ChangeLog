@@ -1,3 +1,11 @@
+2005-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultPolicies.cs: Added a method to create the default FullTrust
+	assemblies in the policy configuration files.
+	* PolicyLevel.cs: Splitted loading/initializing of PolicyLevel so it's
+	now possible to load permissions outside corlib when resolving a 
+	policy. However FullTrustAssemblies is still ignored at this stage.
+
 2005-05-27  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DefaultPolicies.cs: Refactored code to use the new PermissionBuilder

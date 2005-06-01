@@ -76,6 +76,11 @@ namespace System.Security.Policy {
 			}
 		}
 
+		public enum Key {
+			Ecma,
+			MsFinal,
+		}
+
 #if NET_2_0
 		private const string DnsPermissionClass = "System.Net.DnsPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
@@ -91,6 +96,8 @@ namespace System.Security.Policy {
 
 		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+
+		private static Version Runtime = new Version (2, 0, 0, 0);
 #else
 		private const string DnsPermissionClass = "System.Net.DnsPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
@@ -103,7 +110,23 @@ namespace System.Security.Policy {
 		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, System.ServiceProcess, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+
+		private static Version Runtime = new Version (1, 0, 5000, 0);
 #endif
+		private static byte[] _ecmaKey = new byte [16] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+		private static StrongNamePublicKeyBlob _ecma;
+		private static byte[] _msFinalKey = new byte [160] { 
+			0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00, 0x06, 0x02, 0x00, 0x00,
+			0x00, 0x24, 0x00, 0x00, 0x52, 0x53, 0x41, 0x31, 0x00, 0x04, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+			0x07, 0xD1, 0xFA, 0x57, 0xC4, 0xAE, 0xD9, 0xF0, 0xA3, 0x2E, 0x84, 0xAA, 0x0F, 0xAE, 0xFD, 0x0D, 
+			0xE9, 0xE8, 0xFD, 0x6A, 0xEC, 0x8F, 0x87, 0xFB, 0x03, 0x76, 0x6C, 0x83, 0x4C, 0x99, 0x92, 0x1E, 
+			0xB2, 0x3B, 0xE7, 0x9A, 0xD9, 0xD5, 0xDC, 0xC1, 0xDD, 0x9A, 0xD2, 0x36, 0x13, 0x21, 0x02, 0x90, 
+			0x0B, 0x72, 0x3C, 0xF9, 0x80, 0x95, 0x7F, 0xC4, 0xE1, 0x77, 0x10, 0x8F, 0xC6, 0x07, 0x77, 0x4F, 
+			0x29, 0xE8, 0x32, 0x0E, 0x92, 0xEA, 0x05, 0xEC, 0xE4, 0xE8, 0x21, 0xC0, 0xA5, 0xEF, 0xE8, 0xF1, 
+			0x64, 0x5C, 0x4C, 0x0C, 0x93, 0xC1, 0xAB, 0x99, 0x28, 0x5D, 0x62, 0x2C, 0xAA, 0x65, 0x2C, 0x1D, 
+			0xFA, 0xD6, 0x3D, 0x74, 0x5D, 0x6F, 0x2D, 0xE5, 0xF1, 0x7E, 0x5E, 0xAF, 0x0F, 0xC4, 0x96, 0x3D, 
+			0x26, 0x1C, 0x8A, 0x12, 0x43, 0x65, 0x18, 0x20, 0x6D, 0xC0, 0x93, 0x34, 0x4D, 0x5A, 0xD2, 0x93 };
+		private static StrongNamePublicKeyBlob _msFinal;
 
 		private static NamedPermissionSet _fullTrust;
 		private static NamedPermissionSet _localIntranet;
@@ -193,6 +216,27 @@ namespace System.Security.Policy {
 					_everything = BuildEverything ();
 				return _everything;
 			}
+		}
+
+		public static StrongNameMembershipCondition FullTrustMembership (string name, Key key)
+		{
+			StrongNamePublicKeyBlob snkb = null;
+			switch (key) {
+			case Key.Ecma:
+				if (_ecma == null) {
+					_ecma = new StrongNamePublicKeyBlob (_ecmaKey);
+				}
+				snkb = _ecma;
+				break;
+			case Key.MsFinal:
+				if (_msFinal == null) {
+					_msFinal = new StrongNamePublicKeyBlob (_msFinalKey);
+				}
+				snkb = _msFinal;
+				break;
+			}
+
+			return new StrongNameMembershipCondition (snkb, name, Runtime);
 		}
 
 		// internal stuff
