@@ -211,7 +211,11 @@ namespace MonoTests.System.DirectoryServices {
 		public void IsSubset_Null ()
 		{
 			DirectoryServicesPermission dsp = new DirectoryServicesPermission (PermissionState.None);
+#if NET_2_0
 			Assert.IsTrue (dsp.IsSubsetOf (null), "null");
+#else
+			Assert.IsFalse (dsp.IsSubsetOf (null), "null");
+#endif
 		}
 
 		[Test]

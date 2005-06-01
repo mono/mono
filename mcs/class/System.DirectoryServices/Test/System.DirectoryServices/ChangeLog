@@ -1,3 +1,8 @@
+2005-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryServicesPermissionTest.cs: IsSubset(null) has a different 
+	result in 2.0 compared to 1.x.
+
 2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryServicesPermissionTest.cs: Fx 2.0 now has better arguments
