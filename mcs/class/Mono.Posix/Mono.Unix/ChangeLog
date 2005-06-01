@@ -1,5 +1,16 @@
 2005-05-31  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: Add comment for atexit(3) so I don't try to add it.
+	* Syscall.cs: Add fcntl(2) overload which takes DirectoryNotifyFlags (so
+	  that *something* accepts a DirectoryNotifyFlags); Fix IncludeAttribute
+		header files (">sys/poll.h" doesn't exist); 
+	  Add additional <sys/mman.h> functions mmap, munmap, msync, mlock, munlock,
+	  mlockall, munlockall, mremap, mincore, remap_file_pages.
+	* UnixConvert.cs: Add conversion functions for MmapFlags, MmapProt, MsyncFlags,
+	  MlockallFlags, MremapFlags.
+
+2005-05-31  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Syscall.cs, UnixConvert.cs: Rename LockFlags to LockfCommand.  This is a more 
 	  consistent naming, and it's more correct (they weren't flags in the first place).
 

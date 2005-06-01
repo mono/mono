@@ -727,6 +727,166 @@ namespace Mono.Unix {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMmapFlags")]
+		private static extern int FromMmapFlags (MmapFlags value, out Int32 rval);
+
+		public static bool TryFromMmapFlags (MmapFlags value, out Int32 rval)
+		{
+			return FromMmapFlags (value, out rval) == 0;
+		}
+
+		public static Int32 FromMmapFlags (MmapFlags value)
+		{
+			Int32 rval;
+			if (FromMmapFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMmapFlags")]
+		private static extern int ToMmapFlags (Int32 value, out MmapFlags rval);
+
+		public static bool TryToMmapFlags (Int32 value, out MmapFlags rval)
+		{
+			return ToMmapFlags (value, out rval) == 0;
+		}
+
+		public static MmapFlags ToMmapFlags (Int32 value)
+		{
+			MmapFlags rval;
+			if (ToMmapFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMmapProt")]
+		private static extern int FromMmapProt (MmapProt value, out Int32 rval);
+
+		public static bool TryFromMmapProt (MmapProt value, out Int32 rval)
+		{
+			return FromMmapProt (value, out rval) == 0;
+		}
+
+		public static Int32 FromMmapProt (MmapProt value)
+		{
+			Int32 rval;
+			if (FromMmapProt (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMmapProt")]
+		private static extern int ToMmapProt (Int32 value, out MmapProt rval);
+
+		public static bool TryToMmapProt (Int32 value, out MmapProt rval)
+		{
+			return ToMmapProt (value, out rval) == 0;
+		}
+
+		public static MmapProt ToMmapProt (Int32 value)
+		{
+			MmapProt rval;
+			if (ToMmapProt (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMsyncFlags")]
+		private static extern int FromMsyncFlags (MsyncFlags value, out Int32 rval);
+
+		public static bool TryFromMsyncFlags (MsyncFlags value, out Int32 rval)
+		{
+			return FromMsyncFlags (value, out rval) == 0;
+		}
+
+		public static Int32 FromMsyncFlags (MsyncFlags value)
+		{
+			Int32 rval;
+			if (FromMsyncFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMsyncFlags")]
+		private static extern int ToMsyncFlags (Int32 value, out MsyncFlags rval);
+
+		public static bool TryToMsyncFlags (Int32 value, out MsyncFlags rval)
+		{
+			return ToMsyncFlags (value, out rval) == 0;
+		}
+
+		public static MsyncFlags ToMsyncFlags (Int32 value)
+		{
+			MsyncFlags rval;
+			if (ToMsyncFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMlockallFlags")]
+		private static extern int FromMlockallFlags (MlockallFlags value, out Int32 rval);
+
+		public static bool TryFromMlockallFlags (MlockallFlags value, out Int32 rval)
+		{
+			return FromMlockallFlags (value, out rval) == 0;
+		}
+
+		public static Int32 FromMlockallFlags (MlockallFlags value)
+		{
+			Int32 rval;
+			if (FromMlockallFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMlockallFlags")]
+		private static extern int ToMlockallFlags (Int32 value, out MlockallFlags rval);
+
+		public static bool TryToMlockallFlags (Int32 value, out MlockallFlags rval)
+		{
+			return ToMlockallFlags (value, out rval) == 0;
+		}
+
+		public static MlockallFlags ToMlockallFlags (Int32 value)
+		{
+			MlockallFlags rval;
+			if (ToMlockallFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMremapFlags")]
+		private static extern int FromMremapFlags (MremapFlags value, out UInt64 rval);
+
+		public static bool TryFromMremapFlags (MremapFlags value, out UInt64 rval)
+		{
+			return FromMremapFlags (value, out rval) == 0;
+		}
+
+		public static UInt64 FromMremapFlags (MremapFlags value)
+		{
+			UInt64 rval;
+			if (FromMremapFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMremapFlags")]
+		private static extern int ToMremapFlags (UInt64 value, out MremapFlags rval);
+
+		public static bool TryToMremapFlags (UInt64 value, out MremapFlags rval)
+		{
+			return ToMremapFlags (value, out rval) == 0;
+		}
+
+		public static MremapFlags ToMremapFlags (UInt64 value)
+		{
+			MremapFlags rval;
+			if (ToMremapFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		//
 		// Non-generated exports
 		//

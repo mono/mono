@@ -862,7 +862,8 @@ namespace Mono.Unix {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
 		public static extern void abort ();
 
-		/* SKIP: atexit(3) */
+		/* SKIP: atexit(3) -- the GC should have collected most references by the
+		 * time this runs, so no delegates should exist, making it pointless. */
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
 		public static extern void exit (int status);

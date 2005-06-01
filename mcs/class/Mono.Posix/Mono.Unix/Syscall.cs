@@ -60,8 +60,8 @@ using System.Text;
 using Mono.Unix;
 
 [assembly:Mono.Unix.IncludeAttribute (
-	new string [] {"sys/types.h", "sys/stat.h", ">sys/poll.h", ">sys/wait.h",
-		"unistd.h", "fcntl.h", "signal.h", ">poll.h", ">grp.h", "errno.h", ">syslog.h"}, 
+	new string [] {"sys/types.h", "sys/stat.h", "sys/poll.h", "sys/wait.h",
+		"unistd.h", "fcntl.h", "signal.h", "poll.h", "grp.h", "errno.h", "syslog.h"}, 
 	new string [] {"_GNU_SOURCE", "_XOPEN_SOURCE"})]
 
 namespace Mono.Unix {
@@ -632,6 +632,56 @@ namespace Mono.Unix {
 		ST_IMMUTABLE   =  512,  // Immutable file
 		ST_NOATIME     = 1024,  // Do not update access times
 		ST_NODIRATIME  = 2048,  // Do not update directory access times
+	}
+
+	[Map][Flags]
+	public enum MmapFlags : int {
+		MAP_SHARED      = 0x01,     // Share changes.
+		MAP_PRIVATE     = 0x02,     // Changes are private.
+		MAP_TYPE        = 0x0f,     // Mask for type of mapping.
+		MAP_FIXED       = 0x10,     // Interpret addr exactly.
+		MAP_FILE        = 0,
+		MAP_ANONYMOUS   = 0x20,     // Don't use a file.
+		MAP_ANON        = MAP_ANONYMOUS,
+
+		// These are Linux-specific.
+		MAP_GROWSDOWN   = 0x00100,  // Stack-like segment.
+		MAP_DENYWRITE   = 0x00800,  // ETXTBSY
+		MAP_EXECUTABLE  = 0x01000,  // Mark it as an executable.
+		MAP_LOCKED      = 0x02000,  // Lock the mapping.
+		MAP_NORESERVE   = 0x04000,  // Don't check for reservations.
+		MAP_POPULATE    = 0x08000,  // Populate (prefault) pagetables.
+		MAP_NONBLOCK    = 0x10000,  // Do not block on IO.
+	}
+
+	[Map][Flags]
+	public enum MmapProt : int {
+		PROT_READ       = 0x1,  // Page can be read.
+		PROT_WRITE      = 0x2,  // Page can be written.
+		PROT_EXEC       = 0x4,  // Page can be executed.
+		PROT_NONE       = 0x0,  // Page can not be accessed.
+		PROT_GROWSDOWN  = 0x01000000, // Extend change to start of
+		                              //   growsdown vma (mprotect only).
+		PROT_GROWSUP    = 0x02000000, // Extend change to start of
+		                              //   growsup vma (mprotect only).
+	}
+
+	[Map][Flags]
+	public enum MsyncFlags : int {
+		MS_ASYNC      = 0x1,  // Sync memory asynchronously.
+		MS_SYNC       = 0x4,  // Synchronous memory sync.
+		MS_INVALIDATE = 0x2,  // Invalidate the caches.
+	}
+
+	[Map][Flags]
+	public enum MlockallFlags : int {
+		MCL_CURRENT	= 0x1,	// Lock all currently mapped pages.
+		MCL_FUTURE  = 0x2,	// Lock all additions to address
+	}
+
+	[Map][Flags]
+	public enum MremapFlags : ulong {
+		MREMAP_MAYMOVE = 0x1,
 	}
 
 	#endregion
@@ -1262,6 +1312,16 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_fcntl_arg")]
 		public static extern int fcntl (int fd, FcntlCommand cmd, long arg);
 
+		public static int fcntl (int fd, FcntlCommand cmd, DirectoryNotifyFlags arg)
+		{
+			if (cmd != FcntlCommand.F_NOTIFY) {
+				SetLastError (Error.EINVAL);
+				return -1;
+			}
+			long _arg = UnixConvert.FromDirectoryNotifyFlags (arg);
+			return fcntl (fd, FcntlCommand.F_NOTIFY, _arg);
+		}
+
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_fcntl_lock")]
 		public static extern int fcntl (int fd, FcntlCommand cmd, ref Flock @lock);
@@ -1794,6 +1854,59 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_posix_madvise")]
 		public static extern int posix_madvise (IntPtr addr, ulong len, 
 			PosixMadviseAdvice advice);
+
+		public static readonly IntPtr MAP_FAILED = unchecked((IntPtr)(-1));
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_mmap")]
+		public static extern IntPtr mmap (IntPtr start, ulong length, 
+				MmapProt prot, MmapFlags flags, int fd, long offset);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_munmap")]
+		public static extern int munmap (IntPtr start, ulong length);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_mprotect")]
+		public static extern int mprotect (IntPtr start, ulong len, MmapProt prot);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_msync")]
+		public static extern int msync (IntPtr start, ulong len, MsyncFlags flags);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_mlock")]
+		public static extern int mlock (IntPtr start, ulong len);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_munlock")]
+		public static extern int munlock (IntPtr start, ulong len);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="mlockall")]
+		private static extern int sys_mlockall (int flags);
+
+		public static int mlockall (MlockallFlags flags)
+		{
+			int _flags = UnixConvert.FromMlockallFlags (flags);
+			return sys_mlockall (_flags);
+		}
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int munlockall ();
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_mremap")]
+		public static extern IntPtr mremap (IntPtr old_address, ulong old_size, 
+				ulong new_size, MremapFlags flags);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_mincore")]
+		public static extern int mincore (IntPtr start, ulong length, byte[] vec);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_remap_file_pages")]
+		public static extern int remap_file_pages (IntPtr start, ulong size,
+				MmapProt prot, long pgoff, MmapFlags flags);
 
 		#endregion
 
