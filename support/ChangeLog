@@ -1,5 +1,14 @@
 2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* sys-mman.c: Add wrappers for mmap, munmap, mprotect, msync, mlock,
+	  munlock, mremap, mincore, remap_file_pages.
+	* map-icalls.h: Update to latest shared interface.
+	* map.c, map.h: Add {To,From} pairs for MmapFlags, MmapProt, MsyncFlags,
+	  MlockallFlags, MremapFlags.
+	* mph.h: Add mph_return_*_if_ssize_t_overflow macros.
+
+2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* unistd.c: Oops -- deal with s/LockFlags/LockfCommand/ change.
 
 2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>

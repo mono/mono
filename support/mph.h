@@ -110,7 +110,12 @@ typedef   guint64 mph_fsfilcnt_t;
 #define mph_return_val_if_size_t_overflow(var, ret) \
 	_mph_return_val_if_cb_(var, ret, mph_have_size_t_overflow)
 
+#define mph_return_val_if_ssize_t_overflow(var, ret) \
+	_mph_return_val_if_cb_(var, ret, mph_have_long_overflow)
+
 #define mph_return_if_size_t_overflow(var) mph_return_val_if_size_t_overflow(var, -1)
+
+#define mph_return_if_ssize_t_overflow(var) mph_return_val_if_ssize_t_overflow(var, -1)
 
 #define mph_have_off_t_overflow(var) \
 	(((var) < MPH_OFF_T_MIN) || ((var) > MPH_OFF_T_MAX))

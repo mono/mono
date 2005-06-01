@@ -6140,3 +6140,343 @@ int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
 	return 0;
 }
 
+int Mono_Posix_FromMmapFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_MmapFlags_MAP_SHARED) == Mono_Posix_MmapFlags_MAP_SHARED)
+#ifdef MAP_SHARED
+		*r |= MAP_SHARED;
+#else /* def MAP_SHARED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_SHARED */
+	if ((x & Mono_Posix_MmapFlags_MAP_PRIVATE) == Mono_Posix_MmapFlags_MAP_PRIVATE)
+#ifdef MAP_PRIVATE
+		*r |= MAP_PRIVATE;
+#else /* def MAP_PRIVATE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_PRIVATE */
+	if ((x & Mono_Posix_MmapFlags_MAP_TYPE) == Mono_Posix_MmapFlags_MAP_TYPE)
+#ifdef MAP_TYPE
+		*r |= MAP_TYPE;
+#else /* def MAP_TYPE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_TYPE */
+	if ((x & Mono_Posix_MmapFlags_MAP_FIXED) == Mono_Posix_MmapFlags_MAP_FIXED)
+#ifdef MAP_FIXED
+		*r |= MAP_FIXED;
+#else /* def MAP_FIXED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_FIXED */
+	if ((x & Mono_Posix_MmapFlags_MAP_FILE) == Mono_Posix_MmapFlags_MAP_FILE)
+#ifdef MAP_FILE
+		*r |= MAP_FILE;
+#else /* def MAP_FILE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_FILE */
+	if ((x & Mono_Posix_MmapFlags_MAP_ANONYMOUS) == Mono_Posix_MmapFlags_MAP_ANONYMOUS)
+#ifdef MAP_ANONYMOUS
+		*r |= MAP_ANONYMOUS;
+#else /* def MAP_ANONYMOUS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_ANONYMOUS */
+	if ((x & Mono_Posix_MmapFlags_MAP_ANON) == Mono_Posix_MmapFlags_MAP_ANON)
+#ifdef MAP_ANON
+		*r |= MAP_ANON;
+#else /* def MAP_ANON */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_ANON */
+	if ((x & Mono_Posix_MmapFlags_MAP_GROWSDOWN) == Mono_Posix_MmapFlags_MAP_GROWSDOWN)
+#ifdef MAP_GROWSDOWN
+		*r |= MAP_GROWSDOWN;
+#else /* def MAP_GROWSDOWN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_GROWSDOWN */
+	if ((x & Mono_Posix_MmapFlags_MAP_DENYWRITE) == Mono_Posix_MmapFlags_MAP_DENYWRITE)
+#ifdef MAP_DENYWRITE
+		*r |= MAP_DENYWRITE;
+#else /* def MAP_DENYWRITE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_DENYWRITE */
+	if ((x & Mono_Posix_MmapFlags_MAP_EXECUTABLE) == Mono_Posix_MmapFlags_MAP_EXECUTABLE)
+#ifdef MAP_EXECUTABLE
+		*r |= MAP_EXECUTABLE;
+#else /* def MAP_EXECUTABLE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_EXECUTABLE */
+	if ((x & Mono_Posix_MmapFlags_MAP_LOCKED) == Mono_Posix_MmapFlags_MAP_LOCKED)
+#ifdef MAP_LOCKED
+		*r |= MAP_LOCKED;
+#else /* def MAP_LOCKED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_LOCKED */
+	if ((x & Mono_Posix_MmapFlags_MAP_NORESERVE) == Mono_Posix_MmapFlags_MAP_NORESERVE)
+#ifdef MAP_NORESERVE
+		*r |= MAP_NORESERVE;
+#else /* def MAP_NORESERVE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_NORESERVE */
+	if ((x & Mono_Posix_MmapFlags_MAP_POPULATE) == Mono_Posix_MmapFlags_MAP_POPULATE)
+#ifdef MAP_POPULATE
+		*r |= MAP_POPULATE;
+#else /* def MAP_POPULATE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_POPULATE */
+	if ((x & Mono_Posix_MmapFlags_MAP_NONBLOCK) == Mono_Posix_MmapFlags_MAP_NONBLOCK)
+#ifdef MAP_NONBLOCK
+		*r |= MAP_NONBLOCK;
+#else /* def MAP_NONBLOCK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MAP_NONBLOCK */
+	return 0;
+}
+
+int Mono_Posix_ToMmapFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef MAP_SHARED
+	if ((x & MAP_SHARED) == MAP_SHARED)
+		*r |= Mono_Posix_MmapFlags_MAP_SHARED;
+#endif /* ndef MAP_SHARED */
+#ifdef MAP_PRIVATE
+	if ((x & MAP_PRIVATE) == MAP_PRIVATE)
+		*r |= Mono_Posix_MmapFlags_MAP_PRIVATE;
+#endif /* ndef MAP_PRIVATE */
+#ifdef MAP_TYPE
+	if ((x & MAP_TYPE) == MAP_TYPE)
+		*r |= Mono_Posix_MmapFlags_MAP_TYPE;
+#endif /* ndef MAP_TYPE */
+#ifdef MAP_FIXED
+	if ((x & MAP_FIXED) == MAP_FIXED)
+		*r |= Mono_Posix_MmapFlags_MAP_FIXED;
+#endif /* ndef MAP_FIXED */
+#ifdef MAP_FILE
+	if ((x & MAP_FILE) == MAP_FILE)
+		*r |= Mono_Posix_MmapFlags_MAP_FILE;
+#endif /* ndef MAP_FILE */
+#ifdef MAP_ANONYMOUS
+	if ((x & MAP_ANONYMOUS) == MAP_ANONYMOUS)
+		*r |= Mono_Posix_MmapFlags_MAP_ANONYMOUS;
+#endif /* ndef MAP_ANONYMOUS */
+#ifdef MAP_ANON
+	if ((x & MAP_ANON) == MAP_ANON)
+		*r |= Mono_Posix_MmapFlags_MAP_ANON;
+#endif /* ndef MAP_ANON */
+#ifdef MAP_GROWSDOWN
+	if ((x & MAP_GROWSDOWN) == MAP_GROWSDOWN)
+		*r |= Mono_Posix_MmapFlags_MAP_GROWSDOWN;
+#endif /* ndef MAP_GROWSDOWN */
+#ifdef MAP_DENYWRITE
+	if ((x & MAP_DENYWRITE) == MAP_DENYWRITE)
+		*r |= Mono_Posix_MmapFlags_MAP_DENYWRITE;
+#endif /* ndef MAP_DENYWRITE */
+#ifdef MAP_EXECUTABLE
+	if ((x & MAP_EXECUTABLE) == MAP_EXECUTABLE)
+		*r |= Mono_Posix_MmapFlags_MAP_EXECUTABLE;
+#endif /* ndef MAP_EXECUTABLE */
+#ifdef MAP_LOCKED
+	if ((x & MAP_LOCKED) == MAP_LOCKED)
+		*r |= Mono_Posix_MmapFlags_MAP_LOCKED;
+#endif /* ndef MAP_LOCKED */
+#ifdef MAP_NORESERVE
+	if ((x & MAP_NORESERVE) == MAP_NORESERVE)
+		*r |= Mono_Posix_MmapFlags_MAP_NORESERVE;
+#endif /* ndef MAP_NORESERVE */
+#ifdef MAP_POPULATE
+	if ((x & MAP_POPULATE) == MAP_POPULATE)
+		*r |= Mono_Posix_MmapFlags_MAP_POPULATE;
+#endif /* ndef MAP_POPULATE */
+#ifdef MAP_NONBLOCK
+	if ((x & MAP_NONBLOCK) == MAP_NONBLOCK)
+		*r |= Mono_Posix_MmapFlags_MAP_NONBLOCK;
+#endif /* ndef MAP_NONBLOCK */
+	return 0;
+}
+
+int Mono_Posix_FromMmapProt (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_MmapProt_PROT_READ) == Mono_Posix_MmapProt_PROT_READ)
+#ifdef PROT_READ
+		*r |= PROT_READ;
+#else /* def PROT_READ */
+		{errno = EINVAL; return -1;}
+#endif /* ndef PROT_READ */
+	if ((x & Mono_Posix_MmapProt_PROT_WRITE) == Mono_Posix_MmapProt_PROT_WRITE)
+#ifdef PROT_WRITE
+		*r |= PROT_WRITE;
+#else /* def PROT_WRITE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef PROT_WRITE */
+	if ((x & Mono_Posix_MmapProt_PROT_EXEC) == Mono_Posix_MmapProt_PROT_EXEC)
+#ifdef PROT_EXEC
+		*r |= PROT_EXEC;
+#else /* def PROT_EXEC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef PROT_EXEC */
+	if ((x & Mono_Posix_MmapProt_PROT_NONE) == Mono_Posix_MmapProt_PROT_NONE)
+#ifdef PROT_NONE
+		*r |= PROT_NONE;
+#else /* def PROT_NONE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef PROT_NONE */
+	if ((x & Mono_Posix_MmapProt_PROT_GROWSDOWN) == Mono_Posix_MmapProt_PROT_GROWSDOWN)
+#ifdef PROT_GROWSDOWN
+		*r |= PROT_GROWSDOWN;
+#else /* def PROT_GROWSDOWN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef PROT_GROWSDOWN */
+	if ((x & Mono_Posix_MmapProt_PROT_GROWSUP) == Mono_Posix_MmapProt_PROT_GROWSUP)
+#ifdef PROT_GROWSUP
+		*r |= PROT_GROWSUP;
+#else /* def PROT_GROWSUP */
+		{errno = EINVAL; return -1;}
+#endif /* ndef PROT_GROWSUP */
+	return 0;
+}
+
+int Mono_Posix_ToMmapProt (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef PROT_READ
+	if ((x & PROT_READ) == PROT_READ)
+		*r |= Mono_Posix_MmapProt_PROT_READ;
+#endif /* ndef PROT_READ */
+#ifdef PROT_WRITE
+	if ((x & PROT_WRITE) == PROT_WRITE)
+		*r |= Mono_Posix_MmapProt_PROT_WRITE;
+#endif /* ndef PROT_WRITE */
+#ifdef PROT_EXEC
+	if ((x & PROT_EXEC) == PROT_EXEC)
+		*r |= Mono_Posix_MmapProt_PROT_EXEC;
+#endif /* ndef PROT_EXEC */
+#ifdef PROT_NONE
+	if ((x & PROT_NONE) == PROT_NONE)
+		*r |= Mono_Posix_MmapProt_PROT_NONE;
+#endif /* ndef PROT_NONE */
+#ifdef PROT_GROWSDOWN
+	if ((x & PROT_GROWSDOWN) == PROT_GROWSDOWN)
+		*r |= Mono_Posix_MmapProt_PROT_GROWSDOWN;
+#endif /* ndef PROT_GROWSDOWN */
+#ifdef PROT_GROWSUP
+	if ((x & PROT_GROWSUP) == PROT_GROWSUP)
+		*r |= Mono_Posix_MmapProt_PROT_GROWSUP;
+#endif /* ndef PROT_GROWSUP */
+	return 0;
+}
+
+int Mono_Posix_FromMsyncFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_MsyncFlags_MS_ASYNC) == Mono_Posix_MsyncFlags_MS_ASYNC)
+#ifdef MS_ASYNC
+		*r |= MS_ASYNC;
+#else /* def MS_ASYNC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MS_ASYNC */
+	if ((x & Mono_Posix_MsyncFlags_MS_SYNC) == Mono_Posix_MsyncFlags_MS_SYNC)
+#ifdef MS_SYNC
+		*r |= MS_SYNC;
+#else /* def MS_SYNC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MS_SYNC */
+	if ((x & Mono_Posix_MsyncFlags_MS_INVALIDATE) == Mono_Posix_MsyncFlags_MS_INVALIDATE)
+#ifdef MS_INVALIDATE
+		*r |= MS_INVALIDATE;
+#else /* def MS_INVALIDATE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MS_INVALIDATE */
+	return 0;
+}
+
+int Mono_Posix_ToMsyncFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef MS_ASYNC
+	if ((x & MS_ASYNC) == MS_ASYNC)
+		*r |= Mono_Posix_MsyncFlags_MS_ASYNC;
+#endif /* ndef MS_ASYNC */
+#ifdef MS_SYNC
+	if ((x & MS_SYNC) == MS_SYNC)
+		*r |= Mono_Posix_MsyncFlags_MS_SYNC;
+#endif /* ndef MS_SYNC */
+#ifdef MS_INVALIDATE
+	if ((x & MS_INVALIDATE) == MS_INVALIDATE)
+		*r |= Mono_Posix_MsyncFlags_MS_INVALIDATE;
+#endif /* ndef MS_INVALIDATE */
+	return 0;
+}
+
+int Mono_Posix_FromMlockallFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_MlockallFlags_MCL_CURRENT) == Mono_Posix_MlockallFlags_MCL_CURRENT)
+#ifdef MCL_CURRENT
+		*r |= MCL_CURRENT;
+#else /* def MCL_CURRENT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MCL_CURRENT */
+	if ((x & Mono_Posix_MlockallFlags_MCL_FUTURE) == Mono_Posix_MlockallFlags_MCL_FUTURE)
+#ifdef MCL_FUTURE
+		*r |= MCL_FUTURE;
+#else /* def MCL_FUTURE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MCL_FUTURE */
+	return 0;
+}
+
+int Mono_Posix_ToMlockallFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef MCL_CURRENT
+	if ((x & MCL_CURRENT) == MCL_CURRENT)
+		*r |= Mono_Posix_MlockallFlags_MCL_CURRENT;
+#endif /* ndef MCL_CURRENT */
+#ifdef MCL_FUTURE
+	if ((x & MCL_FUTURE) == MCL_FUTURE)
+		*r |= Mono_Posix_MlockallFlags_MCL_FUTURE;
+#endif /* ndef MCL_FUTURE */
+	return 0;
+}
+
+int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_MremapFlags_MREMAP_MAYMOVE) == Mono_Posix_MremapFlags_MREMAP_MAYMOVE)
+#ifdef MREMAP_MAYMOVE
+		*r |= MREMAP_MAYMOVE;
+#else /* def MREMAP_MAYMOVE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef MREMAP_MAYMOVE */
+	return 0;
+}
+
+int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef MREMAP_MAYMOVE
+	if ((x & MREMAP_MAYMOVE) == MREMAP_MAYMOVE)
+		*r |= Mono_Posix_MremapFlags_MREMAP_MAYMOVE;
+#endif /* ndef MREMAP_MAYMOVE */
+	return 0;
+}
+

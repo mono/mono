@@ -653,6 +653,47 @@ int Mono_Posix_ToXattrFlags (int x, int *r);
 int Mono_Posix_FromMountFlags (guint64 x, guint64 *r);
 int Mono_Posix_ToMountFlags (guint64 x, guint64 *r);
 
+#define Mono_Posix_MmapFlags_MAP_SHARED 0x00000001
+#define Mono_Posix_MmapFlags_MAP_PRIVATE 0x00000002
+#define Mono_Posix_MmapFlags_MAP_TYPE 0x0000000f
+#define Mono_Posix_MmapFlags_MAP_FIXED 0x00000010
+#define Mono_Posix_MmapFlags_MAP_FILE 0x00000000
+#define Mono_Posix_MmapFlags_MAP_ANONYMOUS 0x00000020
+#define Mono_Posix_MmapFlags_MAP_ANON 0x00000020
+#define Mono_Posix_MmapFlags_MAP_GROWSDOWN 0x00000100
+#define Mono_Posix_MmapFlags_MAP_DENYWRITE 0x00000800
+#define Mono_Posix_MmapFlags_MAP_EXECUTABLE 0x00001000
+#define Mono_Posix_MmapFlags_MAP_LOCKED 0x00002000
+#define Mono_Posix_MmapFlags_MAP_NORESERVE 0x00004000
+#define Mono_Posix_MmapFlags_MAP_POPULATE 0x00008000
+#define Mono_Posix_MmapFlags_MAP_NONBLOCK 0x00010000
+int Mono_Posix_FromMmapFlags (int x, int *r);
+int Mono_Posix_ToMmapFlags (int x, int *r);
+
+#define Mono_Posix_MmapProt_PROT_READ 0x00000001
+#define Mono_Posix_MmapProt_PROT_WRITE 0x00000002
+#define Mono_Posix_MmapProt_PROT_EXEC 0x00000004
+#define Mono_Posix_MmapProt_PROT_NONE 0x00000000
+#define Mono_Posix_MmapProt_PROT_GROWSDOWN 0x01000000
+#define Mono_Posix_MmapProt_PROT_GROWSUP 0x02000000
+int Mono_Posix_FromMmapProt (int x, int *r);
+int Mono_Posix_ToMmapProt (int x, int *r);
+
+#define Mono_Posix_MsyncFlags_MS_ASYNC 0x00000001
+#define Mono_Posix_MsyncFlags_MS_SYNC 0x00000004
+#define Mono_Posix_MsyncFlags_MS_INVALIDATE 0x00000002
+int Mono_Posix_FromMsyncFlags (int x, int *r);
+int Mono_Posix_ToMsyncFlags (int x, int *r);
+
+#define Mono_Posix_MlockallFlags_MCL_CURRENT 0x00000001
+#define Mono_Posix_MlockallFlags_MCL_FUTURE 0x00000002
+int Mono_Posix_FromMlockallFlags (int x, int *r);
+int Mono_Posix_ToMlockallFlags (int x, int *r);
+
+#define Mono_Posix_MremapFlags_MREMAP_MAYMOVE 0x00000001
+int Mono_Posix_FromMremapFlags (guint64 x, guint64 *r);
+int Mono_Posix_ToMremapFlags (guint64 x, guint64 *r);
+
 G_END_DECLS
 
 #endif /* ndef INC_Mono_Posix_map_H */
