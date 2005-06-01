@@ -99,6 +99,17 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal override void MenuChanged ()
+		{
+			base.MenuChanged ();
+			tracker = new MenuAPI.TRACKER (); 
+			tracker.hCurrentMenu = tracker.hTopMenu = menu_handle;
+
+			MenuAPI.SetMenuBarWindow (menu_handle, form);
+			// TODO: Need to invalidate & redraw topmenu
+		}
+
+
 		/* Mouse events from the form */
 		internal void OnMouseDown (Form window, MouseEventArgs e)
 		{			

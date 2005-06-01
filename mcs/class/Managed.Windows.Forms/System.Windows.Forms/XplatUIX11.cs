@@ -1117,6 +1117,13 @@ namespace System.Windows.Forms {
 		#endregion	// Callbacks
 
 		#region Public Properties
+
+		internal override int Caption {
+			get {
+				throw new NotImplementedException(); 
+			}
+		}
+
 		internal override  Size CursorSize {
 			get {
 				int	x;
@@ -1141,6 +1148,12 @@ namespace System.Windows.Forms {
 				return new Size(4, 4);
 			}
 		} 
+
+		internal override  Size FrameBorderSize { 
+			get {
+				throw new NotImplementedException(); 
+			}
+		}
 
 		internal override  Size IconSize {
 			get {

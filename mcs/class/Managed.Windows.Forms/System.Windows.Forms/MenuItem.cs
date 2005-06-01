@@ -273,7 +273,20 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public bool Visible {
 			get { return visible;}
-			set { visible = value; }
+			set { 
+				if (value == visible)
+					return;
+
+				visible = value;
+
+				if (menu_items != null) {
+					foreach (MenuItem mi in menu_items)
+						mi.Visible = value;
+				}
+
+				parent_menu.IsDirty = true;
+				parent_menu.creating = false;
+			}
 		}
 
 		#endregion Public Properties

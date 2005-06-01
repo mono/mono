@@ -69,14 +69,19 @@ namespace System.Windows.Forms
 					Dispose (true);
 				}
 
-				if (menu_handle == IntPtr.Zero) {					
-					menu_handle = CreateMenuHandle ();
-					CreateItems ();
-					IsDirty = false;
+				if (menu_handle == IntPtr.Zero) {
+					MenuChanged ();
 				}
 
 				return menu_handle;
 			}
+		}
+
+		internal virtual void MenuChanged ()
+		{
+			menu_handle = CreateMenuHandle ();
+			CreateItems ();
+			IsDirty = false;
 		}
 
 		[BrowsableAttribute(false)]
@@ -139,9 +144,10 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{		
 			if (disposing) {
-				if (menu_handle != IntPtr.Zero)
+				if (menu_handle != IntPtr.Zero) {
 					MenuAPI.DestroyMenu (menu_handle);
 					menu_handle = IntPtr.Zero;
+				}
 			}
 		}
 

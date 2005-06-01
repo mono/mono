@@ -83,9 +83,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal abstract int Caption { get; }
 		internal abstract Size CursorSize { get; }
 		internal abstract bool DragFullWindows { get; }
 		internal abstract Size DragSize { get; }
+		internal abstract Size FrameBorderSize { get; }
 		internal abstract Size IconSize { get; }
 		internal abstract Size MaxWindowTrackSize { get; }
 		internal abstract Size MinimizedWindowSize { get; }

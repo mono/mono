@@ -112,6 +112,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public int CaptionHeight {
+			get {
+				return driver.Caption;
+			}
+		}
+
 		static public Size CursorSize {
 			get {
 				return driver.CursorSize;
@@ -127,6 +133,12 @@ namespace System.Windows.Forms {
 		static public Size DragSize {
 			get {
 				return driver.DragSize;
+			}
+		}
+
+		public static Size FrameBorderSize {
+			get {
+				return driver.FrameBorderSize;
 			}
 		}
 

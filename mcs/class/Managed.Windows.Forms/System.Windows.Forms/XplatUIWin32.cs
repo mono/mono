@@ -747,6 +747,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override int Caption {
+			get {
+				return Win32GetSystemMetrics(SystemMetrics.SM_CYCAPTION);
+			}
+		}
+
 		internal override Size CursorSize {
 			get {
 				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR), Win32GetSystemMetrics(SystemMetrics.SM_CYCURSOR));
@@ -762,6 +768,12 @@ namespace System.Windows.Forms {
 		internal override Size DragSize {
 			get {
 				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXDRAG), Win32GetSystemMetrics(SystemMetrics.SM_CYDRAG));
+			}
+		}
+
+		internal override Size FrameBorderSize { 
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXFRAME), Win32GetSystemMetrics(SystemMetrics.SM_CYFRAME));
 			}
 		}
 
@@ -1676,7 +1688,6 @@ Console.WriteLine("Hit Clear background");
 		}
 
 		internal override Point GetMenuOrigin(IntPtr handle) {
-			// FIXME - this does not yet consider different window styles
 			return new Point(SystemInformation.FrameBorderSize.Width, SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight);
 		}
 

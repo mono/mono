@@ -1,3 +1,16 @@
+2005-06-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* Menu.cs: Call MenuChanged when menuitem visibility has been
+	changed.
+	* MenuItem.cs: Rebuild menu when item is (not) visible.
+	* MainMenu.cs: MainMenu has special MenuChanged.
+	* Theme.cs: Caption and FrameBorderSize are not fixed.
+	* XplatUI.cs: Added CaptionHeight,FrameBorderSize.
+	* XplatUIDriver.cs: Introduced Caption and FrameBorderSize.
+	* XplatUIX11.cs,
+	* XplatUIOSX: Caption and FrameBorderSize not implemented yet.
+	* XplatUIWin32.cs: Get Caption and FrameBorderSize from system.
+
 2005-05-30  Jackson Harper  <jackson@ximian.com>
 
 	* DataFormat.cs: We can't statically initialize this stuff because

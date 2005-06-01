@@ -259,7 +259,7 @@ namespace System.Windows.Forms
 
 		public virtual int CaptionHeight {
 			get {
-				return 19;
+				return XplatUI.CaptionHeight;
 			}
 		}
 
@@ -283,7 +283,7 @@ namespace System.Windows.Forms
 
 		public virtual Size FrameBorderSize {
 			get {
-				return new Size(4, 4);
+				return XplatUI.FrameBorderSize;
 			}
 		}
 
