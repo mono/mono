@@ -219,7 +219,7 @@ gint32
 Mono_Posix_Syscall_lockf (int fd, int cmd, mph_off_t len)
 {
 	mph_return_if_off_t_overflow (len);
-	if (Mono_Posix_FromLockFlags (cmd, &cmd) == -1)
+	if (Mono_Posix_FromLockfCommand (cmd, &cmd) == -1)
 		return -1;
 	return lockf (fd, cmd, (off_t) len);
 }

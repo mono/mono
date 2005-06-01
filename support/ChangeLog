@@ -1,5 +1,9 @@
 2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* unistd.c: Oops -- deal with s/LockFlags/LockfCommand/ change.
+
+2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* map.h, map.c, map-icalls.h: Rename LockFlags to LockfCommand.
 
 2005-05-20  Zoltan Varga  <vargaz@freemail.hu>
