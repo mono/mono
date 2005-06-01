@@ -404,112 +404,75 @@ namespace System.Net.Sockets
 		private static object unixendpoint=null;
 		private static Type unixendpointtype=null;
 		
+
+		static void AddSockets (ArrayList sockets, IList list, string name)
+		{
+			if (list != null) {
+				foreach (Socket sock in list) {
+					if (sock == null) // MS throws a NullRef
+						throw new ArgumentNullException (name, "Contains a null element");
+					sockets.Add (sock);
+				}
+			}
+
+			sockets.Add (null);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Select_internal(ref Socket[] read,
-							   ref Socket[] write,
-							   ref Socket[] err,
-							   int timeout,
-							   out int error);
+		private extern static void Select_internal (ref Socket [] sockets,
+							int microSeconds,
+							out int error);
 
-		public static void Select(IList read_list, IList write_list,
-					  IList err_list, int time_us) {
-			int read_count = 0, write_count = 0, err_count = 0;
-			Socket[] read_arr = null;
-			Socket[] write_arr = null;
-			Socket[] err_arr = null;
+		public static void Select (IList checkRead, IList checkWrite, IList checkError, int microSeconds)
+		{
+			ArrayList list = new ArrayList ();
+			AddSockets (list, checkRead, "checkRead");
+			AddSockets (list, checkWrite, "checkWrite");
+			AddSockets (list, checkError, "checkError");
 
-			if (read_list!=null)
-				read_count=read_list.Count;
-
-			if (read_count != 0)
-				read_arr=new Socket[read_count];
-
-			if (write_list!=null)
-				write_count=write_list.Count;
-
-			if (write_count != 0)
-				write_arr=new Socket[write_count];
-
-			if (err_list!=null)
-				err_count=err_list.Count;
-
-			if (err_count != 0)
-				err_arr=new Socket[err_count];
-			
-			if(read_count == 0 && write_count == 0 && err_count == 0) {
-				throw new ArgumentNullException ("read_list, write_list, err_list",
+			if (list.Count == 3) {
+				throw new ArgumentNullException ("checkRead, checkWrite, checkError",
 								 "All the lists are null or empty.");
 			}
 
-			int i;
-
-			if (read_count != 0) {
-				i=0;
-				
-				foreach (Socket s in read_list) {
-					read_arr[i]=s;
-					i++;
-				}
-			}
-
-			if (write_count != 0) {
-				i=0;
-				foreach (Socket s in write_list) {
-					write_arr[i]=s;
-					i++;
-				}
-			}
-			
-			if (err_count != 0) {
-				i=0;
-				foreach (Socket s in err_list) {
-					err_arr[i]=s;
-					i++;
-				}
-			}
-
 			int error;
-			
-			Select_internal(ref read_arr, ref write_arr,
-					ref err_arr, time_us, out error);
-
-			if(error != 0) {
-				throw new SocketException (error);
-			}
-
-			/* Make sure the connected state is updated
-			 * for each socket returned from the select;
-			 * for non blocking Connect()s, this is when
-			 * we find out that the connect succeeded.
+			/*
+			 * The 'sockets' array contains: READ socket 0-n, null,
+			 * 				 WRITE socket 0-n, null,
+			 *				 ERROR socket 0-n, null
 			 */
+			Socket [] sockets = (Socket []) list.ToArray (typeof (Socket));
+			Select_internal (ref sockets, microSeconds, out error);
 
-			if(read_list!=null) {
-				read_list.Clear();
-				if (read_arr != null) {
-					for(i=0; i<read_arr.Length; i++) {
-						read_list.Add(read_arr[i]);
-						read_arr[i].connected = true;
-					}
+			if (error != 0)
+				throw new SocketException (error);
+
+			if (checkRead != null)
+				checkRead.Clear ();
+
+			if (checkWrite != null)
+				checkWrite.Clear ();
+
+			if (checkError != null)
+				checkError.Clear ();
+
+			if (sockets == null)
+				return;
+
+			int mode = 0;
+			int count = sockets.Length;
+			IList currentList = checkRead;
+			for (int i = 0; i < count; i++) {
+				Socket sock = sockets [i];
+				if (sock == null) { // separator
+					currentList = (mode == 0) ? checkWrite : checkError;
+					mode++;
+					continue;
 				}
-			}
-			
-			if(write_list!=null) {
-				write_list.Clear();
-				if (write_arr != null) {
-					for(i=0; i<write_arr.Length; i++) {
-						write_list.Add(write_arr[i]);
-						write_arr[i].connected = true;
-					}
-				}
-			}
-			
-			if(err_list!=null) {
-				err_list.Clear();
-				if (err_arr != null) {
-					for(i=0; i<err_arr.Length; i++) {
-						err_list.Add(err_arr[i]);
-						err_arr[i].connected = true;
-					}
+
+				if (currentList != null) {
+					sock.connected = true;
+					currentList.Add (sock);
 				}
 			}
 		}

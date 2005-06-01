@@ -1,3 +1,8 @@
+2005-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: adapted Select to the new Select_internal that uses poll()
+	instead of select(). Managed part of the fix for bug #71203.
+
 2005-05-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: apply the same hack on blocking Connect calls as the one
