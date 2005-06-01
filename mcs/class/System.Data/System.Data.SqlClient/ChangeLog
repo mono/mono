@@ -1,3 +1,8 @@
+2005-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SqlParameter.cs: moved the 'using S.D.SqlTypes' out of NET_2_0. Fixes
+	the build.
+
 2005-06-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlParameter.cs: Parameter's value can be SqlTypes. Convert to

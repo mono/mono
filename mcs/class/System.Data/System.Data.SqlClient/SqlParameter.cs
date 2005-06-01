@@ -43,8 +43,8 @@ using System.Data;
 using System.Data.Common;
 #if NET_2_0
 using System.Data.ProviderBase;
-using System.Data.SqlTypes;
 #endif // NET_2_0
+using System.Data.SqlTypes;
 using System.Runtime.InteropServices;
 using System.Text;
 
