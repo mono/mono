@@ -7,7 +7,7 @@ TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
 TEST_PROG=xmlconf.exe
 
-test: $(TEST_PROG)
+test: $(TEST_PROG) $(TEST_CATALOG)
 
 run-test: test
 	$(RUNTIME) $(TEST_PROG) $(XMLCONF_OPTIONS)

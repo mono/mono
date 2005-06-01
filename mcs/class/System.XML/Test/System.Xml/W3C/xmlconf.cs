@@ -265,6 +265,7 @@ introduced new bugs! Before you commit, you must do one of the following:
 				if (fixmeList.Contains (testId) || knownFailures.Contains (testId)) {
 					++fixedCount;
 					fixedList.WriteLine (testId);
+					fixedList.Flush ();
 					Console.Error.Write ("!");
 					return true;
 				}
