@@ -1,3 +1,8 @@
+2005-06-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlParameter.cs: Parameter's value can be SqlTypes. Convert to
+	framework type to pass to TDS layer. Fixes bug #75044.
+
 2005-05-24 Umadevi S <sumadevi@novell.com>
 	* fixed some 2.0 and 1.0 specific fields/attributes for various classes.
 	* Added SqlClientMetaDataCollectionNames.cs, Implemented some 2.0

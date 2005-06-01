@@ -82,7 +82,7 @@ namespace System.Data.SqlClient {
 
 		public SqlParameter (string parameterName, object value) 
 		{
-			metaParameter = new TdsMetaParameter (parameterName, value);
+			metaParameter = new TdsMetaParameter (parameterName, SqlTypeToFrameworkType (value));
 			this.sourceVersion = DataRowVersion.Current;
 			InferSqlType (value);
 		}
@@ -105,8 +105,10 @@ namespace System.Data.SqlClient {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
-			metaParameter = new TdsMetaParameter (parameterName, size, isNullable, precision, scale, value);
-
+			metaParameter = new TdsMetaParameter (parameterName, size, 
+							      isNullable, precision, 
+							      scale, 
+							      SqlTypeToFrameworkType (value));
 			SqlDbType = dbType;
 			Direction = direction;
 			SourceColumn = sourceColumn;
@@ -383,7 +385,7 @@ namespace System.Data.SqlClient {
 			set { 
 				if (!isTypeSet)
 					InferSqlType (value);
-				metaParameter.Value = value; 
+				metaParameter.Value = SqlTypeToFrameworkType (value);
 			}
 		}
 
@@ -411,46 +413,61 @@ namespace System.Data.SqlClient {
 
 			switch (type.FullName) {
 			case "System.Int64":
+			case "System.Data.SqlTypes.SqlInt64":
 				SetSqlDbType (SqlDbType.BigInt);
 				break;
 			case "System.Boolean":
+			case "System.Data.SqlTypes.SqlBoolean":
 				SetSqlDbType (SqlDbType.Bit);
 				break;
 			case "System.String":
+			case "System.Data.SqlTypes.SqlString":
 				SetSqlDbType (SqlDbType.NVarChar);
 				break;
 			case "System.DateTime":
+			case "System.Data.SqlTypes.SqlDateTime":
 				SetSqlDbType (SqlDbType.DateTime);
 				break;
 			case "System.Decimal":
+			case "System.Data.SqlTypes.SqlDecimal":
 				SetSqlDbType (SqlDbType.Decimal);
 				break;
 			case "System.Double":
+			case "System.Data.SqlTypes.SqlDouble":
 				SetSqlDbType (SqlDbType.Float);
 				break;
 			case "System.Byte[]":
+			case "System.Data.SqlTypes.SqlBinary":
 				SetSqlDbType (SqlDbType.VarBinary);
 				break;
 			case "System.Byte":
+			case "System.Data.SqlTypes.SqlByte":
 				SetSqlDbType (SqlDbType.TinyInt);
 				break;
 			case "System.Int32":
+			case "System.Data.SqlTypes.SqlInt32":
 				SetSqlDbType (SqlDbType.Int);
 				break;
 			case "System.Single":
+			case "System.Data.SqlTypes.Single":
 				SetSqlDbType (SqlDbType.Real);
 				break;
 			case "System.Int16":
+			case "System.Data.SqlTypes.SqlInt16":
 				SetSqlDbType (SqlDbType.SmallInt);
 				break;
 			case "System.Guid":
+			case "System.Data.SqlTypes.SqlGuid":
 				SetSqlDbType (SqlDbType.UniqueIdentifier);
 				break;
-			case "System.Object":
-				SetSqlDbType (SqlDbType.Variant);
+			case "System.Money":
+			case "System.SmallMoney":
+			case "System.Data.SqlTypes.SqlMoney":
+				SetSqlDbType (SqlDbType.Money);
 				break;
+			case "System.Object":
 			case "System.DBNull":
-				SetSqlDbType(SqlDbType.Variant); // variant can contain numeric,
+				SetSqlDbType (SqlDbType.Variant); // variant can contain numeric,
 								//string,binary or data and also nul								    //values, so we can later resolve 									// it to correct type.	
 				break;	
 			default:
@@ -737,6 +754,43 @@ namespace System.Data.SqlClient {
 		public override string ToString() 
 		{
 			return ParameterName;
+		}
+
+		private object SqlTypeToFrameworkType (object value)
+		{
+			if (! (value is INullable)) // if the value is not SqlType
+				return value;
+
+			// Map to .net type, as Mono TDS respects only types from .net
+			switch (value.GetType ().FullName) {
+			case "System.Data.SqlTypes.SqlBinary":
+				return ( (SqlBinary) value).Value;
+			case "System.Data.SqlTypes.SqlBoolean":
+				return ( (SqlBoolean) value).Value;
+			case "System.Data.SqlTypes.SqlByte":
+				return ( (SqlByte) value).Value;
+			case "System.Data.SqlTypes.SqlDateTime":
+				return ( (SqlDateTime) value).Value;
+			case "System.Data.SqlTypes.SqlDecimal":
+				return ( (SqlDecimal) value).Value;
+			case "System.Data.SqlTypes.SqlDouble":
+				return ( (SqlDouble) value).Value;
+			case "System.Data.SqlTypes.SqlGuid":
+				return ( (SqlGuid) value).Value;
+			case "System.Data.SqlTypes.SqlInt16":
+				return ( (SqlInt16) value).Value;
+			case "System.Data.SqlTypes.SqlInt32 ":
+				return ( (SqlInt32 ) value).Value;
+			case "System.Data.SqlTypes.SqlInt64":
+				return ( (SqlInt64) value).Value;
+			case "System.Data.SqlTypes.SqlMoney":
+				return ( (SqlMoney) value).Value;
+			case "System.Data.SqlTypes.SqlSingle":
+				return ( (SqlSingle) value).Value;
+			case "System.Data.SqlTypes.SqlString":
+				return ( (SqlString) value).Value;
+			}
+			return value;
 		}
 
 #if NET_2_0
