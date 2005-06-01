@@ -1,5 +1,9 @@
 2005-06-01  Andrew Skiba  <andrews@mainsoft.com>
 
+	* TODO : added new file
+
+2005-06-01  Andrew Skiba  <andrews@mainsoft.com>
+
 	* Makefile : test target depends on the catalog
 	* xmlconf.cs : flush fixed list after each output
 	* knownFailures.lst, fixme.lst : add initial lists of known bugs
