@@ -1,5 +1,8 @@
 2005-06-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MethodBuilder.cs (SetCustomAttribute): Handle DllImportAttribute
+	as well.
+
 	* CustomAttributeBuilder.cs: Add a decode_cattr helper method.
 
 2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>

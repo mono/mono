@@ -301,6 +301,22 @@ namespace System.Reflection.Emit {
 				SetImplementationFlags ((MethodImplAttributes)impla);
 				return;
 			}
+			if (attrname == "System.Runtime.InteropServices.DllImportAttribute") {
+				DllImportAttribute attr = (DllImportAttribute)CustomAttributeBuilder.decode_cattr (customBuilder);
+				pi_dll = attr.Value;
+				pi_entry = attr.EntryPoint;
+				native_cc = attr.CallingConvention;
+				charset = attr.CharSet;
+				ExactSpelling = attr.ExactSpelling;
+				if (attr.PreserveSig)
+					iattrs |= MethodImplAttributes.PreserveSig;
+				SetLastError = attr.SetLastError;
+#if NET_1_1
+				BestFitMapping = attr.BestFitMapping;
+				ThrowOnUnmappableChar = attr.ThrowOnUnmappableChar;
+#endif
+				return;
+			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
