@@ -154,6 +154,7 @@ namespace Mono.Globalization.Unicode
 		char [] orderedGurmukhi;
 		char [] orderedGujarati;
 		char [] orderedGeorgian;
+		char [] orderedThaana;
 
 		static readonly char [] orderedTamilConsonants = new char [] {
 			// based on traditional Tamil consonants, except for
@@ -164,6 +165,9 @@ namespace Mono.Globalization.Unicode
 			'\u0BB0', '\u0BB2', '\u0BB5', '\u0BB4', '\u0BB3',
 			'\u0BB1', '\u0BA9', '\u0B9C', '\u0BB8', '\u0BB7',
 			'\u0BB9'};
+
+		Hashtable arabicLetterPrimaryValues = new Hashtable (); // cp -> level1 value
+		Hashtable arabicNameMap = new Hashtable (); // letterName -> cp
 
 		void Run (string [] args)
 		{
@@ -215,8 +219,6 @@ namespace Mono.Globalization.Unicode
 			Result.WriteLine ("static int [] level2 = new int [] {");
 			for (int i = 0; i < map.Length; i++) {
 				int value = map [i].Level2;
-				if (map [i].Category == 0xE)
-					value |= diacritical [i];
 				if (value == 0)
 					Result.Write ("0,");
 				else
@@ -316,6 +318,44 @@ namespace Mono.Globalization.Unicode
 			for (int d = 0; d < diacritics.Length; d++)
 				if (s.IndexOf (diacritics [d]) > 0)
 					diacritical [cp] |= diacriticWeights [d];
+
+			// Arabic letter name
+			if (0x0621 <= cp && cp <= 0x064A &&
+				Char.GetUnicodeCategory ((char) cp)
+				== UnicodeCategory.OtherLetter) {
+				byte value = (byte) (arabicNameMap.Count * 4 + 0x0B);
+				switch (cp) {
+				case 0x0621:
+				case 0x0624:
+				case 0x0626:
+					// hamza, waw, yeh ... special cases.
+					value = 0x07;
+					break;
+				case 0x0649:
+				case 0x064A:
+					value = 0x77; // special cases.
+					break;
+				default:
+					// Get primary letter name i.e.
+					// XXX part of ARABIC LETTER XXX yyy
+					// e.g. that of "TEH MARBUTA" is "TEH".
+					string letterName =
+						(cp == 0x0640) ?
+						// 0x0640 is special: it does
+						// not start with ARABIC LETTER
+						values [0] :
+						values [0].Substring (14);
+					int tmpIdx = letterName.IndexOf (' ');
+					letterName = tmpIdx < 0 ? letterName : letterName.Substring (0, tmpIdx);
+//Console.Error.WriteLine ("Arabic name for {0:X04} is {1}", cp, letterName);
+					if (arabicNameMap.ContainsKey (letterName))
+						value = (byte) arabicLetterPrimaryValues [arabicNameMap [letterName]];
+					else
+						arabicNameMap [letterName] = cp;
+					break;
+				}
+				arabicLetterPrimaryValues [cp] = value;
+			}
 
 			// normalizationType
 			string decomp = values [4];
@@ -449,6 +489,7 @@ namespace Mono.Globalization.Unicode
 			ArrayList gurmukhi = new ArrayList ();
 			ArrayList gujarati = new ArrayList ();
 			ArrayList georgian = new ArrayList ();
+			ArrayList thaana = new ArrayList ();
 
 			using (StreamReader file =
 				new StreamReader (filename)) {
@@ -490,6 +531,10 @@ namespace Mono.Globalization.Unicode
 						for (int x = cp; x <= cpEnd; x++)
 							georgian.Add ((char) x);
 						break;
+					case "Thaana":
+						for (int x = cp; x <= cpEnd; x++)
+							thaana.Add ((char) x);
+						break;
 					}
 				}
 			}
@@ -497,10 +542,12 @@ namespace Mono.Globalization.Unicode
 			gurmukhi.Sort (UCAComparer.Instance);
 			gujarati.Sort (UCAComparer.Instance);
 			georgian.Sort (UCAComparer.Instance);
+			thaana.Sort (UCAComparer.Instance);
 			orderedCyrillic = (char []) cyrillic.ToArray (typeof (char));
 			orderedGurmukhi = (char []) gurmukhi.ToArray (typeof (char));
 			orderedGujarati = (char []) gujarati.ToArray (typeof (char));
 			orderedGeorgian = (char []) georgian.ToArray (typeof (char));
+			orderedThaana = (char []) thaana.ToArray (typeof (char));
 		}
 
 		#endregion
@@ -641,7 +688,7 @@ namespace Mono.Globalization.Unicode
 			}
 			#endregion
 
-			#region Letters
+			#region Letters (general)
 
 			// Greek and Coptic
 			fillIndex [0xF] = 02;
@@ -655,7 +702,6 @@ namespace Mono.Globalization.Unicode
 
 			// Cyrillic - UCA order w/ some modification
 			fillIndex [0x10] = 0x3;
-			// FIXME: For \u0400-\u045F we need "ordered Cyrillic"
 			// table which is moslty from UCA DUCET.
 			for (int i = 0; i < orderedCyrillic.Length; i++) {
 				char c = orderedCyrillic [i];
@@ -681,9 +727,14 @@ namespace Mono.Globalization.Unicode
 
 			// Arabic
 			fillIndex [0x13] = 0x3;
-			/*
-			FIXME: I still need more love on presentation form B
-			*/
+			for (int i = 0x0621; i <= 0x064A; i++) {
+				// Abjad
+				if (Char.GetUnicodeCategory ((char) i)
+					!= UnicodeCategory.OtherLetter)
+					continue;
+				map [i] = new CharMapEntry (0x13,
+					(byte) arabicLetterPrimaryValues [i], 1);
+			}
 			fillIndex [0x13] = 0x84;
 			for (int i = 0x0674; i < 0x06D6; i++)
 				if (Char.IsLetter ((char) i))
@@ -714,9 +765,8 @@ namespace Mono.Globalization.Unicode
 				AddLetterMap ((char) i, 0x15, 1);
 			}
 
-			// Gurmukhi
+			// Gurmukhi. orderedGurmukhi is from UCA
 			fillIndex [0x16] = 02;
-			// FIXME: orderedGurmukhi needed from UCA
 			for (int i = 0; i < orderedGurmukhi.Length; i++) {
 				char c = orderedGurmukhi [i];
 				if (c == '\u0A3C' || c == '\u0A4D' ||
@@ -725,9 +775,8 @@ namespace Mono.Globalization.Unicode
 				AddLetterMap (c, 0x16, 4);
 			}
 
-			// Gujarati
+			// Gujarati. orderedGujarati is from UCA
 			fillIndex [0x17] = 02;
-			// FIXME: orderedGujarati needed from UCA
 			for (int i = 0; i < orderedGujarati.Length; i++)
 				AddLetterMap (orderedGujarati [i], 0x17, 4);
 
@@ -754,9 +803,9 @@ namespace Mono.Globalization.Unicode
 			fillIndex [0x19] = 0x24;
 			AddCharMap ('\u0B94', 0x19, 0);
 			fillIndex [0x19] = 0x26;
-			// FIXME: we need to have constant array for Tamil
-			// consonants. Windows have almost similar sequence
-			// to TAM from tamilnet but a bit different in Grantha
+			// The array for Tamil consonants is a constant.
+			// Windows have almost similar sequence to TAM from
+			// tamilnet but a bit different in Grantha.
 			for (int i = 0; i < orderedTamilConsonants.Length; i++)
 				AddLetterMap (orderedTamilConsonants [i], 0x19, 4);
 			// combining marks
@@ -822,12 +871,59 @@ namespace Mono.Globalization.Unicode
 				if (Char.IsLetter ((char) i))
 					AddCharMap ((char) i, 0x1F, 1);
 
-			// Georgian
-			// FIXME: we need an array in UCA order.
+			// Georgian. orderedGeorgian is from UCA DUCET.
 			fillIndex [0x21] = 5;
 			for (int i = 0; i < orderedGeorgian.Length; i++)
 				AddLetterMap (orderedGeorgian [i], 0x21, 5);
 
+			// FIXME: Japanese needs constant array to store
+			// Kana order
+
+			// Bopomofo
+			fillIndex [0x23] = 0x02;
+			for (int i = 0x3105; i <= 0x312C; i++)
+				AddCharMap ((char) i, 0x23, 1);
+
+			// Estrangela: ancient Syriac
+			fillIndex [0x24] = 0x0B;
+			ArrayList syriacAlternatives = new ArrayList (
+				new int [] {0x714, 0x716, 0x71C, 0x724, 0x727});
+			for (int i = 0x0710; i <= 0x072C; i++)
+				if (i != 0x0711) // ignored
+					AddCharMap ((char) i, 0x24,
+						syriacAlternatives.Contains (i) ?
+						(byte) 2 : (byte) 4);
+
+			// Thaana
+			fillIndex [0x24] = 0x6E;
+			for (int i = 0; i < orderedThaana.Length; i++)
+				AddCharMap (orderedThaana [i], 0x24, 2);
+			#endregion
+
+			#region Level2 adjustment
+			// Arabic Hamzah
+			diacritical [0x624] = 0x5;
+			diacritical [0x626] = 0x7;
+			diacritical [0x622] = 0x9;
+			diacritical [0x623] = 0xA;
+			diacritical [0x625] = 0xB;
+			diacritical [0x649] = 0x5; // 'alif maqs.uurah
+			diacritical [0x64A] = 0x7; // Yaa'
+
+
+			for (int i = 0; i < 0x10000; i++) {
+				switch (map [i].Category) {
+				case 0xE: // Latin diacritics
+					map [i] = new CharMapEntry (0xE, map [i].Level1, diacritical [i]);
+					break;
+				case 0x13: // Arabic
+					if (diacritical [i] == 0)
+						// default by 8
+						diacritical [i] = 0x8;
+					map [i] = new CharMapEntry (0xE, map [i].Level1, diacritical [i]);
+					break;
+				}
+			}
 			#endregion
 		}
 
@@ -840,9 +936,6 @@ namespace Mono.Globalization.Unicode
 
 		private void AddLetterMap (char c, byte category, byte updateCount)
 		{
-// FIXME: implement
-//			throw new NotImplementedException ();
-
 			char c2;
 
 			// process lowerletter recursively (if not defined).
@@ -859,7 +952,7 @@ namespace Mono.Globalization.Unicode
 			// <full>
 			c2 = ToFullWidth (c);
 			if (c2 != c)
-				AddCharMapGroup (c2, category, false, 0);
+				AddLetterMap (c2, category, 0);
 
 			// FIXME: implement decorated characters w/ diacritical
 			// marks.

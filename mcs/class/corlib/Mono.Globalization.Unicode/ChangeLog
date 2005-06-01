@@ -1,3 +1,10 @@
+2005-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : added Estrangela (ancient Syriac) and Thaana.
+	* create-mscompat-collation-table.cs : added support for Arabic abjad,
+	  Estrangela and Thaana.
+	* MSCompatUnicodeTable.template : removed BOM.
+
 2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt : wrong comment cleanup and spelling fixes.

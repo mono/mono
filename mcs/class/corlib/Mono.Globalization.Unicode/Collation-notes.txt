@@ -400,9 +400,16 @@
 **** level 2 details
 
 	Known value maps:
-		-08: Some arabic presentation form B (FE8D-FEEE)
 		-0A: Korean parenthesized numbers (3200-321C)
 		-0C: Korean circled numbers (3260-327B)
+
+		<primary category 13 : Arabic>
+		-08: 627-648 (basic Abjad letters)
+		-09: madda (622)
+		-05: waw with hamza (624)
+		-07: yeh with hamza (626. ignore Presentation Form A area)
+		-0A: alef with hamza above (623)
+		-0A: alef with hamza below (625)
 
 		<primary category 0E : diacritics>
 		Characters in non "0E" category are out of scope.
@@ -711,6 +718,12 @@
 		There are still some special characters: 67E,686,698,6AF ...
 		which might not have equivalent characters (I wonder how they
 		are inserted into the presentation form B map).
+
+			Solution:
+			- hamza, waw, yeh (621,624,626) are special: [13 07]
+			- For all remaining letters, get primary letter name
+			  and store it into dictionary. If unique, then
+			  increment index by 4 from [13 0B]
 		Area 2:
 		674-6D5 : by codepoint from [13 84].
 	  14: 901-963 exc. 93A-93D 950-954 ... Devanagari.
@@ -782,15 +795,23 @@
 
 	  After Kana characters, there are CJK compat characters.
 	  From 22 97 01 01 01 01 00 (3349) to 22 A6 01 01 01 01 00 (333B) are
-	  sorted in JIS table order (CP932.TXT). Others are unknown, but I
-	  don't think the order really matters.
+	  sorted in JIS table order (CP932.TXT). Remaining square characters
+	  are sorted maybe in Alphabetic order.
 
 	  UCA DUCET also does not apply here.
 
 	12 (23) bopomofo letters
+		3105-312C: simple codepoint order from [23 02].
 
-	13 (24) syriac/thaana letters
-	  710-72C exc. 711, 780-7A5.
+	13 culture dependent letters 2
+		710-72C : Estrangela (ancient Syriac).
+			711 is excluded (superscript).
+			714,716,71C,724 and 727 are "alternative" characters.
+			SortKey: [24 0B]-[24 60], by x where x is 2 for those
+			which is "alternative" defined above, otherwise 4.
+
+		780-7A5 : Thaana
+			Equals to UCA order, x2 from [24 6E].
 
 	(Maybe we should add remaining minor-culture characters here. Tibetan,
 	Limbu, Tagalog, Hanunoo, Buhid, Tagbanwa, Myanmar, Kumer, Tai-Le,
