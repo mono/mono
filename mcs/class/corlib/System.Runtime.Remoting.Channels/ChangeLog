@@ -1,3 +1,8 @@
+2005-06-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TransportHeaders.cs: This collection turns out to be case insensitive
+	AND culture insensitive.
+
 2005-05-31  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TransportHeaders.cs: This collection turns out to be case insensitive.

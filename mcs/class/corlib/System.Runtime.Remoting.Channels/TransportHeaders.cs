@@ -42,7 +42,7 @@ namespace System.Runtime.Remoting.Channels
 		
 		public TransportHeaders ()
 		{
-			hash_table = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+			hash_table = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 		}
 
 		public object this [object key]
