@@ -1,5 +1,13 @@
 2005-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* downloaded : added directory. All downloaded files are stored here.
+	* Makefile : use "downloaded" directory.
+	  Added more auto-download stuff.
+	* create-mscompat-collation-table.cs :
+	  Added Japanese square kana support.
+
+2005-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : added Estrangela (ancient Syriac) and Thaana.
 	* create-mscompat-collation-table.cs : added support for Arabic abjad,
 	  Estrangela and Thaana.

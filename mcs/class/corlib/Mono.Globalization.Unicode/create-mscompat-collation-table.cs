@@ -61,7 +61,7 @@ namespace Mono.Globalization.Unicode
 
 		TextWriter Result = Console.Out;
 
-		byte [] fillIndex = new byte [255]; // by category
+		byte [] fillIndex = new byte [256]; // by category
 		CharMapEntry [] map = new CharMapEntry [char.MaxValue + 1];
 
 		char [] specialIgnore = new char [] {
@@ -169,15 +169,20 @@ namespace Mono.Globalization.Unicode
 		Hashtable arabicLetterPrimaryValues = new Hashtable (); // cp -> level1 value
 		Hashtable arabicNameMap = new Hashtable (); // letterName -> cp
 
+		ArrayList jisJapanese = new ArrayList ();
+		ArrayList nonJisJapanese = new ArrayList ();
+
 		void Run (string [] args)
 		{
 			string unidata = args.Length > 0 ?
-				args [0] : "UCD/UnicodeData.txt";
+				args [0] : "downloaded/UnicodeData.txt";
 			string derivCoreProps = args.Length > 1 ?
-				args [1] : "UCD/DerivedCoreProperties.txt";
+				args [1] : "downloaded/DerivedCoreProperties.txt";
 			string scripts = args.Length > 2 ?
-				args [2] : "UCD/Scripts.txt";
-			ParseSources (unidata, derivCoreProps, scripts);
+				args [2] : "downloaded/Scripts.txt";
+			string cp932 = args.Length > 3 ?
+				args [3] : "downloaded/CP932.TXT";
+			ParseSources (unidata, derivCoreProps, scripts, cp932);
 			Console.Error.WriteLine ("parse done.");
 			Generate ();
 			Console.Error.WriteLine ("generation done.");
@@ -271,8 +276,9 @@ namespace Mono.Globalization.Unicode
 
 		#region Parse
 
-		void ParseSources (string unidata, string derivedCoreProp, string scripts)
+		void ParseSources (string unidata, string derivedCoreProp, string scripts, string cp932)
 		{
+			ParseJISOrder (cp932); // in prior to ParseUnidata()
 			ParseUnidata (unidata);
 			ParseDerivedCoreProperties (derivedCoreProp);
 			ParseScripts (scripts);
@@ -356,6 +362,11 @@ namespace Mono.Globalization.Unicode
 				}
 				arabicLetterPrimaryValues [cp] = value;
 			}
+
+			// Japanese square letter
+			if (0x3300 <= cp && cp <= 0x3357)
+				if (!ExistsJIS (cp))
+					nonJisJapanese.Add (new NonJISCharacter (cp, values [0]));
 
 			// normalizationType
 			string decomp = values [4];
@@ -548,6 +559,28 @@ namespace Mono.Globalization.Unicode
 			orderedGujarati = (char []) gujarati.ToArray (typeof (char));
 			orderedGeorgian = (char []) georgian.ToArray (typeof (char));
 			orderedThaana = (char []) thaana.ToArray (typeof (char));
+		}
+
+		void ParseJISOrder (string filename)
+		{
+			using (StreamReader file =
+				new StreamReader (filename)) {
+				while (file.Peek () >= 0) {
+					string s = file.ReadLine ();
+					int idx = s.IndexOf ('#');
+					if (idx >= 0)
+						s = s.Substring (0, idx).Trim ();
+					if (s.Length == 0)
+						continue;
+					idx = s.IndexOf (' ');
+					if (idx < 0)
+						continue;
+					// They start with "0x" so cut them out.
+					int jis = int.Parse (s.Substring (2, idx), NumberStyles.HexNumber);
+					int cp = int.Parse (s.Substring (idx + 3).Trim (), NumberStyles.HexNumber);
+					jisJapanese.Add (new JISCharacter (cp, jis));
+				}
+			}
 		}
 
 		#endregion
@@ -876,8 +909,17 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < orderedGeorgian.Length; i++)
 				AddLetterMap (orderedGeorgian [i], 0x21, 5);
 
-			// FIXME: Japanese needs constant array to store
-			// Kana order
+			// FIXME: Japanese Kana needs constant array.
+
+			// JIS Japanese square chars.
+			fillIndex [0x22] = 0x97;
+			jisJapanese.Sort (JISComparer.Instance);
+			foreach (JISCharacter j in jisJapanese)
+				AddCharMap ((char) j.CP, 0x22, 1);
+			// non-JIS Japanese square chars.
+			nonJisJapanese.Sort (NonJISComparer.Instance);
+			foreach (NonJISCharacter j in nonJisJapanese)
+				AddCharMap ((char) j.CP, 0x22, 1);
 
 			// Bopomofo
 			fillIndex [0x23] = 0x02;
@@ -924,6 +966,30 @@ namespace Mono.Globalization.Unicode
 					break;
 				}
 			}
+			#endregion
+
+			// FIXME: Add more culture-specific letters (that are
+			// not supported in Windows collation) here.
+
+			// Surrogate : computed.
+
+			// FIXME: Hangul.
+
+			// FIXME: CJK.
+
+			// PrivateUse : computed.
+			// remaining Surrogate : computed.
+
+			// FIXME: CJK Extensions goes here.
+
+			#region Special "biggest" area (FF FF)
+			fillIndex [0xFF] = 0xFF;
+			char [] specialBiggest = new char [] {
+				'\u3005', '\u3031', '\u3032', '\u309D',
+				'\u309E', '\u30FC', '\u30FD', '\u30FE',
+				'\uFE7C', '\uFE7D', '\uFF70'};
+			foreach (char c in specialBiggest)
+				AddCharMap (c, 0xFF, 0);
 			#endregion
 		}
 
@@ -1025,6 +1091,14 @@ namespace Mono.Globalization.Unicode
 			return (char) decompValues [idx];
 		}
 
+		bool ExistsJIS (int cp)
+		{
+			foreach (JISCharacter j in jisJapanese)
+				if (j.CP == cp)
+					return true;
+			return false;
+		}
+
 		#endregion
 
 		#region Level 3 properties (Case/Width)
@@ -1109,7 +1183,7 @@ namespace Mono.Globalization.Unicode
 		#endregion
 	}
 
-	internal struct CharMapEntry
+	struct CharMapEntry
 	{
 		public byte Category;
 		public byte Level1;
@@ -1125,6 +1199,55 @@ namespace Mono.Globalization.Unicode
 		}
 	}
 
+	class JISCharacter
+	{
+		public readonly int CP;
+		public readonly int JIS;
+
+		public JISCharacter (int cp, int cpJIS)
+		{
+			CP = cp;
+			JIS = cpJIS;
+		}
+	}
+
+	class JISComparer : IComparer
+	{
+		public static readonly JISComparer Instance =
+			new JISComparer ();
+
+		public int Compare (object o1, object o2)
+		{
+			JISCharacter j1 = (JISCharacter) o1;
+			JISCharacter j2 = (JISCharacter) o2;
+			return j2.JIS - j1.JIS;
+		}
+	}
+
+	class NonJISCharacter
+	{
+		public readonly int CP;
+		public readonly string Name;
+
+		public NonJISCharacter (int cp, string name)
+		{
+			CP = cp;
+			Name = name;
+		}
+	}
+
+	class NonJISComparer : IComparer
+	{
+		public static readonly NonJISComparer Instance =
+			new NonJISComparer ();
+
+		public int Compare (object o1, object o2)
+		{
+			NonJISCharacter j1 = (NonJISCharacter) o1;
+			NonJISCharacter j2 = (NonJISCharacter) o2;
+			return string.CompareOrdinal (j1.Name, j2.Name);
+		}
+	}
 
 	class DictionaryValueComparer : IComparer
 	{
