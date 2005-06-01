@@ -294,5 +294,80 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		static object decode_cattr_value (Type t, byte[] data, int pos, out int rpos) {
+			switch (Type.GetTypeCode (t)) {
+			case TypeCode.String:
+				int len = decode_len (data, pos, out pos);
+				rpos = pos + len;
+				return string_from_bytes (data, pos, len);
+			case TypeCode.Int32:
+				rpos = pos + 4;
+				return data [pos] + (data [pos + 1] << 8) + (data [pos + 2] << 16) + (data [pos + 3] << 24);
+			case TypeCode.Boolean:
+				rpos = pos + 1;
+				return (data [pos] == 0) ? false : true;
+			default:
+				throw new Exception ("FIXME: Type " + t + " not yet handled in decode_cattr_value.");
+			}
+		}
+
+		internal static object decode_cattr (CustomAttributeBuilder customBuilder) {
+			byte[] data = customBuilder.Data;
+			ConstructorInfo ctor = customBuilder.Ctor;
+			int pos = 0;
+
+			// Prolog
+			if (data.Length < 2)
+				throw new Exception ();
+			if ((data [0] != 0x1) || (data [1] != 0x00))
+				throw new Exception ();
+			pos = 2;
+
+			ParameterInfo [] pi = ctor.GetParameters ();
+			object[] ctorArgs = new object [pi.Length];
+			for (int i = 0; i < pi.Length; ++i)
+				ctorArgs [i] = decode_cattr_value (pi [i].ParameterType, data, pos, out pos);
+
+			object res = ctor.Invoke (ctorArgs);
+
+			int num_named = data [pos] + (data [pos + 1] * 256);
+			pos += 2;
+
+			for (int i = 0; i < num_named; ++i) {
+				int named_type = data [pos++];
+				int data_type = data [pos++];
+				string enum_type_name = null;
+
+				if (data_type == 0x55) {
+					int len2 = decode_len (data, pos, out pos);
+					enum_type_name = string_from_bytes (data, pos, len2);
+					pos += len2;
+				}
+
+				int len = decode_len (data, pos, out pos);
+				string name = string_from_bytes (data, pos, len);
+				pos += len;
+
+				if (named_type == 0x53) {
+					/* Field */
+					FieldInfo fi = ctor.DeclaringType.GetField (name, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+					if (fi == null)
+						throw new Exception ("Custom attribute type '" + ctor.DeclaringType + "' doesn't contain a field named '" + name + "'");
+
+					object val = decode_cattr_value (fi.FieldType, data, pos, out pos);
+					if (enum_type_name != null) {
+						Type enumType = Type.GetType (enum_type_name);
+						val = Enum.ToObject (enumType, val);
+					}
+
+					fi.SetValue (res, val);
+				}
+				else
+					// FIXME:
+					throw new Exception ();
+			}
+
+			return res;
+		}
 	}
 }
