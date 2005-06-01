@@ -441,6 +441,14 @@ namespace System.Windows.Forms
 		{
 			if (Scroll == null)
 				return;
+				
+			if (event_args.NewValue < Minimum) {
+				event_args.NewValue = Minimum;
+			}
+			
+			if (event_args.NewValue > Maximum) {
+				event_args.NewValue = Maximum;
+			}
 
 			Scroll (this, event_args);
 		}
