@@ -79,7 +79,7 @@ namespace System.Security {
 
 		internal static IPermission CreatePermission (string fullname, SecurityElement se)
 		{
-			Type classType = GetUnifiedType (fullname);
+			Type classType = Type.GetType (fullname);
 			if (classType == null) {
 				string msg = Locale.GetText ("Can't create an instance of permission class {0}.");
 #if NET_2_0
@@ -89,35 +89,11 @@ namespace System.Security {
 #endif
 			}
 
+			// note: unification is handled in lower levels
+			// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
 			IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
 			p.FromXml (se);
 			return p;
-		}
-
-		// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
-		static internal Type GetUnifiedType (string fullname)
-		{
-			// ensure that permission signed with ECMA or MS "final" key gets unified
-			if (fullname.EndsWith (", PublicKeyToken=b03f5f7f11d50a3a") ||
-			    fullname.EndsWith (", PublicKeyToken=b77a5c561934e089")) {
-				// public key token match, check versions
-#if NET_2_0
-				if (fullname.IndexOf (", Version=2.0.0.0, ") < 0)
-					fullname = Unify (fullname, "2.0.0.0");
-#else
-				if (fullname.IndexOf (", Version=1.0.5000.0, ") < 0)
-					fullname = Unify (fullname, "1.0.5000.0");
-#endif
-			}
-
-			return Type.GetType (fullname);
-		}
-
-		static internal string Unify (string fullname, string version)
-		{
-			int vs = fullname.IndexOf (", Version=");
-			int ve = fullname.IndexOf (",", vs + 10);
-			return fullname.Substring (0, vs + 10) + version + fullname.Substring (ve);
 		}
 	}
 }

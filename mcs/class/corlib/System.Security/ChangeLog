@@ -1,3 +1,11 @@
+2005-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionBuilder.cs: Removed unification stuff. This is done at a 
+	lower level.
+	* SecurityManager.cs: Split loading PolicyLevel in two phases. The
+	PolicyHierarchy is now available after phase 1 which ensures we can
+	load permission from outside corlib.
+
 2005-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostSecurityManager.cs: Added check for ActivationArguments in 

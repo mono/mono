@@ -216,6 +216,7 @@ namespace System.Security {
 			try {
 				pl = new PolicyLevel (type.ToString (), type);
 				pl.LoadFromFile (path);
+				pl.Initialize ();
 			}
 			catch (Exception e) {
 				throw new ArgumentException (Locale.GetText ("Invalid policy XML"), e);
@@ -387,17 +388,26 @@ namespace System.Security {
 			// note: use InternalGetFolderPath to avoid recursive policy initialization
 			string userPolicyPath = Path.Combine (Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData), "mono");
 
+			PolicyLevel enterprise = new PolicyLevel ("Enterprise", PolicyLevelType.Enterprise);
+			PolicyLevel machine = new PolicyLevel ("Machine", PolicyLevelType.Machine);
+			PolicyLevel user = new PolicyLevel ("User", PolicyLevelType.User);
+
+			enterprise.LoadFromFile (Path.Combine (machinePolicyPath, "enterprisesec.config"));
+			machine.LoadFromFile (Path.Combine (machinePolicyPath, "security.config"));
+			user.LoadFromFile (Path.Combine (userPolicyPath, "security.config"));
+
 			ArrayList al = new ArrayList ();
-			al.Add (new PolicyLevel ("Enterprise", PolicyLevelType.Enterprise,
-				Path.Combine (machinePolicyPath, "enterprisesec.config")));
-
-			al.Add (new PolicyLevel ("Machine", PolicyLevelType.Machine,
-				Path.Combine (machinePolicyPath, "security.config")));
-
-			al.Add (new PolicyLevel ("User", PolicyLevelType.User,
-				Path.Combine (userPolicyPath, "security.config")));
-
+			al.Add (enterprise);
+			al.Add (machine);
+			al.Add (user);
+			// setting _hierarchy here allows for loading assemblies containing permissions
+			// FIXME: we still need to enforce the FullTrust list
 			_hierarchy = ArrayList.Synchronized (al);
+
+			// part II - creating the permission sets
+			enterprise.Initialize ();
+			machine.Initialize ();
+			user.Initialize ();
 		}
 
 		internal static bool ResolvePolicyLevel (ref PermissionSet ps, PolicyLevel pl, Evidence evidence)
