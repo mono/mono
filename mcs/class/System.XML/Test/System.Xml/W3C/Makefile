@@ -21,6 +21,7 @@ $(TEST_ARCHIVE):
 
 $(TEST_CATALOG): $(TEST_ARCHIVE)
 	unzip -un $(TEST_ARCHIVE)
+	touch $(TEST_CATALOG)
 
 .cs.exe :
 	$(CSCOMPILE) $<
