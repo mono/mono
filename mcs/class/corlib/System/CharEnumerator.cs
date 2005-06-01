@@ -31,11 +31,12 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System
 {
 	[Serializable]
-	public sealed class CharEnumerator : IEnumerator, ICloneable
+	public sealed class CharEnumerator : IEnumerator, ICloneable, IEnumerator <char>
 	{
 		private string str;
 		private int index;
@@ -101,6 +102,11 @@ namespace System
 		public void Reset ()
 		{
 			index = -1;
+		}
+
+		void IDisposable.Dispose ()
+		{
+			// nop
 		}
 	}
 }

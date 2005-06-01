@@ -1,3 +1,7 @@
+2005-06-01  Ben Maurer  <bmaurer@ximian.com>
+
+	* CharEnumerator.cs: add IEnumerable <char> support
+
 2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Activator.cs: Added missing validation on parameters.
