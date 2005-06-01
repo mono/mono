@@ -116,7 +116,7 @@ class MonoServiceRunner : MarshalByRefObject
 			return 1;
 		}
 	
-		if (Syscall.lockf(lfp, LockFlags.F_TLOCK,0)<0)  {
+		if (Syscall.lockf(lfp, LockfCommand.F_TLOCK,0)<0)  {
 			info (logname, "Daemon is already running.");
 			return 0;
 		}

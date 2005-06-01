@@ -1,3 +1,8 @@
+2005-06-01  Raja R Harinath  <rharinath@novell.com>
+
+	* mono-service.cs (MonoServiceRunner.Main): Replace LockFlags with
+	LockfCommand to reflect the rename in Mono.Posix.dll.
+
 2005-04-12  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* mono-service.cs: Service runs in its own AppDomain now.
