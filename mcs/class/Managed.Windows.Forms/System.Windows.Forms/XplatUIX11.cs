@@ -97,6 +97,7 @@ namespace System.Windows.Forms {
 		private static Pollfd[]		pollfds;		// For watching the X11 socket
 		#endif							//
 		private static X11Keyboard	Keyboard;		//
+		private static X11Dnd		Dnd;
 		private static Socket		listen;			//
 		private static Socket		wake;			//
 		private static Socket		wake_receive;		//
@@ -314,6 +315,7 @@ namespace System.Windows.Forms {
 				#endif
 
 				Keyboard = new X11Keyboard(DisplayHandle);
+				Dnd = new X11Dnd (DisplayHandle);
 
 				GetMessageResult = true;
 
@@ -939,6 +941,9 @@ namespace System.Windows.Forms {
 					}
 
 					case XEventName.SelectionNotify: {
+						if (Dnd.HandleSelectionNotifyEvent (ref xevent)) {
+							break;
+						}
 						if (Clipboard.Enumerating) {
 							Clipboard.Enumerating = false;
 							if (xevent.SelectionEvent.property != 0) {
@@ -1698,6 +1703,9 @@ namespace System.Windows.Forms {
 
 			SetWMStyles(hwnd, cp);
 
+			// for now make all windows dnd enabled
+			Dnd.SetAllowDrop (hwnd, true);
+			
 			return hwnd.Handle;
 		}
 
@@ -2513,6 +2521,10 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ClientMessage: {
+					if (Dnd.HandleClientMessage (ref xevent)) {
+						goto ProcessNextMessage;
+					}
+
 					if (xevent.ClientMessageEvent.message_type == (IntPtr)AsyncAtom) {
 						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
 						break;
