@@ -64,6 +64,7 @@ namespace System.Windows.Forms {
 		internal Graphics	client_dc;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
+		internal ArrayList	marshal_free_list;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -85,11 +86,16 @@ namespace System.Windows.Forms {
 			edge_style = Border3DStyle.Raised;
 			client_rectangle = Rectangle.Empty;
 			erase_pending = true;
+			marshal_free_list = new ArrayList(2);
 		}
 
 		public void Dispose() {
 			windows[client_window] = null;
 			windows[whole_window] = null;
+			for (int i = 0; i < marshal_free_list.Count; i++) {
+				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
+			}
+			marshal_free_list.Clear();
 Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32(), whole_window.ToInt32());
 		}
 		#endregion

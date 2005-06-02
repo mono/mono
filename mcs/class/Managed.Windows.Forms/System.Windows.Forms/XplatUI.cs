@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44278; built: 2005/4/10 23:33:54]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 44786; built: 2005/5/25 22:34:45]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -83,6 +83,8 @@ namespace System.Windows.Forms {
 			} else {
 				driver=XplatUIWin32.GetInstance();
 			}
+
+			driver.InitializeDriver();
 
 		}
 

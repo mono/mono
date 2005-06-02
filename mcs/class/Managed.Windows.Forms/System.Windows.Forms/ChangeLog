@@ -1,5 +1,24 @@
 2005-06-02  Peter Bartok  <pbartok@novell.com>
 
+	* DataObject.cs: 
+	  - Added Data setter
+	  - Fixed broken insertion code for SetData, now also
+	    overwrites any existing entry of the same format name
+	* Hwnd.cs: Added list of pointers that automatically gets
+	  freed when the window is disposed 
+	* XplatUI.cs: Call driver initialization method when loading
+	  a driver
+	* Control.cs: 
+	  - OnDragLeave takes EventArgs, not DragEventArgs
+	  - Added setting of WS_EX_ACCEPTFILES style when dropping is
+	    supported
+	  - Forces style update when drop state changes
+	* XplatUIWin32.cs: Implemented Drag'n'Drop (as good as possible,
+	  not perfect since we cannot (yet) call the IDataObject.GetData()
+	  method, we keep getting 0x80004005 error, dunno why)
+
+2005-06-02  Peter Bartok  <pbartok@novell.com>
+
 	* DragEventArgs.cs: Make fields internal so we can cache the
 	  object and re-set the fields from XplatUI
 

@@ -777,7 +777,7 @@ namespace System.Windows.Forms
 			OnDragDrop (e);
 		}
 
-		internal void DndLeave (DragEventArgs e)
+		internal void DndLeave (EventArgs e)
 		{
 			OnDragLeave (e);
 		}
@@ -1053,6 +1053,7 @@ namespace System.Windows.Forms
 				if (allow_drop == value)
 					return;
 				allow_drop = value;
+				UpdateStyles();
 				XplatUI.SetAllowDrop (Handle, value);
 			}
 		}
@@ -1915,6 +1916,10 @@ namespace System.Windows.Forms
 				create_params.ClassStyle = 0;
 				create_params.ExStyle = 0;
 				create_params.Param = 0;
+
+				if (allow_drop) {
+					create_params.ExStyle |= (int)WindowStyles.WS_EX_ACCEPTFILES;
+				}
 
 				if (parent!=null) {
 					create_params.Parent = parent.Handle;

@@ -55,6 +55,10 @@ namespace System.Windows.Forms {
 				get {
 					return data;
 				}
+
+				set {
+					data = value;
+				}
 			}
 			#endregion	// Properties
 
@@ -226,7 +230,14 @@ namespace System.Windows.Forms {
 			Entry	entry;
 			Entry	e;
 
-			entry = new DataObject.Entry(format, data, autoConvert);
+			entry = Entry.Find(entries, format);
+
+			if (entry == null) {
+				entry = new DataObject.Entry(format, data, autoConvert);
+			} else {
+				entry.Data = data;
+				return;
+			}
 
 			lock (this) {
 				if (entries == null) {
