@@ -1,3 +1,9 @@
+2005-06-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlEntityReference.cs, XmlNode.cs : For entity references, BaseURI 
+	  resolution should be different from that of parent since they might
+	  differ. Patch by Andrew Skiba.
+
 2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDReader.cs :

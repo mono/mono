@@ -52,6 +52,45 @@ namespace System.Xml
 			get { return base.BaseURI; }
 		}
 
+		private XmlEntity Entity {
+			get {
+				XmlDocumentType doctype = OwnerDocument.DocumentType;
+				if (doctype == null)
+					return null;
+
+				if (doctype.Entities == null)
+					return null;
+
+				return doctype.Entities.GetNamedItem (Name) as XmlEntity;
+			}
+		}
+
+		protected override string ChildrenBaseURI {
+			get {
+				XmlEntity ent = Entity;
+				if (ent == null)
+					return string.Empty;
+
+				if (ent.SystemId == null || ent.SystemId.Length == 0)
+					return ent.BaseURI;
+
+				if (ent.BaseURI == null || ent.BaseURI.Length == 0)
+					return ent.SystemId;
+				
+				Uri baseUri = null;
+				try {
+					baseUri = new Uri (ent.BaseURI);
+				} catch (UriFormatException) {
+				}
+
+				XmlResolver resolver = OwnerDocument.Resolver;
+				if (resolver != null)
+					return resolver.ResolveUri (baseUri, ent.SystemId).ToString ();
+
+				return new Uri (baseUri, ent.SystemId).ToString ();
+			}
+		}
+
 		public override bool IsReadOnly {
 			get { return true; } 
 		}
@@ -110,11 +149,10 @@ namespace System.Xml
 			if (FirstChild != null)
 				return;
 
-			XmlDocumentType doctype = OwnerDocument.DocumentType;
-			if (doctype == null)
+			if (OwnerDocument.DocumentType == null)
 				return;
 
-			XmlEntity ent = doctype.Entities.GetNamedItem (Name) as XmlEntity;
+			XmlEntity ent = Entity;
 			if (ent == null)
 				InsertBefore (OwnerDocument.CreateTextNode (String.Empty), null, false, true);
 			else {
