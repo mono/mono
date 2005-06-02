@@ -32,12 +32,12 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[ComVisible(true)]
 	public class DragEventArgs : EventArgs {
-		private int		x;
-		private int		y;
-		private int		keystate;
-		private DragDropEffects	allowed_effect;
-		private DragDropEffects	current_effect;
-		private IDataObject	data_object;
+		internal int			x;
+		internal int			y;
+		internal int			keystate;
+		internal DragDropEffects	allowed_effect;
+		internal DragDropEffects	current_effect;
+		internal IDataObject		data_object;
 
 		#region Public Constructors
 		public DragEventArgs(IDataObject data, int keyState, int x, int y, DragDropEffects allowedEffect, DragDropEffects effect) {

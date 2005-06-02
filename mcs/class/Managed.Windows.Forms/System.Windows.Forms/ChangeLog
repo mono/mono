@@ -1,3 +1,8 @@
+2005-06-02  Peter Bartok  <pbartok@novell.com>
+
+	* DragEventArgs.cs: Make fields internal so we can cache the
+	  object and re-set the fields from XplatUI
+
 2005-06-02  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Add some internal methods so the DnD subsystem can
