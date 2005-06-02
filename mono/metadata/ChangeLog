@@ -1,5 +1,10 @@
 2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* socket-io.c: support abort/suspend in Select_internal after last
+	change.
+
+2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threadpool.c: remove warning.
 
 2005-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
