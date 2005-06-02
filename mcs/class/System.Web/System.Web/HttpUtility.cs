@@ -723,45 +723,92 @@ namespace System.Web {
 			if (s.IndexOf ('&') == -1)
 				return s;
 
-			bool insideEntity = false; // used to indicate that we are in a potential entity
-			string entity = String.Empty;
+			StringBuilder entity = new StringBuilder ();
 			StringBuilder output = new StringBuilder ();
 			int len = s.Length;
+			// 0 -> nothing,
+			// 1 -> right after '&'
+			// 2 -> between '&' and ';' but no '#'
+			// 3 -> '#' found after '&' and getting numbers
+			int state = 0;
+			int number = -1;
 	
 			for (int i = 0; i < len; i++) {
 				char c = s [i];
-				switch (c) {
-				case '&' :
-					output.Append (entity);
-					entity = "&";
-					insideEntity = true;
-					break;
-				case ';' :
-					if (!insideEntity) {
+				if (state == 0) {
+					if (c == '&') {
+						entity.Append (c);
+						state = 1;
+					} else {
 						output.Append (c);
-						break;
 					}
+					continue;
+				}
 
-					entity += c;
-					int length = entity.Length;
-					if (length >= 2 && entity[1] == '#' && entity[2] != ';')
-						entity = ((char) Int32.Parse (entity.Substring (2, entity.Length - 3))).ToString();
-					else if (length > 1 && Entities.ContainsKey (entity.Substring (1, entity.Length - 2)))
-						entity = Entities [entity.Substring (1, entity.Length - 2)].ToString ();
-					
-					output.Append (entity);
-					entity = String.Empty;
-					insideEntity = false;
-					break;
-				default :
-					if (insideEntity)
-						entity += c;
-					else
+				if (c == '&') {
+					state = 0;
+					output.Append (entity.ToString ());
+					entity.Length = 0;
+					entity.Append ('&');
+					continue;
+				}
+
+				if (state == 1) {
+					if (c == ';') {
+						state = 0;
+						output.Append (entity.ToString ());
 						output.Append (c);
-					break;
+						entity.Length = 0;
+					} else {
+						if (c != '#') {
+							state = 2;
+							number = 0;
+						} else {
+							state = 3;
+						}
+						entity.Append (c);
+					}
+				} else if (state == 2) {
+					entity.Append (c);
+					if (c == ';') {
+						string key = entity.ToString ();
+						if (key.Length > 1 && Entities.ContainsKey (key.Substring (1, key.Length - 2)))
+							key = (string) Entities [key.Substring (1, key.Length - 2)];
+
+						output.Append (key);
+						state = 0;
+						entity.Length = 0;
+					}
+				} else if (state == 3) {
+					if (c == ';') {
+						if (number > 65535) {
+							output.Append ("&#");
+							output.Append (number.ToString (CultureInfo.InvariantCulture));
+							output.Append (";");
+						} else {
+							output.Append ((char) number);
+						}
+						state = 0;
+						entity.Length = 0;
+						number = -1;
+					} else if (Char.IsDigit (c)) {
+						number = number * 10 + ((int) c - '0');
+					} else {
+						state = 2;
+						if (number >= 0) {
+							entity.Append (number.ToString (CultureInfo.InvariantCulture));
+							number = -1;
+						}
+						entity.Append (c);
+					}
 				}
 			}
-			output.Append (entity);
+
+			if (entity.Length > 0) {
+				output.Append (entity.ToString ());
+			} else if (number >= 0) {
+				output.Append (number.ToString (CultureInfo.InvariantCulture));
+			}
 			return output.ToString ();
 		}
 	

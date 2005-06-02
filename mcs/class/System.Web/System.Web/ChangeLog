@@ -1,3 +1,8 @@
+2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: modified HtmlDecode so that it does not need to call
+	Int32.Parse and handles improper &# sequences. Fixes bug #74907.
+
 2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SiteMapNodeCollection.cs: Implemented missing methods. The collection
