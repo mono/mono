@@ -903,7 +903,7 @@ namespace Mono.AssemblyInfo
 				else
 					modifier = "";
 
-				string type_name = info.ParameterType.ToString ();
+				string type_name = info.ParameterType.ToString ().Replace ('<', '[').Replace ('>', ']');
 				sb.AppendFormat ("{0}{1}, ", modifier, type_name);
 			}
 
