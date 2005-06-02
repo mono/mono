@@ -731,5 +731,18 @@ namespace MonoTests.System.Data
 
 			AssertDataRelation ("rel", ds.Relations [1], "root_y", true, new string [] {"root_Id"}, new string [] {"root_Id"}, true, true);
 		}
+
+		[Test]
+		public void AutoIncrementStep ()
+		{
+			DataSet ds = new DataSet("testds");
+			DataTable tbl = ds.Tables.Add("testtbl");
+			DataColumn col = tbl.Columns.Add("id", typeof(int));
+			col.AutoIncrement = true;
+			col.AutoIncrementSeed = -1;
+			col.AutoIncrementStep = -1;
+			tbl.Columns.Add("data", typeof(string));
+			Assert (ds.GetXmlSchema ().IndexOf ("AutoIncrementStep") > 0);
+		}
 	}
 }

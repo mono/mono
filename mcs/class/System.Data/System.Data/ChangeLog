@@ -1,3 +1,11 @@
+2005-06-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaConstants.cs,
+	  XmlSchemaDataImporter.cs,
+	  XmlSchemaWriter.cs : AutoIncrementStep support. Patch partly by
+	  George Barbarosie. Fixed bug #75121.
+	* XmlSchemaMapper.cs : it is not used anymore, so just removed.
+
 2005-05-31 Boris Kirzner <borisk@mainsoft.com>
 	* DataRow.cs : SetParentRow on Detached row with no Default version throws an exception.
 	

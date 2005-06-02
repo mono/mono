@@ -80,6 +80,7 @@ internal class XmlConstants
 	public const string DataType = "DataType";
 	public const string AutoIncrement = "AutoIncrement";
 	public const string AutoIncrementSeed = "AutoIncrementSeed";
+	public const string AutoIncrementStep = "AutoIncrementStep";
 
 	//ms schema objects	
 	public const string MsdataPrefix = "msdata";	

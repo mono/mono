@@ -500,6 +500,15 @@ namespace System.Data
 					XmlConvert.ToString (col.AutoIncrementSeed));
 			}
 
+			if (col.AutoIncrementStep != 1) {
+				w.WriteAttributeString (
+
+					XmlConstants.MsdataPrefix,
+					XmlConstants.AutoIncrementStep,
+					XmlConstants.MsdataNamespace,
+					XmlConvert.ToString (col.AutoIncrementStep));
+			}
+
 			if (col.DefaultValue.ToString () != String.Empty)
 				w.WriteAttributeString ("default",
 					DataSet.WriteObjectXml (col.DefaultValue));
