@@ -379,7 +379,7 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		class TakesObject {
-			public TakesInt (object x) {}
+			public TakesObject (object x) {}
 		}
 
 		[Test]
