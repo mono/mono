@@ -20,7 +20,7 @@ $(TEST_ARCHIVE):
 	wget http://www.w3.org/XML/Test/xmlts20031210.zip
 
 $(TEST_CATALOG): $(TEST_ARCHIVE)
-	unzip -un $(TEST_ARCHIVE)
+	mkdir xmlconf; unzip -un $(TEST_ARCHIVE)
 	touch $(TEST_CATALOG)
 
 .cs.exe :
