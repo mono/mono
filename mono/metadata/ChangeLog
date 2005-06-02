@@ -1,3 +1,11 @@
+2005-06-02  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* object.c: When creating the vtable for a proxy, take into account
+	all inherited interfaces, not only the ones registered in
+	iclass->interfaces. This fixs bug #74996.
+	Also, in mono_method_return_message_restore, verify that the array
+	of out args has the expected lengh.
+
 2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: update the timeout in Poll when the call is interrupte.
