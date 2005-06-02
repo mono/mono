@@ -1,3 +1,22 @@
+2005-06-02  Jonathan Pryor <jonpryor@vt.edu>
+
+	* StdioFileStream.cs: Remove FilePosition property & replace with
+	  SaveFilePosition/RestoreFilePosition methods.  Since FilePosition has a
+	  finalizer, it's not right to have implicitly created instances.
+	* Stdlib.cs: 
+	  - FilePosition: GC.SuppressFinalize() should be last in Dispose() 
+	    (following .NET guidelines).
+	  - Syscall: Add locking around functions most likely to be thread unsafe.
+	    This should provide some level of thread-safety to managed code.
+	* Syscall.cs: Add locking around functions most likely to be thread unsafe;
+	  add mkstemp(3) export.
+	* UnixEnvironment.cs: GetUserShells should be atomic (from managed code).
+	* UnixGroup.cs: GetLocalGroups should be atomic (from managed code).
+	* UnixGroupInfo.cs: Add ToGroup() method to retrieve underlying Group info.
+	* UnixUser.cs: GetLocalUsers should be atomic (from managed code).
+	* UnixUserInfo.cs: Add ToPasswd () method to retrieve underlying Passwd info.
+	* UnixDriveInfo.cs: GetDrives should be atomic (from managed code).
+
 2005-05-31  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Add comment for atexit(3) so I don't try to add it.

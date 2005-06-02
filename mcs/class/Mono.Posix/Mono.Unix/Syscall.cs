@@ -1388,9 +1388,18 @@ namespace Mono.Unix {
 			}
 		}
 
+		internal static object fstab_lock = new object ();
+
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_endfsent")]
-		public static extern void endfsent ();
+		private static extern void sys_endfsent ();
+
+		public static void endfsent ()
+		{
+			lock (fstab_lock) {
+				sys_endfsent ();
+			}
+		}
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getfsent")]
@@ -1399,7 +1408,10 @@ namespace Mono.Unix {
 		public static Fstab getfsent ()
 		{
 			_Fstab fsbuf;
-			int r = sys_getfsent (out fsbuf);
+			int r;
+			lock (fstab_lock) {
+				r = sys_getfsent (out fsbuf);
+			}
 			if (r != 0)
 				return null;
 			Fstab fs = new Fstab ();
@@ -1414,7 +1426,10 @@ namespace Mono.Unix {
 		public static Fstab getfsfile (string mount_point)
 		{
 			_Fstab fsbuf;
-			int r = sys_getfsfile (mount_point, out fsbuf);
+			int r;
+			lock (fstab_lock) {
+				r = sys_getfsfile (mount_point, out fsbuf);
+			}
 			if (r != 0)
 				return null;
 			Fstab fs = new Fstab ();
@@ -1429,7 +1444,10 @@ namespace Mono.Unix {
 		public static Fstab getfsspec (string special_file)
 		{
 			_Fstab fsbuf;
-			int r = sys_getfsspec (special_file, out fsbuf);
+			int r;
+			lock (fstab_lock) {
+				r = sys_getfsspec (special_file, out fsbuf);
+			}
 			if (r != 0)
 				return null;
 			Fstab fs = new Fstab ();
@@ -1439,7 +1457,14 @@ namespace Mono.Unix {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_setfsent")]
-		public static extern int setfsent ();
+		private static extern int sys_setfsent ();
+
+		public static int setfsent ()
+		{
+			lock (fstab_lock) {
+				return sys_setfsent ();
+			}
+		}
 
 		#endregion
 
@@ -1486,6 +1511,8 @@ namespace Mono.Unix {
 			}
 		}
 
+		internal static object grp_lock = new object ();
+
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getgrnam")]
 		private static extern int sys_getgrnam (string name, out _Group group);
@@ -1493,7 +1520,10 @@ namespace Mono.Unix {
 		public static Group getgrnam (string name)
 		{
 			_Group group;
-			int r = sys_getgrnam (name, out group);
+			int r;
+			lock (grp_lock) {
+				r = sys_getgrnam (name, out group);
+			}
 			if (r != 0)
 				return null;
 			Group gr = new Group ();
@@ -1510,7 +1540,10 @@ namespace Mono.Unix {
 		public static Group getgrgid (uint uid)
 		{
 			_Group group;
-			int r = sys_getgrgid (uid, out group);
+			int r;
+			lock (grp_lock) {
+				r = sys_getgrgid (uid, out group);
+			}
 			if (r != 0)
 				return null;
 			Group gr = new Group ();
@@ -1562,7 +1595,10 @@ namespace Mono.Unix {
 		public static Group getgrent ()
 		{
 			_Group group;
-			int r = sys_getgrent (out group);
+			int r;
+			lock (grp_lock) {
+				r = sys_getgrent (out group);
+			}
 			if (r != 0)
 				return null;
 			Group gr = new Group();
@@ -1570,11 +1606,25 @@ namespace Mono.Unix {
 			return gr;
 		}
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void setgrent ();
+		[DllImport (LIBC, SetLastError=true, EntryPoint="setgrent")]
+		private static extern void sys_setgrent ();
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void endgrent ();
+		public static void setgrent ()
+		{
+			lock (grp_lock) {
+				sys_setgrent ();
+			}
+		}
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="endgrent")]
+		private static extern void sys_endgrent ();
+
+		public static void endgrent ()
+		{
+			lock (grp_lock) {
+				sys_endgrent ();
+			}
+		}
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fgetgrent")]
@@ -1583,7 +1633,10 @@ namespace Mono.Unix {
 		public static Group fgetgrent (IntPtr stream)
 		{
 			_Group group;
-			int r = sys_fgetgrent (stream, out group);
+			int r;
+			lock (grp_lock) {
+				r = sys_fgetgrent (stream, out group);
+			}
 			if (r != 0)
 				return null;
 			Group gr = new Group ();
@@ -1629,6 +1682,8 @@ namespace Mono.Unix {
 			}
 		}
 
+		internal static object pwd_lock = new object ();
+
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getpwnam")]
 		private static extern int sys_getpwnam (string name, out _Passwd passwd);
@@ -1636,7 +1691,10 @@ namespace Mono.Unix {
 		public static Passwd getpwnam (string name)
 		{
 			_Passwd passwd;
-			int r = sys_getpwnam (name, out passwd);
+			int r;
+			lock (pwd_lock) {
+				r = sys_getpwnam (name, out passwd);
+			}
 			if (r != 0)
 				return null;
 			Passwd pw = new Passwd ();
@@ -1653,7 +1711,10 @@ namespace Mono.Unix {
 		public static Passwd getpwuid (uint uid)
 		{
 			_Passwd passwd;
-			int r = sys_getpwuid (uid, out passwd);
+			int r;
+			lock (pwd_lock) {
+				r = sys_getpwuid (uid, out passwd);
+			}
 			if (r != 0)
 				return null;
 			Passwd pw = new Passwd ();
@@ -1705,7 +1766,10 @@ namespace Mono.Unix {
 		public static Passwd getpwent ()
 		{
 			_Passwd passwd;
-			int r = sys_getpwent (out passwd);
+			int r;
+			lock (pwd_lock) {
+				r = sys_getpwent (out passwd);
+			}
 			if (r != 0)
 				return null;
 			Passwd pw = new Passwd ();
@@ -1713,11 +1777,25 @@ namespace Mono.Unix {
 			return pw;
 		}
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void setpwent ();
+		[DllImport (LIBC, SetLastError=true, EntryPoint="setpwent")]
+		private static extern void sys_setpwent ();
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void endpwent ();
+		public static void setpwent ()
+		{
+			lock (pwd_lock) {
+				sys_setpwent ();
+			}
+		}
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="endpwent")]
+		private static extern void sys_endpwent ();
+
+		public static void endpwent ()
+		{
+			lock (pwd_lock) {
+				sys_endpwent ();
+			}
+		}
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fgetpwent")]
@@ -1726,7 +1804,10 @@ namespace Mono.Unix {
 		public static Passwd fgetpwent (IntPtr stream)
 		{
 			_Passwd passwd;
-			int r = sys_fgetpwent (stream, out passwd);
+			int r;
+			lock (pwd_lock) {
+				r = sys_fgetpwent (stream, out passwd);
+			}
 			if (r != 0)
 				return null;
 			Passwd pw = new Passwd ();
@@ -1759,14 +1840,18 @@ namespace Mono.Unix {
 			return sys_kill (pid, _sig);
 		}
 
+		private static object signal_lock = new object ();
+
 		[DllImport (LIBC, SetLastError=true, EntryPoint="strsignal")]
 		private static extern IntPtr sys_strsignal (int sig);
 
 		public static string strsignal (Signum sig)
 		{
 			int s = UnixConvert.FromSignum (sig);
-			IntPtr r = sys_strsignal (s);
-			return UnixMarshal.PtrToString (r);
+			lock (signal_lock) {
+				IntPtr r = sys_strsignal (s);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
 		// TODO: sigaction(2)
@@ -1810,6 +1895,9 @@ namespace Mono.Unix {
 		//
 		// <stdlib.h>
 		//
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int mkstemp (StringBuilder template);
+
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int ttyslot ();
 
@@ -2633,11 +2721,14 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="ttyname")]
 		private static extern IntPtr sys_ttyname (int fd);
 
-		[Obsolete ("Not re-entrant.  Use ttyname_r instead.")]
+		private static object tty_lock = new object ();
+
 		public static string ttyname (int fd)
 		{
-			IntPtr r = sys_ttyname (fd);
-			return UnixMarshal.PtrToString (r);
+			lock (tty_lock) {
+				IntPtr r = sys_ttyname (fd);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
 		// ttyname_r(3)
@@ -2783,17 +2874,35 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getusershell")]
 		private static extern IntPtr sys_getusershell ();
 
+		internal static object usershell_lock = new object ();
+
 		public static string getusershell ()
 		{
-			IntPtr r = sys_getusershell ();
-			return UnixMarshal.PtrToString (r);
+			lock (usershell_lock) {
+				IntPtr r = sys_getusershell ();
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void setusershell ();
+		[DllImport (LIBC, SetLastError=true, EntryPoint="setusershell")]
+		private static extern void sys_setusershell ();
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void endusershell ();
+		public static void setusershell ()
+		{
+			lock (usershell_lock) {
+				sys_setusershell ();
+			}
+		}
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="endusershell")]
+		private static extern void sys_endusershell ();
+
+		public static void endusershell ()
+		{
+			lock (usershell_lock) {
+				sys_endusershell ();
+			}
+		}
 
 		[DllImport (LIBC, SetLastError=true)]
 		private static extern int daemon (int nochdir, int noclose);

@@ -237,21 +237,20 @@ namespace Mono.Unix {
 			}
 		}
 
-		public FilePosition FilePosition {
-			get {
-				AssertNotDisposed ();
-				FilePosition pos = new FilePosition ();
-				int r = Stdlib.fgetpos (file, pos);
-				UnixMarshal.ThrowExceptionForLastErrorIf (r);
-				return pos;
-			}
-			set {
-				AssertNotDisposed ();
-				if (value == null)
-					throw new ArgumentNullException ("value");
-				int r = Stdlib.fsetpos (file, value);
-				UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			}
+		public void SaveFilePosition (FilePosition pos)
+		{
+			AssertNotDisposed ();
+			int r = Stdlib.fgetpos (file, pos);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public void RestoreFilePosition (FilePosition pos)
+		{
+			AssertNotDisposed ();
+			if (pos == null)
+				throw new ArgumentNullException ("value");
+			int r = Stdlib.fsetpos (file, pos);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public override void Flush ()

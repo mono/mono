@@ -108,6 +108,11 @@ namespace Mono.Unix {
 		{
 			return passwd.ToString ();
 		}
+
+		public Passwd ToPasswd ()
+		{
+			return passwd;
+		}
 	}
 }
 

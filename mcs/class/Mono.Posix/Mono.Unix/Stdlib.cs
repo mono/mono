@@ -195,8 +195,8 @@ namespace Mono.Unix {
 
 		public void Dispose ()
 		{
-			GC.SuppressFinalize (this);
 			Cleanup ();
+			GC.SuppressFinalize (this);
 		}
 
 		private void Cleanup ()
@@ -517,6 +517,8 @@ namespace Mono.Unix {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern IntPtr tmpfile ();
 
+		private static object tmpnam_lock = new object ();
+
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="tmpnam")]
 		private static extern IntPtr sys_tmpnam (StringBuilder s);
@@ -526,15 +528,19 @@ namespace Mono.Unix {
 		{
 			if (s != null && s.Capacity < L_tmpnam)
 				throw new ArgumentOutOfRangeException ("s", "s.Capacity < L_tmpnam");
-			IntPtr r = sys_tmpnam (s);
-			return UnixMarshal.PtrToString (r);
+			lock (tmpnam_lock) {
+				IntPtr r = sys_tmpnam (s);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
 		[Obsolete ("Syscall.mkstemp() should be preferred.")]
 		public static string tmpnam ()
 		{
-			IntPtr r = sys_tmpnam (null);
-			return UnixMarshal.PtrToString (r);
+			lock (tmpnam_lock) {
+				IntPtr r = sys_tmpnam (null);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
@@ -887,6 +893,8 @@ namespace Mono.Unix {
 		// <string.h>
 		//
 
+		private static object strerror_lock = new object ();
+
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="strerror")]
 		private static extern IntPtr sys_strerror (int errnum);
@@ -894,8 +902,10 @@ namespace Mono.Unix {
 		public static string strerror (Error errnum)
 		{
 			int e = UnixConvert.FromError (errnum);
-			IntPtr r = sys_strerror (e);
-			return UnixMarshal.PtrToString (r);
+			lock (strerror_lock) {
+				IntPtr r = sys_strerror (e);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 	}
 

@@ -122,21 +122,24 @@ namespace Mono.Unix {
 		public static UnixDriveInfo[] GetDrives ()
 		{
 			// throws IOException, UnauthorizedAccessException (no permission)
-			Syscall.SetLastError ((Error) 0);
-			int r = Syscall.setfsent ();
-			if (r != 1)
-				throw new IOException ("Error calling setfsent(3)");
 			ArrayList entries = new ArrayList ();
-			try {
-				Fstab fs;
-				while ((fs = Syscall.getfsent()) != null) {
-					// avoid virtual entries, such as "swap"
-					if (fs.fs_file.StartsWith ("/"))
-						entries.Add (new UnixDriveInfo (fs));
+			Syscall.SetLastError ((Error) 0);
+
+			lock (Syscall.fstab_lock) {
+				int r = Syscall.setfsent ();
+				if (r != 1)
+					throw new IOException ("Error calling setfsent(3)", new UnixIOException ());
+				try {
+					Fstab fs;
+					while ((fs = Syscall.getfsent()) != null) {
+						// avoid virtual entries, such as "swap"
+						if (fs.fs_file.StartsWith ("/"))
+							entries.Add (new UnixDriveInfo (fs));
+					}
 				}
-			}
-			finally {
-				Syscall.endfsent ();
+				finally {
+					Syscall.endfsent ();
+				}
 			}
 			return (UnixDriveInfo[]) entries.ToArray (typeof(UnixDriveInfo));
 		}

@@ -123,21 +123,23 @@ namespace Mono.Unix {
 
 		public static UnixUserInfo[] GetLocalUsers ()
 		{
-			Syscall.SetLastError ((Error) 0);
-			Syscall.setpwent ();
-			if (Syscall.GetLastError () != (Error) 0) {
-				UnixMarshal.ThrowExceptionForLastError ();
-			}
 			ArrayList entries = new ArrayList ();
-			try {
-				Passwd p;
-				while ((p = Syscall.getpwent()) != null)
-					entries.Add (new UnixUserInfo (p));
-				if (Syscall.GetLastError () != (Error) 0)
+			Syscall.SetLastError ((Error) 0);
+			lock (Syscall.pwd_lock) {
+				Syscall.setpwent ();
+				if (Syscall.GetLastError () != (Error) 0) {
 					UnixMarshal.ThrowExceptionForLastError ();
-			}
-			finally {
-				Syscall.endpwent ();
+				}
+				try {
+					Passwd p;
+					while ((p = Syscall.getpwent()) != null)
+						entries.Add (new UnixUserInfo (p));
+					if (Syscall.GetLastError () != (Error) 0)
+						UnixMarshal.ThrowExceptionForLastError ();
+				}
+				finally {
+					Syscall.endpwent ();
+				}
 			}
 			return (UnixUserInfo[]) entries.ToArray (typeof(UnixUserInfo));
 		}

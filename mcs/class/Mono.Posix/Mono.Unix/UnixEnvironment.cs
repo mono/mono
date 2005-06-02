@@ -140,14 +140,16 @@ namespace Mono.Unix {
 		{
 			ArrayList shells = new ArrayList ();
 
-			try {
-				Syscall.setusershell ();
-				string shell;
-				while ((shell = Syscall.getusershell ()) != null)
-					shells.Add (shell);
-			}
-			finally {
-				Syscall.endusershell ();
+			lock (Syscall.usershell_lock) {
+				try {
+					Syscall.setusershell ();
+					string shell;
+					while ((shell = Syscall.getusershell ()) != null)
+						shells.Add (shell);
+				}
+				finally {
+					Syscall.endusershell ();
+				}
 			}
 
 			return (string[]) shells.ToArray (typeof(string));

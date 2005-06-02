@@ -68,20 +68,22 @@ namespace Mono.Unix {
 
 		public static UnixGroupInfo[] GetLocalGroups ()
 		{
-			Syscall.SetLastError ((Error) 0);
-			Syscall.setgrent ();
-			if (Syscall.GetLastError () != (Error) 0)
-				UnixMarshal.ThrowExceptionForLastError ();
 			ArrayList entries = new ArrayList ();
-			try {
-				Group g;
-				while ((g = Syscall.getgrent()) != null)
-					entries.Add (new UnixGroupInfo (g));
-				if (Syscall.GetLastError() != (Error) 0)
+			Syscall.SetLastError ((Error) 0);
+			lock (Syscall.grp_lock) {
+				Syscall.setgrent ();
+				if (Syscall.GetLastError () != (Error) 0)
 					UnixMarshal.ThrowExceptionForLastError ();
-			}
-			finally {
-				Syscall.endgrent ();
+				try {
+					Group g;
+					while ((g = Syscall.getgrent()) != null)
+						entries.Add (new UnixGroupInfo (g));
+					if (Syscall.GetLastError() != (Error) 0)
+						UnixMarshal.ThrowExceptionForLastError ();
+				}
+				finally {
+					Syscall.endgrent ();
+				}
 			}
 			return (UnixGroupInfo[]) entries.ToArray (typeof(UnixGroupInfo));
 		}

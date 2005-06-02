@@ -91,6 +91,11 @@ namespace Mono.Unix {
 		{
 			return group.ToString();
 		}
+
+		public Group ToGroup ()
+		{
+			return group;
+		}
 	}
 }
 
