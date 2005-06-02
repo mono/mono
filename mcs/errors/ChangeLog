@@ -1,3 +1,7 @@
+2005-06-02  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0119-2.cs: New test from #75080.
+
 2005-05-31  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1589.cs, cs1590.cs, cs1590-2.cs, cs1590-3.cs, cs1592.cs:

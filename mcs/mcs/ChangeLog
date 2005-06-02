@@ -1,3 +1,21 @@
+2005-06-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75080, cs0119.cs.
+	* ecore.cs (Expression.ExprClassToResolveFlags): New.  Broken out
+	of ...
+	(Expression.Resolve): ... this.  Use it.  Remove bogus code
+	allowing ExprClass.Type and ExprClass.Namespace for
+	ResolveFlags.VariableOrValue.
+	(Expression.Resolve) [1-argument variant]: Change default resolve
+	flags based on language version.
+	(Expression.Error_UnexpectedKind): Use a simple string array
+	rather than an ArrayList.
+	* expression.cs (TypeOf.DoResolve): Set eclass to ExprClass.Value,
+	not ExprClass.Type.
+	(TypeOfVoid.DoResolve): Likewise.
+	(MemberAccess.DoResolve) [3-argument variant]: Make private.  Drop
+	flags argument -- it always has the same value.
+
 2005-05-31  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75081.
