@@ -374,6 +374,21 @@ PublicKeyToken=b77a5c561934e089"));
             typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
 		}
 
+		class TakesInt {
+			public TakesInt (int x) {}
+		}
+
+		class TakesObject {
+			public TakesInt (object x) {}
+		}
+
+		[Test]
+		public void GetConstructoNullInTypes ()
+		{
+			// This ends up calling type.GetConstructor ()
+			Activator.CreateInstance (typeof (TakesInt), new object [] { null });
+			Activator.CreateInstance (typeof (TakesObject), new object [] { null });
+		}
 	}
 }
 

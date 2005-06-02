@@ -1,3 +1,7 @@
+2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeTest.cs: new test for null in Type [] for GetConstructor().
+
 2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ActivatorTest.cs: Updated current tests (which weren't executed 
