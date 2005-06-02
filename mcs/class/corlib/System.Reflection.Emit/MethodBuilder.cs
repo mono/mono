@@ -305,7 +305,10 @@ namespace System.Reflection.Emit {
 				DllImportAttribute attr = (DllImportAttribute)CustomAttributeBuilder.decode_cattr (customBuilder);
 				pi_dll = attr.Value;
 				pi_entry = attr.EntryPoint;
-				native_cc = attr.CallingConvention;
+				if (attr.CallingConvention == 0)
+					native_cc = System.Runtime.InteropServices.CallingConvention.Winapi;
+				else
+					native_cc = attr.CallingConvention;
 				charset = attr.CharSet;
 				ExactSpelling = attr.ExactSpelling;
 				if (attr.PreserveSig)
