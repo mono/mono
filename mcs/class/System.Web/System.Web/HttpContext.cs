@@ -73,8 +73,6 @@ namespace System.Web
 		{
 			Context = this;
 
-			_arrExceptions = null;
-			_oItems = null;
 			_oTimestamp = DateTime.Now;
 			_oRequest = Request;
 			_oResponse = Response;
@@ -85,8 +83,6 @@ namespace System.Web
 		{
 			Context = this;
 
-			_arrExceptions = null;
-			_oItems = null;
 			_oTimestamp = DateTime.Now;
 			_oRequest = new HttpRequest (WorkerRequest, this);
 			_oResponse = new HttpResponse (WorkerRequest, this);
