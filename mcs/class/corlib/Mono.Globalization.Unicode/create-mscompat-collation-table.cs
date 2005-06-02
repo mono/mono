@@ -94,6 +94,7 @@ namespace Mono.Globalization.Unicode
 		byte [] diacritical = new byte [char.MaxValue + 1];
 
 		string [] diacritics = new string [] {
+			// LATIN
 			" ACUTE;", " GRAVE;", " DOT ABOVE;", " MIDDLE DOT;",
 			" CIRCUMFLEX;", " DIAERESIS;", " CARON;", " BREVE;",
 			" DIALYTIKA AND TONOS;", " MACRON;", " TILDE;", " RING ABOVE;",
@@ -135,8 +136,12 @@ namespace Mono.Globalization.Unicode
 			" DOT BELOW AND MACRON",
 			" HORN AND HOOK ABOVE",
 			" HORN AND DOT",
+			// CIRCLED, PARENTHESIZED and so on
+			"CIRCLED DIGIT", "CIRCLED NUMBER", "CIRCLED LATIN", "CIRCLED KATAKANA",
+			"PARENTHESIZED DIGIT", "PARENTHESIZED NUMBER", "PARENTHESIZED LATIN",
 			};
 		byte [] diacriticWeights = new byte [] {
+			// LATIN.
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
 			0x1D, 0x1D, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
@@ -147,7 +152,17 @@ namespace Mono.Globalization.Unicode
 			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x5A,
 			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 
 			0x69, 0x69, 0x6A, 0x6D, 0x6E,
-			0x95, 0xAA
+			0x95, 0xAA,
+			// CIRCLED, PARENTHESIZED and so on.
+			0xEE, 0xEE, 0xEE, 0xEE, 0xF3, 0xF3, 0xF3, 0xF3
+			};
+
+		int [] numberSecondaryWeightBounds = new int [] {
+			0x660, 0x680, 0x6F0, 0x700, 0x960, 0x970,
+			0x9E0, 0x9F0, 0x9F4, 0xA00, 0xA60, 0xA70,
+			0xAE0, 0xAF0, 0xB60, 0xB70, 0xBE0, 0xC00,
+			0xC60, 0xC70, 0xCE0, 0xCF0, 0xD60, 0xD70,
+			0xE50, 0xE60, 0xED0, 0xEE0
 			};
 
 		char [] orderedCyrillic;
@@ -184,6 +199,8 @@ namespace Mono.Globalization.Unicode
 				args [3] : "downloaded/CP932.TXT";
 			ParseSources (unidata, derivCoreProps, scripts, cp932);
 			Console.Error.WriteLine ("parse done.");
+			InterpretParsedData ();
+			Console.Error.WriteLine ("interpretation done.");
 			Generate ();
 			Console.Error.WriteLine ("generation done.");
 			Serialize ();
@@ -324,6 +341,10 @@ namespace Mono.Globalization.Unicode
 			for (int d = 0; d < diacritics.Length; d++)
 				if (s.IndexOf (diacritics [d]) > 0)
 					diacritical [cp] |= diacriticWeights [d];
+			// Two-step grep required for it.
+			if (s.IndexOf ("FULL STOP") > 0 &&
+				(s.IndexOf ("DIGIT") > 0 || s.IndexOf ("NUMBER") > 0))
+				diacritical [cp] |= 0xF4;
 
 			// Arabic letter name
 			if (0x0621 <= cp && cp <= 0x064A &&
@@ -587,6 +608,17 @@ namespace Mono.Globalization.Unicode
 
 		#region Generate
 
+		void InterpretParsedData ()
+		{
+			// number, secondary weights
+			byte weight = 0x38;
+			int [] numarr = numberSecondaryWeightBounds;
+			for (int i = 0; i < numarr.Length; i += 2, weight++)
+				for (int cp = numarr [i]; cp < numarr [i + 1]; cp++)
+					if (Char.IsNumber ((char) cp))
+						diacritical [cp] = weight;
+		}
+
 		void Generate ()
 		{
 			UnicodeCategory uc;
@@ -707,7 +739,8 @@ namespace Mono.Globalization.Unicode
 					prevValue = currValue;
 					fillIndex [0xC] += 1;
 				}
-				AddCharMap ((char) ((int) de.Key), 0xC, 1);
+				int cp = (int) de.Key;
+				AddCharMap ((char) cp, 0xC, 1, diacritical [cp]);
 			}
 
 			// 221E: infinity
@@ -991,6 +1024,7 @@ namespace Mono.Globalization.Unicode
 			foreach (char c in specialBiggest)
 				AddCharMap (c, 0xFF, 0);
 			#endregion
+
 		}
 
 		// Reset fillIndex to fixed value and call AddLetterMap().

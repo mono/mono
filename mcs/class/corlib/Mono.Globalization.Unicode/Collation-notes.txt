@@ -498,23 +498,29 @@
 
 		-E0[64]: 2107 (Eurer)
 		-E0[87]: some Tone letters (TONE TWO / TONE SIX)
-		-EE: Circled-
-			numbers#1 (2460-2473)
-			latin (24B6-24EA)
-			numbers#2 (2776-2793)
-			katakana (32D0-32FE),
-		-F3: Parenthesized enumerations (2470-2487,249C-24B5)
+		-EE: Circled letter-or-digits and katakanas
+			CIRCLED {DIGIT|NUMBER|LATIN|KATAKANA}
+			numbers (2460-2473,2776-2793,24EA)
+			latin (24B6-24E9)
+			katakana (32D0-32FE)
+		-F3: Parenthesized enumerations
+			numbers (2474-2487)
+			latin (249C-24B5)
+			PARENTHESIZED {DIGIT|NUMBER|LATIN}
 		-F4: Numbers with dot (2488-249B)
-
-		-DD-F0: 20D0-20E1
+			{DIGIT|NUMBER} * FULL STOP
 
 		<miscellaneous>
+		-258,25C-25E,285,286,29A,297 -> 0E[80-86,88]
+		-27F,2B3-2B6 -> 0E 8A[80-84]
+		-3D3 -> 0F[44]
+		-476,477 -> 10[46]
+		-215F -> 0C[03]
+
+		-20D0-20E1 -> 01[DD-F0]
 		-483-486 -> 01[94-97]
 		-559,55A -> 01[98,99]
 		-711 -> 01[9A]
-
-		-258,25C-25E,285,286,29A,297 -> 0E[80-86,88]
-		-27F,2B3-2B6 -> 0E 8A[80-84]
 
 		-346-348,2BE-2C5,2CE-2CF -> 01[74-7F]
 		-2D1-2D3,2DE,2E4-2E9 -> 01[81-8A]
@@ -522,16 +528,17 @@
 		-342,343 -> 01[8D,8E]
 		-345 -> 01[90]
 
+		-700-780 01[8D-AF]. Maybe there is some kind of traditional
+		order in Estrangela, but for now am not sure.
+		/*
 		-740-742 -> 01[8D-8F]
 		-747,748,732,735,738,739,73C,73F,743-746,730 -> 01[90,91,94-9F]
 		-731,733,734,736,737,73A,73B,73D,73E,749,74A,7A6-7A9
 		 -> 01[A0-AA,AC-AF]
+		*/
 		-7AA-7B0 -> 01[B0-B6]
 
-		-3D3 -> 44
-		-476,477 -> 46
 		-591-5C2 except for 5BA,5BE -> 01[03-33] in order
-		-215F -> 03
 
 		No further patterns for >= 80
 
@@ -792,11 +799,12 @@
 
 	  For primary weights, 'A' to 'O' are mapped to 22-26, 'Ka' to 'Ko'
 	  are to 2A-2E, 'Sa' to 'So' are to 32-36 ... and follows.
+	  'Nn' is special: [22 80].
 
 	  After Kana characters, there are CJK compat characters.
 	  From 22 97 01 01 01 01 00 (3349) to 22 A6 01 01 01 01 00 (333B) are
 	  sorted in JIS table order (CP932.TXT). Remaining square characters
-	  are sorted maybe in Alphabetic order.
+	  are maybe sorted in Alphabetic order.
 
 	  UCA DUCET also does not apply here.
 
@@ -805,6 +813,7 @@
 
 	13 culture dependent letters 2
 		710-72C : Estrangela (ancient Syriac).
+			codepoint order.
 			711 is excluded (superscript).
 			714,716,71C,724 and 727 are "alternative" characters.
 			SortKey: [24 0B]-[24 60], by x where x is 2 for those
