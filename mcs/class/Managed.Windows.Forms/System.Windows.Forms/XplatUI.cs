@@ -44,16 +44,6 @@ namespace System.Windows.Forms {
 
 		#region Subclasses
 		public class State {
-			static public bool DropTarget {
-				get {
-					return driver.DropTarget;
-				}
-
-				set {
-					driver.DropTarget=value;
-				}
-			}
-
 			static public Keys ModifierKeys {
 				get {
 					return driver.ModifierKeys;
@@ -587,6 +577,14 @@ namespace System.Windows.Forms {
 				Console.WriteLine("SendAsyncMethod({0}): Called", data);
 			#endif
 			driver.SendAsyncMethod (data);
+		}
+
+		internal static void SetAllowDrop (IntPtr handle, bool value)
+		{
+			#if DriverDebug
+			Console.WriteLine ("SetAllowDrop({0}, {1}): Called", handle, value);
+			#endif
+			driver.SetAllowDrop (handle, value);
 		}
 
 		internal static void SetBorderStyle(IntPtr handle, BorderStyle border_style) {

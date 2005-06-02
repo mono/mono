@@ -119,6 +119,13 @@ namespace System.Windows.Forms {
 		internal abstract void SetWindowState(IntPtr handle, FormWindowState state);
 
 		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
+
+		internal virtual void SetAllowDrop (IntPtr handle, bool value)
+		{
+			Console.Error.WriteLine ("Drag and Drop is currently " +
+					"not supported on this platform");
+		}
+
 		internal abstract void SetBorderStyle(IntPtr handle, BorderStyle border_style);
 		internal abstract void SetMenu(IntPtr handle, IntPtr menu_handle);
 
@@ -212,7 +219,7 @@ namespace System.Windows.Forms {
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 
-		
+
 #endregion	// XplatUI Driver Methods
 	}
 

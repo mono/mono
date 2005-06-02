@@ -85,6 +85,7 @@ namespace System.Windows.Forms
 		internal object			control_tag;		// object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
 		internal Cursor			cursor;			// Cursor for the window
+		private bool			allow_drop;		// true if the control accepts droping objects on it   
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -761,6 +762,26 @@ namespace System.Windows.Forms
 				pevent.Graphics.DrawImage (background_image, 0, 0);
 		}
 
+		internal void DndEnter (DragEventArgs e)
+		{
+			OnDragEnter (e);
+		}
+
+		internal void DndOver (DragEventArgs e)
+		{
+			OnDragOver (e);
+		}
+
+		internal void DndDrop (DragEventArgs e)
+		{
+			OnDragDrop (e);
+		}
+
+		internal void DndLeave (DragEventArgs e)
+		{
+			OnDragLeave (e);
+		}
+		
 		internal static MouseButtons FromParamToMouseButtons (int param) {		
 			MouseButtons buttons = MouseButtons.None;
 					
@@ -1025,13 +1046,14 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public virtual bool AllowDrop {
 			get {
-				return XplatUI.State.DropTarget;
+				return allow_drop;
 			}
 
 			set {
-				#if later
-					XplatUI.State.DropTarget=value;
-				#endif
+				if (allow_drop == value)
+					return;
+				allow_drop = value;
+				XplatUI.SetAllowDrop (Handle, value);
 			}
 		}
 

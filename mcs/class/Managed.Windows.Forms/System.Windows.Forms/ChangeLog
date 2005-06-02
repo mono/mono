@@ -1,3 +1,11 @@
+2005-06-02  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Add some internal methods so the DnD subsystem can
+	raise DnD events. Also call into the driver when AllowDrop is set.
+	* XplatUI.cs:
+	* XplatUIDriver.cs: New method for setting whether or not a window
+	is allowed to accept drag and drop messages.
+		
 2005-06-01  Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* ScrollBar.cs: Make sure that values sent in Scroll events 
