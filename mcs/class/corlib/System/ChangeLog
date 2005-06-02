@@ -1,6 +1,6 @@
 2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Type.cs: reverted wrong fix for bug #73100 in r45150. This makes SSL
+	* Type.cs: reverted wrong fix for bug #71300 in r45150. This makes SSL
 	support in System.Net work again.
 
 2005-06-01  Ben Maurer  <bmaurer@ximian.com>
