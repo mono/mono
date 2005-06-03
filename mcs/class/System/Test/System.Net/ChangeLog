@@ -1,3 +1,7 @@
+2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddressTest.cs: cleanup and added loopback IPv6 test.
+
 2005-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsCas.cs: New. CAS unit tests for Dns.
