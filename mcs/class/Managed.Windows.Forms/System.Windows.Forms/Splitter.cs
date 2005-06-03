@@ -77,6 +77,12 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+
+		public BorderStyle BorderStyle {
+			get { return drag_form.InternalBorderStyle; }
+			set { drag_form.InternalBorderStyle = value; }
+		}
+
 		[DefaultValue(DockStyle.Left)]
 		[Localizable(true)]
 		public override DockStyle Dock 

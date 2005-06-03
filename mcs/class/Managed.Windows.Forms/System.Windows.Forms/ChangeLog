@@ -1,5 +1,9 @@
 2005-06-02  Jackson Harper  <jackson@ximian.com>
 
+	* Splitter.cs: Implement BorderStyle.
+
+2005-06-02  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: Tie into the X11Dnd subsystem.
 	* X11Dnd.cs: New file. A subsystem that handles drag and drop on
 	X11 using XDND.
