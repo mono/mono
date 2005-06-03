@@ -30,16 +30,26 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Collections;
 
 namespace System.Windows.Forms
 {
 	public class DataGridBoolColumn : DataGridColumnStyle
 	{
+		[Flags]
+		public enum CheckState {
+			Checked		= 0x00000000,
+			UnChecked	= 0x00000002,
+			Null		= 0x00000004,
+			Selected	= 0x00000008
+		}
+
 		#region	Local Variables
 		private bool allownull;
 		private object falsevalue;
 		private object nullvalue;
 		private object truevalue;
+		private Hashtable checkboxes_state;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -56,6 +66,7 @@ namespace System.Windows.Forms
 		public DataGridBoolColumn (PropertyDescriptor prop, bool isDefault)  : base (prop)
 		{
 			CommonConstructor ();
+			is_default = isDefault;
 		}
 
 		private void CommonConstructor ()
@@ -64,6 +75,7 @@ namespace System.Windows.Forms
 			falsevalue = false;
 			nullvalue = null;
 			truevalue = true;
+			checkboxes_state = new Hashtable ();			
 		}
 
 		#endregion
@@ -131,16 +143,18 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		[MonoTODO]
 		protected internal override void Abort (int rowNum)
 		{
-
+			SetState (rowNum, GetState (null, rowNum) & ~CheckState.Selected);
+			Invalidate ();
 		}
 
-		[MonoTODO]
-		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
+		protected internal override bool Commit (CurrencyManager source, int rowNum)
 		{
-			throw new NotImplementedException ();
+			SetColumnValueAtRow (source, rowNum, FromStateToValue (GetState (source, rowNum)));
+			SetState (rowNum, GetState (source, rowNum) & ~CheckState.Selected);
+			Invalidate ();
+			return true;
 		}
 
 		[MonoTODO]
@@ -149,10 +163,10 @@ namespace System.Windows.Forms
 
 		}
 
-		[MonoTODO]
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)
 		{
-
+			SetState (rowNum, GetState (source, rowNum) | CheckState.Selected);
+			Invalidate ();
 		}
 
 		[MonoTODO]
@@ -160,24 +174,27 @@ namespace System.Windows.Forms
 		{
 
 		}
-		
+
 		protected internal override object GetColumnValueAtRow (CurrencyManager lm, int row)
 		{
 			object obj = base.GetColumnValueAtRow (lm, row);
-			
+
+			if (obj.Equals (nullvalue)) {
+				return Convert.DBNull;
+			}
+
 			if (obj.Equals (truevalue)) {
 				return true;
 			}
-			else {
-				return false;
-			}
+
+			return false;
 		}
-		
+
 		protected internal override int GetMinimumHeight ()
 		{
 			return ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight;
 		}
-		
+
 		protected internal override int GetPreferredHeight (Graphics g, object value)
 		{
 			return ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight;
@@ -187,46 +204,176 @@ namespace System.Windows.Forms
 		{
 			return new Size (ThemeEngine.Current.DataGridMinimumColumnCheckBoxWidth, ThemeEngine.Current.DataGridMinimumColumnCheckBoxHeight);
 		}
-		
+
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
 		{
 			Paint (g, bounds, source, rowNum, false);
 		}
-		
+
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight)
 		{
-			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
+			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor),
 				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
 		}
-		
+
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
 			Size chkbox_size = GetPreferredSize (g, null);
 			Rectangle rect = new Rectangle ();
+			Rectangle rect_selected = bounds;
+			ButtonState state;
 			chkbox_size.Width -= 2;
-			chkbox_size.Height -= 2;			
+			chkbox_size.Height -= 2;
 			rect.X = bounds.X + ((bounds.Width - chkbox_size.Width) / 2);
 			rect.Y = bounds.Y + ((bounds.Height - chkbox_size.Height) / 2);
 			rect.Width = chkbox_size.Width;
 			rect.Height = chkbox_size.Height;
-			
-			bool value = (bool) GetColumnValueAtRow (source, rowNum);
-			ThemeEngine.Current.CPDrawCheckBox (g, rect, value == true ? ButtonState.Checked : ButtonState.Normal);
+			rect_selected.Inflate (-1, -1);		
+
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (
+				((GetState (source, rowNum) & CheckState.Selected) == CheckState.Selected) ? grid.SelectionBackColor: grid.BackColor),
+				rect_selected);
+
+			switch (GetState (source, rowNum) & ~CheckState.Selected) {
+			case CheckState.Checked:
+				state = ButtonState.Checked;
+				break;
+			case CheckState.Null:
+				state = ButtonState.Inactive;
+				break;
+			case CheckState.UnChecked:
+			default:
+				state = ButtonState.Normal;
+				break;
+			}
+
+			ThemeEngine.Current.CPDrawCheckBox (g, rect, state);
 		}
 
-		[MonoTODO]
-		protected internal override void SetColumnValueAtRow (CurrencyManager lm, int row, object value)
+		protected internal override void SetColumnValueAtRow (CurrencyManager lm, int row, object obj)
 		{
+			object value = null;
 
+			if (obj.Equals (nullvalue)) {
+				value = Convert.DBNull;
+			} else {
+				if (obj.Equals (truevalue)) {
+					value = true;
+				}
+			}
+
+			base.SetColumnValueAtRow (lm, row, value);
 		}
 		#endregion	// Public Instance Methods
-		
+
 		#region Private Instance Methods
 		internal static bool CanRenderType (Type type)
-		{			
+		{
 			return (type == typeof (Boolean));
 		}
-		#endregion Private Instance Methods	
+
+		private object FromStateToValue (CheckState state)
+		{
+			state = state & ~CheckState.Selected;	
+			
+			if ((state & CheckState.Checked) == CheckState.Checked) {
+				return truevalue;
+			}
+
+			if ((state & CheckState.Null) == CheckState.Null) {
+				return nullvalue;
+			}
+
+			return falsevalue;
+		}
+
+		private CheckState FromValueToState (object obj)
+		{
+			if (obj.Equals (truevalue)) {
+				return CheckState.Checked;
+			}
+
+			if (obj.Equals (nullvalue)) {
+				return CheckState.Null;
+			}
+
+			return CheckState.UnChecked;
+		}
+
+		private CheckState GetState (CurrencyManager source, int row)
+		{
+			CheckState state;
+
+			if (checkboxes_state[row] == null) {
+				object value = GetColumnValueAtRow (source, row);
+				state =	FromValueToState (value);
+				checkboxes_state.Add (row, state);
+			} else {
+				state = (CheckState) checkboxes_state[row];
+			}
+
+			return state;
+		}
+
+		private CheckState GetNextState (CheckState state)
+		{
+			CheckState new_state;
+			bool selected = ((state & CheckState.Selected) == CheckState.Selected);
+
+			switch (state & ~CheckState.Selected) {
+			case CheckState.Checked:
+				new_state = CheckState.Null;
+				break;
+			case CheckState.Null:
+				new_state = CheckState.UnChecked;
+				break;
+			case CheckState.UnChecked:
+			default:
+				new_state = CheckState.Checked;
+				break;
+			}
+			
+			if (selected) {
+				new_state = new_state | CheckState.Selected;
+			}
+
+			return new_state;
+		}
+
+		internal override void OnKeyDown (KeyEventArgs ke, int row, int column)
+		{
+			CheckState state = GetNextState (GetState (null, row));
+
+			if (ke.KeyCode == Keys.Space) {
+				grid.is_changing = true;
+				grid.InvalidateCurrentRowHeader ();
+				checkboxes_state[row] = state;
+				grid.Invalidate (grid.GetCellBounds (row, column));
+			}
+		}
+
+		internal override void OnMouseDown (MouseEventArgs e, int row, int column)
+		{
+			CheckState state = GetNextState (GetState (null, row));
+
+			grid.is_changing = true;
+			grid.InvalidateCurrentRowHeader ();			
+			SetState (row, state);
+			grid.Invalidate (grid.GetCellBounds (row, column));
+
+		}
+
+		private void SetState (int row, CheckState state)
+		{
+			Console.WriteLine ("Set state {0}, {1}, {2}", row, state, Environment.StackTrace);
+			if (checkboxes_state[row] == null) {
+				checkboxes_state.Add (row, state);
+			} else {
+				checkboxes_state[row] = state;
+			}
+		}
+
+		#endregion Private Instance Methods
 
 		#region Events
 		public event EventHandler AllowNullChanged;

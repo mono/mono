@@ -59,9 +59,9 @@ namespace System.Windows.Forms
 			public static readonly HitTestInfo Nowhere = null;
 
 			#region	Local Variables
-			private int column;
-			private int row;
-			private HitTestType type;
+			internal int column;
+			internal int row;
+			internal HitTestType type;
 			#endregion // Local Variables
 
 			#region Private Constructors
@@ -78,6 +78,7 @@ namespace System.Windows.Forms
 			public int Column {
 				get { return column; }
 			}
+
 			public int Row {
 				get { return row; }
 			}
@@ -107,7 +108,7 @@ namespace System.Windows.Forms
 
 		}
 
-		#region	Local Variables				
+		#region	Local Variables
 		private static readonly Color	def_alternating_backcolor = ThemeEngine.Current.DataGridAlternatingBackColor;
 		private static readonly Color	def_background_color = ThemeEngine.Current.DataGridBackgroundColor;
 		private static readonly Color	def_caption_backcolor = ThemeEngine.Current.DataGridCaptionBackColor;
@@ -161,16 +162,18 @@ namespace System.Windows.Forms
 		private int currentrow_index;
 		private GridTableStylesCollection styles_collection;
 		private DataGridParentRowsLabelStyle parentrowslabel_style;
-		private DataGridCell current_cell;
+		internal DataGridCell current_cell;
 		private Color forecolor;
 		private Color backcolor;
 		private DataGridTableStyle default_style;
 		private DataGridTableStyle current_style;
 		internal HScrollBar horiz_scrollbar;
 		internal VScrollBar vert_scrollbar;
-		private DataGridDrawing grid_drawing;
+		internal DataGridDrawing grid_drawing;
 		internal int first_visiblerow;
 		internal int horz_pixeloffset;
+		internal bool is_editing; 	// Current cell is edit mode
+		internal bool is_changing;	// Indicates if current cell is been changed (in edit mode)
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -209,12 +212,14 @@ namespace System.Windows.Forms
 			selection_forecolor = def_selection_forecolor;
 			rowheaders_width = 35;
 			visiblecolumn_count = 0;
-			visiblerow_count = 0;			
+			visiblerow_count = 0;
 			current_cell = new DataGridCell ();
 			currentrow_index = -1;
 			first_visiblerow = 0;
 			first_visiblecolumn = 0;
 			horz_pixeloffset = 0;
+			is_editing = false;
+			is_changing = false;
 			forecolor = SystemColors.WindowText;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			backcolor = SystemColors.Window;
@@ -226,11 +231,11 @@ namespace System.Windows.Forms
 			CurrentTableStyle = default_style;
 
 			horiz_scrollbar = new HScrollBar ();
-			horiz_scrollbar.Scroll += new ScrollEventHandler  (OnHorizontalScrollEvent);			
+			horiz_scrollbar.Scroll += new ScrollEventHandler  (GridHScrolled);
 			vert_scrollbar = new VScrollBar ();
-			vert_scrollbar.ValueChanged += new EventHandler (OnVerticalScrollEvent);
+			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);
 			grid_drawing = new DataGridDrawing (this);
-			
+
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 
 		}
@@ -353,7 +358,7 @@ namespace System.Windows.Forms
 				if (caption_font == null) {
 					return Font;
 				}
-				
+
 				return caption_font;
 			}
 
@@ -361,10 +366,10 @@ namespace System.Windows.Forms
 				if (caption_font != null && caption_font.Equals (value)) {
 					return;
 				}
-				
+
 				caption_font = value;
 				grid_drawing.CalcGridAreas ();
-				Refresh ();				
+				Refresh ();
 			}
 		}
 
@@ -436,8 +441,9 @@ namespace System.Windows.Forms
 
 			set {
 				if (!current_cell.Equals (value)) {
+					grid_drawing.InvalidateRowHeader (current_cell.RowNumber); // old row header
 					current_cell = value;
-					Refresh ();
+					InvalidateCurrentRowHeader ();
 				}
 			}
 		}
@@ -473,7 +479,7 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				if (SetDataMember (datamember)) {
+				if (SetDataMember (value)) {
 					SetNewDataSource ();
 					Refresh ();
 				}
@@ -547,7 +553,7 @@ namespace System.Windows.Forms
 				if (value == Color.Empty) {
 					throw new ArgumentNullException ("Color.Empty value is invalid.");
 				}
-				
+
 				if (gridline_color != value) {
 					gridline_color = value;
 					Refresh ();
@@ -578,7 +584,7 @@ namespace System.Windows.Forms
 				if (value == Color.Empty) {
 					throw new ArgumentNullException ("Color.Empty value is invalid.");
 				}
-				
+
 				if (header_backcolor != value) {
 					header_backcolor = value;
 					Refresh ();
@@ -725,7 +731,7 @@ namespace System.Windows.Forms
 					if (parentrows_visible) {
 						Refresh ();
 					}
-					
+
 					OnParentRowsLabelStyleChanged (EventArgs.Empty);
 				}
 			}
@@ -759,7 +765,7 @@ namespace System.Windows.Forms
 				if (value < 0) {
 					throw new ArgumentException ("PreferredColumnWidth is less than 0");
 				}
-				
+
 				if (preferredcolumn_width != value) {
 					preferredcolumn_width = value;
 					Refresh ();
@@ -907,34 +913,34 @@ namespace System.Windows.Forms
 
 		#region Private Instance Properties
 		internal DataGridTableStyle CurrentTableStyle {
-			get { 
+			get {
 				return current_style;
 			}
 			set {
 				current_style = value;
 			}
 		}
-				
+
 		internal int FirstVisibleRow {
 			get { return first_visiblerow; }
 			set { first_visiblerow = value;}
 		}
-		
+
 		internal int RowsCount {
-			get {				
+			get {
 				if (ListManager != null) {
 					return ListManager.Count;
 				}
-				
+
 				return 0;
 			}
 		}
-		
-		internal int RowHeight { 
+
+		internal int RowHeight {
 			get {
 				if (preferredrow_height > Font.Height + 3) {
 					return preferredrow_height;
-					
+
 				} else {
 					return Font.Height + 3;
 				}
@@ -958,7 +964,14 @@ namespace System.Windows.Forms
 
 		protected virtual void CancelEditing ()
 		{
+			if (is_editing == false) {
+				return;
+			}
 
+			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+			is_editing = false;
+			is_changing = false;
+			InvalidateCurrentRowHeader ();
 		}
 
 		public void Collapse (int row)
@@ -998,7 +1011,20 @@ namespace System.Windows.Forms
 
 		public virtual bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
 		{
-			throw new NotImplementedException ();
+			if (is_editing == false) {
+				return false;
+			}
+			
+			if (shouldAbort) {
+				gridColumn.Abort (rowNumber);
+			} else {
+				gridColumn.Commit (ListManager, rowNumber);
+			}
+			
+			is_editing = false;
+			is_changing = false;
+			InvalidateCurrentRowHeader ();
+			return true;
 		}
 
 		public virtual void EndInit ()
@@ -1011,19 +1037,19 @@ namespace System.Windows.Forms
 
 		}
 
-		public Rectangle GetCellBounds (DataGridCell dgc)
+		public Rectangle GetCellBounds (DataGridCell cell)
 		{
-			throw new NotImplementedException ();
+			return GetCellBounds (cell.RowNumber, cell.ColumnNumber);
 		}
 
 		public Rectangle GetCellBounds (int row, int col)
 		{
-			throw new NotImplementedException ();
+			return grid_drawing.GetCellBounds (row, col);
 		}
 
 		public Rectangle GetCurrentCellBounds ()
 		{
-			throw new NotImplementedException ();
+			return GetCellBounds (current_cell.RowNumber, current_cell.ColumnNumber);
 		}
 
 		protected virtual string GetOutputTextDelimiter ()
@@ -1033,27 +1059,109 @@ namespace System.Windows.Forms
 
 		protected virtual void GridHScrolled (object sender, ScrollEventArgs se)
 		{
+			if (se.NewValue == horz_pixeloffset ||
+				se.Type == ScrollEventType.EndScroll) {
+				return;
+			}
 
+			Rectangle invalidate = new Rectangle ();
+			Rectangle invalidate_column = new Rectangle ();
+
+			if (se.NewValue > horz_pixeloffset) { // ScrollRight
+				int pixels = se.NewValue - horz_pixeloffset;
+
+				// Columns header
+				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X + grid_drawing.ColumnsHeadersArea.Width - pixels;
+				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
+				invalidate_column.Width = pixels;
+				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, -pixels, 0, false);
+
+				// Cells
+				invalidate.X = grid_drawing.CellsArea.X + grid_drawing.CellsArea.Width - pixels;
+				invalidate.Y = grid_drawing.CellsArea.Y;
+				invalidate.Width = pixels;
+				invalidate.Height = grid_drawing.CellsArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, -pixels, 0, false);
+
+			} else {
+				int pixels = horz_pixeloffset - se.NewValue;
+
+				// Columns header
+				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X;
+				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
+				invalidate_column.Width = pixels;
+				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, pixels, 0, false);
+
+				// Cells
+				invalidate.X =  grid_drawing.CellsArea.X;
+				invalidate.Y =  grid_drawing.CellsArea.Y;
+				invalidate.Width = pixels;
+				invalidate.Height = grid_drawing.CellsArea.Height;
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, pixels, 0, false);
+			}
+
+			horz_pixeloffset = se.NewValue;
+			grid_drawing.UpdateVisibleColumn ();
+			Invalidate (invalidate_column);
+			Invalidate (invalidate);
 		}
 
 		protected virtual void GridVScrolled (object sender, ScrollEventArgs se)
-		{
+		{			
+			int old_first_visiblerow = first_visiblerow;
+			first_visiblerow = se.NewValue;
+			grid_drawing.UpdateVisibleRowCount ();
+			
+			if (first_visiblerow == old_first_visiblerow) {
+				return;
+			}
+			
+			Rectangle invalidate = new Rectangle ();
+
+			if (se.NewValue > old_first_visiblerow ) { // Scrolldown
+				int scrolled_rows = se.NewValue - old_first_visiblerow;
+				int pixels = scrolled_rows * RowHeight;
+
+				invalidate.X =  grid_drawing.CellsArea.X;
+				invalidate.Y =  grid_drawing.CellsArea.Y + grid_drawing.CellsArea.Height - pixels;
+				invalidate.Width = grid_drawing.CellsArea.Width;
+				invalidate.Height = pixels;
+
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, -pixels, false);
+
+			} else { // ScrollUp
+				int scrolled_rows = old_first_visiblerow - se.NewValue;
+				int pixels = scrolled_rows * RowHeight;
+
+				invalidate.X =  grid_drawing.CellsArea.X;
+				invalidate.Y =  grid_drawing.CellsArea.Y;
+				invalidate.Width = grid_drawing.CellsArea.Width;
+				invalidate.Height = pixels;
+
+				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, pixels, false);
+			}			
+			
+			Invalidate (invalidate);
+			Invalidate (grid_drawing.RowsHeadersArea);
 
 		}
 
 		public HitTestInfo HitTest (Point position)
 		{
-			throw new NotImplementedException ();
+			return HitTest (position.X, position.Y);
 		}
 
 		public HitTestInfo HitTest (int x, int y)
 		{
-			throw new NotImplementedException ();
+			return grid_drawing.HitTest (x, y);
 		}
 
+		[MonoTODO]
 		public bool IsExpanded (int rowNumber)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public bool IsSelected (int row)
@@ -1144,8 +1252,8 @@ namespace System.Windows.Forms
 
 		protected override void OnFontChanged (EventArgs e)
 		{
-			base.OnFontChanged (e);
 			grid_drawing.CalcGridAreas ();
+			base.OnFontChanged (e);
 		}
 
 		protected override void OnForeColorChanged (EventArgs e)
@@ -1155,7 +1263,7 @@ namespace System.Windows.Forms
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
-			base.OnHandleCreated (e);			
+			base.OnHandleCreated (e);
 			grid_drawing.CalcGridAreas ();
 		}
 
@@ -1167,6 +1275,8 @@ namespace System.Windows.Forms
 		protected override void OnKeyDown (KeyEventArgs ke)
 		{
 			base.OnKeyDown (ke);
+			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].OnKeyDown 
+				(ke, current_cell.RowNumber, current_cell.ColumnNumber);
 		}
 
 		protected override void OnKeyPress (KeyPressEventArgs kpe)
@@ -1187,6 +1297,26 @@ namespace System.Windows.Forms
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
 			base.OnMouseDown (e);
+
+			HitTestInfo testinfo;
+			testinfo = grid_drawing.HitTest (e.X, e.Y);
+
+			if (testinfo.type == HitTestType.Cell) {
+				
+				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
+				
+				if (new_cell.Equals (current_cell) == false) {
+					CancelEditing ();
+					CurrentCell = new_cell;
+					is_editing = true;
+					is_changing = false;
+					CurrentTableStyle.GridColumnStyles[testinfo.Column].Edit (ListManager,
+						testinfo.Row, GetCellBounds (testinfo.Row, testinfo.Column),
+						_readonly, string.Empty, true);
+				} else {					
+					CurrentTableStyle.GridColumnStyles[testinfo.Column].OnMouseDown (e, testinfo.Row, testinfo.Column);
+				}
+			}
 		}
 
 		protected override void OnMouseLeave (EventArgs e)
@@ -1215,10 +1345,10 @@ namespace System.Windows.Forms
 				Navigate (this, e);
 			}
 		}
-		
+
 		protected override void OnPaint (PaintEventArgs pe)
-		{			
-			grid_drawing.OnPaint (pe);			
+		{
+			grid_drawing.OnPaint (pe);
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs ebe)
@@ -1449,11 +1579,23 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Private Instance Methods
-		
+
 		internal void CalcAreasAndInvalidate ()
 		{
 			grid_drawing.CalcGridAreas ();
 			Invalidate ();
+		}
+
+		// EndEdit current editing operation
+		public virtual bool EndEdit (bool shouldAbort)
+		{			
+			return EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber], 
+				current_cell.RowNumber, shouldAbort);
+		}
+
+		internal void InvalidateCurrentRowHeader ()
+		{
+			grid_drawing.InvalidateRowHeader (current_cell.RowNumber);
 		}
 
 		private bool SetDataMember (string member)
@@ -1486,62 +1628,11 @@ namespace System.Windows.Forms
 			// Create Table Style
 			// Create columns Styles
 			// Bind data
-			
+
 			current_style.DataGrid = this;
+			current_style.GridColumnStyles.Clear ();
 			current_style.CreateColumnsForTable ();
 			grid_drawing.CalcGridAreas ();
-		}
-		
-		private void OnHorizontalScrollEvent (object sender, ScrollEventArgs e)
-		{
-			if (horiz_scrollbar.Value == horz_pixeloffset ||
-				e.Type == ScrollEventType.EndScroll) {
-				return;
-			}
-			
-			Rectangle invalidate = new Rectangle ();
-			Rectangle invalidate_column = new Rectangle ();
-			
-			if (horiz_scrollbar.Value > horz_pixeloffset) { // ScrollRight
-				int pixels = horiz_scrollbar.Value - horz_pixeloffset;
-				
-				// Columns header
-				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X + grid_drawing.ColumnsHeadersArea.Width - pixels;
-				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
-				invalidate_column.Width = pixels;
-				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, -pixels, 0, false);
-				
-				// Cells												
-				invalidate.X = grid_drawing.CellsArea.X + grid_drawing.CellsArea.Width - pixels;
-				invalidate.Y = grid_drawing.CellsArea.Y;
-				invalidate.Width = pixels;
-				invalidate.Height = grid_drawing.CellsArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, -pixels, 0, false);				
-				
-			} else {				
-				int pixels = horz_pixeloffset - horiz_scrollbar.Value;
-				
-				// Columns header
-				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X;
-				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
-				invalidate_column.Width = pixels;
-				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, pixels, 0, false);
-				
-				// Cells				
-				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y;
-				invalidate.Width = pixels;
-				invalidate.Height = grid_drawing.CellsArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, pixels, 0, false);				
-			}
-			
-			horz_pixeloffset = horiz_scrollbar.Value;
-			grid_drawing.UpdateVisibleColumn ();
-			Invalidate (invalidate_column);
-			Invalidate (invalidate);
-			
 		}
 
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
@@ -1553,6 +1644,7 @@ namespace System.Windows.Forms
 			*/
 
 			CurrentTableStyle = (DataGridTableStyle)e.Element;
+			CurrentTableStyle.DataGrid = this;
 
 			switch (e.Action)  {
 				case CollectionChangeAction.Add: {
@@ -1569,44 +1661,6 @@ namespace System.Windows.Forms
 			}
 
 		}
-		
-		private void OnVerticalScrollEvent (object sender, EventArgs e)
-		{			
-			if (vert_scrollbar.Value == first_visiblerow) {
-				return;
-			}
-			
-			Rectangle invalidate = new Rectangle ();
-			
-			if (vert_scrollbar.Value > first_visiblerow ) { // Scrolldown 
-				int scrolled_rows = vert_scrollbar.Value - first_visiblerow;
-				int pixels = scrolled_rows * RowHeight;		
-				
-				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y + grid_drawing.CellsArea.Height - pixels;
-				invalidate.Width = grid_drawing.CellsArea.Width;
-				invalidate.Height = pixels;				
-
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, -pixels, false);				
-				
-			} else { // ScrollUp
-				int scrolled_rows = first_visiblerow - vert_scrollbar.Value;
-				int pixels = scrolled_rows * RowHeight;				
-				
-				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y;
-				invalidate.Width = grid_drawing.CellsArea.Width;
-				invalidate.Height = pixels;				
-				
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, pixels, false);								
-			}
-			
-			first_visiblerow =  vert_scrollbar.Value; 
-			grid_drawing.UpdateVisibleRowCount ();
-			Invalidate (invalidate);
-			Invalidate (grid_drawing.RowsHeadersArea);
-		}
-		
 		#endregion Private Instance Methods
 
 

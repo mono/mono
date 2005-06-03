@@ -68,7 +68,9 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 		protected override void OnKeyPress (KeyPressEventArgs e)
-		{
+		{			
+			grid.is_changing = true;
+			grid.InvalidateCurrentRowHeader ();
 			base.OnKeyPress (e);
 		}
 
@@ -79,6 +81,18 @@ namespace System.Windows.Forms
 
 		protected internal override bool ProcessKeyMessage (ref Message m)
 		{
+			int code = m.WParam.ToInt32 ();
+			
+			if (code == 13) {				
+				grid.EndEdit (false);
+				return true;
+			}
+			
+			if (code == 27) {
+				grid.EndEdit (true);
+				return true;
+			}
+			
 			return base.ProcessKeyMessage (ref m);
 		}
 

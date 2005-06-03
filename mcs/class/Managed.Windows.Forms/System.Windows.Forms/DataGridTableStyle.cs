@@ -745,34 +745,36 @@ namespace System.Windows.Forms
 		// Create column styles for this TableStyle
 		internal void CreateColumnsForTable () 
 		{
-			CurrencyManager	mgr = null;			
-			
-			/*if (manager != null) {
-				mgr = manager;
-			} else {
-				if (datagrid != null) {
-					mgr = datagrid.ListManager;
-				}
-			}*/
-
+			CurrencyManager	mgr = null;
 			mgr = datagrid.ListManager;
 			
 			if (mgr == null) {
 				return;
 			}
 			
-			column_styles.Clear ();
-			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();			
+			//column_styles.Clear ();
+			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();
 			
 			for (int i = 0; i < propcol.Count; i++)
-			{				
+			{
+				string s = propcol[i].Name;
+				DataGridColumnStyle colstyle = column_styles[propcol[i].Name];
+
+				if (column_styles[propcol[i].Name] != null &&
+					column_styles[propcol[i].Name].IsDefault == false) {
+					column_styles[propcol[i].Name].table_style = this;
+					column_styles[propcol[i].Name].SetDataGridInternal (datagrid);					
+					continue;
+				}					
+												
 				// TODO: What to do with relations?
 				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {					
 					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
 					
 				} else {
 					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
-					st.TableStyle = this;
+					st.grid = datagrid;
+					//st.TableStyle = this;
 					st.MappingName = propcol[i].Name;
 					st.HeaderText = propcol[i].Name;
 					st.Width = PreferredColumnWidth;					

@@ -328,6 +328,11 @@ namespace System.Windows.Forms
 				parent_rows.Height - columnshdrs_area.Height;
 
 			int rows_height = (grid.RowsCount - grid.first_visiblerow) * grid.RowHeight;
+			int max_rows = max_height / grid.RowHeight;
+			
+			if (max_rows > grid.RowsCount) {
+				max_rows = grid.RowsCount;
+			}
 
 			if (rows_height > cells_area.Height) {
 				grid.visiblerow_count = max_height / grid.RowHeight;
@@ -337,6 +342,81 @@ namespace System.Windows.Forms
 
 			if (grid.visiblerow_count + grid.first_visiblerow > grid.RowsCount)
 				grid.visiblerow_count = grid.RowsCount - grid.first_visiblerow;
+				
+			if (grid.visiblerow_count < max_rows) {
+				grid.visiblerow_count = max_rows;
+				grid.first_visiblerow = grid.RowsCount - max_rows;
+				grid.Invalidate ();
+			}
+		}
+
+		// From Point to Cell
+		public DataGrid.HitTestInfo HitTest (int x, int y)
+		{
+			DataGrid.HitTestInfo hit = new DataGrid.HitTestInfo ();
+
+			// TODO: Add missing ColumnResize and RowResize checks
+			if (columnshdrs_area.Contains (x, y)) {
+				hit.type = DataGrid.HitTestType.ColumnHeader;
+				return hit;
+			}
+
+			if (rowshdrs_area.Contains (x, y)) {
+				hit.type = DataGrid.HitTestType.RowHeader;
+				return hit;
+			}
+
+			if (caption_area.Contains (x, y)) {
+				hit.type = DataGrid.HitTestType.Caption;
+				return hit;
+			}
+
+			if (parent_rows.Contains (x, y)) {
+				hit.type = DataGrid.HitTestType.ParentRows;
+				return hit;
+			}
+
+			int pos_y, pos_x, width;
+			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
+			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
+				pos_y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+
+				if (y <= pos_y + grid.RowHeight) { // Found row
+					hit.row = row;
+					hit.type = DataGrid.HitTestType.Cell;
+					int cnt = grid.CurrentTableStyle.GridColumnStyles.Count;
+					int col_pixel;
+					int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
+					for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
+
+						col_pixel = GetColumnStartingPixel (column);
+						pos_x = cells_area.X + col_pixel - grid.horz_pixeloffset;
+						width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
+
+						if (x <= pos_x + width) { // Column found
+							hit.column = column;
+							break;
+						}
+					}
+
+					break;
+				}
+			}
+
+			return hit;
+		}
+
+		public Rectangle GetCellBounds (int row, int col)
+		{
+			Rectangle bounds = new Rectangle ();
+			int col_pixel;
+
+			bounds.Width = grid.CurrentTableStyle.GridColumnStyles[col].Width;
+			bounds.Height = grid.RowHeight;
+			bounds.Y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+			col_pixel = GetColumnStartingPixel (col);
+			bounds.X = cells_area.X + col_pixel - grid.horz_pixeloffset;
+			return bounds;
 		}
 
 		public void InvalidateCaption ()
@@ -350,10 +430,6 @@ namespace System.Windows.Forms
 		public void OnPaint (PaintEventArgs pe)
 		{
 			ThemeEngine.Current.CPDrawBorderStyle (pe.Graphics, grid.ClientRectangle, grid.border_style);
-
-			if (pe.ClipRectangle.IntersectsWith (caption_area)) {
-				
-			}
 
 			if (pe.ClipRectangle.IntersectsWith (parent_rows)) {
 				pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.ParentRowsBackColor), parent_rows);
@@ -377,19 +453,19 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
 		public void PaintCaption (Graphics g, Rectangle clip)
 		{
 			Region modified_area =  new Region (clip);
 			modified_area.Intersect (caption_area);
-			
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CaptionBackColor), 
+
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CaptionBackColor),
 				Rectangle.Ceiling (modified_area.GetBounds (g)));
-				
-			g.DrawString (grid.CaptionText, grid.CaptionFont, 
+
+			g.DrawString (grid.CaptionText, grid.CaptionFont,
 				ThemeEngine.Current.ResPool.GetSolidBrush (grid.CaptionForeColor),
-				caption_area);	
-				
+				caption_area);
+
 			modified_area.Dispose ();
 		}
 
@@ -473,8 +549,7 @@ namespace System.Windows.Forms
 				rect_row.Y = rowshdrs_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
 
 				if (clip.IntersectsWith (rect_row)) {
-					PaintRowHeader (g, rect_row);
-					//g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Color.Yellow), rect_row);
+					PaintRowHeader (g, rect_row, row);
 					not_usedarea.Exclude (rect_row);
 				}
 			}
@@ -486,7 +561,17 @@ namespace System.Windows.Forms
 			not_usedarea.Dispose ();
 		}
 
-		public void PaintRowHeader (Graphics g, Rectangle bounds)
+		public void InvalidateRowHeader (int row)
+		{
+			Rectangle rect_rowhdr = new Rectangle ();
+			rect_rowhdr.X = rowshdrs_area.X;
+			rect_rowhdr.Width = rowshdrs_area.Width;
+			rect_rowhdr.Height = grid.RowHeight;
+			rect_rowhdr.Y = rowshdrs_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+			grid.Invalidate (rect_rowhdr);
+		}
+
+		public void PaintRowHeader (Graphics g, Rectangle bounds, int row)
 		{
 			// Background
 			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.ParentRowsBackColor),
@@ -504,6 +589,48 @@ namespace System.Windows.Forms
 
 			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
 				bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
+
+			// Draw arrow
+			if (row == grid.CurrentCell.RowNumber) {
+
+				if (grid.is_changing == true) {
+					g.DrawString ("...", grid.Font,
+						ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black),
+						bounds);
+
+				} else {
+					int cx = 16;
+					int cy = 16;
+					Bitmap	bmp = new Bitmap (cx, cy);
+					Graphics gr = Graphics.FromImage (bmp);
+					Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
+					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
+					bmp.MakeTransparent ();
+					g.DrawImage (bmp, bounds.X + 1, bounds.Y + 1, cx, cy);
+					gr.Dispose ();
+					bmp.Dispose ();
+				}
+			}
+		}
+
+		public void InvalidateColumn (DataGridColumnStyle column)
+		{
+			Rectangle rect_col = new Rectangle ();
+			int col_pixel;
+			int col = -1;
+
+			col = grid.CurrentTableStyle.GridColumnStyles.IndexOf (column);
+
+			if (col == -1) {
+				return;
+			}
+
+			rect_col.Width = column.Width;
+			col_pixel = GetColumnStartingPixel (col);
+			rect_col.X = cells_area.X + col_pixel - grid.horz_pixeloffset;
+			rect_col.Y = cells_area.Y;
+			rect_col.Height = cells_area.Height;
+			grid.Invalidate (rect_col);
 		}
 
 		public void PaintRows (Graphics g, Rectangle cells, Rectangle clip)

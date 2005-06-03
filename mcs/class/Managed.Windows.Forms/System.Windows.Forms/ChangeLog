@@ -1,3 +1,13 @@
+2005-06-03  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: column text editing
+	* DataGridTableStyle.cs: Respect columns styles created by the user
+	* DataGridDrawingLogic.cs: lots of drawing fixes and enhanments
+	* DataGridBoolColumn.cs: bool column editing
+	* DataGrid.cs: fixes to scrolling, properties, etc
+	* DataGridTextBox.cs: handle keyboard
+	* DataGridColumnStyle.cs: fixes
+
 2005-06-02  Jackson Harper  <jackson@ximian.com>
 
 	* ImageListStreamer.cs: Somewhat broken implementation of

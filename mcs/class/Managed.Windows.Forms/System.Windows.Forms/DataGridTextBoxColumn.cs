@@ -39,37 +39,37 @@ namespace System.Windows.Forms
 		private string format;
 		private IFormatProvider format_provider;
 		private StringFormat string_format =  new StringFormat ();
+		private DataGridTextBox textbox = null;
 		#endregion	// Local Variables
 
 		#region Constructors
 		public DataGridTextBoxColumn ()
 		{
-			
+			format = string.Empty;
 		}
-		
+
 		public DataGridTextBoxColumn (PropertyDescriptor prop) : base (prop)
 		{
 			format = string.Empty;
-			
 		}
 		
-		// TODO: What is isDefault for?
 		public DataGridTextBoxColumn (PropertyDescriptor prop,  bool isDefault) : base (prop)
 		{
 			format = string.Empty;
+			is_default = isDefault;
 		}
-		
+
 		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format) : base (prop)
-		{
-			this.format = format;			
-		}
-		
-		// TODO: What is isDefault for?
-		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format, bool isDefault) : base (prop)
 		{
 			this.format = format;
 		}
 		
+		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format, bool isDefault) : base (prop)
+		{
+			this.format = format;
+			is_default = isDefault;
+		}
+
 		#endregion
 
 		#region Public Instance Properties
@@ -100,11 +100,11 @@ namespace System.Windows.Forms
 
 		[DefaultValue(null)]
 		public PropertyDescriptor PropertyDescriptor {
-			set { 
+			set {
 				base.PropertyDescriptor = value;
 			}
 		}
-		
+
 		public override bool ReadOnly {
 			get {
 				return base.ReadOnly;
@@ -113,156 +113,168 @@ namespace System.Windows.Forms
 				base.ReadOnly = value;
 			}
 		}
-		
+
 		[MonoTODO]
 		[Browsable(false)]
 		public virtual TextBox TextBox {
 			get {
-				return null;
-			}			
+				return textbox;
+			}
 		}
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		
-		[MonoTODO]
+
+
 		protected internal override void Abort (int rowNum)
 		{
-			
+			EndEdit ();
 		}
 		
-		[MonoTODO]
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
-			throw new NotImplementedException ();	
+			SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
+			EndEdit ();
+			return true;
 		}
-		
+
 		[MonoTODO]
 		protected internal override void ConcedeFocus ()
 		{
-			
+
 		}
-		
-		[MonoTODO]
+
 		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _readonly, string instantText, bool cellIsVisible)
 		{
-			
+			object obj;
+
+			if (textbox == null) {
+				textbox = new DataGridTextBox ();
+				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
+				DataGridTableStyle.DataGrid.Controls.Add (textbox);
+			}
+
+			textbox.Location = new Point (bounds.X, bounds.Y);
+			textbox.Size = new Size (bounds.Width, bounds.Height);
+
+			obj = GetColumnValueAtRow (source, rowNum);
+			textbox.Text = GetFormattedString (obj);
+			textbox.Focus ();
+			textbox.SelectAll ();
 		}
-		
-		[MonoTODO]
+
 		protected void EndEdit ()
 		{
-			
+			ReleaseHostedControl ();
+			Invalidate ();
 		}
-		
-		[MonoTODO]
+
 		protected internal override void EnterNullValue ()
 		{
-			
+			if (textbox != null) {
+				textbox.Text = NullText;
+			}
 		}
-		
+
 		protected internal override int GetMinimumHeight ()
 		{
 			return FontHeight + 3;
 		}
-		
+
 		[MonoTODO]
 		protected internal override int GetPreferredHeight (Graphics g, object value)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
 		protected internal override Size GetPreferredSize (Graphics g, object value)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
 		protected void HideEditBox ()
 		{
-			
-		}	
-		
+
+		}
+
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)
 		{
 			Paint (g, bounds, source, rowNum, false);
 		}
-		
+
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight)
 		{
-			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
+			Paint (g, bounds, source, rowNum, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor),
 				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
 		}
-				
+
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
 			object obj;
 			obj = GetColumnValueAtRow (source, rowNum);
-			
+
 			PaintText (g, bounds, GetFormattedString (obj),  backBrush, foreBrush, alignToRight);
 		}
-				
+
 		protected void PaintText (Graphics g, Rectangle bounds, string text, bool alignToRight)
 		{
-			PaintText (g, bounds, text,  ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor), 
+			PaintText (g, bounds, text,  ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.BackColor),
 				ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), alignToRight);
-		}		
-		
+		}
+
 		protected void PaintText (Graphics g, Rectangle textBounds, string text, Brush backBrush, Brush foreBrush, bool alignToRight)
-		{			
+		{
 			if (alignToRight == true) {
 				string_format.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 			} else {
 				string_format.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
-			}			
-			
+			}
+
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
-			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);	
+			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);
 		}
 		
-		[MonoTODO]
 		protected internal override void ReleaseHostedControl ()
-		{
-			
-		}
-		
-		protected override void SetDataGridInColumn (DataGrid value)
-		{
-			base.SetDataGridInColumn (value);			
+		{			
+			if (textbox != null) {
+				DataGridTableStyle.DataGrid.Controls.Remove (textbox);
+				textbox.Dispose ();
+				textbox = null;
+			}
 		}
 
-		[MonoTODO]
+		protected override void SetDataGridInColumn (DataGrid value)
+		{
+			base.SetDataGridInColumn (value);
+		}
+		
 		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string instantText)
 		{
-			
+
 		}
 
 		#endregion	// Public Instance Methods
-		
-		
+
+
 		#region Private Instance Methods
-		
+
 		// We use DataGridTextBox to render everything that DataGridBoolColumn does not
 		internal static bool CanRenderType (Type type)
-		{			
+		{
 			return (type != typeof (Boolean));
 		}
-		
+
 		private string GetFormattedString (object obj)
-		{										
+		{
 			if (format != null && obj as IFormattable != null) {
 				return ((IFormattable)obj).ToString (format, format_provider);
-			}	
-						
+			}
+
 			return obj.ToString ();
-			
+
 		}
-		#endregion Private Instance Methods	
-
-
-		#region Events
-
-		#endregion	// Events
+		#endregion Private Instance Methods
 	}
 }

@@ -111,13 +111,14 @@ namespace System.Windows.Forms
 		#region	Local Variables
 		private HorizontalAlignment alignment;
 		private int fontheight;
-		private DataGridTableStyle table_style;
+		internal DataGridTableStyle table_style;
 		private string header_text;
 		private string mapping_name;
 		private string null_text;
 		private PropertyDescriptor property_descriptor;
 		private bool read_only;
 		private int width;
+		protected bool is_default;
 		internal protected DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		private StringFormat string_format_hdr;
@@ -147,6 +148,7 @@ namespace System.Windows.Forms
 			read_only = false;
 			width = -1;
 			grid = null;
+			is_default = false;
 			alignment = HorizontalAlignment.Left;
 			string_format_hdr = new StringFormat ();
 			string_format_hdr.FormatFlags |= StringFormatFlags.NoWrap;
@@ -211,7 +213,10 @@ namespace System.Windows.Forms
 			set {
 				if (value != header_text) {
 					header_text = value;
-					table_style.DataGrid.Invalidate ();
+					
+					if (table_style != null && table_style.DataGrid != null) {
+						table_style.DataGrid.Invalidate ();
+					}
 
 					if (HeaderTextChanged != null) {
 						HeaderTextChanged (this, EventArgs.Empty);
@@ -279,7 +284,10 @@ namespace System.Windows.Forms
 			set {
 				if (value != read_only) {
 					read_only = value;
-					table_style.DataGrid.CalcAreasAndInvalidate ();
+					
+					if (table_style != null && table_style.DataGrid != null) {
+						table_style.DataGrid.CalcAreasAndInvalidate ();
+					}
 					
 					if (ReadOnlyChanged != null) {
 						ReadOnlyChanged (this, EventArgs.Empty);
@@ -297,7 +305,10 @@ namespace System.Windows.Forms
 			set {
 				if (value != width) {
 					width = value;
-					table_style.DataGrid.CalcAreasAndInvalidate ();
+					
+					if (table_style != null && table_style.DataGrid != null) {
+						table_style.DataGrid.CalcAreasAndInvalidate ();
+					}
 
 					if (WidthChanged != null) {
 						WidthChanged (this, EventArgs.Empty);
@@ -309,8 +320,12 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 		
 		#region Private Instance Properties
-		internal DataGridTableStyle TableStyle {		
-			set { table_style = value; }			
+		internal DataGridTableStyle TableStyle {
+			set { table_style = value; }
+		}
+		
+		internal bool IsDefault {
+			get { return is_default; }
 		}
 		#endregion Private Instance Properties
 
@@ -322,7 +337,6 @@ namespace System.Windows.Forms
 		{
 
 		}
-
 		
 		protected void CheckValidDataSource (CurrencyManager value)
 		{
@@ -348,23 +362,20 @@ namespace System.Windows.Forms
 		{
 
 		}
-
-		[MonoTODO]
+		
 		protected virtual AccessibleObject CreateHeaderAccessibleObject ()
 		{
-			throw new NotImplementedException ();
+			return new DataGridColumnHeaderAccessibleObject (this);
 		}
-
 
 		protected internal virtual void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool readOnly)
 		{
-
+			Edit (source, rowNum, bounds, readOnly, string.Empty);
 		}
-
-		[MonoTODO]
-		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds,  bool readOnly,   string instantText)
-		{
-
+		
+		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText)
+		{	
+			Edit (source, rowNum, bounds, readOnly, instantText, true);
 		}
 
 		protected internal abstract void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly,   string instantText,  bool cellIsVisible);
@@ -376,10 +387,7 @@ namespace System.Windows.Forms
 
 		}
 
-		protected internal virtual void EnterNullValue ()
-		{
-
-		}
+		protected internal virtual void EnterNullValue () {}
 		
 		protected internal virtual object GetColumnValueAtRow (CurrencyManager source, int rowNum)
 		{			
@@ -400,23 +408,16 @@ namespace System.Windows.Forms
 
 		protected virtual void Invalidate ()
 		{
-
+			grid.grid_drawing.InvalidateColumn (this);
 		}
 
 		protected internal abstract void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum);
 		protected internal abstract void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, bool alignToRight);
-
-		[MonoTODO]
+		
 		protected internal virtual void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum,
-   			Brush backBrush,  Brush foreBrush, bool alignToRight)
-   		{
+   			Brush backBrush,  Brush foreBrush, bool alignToRight) {}
 
-		}
-
-		protected internal virtual void ReleaseHostedControl ()
-		{
-
-		}
+		protected internal virtual void ReleaseHostedControl () {}
 
 		public void ResetHeaderText ()
 		{
@@ -425,17 +426,35 @@ namespace System.Windows.Forms
 
 		protected internal virtual void SetColumnValueAtRow (CurrencyManager source, int rowNum,  object value)
 		{
-
+			CheckValidDataSource (source);
+			property_descriptor.SetValue (source.GetItem (rowNum), value);
 		}
 
 		protected virtual void SetDataGrid (DataGrid value)
 		{
 			grid = value;
+			
+			if (property_descriptor == null || value == null || value.ListManager == null) {
+				return;
+			}
+			
+			PropertyDescriptorCollection propcol = value.ListManager.GetItemProperties ();
+			for (int i = 0; i < propcol.Count ; i++) {
+				if (propcol[i].Name == header_text) {
+					property_descriptor = propcol[i];
+					break;
+				}
+			}			
 		}
 
 		protected virtual void SetDataGridInColumn (DataGrid value)
 		{
-			grid = value;
+			SetDataGridInColumn (value);
+		}
+		
+		internal void SetDataGridInternal (DataGrid value)
+		{
+			SetDataGridInColumn (value);
 		}
 
 		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string instantText)
@@ -444,7 +463,10 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Public Instance Methods
 		
-		#region Private Instance Methods		
+		#region Private Instance Methods
+		virtual internal void OnMouseDown (MouseEventArgs e, int row, int column) {}
+		virtual internal void OnKeyDown (KeyEventArgs ke, int row, int column) {}
+		
 		protected internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
 		{	
 			// Background
