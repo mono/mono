@@ -364,9 +364,9 @@ namespace Mono.Globalization.Unicode
 			return (0x3041 <= i && i <= 0x3094) ? i + 0x60 : i;
 		}
 
-		public static int ToWidthInsensitive (int i)
+		public static int ToWidthCompat (int i)
 		{
-			int v = widthInsensitives [i];
+			int v = widthCompat [i];
 			return v != 0 ? v : i;
 		}
 

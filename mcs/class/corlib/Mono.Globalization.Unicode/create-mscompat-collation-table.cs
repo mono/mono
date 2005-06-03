@@ -3,8 +3,6 @@
 // There are two kind of sort keys : which are computed and which are laid out
 // as an indexed array. Computed sort keys are:
 //
-//	- CJK, which largely vary depending on LCID
-//	  (namely kr, jp, zh-CHS and zh-CHT)
 //	- Surrogate
 //	- PrivateUse
 //
@@ -31,6 +29,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Xml;
 
 namespace Mono.Globalization.Unicode
 {
@@ -187,17 +186,16 @@ namespace Mono.Globalization.Unicode
 		ArrayList jisJapanese = new ArrayList ();
 		ArrayList nonJisJapanese = new ArrayList ();
 
+		ushort [] cjkJA = new ushort [char.MaxValue - 0x4E00];
+		ushort [] cjkCHS = new ushort [char.MaxValue - 0x3100];
+		ushort [] cjkCHT = new ushort [char.MaxValue - 0x4E00];
+		ushort [] cjkKO = new ushort [char.MaxValue - 0x4E00];
+		byte [] cjkKOlv2 = new byte [char.MaxValue - 0x4E00];
+
 		void Run (string [] args)
 		{
-			string unidata = args.Length > 0 ?
-				args [0] : "downloaded/UnicodeData.txt";
-			string derivCoreProps = args.Length > 1 ?
-				args [1] : "downloaded/DerivedCoreProperties.txt";
-			string scripts = args.Length > 2 ?
-				args [2] : "downloaded/Scripts.txt";
-			string cp932 = args.Length > 3 ?
-				args [3] : "downloaded/CP932.TXT";
-			ParseSources (unidata, derivCoreProps, scripts, cp932);
+			string dirname = args.Length == 0 ? "downloaded" : args [0];
+			ParseSources (dirname);
 			Console.Error.WriteLine ("parse done.");
 			InterpretParsedData ();
 			Console.Error.WriteLine ("interpretation done.");
@@ -268,7 +266,7 @@ namespace Mono.Globalization.Unicode
 			// Width insensitivity mappings
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
-			Result.WriteLine ("static int [] widthInsensitives = new int [] {");
+			Result.WriteLine ("static int [] widthCompat = new int [] {");
 			for (int i = 0; i < char.MaxValue; i++) {
 				int value = 0;
 				switch (decompType [i]) {
@@ -289,16 +287,74 @@ namespace Mono.Globalization.Unicode
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
+
+			// CJK
+			SerializeCJK ("cjkCHS", cjkCHS, char.MaxValue);
+			SerializeCJK ("cjkCHT", cjkCHT, 0x9FB0);
+			SerializeCJK ("cjkJA", cjkJA, 0x9FB0);
+			SerializeCJK ("cjkKO", cjkKO, 0x9FB0);
+			SerializeCJK ("cjkKOlv2", cjkKOlv2, 0x9FB0);
+		}
+
+		void SerializeCJK (string name, ushort [] cjk, int max)
+		{
+			int offset = char.MaxValue - cjk.Length;
+			Result.WriteLine ("static ushort [] {0} = new ushort [] {{", name);
+			for (int i = 0; i < cjk.Length; i++) {
+				if (i + offset == max)
+					break;
+				ushort value = cjk [i];
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X04},", value);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF + offset);
+			}
+			Result.WriteLine ("};");
+			Result.WriteLine ();
+		}
+
+		void SerializeCJK (string name, byte [] cjk, int max)
+		{
+			int offset = char.MaxValue - cjk.Length;
+			Result.WriteLine ("static byte [] {0} = new byte [] {{", name);
+			for (int i = 0; i < cjk.Length; i++) {
+				if (i + offset == max)
+					break;
+				byte value = cjk [i];
+				if (value == 0)
+					Result.Write ("0,");
+				else
+					Result.Write ("0x{0:X02},", value);
+				if ((i & 0xF) == 0xF)
+					Result.WriteLine ("// {0:X04}", i - 0xF + offset);
+			}
+			Result.WriteLine ("};");
+			Result.WriteLine ();
 		}
 
 		#region Parse
 
-		void ParseSources (string unidata, string derivedCoreProp, string scripts, string cp932)
+		void ParseSources (string dirname)
 		{
+			string unidata =
+				dirname + "/UnicodeData.txt";
+			string derivedCoreProps = 
+				dirname + "/DerivedCoreProperties.txt";
+			string scripts = 
+				dirname + "/Scripts.txt";
+			string cp932 = 
+				dirname + "/CP932.TXT";
+			string chXML = dirname + "/common/collation/zh.xml";
+			string jaXML = dirname + "/common/collation/ja.xml";
+			string koXML = dirname + "/common/collation/ko.xml";
+
 			ParseJISOrder (cp932); // in prior to ParseUnidata()
 			ParseUnidata (unidata);
-			ParseDerivedCoreProperties (derivedCoreProp);
+			ParseDerivedCoreProperties (derivedCoreProps);
 			ParseScripts (scripts);
+			ParseCJK (chXML, jaXML, koXML);
 		}
 
 		void ParseUnidata (string filename)
@@ -600,6 +656,97 @@ namespace Mono.Globalization.Unicode
 					int jis = int.Parse (s.Substring (2, idx), NumberStyles.HexNumber);
 					int cp = int.Parse (s.Substring (idx + 3).Trim (), NumberStyles.HexNumber);
 					jisJapanese.Add (new JISCharacter (cp, jis));
+				}
+			}
+		}
+
+		void ParseCJK (string zhXML, string jaXML, string koXML)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.XmlResolver = null;
+			int v;
+			string s;
+			string category;
+			int offset;
+			ushort [] arr;
+
+			// Chinese Simplified
+			category = "chs";
+			arr = cjkCHS;
+			offset = char.MaxValue - arr.Length;
+			doc.Load (zhXML);
+			s = doc.SelectSingleNode ("/ldml/collations/collation[@type='pinyin']/rules/pc").InnerText;
+			v = 0x8008;
+			foreach (char c in s) {
+				if (c < '\u3100')
+					Console.Error.WriteLine ("---- warning: for {0} {1:X04} is omitted which should be {2:X04}", category, (int) c, v);
+				else {
+					arr [(int) c - offset] = (ushort) v++;
+					if (v % 256 == 0)
+						v += 2;
+				}
+			}
+
+			// Chinese Traditional
+			category = "cht";
+			arr = cjkCHT;
+			offset = char.MaxValue - arr.Length;
+			s = doc.SelectSingleNode ("/ldml/collations/collation[@type='stroke']/rules/pc").InnerText;
+			v = 0x8002;
+			foreach (char c in s) {
+				if (c < '\u4E00')
+					Console.Error.WriteLine ("---- warning: for {0} {1:X04} is omitted which should be {2:X04}", category, (int) c, v);
+				else {
+					arr [(int) c - offset] = (ushort) v++;
+					if (v % 256 == 0)
+						v += 2;
+				}
+			}
+
+			// Japanese
+			category = "ja";
+			arr = cjkJA;
+			offset = char.MaxValue - arr.Length;
+			doc.Load (jaXML);
+			s = doc.SelectSingleNode ("/ldml/collations/collation/rules/pc").InnerText;
+			v = 0x8008;
+			foreach (char c in s) {
+				if (c < '\u4E00')
+					Console.Error.WriteLine ("---- warning: for {0} {1:X04} is omitted which should be {2:X04}", category, (int) c, v);
+				else {
+					arr [(int) c - offset] = (ushort) v++;
+					if (v % 256 == 0)
+						v += 2;
+				}
+			}
+
+			// Korean
+			// Korean weight is somewhat complex. It first shifts
+			// Hangul category from 52-x to 80-x (they are anyways
+			// computed). CJK ideographs are placed at secondary
+			// weight, like XX YY 01 zz 01, where XX and YY are
+			// corresponding "reset" value and zz is 41,43,45...
+			//
+			// Unlike chs,cht and ja, Korean value is a combined
+			// ushort which is computed as category
+			//
+			category = "ko";
+			arr = cjkKO;
+			offset = char.MaxValue - arr.Length;
+			doc.Load (koXML);
+			foreach (XmlElement reset in doc.SelectNodes ("/ldml/collations/collation/rules/reset")) {
+				XmlElement sc = (XmlElement) reset.NextSibling;
+				char rc = reset.InnerText [0];
+				int ri = ((int) rc - 0xAC00) + 1;
+				// compute "category" and "level 1"
+				ushort p = (ushort)
+					((ri / 254) * 256 + (ri % 254) + 2);
+				s = sc.InnerText;
+				v = 0x41;
+				foreach (char c in s) {
+					arr [(int) c - offset] = p;
+					cjkKOlv2 [(int) c - offset] = (byte) v;
+					v += 2;
 				}
 			}
 		}

@@ -10,19 +10,18 @@
 
 	* create collation element table(s)
 		- infer how Windows collation element table is composed
-		- infer how Windows sortkey is structured
-		- design data structures
+		  : mostly analyzed.
 		- write table generator source(s)
-	* create culture-specific sortkey modifiers
-		- data structures
-		- data
+		  : mostly implemented as long as they are analyzed.
+		- culture-specific sortkey data
+		  : I only know them via dumped diffs (shown later)
 	* implement collation methods
 		- sortkey collector methods
+		  : left as prototype image
 		- character iterator models and comparison methods
+		  : left as prototype image
 		- string search optimizations
-
-	TODO: add "progress" information on these list items; currently many
-	of them are half-baked.
+		  : not at that stage.
 
 
 ** How to implement CompareInfo members
@@ -834,9 +833,18 @@
 	  syllables (from AC00) follow (until AE4B). It follows kinda based
 	  on some formula (sometimes it looks not e.g. 1117).
 
-	16 (9E 02-F1 E4) CJK (kangxi etc.)
+	16 (9E 02-F1 E4) CJK
 
-	   4E00-. Ordered, condidering case/width equivalents.
+	   9E 02-F0 B4 [3192-319F,3220-3243,3280-32B0,4E00-9FA5] : CJK mark,
+		parenthesized CJK (part), circled CJK (part), CJK ideograph.
+		Ordered but condidering compatible characters (i.e. there is
+		no other way than having massive mapping).
+	   F0 B5-F1 E4 [F900-FA2D]. CJK compatibility ideograph.
+
+	   LAMESPEC: in the latest spec CJK ends at 9F BB. Since MS table
+	   joins these two categories without any consideration, it is
+	   impossible to insert those new characters without breaking binary
+	   compatibility.
 
 	17 (E5 02-FE 33) PrivateUse.
 
@@ -848,12 +856,22 @@
 
 	19 (FE FF 10 02 - FE FF 29 E9) CJK extensions
 
-	   3400-4DB5. Ordered, considering case/width equivalents.
+	   3400-4DB5. Ordered.
 
-	20 (FF FF 01 01 01 01 00) Some Japanese/Arabic extenders
+	20 (FF FF 01 01 01 01 00) special.
+	   Some Japanese extender marks :
+	   	3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE
+
+	   LAMESPEC: In Japanese context Microsoft's understanding of 3031
+	   and 3032 is wrong. They can never be used to repeat just previous
+	   one character, but are usually used to repeat two or more
+	   characters. Also, 3005 is not always used to repeat exactly one
+	   character but sometimes used to repeat two (or possibly more)
+	   characters.
+
+	   Arabic extenders : FE7C, FE7D, FF70
 	   Actually FE7C and FE7D are not extender in Unicode (PropList.txt)
 
-	   3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE, FE7C, FE7D, FF70
 
 	- by UnicodeCategory -
 
@@ -973,7 +991,14 @@
 	which are also in JIS table are moved to 80 xx. Those which are *not*
 	in JIS table are left as is (9E-FE).
 
-	Korean CJK order looks similar that respects KS C 5619.
+	Additionally, Windows has different order for characters below:
+	4EDD,337B,337E,337D,337D,337C
+	They come in front of the first CJK character.
+
+	Korean CJK order looks similar that respects KS C 5619. Note that
+	Korean mixes Hangul and CJK in their order so it's not flat order
+	without indexes (thus, for CJK they are not computable). Also, there
+	is an extra level2 values for Korean CJK map.
 
 	For some Chinese such as zh-CHS, character order is based on pinyin.
 
@@ -1002,25 +1027,21 @@
 
 *** MSCompatUnicodeTable
 
-	Provides several character information:
+	Provides several access to character information:
 
 	- ignorable, ignorable nonspace, normalize width, normalize kanatype
 	- level 4 sortkey provision method(s)
 	- bool HasLevel3(char)
 	- bool HasVariableWeight(char)
 
-	- bool HasContractionAsHead(char)
-	- bool HasContractionAsTail(char)
-	- int IndexToContraction(char)
-	- char [] ContractionTable
-	- bool HasExpansion(char)
-	- int IndexToExpansion(char)
-	- char [] ExpansionTable
+	- bool HasTailoringAsHead(char)
+	- bool HasTailoringAsTail(char)
+	- int IndexToTailoring(char)
 
 	- default sortkey table
 	- culture dependent CJK table
-	- culture dependent sortkey adjustment table
-	  (culture-specific modification)
+	- default tailorings (expansions)
+	- culture dependent tailorings
 
 *** CharacterIterator
 

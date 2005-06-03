@@ -1,3 +1,12 @@
+2005-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : added culture-dependent CJK
+	  table creation. It uses CLDR as its basis. (Culture independent CJK
+	  is not ready BTW).
+	* Makefile : added CLDR archive downloading support.
+	* MSCompatUnicodeTable.template : tiny renamings.
+	* Collation-notes.txt : additional CJK info.
+
 2005-06-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt, create-mscompat-collation-table.cs :
