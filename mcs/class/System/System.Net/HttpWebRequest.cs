@@ -896,12 +896,12 @@ namespace System.Net
 			webHeaders.RemoveInternal ("Proxy-Authorization");
 			webHeaders.RemoveInternal ("Authorization");
 			bool isProxy = (proxy != null && !proxy.IsBypassed (actualUri));
-			ICredentials creds = (!isProxy) ? credentials : proxy.Credentials;
+			ICredentials creds = (!isProxy || credentials != null) ? credentials : proxy.Credentials;
 			Authorization auth = AuthenticationManager.PreAuthenticate (this, creds);
 			if (auth == null)
 				return;
 
-			string authHeader = (isProxy) ? "Proxy-Authorization" : "Authorization";
+			string authHeader = (isProxy && credentials == null) ? "Proxy-Authorization" : "Authorization";
 			webHeaders [authHeader] = auth.Message;
 			usedPreAuth = true;
 		}

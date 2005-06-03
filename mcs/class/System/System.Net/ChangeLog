@@ -1,5 +1,10 @@
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: send the right header/user/password in
+	PreAuthenticate in presence of a proxy.
+
+2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ServicePointManager.cs: when going through a proxy, use 2 different
 	service points depending on the scheme. Fixes bug #75135.
 
