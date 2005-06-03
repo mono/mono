@@ -432,7 +432,8 @@ namespace System.Windows.Forms {
 
 				res = new IntPtr [count];
 				for (int i = 0; i < count; i++) {
-					res [i] = (IntPtr) Marshal.ReadInt32 (data, i * Marshal.SizeOf(typeof(int)));
+					res [i] = (IntPtr) Marshal.ReadInt32 (data, i *
+							Marshal.SizeOf (typeof (int)));
 				}
 			}
 

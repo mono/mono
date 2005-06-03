@@ -1,3 +1,8 @@
+2005-06-02  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Attempting to keep at least one file in MWF
+	monostyled.
+
 2005-06-02  Peter Bartok  <pbartok@novell.com>
 
 	* X11DnD.cs: Use Marshal.SizeOf instead of sizeof, no /unsafe required
