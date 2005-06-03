@@ -1,3 +1,9 @@
+2005-06-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* icall.c: Added create_version to create instances
+	of Version of MonoReflectionAssemblyName. This change helps
+	the AssemblyName tests to keep running fine.
+	
 2005-06-03  Lluis Sanchez Gual  <lluis@novell.com>
   
 	* object.c (mono_method_return_message_restore): A somehow less
