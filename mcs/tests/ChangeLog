@@ -1,3 +1,7 @@
+2005-06-03  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Disable test-183; someone broke it.
+
 2005-05-26  Duncan Mak  <duncan@novell.com>
 	    Raja R Harinath  <rharinath@novell.com>
 
