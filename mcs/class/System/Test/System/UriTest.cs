@@ -514,8 +514,9 @@ namespace MonoTests.System
 		[Category("NotDotNet")]
 		public void CheckHostName1 ()
 		{
+			// reported to MSDN Product Feedback Center (FDBK28674)
 			AssertEquals ("#11: known to fail with ms.net: this is not a valid domain address", UriHostNameType.Unknown, Uri.CheckHostName ("www.contoso.com."));	
-			AssertEquals ("#33 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName ("2001::03A0:1.2.3.4"));
+			// reported to MSDN Product Feedback Center (FDBK28671)
 			AssertEquals ("#36 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName (":11:22:33:44:55:66:77:88"));
 		}
 
@@ -553,6 +554,7 @@ namespace MonoTests.System
 			AssertEquals ("#28", UriHostNameType.IPv6, Uri.CheckHostName ("::ffFF:169.32.14.5"));
 			AssertEquals ("#29", UriHostNameType.IPv6, Uri.CheckHostName ("2001:03A0::/35"));
 			AssertEquals ("#30", UriHostNameType.IPv6, Uri.CheckHostName ("[2001:03A0::/35]"));
+			AssertEquals ("#33", UriHostNameType.IPv6, Uri.CheckHostName ("2001::03A0:1.2.3.4"));
 
 			AssertEquals ("#31", UriHostNameType.Unknown, Uri.CheckHostName ("2001::03A0::/35"));
 			AssertEquals ("#32", UriHostNameType.Unknown, Uri.CheckHostName ("2001:03A0::/35a"));
@@ -569,17 +571,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Category("NotDotNet")]
-		public void IsLoopback1 ()
-		{
-			Uri uri = new Uri("http://[0:0:0:0::127.11.22.33]:8080");
-			Assert ("#10: known to fail with ms.net", uri.IsLoopback);
-			uri = new Uri("http://[::ffff:127.11.22.33]:8080");
-			Assert ("#11: known to fail with ms.net", uri.IsLoopback);
-		}
-
-		[Test]
-		public void IsLoopback2 ()
+		public void IsLoopback ()
 		{
 			Uri uri = new Uri("http://loopback:8080");
 			AssertEquals ("#1", true, uri.IsLoopback);
@@ -599,6 +591,10 @@ namespace MonoTests.System
 			AssertEquals ("#8", true, uri.IsLoopback);
 			uri = new Uri("http://[0:0:0:0::127.0.0.1]:8080");
 			AssertEquals ("#9", true, uri.IsLoopback);
+			uri = new Uri("http://[0:0:0:0::127.11.22.33]:8080");
+			AssertEquals ("#10", false, uri.IsLoopback);
+			uri = new Uri("http://[::ffff:127.11.22.33]:8080");
+			AssertEquals ("#11", false, uri.IsLoopback);
 			uri = new Uri("http://[::ff00:7f11:2233]:8080");
 			AssertEquals ("#12", false, uri.IsLoopback);
 			uri = new Uri("http://[1:0:0:0::1]:8080");
