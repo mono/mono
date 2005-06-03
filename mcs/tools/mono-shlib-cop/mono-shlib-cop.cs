@@ -35,9 +35,10 @@
 // About:
 //    mono-shlib-cop is designed to inspect an assembly and report about
 //    potentially erroneous practices.  In particular, this includes:
-//      - DllImporting a .so which is a symlink (which typically requires the
+//      - DllImporting a .so which may be a symlink (which typically requires the
 //        -devel packages on Linux distros, thus bloating installation and
 //        angering users)
+//      - DllImporting a symbol which doesn't exist in the target library
 //      - etc.
 //
 // Implementation:
@@ -50,15 +51,12 @@
 //      - Create AppDomain with ApplicationBase path set to directory assembly
 //        resides in
 //      - Create an AssemblyChecker instance within the AppDomain
-//      - Check an assembly with AssemblyChecker; get back AssemblyCheckResults.
-//      - Merge results together (to eliminate duplicate messages)
+//      - Check an assembly with AssemblyChecker; store results in Report.
 //      - Print results.
 //
 // TODO:
 //    - AppDomain use
-//    - Message merging
-//    - dllmap loading (need to read $prefix/etc/mono/config and
-//      assembly.config files to look up potential maps)
+//    - specify $prefix to use for finding $prefix/etc/mono/config
 //    - dllmap caching?  (Is it possible to avoid reading the .config file
 //      into each AppDomain at least once?  OS file caching may keep perf from
 //      dieing with all the potential I/O.)
@@ -73,6 +71,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Xml;
 
 using Mono.GetOptions;
 using Mono.Unix;
@@ -86,52 +85,167 @@ using Mono.Unix;
 
 namespace Mono.Unmanaged.Check {
 	[Serializable]
-	sealed class AssemblyCheckResults {
-		private ArrayList errors = new ArrayList ();
-		private ArrayList warnings = new ArrayList ();
+	sealed class MessageInfo {
+		public string Type;
+		public string Member;
+		public string Message;
 
-		public string[] Errors {
-			get {return (string[]) errors.ToArray (typeof(string));}
-		}
-		public string[] Warnings {
-			get {return (string[]) warnings.ToArray (typeof(string));}
+		public MessageInfo (string type, string member, string message)
+		{
+			Type = type;
+			Member = member;
+			Message = message;
 		}
 
-		internal AssemblyCheckResults ()
+		public override bool Equals (object value)
+		{
+			MessageInfo other = value as MessageInfo;
+			if (other == null)
+				return false;
+
+			return Type == other.Type && Member == other.Member && 
+				Message == other.Message;
+		}
+
+		public override int GetHashCode ()
+		{
+			return Type.GetHashCode () ^ Member.GetHashCode () ^ 
+				Message.GetHashCode ();
+		}
+	}
+
+	sealed class MessageCollection : MarshalByRefObject {
+		private ArrayList InnerList = new ArrayList ();
+
+		public MessageCollection ()
 		{
 		}
 
-		internal AssemblyCheckResults (string[] errors, string[] warnings)
+		public int Add (MessageInfo value)
 		{
-			this.errors.AddRange (errors);
-			this.warnings.AddRange (warnings);
+			if (!InnerList.Contains (value))
+				return InnerList.Add (value);
+			return InnerList.IndexOf (value);
 		}
 
-		internal void Check (Type type)
+		public void AddRange (MessageInfo[] value)
+		{
+			foreach (MessageInfo v in value)
+				Add (v);
+		}
+
+		public void AddRange (MessageCollection value)
+		{
+			foreach (MessageInfo v in value)
+				Add (v);
+		}
+
+		public bool Contains (MessageInfo value)
+		{
+			return InnerList.Contains (value);
+		}
+
+		public void CopyTo (MessageInfo[] array, int index)
+		{
+			InnerList.CopyTo (array, index);
+		}
+
+		public int IndexOf (MessageInfo value)
+		{
+			return InnerList.IndexOf (value);
+		}
+
+		public void Insert (int index, MessageInfo value)
+		{
+			InnerList.Insert (index, value);
+		}
+
+		public void Remove (MessageInfo value)
+		{
+			InnerList.Remove (value);
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return InnerList.GetEnumerator ();
+		}
+	}
+
+	sealed class Report : MarshalByRefObject {
+		private MessageCollection errors   = new MessageCollection ();
+		private MessageCollection warnings = new MessageCollection ();
+
+		public MessageCollection Errors {
+			get {return errors;}
+		}
+
+		public MessageCollection Warnings {
+			get {return warnings;}
+		}
+	}
+
+	sealed class AssemblyChecker : MarshalByRefObject {
+
+		public void CheckFile (string file, Report report)
+		{
+			try {
+				Check (Assembly.LoadFile (file), report);
+			}
+			catch (FileNotFoundException e) {
+				report.Errors.Add (new MessageInfo (null, null, 
+					"Could not load `" + file + "': " + e.Message));
+			}
+		}
+
+		public void CheckWithPartialName (string partial, Report report)
+		{
+			AssemblyName an = new AssemblyName ();
+			an.Name = partial;
+			try {
+				Assembly a = Assembly.Load (an);
+				Check (a, report);
+			}
+			catch (FileNotFoundException e) {
+				report.Errors.Add (new MessageInfo (null, null, 
+					"Could not load assembly reference `" + partial + "': " + e.Message));
+			}
+		}
+
+		private void Check (Assembly a, Report report)
+		{
+			foreach (Type t in a.GetTypes ()) {
+				Check (t, report);
+			}
+		}
+
+		private void Check (Type type, Report report)
 		{
 			BindingFlags bf = BindingFlags.Instance | BindingFlags.Static | 
 				BindingFlags.Public | BindingFlags.NonPublic;
 
 			foreach (MemberInfo mi in type.GetMembers (bf)) {
-				CheckMember (type, mi);
+				CheckMember (type, mi, report);
 			}
 		}
 
-		private void CheckMember (Type type, MemberInfo mi)
+		private void CheckMember (Type type, MemberInfo mi, Report report)
 		{
-			DllImportAttribute[] dia = null;
+			DllImportAttribute[] attributes = null;
+			MethodBase[] methods = null;
 			switch (mi.MemberType) {
 				case MemberTypes.Constructor: case MemberTypes.Method: {
 					MethodBase mb = (MethodBase) mi;
-					dia = new DllImportAttribute[]{GetDllImportInfo (mb)};
+					attributes = new DllImportAttribute[]{GetDllImportInfo (mb)};
+					methods = new MethodBase[]{mb};
 					break;
 				}
 				case MemberTypes.Event: {
 					EventInfo ei = (EventInfo) mi;
 					MethodBase add = ei.GetAddMethod (true);
 					MethodBase remove = ei.GetRemoveMethod (true);
-					dia = new DllImportAttribute[]{
+					attributes = new DllImportAttribute[]{
 						GetDllImportInfo (add), GetDllImportInfo (remove)};
+					methods = new MethodBase[]{add, remove};
 					break;
 				}
 				case MemberTypes.Property: {
@@ -139,19 +253,22 @@ namespace Mono.Unmanaged.Check {
 					MethodInfo[] accessors = pi.GetAccessors (true);
 					if (accessors == null)
 						break;
-					dia = new DllImportAttribute[accessors.Length];
-					for (int i = 0; i < dia.Length; ++i)
-						dia [i] = GetDllImportInfo (accessors [i]);
+					attributes = new DllImportAttribute[accessors.Length];
+					methods = new MethodBase [accessors.Length];
+					for (int i = 0; i < accessors.Length; ++i) {
+						attributes [i] = GetDllImportInfo (accessors [i]);
+						methods [i] = accessors [i];
+					}
 					break;
 				}
 			}
-			if (dia == null)
+			if (attributes == null || methods == null)
 				return;
 
-			foreach (DllImportAttribute d in dia) {
-				if (d == null)
+			for (int i = 0; i < attributes.Length; ++i) {
+				if (attributes [i] == null)
 					continue;
-				CheckLibrary (type, d.Value);
+				CheckLibrary (methods [i], attributes [i], report);
 			}
 		}
 
@@ -163,7 +280,6 @@ namespace Mono.Unmanaged.Check {
 			if ((method.Attributes & MethodAttributes.PinvokeImpl) == 0)
 				return null;
 
-			try {
 			// .NET 2.0 synthesizes pseudo-attributes such as DllImport
 			DllImportAttribute dia = (DllImportAttribute) Attribute.GetCustomAttribute (method, 
 						typeof(DllImportAttribute), false);
@@ -185,13 +301,43 @@ namespace Mono.Unmanaged.Check {
 			IntPtr mhandle = method.MethodHandle.Value;
 			return (DllImportAttribute) GetDllImportAttribute.Invoke (null, 
 					new object[]{mhandle});
-			}
-			catch (Exception e) {
-				Trace.WriteLine ("Exception getting DllImportAttribute: " + e.ToString());
-				return null;
-			}
 		}
 		
+		private void CheckLibrary (MethodBase method, DllImportAttribute attribute, 
+				Report report)
+		{
+			string library = attribute.Value;
+			string entrypoint = attribute.EntryPoint;
+			string type = method.DeclaringType.FullName;
+			string mname = method.Name;
+
+			string found = null;
+			string error = null;
+
+			Trace.WriteLine ("Trying to load base library: " + library);
+
+			foreach (string name in GetLibraryNames (method.DeclaringType, library)) {
+				if (LoadLibrary (type, mname, name, entrypoint, report, out error)) {
+					found = name;
+					break;
+				}
+			}
+
+			if (found == null) {
+				report.Errors.Add (new MessageInfo (
+							type, mname,
+							"Could not load library `" + library + "': " + error));
+				return;
+			}
+
+			// UnixFileInfo f = new UnixFileInfo (soname);
+			if (found.EndsWith (".so")) {
+				report.Warnings.Add (new MessageInfo (type, mname, 
+						string.Format ("Library `{0}' might be a development library",
+							found)));
+			}
+		}
+
 		[DllImport ("libgmodule-2.0.so")]
 		private static extern IntPtr g_module_open (string filename, int flags);
 		private static int G_MODULE_BIND_LAZY = 1 << 0;
@@ -211,48 +357,12 @@ namespace Mono.Unmanaged.Check {
 		private static extern IntPtr g_module_build_path (
 			string directory, string module_name);
 
+		[DllImport ("libgmodule-2.0.so")]
+		private static extern int g_module_symbol (IntPtr module, 
+				string symbol_name, out IntPtr symbol);
+
 		[DllImport ("libglib-2.0.so")]
 		private static extern void g_free (IntPtr mem);
-
-		private void CheckLibrary (Type type, string library)
-		{
-			Trace.WriteLine ("Trying to load base library: " + library);
-			string found = null;
-			string error = null;
-			string soname = null;
-			foreach (string name in GetLibraryNames (type, library)) {
-				error = null;
-				IntPtr h = g_module_open (name, G_MODULE_BIND_LAZY |
-					G_MODULE_BIND_LOCAL);
-				try {
-					Trace.WriteLine ("    Trying library name: " + name);
-					if (h != IntPtr.Zero) {
-						found = name;
-						soname = Marshal.PtrToStringAnsi (g_module_name (h));
-						break;
-					}
-					error = Marshal.PtrToStringAnsi (g_module_error ());
-					Trace.WriteLine ("\tError loading library `" + name + "': " + error);
-				}
-				finally {
-					if (h != IntPtr.Zero)
-						g_module_close (h);
-				}
-			}
-
-			if (found == null) {
-				errors.Add ("Unable to load library " + library + ": " + error);
-				return;
-			}
-
-			Trace.WriteLine ("Able to load library " + library + "; soname=" +
-			soname + "; found=" + found);
-			// UnixFileInfo f = new UnixFileInfo (soname);
-			if (found.EndsWith (".so")) {
-				warnings.Add (string.Format ("Type `{0}' depends on potential " + 
-					"development library `{1}'.", type.FullName, found));
-			}
-		}
 
 		private static string[] GetLibraryNames (Type type, string library)
 		{
@@ -260,7 +370,7 @@ namespace Mono.Unmanaged.Check {
 			// mono/metadata/loader.c:mono_lookup_pinvoke_call
 			ArrayList names = new ArrayList ();
 
-			string dll_map = GetDllMapEntry (type);
+			string dll_map = GetDllMapEntry (type, library);
 			if (dll_map != null) 
 				names.Add (dll_map);
 
@@ -295,51 +405,63 @@ namespace Mono.Unmanaged.Check {
 			return (string[]) names.ToArray (typeof(string));
 		}
 
-		private static string GetDllMapEntry (Type type)
+		private static bool LoadLibrary (string type, string member, 
+				string library, string symbol, Report report, out string error)
 		{
-			// TODO
+			error = null;
+			IntPtr h = g_module_open (library, 
+					G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+			try {
+				Trace.WriteLine ("    Trying library name: " + library);
+				if (h != IntPtr.Zero) {
+					string soname = Marshal.PtrToStringAnsi (g_module_name (h));
+					Trace.WriteLine ("Able to load library " + library + 
+							"; soname=" + soname);
+					IntPtr ignore;
+					if (g_module_symbol (h, symbol, out ignore) == 0)
+						report.Errors.Add (new MessageInfo (
+								type, member,
+								string.Format ("library `{0}' is missing symbol `{1}'",
+									library, symbol)));
+					return true;
+				}
+				error = Marshal.PtrToStringAnsi (g_module_error ());
+				Trace.WriteLine ("\tError loading library `" + library + "': " + error);
+			}
+			finally {
+				if (h != IntPtr.Zero)
+					g_module_close (h);
+			}
+			return false;
+		}
+
+		private static XmlDocument etc_mono_config;
+
+		static AssemblyChecker ()
+		{
+			etc_mono_config = new XmlDocument ();
+			etc_mono_config.Load ("/etc/mono/config");
+		}
+
+		private static string GetDllMapEntry (Type type, string library)
+		{
+			string xpath = "//dllmap[@dll=\"" + library + "\"]";
+			// string xpath = "//dllmap";
+			string _config = type.Assembly.Location + ".config";
+			if (File.Exists (_config)) {
+				Trace.WriteLine ("Reading .config file: " + _config);
+				XmlDocument config = new XmlDocument ();
+				config.Load (_config);
+				XmlNodeList entry = config.SelectNodes (xpath);
+				if (entry.Count > 0)
+					return entry[0].Attributes ["target"].Value;
+			}
+			Trace.WriteLine (".config not found; using /etc/mono/config");
+			XmlNodeList maps = etc_mono_config.SelectNodes (xpath);
+			Trace.WriteLine (string.Format ("{0} <dllmap/> entries found!", maps.Count));
+			if (maps.Count > 0)
+				return maps[0].Attributes ["target"].Value;
 			return null;
-		}
-	}
-
-	sealed class AssemblyChecker : MarshalByRefObject {
-
-		public AssemblyCheckResults CheckFile (string file)
-		{
-			try {
-				return Check (Assembly.LoadFile (file));
-			}
-			catch (FileNotFoundException e) {
-				return new AssemblyCheckResults (
-					new string[]{"Could not load `" + file + "': " + e.Message},
-					new string[]{}
-				);
-			}
-		}
-
-		private AssemblyCheckResults Check (Assembly a)
-		{
-			AssemblyCheckResults r = new AssemblyCheckResults ();
-			foreach (Type t in a.GetTypes ()) {
-				r.Check (t);
-			}
-			return r;
-		}
-
-		public AssemblyCheckResults CheckWithPartialName (string partial)
-		{
-			AssemblyName an = new AssemblyName ();
-			an.Name = partial;
-			try {
-				Assembly a = Assembly.Load (an);
-				return Check (a);
-			}
-			catch (FileNotFoundException e) {
-				return new AssemblyCheckResults (
-					new string[]{"Could not load assembly reference `" + partial + "': " + e.Message}, 
-					new string[]{}
-				);
-			}
 		}
 	}
 
@@ -350,37 +472,44 @@ namespace Mono.Unmanaged.Check {
 	}
 
 	class Runner {
+		[DllImport ("does-not-exist")]
+			private static extern void Foo ();
+
+		[DllImport ("another-native-lib")]
+			private static extern void Bar ();
+
 		public static void Main (string[] args)
 		{
-#if TEST
-			AssemblyCheckResults r = new AssemblyCheckResults ();
-			foreach (Type t in Assembly.GetExecutingAssembly().GetTypes()) {
-				Trace.WriteLine ("Checking Type: " + t.FullName);
-				r.Check (t);
-			}
-
-			PrintResults (r);
-#else
 			MyOptions o = new MyOptions ();
 			o.ProcessArgs (args);
 
 			AssemblyChecker checker = new AssemblyChecker ();
+			Report report = new Report ();
 			foreach (string assembly in o.RemainingArguments) {
-				PrintResults (checker.CheckFile (assembly));
+				checker.CheckFile (assembly, report);
 			}
 
 			foreach (string assembly in o.references) {
-				PrintResults (checker.CheckWithPartialName (assembly));
+				checker.CheckWithPartialName (assembly, report);
 			}
-#endif
+
+			foreach (MessageInfo m in report.Errors) {
+				PrintMessage ("error", m);
+			}
+
+			foreach (MessageInfo m in report.Warnings) {
+				PrintMessage ("warning", m);
+			}
 		}
 
-		private static void PrintResults (AssemblyCheckResults acr)
+		private static void PrintMessage (string type, MessageInfo m)
 		{
-			foreach (string s in acr.Errors)
-				Console.WriteLine ("error: " + s);
-			foreach (string s in acr.Warnings)
-				Console.WriteLine ("warning: " + s);
+			Console.Write ("{0}: ", type);
+			if (m.Type != null)
+				Console.Write ("in {0}", m.Type);
+			if (m.Member != null)
+				Console.Write (".{0}: ", m.Member);
+			Console.WriteLine (m.Message);
 		}
 	}
 }

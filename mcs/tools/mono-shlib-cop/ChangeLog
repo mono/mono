@@ -1,9 +1,16 @@
+2005-06-03  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mono-shlib-cop.cs: Add MessageInfo, MessageCollection, & Report classes to
+	  support message merging.  Remove AssemblyCheckResults; AssemblyChecker
+	  uses Report directly to add messages.  Add .config file parsing support.
+	* README: flush.
+
 2005-05-31  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile: Added
 	* README: Added
 	* ChangeLog: Added
 	* mono-shlib-cop.exe.sources: Added
-	* mono-shlib-cop.exe: Added
+	* mono-shlib-cop.cs: Added
 
 # vim: noexpandtab
