@@ -1,3 +1,7 @@
+2005-06-03  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Add sanity checking to snprintf(3) to avoid buffer overflows.
+
 2005-06-02  Jonathan Pryor <jonpryor@vt.edu>
 
 	* StdioFileStream.cs: Remove FilePosition property & replace with

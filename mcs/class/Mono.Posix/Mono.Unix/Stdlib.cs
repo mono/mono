@@ -622,6 +622,8 @@ namespace Mono.Unix {
 
 		public static int snprintf (StringBuilder s, ulong n, string message)
 		{
+			if (n > (ulong) s.Capacity)
+				throw new ArgumentOutOfRangeException ("n", "n must be <= s.Capacity");
 			return sys_snprintf (s, n, "%s", message);
 		}
 
@@ -635,6 +637,9 @@ namespace Mono.Unix {
 		public static int snprintf (StringBuilder s, ulong n, 
 				string format, params object[] parameters)
 		{
+			if (n > (ulong) s.Capacity)
+				throw new ArgumentOutOfRangeException ("n", "n must be <= s.Capacity");
+
 			object[] _parameters = new object[checked(parameters.Length+3)];
 			_parameters [0] = s;
 			_parameters [1] = n;
