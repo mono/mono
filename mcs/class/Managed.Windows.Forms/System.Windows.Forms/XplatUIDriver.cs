@@ -126,9 +126,10 @@ namespace System.Windows.Forms {
 					"not supported on this platform");
 		}
 
-		internal virtual void StartDrag(object data, DragDropEffects allowedEffects) {
+		internal virtual DragDropEffects StartDrag(object data, DragDropEffects allowedEffects) {
 			Console.Error.WriteLine ("Drag and Drop is currently " +
 					"not supported on this platform");
+			return DragDropEffects.None;
 		}
 
 		internal abstract void SetBorderStyle(IntPtr handle, BorderStyle border_style);
