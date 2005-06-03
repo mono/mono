@@ -39,6 +39,7 @@ namespace MonoTests.System.Net.Sockets
 					outSock = new Socket (address.AddressFamily, SocketType.Stream,
 						ProtocolType.IP);
 					IPEndPoint remote = new IPEndPoint (address, 8766);
+					outSock.Connect (remote);
 					break;
 				}
 			}
