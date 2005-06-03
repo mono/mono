@@ -1038,10 +1038,7 @@
 	- bool HasTailoringAsTail(char)
 	- int IndexToTailoring(char)
 
-	- default sortkey table
-	- culture dependent CJK table
-	- default tailorings (expansions)
-	- culture dependent tailorings
+	For data area, see CollationDataStructures.txt for now.
 
 *** CharacterIterator
 

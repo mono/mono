@@ -1,0 +1,94 @@
+* Collation Data structure and code
+
+
+** General
+
+	I will create a code generator named "collation-builder" (currently
+	create-mscompat-collation-table.cs), which creates collation support
+	source files:
+
+	- collation-tables.h : C header that holds raw constant arrays
+	- CollationTable.cs : C# source that declares raw constant arrays
+
+	The latter one is totally optional. It is created just for ease of
+	debugging in pure managed world.
+
+	CollationSource class is used to represent a culture-specific collation
+	resource set.
+
+
+
+** Manual tasks required to maintain the source.
+
+	We should always pay attention to the contants for CodePointIndexer
+	that is likely not be in sync with the constant arrays.
+
+
+
+** collation-tables.h
+
+	typedef struct {
+		ushort lcid;
+		ushort tailoringIndex;
+		ushort tailoringCount;
+		short reverseAccentOrder; /* 1:French sort. 0:Normal */
+	} CollationSource;
+
+	Those [*] characters will be compressed using CodePointIndexer
+	whose max value is char.MaxValue+1.
+
+	// Holds sortkey basis.
+	byte [*] category;
+	byte [*] level1;
+	byte [*] level2;
+	byte [*] level3;
+	char [*] widthCompat;
+
+	// Holds special arrays for CJK order which is culture dependent.
+	ushort [*] cjkCHS;
+	ushort [*] cjkCHT;
+	ushort [*] cjkJA;
+	ushort [*] cjkKO;
+	byte [*] cjkKOlv2;
+	char [whole_tailoring_count] tailorings;
+	CollationSource [culture_count] collationSources;
+
+
+
+** CollatorSource.cs
+
+	static byte [*] category;
+	static byte [*] level1;
+	static byte [*] level2;
+	static byte [*] level3;
+	static char [*] widthCompat;
+	static CodePointIndexer category;
+	static CodePointIndexer level1;
+	static CodePointIndexer level2;
+	static CodePointIndexer level3;
+	static CodePointIndexer widthCompat;
+	static char [] tailorings;
+	static ushort [] cjkCHS;
+	static ushort [] cjkCHT;
+	static ushort [] cjkJA;
+	static ushort [] cjkKO;
+	static byte [] cjkKOlv2;
+	static CodePointIndexer [] cjkIndexer;
+
+	class CollationSource
+	{
+		// Primary constants
+		int tailoringIndex;
+		int tailoringCount;
+		bool reverseAccentOrder;
+
+		// This array is set according to CJK type, and CJK type
+		// will be hardcoded, being identified from LCID.
+		ushort [] cjk;
+
+		// For Korean, level2 table is specially treated.
+
+		// Computed values for optimization in use.
+		byte [*] hasTailoringHead;
+		byte [*] hasTailoringTail;
+	}
