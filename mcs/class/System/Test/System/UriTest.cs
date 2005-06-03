@@ -317,18 +317,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Ignore ("Known to fail under MS runtime")]
-		public void Unc2 ()
-		{
-			try {
-				Uri uri = new Uri ("file:/filename.ext");
-				Assert ("#4", uri.IsUnc);
-			} catch (UriFormatException) {
-				Fail ("#5: known to fail with ms.net");
-			}			
-		}
-		
-		[Test]
 		public void FromHex () 
 		{
 			AssertEquals ("#1", 0, Uri.FromHex ('0'));
@@ -497,17 +485,10 @@ namespace MonoTests.System
 		}
 			
 		[Test]
-		[Ignore("Known to fail under MS runtime")]
-		public void GetLeftPart2 ()
+		[ExpectedException(typeof(UriFormatException))]
+		public void IncompleteSchemeDelimiter ()
 		{
-			try {
-				Uri uri = new Uri ("file:/filename.ext");
-				AssertEquals ("#16", "file://", uri.GetLeftPart (UriPartial.Scheme));
-				AssertEquals ("#17", "", uri.GetLeftPart (UriPartial.Authority));
-				AssertEquals ("#18", "file:///filename.ext", uri.GetLeftPart (UriPartial.Path));			
-			} catch (UriFormatException) {
-				Fail ("#19: known to fail with ms.net (it's their own example!)");
-			}			
+			new Uri ("file:/filename.ext");
 		}
 
 		[Test]
@@ -602,22 +583,24 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		[Category("NotDotNet")]
 		public void Equals1 ()
-		{
-			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
-			Uri uri2 = new Uri ("http://www.contoso.com/index.htm?x=1");
-			Assert ("#2 known to fail with ms.net", !uri1.Equals (uri2));
-			Assert ("#4: known to fail with ms.net", !uri1.Equals ("http://www.contoso.com:8080/index.htm?x=1"));
-		}
-
-		[Test]
-		public void Equals2 ()
 		{
 			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
 			Uri uri2 = new Uri ("http://www.contoso.com/index.htm#fragment");
 			Assert ("#1", uri1.Equals (uri2));
 			Assert ("#3", !uri2.Equals ("http://www.contoso.com/index.html?x=1"));
+			Assert ("#4", !uri1.Equals ("http://www.contoso.com:8080/index.htm?x=1"));
+		}
+
+		[Test]
+#if !NET_2_0
+		[Category("NotDotNet")]
+#endif
+		public void Equals2 ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
+			Uri uri2 = new Uri ("http://www.contoso.com/index.htm?x=1");
+			Assert ("#2 known to fail with ms.net 1.x", !uri1.Equals (uri2));
 		}
 
 		[Test]
@@ -728,11 +711,33 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (UriFormatException))]
-		[Ignore ("MS throws an IndexOutOfRangeException. Bug?")]
+#if !NET_2_0
+		// MS.NET 1.x throws an IndexOutOfRangeException
+		[Category("NotDotNet")]
+#endif
+		[Ignore("Bug #74144")]
 		public void NoHostname2 ()
 		{
 			Uri uri = new Uri ("file://");
+			AssertEquals ("#1", true, uri.IsFile);
+			AssertEquals ("#2", false, uri.IsUnc);
+			AssertEquals ("#3", "file", uri.Scheme);
+			AssertEquals ("#4", "/", uri.LocalPath);
+			AssertEquals ("#5", string.Empty, uri.Query);
+			AssertEquals ("#6", "/", uri.AbsolutePath);
+			AssertEquals ("#7", "file:///", uri.AbsoluteUri);
+			AssertEquals ("#8", string.Empty, uri.Authority);
+			AssertEquals ("#9", string.Empty, uri.Host);
+			AssertEquals ("#10", UriHostNameType.Basic, uri.HostNameType);
+			AssertEquals ("#11", string.Empty, uri.Fragment);
+			AssertEquals ("#12", true, uri.IsDefaultPort);
+			AssertEquals ("#13", true, uri.IsLoopback);
+			AssertEquals ("#14", "/", uri.PathAndQuery);
+			AssertEquals ("#15", false, uri.UserEscaped);
+			AssertEquals ("#16", string.Empty, uri.UserInfo);
+			AssertEquals ("#17", "file://", uri.GetLeftPart (UriPartial.Authority));
+			AssertEquals ("#18", "file:///", uri.GetLeftPart (UriPartial.Path));
+			AssertEquals ("#19", "file://", uri.GetLeftPart (UriPartial.Scheme));
 		}
 
 		[Test]
