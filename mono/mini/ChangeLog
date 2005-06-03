@@ -1,3 +1,11 @@
+2005-06-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (emit_call): Fix yet another bug in the near call
+	optimization.
+
+	* mini-amd64.c (amd64_patch): Add an assert to check that the
+	destination of a call is callable by a near call.
+
 2005-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (emit_call): Fix calls to native functions when the
