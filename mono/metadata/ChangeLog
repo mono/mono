@@ -1,3 +1,8 @@
+2005-06-03  Raja R Harinath  <rharinath@novell.com>
+
+	* object.c (mono_method_return_message_restore): Fix computation
+	of expected number of out args.
+
 2005-06-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_image_get_method_info): Fix the case when the
