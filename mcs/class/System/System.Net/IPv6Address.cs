@@ -159,6 +159,7 @@ namespace System.Net {
 			if (len > (ipv4 ? 6 : 8)) 
 				throw new FormatException ("Not a valid IPv6 address");
 			int piecedouble = -1;
+			bool ipv6 = false;
 			for (int i = 0; i < len; i++) {
 				string piece = pieces [i];
 				if (piece == "!")
@@ -175,6 +176,8 @@ namespace System.Net {
 							throw new FormatException ("Not a valid IPv6 address");
 						}
 					addr [i] = (ushort) p;
+					if (p != 0 || (i == 5 && p != 0xffff))
+						ipv6 = true;
 				}
 			}
 
@@ -192,17 +195,19 @@ namespace System.Net {
 				throw new FormatException ("Not a valid IPv6 address");
 
 			// check IPv4 validity
-			if (ipv4) {
-				for (int i = 0; i < 5; i++) 
+			if (ipv4 && !ipv6) {
+				for (int i = 0; i < 5; i++) {
 					if (addr [i] != 0)
 						throw new FormatException ("Not a valid IPv6 address");
+				}
+
 				if (addr [5] != 0 && addr [5] != 0xffff)
 					throw new FormatException ("Not a valid IPv6 address");
 			}
-			
+
 			return new IPv6Address (addr, prefixLen, scopeId);
 		}
-		
+
 		public ushort [] Address {
 			get { return address; }
 		}

@@ -1,5 +1,10 @@
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* IPv6Address.cs: don't do extra check on ipv4 if this is a ipv6
+	address. Fixes bug #75125.
+
+2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ServicePointManager.cs: when going through a proxy, use 2 different
 	service points depending on the scheme. Fixes bug #75135.
 
