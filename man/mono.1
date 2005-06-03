@@ -358,6 +358,8 @@ environment variable.
 If set, enables some features of the runtime useful for debugging.
 This variable should contain a comma separated list of debugging options.
 Currently, the following options are supported:
+.RS
+.ne 8
 .TP
 .I "handle-sigint"
 This option makes the runtime display the stack traces
@@ -377,6 +379,8 @@ to track down the source of the problems.
 This option will make the runtime abort when it receives a SIGSEGV signal
 while executing unmanaged (native) code. This is useful for debugging
 problems when interfacing with native code.
+.ne
+.RE
 .TP
 .I "MONO_DISABLE_AIO"
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
