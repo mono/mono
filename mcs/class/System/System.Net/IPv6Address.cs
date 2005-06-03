@@ -232,24 +232,26 @@ namespace System.Net {
 		public AddressFamily AddressFamily {
 			get { return AddressFamily.InterNetworkV6; }
 		}
-		
-		/// <summary>
-		///   Used to tell whether the given address is the loopback address.
-		/// </summary>
+
 		public static bool IsLoopback (IPv6Address addr)
 		{
-			for (int i = 0; i < 4; i++)
+			if (addr.address [7] != 1)
+				return false;
+
+			int x = addr.address [6] >> 8;
+			if (x != 0x7f && x != 0)
+				return false;
+
+			for (int i = 0; i < 4; i++) {
 				if (addr.address [i] != 0)
 					return false;
-			if ((addr.address [5] != 0) && (addr.address [5] != 0xffff))
+			}
+
+			if (addr.address [5] != 0 && addr.address [5] != 0xffff)
 				return false;
-			if ((addr.address [6] >> 8) == 0x7f)
-				return true;
-			return ((addr.address [5] == 0) && 
-			        (addr.address [6] == 0) && 
-			        (addr.address [7] == 1));
+
+			return true;
 		}
-		
 
 		private static ushort SwapUShort (ushort number)
 		{
