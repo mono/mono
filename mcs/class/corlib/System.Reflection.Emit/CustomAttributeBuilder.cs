@@ -311,10 +311,19 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		internal static object decode_cattr (CustomAttributeBuilder customBuilder) {
+		internal struct CustomAttributeInfo {
+			public ConstructorInfo ctor;
+			public object[] ctorArgs;
+			public string[] namedParamNames;
+			public object[] namedParamValues;
+		}
+
+		internal static CustomAttributeInfo decode_cattr (CustomAttributeBuilder customBuilder) {
 			byte[] data = customBuilder.Data;
 			ConstructorInfo ctor = customBuilder.Ctor;
 			int pos = 0;
+
+			CustomAttributeInfo info = new CustomAttributeInfo ();
 
 			// Prolog
 			if (data.Length < 2)
@@ -324,15 +333,16 @@ namespace System.Reflection.Emit {
 			pos = 2;
 
 			ParameterInfo [] pi = ctor.GetParameters ();
-			object[] ctorArgs = new object [pi.Length];
+			info.ctor = ctor;
+			info.ctorArgs = new object [pi.Length];
 			for (int i = 0; i < pi.Length; ++i)
-				ctorArgs [i] = decode_cattr_value (pi [i].ParameterType, data, pos, out pos);
-
-			object res = ctor.Invoke (ctorArgs);
+				info.ctorArgs [i] = decode_cattr_value (pi [i].ParameterType, data, pos, out pos);
 
 			int num_named = data [pos] + (data [pos + 1] * 256);
 			pos += 2;
 
+			info.namedParamNames = new string [num_named];
+			info.namedParamValues = new object [num_named];
 			for (int i = 0; i < num_named; ++i) {
 				int named_type = data [pos++];
 				int data_type = data [pos++];
@@ -346,6 +356,7 @@ namespace System.Reflection.Emit {
 
 				int len = decode_len (data, pos, out pos);
 				string name = string_from_bytes (data, pos, len);
+				info.namedParamNames [i] = name;
 				pos += len;
 
 				if (named_type == 0x53) {
@@ -360,14 +371,14 @@ namespace System.Reflection.Emit {
 						val = Enum.ToObject (enumType, val);
 					}
 
-					fi.SetValue (res, val);
+					info.namedParamValues [i] = val;
 				}
 				else
 					// FIXME:
 					throw new Exception ();
 			}
 
-			return res;
+			return info;
 		}
 	}
 }

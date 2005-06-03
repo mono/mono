@@ -302,23 +302,50 @@ namespace System.Reflection.Emit {
 				return;
 			}
 			if (attrname == "System.Runtime.InteropServices.DllImportAttribute") {
-				DllImportAttribute attr = (DllImportAttribute)CustomAttributeBuilder.decode_cattr (customBuilder);
-				pi_dll = attr.Value;
-				pi_entry = attr.EntryPoint;
-				if (attr.CallingConvention == 0)
-					native_cc = System.Runtime.InteropServices.CallingConvention.Winapi;
-				else
-					native_cc = attr.CallingConvention;
-				charset = attr.CharSet;
-				ExactSpelling = attr.ExactSpelling;
-				if (attr.PreserveSig)
-					iattrs |= MethodImplAttributes.PreserveSig;
-				SetLastError = attr.SetLastError;
+				CustomAttributeBuilder.CustomAttributeInfo attr = CustomAttributeBuilder.decode_cattr (customBuilder);
+				bool preserveSig = true;
+
+				/*
+				 * It would be easier to construct a DllImportAttribute from
+				 * the custom attribute builder, but the DllImportAttribute 
+				 * does not contain all the information required here, ie.
+				 * - some parameters, like BestFitMapping has three values
+				 *   ("on", "off", "missing"), but DllImportAttribute only
+				 *   contains two (on/off).
+				 * - PreserveSig is true by default, while it is false by
+				 *   default in DllImportAttribute.
+				 */
+
+				pi_dll = (string)attr.ctorArgs [0];
+				native_cc = System.Runtime.InteropServices.CallingConvention.Winapi;
+
+				for (int i = 0; i < attr.namedParamNames.Length; ++i) {
+					string name = attr.namedParamNames [i];
+					object value = attr.namedParamValues [i];
+
+					if (name == "CallingConvention")
+						native_cc = (CallingConvention)value;
+					else if (name == "CharSet")
+						charset = (CharSet)value;
+					else if (name == "EntryPoint")
+						pi_entry = (string)value;
+					else if (name == "ExactSpelling")
+						ExactSpelling = (bool)value;
+					else if (name == "SetLastError")
+						SetLastError = (bool)value;
+					else if (name == "PreserveSig")
+						preserveSig = (bool)value;
 #if NET_1_1
-				BestFitMapping = attr.BestFitMapping;
-				ThrowOnUnmappableChar = attr.ThrowOnUnmappableChar;
+					else if (name == "BestFitMapping")
+						BestFitMapping = (bool)value;
+					else if (name == "ThrowOnUnmappableChar")
+						ThrowOnUnmappableChar = (bool)value;
 #endif
+				}
+
 				attrs |= MethodAttributes.PinvokeImpl;
+				if (preserveSig)
+					iattrs |= MethodImplAttributes.PreserveSig;
 				return;
 			}
 			if (cattrs != null) {

@@ -1,5 +1,8 @@
 2005-06-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MethodBuilder.cs CustomAttributeBuilder.cs: Rework DllImportAttribute
+	decoding to improve compatibility with MS.NET.
+	
 	* MethodBuilder.cs (SetCustomAttribute): Set PinvokeImpl attribute if
 	a DllImportAttribute is present.
 
