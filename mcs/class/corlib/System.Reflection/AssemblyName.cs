@@ -123,7 +123,7 @@ namespace System.Reflection {
 					return null;
 				StringBuilder fname = new StringBuilder ();
 				fname.Append (name);
-				if (Version.ToString () != "0.0.0.0") {
+				if (Version != null) {
 					fname.Append (", Version=");
 					fname.Append (Version.ToString ());
 				}
@@ -160,27 +160,19 @@ namespace System.Reflection {
 
 		public Version Version {
 			get {
-				if (version != null) return version;
-				
-				if (name == null)
-					return null;
-				if (build == -1)
-					version = new Version (major, minor);
-				else
-					if (revision == -1)
-						version = new Version (major, minor, build);
-				else
-					version = new Version (major, minor, build, revision);
-
 				return version;
 			}
 
 			set {
-				major = value.Major;
-				minor = value.Minor;
-				build = value.Build;
-				revision = value.Revision;
 				version = value;
+				if (value == null)
+					major = minor = build = revision = 0;
+				else {
+					major = value.Major;
+					minor = value.Minor;
+					build = value.Build;
+					revision = value.Revision;
+				}
 			}
 		}
 
@@ -272,6 +264,7 @@ namespace System.Reflection {
 			an.minor = minor;
 			an.build = build;
 			an.revision = revision;
+			an.version = version;
 			an.cultureinfo = cultureinfo;
 			an.flags = flags;
 			an.hashalg = hashalg;

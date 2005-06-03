@@ -1,3 +1,9 @@
+2005-06-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* AssemblyName.cs: Changes to support the creation of version
+	instance from icalls. This change also helps to keep the
+	AssemblyName tests running fine.
+	
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* Binder.cs: Avoid double checked locking and lock on typeof by
