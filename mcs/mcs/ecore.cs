@@ -365,10 +365,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Expression Resolve (EmitContext ec)
 		{
-			ResolveFlags flags = RootContext.Version == LanguageVersion.ISO_1
-				? ResolveFlags.VariableOrValue
-				: ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup;
-			return Resolve (ec, flags);
+			Expression e = Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+
+			if (e != null && e.eclass == ExprClass.MethodGroup && RootContext.Version == LanguageVersion.ISO_1) {
+				((MethodGroupExpr) e).ReportUsageError ();
+				return null;
+			}
+			return e;
 		}
 
 		/// <summary>
