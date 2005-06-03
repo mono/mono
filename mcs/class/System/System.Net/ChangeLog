@@ -1,3 +1,8 @@
+2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ServicePointManager.cs: when going through a proxy, use 2 different
+	service points depending on the scheme. Fixes bug #75135.
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: don't rethrow errors in Write, as the error will be
