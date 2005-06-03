@@ -202,7 +202,8 @@ namespace System.Net
 			
 			ServicePoint sp = null;
 			lock (servicePoints) {
-				sp = servicePoints [address] as ServicePoint;
+				int key = address.GetHashCode () + (int) ((useConnect) ? 1 : 0);
+				sp = servicePoints [key] as ServicePoint;
 				if (sp != null)
 					return sp;
 
@@ -218,7 +219,7 @@ namespace System.Net
 #endif
 				sp.UsesProxy = usesProxy;
 				sp.UseConnect = useConnect;
-				servicePoints.Add (address, sp);
+				servicePoints.Add (key, sp);
 			}
 			
 			return sp;
