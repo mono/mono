@@ -1,3 +1,8 @@
+2005-06-03  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_SOURCES_common): Re-enable test-183: the runtime
+	has been fixed.
+
 2005-06-03  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Disable test-183; someone broke it.
