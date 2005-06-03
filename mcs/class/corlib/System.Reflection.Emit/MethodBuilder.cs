@@ -318,6 +318,7 @@ namespace System.Reflection.Emit {
 				BestFitMapping = attr.BestFitMapping;
 				ThrowOnUnmappableChar = attr.ThrowOnUnmappableChar;
 #endif
+				attrs |= MethodAttributes.PinvokeImpl;
 				return;
 			}
 			if (cattrs != null) {

@@ -1,3 +1,8 @@
+2005-06-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilder.cs (SetCustomAttribute): Set PinvokeImpl attribute if
+	a DllImportAttribute is present.
+
 2005-06-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilder.cs (SetCustomAttribute): Handle the case when the
