@@ -1,5 +1,10 @@
 2005-06-02  Peter Bartok  <pbartok@novell.com>
 
+	* X11DnD.cs: Use Marshal.SizeOf instead of sizeof, no /unsafe required
+	  that way
+
+2005-06-02  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs: Removed MonoTODO from DoDragDrop and added call to Xplat
 	* XplatUI.cs: Added DoDragDrop() method
 	* XplatUIDriver.cs: Added DoDragDrop() method
