@@ -2114,7 +2114,7 @@ namespace System.Windows.Forms
 
 		[MonoTODO("Come up with cross platform drag-drop driver interface")]
 		public DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects) {
-			return DragDropEffects.None;
+			return XplatUI.StartDrag(data, allowedEffects);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

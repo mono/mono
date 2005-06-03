@@ -716,6 +716,13 @@ namespace System.Windows.Forms {
 			driver.ShowCursor(show);
 		}
 
+		internal static void StartDrag(object data, DragDropEffects allowedEffects) {
+			#if DriverDebug
+			Console.WriteLine ("StartDrag({0}, {1}): Called", data, allowedEffects);
+			#endif
+			driver.StartDrag (data, allowedEffects);
+		}
+
 		internal static bool SystrayAdd(IntPtr handle, string tip, Icon icon, out ToolTip tt) {
 			#if DriverDebug
 				Console.WriteLine("SystrayAdd({0:X}, {1}): Called", handle.ToInt32(), tip);
