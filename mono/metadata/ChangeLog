@@ -1,3 +1,8 @@
+2005-06-03  Lluis Sanchez Gual  <lluis@novell.com>
+  
+	* object.c (mono_method_return_message_restore): A somehow less
+	intrusive fix for #75138.
+
 2005-06-03  Raja R Harinath  <rharinath@novell.com>
 
 	* object.c (mono_method_return_message_restore): Fix computation
