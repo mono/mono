@@ -1,5 +1,10 @@
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: send the right header/user/password in
+	PreAuthenticate in presence of a proxy.
+
+2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* IPv6Address.cs: fix IsLoopback. Closes bug #75128.
 
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
