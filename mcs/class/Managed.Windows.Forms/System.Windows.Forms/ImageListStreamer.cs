@@ -47,8 +47,6 @@ namespace System.Windows.Forms {
 
 		private ImageListStreamer (SerializationInfo info, StreamingContext context) {
 
-			
-			
 			byte [] data = (byte [])info.GetValue ("Data", typeof (byte []));
 			if (data == null || data.Length <= signature.Length)
 				return;
@@ -77,9 +75,6 @@ namespace System.Windows.Forms {
 			MemoryStream stream = new MemoryStream (decompressed);
 			BinaryReader reader = new BinaryReader (stream);
 
-			// IntPtr hbmMask = IntPtr.Zero;
-			// IntPtr hbmColor= IntPtr.Zero;
-
 			try {
 				// read image list header
 				reader.ReadUInt16 ();	// usMagic
@@ -93,8 +88,9 @@ namespace System.Windows.Forms {
 				reader.ReadUInt16 ();	// flags
 
 				short [] ovls = new short [4];
-				for (i = 0; i < ovls.Length; i++)
+				for (i = 0; i < ovls.Length; i++) {
 					ovls[i] = reader.ReadInt16 ();
+				}
 
 				image_size = new Size (cx, cy);
 				back_color = Color.FromArgb ((int) bkcolor);
@@ -119,8 +115,8 @@ namespace System.Windows.Forms {
 				Rectangle dest_rect = new Rectangle (0, 0, cx, cy);
 				for (int r = 0 ; r < cCurImage ; r++) {
 					Rectangle area = new Rectangle (
-						(r % step) / cx,
-						(r / step) * cy, 
+						(r % step) * cx,
+						(r / step) * cy,
 						cx, cy);
 					Bitmap b = new Bitmap (cx, cy);
 					using (Graphics g = Graphics.FromImage (b)) {
@@ -136,9 +132,70 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+		[MonoTODO ("RLE is broken")]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			MemoryStream stream = new MemoryStream ();
+			BinaryWriter writer = new BinaryWriter (stream);
+
+			writer.Write (signature);
+			writer.Write (GetStreamData ());
+			
+			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
+		}
+
+		private byte [] GetStreamData ()
+		{
+			MemoryStream stream = new MemoryStream ();
+			BinaryWriter writer = new BinaryWriter (stream);
+
+			int cols = 4;
+			int rows = images.Length / cols;
+			if (images.Length % cols > 0)
+				++rows;
+
+			Bitmap main = new Bitmap (cols * ImageSize.Width, rows * ImageSize.Height);
+			using (Graphics g = Graphics.FromImage (main)) {
+				g.FillRectangle (new SolidBrush (BackColor), 0, 0, cols * ImageSize.Width, rows * ImageSize.Height);
+				for (int i = 0; i < images.Length; i++) {
+					g.DrawImage (images [i], (i % cols) * ImageSize.Width,
+							(i / cols) * ImageSize.Height);
+				}
+			}
+
+			writer.Write ((ushort) (('L' << 8) | 'I'));    // magic
+			writer.Write ((ushort) 0x101);		       // version
+			writer.Write ((ushort) images.Length);
+			writer.Write ((ushort) images.Length);
+			writer.Write ((ushort) (rows * cols));
+			writer.Write ((ushort) 0x4);			// grow....not sure this should be hard coded
+			writer.Write ((ushort) image_size.Width);
+			writer.Write ((ushort) image_size.Height);
+			writer.Write (BackColor.ToArgb ());
+			writer.Write ((ushort) 0x1009);		       // flags
+
+			for (int i = 0; i < 4; i++)
+				writer.Write ((short) -1);  // ovls
+
+			return RLEncodeData (stream.ToArray ());
+		}
+
+		// TODO: This is broken
+		private byte [] RLEncodeData (byte [] data)
+		{
+			MemoryStream stream = new MemoryStream ();
+			BinaryWriter writer = new BinaryWriter (stream);
+
+			for (int i = 0; i < data.Length; i += 2) {
+				int seq = 0;
+				byte item  = data [i];
+				while (data [i++] == item && i < data.Length)
+					seq++;
+				writer.Write ((byte) seq);
+				writer.Write (item);
+			}
+
+			return stream.ToArray ();
 
 		}
 

@@ -1,5 +1,10 @@
 2005-06-02  Jackson Harper  <jackson@ximian.com>
 
+	* ImageListStreamer.cs: Somewhat broken implementation of
+	GetObjectData. The RLE needs some work to match MS properly.
+
+2005-06-02  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Attempting to keep at least one file in MWF
 	monostyled.
 
