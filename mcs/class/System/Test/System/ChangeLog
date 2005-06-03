@@ -1,3 +1,7 @@
+2005-06-02 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* UriTest.cs: added test for bug #75124.
+
 2005-03-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UriTest2.cs: added test from bug #73316.

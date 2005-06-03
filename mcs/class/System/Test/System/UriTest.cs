@@ -799,6 +799,13 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
+		public void UriStartingWithColon()
+		{
+			new Uri("://");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
 		public void EmptyScheme ()
 		{
 			new Uri ("hey");

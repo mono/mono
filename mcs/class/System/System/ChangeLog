@@ -1,3 +1,8 @@
+2005-06-02 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Uri.cs: throw UriFormatException if URI starts with colon.
+	Fixed bug #75124.
+
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Uri.cs:

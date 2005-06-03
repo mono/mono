@@ -940,7 +940,11 @@ namespace System
 			// 1, 2
 			// Identify Windows path, unix path, or standard URI.
 			pos = uriString.IndexOf (':');
-			if (pos < 0) {
+			if (pos == 0) {
+				throw new UriFormatException("Invalid URI: "
+					+ "The format of the URI could not be "
+					+ "determined.");
+			} else if (pos < 0) {
 				// It must be Unix file path or Windows UNC
 				if (uriString [0] == '/')
 					ParseAsUnixAbsoluteFilePath (uriString);
@@ -949,7 +953,7 @@ namespace System
 				else
 					throw new UriFormatException ("URI scheme was not recognized, and input string was not recognized as an absolute file path.");
 				return;
-			}
+			} 
 			else if (pos == 1) {
 				if (!Char.IsLetter (uriString [0]))
 					throw new UriFormatException ("URI scheme must start with a letter.");
