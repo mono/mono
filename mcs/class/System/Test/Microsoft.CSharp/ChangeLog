@@ -1,3 +1,8 @@
+2005-06-04  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromNamespaceTest.cs: re-enabled SimpleNamespaceTest
+	and InvalidNamespaceTest as IndentedTextWriter now matches MS.NET
+
 2005-05-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGeneratorTest.cs: Added tests for GenerateInMemory

@@ -65,7 +65,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Ignore ("This only differs in 4 spaces")]
 		public void SimpleNamespaceTest ()
 		{
 			codeNamespace.Name = "A";
@@ -74,7 +73,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Ignore ("This only differs in 4 spaces")]
 		public void InvalidNamespaceTest ()
 		{
 			codeNamespace.Name = "A,B";
