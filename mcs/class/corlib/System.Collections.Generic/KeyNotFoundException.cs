@@ -31,21 +31,20 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-namespace System.Collections.Generic
-{
-        public class KeyNotFoundException : SystemException, ISerializable
-        {
-                public KeyNotFoundException ()
-                        : base () {}
+namespace System.Collections.Generic {
+	[Serializable]
+	public class KeyNotFoundException : SystemException, ISerializable {
+		public KeyNotFoundException ()
+			: base () {}
 
-                public KeyNotFoundException (string message)
-                        : base (message) {}
+		public KeyNotFoundException (string message)
+			: base (message) {}
 
-                public KeyNotFoundException (string message, Exception inner)
-                        : base (message, inner) {}
+		public KeyNotFoundException (string message, Exception inner)
+			: base (message, inner) {}
 
-                protected KeyNotFoundException (SerializationInfo info, StreamingContext context)
-                        : base (info, context) {}
-        }
+		protected KeyNotFoundException (SerializationInfo info, StreamingContext context)
+			: base (info, context) {}
+	}
 }
 #endif

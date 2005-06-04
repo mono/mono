@@ -41,10 +41,7 @@ using System.Runtime.Serialization;
 namespace System.Collections.Generic {
 
 	[Serializable]
-	[CLSCompliant(true)]
-	public class Dictionary<K, V> : IDictionary<K, V>,
-		//ICollection<KeyValuePair<K, V>>,
-		IEnumerable<KeyValuePair<K, V>>,
+	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 		IDictionary,
 		ICollection,
 		IEnumerable,
@@ -56,10 +53,10 @@ namespace System.Collections.Generic {
 
 		[Serializable]
 		internal class Slot {
-			public K Key;
-			public V Value;
+			public TKey Key;
+			public TValue Value;
 			public Slot next;
-			public Slot (K Key, V Value, Slot next)
+			public Slot (TKey Key, TValue Value, Slot next)
 			{
 				this.Key = Key;
 				this.Value = Value;
@@ -72,7 +69,7 @@ namespace System.Collections.Generic {
 		int _usedSlots;
 		float _loadFactor = DEFAULT_LOAD_FACTOR;
 	
-		IComparer<K> _hcp;
+		IComparer<TKey> _hcp;
 	
 		uint _threshold;
 	
@@ -80,7 +77,7 @@ namespace System.Collections.Generic {
 			get { return _usedSlots; }
 		}
 
-		public V this [K key] {
+		public TValue this [TKey key] {
 			get {
 				int index = GetSlot (key);
 				if (index < 0)
@@ -102,12 +99,12 @@ namespace System.Collections.Generic {
 			Init ();
 		}
 	
-		public Dictionary (IComparer<K> comparer)
+		public Dictionary (IComparer<TKey> comparer)
 		{
 			Init (INITIAL_SIZE, comparer, DEFAULT_LOAD_FACTOR);
 		}
 	
-		public Dictionary (IDictionary<K, V> dictionary)
+		public Dictionary (IDictionary<TKey, TValue> dictionary)
 			: this (dictionary, null)
 		{
 		}
@@ -122,18 +119,18 @@ namespace System.Collections.Generic {
 			Init (loadFactor);
 		}
 	
-		public Dictionary (IDictionary<K, V> dictionary, IComparer<K> comparer)
+		public Dictionary (IDictionary<TKey, TValue> dictionary, IComparer<TKey> comparer)
 		{
 			if (dictionary == null)
 				throw new ArgumentNullException ("dictionary");
 			int capacity = dictionary.Count;
 			Init (capacity, comparer, DEFAULT_LOAD_FACTOR);
-			foreach (KeyValuePair<K, V> entry in dictionary) {
+			foreach (KeyValuePair<TKey, TValue> entry in dictionary) {
 				this.Add (entry.Key, entry.Value);
 			}
 		}
 	
-		public Dictionary (int capacity, IComparer<K> comparer)
+		public Dictionary (int capacity, IComparer<TKey> comparer)
 		{
 			Init (capacity, comparer, DEFAULT_LOAD_FACTOR);
 		}
@@ -158,7 +155,7 @@ namespace System.Collections.Generic {
 			Init (INITIAL_SIZE, null, loadFactor);
 		}
 		
-		protected void Init (int capacity, IComparer<K> hcp, float loadFactor)
+		protected void Init (int capacity, IComparer<TKey> hcp, float loadFactor)
 		{
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
@@ -170,18 +167,18 @@ namespace System.Collections.Generic {
 				_threshold = 1;
 		}
 	
-		ICollection<V> GetValues ()
+		ICollection<TValue> GetValues ()
 		{
-			return ((IDictionary<K, V>) this).Values;
+			return ((IDictionary<TKey, TValue>) this).Values;
 		}
 	
-		ICollection<K> GetKeys ()
+		ICollection<TKey> GetKeys ()
 		{
-			return ((IDictionary<K, V>) this).Keys;
+			return ((IDictionary<TKey, TValue>) this).Keys;
 		}
 	
 	
-		void CopyTo (KeyValuePair<K, V> [] array, int index)
+		void CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -192,7 +189,7 @@ namespace System.Collections.Generic {
 			if (array.Length - index < _usedSlots)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 			
-			foreach (KeyValuePair<K, V> kv in this)
+			foreach (KeyValuePair<TKey, TValue> kv in this)
 				array [index++] = kv;
 		}
 	
@@ -225,7 +222,7 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		protected virtual int GetHash (K key)
+		protected virtual int GetHash (TKey key)
 		{
 			//IComparer<K> hcp = this._hcp;
 			
@@ -237,7 +234,7 @@ namespace System.Collections.Generic {
 			*/
 		}
 	
-		public void Add (K key, V value)
+		public void Add (TKey key, TValue value)
 		{
 			int index = GetSlot (key);
 			if (index >= 0)
@@ -246,7 +243,7 @@ namespace System.Collections.Generic {
 			DoAdd (index, key, value);
 		}
 
-		void DoAdd (int negated_index, K key, V value)
+		void DoAdd (int negated_index, TKey key, TValue value)
 		{
 			int index = -negated_index - 1;
 
@@ -259,7 +256,7 @@ namespace System.Collections.Generic {
 			++_usedSlots;
 		}
 	
-		protected int DoHash (K key)
+		protected int DoHash (TKey key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key", "null key");
@@ -271,7 +268,7 @@ namespace System.Collections.Generic {
 			return spot;
 		}
 
-		public IComparer<K> Comparer {
+		public IComparer<TKey> Comparer {
 			get {
 				return _hcp;
 			}
@@ -284,14 +281,14 @@ namespace System.Collections.Generic {
 			_usedSlots = 0;
 		}
 	
-		public bool ContainsKey (K key)
+		public bool ContainsKey (TKey key)
 		{
 			return GetSlot (key) >= 0;
 		}
 	
-		public bool ContainsValue (V value)
+		public bool ContainsValue (TValue value)
 		{
-			foreach (V v in ((IDictionary) this).Values) {
+			foreach (TValue v in ((IDictionary) this).Values) {
 				if (v.Equals (value))
 					return true;
 			}
@@ -308,7 +305,7 @@ namespace System.Collections.Generic {
 			throw new NotImplementedException ();
 		}
 	
-		public bool Remove (K key)
+		public bool Remove (TKey key)
 		{
 			int index = GetSlot (key);
 
@@ -325,7 +322,7 @@ namespace System.Collections.Generic {
 		// Returns the index of the chain containing key.  Also ensures that the found key is the first element of the chain.
 		// If the key is not found, returns -h-1, where 'h' is the index of the chain that would've contained the key.
 		// 
-		internal int GetSlot (K key)
+		internal int GetSlot (TKey key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
@@ -351,21 +348,21 @@ namespace System.Collections.Generic {
 			return index;
 		}
 	
-		public bool TryGetValue (K key, out V value)
+		public bool TryGetValue (TKey key, out TValue value)
 		{
 			int index = GetSlot (key);
 			bool found = index >= 0;
-			value = found ? _table [index].Value : default (V);
+			value = found ? _table [index].Value : default (TValue);
 			return found;
 		}
 	
-		ICollection<K> IDictionary<K, V>.Keys {
+		ICollection<TKey> IDictionary<TKey, TValue>.Keys {
 			get {
 				return Keys;
 			}
 		}
 	
-		ICollection<V> IDictionary<K, V>.Values {
+		ICollection<TValue> IDictionary<TKey, TValue>.Values {
 			get {
 				return Values;
 			}
@@ -393,38 +390,38 @@ namespace System.Collections.Generic {
 		
 		object IDictionary.this [object key] {
 			get {
-				if (!(key is K))
-					throw new ArgumentException ("key is of not '" + typeof (K).ToString () + "'!");
-				return this [(K) key];
+				if (!(key is TKey))
+					throw new ArgumentException ("key is of not '" + typeof (TKey).ToString () + "'!");
+				return this [(TKey) key];
 			}
-			set { this [(K) key] = (V) value; }
+			set { this [(TKey) key] = (TValue) value; }
 		}
 		ICollection IDictionary.Keys
 		{
-			get { return ((IDictionary<K, V>) this).Keys as ICollection; }
+			get { return ((IDictionary<TKey, TValue>) this).Keys as ICollection; }
 		}
 		ICollection IDictionary.Values
 		{
-			get { return ((IDictionary<K, V>) this).Values as ICollection; }
+			get { return ((IDictionary<TKey, TValue>) this).Values as ICollection; }
 		}
 	
 		void IDictionary.Add (object key, object value)
 		{
-			if (!(key is K))
-				throw new ArgumentException ("key is of not '" + typeof (K).ToString () + "'!");
-			if (!(value is V))
-				throw new ArgumentException ("value is of not '" + typeof (V).ToString () + "'!");
-			this.Add ((K) key, (V) value);
+			if (!(key is TKey))
+				throw new ArgumentException ("key is of not '" + typeof (TKey).ToString () + "'!");
+			if (!(value is TValue))
+				throw new ArgumentException ("value is of not '" + typeof (TValue).ToString () + "'!");
+			this.Add ((TKey) key, (TValue) value);
 		}
 	
 		bool IDictionary.Contains (object key)
 		{
-			return ContainsKey ((K) key);
+			return ContainsKey ((TKey) key);
 		}
 	
 		void IDictionary.Remove (object key)
 		{
-			Remove ((K) key);
+			Remove ((TKey) key);
 		}
 	
 		bool ICollection.IsSynchronized {
@@ -434,26 +431,26 @@ namespace System.Collections.Generic {
 			get { return this; }
 		}
 	
-		bool ICollection<KeyValuePair<K, V>>.IsReadOnly {
+		bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly {
 			get { return false; }
 		}
 	
-		void ICollection<KeyValuePair<K, V>>.Add (KeyValuePair<K, V> keyValuePair)
+		void ICollection<KeyValuePair<TKey, TValue>>.Add (KeyValuePair<TKey, TValue> keyValuePair)
 		{
 			Add (keyValuePair.Key, keyValuePair.Value);
 		}
 	
-		bool ICollection<KeyValuePair<K, V>>.Contains (KeyValuePair<K, V> keyValuePair)
+		bool ICollection<KeyValuePair<TKey, TValue>>.Contains (KeyValuePair<TKey, TValue> keyValuePair)
 		{
 			return this.ContainsKey (keyValuePair.Key);
 		}
 	
-		void ICollection<KeyValuePair<K, V>>.CopyTo (KeyValuePair<K, V> [] array, int index)
+		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
 		{
 			CopyTo (array, index);
 		}
 	
-		bool ICollection<KeyValuePair<K, V>>.Remove (KeyValuePair<K, V> keyValuePair)
+		bool ICollection<KeyValuePair<TKey, TValue>>.Remove (KeyValuePair<TKey, TValue> keyValuePair)
 		{
 			return Remove (keyValuePair.Key);
 		}
@@ -461,7 +458,7 @@ namespace System.Collections.Generic {
 	
 		void ICollection.CopyTo (Array array, int index)
 		{
-			CopyTo ((KeyValuePair<K, V> []) array, index);
+			CopyTo ((KeyValuePair<TKey, TValue> []) array, index);
 		}
 	
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -469,7 +466,7 @@ namespace System.Collections.Generic {
 			return new Enumerator (this, EnumerationMode.DictionaryEntry);
 		}
 	
-		IEnumerator<KeyValuePair<K, V>> IEnumerable<KeyValuePair<K, V>>.GetEnumerator ()
+		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator ()
 		{
 			return new Enumerator (this);
 		}
@@ -477,7 +474,7 @@ namespace System.Collections.Generic {
 		/**
 		 * This is to make the gmcs compiler errror silent
 		 */
-	//			   IEnumerator<K> IEnumerable<K>.GetEnumerator ()
+	//			   IEnumerator<TKey> IEnumerable<K>.GetEnumerator ()
 	//			   {
 	//					   throw new NotImplementedException ();
 	//			   }
@@ -496,10 +493,10 @@ namespace System.Collections.Generic {
 		public enum EnumerationMode { Key, Value, DictionaryEntry, KeyValuePair };
 	
 		[Serializable]
-		public struct Enumerator : IEnumerator<KeyValuePair<K,V>>,
+		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>,
 			IDisposable, IDictionaryEnumerator, IEnumerator
 		{
-			Dictionary<K, V> _dictionary;
+			Dictionary<TKey, TValue> _dictionary;
 			Slot _current;
 			int _index;
 			int _validNodeVisited;
@@ -508,11 +505,11 @@ namespace System.Collections.Generic {
 	
 	
 	
-			public Enumerator (Dictionary<K, V> dictionary) : this (dictionary, EnumerationMode.KeyValuePair)
+			public Enumerator (Dictionary<TKey, TValue> dictionary) : this (dictionary, EnumerationMode.KeyValuePair)
 			{
 			}
 	
-			public Enumerator (Dictionary<K, V> dictionary, EnumerationMode mode)
+			public Enumerator (Dictionary<TKey, TValue> dictionary, EnumerationMode mode)
 			{
 				_index = 0;
 				_current = null;
@@ -542,10 +539,10 @@ namespace System.Collections.Generic {
 				return (_isValid = false);
 			}
 	
-			public KeyValuePair<K, V> Current {
+			public KeyValuePair<TKey, TValue> Current {
 				get {
 					if (!_isValid) throw new InvalidOperationException ();
-					KeyValuePair<K, V> kv = new KeyValuePair<K, V> (_current.Key, _current.Value);
+					KeyValuePair<TKey, TValue> kv = new KeyValuePair<TKey, TValue> (_current.Key, _current.Value);
 					return kv;
 				}
 			}
@@ -563,7 +560,7 @@ namespace System.Collections.Generic {
 						return de as object;
 					case EnumerationMode.KeyValuePair:
 					default:
-						KeyValuePair<K, V> kv = new KeyValuePair<K, V> (_current.Key, _current.Value);
+						KeyValuePair<TKey, TValue> kv = new KeyValuePair<TKey, TValue> (_current.Key, _current.Value);
 						return kv as object;
 					}
 				}
@@ -611,40 +608,40 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
-		public class KeyCollection : ICollection<K>, IEnumerable<K>, ICollection {
-			Dictionary<K, V> _dictionary;
+		public class KeyCollection : ICollection<TKey>, ICollection {
+			Dictionary<TKey, TValue> _dictionary;
 	
-			public KeyCollection (Dictionary<K, V> dictionary)
+			public KeyCollection (Dictionary<TKey, TValue> dictionary)
 			{
 				_dictionary = dictionary;
 			}
 	
-			void ICollection<K>.Add (K item)
+			void ICollection<TKey>.Add (TKey item)
 			{
 				throw new InvalidOperationException ();
 			}
 	
-			void ICollection<K>.Clear ()
+			void ICollection<TKey>.Clear ()
 			{
 				throw new InvalidOperationException ();
 			}
 	
-			bool ICollection<K>.Contains (K item)
+			bool ICollection<TKey>.Contains (TKey item)
 			{
 				return _dictionary.ContainsKey (item);
 			}
 	
-			bool ICollection<K>.Remove (K item)
+			bool ICollection<TKey>.Remove (TKey item)
 			{
 				throw new InvalidOperationException ();
 			}
 	
 			void ICollection.CopyTo (Array array, int index)
 			{
-				CopyTo ((K []) array, index);
+				CopyTo ((TKey []) array, index);
 			}
 	
-			public void CopyTo (K [] array, int index)
+			public void CopyTo (TKey [] array, int index)
 			{
 				if (array == null)
 					throw new ArgumentNullException ("array");
@@ -655,8 +652,8 @@ namespace System.Collections.Generic {
 				if (array.Length - index < _dictionary._usedSlots)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
-				IEnumerable<K> enumerateThis = (IEnumerable<K>) this;
-				foreach (K k in enumerateThis) {
+				IEnumerable<TKey> enumerateThis = (IEnumerable<TKey>) this;
+				foreach (TKey k in enumerateThis) {
 					array [index++] = k;
 				}
 			}
@@ -666,7 +663,7 @@ namespace System.Collections.Generic {
 				return new Enumerator (_dictionary);
 			}
 	
-			IEnumerator<K> IEnumerable<K>.GetEnumerator ()
+			IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator ()
 			{
 				return new KeyEnumerator (_dictionary);
 			}
@@ -677,14 +674,14 @@ namespace System.Collections.Generic {
 			}
 	
 	
-			bool ICollection<K>.IsReadOnly { get { return ((IDictionary) _dictionary).IsReadOnly; } }
+			bool ICollection<TKey>.IsReadOnly { get { return ((IDictionary) _dictionary).IsReadOnly; } }
 			public int Count { get { return _dictionary.Count; } }
 			bool ICollection.IsSynchronized { get { return ((IDictionary) _dictionary).IsSynchronized; } }
 			object ICollection.SyncRoot { get { return ((IDictionary) _dictionary).SyncRoot; } }
 	
-			public struct KeyEnumerator : IEnumerator<K>, IDisposable, IEnumerator {
+			public struct KeyEnumerator : IEnumerator<TKey>, IDisposable, IEnumerator {
 				IEnumerator _hostEnumerator;
-				internal KeyEnumerator (Dictionary<K, V> dictionary)
+				internal KeyEnumerator (Dictionary<TKey, TValue> dictionary)
 				{
 					_hostEnumerator = new Enumerator (dictionary, EnumerationMode.Key);
 				}
@@ -698,9 +695,9 @@ namespace System.Collections.Generic {
 					return _hostEnumerator.MoveNext ();
 				}
 				
-				public K Current {
+				public TKey Current {
 					get {
-						return (K) _hostEnumerator.Current;
+						return (TKey) _hostEnumerator.Current;
 					}
 				}
 				
@@ -718,40 +715,40 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
-		public class ValueCollection : ICollection<V>, IEnumerable<V>, ICollection, IEnumerable {
-			Dictionary<K, V> _dictionary;
+		public class ValueCollection : ICollection<TValue>, ICollection {
+			Dictionary<TKey, TValue> _dictionary;
 	
-			public ValueCollection (Dictionary<K, V> dictionary)
+			public ValueCollection (Dictionary<TKey, TValue> dictionary)
 			{
 				_dictionary = dictionary;
 			}
 	
-			void ICollection<V>.Add (V item)
+			void ICollection<TValue>.Add (TValue item)
 			{
 				throw new InvalidOperationException ();
 			}
 	
-			void ICollection<V>.Clear ()
+			void ICollection<TValue>.Clear ()
 			{
 				throw new InvalidOperationException ();
 			}
 	
-			bool ICollection<V>.Contains (V item)
+			bool ICollection<TValue>.Contains (TValue item)
 			{
 				return _dictionary.ContainsValue (item);
 			}
 	
-			bool ICollection<V>.Remove (V item)
+			bool ICollection<TValue>.Remove (TValue item)
 			{
 				throw new InvalidOperationException ();
 			}
 	
 			void ICollection.CopyTo (Array array, int index)
 			{
-				CopyTo ((V []) array, index);
+				CopyTo ((TValue []) array, index);
 			}
 	
-			public void CopyTo (V [] array, int index)
+			public void CopyTo (TValue [] array, int index)
 			{
 				if (array == null)
 					throw new ArgumentNullException ("array");
@@ -762,8 +759,8 @@ namespace System.Collections.Generic {
 				if (array.Length - index < _dictionary._usedSlots)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
-				IEnumerable<V> enumerateThis = (IEnumerable<V>) this;
-				foreach (V v in enumerateThis) {
+				IEnumerable<TValue> enumerateThis = (IEnumerable<TValue>) this;
+				foreach (TValue v in enumerateThis) {
 					array [index++] = v;
 				}
 			}
@@ -773,7 +770,7 @@ namespace System.Collections.Generic {
 				return new Enumerator (_dictionary);
 			}
 	
-			IEnumerator<V> IEnumerable<V>.GetEnumerator ()
+			IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator ()
 			{
 				return new ValueEnumerator (_dictionary);
 			}
@@ -784,15 +781,15 @@ namespace System.Collections.Generic {
 			}
 	
 	
-			bool ICollection<V>.IsReadOnly { get { return ((IDictionary) _dictionary).IsReadOnly; } }
+			bool ICollection<TValue>.IsReadOnly { get { return ((IDictionary) _dictionary).IsReadOnly; } }
 			public int Count { get { return _dictionary.Count; } }
 			bool ICollection.IsSynchronized { get { return ((IDictionary) _dictionary).IsSynchronized; } }
 			object ICollection.SyncRoot { get { return ((IDictionary) _dictionary).SyncRoot; } }
 	
-			public struct ValueEnumerator : IEnumerator<V>, IDisposable, IEnumerator
+			public struct ValueEnumerator : IEnumerator<TValue>
 			{
 				IEnumerator _hostEnumerator;
-				internal ValueEnumerator (Dictionary<K, V> dictionary)
+				internal ValueEnumerator (Dictionary<TKey, TValue> dictionary)
 				{
 					_hostEnumerator = new Enumerator (dictionary, EnumerationMode.Value);
 				}
@@ -806,9 +803,9 @@ namespace System.Collections.Generic {
 					return _hostEnumerator.MoveNext ();
 				}
 				
-				public V Current {
+				public TValue Current {
 					get {
-						return (V) _hostEnumerator.Current;
+						return (TValue) _hostEnumerator.Current;
 					}
 				}
 				

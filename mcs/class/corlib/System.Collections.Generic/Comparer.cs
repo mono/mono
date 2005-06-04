@@ -31,21 +31,10 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
-	public abstract class Comparer<T> : IComparer<T>, System.Collections.IKeyComparer,
-		System.Collections.IComparer, System.Collections.IHashCodeProvider {
-	
-		public Comparer () {} /* workaround 60438 by not having a protected ctor */
+	[Serializable]
+	public abstract class Comparer<T> : IComparer<T>, System.Collections.IComparer {
+			
 		public abstract int Compare (T x, T y);
-		public virtual bool Equals (T x, T y)
-		{
-			return Compare (x, y) == 0;
-		}
-		public virtual int GetHashCode (T obj)
-		{
-			if (obj == null)
-				throw new ArgumentNullException ();
-			return obj.GetHashCode ();
-		}
 	
 		static DefaultComparer _default;
 		
@@ -72,30 +61,6 @@ namespace System.Collections.Generic {
 			throw new ArgumentException ();
 		}
 	
-		bool System.Collections.IKeyComparer.Equals (object x, object y)
-		{
-			if (x == y)
-				return true;
-			
-			if (x == null || y == null)
-				return false;
-			
-			if (x is T && y is T)
-				return Equals ((T) x, (T) y);
-			
-			throw new ArgumentException ();
-		}
-	
-		int System.Collections.IHashCodeProvider.GetHashCode (object obj)
-		{
-			if (obj == null)
-				throw new ArgumentNullException ();
-			if (obj is T)
-				return GetHashCode ((T) obj);
-			
-			throw new ArgumentException ();
-		}
-	
 		class DefaultComparer : Comparer<T> {
 	
 			public override int Compare (T x, T y)
@@ -112,11 +77,6 @@ namespace System.Collections.Generic {
 					return ((IComparable) x).CompareTo (y);
 				else
 					throw new ArgumentException ("does not implement right interface");
-			}
-	
-			public override bool Equals (T x, T y)
-			{
-				return Object.Equals (x, y);
 			}
 		}
 	}

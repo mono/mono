@@ -37,11 +37,9 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace System.Collections.Generic
-{
-	[ComVisible(false)]
-	public class List<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable
-	{
+namespace System.Collections.Generic {
+	[Serializable]
+	public class List<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable {
 		T [] data;
 		int size;
 		int version;
@@ -71,7 +69,7 @@ namespace System.Collections.Generic
 			data [size ++] = item;
 		}
 		
-		public void CheckRange (int idx, int count)
+		void CheckRange (int idx, int count)
 		{
 			if (idx < 0)
 				throw new ArgumentOutOfRangeException ("index must be equal or larger than zero");
@@ -118,9 +116,9 @@ namespace System.Collections.Generic
 			return IndexOf (item) != -1;
 		}
 		
-		public List <U> ConvertAll <U> (Converter<T, U> converter)
+		public List <TOutput> ConvertAll <TOutput> (Converter<T, TOutput> converter)
 		{
-			List <U> u = new List <U> (size);
+			List <TOutput> u = new List <TOutput> (size);
 			int i = 0;
 			foreach (T t in this)
 				u [i ++] = converter (t);
