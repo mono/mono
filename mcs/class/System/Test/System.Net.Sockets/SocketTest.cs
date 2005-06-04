@@ -77,7 +77,7 @@ namespace MonoTests.System.Net.Sockets
 		
 		private bool BlockingConnect (bool block)
 		{
-			IPEndPoint ep = new IPEndPoint(IPAddress.Any, 1234);
+			IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, 1234);
 			Socket server = new Socket(AddressFamily.InterNetwork,
 						   SocketType.Stream,
 						   ProtocolType.Tcp);
@@ -102,7 +102,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category("NotDotNet")]
 		public void AcceptBlockingStatus()
 		{
 			bool block;
