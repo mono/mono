@@ -22,7 +22,6 @@ namespace MonoTests.System.Net.Sockets
 		public const int BogusPort = 23483;
 
 		[Test]
-		[Ignore ("Bug #75154")]
 		public void ConnectIPAddressAny ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
