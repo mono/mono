@@ -127,7 +127,7 @@ namespace System.ComponentModel
 				message = Locale.GetText ("Operation not supported");
 				break;
 			case 10047:
-				message = Locale.GetText ("AF not supported");
+				message = Locale.GetText ("An address incompatible with the requested protocol was used");
 				break;
 			case 10048:
 				message = Locale.GetText ("Address already in use");

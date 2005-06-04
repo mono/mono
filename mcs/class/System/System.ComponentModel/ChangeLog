@@ -1,5 +1,9 @@
 2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* Win32Exception.cs: improve error message for error 10047.
+
+2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* TypeDescriptor.cs: in .NET 2.0, GetComponentName returns null if
 	object is not an IComponent or has no Site.
 	In .NET 2.0, GetDefaultEvent does not fallback to first defined event
