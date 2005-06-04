@@ -1,3 +1,8 @@
+2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TcpListenerTest.cs: remove NotDotNet category from TcpListener
+	test as its working just fine on both MS.NET 1.x and 2.0.
+
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TcpListenerTest.cs: actually connect the socket to the listener. Fixes

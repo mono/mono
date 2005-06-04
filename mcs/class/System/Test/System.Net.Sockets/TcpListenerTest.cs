@@ -21,7 +21,6 @@ namespace MonoTests.System.Net.Sockets
 	public class TcpListenerTest : Assertion
 	{
 		[Test]
-		[Category("NotDotNet")]
 		public void TcpListener ()
 		{
 			// listen with a new listener (IPv4 is the default)
