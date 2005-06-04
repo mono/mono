@@ -69,7 +69,7 @@ namespace System.Collections.Generic {
 		int _usedSlots;
 		float _loadFactor = DEFAULT_LOAD_FACTOR;
 	
-		IComparer<TKey> _hcp;
+		IEqualityComparer<TKey> _hcp;
 	
 		uint _threshold;
 	
@@ -99,7 +99,7 @@ namespace System.Collections.Generic {
 			Init ();
 		}
 	
-		public Dictionary (IComparer<TKey> comparer)
+		public Dictionary (IEqualityComparer<TKey> comparer)
 		{
 			Init (INITIAL_SIZE, comparer, DEFAULT_LOAD_FACTOR);
 		}
@@ -119,7 +119,7 @@ namespace System.Collections.Generic {
 			Init (loadFactor);
 		}
 	
-		public Dictionary (IDictionary<TKey, TValue> dictionary, IComparer<TKey> comparer)
+		public Dictionary (IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
 		{
 			if (dictionary == null)
 				throw new ArgumentNullException ("dictionary");
@@ -130,7 +130,7 @@ namespace System.Collections.Generic {
 			}
 		}
 	
-		public Dictionary (int capacity, IComparer<TKey> comparer)
+		public Dictionary (int capacity, IEqualityComparer<TKey> comparer)
 		{
 			Init (capacity, comparer, DEFAULT_LOAD_FACTOR);
 		}
@@ -155,7 +155,7 @@ namespace System.Collections.Generic {
 			Init (INITIAL_SIZE, null, loadFactor);
 		}
 		
-		protected void Init (int capacity, IComparer<TKey> hcp, float loadFactor)
+		protected void Init (int capacity, IEqualityComparer<TKey> hcp, float loadFactor)
 		{
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
@@ -224,7 +224,7 @@ namespace System.Collections.Generic {
 
 		protected virtual int GetHash (TKey key)
 		{
-			//IComparer<K> hcp = this._hcp;
+			//IEqualityComparer<K> hcp = this._hcp;
 			
 			return key.GetHashCode ();
 			/*
@@ -268,7 +268,7 @@ namespace System.Collections.Generic {
 			return spot;
 		}
 
-		public IComparer<TKey> Comparer {
+		public IEqualityComparer<TKey> Comparer {
 			get {
 				return _hcp;
 			}

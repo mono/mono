@@ -1258,9 +1258,11 @@ System.Collections.Generic/IEnumerable.cs
 System.Collections.Generic/IEnumerator.cs
 System.Collections.Generic/IList.cs
 System.Collections.Generic/IComparer.cs
+System.Collections.Generic/IEqualityComparer.cs
 System.Collections.Generic/IDictionary.cs
 System.Collections.Generic/IKeyComparer.cs
 System.Collections.Generic/KeyValuePair.cs
+System.Collections.Generic/EqualityComparer.cs
 System.Collections.Generic/KeyNotFoundException.cs
 System.Collections.Generic/List.cs
 System/Action.cs
