@@ -1,3 +1,7 @@
+2005-06-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ia64.c mini-ia64.h: Fix cleanup of memory stack.
+
 2005-06-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (emit_call): Fix yet another bug in the near call optimization.
