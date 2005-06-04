@@ -781,6 +781,15 @@ namespace System.Windows.Forms
 		{
 			OnDragLeave (e);
 		}
+
+		internal void DnDFeedback(GiveFeedbackEventArgs e)
+		{
+			OnGiveFeedback(e);
+		}
+
+		internal void DnDContinueDrag(QueryContinueDragEventArgs e) {
+			OnQueryContinueDrag(e);
+		}
 		
 		internal static MouseButtons FromParamToMouseButtons (int param) {		
 			MouseButtons buttons = MouseButtons.None;
@@ -2112,9 +2121,8 @@ namespace System.Windows.Forms
 			return Graphics.FromHwnd(this.window.Handle);
 		}
 
-		[MonoTODO("Come up with cross platform drag-drop driver interface")]
 		public DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects) {
-			return XplatUI.StartDrag(data, allowedEffects);
+			return XplatUI.StartDrag(this.window.Handle, data, allowedEffects);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

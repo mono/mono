@@ -1,3 +1,15 @@
+2005-06-04  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - We need to pass a window for DragDrop, so enable callback events
+	  - Added DnD callback events when being a DragSource
+	* XplatUI.cs (StartDrag): Added window handle argument
+	* XplatUIDriver.cs (StartDrag): Added window handle argument
+	* QueryContinueDragEventArgs: Made fields internally accessible so
+	  drivers can set them
+	* GiveFeedbackEventArgs: Made fields internally accessible so drivers
+	  can set them
+
 2005-06-03  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: column text editing

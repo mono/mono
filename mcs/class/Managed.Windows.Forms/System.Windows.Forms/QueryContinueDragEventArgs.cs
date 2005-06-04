@@ -32,15 +32,15 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[ComVisible(true)]
 	public class QueryContinueDragEventArgs : EventArgs {
-		private int		key_state;
-		private bool		escape_pressed;
-		private DragAction	drag_action;
+		internal int		key_state;
+		internal bool		escape_pressed;
+		internal DragAction	drag_action;
 
 		#region Public Constructors
 		public QueryContinueDragEventArgs(int keyState, bool escapePressed, DragAction action) {
-			this.key_state=keyState;
-			this.escape_pressed=escapePressed;
-			this.drag_action=action;
+			this.key_state = keyState;
+			this.escape_pressed = escapePressed;
+			this.drag_action = action;
 		}
 		#endregion	// Public Constructors
 

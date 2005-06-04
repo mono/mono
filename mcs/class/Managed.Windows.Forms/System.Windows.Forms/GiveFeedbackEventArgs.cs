@@ -31,8 +31,8 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 	[ComVisible(true)]
 	public class GiveFeedbackEventArgs : EventArgs {
-		private DragDropEffects	effect;
-		private bool		use_default_cursors;
+		internal DragDropEffects	effect;
+		internal bool			use_default_cursors;
 
 		#region Public Constructors
 		public GiveFeedbackEventArgs(DragDropEffects effect, bool useDefaultCursors) {
