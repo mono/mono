@@ -57,6 +57,10 @@ namespace System
 		{
 			return NumberToString (format, new NumberStore (value), nfi);
 		}
+		public static string NumberToString (string format, decimal value, NumberFormatInfo nfi)
+		{
+			return NumberToString (format, new NumberStore (value), nfi);
+		}
 		public static string NumberToString (string format, NumberStore ns, NumberFormatInfo nfi)
 		{
 			if (ns.IsNaN) {
@@ -135,7 +139,7 @@ namespace System
 				return FormatFixedPoint (ns, precision, nfi);
 			case 'g':
 			case 'G':
-				return FormatGeneral (ns, precision, nfi, specifier == 'G');
+				return FormatGeneral (ns, precision, nfi, specifier == 'G', false);
 			case 'n':
 			case 'N':
 				return FormatNumber (ns, precision, nfi);
@@ -145,12 +149,13 @@ namespace System
 			case 'r':
 			case 'R':
 				if (ns.IsFloatingSource) {
-					return FormatGeneral (ns, ns.DefaultPrecision, nfi, true);
+					return FormatGeneral (ns, ns.DefaultPrecision, nfi, true, true);
 				} else {
 					throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 				}
 			case 'x': 
-			case 'X': return FormatHexadecimal (ns, precision, nfi, specifier == 'X');
+			case 'X':
+				return FormatHexadecimal (ns, precision, nfi, specifier == 'X');
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}	
@@ -360,7 +365,7 @@ namespace System
 		}
 		internal static string FormatDecimal (NumberStore ns, int precision, NumberFormatInfo nfi)
 		{
-			if (ns.IsFloatingSource)
+			if (ns.IsFloatingSource || ns.IsDecimalSource)
 				throw new FormatException ();
 
 			precision = precision > 0 ? precision : 1;
@@ -398,13 +403,13 @@ namespace System
 
 		internal static string FormatGeneral (NumberStore ns)
 		{
-			return FormatGeneral (ns, -1, NumberFormatInfo.CurrentInfo, true);
+			return FormatGeneral (ns, -1, NumberFormatInfo.CurrentInfo, true, false);
 		}
 		internal static string FormatGeneral (NumberStore ns, IFormatProvider provider)
 		{
-			return FormatGeneral (ns, -1, NumberFormatInfo.GetInstance (provider), true);
+			return FormatGeneral (ns, -1, NumberFormatInfo.GetInstance (provider), true, false);
 		}
-		private static string FormatGeneral (NumberStore ns, int precision, NumberFormatInfo nfi, bool roundtrip)
+		private static string FormatGeneral (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper, bool roundtrip)
 		{
 			if (ns.ZeroOnly)
 				return "0";
@@ -412,7 +417,7 @@ namespace System
 			precision = precision > 0 ? precision : ns.DefaultPrecision;
 
 			int exponent = 0;
-			bool expMode = (ns.IntegerDigits > precision || ns.DecimalPointPosition <= -4);
+			bool expMode = (ns.IsDecimalSource && precision == ns.DefaultPrecision ? false : (ns.IntegerDigits > precision || ns.DecimalPointPosition <= -4));
 			if (expMode) {
 				while (!(ns.DecimalPointPosition == 1 && ns.GetChar (0) != '0')) {
 					if (ns.DecimalPointPosition > 1) {
@@ -425,7 +430,7 @@ namespace System
 				}
 			}
 
-			precision = precision < ns.DefaultPrecision + 2 ? (precision < 17 ? precision : 17) : ns.DefaultPrecision + 2;
+			precision = precision < ns.DefaultPrecision + 2 ? (precision < ns.DefaultMaxPrecision ? precision : ns.DefaultMaxPrecision) : ns.DefaultPrecision + 2;
 			StringBuilder cb = new StringBuilder (ns.IntegerDigits + precision + 16);
 			if (expMode) {
 				if (ns.RoundDecimal (precision - 1)) {
@@ -433,7 +438,10 @@ namespace System
 					exponent ++;
 				}
 			} else if (!roundtrip) {
-				ns.RoundDecimal (precision);
+				if (ns.IsDecimalSource)
+					ns.RoundPos (precision);
+				else
+					ns.RoundDecimal (precision);
 			}
 
 			if (!ns.Positive) {
@@ -448,7 +456,7 @@ namespace System
 			}
 
 			if (expMode) {
-				if (roundtrip)
+				if (upper)
 					cb.Append ('E');
 				else
 					cb.Append ('e');
@@ -585,7 +593,7 @@ namespace System
 		}
 		internal static string FormatHexadecimal (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper)
 		{
-			if (ns.IsFloatingSource)
+			if (ns.IsFloatingSource || ns.IsDecimalSource)
 				throw new FormatException ();
 
 			int intSize = ns.DefaultByteSize;
@@ -1727,6 +1735,69 @@ namespace System
 
 				return false;
 			}
+
+
+			public NumberStore (decimal value)
+			{
+				int[] bits = decimal.GetBits (value);
+				_positive = (bits [3] & 0x80000000) == 0;
+				bits[3] = bits [3] & 0x7FFFFFFF;
+				int ss = (bits [3] & 0x1F0000) >> 16;
+				ulong lo = (ulong)((((ulong)bits[1]) << 32) | (uint)bits [0]);
+				ulong hi = (uint)bits [2];
+				uint rest = 0;
+
+				int digits = 0;
+				while (hi > 0 || lo > 0) {
+					digits ++;
+					DivideDecimal (ref lo, ref hi, 10, ref rest);
+				}
+
+				lo = (ulong)((((ulong)bits[1]) << 32) | (uint)bits [0]);
+				hi = (uint)bits [2];
+
+				_digits = new byte [digits];
+				int i = digits;
+				while (hi > 0 || lo > 0) {
+					DivideDecimal (ref lo, ref hi, 10, ref rest);
+					_digits [--i] = (byte)rest;
+				}
+
+				_infinity = _NaN = false;
+				_decPointPos = _digits.Length - ss;
+				_defPrecision = _defMaxPrecision = 100;
+				_defByteSize = 16;
+			}
+			static int DivideDecimal (ref ulong lo, ref ulong hi, uint factor, ref uint rest)
+			{
+				ulong a, b, c, h;
+
+				h = hi;
+				a = (uint)(h >> 32);
+				b = a / factor;
+				a -= b * factor;
+				a <<= 32;
+				a |= (uint) h;
+				c = a / factor;
+				a -= c * factor;
+				a <<= 32;
+				hi = b << 32 | (uint)c;
+
+				h = lo;
+				a |= (uint)(h >> 32);
+				b = a / factor;
+				a -= b * factor;
+				a <<= 32;
+				a |= (uint) h;
+				c = a / factor;
+				a -= c * factor;
+				lo = b << 32 | (uint)c;
+
+				rest = (uint)a;
+
+				a <<= 1;
+				return (a >= factor || (a == factor && (c & 1) == 1)) ? 1 : 0;
+			}
 			#endregion
 
 			#region Public Property
@@ -1764,6 +1835,9 @@ namespace System
 			}
 			public bool IsFloatingSource {
 				get { return _defPrecision == 15 || _defPrecision == 7; }
+			}
+			public bool IsDecimalSource {
+				get { return _defPrecision > 30; }
 			}
 			public bool ZeroOnly {
 				get {

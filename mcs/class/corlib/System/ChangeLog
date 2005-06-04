@@ -5,6 +5,9 @@
 	* String.cs: Fixed IndexOfAny thrown an exception
 	when startIndex of arguments equals Length. (Closes bug #75083.)
 
+	* Decimal.cs: Changed to use NumberFormatter in ToString.
+	* NumberFormatter.cs: Implemented decimal formatter.
+
 2005-06-03  Martin Baulig  <martin@ximian.com>
 
 	* CharEnumerator.cs: Reverting Ben's latest change (r45312/45313)
