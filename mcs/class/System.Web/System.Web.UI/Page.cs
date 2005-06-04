@@ -1428,6 +1428,11 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 
+	protected internal void AddContentTemplate (string templateName, ITemplate template)
+	{
+		Master.AddContentTemplate (templateName, template);
+	}
+		
 	#endif
 }
 }

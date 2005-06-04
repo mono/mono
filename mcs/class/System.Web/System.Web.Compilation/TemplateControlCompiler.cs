@@ -625,16 +625,13 @@ namespace System.Web.Compilation
 
 		void AddContentTemplateInvocation (ContentControlBuilder cbuilder, CodeMemberMethod method, string methodName)
 		{
-			CodePropertyReferenceExpression pag = new CodePropertyReferenceExpression (ctrlVar, "Page");
-			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (pag, "Master");
-
 			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
 			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
 
 			CodeObjectCreateExpression newCompiled = new CodeObjectCreateExpression (typeof (CompiledTemplateBuilder));
 			newCompiled.Parameters.Add (newBuild);
 			
-			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (prop, "AddContentTemplate");
+			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (thisRef, "AddContentTemplate");
 			invoke.Parameters.Add (new CodePrimitiveExpression (cbuilder.ContentPlaceHolderID));
 			invoke.Parameters.Add (newCompiled);
 
