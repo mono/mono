@@ -39,11 +39,9 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 	[Serializable]
-	public sealed class String : IConvertible, ICloneable, IEnumerable,
+	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable
 #if NET_2_0
-		IComparable, IComparable<String>
-#else
-		IComparable
+		, IComparable<String>, IEquatable <String>	
 #endif
 	{
 		[NonSerialized] private int length;

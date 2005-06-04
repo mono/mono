@@ -33,11 +33,9 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
-	public struct UInt16 : IFormattable, IConvertible,
+	public struct UInt16 : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<UInt16>
-#else
-		IComparable
+		, IComparable<UInt16>, IEquatable <UInt16>
 #endif
 	{
 		public const ushort MaxValue = 0xffff;

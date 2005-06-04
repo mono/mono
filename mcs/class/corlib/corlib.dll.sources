@@ -131,6 +131,7 @@ System/IApplicationDescription.cs
 System/IAsyncResult.cs
 System/ICloneable.cs
 System/IComparable.cs
+System/IEquatable.cs
 System/IConsoleDriver.cs
 System/IConvertible.cs
 System/ICustomFormatter.cs

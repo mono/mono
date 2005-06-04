@@ -33,11 +33,9 @@ namespace System
 {
 	[CLSCompliant(false)]
 	[Serializable]
-	public struct SByte : IFormattable, IConvertible,
+	public struct SByte : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<SByte>
-#else
-		IComparable
+		, IComparable<SByte>, IEquatable <SByte>
 #endif
 	{
 		public const sbyte MinValue = -128;

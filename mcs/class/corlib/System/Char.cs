@@ -49,7 +49,7 @@ namespace System
 	[Serializable]
 	public struct Char : IComparable, IConvertible
 #if NET_2_0
-		, IComparable <char>
+		, IComparable <char>, IEquatable <char>
 #endif
 	{
 		public const char MaxValue = (char) 0xffff;

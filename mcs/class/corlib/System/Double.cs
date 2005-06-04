@@ -44,7 +44,7 @@ namespace System {
 	[Serializable]
 	public struct Double : IComparable, IFormattable, IConvertible
 #if NET_2_0
-		, IComparable <double>
+		, IComparable <double>, IEquatable <double>
 #endif
 	{
 		public const double Epsilon = 4.9406564584124650e-324;

@@ -32,11 +32,9 @@ using System.Globalization;
 namespace System {
 	
 	[Serializable]
-	public struct Int16 : IFormattable, IConvertible,
+	public struct Int16 : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<Int16>
-#else
-		IComparable
+		, IComparable<Int16>, IEquatable <Int16>
 #endif
 	{
 

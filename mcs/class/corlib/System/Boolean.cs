@@ -50,7 +50,7 @@ namespace System
 	[Serializable]
 	public struct Boolean : IComparable, IConvertible
 #if NET_2_0
-		, IComparable <bool>
+		, IComparable <bool>, IEquatable <bool>
 #endif
 	{
 		/// <value>

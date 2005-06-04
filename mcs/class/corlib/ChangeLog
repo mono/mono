@@ -1,3 +1,9 @@
+2005-06-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* corlib.dll.sources: IEquatable
+
+	* */*.cs: .NET 2.0 fixups
+
 2005-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added (re-added?) the System.Activator unit

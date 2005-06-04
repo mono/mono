@@ -1,14 +1,10 @@
 //
-// System.IComparable.cs
+// System.IEquatable.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//   Ben Maurer <bmaurer@novell.com>
 //
-// (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,14 +27,9 @@
 //
 
 namespace System {
-
-	public interface IComparable {
-		int CompareTo (object obj);
-	}
-	
 #if NET_2_0
-	public interface IComparable <T> {
-		int CompareTo (T x);
+	public interface IEquatable <T> {
+		bool Equals (T x);
 	}
 #endif
 }

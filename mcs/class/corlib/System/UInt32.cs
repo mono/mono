@@ -34,11 +34,9 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
-	public struct UInt32 : IFormattable, IConvertible,
+	public struct UInt32 : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<UInt32>
-#else
-		IComparable
+		, IComparable<UInt32>, IEquatable <UInt32>
 #endif
 	{
 		public const uint MaxValue = 0xffffffff;

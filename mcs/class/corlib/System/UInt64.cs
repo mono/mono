@@ -34,11 +34,9 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
-	public struct UInt64 : IFormattable, IConvertible,
+	public struct UInt64 : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<UInt64>
-#else
-		IComparable
+		, IComparable<UInt64>, IEquatable <UInt64>
 #endif
 	{
 		public const ulong MaxValue = 0xffffffffffffffff;

@@ -41,7 +41,7 @@ namespace System
 	[Serializable]
 	public struct Single : IComparable, IFormattable, IConvertible
 #if NET_2_0
-		, IComparable <float>
+		, IComparable <float>, IEquatable <float>
 #endif
 	{
 		public const float Epsilon = 1.4e-45f;

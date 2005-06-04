@@ -33,11 +33,9 @@
 namespace System
 {
 	[Serializable]
-	public sealed class Version : ICloneable,
+	public sealed class Version : ICloneable, IComparable
 #if NET_2_0
-		IComparable, IComparable<Version>
-#else
-		IComparable
+		, IComparable<Version>, IEquatable <Version>
 #endif
 	{
 

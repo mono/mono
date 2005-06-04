@@ -40,11 +40,9 @@ namespace System
 {
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public struct Guid  : IFormattable,
+	public struct Guid  : IFormattable, IComparable
 #if NET_2_0
-		IComparable, IComparable<Guid>
-#else
-		IComparable
+		, IComparable<Guid>, IEquatable <Guid>
 #endif
 	{
 		private int _a; //_timeLow;

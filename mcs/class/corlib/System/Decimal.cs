@@ -52,11 +52,9 @@ namespace System
     /// digits, suitable for financial and commercial calculations
     /// </summary>
 	[Serializable]
-    public struct Decimal: IFormattable, IConvertible,
+    public struct Decimal: IFormattable, IConvertible, IComparable
 #if NET_2_0
-	IComparable, IComparable<Decimal>
-#else
-	IComparable
+	, IComparable<Decimal>, IEquatable <Decimal>
 #endif
     {
 #if BOOTSTRAP_WITH_OLDLIB

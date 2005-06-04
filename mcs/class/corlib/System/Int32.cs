@@ -33,11 +33,9 @@ using System.Threading;
 namespace System {
 	
 	[Serializable]
-	public struct Int32 : IFormattable, IConvertible,
+	public struct Int32 : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<Int32>
-#else
-		IComparable
+		, IComparable<Int32>, IEquatable <Int32>
 #endif
 	{
 

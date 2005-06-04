@@ -47,11 +47,9 @@ namespace System
 	/// 
 	[Serializable]
 	[StructLayout (LayoutKind.Auto)]
-	public struct DateTime : IFormattable, IConvertible,
+	public struct DateTime : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<DateTime>
-#else
-		IComparable
+		, IComparable<DateTime>, IEquatable <DateTime>
 #endif
 	{
 		private TimeSpan ticks;

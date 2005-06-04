@@ -35,11 +35,9 @@ using System.Text;
 namespace System
 {
 	[Serializable]
-	public struct TimeSpan :
+	public struct TimeSpan : IComparable
 #if NET_2_0
-		IComparable, IComparable<TimeSpan>
-#else
-		IComparable
+		, IComparable<TimeSpan>, IEquatable <TimeSpan>
 #endif
 	{
 		public static readonly TimeSpan MaxValue = new TimeSpan (long.MaxValue);

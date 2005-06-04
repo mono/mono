@@ -35,11 +35,9 @@ using System.Globalization;
 namespace System
 {
 	[Serializable]
-	public struct Byte : IFormattable, IConvertible,
+	public struct Byte : IFormattable, IConvertible, IComparable
 #if NET_2_0
-		IComparable, IComparable<Byte>
-#else
-		IComparable
+		, IComparable<Byte>, IEquatable <Byte>
 #endif
 	{
 		public const byte MinValue = 0;
