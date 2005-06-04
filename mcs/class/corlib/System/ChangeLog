@@ -1,7 +1,9 @@
 2005-06-05  Kazuki Oikawa  <kazuki@panicode.com>
 
-	* NumberFormatter.cs: modified the output
-	of 0.ToString("00.00E00") that was different from MSFT.
+	* NumberFormatter.cs: Fixed the output of 0.ToString("00.00E00")
+	that was different from MSFT.
+	* String.cs: Fixed IndexOfAny thrown an exception
+	when startIndex of arguments equals Length. (Closes bug #75083.)
 
 2005-06-03  Martin Baulig  <martin@ximian.com>
 

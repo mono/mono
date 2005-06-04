@@ -449,8 +449,8 @@ namespace System
 		{
 			if (anyOf == null)
 				throw new ArgumentNullException ("anyOf");
-			if (startIndex < 0 || startIndex >= this.length)
-				throw new ArgumentOutOfRangeException ("sourceIndex");
+			if (startIndex < 0 || startIndex > this.length)
+				throw new ArgumentOutOfRangeException ("startIndex");
 
 			return InternalIndexOfAny (anyOf, startIndex, this.length - startIndex);
 		}
