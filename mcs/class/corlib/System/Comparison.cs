@@ -27,7 +27,6 @@
 //
 #if NET_2_0
 namespace System {
-	[CLSCompliant (true)]
 	public delegate int Comparison <T> (T x, T y);
 }
 #endif

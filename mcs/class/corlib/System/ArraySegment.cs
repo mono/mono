@@ -27,7 +27,6 @@
 //
 #if NET_2_0
 namespace System {
-	[CLSCompliant (false)]
 	public struct ArraySegment <T> {
 		T [] array;
 		int offset, length;

@@ -1650,7 +1650,6 @@ namespace System
 			return new ReadOnlyArray<T> (array);
 		}
 
-		[CLSCompliant (false)]
 		public static Nullable<T> Find<T> (T [] array, Predicate<T> match)
 		{
 			if (array == null)
@@ -1666,7 +1665,6 @@ namespace System
 			return default (Nullable <T>);
 		}
 		
-		[CLSCompliant (false)]
 		public static Nullable<T> FindLast<T> (T [] array, Predicate <T> match)
 		{
 			if (array == null)

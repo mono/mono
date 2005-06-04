@@ -35,7 +35,6 @@ namespace System {
 	public delegate void EventHandler (object sender, EventArgs e);
 		
 #if NET_2_0
-	[CLSCompliant (false)]
 	public delegate void EventHandler <T> (object sender, T e) where T : EventArgs;
 #endif
 

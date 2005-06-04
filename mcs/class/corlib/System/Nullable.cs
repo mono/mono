@@ -36,12 +36,8 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 #if NET_2_0
-namespace System
-{
-
-	[CLSCompliant(false)]
-	public static class Nullable
-	{
+namespace System {
+	public static class Nullable {
 		public static int Compare<T> (Nullable<T> left, Nullable<T> right)
 		{
 			IComparable icomparable = left.value as IComparable;
@@ -97,7 +93,6 @@ namespace System
 		}
 	}
 	
-	[CLSCompliant(false)]
 	public struct Nullable<T> : IComparable, INullableValue
 	{
 		internal T value;

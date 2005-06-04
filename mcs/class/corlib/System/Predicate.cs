@@ -27,7 +27,6 @@
 //
 #if NET_2_0
 namespace System {
-	[CLSCompliant (true)]
 	public delegate bool Predicate <T> (T value);
 }
 #endif

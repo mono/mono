@@ -27,7 +27,6 @@
 //
 #if NET_2_0
 namespace System {
-	[CLSCompliant (true)]
 	public delegate void Action <T> (T value);
 }
 #endif
