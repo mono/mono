@@ -48,6 +48,32 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Ignore ("Bug #75158")]
+		public void IncompatibleAddress ()
+		{
+			IPEndPoint epIPv6 = new IPEndPoint (IPAddress.IPv6Any,
+								0);
+
+			try {
+				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP)) {
+					s.Connect (epIPv6);
+					s.Close ();
+				}
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+#if !NET_2_0
+				// invalid argument
+				int expectedError = 10022;
+#else
+				// address incompatible with protocol
+				int expectedError = 10047;
+#endif
+				Assert.AreEqual (expectedError, ex.ErrorCode,
+						"#2");
+			}
+		}
+
+		[Test]
 		[Category ("InetAccess")]
 		public void EndConnect ()
 		{

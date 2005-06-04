@@ -1,5 +1,9 @@
 2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* SocketTest.cs: added test for bug #75158 (incompatible address).
+
+2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* SocketTest.cs: use IPAddress.Loopback in IPEndPoint to allow 
 	AcceptBlockingStatus test to pass on both Mono and MS.NET.
 
