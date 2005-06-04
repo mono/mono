@@ -191,6 +191,7 @@ namespace System.CodeDom.Compiler {
 		
 		public override void WriteLine()
 		{
+			OutputTabs();
 			writer.WriteLine();
 			newline = true;
 		}

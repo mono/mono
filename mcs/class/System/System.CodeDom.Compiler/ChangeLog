@@ -1,3 +1,8 @@
+2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IndentedTextWriter.cs: also output tabs in WriteLine () to
+	match MS.NET
+
 2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeDomProvider.cs: implemented IsDefined* and GetCompilerInfo.
