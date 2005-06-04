@@ -30,6 +30,7 @@
 #if NET_2_0
 namespace System {
 	[Flags]
+	[Serializable]
 	public enum ConsoleModifiers {
 		Alt = 1,
 		Shift = 2,

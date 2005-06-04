@@ -33,13 +33,19 @@
 
 using System.Runtime.CompilerServices;
 
-namespace System
-{
-	public sealed class Buffer
-	{
+namespace System {
+	public 
+#if NET_2_0
+		static
+#else
+		sealed
+#endif
+	class Buffer {
+#if !NET_2_0
 		private Buffer ()
 		{
 		}
+#endif
 
 		public static int ByteLength (Array array)
 		{

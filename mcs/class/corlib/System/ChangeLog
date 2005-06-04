@@ -1,5 +1,7 @@
 2005-06-04  Ben Maurer  <bmaurer@ximian.com>
 
+	* *.cs: More 2.0 API fixups
+
 	* *.cs: In beta 2, generics are no longer non-cls-compliant.
 
 2005-06-05  Kazuki Oikawa  <kazuki@panicode.com>

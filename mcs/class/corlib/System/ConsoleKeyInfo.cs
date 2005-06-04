@@ -29,6 +29,7 @@
 //
 #if NET_2_0
 namespace System {
+	[Serializable]
 	public struct ConsoleKeyInfo {
 		ConsoleKey key;
 		char keychar;
@@ -76,6 +77,23 @@ namespace System {
 
 		public ConsoleModifiers Modifiers {
 			get { return modifiers; }
+		}
+		
+		public override bool Equals (object o)
+		{
+			if (!(o is ConsoleKeyInfo))
+				return false;
+			return Equals ((ConsoleKeyInfo) o);
+		}
+		
+		public bool Equals (ConsoleKeyInfo o)
+		{
+			return key == o.key && o.keychar == keychar && o.modifiers == modifiers;
+		}
+		
+		public override int GetHashCode ()
+		{
+			return key.GetHashCode () ^ keychar.GetHashCode () ^ modifiers.GetHashCode ();
 		}
 	}
 }

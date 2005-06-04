@@ -32,7 +32,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public class DataMisalignedException : SystemException
+	public sealed class DataMisalignedException : SystemException
 	{
 		const int Result = unchecked ((int)0x80131541);
 

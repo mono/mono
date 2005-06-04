@@ -27,6 +27,7 @@
 //
 #if NET_2_0
 namespace System {
+	[Serializable]
 	public struct ArraySegment <T> {
 		T [] array;
 		int offset, length;
@@ -62,7 +63,7 @@ namespace System {
 			get { return offset; }
 		}
 		
-		public int Length {
+		public int Count {
 			get { return length; }
 		}
 	}

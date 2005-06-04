@@ -30,15 +30,23 @@
 
 using System.Text;
 
-namespace System
-{
-	public sealed class BitConverter
-	{
-		public static readonly bool IsLittleEndian = AmILittleEndian ();
+namespace System {
+	public
+#if NET_2_0
+		static
+#else
+		sealed
+#endif
+	class BitConverter {
 
+#if !NET_2_0
 		private BitConverter ()
 		{
 		}
+#endif
+
+		public static readonly bool IsLittleEndian = AmILittleEndian ();
+
 
 		static bool AmILittleEndian ()
 		{
