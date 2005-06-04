@@ -327,6 +327,9 @@ namespace System.Web.UI
 		
 		internal virtual void AddDependency (string filename)
 		{
+			if (filename == "")
+				return;
+
 			if (dependencies == null)
 				dependencies = new ArrayList ();
 
@@ -336,6 +339,9 @@ namespace System.Web.UI
 		
 		internal virtual void AddAssembly (Assembly assembly, bool fullPath)
 		{
+			if (assembly.Location == "")
+				return;
+
 			if (anames == null)
 				anames = new Hashtable ();
 
