@@ -62,6 +62,7 @@ namespace System.Reflection {
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
+		private bool fromByteArray;
 		
 		internal Assembly () 
 		{
@@ -155,9 +156,16 @@ namespace System.Reflection {
 				return get_global_assembly_cache ();
 			}
 		}
-		
+
+		internal bool FromByteArray {
+			set { fromByteArray = true; }
+		}
+
 		public virtual String Location {
 			get {
+				if (fromByteArray)
+					return String.Empty;
+
 				string loc = get_location ();
 				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
 					// we cannot divulge local file informations

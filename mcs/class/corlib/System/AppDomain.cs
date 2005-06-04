@@ -544,7 +544,9 @@ namespace System
 			if (rawAssembly == null)
 				throw new ArgumentNullException ("rawAssembly");
 				
-			return LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence, refonly);
+			Assembly assembly = LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence, refonly);
+			assembly.FromByteArray = true;
+			return assembly;
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]

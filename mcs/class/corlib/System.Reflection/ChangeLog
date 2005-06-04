@@ -1,3 +1,8 @@
+2005-06-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Assembly.cs: if the assembly is loaded from a byte array, Location
+	returns "". Fixes bug #74958.
+
 2005-06-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AssemblyName.cs: Changes to support the creation of version
