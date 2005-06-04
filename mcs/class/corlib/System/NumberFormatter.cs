@@ -798,8 +798,8 @@ namespace System
 				if (info.DecimalDigits <= 0 && info.IntegerDigits <= 0)
 					ns.Positive = true;
 
-				/*if (sb_int.Length < info.IntegerDigits)
-					sb_int.Insert (0, "0", info.IntegerDigits - sb_int.Length);*/
+				if (sb_int.Length < info.IntegerDigits)
+					sb_int.Insert (0, "0", info.IntegerDigits - sb_int.Length);
 
 				while (sb_exp.Length < info.ExponentDigits - info.ExponentTailSharpDigits)
 					sb_exp.Insert (0, '0');

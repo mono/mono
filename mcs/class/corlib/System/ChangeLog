@@ -1,3 +1,8 @@
+2005-06-05  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* NumberFormatter.cs: modified the output
+	of 0.ToString("00.00E00") that was different from MSFT.
+
 2005-06-03  Martin Baulig  <martin@ximian.com>
 
 	* CharEnumerator.cs: Reverting Ben's latest change (r45312/45313)
