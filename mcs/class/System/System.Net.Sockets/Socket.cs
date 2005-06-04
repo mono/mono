@@ -797,6 +797,16 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.EndPoint = end_point;
+
+			// Bug #75154: Connect() should not succeed for .Any addresses.
+			if (end_point is IPEndPoint) {
+				IPEndPoint ep = (IPEndPoint) end_point;
+				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
+					req.Complete (new SocketException (10049), true);
+					return req;
+				}
+			}
+
 			int error = 0;
 			if (!blocking) {
 				SocketAddress serial = end_point.Serialize ();
@@ -1017,6 +1027,12 @@ namespace System.Net.Sockets
 
 			if(remote_end==null) {
 				throw new ArgumentNullException("remote_end");
+			}
+
+			if (remote_end is IPEndPoint) {
+				IPEndPoint ep = (IPEndPoint) remote_end;
+				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
+					throw new SocketException (10049);
 			}
 
 			SocketAddress serial = remote_end.Serialize ();
