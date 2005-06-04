@@ -75,6 +75,46 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 
+	class AnotherSite: ISite
+	{ 
+		public IComponent Component { get {  return null; } }
+
+		public IContainer Container { get {  return null; } }
+
+		public bool DesignMode { get {  return true; } }
+
+		public string Name { get { return "TestName"; } set { } }
+
+		public object GetService (Type t)
+		{
+			if (t == typeof(ITypeDescriptorFilterService)) {
+				return new AnotherFilter ();
+			}
+			return null;
+		}
+	}
+
+	class AnotherFilter: ITypeDescriptorFilterService
+	{
+		public bool FilterAttributes (IComponent component,IDictionary attributes) {
+			Attribute ea = new DefaultEventAttribute ("AnEvent");
+			attributes [ea.TypeId] = ea;
+			ea = new DefaultPropertyAttribute ("TestProperty");
+			attributes [ea.TypeId] = ea;
+			ea = new EditorAttribute ();
+			attributes [ea.TypeId] = ea;
+			return true;
+		}
+
+		public bool FilterEvents (IComponent component, IDictionary events) {
+			return true;
+		}
+
+		public bool FilterProperties (IComponent component, IDictionary properties) {
+			return true;
+		}
+	}
+
 	[DescriptionAttribute ("my test component")]
 	[DesignerAttribute (typeof(MyDesigner), typeof(int))]
 	public class MyComponent: Component
@@ -108,7 +148,38 @@ namespace MonoTests.System.ComponentModel
 			set { prop = value; }
 		}
 	}
-	
+
+	[DefaultProperty("AnotherProperty")]
+	[DefaultEvent("AnotherEvent")]
+	[DescriptionAttribute ("my test component")]
+	[DesignerAttribute (typeof(MyDesigner), typeof(int))]
+	public class AnotherComponent: Component {
+		string prop;
+		
+		[DescriptionAttribute ("test")]
+		public event EventHandler AnEvent;
+		
+		public event EventHandler AnotherEvent;
+		
+		public AnotherComponent () {
+		}
+		
+		public AnotherComponent (ISite site) {
+			Site = site;
+		}
+		
+		[DescriptionAttribute ("test")]
+		public string TestProperty {
+			get { return prop; }
+			set { prop = value; }
+		}
+		
+		public string AnotherProperty {
+			get { return prop; }
+			set { prop = value; }
+		}
+	}
+
 	public interface ITestInterface
 	{
 		void TestFunction ();
@@ -133,6 +204,7 @@ namespace MonoTests.System.ComponentModel
 	{
 		MyComponent com = new MyComponent ();
 		MyComponent sitedcom = new MyComponent (new MySite ());
+		AnotherComponent anothercom = new AnotherComponent ();
 		
 		[Test]
 		public void TestCreateDesigner ()
@@ -195,9 +267,26 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void TestGetComponentName ()
 		{
-			AssertNotNull ("t1", TypeDescriptor.GetComponentName (com));
-			AssertEquals ("t2", "MyComponent", TypeDescriptor.GetComponentName (com));
-			AssertEquals ("t3", "TestName", TypeDescriptor.GetComponentName (sitedcom));
+#if !NET_2_0
+			AssertEquals ("t1", "MyComponent", TypeDescriptor.GetComponentName (com));
+			AssertEquals ("t2", "MyComponent", TypeDescriptor.GetComponentName (com, false));
+			AssertEquals ("t3", "Exception", TypeDescriptor.GetComponentName (new Exception ()));
+			AssertEquals ("t4", "Exception", TypeDescriptor.GetComponentName (new Exception (), false));
+			AssertNotNull ("t5", TypeDescriptor.GetComponentName (typeof (Exception)));
+			AssertNotNull ("t6", TypeDescriptor.GetComponentName (typeof (Exception), false));
+#else
+			// in MS.NET 2.0, GetComponentName no longer returns
+			// the type name if there's no custom typedescriptor
+			// and no site
+			AssertNull ("t1", TypeDescriptor.GetComponentName (com));
+			AssertNull ("t2", TypeDescriptor.GetComponentName (com, false));
+			AssertNull ("t3", TypeDescriptor.GetComponentName (new Exception ()));
+			AssertNull ("t4", TypeDescriptor.GetComponentName (new Exception (), false));
+			AssertNull ("t5", TypeDescriptor.GetComponentName (typeof (Exception)));
+			AssertNull ("t6", TypeDescriptor.GetComponentName (typeof (Exception), false));
+#endif
+			AssertEquals ("t7", "TestName", TypeDescriptor.GetComponentName (sitedcom));
+			AssertEquals ("t8", "TestName", TypeDescriptor.GetComponentName (sitedcom));
 		}
 		
 		[Test]
@@ -243,10 +332,30 @@ namespace MonoTests.System.ComponentModel
 			
 			des = TypeDescriptor.GetDefaultEvent (com);
 			AssertNull ("t2", des);
-			
-			des = TypeDescriptor.GetDefaultEvent (sitedcom);
+
+			des = TypeDescriptor.GetDefaultEvent (typeof(AnotherComponent));
 			AssertNotNull ("t3", des);
 			AssertEquals ("t4", "AnotherEvent", des.Name);
+
+			des = TypeDescriptor.GetDefaultEvent (anothercom);
+			AssertNotNull ("t5", des);
+			AssertEquals ("t6", "AnotherEvent", des.Name);
+
+			des = TypeDescriptor.GetDefaultEvent (sitedcom);
+#if NET_2_0
+			AssertNull ("t7", des);
+#else
+			AssertNotNull ("t7/1", des);
+			AssertEquals ("t7/2", "AnotherEvent", des.Name);
+#endif
+
+			des = TypeDescriptor.GetDefaultEvent (new MyComponent(new AnotherSite ()));
+			AssertNotNull ("t8", des);
+			AssertEquals ("t9", "AnEvent", des.Name);
+
+			des = TypeDescriptor.GetDefaultEvent (new AnotherComponent(new AnotherSite ()));
+			AssertNotNull ("t10", des);
+			AssertEquals ("t11", "AnEvent", des.Name);
 		}
 		
 		[Test]
@@ -257,18 +366,39 @@ namespace MonoTests.System.ComponentModel
 			
 			des = TypeDescriptor.GetDefaultProperty (com);
 			AssertNull ("t2", des);
-			
+
+			des = TypeDescriptor.GetDefaultProperty (typeof(AnotherComponent));
+			AssertNotNull ("t1", des);
+			AssertEquals ("t2", "AnotherProperty", des.Name);
+
+			des = TypeDescriptor.GetDefaultProperty (anothercom);
+			AssertNotNull ("t1", des);
+			AssertEquals ("t2", "AnotherProperty", des.Name);
 		}
 		
 		[Test]
-		[Ignore("Fails on .NET")]
+#if !NET_2_0
+		// throws NullReferenceException on MS.NET 1.x due to bug
+		// which is fixed in MS.NET 2.0
+		[NUnit.Framework.Category("NotDotNet")]
+#endif
 		public void TestGetDefaultProperty2 ()
 		{
 			PropertyDescriptor des = TypeDescriptor.GetDefaultProperty (sitedcom);
-			AssertNotNull ("t3", des);
-			AssertEquals ("t4", "TestProperty", des.Name);
+			AssertNull ("t1", des);
+
+			des = TypeDescriptor.GetDefaultProperty (new MyComponent (new AnotherSite ()));
+			AssertNotNull ("t2", des);
+			AssertEquals ("t3", "TestProperty", des.Name);
+
+			des = TypeDescriptor.GetDefaultProperty (new AnotherComponent (new AnotherSite ()));
+			AssertNotNull ("t4", des);
+			AssertEquals ("t5", "TestProperty", des.Name);
+
+			des = TypeDescriptor.GetDefaultProperty (new AnotherComponent (new MySite ()));
+			AssertNull ("t6", des);
 		}
-		
+
 		[Test]
 		public void TestGetEvents ()
 		{
@@ -328,7 +458,11 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[Ignore("Fails on .NET")]
+#if !NET_2_0
+		// throws NullReferenceException on MS.NET 1.x due to bug
+		// which is fixed in MS.NET 2.0
+		[NUnit.Framework.Category("NotDotNet")]
+#endif
 		public void TestGetProperties2 ()
 		{
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (sitedcom);

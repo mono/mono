@@ -1,3 +1,8 @@
+2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* TypeDescriptorTests.cs: Added tests for bug #75152. Fixed tests
+	to pass on Mono and MS.NET.
+
 2005-02-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeDescriptorTests.cs: new test for TypeConverter ctor that takes
