@@ -164,7 +164,6 @@ public partial class TypeManager {
 	static public MethodInfo string_concat_object_dot_dot_dot;
 	static public MethodInfo string_isinterneted_string;
 	static public MethodInfo system_type_get_type_from_handle;
-	static public MethodInfo object_getcurrent_void;
 	static public MethodInfo bool_movenext_void;
 	static public MethodInfo ienumerable_getenumerator_void;
 	static public MethodInfo void_reset_void;
@@ -183,6 +182,7 @@ public partial class TypeManager {
 	static public MethodInfo int_array_get_lower_bound_int;
 	static public MethodInfo int_array_get_upper_bound_int;
 	static public MethodInfo void_array_copyto_array_int;
+	static public PropertyInfo ienumerator_getcurrent;
 	
 	//
 	// The attribute constructors.
@@ -1075,6 +1075,27 @@ public partial class TypeManager {
 		return GetMethod (t, name, args, true);
 	}
 
+	/// <summary>
+	///   Returns the PropertyInfo for a property named `name' defined
+	///   in type `t'
+	/// </summary>
+	static PropertyInfo GetProperty (Type t, string name)
+	{
+		MemberList list = FindMembers (t, MemberTypes.Property, BindingFlags.Public |
+				    BindingFlags.Instance, Type.FilterName, name);
+		if (list.Count == 0) {
+			Report.Error (-19, "Can not find the core property `" + name + "'");
+			return null;
+		}
+
+		PropertyInfo pi = list [0] as PropertyInfo;
+		if (pi == null) {
+			Report.Error (-19, "Can not find the core function `" + name + "'");
+			return null;
+		}
+
+		return pi;
+	}
 
 	/// <summary>
 	///    Returns the ConstructorInfo for "args"
@@ -1346,8 +1367,8 @@ public partial class TypeManager {
 		// Void arguments
 		//
 		Type [] void_arg = {  };
-		object_getcurrent_void = GetMethod (
-			ienumerator_type, "get_Current", void_arg);
+		ienumerator_getcurrent = GetProperty (
+			ienumerator_type, "Current");
 		bool_movenext_void = GetMethod (
 			ienumerator_type, "MoveNext", void_arg);
 		void_reset_void = GetMethod (

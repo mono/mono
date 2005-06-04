@@ -2204,9 +2204,6 @@ namespace Mono.CSharp {
 		//
 		public bool IsParameterReference (string name)
 		{
-			Parameter par;
-			int idx;
-
 			for (ToplevelBlock t = this; t != null; t = t.Container) {
 				if (t.IsLocalParameter (name))
 					return true;
@@ -4131,17 +4128,13 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implementation of the foreach C# statement
 	/// </summary>
-	public class Foreach : ExceptionStatement {
+	public class Foreach : Statement {
 		Expression type;
 		Expression variable;
 		Expression expr;
 		Statement statement;
-		ForeachHelperMethods hm;
-		Expression empty, conv;
-		Type array_type, element_type;
-		Type var_type;
-		VariableStorage enumerator;
 		ArrayForeach array;
+		CollectionForeach collection;
 		
 		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
@@ -4167,8 +4160,8 @@ namespace Mono.CSharp {
 			TypeExpr texpr = type.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return false;
-			
-			var_type = texpr.Type;
+
+			Type var_type = texpr.Type;
 
 			//
 			// We need an instance variable.  Not sure this is the best
@@ -4179,460 +4172,17 @@ namespace Mono.CSharp {
 			//
 			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
 			      expr.eclass == ExprClass.PropertyAccess || expr.eclass == ExprClass.IndexerAccess)){
-				error1579 (expr.Type);
+				CollectionForeach.error1579 (expr.Type, loc);
 				return false;
 			}
 
 			if (expr.Type.IsArray) {
-				array_type = expr.Type;
-				element_type = TypeManager.GetElementType (array_type);
-
-				empty = new EmptyExpression (element_type);
-
-				array = new ArrayForeach (type, variable, expr, statement, loc);
+				array = new ArrayForeach (var_type, variable, expr, statement, loc);
 				return array.Resolve (ec);
 			} else {
-				hm = ProbeCollectionType (ec, expr.Type);
-				if (hm == null){
-					error1579 (expr.Type);
-					return false;
-				}			
-
-				array_type = expr.Type;
-				element_type = hm.element_type;
-
-				empty = new EmptyExpression (hm.element_type);
-			}
-
-			bool ok = true;
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-			ec.CurrentBranching.CreateSibling ();
-
- 			//
-			//
-			// FIXME: maybe we can apply the same trick we do in the
-			// array handling to avoid creating empty and conv in some cases.
-			//
-			// Although it is not as important in this case, as the type
-			// will not likely be object (what the enumerator will return).
-			//
-			conv = Convert.ExplicitConversion (ec, empty, var_type, loc);
-			if (conv == null)
-				ok = false;
-
-			variable = variable.ResolveLValue (ec, empty);
-			if (variable == null)
-				ok = false;
-
-			bool disposable = (hm != null) && hm.is_disposable;
-			FlowBranchingException branching = null;
-			if (disposable)
-				branching = ec.StartFlowBranching (this);
-
-			if (!statement.Resolve (ec))
-				ok = false;
-
-			if (disposable) {
-				ResolveFinally (branching);
-				ec.EndFlowBranching ();
-			} else
-				emit_finally = true;
-
-			ec.EndFlowBranching ();
-
-			return ok;
-		}
-		
-		//
-		// Retrieves a `public bool MoveNext ()' method from the Type `t'
-		//
-		static MethodInfo FetchMethodMoveNext (Type t)
-		{
-			MemberList move_next_list;
-			
-			move_next_list = TypeContainer.FindMembers (
-				t, MemberTypes.Method,
-				BindingFlags.Public | BindingFlags.Instance,
-				Type.FilterName, "MoveNext");
-			if (move_next_list.Count == 0)
-				return null;
-
-			foreach (MemberInfo m in move_next_list){
-				MethodInfo mi = (MethodInfo) m;
-				Type [] args;
-				
-				args = TypeManager.GetArgumentTypes (mi);
-				if (args != null && args.Length == 0){
-					if (TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type)
-						return mi;
-				}
-			}
-			return null;
-		}
-		
-		//
-		// Retrieves a `public T get_Current ()' method from the Type `t'
-		//
-		static MethodInfo FetchMethodGetCurrent (Type t)
-		{
-			MemberList get_current_list;
-
-			get_current_list = TypeContainer.FindMembers (
-				t, MemberTypes.Method,
-				BindingFlags.Public | BindingFlags.Instance,
-				Type.FilterName, "get_Current");
-			if (get_current_list.Count == 0)
-				return null;
-
-			foreach (MemberInfo m in get_current_list){
-				MethodInfo mi = (MethodInfo) m;
-				Type [] args;
-
-				args = TypeManager.GetArgumentTypes (mi);
-				if (args != null && args.Length == 0)
-					return mi;
-			}
-			return null;
-		}
-
-		// 
-		// Retrieves a `public void Dispose ()' method from the Type `t'
-		//
-		static MethodInfo FetchMethodDispose (Type t)
-		{
-			MemberList dispose_list;
-			
-			dispose_list = TypeContainer.FindMembers (
-				t, MemberTypes.Method,
-				BindingFlags.Public | BindingFlags.Instance,
-				Type.FilterName, "Dispose");
-			if (dispose_list.Count == 0)
-				return null;
-
-			foreach (MemberInfo m in dispose_list){
-				MethodInfo mi = (MethodInfo) m;
-				Type [] args;
-				
-				args = TypeManager.GetArgumentTypes (mi);
-				if (args != null && args.Length == 0){
-					if (mi.ReturnType == TypeManager.void_type)
-						return mi;
-				}
-			}
-			return null;
-		}
-
-		// 
-		// This struct records the helper methods used by the Foreach construct
-		//
-		class ForeachHelperMethods {
-			public EmitContext ec;
-			public MethodInfo get_enumerator;
-			public MethodInfo move_next;
-			public MethodInfo get_current;
-			public Type element_type;
-			public Type enumerator_type;
-			public bool is_disposable;
-
-			public ForeachHelperMethods (EmitContext ec)
-			{
-				this.ec = ec;
-				this.element_type = TypeManager.object_type;
-				this.enumerator_type = TypeManager.ienumerator_type;
-				this.is_disposable = true;
-			}
-		}
-		
-		static bool GetEnumeratorFilter (MemberInfo m, object criteria)
-		{
-			if (m == null)
-				return false;
-
-			if (!(m is MethodInfo))
-				return false;
-			
-			if (m.Name != "GetEnumerator")
-				return false;
-
-			MethodInfo mi = (MethodInfo) m;
-			Type [] args = TypeManager.GetArgumentTypes (mi);
-			if (args != null){
-				if (args.Length != 0)
-					return false;
-			}
-			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
-
-			// Check whether GetEnumerator is public
-			if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
-					return false;
-
-			if ((mi.ReturnType == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
-				//
-				// Apply the same optimization as MS: skip the GetEnumerator
-				// returning an IEnumerator, and use the one returning a 
-				// CharEnumerator instead. This allows us to avoid the 
-				// try-finally block and the boxing.
-				//
-				return false;
-
-			//
-			// Ok, we can access it, now make sure that we can do something
-			// with this `GetEnumerator'
-			//
-
-			Type return_type = mi.ReturnType;
-			if (mi.ReturnType == TypeManager.ienumerator_type ||
-			    TypeManager.ienumerator_type.IsAssignableFrom (return_type) ||
-			    (!RootContext.StdLib && TypeManager.ImplementsInterface (return_type, TypeManager.ienumerator_type))) {
-				
-				//
-				// If it is not an interface, lets try to find the methods ourselves.
-				// For example, if we have:
-				// public class Foo : IEnumerator { public bool MoveNext () {} public int Current { get {}}}
-				// We can avoid the iface call. This is a runtime perf boost.
-				// even bigger if we have a ValueType, because we avoid the cost
-				// of boxing.
-				//
-				// We have to make sure that both methods exist for us to take
-				// this path. If one of the methods does not exist, we will just
-				// use the interface. Sadly, this complex if statement is the only
-				// way I could do this without a goto
-				//
-				
-				if (return_type.IsInterface ||
-				    (hm.move_next = FetchMethodMoveNext (return_type)) == null ||
-				    (hm.get_current = FetchMethodGetCurrent (return_type)) == null) {
-					
-					hm.move_next = TypeManager.bool_movenext_void;
-					hm.get_current = TypeManager.object_getcurrent_void;
-					return true;    
-				}
-
-			} else {
-
-				//
-				// Ok, so they dont return an IEnumerable, we will have to
-				// find if they support the GetEnumerator pattern.
-				//
-				
-				hm.move_next = FetchMethodMoveNext (return_type);
-				if (hm.move_next == null)
-					return false;
-				
-				hm.get_current = FetchMethodGetCurrent (return_type);
-				if (hm.get_current == null)
-					return false;
-			}
-			
-			hm.element_type = hm.get_current.ReturnType;
-			hm.enumerator_type = return_type;
-			hm.is_disposable = !hm.enumerator_type.IsSealed ||
-				TypeManager.ImplementsInterface (
-					hm.enumerator_type, TypeManager.idisposable_type);
-
-			return true;
-		}
-		
-		/// <summary>
-		///   This filter is used to find the GetEnumerator method
-		///   on which IEnumerator operates
-		/// </summary>
-		static MemberFilter FilterEnumerator;
-		
-		static Foreach ()
-		{
-			FilterEnumerator = new MemberFilter (GetEnumeratorFilter);
-		}
-
-                void error1579 (Type t)
-                {
-                        Report.Error (1579, loc,
-                                      "foreach statement cannot operate on variables of type `" +
-                                      t.FullName + "' because that class does not provide a " +
-                                      " GetEnumerator method or it is inaccessible");
-                }
-
-		static bool TryType (Type t, ForeachHelperMethods hm)
-		{
-			MemberList mi;
-			
-			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
-							BindingFlags.Public | BindingFlags.NonPublic |
-							BindingFlags.Instance | BindingFlags.DeclaredOnly,
-							FilterEnumerator, hm);
-
-			if (mi.Count == 0)
-				return false;
-
-			hm.get_enumerator = (MethodInfo) mi [0];
-			return true;	
-		}
-		
-		//
-		// Looks for a usable GetEnumerator in the Type, and if found returns
-		// the three methods that participate: GetEnumerator, MoveNext and get_Current
-		//
-		ForeachHelperMethods ProbeCollectionType (EmitContext ec, Type t)
-		{
-			ForeachHelperMethods hm = new ForeachHelperMethods (ec);
-
-			for (Type tt = t; tt != null && tt != TypeManager.object_type;){
-				if (TryType (tt, hm))
-					return hm;
-				tt = tt.BaseType;
-			}
-
-			//
-			// Now try to find the method in the interfaces
-			//
-			while (t != null){
-				Type [] ifaces = t.GetInterfaces ();
-
-				foreach (Type i in ifaces){
-					if (TryType (i, hm))
-						return hm;
-				}
-				
-				//
-				// Since TypeBuilder.GetInterfaces only returns the interface
-				// types for this type, we have to keep looping, but once
-				// we hit a non-TypeBuilder (ie, a Type), then we know we are
-				// done, because it returns all the types
-				//
-				if ((t is TypeBuilder))
-					t = t.BaseType;
-				else
-					break;
-			} 
-
-			return null;
-		}
-
-		//
-		// FIXME: possible optimization.
-		// We might be able to avoid creating `empty' if the type is the sam
-		//
-		bool EmitCollectionForeach (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			enumerator = new VariableStorage (ec, hm.enumerator_type);
-			enumerator.EmitThis (ig);
-			//
-			// Instantiate the enumerator
-			//
-			if (expr.Type.IsValueType){
-				IMemoryLocation ml = expr as IMemoryLocation;
-				// Load the address of the value type.
-				if (ml == null) {
-					// This happens if, for example, you have a property
-					// returning a struct which is IEnumerable
-					LocalBuilder t = ec.GetTemporaryLocal (expr.Type);
-						expr.Emit(ec);
-					ig.Emit (OpCodes.Stloc, t);
-					ig.Emit (OpCodes.Ldloca, t);
-					ec.FreeTemporaryLocal (t, expr.Type);
-					} else {
-						ml.AddressOf (ec, AddressOp.Load);
-					}
-				
-				// Emit the call.
-				if (hm.get_enumerator.DeclaringType.IsValueType) {
-					// the method is declared on the value type
-					ig.Emit (OpCodes.Call, hm.get_enumerator);
-				} else {
-					// it is an interface method, so we must box
-					ig.Emit (OpCodes.Box, expr.Type);
-				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
-				}
-			} else {
-				expr.Emit (ec);
-				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
-			}
-			enumerator.EmitStore (ig);
-
-			//
-			// Protect the code in a try/finalize block, so that
-			// if the beast implement IDisposable, we get rid of it
-			//
-			if (hm.is_disposable && emit_finally)
-				ig.BeginExceptionBlock ();
-			
-			Label end_try = ig.DefineLabel ();
-			
-			ig.MarkLabel (ec.LoopBegin);
-			
-			enumerator.EmitCall (ig, hm.move_next);
-			
-			ig.Emit (OpCodes.Brfalse, end_try);
-
-			if (ec.InIterator)
-				ig.Emit (OpCodes.Ldarg_0);
-			
-			enumerator.EmitCall (ig, hm.get_current);
-
-			if (ec.InIterator){
-				conv.Emit (ec);
-				ig.Emit (OpCodes.Stfld, ((LocalVariableReference) variable).local_info.FieldBuilder);
-			} else 
-				((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
-				
-			statement.Emit (ec);
-			ig.Emit (OpCodes.Br, ec.LoopBegin);
-			ig.MarkLabel (end_try);
-			
-			// The runtime provides this for us.
-			// ig.Emit (OpCodes.Leave, end);
-
-			//
-			// Now the finally block
-			//
-			if (hm.is_disposable) {
-				DoEmitFinally (ec);
-				if (emit_finally)
-					ig.EndExceptionBlock ();
-			}
-
-			ig.MarkLabel (ec.LoopEnd);
-			return false;
-		}
-
-		public override void EmitFinally (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			if (hm.enumerator_type.IsValueType) {
-				enumerator.EmitThis (ig);
-
-				MethodInfo mi = FetchMethodDispose (hm.enumerator_type);
-				if (mi != null) {
-					enumerator.EmitLoadAddress (ig);
-					ig.Emit (OpCodes.Call, mi);
-				} else {
-					enumerator.EmitLoad (ig);
-					ig.Emit (OpCodes.Box, hm.enumerator_type);
-					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				}
-			} else {
-				Label call_dispose = ig.DefineLabel ();
-
-				enumerator.EmitThis (ig);
-				enumerator.EmitLoad (ig);
-				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-				ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Brtrue_S, call_dispose);
-				ig.Emit (OpCodes.Pop);
-
-				Label end_finally = ig.DefineLabel ();
-				ig.Emit (OpCodes.Br, end_finally);
-
-				ig.MarkLabel (call_dispose);
-				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				ig.MarkLabel (end_finally);
-
-				if (emit_finally)
-					ig.Emit (OpCodes.Endfinally);
+				collection = new CollectionForeach (
+					var_type, variable, expr, statement, loc);
+				return collection.Resolve (ec);
 			}
 		}
 
@@ -4643,9 +4193,9 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
-			
-			if (hm != null)
-				EmitCollectionForeach (ec);
+
+			if (collection != null)
+				collection.Emit (ec);
 			else
 				array.Emit (ec);
 			
@@ -4653,7 +4203,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 		}
 
-		protected class TemporaryVariable : Expression
+		protected class TemporaryVariable : Expression, IMemoryLocation
 		{
 			FieldBuilder fb;
 			LocalBuilder local;
@@ -4691,6 +4241,18 @@ namespace Mono.CSharp {
 				}
 			}
 
+			public void EmitLoadAddress (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				if (fb != null) {
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldflda, fb);
+				} else {
+					ig.Emit (OpCodes.Ldloca, local);
+				}
+			}
+
 			public void Store (EmitContext ec, Expression right_side)
 			{
 				if (fb != null)
@@ -4714,6 +4276,11 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Stloc, local);
 				else
 					ig.Emit (OpCodes.Stfld, fb);
+			}
+
+			public void AddressOf (EmitContext ec, AddressOp mode)
+			{
+				EmitLoadAddress (ec);
 			}
 		}
 
@@ -4742,7 +4309,7 @@ namespace Mono.CSharp {
 
 		protected class ArrayForeach : Statement
 		{
-			Expression type, variable, expr, conv;
+			Expression variable, expr, conv;
 			Statement statement;
 			Type array_type;
 			Type var_type;
@@ -4753,10 +4320,10 @@ namespace Mono.CSharp {
 			TemporaryVariable copy;
 			Expression access;
 
-			public ArrayForeach (Expression type, Expression var,
+			public ArrayForeach (Type var_type, Expression var,
 					     Expression expr, Statement stmt, Location l)
 			{
-				this.type = type;
+				this.var_type = var_type;
 				this.variable = var;
 				this.expr = expr;
 				statement = stmt;
@@ -4765,12 +4332,6 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{				
-				TypeExpr texpr = type.ResolveAsTypeTerminal (ec);
-				if (texpr == null)
-					return false;
-			
-				var_type = texpr.Type;
-
 				array_type = expr.Type;
 				rank = array_type.GetArrayRank ();
 
@@ -4857,6 +4418,414 @@ namespace Mono.CSharp {
 				}
 
 				ig.MarkLabel (ec.LoopEnd);
+			}
+		}
+
+		protected class CollectionForeach : ExceptionStatement
+		{
+			Expression variable, expr;
+			Statement statement;
+
+			TemporaryVariable enumerator;
+			Expression init;
+			Statement loop;
+
+			MethodGroupExpr get_enumerator;
+			PropertyExpr get_current;
+			MethodInfo move_next;
+			Type var_type, enumerator_type;
+			bool is_disposable;
+
+			public CollectionForeach (Type var_type, Expression var,
+						  Expression expr, Statement stmt, Location l)
+			{
+				this.var_type = var_type;
+				this.variable = var;
+				this.expr = expr;
+				statement = stmt;
+				loc = l;
+			}
+
+			bool GetEnumeratorFilter (EmitContext ec, MethodInfo mi)
+			{
+				Type [] args = TypeManager.GetArgumentTypes (mi);
+				if (args != null){
+					if (args.Length != 0)
+						return false;
+				}
+
+				if (TypeManager.IsOverride (mi))
+					return false;
+			
+				// Check whether GetEnumerator is public
+				if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+					return false;
+
+				if ((mi.ReturnType == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
+					//
+					// Apply the same optimization as MS: skip the GetEnumerator
+					// returning an IEnumerator, and use the one returning a 
+					// CharEnumerator instead. This allows us to avoid the 
+					// try-finally block and the boxing.
+					//
+					return false;
+
+				//
+				// Ok, we can access it, now make sure that we can do something
+				// with this `GetEnumerator'
+				//
+
+				Type return_type = mi.ReturnType;
+				if (mi.ReturnType == TypeManager.ienumerator_type ||
+				    TypeManager.ienumerator_type.IsAssignableFrom (return_type) ||
+				    (!RootContext.StdLib && TypeManager.ImplementsInterface (return_type, TypeManager.ienumerator_type))) {
+					//
+					// If it is not an interface, lets try to find the methods ourselves.
+					// For example, if we have:
+					// public class Foo : IEnumerator { public bool MoveNext () {} public int Current { get {}}}
+					// We can avoid the iface call. This is a runtime perf boost.
+					// even bigger if we have a ValueType, because we avoid the cost
+					// of boxing.
+					//
+					// We have to make sure that both methods exist for us to take
+					// this path. If one of the methods does not exist, we will just
+					// use the interface. Sadly, this complex if statement is the only
+					// way I could do this without a goto
+					//
+
+					if (return_type.IsInterface ||
+					    !FetchMoveNext (ec, return_type) ||
+					    !FetchGetCurrent (ec, return_type)) {
+						move_next = TypeManager.bool_movenext_void;
+						get_current = new PropertyExpr (
+							ec, TypeManager.ienumerator_getcurrent, loc);
+						return true;
+					}
+				} else {
+					//
+					// Ok, so they dont return an IEnumerable, we will have to
+					// find if they support the GetEnumerator pattern.
+					//
+
+					if (!FetchMoveNext (ec, return_type))
+						return false;
+
+					if (!FetchGetCurrent (ec, return_type))
+						return false;
+				}
+
+				enumerator_type = return_type;
+				is_disposable = !enumerator_type.IsSealed ||
+					TypeManager.ImplementsInterface (
+						enumerator_type, TypeManager.idisposable_type);
+
+				return true;
+			}
+
+			//
+			// Retrieves a `public bool MoveNext ()' method from the Type `t'
+			//
+			bool FetchMoveNext (EmitContext ec, Type t)
+			{
+				MemberList move_next_list;
+
+				move_next_list = TypeContainer.FindMembers (
+					t, MemberTypes.Method,
+					BindingFlags.Public | BindingFlags.Instance,
+					Type.FilterName, "MoveNext");
+				if (move_next_list.Count == 0)
+					return false;
+
+				foreach (MemberInfo m in move_next_list){
+					MethodInfo mi = (MethodInfo) m;
+					Type [] args;
+				
+					args = TypeManager.GetArgumentTypes (mi);
+					if ((args != null) && (args.Length == 0) &&
+					    TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type) {
+						move_next = mi;
+						return true;
+					}
+				}
+
+				return false;
+			}
+		
+			//
+			// Retrieves a `public T get_Current ()' method from the Type `t'
+			//
+			bool FetchGetCurrent (EmitContext ec, Type t)
+			{
+				PropertyExpr pe = Expression.MemberLookup (
+					ec, t, "Current", MemberTypes.Property,
+					Expression.AllBindingFlags, loc) as PropertyExpr;
+				if (pe == null)
+					return false;
+
+				get_current = pe;
+				return true;
+			}
+
+			// 
+			// Retrieves a `public void Dispose ()' method from the Type `t'
+			//
+			static MethodInfo FetchMethodDispose (Type t)
+			{
+				MemberList dispose_list;
+
+				dispose_list = TypeContainer.FindMembers (
+					t, MemberTypes.Method,
+					BindingFlags.Public | BindingFlags.Instance,
+					Type.FilterName, "Dispose");
+				if (dispose_list.Count == 0)
+					return null;
+
+				foreach (MemberInfo m in dispose_list){
+					MethodInfo mi = (MethodInfo) m;
+					Type [] args;
+
+					args = TypeManager.GetArgumentTypes (mi);
+					if (args != null && args.Length == 0){
+						if (mi.ReturnType == TypeManager.void_type)
+							return mi;
+					}
+				}
+				return null;
+			}
+
+			static public void error1579 (Type t, Location loc)
+			{
+				Report.Error (1579, loc, "foreach statement cannot operate on " +
+					      "variables of type `{0}' because that class does " +
+					      "not provide a GetEnumerator method or it is " +
+					      "inaccessible", t.FullName);
+			}
+
+			bool TryType (EmitContext ec, Type t)
+			{
+				MethodGroupExpr mg = Expression.MemberLookup (
+					ec, t, "GetEnumerator", MemberTypes.Method,
+					Expression.AllBindingFlags, loc) as MethodGroupExpr;
+				if (mg == null)
+					return false;
+
+				foreach (MethodBase mb in mg.Methods) {
+					if (!GetEnumeratorFilter (ec, (MethodInfo) mb))
+						continue;
+
+					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) mb };
+					get_enumerator = new MethodGroupExpr (mi, loc);
+
+					if (t != expr.Type) {
+						expr = Convert.ExplicitConversion (
+							ec, expr, t, loc);
+						if (expr == null)
+							throw new InternalErrorException ();
+					}
+
+					get_enumerator.InstanceExpression = expr;
+					get_enumerator.IsBase = t != expr.Type;
+
+					return true;
+				}
+
+				return false;
+			}		
+
+			bool ProbeCollectionType (EmitContext ec, Type t)
+			{
+				for (Type tt = t; tt != null && tt != TypeManager.object_type;){
+					if (TryType (ec, tt))
+						return true;
+					tt = tt.BaseType;
+				}
+
+				//
+				// Now try to find the method in the interfaces
+				//
+				while (t != null){
+					Type [] ifaces = t.GetInterfaces ();
+
+					foreach (Type i in ifaces){
+						if (TryType (ec, i))
+							return true;
+					}
+				
+					//
+					// Since TypeBuilder.GetInterfaces only returns the interface
+					// types for this type, we have to keep looping, but once
+					// we hit a non-TypeBuilder (ie, a Type), then we know we are
+					// done, because it returns all the types
+					//
+					if ((t is TypeBuilder))
+						t = t.BaseType;
+					else
+						break;
+				}
+
+				return false;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				enumerator_type = TypeManager.ienumerator_type;
+				is_disposable = true;
+
+				if (!ProbeCollectionType (ec, expr.Type)) {
+					error1579 (expr.Type, loc);
+					return false;
+				}
+
+				enumerator = new TemporaryVariable (enumerator_type, loc);
+				enumerator.Resolve (ec);
+
+				init = new Invocation (get_enumerator, new ArrayList (), loc);
+				init = init.Resolve (ec);
+				if (init == null)
+					return false;
+
+				Expression move_next_expr;
+				{
+					MemberInfo[] mi = new MemberInfo[] { move_next };
+					MethodGroupExpr mg = new MethodGroupExpr (mi, loc);
+					mg.InstanceExpression = enumerator;
+
+					move_next_expr = new Invocation (mg, new ArrayList (), loc);
+				}
+
+				get_current.InstanceExpression = enumerator;
+
+				Statement block = new CollectionForeachStatement (
+					var_type, variable, get_current, statement, loc);
+
+				loop = new While (move_next_expr, block, loc);
+
+				bool ok = true;
+
+				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
+				ec.CurrentBranching.CreateSibling ();
+
+				FlowBranchingException branching = null;
+				if (is_disposable)
+					branching = ec.StartFlowBranching (this);
+
+				if (!loop.Resolve (ec))
+					ok = false;
+
+				if (is_disposable) {
+					ResolveFinally (branching);
+					ec.EndFlowBranching ();
+				} else
+					emit_finally = true;
+
+				ec.EndFlowBranching ();
+
+				return ok;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				enumerator.Store (ec, init);
+
+				//
+				// Protect the code in a try/finalize block, so that
+				// if the beast implement IDisposable, we get rid of it
+				//
+				if (is_disposable && emit_finally)
+					ig.BeginExceptionBlock ();
+			
+				loop.Emit (ec);
+
+				//
+				// Now the finally block
+				//
+				if (is_disposable) {
+					DoEmitFinally (ec);
+					if (emit_finally)
+						ig.EndExceptionBlock ();
+				}
+			}
+
+
+			public override void EmitFinally (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				if (enumerator_type.IsValueType) {
+					enumerator.Emit (ec);
+
+					MethodInfo mi = FetchMethodDispose (enumerator_type);
+					if (mi != null) {
+						enumerator.EmitLoadAddress (ec);
+						ig.Emit (OpCodes.Call, mi);
+					} else {
+						enumerator.Emit (ec);
+						ig.Emit (OpCodes.Box, enumerator_type);
+						ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+					}
+				} else {
+					Label call_dispose = ig.DefineLabel ();
+
+					enumerator.Emit (ec);
+					ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Brtrue_S, call_dispose);
+					ig.Emit (OpCodes.Pop);
+
+					Label end_finally = ig.DefineLabel ();
+					ig.Emit (OpCodes.Br, end_finally);
+
+					ig.MarkLabel (call_dispose);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+					ig.MarkLabel (end_finally);
+				}
+			}
+		}
+
+		protected class CollectionForeachStatement : Statement
+		{
+			Type type;
+			Expression variable, current, conv;
+			Statement statement;
+			Assign assign;
+
+			public CollectionForeachStatement (Type type, Expression variable,
+							   Expression current, Statement statement,
+							   Location loc)
+			{
+				this.type = type;
+				this.variable = variable;
+				this.current = current;
+				this.statement = statement;
+				this.loc = loc;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				current = current.Resolve (ec);
+				if (current == null)
+					return false;
+
+				conv = Convert.ExplicitConversion (ec, current, type, loc);
+				if (conv == null)
+					return false;
+
+				assign = new Assign (variable, conv, loc);
+				if (assign.Resolve (ec) == null)
+					return false;
+
+				if (!statement.Resolve (ec))
+					return false;
+
+				return true;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				assign.EmitStatement (ec);
+				statement.Emit (ec);
 			}
 		}
 	}
