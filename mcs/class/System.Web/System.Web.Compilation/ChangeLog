@@ -1,5 +1,9 @@
 2005-06-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspParser.cs: InvariantCulture love.
+
+2005-06-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateControlCompiler.cs: use the Page AddContentTemplate method,
 	as the one in Master is protected. Fixes bug #75157.
 

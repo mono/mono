@@ -29,6 +29,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -88,7 +89,7 @@ namespace System.Web.Compilation
 		public string VerbatimID {
 			set {
 				tokenizer.Verbatim = true;
-				verbatimID = value.ToUpper ();
+				verbatimID = value.ToUpper (CultureInfo.InvariantCulture);
 			}
 		}
 		
@@ -187,12 +188,12 @@ namespace System.Web.Compilation
 			if (len < 10 || lastQuote != len - 1)
 				return false;
 
-			if (!str.ToLower ().StartsWith ("#include "))
+			if (!str.ToLower (CultureInfo.InvariantCulture).StartsWith ("#include "))
 				return false;
 
 			str = str.Substring (9).Trim ();
-			bool isfile = (str.ToLower ().StartsWith ("file"));
-			if (!isfile && !str.ToLower ().StartsWith ("virtual"))
+			bool isfile = (str.ToLower (CultureInfo.InvariantCulture).StartsWith ("file"));
+			if (!isfile && !str.ToLower (CultureInfo.InvariantCulture).StartsWith ("virtual"))
 				return false;
 
 			pathType = (isfile) ? "file" : "virtual";
@@ -363,7 +364,7 @@ namespace System.Web.Compilation
 			}
 
 			while (token != Token.EOF){
-				if (Char.ToUpper ((char) token) == end [i]){
+				if (Char.ToUpper ((char) token, CultureInfo.InvariantCulture) == end [i]){
 					if (++i >= end.Length)
 						break;
 					token = tokenizer.get_token ();
