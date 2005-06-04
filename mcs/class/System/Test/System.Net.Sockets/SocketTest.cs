@@ -22,6 +22,33 @@ namespace MonoTests.System.Net.Sockets
 		public const int BogusPort = 23483;
 
 		[Test]
+		[Ignore ("Bug #75154")]
+		public void ConnectIPAddressAny ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
+
+			try {
+				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+					s.Connect (ep);
+					s.Close ();
+				}
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+				Assert.AreEqual (10049, ex.ErrorCode, "#2");
+			}
+
+			try {
+				using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+					s.Connect (ep);
+					s.Close ();
+				}
+				Assert.Fail ("#3");
+			} catch (SocketException ex) {
+				Assert.AreEqual (10049, ex.ErrorCode, "#4");
+			}
+		}
+
+		[Test]
 		[Category ("InetAccess")]
 		public void EndConnect ()
 		{

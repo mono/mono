@@ -1,5 +1,9 @@
 2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* SocketTest.cs: added test for bug #75154.
+
+2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* TcpListenerTest.cs: remove NotDotNet category from TcpListener
 	test as its working just fine on both MS.NET 1.x and 2.0.
 
