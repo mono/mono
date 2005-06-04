@@ -1,3 +1,8 @@
+2005-06-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: bump corlib version.
+	* object-internals.h: new field in MonoReflectionAssembly.
+
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object-internals.h: Carlos forgot to add this field.
