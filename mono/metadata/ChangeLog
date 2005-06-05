@@ -1,3 +1,8 @@
+2005-06-05  Kornél Pál <kornelpal@hotmail.com>
+
+	* icall.c: Added ves_icall_Mono_Runtime_GetDisplayName:
+	Returns the name and version of the runtime for reporting.
+
 2005-06-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: bump corlib version.
