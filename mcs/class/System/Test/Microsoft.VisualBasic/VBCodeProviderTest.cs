@@ -31,7 +31,7 @@ namespace MonoTests.Microsoft.VisualBasic
 	}
 
 	[TestFixture]
-	public class VBCodeProviderTest : Assertion {
+	public class VBCodeProviderTest {
 	
 		CodeDomProvider MyVBCodeProvider;
 		static OsType OS;
@@ -53,47 +53,36 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public void FileExtension ()
 		{
-			AssertEquals ("#JW10", "vb", MyVBCodeProvider.FileExtension);
+			Assert.AreEqual("vb", MyVBCodeProvider.FileExtension, "#JW10");
 		}
 
 		[Test]
 		public void LanguageOptionsTest ()
 		{
-			AssertEquals ("#JW20", LanguageOptions.CaseInsensitive, MyVBCodeProvider.LanguageOptions);
+			Assert.AreEqual(LanguageOptions.CaseInsensitive, MyVBCodeProvider.LanguageOptions, "#JW20");
 		}
 
 		[Test]
 		public void CreateCompiler()
 		{
-			// Prepare the compilation
-			//Console.WriteLine("#J30.pre1 - CreateCompiler");
-			ICodeCompiler MyVBCodeCompiler;
-			MyVBCodeCompiler = MyVBCodeProvider.CreateCompiler();
-			AssertNotNull ("#JW30 - CreateCompiler", MyVBCodeCompiler);
-			CompilerResults MyVBCodeCompilerResults;
-			//Console.WriteLine("#J30.post1 - CreateCompiler");
-
+			// prepare the compilation
+			ICodeCompiler MyVBCodeCompiler = MyVBCodeProvider.CreateCompiler();
+			Assert.IsNotNull(MyVBCodeCompiler, "#JW30 - CreateCompiler");
+			
 			CompilerParameters options = new CompilerParameters();
 			options.GenerateExecutable = true;
 			options.IncludeDebugInformation = true;
 			options.TreatWarningsAsErrors = true;
 			
-			// Process compilation
-			MyVBCodeCompilerResults = MyVBCodeCompiler.CompileAssemblyFromSource(options,
-				"public class TestModule" + Environment.NewLine + "public shared sub Main()" + Environment.NewLine + "System.Console.Write(\"Hello world!\")" + Environment.NewLine + "End Sub" + Environment.NewLine + "End Class" + Environment.NewLine);
+			// process compilation
+			CompilerResults MyVBCodeCompilerResults = MyVBCodeCompiler.CompileAssemblyFromSource(options,
+				"public class TestModule" + Environment.NewLine + "public shared sub Main()" 
+				+ Environment.NewLine + "System.Console.Write(\"Hello world!\")" 
+				+ Environment.NewLine + "End Sub" + Environment.NewLine + "End Class");
 
-			// Analyse the compilation success/messages
-			StringCollection MyOutput;
-			MyOutput = MyVBCodeCompilerResults.Output;
-			string MyOutStr = "";
-			foreach (string MyStr in MyOutput)
-			{
-				MyOutStr += MyStr + Environment.NewLine + Environment.NewLine;
-			}
-
-			if (MyVBCodeCompilerResults.Errors.Count != 0) {
-				Console.WriteLine (MyVBCodeCompilerResults);
-				Assert ("#JW31 - Hello world compilation: " + MyOutStr, false);
+			// verify outcome of compilation
+			if (MyVBCodeCompilerResults.Errors.Count > 0) {
+				Assert.Fail("Hello World compilation failed: " + MyVBCodeCompilerResults.Errors[0].ToString());
 			}
 
 			try
@@ -102,8 +91,8 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception ex)
 			{
-				Assert ("#JW32 - MyVBCodeCompilerResults.CompiledAssembly hasn't been an expected object" + 
-						Environment.NewLine + ex.Message + Environment.NewLine + ex.StackTrace, false);
+				Assert.Fail("#JW32 - MyVBCodeCompilerResults.CompiledAssembly hasn't been an expected object" + 
+						Environment.NewLine + ex.Message + Environment.NewLine + ex.StackTrace);
 			}
 
 			// Execute the test app
@@ -119,6 +108,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			NewProcInfo.UseShellExecute = false;
 			NewProcInfo.CreateNoWindow = true;
 			string TestAppOutput = "";
+
 			try
 			{
 				Process MyProc = Process.Start(NewProcInfo);
@@ -129,9 +119,10 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception ex)
 			{
-				Fail("#JW34 - " + ex.Message + Environment.NewLine + ex.StackTrace);
+				Assert.Fail("#JW34 - " + ex.Message + Environment.NewLine + ex.StackTrace);
 			}
-			AssertEquals("#JW33 - Application output", "Hello world!", TestAppOutput);
+			
+			Assert.AreEqual("Hello world!", TestAppOutput, "#JW33 - Application output");
 
 			// Clean up
 			try
@@ -147,13 +138,13 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			// NOT in memory
 			CompilerResults results = CompileAssembly (false);
-			Assert ("#1", results.CompiledAssembly.Location.Length != 0);
-			AssertNotNull ("#2", results.PathToAssembly);
+			Assert.IsTrue(results.CompiledAssembly.Location.Length != 0, "#1");
+			Assert.IsNotNull(results.PathToAssembly, "#2");
 
 			// in memory
 			results = CompileAssembly (true);
-			AssertEquals ("#3", string.Empty, results.CompiledAssembly.Location);
-			AssertNull ("#4", results.PathToAssembly);
+			Assert.AreEqual(string.Empty, results.CompiledAssembly.Location, "#3");
+			Assert.IsNull(results.PathToAssembly, "#4");
 		}
 
 		[Test]
@@ -161,8 +152,8 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			ICodeGenerator MyVBCodeGen;
 			MyVBCodeGen = MyVBCodeProvider.CreateGenerator();
-			Assert ("#JW40 - CreateGenerator", (MyVBCodeGen != null));
-			AssertEquals ("#JW41", true, MyVBCodeGen.Supports (GeneratorSupport.DeclareEnums));
+			Assert.IsNotNull(MyVBCodeGen, "#JW40 - CreateGenerator");
+			Assert.IsTrue(MyVBCodeGen.Supports(GeneratorSupport.DeclareEnums), "#JW41");
 		}
 
 		

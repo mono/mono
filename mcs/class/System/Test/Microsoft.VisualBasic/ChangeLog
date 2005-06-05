@@ -1,3 +1,8 @@
+2005-06-05  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeProviderTest.cs: moved to using NUnit 2.x Assert, improve
+	failure output of CreateCompiler test.
+
 2005-05-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeProviderTest.cs: Added tests for GenerateInMemory
