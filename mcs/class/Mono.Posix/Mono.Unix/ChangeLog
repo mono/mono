@@ -1,3 +1,11 @@
+2005-06-05  Jonathan Pryor <jonpryor@vt.edu>
+
+	* make-map.cs: Change automatic "ifdef HAVE_<header>" support prefix to
+	  "ah:" from ">".  I hadn't known about ">", and "ah:" is (somewhat) more
+	  obvious.
+	* Syscall.cs: Change IncludeAttribute to put all headers/defines one/line.
+	  It's easier to read this way.  Add "ah:sys/xattr.h" to the headers.
+
 2005-06-03  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Add sanity checking to snprintf(3) to avoid buffer overflows.

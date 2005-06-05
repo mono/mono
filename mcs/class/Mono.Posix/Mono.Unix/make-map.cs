@@ -282,8 +282,9 @@ class SourceFileGenerator : FileGenerator {
 		MethodInfo method = prop.GetGetMethod ();
 		string [] includes = (string []) method.Invoke (o, null);
 		foreach (string inc in includes){
-			if (inc [0] == '>'){
-				string i = inc.Substring (1);
+			if (inc.Length > 3 && 
+					string.CompareOrdinal (inc, 0, "ah:", 0, 3) == 0) {
+				string i = inc.Substring (3);
 				writer.WriteLine ("#ifdef HAVE_" + (i.ToUpper ().Replace ("/", "_").Replace (".", "_")));
 				writer.WriteLine ("#include <{0}>", i);
 				writer.WriteLine ("#endif");
