@@ -1,3 +1,7 @@
+2005-06-05  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Enabled test for bug #74958.
+
 2005-05-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodInfoTest.cs: Reenable the pseudo attribute test.
@@ -10,12 +14,12 @@
 
 2005-05-20  Gert Driesen <drieseng@users.sourceforge.net>
 
-	* AssemblyTest.cs: Allow test for bug #75958 to pass on .NET 2.0
+	* AssemblyTest.cs: Allow test for bug #74958 to pass on .NET 2.0
 	Beta 2.
 
 2005-05-15  Gert Driesen <drieseng@users.sourceforge.net>
 
-	* AssemblyTest.cs: Added (ignored) test case for bug #75958.
+	* AssemblyTest.cs: Added (ignored) test case for bug #74958.
 
 2005-05-07  Ben Maurer  <bmaurer@ximian.com>
 

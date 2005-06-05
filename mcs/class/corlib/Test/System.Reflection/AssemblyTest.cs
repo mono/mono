@@ -221,7 +221,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Ignore("Bug #74958")]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
 				Path.GetTempPath (), "AssemblyLocation.dll");
