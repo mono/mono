@@ -151,6 +151,9 @@ namespace System.Web.Services.Protocols
 			catch (Exception ex) {
 				ainfo.SetCompleted (null, ex, true);
 			}
+			finally {
+				response.Close();
+			}
 		}
 
 		protected object[] EndInvoke (IAsyncResult asyncResult)
@@ -330,7 +333,12 @@ namespace System.Web.Services.Protocols
 					throw ex;
 			}
 
-			return ReceiveResponse (response, message, extensions);
+			try {
+				return ReceiveResponse (response, message, extensions);
+			}
+			finally {
+				response.Close();
+			}
 		}
 		
 #if NET_2_0
