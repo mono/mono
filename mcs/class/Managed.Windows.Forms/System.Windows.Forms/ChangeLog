@@ -1,3 +1,8 @@
+2005-06-05  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs: Removed DnD code
+	* Win32DnD.cs: Implemented drop source and drop target functionality
+
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UpDownBase.cs: remove duplicate addition of event, enable some code

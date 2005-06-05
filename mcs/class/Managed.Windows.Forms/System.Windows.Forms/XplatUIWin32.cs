@@ -33,8 +33,6 @@ using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -61,19 +59,7 @@ namespace System.Windows.Forms {
 		private static Queue		message_queue;
 		private static IntPtr 		clip_magic = new IntPtr(27051977);
 
-		// References to DnD delegates for unmanaged land
-		#if OnceOLESucksLess
-		private static MethodInfo	IDataObjectGetDataMethod;
-		private static object[]		GetDataArgs;
-		#endif
-		private static QueryInterfaceDelegate	QueryInterface;
-		private static AddRefDelegate		AddRef;
-		private static ReleaseDelegate		Release;
-		private static DragEnterDelegate	DragEnter;
-		private static DragOverDelegate		DragOver;
-		private static DragLeaveDelegate	DragLeave;
-		private static DropDelegate		Drop;
-		private static DragEventArgs		DragDropEventArgs;
+		private static Win32DnD		DnD;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -526,7 +512,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Flags]
-		private enum GAllocFlags : uint {
+		internal enum GAllocFlags : uint {
 			GMEM_FIXED			= 0x0000,
 			GMEM_MOVEABLE			= 0x0002,
 			GMEM_NOCOMPACT			= 0x0010,
@@ -545,279 +531,6 @@ namespace System.Windows.Forms {
 			GPTR                		= (GMEM_FIXED | GMEM_ZEROINIT)
 		}
 
-		#region DnD
-		internal delegate IntPtr QueryInterfaceDelegate(IntPtr this_, IntPtr riid, IntPtr ppvObject);
-		internal delegate uint AddRefDelegate(IntPtr this_);
-		internal delegate uint ReleaseDelegate(IntPtr this_);
-		internal delegate IntPtr DragEnterDelegate(IntPtr this_, IntPtr pDataObj, IntPtr grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect);
-		internal delegate IntPtr DragOverDelegate(IntPtr this_, IntPtr grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect);
-		internal delegate IntPtr DragLeaveDelegate(IntPtr this_);
-		internal delegate IntPtr DropDelegate(IntPtr this_, IntPtr pDataObj, uint grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect);
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct IDropTargetVtbl {
-			internal QueryInterfaceDelegate	QueryInterface;
-			internal AddRefDelegate		AddRef;
-			internal ReleaseDelegate	Release;
-			internal DragEnterDelegate	DragEnter;
-			internal DragOverDelegate	DragOver;
-			internal DragLeaveDelegate	DragLeave;
-			internal DropDelegate		Drop;
-		}
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct IDropTarget {
-			internal IntPtr			vtbl;
-			internal IntPtr			window;
-		}
-
-		internal delegate IntPtr GetDataDelegate(IntPtr this_, ref FORMATETC pformatetcIn, ref STGMEDIUM pmedium);
-		internal delegate IntPtr GetDataHereDelegate(IntPtr this_, IntPtr pformatetc, IntPtr pmedium);
-		internal delegate IntPtr QueryGetDataDelegate(IntPtr this_, IntPtr pformatetc);
-		internal delegate IntPtr GetCanonicalFormatEtcDelegate(IntPtr this_, IntPtr pformatetcIn, IntPtr pformatetcOut);
-		internal delegate IntPtr SetDataDelegate(IntPtr this_, IntPtr pformatetc, IntPtr pmedium, bool release);
-		internal delegate IntPtr EnumFormatEtcDelegate(IntPtr this_, IntPtr direction, IntPtr ppenumFormatEtc);
-		internal delegate IntPtr DAdviseDelegate(IntPtr this_, IntPtr pformatetc, IntPtr advf, IntPtr pAdvSink, IntPtr pdwConnection);
-		internal delegate IntPtr DUnadviseDelegate(IntPtr this_, IntPtr pdwConnection);
-		internal delegate IntPtr EnumAdviseDelegate(IntPtr this_, IntPtr ppenumAdvise);
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct IDataObjectVtbl {
-			internal IntPtr			QueryInterface;
-			internal IntPtr			AddRef;
-			internal IntPtr			Release;
-			internal IntPtr			GetData;
-			internal IntPtr			GetDataHere;
-			internal IntPtr			QueryGetData;
-			internal IntPtr			GetCanonicalFormatEtc;
-			internal IntPtr			SetData;
-			internal IntPtr			EnumFormatEtc;
-			internal IntPtr			DAdvise;
-			internal IntPtr			DUnadvise;
-			internal IntPtr			EnumAdvise;
-		}
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct IDataObject {
-			internal IntPtr			vtbl;
-		}
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct FORMATETC {
-			internal ClipboardFormats	cfFormat;
-			internal IntPtr			ptd;		// Pointer to target device
-			internal DVASPECT		dwAspect;
-			internal int			lindex;
-			internal TYMED			tymed;
-		}
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		internal struct STGMEDIUM {
-			internal uint		tymed;
-			internal IntPtr		hHandle;	// This is usually a union of various handle types
-			internal IntPtr		pUnkForRelease;
-		}
-
-		internal enum DVASPECT {
-     			DVASPECT_CONTENT	= 1,
-			DVASPECT_THUMBNAIL	= 2,
-			DVASPECT_ICON		= 4,
-			DVASPECT_DOCPRINT	= 8
-		}
-
-		internal enum TYMED {
-		     	TYMED_HGLOBAL		= 1,
-			TYMED_FILE		= 2,
-			TYMED_ISTREAM		= 4,
-			TYMED_ISTORAGE		= 8,
-			TYMED_GDI		= 16,
-			TYMED_MFPICT		= 32,
-			TYMED_ENHMF		= 64,
-			TYMED_NULL		= 0
-		}
-
-		internal static IntPtr QueryInterfaceMethod(IntPtr this_, IntPtr riid, IntPtr ppvObject) {
-			return IntPtr.Zero;
-		}
-
-		internal static uint AddRefMethod(IntPtr this_) {
-			return 1;
-		}
-
-		internal static uint ReleaseMethod(IntPtr this_) {
-			return 0;
-		}
-
-		internal static IntPtr DragEnterMethod(IntPtr this_, IntPtr pDataObj, IntPtr grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect) {
-			IntPtr		window;
-			DragEventArgs	dea;
-
-			window = Marshal.ReadIntPtr(this_, Marshal.SizeOf(typeof(IntPtr)));
-
-			DragDropEventArgs.x = pt_x.ToInt32();
-			DragDropEventArgs.y = pt_y.ToInt32();
-			DragDropEventArgs.allowed_effect = (DragDropEffects)Marshal.ReadIntPtr(pdwEffect).ToInt32();
-			DragDropEventArgs.current_effect = DragDropEventArgs.AllowedEffect;
-			DragDropEventArgs.keystate = grfkeyState.ToInt32();
-
-			Control.FromHandle(window).DndEnter(DragDropEventArgs);
-
-			Marshal.WriteInt32(pdwEffect, (int)DragDropEventArgs.Effect);
-
-			return IntPtr.Zero;
-		}
-
-		internal static IntPtr DragOverMethod(IntPtr this_, IntPtr grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect) {
-			IntPtr window;
-
-			window = Marshal.ReadIntPtr(this_, Marshal.SizeOf(typeof(IntPtr)));
-
-			DragDropEventArgs.x = pt_x.ToInt32();
-			DragDropEventArgs.y = pt_y.ToInt32();
-			DragDropEventArgs.allowed_effect = (DragDropEffects)Marshal.ReadIntPtr(pdwEffect).ToInt32();
-			DragDropEventArgs.current_effect = DragDropEventArgs.AllowedEffect;
-			DragDropEventArgs.keystate = grfkeyState.ToInt32();
-
-			Control.FromHandle(window).DndOver(DragDropEventArgs);
-
-			Marshal.WriteInt32(pdwEffect, (int)DragDropEventArgs.Effect);
-
-			return IntPtr.Zero;
-		}
-
-		internal static IntPtr DragLeaveMethod(IntPtr this_) {
-			IntPtr window;
-
-			window = Marshal.ReadIntPtr(this_, Marshal.SizeOf(typeof(IntPtr)));
-
-			Control.FromHandle(window).DndLeave(EventArgs.Empty);
-
-			return IntPtr.Zero;
-		}
-
-		internal static IntPtr DropMethod(IntPtr this_, IntPtr pDataObj, uint grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect) {
-			#if OnceOLESucksLess
-			IntPtr		window;
-			FORMATETC	format;
-			STGMEDIUM	medium;
-			IntPtr		hDrag;
-			int		result;
-			IntPtr		format_ptr;
-			IntPtr		medium_ptr;
-			#endif
-
-
-			throw new Exception("Yeah Baby, give me WM_DROPFILES");
-
-			#if OnceOLESucksLess
-			window = Marshal.ReadIntPtr(this_, Marshal.SizeOf(typeof(IntPtr)));
-
-			Console.WriteLine("Drop called, window {0:X}", window.ToInt32());
-
-			format = new FORMATETC();
-			format.cfFormat = ClipboardFormats.CF_HDROP;
-			format.ptd = IntPtr.Zero;
-			format.dwAspect=DVASPECT.DVASPECT_CONTENT;
-			format.lindex=-1;
-			format.tymed=TYMED.TYMED_HGLOBAL;
-
-			medium = new STGMEDIUM();
-
-			format_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(format));
-			Marshal.StructureToPtr(format, format_ptr, false);
-
-			medium_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(medium));
-			Marshal.StructureToPtr(medium, medium_ptr, false);
-
-			GetDataArgs[0] = Marshal.ReadIntPtr(Marshal.ReadIntPtr(pDataObj), 12);
-			GetDataArgs[1] = pDataObj;
-			GetDataArgs[2] = format_ptr;
-			GetDataArgs[3] = medium_ptr;
-
-			result = 0;
-
-			try {
-				result = (int)IDataObjectGetDataMethod.Invoke(null, GetDataArgs);
-			}
-
-			catch (Exception e) {
-				Console.WriteLine("Exception", e.Message);
-			}
-
-			Console.WriteLine("GetData returnd {0:X}", result);
-			#endif
-
-			return IntPtr.Zero;
-		}
-
-		internal static bool RegisterDropTarget(IntPtr Window) {
-			IDropTarget	DropTarget;
-			IntPtr		DropTargetPtr;
-			IDropTargetVtbl	OLEDropObject;
-			IntPtr		OLEDropObjectPtr;
-			Hwnd		hwnd;
-
-			DropTarget = new IDropTarget();
-			OLEDropObject = new IDropTargetVtbl();
-			OLEDropObject.QueryInterface = QueryInterface;
-			OLEDropObject.AddRef = AddRef;
-			OLEDropObject.Release = Release;
-			OLEDropObject.DragEnter = DragEnter;
-			OLEDropObject.DragOver = DragOver;
-			OLEDropObject.DragLeave = DragLeave;
-			OLEDropObject.Drop = Drop;
-
-			hwnd = Hwnd.ObjectFromHandle(Window);
-
-			OLEDropObjectPtr = Marshal.AllocHGlobal(Marshal.SizeOf(OLEDropObject));
-			Marshal.StructureToPtr(OLEDropObject, OLEDropObjectPtr, false);
-			hwnd.marshal_free_list.Add(OLEDropObjectPtr);
-
-			DropTargetPtr = Marshal.AllocHGlobal(Marshal.SizeOf(DropTarget));
-			hwnd.marshal_free_list.Add(DropTargetPtr);
-			DropTarget.vtbl = OLEDropObjectPtr;
-			DropTarget.window = Window;
-			Marshal.StructureToPtr(DropTarget, DropTargetPtr, false);
-
-			int result = Win32RegisterDragDrop(Window, DropTargetPtr);
-
-			return true;
-		}
-
-		// Thanks, Martin
-		static MethodInfo CreateIDataObjectGetDataMethod () {
-			AssemblyName aname = new AssemblyName ();
-			aname.Name = "XplatUIWin32.GetData";
-			AssemblyBuilder ass = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				aname, AssemblyBuilderAccess.Run);
-
-			ModuleBuilder mb = ass.DefineDynamicModule ("XplatUIWin32.GetData");
-
-			TypeBuilder tb = mb.DefineType ("XplatUIWin32.GetData", TypeAttributes.Public);
-
-			Type ret_type = typeof (int);
-			Type[] param_types = new Type[] { typeof (IntPtr), typeof (IntPtr), typeof (IntPtr), typeof (IntPtr) };
-			Type[] c_param_types = new Type[] { typeof (IntPtr), typeof (IntPtr), typeof (IntPtr) };
-
-			MethodBuilder method = tb.DefineMethod (
-				"GetData", MethodAttributes.Static | MethodAttributes.Public,
-				ret_type, param_types);
-
-			ILGenerator ig = method.GetILGenerator ();
-			ig.Emit (OpCodes.Ldarg_3);
-			ig.Emit (OpCodes.Ldarg_2);
-			ig.Emit (OpCodes.Ldarg_1);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.EmitCalli (OpCodes.Calli, CallingConvention.StdCall, ret_type, c_param_types);
-			ig.Emit (OpCodes.Ret);
-
-			Type t = tb.CreateType ();
-			MethodInfo m = t.GetMethod ("GetData");
-
-			return m;
-		}
-
-		#endregion	// DnD
 		#endregion
 
 		#region Constructor & Destructor
@@ -828,15 +541,7 @@ namespace System.Windows.Forms {
 			// Handle singleton stuff first
 			ref_count=0;
 
-			// Now regular initialization
-			Win32OleInitialize(IntPtr.Zero);
-
-			#if OnceOLESucksLess
-			// To callback IDataObject methods
-			IDataObjectGetDataMethod = CreateIDataObjectGetDataMethod();
-			GetDataArgs = new object[4];
-			#endif
-			DragDropEventArgs = new DragEventArgs(new DataObject(DataFormats.FileDrop, new string[0]), 0, 0, 0, DragDropEffects.None, DragDropEffects.None);
+			DnD = new Win32DnD();
 
 			mouse_state = MouseButtons.None;
 			mouse_position = Point.Empty;
@@ -870,15 +575,6 @@ namespace System.Windows.Forms {
 			}
 
 			timer_list = new Hashtable ();
-
-			// Setup our delegates
-			QueryInterface = new QueryInterfaceDelegate(QueryInterfaceMethod);
-			AddRef = new AddRefDelegate(AddRefMethod);
-			Release = new ReleaseDelegate(ReleaseMethod);
-			DragEnter = new DragEnterDelegate(DragEnterMethod);
-			DragOver = new DragOverDelegate(DragOverMethod);
-			DragLeave = new DragLeaveDelegate(DragLeaveMethod);
-			Drop = new DropDelegate(DropMethod);
 		}
 		#endregion	// Constructor & Destructor
 
@@ -918,15 +614,15 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private static String AnsiToString(IntPtr ansi_data) {
+		internal static String AnsiToString(IntPtr ansi_data) {
 			return (string)Marshal.PtrToStringAnsi(ansi_data);
 		}
 
-		private static String UnicodeToString(IntPtr unicode_data) {
+		internal static String UnicodeToString(IntPtr unicode_data) {
 			return (string)Marshal.PtrToStringUni(unicode_data);
 		}
 
-		private static Image DIBtoImage(IntPtr dib_data) {
+		internal static Image DIBtoImage(IntPtr dib_data) {
 			MemoryStream		ms;
 			byte[]			header;
 			byte[]			buffer;
@@ -989,7 +685,7 @@ namespace System.Windows.Forms {
 			return bmp;
 		}
 
-		private static byte[] ImageToDIB(Image image) {
+		internal static byte[] ImageToDIB(Image image) {
 			MemoryStream	ms;
 			byte[]		buffer;
 			byte[]		retbuf;
@@ -1002,6 +698,26 @@ namespace System.Windows.Forms {
 			retbuf = new byte[buffer.Length];
 			Array.Copy(buffer, 14, retbuf, 0, buffer.Length - 14);
 			return retbuf;
+		}
+
+		internal static IntPtr DupGlobalMem(IntPtr mem) {
+			IntPtr	dup;
+			IntPtr	dup_ptr;
+			IntPtr	mem_ptr;
+			uint	len;
+
+			len = Win32GlobalSize(mem);
+			mem_ptr = Win32GlobalLock(mem);
+
+			dup = Win32GlobalAlloc(GAllocFlags.GMEM_MOVEABLE, (int)len);
+			dup_ptr = Win32GlobalLock(dup);
+
+			Win32CopyMemory(dup_ptr, mem_ptr, (int)len);
+
+			Win32GlobalUnlock(mem);
+			Win32GlobalUnlock(dup);
+
+			return dup;
 		}
 		#endregion	// Private Support Methods
 
@@ -1513,27 +1229,7 @@ Console.WriteLine("Hit Clear background");
 				}
 
 				case Msg.WM_DROPFILES: {
-					IntPtr		hDrop;
-					int		count;
-					StringBuilder	sb;
-					string[]	dropfiles;
-
-					hDrop = msg.wParam;
-					count = Win32DragQueryFile(hDrop, -1, IntPtr.Zero, 0);
-
-					dropfiles = new string[count];
-
-					sb = new StringBuilder(256);
-					for (int i = 0; i < count; i++) {
-						Win32DragQueryFile(hDrop, i, sb, sb.Capacity);
-						dropfiles[i] = sb.ToString();
-					}
-
-					DragDropEventArgs.Data.SetData(DataFormats.FileDrop, dropfiles);
-
-					Control.FromHandle(msg.hwnd).DndDrop(DragDropEventArgs);
-					
-					return true;
+					return Win32DnD.HandleWMDropFiles(ref msg);
 				}
 
 				case Msg.WM_MOUSELEAVE: {
@@ -2229,10 +1925,14 @@ Console.WriteLine("Hit Clear background");
 
 		internal override void SetAllowDrop(IntPtr hwnd, bool allowed) {
 			if (allowed) {
-				RegisterDropTarget(hwnd);
+				Win32DnD.RegisterDropTarget(hwnd);
 			} else {
-				Win32RevokeDragDrop(hwnd);
+				Win32DnD.UnregisterDropTarget(hwnd);
 			}
+		}
+
+		internal override DragDropEffects StartDrag(IntPtr hwnd, object data, DragDropEffects allowedEffects) {
+			return Win32DnD.StartDrag(hwnd, data, allowedEffects);
 		}
 		
 		internal override int KeyboardSpeed {
@@ -2526,37 +2226,22 @@ Console.WriteLine("Hit Clear background");
 		private extern static IntPtr Win32SetClipboardData(uint format, IntPtr handle);
 
 		[DllImport ("kernel32.dll", EntryPoint="GlobalAlloc", CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32GlobalAlloc(GAllocFlags Flags, int dwBytes);
-
-		[DllImport ("kernel32.dll", EntryPoint="GlobalFree", CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32GlobalFree(IntPtr hMem);
-
-		[DllImport ("kernel32.dll", EntryPoint="GlobalLock", CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32GlobalLock(IntPtr hMem);
-
-		[DllImport ("kernel32.dll", EntryPoint="GlobalUnlock", CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32GlobalUnlock(IntPtr hMem);
+		internal extern static IntPtr Win32GlobalAlloc(GAllocFlags Flags, int dwBytes);
 
 		[DllImport ("kernel32.dll", EntryPoint="CopyMemory", CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32CopyMemory(IntPtr destination, IntPtr source, int length);
+		internal extern static void Win32CopyMemory(IntPtr Destination, IntPtr Source, int length);
 
-		[DllImport ("ole32.dll", EntryPoint="RegisterDragDrop", CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32RegisterDragDrop(IntPtr Window, IntPtr pDropTarget);
+		[DllImport ("kernel32.dll", EntryPoint="GlobalFree", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32GlobalFree(IntPtr hMem);
 
-		[DllImport ("ole32.dll", EntryPoint="RevokeDragDrop", CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32RevokeDragDrop(IntPtr Window);
+		[DllImport ("kernel32.dll", EntryPoint="GlobalSize", CallingConvention=CallingConvention.StdCall)]
+		internal extern static uint Win32GlobalSize(IntPtr hMem);
 
-		[DllImport ("shell32.dll", EntryPoint="DragAcceptFiles", CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32DragAcceptFiles(IntPtr Window, bool fAccept);
+		[DllImport ("kernel32.dll", EntryPoint="GlobalLock", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32GlobalLock(IntPtr hMem);
 
-		[DllImport ("ole32.dll", EntryPoint="OleInitialize", CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32OleInitialize(IntPtr pvReserved);
-
-		[DllImport ("shell32.dll", EntryPoint="DragQueryFileW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32DragQueryFile(IntPtr hDrop, int iFile, IntPtr lpszFile, int cch);
-
-		[DllImport ("shell32.dll", EntryPoint="DragQueryFileW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32DragQueryFile(IntPtr hDrop, int iFile, StringBuilder lpszFile, int cch);
+		[DllImport ("kernel32.dll", EntryPoint="GlobalUnlock", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32GlobalUnlock(IntPtr hMem);
 		#endregion
 	}
 }

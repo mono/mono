@@ -342,6 +342,7 @@ System.Windows.Forms/UpDownEventHandler.cs
 System.Windows.Forms/UserControl.cs
 System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollBar.cs
+System.Windows.Forms/Win32DnD.cs
 System.Windows.Forms/X11Dnd.cs
 System.Windows.Forms/X11Structs.cs
 System.Windows.Forms/X11Keyboard.cs
