@@ -263,6 +263,11 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
+		public static void StackTrace ()
+		{
+			Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
+		}
+
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// IF YOU ADD A NEW WARNING YOU HAVE TO DUPLICATE ITS ID HERE
 		//
