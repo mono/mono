@@ -1,3 +1,12 @@
+2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UpDownBase.cs: remove duplicate addition of event, enable some code
+	that was commented out.
+	* NumericUpDown.cs: added missing attributes and Hexadecimal property.
+	Validate input when a key is pressed. It works fine now for every
+	combination of Hexadecimal. Only missing some drawing love when sharing
+	space with other controls.
+
 2005-06-04  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs:

@@ -17,15 +17,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004, 2005 Novell, Inc.
 //
 // Authors:
 //	Miguel de Icaza (miguel@novell.com).
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 //
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Windows.Forms {
 	[DefaultEvent ("ValueChanged")]
@@ -35,12 +37,13 @@ namespace System.Windows.Forms {
 		Decimal min = 0m;
 		Decimal max = 100m;
 		Decimal increment = 1m;
-		bool thousand = false;
-		bool on_init = false;
 		string format;
+		bool thousand;
+		bool on_init;
 		int decimal_places;
+		bool hexadecimal;
 		
-		public NumericUpDown () : base ()
+		public NumericUpDown ()
 		{
 			UpdateFormat ();
 			UpdateEditText ();
@@ -101,36 +104,66 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		void UpdateFormat ()
+		{
+			if (hexadecimal)
+				format = "X";
+			else if (thousand)
+				format = "N" + decimal_places.ToString ();
+			else
+				format = "F" + decimal_places.ToString ();
+		}
+
 		public override void UpdateEditText ()
 		{
 			if (on_init)
 				return;
-			
+
+			if (UserEdit)
+				ParseEditText ();
+
 			ChangingText = true;
-			Text = updown_value.ToString (format);
+			if (hexadecimal) { // gotta convert to something, decimal throws with "X"
+				long val = (long) updown_value;
+				Text = val.ToString (format);
+			} else {
+				Text = updown_value.ToString (format);
+			}
 		}
 
 		public void ParseEditText ()
 		{
 			decimal res;
-			
 			try {
-				res = decimal.Parse (Text);
+				if (hexadecimal) {
+					res = Int64.Parse (Text, NumberStyles.HexNumber);
+				} else {
+					res = decimal.Parse (Text);
+				}
 			} catch {
-				res = min;
+				res = updown_value;
 			}
 			
 			if (res < min)
 				res = min;
 			else if (res > max)
 				res = max;
-			updown_value = res;
+
+			Value = res;
+			UserEdit = false;
 		}
 
 		protected override void ValidateEditText ()
 		{
 			ParseEditText ();
 			UpdateEditText ();
+		}
+
+		
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			//TODO
+			return base.CreateAccessibilityInstance ();
 		}
 
 		[Bindable(true)]
@@ -155,7 +188,7 @@ namespace System.Windows.Forms {
 				
 				updown_value = value;
 				OnValueChanged (EventArgs.Empty);
-				Text = updown_value.ToString (format);
+				UpdateEditText ();
 			}
 		}
 
@@ -215,64 +248,82 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		void UpdateFormat ()
-		{
-			if (thousand)
-				format = "N" + decimal_places.ToString ();
-			else
-				format = "F" + decimal_places.ToString ();
-		}
-		
+		[DefaultValue (false)]
+		[Localizable (true)]
 		public bool ThousandsSeparator {
 			get {
 				return thousand;
 			}
 
 			set {
+				if (value == thousand)
+					return;
+
 				thousand = value;
 				UpdateFormat ();
 				UpdateEditText ();
 			}
 		}
 
+		[DefaultValue (0)]
 		public int DecimalPlaces {
 			get {
 				return decimal_places;
 			}
 
 			set {
+				if (value == decimal_places)
+					return;
+
 				decimal_places = value;
+				UpdateFormat ();
+				UpdateEditText ();
+			}
+		}
+
+		[DefaultValue (false)]
+		public bool Hexadecimal {
+			get { return hexadecimal; }
+			set {
+				if (value == hexadecimal)
+					return;
+
+				hexadecimal = value;
 				UpdateFormat ();
 				UpdateEditText ();
 			}
 		}
 		
 #region Overrides for Control hooks
-
-		protected override void OnLostFocus (EventArgs e)
+		static bool CompareCharToString (char c, string str)
 		{
-			base.OnLostFocus (e);
-			if (UserEdit){
-				ParseEditText ();
-				UpdateEditText ();
-			}
-		}
+			if (str.Length == 1)
+				return (c == str [0]);
 
-		protected override void OnMouseDown (MouseEventArgs e)
-		{			
-			// TODO: What to do?
-		}
-
-		protected override void OnMouseUp (MouseEventArgs e)
-		{
-			// TODO: What to do?
+			return (new string (c, 1) == str);
 		}
 
 		protected override void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
 		{
-			Console.WriteLine ("OnTextBoxKeyPress: " + e);
+			base.OnTextBoxKeyPress (source, e);
 
-			// TODO: Apparently we must validate digit input here
+			bool handled = true;
+			char key = e.KeyChar;
+			bool is_digit = Char.IsDigit (key);
+			if (is_digit || hexadecimal) {
+				handled = !(is_digit || (key >= 'a' && key <= 'f') || (key >= 'A' && key <= 'F'));
+			} else {
+				NumberFormatInfo ninfo = CultureInfo.CurrentCulture.NumberFormat;
+				if (CompareCharToString (key, ninfo.NegativeSign)) {
+					handled = false;
+				} else if (CompareCharToString (key, ninfo.NumberDecimalSeparator)) {
+					handled = false;
+				} else if (CompareCharToString (key, ninfo.NumberGroupSeparator)) {
+					handled = false;
+				}
+			}
+
+			e.Handled = handled;
 		}
 #endregion
 		protected virtual void OnValueChanged (EventArgs e)

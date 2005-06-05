@@ -175,9 +175,12 @@ namespace System.Windows.Forms {
 			{
 				if (up_pressed){
 					updownbase.UpButton ();
+					up_pressed = false;
 				}
-				if (down_pressed)
+				if (down_pressed) {
 					updownbase.DownButton ();
+					down_pressed = false;
+				}
 			}
 
 			protected override void OnMouseMove (MouseEventArgs args)
@@ -199,7 +202,6 @@ namespace System.Windows.Forms {
 						mouse_in = false;
 					}
 					if (mouse_in ^ old){
-						Console.WriteLine ("STATE CHANGE");
 						if (mouse_in)
 							Click ();
 						Invalidate (pressed);
@@ -256,7 +258,6 @@ namespace System.Windows.Forms {
 			entry.KeyPress += new KeyPressEventHandler (OnTextBoxKeyPress);
 			entry.LostFocus += new EventHandler (OnTextBoxLostFocus);
 			entry.Resize += new EventHandler (OnTextBoxResize);
-			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			
 			entry.ReadOnly = false;
@@ -303,8 +304,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnChanged (object source, EventArgs e)
 		{
-			// Not clear, the docs state that this will raise the
-			// Changed event, but that event is not listed anywhere.
+			
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -407,14 +407,13 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
 		{
-			OnTextChanged (e);
-#if false
 			if (changing_text)
 				return;
-			changing_text = false;
-			user_edit = true;
-			OnChanged (source, e);
-#endif
+
+			ChangingText = false;
+			UserEdit = true;
+			OnTextChanged (e);
+			OnChanged (source, EventArgs.Empty);
 		}
 
 #endregion
