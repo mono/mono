@@ -321,12 +321,17 @@ namespace System.Web.Compilation
 
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
-			if (results.CompiledAssembly == null)
-				throw new CompilationException (parser.InputFile, results.Errors,
-					"No assembly returned after compilation!?");
+			Assembly assembly = results.CompiledAssembly;
+			if (assembly == null) {
+				if (!File.Exists (compilerParameters.OutputAssembly))
+					throw new CompilationException (parser.InputFile, results.Errors,
+						"No assembly returned after compilation!?");
+
+				assembly = Assembly.LoadFrom (compilerParameters.OutputAssembly);
+			}
 
 			results.TempFiles.Delete ();
-			return results.CompiledAssembly.GetType (mainClassExpr.Type.BaseType, true);
+			return assembly.GetType (mainClassExpr.Type.BaseType, true);
 		}
 
 		internal CompilerParameters CompilerParameters {
