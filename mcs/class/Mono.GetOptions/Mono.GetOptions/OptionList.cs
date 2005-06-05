@@ -46,6 +46,7 @@ namespace Mono.GetOptions
 		private OptionsParsingMode parsingMode;
 		private bool breakSingleDashManyLettersIntoManyOptions;
 		private bool endOptionProcessingWithDoubleDash;
+		public ErrorReporter ReportError;
 		
 		private string appExeName;
 		private string appVersion;
@@ -186,6 +187,7 @@ namespace Mono.GetOptions
 			this.parsingMode = optionBundle.ParsingMode ;
 			this.breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
 			this.endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
+			this.ReportError = optionBundle.ReportError;
 			
 			ExtractEntryAssemblyInfo(optionsType);
 
@@ -341,23 +343,47 @@ namespace Mono.GetOptions
 				{
 					try 
 					{
-						StreamReader tr = new StreamReader(arg.Substring(1));
-						string line;
-						while ((line = tr.ReadLine()) != null)
-						{
-							result.AddRange(line.Split());
-						}
-						tr.Close(); 
-					}
-					catch (FileNotFoundException exception)
-					{
-						Console.WriteLine("Could not find response file: " + arg.Substring(1));
+						using (StreamReader tr = new StreamReader(arg.Substring(1))) {
+							string line;
+							StringBuilder sb = new StringBuilder ();
+
+							while ((line = tr.ReadLine()) != null) {
+								int t = line.Length;
+
+								for (int i = 0; i < t; i++) {
+									char c = line [i];
+
+									if (c == '"' || c == '\'') {
+										char end = c;
+
+										for (i++; i < t; i++) {
+											c = line [i];	
+
+											if (c == end)
+												break;
+											sb.Append(c);
+										}
+										} else if (c == ' ') {
+										if (sb.Length > 0) {
+											result.Add (sb.ToString());
+											sb.Length = 0;
+										}
+									} else {
+										sb.Append (c);
+									}
+								}
+								if (sb.Length > 0) {
+									result.Add (sb.ToString());
+									sb.Length = 0;
+								}
+							}
+							tr.Close ();	
+						} 
+					} catch (FileNotFoundException) {
+						ReportError(2011, "Unable to open response file '" + arg.Substring(1) + "'");
 						continue;
-					}
-					catch (Exception exception)
-					{
-						Console.WriteLine("Error trying to read response file: " + arg.Substring(1));
-						Console.WriteLine(exception.Message);
+					} catch (Exception exception) {
+						ReportError(2011, "Unable to open response file '" + arg.Substring(1) + "'. " + exception.Message);
 						continue;
 					}
 				}
