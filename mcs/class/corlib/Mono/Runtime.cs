@@ -41,6 +41,12 @@ namespace Mono {
 		{
 			mono_runtime_install_handlers ();
 		}
+
+		// Should not be removed intended for external use
+		// Safe to be called using reflection
+		// Format is undefined only for use as a string for reporting
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern string GetDisplayName ();
 	}
 	
 }
