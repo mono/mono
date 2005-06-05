@@ -1009,7 +1009,8 @@ namespace Mono.CSharp {
 			Pinned = 4,
 			IsThis = 8,
 			Captured = 16,
-			AddressTaken = 32
+			AddressTaken = 32,
+			CompilerGenerated = 64
 		}
 
 		public enum ReadOnlyContext: byte {
@@ -1111,6 +1112,16 @@ namespace Mono.CSharp {
 
 			set {
 				flags |= Flags.AddressTaken;
+			}
+		}
+
+		public bool CompilerGenerated {
+			get {
+				return (flags & Flags.CompilerGenerated) != 0;
+			}
+
+			set {
+				flags |= Flags.CompilerGenerated;
 			}
 		}
 
@@ -1279,6 +1290,11 @@ namespace Mono.CSharp {
 		//
 		// Keeps track of constants
 		Hashtable constants;
+
+		//
+		// Temporary variables.
+		//
+		ArrayList temporary_variables;
 		
 		//
 		// If this is a switch section, the enclosing switch block.
@@ -1605,6 +1621,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		static int next_temp_id = 0;
+
+		public LocalInfo AddTemporaryVariable (TypeExpr te, Location loc)
+		{
+			if (temporary_variables == null)
+				temporary_variables = new ArrayList ();
+
+			int id = ++next_temp_id;
+			string name = "$s_" + id.ToString ();
+
+			LocalInfo li = new LocalInfo (te, name, this, loc);
+			li.CompilerGenerated = true;
+			temporary_variables.Add (li);
+			return li;
+		}
+
 		public Hashtable Variables {
 			get {
 				return variables;
@@ -1868,6 +1900,12 @@ namespace Mono.CSharp {
 						else if (!vi.IsThis)
 							vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 					}
+				}
+			}
+
+			if (temporary_variables != null) {
+				foreach (LocalInfo vi in temporary_variables) {
+					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 				}
 			}
 
@@ -4206,7 +4244,7 @@ namespace Mono.CSharp {
 		protected class TemporaryVariable : Expression, IMemoryLocation
 		{
 			FieldBuilder fb;
-			LocalBuilder local;
+			LocalInfo li;
 
 			public TemporaryVariable (Type type, Location loc)
 			{
@@ -4223,6 +4261,11 @@ namespace Mono.CSharp {
 					count++;
 					fb = ec.CurrentIterator.MapVariable (
 						"s_", count.ToString (), type);
+				} else {
+					TypeExpr te = new TypeExpression (type, loc);
+					li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
+					if (!li.Resolve (ec))
+						return null;
 				}
 
 				return this;
@@ -4236,7 +4279,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ldfld, fb);
 				} else {
-					ig.Emit (OpCodes.Ldloc, local);
+					ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
 				}
 			}
 
@@ -4248,7 +4291,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ldflda, fb);
 				} else {
-					ig.Emit (OpCodes.Ldloca, local);
+					ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
 				}
 			}
 
@@ -4256,14 +4299,12 @@ namespace Mono.CSharp {
 			{
 				if (fb != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
-				else if (local == null)
-					local = ec.ig.DeclareLocal (type);
 
 				right_side.Emit (ec);
 				if (fb != null)
 					ec.ig.Emit (OpCodes.Stfld, fb);
 				else
-					ec.ig.Emit (OpCodes.Stloc, local);
+					ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
 			}
 
 			public void EmitThis (ILGenerator ig)
@@ -4276,11 +4317,8 @@ namespace Mono.CSharp {
 			{
 				if (fb != null)
 					ig.Emit (OpCodes.Stfld, fb);
-				else {
-					if (local == null)
-						local = ig.DeclareLocal (type);
-					ig.Emit (OpCodes.Stloc, local);
-				}
+				else
+					ig.Emit (OpCodes.Stloc, li.LocalBuilder);
 			}
 
 			public void AddressOf (EmitContext ec, AddressOp mode)

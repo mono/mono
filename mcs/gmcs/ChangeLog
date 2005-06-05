@@ -1,5 +1,15 @@
 2005-06-05  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (LocalInfo.CompilerGenerated): New flag.
+	(Block.AddTemporaryVariable): New public method; creates a new
+	`LocalInfo' for a temporary variable.
+	(Block.EmitMeta): Create the LocalBuilders for all the temporary
+	variables here.
+	(Foreach.TemporaryVariable): Use Block.AddTemporaryVariable() for
+	non-iterator variables.
+
+2005-06-05  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Foreach.TemporaryVariable): Create the
 	LocalBuilder in the Emit phase and not in Resolve since in some
 	situations, we don't have an ILGenerator during Resolve; see
