@@ -143,8 +143,10 @@ namespace System.Web
 				_OutputFilter.Write (arrData, 0, size);
 				_OutputFilter.Flush ();
 
-				if (CloseStream)
+				if (CloseStream) {
 					_OutputFilter.Close ();
+					_OutputFilter = null;
+				}
 			} finally {
 				_OutputProxy.Active = false;
 				FreeBuffer (arrData);

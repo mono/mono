@@ -1,3 +1,7 @@
+2005-06-05  Kornél Pál <kornelpal@hotmail.com>
+
+	* HttpWriter.cs: Fixed: _OutputFilter.Close () was called twice.
+
 2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: modified HtmlDecode so that it does not need to call
