@@ -133,7 +133,8 @@ TEST_SOURCES_net_2_0 = \
 	gen-131 gen-132 gen-133 gen-134 gen-135 gen-136 gen-137 gen-138 gen-139 gen-140 \
 	gen-141 gen-142 gen-143 gen-144 gen-145	gen-146 gen-147 gen-148 gen-149 gen-150 \
 	gen-151 gen-152	gen-153 gen-154 gen-155	        gen-157 gen-158			\
-	cond-attr fixed-buffer-dll fixed-buffer-exe
+	cond-attr fixed-buffer-dll fixed-buffer-exe					\
+	2test-19.cs
 
 TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common)
 
