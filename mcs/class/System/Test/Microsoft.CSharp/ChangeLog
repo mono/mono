@@ -1,3 +1,8 @@
+2005-06-05  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromCompileUnitTest.cs: re-enabled tests as 
+	IndentedTextWriter now matches MS.NET
+
 2005-06-04  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromNamespaceTest.cs: re-enabled SimpleNamespaceTest

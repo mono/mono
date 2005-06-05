@@ -75,7 +75,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Ignore ("This only differs in 4 spaces")]
 		public void SimpleNamespaceTest ()
 		{
 			CodeNamespace ns = new CodeNamespace ("A");
@@ -85,7 +84,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Ignore ("This only differs in 4 spaces")]
 		public void ReferenceAndSimpleNamespaceTest()
 		{
 			CodeNamespace ns = new CodeNamespace ("A");
