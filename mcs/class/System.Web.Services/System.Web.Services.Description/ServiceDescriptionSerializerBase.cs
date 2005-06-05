@@ -58,7 +58,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "targetNamespace" && Reader.NamespaceURI == "") {
 					ob.TargetNamespace = Reader.Value;
@@ -168,7 +168,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "type" && Reader.NamespaceURI == "") {
 					ob.Type = ToXmlQualifiedName (Reader.Value);
@@ -246,7 +246,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -389,7 +389,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -536,7 +536,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -611,7 +611,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -694,7 +694,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "binding" && Reader.NamespaceURI == "") {
 					ob.Binding = ToXmlQualifiedName (Reader.Value);
@@ -762,7 +762,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "element" && Reader.NamespaceURI == "") {
 					ob.Element = ToXmlQualifiedName (Reader.Value);
@@ -840,7 +840,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "parameterOrder" && Reader.NamespaceURI == "") {
 					ob.ParameterOrderString = Reader.Value;
@@ -931,7 +931,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -996,7 +996,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -1061,7 +1061,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -1126,7 +1126,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
 					ob.Message = ToXmlQualifiedName (Reader.Value);
@@ -1194,7 +1194,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
 					ob.Message = ToXmlQualifiedName (Reader.Value);
@@ -1262,7 +1262,7 @@ namespace System.Web.Services.Description
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.Name = Reader.Value;
+					ob.Name = XmlConvert.DecodeName(Reader.Value);
 				}
 				else if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
 					ob.Message = ToXmlQualifiedName (Reader.Value);
@@ -1342,7 +1342,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("ServiceDescription", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			WriteAttribute ("targetNamespace", "", ob.TargetNamespace);
 
 			ServiceDescription.WriteExtensions (Writer, ob);
@@ -1444,7 +1444,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Message", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 
 			if (ob.Parts != null) {
 				for (int n65 = 0; n65 < ob.Parts.Count; n65++) {
@@ -1472,7 +1472,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("PortType", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 
 			if (ob.Operations != null) {
 				for (int n66 = 0; n66 < ob.Operations.Count; n66++) {
@@ -1500,7 +1500,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Binding", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 			WriteAttribute ("type", "", FromXmlQualifiedName (ob.Type));
 
 			ServiceDescription.WriteExtensions (Writer, ob);
@@ -1530,7 +1530,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Service", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 
 			if (ob.Ports != null) {
 				for (int n68 = 0; n68 < ob.Ports.Count; n68++) {
@@ -1563,7 +1563,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("MessagePart", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			WriteAttribute ("element", "", FromXmlQualifiedName (ob.Element));
 			WriteAttribute ("type", "", FromXmlQualifiedName (ob.Type));
 
@@ -1588,7 +1588,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Operation", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 			if (ob.ParameterOrderString != "") {
 				WriteAttribute ("parameterOrder", "", ob.ParameterOrderString);
 			}
@@ -1630,7 +1630,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationBinding", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.Faults != null) {
@@ -1661,7 +1661,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Port", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeName(ob.Name));
 			WriteAttribute ("binding", "", FromXmlQualifiedName (ob.Binding));
 
 			ServiceDescription.WriteExtensions (Writer, ob);
@@ -1686,7 +1686,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationFault", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			WriteAttribute ("message", "", FromXmlQualifiedName (ob.Message));
 
 			if (ob.Documentation != "") {
@@ -1710,7 +1710,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationInput", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			WriteAttribute ("message", "", FromXmlQualifiedName (ob.Message));
 
 			if (ob.Documentation != "") {
@@ -1734,7 +1734,7 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationOutput", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("name", "", ob.Name);
+			WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			WriteAttribute ("message", "", FromXmlQualifiedName (ob.Message));
 
 			if (ob.Documentation != "") {
@@ -1759,7 +1759,7 @@ namespace System.Web.Services.Description
 			if (needType) WriteXsiType("FaultBinding", "http://schemas.xmlsoap.org/wsdl/");
 
 			if (ob.Name != "") {
-				WriteAttribute ("name", "", ob.Name);
+				WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			}
 
 			ServiceDescription.WriteExtensions (Writer, ob);
@@ -1785,7 +1785,7 @@ namespace System.Web.Services.Description
 			if (needType) WriteXsiType("InputBinding", "http://schemas.xmlsoap.org/wsdl/");
 
 			if (ob.Name != "") {
-				WriteAttribute ("name", "", ob.Name);
+				WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			}
 
 			ServiceDescription.WriteExtensions (Writer, ob);
@@ -1811,7 +1811,7 @@ namespace System.Web.Services.Description
 			if (needType) WriteXsiType("OutputBinding", "http://schemas.xmlsoap.org/wsdl/");
 
 			if (ob.Name != "") {
-				WriteAttribute ("name", "", ob.Name);
+				WriteAttribute ("name", "", XmlConvert.EncodeNmToken(ob.Name));
 			}
 
 			ServiceDescription.WriteExtensions (Writer, ob);

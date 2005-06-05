@@ -1,5 +1,6 @@
 2005-06-05 Konstantin Triger <kostat@mainsoft.com>
 
+	* ServiceDescriptionSerializerBase.cs: Perform correct name encoding
 	* ServiceDescription.cs, SoapTransportImporter.cs: moving static fields to AppDomain in Java builds
 
 2005-04-11  Lluis Sanchez Gual <lluis@novell.com>
