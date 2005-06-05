@@ -227,7 +227,6 @@ namespace MonoTests.System.Reflection.Emit {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof(ArgumentNullException))]
 		public void TestGetConstructorNullTypes ()
 		{
@@ -239,6 +238,7 @@ namespace MonoTests.System.Reflection.Emit {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof(ArgumentNullException))]
 		public void TestGetConstructorNullElementType ()
 		{
