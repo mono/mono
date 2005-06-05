@@ -4595,11 +4595,14 @@ namespace Mono.MonoBASIC {
 					goto skip_already_resolved_property;
 				pe.PropertyArgs = (ArrayList) Arguments;
 				MethodBase mi = pe.PropertyInfo.GetGetMethod(true);
+				int argCount = 0;
+				if (Arguments != null)
+					argCount = Arguments.Count;
 
 				bool expanded = false;
 				if (IsApplicable(ec, pe.PropertyArgs, mi, out expanded) != ConversionType.None) {
 					if(VerifyArgumentsCompat (ec, pe.PropertyArgs,
-						pe.PropertyArgs.Count, mi, expanded, null, loc, pe.Name))
+						argCount, mi, expanded, null, loc, pe.Name))
 					{
 						expr_to_return = pe.DoResolve (ec);
 						expr_to_return.eclass = ExprClass.PropertyAccess;

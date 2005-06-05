@@ -1,3 +1,11 @@
+2005-06-03 Satya Sudha K <ksathyasudha@novell.com>
+	* expression.cs : Allowing '()' for property invocation with no args.
+	* typemanager.cs : 
+		- Caching a property's arguments (as 'NoTypes') while registering a property
+		- If a name resolves to a field as well as a property, treat it as a field
+		- If a name resolves to a field as well as a event, giving preference to event
+	* parameters.cs : Case-insensitive search/comparison of parameter/arg names
+
 2005-05-30 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs : 'For Each' statement : Wrapping the body of the For loop inside an exception block 
 			 if the enumerator implements 'IDisposable' interface

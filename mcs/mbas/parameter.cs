@@ -365,13 +365,13 @@ namespace Mono.MonoBASIC {
 				string base_name = FixedParameters [i].Name;
 				
 				for (j = i + 1; j < count; j++){
-					if (base_name != FixedParameters [j].Name)
+					if (base_name.ToLower () != FixedParameters [j].Name.ToLower ())
 						continue;
 					Error_DuplicateParameterName (base_name);
 					return false;
 				}
 
-				if (base_name == array_par_name){
+				if ((array_par_name != null) && (base_name.ToLower () == array_par_name.ToLower ())) {
 					Error_DuplicateParameterName (base_name);
 					return false;
 				}
@@ -403,7 +403,7 @@ namespace Mono.MonoBASIC {
 
 			if (FixedParameters != null){
 				foreach (Parameter par in FixedParameters){
-					if (par.Name == name){
+					if (par.Name.ToLower() == name.ToLower()) {
 						idx = i;
 						return par;
 					}
@@ -412,7 +412,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (ArrayParameter != null){
-				if (name == ArrayParameter.Name){
+				if (name.ToLower () == ArrayParameter.Name.ToLower ()) {
 					idx = i;
 					return ArrayParameter;
 				}

@@ -1541,6 +1541,7 @@ public class TypeManager {
 			return false;
 
 		properties.Add (pb, new Pair (get, set));
+		indexer_arguments.Add (pb, NoTypes);
 
 		return true;
 	}
@@ -2414,8 +2415,24 @@ public class TypeManager {
 			// Multiple properties: we query those just to find out the indexer
 			// name
 			//
-			if (list [0] is PropertyInfo)
+			if (list [0] is PropertyInfo) {
+				if ((list.Count == 2) && (list [1] is FieldInfo))
+					return new MemberInfo [] {list [1]};
 				return (MemberInfo []) list;
+			}
+
+
+			//
+			// We found an event: the cache lookup returns both the event and
+			// its private field.
+			//
+			if (list [0] is EventInfo) {
+				if ((list.Count == 2) && (list [1] is FieldInfo))
+					return new MemberInfo [] {list [0]};
+
+				// Oooops
+				return null;
+			}
 
 			//
 			// We found methods, turn the search into "method scan"
