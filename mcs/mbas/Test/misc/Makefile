@@ -2,7 +2,7 @@ thisdir = mbas/Test/misc
 
 include ../../../build/rules.make
 
-LOCAL_MBAS_FLAGS = --verbosegetoptions --stacktrace
+#LOCAL_MBAS_FLAGS = --verbosegetoptions --stacktrace
 
 test-local: WriteOK.exe
 
