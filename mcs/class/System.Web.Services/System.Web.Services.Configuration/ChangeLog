@@ -1,3 +1,7 @@
+2005-06-05 Konstantin Triger <kostat@mainsoft.com>
+
+	* WebServicesConfigurationSectionHandler.cs: moving static fields to AppDomain in Java builds
+
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* WebServicesConfigurationSectionHandler.cs: removed unused variables

@@ -369,7 +369,18 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class TypeStubManager 
 	{
+#if !TARGET_JVM
 		static Hashtable type_to_manager;
+#else
+		static Hashtable type_to_manager {
+			get {
+				return (Hashtable)AppDomain.CurrentDomain.GetData("TypeStubManager.type_to_manager");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("TypeStubManager.type_to_manager", value);
+			}
+		}
+#endif
 		
 		static TypeStubManager ()
 		{

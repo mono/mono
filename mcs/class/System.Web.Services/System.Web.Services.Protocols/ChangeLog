@@ -1,3 +1,7 @@
+2005-06-05 Konstantin Triger <kostat@mainsoft.com>
+
+	* WebClientProtocol.cs, TypeStubManager.cs, SoapExtension.cs: moving static fields to AppDomain in Java builds
+
 2005-02-07  Lluis Sanchez Gual <lluis@novell.com>
 
 	* XmlReturnWriter.cs, SoapDocumentationHandler.cs: Use utf-8 encoding
