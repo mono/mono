@@ -50,8 +50,8 @@ using System.Runtime.InteropServices;
 	[assembly: SatelliteContractVersion("7.0.3300.0")]
 #endif
 
-[assembly: AssemblyTitle("Microsoft.VisualBasic.dll")]
-[assembly: AssemblyDescription("Microsoft.VisualBasic.dll")]
+[assembly: AssemblyTitle("Microsoft Visual Basic .NET Runtime")]
+[assembly: AssemblyDescription("Microsoft Visual Basic .NET Runtime")]
 [assembly: AssemblyCompany("MONO development team")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 
