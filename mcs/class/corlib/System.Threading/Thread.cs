@@ -621,6 +621,9 @@ namespace System.Threading
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public static void SpinWait (int iterations) 
 		{
 			throw new NotImplementedException ();
@@ -808,6 +811,7 @@ namespace System.Threading
 		}
 
 		public int ManagedThreadId {
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 			get { return thread_id; }
 		}
 
@@ -826,12 +830,14 @@ namespace System.Threading
 		}
 
 		[MonoTODO]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginThreadAffinity ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void EndThreadAffinity ()
 		{
 			throw new NotImplementedException ();

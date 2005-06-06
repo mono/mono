@@ -31,6 +31,10 @@
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Threading
 {
 	public sealed class Mutex : WaitHandle 
@@ -69,7 +73,10 @@ namespace System.Threading
 		{
 			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
 		}
-	
+
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif	
 		public void ReleaseMutex() {
 			ReleaseMutex_internal(Handle);
 		}

@@ -1,3 +1,7 @@
+2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs Mutex.cs Monitor.cs: Add some missing 2.0 attributes.
+
 2005-05-29  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Timer.cs: Added new constructor for 2.0 and ComVisible attribute.

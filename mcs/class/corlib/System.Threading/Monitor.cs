@@ -68,7 +68,7 @@ namespace System.Threading
 		private extern static void Monitor_exit(object obj);
 
 #if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static void Exit(object obj) {
 			if(obj==null) {
