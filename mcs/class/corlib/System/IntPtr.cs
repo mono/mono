@@ -86,6 +86,9 @@ namespace System
 		}
 
 		public static int Size {
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			get {
 				return sizeof (void *);
 			}
@@ -129,6 +132,9 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		unsafe public void *ToPointer ()
 		{
 			return value;

@@ -36,6 +36,10 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[Serializable]
@@ -101,11 +105,17 @@ namespace System
 			return !Equals (a, b);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public override bool Equals (Object obj)
 		{
 			return Equals (this, obj as String);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public bool Equals (String value)
 		{
 			return Equals (this, value);
@@ -1496,6 +1506,9 @@ namespace System
 			}
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public unsafe override int GetHashCode ()
 		{
 			fixed (char * c = this) {

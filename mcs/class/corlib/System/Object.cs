@@ -34,6 +34,10 @@
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System {
 
 	[Serializable]
@@ -73,6 +77,9 @@ namespace System {
 		// <summary>
 		//   Object destructor. 
 		// </summary>
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		~Object ()
 		{
 		}
@@ -114,6 +121,9 @@ namespace System {
 		//   Tests whether a is equal to b.
 		//   Can not figure out why this even exists
 		// </summary>
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public static bool ReferenceEquals (object a, object b)
 		{
 			return (a == b);

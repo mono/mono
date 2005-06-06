@@ -34,6 +34,10 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[MonoTODO ("Serialization needs tests")]
@@ -72,7 +76,9 @@ namespace System
 			info.AddValue ("FieldObj", (MonoField) FieldInfo.GetFieldFromHandle (this), typeof (MonoField));
 		}
 
-
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
@@ -81,6 +87,9 @@ namespace System
 			return value == ((RuntimeFieldHandle)obj).Value;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public bool Equals (RuntimeFieldHandle handle)
 		{
 			return value == handle.Value;

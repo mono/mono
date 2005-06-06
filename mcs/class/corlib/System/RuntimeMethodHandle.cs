@@ -33,6 +33,10 @@ using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[MonoTODO ("Serialization needs tests")]
@@ -81,6 +85,9 @@ namespace System
 			return GetFunctionPointer (value);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
@@ -89,6 +96,9 @@ namespace System
 			return value == ((RuntimeMethodHandle)obj).Value;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public bool Equals (RuntimeMethodHandle handle)
 		{
 			return value == handle.Value;

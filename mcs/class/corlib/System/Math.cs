@@ -463,6 +463,9 @@ namespace System
 		public extern static double Pow (double x, double y);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public extern static double Sqrt (double x);
 	}
 }

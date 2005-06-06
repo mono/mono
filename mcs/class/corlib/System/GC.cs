@@ -102,6 +102,22 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void WaitForPendingFinalizers ();
-		
+
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+		[MonoTODO]
+		public static int CollectionCount (int generation) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void AddMemoryPressure (long bytesAllocated) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void RemoveMemoryPressure (long bytesAllocated) {
+			throw new NotImplementedException ();
+		}
+
 	}
 }

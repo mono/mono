@@ -50,6 +50,10 @@ using System.Security.Policy;
 using System.Security.Principal;
 using System.Configuration.Assemblies;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[ClassInterface(ClassInterfaceType.None)]
@@ -769,6 +773,9 @@ namespace System
 		}
 
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.MayCorruptAppDomain, Cer.MayFail)]
+#endif
 		public static void Unload (AppDomain domain)
 		{
 			if (domain == null)
@@ -999,6 +1006,9 @@ namespace System
 		}
 
 		public int Id {
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			get { return getDomainID (); }
 		}
 

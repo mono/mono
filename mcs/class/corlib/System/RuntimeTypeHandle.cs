@@ -33,6 +33,10 @@
 
 using System.Runtime.Serialization;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[MonoTODO ("Serialization needs tests")]
@@ -71,7 +75,9 @@ namespace System
 			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (MonoType));
 		}
 
-
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
@@ -80,6 +86,9 @@ namespace System
 			return value == ((RuntimeTypeHandle)obj).Value;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public bool Equals (RuntimeTypeHandle handle)
 		{
 			return value == handle.Value;
@@ -92,6 +101,7 @@ namespace System
 
 #if NET_2_0
 		[CLSCompliant (false)]
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public ModuleHandle GetModuleHandle () {
 			return Type.GetTypeFromHandle (this).Module.ModuleHandle;
 		}

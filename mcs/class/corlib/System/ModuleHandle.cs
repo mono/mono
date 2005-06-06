@@ -36,6 +36,8 @@ using System.Runtime.CompilerServices;
 
 #if NET_2_0
 
+using System.Runtime.ConstrainedExecution;
+
 namespace System
 {
 	[CLSCompliant (false)]
@@ -116,6 +118,9 @@ namespace System
 			return ResolveTypeHandle (typeToken);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
@@ -124,6 +129,9 @@ namespace System
 			return value == ((ModuleHandle)obj).Value;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public bool Equals (ModuleHandle handle)
 		{
 			return value == handle.Value;
