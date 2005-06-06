@@ -103,6 +103,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void WaitForPendingFinalizers ();
 
+#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
 		public static int CollectionCount (int generation) {
@@ -118,6 +119,6 @@ namespace System
 		public static void RemoveMemoryPressure (long bytesAllocated) {
 			throw new NotImplementedException ();
 		}
-
+#endif
 	}
 }

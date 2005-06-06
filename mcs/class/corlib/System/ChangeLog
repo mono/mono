@@ -1,5 +1,7 @@
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* GC.cs: Fix build.
+	
 	* GC.cs UnhandledExceptionEventArgs.cs IntPtr.cs RuntimeFieldHandle.cs 
 	  String.cs Object.cs Math.cs RuntimeMethodHandle.cs ModuleHandle.cs 
 	  RuntimeTypeHandle.cs AppDomain.cs: Add some missing 2.0 methods/attributes.
