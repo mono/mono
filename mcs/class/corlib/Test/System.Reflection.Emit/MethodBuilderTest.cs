@@ -16,6 +16,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -579,5 +580,102 @@ public class MethodBuilderTest : Assertion
 		  AssertEquals (typeof (ParamAttribute), cattrs [0].GetType ());
 		*/
 	}
+
+#if NET_2_0
+	[Test]
+	public void SetCustomAttribute_DllImport1 () {
+		string mname = genMethodName ();
+
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod (
+			mname, MethodAttributes.Public, typeof (void), 
+			new Type [] { typeof (int), typeof (string) });
+
+		// Create an attribute with default values
+		mb.SetCustomAttribute (new CustomAttributeBuilder(typeof(DllImportAttribute).GetConstructor(new Type[] { typeof(string) }), new object[] { "kernel32" }));
+
+		Type t = tb.CreateType ();
+
+		DllImportAttribute attr = (DllImportAttribute)((t.GetMethod (mname).GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
+
+		AssertEquals (CallingConvention.Winapi, attr.CallingConvention);
+		AssertEquals (mname, attr.EntryPoint);
+		AssertEquals ("kernel32", attr.Value);
+		AssertEquals (false, attr.ExactSpelling);
+		AssertEquals (true, attr.PreserveSig);
+		AssertEquals (false, attr.SetLastError);
+		AssertEquals (false, attr.BestFitMapping);
+		AssertEquals (false, attr.ThrowOnUnmappableChar);
+	}
+
+	[Test]
+	public void SetCustomAttribute_DllImport2 () {
+		string mname = genMethodName ();
+
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod (
+			mname, MethodAttributes.Public, typeof (void), 
+			new Type [] { typeof (int), typeof (string) });
+
+		CustomAttributeBuilder cb = new CustomAttributeBuilder (typeof (DllImportAttribute).GetConstructor (new Type [] {typeof (String)}), new object [] { "foo" }, new FieldInfo [] {typeof (DllImportAttribute).GetField ("EntryPoint"), typeof (DllImportAttribute).GetField ("CallingConvention"), typeof (DllImportAttribute).GetField ("CharSet"), typeof (DllImportAttribute).GetField ("ExactSpelling"), typeof (DllImportAttribute).GetField ("PreserveSig")}, new object [] { "bar", CallingConvention.StdCall, CharSet.Unicode, true, false });
+		mb.SetCustomAttribute (cb);
+
+		Type t = tb.CreateType ();
+
+		DllImportAttribute attr = (DllImportAttribute)((t.GetMethod (mname).GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
+
+		AssertEquals (CallingConvention.StdCall, attr.CallingConvention);
+		AssertEquals (CharSet.Unicode, attr.CharSet);
+		AssertEquals ("bar", attr.EntryPoint);
+		AssertEquals ("foo", attr.Value);
+		AssertEquals (true, attr.ExactSpelling);
+		AssertEquals (false, attr.PreserveSig);
+		AssertEquals (false, attr.SetLastError);
+		AssertEquals (false, attr.BestFitMapping);
+		AssertEquals (false, attr.ThrowOnUnmappableChar);
+	}
+
+	[Test]
+	public void SetCustomAttribute_DllImport3 () {
+		string mname = genMethodName ();
+
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod (
+			mname, MethodAttributes.Public, typeof (void), 
+			new Type [] { typeof (int), typeof (string) });
+
+		// Test attributes with three values (on/off/missing)
+		CustomAttributeBuilder cb = new CustomAttributeBuilder (typeof (DllImportAttribute).GetConstructor (new Type [] {typeof (String)}), new object [] { "foo" }, new FieldInfo [] { typeof (DllImportAttribute).GetField ("BestFitMapping"), typeof (DllImportAttribute).GetField ("ThrowOnUnmappableChar")}, new object [] { false, false });
+		mb.SetCustomAttribute (cb);
+
+		Type t = tb.CreateType ();
+
+		DllImportAttribute attr = (DllImportAttribute)((t.GetMethod (mname).GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
+
+		AssertEquals (false, attr.BestFitMapping);
+		AssertEquals (false, attr.ThrowOnUnmappableChar);
+	}
+
+	[Test]
+	public void SetCustomAttribute_DllImport4 () {
+		string mname = genMethodName ();
+
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod (
+			mname, MethodAttributes.Public, typeof (void), 
+			new Type [] { typeof (int), typeof (string) });
+
+		CustomAttributeBuilder cb = new CustomAttributeBuilder (typeof (DllImportAttribute).GetConstructor (new Type [] {typeof (String)}), new object [] { "foo" }, new FieldInfo [] { typeof (DllImportAttribute).GetField ("SetLastError"), typeof (DllImportAttribute).GetField ("BestFitMapping"), typeof (DllImportAttribute).GetField ("ThrowOnUnmappableChar")}, new object [] { true, true, true });
+		mb.SetCustomAttribute (cb);
+
+		Type t = tb.CreateType ();
+
+		DllImportAttribute attr = (DllImportAttribute)((t.GetMethod (mname).GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
+
+		AssertEquals (true, attr.SetLastError);
+		AssertEquals (true, attr.BestFitMapping);
+		AssertEquals (true, attr.ThrowOnUnmappableChar);
+	}
+#endif
 }
 }
