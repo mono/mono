@@ -4,6 +4,7 @@ Mono/AuthorAttribute.cs
 Mono/UsageComplementAttribute.cs
 Mono/AdditionalInfoAttribute.cs
 Mono/ReportBugsToAttribute.cs
+Mono/IsPartOfPackage.cs
 Mono.GetOptions/ArgumentProcessorAttribute.cs
 Mono.GetOptions/OptionAttribute.cs
 Mono.GetOptions/OptionsParsingMode.cs

@@ -1,3 +1,7 @@
+2005-06-06  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/OptionList.cs: Some refactoring of Gert's contribution
+	* Added Mono/IsPartOfPackage.cs: new informational assembly attribute
+
 2005-06-05  Gert Driesen  <drieseng@users.sourceforge.net>
 	* Mono.GetOptions/OptionList.cs: Support quoted arguments in
 	response files. Fixes bug #65484.
@@ -26,7 +30,7 @@
 	mbas' CompilerOptions. Added overridable string [] AssembliesToReferenceSoftly
 	* Mono.GetOptions/Options.cs: new constructor adds support to use a provided ErrorReporter
 	also added overridable string AdditionalBannerInfo readonly property 
-	* Mono.GetOptions/OptionList.cs: AdditionalBannerInfo is porcessed byt ShowBanner
+	* Mono.GetOptions/OptionList.cs: AdditionalBannerInfo is processed by ShowBanner
 
 2005-05-09  Raja R Harinath  <rharinath@novell.com>
 	* Mono.GetOptions.Useful/CommonCompilerOptions.cs (AddedReference):

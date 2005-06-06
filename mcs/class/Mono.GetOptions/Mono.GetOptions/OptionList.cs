@@ -75,16 +75,14 @@ namespace Mono.GetOptions
 
 		public string Usage
 		{
-			get
-			{
+			get {
 				return "Usage: " + appExeName + " [options] " + appUsageComplement;
 			}
 		}
 
 		public string AboutDetails
 		{
-			get
-			{
+			get {
 				return appAboutDetails;
 			}
 		}
@@ -162,8 +160,7 @@ namespace Mono.GetOptions
 			if (argumentProcessor != null)
 				throw new NotSupportedException("More than one argument processor method found");
 
-			if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo))
-			{
+			if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo)) {
 				if (((MethodInfo)memberInfo).ReturnType.FullName != typeof(void).FullName)
 					throw new NotSupportedException("Argument processor method must return 'void'");
 
@@ -245,17 +242,8 @@ namespace Mono.GetOptions
 		{
 			ShowTitleLines();
 			Console.WriteLine(appAboutDetails); 
-			StringBuilder sb = new StringBuilder("Authors: ");
-			bool first = true;
-			foreach(string s in appAuthors)
-			{
-				if (first)
-					first = false;
-				else
-					sb.Append(", ");
-				sb.Append(s);
-			}
-			Console.WriteLine(sb.ToString());
+			Console.Write("Authors: ");
+			Console.WriteLine(string.Join(", ", appAuthors));
 		}
 
 		private void ShowHelp(bool showSecondLevelHelp)
@@ -331,79 +319,79 @@ namespace Mono.GetOptions
 		
 		#endregion
 
-		#region Arguments Processing
+		#region Response File Expansion
+		
+		private void processResponseFileLine(string line, ArrayList result, StringBuilder sb)
+		{
+			int t = line.Length;
+			for (int i = 0; i < t; i++) {
+				char c = line [i];
+				if (c == '"' || c == '\'') {
+					char end = c;
+					for (i++; i < t; i++) {
+						c = line [i];	
+						if (c == end)
+							break;
+						sb.Append(c);
+					}
+				} else if (c == ' ') {
+					if (sb.Length > 0) {
+						result.Add(sb.ToString());
+						sb.Length = 0;
+					}
+				} else {
+					sb.Append(c);
+				}
+			}
+			if (sb.Length > 0) {
+				result.Add(sb.ToString());
+				sb.Length = 0;
+			}
+		}
+		
+		private void processResponseFile(string filename, ArrayList result)
+		{
+			StringBuilder sb = new StringBuilder();
+			string line;
+			try {
+				using (StreamReader responseFile = new StreamReader(filename)) {
+					while ((line = responseFile.ReadLine()) != null)
+						processResponseFileLine(line, result, sb);
+					responseFile.Close ();	
+				} 
+			} catch (FileNotFoundException) {
+				ReportError(2011, "Unable to find response file '" + filename + "'");
+			} catch (Exception exception) {
+				ReportError(2011, "Unable to open response file '" + filename + "'. " + exception.Message);
+			}
+		}
 
-		public string[] ExpandResponseFiles(string[] args)
+		private ArrayList ExpandResponseFiles(string[] args)
 		{
 			ArrayList result = new ArrayList();
-
 			foreach(string arg in args)
-			{
-				if (arg.StartsWith("@"))
-				{
-					try 
-					{
-						using (StreamReader tr = new StreamReader(arg.Substring(1))) {
-							string line;
-							StringBuilder sb = new StringBuilder ();
-
-							while ((line = tr.ReadLine()) != null) {
-								int t = line.Length;
-
-								for (int i = 0; i < t; i++) {
-									char c = line [i];
-
-									if (c == '"' || c == '\'') {
-										char end = c;
-
-										for (i++; i < t; i++) {
-											c = line [i];	
-
-											if (c == end)
-												break;
-											sb.Append(c);
-										}
-										} else if (c == ' ') {
-										if (sb.Length > 0) {
-											result.Add (sb.ToString());
-											sb.Length = 0;
-										}
-									} else {
-										sb.Append (c);
-									}
-								}
-								if (sb.Length > 0) {
-									result.Add (sb.ToString());
-									sb.Length = 0;
-								}
-							}
-							tr.Close ();	
-						} 
-					} catch (FileNotFoundException) {
-						ReportError(2011, "Unable to open response file '" + arg.Substring(1) + "'");
-						continue;
-					} catch (Exception exception) {
-						ReportError(2011, "Unable to open response file '" + arg.Substring(1) + "'. " + exception.Message);
-						continue;
-					}
-				}
+				if (arg.StartsWith("@")) 
+					processResponseFile(arg.Substring(1), result);
 				else
 					result.Add(arg);
-			}
-
-			return (string[])result.ToArray(typeof(string));
+			return result;
 		}
+		
+		#endregion
+
+		#region Arguments Processing
+
 
 		private static int IndexOfAny(string where, params char[] what)
 		{
 			return where.IndexOfAny(what);
 		}
 		
-		public string[] NormalizeArgs(string[] args)
+		private string[] NormalizeArgs(string[] args)
 		{
 			bool ParsingOptions = true;
 			ArrayList result = new ArrayList();
-
+			
 			foreach(string arg in ExpandResponseFiles(args)) {
 				if (arg.Length > 0) {
 					if (ParsingOptions) {
