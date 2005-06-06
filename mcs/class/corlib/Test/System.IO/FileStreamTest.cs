@@ -575,7 +575,7 @@ namespace MonoTests.System.IO
                 }
 
 		[Category("NotWorking")]
-		// Bug: 71371
+		// Bug: 71371 -> duplicate and WONTFIX.
 		public void TestLock_FailsOnMono ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "TestLock";
