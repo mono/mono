@@ -1,3 +1,8 @@
+2005-06-06  Gaurav Vaish and Ankit Jain
+
+	* DataSourceHelper.cs: Gaurav Vaish and Ankit Jain patch for databinding
+	* DataGrid.cs: Gaurav Vaish and Ankit Jain patch for databinding
+	
 2005-06-06  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Control.cs: fixes CreateParams Width / Height. 

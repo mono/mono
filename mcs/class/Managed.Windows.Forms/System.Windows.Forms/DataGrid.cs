@@ -136,6 +136,7 @@ namespace System.Windows.Forms
 		internal bool caption_visible;
 		internal bool columnheaders_visible;
 		private object datasource;
+		private object real_datasource;
 		private string datamember;
 		private int firstvisible_column;
 		private bool flatmode;
@@ -191,6 +192,7 @@ namespace System.Windows.Forms
 			caption_visible = true;
 			columnheaders_visible = true;
 			datasource = null;
+			real_datasource = null;
 			datamember = string.Empty;
 			firstvisible_column = 0;
 			flatmode = false;
@@ -680,7 +682,7 @@ namespace System.Windows.Forms
 					return null;
 				}
 
-				return (CurrencyManager) BindingContext [DataSource, DataMember];
+				return (CurrencyManager) BindingContext [real_datasource, DataMember];
 			}
 
 			set {
@@ -1605,6 +1607,7 @@ namespace System.Windows.Forms
 			}
 
 			datamember = member;
+			real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, member);
 			return true;
 		}
 
@@ -1619,6 +1622,13 @@ namespace System.Windows.Forms
 			}
 
 			datasource = source;
+			try {
+				real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, DataMember);
+			}catch (Exception e) {
+				datamember = "";
+				real_datasource = source;
+			}
+			
 			OnDataSourceChanged (EventArgs.Empty);
 			return true;
 		}
