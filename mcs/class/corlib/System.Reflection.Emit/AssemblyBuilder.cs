@@ -103,7 +103,7 @@ namespace System.Reflection.Emit {
 		private RefEmitPermissionSet[] permissions_minimum;
 		private RefEmitPermissionSet[] permissions_optional;
 		private RefEmitPermissionSet[] permissions_refused;
-		PortableExecutableKind peKind;
+		PortableExecutableKinds peKind;
 		ImageFileMachine machine;
 		bool corlib_internal;
 		#endregion
@@ -602,7 +602,7 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-		void Save (string assemblyFileName, PortableExecutableKind portableExecutableKind, ImageFileMachine imageFileMachine)
+		void Save (string assemblyFileName, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
 			this.peKind = portableExecutableKind;
 			this.machine = imageFileMachine;
@@ -674,7 +674,7 @@ namespace System.Reflection.Emit {
 
 		public void Save (string assemblyFileName)
 		{
-			Save (assemblyFileName, PortableExecutableKind.ILOnly, ImageFileMachine.I386);
+			Save (assemblyFileName, PortableExecutableKinds.ILOnly, ImageFileMachine.I386);
 		}
 
 		public void SetEntryPoint (MethodInfo entryMethod)

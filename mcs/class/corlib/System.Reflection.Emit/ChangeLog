@@ -1,3 +1,7 @@
+2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: Update after PortableExecutableKinds name change.
+
 2005-06-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilder.cs CustomAttributeBuilder.cs: Rework DllImportAttribute
