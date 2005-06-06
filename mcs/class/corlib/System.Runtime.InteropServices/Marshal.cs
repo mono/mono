@@ -67,8 +67,14 @@ namespace System.Runtime.InteropServices
 		public extern static IntPtr AllocCoTaskMem (int cb);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public extern static IntPtr AllocHGlobal (IntPtr cb);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public static IntPtr AllocHGlobal (int cb) {
 			return AllocHGlobal ((IntPtr)cb);
 		}
@@ -164,6 +170,9 @@ namespace System.Runtime.InteropServices
 		public extern static void FreeCoTaskMem (IntPtr ptr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public extern static void FreeHGlobal (IntPtr hglobal);
 
 #if NET_2_0
@@ -290,6 +299,9 @@ namespace System.Runtime.InteropServices
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public static extern int GetLastWin32Error();
 
 		[MonoTODO]
