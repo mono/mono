@@ -8,7 +8,7 @@
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Text;
 using System.Collections;
 using System.Globalization;
@@ -38,14 +37,17 @@ using System.Runtime.CompilerServices;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System
 {
 	[Serializable]
-	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable
 #if NET_2_0
-		, IComparable<String>, IEquatable <String>	
+	[ComVisible (true)]
+	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable, IComparable<String>, IEquatable <String>
+#else
+	public sealed class String : IConvertible, ICloneable, IEnumerable, IComparable
 #endif
 	{
 		[NonSerialized] private int length;
@@ -240,6 +242,11 @@ namespace System
 			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
 			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
 			(char) 0x3000, (char) 0xFEFF };
+
+		public String Trim ()
+		{
+			return InternalTrim (WhiteChars, 0);
+		}
 
 		public String Trim (params char[] trimChars)
 		{
@@ -801,7 +808,11 @@ namespace System
 			return culture.TextInfo.ToLower (this);
 		}
 
+#if NET_2_0
+		public unsafe String ToLowerInvariant ()
+#else
 		internal unsafe String ToLowerInvariant ()
+#endif
 		{
 			string tmp = InternalAllocateStr (length);
 			fixed (char* source = &start_char, dest = tmp) {
@@ -834,7 +845,11 @@ namespace System
 			return culture.TextInfo.ToUpper (this);
 		}
 
+#if NET_2_0
+		public unsafe String ToUpperInvariant ()
+#else
 		internal unsafe String ToUpperInvariant ()
+#endif
 		{
 			string tmp = InternalAllocateStr (length);
 			fixed (char* source = &start_char, dest = tmp) {
@@ -859,11 +874,6 @@ namespace System
 		public String ToString (IFormatProvider provider)
 		{
 			return this;
-		}
-
-		public String Trim ()
-		{
-			return Trim (null);
 		}
 
 		public static String Format (String format, Object arg0)

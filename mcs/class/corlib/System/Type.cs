@@ -42,7 +42,11 @@ namespace System {
 
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
-	public abstract class Type : MemberInfo, IReflect {
+#if NET_2_0
+	[ComVisible (true)]
+	[ComDefaultInterface (typeof (_Type))]
+#endif
+	public abstract class Type : MemberInfo, IReflect, _Type, _MemberInfo {
 		
 		internal RuntimeTypeHandle _impl;
 
@@ -53,7 +57,7 @@ namespace System {
 		public static readonly MemberFilter FilterNameIgnoreCase = new MemberFilter (FilterNameIgnoreCase_impl);
 		public static readonly object Missing;
 
-		protected const BindingFlags DefaultBindingFlags =
+		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
 		/* implementation of the delegates for MemberFilter */
@@ -458,7 +462,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static TypeCode GetTypeCodeInternal (Type type);
+		internal extern static TypeCode GetTypeCodeInternal (Type type);
 
 		public static TypeCode GetTypeCode (Type type) {
 			type = type.UnderlyingSystemType;

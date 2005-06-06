@@ -34,13 +34,19 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Configuration.Assemblies;
 
 namespace System 
 {
-	public sealed class Activator
+	[ClassInterface (ClassInterfaceType.None)]
+#if NET_2_0
+	[ComVisible (true)]
+	[ComDefaultInterface (typeof (_Activator))]
+#endif
+	public sealed class Activator : _Activator
 	{
 		const BindingFlags _flags = BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance;
 		const BindingFlags _accessFlags = BindingFlags.DeclaredOnly | BindingFlags.FlattenHierarchy | BindingFlags.IgnoreCase | 
@@ -300,5 +306,28 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object CreateInstanceInternal (Type type);
+
+#if NET_1_1
+		void _Activator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Activator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Activator.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Activator.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
