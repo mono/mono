@@ -302,17 +302,16 @@ namespace Mono.Xml.Xsl
 			}
 
 			string attribute = localName.ToUpper (CultureInfo.InvariantCulture);
-			switch (attribute) {
-			case "OPTION":
-			case "CHECKED":
-			case "SELECTED":
+			string element = ((string) elementNameStack.Peek ()).ToLower (CultureInfo.InvariantCulture);
+
+			if (attribute == "SELECTED" && element == "option"
+				|| attribute == "CHECKED" && element == "input")
 				return;
-			}
+
 			writer.Write ("=\"");
 			openAttribute = true;
 
 			// URI attribute should be escaped.
-			string element = ((string) elementNameStack.Peek ()).ToLower (CultureInfo.InvariantCulture);
 			string attrName = null;
 			string [] attrNames = null;
 			switch (element) {
