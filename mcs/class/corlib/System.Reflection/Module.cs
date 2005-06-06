@@ -42,6 +42,9 @@ namespace System.Reflection {
 		Other
 	};
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	public class Module : ISerializable, ICustomAttributeProvider {
 	

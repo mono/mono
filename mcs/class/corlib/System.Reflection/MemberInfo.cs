@@ -33,6 +33,9 @@ using System.Security.Permissions;
 
 namespace System.Reflection {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]

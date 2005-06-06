@@ -26,8 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 	public

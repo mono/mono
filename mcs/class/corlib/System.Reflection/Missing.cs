@@ -29,8 +29,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class Missing
 	{
 		public static readonly Missing Value = new Missing ();

@@ -36,6 +36,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public abstract class Binder

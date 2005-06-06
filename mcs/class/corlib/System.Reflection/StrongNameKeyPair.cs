@@ -32,12 +32,16 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
 
 namespace System.Reflection {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 [Serializable]
 public class StrongNameKeyPair 
 {		

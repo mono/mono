@@ -31,9 +31,13 @@
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly|AttributeTargets.Class|AttributeTargets.Struct|AttributeTargets.Enum|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Event|AttributeTargets.Interface|AttributeTargets.Parameter|AttributeTargets.Delegate)]
 	public sealed class ObfuscationAttribute : Attribute {
 

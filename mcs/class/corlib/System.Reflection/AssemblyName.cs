@@ -46,6 +46,9 @@ namespace System.Reflection {
 // a.	Uniform Resource Identifiers (URI): Generic Syntax
 //	http://www.ietf.org/rfc/rfc2396.txt
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {

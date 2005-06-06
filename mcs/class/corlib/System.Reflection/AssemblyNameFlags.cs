@@ -32,12 +32,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-
 	/// <summary>
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Flags]
 	[Serializable]
 	public enum AssemblyNameFlags {

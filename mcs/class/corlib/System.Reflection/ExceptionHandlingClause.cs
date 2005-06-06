@@ -34,6 +34,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class ExceptionHandlingClause {
 		#region Sync with reflection.h
 		internal Type catch_type;

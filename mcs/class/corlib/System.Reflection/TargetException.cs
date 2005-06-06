@@ -31,9 +31,13 @@
 
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	public class TargetException : ApplicationException
 	{

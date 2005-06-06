@@ -22,12 +22,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Reflection {
+using System.Runtime.InteropServices;
 
+namespace System.Reflection {
 	public struct InterfaceMapping {
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public MethodInfo[] InterfaceMethods;
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public Type InterfaceType;
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public MethodInfo[] TargetMethods;
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public Type TargetType;
 	}
 }

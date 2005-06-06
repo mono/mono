@@ -27,10 +27,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public delegate bool TypeFilter (Type m, object filterCriteria);
 
 } // System.Reflection

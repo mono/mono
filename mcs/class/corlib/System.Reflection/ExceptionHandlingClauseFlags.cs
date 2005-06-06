@@ -30,9 +30,13 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Flags]
 	public enum ExceptionHandlingClauseFlags {
 		Clause = 0x0,

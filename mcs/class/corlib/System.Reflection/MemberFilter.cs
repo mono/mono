@@ -23,8 +23,12 @@
 //
 using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public delegate bool MemberFilter( MemberInfo m, object filterCriteria);
 
 }

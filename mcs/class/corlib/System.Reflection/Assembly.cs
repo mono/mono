@@ -44,6 +44,9 @@ using Mono.Security;
 
 namespace System.Reflection {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
