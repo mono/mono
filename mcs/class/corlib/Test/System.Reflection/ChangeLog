@@ -1,3 +1,7 @@
+2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodInfoTest.cs: Disable pseudo custom attribute test.
+
 2005-06-05  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Enabled test for bug #74958.
