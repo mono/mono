@@ -1,3 +1,7 @@
+2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Hashtable.cs: Add some missing 2.0 attributes.
+
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* Queue.cs (grow): fix 61919.
