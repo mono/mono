@@ -775,7 +775,7 @@ namespace System.Windows.Forms {
 		internal uint     biClrImportant;
 	}
 
-	internal enum ClipboardFormats {
+	internal enum ClipboardFormats : ushort {
 		CF_TEXT				= 1,
 		CF_BITMAP           		= 2,
 		CF_METAFILEPICT     		= 3,

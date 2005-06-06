@@ -1,5 +1,15 @@
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
+	* Win32DnD.cs: 
+	  - Removed debug output
+	  - Added MarshalAs attribute to ensure proper marshalling of FORMATETC 
+	    struct
+	  - Plugged resource leak
+	* XplatUIStructs.cs: Changed ClipboardFormats size to ushort, to match
+	  MS size
+
+2005-06-05  Peter Bartok  <pbartok@novell.com>
+
 	* XplatUIWin32.cs: Removed DnD code
 	* Win32DnD.cs: Implemented drop source and drop target functionality
 

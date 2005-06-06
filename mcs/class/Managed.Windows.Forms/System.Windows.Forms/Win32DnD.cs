@@ -122,6 +122,7 @@ namespace System.Windows.Forms {
 
 		[StructLayout(LayoutKind.Sequential)]
 			internal struct FORMATETC {
+			[MarshalAs(UnmanagedType.U2)]
 			internal ClipboardFormats	cfFormat;
 			internal IntPtr			ptd;
 			internal DVASPECT		dwAspect;
@@ -292,12 +293,9 @@ namespace System.Windows.Forms {
 				return 0;
 			}
 
-		internal static 	STGMEDIUM	medium = new STGMEDIUM();
+			internal static 	STGMEDIUM	medium = new STGMEDIUM();
 			internal static uint GetData(IntPtr this_, ref FORMATETC pformatetcIn, IntPtr pmedium) {
 				int		index;
-
-				Console.WriteLine("In GetData, looking for {0}", pformatetcIn.cfFormat);
-
 
 				index = FindFormat(pformatetcIn);
 				if (index != -1) {
@@ -322,7 +320,6 @@ namespace System.Windows.Forms {
 
 			internal static uint QueryGetData(IntPtr @this, ref FORMATETC pformatetc) {
 				if (FindFormat(pformatetc) != -1) {
-					Console.WriteLine("QueryGetData has match: {0}", ((FORMATETC)DragFormats[FindFormat(pformatetc)]).cfFormat);
 					return S_OK;
 				}
 				return DV_E_FORMATETC;
@@ -813,11 +810,11 @@ namespace System.Windows.Forms {
 				medium = new STGMEDIUM();
 				medium.tymed = TYMED.TYMED_HGLOBAL;
 
-				mem = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-				result = data_object.QueryInterface(IID_IDataObject, mem);
-				Marshal.FreeHGlobal(mem);
+				//mem = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
+				//result = data_object.QueryInterface(IID_IDataObject, mem);
+				//Marshal.FreeHGlobal(mem);
 
-				result = data_object.AddRef();
+				//result = data_object.AddRef();
 
 				result = data_object.QueryGetData(format);
 
@@ -910,6 +907,7 @@ namespace System.Windows.Forms {
 					hmem_string_ptr += 0x14;
 
 					XplatUIWin32.Win32CopyMemory(new IntPtr(hmem_string_ptr), string_buffer, string_buffer_size);
+					Marshal.FreeHGlobal(string_buffer);
 					XplatUIWin32.Win32GlobalUnlock(hmem_ptr);
 
 					break;
