@@ -1,3 +1,8 @@
+2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ModuleHandleTest.cs: Renamed PortableExecutableKind to *Kinds to fix
+	compilation.
+
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ActivatorTest.cs: removed CreateCom* tests, as we don't support that

@@ -161,18 +161,18 @@ public class ModuleHandleTest : Assertion
 
 	[Test]
 	public void GetPEKind () {
-		PortableExecutableKind pe_kind;
+		PortableExecutableKinds pe_kind;
 		ImageFileMachine machine;
 
 		module.GetPEKind (out pe_kind, out machine);
 
-		AssertEquals (PortableExecutableKind.ILOnly, pe_kind);
+		AssertEquals (PortableExecutableKinds.ILOnly, pe_kind);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void GetPEKindInvalidHandle () {
-		PortableExecutableKind pe_kind;
+		PortableExecutableKinds pe_kind;
 		ImageFileMachine machine;
 
 		ModuleHandle.EmptyHandle.GetPEKind (out pe_kind, out machine);
