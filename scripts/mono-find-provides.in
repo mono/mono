@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# mono-find-provides
+#
+# Authors:
+#       Ben Maurer (bmaurer@ximian.com)
+#
+# (C) 2005 Novell (http://www.novell.com)
+#
+
+IFS=$'\n'
+filelist=($(grep -Ev '/usr/doc/|/usr/share/doc/'))
+monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
+
+# Set the prefix, unless it is overriden (used when building mono rpms)
+: ${prefix=@prefix@}
+
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+bindir=@bindir@
+
+[ -x $bindir/monodis ] || exit 0;
+[ -f $libdir/libmono.so ] || exit 0;
+
+
+# set LD_LIBRARY_PATH to ensure that libmono.so is found
+export LD_LIBRARY_PATH=$libdir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
+for i in "${monolist[@]}"; do
+        ($bindir/monodis --assembly $i | awk '
+                BEGIN { LIBNAME=""; VERSION=""; }
+                /^Version:/ { VERSION=$2 }
+                /^Name:/    { LIBNAME=$2 }
+                END {
+                        if (VERSION && LIBNAME)
+                                print "mono(" LIBNAME ") = " VERSION
+                }
+            ') 2>/dev/null
+done

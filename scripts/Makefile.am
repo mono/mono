@@ -1,8 +1,16 @@
-EXTRA_DIST = script.in script2.in mono-service.in mono-nunit.pc.in
-DISTCLEANFILES = mono-nunit.pc
+EXTRA_DIST =                   \
+	script.in              \
+	script2.in             \
+	mono-service.in        \
+	mono-nunit.pc.in       \
+	mono-find-provides.in  \
+	mono-find-requires.in
+
+DISTCLEANFILES = $(pkgconfig_DATA) $(rpmscripts_SCRIPTS)
 
 bin2dir = $(bindir)
 servicedir = $(bindir)
+rpmscriptsdir = $(bindir)
 
 bin_SCRIPTS = \
 	al			\
@@ -22,8 +30,6 @@ bin_SCRIPTS = \
 	mcs			\
 	mjs			\
 	mkbundle		\
-	mono-find-provides	\
-	mono-find-requires	\
 	monop			\
 	permview		\
 	prj2make		\
@@ -41,7 +47,9 @@ bin2_SCRIPTS = gmcs wsdl2
 
 service_SCRIPTS = mono-service
 
-CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS) mono-service
+rpmscripts_SCRIPTS = mono-find-provides mono-find-requires
+
+CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS) $(service_SCRIPTS)
 
 if USE_JIT
 MONO_INTERP = mono
