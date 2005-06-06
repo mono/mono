@@ -36,7 +36,7 @@ using Microsoft.Win32.SafeHandles;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.IO.IsolatedStorageTests {
+namespace MonoTests.System.IO.IsolatedStorage {
 
 	[TestFixture]
 	public class IsolatedStorageFileStreamTest {
@@ -63,7 +63,6 @@ namespace MonoTests.System.IO.IsolatedStorageTests {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))] // Mono's FileStream throw an ArgumentOutOfRangeException
 		public void Constructor_StringModeBad ()
 		{
