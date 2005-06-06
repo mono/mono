@@ -39,6 +39,10 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Runtime.Remoting {
 
 	[Serializable]
@@ -166,7 +170,9 @@ namespace System.Runtime.Remoting {
 		}
 
 		public virtual IChannelInfo ChannelInfo {
-
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 			get {
 				return channel_info;
 			}
@@ -229,6 +235,9 @@ namespace System.Runtime.Remoting {
 			return identity.IsFromThisAppDomain;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public bool IsFromThisProcess ()
 		{
 			foreach (object data in channel_info.ChannelData)

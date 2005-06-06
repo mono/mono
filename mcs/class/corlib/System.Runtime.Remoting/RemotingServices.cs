@@ -49,6 +49,10 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Runtime.Remoting
 {
 	public sealed class RemotingServices 
@@ -88,6 +92,9 @@ namespace System.Runtime.Remoting
 		internal extern static object InternalExecute (MethodBase method, Object obj,
 							       Object[] parameters, out object [] out_args);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static bool IsTransparentProxy (object proxy);
 		
@@ -297,6 +304,9 @@ namespace System.Runtime.Remoting
 			return app_id + Environment.TickCount + "_" + n + ".rem";
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public static RealProxy GetRealProxy (object proxy)
 		{
 			if (!IsTransparentProxy(proxy)) throw new RemotingException("Cannot get the real proxy from an object that is not a transparent proxy.");
