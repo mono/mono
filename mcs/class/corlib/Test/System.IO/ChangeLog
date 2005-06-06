@@ -1,5 +1,9 @@
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FileTest.cs: yet more invalid array accesses removed.
+
+2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FileTest.cs: on unix there are no invalid chars and we were trying
 	to index beyond the end of the array.
 

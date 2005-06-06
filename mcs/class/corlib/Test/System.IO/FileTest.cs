@@ -1019,7 +1019,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
 		public void SetCreationTimeArgumenException3 ()
 		{
@@ -1083,7 +1082,7 @@ namespace MonoTests.System.IO
 		[Test]
 		[ExpectedException(typeof (ArgumentNullException))]
 		public void SetCreationTimeUtcArgumentNullException1 ()
-		{
+		{ 
 			File.SetCreationTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
 		}
 
@@ -1102,12 +1101,19 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
-		public void SetCreationTimeUtcArgumenException3 ()
+		public void SetCreationTimeUtcArgumentException3 ()
 		{
-			File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1) {
+				bool pass = false;
+				try {
+					File.SetCreationTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+				} catch (ArgumentException) {
+					pass = true;
+				}
+
+				Assertion.Assert ("#01", pass);
+			}
 		}
 
 		[Test]
@@ -1179,12 +1185,19 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
 		public void SetLastAccessTimeArgumenException3 ()
 		{
-			File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1) {
+				bool pass = false;
+				try {
+					File.SetLastAccessTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+				} catch (ArgumentException) {
+					pass = true;
+				}
+
+				Assertion.Assert ("#01", pass);
+			}
 		}
 
 		[Test]
@@ -1254,12 +1267,19 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
 		public void SetLastAccessTimeUtcArgumenException3 ()
 		{
-			File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1) {
+				bool pass = false;
+				try {
+					File.SetLastAccessTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+				} catch (ArgumentException) {
+					pass = true;
+				}
+
+				Assertion.Assert ("#01", pass);
+			}
 		}
 
 		[Test]
@@ -1331,12 +1351,19 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
 		public void SetLastWriteTimeArgumenException3 ()
 		{
-			File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1) {
+				bool pass = false;
+				try {
+					File.SetLastWriteTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+				} catch (ArgumentException) {
+					pass = true;
+				}
+
+				Assertion.Assert ("#01", pass);
+			}
 		}
 
 		[Test]
@@ -1406,12 +1433,19 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
 		public void SetLastWriteTimeUtcArgumenException3 ()
 		{
-			File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1) {
+				bool pass = false;
+				try {
+					File.SetLastWriteTimeUtc (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+				} catch (ArgumentException) {
+					pass = true;
+				}
+
+				Assertion.Assert ("#01", pass);
+			}
 		}
 
 		[Test]
