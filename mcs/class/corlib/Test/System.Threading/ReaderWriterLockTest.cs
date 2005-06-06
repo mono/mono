@@ -14,7 +14,6 @@ using System.Threading;
 namespace MonoTests.System.Threading
 {
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class ReaderWriterLockTest : Assertion
 	{
 		ReaderWriterLock rwlock;

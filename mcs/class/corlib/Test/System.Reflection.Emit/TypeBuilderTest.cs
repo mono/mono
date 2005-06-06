@@ -108,9 +108,7 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
-	[Category("NotWorking")]
-	// See bug: 71301
-	public void TestBaseTypeInterface ()
+	public void TestBaseTypeInterface () // See bug: 71301
 	{
 		TypeBuilder tb3 = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
 		AssertEquals ("Interfaces should default to no base type", null, tb3.BaseType);
@@ -717,7 +715,6 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof(InvalidOperationException))]
-	[Category("NotWorking")]
 	public void TestDefineDefaultConstructorParent () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 		tb.DefineConstructor (MethodAttributes.Public,

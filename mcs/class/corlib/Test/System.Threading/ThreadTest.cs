@@ -14,12 +14,8 @@ using System;
 using System.Security.Principal;
 using System.Threading;
 
-// These tests seem to hang the 2.0 framework. So they are disabled for now
-//
-
 namespace MonoTests.System.Threading {
 
-	[Category ("NotWorking")]
 	public class ThreadedPrincipalTest : Assertion {
 
 		public static void NoPrincipal () 
@@ -75,7 +71,6 @@ namespace MonoTests.System.Threading {
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class ThreadTest : Assertion {
 
 		//Some Classes to test as threads

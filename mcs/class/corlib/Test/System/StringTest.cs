@@ -152,7 +152,6 @@ public class StringTest : Assertion
 	}
 
 	[Test]
-	[Category("NotWorking")]
 	public void CompareNotWorking2 ()
 	{
 		string needle = "ab";
