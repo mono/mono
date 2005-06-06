@@ -1019,13 +1019,20 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
 		[Category("ValueAdd")]
 		// On Unix there are no invalid path chars.
 		public void SetCreationTimeArgumenException3 ()
 		{
-			if (Path.InvalidPathChars.Length > 1)
-				File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1) {
+				bool pass = false;
+				try {
+					File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+				} catch (ArgumentException) {
+					pass = true;
+				}
+
+				Assertion.Assert ("#01", pass);
+			}
 		}
 
 		[Test]
