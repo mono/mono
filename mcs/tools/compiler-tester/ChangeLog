@@ -1,3 +1,7 @@
+2005-06-06  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile (NO_INSTALL): Set.
+
 2005-06-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Convert to use executable.make.
