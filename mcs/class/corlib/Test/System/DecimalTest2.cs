@@ -282,6 +282,9 @@ namespace MonoTests.System
             }
         }
 
+	// Well, more than NotWorking, MS is being less precise than we are:
+	// *** Div: result mismatch for d1=79228162514264337593543950335 i=6 d2=10 j=4 d3=7922816251426433759354395033.5 d3b=7922816251426433759354395034
+	// Ist:7922816251426433759354395033.5  Soll:7922816251426433759354395034  delta=-0.5 == False
 	[Category("NotWorking")]
         public void TestDiv()
         {
