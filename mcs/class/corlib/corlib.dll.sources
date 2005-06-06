@@ -391,7 +391,7 @@ System.Reflection/DefaultMemberAttribute.cs
 System.Reflection/EventAttributes.cs
 System.Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
-System.Reflection/ExceptionHandlingClauseFlags.cs
+System.Reflection/ExceptionHandlingClauseOptions.cs
 System.Reflection/FieldAttributes.cs
 System.Reflection/FieldInfo.cs
 System.Reflection/ICustomAttributeProvider.cs
@@ -424,7 +424,8 @@ System.Reflection/ParameterAttributes.cs
 System.Reflection/ParameterInfo.cs
 System.Reflection/ParameterModifier.cs
 System.Reflection/Pointer.cs
-System.Reflection/PortableExecutableKind.cs
+System.Reflection/PortableExecutableKinds.cs
+System.Reflection/ProcessorArchitecture.cs
 System.Reflection/PropertyAttributes.cs
 System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
