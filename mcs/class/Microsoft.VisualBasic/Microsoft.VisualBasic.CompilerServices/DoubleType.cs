@@ -115,7 +115,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 			return Parse(Value, null);
 		}
 
-		public static bool TryParse(string Value, out double result) {
+
+		internal static bool TryParse(string Value, out double result) {
 			return  Double.TryParse(Value, NumberStyles.Any, null, out result);
 		}
 

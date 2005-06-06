@@ -967,7 +967,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		//checked + string
-		public static object CTypeHelper(object obj, Type toType) {
+		internal static object CTypeHelper(object obj, Type toType) {
 			if (obj == null)
 				return null;
 

@@ -320,11 +320,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return Convert.ToString(Val, 8);
 		}
 
-		public static void SetTime(DateTime dtTime) {
+		internal static void SetTime(DateTime dtTime) {
 			throw new NotImplementedException("Method SetTime in VisualBasic.CompilerServices.Utils is not supported");
 		}
 
-		public static void SetDate(DateTime vDate) {
+		internal static void SetDate(DateTime vDate) {
 			throw new NotImplementedException("Method SetDate in VisualBasic.CompilerServices.Utils is not supported");
 		}
 

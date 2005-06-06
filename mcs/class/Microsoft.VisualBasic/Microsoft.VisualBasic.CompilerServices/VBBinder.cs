@@ -42,7 +42,7 @@ using System.ComponentModel;
 namespace Microsoft.VisualBasic.CompilerServices
 {
 	[StandardModule, EditorBrowsableAttribute(EditorBrowsableState.Never)]
-	public class VBBinder : Binder
+	internal class VBBinder : Binder
 	{
 		public VBBinder() : base()
 		{

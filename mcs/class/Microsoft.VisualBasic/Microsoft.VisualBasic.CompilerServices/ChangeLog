@@ -1,3 +1,9 @@
+2005-06-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* VBBinder.cs : Made it internal as it isn't public in 1.1 API
+	* DoubleType.cs: corrected, TryParse is now internal
+	* ObjectType.cs: corrected, CTypeHelper(string, Type) overload is now internal
+	* Utils.cs: corrected, SetTime and SetDate are now internal
+
 2005-05-25  Satya Sudha K <ksathyasudha@novell.com>
 	* ObjectType.cs : Some fixes to Narrowing conversions
 
