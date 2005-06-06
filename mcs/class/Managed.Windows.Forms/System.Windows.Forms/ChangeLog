@@ -1,3 +1,7 @@
+2005-06-06  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Control.cs: fixes CreateParams Width / Height. 
+
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
 	* Win32DnD.cs: Removed compilation warnings

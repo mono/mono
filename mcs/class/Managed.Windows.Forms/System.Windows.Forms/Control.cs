@@ -1937,17 +1937,17 @@ namespace System.Windows.Forms
 				}
 
 				try {
-					create_params.Y = Width;
+					create_params.Width = Width;
 				}
 				catch {
-					create_params.Y = this.bounds.Width;
+					create_params.Width = this.bounds.Width;
 				}
 
 				try {
-					create_params.Y = Height;
+					create_params.Height = Height;
 				}
 				catch {
-					create_params.Y = this.bounds.Height;
+					create_params.Height = this.bounds.Height;
 				}
 
 
