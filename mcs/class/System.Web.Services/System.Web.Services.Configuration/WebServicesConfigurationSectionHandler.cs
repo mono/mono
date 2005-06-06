@@ -42,7 +42,11 @@ namespace System.Web.Services.Configuration
 		HttpPost = 1 << 1,
 		HttpGet =  1 << 2,
 		Documentation = 1 << 3,
-		All = 0x0F
+#if NET_1_1
+		HttpSoap12 = 1 << 4,
+		HttpPostLocalhost = 1 << 5,
+#endif
+		All = 0xFF
 	}
 	
 	class WSConfig
@@ -86,6 +90,17 @@ namespace System.Web.Services.Configuration
 		{
 			WSProtocol proto;
 			error = null;
+
+#if ONLY_1_1
+			switch (protoName) {
+				case "HttpSoap1.2":
+					protoName = "HttpSoap12";
+					break;
+				case "HttpSoap12":
+					protoName = null;
+					break;
+			}
+#endif
 			try {
 				proto = (WSProtocol) Enum.Parse (typeof (WSProtocol), protoName);
 			} catch {

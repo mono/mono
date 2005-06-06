@@ -33,6 +33,7 @@
 //
 
 using System.IO;
+using System.Net;
 using System.Web.Services;
 using System.Web.Services.Configuration;
 using System.Web.SessionState;
@@ -108,9 +109,27 @@ namespace System.Web.Services.Protocols
 			Type type = WebServiceParser.GetCompiledType (filePath, context);
 
 			WSProtocol protocol = GuessProtocol (context, verb);
+			bool supported = false;
 			IHttpHandler handler = null;
 
-			if (!WSConfig.IsSupported (protocol))
+			supported = WSConfig.IsSupported (protocol);
+			if (!supported) {
+				switch (protocol) {
+					case WSProtocol.HttpSoap:
+						supported = WSConfig.IsSupported (WSProtocol.HttpSoap12);
+						break;
+					case WSProtocol.HttpPost:
+						if (WSConfig.IsSupported (WSProtocol.HttpPostLocalhost)) {
+							string localAddr = context.Request.ServerVariables ["LOCAL_ADDR"];
+
+							supported = localAddr != null &&
+								(localAddr == context.Request.ServerVariables ["REMOTE_ADDR"] ||
+								IPAddress.IsLoopback (IPAddress.Parse (localAddr)));
+						}
+						break;
+				}
+			}
+			if (!supported)
 				return new DummyHttpHandler ();
 
 			switch (protocol) {
