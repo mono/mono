@@ -980,28 +980,6 @@ namespace MonoTests.System.IO
 		}		
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
-		[Category("ValueAdd")]
-		//
-		// This is category ValueAdd, since in Unix the semantics allow for
-		// a file to be deleted while a handle to it remains.
-		//
-		public void FileStreamCloseException ()
-		{
-			string path = TempFolder + Path.DirectorySeparatorChar + "FileStreamCloseException";
-			DeleteFile (path);			
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				File.Delete (path);
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
-
-		[Test]
 		public void FileStreamClose ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "FileStreamClose";

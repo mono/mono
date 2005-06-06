@@ -1,3 +1,8 @@
+2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileTest.cs: removed duplicate test. The same thing is done in
+	DeleteOpenStream.
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StreamCas.cs: New. CAS unit tests to test stack propagation for 
