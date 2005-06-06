@@ -18,7 +18,7 @@ CATALOG = testsuite/TESTS/catalog.xml
 FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
 TEST_EXE = xslttest.exe
-TEST_FLAGS = --report:TestResult.xml --xml --details --outall $(TEST_DOM) 
+TEST_FLAGS = --report:TestResult.xml --xml --details $(TEST_DOM) 
 
 ifdef TEST_DOM
 REFERENCE_RESULTS_NAME = domresults
