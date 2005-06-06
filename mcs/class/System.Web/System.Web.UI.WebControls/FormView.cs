@@ -899,6 +899,9 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (footerRow);
 			}
 			
+			if (dataBinding)
+				DataBind (false);
+			
 			return dataSource.DataSourceCount;
 		}
 		

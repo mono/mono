@@ -132,7 +132,6 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void PerformDataBinding (IEnumerable data)
 		{
-			OnDataBinding (EventArgs.Empty);
 		}
 
 		protected override void ValidateDataSource (object dataSource)
@@ -175,6 +174,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected override void PerformSelect ()
 		{
+			OnDataBinding (EventArgs.Empty);
 			DataSourceView view = GetData ();
 			if (view != null)
 				view.Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
@@ -183,6 +183,7 @@ namespace System.Web.UI.WebControls {
 		void OnSelect (IEnumerable data)
 		{
 			PerformDataBinding (data);
+			OnDataBound (EventArgs.Empty);
 		}
 		
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()

@@ -1,3 +1,15 @@
+2005-06-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* GridView.cs:
+	* FormView.cs:
+	* DetailsView.cs: Bind the control after creating all child
+	 controls.
+	* DataBoundControl.cs: Call OnDataBinding and OnDataBound in
+	the correct methods.
+	* BaseDataBoundControl.cs: Don't call DataBind nor OnDataBound
+	in this class. This is done in DataBoundControl. All this fixes
+	bug #75076.
+
 2005-05-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemCollection.cs: Patch from Curtis (eto@shaw.ca) that fixes

@@ -1184,6 +1184,9 @@ namespace System.Web.UI.WebControls
 			rows = new GridViewRowCollection (list);
 			keys = new DataKeyArray (keyList);
 			
+			if (dataBinding)
+				DataBind (false);
+
 			return dataSource.DataSourceCount;
 		}
 		
