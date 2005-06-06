@@ -1024,8 +1024,8 @@ namespace MonoTests.System.IO
 		// On Unix there are no invalid path chars.
 		public void SetCreationTimeArgumenException3 ()
 		{
-
-			File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
+			if (Path.InvalidPathChars.Length > 1)
+				File.SetCreationTime (Path.InvalidPathChars [1].ToString (), new DateTime (2000, 12, 12, 11, 59, 59));
 		}
 
 		[Test]
