@@ -1,3 +1,7 @@
+2005-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: fix InvalidCastException.
+
 2005-06-05  Kornél Pál <kornelpal@hotmail.com>
 
 	* HttpWriter.cs: Fixed: _OutputFilter.Close () was called twice.

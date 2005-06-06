@@ -773,7 +773,7 @@ namespace System.Web {
 					if (c == ';') {
 						string key = entity.ToString ();
 						if (key.Length > 1 && Entities.ContainsKey (key.Substring (1, key.Length - 2)))
-							key = (string) Entities [key.Substring (1, key.Length - 2)];
+							key = Entities [key.Substring (1, key.Length - 2)].ToString ();
 
 						output.Append (key);
 						state = 0;
