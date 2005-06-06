@@ -289,7 +289,16 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
-		[Category("NotWorking")] // this is a MonoTODO
+		[Test]
+		public void AbortUnstarted ()
+		{
+			C2Test test1 = new C2Test();
+			Thread th = new Thread (new ThreadStart (test1.TestMethod));
+			th.Abort ();
+			th.Start ();
+		}
+
+		[Category("NotWorking")] // this is a MonoTODO -> no support for Priority
 		public void TestPriority2()
 		{
 			C2Test test1 = new C2Test();
@@ -297,7 +306,7 @@ namespace MonoTests.System.Threading {
 			try {
 				AssertEquals("#42 Incorrect Priority in New thread: ",ThreadPriority.Normal, TestThread.Priority);
 				TestThread.Start();
-				TestUtil.WaitForAlive (TestThread, "wait8");
+				TestUtil.WaitForAliveOrStop (TestThread, "wait8");
 				AssertEquals("#43 Incorrect Priority in Started thread: ",ThreadPriority.Normal, TestThread.Priority);
 			}
 			finally {
@@ -306,7 +315,7 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#44 Incorrect Priority in Aborted thread: ",ThreadPriority.Normal, TestThread.Priority);
 		}
 
-		[Category("NotWorking")] // this is a MonoTODO
+		[Category("NotWorking")] // this is a MonoTODO -> no support for Priority
 		public void TestPriority3()
 		{
 			C2Test test1 = new C2Test();
@@ -614,6 +623,11 @@ namespace MonoTests.System.Threading {
 			WhileAlive (t, false, s);
 		}
 		
+		public static bool WaitForAliveOrStop (Thread t, string s)
+		{
+			return WhileAliveOrStop (t, false, s);
+		}
+		
 		public static void WhileAlive (Thread t, bool alive, string s)
 		{
 			DateTime ti = DateTime.Now;
@@ -623,6 +637,22 @@ namespace MonoTests.System.Threading {
 					else Assertion.Fail ("Timeout while waiting for alive state. " + s);
 				}
 			}
+		}
+
+		public static bool WhileAliveOrStop (Thread t, bool alive, string s)
+		{
+			DateTime ti = DateTime.Now;
+			while (t.IsAlive == alive) {
+				if (t.ThreadState == ThreadState.Stopped)
+					return false;
+
+				if ((DateTime.Now - ti).TotalSeconds > 10) {
+					if (alive) Assertion.Fail ("Timeout while waiting for not alive state. " + s);
+					else Assertion.Fail ("Timeout while waiting for alive state. " + s);
+				}
+			}
+
+			return true;
 		}
 	}
 }

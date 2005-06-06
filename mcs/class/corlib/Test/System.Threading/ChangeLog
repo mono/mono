@@ -1,3 +1,9 @@
+2005-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ThreadTest.cs: sanitize waiting for a thread that might be already
+	done. Added test for Thread.Start called after thread.Abort, which used
+	to segfault.
+
 2005-05-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonitorTest.cs: a pair of tests for Monitor.
