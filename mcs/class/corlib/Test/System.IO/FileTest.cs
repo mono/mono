@@ -615,9 +615,13 @@ namespace MonoTests.System.IO
 
 
 		// Setting the creation time on Unix is not possible
-                [Test][Category("NotWorking")]
+                [Test]
                 public void CreationTime ()
                 {
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform != 4) && (platform != 128))
+				return;
+
                         string path = TempFolder + Path.DirectorySeparatorChar + "creationTime";                	
                         if (File.Exists (path))
                         	File.Delete (path);
