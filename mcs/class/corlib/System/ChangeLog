@@ -1,3 +1,7 @@
+2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs MonoCustomAttrs.cs: Return SerializableAttribute for types as well.
+
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Exception.cs: Implements _Exception only for 2.0.

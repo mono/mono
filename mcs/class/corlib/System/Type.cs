@@ -1185,6 +1185,24 @@ namespace System {
 				return attr;
 			}
 		}
+
+		internal object[] GetPseudoCustomAttributes () {
+			int count = 0;
+
+			if (IsSerializable)
+				count ++;
+
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if (IsSerializable)
+				attrs [count ++] = new SerializableAttribute ();
+
+			return attrs;
+		}			
+
 #endif
 	}
 }

@@ -57,6 +57,8 @@ namespace System
 				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributes ();
 			else if (obj is ParameterInfo)
 				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributes ();
+			else if (obj is Type)
+				pseudoAttrs = ((Type)obj).GetPseudoCustomAttributes ();
 
 			if (pseudoAttrs != null) {
 				object[] res = new object [attrs.Length + pseudoAttrs.Length];
