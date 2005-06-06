@@ -92,6 +92,18 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void PrepareConstrainedRegionsNoOP () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void ProbeForSufficientStack() {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public static void PrepareDelegate (Delegate d) {
 			if (d == null)
 				throw new ArgumentNullException ("d");
