@@ -251,16 +251,6 @@ namespace Microsoft.VisualBasic
 			vbFile.put(value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ref bool value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
-
-		{
-			checkRecordNumber(recordNumber,false);
-			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.get(out value,recordNumber);
-		}
-
 		private static void checkRecordNumber(long recordNumber,bool throwArgExc)
 		{
 			if ((recordNumber < 1) && (recordNumber != -1))
@@ -311,9 +301,9 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static void FileGet(
-					   int fileNumber,
-					   ref byte value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+				int fileNumber,
+				ref byte value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 		{
 			checkRecordNumber(recordNumber,false);
@@ -322,9 +312,9 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static void FileGet(
-					   int fileNumber,
-					   ref short value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+				int fileNumber,
+				ref bool value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 		{
 			checkRecordNumber(recordNumber,false);
@@ -333,9 +323,20 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static void FileGet(
-					   int fileNumber,
-					   ref char value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+				int fileNumber,
+				ref short value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(
+				int fileNumber,
+				ref char value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 
 		{
@@ -345,36 +346,40 @@ namespace Microsoft.VisualBasic
 		}
 
 
-		public static void FileGet(int fileNumber, 
-					   ref int value,
-   					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		public static void FileGet(
+				int fileNumber, 
+				ref int value,
+   				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.get(out value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber, 
-					   ref long value, 
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		public static void FileGet(
+				int fileNumber, 
+				ref long value, 
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.get(out value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ref float value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		public static void FileGet(
+				int fileNumber,
+				ref float value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.get(out value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ref double value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		public static void FileGet(
+				int fileNumber,
+				ref double value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 					   
 		{
 			checkRecordNumber(recordNumber,false);
@@ -382,9 +387,10 @@ namespace Microsoft.VisualBasic
 			vbFile.get(out value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ref Decimal value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		public static void FileGet(
+				int fileNumber,
+				ref Decimal value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 					   
 		{
 			checkRecordNumber(recordNumber,false);
@@ -392,23 +398,57 @@ namespace Microsoft.VisualBasic
 			vbFile.get(out value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ref string value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber,
-					   [Optional, __DefaultArgumentValue(false)] bool bIgnored)
+		public static void FileGet(
+				int fileNumber,
+				ref string value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber,
+				[Optional, __DefaultArgumentValue(false)] bool stringIsFixedLength)
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.get(ref value,recordNumber,bIgnored);
+			vbFile.get(ref value,recordNumber,stringIsFixedLength);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ref Object value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		public static void FileGet(
+				int fileNumber,
+				ref Object value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.get(ref value,recordNumber);
+		}
+		
+		public static void FileGet(
+				int fileNumber,
+				ref DateTime value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber)
+
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		[MonoTODO]
+		public static void FileGet(
+				int fileNumber, 
+				ref ValueType value, 
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void FileGet(
+				int fileNumber,
+				ref Array value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber, 
+				[Optional, __DefaultArgumentValue(false)] bool arrayIsDynamic, 
+				[Optional, __DefaultArgumentValue(false)] bool stringIsFixedLength) 
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(ref value,recordNumber,arrayIsDynamic,stringIsFixedLength);
 		}
 
 		public static long Seek(int fileNumber)
@@ -713,11 +753,6 @@ namespace Microsoft.VisualBasic
 		}
 
 
-		public static /*synchronized*/ String Dir(String pathName)
-		{
-			return Dir(pathName, 0);
-		}
-
 		public static /*synchronized*/ String Dir(String pathName, 
 							  [Optional, __DefaultArgumentValue((int)0)] 
 							  FileAttribute fileAttribute)
@@ -945,11 +980,11 @@ namespace Microsoft.VisualBasic
 			return Directory.GetCurrentDirectory();
 		}
 
-		public static void FileGetObject(int fileNumber,
-						 ref object value,
-						 [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
-
-
+		[MonoTODO("How to deal with Array types?")]
+		public static void FileGetObject(
+				int fileNumber,
+				ref object value,
+				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -1019,37 +1054,6 @@ namespace Microsoft.VisualBasic
 			}
 			else
 				throw new NotSupportedException();
-		}
-
-		public static void FileGet(int fileNumber,
-					   ref DateTime value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber)
-
-		{
-			checkRecordNumber(recordNumber,true);
-			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.get(out value,recordNumber);
-		}
-
-		[MonoTODO]
-		public static void FileGet(int fileNumber, 
-						ref ValueType value, 
-						[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
-		{
-			throw new NotImplementedException();
-		}
-
-		public static void FileGet(int fileNumber,
-					   ref Array value,
-					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber, 
-					   [Optional, __DefaultArgumentValue(false)] bool arrayIsDynamic, 
-					   [Optional, __DefaultArgumentValue(false)] bool stringIsFixedLength) 
-
-
-		{
-			checkRecordNumber(recordNumber,true);
-			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.get(ref value,recordNumber,arrayIsDynamic,stringIsFixedLength);
 		}
 
 		public static void FilePutObject(int fileNumber,

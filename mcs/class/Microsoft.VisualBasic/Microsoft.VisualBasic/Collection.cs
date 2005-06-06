@@ -142,7 +142,7 @@ namespace Microsoft.VisualBasic {
 			get {return m_HashIndexers.Count;} 
 		}
 
-		[ReadOnly(true)]
+		// [ReadOnly(true)] class status page says it shouldn't be here
 		[System.Runtime.CompilerServices.IndexerName("Item")] 
 		public System.Object this [System.Int32 Index] {
 			get {
@@ -154,7 +154,12 @@ namespace Microsoft.VisualBasic {
 					throw new IndexOutOfRangeException();
 				}
 			}
-			set {throw new NotImplementedException();} 
+		}
+
+		System.Object IList.this[System.Int32 Index] {
+			set {
+				throw new NotImplementedException();
+			}
 		}
 
 		[System.Runtime.CompilerServices.IndexerName("Item")] 

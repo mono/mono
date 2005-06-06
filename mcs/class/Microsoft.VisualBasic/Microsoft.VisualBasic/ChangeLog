@@ -1,3 +1,11 @@
+2005-06-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Collection.cs (Item [indexer]): Correcting API according to
+	FX1.1 class status page
+	* FileSystem.cs: Killed unneeded overload of Dir method
+		All FileGet overloads grouped together in the source file
+	* VariantType.cs: Killed extraneous enum value
+	* Information.cs: Corrected, was using the VariantType extraneous value
+
 2005-05-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* Conversion.cs (Val): Do a correct impl of Val (char). Fixes bug

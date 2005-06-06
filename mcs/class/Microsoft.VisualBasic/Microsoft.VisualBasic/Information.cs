@@ -420,8 +420,8 @@ namespace Microsoft.VisualBasic
 			if(varType.IsArray) {
 
 				Type type = varType.GetElementType();
-				if(type.IsArray)
-					return VariantType.ObjectArray;
+				if (type.IsArray)
+					return VariantType.Array | VariantType.Object;
 
 				int elemVal = (int) Information.varType(type);
 				return (VariantType)((int)VariantType.Array | elemVal);

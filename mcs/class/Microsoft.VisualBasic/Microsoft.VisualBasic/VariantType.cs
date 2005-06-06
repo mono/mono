@@ -53,7 +53,7 @@ namespace Microsoft.VisualBasic {
 		Char = 18,
 		Long = 20,
 		UserDefinedType = 36,
-		Array = 8192,
-		ObjectArray = 8201
+		Array = 8192 /*,
+		ObjectArray = 8201 - No documentation neither class status page says it is needed */
 	};
 }
