@@ -1,3 +1,12 @@
+2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Alert.cs: Add NoCertificate (41) which _should_ be used in SSL3
+	if we don't want to send a certificate when requested by a server
+	(e.g. in the case the mutual authentication is optional).
+	* CipherSuite.cs: Fixed recursive property. Changed type to short so
+	it can hold 256 bits (valid value). Fixed ctor so it doesn't assign
+	the it's own value.
+
 2005-05-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Forgot to set the event in the previous fix.
