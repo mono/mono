@@ -7,6 +7,8 @@ all-local: compiler-tester-$(PROFILE).exe
 clean-local:
 	rm -f *.exe *.mdb
 
+install-local:
+
 compiler-tester-$(PROFILE).exe: compiler-tester.cs
 	$(CSCOMPILE) /out:$@ compiler-tester.cs xmldocdiff.cs
 	
