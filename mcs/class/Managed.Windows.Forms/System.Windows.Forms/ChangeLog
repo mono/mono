@@ -1,5 +1,11 @@
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs (CreateParams): Since we don't know if one of the 
+	  properties we use is overridden, lets make sure if we fail accessing 
+	  we continue with a backup plan
+
+2005-06-05  Peter Bartok  <pbartok@novell.com>
+
 	* Win32DnD.cs: 
 	  - Removed debug output
 	  - Added MarshalAs attribute to ensure proper marshalling of FORMATETC 

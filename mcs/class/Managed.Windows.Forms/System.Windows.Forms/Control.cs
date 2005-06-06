@@ -1915,11 +1915,41 @@ namespace System.Windows.Forms
 			get {
 				CreateParams create_params = new CreateParams();
 
-				create_params.Caption = Text;
-				create_params.X = Left;
-				create_params.Y = Top;
-				create_params.Width = Width;
-				create_params.Height = Height;
+				try {
+					create_params.Caption = Text;
+				}
+				catch {
+					create_params.Caption = text;
+				}
+
+				try {
+					create_params.X = Left;
+				}
+				catch {
+					create_params.X = this.bounds.X;
+				}
+
+				try {
+					create_params.Y = Top;
+				}
+				catch {
+					create_params.Y = this.bounds.Y;
+				}
+
+				try {
+					create_params.Y = Width;
+				}
+				catch {
+					create_params.Y = this.bounds.Width;
+				}
+
+				try {
+					create_params.Y = Height;
+				}
+				catch {
+					create_params.Y = this.bounds.Height;
+				}
+
 
 				create_params.ClassName = XplatUI.DefaultClassName;
 				create_params.ClassStyle = 0;
