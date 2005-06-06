@@ -63,7 +63,7 @@ namespace System.Reflection {
 			}
 		}
 
-		public ExceptionHandlingClauseFlags Flags {
+		public ExceptionHandlingClauseOptions Flags {
 			get {
 				return flags;
 			}

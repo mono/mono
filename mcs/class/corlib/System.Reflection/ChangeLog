@@ -1,5 +1,7 @@
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ExceptionHandlingClause.cs: Update after ExceptionHandlingClauseFlags name change.
+
 	* *.cs: Updates for net 2.0 beta 2.
 
 	* *.cs: Add net 2.0 ComVisibleAttribute.
