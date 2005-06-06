@@ -1,3 +1,7 @@
+2005-06-06  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridColumnStyle.cs: fixes for DataGridColumnStyle
+	
 2005-06-06  Gaurav Vaish and Ankit Jain
 
 	* DataSourceHelper.cs: Gaurav Vaish and Ankit Jain patch for databinding

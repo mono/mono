@@ -434,7 +434,7 @@ namespace System.Windows.Forms
 		{
 			grid = value;
 			
-			if (property_descriptor == null || value == null || value.ListManager == null) {
+			if (property_descriptor != null || value == null || value.ListManager == null) {
 				return;
 			}
 			
@@ -449,7 +449,7 @@ namespace System.Windows.Forms
 
 		protected virtual void SetDataGridInColumn (DataGrid value)
 		{
-			SetDataGridInColumn (value);
+			SetDataGrid (value);
 		}
 		
 		internal void SetDataGridInternal (DataGrid value)
