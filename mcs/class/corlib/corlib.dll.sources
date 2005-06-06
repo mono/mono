@@ -127,7 +127,6 @@ System/GC.cs
 System/GenericParameterAttributes.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
-System/IApplicationDescription.cs
 System/IAsyncResult.cs
 System/ICloneable.cs
 System/IComparable.cs
@@ -138,7 +137,6 @@ System/ICustomFormatter.cs
 System/IDisposable.cs
 System/IFormatProvider.cs
 System/IFormattable.cs
-System/IHostContext.cs
 System/INullableValue.cs
 System/IndexOutOfRangeException.cs
 System/Int16.cs
