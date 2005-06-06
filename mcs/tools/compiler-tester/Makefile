@@ -2,13 +2,6 @@ thisdir = tools/compiler-tester
 SUBDIRS = 
 include ../../build/rules.make
 
-all-local: compiler-tester-$(PROFILE).exe
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
-clean-local:
-	rm -f *.exe *.mdb
-
-install-local:
-
-compiler-tester-$(PROFILE).exe: compiler-tester.cs
-	$(CSCOMPILE) /out:$@ compiler-tester.cs xmldocdiff.cs
-	
+include $(topdir)/build/executable.make

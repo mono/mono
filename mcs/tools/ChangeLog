@@ -1,3 +1,7 @@
+2005-06-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_2_0_SUBDIRS): Add 'compiler-tester'.
+
 2005-06-06  Marek Safar  <marek.safar@seznam.cz>
 
 	* Makefile: Added compiler-tester.

@@ -58,7 +58,7 @@ endif
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 
 run-mcs-tests:
-	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) ../tools/compiler-tester/compiler-tester-$(PROFILE).exe negative $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
