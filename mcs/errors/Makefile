@@ -32,7 +32,7 @@ TEST_SUPPORT_FILES = \
 
 all-local:
 
-test-local: TestRunner-$(PROFILE).exe $(TEST_SUPPORT_FILES)
+test-local: $(TEST_SUPPORT_FILES)
 
 run-test-ondotnet-local:
 
@@ -57,8 +57,8 @@ endif
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 
-run-mcs-tests: TestRunner-$(PROFILE).exe
-	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) TestRunner-$(PROFILE).exe $(COMPILER_NAME) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+run-mcs-tests:
+	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) ../tools/compiler-tester/compiler-tester-$(PROFILE).exe negative $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
@@ -72,6 +72,3 @@ install-local uninstall-local:
 
 %-module.dll: %-module.cs
 	$(CSCOMPILE) /target:module /out:$@ $<
-
-TestRunner-$(PROFILE).exe: TestRunner.cs
-	$(CSCOMPILE) /out:$@ TestRunner.cs
