@@ -1,5 +1,7 @@
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Assembly.cs ExceptionHandlingClause.cs: Fix build.
+
 	* ProcessorArchitecture.cs: New file.
 
 	* ExceptionHandlingClause.cs: Update after ExceptionHandlingClauseFlags name change.

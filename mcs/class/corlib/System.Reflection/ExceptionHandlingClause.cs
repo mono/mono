@@ -41,7 +41,7 @@ namespace System.Reflection {
 		#region Sync with reflection.h
 		internal Type catch_type;
 		internal int filter_offset;
-		internal ExceptionHandlingClauseFlags flags;
+		internal ExceptionHandlingClauseOptions flags;
 		internal int try_offset;
 		internal int try_length;
 		internal int handler_offset;

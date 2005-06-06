@@ -731,7 +731,7 @@ namespace System.Reflection {
 		public ImageFileMachine ImageFileMachine {
 			get {
 				ImageFileMachine machine;
-				PortableExecutableKind kind;
+				PortableExecutableKinds kind;
 				ModuleHandle handle = ManifestModule.ModuleHandle;
 				handle.GetPEKind (out kind, out machine);
 				return machine;
@@ -751,10 +751,10 @@ namespace System.Reflection {
 		}
 
 		[ComVisible (false)]
-		public PortableExecutableKind PortableExecutableKind {
+		public PortableExecutableKinds PortableExecutableKind {
 			get {
 				ImageFileMachine machine;
-				PortableExecutableKind kind;
+				PortableExecutableKinds kind;
 				ModuleHandle handle = ManifestModule.ModuleHandle;
 				handle.GetPEKind (out kind, out machine);
 				return kind;
