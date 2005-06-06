@@ -1,5 +1,13 @@
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_Mono_Runtime_GetDisplayName): Fix warning.
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): Fix encoding of
+	dynamic DllImportAttribute.
+
+	* icall.c (ves_icall_MonoMethod_GetDllImportAttribute): Fix decoding of 
+	dynamic DllImportAttribute.
+
 	* Makefile.am (libmonoruntimeinclude_HEADERS): Export tabledefs.h too.
 	Fixes #75162.
 
