@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Dennis Hayes	dennish@raytek.com
@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 
 		#region CheckBoxAccessibleObject Subclass
 		[ComVisible(true)]
-			public class CheckBoxAccessibleObject : ControlAccessibleObject {
+		public class CheckBoxAccessibleObject : ButtonBaseAccessibleObject {
 			#region CheckBoxAccessibleObject Local Variables
 			private CheckBox owner;
 			#endregion	// CheckBoxAccessibleObject Local Variables
@@ -315,8 +315,8 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated (e);
 		}
 
-		protected override void OnMouseUp(MouseEventArgs e) {
-			base.OnMouseUp (e);
+		protected override void OnMouseUp(MouseEventArgs mevent) {
+			base.OnMouseUp (mevent);
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {

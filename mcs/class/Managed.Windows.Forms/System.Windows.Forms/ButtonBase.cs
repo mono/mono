@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	public abstract class ButtonBase : Control {
@@ -44,6 +45,27 @@ namespace System.Windows.Forms {
 		internal bool			enter_state;
 		internal StringFormat		text_format;
 		#endregion	// Local Variables
+
+		#region ButtonBaseAccessibleObject sub-class
+		[ComVisible(true)]
+		public class ButtonBaseAccessibleObject : ControlAccessibleObject {
+			#region ButtonBaseAccessibleObject Local Variables
+			private Control	owner;
+			#endregion	// ButtonBaseAccessibleObject Local Variables
+
+			#region ButtonBaseAccessibleObject Constructors
+			public ButtonBaseAccessibleObject(Control owner) : base(owner) {
+				this.owner = owner;
+			}
+			#endregion	// ButtonBaseAccessibleObject Constructors
+
+			#region ButtonBaseAccessibleObject Methods
+			public override void DoDefaultAction() {
+				((ButtonBase)owner).PerformClick();
+			}
+			#endregion	// ButtonBaseAccessibleObject Methods
+		}
+		#endregion	// ButtonBaseAccessibleObject sub-class
 
 		#region Private Properties and Methods
 		internal ButtonState ButtonState {
@@ -504,6 +526,13 @@ namespace System.Windows.Forms {
 			base.WndProc (ref m);
 		}
 		#endregion	// Public Instance Properties
+
+
+		#region Internal Methods
+		private void PerformClick() {
+			OnClick(EventArgs.Empty);
+		}
+		#endregion	// Internal Methods
 
 		#region	Events
 		[Browsable(false)]

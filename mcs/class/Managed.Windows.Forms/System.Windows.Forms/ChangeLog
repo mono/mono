@@ -1,3 +1,24 @@
+2005-06-06  Peter Bartok  <pbartok@novell.com>
+
+	* ImageListStreamer.cs: Fixed signature for GetData
+	* CheckBox.cs: Fixed base class for CheckBoxAccessibleObject
+	* ComboBox.cs: 
+	  - Added missing ChildAccessibleObject class
+	  - Added missing OnXXXFocus overrides, switched to using those 
+	    instead of the event handler
+	* Control.cs:
+	  - Added Parent property for ControlAccessibleObject
+	  - Fixed signatures
+	  - Fixed attributes
+	  - Added ResetBindings()
+	* ListBindingConverter.cs: Implemented some methods
+	* ButtonBase.cs: Added missing ButtonBaseAccessibleObject class
+	* ImageList.cs: Implemented basic handle scheme, removed TODOs
+	* ContainerControl.cs: Fixed signature, now subscribing to the 
+	  ControlRemoved event instead of overriding the handler, LAMESPEC
+	* CurrencyManager.cs: Added missing attribute
+	* MonthCalendar.cs: Added missing properties
+
 2005-06-06  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridColumnStyle.cs: fixes for DataGridColumnStyle

@@ -133,7 +133,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO ("RLE is broken")]
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			MemoryStream stream = new MemoryStream ();
 			BinaryWriter writer = new BinaryWriter (stream);

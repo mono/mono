@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Runtime.InteropServices;
 
 
 namespace System.Windows.Forms
@@ -62,6 +63,25 @@ namespace System.Windows.Forms
 		private TextBox textbox_ctrl;
 		private bool process_textchanged_event;
 		private bool has_focus;		
+
+		[ComVisible(true)]
+		public class ChildAccessibleObject : AccessibleObject {
+			private ComboBox	owner;
+			private IntPtr		handle;
+
+			public ChildAccessibleObject (ComboBox owner, IntPtr handle) {
+				this.owner = owner;
+				this.handle = handle;
+			}
+
+			public override string Name {
+				get {
+					return base.Name;
+				}
+			}
+
+			
+		}
 
 		internal class ComboBoxInfo
 		{
@@ -123,8 +143,6 @@ namespace System.Windows.Forms
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
-			GotFocus += new EventHandler (OnGotFocus);
-			LostFocus += new EventHandler (OnLostFocus);
 		}
 
 		#region events
@@ -733,6 +751,18 @@ namespace System.Windows.Forms
 			base.OnForeColorChanged (e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]		
+		protected override void OnGotFocus (EventArgs e) {			
+			has_focus = true;
+			Invalidate ();
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]		
+		protected override void OnLostFocus (EventArgs e) {			
+			has_focus = false;
+			Invalidate ();
+		}		
+
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
@@ -1036,18 +1066,6 @@ namespace System.Windows.Forms
 			return -1;
 		}
 		
-		private void OnGotFocus (object sender, EventArgs e) 			
-		{			
-			has_focus = true;
-			Invalidate ();
-		}
-		
-		private void OnLostFocus (object sender, EventArgs e) 			
-		{			
-			has_focus = false;
-			Invalidate ();
-		}		
-
 		internal virtual void OnMouseDownCB (object sender, MouseEventArgs e)
     		{    			
     			/* Click On button*/    			

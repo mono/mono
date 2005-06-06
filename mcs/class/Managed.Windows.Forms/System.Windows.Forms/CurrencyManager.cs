@@ -29,7 +29,7 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
-
+	[DefaultMember("Item")]
 	public class CurrencyManager : BindingManagerBase {
 
 		protected Type finalType;

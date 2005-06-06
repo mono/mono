@@ -213,6 +213,13 @@ namespace System.Windows.Forms
 				}
 			}
 
+			public override AccessibleObject Parent {
+				get {
+					return base.Parent;
+				}
+			}
+
+
 			public override AccessibleRole Role {
 				get {
 					return base.Role;
@@ -338,7 +345,7 @@ namespace System.Windows.Forms
 				owner.ResumeLayout();
 			}
 
-			public virtual bool Contains (Control value)
+			public bool Contains (Control value)
 			{
 				return list.Contains (value);
 			}
@@ -1367,9 +1374,9 @@ namespace System.Windows.Forms
 		}
 
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[ParenthesizePropertyName(true)]
+		[RefreshProperties(RefreshProperties.All)]
 		public ControlBindingsCollection DataBindings {
 			get {
 				if (data_bindings == null)
@@ -2501,13 +2508,11 @@ namespace System.Windows.Forms
 			background_color = Color.Empty;
 		}
 
-#if haveDataBindings
 	        [EditorBrowsable(EditorBrowsableState.Never)]
 		[MonoTODO]
 		public void ResetBindings() {
 			// Do something
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetCursor() {

@@ -41,6 +41,7 @@ namespace System.Windows.Forms {
 			active_control = null;
 			focused_control = null;
 			unvalidated_control = null;
+			ControlRemoved += new ControlEventHandler(OnControlRemoved);
 		}
 		#endregion	// Public Constructors
 
@@ -133,8 +134,11 @@ namespace System.Windows.Forms {
 			base.Dispose(disposing);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected override void OnControlRemoved(ControlEventArgs e) {
+		// LAMESPEC This used to be documented, but it's not in code 
+		// and no longer listed in MSDN2
+		// [EditorBrowsable (EditorBrowsableState.Advanced)]
+		// protected override void OnControlRemoved(ControlEventArgs e) {
+		private void OnControlRemoved(object sender, ControlEventArgs e) {
 			if (e.Control == this.unvalidated_control) {
 				this.unvalidated_control = null;
 			}
@@ -143,7 +147,7 @@ namespace System.Windows.Forms {
 				this.unvalidated_control = null;
 			}
 
-			base.OnControlRemoved(e);
+			// base.OnControlRemoved(e);
 		}
 
 		protected override void OnCreateControl() {

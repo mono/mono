@@ -201,6 +201,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override Image BackgroundImage {
+			get {
+				return base.BackgroundImage;
+			}
+			set {
+				base.BackgroundImage = value;
+			}
+		}
+
+
 		// the back color for the main part of the calendar
 		public Color BackColor {
 			set {
@@ -297,6 +309,24 @@ namespace System.Windows.Forms {
 			}
 			get {
 				return fore_color;
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public ImeMode ImeMode {
+			get {
+				return ime_mode;
+			}
+
+			set {
+				if (ime_mode != value) {
+					ime_mode = value;
+
+					if (ImeModeChanged != null) {
+						ImeModeChanged(this, EventArgs.Empty);
+					}
+				}
 			}
 		}
 
@@ -576,6 +606,19 @@ namespace System.Windows.Forms {
 				title_size = new Size ((date_cell_size.Width * column_count), 3 * multiplier);
 
 				return new Size (column_count * date_cell_size.Width, row_count * date_cell_size.Height + title_size.Height);
+			}
+		}
+
+		[Bindable(false)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override string Text {
+			get {
+				return base.Text;
+			}
+			set {
+				base.Text = value;
 			}
 		}
 
@@ -1036,7 +1079,6 @@ namespace System.Windows.Forms {
 		// fired when the user explicitely clicks on date to select it
 		public event DateRangeEventHandler DateSelected;
 
-		[MonoTODO("Fire BackgroundImageChanged event")]
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler BackgroundImageChanged;
@@ -1051,7 +1093,6 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler DoubleClick;
 
-		[MonoTODO("Fire ImeModeChanged event")]
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler ImeModeChanged;
@@ -1060,7 +1101,6 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
 
-		[MonoTODO("Fire TextChanged event")]
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler TextChanged;

@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
+// If we ever need to support the Handle property, we should create a static ArrayList,
+// and store the ImageList object in it, and return the index as handle
+// That way, once we try to support P/Invokes, we can make the handle back to the object
+
 
 // COMPLETE
 
@@ -44,6 +48,7 @@ namespace System.Windows.Forms {
 		private Color			transparency_color;
 		private Delegate		handler;
 		private ImageListStreamer	image_stream;
+		private IntPtr			handle;	
 		#endregion	// Local Variables
 
 		#region Sub-classes
@@ -348,6 +353,7 @@ namespace System.Windows.Forms {
 			transparency_color = Color.Transparent;
 			size = new Size(16, 16);
 			image_collection = new ImageCollection(this);
+			handle = IntPtr.Zero;
 		}
 
 		public ImageList(System.ComponentModel.IContainer container) : this ()
@@ -371,23 +377,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Determine if we support HBITMAP handles, this would involve XplatUI")]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {
 			get {
 				if (RecreateHandle!=null) RecreateHandle(this, EventArgs.Empty);
-				return IntPtr.Zero;
+				handle = new IntPtr(1);
+				return handle;
 			}
 		}
 
-		[MonoTODO("Determine if we support HBITMAP handles, this would involve XplatUI")]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool HandleCreated {
 			get {
+				if (handle != IntPtr.Zero) {
+					return true;
+				}
 				return false;
 			}
 		}

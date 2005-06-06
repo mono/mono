@@ -36,8 +36,10 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Methods
-		[MonoTODO]
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) {
+			if (destinationType == typeof(string)) {
+				return true;
+			}
 			return base.CanConvertTo (context, destinationType);
 		}
 
@@ -46,14 +48,12 @@ namespace System.Windows.Forms {
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
-		[MonoTODO]
 		public override object CreateInstance(ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) {
-			return base.CreateInstance (context, propertyValues);
+			return new Binding((string)propertyValues["PropertyName"], (object)propertyValues["DataSource"], (string)propertyValues["DataMember"]);
 		}
 
-		[MonoTODO]
 		public override bool GetCreateInstanceSupported(ITypeDescriptorContext context) {
-			return base.GetCreateInstanceSupported (context);
+			return true;
 		}
 		#endregion	// Public Instance Methods
 	}
