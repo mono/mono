@@ -95,7 +95,6 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
 			Assert.AreEqual (0, corlib.HostContext, "HostContext");
 			Assert.AreEqual ("v2.0.50215", corlib.ImageRuntimeVersion, "ImageRuntimeVersion");
-			Assert.AreEqual (PortableExecutableKind.ILOnly | PortableExecutableKind.Required32Bit, corlib.PortableExecutableKind, "PortableExecutableKind");
 			Assert.IsFalse (corlib.ReflectionOnly, "ReflectionOnly");
 			Assert.AreEqual (0x20000001, corlib.MetadataToken);
 			Assert.AreEqual (0x1, corlib.ManifestModule.MetadataToken);
@@ -119,7 +118,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (0, corlib_test.HostContext, "HostContext");
 			Assert.AreEqual ("v2.0.50215", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
 			Assert.IsNotNull (corlib_test.ManifestModule, "ManifestModule");
-			Assert.AreEqual (PortableExecutableKind.ILOnly, corlib_test.PortableExecutableKind, "PortableExecutableKind");
 			Assert.IsFalse (corlib_test.ReflectionOnly, "ReflectionOnly");
 #elif NET_1_1
 			Assert.AreEqual ("v1.1.4322", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");

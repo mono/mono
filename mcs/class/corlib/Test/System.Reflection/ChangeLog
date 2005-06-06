@@ -1,3 +1,9 @@
+2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyTest.cs: Removed asserts using PortableExecutableKind - 
+	because (1) it was renamed to PortableExecutableKinds *and* (2)
+	it's documented as obsolete and will be removed for 2.0 RTM.
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodInfoTest.cs: Disable pseudo custom attribute test.
