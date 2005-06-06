@@ -1,3 +1,8 @@
+2005-06-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Control.cs: Added new DataBind() overload for 2.0. The old
+	method calls this new overload.
+
 2005-06-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: ignore empty assembly.Location for in-memory

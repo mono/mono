@@ -771,31 +771,16 @@ namespace System.Web.UI
                         }
                 }
 
-                public virtual void DataBind() //DIT
-                {
+		public virtual void DataBind() //DIT
+		{
 			#if NET_2_0
-			bool foundDataItem = false;
-			
-			if ((stateMask & IS_NAMING_CONTAINER) != 0 && Page != null) {
-				object o = DataBinder.GetDataItem (this, out foundDataItem);
-				if (foundDataItem)
-					Page.PushDataItemContext (o);
-			}
-			
-			try {
+			DataBind (true);
+			#else
+			OnDataBinding (EventArgs.Empty);
+			DataBindChildren();
 			#endif
-				
-				OnDataBinding (EventArgs.Empty);
-				DataBindChildren();
-			
-			#if NET_2_0
-			} finally {
-				if (foundDataItem)
-					Page.PopDataItemContext ();
-			}
-			#endif
-                }
-		
+		}
+
 		#if NET_2_0
 		protected virtual
 		#endif
@@ -1129,6 +1114,29 @@ namespace System.Web.UI
 		{
 			return null;
 		}
+		
+		protected virtual void DataBind (bool raiseOnDataBinding)
+		{
+			bool foundDataItem = false;
+			
+			if ((stateMask & IS_NAMING_CONTAINER) != 0 && Page != null) {
+				object o = DataBinder.GetDataItem (this, out foundDataItem);
+				if (foundDataItem)
+					Page.PushDataItemContext (o);
+			}
+			
+			try {
+				
+				if (raiseOnDataBinding)
+					OnDataBinding (EventArgs.Empty);
+				DataBindChildren();
+			
+			} finally {
+				if (foundDataItem)
+					Page.PopDataItemContext ();
+			}
+		}
+		
 		
 #endif
         }
