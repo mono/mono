@@ -218,12 +218,26 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Ldc_R8, (double) value);
 				break;
 			case MemberTypes.Property:
-			default:
+				PropertyInfo property = (PropertyInfo) minfo;
+				Type decl_type = property.DeclaringType;
+				Type t = null;
+				
+				if (decl_type == typeof (RegExpConstructor)) {
+					t = typeof (GlobalObject);
+				}
+				ig.Emit (OpCodes.Call, t.GetProperty (FieldName (decl_type)).GetGetMethod ());
 
+				CodeGenerator.load_engine (InFunction, ig);
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToObject2"));
+				ig.Emit (OpCodes.Castclass, decl_type);
+				
+				ig.Emit (OpCodes.Call, decl_type.GetProperty (property.Name).GetGetMethod ());
+				break;
+			default:
 				throw new NotImplementedException ();
 			}
 			emit_box (ig, minfo);
-		}
+		}			
 
 		void emit_box (ILGenerator ig, MemberInfo info)
 		{
@@ -237,6 +251,13 @@ namespace Microsoft.JScript {
 			}
 			if (type != null)
 				ig.Emit (OpCodes.Box, type);
+		}
+
+		private string FieldName (Type type)
+		{
+			if (type == typeof (RegExpConstructor))
+				return "RegExp";
+			throw new NotImplementedException ();
 		}
 
 		void emit_late_binding (EmitContext ec)			

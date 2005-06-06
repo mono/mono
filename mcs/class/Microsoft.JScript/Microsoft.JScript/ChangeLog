@@ -1,3 +1,9 @@
+2005-06-06  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (emit_access): We can now access the properties
+	from the Global RegExp object, they were not being accesible
+	because they are properties not fields.
+
 2005-05-31  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalizer.cs: Add the global, non-constructable RegExp
