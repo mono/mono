@@ -1,3 +1,14 @@
+2005-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.template:
+	  Moved body implementation to table creator and put those bool
+	  results into an array.
+	* create-mscompat-collation-table.cs :
+	  So imported those methods. Modified array output to emit "0x"
+	  only for more than 9.
+	* create-normalization-source.cs : ditto on "0x" output matter.
+	* CollationDataStructures.txt : so now it holds ignorableFlags.
+
 2005-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collation-notes.txt, CollationDataStructures.txt :

@@ -88,8 +88,8 @@ namespace Mono.Globalization.Unicode
 			if (array.Length < count)
 				throw new ArgumentOutOfRangeException ("count");
 			for (int i = 0; i < count; i++) {
-				if (array [i] == 0)
-					Console.Write ("0, ");
+				if (array [i] < 10)
+					Console.Write ("{0}, ", array [i]);
 				else
 					Console.Write ("0x{0:X}, ", array [i]);
 				if (i % 16 == 15) {
