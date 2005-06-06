@@ -1,5 +1,9 @@
 2005-06-06  Andrew Skiba  <andrews@mainsoft.com>
 
+	* xslttest.cs : change messages
+
+2005-06-06  Andrew Skiba  <andrews@mainsoft.com>
+
 	* xslttest.cs : make the input and output files look similar to System.Xml/W3C suite
 	* Makefile : reflect the change in the CLI of the xslttest.cs
 

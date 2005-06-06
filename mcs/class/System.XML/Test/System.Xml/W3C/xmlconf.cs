@@ -87,7 +87,6 @@ namespace XmlConfTest {
 		int fixedCount = 0; //tested known to fail that passed
 		#endregion
 
-
 		#region test list fields
 		ArrayList slowTests = new ArrayList ();
 		ArrayList igroredTests = new ArrayList ();
@@ -169,7 +168,8 @@ namespace XmlConfTest {
 				}
 
 				DateTime start = DateTime.Now;
-				res = PerformTest (test) && res;
+				if (!PerformTest (test))
+					res = false;
 				TimeSpan span = DateTime.Now - start;
 				if (span.TotalSeconds > 1) {
 					if (slowTests.Contains (testId))
@@ -188,15 +188,19 @@ namespace XmlConfTest {
 			Console.Error.WriteLine ("Fixed:{0}\n", fixedCount);
 
 			if (fixedCount > 0)
-				Console.Error.WriteLine (@"ATTENTION!
-You must delete the fixed tests (those listed in fixed.lst) from
-knownFailures.lst or fixme.lst. If you don't do it, you can miss
+				Console.Error.WriteLine (@"
+
+ATTENTION!
+Delete the fixed tests (those listed in fixed.lst) from
+knownFailures.lst or fixme.lst, or we might miss
 regressions in the future.");
 
 			if (regressionsCount > 0)
-				Console.Error.WriteLine (@"ERROR!!! New regressions!
+				Console.Error.WriteLine (@"
+
+ERROR!!! New regressions!
 If you see this message for the first time, your last changes had
-introduced new bugs! Before you commit, you must do one of the following:
+introduced new bugs! Before you commit, consider one of the following:
 
 1. Find and fix the bugs, so tests will pass again.
 2. Open new bugs in bugzilla and temporily add the tests to fixme.lst

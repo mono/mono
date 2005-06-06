@@ -288,8 +288,8 @@ FileMatch:
 				Console.Error.WriteLine (@"
 
 ATTENTION!
-You must delete the fixed tests (those listed in fixed.lst) from
-knownFailures.lst or fixme.lst. If you don't do it, you can miss
+Delete the fixed tests (those listed in fixed.lst) from
+knownFailures.lst or fixme.lst, or we might miss
 regressions in the future.");
 
 			if (regressionsCount > 0)
@@ -297,7 +297,7 @@ regressions in the future.");
 
 ERROR!!! New regressions!
 If you see this message for the first time, your last changes had
-introduced new bugs! Before you commit, you must do one of the following:
+introduced new bugs! Before you commit, consider one of the following:
 
 1. Find and fix the bugs, so tests will pass again.
 2. Open new bugs in bugzilla and temporily add the tests to fixme.lst

@@ -1,3 +1,7 @@
+2005-06-06  Andrew Skiba  <andrews@mainsoft.com>
+
+	* xmlconf.cs : change messages
+
 2005-06-02  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile : mkdir as unzip seems to have trouble otherwise (on Cygwin there is an ambiguity between xmlconf.exe and xmlconf dir)
