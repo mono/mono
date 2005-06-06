@@ -682,7 +682,7 @@ namespace Mono.AssemblyInfo
 		protected override string GetMemberAttributes (MemberInfo member)
 		{
 			MethodBase method = (MethodBase) member;
-			return ((int) method.Attributes).ToString (CultureInfo.InvariantCulture);
+			return ((int)( method.Attributes & ~MethodAttributes.ReservedMask)).ToString (CultureInfo.InvariantCulture);
 		}
 
 		protected override void AddExtraData (XmlNode p, MemberInfo member)
