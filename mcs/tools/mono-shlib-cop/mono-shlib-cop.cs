@@ -502,8 +502,11 @@ namespace Mono.Unmanaged.Check {
 
 			AssemblyChecker checker = new AssemblyChecker ();
 			AssemblyCheckInfo report = new AssemblyCheckInfo ();
-			if (o.prefixes.Length == 0)
-				o.prefixes = new string[]{"/"};
+			if (o.prefixes.Length == 0) {
+				DirectoryInfo configDir = 
+					new DirectoryInfo (RuntimeEnvironment.GetRuntimeDirectory());
+				o.prefixes = new string[]{configDir.Parent.Parent.Parent.ToString ()};
+			}
 			report.SetInstallationPrefixes (o.prefixes);
 			foreach (string assembly in o.RemainingArguments) {
 				checker.CheckFile (assembly, report);

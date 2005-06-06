@@ -1,5 +1,10 @@
 2005-06-06  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* mono-shlib-cop.cs: Use better default prefix handling (don't always assume
+	  `/' is the prefix, instead base the choice off runtime information).
+
+2005-06-06  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* mono-shlib-cop.cs: Rename Report to AssemblyCheckInfo.  Add -p
 	  command-line option to specify mono prefixes to search for.
 	  Store $prefix/etc/mono/config and ASSEMBLY.config XmlDocuments in 
