@@ -51,15 +51,11 @@
 //      - Create AppDomain with ApplicationBase path set to directory assembly
 //        resides in
 //      - Create an AssemblyChecker instance within the AppDomain
-//      - Check an assembly with AssemblyChecker; store results in Report.
+//      - Check an assembly with AssemblyChecker; store results in AssemblyCheckInfo.
 //      - Print results.
 //
 // TODO:
 //    - AppDomain use
-//    - specify $prefix to use for finding $prefix/etc/mono/config
-//    - dllmap caching?  (Is it possible to avoid reading the .config file
-//      into each AppDomain at least once?  OS file caching may keep perf from
-//      dieing with all the potential I/O.)
 //    - Make -r work correctly (-r:Mono.Posix should read Mono.Posix from the
 //      GAC and inspect it.)
 //
@@ -171,7 +167,7 @@ namespace Mono.Unmanaged.Check {
 		}
 	}
 
-	sealed class Report : MarshalByRefObject {
+	sealed class AssemblyCheckInfo : MarshalByRefObject {
 		private MessageCollection errors   = new MessageCollection ();
 		private MessageCollection warnings = new MessageCollection ();
 
@@ -182,11 +178,59 @@ namespace Mono.Unmanaged.Check {
 		public MessageCollection Warnings {
 			get {return warnings;}
 		}
+
+		private XmlDocument[] mono_configs = new XmlDocument [0];
+		private IDictionary assembly_configs = new Hashtable ();
+
+		public void SetInstallationPrefixes (string[] prefixes)
+		{
+			mono_configs = new XmlDocument [prefixes.Length];
+			for (int i = 0; i < mono_configs.Length; ++i) {
+				mono_configs [i] = new XmlDocument ();
+				mono_configs [i].Load (prefixes [i] + "/etc/mono/config");
+			}
+		}
+
+		public string GetDllmapEntry (string assemblyPath, string library)
+		{
+			string xpath = "//dllmap[@dll=\"" + library + "\"]";
+
+			XmlDocument d = GetAssemblyConfig (assemblyPath);
+			if (d != null) {
+				XmlNodeList maps = d.SelectNodes (xpath);
+				if (maps.Count > 0)
+					return maps [0].Attributes ["target"].Value;
+			}
+			foreach (XmlDocument config in mono_configs) {
+				XmlNodeList maps = config.SelectNodes (xpath);
+				Trace.WriteLine (string.Format ("{0} <dllmap/> entries found!", maps.Count));
+				if (maps.Count > 0)
+					return maps [0].Attributes ["target"].Value;
+			}
+			return null;
+		}
+
+		private XmlDocument GetAssemblyConfig (string assemblyPath)
+		{
+			XmlDocument d = null;
+			if (assembly_configs.Contains (assemblyPath)) {
+				d = (XmlDocument) assembly_configs [assemblyPath];
+			}
+			else {
+				string _config = assemblyPath + ".config";
+				if (File.Exists (_config)) {
+					d = new XmlDocument ();
+					d.Load (_config);
+				}
+				assembly_configs.Add (assemblyPath, d);
+			}
+			return d;
+		}
 	}
 
 	sealed class AssemblyChecker : MarshalByRefObject {
 
-		public void CheckFile (string file, Report report)
+		public void CheckFile (string file, AssemblyCheckInfo report)
 		{
 			try {
 				Check (Assembly.LoadFile (file), report);
@@ -197,7 +241,7 @@ namespace Mono.Unmanaged.Check {
 			}
 		}
 
-		public void CheckWithPartialName (string partial, Report report)
+		public void CheckWithPartialName (string partial, AssemblyCheckInfo report)
 		{
 			AssemblyName an = new AssemblyName ();
 			an.Name = partial;
@@ -211,14 +255,14 @@ namespace Mono.Unmanaged.Check {
 			}
 		}
 
-		private void Check (Assembly a, Report report)
+		private void Check (Assembly a, AssemblyCheckInfo report)
 		{
 			foreach (Type t in a.GetTypes ()) {
 				Check (t, report);
 			}
 		}
 
-		private void Check (Type type, Report report)
+		private void Check (Type type, AssemblyCheckInfo report)
 		{
 			BindingFlags bf = BindingFlags.Instance | BindingFlags.Static | 
 				BindingFlags.Public | BindingFlags.NonPublic;
@@ -228,7 +272,7 @@ namespace Mono.Unmanaged.Check {
 			}
 		}
 
-		private void CheckMember (Type type, MemberInfo mi, Report report)
+		private void CheckMember (Type type, MemberInfo mi, AssemblyCheckInfo report)
 		{
 			DllImportAttribute[] attributes = null;
 			MethodBase[] methods = null;
@@ -304,7 +348,7 @@ namespace Mono.Unmanaged.Check {
 		}
 		
 		private void CheckLibrary (MethodBase method, DllImportAttribute attribute, 
-				Report report)
+				AssemblyCheckInfo report)
 		{
 			string library = attribute.Value;
 			string entrypoint = attribute.EntryPoint;
@@ -316,7 +360,7 @@ namespace Mono.Unmanaged.Check {
 
 			Trace.WriteLine ("Trying to load base library: " + library);
 
-			foreach (string name in GetLibraryNames (method.DeclaringType, library)) {
+			foreach (string name in GetLibraryNames (method.DeclaringType, library, report)) {
 				if (LoadLibrary (type, mname, name, entrypoint, report, out error)) {
 					found = name;
 					break;
@@ -364,13 +408,13 @@ namespace Mono.Unmanaged.Check {
 		[DllImport ("libglib-2.0.so")]
 		private static extern void g_free (IntPtr mem);
 
-		private static string[] GetLibraryNames (Type type, string library)
+		private static string[] GetLibraryNames (Type type, string library, AssemblyCheckInfo report)
 		{
 			// TODO: keep in sync with
 			// mono/metadata/loader.c:mono_lookup_pinvoke_call
 			ArrayList names = new ArrayList ();
 
-			string dll_map = GetDllMapEntry (type, library);
+			string dll_map = report.GetDllmapEntry (type.Assembly.Location, library);
 			if (dll_map != null) 
 				names.Add (dll_map);
 
@@ -406,7 +450,7 @@ namespace Mono.Unmanaged.Check {
 		}
 
 		private static bool LoadLibrary (string type, string member, 
-				string library, string symbol, Report report, out string error)
+				string library, string symbol, AssemblyCheckInfo report, out string error)
 		{
 			error = null;
 			IntPtr h = g_module_open (library, 
@@ -434,41 +478,14 @@ namespace Mono.Unmanaged.Check {
 			}
 			return false;
 		}
-
-		private static XmlDocument etc_mono_config;
-
-		static AssemblyChecker ()
-		{
-			etc_mono_config = new XmlDocument ();
-			etc_mono_config.Load ("/etc/mono/config");
-		}
-
-		private static string GetDllMapEntry (Type type, string library)
-		{
-			string xpath = "//dllmap[@dll=\"" + library + "\"]";
-			// string xpath = "//dllmap";
-			string _config = type.Assembly.Location + ".config";
-			if (File.Exists (_config)) {
-				Trace.WriteLine ("Reading .config file: " + _config);
-				XmlDocument config = new XmlDocument ();
-				config.Load (_config);
-				XmlNodeList entry = config.SelectNodes (xpath);
-				if (entry.Count > 0)
-					return entry[0].Attributes ["target"].Value;
-			}
-			Trace.WriteLine (".config not found; using /etc/mono/config");
-			XmlNodeList maps = etc_mono_config.SelectNodes (xpath);
-			Trace.WriteLine (string.Format ("{0} <dllmap/> entries found!", maps.Count));
-			if (maps.Count > 0)
-				return maps[0].Attributes ["target"].Value;
-			return null;
-		}
 	}
 
 	class MyOptions : Options {
 		[Option (int.MaxValue, "Assemblies to load by partial names (e.g. from the GAC)", 'r')]
 		public string[] references = new string[]{};
 
+		[Option (int.MaxValue, "Mono installation prefixes (for $prefix/etc/mono/config)", 'p')]
+		public string[] prefixes = new string[]{};
 	}
 
 	class Runner {
@@ -484,7 +501,10 @@ namespace Mono.Unmanaged.Check {
 			o.ProcessArgs (args);
 
 			AssemblyChecker checker = new AssemblyChecker ();
-			Report report = new Report ();
+			AssemblyCheckInfo report = new AssemblyCheckInfo ();
+			if (o.prefixes.Length == 0)
+				o.prefixes = new string[]{"/"};
+			report.SetInstallationPrefixes (o.prefixes);
 			foreach (string assembly in o.RemainingArguments) {
 				checker.CheckFile (assembly, report);
 			}

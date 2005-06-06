@@ -1,3 +1,13 @@
+2005-06-06  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mono-shlib-cop.cs: Rename Report to AssemblyCheckInfo.  Add -p
+	  command-line option to specify mono prefixes to search for.
+	  Store $prefix/etc/mono/config and ASSEMBLY.config XmlDocuments in 
+	  AssemblyCheckInfo, and use AssemblyCheckInfo to search for <dllmap> 
+	  entries.  This allows us to cache XmlDocuments across AppDomains (since
+	  AssemblyCheckInfo is a MarshalByRefObject), and should cut down on file
+	  I/O (since we don't re-read the .config for every member of every type).
+
 2005-06-03  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mono-shlib-cop.cs: Add MessageInfo, MessageCollection, & Report classes to
