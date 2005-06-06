@@ -1,3 +1,8 @@
+2005-06-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (libmonoruntime_la_SOURCES): Revert last change at
+	lupus's request.
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Mono_Runtime_GetDisplayName): Fix warning.
