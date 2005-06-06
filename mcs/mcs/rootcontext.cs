@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 		public static int WarningLevel;
 		
 		public static Target Target;
-		public static string TargetExt = ".exe";
+		public static string TargetExt;
 
 		public static bool VerifyClsCompliance = true;
 
@@ -113,6 +113,7 @@ namespace Mono.CSharp {
 			StrongNameDelaySign = false;
 			MainClass = null;
 			Target = Target.Exe;
+		    	TargetExt = ".exe";
 			Version = LanguageVersion.Default;
 			Documentation = null;
 			impl_details_class = null;
