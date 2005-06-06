@@ -19,12 +19,11 @@ namespace MonoTests.System
 		static readonly string curDir = Directory.GetCurrentDirectory ();
 
 		[Test]
-		[Category("NotWorking")]
 		public void ApplicationBase1 ()
 		{
 			string expected_path = tmpPath.Replace(@"\", @"/");
 			AppDomainSetup setup = new AppDomainSetup ();
-			string fileUri = "file:///" + expected_path;
+			string fileUri = "file://" + expected_path;
 			setup.ApplicationBase = fileUri;
 			AssertEquals ("AB1 #01", expected_path, setup.ApplicationBase);
 		}
@@ -59,6 +58,7 @@ namespace MonoTests.System
 		[Category("NotWorking")]
 		public void ApplicationBase5 ()
 		{
+			// This is failing because of (probably) a windows-ism, so don't worry
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "file:///lala:la";
 			AssertEquals ("AB5 #01", "lala:la", setup.ApplicationBase);

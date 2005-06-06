@@ -65,56 +65,6 @@ namespace MonoTests.System {
 		private string testLocation = typeof (ActivatorTest).Assembly.Location;
 
 		[Test]
-		[Ignore ("doesn't even work on MS runtime")]
-		// This test is ignored for the moment because CreateComInstanceFrom() is not 
-		// implemented yet by the mono Activator class
-		public void CreateComInstanceFrom ()
-		{
-			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.COMTest");
-			COMTest objCOMTest = (COMTest) objHandle.Unwrap ();
-			objCOMTest.Id = 10;
-			Assert.AreEqual (10, objCOMTest.Id, "#A01");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void CreateComInstanceFrom_AssemblyNull ()
-		{
-			ObjectHandle objHandle = Activator.CreateComInstanceFrom (null, "MonoTests.System.ActivatorTestInternal.COMTest");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateComInstanceFrom_AssemblyEmpty ()
-		{
-			ObjectHandle objHandle = Activator.CreateComInstanceFrom (String.Empty, "MonoTests.System.ActivatorTestInternal.COMTest");
-		}
-
-		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
-		[Category ("NotWorking")]
-		public void CreateComInstanceFrom_AssemblyNotFound ()
-		{
-			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation + "1", "MonoTests.System.ActivatorTestInternal.COMTest");
-		}
-
-		[Test]
-		[ExpectedException (typeof (TypeLoadException))]
-		[Category ("NotWorking")]
-		public void CreateComInstanceFrom_TypeNameNotComVisible ()
-		{
-			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.NonCOMTest");
-		}
-
-		[Test]
-		[ExpectedException (typeof (TypeLoadException))]
-		[Category ("NotWorking")]
-		public void CreateComInstanceFrom_TypeNameDoesNotExists ()
-		{
-			ObjectHandle objHandle = Activator.CreateComInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.DoesntExistsCOMTest");
-		}
-
-		[Test]
 		public void CreateInstance_Type()
 		{
 			COMTest objCOMTest = (COMTest) Activator.CreateInstance (typeof (COMTest));

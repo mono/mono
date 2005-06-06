@@ -1,3 +1,11 @@
+2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ActivatorTest.cs: removed CreateCom* tests, as we don't support that
+	and will never do.
+
+	* AppDomainSetupTest.cs: fixed a 'NotWorking' test and added a comment
+	to the other.
+
 2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeTest.cs: new test for null in Type [] for GetConstructor().
