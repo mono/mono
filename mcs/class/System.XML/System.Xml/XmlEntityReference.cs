@@ -65,7 +65,7 @@ namespace System.Xml
 			}
 		}
 
-		protected override string ChildrenBaseURI {
+		internal override string ChildrenBaseURI {
 			get {
 				XmlEntity ent = Entity;
 				if (ent == null)

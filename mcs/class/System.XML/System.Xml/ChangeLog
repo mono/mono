@@ -1,3 +1,7 @@
+2005-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlEntityReference.cs, XmlNode.cs : protected api fix.
+
 2005-06-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlEntityReference.cs, XmlNode.cs : For entity references, BaseURI 

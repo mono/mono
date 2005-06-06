@@ -76,7 +76,7 @@ namespace System.Xml
 			}
 		}
 
-		protected virtual string ChildrenBaseURI {
+		internal virtual string ChildrenBaseURI {
 			get {
 				return BaseURI;
 			}
