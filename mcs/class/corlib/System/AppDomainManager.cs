@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,23 +30,28 @@
 
 using System.Reflection;
 using System.Runtime.Hosting;
+using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 using System.Security.Policy;
 using System.Threading;
 
 namespace System {
 
+	[ComVisible (true)]
+	[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
+	[SecurityPermission (SecurityAction.InheritanceDemand, Infrastructure = true)]
 	public class AppDomainManager : MarshalByRefObject {
 
 		private ApplicationActivator _activator;
 		private Assembly _entry;
 		private HostExecutionContextManager _host_context;
 		private HostSecurityManager _host_security;
-		private DomainManagerInitializationFlags _flags;
+		private AppDomainManagerInitializationOptions _flags;
 
 		public AppDomainManager ()
 		{
-			_flags = DomainManagerInitializationFlags.None;
+			_flags = AppDomainManagerInitializationOptions.None;
 		}
 
 		public virtual ApplicationActivator ApplicationActivator {
@@ -71,7 +76,7 @@ namespace System {
 			}
 		}
 
-		public DomainManagerInitializationFlags InitializationFlags {
+		public AppDomainManagerInitializationOptions InitializationFlags {
 			get { return _flags; }
 			set { _flags = value; }	
 		}

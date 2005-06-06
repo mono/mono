@@ -1,10 +1,10 @@
 //
-// System.DomainManagerInitializationFlags enum
+// System.AppDomainManagerInitializationOptions flags
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,14 +28,16 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System {
 
 	[Flags]
 	[Serializable]
-	public enum DomainManagerInitializationFlags {
+	[ComVisible (true)]
+	public enum AppDomainManagerInitializationOptions {
 		None = 0,
 		RegisterWithHost = 1,
-		Activate = 2
 	}
 }
 

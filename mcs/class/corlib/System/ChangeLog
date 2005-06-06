@@ -1,3 +1,11 @@
+2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* _AppDomain.cs: Added new members in the interface (added in 1.1 SP1)
+	* AppDomain.cs: Added new members from _AppDomain interface.
+	* AppDomainManager.cs: Fixed flags and added attributes.
+	* DomainManagerInitializationFlags.cs: The flag has been renamed to 
+	AppDomainManagerInitializationOptions in beta2.
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs MonoCustomAttrs.cs: Return SerializableAttribute for types as well.
