@@ -1,3 +1,8 @@
+2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IsolatedStorageFileStream.cs: check the FileMode here as FileStream
+	throws a different exception.
+
 2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* INormalizeForIsolatedStorage.cs: Added [ComVisible(true)] for 2.0.

@@ -47,10 +47,13 @@ namespace System.IO.IsolatedStorage {
 	public class IsolatedStorageFileStream : FileStream {
 
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
-		private static string CreateIsolatedPath (IsolatedStorageFile isf, string path)
+		private static string CreateIsolatedPath (IsolatedStorageFile isf, string path, FileMode mode)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
+
+			if (!Enum.IsDefined (typeof (FileMode), mode))
+				throw new ArgumentException ("mode");
 
 			if (isf == null) {
 				// we can't call GetUserStoreForDomain here because it depends on 
@@ -107,7 +110,7 @@ namespace System.IO.IsolatedStorage {
 		// FIXME: Further limit the assertion when imperative Assert is implemented
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, IsolatedStorageFile isf)
-			: base (CreateIsolatedPath (isf, path), mode, access, share, bufferSize, false, true)
+			: base (CreateIsolatedPath (isf, path, mode), mode, access, share, bufferSize, false, true)
 		{
 		}
 
