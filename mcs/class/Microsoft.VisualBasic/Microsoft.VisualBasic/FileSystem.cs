@@ -411,16 +411,6 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(
 				int fileNumber,
-				ref Object value,
-				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
-		{
-			checkRecordNumber(recordNumber,false);
-			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.get(ref value,recordNumber);
-		}
-		
-		public static void FileGet(
-				int fileNumber,
 				ref DateTime value,
 				[Optional, __DefaultArgumentValue((long)-1)] long recordNumber)
 

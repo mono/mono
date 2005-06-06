@@ -1,3 +1,6 @@
+2005-06-06:2  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* FileSystem.cs: Killed unneeded overload FileGet(in, ref Object, ...)
+		
 2005-06-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Collection.cs (Item [indexer]): Correcting API according to
 	FX1.1 class status page
