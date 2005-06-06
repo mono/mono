@@ -415,7 +415,6 @@ namespace System.Windows.Forms {
 			private static void Initialize() {
 				AssemblyName	assembly;
 				AssemblyBuilder	assembly_builder;
-				ModuleBuilder	module_builder;
 
 				if (Initialized) {
 					return;
@@ -790,13 +789,15 @@ namespace System.Windows.Forms {
 			}
 
 			internal static uint Drop(IntPtr @this, IntPtr pDataObj, uint grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect) {
+				throw new Exception("Yeah baby, gimme a ride to WM_DROPFILES land");
+
+				#if InTheFuture
 				ComIDataObjectUnmanaged	data_object;
 				FORMATETC		format;
 				STGMEDIUM		medium;
 				uint			result;
 				IntPtr			mem;
 
-				throw new Exception("Yeah baby, gimme a ride to WM_DROPFILES land");
 
 				data_object = new ComIDataObjectUnmanaged(pDataObj);
 
@@ -821,6 +822,7 @@ namespace System.Windows.Forms {
 				result = data_object.GetData(format, ref medium);
 
 				return E_NOTIMPL;
+				#endif
 			}
 		}
 
@@ -872,8 +874,6 @@ namespace System.Windows.Forms {
 					long		hmem_string_ptr;
 					IntPtr		string_buffer;
 					int		string_buffer_size;
-					IntPtr		src_ptr;
-					IntPtr		dest_ptr;
 
 					sb = new StringBuilder();
 
@@ -985,7 +985,6 @@ namespace System.Windows.Forms {
 			IntPtr	result;
 			IntPtr	data_object;
 			IntPtr	drop_source;
-			uint	ret;
 
 			BuildFormats(data);
 
@@ -994,7 +993,7 @@ namespace System.Windows.Forms {
 
 			result = (IntPtr)DragDropEffects.None;
 
-			ret = Win32DoDragDrop(data_object, drop_source, (IntPtr)allowed, ref result);
+			Win32DoDragDrop(data_object, drop_source, (IntPtr)allowed, ref result);
 
 			// Cleanup again
 			ComIDataObject.ReleaseUnmanaged(data_object);
