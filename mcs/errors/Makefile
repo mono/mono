@@ -15,7 +15,6 @@ GENERICS_COMPILE = $(CSCOMPILE) /target:library
 
 DISTFILES = \
 	CONTRIBUTORS_README 	\
-	README.tests		\
 	errors.txt 		\
 	do-tests.pl		\
 	$(wildcard *.cs)	\
