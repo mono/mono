@@ -35,7 +35,7 @@ using System.IO.IsolatedStorage;
 using System.Security;
 using System.Security.Permissions;
 
-namespace MonoCasTests.System.IO.IsolatedStorage {
+namespace MonoCasTests.System.IO.IsolatedStorageTest {
 
 	[TestFixture]
 	[Category ("CAS")]

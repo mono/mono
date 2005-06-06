@@ -36,7 +36,7 @@ using Microsoft.Win32.SafeHandles;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.IO.IsolatedStorage {
+namespace MonoTests.System.IO.IsolatedStorageTest {
 
 	[TestFixture]
 	public class IsolatedStorageFileStreamTest {

@@ -41,7 +41,7 @@ using System.Threading;
 using Microsoft.Win32.SafeHandles;
 #endif
 
-namespace MonoCasTests.System.IO.IsolatedStorage {
+namespace MonoCasTests.System.IO.IsolatedStorageTest {
 
 	[TestFixture]
 	[Category ("CAS")]

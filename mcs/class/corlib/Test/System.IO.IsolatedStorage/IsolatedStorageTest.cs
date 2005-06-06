@@ -28,13 +28,13 @@
 
 using System;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Security;
 using System.Security.Permissions;
+using System.IO.IsolatedStorage;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.IO.IsolatedStorage {
+namespace MonoTests.System.IO.IsolatedStorageTest {
 
 	// note: IsolatedStorage is abstract so we create a
 	// non-abstract class to test it

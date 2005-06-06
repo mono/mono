@@ -37,7 +37,7 @@ using System.Security.Policy;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.IO.IsolatedStorage {
+namespace MonoTests.System.IO.IsolatedStorageTest {
 
 	[TestFixture]
 	public class IsolatedStorageFileTest {
