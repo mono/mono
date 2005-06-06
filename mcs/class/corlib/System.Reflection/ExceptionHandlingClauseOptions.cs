@@ -1,5 +1,5 @@
 //
-// System.Reflection/ExceptionHandlingClauseFlags.cs
+// System.Reflection/ExceptionHandlingClauseOptions.cs
 //
 // Author:
 //   Zoltan Varga (vargaz@gmail.com)
@@ -38,7 +38,7 @@ namespace System.Reflection {
 	[ComVisible (true)]
 #endif
 	[Flags]
-	public enum ExceptionHandlingClauseFlags {
+	public enum ExceptionHandlingClauseOptions {
 		Clause = 0x0,
 		Filter = 0x1,
 		Finally = 0x2,

@@ -280,7 +280,7 @@ namespace System.Reflection {
 			}
 		}
 
-		public void GetPEKind (out PortableExecutableKind peKind, out ImageFileMachine machine) {
+		public void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
 			ModuleHandle.GetPEKind (out peKind, out machine);
 		}
 #endif
@@ -400,6 +400,6 @@ namespace System.Reflection {
 		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, out ResolveTokenError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKind peKind, out ImageFileMachine machine);
+		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 	}
 }

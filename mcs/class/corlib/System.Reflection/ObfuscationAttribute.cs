@@ -63,7 +63,7 @@ namespace System.Reflection
 			}
 		}
 
-		public bool Strip {
+		public bool StripAfterObfuscation {
 			get {
 				return strip;
 			}

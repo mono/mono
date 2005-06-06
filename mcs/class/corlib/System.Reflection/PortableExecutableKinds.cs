@@ -1,5 +1,5 @@
 //
-// System.Reflection.PortableExecutableKind flag
+// System.Reflection.PortableExecutableKinds flag
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -35,11 +35,12 @@ namespace System.Reflection {
 #else
 	internal
 #endif
-	enum PortableExecutableKind {
+	enum PortableExecutableKinds {
 		NotAPortableExecutableImage = 0,
 		ILOnly = 1,
 		Required32Bit = 2,
 		Plus32Bit = 4,
+		PE32Plus = 4,
 		Unmanaged32Bit = 8
 	}
 }
