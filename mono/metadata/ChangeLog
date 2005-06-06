@@ -1,3 +1,8 @@
+2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (libmonoruntimeinclude_HEADERS): Export tabledefs.h too.
+	Fixes #75162.
+
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threads.c: avoid segfault when an unstarted thread is aborted.
