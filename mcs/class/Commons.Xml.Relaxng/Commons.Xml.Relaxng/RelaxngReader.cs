@@ -120,7 +120,7 @@ namespace Commons.Xml.Relaxng
 			}
 			do {
 				if (!skipRead)
-					b = Reader.Read ();
+					Reader.Read ();
 				else
 					skipRead = false;
 				switch (NodeType) {
@@ -146,7 +146,7 @@ namespace Commons.Xml.Relaxng
 						loop = false;
 					break;
 				}
-			} while (b && loop);
+			} while (!Reader.EOF && loop);
 
 			switch (NodeType) {
 			case XmlNodeType.Element:
@@ -408,7 +408,7 @@ namespace Commons.Xml.Relaxng
 		{
 			while (NodeType != XmlNodeType.Element)
 				if (!Read ())
-					break;
+					throw new RelaxngException ("RELAX NG pattern did not appear.");
 
 			switch (LocalName) {
 			case "element":
