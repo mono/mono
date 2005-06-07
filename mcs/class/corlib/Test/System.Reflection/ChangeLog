@@ -1,3 +1,7 @@
+2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AssemblyTest.cs: put back GetEntryAssembly, but this one is working.
+
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyTest.cs: Removed asserts using PortableExecutableKind - 

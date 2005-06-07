@@ -74,6 +74,25 @@ namespace MonoTests.System.Reflection
 			typeof (int).Assembly.GetType ("&blabla", true, true);
 		}
 
+		[Test]
+		public void GetEntryAssembly ()
+		{
+			// note: only available in default appdomain
+			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
+			// Not sure we should emulate this behavior.
+			string fname = AppDomain.CurrentDomain.FriendlyName;
+			if (fname.EndsWith (".dll")) { // nunit-console
+				Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
+#if NET_2_0
+				Assert.IsFalse (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
+#endif
+			} else { // gnunit
+				Assert.IsNotNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
+#if NET_2_0
+				Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
+#endif
+			}
+		}
 #if NET_2_0
 		[Category ("NotWorking")]
 #endif
