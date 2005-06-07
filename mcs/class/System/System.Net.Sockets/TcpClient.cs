@@ -181,7 +181,7 @@ namespace System.Net.Sockets
 			set {
 				client.SetSocketOption(
 					SocketOptionLevel.Tcp,
-					SocketOptionName.NoDelay, value);
+					SocketOptionName.NoDelay, value ? 1 : 0);
 			}
 		}
 				
