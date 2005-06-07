@@ -1,5 +1,10 @@
 2005-06-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-tailorings.cs, ldml-limited.rng : new file.
+	* LdmlReader.cs : removed old file.
+
+2005-06-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SortKeyBuffer.cs : split from Collator.cs. Now it considers
 	  practical use, reflecting updated sortkey constant design.
 	  Especially level 4 weight is split to 4 arrays that are merged in
