@@ -34,19 +34,24 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections;
 using System.Security;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
 #endif
 
-namespace System.Threading
-{
-	public sealed class Thread
-	{
+namespace System.Threading {
+
+	[ClassInterface (ClassInterfaceType.None)]
+#if NET_2_0
+	[ComVisible (true)]
+	[ComDefaultInterface (typeof (_Thread))]
+#endif
+	public sealed class Thread : _Thread {
+
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;
 		// stores a thread handle
@@ -935,5 +940,28 @@ namespace System.Threading
 		{
 			ExecutionContext.SecurityContext.CompressedStack = stack;
 		}
+
+#if NET_1_1
+		void _Thread.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Thread.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Thread.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Thread.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

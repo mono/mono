@@ -1,3 +1,8 @@
+2005-06-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Thread.cs: Added _Thread interface (and members) and a few missing
+	attributes (for both 1.1 and 2.0).
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs Mutex.cs Monitor.cs: Add some missing 2.0 attributes.
