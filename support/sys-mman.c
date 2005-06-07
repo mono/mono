@@ -83,6 +83,7 @@ Mono_Posix_Syscall_munlock (void *start, mph_size_t len)
 	return munlock (start, (size_t) len);
 }
 
+#ifdef HAVE_MREMAP
 void*
 Mono_Posix_Syscall_mremap (void *old_address, mph_size_t old_size, 
 		mph_size_t new_size, guint64 flags)
@@ -98,6 +99,7 @@ Mono_Posix_Syscall_mremap (void *old_address, mph_size_t old_size,
 	return mremap (old_address, (size_t) old_size, (size_t) new_size,
 			(unsigned long) _flags);
 }
+#endif /* def HAVE_MREMAP */
 
 int
 Mono_Posix_Syscall_mincore (void *start, mph_size_t length, void *vec)
@@ -120,6 +122,7 @@ Mono_Posix_Syscall_posix_madvise (void *addr, mph_size_t len, gint32 advice)
 }
 #endif /* def HAVE_POSIX_MADVISE */
 
+#ifdef HAVE_REMAP_FILE_PAGES
 int
 Mono_Posix_Syscall_remap_file_pages (void *start, mph_size_t size, 
 		int prot, mph_ssize_t pgoff, int flags)
@@ -136,6 +139,7 @@ Mono_Posix_Syscall_remap_file_pages (void *start, mph_size_t size,
 
 	return remap_file_pages (start, (size_t) size, _prot, (ssize_t) pgoff, _flags);
 }
+#endif /* def HAVE_REMAP_FILE_PAGES */
 
 G_END_DECLS
 
