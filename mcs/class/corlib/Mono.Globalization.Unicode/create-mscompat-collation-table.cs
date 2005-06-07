@@ -752,11 +752,13 @@ namespace Mono.Globalization.Unicode
 			doc.Load (koXML);
 			foreach (XmlElement reset in doc.SelectNodes ("/ldml/collations/collation/rules/reset")) {
 				XmlElement sc = (XmlElement) reset.NextSibling;
+				// compute "category" and "level 1" for the 
+				// target "reset" Hangle syllable
 				char rc = reset.InnerText [0];
 				int ri = ((int) rc - 0xAC00) + 1;
-				// compute "category" and "level 1"
 				ushort p = (ushort)
 					((ri / 254) * 256 + (ri % 254) + 2);
+				// Place the characters after the target.
 				s = sc.InnerText;
 				v = 0x41;
 				foreach (char c in s) {
@@ -1391,11 +1393,17 @@ namespace Mono.Globalization.Unicode
 		#endregion
 
 		#region IsIgnorable
+		// FIXME: In the future use DerivedAge.txt to examine character
+		// versions and set those ones that have higher version than
+		// 1.0 as ignorable.
 		static bool IsIgnorable (int i)
 		{
 			switch (i) {
 			case 0:
-			// No idea why they are ignored.
+			// I guess, those characters are added between
+			// Unicode 1.0 (LCMapString) and Unicode 3.1
+			// (UnicodeCategory), so they used to be 
+			// something like OtherNotAssigned as of Unicode 1.1.
 			case 0x2df: case 0x387:
 			case 0x3d7: case 0x3d8: case 0x3d9:
 			case 0x3f3: case 0x3f4: case 0x3f5: case 0x3f6:
@@ -1419,7 +1427,6 @@ namespace Mono.Globalization.Unicode
 			// those ranges.
 			case 0x4d8: case 0x4d9:
 			case 0x4e8: case 0x4e9:
-			case 0x70f:
 			case 0x3036: case 0x303f:
 			case 0x337b: case 0xfb1e:
 				return false;
@@ -1501,10 +1508,10 @@ namespace Mono.Globalization.Unicode
 
 			UnicodeCategory uc = Char.GetUnicodeCategory ((char) i);
 			switch (uc) {
-			// ignored by nature
 			case UnicodeCategory.PrivateUse:
 			case UnicodeCategory.Surrogate:
 				return false;
+			// ignored by nature
 			case UnicodeCategory.Format:
 			case UnicodeCategory.OtherNotAssigned:
 				return true;

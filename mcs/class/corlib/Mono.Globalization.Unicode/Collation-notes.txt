@@ -269,17 +269,21 @@
 	Those sortkey data is collected only for Japanese (category 22)
 	characters.
 
-	There are 3 sections each of them ends by FF. Each of them represents
-	the values for character by character:
+	There are 3 sections each of them ends with FF. Each of them
+	represents the values for character by character:
 	- small letter type (kogaki moji); C4 (small) or E4 (normal)
 	- category middle section:
-		+ dash mark 4 (\u309D,\u309E,\u30FD,\u30FE,\uFF70), 5 (\u30FC)
-		  LAMESPEC: those characters of value '4' differs in level 2
-		  wrt voice marks, but does not differetiate kana types (bug).
-		  It is ignored when IgnoreNonSpace applies.
-		'0x02'
-		+ kana type: E4 (hiragana) or C4 (katakana)
-	- width; C5 (full) or C4 (half)
+		two subsections separated by 0x02
+		- char type;
+		  3 (normal)
+		  or 4 (voice mark - \u309D,\u309E,\u30FD,\u30FE, \uFF70)
+		  or 5 (dash mark - \u30FC)
+		- kana type; C4 (katakana) or E4 (hiragana)
+	- width; 2 (normal) or C5 (full) or C4 (half)
+
+	  LAMESPEC: those characters of value '4' of middle section differs
+	  in level 2 wrt voice marks, but does not differetiate kana types
+	  (bug). It is ignored when IgnoreNonSpace applies.
 
 **** level 5
 
@@ -833,6 +837,19 @@
 	  syllables (from AC00) follow (until AE4B). It follows kinda based
 	  on some formula (sometimes it looks not e.g. 1117).
 
+	  Hangle Syllables should not be filled in the table. Instead, they
+	  can be easily computed by the following formulum:
+
+		// rc is the codepoint for the input Syllable
+		// (p holds "category << 8 + level1weight")
+		int ri = ((int) rc - 0xAC00) + 1;
+		ushort p = (ushort)
+			((ri / 254) * 256 + (ri % 254) + 2);
+
+	  Hangul Jamo cannot be filled in the table directly, since
+	  U+1113 - U+159 holds additional primary key bytes.
+	  FIXME: find out how they can be computed.
+
 	16 (9E 02-F1 E4) CJK
 
 	   9E 02-F0 B4 [3192-319F,3220-3243,3280-32B0,4E00-9FA5] : CJK mark,
@@ -858,15 +875,19 @@
 
 	   3400-4DB5. Ordered.
 
+	   They should be computed, since this range should be anyways
+	   checked (to not directly acquire the sortkey values but needs
+	   FE FF part) and anyways it can be computed.
+
 	20 (FF FF 01 01 01 01 00) special.
 	   Some Japanese extender marks :
 	   	3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE
 
-	   LAMESPEC: In Japanese context Microsoft's understanding of 3031
-	   and 3032 is wrong. They can never be used to repeat just previous
-	   one character, but are usually used to repeat two or more
-	   characters. Also, 3005 is not always used to repeat exactly one
-	   character but sometimes used to repeat two (or possibly more)
+	   LAMESPEC: In native context Microsoft's understanding of Japanese 
+	   3031 and 3032 is wrong. They can never be used to repeat *just
+	   previous one* character, but are usually used to repeat two or
+	   more characters. Also, 3005 is not always used to repeat exactly
+	   one character but sometimes used to repeat two (or possibly more)
 	   characters.
 
 	   Arabic extenders : FE7C, FE7D, FF70
@@ -1025,14 +1046,12 @@
 	CultureInfo contains many overloaded methods that are just for 
 	convenience. This class contains only required members.
 
-*** MSCompatUnicodeTable
+*** CollationSource (for now MSCompatUnicodeTable)
 
 	Provides several access to character information:
 
 	- ignorable, ignorable nonspace, normalize width, normalize kanatype
 	- level 4 sortkey provision method(s)
-	- bool HasLevel3(char)
-	- bool HasVariableWeight(char)
 
 	- bool HasTailoringAsHead(char)
 	- bool HasTailoringAsTail(char)

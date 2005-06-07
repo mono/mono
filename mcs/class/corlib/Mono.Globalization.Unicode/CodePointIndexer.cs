@@ -49,7 +49,7 @@ namespace Mono.Globalization.Unicode
 		}
 #endif
 
-		public int GetIndexForCodePoint (int cp)
+		public int ToIndex (int cp)
 		{
 #if DumpFullArray
 			return cp;
@@ -63,7 +63,7 @@ namespace Mono.Globalization.Unicode
 #endif
 		}
 
-		public int GetCodePointForIndex (int i)
+		public int ToCodePoint (int i)
 		{
 #if DumpFullArray
 			return i;

@@ -32,24 +32,24 @@ namespace Mono.Globalization.Unicode
 
 		public static int PropIdx (int cp)
 		{
-			return prop.GetIndexForCodePoint (cp);
+			return prop.ToIndex (cp);
 		}
 
 		public static int PropCP (int index)
 		{
-			return prop.GetCodePointForIndex (index);
+			return prop.ToCodePoint (index);
 		}
 
 		public static int PropCount { get { return prop.TotalCount; } }
 
 		public static int MapIdx (int cp)
 		{
-			return map.GetIndexForCodePoint (cp);
+			return map.ToIndex (cp);
 		}
 
 		public static int MapCP (int index)
 		{
-			return map.GetCodePointForIndex (index);
+			return map.ToCodePoint (index);
 		}
 
 		public static int MapCount { get { return map.TotalCount; } }

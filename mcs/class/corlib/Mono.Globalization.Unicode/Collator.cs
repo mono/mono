@@ -33,146 +33,6 @@ using System.Globalization;
 
 namespace Mono.Globalization.Unicode
 {
-	// Internal sort key storage that is reused during GetSortKey.
-	internal class SortKeyBuffer
-	{
-		int l1, l2, l3, l4, l5;
-		byte [] l1b, l2b, l3b, l4b, l5b;
-		int level5LastPos;
-
-		public SortKeyBuffer ()
-		{
-		}
-
-		public void Reset ()
-		{
-			l1 = l2 = l3 = l4 = l5 = 0;
-			level5LastPos = 0;
-		}
-
-		// It is used for CultureInfo.ClearCachedData().
-		internal void ClearBuffer ()
-		{
-			l1b = l2b = l3b = l4b = l5b = null;
-		}
-
-		internal void AdjustBufferSize (string s)
-		{
-			if (l1b == null || l1b.Length < s.Length)
-				l1b = new byte [s.Length * 2 + 10];
-			if (l2b == null || l2b.Length < s.Length)
-				l2b = new byte [s.Length + 10];
-			if (l3b == null || l3b.Length < s.Length)
-				l3b = new byte [s.Length + 10];
-			// This weight is used only in Japanese text.
-			// We could expand the initial length as well as
-			// primary length (actually x3), but even in ja-JP
-			// most of the compared strings won't be Japanese.
-			if (l4b == null)
-				l5b = new byte [10];
-			if (l5b == null)
-				l5b = new byte [10];
-		}
-
-		// Append non-variable character.
-		internal void AppendNormal (byte [] table, int idx1, int idx2, int idx3, int idx4)
-		{
-			// idx1-4 points to CollationTable indexes
-			while (table [idx1] != 0)
-				AppendBufferPrimitive (table [idx1++], ref l1b, ref l1);
-			while (table [idx2] != 0)
-				AppendBufferPrimitive (table [idx2++], ref l2b, ref l2);
-			while (table [idx3] != 0)
-				AppendBufferPrimitive (table [idx3++], ref l3b, ref l3);
-			// level 4 weight is added only for Japanese kana.
-			if (idx4 > 0)
-				while (table [idx4] != 0)
-					AppendBufferPrimitive (table [idx4++],
-						ref l4b, ref l4);
-		}
-
-		// Append variable-weight character.
-		internal void AppendLevel5 (byte [] table, int idx, int currentIndex)
-		{
-			// offset
-			int offsetValue = currentIndex - level5LastPos;
-			for (; offsetValue > 8064; offsetValue -= 8064)
-				AppendBufferPrimitive (0xFF, ref l5b, ref l5);
-			if (offsetValue > 63)
-				AppendBufferPrimitive ((byte) (offsetValue - 63 / 4 + 0x80), ref l5b, ref l5);
-			AppendBufferPrimitive ((byte) (offsetValue % 63), ref l5b, ref l5);
-
-			level5LastPos = currentIndex;
-
-			// sortkey value
-			idx++; // skip the "variable" mark: 01
-			while (table [idx] != 0)
-				AppendBufferPrimitive (table [idx++], ref l5b, ref l5);
-		}
-
-		private void AppendBufferPrimitive (byte value, ref byte [] buf, ref int bidx)
-		{
-			buf [bidx++] = value;
-			if (bidx == buf.Length) {
-				byte [] tmp = new byte [bidx * 2];
-				Array.Copy (buf, tmp, buf.Length);
-				buf = tmp;
-			}
-		}
-
-		public byte [] GetResultAndReset ()
-		{
-			byte [] ret = GetResult ();
-			Reset ();
-			return ret;
-		}
-
-		// For level2-5, 02 is the default and could be cut (implied).
-		// 02 02 02 -> 0
-		// 02 03 02 -> 2
-		// 03 04 05 -> 3
-		private int GetOptimizedLength (byte [] data, int len)
-		{
-			int cur = -1;
-			for (int i = 0; i < len; i++)
-				if (data [i] != 2)
-					cur = i;
-			return cur + 1;
-		}
-
-		public byte [] GetResult ()
-		{
-			l2 = GetOptimizedLength (l2b, l2);
-			l3 = GetOptimizedLength (l3b, l3);
-			l4 = GetOptimizedLength (l4b, l4);
-			l5 = GetOptimizedLength (l5b, l5);
-
-			int length = l1 + l2 + l3 + l4 + l5 + 5;
-
-			byte [] ret = new byte [length];
-			Array.Copy (l1b, ret, l1);
-			ret [l1] = 1; // end-of-level mark
-			int cur = l1 + 1;
-			if (l2 > 0)
-				Array.Copy (l2b, 0, ret, cur, l2);
-			cur += l2;
-			ret [cur++] = 1; // end-of-level mark
-			if (l3 > 0)
-				Array.Copy (l3b, 0, ret, cur, l3);
-			cur += l3;
-			ret [cur++] = 1; // end-of-level mark
-			if (l4 > 0)
-				Array.Copy (l4b, 0, ret, cur, l4);
-			cur += l4;
-			ret [cur++] = 1; // end-of-level mark
-			if (l5 > 0)
-				Array.Copy (l5b, 0, ret, cur, l5);
-			cur += l5;
-			ret [cur++] = 0; // end-of-data mark
-			return ret;
-		}
-	}
-
 	internal abstract class CharacterIterator
 	{
 		protected CharacterIterator (CompareOptions opt, Collator coll)
@@ -195,6 +55,7 @@ namespace Mono.Globalization.Unicode
 		protected int ExtensionCurrent;
 
 		public abstract bool MoveNext ();
+		public abstract bool MoveBack ();
 		public abstract void Reset ();
 	}
 
@@ -221,7 +82,7 @@ namespace Mono.Globalization.Unicode
 		{
 			Current = start;
 			Length = 0;
-			Value = Next = '\0';
+			Value = '\0';
 		}
 
 		public override bool MoveNext ()
@@ -264,11 +125,10 @@ namespace Mono.Globalization.Unicode
 			MoveNext ();
 		}
 
-		internal void SetProp (int len, char c, char exp)
+		internal void SetProp (int len, char c)
 		{
 			Length = len;
 			Value = c;
-			Next = exp;
 		}
 	}
 
@@ -309,10 +169,13 @@ namespace Mono.Globalization.Unicode
 					return true;
 				ExtensionStart = -1;
 			}
+			/*
 			if (ExtensionStart > 0) {
 				if (Extension
 
 			return Collator.MoveIteratorBack (this);
+			*/
+			throw new NotImplementedException ();
 		}
 	}
 
@@ -331,25 +194,14 @@ namespace Mono.Globalization.Unicode
 
 		CultureInfo culture;
 
-		//
-		// Data layout:
-		//	[c1][c2]...[0][i][0]
-		// where c1 to c3 represent one contraction, and i represents 
-		// corresponding index to (custom) sortkey table.
-		//
-		char [] contractions;
-
-		//
-		// Data layout:
-		//	[x][c1][c2]...[0]
-		// where x represents the target character and ... mhm, maybe
-		// I had better aggregate them into current "contractions" field
-		char [] expansions;
-		//
-
 		// this reference to byte[] could be altered depending on
 		// the culture, namely ja, ko, zh-*.
 		byte [] customCjkKeys;
+
+		// not sure if we hold them as these forms here, but 
+		// something for tailoring is required inside this class.
+		int tailoringIndex;
+		int tailoringCount;
 
 		// True if the culture expects so-called French accent order.
 		bool reverseAccent;
@@ -360,8 +212,6 @@ namespace Mono.Globalization.Unicode
 		public Collator (CultureInfo ci)
 		{
 			culture = ci;
-			StreamReader sr = new StreamReader (blahResourceStream);
-			fill_charprops_and_sortkey_tailorings (ci);
 		}
 
 		public void ClearInternalBuffer ()
@@ -381,7 +231,7 @@ namespace Mono.Globalization.Unicode
 		}
 
 		// Get character element length of the argument character in s at cur.
-		internal void MoveIteratorNext (CharacterIterator i)
+		internal bool MoveIteratorNext (CharacterIterator i)
 		{
 			// check contractions
 			int ret = -1;
@@ -406,6 +256,11 @@ namespace Mono.Globalization.Unicode
 			// check expansions
 
 			i.SerProp (1, i.Text [i.Current], char.MinValue);
+		}
+
+		internal bool MoveIteratorBack (CharacterIterator i)
+		{
+			throw new NotImplementedException ();
 		}
 
 		// returns -1 if no matching contraction.
@@ -648,6 +503,7 @@ namespace Mono.Globalization.Unicode
 		public int Compare (string s1, int start1, int len1,
 			string s2, int start2, int len2, CompareOptions opt)
 		{
+			throw new NotImplementedException ();
 			/*
 			if (s1.Length < start1 + len1 ||
 				s2.Length < start2 + len2)

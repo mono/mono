@@ -79,7 +79,7 @@ namespace Mono.Globalization.Unicode
 				else
 					Console.Write ("0x{0:X}, ", array [i]);
 				if (i % 16 == 15) {
-					int l = getCP ? CollationElementTableUtil.Indexer.GetCodePointForIndex (i) : i;
+					int l = getCP ? CollationElementTableUtil.Indexer.ToCodePoint (i) : i;
 					Console.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
 				}
 			}
@@ -102,7 +102,7 @@ namespace Mono.Globalization.Unicode
 					continue;
 
 				int cp = int.Parse (line.Substring (0, 5), NumberStyles.HexNumber);
-				int collElemIdx = CollationElementTableUtil.Indexer.GetIndexForCodePoint (cp);
+				int collElemIdx = CollationElementTableUtil.Indexer.ToIndex (cp);
 				if (collElemIdx < 0) {
 					Console.Error.WriteLine ("WARNING: handle character {0:x} in collation element table.", cp);
 					continue;

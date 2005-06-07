@@ -1,3 +1,22 @@
+2005-06-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SortKeyBuffer.cs : split from Collator.cs. Now it considers
+	  practical use, reflecting updated sortkey constant design.
+	  Especially level 4 weight is split to 4 arrays that are merged in
+	  the last stage of GetSortKey().
+	* Collator.cs : thus SortKeyBuffer is removed from here.
+	  Additionally, removed some extraneous bits in other classes.
+	* Collation-notes.txt : Some editorial fixes. Added information on
+	  Korean matter (how to compute Hangle Syllables / Hangul Jamo cannot
+	  be stored in simple byte arrays).
+	* CodePointIndexer.cs,
+	  create-collation-element-table.cs,
+	  CollationElementTable.template,
+	  NormalizationTableUtil.cs : short CodePointIndexer method names.
+	* create-mscompat-collation-table.cs : Additional info on why some
+	  meaningful characters are ignored in Windows (Unicode version
+	  difference). Removed U+070F from special check (was extraneous).
+
 2005-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MSCompatUnicodeTable.template:
