@@ -92,6 +92,11 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		protected override int GetFileStatus (string path, out Stat stat)
+		{
+			return Syscall.lstat (path, out stat);
+		}
+
 		// TODO: Should ReadLink be in UnixSymbolicLinkInfo?
 		private string ReadLink ()
 		{

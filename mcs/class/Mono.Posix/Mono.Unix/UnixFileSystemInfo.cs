@@ -245,8 +245,13 @@ namespace Mono.Unix {
 		{
 			if (valid && !force)
 				return;
-			int r = Syscall.lstat (FullPath, out this.stat);
+			int r = GetFileStatus (FullPath, out this.stat);
 			valid = r == 0;
+		}
+
+		protected virtual int GetFileStatus (string path, out Stat stat)
+		{
+			return Syscall.stat (path, out stat);
 		}
 
 		public void SetLength (long length)

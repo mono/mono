@@ -1,5 +1,13 @@
 2005-06-07  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixFileSystemInfo.cs: Don't use lstat(2), use stat(2).  This fits with
+	  expectations better -- if you create a UnixFileInfo() on a symlink, you
+	  want to get the target's information, not the symlink's info.  Add
+	  GetFileStatus so UnixSymbolicLinkInfo can override this behavior.
+	* UnixSymbolicLinkInfo.cs: Implement GetFileStatus() (which calls lstat(2)).
+
+2005-06-07  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Syscall.cs: Document naming conventions.
 
 2005-06-05  Jonathan Pryor <jonpryor@vt.edu>
