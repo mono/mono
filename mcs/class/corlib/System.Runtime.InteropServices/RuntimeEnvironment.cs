@@ -3,12 +3,10 @@
 //
 // Authors:
 // 	Dominik Fretz (roboto@gmx.net)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Dominik Fretz
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,41 +28,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Runtime.InteropServices
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class RuntimeEnvironment
 	{
 		public RuntimeEnvironment ()
 		{
 		}
 
-		public static string SystemConfigurationFile 
-		{
-			get { return Environment.GetMachineConfigPath (); }
+		public static string SystemConfigurationFile {
+			get {
+				// GetMachineConfigPath is internal and not protected by CAS
+				string path = Environment.GetMachineConfigPath ();
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path);
+				}
+				return path;
+			}
 		}
 
-		
-		[MonoTODO]
 		public static bool FromGlobalAccessCache (Assembly a)
 		{
-			throw new NotImplementedException ();
+			// yes, this will throw a NullReferenceException (just like MS, reported as ...)
+			return a.GlobalAssemblyCache;
 		}
-
 	
 		public static string GetRuntimeDirectory ()
 		{
 			return Path.GetDirectoryName (typeof (int).Assembly.Location);	
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static string GetSystemVersion ()
 		{
 			return "v" + Environment.Version.Major + "." + Environment.Version.Minor + "." + Environment.Version.Build;
 		}
-		
 	}
 }
-
