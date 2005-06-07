@@ -524,7 +524,7 @@ namespace System.Collections.Generic {
 				if (_validNodeVisited == _dictionary.Count)
 					return (_isValid = false);
 	
-				while (_index < _dictionary._table.Length) {
+				while (_index <= _dictionary._table.Length) {
 					if (_current == null)
 						_current = _dictionary._table [_index++];
 					else
