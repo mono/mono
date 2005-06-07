@@ -1,3 +1,8 @@
+2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultTraceListener.cs: s/MONO_TRACE/MONO_TRACE_LISTENER/. The
+	runtime uses MONO_TRACE too...
+
 2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PerformanceCounterPermissionEntry.cs: Added more 2.0 validations for

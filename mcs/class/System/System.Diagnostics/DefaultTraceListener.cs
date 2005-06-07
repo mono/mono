@@ -57,15 +57,15 @@ namespace System.Diagnostics {
 			// messages.  On Win32 platforms (OnWin32 = true), we use the
 			// `OutputDebugString' api.
 			//
-			// On Linux platforms, we use MONO_TRACE to figure things out.  See the
-			// API documentation for more information on MONO_TRACE.
+			// On Linux platforms, we use MONO_TRACE_LISTENER to figure things out.  See the
+			// API documentation for more information on MONO_TRACE_LISTENER.
 			OnWin32 = (Path.DirectorySeparatorChar == '\\');
 
 			if (!OnWin32) {
 				// If we're running on Unix, we don't have OutputDebugString.
-				// Instead, send output to...wherever the MONO_TRACE environment
+				// Instead, send output to...wherever the MONO_TRACE_LISTENER environment
 				// variables says to.
-				String trace = Environment.GetEnvironmentVariable("MONO_TRACE");
+				String trace = Environment.GetEnvironmentVariable("MONO_TRACE_LISTENER");
 
 				if (trace != null) {
 					string file = null;
@@ -102,16 +102,16 @@ namespace System.Diagnostics {
 		/**
 		 * Get the prefix for the specified variable.
 		 *
-		 * "Prefixes" are used in the MONO_TRACE variable, and specify text that
+		 * "Prefixes" are used in the MONO_TRACE_LISTENER variable, and specify text that
 		 * should precede each message printed to the console.  The prefix is
 		 * appended to the console location with a colon (':') separating them.
-		 * For example, if MONO_TRACE is "Console.Out:** my prefix", the prefix is
+		 * For example, if MONO_TRACE_LISTENER is "Console.Out:** my prefix", the prefix is
 		 * "** my prefix".
 		 *
 		 * Everything after the colon, if the colon is present, is used as the
 		 * prefix.
 		 *
-		 * @param	var		The current MONO_TRACE variable
+		 * @param	var		The current MONO_TRACE_LISTENER variable
 		 * @param	target	The name of the output location, e.g. "Console.Out"
 		 */
 		private static string GetPrefix (string var, string target)
