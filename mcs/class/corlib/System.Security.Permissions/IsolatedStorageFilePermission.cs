@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies. http://www.motus.com
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,18 +32,18 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class IsolatedStorageFilePermission : IsolatedStoragePermission, IBuiltInPermission {
 
 		private const int version = 1;
 
 		// Constructors
 
-		[MonoTODO ("usage/quota calculated from evidences/policy")]
-		public IsolatedStorageFilePermission (PermissionState state) : base (state)
+		public IsolatedStorageFilePermission (PermissionState state)
+			: base (state)
 		{
-			if (!IsUnrestricted ()) {
-				// TODO
-			}
 		}
 
 		// Properties
@@ -117,13 +117,11 @@ namespace System.Security.Permissions {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("new override - something must have been added ???")]
 		[ComVisible (false)]
 		public override SecurityElement ToXml ()
 		{
-			SecurityElement se = base.ToXml ();
-			// TODO - something must have been added ???
-			return se;
+			return base.ToXml ();
 		}
 #endif
 

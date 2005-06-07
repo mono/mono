@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +28,12 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System.Security.Permissions {
 
 	[Serializable]
+	[ComVisible (true)]
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -43,7 +46,6 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
-// FIXME: should be "unrestricted aware" but MS version isn't in Fx 2.0 beta 1
 			return (IPermission) new GacIdentityPermission ();
 		}
 	}

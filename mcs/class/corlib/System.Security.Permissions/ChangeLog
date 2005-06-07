@@ -1,3 +1,10 @@
+2005-06-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFilePermission.cs: Removed unrequired TODO on ctor.
+	Added ComVisible for NET_2_0.
+	* GacIdentityPermissionAttribute.cs: Removed FIXME. Added ComVisible 
+	for NET_2_0.
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostProtectionAttribute.cs: Fixes flag cleaning logical 
