@@ -1,3 +1,7 @@
+2005-06-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidationFlags.cs : it is NET_2_0.
+
 2005-05-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaInference.cs : For each resulting schema, it has to emit
