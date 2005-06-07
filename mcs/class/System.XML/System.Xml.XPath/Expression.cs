@@ -348,8 +348,14 @@ namespace System.Xml.XPath
 					public XPathTextComparer (XmlSortOrder orderSort, XmlCaseOrder orderCase, string strLang)
 					{
 						_orderCase = orderCase;
+						// FIXME: We have to set this in
+						// reverse order since currently
+						// we don't support collation.
+#if TARGET_JVM
+						_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? -1 : 1;
+#else
 						_nMulCase = (orderCase == XmlCaseOrder.UpperFirst) ? 1 : -1;
-
+#endif
 						_nMulSort = (orderSort == XmlSortOrder.Ascending) ? 1 : -1;
 
 						if (strLang == null || strLang == "")
