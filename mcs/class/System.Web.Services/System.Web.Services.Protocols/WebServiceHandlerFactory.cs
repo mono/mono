@@ -42,18 +42,6 @@ using System.Collections.Specialized;
 
 namespace System.Web.Services.Protocols
 {
-	class DummyHttpHandler : IHttpHandler
-	{
-		bool IHttpHandler.IsReusable {
-			get { return false; }
-		}
-
-		void IHttpHandler.ProcessRequest (HttpContext context)
-		{
-			// Do nothing
-		}
-	}
-	
 	class SessionWrapperHandler : IHttpHandler, IRequiresSessionState
 	{
 		IHttpHandler handler;
@@ -130,7 +118,7 @@ namespace System.Web.Services.Protocols
 				}
 			}
 			if (!supported)
-				return new DummyHttpHandler ();
+				throw new InvalidOperationException ("Unsupported request format.");
 
 			switch (protocol) {
 			case WSProtocol.HttpSoap:
