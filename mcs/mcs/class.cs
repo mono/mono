@@ -2509,7 +2509,7 @@ namespace Mono.CSharp {
 				parent = ((ClassPart) parent).PartialContainer;
 
 			pc = new PartialContainer (ns.NS, parent, member_name, mod_flags, kind, loc);
-			RootContext.Tree.RecordDecl (member_name, pc);
+			RootContext.Tree.RecordDecl (ns.NS, member_name, pc);
 
 			if (kind == Kind.Interface)
 				parent.AddInterface (pc);
@@ -2638,6 +2638,12 @@ namespace Mono.CSharp {
 				return PartialContainer.BaseCache;
 			}
 		}
+
+		public override TypeBuilder DefineType ()
+		{
+			throw new InternalErrorException ("Should not get here");
+		}
+
 	}
 
 	public abstract class ClassOrStruct : TypeContainer {

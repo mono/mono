@@ -398,11 +398,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void DefineName (string name, IAlias o)
-		{
-			ns.DefineName (name, o);
-		}
-
 		/// <summary>
 		///   Records a new namespace for resolving name references
 		/// </summary>
