@@ -361,12 +361,6 @@ Currently, the following options are supported:
 .RS
 .ne 8
 .TP
-.I "handle-sigint"
-This option makes the runtime display the stack traces
-for all the threads running and exit when mono is interrupted (Ctrl-C)
-and print some additional messages on error conditions. It may not
-exit cleanly. Use at your own risk.
-.TP
 .I "keep-delegates"
 This option will leak delegate trampolines that are no longer
 referenced as to present the user with more information about a
@@ -468,10 +462,27 @@ The maximum number of threads in the general threadpool will be
 variable is 5.
 .TP
 .I "MONO_TRACE"
+Used for runtime tracing of method calls. The format of the comma separated
+trace options is:
+.nf
+
+	[-]M:method name
+	[-]N:namespace
+	[-]T:class name
+	[-]all
+	[-]program
+	disabled		Trace output off upon start.
+
+.fi
+You can toggle trace output on/off sending a SIGUSR2 signal to the program.
+.TP
+.I "MONO_TRACE_LISTENER"
 If set, enables the System.Diagnostics.DefaultTraceListener, which will 
 print the output of the System.Diagnostics Trace and Debug classes.  
 It can be set to a filename, and to Console.Out or Console.Error to display
-output to standard output or standard error, respectively.
+output to standard output or standard error, respectively. If it's set to
+Console.Out or Console.Error you can append an optional prefix that will
+be used when writing messages like this: Console.Error:MyProgramName.
 See the System.Diagnostics.DefaultTraceListener documentation for more
 information.
 .TP
