@@ -76,6 +76,13 @@ namespace System.Reflection.Emit {
 			return v.op1 == op1 && v.op2 == op2;
 		}
 
+#if NET_2_0
+		public bool Equals (OpCode obj)
+		{
+			return obj.op1 == op1 && obj.op2 == op2;
+		}
+#endif
+
 		public override string ToString ()
 		{
 			return Name;

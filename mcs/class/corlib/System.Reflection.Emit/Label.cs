@@ -51,6 +51,15 @@ namespace System.Reflection.Emit {
 			return false;
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public bool Equals (Label obj)
+		{
+			/* FIXME: */
+			return false;
+		}
+#endif
+
 		public override int GetHashCode () {
 			return label.GetHashCode ();
 		}

@@ -55,8 +55,6 @@ namespace System.Reflection.Emit {
 			tokValue = val;
 		}
 
-
-
 		/// <summary>
 		/// </summary>
 		public override bool Equals (object obj)
@@ -71,6 +69,12 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+#if NET_2_0
+		public bool Equals (MethodToken obj)
+		{
+			return (this.tokValue == obj.tokValue);
+		}
+#endif
 
 		/// <summary>
 		///  Tests whether the given object is an instance of

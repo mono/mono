@@ -71,6 +71,12 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+#if NET_2_0
+		public bool Equals (EventToken obj)
+		{
+			return (this.tokValue == obj.tokValue);
+		}
+#endif
 
 		/// <summary>
 		///  Tests whether the given object is an instance of
