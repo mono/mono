@@ -1,3 +1,15 @@
+2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* reflection.c: Functions added to support the creation
+	of CustomAttributeData, which includes Attribute data
+	used by ReflectionOnly methods.
+
+	* reflection.h:  mono_reflection_get_custom_attrs_data and
+	 mono_custom_attrs_data_construct added (functions exposed).
+
+	 * icall.c: Added mono_reflection_get_custom_attrs_data
+	 as icall.
+	
 2005-06-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (libmonoruntime_la_SOURCES): Revert last change at
