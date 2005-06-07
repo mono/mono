@@ -1,3 +1,7 @@
+2005-06-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *-ia64.*: Ongoing IA64 work.
+
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* trace.[ch]:
