@@ -1,3 +1,9 @@
+2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MonoCustomAttrs.cs: Added GetCustomAttributesDataInternal icall, and
+	also internal method GetCustomAttributesData, used by 
+	System.Reflection.CustomAttributeData.
+	
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Activator.cs: Added  _Activator interface (and members) for 1.1 and

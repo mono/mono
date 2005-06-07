@@ -36,6 +36,10 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
+#if  NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System
 {
 	internal class MonoCustomAttrs
@@ -222,6 +226,20 @@ namespace System
 
 			return GetCustomAttributes (obj, null, inherit);
 		}
+
+#if NET_2_0
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern CustomAttributeData [] GetCustomAttributesDataInternal (ICustomAttributeProvider obj);
+
+		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj)
+		{
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+
+			CustomAttributeData [] attrs = GetCustomAttributesDataInternal (obj);
+			return Array.AsReadOnly<CustomAttributeData> (attrs);
+		}
+#endif
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
