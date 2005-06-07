@@ -25,12 +25,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
 	/// <summary>
 	///  Describes the types of MSIL instructions.
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum OpCodeType {
 
 		/// <summary>
@@ -39,6 +43,9 @@ namespace System.Reflection.Emit {
 		///  additional information to particular
 		///  MSIL processor.
 		/// </summary>
+#if NET_2_0
+		[Obsolete ("This API has been deprecated.")]
+#endif
 		Annotation = 0,
 
 		/// <summary>

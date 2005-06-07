@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
@@ -34,6 +35,9 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 #else
 	[Flags]
+#endif
+#if NET_2_0
+	[ComVisible (true)]
 #endif
 	public enum PackingSize {
 

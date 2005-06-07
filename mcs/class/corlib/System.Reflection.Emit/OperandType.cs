@@ -25,12 +25,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
 	/// <summary>
 	///  Describes the operand types of MSIL instructions.
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum OperandType {
 
 		/// <summary>
@@ -59,6 +63,9 @@ namespace System.Reflection.Emit {
 
 		/// <summary>
 		/// </summary>
+#if NET_2_0
+		[Obsolete ("This API has been deprecated.")]
+#endif
 		InlinePhi = 6,
 
 		/// <summary>

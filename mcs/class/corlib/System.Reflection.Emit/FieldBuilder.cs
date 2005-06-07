@@ -164,6 +164,9 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
+#if NET_2_0
+		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
+#endif
 		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
 			RejectIfCreated ();
 			marshal_info = unmanagedMarshal;

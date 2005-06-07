@@ -25,12 +25,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
 	/// <summary>
 	///  Describes how values are pushed onto or popped off a stack.
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum StackBehaviour {
 
 		/// <summary>
@@ -144,6 +148,11 @@ namespace System.Reflection.Emit {
 		/// <summary>
 		/// </summary>
 		Varpush = 0x1B
+
+#if NET_2_0
+		,
+		Popref_popi_pop1 = 0x1C
+#endif
 	}
 
 }

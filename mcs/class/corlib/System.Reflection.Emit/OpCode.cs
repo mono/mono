@@ -29,9 +29,13 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public struct OpCode {
 
 		internal byte op1, op2;

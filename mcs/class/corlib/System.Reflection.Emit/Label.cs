@@ -30,7 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection.Emit {
+
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	public struct Label {
 		internal int label;

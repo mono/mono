@@ -37,6 +37,10 @@ using System;
 
 namespace System.Reflection.Emit {
 
+#if NET_2_0
+	[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
+	[ComVisible (true)]
+#endif
 	[Serializable]
 	public sealed class UnmanagedMarshal {
 		private int count;
