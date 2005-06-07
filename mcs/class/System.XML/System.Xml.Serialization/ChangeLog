@@ -1,3 +1,17 @@
+2005-06-07  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: When reading members by order,
+	call a MoveToContext after each member read. In the fixup method
+	don't cast returned values if it is reading an object array.
+	
+	* XmlSchemaImporter.cs: In ImportDerivedTypeMapping, if the type
+	being imported is a primitive type, create a wrapper class that
+	inherits from the provided one. This fixes bug #68809.
+	
+	* XmlSerializationReader.cs: Properly report unreferenced objects.
+	Created an overload of ReadTypedPrimitive that reports elements of
+	unknown type. Implemented Referenced(). 
+
 2005-05-30  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlReflectionImporter.cs: Don't ignore type namespaces explicitely

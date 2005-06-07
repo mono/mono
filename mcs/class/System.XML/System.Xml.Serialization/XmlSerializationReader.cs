@@ -59,6 +59,7 @@ namespace System.Xml.Serialization
 		Hashtable delayedListFixups;
 		XmlSerializer eventSource;
 		int delayedFixupId = 0;
+		Hashtable referencedObjects;
 
 		string w3SchemaNS;
 		string w3InstanceNS;
@@ -312,7 +313,12 @@ namespace System.Xml.Serialization
 		protected object GetTarget (string id)
 		{
 			if (targets == null) return null;
-			return targets [id];
+			object ob = targets [id];
+			if (ob != null) {
+				if (referencedObjects == null) referencedObjects = new Hashtable ();
+				referencedObjects [ob] = ob;
+			}
+			return ob;
 		}
 
 		bool TargetReady (string id)
@@ -496,14 +502,14 @@ namespace System.Xml.Serialization
 			{
 				WriteCallbackInfo info = GetCallbackInfo (qname);
 				if (info == null)
-					ob = ReadTypedPrimitive (qname);
+					ob = ReadTypedPrimitive (qname, id != null);
 				else
 					ob = info.Callback();
 			}
 			AddTarget (id, ob);
 			return ob;
 		}
-
+		
 		bool ReadList (out object resultList)
 		{
 			string arrayTypeAttr = Reader.GetAttribute (arrayType, soapNS);
@@ -598,6 +604,13 @@ namespace System.Xml.Serialization
 				foreach (Fixup fixup in fixups)
 					fixup.Callback (fixup);
 			}
+			
+			if (targets != null) {
+				foreach (DictionaryEntry e in targets) {
+					if (e.Value != null && (referencedObjects == null || !referencedObjects.Contains (e.Value)))
+						UnreferencedObject ((string)e.Key, e.Value);
+				}
+			}
 		}
 
 		protected object ReadReferencingElement (out string fixupReference)
@@ -644,7 +657,7 @@ namespace System.Xml.Serialization
 				{
 					WriteCallbackInfo info = GetCallbackInfo (qname);
 					if (info == null)
-						return ReadTypedPrimitive (qname);
+						return ReadTypedPrimitive (qname, true);
 					else
 						return info.Callback();
 				}
@@ -690,12 +703,21 @@ namespace System.Xml.Serialization
 
 		protected object ReadTypedPrimitive (XmlQualifiedName qname)
 		{
+			return ReadTypedPrimitive (qname, false);
+		}
+		
+		object ReadTypedPrimitive (XmlQualifiedName qname, bool reportUnknown)
+		{
 			if (qname == null) qname = GetXsiType ();
+			
 			TypeData typeData = TypeTranslator.FindPrimitiveTypeData (qname.Name);
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive)
 			{
 				// Put everything into a node array
 				XmlNode node = Document.ReadNode (reader);
+				
+				if (reportUnknown)
+					OnUnknownNode (node, null);
 
 				if (node.ChildNodes.Count == 0 && node.Attributes.Count == 0)
 					return new Object ();
@@ -743,9 +765,12 @@ namespace System.Xml.Serialization
 			return doc;
 		}
 
-		[MonoTODO ("Implement")]
 		protected void Referenced (object o)
 		{
+			if (o != null) {
+				if (referencedObjects == null) referencedObjects = new Hashtable ();
+				referencedObjects [o] = o;
+			}
 		}
 
 		protected Array ShrinkArray (Array a, int length, Type elementType, bool isNullable)
@@ -882,6 +907,11 @@ namespace System.Xml.Serialization
 
 		protected void UnknownNode (object o)
 		{
+			OnUnknownNode (ReadXmlNode (false), o);
+		}
+		
+		void OnUnknownNode (XmlNode node, object o)
+		{
 			int line_number, line_position;
 			
 			if (Reader is XmlTextReader){
@@ -892,24 +922,21 @@ namespace System.Xml.Serialization
 				line_position = 0;
 			}
 	
-			if (eventSource != null)
-				eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
-	
-			if (Reader.NodeType == XmlNodeType.Attribute)
+			if (node is XmlAttribute)
 			{
-				XmlAttribute att = (XmlAttribute) ReadXmlNode (false);
-				UnknownAttribute (o, att);
+				UnknownAttribute (o, (XmlAttribute)node);
 				return;
 			}
-			else if (Reader.NodeType == XmlNodeType.Element)
+			else if (node is XmlElement)
 			{
-				XmlElement elem = (XmlElement) ReadXmlNode (false);
-				UnknownElement (o, elem);
+				UnknownElement (o, (XmlElement) node);
 				return;
 			}
 			else
 			{
-				Reader.Skip();
+				if (eventSource != null)
+					eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, node.LocalName, node.Name, node.NamespaceURI, node.NodeType, o, node.Value));
+	
 				if (Reader.ReadState == ReadState.EndOfFile) 
 					throw new InvalidOperationException ("End of document found");
 			}

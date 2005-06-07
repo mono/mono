@@ -196,10 +196,10 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				if (!LocateElement (name, out qname, out stype) || stype == null)
+				if (!LocateElement (name, out qname, out stype))
 					return null;
 			}
-			
+
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
 			if (map != null)
 			{
@@ -212,8 +212,15 @@ namespace System.Xml.Serialization
 			}
 			
 			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
-			map.Documentation = GetDocumentation (stype);
-			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
+			if (stype != null) {
+				map.Documentation = GetDocumentation (stype);
+				RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
+			} else {
+				ClassMap cmap = new ClassMap ();
+				CodeIdentifiers classIds = new CodeIdentifiers ();
+				map.ObjectMap = cmap;
+				AddTextMember (qname, cmap, classIds);
+			}
 			
 			BuildPendingMaps ();
 			SetMapBaseType (map, baseType);

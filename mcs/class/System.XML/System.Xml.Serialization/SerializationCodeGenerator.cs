@@ -1258,14 +1258,12 @@ namespace System.Xml.Serialization
 			if (_typeMap is XmlTypeMapping)
 			{
 				XmlTypeMapping typeMap = (XmlTypeMapping) _typeMap;
-//				Console.WriteLine ("> " + typeMap.TypeName);
 
 				if (_format == SerializationFormat.Literal)
 				{
 					if (typeMap.TypeData.SchemaType == SchemaTypes.XmlNode)
 						throw new Exception ("Not supported for XmlNode types");
 						
-//					Console.WriteLine ("This should be string:" + typeMap.ElementName.GetType());
 					WriteLineInd ("if (Reader.LocalName != " + GetLiteral (typeMap.ElementName) + " || Reader.NamespaceURI != " + GetLiteral (typeMap.Namespace) + ")");
 					WriteLine ("throw CreateUnknownNodeException();");
 					Unindent ();
@@ -1788,6 +1786,8 @@ namespace System.Xml.Serialization
 	
 					if (!readByOrder)
 						WriteLineUni ("}");
+					else
+						WriteLine ("Reader.MoveToContent();");
 					first = false;
 				}
 				
@@ -2256,7 +2256,9 @@ namespace System.Xml.Serialization
 					foreach (XmlTypeMapMember member in members)
 					{
 						WriteLineInd ("if (ids[" + member.Index + "] != null)");
-						GenerateSetMemberValue (member, "source", GetCast (member.TypeData, "GetTarget(ids[" + member.Index + "])"), isList);
+						string val = "GetTarget(ids[" + member.Index + "])";
+						if (!isList) val = GetCast (member.TypeData, val);
+						GenerateSetMemberValue (member, "source", val, isList);
 						Unindent ();
 					}
 				}
