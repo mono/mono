@@ -421,6 +421,33 @@ namespace MonoTests.System.Collections.Generic {
 			}
 			Assert.AreEqual(4, i);
 		}
+
+		[Test]
+		public void KeyValueEnumeratorTest ()
+		{
+                	IDictionary<int, int> d = new Dictionary<int, int>();
+
+        	        d [9] = 1;
+	                d [10] = 2;
+                	d [19] = 3;
+
+        	        ICollection <int> vs = d.Values;
+	
+        	        int count = 0;
+	                foreach (int i in vs)
+        	       	        count++;
+
+			Assert.AreEqual (count, vs.Count);
+
+        	        vs = d.Keys;
+	
+        	        count = 0;
+	                foreach (int i in vs)
+        	       	        count++;
+
+			Assert.AreEqual (count, vs.Count);
+		}
+
 	}
 }
 
