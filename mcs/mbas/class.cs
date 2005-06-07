@@ -3939,9 +3939,9 @@ namespace Mono.MonoBASIC {
 			Modifiers.WRITEONLY |
 			Modifiers.SHADOWS;
 
-		string set_parameter_name;
-		Parameters get_params;
-		Parameters set_params;
+		//string set_parameter_name;
+		//Parameters get_params;
+		//Parameters set_params;
 		
 		public Property (Expression type, string name, int mod_flags,
 				Accessor get_block, Accessor set_block,
@@ -3977,6 +3977,12 @@ namespace Mono.MonoBASIC {
 				Report.Error (30435, Location,
 					"'Property' inside a 'Structure' can not be declared as " +
 					"'Protected' or 'Protected Friend'");
+
+			if (((ModFlags & Modifiers.DEFAULT) != 0) && (Parameters == null || Parameters.CountStandardParams () == 0)) {
+				Report.Error (31048, Location, "Properties with no required " +
+					"parameters cannot be declared 'Default'");
+				return false;
+			}
 
 			if (!DoDefine (parent))
 				return false;

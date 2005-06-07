@@ -611,9 +611,11 @@ namespace Mono.MonoBASIC {
 			loc = l;
 		}
 
+/*
 		void LoadExprValue (EmitContext ec)
 		{
 		}
+*/
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -3554,7 +3556,7 @@ namespace Mono.MonoBASIC {
 		bool is_left_hand; // Needed for late bound calls
 		bool is_retval_required; // Needed for late bound calls
 		static Hashtable method_parameter_cache;
-		static MemberFilter CompareName;
+		//static MemberFilter CompareName;
 
 		static ArrayList tempvars; // For ByRef - different parameter and argument type
 		static bool is_byref_conversion = false; //For ByRef when it is converted 
@@ -3582,7 +3584,7 @@ namespace Mono.MonoBASIC {
 			this.is_left_hand = false;
 			Arguments = arguments;
 			loc = l;
-			CompareName = new MemberFilter (compare_name_filter);
+			//CompareName = new MemberFilter (compare_name_filter);
 		}
 
 		public Expression Expr {
@@ -3814,6 +3816,7 @@ namespace Mono.MonoBASIC {
 						return ConversionType.Widening;
 				 // }
 				
+/*
 				if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 					Type pt = pd.ParameterType (i);
 					
@@ -3824,6 +3827,7 @@ namespace Mono.MonoBASIC {
 						return ConversionType.None;
 				}
 				return ConversionType.Widening;
+*/
 			} else
 				return ConversionType.None;					
 		}
@@ -4013,10 +4017,12 @@ namespace Mono.MonoBASIC {
 			return orderedArgs;
 		}
 		
+/*
 		static bool compare_name_filter (MemberInfo m, object filterCriteria)
 		{
 			return (m.Name == ((string) filterCriteria));
 		}
+*/
 
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
 							  ref ArrayList Arguments, Location loc)
@@ -4036,6 +4042,7 @@ namespace Mono.MonoBASIC {
 			return OverloadResolve (ec, me, ref a, loc);	
 		}
 
+/*
 		static string ToString(MethodBase mbase)
 		{
 			if (mbase == null)
@@ -4057,6 +4064,7 @@ namespace Mono.MonoBASIC {
 
 			return mbase.ToString();
 		}
+*/
 		
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
@@ -4951,6 +4959,7 @@ namespace Mono.MonoBASIC {
 			}
 		}
 		
+/*
 		static void EmitPropertyArgs (EmitContext ec, ArrayList prop_args)
 		{
 			int top = prop_args.Count;
@@ -4961,6 +4970,7 @@ namespace Mono.MonoBASIC {
 				a.Emit (ec);
 			}
 		}
+*/
 
 		public override void Emit (EmitContext ec)
 		{
@@ -5446,6 +5456,7 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
+/*
 		void Error_NegativeArrayIndex ()
 		{
 			Error (284, "Can not create array with a negative size");
@@ -5497,6 +5508,7 @@ namespace Mono.MonoBASIC {
 
 			return target;
 		}
+*/
 
 		//
 		// Creates the type of the array
@@ -7251,7 +7263,7 @@ namespace Mono.MonoBASIC {
 		MethodInfo get, set;
 		Indexers ilist;
 		ArrayList set_arguments;
-		bool is_base_indexer;
+		//bool is_base_indexer;
 
 		protected Type indexer_type;
 		protected Type current_type;
@@ -7268,7 +7280,7 @@ namespace Mono.MonoBASIC {
 					 Location loc)
 		{
 			this.instance_expr = instance_expr;
-			this.is_base_indexer = is_base_indexer;
+			//this.is_base_indexer = is_base_indexer;
 			this.eclass = ExprClass.Value;
 			this.loc = loc;
 		}

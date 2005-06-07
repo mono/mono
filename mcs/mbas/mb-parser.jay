@@ -5473,6 +5473,7 @@ private void AddHandler (Expression evt_definition, Expression handler_exp)
 	AddHandler (current_block, evt_definition, handler_exp);
 }
 
+/*
 void CheckAttributeTarget (string a)
 {
 	switch (a) {
@@ -5486,6 +5487,7 @@ void CheckAttributeTarget (string a)
 		break;
 	}
 }
+*/
 
 private void AddHandler (Block b, Expression evt_id, Expression handles_exp)
 {
@@ -5562,6 +5564,7 @@ private ConstructorInitializer CheckConstructorInitializer (ref ArrayList s)
 	return ci;
 }
 
+/*
 void Error_ExpectingTypeName (Location l, Expression expr)
 {
 	if (expr is Invocation){
@@ -5570,6 +5573,7 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 		Report.Error (-1, l, "Invalid Type definition");
 	}
 }
+*/
 
 public static Expression SetLeftHandFlag (Expression expr) {
 	if (expr is Invocation) {
@@ -5606,9 +5610,11 @@ public static Expression SetValueRequiredFlag (Expression expr) {
 	return expr;
 }
 
+/*
 static bool AlwaysAccept (MemberInfo m, object filterCriteria) {
 	return true;
 }
+*/
 
 private void ReportError9998()
 {

@@ -928,7 +928,7 @@ namespace Mono.MonoBASIC {
 
 	public class LabeledStatement : Statement {
 		public readonly Location Location;
-		string label_name;
+		//string label_name;
 		bool defined;
 		bool referenced;
 		Label label;
@@ -937,7 +937,7 @@ namespace Mono.MonoBASIC {
 		
 		public LabeledStatement (string label_name, Location l)
 		{
-			this.label_name = label_name;
+			//this.label_name = label_name;
 			this.Location = l;
 		}
 
@@ -2208,7 +2208,7 @@ namespace Mono.MonoBASIC {
 			num_params = 0;
 
 			for (int i = 0; i < count; i++) {
-				Parameter.Modifier mod = param_info.ParameterModifier (i);
+				//Parameter.Modifier mod = param_info.ParameterModifier (i);
 
 			//	if ((mod & Parameter.Modifier.OUT) == 0)
 			//		continue;
@@ -2814,7 +2814,7 @@ namespace Mono.MonoBASIC {
 		//
 		// Maps variable names to ILGenerator.LocalBuilders
 		//
-		CaseInsensitiveHashtable local_builders;
+		//CaseInsensitiveHashtable local_builders;
 
 		// to hold names of variables required for late binding
 		public const string lateBindingArgs = "1_LBArgs";
@@ -3283,7 +3283,7 @@ namespace Mono.MonoBASIC {
 			// Process this block variables
 			//
 			if (variables != null){
-				local_builders = new CaseInsensitiveHashtable ();
+				//local_builders = new CaseInsensitiveHashtable ();
 				
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
@@ -3982,16 +3982,18 @@ namespace Mono.MonoBASIC {
 		//
 		bool CheckSwitch (EmitContext ec)
 		{
-			Type compare_type;
+			//Type compare_type;
 			bool error = false;
 			Elements = new CaseInsensitiveHashtable ();
 				
 			got_default = false;
 
+/*
 			if (TypeManager.IsEnumType (SwitchType)){
 				compare_type = TypeManager.EnumToUnderlying (SwitchType);
 			} else
 				compare_type = SwitchType;
+*/
 			
 			for (int secIndex = 0; secIndex < Sections.Count; secIndex ++) {
 				SwitchSection ss = (SwitchSection) Sections [secIndex];
@@ -5463,7 +5465,8 @@ namespace Mono.MonoBASIC {
 			if (!statement.Resolve (ec))
 				return false;
 
-			FlowReturns returns = ec.EndFlowBranching ();
+			//FlowReturns returns = ec.EndFlowBranching ();
+			ec.EndFlowBranching ();
 			return true;
 		}
 		

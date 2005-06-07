@@ -220,6 +220,7 @@ namespace Mono.Languages {
 			return Report.Errors == 0;
 		}
 
+/*
 		private bool EmbedResources()
 		{
 			options.StartTime("Embedding resources");			
@@ -227,6 +228,7 @@ namespace Mono.Languages {
 			options.ShowTime("   Done");
 			return Report.Errors == 0;
 		}
+*/
 
 		private bool SaveOutput()
 		{

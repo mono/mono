@@ -1055,7 +1055,7 @@ public class TypeManager {
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 
-	static CaseInsensitiveHashtable type_hash = new CaseInsensitiveHashtable ();
+	//static CaseInsensitiveHashtable type_hash = new CaseInsensitiveHashtable ();
 
 	/// <remarks>
 	///   This is the "old", non-cache based FindMembers() function.  We cannot use
@@ -2137,7 +2137,7 @@ public class TypeManager {
 	//
 	// Name of the member
 	//
-	static string   closure_name;
+	//static string   closure_name;
 
 	//
 	// Whether we allow private members in the result (since FindMembers
@@ -2149,7 +2149,7 @@ public class TypeManager {
 	// Who is invoking us and which type is being queried currently.
 	//
 	static Type     closure_invocation_type;
-	static Type     closure_queried_type;
+	//static Type     closure_queried_type;
 	static Type     closure_start_type;
 
 	//
@@ -2311,7 +2311,7 @@ public class TypeManager {
 		bool always_ok_flag = false;
 		bool skip_iface_check = true, used_cache = false;
 
-		closure_name = name;
+		//closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
 		closure_start_type = queried_type;
@@ -2364,7 +2364,7 @@ public class TypeManager {
 			}
 
 			closure_private_ok = private_ok;
-			closure_queried_type = current_type;
+			//closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
 			bf |= BindingFlags.IgnoreCase;

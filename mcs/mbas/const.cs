@@ -286,13 +286,11 @@ namespace Mono.MonoBASIC {
                                 return false;
                         }
 
-                        Expression real_expr = Expr;
 
                         Constant ce = Expr as Constant;
                         if (ce == null){
                                 UnCheckedExpr un_expr = Expr as UnCheckedExpr;
                                 CheckedExpr ch_expr = Expr as CheckedExpr;
-                                EmptyCast ec_expr = Expr as EmptyCast;
 				 if ((un_expr != null) && (un_expr.Expr is Constant))
                                         Expr = un_expr.Expr;
                                 else if ((ch_expr != null) && (ch_expr.Expr is Constant))

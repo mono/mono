@@ -1,3 +1,7 @@
+2005-06-07 Satya Sudha K <ksathyasudha@novell.com>
+	* class.cs : Disallowing default properties without parameters.
+	* Some cleanups in other files to get rid of warnings.
+
 2005-06-03 Satya Sudha K <ksathyasudha@novell.com>
 	* expression.cs : Allowing '()' for property invocation with no args.
 	* typemanager.cs : 
