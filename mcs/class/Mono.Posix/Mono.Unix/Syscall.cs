@@ -1006,6 +1006,65 @@ namespace Mono.Unix {
 	//        This is the case for using UnixConvert, which will throw an
 	//        exception if an invalid/unsupported value is used.
 	//
+	// Naming Conventions:
+	//  - Syscall method names should have the same name as the function being
+	//    wrapped (e.g. Syscall.read ==> read(2)).  This allows people to
+	//    consult the appropriate man page if necessary.
+	//  - Methods need not have the same arguments IF this simplifies or
+	//    permits correct usage.  The current example is syslog, in which
+	//    syslog(3)'s single `priority' argument is split into SyslogFacility
+	//    and SyslogLevel arguments.
+	//  - Type names (structures, classes, enumerations) are always PascalCased.
+	//  - Enumerations are named as <MethodName><ArgumentName>, and are located
+	//    in the Mono.Unix namespace.  For readability, if ArgumentName is
+	//    "cmd", use Command instead.  For example, fcntl(2) takes a
+	//    FcntlCommand argument.  This naming convention is to provide an
+	//    assocation between an enumeration and where it should be used, and
+	//    allows a single method to accept multiple different enumerations 
+	//    (see mmap(2), which takes MmapProt and MmapFlags).
+	//    - EXCEPTION: if an enumeration is shared between multiple different
+	//      methods, AND/OR the "obvious" enumeration name conflicts with an
+	//      existing .NET type, a more appropriate name should be used.
+	//      Example: FilePermissions
+	//  - Enumerations should have the [Map] and (optional) [Flgas] attributes.
+	//    [Map] is required for make-map to find the type and generate the
+	//    appropriate UnixConvert conversion functions.
+	//  - Enumeration contents should match the original Unix names.  This helps
+	//    with documentation (the existing man pages are still useful), and is
+	//    required for use with the make-map generation program.
+	//  - Structure names should be the PascalCased version of the actual
+	//    structure name (struct flock ==> Flock).  Structure members should
+	//    have the same names, or a (reasonably) portable subset (Dirent being
+	//    the poster child for questionable members).
+	//    - Whether the managed type should be a reference type (class) or a 
+	//      value type (struct) should be determined on a case-by-case basis: 
+	//      if you ever need to be able to use NULL for it (such as with Dirent, 
+	//      Group, Passwd, as these are method return types and `null' is used 
+	//      to signify the end), it should be a reference type; otherwise, use 
+	//      your discretion, and keep any expected usage patterns in mind.
+	//  - Syscall should be a Single Point Of Truth (SPOT).  There should be
+	//    only ONE way to do anything.  By convention, the Linux function names
+	//    are used, but that need not always be the case (use your discretion).
+	//    It SHOULD NOT be required that developers know what platform they're
+	//    on, and choose among a set of similar functions.  In short, anything
+	//    that requires a platform check is BAD -- Mono.Unix is a wrapper, and
+	//    we can afford to clean things up whenever possible.
+	//    - Examples: 
+	//    	- Syscall.statfs: Solaris/Mac OS X provide statfs(2), Linux provides
+	//        statvfs(2).  MonoPosixHelper will "thunk" between the two,
+	//        exporting a statvfs that works across platforms.
+	//    	- Syscall.getfsent: Glibc export which Solaris lacks, while Solaris
+	//    	  instead provides getvfsent(3).  MonoPosixHelper provides wrappers
+	//    	  to convert getvfsent(3) into Fstab data.
+	//    - Exception: If it isn't possible to cleanly wrap platforms, then the
+	//      method shouldn't be exported.  The user will be expected to do their
+	//      own platform check and their own DllImports.
+	//      Examples: mount(2), umount(2), etc.
+	//    - Note: if a platform doesn't support a function AT ALL, the
+	//      MonoPosixHelper wrapper won't be compiled, resulting in a
+	//      MissingMethodException.  This is also consistent with a missing 
+	//      P/Invoke into libc.so.
+	//
 	public sealed class Syscall : Stdlib
 	{
 		new internal const string LIBC  = "libc";

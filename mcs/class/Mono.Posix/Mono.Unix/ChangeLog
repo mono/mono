@@ -1,3 +1,7 @@
+2005-06-07  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Document naming conventions.
+
 2005-06-05  Jonathan Pryor <jonpryor@vt.edu>
 
 	* make-map.cs: Change automatic "ifdef HAVE_<header>" support prefix to
