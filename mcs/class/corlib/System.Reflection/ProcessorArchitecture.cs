@@ -28,9 +28,11 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection {
 
-	[Flags]
+	[ComVisible (true)]
 	[Serializable]
 	public enum ProcessorArchitecture {
 		None = 0,

@@ -103,6 +103,9 @@ namespace System.Reflection {
 			return typeImpl.GetConstructor (bindingAttr, binder, callConvention, types, modifiers);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override ConstructorInfo[] GetConstructors( BindingFlags bindingAttr)
 		{
 			return typeImpl.GetConstructors (bindingAttr);
@@ -153,6 +156,9 @@ namespace System.Reflection {
 			return typeImpl.GetInterface (name, ignoreCase);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override InterfaceMapping GetInterfaceMap( Type interfaceType)
 		{
 			return typeImpl.GetInterfaceMap (interfaceType);
@@ -281,6 +287,12 @@ namespace System.Reflection {
 		public override MethodInfo DeclaringMethod {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		public override int MetadataToken {
+			get {
+				return typeImpl.MetadataToken;
 			}
 		}
 #endif

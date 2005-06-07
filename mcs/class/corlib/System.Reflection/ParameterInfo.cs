@@ -170,18 +170,28 @@ namespace System.Reflection
 		}			
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO]
+		[Obsolete ("Use ParameterInfo.GetOptionalCustomModifiers().")]
 		public virtual Type[] OptionalCustomModifiers {
 			get {
-				throw new NotImplementedException ();
+				return GetOptionalCustomModifiers ();
+			}
+		}
+
+		[Obsolete ("Use ParameterInfo.GetRequiredCustomModifiers().")]
+		public virtual Type[] RequiredCustomModifiers {
+			get {
+				return GetRequiredCustomModifiers ();
 			}
 		}
 
 		[MonoTODO]
-		public virtual Type[] RequiredCustomModifiers {
-			get {
-				throw new NotImplementedException ();
-			}
+		public virtual Type[] GetOptionalCustomModifiers () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual Type[] GetRequiredCustomModifiers () {
+			throw new NotImplementedException ();
 		}
 #endif
 	}

@@ -50,6 +50,9 @@ namespace System.Reflection {
 		protected ConstructorInfo() {
 		}
 		
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override MemberTypes MemberType {
 			get {return MemberTypes.Constructor;}
 		}

@@ -217,16 +217,28 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		[Obsolete ("Use FieldInfo.GetOptionalCustomModifiers().")]
 		public virtual Type[] OptionalCustomModifiers {
 			get {
-				throw new NotImplementedException ();
+				return GetOptionalCustomModifiers ();
 			}
 		}
 
+		[Obsolete ("Use FieldInfo.GetRequiredCustomModifiers().")]
 		public virtual Type[] RequiredCustomModifiers {
 			get {
-				throw new NotImplementedException ();
+				return GetRequiredCustomModifiers ();
 			}
+		}
+
+		[MonoTODO]
+		public virtual Type[] GetOptionalCustomModifiers () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual Type[] GetRequiredCustomModifiers () {
+			throw new NotImplementedException ();
 		}
 #endif
 

@@ -41,8 +41,9 @@ namespace System.Reflection {
 	/// </summary>
 #if NET_2_0
 	[ComVisible (true)]
-#endif
+#else
 	[Flags]
+#endif
 	public enum MethodImplAttributes {
 
 		/// <summary>

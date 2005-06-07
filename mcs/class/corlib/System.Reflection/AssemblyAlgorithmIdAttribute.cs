@@ -37,8 +37,10 @@ namespace System.Reflection
 {
 #if NET_2_0
 	[ComVisible (true)]
-#endif
+	[AttributeUsage (AttributeTargets.Assembly, Inherited=false)]
+#else
 	[AttributeUsage (AttributeTargets.Assembly)]
+#endif
 	public sealed class AssemblyAlgorithmIdAttribute : Attribute
 	{
 		// Field
