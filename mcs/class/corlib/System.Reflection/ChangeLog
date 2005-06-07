@@ -1,11 +1,3 @@
-2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
-
-	* CustomAttributeData.cs: Implemented.
-
-	* CustomAttributeDataNamedArgument.cs: Implemented.
-
-	* CustomAttrbuteDataTypedArgument.cs: Implemented.
-	
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs ExceptionHandlingClause.cs: Fix build.

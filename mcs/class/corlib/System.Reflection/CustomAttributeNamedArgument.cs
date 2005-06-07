@@ -3,7 +3,6 @@
 //
 // Author:
 //   Zoltan Varga (vargaz@gmail.com)
-//   Carlos Alberto Cortez (calberto.cortez@gmail.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -38,30 +37,19 @@ namespace System.Reflection {
 	[ComVisible (true)]
 #endif
 	public struct CustomAttributeNamedArgument {
-		CustomAttributeTypedArgument typedArgument;
-		MemberInfo memberInfo;
 
-		internal CustomAttributeNamedArgument (MemberInfo memberInfo, object typedArgument)
-		{
-			this.memberInfo = memberInfo;
-			this.typedArgument = (CustomAttributeTypedArgument) typedArgument;
-		}
-
+		[MonoTODO]
 		public MemberInfo MemberInfo {
 			get {
-				return memberInfo;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public CustomAttributeTypedArgument TypedValue {
 			get {
-				return typedArgument;
+				throw new NotImplementedException ();
 			}
-		}
-
-		public override string ToString ()
-		{
-			return memberInfo.Name + " = " + typedArgument.ToString ();
 		}
 	}
 
