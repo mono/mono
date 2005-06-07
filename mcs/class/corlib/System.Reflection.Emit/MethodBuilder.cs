@@ -41,7 +41,11 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
-
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_MethodBuilder))]
+#endif
 	public sealed class MethodBuilder : MethodInfo {
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
@@ -358,6 +362,10 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");

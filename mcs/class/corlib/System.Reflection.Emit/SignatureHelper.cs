@@ -39,7 +39,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_SignatureHelper))]
+#endif
 	public sealed class SignatureHelper {
 		internal enum SignatureHelperType {
 			HELPER_FIELD,

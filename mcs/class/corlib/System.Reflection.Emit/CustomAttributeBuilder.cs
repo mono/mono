@@ -38,6 +38,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_CustomAttributeBuilder))]
+#endif
 	public class CustomAttributeBuilder {
 		ConstructorInfo ctor;
 		byte[] data;

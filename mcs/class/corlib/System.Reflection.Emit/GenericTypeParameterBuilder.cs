@@ -33,12 +33,14 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Runtime.Serialization;
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 namespace System.Reflection.Emit
 {
+	[ComVisible (true)]
 	public sealed class GenericTypeParameterBuilder : Type
 	{
 	#region Sync with reflection.h
@@ -56,6 +58,7 @@ namespace System.Reflection.Emit
 			this.base_type = base_type_constraint;
 		}
 
+		[ComVisible (true)]
 		public void SetInterfaceConstraints (Type[] iface_constraints)
 		{
 			this.iface_constraints = iface_constraints;

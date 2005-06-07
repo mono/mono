@@ -43,7 +43,11 @@ using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
-
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_TypeBuilder))]
+#endif
 	public sealed class TypeBuilder : Type {
 	#region Sync with reflection.h
 	private string tname;

@@ -39,6 +39,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_EventBuilder))]
+#endif
 	public sealed class EventBuilder {
 		string name;
 		Type type;
@@ -113,6 +118,10 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");

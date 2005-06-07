@@ -160,6 +160,11 @@ namespace System.Reflection.Emit {
 		int GetToken (SignatureHelper helper);
 	}		
 
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_ILGenerator))]
+#endif
 	public class ILGenerator: Object {
 		private struct LabelFixup {
 			public int offset;    // The number of bytes between pos and the
@@ -454,6 +459,7 @@ namespace System.Reflection.Emit {
 			code [code_len++] = val;
 		}
 		
+		[ComVisible (true)]
 		public virtual void Emit (OpCode opcode, ConstructorInfo constructor)
 		{
 			int token = token_gen.GetToken (constructor);

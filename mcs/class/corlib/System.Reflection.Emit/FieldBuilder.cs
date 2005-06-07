@@ -39,6 +39,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_FieldBuilder))]
+#endif
 	public sealed class FieldBuilder : FieldInfo {
 		private FieldAttributes attrs;
 		private Type type;
@@ -159,6 +164,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			RejectIfCreated ();
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));

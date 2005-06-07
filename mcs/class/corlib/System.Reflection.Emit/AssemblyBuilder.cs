@@ -81,6 +81,11 @@ namespace System.Reflection.Emit {
 		}
 	}
 
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_AssemblyBuilder))]
+#endif
 	public sealed class AssemblyBuilder : Assembly {
 		#region Sync with reflection.h
 		private IntPtr dynamic_assembly;
@@ -735,6 +740,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute ( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");

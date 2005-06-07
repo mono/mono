@@ -27,9 +27,15 @@
 //
 
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_MethodRental))]
+#endif
 	public sealed class MethodRental {
 
 		public const int JitImmediate = 1;

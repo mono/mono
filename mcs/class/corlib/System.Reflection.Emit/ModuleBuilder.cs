@@ -42,6 +42,11 @@ using System.Resources;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_ModuleBuilder))]
+#endif
 	public class ModuleBuilder : Module {
 		#region Sync with reflection.h
 		private IntPtr dynamic_image;
@@ -257,6 +262,9 @@ namespace System.Reflection.Emit {
 			name_cache.Add (name, tb);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			return DefineType (name, attr, parent, interfaces, PackingSize.Unspecified, TypeBuilder.UnspecifiedTypeSize);
 		}
@@ -288,10 +296,16 @@ namespace System.Reflection.Emit {
 			return eb;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override Type GetType( string className) {
 			return GetType (className, false, false);
 		}
 		
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override Type GetType( string className, bool ignoreCase) {
 			return GetType (className, false, ignoreCase);
 		}
@@ -339,7 +353,10 @@ namespace System.Reflection.Emit {
 			}
 			return null;
 		}
-		
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif		
 		public override Type GetType (string className, bool throwOnError, bool ignoreCase) {
 			int subt;
 			string orig = className;
@@ -404,6 +421,10 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
@@ -519,7 +540,9 @@ namespace System.Reflection.Emit {
 			return GetMethodToken (GetArrayMethod (arrayClass, methodName, callingConvention, returnType, parameterTypes));
 		}
 
-
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public MethodToken GetConstructorToken (ConstructorInfo con)
 		{
 			if (con == null)

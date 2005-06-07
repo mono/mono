@@ -41,6 +41,11 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
 
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_ConstructorBuilder))]
+#endif
 	public sealed class ConstructorBuilder : ConstructorInfo {
 		private RuntimeMethodHandle mhandle;
 		private ILGenerator ilgen;
@@ -222,6 +227,10 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");

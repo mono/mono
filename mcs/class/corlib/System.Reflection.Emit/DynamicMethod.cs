@@ -42,6 +42,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DynamicMethod : MethodInfo {
 		#region Sync with reflection.h
 		private RuntimeMethodHandle mhandle;

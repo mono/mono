@@ -1,4 +1,9 @@
+using System.Runtime.InteropServices;
+
 namespace System.Reflection.Emit {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class OpCodes {
 		//
 		// The order is:
