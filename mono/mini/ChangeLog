@@ -1,3 +1,8 @@
+2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* trace.[ch]:
+	* mini.c: added the ability to toggle trace on/off using SIGUSR2.
+
 2005-06-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ia64.c mini-ia64.h: Fix cleanup of memory stack.
