@@ -1,3 +1,9 @@
+
+2005-06-06  Michael Meeks  <michael.meeks@novell.com>
+
+	* object.c (extend_interface_array): fix really silly
+	memory corrupting / comparison bug.
+
 2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* reflection.c: Functions added to support the creation
