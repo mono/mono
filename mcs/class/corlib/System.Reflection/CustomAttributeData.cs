@@ -3,6 +3,7 @@
 //
 // Author:
 //   Zoltan Varga (vargaz@gmail.com)
+//   Carlos Alberto Cortez (calberto.cortez@gmail.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -32,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Reflection {
 
@@ -39,46 +41,86 @@ namespace System.Reflection {
 	[ComVisible (true)]
 #endif
 	public sealed class CustomAttributeData {
+		ConstructorInfo ctorInfo;
+		IList<CustomAttributeTypedArgument> ctorArgs;
+		IList<CustomAttributeNamedArgument> namedArgs;
 
-		[MonoTODO]
+		internal CustomAttributeData (ConstructorInfo ctorInfo, object [] ctorArgs, object [] namedArgs)
+		{
+			this.ctorInfo = ctorInfo;
+			
+			this.ctorArgs = Array.AsReadOnly<CustomAttributeTypedArgument> 
+				(ctorArgs != null ? UnboxValues<CustomAttributeTypedArgument> (ctorArgs) : new CustomAttributeTypedArgument [0]);
+			
+			this.namedArgs = Array.AsReadOnly<CustomAttributeNamedArgument> 
+				(namedArgs != null ? UnboxValues<CustomAttributeNamedArgument> (namedArgs) : new CustomAttributeNamedArgument [0]);
+		}
+
 		public ConstructorInfo Constructor {
 			get {
-				throw new NotImplementedException ();
+				return ctorInfo;
 			}
 		}
 
-		[MonoTODO]
 		public IList<CustomAttributeTypedArgument> ConstructorArguments {
 			get {
-				throw new NotImplementedException ();
+				return ctorArgs;
 			}
 		}
 
-		[MonoTODO]
 		public IList<CustomAttributeNamedArgument> NamedArguments {
 			get {
-				throw new NotImplementedException ();
+				return namedArgs;
 			}
 		}
 
-		[MonoTODO]
-		public static IList<CustomAttributeData> GetCustomAttributes (Assembly yarget) {
-			throw new NotImplementedException ();
+		public static IList<CustomAttributeData> GetCustomAttributes (Assembly target) {
+			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
-		[MonoTODO]
 		public static IList<CustomAttributeData> GetCustomAttributes (MemberInfo target) {
-			throw new NotImplementedException ();
+			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
-		[MonoTODO]
 		public static IList<CustomAttributeData> GetCustomAttributes (Module target) {
-			throw new NotImplementedException ();
+			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
-		[MonoTODO]
 		public static IList<CustomAttributeData> GetCustomAttributes (ParameterInfo target) {
-			throw new NotImplementedException ();
+			return MonoCustomAttrs.GetCustomAttributesData (target);
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("[" + ctorInfo.DeclaringType.Name + " (");
+			for (int i = 0; i < ctorArgs.Count; i++) {
+				sb.Append (ctorArgs [i].ToString ());
+				if (i + 1 < ctorArgs.Count)
+					sb.Append (", ");
+			}
+
+			if (namedArgs.Count > 0)
+				sb.Append (", ");
+			
+			for (int j = 0; j < namedArgs.Count; j++) {
+				sb.Append (namedArgs [j].ToString ());
+				if (j + 1 < namedArgs.Count)
+					sb.Append (", ");
+			}
+			sb.AppendFormat (")]");
+
+			return sb.ToString ();
+		}
+
+		static T [] UnboxValues<T> (object [] values)
+		{
+			T [] retval = new T [values.Length];
+			for (int i = 0; i < values.Length; i++)
+				retval [i] = (T) values [i];
+
+			return retval;
 		}
 	}
 

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Zoltan Varga (vargaz@gmail.com)
+//   Carlos Alberto Cortez (calberto.cortez@gmail.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -37,19 +38,36 @@ namespace System.Reflection {
 	[ComVisible (true)]
 #endif
 	public struct CustomAttributeTypedArgument {
+		Type argumentType;
+		object value;
 
-		[MonoTODO]
+		internal CustomAttributeTypedArgument (Type argumentType, object value)
+		{
+			this.argumentType = argumentType;
+			this.value = value;
+		}
+
 		public Type ArgumentType {
 			get {
-				throw new NotImplementedException ();
+				return argumentType;
 			}
 		}
 
-		[MonoTODO]
 		public object Value {
 			get {
-				throw new NotImplementedException ();
+				return value;
 			}
+		}
+
+		public override string ToString ()
+		{
+			string val = value.ToString ();
+			if (argumentType == typeof (string))
+				return "\"" + val + "\"";
+			if (argumentType == typeof (Type)) 
+				return "typeof (" + val + ")";
+
+			return val;
 		}
 	}
 
