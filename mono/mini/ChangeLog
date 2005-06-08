@@ -1,3 +1,7 @@
+2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c: no SIGUSR2 on windows. Remove it for PLATFORM_WIN32.
+
 2005-06-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *-ia64.*: Ongoing IA64 work.
