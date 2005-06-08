@@ -384,6 +384,9 @@ namespace System {
 
 		public abstract RuntimeTypeHandle TypeHandle {get;}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorInfo TypeInitializer {
 			get {
 				return GetConstructorImpl (
@@ -548,6 +551,9 @@ namespace System {
 				return type_is_subtype_of (a, b, check_interfaces);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public virtual bool IsSubclassOf (Type c)
 		{
 			if (c == null)
@@ -578,7 +584,10 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);
-		
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif		
 		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
 			InterfaceMapping res;
 			if (interfaceType == null)
@@ -873,12 +882,18 @@ namespace System {
 			return typeof (MarshalByRefObject).IsAssignableFrom (this);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
 			return GetConstructorImpl (
 				DefaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
 						       Type[] types, ParameterModifier[] modifiers)
 		{
@@ -886,6 +901,9 @@ namespace System {
 				bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
 						       CallingConventions callConvention,
 						       Type[] types, ParameterModifier[] modifiers)
@@ -896,11 +914,17 @@ namespace System {
 			return GetConstructorImpl (bindingAttr, binder, callConvention, types, modifiers);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorInfo[] GetConstructors ()
 		{
 			return GetConstructors (BindingFlags.Public | BindingFlags.Instance);
 		}
-		
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif		
 		public abstract ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
 		public virtual MemberInfo[] GetDefaultMembers ()
@@ -1068,7 +1092,10 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type BindGenericParameters (Type gt, Type [] types);
-		
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif		
 		public Type BindGenericParameters (Type [] types)
 		{
 			if (types == null)

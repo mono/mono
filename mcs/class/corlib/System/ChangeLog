@@ -1,3 +1,7 @@
+2005-06-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs: Add missing 2.0 attributes.
+
 2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MonoCustomAttrs.cs: Added GetCustomAttributesDataInternal icall, and
