@@ -1,5 +1,6 @@
 2005-06-08  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #75160.
 	* class.cs (GetPartialBases): Fix return value check of
 	part.GetClassBases.
 
