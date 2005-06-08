@@ -1,5 +1,13 @@
 2005-06-08  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay (nullable_type_or_conditional): If we put the
+	nullable back and our `type' is a `ComposedCast', remove the
+	nullable from it.  Fixes #75156.
+
+	* expression.cs (ComposedCast.RemoveNullable): New public method.
+
+2005-06-08  Martin Baulig  <martin@ximian.com>
+
 	The big Iterators rewrite :-)
 
 	* iterators.cs: Rewrite this to use the anonymous methods framework.
