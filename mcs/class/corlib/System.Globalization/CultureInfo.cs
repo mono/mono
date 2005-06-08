@@ -42,7 +42,7 @@ namespace System.Globalization
 		static volatile CultureInfo invariant_culture_info;
 
 		const int NumOptionalCalendars = 5;
-		const int CalendarTypeMask = 0xFF;
+		const int GregorianTypeMask = 0x00FFFFFF;
 		const int CalendarTypeBits = 24;
 
 		bool m_isReadOnly;
@@ -345,15 +345,20 @@ namespace System.Globalization
 			}
 		}
 
+		internal void CheckNeutral ()
+		{
+			if (IsNeutralCulture) {
+				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
+						"a neutral culture. It can not be used in formatting " +
+						"and parsing and therefore cannot be set as the thread's " +
+						"current culture.");
+			}
+		}
+
 		public virtual NumberFormatInfo NumberFormat {
 			get {
 				if (!constructed) Construct ();
-				if (IsNeutralCulture) {
-					throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
-							"a neutral culture. It can not be used in formatting " +
-							"and parsing and therefore cannot be set as the thread's " +
-							"current culture.");
-				}
+				CheckNeutral ();
 				if (numInfo == null){
 					lock (this){
 						if (numInfo == null) {
@@ -382,12 +387,7 @@ namespace System.Globalization
 			get 
 			{
 				if (!constructed) Construct ();
-				if (IsNeutralCulture) {
-					throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
-							"a neutral culture. It can not be used in formatting " +
-							"and parsing and therefore cannot be set as the thread's " +
-							"current culture.");
-				}
+				CheckNeutral ();
 				if (dateTimeInfo == null)
 				{
 					lock (this)
@@ -623,11 +623,13 @@ namespace System.Globalization
 
 			for (int i=0; i<NumOptionalCalendars; i++) {
 				Calendar cal = null;
-				switch (*(calendar_data + i) & CalendarTypeMask >> CalendarTypeBits) {
+				int caldata = *(calendar_data + i);
+				int caltype = (caldata >> CalendarTypeBits);
+				switch (caltype) {
 				case 0:
-					int gt = (*(calendar_data + i) & CalendarTypeMask);
-					GregorianCalendarTypes type = (GregorianCalendarTypes) gt;
-					cal = new GregorianCalendar (type);
+					GregorianCalendarTypes greg_type;
+					greg_type = (GregorianCalendarTypes) (caldata & GregorianTypeMask);
+					cal = new GregorianCalendar (greg_type);
 					break;
 				case 1:
 					cal = new HijriCalendar ();
@@ -636,7 +638,7 @@ namespace System.Globalization
 					cal = new ThaiBuddhistCalendar ();
 					break;
 				default:
-					throw new Exception ("invalid calendar type:  " + *(calendar_data + i));
+					throw new Exception ("invalid calendar type:  " + caldata);
 				}
 				optional_calendars [i] = cal;
 			}

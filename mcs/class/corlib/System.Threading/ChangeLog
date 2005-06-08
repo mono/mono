@@ -1,3 +1,8 @@
+2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs: check that the culture is valid for formatting
+	(ie, (!neutral || invariant)).
+
 2005-06-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Thread.cs: Added _Thread interface (and members) and a few missing

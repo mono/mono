@@ -392,6 +392,7 @@ namespace System.Threading {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
+				value.CheckNeutral ();
 				in_currentculture = true;
 				try {
 					BinaryFormatter bf = new BinaryFormatter();

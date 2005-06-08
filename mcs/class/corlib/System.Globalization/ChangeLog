@@ -1,3 +1,9 @@
+2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CultureInfo.cs: added internal method to check for a culture
+	valid for formatting. Correctly get the calendar type.  Before
+	it was always type 0. Thanks to Mcs for pointing this out.
+
 2005-05-06  Miguel de Icaza  <miguel@novell.com>
 
 	* CultureInfo.cs: Eliminate double-check lock always init the invariant_culture_info.
