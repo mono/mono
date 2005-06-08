@@ -1,3 +1,8 @@
+2005-06-08  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Create an unversioned library.  We won't make any gaurantees
+	  about ABI stability until Mono 1.2 (if then).
+
 2005-06-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* sys-mman.c: Check for presence of mremap and remap_file_pages.
