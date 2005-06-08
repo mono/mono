@@ -1,3 +1,10 @@
+2005-06-08  Jackson Harper  <jackson@ximian.com>
+
+	* Guidelines:
+	* Design: Double buffering is handled at a different level now, so
+	I am removing mention of it. Control developers do not need to
+	know how it works.
+
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Add Win32DnD.cs

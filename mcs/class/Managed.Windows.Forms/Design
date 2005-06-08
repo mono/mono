@@ -55,16 +55,6 @@ respectively for Linux/Mac and Windows platforms. Support for any new platform
 can be added simply by implementing XplatUIDriver for the new platform.
 
 
-2a. Double Buffering:
-=====================
-
-For drawing controls double buffering used, so that a better performance
-can be achieved. Every controls maintains a bitmap image of itself. This
-image is used for painting the screen when a paint event is raised. When
-a control property changes the look of the control, it redraws the bitmap
-image. [Please see the guidelines document]
-
-
 2b. Themes:
 ===========
 
