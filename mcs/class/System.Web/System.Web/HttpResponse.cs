@@ -943,6 +943,15 @@ namespace System.Web
 			Cookies.Add (cookie);
 		}
 
+#if NET_1_1
+		// LAMESPEC: added in a service pack for 1.1 and available in 2.0 beta
+		[MonoTODO]
+		public void TransmitFile (string filename)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		private void WriteFromStream (Stream stream, long offset, long length, long bufsize)
 		{
 			if (offset < 0 || length <= 0)

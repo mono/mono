@@ -35,7 +35,7 @@ namespace System.Web {
 #if NET_2_0
 	[Serializable]
 #endif
-	public class HttpParseException : HttpException {
+	public sealed class HttpParseException : HttpException {
 
 		int line;
 		string virtualPath;
@@ -86,7 +86,6 @@ namespace System.Web {
 		}
 #endif
 
-		[MonoTODO]
 		public string FileName {
 			get { return virtualPath; }
 		}

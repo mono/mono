@@ -1,3 +1,9 @@
+2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpParseException.cs:
+	* HttpResponse.cs:
+	* HttpApplication.cs: updates for 1.1 service pack.
+
 2005-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: fix InvalidCastException.

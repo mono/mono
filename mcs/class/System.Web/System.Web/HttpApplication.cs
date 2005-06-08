@@ -45,7 +45,7 @@ using System.Web.SessionState;
 namespace System.Web
 {
 
-	[ToolboxItem(true)]
+	[ToolboxItem(false)]
 	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable
 	{
 
