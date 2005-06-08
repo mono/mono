@@ -1,4 +1,9 @@
 
+Wed Jun 8 19:26:38 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: add proper locking in mono_remote_class_vtable(),
+	fixes possible memory corruption.
+
 2005-06-06  Michael Meeks  <michael.meeks@novell.com>
 
 	* object.c (extend_interface_array): fix really silly
