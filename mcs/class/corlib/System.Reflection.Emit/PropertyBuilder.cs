@@ -160,6 +160,14 @@ namespace System.Reflection.Emit {
 		}
 		public override void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
 		}
+
+#if NET_2_0
+		public override Module Module {
+			get {
+				return base.Module;
+			}
+		}
+#endif
 	}
 }
 

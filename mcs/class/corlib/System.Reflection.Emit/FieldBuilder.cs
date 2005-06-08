@@ -206,6 +206,12 @@ namespace System.Reflection.Emit {
 		{
 			return this;
 		}
+
+		public override Module Module {
+			get {
+				return base.Module;
+			}
+		}
 #endif
 	}
 }

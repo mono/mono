@@ -1,5 +1,8 @@
 2005-06-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ConstructorBuilder.cs FieldBuilder.cs MethodBuilder.cs PropertyBuilder.cs:
+	Add 2.0 Module property.
+
 	* *.cs: Updates for net 2.0 beta 2.
 
 2005-06-07  Zoltan Varga  <vargaz@freemail.hu>

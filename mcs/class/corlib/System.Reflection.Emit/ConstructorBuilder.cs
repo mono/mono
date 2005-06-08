@@ -270,6 +270,12 @@ namespace System.Reflection.Emit {
 				return false;
 			}
 		}
+
+		public override Module Module {
+			get {
+				return base.Module;
+			}
+		}
 #endif
 
 		public override string ToString() {

@@ -531,6 +531,12 @@ namespace System.Reflection.Emit {
 			this.paramModReq = parameterTypeRequiredCustomModifiers;
 			this.paramModOpt = parameterTypeOptionalCustomModifiers;
 		}
+
+		public override Module Module {
+			get {
+				return base.Module;
+			}
+		}
 #endif
 	}
 }
