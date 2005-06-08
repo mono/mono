@@ -41,7 +41,6 @@ namespace System.Web.UI
 	[DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 	[ToolboxItem (false), ParseChildren (true)]
 	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
-	[Designer ("Microsoft.VSDesigner.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VSDesigner, typeof (IRootDesigner))]
 	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
 	{

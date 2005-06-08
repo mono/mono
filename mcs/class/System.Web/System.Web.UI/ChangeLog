@@ -1,3 +1,9 @@
+2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UserControl.cs:
+	* Page.cs:
+	* Control.cs: updates for 1.1 SP1
+
 2005-06-06  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Control.cs: Added new DataBind() overload for 2.0. The old
