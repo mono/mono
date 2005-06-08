@@ -43,10 +43,10 @@ using System.Runtime.CompilerServices;
 [assembly: Mono.UsageComplement("SOURCE-FILES")]
 
 //[assembly: Mono.LicensingWith(Mono.GetOptions.Licenses.GPL)]
-//[assembly: Mono.ForMoreInformation("http://www.go-mono.com")]
-//[assembly: Mono.UsageClause("mbas [options] source-files")]
+[assembly: Mono.AdditionalInfo("For more information: http://www.mono-project.com/Language_BASIC")]
+[assembly: Mono.ReportBugsTo(" http://bugzilla.ximian.com/enter_bug.cgi?product=Mono%3A+Compilers&component=Basic ")]
 
-[assembly: AssemblyVersion("0.96.1.0")]
+[assembly: AssemblyVersion("0.96.2.0")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]

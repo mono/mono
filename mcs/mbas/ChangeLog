@@ -1,3 +1,8 @@
+2005-06-08 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* AssemblyInfo.cs : 
+		- Added informational attributes that Mono.GetOptions shows in the help screen.
+		- Bumped up the version number a bit 
+	
 2005-06-07 Satya Sudha K <ksathyasudha@novell.com>
 	* class.cs : Disallowing default properties without parameters.
 	* Some cleanups in other files to get rid of warnings.
