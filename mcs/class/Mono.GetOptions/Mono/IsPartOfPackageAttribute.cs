@@ -1,5 +1,5 @@
 //
-// IsPartOfPackage.cs
+// IsPartOfPackageAttribute.cs
 //
 // Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
@@ -33,11 +33,11 @@ using System;
 namespace Mono
 {
 	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple=true)]
-	public class IsPartOfPackage : System.Attribute
+	public class IsPartOfPackageAttribute : System.Attribute
 	{
 		public string PackageName;
 
-		public IsPartOfPackage(string packageName)
+		public IsPartOfPackageAttribute(string packageName)
 		{
 			PackageName = packageName;
 		}

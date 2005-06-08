@@ -1,3 +1,7 @@
+2005-06-08  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* oops Mono.IsPartOfPackage renamed to Mono.IsPartOfPackageAttribute, 
+	as mandates the convention
+	
 2005-06-06  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions/OptionList.cs: Some refactoring of Gert's contribution
 	* Added Mono/IsPartOfPackage.cs: new informational assembly attribute
