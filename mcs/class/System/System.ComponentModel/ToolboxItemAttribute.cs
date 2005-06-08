@@ -35,18 +35,13 @@ namespace System.ComponentModel
 	[AttributeUsage(AttributeTargets.All)]
 	public class ToolboxItemAttribute : Attribute
 	{
-		static string defaultItemType;
+		private static string defaultItemType = "System.Drawing.Design.ToolboxItem,System.Drawing";
 
 		public static readonly ToolboxItemAttribute Default = new ToolboxItemAttribute (defaultItemType);
 		public static readonly ToolboxItemAttribute None = new ToolboxItemAttribute (false);
 
 		private Type itemType;
 		private string itemTypeName;
-
-		static ToolboxItemAttribute ()
-		{
-			defaultItemType = "System.Drawing.Desing.ToolboxItem" + AssemblySystem_Drawing;
-		}
 
 		public ToolboxItemAttribute (bool defaultType)
 		{

@@ -1,3 +1,7 @@
+2005-06-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ToolboxItemAttribute.cs: Revert last change as it breaks the build.
+
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ToolboxItemAttribute.cs: fix default type name.
