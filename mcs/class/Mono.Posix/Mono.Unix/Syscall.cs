@@ -2635,7 +2635,7 @@ namespace Mono.Unix {
 
 		// TODO: execle, execl, execlp
 		[DllImport (LIBC, SetLastError=true)]
-		private static extern int execvp (string path, string[] argv);
+		public static extern int execvp (string path, string[] argv);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int nice (int inc);

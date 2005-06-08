@@ -1,5 +1,10 @@
 2005-06-08  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs: Add execvp(2).  (This should have been added with the other
+	  exec(2) additions...).
+
+2005-06-08  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Syscall.cs: Update comment with correct exception type.
 	* UnixConvert.cs: Rename ToFilePermissions(string) to
 	  FromOctalPermissionString; Add ToOctalPermissionString,
