@@ -1,3 +1,10 @@
+2005-06-08  Raja R Harinath  <rharinath@novell.com>
+
+	* test-388.cs, test-389.cs: New tests from #75160.  They're
+	actually interdependent.  #75160 is a file-ordering bug, and we
+	use the two testcases to drive the two different orderings.
+	* Makefile (TEST_HARNESS_EXTRAS): Add test-388.cs and test-389.cs.
+
 2005-06-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_SOURCES_common): Re-enable test-183: the runtime

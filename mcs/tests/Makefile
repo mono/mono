@@ -33,7 +33,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = test-386 test-387
+NEW_TEST_SOURCES_common = test-386 test-387 test-388 test-389
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -160,7 +160,10 @@ TEST_ORDERING = \
 # Some tests may require additional files to be available in the current directory.
 # To promote interoperability, we prefer that those files not be referred to with ../ or ..\\
 # To that end, we will copy those files to the test-harness directory, so that we can refer to simple filenames.
-TEST_HARNESS_EXTRAS = $(wildcard *.inc) test-74.cs test-353-2.cs test-361-2.cs test-377-$(PROFILE)-il.dll
+TEST_HARNESS_EXTRAS = \
+	$(wildcard *.inc) \
+	test-74.cs test-353-2.cs test-361-2.cs test-388.cs test-389.cs \
+	test-377-$(PROFILE)-il.dll
 
 all-local install-local uninstall-local:
 
