@@ -1,3 +1,9 @@
+2005-06-08  Martin Baulig  <martin@ximian.com>
+
+	* Dictionary.cs (Dictionary.KeyEnumerator): Removed the public
+	GetEnumerator() function since it's returning the wrong type.
+	(Dictionary.ValueEnumerator): Likewise.  Fix #75073.
+
 2005-06-08  Ankit Jain <ankit@corewars.org>
 
 	* Dictionary.cs (Dictionary<TKey, TValue>.MoveNext): Allow traversal of chain in last slot

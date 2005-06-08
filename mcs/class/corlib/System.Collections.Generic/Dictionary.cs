@@ -658,11 +658,6 @@ namespace System.Collections.Generic {
 				}
 			}
 	
-			public Enumerator GetEnumerator ()
-			{
-				return new Enumerator (_dictionary);
-			}
-	
 			IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator ()
 			{
 				return new KeyEnumerator (_dictionary);
@@ -763,11 +758,6 @@ namespace System.Collections.Generic {
 				foreach (TValue v in enumerateThis) {
 					array [index++] = v;
 				}
-			}
-	
-			public Enumerator GetEnumerator ()
-			{
-				return new Enumerator (_dictionary);
 			}
 	
 			IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator ()
