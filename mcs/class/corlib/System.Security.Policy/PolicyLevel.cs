@@ -242,8 +242,7 @@ namespace System.Security.Policy {
 
                 public static PolicyLevel CreateAppDomainLevel ()
                 {
-			NamedPermissionSet fullTrust = new NamedPermissionSet ("FullTrust", PermissionState.Unrestricted);
-			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (fullTrust));
+			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (DefaultPolicies.FullTrust));
 			cg.Name = "All_Code";
 			PolicyLevel pl = new PolicyLevel ("AppDomain", PolicyLevelType.AppDomain);
 			pl.RootCodeGroup = cg;
@@ -395,10 +394,11 @@ namespace System.Security.Policy {
                 {
 			if (fullNames != null)
 				fullNames.Clear ();
-                        full_trust_assemblies.Clear ();
-                        named_permission_sets.Clear ();
 
 			if (_type != PolicyLevelType.AppDomain) {
+	                        full_trust_assemblies.Clear ();
+	                        named_permission_sets.Clear ();
+
 				// because the policy doesn't exist LoadFromFile will try to
 				// 1. use the .default file if existing (like Fx 2.0 does); or
 				// 2. use the hard-coded default values
@@ -410,15 +410,9 @@ namespace System.Security.Policy {
 					catch {}
 				}
 				LoadFromFile (_location);
-			}
-			else {
-				named_permission_sets.Add (DefaultPolicies.LocalIntranet);
-				named_permission_sets.Add (DefaultPolicies.Internet);
-				named_permission_sets.Add (DefaultPolicies.SkipVerification);
-				named_permission_sets.Add (DefaultPolicies.Execution);
-				named_permission_sets.Add (DefaultPolicies.Nothing);
-				named_permission_sets.Add (DefaultPolicies.Everything);
-				named_permission_sets.Add (DefaultPolicies.FullTrust);
+			} else {
+				CreateDefaultFullTrustAssemblies ();
+				CreateDefaultNamedPermissionSets ();
 			}
                 }
 
@@ -439,7 +433,6 @@ namespace System.Security.Policy {
 			CodeGroup cg = root_code_group.ResolveMatchingCodeGroups (evidence);
 			// TODO
 			return ((cg != null) ? cg : null);
-
                 }
 
                 public SecurityElement ToXml ()
@@ -538,6 +531,11 @@ namespace System.Security.Policy {
 				break;
 			}
 
+			CreateDefaultFullTrustAssemblies ();
+		}
+
+		internal void CreateDefaultFullTrustAssemblies () 
+		{
 			// (default) assemblies that are fully trusted during policy resolution
 			full_trust_assemblies.Clear ();
 			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("mscorlib", DefaultPolicies.Key.Ecma));

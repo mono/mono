@@ -1,3 +1,7 @@
+2005-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevel.cs: Added some missing initialization. More code reuse.
+
 2005-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultPolicies.cs: Added a method to create the default FullTrust
