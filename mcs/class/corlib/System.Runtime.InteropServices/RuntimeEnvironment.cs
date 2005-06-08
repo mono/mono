@@ -50,7 +50,7 @@ namespace System.Runtime.InteropServices
 				// GetMachineConfigPath is internal and not protected by CAS
 				string path = Environment.GetMachineConfigPath ();
 				if (SecurityManager.SecurityEnabled) {
-					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path);
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
 				return path;
 			}

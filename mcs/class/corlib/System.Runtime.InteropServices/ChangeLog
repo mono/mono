@@ -1,3 +1,7 @@
+2005-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RuntimeEnvironment.cs: I get better results when calling Demand.
+
 2005-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeEnvironment.cs: Implemented TODO. Added security for CAS.
