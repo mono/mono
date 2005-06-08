@@ -75,8 +75,6 @@ mono_debugger_lock (void)
 void
 mono_debugger_unlock (void)
 {
-	g_assert (debugger_lock_level > 0);
-
 	if (debugger_lock_level == 1) {
 		if (must_reload_symtabs && mono_debugger_use_debugger) {
 			mono_debugger_event (MONO_DEBUGGER_EVENT_RELOAD_SYMTABS, 0, 0);
@@ -395,9 +393,6 @@ mono_debugger_runtime_invoke (MonoMethod *method, void *obj, void **params, Mono
 {
 	MonoObject *retval;
 	gchar *message;
-
-	//	g_message (G_STRLOC ": %p - %p - %p - %p", method, obj, params, exc);
-	//	g_message (G_STRLOC ": %s.%s", method->klass->name, method->name);
 
 	if (!strcmp (method->name, ".ctor")) {
 		retval = obj = mono_object_new (mono_domain_get (), method->klass);
