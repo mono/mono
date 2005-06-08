@@ -5,6 +5,10 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 #endif
 	public class OpCodes {
+
+		internal OpCodes () {
+		}
+
 		//
 		// The order is:
 		//	 Op1, Op2, StackBehaviourPush, StackBehaviourPop
@@ -470,6 +474,9 @@ namespace System.Reflection.Emit {
 			0xFF << 0 | 0x73 << 8 | (byte) StackBehaviour.Pushref << 16 | (byte) StackBehaviour.Varpop << 24,
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineMethod << 16 | (byte) FlowControl.Call << 24);
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 		public static readonly OpCode Castclass = new OpCode (
 			0xFF << 0 | 0x74 << 8 | (byte) StackBehaviour.Pushref << 16 | (byte) StackBehaviour.Popref << 24,
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
@@ -655,6 +662,14 @@ namespace System.Reflection.Emit {
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
 
 		public static readonly OpCode Stelem_Any = new OpCode (
+			0xFF << 0 | 0xA4 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popref_popi_popref << 24,
+			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
+
+		public static readonly OpCode Ldelem = new OpCode (
+			0xFF << 0 | 0xA3 << 8 | (byte) StackBehaviour.Push1 << 16 | (byte) StackBehaviour.Popref_popi << 24,
+			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
+
+		public static readonly OpCode Stelem = new OpCode (
 			0xFF << 0 | 0xA4 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popref_popi_popref << 24,
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
 

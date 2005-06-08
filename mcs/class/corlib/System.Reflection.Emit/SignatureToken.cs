@@ -35,8 +35,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 #if NET_2_0
 	[ComVisible (true)]
-#endif
+#else
 	[Serializable]
+#endif
 	public struct SignatureToken {
 
 		internal int tokValue;

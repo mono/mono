@@ -55,11 +55,19 @@ namespace System.Reflection.Emit {
 		private MethodBuilder get_method;
 		private int table_idx = 0;
 		internal TypeBuilder typeb;
+		private Type[] returnModReq;
+		private Type[] returnModOpt;
+		private Type[][] paramModReq;
+		private Type[][] paramModOpt;
 		
-		internal PropertyBuilder (TypeBuilder tb, string name, PropertyAttributes attributes, Type returnType, Type[] parameterTypes) {
+		internal PropertyBuilder (TypeBuilder tb, string name, PropertyAttributes attributes, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
 			this.name = name;
 			this.attrs = attributes;
 			this.type = returnType;
+			this.returnModReq = returnModReq;
+			this.returnModOpt = returnModOpt;
+			this.paramModReq = paramModReq;
+			this.paramModOpt = paramModOpt;
 			if (parameterTypes != null) {
 				this.parameters = new Type [parameterTypes.Length];
 				System.Array.Copy (parameterTypes, this.parameters, this.parameters.Length);

@@ -113,6 +113,7 @@ namespace System.Reflection.Emit {
 				create_dynamic_method (this);
 		}
 
+		[ComVisible (true)]
 		public Delegate CreateDelegate (Type delegateType)
 		{
 			if (delegateType == null)
@@ -126,6 +127,7 @@ namespace System.Reflection.Emit {
 			return deleg;
 		}
 
+		[ComVisible (true)]
 		public Delegate CreateDelegate (Type delegateType, object target)
 		{
 			if (delegateType == null)

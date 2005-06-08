@@ -260,6 +260,9 @@ namespace System.Reflection.Emit {
 			attrs |= TypeAttributes.HasSecurity;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void AddInterfaceImplementation( Type interfaceType) {
 			if (interfaceType == null)
 				throw new ArgumentNullException ("interfaceType");
@@ -389,6 +392,9 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			return DefineNestedType (name, attr, parent, interfaces, PackingSize.Unspecified, UnspecifiedTypeSize);
 		}
@@ -401,10 +407,16 @@ namespace System.Reflection.Emit {
 			return DefineNestedType (name, attr, parent, null, packsize, UnspecifiedTypeSize);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
 			return DefineConstructor (attributes, callingConvention, parameterTypes, null, null);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public
 #else
@@ -426,6 +438,9 @@ namespace System.Reflection.Emit {
 			return cb;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorBuilder DefineDefaultConstructor (MethodAttributes attributes)
 		{
 			Type parent_type;
@@ -455,10 +470,6 @@ namespace System.Reflection.Emit {
 			return cb;
 		}
 
-		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes) {
-			return DefineMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
-		}
-
 		private void append_method (MethodBuilder mb) {
 			if (methods != null) {
 				if (methods.Length == num_methods) {
@@ -471,6 +482,10 @@ namespace System.Reflection.Emit {
 			}
 			methods [num_methods] = mb;
 			num_methods ++;
+		}
+
+		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes) {
+			return DefineMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
 		}
 
 		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
@@ -553,6 +568,16 @@ namespace System.Reflection.Emit {
 				nativeCallConv, nativeCharSet);
 		}
 
+#if NET_2_0
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes) {
+			return DefineMethod (name, attributes, CallingConventions.Standard);
+		}
+
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callConv) {
+			return DefineMethod (name, attributes, callConv, null, null);
+		}
+#endif
+
 		public void DefineMethodOverride( MethodInfo methodInfoBody, MethodInfo methodInfoDeclaration) {
 			if (methodInfoBody == null)
 				throw new ArgumentNullException ("methodInfoBody");
@@ -600,6 +625,15 @@ namespace System.Reflection.Emit {
 		}
 
 		public PropertyBuilder DefineProperty( string name, PropertyAttributes attributes, Type returnType, Type[] parameterTypes) {
+			return DefineProperty (name, attributes, returnType, null, null, parameterTypes, null, null);
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
 			check_name ("name", name);
 			if (parameterTypes != null)
 				foreach (Type param in parameterTypes)
@@ -607,7 +641,7 @@ namespace System.Reflection.Emit {
 						throw new ArgumentNullException ("parameterTypes");
 			check_not_created ();
 
-			PropertyBuilder res = new PropertyBuilder (this, name, attributes, returnType, parameterTypes);
+			PropertyBuilder res = new PropertyBuilder (this, name, attributes, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, parameterTypes, parameterTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers);
 
 			if (properties != null) {
 				PropertyBuilder[] new_properties = new PropertyBuilder [properties.Length+1];
@@ -621,6 +655,9 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public ConstructorBuilder DefineTypeInitializer() {
 			return DefineConstructor (MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, null);
 		}
@@ -707,6 +744,9 @@ namespace System.Reflection.Emit {
 			symbolWriter.CloseNamespace ();
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
 		{
 			if (ctors == null)
@@ -1247,6 +1287,10 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
@@ -1317,6 +1361,9 @@ namespace System.Reflection.Emit {
 			return pmodule.get_next_table_index (obj, table, inc);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override InterfaceMapping GetInterfaceMap (Type interfaceType)
 		{
 			if (created == null)
@@ -1369,6 +1416,9 @@ namespace System.Reflection.Emit {
 			return base.IsAssignableFrom (c);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		[MonoTODO]
 		public override bool IsSubclassOf (Type c)
 		{

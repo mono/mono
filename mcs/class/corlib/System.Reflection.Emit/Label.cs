@@ -45,18 +45,21 @@ namespace System.Reflection.Emit {
 			label = val;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj) {
-			/* FIXME */
-			return false;
+			bool res = obj is Label;
+
+			if (res) {
+				Label l = (Label)obj;
+				res = (label == l.label);
+			}
+
+			return res;
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public bool Equals (Label obj)
 		{
-			/* FIXME: */
-			return false;
+			return (label == obj.label);
 		}
 #endif
 
