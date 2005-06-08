@@ -31,7 +31,7 @@ using System;
 
 namespace System.Web.UI {
 
-	[AttributeUsage (AttributeTargets.Assembly)]
+	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=true)]
 	public sealed class TagPrefixAttribute : Attribute
 	{
 		string namespaceName;
