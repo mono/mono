@@ -68,11 +68,6 @@
 	* Decimal.cs: Changed to use NumberFormatter in ToString.
 	* NumberFormatter.cs: Implemented decimal formatter.
 
-2005-06-03  Martin Baulig  <martin@ximian.com>
-
-	* CharEnumerator.cs: Reverting Ben's latest change (r45312/45313)
-	for the moment since it breaks the build; see #75136.
-
 2005-06-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Type.cs: reverted wrong fix for bug #71300 in r45150. This makes SSL

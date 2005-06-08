@@ -31,11 +31,17 @@
 //
 
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System
 {
 	[Serializable]
 	public sealed class CharEnumerator : IEnumerator, ICloneable
+#if NET_2_0
+	, IEnumerator <char>
+#endif
 	{
 		private string str;
 		private int index;
@@ -102,5 +108,11 @@ namespace System
 		{
 			index = -1;
 		}
+#if NET_2_0
+		void IDisposable.Dispose ()
+		{
+			// nop
+		}
+#endif
 	}
 }
