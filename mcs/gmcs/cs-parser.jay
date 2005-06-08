@@ -3252,7 +3252,7 @@ anonymous_method_expression
 		Location loc = (Location) $3;
 		top_current_block = (Block) oob_stack.Pop ();
 		current_block = (Block) oob_stack.Pop ();
-			if (RootContext.Version == LanguageVersion.ISO_1){
+		if (RootContext.Version == LanguageVersion.ISO_1){
 				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
 				$$ = null;
 		} else  {

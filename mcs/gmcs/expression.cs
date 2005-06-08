@@ -3761,7 +3761,9 @@ namespace Mono.CSharp {
 				// If we are referencing a variable from the external block
 				// flag it for capturing
 				//
-				if (local_info.Block.Toplevel != ec.CurrentBlock.Toplevel){
+				if ((local_info.Block.Toplevel != ec.CurrentBlock.Toplevel) ||
+				    ec.CurrentAnonymousMethod.IsIterator)
+				{
 					if (local_info.AddressTaken){
 						AnonymousMethod.Error_AddressOfCapturedVar (local_info.Name, loc);
 						return null;
@@ -3814,7 +3816,7 @@ namespace Mono.CSharp {
 				//
 				// A local variable on the local CLR stack
 				//
-			ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
+				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
 			} else {
 				//
 				// A local variable captured by anonymous methods.
@@ -3935,6 +3937,10 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
+		public ParameterReference (InternalParameters pars, Block block, int idx, Location loc)
+			: this (pars.Parameters, block, idx, pars.ParameterName (idx), loc)
+		{ }
+
 		public VariableInfo VariableInfo {
 			get { return vi; }
 		}
@@ -3992,7 +3998,7 @@ namespace Mono.CSharp {
 						      "Can not reference a ref or out parameter in an anonymous method");
 					return;
 				}
-				
+
 				//
 				// If we are referencing the parameter from the external block
 				// flag it for capturing
@@ -4037,9 +4043,6 @@ namespace Mono.CSharp {
 			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
 
-			if (ec.RemapToProxy)
-				return ec.RemapParameter (idx);
-			
 			return this;
 		}
 
@@ -4049,9 +4052,6 @@ namespace Mono.CSharp {
 
 			SetAssigned (ec);
 
-			if (ec.RemapToProxy)
-				return ec.RemapParameterLValue (idx, right_side);
-			
 			return this;
 		}
 
@@ -4083,7 +4083,6 @@ namespace Mono.CSharp {
 			if (!ec.MethodIsStatic)
 				arg_idx++;
 			
-
 			EmitLdArg (ig, arg_idx);
 
 			//
@@ -4093,11 +4092,6 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				ec.EmitParameter (name);
-				return;
-			}
-			
 			Emit (ec, false);
 		}
 		
@@ -4105,6 +4099,14 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
+
+			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
+				if (leave_copy)
+					throw new InternalErrorException ();
+
+				ec.EmitParameter (name);
+				return;
+			}
 
 			if (!ec.MethodIsStatic)
 				arg_idx++;
@@ -4853,7 +4855,6 @@ namespace Mono.CSharp {
 					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
 					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
-
 
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {

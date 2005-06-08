@@ -1225,7 +1225,13 @@ namespace Mono.CSharp {
 					part.ec.ContainerType = TypeBuilder;
 				}
 			} else {
-				ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+				//
+				// Normally, we create the EmitContext here.
+				// The only exception is if we're an Iterator - in this case,
+				// we already have the `ec', so we don't want to create a new one.
+				//
+				if (ec == null)
+					ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 				ec.ContainerType = TypeBuilder;
 			}
 
@@ -1623,6 +1629,13 @@ namespace Mono.CSharp {
 			if (parts != null) {
 				foreach (ClassPart part in parts) {
 					if (!part.Define ())
+						return false;
+				}
+			}
+
+			if (iterators != null) {
+				foreach (Iterator iterator in iterators) {
+					if (!iterator.Define ())
 						return false;
 				}
 			}
@@ -4323,8 +4336,14 @@ namespace Mono.CSharp {
 
 		public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 		{
-			return new EmitContext (
+			EmitContext ec = new EmitContext (
 				tc, ds, Location, ig, ReturnType, ModFlags, false);
+
+			ec.CurrentIterator = tc as Iterator;
+			if (ec.CurrentIterator != null)
+				ec.CurrentAnonymousMethod = ec.CurrentIterator.Host;
+
+			return ec;
 		}
 
 		public ObsoleteAttribute GetObsoleteAttribute ()
@@ -4632,6 +4651,9 @@ namespace Mono.CSharp {
 		//
 		public override bool Define ()
 		{
+			if (ConstructorBuilder != null)
+				return true;
+
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
 

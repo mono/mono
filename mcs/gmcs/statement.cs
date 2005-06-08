@@ -567,6 +567,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			AnonymousContainer am = ec.CurrentAnonymousMethod;
+			if ((am != null) && am.IsIterator && ec.InIterator) {
+				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
+					      "statement to return a value, or yield break to end the iteration");
+				return false;
+			}
+
 			if (ec.ReturnType == null){
 				if (Expr != null){
 					if (ec.CurrentAnonymousMethod != null){
@@ -585,12 +592,6 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (ec.InIterator) {
-					Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
-						"statement to return a value, or yield break to end the iteration");
-					return false;
-				}
-
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;
@@ -603,11 +604,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (ec.InIterator){
-				Error (-206, "Return statement not allowed inside iterators");
-				return false;
-			}
-				
 			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 
 			if (ec.CurrentBranching.InTryOrCatch (true)) {
@@ -1276,7 +1272,7 @@ namespace Mono.CSharp {
 		// statements.
 		//
 		ArrayList children;
-		
+
 		//
 		// Labels.  (label, block) pairs.
 		//
@@ -1819,19 +1815,6 @@ namespace Mono.CSharp {
 							continue;
 					}
 
-#if false
-					if (remap_locals)
-						vi.FieldBuilder = ec.MapVariable (name, vi.VariableType);
-					else if (vi.Pinned)
-						//
-						// This is needed to compile on both .NET 1.x and .NET 2.x
-						// the later introduced `DeclareLocal (Type t, bool pinned)'
-						//
-						vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
-					else if (!vi.IsThis)
-						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
-#endif
-
 					if (constants == null)
 						continue;
 
@@ -1880,7 +1863,6 @@ namespace Mono.CSharp {
 			
 			if (variables != null){
 				bool have_captured_vars = ec.HaveCapturedVariables ();
-				bool remap_locals = ec.RemapToProxy;
 				
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
@@ -1888,24 +1870,32 @@ namespace Mono.CSharp {
 					if (have_captured_vars && ec.IsCaptured (vi))
 						continue;
 
-					if (remap_locals){
-						vi.FieldBuilder = ec.MapVariable (vi.Name, vi.VariableType);
-					} else {
-						if (vi.Pinned)
-							//
-							// This is needed to compile on both .NET 1.x and .NET 2.x
-							// the later introduced `DeclareLocal (Type t, bool pinned)'
-							//
-							vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
-						else if (!vi.IsThis)
-							vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
-					}
+					if (vi.Pinned)
+						//
+						// This is needed to compile on both .NET 1.x and .NET 2.x
+						// the later introduced `DeclareLocal (Type t, bool pinned)'
+						//
+						vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
+					else if (!vi.IsThis)
+						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 				}
 			}
 
 			if (temporary_variables != null) {
+				AnonymousContainer am = ec.CurrentAnonymousMethod;
+				TypeBuilder scope = null;
+				if ((am != null) && am.IsIterator) {
+					scope = am.Scope.ScopeTypeBuilder;
+					if (scope == null)
+						throw new InternalErrorException ();
+				}
 				foreach (LocalInfo vi in temporary_variables) {
-					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+					if (scope != null) {
+						if (vi.FieldBuilder == null)
+							vi.FieldBuilder = scope.DefineField (
+								vi.Name, vi.VariableType, FieldAttributes.Assembly);
+					} else
+						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 				}
 			}
 
@@ -1991,7 +1981,6 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
 				      ec.CurrentBranching, statement_count, num_statements);
-
 
 			FlowBranching.UsageVector vector = ec.DoEndFlowBranching ();
 
@@ -2128,11 +2117,12 @@ namespace Mono.CSharp {
 		// Pointer to the host of this anonymous method, or null
 		// if we are the topmost block
 		//
-		public ToplevelBlock Container;
+		ToplevelBlock container;
 		CaptureContext capture_context;
 		FlowBranching top_level_branching;
 
 		Hashtable capture_contexts;
+		ArrayList children;
 
 		//
 		// The parameters for the block.
@@ -2155,13 +2145,27 @@ namespace Mono.CSharp {
 				cc.AdjustScopes ();
 			}
 		}
-		
+
 		public CaptureContext ToplevelBlockCaptureContext {
 			get {
 				return capture_context;
 			}
 		}
-		
+
+		public ToplevelBlock Container {
+			get {
+				return container;
+			}
+		}
+
+		protected void AddChild (ToplevelBlock block)
+		{
+			if (children == null)
+				children = new ArrayList ();
+
+			children.Add (block);
+		}
+
 		//
 		// Parent is only used by anonymous blocks to link back to their
 		// parents
@@ -2185,14 +2189,17 @@ namespace Mono.CSharp {
 			base (null, flags | Flags.IsToplevel, start, Location.Null)
 		{
 			Parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
-			Container = container;
+			this.container = container;
+
+			if (container != null)
+				container.AddChild (this);
 		}
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
 		}
 
-		public void SetHaveAnonymousMethods (Location loc, AnonymousMethod host)
+		public void SetHaveAnonymousMethods (Location loc, AnonymousContainer host)
 		{
 			if (capture_context == null)
 				capture_context = new CaptureContext (this, loc, host);
@@ -2207,6 +2214,26 @@ namespace Mono.CSharp {
 		public FlowBranching TopLevelBranching {
 			get {
 				return top_level_branching;
+			}
+		}
+
+		//
+		// This is used if anonymous methods are used inside an iterator
+		// (see 2test-22.cs for an example).
+		//
+		// The AnonymousMethod is created while parsing - at a time when we don't
+		// know yet that we're inside an iterator, so it's `Container' is initially
+		// null.  Later on, when resolving the iterator, we need to move the
+		// anonymous method into that iterator.
+		//
+		public void ReParent (ToplevelBlock new_parent, AnonymousContainer new_host)
+		{
+			foreach (ToplevelBlock block in children) {
+				if (block.CaptureContext == null)
+					continue;
+
+				block.container = new_parent;
+				block.CaptureContext.ReParent (new_parent, new_host);
 			}
 		}
 
@@ -3450,11 +3477,6 @@ namespace Mono.CSharp {
 
 			CheckObsolete (expr_type);
 
-			if (ec.RemapToProxy){
-				Report.Error (-210, loc, "Fixed statement not allowed in iterators");
-				return false;
-			}
-			
 			data = new Emitter [declarators.Count];
 
 			if (!expr_type.IsPointer){
@@ -4243,7 +4265,6 @@ namespace Mono.CSharp {
 
 		protected class TemporaryVariable : Expression, IMemoryLocation
 		{
-			FieldBuilder fb;
 			LocalInfo li;
 
 			public TemporaryVariable (Type type, Location loc)
@@ -4253,20 +4274,19 @@ namespace Mono.CSharp {
 				eclass = ExprClass.Value;
 			}
 
-			static int count;
-
 			public override Expression DoResolve (EmitContext ec)
 			{
-				if (ec.InIterator) {
-					count++;
-					fb = ec.CurrentIterator.MapVariable (
-						"s_", count.ToString (), type);
-				} else {
-					TypeExpr te = new TypeExpression (type, loc);
-					li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
-					if (!li.Resolve (ec))
-						return null;
-				}
+				if (li != null)
+					return this;
+
+				TypeExpr te = new TypeExpression (type, loc);
+				li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
+				if (!li.Resolve (ec))
+					return null;
+
+				AnonymousContainer am = ec.CurrentAnonymousMethod;
+				if ((am != null) && am.IsIterator)
+					ec.CaptureVariable (li);
 
 				return this;
 			}
@@ -4275,9 +4295,9 @@ namespace Mono.CSharp {
 			{
 				ILGenerator ig = ec.ig;
 
-				if (fb != null) {
+				if (li.FieldBuilder != null) {
 					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, fb);
+					ig.Emit (OpCodes.Ldfld, li.FieldBuilder);
 				} else {
 					ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
 				}
@@ -4287,9 +4307,9 @@ namespace Mono.CSharp {
 			{
 				ILGenerator ig = ec.ig;
 
-				if (fb != null) {
+				if (li.FieldBuilder != null) {
 					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldflda, fb);
+					ig.Emit (OpCodes.Ldflda, li.FieldBuilder);
 				} else {
 					ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
 				}
@@ -4297,26 +4317,28 @@ namespace Mono.CSharp {
 
 			public void Store (EmitContext ec, Expression right_side)
 			{
-				if (fb != null)
+				if (li.FieldBuilder != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
 
 				right_side.Emit (ec);
-				if (fb != null)
-					ec.ig.Emit (OpCodes.Stfld, fb);
-				else
+				if (li.FieldBuilder != null) {
+					ec.ig.Emit (OpCodes.Stfld, li.FieldBuilder);
+				} else {
 					ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+				}
 			}
 
-			public void EmitThis (ILGenerator ig)
+			public void EmitThis (EmitContext ec)
 			{
-				if (fb != null)
-					ig.Emit (OpCodes.Ldarg_0);
+				if (li.FieldBuilder != null) {
+					ec.ig.Emit (OpCodes.Ldarg_0);
+				}
 			}
 
 			public void EmitStore (ILGenerator ig)
 			{
-				if (fb != null)
-					ig.Emit (OpCodes.Stfld, fb);
+				if (li.FieldBuilder != null)
+					ig.Emit (OpCodes.Stfld, li.FieldBuilder);
 				else
 					ig.Emit (OpCodes.Stloc, li.LocalBuilder);
 			}
@@ -4335,14 +4357,14 @@ namespace Mono.CSharp {
 
 			public void Initialize (EmitContext ec)
 			{
-				EmitThis (ec.ig);
+				EmitThis (ec);
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 				EmitStore (ec.ig);
 			}
 
 			public void Increment (EmitContext ec)
 			{
-				EmitThis (ec.ig);
+				EmitThis (ec);
 				Emit (ec);
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 				ec.ig.Emit (OpCodes.Add);
@@ -4374,7 +4396,7 @@ namespace Mono.CSharp {
 			}
 
 			public override bool Resolve (EmitContext ec)
-			{				
+			{
 				array_type = expr.Type;
 				rank = array_type.GetArrayRank ();
 
@@ -4433,7 +4455,7 @@ namespace Mono.CSharp {
 					test [i] = ig.DefineLabel ();
 					loop [i] = ig.DefineLabel ();
 
-					lengths [i].EmitThis (ig);
+					lengths [i].EmitThis (ec);
 					((ArrayAccess) access).EmitGetLength (ec, i);
 					lengths [i].EmitStore (ig);
 				}

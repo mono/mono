@@ -20,9 +20,10 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	public class AnonymousMethod : Expression {
+	public abstract class AnonymousContainer : Expression
+	{
 		// Used to generate unique method names.
-		static int anonymous_method_count;
+		protected static int anonymous_method_count;
 		    
 		// An array list of AnonymousMethodParameter or null
 		public Parameters Parameters;
@@ -42,19 +43,19 @@ namespace Mono.CSharp {
 		//
 		public Method method;
 
-		MethodInfo invoke_mb;
+		protected MethodInfo invoke_mb;
 		
 		// The emit context for the anonymous method
 		public EmitContext aec;
 		public InternalParameters amp;
 		public string[] TypeParameters;
 		public Type[] TypeArguments;
-		bool unreachable;
+		protected bool unreachable;
 		
 		//
 		// The modifiers applied to the method, we aggregate them
 		//
-		int method_modifiers = Modifiers.PRIVATE;
+		protected int method_modifiers = Modifiers.PRIVATE;
 		
 		//
 		// During the resolve stage of the anonymous method body,
@@ -66,9 +67,10 @@ namespace Mono.CSharp {
 		//
 		// Points to our container anonymous method if its present
 		//
-		public AnonymousMethod ContainerAnonymousMethod;
-		
-		public AnonymousMethod (Parameters parameters, ToplevelBlock container, ToplevelBlock block, Location l)
+		public AnonymousContainer ContainerAnonymousMethod;	
+
+		protected AnonymousContainer (Parameters parameters, ToplevelBlock container,
+					      ToplevelBlock block, Location l)
 		{
 			Parameters = parameters;
 			Block = block;
@@ -79,6 +81,20 @@ namespace Mono.CSharp {
 			//
 			container.SetHaveAnonymousMethods (l, this);
 			block.SetHaveAnonymousMethods (l, this);
+		}
+
+		protected AnonymousContainer (Parameters parameters, ToplevelBlock container,
+					      Location l)
+		{
+			Parameters = parameters;
+			Block = new ToplevelBlock (container, Parameters, l);
+			loc = l;
+
+			//
+			// The order is important: this setups the CaptureContext tree hierarchy.
+			//
+			container.SetHaveAnonymousMethods (loc, this);
+			Block.SetHaveAnonymousMethods (loc, this);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -99,6 +115,27 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		protected abstract bool CreateMethodHost (EmitContext ec);
+
+		public abstract void CreateScopeType (EmitContext ec, ScopeInfo scope);
+
+		public abstract bool IsIterator {
+			get;
+		}
+	}
+
+	public class AnonymousMethod : AnonymousContainer
+	{
+		public AnonymousMethod (Parameters parameters, ToplevelBlock container,
+					ToplevelBlock block, Location l)
+			: base (parameters, container, block, l)
+		{
+		}
+
+		public override bool IsIterator {
+			get { return false; }
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			// nothing, as we only exist to not do anything.
@@ -107,7 +144,7 @@ namespace Mono.CSharp {
 		//
 		// Creates the host for the anonymous method
 		//
-		bool CreateMethodHost (EmitContext ec, Type return_type)
+		protected override bool CreateMethodHost (EmitContext ec)
 		{
 			//
 			// Crude hack follows: we replace the TypeBuilder during the
@@ -153,7 +190,7 @@ namespace Mono.CSharp {
 
 			method = new Method (
 				(TypeContainer) ec.TypeContainer, generic_method,
-				new TypeExpression (return_type, loc),
+				new TypeExpression (invoke_mb.ReturnType, loc),
 				method_modifiers, false, member_name,
 				Parameters, null, loc);
 			method.Block = Block;
@@ -329,7 +366,7 @@ namespace Mono.CSharp {
 		
 		public bool EmitMethod (EmitContext ec)
 		{
-			if (!CreateMethodHost (ec, invoke_mb.ReturnType))
+			if (!CreateMethodHost (ec))
 				return false;
 
 			MethodBuilder builder = method.MethodData.MethodBuilder;
@@ -347,6 +384,30 @@ namespace Mono.CSharp {
 			aec.EmitMeta (Block, amp);
 			aec.EmitResolvedTopBlock (Block, unreachable);
 			return true;
+		}
+
+		public override void CreateScopeType (EmitContext ec, ScopeInfo scope)
+		{
+			TypeBuilder container = ec.TypeContainer.TypeBuilder;
+			string name = String.Format ("<>AnonHelp<{0}>", scope.id);
+
+			scope.ScopeTypeBuilder = container.DefineNestedType (
+				name, TypeAttributes.AutoLayout | TypeAttributes.Class |
+				TypeAttributes.NestedAssembly, TypeManager.object_type, null);
+
+			Type [] constructor_types = TypeManager.NoTypes;
+			Parameters constructor_parameters = Parameters.EmptyReadOnlyParameters;
+			scope.ScopeConstructor = scope.ScopeTypeBuilder.DefineConstructor (
+				MethodAttributes.Public | MethodAttributes.HideBySig |
+				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+				CallingConventions.HasThis, constructor_types);
+			InternalParameters parameter_info = new InternalParameters (constructor_types, constructor_parameters);
+			TypeManager.RegisterMethod (scope.ScopeConstructor, parameter_info, constructor_types);
+
+			ILGenerator cig = scope.ScopeConstructor.GetILGenerator ();
+			cig.Emit (OpCodes.Ldarg_0);
+			cig.Emit (OpCodes.Call, TypeManager.object_ctor);
+			cig.Emit (OpCodes.Ret);
 		}
 
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
@@ -457,8 +518,7 @@ namespace Mono.CSharp {
 		// Points to the object of type `ScopeTypeBuilder' that
 		// holds the data for the scope
 		//
-		public LocalBuilder ScopeInstance;
-
+		LocalBuilder scope_instance;
 		
 		public ScopeInfo (CaptureContext cc, Block b)
 		{
@@ -543,36 +603,17 @@ namespace Mono.CSharp {
 			return String.Format ("<>AnonHelp<{0}>", id);
 		}
 
-		public void EmitScopeConstructor ()
-		{
-			Type [] constructor_types = TypeManager.NoTypes;
-			Parameters constructor_parameters = Parameters.EmptyReadOnlyParameters;
-			ScopeConstructor = ScopeTypeBuilder.DefineConstructor (
-				MethodAttributes.Public | MethodAttributes.HideBySig |
-				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-				CallingConventions.HasThis, constructor_types);
-			InternalParameters parameter_info = new InternalParameters (constructor_types, constructor_parameters);
-			TypeManager.RegisterMethod (ScopeConstructor, parameter_info, constructor_types);
-
-			ILGenerator cig = ScopeConstructor.GetILGenerator ();
-			cig.Emit (OpCodes.Ldarg_0);
-			cig.Emit (OpCodes.Call, TypeManager.object_ctor);
-			cig.Emit (OpCodes.Ret);
-		}
-		
 		public void EmitScopeType (EmitContext ec)
 		{
-			//EmitDebug ();
+			// EmitDebug ();
 
 			if (ScopeTypeBuilder != null)
 				return;
 			
 			TypeBuilder container = ec.TypeContainer.TypeBuilder;
 
-			ScopeTypeBuilder = container.DefineNestedType (
-				MakeHelperName (), TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.NestedAssembly,
-				TypeManager.object_type, null);
-
+			CaptureContext.Host.CreateScopeType (ec, this);
+			
 			if (NeedThis)
 				THIS = ScopeTypeBuilder.DefineField ("<>THIS", container, FieldAttributes.Assembly);
 
@@ -580,18 +621,18 @@ namespace Mono.CSharp {
 				if (ParentScope.ScopeTypeBuilder == null){
 					throw new Exception (String.Format ("My parent has not been initialized {0} and {1}", ParentScope, this));
 				}
-				
-				ParentLink = ScopeTypeBuilder.DefineField ("<>parent", ParentScope.ScopeTypeBuilder,
-									   FieldAttributes.Assembly);
+
+				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
+					ParentLink = ScopeTypeBuilder.DefineField ("<>parent", ParentScope.ScopeTypeBuilder,
+										   FieldAttributes.Assembly);
 			}
 			
 			if (NeedThis && ParentScope != null)
 				throw new Exception ("I was not expecting THIS && having a parent");
 
-			foreach (LocalInfo info in locals){
+			foreach (LocalInfo info in locals)
 				info.FieldBuilder = ScopeTypeBuilder.DefineField (
 					info.Name, info.VariableType, FieldAttributes.Assembly);
-			}
 
 			if (HostsParameters){
 				Hashtable captured_parameters = CaptureContext.captured_parameters;
@@ -606,7 +647,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			EmitScopeConstructor ();
 			foreach (ScopeInfo si in children){
 				si.EmitScopeType (ec);
 			}
@@ -632,13 +672,20 @@ namespace Mono.CSharp {
 			if (ScopeConstructor == null)
 				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
 			
-			ig.Emit (OpCodes.Newobj, (ConstructorInfo) ScopeConstructor);
-			ScopeInstance = ig.DeclareLocal (ScopeTypeBuilder);
-			ig.Emit (OpCodes.Stloc, ScopeInstance);
+			if (!CaptureContext.Host.IsIterator) {
+				scope_instance = ig.DeclareLocal (ScopeTypeBuilder);
+				ig.Emit (OpCodes.Newobj, (ConstructorInfo) ScopeConstructor);
+				ig.Emit (OpCodes.Stloc, scope_instance);
+			}
 
 			if (THIS != null){
-				ig.Emit (OpCodes.Ldloc, ScopeInstance);
-				ig.Emit (OpCodes.Ldarg_0);
+				if (CaptureContext.Host.IsIterator) {
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldarg_1);
+				} else {
+					ig.Emit (OpCodes.Ldloc, scope_instance);
+					ig.Emit (OpCodes.Ldarg_0);
+				}
 				ig.Emit (OpCodes.Stfld, THIS);
 			}
 
@@ -646,36 +693,48 @@ namespace Mono.CSharp {
 			// Copy the parameter values, if any
 			//
 			int extra = ec.IsStatic ? 0 : 1;
+			if (CaptureContext.Host.IsIterator)
+				extra++;
 			if (HostsParameters){
 				Hashtable captured_parameters = CaptureContext.captured_parameters;
 				
 				foreach (DictionaryEntry de in captured_parameters){
 					CapturedParameter cp = (CapturedParameter) de.Value;
 
-					ig.Emit (OpCodes.Ldloc, ScopeInstance);
+					EmitScopeInstance (ig);
 					ParameterReference.EmitLdArg (ig, cp.Idx + extra);
 					ig.Emit (OpCodes.Stfld, cp.FieldBuilder);
 				}
 			}
-			
+
 			if (ParentScope != null){
 				if (!ParentScope.inited)
 					ParentScope.EmitInitScope (ec);
-				
-				//
-				// Only emit initialization in our capturecontext world
-				//
-				if (ParentScope.CaptureContext == CaptureContext){
-					ig.Emit (OpCodes.Ldloc, ScopeInstance);
-					ig.Emit (OpCodes.Ldloc, ParentScope.ScopeInstance);
-					ig.Emit (OpCodes.Stfld, ParentLink);
-				} else {
-					ig.Emit (OpCodes.Ldloc, ScopeInstance);
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Stfld, ParentLink);
+
+				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder) {
+					//
+					// Only emit initialization in our capturecontext world
+					//
+					if (ParentScope.CaptureContext == CaptureContext){
+						EmitScopeInstance (ig);
+						ParentScope.EmitScopeInstance (ig);
+						ig.Emit (OpCodes.Stfld, ParentLink);
+					} else {
+						EmitScopeInstance (ig);
+						ig.Emit (OpCodes.Ldarg_0);
+						ig.Emit (OpCodes.Stfld, ParentLink);
+					}
 				}
 			}
 			inited = true;
+		}
+
+		public void EmitScopeInstance (ILGenerator ig)
+		{
+			if (CaptureContext.Host.IsIterator)
+				ig.Emit (OpCodes.Ldarg_0);
+			else
+				ig.Emit (OpCodes.Ldloc, scope_instance);
 		}
 
 		static void DoPath (StringBuilder sb, ScopeInfo start)
@@ -731,9 +790,10 @@ namespace Mono.CSharp {
 		Hashtable captured_fields = new Hashtable ();
 		Hashtable captured_variables = new Hashtable ();
 		public Hashtable captured_parameters = new Hashtable ();
-		public AnonymousMethod Host;
+		public AnonymousContainer Host;
 		
-		public CaptureContext (ToplevelBlock toplevel_owner, Location loc, AnonymousMethod host)
+		public CaptureContext (ToplevelBlock toplevel_owner, Location loc,
+				       AnonymousContainer host)
 		{
 			cc_id = count++;
 			this.toplevel_owner = toplevel_owner;
@@ -749,7 +809,18 @@ namespace Mono.CSharp {
 				DoPath (sb, cc.ParentCaptureContext);
 				sb.Append (".");
 			}
-			sb.Append (cc_id.ToString ());
+			sb.Append (cc.cc_id.ToString ());
+		}
+
+		public void ReParent (ToplevelBlock new_toplevel, AnonymousContainer new_host)
+		{
+			toplevel_owner = new_toplevel;
+			Host = new_host;
+
+			for (CaptureContext cc = ParentCaptureContext; cc != null;
+			     cc = cc.ParentCaptureContext) {
+				cc.Host = new_host;
+			}
 		}
 		
 		public override string ToString ()
@@ -813,7 +884,7 @@ namespace Mono.CSharp {
 			throw new Exception ("Should never be reached");
 		}
 
-		void AdjustMethodScope (AnonymousMethod am, ScopeInfo scope)
+		void AdjustMethodScope (AnonymousContainer am, ScopeInfo scope)
 		{
 			am.Scope = Deepest (am.Scope, scope);
 		}
@@ -828,7 +899,7 @@ namespace Mono.CSharp {
 				topmost = parent;
 		}
 		
-		public void AddLocal (AnonymousMethod am, LocalInfo li)
+		public void AddLocal (AnonymousContainer am, LocalInfo li)
 		{
 			if (li.Block.Toplevel != toplevel_owner){
 				ParentCaptureContext.AddLocal (am, li);
@@ -846,7 +917,7 @@ namespace Mono.CSharp {
 				topmost = scope;
 			} else {
 				// Link to parent
-				
+
 				for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
 					if (scopes [b.ID] != null){
 						LinkScope (scope, b.ID);
@@ -912,7 +983,8 @@ namespace Mono.CSharp {
 		//
 		// Records the captured parameter at the appropriate CaptureContext
 		//
-		public void AddParameter (EmitContext ec, AnonymousMethod am, string name, Type t, int idx)
+		public void AddParameter (EmitContext ec, AnonymousContainer am,
+					  string name, Type t, int idx)
 		{
 			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
 
@@ -922,7 +994,7 @@ namespace Mono.CSharp {
 		//
 		// Records the parameters in the context
 		//
-		void AddParameterToContext (AnonymousMethod am, string name, Type t, int idx)
+		public void AddParameterToContext (AnonymousContainer am, string name, Type t, int idx)
 		{
 			if (captured_parameters == null)
 				captured_parameters = new Hashtable ();
@@ -1033,6 +1105,13 @@ namespace Mono.CSharp {
 				topmost.CloseTypes ();
 		}
 
+		public void EmitInitScope (EmitContext ec)
+		{
+			EmitAnonymousHelperClasses (ec);
+			if (topmost != null)
+				topmost.EmitInitScope (ec);
+		}
+
 		ScopeInfo GetScopeFromBlock (EmitContext ec, Block b)
 		{
 			ScopeInfo si;
@@ -1049,20 +1128,25 @@ namespace Mono.CSharp {
 		// Emits the opcodes necessary to load the instance of the captured
 		// variable in `li'
 		//
-		public void EmitCapturedVariableInstance (EmitContext ec, LocalInfo li, AnonymousMethod am)
+		public void EmitCapturedVariableInstance (EmitContext ec, LocalInfo li,
+							  AnonymousContainer am)
 		{
 			ILGenerator ig = ec.ig;
 			ScopeInfo si;
-			
+
 			if (li.Block.Toplevel == toplevel_owner){
 				si = GetScopeFromBlock (ec, li.Block);
-				ig.Emit (OpCodes.Ldloc, si.ScopeInstance);
+				si.EmitScopeInstance (ig);
 				return;
 			}
 
 			si = am.Scope;
 			ig.Emit (OpCodes.Ldarg_0);
 			if (si != null){
+				if (am.IsIterator && (si.ScopeBlock.Toplevel == li.Block.Toplevel)) {
+					return;
+				}
+
 				while (si.ScopeBlock.ID != li.Block.ID){
 					if (si.ParentLink != null)
 						ig.Emit (OpCodes.Ldfld, si.ParentLink);
@@ -1103,10 +1187,10 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			ScopeInfo si;
-			
+
 			if (ec.CurrentBlock.Toplevel == toplevel_owner){
 				si = GetScopeFromBlock (ec, toplevel_owner);
-				ig.Emit (OpCodes.Ldloc, si.ScopeInstance);
+				si.EmitScopeInstance (ig);
 				return;
 			}
 
@@ -1182,18 +1266,18 @@ namespace Mono.CSharp {
 		// The following methods are only invoked on the host for the
 		// anonymous method.
 		//
-		public void EmitMethodHostInstance (EmitContext target, AnonymousMethod am)
+		public void EmitMethodHostInstance (EmitContext target, AnonymousContainer am)
 		{
 			ILGenerator ig = target.ig;
 			ScopeInfo si = am.Scope;
-			
+
 			if (si == null){
 				ig.Emit (OpCodes.Ldarg_0);
 				return;
 			}
 
 			si.EmitInitScope (target);
-			ig.Emit (OpCodes.Ldloc, si.ScopeInstance);
+			si.EmitScopeInstance (ig);
 		}
 
 		ArrayList all_scopes = new ArrayList ();
