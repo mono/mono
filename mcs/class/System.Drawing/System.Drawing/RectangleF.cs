@@ -296,16 +296,11 @@ namespace System.Drawing
 		/// <remarks>
 		///	Indicates if the width or height are zero. Read only.
 		/// </remarks>
-		//
-		// LAMESPEC: Documentation says "This property returns true if 
-		// the Width, Height, X, and Y properties of this RectangleF all 
-		// have values of zero; otherwise, false.". Reality returns TRUE if
-		// width or height are equal 0		
-		
+		//		
 		[Browsable (false)]
 		public bool IsEmpty {
 			get {
-				return ((width == 0) || (height == 0));
+				return ((x == 0) && (y == 0) && (width == 0) && (height == 0));
 			}
 		}
 
@@ -456,8 +451,8 @@ namespace System.Drawing
 		
 		public bool Contains (float x, float y)
 		{
-			return ((x >= Left) && (x <= Right) && 
-				(y >= Top) && (y <= Bottom));
+			return ((x >= Left) && (x < Right) && 
+				(y >= Top) && (y < Bottom));
 		}
 
 		/// <summary>
@@ -526,8 +521,8 @@ namespace System.Drawing
 
 		public bool IntersectsWith (RectangleF r)
 		{
-			return !((Left > r.Right) || (Right < r.Left) ||
-			    (Top > r.Bottom) || (Bottom < r.Top));
+			return !((Left >= r.Right) || (Right <= r.Left) ||
+			    (Top >= r.Bottom) || (Bottom <= r.Top));
 		}
 
 		/// <summary>

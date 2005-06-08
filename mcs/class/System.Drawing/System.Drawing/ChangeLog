@@ -1,3 +1,16 @@
+2005-06-08 Jordi Mas i Hernandez <jordi@ximian.com> <kornelpal@hotmail.com>
+
+	* Rectangle.cs:
+		- Fixes is empty method IsEmpty logic
+		- Fixes Contains method logic
+		- Fixes IntersectsWith logic
+		
+	* RectangleF.cs:
+		- Fixes is empty method IsEmpty logic
+		- Fixes Contains method logic
+		- Fixes IntersectsWith logic
+
+
 2005-05-28  Kornél Pál <kornelpal@hotmail.com>
 
 	* ComIStreamMarshaler.cs: GC.SuppressFinalize(this) is not called in
