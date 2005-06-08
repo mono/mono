@@ -1,3 +1,15 @@
+2005-06-08  Martin Baulig  <martin@ximian.com>
+
+	Fix #75136.
+
+	* loader.c
+	(mono_method_signature_full): New public method; takes a
+	`MonoGenericContext *'.
+	(find_method): Use mono_method_signature_full() and pass the
+	klass'es context to it.
+
+	* class.c (mono_class_is_inflated_method): Use
+	mono_method_signature_full() and pass the context to it.
 
 Wed Jun 8 19:26:38 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
