@@ -1,3 +1,8 @@
+2005-06-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile.am: Avoid versioning. We aren't going to be a strongly
+	versioned lib.
+
 2005-05-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* os.c: Update from the official version.
