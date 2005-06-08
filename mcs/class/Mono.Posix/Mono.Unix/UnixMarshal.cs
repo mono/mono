@@ -51,27 +51,22 @@ namespace Mono.Unix {
 	//            using strerror(3).
 	//            This should be thread safe, since the check is done within the
 	//            class constructor lock.
-	//  Problem:  But if strerror_r() isn't present, we're not thread safe!
-	// Solution:  Tough.  It's still better than nothing.  I think.  
-	//            Check UnixMarshal.IsErrorDescriptionThreadSafe if you need to
-	//            know which error translator is being used.
+	//            Strerror(3) will be thread-safe from managed code, but won't
+	//            be thread-safe between managed & unmanaged code.
 	internal class ErrorMarshal
 	{
 		internal delegate string ErrorTranslator (Error errno);
 
 		internal static readonly ErrorTranslator Translate;
-		internal static readonly bool HaveStrerror_r;
 
 		static ErrorMarshal ()
 		{
 			try {
 				Translate = new ErrorTranslator (strerror_r);
 				Translate (Error.ERANGE);
-				HaveStrerror_r = true;
 			}
 			catch (EntryPointNotFoundException e) {
 				Translate = new ErrorTranslator (strerror);
-				HaveStrerror_r = false;
 			}
 		}
 
@@ -102,10 +97,6 @@ namespace Mono.Unix {
 		public static string GetErrorDescription (Error errno)
 		{
 			return ErrorMarshal.Translate (errno);
-		}
-
-		public static bool IsErrorDescriptionThreadSafe {
-			get {return ErrorMarshal.HaveStrerror_r;}
 		}
 
 		public static IntPtr Alloc (long size)

@@ -1062,7 +1062,7 @@ namespace Mono.Unix {
 	//      Examples: mount(2), umount(2), etc.
 	//    - Note: if a platform doesn't support a function AT ALL, the
 	//      MonoPosixHelper wrapper won't be compiled, resulting in a
-	//      MissingMethodException.  This is also consistent with a missing 
+	//      EntryPointNotFoundException.  This is also consistent with a missing 
 	//      P/Invoke into libc.so.
 	//
 	public sealed class Syscall : Stdlib

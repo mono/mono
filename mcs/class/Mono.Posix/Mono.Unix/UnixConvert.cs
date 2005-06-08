@@ -892,10 +892,150 @@ namespace Mono.Unix {
 		//
 
 		// convert from octal representation.
-		public static FilePermissions ToFilePermissions (string value)
+		public static FilePermissions FromOctalPermissionString (string value)
 		{
 			uint n = Convert.ToUInt32 (value, 8);
 			return ToFilePermissions (n);
+		}
+
+		public static string ToOctalPermissionString (FilePermissions value)
+		{
+			string s = Convert.ToString ((int) (value & ~FilePermissions.S_IFMT), 8);
+			return new string ('0', 4-s.Length) + s;
+		}
+
+		public static FilePermissions FromUnixPermissionString (string value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (value.Length != 9 && value.Length != 10)
+				throw new ArgumentException ("value", "must contain 9 or 10 characters");
+
+			int i = 0;
+			FilePermissions perms = new FilePermissions ();
+
+			if (value.Length == 10) {
+				perms |= GetUnixPermissionDevice (value [i]);
+				++i;
+			}
+
+			perms |= GetUnixPermissionGroup (
+				value [i++], FilePermissions.S_IRUSR,
+				value [i++], FilePermissions.S_IWUSR,
+				value [i++], FilePermissions.S_IXUSR,
+				's', 'S', FilePermissions.S_ISUID);
+
+			perms |= GetUnixPermissionGroup (
+				value [i++], FilePermissions.S_IRGRP,
+				value [i++], FilePermissions.S_IWGRP,
+				value [i++], FilePermissions.S_IXGRP,
+				's', 'S', FilePermissions.S_ISGID);
+
+			perms |= GetUnixPermissionGroup (
+				value [i++], FilePermissions.S_IROTH,
+				value [i++], FilePermissions.S_IWOTH,
+				value [i++], FilePermissions.S_IXOTH,
+				't', 'T', FilePermissions.S_ISVTX);
+
+			return perms;
+		}
+
+		private static FilePermissions GetUnixPermissionDevice (char value)
+		{
+			switch (value) {
+			case 'd': return FilePermissions.S_IFDIR;
+			case 'c': return FilePermissions.S_IFCHR;
+			case 'b': return FilePermissions.S_IFBLK;
+			case '-': return FilePermissions.S_IFREG;
+			case 'p': return FilePermissions.S_IFIFO;
+			case 'l': return FilePermissions.S_IFLNK;
+			case 's': return FilePermissions.S_IFSOCK;
+			}
+			throw new ArgumentException ("value", "invalid device specification: " + 
+				value);
+		}
+
+		private static FilePermissions GetUnixPermissionGroup (
+			char read, FilePermissions readb, 
+			char write, FilePermissions writeb, 
+			char exec, FilePermissions execb,
+			char xboth, char xbitonly, FilePermissions xbit)
+		{
+			FilePermissions perms = new FilePermissions ();
+			if (read == 'r')
+				perms |= readb;
+			if (write == 'w')
+				perms |= writeb;
+			if (exec == 'x')
+				perms |= execb;
+			else if (exec == xbitonly)
+				perms |= xbit;
+			else if (exec == xboth)
+				perms |= (execb | xbit);
+			return perms;
+		}
+
+		// Create ls(1) drwxrwxrwx permissions display
+		public static string ToUnixPermissionString (FilePermissions value)
+		{
+			char [] access = new char[] {
+				'-',            // device
+				'-', '-', '-',  // owner
+				'-', '-', '-',  // group
+				'-', '-', '-',  // other
+			};
+			bool have_device = true;
+			switch (value & FilePermissions.S_IFMT) {
+				case FilePermissions.S_IFDIR:   access [0] = 'd'; break;
+				case FilePermissions.S_IFCHR:   access [0] = 'c'; break;
+				case FilePermissions.S_IFBLK:   access [0] = 'b'; break;
+				case FilePermissions.S_IFREG:   access [0] = '-'; break;
+				case FilePermissions.S_IFIFO:   access [0] = 'p'; break;
+				case FilePermissions.S_IFLNK:   access [0] = 'l'; break;
+				case FilePermissions.S_IFSOCK:  access [0] = 's'; break;
+				default:                        have_device = false; break;
+			}
+			SetUnixPermissionGroup (value, access, 1, 
+				FilePermissions.S_IRUSR, FilePermissions.S_IWUSR, FilePermissions.S_IXUSR,
+				's', 'S', FilePermissions.S_ISUID);
+			SetUnixPermissionGroup (value, access, 4, 
+				FilePermissions.S_IRGRP, FilePermissions.S_IWGRP, FilePermissions.S_IXGRP,
+				's', 'S', FilePermissions.S_ISGID);
+			SetUnixPermissionGroup (value, access, 7, 
+				FilePermissions.S_IROTH, FilePermissions.S_IWOTH, FilePermissions.S_IXOTH,
+				't', 'T', FilePermissions.S_ISVTX);
+			return have_device 
+				? new string (access)
+				: new string (access, 1, 9);
+		}
+
+		private static void SetUnixPermissionGroup (FilePermissions value,
+			char[] access, int index,
+			FilePermissions read, FilePermissions write, FilePermissions exec,
+			char both, char setonly, FilePermissions setxbit)
+		{
+			if (UnixFileSystemInfo.IsType (value, read))
+				access [index] = 'r';
+			if (UnixFileSystemInfo.IsType (value, write))
+				access [index+1] = 'w';
+			access [index+2] = GetSymbolicMode (value, exec, both, setonly, setxbit);
+		}
+
+		// Implement the GNU ls(1) permissions spec; see `info coreutils ls`,
+		// section 10.1.2, the `-l' argument information.
+		private static char GetSymbolicMode (FilePermissions value, 
+			FilePermissions xbit, char both, char setonly, FilePermissions setxbit)
+		{
+			bool is_x  = UnixFileSystemInfo.IsType (value, xbit);
+			bool is_sx = UnixFileSystemInfo.IsType (value, setxbit);
+			
+			if (is_x && is_sx)
+				return both;
+			if (is_sx)
+				return setonly;
+			if (is_x)
+				return 'x';
+			return '-';
 		}
 
 		public static readonly DateTime LocalUnixEpoch = 

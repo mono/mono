@@ -1,3 +1,13 @@
+2005-06-08  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Update comment with correct exception type.
+	* UnixConvert.cs: Rename ToFilePermissions(string) to
+	  FromOctalPermissionString; Add ToOctalPermissionString,
+	  FromUnixPermissionString, ToUnixPermissionString.
+	* UnixMarshal.cs: Remove ErrorMarshal.HaveStrerror_r and
+	  UnixMarshal.IsErrorDescriptionThreadSafe.  strerror(3) is now thread-safe
+	  (from managed code, at least).  Update comment.
+
 2005-06-07  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixFileSystemInfo.cs: Don't use lstat(2), use stat(2).  This fits with
