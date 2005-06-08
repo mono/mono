@@ -1,3 +1,7 @@
+2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IISAPIRuntime.cs: GUID changed.
+
 2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IApplicationHost.cs : missing namespace import.
