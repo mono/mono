@@ -11,7 +11,6 @@ class C: IEnumerable
    {
       D d = delegate {
 		yield return this;
-		return this;
 	  };
    }
 }
