@@ -1,3 +1,13 @@
+2005-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllowPartiallyTrustedCallersAttribute.cs, HostSecurityManagerFlags.cs
+	IEvidenceFactory.cs, IPermission.cs, ISecurityEncodable.cs,
+	ISecurityPolicyEncodable.cs, IStackWalk.cs, NamedPermissionSet.cs,
+	PolicyLevelType.cs, SecureString.cs, SecurityElement.cs, 
+	SecurityZone.cs, UnverifiableCodeAttribute.cs, VerificationException.cs
+	XmlSyntaxException.cs: Fix 2.0 beta2 API changes (which is mostly 
+	adding ComVisible attributes to classes).
+
 2005-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionBuilder.cs: Removed unification stuff. This is done at a 

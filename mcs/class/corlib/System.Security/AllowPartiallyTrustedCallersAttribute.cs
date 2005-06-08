@@ -2,7 +2,7 @@
 // System.Security.AllowPartiallyTrustedCallersAttribute implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
@@ -27,8 +27,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Security {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
 	public sealed class AllowPartiallyTrustedCallersAttribute : Attribute {
 

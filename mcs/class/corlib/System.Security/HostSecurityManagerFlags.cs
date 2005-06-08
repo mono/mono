@@ -28,9 +28,12 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System.Security {
 
 	[Flags]
+	[ComVisible (true)]
 	[Serializable]
 	public enum HostSecurityManagerOptions {
 		None = 0,

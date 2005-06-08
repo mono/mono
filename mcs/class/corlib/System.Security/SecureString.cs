@@ -4,7 +4,7 @@
 // Authors
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
@@ -40,7 +39,6 @@ using Mono.Security.Cryptography;
 namespace System.Security {
 
 	[MonoTODO ("current version ISN'T encrypted")]
-	[ComVisible (false)]
 	public sealed class SecureString : CriticalFinalizerObject, IDisposable {
 
 		static private SymmetricAlgorithm _cipher;
@@ -79,11 +77,6 @@ namespace System.Security {
 			for (_length=1; _length <= length; _length++)
 				_dec [_length] = *value++;
 			Encrypt ();
-		}
-
-		~SecureString ()
-		{
-			Dispose ();
 		}
 
 		// properties
