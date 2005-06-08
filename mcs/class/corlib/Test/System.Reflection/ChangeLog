@@ -1,3 +1,9 @@
+2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* AssemblyNameTest.cs: Added tests to Version method,
+	in order to do additional checks with AssemblyBuilder
+	version.
+	
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AssemblyTest.cs: put back GetEntryAssembly, but this one is working.

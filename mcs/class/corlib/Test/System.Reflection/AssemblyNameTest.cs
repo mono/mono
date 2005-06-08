@@ -283,6 +283,15 @@ public class AssemblyNameTest {
 		return Assembly.LoadFrom (Path.Combine (tempDir, name.Name + ".dll"));
 	}
 
+	private AssemblyBuilder GenerateDynamicAssembly (AssemblyName name)
+	{
+		AssemblyBuilder ab = domain.DefineDynamicAssembly (
+				name,
+				AssemblyBuilderAccess.Run);
+
+		return ab;
+	}
+
 	[Test]
 	public void TestCultureInfo ()
 	{
@@ -302,17 +311,26 @@ public class AssemblyNameTest {
 		Assembly a = GenerateAssembly (name);
 		Assert.AreEqual ("1.2.3.4", a.GetName ().Version.ToString ());
 
+		AssemblyBuilder ab = GenerateDynamicAssembly (name);
+		Assert.AreEqual ("1.2.3.4", ab.GetName ().Version.ToString ());
+
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2, 3);
 
 		a = GenerateAssembly (name);
 		Assert.AreEqual ("1.2.3.0", a.GetName ().Version.ToString ());
 
+		ab = GenerateDynamicAssembly (name);
+		Assert.AreEqual ("1.2.3.0", ab.GetName ().Version.ToString ());
+
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2);
 
 		a = GenerateAssembly (name);
 		Assert.AreEqual ("1.2.0.0", a.GetName ().Version.ToString ());
+
+		ab = GenerateDynamicAssembly (name);
+		Assert.AreEqual ("1.2.0.0", ab.GetName ().Version.ToString ());
 	}
 
 	[Test]
