@@ -11,6 +11,7 @@ using NUnit.Framework;
 using System.IO;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System.Globalization
 {
@@ -28,6 +29,13 @@ namespace MonoTests.System.Globalization
 			}
 
 			Assert ("InvariantCulture not found in the array from GetCultures()", false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TrySetNeutralCultureNotInvariant ()
+		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("ar");
 		}
 	}
 }
