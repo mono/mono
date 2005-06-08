@@ -18,7 +18,8 @@ using System.Web.UI;
 namespace System.Web.UI.HtmlControls{
 	
 	[ToolboxItem(false)]
-	[Designer ("System.Web.UI.Design.HtmlIntrinsicControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Web.UI.Design.HtmlIntrinsicControlDesigner, " + Consts.AssemblySystem_Design,
+			"System.ComponentModel.Design.IDesigner")]
 	public abstract class HtmlControl : Control, IAttributeAccessor
 	{
 		internal string _tagName;
@@ -101,7 +102,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 
-		[DefaultValue("")]
+		[DefaultValue(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebCategory("Behavior")]
 		public bool Disabled
