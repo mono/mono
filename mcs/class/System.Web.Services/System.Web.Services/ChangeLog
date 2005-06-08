@@ -1,3 +1,7 @@
+2005-06-08  Konstantin Triger <kostat@mainsoft.com>
+
+	* WebMethodAttribute.cs: Added TARGET_J2EE ifdef to remove the EnterpiseServices dependency, which are not supported yet under this target
+
 2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* WebService.cs: Get the HttpContext from the HttpContext.Current, do not

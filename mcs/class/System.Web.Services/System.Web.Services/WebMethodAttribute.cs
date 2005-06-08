@@ -28,9 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !TARGET_J2EE
 using System.EnterpriseServices;
+#endif
 
 namespace System.Web.Services {
+
+#if TARGET_J2EE
+	public enum TransactionOption {Disabled , NotSupported , Required , RequiresNew , Supported }
+#endif
+
 	[AttributeUsage(AttributeTargets.Method, Inherited = true)]
 	public sealed class WebMethodAttribute : Attribute {
 
