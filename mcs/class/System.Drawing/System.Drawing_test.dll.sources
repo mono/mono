@@ -6,7 +6,9 @@ System.Drawing/TestPens.cs
 System.Drawing/TestPoint.cs
 System.Drawing/TestPointConverter.cs
 System.Drawing/TestPointF.cs
+System.Drawing/TestRectangle.cs
 System.Drawing/TestRectangleConverter.cs
+System.Drawing/TestRectangleF.cs
 System.Drawing/TestSize.cs
 System.Drawing/TestSizeConverter.cs
 System.Drawing/TestSizeF.cs

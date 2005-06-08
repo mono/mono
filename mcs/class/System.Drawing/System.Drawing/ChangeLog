@@ -1,4 +1,4 @@
-2005-06-08 Jordi Mas i Hernandez <jordi@ximian.com> <kornelpal@hotmail.com>
+2005-06-08 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* Rectangle.cs:
 		- Fixes is empty method IsEmpty logic
