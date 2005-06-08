@@ -2077,9 +2077,8 @@ namespace Mono.CSharp {
 			}
 
 			// Can not continue if constants are broken
-			int errors = Report.Errors;
 			EmitConstants ();
-			if (errors != Report.Errors)
+			if (Report.Errors > 0)
 				return;
 
 			if (default_static_constructor != null)
