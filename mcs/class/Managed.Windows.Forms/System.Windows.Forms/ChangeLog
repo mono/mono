@@ -1,3 +1,8 @@
+2005-06-07  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs: Clear the background area when drawing
+	buttons.
+
 2005-06-06  Peter Bartok  <pbartok@novell.com>
 
 	* ImageListStreamer.cs: Fixed signature for GetData

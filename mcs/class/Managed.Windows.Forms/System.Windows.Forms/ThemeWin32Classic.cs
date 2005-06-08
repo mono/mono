@@ -5013,6 +5013,9 @@ namespace System.Windows.Forms
 //						hatchBrush.Dispose();
 //					}
 
+					// Clear the background
+					graphics.FillRectangle (SystemBrushes.Control, rectangle);
+
 					if ((State & DrawFrameControlStates.Pushed)!=0 || (State & DrawFrameControlStates.Checked)!=0) {
 						graphics.DrawRectangle (ResPool.GetPen (ControlPaint.Dark (ColorButtonFace)), trace_rectangle);
 					} else if ((State & DrawFrameControlStates.Flat)!=0) {
