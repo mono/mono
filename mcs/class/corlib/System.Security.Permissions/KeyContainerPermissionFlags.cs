@@ -28,10 +28,13 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
+
 namespace System.Security.Permissions {
 
 	[Flags]
 	[Serializable]
+	[ComVisible (true)]
 	public enum KeyContainerPermissionFlags {
 		NoFlags = 0,
 		Create = 1,
