@@ -1,3 +1,8 @@
+2005-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HMAC.cs: BlockSizeValue has changed from a protected member to
+	a protected property.
+
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CspProviderFlags.cs: UseExistingKey was added in 1.1 SP1. Added

@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -48,13 +49,14 @@ namespace System.Security.Cryptography {
 	//	not free :-(
 	//	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E71%2D2000
 
+	[ComVisible (true)]
 	public abstract class HMAC : KeyedHashAlgorithm {
 
 		private bool _disposed;
 		private string _hashName;
 		private HashAlgorithm _algo;
 		private BlockProcessor _block;
-		protected Int32 BlockSizeValue; 
+		private int _blockSizeValue; 
 
 		// constructors
 
@@ -64,6 +66,11 @@ namespace System.Security.Cryptography {
 		}
 
 		// properties
+
+		protected int BlockSizeValue {
+			get { return _blockSizeValue; }
+			set { _blockSizeValue = value; }
+		}
 
 		public string HashName {
 			get { return _hashName; }
