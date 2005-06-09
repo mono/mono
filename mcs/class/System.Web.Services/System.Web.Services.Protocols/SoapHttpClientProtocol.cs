@@ -247,7 +247,7 @@ namespace System.Web.Services.Protocols
 					msg = String.Format (msg, (int) code, code);
 					throw new WebException (msg, null, WebExceptionStatus.ProtocolError, http_response);
 				}
-				if (response.ContentLength == 0 && (code == HttpStatusCode.Accepted || code == HttpStatusCode.OK)) {
+				if (message.OneWay && response.ContentLength == 0 && (code == HttpStatusCode.Accepted || code == HttpStatusCode.OK)) {
 					return new object[0];
 				}
 			}

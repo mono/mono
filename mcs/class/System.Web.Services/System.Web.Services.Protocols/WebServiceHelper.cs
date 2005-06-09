@@ -201,12 +201,14 @@ namespace System.Web.Services.Protocols
 
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (message);
-			sb.Append ("\r\nResponse error message:\r\n--\r\n");
+			if (response.ContentLength > 0) {
+				sb.Append ("\r\nResponse error message:\r\n--\r\n");
 
-			try {
-				StreamReader resp = new StreamReader (response.GetResponseStream (), enc);
-				sb.Append (resp.ReadToEnd ());
-			} catch (Exception) {
+				try {
+					StreamReader resp = new StreamReader (response.GetResponseStream (), enc);
+					sb.Append (resp.ReadToEnd ());
+				} catch (Exception) {
+				}
 			}
 
 			throw new InvalidOperationException (sb.ToString ());
