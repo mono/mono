@@ -1,3 +1,12 @@
+2005-06-09  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataReader.cs: GetValue (): return decimal in case of odbc
+	type Numeric. Move the temp buffer logic inside.
+
+	* OdbcTypeConverter.cs: map SQL_TYPE.NUMERIC to SQL_C_TYPE.CHAR by
+	now, since PgSql driver seems not to accept NUMERIC c type. Other
+	database anyway, provides NUMERIC datatype as DECIMAL.
+
 2005-05-31  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameter.cs: setBuffer (): for numeric type, the buffer

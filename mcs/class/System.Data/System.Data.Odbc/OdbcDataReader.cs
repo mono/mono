@@ -649,17 +649,17 @@ namespace System.Data.Odbc
 				// mk:@MSITStore:C:\program%20files\Microsoft%20Data%20Access%20SDK\Docs\odbc.chm::/htm/odbcc_data_types.htm
 				switch (col.OdbcType)
 				{
+					case OdbcType.Numeric:
 					case OdbcType.Decimal:
 						bufsize=50;
-						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decima. 
-                                                // 2005 03 10 : this now works with unixodbc with numeric c type.
+						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal. 
 						ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
-						byte[] temp = new byte[outsize];
-                                                for (int i=0;i<outsize;i++)
-                                                        temp[i]=buffer[i];
-
-						if (outsize!=-1)
+						if (outsize!=-1) {
+							byte[] temp = new byte[outsize];
+							for (int i=0;i<outsize;i++)
+								temp[i]=buffer[i];
 							DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(temp));
+						}
 						break;
 					case OdbcType.TinyInt:
 						short short_data=0;

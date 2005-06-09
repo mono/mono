@@ -256,7 +256,9 @@ namespace System.Data.Odbc
 			OdbcTypeMap.Add (new TypeMap (OdbcType.Int,		SQL_C_TYPE.LONG,		SQL_TYPE.INTEGER    ));
 			OdbcTypeMap.Add (new TypeMap (OdbcType.NChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WCHAR	    ));
 			OdbcTypeMap.Add (new TypeMap (OdbcType.NText,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WLONGVARCHAR));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Numeric,		SQL_C_TYPE.NUMERIC,		SQL_TYPE.NUMERIC    ));
+			// Currently, NUMERIC types works only with NUMERIC SQL Type to CHAR C Type mapping (pgsql). Other databases return 
+			// SQL_TYPE.DECIMAL in place of numeric types.
+			OdbcTypeMap.Add (new TypeMap (OdbcType.Numeric,		SQL_C_TYPE.CHAR,		SQL_TYPE.NUMERIC    ));
 			OdbcTypeMap.Add (new TypeMap (OdbcType.NVarChar,	SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   ));
 			OdbcTypeMap.Add (new TypeMap (OdbcType.Real,		SQL_C_TYPE.FLOAT,		SQL_TYPE.REAL	    ));
 			OdbcTypeMap.Add (new TypeMap (OdbcType.SmallDateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
