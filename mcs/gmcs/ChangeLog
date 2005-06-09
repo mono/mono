@@ -1,5 +1,11 @@
 2005-06-09  Martin Baulig  <martin@ximian.com>
 
+	* delegate.cs (Delegate.VerifyMethod): Added
+	`MethodGroupExpr old_mg' argument; inherit its
+	`HasTypeParameters'; fix #75085.
+
+2005-06-09  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.OverloadResolve): Correctly handle
 	generic methods for the SetMemberIsUsed(); fix #75064.
 

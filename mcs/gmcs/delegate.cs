@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 		// to extract the signature of a delegate.
 		//
 		public static MethodGroupExpr GetInvokeMethod (EmitContext ec, Type delegate_type,
-						       Location loc)
+							       Location loc)
 		{
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
@@ -484,12 +484,16 @@ namespace Mono.CSharp {
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
-		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
+		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type,
+						       MethodGroupExpr old_mg, MethodBase mb,
 						       Location loc)
 		{
 			MethodGroupExpr mg = GetInvokeMethod (ec, delegate_type, loc);
 			if (mg == null)
 				return null;
+
+			if (old_mg.HasTypeArguments)
+				mg.HasTypeArguments = true;
 
 			MethodBase invoke_mb = mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
@@ -516,13 +520,13 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (invoke_pd_type.IsSubclassOf (pd_type) && 
-						invoke_pd_type_mod == pd_type_mod)
+				    invoke_pd_type_mod == pd_type_mod)
 					if (RootContext.Version == LanguageVersion.ISO_1) {
 						Report.FeatureIsNotStandardized (loc, "contravariance");
 						return null;
 					} else
 						continue;
-					
+
 				return null;
 			}
 
@@ -822,7 +826,7 @@ namespace Mono.CSharp {
 							     bool check_only)
 		{
 			foreach (MethodInfo mi in mg.Methods){
-				delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
+				delegate_method  = Delegate.VerifyMethod (ec, type, mg, mi, loc);
 				
 				if (delegate_method != null)
 					break;
