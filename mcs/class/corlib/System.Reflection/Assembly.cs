@@ -746,6 +746,7 @@ namespace System.Reflection {
 		}
 
 		[ComVisible (false)]
+		[Obsolete ("Please use Assembly.ManifestModule.GetPEKind() instead - this will be removed before Whidbey ships.")]
 		public PortableExecutableKinds PortableExecutableKinds {
 			get {
 				ImageFileMachine machine;

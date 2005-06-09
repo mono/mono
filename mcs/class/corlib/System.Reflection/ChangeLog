@@ -1,5 +1,7 @@
 2005-06-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* CustomAttributeData.cs EventInfo.cs Assembly.cs: Updates for net 2.0 beta 2.
+
 	* *.cs: Updates for net 2.0 beta 2.
 
 2005-06-07  Zoltan Varga  <vargaz@freemail.hu>

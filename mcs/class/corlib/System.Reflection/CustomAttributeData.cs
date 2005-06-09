@@ -56,6 +56,7 @@ namespace System.Reflection {
 				(namedArgs != null ? UnboxValues<CustomAttributeNamedArgument> (namedArgs) : new CustomAttributeNamedArgument [0]);
 		}
 
+		[ComVisible (true)]
 		public ConstructorInfo Constructor {
 			get {
 				return ctorInfo;
