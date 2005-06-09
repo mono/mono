@@ -1,5 +1,7 @@
 2005-06-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* *-ia64.*: Ongoing IA64 work.
+
 	* basic.cs: Add conv.ovf.i4.un test.
 
 2005-06-09  Massimiliano Mantione  <massi@ximian.com>
