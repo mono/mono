@@ -29,6 +29,7 @@
 //
 
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Text;
 
@@ -37,6 +38,9 @@ using Mono.Xml;
 
 namespace System.Security.Permissions {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]

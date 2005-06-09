@@ -7,7 +7,7 @@
 //
 // (C) 2002
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,9 +30,14 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
-	
+
+#if NET_2_0
+	[ComVisible (true)]
+#endif
+
 	[Serializable]
 	public sealed class SecurityPermission :
 		CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {

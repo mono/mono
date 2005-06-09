@@ -4,7 +4,7 @@
 // Author
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +29,14 @@
 #if NET_2_0
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 		AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method, 
 		AllowMultiple = true, Inherited = false)]
+	[ComVisible (true)]
 	[Serializable]
 	public sealed class KeyContainerPermissionAttribute : CodeAccessSecurityAttribute {
 

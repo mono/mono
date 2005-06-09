@@ -8,9 +8,7 @@
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,29 +30,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum UIPermissionWindow {
 
-		/// <summary>
-		/// </summary>
 		NoWindows = 0,
-
-		/// <summary>
-		/// </summary>
 		SafeSubWindows = 1,
-
-		/// <summary>
-		/// </summary>
 		SafeTopLevelWindows = 2,
-
-		/// <summary>
-		/// </summary>
 		AllWindows = 3,
-	} // UIPermissionWindow
-
-} // System.Security.Permissions
+	}
+}

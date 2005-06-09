@@ -3,14 +3,11 @@
 //
 // Authors
 //	Duncan Mak <duncan@ximian.com>
-//	Sebastien Pouliot <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 // Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,10 +29,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -47,7 +47,10 @@ namespace System.Security.Permissions {
 		private bool canSave;
 		
 		// Constructor
-		public FileDialogPermissionAttribute (SecurityAction action) : base (action) {}
+		public FileDialogPermissionAttribute (SecurityAction action)
+			: base (action)
+		{
+		}
 
 		// Properties
 		public bool Open {

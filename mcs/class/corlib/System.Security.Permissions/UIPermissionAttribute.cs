@@ -4,10 +4,7 @@
 // Duncan Mak <duncan@ximian.com>
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,10 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -44,17 +44,17 @@ namespace System.Security.Permissions {
 		private UIPermissionWindow window;
 		
 		// Constructor
-		public UIPermissionAttribute (SecurityAction action) : base (action) {}
+		public UIPermissionAttribute (SecurityAction action) : base (action)
+		{
+		}
 		
 		// Properties
-		public UIPermissionClipboard Clipboard
-		{
+		public UIPermissionClipboard Clipboard {
 			get { return clipboard; }
 			set { clipboard = value; }
 		}
 
-		public UIPermissionWindow Window
-		{
+		public UIPermissionWindow Window {
 			get { return window; }
 			set { window = value; }
 		}

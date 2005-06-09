@@ -8,9 +8,7 @@
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,21 +30,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public enum PermissionState {
 
-		/// <summary>
-		/// </summary>
 		Unrestricted = 1,
-
-		/// <summary>
-		/// </summary>
 		None = 0,
-	} // PermissionState
-
-} // System.Security.Permissions
+	}
+}
