@@ -1,3 +1,29 @@
+2005-06-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* domain.c: The key for proxy_vtable_hash is now a pointer
+	array. Added new GHashFunc and GCompareFunc functions for this.
+
+	* class.h: The list of interfaces in MonoRemoteClass is known in
+	advance and can't grow (we create a new MonoRemoteClass if needed),
+	so now the interface array can be allocated together with
+	MonoRemoteClass.
+	
+	* object.c: Added a new method create_remote_class_key.
+	Fixed mono_remote_class so it does not depend on
+	mono_upgrade_remote_class.
+	Removed extend_interface_array.
+	Added new method clone_remote_class(), which makes a copy of a remote
+	class and adds a new interface or class to it.
+	mono_upgrade_remote_class() now creates a new remote class (or gets
+	it from the cache) if an vtable upgrade is needed. In this way
+	we make sure that other objects sharing the same remote class
+	don't get the new vtable with unwanted interfaces.
+	
+	* object-internals.h:
+	* object.h: Moved mono_upgrade_remote_class to object-internals.h.
+	
+	* marshal.c: Track changes in mono_upgrade_remote_class().
+
 2005-06-08  Kamil Skalski <nazgul@nemerle.org>
 	* icall.c: Add runtime methods for obtaining members of inflated
 	class, which were created from supplied non-inflated members. It
