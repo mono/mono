@@ -1,3 +1,8 @@
+2005-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TraceImpl.cs: Adjust internal indentlevel and indentsize before 
+	passing on to listeners. Fixes some test failures.
+
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultTraceListener.cs: s/MONO_TRACE/MONO_TRACE_LISTENER/. The

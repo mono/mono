@@ -72,11 +72,11 @@ namespace System.Diagnostics {
 			get {return indentLevel;}
 			set {
 				lock (ListenersSyncRoot) {
+					indentLevel = value;
+
 					foreach (TraceListener t in Listeners) {
 						t.IndentLevel = indentLevel;
 					}
-
-					indentLevel = value;
 				}
 			}
 		}
@@ -85,11 +85,11 @@ namespace System.Diagnostics {
 			get {return indentSize;}
 			set {
 				lock (ListenersSyncRoot) {
+					indentSize = value;
+
 					foreach (TraceListener t in Listeners) {
 						t.IndentSize = indentSize;
 					}
-
-					indentSize = value;
 				}
 			}
 		}
