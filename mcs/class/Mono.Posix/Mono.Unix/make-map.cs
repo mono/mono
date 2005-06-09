@@ -381,11 +381,11 @@ class ConvertFileGenerator : FileGenerator {
 		WriteHeader (scs, assembly_name);
 		scs.WriteLine ("using System;");
 		scs.WriteLine ("using System.Runtime.InteropServices;");
-		scs.WriteLine ("using Mono.Posix;\n");
-		scs.WriteLine ("namespace Mono.Posix {\n");
-		scs.WriteLine ("\tpublic sealed /* static */ class PosixConvert");
+		scs.WriteLine ("using Mono.Unix;\n");
+		scs.WriteLine ("namespace Mono.Unix {\n");
+		scs.WriteLine ("\tpublic sealed /* static */ class UnixConvert");
 		scs.WriteLine ("\t{");
-		scs.WriteLine ("\t\tprivate PosixConvert () {}\n");
+		scs.WriteLine ("\t\tprivate UnixConvert () {}\n");
 		scs.WriteLine ("\t\tprivate const string LIB = \"MonoPosixHelper\";\n");
 		scs.WriteLine ("\t\tprivate static void ThrowArgumentException (object value)");
 		scs.WriteLine ("\t\t{");
@@ -401,15 +401,21 @@ class ConvertFileGenerator : FileGenerator {
 			return;
 
 		string mtype = Enum.GetUnderlyingType(t).Name;
+		ObsoleteAttribute oa = (ObsoleteAttribute) Attribute.GetCustomAttribute (t, 
+					typeof(ObsoleteAttribute), false);
+		string obsolete = "";
+		if (oa != null) {
+			obsolete = "[Obsolete (\"" + oa.Message + "\")]\n\t\t";
+		}
 		scs.WriteLine ("\t\t[DllImport (LIB, " + 
 			"EntryPoint=\"{0}_From{1}\")]\n" +
 			"\t\tprivate static extern int From{1} ({1} value, out {2} rval);\n",
 			ns, t.Name, mtype);
-		scs.WriteLine ("\t\tpublic static bool TryFrom{1} ({1} value, out {2} rval)\n" +
+		scs.WriteLine ("\t\t{3}public static bool TryFrom{1} ({1} value, out {2} rval)\n" +
 			"\t\t{{\n" +
 			"\t\t\treturn From{1} (value, out rval) == 0;\n" +
-			"\t\t}}\n", ns, t.Name, mtype);
-		scs.WriteLine ("\t\tpublic static {0} From{1} ({1} value)", mtype, t.Name);
+			"\t\t}}\n", ns, t.Name, mtype, obsolete);
+		scs.WriteLine ("\t\t{2}public static {0} From{1} ({1} value)", mtype, t.Name, obsolete);
 		scs.WriteLine ("\t\t{");
 		scs.WriteLine ("\t\t\t{0} rval;", mtype);
 		scs.WriteLine ("\t\t\tif (From{0} (value, out rval) == -1)\n" + 
@@ -420,11 +426,11 @@ class ConvertFileGenerator : FileGenerator {
 			"EntryPoint=\"{0}_To{1}\")]\n" +
 			"\t\tprivate static extern int To{1} ({2} value, out {1} rval);\n",
 			ns, t.Name, mtype);
-		scs.WriteLine ("\t\tpublic static bool TryTo{1} ({0} value, out {1} rval)\n" +
+		scs.WriteLine ("\t\t{2}public static bool TryTo{1} ({0} value, out {1} rval)\n" +
 			"\t\t{{\n" +
 			"\t\t\treturn To{1} (value, out rval) == 0;\n" +
-			"\t\t}}\n", mtype, t.Name);
-		scs.WriteLine ("\t\tpublic static {1} To{1} ({0} value)", mtype, t.Name);
+			"\t\t}}\n", mtype, t.Name, obsolete);
+		scs.WriteLine ("\t\t{2}public static {1} To{1} ({0} value)", mtype, t.Name, obsolete);
 		scs.WriteLine ("\t\t{");
 		scs.WriteLine ("\t\t\t{0} rval;", t.Name);
 		scs.WriteLine ("\t\t\tif (To{0} (value, out rval) == -1)\n" + 
