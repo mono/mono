@@ -808,9 +808,12 @@ namespace System.Data
 			return new PropertyDescriptorCollection (descriptors);
 		}
 
-		[MonoTODO]
+		
 		string ITypedList.GetListName (PropertyDescriptor[] listAccessors) 
 		{
+			if (dataTable != null) {				
+				return dataTable.TableName;
+			}
 			return "";
 		}
 
