@@ -5175,7 +5175,10 @@ namespace Mono.CSharp {
 				return null;
 
 			if (method != null) {
-				IMethodData data = TypeManager.GetMethod (method);
+				MethodBase the_method = method;
+				if (the_method.Mono_IsInflatedMethod)
+					the_method = the_method.GetGenericMethodDefinition ();
+				IMethodData data = TypeManager.GetMethod (the_method);
 				if (data != null)
 					data.SetMemberIsUsed ();
 			}

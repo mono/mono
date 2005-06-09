@@ -1,5 +1,10 @@
 2005-06-09  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.OverloadResolve): Correctly handle
+	generic methods for the SetMemberIsUsed(); fix #75064.
+
+2005-06-09  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Throw.Resolve): Use TypeManager.IsSubclassOf();
 	fixes #75062.
 
