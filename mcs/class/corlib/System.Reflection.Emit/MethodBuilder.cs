@@ -126,7 +126,7 @@ namespace System.Reflection.Emit {
 
 		public override RuntimeMethodHandle MethodHandle {
 			get {
-				return mhandle;
+				throw NotSupported ();
 			}
 		}
 
@@ -492,17 +492,6 @@ namespace System.Reflection.Emit {
 			return generic_params;
 		}
 
-                public void SetReturnType (Type return_type) 
-                {
-                        this.rtype = return_type;
-                }
-
-                public void SetParameters (Type[] parameter_types) 
-                {
-			this.parameters = new Type [parameter_types.Length];
-			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
-                }
-
 		public void SetGenericMethodSignature (MethodAttributes attributes, CallingConventions callingConvention, Type return_type, Type[] parameter_types)
 		{
 			RejectIfCreated ();
@@ -515,6 +504,23 @@ namespace System.Reflection.Emit {
 			this.rtype = return_type;
 			this.parameters = new Type [parameter_types.Length];
 			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
+		}
+
+		public void SetReturnType (Type returnType)
+		{
+			rtype = returnType;
+		}
+
+		public void SetParameters (params Type[] parameterTypes)
+		{
+			if (parameterTypes != null) {
+				for (int i = 0; i < parameterTypes.Length; ++i)
+					if (parameterTypes [i] == null)
+						throw new ArgumentException ("Elements of the parameterTypes array cannot be null", "parameterTypes");
+
+				this.parameters = new Type [parameterTypes.Length];
+				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
+			}
 		}
 
 		public void SetSignature (Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {

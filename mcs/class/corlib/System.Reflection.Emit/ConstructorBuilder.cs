@@ -120,7 +120,7 @@ namespace System.Reflection.Emit {
 
 		public override RuntimeMethodHandle MethodHandle { 
 			get {
-				return mhandle;
+				throw not_supported ();
 			}
 		}
 

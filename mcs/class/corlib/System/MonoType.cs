@@ -224,31 +224,6 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetCorrespondingInflatedMethod (IntPtr generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern ConstructorInfo GetCorrespondingInflatedConstructor (IntPtr generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern FieldInfo GetCorrespondingInflatedField (IntPtr generic);
-
-
-		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
-                {
-                        return GetCorrespondingInflatedMethod (fromNoninstanciated.MethodHandle.Value);
-                }
-
-		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
-		{
-                        return GetCorrespondingInflatedConstructor (fromNoninstanciated.MethodHandle.Value);
-		}
-
-		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
-		{
-                        return GetCorrespondingInflatedField (fromNoninstanciated.FieldHandle.Value);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type GetNestedType (string name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

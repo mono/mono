@@ -760,22 +760,6 @@ namespace System {
 			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
-		internal virtual MethodInfo GetMethod (MethodInfo fromNoninstanciated)
-                {
-			throw new System.InvalidOperationException ("can only be called in generic type");
-                }
-
-		internal virtual ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
-                {
-			throw new System.InvalidOperationException ("can only be called in generic type");
-                }
-
-		internal virtual FieldInfo GetField (FieldInfo fromNoninstanciated)
-                {
-			throw new System.InvalidOperationException ("can only be called in generic type");
-                }
-
-		
 		public MethodInfo[] GetMethods ()
 		{
 			return GetMethods (DefaultBindingFlags);
@@ -1125,11 +1109,6 @@ namespace System {
 				throw new TypeLoadException ();
 			return res;
 		}
-
-                public Type MakeGenericType (Type[] types)
-                {
-			return BindGenericParameters (types);
-                }
 
 		public abstract bool IsGenericParameter {
 			get;

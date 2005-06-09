@@ -57,15 +57,6 @@ namespace System.Reflection
 		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetCorrespondingInflatedMethod (IntPtr generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern ConstructorInfo GetCorrespondingInflatedConstructor (IntPtr generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern FieldInfo GetCorrespondingInflatedField (IntPtr generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -132,27 +123,6 @@ namespace System.Reflection
 			return generic_type.IsValueType;
 		}
 
-		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
-		{
-			initialize ();
-
-			return GetCorrespondingInflatedMethod (fromNoninstanciated.MethodHandle.Value);
-		}
-
-		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
-		{
-			initialize ();
-
-			return GetCorrespondingInflatedConstructor (fromNoninstanciated.MethodHandle.Value);
-		}
-
-		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
-		{
-			initialize ();
-
-			return GetCorrespondingInflatedField (fromNoninstanciated.FieldHandle.Value);
-		}
-		
 		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
 			ArrayList l = new ArrayList ();
