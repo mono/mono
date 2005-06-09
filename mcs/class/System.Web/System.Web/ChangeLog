@@ -1,3 +1,8 @@
+2005-06-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: fix the check in Close() so that CloseConnection is
+	called even if there has been no final Flush. Fixes bug #75176.
+
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpParseException.cs:

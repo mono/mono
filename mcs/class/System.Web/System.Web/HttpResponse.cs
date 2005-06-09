@@ -710,9 +710,10 @@ namespace System.Web
 
 		public void Close ()
 		{
-			if (closed && !_bClientDisconnected) {
+			if (!closed && !_bClientDisconnected) {
 				_WorkerRequest.CloseConnection ();
 				_bClientDisconnected = true;
+				closed = true;
 			}
 		}
 
