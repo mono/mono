@@ -1,3 +1,7 @@
+2005-06-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleHandle RuntimeMethodHandle.cs RuntimeTypeHandle.cs RuntimeFieldHandle.cs RuntimeArgumentHandle.cs: Add missing 2.0 attributes.
+
 2005-06-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs: Add missing 2.0 attributes.

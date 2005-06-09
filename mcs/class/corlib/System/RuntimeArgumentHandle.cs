@@ -31,8 +31,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace System
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public struct RuntimeArgumentHandle
 	{
 		internal IntPtr args;

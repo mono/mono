@@ -31,6 +31,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 #if NET_2_0
@@ -39,6 +40,9 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[MonoTODO ("Serialization needs tests")]
 	[Serializable]
 	public struct RuntimeMethodHandle : ISerializable
