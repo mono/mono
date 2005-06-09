@@ -1,3 +1,11 @@
+2005-06-08  Kamil Skalski <nazgul@nemerle.org>
+
+	* Type.cs: Add MakeGenericType method form .NET 2.0 beta 2 API
+
+	* Type.cs MonoType.cs: Add internal virtual Get{Method,Constructor,Field} 
+	for obtaining instanciated *Info objects from non-instanciated
+	counterparts
+
 2005-06-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleHandle RuntimeMethodHandle.cs RuntimeTypeHandle.cs RuntimeFieldHandle.cs RuntimeArgumentHandle.cs: Add missing 2.0 attributes.

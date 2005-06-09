@@ -126,7 +126,7 @@ namespace System.Reflection.Emit {
 
 		public override RuntimeMethodHandle MethodHandle {
 			get {
-				throw NotSupported ();
+				return mhandle;
 			}
 		}
 
@@ -491,6 +491,17 @@ namespace System.Reflection.Emit {
 
 			return generic_params;
 		}
+
+                public void SetReturnType (Type return_type) 
+                {
+                        this.rtype = return_type;
+                }
+
+                public void SetParameters (Type[] parameter_types) 
+                {
+			this.parameters = new Type [parameter_types.Length];
+			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
+                }
 
 		public void SetGenericMethodSignature (MethodAttributes attributes, CallingConventions callingConvention, Type return_type, Type[] parameter_types)
 		{
