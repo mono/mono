@@ -517,11 +517,6 @@ namespace System.Reflection.Emit {
 			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
 		}
 
-		public void SetReturnType (Type returnType)
-		{
-			rtype = returnType;
-		}
-
 		public void SetParameters (params Type[] parameterTypes)
 		{
 			if (parameterTypes != null) {
