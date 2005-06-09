@@ -230,9 +230,21 @@ namespace TestRunner {
 	}
 
 	class PositiveChecker: Checker {
-		string files_folder;
-		static object[] default_args = new object[1] { new string[] {} };
+		readonly string files_folder;
+		readonly static object[] default_args = new object[1] { new string[] {} };
 		string doc_output;
+
+		// When we cannot load assembly to domain we are automaticaly switching to process calling
+		bool appdomain_limit_reached;
+
+		ProcessStartInfo pi;
+		readonly string mono;
+
+		// This is really pain
+		// This number is highly experimental on my box I am not able to load more than 1000 files to domain
+		// Every files is there twice and we need some space for tests which reference assemblies
+		const int MAX_TESTS_IN_DOMAIN = 420;
+		int test_counter;
 
 		protected enum TestResult {
 			CompileError,
@@ -245,7 +257,19 @@ namespace TestRunner {
 		public PositiveChecker (ITester tester, string log_file, string issue_file):
 			base (tester, log_file, issue_file)
 		{
-			files_folder = @"C:\CVSROOT\mcs\tests"; // System.IO.Path.GetDirectoryName (this.GetType ().Assembly.Location);
+			files_folder = Directory.GetCurrentDirectory ();
+
+			pi = new ProcessStartInfo ();
+			pi.CreateNoWindow = true;
+			pi.WindowStyle = ProcessWindowStyle.Hidden;
+			pi.RedirectStandardOutput = true;
+			pi.RedirectStandardError = true;
+			pi.UseShellExecute = false;
+
+			mono = Environment.GetEnvironmentVariable ("MONO_RUNTIME");
+			if (mono != null) {
+				pi.FileName = mono;
+			}
 		}
 
 		protected override string[] GetExtraOptions(string file)
@@ -264,7 +288,6 @@ namespace TestRunner {
 			return opt;
 		}
 
-
 		protected override bool Check(string filename)
 		{
 			try {
@@ -279,41 +302,31 @@ namespace TestRunner {
 			}
 
 			MethodInfo mi = null;
-			try {
-				string fn = Path.Combine (files_folder, Path.GetFileNameWithoutExtension (filename) + ".exe");
-				mi = Assembly.LoadFile (fn).EntryPoint;
-			}
-			catch (Exception e) {
-				HandleFailure (filename, TestResult.LoadError, e.ToString ());
-				return false;
-			}
-
-			if (mi.ReturnType != typeof (void)) {
-				TextWriter standart_ouput = Console.Out;
-				TextWriter standart_error = Console.Error;
-				Console.SetOut (TextWriter.Null);
-				Console.SetError (TextWriter.Null);
-				ParameterInfo[] pi = mi.GetParameters ();
-
-				object[] args = pi.Length == 0 ? null : default_args;
-
-				object result = null;
+			string file = Path.Combine (files_folder, Path.GetFileNameWithoutExtension (filename) + ".exe");
+			if (!appdomain_limit_reached) {
 				try {
-					result = mi.Invoke (null, args);
-					Console.SetOut (standart_ouput);
-					Console.SetError (standart_error);
+					mi = Assembly.LoadFile (file).EntryPoint;
+					if (test_counter++ > MAX_TESTS_IN_DOMAIN)
+						appdomain_limit_reached = true;
+				}
+				catch (FileNotFoundException) {
+					if (File.Exists (file)) {
+						Console.WriteLine ("APPDOMAIN LIMIT REACHED");
+						appdomain_limit_reached = true;
+					}
 				}
 				catch (Exception e) {
-					Console.SetOut (standart_ouput);
-					Console.SetError (standart_error);
-					HandleFailure (filename, TestResult.ExecError, e.ToString ());
+					HandleFailure (filename, TestResult.LoadError, e.ToString ());
 					return false;
 				}
+			}
 
-				if (result is int && (int)result != 0) {
-					HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + result.ToString ());
+			if (appdomain_limit_reached) {
+				if (!ExecuteFile (file, filename))
 					return false;
-				}
+			} else {
+				if (!ExecuteFile (mi, filename))
+					return false;
 			}
 
 			if (doc_output != null) {
@@ -328,6 +341,53 @@ namespace TestRunner {
 			}
 
 			HandleFailure (filename, TestResult.Success, null);
+			return true;
+		}
+
+		bool ExecuteFile (string exe_name, string filename)
+		{
+			if (mono == null)
+				pi.FileName = exe_name;
+			else
+				pi.Arguments = exe_name;
+
+			Process p = Process.Start (pi);
+			p.WaitForExit ();
+
+			// TODO: How can I recognize return type void ?
+			if (p.ExitCode == 0)
+				return true;
+
+			HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + p.ExitCode.ToString ());
+			return false;
+		}
+
+		bool ExecuteFile (MethodInfo entry_point, string filename)
+		{
+			TextWriter standart_ouput = Console.Out;
+			TextWriter standart_error = Console.Error;
+			Console.SetOut (TextWriter.Null);
+			Console.SetError (TextWriter.Null);
+			ParameterInfo[] pi = entry_point.GetParameters ();
+			object[] args = pi.Length == 0 ? null : default_args;
+
+			object result = null;
+			try {
+				result = entry_point.Invoke (null, args);
+				Console.SetOut (standart_ouput);
+				Console.SetError (standart_error);
+			}
+			catch (Exception e) {
+				Console.SetOut (standart_ouput);
+				Console.SetError (standart_error);
+				HandleFailure (filename, TestResult.ExecError, e.ToString ());
+				return false;
+			}
+
+			if (result is int && (int)result != 0) {
+				HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + result.ToString ());
+				return false;
+			}
 			return true;
 		}
 
