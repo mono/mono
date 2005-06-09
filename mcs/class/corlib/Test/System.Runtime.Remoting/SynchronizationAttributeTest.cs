@@ -137,6 +137,7 @@ namespace MonoTests.System.Runtime.Remoting
 
 	[TestFixture]
 	// http://bugzilla.ximian.com/show_bug.cgi?id=72576
+	[Category ("NotWorking")]
 	public class SynchronizationAttributeTest: Assertion
 	{
 		SincroRequiresNew sincob = new SincroRequiresNew ();
