@@ -14,11 +14,10 @@ using System;
 using System.Security.Principal;
 using System.Threading;
 
-// These tests seem to hang the 2.0 framework. So they are disabled for now
-//
-
 namespace MonoTests.System.Threading {
-
+	
+	// These tests seem to hang the 2.0 framework. So they are disabled for now
+	// Don't reenable them until you can run a few thousand times on an SMP box.
 	[Category ("NotWorking")]
 	public class ThreadedPrincipalTest : Assertion {
 

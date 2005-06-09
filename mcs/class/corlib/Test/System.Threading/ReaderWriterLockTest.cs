@@ -14,6 +14,8 @@ using System.Threading;
 namespace MonoTests.System.Threading
 {
 	[TestFixture]
+	// DISABLED due to random hangs. Do not renable until you can run this
+	// a few thousand times on an SMP box.
 	[Category ("NotWorking")]
 	public class ReaderWriterLockTest : Assertion
 	{
