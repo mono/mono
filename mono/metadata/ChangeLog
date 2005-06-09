@@ -1,3 +1,8 @@
+2005-06-09  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c
+	(mono_reflection_bind_generic_method_parameters): Fix #75169.
+
 2005-06-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 	* reflection.c (mono_image_basic_init): Define
 	Version in MonoDynamicAssembly. 
