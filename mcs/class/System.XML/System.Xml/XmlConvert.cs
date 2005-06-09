@@ -452,7 +452,11 @@ namespace System.Xml {
 			if (Double.IsNegativeInfinity(value)) return "-INF";
 			if (Double.IsPositiveInfinity(value)) return "INF";
 			if (Double.IsNaN(value)) return "NaN";
+#if TARGET_JVM
+			return value.ToString("R", NumberFormatInfo.InvariantInfo);
+#else
 			return value.ToString(CultureInfo.InvariantCulture);
+#endif
 		}
 
 		public static string ToString(float value)
@@ -460,7 +464,11 @@ namespace System.Xml {
 			if (Single.IsNegativeInfinity(value)) return "-INF";
 			if (Single.IsPositiveInfinity(value)) return "INF";
 			if (Single.IsNaN(value)) return "NaN";
+#if TARGET_JVM
+			return value.ToString("R", NumberFormatInfo.InvariantInfo);
+#else
 			return value.ToString(CultureInfo.InvariantCulture);
+#endif
 		}
 
 		[CLSCompliant (false)]
