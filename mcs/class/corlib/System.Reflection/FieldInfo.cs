@@ -44,6 +44,7 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_FieldInfo))]
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]

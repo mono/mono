@@ -40,6 +40,7 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_PropertyInfo))]
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
@@ -101,24 +102,39 @@ namespace System.Reflection {
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO]
+		[Obsolete ("Use ParameterInfo.GetOptionalCustomModifiers().")]
 		public virtual Type[] OptionalCustomModifiers {
 			get {
-				throw new NotImplementedException ();
+				return GetOptionalCustomModifiers ();
+			}
+		}
+
+		[Obsolete ("Use ParameterInfo.GetRequiredCustomModifiers().")]
+		public virtual Type[] RequiredCustomModifiers {
+			get {
+				return GetRequiredCustomModifiers ();
 			}
 		}
 
 		[MonoTODO]
-		public virtual Type[] RequiredCustomModifiers {
-			get {
-				throw new NotImplementedException ();
-			}
+		public virtual Type[] GetOptionalCustomModifiers () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual Type[] GetRequiredCustomModifiers () {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public virtual object GetConstantValue () {
 			throw new NotImplementedException ();
-		}		
+		}
+
+		[MonoTODO]
+		public virtual object GetRawConstantValue() {
+			throw new NotImplementedException ();
+		}
 #endif
 	}
 }

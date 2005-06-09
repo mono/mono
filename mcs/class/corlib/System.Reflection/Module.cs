@@ -44,6 +44,8 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_Module))]
 #endif
 	[Serializable]
 	public class Module : ISerializable, ICustomAttributeProvider {
@@ -94,7 +96,6 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0
-		[CLSCompliant(false)]
 		public ModuleHandle ModuleHandle {
 			get {
 				return new ModuleHandle (_impl);
@@ -224,17 +225,26 @@ namespace System.Reflection {
 				return null;
 			}
 		}
-	
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public virtual Type GetType(string className) 
 		{
 			return GetType (className, false, false);
 		}
-	
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif	
 		public virtual Type GetType(string className, bool ignoreCase) 
 		{
 			return GetType (className, false, ignoreCase);
 		}
 	
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public virtual Type GetType(string className, bool throwOnError, bool ignoreCase) 
 		{
 			if (className == null)
@@ -267,14 +277,20 @@ namespace System.Reflection {
 			return name;
 		}
 
-		internal Guid MvId {
+#if NET_2_0
+		[Obsolete ("Please use ModuleVersionId instead - this will be removed before Whidbey ships.")]
+		public
+#else
+		internal 
+#endif
+		Guid MvId {
 			get {
 				return Mono_GetGuid (this);
 			}
 		}
 
 #if NET_2_0
-		Guid ModuleVersionId {
+		public Guid ModuleVersionId {
 			get {
 				return Mono_GetGuid (this);
 			}
@@ -294,6 +310,7 @@ namespace System.Reflection {
 				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
 		}
 
+		[Obsolete ("Please use ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments) - this will be removed before Whidbey ships.")]
 		public FieldInfo ResolveField (int metadataToken) {
 			ResolveTokenError error;
 
@@ -314,6 +331,7 @@ namespace System.Reflection {
 				return m;
 		}
 
+		[Obsolete ("Please use ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments) - this will be removed before Whidbey ships.")]
 		public MethodBase ResolveMethod (int metadataToken) {
 			ResolveTokenError error;
 
@@ -334,6 +352,7 @@ namespace System.Reflection {
 				return s;
 		}
 
+		[Obsolete ("Please use ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments) - this will be removed before Whidbey ships.")]
 		public Type ResolveType (int metadataToken) {
 			ResolveTokenError error;
 

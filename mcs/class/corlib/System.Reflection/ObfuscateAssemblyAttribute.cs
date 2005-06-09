@@ -35,10 +35,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	[AttributeUsage (AttributeTargets.Assembly)]
+	[AttributeUsage (AttributeTargets.Assembly, Inherited=false)]
 	public sealed class ObfuscateAssemblyAttribute : Attribute {
 
 		private bool is_private;
@@ -57,6 +55,16 @@ namespace System.Reflection
 		}
 
 		public bool StripAfterObfuscation {
+			get {
+				return strip;
+			}
+			set {
+				strip = value;
+			}
+		}
+
+		[Obsolete ("Use 'StripAfterObfuscation' instead.")]
+		public bool Strip {
 			get {
 				return strip;
 			}

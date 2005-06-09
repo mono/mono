@@ -39,6 +39,7 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_EventInfo))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class EventInfo : MemberInfo {

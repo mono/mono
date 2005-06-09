@@ -35,10 +35,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	[AttributeUsage (AttributeTargets.Assembly|AttributeTargets.Class|AttributeTargets.Struct|AttributeTargets.Enum|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Event|AttributeTargets.Interface|AttributeTargets.Parameter|AttributeTargets.Delegate)]
+	[AttributeUsage (AttributeTargets.Assembly|AttributeTargets.Class|AttributeTargets.Struct|AttributeTargets.Enum|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Event|AttributeTargets.Interface|AttributeTargets.Parameter|AttributeTargets.Delegate, AllowMultiple=true, Inherited=false)]
 	public sealed class ObfuscationAttribute : Attribute {
 
 		private bool exclude;
@@ -64,6 +62,16 @@ namespace System.Reflection
 		}
 
 		public bool StripAfterObfuscation {
+			get {
+				return strip;
+			}
+			set {
+				strip = value;
+			}
+		}
+
+		[Obsolete ("Use 'StripAfterObfuscation' instead.")]
+		public bool Strip {
 			get {
 				return strip;
 			}

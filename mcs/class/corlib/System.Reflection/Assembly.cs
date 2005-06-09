@@ -46,6 +46,7 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
@@ -543,15 +544,7 @@ namespace System.Reflection {
 		 */
 
 		// FIXME: LoadWithPartialName must look cache (no CAS) or read from disk (CAS)
-#if NET_2_0
-		[Obsolete ("")]
-		[ComVisible (false)]
-		[MonoTODO]
-		public
-#else
-		internal
-#endif
-		static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence, bool oldBehavior)
+		internal static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence, bool oldBehavior)
 		{
 			if (!oldBehavior)
 				throw new NotImplementedException ();
@@ -728,6 +721,7 @@ namespace System.Reflection {
 		}
 
 		[ComVisible (false)]
+		[Obsolete ("Please use Assembly.ManifestModule.GetPEKind() instead - this will be removed before Whidbey ships.")]
 		public ImageFileMachine ImageFileMachine {
 			get {
 				ImageFileMachine machine;
@@ -745,13 +739,14 @@ namespace System.Reflection {
 		}
 
 		[ComVisible (false)]
+		[Obsolete ("This method has been deprecated and will be removed before v2.0 RTM is released.")]
 		public extern int MetadataToken {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
 
 		[ComVisible (false)]
-		public PortableExecutableKinds PortableExecutableKind {
+		public PortableExecutableKinds PortableExecutableKinds {
 			get {
 				ImageFileMachine machine;
 				PortableExecutableKinds kind;

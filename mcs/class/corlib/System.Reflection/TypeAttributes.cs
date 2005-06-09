@@ -160,6 +160,14 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		HasSecurity = 262144,
+
+		/// <summary>
+		/// </summary>
+		CustomFormatClass = 0x30000,
+
+		/// <summary>
+		/// </summary>
+		CustomFormatMask = 0xc00000
 	} // TypeAttributes
 
 } // System.Reflection

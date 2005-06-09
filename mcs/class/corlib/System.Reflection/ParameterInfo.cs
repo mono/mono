@@ -35,6 +35,8 @@ namespace System.Reflection
 {
 #if NET_2_0
 	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 #endif
 	[Serializable]
 	public class ParameterInfo : ICustomAttributeProvider
@@ -192,6 +194,13 @@ namespace System.Reflection
 		[MonoTODO]
 		public virtual Type[] GetRequiredCustomModifiers () {
 			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual object RawDefaultValue {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 #endif
 	}

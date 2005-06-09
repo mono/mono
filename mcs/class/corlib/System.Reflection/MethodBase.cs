@@ -41,6 +41,7 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_MethodBase))]
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]

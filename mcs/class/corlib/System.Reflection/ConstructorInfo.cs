@@ -40,11 +40,18 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_ConstructorInfo))]	
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class ConstructorInfo : MethodBase {
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static readonly string ConstructorName = ".ctor";
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public static readonly string TypeConstructorName = ".cctor";
 
 		protected ConstructorInfo() {

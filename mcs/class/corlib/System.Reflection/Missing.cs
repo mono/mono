@@ -35,6 +35,7 @@ namespace System.Reflection
 {
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public sealed class Missing
 	{

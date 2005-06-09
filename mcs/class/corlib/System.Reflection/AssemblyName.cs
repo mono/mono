@@ -48,10 +48,13 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
 #endif
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
+		#region Synch with object-internals.h
 		string name;
 		string codebase;
 		int major, minor, build, revision;
@@ -63,6 +66,12 @@ namespace System.Reflection {
 		byte[] keyToken;
 		AssemblyVersionCompatibility versioncompat;
 		Version version;
+#if NET_2_0
+		ProcessorArchitecture processor_architecture;
+#else
+		int processor_architecture;
+#endif
+        #endregion
 		
 		public AssemblyName ()
 		{
@@ -74,6 +83,16 @@ namespace System.Reflection {
 		public AssemblyName (string assemblyName)
 		{
 			name = assemblyName;
+		}
+
+		[MonoTODO]
+		public ProcessorArchitecture ProcessorArchitecture {
+			get {
+				return processor_architecture;
+			}
+			set {
+				processor_architecture = value;
+			}
 		}
 #endif
 
