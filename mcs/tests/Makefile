@@ -115,8 +115,8 @@ TEST_EXCLUDES_common = test-50 test-120 a-parameter4
 
 TEST_SOURCES_net_2_0 = \
 	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe		\
-	gen-47-dll gen-47-exe gen-98-dll gen-98-exe					\
-	gen-156-dll gen-156-exe								\
+	gen-47-dll gen-47-exe gen-98-dll gen-98-exe 					\
+	gen-156-dll gen-156-exe	gen-161-dll gen-161-exe					\
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10  \
 	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20  \
 	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30  \
