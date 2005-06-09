@@ -1,3 +1,16 @@
+2005-06-09  Raja R Harinath  <rharinath@novell.com>
+
+	Simplify Enumerator.MoveNext to make it "obviously correct", rather
+	than require subtle reasoning about the state of various variables.
+	* Dictionary.cs (Enumerator._isValid): Remove.  Replace all uses
+	with "_current == null".
+	(Enumerator._validNodeVisited): Remove.
+	(Enumerator._next): New.  Holds the the next position.
+	(Enumerator.FixNest): New helper function that ensures that _next
+	has the right value.
+	(Enumerator.MoveNext): Simplify.  Now, copies _next to _current
+	and advances _next if possible.
+
 2005-06-08  Martin Baulig  <martin@ximian.com>
 
 	* Dictionary.cs (Dictionary.KeyEnumerator): Removed the public

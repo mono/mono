@@ -496,14 +496,12 @@ namespace System.Collections.Generic {
 		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>,
 			IDisposable, IDictionaryEnumerator, IEnumerator
 		{
-			Dictionary<TKey, TValue> _dictionary;
-			Slot _current;
-			int _index;
-			int _validNodeVisited;
-			bool _isValid;
+			Slot [] _dictionaryTable;
 			EnumerationMode _navigationMode;
-	
-	
+
+			Slot _current;
+			Slot _next;
+			int _index;
 	
 			public Enumerator (Dictionary<TKey, TValue> dictionary) : this (dictionary, EnumerationMode.KeyValuePair)
 			{
@@ -511,37 +509,41 @@ namespace System.Collections.Generic {
 	
 			public Enumerator (Dictionary<TKey, TValue> dictionary, EnumerationMode mode)
 			{
+				_dictionaryTable = dictionary._table;
+				_navigationMode = mode;
+
+				// The following stanza is identical to IEnumerator.Reset (), but because of the
+				// definite assignment rule, we cannot call it here.
 				_index = 0;
 				_current = null;
-				_validNodeVisited = 0;
-				_dictionary = dictionary;
-				_isValid = false;
-				_navigationMode = mode;
+				_next = _dictionaryTable [_index];
+				FixNext ();
 			}
-	
+
 			public bool MoveNext ()
 			{
-				if (_validNodeVisited == _dictionary.Count)
-					return (_isValid = false);
-	
-				while (_index <= _dictionary._table.Length) {
-					if (_current == null)
-						_current = _dictionary._table [_index++];
-					else
-						_current = _current.next;
-	
-					if (_current != null) {
-						++_validNodeVisited;
-						return (_isValid = true);
-					}
-				}
-	
-				return (_isValid = false);
+				_current = _next;
+				if (_next == null)
+					return false;
+				_next = _next.next;
+				FixNext ();
+				return true;
 			}
-	
+
+			void FixNext ()
+			{
+				// _next == null ==> _next fell off the end of the chain pointed by _index.
+				while (_next == null) {
+					if (++_index >= _dictionaryTable.Length)
+						break;
+					_next = _dictionaryTable [_index];
+				}
+			}
+
 			public KeyValuePair<TKey, TValue> Current {
 				get {
-					if (!_isValid) throw new InvalidOperationException ();
+					if (_current == null)
+						throw new InvalidOperationException ();
 					KeyValuePair<TKey, TValue> kv = new KeyValuePair<TKey, TValue> (_current.Key, _current.Value);
 					return kv;
 				}
@@ -549,7 +551,8 @@ namespace System.Collections.Generic {
 	
 			object IEnumerator.Current {
 				get {
-					if (!_isValid) throw new InvalidOperationException ();
+					if (_current == null)
+						throw new InvalidOperationException ();
 					switch (_navigationMode) {
 					case EnumerationMode.Key:
 						return _current.Key as object;
@@ -570,7 +573,8 @@ namespace System.Collections.Generic {
 			{
 				get
 				{
-					if (!_isValid) throw new InvalidOperationException ();
+					if (_current == null)
+						throw new InvalidOperationException ();
 					DictionaryEntry entry = new DictionaryEntry (_current.Key, _current.Value);
 					return entry;
 				}
@@ -580,15 +584,16 @@ namespace System.Collections.Generic {
 			{
 				_index = 0;
 				_current = null;
-				_isValid = false;
-				_validNodeVisited = 0;
+				_next = _dictionaryTable [_index];
+				FixNext ();
 			}
 	
 			object IDictionaryEnumerator.Key
 			{
 				get
 				{
-					if (!_isValid) throw new InvalidOperationException ();
+					if (_current == null)
+						throw new InvalidOperationException ();
 					return _current.Key;
 				}
 			}
@@ -596,7 +601,8 @@ namespace System.Collections.Generic {
 			{
 				get
 				{
-					if (!_isValid) throw new InvalidOperationException ();
+					if (_current == null)
+						throw new InvalidOperationException ();
 					return _current.Value;
 				}
 			}
