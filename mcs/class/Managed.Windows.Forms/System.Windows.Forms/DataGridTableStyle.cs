@@ -727,7 +727,7 @@ namespace System.Windows.Forms
 
 		protected bool ShouldSerializePreferredRowHeight ()
 		{
-			return (preferredrow_height != ThemeEngine.Current.DefaultFont.Height + 3);
+			return (preferredrow_height != datagrid.def_preferredrow_height);
 		}
 
 		protected bool ShouldSerializeSelectionBackColor ()
@@ -750,16 +750,16 @@ namespace System.Windows.Forms
 			
 			if (mgr == null) {
 				return;
-			}
+			}			
 			
-			//column_styles.Clear ();
 			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();
 			
 			for (int i = 0; i < propcol.Count; i++)
 			{
 				string s = propcol[i].Name;
 				DataGridColumnStyle colstyle = column_styles[propcol[i].Name];
-
+				
+				// The column style is already provided by the user
 				if (column_styles[propcol[i].Name] != null &&
 					column_styles[propcol[i].Name].IsDefault == false) {
 					column_styles[propcol[i].Name].table_style = this;
@@ -773,8 +773,7 @@ namespace System.Windows.Forms
 					
 				} else {
 					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
-					st.grid = datagrid;
-					//st.TableStyle = this;
+					st.grid = datagrid;					
 					st.MappingName = propcol[i].Name;
 					st.HeaderText = propcol[i].Name;
 					st.Width = PreferredColumnWidth;					

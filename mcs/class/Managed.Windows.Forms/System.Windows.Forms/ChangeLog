@@ -1,3 +1,17 @@
+2005-06-09  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: drawing fixes
+	* DataGridCell.cs: fixes ToString method to match MSNet
+	* DataGridTableStyle.cs: fixes
+	* DataGridBoolColumn.cs: fixes, drawing
+	* DataGridDrawingLogic.cs: fixes, new methods
+	* DataGridTextBox.cs: Keyboard and fixes
+	* DataGrid.cs:
+		- Keyboard navigation
+		- Scrolling fixes
+		- Row selection (single, multiple, deletion, etc)
+		- Lots of fixes
+	
 2005-06-07  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Clear the background area when drawing

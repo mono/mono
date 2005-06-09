@@ -145,15 +145,15 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected internal override void Abort (int rowNum)
 		{
-			SetState (rowNum, GetState (null, rowNum) & ~CheckState.Selected);
-			Invalidate ();
+			SetState (rowNum, GetState (null, rowNum) & ~CheckState.Selected);			
+			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
 		protected internal override bool Commit (CurrencyManager source, int rowNum)
 		{
 			SetColumnValueAtRow (source, rowNum, FromStateToValue (GetState (source, rowNum)));
 			SetState (rowNum, GetState (source, rowNum) & ~CheckState.Selected);
-			Invalidate ();
+			grid.Invalidate (grid.GetCurrentCellBounds ());
 			return true;
 		}
 
@@ -166,7 +166,7 @@ namespace System.Windows.Forms
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)
 		{
 			SetState (rowNum, GetState (source, rowNum) | CheckState.Selected);
-			Invalidate ();
+			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
 		[MonoTODO]
@@ -219,20 +219,22 @@ namespace System.Windows.Forms
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
 		{
 			Size chkbox_size = GetPreferredSize (g, null);
-			Rectangle rect = new Rectangle ();
-			Rectangle rect_selected = bounds;
+			Rectangle rect = new Rectangle ();			
 			ButtonState state;
 			chkbox_size.Width -= 2;
 			chkbox_size.Height -= 2;
 			rect.X = bounds.X + ((bounds.Width - chkbox_size.Width) / 2);
 			rect.Y = bounds.Y + ((bounds.Height - chkbox_size.Height) / 2);
 			rect.Width = chkbox_size.Width;
-			rect.Height = chkbox_size.Height;
-			rect_selected.Inflate (-1, -1);		
-
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (
-				((GetState (source, rowNum) & CheckState.Selected) == CheckState.Selected) ? grid.SelectionBackColor: grid.BackColor),
-				rect_selected);
+			rect.Height = chkbox_size.Height;			
+			
+			// If the cell is selected
+			if ((GetState (source, rowNum) & CheckState.Selected) == CheckState.Selected) { 
+				backBrush = ThemeEngine.Current.ResPool.GetSolidBrush (grid.SelectionBackColor);
+			}
+						
+			g.FillRectangle (backBrush, bounds);
+			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow), bounds);
 
 			switch (GetState (source, rowNum) & ~CheckState.Selected) {
 			case CheckState.Checked:
@@ -360,12 +362,10 @@ namespace System.Windows.Forms
 			grid.InvalidateCurrentRowHeader ();			
 			SetState (row, state);
 			grid.Invalidate (grid.GetCellBounds (row, column));
-
 		}
 
 		private void SetState (int row, CheckState state)
-		{
-			Console.WriteLine ("Set state {0}, {1}, {2}", row, state, Environment.StackTrace);
+		{			
 			if (checkboxes_state[row] == null) {
 				checkboxes_state.Add (row, state);
 			} else {

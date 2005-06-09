@@ -113,8 +113,7 @@ namespace System.Windows.Forms
 				base.ReadOnly = value;
 			}
 		}
-
-		[MonoTODO]
+		
 		[Browsable(false)]
 		public virtual TextBox TextBox {
 			get {
@@ -128,13 +127,13 @@ namespace System.Windows.Forms
 
 		protected internal override void Abort (int rowNum)
 		{
-			EndEdit ();
+			EndEdit ();			
 		}
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
 			SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
-			EndEdit ();
+			EndEdit ();			
 			return true;
 		}
 
@@ -166,7 +165,7 @@ namespace System.Windows.Forms
 		protected void EndEdit ()
 		{
 			ReleaseHostedControl ();
-			Invalidate ();
+			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
 		protected internal override void EnterNullValue ()
@@ -231,7 +230,10 @@ namespace System.Windows.Forms
 			} else {
 				string_format.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
 			}
-
+			
+			g.FillRectangle (backBrush, textBounds);
+			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow), textBounds);
+			
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
 			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);
 		}

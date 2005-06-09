@@ -46,6 +46,7 @@ namespace System.Windows.Forms
 		private Rectangle rowshdrs_area;	// Used Headers rows area
 		private int rowshdrs_maxheight; 	// Total height for rows (max height)
 		private Rectangle cells_area;
+		private bool partial_row;
 
 		#endregion // Local Variables
 
@@ -114,6 +115,8 @@ namespace System.Windows.Forms
 			client_area.Width -= BorderStyleSize * 2;
 			client_area.Height -= BorderStyleSize * 2;
 
+			Console.WriteLine ("CalcClientArea");
+
 			//Console.WriteLine ("CalcClientArea ClientRectangle {0}, ClientArea {1}, BorderStyleSize {2}",
 			//	 grid.ClientRectangle, client_area, BorderStyleSize);
 		}
@@ -131,6 +134,7 @@ namespace System.Windows.Forms
 			CalcColumnsHeader ();
 			CalcCellsArea ();
 
+			UpdateVisibleRowCount (); // need it to be able to calcultate the need of horz scrollbar
 			if (SetUpVerticalScrollBar ()) { // We need a Vertical ScrollBar
 				if (grid.caption_visible) {
 					caption_area.Width -= grid.vert_scrollbar.Width;
@@ -167,6 +171,7 @@ namespace System.Windows.Forms
 			}
 
 			UpdateVisibleColumn ();
+			UpdateVisibleRowCount ();
 
 			//Console.WriteLine ("DataGridDrawing.CalcGridAreas cells:{0}", cells_area);
 		}
@@ -281,8 +286,6 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			UpdateVisibleRowCount ();
-
 			if (grid.caption_visible) {
 				rowshdrs_area.Y = caption_area.Y + caption_area.Height;
 			} else {
@@ -324,30 +327,36 @@ namespace System.Windows.Forms
 
 		public void UpdateVisibleRowCount ()
 		{
-			int max_height = client_area.Height - caption_area.Height -
-				parent_rows.Height - columnshdrs_area.Height;
+			int max_height = cells_area.Height;
 
 			int rows_height = (grid.RowsCount - grid.first_visiblerow) * grid.RowHeight;
 			int max_rows = max_height / grid.RowHeight;
-			
+
+			//Console.WriteLine ("UpdateVisibleRowCount {0} {1}/{2} (row h) {3}",
+			//	max_rows, max_height, grid.RowHeight, cells_area.Height);
+
 			if (max_rows > grid.RowsCount) {
 				max_rows = grid.RowsCount;
 			}
 
 			if (rows_height > cells_area.Height) {
-				grid.visiblerow_count = max_height / grid.RowHeight;
+				grid.visiblerow_count = max_rows;
 			} else {
 				grid.visiblerow_count = grid.RowsCount;
 			}
 
 			if (grid.visiblerow_count + grid.first_visiblerow > grid.RowsCount)
 				grid.visiblerow_count = grid.RowsCount - grid.first_visiblerow;
-				
+
 			if (grid.visiblerow_count < max_rows) {
 				grid.visiblerow_count = max_rows;
 				grid.first_visiblerow = grid.RowsCount - max_rows;
 				grid.Invalidate ();
 			}
+
+			// TODO: Partial visible rows? May be only paint them and not take then into account for any
+			// anything else
+			//grid.visiblerow_count++;
 		}
 
 		// From Point to Cell
@@ -363,6 +372,15 @@ namespace System.Windows.Forms
 
 			if (rowshdrs_area.Contains (x, y)) {
 				hit.type = DataGrid.HitTestType.RowHeader;
+				int posy;
+				int rcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
+				for (int r = grid.FirstVisibleRow; r < rcnt; r++) {
+					posy = cells_area.Y + ((r - grid.FirstVisibleRow) * grid.RowHeight);
+					if (y <= posy + grid.RowHeight) { // Found row
+						hit.row = r;
+						break;
+					}
+				}
 				return hit;
 			}
 
@@ -429,6 +447,7 @@ namespace System.Windows.Forms
 
 		public void OnPaint (PaintEventArgs pe)
 		{
+			Console.WriteLine ("OnPaint {0}", pe.ClipRectangle);
 			ThemeEngine.Current.CPDrawBorderStyle (pe.Graphics, grid.ClientRectangle, grid.border_style);
 
 			if (pe.ClipRectangle.IntersectsWith (parent_rows)) {
@@ -542,6 +561,11 @@ namespace System.Windows.Forms
 			not_usedarea.Intersect (rowshdrs_area_complete);
 
 			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
+
+			if (rowcnt < grid.RowsCount) { // Paint one row more for partial rows
+				rowcnt++;
+			}
+
 			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
 
 				rect_row.Width = rowshdrs_area.Width;
@@ -559,6 +583,21 @@ namespace System.Windows.Forms
 				Rectangle.Ceiling (not_usedarea.GetBounds (g)));
 
 			not_usedarea.Dispose ();
+		}
+
+		public void InvalidateRow (int row)
+		{
+			if (row < grid.FirstVisibleRow || row > grid.FirstVisibleRow + grid.VisibleRowCount) {
+				return;
+			}
+
+			Rectangle rect_row = new Rectangle ();
+
+			rect_row.X = cells_area.X;
+			rect_row.Width = cells_area.Width;
+			rect_row.Height = grid.RowHeight;
+			rect_row.Y = cells_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
+			grid.Invalidate (rect_row);
 		}
 
 		public void InvalidateRowHeader (int row)
@@ -641,6 +680,11 @@ namespace System.Windows.Forms
 			not_usedarea.Intersect (cells_area);
 
 			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
+
+			if (rowcnt < grid.RowsCount) { // Paint one row more for partial rows
+				rowcnt++;
+			}
+
 			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
 				// Get cell's width for column style
 				rect_row.Width = cells.Width;
@@ -661,11 +705,12 @@ namespace System.Windows.Forms
 
 		public void PaintRow (Graphics g, int row, Rectangle row_rect)
 		{
-			//Console.WriteLine ("PaintRow row: {0}, rect {1}", row, row_rect);
+			Console.WriteLine ("PaintRow row: {0}, rect {1}", row, row_rect);
 
 			Rectangle rect_cell = new Rectangle ();
 			int cnt = grid.CurrentTableStyle.GridColumnStyles.Count;
 			int col_pixel;
+			Color backcolor, forecolor;
 			Region prev_clip = g.Clip;
 			Region current_clip;
 			Region not_usedarea = new Region (row_rect);
@@ -685,11 +730,20 @@ namespace System.Windows.Forms
 				current_clip = new Region (row_rect);
 				g.Clip = current_clip;
 
-				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), rect_cell);
-				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow), rect_cell);
+				if (grid.IsSelected (row)) {
+					backcolor =  grid.SelectionBackColor;
+					forecolor =  grid.SelectionForeColor;
+				} else {
+					backcolor =  grid.BackgroundColor;
+					forecolor =  grid.ForeColor;
+				}
 
 				not_usedarea.Exclude (rect_cell);
-				grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row);
+
+				grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
+					ThemeEngine.Current.ResPool.GetSolidBrush (backcolor),
+					ThemeEngine.Current.ResPool.GetSolidBrush (forecolor),
+					grid.RightToLeft == RightToLeft.Yes);
 
 				g.Clip = prev_clip;
 				current_clip.Dispose ();
@@ -719,8 +773,8 @@ namespace System.Windows.Forms
 			grid.horiz_scrollbar.Size = new Size (client_area.Width,
 				grid.horiz_scrollbar.Height);
 
-			//grid.horiz_scrollbar.Maximum = width_all - cells_area.Width;
-			//grid.horiz_scrollbar.LargeChange = cells_area.Width;
+			grid.horiz_scrollbar.Maximum = width_all - cells_area.Width;
+			grid.horiz_scrollbar.LargeChange = cells_area.Width;
 			grid.Controls.Add (grid.horiz_scrollbar);
 			grid.horiz_scrollbar.Visible = true;
 			return true;
@@ -742,7 +796,7 @@ namespace System.Windows.Forms
 				client_area.Height);
 
 			grid.vert_scrollbar.Maximum = grid.RowsCount;
-			grid.vert_scrollbar.LargeChange = cells_area.Height / grid.RowHeight;
+			grid.vert_scrollbar.LargeChange = VLargeChange;
 
 			grid.Controls.Add (grid.vert_scrollbar);
 			grid.vert_scrollbar.Visible = true;
@@ -796,6 +850,12 @@ namespace System.Windows.Forms
 		public Rectangle RowsHeadersArea {
 			get {
 				return rowshdrs_area;
+			}
+		}
+
+		public int VLargeChange {
+			get {
+				return cells_area.Height / grid.RowHeight;
 			}
 		}
 

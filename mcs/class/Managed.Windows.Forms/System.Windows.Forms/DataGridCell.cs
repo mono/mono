@@ -76,7 +76,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return base.ToString () + "{RowNumber = " + row +", ColumnNumber = " + column + "}";
+			return "DataGridCell {RowNumber = " + row +", ColumnNumber = " + column + "}";
 		}
 
 		#endregion	// Public Instance Methods

@@ -81,18 +81,32 @@ namespace System.Windows.Forms
 
 		protected internal override bool ProcessKeyMessage (ref Message m)
 		{
-			int code = m.WParam.ToInt32 ();
+			Keys key = (Keys) m.WParam.ToInt32 ();
 			
-			if (code == 13) {				
+			switch (key) {
+			case Keys.Return:
 				grid.EndEdit (false);
 				return true;
-			}
 			
-			if (code == 27) {
+			case Keys.Escape:
 				grid.EndEdit (true);
 				return true;
-			}
+				
+			case Keys.Right:
+			case Keys.Up:
+			case Keys.Down:
+			case Keys.PageUp:
+			case Keys.PageDown:
+			case Keys.Home:
+			case Keys.End:
+				grid.EndEdit (false);
+				break;
 			
+			default:
+				break;
+			}			
+			
+			isedit = false;
 			return base.ProcessKeyMessage (ref m);
 		}
 
