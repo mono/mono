@@ -1,3 +1,8 @@
+2005-06-09  Duncan Mak  <duncan@novell.com>
+
+	* *.h: Added G_BEGIN_DECLS and G_END_DECLS where appropriate to
+	all public headers. Fixes #74919.
+
 2005-05-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-codeman.c: Align code on a 16 byte boundary on ia64.
