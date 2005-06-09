@@ -104,6 +104,16 @@ namespace MonoTests.Microsoft.CSharp
 			Assertion.AssertEquals ("[assembly: A()]", Code.Trim ());
 		}
 
+		[Test]
+		[Ignore ("Bug #75190")]
+		public void CodeSnippetTest ()
+		{
+			codeUnit = new CodeSnippetCompileUnit ("public class Test1 {}");
+			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
+			writer.Close ();
+			Assertion.AssertEquals ("public class Test1 {}" + writer.NewLine, writer.ToString());
+		}
+
 		/* FIXME
 		[Test]
 		public void AttributeWithValueTest ()
