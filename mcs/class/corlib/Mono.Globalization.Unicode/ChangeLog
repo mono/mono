@@ -1,3 +1,13 @@
+2005-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-tailorings.cs : added configuration support. sort them.
+	  I wonder if it is really usable. Having own format might be better.
+	* create-mscompat-collation-table.cs : fixing some sortkey numbers,
+	  making closer to windows. Now it handles NFKD in some places.
+	* MSCompatUnicodeTable.template : Added dummy sortkey dumper driver.
+	* CollationDataStructures.txt : added description on tailoring
+	  fields, though they are subject to change.
+
 2005-06-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-tailorings.cs, ldml-limited.rng : new file.

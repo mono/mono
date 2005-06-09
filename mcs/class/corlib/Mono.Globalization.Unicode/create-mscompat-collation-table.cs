@@ -8,8 +8,8 @@
 //
 // Also, for composite characters it should prepare different index table.
 //
-// It is possible to "compute" level 3 weights, they are still dumped to
-// an array to avoid execution cost.
+// Though it is possible to "compute" level 3 weights, they are still dumped
+// to an array to avoid execution cost.
 //
 
 //
@@ -180,8 +180,14 @@ namespace Mono.Globalization.Unicode
 			'\u0BB1', '\u0BA9', '\u0B9C', '\u0BB8', '\u0BB7',
 			'\u0BB9'};
 
-		Hashtable arabicLetterPrimaryValues = new Hashtable (); // cp -> level1 value
-		Hashtable arabicNameMap = new Hashtable (); // letterName -> cp
+		// cp -> level1 value
+		Hashtable arabicLetterPrimaryValues = new Hashtable ();
+
+		// letterName -> cp
+		Hashtable arabicNameMap = new Hashtable ();
+
+		// cp -> Hashtable [decompType] -> cp
+		Hashtable nfkdMap = new Hashtable ();
 
 		ArrayList jisJapanese = new ArrayList ();
 		ArrayList nonJisJapanese = new ArrayList ();
@@ -268,7 +274,7 @@ namespace Mono.Globalization.Unicode
 			// Thirtiary weight
 			Result.WriteLine ("static byte [] level3 = new byte [] {");
 			for (int i = 0; i < map.Length; i++) {
-				byte value = ComputeLevel3WeightRaw ((char) i);
+				byte value = ComputeLevel3Weight ((char) i);
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
@@ -524,10 +530,20 @@ namespace Mono.Globalization.Unicode
 			decomp = idx < 0 ? decomp : decomp.Substring (decomp.IndexOf ('>') + 2);
 			if (decomp.Length > 0) {
 				string [] velems = decomp.Split (' ');
-				decompIndex [cp] = decompValues.Count;
+				int didx = decompValues.Count;
+				decompIndex [cp] = didx;
 				foreach (string v in velems)
 					decompValues.Add (int.Parse (v, NumberStyles.HexNumber));
 				decompLength [cp] = velems.Length;
+
+				// [decmpType] -> this_cp
+				Hashtable entry = (Hashtable) nfkdMap [
+					decompValues [didx]];
+				if (entry == null) {
+					entry = new Hashtable ();
+					nfkdMap [decompValues [didx]] = entry;
+				}
+				entry [decompType [cp]] = cp;
 			}
 			// numeric values
 			if (values [5].Length > 0)
@@ -814,6 +830,8 @@ namespace Mono.Globalization.Unicode
 			// Controls : 06 03 - 06 3D
 			fillIndex [6] = 3;
 			for (int i = 0; i < 65536; i++) {
+				if (IsIgnorable (i))
+					continue;
 				char c = (char) i;
 				uc = Char.GetUnicodeCategory (c);
 				if (uc == UnicodeCategory.Control &&
@@ -822,26 +840,26 @@ namespace Mono.Globalization.Unicode
 			}
 
 			// Apostrophe 06 80
-			map ['\''] = new CharMapEntry (6, 80, 1);
-			map ['\uFF63'] = new CharMapEntry (6, 80, 1); // full
+			map ['\''] = new CharMapEntry (6, 0x80, 0);
+			map ['\uFF63'] = new CharMapEntry (6, 0x80, 0); // full
 
 			// Hyphen/Dash : 06 81 - 06 90
 			fillIndex [6] = 0x81;
 			for (int i = 0; i < 65536; i++) {
 				if (Char.GetUnicodeCategory ((char) i)
 					== UnicodeCategory.DashPunctuation)
-					AddCharMapGroup ((char) i, 6, true, 1);
+					AddCharMapGroupTail ((char) i, 6, 1);
 			}
 
 			// Arabic variable weight chars 06 A0 -
 			fillIndex [6] = 0xA0;
 			// vowels
 			for (int i = 0x64B; i <= 0x650; i++)
-				AddCharMapGroup ((char) i, 6, true, 1);
+				AddCharMapGroupTail ((char) i, 6, 1);
 			// sukun
-			AddCharMapGroup ('\u0652', 6, false, 1);
+			AddCharMapGroup ('\u0652', 6, 1, 0);
 			// shadda
-			AddCharMapGroup ('\u0651', 6, false, 1);
+			AddCharMapGroup ('\u0651', 6, 1, 0);
 			#endregion
 
 
@@ -860,21 +878,23 @@ namespace Mono.Globalization.Unicode
 
 
 			#region Whitespaces // 07 03 -
-			fillIndex [0x7] = 0x3;
-			AddCharMapGroup (' ', 0x7, false, 1);
+			fillIndex [0x7] = 0x2;
+			AddCharMap (' ', 0x7, 2);
 			AddCharMap ('\u00A0', 0x7, 1);
 			for (int i = 9; i <= 0xD; i++)
 				AddCharMap ((char) i, 0x7, 1);
 			for (int i = 0x2000; i <= 0x200B; i++)
 				AddCharMap ((char) i, 0x7, 1);
-			AddCharMapGroup ('\u2028', 0x7, false, 1);
-			AddCharMapGroup ('\u2029', 0x7, false, 1);
+
+			fillIndex [0x7] = 0x17;
+			AddCharMapGroup ('\u2028', 0x7, 1, 0);
+			AddCharMapGroup ('\u2029', 0x7, 1, 0);
 
 			// LAMESPEC: Windows developers seem to have thought 
 			// that those characters are kind of whitespaces,
 			// while they aren't.
-			AddCharMapGroup ('\u2422', 0x7, false, 1); // blank symbol
-			AddCharMapGroup ('\u2423', 0x7, false, 1); // open box
+			AddCharMap ('\u2422', 0x7, 1, 0); // blank symbol
+			AddCharMap ('\u2423', 0x7, 1, 0); // open box
 			#endregion
 
 
@@ -884,7 +904,17 @@ namespace Mono.Globalization.Unicode
 				if (Char.IsLetterOrDigit ((char) i)
 					|| "+-<=>'".IndexOf ((char) i) >= 0)
 					continue; // they are not added here.
-				AddCharMapGroup ((char) i, 0x7, false, 1);
+				if (i == 0x29) {
+					// If 0xFE5A should be treated in the 
+					// same way as others in this range, 
+					// it should be treated as to have the 
+					// same primary weight as 0x29, but it
+					// actually has different weight.
+					AddCharMap ('\u0029', 0x7, 1);
+					AddCharMap ('\uFE5A', 0x7, 1);
+				}
+				else
+					AddCharMapGroup2 ((char) i, 0x7, 1);
 			}
 			#endregion
 
@@ -912,6 +942,10 @@ namespace Mono.Globalization.Unicode
 			foreach (int i in numbers)
 				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
 			numberValues.Sort (DictionaryValueComparer.Instance);
+
+//foreach (DictionaryEntry de in numberValues)
+//Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
+
 			decimal prevValue = -1;
 			foreach (DictionaryEntry de in numberValues) {
 				decimal currValue = (decimal) de.Value;
@@ -920,7 +954,7 @@ namespace Mono.Globalization.Unicode
 					fillIndex [0xC] += 1;
 				}
 				int cp = (int) de.Key;
-				AddCharMap ((char) cp, 0xC, 1, diacritical [cp]);
+				AddCharMapGroup ((char) cp, 0xC, 1, diacritical [cp]);
 			}
 
 			// 221E: infinity
@@ -1245,34 +1279,102 @@ namespace Mono.Globalization.Unicode
 
 		private void AddCharMap (char c, byte category, byte increment)
 		{
-			AddCharMap (c, category, increment, 1);
+			AddCharMap (c, category, increment, 0);
 		}
 		
-		private void AddCharMap (char c, byte category, byte increment, byte level2)
+		private void AddCharMap (char c, byte category, byte increment, byte alt)
 		{
+			if (IsIgnorable ((int) c))
+				return; // do nothing
+
 			map [(int) c] = new CharMapEntry (category,
-				category == 1 ? level2 : fillIndex [category],
-				category != 1 ? fillIndex [category] : level2);
+				category == 1 ? alt : fillIndex [category],
+				category == 1 ? fillIndex [category] : alt);
 			fillIndex [category] += increment;
 		}
 
-		private void AddCharMapGroup (char c, byte category, bool tail, byte updateCount)
+		private void AddCharMapGroupTail (char c, byte category, byte updateCount)
 		{
-			// <small> updates index
-			char c2 = tail ?
-				ToSmallFormTail (c) :
-				ToSmallForm (c);
+			char c2 = ToSmallFormTail (c);
 			if (c2 != c)
-				AddCharMap (c2, category, updateCount);
+				AddCharMap (c2, category, updateCount, 0);
 			// itself
-			AddCharMap (c, category, updateCount);
+			AddCharMap (c, category, updateCount, 0);
 			// <full>
-			c2 = tail ?
-				ToFullWidthTail (c) :
-				ToFullWidth (c);
+			c2 = ToFullWidthTail (c);
 			if (c2 != c)
-				AddCharMapGroup (c2, category, tail, 0);
-			// FIXME: add more
+				AddCharMapGroupTail (c2, category, updateCount);
+		}
+
+		// note that level2 is fixed
+		private void AddCharMapGroup2 (char c, byte category, byte updateCount)
+		{
+			char small = char.MinValue;
+			char full = char.MinValue;
+			char vertical = char.MinValue;
+			char super = char.MinValue;
+			char sub = char.MinValue;
+			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
+			if (nfkd != null) {
+				object smv = nfkd [(byte) DecompositionSmall];
+				if (smv != null)
+					small = (char) ((int) smv);
+				object fv = nfkd [(byte) DecompositionSmall];
+				if (fv != null)
+					full = (char) ((int) fv);
+				object vv = nfkd [(byte) DecompositionVertical];
+				if (vv != null)
+					vertical = (char) ((int) vv);
+				object spv = nfkd [(byte) DecompositionSuper];
+				if (spv != null)
+					super = (char) ((int) spv);
+				object sbv = nfkd [(byte) DecompositionSub];
+				if (sbv != null)
+					sub = (char) ((int) sbv);
+			}
+
+			// <small> updates index
+			if (small != char.MinValue)
+				AddCharMap (small, category, updateCount);
+
+			// itself
+			AddCharMap (c, category, 0, 0);
+			// <full>,<super>,<sub> the same index
+			if (full != char.MinValue)
+				AddCharMap (full, category, 0);
+			if (super != char.MinValue)
+				AddCharMap (super, category, 0);
+			if (sub != char.MinValue)
+				AddCharMap (sub, category, 0);
+
+			// update index here.
+			fillIndex [category] += updateCount;
+
+			if (vertical != char.MinValue)
+				AddCharMap (vertical, category, updateCount);
+		}
+
+		// note that level2 is fixed
+		// different order than AddCharMapGroup2()
+		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2)
+		{
+			// itself
+			AddCharMap (c, category, updateCount, level2);
+
+			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
+			if (nfkd == null)
+				return;
+
+			// Here type of i must be byte since the constants
+			// are stored as byte.
+			for (byte i = 1; i <= 17; i++) {
+				if (nfkd.ContainsKey (i)) {
+					int cp = (int) nfkd [i];
+					if (decompLength [cp] == 1) {
+						AddCharMapGroup ((char) cp, category, updateCount, level2);
+					}
+				}
+			}
 		}
 
 		char ToFullWidth (char c)
@@ -1316,6 +1418,11 @@ namespace Mono.Globalization.Unicode
 		#endregion
 
 		#region Level 3 properties (Case/Width)
+
+		private byte ComputeLevel3Weight (char c)
+		{
+			return (byte) (ComputeLevel3WeightRaw (c) + 2);
+		}
 
 		private byte ComputeLevel3WeightRaw (char c) // add 2 for sortkey value
 		{
@@ -1828,7 +1935,12 @@ namespace Mono.Globalization.Unicode
 			DictionaryEntry e1 = (DictionaryEntry) o1;
 			DictionaryEntry e2 = (DictionaryEntry) o2;
 			// FIXME: in case of 0, compare decomposition categories
-			return Decimal.Compare ((decimal) e1.Value, (decimal) e2.Value);
+			int ret = Decimal.Compare ((decimal) e1.Value, (decimal) e2.Value);
+			if (ret != 0)
+				return ret;
+			int i1 = (int) e1.Key;
+			int i2 = (int) e2.Key;
+			return i1 - i2;
 		}
 	}
 

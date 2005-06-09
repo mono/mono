@@ -21,17 +21,29 @@ namespace Mono.Globalization.Unicode
 		}
 	}
 
+	public class TailoringComparer : IComparer
+	{
+		public static TailoringComparer Instance =
+			new TailoringComparer ();
+
+		public int Compare (object o1, object o2)
+		{
+			Tailoring t1 = (Tailoring) o1;
+			Tailoring t2 = (Tailoring) o2;
+			return String.CompareOrdinal (t1.TargetString, t2.TargetString);
+		}
+	}
+
 	class Tailoring
 	{
-		public readonly char Target;
 		public readonly int Before;
 		string targetString;
 
 		ArrayList tailored = new ArrayList ();
 
-		public Tailoring (char c, int before)
+		public Tailoring (string value, int before)
 		{
-			Target = c;
+			targetString = value;
 			Before = before;
 		}
 
@@ -43,9 +55,10 @@ namespace Mono.Globalization.Unicode
 			get { return tailored; }
 		}
 
+		// <x>
 		public void Contraction (int level, string value, string additional)
 		{
-			targetString = Target + additional;
+			targetString += additional;
 			tailored.Add (new Mapping (level, value));
 		}
 
@@ -61,18 +74,52 @@ namespace Mono.Globalization.Unicode
 			foreach (char c in value)
 				tailored.Add (new Mapping (level, new string (c, 1)));
 		}
+
+		public void Serialize (TextWriter w)
+		{
+			w.Write ("	// Target: '{0}' {{", TargetString);
+			foreach (char c in TargetString)
+				w.Write ("{0:X04},", (int) c);
+			w.WriteLine ("}} {0}",
+				TargetString.Length > 1 ? "!" : "");
+			if (Before != 0)
+				w.WriteLine ("	// Before: {0}", Before);
+			foreach (Mapping m in tailored) {
+				w.Write ("	// {0}:'{1}' {{", m.Level, m.Value);
+				foreach (char c in m.Value)
+					w.Write ("{0:X04},", (int) c);
+				w.WriteLine ("}");
+			}
+		}
+	}
+
+	public class TailoringStoreComparer : IComparer
+	{
+		public static TailoringStoreComparer Instance =
+			new TailoringStoreComparer ();
+
+		public int Compare (object o1, object o2)
+		{
+			TailoringStore t1 = (TailoringStore) o1;
+			TailoringStore t2 = (TailoringStore) o2;
+			return t1.Culture.LCID - t2.Culture.LCID;
+		}
 	}
 
 	class TailoringStore
 	{
-		int lcid;
+		CultureInfo culture;
 		ArrayList tailorings = new ArrayList ();
 		string alias;
 		bool frenchSort;
 
 		public TailoringStore (string name)
 		{
-			lcid = new CultureInfo (name).LCID;
+			culture = new CultureInfo (name);
+		}
+
+		public CultureInfo Culture {
+			get { return culture; }
 		}
 
 		public bool FrenchSort {
@@ -89,10 +136,25 @@ namespace Mono.Globalization.Unicode
 		{
 			tailorings.Add (t);
 		}
+
+		public void Serialize (TextWriter w)
+		{
+			w.WriteLine ("// Culture: {0} ({1})", culture.LCID, culture.Name);
+			if (FrenchSort)
+				w.WriteLine ("// FrenchSort.");
+			if (Alias != null)
+				w.WriteLine ("// Alias: {0}", Alias);
+
+			tailorings.Sort (TailoringComparer.Instance);
+
+			foreach (Tailoring t in tailorings)
+				t.Serialize (w);
+		}
 	}
 
 	class CultureSpecificLdmlReader
 	{
+		ArrayList ignoredFiles = new ArrayList ();
 		ArrayList tailorings = new ArrayList ();
 
 		public static void Main (string [] args)
@@ -102,28 +164,39 @@ namespace Mono.Globalization.Unicode
 
 		void Run (string [] args)
 		{
+			if (args.Length < 2) {
+				Console.WriteLine ("specify arguments: path_to_ldml_files config_file");
+				return;
+			}
 			string dirname = args [0];
+			string configFileName = args [1];
+			string config = null;
+			using (StreamReader sr = new StreamReader (configFileName)) {
+				config = sr.ReadToEnd ();
+			}
+			foreach (string configLine in config.Split ('\n')) {
+				int idx = configLine.IndexOf ('#');
+				string line = idx < 0 ? configLine : configLine.Substring (0, idx);
+				if (line.StartsWith ("ignore: "))
+					ignoredFiles.Add (line.Substring (8).Trim ());
+			}
+
 			XmlTextReader rng = new XmlTextReader ("ldml-limited.rng");
 			RelaxngPattern p = RelaxngPattern.Read (rng);
 			rng.Close ();
 
 			foreach (FileInfo fi in new DirectoryInfo (dirname).GetFiles ("*.xml")) {
-				switch (fi.Name) {
-				case "dz.xml": // too fragile draft
-				case "ja.xml": // will use modified one instead
-				case "ko.xml": // will use modified one instead
-				case "root.xml":
+				if (ignoredFiles.Contains (fi.Name))
 					continue; // skip
-				}
-				if (fi.Name.StartsWith ("zh"))
-					continue; // will use modified ones instead
 				XmlTextReader inst = null;
 				try {
 					inst = new XmlTextReader (fi.FullName);
+					inst.XmlResolver = null;
 					RelaxngValidatingReader rvr = new 
 						RelaxngValidatingReader (inst, p);
 					rvr.ReportDetails = true;
 					XmlDocument doc = new XmlDocument ();
+					doc.XmlResolver = null;
 					doc.Load (rvr);
 					TailoringStore ts = ProcessLdml (doc);
 					if (ts != null)
@@ -133,6 +206,11 @@ namespace Mono.Globalization.Unicode
 						inst.Close ();
 				}
 			}
+
+			tailorings.Sort (TailoringStoreComparer.Instance);
+
+			foreach (TailoringStore ts in tailorings)
+				ts.Serialize (Console.Out);
 		}
 
 		TailoringStore ProcessLdml (XmlDocument doc)
@@ -151,7 +229,7 @@ namespace Mono.Globalization.Unicode
 				Console.Error.WriteLine ("WARNING: culture " + lcid + " is not supported in the runtime.");
 				return null;
 			}
-			Console.Error.WriteLine ("Processing " + lcid);
+//			Console.Error.WriteLine ("Processing " + lcid);
 
 			XmlNode vn = doc.SelectSingleNode ("/ldml/collations/alias/@source");
 			if (vn != null) {
@@ -172,21 +250,14 @@ namespace Mono.Globalization.Unicode
 				XmlElement el = n as XmlElement;
 				if (el == null)
 					continue;
-				foreach (XmlAttribute a in el.Attributes) {
-					switch (a.LocalName) {
-					case "before":
-						switch (el.LocalName) {
-						case "reset":
-							before = a.Value == "primary" ? 1 : a.Value == "secondary" ? 2 : 6;
-							continue;
-						}
-						break;
-					}
-					throw new Exception ("Support this attribute: " + el.Attributes [0].Name);
-				}
 
 				switch (el.LocalName) {
 				case "reset":
+					switch (el.GetAttribute ("before")) {
+					case "primary": before = 1; break;
+					case "secondary": before = 2; break;
+					}
+
 					switch (el.FirstChild.LocalName) {
 					case "last_primary_ignorable":
 					case "last_secondary_ignorable":
@@ -194,14 +265,14 @@ namespace Mono.Globalization.Unicode
 						continue;
 					}
 					XmlElement cpElem = el.SelectSingleNode ("cp") as XmlElement;
-					char cp = char.MinValue;
+					string v = "";
 					if (cpElem != null)
-						cp = (char) (int.Parse (
+						v = new string ((char) (int.Parse (
 							cpElem.GetAttribute ("hex"),
-							NumberStyles.HexNumber));
+							NumberStyles.HexNumber)), 1);
 					else
-						cp = el.FirstChild.Value [0];
-					t = new Tailoring (cp, before);
+						v = el.FirstChild.Value;
+					t = new Tailoring (v, before);
 					before = 0;
 					contraction = null;
 					ts.Add (t);
@@ -238,10 +309,11 @@ namespace Mono.Globalization.Unicode
 					}
 					if (contraction != null && el.LastChild.InnerText != contraction)
 						throw new Exception ("When there are sequential 'x' elements for single tailoring, those 'extend' text must be identical.");
+					bool exists = contraction != null;
 					contraction = el.LastChild.InnerText;
 					t.Contraction (contLevel,
 						el.FirstChild.InnerText,
-						contraction);
+						exists ? "" : contraction);
 					break;
 				default:
 					throw new Exception ("Support this element: " + el.Name);

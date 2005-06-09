@@ -5,13 +5,56 @@ namespace Mono.Globalization.Unicode
 {
 	internal class MSCompatUnicodeTable
 	{
+
+public static void Main ()
+{
+	for (int i = 0; i <= char.MaxValue; i++) {
+		if (ignorableFlags [i] == 7)
+			continue;
+		foreach (byte b in GetSortKeyRaw (i))
+			Console.Write ("{0:X02} ", b);
+		Console.WriteLine (" : {0:X} ({1}), {2}    {3}{4:X02}  {5:X02}  ",
+			i,
+			i < 0x20 ? ' ' : (char) i,
+			Char.GetUnicodeCategory ((char) i),
+			level2 [i] != 0 ? '&' : ' ',
+			level2 [i] != 0 ? level2 [i] : (byte) 1,
+			1
+			);
+	}
+}
+
+static byte [] tmp = new byte [256];
+
+static byte [] GetSortKeyRaw (int i)
+{
+	int n = 0;
+	tmp [n++] = categories [i];
+	tmp [n++] = level1 [i];
+	tmp [n++] = 1;
+	if (level2 [i] != 0)
+		tmp [n++] = level2 [i];
+	tmp [n++] = 1;
+	if (level3 [i] != 0)
+		tmp [n++] = level3 [i];
+	tmp [n++] = 1;
+	tmp [n++] = 1; // level4
+	tmp [n++] = 0;
+	byte [] ret = new byte [n];
+	Array.Copy (tmp, ret, n);
+	return ret;
+}
+
+		// FIXME: fill the table
+		static char [] tailorings = new char [] {};
+
 		public static bool IsIgnorable (int i)
 		{
 			UnicodeCategory uc = Char.GetUnicodeCategory ((char) i);
 			// This check eliminates some extraneous code areas
 			if (uc == UnicodeCategory.OtherNotAssigned)
 				return true;
-			return isIgnorable [i] == 7;
+			return ignorableFlags [i] == 7;
 		}
 		// Verifier:
 		// for (int i = 0; i <= char.MaxValue; i++)
@@ -22,12 +65,12 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsIgnorableSymbol (int i)
 		{
-			return isIgnorable [i] & 0x2;
+			return (ignorableFlags [i] & 0x2) != 0;
 		}
 
 		public static bool IsIgnorableNonSpacing (int i)
 		{
-			return isIgnorable [i] & 0x4;
+			return (ignorableFlags [i] & 0x4) != 0;
 		}
 
 		public static int ToKanatypeInsensitive (int i)
