@@ -1,3 +1,7 @@
+2005-06-09  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c: (remove_block_if_useless) Fixed bug 75061.
+	
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c: no SIGUSR2 on windows. Remove it for PLATFORM_WIN32.
