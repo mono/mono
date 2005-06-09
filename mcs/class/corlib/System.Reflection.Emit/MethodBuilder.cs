@@ -517,18 +517,6 @@ namespace System.Reflection.Emit {
 			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
 		}
 
-		public void SetParameters (params Type[] parameterTypes)
-		{
-			if (parameterTypes != null) {
-				for (int i = 0; i < parameterTypes.Length; ++i)
-					if (parameterTypes [i] == null)
-						throw new ArgumentException ("Elements of the parameterTypes array cannot be null", "parameterTypes");
-
-				this.parameters = new Type [parameterTypes.Length];
-				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
-			}
-		}
-
 		public void SetSignature (Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
 			SetReturnType (returnType);
 			SetParameters (parameterTypes);
