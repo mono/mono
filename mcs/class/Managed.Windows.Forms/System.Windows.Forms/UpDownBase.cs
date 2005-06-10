@@ -17,414 +17,340 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2005 Novell, Inc.
 //
 // Authors:
-//	Miguel de Icaza (miguel@novell.com).
+//	Jonathan Gilbert	<logic@deltaq.org>
 //
+// Integration into MWF:
+//	Peter Bartok		<pbartok@novell.com>
 //
-/*
 
-TODO:
+// COMPLETE
 
-	- Actually paint the border, could not get it to work.
-
-	- Implement ContextMenu property.
-	
-	- Force the size of the entry: it can not be resized vertically
-	  ever, the size is set by the size of the font
-
-	- Add defaults with [DefautValue ]
-
-	- Audit every place where ChangingText is used, whose meaning is
-	  `Me, the library is changing the text'.  Kind of hack to deal with
-	  loops on events.
-
-	- Hook up the keyboard events.
-
-*/
 using System;
-using System.Drawing;
+using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace System.Windows.Forms {
-	public abstract class UpDownBase : ContainerControl {
+namespace System.Windows.Forms
+{
+	[Designer("System.Windows.Forms.Design.UpDownBaseDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	public abstract class UpDownBase : System.Windows.Forms.ContainerControl {
+		#region UpDownSpinner Sub-class
+		internal sealed class UpDownSpinner : Control {
+			#region	Local Variables
+			private const int	InitialRepeatDelay = 50;
+			private UpDownBase	owner;
+			private Timer		tmrRepeat;
+			private Rectangle	top_button_rect;
+			private Rectangle	bottom_button_rect;
+			private int		mouse_pressed;
+			private int		mouse_x;
+			private int		mouse_y;
+			private int		repeat_delay;
+			private int		repeat_counter;
+			#endregion	// Local Variables
 
-		internal class Spinner : Control, IDisposable {
-			UpDownBase updownbase;
-			Rectangle up, down, pressed;
-			Timer timer;
-			bool up_pressed, down_pressed;
-			bool captured, mouse_in;
+			#region Constructors
+			public UpDownSpinner(UpDownBase owner) {
+				this.owner = owner;
 
-			//
-			// Interval values
-			//
-			const int StartInterval = 1000;
-			const int RepeatInterval = 400;
-			const int ChangeInterval = 75;
-			const int MinimumInterval = 100;
-			
-			internal Spinner (UpDownBase updownbase)
-			{
-				this.updownbase = updownbase;				
+				mouse_pressed = 0;
+
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.Opaque, true);
+				this.SetStyle(ControlStyles.ResizeRedraw, true);
+				this.SetStyle(ControlStyles.UserPaint, true);
+				this.SetStyle(ControlStyles.Selectable, false);
+
+				tmrRepeat = new Timer();
+
+				tmrRepeat.Enabled = false;
+				tmrRepeat.Interval = 10;
+				tmrRepeat.Tick += new EventHandler(tmrRepeat_Tick);
+
+				compute_rects();
+			}
+			#endregion	// Constructors
+
+			#region Private & Internal Methods
+			private void compute_rects() {
+				int top_button_height;
+				int bottom_button_height;
+
+				top_button_height = ClientSize.Height / 2;
+				bottom_button_height = ClientSize.Height - top_button_height;
+
+				top_button_rect = new Rectangle(0, 0, ClientSize.Width, top_button_height);
+				bottom_button_rect = new Rectangle(0, top_button_height, ClientSize.Width, bottom_button_height);
 			}
 
-			protected override void OnPaint (PaintEventArgs pe)
-			{
-				if (pe.ClipRectangle.Contains (up))
-					DrawUp (pe.Graphics);
-				if (pe.ClipRectangle.Contains (down))
-					DrawDown (pe.Graphics);
+			private void redraw(Graphics graphics) {
+				ButtonState top_button_state;
+				ButtonState bottom_button_state;
 
-				base.OnPaint (pe);
+				top_button_state = bottom_button_state = ButtonState.Normal;
+
+				if (mouse_pressed != 0) {
+					if ((mouse_pressed == 1) && top_button_rect.Contains(mouse_x, mouse_y)) {
+						top_button_state = ButtonState.Pushed;
+					}
+
+					if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y)) {
+						bottom_button_state = ButtonState.Pushed;
+					}
+				}
+
+				ControlPaint.DrawScrollButton(graphics, top_button_rect, ScrollButton.Up, top_button_state);
+				ControlPaint.DrawScrollButton(graphics, bottom_button_rect, ScrollButton.Down, bottom_button_state);
 			}
 
-			protected override void OnLayout (LayoutEventArgs args)
-			{
-				base.OnLayout (args);
-				Rectangle bounds = Bounds;
+			private void tmrRepeat_Tick(object sender, EventArgs e) {
+				if (repeat_delay > 1) {
+					repeat_counter++;
 
-				up = new Rectangle (0, 0, bounds.Width, bounds.Height/2);
-				down = new Rectangle (0, bounds.Height/2, bounds.Width, bounds.Height/2);
+					if (repeat_counter < repeat_delay) {
+						return;
+					}
+
+					repeat_counter = 0;
+					repeat_delay = (repeat_delay * 3 / 4);
+				}
+
+				if (mouse_pressed == 0) {
+					tmrRepeat.Enabled = false;
+				}
+
+				if ((mouse_pressed == 1) && top_button_rect.Contains(mouse_x, mouse_y)) {
+					owner.UpButton();
+				}
+
+				if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y)) {
+					owner.DownButton();
+				}
 			}
+			#endregion	// Private & Internal Methods
 
-			protected override void OnMouseDown (MouseEventArgs args)
-			{
-				base.OnMouseDown (args);
-
-				if (args.Button != MouseButtons.Left)
+			#region Protected Instance Methods
+			protected override void OnMouseDown(MouseEventArgs e) {
+				if (e.Button != MouseButtons.Left) {
 					return;
+				}
 
-				if (up.Contains (args.X, args.Y)){
-					up_pressed = true;
-					pressed = up;
-				} else if (down.Contains (args.X, args.Y)){
-					down_pressed = true;
-					pressed = down;
-				} else
-					return;
+				if (top_button_rect.Contains(e.X, e.Y)) {
+					mouse_pressed = 1;
+					owner.UpButton();
+				} else if (bottom_button_rect.Contains(e.X, e.Y)) {
+					mouse_pressed = 2;
+					owner.DownButton();
+				}
 
-				Click ();
-				Invalidate (pressed);
+				mouse_x = e.X;
+				mouse_y = e.Y;
 				Capture = true;
-				InitTimer ();
-				
-				mouse_in = down_pressed | up_pressed;
+
+				tmrRepeat.Enabled = true;
+				repeat_counter = 0;
+				repeat_delay = InitialRepeatDelay;
+
+				using (Graphics g = CreateGraphics()) {
+					redraw(g);
+				}
 			}
 
-			protected override void OnMouseUp (MouseEventArgs args)
-			{
-				base.OnMouseUp (args);
-				
-				if (Capture){
-					if (up_pressed){
-						up_pressed = false;
-						Invalidate (up);
+			protected override void OnMouseMove(MouseEventArgs e) {
+				ButtonState before, after;
+
+				before = ButtonState.Normal;
+				if ((mouse_pressed == 1) && top_button_rect.Contains(mouse_x, mouse_y))
+					before = ButtonState.Pushed;
+				if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y))
+					before = ButtonState.Pushed;
+
+				mouse_x = e.X;
+				mouse_y = e.Y;
+
+				after = ButtonState.Normal;
+				if ((mouse_pressed == 1) && top_button_rect.Contains(mouse_x, mouse_y))
+					after = ButtonState.Pushed;
+				if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y))
+					after = ButtonState.Pushed;
+
+				if (before != after) {
+					if (after == ButtonState.Pushed) {
+						tmrRepeat.Enabled = true;
+						repeat_counter = 0;
+						repeat_delay = InitialRepeatDelay;
+
+						// fire off one right now too for good luck
+						if (mouse_pressed == 1)
+							owner.UpButton();
+						if (mouse_pressed == 2)
+							owner.DownButton();
 					}
-					if (down_pressed){
-						down_pressed = false;
-						Invalidate (down);
+					else
+						tmrRepeat.Enabled = false;
+
+					using (Graphics g = CreateGraphics()) {
+						redraw(g);
 					}
 				}
+			}
+
+			protected override void OnMouseUp(MouseEventArgs e) {
+				mouse_pressed = 0;
 				Capture = false;
-				timer.Enabled = false;
-			}
 
-			//
-			// Sets up the auto-repeat timer, we give a one second
-			// delay, and then we use the keyboard settings for auto-repeat.
-			//
-			void InitTimer ()
-			{
-				if (timer != null){
-					timer.Interval = StartInterval;
-					timer.Enabled = true;
-					return;
-				}
-				
-				timer = new Timer ();
-				int kd = SystemInformation.KeyboardDelay;
-				kd = kd < 0 ? 0 : (kd > 4 ? 4 : kd);
-				timer.Interval = StartInterval;
-				timer.Tick += new EventHandler (ClockTick);
-				timer.Enabled = true;
-			}
-
-			void ClockTick (object o, EventArgs a)
-			{
-				if (timer == null)
-					throw new Exception ("The timer that owns this callback is null!");
-				
-				int interval = timer.Interval;
-
-				if (interval == StartInterval)
-					interval = RepeatInterval;
-				else
-					interval -= ChangeInterval;
-
-				if (interval < MinimumInterval)
-					interval = MinimumInterval;
-				timer.Interval = interval;
-
-				Click ();
-			}
-
-			void Click ()
-			{
-				if (up_pressed){
-					updownbase.UpButton ();
-					up_pressed = false;
-				}
-				if (down_pressed) {
-					updownbase.DownButton ();
-					down_pressed = false;
+				using (Graphics g = CreateGraphics()) {
+					redraw(g);
 				}
 			}
 
-			protected override void OnMouseMove (MouseEventArgs args)
-			{
-				base.OnMouseMove (args);
-				if (Capture){
-					bool old = mouse_in;
-
-					if (pressed.Contains (args.X, args.Y)){
-						if (timer == null)
-							InitTimer ();
-						mouse_in = true;
-					} else {
-						if (timer != null){
-							timer.Enabled = false;
-							timer.Dispose ();
-							timer = null;
-						}
-						mouse_in = false;
-					}
-					if (mouse_in ^ old){
-						if (mouse_in)
-							Click ();
-						Invalidate (pressed);
-					}
-				}
-			}
-			
-			void DrawUp (Graphics dc)
-			{
-				ButtonState bs;
-
-				bs = mouse_in && up_pressed ? ButtonState.Pushed : ButtonState.Normal;
-				ThemeEngine.Current.CPDrawScrollButton (dc, up, ScrollButton.Up, bs);
-			}
-			
-			void DrawDown (Graphics dc)
-			{
-				ButtonState bs;
-
-				bs = mouse_in && down_pressed ? ButtonState.Pushed : ButtonState.Normal;
-				ThemeEngine.Current.CPDrawScrollButton (dc, down, ScrollButton.Down, bs);
+			protected override void OnMouseWheel(MouseEventArgs e) {
+				if (e.Delta > 0)
+					owner.UpButton();
+				else if (e.Delta < 0)
+					owner.DownButton();
 			}
 
-			void IDisposable.Dispose ()
-			{
-				if (timer != null){
-					timer.Stop ();
-					timer.Dispose ();
-				}
-				timer = null;
-				base.Dispose ();
+			protected override void OnPaint(PaintEventArgs e) {
+				redraw(e.Graphics);
 			}
+
+			protected override void OnResize(EventArgs e) {
+				base.OnResize(e);
+				compute_rects();
+			}
+			#endregion	// Protected Instance Methods
 		}
+		#endregion	// UpDownSpinner Sub-class
 
-		BorderStyle border_style = BorderStyle.Fixed3D;		
-		TextBox entry;
-		Spinner spinner;
-		int border;
-		int scrollbar_button_size = ThemeEngine.Current.ScrollBarButtonSize;
-		LeftRightAlignment updown_align = LeftRightAlignment.Right;
-		bool changing_text = false;
-		bool user_edit = false;
-		bool intercept = true;		
-		
-		public UpDownBase () : base ()
-		{
-			SuspendLayout ();
+		#region Local Variables
+		internal TextBox		txtView;
+		private UpDownSpinner		spnSpinner;
+		private BorderStyle		border_style;
+		private bool			_InterceptArrowKeys = true;
+		private LeftRightAlignment	_UpDownAlign;
+		private bool			changing_text;
+		private bool			user_edit;
+		#endregion	// Local Variables
 
-			entry = new TextBox ();
-			entry.Font = Font;			
-			entry.LostFocus += new EventHandler (EntryOnLostFocus);
-			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
-			entry.KeyDown += new KeyEventHandler (OnTextBoxKeyDown);
-			entry.KeyPress += new KeyPressEventHandler (OnTextBoxKeyPress);
-			entry.LostFocus += new EventHandler (OnTextBoxLostFocus);
-			entry.Resize += new EventHandler (OnTextBoxResize);
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-			
-			entry.ReadOnly = false;
-			Controls.Add (entry);
+		#region Public Constructors
+		public UpDownBase() {
+			_UpDownAlign = LeftRightAlignment.Right;
+			border_style = BorderStyle.Fixed3D;
 
-			spinner = new Spinner (this);
-			Controls.Add (spinner);
+			spnSpinner = new UpDownSpinner(this);
 
-			ComputeSizeAndLocation ();
-			ResumeLayout ();
-		}
+			txtView = new TextBox();
+			txtView.ModifiedChanged += new EventHandler(OnChanged);
+			txtView.AcceptsReturn = true;
+			txtView.AutoSize = false;
+			txtView.BorderStyle = BorderStyle.None;
+			txtView.Location = new System.Drawing.Point(17, 17);
+			txtView.TabIndex = 0;
 
-		void EntryOnLostFocus (object sender, EventArgs e)
-		{
-			OnLostFocus (e);
-		}
+			Controls.Add(txtView);
+			Controls.Add(spnSpinner);
 
-		void ComputeSizeAndLocation ()
-		{
-			if (BorderStyle == BorderStyle.Fixed3D)
-				border = 2;
-			else if (BorderStyle == BorderStyle.FixedSingle)
-				border = 1;
-			else
-				border = 0;
-				
-			Size = (entry.Size + spinner.Size + new Size (border, border));
-			
-			entry.Location = new Point (border, border);
-		}
-		
-
-#region UpDownBase overwritten methods
-		
-		protected override void OnMouseWheel (MouseEventArgs args)
-		{
-			base.OnMouseWheel (args);
-
-			if (args.Delta > 0)
-				UpButton ();
-			else if (args.Delta < 0)
-				DownButton ();
-		}
-
-		protected virtual void OnChanged (object source, EventArgs e)
-		{
-			
-		}
-
-		protected override void OnFontChanged (EventArgs e)
-		{
-			base.OnFontChanged (e);
-
-			entry.Font = Font;			
 			Height = PreferredHeight;
+			base.BackColor = txtView.BackColor;
+
+			txtView.MouseWheel += new MouseEventHandler(txtView_MouseWheel);
+
+			txtView.KeyDown += new KeyEventHandler(OnTextBoxKeyDown);
+			txtView.KeyPress += new KeyPressEventHandler(OnTextBoxKeyPress);
+			txtView.LostFocus += new EventHandler(OnTextBoxLostFocus);
+			txtView.Resize += new EventHandler(OnTextBoxResize);
+			txtView.TextChanged += new EventHandler(OnTextBoxTextChanged);
+
+			txtView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			this.Paint +=new PaintEventHandler(UpDownBase_Paint);
+
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.DoubleBuffer, true);
+			SetStyle(ControlStyles.Opaque, true);
+			SetStyle(ControlStyles.ResizeRedraw, true);
+			SetStyle(ControlStyles.UserPaint, true);
+
+			UpdateEditText();
+		}
+		#endregion
+
+		#region Private Methods
+		void reseat_controls() {
+			int border = 0;
+
+			switch (border_style) {
+				case BorderStyle.FixedSingle: border = 1; break;
+				case BorderStyle.Fixed3D:     border = 2; break;
+			}
+
+			int text_displacement = 0;
+
+			int spinner_width = 16;
+			//int spinner_width = ClientSize.Height - 2 * border;
+
+			if (_UpDownAlign == LeftRightAlignment.Left) {
+				spnSpinner.Bounds = new Rectangle(border, border, spinner_width, ClientSize.Height - 2 * border);
+				text_displacement = spnSpinner.Width;
+
+				spnSpinner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+			} else {
+				spnSpinner.Bounds = new Rectangle(ClientSize.Width - spinner_width - border, border, spinner_width, ClientSize.Height - 2 * border);
+
+				spnSpinner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+			}
+			
+			txtView.Bounds = new Rectangle(text_displacement + border, border, ClientSize.Width - spinner_width - 2 * border, Height - 2 * border);
 		}
 
-		protected override void OnHandleCreated (EventArgs e)
-		{
-			base.OnHandleCreated (e);			
-		}
-				
-		protected override void OnLayout (LayoutEventArgs args)
-		{
-			base.OnLayout (args);
-
-			Rectangle bounds = Bounds;
-			int entry_width = bounds.Right - scrollbar_button_size - 1;
-
-			entry.SetBounds (bounds.X, bounds.Y, entry_width, bounds.Height);
-			spinner.SetBounds (entry_width + 1, bounds.Y, scrollbar_button_size, bounds.Height);
+		private void txtView_MouseWheel(object sender, MouseEventArgs e) {
+			if (e.Delta > 0) {
+				UpButton();
+			} else if (e.Delta < 0) {
+				DownButton();
+			}
 		}
 
-#if NET_2_0
-#if false
-		protected override void OnPaint (PaintEventArgs pe)
-		{
-                        if (pe.ClipRectangle.Contains (up))
-                                DrawUp (pe.Graphics);
-                        if (pe.ClipRectangle.Contains (down))
-                                DrawDown (pe.Graphics);
 
-			base.OnPaint (pe);
-		}
+		private void UpDownBase_Paint(object sender, PaintEventArgs e) {
+			int border = 0;
 
-		protected override void SetVisibleCore (bool state)
-		{
-			base.SetVisibleCore (state);
-		}
-#endif
-#endif
+			switch (border_style) {
+				case BorderStyle.FixedSingle: {
+					ControlPaint.DrawBorder(e.Graphics, ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
+					border = 1;
+					break;
+				}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected override void WndProc (ref Message m)
-		{
-			base.WndProc (ref m);
-		}
-
-		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
-		{
-			//
-			// Force the size to be our height.
-			//
-			base.SetBoundsCore (x, y, width, PreferredHeight, specified);
-		}
-		
-		protected override void Dispose (bool disposing)
-		{
-			if (spinner != null){
-				if (disposing){
-					spinner.Dispose ();
-					entry.Dispose ();
+				case BorderStyle.Fixed3D: {
+					ControlPaint.DrawBorder3D(e.Graphics,
+						ClientRectangle, Border3DStyle.Sunken, Border3DSide.All);
+					border = 2;
+					break;
 				}
 			}
-			spinner = null;
-			entry = null;
-			base.Dispose (true);
+
+			Rectangle rect = ClientRectangle;
+
+			rect.Inflate(-border, -border);
+
+			using (SolidBrush background = new SolidBrush(BackColor)) {
+				e.Graphics.FillRectangle(background, rect);
+			}
 		}
-		
-#endregion
-		
-#region UpDownBase virtual methods
-		//
-		// These are hooked up to the various events from the Entry line that
-		// we do not have yet, and implement the keyboard behavior (use a different
-		// widget to test)
-		//
-		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
-		{
-			OnKeyDown(e);
-		}
-		
-		protected virtual void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
-		{
-			OnKeyPress (e);
-		}
+		#endregion	// Private Methods
 
-		protected virtual void OnTextBoxLostFocus (object source, EventArgs e)
-		{
-			OnLostFocus (e);
-		}
-
-		protected virtual void OnTextBoxResize (object source, EventArgs e)
-		{
-			OnResize (e);
-		}
-
-		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
-		{
-			if (changing_text)
-				return;
-
-			ChangingText = false;
-			UserEdit = true;
-			OnTextChanged (e);
-			OnChanged (source, EventArgs.Empty);
-		}
-
-#endregion
-
-#region UpDownBase Properties
-
-		/* FIXME: Do not know what Autoscroll should do */
+		#region Public Instance Properties
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Browsable(false)]
-		public virtual bool AutoScroll {
+		public override bool AutoScroll {
 			get {
 				return base.AutoScroll;
 			}
@@ -434,11 +360,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		/* FIXME: Do not know what AutoscrollMargin does */
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Browsable(false)]
-		public new Size AutoScrollMargin {
+		public Size AutoScrollMargin {
 			get {
 				return base.AutoScrollMargin;
 			}
@@ -448,11 +373,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		/* FIXME: Do not know what AutoscrollMinSize does */
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Browsable(false)]
-		public new Size AutoScrollMinSize {
+		public Size AutoScrollMinSize {
 			get {
 				return base.AutoScrollMinSize;
 			}
@@ -468,22 +392,24 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				entry.BackColor = value;
+				base.BackColor = value;
+				txtView.BackColor = value;
 			}
 		}
 
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Browsable(false)]
 		public override Image BackgroundImage {
 			get {
-				return entry.BackgroundImage;
+				return base.BackgroundImage;
 			}
-
 			set {
-				entry.BackgroundImage = value;
+				base.BackgroundImage = value;
+				txtView.BackgroundImage = value;
 			}
 		}
+
 
 		[DefaultValue(BorderStyle.Fixed3D)]
 		[DispId(-504)]
@@ -493,36 +419,155 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				switch (border_style) {
+					case BorderStyle.None:
+					case BorderStyle.FixedSingle:
+					case BorderStyle.Fixed3D:
+						// acceptable types
+						break;
+
+					default:
+						throw new InvalidEnumArgumentException("value", (int)value, typeof(BorderStyle));
+				}
+
 				border_style = value;
 
-				SuspendLayout ();
-				ComputeSizeAndLocation ();
-				ResumeLayout ();
+				reseat_controls();
+
+				Invalidate();
 			}
 		}
 
-		//
-		// Used internally to flag when the derivative classes are changing
-		// the Text property as opposed to the user
-		//
+		public override ContextMenu ContextMenu {
+			get {
+				return base.ContextMenu;
+			}
+			set {
+				base.ContextMenu = value;
+				txtView.ContextMenu = value;
+				spnSpinner.ContextMenu = value;
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public DockPaddingEdges DockPadding {
+			get {
+				return base.DockPadding;
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public override bool Focused {
+			get {
+				return txtView.Focused;
+			}
+		}
+
+		public override Color ForeColor {
+			get {
+				return base.ForeColor;
+			}
+			set {
+				base.ForeColor = value;
+				txtView.ForeColor = value;
+			}
+		}
+
+		[DefaultValue(true)]
+		public bool InterceptArrowKeys {
+			get {
+				return _InterceptArrowKeys;
+			}
+			set {
+				_InterceptArrowKeys = value;
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public int PreferredHeight {
+			get {
+				// For some reason, the TextBox's PreferredHeight does not
+				// change when the Font property is assigned. Without a
+				// border, it will always be Font.Height anyway.
+				//int text_box_preferred_height = (txtView != null) ? txtView.PreferredHeight : Font.Height;
+				int text_box_preferred_height = Font.Height;
+
+				switch (border_style) {
+					case BorderStyle.FixedSingle:
+					case BorderStyle.Fixed3D:
+						text_box_preferred_height += 3; // magic number? :-)
+
+						return text_box_preferred_height + 4;
+
+					case BorderStyle.None:
+					default:
+						return text_box_preferred_height;
+				}
+			}
+		}
+
+		[DefaultValue(false)]
+		public bool ReadOnly {
+			get {
+				return txtView.ReadOnly;
+			}
+			set {
+				txtView.ReadOnly = value;
+			}
+		}
+
+		[Localizable(true)]
+		public override string Text {
+			get {
+				return txtView.Text;
+			}
+			set {
+				bool suppress_validation = changing_text;
+
+				txtView.Text = value;
+
+				if (!suppress_validation)
+					ValidateEditText();
+			}
+		}
+
+		[DefaultValue(HorizontalAlignment.Left)]
+		[Localizable(true)]
+		public HorizontalAlignment TextAlign {
+			get {
+				return txtView.TextAlign;
+			}
+			set{
+				txtView.TextAlign = value;
+			}
+		}
+
+		[DefaultValue(LeftRightAlignment.Right)]
+		[Localizable(true)]
+		public LeftRightAlignment UpDownAlign {
+			get {
+				return _UpDownAlign;
+			}
+			set {
+				_UpDownAlign = value;
+
+				reseat_controls();
+			}
+		}
+		#endregion	// Public Instance Properties
+
+		#region Protected Instance Properties
 		protected bool ChangingText {
 			get {
 				return changing_text;
 			}
-
 			set {
 				changing_text = value;
-			}
-		}
-
-		// TODO: What should this do?
-		public override ContextMenu ContextMenu {
-			get {
-				return null;
-			}
-
-			set {
-				/* */
 			}
 		}
 
@@ -531,191 +576,154 @@ namespace System.Windows.Forms {
 				return base.CreateParams;
 			}
 		}
-		
+
 		protected override Size DefaultSize {
-			get { return new Size (120, PreferredHeight);}
-		}
-				
-		public new DockPaddingEdges DockPadding {
-			get { return base.DockPadding; }
+			get {
+				return new Size(120, this.PreferredHeight);
+			}
 		}
 
 		protected bool UserEdit {
 			get {
 				return user_edit;
 			}
-
 			set {
 				user_edit = value;
 			}
 		}
+		#endregion	// Protected Instance Properties
 
-		public override string Text {
-			get {
-				if (entry == null)
-					return String.Empty;
-				
-				return entry.Text;
-			}
-
-			set {
-				//
-				// The documentation is conflicts with itself, we can
-				// not call UpdateEditText, as this will call Text to
-				// set the value.
-				//
-				entry.Text = value;
-				
-				if (UserEdit)
-					ValidateEditText ();
-				
-				if (ChangingText)
-					ChangingText = false;
-			}
+		#region Public Instance Methods
+		public abstract void DownButton();
+		public void Select(int start, int length) {
+			txtView.Select(start, length);
 		}
 
-		public LeftRightAlignment UpDownAlign
-		{
-			get {
-				return updown_align;
-			}
-			
-			set {
-				updown_align = value;
-                        }
-                }
+		public abstract void UpButton();
+		#endregion	// Public Instance Methods
 
-		[DefaultValue(false)]
-		public bool ReadOnly {
-			get {
-				return entry.ReadOnly;
-			}
+		#region Protected Instance Methods
+		protected override void Dispose(bool disposing) {
+			if (disposing) {
+				txtView.Dispose();
+				txtView = null;
 
-			set {
-				entry.ReadOnly = value;
+				spnSpinner.Dispose();
+				spnSpinner = null;
 			}
+			base.Dispose (disposing);
 		}
 
-		public override bool Focused {
-			get {
-				return entry.Focused;
-			}
+		[MonoTODO]
+		protected virtual void OnChanged(object source, EventArgs e) {
+			// FIXME
 		}
 
-		public override Color ForeColor {
-			get {
-				return base.ForeColor;
-			}
-
-			set {
-				base.ForeColor = value;
-				entry.ForeColor = value;
-			}
-			
+		protected override void OnFontChanged(EventArgs e) {
+			txtView.Font = this.Font;
+			Height = PreferredHeight;
 		}
 
-		public bool InterceptArrowKeys {
-			get {
-				return intercept;
-			}
-
-			set {
-				intercept = value;
-			}
+		protected override void OnHandleCreated(EventArgs e) {
+			base.OnHandleCreated (e);
 		}
-		
-		public int PreferredHeight {
-			get {
-				if (entry == null)
-					return Height + 3;
-				
-				return entry.Height + 3;
-			}
-		}		
-		
-		public HorizontalAlignment TextAlign {
-			get {
-				return entry.TextAlign;
-			}
-			
-			set {
-				if (value == entry.TextAlign)
-					return;
-					
-				if (value != HorizontalAlignment.Right && value != HorizontalAlignment.Left
-					&& value != HorizontalAlignment.Center) {
-					throw new InvalidEnumArgumentException ("The value assigned is not one of the HorizontalAlignment values.");
-						
+
+		protected override void OnLayout(LayoutEventArgs e) {
+			base.OnLayout(e);
+		}
+
+		protected override void OnMouseWheel(MouseEventArgs e) {
+			// prevent this event from firing twice for the same mouse action!
+			if (GetChildAtPoint(new Point(e.X, e.Y)) == null)
+				txtView_MouseWheel(null, e);
+		}
+
+		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) {
+			if (_InterceptArrowKeys) {
+				if ((e.KeyCode == Keys.Up) || (e.KeyCode == Keys.Down)) {
+					e.Handled = true;
+
+					if (e.KeyCode == Keys.Up)
+						UpButton();
+					if (e.KeyCode == Keys.Down)
+						DownButton();
 				}
-				
-				entry.TextAlign = value;
-			}
-		}
-#endregion
-		
-#region UpDownBase standard methods
-		public void Select (int start, int length)
-		{
-			entry.Select (start, length);
-		}
-
-		protected virtual void ValidateEditText ()
-		{
-			// 
-		}
-#endregion
-
-#region Events
-		//
-		// All these events are just a proxy to the base class,
-		// we must overwrite them for API compatibility
-		//
-		
-		public new event EventHandler MouseEnter {
-			add {
-				base.MouseEnter += value;
 			}
 
-			remove {
-				base.MouseEnter -= value;
+			OnKeyDown(e);
+		}
+
+		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e) {
+			if (e.KeyChar == '\r') {
+				e.Handled = true;
+				ValidateEditText();
+			}
+			OnKeyPress(e);
+		}
+
+		protected virtual void OnTextBoxLostFocus(object source, EventArgs e) {
+			if (user_edit) {
+				ValidateEditText();
 			}
 		}
 
-		public new event EventHandler MouseHover {
-			add {
-				base.MouseHover += value;
+		protected virtual void OnTextBoxResize(object source, EventArgs e) {
+			// compute the new height, taking the border into account
+			Height = PreferredHeight;
+
+			// let anchoring reposition the controls
+		}
+
+		protected virtual void OnTextBoxTextChanged(object source, EventArgs e) {
+			if (changing_text) {
+				ChangingText = false;
+			} else {
+				UserEdit = true;
 			}
 
-			remove {
-				base.MouseHover -= value;
+			OnTextChanged(e);
+		}
+
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			base.SetBoundsCore(x, y, width, height, specified);
+
+			if ((specified & BoundsSpecified.Size) != BoundsSpecified.None) {
+				reseat_controls();
 			}
 		}
 
-		public new event EventHandler MouseLeave {
-			add {
-				base.MouseLeave += value;
-			}
+		protected abstract void UpdateEditText();
 
-			remove {
-				base.MouseLeave -= value;
-			}
+		protected virtual void ValidateEditText() {
+			// to be overridden by subclassers
 		}
 
-		public new event EventHandler BackgroundImageChanged {
-			add {
-				base.BackgroundImageChanged += value;
-			}
-
-			remove {
-				base.BackgroundImageChanged -= value;
-			}
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected override void WndProc(ref Message m) {
+			base.WndProc (ref m);
 		}
-#endregion
-		
-#region Abstract methods
-		public abstract void DownButton ();
-		public abstract void UpButton ();
-		public abstract void UpdateEditText ();
-#endregion
+		#endregion	// Protected Instance Methods
+
+		#region Events
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler MouseEnter;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler MouseHover;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler MouseLeave;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseMove;
+		#endregion	// Events
 	}
 }

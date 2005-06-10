@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -36,9 +36,9 @@ namespace System.Windows.Forms {
 	[ComVisible(true)]
 	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
 		#region Private Variables
-		private string		name;
-		private string		value;
-		private Control		owner;
+		internal string		name;
+		internal string		value;
+		internal Control	owner;
 		internal AccessibleRole	role;
 		internal string		default_action;
 		internal string		description;

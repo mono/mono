@@ -1,3 +1,17 @@
+2005-06-09  Peter Bartok  <pbartok@novell.com>
+
+	* UpDownBase.cs, NumericUpDown.cs, DomainUpDown.cs: Integrated
+	  Jonathan's standalone controls into MWF, implemented missing 
+	  events, attributes and methods; added xxxAccessible classes
+	* AccessibleObject.cs: Made fields internal so other classes
+	  can change them if needed
+
+2005-06-09  Jonathan Gilbert  <2a5gjx302@sneakemail.com>
+
+	* UpDownBase.cs: Complete implementation
+	* NumericUpDown.cs: Complete implementation
+	* DomainUpDown.cs: Complete implementation
+
 2005-06-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: drawing fixes
