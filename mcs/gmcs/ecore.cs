@@ -3254,8 +3254,9 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
 
-			if (FieldInfo is FieldBuilder){
-				FieldBase f = TypeManager.GetField (FieldInfo);
+			FieldInfo the_fi = FieldInfo.Mono_GetGenericFieldDefinition ();
+			if (the_fi is FieldBuilder){
+				FieldBase f = TypeManager.GetField (the_fi);
 				if (f != null){
 					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 						is_volatile = true;
