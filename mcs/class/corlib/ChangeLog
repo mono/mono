@@ -1,3 +1,8 @@
+2005-06-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Added unit tests for System.Security.
+	Policy.StrongNameMembershipCondition.
+
 2005-06-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added unit tests (normal and CAS) for 
