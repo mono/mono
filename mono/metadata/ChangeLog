@@ -1,5 +1,9 @@
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* icall.c: frombase64. Fix problems exposed by new tests.
+
+2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* icall.c: added internal calls for converting char [] and strings in
 	base64 into byte [].
 
