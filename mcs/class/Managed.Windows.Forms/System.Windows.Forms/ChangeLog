@@ -1,6 +1,10 @@
 2005-06-10  John BouAntoun <jba-mono@optusnet.com.au>
+	* MonthCalendar.cs: Wired in NumericUpDown control for year
+
+2005-06-10  John BouAntoun <jba-mono@optusnet.com.au>
 	* MonthCalendar.cs: Removed MonoTodo attributes on Click and 
 	  DoubleClick events, since they are not meant to be fired.
+
 2005-06-09  Peter Bartok  <pbartok@novell.com>
 
 	* UpDownBase.cs, NumericUpDown.cs, DomainUpDown.cs: Integrated

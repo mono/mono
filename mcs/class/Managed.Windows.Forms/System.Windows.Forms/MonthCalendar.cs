@@ -24,7 +24,6 @@
 //
 // REMAINING TODO:
 //	- get the date_cell_size and title_size to be pixel perfect match of SWF
-//	- show the year spin control
 
 using System;
 using System.Collections;
@@ -60,6 +59,7 @@ namespace System.Windows.Forms {
 		bool 			today_date_set;
 		Color 			trailing_fore_color;
 		ContextMenu		menu;
+		NumericUpDown	year_updown;
 		Timer		 	timer;
 		
 		// internal variables used
@@ -77,6 +77,8 @@ namespace System.Windows.Forms {
 		internal bool			is_next_clicked;
 		internal bool 			is_shift_pressed;
 		internal DateTime		first_select_start_date;
+		internal int			last_clicked_calendar_index;
+		internal Rectangle		last_clicked_calendar_rect;
 		private Point			month_title_click_location;
 		// this is used to see which item was actually clicked on in the beginning
 		// so that we know which item to fire on timer
@@ -161,8 +163,18 @@ namespace System.Windows.Forms {
 			first_select_start_date = now;
 			month_title_click_location = Point.Empty;
 
+			// set up context menu
 			SetUpContextMenu ();
 
+			// set up the year up down control
+			year_updown = new NumericUpDown();
+			year_updown.Font = this.Font;
+			year_updown.Minimum = MinDate.Year;
+			year_updown.Maximum = MaxDate.Year;
+			year_updown.ReadOnly = true;
+			year_updown.Visible = false;
+			this.Controls.Add(year_updown);
+			
 			// event handlers
 //			LostFocus += new EventHandler (LostFocusHandler);
 			timer.Tick += new EventHandler (TimerHandler);
@@ -171,7 +183,9 @@ namespace System.Windows.Forms {
 			KeyDown += new KeyEventHandler (KeyDownHandler);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
 			KeyUp += new KeyEventHandler (KeyUpHandler);
-			// this replaces paint so call the control version
+			year_updown.ValueChanged += new EventHandler(UpDownYearChangedHandler);
+
+			// this replaces paint so call the control version			
 			((Control)this).Paint += new PaintEventHandler (PaintHandler);
 		}
 		
@@ -786,131 +800,7 @@ namespace System.Windows.Forms {
 
 		// returns a HitTestInfo for MonthCalendar element's under the specified point
 		public HitTestInfo HitTest (Point point) {
-			// before doing all the hard work, see if the today's date wasn't clicked
-			Rectangle today_rect = new Rectangle (
-				ClientRectangle.X, 
-				ClientRectangle.Bottom - date_cell_size.Height,
-				7 * date_cell_size.Width,
-				date_cell_size.Height);
-			if (today_rect.Contains (point) && this.ShowToday) {
-				return new HitTestInfo(HitArea.TodayLink, point, DateTime.Now);
-			}
-
-			Size month_size = SingleMonthSize;
-			// define calendar rect's that this thing can land in
-			Rectangle[] calendars = new Rectangle [CalendarDimensions.Width * CalendarDimensions.Height];
-			for (int i=0; i < CalendarDimensions.Width * CalendarDimensions.Height; i ++) {
-				if (i == 0) {
-					calendars[i] = new Rectangle (
-						new Point (ClientRectangle.X + 1, ClientRectangle.Y + 1),
-						month_size);
-				} else {
-					// calendar on the next row
-					if (i % CalendarDimensions.Width == 0) {
-						calendars[i] = new Rectangle (
-							new Point (calendars[i-CalendarDimensions.Width].X, calendars[i-CalendarDimensions.Width].Bottom + calendar_spacing.Height),
-							month_size);
-					} else {
-						// calendar on the next column
-						calendars[i] = new Rectangle (
-							new Point (calendars[i-1].Right + calendar_spacing.Width, calendars[i-1].Y),
-							month_size);
-					}
-				}
-			}
-			
-			// through each trying to find a match
-			for (int i = 0; i < calendars.Length ; i++) {
-				if (calendars[i].Contains (point)) {					
-					// check the title section
-					Rectangle title_rect = new Rectangle (
-						calendars[i].Location,
-						title_size);
-					if (title_rect.Contains (point) ) {
-						// make sure it's not a previous button
-						if (i == 0) {
-							Rectangle button_rect = new Rectangle(
-								new Point (calendars[i].X + button_x_offset, (title_size.Height - button_size.Height)/2),
-								button_size);
-							if (button_rect.Contains (point)) 
-							{
-								return new HitTestInfo(HitArea.PrevMonthButton, point, DateTime.Now);
-							}
-						}
-						// make sure it's not the next button
-						if (i % CalendarDimensions.Height == 0 && i % CalendarDimensions.Width == calendar_dimensions.Width - 1) {
-							Rectangle button_rect = new Rectangle(
-								new Point (calendars[i].Right - button_x_offset - button_size.Width, (title_size.Height - button_size.Height)/2),
-								button_size);
-							if (button_rect.Contains (point)) 
-							{
-								return new HitTestInfo(HitArea.NextMonthButton, point, DateTime.Now);
-							}
-						}
-
-						// make sure it's not the month or the year of the calendar
-						if (GetMonthNameRectangle (title_rect, i).Contains (point)) {
-							return new HitTestInfo(HitArea.TitleMonth, point, DateTime.Now);
-						}
-						if (GetYearNameRectangle (title_rect, i).Contains (point)) {
-							return new HitTestInfo(HitArea.TitleYear, point, DateTime.Now);
-						}
-
-						// return the hit test in the title background
-						return new HitTestInfo(HitArea.TitleBackground, point, DateTime.Now);
-					}
-
-					Point date_grid_location = new Point (calendars[i].X, title_rect.Bottom);
-
-					// see if it's in the Week numbers
-					if (ShowWeekNumbers) {
-						Rectangle weeks_rect = new Rectangle (
-							date_grid_location,
-							new Size (date_cell_size.Width,Math.Max (calendars[i].Height - title_rect.Height, 0)));
-						if (weeks_rect.Contains (point)) {
-							return new HitTestInfo(HitArea.WeekNumbers, point, DateTime.Now);
-						}
-
-						// move the location of the grid over
-						date_grid_location.X += date_cell_size.Width;
-					}
-
-					// see if it's in the week names
-					Rectangle day_rect = new Rectangle (
-						date_grid_location,
-						new Size (Math.Max (calendars[i].Right - date_grid_location.X, 0), date_cell_size.Height));
-					if (day_rect.Contains (point)) {						
-						return new HitTestInfo(HitArea.DayOfWeek, point, DateTime.Now);
-					}
-						
-					// finally see if it was a date that was clicked
-					Rectangle date_grid = new Rectangle (
-						new Point (day_rect.X, day_rect.Bottom),
-						new Size (day_rect.Width, Math.Max(calendars[i].Bottom - day_rect.Bottom, 0)));
-					if (date_grid.Contains (point)) {
-						// okay so it's inside the grid, get the offset
-						Point offset = new Point (point.X - date_grid.X, point.Y - date_grid.Y);
-						int row = offset.Y / date_cell_size.Height;
-						int col = offset.X / date_cell_size.Width;
-						// establish our first day of the month
-						DateTime calendar_month = this.CurrentMonth.AddMonths(i);
-						DateTime first_day = GetFirstDateInMonthGrid (calendar_month);
-						DateTime time = first_day.AddDays ((row * 7) + col);
-						// establish which date was clicked
-						if (time.Year != calendar_month.Year || time.Month != calendar_month.Month) {
-							if (time < calendar_month && i == 0) {
-								return new HitTestInfo(HitArea.PrevMonthDate, point, time);
-							} else if (time > calendar_month && i == CalendarDimensions.Width*CalendarDimensions.Height - 1) {
-								return new HitTestInfo(HitArea.NextMonthDate, point, time);
-							}
-							return new HitTestInfo(HitArea.Nowhere, point, time);
-						}
-						return new HitTestInfo(HitArea.Date, point, time);
-					}
-				}				
-			}
-
-			return new HitTestInfo ();
+			return HitTest (point, out last_clicked_calendar_index, out last_clicked_calendar_rect);
 		}
 
 		// clears all the annually bolded dates
@@ -1129,6 +1019,142 @@ namespace System.Windows.Forms {
 		#endregion	// internal properties
 
 		#region internal/private methods
+		internal HitTestInfo HitTest (
+			Point point,
+			out int calendar_index,
+			out Rectangle calendar_rect) {
+			// start by initialising the ref parameters
+			calendar_index = -1;
+			calendar_rect = Rectangle.Empty;
+
+			// before doing all the hard work, see if the today's date wasn't clicked
+			Rectangle today_rect = new Rectangle (
+				ClientRectangle.X, 
+				ClientRectangle.Bottom - date_cell_size.Height,
+				7 * date_cell_size.Width,
+				date_cell_size.Height);
+			if (today_rect.Contains (point) && this.ShowToday) {
+				return new HitTestInfo(HitArea.TodayLink, point, DateTime.Now);
+			}
+
+			Size month_size = SingleMonthSize;
+			// define calendar rect's that this thing can land in
+			Rectangle[] calendars = new Rectangle [CalendarDimensions.Width * CalendarDimensions.Height];
+			for (int i=0; i < CalendarDimensions.Width * CalendarDimensions.Height; i ++) {
+				if (i == 0) {
+					calendars[i] = new Rectangle (
+						new Point (ClientRectangle.X + 1, ClientRectangle.Y + 1),
+						month_size);
+				} else {
+					// calendar on the next row
+					if (i % CalendarDimensions.Width == 0) {
+						calendars[i] = new Rectangle (
+							new Point (calendars[i-CalendarDimensions.Width].X, calendars[i-CalendarDimensions.Width].Bottom + calendar_spacing.Height),
+							month_size);
+					} else {
+						// calendar on the next column
+						calendars[i] = new Rectangle (
+							new Point (calendars[i-1].Right + calendar_spacing.Width, calendars[i-1].Y),
+							month_size);
+					}
+				}
+			}
+			
+			// through each trying to find a match
+			for (int i = 0; i < calendars.Length ; i++) {
+				if (calendars[i].Contains (point)) {					
+					// check the title section
+					Rectangle title_rect = new Rectangle (
+						calendars[i].Location,
+						title_size);
+					if (title_rect.Contains (point) ) {
+						// make sure it's not a previous button
+						if (i == 0) {
+							Rectangle button_rect = new Rectangle(
+								new Point (calendars[i].X + button_x_offset, (title_size.Height - button_size.Height)/2),
+								button_size);
+							if (button_rect.Contains (point)) {
+								return new HitTestInfo(HitArea.PrevMonthButton, point, DateTime.Now);
+							}
+						}
+						// make sure it's not the next button
+						if (i % CalendarDimensions.Height == 0 && i % CalendarDimensions.Width == calendar_dimensions.Width - 1) {
+							Rectangle button_rect = new Rectangle(
+								new Point (calendars[i].Right - button_x_offset - button_size.Width, (title_size.Height - button_size.Height)/2),
+								button_size);
+							if (button_rect.Contains (point)) {
+								return new HitTestInfo(HitArea.NextMonthButton, point, DateTime.Now);
+							}
+						}
+
+						// indicate which calendar and month it was
+						calendar_index = i;
+						calendar_rect = calendars[i];
+
+						// make sure it's not the month or the year of the calendar
+						if (GetMonthNameRectangle (title_rect, i).Contains (point)) {
+							return new HitTestInfo(HitArea.TitleMonth, point, DateTime.Now);
+						}
+						if (GetYearNameRectangle (title_rect, i).Contains (point)) {
+							return new HitTestInfo(HitArea.TitleYear, point, DateTime.Now);
+						}
+
+						// return the hit test in the title background
+						return new HitTestInfo(HitArea.TitleBackground, point, DateTime.Now);
+					}
+
+					Point date_grid_location = new Point (calendars[i].X, title_rect.Bottom);
+
+					// see if it's in the Week numbers
+					if (ShowWeekNumbers) {
+						Rectangle weeks_rect = new Rectangle (
+							date_grid_location,
+							new Size (date_cell_size.Width,Math.Max (calendars[i].Height - title_rect.Height, 0)));
+						if (weeks_rect.Contains (point)) {
+							return new HitTestInfo(HitArea.WeekNumbers, point, DateTime.Now);
+						}
+
+						// move the location of the grid over
+						date_grid_location.X += date_cell_size.Width;
+					}
+
+					// see if it's in the week names
+					Rectangle day_rect = new Rectangle (
+						date_grid_location,
+						new Size (Math.Max (calendars[i].Right - date_grid_location.X, 0), date_cell_size.Height));
+					if (day_rect.Contains (point)) {
+						return new HitTestInfo(HitArea.DayOfWeek, point, DateTime.Now);
+					}
+						
+					// finally see if it was a date that was clicked
+					Rectangle date_grid = new Rectangle (
+						new Point (day_rect.X, day_rect.Bottom),
+						new Size (day_rect.Width, Math.Max(calendars[i].Bottom - day_rect.Bottom, 0)));
+					if (date_grid.Contains (point)) {
+						// okay so it's inside the grid, get the offset
+						Point offset = new Point (point.X - date_grid.X, point.Y - date_grid.Y);
+						int row = offset.Y / date_cell_size.Height;
+						int col = offset.X / date_cell_size.Width;
+						// establish our first day of the month
+						DateTime calendar_month = this.CurrentMonth.AddMonths(i);
+						DateTime first_day = GetFirstDateInMonthGrid (calendar_month);
+						DateTime time = first_day.AddDays ((row * 7) + col);
+						// establish which date was clicked
+						if (time.Year != calendar_month.Year || time.Month != calendar_month.Month) {
+							if (time < calendar_month && i == 0) {
+								return new HitTestInfo(HitArea.PrevMonthDate, point, time);
+							} else if (time > calendar_month && i == CalendarDimensions.Width*CalendarDimensions.Height - 1) {
+								return new HitTestInfo(HitArea.NextMonthDate, point, time);
+							}							
+							return new HitTestInfo(HitArea.Nowhere, point, time);
+						}
+						return new HitTestInfo(HitArea.Date, point, time);
+					}
+				}				
+			}
+
+			return new HitTestInfo ();
+		}
 
 		// returns the date of the first cell of the specified month grid
 		internal DateTime GetFirstDateInMonthGrid (DateTime month) {
@@ -1224,6 +1250,30 @@ namespace System.Windows.Forms {
 				MenuItem menu_item = new MenuItem ( new DateTime (2000, i+1, 1).ToString ("MMMM"));
 				menu_item.Click += new EventHandler (MenuItemClickHandler);
 				menu.MenuItems.Add (menu_item);
+			}
+		}
+
+		// initialises text value and show's year up down in correct position
+		private void PrepareYearUpDown (Point p) {
+			Rectangle old_location = year_updown.Bounds;
+
+			// set position
+			Rectangle title_rect = new Rectangle(
+				last_clicked_calendar_rect.Location,
+				title_size);
+
+			year_updown.Bounds = GetYearNameRectangle(
+				title_rect, 
+				last_clicked_calendar_index);
+			year_updown.Top -= 4;
+			year_updown.Width += (int) (this.Font.Size * 4);
+			// set year - only do this if this isn't being called because of a year up down click
+			if(year_updown.Bounds != old_location) {
+				year_updown.Value = current_month.AddMonths(last_clicked_calendar_index).Year;			
+			}
+
+			if(!year_updown.Visible) {
+				year_updown.Visible = true;
 			}
 		}
 
@@ -1389,6 +1439,13 @@ namespace System.Windows.Forms {
 					this.is_date_clicked = false;
 					break;
 			}
+		}
+
+		// called when the year is changed
+		private void UpDownYearChangedHandler (object sender, EventArgs e) {
+			int initial_year_value = this.CurrentMonth.AddMonths(last_clicked_calendar_index).Year;
+			int diff = (int) year_updown.Value - initial_year_value;
+			this.CurrentMonth = this.CurrentMonth.AddYears(diff);
 		}
 
 		// called when context menu is clicked
@@ -1579,9 +1636,14 @@ namespace System.Windows.Forms {
 					return;					
 				}
 			}
-			
+
 			//establish where was hit
 			HitTestInfo hti = this.HitTest(point);
+			// hide the year numeric up down if it was clicked
+			if (year_updown != null && year_updown.Visible && hti.HitArea != HitArea.TitleYear)
+			{
+				year_updown.Visible = false;
+			}
 			switch (hti.HitArea) {
 				case HitArea.PrevMonthButton:
 				case HitArea.NextMonthButton:
@@ -1609,8 +1671,8 @@ namespace System.Windows.Forms {
 					menu.Show (this, hti.Point);		
 					break;
 				case HitArea.TitleYear:
-					//TODO: show the year spin control
-					System.Console.WriteLine ("//TODO: show the year spin control");
+					// place the numeric up down
+					PrepareYearUpDown(hti.Point);
 					break;
 				case HitArea.TodayLink:
 					this.SetSelectionRange (DateTime.Now.Date, DateTime.Now.Date);
@@ -1626,103 +1688,118 @@ namespace System.Windows.Forms {
 
 		// raised by any key down events
 		private void KeyDownHandler (object sender, KeyEventArgs e) {
-			if (!is_shift_pressed && e.Shift) {
-				first_select_start_date = SelectionStart;
-				is_shift_pressed = e.Shift;
-			}
-			switch (e.KeyCode) {
-				case Keys.Home:
-					// set the date to the start of the month
-					if (is_shift_pressed) {
-						DateTime date = GetFirstDateInMonth (first_select_start_date);
-						if (date < first_select_start_date.AddDays ((MaxSelectionCount-1)*-1)) {
-							date = first_select_start_date.AddDays ((MaxSelectionCount-1)*-1);
+			// send keys to the year_updown control, let it handle it
+			if(year_updown.Visible) {
+				switch (e.KeyCode) {
+					case Keys.Enter:
+						year_updown.Visible = false;
+						break;
+					case Keys.Up:
+						year_updown.Value = year_updown.Value + 1;
+						break;
+					case Keys.Down:
+						year_updown.Value = year_updown.Value - 1;
+						break;
+				}
+			} else {
+				if (!is_shift_pressed && e.Shift) {
+					first_select_start_date = SelectionStart;
+					is_shift_pressed = e.Shift;
+				}
+				switch (e.KeyCode) {
+					case Keys.Home:
+						// set the date to the start of the month
+						if (is_shift_pressed) {
+							DateTime date = GetFirstDateInMonth (first_select_start_date);
+							if (date < first_select_start_date.AddDays ((MaxSelectionCount-1)*-1)) {
+								date = first_select_start_date.AddDays ((MaxSelectionCount-1)*-1);
+							}
+							this.SetSelectionRange (date, first_select_start_date);
+						} else {
+							DateTime date = GetFirstDateInMonth (this.SelectionStart);
+							this.SetSelectionRange (date, date);
 						}
-						this.SetSelectionRange (date, first_select_start_date);
-					} else {
-						DateTime date = GetFirstDateInMonth (this.SelectionStart);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.End:
-					// set the date to the last of the month
-					if (is_shift_pressed) {
-						DateTime date = GetLastDateInMonth (first_select_start_date);
-						if (date > first_select_start_date.AddDays (MaxSelectionCount-1)) {
-							date = first_select_start_date.AddDays (MaxSelectionCount-1);
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					case Keys.End:
+						// set the date to the last of the month
+						if (is_shift_pressed) {
+							DateTime date = GetLastDateInMonth (first_select_start_date);
+							if (date > first_select_start_date.AddDays (MaxSelectionCount-1)) {
+								date = first_select_start_date.AddDays (MaxSelectionCount-1);
+							}
+							this.SetSelectionRange (date, first_select_start_date);
+						} else {
+							DateTime date = GetLastDateInMonth (this.SelectionStart);
+							this.SetSelectionRange (date, date);
 						}
-						this.SetSelectionRange (date, first_select_start_date);
-					} else {
-						DateTime date = GetLastDateInMonth (this.SelectionStart);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.PageUp:
-					// set the date to the last of the month
-					if (is_shift_pressed) {
-						this.AddTimeToSelection (-1, false);
-					} else {
-						DateTime date = this.SelectionStart.AddMonths (-1);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.PageDown:
-					// set the date to the last of the month
-					if (is_shift_pressed) {
-						this.AddTimeToSelection (1, false);
-					} else {
-						DateTime date = this.SelectionStart.AddMonths (1);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.Up:
-					// set the back 1 week
-					if (is_shift_pressed) {
-						this.AddTimeToSelection (-7, true);						
-					} else {
-						DateTime date = this.SelectionStart.AddDays (-7);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.Down:
-					// set the date forward 1 week
-					if (is_shift_pressed) {
-						this.AddTimeToSelection (7, true);
-					} else {
-						DateTime date = this.SelectionStart.AddDays (7);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.Left:
-					// move one left
-					if (is_shift_pressed) {
-						this.AddTimeToSelection (-1, true);
-					} else {
-						DateTime date = this.SelectionStart.AddDays (-1);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				case Keys.Right:
-					// move one left
-					if (is_shift_pressed) {
-						this.AddTimeToSelection (1, true);
-					} else {
-						DateTime date = this.SelectionStart.AddDays (1);
-						this.SetSelectionRange (date, date);
-					}
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					break;
-				default:
-					break;
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					case Keys.PageUp:
+						// set the date to the last of the month
+						if (is_shift_pressed) {
+							this.AddTimeToSelection (-1, false);
+						} else {
+							DateTime date = this.SelectionStart.AddMonths (-1);
+							this.SetSelectionRange (date, date);
+						}
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					case Keys.PageDown:
+						// set the date to the last of the month
+						if (is_shift_pressed) {
+							this.AddTimeToSelection (1, false);
+						} else {
+							DateTime date = this.SelectionStart.AddMonths (1);
+							this.SetSelectionRange (date, date);
+						}
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					case Keys.Up:
+						// set the back 1 week
+						if (is_shift_pressed) {
+							this.AddTimeToSelection (-7, true);						
+						} else {
+							DateTime date = this.SelectionStart.AddDays (-7);
+							this.SetSelectionRange (date, date);
+						}
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					case Keys.Down:
+						// set the date forward 1 week
+						if (is_shift_pressed) {
+							this.AddTimeToSelection (7, true);
+						} else {
+							DateTime date = this.SelectionStart.AddDays (7);
+							this.SetSelectionRange (date, date);
+						}
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));					
+						break;
+					case Keys.Left:
+						// move one left
+						if (is_shift_pressed) {
+							this.AddTimeToSelection (-1, true);
+						} else {
+							DateTime date = this.SelectionStart.AddDays (-1);
+							this.SetSelectionRange (date, date);
+						}
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					case Keys.Right:
+						// move one left
+						if (is_shift_pressed) {
+							this.AddTimeToSelection (1, true);
+						} else {
+							DateTime date = this.SelectionStart.AddDays (1);
+							this.SetSelectionRange (date, date);
+						}
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						break;
+					default:
+						break;
+				}
+				e.Handled = true;
 			}
-			e.Handled = true;
 		}
 
 		// to check if the mouse has come up on this control
