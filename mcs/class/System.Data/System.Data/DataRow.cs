@@ -1459,12 +1459,15 @@ namespace System.Data {
 					}
 
 					if (HasVersion(DataRowVersion.Current)) {
-						if (row.Current < 0) {
-							row.Current = row.Table.RecordCache.NewRecord();
+						if (Current == Original) {
+							row.Current = row.Original;
+						}else {
+							if (row.Current < 0)
+								row.Current = row.Table.RecordCache.NewRecord();
+							object val = column[Current];
+							row.CheckValue(val, targetColumn);
+							targetColumn[row.Current] = val;
 						}
-						object val = column[Current];
-						row.CheckValue(val, targetColumn);
-						targetColumn[row.Current] = val;
 					}
 					else {
 						if (row.Current > 0) {

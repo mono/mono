@@ -477,46 +477,45 @@ namespace System.Data {
 				return null;
 			
 			DataSet copySet = Clone ();
+			bool prev = copySet.EnforceConstraints;
+			copySet.EnforceConstraints = false;
+
 			Hashtable addedRows = new Hashtable ();
 
-			IEnumerator tableEnumerator = Tables.GetEnumerator ();
-			DataTable origTable;
-			DataTable copyTable;
-			while (tableEnumerator.MoveNext ()) {
-				origTable = (DataTable)tableEnumerator.Current;
-				copyTable = copySet.Tables[origTable.TableName];
-				
-				// Look for relations that have this table as child
-				IEnumerator relations = origTable.ParentRelations.GetEnumerator ();
-
-				IEnumerator rowEnumerator = origTable.Rows.GetEnumerator ();
-				while (rowEnumerator.MoveNext ()) {
-					DataRow row = (DataRow)rowEnumerator.Current;
-					
-					if (row.IsRowChanged (rowStates))
-						AddChangedRow (addedRows, copySet, copyTable, relations, row);
+			for (int i = 0; i < Tables.Count; i++) {
+				DataTable origTable = Tables [i];
+				DataTable copyTable = copySet.Tables[origTable.TableName];
+				for (int j = 0; j < origTable.Rows.Count; j++) {
+					DataRow row = origTable.Rows [j];
+					if (!row.IsRowChanged (rowStates)
+					    || addedRows.Contains (row))
+						continue;
+					AddChangedRow (addedRows, copyTable, row);
 				}
 			}
+			copySet.EnforceConstraints = prev;
 			return copySet;
 		}
 		
-		void AddChangedRow (Hashtable addedRows, DataSet copySet, DataTable copyTable, IEnumerator relations, DataRow row)
+		private void AddChangedRow (Hashtable addedRows, DataTable copyTable, DataRow row)
 		{
 			if (addedRows.ContainsKey (row)) return;
-			
-			relations.Reset ();
-			while (relations.MoveNext ()) {
-				DataRow parentRow = row.GetParentRow ((DataRelation) relations.Current);
-				if (parentRow == null || addedRows.ContainsKey (parentRow)) continue;
-				DataTable parentCopyTable = copySet.Tables [parentRow.Table.TableName];
-				AddChangedRow (addedRows, copySet, parentCopyTable, parentRow.Table.ParentRelations.GetEnumerator (), parentRow);
+
+			foreach (DataRelation relation in row.Table.ParentRelations) {
+				DataRow parent = row.GetParentRow (relation);
+				if (parent == null)
+					continue;
+				// add the parent row
+				DataTable parentCopyTable = copyTable.DataSet.Tables [parent.Table.TableName];
+				AddChangedRow (addedRows, parentCopyTable, parent);
 			}
-		
-			DataRow newRow = copyTable.NewRow ();
-			copyTable.Rows.Add (newRow);
-			row.CopyValuesToRow (newRow);			
+
+			// add the current row
+			DataRow newRow = copyTable.NewNotInitializedRow();
+			copyTable.Rows.AddInternal(newRow);
+			row.CopyValuesToRow (newRow);
 			newRow.XmlRowID = row.XmlRowID;
-			addedRows.Add (row,row);
+			addedRows.Add (row, row);
 		}
 
 #if NET_2_0

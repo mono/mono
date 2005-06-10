@@ -1,8 +1,13 @@
 2005-06-10  Sureshkumar T  <tsureshkumar@novell.com>
 
-	* MergeManager.cs: Temporarily disable EnforceConstraints while
-	doing a dataset Merge. Patch from george.barbarosie@gmail.com
-	(George Barbarosie).
+	* DataRow.cs: CopyValuesToRow: if orginal == current, don't create
+	a new current record.
+
+	* DataSet.cs: GetChanges :Temporarily disable EnforceConstraints.
+
+	* MergeManager.cs: Merge: Temporarily disable
+	EnforceConstraints. Patch from george.barbarosie@gmail.com (George
+	Barbarosie).
 
 2005-06-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
