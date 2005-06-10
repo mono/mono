@@ -40,5 +40,8 @@ namespace System.Web.UI.WebControls
 		Short,
 		FirstLetter,
 		FirstTwoLetters
+#if NET_2_0
+		, Shortest
+#endif
 	}
 }

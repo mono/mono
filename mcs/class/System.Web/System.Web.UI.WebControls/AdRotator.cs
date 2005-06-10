@@ -336,16 +336,6 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
-		AdType adType;
-		
-		[DefaultValueAttribute ("Banner")]
-		[WebCategoryAttribute ("Behavior")]
-		[WebSysDescriptionAttribute ("Advertisement of specific type is created by specified value")]
-		public AdType AdType {
-			get { return adType; }
-			set { adType = value; }
-		}
-
 		string alternateTextField;
 
 		[DefaultValueAttribute ("AlternateText")]

@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.TableRowSection.cs
 //
 // Author: Sanjay Gupta (gsanjay@novell.com)
@@ -29,9 +29,9 @@
 namespace System.Web.UI.WebControls {
 	[SerializableAttribute]
         public enum TableRowSection {
-                TableBody = 0,
-		TableHeader = 1,
-		TableFooter = 2				
+			TableHeader = 0,
+			TableBody = 1,
+			TableFooter = 2				
         }
 }
 #endif
