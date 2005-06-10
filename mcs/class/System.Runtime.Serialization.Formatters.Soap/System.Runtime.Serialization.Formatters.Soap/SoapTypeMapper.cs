@@ -408,10 +408,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				return ((decimal) value).ToString (CultureInfo.InvariantCulture);
 			}
 			else if (value is double) {
-				return ((double) value).ToString (CultureInfo.InvariantCulture);
+				return ((double) value).ToString ("G17", CultureInfo.InvariantCulture);
 			}
 			else if (value is float) {
-				return ((float) value).ToString (CultureInfo.InvariantCulture);
+				return ((float) value).ToString ("G9", CultureInfo.InvariantCulture);
 			}
 			else if (value is TimeSpan) {
 				return SoapDuration.ToString ((TimeSpan)value);

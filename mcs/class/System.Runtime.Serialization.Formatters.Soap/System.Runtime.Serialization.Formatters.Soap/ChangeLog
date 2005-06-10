@@ -1,3 +1,8 @@
+2005-05-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapTypeMapper.cs: Serialize floats and doubles using the correct
+	precision. Patch by Roei Erez that fixes bug #75196.
+
 2005-05-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapReader.cs:
