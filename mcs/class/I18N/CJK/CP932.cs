@@ -290,9 +290,11 @@ public unsafe class CP932 : Encoding
 					{
 						// PrivateUse
 						int diff = ch - 0xE000;
-						value = ((int) (diff / 0xFC) << 8)
-							+ (diff % 0xFC)
+						value = ((int) (diff / 0xBC) << 8)
+							+ (diff % 0xBC)
 							+ 0xF040;
+						if (value % 0x100 >= 0x7F)
+							value++;
 					}
 					else if(ch >= 0xFF01 && ch <= 0xFF60)
 					{
@@ -815,7 +817,9 @@ public unsafe class CP932 : Encoding
 							else if (last >= 0xF0 && last <= 0xFC && byteval <= 0xFC)
 							{
 								// PrivateUse
-								value = 0xE000 + (last - 0xF0) * 0xFC + byteval;
+								value = 0xE000 + (last - 0xF0) * 0xBC + byteval;
+								if (byteval > 0x7F)
+									value--;
 							}
 							else
 							{
