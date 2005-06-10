@@ -1,5 +1,7 @@
 2005-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* basic-long.cs: Add tests for add/sub.ovf.
+
 	* basic.cs: Add tests for sub.ovf.
 
 	* *-ia64.*: Ongoing IA64 work.
