@@ -1,3 +1,7 @@
+2005-06-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *-ia64.*: Ongoing IA64 work.
+
 2005-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* basic-long.cs: Add tests for add/sub.ovf.
