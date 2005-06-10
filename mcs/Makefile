@@ -19,6 +19,7 @@ centum_tests := \
 	class/System.Configuration.Install \
 	class/System.Runtime.Remoting \
 	class/System.Runtime.Serialization.Formatters.Soap \
+	class/System.Security \
 	class/System.Web \
 	class/System.Web.Services \
 	tests \
