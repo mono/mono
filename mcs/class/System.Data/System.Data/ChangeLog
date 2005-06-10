@@ -1,7 +1,13 @@
+2005-06-10  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* MergeManager.cs: Temporarily disable EnforceConstraints while
+	doing a dataset Merge. Patch from george.barbarosie@gmail.com
+	(George Barbarosie).
+
 2005-06-09  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataView.cs: fixes GetListName
-	
+
 2005-06-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaConstants.cs,

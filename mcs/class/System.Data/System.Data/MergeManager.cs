@@ -38,11 +38,13 @@ namespace System.Data
 			if(sourceSet == null)
 				throw new ArgumentNullException("sourceSet");
 
+			bool prevEC = targetSet.EnforceConstraints;
+			targetSet.EnforceConstraints = false;
 			foreach (DataTable t in sourceSet.Tables)
 				MergeManager.Merge(targetSet, t, preserveChanges, missingSchemaAction);
 
 			AdjustSchema(targetSet,sourceSet,missingSchemaAction);
-
+			targetSet.EnforceConstraints = prevEC;
 		}
 
 		internal static void Merge(DataSet targetSet, DataTable sourceTable, bool preserveChanges, MissingSchemaAction missingSchemaAction)
