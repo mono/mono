@@ -13,7 +13,6 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
@@ -75,6 +74,34 @@ namespace MonoTests.Microsoft.VisualBasic
 		public void LanguageOptionsTest ()
 		{
 			Assert.AreEqual (LanguageOptions.CaseInsensitive, _codeProvider.LanguageOptions, "#JW20");
+		}
+
+		[Test]
+		public void GeneratorSupports ()
+		{
+			ICodeGenerator codeGenerator = _codeProvider.CreateGenerator ();
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareEnums), "#1");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.ArraysOfArrays), "#2");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.AssemblyAttributes), "#3");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.ChainedConstructorArguments), "#4");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.ComplexExpressions), "#5");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareDelegates), "#6");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareEnums), "#7");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareEvents), "#8");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareInterfaces), "#9");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareValueTypes), "#10");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.EntryPointMethod), "#11");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.GotoStatements), "#12");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.MultidimensionalArrays), "#13");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.MultipleInterfaceMembers), "#14");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.NestedTypes), "#15");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.ParameterAttributes), "#16");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.PublicStaticMembers), "#17");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.ReferenceParameters), "#18");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.ReturnTypeAttributes), "#19");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.StaticConstructors), "#20");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.TryCatchStatements), "#21");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.Win32Resources), "#22");
 		}
 
 		[Test]
@@ -179,13 +206,6 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			// verify we don't cleanup files in temp directory too agressively
 			string[] tempFiles = Directory.GetFiles (_tempDir);
-
-			foreach (string file in tempFiles) {
-				if (file != sourceFile) {
-					Assert.Fail ("TEMPFILE: " + file);
-				}
-			}
-
 			Assert.AreEqual (1, tempFiles.Length, "#4");
 			Assert.AreEqual (sourceFile, tempFiles[0], "#5");
 
