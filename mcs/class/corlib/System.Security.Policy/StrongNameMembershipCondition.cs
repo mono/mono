@@ -28,9 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Security.Policy {
 
@@ -53,7 +55,8 @@ namespace System.Security.Policy {
 
                         this.blob = blob;
                         this.name = name;
-                        assemblyVersion = version;
+			if (version != null)
+	                        assemblyVersion = (Version) version.Clone ();
                 }
 
 		// for PolicyLevel (to avoid validation duplication)
@@ -83,8 +86,7 @@ namespace System.Security.Policy {
                         get { return blob; }
                         set {
                                 if (value == null)
-                                        throw new ArgumentNullException (
-                                                Locale.GetText ("The argument is null."));
+                                        throw new ArgumentNullException ("PublicKey");
 				blob = value;
 			}
 		}
@@ -94,12 +96,17 @@ namespace System.Security.Policy {
 			if (evidence == null)
 				return false;
 
-			foreach (object o in evidence) {
-				if (o is StrongName) {
-					StrongName sn = (o as StrongName);
-					/* ??? partial match ??? */
-					if (sn.PublicKey.Equals (blob) && (sn.Name == name) && (sn.Version.Equals (assemblyVersion)))
-						return true;
+			IEnumerator e = evidence.GetHostEnumerator ();
+			while (e.MoveNext ()) {
+				StrongName sn = (e.Current as StrongName);
+				if (sn != null) {
+					if (!sn.PublicKey.Equals (blob))
+						return false;
+					if ((name != null) && (name != sn.Name))
+						return false;
+					if ((assemblyVersion != null) && !assemblyVersion.Equals (sn.Version))
+						return false;
+					return true;
 				}
 			}
 			return false;
@@ -111,17 +118,22 @@ namespace System.Security.Policy {
 		}
 
 		public override bool Equals (object o)
-		{	 
-			if (o is StrongNameMembershipCondition == false)
+		{
+			StrongNameMembershipCondition snmc = (o as StrongNameMembershipCondition);
+			if (snmc == null)
 				return false;
-			else {
-				StrongNameMembershipCondition snmc = (StrongNameMembershipCondition) o;
-				return (snmc.Name == Name && snmc.Version == Version && snmc.PublicKey == PublicKey);
-			}
+			if (!snmc.PublicKey.Equals (PublicKey))
+				return false;
+			if (name != snmc.Name)
+				return false;
+			if (assemblyVersion != null)
+			 	return assemblyVersion.Equals (snmc.Version);
+			return (snmc.Version == null);
 		}
 
 		public override int GetHashCode ()
 		{
+			// name and version aren't part of the calculation
 			return blob.GetHashCode ();
 		}
 
@@ -138,16 +150,20 @@ namespace System.Security.Policy {
 			name = e.Attribute ("Name");
 			string v = (string) e.Attribute ("AssemblyVersion");
 			if (v == null)
-				assemblyVersion = new Version ();
+				assemblyVersion = null;
 			else
 				assemblyVersion = new Version (v);
 		}
 
                 public override string ToString ()
                 {
-			// ??? missing informations ???
-                        return String.Format ( "Strong Name - {0} name = {1} version {2}",
-                                        blob, name, assemblyVersion);
+			StringBuilder sb = new StringBuilder ("StrongName - ");
+			sb.Append (blob);
+			if (name != null)
+				sb.AppendFormat (" name = {0}", name);
+			if (assemblyVersion != null)
+				sb.AppendFormat (" version = {0}", assemblyVersion);
+			return sb.ToString ();
                 }
 
                 public SecurityElement ToXml ()

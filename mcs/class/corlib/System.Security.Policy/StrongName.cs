@@ -50,6 +50,8 @@ public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
 			throw new ArgumentNullException ("name");
 		if (version == null)
 			throw new ArgumentNullException ("version");
+		if (name.Length == 0)
+			throw new ArgumentException (Locale.GetText ("Empty"), "name");
 
 		publickey = blob;
 		this.name = name;

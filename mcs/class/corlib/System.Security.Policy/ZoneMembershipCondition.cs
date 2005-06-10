@@ -92,13 +92,13 @@ namespace System.Security.Policy {
                         return new ZoneMembershipCondition (zone);
                 }
 
-                public override bool Equals (Object o)
-                {
-                        if (o is ZoneMembershipCondition == false)
-                                return false;
-                        else
-                                return ((ZoneMembershipCondition) o).SecurityZone == zone;
-                }
+		public override bool Equals (object o)
+		{
+			ZoneMembershipCondition zmc = (o as ZoneMembershipCondition);
+			if (zmc == null)
+				return false;
+			return (zmc.SecurityZone == zone);
+		}
 
                 public void FromXml (SecurityElement element)
                 {

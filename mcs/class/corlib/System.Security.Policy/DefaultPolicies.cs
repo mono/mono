@@ -285,7 +285,11 @@ namespace System.Security.Policy {
 
 			IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.None);
 			isfp.UsageAllowed = IsolatedStorageContainment.DomainIsolationByUser;
+#if NET_2_0
+			isfp.UserQuota = 512000;
+#else
 			isfp.UserQuota = 10240;
+#endif
 			nps.AddPermission (isfp);
 
 			nps.AddPermission (new SecurityPermission (SecurityPermissionFlag.Execution));
