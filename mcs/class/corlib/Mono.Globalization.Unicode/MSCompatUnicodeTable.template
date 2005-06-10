@@ -16,14 +16,18 @@ public static void Main ()
 			continue;
 		int cur = 1;
 		byte lv2 = 0;
-		foreach (byte b in GetSortKeyRaw (i)) {
+		byte [] data = GetSortKeyRaw (i);
+		foreach (byte b in data) {
 			if (cur == 2 && lv2 == 0)
 				lv2 = b;
 			Output.Write ("{0:X02} ", b);
 			if (b == 1)
 				cur++;
 		}
-		Output.WriteLine (" : {0:X} ({1}), {2}    {3}{4:X02}  {5:X02}  ",
+		if (data [0] == 0xE || data [0] == 0xC ||
+			char.IsSurrogate ((char) i))
+			lv2 = 1;
+		Output.WriteLine (" : {0:X} (), {2}    {3}{4:X02}  {5:X02}  ",
 			i,
 			i < 0x20 ? ' ' : (char) i,
 			Char.GetUnicodeCategory ((char) i),
@@ -60,6 +64,22 @@ static byte [] GetSortKeyRaw (int i)
 	if (level3 [i] != 0)
 		tmp [n++] = level3 [i];
 	tmp [n++] = 1;
+
+	if (HasSpecialWeight ((char) i)) {
+		if (IsJapaneseSmallLetter ((char) i))
+			tmp [n++] = 0xC4;
+		tmp [n++] = 0xFF;
+		byte v = GetJapaneseDashType ((char) i);
+		if (v != 3)
+			tmp [n++] = v;
+		tmp [n++] = 0x02;
+		if (!IsHiragana ((char) i))
+			tmp [n++] = 0xC4;
+		tmp [n++] = 0xFF;
+		if (IsHalfWidthKana ((char) i))
+		tmp [n++] = 0xC4;
+		tmp [n++] = 0xFF;
+	}
 	tmp [n++] = 1; // level4
 	tmp [n++] = 0;
 	byte [] ret = new byte [n];
@@ -90,10 +110,10 @@ static byte [] GetPrivateUseSortKeyRaw (int i)
 
 static byte [] GetSurrogateSortKeyRaw (int i)
 {
-	bool isSpecialArea = (0xD840 <= i && i <= 0xD87F || 0xD8B0 <= i && i <= 0xD8FF);
-	int diff = i - (isSpecialArea ? i < 0xD8B0 ? 0xD840 : 0xD8B0 : 0xD800);
-	int segment = isSpecialArea ? 0xF2 : 0x41;
-	byte lower = 0x3F;//(byte) (isSpecialArea ? 0x3F : 0x3E);
+	bool isSpecialArea = (0xD840 <= i && i < 0xD880 || 0xDB80 <= i && i < 0xDC00);
+	int diff = i - (isSpecialArea ? i < 0xD8B0 ? 0xD840 : 0xDB80 : 0xD800);
+	int segment = isSpecialArea ? 0xFE : 0x41;
+	byte lower = (byte) (0xD840 <= i && i < 0xDC00 ? 0x3E : 0x3F);
 	return new byte [] {
 		(byte) (segment + diff / 254),
 		(byte) (diff % 254 + 2),
@@ -236,7 +256,7 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 				return false;
 			else if (c < '\u3100')
 				return true;
-			else if (c < '\uFF60')
+			else if (c < '\uFF60' || c == '\uFF65')
 				return false;
 			else if (c < '\uFF9F')
 				return true;
@@ -255,7 +275,7 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 			case '\u30FC':
 				return 5;
 			}
-			return 0;
+			return 3;
 		}
 
 		public static bool IsHalfWidthKana (char c)

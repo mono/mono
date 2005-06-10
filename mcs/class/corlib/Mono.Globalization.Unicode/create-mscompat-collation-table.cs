@@ -40,7 +40,7 @@ namespace Mono.Globalization.Unicode
 			new MSCompatSortKeyTableGenerator ().Run (args);
 		}
 
-		const int DecompositionFull = 1; // fixed
+		const int DecompositionWide = 1; // fixed
 		const int DecompositionSub = 2; // fixed
 		const int DecompositionSmall = 3;
 		const int DecompositionIsolated = 4;
@@ -48,10 +48,10 @@ namespace Mono.Globalization.Unicode
 		const int DecompositionFinal = 6;
 		const int DecompositionMedial = 7;
 		const int DecompositionNoBreak = 8;
-		const int DecompositionVertical = 0x9;
+		const int DecompositionVertical = 9;
 		const int DecompositionFraction = 0xA;
 		const int DecompositionFont = 0xB;
-		const int DecompositionWide = 0xC;
+		const int DecompositionFull = 0xC;
 		const int DecompositionNarrow = 0xD;
 		const int DecompositionSuper = 0xE; // fixed
 		const int DecompositionCircle = 0xF;
@@ -579,8 +579,8 @@ namespace Mono.Globalization.Unicode
 
 				// [decmpType] -> this_cp
 				int targetCP = (int) decompValues [didx];
+				// for "(x)" it specially maps to 'x' .
 				// FIXME: check if it is sane
-				// for "(x)" it specially maps to 'x'
 				if (decompLength [cp] == 3 &&
 					(int) decompValues [didx] == '(' &&
 					(int) decompValues [didx + 2] == ')')
@@ -1003,8 +1003,8 @@ namespace Mono.Globalization.Unicode
 				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
 			numberValues.Sort (DictionaryValueComparer.Instance);
 
-foreach (DictionaryEntry de in numberValues)
-Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
+//foreach (DictionaryEntry de in numberValues)
+//Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 
 //			decimal prevValue = -1;
 			foreach (DictionaryEntry de in numberValues) {
@@ -1039,13 +1039,12 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 			AddCharMap ('\u221E', 0xC, 1);
 			#endregion
 
-			#region Latin alphabets
+			#region Letters (general)
+
+			// Latin alphabets
 			for (int i = 0; i < alphabets.Length; i++) {
 				AddAlphaMap (alphabets [i], 0xE, alphaWeights [i]);
 			}
-			#endregion
-
-			#region Letters (general)
 
 			// Greek and Coptic
 			fillIndex [0xF] = 02;
@@ -1295,7 +1294,7 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 			// FIXME: Add more culture-specific letters (that are
 			// not supported in Windows collation) here.
 
-			// Surrogate : computed.
+			// Surrogate ... they are computed.
 
 			// FIXME: Hangul.
 
@@ -1304,11 +1303,15 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 			fillIndex [cjkCat] = 0x2;
 			for (int cp = 0x4E00; cp <= 0x9FBB; cp++)
 				AddCharMapGroupCJK ((char) cp, ref cjkCat);
+			// CJK Extensions goes here.
+			// LAMESPEC: With this Windows style CJK layout, it is
+			// impossible to add more CJK ideograph i.e. 0x9FA6-
+			// 0x9FBB can never be added w/o breaking compat.
+			for (int cp = 0xF900; cp <= 0xFA2D; cp++)
+				AddCharMapGroupCJK ((char) cp, ref cjkCat);
 
-			// PrivateUse : computed.
-			// remaining Surrogate : computed.
-
-			// FIXME: CJK Extensions goes here.
+			// PrivateUse ... computed.
+			// remaining Surrogate ... computed.
 
 			#region Special "biggest" area (FF FF)
 			fillIndex [0xFF] = 0xFF;
@@ -1320,6 +1323,29 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 				AddCharMap (c, 0xFF, 0);
 			#endregion
 
+			// Characters w/ diacritical marks (NFKD)
+			for (int i = 0; i <= char.MaxValue; i++) {
+				if (map [i].Defined || IsIgnorable (i))
+					continue;
+				if (decompIndex [i] == 0)
+					continue;
+
+				int start = decompIndex [i];
+				int primaryChar = decompValues [start];
+				if (map [primaryChar].Level1 == 0)
+					continue;
+				int secondary = 0;
+				for (int l = 1; l < decompLength [i]; l++) {
+					int c = decompValues [start + l];
+					secondary += diacritical [c];
+				}
+//Console.Error.WriteLine ("======== {0:X04} on diacritical process. Primary char is {1:X04}", i, primaryChar);
+				map [i] = new CharMapEntry (
+					map [primaryChar].Category,
+					map [primaryChar].Level1,
+					(byte) secondary);
+				
+			}
 		}
 
 		// Reset fillIndex to fixed value and call AddLetterMap().
@@ -1331,6 +1357,20 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 
 		private void AddLetterMap (char c, byte category, byte updateCount)
 		{
+			char c2;
+			// <small> updates index
+			c2 = ToSmallForm (c);
+			if (c2 != c)
+				AddCharMapGroup2 (c2, category, updateCount, 0);
+			c2 = Char.ToLower (c, CultureInfo.InvariantCulture);
+			if (c2 != c && !map [(int) c2].Defined)
+				AddLetterMap (c2, category, 0);
+			AddCharMapGroup2 (c, category, 0, 0);
+			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
+			if (c2 != c && !map [(int) c2].Defined)
+				AddLetterMap (c2, category, 0);
+			fillIndex [category] += updateCount;
+/*
 			char c2;
 
 			// process lowerletter recursively (if not defined).
@@ -1356,6 +1396,7 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
 			if (c2 != c && !map [(int) c2].Defined)
 				AddLetterMap (c2, category, updateCount);
+*/
 		}
 
 		private void AddCharMap (char c, byte category, byte increment)
@@ -1625,7 +1666,7 @@ Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
 
 			// misc
 			switch (decompType [(int) c]) {
-			case DecompositionFull: // <full>
+			case DecompositionWide: // <wide>
 			case DecompositionSub: // <sub>
 			case DecompositionSuper: // <super>
 				ret |= decompType [(int) c];

@@ -1,5 +1,11 @@
 2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed latin alphabet support.
+	  Added latin with diacritical and CJK extension.
+	* MSCompatUnicodeTable.cs : modified dumper code a bit (for my purpose).
+
+2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : now parses DerivedAge.txt (right
 	  now not used thouth). Filled CJK ideograph, still not perfect.
 	  Fixed number primary keys. NFKD numbers and CJK ideographs are now
