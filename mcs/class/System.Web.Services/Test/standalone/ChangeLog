@@ -1,3 +1,8 @@
+2005-06-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* services.xml: Disable some tests on external services
+	since they are very unreliable.
+
 2005-02-07  Lluis Sanchez Gual <lluis@novell.com>
 
 	* client/localhost/TestBinding4Test.cs: Fix build.

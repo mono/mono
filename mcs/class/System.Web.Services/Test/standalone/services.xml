@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<services xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <service>
     <wsdl>http://upload.eraserver.net/circle24/autoloan.asmx?wsdl</wsdl>
     <name>autoloanTest</name>
@@ -1497,7 +1497,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>true</clientTest>
+    <clientTest>false</clientTest>
   </service>
   <service>
     <wsdl>http://www.barnaland.is/dev/sms.asmx?WSDL</wsdl>
@@ -1524,7 +1524,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>true</clientTest>
+    <clientTest>false</clientTest>
   </service>
   <service>
     <wsdl>http://www.indobiz.com/OptionPricing.asmx?WSDL</wsdl>
@@ -2322,7 +2322,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>true</clientTest>
+    <clientTest>false</clientTest>
   </service>
   <service>
     <wsdl>http://www.xmethods.net/wsdl/query.wsdl</wsdl>
@@ -2340,7 +2340,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>true</clientTest>
+    <clientTest>false</clientTest>
   </service>
   <service>
     <wsdl>http://ws2.serviceobjects.net/pt/PackTrack.asmx?WSDL</wsdl>
@@ -2606,7 +2606,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>true</clientTest>
+    <clientTest>false</clientTest>
   </service>
   <service>
     <wsdl>http://www.oakleaf.ws/cfrsearchws/cfrsearchws.asmx?wsdl</wsdl>
