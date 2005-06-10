@@ -764,10 +764,18 @@ namespace System.Net
 			return result;
 		}
 
-		internal void EndWrite (IAsyncResult result)
+		internal bool EndWrite (IAsyncResult result)
 		{
-			if (nstream != null)
+			if (nstream == null)
+				return false;
+
+			try {
 				nstream.EndWrite (result);
+				return true;
+			} catch (Exception e) {
+				status = WebExceptionStatus.SendFailure;
+				return false;
+			}
 		}
 
 		internal int Read (byte [] buffer, int offset, int size)

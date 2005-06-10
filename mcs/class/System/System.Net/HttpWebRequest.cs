@@ -90,6 +90,7 @@ namespace System.Net
 		byte[] bodyBuffer;
 		int bodyBufferLength;
 		bool getResponseCalled;
+		Exception saved_exc;
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
@@ -664,8 +665,13 @@ namespace System.Net
 			initialMethod = method;
 			if (haveResponse) {
 				if (webResponse != null) {
+					Exception saved = saved_exc;
 					Monitor.Exit (this);
-					asyncRead.SetCompleted (true, webResponse);
+					if (saved == null) {
+						asyncRead.SetCompleted (true, webResponse);
+					} else {
+						asyncRead.SetCompleted (true, saved);
+					}
 					asyncRead.DoCallback ();
 					return asyncRead;
 				}
@@ -704,9 +710,6 @@ namespace System.Net
 
 		public override WebResponse GetResponse()
 		{
-			if (haveResponse && webResponse != null)
-				return webResponse;
-
 			WebAsyncResult result = (WebAsyncResult) BeginGetResponse (null, null);
 			return EndGetResponse (result);
 		}
@@ -1008,7 +1011,21 @@ namespace System.Net
 				asyncWrite = null;
 			}
 		}
-		
+
+		void CheckSendError (WebConnectionData data)
+		{
+			// Got here, but no one called GetResponse
+			if (data.StatusCode < 400)
+				return;
+
+			if (writeStream != null && asyncRead == null && !writeStream.CompleteRequestWritten) {
+				// The request has not been completely sent and we got here!
+				// We should probably just close and cause an error in any case,
+				saved_exc = new WebException (data.StatusDescription, null, WebExceptionStatus.ProtocolError, webResponse); 
+				webResponse.ReadAll ();
+			}
+		}
+
 		internal void SetResponseData (WebConnectionData data)
 		{
 			if (aborted) {
@@ -1025,6 +1042,14 @@ namespace System.Net
 				wexc = new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null); 
 				if (data.stream != null)
 					data.stream.Close ();
+			}
+
+			if (wexc == null && (method == "POST" || method == "PUT")) {
+				lock (this) {
+					CheckSendError (data);
+					if (saved_exc != null)
+						wexc = (WebException) saved_exc;
+				}
 			}
 
 			WebAsyncResult r = asyncRead;
