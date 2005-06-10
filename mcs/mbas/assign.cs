@@ -388,15 +388,6 @@ namespace Mono.MonoBASIC {
 					source = e.Resolve (ec);
 					return this;
 				}
-				if (source_type == TypeManager.date_type && (source_type!=target_type)) {
-					if( target_type != TypeManager.object_type) {
-						Report.Error (30311, loc,
-					      		" Value of type " + source_type +
-							" cannot be converted to " + target_type);
-						return null;
-					}
-					
-				}
 				if (target_type.IsValueType) {
 					New n = (New) source;
 					n.ValueTypeVariable = target;

@@ -1,3 +1,6 @@
+2005-06-10 Manjula GHM <mmanjula@novell.com>
+	*assign.cs: Allow New Date assignment to other types
+
 2005-06-08 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* AssemblyInfo.cs : 
 		- Added informational attributes that Mono.GetOptions shows in the help screen.
