@@ -1083,12 +1083,12 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler BackgroundImageChanged;
 
-		[MonoTODO("Fire Click event")]
+		// this event is overridden to supress it from being fired
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler Click;
 
-		[MonoTODO("Fire DoubleClick event")]
+		// this event is overridden to supress it from being fired
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler DoubleClick;
