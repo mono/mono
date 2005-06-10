@@ -1,3 +1,7 @@
+2005-06-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongNamePublicKeyBlob.cs: Reduce casts in Equals.
+
 2005-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* all: Added ComVisible(true) and some Obsolete attributes for NET_2_0

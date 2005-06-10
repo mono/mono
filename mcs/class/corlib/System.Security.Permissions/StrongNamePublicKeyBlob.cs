@@ -78,15 +78,15 @@ public sealed class StrongNamePublicKeyBlob {
 	
 	public override bool Equals (object obj) 
 	{
-		bool result = (obj is StrongNamePublicKeyBlob);
+		StrongNamePublicKeyBlob snpkb = (obj as StrongNamePublicKeyBlob);
+		if (snpkb == null)
+			return false;
+
+		bool result = (pubkey.Length == snpkb.pubkey.Length);
 		if (result) {
-			StrongNamePublicKeyBlob snpkb = (obj as StrongNamePublicKeyBlob);
-			result = (pubkey.Length == snpkb.pubkey.Length);
-			if (result) {
-				for (int i = 0; i < pubkey.Length; i++) {
-					if (pubkey[i] != snpkb.pubkey[i])
-						return false;
-				}
+			for (int i = 0; i < pubkey.Length; i++) {
+				if (pubkey[i] != snpkb.pubkey[i])
+					return false;
 			}
 		}
 		return result;
