@@ -1,8 +1,15 @@
+2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Convert.cs: FromBase64String and FromBase64CharArray are now internal
+	calls to avoid extra allocations.
+
 2005-06-09  Kamil Skalski <nazgul@nemerle.org>
+
 	* Type.cs: Add MakeGenericType method form .NET 2.0 beta 2 API
 
-	* Type.cs MonoType.cs: Add internal virtual Get{Method,Constructor,Field} 
-	for obtaining instanciated *Info objects from non-instanciated counterparts
+	* Type.cs MonoType.cs: Add internal virtual
+	Get{Method,Constructor,Field} for obtaining instanciated *Info objects
+	from non-instanciated counterparts
 
 2005-06-09  Zoltan Varga  <vargaz@freemail.hu>
 
