@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using Microsoft.VisualBasic;
 using NUnit.Framework;
 
@@ -102,6 +103,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.StaticConstructors), "#20");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.TryCatchStatements), "#21");
 			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.Win32Resources), "#22");
+#if NET_2_0
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.DeclareIndexerProperties), "#23");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.GenericTypeDeclaration), "#24");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.GenericTypeReference), "#25");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.PartialTypes), "#26");
+			Assert.IsTrue (codeGenerator.Supports (GeneratorSupport.Resources), "#27");
+#endif
 		}
 
 		[Test]
@@ -200,6 +208,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			CompilerResults results = compiler.CompileAssemblyFromFile (options,
 				sourceFile);
 
+			// verify compilation was successful
+			AssertCompileResults (results, true);
+
 			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
 			Assert.IsNull (results.PathToAssembly, "#2");
 			Assert.IsNotNull (results.CompiledAssembly.GetType ("Test1"), "#3");
@@ -208,7 +219,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			string[] tempFiles = Directory.GetFiles (_tempDir);
 			Assert.AreEqual (1, tempFiles.Length, "#4");
 			Assert.AreEqual (sourceFile, tempFiles[0], "#5");
-
 		}
 
 		[Test]
@@ -242,6 +252,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			CompilerResults results = compiler.CompileAssemblyFromFileBatch (options,
 				new string[] { sourceFile1, sourceFile2 });
 
+			// verify compilation was successful
+			AssertCompileResults (results, true);
+
 			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
 			Assert.IsNull (results.PathToAssembly, "#2");
 
@@ -274,6 +287,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			CompilerResults results = compiler.CompileAssemblyFromSource (options,
 				_sourceTest1);
 
+			// verify compilation was successful
+			AssertCompileResults (results, true);
+
 			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
 			Assert.IsNull (results.PathToAssembly, "#2");
 			Assert.IsNotNull (results.CompiledAssembly.GetType ("Test1"), "#3");
@@ -302,6 +318,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromSourceBatch (options,
 				new string[] { _sourceTest1, _sourceTest2 });
+
+			// verify compilation was successful
+			AssertCompileResults (results, true);
 
 			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
 			Assert.IsNull (results.PathToAssembly, "#2");
@@ -391,6 +410,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromDom (options, new CodeCompileUnit ());
 
+			// verify compilation was successful
+			AssertCompileResults (results, true);
+
 			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
 			Assert.IsNull (results.PathToAssembly, "#2");
 
@@ -418,6 +440,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
 			CompilerResults results = compiler.CompileAssemblyFromDomBatch (options,
 				new CodeCompileUnit[] { new CodeCompileUnit (), new CodeCompileUnit () });
+
+			// verify compilation was successful
+			AssertCompileResults (results, true);
 
 			Assert.AreEqual (string.Empty, results.CompiledAssembly.Location, "#1");
 			Assert.IsNull (results.PathToAssembly, "#2");
@@ -492,6 +517,17 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 		}
 
+		private static void AssertCompileResults (CompilerResults results, bool allowWarnings)
+		{
+			foreach (CompilerError compilerError in results.Errors) {
+				if (allowWarnings && compilerError.IsWarning) {
+					continue;
+				}
+
+				Assert.Fail (compilerError.ToString ());
+			}
+		}
+
 		private static AppDomain CreateTestDomain ()
 		{
 			return AppDomain.CreateDomain ("CompileFromDom", AppDomain.CurrentDomain.Evidence,
@@ -521,6 +557,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				ICodeCompiler compiler = codeProvider.CreateCompiler ();
 				CompilerResults results = compiler.CompileAssemblyFromDom (options, new CodeCompileUnit ());
 
+				// verify compilation was successful
+				AssertCompileResults (results, true);
+
 				Assert.IsTrue (results.CompiledAssembly.Location.Length != 0,
 					"Location should not be empty string");
 				Assert.IsNotNull (results.PathToAssembly, "PathToAssembly should not be null");
@@ -538,6 +577,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				VBCodeProvider codeProvider = new VBCodeProvider ();
 				ICodeCompiler compiler = codeProvider.CreateCompiler ();
 				CompilerResults results = compiler.CompileAssemblyFromDomBatch (options, new CodeCompileUnit[] { new CodeCompileUnit (), new CodeCompileUnit () });
+
+				// verify compilation was successful
+				AssertCompileResults (results, true);
 
 				Assert.IsTrue (results.CompiledAssembly.Location.Length != 0,
 					"Location should not be empty string");

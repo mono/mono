@@ -1,5 +1,11 @@
 2005-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* VBCodeProviderTest.cs: improve reporting of test failures as a
+	result of compile errors. Added a ICodeGenerator.Supports tests
+	for .NET 2.0.
+
+2005-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* VBCodeProviderTest.cs: removed unnecessary test, added test
 	for ICodeGenerator.Supports.
 
