@@ -221,7 +221,7 @@ namespace MonoTests.System.Diagnostics {
 			t2.Join ();
 
 			Assert.IsTrue (m.Exception == null, m.Exception);
-			Assert.IsTrue (m.listener.WriteLines < MultiThreadModify.MaxIterations,
+			Assert.AreEqual (MultiThreadModify.MaxIterations, m.listener.WriteLines,
 					"#tmtm: listener was removed before iterations were completed");
 		}
 	}

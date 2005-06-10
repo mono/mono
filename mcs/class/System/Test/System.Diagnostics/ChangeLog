@@ -1,3 +1,7 @@
+2005-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TraceTest.cs: Fixed test failure.
+
 2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventLogPermissionAttributeTest.cs: Character #133 is refused into
