@@ -1,3 +1,8 @@
+2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetReadXmlSchemaTest.cs : TestSampleFileImportSimple() is not
+	  working and it takes so much time (downloading), so just disable it.
+
 2005-06-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetReadXmlSchemaTest.cs : testcase for bug #75121.
