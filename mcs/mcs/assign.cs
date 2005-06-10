@@ -442,7 +442,7 @@ namespace Mono.CSharp {
 			}
 			
 			//
-			// If this assignemnt/operator was part of a compound binary
+			// If this assignment/operator was part of a compound binary
 			// operator, then we allow an explicit conversion, as detailed
 			// in the spec. 
 			//
@@ -482,8 +482,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-
 			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
+			
 			if (source == null)
 				return null;
 

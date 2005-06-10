@@ -1,3 +1,20 @@
+2005-06-10  Duncan Mak  <duncan@novell.com>
+
+	* cs-tokenizer.cs (process_directives): New flag for controlling
+	the processing of preprocessor directives.
+	(x_token): After seeing a '#', return Token.NONE instead of going
+	to handle_preprocessing_directive() when not processing
+	directives. This avoids unnecessary processing during the token peek in
+	is_punct().
+
+	This fixes #74939.
+
+	* cs-tokenizer.cs (handle_preprocessing_directive, xtoken): Use
+	the existing error reporting methods instead of Report.Error.
+
+	* convert.cs (priv_fmt_expr): Remove. It's not needed anymore
+	after Raja's rewrite.
+
 2005-06-08  Miguel de Icaza  <miguel@novell.com>
 
 	* class.cs: Small fix.

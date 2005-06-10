@@ -457,7 +457,11 @@ namespace Mono.CSharp
 
 				// Save current position and parse next token.
 				int old = reader.Position;
+
+				// disable preprocessing directives when peeking
+				process_directives = false;
 				int new_token = token ();
+				process_directives = true;
 				reader.Position = old;
 				putback_char = -1;
 
@@ -1543,6 +1547,11 @@ namespace Mono.CSharp
 		}
 		
 		//
+		// Set to false to stop handling preprocesser directives
+		// 
+		bool process_directives = true;
+
+		//
 		// if true, then the code continues processing the code
 		// if false, the code stays in a loop until another directive is
 		// reached.
@@ -1678,9 +1687,7 @@ namespace Mono.CSharp
 
 			case "else":
 				if (ifstack == null || ifstack.Count == 0){
-					Report.Error (
-						1028, Location,
-						"Unexpected processor directive (no #if for this #else)");
+					Error_UnexpectedDirective ("no #if for this #else");
 					return true;
 				} else {
 					int state = (int) ifstack.Peek ();
@@ -1751,7 +1758,7 @@ namespace Mono.CSharp
 
 		}
 
-		private int consume_string (bool quoted) 
+		private int consume_string (bool quoted)
 		{
 			int c;
 			string_builder.Length = 0;
@@ -2050,11 +2057,14 @@ namespace Mono.CSharp
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
 				if (c == '#') {
+					// return NONE if we're not processing directives (during token peeks)
+					if (!process_directives)
+						return Token.NONE;
+
 					bool cont = true;
-					
 					if (tokens_seen || comments_seen) {
-                                               error_details = "Preprocessor directives must appear as the first non-whitespace " +
-                                                       "character on a line.";
+                                               error_details = "Preprocessor directives must appear as the first" +
+					       " non-whitespace character on a line.";
 
                                                Report.Error (1040, Location, error_details);
 
