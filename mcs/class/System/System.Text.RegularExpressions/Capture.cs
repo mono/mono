@@ -42,15 +42,11 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public string Value {
-			get { 
-				if (text!= null)
-					return text.Substring (index, length); 
-				else
-					return String.Empty;
-			}
+			get { return text == null ? String.Empty : text.Substring (index, length); }
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return Value;
 		}
 
@@ -58,7 +54,8 @@ namespace System.Text.RegularExpressions {
 
 		internal Capture (string text) : this (text, 0, 0) { }
 
-		internal Capture (string text, int index, int length) {
+		internal Capture (string text, int index, int length)
+		{
 			this.text = text;
 			this.index = index;
 			this.length = length;

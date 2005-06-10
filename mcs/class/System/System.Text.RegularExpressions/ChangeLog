@@ -1,3 +1,19 @@
+2005-06-10  Raja R Harinath  <rharinath@novell.com>
+
+	* interpreter.cs (Interpreter.GenerateMatch): Avoid allocating two
+	intermediate arrays to build the final result.
+	(Interpreter.GetGroupInfo, Interpreter.PopulateGroup): New helper
+	functions.
+	* CaptureCollection.cs (list): Change from ArrayList to list.
+	(SetValue): New internal helper, used by Interpreter.PopulateGroup.
+	(Enumerator): Remove helper class.
+	(IEnumerator.GetEnumerator): Just use list.GetEnumerator.
+	* GroupCollection.cs: Likewise.
+	* Group.cs (Group): Move responsibility of populating 'Captures'
+	to Interpreter.PopulateGroup.
+	* Match.cs (Match): Move responsibility of populating 'Groups' to
+	Interpreter.GenerateMatch.
+
 2005-05-25  Raja R Harinath  <rharinath@novell.com>
 
 	* replace.cs (ReplacementEvaluator.Compile): Rewrite to avoid

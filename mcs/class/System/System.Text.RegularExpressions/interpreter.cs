@@ -926,24 +926,54 @@ namespace System.Text.RegularExpressions {
 			return m;
 		}
 
-		private Match GenerateMatch (Regex regex) {
-			int[][] grps = new int[groups.Length][];
-			ArrayList caps = new ArrayList ();
-
-			for (int gid = 0; gid < groups.Length; ++ gid) {
-				caps.Clear ();
-				for (int m = groups[gid]; m >= 0; m = marks[m].Previous) {
-					if (!marks[m].IsDefined)
-						continue;
-					
-					caps.Add (marks[m].Index);
-					caps.Add (marks[m].Length);
+		private void GetGroupInfo (int gid, out int first_mark_index, out int n_caps)
+		{
+			first_mark_index = -1;
+			bool first = true;
+			n_caps = 0;
+			for (int m = groups [gid]; m >= 0; m = marks [m].Previous) {
+				if (!marks [m].IsDefined)
+					continue;
+				++n_caps;
+				if (first) {
+					first = false;
+					first_mark_index = m;
 				}
-
-				grps[gid] = (int[])caps.ToArray (typeof (int));
 			}
+		}
 
-			return new Match (regex, this, text, text_end, grps);
+		private void PopulateGroup (Group g, int first_mark_index, int n_caps)
+		{
+			int i = 1;
+			for (int m = marks [first_mark_index].Previous; m >= 0; m = marks [m].Previous) {
+				if (!marks [m].IsDefined)
+					continue;
+				Capture cap = new Capture (text, marks [m].Index, marks [m].Length);
+				g.Captures.SetValue (cap, n_caps - 1 - i);
+				++i;
+			}
+		}
+
+		private Match GenerateMatch (Regex regex)
+		{
+			int n_caps, first_mark_index;
+			Group g;
+			GetGroupInfo (0, out first_mark_index, out n_caps);
+			Match retval = new Match (regex, this, text, text_end, groups.Length, 
+						  marks [first_mark_index].Index, marks [first_mark_index].Length, n_caps);
+			PopulateGroup (retval, first_mark_index, n_caps);
+
+			for (int gid = 1; gid < groups.Length; ++ gid) {
+				GetGroupInfo (gid, out first_mark_index, out n_caps);
+				if (first_mark_index < 0) {
+					g = Group.Fail;
+				} else {
+					g = new Group (text, marks [first_mark_index].Index, marks [first_mark_index].Length, n_caps);
+					PopulateGroup (g, first_mark_index, n_caps);
+				}
+				retval.Groups.SetValue (g, gid);
+			}
+			return retval;
 		}
 
 		// interpreter attributes

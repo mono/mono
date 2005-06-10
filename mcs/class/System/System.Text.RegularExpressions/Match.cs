@@ -37,7 +37,8 @@ namespace System.Text.RegularExpressions {
 			get { return empty; }
 		}
 		
-		public static Match Synchronized (Match inner) {
+		public static Match Synchronized (Match inner)
+		{
 			return inner;	// FIXME need to sync on machine access
 		}
 		
@@ -45,7 +46,8 @@ namespace System.Text.RegularExpressions {
 			get { return groups; }
 		}
 
-		public Match NextMatch () {
+		public Match NextMatch ()
+		{
 			if (this == Empty)
 				return Empty;
 
@@ -59,32 +61,33 @@ namespace System.Text.RegularExpressions {
 			return machine.Scan (regex, Text, scan_ptr, text_length);
 		}
 
-		public virtual string Result (string replacement) {
+		public virtual string Result (string replacement)
+		{
 			return ReplacementEvaluator.Evaluate (replacement, this);
 		}
 
 		// internal
 
-		internal Match () : base (null, null) {
+		internal Match () : base ()
+		{
 			this.regex = null;
 			this.machine = null;
 			this.text_length = 0;
-			this.groups = new GroupCollection ();
 
-			groups.Add (this);
+			this.groups = new GroupCollection (1);
+			groups.SetValue (this, 0);
 		}
 		
-		internal Match (Regex regex, IMachine machine, string text, int text_length, int[][] grps) :
-			base (text, grps[0])
+		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
+				int index, int length, int n_caps) :
+			base (text, index, length, n_caps)
 		{
 			this.regex = regex;
 			this.machine = machine;
 			this.text_length = text_length;
 
-			this.groups = new GroupCollection ();
-			groups.Add (this);
-			for (int i = 1; i < grps.Length; ++ i)
-				groups.Add (new Group (text, grps[i]));
+			this.groups = new GroupCollection (n_groups);
+			groups.SetValue (this, 0);
 		}
 
 		internal Regex Regex {

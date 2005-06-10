@@ -38,118 +38,67 @@ namespace System.Text.RegularExpressions
 	[Serializable]
 	public class GroupCollection: ICollection, IEnumerable
 	{
-		private ArrayList list;
+		private Group [] list;
 
 		/* No public constructor */
-		internal GroupCollection () {
-			list = new ArrayList ();
+		internal GroupCollection (int n)
+		{
+			list = new Group [n];
 		}
 
 		public virtual int Count {
-			get {
-				return(list.Count);
-			}
+			get { return list.Length; }
 		}
 
 		public bool IsReadOnly {
-			get {
-				return(true);
-			}
+			get { return true; }
 		}
 
 		public virtual bool IsSynchronized {
+			get { return false; }
+		}
+
+		public Group this [int i] {
 			get {
-				return(false);
+				if (i < list.Length && i >= 0)
+					return list [i];
+				else
+					return Group.Fail;
 			}
 		}
 
-		public Group this[int i] {
-			get {
-				if (i < list.Count &&
-				    i >= 0) {
-					return((Group)list[i]);
-				} else {
-					return(new Group ());
-				}
-			}
+		internal void SetValue (Group g, int i)
+		{
+			list [i] = g;
 		}
 
-		public Group this[string groupName] {
+		public Group this [string groupName] {
 			get {
-				foreach (object o in list) {
-					if (!(o is Match)) {
+				foreach (Group g in list) {
+					if (!(g is Match))
 						continue;
-					}
 
-					int index = ((Match)o).Regex.GroupNumberFromName (groupName);
-
-					if (index != -1) {
-						return(this[index]);
-					}
+					int index = ((Match)g).Regex.GroupNumberFromName (groupName);
+					if (index != -1)
+						return this [index];
 				}
 
-				return(new Group ());
+				return Group.Fail;
 			}
 		}
 
 		public virtual object SyncRoot {
-			get {
-				return(list);
-			}
+			get { return list; }
 		}
 
-		public virtual void CopyTo (Array array, int index) {
-			foreach (object o in list) {
-				if (index > array.Length) {
-					break;
-				}
-
-				array.SetValue (o, index++);
-			}
+		public virtual void CopyTo (Array array, int index)
+		{
+			list.CopyTo (array, index);
 		}
 
-		public virtual IEnumerator GetEnumerator () {
-			return(new Enumerator (list));
-		}
-
-		internal void Add (object o) {
-			list.Add (o);
-		}
-
-		internal void Reverse () {
-			list.Reverse ();
-		}
-
-		private class Enumerator: IEnumerator {
-			private IList list;
-			private int ptr;
-
-			public Enumerator (IList list) {
-				this.list = list;
-				Reset ();
-			}
-
-			public object Current {
-				get {
-					if (ptr >= list.Count) {
-						throw new InvalidOperationException ();
-					}
-
-					return(list[ptr]);
-				}
-			}
-
-			public bool MoveNext () {
-				if (ptr > list.Count) {
-					throw new InvalidOperationException ();
-				}
-
-				return(++ptr < list.Count);
-			}
-
-			public void Reset () {
-				ptr = -1;
-			}
+		public virtual IEnumerator GetEnumerator ()
+		{
+			return list.GetEnumerator ();
 		}
 	}
 }

@@ -33,9 +33,12 @@ namespace System.Text.RegularExpressions {
 
 	[Serializable]
 	public class Group : Capture {
-		public static Group Synchronized (Group inner) {
+		public static Group Synchronized (Group inner)
+		{
 			return inner;	// is this enough?
 		}
+
+		internal static Group Fail = new Group ();
 
 		public CaptureCollection Captures {
 			get { return captures; }
@@ -46,27 +49,17 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// internal
-
-		internal Group (string text, int[] caps) : base (text) {
-			this.captures = new CaptureCollection ();
-
-			if (caps == null || caps.Length == 0) {
-				this.success = false;
-				return;
-			}
-
-			this.success = true;
-			this.index = caps[0];
-			this.length = caps[1];
-			captures.Add (this);
-			for (int i = 2; i < caps.Length; i += 2)
-				captures.Add (new Capture (text, caps[i], caps[i + 1]));
-			captures.Reverse ();
+		internal Group (string text, int index, int length, int n_caps) : base (text, index, length)
+		{
+			success = true;
+			captures = new CaptureCollection (n_caps);
+			captures.SetValue (this, n_caps - 1);
 		}
 		
-		internal Group (): base ("")
+		internal Group () : base ("")
 		{
-			captures = new CaptureCollection ();
+			success = false;
+			captures = new CaptureCollection (0);
 		}
 
 		private bool success;
