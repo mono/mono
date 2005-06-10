@@ -6,28 +6,50 @@ namespace Mono.Globalization.Unicode
 	internal class MSCompatUnicodeTable
 	{
 
+static System.IO.TextWriter Output = Console.Out;
+
+#region private debugging thingy
 public static void Main ()
 {
 	for (int i = 0; i <= char.MaxValue; i++) {
-		if (ignorableFlags [i] == 7)
+		if (IsIgnorable (i))
 			continue;
-		foreach (byte b in GetSortKeyRaw (i))
-			Console.Write ("{0:X02} ", b);
-		Console.WriteLine (" : {0:X} ({1}), {2}    {3}{4:X02}  {5:X02}  ",
+		int cur = 1;
+		byte lv2 = 0;
+		foreach (byte b in GetSortKeyRaw (i)) {
+			if (cur == 2 && lv2 == 0)
+				lv2 = b;
+			Output.Write ("{0:X02} ", b);
+			if (b == 1)
+				cur++;
+		}
+		Output.WriteLine (" : {0:X} ({1}), {2}    {3}{4:X02}  {5:X02}  ",
 			i,
 			i < 0x20 ? ' ' : (char) i,
 			Char.GetUnicodeCategory ((char) i),
-			level2 [i] != 0 ? '&' : ' ',
-			level2 [i] != 0 ? level2 [i] : (byte) 1,
+			lv2 != 1 ? '&' : ' ',
+			lv2,
 			1
 			);
 	}
+	Output.Close ();
 }
 
 static byte [] tmp = new byte [256];
 
 static byte [] GetSortKeyRaw (int i)
 {
+	if (0xAC00 <= i && i <= 0xD7A3)
+		return GetHangleSyllableSortKeyRaw (i, 0x52);
+
+	UnicodeCategory uc = char.GetUnicodeCategory ((char) i);
+	switch (uc) {
+	case UnicodeCategory.PrivateUse:
+		return GetPrivateUseSortKeyRaw (i);
+	case UnicodeCategory.Surrogate:
+		return GetSurrogateSortKeyRaw (i);
+	}
+
 	int n = 0;
 	tmp [n++] = categories [i];
 	tmp [n++] = level1 [i];
@@ -45,6 +67,46 @@ static byte [] GetSortKeyRaw (int i)
 	return ret;
 }
 
+static byte [] GetHangleSyllableSortKeyRaw (int i, byte segment)
+{
+	int ri = i - 0xAC00;
+	ri = ri + ri / 0x24C + 1;
+	return new byte [] {
+		(byte) (segment + ri / 254),
+		(byte) (ri % 254 + 2),
+		1, 1, 1, 1, 0
+		};
+}
+
+static byte [] GetPrivateUseSortKeyRaw (int i)
+{
+	int diff = i - 0xE000;
+	return new byte [] {
+		(byte) (0xE5 + diff / 254),
+		(byte) (diff % 254 + 2),
+		1, 1, 1, 1, 0
+		};
+}
+
+static byte [] GetSurrogateSortKeyRaw (int i)
+{
+	bool isSpecialArea = (0xD840 <= i && i <= 0xD87F || 0xD8B0 <= i && i <= 0xD8FF);
+	int diff = i - (isSpecialArea ? i < 0xD8B0 ? 0xD840 : 0xD8B0 : 0xD800);
+	int segment = isSpecialArea ? 0xF2 : 0x41;
+	byte lower = 0x3F;//(byte) (isSpecialArea ? 0x3F : 0x3E);
+	return new byte [] {
+		(byte) (segment + diff / 254),
+		(byte) (diff % 254 + 2),
+		1,
+		lower, 1,
+		lower, 1,
+		1,
+		0
+		};
+}
+#endregion
+
+
 		// FIXME: fill the table
 		static char [] tailorings = new char [] {};
 
@@ -53,6 +115,9 @@ static byte [] GetSortKeyRaw (int i)
 			UnicodeCategory uc = Char.GetUnicodeCategory ((char) i);
 			// This check eliminates some extraneous code areas
 			if (uc == UnicodeCategory.OtherNotAssigned)
+				return true;
+			// Some characters in Surrogate area are ignored.
+			if (0xD880 <= i && i < 0xDB80)
 				return true;
 			return ignorableFlags [i] == 7;
 		}

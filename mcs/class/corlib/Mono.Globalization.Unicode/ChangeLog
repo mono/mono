@@ -1,3 +1,14 @@
+2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : now parses DerivedAge.txt (right
+	  now not used thouth). Filled CJK ideograph, still not perfect.
+	  Fixed number primary keys. NFKD numbers and CJK ideographs are now
+	  considered, including brackets elimination.
+	* Makefile : now it downloads DerivedAge.txt.
+	* MSCompatUnicodeTable.template : added dummy code dumper. It computes
+	  PrivateUse, Surrogate and Hangul Syllables.
+	* Collation-notes.txt : Noted that Hangul Syllables need more love.
+
 2005-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-tailorings.cs : added configuration support. sort them.

@@ -834,8 +834,9 @@
 	15 (52 02-7E C8) hangul, mixing combined ones
 
 	  It starts from 1100. After width-insensitive equivalents, those
-	  syllables (from AC00) follow (until AE4B). It follows kinda based
-	  on some formula (sometimes it looks not e.g. 1117).
+	  syllables (from AC00) follow (until <del>AE4B</del>D7A3).
+	  It follows kinda based on some formula (sometimes it looks not
+	  e.g. 1117). FIXME: this area should be clarified more.
 
 	  Hangle Syllables should not be filled in the table. Instead, they
 	  can be easily computed by the following formulum:
