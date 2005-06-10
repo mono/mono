@@ -1,3 +1,10 @@
+2005-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeProviderTest.cs: added batch of tests that check whether
+	temporary files are cleaned up, compile multiple sources/compile units
+	and files. Use separate AppDomain for tests that actually loaded
+	the compiled assembly, to ensure no test output is left on the system.
+
 2005-06-05  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeProviderTest.cs: moved to using NUnit 2.x Assert, improve

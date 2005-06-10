@@ -1,3 +1,9 @@
+2005-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeCompiler.cs: ArgumentException was thrown when more than 
+	one file/source or CodeCompileUnit is built, temporary files were
+	not cleaned up. Fixes bug #75191.
+
 2005-05-29  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeCompiler.cs: Load compiled assembly from byte array if
