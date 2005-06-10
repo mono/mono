@@ -65,7 +65,7 @@ namespace System.Windows.Forms
 				this.SetStyle(ControlStyles.Opaque, true);
 				this.SetStyle(ControlStyles.ResizeRedraw, true);
 				this.SetStyle(ControlStyles.UserPaint, true);
-				this.SetStyle(ControlStyles.Selectable, false);
+				this.GotFocus += new EventHandler(UpDownSpinner_GotFocus);
 
 				tmrRepeat = new Timer();
 
@@ -132,6 +132,10 @@ namespace System.Windows.Forms
 				if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y)) {
 					owner.DownButton();
 				}
+			}
+
+			private void UpDownSpinner_GotFocus(object sender, EventArgs e) {
+				this.Select(owner.txtView);
 			}
 			#endregion	// Private & Internal Methods
 
@@ -256,6 +260,8 @@ namespace System.Windows.Forms
 
 			Controls.Add(txtView);
 			Controls.Add(spnSpinner);
+
+			this.ActiveControl = txtView;
 
 			Height = PreferredHeight;
 			base.BackColor = txtView.BackColor;

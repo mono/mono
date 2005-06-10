@@ -1,3 +1,10 @@
+2005-06-10  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs(Select): Moved SetFocus call to avoid potential
+	  loops if controls change the active control when getting focus
+	* UpDownBase.cs: Fixes to allow proper keyboard focus after clicking
+	  the up/down buttons
+
 2005-06-10  Matthias Felgner  <matthiasf@voelcker.ocm>
 
 	* ImageListConverter.cs: Implemented

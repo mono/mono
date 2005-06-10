@@ -742,11 +742,11 @@ namespace System.Windows.Forms
 
 			control.is_selected = true;
 
-			XplatUI.SetFocus(control.window.Handle);
 			container = GetContainerControl();
 			if (container != null) {
 				container.ActiveControl = control;
 			}
+			XplatUI.SetFocus(control.window.Handle);
 			return true;
 		}
 
