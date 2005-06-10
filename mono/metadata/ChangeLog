@@ -1,3 +1,9 @@
+2005-06-10  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_generic_2): Read the nested classes
+	from the metadata rather than from `gklass->nested_classes' since
+	`gklass' might not be initialized yet.
+
 2005-06-09  Duncan Mak  <duncan@novell.com>
 
 	* *.h: Added G_BEGIN_DECLS and G_END_DECLS where appropriate to
