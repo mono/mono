@@ -29,10 +29,14 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class SymmetricAlgorithm : IDisposable {
 		protected int BlockSizeValue; 
 		protected int FeedbackSizeValue; 

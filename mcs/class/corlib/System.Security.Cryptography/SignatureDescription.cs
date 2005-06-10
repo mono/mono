@@ -6,11 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,12 +33,15 @@
 // http://www.csharpfriends.com/Members/Main/Classes/get_class.aspx?assembly=mscorlib,%20Version=1.0.3300.0,%20Culture=neutral,%20PublicKeyToken=b77a5c561934e089&namespace=System.Security.Cryptography&class=SignatureDescription
 // Those 2 classes are returned by CryptoConfig.CreateFromName and used in XMLDSIG
 
-using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Security;
 
 namespace System.Security.Cryptography {
 	
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public class SignatureDescription {
 
 	private string _DeformatterAlgorithm;

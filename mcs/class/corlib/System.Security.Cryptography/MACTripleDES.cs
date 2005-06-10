@@ -2,10 +2,10 @@
 // MACTripleDES.cs: Handles MAC with TripleDES
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,6 +39,9 @@ namespace System.Security.Cryptography {
 	//	http://www.itl.nist.gov/fipspubs/fip81.htm
 	
 	// LAMESPEC: MACTripleDES == MAC-CBC using TripleDES (not MAC-CFB).
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class MACTripleDES: KeyedHashAlgorithm {
 	
 		private TripleDES tdes;

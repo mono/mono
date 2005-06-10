@@ -35,6 +35,9 @@ namespace System.Security.Cryptography {
 	// Note: This class isn't used by Mono as all algorithms are provided with
 	// 100% managed implementations.
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class CryptoAPITransform : ICryptoTransform {
 
 		private bool m_disposed;

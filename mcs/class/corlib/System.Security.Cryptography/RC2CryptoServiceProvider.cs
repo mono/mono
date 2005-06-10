@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,6 +39,9 @@ namespace System.Security.Cryptography {
 	// a.	IETF RFC2286: A Description of the RC2(r) Encryption Algorithm
 	//	http://www.ietf.org/rfc/rfc2268.txt
 	
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class RC2CryptoServiceProvider : RC2 {
 
 		private bool _useSalt;

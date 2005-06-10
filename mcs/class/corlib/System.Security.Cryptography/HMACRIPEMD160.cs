@@ -2,13 +2,10 @@
 // HMACRIPEMD160.cs: HMAC implementation using RIPEMD160
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,26 +29,25 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
+	[ComVisible (true)]
 	public class HMACRIPEMD160 : HMAC {
 
-		public HMACRIPEMD160 () : this (KeyBuilder.Key (8)) {}
+		public HMACRIPEMD160 () 
+			: this (KeyBuilder.Key (8))
+		{
+		}
 
 		public HMACRIPEMD160 (byte[] rgbKey) : base () 
 		{
 			HashName = "RIPEMD160";
 			HashSizeValue = 160;
 			Key = rgbKey;
-		}
-
-		~HMACRIPEMD160 () 
-		{
-			Dispose (false);
 		}
 	}
 }

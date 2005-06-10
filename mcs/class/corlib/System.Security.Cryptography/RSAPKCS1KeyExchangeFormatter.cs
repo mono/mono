@@ -28,6 +28,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -35,6 +36,9 @@ namespace System.Security.Cryptography {
 	// LAMESPEC: There seems no way to select a hash algorithm. The default 
 	// algorithm, is SHA1 because the class use the PKCS1MaskGenerationMethod -
 	// which default to SHA1.
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class RSAPKCS1KeyExchangeFormatter: AsymmetricKeyExchangeFormatter
 	{
 		private RSA rsa;

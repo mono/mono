@@ -29,10 +29,12 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 
 namespace System.Security.Cryptography {
 
+	[ComVisible (true)]
 	public sealed class CspKeyContainerInfo {
 
 		private CspParameters _params;

@@ -2,10 +2,10 @@
 // HMACSHA1.cs: Handles HMAC with SHA-1
 //
 // Author:
-//	Sebastien Pouliot <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +28,7 @@
 //
 
 using System.IO;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
@@ -133,9 +134,11 @@ namespace System.Security.Cryptography {
 		}
 	}
 #else
+	[ComVisible (true)]
 	public class HMACSHA1 : HMAC {
 
-		public HMACSHA1 () : this (KeyBuilder.Key (8))
+		public HMACSHA1 ()
+			: this (KeyBuilder.Key (8))
 		{
 		}
 
@@ -144,11 +147,6 @@ namespace System.Security.Cryptography {
 			HashName = "SHA1";
 			HashSizeValue = 160;
 			Key = rgbKey;
-		}
-
-		~HMACSHA1 () 
-		{
-			Dispose (false);
 		}
 	}
 #endif

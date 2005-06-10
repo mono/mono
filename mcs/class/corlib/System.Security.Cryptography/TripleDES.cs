@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,8 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -40,6 +40,9 @@ namespace System.Security.Cryptography {
 //	not free :-(
 //	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public abstract class TripleDES : SymmetricAlgorithm {
 
 	public TripleDES ()

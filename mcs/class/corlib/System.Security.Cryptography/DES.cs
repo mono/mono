@@ -29,6 +29,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 // References:
 // a.	FIPS PUB 46-3: Data Encryption Standard
@@ -36,6 +37,9 @@ using System.Globalization;
 
 namespace System.Security.Cryptography {
 
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public abstract class DES : SymmetricAlgorithm {
 
 	private const int keySizeByte = 8;

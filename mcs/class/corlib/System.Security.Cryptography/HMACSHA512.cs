@@ -2,13 +2,10 @@
 // HMACSHA512.cs: HMAC implementation using SHA512
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,26 +29,25 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
+	[ComVisible (true)]
 	public class HMACSHA512 : HMAC {
 
-		public HMACSHA512 () : this (KeyBuilder.Key (8)) {}
+		public HMACSHA512 ()
+			: this (KeyBuilder.Key (8))
+		{
+		}
 
 		public HMACSHA512 (byte[] rgbKey) : base () 
 		{
 			HashName = "SHA512";
 			HashSizeValue = 512;
 			Key = rgbKey;
-		}
-
-		~HMACSHA512 () 
-		{
-			Dispose (false);
 		}
 	}
 }

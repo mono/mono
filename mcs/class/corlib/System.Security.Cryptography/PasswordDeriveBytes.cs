@@ -28,6 +28,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Security.Cryptography {
@@ -38,6 +39,9 @@ namespace System.Security.Cryptography {
 // b.	IETF RFC2898: PKCS #5: Password-Based Cryptography Specification Version 2.0
 //	http://www.rfc-editor.org/rfc/rfc2898.txt
 
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public class PasswordDeriveBytes : DeriveBytes {
 
 	private string HashNameValue;

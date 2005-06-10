@@ -9,7 +9,7 @@
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,6 +40,7 @@ using Mono.Security.Cryptography;
 namespace System.Security.Cryptography {
 
 #if NET_2_0
+	[ComVisible (true)]
 	public sealed class DSACryptoServiceProvider : DSA, ICspAsymmetricAlgorithm {
 #elif NET_1_1
 	public sealed class DSACryptoServiceProvider : DSA {

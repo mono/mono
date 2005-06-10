@@ -34,6 +34,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
 
@@ -41,6 +42,9 @@ using Mono.Xml;
 
 namespace System.Security.Cryptography {
 
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public class CryptoConfig {
 
 	static private object lockObject;

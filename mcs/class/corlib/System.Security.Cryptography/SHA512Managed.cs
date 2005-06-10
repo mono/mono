@@ -8,11 +8,7 @@
 // (C) 2002
 // Implementation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,10 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
+#if NET_2_0
+[ComVisible (true)]
+#endif
 public class SHA512Managed : SHA512 {
 
 	private byte[] xBuf;

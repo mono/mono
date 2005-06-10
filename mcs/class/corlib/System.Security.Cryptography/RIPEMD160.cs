@@ -5,10 +5,7 @@
 //	Pieter Philippaerts (Pieter@mentalis.org)
 //
 // (C) 2003 The Mentalis.org Team (http://www.mentalis.org/)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,12 +29,15 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	/// <summary>
 	/// Represents the abstract class from which all implementations of the <see cref="RIPEMD160"/> hash algorithm inherit.
 	/// </summary>
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class RIPEMD160 : HashAlgorithm {
 		/// <summary>
 		/// Initializes a new instance of <see cref="RIPEMD160"/>.

@@ -31,9 +31,13 @@
 
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class HashAlgorithm : ICryptoTransform {
 
 		protected byte[] HashValue;

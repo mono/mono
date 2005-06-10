@@ -28,11 +28,15 @@
 //
 
 #if NET_2_0
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 #endif
 
 namespace System.Security.Cryptography {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class CspParameters {
 
 		private CspProviderFlags _Flags;

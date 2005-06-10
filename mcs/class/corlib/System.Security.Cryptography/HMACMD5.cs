@@ -2,13 +2,10 @@
 // HMACMD5.cs: HMAC implementation using MD5
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +29,7 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
@@ -45,21 +42,19 @@ namespace System.Security.Cryptography {
 	// b.	IETF RFC2202: Test Cases for HMAC-MD5 and HMAC-SHA-1
 	//	(include C source for HMAC-MD5 and HAMAC-SHA1)
 	//	http://www.ietf.org/rfc/rfc2202.txt
-
+	[ComVisible (true)]
 	public class HMACMD5 : HMAC {
 
-		public HMACMD5 () : this (KeyBuilder.Key (8)) {}
+		public HMACMD5 () 
+			: this (KeyBuilder.Key (8))
+		{
+		}
 
 		public HMACMD5 (byte[] rgbKey) : base ()
 		{
 			HashName = "MD5";
 			HashSizeValue = 128;
 			Key = rgbKey;
-		}
-
-		~HMACMD5 () 
-		{
-			Dispose (false);
 		}
 	}
 }

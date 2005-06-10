@@ -8,7 +8,7 @@
 //     - http://www.esat.kuleuven.ac.be/~cosicart/ps/AB-9601/
 //
 // (C) 2003 The Mentalis.org Team (http://www.mentalis.org/)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,6 +38,7 @@ namespace System.Security.Cryptography {
 	/// <summary>
 	/// Computes the <see cref="RIPEMD160"/> hash for the input data.
 	/// </summary>
+	[ComVisible (true)]
 	public class RIPEMD160Managed : RIPEMD160 { // not 'sealed' according to preliminary docs; this may change though
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RIPEMD160Managed"/> class. This class cannot be inherited.

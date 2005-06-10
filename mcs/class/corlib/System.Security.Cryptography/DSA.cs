@@ -28,8 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using Mono.Xml;
@@ -41,6 +41,9 @@ using Mono.Security;
 
 namespace System.Security.Cryptography {
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class DSA : AsymmetricAlgorithm	{
 
 #if NET_2_0

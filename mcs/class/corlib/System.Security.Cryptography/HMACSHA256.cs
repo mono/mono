@@ -2,13 +2,10 @@
 // HMACSHA256.cs: HMAC implementation using SHA256
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,26 +29,25 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
+	[ComVisible (true)]
 	public class HMACSHA256 : HMAC {
 
-		public HMACSHA256 () : this (KeyBuilder.Key (8)) {}
+		public HMACSHA256 () 
+			: this (KeyBuilder.Key (8))
+		{
+		}
 
 		public HMACSHA256 (byte[] rgbKey) : base () 
 		{
 			HashName = "SHA256";
 			HashSizeValue = 256;
 			Key = rgbKey;
-		}
-
-		~HMACSHA256 () 
-		{
-			Dispose (false);
 		}
 	}
 }

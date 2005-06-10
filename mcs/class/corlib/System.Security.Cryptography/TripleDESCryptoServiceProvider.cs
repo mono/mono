@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -39,6 +39,9 @@ namespace System.Security.Cryptography {
 	//	not free :-(
 	//	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 	
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class TripleDESCryptoServiceProvider : TripleDES {
 	
 		public TripleDESCryptoServiceProvider ()

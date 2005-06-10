@@ -29,12 +29,14 @@
 
 #if NET_2_0
 
+using System.Runtime.InteropServices;
 using System.Text;
 
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
 
+	[ComVisible (true)]
 	public class Rfc2898DeriveBytes : DeriveBytes {
 
 		private const int defaultIterations = 1000;

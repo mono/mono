@@ -5,7 +5,7 @@
 //	Andrew Birkett (andy@nobugs.org)
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
@@ -35,6 +35,9 @@ namespace System.Security.Cryptography {
 	// a.	IETF RFC2286: A Description of the RC2(r) Encryption Algorithm
 	//	http://www.ietf.org/rfc/rfc2268.txt
 
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class RC2 : SymmetricAlgorithm {
 
 		public static new RC2 Create () 
