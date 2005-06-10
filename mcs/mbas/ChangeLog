@@ -1,4 +1,7 @@
 2005-06-10 Manjula GHM <mmanjula@novell.com>
+	*assign: To Support Optional Max. Insert length value in Mid statement
+
+2005-06-10 Manjula GHM <mmanjula@novell.com>
 	*assign.cs: Allow New Date assignment to other types
 
 2005-06-08 Rafael Teixeira <rafaelteixeirabr@hotmail.com>

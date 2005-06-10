@@ -246,12 +246,21 @@ namespace Mono.MonoBASIC {
                         			Expression etmp;
                         			ArrayList arglist = new ArrayList();
 	
-                        			Argument arg4;
+                        			Argument arg3,arg4;
                         			Expression e = null;
                         			eclass = ExprClass.Value;
 	
                          			arglist  = i.Arguments;
-	
+		
+						// If maximum Insert Length value is ommitted	
+						if(arglist.Count == 2 && source.Type == TypeManager.string_type) {
+							string val = null;
+							val = ((StringConstant) source).Value.ToString();
+							int maxInsertLength = val.Length;	
+		                        		arg3 = new Argument (new IntLiteral(maxInsertLength), Argument.AType.Expression);
+		                        		arglist.Add (arg3);
+						}
+
                         			etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.StringType.MidStmtStr", loc);
 						//Get fourth argument and add it to argument list
 	
