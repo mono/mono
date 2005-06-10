@@ -68,6 +68,13 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void EmptyNameConstructor ()
+		{
+			StrongName sn = new StrongName (snpkb, String.Empty, version);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullVersionConstructor () 
 		{
