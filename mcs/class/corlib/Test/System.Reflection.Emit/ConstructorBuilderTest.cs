@@ -92,16 +92,15 @@ public class ConstructorBuilderTest : Assertion
 		cb.InitLocals = false;
 		AssertEquals ("InitLocals is settable", cb.InitLocals, false);
 	}
-
+	
+	[Test]
+	[Category ("NotWorking")]
+	[ExpectedException (typeof(NotSupportedException))]
 	public void TestMethodHandle () {
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [0]);
 
-		try {
-			RuntimeMethodHandle handle = cb.MethodHandle;
-			Fail ();
-		} catch (NotSupportedException) {
-		}
+		RuntimeMethodHandle handle = cb.MethodHandle;
 	}
 
 	public void TestName () {

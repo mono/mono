@@ -104,16 +104,15 @@ public class MethodBuilderTest : Assertion
 		mb.InitLocals = false;
 		Assert ("InitLocals is settable", !mb.InitLocals);
 	}
-
+	
+	[Test]
+	[Category ("NotWorking")]
+	[ExpectedException (typeof(NotSupportedException))]
 	public void TestMethodHandle () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
 
-		try {
-			RuntimeMethodHandle handle = mb.MethodHandle;
-			Fail ();
-		} catch (NotSupportedException) {
-		}
+		RuntimeMethodHandle handle = mb.MethodHandle;
 	}
 
 	public void TestName () {
