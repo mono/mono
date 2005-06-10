@@ -1,3 +1,9 @@
+2005-06-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetTest.cs: Added tests for GetPermission with null and 
+	when using a subclass of a permission. Also some new (not working)
+	tests for NET_2_0.
+
 2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs: Added unification tests for permissions inside

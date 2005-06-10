@@ -582,6 +582,13 @@ namespace MonoTests.System.Security {
 		}
 #endif
 		[Test]
+		public void GetPermission_Null ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			AssertNull ("Empty", ps.GetPermission (null));
+		}
+
+		[Test]
 		public void GetPermission_None ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
@@ -593,6 +600,15 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			AssertNull ("Empty", ps.GetPermission (typeof (SecurityPermission)));
+		}
+
+		[Test]
+		public void GetPermission_Subclass ()
+		{
+			IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.Unrestricted);
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (isfp);
+			AssertNull ("Subclass", ps.GetPermission (typeof (IsolatedStoragePermission)));
 		}
 
 		private void Compare (string msg, PermissionSet ps, bool unrestricted, int count)
@@ -982,7 +998,24 @@ namespace MonoTests.System.Security {
 			Compare ("UPS2+ZIP U UPS1", ups2.Union (ups1), true, 1);
 #endif
 		}
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")] // requires imperative stack modifiers
+		[ExpectedException (typeof (ExecutionEngineException))]
+		public void RevertAssert_WithoutAssertion ()
+		{
+			PermissionSet.RevertAssert ();
+		}
 
+		[Test]
+		[Category ("NotWorking")] // requires imperative stack modifiers
+		public void RevertAssert_WithAssertion ()
+		{
+			PermissionSet ups = new PermissionSet (PermissionState.Unrestricted);
+			ups.Assert ();
+			PermissionSet.RevertAssert ();
+		}
+#endif
 		[Test]
 		public void Assert_NonCasPermission ()
 		{
