@@ -1,4 +1,7 @@
 2005-06-10 Manjula GHM <mmanjula@novell.com>
+	*assign: To Support other types of source in Mid statement
+
+2005-06-10 Manjula GHM <mmanjula@novell.com>
 	*assign: To Support Optional Max. Insert length value in Mid statement
 
 2005-06-10 Manjula GHM <mmanjula@novell.com>

@@ -252,10 +252,10 @@ namespace Mono.MonoBASIC {
 	
                          			arglist  = i.Arguments;
 		
-						// If maximum Insert Length value is ommitted	
-						if(arglist.Count == 2 && source.Type == TypeManager.string_type) {
+						// If maximum Insert Length value is omitted	
+						if(arglist.Count == 2) {
 							string val = null;
-							val = ((StringConstant) source).Value.ToString();
+							val = source.ToString();
 							int maxInsertLength = val.Length;	
 		                        		arg3 = new Argument (new IntLiteral(maxInsertLength), Argument.AType.Expression);
 		                        		arglist.Add (arg3);
