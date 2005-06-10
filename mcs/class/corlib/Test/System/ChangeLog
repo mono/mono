@@ -1,3 +1,7 @@
+2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConvertTest.cs: added new tests for FromBase64String.
+
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ModuleHandleTest.cs: Renamed PortableExecutableKind to *Kinds to fix
