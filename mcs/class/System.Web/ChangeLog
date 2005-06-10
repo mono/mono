@@ -1,3 +1,9 @@
+2005-06-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: New files:
+		System.Web.Security/MembershipValidatePasswordEventHandler.cs
+		System.Web.Security/ValidatePasswordEventArgs.cs
+
 2005-05-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
