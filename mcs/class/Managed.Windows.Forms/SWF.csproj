@@ -549,6 +549,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DataSourceHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DateBoldEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -845,6 +850,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ImageList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ImageListConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1800,6 +1810,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\VScrollBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\Win32DnD.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\X11Dnd.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
