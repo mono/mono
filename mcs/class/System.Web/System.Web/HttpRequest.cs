@@ -224,9 +224,12 @@ namespace System.Web {
 				_oFormData = new HttpValueCollection (data, true, enc);
 				return;
 			}
+
 			if (!ContentType.StartsWith ("multipart/form-data")) {
 				if (contentType.Length > 0)
 					Console.WriteLine ("Content-Type -> {0} not supported", contentType);
+
+				GetRawContent (); // at least, read the data and check length validity
 				_oFormData = new HttpValueCollection ();
 				return;
 			}
@@ -268,37 +271,38 @@ namespace System.Web {
 			int length = ContentLength;
 			HttpRuntimeConfig cfg = (HttpRuntimeConfig) _oContext.GetConfig ("system.web/httpRuntime");
 			int maxRequestLength = cfg.MaxRequestLength * 1024;
-			if (ContentLength > maxRequestLength)
+			if (length > maxRequestLength) {
 				throw new HttpException (400, "Maximum request length exceeded.");
+			}
 				
 			if (_WorkerRequest.IsEntireEntityBodyIsPreloaded () || length <= _arrRawContent.Length)
 				return _arrRawContent;
 
-			byte [] arrBuffer = new byte [Math.Min (16384, length)];
-			MemoryStream ms = new MemoryStream (arrBuffer.Length);
-			ms.Write (_arrRawContent, 0, _arrRawContent.Length);
+			byte [] result = new byte [length];
+			int offset = _arrRawContent.Length;
+			Buffer.BlockCopy (_arrRawContent, 0, result, 0, offset);
+
 			int read = 0;
+			byte [] arrBuffer = new byte [Math.Min (16384, length)];
 			int bufLength = arrBuffer.Length;
-			for (int loaded = _arrRawContent.Length; loaded < length; loaded += read) {
-				if (length - loaded < bufLength)
-					bufLength = length - loaded;
+			for (; offset < length; offset += read) {
+				if (length - offset < bufLength)
+					bufLength = length - offset;
 
 				read = _WorkerRequest.ReadEntityBody (arrBuffer, bufLength);
 				if (read == 0 ||read == -1 )
 					break;
 
-				if (ContentLength > maxRequestLength || ms.Length + read > maxRequestLength)
+				if (length > maxRequestLength || offset + read > maxRequestLength)
 					throw new HttpException (400, "Maximum request length exceeded.");
 
-				ms.Write (arrBuffer, 0, read);
+				Buffer.BlockCopy (arrBuffer, 0, result, offset, read);
 			}
 
-			byte [] msBuffer = ms.GetBuffer ();
-			if (msBuffer.Length == length)
-				_arrRawContent = msBuffer;
-			else
-				_arrRawContent = ms.ToArray ();
+			if (offset < length)
+				throw new HttpException (400, "Data length is shorter than Content-Length.");
 
+			_arrRawContent = result;
 			if (userFilter != null) {
 				requestFilter.Set (_arrRawContent, 0, _arrRawContent.Length);
 				int userLength = Convert.ToInt32 (userFilter.Length - userFilter.Position);
