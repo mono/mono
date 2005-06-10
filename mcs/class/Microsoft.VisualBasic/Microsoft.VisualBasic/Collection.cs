@@ -154,9 +154,11 @@ namespace Microsoft.VisualBasic {
 					throw new IndexOutOfRangeException();
 				}
 			}
+#if NET_2_0
 		}
 
 		System.Object IList.this[System.Int32 Index] {
+#endif
 			set {
 				throw new NotImplementedException();
 			}
