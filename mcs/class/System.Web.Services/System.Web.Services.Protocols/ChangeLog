@@ -1,3 +1,10 @@
+2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs: use the HttpResponse.BufferOutput
+	instead of our own MemoryStream when buffering is enabled. Flush the
+	response instead of closing it, as that allows for Content-Length to
+	be sent from HttpResponse and helps reusing connections.
+
 2005-06-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebServiceHelper.cs: don't even try to read the response if its length

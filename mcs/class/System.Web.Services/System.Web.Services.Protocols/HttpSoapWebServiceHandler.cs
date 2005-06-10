@@ -247,19 +247,10 @@ namespace System.Web.Services.Protocols
 			response.ContentType = "text/xml; charset=utf-8";
 			if (message.Exception != null) response.StatusCode = 500;
 
-			long contentLength = 0;
-			Stream outStream = null;
-			MemoryStream bufferStream = null;
 			Stream responseStream = response.OutputStream;
+			Stream outStream = responseStream;
 			bool bufferResponse = (methodInfo == null || methodInfo.MethodAttribute.BufferResponse);
-			
-			if (bufferResponse)
-			{
-				bufferStream = new MemoryStream ();
-				outStream = bufferStream;
-			}
-			else
-				outStream = responseStream;
+			response.BufferOutput = bufferResponse;
 
 			try
 			{
@@ -292,8 +283,7 @@ namespace System.Web.Services.Protocols
 					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
 				}
 				
-				if (bufferStream != null) contentLength = bufferStream.Length;
-				xtw.Close ();
+				xtw.Flush ();
 			}
 			catch (Exception ex)
 			{
@@ -306,15 +296,6 @@ namespace System.Web.Services.Protocols
 				responseStream.Close ();
 				return;
 			}
-			
-			try
-			{
-				if (bufferResponse)
-					responseStream.Write (bufferStream.GetBuffer(), 0, (int) contentLength);
-			}
-			catch {}
-			
-			responseStream.Close ();
 		}
 
 		void SerializeFault (HttpContext context, SoapServerMessage requestMessage, Exception ex)
