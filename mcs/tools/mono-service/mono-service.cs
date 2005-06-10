@@ -38,19 +38,11 @@ class MonoServiceRunner : MarshalByRefObject
 		Environment.Exit (1);
 	}
 
-	delegate void sighandler_t (int arg);
-	
-	AutoResetEvent signal_event;
-
-	[DllImport ("libc")]
-	extern static int signal (int signum, sighandler_t handler);
-
 	int signum;
 	
 	void my_handler (int sig)
 	{
 		signum = sig;
-		signal_event.Set ();
 	}
 
 	static void call (object o, string method, object [] arg)
@@ -161,20 +153,14 @@ class MonoServiceRunner : MarshalByRefObject
 	public int StartService ()
 	{
 		try	{
-			//
-			// Setup signals
-			//
-			signal_event = new AutoResetEvent (false);
-	
 			// Invoke all the code used in the signal handler, so the JIT does
 			// not kick-in inside the signal handler
-			signal_event.Set ();
-			signal_event.Reset ();
-	
+			my_handler (0);
+			
 			// Hook up 
-			signal (UnixConvert.FromSignum (Signum.SIGTERM), new sighandler_t (my_handler));
-			signal (UnixConvert.FromSignum (Signum.SIGUSR1), new sighandler_t (my_handler));
-			signal (UnixConvert.FromSignum (Signum.SIGUSR2), new sighandler_t (my_handler));
+			Stdlib.signal (Signum.SIGTERM, new SignalHandler (my_handler));
+			Stdlib.signal (Signum.SIGUSR1, new SignalHandler (my_handler));
+			Stdlib.signal (Signum.SIGUSR2, new SignalHandler (my_handler));
 	
 			// Load service assembly
 			Assembly a = null;
@@ -222,8 +208,9 @@ class MonoServiceRunner : MarshalByRefObject
 			return 0;
 			
 		} catch ( Exception ex ) {
-			for (Exception e = ex; e != null; e = e.InnerException)
+			for (Exception e = ex; e != null; e = e.InnerException) {
 				error (logname, e.Message);
+			}
 			
 			return 1;
 		}
@@ -258,7 +245,9 @@ class MonoServiceRunner : MarshalByRefObject
 			info (logname, "Service {0} started", service.ServiceName);
 	
 			for (bool running = true; running; ){
-				signal_event.WaitOne ();
+				// Poll only after 500ms
+				Thread.Sleep (500);
+				
 				Signum v;
 				
 				if (UnixConvert.TryToSignum (signum, out v)){

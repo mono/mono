@@ -1,3 +1,10 @@
+2005-06-10  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* mono-service.cs: Removed AutoResetEvent code from signal
+	handler because it was unsafe and not guaranteed to work. 
+	Use polling in main loop instead.
+	Use signal functions from Mono.Unix instead of self defined ones.
+	
 2005-06-01  Raja R Harinath  <rharinath@novell.com>
 
 	* mono-service.cs (MonoServiceRunner.Main): Replace LockFlags with
