@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -634,6 +635,9 @@ namespace System.Security.Cryptography {
 		}
 	} 
 	
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DESCryptoServiceProvider : DES {
 	
 		public DESCryptoServiceProvider () : base ()
