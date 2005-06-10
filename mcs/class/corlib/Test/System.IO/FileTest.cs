@@ -619,18 +619,12 @@ namespace MonoTests.System.IO
                 public void CreationTime ()
                 {
 			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform != 4) && (platform != 128))
+			if ((platform == 4) || (platform == 128))
 				return;
 
-                        string path = TempFolder + Path.DirectorySeparatorChar + "creationTime";                	
-                        if (File.Exists (path))
-                        	File.Delete (path);
-                        FileStream stream = null;	
+                        string path = Path.GetTempFileName ();	
                        	
                        	try {
-                       		stream = File.Create (path);
-                		stream.Close ();                	
-                	
                 		File.SetCreationTime (path, new DateTime (2002, 4, 6, 4, 6, 4));
                 		DateTime time = File.GetCreationTime (path);
                 		Assertion.AssertEquals ("test#01", 2002, time.Year);
@@ -661,8 +655,6 @@ namespace MonoTests.System.IO
                 		Assertion.AssertEquals ("test#19", 4, time.Hour);
                 		Assertion.AssertEquals ("test#20", 4, time.Second);
                        	} finally {
-                       		if (stream != null)
-                       			stream.Close ();
                        		DeleteFile (path);
                        	}
                 }

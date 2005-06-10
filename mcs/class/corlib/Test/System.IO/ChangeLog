@@ -1,3 +1,8 @@
+2005-06-10  Ben Maurer  <bmaurer@ximian.com>
+
+	* FileTest.cs: Fix gonz's typo. Also, clean stuff up by using the
+	temp file api, rather than our own hack.
+
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileTest.cs: yet more invalid array accesses removed.
