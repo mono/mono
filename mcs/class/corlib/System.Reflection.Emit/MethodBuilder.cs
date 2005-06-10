@@ -126,7 +126,7 @@ namespace System.Reflection.Emit {
 
 		public override RuntimeMethodHandle MethodHandle {
 			get {
-				throw NotSupported ();
+				return mhandle;
 			}
 		}
 

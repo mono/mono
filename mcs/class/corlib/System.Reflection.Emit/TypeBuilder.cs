@@ -1468,7 +1468,7 @@ namespace System.Reflection.Emit {
 
 		public override bool HasGenericArguments {
 			get {
-				throw new NotImplementedException ();
+				return generic_params != null;
 			}
 		}
 
@@ -1511,6 +1511,33 @@ namespace System.Reflection.Emit {
 		{
 			return DefineMethod (name, attributes, CallingConventions.Standard, null, null);
 		}
+
+                public static ConstructorInfo GetConstructor (Type instanciated, ConstructorInfo ctor)
+                {
+			ConstructorInfo res = instanciated.GetConstructor (ctor);
+			if (res == null)
+				throw new System.Exception ("constructor not found");
+			else
+				return res;
+                }
+
+                public static MethodInfo GetMethod (Type instanciated, MethodInfo meth)
+                {
+			MethodInfo res = instanciated.GetMethod (meth);
+			if (res == null)
+				throw new System.Exception ("method not found");
+			else
+				return res;
+                }
+
+                public static FieldInfo GetField (Type instanciated, FieldInfo fld)
+                {
+			FieldInfo res = instanciated.GetField (fld);
+			if (res == null)
+				throw new System.Exception ("field not found");
+			else
+				return res;
+                }
 #endif
 	}
 }

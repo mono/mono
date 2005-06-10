@@ -1,3 +1,11 @@
+2005-06-09  Kamil Skalski <nazgul@nemerle.org>
+	* ConstructorBuilder.cs FieldBuilders.cs MethodBuilder.cs: Return
+	RuntimeHandles when requested
+	
+	* TypeBuilder.cs: Add static Get{Method,Constructor,Field} methods
+	from .NET 2.0 beta 2 API for obtaining instanciated *Info objects
+	from non-instanciated counterparts 
+
 2005-06-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ConstructorBuilder.cs FieldBuilder.cs MethodBuilder.cs PropertyBuilder.cs:
