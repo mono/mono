@@ -138,9 +138,8 @@ namespace System.Windows.Forms
 
 		public bool Contains (DataGridColumnStyle column)
 		{
-			return items.Contains (column);
+			return (FromColumnNameToIndex (column.MappingName) != -1);
 		}
-
 		
 		public bool Contains (PropertyDescriptor propDesc)
 		{
@@ -149,7 +148,7 @@ namespace System.Windows.Forms
 
 		public bool Contains (string name)
 		{
-			return (this[name] != null);
+			return (FromColumnNameToIndex (name) != -1);
 		}
 
 		void ICollection.CopyTo (Array dest, int index)

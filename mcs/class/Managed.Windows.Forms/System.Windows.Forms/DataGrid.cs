@@ -183,6 +183,7 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public DataGrid ()
 		{
+			grid_drawing = new DataGridDrawing (this);
 			allow_navigation = true;
 			allow_sorting = true;
 			alternating_backcolor = def_alternating_backcolor;
@@ -240,10 +241,8 @@ namespace System.Windows.Forms
 			horiz_scrollbar = new HScrollBar ();
 			horiz_scrollbar.Scroll += new ScrollEventHandler  (GridHScrolled);
 			vert_scrollbar = new VScrollBar ();
-			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);
-			grid_drawing = new DataGridDrawing (this);
-			KeyUp += new KeyEventHandler (OnKeyUpDG);
-			HandleCreated += new EventHandler (OnCreateHandle);
+			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);			
+			KeyUp += new KeyEventHandler (OnKeyUpDG);			
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 
@@ -488,9 +487,16 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				if (SetDataMember (value)) {
-					SetNewDataSource ();
-					Refresh ();
+				if (SetDataMember (value)) {					
+					
+					if (styles_collection.Contains (value) == true) {
+						CurrentTableStyle = styles_collection[value];
+						current_style.CreateColumnsForTable (true);
+					} else {
+						CurrentTableStyle = default_style;
+						current_style.GridColumnStyles.Clear ();
+						current_style.CreateColumnsForTable (false);
+					}					
 				}
 			}
 		}
@@ -505,8 +511,7 @@ namespace System.Windows.Forms
 
 			set {
 				if (SetDataSource (value)) {
-					SetNewDataSource ();
-					Refresh ();
+					SetNewDataSource ();					
 				}
 			}
 		}
@@ -927,6 +932,8 @@ namespace System.Windows.Forms
 			}
 			set {
 				current_style = value;
+				current_style.DataGrid = this;
+				CalcAreasAndInvalidate ();
 			}
 		}
 
@@ -1730,6 +1737,7 @@ namespace System.Windows.Forms
 
 		private bool SetDataMember (string member)
 		{
+			Console.WriteLine ("SetDataMember {0}", member);
 			if (member == datamember) {
 				return false;
 			}
@@ -1765,12 +1773,10 @@ namespace System.Windows.Forms
 		{
 			// Create Table Style
 			// Create columns Styles
-			// Bind data
-
-			current_style.DataGrid = this;
+			// Bind data				
 			current_style.GridColumnStyles.Clear ();
-			current_style.CreateColumnsForTable ();
-			grid_drawing.CalcGridAreas ();
+			current_style.CreateColumnsForTable (false);
+			CalcAreasAndInvalidate ();
 		}
 
 		private void OnKeyUpDG (object sender, KeyEventArgs e)
@@ -1786,37 +1792,37 @@ namespace System.Windows.Forms
 				break;
 			}
 		}
-
-		private void OnCreateHandle (object sender, EventArgs e)
-		{
-			Console.WriteLine ("OnCreateHandle");
-		}
-
+		
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
-		{
-			Console.WriteLine ("Datagrid.TableStyles Collection Changed {0}, null {1}", e.Action,
-				e.Element == null);
-			/*
-				TODO: What's up if there are columns in the incoming TableStyle
-			*/
+		{				
+			Console.WriteLine ("Datagrid.TableStyles Collection Changed {0}, null {1}, name src {2}, name table style {3}", 
+				e.Action,
+				e.Element == null, ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName);
+				
+			int cnt = ((DataGridTableStyle) e.Element).GridColumnStyles.Count;
+			
+			if (String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {			
+				CurrentTableStyle = (DataGridTableStyle)e.Element;
+				((DataGridTableStyle) e.Element).CreateColumnsForTable (false);				
+			}
 
-			CurrentTableStyle = (DataGridTableStyle)e.Element;
-			CurrentTableStyle.DataGrid = this;
+			
 
-			switch (e.Action)  {
-				case CollectionChangeAction.Add: {
-					((DataGridTableStyle) e.Element).CreateColumnsForTable ();
+			/*switch (e.Action)  {
+				case CollectionChangeAction.Add:
 					break;
-				}
+				
 				case CollectionChangeAction.Remove:
 					break;
+					
 				case CollectionChangeAction.Refresh:
 					break;
 
 				default:
 					break;
-			}
-
+			}*/
+			
+			CalcAreasAndInvalidate ();
 		}
 
 		private void EditCell (DataGridCell cell)

@@ -42,9 +42,9 @@ namespace System.Windows.Forms
 		}
 
 		#region Public Instance Properties
-		public DataGridTableStyle this[string columnName] {
+		public DataGridTableStyle this[string tableName] {
 			get {
-				int idx = FromColumnNameToIndex (columnName);
+				int idx = FromTableNameToIndex (tableName);
 				return idx == -1 ? null : this [idx];
 			}
 		}
@@ -91,16 +91,16 @@ namespace System.Windows.Forms
 		#endregion Public Instance Properties
 
 		#region Public Instance Methods
-		public virtual int Add (DataGridTableStyle column)
+		public virtual int Add (DataGridTableStyle table)
 		{			
-			int cnt = AddInternal (column);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
+			int cnt = AddInternal (table);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 			return cnt;
 		}
 
-		public void AddRange (DataGridTableStyle[] columns)
+		public void AddRange (DataGridTableStyle[] tables)
 		{
-			foreach (DataGridTableStyle mi in columns)
+			foreach (DataGridTableStyle mi in tables)
 				AddInternal (mi);
 
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
@@ -112,14 +112,14 @@ namespace System.Windows.Forms
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh , null));
 		}
 
-		public bool Contains (DataGridTableStyle column)
+		public bool Contains (DataGridTableStyle table)
 		{
-			return items.Contains (column);
+			return (FromTableNameToIndex (table.MappingName) != -1);
 		}
 
 		public bool Contains (string name)
 		{
-			return (this[name] != null);
+			return (FromTableNameToIndex (name) != -1);
 		}
 
 		void ICollection.CopyTo (Array dest, int index)
@@ -203,22 +203,26 @@ namespace System.Windows.Forms
 		
 		
 		#region Private Instance Methods
-		private int AddInternal (DataGridTableStyle column)
+		private int AddInternal (DataGridTableStyle table)
 		{				
-			if (FromColumnNameToIndex (column.MappingName) != -1) {
+			if (FromTableNameToIndex (table.MappingName) != -1) {
 				throw new ArgumentException ("The TableStyles collection already has a TableStyle with this mapping name");
 			}
 			
-			column.DataGrid = owner;
-			int cnt = items.Add (column);
+			table.DataGrid = owner;
+			int cnt = items.Add (table);
 			return cnt;			
 		}
 		
-		private int FromColumnNameToIndex (string columnName)
+		private int FromTableNameToIndex (string tableName)
 		{		
 			for (int i = 0; i < items.Count; i++) {
-				DataGridTableStyle column = (DataGridTableStyle) items[i];
-				if (column.MappingName == columnName) {
+				DataGridTableStyle table = (DataGridTableStyle) items[i];
+								
+				if (table.MappingName == null)
+					continue;
+
+				if (String.Compare (table.MappingName, tableName, true) == 0) {
 					return i;
 				}
 			}

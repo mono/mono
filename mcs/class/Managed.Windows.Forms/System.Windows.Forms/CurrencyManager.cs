@@ -93,6 +93,18 @@ namespace System.Windows.Forms {
 				OnPositionChanged (EventArgs.Empty);
 			}
 		}
+		
+		internal string ListName {
+			get {
+				ITypedList typed = list as ITypedList;
+				
+				if (typed == null) {
+					return finalType.Name;
+				} else {
+					return typed.GetListName (null);
+				}
+			}		
+		}
 
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{

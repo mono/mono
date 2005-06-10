@@ -109,7 +109,7 @@ namespace System.Windows.Forms
 		}
 
 		#region	Local Variables
-		private HorizontalAlignment alignment;
+		internal HorizontalAlignment alignment;
 		private int fontheight;
 		internal DataGridTableStyle table_style;
 		private string header_text;
@@ -167,10 +167,14 @@ namespace System.Windows.Forms
 			set {				
 				if (value != alignment) {
 					alignment = value;
-
+					
+					if (table_style != null && table_style.DataGrid != null) {
+						table_style.DataGrid.Invalidate ();
+					}
+					
 					if (AlignmentChanged != null) {
 						AlignmentChanged (this, EventArgs.Empty);
-					}
+					}					
 				}
 			}
 		}
@@ -250,6 +254,10 @@ namespace System.Windows.Forms
 			set {
 				if (value != null_text) {
 					null_text = value;
+					
+					if (table_style != null && table_style.DataGrid != null) {
+						table_style.DataGrid.Invalidate ();
+					}
 
 					if (NullTextChanged != null) {
 						NullTextChanged (this, EventArgs.Empty);
@@ -440,7 +448,7 @@ namespace System.Windows.Forms
 			
 			PropertyDescriptorCollection propcol = value.ListManager.GetItemProperties ();
 			for (int i = 0; i < propcol.Count ; i++) {
-				if (propcol[i].Name == header_text) {
+				if (propcol[i].Name == mapping_name) {
 					property_descriptor = propcol[i];
 					break;
 				}

@@ -115,7 +115,7 @@ namespace System.Windows.Forms
 			client_area.Width -= BorderStyleSize * 2;
 			client_area.Height -= BorderStyleSize * 2;
 
-			Console.WriteLine ("CalcClientArea");
+			//Console.WriteLine ("CalcClientArea");
 
 			//Console.WriteLine ("CalcClientArea ClientRectangle {0}, ClientArea {1}, BorderStyleSize {2}",
 			//	 grid.ClientRectangle, client_area, BorderStyleSize);
@@ -311,15 +311,18 @@ namespace System.Windows.Forms
 
 		public void UpdateVisibleColumn ()
 		{
+			if (grid.CurrentTableStyle.GridColumnStyles.Count == 0) {
+				grid.visiblecolumn_count = 0;
+				return;	
+			}
+			
 			int col;
 			int max_pixel = grid.horz_pixeloffset + cells_area.Width;
 			grid.first_visiblecolumn = FromPixelToColumn (grid.horz_pixeloffset);
 
 			col = FromPixelToColumn (max_pixel);
 			grid.visiblecolumn_count = (col - grid.first_visiblecolumn);
-
-			if (grid.visiblecolumn_count > 0)
-				grid.visiblecolumn_count++;
+			grid.visiblecolumn_count++;
 
 			//Console.WriteLine ("UpdateVisibleColumn col: {0}, cnt {1}",
 			//	grid.first_visiblecolumn, grid.visiblecolumn_count);
@@ -705,7 +708,7 @@ namespace System.Windows.Forms
 
 		public void PaintRow (Graphics g, int row, Rectangle row_rect)
 		{
-			Console.WriteLine ("PaintRow row: {0}, rect {1}", row, row_rect);
+			//Console.WriteLine ("PaintRow row: {0}, rect {1}", row, row_rect);
 
 			Rectangle rect_cell = new Rectangle ();
 			int cnt = grid.CurrentTableStyle.GridColumnStyles.Count;

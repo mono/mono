@@ -743,7 +743,7 @@ namespace System.Windows.Forms
 		
 		#region Private Instance Properties		
 		// Create column styles for this TableStyle
-		internal void CreateColumnsForTable () 
+		internal void CreateColumnsForTable (bool onlyBind) 
 		{
 			CurrencyManager	mgr = null;
 			mgr = datagrid.ListManager;
@@ -765,7 +765,12 @@ namespace System.Windows.Forms
 					column_styles[propcol[i].Name].table_style = this;
 					column_styles[propcol[i].Name].SetDataGridInternal (datagrid);					
 					continue;
-				}					
+				}		
+			
+				if (onlyBind == true) {
+					continue;
+				}
+
 												
 				// TODO: What to do with relations?
 				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {					

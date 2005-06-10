@@ -231,6 +231,18 @@ namespace System.Windows.Forms
 				string_format.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
 			}
 			
+			switch (alignment) {
+			case HorizontalAlignment.Center:
+				string_format.Alignment = StringAlignment.Center;
+				break;
+			case HorizontalAlignment.Right:
+				string_format.Alignment = StringAlignment.Far;
+				break;			
+			default:
+				string_format.Alignment = StringAlignment.Near;
+				break;
+			}			
+					
 			g.FillRectangle (backBrush, textBounds);
 			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow), textBounds);
 			

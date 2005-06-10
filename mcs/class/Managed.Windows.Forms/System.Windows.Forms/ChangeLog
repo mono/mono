@@ -1,3 +1,15 @@
+2005-06-10  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: Honors aligment
+	* GridColumnStylesCollection.cs: Contains is case unsensitive
+	* GridTableStylesCollection.cs: several fixes
+	* DataGridTableStyle.cs: default column creation
+	* DataGridDrawingLogic.cs: fixes
+	* CurrencyManager.cs: ListName property
+	* DataGrid.cs: multiple styles support
+	* DataGridColumnStyle.cs: fixes
+	
+
 2005-06-10  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs(Select): Moved SetFocus call to avoid potential
