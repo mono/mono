@@ -60,6 +60,7 @@ namespace System.Net
 		object locker = new object ();
 		bool initRead;
 		bool read_eof;
+		bool complete_request_written;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -94,6 +95,10 @@ namespace System.Net
 
 			if (sendChunked)
 				pending = new ManualResetEvent (true);
+		}
+
+		internal bool CompleteRequestWritten {
+			get { return complete_request_written; }
 		}
 
 		internal bool SendChunked {
@@ -513,14 +518,28 @@ namespace System.Net
 			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
 				return;
 
-			cnc.Write (bytes, 0, length);
+			if (!initRead) {
+				initRead = true;
+				WebConnection.InitRead (cnc);
+			}
+
+			IAsyncResult result = cnc.BeginWrite (bytes, 0, length, null, null);
+			complete_request_written = cnc.EndWrite (result);
 		}
 
 		internal void InternalClose ()
 		{
 			disposed = true;
 		}
-		
+
+		internal void ForceCloseConnection ()
+		{
+			if (!disposed) {
+				disposed = true;
+				cnc.Close (true);
+			}
+		}
+
 		public override void Close ()
 		{
 			if (sendChunked) {
@@ -541,6 +560,7 @@ namespace System.Net
 				}
 				return;
 			} else if (!allowBuffering) {
+				complete_request_written = true;
 				if (!initRead) {
 					initRead = true;
 					WebConnection.InitRead (cnc);
@@ -551,17 +571,12 @@ namespace System.Net
 			if (disposed)
 				return;
 
-			disposed = true;
-
 			long length = request.ContentLength;
 			if (length != -1 && length > writeBuffer.Length)
 				throw new IOException ("Cannot close the stream until all bytes are written");
 
 			WriteRequest ();
-			if (!initRead) {
-				initRead = true;
-				WebConnection.InitRead (cnc);
-			}
+			disposed = true;
 		}
 
 		public override long Seek (long a, SeekOrigin b)

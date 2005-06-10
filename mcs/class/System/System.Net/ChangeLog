@@ -1,3 +1,13 @@
+2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs:
+	* HttpWebRequest.cs:
+	* WebConnectionStream.cs: initiate the polling for input data after
+	sending the header so that we detect any response that the server sends
+	back even if we're still trying to write the request for a POST/PUT.
+	If we get the response (or an error) before any one calls GetResponse(),
+	keep it around instead of ignoring it.
+
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: send the right header/user/password in
@@ -7,6 +17,12 @@
 
 	* ServicePointManager.cs: when going through a proxy, use 2 different
 	service points depending on the scheme. Fixes bug #75135.
+
+2005-05-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: prevent 2 nullrefs when the aborting during
+	Connect() and reset the status to Success before starting a new
+	request.
 
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
