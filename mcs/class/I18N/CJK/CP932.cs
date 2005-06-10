@@ -286,6 +286,14 @@ public unsafe class CP932 : Encoding
 						value = ((int)(cjkToJis[value])) |
 								(((int)(cjkToJis[value + 1])) << 8);
 					}
+					else if(ch >= 0xE000 && ch <= 0xE757)
+					{
+						// PrivateUse
+						int diff = ch - 0xE000;
+						value = ((int) (diff / 0xFC) << 8)
+							+ (diff % 0xFC)
+							+ 0xF040;
+					}
 					else if(ch >= 0xFF01 && ch <= 0xFF60)
 					{
 						value = ch - 0xFF00 + 0x20;
@@ -332,6 +340,12 @@ public unsafe class CP932 : Encoding
 							bytes[posn++] = (byte)(ch - (0x9F - 0x80) + 0xE0);
 						}
 						bytes[posn++] = (byte)value;
+					}
+					else if (value >= 0xF040 && value <= 0xF9FC)
+					{
+						// PrivateUse
+						bytes[posn++] = (byte) (value / 0x100);
+						bytes[posn++] = (byte) (value % 0x100);
 					}
 					else
 					{
@@ -797,6 +811,11 @@ public unsafe class CP932 : Encoding
 							if(last >= 0x81 && last <= 0x9F)
 							{
 								value = (last - 0x81) * 0xBC;
+							}
+							else if (last >= 0xF0 && last <= 0xFC && byteval <= 0xFC)
+							{
+								// PrivateUse
+								value = 0xE000 + (last - 0xF0) * 0xFC + byteval;
 							}
 							else
 							{
