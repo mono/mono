@@ -31,9 +31,13 @@
 #if NET_2_0
 using System.Collections;
 using System.Web.UI;
+using System;
 
-namespace System.Web.Security {
-	public class MembershipUserCollection : ICloneable, ICollection {
+namespace System.Web.Security
+{
+	[Serializable]
+	public class MembershipUserCollection : ICollection
+	{
 		public MembershipUserCollection ()
 		{
 		}
@@ -41,7 +45,7 @@ namespace System.Web.Security {
 		public void Add (MembershipUser user)
 		{
 			CheckNotReadOnly ();
-			store.Add (user.Username, user);
+			store.Add (user.UserName, user);
 		}
 		
 		public void Clear ()
@@ -50,15 +54,12 @@ namespace System.Web.Security {
 			store.Clear ();
 		}
 		
-		public object Clone ()
+		void ICollection.CopyTo (Array array, int index)
 		{
-			MembershipUserCollection clone = new MembershipUserCollection ();
-			foreach (MembershipUser u in this)
-				clone.Add (u);
-			return clone;
+			store.CopyTo (array, index);
 		}
 		
-		public void CopyTo (Array array, int index)
+		public void CopyTo (MembershipUser[] array, int index)
 		{
 			store.CopyTo (array, index);
 		}

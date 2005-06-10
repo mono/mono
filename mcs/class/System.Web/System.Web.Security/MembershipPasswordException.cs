@@ -29,11 +29,22 @@
 //
 
 #if NET_2_0
-namespace System.Web.Security {
-	public class MembershipPasswordException : HttpException {
+
+using System;
+using System.Runtime.Serialization;
+
+namespace System.Web.Security
+{
+	[Serializable]
+	public class MembershipPasswordException : Exception
+	{
 		public MembershipPasswordException () : base () {}
 		public MembershipPasswordException (string message) : base (message) {}
 		public MembershipPasswordException (string message, Exception innerException) : base (message, innerException) {}
+		
+		public MembershipPasswordException (SerializationInfo info, StreamingContext context): base (info, context)
+		{
+		}
 	}
 }
 #endif

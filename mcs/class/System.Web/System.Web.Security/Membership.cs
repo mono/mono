@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2005 Novell, inc.
 //
 
 //
@@ -33,10 +35,13 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace System.Web.Security {
-	public sealed class Membership {
-		
-		private Membership () {}
+namespace System.Web.Security
+{
+	public abstract class Membership
+	{
+		private Membership ()
+		{
+		}
 		
 		public static MembershipUser CreateUser (string username, string password)
 		{
@@ -55,7 +60,12 @@ namespace System.Web.Security {
 		
 		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status)
 		{
-			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, out status);
+			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, null, out status);
+		}
+		
+		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
+		{
+			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, providerUserKey, out status);
 		}
 		
 		public static bool DeleteUser (string username)
@@ -69,7 +79,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public static string GeneratePassword (int length)
+		public static string GeneratePassword (int length, int numberOfNonAlphanumericCharacters)
 		{
 			throw new NotImplementedException ();
 		}
@@ -110,6 +120,16 @@ namespace System.Web.Security {
 			return Provider.GetUser (username, userIsOnline);
 		}
 		
+		public static MembershipUser GetUser (object providerUserKey)
+		{
+			return GetUser (providerUserKey, false);
+		}
+		
+		public static MembershipUser GetUser (object providerUserKey, bool userIsOnline)
+		{
+			return Provider.GetUser (providerUserKey, userIsOnline);
+		}
+		
 		public static string GetUserNameByEmail (string email)
 		{
 			return Provider.GetUserNameByEmail (email);
@@ -124,6 +144,30 @@ namespace System.Web.Security {
 		{
 			return Provider.ValidateUser (username, password);
 		}
+		
+		public static MembershipUserCollection FindUsersByEmail (string emailToMatch)
+		{
+			int totalRecords;
+			return Provider.FindUsersByEmail (emailToMatch, 0, int.MaxValue, out totalRecords);
+		}
+		
+		public static MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
+		{
+			return Provider.FindUsersByEmail (emailToMatch, pageIndex, pageSize, out totalRecords);
+		}
+		
+		public static MembershipUserCollection FindUsersByName (string nameToMatch)
+		{
+			int totalRecords;
+			return Provider.FindUsersByName (nameToMatch, 0, int.MaxValue, out totalRecords);
+		}
+		
+		public static MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords)
+		{
+			return Provider.FindUsersByName (nameToMatch, pageIndex, pageSize, out totalRecords);
+		}
+
+		
 		
 		public static string ApplicationName {
 			get { return Provider.ApplicationName; }
@@ -142,6 +186,26 @@ namespace System.Web.Security {
 			get { return Provider.RequiresQuestionAndAnswer; }
 		}
 		
+		public static int MaxInvalidPasswordAttempts {
+			get { return Provider.MaxInvalidPasswordAttempts; }
+		}
+		
+		public static int MinRequiredNonAlphanumericCharacters {
+			get { return Provider.MinRequiredNonAlphanumericCharacters; }
+		}
+		
+		public static int MinRequiredPasswordLength {
+			get { return Provider.MinRequiredPasswordLength; }
+		}
+		
+		public static int PasswordAttemptWindow {
+			get { return Provider.PasswordAttemptWindow; }
+		}
+		
+		public static string PasswordStrengthRegularExpression {
+			get { return Provider.PasswordStrengthRegularExpression; }
+		}
+				
 		[MonoTODO]
 		public static MembershipProvider Provider {
 			get { throw new NotImplementedException (); }
@@ -155,6 +219,11 @@ namespace System.Web.Security {
 		[MonoTODO]
 		public static int UserIsOnlineTimeWindow {
 			get { throw new NotImplementedException (); }
+		}
+		
+		public event MembershipValidatePasswordEventHandler ValidatingPassword {
+			add { Provider.ValidatingPassword += value; }
+			remove { Provider.ValidatingPassword -= value; }
 		}
 	}
 }

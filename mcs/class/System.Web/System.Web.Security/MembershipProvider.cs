@@ -42,7 +42,7 @@ namespace System.Web.Security
 		
 		public abstract bool ChangePassword (string name, string oldPwd, string newPwd);
 		public abstract bool ChangePasswordQuestionAndAnswer (string name, string password, string newPwdQuestion, string newPwdAnswer);
-		public abstract MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status);
+		public abstract MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status);
 		public abstract bool DeleteUser (string name, bool deleteAllRelatedData);
 		public abstract MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords);
 		public abstract MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords);
@@ -50,14 +50,32 @@ namespace System.Web.Security
 		public abstract int GetNumberOfUsersOnline ();
 		public abstract string GetPassword (string name, string answer);
 		public abstract MembershipUser GetUser (string name, bool userIsOnline);
+		public abstract MembershipUser GetUser (object providerUserKey, bool userIsOnline);
 		public abstract string GetUserNameByEmail (string email);
 		public abstract string ResetPassword (string name, string answer);
 		public abstract void UpdateUser (MembershipUser user);
 		public abstract bool ValidateUser (string name, string password);
+		public abstract bool UnlockUser (string userName);
+		
 		public abstract string ApplicationName { get; set; }
 		public abstract bool EnablePasswordReset { get; }
 		public abstract bool EnablePasswordRetrieval { get; }
 		public abstract bool RequiresQuestionAndAnswer { get; }
+		public abstract int MaxInvalidPasswordAttempts { get; }
+		public abstract int MinRequiredNonAlphanumericCharacters { get; }
+		public abstract int MinRequiredPasswordLength { get; }
+		public abstract int PasswordAttemptWindow { get; }
+		public abstract MembershipPasswordFormat PasswordFormat { get; }
+		public abstract string PasswordStrengthRegularExpression { get; }
+		public abstract bool RequiresUniqueEmail { get; }
+		
+		protected virtual void OnValidatingPassword (ValidatePasswordEventArgs args)
+		{
+			if (ValidatingPassword != null)
+				ValidatingPassword (this, args);
+		}
+		
+		public event MembershipValidatePasswordEventHandler ValidatingPassword;
 	}
 }
 #endif

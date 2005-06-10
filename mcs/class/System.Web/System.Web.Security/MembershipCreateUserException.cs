@@ -29,15 +29,44 @@
 //
 
 #if NET_2_0
-namespace System.Web.Security {
-	[MonoTODO ("make strings for the messages")]
-	public class MembershipCreateUserException : HttpException {
+using System;
+using System.Runtime.Serialization;
+
+namespace System.Web.Security
+{
+	[Serializable]
+	public class MembershipCreateUserException : Exception
+	{
+		MembershipCreateStatus statusCode;
+		
+		public MembershipCreateUserException ()
+		{
+		}
+		
+		public MembershipCreateUserException (string message): base (message)
+		{
+		}
+		
+		public MembershipCreateUserException (string message, Exception innerException): base (message, innerException)
+		{
+		}
+		
+		public MembershipCreateUserException (SerializationInfo info, StreamingContext context): base (info, context)
+		{
+			info.AddValue ("statusCode", statusCode);
+		}
+		
 		public MembershipCreateUserException (MembershipCreateStatus statusCode) : base (statusCode.ToString ())
 		{
 			this.statusCode = statusCode;
 		}
 		
-		MembershipCreateStatus statusCode;
+		public override void GetObjectData (SerializationInfo info, StreamingContext ctx)
+		{
+			base.GetObjectData (info, ctx);
+			statusCode = (MembershipCreateStatus) info.GetValue ("statusCode", typeof(MembershipCreateStatus));
+		}
+		
 		public MembershipCreateStatus StatusCode {
 			get { return statusCode; }
 		}

@@ -49,13 +49,13 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public override void DeleteRole (string rolename, bool throwOnPopulatedRole)
+		public override bool DeleteRole (string rolename, bool throwOnPopulatedRole)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override void FindUsersInRole (string roleName, string usernameToMatch)
+		public override string[] FindUsersInRole (string roleName, string usernameToMatch)
 		{
 			throw new NotImplementedException ();
 		}

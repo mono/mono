@@ -1,10 +1,10 @@
 //
-// System.Web.Security.MembershipProviderCollection
+// System.Web.Security.ValidatePasswordEventArgs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
+// (C) 2005 Novell, inc.
 //
 
 //
@@ -29,28 +29,48 @@
 //
 
 #if NET_2_0
-using System.Configuration.Provider;
 
-namespace System.Web.Security {
-	public sealed class MembershipProviderCollection : ProviderCollection
+using System;
+
+namespace System.Web.Security
+{
+	public sealed class ValidatePasswordEventArgs: EventArgs
 	{
-		public override void Add (ProviderBase provider)
+		bool cancel;
+		Exception exception;
+		bool isNewUser;
+		string userName;
+		string password;
+		
+		public ValidatePasswordEventArgs (string userName, string password, bool isNewUser)
 		{
-			if (provider is MembershipProvider)
-				base.Add (provider);
-			else
-				throw new HttpException ();
+			this.isNewUser = isNewUser;
+			this.userName = userName;
+			this.password = password;
 		}
 		
-		public void CopyTo (MembershipProvider[] array, int index)
-		{
-			base.CopyTo (array, index);
+		public bool Cancel {
+			get { return cancel; }
+			set { cancel = value; }
 		}
 		
-		public new MembershipProvider this [string name] {
-			get { return (MembershipProvider) base [name]; }
+		public Exception FailureInformation {
+			get { return exception; }
+			set { exception = value; }
+		}
+		
+		public bool IsNewUser {
+			get { return isNewUser; }
+		}
+		
+		public string UserName {
+			get { return userName; }
+		}
+		
+		public string Password {
+			get { return password; }
 		}
 	}
 }
-#endif
 
+#endif

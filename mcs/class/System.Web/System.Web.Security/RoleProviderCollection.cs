@@ -31,8 +31,10 @@
 #if NET_2_0
 using System.Configuration.Provider;
 
-namespace System.Web.Security {
-	public class RoleProviderCollection : ProviderCollection {
+namespace System.Web.Security
+{
+	public sealed class RoleProviderCollection : ProviderCollection
+	{
 		public override void Add (ProviderBase provider)
 		{
 			if (provider is RoleProvider)
@@ -43,6 +45,11 @@ namespace System.Web.Security {
 		
 		public new RoleProvider this [string name] {
 			get { return (RoleProvider) base [name]; }
+		}
+		
+		public void CopyTo (RoleProvider[] array, int index)
+		{
+			base.CopyTo (array, index);
 		}
 	}
 }

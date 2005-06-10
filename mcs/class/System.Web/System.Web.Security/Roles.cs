@@ -33,37 +33,33 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace System.Web.Security {
-	public sealed class Roles {
-		
-		[MonoTODO]
+namespace System.Web.Security
+{
+	public sealed class Roles
+	{
 		public static void AddUsersToRole (string [] usernames, string rolename)
 		{
-			throw new NotImplementedException ();
+			Provider.AddUsersToRoles (usernames, new string[] {rolename});
 		}
 		
-		[MonoTODO]
 		public static void AddUsersToRoles (string [] usernames, string [] rolenames)
 		{
-			throw new NotImplementedException ();
+			Provider.AddUsersToRoles (usernames, rolenames);
 		}
 		
-		[MonoTODO]
 		public static void AddUserToRole (string username, string rolename)
 		{
-			throw new NotImplementedException ();
+			Provider.AddUsersToRoles (new string[] {username}, new string[] {rolename});
 		}
 		
-		[MonoTODO]
 		public static void AddUserToRoles (string username, string [] rolenames)
 		{
-			throw new NotImplementedException ();
+			Provider.AddUsersToRoles (new string[] {username}, rolenames);
 		}
 		
-		[MonoTODO]
 		public static void CreateRole (string rolename)
 		{
-			throw new NotImplementedException ();
+			Provider.CreateRole (rolename);
 		}
 		
 		[MonoTODO]
@@ -72,82 +68,88 @@ namespace System.Web.Security {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public static void DeleteRole (string rolename)
+		public static bool DeleteRole (string rolename)
 		{
-			throw new NotImplementedException ();
+			return Provider.DeleteRole (rolename, true);
 		}
 		
-		[MonoTODO]
+		public static bool DeleteRole (string rolename, bool throwOnPopulatedRole)
+		{
+			return Provider.DeleteRole (rolename, throwOnPopulatedRole);
+		}
+		
 		public static string [] GetAllRoles ()
 		{
-			throw new NotImplementedException ();
+			return Provider.GetAllRoles ();
 		}
 		
-		[MonoTODO]
 		public static string [] GetRolesForUser ()
 		{
-			throw new NotImplementedException ();
+			return Provider.GetRolesForUser (CurrentUser);
 		}
 		
-		[MonoTODO]
+		static string CurrentUser {
+			get {
+				if (HttpContext.Current != null && HttpContext.Current.User != null)
+					return HttpContext.Current.User.Identity.Name;
+				else
+					return System.Threading.Thread.CurrentPrincipal.Identity.Name;
+			}
+		}
+		
 		public static string [] GetRolesForUser (string username)
 		{
-			throw new NotImplementedException ();
+			return Provider.GetRolesForUser (username);
 		}
 		
-		[MonoTODO]
 		public static string [] GetUsersInRole (string rolename)
 		{
-			throw new NotImplementedException ();
+			return Provider.GetUsersInRole (rolename);
 		}
 		
-		[MonoTODO]
 		public static bool IsUserInRole (string rolename)
 		{
-			throw new NotImplementedException ();
+			return Provider.IsUserInRole (CurrentUser, rolename);
 		}
 		
-		[MonoTODO]
 		public static bool IsUserInRole (string username, string rolename)
 		{
-			throw new NotImplementedException ();
+			return Provider.IsUserInRole (username, rolename);
 		}
 		
-		[MonoTODO]
 		public static void RemoveUserFromRole (string username, string rolename)
 		{
-			throw new NotImplementedException ();
+			Provider.RemoveUsersFromRoles (new string[] {username}, new string[] {rolename});
 		}
 		
-		[MonoTODO]
 		public static void RemoveUserFromRoles (string username, string [] rolenames)
 		{
-			throw new NotImplementedException ();
+			Provider.RemoveUsersFromRoles (new string[] {username}, rolenames);
 		}
 		
-		[MonoTODO]
 		public static void RemoveUsersFromRole (string [] usernames, string rolename)
 		{
-			throw new NotImplementedException ();
+			Provider.RemoveUsersFromRoles (usernames, new string[] {rolename});
 		}
 		
-		[MonoTODO]
 		public static void RemoveUsersFromRoles (string [] usernames, string [] rolenames)
 		{
-			throw new NotImplementedException ();
+			Provider.RemoveUsersFromRoles (usernames, rolenames);
 		}
 		
-		[MonoTODO]
 		public static bool RoleExists (string rolename)
 		{
-			throw new NotImplementedException ();
+			return Provider.RoleExists (rolename);
 		}
 		
-		[MonoTODO]
+		public static string[] FinsUsersInRole (string rolename, string usernameToMatch)
+		{
+			return Provider.FindUsersInRole (rolename, usernameToMatch);
+		}
+		
 		public static string ApplicationName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return Provider.ApplicationName; }
+			set { Provider.ApplicationName = value; }
 		}
 		
 		[MonoTODO]

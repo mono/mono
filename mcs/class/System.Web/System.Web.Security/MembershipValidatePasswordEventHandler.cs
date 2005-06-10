@@ -1,10 +1,10 @@
 //
-// System.Web.Security.MembershipProviderCollection
+// System.Web.Security.MembershipValidatePasswordEventHandler
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
+// (C) 2005 Novell, inc.
 //
 
 //
@@ -29,28 +29,10 @@
 //
 
 #if NET_2_0
-using System.Configuration.Provider;
 
-namespace System.Web.Security {
-	public sealed class MembershipProviderCollection : ProviderCollection
-	{
-		public override void Add (ProviderBase provider)
-		{
-			if (provider is MembershipProvider)
-				base.Add (provider);
-			else
-				throw new HttpException ();
-		}
-		
-		public void CopyTo (MembershipProvider[] array, int index)
-		{
-			base.CopyTo (array, index);
-		}
-		
-		public new MembershipProvider this [string name] {
-			get { return (MembershipProvider) base [name]; }
-		}
-	}
+namespace System.Web.Security
+{
+	public delegate void MembershipValidatePasswordEventHandler (object sender, ValidatePasswordEventArgs e);
 }
-#endif
 
+#endif

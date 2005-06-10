@@ -50,7 +50,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public override MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status)
+		public override MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
 		{
 			throw new NotImplementedException ();
 		}
@@ -104,6 +104,12 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
+		public override MembershipUser GetUser (object providerUserKey, bool userIsOnline)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public override string GetUserNameByEmail (string email)
 		{
 			throw new NotImplementedException ();
@@ -134,6 +140,12 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
+		public override bool UnlockUser (string userName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public override string ApplicationName {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -155,7 +167,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public virtual MembershipPasswordFormat PasswordFormat {
+		public override MembershipPasswordFormat PasswordFormat {
 			get { throw new NotImplementedException (); }
 		}
 		
@@ -165,7 +177,32 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public virtual bool RequiresUniqueEmail {
+		public override bool RequiresUniqueEmail {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public override int MaxInvalidPasswordAttempts {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public override int MinRequiredNonAlphanumericCharacters {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public override int MinRequiredPasswordLength {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public override int PasswordAttemptWindow {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public override string PasswordStrengthRegularExpression {
 			get { throw new NotImplementedException (); }
 		}
 	}

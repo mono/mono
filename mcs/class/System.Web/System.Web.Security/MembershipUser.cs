@@ -29,41 +29,61 @@
 //
 
 #if NET_2_0
-namespace System.Web.Security {
-	public class MembershipUser {
+namespace System.Web.Security
+{
+	[Serializable]
+	public class MembershipUser
+	{
+		string providerName;
+		string name;
+		object providerUserKey;
+		string email;
+		string passwordQuestion;
+		string comment;
+		bool isApproved;
+		bool isLockedOut;
+		DateTime creationDate;
+		DateTime lastLoginDate;
+		DateTime lastActivityDate;
+		DateTime lastPasswordChangedDate;
+		DateTime lastLockoutDate;
+		
 		protected MembershipUser ()
 		{
 		}
 		
-		public MembershipUser (MembershipProvider provider, string name, string email,
-			string passwordQuestion, string comment, bool isApproved,
+		public MembershipUser (string providerName, string name, object providerUserKey, string email,
+			string passwordQuestion, string comment, bool isApproved, bool isLockedOut,
 			DateTime creationDate, DateTime lastLoginDate, DateTime lastActivityDate,
-			DateTime lastPasswordChangedDate)
+			DateTime lastPasswordChangedDate, DateTime lastLockoutDate)
 		{
-			this.provider = provider;
+			this.providerName = providerName;
 			this.name = name;
+			this.providerUserKey = providerUserKey;
 			this.email = email;
 			this.passwordQuestion = passwordQuestion;
 			this.comment = comment;
 			this.isApproved = isApproved;
+			this.isLockedOut = isLockedOut;
 			this.creationDate = creationDate;
 			this.lastLoginDate = lastLoginDate;
 			this.lastActivityDate = lastActivityDate;
 			this.lastPasswordChangedDate = lastPasswordChangedDate;
+			this.lastLockoutDate = lastLockoutDate;
 		}
 		
 		public virtual bool ChangePassword (string oldPassword, string newPassword)
 		{
-			bool success = Provider.ChangePassword (Username, oldPassword, newPassword);
+			bool success = Provider.ChangePassword (UserName, oldPassword, newPassword);
 			if (success)
-				LastPasswordChangedDate = DateTime.Now;
+				lastPasswordChangedDate = DateTime.Now;
 			
 			return success;
 		}
 		
 		public virtual bool ChangePasswordQuestionAndAnswer (string password, string newPasswordQuestion, string newPasswordAnswer)
 		{
-			bool success = Provider.ChangePasswordQuestionAndAnswer (Username, password, newPasswordQuestion, newPasswordAnswer);
+			bool success = Provider.ChangePasswordQuestionAndAnswer (UserName, password, newPasswordQuestion, newPasswordAnswer);
 			if (success)
 				passwordQuestion = newPasswordQuestion;
 			
@@ -77,7 +97,7 @@ namespace System.Web.Security {
 		
 		public virtual string GetPassword (string answer)
 		{
-			return Provider.GetPassword (Username, answer);
+			return Provider.GetPassword (UserName, answer);
 		}
 		
 		public virtual string ResetPassword ()
@@ -87,9 +107,9 @@ namespace System.Web.Security {
 		
 		public virtual string ResetPassword (string answer)
 		{
-			string newPass = Provider.ResetPassword (Username, answer);
+			string newPass = Provider.ResetPassword (UserName, answer);
 			if (newPass != null)
-				LastPasswordChangedDate = DateTime.Now;
+				lastPasswordChangedDate = DateTime.Now;
 			
 			return newPass;
 		}
@@ -101,7 +121,6 @@ namespace System.Web.Security {
 		
 		public virtual DateTime CreationDate {
 			get { return creationDate; }
-			set { creationDate = value; }
 		}
 		
 		public virtual string Email {
@@ -114,9 +133,14 @@ namespace System.Web.Security {
 			set { isApproved = value; }
 		}
 		
-		[MonoTODO]
+		public virtual bool IsLockedOut {
+			get { return isLockedOut; }
+		}
+		
 		public bool IsOnline {
-			get { throw new NotImplementedException (); }
+			get {
+				return LastActivityDate > DateTime.Now - TimeSpan.FromMinutes (Membership.UserIsOnlineTimeWindow);  
+			}
 		}
 		
 		public virtual DateTime LastActivityDate {
@@ -131,31 +155,49 @@ namespace System.Web.Security {
 		
 		public virtual DateTime LastPasswordChangedDate {
 			get { return lastPasswordChangedDate; }
-			set { lastPasswordChangedDate = value; }
+		}
+		
+		public virtual DateTime LastLockoutDate {
+			get { return lastLockoutDate; }
 		}
 		
 		public virtual string PasswordQuestion {
 			get { return passwordQuestion; }
 		}
 		
-		public virtual MembershipProvider Provider {
-			get { return provider; }
+		public virtual string ProviderName {
+			get { return providerName; }
 		}
 		
-		public virtual string Username {
+		public virtual string UserName {
 			get { return name; }
 		}
 		
-		MembershipProvider provider;
-		string name;
-		string email;
-		string passwordQuestion;
-		string comment;
-		bool isApproved;
-		DateTime creationDate;
-		DateTime lastLoginDate;
-		DateTime lastActivityDate;
-		DateTime lastPasswordChangedDate;
+		public virtual object ProviderUserKey {
+			get { return providerUserKey; }
+		}
+		
+		public override string ToString ()
+		{
+			return UserName;
+		}
+		
+		public virtual bool UnlockUser ()
+		{
+			if (Provider.UnlockUser (UserName)) {
+				isLockedOut = false;
+				return true;
+			}
+			return false;
+		}
+		
+		MembershipProvider Provider {
+			get {
+				MembershipProvider p = Membership.Providers [ProviderName];
+				if (p == null) throw new InvalidOperationException ("Membership provider '" + ProviderName + "' not found.");
+				return p;
+			}
+		}
 	}
 }
 #endif

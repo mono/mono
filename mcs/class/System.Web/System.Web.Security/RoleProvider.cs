@@ -41,8 +41,8 @@ namespace System.Web.Security
 		
 		public abstract void AddUsersToRoles (string [] usernames, string [] rolenames);
 		public abstract void CreateRole (string rolename);
-		public abstract void DeleteRole (string rolename, bool throwOnPopulatedRole);
-		public abstract void FindUsersInRole (string roleName, string usernameToMatch);
+		public abstract bool DeleteRole (string rolename, bool throwOnPopulatedRole);
+		public abstract string [] FindUsersInRole (string roleName, string usernameToMatch);
 		public abstract string [] GetAllRoles ();
 		public abstract string [] GetRolesForUser (string username);
 		public abstract string [] GetUsersInRole (string rolename);
