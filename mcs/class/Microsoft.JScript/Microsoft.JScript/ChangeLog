@@ -1,3 +1,14 @@
+2005-06-10  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* LateBinding.cs: Added field right_hand_side. Initial
+	implementation of Call. Added build_args method. Initial
+	implementation of GetNonMissingValue.
+	* Convert.cs (ToObject): Add return values for TypeCode.String,
+	TypeCode.Boolean, and TypeCode.Object.
+	* RegExpPrototype.cs (toString): Implemented.
+	* RegExpObject.cs: Implemented.
+	* RegExpConstructor.cs: Implement Construct, CreateInstance, and Invoke.
+
 2005-06-06  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs (emit_access): We can now access the properties
