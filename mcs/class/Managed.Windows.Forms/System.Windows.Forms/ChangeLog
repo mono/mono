@@ -1,3 +1,8 @@
+2005-06-11  Jackson Harper  <jackson@ximian.com>
+
+	* StatusBarPanel.cs: Signature cleanups. Implement
+	BeginInit/EndInit.
+
 2005-06-10  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: Honors aligment

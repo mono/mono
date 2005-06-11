@@ -37,6 +37,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private StatusBar parent;
 
+		private bool initializing;
 		private string text = String.Empty;
 		private string tool_tip_text = String.Empty;
 
@@ -46,6 +47,7 @@ namespace System.Windows.Forms {
 		private StatusBarPanelBorderStyle border_style = StatusBarPanelBorderStyle.Sunken;
 		private StatusBarPanelStyle style;
 		private int width = 100;
+		private int twidth = -1;
 		private int min_width = 10;
 		#endregion	// Local Variables
 
@@ -105,7 +107,11 @@ namespace System.Windows.Forms {
 			set {
 				if (value < 0)
 					throw new ArgumentException ("value");
-				width = value;
+
+				if (initializing)
+					twidth = value;
+				else
+					width = value;
 			}
 		}
 		
@@ -144,19 +150,23 @@ namespace System.Windows.Forms {
 			return "StatusBarPanel: {" + Text +"}";
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
 		}
 
-		[MonoTODO]
-		public virtual void BeginInit()
+		public virtual void BeginInit ()
 		{
+			initializing = true;
 		}
 
-		[MonoTODO]
-		public virtual void EndInit()
+		public virtual void EndInit ()
 		{
+			if (!initializing || twidth == -1)
+				return;
+
+			width = twidth;
+			twidth = -1;
+			initializing = false;
 		}
 	}
 }
