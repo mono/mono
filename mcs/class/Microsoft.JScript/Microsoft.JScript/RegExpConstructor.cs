@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) Copyright 2005, Novell Inc (http://novell.com)
 //
 
 //
@@ -41,18 +42,41 @@ namespace Microsoft.JScript {
 
 		public Object Construct (string pattern, bool ignoreCase, bool global, bool multiLine)
 		{
-			throw new NotImplementedException ();
+			RegExpObject re = new RegExpObject (pattern, ignoreCase, global, multiLine);
+			return re;
 		}
 
-		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
-		public new RegExpObject CreateInstance(params Object[] args)
+		//
+		// Invoked when we do: new RegExp (...)
+		//
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
+		public new RegExpObject CreateInstance (params object [] args)
 		{
-			throw new NotImplementedException ();
+			return Invoke (args);
 		}
 
-		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
-		public RegExpObject Invoke(params Object[] args)
+		//
+		// Invoked when we do: x = RegExp (...)
+		//
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
+		public RegExpObject Invoke (params object [] args)
 		{
+			if (args != null) {
+				int length = args.Length;
+				if (length > 0) {
+					object o = args [0];
+					if (o is RegExpObject)
+						return (RegExpObject) o;
+
+					string flags = "";
+					if (length > 1)
+						flags += Convert.ToString (args [1]);
+					return new RegExpObject (Convert.ToString (args [0]),
+								 flags.IndexOfAny (new char [] {'i'}) > -1,
+								 flags.IndexOfAny (new char [] {'g'}) > -1,
+								 flags.IndexOfAny (new char [] {'m'}) > -1);
+				}
+			}
 			throw new NotImplementedException ();
 		}
 

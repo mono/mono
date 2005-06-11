@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) Copyright 2005, Novell Inc (http://novell.com)
 //
 
 //
@@ -61,7 +62,9 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_toString)]
 		public static string toString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (RegExpObject));
+			RegExpObject re = (RegExpObject) thisObj;
+			return re.ToString ();
 		}
 	}
 }

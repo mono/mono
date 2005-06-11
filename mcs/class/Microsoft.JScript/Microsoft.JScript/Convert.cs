@@ -135,7 +135,19 @@ namespace Microsoft.JScript {
 
 
 		public static object ToObject (object value, VsaEngine engine)
-		{
+		{			
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			switch (tc) {
+			case TypeCode.String:
+				return new StringObject (ic.ToString (null));
+			case TypeCode.Object:
+				return value;
+			default:
+				Console.WriteLine ("\nToObject: value.GetType = {0}", value.GetType ());
+				break;
+			}
 			throw new NotImplementedException ();
 		}
 
@@ -162,6 +174,13 @@ namespace Microsoft.JScript {
 			case TypeCode.DBNull:
 				return "null";
 
+			case TypeCode.Boolean:
+				bool r = (bool) value;
+				if (r)
+					return "true";
+				else
+					return "false";
+				
 			case TypeCode.String:
 			case TypeCode.Double:
 				return ic.ToString (null);

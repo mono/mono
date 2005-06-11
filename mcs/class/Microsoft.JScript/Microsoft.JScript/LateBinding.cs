@@ -33,6 +33,7 @@ using System;
 using System.Reflection;
 using System.Diagnostics;
 using Microsoft.JScript.Vsa;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -40,10 +41,11 @@ namespace Microsoft.JScript {
 
 		public object obj;
 		private static BindingFlags bind_flags = BindingFlags.Public;
-
+		private string right_hand_side;
+			
 		public LateBinding (string name)
 		{
-			throw new NotImplementedException (); 
+			this.right_hand_side = name;
 		}
 
 
@@ -58,9 +60,38 @@ namespace Microsoft.JScript {
 		public object Call (object [] arguments, bool construct, bool brackets,
 				    VsaEngine engine)
 		{
+			if (construct) {
+				if (brackets) {					
+				} else {
+				}
+			} else {
+				if (brackets) {
+				} else {
+					Type type = null;
+
+					if (obj is JSObject)
+						type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+
+					MethodInfo method = type.GetMethod (right_hand_side, BindingFlags.Public | BindingFlags.Static);
+					object [] args = build_args (arguments, engine);
+					return method.Invoke (type, args);
+				}
+			}
 			throw new NotImplementedException ();
 		}
 
+		private object [] build_args (object [] arguments, VsaEngine engine)
+		{
+			ArrayList args = new ArrayList ();
+			if (obj != null)
+				args.Add (obj);
+			if (engine != null)
+				args.Add (engine);
+			foreach (object o in arguments)
+				args.Add (o);
+			return args.ToArray ();
+		}
+		
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public static object CallValue (object thisObj, object val, object [] arguments,
@@ -110,6 +141,18 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public object GetNonMissingValue ()
 		{
+			Type type = obj.GetType ();
+			MemberInfo [] members = type.GetMember (right_hand_side);
+			if (members.Length > 0) {
+				MemberInfo member = members [0];
+				MemberTypes member_type = member.MemberType;
+
+				switch (member_type) {
+				case MemberTypes.Property:
+					MethodInfo method = ((PropertyInfo) member).GetGetMethod ();
+					return method.Invoke (obj, new object [] {});
+				}
+			}
 			throw new NotImplementedException ();
 		}
 

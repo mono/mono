@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) Copyright 2005, Novell Inc (http://novell.com)
 //
 
 //
@@ -28,35 +29,61 @@
 //
 
 using System;
+using System.Text;
 
 namespace Microsoft.JScript {
 
 	public class RegExpObject : JSObject {
 
+		private string _source;
+		private bool _ignoreCase;
+		private bool _global;
+		private bool _multiline;
+			
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			StringBuilder str = new StringBuilder ();
+			str.Append ("/");
+			str.Append (_source);
+			str.Append ("/");
+
+			if (_ignoreCase)
+				str.Append ("i");
+			if(_global)
+				str.Append ("g");
+			if (_multiline)
+				str.Append ("m");
+
+			return str.ToString ();
 		}
 
 		public string source {
-			get { throw new NotImplementedException (); }
+			get { return _source; }
 		}
 
 		public bool ignoreCase {
-			get { throw new NotImplementedException (); }
+			get { return _ignoreCase; }
 		}
 
 		public bool global {
-			get { throw new NotImplementedException (); }
+			get { return _global; }
 		}
 		
 		public bool multiline {
-			get { throw new NotImplementedException (); }
+			get { return _multiline; }
 		}
 
 		public Object lastIndex {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
+		}
+
+		internal RegExpObject  (string pattern, bool ignoreCase, bool global, bool multiLine)
+		{
+			_source = pattern;
+			_ignoreCase = ignoreCase;
+			_global = global;
+			_multiline = multiLine;
 		}
 	}
 }
