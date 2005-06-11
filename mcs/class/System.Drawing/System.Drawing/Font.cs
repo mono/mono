@@ -167,7 +167,7 @@ namespace System.Drawing
 				return(result);
 			}
 
-			if ((int) osInfo.Platform == 128) {
+			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
 			// If we're on Unix we use our private gdiplus API to avoid Wine 
 			// dependencies in S.D
 
@@ -223,7 +223,7 @@ namespace System.Drawing
 				return IntPtr.Zero;
 			}
 
-			if ((int) osInfo.Platform == 128) {
+			if ((int) osInfo.Platform == 128 || (int) osInfo.Platform == 4) {
 				return fontObject;
 			} else {
 				LOGFONTA lf = new LOGFONTA ();

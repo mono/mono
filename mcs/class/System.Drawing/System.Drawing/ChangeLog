@@ -1,3 +1,7 @@
+2005-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Font.cs: fix platform checks.
+
 2005-06-08 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* Rectangle.cs:
@@ -9,7 +13,6 @@
 		- Fixes is empty method IsEmpty logic
 		- Fixes Contains method logic
 		- Fixes IntersectsWith logic
-
 
 2005-05-28  Kornél Pál <kornelpal@hotmail.com>
 
