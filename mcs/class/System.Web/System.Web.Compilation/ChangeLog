@@ -1,3 +1,9 @@
+2005-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: allow more than 2 levels when looking for
+	properties of fields for an attribute like "Prop1-Prop2-Prop3". Fixes
+	bug #75234.
+
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: when the OutputAssembly is null, we can still have

@@ -321,8 +321,35 @@ namespace System.Web.Compilation
 			}
 		}
 #endif
-		
-		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id, string attValue)
+
+		static bool InvariantCompare (string a, string b)
+		{
+			return (0 == String.Compare (a, b, false, CultureInfo.InvariantCulture));
+		}
+
+		static bool InvariantCompareNoCase (string a, string b)
+		{
+			return (0 == String.Compare (a, b, true, CultureInfo.InvariantCulture));
+		}
+
+		static MemberInfo GetFieldOrProperty (Type type, string name)
+		{
+			BindingFlags flags = BindingFlags.IgnoreCase | BindingFlags.Public |
+						BindingFlags.Static | BindingFlags.Instance;
+
+			try {
+				return type.GetProperty (name, flags);
+			} catch {}
+
+			try {
+				return type.GetField (name, flags);
+			} catch {}
+
+			return null;
+		}
+
+		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id,
+						string attValue, string prefix)
 		{
 			int hyphen = id.IndexOf ('-');
 
@@ -339,7 +366,7 @@ namespace System.Web.Compilation
 				type = ((FieldInfo) member).FieldType;
 			}
 
-			if (0 == String.Compare (member.Name, id, true)){
+			if (InvariantCompareNoCase (member.Name, id)) {
 #if NET_2_0
 				if (isDataBound) RegisterBindingInfo (builder, member.Name, ref attValue);
 #endif
@@ -352,12 +379,23 @@ namespace System.Web.Compilation
 
 			string prop_field = id.Replace ("-", ".");
 			string [] parts = prop_field.Split (new char [] {'.'});
-			if (parts.Length != 2 || 0 != String.Compare (member.Name, parts [0], true))
+			int length = parts.Length;
+			if (length < 2 || !InvariantCompare (member.Name, parts [0]))
 				return false;
+
+			if (length > 2) {
+				MemberInfo sub_member = GetFieldOrProperty (type, parts [1]);
+				if (sub_member == null)
+					return false;
+
+				string new_prefix = prefix + sub_member.Name + ".";
+				string new_id = id.Substring (hyphen + 1);
+				return ProcessPropertiesAndFields (builder, sub_member, new_id, attValue, new_prefix);
+			}
 
 			PropertyInfo [] subprops = type.GetProperties ();
 			foreach (PropertyInfo subprop in subprops) {
-				if (0 != String.Compare (subprop.Name, parts [1], true))
+				if (!InvariantCompareNoCase (subprop.Name, parts [1]))
 					continue;
 
 				if (subprop.CanWrite == false)
@@ -410,8 +448,8 @@ namespace System.Web.Compilation
 			bool is_processed = false;
 			Type type = builder.ControlType;
 
-			foreach (string id in atts.Keys){
-				if (0 == String.Compare (id, "runat", true))
+			foreach (string id in atts.Keys) {
+				if (InvariantCompareNoCase (id, "runat"))
 					continue;
 
 				is_processed = false;
@@ -422,7 +460,7 @@ namespace System.Web.Compilation
 
 					string id_as_event = id.Substring (2);
 					foreach (EventInfo ev in ev_info){
-						if (0 == String.Compare (ev.Name, id_as_event, true)){
+						if (InvariantCompareNoCase (ev.Name, id_as_event)){
 							AddEventAssign (builder.method,
 									ev.Name,
 									ev.EventHandlerType,
@@ -441,7 +479,7 @@ namespace System.Web.Compilation
 					prop_info = type.GetProperties ();
 
 				foreach (PropertyInfo prop in prop_info) {
-					is_processed = ProcessPropertiesAndFields (builder, prop, id, attvalue);
+					is_processed = ProcessPropertiesAndFields (builder, prop, id, attvalue, null);
 					if (is_processed)
 						break;
 				}
@@ -453,7 +491,7 @@ namespace System.Web.Compilation
 					field_info = type.GetFields ();
 
 				foreach (FieldInfo field in field_info){
-					is_processed = ProcessPropertiesAndFields (builder, field, id, attvalue);
+					is_processed = ProcessPropertiesAndFields (builder, field, id, attvalue, null);
 					if (is_processed)
 						break;
 				}
@@ -1009,9 +1047,9 @@ namespace System.Web.Compilation
 				return new CodePrimitiveExpression (str);
 
 			if (type == typeof (bool)) {
-				if (str == null || str == "" || 0 == String.Compare (str, "true", true))
+				if (str == null || str == "" || InvariantCompareNoCase (str, "true"))
 					return new CodePrimitiveExpression (true);
-				else if (0 == String.Compare (str, "false", true))
+				else if (InvariantCompareNoCase (str, "false"))
 					return new CodePrimitiveExpression (false);
 				else
 					throw new ParseException (currentLocation,
