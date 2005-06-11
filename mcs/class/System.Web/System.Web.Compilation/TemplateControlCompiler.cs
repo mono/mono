@@ -334,15 +334,12 @@ namespace System.Web.Compilation
 
 		static MemberInfo GetFieldOrProperty (Type type, string name)
 		{
-			BindingFlags flags = BindingFlags.IgnoreCase | BindingFlags.Public |
-						BindingFlags.Static | BindingFlags.Instance;
-
 			try {
-				return type.GetProperty (name, flags);
+				return type.GetProperty (name, noCaseFlags);
 			} catch {}
 
 			try {
-				return type.GetField (name, flags);
+				return type.GetField (name, noCaseFlags);
 			} catch {}
 
 			return null;
@@ -352,9 +349,7 @@ namespace System.Web.Compilation
 						string attValue, string prefix)
 		{
 			int hyphen = id.IndexOf ('-');
-
 			bool isPropertyInfo = (member is PropertyInfo);
-			bool is_processed = false;
 			bool isDataBound = IsDataBound (attValue);
 
 			Type type;
@@ -388,39 +383,34 @@ namespace System.Web.Compilation
 				if (sub_member == null)
 					return false;
 
-				string new_prefix = prefix + sub_member.Name + ".";
+				string new_prefix = prefix + parts [0] + ".";
 				string new_id = id.Substring (hyphen + 1);
 				return ProcessPropertiesAndFields (builder, sub_member, new_id, attValue, new_prefix);
 			}
 
-			PropertyInfo [] subprops = type.GetProperties ();
-			foreach (PropertyInfo subprop in subprops) {
-				if (!InvariantCompareNoCase (subprop.Name, parts [1]))
-					continue;
+			MemberInfo subpf = GetFieldOrProperty (type, parts [1]);
+			if (!(subpf is PropertyInfo))
+				return false;
 
-				if (subprop.CanWrite == false)
-					return false;
+			PropertyInfo subprop = (PropertyInfo) subpf;
+			if (subprop.CanWrite == false)
+				return false;
 
-				bool is_bool = subprop.PropertyType == typeof (bool);
-				if (!is_bool && attValue == null)
-					return false; // Font-Size -> Font-Size="" as html
+			bool is_bool = (subprop.PropertyType == typeof (bool));
+			if (!is_bool && attValue == null)
+				return false; // Font-Size -> Font-Size="" as html
 
-				string value;
-				if (attValue == null && is_bool)
-					value = "true"; // Font-Bold <=> Font-Bold="true"
-				else
-					value = attValue;
-
+			string val = attValue;
+			if (attValue == null && is_bool)
+				val = "true"; // Font-Bold <=> Font-Bold="true"
 #if NET_2_0
-				if (isDataBound) RegisterBindingInfo (builder, member.Name + "." + subprop.Name, ref attValue);
+			if (isDataBound) RegisterBindingInfo (builder, prefix + member.Name + "." + subprop.Name, ref attValue);
 #endif
-				AddCodeForPropertyOrField (builder, subprop.PropertyType,
-						 member.Name + "." + subprop.Name,
-						 value, subprop, isDataBound);
-				is_processed = true;
-			}
+			AddCodeForPropertyOrField (builder, subprop.PropertyType,
+						prefix + member.Name + "." + subprop.Name,
+						val, subprop, isDataBound);
 
-			return is_processed;
+			return true;
 		}
 
 		void AddEventAssign (CodeMemberMethod method, string name, Type type, string value)
@@ -443,8 +433,6 @@ namespace System.Web.Compilation
 				return;
 
 			EventInfo [] ev_info = null;
-			PropertyInfo [] prop_info = null;
-			FieldInfo [] field_info = null;
 			bool is_processed = false;
 			Type type = builder.ControlType;
 
@@ -475,25 +463,16 @@ namespace System.Web.Compilation
 						continue;
 				} 
 
-				if (prop_info == null)
-					prop_info = type.GetProperties ();
-
-				foreach (PropertyInfo prop in prop_info) {
-					is_processed = ProcessPropertiesAndFields (builder, prop, id, attvalue, null);
+				int hyphen = id.IndexOf ('-');
+				string alt_id = id;
+				if (hyphen != -1)
+					alt_id = id.Substring (0, hyphen);
+					
+				MemberInfo fop = GetFieldOrProperty (type, alt_id);
+				if (fop != null) {
+					is_processed = ProcessPropertiesAndFields (builder, fop, id, attvalue, null);
 					if (is_processed)
-						break;
-				}
-
-				if (is_processed)
-					continue;
-
-				if (field_info == null)
-					field_info = type.GetFields ();
-
-				foreach (FieldInfo field in field_info){
-					is_processed = ProcessPropertiesAndFields (builder, field, id, attvalue, null);
-					if (is_processed)
-						break;
+						continue;
 				}
 
 				if (is_processed)

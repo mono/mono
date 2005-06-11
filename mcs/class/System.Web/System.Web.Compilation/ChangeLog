@@ -1,5 +1,13 @@
 2005-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TemplateControlCompiler.cs: when mapping an attribute name to a field
+	or property name, there's no need to try with every property and field,
+	but just the one found when searching by name (no case). There was one
+	call to ProcessPropertiesAndFields per property or field until found,
+	now only one if the property/field is found, none otherwise.
+
+2005-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateControlCompiler.cs: allow more than 2 levels when looking for
 	properties of fields for an attribute like "Prop1-Prop2-Prop3". Fixes
 	bug #75234.
