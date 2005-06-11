@@ -997,8 +997,6 @@ namespace Mono.CSharp
 
 		protected override bool Supports( GeneratorSupport supports )
 		{
-			if ( (supports & GeneratorSupport.Win32Resources) != 0 )
-				return false;
 			return true;
 		}
 

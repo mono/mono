@@ -83,48 +83,61 @@ namespace Mono.CSharp
 		//
 		// Methods
 		//
-		[MonoTODO]
-		public CompilerResults CompileAssemblyFromDom (
-			CompilerParameters options,CodeCompileUnit e)
+		public CompilerResults CompileAssemblyFromDom (CompilerParameters options, CodeCompileUnit e)
 		{
-			return CompileAssemblyFromDomBatch(options,new CodeCompileUnit[]{e});
+			return CompileAssemblyFromDomBatch (options, new CodeCompileUnit[] { e });
 		}
-		public CompilerResults CompileAssemblyFromDomBatch (
-			CompilerParameters options,CodeCompileUnit[] ea)
+
+		public CompilerResults CompileAssemblyFromDomBatch (CompilerParameters options, CodeCompileUnit[] ea)
 		{
-			string[] fileNames=new string[ea.Length];
-			int i=0;
-			if (options == null)
-				options = new CompilerParameters ();
-			
-			StringCollection assemblies = options.ReferencedAssemblies;
-
-			foreach (CodeCompileUnit e in ea) {
-				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, i.ToString () + ".cs");
-				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
-				StreamWriter s=new StreamWriter(f, Encoding.UTF8);
-				if (e.ReferencedAssemblies != null) {
-					foreach (string str in e.ReferencedAssemblies) {
-						if (!assemblies.Contains (str))
-							assemblies.Add (str);
-					}
-				}
-
-				((ICodeGenerator)this).GenerateCodeFromCompileUnit (e, s, new CodeGeneratorOptions());
-				s.Close();
-				f.Close();
-				i++;
+			if (options == null) {
+				throw new ArgumentNullException ("options");
 			}
-			return CompileAssemblyFromFileBatch (options, fileNames);
+
+			try {
+				return CompileFromDomBatch (options, ea);
+			} finally {
+				options.TempFiles.Delete ();
+			}
 		}
-		
-		public CompilerResults CompileAssemblyFromFile (
-			CompilerParameters options,string fileName)
+
+		public CompilerResults CompileAssemblyFromFile (CompilerParameters options, string fileName)
 		{
-			return CompileAssemblyFromFileBatch (options, new string []{fileName});
+			return CompileAssemblyFromFileBatch (options, new string[] { fileName });
 		}
 
 		public CompilerResults CompileAssemblyFromFileBatch (CompilerParameters options, string[] fileNames)
+		{
+			if (options == null) {
+				throw new ArgumentNullException ("options");
+			}
+
+			try {
+				return CompileFromFileBatch (options, fileNames);
+			} finally {
+				options.TempFiles.Delete ();
+			}
+		}
+
+		public CompilerResults CompileAssemblyFromSource (CompilerParameters options, string source)
+		{
+			return CompileAssemblyFromSourceBatch (options, new string[] { source });
+		}
+
+		public CompilerResults CompileAssemblyFromSourceBatch (CompilerParameters options, string[] sources)
+		{
+			if (options == null) {
+				throw new ArgumentNullException ("options");
+			}
+
+			try {
+				return CompileFromSourceBatch (options, sources);
+			} finally {
+				options.TempFiles.Delete ();
+			}
+		}
+
+		private CompilerResults CompileFromFileBatch (CompilerParameters options, string[] fileNames)
 		{
 			if (null == options)
 				throw new ArgumentNullException("options");
@@ -194,28 +207,6 @@ namespace Mono.CSharp
 
 			return results;
 		}
-		public CompilerResults CompileAssemblyFromSource (
-			CompilerParameters options,string source)
-		{
-			return CompileAssemblyFromSourceBatch(options,new string[]{source});
-		}
-		public CompilerResults CompileAssemblyFromSourceBatch (
-			CompilerParameters options,string[] sources)
-		{
-			string[] fileNames=new string[sources.Length];
-			int i=0;
-			foreach (string source in sources) {
-				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, i.ToString () + ".cs");
-				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
-				StreamWriter s=new StreamWriter(f);
-				s.Write(source);
-				s.Close();
-				f.Close();
-				i++;
-			}
-			return CompileAssemblyFromFileBatch (options, fileNames);
-		}
-
 
 		private static string BuildArgs(CompilerParameters options,string[] fileNames)
 		{
@@ -224,6 +215,10 @@ namespace Mono.CSharp
 				args.Append("/target:exe ");
 			else
 				args.Append("/target:library ");
+
+			if (options.Win32Resource != null)
+				args.AppendFormat("/win32res:\"{0}\" ",
+					options.Win32Resource);
 
 			if (options.IncludeDebugInformation)
 				args.Append("/debug+ /optimize- ");
@@ -237,7 +232,7 @@ namespace Mono.CSharp
 				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
 
 			if (options.OutputAssembly==null)
-				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll");
+				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll", !options.GenerateInMemory);
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
 
 			if (null != options.ReferencedAssemblies)
@@ -286,9 +281,70 @@ namespace Mono.CSharp
 			return error;
 		}
 
-		static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension)
+		private static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension, bool keepFile)
+		{
+			return temp_files.AddExtension (extension, keepFile);
+		}
+
+		private static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension)
 		{
 			return temp_files.AddExtension (extension);
+		}
+
+		private CompilerResults CompileFromDomBatch (CompilerParameters options, CodeCompileUnit[] ea)
+		{
+			if (options == null) {
+				throw new ArgumentNullException ("options");
+			}
+
+			if (ea == null) {
+				throw new ArgumentNullException ("ea");
+			}
+
+			string[] fileNames = new string[ea.Length];
+			StringCollection assemblies = options.ReferencedAssemblies;
+
+			for (int i = 0; i < ea.Length; i++) {
+				CodeCompileUnit compileUnit = ea[i];
+				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + "cs");
+				FileStream f = new FileStream (fileNames[i], FileMode.OpenOrCreate);
+				StreamWriter s = new StreamWriter (f);
+				if (compileUnit.ReferencedAssemblies != null) {
+					foreach (string str in compileUnit.ReferencedAssemblies) {
+						if (!assemblies.Contains (str))
+							assemblies.Add (str);
+					}
+				}
+
+				((ICodeGenerator) this).GenerateCodeFromCompileUnit (compileUnit, s, new CodeGeneratorOptions ());
+				s.Close ();
+				f.Close ();
+			}
+			return CompileAssemblyFromFileBatch (options, fileNames);
+		}
+
+		private CompilerResults CompileFromSourceBatch (CompilerParameters options, string[] sources)
+		{
+			if (options == null) {
+				throw new ArgumentNullException ("options");
+			}
+
+			if (sources == null) {
+				throw new ArgumentNullException ("sources");
+			}
+
+			string[] fileNames = new string[sources.Length];
+
+			for (int i = 0; i < sources.Length; i++) {
+				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + "cs");
+				FileStream f = new FileStream (fileNames[i], FileMode.OpenOrCreate);
+				using (StreamWriter s = new StreamWriter (f)) {
+					s.Write (sources[i]);
+					s.Close ();
+				}
+				f.Close ();
+			}
+			return CompileFromFileBatch (options, fileNames);
 		}
 	}
 }

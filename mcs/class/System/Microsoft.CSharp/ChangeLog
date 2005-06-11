@@ -1,3 +1,11 @@
+2005-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Win32 resources are supported. Fixes bug
+	#75218.
+	* CSharpCodeCompiler.cs: Clean up temporary files after compilation. 
+	Fixes bug #75221. Added support for Win32 resources. Fixes bug
+	#75218.
+
 2005-05-29  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeCompiler.cs: Load compiled assembly from byte array
