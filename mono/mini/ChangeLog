@@ -1,5 +1,7 @@
 2005-06-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ia64.h exceptions-ia64.c: Ongoing IA64 work.
+
 	* *-ia64.*: Ongoing IA64 work.
 
 2005-06-10  Zoltan Varga  <vargaz@freemail.hu>
