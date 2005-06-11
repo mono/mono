@@ -1,3 +1,7 @@
+2005-06-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaCollectionTests.cs : added test for #75126.
+
 2005-02-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaTests.cs : just set NotWorking for trivial comparison tests.

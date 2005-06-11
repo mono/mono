@@ -70,5 +70,11 @@ namespace MonoTests.System.Xml
 			col.Add (schema);
 			Assert (schema.IsCompiled);
 		}
+
+		[Test] // bug #75126
+		public void TestGetEnumerator ()
+		{
+			new XmlSchemaCollection().GetEnumerator();
+		}
 	}
 }

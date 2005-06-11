@@ -1,3 +1,9 @@
+2005-06-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaCollection.cs, XmlSchemaCollectionEnumerator.cs :
+	  GetEnumerator() was not in sync with the internal change to
+	  XmlSchemaSet. Fixed bug #75126. Patch by Crestez Leonard.
+
 2005-06-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidationFlags.cs : it is NET_2_0.

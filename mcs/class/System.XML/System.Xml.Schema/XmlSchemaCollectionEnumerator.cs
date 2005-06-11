@@ -32,17 +32,17 @@ namespace System.Xml.Schema
 	/// </summary>
 	public sealed class XmlSchemaCollectionEnumerator : IEnumerator
 	{
-		private IDictionaryEnumerator xenum;
-		IEnumerable tmp;
-		internal XmlSchemaCollectionEnumerator(XmlSchemaCollection col)
+		private IEnumerator xenum;
+
+		internal XmlSchemaCollectionEnumerator(ICollection col)
 		{
-			tmp = (IEnumerable) col;
-			xenum = (IDictionaryEnumerator) tmp.GetEnumerator ();
+			xenum = col.GetEnumerator ();
 		}
+
 		// Properties
 		public XmlSchema Current { 
 			get {
-				return (XmlSchema) xenum.Value; 
+				return (XmlSchema) xenum.Current; 
 			}
 		}
 		// Methods
@@ -62,7 +62,7 @@ namespace System.Xml.Schema
 		}
 		object IEnumerator.Current
 		{
-			get { return xenum.Value; }
+			get { return xenum.Current; }
 		}
 	}
 }

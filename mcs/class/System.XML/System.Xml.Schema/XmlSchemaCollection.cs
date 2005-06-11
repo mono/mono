@@ -175,7 +175,8 @@ namespace System.Xml.Schema
 
 		public XmlSchemaCollectionEnumerator GetEnumerator ()
 		{
-			return new XmlSchemaCollectionEnumerator (this);
+                        // The actual collection is schemaSet.Schemas()
+			return new XmlSchemaCollectionEnumerator(schemaSet.Schemas());
 		}
 
 		// interface Methods
