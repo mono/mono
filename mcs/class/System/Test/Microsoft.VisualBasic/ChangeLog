@@ -1,5 +1,10 @@
 2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* VBCodeProviderTest.cs: Marked tests NotWorking on 2.0 profile
+	as we don't yet have an mbas for that profile.
+
+2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* VBCodeProviderTest.cs: fixed line endings
 
 2005-06-10  Gert Driesen <drieseng@users.sourceforge.net>
