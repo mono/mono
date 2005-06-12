@@ -1,3 +1,7 @@
+2005-06-12  Andrew Skiba  <andrews@mainsoft.com>
+
+	* xmlconf.cs : make class IDisposable; add another output file for total report
+
 2005-06-09  Andrew Skiba  <andrews@mainsoft.com>
 
 	* knownFailures.lst : fix the list of tests that fail on GH 1.6

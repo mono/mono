@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Reflection;
 
 namespace XmlConfTest {
-	class XmlConfTest {
+	class XmlConfTest: IDisposable {
 		
 		#region Command Line Options Handling
 
@@ -93,9 +93,27 @@ namespace XmlConfTest {
 		ArrayList knownFailures = new ArrayList ();
 		ArrayList fixmeList = new ArrayList ();
 		ArrayList netFailures = new ArrayList ();
-		StreamWriter failedList;
-		StreamWriter fixedList;
-		StreamWriter slowNewList;
+		StreamWriter failedListWriter;
+		StreamWriter fixedListWriter;
+		StreamWriter slowNewListWriter;
+		StreamWriter totalListWriter;
+		#endregion
+
+                #region IDisposable Members
+                public void Dispose() {
+                        if (failedListWriter != null)
+                                failedListWriter.Close ();
+			if (fixedListWriter != null)
+				failedListWriter.Close ();
+			if (slowNewListWriter != null)
+				slowNewListWriter.Close ();
+			if (totalListWriter != null)
+				totalListWriter.Close ();
+			failedListWriter = null;
+			fixedListWriter = null;
+			slowNewListWriter = null;
+			totalListWriter = null;
+		}
 		#endregion
 
 		#region command line option fields
@@ -110,10 +128,12 @@ namespace XmlConfTest {
 
 		static int Main (string[] args)
 		{
-			if (!new XmlConfTest(args).Run ())
-				return 1;
-			else
-				return 0;
+			using (XmlConfTest test = new XmlConfTest (args)) {
+				if (!test.Run ())
+					return 1;
+				else
+					return 0;
+			}		
 		}
 
 		#region ReadStrings ()
@@ -135,9 +155,10 @@ namespace XmlConfTest {
 		XmlConfTest (string [] args)
 		{
 			_args = args;
-			failedList = new StreamWriter ("failed.lst", false);
-			fixedList = new StreamWriter ("fixed.lst", false);
-			slowNewList = new StreamWriter ("slow-new.lst", false);
+			failedListWriter = new StreamWriter ("failed.lst", false);
+			fixedListWriter = new StreamWriter ("fixed.lst", false);
+			slowNewListWriter = new StreamWriter ("slow-new.lst", false);
+			totalListWriter = new StreamWriter ("total.lst", false);
 			ReadStrings (slowTests, "slow.lst");
 			ReadStrings (igroredTests, "ignored.lst");
 			ReadStrings (knownFailures, "knownFailures.lst");
@@ -174,8 +195,7 @@ namespace XmlConfTest {
 				if (span.TotalSeconds > 1) {
 					if (slowTests.Contains (testId))
 						continue;
-					slowNewList.WriteLine (testId);
-					slowNewList.Flush ();
+					slowNewListWriter.WriteLine (testId);
 				}
 			}
 
@@ -263,22 +283,25 @@ introduced new bugs! Before you commit, consider one of the following:
 		bool Report (XmlElement test, bool isok, bool nonValidatingPassed, bool validatingPassed)
 		{
 			string testId = test.GetAttribute ("ID");
+			totalListWriter.Write (testId + "\t");
 
 			if (isok) {
 				++passedCount;
 				if (fixmeList.Contains (testId) || knownFailures.Contains (testId)) {
 					++fixedCount;
-					fixedList.WriteLine (testId);
-					fixedList.Flush ();
+					fixedListWriter.WriteLine (testId);
 					Console.Error.Write ("!");
+					totalListWriter.WriteLine ("fixed");
 					return true;
 				}
 				if (netFailures.Contains (testId)) {
 					Console.Error.Write (",");
+					totalListWriter.WriteLine (",");
 					return true;
 				}
 
 				Console.Error.Write (".");
+				totalListWriter.WriteLine (".");
 				return true;
 			}
 
@@ -286,23 +309,26 @@ introduced new bugs! Before you commit, consider one of the following:
 
 			if (netFailures.Contains (testId)) {
 				Console.Error.Write ("K");
+				totalListWriter.WriteLine ("dot net known failure");
 				return true;
 			}
 			if (knownFailures.Contains (testId)) {
 				Console.Error.Write ("k");
+				totalListWriter.WriteLine ("known failure");
 				return true;
 			}
 			if (fixmeList.Contains (testId)) {
 				Console.Error.Write ("f");
+				totalListWriter.WriteLine ("fixme");
 				return true;
 			}
 
 			++regressionsCount;
 			Console.Error.Write ("E");
-			failedList.Write ("*** Test failed:\t{0}\ttype:{1}\tnonValidatingPassed:{2},validatingPassed:{3}\t",
+			totalListWriter.WriteLine ("regression");
+			failedListWriter.Write ("*** Test failed:\t{0}\ttype:{1}\tnonValidatingPassed:{2},validatingPassed:{3}\t",
 				testId, test.GetAttribute ("TYPE"), nonValidatingPassed, validatingPassed);
-			failedList.WriteLine (test.InnerXml);
-			failedList.Flush ();
+			failedListWriter.WriteLine (test.InnerXml);
 			return false;
 		}
 	}
