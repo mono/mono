@@ -52,7 +52,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof(NotSupportedException))]
 		public void TestFieldHandleIncomplete ()
 		{
@@ -62,7 +61,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof(NotSupportedException))]
 		public void TestFieldHandleComplete ()
 		{

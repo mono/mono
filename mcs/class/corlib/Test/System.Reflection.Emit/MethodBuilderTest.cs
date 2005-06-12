@@ -59,6 +59,7 @@ public class MethodBuilderTest : Assertion
 		return "class" + (typeIndexer ++);
 	}
 
+	[Test]
 	public void TestAttributes () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), MethodAttributes.Public, typeof (void), new Type [0]);
@@ -67,6 +68,7 @@ public class MethodBuilderTest : Assertion
 					  MethodAttributes.Public, mb.Attributes);
 	}
 
+	[Test]
 	public void TestCallingConvention () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type[0]);
@@ -88,6 +90,7 @@ public class MethodBuilderTest : Assertion
 					  mb4.CallingConvention);
 	}
 
+	[Test]
 	public void TestDeclaringType () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type[0]);
@@ -96,6 +99,7 @@ public class MethodBuilderTest : Assertion
 					  genClass, mb.DeclaringType);
 	}
 
+	[Test]
 	public void TestInitLocals () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type[0]);
@@ -106,15 +110,26 @@ public class MethodBuilderTest : Assertion
 	}
 	
 	[Test]
-	[Category ("NotWorking")]
 	[ExpectedException (typeof(NotSupportedException))]
-	public void TestMethodHandle () {
+	public void TestMethodHandleIncomplete () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
 
 		RuntimeMethodHandle handle = mb.MethodHandle;
 	}
 
+	[Test]
+	[ExpectedException (typeof(NotSupportedException))]
+	public void TestMethodHandleComplete () {
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), 0, typeof (void), new Type [0]);
+		mb.CreateMethodBody (new byte[2], 0);
+		genClass.CreateType ();
+
+		RuntimeMethodHandle handle = mb.MethodHandle;
+	}
+
+	[Test]
 	public void TestName () {
 		string name = genMethodName ();
 		MethodBuilder mb = genClass.DefineMethod (
@@ -123,6 +138,7 @@ public class MethodBuilderTest : Assertion
 		AssertEquals ("Name works", name, mb.Name);
 	}
 
+	[Test]
 	public void TestReflectedType () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
@@ -131,6 +147,7 @@ public class MethodBuilderTest : Assertion
 					  genClass, mb.ReflectedType);
 	}
 
+	[Test]
 	public void TestReturnType () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (Console), new Type [0]);
@@ -145,6 +162,7 @@ public class MethodBuilderTest : Assertion
 		Assert ("void ReturnType works", (mb2.ReturnType == null) || (mb2.ReturnType == typeof (void)));
 	}
 
+	[Test]
 	public void TestReturnTypeCustomAttributes () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (Console), new Type [0]);
@@ -162,6 +180,7 @@ public class MethodBuilderTest : Assertion
 	}
 	*/
 
+	[Test]
 	public void TestCreateMethodBody () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
@@ -217,6 +236,7 @@ public class MethodBuilderTest : Assertion
 			new Type[2] {
 			typeof(int), typeof(int)
 		});
+		mb.CreateMethodBody (new byte[2], 0);
 		tb.CreateType ();
 		mb.DefineParameter (-5, ParameterAttributes.None, "param1");
 	}
@@ -231,10 +251,12 @@ public class MethodBuilderTest : Assertion
 			new Type[2] {
 			typeof(int), typeof(int)
 		});
+		mb.CreateMethodBody (new byte[2], 0);
 		tb.CreateType ();
 		mb.DefineParameter (1, ParameterAttributes.None, "param1");
 	}
 
+	[Test]
 	public void TestDefineParameter () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
@@ -288,6 +310,7 @@ public class MethodBuilderTest : Assertion
 			methodName.GetHashCode (), mb.GetHashCode ());
 	}
 
+	[Test]
 	public void TestGetBaseDefinition () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
@@ -296,6 +319,7 @@ public class MethodBuilderTest : Assertion
 					  mb.GetBaseDefinition (), mb);
 	}
 
+	[Test]
 	public void TestGetILGenerator () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
@@ -324,6 +348,7 @@ public class MethodBuilderTest : Assertion
 		}
 	}
 
+	[Test]
 	public void TestMethodImplementationFlags () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
@@ -351,6 +376,7 @@ public class MethodBuilderTest : Assertion
 		}
 	}
 
+	[Test]
 	public void TestGetModule () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
@@ -359,6 +385,7 @@ public class MethodBuilderTest : Assertion
 					  mb.GetModule ());
 	}
 
+	[Test]
 	public void TestGetParameters () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
@@ -380,6 +407,7 @@ public class MethodBuilderTest : Assertion
 		*/
 	}
 
+	[Test]
 	public void TestGetToken () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
@@ -388,6 +416,7 @@ public class MethodBuilderTest : Assertion
 		mb.GetToken ();
 	}
 
+	[Test]
 	public void TestInvoke () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), 
@@ -406,23 +435,21 @@ public class MethodBuilderTest : Assertion
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
 	public void TestIsDefined () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), 
 			new Type [1] {typeof(int)});
-
-		try {
-			mb.IsDefined (null, true);
-			Fail ();
-		} catch (NotSupportedException) {
-		}
+		mb.IsDefined (null, true);
 	}
 
+	[Test]
 	public void TestGetCustomAttributes () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), 
 			new Type [1] {typeof(int)});
-
+		
 		try {
 			mb.GetCustomAttributes (true);
 			Fail ();
@@ -436,6 +463,7 @@ public class MethodBuilderTest : Assertion
 		}
 	}
 
+	[Test]
 	public void TestSetCustomAttribute () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		string name = genMethodName ();

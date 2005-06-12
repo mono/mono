@@ -94,8 +94,6 @@ public class ConstructorBuilderTest : Assertion
 	}
 	
 	[Test]
-	[Category ("NotWorking")]
-	[ExpectedException (typeof(NotSupportedException))]
 	public void TestMethodHandle () {
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [0]);

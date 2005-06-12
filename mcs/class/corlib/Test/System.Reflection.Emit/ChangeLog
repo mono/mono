@@ -1,3 +1,12 @@
+2005-06-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FieldBuilderTest.cs: Enabled tests for FieldHandle again after 
+	fixing regression.
+	* ConstructorBuilderTest.cs: MethodHandle should not throw
+	NotSupportedException.
+	* MethodBuilderTest.cs: Enabled test for MethodHandle again after
+	fixing regression, and added additional test.
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilderTest.cs: Add tests for setting DllImportAttribute.

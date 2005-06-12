@@ -80,7 +80,7 @@ namespace System.Reflection.Emit {
 
 		public override RuntimeFieldHandle FieldHandle {
 			get {
-				return handle;
+				throw CreateNotSupportedException ();
 			}
 		}
 
