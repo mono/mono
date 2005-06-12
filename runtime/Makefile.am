@@ -9,6 +9,7 @@ tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
 
+etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config
 
 etc/mono/1.0/machine.config: $(top_srcdir)/data/net_1_1/machine.config
@@ -49,7 +50,7 @@ uninstall:
 
 clean-local:
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
-	-rm -fr $(symlinks) $(tmpinst) .wapi
+	-rm -fr $(etctmp) $(tmpinst) .wapi
 
 if INSTALL_2_0
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
