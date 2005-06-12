@@ -270,6 +270,8 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotDotNet")]
+		// Depends on the GAC working, which it doesn't durring make distcheck.
+		[Category ("NotWorking")]
 		public void GetTypeWithWhitespace () {
 			AssertNotNull (Type.GetType
 						   (@"System.Configuration.NameValueSectionHandler,
