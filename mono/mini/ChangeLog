@@ -1,3 +1,7 @@
+2005-06-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mini_init): Fix signature of mono_delegate_ctor.
+
 2005-06-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ia64.h exceptions-ia64.c: Ongoing IA64 work.
