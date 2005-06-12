@@ -1,3 +1,8 @@
+2005-06-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-ia64.c mini-ia64.h: Modify ip during exception handling
+	so it points into the faulting instruction.
+
 2005-06-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jit-icalls.c (mono_imul_ovf): Add exception handling.
