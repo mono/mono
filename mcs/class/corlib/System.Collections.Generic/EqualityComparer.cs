@@ -32,19 +32,25 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
 	[Serializable]
-	public abstract class EqualityComparer<T> : IEqualityComparer<T> {
-			
+	public abstract class EqualityComparer <T> : IEqualityComparer <T> {
+		
+		static EqualityComparer ()
+		{
+			if (typeof (IEquatable <T>).IsAssignableFrom (typeof (T)))
+				_default = (EqualityComparer <T>) Activator.CreateInstance (typeof (IEquatableOfTEqualityComparer <>).BindGenericParameters (new Type [] { typeof (T) }));
+			else
+				_default = new DefaultComparer ();
+		}
+		
+		
 		public abstract int GetHashCode (T obj);
 		public abstract bool Equals (T x, T y);
 	
-		static DefaultComparer _default;
+		static readonly EqualityComparer <T> _default;
 		
-		[MonoTODO ("This is going to make a really slow comparer. We need to speed this up if T : ICompareable<T> create a class with a where clause of T : ICompareable <T>")]
-		public static EqualityComparer<T> Default {
+		public static EqualityComparer <T> Default {
 			get {
-				if (_default != null)
-					return _default;
-				return _default = new DefaultComparer ();
+				return _default;
 			}
 		}
 		
@@ -57,10 +63,28 @@ namespace System.Collections.Generic {
 	
 			public override bool Equals (T x, T y)
 			{
-				return Object.Equals (x, y);
+				if (x == null)
+					return y == null;
+				
+				return x.Equals (y);
 			}
 		}
 	}
+	
+	class IEquatableOfTEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
 
+		public override int GetHashCode (T obj)
+		{
+			return obj.GetHashCode ();
+		}
+
+		public override bool Equals (T x, T y)
+		{
+			if (x == null)
+				return y == null;
+			
+			return x.Equals (y);
+		}
+	}
 }
 #endif

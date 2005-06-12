@@ -33,17 +33,23 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic {
 	[Serializable]
 	public abstract class Comparer<T> : IComparer<T>, System.Collections.IComparer {
-			
+		
+		static Comparer ()
+		{
+			if (typeof (IComparable<T>).IsAssignableFrom (typeof (T)))
+				_default = (Comparer<T>) Activator.CreateInstance (typeof (IComparableOfTComparer <>).BindGenericParameters (new Type [] { typeof (T) }));
+			else
+				_default = new DefaultComparer ();
+		}
+		
+		
 		public abstract int Compare (T x, T y);
 	
-		static DefaultComparer _default;
+		static readonly Comparer <T> _default;
 		
-		[MonoTODO ("This is going to make a really slow comparer. We need to speed this up if T : ICompareable<T> create a class with a where clause of T : ICompareable <T>")]
-		public static Comparer<T> Default {
+		public static Comparer <T> Default {
 			get {
-				if (_default != null)
-					return _default;
-				return _default = new DefaultComparer ();
+				return _default;
 			}
 		}
 	
@@ -78,6 +84,19 @@ namespace System.Collections.Generic {
 				else
 					throw new ArgumentException ("does not implement right interface");
 			}
+		}
+	}
+	
+	class IComparableOfTComparer <T> : Comparer <T> where T : IComparable {
+		public override int Compare (T x, T y)
+		{
+			// `null' is less than any other ref type
+			if (x == null)
+				return y == null ? 0 : -1;
+			else if (y == null)
+				return 1;
+			
+			return x.CompareTo (y);
 		}
 	}
 

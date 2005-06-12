@@ -1,3 +1,10 @@
+2005-06-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* Comparer.cs, EqualityComparer.cs: Important performance hack:
+	make sure that we don't box stuff and do reflection on every
+	comparison. We use reflection at cctor time rather than on every
+	request.
+
 2005-06-09  Raja R Harinath  <rharinath@novell.com>
 
 	Simplify Enumerator.MoveNext to make it "obviously correct", rather
