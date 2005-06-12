@@ -55,6 +55,7 @@ namespace MonoTests.System.Runtime.InteropServices {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void FromGlobalAccessCache ()
 		{
 			Assembly corlib = typeof (int).Assembly;
