@@ -495,8 +495,6 @@ namespace MonoTests.System
 		[Category("NotDotNet")]
 		public void CheckHostName1 ()
 		{
-			// reported to MSDN Product Feedback Center (FDBK28674)
-			AssertEquals ("#11: known to fail with ms.net: this is not a valid domain address", UriHostNameType.Unknown, Uri.CheckHostName ("www.contoso.com."));	
 			// reported to MSDN Product Feedback Center (FDBK28671)
 			AssertEquals ("#36 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName (":11:22:33:44:55:66:77:88"));
 		}
@@ -514,6 +512,7 @@ namespace MonoTests.System
 			AssertEquals ("#8", UriHostNameType.Dns, Uri.CheckHostName ("9001.002.03.4"));
 			AssertEquals ("#9", UriHostNameType.Dns, Uri.CheckHostName ("www.contoso.com"));
 			AssertEquals ("#10", UriHostNameType.Unknown, Uri.CheckHostName (".www.contoso.com"));
+			AssertEquals ("#11", UriHostNameType.Dns, Uri.CheckHostName ("www.contoso.com."));
 			AssertEquals ("#12", UriHostNameType.Dns, Uri.CheckHostName ("www.con-toso.com"));	
 			AssertEquals ("#13", UriHostNameType.Dns, Uri.CheckHostName ("www.con_toso.com"));	
 			AssertEquals ("#14", UriHostNameType.Unknown, Uri.CheckHostName ("www.con,toso.com"));	

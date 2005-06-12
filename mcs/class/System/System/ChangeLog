@@ -1,3 +1,8 @@
+2005-06-11 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Uri.cs: Domain address might have trailing period to indicate
+	that the domain name is fully qualified. Fixes bug #75230.
+
 2005-06-02 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Uri.cs: throw UriFormatException if URI starts with colon.

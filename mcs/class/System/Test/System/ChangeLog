@@ -1,3 +1,7 @@
+2005-06-11 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* UriTest.cs: modify tests to reflect fix for bug #75230.
+
 2005-06-03 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* UriTest.cs: modify tests to reflect fixes in .NET 2.0.

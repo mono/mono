@@ -488,9 +488,6 @@ namespace System
 		{
 			int len = name.Length;
 			
-			if (name [len - 1] == '.')
-				return false;
-				
 			int count = 0;
 			for (int i = 0; i < len; i++) {
 				char c = name [i];
