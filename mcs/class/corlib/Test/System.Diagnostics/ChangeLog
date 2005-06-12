@@ -1,3 +1,8 @@
+2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* StackTraceTest.cs: Mono does not support StraceTrace for
+	thread. Test passes on MS.NET 2.x.
+
 2005-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* StackFrameCas.cs: Fixed failures under MS for NET_1_1.

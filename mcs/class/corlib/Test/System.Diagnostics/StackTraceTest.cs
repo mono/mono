@@ -133,8 +133,12 @@ namespace MonoTests.System.Diagnostics {
 		}
 
 		[Test]
-		[Ignore ("Exception documented but not thrown on MS runtime")]
+#if !NET_2_0
+		// on MS .NET 1.x, ThreadState after Start() is Unstarted
+		[Category ("NotDotNet")]
+#endif
 		[ExpectedException (typeof (ThreadStateException))]
+		[Ignore ("Not supported in Mono")]
 		public void StackTrace_Thread_NotSuspended ()
 		{
 			Thread t = new Thread (new ThreadStart (EmptyThread));
