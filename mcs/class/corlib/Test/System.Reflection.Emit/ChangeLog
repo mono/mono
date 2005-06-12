@@ -1,5 +1,10 @@
 2005-06-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* AssemblyBuilderTest.cs: Added AssemblyName tests that currently
+	fail on Mono.
+
+2005-06-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* FieldBuilderTest.cs: Enabled tests for FieldHandle again after 
 	fixing regression.
 	* ConstructorBuilderTest.cs: MethodHandle should not throw

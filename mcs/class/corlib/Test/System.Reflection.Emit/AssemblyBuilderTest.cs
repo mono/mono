@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Globalization;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -535,6 +536,114 @@ public class AssemblyBuilderTest : Assertion
 		// Test with no modules
 		AssemblyBuilder ab2 = genAssembly ();
 		m = ab2.GetModules ();
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void AssemblyName_Culture ()
+	{
+		AssemblyName assemblyName = new AssemblyName ();
+		assemblyName.Name = "AssemblyNameTest";
+		assemblyName.Version = new Version ("1.0.0.0");
+		assemblyName.CultureInfo = new CultureInfo ("en-US");
+
+		const string fullName = "AssemblyNameTest, Version=1.0.0.0, Culture=en-US, PublicKeyToken=null";
+		const string abName = "AssemblyNameTest, Version=1.0.0.0, Culture=en-US";
+
+		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void AssemblyName_PublicKey ()
+	{
+		AssemblyName assemblyName = new AssemblyName ();
+		assemblyName.Name = "AssemblyNameTest";
+		assemblyName.Version = new Version ("1.2.3.4");
+		assemblyName.KeyPair = new StrongNameKeyPair (strongName);
+
+		const string fullName = "AssemblyNameTest, Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8";
+		const string abName = "AssemblyNameTest, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8";
+
+		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void AssemblyName_NoVersion ()
+	{
+		AssemblyName assemblyName = new AssemblyName ();
+		assemblyName.Name = "AssemblyNameTest";
+
+		const string fullName = "AssemblyNameTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+		const string abName = "AssemblyNameTest, Version=0.0.0.0";
+
+		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void AssemblyName_Version ()
+	{
+		AssemblyName assemblyName = new AssemblyName ();
+		assemblyName.Name = "AssemblyNameTest";
+		assemblyName.Version = new Version (1, 2, 3, 4);
+
+		const string fullName = "AssemblyNameTest, Version=1.2.3.4, Culture=neutral, PublicKeyToken=null";
+		const string abName = "AssemblyNameTest, Version=1.2.3.4";
+
+		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
+	}
+
+	private static void AssertAssemblyName (string tempDir, AssemblyName assemblyName, string abName, string fullName)
+	{
+		AppDomain currentDomain = AppDomain.CurrentDomain;
+		AppDomain newDomain = null;
+
+		try {
+			AssemblyBuilder ab = currentDomain.DefineDynamicAssembly (
+				assemblyName, AssemblyBuilderAccess.Save, tempDir);
+			ab.Save (assemblyName.Name + ".dll");
+
+#if NET_2_0
+			// on .NET 2.0, the full name of the AssemblyBuilder matches the 
+			// fully qualified assembly name
+			AssertEquals (fullName, ab.FullName);
+#else
+			AssertEquals (abName, ab.FullName);
+#endif
+
+			// load assembly in separate domain, so we can clean-up after the 
+			// test
+			newDomain = AppDomain.CreateDomain ("test2", currentDomain.Evidence,
+				currentDomain.SetupInformation);
+
+			Helper helper = new Helper (Path.Combine (tempDir, assemblyName.Name + ".dll"),
+				fullName);
+			newDomain.DoCallBack (new CrossAppDomainDelegate (helper.Test));
+		} finally {
+			if (newDomain != null) {
+				AppDomain.Unload (newDomain);
+			}
+		}
+	}
+
+	[Serializable ()]
+	private class Helper
+	{
+		private readonly string _assemblyPath;
+		private readonly string _assemblyName;
+
+		public Helper (string assemblyPath, string assemblyName)
+		{
+			_assemblyPath = assemblyPath;
+			_assemblyName = assemblyName;
+		}
+		public void Test ()
+		{
+			AssemblyName assemblyName = AssemblyName.GetAssemblyName (_assemblyPath);
+			Assertion.AssertEquals (_assemblyName, assemblyName.ToString ());
+		}
 	}
 }
 }
