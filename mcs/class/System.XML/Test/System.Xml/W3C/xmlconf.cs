@@ -99,12 +99,13 @@ namespace XmlConfTest {
 		StreamWriter totalListWriter;
 		#endregion
 
-                #region IDisposable Members
-                public void Dispose() {
-                        if (failedListWriter != null)
-                                failedListWriter.Close ();
-			if (fixedListWriter != null)
+		#region IDisposable Members
+		public void Dispose()
+		{
+			if (failedListWriter != null)
 				failedListWriter.Close ();
+			if (fixedListWriter != null)
+				fixedListWriter.Close ();
 			if (slowNewListWriter != null)
 				slowNewListWriter.Close ();
 			if (totalListWriter != null)
