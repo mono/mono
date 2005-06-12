@@ -1,3 +1,7 @@
+2005-06-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h: Ongoing IA64 work.
+
 2005-06-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ia64/ia64-codegen.h: Ongoing IA64 work.
