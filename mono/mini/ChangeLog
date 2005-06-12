@@ -1,5 +1,7 @@
 2005-06-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* jit-icalls.c (mono_imul_ovf): Add exception handling.
+
 	* *-ia64.*: Ongoing IA64 work.
 
 	* mini.c (mini_init): Fix signature of mono_delegate_ctor.
