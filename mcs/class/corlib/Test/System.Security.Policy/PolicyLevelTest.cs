@@ -273,6 +273,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		// Makes distcheck fail because there is no Mono installed into the prefix
+		// thus making the GAC not work...
+		[Category ("NotWorking")]
 		public void FromXml () 
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();
@@ -293,6 +296,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		// Makes distcheck fail because there is no Mono installed into the prefix
+		// thus making the GAC not work...
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void FromXml_Invalid () 
 		{
