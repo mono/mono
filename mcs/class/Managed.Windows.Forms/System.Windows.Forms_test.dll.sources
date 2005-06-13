@@ -4,3 +4,5 @@ System.Windows.Forms/TreeViewTest.cs
 System.Windows.Forms/LabelPropertyTest.cs
 System.Windows.Forms/ControlTest.cs
 System.Windows.Forms/ControlEventTest.cs
+System.Windows.Forms/TextBoxTest.cs
+System.Windows.Forms/ButtonTest.cs

@@ -1,3 +1,8 @@
+2005-06-13  Ritvik Mayank  <mritvik@novell.com>
+
+	* System.Windows.Forms_test.dll.sources : Added TextBoxTest.cs
+	and ButtonTest.cs for TextBox and Button tests respectively.
+
 2005-06-10  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Add ImageListConverter.cs
