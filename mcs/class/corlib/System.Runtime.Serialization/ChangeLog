@@ -1,3 +1,7 @@
+2005-06-13  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Formatter.cs: Properly initialize protected fields. Fixes bug #75233. 
+
 2005-05-17  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationInfo.cs: Use IsInstanceOfType instead of IsAssignableFrom

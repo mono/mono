@@ -45,8 +45,8 @@ public abstract class Formatter : IFormatter
 	{
 	}
 	
-	protected ObjectIDGenerator m_idGenerator;
-	protected Queue m_objectQueue;
+	protected ObjectIDGenerator m_idGenerator = new ObjectIDGenerator ();
+	protected Queue m_objectQueue = new Queue ();
 
 	public abstract SerializationBinder Binder {
 		get;
