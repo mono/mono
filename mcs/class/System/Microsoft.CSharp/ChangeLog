@@ -1,3 +1,8 @@
+2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeCompiler.cs: Temp source files should have extension
+	".cs".
+
 2005-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Win32 resources are supported. Fixes bug
