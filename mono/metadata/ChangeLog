@@ -1,3 +1,16 @@
+2005-06-13  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h (MonoTypeNameFormat): New enum.
+
+	* class.c
+	(mono_class_get_name_full): Renamed to mono_type_get_name_full().
+	(mono_type_get_full_name): Removed.
+	(mono_type_get_name_full): Take a `MonoTypeNameFormat format'
+	argument instead of the boolean's.
+
+	* icall.c (ves_icall_System_MonoType_getFullName):
+	Added `gboolean assembly_qualified'.	
+
 2005-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: no need to convert from utf16 to utf8 and then back again
