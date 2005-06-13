@@ -296,7 +296,7 @@ namespace Microsoft.VisualBasic
 
 			for (int i = 0; i < ea.Length; i++) {
 				CodeCompileUnit compileUnit = ea[i];
-				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + "vb");
+				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + ".vb");
 				FileStream f = new FileStream (fileNames[i], FileMode.OpenOrCreate);
 				StreamWriter s = new StreamWriter (f);
 				if (compileUnit.ReferencedAssemblies != null) {
@@ -326,7 +326,7 @@ namespace Microsoft.VisualBasic
 			string[] fileNames = new string[sources.Length];
 
 			for (int i = 0; i < sources.Length; i++) {
-				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + "vb");
+				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + ".vb");
 				FileStream f = new FileStream (fileNames[i], FileMode.OpenOrCreate);
 				using (StreamWriter s = new StreamWriter (f)) {
 					s.Write (sources[i]);

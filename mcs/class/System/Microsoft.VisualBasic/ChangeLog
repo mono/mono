@@ -1,3 +1,7 @@
+2005-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeCompiler.cs: Temp source files should have extension ".vb".
+
 2005-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeCompiler.cs: ArgumentException was thrown when more than 
