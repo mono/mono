@@ -118,8 +118,8 @@ namespace System.Windows.Forms
 		private PropertyDescriptor property_descriptor;
 		private bool read_only;
 		private int width;
-		protected bool is_default;
-		internal protected DataGrid grid;
+		internal bool is_default;
+		internal DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		private StringFormat string_format_hdr;
 		#endregion	// Local Variables
@@ -475,7 +475,7 @@ namespace System.Windows.Forms
 		virtual internal void OnMouseDown (MouseEventArgs e, int row, int column) {}
 		virtual internal void OnKeyDown (KeyEventArgs ke, int row, int column) {}
 		
-		protected internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
+		internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
 		{	
 			// Background
 			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.DataGrid.ParentRowsBackColor), 

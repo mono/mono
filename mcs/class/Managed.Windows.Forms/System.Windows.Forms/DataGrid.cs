@@ -178,6 +178,7 @@ namespace System.Windows.Forms
 		private Hashtable selected_rows;
 		private bool ctrl_pressed;
 		private bool shift_pressed;
+		private bool begininit;
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -186,6 +187,7 @@ namespace System.Windows.Forms
 			grid_drawing = new DataGridDrawing (this);
 			allow_navigation = true;
 			allow_sorting = true;
+			begininit = false;
 			alternating_backcolor = def_alternating_backcolor;
 			background_color = def_background_color;
 			border_style = BorderStyle.Fixed3D;
@@ -640,21 +642,23 @@ namespace System.Windows.Forms
 
 		public object this [DataGridCell cell] {
 			get  {
-				throw new NotImplementedException ();
+				return this [cell.RowNumber, cell.ColumnNumber];
 			}
 
 			set {
-				throw new NotImplementedException ();
+				this [cell.RowNumber, cell.ColumnNumber] = value;
 			}
 		}
 
 		public object this [int rowIndex, int columnIndex] {
 			get  {
-				throw new NotImplementedException ();
+				return CurrentTableStyle.GridColumnStyles[columnIndex].GetColumnValueAtRow (ListManager,
+					rowIndex);
 			}
 
 			set {
-				throw new NotImplementedException ();
+				CurrentTableStyle.GridColumnStyles[columnIndex].SetColumnValueAtRow (ListManager,
+					rowIndex, value);
 			}
 		}
 
@@ -967,16 +971,16 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 
+		[MonoTODO]
 		public virtual bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public virtual void BeginInit ()
 		{
-
+			begininit = true;
 		}
-
 
 		protected virtual void CancelEditing ()
 		{			
@@ -986,6 +990,7 @@ namespace System.Windows.Forms
 			InvalidateCurrentRowHeader ();
 		}
 
+		[MonoTODO]
 		public void Collapse (int row)
 		{
 
@@ -1013,7 +1018,7 @@ namespace System.Windows.Forms
 
 		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop, bool isDefault)
 		{
-			throw new NotImplementedException ();
+			return CreateGridColumn (prop, isDefault);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -1041,7 +1046,7 @@ namespace System.Windows.Forms
 
 		public virtual void EndInit ()
 		{
-
+			begininit = false;
 		}
 
 		public void Expand (int row)
@@ -1066,7 +1071,7 @@ namespace System.Windows.Forms
 
 		protected virtual string GetOutputTextDelimiter ()
 		{
-			throw new NotImplementedException ();
+			return string.Empty;
 		}
 
 		protected virtual void GridHScrolled (object sender, ScrollEventArgs se)
@@ -1113,11 +1118,13 @@ namespace System.Windows.Forms
 			return selected_rows[row] != null;
 		}
 
+		[MonoTODO]
 		public void NavigateBack ()
 		{
 
 		}
 
+		[MonoTODO]
 		public void NavigateTo (int rowNumber, string relationName)
 		{
 
@@ -1219,8 +1226,8 @@ namespace System.Windows.Forms
 		protected override void OnKeyDown (KeyEventArgs ke)
 		{
 			base.OnKeyDown (ke);
-
-			if (KeyboardNavigation (ke.KeyCode) == true) {
+			
+			if (ProcessGridKey (ke) == true) {
 				ke.Handled = true;
 			}
 
@@ -1390,23 +1397,116 @@ namespace System.Windows.Forms
 
 		protected bool ProcessGridKey (KeyEventArgs ke)
 		{
-			throw new NotImplementedException ();
+			if (RowsCount == 0) {
+				return false;
+			}
+
+			switch (ke.KeyCode) {
+			case Keys.ControlKey:
+				ctrl_pressed = true;
+				break;
+			case Keys.ShiftKey:
+				shift_pressed = true;
+				break;
+			case Keys.Up:
+			{
+				if (current_cell.RowNumber > 0) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
+					EditCell (current_cell);
+				}
+				break;
+			}
+			case Keys.Down:
+			{
+				if (current_cell.RowNumber < RowsCount - 1) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
+					EditCell (current_cell);
+				}
+				break;
+			}
+			case Keys.Right:
+			{
+				if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
+					EditCell (current_cell);
+				}
+				break;
+			}
+			case Keys.Left:
+			{
+				if (current_cell.ColumnNumber > 0) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
+					EditCell (current_cell);
+				}
+				break;
+			}
+			case Keys.PageUp:
+			{
+				if (current_cell.RowNumber > grid_drawing.VLargeChange) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber - grid_drawing.VLargeChange, current_cell.ColumnNumber);
+				} else {
+					CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
+				}
+
+				EditCell (current_cell);
+				break;
+			}
+			case Keys.PageDown:
+			{
+				if (current_cell.RowNumber + grid_drawing.VLargeChange < RowsCount) {
+					CurrentCell = new DataGridCell (current_cell.RowNumber + grid_drawing.VLargeChange, current_cell.ColumnNumber);
+				} else {
+					CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
+				}
+
+				EditCell (current_cell);
+				break;
+			}
+			case Keys.Home:
+			{
+				CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
+				EditCell (current_cell);
+				break;
+			}
+			case Keys.End:
+			{
+				CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
+				EditCell (current_cell);
+				break;
+			}
+			case Keys.Delete:
+			{
+				ICollection keys = selected_rows.Keys;
+				foreach (int row in selected_rows.Keys) {
+					ListManager.RemoveAt (row);						
+				}
+				selected_rows.Clear ();
+				CalcAreasAndInvalidate ();
+				break;					
+			}
+			default:
+				return false; // message not processed
+			}
+
+			return true; // message processed
 		}
 
 		// Called from DataGridTextBox
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
 			Keys key = (Keys) m.WParam.ToInt32 ();
-			if (KeyboardNavigation (key) == true) {
+			KeyEventArgs ke = new KeyEventArgs (key);
+			if (ProcessGridKey (ke) == true) {
 				return true;
 			}
 
 			return base.ProcessKeyPreview (ref m);
 		}
 
+		[MonoTODO]	
 		protected bool ProcessTabKey (Keys keyData)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public void ResetAlternatingBackColor ()
@@ -1585,102 +1685,6 @@ namespace System.Windows.Forms
 			grid_drawing.CalcGridAreas ();
 			Invalidate ();
 		}
-
-		internal bool KeyboardNavigation (Keys key)
-		{
-			if (RowsCount == 0) {
-				return false;
-			}
-
-			switch (key) {
-				case Keys.ControlKey:
-					ctrl_pressed = true;
-					break;
-				case Keys.ShiftKey:
-					shift_pressed = true;
-					break;
-				case Keys.Up:
-				{
-					if (current_cell.RowNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
-						EditCell (current_cell);
-					}
-					break;
-				}
-				case Keys.Down:
-				{
-					if (current_cell.RowNumber < RowsCount - 1) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);
-						EditCell (current_cell);
-					}
-					break;
-				}
-				case Keys.Right:
-				{
-					if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
-						EditCell (current_cell);
-					}
-					break;
-				}
-				case Keys.Left:
-				{
-					if (current_cell.ColumnNumber > 0) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
-						EditCell (current_cell);
-					}
-					break;
-				}
-				case Keys.PageUp:
-				{
-					if (current_cell.RowNumber > grid_drawing.VLargeChange) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber - grid_drawing.VLargeChange, current_cell.ColumnNumber);
-					} else {
-						CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
-					}
-
-					EditCell (current_cell);
-					break;
-				}
-				case Keys.PageDown:
-				{
-					if (current_cell.RowNumber + grid_drawing.VLargeChange < RowsCount) {
-						CurrentCell = new DataGridCell (current_cell.RowNumber + grid_drawing.VLargeChange, current_cell.ColumnNumber);
-					} else {
-						CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
-					}
-
-					EditCell (current_cell);
-					break;
-				}
-				case Keys.Home:
-				{
-					CurrentCell = new DataGridCell (0, current_cell.ColumnNumber);
-					EditCell (current_cell);
-					break;
-				}
-				case Keys.End:
-				{
-					CurrentCell = new DataGridCell (RowsCount - 1, current_cell.ColumnNumber);
-					EditCell (current_cell);
-					break;
-				}
-				case Keys.Delete:
-				{
-					ICollection keys = selected_rows.Keys;
-					foreach (int row in selected_rows.Keys) {
-						ListManager.RemoveAt (row);						
-					}
-					selected_rows.Clear ();
-					CalcAreasAndInvalidate ();
-					break;					
-				}
-				default:
-					return false; // message not processed
-				}
-
-				return true; // message processed
-			}
 
 		// EndEdit current editing operation
 		public virtual bool EndEdit (bool shouldAbort)
