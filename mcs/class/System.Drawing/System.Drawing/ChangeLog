@@ -1,3 +1,9 @@
+2005-06-13  Peter Bartok  <pbartok@novell.com>
+
+	* Icon.cs(ToBitmap): If the icon is not 32bits, create the bitmap
+	  through an intermediary step, which turns it into a 32bit version.
+	  Fixes #75254
+
 2005-06-13  Kornél Pál <kornelpal@hotmail.com>
 
 	* ComIStreamMarshaler.cs: Dispose releases managed objects as well,

@@ -321,7 +321,15 @@ namespace System.Drawing
 					writer.Flush ();
 
 					// create bitmap from stream and return
-					bmp = new Bitmap (stream);
+					if (colCount > 0) {
+						Bitmap new_bmp;
+
+						new_bmp = new Bitmap(stream);
+						bmp = new Bitmap(new_bmp, bih.biWidth, bih.biHeight/2);
+						new_bmp.Dispose();
+					} else {
+						bmp = new Bitmap(stream);
+					}
 
 					// This hack is so ugly, it's embarassing. 
 					// But icons are small, so it should be ok for now
