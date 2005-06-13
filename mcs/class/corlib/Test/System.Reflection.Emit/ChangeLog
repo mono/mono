@@ -1,5 +1,11 @@
 2005-06-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* AssemblyBuilderTest.cs: Setting KeyPair of AssemblyName has 
+	currently no effect on PublicKey(Token) and FullName of AssemblyName
+	of the AssemblyBuilder. Test for bug #75246.
+
+2005-06-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* AssemblyBuilderTest.cs: Removed inheritance from deprecated
 	Assertion class. Use Assert class instead.
 
