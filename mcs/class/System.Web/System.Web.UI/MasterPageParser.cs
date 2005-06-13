@@ -52,6 +52,12 @@ namespace System.Web.UI
 			return (MasterPage) mpp.GetCompiledInstance ();
 		}
 
+		public static Type GetCompiledMasterType (string virtualPath, string inputFile, HttpContext context)
+		{
+			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
+			return mpp.CompileIntoType ();
+		}
+
 		internal override Type DefaultBaseType {
 			get { return typeof (MasterPage); }
 		}

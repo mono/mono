@@ -60,6 +60,7 @@ namespace System.Web.UI
 
 #if NET_2_0
 		string masterPage;
+		Type masterType;
 #endif
 
 		public PageParser ()
@@ -243,6 +244,9 @@ namespace System.Web.UI
 			
 #if NET_2_0
 			masterPage = GetString (atts, "MasterPageFile", null);
+			
+			// Make sure the page exists
+			MasterPageParser.GetCompiledMasterType (masterPage, HttpContext.Current.Request.MapPath (masterPage), HttpContext.Current);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -250,6 +254,29 @@ namespace System.Web.UI
 
 			base.ProcessMainAttributes (atts);
 		}
+		
+#if NET_2_0
+		internal override void AddDirective (string directive, Hashtable atts)
+		{
+			if (String.Compare ("MasterType", directive, true) == 0) {
+				string type = GetString (atts, "TypeName", null);
+				if (type != null) {
+					masterType = LoadType (type);
+					if (masterType == null)
+						ThrowParseException ("Could not load type '" + type + "'.");
+				} else {
+					string path = GetString (atts, "VirtualPath", null);
+					if (path != null)
+						masterType = MasterPageParser.GetCompiledMasterType (path, HttpContext.Current.Request.MapPath (path), HttpContext.Current);
+					else
+						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");
+				}
+				AddAssembly (masterType.Assembly, true);
+			}
+			else
+				base.AddDirective (directive, atts);
+		}
+#endif
 		
 		static string SuggestCulture (string culture)
 		{
@@ -342,6 +369,10 @@ namespace System.Web.UI
 #if NET_2_0
 		internal string MasterPageFile {
 			get { return masterPage; }
+		}
+		
+		internal Type MasterType {
+			get { return masterType; }
 		}
 #endif
 	}
