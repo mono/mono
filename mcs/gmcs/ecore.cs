@@ -2469,7 +2469,7 @@ namespace Mono.CSharp {
 
 		public override string FullName {
 			get {
-				return TypeManager.GetTypeName (Type);
+				return Type.FullName != null ? Type.FullName : Type.Name;
 			}
 		}
 	}
