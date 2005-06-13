@@ -1,4 +1,5 @@
-//using System;
+// cs0519.cs: `System' clashes with a predefined namespace
+// Line: 1
 
 enum System { A }
 

@@ -1,4 +1,4 @@
-// cs0136.cs: local variable j can not be declared, because there is something with that name already
+// cs0136-2.cs: A local variable named `j' cannot be declared in this scope because it would give a different meaning to `j', which is already used in a `parent or current' scope to denote something else
 // Line: 5
 class X {
 	public static void Bar (int j, params int [] args)

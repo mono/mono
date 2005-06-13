@@ -1,4 +1,4 @@
-// cs0111.cs: Class 'C' already defines a member called 'this' with the same parameter types
+// cs0111-9.cs: Type `C' already defines a member called `this' with the same parameter types
 // Line: 6
 
 class C

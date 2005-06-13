@@ -1,4 +1,4 @@
-// cs0102.cs: The class 'SampleClass' already contains a definition for 'EE'
+// cs0102-9.cs: The type `SampleClass' already contains a definition for `EE'
 // Line: 6
 
 public class SampleClass {

@@ -1,4 +1,4 @@
-//cs0243: NonExistant does not exist in this namespace
+// cs0246-10.cs: The type or namespace name `Nonexistant' could not be found (are you missing a using directive or an assembly reference?)
 
 using System;
 using Nonexistant;

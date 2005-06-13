@@ -1,4 +1,4 @@
-// cs0231.cs: A params parameter must be the last in a formal parameter list
+// cs0231.cs: A params parameter must be the last parameter in a formal parameter list
 // Line: 5
 class Test
 {

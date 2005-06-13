@@ -1,4 +1,4 @@
-// cs0122.cs: y.x is inaccessible due to its protection level
+// cs0122.cs: `Y.x()' is inaccessible due to its protection level
 // Line: 15
 using System;
 

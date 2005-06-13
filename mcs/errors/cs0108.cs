@@ -1,4 +1,4 @@
-// cs0108.cs: The new keyword is required on MEMBER because it hides MEMBER2
+// cs0108.cs: `Derived.F()' hides inherited member `Base.F()'. Use the new keyword if hiding was intended
 // Line:
 // Compiler options: -warnaserror -warn:2
 

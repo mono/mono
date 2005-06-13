@@ -1,4 +1,4 @@
-// cs0159-2.cs: No such case 20
+// cs0159-2.cs: No such label `case 20:' within the scope of the goto statement
 
 class y {
 	enum X { A = 1, B = 1, C = 1 }

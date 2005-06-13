@@ -1,4 +1,4 @@
-// cs0052.cs: Accessibility levels inconsistent. Method type is less accessible than method.
+// cs0050-2.cs: Inconsistent accessibility: return type `ErrorCS0052' is less accessible than method `Foo.Method()'
 // Line: 10
 
 using System;

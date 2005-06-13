@@ -1,4 +1,4 @@
-// cs102.cs: The class 'X' already contains a definition for 'A'
+// cs0102-6.cs: The type `X' already contains a definition for `A'
 // Line: 6
 
 class X {

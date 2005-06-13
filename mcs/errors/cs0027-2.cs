@@ -1,4 +1,4 @@
-// cs0027-2.cs: Keyword 'this' can't be used outside a constructor, a method or a property.
+// cs0027-2.cs: Keyword `this' is not available in the current context
 // Line: 10
 
 // Attention: Here the compiler complains saying that cannot convert implicitly from 'Error0027' to 'int' but

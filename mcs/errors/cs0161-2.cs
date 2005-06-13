@@ -1,4 +1,4 @@
-// CS0161: Not all code paths return a value
+// cs0161-2.cs: `Test.Main()': not all code paths return a value
 // Line: 4
 class Test {
 	static int Main () {

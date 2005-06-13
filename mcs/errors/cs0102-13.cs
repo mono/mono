@@ -1,4 +1,4 @@
-// cs0102.cs: The class 'SampleClass' already contains a definition for 'op_Implicit'
+// cs0102-13.cs: The type `SampleClass' already contains a definition for `op_Implicit'
 // Line: 10
 
 public class SampleClass {

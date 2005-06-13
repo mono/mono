@@ -1,4 +1,4 @@
-// cs0175: wrong context for use of `base' keyword
+// cs0175.cs: Use of keyword `base' is not valid in this context
 // Line: 8
 using System.Collections;
 class Collection : CollectionBase

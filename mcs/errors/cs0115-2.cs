@@ -1,4 +1,4 @@
-// cs0115.cs: 'X.this[int]': no suitable method found to override
+// cs0115.cs: `X.this[int]': no suitable method found to override
 // Line: 5
 
 class X {

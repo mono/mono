@@ -1,4 +1,4 @@
-// cs0074.cs: Abstracts events can't have initializers.
+// cs0074.cs: `ErrorCS0074.OnFoo': abstract event cannot have an initializer
 // Line: 8
 
 using System;

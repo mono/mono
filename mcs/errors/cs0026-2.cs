@@ -1,4 +1,4 @@
-// cs0026: use of this is not allowed in a static field initializer
+// cs0026-2.cs: Keyword `this' is not valid in a static property, static method, or static field initializer
 // 
 class X {
 	static object o = this;

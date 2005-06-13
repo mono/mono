@@ -1,4 +1,4 @@
-// cs0039.cs: as operator can not convert explicitly from type to type
+// cs0039.cs: Cannot convert type `decimal' to `string' via a built-in conversion
 // line: 8
 class A {
         public static void Main ()

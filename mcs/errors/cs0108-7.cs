@@ -1,4 +1,4 @@
-// cs0108.cs: The new keyword is required on 'Derived.Prop because it hides inherited member
+// cs0108-7.cs: `Derived.Prop(bool)' hides inherited member `Base.Prop'. Use the new keyword if hiding was intended
 // Line: 13
 // Compiler options: -warnaserror -warn:2
 

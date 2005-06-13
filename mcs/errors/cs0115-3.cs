@@ -1,4 +1,4 @@
-// cs0115:'MyTestExtended.GetName()': no suitable methods found to override 
+// cs0115-3.cs: `MyTestExtended.GetName()': no suitable method found to override
 // Line: 12
 // Compiler options: -r:CS0534-4-lib.dll
 

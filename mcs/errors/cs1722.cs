@@ -1,3 +1,6 @@
+// cs1722.cs: In Class `My.Namespace.MyBaseClass', `My.Namespace.MyInterfaceBase' is not an interface, a base class must be listed first
+// Line: 21
+
 using System;
 
 namespace My.Namespace {

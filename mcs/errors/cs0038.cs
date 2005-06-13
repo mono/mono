@@ -1,4 +1,4 @@
-// cs0038.cs: Cannot access a nonstatic member of outer type `X' via nested type `X.Y'.
+// cs0038.cs: Cannot access a nonstatic member of outer type `X' via nested type `X.Y'
 // line: 15
 using System;
 

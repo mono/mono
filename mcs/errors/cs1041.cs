@@ -1,14 +1,6 @@
-// warning CS1041: Identifier expected, 'true' is a keyword
-// warning CS1041: Identifier expected, 'catch' is a keyword
-// Compiler options: -warnaserror -doc:dummy.xml
+// cs1041.cs: Identifier expected, 'int' is a keyword
+// Line: 5
 
-/// <summary><see cref="true" />, <see cref="catch" /></summary>
-public enum Test {
-        /// <summary>Maybe</summary>
-        @true,
-
-        /// <summary>Maybe</summary>
-        @catch
+public class Test {
+    void T (int int) {}
 }
-
-class Foo { static void Main () {} }

@@ -1,5 +1,6 @@
+// cs1590.cs: Invalid XML 'include' element; Missing 'file' attribute.
+// Line: 16
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
-// Invalid XML 'include' element; Missing 'file' attribute
 
 namespace Testing
 {

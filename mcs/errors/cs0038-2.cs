@@ -1,4 +1,4 @@
-// CS0038: Cannot access nonstatic member `MyEnum' of outer type `X' via nested type `X+Nested'
+// cs0038-2.cs: Cannot access a nonstatic member of outer type `X' via nested type `X.Nested'
 // Line: 9
 public enum MyEnum { V = 1 }
 

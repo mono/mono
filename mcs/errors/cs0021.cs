@@ -1,4 +1,4 @@
-// cs0021.cs: You can't use and indexer with a type that doesn't support it.
+// cs0021.cs: Cannot apply indexing with [] to an expression of type `int'
 // Line: 9 
 using System;
 

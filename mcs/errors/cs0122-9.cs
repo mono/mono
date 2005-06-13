@@ -1,3 +1,6 @@
+// cs0122-9.cs: `X.a' is inaccessible due to its protection level
+// Line: 11
+
 public class X {
 	private int a {
 		get {

@@ -1,4 +1,4 @@
-// cs0208: _Port is not an unmanaged type.
+// cs0208-8.cs: Cannot take the address of, get the size of, or declare a pointer to a managed type (`_Port')
 // Line: 16
 // Compiler options: -unsafe
 

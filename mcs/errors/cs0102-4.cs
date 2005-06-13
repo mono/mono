@@ -1,4 +1,4 @@
-// cs0102.cs: The class 'ErrorClass' already contains a definition for 'Blah'
+// cs0102-4.cs: The type `ErrorClass' already contains a definition for `Blah'
 // Line: 7
 
 using System.Runtime.CompilerServices;

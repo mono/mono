@@ -1,4 +1,4 @@
-// CS0117: `A' does not contain a definition for `Foo'.
+// cs0117-2.cs: `A' does not contain a definition for `Foo'
 // Line: 15
 using System;
 using System.Runtime.CompilerServices;

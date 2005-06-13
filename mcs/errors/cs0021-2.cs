@@ -1,3 +1,6 @@
+// cs0021-2.cs: Cannot apply indexing with [] to an expression of type `System.Array'
+// Line: 9 
+
 using System;
 class X {
 

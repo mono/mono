@@ -1,5 +1,4 @@
-// cs0154.cs: The property 'name' can not be used in this context because
-//            it lacks a get accessor.
+// cs0154.cs: The property or indexer `A.name' cannot be used in this context because it lacks the get accessor
 // Line: 21
 
 public class A

@@ -1,4 +1,4 @@
-// cs0193.cs: * or -> operator can only be applied to pointer types.
+// cs0193.cs: The * or -> operator must be applied to a pointer
 // Line: 9
 // Compiler options: -unsafe
 

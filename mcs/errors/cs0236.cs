@@ -1,4 +1,4 @@
-//cs0236: A field initializer cannot reference the non-static field, method or property `X.Foo'.
+// cs0236.cs: A field initializer cannot reference the nonstatic field, method, or property `X.Foo.get'
 
 class X
 {

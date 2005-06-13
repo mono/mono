@@ -1,4 +1,4 @@
-// cs0122.cs: prop is not accessible due to its protection level
+// cs0122-2.cs: `A.prop' is inaccessible due to its protection level
 // Line: 19
 // Compiler options: -t:library
 

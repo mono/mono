@@ -1,4 +1,4 @@
-// cs0057.cs: Inconsistent accessibility. Parameter type is less accessible than operator.
+// cs0057.cs: Inconsistent accessibility: parameter type `ErrorCS0057' is less accessible than operator `Foo.implicit operator Foo(ErrorCS0057)'
 // Line: 11
 
 using System;

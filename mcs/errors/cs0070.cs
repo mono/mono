@@ -1,4 +1,4 @@
-// cs0070.cs :  The event 'Click' can only appear on the left-side of a += or -= (except when used from within the type 'Button')
+// cs0070.cs: The event `Button.Click' can only appear on the left hand side of += or -= (except when used from within the type `Button')
 // Line : 20
 
 using System;

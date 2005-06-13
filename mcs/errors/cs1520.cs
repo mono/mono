@@ -1,6 +1,5 @@
-//
-// cs1520: Class, struct or interface method must have a return type
-// Line: 9
+// cs1520.cs: Class, struct, or interface method must have a return type
+// Line: 8
 
 class test {
 

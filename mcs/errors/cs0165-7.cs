@@ -1,4 +1,4 @@
-// CS0165: Use of unassigned local variable `x'
+// cs0165-7.cs: Use of unassigned local variable `service'
 // Line: 16
 using System;
 

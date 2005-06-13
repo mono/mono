@@ -1,4 +1,4 @@
-// cs0179.cs: member can not be declared extern and have a body
+// cs0179.cs: `X.extern_method()' cannot be extern and declare a body
 // Line:
 
 class X {

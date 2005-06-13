@@ -1,4 +1,7 @@
+// cs1571.cs: XML comment on 'Bar' has a duplicate param tag for 'i'
+// Line: 18
 // Compiler options: -doc:dummy.xml -warn:2 -warnaserror
+
 namespace Testing
 {
 	public class Test

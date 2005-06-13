@@ -1,4 +1,4 @@
-// cs0031.cs : Constant value '256' cannot be converted to a byte
+// cs0031.cs: Constant value `256' cannot be converted to a `byte'
 // Line : 7
 
 public class Blah {

@@ -1,4 +1,4 @@
-// cs0058.cs: Incompatible accessibility. Parameter type is less accessible than delegate.
+// cs0058.cs: Inconsistent accessibility: return type `ErrorCS0058' is less accessible than delegate `Foo.Delegate'
 // Line: 10
 
 using System;

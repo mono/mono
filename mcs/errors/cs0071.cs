@@ -1,4 +1,4 @@
-// cs0071.cs: An explicit implementation of an event must use property syntax.
+// cs0071.cs: An explicit interface implementation of an event must use property syntax
 // Line: 13
 
 using System;

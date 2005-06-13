@@ -1,4 +1,4 @@
-// cs0221.cs: cannot convert constant value to type, use in checked context
+// cs0221.cs: Constant value `4294967295' cannot be converted to a `int' (use `unchecked' syntax to override)
 // Line: 5
 
 class X {

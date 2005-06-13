@@ -1,4 +1,4 @@
-// cs0122-13.cs: 'Wrapper.Test.foo' is inaccessible due to its protection level
+// cs0122-13.cs: `Test.foo' is inaccessible due to its protection level
 // Line: 10
 
 internal class Test 

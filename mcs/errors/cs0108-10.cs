@@ -1,4 +1,4 @@
-// cs0108.cs: The new keyword is required on 'Derived.EE' because it hides inherited member
+// cs0108-10.cs: `Derived.EE' hides inherited member `Base.EE'. Use the new keyword if hiding was intended
 // Line: 12
 // Compiler options: -warnaserror -warn:2
 

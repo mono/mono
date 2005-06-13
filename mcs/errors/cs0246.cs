@@ -1,4 +1,4 @@
-// cs0246.cs: can not find type `B'
+// cs0246.cs: The type or namespace name `B' could not be found (are you missing a using directive or an assembly reference?)
 // Line: 4
 interface A : B {
 }

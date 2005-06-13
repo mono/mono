@@ -1,4 +1,4 @@
-// cs0019.cs : Operator '-' cannot be applied to operands of type `string' and `ulong'
+// cs0019-8.cs: Operator `-' cannot be applied to operands of type `string' and `ulong'
 // Line : 12
 
 using System;

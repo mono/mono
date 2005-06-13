@@ -1,4 +1,4 @@
-// cs0183.cs: the expression is always of the type `x'
+// cs0183.cs: The given expression is always of the provided (`int') type
 // Line:
 // Compiler options: -warnaserror -warn:1
 

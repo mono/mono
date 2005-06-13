@@ -1,4 +1,4 @@
-// cs0060.cs: Incosistent accessability between X and Y.X
+// cs0060.cs: Inconsistent accessibility: base class `X' is less accessible than class `Y'
 // Line: 6
 class X {
 }

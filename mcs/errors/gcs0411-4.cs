@@ -1,3 +1,6 @@
+// gcs0411.cs: The type arguments for method `T X.G ()' cannot be infered from the usage. Try specifying the type arguments explicitly.
+// Line: 17
+
 using System;
 
 delegate int E ();

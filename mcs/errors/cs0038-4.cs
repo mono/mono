@@ -1,3 +1,6 @@
+// cs0038.cs: Cannot access a nonstatic member of outer type `B' via nested type `B.C'
+// line: 14
+
 public class B {
 	public static void Main ()
 	{

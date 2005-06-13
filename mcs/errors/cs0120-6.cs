@@ -1,4 +1,4 @@
-// CS0120: An object reference is required for the non-static field `Int32'
+// cs0120-6.cs: An object reference is required for the nonstatic field, method, or property `MemRefMonoBug.Int32'
 // Line: 11
 
 using System;

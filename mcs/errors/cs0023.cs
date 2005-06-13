@@ -1,4 +1,4 @@
-// cs0023.cs : Operator ~ cannot be applied to operand of type `Foo'
+// cs0023.cs: Operator `~' cannot be applied to operand of type `Foo'
 // Line : 10
 
 public class Foo {

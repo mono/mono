@@ -1,4 +1,4 @@
-//cs0037.cs: Can not convert null to struct because its a value type
+// cs0037.cs: Cannot convert null to `S' because it is a value type
 // Line: 10
 struct S {
 	int a;

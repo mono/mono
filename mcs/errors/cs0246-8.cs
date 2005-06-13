@@ -1,4 +1,4 @@
-// CS0246: Cannot find type `Reflection.ConstructorInfo'
+// cs0246-8.cs: The type or namespace name `Reflection' could not be found (are you missing a using directive or an assembly reference?)
 // Line: 7
 using System;
 

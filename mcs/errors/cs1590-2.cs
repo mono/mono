@@ -1,5 +1,6 @@
+// cs1590.cs: Invalid XML 'include' element; Missing 'path' attribute.
+// Line: 11
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
-// Invalid XML 'include' element; Missing 'path' attribute
 
 namespace Testing
 {

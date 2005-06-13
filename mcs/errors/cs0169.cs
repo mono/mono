@@ -1,4 +1,4 @@
-// cs0169.cs: warning, private field `prv' is never used
+// cs0169.cs: The private field `X.x' is never used
 // Line: 4
 // Compiler options: -warnaserror -warn:4
 

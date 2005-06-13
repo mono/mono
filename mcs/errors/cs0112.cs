@@ -1,4 +1,4 @@
-// cs0112.cs: A static method can not be marked as virtual, abstract or override.
+// cs0112.cs: A static member `X.Bar.Add(int, int)' cannot be marked as override, virtual or abstract
 // Line: 13
 
 namespace X

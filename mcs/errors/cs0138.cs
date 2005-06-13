@@ -1,5 +1,4 @@
-// cs0138.cs: Using keyword only let you specify a namespace,
-// 	      Console is a class not a namespace.
+// cs0138.cs: A using namespace directive can only be applied to namespaces; `System.Console' is a type not a namespace
 // Line: 5
 
 using System;

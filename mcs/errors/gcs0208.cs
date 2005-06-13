@@ -1,5 +1,7 @@
+// gcs0208.cs: Cannot take the size of an unmanaged type (X`1)
+// Line: 12
 // Compiler options: -unsafe
-// CS0208: Cannot take the address of, get the size of, or declare a pointer to a managed type ('X<A>')
+
 class X <Y> {
 }
 

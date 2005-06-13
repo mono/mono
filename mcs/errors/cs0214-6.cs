@@ -1,3 +1,6 @@
+// cs0214.cs: Pointers may only be used in an unsafe context
+// Line: 12
+
 using System;
 
 namespace ConsoleApplication1

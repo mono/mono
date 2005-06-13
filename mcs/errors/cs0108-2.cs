@@ -1,4 +1,4 @@
-// cs0108-2.cs: The new keyword is required on 'Derived.Test(bool)' because it hides 'BaseInterface.Test(bool)'
+// cs0108-2.cs: `Derived.Test(bool)' hides inherited member `BaseInterface.Test(bool)'. Use the new keyword if hiding was intended
 // Line: 9
 // Compiler options: -warnaserror -warn:2 -t:library
 

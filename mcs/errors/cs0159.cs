@@ -1,4 +1,4 @@
-// cs0159.cs: No default target for goto default
+// cs0159.cs: No such label `default:' within the scope of the goto statement
 // Line:
 
 class X {

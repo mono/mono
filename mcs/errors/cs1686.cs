@@ -1,3 +1,5 @@
+// cs1686.cs: Variable i is captured in an anonymous method and its address is also being taken: they are exclusive
+// Line: 16
 // Compiler options: -unsafe
 
 class X {

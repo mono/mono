@@ -1,4 +1,4 @@
-// CS0156: A throw statement with no argument is only allowed in a catch clause
+// cs0156.cs: A throw statement with no arguments is not allowed outside of a catch clause
 // Line: 12
 
 using System;

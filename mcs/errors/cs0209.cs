@@ -1,4 +1,4 @@
-// cs0209.cs: variable in a fixed statement must be a pointer
+// cs0209.cs: The type of locals declared in a fixed statement must be a pointer type
 // Line: 9
 // Compiler options: -unsafe
 

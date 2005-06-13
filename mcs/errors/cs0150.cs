@@ -1,4 +1,4 @@
-// cs0150.cs :
+// cs0150.cs: A constant value is expected
 // Line :
 
 using System;

@@ -1,5 +1,5 @@
-//
-// cs0594: Floating-point constant is outside the range for type 'decimal|double|float'
+// cs0594.cs: Floating-point constant is outside the range of the type 'decimal'
+// Line: 6
 
 class X {
 	public static void Main() {

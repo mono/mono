@@ -1,4 +1,4 @@
-// cs0200: can not assign to property X.P -- it is readonly
+// cs0200.cs: Property or indexer `X.P' cannot be assigned to (it is read only)
 // line: 12
 class X {
 	static int P {

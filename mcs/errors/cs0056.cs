@@ -1,4 +1,4 @@
-// cs0056.cs: Incompatible accessibility. Operator return type is less accessible than operator.
+// cs0056.cs: Inconsistent accessibility: return type `ErrorCS0056' is less accessible than operator `Foo.implicit operator ErrorCS0056(Foo)'
 // Line: 11
 
 using System;

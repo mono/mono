@@ -1,4 +1,7 @@
+// cs1574.cs: XML comment on 'Test' has cref attribute 'System.Xml.XmlDocument' that could not be resolved in 'Test'.
+// Line: 9
 // Compiler options: -doc:dummy.xml -warnaserror -noconfig
+
 using System;
 
 /// <seealso cref="System.Xml.XmlDocument"/>

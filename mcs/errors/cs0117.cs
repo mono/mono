@@ -1,4 +1,4 @@
-// cs0117: `int' does not contain a definition for 'E'.
+// cs0117.cs: `int' does not contain a definition for `E'
 // Line: 7
 
 class T {

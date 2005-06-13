@@ -1,4 +1,4 @@
-// cs0165.cs: Use of unassigned local variable
+// cs0165-5.cs: Use of unassigned local variable `a'
 // Line: 9
 
 using System;

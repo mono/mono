@@ -1,4 +1,4 @@
-// cs0179.cs: member can not be declared extern and abstract
+// cs0180.cs: `X.extern_method()' cannot be both extern and abstract
 // Line:
 
 class X {

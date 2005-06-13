@@ -1,6 +1,5 @@
-//
-// cs0225.cs: params parameter have to be a single dimensional array.
-// 
+// cs0225.cs: The params parameter must be a single dimensional array
+// Line: 6
 
 public class X
 {

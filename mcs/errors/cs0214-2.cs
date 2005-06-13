@@ -1,4 +1,4 @@
-// cs0214: pointers can only be used in an unsafe context
+// cs0214-2.cs: Pointers and fixed size buffers may only be used in an unsafe context
 // Line: 9
 // Compiler options: -unsafe
 

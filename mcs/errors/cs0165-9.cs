@@ -1,3 +1,6 @@
+// cs0165.cs: Use of unassigned local variable `s'
+// Line: 16
+
 using System;
 
 public class Test

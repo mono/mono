@@ -1,4 +1,4 @@
-// CS0120: An object reference is required for the non-static field `String'
+// cs0120-7.cs: An object reference is required for the nonstatic field, method, or property `MemRefMonoBug.String'
 // Line: 11
 
 using System;

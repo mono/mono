@@ -1,9 +1,6 @@
-//
-// The type parameters introduce the names into the class namespace, so it is
-// not possible to have members with the same name as a parameter
-//
+// gcs0102.cs: The type 'X`1' already contains a definition for 'T'
+// Line: 11
 
-// First error.
 class X <T> {
 	int T;
 }

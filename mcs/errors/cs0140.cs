@@ -1,4 +1,4 @@
-// cs0140: A duplicated Label.
+// cs0140.cs: The label `L1' is a duplicate
 // Line: 11 
 
 namespace cs0140Test

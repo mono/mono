@@ -1,4 +1,4 @@
-// cs0185.cs: object is not a reference type (as expected by lock)
+// cs0185.cs: `int' is not a reference type as required by the lock statement
 // Line:
 
 class X {

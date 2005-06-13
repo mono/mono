@@ -1,4 +1,4 @@
-// cs0069.cs: Event cannot have add or remove accessors in an interface.
+// cs0069.cs: Event in interface cannot have add or remove accessors
 // Line: 13
 
 using System;

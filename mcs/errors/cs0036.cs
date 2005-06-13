@@ -1,4 +1,4 @@
-// cs0036.cs: Attibute [In] cannot be accompaning the an 'out' parameter.
+// cs0036.cs: An out parameter cannot have the `In' attribute
 // Line: 10
 
 using System;

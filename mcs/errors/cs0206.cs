@@ -1,4 +1,4 @@
-// cs0206.cs: indexers or properties can not be used as ref or out arguments
+// cs0206.cs: A property or indexer may not be passed as an out or ref parameter
 // Line:
 class X {
 	static int P { get { return 1; } set { } }

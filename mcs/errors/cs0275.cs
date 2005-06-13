@@ -1,4 +1,4 @@
-// cs0275.cs(9) error CS0275: Accessibility modifiers can not be used on accessors in interfaces
+// cs0275.cs: `Error0275.Message.get': accessibility modifiers may not be used on accessors in an interface
 // Line: 7
 
  public interface Error0275

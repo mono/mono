@@ -1,4 +1,4 @@
-// cs0103cs: The name 'y' does not exist in the current context
+// cs0103.cs: The name `y' does not exist in the context of `C'
 // Line: 8
 
 public class C

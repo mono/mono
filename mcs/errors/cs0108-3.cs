@@ -1,4 +1,4 @@
-// cs0108.cs: The new keyword is required on 'O.InnerAttribute()' because it hides inherited member
+// cs0108-3.cs: `O.InnerAttribute' hides inherited member `Base.InnerAttribute()'. Use the new keyword if hiding was intended
 // Line: 12
 // Compiler options: -warnaserror -warn:2
 

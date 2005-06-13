@@ -1,3 +1,6 @@
+// cs0019.cs: Operator `==' cannot be applied to operands of type `A' and `B'
+// Line : 21
+
 enum A
 {
         A1,

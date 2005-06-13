@@ -1,3 +1,6 @@
+// cs1540.cs: Cannot access protected member `A.n' via a qualifier of type `A'; the qualifier must be of type `B' (or derived from it)
+// Line: 14
+
 class A
 {
         protected void n () { }

@@ -1,4 +1,4 @@
-// cs0108.cs: The new keyword is required on 'Outer.Inner' because it hides inherited member
+// cs0108-9.cs: `Outer.Inner' hides inherited member `Base.Inner'. Use the new keyword if hiding was intended
 // Line: 13
 // Compiler options: -warnaserror -warn:2
 

@@ -1,4 +1,4 @@
-// cs0122: `Foo.Bar' is inaccessible due to its protection level
+// cs0122-5.cs: `Test.Foo.Bar' is inaccessible due to its protection level
 
 public class Test
 {

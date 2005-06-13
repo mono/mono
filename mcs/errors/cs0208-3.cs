@@ -1,4 +1,4 @@
-// cs0202.cs: The call to GetEnumerator must return a class or a struct, not 'Foo.P*'
+// cs0208-3.cs: Cannot take the address of, get the size of, or declare a pointer to a managed type (`Foo.P')
 // Line: 18
 // Compiler options: -unsafe
 

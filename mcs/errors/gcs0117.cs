@@ -1,3 +1,6 @@
+// gcs0117.cs: `X' does not contain a definition for `Test'
+// Line: 12
+
 class A<X>
 {
 	//

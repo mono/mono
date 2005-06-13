@@ -1,4 +1,4 @@
-// cs0121.cs: ambigous call when selecting function due to implicit casts
+// cs0121.cs: The call is ambiguous between the following methods or properties: `X.a(int, double)' and `X.a(double, int)'
 // Line: 15
 
 class X {

@@ -1,4 +1,4 @@
-// cs0073.cs: An add or remove accessor must have a body.
+// cs0073.cs: An add or remove accessor must have a body
 // Line: 9
 
 using System;

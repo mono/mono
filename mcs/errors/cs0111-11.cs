@@ -1,4 +1,4 @@
-// cs111.cs : Class `Blah' already contains a definition with the same return value and parameter types for method 'I.M'
+// cs0111-11.cs: Type `Blah' already defines a member called `I.M' with the same parameter types
 // Line : 12
 
 public interface I

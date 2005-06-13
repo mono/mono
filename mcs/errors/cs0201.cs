@@ -1,6 +1,5 @@
-//
-// cs0201.cs: if a meaningless statement is encountered error cs0201 have to be thrown
-//
+// cs0201.cs: Only assignment, call, increment, decrement, and new object expressions can be used as a statement
+// Line: 11
 
 using System;
 

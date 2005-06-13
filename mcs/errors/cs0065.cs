@@ -1,4 +1,4 @@
-// cs0065.cs: 'EventClass.handler' : event property must have both add and remove accessors
+// cs0065.cs: `EventClass.handler': event property must have both add and remove accessors
 // Line : 9
 
 using System;

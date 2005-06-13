@@ -1,4 +1,4 @@
-// cs0034: operator >= is ambiguous on types ulong and sbyte
+// cs0034.cs: Operator `>=' is ambiguous on operands of type `ulong' and `sbyte'
 // Line: 7
 class X {
 

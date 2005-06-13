@@ -1,4 +1,4 @@
-// cs0072.cs: `Child.OnFoo' : cannot override; `ErrorCS0072.OnFoo' is not an event
+// cs0072.cs: Event `Child.OnFoo' can override only event
 // Line: 16
 
 using System;

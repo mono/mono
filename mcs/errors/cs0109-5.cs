@@ -1,4 +1,4 @@
-// cs0109.cs: The member 'Derived.Test()' does not hide an inherited member. The new keyword is not required
+// cs0109.cs: The member `Derived.Test()' does not hide an inherited member. The new keyword is not required
 // Line: 10
 // Compiler options: -warnaserror -warn:4
 

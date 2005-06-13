@@ -1,3 +1,6 @@
+// cs1632.cs: Control cannot leave body of anonymous method
+// Line: 12
+
 using System;
 
 class X {

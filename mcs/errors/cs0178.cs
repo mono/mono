@@ -1,4 +1,4 @@
-// cs0178.cs :
+// cs0178.cs: Invalid rank specifier: expected `,' or `]'
 // Line :
 
 using System;

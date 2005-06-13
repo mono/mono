@@ -1,4 +1,4 @@
-// cs0274.cs: Accessibility modifiers for both accesors is not allowed
+// cs0274.cs: Cannot specify accessibility modifiers for both accessors of the property or indexer `Error0274.Message'
 // Line: 7
 // Compiler options: -t:library
 

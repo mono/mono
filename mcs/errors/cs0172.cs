@@ -1,3 +1,6 @@
+// cs0172.cs: Can not compute type of conditional expression as `X' and `Y' convert implicitly to each other
+// Line: 25
+
 class X {
 	public static implicit operator X (Y y)
 	{

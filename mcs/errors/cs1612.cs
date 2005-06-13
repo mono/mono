@@ -1,3 +1,6 @@
+// cs1612.cs: Cannot modify expression because it is not a variable.
+// Line: 9
+
 using System;
 class X {
 	static void Main ()

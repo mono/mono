@@ -1,10 +1,10 @@
-// cs0100.cs: same parameters name in a method declaration.
+// cs0100.cs: The parameter name `a' is a duplicate
 // Line: 6
 //
 // Author: 
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+// 	Alejandro Snchez Acosta  <raciel@es.gnu.org>
 //
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro Snchez Acosta
 //
 
 public class X 

@@ -1,4 +1,4 @@
-// cs0196.cs: pointers must be indexed by a single value
+// cs0196.cs: A pointer must be indexed by only one value
 // line: 10
 // Compiler options: -unsafe
 using System;
