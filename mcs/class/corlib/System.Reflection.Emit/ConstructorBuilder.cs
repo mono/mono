@@ -208,7 +208,7 @@ namespace System.Reflection.Emit {
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 
-			string attrname = customBuilder.Ctor.ReflectedType.ToString ();
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.CompilerServices.MethodImplAttribute") {
 				byte[] data = customBuilder.Data;
 				int impla; // the (stupid) ctor takes a short or an int ... 

@@ -470,12 +470,12 @@ namespace System
 
 		public override string AssemblyQualifiedName {
 			get {
-				return getFullName (true, true);
+				return getFullName (false) + ", " + Assembly.UnprotectedGetName ().ToString ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern string getFullName(bool full_name, bool assembly_qualified);
+		private extern string getFullName(bool full_name);
 
 		public extern override Type BaseType {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -484,11 +484,7 @@ namespace System
 
 		public override string FullName {
 			get {
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-				return getFullName (true, false);
-#else
-				return getFullName (false, false);
-#endif
+				return getFullName (false);
 			}
 		}
 
@@ -569,7 +565,7 @@ namespace System
 
 		public override string ToString()
 		{
-			return getFullName (false, false);
+			return getFullName (true);
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
