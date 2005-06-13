@@ -1,5 +1,9 @@
 2005-06-13  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Remove some TODOS.
+
+2005-06-13  Jackson Harper  <jackson@ximian.com>
+
 	* Form.cs: Hook into the mdi framework.
 	* MdiClient.cs: Use the base control collections add method so
 	parents get setup correctly. Set the default back colour and dock

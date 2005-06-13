@@ -204,15 +204,20 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 						"'value' must be greater than or equal to 0.");
 				}
+				if (image_index == value)
+					return;
 				image_index = value;
+				Refresh ();
 			}
 		}
 
-		[MonoTODO ("Anything special need to be done here?")]
 		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
-			set { image_list = value; }
+			set {
+				image_list = value;
+				Refresh ();
+			}
 		}
 
 		[Localizable(true)]
@@ -394,7 +399,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
-		[MonoTODO ("Anything extra needed here?")]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams cp = base.CreateParams;
@@ -474,7 +478,6 @@ namespace System.Windows.Forms {
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO ("What does the state effect?")]
 		protected OwnerDrawPropertyBag GetItemRenderStyles (TreeNode node, int state) {
 			return node.prop_bag;
 		}
