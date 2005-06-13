@@ -22,7 +22,7 @@ namespace MonoTests.System.Reflection.Emit
 {
 
 [TestFixture]
-public class AssemblyBuilderTest : Assertion
+public class AssemblyBuilderTest
 {	
 	[AttributeUsage (AttributeTargets.Assembly)]
 	public sealed class FooAttribute : Attribute
@@ -103,20 +103,19 @@ public class AssemblyBuilderTest : Assertion
 	}
 
 	public void TestEntryPoint () {
-		AssertEquals ("EntryPoint defaults to null",
-					  null, ab.EntryPoint);
+		Assert.AreEqual (null, ab.EntryPoint, "EntryPoint defaults to null");
 
 		MethodInfo mi = genEntryFunction (ab);
 		ab.SetEntryPoint (mi);
 
-		AssertEquals ("EntryPoint works", mi, ab.EntryPoint);
+		Assert.AreEqual (mi, ab.EntryPoint, "EntryPoint works");
 	}
 
 	public void TestSetEntryPoint () {
 		// Check invalid arguments
 		try {
 			ab.SetEntryPoint (null);
-			Fail ();
+			Assert.Fail ();
 		}
 		catch (ArgumentNullException) {
 		}
@@ -124,7 +123,7 @@ public class AssemblyBuilderTest : Assertion
 		// Check method from other assembly
 		try {
 			ab.SetEntryPoint (typeof (AssemblyBuilderTest).GetMethod ("TestSetEntryPoint"));
-			Fail ();
+			Assert.Fail ();
 		}
 		catch (InvalidOperationException) {
 		}
@@ -134,10 +133,10 @@ public class AssemblyBuilderTest : Assertion
 		CustomAttributeBuilder cab = new CustomAttributeBuilder (typeof (FooAttribute).GetConstructor (new Type [1] {typeof (string)}), new object [1] { "A" });
 		ab.SetCustomAttribute (cab);
 
-		AssertEquals ("IsDefined works",
-					  true, ab.IsDefined (typeof (FooAttribute), false));
-		AssertEquals ("IsDefined works",
-					  false, ab.IsDefined (typeof (AssemblyVersionAttribute), false));
+		Assert.IsTrue (ab.IsDefined (typeof (FooAttribute), false),
+			"IsDefined works");
+		Assert.IsFalse (ab.IsDefined (typeof (AssemblyVersionAttribute), false),
+			"IsDefined works");
 	}
 
 	[ExpectedException (typeof (NotSupportedException))]
@@ -191,19 +190,19 @@ public class AssemblyBuilderTest : Assertion
 	}
 
 	public void TestGetDynamicModule3 () {
-		AssertNull (ab.GetDynamicModule ("FOO2"));
+		Assert.IsNull (ab.GetDynamicModule ("FOO2"));
 
 		ModuleBuilder mb = ab.DefineDynamicModule ("FOO");
 
-		AssertEquals (mb, ab.GetDynamicModule ("FOO"));
+		Assert.AreEqual (mb, ab.GetDynamicModule ("FOO"));
 
-		AssertNull (ab.GetDynamicModule ("FOO4"));
+		Assert.IsNull (ab.GetDynamicModule ("FOO4"));
 	}
 
 #if NET_1_1
 	public void TestImageRuntimeVersion () {
 		string version = ab.ImageRuntimeVersion;
-		Assert (version.Length > 0);
+		Assert.IsTrue (version.Length > 0);
 	}
 #endif
 
@@ -319,7 +318,7 @@ public class AssemblyBuilderTest : Assertion
 			ab.DefineDynamicModule (name);
 		}
 		catch (Exception) {
-			Fail ();
+			Assert.Fail ();
 		}
 
 		name = name + "A";
@@ -479,7 +478,7 @@ public class AssemblyBuilderTest : Assertion
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		// no exception is thrown (file not found)
 		// because it's not AssemblyBuilder.Save job to do the signing :-/
-		AssertNull ("Token", check.GetPublicKeyToken ());
+		Assert.IsNull (check.GetPublicKeyToken (), "Token");
 	}
 
 	[Test]
@@ -498,7 +497,7 @@ public class AssemblyBuilderTest : Assertion
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		// no public key is inserted into the assembly
 		// because it's not AssemblyBuilder.Save job to do the signing :-/
-		AssertNull ("Token", check.GetPublicKeyToken ());
+		Assert.IsNull (check.GetPublicKeyToken (), "Token");
 	}
 
 	[Test]
@@ -513,7 +512,7 @@ public class AssemblyBuilderTest : Assertion
 
 		string filename = Path.Combine (tempDir, "StrongName_WithoutAttributes.dll");
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
-		AssertEquals ("Token", "0E-EA-7C-E6-5F-35-F2-D8", BitConverter.ToString (check.GetPublicKeyToken ()));
+		Assert.AreEqual ("0E-EA-7C-E6-5F-35-F2-D8", BitConverter.ToString (check.GetPublicKeyToken ()), "Token");
 	}
 
 	[Test]
@@ -531,7 +530,7 @@ public class AssemblyBuilderTest : Assertion
 		Module[] m;
 
 		m = ab.GetModules ();
-		Assert (m.Length >= 2);
+		Assert.IsTrue (m.Length >= 2);
 
 		// Test with no modules
 		AssemblyBuilder ab2 = genAssembly ();
@@ -608,9 +607,9 @@ public class AssemblyBuilderTest : Assertion
 #if NET_2_0
 			// on .NET 2.0, the full name of the AssemblyBuilder matches the 
 			// fully qualified assembly name
-			AssertEquals (fullName, ab.FullName);
+			Assert.AreEqual (fullName, ab.FullName);
 #else
-			AssertEquals (abName, ab.FullName);
+			Assert.AreEqual (abName, ab.FullName);
 #endif
 
 			// load assembly in separate domain, so we can clean-up after the 
@@ -642,7 +641,7 @@ public class AssemblyBuilderTest : Assertion
 		public void Test ()
 		{
 			AssemblyName assemblyName = AssemblyName.GetAssemblyName (_assemblyPath);
-			Assertion.AssertEquals (_assemblyName, assemblyName.ToString ());
+			Assert.AreEqual (_assemblyName, assemblyName.ToString ());
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2005-06-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilderTest.cs: Removed inheritance from deprecated
+	Assertion class. Use Assert class instead.
+
 2005-06-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilderTest.cs: Added AssemblyName tests that currently
