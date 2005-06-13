@@ -1,5 +1,16 @@
 2005-06-13  Jackson Harper  <jackson@ximian.com>
 
+	* Form.cs: Hook into the mdi framework.
+	* MdiClient.cs: Use the base control collections add method so
+	parents get setup correctly. Set the default back colour and dock
+	style.
+	* MdiChildContext.cs: New class, this bad actor handles an
+	instance of an MDI window. Right now there is only basic
+	support. You can drag, close, and resize windows. Minimize and
+	Maximize are partially implemented.
+
+2005-06-13  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: Mash numbers together properly, otherwise we get
 	freaky when both vals are negative. NOTE: There are probably other
 	places in XplatUIX11 that this needs to be done.

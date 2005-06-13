@@ -40,28 +40,20 @@ namespace System.Windows.Forms {
 		#region Public Classes
 		public new class ControlCollection : Control.ControlCollection {
 			MdiClient	owner;
-
+			
 			public ControlCollection(MdiClient owner) : base(owner) {
 				this.owner = owner;
+				controls = new ArrayList ();
 			}
 
 			public override void Add(Control value) {
-				if ((value is Form) == false || (((Form)value).IsMdiChild)) {
+				if ((value is Form) == false || !(((Form)value).IsMdiChild)) {
 					throw new ArgumentException("Form must be MdiChild");
 				}
-
-				for (int i=0; i<list.Count; i++) {
-					if (list[i]==value) {
-						// Do we need to do anything here?
-						return;
-					}
-				}
-				list.Add(value);
-				//((Form)value).owner=(Form)owner;
+				base.Add (value);
 			}
 
 			public override void Remove(Control value) {
-				//((Form)value).owner = null;
 				base.Remove (value);
 			}
 		}
@@ -69,9 +61,27 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 		public MdiClient() {
+			BackColor = SystemColors.AppWorkspace;
+			Dock = DockStyle.Fill;
 		}
 		#endregion	// Public Constructors
 
+		protected override Control.ControlCollection CreateControlsInstance ()
+		{
+			return new MdiClient.ControlCollection (this);
+		}
+
+		protected override void WndProc(ref Message m) {
+			/*
+			switch ((Msg) m.Msg) {
+				case Msg.WM_PAINT: {				
+					Console.WriteLine ("ignoring paint");
+					return;
+				}
+			}
+			*/
+			base.WndProc (ref m);
+		}
 		#region Public Instance Properties
 		[Localizable(true)]
 		public override System.Drawing.Image BackgroundImage {
@@ -95,32 +105,10 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
-		#region Protected Instance Properties
+#region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
-				XplatUIWin32.CLIENTCREATESTRUCT	ccs;
-				CreateParams			cp;
-
-				cp = base.CreateParams;
-
-				if (parent != null) {
-					cp.X = 0;
-					cp.Y = 0;
-					cp.Width = parent.Width;
-					cp.Height = parent.Height;
-				}
-
-
-				ccs = new System.Windows.Forms.XplatUIWin32.CLIENTCREATESTRUCT();
-				ccs.hWindowMenu = IntPtr.Zero;
-				ccs.idFirstChild = 27577;
-				cp.Param = ccs;
-
-				cp.ClassName = "MDICLIENT";
-				cp.Style |= (int)(WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE);
-				cp.ExStyle |= (int)WindowStyles.WS_EX_MDICHILD;
-
-				return cp;
+				return base.CreateParams;
 			}
 		}
 		#endregion	// Protected Instance Properties

@@ -62,6 +62,7 @@ namespace System.Windows.Forms {
 		private Form			owner;
 		private Form.ControlCollection	owned_forms;
 		private MdiClient		mdi_container;
+		private MdiChildContext		mdi_child_context;
 		private Form			mdi_parent;
 		private bool			key_preview;
 		private MainMenu		menu;
@@ -448,15 +449,29 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				SuspendLayout ();
+
+				// TopLevel = true;
+
+				if (!value.IsMdiContainer)
+					throw new ArgumentException ();
+
 				if (mdi_parent != null) {
-					mdi_parent.Controls.Remove(this);
+					mdi_parent.MdiContainer.Controls.Remove (this);
 				}
 
 				mdi_parent = value;
 				if (mdi_parent != null) {
-					mdi_parent.Controls.Add(this);
+					mdi_child_context = new MdiChildContext (this);
+					mdi_parent.MdiContainer.Controls.Add (this);
 				}
+
+				ResumeLayout ();
 			}
+		}
+
+		internal MdiClient MdiContainer {
+			get { return mdi_container; }
 		}
 
 		[DefaultValue(null)]
@@ -650,6 +665,8 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (!value && IsMdiContainer)
+					throw new ArgumentException ("MDI Container forms must be top level.");
 				SetTopLevel(value);
 			}
 		}
@@ -1265,6 +1282,11 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
+
+			if (IsMdiChild && mdi_child_context.HandleMessage (ref m)) {
+				return;
+			}
+
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
 					CancelEventArgs args = new CancelEventArgs();
