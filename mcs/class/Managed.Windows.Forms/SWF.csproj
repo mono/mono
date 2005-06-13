@@ -1109,6 +1109,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\MdiChildContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MdiClient.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

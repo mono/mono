@@ -1,3 +1,9 @@
+2005-06-13  Jackson Harper  <jackson@ximian.com>
+
+	* SWF.csproj:
+	* System.Windows.Forms.dll.sources: Add MdiClientContext to the
+	build.
+
 2005-06-13  Ritvik Mayank  <mritvik@novell.com>
 
 	* System.Windows.Forms_test.dll.sources : Added TextBoxTest.cs
