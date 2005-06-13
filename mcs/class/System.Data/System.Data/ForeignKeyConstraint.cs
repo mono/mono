@@ -475,7 +475,11 @@ namespace System.Data {
 		
 		protected override bool IsConstraintViolated()
 		{
-			if (Table.DataSet == null || RelatedTable.DataSet == null) return false; //	
+			if (Table.DataSet == null || RelatedTable.DataSet == null) 
+				return false;
+			
+			if (!Table.DataSet.EnforceConstraints)
+				return false;
 				
 			bool hasErrors = false;
 			foreach (DataRow row in Table.Rows) {

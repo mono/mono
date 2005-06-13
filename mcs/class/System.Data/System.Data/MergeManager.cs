@@ -128,16 +128,17 @@ namespace System.Data
 				}
 			
 				// find the row in the target table.
-				targetRow = targetTable.Rows.Find(keyValues);
+				targetRow = targetTable.Rows.Find(keyValues, DataViewRowState.OriginalRows);
+				if (targetRow == null)
+					targetRow = targetTable.Rows.Find(keyValues);
 			}
 			// row doesn't exist in target table, or there are no primary keys.
 			// create new row and copy values from source row to the new row.
 			if (targetRow == null)
 			{ 
-				targetRow = targetTable.NewRow();
-				targetRow.Proposed = -1;
-				row.CopyValuesToRow(targetRow);
-				targetTable.Rows.Add(targetRow);
+				DataRow newRow = targetTable.NewNotInitializedRow();
+				row.CopyValuesToRow(newRow);
+				targetTable.Rows.AddInternal (newRow);
 			}
 			// row exists in target table, and presere changes is false - 
 			// change the values of the target row to the values of the source row.

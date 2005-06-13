@@ -43,8 +43,6 @@ using System.Collections;
 using System.Globalization;
 using System.Xml;
 
-using System.Data.Common;
-
 namespace System.Data {
 	/// <summary>
 	/// Represents a row of data in a DataTable.
@@ -1438,57 +1436,70 @@ namespace System.Data {
 			if (row == this)
 				throw new ArgumentException("'row' is the same as this object");
 
+			// create target records if missing.
+			if (HasVersion(DataRowVersion.Original)) {
+				if (row.Original < 0)
+					row.Original = row.Table.RecordCache.NewRecord();
+				else if (row.Original == row.Current) {
+					row.Original = row.Table.RecordCache.NewRecord();
+					row.Table.RecordCache.CopyRecord (row.Table, row.Current, row.Original);
+				}
+			} else {
+				if (row.Original > 0) {
+					if (row.Original != row.Current)
+						row.Table.RecordCache.DisposeRecord(row.Original);
+					row.Original = -1;
+				}
+			}
+
+			if (HasVersion(DataRowVersion.Current)) {
+				if (Current == Original) {
+					if (row.Current >= 0)
+						row.Table.RecordCache.DisposeRecord(row.Current);
+					row.Current = row.Original;
+				}else {
+					if (row.Current < 0)
+						row.Current = row.Table.RecordCache.NewRecord();
+				}
+			} else {
+				if (row.Current > 0) {
+					row.Table.RecordCache.DisposeRecord(row.Current);
+					row.Current = -1;
+				}
+			}
+
+			if (HasVersion(DataRowVersion.Proposed)) {
+				if (row.Proposed < 0)
+					row.Proposed = row.Table.RecordCache.NewRecord();
+			} else {
+				if (row.Proposed > 0) {
+					row.Table.RecordCache.DisposeRecord(row.Proposed);
+					row.Proposed = -1;
+				}
+			}
+			
+			// copy source record values to target records
 			foreach(DataColumn column in Table.Columns) {
 				DataColumn targetColumn = row.Table.Columns[column.ColumnName];
 				//if a column with the same name exists in both rows copy the values
 				if(targetColumn != null) {
-					int index = targetColumn.Ordinal;
 					if (HasVersion(DataRowVersion.Original)) {
-						if (row.Original < 0) {
-							row.Original = row.Table.RecordCache.NewRecord();
-						}
 						object val = column[Original];
 						row.CheckValue(val, targetColumn);
 						targetColumn[row.Original] = val;
 					}
-					else {
-						if (row.Original > 0) {
-							row.Table.RecordCache.DisposeRecord(row.Original);
-							row.Original = -1;
-						}
-					}
 
-					if (HasVersion(DataRowVersion.Current)) {
-						if (Current == Original) {
-							row.Current = row.Original;
-						}else {
-							if (row.Current < 0)
-								row.Current = row.Table.RecordCache.NewRecord();
-							object val = column[Current];
-							row.CheckValue(val, targetColumn);
-							targetColumn[row.Current] = val;
-						}
-					}
-					else {
-						if (row.Current > 0) {
-							row.Table.RecordCache.DisposeRecord(row.Current);
-							row.Current = -1;
-						}
+					if (HasVersion(DataRowVersion.Current)
+					    && Current != Original) {
+						object val = column[Current];
+						row.CheckValue(val, targetColumn);
+						targetColumn[row.Current] = val;
 					}
 
 					if (HasVersion(DataRowVersion.Proposed)) {
-						if (row.Proposed < 0) {
-							row.Proposed = row.Table.RecordCache.NewRecord();
-						}
 						object val = column[row.Proposed];
 						row.CheckValue(val, targetColumn);
 						targetColumn[row.Proposed] = val;
-					}
-					else {
-						if (row.Proposed > 0) {
-							row.Table.RecordCache.DisposeRecord(row.Proposed);
-							row.Proposed = -1;
-						}
 					}
 				}
 			}

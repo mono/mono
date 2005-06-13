@@ -1,3 +1,25 @@
+2005-06-13  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRowCollection.cs: Find (keys, version): Added an overload to
+	find keys matching given DataViewRowState filter. Used in
+	DataSet.Merge and DataTable.LoadDataRow.
+
+	* DataTable.cs: LoadDataRow (values, LoadOption): Use
+	DataRowCollection.Find (object [], DataViewRowState) overload.
+
+	* DataRow.cs:
+	- CopyValuesToRow: Create target "records" out of loop. Records
+	should be created once, not for each column. Dispose Unused target
+	records.
+
+	* MergeManager.cs:
+	- MergeRow: Find rows with matching original records. If not,
+	select with current values.
+	- MergeRow: While adding new row, use NewNotInitializedRow.
+
+	* ForeignKeyConstraint.cs: IsConstraintViolated: should not check
+	if EnforceConstraints is false.
+
 2005-06-10  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRow.cs: CopyValuesToRow: if orginal == current, don't create

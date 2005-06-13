@@ -207,6 +207,26 @@ namespace System.Data
 			return (record != -1) ? table.RecordCache[record] : null;
 		}
 
+		/// <summary>
+		/// Gets the row containing the specified primary key values by searching the rows 
+		/// filtered by the state.
+		/// </summary>
+		internal DataRow Find (object [] keys, DataViewRowState rowStateFilter)
+		{
+			if (table.PrimaryKey.Length == 0)
+				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
+
+			if (keys == null)
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
+			
+			Index index = table.FindIndex (table.PrimaryKey, null, rowStateFilter, null);
+			if (index == null)
+				index = new Index (new Key (table, table.PrimaryKey, null, rowStateFilter, null));
+
+			int record = index.Find(keys);
+			return (record != -1) ? table.RecordCache[record] : null;
+		}
+
 		internal DataRow Find(int index)
 		{
 			DataColumn[] primaryKey = table.PrimaryKey;

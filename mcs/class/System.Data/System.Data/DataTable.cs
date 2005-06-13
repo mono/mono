@@ -1202,22 +1202,13 @@ namespace System.Data {
                         
                         // Find Data DataRow
                         if (this.PrimaryKey.Length > 0) {
-                                Index index = FindIndex (PrimaryKey,null,DataViewRowState.OriginalRows,null);
-				if (index == null)
-					index = new Index (new Key(this, PrimaryKey,null,DataViewRowState.OriginalRows,null));
-
 				object [] keys = new object [PrimaryKey.Length];
 				for (int i=0; i < PrimaryKey.Length; i++)
 					keys [i] = values [PrimaryKey [i].Ordinal];
 
-				int existingRecord = index.Find(keys);
-				if (existingRecord >= 0)
-					row = RecordCache[existingRecord];
-				else {                                           
-					existingRecord = _primaryKeyConstraint.Index.Find(keys);
-					if (existingRecord >= 0)
-						row = RecordCache[existingRecord];
-				}
+				row = Rows.Find(keys, DataViewRowState.OriginalRows);
+				if (row == null)
+					row = Rows.Find (keys);
                         }
                                 
                         // If not found, add new row
