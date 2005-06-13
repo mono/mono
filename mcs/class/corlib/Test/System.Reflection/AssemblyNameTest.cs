@@ -18,6 +18,7 @@ using System.Runtime.Serialization;
 using System.Threading;
 using System.Globalization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security;
 
 namespace MonoTests.System.Reflection {
 
@@ -89,6 +90,9 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+#endif
 	public void EmptyAssembly () 
 	{
 		an = new AssemblyName ();
@@ -96,7 +100,11 @@ public class AssemblyNameTest {
 		Assert.IsNull (an.CultureInfo, "CultureInfo");
 		Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
+#if NET_2_0
+		Assert.AreEqual (String.Empty, an.FullName, "FullName");
+#else
 		Assert.IsNull (an.FullName, "FullName");
+#endif
 		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (an.KeyPair, "KeyPair");
 		Assert.IsNull (an.Name, "Name");
@@ -106,6 +114,10 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+	[ExpectedException (typeof (SecurityException))]
+#endif
 	public void PublicKey () 
 	{
 		an = new AssemblyName ();
@@ -206,6 +218,10 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+	[ExpectedException (typeof (SecurityException))]
+#endif
 	public void FullName5 ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -233,6 +249,10 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+	[ExpectedException (typeof (SecurityException))]
+#endif
 	public void FullName7 ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -249,6 +269,10 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+	[ExpectedException (typeof (SecurityException))]
+#endif
 	public void FullName8 ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -312,26 +336,48 @@ public class AssemblyNameTest {
 		Assembly a = GenerateAssembly (name);
 		Assert.AreEqual ("1.2.3.4", a.GetName ().Version.ToString (), "1.2.3.4 normal");
 
-		AssemblyBuilder ab = GenerateDynamicAssembly (name);
-		Assert.AreEqual ("1.2.3.4", ab.GetName ().Version.ToString (), "1.2.3.4 dynamic");
-
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2, 3);
 
 		a = GenerateAssembly (name);
 		Assert.AreEqual ("1.2.3.0", a.GetName ().Version.ToString (), "1.2.3.0 normal");
 
-		ab = GenerateDynamicAssembly (name);
-		Assert.AreEqual ("1.2.3.0", ab.GetName ().Version.ToString (), "1.2.3.0 dynamic");
-
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2);
 
 		a = GenerateAssembly (name);
 		Assert.AreEqual ("1.2.0.0", a.GetName ().Version.ToString (), "1.2.0.0 normal");
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void Version_Dynamic ()
+	{
+		AssemblyName name = GenAssemblyName ();
+		name.Version = new Version (1, 2, 3, 4);
+
+		AssemblyBuilder ab = GenerateDynamicAssembly (name);
+		Assert.AreEqual ("1.2.3.4", ab.GetName ().Version.ToString (), "1.2.3.4 dynamic");
+
+		name = GenAssemblyName ();
+		name.Version = new Version (1, 2, 3);
 
 		ab = GenerateDynamicAssembly (name);
+#if NET_2_0
+		Assert.AreEqual ("1.2.3.0", ab.GetName ().Version.ToString (), "1.2.3.0 dynamic");
+#else
+		Assert.AreEqual ("1.2.3.65535", ab.GetName ().Version.ToString (), "1.2.3.0 dynamic");
+#endif
+
+		name = GenAssemblyName ();
+		name.Version = new Version (1, 2);
+
+		ab = GenerateDynamicAssembly (name);
+#if NET_2_0
 		Assert.AreEqual ("1.2.0.0", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
+#else
+		Assert.AreEqual ("1.2.65535.65535", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
+#endif
 	}
 
 	[Test]
@@ -432,6 +478,9 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]
+#endif
 	public void Clone_Empty ()
 	{
 		an = new AssemblyName ();
@@ -441,7 +490,11 @@ public class AssemblyNameTest {
 		Assert.IsNull (clone.CultureInfo, "CultureInfo");
 		Assert.IsNull (clone.EscapedCodeBase, "EscapedCodeBase");
 		Assert.AreEqual (AssemblyNameFlags.None, clone.Flags, "Flags");
+#if NET_2_0
+		Assert.AreEqual (String.Empty, clone.FullName, "FullName");
+#else
 		Assert.IsNull (clone.FullName, "FullName");
+#endif
 		Assert.AreEqual (AssemblyHashAlgorithm.None, clone.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (clone.KeyPair, "KeyPair");
 		Assert.IsNull (clone.Name, "Name");
