@@ -1,3 +1,8 @@
+2005-06-12  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Use sizing cursors similar to the ones on
+	windows.
+
 2005-06-11  Jackson Harper  <jackson@ximian.com>
 
 	* StatusBarPanel.cs: Signature cleanups. Implement

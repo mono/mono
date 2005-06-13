@@ -1925,22 +1925,22 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.SizeNESW: {
-					shape = CursorFontShape.XC_sizing; 
+					shape = CursorFontShape.XC_top_right_corner; 
 					break;
 				}
 
 				case StdCursor.SizeNS: {
-					shape = CursorFontShape.XC_fleur; 
+					shape = CursorFontShape.XC_sb_v_double_arrow;
 					break;
 				}
 
 				case StdCursor.SizeNWSE: {
-					shape = CursorFontShape.XC_bottom_right_corner; 
+					shape = CursorFontShape.XC_top_left_corner; 
 					break;
 				}
 
 				case StdCursor.SizeWE: {
-					shape = CursorFontShape.XC_fleur; 
+					shape = CursorFontShape.XC_sb_h_double_arrow; 
 					break;
 				}
 
