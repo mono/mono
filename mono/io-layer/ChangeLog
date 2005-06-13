@@ -1,3 +1,8 @@
+2005-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: (GetLogicalDrives) when a bogus line is read, don't leak memory.
+	When the buffer has not enough space, close the file before returning.
+
 2005-06-09  Duncan Mak  <duncan@novell.com>
 
 	* *.h: Added G_BEGIN_DECLS and G_END_DECLS where appropriate to
