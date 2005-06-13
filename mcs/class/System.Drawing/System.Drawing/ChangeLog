@@ -1,3 +1,10 @@
+2005-06-13  Kornél Pál <kornelpal@hotmail.com>
+
+	* ComIStreamMarshaler.cs: Dispose releases managed objects as well,
+	  removed some unnecessary code
+	* ComIStreamWrapper.cs: Reworked Seek method to proper support of
+	  positions beyond the size of stream
+
 2005-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Font.cs: fix platform checks.

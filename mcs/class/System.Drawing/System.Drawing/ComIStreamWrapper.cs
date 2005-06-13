@@ -8,8 +8,6 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -97,40 +95,47 @@ namespace System.Drawing
 
 		public void Seek(long dlibMove, int dwOrigin, IntPtr plibNewPosition)
 		{
-			long newPosition = -1;
+			long newPosition;
 
 			if (baseStream.CanWrite)
 			{
-				long length = baseStream.Length;
-				long curPos;
-
-				if ((curPos = position) == -1)
-					curPos = baseStream.Position;
-
 				switch ((SeekOrigin)dwOrigin)
 				{
 					case SeekOrigin.Begin:
-						if (dlibMove > length)
-							newPosition = dlibMove;
+						newPosition = dlibMove;
 						break;
 					case SeekOrigin.Current:
-						if (curPos + dlibMove > length)
-							newPosition = curPos + dlibMove;
+						if ((newPosition = position) == -1)
+							newPosition = baseStream.Position;
+						newPosition += dlibMove;
 						break;
 					case SeekOrigin.End:
-						if (dlibMove > 0)
-							newPosition = length + dlibMove;
+						newPosition = baseStream.Length + dlibMove;
 						break;
+					default:
+						throw new ExternalException(null, STG_E_INVALIDFUNCTION);
+				}
+
+				if (newPosition > baseStream.Length)
+					position = newPosition;
+				else
+				{
+					baseStream.Position = newPosition;
+					position = -1;
 				}
 			}
-
-			if (newPosition == -1)
+			else
 			{
-				newPosition = baseStream.Seek(dlibMove, (SeekOrigin)dwOrigin);
+				try
+				{
+					newPosition = baseStream.Seek(dlibMove, (SeekOrigin)dwOrigin);
+				}
+				catch (ArgumentException)
+				{
+					throw new ExternalException(null, STG_E_INVALIDFUNCTION);
+				}
 				position = -1;
 			}
-			else
-				position = newPosition;
 
 			if (plibNewPosition != IntPtr.Zero)
 				Marshal.WriteInt64(plibNewPosition, newPosition);

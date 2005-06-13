@@ -8,8 +8,6 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -126,10 +124,10 @@ namespace System.Drawing
 			private static readonly IntPtr comVtable;
 			private static readonly VtableDestructor vtableDestructor;
 
-			private readonly IStream managedInterface;
-			private readonly IntPtr comInterface;
+			private IStream managedInterface;
+			private IntPtr comInterface;
 			// Keeps the object alive when it has no managed references
-			private readonly GCHandle gcHandle;
+			private GCHandle gcHandle;
 			private int refCount = 1;
 
 			static ManagedToNativeWrapper()
@@ -182,7 +180,11 @@ namespace System.Drawing
 				Marshal.FreeHGlobal(comInterface);
 				gcHandle.Free();
 				if (disposing)
+				{
+					comInterface = IntPtr.Zero;
+					managedInterface = null;
 					GC.SuppressFinalize(this);
+				}
 			}
 
 			internal static IStream GetUnderlyingInterface(IntPtr comInterface, bool outParam)
@@ -485,13 +487,13 @@ namespace System.Drawing
 
 			private static int Clone(IntPtr @this, out IntPtr ppstm)
 			{
+				ppstm = IntPtr.Zero;
 #if MAP_EX_TO_HR
 				try
 				{
 #endif
 					IStream newInterface;
 
-					ppstm = IntPtr.Zero;
 					GetObject(@this).managedInterface.Clone(out newInterface);
 					ppstm = ManagedToNativeWrapper.GetInterface(newInterface);
 					return S_OK;
@@ -499,7 +501,6 @@ namespace System.Drawing
 				}
 				catch (Exception e)
 				{
-					ppstm = IntPtr.Zero;
 					return GetHRForException(e);
 				}
 #endif
@@ -509,8 +510,8 @@ namespace System.Drawing
 		// Managed Runtime Callable Wrapper implementation
 		private sealed class NativeToManagedWrapper : IStream
 		{
-			private readonly IntPtr comInterface;
-			private readonly IStreamVtbl managedVtable;
+			private IntPtr comInterface;
+			private IStreamVtbl managedVtable;
 
 			private NativeToManagedWrapper(IntPtr comInterface, bool outParam)
 			{
@@ -529,7 +530,11 @@ namespace System.Drawing
 			{
 				managedVtable.Release(comInterface);
 				if (disposing)
+				{
+					comInterface = IntPtr.Zero;
+					managedVtable = null;
 					GC.SuppressFinalize(this);
+				}
 			}
 
 			internal static IntPtr GetUnderlyingInterface(IStream managedInterface)
