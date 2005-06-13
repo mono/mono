@@ -1,3 +1,8 @@
+2005-06-13  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RealProxy.cs: Report invalid return type of values using
+	InvalidCastException, like MS.NET. Fixes bug #75203.
+
 2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RealProxy.cs: Added _targetDomainId and _targetUri fields, which are

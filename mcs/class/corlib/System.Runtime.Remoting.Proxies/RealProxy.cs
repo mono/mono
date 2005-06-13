@@ -286,7 +286,7 @@ namespace System.Runtime.Remoting.Proxies
 
 			MethodInfo mi = (MethodInfo) call.MethodBase;
 			if (mrm.ReturnValue != null && !mi.ReturnType.IsInstanceOfType (mrm.ReturnValue))
-				throw new RemotingException ("Return value has an invalid type");
+				throw new InvalidCastException ("Return value has an invalid type");
 
 			// Check out parameters
 
@@ -319,7 +319,7 @@ namespace System.Runtime.Remoting.Proxies
 						object outArg = mrm.GetOutArg (nout++);
 						if (outArg != null && !par.ParameterType.IsInstanceOfType (outArg))
 						{
-							throw new RemotingException ("Return argument '" + par.Name + "' has an invalid type");
+							throw new InvalidCastException ("Return argument '" + par.Name + "' has an invalid type");
 						}
 						outArgs [narg++] = outArg;
 					}
