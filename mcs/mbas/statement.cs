@@ -920,7 +920,10 @@ namespace Mono.MonoBASIC {
 		protected override bool DoEmit (EmitContext ec)
 		{
 			Label l = label.LabelTarget (ec);
-			ec.ig.Emit (OpCodes.Br, l);
+			 if (ec.InTry || ec.InCatch)
+                         	ec.ig.Emit (OpCodes.Leave, l);
+			else 
+				ec.ig.Emit (OpCodes.Br, l);
 			
 			return false;
 		}
