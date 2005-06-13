@@ -1,3 +1,9 @@
+2005-06-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyNameTest.cs: Added distinctive names for all asserts in 
+	Version. Changed Self to NotWorking as other cases returns null. It 
+	will re-activated once we know the logic behind it.
+
 2005-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AssemblyNameTest.cs: Added tests to Version method,

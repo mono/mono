@@ -145,6 +145,7 @@ public class AssemblyNameTest {
 
 	// !!! this assembly MUST NOT use a StrongName !!!
 	[Test]
+	[Category ("NotWorking")] // in other cases null is returned
 	public void Self () 
 	{
 		Assembly a = Assembly.GetExecutingAssembly ();
@@ -309,28 +310,28 @@ public class AssemblyNameTest {
 		name.Version = new Version (1, 2, 3, 4);
 
 		Assembly a = GenerateAssembly (name);
-		Assert.AreEqual ("1.2.3.4", a.GetName ().Version.ToString ());
+		Assert.AreEqual ("1.2.3.4", a.GetName ().Version.ToString (), "1.2.3.4 normal");
 
 		AssemblyBuilder ab = GenerateDynamicAssembly (name);
-		Assert.AreEqual ("1.2.3.4", ab.GetName ().Version.ToString ());
+		Assert.AreEqual ("1.2.3.4", ab.GetName ().Version.ToString (), "1.2.3.4 dynamic");
 
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2, 3);
 
 		a = GenerateAssembly (name);
-		Assert.AreEqual ("1.2.3.0", a.GetName ().Version.ToString ());
+		Assert.AreEqual ("1.2.3.0", a.GetName ().Version.ToString (), "1.2.3.0 normal");
 
 		ab = GenerateDynamicAssembly (name);
-		Assert.AreEqual ("1.2.3.0", ab.GetName ().Version.ToString ());
+		Assert.AreEqual ("1.2.3.0", ab.GetName ().Version.ToString (), "1.2.3.0 dynamic");
 
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2);
 
 		a = GenerateAssembly (name);
-		Assert.AreEqual ("1.2.0.0", a.GetName ().Version.ToString ());
+		Assert.AreEqual ("1.2.0.0", a.GetName ().Version.ToString (), "1.2.0.0 normal");
 
 		ab = GenerateDynamicAssembly (name);
-		Assert.AreEqual ("1.2.0.0", ab.GetName ().Version.ToString ());
+		Assert.AreEqual ("1.2.0.0", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
 	}
 
 	[Test]
