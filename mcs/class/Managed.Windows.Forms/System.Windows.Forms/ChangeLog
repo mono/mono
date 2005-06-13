@@ -1,5 +1,11 @@
 2005-06-13  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: Override SetAllowDrop on X11 so an error message
+	isn't printed when the user enables dropping. (X11 does accept
+	drops).
+	
+2005-06-13  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Remove some TODOS.
 
 2005-06-13  Jackson Harper  <jackson@ximian.com>
