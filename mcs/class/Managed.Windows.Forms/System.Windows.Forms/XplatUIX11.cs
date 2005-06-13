@@ -2972,6 +2972,11 @@ namespace System.Windows.Forms {
 			WakeupMain ();
 		}
 
+		internal override void SetAllowDrop (IntPtr handle, bool value)
+		{
+			// We allow drop on all windows
+		}
+
 		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
 			Hwnd	hwnd;
 
