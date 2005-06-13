@@ -1,3 +1,9 @@
+2005-06-13  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.GetTypeName): New public function;
+	use this everywhere instead of accessing `Type.FullName' directly;
+	this is neccessary since `Type.FullName' is broken in .NET 2.x.
+
 2005-06-09  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (Delegate.VerifyMethod): Added

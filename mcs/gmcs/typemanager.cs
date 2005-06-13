@@ -715,7 +715,7 @@ public partial class TypeManager {
 	{
 		object ret = null;
 		if (!type_hash.Lookup (t, name, out ret)) {
-			string lookup = t.FullName + "+" + name;
+			string lookup = GetTypeName (t) + "+" + name;
 			ret = t.Module.GetType (lookup);
 			type_hash.Insert (t, name, ret);
 		}
@@ -852,10 +852,9 @@ public partial class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
-		if (t.FullName == null)
-			return t.Name;
+		string name = GetTypeName (t);
 
-		return Regex.Replace (t.FullName, 
+		return Regex.Replace (name, 
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
@@ -898,7 +897,7 @@ public partial class TypeManager {
 		// Unfortunately, there's no dynamic dispatch on the arguments of a function.
 		return (mi is MethodBase)
 			? GetFullNameSignature (mi as MethodBase) 
-			: mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+			: GetTypeName (mi.DeclaringType).Replace ('+', '.') + '.' + mi.Name;
 	}
 		
 	static public string GetFullNameSignature (MethodBase mb)
@@ -916,10 +915,11 @@ public partial class TypeManager {
 				name = "this";
 		}
 
-		return mb.DeclaringType.FullName.Replace ('+', '.') + '.' + name;
+		return GetTypeName (mb.DeclaringType).Replace ('+', '.') + '.' + name;
 	}
 
-	private static void GetFullName_recursed (StringBuilder sb, Type t, bool recursed)
+	private static void GetFullName_recursed (StringBuilder sb, Type t, bool recursed,
+						  bool include_generic)
 	{
 		if (t.IsGenericParameter) {
 			sb.Append (t.Name);
@@ -927,7 +927,7 @@ public partial class TypeManager {
 		}
 
 		if (t.DeclaringType != null) {
-			GetFullName_recursed (sb, t.DeclaringType, true);
+			GetFullName_recursed (sb, t.DeclaringType, true, include_generic);
 			sb.Append (".");
 		}
 
@@ -939,6 +939,11 @@ public partial class TypeManager {
 			}
 		}
 
+		if (!include_generic) {
+			sb.Append (t.Name);
+			return;
+		}
+
 		sb.Append (SimpleName.RemoveGenericArity (t.Name));
 
 		Type[] args = GetTypeArguments (t);
@@ -947,7 +952,7 @@ public partial class TypeManager {
 			for (int i = 0; i < args.Length; i++) {
 				if (i > 0)
 					sb.Append (",");
-				sb.Append (GetFullName (args [i]));
+				GetFullName_recursed (sb, args [i], false, true);
 			}
 			sb.Append (">");
 		}
@@ -956,7 +961,15 @@ public partial class TypeManager {
 	static public string GetFullName (Type t)
 	{
 		StringBuilder sb = new StringBuilder ();
-		GetFullName_recursed (sb, t, false);
+		GetFullName_recursed (sb, t, false, true);
+		return sb.ToString ();
+	}
+
+	static public string GetTypeName (Type t)
+	{
+		StringBuilder sb = new StringBuilder ();
+		GetFullName_recursed (sb, t, false, false);
+		Report.Debug (64, "GET TYPE NAME", t, sb.ToString ());
 		return sb.ToString ();
 	}
 
@@ -2878,9 +2891,9 @@ public partial class TypeManager {
 		// type names
 		//
 		if (invocation_type != null){
-			string invocation_name = invocation_type.FullName;
+			string invocation_name = GetTypeName (invocation_type);
 			if ((invocation_name != null) && (invocation_name.IndexOf ('+') != -1)){
-				string container = queried_type.FullName + "+";
+				string container = GetTypeName (queried_type) + "+";
 				int container_length = container.Length;
 
 				if (invocation_name.Length > container_length){
@@ -3170,7 +3183,7 @@ public sealed class TypeHandle : IMemberContainer {
 	private TypeHandle (Type type)
 	{
 		this.type = type;
-		full_name = type.FullName != null ? type.FullName : type.Name;
+		full_name = TypeManager.GetTypeName (type);
 		if (type.BaseType != null) {
 			base_cache = TypeManager.LookupMemberCache (type.BaseType);
 			BaseType = base_cache.Container;

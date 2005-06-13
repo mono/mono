@@ -8857,7 +8857,7 @@ namespace Mono.CSharp {
 
 		public override string FullName {
 			get {
-				return type.FullName;
+				return TypeManager.GetTypeName (type);
 			}
 		}
 	}
