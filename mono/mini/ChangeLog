@@ -1,5 +1,10 @@
 2005-06-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* objects.cs: Add regression test for #74992.
+
+	* liveness.c: Extend live ranges of arguments to the beginning of the
+	method. Fixes #74992.
+
 	* exceptions-ia64.c mini-ia64.h: Modify ip during exception handling
 	so it points into the faulting instruction.
 
