@@ -1,5 +1,8 @@
 2005-06-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_jit_free_method): Remove the method from the JitInfo table
+	before freeing the code memory. Fixes #74990.
+
 	* objects.cs: Add regression test for #74992.
 
 	* liveness.c: Extend live ranges of arguments to the beginning of the
