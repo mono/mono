@@ -1,3 +1,7 @@
+2005-06-06  Marek Safar  <marek.safar@seznam.cz>
+
+	* rootcontext.cs: Reset TargetExt as well.
+	
 2005-06-09  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (Delegate.VerifyMethod): Added
