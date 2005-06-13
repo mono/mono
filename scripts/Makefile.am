@@ -31,6 +31,7 @@ bin_SCRIPTS = \
 	mjs			\
 	mkbundle		\
 	monop			\
+	mono-shlib-cop \
 	permview		\
 	prj2make		\
 	resgen			\
