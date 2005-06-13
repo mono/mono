@@ -581,16 +581,23 @@ namespace Mono.Globalization.Unicode
 				int targetCP = (int) decompValues [didx];
 				// for "(x)" it specially maps to 'x' .
 				// FIXME: check if it is sane
-				if (decompLength [cp] == 3 &&
+				if (velems.Length == 3 &&
 					(int) decompValues [didx] == '(' &&
 					(int) decompValues [didx + 2] == ')')
 					targetCP = (int) decompValues [didx + 1];
-				Hashtable entry = (Hashtable) nfkdMap [targetCP];
-				if (entry == null) {
-					entry = new Hashtable ();
-					nfkdMap [targetCP] = entry;
+				else if (velems.Length > 1 &&
+					(targetCP < 0x4C00 || 0x9FBB < targetCP))
+					// skip them, except for CJK ideograph compat
+					targetCP = 0;
+
+				if (targetCP != 0) {
+					Hashtable entry = (Hashtable) nfkdMap [targetCP];
+					if (entry == null) {
+						entry = new Hashtable ();
+						nfkdMap [targetCP] = entry;
+					}
+					entry [(byte) decompType [cp]] = cp;
 				}
-				entry [decompType [cp]] = cp;
 			}
 			// numeric values
 			if (values [5].Length > 0)
@@ -697,7 +704,7 @@ namespace Mono.Globalization.Unicode
 						continue;
 
 					switch (value) {
-					case "cyrillic":
+					case "Cyrillic":
 						for (int x = cp; x <= cpEnd; x++)
 							cyrillic.Add ((char) x);
 						break;
@@ -709,7 +716,7 @@ namespace Mono.Globalization.Unicode
 						for (int x = cp; x <= cpEnd; x++)
 							gujarati.Add ((char) x);
 						break;
-					case "Georgia":
+					case "Georgian":
 						for (int x = cp; x <= cpEnd; x++)
 							georgian.Add ((char) x);
 						break;
@@ -1003,8 +1010,8 @@ namespace Mono.Globalization.Unicode
 				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
 			numberValues.Sort (DictionaryValueComparer.Instance);
 
-//foreach (DictionaryEntry de in numberValues)
-//Console.Error.WriteLine ("****** number {0:X04} : {1}", de.Key, de.Value);
+foreach (DictionaryEntry de in numberValues)
+Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, decompType [(int) de.Key]);
 
 //			decimal prevValue = -1;
 			foreach (DictionaryEntry de in numberValues) {
@@ -1021,7 +1028,7 @@ namespace Mono.Globalization.Unicode
 				if (cp ==  0x215B)
 					fillIndex [0xC] += 2;
 				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp]);
-				if (cp != 09E7)
+				if (cp != 0x09E7)
 					fillIndex [0xC]++;
 				if (0x2460 <= cp && cp <= 0x246A) {
 					int xcp;
@@ -1297,18 +1304,28 @@ namespace Mono.Globalization.Unicode
 			// Surrogate ... they are computed.
 
 			// FIXME: Hangul.
+			byte hangulCat = 0x52;
+			fillIndex [hangulCat] = 0x2;
+			for (int cp = 0x1100; cp <= 0x1112; cp++) {
+				AddCharMapGroupCJK ((char) cp, ref hangulCat, false);
+				for (int l = 0; l < 0x15; l++)
+					for (int v = 0; v < 0x1C; v++)
+						AddCharMapGroupCJK (
+							(char) (0xAC00 + (cp - 0x1100) * 0x1C * 0x15 + l * 0x1C + v),
+							ref hangulCat, false);
+			}
 
 			// CJK unified ideograph.
 			byte cjkCat = 0x9E;
 			fillIndex [cjkCat] = 0x2;
 			for (int cp = 0x4E00; cp <= 0x9FBB; cp++)
-				AddCharMapGroupCJK ((char) cp, ref cjkCat);
+				AddCharMapGroupCJK ((char) cp, ref cjkCat, true);
 			// CJK Extensions goes here.
 			// LAMESPEC: With this Windows style CJK layout, it is
 			// impossible to add more CJK ideograph i.e. 0x9FA6-
 			// 0x9FBB can never be added w/o breaking compat.
 			for (int cp = 0xF900; cp <= 0xFA2D; cp++)
-				AddCharMapGroupCJK ((char) cp, ref cjkCat);
+				AddCharMapGroupCJK ((char) cp, ref cjkCat, true);
 
 			// PrivateUse ... computed.
 			// remaining Surrogate ... computed.
@@ -1339,7 +1356,6 @@ namespace Mono.Globalization.Unicode
 					int c = decompValues [start + l];
 					secondary += diacritical [c];
 				}
-//Console.Error.WriteLine ("======== {0:X04} on diacritical process. Primary char is {1:X04}", i, primaryChar);
 				map [i] = new CharMapEntry (
 					map [primaryChar].Category,
 					map [primaryChar].Level1,
@@ -1366,9 +1382,9 @@ namespace Mono.Globalization.Unicode
 			if (c2 != c && !map [(int) c2].Defined)
 				AddLetterMap (c2, category, 0);
 			AddCharMapGroup2 (c, category, 0, 0);
-			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
-			if (c2 != c && !map [(int) c2].Defined)
-				AddLetterMap (c2, category, 0);
+//			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
+//			if (c2 != c && !map [(int) c2].Defined)
+//				AddLetterMap (c2, category, 0);
 			fillIndex [category] += updateCount;
 /*
 			char c2;
@@ -1407,7 +1423,6 @@ namespace Mono.Globalization.Unicode
 		private void AddCharMap (char c, byte category, byte increment, byte alt)
 		{
 			if (IsIgnorable ((int) c) || map [(int) c].Defined) {
-//Console.Error.WriteLine ("========== attempt of duplication for {0:X04} in category {1:X02} ignored.", (int) c, category);
 				return; // do nothing
 			}
 
@@ -1435,13 +1450,16 @@ namespace Mono.Globalization.Unicode
 		// (+ increases weight):
 		//	(<small> +)
 		//	itself
-		//	<full> | <super> | <sub> | <wide> (| <narrow>)
+		//	<fraction>
+		//	<full> | <super> | <sub>
+		//	<circle> | <wide> (| <narrow>)
 		//	+
 		//	(vertical +)
 		//
 		// level2 is fixed (does not increase).
 			int [] sameWeightItems = new int [] {
 				0, // canonically compatible
+				DecompositionFraction,
 				DecompositionFull,
 				DecompositionSuper,
 				DecompositionSub,
@@ -1485,9 +1503,9 @@ namespace Mono.Globalization.Unicode
 				AddCharMap (vertical, category, updateCount, level2);
 		}
 
-		private void AddCharMapCJK (char c, ref byte category)
+		private void AddCharMapCJK (char c, ref byte category, bool increaseNFKD)
 		{
-			AddCharMap (c, category, 1, 0);
+			AddCharMap (c, category, (byte) (increaseNFKD ? 1 : 0), 0);
 			// Special. I wonder why but Windows skips 9E F9.
 			if (category == 0x9E && fillIndex [category] == 0xF9)
 				fillIndex [category]++;
@@ -1497,17 +1515,21 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		private void AddCharMapGroupCJK (char c, ref byte category)
+		private void AddCharMapGroupCJK (char c, ref byte category, bool increaseNFKD)
 		{
-			AddCharMapCJK (c, ref category);
+			AddCharMapCJK (c, ref category, true);
 
 			// LAMESPEC: see below.
 			if (c == '\u52DE') {
-				AddCharMapCJK ('\u3298', ref category);
-				AddCharMapCJK ('\u3238', ref category);
+				AddCharMapCJK ('\u3298', ref category, true);
+				AddCharMapCJK ('\u3238', ref category, true);
 			}
 			if (c == '\u5BEB')
-				AddCharMapCJK ('\u32A2', ref category);
+				AddCharMapCJK ('\u32A2', ref category, true);
+			if (c == '\u91AB')
+				// Especially this mapping order totally does
+				// not make sense to me.
+				AddCharMapCJK ('\u32A9', ref category, true);
 
 			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
 			if (nfkd == null)
@@ -1526,10 +1548,12 @@ namespace Mono.Globalization.Unicode
 				// in 3200-32B0 are incorrectly mapped. They
 				// mix Chinise and Japanese Kanji when
 				// ordering those characters.
-				if (w == 0x32A2 || w == 0x3298 || w == 0x3238)
+				switch (w) {
+				case 0x32A2: case 0x3298: case 0x3238: case 0x32A9:
 					continue;
+				}
 
-				AddCharMapCJK ((char) w, ref category);
+				AddCharMapCJK ((char) w, ref category, increaseNFKD);
 			}
 		}
 

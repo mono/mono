@@ -43,8 +43,11 @@ static byte [] tmp = new byte [256];
 
 static byte [] GetSortKeyRaw (int i)
 {
-	if (0xAC00 <= i && i <= 0xD7A3)
-		return GetHangleSyllableSortKeyRaw (i, 0x52);
+//	if (0xAC00 <= i && i <= 0xD7A3)
+//		return GetHangleSyllableSortKeyRaw (i, 0x52);
+
+	if (0x3400 <= i && i <= 0x4DB5)
+		return GetCJKExtensionSortKeyRaw (i);
 
 	UnicodeCategory uc = char.GetUnicodeCategory ((char) i);
 	switch (uc) {
@@ -98,6 +101,16 @@ static byte [] GetHangleSyllableSortKeyRaw (int i, byte segment)
 		};
 }
 
+static byte [] GetCJKExtensionSortKeyRaw (int i)
+{
+	int diff = i - 0x3400;
+	return new byte [] {
+		0xFE, 0xFF,
+		(byte) (0x10 + diff / 254),
+		(byte) (diff % 254 + 2),
+		1, 1, 1, 1, 0};
+}
+
 static byte [] GetPrivateUseSortKeyRaw (int i)
 {
 	int diff = i - 0xE000;
@@ -110,10 +123,28 @@ static byte [] GetPrivateUseSortKeyRaw (int i)
 
 static byte [] GetSurrogateSortKeyRaw (int i)
 {
-	bool isSpecialArea = (0xD840 <= i && i < 0xD880 || 0xDB80 <= i && i < 0xDC00);
-	int diff = i - (isSpecialArea ? i < 0xD8B0 ? 0xD840 : 0xDB80 : 0xD800);
-	int segment = isSpecialArea ? 0xFE : 0x41;
-	byte lower = (byte) (0xD840 <= i && i < 0xDC00 ? 0x3E : 0x3F);
+	int diffbase = 0;
+	int segment = 0;
+	byte lower = 0;
+
+	if (i < 0xD840) {
+		diffbase = 0xD800;
+		segment = 0x41;
+		lower = (byte) ((i == 0xD800) ? 0x3E : 0x3F);
+	} else if (0xD840 <= i && i < 0xD880) {
+		diffbase = 0xD840;
+		segment = 0xF2;
+		lower = 0x3E;
+	} else if (0xDB80 <= i && i < 0xDC00) {
+		diffbase = 0xDB80 - 0x40;
+		segment = 0xFE;
+		lower = 0x3E;
+	} else {
+		diffbase = 0xDC00 - 0xF8 + 2;
+		segment = 0x41;
+		lower = 0x3F;
+	}
+	int diff = i - diffbase;
 	return new byte [] {
 		(byte) (segment + diff / 254),
 		(byte) (diff % 254 + 2),
@@ -260,7 +291,7 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 				return false;
 			else if (c < '\uFF9F')
 				return true;
-			return true;
+			return false;
 		}
 
 		public static byte GetJapaneseDashType (char c)

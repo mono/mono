@@ -1,3 +1,14 @@
+2005-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : don't process nonexact NFKD 
+	  mapping as equivalent, however store CJK extensions into NFKD map
+	  even if one does not strictly match.
+	  Now am going to fill Hangul into tables (unlike UCA it does not look
+	  possible to calculate sortkey value).
+	  Fixed Cyrillic and Georgian UCA based orderings.
+	* MSCompatUnicodeTable.template : added CJK extension sortkey 
+	  calculation.
+
 2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : Fixed latin alphabet support.
