@@ -225,7 +225,7 @@
 	The actual values are + 2 (e.g. for Hangul Normal Jamo, the value is 4)
 
 	For Korean letters:
-		- 2: Normal Jamo (1100-11F9)
+		- 2: Jongseong (11A8-11F9)
 		- 4: Half width? (FFA0-FFDC) and Compatibility Jamo? (3165-318E)
 		- 5: Compatibility Jamo (3130-3164)?
 		     TODO: Learn about Korean characters.
@@ -234,7 +234,7 @@
 		- 4 circled inverse (2776-277F)
 		- 8 circled sans serif (2780-2789)
 		- C circled inverse && sans serif (278A-2793)
-		- 18 Roman, 1BC (TODO: why?)
+		- 47 roman (2160-2182)
 
 	For Arabic letters:
 		- 2 Isolated form in presentation form B in FE80-FE8D
@@ -406,6 +406,8 @@
 		-0A: Korean parenthesized numbers (3200-321C)
 		-0C: Korean circled numbers (3260-327B)
 
+		-03: Japanese voice mark
+
 		<primary category 13 : Arabic>
 		-08: 627-648 (basic Abjad letters)
 		-09: madda (622)
@@ -470,7 +472,7 @@
 		-60: circumflex below except for cp{1E76,1E77} | horn and acute
 		-61: breve below | horn and grave
 		-63: tilde below | 2125
-		-68: D0,F0,182,183 | dot below and dot above
+		-68: D0,F0,182,183 | dot below and dot above | topbar
 		-69: right half ring | horn and tilde
 		-6A: circumflex and dot below
 		-6D: breve and dot below
@@ -850,6 +852,7 @@
 	  Hangul Jamo cannot be filled in the table directly, since
 	  U+1113 - U+159 holds additional primary key bytes.
 	  FIXME: find out how they can be computed.
+	  See http://dev.icu-project.org/cgi-bin/viewcvs.cgi/*checkout*/icuhtml/design/collation/ICU_collation_design.htm?rev=HEAD&content-type=text/html#Hangul_Implicit_CEs
 
 	16 (9E 02-F1 E4) CJK
 

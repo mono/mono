@@ -24,16 +24,17 @@ public static void Main ()
 			if (b == 1)
 				cur++;
 		}
-		if (data [0] == 0xE || data [0] == 0xC ||
+		if (data [0] == 0xE || data [0] == 0xC || data [0] == 0x22 ||
 			char.IsSurrogate ((char) i))
 			lv2 = 1;
-		Output.WriteLine (" : {0:X} (), {2}    {3}{4:X02}  {5:X02}  ",
+		Output.WriteLine (" : {0:X} (), {2}  {6} {3}{4:X02}  {5:X02}  ",
 			i,
 			i < 0x20 ? ' ' : (char) i,
 			Char.GetUnicodeCategory ((char) i),
 			lv2 != 1 ? '&' : ' ',
 			lv2,
-			1
+			1,
+			HasSpecialWeight ((char) i) ? '$' : ' '
 			);
 	}
 	Output.Close ();
@@ -58,8 +59,10 @@ static byte [] GetSortKeyRaw (int i)
 	}
 
 	int n = 0;
-	tmp [n++] = categories [i];
-	tmp [n++] = level1 [i];
+	if (categories [i] != 0x1) {
+		tmp [n++] = categories [i];
+		tmp [n++] = level1 [i];
+	}
 	tmp [n++] = 1;
 	if (level2 [i] != 0)
 		tmp [n++] = level2 [i];
@@ -330,6 +333,7 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 				case '\u3045':
 				case '\u3047':
 				case '\u3049':
+				case '\u3063':
 				case '\u3083':
 				case '\u3085':
 				case '\u3087':
@@ -339,6 +343,7 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 				case '\u30A5':
 				case '\u30A7':
 				case '\u30A9':
+				case '\u30C3':
 				case '\u30E3':
 				case '\u30E5':
 				case '\u30E7':

@@ -94,9 +94,9 @@ namespace Mono.Globalization.Unicode
 
 		string [] diacritics = new string [] {
 			// LATIN
-			" ACUTE;", " GRAVE;", " DOT ABOVE;", " MIDDLE DOT;",
-			" CIRCUMFLEX;", " DIAERESIS;", " CARON;", " BREVE;",
-			" DIALYTIKA AND TONOS;", " MACRON;", " TILDE;", " RING ABOVE;",
+			"WITH ACUTE;", "WITH GRAVE;", " DOT ABOVE;", " MIDDLE DOT;",
+			" CIRCUMFLEX;", " DIAERESIS;", " CARON;", "WITH BREVE;",
+			" DIALYTIKA AND TONOS;", "WITH MACRON;", " TILDE;", " RING ABOVE;",
 			" OGONEK;", " CEDILLA;",
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
 			" STROKE;", " CIRCUMFLEX AND ACUTE;",
@@ -189,6 +189,9 @@ namespace Mono.Globalization.Unicode
 		// cp -> Hashtable [decompType] -> cp
 		Hashtable nfkdMap = new Hashtable ();
 
+		// Latin letter -> ArrayList [int]
+		Hashtable latinMap = new Hashtable ();
+
 		ArrayList jisJapanese = new ArrayList ();
 		ArrayList nonJisJapanese = new ArrayList ();
 
@@ -211,7 +214,7 @@ namespace Mono.Globalization.Unicode
 			Console.Error.WriteLine ("parse done.");
 
 			FillSecondaryValues ();
-			GeneratePrimary ();
+			GenerateCore ();
 			Console.Error.WriteLine ("generation done.");
 			Serialize ();
 			Console.Error.WriteLine ("serialization done.");
@@ -456,6 +459,31 @@ namespace Mono.Globalization.Unicode
 			if (s.IndexOf ("SMALL CAPITAL") > 0)
 				isSmallCapital [cp] = true;
 
+			// latin mapping by character name
+			if (s.IndexOf ("LATIN") > 0) {
+				int lidx = s.IndexOf ("LETTER DOTLESS ");
+				int offset = lidx + 15;
+				if (lidx < 0) {
+					lidx = s.IndexOf ("LETTER TURNED ");
+					offset = lidx + 14;
+				}
+				if (lidx < 0) {
+					lidx = s.IndexOf ("LETTER ");
+					offset = lidx + 7;
+				}
+				char c = lidx > 0 ? s [offset] : char.MinValue;
+				if ('A' <= c && c <= 'Z' &&
+					(s.Length == offset + 1 || s [offset + 1] == ' ')) {
+					ArrayList entry = (ArrayList) latinMap [c];
+					if (entry == null) {
+						entry = new ArrayList ();
+						latinMap [c] = entry;
+					}
+					entry.Add (cp);
+				}
+			}
+
+			// diacritical weights by character name
 			for (int d = 0; d < diacritics.Length; d++)
 				if (s.IndexOf (diacritics [d]) > 0)
 					diacritical [cp] |= diacriticWeights [d];
@@ -585,6 +613,9 @@ namespace Mono.Globalization.Unicode
 					(int) decompValues [didx] == '(' &&
 					(int) decompValues [didx + 2] == ')')
 					targetCP = (int) decompValues [didx + 1];
+				// special: 0x215F "1/"
+				else if (cp == 0x215F)
+					targetCP = '1';
 				else if (velems.Length > 1 &&
 					(targetCP < 0x4C00 || 0x9FBB < targetCP))
 					// skip them, except for CJK ideograph compat
@@ -706,23 +737,28 @@ namespace Mono.Globalization.Unicode
 					switch (value) {
 					case "Cyrillic":
 						for (int x = cp; x <= cpEnd; x++)
-							cyrillic.Add ((char) x);
+							if (!IsIgnorable (x))
+								cyrillic.Add ((char) x);
 						break;
 					case "Gurmukhi":
 						for (int x = cp; x <= cpEnd; x++)
-							gurmukhi.Add ((char) x);
+							if (!IsIgnorable (x))
+								gurmukhi.Add ((char) x);
 						break;
 					case "Gujarati":
 						for (int x = cp; x <= cpEnd; x++)
-							gujarati.Add ((char) x);
+							if (!IsIgnorable (x))
+								gujarati.Add ((char) x);
 						break;
 					case "Georgian":
 						for (int x = cp; x <= cpEnd; x++)
-							georgian.Add ((char) x);
+							if (!IsIgnorable (x))
+								georgian.Add ((char) x);
 						break;
 					case "Thaana":
 						for (int x = cp; x <= cpEnd; x++)
-							thaana.Add ((char) x);
+							if (!IsIgnorable (x))
+								thaana.Add ((char) x);
 						break;
 					}
 				}
@@ -884,7 +920,7 @@ namespace Mono.Globalization.Unicode
 						diacritical [cp] = weight;
 		}
 
-		void GeneratePrimary ()
+		void GenerateCore ()
 		{
 			UnicodeCategory uc;
 
@@ -944,6 +980,19 @@ namespace Mono.Globalization.Unicode
 			fillIndex [0x1] = 0xDC;
 			for (int i = 0x20d0; i <= 0x20e1; i++)
 				AddCharMap ((char) i, 0x1, 1);
+
+			// Hebrew Accents
+			fillIndex [0x1] = 0x3;
+			for (int i = 0x0591; i <= 0x05C2; i++)
+				if (i != 0x05BE)
+					AddCharMap ((char) i, 0x1, 1);
+
+			// Bengali nonspacing marks
+			fillIndex [0x1] = 0x3;
+			for (int i = 0x0981; i < 0x0A00; i++)
+				if (Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 0x1, 1);
 			#endregion
 
 
@@ -1010,35 +1059,66 @@ namespace Mono.Globalization.Unicode
 				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
 			numberValues.Sort (DictionaryValueComparer.Instance);
 
-foreach (DictionaryEntry de in numberValues)
-Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, decompType [(int) de.Key]);
+//foreach (DictionaryEntry de in numberValues)
+//Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, decompType [(int) de.Key]);
 
-//			decimal prevValue = -1;
+			decimal prevValue = -1;
 			foreach (DictionaryEntry de in numberValues) {
-//				decimal currValue = (decimal) de.Value;
-//				if (prevValue < currValue) {
-//					if (prevValue == (decimal) 1.0) // special case
-//						fillIndex [0xC] += 2;
-//					prevValue = currValue;
-//					fillIndex [0xC]++;
-//				}
 				int cp = (int) de.Key;
+				decimal currValue = (decimal) de.Value;
+//Console.Error.WriteLine ("ADD NUMBER. PREV {0} CURR {1} {2}", prevValue, currValue, prevValue - (int) prevValue);
+				if (prevValue < currValue &&
+					prevValue - (int) prevValue == 0 &&
+					prevValue >= 1) {
+					// Process Hangzhou and Roman numbers
+					fillIndex [0xC]++;
+					int xcp;
+					xcp = (int) prevValue + 0x2170 - 1;
+					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					xcp = (int) prevValue + 0x2160 - 1;
+					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					fillIndex [0xC] += 2;
+					xcp = (int) prevValue + 0x3021 - 1;
+					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					fillIndex [0xC]++;
+				}
+				if (prevValue < currValue)
+					prevValue = currValue;
 				if (map [cp].Defined)
 					continue;
-				if (cp ==  0x215B)
+				// HangZhou and Roman are add later 
+				// (code is above)
+				else if (0x3021 <= cp && cp < 0x302A
+					|| 0x2160 <= cp && cp < 0x216A
+					|| 0x2170 <= cp && cp < 0x217A)
+					continue;
+
+				if (cp ==  0x215B) // FIXME: why?
 					fillIndex [0xC] += 2;
+				else if (cp == 0x3021) // FIXME: why?
+					fillIndex [0xC]++;
 				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp]);
+
+				if (cp <= '9') {
+					int xcp;
+					xcp = cp - 0x31 + 0x2776;
+					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					xcp = cp - 0x31 + 0x2780;
+					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					xcp = cp - 0x31 + 0x278A;
+					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					if (cp != '0') {
+						xcp = cp - 0x31 + 0x2460;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						xcp = cp - 0x31 + 0x2474;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						xcp = cp - 0x31 + 0x2488;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					}
+				}
+
 				if (cp != 0x09E7)
 					fillIndex [0xC]++;
-				if (0x2460 <= cp && cp <= 0x246A) {
-					int xcp;
-					xcp = cp - 0x2460 + 0x2776;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					xcp = cp - 0x2460 + 0x2780;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					xcp = cp - 0x2460 + 0x278A;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-				}
 			}
 
 			// 221E: infinity
@@ -1104,9 +1184,12 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 					AddLetterMap ((char) i, 0x13, 1);
 
 			// Devanagari
+			// FIXME: it does seem straight codepoint mapping.
+			fillIndex [0x14] = 04;
 			for (int i = 0x0901; i < 0x0905; i++)
-				if (Char.IsLetter ((char) i))
+				if (!IsIgnorable (i))
 					AddLetterMap ((char) i, 0x14, 2);
+			fillIndex [0x14] = 0xB;
 			for (int i = 0x0905; i < 0x093A; i++)
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0x14, 4);
@@ -1117,6 +1200,8 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 			// Bengali
 			fillIndex [0x15] = 02;
 			for (int i = 0x0980; i < 0x9FF; i++) {
+				if (IsIgnorable (i))
+					continue;
 				if (i == 0x09E0)
 					fillIndex [0x15] = 0x3B;
 				switch (Char.GetUnicodeCategory ((char) i)) {
@@ -1129,9 +1214,12 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 			}
 
 			// Gurmukhi. orderedGurmukhi is from UCA
+			// FIXME: it does not look equivalent to UCA.
 			fillIndex [0x16] = 02;
 			for (int i = 0; i < orderedGurmukhi.Length; i++) {
 				char c = orderedGurmukhi [i];
+				if (!Char.IsLetter (c))
+					continue;
 				if (c == '\u0A3C' || c == '\u0A4D' ||
 					'\u0A66' <= c && c <= '\u0A71')
 					continue;
@@ -1239,7 +1327,58 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 			for (int i = 0; i < orderedGeorgian.Length; i++)
 				AddLetterMap (orderedGeorgian [i], 0x21, 5);
 
-			// FIXME: Japanese Kana needs constant array.
+			// Japanese Kana.
+			fillIndex [0x22] = 2;
+			int kanaOffset = 0x3041;
+			byte [] kanaLines = new byte [] {2, 2, 2, 2, 1, 3, 1, 2, 1};
+
+			for (int gyo = 0; gyo < 9; gyo++) {
+				for (int dan = 0; dan < 5; dan++) {
+					if (gyo == 7 && dan % 2 == 1) {
+						// 'ya'-gyo
+						fillIndex [0x22]++;
+						kanaOffset -= 2; // There is no space for yi and ye.
+						continue;
+					}
+					int cp = kanaOffset + dan * kanaLines [gyo];
+					// small lines (a-gyo, ya-gyo)
+					if (gyo == 0 || gyo == 7) {
+						AddKanaMap (cp, 1); // small
+						AddKanaMap (cp + 1, 1);
+					}
+					else
+						AddKanaMap (cp, kanaLines [gyo]);
+					fillIndex [0x22]++;
+
+					if (cp == 0x3061) {
+						// add small 'Tsu' (before normal one)
+						AddKanaMap (0x3063, 1);
+						kanaOffset++;
+					}
+				}
+				fillIndex [0x22] += 3;
+				kanaOffset += 5 * kanaLines [gyo];
+			}
+
+			// Wa-gyo is almost special, so I just manually add.
+			AddLetterMap ((char) 0x308E, 0x22, 0);
+			AddLetterMap ((char) (0x308E + 0x60), 0x22, 0);
+			AddLetterMap ((char) 0x308F, 0x22, 0);
+			AddLetterMap ((char) (0x308F + 0x60), 0x22, 0);
+			fillIndex [0x22]++;
+			AddLetterMap ((char) 0x3090, 0x22, 0);
+			AddLetterMap ((char) (0x3090 + 0x60), 0x22, 0);
+			fillIndex [0x22] += 2;
+			// no "Wu" in Japanese.
+			AddLetterMap ((char) 0x3091, 0x22, 0);
+			AddLetterMap ((char) (0x3091 + 0x60), 0x22, 0);
+			fillIndex [0x22]++;
+			AddLetterMap ((char) 0x3092, 0x22, 0);
+			AddLetterMap ((char) (0x3092 + 0x60), 0x22, 0);
+			// Nn
+			fillIndex [0x22] = 0x80;
+			AddLetterMap ((char) 0x3093, 0x22, 0);
+			AddLetterMap ((char) (0x3093 + 0x60), 0x22, 0);
 
 			// JIS Japanese square chars.
 			fillIndex [0x22] = 0x97;
@@ -1258,18 +1397,32 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 
 			// Estrangela: ancient Syriac
 			fillIndex [0x24] = 0x0B;
+			// FIXME: is 0x71E really alternative form?
 			ArrayList syriacAlternatives = new ArrayList (
-				new int [] {0x714, 0x716, 0x71C, 0x724, 0x727});
-			for (int i = 0x0710; i <= 0x072C; i++)
-				if (i != 0x0711) // ignored
-					AddCharMap ((char) i, 0x24,
-						syriacAlternatives.Contains (i) ?
-						(byte) 2 : (byte) 4);
+				new int [] {0x714, 0x716, 0x71C, 0x71E, 0x724, 0x727});
+			for (int i = 0x0710; i <= 0x072C; i++) {
+				if (i == 0x0711) // NonSpacingMark
+					continue;
+				if (syriacAlternatives.Contains (i))
+					continue;
+				AddCharMap ((char) i, 0x24, 4);
+				// FIXME: why?
+				if (i == 0x721)
+					fillIndex [0x24]++;
+			}
+			foreach (int cp in syriacAlternatives)
+				map [cp] = new CharMapEntry (0x24,
+					(byte) (map [cp - 1].Level1 + 2),
+					0);
 
 			// Thaana
+			// FIXME: it turned out that it does not look like UCA
 			fillIndex [0x24] = 0x6E;
-			for (int i = 0; i < orderedThaana.Length; i++)
+			for (int i = 0; i < orderedThaana.Length; i++) {
+				if (IsIgnorableNonSpacing (i))
+					continue;
 				AddCharMap (orderedThaana [i], 0x24, 2);
+			}
 			#endregion
 
 			#region Level2 adjustment
@@ -1369,50 +1522,51 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 		{
 			fillIndex [category] = alphaWeight;
 			AddLetterMap (c, category, 0);
+
+			ArrayList al = latinMap [c] as ArrayList;
+			if (al == null)
+				return;
+
+//Console.Error.WriteLine ("PROCESSING {0}: {1} entries", c, al.Count);
+//foreach (int cp in al) Console.Error.WriteLine ("    {0:X04}", cp);
+			foreach (int cp in al)
+				AddLetterMap ((char) cp, category, 0);
+		}
+
+		private void AddKanaMap (int i, byte voices)
+		{
+			for (byte b = 0; b < voices; b++) {
+				char c = (char) (i + b);
+				byte arg = (byte) (b > 0 ? b + 2 : 0);
+				// Hiragana
+				AddLetterMapCore (c, 0x22, 0, arg);
+				// Katakana
+				AddLetterMapCore ((char) (c + 0x60), 0x22, 0, arg);
+			}
 		}
 
 		private void AddLetterMap (char c, byte category, byte updateCount)
+		{
+			AddLetterMapCore (c, category, updateCount, 0);
+		}
+
+		private void AddLetterMapCore (char c, byte category, byte updateCount, byte level2)
 		{
 			char c2;
 			// <small> updates index
 			c2 = ToSmallForm (c);
 			if (c2 != c)
-				AddCharMapGroup2 (c2, category, updateCount, 0);
+				AddCharMapGroup2 (c2, category, updateCount, level2);
 			c2 = Char.ToLower (c, CultureInfo.InvariantCulture);
 			if (c2 != c && !map [(int) c2].Defined)
-				AddLetterMap (c2, category, 0);
-			AddCharMapGroup2 (c, category, 0, 0);
-//			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
-//			if (c2 != c && !map [(int) c2].Defined)
-//				AddLetterMap (c2, category, 0);
-			fillIndex [category] += updateCount;
-/*
-			char c2;
-
-			// process lowerletter recursively (if not defined).
-			c2 = Char.ToLower (c, CultureInfo.InvariantCulture);
-			if (c2 != c && !map [(int) c2].Defined)
-				AddLetterMap (c2, category, updateCount);
-
-			// <small> updates index
-			c2 = ToSmallForm (c);
-			if (c2 != c)
-				AddCharMap (c2, category, updateCount);
-			// itself
-			AddCharMap (c, category, updateCount);
-			// <full>
-			c2 = ToFullWidth (c);
-			if (c2 != c)
-				AddLetterMap (c2, category, 0);
-
-			// FIXME: implement decorated characters w/ diacritical
-			// marks.
-
-			// process upperletter recursively (if not defined).
-			c2 = Char.ToUpper (c, CultureInfo.InvariantCulture);
-			if (c2 != c && !map [(int) c2].Defined)
-				AddLetterMap (c2, category, updateCount);
-*/
+				AddLetterMapCore (c2, category, 0, level2);
+			bool doUpdate = true;
+			if (!map [c].Defined)
+				AddCharMapGroup2 (c, category, 0, level2);
+			else
+				doUpdate = false;
+			if (doUpdate)
+				fillIndex [category] += updateCount;
 		}
 
 		private void AddCharMap (char c, byte category, byte increment)
@@ -2172,20 +2326,20 @@ Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, de
 			for (int i = 0; i < l; i++) {
 				SortKeyValue k1 = CollationElementTable.GetSortKey (i1, i);
 				SortKeyValue k2 = CollationElementTable.GetSortKey (i2, i);
-				int v = k1.Primary.CompareTo (k2.Primary);
+				int v = k1.Primary - k2.Primary;
 				if (v != 0)
 					return v;
-				v = k1.Secondary.CompareTo (k2.Secondary);
+				v = k1.Secondary - k2.Secondary;
 				if (v != 0)
 					return v;
-				v = k1.Thirtiary.CompareTo (k2.Thirtiary);
+				v = k1.Thirtiary - k2.Thirtiary;
 				if (v != 0)
 					return v;
-				v = k1.Quarternary.CompareTo (k2.Quarternary);
+				v = k1.Quarternary - k2.Quarternary;
 				if (v != 0)
 					return v;
 			}
-			return l2 - l1;
+			return l1 - l2;
 		}
 	}
 }
