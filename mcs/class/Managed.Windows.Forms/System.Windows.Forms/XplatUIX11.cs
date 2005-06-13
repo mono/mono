@@ -2372,7 +2372,7 @@ namespace System.Windows.Forms {
 
 						msg.message = Msg.WM_MOUSEMOVE;
 						msg.wParam = GetMousewParam(0);
-						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
+						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
 						HoverState.X = MousePosition.X = xevent.MotionEvent.x;
 						HoverState.Y = MousePosition.Y = xevent.MotionEvent.y;
@@ -2380,7 +2380,7 @@ namespace System.Windows.Forms {
 						break;
 					} else {
 						msg.message = Msg.WM_NCHITTEST;
-						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
+						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
 						MousePosition.X = xevent.MotionEvent.x;
 						MousePosition.Y = xevent.MotionEvent.y;

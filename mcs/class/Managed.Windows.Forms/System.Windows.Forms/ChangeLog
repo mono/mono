@@ -1,3 +1,9 @@
+2005-06-13  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Mash numbers together properly, otherwise we get
+	freaky when both vals are negative. NOTE: There are probably other
+	places in XplatUIX11 that this needs to be done.
+
 2005-06-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGrid.cs: implement missing methods, move KeyboardNavigation
