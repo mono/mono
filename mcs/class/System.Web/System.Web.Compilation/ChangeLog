@@ -1,3 +1,9 @@
+2005-06-13  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Directive.cs: Register the MasterType directive.
+	* PageCompiler.cs: If a MasterType is specified, add a type specific
+	Master property. All this fixes bug #75192.
+
 2005-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: when mapping an attribute name to a field

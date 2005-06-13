@@ -194,6 +194,19 @@ namespace System.Web.Compilation
 		{
 			base.CreateMethods ();
 
+#if NET_2_0
+			if (pageParser.MasterType != null) {
+				CodeMemberProperty mprop = new CodeMemberProperty ();
+				mprop.Name = "Master";
+				mprop.Type = new CodeTypeReference (pageParser.MasterType);
+				mprop.Attributes = MemberAttributes.Public | MemberAttributes.New;
+				CodeExpression prop = new CodePropertyReferenceExpression (new CodeBaseReferenceExpression (), "Master");
+				prop = new CodeCastExpression (pageParser.MasterType, prop);
+				mprop.GetStatements.Add (new CodeMethodReturnStatement (prop));
+				mainClass.Members.Add (mprop);
+			}
+#endif
+			
 			CreateGetTypeHashCode ();
 		}
 

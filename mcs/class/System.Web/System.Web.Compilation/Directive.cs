@@ -66,6 +66,10 @@ namespace System.Web.Compilation
 
 		static string [] application_atts = { "description", "inherits", "codebehind" };
 
+#if NET_2_0
+		static string [] mastertype_atts = { "virtualpath", "typename" };
+#endif
+		
 		static Directive ()
 		{
 			InitHash ();
@@ -125,6 +129,10 @@ namespace System.Web.Compilation
 			directivesHash.Add ("APPLICATION", valid_attributes);
 
 #if NET_2_0
+			valid_attributes = new Hashtable (provider, comparer);
+			foreach (string att in mastertype_atts) valid_attributes.Add (att, null);
+			directivesHash.Add ("MASTERTYPE", valid_attributes);
+			
 			valid_attributes = new Hashtable (provider, comparer);
 			foreach (string att in control_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("MASTER", valid_attributes);
