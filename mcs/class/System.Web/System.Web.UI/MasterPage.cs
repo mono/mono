@@ -59,8 +59,10 @@ namespace System.Web.UI
 		{
 			foreach (ContentPlaceHolder place in placeholders) {
 				ITemplate template = templates [place.ID] as ITemplate;
-				if (template != null)
+				if (template != null) {
+					place.Controls.Clear ();
 					template.InstantiateIn (place);
+				}
 			}
 		}
 	}
