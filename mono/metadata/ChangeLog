@@ -1,3 +1,8 @@
+2005-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: no need to convert from utf16 to utf8 and then back again
+	after the call to GetLogicalDrives.
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: frombase64. Fix problems exposed by new tests.
