@@ -1,3 +1,8 @@
+2005-06-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RuntimeEnvironmentTest.cs: Commented an assert than wasn't true when
+	doing a "make distcheck".
+
 2005-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeEnvironmentTest.cs: New. Unit tests for RuntimeEnvironment.
