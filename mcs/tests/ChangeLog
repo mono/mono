@@ -1,3 +1,7 @@
+2005-06-15  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile (run-test-local): Don't pick 'mono' from the path.
+
 2005-06-14  Marek Safar <marek.safar@seznam.cz>
 
 	* gen-*.cs: Renamed to gtest-*.cs.
@@ -6,7 +10,7 @@
 	* 2test-22: Renamed to gtest-165.cs.
 	* 2test-*.cs: Renamed to test-*.cs
 	* xml-*.cs: Renamed to test-xml*.cs.
-	
+
 	* Makefile: Switch to compiler-tester.
 
 2005-06-08  Raja R Harinath  <rharinath@novell.com>

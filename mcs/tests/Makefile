@@ -204,7 +204,7 @@ TEST_PATTERN = 'test-*.cs'
 endif
 
 run-test-local: ilasm
-	MONO_RUNTIME=mono $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	MONO_RUNTIME='$(RUNTIME)' $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 # do nothing for this target
 run-test-ondotnet-local:
