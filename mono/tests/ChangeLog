@@ -1,3 +1,8 @@
+2005-06-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile.am (testbundle): Test case that bundling works with a
+	hello world.
+
 2005-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (TestDriver.dll): Fix a warning.
