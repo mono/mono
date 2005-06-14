@@ -1,3 +1,7 @@
+2005-06-14  Raja R Harinath  <harinath@gmail.com>
+
+	* RegexBugs.cs (NameLookupInEmptyMatch): New test from #74753.
+
 2005-05-25  Raja R Harinath  <rharinath@novell.com>
 
 	* RegexReplace.cs: Add a couple more testcases.

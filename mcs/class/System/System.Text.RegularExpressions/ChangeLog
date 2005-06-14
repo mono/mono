@@ -1,3 +1,10 @@
+2005-06-14  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #74753.
+	* Match.cs (Match) [zero-argument variant]: Make private.
+	* GroupCollection (Item) [string variant]: Don't look for the
+	group number in an empty match.
+
 2005-06-10  Raja R Harinath  <rharinath@novell.com>
 
 	* interpreter.cs (Interpreter.GenerateMatch): Avoid allocating two

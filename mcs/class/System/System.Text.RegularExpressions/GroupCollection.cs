@@ -74,11 +74,10 @@ namespace System.Text.RegularExpressions
 
 		public Group this [string groupName] {
 			get {
-				foreach (Group g in list) {
-					if (!(g is Match))
-						continue;
-
-					int index = ((Match)g).Regex.GroupNumberFromName (groupName);
+				// The 0th group is the match.
+				Match m = (Match) list [0];
+				if (m != Match.Empty) {
+					int index = m.Regex.GroupNumberFromName (groupName);
 					if (index != -1)
 						return this [index];
 				}

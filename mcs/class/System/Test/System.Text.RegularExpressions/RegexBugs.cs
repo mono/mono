@@ -147,7 +147,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
 			Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
 		}
-		
+
 		[Test]
 		public void UndefinedGroup () // bug 52890
 		{
@@ -276,6 +276,25 @@ namespace MonoTests.System.Text.RegularExpressions
 			x = new Regex ("{a,1}");
 			x = new Regex ("{a}");
 			x = new Regex ("{,a}");
+		}
+
+		[Test]
+		public void NameLookupInEmptyMatch () // bug 74753
+		{
+			Regex regTime = new Regex (
+					@"(?<hour>[0-9]{1,2})([\:](?<minute>[0-9]{1,2})){0,1}([\:](?<second>[0-9]{1,2})){0,1}\s*(?<ampm>(?i:(am|pm)){0,1})");
+
+			Match mTime = regTime.Match("");
+			AssertEquals ("#01", "", mTime.Groups["hour"].Value);
+			AssertEquals ("#02", "", mTime.Groups["minute"].Value);
+			AssertEquals ("#03", "", mTime.Groups["second"].Value);
+			AssertEquals ("#04", "", mTime.Groups["ampm"].Value);
+
+			mTime = regTime.Match("12:00 pm");
+			AssertEquals ("#05", "12", mTime.Groups["hour"].Value);
+			AssertEquals ("#06", "00", mTime.Groups["minute"].Value);
+			AssertEquals ("#07", "", mTime.Groups["second"].Value);
+			AssertEquals ("#08", "pm", mTime.Groups["ampm"].Value);
 		}
 	}
 }
