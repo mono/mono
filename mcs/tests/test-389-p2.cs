@@ -1,6 +1,5 @@
 // This is used to debug an ordering dependent bug.
 //
-// Compiler options: test-388-p2.cs /out:test-388.exe
 
 namespace Schemas {
     [System.Xml.Serialization.XmlType("base-field-type"),
@@ -40,9 +39,5 @@ namespace Schemas {
 		[System.Xml.Serialization.XmlElement("field-type",Type=typeof(fieldtype)),
         System.Xml.Serialization.XmlElement("compound-field",Type=typeof(compoundfield))]
         public basefieldtype[] Items;
-    }
-    
-    public class M {
-	public static void Main () {}
     }
 }

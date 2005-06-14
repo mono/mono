@@ -1,6 +1,5 @@
-// This is used to debug an ordering dependent bug.
+// This is used to debug an ordering dependent bug.  The counterpart is test-388.cs.
 //
-// Compiler options: test-389-p2.cs /out:test-389.exe
 
 using System;
 using System.Collections;
@@ -47,9 +46,5 @@ namespace Schemas
 			Console.WriteLine ("Instantiating form window");
 			return null;
 		}
-	}
-	
-	public class M {
-	    public static void Main () {}
 	}
 }

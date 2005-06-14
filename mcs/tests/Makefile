@@ -191,9 +191,20 @@ mcs-casts.out: casts-mcs.exe
 test-casts: boot-casts.out mcs-casts.out
 	cmp $^
 
-test-local: xmldocdiff.exe casts-boot.exe
+test-local: casts-boot.exe
 
-run-test-local: ilasm test-harness test-casts
+ifeq (net_2_0, $(PROFILE))
+COMPILER_NAME = gmcs
+COMPILER = $(topdir)/gmcs/gmcs.exe
+TEST_PATTERN = '*test-*.cs'
+else
+COMPILER_NAME = mcs
+COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
+TEST_PATTERN = 'test-*.cs'
+endif
+
+run-test-local: ilasm
+	MONO_RUNTIME=mono $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 # do nothing for this target
 run-test-ondotnet-local:
@@ -210,7 +221,8 @@ test-generics-2:
 
 clean-local:
 	-rm -fr dir-*
-	-rm -f *.exe *.dll *.netmodule *.out *.pdb casts.cs
+	-rm -f *.exe *.dll *.netmodule *.out *.pdb casts.cs *.log
+	-rm -f xml-*.xml
 
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
@@ -222,7 +234,7 @@ TEST_TAG = mcs
 endif
 
 .PHONY: test-harness test-harness-run
-test-harness: xmldocdiff.exe
+test-harness: 
 	@$(MAKE) -s test-harness-run
 
 exe_tests := $(filter %-exe, $(TEST_SOURCES))
@@ -266,9 +278,6 @@ TEST_SOURCES_XML = \
 TEST_SOURCES_XML_PENDING = xml-027
 
 xml-doc-tests := $(filter xml-%, $(TEST_SOURCES))
-
-xmldocdiff.exe:
-	$(CSCOMPILE) xmldocdiff.cs
 
 %-il.dll: %-il.il
 	$(ILASM) /dll $<

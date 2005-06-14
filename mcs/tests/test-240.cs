@@ -4,17 +4,18 @@ using System;
 using System.Diagnostics;
 
 class TestClass {
+	static int return_code = 1;
     
         [Conditional("C1"), Conditional("C2")]    
         public static void ConditionalMethod()
         {
             Console.WriteLine ("Succeeded");
-            Environment.Exit (0);
+            return_code = 0;
         }
     
         static int Main()
         {
             ConditionalMethod ();
-            return 1;
+            return return_code;
         }
 }

@@ -1,20 +1,22 @@
 class T {
-	static void Main ()
+	static int ret_code = 0;
+    
+	static int Main ()
 	{
 		try {
 			T t = null;
 			t.Foo ();
 		} catch {
-			System.Environment.Exit (0);
+			return ret_code;
 		}
-		
-		System.Environment.Exit (1);
+		ret_code = 1;
+		return ret_code;
 	}
 	
 	void Foo () {
 		if (this == null) {
 			System.Console.WriteLine ("This isnt anything!?!?");
-			System.Environment.Exit (1);
+			ret_code = 1;
 		}
 	}
 }

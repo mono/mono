@@ -1,4 +1,4 @@
-// Compiler options: test-353-2.cs
+// Compiler options: test-353-p2.cs /out:test-353.exe
 
 using System;
  
