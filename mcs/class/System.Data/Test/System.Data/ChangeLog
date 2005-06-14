@@ -1,3 +1,7 @@
+2005-06-14  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataSetTest.cs: Added test case for GetChanges method.
+
 2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetReadXmlSchemaTest.cs : TestSampleFileImportSimple() is not

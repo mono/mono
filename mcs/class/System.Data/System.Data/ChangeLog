@@ -1,3 +1,8 @@
+2005-06-14  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataSet.cs: GetChanges: if row is deleted, get parent rows based
+	on original version. fixes bug #75227.
+
 2005-06-13  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRowCollection.cs: Find (keys, version): Added an overload to

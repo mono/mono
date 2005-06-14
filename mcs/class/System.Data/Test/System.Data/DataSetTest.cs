@@ -1957,6 +1957,55 @@ namespace MonoTests.System.Data
                         MyDataSet ds = (MyDataSet)(ds1.Clone());
                      	AssertEquals("A#01",2,MyDataSet.count);
 		}
+
+		#region DataSet.GetChanges Tests
+		public void GetChanges_Relations_DifferentRowStatesTest ()
+		{
+			DataSet ds = new DataSet ("ds");
+			DataTable parent = ds.Tables.Add ("parent");
+			DataTable child = ds.Tables.Add ("child");
+			
+			parent.Columns.Add ("id", typeof (int));
+			parent.Columns.Add ("name", typeof (string));
+			
+
+			child.Columns.Add ("id", typeof (int));
+			child.Columns.Add ("parent", typeof (int));
+			child.Columns.Add ("name", typeof (string));
+
+			parent.Rows.Add (new object [] { 1, "mono parent 1" } );
+			parent.Rows.Add (new object [] { 2, "mono parent 2" } );
+			parent.Rows.Add (new object [] { 3, "mono parent 3" } );
+			parent.Rows.Add (new object [] { 4, "mono parent 4" } );
+			parent.AcceptChanges ();
+
+			child.Rows.Add (new object [] { 1, 1, "mono child 1" } );
+			child.Rows.Add (new object [] { 2, 2, "mono child 2" } );
+			child.Rows.Add (new object [] { 3, 3, "mono child 3" } );
+			child.AcceptChanges ();
+
+			DataRelation relation = ds.Relations.Add ("parent_child", 
+								  parent.Columns ["id"],
+								  child.Columns ["parent"]);
+			
+			// modify the parent and get changes
+			child.Rows [1]["parent"] = 4;
+			DataSet changes = ds.GetChanges ();
+			DataRow row = changes.Tables ["parent"].Rows[0];
+			Assert.AreEqual ((int) parent.Rows [3][0], (int) row [0], "#RT1");
+			Assert.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT2 only get parent row with current version");
+			ds.RejectChanges ();
+
+			// delete a child row and get changes.
+			child.Rows [0].Delete ();
+			changes = ds.GetChanges ();
+			
+			Assert.AreEqual (changes.Tables.Count, 2, "#RT3 Should import parent table as well");
+			Assert.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT4 only get parent row with original version");
+			Assert.AreEqual (1, (int) changes.Tables ["parent"].Rows [0][0], "#RT5 parent row based on original version");
+		}
+		#endregion // DataSet.GetChanges Tests
+
         }
 
 

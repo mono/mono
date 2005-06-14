@@ -502,7 +502,10 @@ namespace System.Data {
 			if (addedRows.ContainsKey (row)) return;
 
 			foreach (DataRelation relation in row.Table.ParentRelations) {
-				DataRow parent = row.GetParentRow (relation);
+				DataRow parent = ( row.RowState != DataRowState.Deleted ? 
+						   row.GetParentRow (relation) :
+						   row.GetParentRow (relation, DataRowVersion.Original)
+						   );
 				if (parent == null)
 					continue;
 				// add the parent row
