@@ -119,7 +119,7 @@ copy_statfs (struct Mono_Posix_Statvfs *to, struct statfs *from)
   to->f_files   = from->f_files;
   to->f_ffree   = from->f_ffree;
   to->f_favail  = from->f_ffree; /* OSX doesn't have f_avail */
-  Mono_Posix_ToMountFlags (from->f_flag, &to->f_flag);
+  Mono_Posix_ToMountFlags (from->f_flags, &to->f_flag);
 	// from->f_fsid is an int32[2], to->f_fsid is a uint64, 
 	// so this shouldn't lose anything.
 	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
