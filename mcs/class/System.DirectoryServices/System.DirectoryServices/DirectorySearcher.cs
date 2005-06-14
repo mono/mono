@@ -623,9 +623,6 @@ namespace System.DirectoryServices
 		private void DoSearch()
 		{
 			InitBlock();
-			if (!PropertiesToLoad.Contains("ADsPath")) {
-				PropertiesToLoad.Add("ADsPath");
-			}
 			String[] attrs= new String[PropertiesToLoad.Count];
 			PropertiesToLoad.CopyTo(attrs,0);
 			

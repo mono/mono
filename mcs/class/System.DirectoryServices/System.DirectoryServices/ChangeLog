@@ -1,3 +1,6 @@
+2005-06-14  Boris Kirzner <borisk@mainsoft.com>
+	* DirectorySearcher.cs : AdsPath property should not appear in the query, but it still should appear in the SearchResult properties (by initialization from result entry path).
+
 2005-03-31  Boris Kirzner <borisk@mainsoft.com>
 	* DirectoryEntry.cs :
 		- Implemented UsePropertyCache.
