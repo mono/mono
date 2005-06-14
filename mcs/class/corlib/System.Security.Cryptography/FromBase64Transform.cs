@@ -1,8 +1,9 @@
 //
 // System.Security.Cryptography.FromBase64Transform
 //
-// Author:
-//   Sergey Chaban (serge@wildwestsoftware.com)
+// Authors:
+//	Sergey Chaban (serge@wildwestsoftware.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
@@ -47,9 +48,10 @@ namespace System.Security.Cryptography {
 
 		private FromBase64TransformMode mode;
 		private byte[] accumulator;
-		private byte[] filterBuffer;
 		private int accPtr;
 		private bool m_disposed;
+
+		private const byte TerminatorByte = ((byte) '=');
 
 		public FromBase64Transform ()
 			: this (FromBase64TransformMode.IgnoreWhiteSpaces)
@@ -60,7 +62,6 @@ namespace System.Security.Cryptography {
 		{
 			this.mode = mode;
 			accumulator = new byte [4];
-			filterBuffer = new byte [4];
 			accPtr = 0;
 			m_disposed = false;
 		}
@@ -103,40 +104,14 @@ namespace System.Security.Cryptography {
 				// zeroize data
 				if (accumulator != null)
 					Array.Clear (accumulator, 0, accumulator.Length);
-				if (filterBuffer != null)
-					Array.Clear (filterBuffer, 0, filterBuffer.Length);
 
 				// dispose unmanaged objects
 				if (disposing) {
 					// dispose managed objects
 					accumulator = null;
-					filterBuffer = null;
 				}
 				m_disposed = true;
 			}
-		}
-
-		private int Filter (byte [] buffer, int offset, int count)
-		{
-			int end = offset + count;
-			int len = filterBuffer.Length;
-			int ptr = 0;
-			byte[] filter = this.filterBuffer;
-
-			for (int i = offset; i < end; i++) {
-				byte b = buffer [i];
-				if (!Char.IsWhiteSpace ((char) b)) {
-					if (ptr >= len) {
-						len <<= 1;
-						this.filterBuffer = new byte [len];
-						Buffer.BlockCopy (filter, 0, this.filterBuffer, 0, len >> 1);
-						filter = this.filterBuffer;
-					}
-					filter [ptr++] = b;
-				}
-			}
-
-			return ptr;
 		}
 
 		private byte[] lookupTable; 
@@ -157,58 +132,42 @@ namespace System.Security.Cryptography {
 			return ret;
 		}
 
-		private int DoTransform (byte [] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+		private int ProcessBlock (byte[] output, int offset)
 		{
-			int full = inputCount >> 2;
-			if (full == 0)
-				return 0;
-
 			int rem = 0;
-
-			if (inputBuffer[inputCount - 1] == (byte)'=') {
-				++rem;
-				--full;
-			}
-
-			if (inputBuffer[inputCount - 2] == (byte)'=')
-				++rem;
+			if (accumulator [3] == TerminatorByte)
+				rem++;
+			if (accumulator [2] == TerminatorByte)
+				rem++;
 
 			lookupTable = Base64Constants.DecodeTable;
 			int b0,b1,b2,b3;
 
-			for (int i = 0; i < full; i++) {
-				b0 = lookup (inputBuffer [inputOffset++]);
-				b1 = lookup (inputBuffer [inputOffset++]);
-				b2 = lookup (inputBuffer [inputOffset++]);
-				b3 = lookup (inputBuffer [inputOffset++]);
-
-				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
-				outputBuffer [outputOffset++] = (byte) ((b1 << 4) | (b2 >> 2));
-				outputBuffer [outputOffset++] = (byte) ((b2 << 6) | b3);
-			}
-
-			int res = full * 3;
-
 			switch (rem) {
 			case 0:
+				b0 = lookup (accumulator [0]);
+				b1 = lookup (accumulator [1]);
+				b2 = lookup (accumulator [2]);
+				b3 = lookup (accumulator [3]);
+				output [offset++] = (byte) ((b0 << 2) | (b1 >> 4));
+				output [offset++] = (byte) ((b1 << 4) | (b2 >> 2));
+				output [offset] = (byte) ((b2 << 6) | b3);
 				break;
 			case 1:
-				b0 = lookup (inputBuffer [inputOffset++]);
-				b1 = lookup (inputBuffer [inputOffset++]);
-				b2 = lookup (inputBuffer [inputOffset++]);
-				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
-				outputBuffer [outputOffset++] = (byte) ((b1 << 4) | (b2 >> 2));
-				res += 2;
+				b0 = lookup (accumulator [0]);
+				b1 = lookup (accumulator [1]);
+				b2 = lookup (accumulator [2]);
+				output [offset++] = (byte) ((b0 << 2) | (b1 >> 4));
+				output [offset] = (byte) ((b1 << 4) | (b2 >> 2));
 				break;
 			case 2:
-				b0 = lookup (inputBuffer [inputOffset++]);
-				b1 = lookup (inputBuffer [inputOffset++]);
-				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
-				++res;
+				b0 = lookup (accumulator [0]);
+				b1 = lookup (accumulator [1]);
+				output [offset] = (byte) ((b0 << 2) | (b1 >> 4));
 				break;
 			}
 
-			return res;
+			return (3 - rem);
 		}
 
 		private void CheckInputParameters (byte[] inputBuffer, int inputOffset, int inputCount)
@@ -231,38 +190,28 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("FromBase64Transform");
 			// LAMESPEC: undocumented exceptions
 			CheckInputParameters (inputBuffer, inputOffset, inputCount);
-			if ((outputBuffer == null) || (outputOffset < 0) || (inputCount > outputBuffer.Length - outputOffset))
+			if ((outputBuffer == null) || (outputOffset < 0))
 				throw new FormatException ("outputBuffer");
 
-			int n;
-			byte [] src;
-			int srcOff;
 			int res = 0;
 
-			if (mode == FromBase64TransformMode.IgnoreWhiteSpaces) {
-				n = Filter (inputBuffer, inputOffset, inputCount);
-				src = filterBuffer;
-				srcOff = 0;
-			}
-			else {
-				n = inputCount;
-				src = inputBuffer;
-				srcOff = inputOffset;
-			}
-
-			int count = accPtr + n;
-
-			if (count < 4) {
-				Buffer.BlockCopy (src, srcOff, accumulator, accPtr, n);
-				accPtr = count;
-			}
-			else {
-				byte[] tmpBuff = new byte [count];
-				Buffer.BlockCopy (accumulator, 0, tmpBuff, 0, accPtr);
-				Buffer.BlockCopy (src, srcOff, tmpBuff, accPtr, n);
-				accPtr = count & 3;
-				Buffer.BlockCopy (src, srcOff + (n - accPtr), accumulator, 0, accPtr);
-				res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset) ;
+			while (inputCount > 0) {
+				if (accPtr < 4) {
+					byte b = inputBuffer [inputOffset++];
+					if (mode == FromBase64TransformMode.IgnoreWhiteSpaces) {
+						if (!Char.IsWhiteSpace ((char) b))
+							accumulator [accPtr++] = b;
+					} else {
+						// don't ignore, we'll fail if bad data is provided
+						accumulator [accPtr++] = b;
+					}
+				}
+				if (accPtr == 4) {
+					res += ProcessBlock (outputBuffer, outputOffset);
+					outputOffset += 3;
+					accPtr = 0;
+				}
+				inputCount--;
 			}
 
 			return res;
@@ -275,41 +224,50 @@ namespace System.Security.Cryptography {
 			// LAMESPEC: undocumented exceptions
 			CheckInputParameters (inputBuffer, inputOffset, inputCount);
 
-			byte[] src;
-			int srcOff;
-			int n;
-
+			int ws = 0;
+			int terminator = 0;
 			if (mode == FromBase64TransformMode.IgnoreWhiteSpaces) {
-				n = Filter (inputBuffer, inputOffset, inputCount);
-				src = filterBuffer;
-				srcOff = 0;
+				// count whitespace inside string
+				for (int i=inputOffset, j=0; j < inputCount; i++, j++) {
+					if (Char.IsWhiteSpace ((char)inputBuffer [i]))
+						ws++;
+				}
+				// there may be whitespace after the terminator
+				int k = inputOffset + inputCount - 1;
+				int n = Math.Min (2, inputCount);
+				while (n > 0) {
+					char c = (char) inputBuffer [k--];
+					if (c == '=') {
+						terminator++;
+						n--;
+					} else if (Char.IsWhiteSpace (c)) {
+						continue;
+					} else {
+						break;
+					}
+				}						
+			} else {
+				if (inputBuffer [inputOffset + inputCount - 1] == TerminatorByte)
+					terminator++;
+				if (inputBuffer [inputOffset + inputCount - 2] == TerminatorByte)
+					terminator++;
 			}
-			else {
-				n = inputCount;
-				src = inputBuffer;
-				srcOff = inputOffset;
+			// some terminators could already be in the accumulator
+			if ((inputCount < 4) && (terminator < 2)) {
+				if ((accPtr > 2) && (accumulator [3] == TerminatorByte))
+					terminator++;
+				if ((accPtr > 1) && (accumulator [2] == TerminatorByte))
+					terminator++;
 			}
 
-			int dataLen = accPtr + n;
-			byte[] tmpBuf = new byte [dataLen];
+			int count = ((accPtr + inputCount - ws) >> 2) * 3 - terminator;
+			if (count <= 0)
+				return new byte [0];
 
-			int resLen = ((dataLen) >> 2) * 3;
-			byte[] res = new byte [resLen];
-
-			Buffer.BlockCopy (accumulator, 0, tmpBuf, 0, accPtr);
-			Buffer.BlockCopy (src, srcOff, tmpBuf, accPtr, n);
-			
-			int actLen = DoTransform (tmpBuf, 0, dataLen, res, 0);
-			accPtr = 0;
-
-			if (actLen < resLen) {
-				byte[] newres = new byte [actLen];
-
-				Buffer.BlockCopy (res, 0, newres, 0, actLen);
-				return newres;
-			} 
-			else
-				return res;
+			// allocate the "right" ammount (to avoid multiple allocation/copy)
+			byte[] result = new byte [count];
+			TransformBlock (inputBuffer, inputOffset, inputCount, result, 0);
+			return result;
 		}
 	}
 }
