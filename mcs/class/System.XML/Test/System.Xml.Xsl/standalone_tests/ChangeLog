@@ -1,3 +1,8 @@
+2004-06-09  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile, catalog-fixed.diff : Patch the fixed catalog to correct things 
+	I could not fix with sed script
+
 2005-06-06  Andrew Skiba  <andrews@mainsoft.com>
 
 	* xslttest.cs : change messages

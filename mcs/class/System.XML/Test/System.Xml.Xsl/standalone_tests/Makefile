@@ -68,8 +68,13 @@ endif
 .cs.exe :
 	$(CSCOMPILE) $<
 
-$(FIXED_CATALOG) : $(CATALOG) catalog.sed
+catalog-fixed : $(FIXED_CATALOG)
+
+$(FIXED_CATALOG) : $(CATALOG) catalog.sed catalog.diff
 	sed -f catalog.sed $(CATALOG) > $(FIXED_CATALOG)
+	patch -p0 $(FIXED_CATALOG) < catalog-fixed.diff
+
+catalog : $(CATALOG)
 
 $(CATALOG) : $(TEST_ARCHIVE)
 	unzip -un $(TEST_ARCHIVE)
