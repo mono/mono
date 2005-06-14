@@ -1,3 +1,8 @@
+2005-06-13  Miguel de Icaza  <miguel@novell.com>
+
+	*  sys-statvfs.c (copy_statfs): f_flags is the field name on BSD,
+	not f_flag. 
+
 2005-06-08  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am: Create an unversioned library.  We won't make any gaurantees
