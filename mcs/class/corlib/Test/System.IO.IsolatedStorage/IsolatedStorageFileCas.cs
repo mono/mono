@@ -34,6 +34,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Security;
 using System.Security.Permissions;
+using System.Security.Policy;
 
 namespace MonoCasTests.System.IO.IsolatedStorageTest {
 
@@ -272,6 +273,45 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 			Write (isf);
 			isf.Dispose ();
 			isf.Close ();
+		}
+
+
+		private ulong MaximumSize (SecurityZone zone)
+		{
+			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly;
+
+			Evidence ae = new Evidence ();
+			ae.AddHost (new Zone (zone));
+			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null, ae, typeof (Zone));
+			return isf.MaximumSize;
+		}
+
+		[Test]
+		public void MaximumSize ()
+		{
+			Assert.AreEqual (Int64.MaxValue, MaximumSize (SecurityZone.MyComputer), "MyComputer");
+			Assert.AreEqual (Int64.MaxValue, MaximumSize (SecurityZone.Intranet), "Intranet");
+#if NET_2_0
+			Assert.AreEqual (512000, MaximumSize (SecurityZone.Internet), "Internet");
+			Assert.AreEqual (512000, MaximumSize (SecurityZone.Trusted), "Trusted");
+#else
+			Assert.AreEqual (10240, MaximumSize (SecurityZone.Internet), "Internet");
+			Assert.AreEqual (10240, MaximumSize (SecurityZone.Trusted), "Trusted");
+#endif
+		}
+
+		[Test]
+		[ExpectedException (typeof (PolicyException))]
+		public void MaximumSize_Untrusted ()
+		{
+			Assert.AreEqual (Int64.MaxValue, MaximumSize (SecurityZone.Untrusted), "Untrusted");
+		}
+
+		[Test]
+		[ExpectedException (typeof (PolicyException))]
+		public void MaximumSize_NoZone ()
+		{
+			Assert.AreEqual (Int64.MaxValue, MaximumSize (SecurityZone.NoZone), "NoZone");
 		}
 	}
 }
