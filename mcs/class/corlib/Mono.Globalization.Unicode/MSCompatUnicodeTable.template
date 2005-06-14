@@ -14,28 +14,11 @@ public static void Main ()
 	for (int i = 0; i <= char.MaxValue; i++) {
 		if (IsIgnorable (i))
 			continue;
-		int cur = 1;
-		byte lv2 = 0;
 		byte [] data = GetSortKeyRaw (i);
-		foreach (byte b in data) {
-			if (cur == 2 && lv2 == 0)
-				lv2 = b;
+		foreach (byte b in data)
 			Output.Write ("{0:X02} ", b);
-			if (b == 1)
-				cur++;
-		}
-		if (data [0] == 0xE || data [0] == 0xC || data [0] == 0x22 ||
-			char.IsSurrogate ((char) i))
-			lv2 = 1;
-		Output.WriteLine (" : {0:X} (), {2}  {6} {3}{4:X02}  {5:X02}  ",
-			i,
-			i < 0x20 ? ' ' : (char) i,
-			Char.GetUnicodeCategory ((char) i),
-			lv2 != 1 ? '&' : ' ',
-			lv2,
-			1,
-			HasSpecialWeight ((char) i) ? '$' : ' '
-			);
+		Output.WriteLine (" : {0:X04}, {1}",
+			i, Char.GetUnicodeCategory ((char) i));
 	}
 	Output.Close ();
 }
@@ -290,7 +273,11 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 				return false;
 			else if (c < '\u3100')
 				return true;
-			else if (c < '\uFF60' || c == '\uFF65')
+			else if (c < '\u32D0')
+				return false;
+			else if (c < '\u32FF')
+				return true;
+			else if (c < '\uFF66')
 				return false;
 			else if (c < '\uFF9F')
 				return true;

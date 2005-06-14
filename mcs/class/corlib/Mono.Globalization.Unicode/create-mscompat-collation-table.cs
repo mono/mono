@@ -51,9 +51,9 @@ namespace Mono.Globalization.Unicode
 		const int DecompositionVertical = 9;
 		const int DecompositionFraction = 0xA;
 		const int DecompositionFont = 0xB;
-		const int DecompositionFull = 0xC;
+		const int DecompositionSuper = 0xC; // fixed
+		const int DecompositionFull = 0xE;
 		const int DecompositionNarrow = 0xD;
-		const int DecompositionSuper = 0xE; // fixed
 		const int DecompositionCircle = 0xF;
 		const int DecompositionSquare = 0x10;
 		const int DecompositionCompat = 0x11;
@@ -946,12 +946,12 @@ namespace Mono.Globalization.Unicode
 			}
 
 			// Apostrophe 06 80
-			map ['\''] = new CharMapEntry (6, 0x80, 0);
-			map ['\uFF63'] = new CharMapEntry (6, 0x80, 0); // full
+			fillIndex [6] = 0x80;
+			AddCharMapGroup ('\'', 6, 1, 0);
+			AddCharMap ('\uFE63', 6, 1);
 
 			// Hyphen/Dash : 06 81 - 06 90
-			fillIndex [6] = 0x81;
-			for (int i = 0; i < 65536; i++) {
+			for (int i = 0; i < char.MaxValue; i++) {
 				if (Char.GetUnicodeCategory ((char) i)
 					== UnicodeCategory.DashPunctuation)
 					AddCharMapGroupTail ((char) i, 6, 1);
@@ -1027,6 +1027,7 @@ namespace Mono.Globalization.Unicode
 			AddCharMapGroup ('\u2028', 0x7, 1, 0);
 			AddCharMapGroup ('\u2029', 0x7, 1, 0);
 
+			// Characters which used to represent layout control.
 			// LAMESPEC: Windows developers seem to have thought 
 			// that those characters are kind of whitespaces,
 			// while they aren't.
@@ -1107,12 +1108,18 @@ namespace Mono.Globalization.Unicode
 			foreach (DictionaryEntry de in numberValues) {
 				int cp = (int) de.Key;
 				decimal currValue = (decimal) de.Value;
-//Console.Error.WriteLine ("ADD NUMBER. PREV {0} CURR {1} {2}", prevValue, currValue, prevValue - (int) prevValue);
+				bool addnew = false;
 				if (prevValue < currValue &&
 					prevValue - (int) prevValue == 0 &&
 					prevValue >= 1) {
+
+					addnew = true;
 					// Process Hangzhou and Roman numbers
-					fillIndex [0xC]++;
+
+					// There are some SPECIAL cases.
+					if (currValue != 4) // no increment for 4
+						fillIndex [0xC]++;
+
 					int xcp;
 					xcp = (int) prevValue + 0x2170 - 1;
 					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
@@ -1140,15 +1147,17 @@ namespace Mono.Globalization.Unicode
 					fillIndex [0xC]++;
 				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp]);
 
-				if (cp <= '9') {
+				if (addnew || cp <= '9') {
 					int xcp;
-					xcp = cp - 0x31 + 0x2776;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					xcp = cp - 0x31 + 0x2780;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					xcp = cp - 0x31 + 0x278A;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					if (cp != '0') {
+					if (1 <= currValue && currValue <= 10) {
+						xcp = cp - 0x31 + 0x2776;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						xcp = cp - 0x31 + 0x2780;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						xcp = cp - 0x31 + 0x278A;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					}
+					if (1 <= currValue && currValue <= 20) {
 						xcp = cp - 0x31 + 0x2460;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
 						xcp = cp - 0x31 + 0x2474;
@@ -1158,7 +1167,17 @@ namespace Mono.Globalization.Unicode
 					}
 				}
 
-				if (cp != 0x09E7)
+				if (cp != 0x09E7 && cp != 0x09EA)
+					fillIndex [0xC]++;
+
+				// Add special cases that are not regarded as 
+				// numbers in UnicodeCategory speak.
+				if (cp == '5') {
+					// TONE FIVE
+					AddCharMapGroup ('\u01BD', 0xC, 0, 0);
+					AddCharMapGroup ('\u01BC', 0xC, 1, 0);
+				}
+				else if (cp == '6') // FIXME: why?
 					fillIndex [0xC]++;
 			}
 
@@ -1175,7 +1194,11 @@ namespace Mono.Globalization.Unicode
 
 			// Greek and Coptic
 			fillIndex [0xF] = 02;
-			for (int i = 0x0380; i < 0x03CF; i++)
+			for (int i = 0x0380; i < 0x0390; i++)
+				if (Char.IsLetter ((char) i))
+					AddLetterMap ((char) i, 0xF, 1);
+			fillIndex [0xF] = 02;
+			for (int i = 0x0391; i < 0x03CF; i++)
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0xF, 1);
 			fillIndex [0xF] = 0x40;
@@ -1502,7 +1525,11 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < 0x10000; i++) {
 				switch (map [i].Category) {
 				case 0xE: // Latin diacritics
-					map [i] = new CharMapEntry (0xE, map [i].Level1, diacritical [i]);
+				case 0x22: // Japanese: circled characters
+					map [i] = new CharMapEntry (
+						map [i].Category,
+						map [i].Level1,
+						diacritical [i]);
 					break;
 				case 0x13: // Arabic
 					if (diacritical [i] == 0)
@@ -1521,10 +1548,10 @@ namespace Mono.Globalization.Unicode
 
 			// Hangul.
 			//
-			// Since Unlike UCA Hangul sequence mixes Jongseong
+			// Unlike UCA Windows Hangul sequence mixes Jongseong
 			// with Choseong sequence as well as Jungseong,
 			// adjusted to have the same primary weight for the
-			// same base character, it is not possible to compute
+			// same base character. So it is impossible to compute
 			// those sort keys.
 			//
 			// Here I introduce an ordered sequence of mixed
@@ -1629,13 +1656,15 @@ namespace Mono.Globalization.Unicode
 			byte cjkCat = 0x9E;
 			fillIndex [cjkCat] = 0x2;
 			for (int cp = 0x4E00; cp <= 0x9FBB; cp++)
-				AddCharMapGroupCJK ((char) cp, ref cjkCat);
+				if (!IsIgnorable (cp))
+					AddCharMapGroupCJK ((char) cp, ref cjkCat);
 			// CJK Extensions goes here.
 			// LAMESPEC: With this Windows style CJK layout, it is
 			// impossible to add more CJK ideograph i.e. 0x9FA6-
 			// 0x9FBB can never be added w/o breaking compat.
 			for (int cp = 0xF900; cp <= 0xFA2D; cp++)
-				AddCharMapGroupCJK ((char) cp, ref cjkCat);
+				if (!IsIgnorable (cp))
+					AddCharMapGroupCJK ((char) cp, ref cjkCat);
 
 			// PrivateUse ... computed.
 			// remaining Surrogate ... computed.

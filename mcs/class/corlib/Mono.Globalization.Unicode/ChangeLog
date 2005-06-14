@@ -1,5 +1,12 @@
 2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : more mapping fix on numbers,
+	  letters, variable weight characters, circled Japanese and CJK.
+	* MSCompatUnicodeTable.template : fixed HasSpecialWeight() to be more
+	  inclusive. Simplified dumper code.
+
+2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : finished Hangul (both Jamo
 	  and Syllables). sortkey dumper diff lines became 8000 from 30000.
 
