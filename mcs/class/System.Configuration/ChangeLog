@@ -1,0 +1,5 @@
+2005-06-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ChangeLog: Add change log to this directory
+	* Makefile, System.Configuration.sources: New build files.
+
