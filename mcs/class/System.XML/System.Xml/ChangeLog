@@ -1,5 +1,14 @@
 2005-06-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader.cs : further text node fixes.
+	  - Cut out validation code from Text node case.
+	  - Now it does not use error-prone case transition but uses 
+	    DocumentFragment 'vacant room' and fixed incorrect transition from
+	    whitespace to text.
+	  - CDATA should be validated the same as Text is.
+
+2005-06-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader.cs : whitespace nodes were incorrectly rejected
 	  inside non-mixed content model.
 

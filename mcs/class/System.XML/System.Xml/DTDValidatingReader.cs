@@ -569,6 +569,11 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.CDATA:
+				isSignificantWhitespace = isWhitespace = false;
+				isText = true;
+
+				ValidateText ();
+
 				if (currentTextValue != null) {
 					currentTextValue = constructingTextValue;
 					constructingTextValue = null;
@@ -580,26 +585,19 @@ namespace Mono.Xml
 					isSignificantWhitespace = true;
 				isWhitespace = false;
 				dontResetTextType = true;
-				goto case XmlNodeType.Text;
+				goto case XmlNodeType.DocumentFragment;
 			case XmlNodeType.Text:
-				bool wasWhitespace = isWhitespace;
+				isWhitespace = isSignificantWhitespace = false;
 				isText = true;
-				if (!dontResetTextType) {
-					isWhitespace = isSignificantWhitespace = false;
-				}
-				// If no schema specification, then skip validation.
-				if (currentAutomata == null)
+				goto case XmlNodeType.DocumentFragment;
+			case XmlNodeType.DocumentFragment:
+				// it should not happen, but in case if
+				// XmlReader really returns it, just ignore.
+				if (reader.NodeType == XmlNodeType.DocumentFragment)
 					break;
 
-				if (elementStack.Count > 0)
-					elem = dtd.ElementDecls [elementStack.Peek () as string];
-				// Here element should have been already validated, so
-				// if no matching declaration is found, simply ignore.
-				if (elem != null && !elem.IsMixedContent && !elem.IsAny && !wasWhitespace) {
-					HandleError (String.Format ("Current element {0} does not allow character data content.", elementStack.Peek () as string),
-						XmlSeverityType.Error);
-					currentAutomata = previousAutomata;
-				}
+				ValidateText ();
+
 				if (entityReaderStack.Count > 0 && validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 					constructingTextValue += reader.Value;
 					return ReadContent ();
@@ -608,7 +606,7 @@ namespace Mono.Xml
 			case XmlNodeType.Whitespace:
 				if (!isText && !isSignificantWhitespace)
 					isWhitespace = true;
-				goto case XmlNodeType.Text;
+				goto case XmlNodeType.DocumentFragment;
 			case XmlNodeType.EntityReference:
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 					ResolveEntity ();
@@ -622,6 +620,23 @@ namespace Mono.Xml
 			constructingTextValue = null;
 			MoveToElement ();
 			return true;
+		}
+
+		private void ValidateText ()
+		{
+			if (currentAutomata == null)
+				return;
+
+			DTDElementDeclaration elem = null;
+			if (elementStack.Count > 0)
+				elem = dtd.ElementDecls [elementStack.Peek () as string];
+			// Here element should have been already validated, so
+			// if no matching declaration is found, simply ignore.
+			if (elem != null && !elem.IsMixedContent && !elem.IsAny && !isWhitespace) {
+				HandleError (String.Format ("Current element {0} does not allow character data content.", elementStack.Peek () as string),
+					XmlSeverityType.Error);
+				currentAutomata = previousAutomata;
+			}
 		}
 
 		private void ValidateWhitespaceNode ()
