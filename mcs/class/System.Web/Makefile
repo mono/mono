@@ -45,6 +45,7 @@ RESOURCE_FILES = \
 
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES = $(RESOURCE_FILES)
+OTHER_LIB_MCS_FLAGS = /r:System.Configuration.dll
 endif
 
 LIBRARY = System.Web.dll
@@ -56,6 +57,7 @@ LIB_MCS_FLAGS = \
 	/r:System.Data.dll		\
 	/r:System.Xml.dll		\
 	/r:System.EnterpriseServices.dll \
+	$(OTHER_LIB_MCS_FLAGS) \
 	$(OTHER_RES:%=/resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)

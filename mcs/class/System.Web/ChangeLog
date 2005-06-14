@@ -1,3 +1,7 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Added reference to System.Configuration.
+
 2005-06-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: New files:
