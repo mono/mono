@@ -182,12 +182,12 @@ namespace System.IO.IsolatedStorage {
 		{
 			return base.BeginWrite (buffer, offset, numBytes, userCallback, stateObject);
 		}
-
+#if !NET_2_0
 		public override void Close ()
 		{
 			base.Close ();
 		}
-
+#endif
 		public override int EndRead (IAsyncResult asyncResult)
 		{
 			return base.EndRead (asyncResult);

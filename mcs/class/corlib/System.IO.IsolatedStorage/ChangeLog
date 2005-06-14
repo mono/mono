@@ -1,3 +1,9 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileStream.cs: Remove Close method from NET_2_0.
+	* IsolatedStorageFile.cs: Implemented missing MaximumSize property
+	and GetPermission method.
+
 2005-06-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IsolatedStorageFileStream.cs: check the FileMode here as FileStream

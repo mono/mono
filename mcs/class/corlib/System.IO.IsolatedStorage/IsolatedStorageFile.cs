@@ -53,6 +53,10 @@ namespace System.IO.IsolatedStorage {
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable {
 
+		private bool _resolved;
+		private ulong _maxSize;
+		private Evidence _fullEvidences;
+
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
 		{
 			Demand (scope);
@@ -182,6 +186,7 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
@@ -194,6 +199,7 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
@@ -215,6 +221,7 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
@@ -227,6 +234,7 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile._domainIdentity = GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence);
 			Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+			storageFile._fullEvidences = e;
 			storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			storageFile.PostInit ();
 			return storageFile;
@@ -275,7 +283,6 @@ namespace System.IO.IsolatedStorage {
 			if (SecurityManager.SecurityEnabled) {
 				IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.None);
 				isfp.UsageAllowed = ScopeToContainment (scope);
-				// TODO: quota
 				isfp.Demand ();
 			}
 		}
@@ -380,10 +387,50 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant(false)]
-		[MonoTODO ("Maximum size must be restricted by the security policy")]
 		public override ulong MaximumSize {
 			// return an ulong but default is signed long
-			get { return Int64.MaxValue; }
+			get {
+				if (!SecurityManager.SecurityEnabled)
+					return Int64.MaxValue;
+
+				if (_resolved)
+					return _maxSize;
+
+				Evidence e = null;
+				if (_fullEvidences != null) {
+					// if possible use the complete evidences we had
+					// for computing the X identity
+					e = _fullEvidences;
+				} else {
+					e = new Evidence ();
+					// otherwise use what was provided
+					if (_domainIdentity != null)
+						e.AddHost (_domainIdentity);
+					if (_assemblyIdentity != null)
+						e.AddHost (_assemblyIdentity);
+					if (_applicationIdentity != null)
+						e.AddHost (_applicationIdentity);
+				}
+				if (e.Count < 1) {
+					throw new InvalidOperationException (
+						Locale.GetText ("Couldn't get the quota from the available evidences."));
+				}
+
+				PermissionSet ps = SecurityManager.ResolvePolicy (e);
+				IsolatedStoragePermission isp = GetPermission (ps);
+				if (isp == null) {
+					if (ps.IsUnrestricted ()) {
+						_maxSize = Int64.MaxValue; /* default value */
+					} else {
+						throw new InvalidOperationException (
+							Locale.GetText ("No quota from the available evidences."));
+					}
+				} else {
+					_maxSize = (ulong) isp.UserQuota;
+				}
+				_resolved = true;
+				return _maxSize;
+			}
 		}
 
 		internal string Root {
@@ -442,10 +489,11 @@ namespace System.IO.IsolatedStorage {
 		}
 
 
-		[MonoTODO ("Permissions are CAS related")]
 		protected override IsolatedStoragePermission GetPermission (PermissionSet ps)
 		{
-			throw new NotImplementedException ();
+			if (ps == null)
+				return null;
+			return (IsolatedStoragePermission) ps.GetPermission (typeof (IsolatedStorageFilePermission));
 		}
 
 		// internal stuff
