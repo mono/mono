@@ -189,6 +189,7 @@ namespace System.Web.Services.Description {
 					else {
 						string namesp = members[n].TypeNamespace;
 						if (namesp == "") namesp = members[n].Namespace;
+						part.Name = members[n].ElementName;
 						part.Type = new XmlQualifiedName (members[n].TypeName, namesp);
 					}
 					msg.Parts.Add (part);

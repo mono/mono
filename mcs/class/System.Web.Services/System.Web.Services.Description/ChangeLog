@@ -1,3 +1,9 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapProtocolReflector.cs: Set the part name when using bare encoded format.
+	* ServiceDescriptionFormatExtensionCollection.cs: Use IsInstanceOfType instead
+	of Type.IsAssignableFrom when possible.
+
 2005-06-06  Kornél Pál <kornelpal@hotmail.com>
 
 	* ServiceDescriptionReflector.cs: Added support for HttpPostLocalhost and HttpSoap12

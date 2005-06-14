@@ -79,7 +79,7 @@ namespace System.Web.Services.Description {
 		public object Find (Type type)
 		{
 			foreach (object value in List)
-				if (type.IsAssignableFrom (value.GetType ()))
+				if (type.IsInstanceOfType (value))
 					return value;
 			return null;
 		}
