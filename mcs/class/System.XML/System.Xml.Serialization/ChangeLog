@@ -1,3 +1,10 @@
+2005-06-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapElementInfo.cs: Added new DataTypeName property for
+	getting the real xml type name of a member.
+	* XmlSerializationWriterInterpreter.cs: Use that new property
+	to get the type name of primitive types. This should fix bug #75180.
+
 2005-06-07  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: When reading members by order,

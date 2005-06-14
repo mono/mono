@@ -304,8 +304,8 @@ namespace System.Xml.Serialization
 				case SchemaTypes.Primitive:
 					if (_format == SerializationFormat.Literal) 
 						WritePrimitiveValueLiteral (memberValue, elem.ElementName, elem.Namespace, elem.MappedType, elem.TypeData, elem.WrappedElement, elem.IsNullable);
-					else
-						WritePrimitiveValueEncoded (memberValue, elem.ElementName, elem.Namespace, new XmlQualifiedName (elem.TypeData.XmlType, elem.DataTypeNamespace), elem.MappedType, elem.TypeData, elem.WrappedElement, elem.IsNullable);
+					else 
+						WritePrimitiveValueEncoded (memberValue, elem.ElementName, elem.Namespace, new XmlQualifiedName (elem.DataTypeName, elem.DataTypeNamespace), elem.MappedType, elem.TypeData, elem.WrappedElement, elem.IsNullable);
 					break;
 
 				case SchemaTypes.Array:

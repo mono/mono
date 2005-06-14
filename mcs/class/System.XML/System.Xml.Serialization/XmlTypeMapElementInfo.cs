@@ -89,6 +89,15 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		public string DataTypeName
+		{
+			get 
+			{ 
+				if (_mappedType == null) return TypeData.XmlType;
+				else return _mappedType.XmlType;
+			}
+		}
+
 		public XmlSchemaForm Form 
 		{
 			get { return _form; }
