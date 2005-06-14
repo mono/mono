@@ -1,3 +1,26 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AppSettingsSection.cs, ConfigInfo.cs, Configuration.cs
+	ConfigurationAllowDefinition.cs, ConfigurationElement.cs
+	ConfigurationElementCollection.cs, ConfigurationElementCollectionType.cs
+	ConfigurationLocation.cs, ConfigurationLocationCollection.cs
+	ConfigurationProperty.cs, ConfigurationPropertyAttribute.cs
+	ConfigurationPropertyCollection.cs, ConfigurationPropertyFlags.cs
+	ConfigurationSection.cs, ConfigurationSectionCollection.cs
+	ConfigurationSectionGroup.cs, ConfigurationSectionGroupCollection.cs
+	ConfigurationUpdateMode.cs, ConfigurationUserLevel.cs
+	ConfigurationValidationAttribute.cs, ConnectionStringsSection.cs
+	ConnectionStringSettingsCollection.cs, ConnectionStringSettings.cs
+	IntegerConfigurationProperty.cs, NonEmptyStringConfigurationProperty.cs
+	NonEmptyStringFlags.cs, PathLevel.cs, ProtectedConfigurationProvider.cs
+	ProviderBase.cs, ProviderSettings.cs, ProviderSettingsCollection.cs
+	RuntimeOnlySection.cs, SectionInfo.cs, SectionGroupInfo.cs
+	TimeSpanConfigurationProperty.cs, TimeSpanPropertyFlags.cs
+	TimeSpanSerializedFormat.cs:
+
+	Moved to the new System.Configuration assembly.
+
+
 2005-03-23  Jackson Harper  <jackson@ximian.com>
 
 	* ApplicationSettingsBase.cs: We need this stub to do some 2.0
