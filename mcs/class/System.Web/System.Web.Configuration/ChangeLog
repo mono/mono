@@ -1,3 +1,9 @@
+2005-06-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs: when an attribute is not
+	provided, don't assing Encoding.Default to it, as we might override
+	parent's settings.
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfiguration.cs: throw if we cannot load the type given
