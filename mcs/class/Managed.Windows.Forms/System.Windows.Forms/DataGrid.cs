@@ -341,9 +341,8 @@ namespace System.Windows.Forms
 			set {
 				 if (border_style != value) {
 					border_style = value;
-					grid_drawing.CalcGridAreas ();
-					OnBorderStyleChanged (EventArgs.Empty);
-					Refresh ();
+					CalcAreasAndInvalidate ();
+					OnBorderStyleChanged (EventArgs.Empty);					
 				}
 			}
 		}
@@ -378,8 +377,7 @@ namespace System.Windows.Forms
 				}
 
 				caption_font = value;
-				grid_drawing.CalcGridAreas ();
-				Refresh ();
+				CalcAreasAndInvalidate ();
 			}
 		}
 
@@ -420,8 +418,7 @@ namespace System.Windows.Forms
 			set {
 				if (caption_visible != value) {
 					caption_visible = value;
-					grid_drawing.CalcGridAreas ();
-					Refresh ();
+					CalcAreasAndInvalidate ();
 					OnCaptionVisibleChanged (EventArgs.Empty);
 				}
 			}
@@ -436,8 +433,7 @@ namespace System.Windows.Forms
 			set {
 				if (columnheaders_visible != value) {
 					columnheaders_visible = value;
-					grid_drawing.CalcGridAreas ();
-					Refresh ();
+					CalcAreasAndInvalidate ();
 				}
 			}
 		}
@@ -616,7 +612,7 @@ namespace System.Windows.Forms
 			set {
 				if (header_font != null && !header_font.Equals (value)) {
 					header_font = value;
-					Refresh ();
+					CalcAreasAndInvalidate ();
 				}
 			}
 		}
@@ -764,8 +760,7 @@ namespace System.Windows.Forms
 			set {
 				if (parentrows_visible != value) {
 					parentrows_visible = value;
-					grid_drawing.CalcGridAreas ();
-					Refresh ();
+					CalcAreasAndInvalidate ();
 					OnParentRowsVisibleChanged (EventArgs.Empty);
 				}
 			}
@@ -799,8 +794,7 @@ namespace System.Windows.Forms
 			set {
 				if (preferredrow_height != value) {
 					preferredrow_height = value;
-					grid_drawing.CalcGridAreas ();
-					Refresh ();
+					CalcAreasAndInvalidate ();					
 				}
 			}
 		}
@@ -829,8 +823,7 @@ namespace System.Windows.Forms
 			set {
 				if (rowheaders_visible != value) {
 					rowheaders_visible = value;
-					grid_drawing.CalcGridAreas ();
-					Refresh ();
+					CalcAreasAndInvalidate ();
 				}
 			}
 		}
@@ -844,8 +837,7 @@ namespace System.Windows.Forms
 			set {
 				if (rowheaders_width != value) {
 					rowheaders_width = value;
-					grid_drawing.CalcGridAreas ();
-					Refresh ();
+					CalcAreasAndInvalidate ();
 				}
 			}
 		}
@@ -958,8 +950,8 @@ namespace System.Windows.Forms
 
 		internal int RowHeight {
 			get {
-				if (preferredrow_height > Font.Height + 3 + 1 /* line */) {
-					return preferredrow_height;
+				if (CurrentTableStyle.CurrentPreferredRowHeight > Font.Height + 3 + 1 /* line */) {
+					return CurrentTableStyle.CurrentPreferredRowHeight;
 
 				} else {
 					return Font.Height + 3 + 1 /* line */;
@@ -1809,23 +1801,7 @@ namespace System.Windows.Forms
 				CurrentTableStyle = (DataGridTableStyle)e.Element;
 				((DataGridTableStyle) e.Element).CreateColumnsForTable (false);				
 			}
-
-			
-
-			/*switch (e.Action)  {
-				case CollectionChangeAction.Add:
-					break;
-				
-				case CollectionChangeAction.Remove:
-					break;
-					
-				case CollectionChangeAction.Refresh:
-					break;
-
-				default:
-					break;
-			}*/
-			
+						
 			CalcAreasAndInvalidate ();
 		}
 

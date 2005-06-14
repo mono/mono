@@ -241,7 +241,7 @@ namespace System.Windows.Forms
 			columnshdrs_maxwidth = client_area.X + client_area.Width - columnshdrs_area.X;
 			max_width_cols = columnshdrs_maxwidth;
 
-			if (grid.rowheaders_visible) {
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				max_width_cols -= grid.RowHeaderWidth;
 			}
 
@@ -250,7 +250,7 @@ namespace System.Windows.Forms
 			} else {
 				columnshdrs_area.Width = width_all_cols;
 
-				if (grid.rowheaders_visible) {
+				if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 					columnshdrs_area.Width += grid.RowHeaderWidth;
 				}
 			}
@@ -281,7 +281,7 @@ namespace System.Windows.Forms
 
 		public void CalcRowsHeaders ()
 		{
-			if (grid.rowheaders_visible == false) {
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible == false) {
 				rowshdrs_area = Rectangle.Empty;
 				return;
 			}
@@ -495,12 +495,12 @@ namespace System.Windows.Forms
 		{
 			Rectangle columns_area = columnshdrs_area;
 
-			if (grid.rowheaders_visible) { // Paint corner shared between row and column header
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) { // Paint corner shared between row and column header
 				Rectangle rect_bloc = columnshdrs_area;
 				rect_bloc.Width = grid.RowHeaderWidth;
 				rect_bloc.Height = columnshdrs_area.Height;
 				if (clip.IntersectsWith (rect_bloc)) {
-					g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.ParentRowsBackColor), rect_bloc);
+					g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
 				}
 
 				columns_area.X += grid.RowHeaderWidth;
@@ -512,7 +512,7 @@ namespace System.Windows.Forms
 			columnshdrs_area_complete.Width = columnshdrs_maxwidth;
 			Region not_usedarea = new Region (clip);
 
-			if (grid.rowheaders_visible) {
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				columnshdrs_area_complete.Width -= grid.RowHeaderWidth;
 			}
 
@@ -581,7 +581,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			// This fills with background colourt the unused part in the row headers
+			// This fills with background colour the unused part in the row headers
 			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
 				Rectangle.Ceiling (not_usedarea.GetBounds (g)));
 
@@ -616,7 +616,7 @@ namespace System.Windows.Forms
 		public void PaintRowHeader (Graphics g, Rectangle bounds, int row)
 		{
 			// Background
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.ParentRowsBackColor),
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
 				bounds);
 
 			// Paint Borders
@@ -836,7 +836,7 @@ namespace System.Windows.Forms
 			get {
 				Rectangle columns_area = columnshdrs_area;
 
-				if (grid.rowheaders_visible) {
+				if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 					columns_area.X += grid.RowHeaderWidth;
 					columns_area.Width -= grid.RowHeaderWidth;
 				}
@@ -846,7 +846,7 @@ namespace System.Windows.Forms
 
 		public int ColumnsHeaderHeight {
 			get {
-				return grid.Font.Height + 6;
+				return grid.CurrentTableStyle.HeaderFont.Height + 6;
 			}
 		}
 

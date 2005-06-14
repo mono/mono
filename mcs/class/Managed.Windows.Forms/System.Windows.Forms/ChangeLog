@@ -1,3 +1,12 @@
+2005-06-14  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: default datagrid settings for Default Styles, fixes
+	* DataGridTableStyle.cs: default datagrid settings for Default Styles, fixes 
+	* DataGridDrawingLogic.cs: default datagrid settings for Default Styles, fixes
+	* DataGridBoolColumn.cs: default datagrid settings for Default Styles, fixes
+	* DataGrid.cs: default datagrid settings for Default Styles, fixes
+	* DataGridColumnStyle.cs: default datagrid settings for Default Styles, fixes
+
 2005-06-13  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Override SetAllowDrop on X11 so an error message

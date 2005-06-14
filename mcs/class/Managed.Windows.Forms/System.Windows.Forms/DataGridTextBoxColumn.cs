@@ -244,7 +244,10 @@ namespace System.Windows.Forms
 			}			
 					
 			g.FillRectangle (backBrush, textBounds);
-			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow), textBounds);
+			
+			if (table_style.CurrentGridLineStyle == DataGridLineStyle.Solid) {
+				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor), textBounds);
+			}
 			
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
 			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);

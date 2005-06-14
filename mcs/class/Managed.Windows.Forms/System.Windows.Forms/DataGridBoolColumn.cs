@@ -234,7 +234,10 @@ namespace System.Windows.Forms
 			}
 						
 			g.FillRectangle (backBrush, bounds);
-			g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow), bounds);
+			
+			if (table_style.CurrentGridLineStyle == DataGridLineStyle.Solid) {
+				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor), bounds);
+			}
 
 			switch (GetState (source, rowNum) & ~CheckState.Selected) {
 			case CheckState.Checked:

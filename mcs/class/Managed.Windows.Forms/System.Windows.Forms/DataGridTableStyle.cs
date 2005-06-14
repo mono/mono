@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 	public class DataGridTableStyle : Component, IDataGridEditingService
 	{
 		public static DataGridTableStyle DefaultTableStyle = new DataGridTableStyle (true);
-		
+
 		#region	Local Variables
 		private static readonly Color		def_alternating_backcolor = SystemColors.Window;
 		private static readonly Color		def_backcolor = SystemColors.Window;
@@ -142,6 +142,10 @@ namespace System.Windows.Forms
 				if (allow_sorting != value) {
 					allow_sorting = value;
 					OnAllowSortingChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -155,6 +159,10 @@ namespace System.Windows.Forms
 				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
 					OnAlternatingBackColorChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -168,6 +176,10 @@ namespace System.Windows.Forms
 				if (backcolor != value) {
 					backcolor = value;
 					OnBackColorChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -182,6 +194,10 @@ namespace System.Windows.Forms
 				if (columnheaders_visible != value) {
 					columnheaders_visible = value;
 					OnColumnHeadersVisibleChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -208,6 +224,10 @@ namespace System.Windows.Forms
 				if (forecolor != value) {
 					forecolor = value;
 					OnForeColorChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -227,6 +247,10 @@ namespace System.Windows.Forms
 				if (gridline_color != value) {
 					gridline_color = value;
 					OnGridLineColorChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -241,6 +265,10 @@ namespace System.Windows.Forms
 				if (gridline_style != value) {
 					gridline_style = value;
 					OnGridLineStyleChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -251,9 +279,17 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value == Color.Empty) {
+					throw new ArgumentNullException ("Color.Empty value is invalid.");
+				}
+
 				if (header_backcolor != value) {
 					header_backcolor = value;
 					OnHeaderBackColorChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -266,7 +302,7 @@ namespace System.Windows.Forms
 					return header_font;
 
 				if (datagrid != null)
-					return datagrid.Font;
+					return datagrid.HeaderFont;
 
 				return ThemeEngine.Current.DefaultFont;
 			}
@@ -275,6 +311,10 @@ namespace System.Windows.Forms
 				if (header_font != value) {
 					header_font = value;
 					OnHeaderFontChanged (EventArgs.Empty);
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
 				}
 			}
 		}
@@ -288,6 +328,11 @@ namespace System.Windows.Forms
 
 				if (header_forecolor != value) {
 					header_forecolor = value;
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
+
 					OnHeaderForeColorChanged (EventArgs.Empty);
 				}
 			}
@@ -301,6 +346,11 @@ namespace System.Windows.Forms
 			set {
 				if (link_color != value) {
 					link_color = value;
+
+					if (datagrid != null) {
+						datagrid.Refresh ();
+					}
+
 					OnLinkColorChanged (EventArgs.Empty);
 				}
 			}
@@ -348,7 +398,7 @@ namespace System.Windows.Forms
 				if (value < 0) {
 					throw new ArgumentException ("PreferredColumnWidth is less than 0");
 				}
-				
+
 				if (preferredcolumn_width != value) {
 					preferredcolumn_width = value;
 					OnPreferredColumnWidthChanged (EventArgs.Empty);
@@ -442,6 +492,80 @@ namespace System.Windows.Forms
 
 		#endregion	// Public Instance Properties
 
+		#region Private Instance Properties
+		internal DataGridLineStyle CurrentGridLineStyle {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.GridLineStyle;
+				}
+
+				return gridline_style;
+			}
+		}
+
+		internal Color CurrentGridLineColor {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.GridLineColor;
+				}
+
+				return gridline_color;
+			}
+		}
+
+		internal Color CurrentHeaderBackColor {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.HeaderBackColor;
+				}
+
+				return header_backcolor;
+			}
+		}
+
+		internal Color CurrentHeaderForeColor {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.HeaderForeColor;
+				}
+
+				return header_forecolor;
+			}
+		}
+
+		internal int CurrentPreferredColumnWidth {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.PreferredColumnWidth;
+				}
+
+				return preferredcolumn_width;
+			}
+		}
+
+		internal int CurrentPreferredRowHeight {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.PreferredRowHeight;
+				}
+
+				return preferredrow_height;
+			}
+		}
+		
+		internal bool CurrentRowHeadersVisible {
+			get {
+				if (is_default && datagrid != null) {
+					return datagrid.RowHeadersVisible;
+				}
+
+				return rowheaders_visible;
+			}
+		}
+
+
+		#endregion Private Instance Properties
+
 		#region Public Instance Methods
 
 		[MonoTODO]
@@ -451,31 +575,31 @@ namespace System.Windows.Forms
 		}
 
 		protected internal virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop)
-		{	
+		{
 			return CreateGridColumn (prop,  false);
 		}
-		
+
 		protected internal virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop,  bool isDefault)
-		{			
+		{
 			if (DataGridBoolColumn.CanRenderType (prop.PropertyType)) {
 				return new DataGridBoolColumn (prop, isDefault);
 			}
-			
+
 			if (DataGridTextBoxColumn.CanRenderType (prop.PropertyType)) {
-				
+
 				// At least to special cases with formats
 				if (prop.PropertyType.Equals (typeof (DateTime))) {
-					return new DataGridTextBoxColumn (prop, "d", isDefault);					
+					return new DataGridTextBoxColumn (prop, "d", isDefault);
 				}
-				
+
 				if (prop.PropertyType.Equals (typeof (Int32)) ||
 					prop.PropertyType.Equals (typeof (Int16))) {
-					return new DataGridTextBoxColumn (prop, "G", isDefault);					
+					return new DataGridTextBoxColumn (prop, "G", isDefault);
 				}
-				
-				return new DataGridTextBoxColumn (prop, isDefault);				
+
+				return new DataGridTextBoxColumn (prop, isDefault);
 			}
-			
+
 			throw new NotImplementedException ();
 		}
 
@@ -740,54 +864,54 @@ namespace System.Windows.Forms
 			return (selection_forecolor != def_selection_forecolor);
 		}
 		#endregion	// Protected Instance Methods
-		
-		#region Private Instance Properties		
+
+		#region Private Instance Properties
 		// Create column styles for this TableStyle
-		internal void CreateColumnsForTable (bool onlyBind) 
+		internal void CreateColumnsForTable (bool onlyBind)
 		{
 			CurrencyManager	mgr = null;
 			mgr = datagrid.ListManager;
-			
+
 			if (mgr == null) {
 				return;
-			}			
-			
+			}
+
 			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();
-			
+
 			for (int i = 0; i < propcol.Count; i++)
 			{
 				string s = propcol[i].Name;
 				DataGridColumnStyle colstyle = column_styles[propcol[i].Name];
-				
+
 				// The column style is already provided by the user
 				if (column_styles[propcol[i].Name] != null &&
 					column_styles[propcol[i].Name].IsDefault == false) {
 					column_styles[propcol[i].Name].table_style = this;
-					column_styles[propcol[i].Name].SetDataGridInternal (datagrid);					
+					column_styles[propcol[i].Name].SetDataGridInternal (datagrid);
 					continue;
-				}		
-			
+				}
+
 				if (onlyBind == true) {
 					continue;
 				}
 
-												
+
 				// TODO: What to do with relations?
-				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {					
+				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {
 					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
-					
+
 				} else {
 					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
-					st.grid = datagrid;					
+					st.grid = datagrid;
 					st.MappingName = propcol[i].Name;
 					st.HeaderText = propcol[i].Name;
-					st.Width = PreferredColumnWidth;					
-					column_styles.Add (st);					
-				}				
+					st.Width = CurrentPreferredColumnWidth;
+					column_styles.Add (st);
+				}
 			}
-			
+
 		}
-		
+
 		#endregion Private Instance Properties
 
 		#region Events

@@ -478,7 +478,7 @@ namespace System.Windows.Forms
 		internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
 		{	
 			// Background
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.DataGrid.ParentRowsBackColor), 
+			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderBackColor), 
 				bounds);
 			
 			// Paint Borders			
@@ -498,7 +498,7 @@ namespace System.Windows.Forms
 			
 			bounds.X += 3;
 			bounds.Width -=	3;
-			g.DrawString (HeaderText, DataGridTableStyle.DataGrid.Font, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.ForeColor), 
+			g.DrawString (HeaderText, DataGridTableStyle.HeaderFont, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderForeColor), 
 				bounds, string_format_hdr);
 		}
 		
