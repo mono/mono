@@ -1,3 +1,12 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Avoid creating the synchronized array lists unless they
+	are needed.
+	* PolicyLevel.cs: Fixed System.Drawing public key. IsFullTrustAssembly
+	can now executed without a Demand for the AssemblyName. Added the
+	UnionCodeGroup in the default policies. Reworked initialization to
+	support FullyTrustedAssemblies.
+
 2005-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevel.cs: Added some missing initialization. More code reuse.

@@ -55,7 +55,6 @@ namespace System.Security.Policy {
 		private string _location;
 		private PolicyLevelType _type;
 		private Hashtable fullNames;
-		private bool loaded;
 		private SecurityElement xml;
 
 		internal PolicyLevel (string label, PolicyLevelType type)
@@ -69,7 +68,6 @@ namespace System.Security.Policy {
 		internal void LoadFromFile (string filename)
 		{
 			try {
-				loaded = false;
 				// check for policy file
 				if (!File.Exists (filename)) {
 					// if it doesn't exist use the default configuration (like Fx 2.0)
@@ -84,11 +82,13 @@ namespace System.Security.Policy {
 				if (File.Exists (filename)) {
 					using (StreamReader sr = File.OpenText (filename)) {
 						xml = FromString (sr.ReadToEnd ());
-						FromXml1 (xml);
+						FromXml (xml);
 					}
-					loaded = true;
 				} else {
+					CreateDefaultFullTrustAssemblies ();
+					CreateDefaultNamedPermissionSets ();
 					CreateDefaultLevel (_type);
+					Save ();
 				}
 			}
 			catch {
@@ -97,27 +97,10 @@ namespace System.Security.Policy {
 				// * can't copy default file to policy
 				// * can't read policy file;
 				// * can't decode policy file
-				if (!loaded)
-					CreateDefaultLevel (_type);
+				// * can't save hardcoded policy to filename
 			}
 			finally {
 				_location = filename;
-			}
-		}
-
-		internal void Initialize ()
-		{
-			if (loaded) {
-				FromXml2 (xml);
-			} else {
-				CreateDefaultNamedPermissionSets ();
-				try {
-					Save ();
-				}
-				catch {
-					// this can fail in many ways including...
-					// * can't save hardcoded policy to filename
-				}
 			}
 		}
 
@@ -259,12 +242,6 @@ namespace System.Security.Policy {
 //			if (e.Tag != "PolicyLevel")
 //				throw new ArgumentException (Locale.GetText ("Invalid XML"));
 
-			FromXml1 (e);
-			FromXml2 (e);
-		}
-
-		internal void FromXml1 (SecurityElement e)
-		{
 			SecurityElement sc = e.SearchForChildByTag ("SecurityClasses");
 			if ((sc != null) && (sc.Children != null) && (sc.Children.Count > 0)) {
 				fullNames = new Hashtable (sc.Children.Count);
@@ -290,13 +267,10 @@ namespace System.Security.Policy {
 			SecurityElement cg = e.SearchForChildByTag ("CodeGroup");
 			if ((cg != null) && (cg.Children != null) && (cg.Children.Count > 0)) {
 				root_code_group = CodeGroup.CreateFromXml (cg, this);
-			}
-			else
+			} else {
 				throw new ArgumentException (Locale.GetText ("Missing Root CodeGroup"));
-		}
+			}
 
-		internal void FromXml2 (SecurityElement e)
-		{
 			SecurityElement nps = e.SearchForChildByTag ("NamedPermissionSets");
 			if ((nps != null) && (nps.Children != null) && (nps.Children.Count > 0)) {
 				named_permission_sets.Clear ();
@@ -514,13 +488,40 @@ namespace System.Security.Policy {
 		// (b) no corresponding default policy file exists
 		internal void CreateDefaultLevel (PolicyLevelType type) 
 		{
-			PolicyStatement psu = new PolicyStatement (new PermissionSet (PermissionState.Unrestricted));
+			PolicyStatement psu = new PolicyStatement (DefaultPolicies.FullTrust);
 
 			switch (type) {
 			case PolicyLevelType.Machine:
 				// by default all stuff is in the machine policy...
-				root_code_group = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.MyComputer), psu);
+				PolicyStatement psn = new PolicyStatement (DefaultPolicies.Nothing);
+				root_code_group = new UnionCodeGroup (new AllMembershipCondition (), psn);
 				root_code_group.Name = "All_Code";
+
+				UnionCodeGroup myComputerZone = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.MyComputer), psu);
+				myComputerZone.Name = "My_Computer_Zone";
+				// TODO: strongname code group for ECMA and MS keys
+				root_code_group.AddChild (myComputerZone);
+
+				UnionCodeGroup localIntranetZone = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Intranet), 
+					new PolicyStatement (DefaultPolicies.LocalIntranet));
+				localIntranetZone.Name = "LocalIntranet_Zone";
+				// TODO: same site / same directory
+				root_code_group.AddChild (localIntranetZone);
+
+				PolicyStatement psi = new PolicyStatement (DefaultPolicies.Internet);
+				UnionCodeGroup internetZone = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Internet), psi);
+				internetZone.Name = "Internet_Zone";
+				// TODO: same site
+				root_code_group.AddChild (internetZone);
+
+				UnionCodeGroup restrictedZone = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Untrusted), psn);
+				restrictedZone.Name = "Restricted_Zone";
+				root_code_group.AddChild (restrictedZone);
+
+				UnionCodeGroup trustedZone = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Trusted), psi);
+				trustedZone.Name = "Trusted_Zone";
+				// TODO: same site
+				root_code_group.AddChild (trustedZone);
 				break;
 			case PolicyLevelType.User:
 			case PolicyLevelType.Enterprise:
@@ -530,8 +531,6 @@ namespace System.Security.Policy {
 				root_code_group.Name = "All_Code";
 				break;
 			}
-
-			CreateDefaultFullTrustAssemblies ();
 		}
 
 		internal void CreateDefaultFullTrustAssemblies () 
@@ -542,7 +541,7 @@ namespace System.Security.Policy {
 			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System", DefaultPolicies.Key.Ecma));
 			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Data", DefaultPolicies.Key.Ecma));
 			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.DirectoryServices", DefaultPolicies.Key.MsFinal));
-			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Drawing", DefaultPolicies.Key.Ecma));
+			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Drawing", DefaultPolicies.Key.MsFinal));
 			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.Messaging", DefaultPolicies.Key.MsFinal));
 			full_trust_assemblies.Add (DefaultPolicies.FullTrustMembership ("System.ServiceProcess", DefaultPolicies.Key.MsFinal));
 		}
@@ -571,7 +570,7 @@ namespace System.Security.Policy {
 
 		internal bool IsFullTrustAssembly (Assembly a)
 		{
-			AssemblyName an = a.GetName ();
+			AssemblyName an = a.UnprotectedGetName ();
 			StrongNamePublicKeyBlob snpkb = new StrongNamePublicKeyBlob (an.GetPublicKey ());
 			StrongNameMembershipCondition snMC = new StrongNameMembershipCondition (snpkb, an.Name, an.Version);
 			foreach (StrongNameMembershipCondition sn in full_trust_assemblies) {

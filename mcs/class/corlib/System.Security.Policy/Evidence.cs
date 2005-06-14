@@ -9,7 +9,7 @@
 //
 // (C) 2001 Ximian, Inc.
 // Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -57,22 +57,20 @@ namespace System.Security.Policy {
 
 		public Evidence () 
 		{
-			hostEvidenceList = ArrayList.Synchronized (new ArrayList ());
-			assemblyEvidenceList = ArrayList.Synchronized (new ArrayList ());
 		}
 
-		public Evidence (Evidence evidence) : this ()
+		public Evidence (Evidence evidence)
 		{
 			if (evidence != null)
 				Merge (evidence);	
 		}
 
-		public Evidence (object[] hostEvidence, object[] assemblyEvidence) : this ()
+		public Evidence (object[] hostEvidence, object[] assemblyEvidence)
 		{
 			if (null != hostEvidence)
-				hostEvidenceList.AddRange (hostEvidence);
+				HostEvidenceList.AddRange (hostEvidence);
 			if (null != assemblyEvidence)
-				assemblyEvidenceList.AddRange (assemblyEvidence);
+				AssemblyEvidenceList.AddRange (assemblyEvidence);
 		}
 		
 		//
@@ -81,7 +79,12 @@ namespace System.Security.Policy {
 	
 		public int Count {
 			get {
-				return (hostEvidenceList.Count + assemblyEvidenceList.Count);
+				int count = 0;
+				if (hostEvidenceList != null)
+					count += hostEvidenceList.Count;
+				if (assemblyEvidenceList!= null)
+					count += assemblyEvidenceList.Count;
+				return count;
 			}
 		}
 
@@ -100,8 +103,8 @@ namespace System.Security.Policy {
 
 		public bool Locked {
 			get { return _locked; }
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
 			set { 
-				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
 				_locked = value; 
 			}
 		}	
@@ -110,22 +113,38 @@ namespace System.Security.Policy {
 			get { return this; }
 		}
 
+		internal ArrayList HostEvidenceList {
+			get {
+				if (hostEvidenceList == null)
+					hostEvidenceList = ArrayList.Synchronized (new ArrayList ());
+				return hostEvidenceList;
+			}
+		}
+
+		internal ArrayList AssemblyEvidenceList {
+			get {
+				if (assemblyEvidenceList == null)
+					assemblyEvidenceList = ArrayList.Synchronized (new ArrayList ());
+				return assemblyEvidenceList;
+			}
+		}
+
 		//
 		// Public Methods
 		//
 
 		public void AddAssembly (object id) 
 		{
-			assemblyEvidenceList.Add (id);
+			AssemblyEvidenceList.Add (id);
 			_hashCode = 0;
 		}
 
 		public void AddHost (object id) 
 		{
-			if (_locked) {
+			if (_locked && SecurityManager.SecurityEnabled) {
 				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
 			}
-			hostEvidenceList.Add (id);
+			HostEvidenceList.Add (id);
 			_hashCode = 0;
 		}
 
@@ -133,18 +152,24 @@ namespace System.Security.Policy {
 		[ComVisible (false)]
 		public void Clear ()
 		{
-			hostEvidenceList.Clear ();
-			assemblyEvidenceList.Clear ();
+			if (hostEvidenceList != null)
+				hostEvidenceList.Clear ();
+			if (assemblyEvidenceList != null)
+				assemblyEvidenceList.Clear ();
 			_hashCode = 0;
 		}
 #endif
 
 		public void CopyTo (Array array, int index) 
 		{
-			if (hostEvidenceList.Count > 0) 
-				hostEvidenceList.CopyTo (array, index);
-			if (assemblyEvidenceList.Count > 0) 
-				assemblyEvidenceList.CopyTo (array, index + hostEvidenceList.Count);
+			int hc = 0;
+			if (hostEvidenceList != null) {
+				hc = hostEvidenceList.Count;
+				if (hc > 0)
+					hostEvidenceList.CopyTo (array, index);
+			}
+			if ((assemblyEvidenceList != null) && (assemblyEvidenceList.Count > 0))
+				assemblyEvidenceList.CopyTo (array, index + hc);
 		}
 
 #if NET_2_0
@@ -157,9 +182,9 @@ namespace System.Security.Policy {
 			if (e == null)
 				return false;
 
-			if (hostEvidenceList.Count != e.hostEvidenceList.Count)
+			if (HostEvidenceList.Count != e.HostEvidenceList.Count)
 				return false;
-			if (assemblyEvidenceList.Count != e.assemblyEvidenceList.Count)
+			if (AssemblyEvidenceList.Count != e.AssemblyEvidenceList.Count)
 				return false;
 
 			for (int i = 0; i < hostEvidenceList.Count; i++) {
@@ -191,13 +216,18 @@ namespace System.Security.Policy {
 
 		public IEnumerator GetEnumerator () 
 		{
-			return new EvidenceEnumerator (hostEvidenceList.GetEnumerator (), 
-				assemblyEvidenceList.GetEnumerator ());
+			IEnumerator he = null;
+			if (hostEvidenceList != null)
+				he = hostEvidenceList.GetEnumerator ();
+			IEnumerator ae = null;
+			if (assemblyEvidenceList != null)
+				assemblyEvidenceList.GetEnumerator ();
+			return new EvidenceEnumerator (he, ae);
 		}
 
 		public IEnumerator GetAssemblyEnumerator () 
 		{
-			return assemblyEvidenceList.GetEnumerator ();
+			return AssemblyEvidenceList.GetEnumerator ();
 		}
 
 #if NET_2_0
@@ -206,10 +236,14 @@ namespace System.Security.Policy {
 		{
 			// kind of long so we cache it
 			if (_hashCode == 0) {
-				for (int i = 0; i < hostEvidenceList.Count; i++)
-					_hashCode ^= hostEvidenceList [i].GetHashCode ();
-				for (int i = 0; i < assemblyEvidenceList.Count; i++)
-					_hashCode ^= assemblyEvidenceList [i].GetHashCode ();
+				if (hostEvidenceList != null) {
+					for (int i = 0; i < hostEvidenceList.Count; i++)
+						_hashCode ^= hostEvidenceList [i].GetHashCode ();
+				}
+				if (assemblyEvidenceList != null) {
+					for (int i = 0; i < assemblyEvidenceList.Count; i++)
+						_hashCode ^= assemblyEvidenceList [i].GetHashCode ();
+				}
 			}
 			return _hashCode;
 		}
@@ -217,20 +251,19 @@ namespace System.Security.Policy {
 
 		public IEnumerator GetHostEnumerator () 
 		{
-			return hostEvidenceList.GetEnumerator ();
+			return HostEvidenceList.GetEnumerator ();
 		}
 
 		public void Merge (Evidence evidence) 
 		{
 			if ((evidence != null) && (evidence.Count > 0)) {
-				IEnumerator hostenum = evidence.GetHostEnumerator ();
-				while (hostenum.MoveNext ()) {
-					AddHost (hostenum.Current);
+				if (evidence.hostEvidenceList != null) {
+					foreach (object o in evidence.hostEvidenceList)
+						AddHost (o);
 				}
-
-				IEnumerator assemblyenum = evidence.GetAssemblyEnumerator ();
-				while (assemblyenum.MoveNext ()) {
-					AddAssembly (assemblyenum.Current);
+				if (evidence.assemblyEvidenceList != null) {
+					foreach (object o in evidence.assemblyEvidenceList)
+						AddAssembly (o);
 				}
 				_hashCode = 0;
 			}
@@ -325,14 +358,17 @@ namespace System.Security.Policy {
 			{
 				this.hostEnum = hostenum;
 				this.assemblyEnum = assemblyenum;
-				currentEnum = hostEnum;			
+				currentEnum = hostEnum;		
 			}
 
 			public bool MoveNext () 
 			{
+				if (currentEnum == null)
+					return false;
+
 				bool ret = currentEnum.MoveNext ();
 				
-				if ( !ret && hostEnum == currentEnum ) {
+				if (!ret && (hostEnum == currentEnum) && (assemblyEnum != null)) {
 					currentEnum = assemblyEnum;
 					ret = assemblyEnum.MoveNext ();
 				}
@@ -342,9 +378,14 @@ namespace System.Security.Policy {
 
 			public void Reset () 
 			{
-				hostEnum.Reset ();
-				assemblyEnum.Reset ();
-				currentEnum = hostEnum;
+				if (hostEnum != null) {
+					hostEnum.Reset ();
+					currentEnum = hostEnum;
+				} else {
+					currentEnum = assemblyEnum;
+				}
+				if (assemblyEnum != null)
+					assemblyEnum.Reset ();
 			}
 
 			public object Current {
