@@ -34,7 +34,7 @@ System.Management/PutType.cs
 System.Management/QualifierData.cs
 System.Management/QualifierDataCollection.cs
 System.Management/TextFormat.cs
-System.Management/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Management.Instrumentation/BaseEvent.cs
 System.Management.Instrumentation/IInstance.cs
 System.Management.Instrumentation/InstrumentationType.cs

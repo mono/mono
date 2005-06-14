@@ -88,7 +88,7 @@ System.Xml/MonoFIXAttribute.cs
 System.Xml/NameTable.cs
 System.Xml/NewLineHandling.cs
 System.Xml/ReadState.cs
-System.Xml/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Xml/ValidationType.cs
 System.Xml/XmlEntity.cs
 System.Xml/WhitespaceHandling.cs

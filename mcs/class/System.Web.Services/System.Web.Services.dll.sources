@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
-System.Web.Services/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Web.Services/WebMethodAttribute.cs
 System.Web.Services/WebService.cs
 System.Web.Services/WebServiceAttribute.cs

@@ -1,6 +1,6 @@
 ./Assembly/AssemblyInfo.cs
 ./../../build/common/Locale.cs
-./Assembly/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 ./System.Runtime.InteropServices.CustomMarshalers/EnumerableToDispatchMarshaler.cs
 ./System.Runtime.InteropServices.CustomMarshalers/ExpandoToDispatchExMarshaler.cs
 ./System.Runtime.InteropServices.CustomMarshalers/EnumeratorToEnumVariantMarshaler.cs

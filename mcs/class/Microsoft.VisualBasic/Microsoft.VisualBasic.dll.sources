@@ -29,7 +29,7 @@ Microsoft.VisualBasic/OpenMode.cs
 Microsoft.VisualBasic/OpenShare.cs
 Microsoft.VisualBasic/SpcInfo.cs
 Microsoft.VisualBasic/Strings.cs
-Microsoft.VisualBasic/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.VisualBasic/TabInfo.cs
 Microsoft.VisualBasic/TriState.cs
 Microsoft.VisualBasic/VBFixedArrayAttribute.cs
@@ -68,7 +68,7 @@ Microsoft.VisualBasic.CompilerServices/SingleType.cs
 Microsoft.VisualBasic.CompilerServices/StandardModuleAttribute.cs
 Microsoft.VisualBasic.CompilerServices/StaticLocalInitFlag.cs
 Microsoft.VisualBasic.CompilerServices/StringType.cs
-Microsoft.VisualBasic.CompilerServices/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.VisualBasic.CompilerServices/Utils.cs
 Microsoft.VisualBasic.CompilerServices/VBBinder.cs
 Microsoft.VisualBasic.CompilerServices/VBErrors.cs

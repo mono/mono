@@ -37,7 +37,7 @@ System.Messaging/MessageQueueTransactionStatus.cs
 System.Messaging/MessageQueueTransactionType.cs
 System.Messaging/MessageType.cs
 System.Messaging/MessagingDescriptionAttribute.cs
-System.Messaging/MonoTODO.cs
+../../build/common/MonoTODOAttribute.cs
 System.Messaging/PeekCompletedEventArgs.cs
 System.Messaging/PeekCompletedEventHandler.cs
 System.Messaging/ReceiveCompletedEventArgs.cs

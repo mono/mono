@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
-System.Runtime.Remoting/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs
 System.Runtime.Remoting.Channels/BinaryClientFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/BinaryCore.cs

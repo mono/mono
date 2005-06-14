@@ -22,5 +22,5 @@ System.DirectoryServices/SearchResultCollection.cs
 System.DirectoryServices/SearchScope.cs
 System.DirectoryServices/SortDirection.cs
 System.DirectoryServices/SortOption.cs
-System.DirectoryServices/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.DirectoryServices.Design/DirectoryEntryConverter.cs

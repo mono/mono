@@ -4,7 +4,7 @@ Mono.Xml/XmlCanonicalizer.cs
 Microsoft.Web.Services/ChainStream.cs
 Microsoft.Web.Services/UriList.cs
 Microsoft.Web.Services/SoapFormatException.cs
-Microsoft.Web.Services/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.Web.Services/WebServicesExtension.cs
 Microsoft.Web.Services/WebServicesClientProtocol.cs
 Microsoft.Web.Services/SoapWebResponse.cs

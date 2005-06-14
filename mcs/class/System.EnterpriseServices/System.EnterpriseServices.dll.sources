@@ -70,7 +70,7 @@ System.EnterpriseServices/SxsOption.cs
 System.EnterpriseServices/SynchronizationAttribute.cs
 System.EnterpriseServices/SynchronizationOption.cs
 System.EnterpriseServices/ThreadPoolOption.cs
-System.EnterpriseServices/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.EnterpriseServices/TransactionAttribute.cs
 System.EnterpriseServices/TransactionIsolationLevel.cs
 System.EnterpriseServices/TransactionOption.cs

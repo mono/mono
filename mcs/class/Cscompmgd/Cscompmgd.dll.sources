@@ -3,4 +3,4 @@ Assembly/AssemblyInfo.cs
 Microsoft.CSharp/Compiler.cs
 Microsoft.CSharp/CompilerError.cs
 Microsoft.CSharp/ErrorLevel.cs
-Microsoft.CSharp/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs

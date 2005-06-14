@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
-System.ServiceProcess/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.ServiceProcess/PowerBroadcastStatus.cs
 System.ServiceProcess/ServiceAccount.cs
 System.ServiceProcess/ServiceControllerPermissionAccess.cs

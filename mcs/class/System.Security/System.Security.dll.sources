@@ -123,7 +123,7 @@ System.Security.Cryptography.Xml/XmlEncryption.cs
 System.Security.Cryptography.Xml/XmlLicenseTransform.cs
 System.Security.Cryptography.Xml/XmlSignature.cs
 System.Security.Cryptography.Xml/XmlSignatureStreamReader.cs
-System.Security.Cryptography.Xml/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Security.Permissions/DataProtectionPermission.cs
 System.Security.Permissions/DataProtectionPermissionAttribute.cs
 System.Security.Permissions/DataProtectionPermissionFlags.cs

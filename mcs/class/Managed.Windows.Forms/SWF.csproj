@@ -1674,7 +1674,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\TODOAttribute.cs"
+                    RelPath = "..\..\build\common\MonoTODOAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

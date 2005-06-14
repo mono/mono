@@ -169,7 +169,7 @@ Microsoft.JScript/StringObject.cs
 Microsoft.JScript/StringPrototype.cs
 Microsoft.JScript/SuperTypeMembersSorter.cs
 Microsoft.JScript/SyntaxErrorObject.cs
-Microsoft.JScript/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.JScript/Throw.cs
 Microsoft.JScript/Try.cs
 Microsoft.JScript/TypedArray.cs

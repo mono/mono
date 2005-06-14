@@ -106,7 +106,7 @@ System.Drawing.Drawing2D/PixelOffsetMode.cs
 System.Drawing.Drawing2D/QualityMode.cs
 System.Drawing.Drawing2D/RegionData.cs
 System.Drawing.Drawing2D/SmoothingMode.cs
-System.Drawing.Drawing2D/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Drawing.Drawing2D/WarpMode.cs
 System.Drawing.Drawing2D/WrapMode.cs
 System.Drawing.Imaging/BitmapData.cs

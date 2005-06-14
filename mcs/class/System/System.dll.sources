@@ -617,7 +617,7 @@ System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermissionLevel.cs
 System/InvalidDataException.cs
 System/SRDescriptionAttribute.cs
-System/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System/UriBuilder.cs
 System/Uri.cs
 System/UriFormatException.cs

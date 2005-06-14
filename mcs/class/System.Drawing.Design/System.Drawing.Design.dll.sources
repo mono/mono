@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
-Assembly/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Drawing.Design/BitmapEditor.cs
 System.Drawing.Design/ColorEditor.cs
 System.Drawing.Design/ContentAlignmentEditor.cs

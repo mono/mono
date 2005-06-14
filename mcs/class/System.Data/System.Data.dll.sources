@@ -120,7 +120,7 @@ System.Data/StatementCompletedEventHandler.cs
 System.Data/StatementType.cs
 System.Data/StrongTypingException.cs
 System.Data/SyntaxErrorException.cs
-System.Data/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Data/TypedDataSetGenerator.cs
 System.Data/TypeDataSetGeneratorException.cs
 System.Data/UniqueConstraint.cs

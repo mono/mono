@@ -13,6 +13,6 @@ System.Configuration.Install/InstallEventHandler.cs
 System.Configuration.Install/ManagedInstallerClass.cs
 System.Configuration.Install/TransactedInstaller.cs
 System.Configuration.Install/UninstallAction.cs
-System.Configuration.Install/TODOAttribute.cs
+../../build/common/MonoTODOAttribute.cs
 System.Diagnostics/EventLogInstaller.cs
 System.Diagnostics/PerformanceCounterInstaller.cs
