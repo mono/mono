@@ -100,7 +100,7 @@ namespace Mono.Data.SqliteClient
 			try 
 			{
 				SqliteCommand cmd = _connection.CreateCommand();
-				cmd.CommandText = "COMMIT";
+				cmd.CommandText = "ROLLBACK";
 				cmd.ExecuteNonQuery();
 				_open = false;
 			}

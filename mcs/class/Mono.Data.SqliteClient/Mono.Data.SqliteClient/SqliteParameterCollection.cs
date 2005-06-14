@@ -4,8 +4,11 @@
 // Represents a collection of parameters relevant to a SqliteCommand as well as 
 // their respective mappings to columns in a DataSet.
 //
-// Author(s): Vladimir Vukicevic  <vladimir@pobox.com>
-//            Everaldo Canuto  <everaldo_canuto@yahoo.com.br>
+//Author(s):		Vladimir Vukicevic  <vladimir@pobox.com>
+//			Everaldo Canuto  <everaldo_canuto@yahoo.com.br>
+//			Chris Turchin <chris@turchin.net>
+//			Jeroen Zwartepoorte <jeroen@xs4all.nl>
+//			Thomas Zoechling <thomas.zoechling@gmx.at>
 //
 // Copyright (C) 2002  Vladimir Vukicevic
 //
@@ -46,85 +49,148 @@ namespace Mono.Data.SqliteClient
 		#endregion
 
 		#region Private Methods
-		
+
 		private void CheckSqliteParam (object value)
 		{
 			if (!(value is SqliteParameter))
-				throw new InvalidCastException("Can only use SqliteParameter objects");
-		}
+				throw new InvalidCastException ("Can only use SqliteParameter objects");
+			SqliteParameter sqlp = value as SqliteParameter;
+			if (sqlp.ParameterName == null || sqlp.ParameterName.Length == 0)
+				sqlp.ParameterName = this.GenerateParameterName();
+                 }
 
 		private void RecreateNamedHash ()
 		{
-			for (int i = 0; i < numeric_param_list.Count; i++) {
+			for (int i = 0; i < numeric_param_list.Count; i++) 
+			{
 				named_param_hash[((SqliteParameter) numeric_param_list[i]).ParameterName] = i;
 			}
 		}
-		
+
+		//FIXME: if the user is calling Insert at various locations with unnamed parameters, this is not going to work....
+		private string GenerateParameterName()
+		{
+			int		index	= this.Count + 1;
+			string	name	= String.Empty;
+
+			while (index > 0)
+			{
+				name = ":" + index.ToString();
+					if (this.IndexOf(name) == -1)
+					index = -1;
+				else
+				index++;
+			}
+			return name;
+		}
+
 		#endregion
 
 		#region Properties
 		
 		object IList.this[int index] {
-			get {
+			get 
+			{
 				return this[index];
 			}
-			set {
+			set 
+			{
 				CheckSqliteParam (value);
 				this[index] = (SqliteParameter) value;
 			}
 		}
 		
 		object IDataParameterCollection.this[string parameterName] {
-			get {
+			get 
+			{
 				return this[parameterName];
 			}
-			set {
+			set 
+			{
 				CheckSqliteParam (value);
 				this[parameterName] = (SqliteParameter) value;
 			}
 		}
 		
-		public SqliteParameter this[string parameterName] {
-			get {
-				return this[(int) named_param_hash[parameterName]];
+		public SqliteParameter this[string parameterName] 
+		{
+			get 
+			{
+				if (this.Contains(parameterName))
+					return this[(int) named_param_hash[parameterName]];
+				else
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}
-			set {
-				if (this.Contains (parameterName))
+			set
+			{
+				if (this.Contains(parameterName))
 					numeric_param_list[(int) named_param_hash[parameterName]] = value;
-				else          // uhm, do we add it if it doesn't exist? what does ms do?
-					Add (value);
+				else
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+			}
+		}
+
+		public SqliteParameter this[int parameterIndex]
+		{
+			get
+			{
+				if (this.Count >= parameterIndex+1)
+					return (SqliteParameter) numeric_param_list[parameterIndex];
+				else          
+					throw new IndexOutOfRangeException("The specified parameter index does not exist: " + parameterIndex.ToString());
+			}
+			set
+			{
+				if (this.Count >= parameterIndex+1)
+					numeric_param_list[parameterIndex] = value;
+				else          
+					throw new IndexOutOfRangeException("The specified parameter index does not exist: " + parameterIndex.ToString());
+			}
+		}
+
+
+		public int Count 
+		{
+			get
+			{
+				return this.numeric_param_list.Count;
+			}
+		}
+
+		bool IList.IsFixedSize
+		{
+			get
+			{
+				return this.numeric_param_list.IsFixedSize;
+			}
+		}
+
+		bool IList.IsReadOnly
+		{
+			get
+			{
+				return this.numeric_param_list.IsReadOnly;
+			}
+		}
+
+
+		bool ICollection.IsSynchronized 
+		{
+			get
+			{
+				return this.numeric_param_list.IsSynchronized;
 			}
 		}
 		
-		public SqliteParameter this[int parameterIndex] {
-			get {
-				return (SqliteParameter) numeric_param_list[parameterIndex];
+
+		object ICollection.SyncRoot 
+		{
+			get
+			{
+				return this.numeric_param_list.SyncRoot;
 			}
-			set {
-				numeric_param_list[parameterIndex] = value;
-			}
 		}
-		
-		public int Count {
-			get { return numeric_param_list.Count; }
-		}
-		
-		public bool IsFixedSize {
-			get { return false; }
-		}
-		
-		public bool IsReadOnly {
-			get { return false; }
-		}
-		
-		public bool IsSynchronized {
-			get { return false; }
-		}
-		
-		public object SyncRoot {
-			get { return null; }
-		}
-		
+
 		#endregion
 
 		#region Public Methods
@@ -132,15 +198,13 @@ namespace Mono.Data.SqliteClient
 		public int Add (object value)
 		{
 			CheckSqliteParam (value);
-			SqliteParameter sqlp = (SqliteParameter) value;
+			SqliteParameter sqlp = value as SqliteParameter;
 			if (named_param_hash.Contains (sqlp.ParameterName))
-				throw new DuplicateNameException ("Parameter collection already contains given value.");
-			
-			named_param_hash[value] = numeric_param_list.Add (value);
-			
-			return (int) named_param_hash[value];
+				throw new DuplicateNameException ("Parameter collection already contains the a SqliteParameter with the given ParameterName.");
+			named_param_hash[sqlp.ParameterName] = numeric_param_list.Add(value);
+				return (int) named_param_hash[sqlp.ParameterName];
 		}
-		
+
 		public SqliteParameter Add (SqliteParameter param)
 		{
 			Add ((object)param);
@@ -165,7 +229,7 @@ namespace Mono.Data.SqliteClient
 		
 		public void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			this.numeric_param_list.CopyTo(array, index);
 		}
 		
 		bool IList.Contains (object value)
@@ -185,7 +249,7 @@ namespace Mono.Data.SqliteClient
 		
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return this.numeric_param_list.GetEnumerator();
 		}
 		
 		int IList.IndexOf (object param)
@@ -195,7 +259,10 @@ namespace Mono.Data.SqliteClient
 		
 		public int IndexOf (string parameterName)
 		{
-			return (int) named_param_hash[parameterName];
+			if (named_param_hash.Contains(parameterName))
+				return (int) named_param_hash[parameterName];
+			else
+				return -1;
 		}
 		
 		public int IndexOf (SqliteParameter param)
@@ -206,7 +273,8 @@ namespace Mono.Data.SqliteClient
 		public void Insert (int index, object value)
 		{
 			CheckSqliteParam (value);
-			if (numeric_param_list.Count == index) {
+			if (numeric_param_list.Count == index) 
+			{
 				Add (value);
 				return;
 			}
@@ -245,4 +313,3 @@ namespace Mono.Data.SqliteClient
 		#endregion
 	}
 }
-                

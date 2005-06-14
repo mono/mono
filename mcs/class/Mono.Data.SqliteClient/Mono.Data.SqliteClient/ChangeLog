@@ -1,3 +1,15 @@
+2005-06-14  Thomas Zoechling <thomas.zoechling@gmx.at>
+
+	* Sqlite.cs:
+	- Added sqlite3_bind_* for native Sqlite3 Parameters
+	* SqliteCommand.cs
+	- Added methods for parameter processing/binding (sqlite3 uses bind / sqlite2 uses regEx to extract parameters)
+	- Sqlite uses ':' as delimeter!
+	* SqliteParameterCollection.cs
+	- Chris Turchin fixed a problem in the Parameter Hashmap
+	* SqliteTransaction.cs
+	- The CommandText for the Rollback Command was "COMMIT" ! ->changed :)
+
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqliteConnection.cs:
