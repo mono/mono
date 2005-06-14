@@ -1,3 +1,8 @@
+2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompa-collation-table.cs : added some nonspacing marks in
+	  either correct or hacky way.
+
 2005-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : several improvements. Japanese

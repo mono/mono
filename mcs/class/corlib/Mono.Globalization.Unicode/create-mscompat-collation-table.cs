@@ -974,25 +974,43 @@ namespace Mono.Globalization.Unicode
 
 			// Combining diacritical marks: 01 DC -
 
+			fillIndex [0x1] = 0x41;
+			for (int i = 0x030E; i <= 0x0326; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x0329; i <= 0x0334; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x0339; i <= 0x0341; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			fillIndex [0x1] = 0x72;
+			for (int i = 0x0346; i <= 0x0348; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x02BE; i <= 0x02BF; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x02C1; i <= 0x02C5; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x02CE; i <= 0x02CF; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x02D1; i <= 0x02D3; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+			AddCharMap ('\u02DE', 0x1, 1);
+			for (int i = 0x02E4; i <= 0x02E9; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
 			// overflow of level 2 unless we start before 0xDD).
 			fillIndex [0x1] = 0xDC;
 			for (int i = 0x20d0; i <= 0x20e1; i++)
 				AddCharMap ((char) i, 0x1, 1);
-
-			// Hebrew Accents
-			fillIndex [0x1] = 0x3;
-			for (int i = 0x0591; i <= 0x05C2; i++)
-				if (i != 0x05BE)
-					AddCharMap ((char) i, 0x1, 1);
-
-			// Bengali nonspacing marks
-			fillIndex [0x1] = 0x3;
-			for (int i = 0x0981; i < 0x0A00; i++)
-				if (Char.GetUnicodeCategory ((char) i) ==
-					UnicodeCategory.NonSpacingMark)
-					AddCharMap ((char) i, 0x1, 1);
 			#endregion
 
 
@@ -1029,17 +1047,40 @@ namespace Mono.Globalization.Unicode
 					AddCharMapGroup2 ('\u3001', 0x7, 1, 0);
 				else if (i == 0x2E)
 					AddCharMapGroup2 ('\u3002', 0x7, 1, 0);
+				else if (i == 0x3A)
+					AddCharMap ('\uFE30', 0x7, 1, 0);
 			}
 			#endregion
 
 
 			// FIXME: for 07 xx we need more love.
 
-			// FIXME: implement 08
+			// FIXME: 08 should be more complete.
+			fillIndex [0x8] = 2;
+			for (int cp = 0; cp < char.MaxValue; cp++)
+				if (Char.GetUnicodeCategory ((char) cp) ==
+					UnicodeCategory.MathSymbol)
+					AddCharMapGroup2 ((char) cp, 0x8, 1, 0);
 
 			// FIXME: implement 09
 
 			// FIXME: implement 0A
+			#region Symbols
+			fillIndex [0xA] = 2;
+			// byte currency symbols
+			for (int cp = 0; cp < 0x100; cp++) {
+				uc = Char.GetUnicodeCategory ((char) cp);
+				if (uc == UnicodeCategory.CurrencySymbol &&
+					cp != '$')
+					AddCharMapGroup2 ((char) cp, 0xA, 1, 0);
+			}
+			// byte other symbols
+			for (int cp = 0; cp < 0x100; cp++) {
+				uc = Char.GetUnicodeCategory ((char) cp);
+				if (uc == UnicodeCategory.OtherSymbol)
+					AddCharMapGroup2 ((char) cp, 0xA, 1, 0);
+			}
+			#endregion
 
 			#region Numbers // 0C 02 - 0C E1
 			fillIndex [0xC] = 2;
@@ -1126,12 +1167,11 @@ namespace Mono.Globalization.Unicode
 			AddCharMap ('\u221E', 0xC, 1);
 			#endregion
 
-			#region Letters (general)
+			#region Letters and NonSpacing Marks (general)
 
 			// Latin alphabets
-			for (int i = 0; i < alphabets.Length; i++) {
+			for (int i = 0; i < alphabets.Length; i++)
 				AddAlphaMap (alphabets [i], 0xE, alphaWeights [i]);
-			}
 
 			// Greek and Coptic
 			fillIndex [0xF] = 02;
@@ -1163,18 +1203,29 @@ namespace Mono.Globalization.Unicode
 					AddLetterMap ((char) i, 0x11, 1);
 
 			// Hebrew
+			// -Letters
 			fillIndex [0x12] = 0x3;
 			for (int i = 0x05D0; i < 0x05FF; i++)
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0x12, 1);
+			// -Accents
+			fillIndex [0x1] = 0x3;
+			for (int i = 0x0591; i <= 0x05C2; i++)
+				if (i != 0x05BE)
+					AddCharMap ((char) i, 0x1, 1);
 
 			// Arabic
+			fillIndex [0x1] = 0x8E;
 			fillIndex [0x13] = 0x3;
 			for (int i = 0x0621; i <= 0x064A; i++) {
 				// Abjad
 				if (Char.GetUnicodeCategory ((char) i)
-					!= UnicodeCategory.OtherLetter)
+					!= UnicodeCategory.OtherLetter) {
+					// FIXME: arabic nonspacing marks are
+					// in different order.
+					AddCharMap ((char) i, 0x1, 1);
 					continue;
+				}
 				map [i] = new CharMapEntry (0x13,
 					(byte) arabicLetterPrimaryValues [i], 1);
 			}
@@ -1198,6 +1249,7 @@ namespace Mono.Globalization.Unicode
 					AddLetterMap ((char) i, 0x14, 2);
 
 			// Bengali
+			// -Letters
 			fillIndex [0x15] = 02;
 			for (int i = 0x0980; i < 0x9FF; i++) {
 				if (IsIgnorable (i))
@@ -1212,14 +1264,25 @@ namespace Mono.Globalization.Unicode
 				}
 				AddLetterMap ((char) i, 0x15, 1);
 			}
+			// -Signs
+			fillIndex [0x1] = 0x3;
+			for (int i = 0x0981; i < 0x0A00; i++)
+				if (Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 0x1, 1);
 
 			// Gurmukhi. orderedGurmukhi is from UCA
 			// FIXME: it does not look equivalent to UCA.
+			fillIndex [0x1] = 03;
 			fillIndex [0x16] = 02;
 			for (int i = 0; i < orderedGurmukhi.Length; i++) {
 				char c = orderedGurmukhi [i];
-				if (!Char.IsLetter (c))
+				if (IsIgnorable ((int) c))
 					continue;
+				if (!Char.IsLetter (c)) {
+					AddLetterMap (c, 0x1, 1);
+					continue;
+				}
 				if (c == '\u0A3C' || c == '\u0A4D' ||
 					'\u0A66' <= c && c <= '\u0A71')
 					continue;
@@ -1505,16 +1568,32 @@ namespace Mono.Globalization.Unicode
 				if (map [primaryChar].Level1 == 0)
 					continue;
 				int secondary = 0;
+				bool skip = false;
 				for (int l = 1; l < decompLength [i]; l++) {
 					int c = decompValues [start + l];
+					if (map [c].Level1 != 0)
+						skip = true;
 					secondary += diacritical [c];
 				}
+				if (skip)
+					continue;
 				map [i] = new CharMapEntry (
 					map [primaryChar].Category,
 					map [primaryChar].Level1,
 					(byte) secondary);
 				
 			}
+
+
+			// FIXME: this is hack but those which are 
+			// NonSpacingMark characters and still undefined
+			// are likely to be nonspacing.
+			for (int i = 0; i < char.MaxValue; i++)
+				if (!map [i].Defined &&
+					!IsIgnorable (i) &&
+					Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 1, 1);
 		}
 
 		// Reset fillIndex to fixed value and call AddLetterMap().
