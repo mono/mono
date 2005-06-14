@@ -1,3 +1,8 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: Override UnprotectedGetName to set the public 
+	key (if available).
+
 2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* FieldBuilder.cs: FieldBuilder.FieldHandle should throw

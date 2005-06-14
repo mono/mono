@@ -850,5 +850,14 @@ namespace System.Reflection.Emit {
 		{
 			return (str == "neutral" ? String.Empty : str);
 		}
+
+		internal override AssemblyName UnprotectedGetName ()
+		{
+			AssemblyName an = base.UnprotectedGetName ();
+			if (sn != null) {
+				an.SetPublicKey (sn.PublicKey);
+			}
+			return an;
+		}
 	}
 }
