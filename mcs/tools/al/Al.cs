@@ -5,15 +5,18 @@
 //   Zoltan Varga (vargaz@freemail.hu)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
-
 
 using System;
 using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Text;
+
+using Mono.Security.Cryptography;
 
 namespace Mono.AssemblyLinker
 {
@@ -41,13 +44,15 @@ namespace Mono.AssemblyLinker
 		ArrayList inputFiles = new ArrayList ();
 		ArrayList resources = new ArrayList ();
 		ArrayList cattrs = new ArrayList ();
-		string outputFile;
 		bool fullPaths;
 		string outFile;
 		string entryPoint;
 		string win32IconFile;
 		string win32ResFile;
 		Target target;
+		bool delaysign;
+		string keyfile;
+		string keyname;
 
 		public static int Main (String[] args) {
 			return new AssemblyLinker ().DynMain (args);
@@ -215,7 +220,15 @@ namespace Mono.AssemblyLinker
 
 				case "delay":
 				case "delaysign":
-					ReportNotImplemented (opt);
+				case "delay+":
+				case "delaysign+":
+					AddCattr (typeof (AssemblyDelaySignAttribute), typeof (bool), true);
+					delaysign = true;
+					break;
+
+				case "delay-":
+				case "delaysign-":
+					delaysign = false;
 					break;
 
 				case "descr":
@@ -268,6 +281,7 @@ namespace Mono.AssemblyLinker
 					if (arg == null)
 						ReportMissingText (opt);
 					AddCattr (typeof (AssemblyKeyFileAttribute), arg);
+					keyfile = arg;
 					break;
 					
 				case "keyn":
@@ -275,6 +289,7 @@ namespace Mono.AssemblyLinker
 					if (arg == null)
 						ReportMissingText (opt);
 					AddCattr (typeof (AssemblyKeyNameAttribute), arg);
+					keyname = arg;
 					break;
 
 				case "main":
@@ -470,9 +485,74 @@ namespace Mono.AssemblyLinker
 			Report (1010, String.Format ("Missing ':<text>' for '{0}' option", option));
 		}
 
+		// copied from /mcs/mcs/codegen.cs
+		private void SetPublicKey (AssemblyName an, byte[] strongNameBlob) 
+		{
+			// check for possible ECMA key
+			if (strongNameBlob.Length == 16) {
+				// will be rejected if not "the" ECMA key
+				an.SetPublicKey (strongNameBlob);
+			} else {
+				// take it, with or without, a private key
+				RSA rsa = CryptoConvert.FromCapiKeyBlob (strongNameBlob);
+				// and make sure we only feed the public part to Sys.Ref
+				byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
+					
+				// AssemblyName.SetPublicKey requires an additional header
+				byte[] publicKeyHeader = new byte [12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+
+				byte[] encodedPublicKey = new byte [12 + publickey.Length];
+				Buffer.BlockCopy (publicKeyHeader, 0, encodedPublicKey, 0, 12);
+				Buffer.BlockCopy (publickey, 0, encodedPublicKey, 12, publickey.Length);
+				an.SetPublicKey (encodedPublicKey);
+			}
+		}
+
+		private void SetKeyPair (AssemblyName aname)
+		{
+			if (keyfile != null) {
+				if (!File.Exists (keyfile)) {
+					Report (1044, String.Format ("Couldn't open '{0}' key file.", keyfile));
+				}
+
+				using (FileStream fs = File.OpenRead (keyfile)) {
+					byte[] data = new byte [fs.Length];
+					try {
+						fs.Read (data, 0, data.Length);
+
+						if (delaysign) {
+							SetPublicKey (aname, data);
+						} else {
+							CryptoConvert.FromCapiPrivateKeyBlob (data);
+							aname.KeyPair = new StrongNameKeyPair (data);
+						}
+					}
+					catch (CryptographicException) {
+						if (!delaysign) {
+							if (data.Length == 16) {
+								// error # is different for ECMA key
+								Report (1019, "Could not strongname the assembly. " + 
+									"ECMA key can only be used to delay-sign assemblies");
+							} else {
+								Report (1028, String.Format ("Key file {0}' is missing it's private key " +
+									"or couldn't be decoded.", keyfile));
+							}
+						} else {
+							Report (1044, String.Format ("Couldn't decode '{0}' key file.", keyfile));
+						}
+					}
+					fs.Close ();
+				}
+			} else if (keyname != null) {
+				// delay-sign doesn't apply to key containers
+				aname.KeyPair = new StrongNameKeyPair (keyname);
+			}
+		}
+
 		private void DoIt () {
 			AssemblyName aname = new AssemblyName ();
 			aname.Name = Path.GetFileNameWithoutExtension (outFile);
+			SetKeyPair (aname);
 
 			string fileName = Path.GetFileName (outFile);
 

@@ -1,3 +1,8 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Al.cs: Added support for signing/delay-signing/ecma-delay-signing.
+	* Makefile: Added dependency on Mono.Security.dll for CryptoConvert.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Al.cs: Applied patch from Gert Driesen (gert.driesen@pandora.be). 
