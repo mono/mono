@@ -74,3 +74,4 @@ scanner/Location.cs
 scanner/NumberHelper.cs
 scanner/StringHelperBase.cs
 scanner/StringHelper.cs
+../build/common/MonoVersion.cs
