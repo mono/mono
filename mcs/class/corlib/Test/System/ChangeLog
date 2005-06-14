@@ -1,5 +1,7 @@
-2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CharCategoryTest.cs: Added new whitespace (to fix failure on Mono, 
+	there are other failures when executed under 2.0 beta 2).
 	* CharTest.cs: Added test to check for all whitespaces.
 
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
