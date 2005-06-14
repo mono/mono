@@ -99,7 +99,16 @@ namespace System.Web.Services.Protocols
 			return Encoding.GetEncoding (encoding);
 		}
 
-		public static void WriteSoapMessage (XmlTextWriter xtw, SoapTypeStubInfo info, SoapBindingUse methodUse, XmlSerializer bodySerializer, object bodyContent, SoapHeaderCollection headers)
+		public static void WriteSoapMessage (XmlTextWriter xtw, SoapMethodStubInfo method, SoapHeaderDirection dir, object bodyContent, SoapHeaderCollection headers)
+		{
+			SoapBindingUse methodUse = dir == SoapHeaderDirection.Fault ? SoapBindingUse.Literal : method.Use;
+			XmlSerializer bodySerializer = method.GetBodySerializer (dir);
+			XmlSerializer headerSerializer = method.GetHeaderSerializer (dir);
+			object[] headerArray = method.GetHeaderValueArray (dir, headers);
+			WriteSoapMessage (xtw, methodUse, bodySerializer, headerSerializer, bodyContent, headerArray);
+		}
+		
+		public static void WriteSoapMessage (XmlTextWriter xtw, SoapBindingUse methodUse, XmlSerializer bodySerializer, XmlSerializer headerSerializer, object bodyContent, object[] headers)
 		{
 			xtw.WriteStartDocument ();
 			xtw.WriteStartElement ("soap", "Envelope", WebServiceHelper.SoapEnvelopeNamespace);
@@ -109,13 +118,9 @@ namespace System.Web.Services.Protocols
 			// Serialize headers
 			if (headers != null)
 			{
-				foreach (SoapHeader header in headers) 
-				{
-					XmlSerializer ser = info.GetHeaderSerializer (header.GetType(), methodUse);
-					xtw.WriteStartElement ("soap", "Header", WebServiceHelper.SoapEnvelopeNamespace);
-					ser.Serialize (xtw, header);
-					xtw.WriteEndElement ();
-				}
+				xtw.WriteStartElement ("soap", "Header", WebServiceHelper.SoapEnvelopeNamespace);
+				headerSerializer.Serialize (xtw, headers);
+				xtw.WriteEndElement ();
 			}
 
 			// Serialize body
@@ -131,12 +136,19 @@ namespace System.Web.Services.Protocols
 			xtw.Flush ();
 		}
 
-		public static void ReadSoapMessage (XmlTextReader xmlReader, SoapTypeStubInfo typeStubInfo, SoapBindingUse methodUse, XmlSerializer bodySerializer, out object body, out SoapHeaderCollection headers)
+		public static void ReadSoapMessage (XmlTextReader xmlReader, SoapMethodStubInfo method, SoapHeaderDirection dir, out object body, out SoapHeaderCollection headers)
+		{
+			XmlSerializer bodySerializer = method.GetBodySerializer (dir);
+			XmlSerializer headerSerializer = method.GetHeaderSerializer (dir);
+			ReadSoapMessage (xmlReader, bodySerializer, headerSerializer, out body, out headers);
+		}
+		
+		public static void ReadSoapMessage (XmlTextReader xmlReader, XmlSerializer bodySerializer, XmlSerializer headerSerializer, out object body, out SoapHeaderCollection headers)
 		{
 			xmlReader.MoveToContent ();
 			xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
 
-			headers = ReadHeaders (typeStubInfo, methodUse, xmlReader);
+			headers = ReadHeaders (xmlReader, headerSerializer);
 
 			xmlReader.MoveToContent ();
 			xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
@@ -148,37 +160,20 @@ namespace System.Web.Services.Protocols
 			body = bodySerializer.Deserialize (xmlReader);
 		}
 
-		static SoapHeaderCollection ReadHeaders (SoapTypeStubInfo typeStubInfo, SoapBindingUse methodUse, XmlTextReader xmlReader)
+		static SoapHeaderCollection ReadHeaders (XmlTextReader xmlReader, XmlSerializer headerSerializer)
 		{
-			SoapHeaderCollection headers = new SoapHeaderCollection ();
+			SoapHeaderCollection headers = null;
 			while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
 			{
 				if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Header" 
-				    && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace && !xmlReader.IsEmptyElement)
+				    && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace && !xmlReader.IsEmptyElement
+				    && headerSerializer != null)
 				{
 					xmlReader.ReadStartElement ();
 					xmlReader.MoveToContent ();
 					
-					while (xmlReader.NodeType != XmlNodeType.Element && xmlReader.NodeType != XmlNodeType.EndElement)
-						xmlReader.Skip ();
-						
-					xmlReader.MoveToContent ();
-					
-					if (xmlReader.NodeType == XmlNodeType.Element) {
-						XmlQualifiedName qname = new XmlQualifiedName (xmlReader.LocalName, xmlReader.NamespaceURI);
-						XmlSerializer headerSerializer = typeStubInfo.GetHeaderSerializer (qname, methodUse);
-						if (headerSerializer != null)
-						{
-							SoapHeader header = (SoapHeader) headerSerializer.Deserialize (xmlReader);
-							headers.Add (header);
-						}
-						else
-						{
-							XmlDocument doc = new XmlDocument ();
-							XmlElement elem = (XmlElement) doc.ReadNode (xmlReader);
-							headers.Add (new SoapUnknownHeader (elem));
-						}
-					}
+					HeaderSerializationHelper uh = new HeaderSerializationHelper (headerSerializer);
+					headers = uh.Deserialize (xmlReader);
 					
 					while (xmlReader.NodeType != XmlNodeType.EndElement)
 						xmlReader.Skip ();
@@ -188,7 +183,40 @@ namespace System.Web.Services.Protocols
 				else
 					xmlReader.Skip ();
 			}
-			return headers;
+			if (headers != null)
+				return headers;
+			else
+				return new SoapHeaderCollection ();
+		}
+		
+		class HeaderSerializationHelper
+		{
+			SoapHeaderCollection headers;
+			XmlSerializer headerSerializer;
+			
+			public HeaderSerializationHelper (XmlSerializer headerSerializer)
+			{
+				this.headers = new SoapHeaderCollection ();
+				this.headerSerializer = headerSerializer;
+			}
+			
+			public SoapHeaderCollection Deserialize (XmlTextReader xmlReader)
+			{
+				try {
+					headerSerializer.UnknownElement += new XmlElementEventHandler (OnAddUnknownHeader);
+					object[] headerArray = (object[]) headerSerializer.Deserialize (xmlReader);
+					foreach (SoapHeader h in headerArray)
+						if (h != null) headers.Add (h);
+					return headers;
+				} finally {
+					headerSerializer.UnknownElement -= new XmlElementEventHandler (OnAddUnknownHeader);
+				}
+			}
+			
+			void OnAddUnknownHeader (object sender, XmlElementEventArgs e)
+			{
+				headers.Add (new SoapUnknownHeader (e.Element));
+			}
 		}
 
 		public static void InvalidOperation (string message, WebResponse response, Encoding enc)

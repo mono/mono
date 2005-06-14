@@ -1,3 +1,14 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapHttpClientProtocol.cs: 
+	* WebServiceHelper.cs:
+	* Methods.cs: Changed the way headers are serialized. Instead of having
+	a serializer per header type, we now have a serializer per method, and
+	headers are serialized using a member mapping.
+	
+	* HttpSoapWebServiceHandler.cs: Handle one way methods properly.
+	Fixes bug #70699.
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs: use the HttpResponse.BufferOutput

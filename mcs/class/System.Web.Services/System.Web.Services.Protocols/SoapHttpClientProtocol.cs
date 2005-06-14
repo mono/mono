@@ -216,7 +216,7 @@ namespace System.Web.Services.Protocols
 
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (s);
 				
-				WebServiceHelper.WriteSoapMessage (xtw, type_info, message.MethodStubInfo.Use, message.MethodStubInfo.RequestSerializer, message.Parameters, message.Headers);
+				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers);
 
 				if (extensions != null) {
 					message.SetStage (SoapMessageStage.AfterSerialize);
@@ -247,7 +247,7 @@ namespace System.Web.Services.Protocols
 					msg = String.Format (msg, (int) code, code);
 					throw new WebException (msg, null, WebExceptionStatus.ProtocolError, http_response);
 				}
-				if (message.OneWay && response.ContentLength == 0 && (code == HttpStatusCode.Accepted || code == HttpStatusCode.OK)) {
+				if (message.OneWay && response.ContentLength <= 0 && (code == HttpStatusCode.Accepted || code == HttpStatusCode.OK)) {
 					return new object[0];
 				}
 			}
@@ -281,8 +281,7 @@ namespace System.Web.Services.Protocols
 			using (StreamReader reader = new StreamReader (stream, encoding, false)) {
 				XmlTextReader xml_reader = new XmlTextReader (reader);
 
-				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, msi.ResponseSerializer,
-								out content, out headers);
+				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, out content, out headers);
 			}
 
 			

@@ -61,13 +61,22 @@ namespace System.Web.Services.Protocols {
 		internal SoapBindingUse Use;
 
 		internal HeaderInfo[] Headers;
+		internal HeaderInfo[] InHeaders;
+		internal HeaderInfo[] OutHeaders;
+		internal HeaderInfo[] FaultHeaders;
 		internal SoapExtensionRuntimeConfig[] SoapExtensions;
 		
 		internal XmlMembersMapping InputMembersMapping;
 		internal XmlMembersMapping OutputMembersMapping;
+		internal XmlMembersMapping InputHeaderMembersMapping;
+		internal XmlMembersMapping OutputHeaderMembersMapping;
+		internal XmlMembersMapping FaultHeaderMembersMapping;
 		
 		private int requestSerializerId;
 		private int responseSerializerId;
+		private int requestHeadersSerializerId = -1;
+		private int responseHeadersSerializerId = -1;
+		private int faultHeadersSerializerId = -1;
 		
 		internal XmlSerializer RequestSerializer
 		{
@@ -78,6 +87,22 @@ namespace System.Web.Services.Protocols {
 		{
 			get { return TypeStub.GetSerializer (responseSerializerId); }
 		}
+		
+		internal XmlSerializer RequestHeadersSerializer
+		{
+			get { return requestHeadersSerializerId != -1 ? TypeStub.GetSerializer (requestHeadersSerializerId) : null; }
+		}
+		
+		internal XmlSerializer ResponseHeadersSerializer
+		{
+			get { return responseHeadersSerializerId != -1 ? TypeStub.GetSerializer (responseHeadersSerializerId) : null; }
+		}
+		
+		internal XmlSerializer FaultHeadersSerializer
+		{
+			get { return faultHeadersSerializerId != -1 ? TypeStub.GetSerializer (faultHeadersSerializerId) : null; }
+		}
+		
 
 		//
 		// Constructor
@@ -184,7 +209,12 @@ namespace System.Web.Services.Protocols {
 			responseSerializerId = parent.RegisterSerializer (OutputMembersMapping);
 
 			object[] o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
-			ArrayList headerList = new ArrayList (o.Length);
+			ArrayList allHeaderList = new ArrayList (o.Length);
+			ArrayList inHeaderList = new ArrayList (o.Length);
+			ArrayList outHeaderList = new ArrayList (o.Length);
+			ArrayList faultHeaderList = new ArrayList ();
+			
+			SoapHeaderDirection unknownHeaderDirections = (SoapHeaderDirection)0;
 			
 			for (int i = 0; i < o.Length; i++) {
 				SoapHeaderAttribute att = (SoapHeaderAttribute) o[i];
@@ -192,13 +222,56 @@ namespace System.Web.Services.Protocols {
 				if (mems.Length == 0) throw new InvalidOperationException ("Member " + att.MemberName + " not found in class " + source.DeclaringType.FullName + ".");
 				
 				HeaderInfo header = new HeaderInfo (mems[0], att);
-				headerList.Add (header);
-
-				if (!header.IsUnknownHeader)
-					parent.RegisterHeaderType (header.HeaderType, serviceNamespace, Use);
+				allHeaderList.Add (header);
+				if (!header.IsUnknownHeader) {
+					if ((header.Direction & SoapHeaderDirection.In) != 0)
+						inHeaderList.Add (header);
+					if ((header.Direction & SoapHeaderDirection.Out) != 0)
+						outHeaderList.Add (header);
+					if ((header.Direction & SoapHeaderDirection.Fault) != 0)
+						faultHeaderList.Add (header);
+				} else
+					unknownHeaderDirections |= header.Direction;
 			}
-			Headers = (HeaderInfo[]) headerList.ToArray (typeof(HeaderInfo));
+			
+			Headers = (HeaderInfo[]) allHeaderList.ToArray (typeof(HeaderInfo));
 
+			if (inHeaderList.Count > 0 || (unknownHeaderDirections & SoapHeaderDirection.In) != 0) {
+				InHeaders = (HeaderInfo[]) inHeaderList.ToArray (typeof(HeaderInfo));
+				XmlReflectionMember[] members = BuildHeadersReflectionMembers (InHeaders);
+				
+				if (Use == SoapBindingUse.Literal)
+					InputHeaderMembersMapping = xmlImporter.ImportMembersMapping ("", RequestNamespace, members, false);
+				else
+					InputHeaderMembersMapping = soapImporter.ImportMembersMapping ("", RequestNamespace, members, false, false);
+				
+				requestHeadersSerializerId = parent.RegisterSerializer (InputHeaderMembersMapping);
+			}
+			
+			if (outHeaderList.Count > 0 || (unknownHeaderDirections & SoapHeaderDirection.Out) != 0) {
+				OutHeaders = (HeaderInfo[]) outHeaderList.ToArray (typeof(HeaderInfo));
+				XmlReflectionMember[] members = BuildHeadersReflectionMembers (OutHeaders);
+				
+				if (Use == SoapBindingUse.Literal)
+					OutputHeaderMembersMapping = xmlImporter.ImportMembersMapping ("", RequestNamespace, members, false);
+				else
+					OutputHeaderMembersMapping = soapImporter.ImportMembersMapping ("", RequestNamespace, members, false, false);
+				
+				responseHeadersSerializerId = parent.RegisterSerializer (OutputHeaderMembersMapping);
+			}
+			
+			if (faultHeaderList.Count > 0 || (unknownHeaderDirections & SoapHeaderDirection.Fault) != 0) {
+				FaultHeaders = (HeaderInfo[]) faultHeaderList.ToArray (typeof(HeaderInfo));
+				XmlReflectionMember[] members = BuildHeadersReflectionMembers (FaultHeaders);
+				
+				if (Use == SoapBindingUse.Literal)
+					FaultHeaderMembersMapping = xmlImporter.ImportMembersMapping ("", RequestNamespace, members, false);
+				else
+					FaultHeaderMembersMapping = soapImporter.ImportMembersMapping ("", RequestNamespace, members, false, false);
+				
+				faultHeadersSerializerId = parent.RegisterSerializer (FaultHeaderMembersMapping);
+			}
+			
 			SoapExtensions = SoapExtension.GetMethodExtensions (source);
 		}
 
@@ -268,11 +341,89 @@ namespace System.Web.Services.Protocols {
 			return out_members;
 		}
 
+		XmlReflectionMember [] BuildHeadersReflectionMembers (HeaderInfo[] headers)
+		{
+			XmlReflectionMember [] mems = new XmlReflectionMember [headers.Length];
+
+			for (int n=0; n<headers.Length; n++)
+			{
+				HeaderInfo header = headers [n];
+				
+				XmlReflectionMember m = new XmlReflectionMember ();
+				m.IsReturnValue = false;
+				m.MemberName = header.HeaderType.Name;
+				m.MemberType = header.HeaderType;
+
+				// MS.NET reflects header classes in a weird way. The root element
+				// name is the CLR class name unless it is specified in an XmlRootAttribute.
+				// The usual is to use the xml type name by default, but not in this case.
+				
+				XmlAttributes ats = new XmlAttributes (header.HeaderType);
+				if (ats.XmlRoot != null) {
+					XmlElementAttribute xe = new XmlElementAttribute ();
+					xe.ElementName = ats.XmlRoot.ElementName;
+					xe.Namespace = ats.XmlRoot.Namespace;
+					m.XmlAttributes = new XmlAttributes ();
+					m.XmlAttributes.XmlElements.Add (xe);
+				}
+				
+				mems [n] = m;
+			}
+			return mems;
+		}
+
 		public HeaderInfo GetHeaderInfo (Type headerType)
 		{
 			foreach (HeaderInfo headerInfo in Headers)
 				if (headerInfo.HeaderType == headerType) return headerInfo;
 			return null;
+		}
+		
+		public XmlSerializer GetBodySerializer (SoapHeaderDirection dir)
+		{
+			switch (dir) {
+				case SoapHeaderDirection.In: return RequestSerializer;
+				case SoapHeaderDirection.Out: return ResponseSerializer;
+				case SoapHeaderDirection.Fault: return Fault.Serializer;
+				default: return null;
+			}
+		}
+		
+		public XmlSerializer GetHeaderSerializer (SoapHeaderDirection dir)
+		{
+			switch (dir) {
+				case SoapHeaderDirection.In: return RequestHeadersSerializer;
+				case SoapHeaderDirection.Out: return ResponseHeadersSerializer;
+				case SoapHeaderDirection.Fault: return FaultHeadersSerializer;
+				default: return null;
+			}
+		}
+		
+		HeaderInfo[] GetHeaders (SoapHeaderDirection dir)
+		{
+			switch (dir) {
+				case SoapHeaderDirection.In: return InHeaders;
+				case SoapHeaderDirection.Out: return OutHeaders;
+				case SoapHeaderDirection.Fault: return FaultHeaders;
+				default: return null;
+			}
+		}
+		
+		public object[] GetHeaderValueArray (SoapHeaderDirection dir, SoapHeaderCollection headers)
+		{
+			HeaderInfo[] headerInfos = GetHeaders (dir);
+			if (headerInfos == null) return null;
+
+			object[] hs = new object [headerInfos.Length];
+			
+			for (int n=0; n<headers.Count; n++) {
+				SoapHeader h = headers[n];
+				Type t = h.GetType();
+				for (int i=0; i<headerInfos.Length; i++)
+					if (headerInfos [i].HeaderType == t)
+						hs [i] = h;
+			}
+			return hs;
 		}
 	}
 
@@ -443,66 +594,6 @@ namespace System.Web.Services.Protocols {
 			methods_byaction [res.Action] = res;
 			return res;
 		}
-		
-		internal void RegisterHeaderType (Type type, string serviceNamespace, SoapBindingUse use)
-		{
-			Hashtable serializers = header_serializers [(int)use];
-			if (serializers == null) {
-				serializers = new Hashtable ();
-				header_serializers [(int)use] = serializers;
-				header_serializers_byname [(int)use] = new Hashtable ();
-			}
-			
-			if (serializers.ContainsKey (type)) 
-				return;
-
-			XmlTypeMapping tm;
-			if (use == SoapBindingUse.Literal) {
-				XmlReflectionImporter ri = new XmlReflectionImporter ();
-				
-				// MS.NET reflects header classes in a weird way. The root element
-				// name is the CLR class name unless it is specified in an XmlRootAttribute.
-				// The usual is to use the xml type name by default, but not in this case.
-				
-				XmlRootAttribute root;
-				XmlAttributes ats = new XmlAttributes (type);
-				if (ats.XmlRoot != null) root = ats.XmlRoot;
-				else root = new XmlRootAttribute (type.Name);
-				
-				if (root.Namespace == null) root.Namespace = LogicalType.GetWebServiceLiteralNamespace (serviceNamespace);
-				if (root.ElementName == null) root.ElementName = type.Name;
-				
-				tm = ri.ImportTypeMapping (type, root);
-			}
-			else {
-				SoapReflectionImporter ri = new SoapReflectionImporter ();
-				tm = ri.ImportTypeMapping (type, LogicalType.GetWebServiceEncodedNamespace (serviceNamespace));
-			}
-			
-			int sid = RegisterSerializer (tm);
-
-			serializers [type] = sid;
-			header_serializers_byname [(int)use] [new XmlQualifiedName (tm.ElementName, tm.Namespace)] = sid;
-		}
-
-		internal XmlSerializer GetHeaderSerializer (Type type, SoapBindingUse use)
-		{
-			Hashtable table = header_serializers [(int)use];
-			if (table == null) return null;
-				
-			return GetSerializer ((int) table [type]);
-		}
-	
-		internal XmlSerializer GetHeaderSerializer (XmlQualifiedName qname, SoapBindingUse use)
-		{
-			Hashtable table = header_serializers_byname [(int)use];
-			if (table == null) return null;
-			
-			object serId = table [qname];
-			if (serId == null) return null;
-				
-			return GetSerializer ((int) serId);
-		}		
 		
 		public SoapMethodStubInfo GetMethodForSoapAction (string name)
 		{

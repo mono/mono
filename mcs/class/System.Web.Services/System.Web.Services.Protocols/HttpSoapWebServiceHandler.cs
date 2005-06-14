@@ -83,14 +83,27 @@ namespace System.Web.Services.Protocols
 			{
 				if (requestMessage == null)
 					requestMessage = DeserializeRequest (context.Request);
-					
-				responseMessage = Invoke (context, requestMessage);
-				SerializeResponse (context.Response, responseMessage);
+				
+				if (methodInfo != null && methodInfo.OneWay) {
+					context.Response.BufferOutput = false;
+					context.Response.StatusCode = 202;
+					context.Response.Flush ();
+					context.Response.Close ();
+					Invoke (context, requestMessage);
+				} else {
+					responseMessage = Invoke (context, requestMessage);
+					SerializeResponse (context.Response, responseMessage);
+				}
 			}
 			catch (Exception ex)
 			{
-				SerializeFault (context, requestMessage, ex);
-				return;
+				if (methodInfo != null && methodInfo.OneWay) {
+					context.Response.StatusCode = 500;
+					context.Response.Flush ();
+					context.Response.Close ();
+				} else {
+					SerializeFault (context, requestMessage, ex);
+				}
 			}
 		}
 
@@ -189,7 +202,7 @@ namespace System.Web.Services.Protocols
 				{
 					object content;
 					SoapHeaderCollection headers;
-					WebServiceHelper.ReadSoapMessage (xmlReader, _typeStubInfo, methodInfo.Use, methodInfo.RequestSerializer, out content, out headers);
+					WebServiceHelper.ReadSoapMessage (xmlReader, methodInfo, SoapHeaderDirection.In, out content, out headers);
 					message.InParameters = (object []) content;
 					message.SetHeaders (headers);
 				}
@@ -271,9 +284,11 @@ namespace System.Web.Services.Protocols
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (outStream);
 				
 				if (message.Exception == null)
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, methodInfo.Use, methodInfo.ResponseSerializer, message.OutParameters, message.Headers);
+					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers);
+				else if (methodInfo != null)
+					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers);
 				else
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, SoapBindingUse.Literal, Fault.Serializer, new Fault (message.Exception), null);
+					WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null);
 
 				if (bufferResponse)
 				{
