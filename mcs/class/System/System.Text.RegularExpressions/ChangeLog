@@ -1,5 +1,7 @@
 2005-06-14  Raja R Harinath  <harinath@gmail.com>
 
+	* parser.cs (Parser.ConsumeWhitespace): Add bounds check.
+
 	Fix #74753.
 	* Match.cs (Match) [zero-argument variant]: Make private.
 	* GroupCollection (Item) [string variant]: Don't look for the

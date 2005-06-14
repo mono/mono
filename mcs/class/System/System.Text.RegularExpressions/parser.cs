@@ -1033,10 +1033,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		private void ConsumeWhitespace (bool ignore) {
-			while (true) {
-				if (ptr >= pattern.Length)
-					break;
-			
+			while (ptr < pattern.Length) {
 				if (pattern[ptr] == '(') {
 					if (ptr + 3 >= pattern.Length)
 						return;
@@ -1045,7 +1042,7 @@ namespace System.Text.RegularExpressions.Syntax {
 						return;
 
 					ptr += 3;
-					while (pattern[ptr ++] != ')')
+					while (ptr < pattern.Length && pattern[ptr ++] != ')')
 						/* ignore */ ;
 				}
 				else if (ignore && pattern[ptr] == '#') {
