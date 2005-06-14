@@ -68,7 +68,7 @@ namespace System.Net.Configuration
 			set { base [alwaysUseCompletionPortsForConnect] = value; }
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

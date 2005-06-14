@@ -56,7 +56,7 @@ namespace System.Net.Configuration
 
 		#region Properties
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
@@ -69,13 +69,13 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected internal override object GetRuntimeObject ()
+		protected override object GetRuntimeObject ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal override void InitializeDefault ()
+		protected override void InitializeDefault ()
 		{
 			throw new NotImplementedException ();
 		}

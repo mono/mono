@@ -70,7 +70,7 @@ namespace System.Net.Configuration
 			get { return (Ipv6Element) base [ipv6]; }
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
@@ -87,7 +87,7 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected internal override object GetRuntimeObject ()
+		protected override object GetRuntimeObject ()
 		{
 			throw new NotImplementedException ();
 		}

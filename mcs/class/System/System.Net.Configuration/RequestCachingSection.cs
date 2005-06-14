@@ -85,7 +85,7 @@ namespace System.Net.Configuration
 			set { base [isPrivateCache] = value; }
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
@@ -99,7 +99,7 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected internal override object GetRuntimeObject ()
+		protected override object GetRuntimeObject ()
 		{
 			throw new NotImplementedException ();
 		}

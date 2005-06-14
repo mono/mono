@@ -68,7 +68,7 @@ namespace System.Net.Configuration
 			get { return (ModuleElement) base [module]; }
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
@@ -81,7 +81,7 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected internal override object GetRuntimeObject ()
+		protected override object GetRuntimeObject ()
 		{
 			throw new NotImplementedException ();
 		}

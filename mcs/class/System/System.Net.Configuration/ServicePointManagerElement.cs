@@ -92,7 +92,7 @@ namespace System.Net.Configuration
 			set { base [expect100Continue] = value; }
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

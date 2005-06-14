@@ -56,7 +56,7 @@ namespace System.Net.Configuration
 
 		#region Properties
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

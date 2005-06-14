@@ -85,7 +85,7 @@ namespace System.Net.Configuration
 			set { base [policyLevel] = value; }
 		}
 
-		protected internal override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 
@@ -94,13 +94,13 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected internal override void Deserialize (XmlReader reader, bool serializeCollectionKey)
+		protected override void Deserialize (XmlReader reader, bool serializeCollectionKey)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal override void Reset (ConfigurationElement parentElement, object context)
+		protected override void Reset (ConfigurationElement parentElement, object context)
 		{
 			throw new NotImplementedException ();
 		}

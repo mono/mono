@@ -1,3 +1,16 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SettingsSection.cs, UriParserElement.cs, MailSettingsSection.cs,
+	  RequestCachingSection.cs, SmtpElement.cs, AuthenticationModulesSection.cs,
+	  Ipv6Element.cs, ModuleElement.cs, AuthenticationModuleElement.cs,
+	  UriParserSection.cs, SocketElement.cs, ConnectionManagementElement.cs,
+	  WebRequestModuleElement.cs, DefaultProxySection.cs, BypassElement.cs,
+	  ServicePointManagerElement.cs, ConnectionManagementSection.cs,
+	  ProxyElement.cs, HttpCachePolicyElement.cs, HttpWebRequestElement.cs,
+	  WebRequestModulesSection.cs:
+	  Changed properties from "internal protected" to "protected", since
+	  configuration classes have been moved to a new assembly.
+
 2004-09-10  Tim Coleman <tim@timcoleman.com>
 	* AuthenticationModuleElement.cs AuthenticationModuleElementCollection.cs
 	* AuthenticationModulesSection.cs BypassElement.cs BypassElementCollection.cs
