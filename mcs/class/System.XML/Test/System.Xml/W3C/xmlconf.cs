@@ -240,6 +240,9 @@ introduced new bugs! Before you commit, consider one of the following:
 
 			Uri baseUri = new Uri (test.BaseURI);
 			Uri testUri = new Uri (baseUri, test.GetAttribute ("URI"));
+
+			totalListWriter.Write (testUri.ToString () + "\t");
+
 			bool validatingPassed;
 			bool nonValidatingPassed;
 			try {

@@ -1,3 +1,8 @@
+2005-06-14  Andrew Skiba  <andrews@mainsoft.com>
+
+	* fixme.lst : remove testcases fixed by r45935
+	* xmlconf.cs : one-liner for total.lst output
+
 2005-06-12  Andrew Skiba  <andrews@mainsoft.com>
 
 	* xmlconf.cs : make class IDisposable; add another output file for total report
