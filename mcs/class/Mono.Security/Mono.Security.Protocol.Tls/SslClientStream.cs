@@ -808,7 +808,20 @@ namespace Mono.Security.Protocol.Tls
 				}
 
 				// Send client certificate if requested
-				if (this.context.ServerSettings.CertificateRequest)
+				// even if the server ask for it it _may_ still be optional
+				bool clientCertificate = this.context.ServerSettings.CertificateRequest;
+
+				// NOTE: sadly SSL3 and TLS1 differs in how they handle this and
+				// the current design doesn't allow a very cute way to handle 
+				// SSL3 alert warning for NoCertificate (41).
+				if (this.context.SecurityProtocol == SecurityProtocolType.Ssl3)
+				{
+					clientCertificate = ((this.context.ClientSettings.Certificates != null) &&
+						(this.context.ClientSettings.Certificates.Count > 0));
+					// this works well with OpenSSL (but only for SSL3)
+				}
+
+				if (clientCertificate)
 				{
 					this.protocol.SendRecord(HandshakeType.Certificate);
 				}
@@ -819,8 +832,8 @@ namespace Mono.Security.Protocol.Tls
 				// Now initialize session cipher with the generated keys
 				this.context.Cipher.InitializeCipher();
 
-				// Send certificate verify if requested
-				if (this.context.ServerSettings.CertificateRequest)
+				// Send certificate verify if requested (optional)
+				if (clientCertificate && (this.context.ClientSettings.ClientCertificate != null))
 				{
 					this.protocol.SendRecord(HandshakeType.CertificateVerify);
 				}

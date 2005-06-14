@@ -1,3 +1,9 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Add support for _optional_ mutual authentication.
+	SSL3 and TLS1 deals differently with this. SSL3 tested with OpenSSL,
+	TSL1 tested with OpenSSL and LDAPS/AD.
+
 2005-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Alert.cs: Add NoCertificate (41) which _should_ be used in SSL3
