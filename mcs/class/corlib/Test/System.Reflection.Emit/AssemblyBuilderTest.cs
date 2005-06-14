@@ -553,54 +553,77 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[Category ("NotWorking")] // bug #75246
 	public void AssemblyName_PublicKey ()
 	{
 		AssemblyName assemblyName = new AssemblyName ();
-		assemblyName.Name = "AssemblyNameTest";
+		assemblyName.Name = "AssemblyNameTest_PublicKey";
 		assemblyName.Version = new Version ("1.2.3.4");
 		assemblyName.KeyPair = new StrongNameKeyPair (strongName);
 
-		Assert.IsNull (assemblyName.CultureInfo, "#1");
-		Assert.AreEqual ("AssemblyNameTest, Version=1.2.3.4", assemblyName.FullName, "#2");
+		Assert.AreEqual ("AssemblyNameTest_PublicKey, Version=1.2.3.4", assemblyName.FullName, "#1");
 
-		const string fullName = "AssemblyNameTest, Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8";
+		const string fullName = "AssemblyNameTest_PublicKey, Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8";
 
 		AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
 			assemblyName, AssemblyBuilderAccess.Save, tempDir);
 
 		AssemblyName abName = ab.GetName ();
-		Assert.IsNotNull (abName.GetPublicKeyToken (), "#3");
-		Assert.IsTrue (abName.GetPublicKeyToken ().Length > 0, "#4");
-		Assert.IsNotNull (abName.GetPublicKey () != null, "#5");
-		Assert.IsTrue (abName.GetPublicKey ().Length > 0, "#6");
-		Assert.IsNotNull (abName.CultureInfo != null, "#7");
+		Assert.IsNotNull (abName.GetPublicKeyToken (), "#2");
+		Assert.IsTrue (abName.GetPublicKeyToken ().Length > 0, "#3");
+		Assert.IsNotNull (abName.GetPublicKey () != null, "#4");
+		Assert.IsTrue (abName.GetPublicKey ().Length > 0, "#5");
+
+		ab.Save ("AssemblyNameTest_PublicKey.dll");
+		AssemblyName bakedName = AssemblyName.GetAssemblyName (Path.Combine(
+			tempDir, "AssemblyNameTest_PublicKey.dll"));
+
+		Assert.IsNotNull (bakedName.GetPublicKeyToken (), "#6");
+		Assert.IsNotNull (bakedName.GetPublicKey (), "#7");
+		Assert.AreEqual (fullName, bakedName.FullName, "#8");
+	}
+
+	[Test]
+	[Category ("NotWorking")] 
+	public void AssemblyName_MoreCultureInfo ()
+	{
+		AssemblyName assemblyName = new AssemblyName ();
+		assemblyName.Name = "AssemblyNameTest_MoreCultureInfo";
+		assemblyName.Version = new Version ("1.2.3.4");
+		assemblyName.KeyPair = new StrongNameKeyPair (strongName);
+
+		Assert.IsNull (assemblyName.CultureInfo, "#1");
+		Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4", assemblyName.FullName, "#2");
+
+		const string fullName = "AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8";
+
+		AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+			assemblyName, AssemblyBuilderAccess.Save, tempDir);
+
+		AssemblyName abName = ab.GetName ();
+		Assert.IsNotNull (abName.CultureInfo != null, "#3");
 #if NET_2_0
-		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#8");
-		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#9");
-		Assert.AreEqual (fullName, abName.FullName, "#10");
+		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#4");
+		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#5");
+		Assert.AreEqual (fullName, abName.FullName, "#6");
 #else
-		Assert.AreEqual (CultureInfo.InvariantCulture, abName.CultureInfo, "#11");
-		Assert.AreEqual ("AssemblyNameTest, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#12");
+		Assert.AreEqual (CultureInfo.InvariantCulture, abName.CultureInfo, "#7");
+		Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#8");
 #endif
 
-		ab.Save ("AssemblyNameTest.dll");
+		ab.Save ("AssemblyNameTest_MoreCultureInfo.dll");
 
 		AssemblyName bakedName = AssemblyName.GetAssemblyName (Path.Combine(
-			tempDir, "AssemblyNameTest.dll"));
+			tempDir, "AssemblyNameTest_MoreCultureInfo.dll"));
 
-		Assert.IsNotNull (bakedName.GetPublicKeyToken (), "#13");
-		Assert.IsNotNull (bakedName.GetPublicKey (), "#14");
-		Assert.IsNotNull (bakedName.CultureInfo, "#15");
+		Assert.IsNotNull (bakedName.CultureInfo, "#9");
 
 #if NET_2_0
-		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#16");
-		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#17");
+		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#10");
+		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#11");
 #else
-		Assert.AreEqual (CultureInfo.InvariantCulture, bakedName.CultureInfo, "#18");
+		Assert.AreEqual (CultureInfo.InvariantCulture, bakedName.CultureInfo, "#12");
 #endif
-
-		Assert.AreEqual (fullName, bakedName.FullName, "#19");
+		Assert.AreEqual (fullName, bakedName.FullName, "#13");
 	}
 
 	[Test]
