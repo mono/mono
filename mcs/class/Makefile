@@ -9,6 +9,7 @@ bootstrap_dirs := \
 	System.XML				\
 	Mono.Security				\
 	System.Security				\
+	System.Configuration		\
 	System					\
 	$(MONO_SYMBOLWRITER)
 
@@ -29,6 +30,7 @@ SUBDIRS = \
 	System.XML			\
 	Mono.Security			\
 	System.Security			\
+	System.Configuration	\
 	System				\
 	I18N				\
 	System.Drawing			\
