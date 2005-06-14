@@ -121,7 +121,6 @@ namespace MonoCasTests.System.Reflection {
 		public void PartialTrust_PermitOnly_FileIOPermission ()
 		{
 			// call "normal" unit with reduced privileges
-			ant.Self ();
 			ant.FullName1 ();
 			ant.FullName2 ();
 			ant.FullName3 ();

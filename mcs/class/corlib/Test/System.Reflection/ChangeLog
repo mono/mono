@@ -1,3 +1,8 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyNameCas.cs: Removed execution of AssemblyNameTest.Self as it
+	is now NotWorking.
+
 2005-06-13  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* AssemblyNameTest.cs: "Fixed" tests so they execute without errors on
