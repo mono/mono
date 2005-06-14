@@ -27,8 +27,10 @@ ifeq (2.0, $(FRAMEWORK_VERSION))
 # Happens on net_2_0_bootstrap and net_2_0 profiles
 SECURITY_DEP := System.Security.dll
 SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
-CYCLIC_DEPS += $(SECURITY_DEP)
-CYCLIC_DEP_FILES += $(SECURITY_DEP_FILE)
+CONFIGURATION_DEP := System.Configuration.dll
+CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
+CYCLIC_DEPS += $(SECURITY_DEP) $(CONFIGURATION_DEP)
+CYCLIC_DEP_FILES += $(SECURITY_DEP_FILE) $(CONFIGURATION_DEP_FILE)
 endif
 
 EXTRA_DISTFILES = \
@@ -82,6 +84,11 @@ endif
 ifdef SECURITY_DEP_FILE
 LIB_MCS_FLAGS += /define:SECURITY_DEP /r:$(SECURITY_DEP)
 $(the_lib): $(SECURITY_DEP_FILE)
+endif
+
+ifdef CONFIGURATION_DEP_FILE
+LIB_MCS_FLAGS += /define:CONFIGURATION_DEP /r:$(CONFIGURATION_DEP)
+$(the_lib): $(CONFIGURATION_DEP_FILE)
 endif
 
 $(test_lib): $(test_lib).config $(TEST_RESOURCES)

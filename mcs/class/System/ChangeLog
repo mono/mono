@@ -1,3 +1,10 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.dll.sources: Removed some files that have been moved to the
+	new System.Configuration assembly.
+	* Makefile: Handle the cyclic dependency with the new
+	System.Configuration assembly.
+
 2005-05-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CSharpCodeProviderTest.cs
