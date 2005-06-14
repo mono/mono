@@ -21,6 +21,19 @@ SSL3 and TLS1 protocols. A script is provided to use OpenSSL as a server.
 % mono mutual.exe localhost SSL
 
 
+5. Testing TLS1 _optional_ mutual authentication [**]
+
+% mono mutual.exe localhost TLS
+
+
+6. Testing SSL3 _optional_ mutual authentication [**]
+
+% mono mutual.exe localhost SSL
+
+
 
 [*] OpenSSL (if used) requires a mutual authentication. So test #3 and #4 are
 expected to fail.
+
+[**] Test 5 and 6 must be executed with the serveropt.sh script running. Both
+tests ARE NOT expected to fail.

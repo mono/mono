@@ -1,3 +1,9 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* README: Add information about optional mutual authentication.
+	* serveropt.sh: New. Server script to use OpenSSL to accept (but not
+	require) client certificates.
+
 2005-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChangeLog: New. Track changes for the mutual tool;
