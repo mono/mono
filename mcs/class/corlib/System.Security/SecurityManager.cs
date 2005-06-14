@@ -65,6 +65,7 @@ namespace System.Security {
 		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
 		private static IPermission _unmanagedCode;
 		private static Hashtable _declsecCache;
+		private static PolicyLevel _level;
 
 		static SecurityManager () 
 		{
@@ -216,7 +217,6 @@ namespace System.Security {
 			try {
 				pl = new PolicyLevel (type.ToString (), type);
 				pl.LoadFromFile (path);
-				pl.Initialize ();
 			}
 			catch (Exception e) {
 				throw new ArgumentException (Locale.GetText ("Invalid policy XML"), e);
@@ -264,6 +264,20 @@ namespace System.Security {
 			}
 
 			ResolveIdentityPermissions (ps, evidence);
+
+			// do we have the right to execute ?
+			if (CheckExecutionRights) {
+				// unless we have "Full Trust"...
+				if (!ps.IsUnrestricted ()) {
+					// ... we need to find a SecurityPermission
+					IPermission security = ps.GetPermission (typeof (SecurityPermission));
+					if (!_execution.IsSubsetOf (security)) {
+						throw new PolicyException (Locale.GetText (
+							"Policy doesn't grant the right to execute to the assembly."));
+					}
+				}
+			}
+
 			return ps;
 		}
 
@@ -317,18 +331,6 @@ namespace System.Security {
 				throw new PolicyException (Locale.GetText (
 					"Policy doesn't grant the minimal permissions required to execute the assembly."));
 			}
-			// do we have the right to execute ?
-			if (CheckExecutionRights) {
-				// unless we have "Full Trust"...
-				if (!resolved.IsUnrestricted ()) {
-					// ... we need to find a SecurityPermission
-					IPermission security = resolved.GetPermission (typeof (SecurityPermission));
-					if (!_execution.IsSubsetOf (security)) {
-						throw new PolicyException (Locale.GetText (
-							"Policy doesn't grant the right to execute to the assembly."));
-					}
-				}
-			}
 
 			denied = denyPset;
 			return resolved;
@@ -371,12 +373,9 @@ namespace System.Security {
 
 		private static IEnumerator Hierarchy {
 			get {
-				// double-lock pattern
-				if (_hierarchy == null) {
-					lock (_lockObject) {
-						if (_hierarchy == null)
-							InitializePolicyHierarchy ();
-					}
+				lock (_lockObject) {
+					if (_hierarchy == null)
+						InitializePolicyHierarchy ();
 				}
 				return _hierarchy.GetEnumerator ();
 			}
@@ -389,25 +388,24 @@ namespace System.Security {
 			string userPolicyPath = Path.Combine (Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData), "mono");
 
 			PolicyLevel enterprise = new PolicyLevel ("Enterprise", PolicyLevelType.Enterprise);
-			PolicyLevel machine = new PolicyLevel ("Machine", PolicyLevelType.Machine);
-			PolicyLevel user = new PolicyLevel ("User", PolicyLevelType.User);
-
+			_level = enterprise;
 			enterprise.LoadFromFile (Path.Combine (machinePolicyPath, "enterprisesec.config"));
+
+			PolicyLevel machine = new PolicyLevel ("Machine", PolicyLevelType.Machine);
+			_level = machine;
 			machine.LoadFromFile (Path.Combine (machinePolicyPath, "security.config"));
+
+			PolicyLevel user = new PolicyLevel ("User", PolicyLevelType.User);
+			_level = user;
 			user.LoadFromFile (Path.Combine (userPolicyPath, "security.config"));
 
 			ArrayList al = new ArrayList ();
 			al.Add (enterprise);
 			al.Add (machine);
 			al.Add (user);
-			// setting _hierarchy here allows for loading assemblies containing permissions
-			// FIXME: we still need to enforce the FullTrust list
-			_hierarchy = ArrayList.Synchronized (al);
 
-			// part II - creating the permission sets
-			enterprise.Initialize ();
-			machine.Initialize ();
-			user.Initialize ();
+			_hierarchy = ArrayList.Synchronized (al);
+			_level = null;
 		}
 
 		internal static bool ResolvePolicyLevel (ref PermissionSet ps, PolicyLevel pl, Evidence evidence)
@@ -443,6 +441,11 @@ namespace System.Security {
 					ps.AddPermission (p);
 				}
 			}
+		}
+
+		internal static PolicyLevel ResolvingPolicyLevel {
+			get { return _level; }
+			set { _level = value; }
 		}
 
 		internal static PermissionSet Decode (IntPtr permissions, int length)
@@ -542,12 +545,9 @@ namespace System.Security {
 
 		private static IPermission UnmanagedCode {
 			get {
-				// double-lock pattern
-				if (_unmanagedCode == null) {
-					lock (_lockObject) {
-						if (_unmanagedCode == null)
-							_unmanagedCode = new SecurityPermission (SecurityPermissionFlag.UnmanagedCode);
-					}
+				lock (_lockObject) {
+					if (_unmanagedCode == null)
+						_unmanagedCode = new SecurityPermission (SecurityPermissionFlag.UnmanagedCode);
 				}
 				return _unmanagedCode;
 			}

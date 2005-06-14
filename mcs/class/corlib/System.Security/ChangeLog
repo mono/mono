@@ -1,3 +1,11 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Added ResolvingPolicyLevel property to enable
+	support for FullTrustAssemblies during policy resolution. Reworked
+	(simplified) locking. Moved check for CheckExecutionRights to the 
+	"right" place.
+	* PermissionSet.cs: Added shortcut in GetPermission(Type).
+
 2005-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AllowPartiallyTrustedCallersAttribute.cs, HostSecurityManagerFlags.cs

@@ -449,8 +449,11 @@ namespace System.Security {
 
 		public virtual IPermission GetPermission (Type permClass) 
 		{
+			if ((permClass == null) || (list.Count == 0))
+				return null;
+
 			foreach (object o in list) {
-				if (o.GetType ().Equals (permClass))
+				if ((o != null) && o.GetType ().Equals (permClass))
 					return (IPermission) o;
 			}
 			// it's normal to return null for unrestricted sets
