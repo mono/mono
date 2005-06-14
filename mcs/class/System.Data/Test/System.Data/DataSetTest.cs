@@ -43,6 +43,8 @@ using System.Globalization;
 using System.Threading;
 using System.Text;
 
+using AssertType = NUnit.Framework.Assert;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -1992,17 +1994,17 @@ namespace MonoTests.System.Data
 			child.Rows [1]["parent"] = 4;
 			DataSet changes = ds.GetChanges ();
 			DataRow row = changes.Tables ["parent"].Rows[0];
-			Assert.AreEqual ((int) parent.Rows [3][0], (int) row [0], "#RT1");
-			Assert.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT2 only get parent row with current version");
+			AssertType.AreEqual ((int) parent.Rows [3][0], (int) row [0], "#RT1");
+			AssertType.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT2 only get parent row with current version");
 			ds.RejectChanges ();
 
 			// delete a child row and get changes.
 			child.Rows [0].Delete ();
 			changes = ds.GetChanges ();
 			
-			Assert.AreEqual (changes.Tables.Count, 2, "#RT3 Should import parent table as well");
-			Assert.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT4 only get parent row with original version");
-			Assert.AreEqual (1, (int) changes.Tables ["parent"].Rows [0][0], "#RT5 parent row based on original version");
+			AssertType.AreEqual (changes.Tables.Count, 2, "#RT3 Should import parent table as well");
+			AssertType.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT4 only get parent row with original version");
+			AssertType.AreEqual (1, (int) changes.Tables ["parent"].Rows [0][0], "#RT5 parent row based on original version");
 		}
 		#endregion // DataSet.GetChanges Tests
 

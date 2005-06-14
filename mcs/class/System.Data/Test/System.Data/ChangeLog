@@ -1,3 +1,7 @@
+2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetTest.cs : quick build fix.
+
 2005-06-14  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataSetTest.cs: Added test case for GetChanges method.
