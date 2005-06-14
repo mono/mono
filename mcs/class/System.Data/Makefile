@@ -9,6 +9,10 @@ system = System.dll
 else
 system = $(topdir)/class/lib/$(PROFILE)/System.dll
 endif
+	
+ifeq (net_2_0, $(PROFILE))
+OTHER_LIB_MCS_FLAGS = /r:System.Configuration.dll
+endif
 
 LIBRARY = System.Data.dll
 LIB_MCS_FLAGS = \
@@ -17,7 +21,8 @@ LIB_MCS_FLAGS = \
 	/r:$(system)			 	\
 	/r:System.Xml.dll 			\
 	/r:System.EnterpriseServices.dll 	\
-	/r:Mono.Data.Tds.dll
+	/r:Mono.Data.Tds.dll \
+	$(OTHER_LIB_MCS_FLAGS)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
 

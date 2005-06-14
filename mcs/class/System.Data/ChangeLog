@@ -1,3 +1,7 @@
+2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Added reference to System.Configuration.
+
 2005-05-31 Boris Kirzner <borisk@mainsoft.com>
 		* System.Data_test.dll.sources : added System.Data.Tests.Mainsoft/System.Data/RowNotInTableException/RowNotInTableException_Generate.cs
 		
