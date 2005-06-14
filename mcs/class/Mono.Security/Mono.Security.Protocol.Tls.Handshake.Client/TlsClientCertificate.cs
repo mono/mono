@@ -31,11 +31,29 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientCertificate : HandshakeMessage
 	{
+		private bool clientCertSelected;
+		private X509Certificate clientCert;
+
 		#region Constructors
 
 		public TlsClientCertificate(Context context) 
 			: base(context, HandshakeType.Certificate)
 		{
+		}
+
+		#endregion
+
+		#region Properties
+
+		public X509Certificate ClientCertificate {
+			get {
+				if (!clientCertSelected)
+				{
+					GetClientCertificate ();
+					clientCertSelected = true;
+				}
+				return clientCert;
+			}
 		}
 
 		#endregion
@@ -52,49 +70,63 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Protected Methods
 
-		protected override void ProcessAsSsl3()
-		{
-			this.ProcessAsTls1();
-		}
-
-		protected override void ProcessAsTls1()
+		private void GetClientCertificate ()
 		{
 #warning "Client certificate selection is unfinished"
 			ClientContext context = (ClientContext)this.Context;
-			string msg = "Client certificate requested by the server and no client certificate specified.";
 
-			if (context.ClientSettings.Certificates == null ||
-				context.ClientSettings.Certificates.Count == 0)
+			// note: the server may ask for mutual authentication 
+			// but may not require it (i.e. it can be optional).
+			if (context.ClientSettings.Certificates != null &&
+				context.ClientSettings.Certificates.Count > 0)
 			{
-				throw new TlsException(AlertDescription.UserCancelled, msg);
-			}
-			
-			// Select a valid certificate
-			X509Certificate clientCert = this.Context.ClientSettings.Certificates[0];
-
-			clientCert = context.SslStream.RaiseClientCertificateSelection(
-				this.Context.ClientSettings.Certificates,
-				new X509Certificate(this.Context.ServerSettings.Certificates[0].RawData),
-				this.Context.ClientSettings.TargetHost,
-				null);
-
-			if (clientCert == null)
-			{
-				throw new TlsException(AlertDescription.UserCancelled, msg);
+				clientCert = context.SslStream.RaiseClientCertificateSelection(
+					this.Context.ClientSettings.Certificates,
+					new X509Certificate(this.Context.ServerSettings.Certificates[0].RawData),
+					this.Context.ClientSettings.TargetHost,
+					null);
+				// Note: the application code can raise it's 
+				// own exception to stop the connection too.
 			}
 
 			// Update the selected client certificate
 			context.ClientSettings.ClientCertificate = clientCert;
+		}
 
-			// Write client certificates information to a stream
-			TlsStream stream = new TlsStream();
-
-			stream.WriteInt24(clientCert.GetRawCertData().Length);
-			stream.Write(clientCert.GetRawCertData());
-
+		private void Write (X509Certificate clientCert)
+		{
+			byte[] rawdata = clientCert.GetRawCertData();
 			// Compose the message
-			this.WriteInt24((int)stream.Length);
-			this.Write(stream.ToArray());
+			this.WriteInt24(rawdata.Length + 3);
+			this.WriteInt24(rawdata.Length);
+			this.Write(rawdata);
+		}
+
+		protected override void ProcessAsSsl3()
+		{
+			if (this.ClientCertificate != null)
+			{
+				Write (this.ClientCertificate);
+			}
+			else
+			{
+				// an Alert warning for NoCertificate (41) 
+				// should be sent from here - but that would
+				// break the current message handling
+			}
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			if (this.ClientCertificate != null)
+			{
+				Write (this.ClientCertificate);
+			}
+			else
+			{
+				// return message with empty certificate (see 7.4.6 in RFC2246)
+				this.WriteInt24 (0);
+			}
 		}
 
 		#endregion

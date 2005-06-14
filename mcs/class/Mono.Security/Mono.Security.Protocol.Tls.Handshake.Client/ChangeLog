@@ -1,3 +1,9 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificate.cs: Add support for _optional_ mutual 
+	authentication. SSL3 and TLS1 deals differently with this. SSL3 tested
+	with OpenSSL, TSL1 tested with OpenSSL and LDAPS/AD.
+
 2005-04-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientCertificateVerify.cs: Add missing data length (16 bits - 
