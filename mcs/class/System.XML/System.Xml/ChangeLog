@@ -1,3 +1,8 @@
+2005-06-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : whitespace nodes were incorrectly rejected
+	  inside non-mixed content model.
+
 2005-06-09  Andrew Skiba  <andrews@mainsoft.com>
 
 	* XmlConvert.cs : add TARGET_JVM for roundtrip bug

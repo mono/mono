@@ -578,9 +578,11 @@ namespace Mono.Xml
 			case XmlNodeType.SignificantWhitespace:
 				if (!isText)
 					isSignificantWhitespace = true;
+				isWhitespace = false;
 				dontResetTextType = true;
 				goto case XmlNodeType.Text;
 			case XmlNodeType.Text:
+				bool wasWhitespace = isWhitespace;
 				isText = true;
 				if (!dontResetTextType) {
 					isWhitespace = isSignificantWhitespace = false;
@@ -593,7 +595,7 @@ namespace Mono.Xml
 					elem = dtd.ElementDecls [elementStack.Peek () as string];
 				// Here element should have been already validated, so
 				// if no matching declaration is found, simply ignore.
-				if (elem != null && !elem.IsMixedContent && !elem.IsAny) {
+				if (elem != null && !elem.IsMixedContent && !elem.IsAny && !wasWhitespace) {
 					HandleError (String.Format ("Current element {0} does not allow character data content.", elementStack.Peek () as string),
 						XmlSeverityType.Error);
 					currentAutomata = previousAutomata;
