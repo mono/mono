@@ -70,7 +70,7 @@ endif
 
 catalog-fixed : $(FIXED_CATALOG)
 
-$(FIXED_CATALOG) : $(CATALOG) catalog.sed catalog.diff
+$(FIXED_CATALOG) : $(CATALOG) catalog.sed catalog-fixed.diff
 	sed -f catalog.sed $(CATALOG) > $(FIXED_CATALOG)
 	patch -p0 $(FIXED_CATALOG) < catalog-fixed.diff
 
