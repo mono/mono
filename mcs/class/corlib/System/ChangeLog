@@ -1,3 +1,8 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Char.cs: ToLowerInvariant and ToUpperInvariant are now public in 
+	NET_2_0. Added "new" white char and ComVisible for 2.0.
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Convert.cs: FromBase64String and FromBase64CharArray are now internal

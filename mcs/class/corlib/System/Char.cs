@@ -7,11 +7,7 @@
 //   Jackson Harper (jackson@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,16 +36,20 @@
 // which appears to just be a Convert.ToString(char c) type method. ECMA also
 // doesn't list this class as implementing IFormattable.
 
-using System; 
 using System.Globalization;
 using System.Runtime.CompilerServices;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System
 {
 	[Serializable]
-	public struct Char : IComparable, IConvertible
 #if NET_2_0
-		, IComparable <char>, IEquatable <char>
+	[ComVisible (true)]
+	public struct Char : IComparable, IConvertible, IComparable <char>, IEquatable <char>
+#else
+	public struct Char : IComparable, IConvertible
 #endif
 	{
 		public const char MaxValue = (char) 0xffff;
@@ -457,7 +457,10 @@ namespace System
 				case (char)0x0d:
 				case (char)0x85: // NEL 
 				case (char)0x2028: // Line Separator
-				case (char)0x2029: // Paragraph Separator	
+				case (char)0x2029: // Paragraph Separator
+#if NET_2_0
+				case (char)0x205F: // Medium Mathematical Space
+#endif
 					return true;
 				default:
 					return false;
@@ -493,7 +496,11 @@ namespace System
 			return ToLower (c, CultureInfo.CurrentCulture);
 		}
 
+#if NET_2_0
+		public static char ToLowerInvariant (char c)
+#else
 		internal static char ToLowerInvariant (char c)
+#endif
 		{
 			unsafe {
 				if (c <= ((char)0x24cf))
@@ -519,7 +526,11 @@ namespace System
 			return ToUpper (c, CultureInfo.CurrentCulture);
 		}
 
+#if NET_2_0
+		public static char ToUpperInvariant (char c)
+#else
 		internal static char ToUpperInvariant (char c)
+#endif
 		{
 			unsafe {
 				if (c <= ((char)0x24e9))
