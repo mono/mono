@@ -1,5 +1,5 @@
 ./Assembly/AssemblyInfo.cs
-./Assembly/Locale.cs
+./../../build/common/Locale.cs
 ./Mono.Unix/Catalog.cs
 ./Mono.Unix/CdeclFunction.cs
 ./Mono.Unix/IncludeAttribute.cs

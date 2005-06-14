@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 Mono.Xml/XmlCanonicalizer.cs
 Microsoft.Web.Services/AsyncResult.cs
 Microsoft.Web.Services/ChainStream.cs

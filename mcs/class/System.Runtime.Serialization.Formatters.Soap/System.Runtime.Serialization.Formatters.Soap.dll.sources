@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 System.Runtime.Serialization.Formatters.Soap/SoapWriter.cs
 System.Runtime.Serialization.Formatters.Soap/SoapReader.cs
 System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs

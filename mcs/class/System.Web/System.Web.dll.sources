@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 System.Web.Administration/WebAdminUserControl.cs
 System.Web.Caching/Cache.cs
 System.Web.Caching/CacheDefinitions.cs

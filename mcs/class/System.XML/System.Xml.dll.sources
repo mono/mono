@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 Mono.Xml.Schema/XmlSchemaValidatingReader.cs
 Mono.Xml.Schema/XsdIdentityPath.cs
 Mono.Xml.Schema/XsdIdentityState.cs

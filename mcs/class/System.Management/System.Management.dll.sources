@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 System.Management/AuthenticationLevel.cs
 System.Management/CimType.cs
 System.Management/ComparisonSettings.cs

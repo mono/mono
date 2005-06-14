@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/Registry.cs

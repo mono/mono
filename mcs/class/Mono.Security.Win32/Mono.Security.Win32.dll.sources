@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 Mono.Security.Cryptography/CapiContext.cs
 Mono.Security.Cryptography/CapiHash.cs
 Mono.Security.Cryptography/CapiRandomNumberGenerator.cs

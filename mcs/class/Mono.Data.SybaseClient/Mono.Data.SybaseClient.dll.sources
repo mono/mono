@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 Mono.Data.SybaseClient/SybaseCommand.cs
 Mono.Data.SybaseClient/SybaseCommandBuilder.cs
 Mono.Data.SybaseClient/SybaseConnection.cs

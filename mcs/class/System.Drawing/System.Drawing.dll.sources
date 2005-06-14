@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 System.Drawing/Bitmap.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs

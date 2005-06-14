@@ -31,17 +31,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 internal sealed class Locale {
 
 	private Locale ()
 	{
 	}
 
-	/// <summary>
-	///   Returns the translated message for the current locale
-	/// </summary>
 	public static string GetText (string msg)
 	{
 		return msg;
+	}
+
+	public static string GetText (string fmt, params object [] args)
+	{
+		return String.Format (fmt, args);
 	}
 }

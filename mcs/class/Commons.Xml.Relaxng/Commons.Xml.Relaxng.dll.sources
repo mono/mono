@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Locale.cs
+../../build/common/Locale.cs
 Commons.Xml/XmlDefaultReader.cs
 Commons.Xml.Relaxng/Misc.cs
 Commons.Xml.Relaxng/RelaxngDatatype.cs

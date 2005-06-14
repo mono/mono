@@ -1,5 +1,5 @@
 ./Assembly/AssemblyInfo.cs
-./Assembly/Locale.cs
+./../../build/common/Locale.cs
 ./Mono.Math/BigInteger.cs
 ./Mono.Math.Prime/ConfidenceFactor.cs
 ./Mono.Math.Prime/PrimalityTests.cs
