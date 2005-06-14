@@ -1,3 +1,7 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CharTest.cs: Added test to check for all whitespaces.
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConvertTest.cs: added new tests for FromBase64String.

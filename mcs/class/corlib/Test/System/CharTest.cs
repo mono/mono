@@ -3,6 +3,7 @@
 // David Brandt (bucky@keystreams.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -14,16 +15,6 @@ namespace MonoTests.System
 
 public class CharTest : TestCase
 {
-	public CharTest() {}
-
-	protected override void SetUp() 
-	{
-	}
-
-	protected override void TearDown() 
-	{
-	}
-
 	public void TestCompareTo()
 	{
 		Char c1 = 'a';
@@ -422,6 +413,48 @@ public class CharTest : TestCase
 		Assert("whitespace3-2", Char.IsWhiteSpace(s1, 3));
 	}
 
+	[Test]
+	public void IsWhiteSpace_Complete ()
+	{
+		for (int i=0; i < UInt16.MaxValue; i++) {
+			Char c = Convert.ToChar (i);
+			switch (i) {
+			case 0x0009:
+			case 0x000A:
+			case 0x000B:
+			case 0x000C:
+			case 0x000D:
+			case 0x0020:
+			case 0x0085:
+			case 0x00A0:
+			case 0x1680:
+			case 0x2000:
+			case 0x2001:
+			case 0x2002:
+			case 0x2003:
+			case 0x2004:
+			case 0x2005:
+			case 0x2006:
+			case 0x2007:
+			case 0x2008:
+			case 0x2009:
+			case 0x200A:
+			case 0x200B:
+			case 0x2028:
+			case 0x2029:
+			case 0x202F:
+#if NET_2_0
+			case 0x205F:
+#endif
+			case 0x3000:
+				Assert (i.ToString (), Char.IsWhiteSpace (c));
+				break;
+			default:
+				Assert (i.ToString (), !Char.IsWhiteSpace (c));
+				break;
+			}
+		}
+	}
 
 	public void TestParse()
 	{
