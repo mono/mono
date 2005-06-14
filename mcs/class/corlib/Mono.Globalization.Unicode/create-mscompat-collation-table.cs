@@ -1519,29 +1519,123 @@ namespace Mono.Globalization.Unicode
 
 			// Surrogate ... they are computed.
 
-			// FIXME: Hangul.
+			// Hangul.
+			//
+			// Since Unlike UCA Hangul sequence mixes Jongseong
+			// with Choseong sequence as well as Jungseong,
+			// adjusted to have the same primary weight for the
+			// same base character, it is not possible to compute
+			// those sort keys.
+			//
+			// Here I introduce an ordered sequence of mixed
+			// 'commands' and 'characters' that is similar to
+			// LDML text:
+			//	- ',' increases primary weight.
+			//	- [A B] means a range, increasing index
+			//	- {A B} means a range, without increasing index
+			//	- '=' is no operation (it means the characters 
+			//	  of both sides have the same weight).
+			//	- '>' inserts a Hangul Syllable block that 
+			//	  contains 0x251 characters.
+			//	- '<' decreases the index
+			//	- '0'-'9' means skip count
+			//	- whitespaces are ignored
+			//
+
+			string hangulSequence =
+			+ "\u1100=\u11A8 > \u1101=\u11A9 >"
+			+ "\u11C3, \u11AA, \u11C4, \u1102=\u11AB >"
+			+ "<{\u1113 \u1116}, \u3165,"
+				+ "\u11C5, \u11C6=\u3166,, \u11C7, \u11C8,"
+				+ "\u11AC, \u11C9, \u11AD, \u1103=\u11AE  >"
+			+ "\u11CA, \u1104, \u11CB > \u1105 >"
+			+ "\u11B0, [\u11CC \u11D0], \u11B1, [\u11D1 \u11D2],"
+				+ "\u11B2, [\u11D3 \u11D5], \u11B3,"
+				+ "[\u11D6 \u11D7], \u11B4, \u11B5,"
+				+ "\u11B6=\u11D8, \u3140,, \u11D9, \u1106=\u11B7 >"
+			+ "[\u11DA \u11E2], \u1107=\u11B8 >"
+			+ "<{\u111E \u1120}, \u3172,, \u3173, "
+				+ "\u11E3, \u1108 >"
+			+ "\u11B9,,,,,,,,, [\u11E4 \u11E6],, \u1109=\u11BA,,,"
+				+ "\u3214=\u3274 <>"
+			+ "<{\u112D \u1133}, \u11E7,, [\u11E8 \u11E9],,"
+				+ "\u11EA,, \u110A=\u11BB,,, >"
+			+ "{\u1134 \u1140}, \u317E,,,,,, \u11EB,"
+			+ "\u110B=\u11BC, [\u1161 \u11A2], \u1160 >"
+			+ "\u11EE, \u11EC, \u11ED,,,,, \u11F1,, \u11F2,,,"
+				+ "\u11EF,,, \u11F0, \u110C=\u11BD,, >"
+			+ "\u110D,,  >"
+			+ "<{\u114E \u1151},, \u110E=\u11BE,,  >"
+			+ "<{\u1152 \u1155},,, \u110F=\u11BF >"
+			+ "\u1110=\u11C0 > \u1111=\u11C1 >"
+			+ "\u11F3, \u11F4, \u1112=\u11C2 >"
+			+ "\u11F9, [\u11F5 \u11F8]"
+			;
+
 			byte hangulCat = 0x52;
 			fillIndex [hangulCat] = 0x2;
-			for (int cp = 0x1100; cp <= 0x1112; cp++) {
-				AddCharMapGroupCJK ((char) cp, ref hangulCat, false);
-				for (int l = 0; l < 0x15; l++)
-					for (int v = 0; v < 0x1C; v++)
-						AddCharMapGroupCJK (
-							(char) (0xAC00 + (cp - 0x1100) * 0x1C * 0x15 + l * 0x1C + v),
-							ref hangulCat, false);
+
+			int syllableBlock = 0;
+			for (int n = 0; n < hangulSequence.Length; n++) {
+				char c = hangulSequence [n];
+				int start, end;
+				if (Char.IsWhiteSpace (c))
+					continue;
+				switch (c) {
+				case '=':
+					break; // NOP
+				case ',':
+					IncrementSequentialIndex (ref hangulCat);
+					break;
+				case '<':
+					if (fillIndex [hangulCat] == 2)
+						throw new Exception ("FIXME: handle it correctly (yes it is hacky, it is really unfortunate).");
+					fillIndex [hangulCat]--;
+					break;
+				case '>':
+					IncrementSequentialIndex (ref hangulCat);
+					for (int l = 0; l < 0x15; l++)
+						for (int v = 0; v < 0x1C; v++) {
+							AddCharMap (
+								(char) (0xAC00 + syllableBlock * 0x1C * 0x15 + l * 0x1C + v), hangulCat, 0);
+							IncrementSequentialIndex (ref hangulCat);
+						}
+					syllableBlock++;
+					break;
+				case '[':
+					start = hangulSequence [n + 1];
+					end = hangulSequence [n + 3];
+					for (int i = start; i <= end; i++) {
+						AddCharMap ((char) i, hangulCat, 0);
+						if (end > i)
+							IncrementSequentialIndex (ref hangulCat);
+					}
+					n += 4; // consumes 5 characters for this operation
+					break;
+				case '{':
+					start = hangulSequence [n + 1];
+					end = hangulSequence [n + 3];
+					for (int i = start; i <= end; i++)
+						AddCharMap ((char) i, hangulCat, 0);
+					n += 4; // consumes 5 characters for this operation
+					break;
+				default:
+					AddCharMap (c, hangulCat, 0);
+					break;
+				}
 			}
 
 			// CJK unified ideograph.
 			byte cjkCat = 0x9E;
 			fillIndex [cjkCat] = 0x2;
 			for (int cp = 0x4E00; cp <= 0x9FBB; cp++)
-				AddCharMapGroupCJK ((char) cp, ref cjkCat, true);
+				AddCharMapGroupCJK ((char) cp, ref cjkCat);
 			// CJK Extensions goes here.
 			// LAMESPEC: With this Windows style CJK layout, it is
 			// impossible to add more CJK ideograph i.e. 0x9FA6-
 			// 0x9FBB can never be added w/o breaking compat.
 			for (int cp = 0xF900; cp <= 0xFA2D; cp++)
-				AddCharMapGroupCJK ((char) cp, ref cjkCat, true);
+				AddCharMapGroupCJK ((char) cp, ref cjkCat);
 
 			// PrivateUse ... computed.
 			// remaining Surrogate ... computed.
@@ -1594,6 +1688,15 @@ namespace Mono.Globalization.Unicode
 					Char.GetUnicodeCategory ((char) i) ==
 					UnicodeCategory.NonSpacingMark)
 					AddCharMap ((char) i, 1, 1);
+		}
+
+		private void IncrementSequentialIndex (ref byte hangulCat)
+		{
+			fillIndex [hangulCat]++;
+			if (fillIndex [hangulCat] == 0) { // overflown
+				hangulCat++;
+				fillIndex [hangulCat] = 0x2;
+			}
 		}
 
 		// Reset fillIndex to fixed value and call AddLetterMap().
@@ -1736,33 +1839,31 @@ namespace Mono.Globalization.Unicode
 				AddCharMap (vertical, category, updateCount, level2);
 		}
 
-		private void AddCharMapCJK (char c, ref byte category, bool increaseNFKD)
+		private void AddCharMapCJK (char c, ref byte category)
 		{
-			AddCharMap (c, category, (byte) (increaseNFKD ? 1 : 0), 0);
+			AddCharMap (c, category, 0, 0);
+			IncrementSequentialIndex (ref category);
+
 			// Special. I wonder why but Windows skips 9E F9.
 			if (category == 0x9E && fillIndex [category] == 0xF9)
-				fillIndex [category]++;
-			if (fillIndex [category] == 0) { // overflown
-				category++;
-				fillIndex [category] = 0x2;
-			}
+				IncrementSequentialIndex (ref category);
 		}
 
-		private void AddCharMapGroupCJK (char c, ref byte category, bool increaseNFKD)
+		private void AddCharMapGroupCJK (char c, ref byte category)
 		{
-			AddCharMapCJK (c, ref category, true);
+			AddCharMapCJK (c, ref category);
 
 			// LAMESPEC: see below.
 			if (c == '\u52DE') {
-				AddCharMapCJK ('\u3298', ref category, true);
-				AddCharMapCJK ('\u3238', ref category, true);
+				AddCharMapCJK ('\u3298', ref category);
+				AddCharMapCJK ('\u3238', ref category);
 			}
 			if (c == '\u5BEB')
-				AddCharMapCJK ('\u32A2', ref category, true);
+				AddCharMapCJK ('\u32A2', ref category);
 			if (c == '\u91AB')
 				// Especially this mapping order totally does
 				// not make sense to me.
-				AddCharMapCJK ('\u32A9', ref category, true);
+				AddCharMapCJK ('\u32A9', ref category);
 
 			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
 			if (nfkd == null)
@@ -1786,7 +1887,7 @@ namespace Mono.Globalization.Unicode
 					continue;
 				}
 
-				AddCharMapCJK ((char) w, ref category, increaseNFKD);
+				AddCharMapCJK ((char) w, ref category);
 			}
 		}
 
@@ -1867,7 +1968,7 @@ namespace Mono.Globalization.Unicode
 		private byte ComputeLevel3WeightRaw (char c) // add 2 for sortkey value
 		{
 			// Korean
-			if ('\u1100' <= c && c <= '\u11F9')
+			if ('\u11A8' <= c && c <= '\u11F9')
 				return 2;
 			if ('\uFFA0' <= c && c <= '\uFFDC')
 				return 4;
