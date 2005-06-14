@@ -354,7 +354,7 @@ namespace System.Reflection {
 		}
 
 		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
-		internal AssemblyName UnprotectedGetName ()
+		internal virtual AssemblyName UnprotectedGetName ()
 		{
 			AssemblyName aname = new AssemblyName ();
 			FillName (this, aname);
@@ -795,6 +795,12 @@ namespace System.Reflection {
 		internal PermissionSet GrantedPermissionSet {
 			get {
 				if (_granted == null) {
+					if (SecurityManager.ResolvingPolicyLevel != null) {
+						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
+							return DefaultPolicies.FullTrust;
+						else
+							return null; // we can't resolve during resolution
+					}
 					Resolve ();
 				}
 				return _granted;
@@ -805,6 +811,12 @@ namespace System.Reflection {
 			get {
 				// yes we look for granted, as denied may be null
 				if (_granted == null) {
+					if (SecurityManager.ResolvingPolicyLevel != null) {
+						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
+							return null;
+						else
+							return DefaultPolicies.FullTrust; // deny unrestricted
+					}
 					Resolve ();
 				}
 				return _denied;

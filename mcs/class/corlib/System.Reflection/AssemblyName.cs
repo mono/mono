@@ -211,13 +211,9 @@ namespace System.Reflection {
 
 		public byte[] GetPublicKey() 
 		{
-			// to match MS implementation -- funny one
-			if (publicKey != null)
-				return publicKey;
-			else if (name == null)
-				return null;
-			else
-				return new byte [0];
+			return publicKey;
+			// FIXME: In some cases MS implementation returns 
+			// "new byte [0]" instead of null
 		}
 
 		public byte[] GetPublicKeyToken() 

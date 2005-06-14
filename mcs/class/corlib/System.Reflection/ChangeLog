@@ -1,3 +1,12 @@
+2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: UnprotectedGetName is now virtual to allow for more
+	initialization in AssemblyBuilder. The [Granted|Refused]PermissionSet
+	now use the ResolvingPolicyLevel to support the policy 
+	FullTrustAssemblies during resolution.
+	* AssemblyName.cs: Return null instead of "new byte [0]" if no public
+	key is available.
+
 2005-06-09  Kamil Skalski <nazgul@nemerle.org>
 	* MonoGenericClass.cs: Add overrides of Get{Method,Constructor,Field} 
 	for obtaining instanciated *Info objects from non-instanciated counterparts
