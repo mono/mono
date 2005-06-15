@@ -1,5 +1,12 @@
 2005-06-15  Martin Baulig  <martin@ximian.com>
 
+	Applied a patch from Michal Moskal <michal.moskal@gmail.com>.
+
+	* reflection.c (encode_locals, field_encode_signature): Increase
+	the default sizes of the buffers a little bit.
+
+2005-06-15  Martin Baulig  <martin@ximian.com>
+
 	* class-internals.h (MonoTypeNameFormat): New enum.
 
 	* class.c
