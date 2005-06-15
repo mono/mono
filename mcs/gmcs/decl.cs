@@ -1037,6 +1037,8 @@ namespace Mono.CSharp {
 			for (Type current_type = TypeBuilder;
 			     current_type != null && current_type != TypeManager.object_type;
 			     current_type = current_type.BaseType) {
+				if (current_type.IsGenericInstance)
+					current_type = current_type.GetGenericTypeDefinition ();
 				if (current_type is TypeBuilder) {
 					DeclSpace decl = this;
 					if (current_type != TypeBuilder)
