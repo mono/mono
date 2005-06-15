@@ -824,9 +824,6 @@ namespace Mono.CSharp {
 			case SecurityAction.PermitOnly:
 			case SecurityAction.LinkDemand:
 			case SecurityAction.InheritanceDemand:
-			case SecurityAction.LinkDemandChoice:
-			case SecurityAction.InheritanceDemandChoice:
-			case SecurityAction.DemandChoice:
 				if (!for_assembly)
 					return true;
 				break;
