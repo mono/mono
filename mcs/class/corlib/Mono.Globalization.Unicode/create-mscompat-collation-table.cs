@@ -921,6 +921,12 @@ namespace Mono.Globalization.Unicode
 				for (int cp = numarr [i]; cp < numarr [i + 1]; cp++)
 					if (Char.IsNumber ((char) cp))
 						diacritical [cp] = weight;
+
+			// Korean parens numbers
+			for (int i = 0x3200; i <= 0x321C; i++)
+				diacritical [i] = 0xA;
+			for (int i = 0x3260; i <= 0x327B; i++)
+				diacritical [i] = 0xC;
 		}
 
 		void GenerateCore ()
@@ -1299,7 +1305,7 @@ namespace Mono.Globalization.Unicode
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0x14, 4);
 			for (int i = 0x093E; i < 0x094F; i++)
-				if (Char.IsLetter ((char) i))
+				if (!IsIgnorable (i))
 					AddLetterMap ((char) i, 0x14, 2);
 
 			// Bengali
@@ -1542,43 +1548,12 @@ namespace Mono.Globalization.Unicode
 			}
 			#endregion
 
-			#region Level2 adjustment
-			// Arabic Hamzah
-			diacritical [0x624] = 0x5;
-			diacritical [0x626] = 0x7;
-			diacritical [0x622] = 0x9;
-			diacritical [0x623] = 0xA;
-			diacritical [0x625] = 0xB;
-			diacritical [0x649] = 0x5; // 'alif maqs.uurah
-			diacritical [0x64A] = 0x7; // Yaa'
-
-
-			for (int i = 0; i < char.MaxValue; i++) {
-				byte mod = 0;
-				byte cat = map [i].Category;
-				switch (cat) {
-				case 0xE: // Latin diacritics
-				case 0x22: // Japanese: circled characters
-					mod = diacritical [i];
-					break;
-				case 0x13: // Arabic
-					if (diacritical [i] == 0)
-						mod = 0x8; // default for arabic
-					break;
-				}
-				if (0x52 <= cat && cat <= 0x7F) // Hangul
-					mod = diacritical [i];
-				if (mod > 0)
-					map [i] = new CharMapEntry (
-						cat, map [i].Level1, mod);
-			}
-			#endregion
-
 			// FIXME: Add more culture-specific letters (that are
 			// not supported in Windows collation) here.
 
 			// Surrogate ... they are computed.
 
+			#region Hangul
 			// Hangul.
 			//
 			// Unlike UCA Windows Hangul sequence mixes Jongseong
@@ -1685,6 +1660,8 @@ namespace Mono.Globalization.Unicode
 				}
 			}
 
+			#endregion
+
 			// CJK unified ideograph.
 			byte cjkCat = 0x9E;
 			fillIndex [cjkCat] = 0x2;
@@ -1774,11 +1751,21 @@ namespace Mono.Globalization.Unicode
 
 				int start = decompIndex [i];
 				int primaryChar = decompValues [start];
-				if (map [primaryChar].Level1 == 0)
-					continue;
 				int secondary = 0;
 				bool skip = false;
-				for (int l = 1; l < decompLength [i]; l++) {
+				int length = decompLength [i];
+				// special processing for parenthesized ones.
+				if (length == 3 &&
+					decompValues [start] == '(' &&
+					decompValues [start + 2] == ')') {
+					primaryChar = decompValues [start + 1];
+					length = 1;
+				}
+
+				if (map [primaryChar].Level1 == 0)
+					continue;
+
+				for (int l = 1; l < length; l++) {
 					int c = decompValues [start + l];
 					if (map [c].Level1 != 0)
 						skip = true;
@@ -1793,6 +1780,37 @@ namespace Mono.Globalization.Unicode
 				
 			}
 
+			#region Level2 adjustment
+			// Arabic Hamzah
+			diacritical [0x624] = 0x5;
+			diacritical [0x626] = 0x7;
+			diacritical [0x622] = 0x9;
+			diacritical [0x623] = 0xA;
+			diacritical [0x625] = 0xB;
+			diacritical [0x649] = 0x5; // 'alif maqs.uurah
+			diacritical [0x64A] = 0x7; // Yaa'
+
+
+			for (int i = 0; i < char.MaxValue; i++) {
+				byte mod = 0;
+				byte cat = map [i].Category;
+				switch (cat) {
+				case 0xE: // Latin diacritics
+				case 0x22: // Japanese: circled characters
+					mod = diacritical [i];
+					break;
+				case 0x13: // Arabic
+					if (diacritical [i] == 0)
+						mod = 0x8; // default for arabic
+					break;
+				}
+				if (0x52 <= cat && cat <= 0x7F) // Hangul
+					mod = diacritical [i];
+				if (mod > 0)
+					map [i] = new CharMapEntry (
+						cat, map [i].Level1, mod);
+			}
+			#endregion
 
 			// FIXME: this is hack but those which are 
 			// NonSpacingMark characters and still undefined

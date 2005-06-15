@@ -17,7 +17,16 @@ public static void Main ()
 	for (int i = 0; i <= char.MaxValue; i++) {
 		if (IsIgnorable (i))
 			continue;
-		byte [] data = GetSortKeyRaw (i);
+
+		string expansion = GetExpansion ((char) i);
+		if (expansion != null) {
+			foreach (char c in expansion)
+				FillSortKeyRaw (c);
+		}
+		else
+			FillSortKeyRaw (i);
+
+		byte [] data = buf.GetResultAndReset ();
 		foreach (byte b in data)
 			Output.Write ("{0:X02} ", b);
 		Output.WriteLine (" : {0:X04}, {1}",
@@ -26,19 +35,21 @@ public static void Main ()
 	Output.Close ();
 }
 
-static byte [] tmp = new byte [256];
-
-static byte [] GetSortKeyRaw (int i)
+static void FillSortKeyRaw (int i)
 {
-	if (0x3400 <= i && i <= 0x4DB5)
-		return GetCJKExtensionSortKeyRaw (i);
+	if (0x3400 <= i && i <= 0x4DB5) {
+		FillCJKExtensionSortKeyRaw (i);
+		return;
+	}
 
 	UnicodeCategory uc = char.GetUnicodeCategory ((char) i);
 	switch (uc) {
 	case UnicodeCategory.PrivateUse:
-		return GetPrivateUseSortKeyRaw (i);
+		FillPrivateUseSortKeyRaw (i);
+		return;
 	case UnicodeCategory.Surrogate:
-		return GetSurrogateSortKeyRaw (i);
+		FillSurrogateSortKeyRaw (i);
+		return;
 	}
 
 	if (HasSpecialWeight ((char) i))
@@ -52,20 +63,18 @@ static byte [] GetSortKeyRaw (int i)
 	else
 		buf.AppendNormal (
 			categories [i], level1 [i], level2 [i], level3 [i]);
-	return buf.GetResultAndReset ();
 }
 
-static byte [] GetCJKExtensionSortKeyRaw (int i)
+static void FillCJKExtensionSortKeyRaw (int i)
 {
 	int diff = i - 0x3400;
 
 	buf.AppendCJKExtension (
 		(byte) (0x10 + diff / 254),
 		(byte) (diff % 254 + 2));
-	return buf.GetResultAndReset ();
 }
 
-static byte [] GetPrivateUseSortKeyRaw (int i)
+static void FillPrivateUseSortKeyRaw (int i)
 {
 	int diff = i - 0xE000;
 	buf.AppendNormal (
@@ -73,10 +82,9 @@ static byte [] GetPrivateUseSortKeyRaw (int i)
 		(byte) (diff % 254 + 2),
 		0,
 		0);
-	return buf.GetResultAndReset ();
 }
 
-static byte [] GetSurrogateSortKeyRaw (int i)
+static void FillSurrogateSortKeyRaw (int i)
 {
 	int diffbase = 0;
 	int segment = 0;
@@ -106,7 +114,6 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 		(byte) (diff % 254 + 2),
 		lower,
 		lower);
-	return buf.GetResultAndReset ();
 }
 #endregion
 

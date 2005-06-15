@@ -143,17 +143,18 @@
 	- Logic: Unlike UCA it has no concept of "blocked" combining marks,
 	  and combining marks are never considered as an independent character
 	  (thus combining in Windows is buggy).
-	- Data: It is based on old Unicode standard. It ignores minor
-	  cultures. Character property values differ as well as those from
-	  the default Unicode collation element table (DUCET). In a few
-	  cultures Windows collation is close to the native language (e.g.
-	  Tamil, while it does not conform to TAM).
+	- Data: Windows is based on old Unicode standard (even older than 1.1).
+	  It ignores minor cultures. Character property values differ as well
+	  as those from the default Unicode collation element table (DUCET).
+	  In a few cultures Windows collation is close to the native language
+	  (e.g. Tamil, while it does not conform to TAM).
 
 	IgnoreWidth/IgnoreSymbols is processed after Kana voice mark
 	decomposition (something like NFD, but not equivalent. Example: \u304C
 	is completely equivalent to \u304B\u309B, which is not part of NFKD).
-	This means, if there is a combined Kana characters, it will be first 
-	decomposed and then compared.
+	<del>This means, if there is a combined Kana characters, it will be
+	first decomposed and then compared.<del> It scarcely matters since
+	there are special weight data for Japanese.
 
 *** Microsoft design problem
 
@@ -161,6 +162,9 @@
 	many characters that are used in for each specific culture, such as
 	Myanmar, Mongolian, Cherokee, Etiopic, Tagalog, Khmer, are regarded as
 	"completely ignorable".
+
+	I tagged many LAMESPEC items in the implementation (both in collator
+	and table generator).
 
 
 ** MS collation design inference

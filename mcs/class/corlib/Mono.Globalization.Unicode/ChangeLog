@@ -1,5 +1,12 @@
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.template : Now expansions are simulated.
+	* create-mscompat-collation-table.cs : filled Korean number level2.
+	  Reordered some code blocks to fill correct diacritical differences.
+	* Collation-notes.txt : some corrections and minor additions.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.template :
 	  Now dumper test driver uses SortKeyBuffer for dogfooding.
 	* create-mscompat-collation-table.cs : some diacritical level fixes
