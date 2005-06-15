@@ -749,8 +749,9 @@ namespace System.Data {
 								case DataRowAction.Change: {
 								// change only the values in the key columns
 								// set the childcolumn value to the new parent row value
-								for (int k = 0; k < fkc.Columns.Length; k++)
-									childRows[j][fkc.Columns[k]] = this[fkc.RelatedColumns[k], DataRowVersion.Proposed];
+									for (int k = 0; k < fkc.Columns.Length; k++)
+										if (!fkc.RelatedColumns [k].DataContainer [Original].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
+											childRows[j][fkc.Columns[k]] = this[fkc.RelatedColumns[k], DataRowVersion.Proposed];
 
 									break;
 								}
@@ -854,7 +855,7 @@ namespace System.Data {
 					throw e;
 				}
 
-					CheckChildRows(DataRowAction.Change);
+				CheckChildRows(DataRowAction.Change);
 				if (Original != Current) {
 					Table.RecordCache.DisposeRecord(Current);
 				}

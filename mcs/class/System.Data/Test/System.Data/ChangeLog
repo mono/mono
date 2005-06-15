@@ -1,3 +1,9 @@
+2005-06-15  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataSetTest.cs: added a test case for DataSet changes cascading
+	to child tables. test case idea from george.barbarosie@gmail.com
+	(George Barbarosie) in bug #75226.
+
 2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : quick build fix.

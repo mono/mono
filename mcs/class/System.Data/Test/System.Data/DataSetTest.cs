@@ -2008,6 +2008,55 @@ namespace MonoTests.System.Data
 		}
 		#endregion // DataSet.GetChanges Tests
 
+		[Test]
+		public void RuleTest ()
+		{
+			DataSet ds = new DataSet ("testds");
+			DataTable parent = ds.Tables.Add ("parent");
+			DataTable child = ds.Tables.Add ("child");
+			
+			parent.Columns.Add ("id", typeof (int));
+			parent.Columns.Add ("name", typeof (string));
+			parent.PrimaryKey = new DataColumn [] {parent.Columns ["id"]} ;
+
+			child.Columns.Add ("id", typeof (int));
+			child.Columns.Add ("parent", typeof (int));
+			child.Columns.Add ("name", typeof (string));
+			child.PrimaryKey = new DataColumn [] {child.Columns ["id"]} ;
+
+			DataRelation relation = ds.Relations.Add ("parent_child", 
+								  parent.Columns ["id"],
+								  child.Columns ["parent"]);
+
+			parent.Rows.Add (new object [] {1, "mono test 1"});
+			parent.Rows.Add (new object [] {2, "mono test 2"});
+			parent.Rows.Add (new object [] {3, "mono test 3"});
+			
+			child.Rows.Add (new object [] {1, 1, "mono child test 1"});
+			child.Rows.Add (new object [] {2, 2, "mono child test 2"});
+			child.Rows.Add (new object [] {3, 3, "mono child test 3"});
+			
+			ds.AcceptChanges ();
+			
+			parent.Rows [0] ["name"] = "mono changed test 1";
+			
+			Assertion.AssertEquals ("#RT1 child should not be modified", 
+						DataRowState.Unchanged,
+						parent.Rows [0].GetChildRows (relation) [0].RowState);
+
+			ds.RejectChanges ();
+			parent.Rows [0] ["id"] = "4";
+			
+			DataRow childRow =  parent.Rows [0].GetChildRows (relation) [0];
+			Assertion.AssertEquals ("#RT2 child should be modified", 
+						DataRowState.Modified,
+						childRow.RowState);
+			Assertion.AssertEquals ("#RT3 child should point to modified row", 
+						4,
+						(int) childRow ["parent"]);
+		}
+		
+
         }
 
 

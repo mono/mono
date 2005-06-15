@@ -1,3 +1,8 @@
+2005-06-15  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs: CheckChildRows: cascade parent changes to child rows
+	only if there is a change in columns of the fk constraint.
+
 2005-06-14  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataSet.cs: GetChanges: if row is deleted, get parent rows based
