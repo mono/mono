@@ -737,7 +737,7 @@ namespace System.Collections {
 		//
 		// Private static methods
 		//
-		private static bool TestPrime (int x)
+		internal static bool TestPrime (int x)
 		{
 			if ((x & 1) != 0) {
 				for (int n = 3; n< (int)Math.Sqrt (x); n += 2) {
@@ -750,7 +750,7 @@ namespace System.Collections {
 			return (x == 2);
 		}
 
-		private static int CalcPrime (int x)
+		internal static int CalcPrime (int x)
 		{
 			for (int i = (x & (~1))-1; i< Int32.MaxValue; i += 2) {
 				if (TestPrime (i)) return i;
@@ -758,7 +758,7 @@ namespace System.Collections {
 			return x;
 		}
 
-		private static int ToPrime (int x)
+		internal static int ToPrime (int x)
 		{
 			for (int i = 0; i < primeTbl.Length; i++) {
 				if (x <= primeTbl [i])

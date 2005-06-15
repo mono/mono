@@ -1,3 +1,11 @@
+2005-06-12  David Waite  <dwaite@gmail.com>
+
+	* IKeyComparer.cs: removed
+	* KeyValuePair.cs: add same-style ToString as ms.net Beta2 impl,
+	make Serializable, use correct field names.
+	* Dictionary.cs: Miscelaneus clean-ups, added serialization
+	support, use Hashtable prime functions
+
 2005-06-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* Comparer.cs, EqualityComparer.cs: Important performance hack:

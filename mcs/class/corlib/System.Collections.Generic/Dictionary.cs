@@ -5,10 +5,11 @@
 //	Sureshkumar T (tsureshkumar@novell.com)
 //	Marek Safar (marek.safar@seznam.cz) (stubs)
 //	Ankit Jain (radical@corewars.org)
-//
+//	David Waite (mass@akuma.org)
 //
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 David Waite
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,42 +37,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
+using System.Security.Permissions;
 
 namespace System.Collections.Generic {
 
 	[Serializable]
+	[CLSCompliant(true)]
 	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 		IDictionary,
 		ICollection,
-		IEnumerable,
+		ICollection<KeyValuePair<TKey, TValue>>,
+		IEnumerable<KeyValuePair<TKey, TValue>>,
 		ISerializable,
 		IDeserializationCallback
 	{
 		const int INITIAL_SIZE = 10;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 
-		[Serializable]
-		internal class Slot {
-			public TKey Key;
-			public TValue Value;
-			public Slot next;
-			public Slot (TKey Key, TValue Value, Slot next)
+		private class Slot {
+			public KeyValuePair<TKey, TValue> Data;
+			public Slot Next;
+			
+			public Slot (KeyValuePair<TKey,TValue> Data, Slot Next)
 			{
-				this.Key = Key;
-				this.Value = Value;
-				this.next = next;
+				this.Data = Data;
+				this.Next = Next;
 			}
 		}
 	
 		Slot [] _table;
 	
 		int _usedSlots;
-		float _loadFactor = DEFAULT_LOAD_FACTOR;
 	
 		IEqualityComparer<TKey> _hcp;
-	
-		uint _threshold;
+		SerializationInfo _serializationInfo;
+		
+		private int _threshold;
 	
 		public int Count {
 			get { return _usedSlots; }
@@ -82,7 +83,7 @@ namespace System.Collections.Generic {
 				int index = GetSlot (key);
 				if (index < 0)
 					throw new KeyNotFoundException ();
-				return _table [index].Value;
+				return _table [index].Data.Value;
 			}
 			
 			set {
@@ -90,18 +91,18 @@ namespace System.Collections.Generic {
 				if (index < 0)
 					DoAdd (index, key, value);
 				else
-					_table [index].Value = value;
+					_table [index].Data.Value = value;
 			}
 		}
 	
 		public Dictionary ()
 		{
-			Init ();
+			Init (INITIAL_SIZE, null);
 		}
 	
 		public Dictionary (IEqualityComparer<TKey> comparer)
 		{
-			Init (INITIAL_SIZE, comparer, DEFAULT_LOAD_FACTOR);
+			Init (INITIAL_SIZE, comparer);
 		}
 	
 		public Dictionary (IDictionary<TKey, TValue> dictionary)
@@ -111,12 +112,7 @@ namespace System.Collections.Generic {
 	
 		public Dictionary (int capacity)
 		{
-			Init (capacity);
-		}
-	
-		public Dictionary (float loadFactor)
-		{
-			Init (loadFactor);
+			Init (capacity, null);
 		}
 	
 		public Dictionary (IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
@@ -124,7 +120,7 @@ namespace System.Collections.Generic {
 			if (dictionary == null)
 				throw new ArgumentNullException ("dictionary");
 			int capacity = dictionary.Count;
-			Init (capacity, comparer, DEFAULT_LOAD_FACTOR);
+			Init (capacity, comparer);
 			foreach (KeyValuePair<TKey, TValue> entry in dictionary) {
 				this.Add (entry.Key, entry.Value);
 			}
@@ -132,41 +128,25 @@ namespace System.Collections.Generic {
 	
 		public Dictionary (int capacity, IEqualityComparer<TKey> comparer)
 		{
-			Init (capacity, comparer, DEFAULT_LOAD_FACTOR);
+			Init (capacity, comparer);
 		}
 	
 		protected Dictionary (SerializationInfo info, StreamingContext context)
 		{
-			Init ();
-		}
-	
-		void Init ()
-		{
-			Init (INITIAL_SIZE, null, DEFAULT_LOAD_FACTOR);
-		}
-	
-		void Init (int capacity)
-		{
-			Init (capacity, null, DEFAULT_LOAD_FACTOR);
-		}
-	
-		void Init (float loadFactor)
-		{
-			Init (INITIAL_SIZE, null, loadFactor);
+			_serializationInfo = info;
 		}
 		
-		protected void Init (int capacity, IEqualityComparer<TKey> hcp, float loadFactor)
+		private void Init (int capacity, IEqualityComparer<TKey> hcp)
 		{
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
-			this._hcp = hcp;
+			this._hcp = (hcp != null) ? hcp : EqualityComparer<TKey>.Default;
 			_table = new Slot [capacity];
-			_loadFactor = loadFactor;
-			_threshold = (uint) (capacity * _loadFactor);
+			_threshold = (int)(capacity * DEFAULT_LOAD_FACTOR);
 			if (_threshold == 0 && capacity > 0)
 				_threshold = 1;
 		}
-	
+
 		ICollection<TValue> GetValues ()
 		{
 			return ((IDictionary<TKey, TValue>) this).Values;
@@ -193,15 +173,15 @@ namespace System.Collections.Generic {
 				array [index++] = kv;
 		}
 	
-		protected void Resize ()
+		private void Resize ()
 		{
 			// From the SDK docs:
 			//	 Hashtable is automatically increased
 			//	 to the smallest prime number that is larger
 			//	 than twice the current number of Hashtable buckets
-			uint newSize = (uint) ToPrime ((_table.Length << 1) | 1);
+			uint newSize = (uint) Hashtable.ToPrime ((_table.Length << 1) | 1);
 
-			_threshold = (uint) (newSize * _loadFactor);
+			_threshold = (int)(newSize * DEFAULT_LOAD_FACTOR);
 			if (_threshold == 0 && newSize > 0)
 				_threshold = 1;
 		
@@ -213,27 +193,15 @@ namespace System.Collections.Generic {
 			int index;
 			for (int i = 0; i < oldTable.Length; i++) {
 				for (Slot slot = oldTable [i]; slot != null; slot = nextslot) {
-					nextslot = slot.next;
+					nextslot = slot.Next;
 
-					index = DoHash (slot.Key);
-					slot.next = _table [index];
+					index = DoHash (slot.Data.Key);
+					slot.Next = _table [index];
 					_table [index] = slot;
 				}
 			}
 		}
 
-		protected virtual int GetHash (TKey key)
-		{
-			//IEqualityComparer<K> hcp = this._hcp;
-			
-			return key.GetHashCode ();
-			/*
-			return (hcp != null)
-			? hcp.GetHashCode (key)
-			: key.GetHashCode ();
-			*/
-		}
-	
 		public void Add (TKey key, TValue value)
 		{
 			int index = GetSlot (key);
@@ -252,18 +220,19 @@ namespace System.Collections.Generic {
 				index = DoHash (key);
 			}
 
-			_table [index] = new Slot (key, value, _table [index]);
+			_table [index] = new Slot (
+				new KeyValuePair<TKey,TValue>(key, value), 
+				_table [index]);
 			++_usedSlots;
 		}
 	
-		protected int DoHash (TKey key)
+		private int DoHash (TKey key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key", "null key");
 	
 			int size = this._table.Length;
-			int h = this.GetHash (key) & Int32.MaxValue;
-			//Console.WriteLine ("Hashvalue for key {0} is {1}", key.ToString (), h);
+			int h = _hcp.GetHashCode (key) & Int32.MaxValue;
 			int spot = (int) ((uint) h % size);
 			return spot;
 		}
@@ -295,14 +264,54 @@ namespace System.Collections.Generic {
 			return false;
 		}
 	
+		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			info.AddValue("usedSlots", _usedSlots);
+			info.AddValue("hcp", _hcp);
+			info.AddValue("threshold", _threshold);
+			KeyValuePair<TKey, TValue>[] data = null;
+			if (_usedSlots > 0)
+			{
+				data = new KeyValuePair<TKey,TValue>[_usedSlots];
+				int i = 0;
+				foreach (KeyValuePair<TKey, TValue> kv in this)
+				{
+					data[i] = kv;
+				}
+				info.AddValue("data", data);
+				info.AddValue("capacity", _table.Length);
+			}
 		}
 	
 		public virtual void OnDeserialization (object sender)
 		{
-			throw new NotImplementedException ();
+			if (_serializationInfo != null)
+			{
+				_usedSlots = _serializationInfo.GetInt32("usedSlots");
+				_hcp = (IEqualityComparer<TKey>) _serializationInfo.GetValue("hcp", typeof(IEqualityComparer<TKey>));
+				_threshold = _serializationInfo.GetInt32("threshold");
+				if (_usedSlots == 0)
+				{
+					_table = new Slot[INITIAL_SIZE];
+				}
+				else
+				{
+					int capacity = _serializationInfo.GetInt32("capacity");
+					_table = new Slot[capacity];
+					
+					KeyValuePair<TKey, TValue>[] data =
+					(KeyValuePair<TKey, TValue>[]) 
+					_serializationInfo.GetValue(
+						"data", 
+						typeof(KeyValuePair<TKey, TValue>[]));
+					foreach (KeyValuePair<TKey, TValue> kv in data)
+					{
+						Add(kv.Key, kv.Value);
+					}
+				}
+				_serializationInfo = null;
+			}
 		}
 	
 		public bool Remove (TKey key)
@@ -313,7 +322,7 @@ namespace System.Collections.Generic {
 				return false;
 
 			// If GetSlot returns a valid index, the given key is at the head of the chain.
-			_table [index] = _table [index].next;
+			_table [index] = _table [index].Next;
 			--_usedSlots;
 			return true;
 		}
@@ -322,7 +331,7 @@ namespace System.Collections.Generic {
 		// Returns the index of the chain containing key.  Also ensures that the found key is the first element of the chain.
 		// If the key is not found, returns -h-1, where 'h' is the index of the chain that would've contained the key.
 		// 
-		internal int GetSlot (TKey key)
+		private int GetSlot (TKey key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
@@ -330,9 +339,9 @@ namespace System.Collections.Generic {
 			Slot slot = _table [index];
 			Slot prev = null;
 
-			while (slot != null && !slot.Key.Equals (key)) {
+			while (slot != null && !slot.Data.Key.Equals (key)) {
 				prev = slot;
-				slot = slot.next;
+				slot = slot.Next;
 			}
 	
 			if (slot == null)
@@ -340,8 +349,8 @@ namespace System.Collections.Generic {
 	
 			if (prev != null) {
 				// Move to the head of the list
-				prev.next = slot.next;
-				slot.next = _table [index];
+				prev.Next = slot.Next;
+				slot.Next = _table [index];
 				_table [index] = slot;
 			}
 
@@ -352,7 +361,7 @@ namespace System.Collections.Generic {
 		{
 			int index = GetSlot (key);
 			bool found = index >= 0;
-			value = found ? _table [index].Value : default (TValue);
+			value = found ? _table [index].Data.Value : default (TValue);
 			return found;
 		}
 	
@@ -379,7 +388,17 @@ namespace System.Collections.Generic {
 				return new ValueCollection (this);
 			}
 		}
-		
+		ICollection IDictionary.Keys {
+			get {
+				return Keys;
+			}
+		}
+		ICollection IDictionary.Values {
+			get {
+				return Values;
+			}
+		}
+
 		bool IDictionary.IsFixedSize {
 			get { return false; }
 		}
@@ -395,14 +414,6 @@ namespace System.Collections.Generic {
 				return this [(TKey) key];
 			}
 			set { this [(TKey) key] = (TValue) value; }
-		}
-		ICollection IDictionary.Keys
-		{
-			get { return ((IDictionary<TKey, TValue>) this).Keys as ICollection; }
-		}
-		ICollection IDictionary.Values
-		{
-			get { return ((IDictionary<TKey, TValue>) this).Values as ICollection; }
 		}
 	
 		void IDictionary.Add (object key, object value)
@@ -447,7 +458,17 @@ namespace System.Collections.Generic {
 	
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
 		{
-			CopyTo (array, index);
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			if (index >= array.Length)
+				throw new ArgumentException ("index larger than largest valid index of array");
+			if (array.Length - index < _usedSlots)
+				throw new ArgumentException ("Destination array cannot hold the requested elements!");
+			
+			foreach (KeyValuePair<TKey, TValue> kv in this)
+				array [index++] = kv;
 		}
 	
 		bool ICollection<KeyValuePair<TKey, TValue>>.Remove (KeyValuePair<TKey, TValue> keyValuePair)
@@ -458,6 +479,8 @@ namespace System.Collections.Generic {
 	
 		void ICollection.CopyTo (Array array, int index)
 		{
+			// TODO: Verify this can be a KeyValuePair, and doesn't need to be
+			// a DictionaryEntry type
 			CopyTo ((KeyValuePair<TKey, TValue> []) array, index);
 		}
 	
@@ -474,11 +497,6 @@ namespace System.Collections.Generic {
 		/**
 		 * This is to make the gmcs compiler errror silent
 		 */
-	//			   IEnumerator<TKey> IEnumerable<K>.GetEnumerator ()
-	//			   {
-	//					   throw new NotImplementedException ();
-	//			   }
-	
 	
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{
@@ -525,7 +543,7 @@ namespace System.Collections.Generic {
 				_current = _next;
 				if (_next == null)
 					return false;
-				_next = _next.next;
+				_next = _next.Next;
 				FixNext ();
 				return true;
 			}
@@ -544,8 +562,7 @@ namespace System.Collections.Generic {
 				get {
 					if (_current == null)
 						throw new InvalidOperationException ();
-					KeyValuePair<TKey, TValue> kv = new KeyValuePair<TKey, TValue> (_current.Key, _current.Value);
-					return kv;
+					return _current.Data;
 				}
 			}
 	
@@ -555,16 +572,15 @@ namespace System.Collections.Generic {
 						throw new InvalidOperationException ();
 					switch (_navigationMode) {
 					case EnumerationMode.Key:
-						return _current.Key as object;
+						return _current.Data.Key;
 					case EnumerationMode.Value:
-						return _current.Value as object;
+						return _current.Data.Value;
 					case EnumerationMode.DictionaryEntry:
-						DictionaryEntry de = new DictionaryEntry (_current.Key, _current.Value);
-						return de as object;
+						DictionaryEntry de = new DictionaryEntry (_current.Data.Key, _current.Data.Value);
+						return de;
 					case EnumerationMode.KeyValuePair:
 					default:
-						KeyValuePair<TKey, TValue> kv = new KeyValuePair<TKey, TValue> (_current.Key, _current.Value);
-						return kv as object;
+						return _current.Data;
 					}
 				}
 			}
@@ -575,7 +591,7 @@ namespace System.Collections.Generic {
 				{
 					if (_current == null)
 						throw new InvalidOperationException ();
-					DictionaryEntry entry = new DictionaryEntry (_current.Key, _current.Value);
+					DictionaryEntry entry = new DictionaryEntry (_current.Data.Key, _current.Data.Value);
 					return entry;
 				}
 			}
@@ -594,7 +610,7 @@ namespace System.Collections.Generic {
 				{
 					if (_current == null)
 						throw new InvalidOperationException ();
-					return _current.Key;
+					return _current.Data.Key;
 				}
 			}
 			object IDictionaryEnumerator.Value
@@ -603,7 +619,7 @@ namespace System.Collections.Generic {
 				{
 					if (_current == null)
 						throw new InvalidOperationException ();
-					return _current.Value;
+					return _current.Data.Value;
 				}
 			}
 	
@@ -614,6 +630,7 @@ namespace System.Collections.Generic {
 		}
 	
 		// This collection is a read only collection
+		[Serializable]
 		public class KeyCollection : ICollection<TKey>, ICollection {
 			Dictionary<TKey, TValue> _dictionary;
 	
@@ -818,74 +835,6 @@ namespace System.Collections.Generic {
 	
 			}
 		}
-	
-		static bool TestPrime (int x)
-		{
-			if ((x & 1) != 0) {
-				for (int n = 3; n < (int) Math.Sqrt (x); n += 2) {
-					if ((x % n) == 0)
-						return false;
-				}
-				return true;
-			}
-			// There is only one even prime - 2.
-			return (x == 2);
-		}
-	
-		static int CalcPrime (int x)
-		{
-			for (int i = (x & (~1)) - 1; i < Int32.MaxValue; i += 2) {
-				if (TestPrime (i)) return i;
-			}
-			return x;
-		}
-	
-		static int ToPrime (int x)
-		{
-			for (int i = 0; i < primeTbl.Length; i++) {
-				if (x <= primeTbl [i])
-					return primeTbl [i];
-			}
-			return CalcPrime (x);
-		}
-	
-		static readonly int [] primeTbl = {
-			11,
-			19,
-			37,
-			73,
-			109,
-			163,
-			251,
-			367,
-			557,
-			823,
-			1237,
-			1861,
-			2777,
-			4177,
-			6247,
-			9371,
-			14057,
-			21089,
-			31627,
-			47431,
-			71143,
-			106721,
-			160073,
-			240101,
-			360163,
-			540217,
-			810343,
-			1215497,
-			1823231,
-			2734867,
-			4102283,
-			6153409,
-			9230113,
-			13845163
-		};
 	}
 }
 #endif
-

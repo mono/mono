@@ -35,28 +35,20 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
-	public struct KeyValuePair<K,V> {
-		K key;
-		V val;
+	[Serializable]
+	public struct KeyValuePair<TKey,TValue> {
+		public TKey Key;
+		public TValue Value;
 		
-		public KeyValuePair (K key, V val)
+		public KeyValuePair (TKey Key, TValue Value)
 		{
-			this.key = key;
-			this.val = val;
+			this.Key = Key;
+			this.Value = Value;
 		}
-		
-		public K Key {
-			get { return key; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException ();
-				key = value;
-			}
-		}
-		
-		public V Value {
-			get { return val; }
-			set { val = value; }
+
+		public override string ToString()
+		{
+			return "[" + (Key != null ? Key.ToString() : string.Empty)  + ", " + (Value != null ? Value.ToString() : string.Empty) + "]";
 		}
 	}
 }

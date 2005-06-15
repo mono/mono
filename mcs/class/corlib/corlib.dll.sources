@@ -243,6 +243,7 @@ System.Collections/IDictionary.cs
 System.Collections/IDictionaryEnumerator.cs
 System.Collections/IEnumerable.cs
 System.Collections/IEnumerator.cs
+System.Collections/IEqualityComparer.cs
 System.Collections/IHashCodeProvider.cs
 System.Collections/IList.cs
 System.Collections/Queue.cs
@@ -1259,7 +1260,6 @@ System.Collections.Generic/IList.cs
 System.Collections.Generic/IComparer.cs
 System.Collections.Generic/IEqualityComparer.cs
 System.Collections.Generic/IDictionary.cs
-System.Collections.Generic/IKeyComparer.cs
 System.Collections.Generic/KeyValuePair.cs
 System.Collections.Generic/EqualityComparer.cs
 System.Collections.Generic/KeyNotFoundException.cs

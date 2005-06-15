@@ -1,14 +1,12 @@
 //
-// System.Collections.Generic.IKeyComparer
+// System.Collections.Generic.IEqualityComparer
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	David Waite (mass@akuma.org)
 //
-// (C) 2003 Ben Maurer
+// (C) 2005 David Waite
 //
 
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,13 +30,12 @@
 
 #if NET_2_0
 using System;
-using System.Runtime.InteropServices;
 
-namespace System.Collections.Generic {
-	[ComVisible(false)]
-	public interface IKeyComparer<T> : IComparer<T> {
-		bool Equals (T x, T y);
-		int GetHashCode (T obj);
+namespace System.Collections {
+
+	public interface IEqualityComparer {
+		bool Equals (object x, object y);
+		int GetHashCode(object x);
 	}
 }
 #endif

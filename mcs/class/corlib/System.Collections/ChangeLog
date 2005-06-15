@@ -1,3 +1,9 @@
+2005-06-12  David Waite  <dwaite@gmail.com>
+
+	* Hashtable.cs: make prime-related functions internal so generic
+	Dictionary can use them.
+	* IEqualityComparer.cs: add non-generic IEqualityComparer interface
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Hashtable.cs: Add some missing 2.0 attributes.
