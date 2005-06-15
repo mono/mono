@@ -1,3 +1,8 @@
+2005-06-15  Martin Baulig  <martin@ximian.com>
+
+	* System/GenericParameterAttributes.cs: Move to System.Reflection;
+	thanks to Kamil Skalski <nazgul@nemerle.org> for pointing this out.
+
 2005-06-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added unit tests for System.Security.

@@ -124,7 +124,6 @@ System/FieldAccessException.cs
 System/FlagsAttribute.cs
 System/FormatException.cs
 System/GC.cs
-System/GenericParameterAttributes.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs
@@ -392,6 +391,7 @@ System.Reflection/ExceptionHandlingClause.cs
 System.Reflection/ExceptionHandlingClauseOptions.cs
 System.Reflection/FieldAttributes.cs
 System.Reflection/FieldInfo.cs
+System.Reflection/GenericParameterAttributes.cs
 System.Reflection/ICustomAttributeProvider.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/InterfaceMapping.cs

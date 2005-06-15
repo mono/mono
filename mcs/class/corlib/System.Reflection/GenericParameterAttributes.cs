@@ -1,6 +1,6 @@
 // -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.GenericParameterAttributes
+// System.Reflection.GenericParameterAttributes
 //
 // Author:
 //    Martin Baulig (martin@ximian.com)
