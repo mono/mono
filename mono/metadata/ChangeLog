@@ -1,14 +1,16 @@
+2005-06-13  Michal Moskal <malekith@nemerle.org>
+
+        * reflection.c (field_encode_signature, encode_locals):
+         Make sizes of buffers for types larger (for big generic types).
+	 (create_generic_typespec,
+	 mono_reflection_sighelper_get_signature_local,
+	 mono_reflection_sighelper_get_signature_field):
+	 Add asserts for too small buffers.
+
 2005-06-15  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_MonoGenericClass_GetParentType): Return NULL
 	if our parent is not a dynamic type.
-
-2005-06-15  Martin Baulig  <martin@ximian.com>
-
-	Applied a patch from Michal Moskal <michal.moskal@gmail.com>.
-
-	* reflection.c (encode_locals, field_encode_signature): Increase
-	the default sizes of the buffers a little bit.
 
 2005-06-15  Martin Baulig  <martin@ximian.com>
 
