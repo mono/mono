@@ -1,3 +1,8 @@
+2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HttpCachePolicyElement.cs:
+	* SmtpElement.cs: Track 2.0 API changes.
+
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SettingsSection.cs, UriParserElement.cs, MailSettingsSection.cs,

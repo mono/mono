@@ -89,16 +89,6 @@ namespace System.Net.Configuration
 		}
 
 		#endregion // Properties
-
-		#region Methods
-
-		[MonoTODO]
-		protected override void ValidateRequiredProperties (ConfigurationPropertyCollection props, bool serializeCollectionKey)
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
 	}
 }
 

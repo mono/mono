@@ -94,13 +94,13 @@ namespace System.Net.Configuration
 		#region Methods
 
 		[MonoTODO]
-		protected override void Deserialize (XmlReader reader, bool serializeCollectionKey)
+		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void Reset (ConfigurationElement parentElement, object context)
+		protected override void Reset (ConfigurationElement parentElement)
 		{
 			throw new NotImplementedException ();
 		}
