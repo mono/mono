@@ -1558,6 +1558,9 @@ namespace Mono.CSharp
 		//
 		bool handle_preprocessing_directive (bool caller_is_taking)
 		{
+			if (!process_directives)
+				return true;
+
 			string cmd, arg;
 			bool region_directive = false;
 
@@ -2057,9 +2060,6 @@ namespace Mono.CSharp
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
 				if (c == '#') {
-					// return NONE if we're not processing directives (during token peeks)
-					if (!process_directives)
-						return Token.NONE;
 
 					bool cont = true;
 					if (tokens_seen || comments_seen) {

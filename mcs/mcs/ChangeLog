@@ -2,10 +2,9 @@
 
 	* cs-tokenizer.cs (process_directives): New flag for controlling
 	the processing of preprocessor directives.
-	(x_token): After seeing a '#', return Token.NONE instead of going
-	to handle_preprocessing_directive() when not processing
-	directives. This avoids unnecessary processing during the token peek in
-	is_punct().
+	(handle_preprocessing_directive): Exit early when not processing
+	directives. This avoids unnecessary processing during the token
+	peek in is_punct().
 
 	This fixes #74939.
 
