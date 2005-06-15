@@ -224,28 +224,24 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetCorrespondingInflatedMethod (IntPtr generic);
+		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern ConstructorInfo GetCorrespondingInflatedConstructor (IntPtr generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern FieldInfo GetCorrespondingInflatedField (IntPtr generic);
-
+		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
                 {
-                        return GetCorrespondingInflatedMethod (fromNoninstanciated.MethodHandle.Value);
+                        return GetCorrespondingInflatedMethod (fromNoninstanciated);
                 }
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
-                        return GetCorrespondingInflatedConstructor (fromNoninstanciated.MethodHandle.Value);
+                        return GetCorrespondingInflatedConstructor (fromNoninstanciated);
 		}
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
-                        return GetCorrespondingInflatedField (fromNoninstanciated.FieldHandle.Value);
+			return GetField (fromNoninstanciated.Name);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

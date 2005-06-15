@@ -1,3 +1,9 @@
+2005-06-13  Michal Moskal <malekith@nemerle.org>
+	
+	* MonoType.cs: Don't use MethodHandle in GetMethod/GetConstructor,
+	since it now throws on MethodBuilders. Don't use FieldHandle in
+	GetField (throws on FieldBuilder) - just use the name.
+
 2005-06-13  Martin Baulig  <martin@ximian.com>
 
 	* MonoType.cs
