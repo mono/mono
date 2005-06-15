@@ -1,3 +1,8 @@
+2005-06-15  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* System.Windows.Forms.dll.sources: Added Mime.cs and
+	MimeGenerated.cs.
+
 2005-06-13  Jackson Harper  <jackson@ximian.com>
 
 	* SWF.csproj:
@@ -32,7 +37,7 @@
 
 2005-05-24  Peter Bartok  <pbartok@novell.com>
 
-	* System.Windows.Forms.dll.sources: Added 
+	* System.Windows.Forms.dll.sources: Added
 	  DataGridPreferredColumnWidthTypeConverter.cs
 	* SWF.csproj: Updated
 
@@ -53,7 +58,7 @@
 
 2005-05-11  Peter Bartok  <pbartok@novell.com>
 
-	* System.Windows.Forms.dll.sources: Added 
+	* System.Windows.Forms.dll.sources: Added
 	  IDataGridEditingService.cs, System.Resources/ResXFileRef.cs,
 	  System.Resources/ResXResourceSet.cs
 	* SWF.csproj: Updated
@@ -72,7 +77,7 @@
 
 2005-05-05  Peter Bartok  <pbartok@novell.com>
 
-	* System.Windows.Forms.dll.sources: Added AxHost.cs, 
+	* System.Windows.Forms.dll.sources: Added AxHost.cs,
 	  ErrorProvider.cs, RichTextBoxFinds.cs, RichTextBoxScrollBars.cs,
 	  RichTextBoxSelectionAttribute.cs, RichTextBoxSelectionTypes.cs,
 	  RichTextBoxStreamType.cs, RichTextBoxWordPunctuations.cs
@@ -154,7 +159,7 @@
 
 	* System.Windows.Forms.dll.sources: Added SelectionRangeConverter.cs,
 	  OpacityConverter.cs, KeysConverter.cs, Hwnd.cs
-	* System.Windows.Forms.dll.resources: Added 
+	* System.Windows.Forms.dll.resources: Added
 	* Makefile: Added support for generating resources
 
 2005-02-12  Geoff Norton  <gnorton@customerdna.com>
@@ -190,7 +195,7 @@
 	  GridItem.cs, GridItemCollection.cs, GridItemType.cs,
 	  PropertyGrid.cs, PropertySort.cs, PropertyTabChangedEventArgs.cs,
 	  PropertyTabChangedEventHandler.cs, PropertyValueChangedEventArgs.cs
-	  PropertyValueChangedEventHandler.cs, 
+	  PropertyValueChangedEventHandler.cs,
 	  SelectedGridItemChangedEventArgs.cs,
 	  SelectedGridItemChangedEventHandler.cs
 
@@ -237,7 +242,7 @@
 
 2004-12-24  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* System.Windows.Forms.dll.Sources: Added ComboBox.cs and 
+	* System.Windows.Forms.dll.Sources: Added ComboBox.cs and
 	  ComboBoxStyle.cs
 
 2004-12-20  Peter Bartok  <pbartok@novell.com>
@@ -286,7 +291,7 @@
 
 2004-12-02  Peter Bartok  <pbartok@novell.com>
 
-	* SWF.csproj: Added Jackson's fresly minted TreeView files to 
+	* SWF.csproj: Added Jackson's fresly minted TreeView files to
 	  build list
 
 2004-12-01  Jackson Harper  <jackson@ximian.com>
@@ -303,12 +308,12 @@
 
 	* System.Windows.Forms.dll.sources: Removed tree
 	  additions.
-	  I am removing these files as they conflict with already completed 
-	  work. While it is fantastic to get contributions to MWF, I 
+	  I am removing these files as they conflict with already completed
+	  work. While it is fantastic to get contributions to MWF, I
 	  respectfully ask that everyone please coordinate their contributions
-	  through mono-winforms-list or #mono-winforms at this time. We're 
-	  explicitly avoiding stubbing and don't want controls that don't have 
-	  their basic functionality implemented in svn. Please also see 
+	  through mono-winforms-list or #mono-winforms at this time. We're
+	  explicitly avoiding stubbing and don't want controls that don't have
+	  their basic functionality implemented in svn. Please also see
 	  http://www.mono-project.com/contributing/winforms.html
 	
 2004-11-29  Marek Safar  <marek.safar@seznam.cz>

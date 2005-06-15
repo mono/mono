@@ -220,6 +220,8 @@ System.Windows.Forms/MessageBoxIcon.cs
 System.Windows.Forms/MessageBoxOptions.cs
 System.Windows.Forms/Message.cs
 System.Windows.Forms/MethodInvoker.cs
+System.Windows.Forms/Mime.cs
+System.Windows.Forms/MimeGenerated.cs
 System.Windows.Forms/MonthCalendar.cs
 System.Windows.Forms/MouseButtons.cs
 System.Windows.Forms/MouseEventArgs.cs
@@ -317,7 +319,7 @@ System.Windows.Forms/ThreadExceptionDialog.cs
 System.Windows.Forms/TickStyle.cs
 System.Windows.Forms/Timer.cs
 ../../build/common/MonoTODOAttribute.cs
-System.Windows.Forms/ToolBarAppearance.cs 
+System.Windows.Forms/ToolBarAppearance.cs
 System.Windows.Forms/ToolBarButtonClickEventArgs.cs
 System.Windows.Forms/ToolBarButtonClickEventHandler.cs
 System.Windows.Forms/ToolBarButton.cs
