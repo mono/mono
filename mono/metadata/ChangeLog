@@ -1,3 +1,11 @@
+2005-06-13 Michal Moskal <malekith@nemerle.org>
+
+	* icall.c: Make GetCorrespondingMethod/Constructor take
+	MonoReflectionMethod method not MonoMethod. Removed
+	MonoType.GetCorrespondingField, and make
+	MonoGenericType.GetCorrespondingField take name not
+	MonoClassField.
+
 2005-06-13  Michal Moskal <malekith@nemerle.org>
 
         * reflection.c (field_encode_signature, encode_locals):
