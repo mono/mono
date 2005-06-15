@@ -41,7 +41,6 @@ namespace Mono.Xml
 #if INSIDE_CORLIB
 	internal
 #else
-	[CLSCompliant(false)]    
 	public
 #endif
 	class DefaultHandler : SmallXmlParser.IContentHandler
@@ -78,7 +77,6 @@ namespace Mono.Xml
 #if INSIDE_CORLIB
 	internal
 #else
-	[CLSCompliant(false)]    
 	public
 #endif
 	class SmallXmlParser

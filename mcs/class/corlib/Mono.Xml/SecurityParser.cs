@@ -41,7 +41,6 @@ namespace Mono.Xml {
 #if INSIDE_CORLIB
 	internal
 #else
-	[CLSCompliant(false)]    
 	public
 #endif
 	class SecurityParser : SmallXmlParser, SmallXmlParser.IContentHandler {
