@@ -334,15 +334,19 @@ namespace System.Web.Compilation
 
 		static MemberInfo GetFieldOrProperty (Type type, string name)
 		{
+			MemberInfo member = null;
 			try {
-				return type.GetProperty (name, noCaseFlags);
+				member = type.GetProperty (name, noCaseFlags);
 			} catch {}
+			
+			if (member != null)
+				return member;
 
 			try {
-				return type.GetField (name, noCaseFlags);
+				member = type.GetField (name, noCaseFlags);
 			} catch {}
 
-			return null;
+			return member;
 		}
 
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id,
