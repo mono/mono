@@ -7,8 +7,7 @@ thisdir = tests
 SUBDIRS =
 include ../build/rules.make
 
-DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc) \
-	test-353-2.cs test-361-2.cs
+DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc)
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 

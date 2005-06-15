@@ -1,6 +1,7 @@
 2005-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-test-local): Run with $(TEST_RUNTIME).
+	(DISTFILES): Fix for 'make distcheck'.
 
 2005-06-15  Raja R Harinath  <harinath@gmail.com>
 
