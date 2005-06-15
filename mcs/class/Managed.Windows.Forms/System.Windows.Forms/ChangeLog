@@ -1,7 +1,12 @@
+2005-06-15  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* Mime.cs, MimeGenerated.cs: First draft of MWF mime stuff, see Mime.cs for
+	usage
+
 2005-06-14  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: default datagrid settings for Default Styles, fixes
-	* DataGridTableStyle.cs: default datagrid settings for Default Styles, fixes 
+	* DataGridTableStyle.cs: default datagrid settings for Default Styles, fixes
 	* DataGridDrawingLogic.cs: default datagrid settings for Default Styles, fixes
 	* DataGridBoolColumn.cs: default datagrid settings for Default Styles, fixes
 	* DataGrid.cs: default datagrid settings for Default Styles, fixes
@@ -78,13 +83,13 @@
 
 2005-06-10  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: Removed MonoTodo attributes on Click and 
+	* MonthCalendar.cs: Removed MonoTodo attributes on Click and
 	  DoubleClick events, since they are not meant to be fired.
 
 2005-06-09  Peter Bartok  <pbartok@novell.com>
 
 	* UpDownBase.cs, NumericUpDown.cs, DomainUpDown.cs: Integrated
-	  Jonathan's standalone controls into MWF, implemented missing 
+	  Jonathan's standalone controls into MWF, implemented missing
 	  events, attributes and methods; added xxxAccessible classes
 	* AccessibleObject.cs: Made fields internal so other classes
 	  can change them if needed
@@ -118,9 +123,9 @@
 
 	* ImageListStreamer.cs: Fixed signature for GetData
 	* CheckBox.cs: Fixed base class for CheckBoxAccessibleObject
-	* ComboBox.cs: 
+	* ComboBox.cs:
 	  - Added missing ChildAccessibleObject class
-	  - Added missing OnXXXFocus overrides, switched to using those 
+	  - Added missing OnXXXFocus overrides, switched to using those
 	    instead of the event handler
 	* Control.cs:
 	  - Added Parent property for ControlAccessibleObject
@@ -130,7 +135,7 @@
 	* ListBindingConverter.cs: Implemented some methods
 	* ButtonBase.cs: Added missing ButtonBaseAccessibleObject class
 	* ImageList.cs: Implemented basic handle scheme, removed TODOs
-	* ContainerControl.cs: Fixed signature, now subscribing to the 
+	* ContainerControl.cs: Fixed signature, now subscribing to the
 	  ControlRemoved event instead of overriding the handler, LAMESPEC
 	* CurrencyManager.cs: Added missing attribute
 	* MonthCalendar.cs: Added missing properties
@@ -146,7 +151,7 @@
 	
 2005-06-06  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* Control.cs: fixes CreateParams Width / Height. 
+	* Control.cs: fixes CreateParams Width / Height.
 
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
@@ -154,15 +159,15 @@
 
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
-	* Control.cs (CreateParams): Since we don't know if one of the 
-	  properties we use is overridden, lets make sure if we fail accessing 
+	* Control.cs (CreateParams): Since we don't know if one of the
+	  properties we use is overridden, lets make sure if we fail accessing
 	  we continue with a backup plan
 
 2005-06-05  Peter Bartok  <pbartok@novell.com>
 
-	* Win32DnD.cs: 
+	* Win32DnD.cs:
 	  - Removed debug output
-	  - Added MarshalAs attribute to ensure proper marshalling of FORMATETC 
+	  - Added MarshalAs attribute to ensure proper marshalling of FORMATETC
 	    struct
 	  - Plugged resource leak
 	* XplatUIStructs.cs: Changed ClipboardFormats size to ushort, to match
@@ -237,15 +242,15 @@
 
 2005-06-02  Peter Bartok  <pbartok@novell.com>
 
-	* DataObject.cs: 
+	* DataObject.cs:
 	  - Added Data setter
 	  - Fixed broken insertion code for SetData, now also
 	    overwrites any existing entry of the same format name
 	* Hwnd.cs: Added list of pointers that automatically gets
-	  freed when the window is disposed 
+	  freed when the window is disposed
 	* XplatUI.cs: Call driver initialization method when loading
 	  a driver
-	* Control.cs: 
+	* Control.cs:
 	  - OnDragLeave takes EventArgs, not DragEventArgs
 	  - Added setting of WS_EX_ACCEPTFILES style when dropping is
 	    supported
@@ -269,7 +274,7 @@
 		
 2005-06-01  Jordi Mas i Hernandez <jordi@ximian.com>
 	
-	* ScrollBar.cs: Make sure that values sent in Scroll events 
+	* ScrollBar.cs: Make sure that values sent in Scroll events
 	are always between Maximum and Minimum.
 
 2005-06-01  Marek Safar  <marek.safar@seznam.cz>
@@ -300,7 +305,7 @@
 	* DataObject.cs: Dont crash if no data is found.
 
 2005-05-26  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
-	* MdiClient.cs: Add missing Localizable attribute to BackgroundImage property 
+	* MdiClient.cs: Add missing Localizable attribute to BackgroundImage property
 		as per status page, guessing it should be set to true
 
 2005-05-26  Jordi Mas i Hernandez <jordi@ximian.com>
@@ -325,14 +330,14 @@
 
 	* OpenFileDialog.cs, Form.cs, Menu.cs, GroupBox.cs, UserControl.cs,
 	  Label.cs, DataGridTextBoxColumn.cs, PropertyGrid.cs, ErrorProvider.cs
-	  Splitter.cs, Control.cs, FontDialog.cs, TabPage.cs, 
+	  Splitter.cs, Control.cs, FontDialog.cs, TabPage.cs,
 	  FolderBrowserDialog.cs, HelpProvider.cs, DataGridTableStyle.cs,
 	  NotifyIcon.cs, FileDialog.cs, ListView.cs, SaveFileDialog.cs,
 	  ToolBarButton.cs, ImageList.cs, DataGridBoolColumn.cs, Panel.cs,
 	  DataGrid.cs, DataGridTextBox.cs, ListBox.cs, TrackBar.cs,
 	  AxHost.cs, TabControl.cs, ScrollableControl.cs, ToolBar.cs,
 	  DataGridColumnStyle.cs, PictureBox.cs, DateTimePicker.cs,
-	  StatusBar.cs, MonthCalendar.cs, TreeView.cs: Added 
+	  StatusBar.cs, MonthCalendar.cs, TreeView.cs: Added
 	  missing attributes, etc
 	* DataGridPreferredColumnWidthTypeConverter.cs: Added
 
@@ -340,10 +345,10 @@
 
 	* Help.cs: Added, implemented trivial functions, throws up MessageBox
 	  when user tries to get help
-	* DataObject.cs, DataFormats.cs, LinkArea.cs, 
-	  SelectionRangeConverter.cs, Clipboard.cs : Removed unused variables 
+	* DataObject.cs, DataFormats.cs, LinkArea.cs,
+	  SelectionRangeConverter.cs, Clipboard.cs : Removed unused variables
 	  to suppress warnings
-	* XplatUIWin32.cs, XplatUIOSX.cs, XplatUIX11.cs: Removed unused code to 
+	* XplatUIWin32.cs, XplatUIOSX.cs, XplatUIX11.cs: Removed unused code to
 	  avoid unreachable code warning
 
 2005-05-20  Peter Bartok  <pbartok@novell.com>
@@ -367,7 +372,7 @@
 2005-05-20  Peter Bartok  <pbartok@novell.com>
 
 	* Cursors.cs: Added setting of cursor name
-	* Cursor.cs: 
+	* Cursor.cs:
 	  - Implemented constructors
 	  - Implemented Draw and DrawStretched
 	  - Implemented Current property
@@ -427,7 +432,7 @@
 
 2005-05-18  Peter Bartok  <pbartok@novell.com>
 
-	* DataObject.cs: Entries are not global but particular to the 
+	* DataObject.cs: Entries are not global but particular to the
 	  DataObject, now it behaves that way
 	* XplatUIWin32.cs: Implemented Clipboard methods
 	* Clipboard.cs: Implemented
@@ -435,15 +440,15 @@
 	* XplatUIOSX.cs: Updated to final clipboard prototypes
 	* XplatUIX11.cs: Implemented Clipboard methods
 	* XplatUIDriver.cs: Updated to final clipboard prototypes
-	* XplatUIStructs.cs: 
-	  - Added BITMAPINFOHEADER struct 
+	* XplatUIStructs.cs:
+	  - Added BITMAPINFOHEADER struct
 	  - Added ClipboardFormats enum
-	* X11Structs.cs: 
+	* X11Structs.cs:
 	  - Added ClipboardStruct
 	  - Added Atom enum items for clipboard types
 	  - Fixed atom types for Selection event structures
-	* DataFormats.cs: 
-	  - Added internal properties and methods for drivers to enumerate 
+	* DataFormats.cs:
+	  - Added internal properties and methods for drivers to enumerate
 	    all known formats
 	  - Switched initialization method to allow drivers to assign their
 	    own IDs even for the MS predefined clipboard IDs
