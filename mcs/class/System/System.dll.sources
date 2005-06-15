@@ -349,6 +349,7 @@ System.Configuration/IConfigurationSystem.cs
 System.Configuration/IgnoreSectionHandler.cs
 System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
+System.Configuration/ProviderBase.cs
 System.Configuration/SingleTagSectionHandler.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/BooleanSwitch.cs
