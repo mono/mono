@@ -1,3 +1,7 @@
+2005-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Binder.cs: null is ok for a value type. Fixes bug #75241.
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: UnprotectedGetName is now virtual to allow for more

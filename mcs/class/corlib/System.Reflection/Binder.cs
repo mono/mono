@@ -186,7 +186,7 @@ namespace System.Reflection
 					return true;
 
 				if (from == null)
-					return !to.IsValueType;
+					return true;
 
 				TypeCode fromt = Type.GetTypeCode (from);
 				TypeCode tot = Type.GetTypeCode (to);
