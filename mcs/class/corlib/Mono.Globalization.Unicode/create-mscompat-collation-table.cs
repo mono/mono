@@ -96,8 +96,8 @@ namespace Mono.Globalization.Unicode
 		string [] diacritics = new string [] {
 			// LATIN
 			"WITH ACUTE;", "WITH GRAVE;", " DOT ABOVE;", " MIDDLE DOT;",
-			" CIRCUMFLEX;", " DIAERESIS;", " CARON;", "WITH BREVE;",
-			" DIALYTIKA AND TONOS;", "WITH MACRON;", " TILDE;", " RING ABOVE;",
+			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
+			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", " RING ABOVE;",
 			" OGONEK;", " CEDILLA;",
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
 			" STROKE;", " CIRCUMFLEX AND ACUTE;",
@@ -1171,9 +1171,57 @@ namespace Mono.Globalization.Unicode
 
 			#region Letters and NonSpacing Marks (general)
 
-			// Latin alphabets
+			// ASCII Latin alphabets
 			for (int i = 0; i < alphabets.Length; i++)
 				AddAlphaMap (alphabets [i], 0xE, alphaWeights [i]);
+
+
+			// non-ASCII Latin alphabets
+			// FIXME: there is no such characters that are placed
+			// *after* "alphabets" array items. This is nothing
+			// more than a hack that creates dummy weight for
+			// primary characters.
+			for (int i = 0x0080; i < 0x0300; i++) {
+				if (!Char.IsLetter ((char) i))
+					continue;
+				// For those Latin Letters which has NFKD are
+				// not added as independent primary character.
+				if (decompIndex [i] != 0)
+					continue;
+				// SPECIAL CASES:
+				// 1.some alphabets have primarily
+				//   equivalent ASCII alphabets.
+				// 2.some have independent primary weights,
+				//   but inside a-to-z range.
+				// 3.there are some expanded characters that
+				//   are not part of Unicode Standard NFKD.
+				switch (i) {
+				// 1. skipping them does not make sense
+//				case 0xD0: case 0xF0: case 0x131: case 0x138:
+//				case 0x184: case 0x185: case 0x186: case 0x189:
+//				case 0x18D: case 0x18E: case 0x18F: case 0x190:
+//				case 0x194: case 0x195: case 0x196: case 0x19A:
+//				case 0x19B: case 0x19C:
+				// 2. skipping them does not make sense
+//				case 0x14A: // Ng
+//				case 0x14B: // ng
+				// 3.
+				case 0xC6: // AE
+				case 0xE6: // ae
+				case 0xDE: // Icelandic Thorn
+				case 0xFE: // Icelandic Thorn
+				case 0xDF: // German ss
+				case 0xFF: // German ss
+				// not classified yet
+//				case 0x1A6: case 0x1A7: case 0x1A8: case 0x1A9:
+//				case 0x1AA: case 0x1B1: case 0x1B7: case 0x1B8:
+//				case 0x1B9: case 0x1BA: case 0x1BB: case 0x1BF:
+//				case 0x1C0: case 0x1C1: case 0x1C2: case 0x1C3:
+//				case 0x1DD:
+					continue;
+				}
+				AddCharMapGroup ((char) i, 0xE, 1, 0);
+			}
 
 			// Greek and Coptic
 			fillIndex [0xF] = 02;

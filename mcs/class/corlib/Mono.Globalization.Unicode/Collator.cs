@@ -188,9 +188,9 @@ namespace Mono.Globalization.Unicode
 			invariant = new Collator (CultureInfo.InvariantCulture);
 		}
 
-		public static char [] DefaultContractions {
-			get { return invariant.contractions; }
-		}
+//		public static char [] DefaultExpansions {
+//			get { return invariant.tailorings; }
+//		}
 
 		CultureInfo culture;
 
@@ -228,23 +228,26 @@ namespace Mono.Globalization.Unicode
 		//	5: variable weight difference
 		public int CompareChar (CharacterIterator i1, CharacterIterator i2)
 		{
+			throw new NotImplementedException ();
 		}
 
 		// Get character element length of the argument character in s at cur.
 		internal bool MoveIteratorNext (CharacterIterator i)
 		{
+			throw new NotImplementedException ();
+/*
 			// check contractions
 			int ret = -1;
 			char [] target = null;
-			if (contractions != null) {
-				ret = CheckContraction (contractions, i.Text, i.Current);
+			if (tailorings != null) {
+				ret = CheckContraction (tailorings, i.Text, i.Current);
 				if (ret >= 0)
-					target = contractions;
+					target = tailorings;
 			}
 			if (ret < 0) {
-				ret = CheckContraction (DefaultContractions, i.Text, i.Current);
+				ret = CheckContraction (DefaultExpansions, i.Text, i.Current);
 				if (ret >= 0)
-					target = DefaultContractions;
+					target = DefaultExpansions;
 			}
 			if (ret >= 0) {
 				int len = 0;
@@ -256,6 +259,7 @@ namespace Mono.Globalization.Unicode
 			// check expansions
 
 			i.SerProp (1, i.Text [i.Current], char.MinValue);
+*/
 		}
 
 		internal bool MoveIteratorBack (CharacterIterator i)
@@ -308,7 +312,7 @@ namespace Mono.Globalization.Unicode
 			if (MSCompatUnicodeTable.IsIgnorable (i))
 				return true;
 			if ((opt & CompareOptions.IgnoreWidth) != 0)
-				i = MSCompatUnicodeTable.ToWidthInsensitive (i);
+				i = MSCompatUnicodeTable.ToWidthCompat (i);
 			if ((opt & CompareOptions.IgnoreKanaType) != 0)
 				i = MSCompatUnicodeTable.ToKanaTypeInsensitive (i);
 			if ((opt & CompareOptions.IgnoreCase) != 0 && i <= char.MaxValue)
@@ -341,12 +345,12 @@ namespace Mono.Globalization.Unicode
 		*/
 		public int IndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
-			return IndexOf (new StringIterator (s, start, length), new SingleCharacterIterator (target), opt);
+			return IndexOf (new StringIterator (s, start, length, opt, this), new SingleCharacterIterator (target, opt, this));
 		}
 
 		public int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
-			return IndexOf (new StringIterator (s, start, length, opt), new StringIterator (target, opt));
+			return IndexOf (new StringIterator (s, start, length, opt, this), new StringIterator (target, 0, target.Length, opt, this));
 		}
 
 		private int IndexOf (StringIterator src,
@@ -355,7 +359,8 @@ namespace Mono.Globalization.Unicode
 			while (src.MoveNext ()) {
 				target.Reset ();
 				target.MoveNext ();
-				if (IsPrefix (src, target))
+				bool dummy = false;
+				if (IsPrefix (src, target, ref dummy))
 					return src.Current;
 			}
 			return -1;
@@ -366,16 +371,17 @@ namespace Mono.Globalization.Unicode
 		// If no match, return -1.
 		public int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
-			StringIterator src = new StringIterator (s, start, length, opt);
+			StringIterator src = new StringIterator (s, start, length, opt, this);
 			src.MoveTo (s.Length - 1);
-			return LastIndexOf (src, new SingleCharacterIterator (target));
+			bool dummy = false;
+			return LastIndexOf (src, new SingleCharacterIterator (target, opt, this), ref dummy);
 		}
 
 		public int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
-			StringIterator src = new StringIterator (s, start, length. opt);
+			StringIterator src = new StringIterator (s, start, length, opt, this);
 			src.MoveTo (s.Length - target.Length);
-			return IndexOf (src, new StringIterator (target, opt));
+			return IndexOf (src, new StringIterator (target, 0, target.Length, opt, this));
 		}
 
 		private int LastIndexOf (StringIterator src,
@@ -415,8 +421,8 @@ namespace Mono.Globalization.Unicode
 		{
 			bool dummy = false;
 			return IsPrefix (
-				new StringIterator (src, 0, src.Length, opt),
-				new StringIterator (target, 0, target.Length, opt), dummy);
+				new StringIterator (src, 0, src.Length, opt, this),
+				new StringIterator (target, 0, target.Length, opt, this), ref dummy);
 		}
 
 		private bool IsPrefix (StringIterator src,
@@ -568,7 +574,7 @@ namespace Mono.Globalization.Unicode
 		public byte [] GetSortKey (string s, CompareOptions opt)
 		{
 			StringIterator iter = new StringIterator (s, 0, s.Length, opt, this);
-			buf.AdjustBufferSize (s);
+			buf.AdjustBufferSize (s.Length);
 			while (iter.MoveNext ())
 				GetSortKeyForChar (iter, buf);
 			return buf.GetResultAndReset ();

@@ -30,18 +30,18 @@ namespace Mono.Globalization.Unicode
 			l1b = l2b = l3b = l4sb = l4tb = l4kb = l4wb = l5b = null;
 		}
 
-		internal void AdjustBufferSize (string s)
+		internal void AdjustBufferSize (int len)
 		{
 			// For Korean text it is likely to be much bigger (for
 			// Jamo), but even in ko-KR most of the compared
 			// strings won't be Hangul.
-			if (l1b == null || l1b.Length < s.Length)
-				l1b = new byte [s.Length * 2 + 10];
+			if (l1b == null || l1b.Length < len)
+				l1b = new byte [len * 2 + 10];
 
-			if (l2b == null || l2b.Length < s.Length)
-				l2b = new byte [s.Length + 10];
-			if (l3b == null || l3b.Length < s.Length)
-				l3b = new byte [s.Length + 10];
+			if (l2b == null || l2b.Length < len)
+				l2b = new byte [len + 10];
+			if (l3b == null || l3b.Length < len)
+				l3b = new byte [len + 10];
 
 			// This weight is used only in Japanese text.
 			// We could expand the initial length as well as
@@ -60,9 +60,19 @@ namespace Mono.Globalization.Unicode
 				l5b = new byte [10];
 		}
 
+		internal void AppendCJKExtension (byte lv1msb, byte lv1lsb)
+		{
+			AppendBufferPrimitive (0xFE, ref l1b, ref l1);
+			AppendBufferPrimitive (0xFF, ref l1b, ref l1);
+			AppendBufferPrimitive (lv1msb, ref l1b, ref l1);
+			AppendBufferPrimitive (lv1lsb, ref l1b, ref l1);
+			AppendBufferPrimitive (2, ref l2b, ref l2);
+			AppendBufferPrimitive (2, ref l3b, ref l3);
+		}
+
 		internal void AppendJamo (byte category, byte lv1msb, byte lv1lsb)
 		{
-			AppendNormal (category, lv1msb, lv2, lv3);
+			AppendNormal (category, lv1msb, 0, 0);
 			AppendBufferPrimitive (0xFF, ref l1b, ref l1);
 			AppendBufferPrimitive (lv1lsb, ref l1b, ref l1);
 			AppendBufferPrimitive (0xFF, ref l1b, ref l1);
@@ -74,21 +84,27 @@ namespace Mono.Globalization.Unicode
 		}
 
 		// Append sort key value from table normally.
-		internal void AppendKana (byte category, byte lv1, byte lv2, byte lv3, bool isSmallKana, byte kanaType, bool isKatakana, byte kanaWidth)
+		internal void AppendKana (byte category, byte lv1, byte lv2, byte lv3, bool isSmallKana, byte kanaType, bool isKatakana, bool isHalfWidth)
 		{
 			AppendNormal (category, lv1, lv2, lv3);
 
-			AppendBufferPrimitive (isSmallKana ? 0xC4 : 0xE4, ref l4sb, ref l4s);
+			AppendBufferPrimitive ((byte) (isSmallKana ? 0xC4 : 0xE4), ref l4sb, ref l4s);
 			AppendBufferPrimitive (kanaType, ref l4tb, ref l4t);
-			AppendBufferPrimitive (isKatakana ? 0xC4 : 0xE4, ref l4kb, ref l4k);
-			AppendBufferPrimitive (kanaWidth, ref l4wb, ref l4w);
+			AppendBufferPrimitive ((byte) (isKatakana ? 0xC4 : 0xE4), ref l4kb, ref l4k);
+			AppendBufferPrimitive ((byte) (isHalfWidth ? 0xC4 : 0xE4), ref l4wb, ref l4w);
 		}
 
 		// Append sort key value from table normally.
 		internal void AppendNormal (byte category, byte lv1, byte lv2, byte lv3)
 		{
-			AppendBufferPrimitive (category, ref l1b, ref l1);
-			AppendBufferPrimitive (lv1, ref l1b, ref l1);
+			if (lv2 == 0)
+				lv2 = 2;
+			if (lv3 == 0)
+				lv3 = 2;
+			if (category != 1) {
+				AppendBufferPrimitive (category, ref l1b, ref l1);
+				AppendBufferPrimitive (lv1, ref l1b, ref l1);
+			}
 			AppendBufferPrimitive (lv2, ref l2b, ref l2);
 			AppendBufferPrimitive (lv3, ref l3b, ref l3);
 		}
@@ -133,29 +149,30 @@ namespace Mono.Globalization.Unicode
 		// 02 02 02 -> 0
 		// 02 03 02 -> 2
 		// 03 04 05 -> 3
-		private int GetOptimizedLength (byte [] data, int len)
+		private int GetOptimizedLength (byte [] data, int len, byte defaultValue)
 		{
 			int cur = -1;
 			for (int i = 0; i < len; i++)
-				if (data [i] != 2)
+				if (data [i] != defaultValue)
 					cur = i;
 			return cur + 1;
 		}
 
 		public byte [] GetResult ()
 		{
-			l2 = GetOptimizedLength (l2b, l2);
-			l3 = GetOptimizedLength (l3b, l3);
-			l4s = GetOptimizedLength (l4sb, l4s);
-			l4t = GetOptimizedLength (l4tb, l4t);
-			l4k = GetOptimizedLength (l4kb, l4k);
-			l4w = GetOptimizedLength (l4wb, l4w);
-			l5 = GetOptimizedLength (l5b, l5);
+			l2 = GetOptimizedLength (l2b, l2, 2);
+			l3 = GetOptimizedLength (l3b, l3, 2);
+			bool hasJapaneseWeight = (l4s > 0);
+			l4s = GetOptimizedLength (l4sb, l4s, 0xE4);
+			l4t = GetOptimizedLength (l4tb, l4t, 3);
+			l4k = GetOptimizedLength (l4kb, l4k, 0xE4);
+			l4w = GetOptimizedLength (l4wb, l4w, 0xE4);
+			l5 = GetOptimizedLength (l5b, l5, 2);
 
 			int length = l1 + l2 + l3 + l5 + 5;
 			int jpLength = l4s + l4t + l4k + l4w;
-			if (jpLength > 0)
-				length += jpLength + 3;
+			if (hasJapaneseWeight)
+				length += jpLength + 4;
 
 			byte [] ret = new byte [length];
 			Array.Copy (l1b, ret, l1);
@@ -169,18 +186,19 @@ namespace Mono.Globalization.Unicode
 				Array.Copy (l3b, 0, ret, cur, l3);
 			cur += l3;
 			ret [cur++] = 1; // end-of-level mark
-			if (jpLength > 0) {
-				Array.Copy (l4s, 0, ret, cur, l4s);
+			if (hasJapaneseWeight) {
+				Array.Copy (l4sb, 0, ret, cur, l4s);
 				cur += l4s;
 				ret [cur++] = 0xFF; // end-of-jp-subsection
-				Array.Copy (l4t, 0, ret, cur, l4t);
+				Array.Copy (l4tb, 0, ret, cur, l4t);
 				cur += l4t;
 				ret [cur++] = 2; // end-of-jp-middle-subsection
-				Array.Copy (l4k, 0, ret, cur, l4k);
+				Array.Copy (l4kb, 0, ret, cur, l4k);
 				cur += l4k;
 				ret [cur++] = 0xFF; // end-of-jp-subsection
-				Array.Copy (l4w, 0, ret, cur, l4w);
+				Array.Copy (l4wb, 0, ret, cur, l4w);
 				cur += l4w;
+				ret [cur++] = 0xFF; // end-of-jp-subsection
 			}
 			ret [cur++] = 1; // end-of-level mark
 			if (l5 > 0)

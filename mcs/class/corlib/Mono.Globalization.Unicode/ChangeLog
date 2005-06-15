@@ -1,5 +1,14 @@
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.template :
+	  Now dumper test driver uses SortKeyBuffer for dogfooding.
+	* create-mscompat-collation-table.cs : some diacritical level fixes
+	  (with non-working extra latin check).
+	* SortKeyBuffer.cs : several fixes to get working as a practical code.
+	* Collator.cs : make it compilable, leaving things as NotImplemented.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : some fixes on primary category
 	  07 (miscellaneous symbols and punctuations).
 

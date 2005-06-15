@@ -7,10 +7,13 @@ namespace Mono.Globalization.Unicode
 	{
 
 static System.IO.TextWriter Output = Console.Out;
+static SortKeyBuffer buf = new SortKeyBuffer ();
 
 #region private debugging thingy
 public static void Main ()
 {
+	buf.AdjustBufferSize (1);
+
 	for (int i = 0; i <= char.MaxValue; i++) {
 		if (IsIgnorable (i))
 			continue;
@@ -27,9 +30,6 @@ static byte [] tmp = new byte [256];
 
 static byte [] GetSortKeyRaw (int i)
 {
-//	if (0xAC00 <= i && i <= 0xD7A3)
-//		return GetHangleSyllableSortKeyRaw (i, 0x52);
-
 	if (0x3400 <= i && i <= 0x4DB5)
 		return GetCJKExtensionSortKeyRaw (i);
 
@@ -41,70 +41,39 @@ static byte [] GetSortKeyRaw (int i)
 		return GetSurrogateSortKeyRaw (i);
 	}
 
-	int n = 0;
-	if (categories [i] != 0x1) {
-		tmp [n++] = categories [i];
-		tmp [n++] = level1 [i];
-	}
-	tmp [n++] = 1;
-	if (level2 [i] != 0)
-		tmp [n++] = level2 [i];
-	tmp [n++] = 1;
-	if (level3 [i] != 0)
-		tmp [n++] = level3 [i];
-	tmp [n++] = 1;
-
-	if (HasSpecialWeight ((char) i)) {
-		if (IsJapaneseSmallLetter ((char) i))
-			tmp [n++] = 0xC4;
-		tmp [n++] = 0xFF;
-		byte v = GetJapaneseDashType ((char) i);
-		if (v != 3)
-			tmp [n++] = v;
-		tmp [n++] = 0x02;
-		if (!IsHiragana ((char) i))
-			tmp [n++] = 0xC4;
-		tmp [n++] = 0xFF;
-		if (IsHalfWidthKana ((char) i))
-		tmp [n++] = 0xC4;
-		tmp [n++] = 0xFF;
-	}
-	tmp [n++] = 1; // level4
-	tmp [n++] = 0;
-	byte [] ret = new byte [n];
-	Array.Copy (tmp, ret, n);
-	return ret;
-}
-
-static byte [] GetHangleSyllableSortKeyRaw (int i, byte segment)
-{
-	int ri = i - 0xAC00;
-	ri = ri + ri / 0x24C + 1;
-	return new byte [] {
-		(byte) (segment + ri / 254),
-		(byte) (ri % 254 + 2),
-		1, 1, 1, 1, 0
-		};
+	if (HasSpecialWeight ((char) i))
+		buf.AppendKana (
+			categories [i], level1 [i], level2 [i], level3 [i],
+			IsJapaneseSmallLetter ((char) i),
+			GetJapaneseDashType ((char) i),
+			!IsHiragana ((char) i),
+			IsHalfWidthKana ((char) i)
+			);
+	else
+		buf.AppendNormal (
+			categories [i], level1 [i], level2 [i], level3 [i]);
+	return buf.GetResultAndReset ();
 }
 
 static byte [] GetCJKExtensionSortKeyRaw (int i)
 {
 	int diff = i - 0x3400;
-	return new byte [] {
-		0xFE, 0xFF,
+
+	buf.AppendCJKExtension (
 		(byte) (0x10 + diff / 254),
-		(byte) (diff % 254 + 2),
-		1, 1, 1, 1, 0};
+		(byte) (diff % 254 + 2));
+	return buf.GetResultAndReset ();
 }
 
 static byte [] GetPrivateUseSortKeyRaw (int i)
 {
 	int diff = i - 0xE000;
-	return new byte [] {
+	buf.AppendNormal (
 		(byte) (0xE5 + diff / 254),
 		(byte) (diff % 254 + 2),
-		1, 1, 1, 1, 0
-		};
+		0,
+		0);
+	return buf.GetResultAndReset ();
 }
 
 static byte [] GetSurrogateSortKeyRaw (int i)
@@ -131,15 +100,13 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 		lower = 0x3F;
 	}
 	int diff = i - diffbase;
-	return new byte [] {
+
+	buf.AppendNormal (
 		(byte) (segment + diff / 254),
 		(byte) (diff % 254 + 2),
-		1,
-		lower, 1,
-		lower, 1,
-		1,
-		0
-		};
+		lower,
+		lower);
+	return buf.GetResultAndReset ();
 }
 #endregion
 
@@ -175,7 +142,7 @@ static byte [] GetSurrogateSortKeyRaw (int i)
 			return (ignorableFlags [i] & 0x4) != 0;
 		}
 
-		public static int ToKanatypeInsensitive (int i)
+		public static int ToKanaTypeInsensitive (int i)
 		{
 			// Note that IgnoreKanaType does not treat half-width
 			// katakana as equivalent to full-width ones.
