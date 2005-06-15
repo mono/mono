@@ -1,3 +1,8 @@
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : some fixes on primary category
+	  07 (miscellaneous symbols and punctuations).
+
 2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : more mapping fix on numbers,

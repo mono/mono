@@ -57,6 +57,7 @@ namespace Mono.Globalization.Unicode
 		const int DecompositionCircle = 0xF;
 		const int DecompositionSquare = 0x10;
 		const int DecompositionCompat = 0x11;
+		const int DecompositionCanonical = 0x12;
 
 		TextWriter Result = Console.Out;
 
@@ -595,6 +596,8 @@ namespace Mono.Globalization.Unicode
 					throw new Exception ("Support NFKD type : " + decomp);
 				}
 			}
+			else
+				decompType [cp] = DecompositionCanonical;
 			decomp = idx < 0 ? decomp : decomp.Substring (decomp.IndexOf ('>') + 2);
 			if (decomp.Length > 0) {
 
@@ -1036,32 +1039,12 @@ namespace Mono.Globalization.Unicode
 			#endregion
 
 
-			#region ASCII non-alphanumeric + 3001, 3002 // 07
-			// non-alphanumeric ASCII except for: + - < = > '
-			for (int i = 0x21; i < 0x7F; i++) {
-				if (Char.IsLetterOrDigit ((char) i)
-					|| "+-<=>'".IndexOf ((char) i) >= 0)
-					continue; // they are not added here.
-					AddCharMapGroup2 ((char) i, 0x7, 1, 0);
-				// Insert 3001 after ',' and 3002 after '.'
-				if (i == 0x2C)
-					AddCharMapGroup2 ('\u3001', 0x7, 1, 0);
-				else if (i == 0x2E)
-					AddCharMapGroup2 ('\u3002', 0x7, 1, 0);
-				else if (i == 0x3A)
-					AddCharMap ('\uFE30', 0x7, 1, 0);
-			}
-			#endregion
-
-
-			// FIXME: for 07 xx we need more love.
-
 			// FIXME: 08 should be more complete.
 			fillIndex [0x8] = 2;
 			for (int cp = 0; cp < char.MaxValue; cp++)
 				if (Char.GetUnicodeCategory ((char) cp) ==
 					UnicodeCategory.MathSymbol)
-					AddCharMapGroup2 ((char) cp, 0x8, 1, 0);
+					AddCharMapGroup ((char) cp, 0x8, 1, 0);
 
 			// FIXME: implement 09
 
@@ -1073,13 +1056,13 @@ namespace Mono.Globalization.Unicode
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (uc == UnicodeCategory.CurrencySymbol &&
 					cp != '$')
-					AddCharMapGroup2 ((char) cp, 0xA, 1, 0);
+					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 			// byte other symbols
 			for (int cp = 0; cp < 0x100; cp++) {
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (uc == UnicodeCategory.OtherSymbol)
-					AddCharMapGroup2 ((char) cp, 0xA, 1, 0);
+					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 			#endregion
 
@@ -1522,22 +1505,24 @@ namespace Mono.Globalization.Unicode
 			diacritical [0x64A] = 0x7; // Yaa'
 
 
-			for (int i = 0; i < 0x10000; i++) {
-				switch (map [i].Category) {
+			for (int i = 0; i < char.MaxValue; i++) {
+				byte mod = 0;
+				byte cat = map [i].Category;
+				switch (cat) {
 				case 0xE: // Latin diacritics
 				case 0x22: // Japanese: circled characters
-					map [i] = new CharMapEntry (
-						map [i].Category,
-						map [i].Level1,
-						diacritical [i]);
+					mod = diacritical [i];
 					break;
 				case 0x13: // Arabic
 					if (diacritical [i] == 0)
-						// default by 8
-						diacritical [i] = 0x8;
-					map [i] = new CharMapEntry (0xE, map [i].Level1, diacritical [i]);
+						mod = 0x8; // default for arabic
 					break;
 				}
+				if (0x52 <= cat && cat <= 0x7F) // Hangul
+					mod = diacritical [i];
+				if (mod > 0)
+					map [i] = new CharMapEntry (
+						cat, map [i].Level1, mod);
 			}
 			#endregion
 
@@ -1679,6 +1664,59 @@ namespace Mono.Globalization.Unicode
 				AddCharMap (c, 0xFF, 0);
 			#endregion
 
+			#region 07 - ASCII non-alphanumeric + 3001, 3002 // 07
+			// non-alphanumeric ASCII except for: + - < = > '
+			for (int i = 0x21; i < 0x7F; i++) {
+				if (Char.IsLetterOrDigit ((char) i)
+					|| "+-<=>'".IndexOf ((char) i) >= 0)
+					continue; // they are not added here.
+					AddCharMapGroup2 ((char) i, 0x7, 1, 0);
+				// Insert 3001 after ',' and 3002 after '.'
+				if (i == 0x2C)
+					AddCharMapGroup2 ('\u3001', 0x7, 1, 0);
+				else if (i == 0x2E) {
+					fillIndex [0x7]--;
+					AddCharMapGroup2 ('\u3002', 0x7, 1, 0);
+				}
+				else if (i == 0x3A)
+					AddCharMap ('\uFE30', 0x7, 1, 0);
+			}
+			#endregion
+
+			#region 07 - Punctuations and something else
+			for (int i = 0xA0; i < char.MaxValue; i++) {
+				if (IsIgnorable (i))
+					continue;
+
+				// SPECIAL CASES:
+				switch (i) {
+				case 0xAB: // 08
+				case 0x2329: // 09
+				case 0x232A: // 09
+					continue;
+				}
+
+				switch (Char.GetUnicodeCategory ((char) i)) {
+				case UnicodeCategory.OtherPunctuation:
+				case UnicodeCategory.ClosePunctuation:
+				case UnicodeCategory.InitialQuotePunctuation:
+				case UnicodeCategory.FinalQuotePunctuation:
+				case UnicodeCategory.ModifierSymbol:
+					// SPECIAL CASES: // 0xA
+					if (0x2020 <= i && i <= 0x2042)
+						continue;
+					AddCharMapGroup ((char) i, 0x7, 1, 0);
+					break;
+				default:
+					if (i == 0xA6) // SPECIAL CASE. FIXME: why?
+						goto case UnicodeCategory.OtherPunctuation;
+					break;
+				}
+			}
+			#endregion
+
+			// FIXME: for 07 xx we need more love.
+
 			// Characters w/ diacritical marks (NFKD)
 			for (int i = 0; i <= char.MaxValue; i++) {
 				if (map [i].Defined || IsIgnorable (i))
@@ -1767,34 +1805,33 @@ namespace Mono.Globalization.Unicode
 			// <small> updates index
 			c2 = ToSmallForm (c);
 			if (c2 != c)
-				AddCharMapGroup2 (c2, category, updateCount, level2);
+				AddCharMapGroup (c2, category, updateCount, level2);
 			c2 = Char.ToLower (c, CultureInfo.InvariantCulture);
 			if (c2 != c && !map [(int) c2].Defined)
 				AddLetterMapCore (c2, category, 0, level2);
 			bool doUpdate = true;
-			if (!map [c].Defined)
-				AddCharMapGroup2 (c, category, 0, level2);
-			else
+			if (IsIgnorable ((int) c) || map [(int) c].Defined)
 				doUpdate = false;
+			else
+				AddCharMapGroup (c, category, 0, level2);
 			if (doUpdate)
 				fillIndex [category] += updateCount;
 		}
 
-		private void AddCharMap (char c, byte category, byte increment)
+		private bool AddCharMap (char c, byte category, byte increment)
 		{
-			AddCharMap (c, category, increment, 0);
+			return AddCharMap (c, category, increment, 0);
 		}
 		
-		private void AddCharMap (char c, byte category, byte increment, byte alt)
+		private bool AddCharMap (char c, byte category, byte increment, byte alt)
 		{
-			if (IsIgnorable ((int) c) || map [(int) c].Defined) {
-				return; // do nothing
-			}
-
+			if (IsIgnorable ((int) c) || map [(int) c].Defined)
+				return false; // do nothing
 			map [(int) c] = new CharMapEntry (category,
 				category == 1 ? alt : fillIndex [category],
 				category == 1 ? fillIndex [category] : alt);
 			fillIndex [category] += increment;
+			return true;
 		}
 
 		private void AddCharMapGroupTail (char c, byte category, byte updateCount)
@@ -1822,18 +1859,21 @@ namespace Mono.Globalization.Unicode
 		//	(vertical +)
 		//
 		// level2 is fixed (does not increase).
-			int [] sameWeightItems = new int [] {
-				0, // canonically compatible
-				DecompositionFraction,
-				DecompositionFull,
-				DecompositionSuper,
-				DecompositionSub,
-				DecompositionCircle,
-				DecompositionWide,
-				DecompositionNarrow,
-				};
-		private void AddCharMapGroup2 (char c, byte category, byte updateCount, byte level2)
+		int [] sameWeightItems = new int [] {
+			0, // canonically compatible
+			DecompositionFraction,
+			DecompositionFull,
+			DecompositionSuper,
+			DecompositionSub,
+			DecompositionCircle,
+			DecompositionWide,
+			DecompositionNarrow,
+			};
+		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2)
 		{
+if (map [(int) c].Defined)
+return;
+
 			char small = char.MinValue;
 			char vertical = char.MinValue;
 			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
@@ -1897,7 +1937,7 @@ namespace Mono.Globalization.Unicode
 			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
 			if (nfkd == null)
 				return;
-			for (byte weight = 0; weight <= 17; weight++) {
+			for (byte weight = 0; weight <= 0x12; weight++) {
 				object wv = nfkd [weight];
 				if (wv == null)
 					continue;
@@ -1920,30 +1960,47 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		// note that level2 is fixed
-		// different order than AddCharMapGroup2()
-		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2)
+		// For now it is only for 0x7 category.
+		private void AddCharMapGroup2 (char c, byte category, byte updateCount, byte level2)
 		{
-/*
+			char small = char.MinValue;
+			char vertical = char.MinValue;
+			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
+			if (nfkd != null) {
+				object smv = nfkd [(byte) DecompositionSmall];
+				if (smv != null)
+					small = (char) ((int) smv);
+				object vv = nfkd [(byte) DecompositionVertical];
+				if (vv != null)
+					vertical = (char) ((int) vv);
+			}
+
+			// <small> updates index
+			if (small != char.MinValue)
+				// SPECIAL CASE excluded (FIXME: why?)
+				if (small != '\u2024')
+					AddCharMap (small, category, updateCount);
+
 			// itself
 			AddCharMap (c, category, updateCount, level2);
 
-			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
-			if (nfkd == null)
-				return;
-
-			// Here type of i must be byte since the constants
-			// are stored as byte.
-			for (byte i = 1; i <= 17; i++) {
-				if (nfkd.ContainsKey (i)) {
-					int cp = (int) nfkd [i];
-					if (decompLength [cp] == 1) {
-						AddCharMapGroup ((char) cp, category, updateCount, level2);
+			// Since nfkdMap is problematic to have two or more
+			// NFKD to an identical character, here I iterate all.
+			for (int c2 = 0; c2 < char.MaxValue; c2++) {
+				if (decompLength [c2] == 1 &&
+					(int) (decompValues [decompIndex [c2]]) == (int) c) {
+					switch (decompType [c2]) {
+					case DecompositionCompat:
+						AddCharMap ((char) c2, category, updateCount, level2);
+						break;
 					}
 				}
 			}
-*/
-			AddCharMapGroup2 (c, category, updateCount, level2);
+
+			if (vertical != char.MinValue)
+				// SPECIAL CASE excluded (FIXME: why?)
+				if (vertical != '\uFE33' && vertical != '\uFE34')
+					AddCharMap (vertical, category, updateCount, level2);
 		}
 
 		char ToFullWidth (char c)
