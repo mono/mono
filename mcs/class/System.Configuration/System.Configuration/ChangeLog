@@ -1,3 +1,38 @@
+2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ConfigurationElement.cs, ConfigurationErrorsException.cs
+	SectionInfo.cs, ConnectionStringSettingsCollection.cs,
+	ConfigurationPropertyCollection.cs, ProtectedConfigurationProvider.cs,
+	ConfigurationSection.cs, NonEmptyStringConfigurationProperty.cs,
+	ConfigurationElementCollectionType.cs, Configuration.cs, 
+	ConnectionStringSettings.cs, ConfigurationProperty.cs,
+	ConfigurationLocationCollection.cs, TimeSpanConfigurationProperty.cs,
+	ConfigurationAllowDefinition.cs, ConfigInfo.cs,
+	ConfigurationSectionGroupCollection.cs, AppSettingsSection.cs,
+	ProviderSettingsCollection.cs, IntegerConfigurationProperty.cs,
+	SectionGroupInfo.cs, ConfigurationUserLevel.cs,
+	ConnectionStringsSection.cs, ConfigurationPropertyAttribute.cs,
+	ConfigurationLocation.cs, ConfigurationSectionCollection.cs,
+	ConfigurationSectionGroup.cs, RuntimeOnlySection.cs,
+	ProviderSettings.cs: 
+		Track API changes.
+	
+	* ConfigurationElementCollection.cs: Implemented support for Basic
+	collection type. Other fixes.
+	
+	* ConfigurationPropertyFlags.cs: Renamed to ConfigurationPropertyOptions.
+	* ConfigurationUpdateMode.cs: Renamed to ConfigurationSaveMode.
+	
+	* SectionInformation.cs, ConfigurationAllowExeDefinition.cs
+	ConfigurationManager.cs, ConfigurationSaveMode.cs,
+	ConfigurationValidatorAttribute.cs, ProtectedConfigurationSection.cs,
+	ConfigurationValidatorBase.cs, ConfigurationPropertyOptions.cs:
+		New files.
+	
+	* ConfigurationValidationAttribute.cs: Removed.
+	
+	* ProviderBase.cs: Moved to System.dll.
+
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AppSettingsSection.cs, ConfigInfo.cs, Configuration.cs

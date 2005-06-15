@@ -33,32 +33,43 @@ using System.ComponentModel;
 
 namespace System.Configuration
 {
-	public class ConfigurationProperty
+	public sealed class ConfigurationProperty
 	{
 		string name;
 		Type type;
 		object default_value;
 		TypeConverter converter;
-		ConfigurationValidationAttribute validation;
-		ConfigurationPropertyFlags flags;
+		ConfigurationValidatorBase validation;
+		ConfigurationPropertyOptions flags;
+		string description;
 		
 		public ConfigurationProperty (string name, Type type, object default_value)
-			: this (name, type, default_value, ConfigurationPropertyFlags.None)
+			: this (name, type, default_value, ConfigurationPropertyOptions.None)
 		{
 		}
 
 		public ConfigurationProperty (
 					string name, Type type, object default_value,
-					ConfigurationPropertyFlags flags)
-			:this (name, type, default_value, TypeDescriptor.GetConverter (type), null, flags)
+					ConfigurationPropertyOptions flags)
+			:this (name, type, default_value, TypeDescriptor.GetConverter (type), null, flags, null)
 		{
 		}
 		
 		public ConfigurationProperty (
 					string name, Type type, object default_value,
 					TypeConverter converter,
-					ConfigurationValidationAttribute validation,
-					ConfigurationPropertyFlags flags)
+					ConfigurationValidatorBase validation,
+					ConfigurationPropertyOptions flags)
+		: this (name, type, default_value, converter, validation, flags, null)
+		{
+		}
+
+		public ConfigurationProperty (
+					string name, Type type, object default_value,
+					TypeConverter converter,
+					ConfigurationValidatorBase validation,
+					ConfigurationPropertyOptions flags,
+					string description)
 		{
 			this.name = name;
 			this.converter = converter;
@@ -66,6 +77,7 @@ namespace System.Configuration
 			this.flags = flags;
 			this.type = type;
 			this.validation = validation;
+			this.description = description;
 		}
 
 		public TypeConverter Converter {
@@ -77,26 +89,30 @@ namespace System.Configuration
 		}
 
 		public bool IsKey {                        
-			get { return (flags & ConfigurationPropertyFlags.IsKey) != 0; }
+			get { return (flags & ConfigurationPropertyOptions.IsKey) != 0; }
 		}
 
 		public bool IsRequired {
-			get { return (flags & ConfigurationPropertyFlags.Required) != 0; }               
+			get { return (flags & ConfigurationPropertyOptions.Required) != 0; }               
 		}
 
 		public string Name {
 			get { return name; }
 		}
 
+		public string Description {
+			get { return description; }
+		}
+
 		public Type Type {
 			get { return type; }
 		}
 
-		public ConfigurationValidationAttribute ValidationAttribute {
+		public ConfigurationValidatorBase Validator {
 			get { return validation; }
 		}
 
-		protected internal virtual object ConvertFromString (string value)
+		internal object ConvertFromString (string value)
 		{
 			if (converter != null)
 				return converter.ConvertFromInvariantString (value);
@@ -104,7 +120,7 @@ namespace System.Configuration
 				throw new NotImplementedException ();
 		}
 
-		protected internal virtual string ConvertToString (object value)
+		internal string ConvertToString (object value)
 		{
 			if (converter != null)
 				return converter.ConvertToInvariantString (value);

@@ -31,7 +31,7 @@ using System.Xml;
 
 namespace System.Configuration
 {
-	public abstract class ProtectedConfigurationProvider
+	public abstract class ProtectedConfigurationProvider: ProviderBase
 	{
 		protected ProtectedConfigurationProvider ()
 		{

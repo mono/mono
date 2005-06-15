@@ -33,7 +33,7 @@
 using System;
 using System.Configuration;
 
-namespace System.Web.Configuration
+namespace System.Configuration
 {
 	public sealed class ProviderSettingsCollection: ConfigurationElementCollection
 	{
@@ -64,11 +64,6 @@ namespace System.Web.Configuration
 			BaseRemove (key);
 		}
 		
-		public void RemoveAt (int index)
-		{
-			BaseRemoveAt (index);
-		}
-		
 		public ProviderSettings this [int n]
 		{
 			get { return (ProviderSettings) BaseGet (n); }
@@ -78,11 +73,6 @@ namespace System.Web.Configuration
 		public ProviderSettings this [object key]
 		{
 			get { return (ProviderSettings) BaseGet (key); }
-		}
-		
-		protected override bool CompareKeys (object key1, object key2)
-		{
-			return key1.Equals (key2);
 		}
 		
 		protected internal override ConfigurationPropertyCollection Properties {

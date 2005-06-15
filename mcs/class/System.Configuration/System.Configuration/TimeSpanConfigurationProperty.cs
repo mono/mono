@@ -37,18 +37,18 @@ namespace System.Configuration
 		TimeSpanSerializedFormat _format;
 		TimeSpanPropertyFlags _tsflags;
 		
-		public TimeSpanConfigurationProperty (string name, TimeSpan defaultValue, ConfigurationPropertyFlags flags)
+		public TimeSpanConfigurationProperty (string name, TimeSpan defaultValue, ConfigurationPropertyOptions flags)
 			: base (name, typeof(TimeSpan), defaultValue, flags)
 		{
 		}
 
-		public TimeSpanConfigurationProperty (string name, TimeSpan defaultValue, TimeSpanSerializedFormat format, ConfigurationPropertyFlags flags)
+		public TimeSpanConfigurationProperty (string name, TimeSpan defaultValue, TimeSpanSerializedFormat format, ConfigurationPropertyOptions flags)
 			: base (name, typeof(TimeSpan), defaultValue, flags)
 		{
 			_format = format;
 		}
 
-		public TimeSpanConfigurationProperty (string name, TimeSpan defaultValue, TimeSpanSerializedFormat format, TimeSpanPropertyFlags tsflags, ConfigurationPropertyFlags flags)
+		public TimeSpanConfigurationProperty (string name, TimeSpan defaultValue, TimeSpanSerializedFormat format, TimeSpanPropertyFlags tsflags, ConfigurationPropertyOptions flags)
 			: base (name, typeof(TimeSpan), defaultValue, flags)
 		{
 			_format = format;

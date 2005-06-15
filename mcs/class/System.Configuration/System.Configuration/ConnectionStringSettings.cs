@@ -43,7 +43,6 @@ namespace System.Configuration
 
                 #region Fields
                 private static ConfigurationPropertyCollection _properties;
-                private static ConfigurationPropertyCollection _keyProperties;
         
                 private static readonly ConfigurationProperty _propConnectionString;
                 private static readonly ConfigurationProperty _propName;
@@ -54,31 +53,28 @@ namespace System.Configuration
                 static ConnectionStringSettings ()
                 {
                         _properties     = new ConfigurationPropertyCollection ();
-                        _keyProperties  = new ConfigurationPropertyCollection ();
                         _propName = new ConfigurationProperty ("name", 
                                                                typeof(string), 
                                                                "", 
-                                                               ConfigurationPropertyFlags.Required | 
-                                                               ConfigurationPropertyFlags.IsKey
+                                                               ConfigurationPropertyOptions.Required | 
+                                                               ConfigurationPropertyOptions.IsKey
                                                                );
 
                         _propProviderName = new ConfigurationProperty ("providerName",
                                                                        typeof (string),
                                                                        "",
-                                                                       ConfigurationPropertyFlags.Required
+                                                                       ConfigurationPropertyOptions.Required
                                                                        );
 
                         _propConnectionString = new ConfigurationProperty ("connectionString",
                                                                            typeof (string),
                                                                            "",
-                                                                           ConfigurationPropertyFlags.Required
+                                                                           ConfigurationPropertyOptions.Required
                                                                            );
 
                         _properties.Add (_propName);
                         _properties.Add (_propProviderName);
                         _properties.Add (_propConnectionString);
-
-                        _keyProperties.Add (_propName);
                 }
 
                 public ConnectionStringSettings ()
@@ -101,13 +97,6 @@ namespace System.Configuration
 
                 #region Properties
 
-                protected internal override ConfigurationPropertyCollection CollectionKeyProperties
-                {
-                        get
-                        {
-                                return _keyProperties;
-                        }
-                }
                 protected internal override ConfigurationPropertyCollection Properties
                 {
                         get
@@ -134,8 +123,11 @@ namespace System.Configuration
                 }
        
                 #endregion // Properties
+                
+                public override string ToString ()
+                {
+                	return ConnectionString;
+                }
         }
-
-
 }
 #endif // NET_2_0

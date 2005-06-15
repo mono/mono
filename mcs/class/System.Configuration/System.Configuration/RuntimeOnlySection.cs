@@ -43,13 +43,13 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		protected internal override void ReadXml (XmlReader reader, object context)
+		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			xml = reader.ReadOuterXml ();
 		}
 
 		[MonoTODO]
-		protected internal override void Reset (ConfigurationElement parent_element, object context)
+		protected internal override void Reset (ConfigurationElement parent_element)
 		{
 		}
 
@@ -59,10 +59,10 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		protected internal override string WriteXml (
-				ConfigurationElement parent,
-				object context, string name,
-				ConfigurationUpdateMode updateMode)
+		protected internal override string SerializeSection (
+				ConfigurationElement parentElement,
+				string name,
+				ConfigurationSaveMode saveMode)
 		{
 			return xml;
 		}

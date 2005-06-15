@@ -1,9 +1,8 @@
 //
-// System.Configuration.ConfigurationLocation.cs
+// System.Configuration.ProtectedConfigurationSection.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
-//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,32 +28,10 @@
 
 #if NET_2_0
 
-namespace System.Configuration {
-
-	public class ConfigurationLocation
+namespace System.Configuration
+{
+	public sealed class ProtectedConfigurationSection: ConfigurationSection
 	{
-		string path;
-		Configuration configuration;
-		
-		internal ConfigurationLocation()
-		{
-		}
-		
-		internal ConfigurationLocation (string path, Configuration config)
-		{
-			this.path = path;
-			configuration = config;
-		}
-		
-		public string Path {
-			get { return path; }
-		}
-
-		public Configuration OpenConfiguration ()
-		{
-			return configuration;
-		}
 	}
 }
-
 #endif

@@ -83,11 +83,6 @@ namespace System.Configuration {
 			get { return Sections ["appSettings"] as AppSettingsSection; }
 		}
 
-		[MonoTODO]
-		public PathLevel ConfigurationPathLevel {
-			get { throw new NotImplementedException (); }
-		}
-
 		public ConnectionStringsSection ConnectionStrings {
 			get { return (ConnectionStringsSection) GetSection ("connectionStrings"); }
 		}
@@ -96,9 +91,16 @@ namespace System.Configuration {
 			get { return fileName; }
 		}
 
-		[MonoTODO]
 		public bool HasFile {
-			get { throw new NotImplementedException (); }
+			get {
+				if (File.Exists (fileName))
+					return true;
+
+				if (parent != null)
+					return parent.HasFile;
+				else
+					return false; 
+			 }
 		}
 
 		public ConfigurationLocationCollection Locations {
@@ -106,11 +108,6 @@ namespace System.Configuration {
 				if (locations == null) locations = new ConfigurationLocationCollection ();
 				return locations;
 			}
-		}
-
-		[MonoTODO]
-		public string Path {
-			get { throw new NotImplementedException (); }
 		}
 
 		public ConfigurationSectionGroup RootSectionGroup {
@@ -129,81 +126,6 @@ namespace System.Configuration {
 
 		public ConfigurationSectionCollection Sections {
 			get { return RootSectionGroup.Sections; }
-		}
-
-		public static Configuration GetExeConfiguration (string path, ConfigurationUserLevel level)
-		{
-			if (path == null) {
-				path = Assembly.GetCallingAssembly ().Location;
-			} else if (!File.Exists (path)) {
-				throw new ArgumentException ("File not found or not readable.", "path");
-			}
-
-			return new Configuration (path + ".config", GetMachineConfiguration ());
-		}
-
-		public static Configuration GetMachineConfiguration ()
-		{
-			return GetMachineConfiguration (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
-		}
-
-		public static Configuration GetMachineConfiguration (string path)
-		{
-			return GetMachineConfiguration (path, null);
-		}
-		
-		public static Configuration GetMachineConfiguration (string path, string server)
-		{
-			return GetMachineConfiguration (path, server, IntPtr.Zero);
-		}
-
-		[MonoTODO]
-		public static Configuration GetMachineConfiguration (
-						string path, string server, IntPtr user_token)
-		{
-			return new Configuration (path);
-		}
-
-		[MonoTODO]
-		public static Configuration GetMachineConfiguration (
-						string path, string server, string username, string password)
-		{
-			return new Configuration (path);
-		}
-
-		public static Configuration GetWebConfiguration (string path)
-		{
-			return GetWebConfiguration (path, null);
-		}
-
-		public static Configuration GetWebConfiguration (string path, string site)
-		{
-			return GetWebConfiguration (path, site, null);
-		}
-		
-		public static Configuration GetWebConfiguration (string path, string site, string subpath)
-		{
-			return GetWebConfiguration (path, site, subpath, null);
-		}
-
-		public static Configuration GetWebConfiguration (
-						string path, string site, string subpath, string server)
-		{
-			return GetWebConfiguration (path, site, subpath, server, IntPtr.Zero);
-		}
-
-		[MonoTODO]
-		public static Configuration GetWebConfiguration (
-						string path, string site, string subpath, string server, IntPtr user_token)
-		{
-			return new Configuration (path, GetMachineConfiguration ());
-		}
-
-		[MonoTODO]
-		public static Configuration GetWebConfiguration (
-						string path, string site, string subpath, string server, string username, string password)
-		{
-			return new Configuration (path, GetMachineConfiguration ());
 		}
 		
 		public ConfigurationSection GetSection (string path)
@@ -246,12 +168,11 @@ namespace System.Configuration {
 				
 			ConfigurationSection parentSection = parent != null ? parent.GetSectionInstance (config, true) : null;
 			sec.RawXml = data as string;
-			sec.SetPath (config.XPath);
-			sec.Reset (parentSection, this);
+			sec.Reset (parentSection);
 			
 			if (data != null) {
 				XmlTextReader r = new XmlTextReader (new StringReader (data as string));
-				sec.ReadXml (r, this);
+				sec.DeserializeSection (r);
 				r.Close ();
 			}
 			
@@ -284,23 +205,22 @@ namespace System.Configuration {
 		internal void CreateSection (SectionGroupInfo group, string name, ConfigurationSection sec)
 		{
 			if (group.HasChild (name)) throw new ConfigurationException ("Cannot add a ConfigurationSection. A section or section group already exists with the name '" + name + "'");
-			if (sec.TypeName == null) sec.TypeName = sec.GetType ().AssemblyQualifiedName;
-			sec.SetName (name);
+			if (sec.SectionInformation.Type == null) sec.SectionInformation.Type = sec.GetType ().AssemblyQualifiedName;
+			sec.SectionInformation.SetName (name);
 
-			SectionInfo section = new SectionInfo (name, sec.TypeName, sec.AllowLocation, sec.AllowDefinition);
+			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition);
 			section.FileName = FileName;
 			group.AddChild (section);
 			elementData [section] = sec;
-			sec.SetPath (section.XPath);
 		}
 		
 		internal void CreateSectionGroup (SectionGroupInfo parentGroup, string name, ConfigurationSectionGroup sec)
 		{
 			if (parentGroup.HasChild (name)) throw new ConfigurationException ("Cannot add a ConfigurationSectionGroup. A section or section group already exists with the name '" + name + "'");
-			if (sec.TypeName == null) sec.TypeName = sec.GetType ().AssemblyQualifiedName;
+			if (sec.Type == null) sec.Type = sec.GetType ().AssemblyQualifiedName;
 			sec.SetName (name);
 
-			SectionGroupInfo section = new SectionGroupInfo (name, sec.TypeName);
+			SectionGroupInfo section = new SectionGroupInfo (name, sec.Type);
 			section.FileName = FileName;
 			parentGroup.AddChild (section);
 			elementData [section] = sec;
@@ -311,20 +231,35 @@ namespace System.Configuration {
 			elementData.Remove (config);
 		}
 		
-		public void Update ()
+		public void Save ()
 		{
-			Update (ConfigurationUpdateMode.Modified, false);
+			SaveAs (fileName, ConfigurationSaveMode.Modified, false);
 		}
 		
-		public void Update (ConfigurationUpdateMode mode)
+		public void Save (ConfigurationSaveMode mode)
 		{
-			Update (mode, false);
+			SaveAs (fileName, mode, false);
+		}
+		
+		public void Save (ConfigurationSaveMode mode, bool forceUpdateAll)
+		{
+			SaveAs (fileName, mode, forceUpdateAll);
+		}
+		
+		public void SaveAs (string filename)
+		{
+			SaveAs (filename, ConfigurationSaveMode.Modified, false);
+		}
+		
+		public void SaveAs (string filename, ConfigurationSaveMode mode)
+		{
+			SaveAs (filename, mode, false);
 		}
 		
 		[MonoTODO ("Detect if file has changed")]
-		public void Update (ConfigurationUpdateMode mode, bool forceUpdateAll)
+		public void SaveAs (string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
-			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (fileName));
+			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (filename));
 			tw.Formatting = Formatting.Indented;
 			try {
 				tw.WriteStartElement ("configuration");

@@ -1,9 +1,8 @@
 //
-// System.Configuration.ConfigurationLocation.cs
+// System.Configuration.ConfigurationValidatorAttribute.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
-//  Lluis Sanchez Gual (lluis@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,37 +23,40 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
+using System;
 
-namespace System.Configuration {
-
-	public class ConfigurationLocation
+namespace System.Configuration
+{
+	[AttributeUsage (AttributeTargets.Property)]
+	public class ConfigurationValidatorAttribute : Attribute
 	{
-		string path;
-		Configuration configuration;
+		Type validatorType;
+		ConfigurationValidatorBase instance;
 		
-		internal ConfigurationLocation()
+		protected ConfigurationValidatorAttribute ()
 		{
-		}
-		
-		internal ConfigurationLocation (string path, Configuration config)
-		{
-			this.path = path;
-			configuration = config;
-		}
-		
-		public string Path {
-			get { return path; }
 		}
 
-		public Configuration OpenConfiguration ()
+		public ConfigurationValidatorAttribute (Type validator)
 		{
-			return configuration;
+			validatorType = validator;
+		}
+
+		public virtual ConfigurationValidatorBase ValidatorInstance {
+			get {
+				if (instance == null)
+					instance = (ConfigurationValidatorBase) Activator.CreateInstance (validatorType);
+				return instance;
+			}
+		}
+		
+		public Type ValidatorType {
+			get { return validatorType; }
 		}
 	}
 }
-
 #endif

@@ -1,5 +1,5 @@
 //
-// System.Configuration.ConfigurationPropertyFlags.cs
+// System.Configuration.ConfigurationSaveMode.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
@@ -29,13 +29,11 @@
 #if NET_2_0
 namespace System.Configuration
 {
-        [Serializable, Flags]
-        public enum ConfigurationPropertyFlags
+        public enum ConfigurationSaveMode
         {
-                None = 0,
-                DefaultCollection = 1,
-                Required = 2,
-                IsKey = 4
+                Minimal = 1,
+                Full = 2,
+                Modified = 3
         }
 }
 #endif

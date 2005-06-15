@@ -35,12 +35,12 @@ namespace System.Configuration
 	{
 		NonEmptyStringFlags stringFlags;
 		
-		public NonEmptyStringConfigurationProperty (string name, string defaultValue, ConfigurationPropertyFlags flags)
+		public NonEmptyStringConfigurationProperty (string name, string defaultValue, ConfigurationPropertyOptions flags)
 			: base (name, typeof(string), defaultValue, flags)
 		{
 		}
 
-		public NonEmptyStringConfigurationProperty (string name, string defaultValue, ConfigurationPropertyFlags flags, NonEmptyStringFlags nonEmptyStringFlags)
+		public NonEmptyStringConfigurationProperty (string name, string defaultValue, ConfigurationPropertyOptions flags, NonEmptyStringFlags nonEmptyStringFlags)
 			: base (name, typeof(string), defaultValue, flags)
 		{
 			stringFlags = nonEmptyStringFlags;

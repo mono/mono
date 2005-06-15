@@ -70,9 +70,9 @@ namespace System.Configuration {
 		}
 		
 		public abstract void ReadConfig (Configuration cfg, XmlTextReader reader);
-		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationUpdateMode mode);
+		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode);
 		public abstract void ReadData (Configuration config, XmlTextReader reader);
-		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationUpdateMode mode);
+		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode);
 	}
 }
 

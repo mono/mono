@@ -38,7 +38,6 @@ namespace System.Configuration
 	public sealed class ProviderSettings: ConfigurationElement
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationPropertyCollection keys;
 		static ConfigurationProperty nameProp;
 		static ConfigurationProperty typeProp;
 		
@@ -52,9 +51,6 @@ namespace System.Configuration
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);
 			properties.Add (typeProp);
-			
-			keys = new ConfigurationPropertyCollection ();
-			keys.Add (nameProp);
 		}
 		
 		public ProviderSettings ()
@@ -67,19 +63,13 @@ namespace System.Configuration
 			Type = type;
 		}
 		
-		protected internal override ConfigurationPropertyCollection CollectionKeyProperties {
-			get {
-				return keys;
-			}
-		}
-		
 		protected internal override ConfigurationPropertyCollection Properties {
 			get {
 				return properties;
 			}
 		}
 
-		protected override bool HandleUnrecognizedAttribute (string name, string value)
+		protected override bool OnDeserializeUnrecognizedAttribute (string name, string value)
 		{
 			if (parameters == null)
 				parameters = new ConfigNameValueCollection ();
@@ -93,9 +83,9 @@ namespace System.Configuration
 			return (parameters != null && parameters.IsModified) || base.IsModified ();
 		}
 
-		protected internal override void Reset (ConfigurationElement parentElement, object context)
+		protected internal override void Reset (ConfigurationElement parentElement)
 		{
-			base.Reset (parentElement, context);
+			base.Reset (parentElement);
 
 			ProviderSettings sec = parentElement as ProviderSettings;
 			if (sec != null && sec.parameters != null)
@@ -105,12 +95,11 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		protected internal override void UnMerge (
+		protected internal override void Unmerge (
 				ConfigurationElement source, ConfigurationElement parent,
-				bool serializeCollectionKey, object context,
-				ConfigurationUpdateMode updateMode)
+				bool serializeCollectionKey, ConfigurationSaveMode updateMode)
 		{
-			base.UnMerge (source, parent, serializeCollectionKey, context, updateMode);
+			base.Unmerge (source, parent, serializeCollectionKey, updateMode);
 		}
 		
 		public string Name {

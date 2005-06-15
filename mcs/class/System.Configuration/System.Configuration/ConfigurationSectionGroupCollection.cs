@@ -34,6 +34,7 @@ using System.Collections.Specialized;
 
 namespace System.Configuration {
 
+	[Serializable]
 	public sealed class ConfigurationSectionGroupCollection : NameObjectCollectionBase
 	{
 		SectionGroupInfo group;

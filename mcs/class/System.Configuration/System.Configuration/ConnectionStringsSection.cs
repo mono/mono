@@ -49,7 +49,7 @@ namespace System.Configuration
                 static ConnectionStringsSection ()
                 {
                         _propConnectionStrings = new ConfigurationProperty (null, typeof (ConnectionStringSettingsCollection), 
-                                                                            null, ConfigurationPropertyFlags.DefaultCollection);
+                                                                            null, ConfigurationPropertyOptions.DefaultCollection);
                         _properties = new ConfigurationPropertyCollection ();
                         _properties.Add (_propConnectionStrings);
                 }
@@ -76,16 +76,10 @@ namespace System.Configuration
                 #endregion // Properties
 
             
-                #region Methods
                 protected internal override object GetRuntimeObject ()
                 {
                         return base.GetRuntimeObject ();
                 }
-                protected internal override void InitializeDefault ()
-                {
-
-                }
-                #endregion // Methods
         }
 
 }

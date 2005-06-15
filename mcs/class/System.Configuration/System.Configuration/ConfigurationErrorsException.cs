@@ -36,88 +36,74 @@ using System.Xml;
 namespace System.Configuration 
 {
 	[Serializable]
-	public class ConfigurationErrorsException : SystemException
+	public class ConfigurationErrorsException : ConfigurationException
 	{
-		// Fields		
-		string bareMessage;
-		string filename;
-		int line;
-
 		//
 		// Constructors
 		//
 		public ConfigurationErrorsException ()
-			: base (Locale.GetText ("There is an error in a configuration setting."))
 		{
-			filename = null;
-			bareMessage = Locale.GetText ("There is an error in a configuration setting.");
-			line = 0;
 		}
 		
 		public ConfigurationErrorsException (string message)
 			: base (message)
 		{
-			bareMessage = message;
 		}
 
 		protected ConfigurationErrorsException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			filename = info.GetString ("filename");
-			line = info.GetInt32 ("line");
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner)
 			: base (message, inner)
 		{
-			bareMessage = message;
 		}
 
 		public ConfigurationErrorsException (string message, XmlNode node)
-			: base (message)
+			: base (message, GetFilename (node), GetLineNumber (node))
 		{
-			filename = GetFilename(node);
-			line = GetLineNumber(node);
-			bareMessage = message;
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner, XmlNode node)
-			: base (message, inner)
+			: base (message, inner, GetFilename (node), GetLineNumber (node))
 		{
-			filename = GetFilename (node);
-			line = GetLineNumber (node);
-			bareMessage = message;
+		}
+		
+		public ConfigurationErrorsException (string message, XmlReader reader)
+			: base (message, GetFilename (reader), GetLineNumber (reader))
+		{
+		}
+
+		public ConfigurationErrorsException (string message, Exception inner, XmlReader reader)
+			: base (message, inner, GetFilename (reader), GetLineNumber (reader))
+		{
 		}
 		
 		public ConfigurationErrorsException (string message, string filename, int line)
-			: base (message)
+			: base (message, filename, line)
 		{
-			bareMessage = message;
-			this.filename = filename;
-			this.line= line;
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner, string filename, int line)
-			: base (message)
+			: base (message, inner, filename, line)
 		{
-			bareMessage = message;
-			this.filename = filename;
-			this.line = line;
 		}
+		
 		//
 		// Properties
 		//
-		public string BareMessage
+/*		public override string BareMessage
 		{
 			get  { return bareMessage; }
 		}
 
-		public string Filename
+		public override string Filename
 		{
 			get { return filename; }
 		}
 		
-		public int Line
+		public override int Line
 		{
 			get { return line; }
 		}
@@ -132,11 +118,27 @@ namespace System.Configuration
 				return baseMsg + " (" + f + l + ")";
 			}
 		}
-
+*/
 		//
 		// Methods
 		//
-		public static string GetFilename (XmlNode node)
+		public static string GetFilename (XmlReader reader)
+		{
+			if (reader is XmlTextReader)
+				return ((XmlTextReader)reader).BaseURI;
+			else
+				return String.Empty;
+		}
+
+		public static int GetLineNumber (XmlReader reader)
+		{
+			if (reader is XmlTextReader)
+				return ((XmlTextReader)reader).LineNumber;
+			else
+				return 0;
+		}
+
+		static string GetFilename (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))
 				return String.Empty;
@@ -144,19 +146,20 @@ namespace System.Configuration
 			return ((IConfigXmlNode) node).Filename;
 		}
 
-		public static int GetLineNumber (XmlNode node)
+		static int GetLineNumber (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))
 				return 0;
 
 			return ((IConfigXmlNode) node).LineNumber;
 		}
-
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		
+/*		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 			info.AddValue ("filename", filename);
 			info.AddValue ("line", line);
 		}
+		*/
 	}
 }

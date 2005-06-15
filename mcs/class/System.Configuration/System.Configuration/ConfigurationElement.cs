@@ -45,8 +45,13 @@ namespace System.Configuration
 		bool modified;
 		ElementMap map;
 		ConfigurationPropertyCollection keyProps;
+		bool readOnly;
 		
 		protected ConfigurationElement ()
+		{
+		}
+		
+		protected internal virtual void Init ()
 		{
 		}
 		
@@ -55,16 +60,8 @@ namespace System.Configuration
 			set { rawXml = value; }
 		}
 
-		protected internal virtual ConfigurationPropertyCollection CollectionKeyProperties {
-			get {
-				return null;
-			}
-		}
-		
 		internal ConfigurationPropertyCollection GetKeyProperties ()
 		{
-			if (keyProps != null) return keyProps;
-			keyProps = CollectionKeyProperties;
 			if (keyProps != null) return keyProps;
 			
 			if (map.Properties == Properties)
@@ -83,7 +80,7 @@ namespace System.Configuration
 			get {
 				if (values == null || !values.ContainsKey (property)) {
 					if (property.IsElement) {
-						object elem = Activator.CreateInstance (property.Type);
+						object elem = CreateElement (property.Type);
 						this [property] = elem;
 						return elem;
 					}
@@ -150,7 +147,7 @@ namespace System.Configuration
 			return code;
 		}
 
-		public bool HasValue (string key)
+		internal bool HasValue (string key)
 		{
 			if (values == null) return false;
 			ConfigurationProperty prop = Properties [key];
@@ -163,20 +160,7 @@ namespace System.Configuration
 			return values != null && values.Count > 0;
 		}
 
-		[MonoTODO]
-		public string PropertyFileName ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int PropertyLineNumber ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected internal virtual void Deserialize (XmlReader reader, bool serializeCollectionKey)
+		protected internal virtual void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			Hashtable readProps = new Hashtable ();
 			
@@ -185,7 +169,7 @@ namespace System.Configuration
 			{
 				ConfigurationProperty prop = Properties [reader.LocalName];
 				if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
-					if (!HandleUnrecognizedAttribute (reader.LocalName, reader.Value))
+					if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
 					continue;
 				}
@@ -216,7 +200,7 @@ namespace System.Configuration
 					
 					ConfigurationProperty prop = Properties [reader.LocalName];
 					if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
-						if (!HandleUnrecognizedElement (reader.LocalName, reader))
+						if (!OnDeserializeUnrecognizedElement (reader.LocalName, reader))
 							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
 						continue;
 					}
@@ -228,7 +212,7 @@ namespace System.Configuration
 						throw new ConfigurationException ("The element <" + prop.Name + "> may only appear once in this section.");
 					
 					ConfigurationElement val = this [prop] as ConfigurationElement;
-					val.Deserialize (reader, serializeCollectionKey);
+					val.DeserializeElement (reader, serializeCollectionKey);
 					readProps [prop] = prop.Name;
 				}
 			}
@@ -238,17 +222,39 @@ namespace System.Configuration
 			if (readProps.Count > 0) {
 				readProperties = new string [readProps.Count];
 				readProps.Values.CopyTo ((object[])readProperties, 0);
+				
+				foreach (ConfigurationProperty prop in Properties)
+					if (prop.IsRequired && !readProps.ContainsKey (prop)) {
+						object val = OnRequiredPropertyNotFound (prop.Name);
+						if (!object.Equals (val, prop.DefaultValue))
+							this [prop] = val;
+					}
 			}
+			
+			PostDeserialize ();
 		}
 
-		protected virtual bool HandleUnrecognizedAttribute (string name, string value)
+		protected virtual bool OnDeserializeUnrecognizedAttribute (string name, string value)
 		{
 			return false;
 		}
 
-		protected virtual bool HandleUnrecognizedElement (string element, XmlReader reader)
+		protected virtual bool OnDeserializeUnrecognizedElement (string element, XmlReader reader)
 		{
 			return false;
+		}
+		
+		protected virtual object OnRequiredPropertyNotFound (string name)
+		{
+			throw new ConfigurationErrorsException ("Required attribute '" + name + "' not found.");
+		}
+		
+		protected virtual void PreSerialize (XmlWriter writer)
+		{
+		}
+
+		protected virtual void PostDeserialize ()
+		{
 		}
 
 		protected internal virtual void InitializeDefault ()
@@ -260,13 +266,23 @@ namespace System.Configuration
 		{
 			return modified;
 		}
-
-		protected internal virtual void ReadXml (XmlReader reader, object context)
+		
+		protected internal virtual void SetReadOnly ()
 		{
-			Deserialize (reader, false);
+			readOnly = true;
+		}
+		
+		public virtual bool IsReadOnly ()
+		{
+			return readOnly;
 		}
 
-		protected internal virtual void Reset (ConfigurationElement parentElement, object context)
+		protected internal virtual void DeserializeSection (XmlReader reader)
+ 		{
+			DeserializeElement (reader, false);
+		}
+
+		protected internal virtual void Reset (ConfigurationElement parentElement)
 		{
 			if (parentElement != null) {
 				values = null;
@@ -274,8 +290,8 @@ namespace System.Configuration
 					if (parentElement.HasValue (prop.Name)) {
 						if (prop.IsElement) {
 							ConfigurationElement parentValue = parentElement [prop.Name] as ConfigurationElement;
-							ConfigurationElement value = Activator.CreateInstance (parentValue.GetType()) as ConfigurationElement;
-							value.Reset (parentValue, context);
+							ConfigurationElement value = CreateElement (parentValue.GetType());
+							value.Reset (parentValue);
 							this [prop] = value;
 						}
 						else
@@ -292,24 +308,31 @@ namespace System.Configuration
 			modified = false;
 		}
 
-		[MonoTODO ("Return value?")]
-		protected internal virtual bool Serialize (XmlWriter writer, bool serializeCollectionKey)
+		protected internal virtual bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
-			if (values == null) return true;
+			PreSerialize (writer);
+			
+			if (values == null)
+				return false;
 			
 			if (serializeCollectionKey) {
-				foreach (ConfigurationProperty prop in GetKeyProperties ())
+				ConfigurationPropertyCollection props = GetKeyProperties ();
+				foreach (ConfigurationProperty prop in props)
 					writer.WriteAttributeString (prop.Name, prop.ConvertToString (this[prop]));
-				return true;
+				return props.Count > 0;
 			}
+			
+			bool wroteData = false;
 			
 			foreach (DictionaryEntry entry in values)
 			{
 				ConfigurationProperty prop = (ConfigurationProperty) entry.Key;
 				if (prop.IsElement) continue;
 				
-				if (!object.Equals (entry.Value, prop.DefaultValue))
+				if (!object.Equals (entry.Value, prop.DefaultValue)) {
 					writer.WriteAttributeString (prop.Name, prop.ConvertToString (entry.Value));
+					wroteData = true;
+				}
 			}
 			
 			foreach (DictionaryEntry entry in values)
@@ -318,34 +341,28 @@ namespace System.Configuration
 				if (!prop.IsElement) continue;
 				
 				ConfigurationElement val = entry.Value as ConfigurationElement;
-				if (val != null && val.HasValues ())
-					val.SerializeToXmlElement (writer, prop.Name);
+				if (val != null && val.HasValues ()) {
+					wroteData = val.SerializeToXmlElement (writer, prop.Name) || wroteData;
+				}
 			}
-			return true;
+			return wroteData;
 		}
 				
-		[MonoTODO]
-		protected internal virtual bool SerializeAttributeOnRemove (
-				ConfigurationProperty property)
-		{
-			throw new NotImplementedException ();
-		}
-
 		protected internal virtual bool SerializeToXmlElement (
 				XmlWriter writer, string elementName)
 		{
 			writer.WriteStartElement (elementName);
-			Serialize (writer, false);
+			bool res = SerializeElement (writer, false);
 			writer.WriteEndElement ();
-			return true;
+			return res;
 		}
 
-		protected internal virtual void UnMerge (
+		protected internal virtual void Unmerge (
 				ConfigurationElement source, ConfigurationElement parent,
-				bool serializeCollectionKey, object context,
-				ConfigurationUpdateMode updateMode)
+				bool serializeCollectionKey,
+				ConfigurationSaveMode updateMode)
 		{
-			if (source.GetType() != parent.GetType())
+			if (parent != null && source.GetType() != parent.GetType())
 				throw new ConfigurationException ("Can't unmerge two elements of different type");
 			
 			foreach (ConfigurationProperty prop in source.Properties)
@@ -353,7 +370,7 @@ namespace System.Configuration
 				if (!source.HasValue (prop.Name)) continue;
 				
 				object sourceValue = source [prop];
-				if 	(!parent.HasValue (prop.Name)) {
+				if 	(parent == null || !parent.HasValue (prop.Name)) {
 					this [prop] = sourceValue;
 					continue;
 				}
@@ -361,8 +378,8 @@ namespace System.Configuration
 					object parentValue = parent [prop];
 					if (prop.IsElement) {
 						if (parentValue != null) {
-							ConfigurationElement copy = (ConfigurationElement) Activator.CreateInstance (prop.Type);
-							copy.UnMerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, serializeCollectionKey, context, updateMode);
+							ConfigurationElement copy = (ConfigurationElement) CreateElement (prop.Type);
+							copy.Unmerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, serializeCollectionKey, updateMode);
 							this [prop] = copy;
 						}
 						else
@@ -370,8 +387,8 @@ namespace System.Configuration
 					}
 					else {
 						if (!object.Equals (sourceValue, parentValue) || 
-							(updateMode == ConfigurationUpdateMode.Full) ||
-							(updateMode == ConfigurationUpdateMode.Modified && source.IsReadFromConfig (prop.Name)))
+							(updateMode == ConfigurationSaveMode.Full) ||
+							(updateMode == ConfigurationSaveMode.Modified && source.IsReadFromConfig (prop.Name)))
 							this [prop] = sourceValue;
 					}
 				}
@@ -383,23 +400,12 @@ namespace System.Configuration
 			return readProperties != null && Array.IndexOf (readProperties, propName) != -1;
 		}
 
-		[MonoTODO]
-		protected virtual void ValidateRequiredProperties (
-				ConfigurationPropertyCollection properties,
-				bool serialize_collection_key)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected internal virtual string WriteXml (
-				ConfigurationElement parent,
-				object context, string name,
-				ConfigurationUpdateMode updateMode)
+		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
 		{
 			ConfigurationElement elem;
-			if (parent != null) {
-				elem = (ConfigurationElement) Activator.CreateInstance (GetType());
-				elem.UnMerge (this, parent, false, context, updateMode);
+			if (parentElement != null) {
+				elem = (ConfigurationElement) CreateElement (GetType());
+				elem.Unmerge (this, parentElement, false, saveMode);
 			}
 			else
 				elem = this;
@@ -422,6 +428,15 @@ namespace System.Configuration
 				return map;
 			}
 		}
+		
+		ConfigurationElement CreateElement (Type t)
+		{
+			ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (t);
+			elem.Init ();
+			if (IsReadOnly ())
+				elem.SetReadOnly ();
+			return elem;
+		}
 	}
 	
 	internal class ElementMap
@@ -439,13 +454,15 @@ namespace System.Configuration
 			PropertyInfo[] props = t.GetProperties ();
 			foreach (PropertyInfo prop in props)
 			{
-				ConfigurationPropertyAttribute at = (ConfigurationPropertyAttribute) Attribute.GetCustomAttribute (prop, typeof(ConfigurationPropertyAttribute)) as ConfigurationPropertyAttribute;
+				ConfigurationPropertyAttribute at = Attribute.GetCustomAttribute (prop, typeof(ConfigurationPropertyAttribute)) as ConfigurationPropertyAttribute;
 				if (at == null) continue;
 				string name = at.Name != null ? at.Name : prop.Name;
 				
-				ConfigurationValidationAttribute validator = (ConfigurationValidationAttribute) Attribute.GetCustomAttribute (t, typeof(ConfigurationValidationAttribute)) as ConfigurationValidationAttribute;
+				ConfigurationValidatorAttribute validatorAttr = Attribute.GetCustomAttribute (t, typeof(ConfigurationValidatorAttribute)) as ConfigurationValidatorAttribute;
+				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : null;
+				
 				TypeConverter converter = TypeDescriptor.GetConverter (prop.PropertyType);
-				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Flags);
+				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
 				
 				if (properties == null) properties = new ConfigurationPropertyCollection ();
 				properties.Add (cp);

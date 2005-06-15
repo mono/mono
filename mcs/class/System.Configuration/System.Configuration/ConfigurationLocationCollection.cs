@@ -34,6 +34,10 @@ namespace System.Configuration {
 
 	public class ConfigurationLocationCollection : ReadOnlyCollectionBase
 	{
+		internal ConfigurationLocationCollection ()
+		{
+		}
+		
 		public ConfigurationLocation this [int index] {
 			get { return this [index] as ConfigurationLocation; }
 		}

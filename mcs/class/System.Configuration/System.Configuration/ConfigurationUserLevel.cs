@@ -33,7 +33,7 @@ namespace System.Configuration {
         [Serializable]
         public enum ConfigurationUserLevel
         {
-                None = 1,
+                None = 0,
                 PerUserRoaming = 10,
                 PerUserRoamingAndLocal = 20
         }

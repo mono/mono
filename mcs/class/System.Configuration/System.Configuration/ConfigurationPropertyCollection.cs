@@ -56,11 +56,11 @@ namespace System.Configuration
 			}
 		}
 
-		bool ICollection.IsSynchronized {
+		public bool IsSynchronized {
 			get {  return false; }
 		}
 
-		object ICollection.SyncRoot {
+		public object SyncRoot {
 			get { return collection; }
 		}
 
@@ -89,7 +89,7 @@ namespace System.Configuration
 			((ICollection) collection).CopyTo (array, index);
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
+		public IEnumerator GetEnumerator ()
 		{
 			return collection.GetEnumerator ();
 		}

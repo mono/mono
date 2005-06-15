@@ -58,13 +58,18 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
-		public void RequireDeclaration (bool require)
+		public void ForceDeclaration (bool require)
 		{
 			this.require_declaration = require;
 		}
 
+		public void ForceDeclaration ()
+		{
+			ForceDeclaration (true);
+		}
+		
 		[MonoTODO]
-		public bool IsDeclared {
+		public bool IsDeclarationRequired {
 			get { return require_declaration; }
 		}
 
@@ -72,7 +77,8 @@ namespace System.Configuration
 			get { return name; }
 		}
 
-		public string Path {
+		[MonoTODO ("Check if this is correct")]
+		public string SectionGroupName {
 			get { return group.XPath; }
 		}
 
@@ -90,7 +96,7 @@ namespace System.Configuration
 			}
 		}
 
-		public string TypeName {
+		public string Type {
 			get { return type_name;}
 			set { type_name = value; }
 		}

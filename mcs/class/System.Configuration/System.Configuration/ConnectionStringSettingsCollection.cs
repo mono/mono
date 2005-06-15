@@ -110,15 +110,6 @@ namespace System.Configuration
                         BaseRemoveAt (index);
                 }
 
-                protected override void BaseAdd (ConfigurationElement element)
-                {
-                        if ( ! (element is ConnectionStringSettings))
-                                base.BaseAdd (element);
-                        if (IndexOf ((ConnectionStringSettings) element) >= 0)
-                                throw new ConfigurationException (String.Format ("The element {0} already exist!",
-                                                                                 ((ConnectionStringSettings) element).Name));
-                        base.BaseAdd (element);
-                }
                 protected override void BaseAdd (int index, ConfigurationElement element)
                 {
                         if (!(element is ConnectionStringSettings))
@@ -128,12 +119,7 @@ namespace System.Configuration
                                                                                  ((ConnectionStringSettings) element).Name));
                         this [index] = (ConnectionStringSettings) element;
                 }
-                protected override bool CompareKeys (object key1, object key2)
-                {
-                        if (!(key1 is ConnectionStringSettings) || !(key2 is ConnectionStringSettings))
-                                return false;
-                        return (((ConnectionStringSettings) key1).Name == ((ConnectionStringSettings) key2).Name);
-                }
+                
                 #endregion // Methods
         
         }

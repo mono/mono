@@ -35,26 +35,26 @@ namespace System.Configuration
 	{
 		string name;
 		object default_value;
-		ConfigurationPropertyFlags flags;
+		ConfigurationPropertyOptions flags;
 		
 		public ConfigurationPropertyAttribute (string name)
 		{
 			this.name = name;
 		}
 		
-		public bool CollectionKey {
-			get { return (flags & ConfigurationPropertyFlags.IsKey) != 0; }
+		public bool IsCollectionKey {
+			get { return (flags & ConfigurationPropertyOptions.IsKey) != 0; }
 			set {
-				if (value) flags |= ConfigurationPropertyFlags.IsKey; 
-				else flags &= ~ConfigurationPropertyFlags.IsKey; 
+				if (value) flags |= ConfigurationPropertyOptions.IsKey; 
+				else flags &= ~ConfigurationPropertyOptions.IsKey; 
 			}
 		}
 		
-		public bool DefaultCollectionProperty {
-			get { return (flags & ConfigurationPropertyFlags.DefaultCollection) != 0; }
+		public bool IsDefaultCollectionProperty {
+			get { return (flags & ConfigurationPropertyOptions.DefaultCollection) != 0; }
 			set {
-				if (value) flags |= ConfigurationPropertyFlags.DefaultCollection; 
-				else flags &= ~ConfigurationPropertyFlags.DefaultCollection; 
+				if (value) flags |= ConfigurationPropertyOptions.DefaultCollection; 
+				else flags &= ~ConfigurationPropertyOptions.DefaultCollection; 
 			}
 		}
 		
@@ -63,21 +63,20 @@ namespace System.Configuration
 			set { default_value = value; }
 		}
 		
-		public ConfigurationPropertyFlags Flags {
+		public ConfigurationPropertyOptions Options {
 			get { return flags; }
 			set { flags = value; }
 		}
 		
 		public string Name {
 			get { return name; }
-			set { name = value; }
 		}
 		
 		public bool RequiredValue {
-			get { return (flags & ConfigurationPropertyFlags.Required) != 0; }
+			get { return (flags & ConfigurationPropertyOptions.Required) != 0; }
 			set {
-				if (value) flags |= ConfigurationPropertyFlags.Required; 
-				else flags &= ~ConfigurationPropertyFlags.Required; 
+				if (value) flags |= ConfigurationPropertyOptions.Required; 
+				else flags &= ~ConfigurationPropertyOptions.Required; 
 			}
 		}
 	}

@@ -110,7 +110,7 @@ namespace System.Configuration
 			reader.Skip ();
 		}
 		
-		public override void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationUpdateMode mode)
+		public override void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode)
 		{
 			writer.WriteStartElement ("section");
 			writer.WriteAttributeString ("name", Name);
@@ -127,14 +127,14 @@ namespace System.Configuration
 			config.SetSectionXml (this, reader.ReadOuterXml ());
 		}
 		
-		public override void WriteData (Configuration config, XmlWriter writer, ConfigurationUpdateMode mode)
+		public override void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode)
 		{
 			string xml;
 			
 			ConfigurationSection section = config.GetSectionInstance (this, false);
 			if (section != null) {
 				ConfigurationSection parentSection = config.Parent != null ? config.Parent.GetSectionInstance (this, false) : null;
-				xml = section.WriteXml (parentSection, config, Name, mode);
+				xml = section.SerializeSection (parentSection, Name, mode);
 			}
 			else {
 				xml = config.GetSectionXml (this);

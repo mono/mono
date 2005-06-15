@@ -1,5 +1,5 @@
 //
-// System.Configuration.ConfigurationValidationAttribute.cs
+// System.Configuration.ConfigurationAllowExeDefinition.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
@@ -27,17 +27,14 @@
 //
 
 #if NET_2_0
-using System;
-
 namespace System.Configuration
 {
-	public abstract class ConfigurationValidationAttribute : Attribute
+	public enum ConfigurationAllowExeDefinition
 	{
-		protected ConfigurationValidationAttribute ()
-		{
-		}
-
-		protected abstract bool Validate (ConfigurationProperty property, object value);
+		MachineOnly,
+		MachineToApplication = 100,
+		MachineToLocalUser = 300,
+		MachineToRoamingUser = 200
 	}
 }
 #endif

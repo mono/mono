@@ -37,14 +37,14 @@ namespace System.Configuration
 		int min;
 		int max;
 		
-		public IntegerConfigurationProperty (string name, int defaultValue, ConfigurationPropertyFlags flags)
+		public IntegerConfigurationProperty (string name, int defaultValue, ConfigurationPropertyOptions flags)
 			: base (name, typeof(int), defaultValue, flags)
 		{
 			min = int.MinValue;
 			max = int.MaxValue;
 		}
 
-		public IntegerConfigurationProperty (string name, int defaultValue, int minimumValue, int maximumValue, ConfigurationPropertyFlags flags)
+		public IntegerConfigurationProperty (string name, int defaultValue, int minimumValue, int maximumValue, ConfigurationPropertyOptions flags)
 			: base (name, typeof(int), defaultValue, flags)
 		{
 			min = minimumValue;

@@ -1,8 +1,9 @@
 //
-// System.Configuration.ConfigurationUpdateMode.cs
+// System.Configuration.ConfigurationManager.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
+// 	Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,15 +26,39 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-
 #if NET_2_0
-namespace System.Configuration
-{
-        public enum ConfigurationUpdateMode
-        {
-                Minimal = 1,
-                Modified = 2,
-                Full = 3
-        }
+using System;
+using System.Collections;
+using System.Collections.Specialized;
+using System.Reflection;
+using System.Xml;
+using System.IO;
+
+namespace System.Configuration {
+
+	public abstract class ConfigurationManager
+	{
+		ConfigurationManager ()
+		{
+		}
+		
+		[MonoTODO ("userLevel")]
+		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel, string exePath)
+		{
+			if (exePath == null) {
+				exePath = Assembly.GetCallingAssembly ().Location;
+			} else if (!File.Exists (exePath)) {
+				throw new ArgumentException ("File not found or not readable.", "exePath");
+			}
+
+			return new Configuration (exePath + ".config", OpenMachineConfiguration ());
+		}
+
+		public static Configuration OpenMachineConfiguration ()
+		{
+			return new Configuration (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
+		}
+	}
 }
+
 #endif

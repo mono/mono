@@ -216,7 +216,7 @@ namespace System.Configuration
 			reader.ReadEndElement ();
 		}
 		
-		public override void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationUpdateMode mode)
+		public override void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode)
 		{
 			if (Name != null) {
 				writer.WriteStartElement ("sectionGroup");
@@ -296,19 +296,19 @@ namespace System.Configuration
 			}
 		}
 		
-		public void WriteRootData (XmlWriter writer, Configuration config, ConfigurationUpdateMode mode)
+		public void WriteRootData (XmlWriter writer, Configuration config, ConfigurationSaveMode mode)
 		{
 			WriteContent (writer, config, mode, false);
 		}
 		
-		public override void WriteData (Configuration config, XmlWriter writer, ConfigurationUpdateMode mode)
+		public override void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode)
 		{
 			writer.WriteStartElement (Name);
 			WriteContent (writer, config, mode, true);
 			writer.WriteEndElement ();
 		}
 		
-		public void WriteContent (XmlWriter writer, Configuration config, ConfigurationUpdateMode mode, bool writeElem)
+		public void WriteContent (XmlWriter writer, Configuration config, ConfigurationSaveMode mode, bool writeElem)
 		{
 			foreach (ConfigInfoCollection col in new object[] {Sections, Groups}) {
 				foreach (string key in col) {

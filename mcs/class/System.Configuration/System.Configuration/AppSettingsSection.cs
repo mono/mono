@@ -49,7 +49,7 @@ namespace System.Configuration {
 		}
 
 		[MonoTODO ("Read file attribute")]
-		protected internal override void ReadXml (XmlReader reader, object context)
+		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			XmlDocument doc = new XmlDocument ();
 			XmlNode data = doc.ReadNode (reader);
@@ -57,7 +57,7 @@ namespace System.Configuration {
 			values = ConfigHelper.GetNameValueCollection (values, data, "key", "value");
 		}
 
-		protected internal override void Reset (ConfigurationElement parentSection, object context)
+		protected internal override void Reset (ConfigurationElement parentSection)
 		{
 			AppSettingsSection sec = parentSection as AppSettingsSection;
 			if (sec != null && sec.values != null)
@@ -71,8 +71,8 @@ namespace System.Configuration {
 			if (values != null) values.ResetModified ();
 		}
 
-		protected internal override string WriteXml (
-			ConfigurationElement parent, object context, string name, ConfigurationUpdateMode mode)
+		protected internal override string SerializeSection (
+			ConfigurationElement parent, string name, ConfigurationSaveMode mode)
 		{
 			AppSettingsSection sec = parent as AppSettingsSection;
 			NameValueCollection parentValues = sec != null && !hasClear ? sec.Settings : null;

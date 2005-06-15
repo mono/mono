@@ -1,5 +1,5 @@
 //
-// System.Configuration.ProviderBase.cs
+// System.Configuration.ConfigurationPropertyOptions.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
@@ -27,29 +27,15 @@
 //
 
 #if NET_2_0
-using System.Collections.Specialized;
-
 namespace System.Configuration
 {
-	public abstract class ProviderBase
-	{
-		string name;
-		NameValueCollection configuration;
-		
-		protected ProviderBase ()
-		{
-		}
-
-		public virtual string Name {
-			get { return name; }
-		}
-
-		[MonoTODO]
-		public virtual void Initialize (string name, NameValueCollection configuration)
-		{
-			this.name = name;
-			this.configuration = configuration;
-		}
-	}
+        [Serializable, Flags]
+        public enum ConfigurationPropertyOptions
+        {
+                None = 0,
+                DefaultCollection = 1,
+                Required = 2,
+                IsKey = 4
+        }
 }
 #endif

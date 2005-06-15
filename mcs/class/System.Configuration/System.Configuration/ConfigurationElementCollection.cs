@@ -40,13 +40,25 @@ namespace System.Configuration
 	{
 		ArrayList list = new ArrayList ();
 		ArrayList removed;
+		ArrayList inherited;
 		bool emitClear;
 		bool modified;
+		IComparer comparer;
+		int inheritedLimitIndex;
+		
+		string addElementName = "add";
+		string clearElementName = "clear";
+		string removeElementName = "remove";
 		
 		#region Constructors
 
 		protected ConfigurationElementCollection ()
 		{
+		}
+
+		protected ConfigurationElementCollection (IComparer comparer)
+		{
+			this.comparer = comparer;
 		}
 
 		#endregion // Constructors
@@ -55,6 +67,20 @@ namespace System.Configuration
 		
 		protected virtual ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
+		}
+		
+		bool IsBasic {
+			get {
+				return CollectionType == ConfigurationElementCollectionType.BasicMap ||
+						CollectionType == ConfigurationElementCollectionType.BasicMapAlternate;
+			}
+		}
+		
+		bool IsAlternate {
+			get {
+				return CollectionType == ConfigurationElementCollectionType.AddRemoveClearMapAlternate ||
+						CollectionType == ConfigurationElementCollectionType.BasicMapAlternate;
+			}
 		}
 
 		public virtual int Count {
@@ -70,16 +96,31 @@ namespace System.Configuration
 			set { emitClear = value; }
 		}
 
-		bool ICollection.IsSynchronized {
+		public bool IsSynchronized {
 			get { return false; }
 		}
 
-		object ICollection.SyncRoot {
+		public object SyncRoot {
 			get { return this; }
 		}
 
 		protected virtual bool ThrowOnDuplicate {
 			get { return true; }
+		}
+		
+		protected internal string AddElementName {
+			get { return addElementName; }
+			set { addElementName = value; }
+		}
+
+		protected internal string ClearElementName {
+			get { return clearElementName; }
+			set { clearElementName = value; }
+		}
+
+		protected internal string RemoveElementName {
+			get { return removeElementName; }
+			set { removeElementName = value; }
 		}
 
 		#endregion // Properties
@@ -95,7 +136,15 @@ namespace System.Configuration
 		{
 //			if (throwIfExists && BaseIndexOf (element) != -1)
 //				throw new ConfigurationException ("Duplicate element in collection");
-			list.Add (element);
+			if (IsReadOnly ())
+				throw new ConfigurationErrorsException ("Collection is read only.");
+			
+			if (IsAlternate) {
+				list.Insert (inheritedLimitIndex, element);
+				inheritedLimitIndex++;
+			}
+			else
+				list.Add (element);
 			modified = true;
 		}
 
@@ -103,12 +152,23 @@ namespace System.Configuration
 		{
 //			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
 //				throw new ConfigurationException ("Duplicate element in collection");
+			if (IsReadOnly ())
+				throw new ConfigurationErrorsException ("Collection is read only.");
+			
+			if (IsAlternate && (index > inheritedLimitIndex))
+				throw new ConfigurationErrorsException ("Can't insert new elements below the inherited elements.");
+			if (!IsAlternate && (index <= inheritedLimitIndex))
+				throw new ConfigurationErrorsException ("Can't insert new elements above the inherited elements.");
+				
 			list.Insert (index, element);
 			modified = true;
 		}
 
 		protected internal void BaseClear ()
 		{
+			if (IsReadOnly ())
+				throw new ConfigurationErrorsException ("Collection is read only.");
+				
 			list.Clear ();
 			modified = true;
 		}
@@ -152,14 +212,22 @@ namespace System.Configuration
 			return -1;
 		}
 
-		[MonoTODO]
 		protected internal bool BaseIsRemoved (object key)
 		{
+			if (removed == null)
+				return false;
+			foreach (ConfigurationElement elem in removed) {
+				if (CompareKeys (GetElementKey (elem), key))
+					return true;
+			}
 			return false;
 		}
 
 		protected internal void BaseRemove (object key)
 		{
+			if (IsReadOnly ())
+				throw new ConfigurationErrorsException ("Collection is read only.");
+				
 			int index = IndexOfKey (key);
 			if (index != -1) {
 				BaseRemoveAt (index);
@@ -169,16 +237,26 @@ namespace System.Configuration
 
 		protected internal void BaseRemoveAt (int index)
 		{
+			if (IsReadOnly ())
+				throw new ConfigurationErrorsException ("Collection is read only.");
+				
 			ConfigurationElement elem = (ConfigurationElement) list [index];
 			if (!IsElementRemovable (elem))
-				throw new ConfigurationException ("Element can't be removed from element collection");
+				throw new ConfigurationErrorsException ("Element can't be removed from element collection.");
+			
+			if (inherited != null && inherited.Contains (elem))
+				throw new ConfigurationErrorsException ("Inherited items can't be removed.");
+			
 			list.RemoveAt (index);
 			modified = true;
 		}
 
-		protected virtual bool CompareKeys (object key1, object key2)
+		bool CompareKeys (object key1, object key2)
 		{
-			return object.Equals (key1, key2);
+			if (comparer != null)
+				return comparer.Compare (key1, key2) == 0;
+			else
+				return object.Equals (key1, key2);
 		}
 
 		public void CopyTo (ConfigurationElement[] array, int index)
@@ -222,12 +300,11 @@ namespace System.Configuration
 			list.CopyTo (arr, index);
 		}
 		
-		IEnumerator IEnumerable.GetEnumerator ()
+		public IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
 		}
 
-		[MonoTODO ("Do something with this")]
 		protected virtual bool IsElementName (string elementName)
 		{
 			return false;
@@ -235,7 +312,7 @@ namespace System.Configuration
 
 		protected virtual bool IsElementRemovable (ConfigurationElement element)
 		{
-			return true;
+			return !IsReadOnly ();
 		}
 
 		protected internal override bool IsModified ()
@@ -248,17 +325,28 @@ namespace System.Configuration
 			return list.Count > 0;
 		}
 
-		[MonoTODO ("parentItem.GetType().Name ??")]
-		protected internal override void Reset (ConfigurationElement parentElement, object context)
+		protected internal override void Reset (ConfigurationElement parentElement)
 		{
+			bool basic = IsBasic;
+				
 			ConfigurationElementCollection parent = (ConfigurationElementCollection) parentElement;
 			for (int n=0; n<parent.Count; n++)
 			{
 				ConfigurationElement parentItem = parent.BaseGet (n);
-				ConfigurationElement item = CreateNewElement (parentItem.GetType().Name);
-				item.Reset (parentItem, context);
+				ConfigurationElement item = CreateNewElement (parentItem.GetType().FullName);
+				item.Reset (parentItem);
 				BaseAdd (item);
+				
+				if (basic) {
+					if (inherited == null)
+						inherited = new ArrayList ();
+					inherited.Add (item);
+				}
 			}
+			if (IsAlternate)
+				inheritedLimitIndex = 0;
+			else
+				inheritedLimitIndex = Count - 1;
 			modified = false;
 		}
 
@@ -267,58 +355,95 @@ namespace System.Configuration
 			modified = false;
 		}
 
-		[MonoTODO ("Support for BasicMap. Return value.")]
-		protected internal override bool Serialize (XmlWriter writer, bool serializeCollectionKey)
+		protected internal override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
 			if (serializeCollectionKey) {
-				return base.Serialize (writer, serializeCollectionKey);
+				return base.SerializeElement (writer, serializeCollectionKey);
 			}
 			
-			if (emitClear)
-				writer.WriteElementString ("clear","");
+			bool wroteData = false;
 			
-			if (removed != null)
-				for (int n=0; n<removed.Count; n++) {
-					writer.WriteStartElement ("remove");
-					((ConfigurationElement)removed[n]).Serialize (writer, true);
-					writer.WriteEndElement ();
+			if (IsBasic)
+			{
+				for (int n=0; n<list.Count; n++) {
+					ConfigurationElement elem = (ConfigurationElement) list [n];
+					if (ElementName != string.Empty)
+						wroteData = elem.SerializeToXmlElement (writer, ElementName) || wroteData;
+					else
+						wroteData = elem.SerializeElement (writer, false) || wroteData;
 				}
-			
-			for (int n=0; n<list.Count; n++) {
-				ConfigurationElement elem = (ConfigurationElement) list [n];
-				elem.SerializeToXmlElement (writer, "add");
 			}
-			return true;
+			else
+			{
+				if (emitClear) {
+					writer.WriteElementString (clearElementName, "");
+					wroteData = true;
+				}
+				
+				if (removed != null) {
+					for (int n=0; n<removed.Count; n++) {
+						writer.WriteStartElement (removeElementName);
+						((ConfigurationElement)removed[n]).SerializeElement (writer, true);
+						writer.WriteEndElement ();
+					}
+					wroteData = wroteData || removed.Count > 0;
+				}
+				
+				for (int n=0; n<list.Count; n++) {
+					ConfigurationElement elem = (ConfigurationElement) list [n];
+					elem.SerializeToXmlElement (writer, addElementName);
+				}
+				
+				wroteData = wroteData || list.Count > 0;
+			}
+			return wroteData;
 		}
 
-		protected override bool HandleUnrecognizedElement (string elementName, XmlReader reader)
+		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader)
 		{
-			if (elementName == "clear") {
-				BaseClear ();
-				emitClear = true;
-				modified = false;
-				return true;
+			if (IsBasic)
+			{
+				ConfigurationElement elem = null;
+				
+				if (elementName == ElementName)
+					elem = CreateNewElement ();
+				if (IsElementName (elementName))
+					elem = CreateNewElement (elementName);
+
+				if (elem != null) {
+					elem.DeserializeElement (reader, false);
+					BaseAdd (elem);
+					modified = false;
+					return true;
+				}
 			}
-			else if (elementName == "remove") {
-				ConfigurationElement elem = CreateNewElement ();
-				elem.Deserialize (reader, true);
-				BaseRemove (GetElementKey (elem));
-				modified = false;
-				return true;
-			}
-			else if (elementName == "add") {
-				ConfigurationElement elem = CreateNewElement ();
-				elem.Deserialize (reader, false);
-				BaseAdd (elem);
-				modified = false;
-				return true;
+			else {
+				if (elementName == clearElementName) {
+					BaseClear ();
+					emitClear = true;
+					modified = false;
+					return true;
+				}
+				else if (elementName == removeElementName) {
+					ConfigurationElement elem = CreateNewElement ();
+					elem.DeserializeElement (reader, true);
+					BaseRemove (GetElementKey (elem));
+					modified = false;
+					return true;
+				}
+				else if (elementName == addElementName) {
+					ConfigurationElement elem = CreateNewElement ();
+					elem.DeserializeElement (reader, false);
+					BaseAdd (elem);
+					modified = false;
+					return true;
+				}
 			}
 			
 			return false;
 		}
 		
-		[MonoTODO ("CreateNewElement?, serializeCollectionKey?")]
-		protected internal override void UnMerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, bool serializeCollectionKey, object context, ConfigurationUpdateMode updateMode)
+		protected internal override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, bool serializeCollectionKey, ConfigurationSaveMode updateMode)
 		{
 			ConfigurationElementCollection source = (ConfigurationElementCollection) sourceElement;
 			ConfigurationElementCollection parent = (ConfigurationElementCollection) parentElement;
@@ -326,20 +451,23 @@ namespace System.Configuration
 			for (int n=0; n<source.Count; n++) {
 				ConfigurationElement sitem = source.BaseGet (n);
 				object key = source.GetElementKey (sitem);
-				ConfigurationElement pitem = parent.BaseGet (key) as ConfigurationElement;
-				if (pitem != null && updateMode != ConfigurationUpdateMode.Full) {
-					ConfigurationElement nitem = CreateNewElement ();
-					nitem.UnMerge (sitem, pitem, serializeCollectionKey, context, ConfigurationUpdateMode.Minimal);
+				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
+				if (pitem != null && updateMode != ConfigurationSaveMode.Full) {
+					ConfigurationElement nitem = CreateNewElement (pitem.GetType().FullName);
+					nitem.Unmerge (sitem, pitem, serializeCollectionKey, ConfigurationSaveMode.Minimal);
 					if (nitem.HasValues ())
 						BaseAdd (nitem);
 				}
-				else
-					BaseAdd (sitem);
+				else {
+					ConfigurationElement nitem = CreateNewElement (sitem.GetType().FullName);
+					nitem.Unmerge (sitem, null, serializeCollectionKey, ConfigurationSaveMode.Full);
+					BaseAdd (nitem);
+				}
 			}
 			
-			if (updateMode == ConfigurationUpdateMode.Full)
+			if (updateMode == ConfigurationSaveMode.Full)
 				EmitClear = true;
-			else {
+			else if (parent != null) {
 				for (int n=0; n<parent.Count; n++) {
 					ConfigurationElement pitem = parent.BaseGet (n);
 					object key = parent.GetElementKey (pitem);
