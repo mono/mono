@@ -1,3 +1,7 @@
+2005-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (run-test-local): Run with $(TEST_RUNTIME).
+
 2005-06-15  Raja R Harinath  <harinath@gmail.com>
 
 	* Makefile (run-test-local): Don't pick 'mono' from the path.

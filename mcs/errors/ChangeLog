@@ -1,3 +1,7 @@
+2005-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (run-mcs-tests): Run with TEST_RUNTIME.
+
 2005-06-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-mcs-tests): Update location of compiler-tester.exe.
