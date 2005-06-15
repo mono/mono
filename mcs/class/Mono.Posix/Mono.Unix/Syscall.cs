@@ -97,7 +97,9 @@ namespace Mono.Unix {
 	[Flags][Map]
 	public enum SyslogFacility {
 		LOG_KERN      = 0 << 3,
+		[Obsolete ("use SyslogFacility.LOG_USER")]
 		LOG_USRE      = 1 << 3,
+		LOG_USER      = 1 << 3,
 		LOG_MAIL      = 2 << 3,
 		LOG_DAEMON    = 3 << 3,
 		LOG_AUTH      = 4 << 3,

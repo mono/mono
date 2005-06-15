@@ -1,3 +1,8 @@
+2005-06-15  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: s/LOG_USRE/LOG_USER/.  Fixes #75274.  
+	  Thanks to Martin Honermeyer.
+
 2005-06-09  Jonathan Pryor <jonpryor@vt.edu>
 
 	* make-map.cs: Look for [Obsolete] members, and mark the UnixConvert
