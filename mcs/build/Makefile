@@ -21,6 +21,8 @@ DISTFILES = \
 	executable.make			\
 	library.make			\
 	rules.make			\
+	common/Locale.cs		\
+	common/MonoTODOAttribute.cs	\
 	$(PLATFORMS:%=platforms/%.make) $(PROFILES:%=profiles/%.make)
 
 dist-local: dist-default
