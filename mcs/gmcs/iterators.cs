@@ -32,7 +32,6 @@ namespace Mono.CSharp {
 	public class Yield : Statement {
 		Expression expr;
 		ArrayList finally_blocks;
-		bool resolved;
 
 		public Yield (Expression expr, Location l)
 		{
@@ -77,8 +76,6 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
-
-			resolved = true;
 
 			if (!CheckContext (ec, loc))
 				return false;
@@ -133,8 +130,6 @@ namespace Mono.CSharp {
 		TypeExpr iterator_type_expr;
 		bool is_enumerable;
 		public readonly bool IsStatic;
-
-		Hashtable fields;
 
 		//
 		// The state as we generate the iterator
@@ -366,8 +361,6 @@ namespace Mono.CSharp {
 			this.original_block = block;
 			this.block = new ToplevelBlock (block, parameters.Parameters, loc);
 
-			fields = new Hashtable ();
-
 			IsStatic = (modifiers & Modifiers.STATIC) != 0;
 		}
 
@@ -550,8 +543,6 @@ namespace Mono.CSharp {
 
 		Field pc_field;
 		Field current_field;
-		LocalInfo pc_local;
-		LocalInfo current_local;
 		Method dispose;
 
 		void Create_Block ()
@@ -1063,12 +1054,10 @@ namespace Mono.CSharp {
 		protected class InitScope : Statement
 		{
 			Iterator iterator;
-			CaptureContext cc;
 
 			public InitScope (Iterator iterator, CaptureContext cc, Location loc)
 			{
 				this.iterator = iterator;
-				this.cc = cc;
 				this.loc = loc;
 			}
 
@@ -1139,7 +1128,6 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 
-				FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 				ec.CurrentBranching.CurrentUsageVector.Return ();
 
 				return true;
