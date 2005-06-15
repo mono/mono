@@ -41,11 +41,11 @@ namespace System.Web.Configuration
 		static CodeSubDirectory ()
 		{
 			props = new ConfigurationPropertyCollection ();
-			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.IsKey | ConfigurationPropertyFlags.Required;
+/*			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.IsKey | ConfigurationPropertyFlags.Required;
 			NonEmptyStringFlags strFlags = NonEmptyStringFlags.TrimWhitespace;
 			ConfigurationProperty prop = new NonEmptyStringConfigurationProperty ("directoryName", "", flags, strFlags);
 			props.Add (prop);
-		}
+*/		}
 
 		public string DirectoryName {
 			get { return directoryName; }

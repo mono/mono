@@ -1,3 +1,14 @@
+2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* CodeSubDirectory.cs:
+	* ExpressionBuilder.cs:
+	* AssemblyInfo.cs:
+	* BuildProviderCollection.cs:
+	* ExpressionBuilderCollection.cs:
+	* CodeSubDirectoriesCollection.cs:
+	* AnonymousIdentificationSection.cs: Track 2.0 api changes
+	in System.Configuration.
+
 2005-06-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalizationConfigurationHandler.cs: when an attribute is not
