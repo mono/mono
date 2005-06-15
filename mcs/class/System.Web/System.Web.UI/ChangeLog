@@ -1,3 +1,9 @@
+2005-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PageParser.cs: don't try to compile the master page if it wan't
+	provided. Use MapPath from the base classes instead of the long
+	version. Fixes bug #75269 that prevented xsp2 from working properly.
+
 2005-06-13  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* MasterPage.cs: Clear the default content of placeholders before
