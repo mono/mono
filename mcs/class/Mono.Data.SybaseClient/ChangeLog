@@ -1,3 +1,8 @@
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Mono.Data.SybaseClient.dll.sources :
+	  remove duplicate MonoTODOAttribute.cs
+
 2005-01-10  Daniel Morgan <danielmorgan@verizon.net>
 
 	* Mono.Data.SybaseClient/SybaseConnection.cs: fix 

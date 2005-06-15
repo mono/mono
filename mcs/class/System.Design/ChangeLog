@@ -1,3 +1,8 @@
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Design.dll.sources :
+	  remove duplicate MonoTODOAttribute.cs
+
 2004-10-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Design.dll.sources: added files in

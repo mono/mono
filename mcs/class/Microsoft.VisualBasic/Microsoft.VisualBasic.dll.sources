@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.VisualBasic/AppWinStyle.cs
 Microsoft.VisualBasic/CallType.cs
 Microsoft.VisualBasic/Collection.cs
@@ -29,7 +30,6 @@ Microsoft.VisualBasic/OpenMode.cs
 Microsoft.VisualBasic/OpenShare.cs
 Microsoft.VisualBasic/SpcInfo.cs
 Microsoft.VisualBasic/Strings.cs
-../../build/common/MonoTODOAttribute.cs
 Microsoft.VisualBasic/TabInfo.cs
 Microsoft.VisualBasic/TriState.cs
 Microsoft.VisualBasic/VBFixedArrayAttribute.cs
@@ -68,7 +68,6 @@ Microsoft.VisualBasic.CompilerServices/SingleType.cs
 Microsoft.VisualBasic.CompilerServices/StandardModuleAttribute.cs
 Microsoft.VisualBasic.CompilerServices/StaticLocalInitFlag.cs
 Microsoft.VisualBasic.CompilerServices/StringType.cs
-../../build/common/MonoTODOAttribute.cs
 Microsoft.VisualBasic.CompilerServices/Utils.cs
 Microsoft.VisualBasic.CompilerServices/VBBinder.cs
 Microsoft.VisualBasic.CompilerServices/VBErrors.cs

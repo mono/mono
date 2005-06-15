@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Data.SybaseClient.dll
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
+LIB_MCS_FLAGS = /r:System.dll /r:System.Xml.dll \
 	/r:System.EnterpriseServices.dll /r:System.Data.dll \
 	/r:Mono.Data.Tds.dll
 NO_TEST = yes

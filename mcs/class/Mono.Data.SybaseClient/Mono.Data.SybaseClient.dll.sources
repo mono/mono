@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
 Mono.Data.SybaseClient/SybaseCommand.cs
 Mono.Data.SybaseClient/SybaseCommandBuilder.cs
 Mono.Data.SybaseClient/SybaseConnection.cs
@@ -20,7 +21,6 @@ Mono.Data.SybaseClient/SybaseRowUpdatingEventArgs.cs
 Mono.Data.SybaseClient/SybaseRowUpdatingEventHandler.cs
 Mono.Data.SybaseClient/SybaseTransaction.cs
 Mono.Data.SybaseClient/SybaseType.cs
-../../build/common/MonoTODOAttribute.cs
 Mono.Data.SybaseTypes/SybaseBinary.cs
 Mono.Data.SybaseTypes/SybaseBoolean.cs
 Mono.Data.SybaseTypes/SybaseByte.cs
@@ -38,4 +38,3 @@ Mono.Data.SybaseTypes/SybaseSingle.cs
 Mono.Data.SybaseTypes/SybaseString.cs
 Mono.Data.SybaseTypes/SybaseTruncateException.cs
 Mono.Data.SybaseTypes/SybaseTypeException.cs
-../../build/common/MonoTODOAttribute.cs
