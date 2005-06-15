@@ -1,3 +1,8 @@
+2005-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Remove.  There's no Test/ directory.
+	Reported by Ritvik Mayank.
+
 2005-06-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ChangeLog: Add change log to this directory
