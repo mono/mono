@@ -246,7 +246,8 @@ namespace System.Web.UI
 			masterPage = GetString (atts, "MasterPageFile", null);
 			
 			// Make sure the page exists
-			MasterPageParser.GetCompiledMasterType (masterPage, HttpContext.Current.Request.MapPath (masterPage), HttpContext.Current);
+			if (masterPage != null)
+				MasterPageParser.GetCompiledMasterType (masterPage, MapPath (masterPage), HttpContext.Current);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -267,7 +268,7 @@ namespace System.Web.UI
 				} else {
 					string path = GetString (atts, "VirtualPath", null);
 					if (path != null)
-						masterType = MasterPageParser.GetCompiledMasterType (path, HttpContext.Current.Request.MapPath (path), HttpContext.Current);
+						masterType = MasterPageParser.GetCompiledMasterType (path, MapPath (path), HttpContext.Current);
 					else
 						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");
 				}
