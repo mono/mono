@@ -1,3 +1,7 @@
+2005-06-15  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* System.Configuration.sources: Added new files.
+
 2005-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Remove.  There's no Test/ directory.
