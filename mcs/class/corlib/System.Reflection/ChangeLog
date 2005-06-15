@@ -1,3 +1,10 @@
+2005-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs, AssemblyName.cs, ConstructorInfo.cs, EventInfo.cs,
+	FieldInfo.cs, MemberInfo.cs, MethodBase.cs, MethodInfo.cs, Module.cs,
+	ParameterInfo.cs, PropertyInfo.cs: Added some missing interfaces and
+	attributes that were added in 1.1 SP1 or 2.0 beta2.
+
 2005-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Binder.cs: null is ok for a value type. Fixes bug #75241.

@@ -40,7 +40,7 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	public abstract class MemberInfo : ICustomAttributeProvider {
+	public abstract class MemberInfo : ICustomAttributeProvider, _MemberInfo {
 
 		protected MemberInfo ()
 		{

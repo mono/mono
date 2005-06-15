@@ -3,9 +3,7 @@
 // Sean MacIsaac (macisaac@ximian.com)
 //
 // (C) 2001 Ximian, Inc.
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,12 +33,12 @@ namespace System.Reflection
 {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 #endif
 	[Serializable]
-	public class ParameterInfo : ICustomAttributeProvider
-	{
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	public class ParameterInfo : ICustomAttributeProvider, _ParameterInfo {
+
 		protected Type ClassImpl;
 		protected object DefaultValueImpl;
 		protected MemberInfo MemberImpl;
@@ -201,6 +199,29 @@ namespace System.Reflection
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+#endif
+
+#if NET_1_1
+		void _ParameterInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ParameterInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ParameterInfo.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ParameterInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 	}

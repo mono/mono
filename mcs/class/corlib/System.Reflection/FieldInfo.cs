@@ -5,12 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-// TODO: Mucho left to implement.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,11 +25,12 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+//
+// TODO: Mucho left to implement.
 //
 
-using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -48,7 +44,8 @@ namespace System.Reflection {
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	public abstract class FieldInfo : MemberInfo {
+	public abstract class FieldInfo : MemberInfo, _FieldInfo {
+
 		public abstract FieldAttributes Attributes {get;}
 		public abstract RuntimeFieldHandle FieldHandle {get;}
 

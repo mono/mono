@@ -48,12 +48,13 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
 #endif
 	[Serializable]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
-	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
+	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
+
 		#region Synch with object-internals.h
 		string name;
 		string codebase;
@@ -307,5 +308,28 @@ namespace System.Reflection {
 			Assembly.InternalGetAssemblyName (System.IO.Path.GetFullPath (assemblyFile), aname);
 			return aname;
 		}
+
+#if NET_1_1
+		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyName.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyName.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyName.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

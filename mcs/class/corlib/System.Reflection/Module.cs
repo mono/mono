@@ -44,11 +44,11 @@ namespace System.Reflection {
 
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 #endif
 	[Serializable]
-	public class Module : ISerializable, ICustomAttributeProvider {
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	public class Module : ISerializable, ICustomAttributeProvider, _Module {
 	
 		public static readonly TypeFilter FilterTypeName;
 		public static readonly TypeFilter FilterTypeNameIgnoreCase;
@@ -420,5 +420,28 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
+
+#if NET_1_1
+		void _Module.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Module.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Module.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _Module.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
