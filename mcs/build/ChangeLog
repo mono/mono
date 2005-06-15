@@ -1,3 +1,7 @@
+2005-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make (dist-local): Copy from library.make.
+
 2005-05-23  Raja R Harinath  <rharinath@novell.com>
 
 	* rules.make (STD_TARGETS): Make them all go through an
