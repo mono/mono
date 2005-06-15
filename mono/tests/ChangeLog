@@ -1,3 +1,8 @@
+2005-06-15  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (testbundle): Run the testcase with MONO_PATH set to
+	the build tree -- it's built with autodeps off.
+
 2005-06-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile.am (testbundle): Test case that bundling works with a
