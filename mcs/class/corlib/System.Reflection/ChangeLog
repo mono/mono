@@ -1,3 +1,9 @@
+2005-06-13  Michal Moskal <malekith@nemerle.org>
+	
+	* MonoGenericClass.cs: Don't use MethodHandle in GetMethod/GetConstructor,
+	since it now throws on MethodBuilders. Don't use FieldHandle in
+	GetField (throws on FieldBuilder) - just use the name.
+
 2005-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs, AssemblyName.cs, ConstructorInfo.cs, EventInfo.cs,
