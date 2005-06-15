@@ -1,3 +1,7 @@
+2005-06-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (testaot): Use JITTEST_PROG_RUN for compiling the AOT module.
+
 2005-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (testbundle): Run the testcase with MONO_PATH set to
