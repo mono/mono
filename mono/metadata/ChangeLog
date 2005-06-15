@@ -1,5 +1,10 @@
 2005-06-15  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_MonoGenericClass_GetParentType): Return NULL
+	if our parent is not a dynamic type.
+
+2005-06-15  Martin Baulig  <martin@ximian.com>
+
 	Applied a patch from Michal Moskal <michal.moskal@gmail.com>.
 
 	* reflection.c (encode_locals, field_encode_signature): Increase
