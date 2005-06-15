@@ -1,5 +1,12 @@
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : added support for letterlike
+	  characters and squared CJK compatibility characters, ordered by
+	  character names (0x0E category).
+	* Collation-notes.txt : added description on that.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.template : Now expansions are simulated.
 	* create-mscompat-collation-table.cs : filled Korean number level2.
 	  Reordered some code blocks to fill correct diacritical differences.

@@ -181,6 +181,9 @@ namespace Mono.Globalization.Unicode
 			'\u0BB1', '\u0BA9', '\u0B9C', '\u0BB8', '\u0BB7',
 			'\u0BB9'};
 
+		// cp -> character name (only for some characters)
+		ArrayList sortableCharNames = new ArrayList ();
+
 		// cp -> level1 value
 		Hashtable arabicLetterPrimaryValues = new Hashtable ();
 
@@ -214,7 +217,7 @@ namespace Mono.Globalization.Unicode
 			ParseSources (dirname);
 			Console.Error.WriteLine ("parse done.");
 
-			FillSecondaryValues ();
+			ModifyParsedValues ();
 			GenerateCore ();
 			Console.Error.WriteLine ("generation done.");
 			Serialize ();
@@ -483,6 +486,16 @@ namespace Mono.Globalization.Unicode
 					entry.Add (cp);
 				}
 			}
+
+			// For some characters store the name and sort later
+			// to determine sorting.
+			if (0x2100 <= cp && cp <= 0x213F &&
+				Char.IsSymbol ((char) cp))
+				sortableCharNames.Add (
+					new DictionaryEntry (cp, values [0]));
+			else if (0x3380 <= cp && cp <= 0x33DD)
+				sortableCharNames.Add (new DictionaryEntry (
+					cp, values [0].Substring (7)));
 
 			// diacritical weights by character name
 			for (int d = 0; d < diacritics.Length; d++)
@@ -912,7 +925,7 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		void FillSecondaryValues ()
+		void ModifyParsedValues ()
 		{
 			// number, secondary weights
 			byte weight = 0x38;
@@ -927,6 +940,39 @@ namespace Mono.Globalization.Unicode
 				diacritical [i] = 0xA;
 			for (int i = 0x3260; i <= 0x327B; i++)
 				diacritical [i] = 0xC;
+
+			// Update name part of named characters
+			for (int i = 0; i < sortableCharNames.Count; i++) {
+				DictionaryEntry de =
+					(DictionaryEntry) sortableCharNames [i];
+				int cp = (int) de.Key;
+				string renamed = null;
+				switch (cp) {
+				case 0x2101: renamed = "A_1"; break;
+				case 0x33C3: renamed = "A_2"; break;
+				case 0x2105: renamed = "C_1"; break;
+				case 0x2106: renamed = "C_2"; break;
+				case 0x211E: renamed = "R1"; break;
+				case 0x211F: renamed = "R2"; break;
+				// Remove some of them!
+				case 0x2103:
+				case 0x2109:
+				case 0x2116:
+				case 0x2117:
+				case 0x2118:
+				case 0x2125:
+				case 0x2127:
+				case 0x2129:
+				case 0x212E:
+				case 0x2132:
+					sortableCharNames.RemoveAt (i);
+					i--;
+					continue;
+				}
+				if (renamed != null)
+					sortableCharNames [i] =
+						new DictionaryEntry (cp, renamed);
+			}
 		}
 
 		void GenerateCore ()
@@ -1088,7 +1134,7 @@ namespace Mono.Globalization.Unicode
 			ArrayList numberValues = new ArrayList ();
 			foreach (int i in numbers)
 				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
-			numberValues.Sort (DictionaryValueComparer.Instance);
+			numberValues.Sort (DecimalDictionaryValueComparer.Instance);
 
 //foreach (DictionaryEntry de in numberValues)
 //Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, decompType [(int) de.Key]);
@@ -1286,8 +1332,11 @@ namespace Mono.Globalization.Unicode
 					AddCharMap ((char) i, 0x1, 1);
 					continue;
 				}
-				map [i] = new CharMapEntry (0x13,
-					(byte) arabicLetterPrimaryValues [i], 1);
+//				map [i] = new CharMapEntry (0x13,
+//					(byte) arabicLetterPrimaryValues [i], 1);
+				fillIndex [0x13] = 
+					(byte) arabicLetterPrimaryValues [i];
+				AddLetterMap ((char) i, 0x13, 0);
 			}
 			fillIndex [0x13] = 0x84;
 			for (int i = 0x0674; i < 0x06D6; i++)
@@ -1662,6 +1711,23 @@ namespace Mono.Globalization.Unicode
 
 			#endregion
 
+			// Letterlike characters and CJK compatibility square
+			sortableCharNames.Sort (StringDictionaryValueComparer.Instance);
+			int [] counts = new int ['Z' - 'A' + 1];
+			char [] namedChars = new char [sortableCharNames.Count];
+			int nCharNames = 0;
+			foreach (DictionaryEntry de in sortableCharNames) {
+				counts [((string) de.Value) [0] - 'A']++;
+				namedChars [nCharNames++] = (char) ((int) de.Key);
+			}
+			nCharNames = 0; // reset
+			for (int a = 0; a < counts.Length; a++) {
+				fillIndex [0xE] = (byte) (alphaWeights [a + 1] - counts [a]);
+				for (int i = 0; i < counts [a]; i++)
+//Console.Error.WriteLine ("---- {0:X04} : {1:x02} / {2} {3}", (int) namedChars [nCharNames], fillIndex [0xE], ((DictionaryEntry) sortableCharNames [nCharNames]).Value, Char.GetUnicodeCategory (namedChars [nCharNames]));
+					AddCharMap (namedChars [nCharNames++], 0xE, 1);
+			}
+
 			// CJK unified ideograph.
 			byte cjkCat = 0x9E;
 			fillIndex [cjkCat] = 0x2;
@@ -1842,8 +1908,6 @@ namespace Mono.Globalization.Unicode
 			if (al == null)
 				return;
 
-//Console.Error.WriteLine ("PROCESSING {0}: {1} entries", c, al.Count);
-//foreach (int cp in al) Console.Error.WriteLine ("    {0:X04}", cp);
 			foreach (int cp in al)
 				AddLetterMap ((char) cp, category, 0);
 		}
@@ -1926,7 +1990,6 @@ namespace Mono.Globalization.Unicode
 		//
 		// level2 is fixed (does not increase).
 		int [] sameWeightItems = new int [] {
-			0, // canonically compatible
 			DecompositionFraction,
 			DecompositionFull,
 			DecompositionSuper,
@@ -2614,21 +2677,43 @@ return;
 		}
 	}
 
-	class DictionaryValueComparer : IComparer
+	class DecimalDictionaryValueComparer : IComparer
 	{
-		public static readonly DictionaryValueComparer Instance
-			= new DictionaryValueComparer ();
+		public static readonly DecimalDictionaryValueComparer Instance
+			= new DecimalDictionaryValueComparer ();
 
-		private DictionaryValueComparer ()
+		private DecimalDictionaryValueComparer ()
 		{
 		}
 
-		public /*static*/ int Compare (object o1, object o2)
+		public int Compare (object o1, object o2)
 		{
 			DictionaryEntry e1 = (DictionaryEntry) o1;
 			DictionaryEntry e2 = (DictionaryEntry) o2;
 			// FIXME: in case of 0, compare decomposition categories
 			int ret = Decimal.Compare ((decimal) e1.Value, (decimal) e2.Value);
+			if (ret != 0)
+				return ret;
+			int i1 = (int) e1.Key;
+			int i2 = (int) e2.Key;
+			return i1 - i2;
+		}
+	}
+
+	class StringDictionaryValueComparer : IComparer
+	{
+		public static readonly StringDictionaryValueComparer Instance
+			= new StringDictionaryValueComparer ();
+
+		private StringDictionaryValueComparer ()
+		{
+		}
+
+		public int Compare (object o1, object o2)
+		{
+			DictionaryEntry e1 = (DictionaryEntry) o1;
+			DictionaryEntry e2 = (DictionaryEntry) o2;
+			int ret = String.Compare ((string) e1.Value, (string) e2.Value);
 			if (ret != 0)
 				return ret;
 			int i1 = (int) e1.Key;

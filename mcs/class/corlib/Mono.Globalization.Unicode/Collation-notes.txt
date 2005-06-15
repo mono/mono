@@ -707,12 +707,13 @@
 	  F8-2B8 except for (1BB-1BD and 1C0-1C3), but not sequential.
 	  2E0-2E3.
 
-	  TODO: fill diacritical orders.
+	  For diacritical orders, see level 2.
 
 	  For 'A' it is "0E 02", for 'B' "0E 09" ... 'Z' "0E A9", ezh "0E AA".
 	  0E B3 (1BE), 0E B4 (298)
 
-	  This ordering is nothing to do with European Ordering Rules (EOR).
+	  There are CJK compatibility characters (3800-) and letterlike
+	  symbols (2100-) in those A-to-Z area, ordered by character name.
 
 	10 culture dependent letters (general)
 	  0F: 386-3F2 ... Greek and Coptic
