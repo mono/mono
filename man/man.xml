@@ -22,4 +22,5 @@
 <manpage name="certmgr" page="certmgr.1" />
 <manpage name="xsd" page="xsd.1" />
 <manpage name="caspol" page="caspol.1" />
+<manpage name="al" page="al.1" />
 </manpages>
