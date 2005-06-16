@@ -269,6 +269,26 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PrincipalPermission p = new PrincipalPermission ("user", null);
 			Assert ("User.IsSubsetOf(null)", !p.IsSubsetOf (null));
+
+			p = new PrincipalPermission (PermissionState.None);
+			Assert ("None.IsSubsetOf(null)", p.IsSubsetOf (null));
+
+			p = new PrincipalPermission (PermissionState.Unrestricted);
+			Assert ("Unrestricted.IsSubsetOf(null)", !p.IsSubsetOf (null));
+		}
+
+		[Test]
+		public void IsSubsetOfNone ()
+		{
+			PrincipalPermission none = new PrincipalPermission (PermissionState.None);
+			PrincipalPermission p = new PrincipalPermission ("user", null);
+			Assert ("User.IsSubsetOf(null)", !p.IsSubsetOf (none));
+
+			p = new PrincipalPermission (PermissionState.None);
+			Assert ("None.IsSubsetOf(null)", p.IsSubsetOf (none));
+
+			p = new PrincipalPermission (PermissionState.Unrestricted);
+			Assert ("Unrestricted.IsSubsetOf(null)", !p.IsSubsetOf (none));
 		}
 
 		[Test]

@@ -1,3 +1,7 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermissionTest.cs: Added more tests for IsSubsetOf method.
+
 2005-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostProtectionAttributeTest.cs: Added tests to check for individual 
