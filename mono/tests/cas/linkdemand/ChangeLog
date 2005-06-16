@@ -1,3 +1,14 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* aptc1.cs: Add a RequestRefuse for SkipVerification when RESTRICT is
+	defined.
+	* aptc2.cs: Add a RequestRefuse for SkipVerification when RESTRICT is
+	defined. Change IsSigned() for IsRestricted().
+	* icall1.cs: Fix typos.
+	* Makefile: Changed compilation for aptc*.cs. Removed icall5.cs from 
+	testing (until I figure out exactly the rules being used).
+	* README: Updated informations about the APTC tests.
+
 2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall1.cs: Fixed test to work on NET_2_0. We're now accepting the
