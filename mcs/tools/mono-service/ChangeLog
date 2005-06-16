@@ -1,3 +1,8 @@
+2005-06-16  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* mono-service.cs: Remove lock file when service is
+	terminated.
+	
 2005-06-10  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* mono-service.cs: Removed AutoResetEvent code from signal

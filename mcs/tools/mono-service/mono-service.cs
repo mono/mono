@@ -113,34 +113,40 @@ class MonoServiceRunner : MarshalByRefObject
 			return 0;
 		}
 		
-		// Write pid to lock file
-		string pid = Syscall.getpid ().ToString () + Environment.NewLine;
-		IntPtr buf = Marshal.StringToCoTaskMemAnsi (pid);
-		Syscall.write (lfp, buf, (ulong)pid.Length);
-		Marshal.FreeCoTaskMem (buf);
-
-		// Create new AppDomain to run service
-		AppDomainSetup setup = new AppDomainSetup ();
-		setup.ApplicationBase = Environment.CurrentDirectory;
-		setup.ConfigurationFile = Path.Combine (Environment.CurrentDirectory, assembly + ".config");
-		setup.ApplicationName = logname;
-		
-		AppDomain newDomain = AppDomain.CreateDomain (logname, AppDomain.CurrentDomain.Evidence, setup);
-		MonoServiceRunner rnr = newDomain.CreateInstanceAndUnwrap(
-            typeof (MonoServiceRunner).Assembly.FullName,
-            typeof (MonoServiceRunner).FullName,
-            true,
-            BindingFlags.Default,
-            null,
-            new object [] {assembly, name, logname},
-            null, null, null) as MonoServiceRunner;
+		try {
+			// Write pid to lock file
+			string pid = Syscall.getpid ().ToString () + Environment.NewLine;
+			IntPtr buf = Marshal.StringToCoTaskMemAnsi (pid);
+			Syscall.write (lfp, buf, (ulong)pid.Length);
+			Marshal.FreeCoTaskMem (buf);
+	
+			// Create new AppDomain to run service
+			AppDomainSetup setup = new AppDomainSetup ();
+			setup.ApplicationBase = Environment.CurrentDirectory;
+			setup.ConfigurationFile = Path.Combine (Environment.CurrentDirectory, assembly + ".config");
+			setup.ApplicationName = logname;
 			
-		if (rnr == null) {
-			error (logname, "Internal Mono Error: Could not create MonoServiceRunner.");
-			return 1;
+			AppDomain newDomain = AppDomain.CreateDomain (logname, AppDomain.CurrentDomain.Evidence, setup);
+			MonoServiceRunner rnr = newDomain.CreateInstanceAndUnwrap(
+				typeof (MonoServiceRunner).Assembly.FullName,
+				typeof (MonoServiceRunner).FullName,
+				true,
+				BindingFlags.Default,
+				null,
+				new object [] {assembly, name, logname},
+				null, null, null) as MonoServiceRunner;
+				
+			if (rnr == null) {
+				error (logname, "Internal Mono Error: Could not create MonoServiceRunner.");
+				return 1;
+			}
+	
+			return rnr.StartService ();
+		} finally {
+			// Remove lock file when done
+			if (File.Exists(lockfile))
+				File.Delete (lockfile);
 		}
-
-		return rnr.StartService ();
 	}
 	
 	public MonoServiceRunner (string assembly, string name, string logname)
