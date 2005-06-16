@@ -5165,9 +5165,8 @@ namespace System.Windows.Forms
 				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), area.X + area.Width -1 , area.Y, area.X + area.Width -1, 
 					area.Y + area.Height);
 
-				// FIXME: These colors are not correct. Microsoft uses different ones but I didn't find them.
-				dc.DrawLine (ResPool.GetPen (ColorButtonLight), area.X + 1, area.Bottom - 2, area.Right - 2, area.Bottom - 2);
-				dc.DrawLine (ResPool.GetPen (ColorButtonLight), area.Right - 2, area.Top + 1, area.Right - 2, area.Bottom - 2);
+				dc.DrawLine (ResPool.GetPen (ColorActiveBorder), area.X + 1, area.Bottom - 2, area.Right - 2, area.Bottom - 2);
+				dc.DrawLine (ResPool.GetPen (ColorActiveBorder), area.Right - 2, area.Top + 1, area.Right - 2, area.Bottom - 2);
 				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), area.X + 1, area.Top + 1, area.X + 1, area.Bottom - 3);
 				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), area.X + 1, area.Top + 1, area.Right - 3, area.Top + 1);
 				break;

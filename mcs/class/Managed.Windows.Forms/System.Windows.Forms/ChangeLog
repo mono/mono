@@ -1,3 +1,7 @@
+2005-06-16  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: fixes colour
+
 2005-06-15  Peter Bartok  <pbartok@novell.com>
 
 	* MWFCategoryAttribute.cs: Added (Needed for PropertyGrid designer support)
