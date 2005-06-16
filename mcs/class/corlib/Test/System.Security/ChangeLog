@@ -1,3 +1,8 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NamedPermissionSetTest.cs: Added more extensive constructor and 
+	default values testing.
+
 2005-06-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs: Added tests for GetPermission with null and 

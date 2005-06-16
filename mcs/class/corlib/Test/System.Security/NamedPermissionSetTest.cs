@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,6 +53,112 @@ namespace MonoTests.System.Security {
 		public void ConstructorNameEmpty () 
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("");
+		}
+
+		[Test]
+		public void ConstructorName ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet ("name");
+			AssertEquals ("Name", "name", nps.Name);
+			AssertNull ("Description", nps.Description);
+			Assert ("IsUnrestricted", nps.IsUnrestricted ());
+			Assert ("IsEmpty", !nps.IsEmpty ());
+			Assert ("IsReadOnly", !nps.IsReadOnly);
+			Assert ("IsSynchronized", !nps.IsSynchronized);
+			AssertEquals ("Count", 0, nps.Count);
+		}
+
+		[Test]
+		public void ConstructorNameReserved ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet ("FullTrust");
+			AssertEquals ("Name", "FullTrust", nps.Name);
+			AssertNull ("Description", nps.Description);
+			Assert ("IsUnrestricted", nps.IsUnrestricted ());
+			Assert ("IsEmpty", !nps.IsEmpty ());
+			Assert ("IsReadOnly", !nps.IsReadOnly);
+			Assert ("IsSynchronized", !nps.IsSynchronized);
+			AssertEquals ("Count", 0, nps.Count);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void ConstructorNamedPermissionSetNull ()
+		{
+			NamedPermissionSet nullps = null;
+			NamedPermissionSet nps = new NamedPermissionSet (nullps);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorNameNullPermissionState ()
+		{
+			new NamedPermissionSet (null, PermissionState.None);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorNameEmptyPermissionState ()
+		{
+			new NamedPermissionSet (String.Empty, PermissionState.None);
+		}
+
+		[Test]
+		public void ConstructorNamePermissionStateNone ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet ("name", PermissionState.None);
+			AssertEquals ("Name", "name", nps.Name);
+			AssertNull ("Description", nps.Description);
+			Assert ("IsUnrestricted", !nps.IsUnrestricted ());
+			Assert ("IsEmpty", nps.IsEmpty ());
+			Assert ("IsReadOnly", !nps.IsReadOnly);
+			Assert ("IsSynchronized", !nps.IsSynchronized);
+			AssertEquals ("Count", 0, nps.Count);
+		}
+
+		[Test]
+		public void ConstructorNamePermissionStateUnrestricted ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet ("name", PermissionState.Unrestricted);
+			AssertEquals ("Name", "name", nps.Name);
+			AssertNull ("Description", nps.Description);
+			Assert ("IsUnrestricted", nps.IsUnrestricted ());
+			Assert ("IsEmpty", !nps.IsEmpty ());
+			Assert ("IsReadOnly", !nps.IsReadOnly);
+			Assert ("IsSynchronized", !nps.IsSynchronized);
+			AssertEquals ("Count", 0, nps.Count);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorNameNullPermissionSet ()
+		{
+			new NamedPermissionSet (null, new PermissionSet (PermissionState.None));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorNameEmptyPermissionSet ()
+		{
+			new NamedPermissionSet (String.Empty, new PermissionSet (PermissionState.None));
+		}
+
+		[Test]
+		public void ConstructorNamePermissionSetNull ()
+		{
+			NamedPermissionSet nps = new NamedPermissionSet ("name", null);
+			AssertEquals ("Name", "name", nps.Name);
+			AssertNull ("Description", nps.Description);
+#if NET_2_0
+			Assert ("IsUnrestricted", !nps.IsUnrestricted ());
+			Assert ("IsEmpty", nps.IsEmpty ());
+#else
+			Assert ("IsUnrestricted", nps.IsUnrestricted ());
+			Assert ("IsEmpty", !nps.IsEmpty ());
+#endif
+			Assert ("IsReadOnly", !nps.IsReadOnly);
+			Assert ("IsSynchronized", !nps.IsSynchronized);
+			AssertEquals ("Count", 0, nps.Count);
 		}
 
 		[Test]
