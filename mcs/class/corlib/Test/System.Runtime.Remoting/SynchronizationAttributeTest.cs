@@ -147,7 +147,6 @@ namespace MonoTests.System.Runtime.Remoting
 		bool otResult;
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSynchronization ()
 		{
 			Thread tr = new Thread (new ThreadStart (FirstSyncThread));
@@ -219,7 +218,6 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestLocked1 ()
 		{
 			sincob.Lock (false);
@@ -298,7 +296,6 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestNoReentry ()
 		{
 			Thread tr = new Thread (new ThreadStart (FirstNoReentryThread));
@@ -322,7 +319,6 @@ namespace MonoTests.System.Runtime.Remoting
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCallback ()
 		{
 			Thread tr = new Thread (new ThreadStart (CallbackThread));
