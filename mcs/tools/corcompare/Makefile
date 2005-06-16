@@ -66,3 +66,4 @@ $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe: $(APIINFO_SOURCES)
 
 mono-api-info.exe: $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
 	cp $< $@
+	-cp $<.mdb $@.mdb

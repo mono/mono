@@ -1,3 +1,8 @@
+2005-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (mono-api-info.exe): Copy mdb file from the
+	profile-specific directory.
+
 2005-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-api-info.cs: exclude the ReservedMask bits from method
