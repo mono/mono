@@ -1,3 +1,7 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Empty names are only verified in NET_2_0.
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Evidence.cs: Avoid creating the synchronized array lists unless they
