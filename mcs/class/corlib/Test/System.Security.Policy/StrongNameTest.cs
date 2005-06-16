@@ -68,7 +68,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void EmptyNameConstructor ()
 		{
 			StrongName sn = new StrongName (snpkb, String.Empty, version);

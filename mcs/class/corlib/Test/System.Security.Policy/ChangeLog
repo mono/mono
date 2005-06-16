@@ -1,3 +1,7 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongNameTest.cs: Empty names are only verified in NET_2_0.
+
 2005-06-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameMembershipConditionTest.cs: New. Unit tests for 
