@@ -201,7 +201,7 @@ namespace System.Security.Permissions {
 		{
 			PrincipalPermission pp = Cast (target);
 			if (pp == null)
-				return false;
+				return IsEmpty ();
 
 			if (IsUnrestricted ())
 				return pp.IsUnrestricted ();
@@ -334,6 +334,11 @@ namespace System.Security.Permissions {
 			}
 
 			return pp;
+		}
+
+		private bool IsEmpty ()
+		{
+			return (principals.Count == 0);
 		}
 
 		// Normally permissions tags are "IPermission" but this (non-CAS) permission use "Permission"

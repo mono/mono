@@ -1,3 +1,8 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermission.cs: Fixed IsSubsetOf method when permission is
+	empty.
+
 2005-06-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNamePublicKeyBlob.cs: Reduce casts in Equals.
