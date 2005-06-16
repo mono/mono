@@ -1,3 +1,8 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Simplified LinkDemandFullTrust as FullTrust is
+	immutable.
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Added ResolvingPolicyLevel property to enable

@@ -679,20 +679,17 @@ namespace System.Security {
 
 		private static bool LinkDemandFullTrust (Assembly a)
 		{
-			// double-lock pattern
-			if (_fullTrust == null) {
-				lock (_lockObject) {
-					if (_fullTrust == null)
-						_fullTrust = new NamedPermissionSet ("FullTrust");
-				}
-			}
-
-			try {
-				return (SecurityManager.CheckPermissionSet (a, _fullTrust, false) == null);
-			}
-			catch (SecurityException) {
+			// FullTrust is immutable (and means Unrestricted) 
+			// so we can skip the subset operations and jump to IsUnrestricted.
+			PermissionSet granted = a.GrantedPermissionSet;
+			if ((granted != null) && !granted.IsUnrestricted ())
 				return false;
-			}
+
+			PermissionSet denied = a.DeniedPermissionSet;
+			if ((denied != null) && !denied.IsEmpty ())
+				return false;
+
+			return true;
 		}
 
 		private static bool LinkDemandUnmanaged (Assembly a)
