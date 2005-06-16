@@ -1,5 +1,12 @@
 2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : simple collator implementation that just will
+	  use GetSortKey() for all its basis.
+	* TestDriver.cs : sample code that uses this collator set.
+	* MSCompatUnicodeTable.template : removed test driver from here.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Hangul fixes.
 	  Now less than 300 characters that does not have sortkey weights.
 	* MSCompatUnicodeTable.template : added FIXME info for Hangul Jamo.
