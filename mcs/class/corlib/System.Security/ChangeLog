@@ -1,5 +1,6 @@
-2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* NamedPermissionSet.cs: A default NamedPermissionSet is Unrestricted.
 	* SecurityManager.cs: Simplified LinkDemandFullTrust as FullTrust is
 	immutable.
 

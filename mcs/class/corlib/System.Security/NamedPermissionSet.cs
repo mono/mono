@@ -69,7 +69,7 @@ namespace System.Security {
 		}
 
 		public NamedPermissionSet (string name) 
-			: this (name, PermissionState.None)
+			: this (name, PermissionState.Unrestricted)
 		{
 		}
 
