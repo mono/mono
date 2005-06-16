@@ -1,3 +1,8 @@
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Fixed APTC to check for FullTrust on caller assembly (and
+	not on callee assembly). Fixed some comments.
+
 2005-06-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Mark the "methods" symbol as a function so
