@@ -578,5 +578,81 @@ namespace MonoTests.System.IO
 					dummy = f.Name;
 			}
 		}
+
+			[Test]
+			public void LastWriteTime ()
+			{
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.LastWriteTime = new DateTime (2003, 6, 4, 6, 4, 0);
+
+				DateTime time = Directory.GetLastWriteTime (TempFolder);
+				AssertEquals ("test#01", 2003, time.Year);
+				AssertEquals ("test#02", 6, time.Month);
+				AssertEquals ("test#03", 4, time.Day);
+				AssertEquals ("test#04", 6, time.Hour);
+				AssertEquals ("test#05", 4, time.Minute);
+				AssertEquals ("test#06", 0, time.Second);
+
+				time = TimeZone.CurrentTimeZone.ToLocalTime (
+					Directory.GetLastWriteTimeUtc (TempFolder));
+				AssertEquals ("test#07", 2003, time.Year);
+				AssertEquals ("test#08", 6, time.Month);
+				AssertEquals ("test#09", 4, time.Day);
+				AssertEquals ("test#10", 6, time.Hour);
+				AssertEquals ("test#11", 4, time.Minute);
+				AssertEquals ("test#12", 0, time.Second);
+			}
+
+			[Test]
+			public void LastWriteTimeUtc ()
+			{
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.LastWriteTimeUtc = new DateTime (2003, 6, 4, 6, 4, 0);
+
+				DateTime time = TimeZone.CurrentTimeZone.ToUniversalTime (
+					Directory.GetLastWriteTime (TempFolder));
+				AssertEquals ("test#1", 2003, time.Year);
+				AssertEquals ("test#2", 6, time.Month);
+				AssertEquals ("test#3", 4, time.Day);
+				AssertEquals ("test#4", 6, time.Hour);
+				AssertEquals ("test#5", 4, time.Minute);
+				AssertEquals ("test#6", 0, time.Second);
+
+				time = Directory.GetLastWriteTimeUtc (TempFolder);
+				AssertEquals ("test#7", 2003, time.Year);
+				AssertEquals ("test#8", 6, time.Month);
+				AssertEquals ("test#9", 4, time.Day);
+				AssertEquals ("test#10", 6, time.Hour);
+				AssertEquals ("test#11", 4, time.Minute);
+				AssertEquals ("test#12", 0, time.Second);
+			}
+
+			[Test]
+			public void LastAccessTime ()
+			{
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.LastAccessTime = DateTime.Now;
+			}
+
+			[Test]
+			public void LastAccessTimeUtc ()
+			{
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.LastAccessTimeUtc = DateTime.Now;
+			}
+
+			[Test]
+			public void CreationTime ()
+			{
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.CreationTime = DateTime.Now;
+			}
+
+			[Test]
+			public void CreationTimeUtc ()
+			{
+				DirectoryInfo info = new DirectoryInfo (TempFolder);
+				info.CreationTimeUtc = DateTime.Now;
+			}
     	}
 }

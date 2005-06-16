@@ -1,3 +1,7 @@
+2005-06-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryInfoTest.cs: Added tests for bug #75285.
+
 2005-06-10  Ben Maurer  <bmaurer@ximian.com>
 
 	* FileTest.cs: Fix gonz's typo. Also, clean stuff up by using the
