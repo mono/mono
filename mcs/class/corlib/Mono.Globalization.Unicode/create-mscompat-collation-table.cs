@@ -184,6 +184,9 @@ namespace Mono.Globalization.Unicode
 		// cp -> character name (only for some characters)
 		ArrayList sortableCharNames = new ArrayList ();
 
+		// cp -> arrow value 0:UPWARDS 1:RIGHTWARDS 2:DOWNWARDS 3:LEFTWARDS
+		ArrayList arrowValues = new ArrayList ();
+
 		// cp -> level1 value
 		Hashtable arabicLetterPrimaryValues = new Hashtable ();
 
@@ -486,6 +489,47 @@ namespace Mono.Globalization.Unicode
 					entry.Add (cp);
 				}
 			}
+
+			// Arrow names
+			if (0x2000 <= cp && cp < 0x3000) {
+				int value = 0;
+				switch (cp) {
+				case 0x21C5: value = -1; break; // E2
+				case 0x261D: value = 1; break;
+				case 0x27A6: value = 3; break;
+				case 0x21B0: value = 7; break;
+				case 0x21B1: value = 3; break;
+				case 0x21B2: value = 7; break;
+				case 0x21B4: value = 5; break;
+				case 0x21B5: value = 7; break;
+				case 0x21B9: value = -1; break; // E1
+				case 0x21CF: value = 7; break;
+				case 0x21D0: value = 3; break;
+				}
+				string [] arrowTargets = new string [] {
+					"",
+					"UPWARDS",
+					"NORTH EAST",
+					"RIGHTWARDS",
+					"SOUTH EAST",
+					"DOWNWARDS",
+					"SOUTH WEST",
+					"LEFTWARDS",
+					"NORTH WEST",
+					};
+				if (value == 0)
+					for (int i = 1; value == 0 && i < arrowTargets.Length; i++)
+						if (s.IndexOf (arrowTargets [i]) > 0 &&
+							s.IndexOf ("BARB " + arrowTargets [i]) < 0 &&
+//							s.IndexOf (" WITH TIP " + arrowTargets [i]) < 0 &&
+							s.IndexOf (" OVER") < 0
+						)
+							value = i;
+				if (value > 0)
+					arrowValues.Add (new DictionaryEntry (
+						cp, value));
+			}
+
 
 			// For some characters store the name and sort later
 			// to determine sorting.
@@ -1090,15 +1134,33 @@ namespace Mono.Globalization.Unicode
 			AddCharMap ('\u2423', 0x7, 1, 0); // open box
 			#endregion
 
+			// FIXME: 09 should be more complete.
+			fillIndex [0x9] = 2;
+			// misc tech mark
+			for (int cp = 0x2300; cp <= 0x237A; cp++)
+				AddCharMap ((char) cp, 0x9, 1, 0);
+
+			// arrows
+			byte [] arrowLv2 = new byte [] {0, 3, 3, 3, 3, 3, 3, 3, 3};
+			foreach (DictionaryEntry de in arrowValues) {
+				int idx = (int) de.Value;
+				int cp = (int) de.Key;
+				if (map [cp].Defined)
+					continue;
+				fillIndex [0x9] = (byte) (0xD8 + idx);
+//Console.Error.WriteLine ("-------- {0} {1:X04} {2:X02} {3:X02}", idx, cp, fillIndex [0x9], arrowLv2 [idx]);
+				AddCharMapGroup ((char) cp, 0x9, 0, arrowLv2 [idx]);
+				arrowLv2 [idx]++;
+//				map [cp] = new CharMapEntry (0x9, fillIndex [0x9]++, arrowLv2 [idx]++);
+			}
 
 			// FIXME: 08 should be more complete.
 			fillIndex [0x8] = 2;
 			for (int cp = 0; cp < char.MaxValue; cp++)
-				if (Char.GetUnicodeCategory ((char) cp) ==
+				if (!map [cp].Defined &&
+					Char.GetUnicodeCategory ((char) cp) ==
 					UnicodeCategory.MathSymbol)
 					AddCharMapGroup ((char) cp, 0x8, 1, 0);
-
-			// FIXME: implement 09
 
 			// FIXME: implement 0A
 			#region Symbols
@@ -1106,16 +1168,26 @@ namespace Mono.Globalization.Unicode
 			// byte currency symbols
 			for (int cp = 0; cp < 0x100; cp++) {
 				uc = Char.GetUnicodeCategory ((char) cp);
-				if (uc == UnicodeCategory.CurrencySymbol &&
+				if (!IsIgnorable (cp) &&
+					uc == UnicodeCategory.CurrencySymbol &&
 					cp != '$')
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 			// byte other symbols
 			for (int cp = 0; cp < 0x100; cp++) {
 				uc = Char.GetUnicodeCategory ((char) cp);
-				if (uc == UnicodeCategory.OtherSymbol)
+				if (!IsIgnorable (cp) &&
+					uc == UnicodeCategory.OtherSymbol)
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
+
+			fillIndex [0xA] = 0x2F; // FIXME: it won't be needed
+			for (int cp = 0x2600; cp <= 0x2613; cp++)
+				AddCharMap ((char) cp, 0xA, 1, 0);
+			for (int cp = 0x2620; cp <= 0x2770; cp++)
+				if (Char.IsSymbol ((char) cp))
+					AddCharMap ((char) cp, 0xA, 1, 0);
+
 			#endregion
 
 			#region Numbers // 0C 02 - 0C E1
@@ -2000,8 +2072,8 @@ namespace Mono.Globalization.Unicode
 			};
 		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2)
 		{
-if (map [(int) c].Defined)
-return;
+			if (map [(int) c].Defined)
+				return;
 
 			char small = char.MinValue;
 			char vertical = char.MinValue;
