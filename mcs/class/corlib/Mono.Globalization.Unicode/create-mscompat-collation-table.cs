@@ -184,8 +184,11 @@ namespace Mono.Globalization.Unicode
 		// cp -> character name (only for some characters)
 		ArrayList sortableCharNames = new ArrayList ();
 
-		// cp -> arrow value 0:UPWARDS 1:RIGHTWARDS 2:DOWNWARDS 3:LEFTWARDS
+		// cp -> arrow value (int)
 		ArrayList arrowValues = new ArrayList ();
+
+		// cp -> box value (int)
+		ArrayList boxValues = new ArrayList ();
 
 		// cp -> level1 value
 		Hashtable arabicLetterPrimaryValues = new Hashtable ();
@@ -462,6 +465,8 @@ namespace Mono.Globalization.Unicode
 			if (IsIgnorable (cp))
 				return;
 
+			string name = values [0];
+
 			// isSmallCapital
 			if (s.IndexOf ("SMALL CAPITAL") > 0)
 				isSmallCapital [cp] = true;
@@ -493,6 +498,7 @@ namespace Mono.Globalization.Unicode
 			// Arrow names
 			if (0x2000 <= cp && cp < 0x3000) {
 				int value = 0;
+				// SPECIAL CASES. FIXME: why?
 				switch (cp) {
 				case 0x21C5: value = -1; break; // E2
 				case 0x261D: value = 1; break;
@@ -521,7 +527,6 @@ namespace Mono.Globalization.Unicode
 					for (int i = 1; value == 0 && i < arrowTargets.Length; i++)
 						if (s.IndexOf (arrowTargets [i]) > 0 &&
 							s.IndexOf ("BARB " + arrowTargets [i]) < 0 &&
-//							s.IndexOf (" WITH TIP " + arrowTargets [i]) < 0 &&
 							s.IndexOf (" OVER") < 0
 						)
 							value = i;
@@ -530,6 +535,71 @@ namespace Mono.Globalization.Unicode
 						cp, value));
 			}
 
+			// Box names
+			if (0x2500 <= cp && cp < 0x25B0) {
+				int value = 0;
+				// flags:
+				// up:1 down:2 right:4 left:8 vert:16 horiz:32
+				// [h,rl] [r] [l]
+				// [v,ud] [u] [d]
+				// [dr] [dl] [ur] [ul]
+				// [vr,udr] [vl,vdl]
+				// [hd,rld] [hu,rlu]
+				// [hv,udrl,rlv,udh]
+				ArrayList flags = new ArrayList (new int [] {
+					32, 8 + 4, 8, 4,
+					16, 1 + 2, 1, 2,
+					4 + 2, 8 + 2, 4 + 1, 8 + 1,
+					16 + 4, 1 + 2 + 4, 16 + 8, 1 + 2 + 8,
+					32 + 2, 4 + 8 + 2, 32 + 1, 4 + 8 + 1,
+					16 + 32, 1 + 2 + 4 + 8, 4 + 8 + 16, 1 + 2 + 32
+					});
+				byte [] offsets = new byte [] {
+					0, 0, 1, 2,
+					3, 3, 4, 5,
+					6, 7, 8, 9,
+					10, 10, 11, 11,
+					12, 12, 13, 13,
+					14, 14, 14, 14};
+				if (s.IndexOf ("BOX DRAWINGS ") > 0) {
+					int flag = 0;
+					if (s.IndexOf (" UP") > 0)
+						flag |= 1;
+					if (s.IndexOf (" DOWN") > 0)
+						flag |= 2;
+					if (s.IndexOf (" RIGHT") > 0)
+						flag |= 4;
+					if (s.IndexOf (" LEFT") > 0)
+						flag |= 8;
+					if (s.IndexOf (" VERTICAL") > 0)
+						flag |= 16;
+					if (s.IndexOf (" HORIZONTAL") > 0)
+						flag |= 32;
+
+					int fidx = flags.IndexOf (flag);
+					value = fidx < 0 ? fidx : offsets [fidx];
+				} else if (s.IndexOf ("BLOCK") > 0) {
+					if (s.IndexOf ("ONE EIGHTH") > 0)
+						value = 0x12;
+					else if (s.IndexOf ("ONE QUARTER") > 0)
+						value = 0x13;
+					else if (s.IndexOf ("THREE EIGHTHS") > 0)
+						value = 0x14;
+					else if (s.IndexOf ("HALF") > 0)
+						value = 0x15;
+					else if (s.IndexOf ("FIVE EIGHTHS") > 0)
+						value = 0x16;
+					else if (s.IndexOf ("THREE QUARTERS") > 0)
+						value = 0x17;
+					else if (s.IndexOf ("SEVEN EIGHTHS") > 0)
+						value = 0x18;
+					else
+						value = 0x19;
+				}
+				if (value >= 0)
+					boxValues.Add (new DictionaryEntry (
+						cp, value));
+			}
 
 			// For some characters store the name and sort later
 			// to determine sorting.
@@ -1148,11 +1218,27 @@ namespace Mono.Globalization.Unicode
 				if (map [cp].Defined)
 					continue;
 				fillIndex [0x9] = (byte) (0xD8 + idx);
-//Console.Error.WriteLine ("-------- {0} {1:X04} {2:X02} {3:X02}", idx, cp, fillIndex [0x9], arrowLv2 [idx]);
 				AddCharMapGroup ((char) cp, 0x9, 0, arrowLv2 [idx]);
 				arrowLv2 [idx]++;
-//				map [cp] = new CharMapEntry (0x9, fillIndex [0x9]++, arrowLv2 [idx]++);
 			}
+			// boxes
+			byte [] boxLv2 = new byte [128];
+			for (int i = 0; i < boxLv2.Length; i++)
+				boxLv2 [i] = 3;
+			foreach (DictionaryEntry de in boxValues) {
+				int cp = (int) de.Key;
+				int idx = (int) de.Value;
+				if (map [cp].Defined)
+					continue;
+				fillIndex [0x9] = (byte) (0xE5 + idx);
+				AddCharMapGroup ((char) cp, 0x9, 0, boxLv2 [idx]);
+				boxLv2 [idx]++;
+			}
+			// Some special characters (slanted)
+			fillIndex [0x9] = 0xF4;
+			AddCharMap ('\u2571', 0x9, 3);
+			AddCharMap ('\u2572', 0x9, 3);
+			AddCharMap ('\u2573', 0x9, 3);
 
 			// FIXME: 08 should be more complete.
 			fillIndex [0x8] = 2;

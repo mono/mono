@@ -1,5 +1,10 @@
 2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Added mappings for box
+	  drawings and blocks.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Added mappings for arrows.
 
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
