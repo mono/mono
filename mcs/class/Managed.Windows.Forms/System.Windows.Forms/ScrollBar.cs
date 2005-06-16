@@ -296,6 +296,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (10)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFDescription("Scroll amount when clicking in the scroll area"), MWFCategory("Behaviour")]
 		public int LargeChange {
 			get {
 				if (large_change > maximum)
@@ -321,6 +322,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (100)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFDescription("Highest value for scrollbar"), MWFCategory("Behaviour")]
 		public int Maximum {
 			get { return maximum; }
 			set {
@@ -342,6 +344,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (0)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFDescription("Smallest value for scrollbar"), MWFCategory("Behaviour")]
 		public int Minimum {
 			get { return minimum; }
 			set {
@@ -362,6 +365,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue (1)]
+		[MWFDescription("Scroll amount when clicking scroll arrows"), MWFCategory("Behaviour")]
 		public int SmallChange {
 			get { return small_change; }
 			set {
@@ -393,6 +397,7 @@ namespace System.Windows.Forms
 
 		[Bindable(true)]
 		[DefaultValue (0)]
+		[MWFDescription("Current value for scrollbar"), MWFCategory("Behaviour")]
 		public int Value {
 			get { return position; }
 			set {

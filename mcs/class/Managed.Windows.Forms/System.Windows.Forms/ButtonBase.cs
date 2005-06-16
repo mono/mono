@@ -152,6 +152,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		[Localizable(true)]
 		[DefaultValue(FlatStyle.Standard)]
+		[MWFDescription("Determines look of button"), MWFCategory("Appearance")]
 		public FlatStyle FlatStyle {
 			get {
 				return flat_style;
@@ -164,6 +165,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[Localizable(true)]
+		[MWFDescription("Sets image to be displayed on button face"), MWFCategory("Appearance")]
 		public Image Image {
 			get {
 				return image;
@@ -177,6 +179,7 @@ namespace System.Windows.Forms {
 
 		[Localizable(true)]
 		[DefaultValue(ContentAlignment.MiddleCenter)]
+		[MWFDescription("Sets the alignment of the image to be displayed on button face"), MWFCategory("Appearance")]
 		public ContentAlignment ImageAlign {
 			get {
 				return image_alignment;
@@ -192,6 +195,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(-1)]
 		[Editor("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter(typeof(ImageIndexConverter))]
+		[MWFDescription("Index of image to display, if ImageList is used for button face images"), MWFCategory("Appearance")]
 		public int ImageIndex {
 			get {
 				if (image_list==null) {
@@ -207,6 +211,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(null)]
+		[MWFDescription("ImageList used for ImageIndex"), MWFCategory("Appearance")]
 		public ImageList ImageList {
 			get {
 				return image_list;
@@ -250,6 +255,7 @@ namespace System.Windows.Forms {
 
 		[Localizable(true)]
 		[DefaultValue(ContentAlignment.MiddleCenter)]
+		[MWFDescription("Alignment for button text"), MWFCategory("Appearance")]
 		public virtual ContentAlignment TextAlign {
 			get {
 				return text_alignment;

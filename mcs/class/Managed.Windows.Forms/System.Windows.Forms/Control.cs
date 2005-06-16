@@ -1049,6 +1049,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(AccessibleRole.Default)]
+		[MWFDescription("Role of the control"), MWFCategory("Accessibility")]
 		public AccessibleRole AccessibleRole {
 			get {
 				return AccessibilityObject.role;
@@ -3968,6 +3969,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		public event ControlEventHandler	ControlRemoved;
 
+		[MWFDescription("Fired when the cursor for the control has been changed"), MWFCategory("PropertyChanged")]
 		public event EventHandler		CursorChanged;
 		public event EventHandler		DockChanged;
 		public event EventHandler		DoubleClick;

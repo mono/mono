@@ -1194,6 +1194,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\Mime.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MimeGenerated.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MonthCalendar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1210,6 +1220,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\MouseEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MWFCategoryAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MWFDescriptionAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

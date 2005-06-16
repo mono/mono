@@ -226,6 +226,8 @@ System.Windows.Forms/MonthCalendar.cs
 System.Windows.Forms/MouseButtons.cs
 System.Windows.Forms/MouseEventArgs.cs
 System.Windows.Forms/MouseEventHandler.cs
+System.Windows.Forms/MWFCategoryAttribute.cs
+System.Windows.Forms/MWFDescriptionAttribute.cs
 System.Windows.Forms/NativeWindow.cs
 System.Windows.Forms/NavigateEventArgs.cs
 System.Windows.Forms/NavigateEventHandler.cs

@@ -1,3 +1,9 @@
+2005-06-15  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added MWFCategoryAttribute.cs and
+	  MWFDescriptionAttribute.cs
+	* SWF.csproj: Updated
+
 2005-06-15  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* System.Windows.Forms.dll.sources: Added Mime.cs and

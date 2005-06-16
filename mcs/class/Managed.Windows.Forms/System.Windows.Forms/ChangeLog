@@ -1,3 +1,11 @@
+2005-06-15  Peter Bartok  <pbartok@novell.com>
+
+	* MWFCategoryAttribute.cs: Added (Needed for PropertyGrid designer support)
+	* MWFDescriptionAttribute.cs: Added (Needed for PropertyGrid designer support)
+	* ButtonBase.cs: Added MWFCategory and MWFDescription attributes
+	* Control.cs: Added some MWFCategory and MWFDescription attributes
+	* ScrollBar.cs: Added some MWFCategory and MWFDescription attributes
+
 2005-06-15  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* Mime.cs, MimeGenerated.cs: First draft of MWF mime stuff, see Mime.cs for
