@@ -37,11 +37,20 @@ public static void Main ()
 
 static void FillSortKeyRaw (int i)
 {
+	if (0x1113 <= i && i <= 0x115F) {
+		// FIXME: it should use buf.AppendJamo().
+		FillSortKeyRawNormal (i);
+		return;
+	}
 	if (0x3400 <= i && i <= 0x4DB5) {
 		FillCJKExtensionSortKeyRaw (i);
 		return;
 	}
+	FillSortKeyRawNormal (i);
+}
 
+static void FillSortKeyRawNormal (int i)
+{
 	UnicodeCategory uc = char.GetUnicodeCategory ((char) i);
 	switch (uc) {
 	case UnicodeCategory.PrivateUse:

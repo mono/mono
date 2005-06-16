@@ -1,5 +1,11 @@
 2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Hangul fixes.
+	  Now less than 300 characters that does not have sortkey weights.
+	* MSCompatUnicodeTable.template : added FIXME info for Hangul Jamo.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Added control picture mappings.
 	  Minor primary weight fixes.
 
