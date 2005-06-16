@@ -207,6 +207,7 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
+		[Category("NotWorking")]
 		[Category("NotDotNet")]
 		public void TestStart()
 		{
@@ -423,7 +424,7 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
-		
+		[Category ("NotWorking")]
 		public void TestJoin1()
 		{
 			C1Test test1 = new C1Test();
@@ -470,6 +471,7 @@ namespace MonoTests.System.Threading {
 		} 
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CurrentPrincipal_PrincipalPolicy_NoPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread
@@ -485,6 +487,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread
@@ -500,6 +503,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CurrentPrincipal_PrincipalPolicy_WindowsPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread

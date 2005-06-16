@@ -135,6 +135,13 @@ namespace System.Collections.Generic {
 		{
 			_serializationInfo = info;
 		}
+
+		void SetThreshold ()
+		{
+			_threshold = (int)(_table.Length * DEFAULT_LOAD_FACTOR);
+			if (_threshold == 0 && _table.Length > 0)
+				_threshold = 1;
+		}
 		
 		private void Init (int capacity, IEqualityComparer<TKey> hcp)
 		{
@@ -142,22 +149,9 @@ namespace System.Collections.Generic {
 				throw new ArgumentOutOfRangeException ("capacity");
 			this._hcp = (hcp != null) ? hcp : EqualityComparer<TKey>.Default;
 			_table = new Slot [capacity];
-			_threshold = (int)(capacity * DEFAULT_LOAD_FACTOR);
-			if (_threshold == 0 && capacity > 0)
-				_threshold = 1;
+			SetThreshold ();
 		}
 
-		ICollection<TValue> GetValues ()
-		{
-			return ((IDictionary<TKey, TValue>) this).Values;
-		}
-	
-		ICollection<TKey> GetKeys ()
-		{
-			return ((IDictionary<TKey, TValue>) this).Keys;
-		}
-	
-	
 		void CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
 		{
 			if (array == null)
@@ -169,8 +163,10 @@ namespace System.Collections.Generic {
 			if (array.Length - index < _usedSlots)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 			
-			foreach (KeyValuePair<TKey, TValue> kv in this)
-				array [index++] = kv;
+			for (int i = 0; i < _table.Length; ++i) {
+				for (Slot slot = _table [i]; slot != null; slot = slot.Next)
+					array [index++] = slot.Data;
+			}
 		}
 	
 		private void Resize ()
@@ -180,15 +176,12 @@ namespace System.Collections.Generic {
 			//	 to the smallest prime number that is larger
 			//	 than twice the current number of Hashtable buckets
 			uint newSize = (uint) Hashtable.ToPrime ((_table.Length << 1) | 1);
-
-			_threshold = (int)(newSize * DEFAULT_LOAD_FACTOR);
-			if (_threshold == 0 && newSize > 0)
-				_threshold = 1;
 		
 			Slot nextslot = null;
 			Slot [] oldTable = _table;
 			
 			_table = new Slot [newSize];
+			SetThreshold ();
 
 			int index;
 			for (int i = 0; i < oldTable.Length; i++) {
@@ -257,61 +250,56 @@ namespace System.Collections.Generic {
 	
 		public bool ContainsValue (TValue value)
 		{
-			foreach (TValue v in ((IDictionary) this).Values) {
-				if (v.Equals (value))
-					return true;
+			IEqualityComparer<TValue> cmp = EqualityComparer<TValue>.Default;
+
+			for (int i = 0; i < _table.Length; ++i) {
+				for (Slot slot = _table [i]; slot != null; slot = slot.Next) {
+					if (cmp.Equals (value, slot.Data.Value))
+						return true;
+				}
 			}
 			return false;
 		}
 	
-		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
+		[SecurityPermission (SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("usedSlots", _usedSlots);
-			info.AddValue("hcp", _hcp);
-			info.AddValue("threshold", _threshold);
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("hcp", _hcp);
 			KeyValuePair<TKey, TValue>[] data = null;
-			if (_usedSlots > 0)
-			{
-				data = new KeyValuePair<TKey,TValue>[_usedSlots];
-				int i = 0;
-				foreach (KeyValuePair<TKey, TValue> kv in this)
-				{
-					data[i] = kv;
-				}
-				info.AddValue("data", data);
-				info.AddValue("capacity", _table.Length);
+			if (_usedSlots > 0) {
+				data = new KeyValuePair<TKey,TValue> [_usedSlots];
+				CopyTo (data, 0);
 			}
+			info.AddValue ("data", data);
+			info.AddValue ("buckets_hint", _table.Length);
 		}
 	
 		public virtual void OnDeserialization (object sender)
 		{
-			if (_serializationInfo != null)
-			{
-				_usedSlots = _serializationInfo.GetInt32("usedSlots");
-				_hcp = (IEqualityComparer<TKey>) _serializationInfo.GetValue("hcp", typeof(IEqualityComparer<TKey>));
-				_threshold = _serializationInfo.GetInt32("threshold");
-				if (_usedSlots == 0)
-				{
-					_table = new Slot[INITIAL_SIZE];
-				}
-				else
-				{
-					int capacity = _serializationInfo.GetInt32("capacity");
-					_table = new Slot[capacity];
-					
-					KeyValuePair<TKey, TValue>[] data =
-					(KeyValuePair<TKey, TValue>[]) 
-					_serializationInfo.GetValue(
-						"data", 
-						typeof(KeyValuePair<TKey, TValue>[]));
-					foreach (KeyValuePair<TKey, TValue> kv in data)
-					{
-						Add(kv.Key, kv.Value);
-					}
-				}
-				_serializationInfo = null;
+			if (_serializationInfo == null)
+				return;
+
+			_hcp = (IEqualityComparer<TKey>) _serializationInfo.GetValue ("hcp", typeof (IEqualityComparer<TKey>));
+			KeyValuePair<TKey, TValue> [] data =
+				(KeyValuePair<TKey, TValue> []) 
+				_serializationInfo.GetValue ("data", typeof (KeyValuePair<TKey, TValue> []));
+
+			int buckets = _serializationInfo.GetInt32 ("buckets_hint");
+			if (buckets < INITIAL_SIZE)
+				buckets = INITIAL_SIZE;
+
+			_table = new Slot [buckets];
+			SetThreshold ();
+			_usedSlots = 0;
+
+			if (data != null) {
+				for (int i = 0; i < data.Length; ++i)
+					Add (data [i].Key, data [i].Value);
 			}
+			_serializationInfo = null;
 		}
 	
 		public bool Remove (TKey key)
@@ -458,17 +446,7 @@ namespace System.Collections.Generic {
 	
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
-			if (index >= array.Length)
-				throw new ArgumentException ("index larger than largest valid index of array");
-			if (array.Length - index < _usedSlots)
-				throw new ArgumentException ("Destination array cannot hold the requested elements!");
-			
-			foreach (KeyValuePair<TKey, TValue> kv in this)
-				array [index++] = kv;
+			this.CopyTo (array, index);
 		}
 	
 		bool ICollection<KeyValuePair<TKey, TValue>>.Remove (KeyValuePair<TKey, TValue> keyValuePair)
@@ -483,7 +461,7 @@ namespace System.Collections.Generic {
 			// a DictionaryEntry type
 			CopyTo ((KeyValuePair<TKey, TValue> []) array, index);
 		}
-	
+
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new Enumerator (this, EnumerationMode.DictionaryEntry);
@@ -493,11 +471,7 @@ namespace System.Collections.Generic {
 		{
 			return new Enumerator (this);
 		}
-	
-		/**
-		 * This is to make the gmcs compiler errror silent
-		 */
-	
+
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{
 			return new Enumerator (this, EnumerationMode.DictionaryEntry);
@@ -508,7 +482,7 @@ namespace System.Collections.Generic {
 			return new Enumerator (this, EnumerationMode.KeyValuePair);
 		}
 	
-		public enum EnumerationMode { Key, Value, DictionaryEntry, KeyValuePair };
+		internal enum EnumerationMode { DictionaryEntry, KeyValuePair };
 	
 		[Serializable]
 		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>,
@@ -518,44 +492,32 @@ namespace System.Collections.Generic {
 			EnumerationMode _navigationMode;
 
 			Slot _current;
-			Slot _next;
-			int _index;
+			int _nextIndex;
 	
 			public Enumerator (Dictionary<TKey, TValue> dictionary) : this (dictionary, EnumerationMode.KeyValuePair)
 			{
 			}
 	
-			public Enumerator (Dictionary<TKey, TValue> dictionary, EnumerationMode mode)
+			internal Enumerator (Dictionary<TKey, TValue> dictionary, EnumerationMode mode)
 			{
 				_dictionaryTable = dictionary._table;
 				_navigationMode = mode;
 
 				// The following stanza is identical to IEnumerator.Reset (), but because of the
 				// definite assignment rule, we cannot call it here.
-				_index = 0;
+				_nextIndex = 0;
 				_current = null;
-				_next = _dictionaryTable [_index];
-				FixNext ();
 			}
 
 			public bool MoveNext ()
 			{
-				_current = _next;
-				if (_next == null)
-					return false;
-				_next = _next.Next;
-				FixNext ();
-				return true;
-			}
+				if (_current != null)
+					_current = _current.Next;
 
-			void FixNext ()
-			{
-				// _next == null ==> _next fell off the end of the chain pointed by _index.
-				while (_next == null) {
-					if (++_index >= _dictionaryTable.Length)
-						break;
-					_next = _dictionaryTable [_index];
-				}
+				while (_current == null && _nextIndex < _dictionaryTable.Length)
+					_current = _dictionaryTable [_nextIndex++];
+
+				return _current != null;
 			}
 
 			public KeyValuePair<TKey, TValue> Current {
@@ -571,10 +533,6 @@ namespace System.Collections.Generic {
 					if (_current == null)
 						throw new InvalidOperationException ();
 					switch (_navigationMode) {
-					case EnumerationMode.Key:
-						return _current.Data.Key;
-					case EnumerationMode.Value:
-						return _current.Data.Value;
 					case EnumerationMode.DictionaryEntry:
 						DictionaryEntry de = new DictionaryEntry (_current.Data.Key, _current.Data.Value);
 						return de;
@@ -598,10 +556,8 @@ namespace System.Collections.Generic {
 	
 			void IEnumerator.Reset ()
 			{
-				_index = 0;
+				_nextIndex = 0;
 				_current = null;
-				_next = _dictionaryTable [_index];
-				FixNext ();
 			}
 	
 			object IDictionaryEnumerator.Key
@@ -625,43 +581,21 @@ namespace System.Collections.Generic {
 	
 			public void Dispose ()
 			{
-	
+				_current = null;
+				_dictionaryTable = null;
 			}
 		}
 	
 		// This collection is a read only collection
 		[Serializable]
-		public class KeyCollection : ICollection<TKey>, ICollection {
+		public class KeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable {
 			Dictionary<TKey, TValue> _dictionary;
 	
 			public KeyCollection (Dictionary<TKey, TValue> dictionary)
 			{
+				if (dictionary == null)
+					throw new ArgumentNullException ("dictionary");
 				_dictionary = dictionary;
-			}
-	
-			void ICollection<TKey>.Add (TKey item)
-			{
-				throw new InvalidOperationException ();
-			}
-	
-			void ICollection<TKey>.Clear ()
-			{
-				throw new InvalidOperationException ();
-			}
-	
-			bool ICollection<TKey>.Contains (TKey item)
-			{
-				return _dictionary.ContainsKey (item);
-			}
-	
-			bool ICollection<TKey>.Remove (TKey item)
-			{
-				throw new InvalidOperationException ();
-			}
-	
-			void ICollection.CopyTo (Array array, int index)
-			{
-				CopyTo ((TKey []) array, index);
 			}
 	
 			public void CopyTo (TKey [] array, int index)
@@ -676,36 +610,77 @@ namespace System.Collections.Generic {
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
 				IEnumerable<TKey> enumerateThis = (IEnumerable<TKey>) this;
-				foreach (TKey k in enumerateThis) {
+				foreach (TKey k in enumerateThis)
 					array [index++] = k;
-				}
 			}
 	
+			public Enumerator GetEnumerator ()
+			{
+				return new Enumerator (_dictionary.GetEnumerator ());
+			}
+
+			void ICollection<TKey>.Add (TKey item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+	
+			void ICollection<TKey>.Clear ()
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+	
+			bool ICollection<TKey>.Contains (TKey item)
+			{
+				return _dictionary.ContainsKey (item);
+			}
+	
+			bool ICollection<TKey>.Remove (TKey item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
 			IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator ()
 			{
-				return new KeyEnumerator (_dictionary);
+				return this.GetEnumerator ();
+			}
+	
+			void ICollection.CopyTo (Array array, int index)
+			{
+				CopyTo ((TKey []) array, index);
 			}
 	
 			IEnumerator IEnumerable.GetEnumerator ()
 			{
-				return new Enumerator (_dictionary, EnumerationMode.Key);
+				return this.GetEnumerator ();
+			}
+
+			public int Count {
+				get { return _dictionary.Count; }
 			}
 	
+			bool ICollection<TKey>.IsReadOnly {
+				get { return true; }
+			}
+
+			bool ICollection.IsSynchronized {
+				get { return false; }
+			}
+
+			object ICollection.SyncRoot {
+				get { return ((ICollection) _dictionary).SyncRoot; }
+			}
 	
-			bool ICollection<TKey>.IsReadOnly { get { return ((IDictionary) _dictionary).IsReadOnly; } }
-			public int Count { get { return _dictionary.Count; } }
-			bool ICollection.IsSynchronized { get { return ((IDictionary) _dictionary).IsSynchronized; } }
-			object ICollection.SyncRoot { get { return ((IDictionary) _dictionary).SyncRoot; } }
-	
-			public struct KeyEnumerator : IEnumerator<TKey>, IDisposable, IEnumerator {
-				IEnumerator _hostEnumerator;
-				internal KeyEnumerator (Dictionary<TKey, TValue> dictionary)
+			public struct Enumerator : IEnumerator<TKey>, IDisposable, IEnumerator {
+				IEnumerator<KeyValuePair<TKey, TValue>> _hostEnumerator;
+
+				internal Enumerator (IEnumerator<KeyValuePair<TKey, TValue>> hostEnumerator)
 				{
-					_hostEnumerator = new Enumerator (dictionary, EnumerationMode.Key);
+					_hostEnumerator = hostEnumerator;
 				}
 				
 				public void Dispose ()
 				{
+					_hostEnumerator = null;
 				}
 				
 				public bool MoveNext ()
@@ -715,13 +690,13 @@ namespace System.Collections.Generic {
 				
 				public TKey Current {
 					get {
-						return (TKey) _hostEnumerator.Current;
+						return _hostEnumerator.Current.Key;
 					}
 				}
 				
 				object IEnumerator.Current {
 					get {
-						return _hostEnumerator.Current;
+						return _hostEnumerator.Current.Key;
 					}
 				}
 				
@@ -731,39 +706,17 @@ namespace System.Collections.Generic {
 				}
 			}
 		}
-	
+
 		// This collection is a read only collection
-		public class ValueCollection : ICollection<TValue>, ICollection {
+		[Serializable]
+		public class ValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable {
 			Dictionary<TKey, TValue> _dictionary;
 	
 			public ValueCollection (Dictionary<TKey, TValue> dictionary)
 			{
+				if (dictionary == null)
+					throw new ArgumentNullException ("dictionary");
 				_dictionary = dictionary;
-			}
-	
-			void ICollection<TValue>.Add (TValue item)
-			{
-				throw new InvalidOperationException ();
-			}
-	
-			void ICollection<TValue>.Clear ()
-			{
-				throw new InvalidOperationException ();
-			}
-	
-			bool ICollection<TValue>.Contains (TValue item)
-			{
-				return _dictionary.ContainsValue (item);
-			}
-	
-			bool ICollection<TValue>.Remove (TValue item)
-			{
-				throw new InvalidOperationException ();
-			}
-	
-			void ICollection.CopyTo (Array array, int index)
-			{
-				CopyTo ((TValue []) array, index);
 			}
 	
 			public void CopyTo (TValue [] array, int index)
@@ -778,37 +731,77 @@ namespace System.Collections.Generic {
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
 				IEnumerable<TValue> enumerateThis = (IEnumerable<TValue>) this;
-				foreach (TValue v in enumerateThis) {
-					array [index++] = v;
-				}
+				foreach (TValue k in enumerateThis)
+					array [index++] = k;
 			}
 	
+			public Enumerator GetEnumerator ()
+			{
+				return new Enumerator (_dictionary.GetEnumerator ());
+			}
+
+			void ICollection<TValue>.Add (TValue item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+	
+			void ICollection<TValue>.Clear ()
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+	
+			bool ICollection<TValue>.Contains (TValue item)
+			{
+				return _dictionary.ContainsValue (item);
+			}
+	
+			bool ICollection<TValue>.Remove (TValue item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
 			IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator ()
 			{
-				return new ValueEnumerator (_dictionary);
+				return this.GetEnumerator ();
+			}
+	
+			void ICollection.CopyTo (Array array, int index)
+			{
+				CopyTo ((TValue []) array, index);
 			}
 	
 			IEnumerator IEnumerable.GetEnumerator ()
 			{
-				return new Enumerator (_dictionary, EnumerationMode.Value);
+				return this.GetEnumerator ();
+			}
+
+			public int Count {
+				get { return _dictionary.Count; }
 			}
 	
+			bool ICollection<TValue>.IsReadOnly {
+				get { return true; }
+			}
+
+			bool ICollection.IsSynchronized {
+				get { return false; }
+			}
+
+			object ICollection.SyncRoot {
+				get { return ((ICollection) _dictionary).SyncRoot; }
+			}
 	
-			bool ICollection<TValue>.IsReadOnly { get { return ((IDictionary) _dictionary).IsReadOnly; } }
-			public int Count { get { return _dictionary.Count; } }
-			bool ICollection.IsSynchronized { get { return ((IDictionary) _dictionary).IsSynchronized; } }
-			object ICollection.SyncRoot { get { return ((IDictionary) _dictionary).SyncRoot; } }
-	
-			public struct ValueEnumerator : IEnumerator<TValue>
-			{
-				IEnumerator _hostEnumerator;
-				internal ValueEnumerator (Dictionary<TKey, TValue> dictionary)
+			public struct Enumerator : IEnumerator<TValue>, IDisposable, IEnumerator {
+				IEnumerator<KeyValuePair<TKey, TValue>> _hostEnumerator;
+
+				internal Enumerator (IEnumerator<KeyValuePair<TKey, TValue>> hostEnumerator)
 				{
-					_hostEnumerator = new Enumerator (dictionary, EnumerationMode.Value);
+					_hostEnumerator = hostEnumerator;
 				}
 				
 				public void Dispose ()
 				{
+					_hostEnumerator = null;
 				}
 				
 				public bool MoveNext ()
@@ -818,13 +811,13 @@ namespace System.Collections.Generic {
 				
 				public TValue Current {
 					get {
-						return (TValue) _hostEnumerator.Current;
+						return _hostEnumerator.Current.Value;
 					}
 				}
 				
 				object IEnumerator.Current {
 					get {
-						return _hostEnumerator.Current;
+						return _hostEnumerator.Current.Value;
 					}
 				}
 				
@@ -832,7 +825,6 @@ namespace System.Collections.Generic {
 				{
 					_hostEnumerator.Reset ();
 				}
-	
 			}
 		}
 	}

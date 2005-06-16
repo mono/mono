@@ -1,3 +1,25 @@
+2005-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Dictionary.cs (GetKeys, GetValues): Remove.
+	(SetThreshold): New function to calculate the resize threshold.
+	(CopyTo): Don't use foreach syntax.
+	(ContainsValue): Likewise.  Use default equality comparer of the
+	value type.
+	(GetObjectData): Use CopyTo to copy into temporary array.  Don't
+	save redundant _usedSlots and _threshold.
+	(OnDeserialization): Rewrite.
+	(ICollection<>.CopyTo): Forward to CopyTo.
+	(Enumerator._nextIndex): Rename to from _index.
+	(Enumerator._next, Enumerator.FixNext): Remove.
+	(Enumerator.Current): Rewrite to avoid need for _next.
+	(Enumerator.IEnumerator.Reset): Update.
+	(KeyCollection): Is also IEnumerable<TKey> and IEnumerable.
+	Update methods to conform to standard.
+	(KeyCollection.GetEnumerator): Restore.  Return the correct type.
+	(KeyCollection.Enumerator): Rename from KeyEnumerator.  Simple
+	wrapper that forwards to Dictionary<,>.Enumerator.
+	(ValueCollection): Likewise.
+
 2005-06-12  David Waite  <dwaite@gmail.com>
 
 	* IKeyComparer.cs: removed

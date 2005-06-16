@@ -1,3 +1,8 @@
+2005-06-16  Raja R Harinath  <rharinath@novell.com>
+
+	* DictionaryTest.cs (SliceCollectionsEnumeratorTest): New test
+	based on #75053.
+
 2005-06-07  Ankit Jain <ankit@corewars.org>
 
 	* DictionaryTest.cs (KeyValueEnumeratorTest): Added new test.

@@ -448,6 +448,17 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (count, vs.Count);
 		}
 
+		[Test] 		// bug 75073
+		public void SliceCollectionsEnumeratorTest ()
+		{
+			Dictionary<string, int> values = new Dictionary<string, int> ();
+
+			IEnumerator <string> ke = values.Keys.GetEnumerator ();
+			IEnumerator <int>    ve = values.Values.GetEnumerator ();
+
+			Assert.IsTrue (ke is Dictionary<string, int>.KeyCollection.Enumerator);
+			Assert.IsTrue (ve is Dictionary<string, int>.ValueCollection.Enumerator);
+		}
 	}
 }
 
