@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -163,6 +163,33 @@ namespace MonoTests.System.Security {
 			AssertEquals ("SecurityPermission", SecurityPermissionFlag.AllFlags, (result as SecurityPermission).Flags);
 			AssertEquals ("1", 1, ps.Count);
 			Assert ("State", !ps.IsUnrestricted ());
+		}
+
+		[Test]
+		public void AddPermission_NonCasPermission ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (new PrincipalPermission ("name", "role"));
+			AssertEquals ("Count", 1, ps.Count);
+			Assert ("IsEmpty", !ps.IsEmpty ());
+		}
+
+		[Test]
+		public void AddPermission_NonCasPermissionNone ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (new PrincipalPermission (PermissionState.None));
+			AssertEquals ("Count", 1, ps.Count);
+			Assert ("IsEmpty", ps.IsEmpty ());
+		}
+
+		[Test]
+		public void AddPermission_NonCasPermissionUnrestricted ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			ps.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
+			AssertEquals ("Count", 1, ps.Count);
+			Assert ("IsEmpty", !ps.IsEmpty ());
 		}
 
 		[Test]
@@ -786,6 +813,71 @@ namespace MonoTests.System.Security {
 			ups2.AddPermission (zip);
 			Assert ("UPS1Z.IsSubset(UPS2Z)", ups1.IsSubsetOf (ups2));
 			Assert ("UPS2Z.IsSubset(UPS1Z)", ups2.IsSubsetOf (ups1));
+		}
+
+		[Test]
+		public void IsSubset_NonCasPermission ()
+		{
+			PermissionSet ps1 = new PermissionSet (PermissionState.None);
+			ps1.AddPermission (new PrincipalPermission ("name", "role"));
+			PermissionSet ps2 = new PermissionSet (PermissionState.None);
+			Assert ("PS1.IsSubset(null)", !ps1.IsSubsetOf (null));
+			Assert ("PS1.IsSubset(None)", !ps1.IsSubsetOf (ps2));
+			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+
+			PermissionSet ps3 = ps1.Copy ();
+			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
+			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+
+			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
+#if NET_2_0
+			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
+#else
+			Assert ("PS1.IsSubset(Unrestricted)", !ps1.IsSubsetOf (ups1));
+#endif
+			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+		}
+
+		[Test]
+		public void IsSubset_NonCasPermission_None ()
+		{
+			PermissionSet ps1 = new PermissionSet (PermissionState.None);
+			ps1.AddPermission (new PrincipalPermission (PermissionState.None));
+			PermissionSet ps2 = new PermissionSet (PermissionState.None);
+			Assert ("PS1.IsSubset(null)", ps1.IsSubsetOf (null));
+			Assert ("PS1.IsSubset(None)", ps1.IsSubsetOf (ps2));
+			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+
+			PermissionSet ps3 = ps1.Copy ();
+			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
+			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+
+			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
+			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
+			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+		}
+
+		[Test]
+		public void IsSubset_NonCasPermission_Unrestricted ()
+		{
+			PermissionSet ps1 = new PermissionSet (PermissionState.None);
+			ps1.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
+			PermissionSet ps2 = new PermissionSet (PermissionState.None);
+			Assert ("PS1.IsSubset(null)", !ps1.IsSubsetOf (null));
+			Assert ("PS1.IsSubset(None)", !ps1.IsSubsetOf (ps2));
+			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+
+			PermissionSet ps3 = ps1.Copy ();
+			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
+			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+
+			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
+#if NET_2_0
+			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
+#else
+			Assert ("PS1.IsSubset(Unrestricted)", !ps1.IsSubsetOf (ups1));
+#endif
+			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
 		}
 
 		[Test]
