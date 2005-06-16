@@ -1240,14 +1240,6 @@ namespace Mono.Globalization.Unicode
 			AddCharMap ('\u2572', 0x9, 3);
 			AddCharMap ('\u2573', 0x9, 3);
 
-			// FIXME: 08 should be more complete.
-			fillIndex [0x8] = 2;
-			for (int cp = 0; cp < char.MaxValue; cp++)
-				if (!map [cp].Defined &&
-					Char.GetUnicodeCategory ((char) cp) ==
-					UnicodeCategory.MathSymbol)
-					AddCharMapGroup ((char) cp, 0x8, 1, 0);
-
 			// FIXME: implement 0A
 			#region Symbols
 			fillIndex [0xA] = 2;
@@ -1261,6 +1253,8 @@ namespace Mono.Globalization.Unicode
 			}
 			// byte other symbols
 			for (int cp = 0; cp < 0x100; cp++) {
+				if (cp == 0xA6)
+					continue; // SPECIAL: skip FIXME: why?
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (!IsIgnorable (cp) &&
 					uc == UnicodeCategory.OtherSymbol)
@@ -1270,9 +1264,13 @@ namespace Mono.Globalization.Unicode
 			fillIndex [0xA] = 0x2F; // FIXME: it won't be needed
 			for (int cp = 0x2600; cp <= 0x2613; cp++)
 				AddCharMap ((char) cp, 0xA, 1, 0);
+			// Dingbats
 			for (int cp = 0x2620; cp <= 0x2770; cp++)
 				if (Char.IsSymbol ((char) cp))
 					AddCharMap ((char) cp, 0xA, 1, 0);
+			// OCR
+			for (int i = 0x2440; i < 0x2460; i++)
+				AddCharMap ((char) i, 0xA, 1, 0);
 
 			#endregion
 
@@ -1940,6 +1938,7 @@ namespace Mono.Globalization.Unicode
 				// SPECIAL CASES:
 				switch (i) {
 				case 0xAB: // 08
+				case 0xB7: // 0A
 				case 0x2329: // 09
 				case 0x232A: // 09
 					continue;
@@ -1948,6 +1947,7 @@ namespace Mono.Globalization.Unicode
 				switch (Char.GetUnicodeCategory ((char) i)) {
 				case UnicodeCategory.OtherPunctuation:
 				case UnicodeCategory.ClosePunctuation:
+				case UnicodeCategory.OpenPunctuation:
 				case UnicodeCategory.InitialQuotePunctuation:
 				case UnicodeCategory.FinalQuotePunctuation:
 				case UnicodeCategory.ModifierSymbol:
@@ -1962,9 +1962,20 @@ namespace Mono.Globalization.Unicode
 					break;
 				}
 			}
+			// Control pictures
+			for (int i = 0x2400; i <= 0x2421; i++)
+				AddCharMap ((char) i, 0x7, 1, 0);
 			#endregion
 
 			// FIXME: for 07 xx we need more love.
+
+			// FIXME: 08 should be more complete.
+			fillIndex [0x8] = 2;
+			for (int cp = 0; cp < char.MaxValue; cp++)
+				if (!map [cp].Defined &&
+					Char.GetUnicodeCategory ((char) cp) ==
+					UnicodeCategory.MathSymbol)
+					AddCharMapGroup ((char) cp, 0x8, 1, 0);
 
 			// Characters w/ diacritical marks (NFKD)
 			for (int i = 0; i <= char.MaxValue; i++) {
