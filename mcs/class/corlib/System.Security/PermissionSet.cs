@@ -326,28 +326,41 @@ namespace System.Security {
 
 		public virtual bool IsSubsetOf (PermissionSet target)
 		{
+#if NET_2_0
 			// if target is empty we must be empty too
 			if ((target == null) || (target.IsEmpty ()))
 				return this.IsEmpty ();
 
-			// TODO - non CAS permissions must be evaluated for unrestricted
-
-			// if target is unrestricted then we are a subset
-			if (!this.IsUnrestricted () && target.IsUnrestricted ())
+			// all permissions support unrestricted in 2.0
+			if (target.IsUnrestricted ())
 				return true;
-			// else target isn't unrestricted.
-			// so if we are unrestricted, the we can't be a subset
-			if (this.IsUnrestricted () && !target.IsUnrestricted ())
+			if (this.IsUnrestricted ())
+				return false;
+#endif
+			if (this.IsUnrestricted () && ((target == null) || !target.IsUnrestricted ()))
 				return false;
 
 			// if each of our permission is (a) present and (b) a subset of target
 			foreach (IPermission p in list) {
-				// for every type in both list
-				IPermission i = target.GetPermission (p.GetType ());
-				if (i == null)
-					return false; // not present (condition a)
-				if (!p.IsSubsetOf (i))
-					return false; // not a subset (condition b)
+#if !NET_2_0
+				if (target == null) {
+					if (!p.IsSubsetOf (null))
+						return false;
+				} else
+#endif
+				{
+					// non CAS permissions must be evaluated for unrestricted
+					Type t = p.GetType ();
+					IPermission i = null;
+					if (target.IsUnrestricted () && (p is CodeAccessPermission) && (p is IUnrestrictedPermission)) {
+						i = (IPermission) Activator.CreateInstance (t, psUnrestricted);
+					} else {
+						i = target.GetPermission (t);
+					}
+
+					if (!p.IsSubsetOf (i))
+						return false; // not a subset (condition b)
+				}
 			}
 			return true;
 		}

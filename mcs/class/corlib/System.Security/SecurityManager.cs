@@ -62,7 +62,6 @@ namespace System.Security {
 #endif
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
-		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
 		private static IPermission _unmanagedCode;
 		private static Hashtable _declsecCache;
 		private static PolicyLevel _level;
@@ -81,7 +80,7 @@ namespace System.Security {
 			get;
 
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+			[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 			set;
 		}
 
@@ -90,7 +89,7 @@ namespace System.Security {
 			get;
 
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+			[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 			set;
 		}
 
@@ -121,25 +120,53 @@ namespace System.Security {
 			// - Not affected by overrides (like Assert, Deny and PermitOnly)
 			// - calls IsSubsetOf even for non CAS permissions
 			//   (i.e. it does call Demand so any code there won't be executed)
+#if NET_2_0
+			// with 2.0 identity permission are unrestrictable
 			return IsGranted (Assembly.GetCallingAssembly (), perm);
+#else
+			if (perm is IUnrestrictedPermission)
+				return IsGranted (Assembly.GetCallingAssembly (), perm);
+			else
+				return IsGrantedRestricted (Assembly.GetCallingAssembly (), perm);
+#endif
 		}
 
-		internal static bool IsGranted (Assembly a, IPermission perm)
+#if !NET_2_0
+		// only for permissions that do not implement IUnrestrictedPermission
+		internal static bool IsGrantedRestricted (Assembly a, IPermission perm)
 		{
-			CodeAccessPermission grant = null;
-
-			if (a.GrantedPermissionSet != null) {
-				grant = (CodeAccessPermission) a.GrantedPermissionSet.GetPermission (perm.GetType ());
-				if (grant == null) {
-					if (!a.GrantedPermissionSet.IsUnrestricted () || !(perm is IUnrestrictedPermission)) {
-						return perm.IsSubsetOf (null);
-					}
-				} else if (!perm.IsSubsetOf (grant)) {
+			PermissionSet granted = a.GrantedPermissionSet;
+			if (granted != null) {
+				CodeAccessPermission grant = (CodeAccessPermission) granted.GetPermission (perm.GetType ());
+				if (!perm.IsSubsetOf (grant)) {
 					return false;
 				}
 			}
 
-			if (a.DeniedPermissionSet != null) {
+			PermissionSet denied = a.DeniedPermissionSet;
+			if (denied != null) {
+				CodeAccessPermission refuse = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (perm.GetType ());
+				if ((refuse != null) && perm.IsSubsetOf (refuse))
+					return false;
+			}
+			return true;
+		}
+#endif
+		// note: in 2.0 *all* permissions (including identity permissions) support unrestricted
+		internal static bool IsGranted (Assembly a, IPermission perm)
+		{
+			PermissionSet granted = a.GrantedPermissionSet;
+			if ((granted != null) && !granted.IsUnrestricted ()) {
+				CodeAccessPermission grant = (CodeAccessPermission) granted.GetPermission (perm.GetType ());
+				if (!perm.IsSubsetOf (grant)) {
+					return false;
+				}
+			}
+
+			PermissionSet denied = a.DeniedPermissionSet;
+			if ((denied != null) && !denied.IsEmpty ()) {
+				if (denied.IsUnrestricted ())
+					return false;
 				CodeAccessPermission refuse = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (perm.GetType ());
 				if ((refuse != null) && perm.IsSubsetOf (refuse))
 					return false;
@@ -207,7 +234,7 @@ namespace System.Security {
 			return null;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
 			if (path == null)
@@ -224,7 +251,7 @@ namespace System.Security {
 			return pl;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
 			if (null == str)
@@ -241,7 +268,7 @@ namespace System.Security {
 			return pl;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static IEnumerator PolicyHierarchy ()
 		{
 			return Hierarchy;
@@ -694,6 +721,7 @@ namespace System.Security {
 
 		private static bool LinkDemandUnmanaged (Assembly a)
 		{
+			// note: we know that UnmanagedCode (SecurityPermission) implements IUnrestrictedPermission
 			return IsGranted (a, UnmanagedCode);
 		}
 
@@ -719,7 +747,7 @@ namespace System.Security {
 				break;
 			case 2: // MONO_JIT_LINKDEMAND_APTC
 				message = Locale.GetText ("Partially trusted callers aren't allowed to call into this assembly.");
-				demanded = (object) _fullTrust;
+				demanded = (object) DefaultPolicies.FullTrust; // immutable
 				break;
 			case 4: // MONO_JIT_LINKDEMAND_ECMA
 				message = Locale.GetText ("Calling internal calls is restricted to ECMA signed assemblies.");

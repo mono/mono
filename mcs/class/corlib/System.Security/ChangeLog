@@ -1,4 +1,12 @@
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PermissionSet.cs: Added support for non-CAS permissions in the
+	IsSubsetOf method.
+	* SecurityManager.cs: Simplified IsGranted and added support for 2.0
+	(where all permissions support unrestricted). Changed desclarative 
+	security syntax not to use flags (like the rest of the source code).
+
+2005-06-16  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* NamedPermissionSet.cs: A default NamedPermissionSet is Unrestricted.
 	* SecurityManager.cs: Simplified LinkDemandFullTrust as FullTrust is
