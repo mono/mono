@@ -1,3 +1,8 @@
+2005-06-17  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_type_get_name_recurse): Don't add the assembly
+	name for type arguments.
+
 2005-06-15  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_image_get_inflated_method_token): Encode
