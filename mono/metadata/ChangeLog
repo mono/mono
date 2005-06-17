@@ -1,5 +1,10 @@
 2005-06-17  Martin Baulig  <martin@ximian.com>
 
+	* loader.c (method_from_methodspec): Use `context->container' when
+	parsing the `gmethod->inst'.
+
+2005-06-17  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_type_get_name_recurse): Don't add the assembly
 	name for type arguments.
 
