@@ -1195,10 +1195,17 @@ System.Security.Policy/Zone.cs
 System.Security.Policy/ZoneMembershipCondition.cs
 System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs
+System.Security.Principal/IdentityNotMappedException.cs
+System.Security.Principal/IdentityReferenceCollection.cs
+System.Security.Principal/IdentityReference.cs
 System.Security.Principal/IIdentity.cs
 System.Security.Principal/IPrincipal.cs
+System.Security.Principal/NTAccount.cs
 System.Security.Principal/PrincipalPolicy.cs
+System.Security.Principal/SecurityIdentifier.cs
+System.Security.Principal/TokenAccessLevels.cs
 System.Security.Principal/TokenImpersonationLevel.cs
+System.Security.Principal/WellKnownSidType.cs
 System.Security.Principal/WindowsAccountType.cs
 System.Security.Principal/WindowsBuiltInRole.cs
 System.Security.Principal/WindowsIdentity.cs
