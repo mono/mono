@@ -244,10 +244,7 @@ namespace MonoTests.System.XmlSerialization
 			
 			TimeZone tz = TimeZone.CurrentTimeZone;
 			TimeSpan off = tz.GetUtcOffset (d);
-			string sp = string.Format ("{0:00}:{1:00}", off.TotalHours, off.TotalMinutes%60);
-			if (off.Ticks > 0) sp = "+" + sp;
-			else sp = "-" + sp;
-
+			string sp = string.Format ("{0}{1:00}:{2:00}", off.Ticks > 0 ? "+" : "-", off.Hours, off.Minutes);
 			AssertEquals (Infoset("<dateTime>0001-01-01T00:00:00.0000000" + sp + "</dateTime>"), WriterText);
 		}
 

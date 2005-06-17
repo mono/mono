@@ -1,3 +1,9 @@
+2005-06-17  Raja R Harinath  <rharinath@novell.com>
+
+	* XmlSerializerTests.cs (TestSerializeDateTime): Avoid rounding
+	errors while printing timezone offset (off.TotalHours == 5.5 gets
+	printed as 6).
+
 2005-04-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializerTests.cs:
