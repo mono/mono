@@ -1,4 +1,8 @@
 2005-06-17  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* DataGrid.cs: clears cached value
+
+2005-06-17  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: new rows, speed improvements, fixes, readonly prop.
 	* DataGridDrawingLogic.cs: new rows, speed improvements, fixes, readonly prop.

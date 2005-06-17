@@ -1779,6 +1779,7 @@ namespace System.Windows.Forms
 			}
 
 			datasource = source;
+			cached_currencymgr = null;
 			try {
 				real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, DataMember);
 			}catch (Exception e) {
