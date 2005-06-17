@@ -175,10 +175,12 @@ namespace System.Windows.Forms
 		internal int horz_pixeloffset;
 		internal bool is_editing; 	// Current cell is edit mode
 		internal bool is_changing;	// Indicates if current cell is been changed (in edit mode)
+		internal bool is_adding;	// Indicates when we are adding a row
 		private Hashtable selected_rows;
 		private bool ctrl_pressed;
 		private bool shift_pressed;
 		private bool begininit;
+		private CurrencyManager cached_currencymgr;
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -226,6 +228,7 @@ namespace System.Windows.Forms
 			horz_pixeloffset = 0;
 			is_editing = false;
 			is_changing = false;
+			is_adding = false;
 			forecolor = SystemColors.WindowText;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			backcolor = SystemColors.Window;
@@ -233,6 +236,7 @@ namespace System.Windows.Forms
 			ctrl_pressed = false;
 			shift_pressed = false;
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
+			cached_currencymgr = null;
 
 			default_style = new DataGridTableStyle (true);
 			styles_collection = new GridTableStylesCollection (this);
@@ -694,7 +698,12 @@ namespace System.Windows.Forms
 					return null;
 				}
 
-				return (CurrencyManager) BindingContext [real_datasource, DataMember];
+				if (cached_currencymgr != null) {
+					return cached_currencymgr;
+				}
+
+				cached_currencymgr = (CurrencyManager) BindingContext [real_datasource, DataMember];
+				return cached_currencymgr;
 			}
 
 			set {
@@ -794,7 +803,7 @@ namespace System.Windows.Forms
 			set {
 				if (preferredrow_height != value) {
 					preferredrow_height = value;
-					CalcAreasAndInvalidate ();					
+					CalcAreasAndInvalidate ();
 				}
 			}
 		}
@@ -809,7 +818,7 @@ namespace System.Windows.Forms
 				if (_readonly != value) {
 					_readonly = value;
 					OnReadOnlyChanged (EventArgs.Empty);
-					Refresh ();
+					CalcAreasAndInvalidate ();
 				}
 			}
 		}
@@ -939,9 +948,9 @@ namespace System.Windows.Forms
 		}
 
 		internal int RowsCount {
-			get {
+			get {				
 				if (ListManager != null) {
-					return ListManager.Count;
+					return ListManager.Count;					
 				}
 
 				return 0;
@@ -956,6 +965,12 @@ namespace System.Windows.Forms
 				} else {
 					return Font.Height + 3 + 1 /* line */;
 				}
+			}
+		}
+		
+		internal bool ShowEditRow {
+			get {
+				return _readonly == false;
 			}
 		}
 
@@ -977,6 +992,12 @@ namespace System.Windows.Forms
 		protected virtual void CancelEditing ()
 		{			
 			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+			
+			if (is_adding == true) {
+				ListManager.RemoveAt (RowsCount - 1);
+				is_adding = false;
+			}
+			
 			is_editing = false;
 			is_changing = false;
 			InvalidateCurrentRowHeader ();
@@ -1019,10 +1040,16 @@ namespace System.Windows.Forms
 		}
 
 		public virtual bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
-		{
-			if (is_editing == false) {
-				return false;
-			}
+		{						
+			if (is_adding == true) {				
+				if (shouldAbort) {
+					ListManager.CancelCurrentEdit ();
+				} else {
+					ListManager.EndCurrentEdit ();
+					CalcAreasAndInvalidate ();
+				}
+				is_adding = false;
+			} 
 
 			if (shouldAbort) {
 				gridColumn.Abort (rowNumber);
@@ -1467,8 +1494,7 @@ namespace System.Windows.Forms
 				break;
 			}
 			case Keys.Delete:
-			{
-				ICollection keys = selected_rows.Keys;
+			{				
 				foreach (int row in selected_rows.Keys) {
 					ListManager.RemoveAt (row);						
 				}
@@ -1547,8 +1573,7 @@ namespace System.Windows.Forms
 		}
 
 		protected void ResetSelection ()
-		{
-			ICollection keys = selected_rows.Keys;
+		{			
 			foreach (int row in selected_rows.Keys) {
 				grid_drawing.InvalidateRow (row);
 				grid_drawing.InvalidateRowHeader (row);
@@ -1732,14 +1757,14 @@ namespace System.Windows.Forms
 		}
 
 		private bool SetDataMember (string member)
-		{
-			Console.WriteLine ("SetDataMember {0}", member);
+		{			
 			if (member == datamember) {
 				return false;
 			}
 
 			datamember = member;
 			real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, member);
+			cached_currencymgr = null;
 			return true;
 		}
 
@@ -1790,13 +1815,7 @@ namespace System.Windows.Forms
 		}
 		
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
-		{				
-			Console.WriteLine ("Datagrid.TableStyles Collection Changed {0}, null {1}, name src {2}, name table style {3}", 
-				e.Action,
-				e.Element == null, ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName);
-				
-			int cnt = ((DataGridTableStyle) e.Element).GridColumnStyles.Count;
-			
+		{	
 			if (String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {			
 				CurrentTableStyle = (DataGridTableStyle)e.Element;
 				((DataGridTableStyle) e.Element).CreateColumnsForTable (false);				
@@ -1810,6 +1829,13 @@ namespace System.Windows.Forms
 			ResetSelection (); // Invalidates selected rows
 			is_editing = false;
 			is_changing = false;
+			
+			if (ShowEditRow && cell.RowNumber >= RowsCount) {
+				ListManager.AddNew ();
+				is_adding = true;
+				Invalidate (); // We have just added a new row
+			}
+			
 			CurrentTableStyle.GridColumnStyles[cell.ColumnNumber].Edit (ListManager,
 				cell.RowNumber, GetCellBounds (cell.RowNumber, cell.ColumnNumber),
 				_readonly, string.Empty, true);
@@ -1817,8 +1843,7 @@ namespace System.Windows.Forms
 
 		private void ShiftSelection (int index)
 		{
-			int shorter_item = -1, dist = RowsCount + 1, cur_dist;
-			ICollection keys = selected_rows.Keys;
+			int shorter_item = -1, dist = RowsCount + 1, cur_dist;			
 
 			foreach (int row in selected_rows.Keys) {
 

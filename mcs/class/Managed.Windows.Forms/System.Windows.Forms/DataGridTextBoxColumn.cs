@@ -132,7 +132,24 @@ namespace System.Windows.Forms
 		
 		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
-			SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
+			string text;
+			
+			if (textbox.Text == NullText) {
+				text = string.Empty;
+			} else {
+				text = textbox.Text;
+			}
+			
+			try {
+				SetColumnValueAtRow (dataSource, rowNum, text);
+			}
+			
+			catch (Exception e) {
+				string message = "The data entered in column ["+ MappingName +"] has an invalid format.";
+				MessageBox.Show( message);
+			}
+			
+			
 			EndEdit ();			
 			return true;
 		}
@@ -143,15 +160,27 @@ namespace System.Windows.Forms
 
 		}
 
-		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _readonly, string instantText, bool cellIsVisible)
+		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
 		{
 			object obj;
-
+			
 			if (textbox == null) {
 				textbox = new DataGridTextBox ();
 				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
 				DataGridTableStyle.DataGrid.Controls.Add (textbox);
-			}
+				textbox.Multiline = true;
+				textbox.BorderStyle = BorderStyle.None;
+			}			
+			
+			textbox.TextAlign = alignment;
+			textbox.Visible = cellIsVisible;
+			
+			if ((ParentReadOnly == false && ReadOnly == true) || 
+				(ParentReadOnly == false && _ro == true)) {
+				textbox.ReadOnly = true;
+			} else {
+				textbox.ReadOnly = false;
+			}			
 
 			textbox.Location = new Point (bounds.X, bounds.Y);
 			textbox.Size = new Size (bounds.Width, bounds.Height);
@@ -285,6 +314,10 @@ namespace System.Windows.Forms
 
 		private string GetFormattedString (object obj)
 		{
+			if (obj == DBNull.Value) {
+				return NullText;
+			}
+			
 			if (format != null && obj as IFormattable != null) {
 				return ((IFormattable)obj).ToString (format, format_provider);
 			}

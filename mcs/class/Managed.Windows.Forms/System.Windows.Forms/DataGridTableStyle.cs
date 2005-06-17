@@ -880,9 +880,6 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < propcol.Count; i++)
 			{
-				string s = propcol[i].Name;
-				DataGridColumnStyle colstyle = column_styles[propcol[i].Name];
-
 				// The column style is already provided by the user
 				if (column_styles[propcol[i].Name] != null &&
 					column_styles[propcol[i].Name].IsDefault == false) {

@@ -106,8 +106,8 @@ namespace System.Windows.Forms
 				}
 			}
 			#endregion Public Instance Methods
-		}
-
+		}		
+		
 		#region	Local Variables
 		internal HorizontalAlignment alignment;
 		private int fontheight;
@@ -116,12 +116,13 @@ namespace System.Windows.Forms
 		private string mapping_name;
 		private string null_text;
 		private PropertyDescriptor property_descriptor;
-		private bool read_only;
+		private bool _readonly;
 		private int width;
 		internal bool is_default;
 		internal DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		private StringFormat string_format_hdr;
+		static string def_null_text = "(null)";
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -142,10 +143,10 @@ namespace System.Windows.Forms
 			fontheight = -1;
 			table_style = null;
 			header_text = string.Empty;
-			mapping_name  = "(null)";
-			null_text = string.Empty;
+			mapping_name  = string.Empty;
+			null_text = def_null_text;
 			accesible_object = new DataGridColumnHeaderAccessibleObject (this);
-			read_only = false;
+			_readonly = false;
 			width = -1;
 			grid = null;
 			is_default = false;
@@ -287,11 +288,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public virtual bool ReadOnly  {
 			get {
-				return read_only;
+				return _readonly;
 			}
 			set {
-				if (value != read_only) {
-					read_only = value;
+				if (value != _readonly) {
+					_readonly = value;
 					
 					if (table_style != null && table_style.DataGrid != null) {
 						table_style.DataGrid.CalcAreasAndInvalidate ();
@@ -328,6 +329,30 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 		
 		#region Private Instance Properties
+		
+		// The logic seems to be that: 
+		// - If DataGrid.ReadOnly is true all the tables and columns are readonly ignoring other settings
+		// - If DataGridTableStyle.ReadOnly is true all columns are readonly ignoring other settings
+		// - If DataGrid.ReadOnly and DataGridTableStyle.ReadOnly are false, the columns settings are mandatory
+		//
+		internal bool ParentReadOnly {
+			get {
+				if (grid != null) {
+					if (grid.ReadOnly == true) {
+						return true;
+					}
+				}
+				
+				if (table_style != null) {
+					if (table_style.ReadOnly == true) {
+						return true;
+					}
+				}
+				
+				return false;
+			}
+		}
+		
 		internal DataGridTableStyle TableStyle {
 			set { table_style = value; }
 		}
@@ -435,7 +460,7 @@ namespace System.Windows.Forms
 		protected internal virtual void SetColumnValueAtRow (CurrencyManager source, int rowNum,  object value)
 		{
 			CheckValidDataSource (source);
-			property_descriptor.SetValue (source.GetItem (rowNum), value);
+			property_descriptor.SetValue (source.GetItem (rowNum), value);			
 		}
 
 		protected virtual void SetDataGrid (DataGrid value)
@@ -500,6 +525,15 @@ namespace System.Windows.Forms
 			bounds.Width -=	3;
 			g.DrawString (HeaderText, DataGridTableStyle.HeaderFont, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderForeColor), 
 				bounds, string_format_hdr);
+		}
+				
+		internal void PaintNewRow (Graphics g, Rectangle bounds, Brush backBrush, Brush foreBrush)
+		{
+			g.FillRectangle (backBrush, bounds);
+						
+			if (table_style.CurrentGridLineStyle == DataGridLineStyle.Solid) {
+				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor), bounds);
+			}			
 		}
 		
 		#endregion Private Instance Methods

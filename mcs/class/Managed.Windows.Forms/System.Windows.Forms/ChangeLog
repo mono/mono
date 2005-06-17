@@ -1,3 +1,10 @@
+2005-06-17  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: new rows, speed improvements, fixes, readonly prop.
+	* DataGridDrawingLogic.cs: new rows, speed improvements, fixes, readonly prop.
+	* DataGrid.cs: new rows, speed improvements, fixes, readonly prop.
+	* DataGridColumnStyle.cs: new rows, speed improvements, fixes, readonly prop.
+	
 2005-06-16  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ThemeWin32Classic.cs: fixes colour
