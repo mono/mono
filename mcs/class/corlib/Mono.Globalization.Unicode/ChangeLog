@@ -1,3 +1,13 @@
+2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : more Hangul fixes.
+	* SortKey.cs : it will replace sys.globalization.SortKey. It has
+	  some internal members.
+	* SortKeyBuffer.cs : now it uses SortKey instead of byte[].
+	* SimpleCollator.cs : CompareOptions support. However I don't think
+	  it will be developed anymore since SortKey never enables IndexOf().
+	* TestDriver.cs : a few CompareOptions cases.
+
 2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : simple collator implementation that just will

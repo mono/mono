@@ -2,17 +2,19 @@ using System;
 using System.IO;
 using System.Globalization;
 
-
 namespace Mono.Globalization.Unicode
 {
 	// Internal sort key storage that is reused during GetSortKey.
 	internal class SortKeyBuffer
 	{
-		// l4s = small kana sensitivity, l4t = kana character type,
+		// l4s = small kana sensitivity, l4t = mark type,
 		// l4k = katakana flag, l4w = kana width sensitivity
 		int l1, l2, l3, l4s, l4t, l4k, l4w, l5;
 		byte [] l1b, l2b, l3b, l4sb, l4tb, l4kb, l4wb, l5b;
 		int level5LastPos;
+
+		string source;
+		bool processLevel2;
 
 		public SortKeyBuffer ()
 		{
@@ -30,15 +32,18 @@ namespace Mono.Globalization.Unicode
 			l1b = l2b = l3b = l4sb = l4tb = l4kb = l4wb = l5b = null;
 		}
 
-		internal void AdjustBufferSize (int len)
+		internal void Initialize (CompareOptions options, string s)
 		{
+			int len = s.Length;
+			processLevel2 = (options & CompareOptions.IgnoreNonSpace) == 0;
+
 			// For Korean text it is likely to be much bigger (for
 			// Jamo), but even in ko-KR most of the compared
 			// strings won't be Hangul.
 			if (l1b == null || l1b.Length < len)
 				l1b = new byte [len * 2 + 10];
 
-			if (l2b == null || l2b.Length < len)
+			if (processLevel2 && (l2b == null || l2b.Length < len))
 				l2b = new byte [len + 10];
 			if (l3b == null || l3b.Length < len)
 				l3b = new byte [len + 10];
@@ -66,10 +71,16 @@ namespace Mono.Globalization.Unicode
 			AppendBufferPrimitive (0xFF, ref l1b, ref l1);
 			AppendBufferPrimitive (lv1msb, ref l1b, ref l1);
 			AppendBufferPrimitive (lv1lsb, ref l1b, ref l1);
-			AppendBufferPrimitive (2, ref l2b, ref l2);
+			if (processLevel2)
+				AppendBufferPrimitive (2, ref l2b, ref l2);
 			AppendBufferPrimitive (2, ref l3b, ref l3);
 		}
 
+		// LAMESPEC: Windows handles some of Hangul Jamo as to have
+		// more than two primary weight values. However this causes
+		// incorrect zero-termination. So I just ignore them and
+		// treat it as usual character.
+		/*
 		internal void AppendJamo (byte category, byte lv1msb, byte lv1lsb)
 		{
 			AppendNormal (category, lv1msb, 0, 0);
@@ -82,14 +93,15 @@ namespace Mono.Globalization.Unicode
 			AppendBufferPrimitive (0xFF, ref l1b, ref l1);
 			AppendBufferPrimitive (0, ref l1b, ref l1);
 		}
+		*/
 
 		// Append sort key value from table normally.
-		internal void AppendKana (byte category, byte lv1, byte lv2, byte lv3, bool isSmallKana, byte kanaType, bool isKatakana, bool isHalfWidth)
+		internal void AppendKana (byte category, byte lv1, byte lv2, byte lv3, bool isSmallKana, byte markType, bool isKatakana, bool isHalfWidth)
 		{
 			AppendNormal (category, lv1, lv2, lv3);
 
 			AppendBufferPrimitive ((byte) (isSmallKana ? 0xC4 : 0xE4), ref l4sb, ref l4s);
-			AppendBufferPrimitive (kanaType, ref l4tb, ref l4t);
+			AppendBufferPrimitive (markType, ref l4tb, ref l4t);
 			AppendBufferPrimitive ((byte) (isKatakana ? 0xC4 : 0xE4), ref l4kb, ref l4k);
 			AppendBufferPrimitive ((byte) (isHalfWidth ? 0xC4 : 0xE4), ref l4wb, ref l4w);
 		}
@@ -105,7 +117,8 @@ namespace Mono.Globalization.Unicode
 				AppendBufferPrimitive (category, ref l1b, ref l1);
 				AppendBufferPrimitive (lv1, ref l1b, ref l1);
 			}
-			AppendBufferPrimitive (lv2, ref l2b, ref l2);
+			if (processLevel2)
+				AppendBufferPrimitive (lv2, ref l2b, ref l2);
 			AppendBufferPrimitive (lv3, ref l3b, ref l3);
 		}
 
@@ -138,9 +151,9 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		public byte [] GetResultAndReset ()
+		public SortKey GetResultAndReset ()
 		{
-			byte [] ret = GetResult ();
+			SortKey ret = GetResult ();
 			Reset ();
 			return ret;
 		}
@@ -158,7 +171,7 @@ namespace Mono.Globalization.Unicode
 			return cur + 1;
 		}
 
-		public byte [] GetResult ()
+		public SortKey GetResult ()
 		{
 			l2 = GetOptimizedLength (l2b, l2, 2);
 			l3 = GetOptimizedLength (l3b, l3, 2);
@@ -205,7 +218,7 @@ namespace Mono.Globalization.Unicode
 				Array.Copy (l5b, 0, ret, cur, l5);
 			cur += l5;
 			ret [cur++] = 0; // end-of-data mark
-			return ret;
+			return new SortKey (source, ret, l1, l2, l3, l4s, l4t, l4k, l4w, l5);
 		}
 	}
 }

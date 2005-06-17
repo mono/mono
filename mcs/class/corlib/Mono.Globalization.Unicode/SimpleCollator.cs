@@ -14,36 +14,66 @@ namespace Mono.Globalization.Unicode
 	internal class SimpleCollator
 	{
 		SortKeyBuffer buf = new SortKeyBuffer ();
+		// CompareOptions expanded.
+		bool ignoreWidth;
+		bool ignoreCase;
+		bool ignoreKanaType;
+		TextInfo textInfo; // for ToLower().
 
 		#region GetSortKey()
 
-		public byte [] GetSortKey (string s)
+		public SimpleCollator (CultureInfo culture)
+		{
+			textInfo = culture.TextInfo;
+		}
+
+		public SortKey GetSortKey (string s)
 		{
 			return GetSortKey (s, CompareOptions.None);
 		}
 
-		public byte [] GetSortKey (string s, CompareOptions options)
+		public SortKey GetSortKey (string s, CompareOptions options)
 		{
 			return GetSortKey (s, 0, s.Length, options);
 		}
 
-		byte [] GetSortKey (string s, int start, int length, CompareOptions options)
+		void SetOptions (CompareOptions options)
 		{
-			int end = start + length;
-			buf.AdjustBufferSize (length);
-			for (int i = start; i < end; i++) {
-				char c = s [i];
-				if (Uni.IsIgnorable ((int) c))
-					continue;
+			this.ignoreWidth = (options & CompareOptions.IgnoreWidth) != 0;
+			this.ignoreCase = (options & CompareOptions.IgnoreCase) != 0;
+			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
+		}
 
-				string expansion = Uni.GetExpansion (c);
+		int FilterOptions (int i)
+		{
+			if (ignoreWidth)
+				i = Uni.ToWidthCompat (i);
+			if (ignoreCase)
+				i = textInfo.ToLower ((char) i);
+			if (ignoreKanaType)
+				i = Uni.ToKanaTypeInsensitive (i);
+			return i;
+		}
+
+		SortKey GetSortKey (string s, int start, int length, CompareOptions options)
+		{
+			SetOptions (options);
+
+			int end = start + length;
+			buf.Initialize (options, s);
+			for (int n = start; n < end; n++) {
+				int i = s [n];
+				if (Uni.IsIgnorable (i))
+					continue;
+				i = FilterOptions (i);
+
+				string expansion = Uni.GetExpansion ((char) i);
 				if (expansion != null) {
 					foreach (char e in expansion)
 						FillSortKeyRaw (e);
 				}
 				else
-					FillSortKeyRaw ((int) c);
-
+					FillSortKeyRaw (i);
 			}
 			return buf.GetResultAndReset ();
 		}
@@ -74,7 +104,7 @@ namespace Mono.Globalization.Unicode
 					Uni.IsJapaneseSmallLetter ((char) i),
 					Uni.GetJapaneseDashType ((char) i),
 					!Uni.IsHiragana ((char) i),
-					Uni.IsHalfWidthKana ((char) i)
+					!ignoreWidth && Uni.IsHalfWidthKana ((char) i)
 					);
 			else
 				buf.AppendNormal (
@@ -152,8 +182,10 @@ namespace Mono.Globalization.Unicode
 		public int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{
-			byte [] d1 = GetSortKey (s1, idx1, len1, options);
-			byte [] d2 = GetSortKey (s2, idx2, len2, options);
+			SortKey sk1 = GetSortKey (s1, idx1, len1, options);
+			SortKey sk2 = GetSortKey (s2, idx2, len2, options);
+			byte [] d1 = sk1.KeyData;
+			byte [] d2 = sk2.KeyData;
 			int len = d1.Length > d2.Length ? d2.Length : d1.Length;
 			for (int i = 0; i < len; i++)
 				if (d1 [i] != d2 [i])
