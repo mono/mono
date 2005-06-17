@@ -1,3 +1,10 @@
+2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlValidatingReader.cs : LookupNamespace() was trying to access to 
+	  null reference to validatingReader.
+	* DTDValidatingReader.cs : Fixed default xmlns* attribute handling.
+	  It used to be valid only at the declaring element.
+
 2005-06-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : further text node fixes.

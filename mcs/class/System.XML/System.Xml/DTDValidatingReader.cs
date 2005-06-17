@@ -69,7 +69,7 @@ namespace Mono.Xml
 			attributeLocalNames = new Hashtable ();
 			attributeNamespaces = new Hashtable ();
 			attributePrefixes = new Hashtable ();
-			nsdecls = new Hashtable ();
+			nsmgr = new XmlNamespaceManager (reader.NameTable);
 			this.validatingReader = validatingReader;
 			valueBuilder = new StringBuilder ();
 			idList = new ArrayList ();
@@ -105,7 +105,7 @@ namespace Mono.Xml
 		Hashtable attributeLocalNames;
 		Hashtable attributeNamespaces;
 		Hashtable attributePrefixes;
-		Hashtable nsdecls;
+		XmlNamespaceManager nsmgr;
 		StringBuilder valueBuilder;
 		ArrayList idList;
 		ArrayList missingIDReferences;
@@ -190,9 +190,7 @@ namespace Mono.Xml
 
 		public override string LookupNamespace (string prefix)
 		{
-			if (nsdecls.Count > 0 && nsdecls [prefix] != null)
-				return (string) nsdecls [prefix];
-			return reader.LookupNamespace (prefix);
+			return nsmgr.LookupNamespace (NameTable.Get (prefix));
 		}
 
 #if NET_2_0
@@ -366,7 +364,6 @@ namespace Mono.Xml
 			attributeValues.Clear ();
 			attributeNamespaces.Clear ();
 			attributePrefixes.Clear ();
-			nsdecls.Clear ();
 			isWhitespace = false;
 			isSignificantWhitespace = false;
 			isText = false;
@@ -527,12 +524,6 @@ namespace Mono.Xml
 					// SetupValidityIgnorantAttributes ();
 					ValidateAttributes (null, false);
 				}
-				foreach (string attr in attributes)
-					if (attr == "xmlns" ||
-						String.CompareOrdinal (attr, 0, "xmlns", 0, 5) == 0)
-						nsdecls.Add (
-							attr == "xmlns" ? String.Empty : attributeLocalNames [attr],
-							attributeValues [attr]);
 				// If it is empty element then directly check end element.
 				if (reader.IsEmptyElement)
 					goto case XmlNodeType.EndElement;
@@ -544,6 +535,7 @@ namespace Mono.Xml
 					constructingTextValue = null;
 					return true;
 				}
+				nsmgr.PopScope ();
 				elementStack.Pop ();
 				// endElementDeriv
 				// If no schema specification, then skip validation.
@@ -688,6 +680,20 @@ namespace Mono.Xml
 		Stack attributeValueEntityStack = new Stack ();
 
 		private void ValidateAttributes (DTDAttListDeclaration decl, bool validate)
+		{
+			DtdValidateAttributes (decl, validate);
+
+			foreach (string attr in attributes)
+				if (attr == "xmlns" ||
+					String.CompareOrdinal (attr, 0, "xmlns:", 0, 6) == 0)
+					nsmgr.AddNamespace (
+						attr == "xmlns" ? String.Empty : (string) attributeLocalNames [attr],
+						(string) attributeValues [attr]);
+
+			nsmgr.PushScope ();
+		}
+
+		private void DtdValidateAttributes (DTDAttListDeclaration decl, bool validate)
 		{
 			while (reader.MoveToNextAttribute ()) {
 				string attrName = reader.Name;
@@ -1109,10 +1115,8 @@ namespace Mono.Xml
 					return (string) attributeNamespaces [currentAttribute];
 				else if (IsDefault)
 					return String.Empty;
-				else if (nsdecls.Count > 0 && nsdecls [Prefix] != null)
-					return (string) nsdecls [Prefix];
 				else
-					return reader.NamespaceURI;
+					return nsmgr.LookupNamespace (Prefix);
 			}
 		}
 

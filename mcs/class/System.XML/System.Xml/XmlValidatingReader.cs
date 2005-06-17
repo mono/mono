@@ -401,9 +401,9 @@ namespace System.Xml
 		public override string LookupNamespace (string prefix)
 		{
 			if (validatingReader != null)
-				return sourceReader.LookupNamespace (prefix);
-			else
 				return validatingReader.LookupNamespace (prefix);
+			else
+				return sourceReader.LookupNamespace (prefix);
 		}
 
 #if NET_2_0

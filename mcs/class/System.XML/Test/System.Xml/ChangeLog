@@ -1,3 +1,7 @@
+2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlValidatingReaderTests.cs : added DefaultXmlnsAttributeLookup().
+
 2005-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlValidatingReaderTests.cs : let's test external DTD as well.
