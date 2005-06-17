@@ -1,3 +1,7 @@
+2005-06-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Allow STACK_PTR as input to SWITCH.
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c: Fixed APTC to check for FullTrust on caller assembly (and
