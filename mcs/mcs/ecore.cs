@@ -2930,8 +2930,8 @@ namespace Mono.CSharp {
 				// Resolve the field's instance expression while flow analysis is turned
 				// off: when accessing a field "a.b", we must check whether the field
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
-				InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue |
-								       ResolveFlags.DisableFlowAnalysis);
+				InstanceExpression = InstanceExpression.Resolve (
+					ec, ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis);
 				if (InstanceExpression == null)
 					return null;
 			}
@@ -3385,23 +3385,23 @@ namespace Mono.CSharp {
 
 		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
 		{
-			if ((InstanceExpression == null) && ec.IsStatic && !is_static) {
+			if (is_static) {
+				InstanceExpression = null;
+				return true;
+			}
+
+			if (InstanceExpression == null) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
 				return false;
 			}
 
-			if (!IsInstance || InstanceExpression == EmptyExpression.Null)
-				InstanceExpression = null;
+			InstanceExpression = InstanceExpression.DoResolve (ec);
+			if (InstanceExpression == null)
+				return false;
+			
+			InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
-			if (InstanceExpression != null) {
-				InstanceExpression = InstanceExpression.DoResolve (ec);
-				if (InstanceExpression == null)
-					return false;
-
-				InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
-			}
-
-			if (must_do_cs1540_check && (InstanceExpression != null)) {
+			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null) {
 				if ((InstanceExpression.Type != ec.ContainerType) &&
 				    ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
 					Report.Error (1540, loc, "Cannot access protected member `" +
@@ -3731,25 +3731,25 @@ namespace Mono.CSharp {
 
 		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
 		{
-			if ((InstanceExpression == null) && ec.IsStatic && !is_static) {
+			if (is_static) {
+				InstanceExpression = null;
+				return true;
+			}
+
+			if (InstanceExpression == null) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, EventInfo.Name);
 				return false;
 			}
 
-			if (!IsInstance || InstanceExpression == EmptyExpression.Null)
-				InstanceExpression = null;
-
-			if (InstanceExpression != null) {
-				InstanceExpression = InstanceExpression.DoResolve (ec);
-				if (InstanceExpression == null)
-					return false;
-			}
+			InstanceExpression = InstanceExpression.DoResolve (ec);
+			if (InstanceExpression == null)
+				return false;
 
 			//
 			// This is using the same mechanism as the CS1540 check in PropertyExpr.
 			// However, in the Event case, we reported a CS0122 instead.
 			//
-			if (must_do_cs1540_check && (InstanceExpression != null)) {
+			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null) {
 				if ((InstanceExpression.Type != ec.ContainerType) &&
 					ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
 					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
@@ -3769,15 +3769,6 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!IsInstance)
-				InstanceExpression = null;
-
-			if (InstanceExpression != null) {
-				InstanceExpression = InstanceExpression.DoResolve (ec);
-				if (InstanceExpression == null)
-					return null;
-			}
-
 			bool must_do_cs1540_check;
 			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check) &&
 			      IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
