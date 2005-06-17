@@ -1,3 +1,8 @@
+2005-06-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsPrincipalTest.cs: In NET_2_0 multiple IsInRole methods can 
+	now accept null.
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WindowsIdentityTest.cs: Fixed IsPosix for NET_2_0.

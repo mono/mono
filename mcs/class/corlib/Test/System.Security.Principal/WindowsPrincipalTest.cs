@@ -70,7 +70,7 @@ namespace MonoTests.System.Security.Principal {
 		public void IsInRole_Null ()
 		{
 			WindowsPrincipal p = new WindowsPrincipal (WindowsIdentity.GetAnonymous ());
-			Assert ("IsInRole(Null)", !p.IsInRole (null));
+			Assert ("IsInRole(Null)", !p.IsInRole ((string)null));
 		}
 
 		[Test]
