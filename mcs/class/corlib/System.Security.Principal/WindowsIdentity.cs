@@ -30,6 +30,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -38,6 +39,9 @@ namespace System.Security.Principal {
 	[Serializable]
 #if NET_1_0
 	public class WindowsIdentity : IIdentity, IDeserializationCallback {
+#elif NET_2_0
+	[ComVisible (true)]
+	public class WindowsIdentity : IIdentity, IDeserializationCallback, ISerializable, IDisposable {
 #else
 	public class WindowsIdentity : IIdentity, IDeserializationCallback, ISerializable {
 #endif
@@ -113,13 +117,26 @@ namespace System.Security.Principal {
 		}
 #endif
 
+#if NET_2_0
+		[ComVisible (false)]
+		public void Dispose ()
+		{
+			_token = IntPtr.Zero;
+		}
+		
+		[ComVisible (false)]
+		protected virtual void Dispose (bool disposing)
+		{
+			_token = IntPtr.Zero;
+		}
+#else
 		~WindowsIdentity ()
 		{
 			// clear our copy but don't close it
 			// http://www.develop.com/kbrown/book/html/whatis_windowsprincipal.html
 			_token = IntPtr.Zero;
 		}
-
+#endif
 		// static methods
 
 		public static WindowsIdentity GetAnonymous ()
@@ -144,7 +161,19 @@ namespace System.Security.Principal {
 		{
 			return new WindowsIdentity (GetCurrentToken (), null, WindowsAccountType.Normal, true);
 		}
+#if NET_2_0
+		[MonoTODO ("need icall changes")]
+		public static WindowsIdentity GetCurrent (bool ifImpersonating)
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO ("need icall changes")]
+		public static WindowsIdentity GetCurrent (TokenAccessLevels desiredAccess)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		// methods
 
 		public virtual WindowsImpersonationContext Impersonate ()
@@ -200,7 +229,30 @@ namespace System.Security.Principal {
 		{
 			get { return _token; }
 		}
+#if NET_2_0
+		[MonoTODO ("not implemented")]
+		public IdentityReferenceCollection Groups {
+			get { throw new NotImplementedException (); }
+		}
 
+		[MonoTODO ("not implemented")]
+		[ComVisible (false)]
+		public TokenImpersonationLevel ImpersonationLevel {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("not implemented")]
+		[ComVisible (false)]
+		public SecurityIdentifier Owner {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("not implemented")]
+		[ComVisible (false)]
+		public SecurityIdentifier User {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 			_token = (IntPtr) _info.GetValue ("m_userToken", typeof (IntPtr));

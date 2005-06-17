@@ -5,11 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,13 +27,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Principal {
 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public class WindowsPrincipal : IPrincipal {
 
 		private WindowsIdentity _identity;
@@ -129,7 +128,6 @@ namespace System.Security.Principal {
 					if (role == check)
 						return true;
 #else
-					Console.WriteLine ("> {0}", check);
 					if ((check != null) && (role == check.ToUpperInvariant ()))
 						return true;
 #endif
@@ -156,7 +154,14 @@ namespace System.Security.Principal {
 				return IsInRole ((int) role);
 			}
 		}
-
+#if NET_2_0
+		[MonoTODO ("not implemented")]
+		[ComVisible (false)]
+		public virtual bool IsInRole (SecurityIdentifier sid)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		private static bool IsPosix {
 			get { return ((int) Environment.Platform == 128); }
 		}

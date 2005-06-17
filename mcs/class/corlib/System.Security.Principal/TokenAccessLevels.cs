@@ -1,12 +1,10 @@
 //
-// System.Security.Principal.TokenImpersonationLevel.cs
+// System.Security.Principal.TokenAccessLevels flags
 //
 // Author:
-//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) Tim Coleman, 2004
-// (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,13 +33,22 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal {
 
 	[Serializable]
+	[Flags]
 	[ComVisible (true)]
-	public enum TokenImpersonationLevel {
-		Anonymous = 0x01,
-		Delegation = 0x04,
-		Identification = 0x02,
-		Impersonation = 0x03,
-		None = 0x00
+	public enum TokenAccessLevels {
+		AssignPrimary = 1,
+		Duplicate = 2,
+		Impersonate = 4,
+		Query = 8,
+		QuerySource = 16,
+		AdjustPrivileges = 32,
+		AdjustGroups = 64,
+		AdjustDefault = 128,
+		AdjustSessionId = 256,
+		Read = 0x20008,
+		Write = 0x200E0,
+		AllAccess = 0xF01FF,
+		MaximumAllowed = 0x2000000
 	}
 }
 

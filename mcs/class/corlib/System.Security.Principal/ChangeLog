@@ -1,3 +1,22 @@
+2005-06-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IdentityNotMappedException.cs: New (2.0). Identity exception.
+	* IdentityReference.cs: New (2.0). Abstract base class to collect /
+	translate identities.
+	* IdentityReferenceCollection.cs: New. (2.0) Collection of 
+	IdentityReference (e.g. groups).
+	* NTAccount.cs: New (2.0). Domain/User (string based) 
+	IdentityReference.
+	* SecurityIdentifier.cs: New (2.0). SID (binary based) 
+	IdentityReference.
+	* TokenAccessLevels.cs: New (2.0). Type of identity token.
+	* TokenImpersonationLevel.cs: Fixed name in header.
+	* WellKnownSidType.cs: New (2.0). Enum of all well known SID.
+	* WindowsIdentity.cs: Implement IDisposable for 2.0. Add Identity
+	Reference support for User, Owner and a collection for groups.
+	* WindowsImpersonationContext.cs: Implement IDisposable for 2.0.
+	* WindowsPrincipal.cs: Added IsInRole(SecurityIdentifier) for 2.0.
+
 2005-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GenericIdentity.cs: Added [ComVisible(true)] for NET_2_0.

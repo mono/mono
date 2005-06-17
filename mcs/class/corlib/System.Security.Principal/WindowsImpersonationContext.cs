@@ -6,11 +6,7 @@
 //	Sebastien Pouliot  (sebastien@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,13 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security;
 
 namespace System.Security.Principal {
 
+#if NET_2_0
+	[ComVisible (true)]
+	public class WindowsImpersonationContext : IDisposable {
+#else
 	public class WindowsImpersonationContext {
+#endif
 
 		private IntPtr _token;
 		private bool undo;
@@ -52,14 +53,30 @@ namespace System.Security.Principal {
 			}
 			undo = false;
 		}
-
+#if NET_2_0
+		[ComVisible (false)]
+		public void Dispose ()
+		{
+			if (!undo) {
+				Undo ();
+			}
+		}
+		
+		[ComVisible (false)]
+		protected virtual void Dispose (bool disposing)
+		{
+			if (!undo) {
+				Undo ();
+			}
+		}
+#else
 		~WindowsImpersonationContext ()
 		{
 			if (!undo) {
 				Undo ();
 			}
 		}
-
+#endif
 		public void Undo ()
 		{
 			if (!RevertToSelf ()) {

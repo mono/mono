@@ -1,12 +1,10 @@
 //
-// System.Security.Principal.TokenImpersonationLevel.cs
+// System.Security.Policy.IdentityNotMappedException.cs
 //
 // Author:
-//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) Tim Coleman, 2004
-// (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,18 +28,37 @@
 
 #if NET_2_0
 
+using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.Security.Principal {
 
 	[Serializable]
-	[ComVisible (true)]
-	public enum TokenImpersonationLevel {
-		Anonymous = 0x01,
-		Delegation = 0x04,
-		Identification = 0x02,
-		Impersonation = 0x03,
-		None = 0x00
+	[ComVisible (false)]
+	public class IdentityNotMappedException : SystemException {
+
+		public IdentityNotMappedException ()
+		{
+		}
+
+		public IdentityNotMappedException (string message)
+		{
+		}
+
+		public IdentityNotMappedException (string message, Exception inner)
+		{
+		}
+
+		[MonoTODO ("not implemented")]
+		public IdentityReferenceCollection UnmappedIdentities {
+			get { return null; }
+		}
+
+		[MonoTODO ("not implemented")]
+		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
+		}
 	}
 }
 

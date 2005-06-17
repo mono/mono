@@ -1,12 +1,10 @@
 //
-// System.Security.Principal.TokenImpersonationLevel.cs
+// System.Security.Policy.IdentityReference.cs
 //
 // Author:
-//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) Tim Coleman, 2004
-// (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,18 +28,47 @@
 
 #if NET_2_0
 
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Security.Principal {
 
-	[Serializable]
-	[ComVisible (true)]
-	public enum TokenImpersonationLevel {
-		Anonymous = 0x01,
-		Delegation = 0x04,
-		Identification = 0x02,
-		Impersonation = 0x03,
-		None = 0x00
+	[ComVisible (false)]
+	public abstract class IdentityReference {
+
+		public abstract string Value { 
+			get;
+		}
+
+
+		public abstract override bool Equals (object o);
+
+		public abstract override int GetHashCode ();
+
+		public abstract bool IsValidTargetType (Type targetType);
+
+		public abstract override string ToString ();
+
+		public abstract IdentityReference Translate (Type targetType);
+
+
+		public static bool operator== (IdentityReference left, IdentityReference right)
+		{
+			if (left == null)
+				return (right == null);
+			if (right == null)
+				return false;
+			return (left.Value == right.Value);
+		}
+
+		public static bool operator!= (IdentityReference left, IdentityReference right)
+		{
+			if (left == null)
+				return (right != null);
+			if (right == null)
+				return true;
+			return (left.Value != right.Value);
+		}
 	}
 }
 
