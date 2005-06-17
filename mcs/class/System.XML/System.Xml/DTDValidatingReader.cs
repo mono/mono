@@ -689,8 +689,15 @@ namespace Mono.Xml
 					nsmgr.AddNamespace (
 						attr == "xmlns" ? String.Empty : (string) attributeLocalNames [attr],
 						(string) attributeValues [attr]);
-
 			nsmgr.PushScope ();
+
+			foreach (string attr in attributes) {
+				string prefix = attr == "xmlns" ? "xmlns" : attributePrefixes [attr] as string;
+				if (prefix == String.Empty)
+					attributeNamespaces.Add (attr, String.Empty);
+				else
+					attributeNamespaces.Add (attr, LookupNamespace (prefix));
+			}
 		}
 
 		private void DtdValidateAttributes (DTDAttListDeclaration decl, bool validate)
@@ -700,7 +707,6 @@ namespace Mono.Xml
 				this.currentAttribute = attrName;
 				attributes.Add (attrName);
 				attributeLocalNames.Add (attrName, reader.LocalName);
-				attributeNamespaces.Add (attrName, reader.NamespaceURI);
 				attributePrefixes.Add (attrName, reader.Prefix);
 				XmlReader targetReader = reader;
 				string attrValue = null;
@@ -910,7 +916,6 @@ namespace Mono.Xml
 						String.Empty :
 						def.Name.Substring (0, colonAt);
 					attributePrefixes.Add (def.Name, prefix);
-					attributeNamespaces.Add (def.Name, reader.LookupNamespace (prefix));
 					attributeValues.Add (def.Name, def.DefaultValue);
 					break;
 				}
@@ -1085,8 +1090,6 @@ namespace Mono.Xml
 					return ((XmlReader) entityReaderStack.Peek ()).LocalName; // name of EndEntity
 				else if (NodeType == XmlNodeType.Attribute)
 					return (string) attributeLocalNames [currentAttribute];
-				else if (IsDefault)
-					return String.Empty;
 				else
 					return reader.LocalName;
 			}
@@ -1100,8 +1103,6 @@ namespace Mono.Xml
 					return ((XmlReader) entityReaderStack.Peek ()).Name; // name of EndEntity
 				else if (NodeType == XmlNodeType.Attribute)
 					return currentAttribute;
-				else if (IsDefault)
-					return String.Empty;
 				else
 					return reader.Name;
 			}
@@ -1113,10 +1114,7 @@ namespace Mono.Xml
 					return String.Empty;
 				else if (NodeType == XmlNodeType.Attribute)
 					return (string) attributeNamespaces [currentAttribute];
-				else if (IsDefault)
-					return String.Empty;
-				else
-					return nsmgr.LookupNamespace (Prefix);
+				return nsmgr.LookupNamespace (Prefix);
 			}
 		}
 
@@ -1151,8 +1149,6 @@ namespace Mono.Xml
 					return String.Empty;
 				else if (NodeType == XmlNodeType.Attribute)
 					return (string) attributePrefixes [currentAttribute];
-				else if (IsDefault)
-					return String.Empty;
 				else
 					return reader.Prefix;
 			}
@@ -1220,18 +1216,11 @@ namespace Mono.Xml
 			get {
 				if (currentTextValue != null)
 					return currentTextValue;
-				// This check also covers value node of default attributes.
-				if (IsDefault) {
-					DTDAttributeDefinition def = 
-						dtd.AttListDecls [currentElement] [currentAttribute] as DTDAttributeDefinition;
-					return sourceTextReader != null && sourceTextReader.Normalization ?
-						def.NormalizedDefaultValue : def.DefaultValue;
-				}
 				// As to this property, MS.NET seems ignorant of EntityHandling...
-				else if (NodeType == XmlNodeType.Attribute)// &&
+				else if (NodeType == XmlNodeType.Attribute
+					// It also covers default attribute text.
+ 					|| consumedAttribute)
 					return FilterNormalization (Name, (string) attributeValues [currentAttribute]);
-				else if (consumedAttribute)
-					return FilterNormalization (Name, (string) attributeValues [this.currentAttribute]);
 				else
 					return FilterNormalization (Name, reader.Value);
 			}

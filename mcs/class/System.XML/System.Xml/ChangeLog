@@ -1,5 +1,13 @@
 2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDValidatingReader.cs : removed some extra IsDefault check (with
+	  the latse code default attributes are stored in hashtables anyways.)
+	  Fixup attribute namespaces _after_ xmlns attributse are filled.
+	  The latest change is not good that namespaceURI of a local attribute
+	  was incorrectly globally looked up (it should be always "").
+
+2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReader.cs : LookupNamespace() was trying to access to 
 	  null reference to validatingReader.
 	* DTDValidatingReader.cs : Fixed default xmlns* attribute handling.

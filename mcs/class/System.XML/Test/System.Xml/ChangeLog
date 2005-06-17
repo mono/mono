@@ -1,5 +1,10 @@
 2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReaderTests.cs : added attribute namespace check in
+	  DefaultXmlnsAttributeLookup() as well.
+
+2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReaderTests.cs : added DefaultXmlnsAttributeLookup().
 
 2005-05-31  Atsushi Enomoto <atsushi@ximian.com>

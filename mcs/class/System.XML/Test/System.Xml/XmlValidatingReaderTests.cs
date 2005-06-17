@@ -869,15 +869,19 @@ namespace MonoTests.System.Xml
 		{
 			string xml = @"<!DOCTYPE X [
 			<!ELEMENT X (Y)+>
+			<!ENTITY baz 'urn:baz'>
 			<!ATTLIST X
 				xmlns CDATA 'urn:foo'
-				xmlns:bar CDATA 'urn:bar'>
+				xmlns:bar CDATA 'urn:bar'
+				xmlns:baz CDATA #IMPLIED
+				dummy CDATA 'dummy'
+				baz:dummy CDATA 'dummy'>
 			<!ELEMENT Y (#PCDATA)*>
 			<!ATTLIST Y
 				xmlns CDATA #IMPLIED
 				xmlns:bar CDATA #IMPLIED>
 			]>
-			<X><Y/><Y>text.</Y><Y xmlns='' xmlns:bar=''>text.</Y></X>";
+			<X xmlns:baz='&baz;'><Y/><Y>text.</Y><Y xmlns='' xmlns:bar=''>text.</Y></X>";
 			XmlValidatingReader xvr = new XmlValidatingReader (
 				xml, XmlNodeType.Document, null);
 			xvr.Read (); // DTD
@@ -885,6 +889,14 @@ namespace MonoTests.System.Xml
 			xvr.Read ();
 			AssertEquals ("#1-1", "urn:foo", xvr.LookupNamespace (String.Empty));
 			AssertEquals ("#1-2", "urn:bar", xvr.LookupNamespace ("bar"));
+
+			AssertEquals ("#1-a", "urn:baz", xvr.LookupNamespace ("baz"));
+			Assert ("#1-b", xvr.MoveToAttribute ("baz:dummy"));
+			AssertEquals ("#1-c", "urn:baz", xvr.NamespaceURI);
+
+			Assert ("#1-d", xvr.MoveToAttribute ("dummy"));
+			AssertEquals ("#1-e", String.Empty, xvr.NamespaceURI);
+
 			xvr.Read (); // first Y, empty element
 			AssertEquals ("#2-1", "urn:foo", xvr.LookupNamespace (String.Empty));
 			AssertEquals ("#2-2", "urn:bar", xvr.LookupNamespace ("bar"));
