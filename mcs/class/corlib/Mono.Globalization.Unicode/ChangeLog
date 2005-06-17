@@ -1,5 +1,11 @@
 2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SortKeyBuffer.cs : non-primary character is added to previous 
+	  diacritical weight.
+	* TestDriver.cs : added example case of above.
+
+2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : IgnoreSymbols support.
 	* TestDriver.cs : compilation fix. IgnoreSymbols example.
 	* create-mscompat-collation-table.cs : more Hangul fixes.

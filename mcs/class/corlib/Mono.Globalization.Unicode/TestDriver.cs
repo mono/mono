@@ -28,6 +28,7 @@ namespace Mono.Globalization.Unicode
 			Compare("12", "1");
 			Compare("AE", "\u00C6");
 			Compare("AB\u01c0C", "A\u01c0B\u01c0C", CompareOptions.IgnoreSymbols);
+			Compare("A\u0304", "\u0100"); // diacritical weight addition
 
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");

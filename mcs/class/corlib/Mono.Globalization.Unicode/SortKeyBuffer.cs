@@ -113,6 +113,15 @@ namespace Mono.Globalization.Unicode
 				lv2 = 2;
 			if (lv3 == 0)
 				lv3 = 2;
+
+			// non-primary diacritical weight is added to that of
+			// the previous character (and does not reset level 3
+			// weight).
+			if (processLevel2 &&category == 1 && l1 > 0) {
+				lv2 = (byte) (lv2 + l2b [--l2]);
+				lv3 = l3b [--l3];
+			}
+
 			if (category != 1) {
 				AppendBufferPrimitive (category, ref l1b, ref l1);
 				AppendBufferPrimitive (lv1, ref l1b, ref l1);
