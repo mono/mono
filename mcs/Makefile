@@ -22,6 +22,7 @@ centum_tests := \
 	class/System.Security \
 	class/System.Web \
 	class/System.Web.Services \
+	class/System.XML \
 	tests \
 	errors
 #	class/System
