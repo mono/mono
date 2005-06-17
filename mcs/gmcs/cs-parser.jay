@@ -3500,7 +3500,6 @@ relational_expression
 		yyErrorFlag = 3;
 	  } nullable_type_or_conditional
 	  {
-		Report.Debug (64, "PARSE IS", $1, $1.GetType (), $4, $4.GetType (), lexer.Location);
 		$$ = new Is ((Expression) $1, (Expression) $4, lexer.Location);
 	  }
 	| relational_expression AS
