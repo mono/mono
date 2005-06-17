@@ -36,8 +36,7 @@ namespace System.Configuration {
 
 	public sealed class AppSettingsSection : ConfigurationSection
 	{
-		ConfigNameValueCollection values;
-		bool hasClear;
+		KeyValueConfigurationCollection values;
 		
 		public AppSettingsSection ()
 		{
@@ -45,70 +44,30 @@ namespace System.Configuration {
 
 		protected internal override  bool IsModified ()
 		{
-			return values != null && values.IsModified;
+			return Settings.IsModified ();
 		}
 
 		[MonoTODO ("Read file attribute")]
 		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
-			XmlDocument doc = new XmlDocument ();
-			XmlNode data = doc.ReadNode (reader);
-			hasClear = ((XmlElement)data)["clear"] != null;
-			values = ConfigHelper.GetNameValueCollection (values, data, "key", "value");
+			Settings.DeserializeElement (reader, serializeCollectionKey);
 		}
 
 		protected internal override void Reset (ConfigurationElement parentSection)
 		{
-			AppSettingsSection sec = parentSection as AppSettingsSection;
-			if (sec != null && sec.values != null)
-				values = new ConfigNameValueCollection (sec.values);
-			else
-				values = null;
-		}
-
-		protected internal override void ResetModified ()
-		{
-			if (values != null) values.ResetModified ();
+			AppSettingsSection psec = parentSection as AppSettingsSection;
+			if (psec != null)
+				Settings.Reset (psec.Settings);
 		}
 
 		protected internal override string SerializeSection (
 			ConfigurationElement parent, string name, ConfigurationSaveMode mode)
 		{
-			AppSettingsSection sec = parent as AppSettingsSection;
-			NameValueCollection parentValues = sec != null && !hasClear ? sec.Settings : null;
-			
-			StringWriter sw = new StringWriter ();
-			XmlTextWriter writer = new XmlTextWriter (sw);
-			writer.WriteStartElement ("appSettings");
-			
-			if (hasClear) {
-				writer.WriteStartElement ("clear");
-				writer.WriteEndElement ();
-			}
-			
-			foreach (string key in values) {
-				string val = values [key];
-				string parentVal = parentValues != null ? parentValues [key] : null;
-				if (parentVal != val) {
-					writer.WriteStartElement ("add");
-					writer.WriteAttributeString ("key", key);
-					writer.WriteAttributeString ("value", val);
-					writer.WriteEndElement ();
-				}
-			}
-			
-			if (parentValues != null) {
-				foreach (string key in parentValues) {
-					if (values [key] == null) {
-						writer.WriteStartElement ("remove");
-						writer.WriteAttributeString ("key", key);
-						writer.WriteEndElement ();
-					}
-				}
-			}
-			
-			writer.WriteEndElement ();
-			return sw.ToString ();
+			AppSettingsSection psec = parent as AppSettingsSection;
+			if (psec != null)
+				return Settings.SerializeSection (psec.Settings, name, mode);
+			else
+				return Settings.SerializeSection (null, name, mode);
 		}
 
 		[MonoTODO]
@@ -117,10 +76,10 @@ namespace System.Configuration {
 			set { throw new NotImplementedException (); }
 		}
 
-		public NameValueCollection Settings {
+		public KeyValueConfigurationCollection Settings {
 			get {
 				if (values == null)
-					values = new ConfigNameValueCollection();
+					values = new KeyValueConfigurationCollection();
 				return values;
 			}
 		}

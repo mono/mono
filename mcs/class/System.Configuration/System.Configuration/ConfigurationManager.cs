@@ -33,13 +33,21 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Xml;
 using System.IO;
+using System.Configuration.Internal;
 
 namespace System.Configuration {
 
 	public abstract class ConfigurationManager
 	{
+		static InternalConfigurationFactory configFactory = new InternalConfigurationFactory ();
+		
 		ConfigurationManager ()
 		{
+		}
+		
+		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
+		{
+			return OpenExeConfiguration (userLevel, null);
 		}
 		
 		[MonoTODO ("userLevel")]
@@ -51,12 +59,30 @@ namespace System.Configuration {
 				throw new ArgumentException ("File not found or not readable.", "exePath");
 			}
 
-			return new Configuration (exePath + ".config", OpenMachineConfiguration ());
+			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
+			map.ExeConfigFilename = exePath + ".config";
+			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map);
+		}
+
+		[MonoTODO ("userLevel")]
+		public static Configuration OpenMappedExeConfiguration (ExeConfigurationFileMap fileMap, ConfigurationUserLevel userLevel)
+		{
+			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), fileMap);
 		}
 
 		public static Configuration OpenMachineConfiguration ()
 		{
-			return new Configuration (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
+			ConfigurationFileMap map = new ConfigurationFileMap ();
+			return ConfigurationFactory.Create (typeof(MachineConfigurationHost), map);
+		}
+		
+		public static Configuration OpenMappedMachineConfiguration (ConfigurationFileMap fileMap)
+		{
+			return ConfigurationFactory.Create (typeof(MachineConfigurationHost), fileMap);
+		}
+		
+		internal static IInternalConfigConfigurationFactory ConfigurationFactory {
+			get { return configFactory; }
 		}
 	}
 }

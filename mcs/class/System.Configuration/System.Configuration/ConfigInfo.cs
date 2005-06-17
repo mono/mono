@@ -40,7 +40,7 @@ namespace System.Configuration {
 		public string Name;
 		public string TypeName;
 		Type type;
-		public string FileName;
+		string streamName;
 		public ConfigInfo Parent;
 		
 		public object CreateInstance ()
@@ -61,15 +61,20 @@ namespace System.Configuration {
 			}
 		}
 		
+		public string StreamName {
+			get { return streamName; }
+			set { streamName = value; }
+		}
+		
 		public abstract bool HasConfigContent (Configuration cfg);
 		public abstract bool HasDataContent (Configuration cfg);
 		
 		protected void ThrowException (string text, XmlTextReader reader)
 		{
-			throw new ConfigurationException (text, FileName, reader.LineNumber);
+			throw new ConfigurationException (text, StreamName, reader.LineNumber);
 		}
 		
-		public abstract void ReadConfig (Configuration cfg, XmlTextReader reader);
+		public abstract void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader);
 		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode);
 		public abstract void ReadData (Configuration config, XmlTextReader reader);
 		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode);

@@ -124,7 +124,7 @@ namespace System.Configuration
 		
 		public override bool HasConfigContent (Configuration cfg)
 		{
-			if (FileName == cfg.FileName) return true;
+			if (StreamName == cfg.FileName) return true;
 			foreach (ConfigInfoCollection col in new object[] {Sections, Groups}) {
 				foreach (string key in col) {
 					ConfigInfo cinfo = col [key];
@@ -135,9 +135,9 @@ namespace System.Configuration
 			return false;
 		}
 		
-		public override void ReadConfig (Configuration cfg, XmlTextReader reader)
+		public override void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader)
 		{
-			FileName = cfg.FileName;
+			StreamName = streamName;
 			
 			if (reader.LocalName != "configSections")
 			{
@@ -199,7 +199,7 @@ namespace System.Configuration
 				else
 					ThrowException ("Unrecognized element: " + reader.Name, reader);
 					
-				cinfo.ReadConfig (cfg, reader);
+				cinfo.ReadConfig (cfg, streamName, reader);
 				ConfigInfo actInfo = Groups [cinfo.Name];
 				if (actInfo == null) actInfo = Sections [cinfo.Name];
 				
@@ -207,7 +207,7 @@ namespace System.Configuration
 					if (actInfo.GetType () != cinfo.GetType ())
 						ThrowException ("A section or section group named '" + cinfo.Name + "' already exists", reader);
 					// Make sure that this section is saved in this configuration file:
-					actInfo.FileName = cfg.FileName;
+					actInfo.StreamName = streamName;
 				}
 				else
 					AddChild (cinfo);
@@ -281,9 +281,14 @@ namespace System.Configuration
 				if (reader.LocalName == "location") {
 					Configuration locConfig = new Configuration (config);
 					string path = reader.GetAttribute ("path");
-					ConfigurationLocation loc = new ConfigurationLocation (path, locConfig);
-					config.Locations.Add (loc);
-					ReadData (locConfig, reader);
+					if (path != null && path.Length > 0) {
+						string[] pathList = path.Split (',');
+						foreach (string p in pathList) {
+							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), locConfig);
+							config.Locations.Add (loc);
+						}
+						ReadData (locConfig, reader);
+					}
 				}
 				
 				ConfigInfo data = (sections != null) ? (ConfigInfo) sections [reader.LocalName] : (ConfigInfo) null;

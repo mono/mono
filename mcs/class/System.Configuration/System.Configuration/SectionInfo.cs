@@ -59,13 +59,13 @@ namespace System.Configuration
 		
 		public override bool HasConfigContent (Configuration cfg)
 		{
-			return FileName == cfg.FileName;
+			return StreamName == cfg.FileName;
 		}
 
-		public override void ReadConfig (Configuration cfg, XmlTextReader reader)
+		public override void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader)
 		{
 			ConfigurationAllowDefinition allowDefinition;
-			FileName = cfg.FileName;
+			StreamName = streamName;
 
 			while (reader.MoveToNextAttribute ()) {
 				switch (reader.Name)

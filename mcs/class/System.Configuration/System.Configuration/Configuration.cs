@@ -33,6 +33,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Xml;
 using System.IO;
+using System.Configuration.Internal;
 
 namespace System.Configuration {
 
@@ -40,35 +41,45 @@ namespace System.Configuration {
 	{
 		Configuration parent;
 		Hashtable elementData = new Hashtable ();
-		string fileName;
+		string streamName;
 		ConfigurationSectionGroup rootSectionGroup;
 		ConfigurationLocationCollection locations;
 		SectionGroupInfo rootGroup;
+		IConfigSystem system;
 		
-		internal Configuration (): this (null, null)
+		internal Configuration (Configuration parent)
 		{
+			Init (parent.system, null, parent);
 		}
 		
-		internal Configuration (string file): this (file, null)
+		internal Configuration (IConfigSystem system, string file, Configuration parent)
 		{
+			Init (system, file, parent);
 		}
 		
-		internal Configuration (Configuration parent): this (null, parent)
+		internal Configuration (IConfigSystem system, string[] paths)
 		{
+			Configuration lastConfig = null;
+			
+			for (int n=0; n < paths.Length - 1; n++)
+				lastConfig = new Configuration (system, paths [n], lastConfig);
+			
+			Init (system, paths [paths.Length - 1], lastConfig);
 		}
 		
-		internal Configuration (string file, Configuration parent)
+		internal void Init (IConfigSystem system, string configPath, Configuration parent)
 		{
-			fileName = file;
+			this.system = system;
+			streamName = system.Host.GetStreamName (configPath);
 			this.parent = parent;
 			if (parent != null)
 				rootGroup = parent.rootGroup;
 			else {
 				rootGroup = new SectionGroupInfo ();
-				rootGroup.FileName = file;
+				rootGroup.StreamName = streamName;
 			}
 			
-			if (file != null && File.Exists (file)) Load (file);
+			Load ();
 		}
 		
 		internal Configuration Parent {
@@ -76,7 +87,7 @@ namespace System.Configuration {
 		}
 		
 		internal string FileName {
-			get { return fileName; }
+			get { return streamName; }
 		}
 
 		public AppSettingsSection AppSettings {
@@ -88,19 +99,13 @@ namespace System.Configuration {
 		}
 
 		public string FilePath {
-			get { return fileName; }
+			get { return streamName; }
 		}
 
 		public bool HasFile {
 			get {
-				if (File.Exists (fileName))
-					return true;
-
-				if (parent != null)
-					return parent.HasFile;
-				else
-					return false; 
-			 }
+				return streamName != null;
+			}
 		}
 
 		public ConfigurationLocationCollection Locations {
@@ -209,7 +214,7 @@ namespace System.Configuration {
 			sec.SectionInformation.SetName (name);
 
 			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition);
-			section.FileName = FileName;
+			section.StreamName = streamName;
 			group.AddChild (section);
 			elementData [section] = sec;
 		}
@@ -221,7 +226,7 @@ namespace System.Configuration {
 			sec.SetName (name);
 
 			SectionGroupInfo section = new SectionGroupInfo (name, sec.Type);
-			section.FileName = FileName;
+			section.StreamName = streamName;
 			parentGroup.AddChild (section);
 			elementData [section] = sec;
 		}
@@ -233,17 +238,27 @@ namespace System.Configuration {
 		
 		public void Save ()
 		{
-			SaveAs (fileName, ConfigurationSaveMode.Modified, false);
+			Save (ConfigurationSaveMode.Modified, false);
 		}
 		
 		public void Save (ConfigurationSaveMode mode)
 		{
-			SaveAs (fileName, mode, false);
+			Save (mode, false);
 		}
 		
 		public void Save (ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
-			SaveAs (fileName, mode, forceUpdateAll);
+			object ctx = null;
+			Stream stream = system.Host.OpenStreamForWrite (streamName, null, ref ctx);
+			try {
+				Save (stream, mode, forceUpdateAll);
+				system.Host.WriteCompleted (streamName, true, ctx);
+			} catch (Exception ex) {
+				system.Host.WriteCompleted (streamName, false, ctx);
+				throw;
+			} finally {
+				stream.Close ();
+			}
 		}
 		
 		public void SaveAs (string filename)
@@ -259,7 +274,12 @@ namespace System.Configuration {
 		[MonoTODO ("Detect if file has changed")]
 		public void SaveAs (string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
-			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (filename));
+			Save (new FileStream (filename, FileMode.Open, FileAccess.Write), mode, forceUpdateAll);
+		}
+		
+		void Save (Stream stream, ConfigurationSaveMode mode, bool forceUpdateAll)
+		{
+			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (stream));
 			tw.Formatting = Formatting.Indented;
 			try {
 				tw.WriteStartElement ("configuration");
@@ -274,18 +294,17 @@ namespace System.Configuration {
 			}
 		}
 		
-		internal bool Load (string fileName)
+		bool Load ()
 		{
-			this.fileName = fileName;
-			if (!File.Exists (fileName))
-				throw new ConfigurationException ("File '" + fileName + "' not found");
-
+			if (streamName == null)
+				return true;
+			
+			Stream stream = system.Host.OpenStreamForRead (streamName);
 			XmlTextReader reader = null;
 
 			try {
-				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
-				reader = new XmlTextReader (fs);
-				ReadConfigFile (reader, fileName);
+				reader = new XmlTextReader (stream);
+				ReadConfigFile (reader, streamName);
 /*			} catch (ConfigurationException) {
 				throw;
 			} catch (Exception e) {
@@ -319,7 +338,7 @@ namespace System.Configuration {
 				if (reader.HasAttributes)
 					ThrowException ("Unrecognized attribute in <configSections>.", reader);
 				
-				rootGroup.ReadConfig (this, reader);
+				rootGroup.ReadConfig (this, fileName, reader);
 			}
 			
 			rootGroup.ReadRootData (reader, this);
@@ -328,7 +347,7 @@ namespace System.Configuration {
 
 		private void ThrowException (string text, XmlTextReader reader)
 		{
-			throw new ConfigurationException (text, fileName, reader.LineNumber);
+			throw new ConfigurationException (text, streamName, reader.LineNumber);
 		}
 	}
 }

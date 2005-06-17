@@ -1,3 +1,26 @@
+2005-06-17  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SectionInfo.cs, ConfigInfo.cs, SectionGroupInfo.cs: Minor api fixes.
+	* ConfigurationPropertyCollection.cs: Added Clear method.
+	* ContextInformation.cs: Implemented.
+	* ConfigurationManager.cs: Implemented some missing methods.
+	Configuration objects are now created through the ConfigurationFactory.
+	* InternalConfigurationHost.cs: Implementation of IInternalConfigHost
+	to be used for exe files and machine.config.
+	* ConfigurationFileMap.cs: Implemented.
+	* Configuration.cs: Read and write config files using the methods that
+	  IInternalConfigHost provides.
+	* InternalConfigurationRoot.cs: IInternalConfigRoot stub.
+	* ExeContext.cs: Implemented.
+	* AppSettingsSection.cs: Use the KeyValueConfigurationCollection
+	collection to store values.
+	* KeyValueConfigurationElement.cs: Implemented.
+	* KeyValueConfigurationCollection.cs: Implemented.
+	* InternalConfigurationFactory.cs: An implementation of 
+	IInternalConfigConfigurationFactory.
+	* ConfigurationPropertyAttribute.cs: Added missing attributes.
+	* ExeConfigurationFileMap.cs: Implemented.
+
 2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ConfigurationElement.cs, ConfigurationErrorsException.cs

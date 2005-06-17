@@ -98,6 +98,11 @@ namespace System.Configuration
 		{
 			return collection.Remove (this [name]);
 		}
+		
+		public void Clear ()
+		{
+			collection.Clear ();
+		}
 	}
 }
 #endif

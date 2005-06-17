@@ -31,6 +31,7 @@
 
 namespace System.Configuration
 {
+	[AttributeUsage (AttributeTargets.Property)]
 	public sealed class ConfigurationPropertyAttribute : Attribute
 	{
 		string name;
