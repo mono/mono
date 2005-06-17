@@ -282,8 +282,12 @@ namespace System.Data
 
 		public DataView CreateDataView (DataTable table) 
 		{
-			DataViewSetting s = settings [table];
-			return new DataView (table, this, s.Sort, s.RowFilter, s.RowStateFilter);
+			if (settings [table] != null) {
+				DataViewSetting s = settings [table];
+				return new DataView (table, this, s.Sort, s.RowFilter, s.RowStateFilter);
+			} else {
+				return new DataView (table);
+			}
 		}
 
 		[MonoTODO]

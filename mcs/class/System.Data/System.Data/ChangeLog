@@ -1,3 +1,7 @@
+2005-06-17  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataViewManager.cs: fixes exception and creates DataView
+
 2005-06-15  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRow.cs: CheckChildRows: cascade parent changes to child rows
