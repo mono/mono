@@ -36,23 +36,31 @@ namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (false)]
-	public class IdentityNotMappedException : SystemException {
+	public sealed class IdentityNotMappedException : SystemException {
+
+		private IdentityReferenceCollection _coll;
 
 		public IdentityNotMappedException ()
+			: base (Locale.GetText ("Couldn't translate some identities."))
 		{
 		}
 
 		public IdentityNotMappedException (string message)
+			: base (message)
 		{
 		}
 
 		public IdentityNotMappedException (string message, Exception inner)
+			: base (message, inner)
 		{
 		}
 
-		[MonoTODO ("not implemented")]
 		public IdentityReferenceCollection UnmappedIdentities {
-			get { return null; }
+			get {
+				if (_coll == null)
+					_coll = new IdentityReferenceCollection ();
+				return _coll;
+			}
 		}
 
 		[MonoTODO ("not implemented")]

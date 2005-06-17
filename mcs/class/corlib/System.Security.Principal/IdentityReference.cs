@@ -36,6 +36,11 @@ namespace System.Security.Principal {
 	[ComVisible (false)]
 	public abstract class IdentityReference {
 
+		protected IdentityReference ()
+		{
+		}
+
+
 		public abstract string Value { 
 			get;
 		}

@@ -93,7 +93,7 @@ namespace System.Security.Principal {
 		BuiltinIncomingForestTrustBuildersSid,
 		BuiltinPerformanceMonitoringUsersSid,
 		BuiltinPerformanceLoggingUsersSid,
-		BuiltinAutorizationAccessSid,
+		BuiltinAuthorizationAccessSid,
 		WinBuiltinTerminalServerLicenseServersSid,
 		MaxDefined = WinBuiltinTerminalServerLicenseServersSid
 	}

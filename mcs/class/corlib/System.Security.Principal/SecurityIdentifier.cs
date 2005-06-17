@@ -35,7 +35,7 @@ namespace System.Security.Principal {
 
 	[MonoTODO ("not implemented")]
 	[ComVisible (false)]
-	public sealed class SecurityIdentifier : IdentityReference {
+	public sealed class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier> {
 
 		private string _value;
 
@@ -99,6 +99,11 @@ namespace System.Security.Principal {
 
 		public override string Value { 
 			get { return _value; }
+		}
+
+		public int CompareTo (SecurityIdentifier sid)
+		{
+			return Value.CompareTo (sid.Value);
 		}
 
 		public override bool Equals (object o)
