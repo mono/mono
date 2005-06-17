@@ -1,3 +1,6 @@
+2005-06-17  Zoltan Varga  <vargaz@freemail.hu>
+
+ 	* pthread_support.c: Workaround gcc-3.3 compiler bug.
 
 Tue May 3 16:28:26 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
