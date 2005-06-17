@@ -15,6 +15,7 @@ namespace Mono.Globalization.Unicode
 	{
 		SortKeyBuffer buf = new SortKeyBuffer ();
 		// CompareOptions expanded.
+		bool ignoreSymbols;
 		bool ignoreWidth;
 		bool ignoreCase;
 		bool ignoreKanaType;
@@ -39,6 +40,7 @@ namespace Mono.Globalization.Unicode
 
 		void SetOptions (CompareOptions options)
 		{
+			this.ignoreSymbols = (options & CompareOptions.IgnoreSymbols) != 0;
 			this.ignoreWidth = (options & CompareOptions.IgnoreWidth) != 0;
 			this.ignoreCase = (options & CompareOptions.IgnoreCase) != 0;
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
@@ -63,7 +65,7 @@ namespace Mono.Globalization.Unicode
 			buf.Initialize (options, s);
 			for (int n = start; n < end; n++) {
 				int i = s [n];
-				if (Uni.IsIgnorable (i))
+				if (IsIgnorable (i))
 					continue;
 				i = FilterOptions (i);
 
@@ -76,6 +78,12 @@ namespace Mono.Globalization.Unicode
 					FillSortKeyRaw (i);
 			}
 			return buf.GetResultAndReset ();
+		}
+
+		bool IsIgnorable (int i)
+		{
+			return Uni.IsIgnorable (i) ||
+				ignoreSymbols && Uni.IsIgnorableSymbol (i);
 		}
 
 		void FillSortKeyRaw (int i)

@@ -27,13 +27,14 @@ namespace Mono.Globalization.Unicode
 			Compare("\uFF21", "a", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
 			Compare("12", "1");
 			Compare("AE", "\u00C6");
+			Compare("AB\u01c0C", "A\u01c0B\u01c0C", CompareOptions.IgnoreSymbols);
 
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");
 
 			// dump sortkey for every single character.
 			for (int i = 0; i <= char.MaxValue; i++) {
-				byte [] data = coll.GetSortKey (new string ((char) i, 1));
+				byte [] data = coll.GetSortKey (new string ((char) i, 1)).KeyData;
 				if (data.Length == 5 && data [0] == 1 && data [1] == 1 &&
 					data [2] == 1 && data [3] == 1 && data [4] == 0)
 					continue;
@@ -58,7 +59,7 @@ namespace Mono.Globalization.Unicode
 
 		void DumpSortKey (string s)
 		{
-			byte [] data = coll.GetSortKey (s);
+			byte [] data = coll.GetSortKey (s).KeyData;
 			foreach (byte b in data)
 				Console.Error.Write ("{0:X02} ", b);
 			Console.Error.WriteLine (" : {0}", s);

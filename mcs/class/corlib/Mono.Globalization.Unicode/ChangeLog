@@ -1,5 +1,11 @@
 2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : IgnoreSymbols support.
+	* TestDriver.cs : compilation fix. IgnoreSymbols example.
+	* create-mscompat-collation-table.cs : more Hangul fixes.
+
+2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : more Hangul fixes.
 	* SortKey.cs : it will replace sys.globalization.SortKey. It has
 	  some internal members.
