@@ -32,7 +32,7 @@
 //
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-namespace System
+namespace System.Reflection
 {
 	[Flags]
 	public enum GenericParameterAttributes
