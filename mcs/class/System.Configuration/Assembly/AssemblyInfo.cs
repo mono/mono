@@ -42,11 +42,9 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle ("System.Configuration.dll")]
 [assembly: AssemblyDescription ("System.Configuration.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyCopyright ("(c) 2005 Various Authors")]
-[assembly: AssemblyTrademark ("")]
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.Configuration.dll")]
