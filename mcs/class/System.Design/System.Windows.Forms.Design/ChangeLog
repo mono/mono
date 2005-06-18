@@ -1,3 +1,6 @@
+2005-06-18  Jonathan Chambers <jonathan.chambers@ansys.com>
+	* DockEditor.cs: Implemented class
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ComponentEditorForm.cs: CRLF to LF
