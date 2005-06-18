@@ -36,7 +36,9 @@ namespace System.Security.Principal {
 	[ComVisible (false)]
 	public abstract class IdentityReference {
 
-		protected IdentityReference ()
+		// yep, this means it cannot be inherited outside corlib
+		// not sure if this is "by design" reported as FDBK30180
+		internal IdentityReference ()
 		{
 		}
 

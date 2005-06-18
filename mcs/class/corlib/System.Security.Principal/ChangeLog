@@ -1,3 +1,8 @@
+2005-06-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IdentityReference.cs: Constructor is internal (which means it the
+	class cannot be inherited outside corlib).
+
 2005-06-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IdentityNotMappedException.cs: New (2.0). Identity exception.
