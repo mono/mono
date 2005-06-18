@@ -1,3 +1,11 @@
+2005-06-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Lower memory usage while loading AOT methods.
+
+	* tramp-x86.c: Avoid allocating+freeing MonoJitInfo structures.
+
+	* mini.h: Bump AOT file format version.
+
 2005-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Allow STACK_PTR as input to SWITCH.
