@@ -484,11 +484,7 @@ namespace System.Windows.Forms
 
 		private void HandlePropertyValueChanged(object sender, EventArgs e)
 		{
-			if (PropertyValueChanged != null) 
-			{
-				PropertyValueChanged(this, new PropertyValueChangedEventArgs( selected_grid_item, current_property_value));
-				current_property_value = selected_grid_item.Value;
-			}
+			OnPropertyValueChanged(new PropertyValueChangedEventArgs( selected_grid_item, current_property_value));
 		}
 
 		[DefaultValue(null)]
@@ -593,13 +589,12 @@ namespace System.Windows.Forms
 		}
 
 
-		[MonoTODO]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		protected virtual Type DefaultTabType {
 			get {
-				throw new NotImplementedException();
+				return typeof(PropertyTab);
 			}
 		}
 		
@@ -630,16 +625,20 @@ namespace System.Windows.Forms
 			base.Dispose();
 		}
 		
-		[MonoTODO]
 		public void CollapseAllGridItems () 
 		{
-			throw new NotImplementedException();
+			foreach (GridItem item in this.grid_items)
+			{
+				item.Expanded = false;
+			}
 		}
 
-		[MonoTODO]
 		public void ExpandAllGridItems () 
 		{
-			throw new NotImplementedException();
+			foreach (GridItem item in this.grid_items)
+			{
+				item.Expanded = true;
+			}
 		}
 
 		public override void Refresh () 
@@ -729,10 +728,13 @@ namespace System.Windows.Forms
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		protected virtual void OnPropertyValueChanged (PropertyValueChangedEventArgs e) 
 		{
-			throw new NotImplementedException();
+			if (PropertyValueChanged != null) 
+			{
+				PropertyValueChanged(this, e);
+				current_property_value = selected_grid_item.Value;
+			}
 		}
 
 		protected override void OnResize (EventArgs e) 
@@ -740,7 +742,6 @@ namespace System.Windows.Forms
 			base.OnResize (e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnSelectedGridItemChanged (SelectedGridItemChangedEventArgs e) 
 		{
 			if (SelectedGridItemChanged != null) 
@@ -749,10 +750,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO]
 		protected virtual void OnSelectedObjectsChanged (EventArgs e) 
 		{
-			throw new NotImplementedException();
+			if (SelectedObjectsChanged != null) 
+			{
+				SelectedObjectsChanged(this, e);
+			}
 		}
 
 		protected override void OnSystemColorsChanged (EventArgs e) 
@@ -997,10 +1000,11 @@ namespace System.Windows.Forms
 
 		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, GridItemCollection category_grid_item_coll) 
 		{
+//			TypeConverter converter = TypeDescriptor.GetConverter(obj);
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
 			for (int i = 0; i < properties.Count;i++) {
 				bool not_browseable = properties[i].Attributes.Contains(new BrowsableAttribute(false));
-				if (!not_browseable) {
+				if (!not_browseable/*properties[i].IsBrowsable*/) {
 					GridEntry grid_entry = new GridEntry(obj, properties[i]);
 					grid_item_coll.Add(properties[i].Name,grid_entry);
 

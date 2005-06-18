@@ -1,3 +1,8 @@
+2005-06-18  Jonathan Chambers <jonathan.chambers@ansys.com>
+	
+	* PropertyGrid.cs: Cleaned up some TODOs
+	* PropertyGridView.cs: Added support for UITypeEditors
+
 2005-06-17  Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* DataGrid.cs: clears cached value

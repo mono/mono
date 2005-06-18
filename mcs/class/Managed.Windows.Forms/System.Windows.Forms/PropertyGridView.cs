@@ -49,9 +49,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private int splitter_location;
 		private int open_grid_item_count = -1;
 		private int skipped_grid_items;
-		private Form dropdown_form;
+		private PropertyGridDropDown dropdown_form;
+		private bool dropdown_form_showing;
 		private Form dialog_form;
-		private ListBox listBox;
 		private VScrollBar vbar;
 		#endregion
 
@@ -68,17 +68,15 @@ namespace System.Windows.Forms.PropertyGridInternal
 			grid_textbox.DropDownButtonClicked +=new EventHandler(DropDownButtonClicked);
 			grid_textbox.DialogButtonClicked +=new EventHandler(DialogButtonClicked);
 
-			dropdown_form = new Form();
+			
+			dropdown_form = new PropertyGridDropDown();
 			dropdown_form.FormBorderStyle = FormBorderStyle.None;
-			dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
+			dropdown_form.ShowInTaskbar = false;
 			
 			dialog_form = new Form();
 			//dialog_form.FormBorderStyle = FormBorderStyle.None;
 
-			listBox = new ListBox();
-			listBox.Dock = DockStyle.Fill;
-			listBox.SelectedIndexChanged +=new EventHandler(listBox_SelectedIndexChanged);
-			dropdown_form.Controls.Add(listBox);
+			
 
 			grid_textbox.Visible = true;
 			grid_textbox.Font = this.Font;//new Font(this.Font,FontStyle.Bold);
@@ -257,42 +255,33 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		private void DrawGridItem (GridItem grid_item, PaintEventArgs pevent, int depth, ref int yLoc) 
+		private void DrawGridItemLabel(GridItem grid_item, PaintEventArgs pevent, Rectangle rect)
 		{
-			// left column
-			pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), 0,yLoc,V_INDENT, ROW_HEIGHT);
+			int x = rect.X+1;
+			if (grid_item.Parent != null && grid_item.Parent.GridItemType != GridItemType.Category)
+				x += V_INDENT;
 
-			if (grid_item.Expandable) 
-			{
-				grid_item.PlusMinusBounds = DrawPlusMinus(pevent, 3, yLoc+3, grid_item.Expanded, grid_item.GridItemType == GridItemType.Category);
-			}
-			
+			Font font = this.Font;
+			Brush brush = SystemBrushes.WindowText;
 			if (grid_item.GridItemType == GridItemType.Category)
 			{
-				pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), ROW_HEIGHT);
+				font = new Font(font, FontStyle.Bold);
+				brush = SystemBrushes.ControlDark;
 			}
-			
+
 			if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category)
 			{
-				pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Color.Blue), new Rectangle(V_INDENT,yLoc, splitter_location-V_INDENT, ROW_HEIGHT));
+				pevent.Graphics.FillRectangle (SystemBrushes.Highlight, rect);
 				// Label
-				pevent.Graphics.DrawString(grid_item.Label,this.Font,SystemBrushes.Window,new RectangleF(1+depth*V_INDENT,yLoc+2, splitter_location-(5+depth*V_INDENT), ROW_HEIGHT-4));
-				
-				grid_textbox.Location = new Point(splitter_location+1, yLoc);
-				grid_textbox.Size = new Size(ClientRectangle.Width-splitter_location,ROW_HEIGHT);
+				brush = SystemBrushes.HighlightText;
 			}
-			else
-			{
-				Font font = this.Font;
-				Brush brush = SystemBrushes.WindowText;
-				if (grid_item.GridItemType == GridItemType.Category)
-				{
-					font = new Font(font, FontStyle.Bold);
-					brush = SystemBrushes.ControlDark;
-				}
-				// Label
-				pevent.Graphics.DrawString(grid_item.Label,font,brush,new RectangleF(1+depth*V_INDENT,yLoc+2, splitter_location-(5+depth*V_INDENT), ROW_HEIGHT-4));
-			}
+
+			
+			pevent.Graphics.DrawString(grid_item.Label,font,brush,new Rectangle(x, rect.Y + 2,x-rect.X+rect.Width,rect.Height-2));
+		}
+
+		private void DrawGridItemValue(GridItem grid_item, PaintEventArgs pevent, Rectangle rect)
+		{
 			// Value
 			if (grid_item.PropertyDescriptor != null)
 			{
@@ -310,7 +299,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 				{
 					grid_textbox.DropDownButtonVisible = false;
 					grid_textbox.DialogButtonVisible = false;
-					listBox.Items.Clear();
 					if (editor != null) 
 					{
 						UITypeEditorEditStyle style = editor.GetEditStyle();
@@ -327,12 +315,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 					}
 					else 
 					{
+						try
+						{
 						if (grid_item.PropertyDescriptor.Converter.GetStandardValuesSupported()) 
 						{
-							foreach (object obj in grid_item.PropertyDescriptor.Converter.GetStandardValues())
-								listBox.Items.Add(obj);
+							
 							grid_textbox.DropDownButtonVisible = true;
 							grid_textbox.ReadOnly = true;
+						}
+						}
+						catch (Exception ex)
+						{
 						}
 					}
 				}
@@ -342,20 +335,62 @@ namespace System.Windows.Forms.PropertyGridInternal
 				int xLoc = splitter_location+1;
 				if (paintsValue)
 				{
-					pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(Color.Black), splitter_location+2,yLoc+2, 20, ROW_HEIGHT-4);
+					pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(Color.Black), splitter_location+2,rect.Y+2, 20, ROW_HEIGHT-4);
 					try
 					{
-						editor.PaintValue(grid_item.Value, pevent.Graphics, new Rectangle(splitter_location+3,yLoc+3, 19, ROW_HEIGHT-5));
+						editor.PaintValue(grid_item.Value, pevent.Graphics, new Rectangle(splitter_location+3,rect.Y+3, 19, ROW_HEIGHT-5));
 					}
 					catch (Exception ex)
 					{
+						System.Console.WriteLine(ex.Message);
 						// design time stuff is not playing nice
 					}
 					xLoc += 27;
 				}
 
+				Font font = this.Font;
+				try {
 				string value = grid_item.PropertyDescriptor.Converter.ConvertToString(grid_item.Value);
-				pevent.Graphics.DrawString(value,this.Font,SystemBrushes.WindowText,new RectangleF(xLoc,yLoc+2, ClientRectangle.Width-(xLoc), ROW_HEIGHT-4));
+				if (grid_item.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+					font = new Font(font, FontStyle.Bold);
+				
+				pevent.Graphics.DrawString(value,font,SystemBrushes.WindowText,new RectangleF(xLoc,rect.Y+2, ClientRectangle.Width-(xLoc), ROW_HEIGHT));
+
+}
+				catch (Exception e)
+				{
+				}
+				if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category)
+				{
+					grid_textbox.Location = new Point(xLoc, rect.Top);
+					grid_textbox.Size = new Size(ClientRectangle.Width-xLoc,ROW_HEIGHT);
+				}
+			}
+		}
+
+		private void DrawGridItem (GridItem grid_item, PaintEventArgs pevent, int depth, ref int yLoc) 
+		{
+			if (yLoc > -ROW_HEIGHT && yLoc < ClientRectangle.Height)
+			{
+			
+				// left column
+				pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), 0,yLoc,V_INDENT, ROW_HEIGHT);
+
+				if (grid_item.Expandable) 
+				{
+					grid_item.PlusMinusBounds = DrawPlusMinus(pevent, 3, yLoc+3, grid_item.Expanded, grid_item.GridItemType == GridItemType.Category);
+				}
+			
+				if (grid_item.GridItemType == GridItemType.Category)
+				{
+					pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), ROW_HEIGHT);
+				}
+
+				DrawGridItemLabel(grid_item, pevent, new Rectangle(V_INDENT,yLoc, splitter_location-V_INDENT, ROW_HEIGHT));
+				DrawGridItemValue(grid_item, pevent, new Rectangle(splitter_location+2,yLoc, ClientRectangle.Width-splitter_location-2, ROW_HEIGHT));
+			
+				
+				
 			}
 			grid_item.Top = yLoc;
 			yLoc += ROW_HEIGHT;
@@ -407,7 +442,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private void dropdown_form_Deactivate (object sender, EventArgs e) 
 		{
+			dropdown_form_showing = false;
 			dropdown_form.Hide();
+			//dropdown_form = new Form();
 		}
 
 		private void listBox_SelectedIndexChanged (object sender, EventArgs e) 
@@ -415,10 +452,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (this.property_grid.SelectedGridItem != null) {
 				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
 				if (desc != null) {
-					SetPropertyValue(listBox.SelectedItem);
+					SetPropertyValue(((ListBox)sender).SelectedItem);
 				}
 			}
 			dropdown_form.Hide();
+			//dropdown_form = new Form();
 			Refresh();
 		}
 
@@ -436,8 +474,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private void DropDownButtonClicked (object sender, EventArgs e) 
 		{
-			if (listBox.Items.Count > 0)
+			if (property_grid.SelectedGridItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor)) == null)
 			{
+				//dropdown_form.FormBorderStyle = FormBorderStyle.None;
+				dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
+				ListBox listBox = new ListBox();
+				listBox.Dock = DockStyle.Fill;
+				listBox.SelectedIndexChanged +=new EventHandler(listBox_SelectedIndexChanged);
+				foreach (object obj in property_grid.SelectedGridItem.PropertyDescriptor.Converter.GetStandardValues())
+					listBox.Items.Add(obj);
+				dropdown_form.Controls.Clear();
+				dropdown_form.Controls.Add(listBox);
 				dropdown_form.Location = PointToScreen(new Point(grid_textbox.Location.X,grid_textbox.Location.Y+ROW_HEIGHT));
 				dropdown_form.Width = grid_textbox.Width;
 				dropdown_form.Show();
@@ -447,7 +494,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				UITypeEditor editor = (UITypeEditor)property_grid.SelectedGridItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
 				System.ComponentModel.Design.ServiceContainer service_container = new System.ComponentModel.Design.ServiceContainer();
 				service_container.AddService(typeof(System.Windows.Forms.Design.IWindowsFormsEditorService), this);
-				editor.EditValue(null, service_container,property_grid.SelectedGridItem.Value);
+				SetPropertyValue(editor.EditValue(null, service_container,property_grid.SelectedGridItem.Value));
 			}
 		}
 		
@@ -455,12 +502,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			//dialog_form.Location = PointToScreen(new Point(grid_textbox.Location.X,grid_textbox.Location.Y+ROW_HEIGHT));
 			//dropdown_form.Width = grid_textbox.Width;
-			dialog_form.ShowDialog(this);
+			dialog_form.Show();
 		}
 
 		private void HandleScroll(object sender, ScrollEventArgs e)
 		{
-			if (e.NewValue < 0)
+			if (e.NewValue <= 0)
 			{
 				e.NewValue = 0;
 				if (e.NewValue == vbar.Value)return;
@@ -475,10 +522,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 			{
 				case ScrollEventType.SmallDecrement:
 					XplatUI.ScrollWindow(Handle, 0, ROW_HEIGHT, false);
+					grid_textbox.Top += ROW_HEIGHT;
 					Invalidate(new Rectangle(0,0,ClientRectangle.Width,ROW_HEIGHT));
 					break;
 				case ScrollEventType.SmallIncrement:
 					XplatUI.ScrollWindow(Handle, 0, -ROW_HEIGHT, false);
+					grid_textbox.Top -= ROW_HEIGHT;
 					Invalidate(new Rectangle(0,ClientRectangle.Bottom-ROW_HEIGHT,ClientRectangle.Width,ROW_HEIGHT));
 					break;
 				case ScrollEventType.LargeDecrement:
@@ -509,7 +558,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 				//	clip.Union(new Rectangle(0,property_grid.SelectedGridItem.Top, ClientRectangle.Width, ROW_HEIGHT));
 
 			if (e.NewSelection.PropertyDescriptor != null)
+			{
 				grid_textbox.Text = e.NewSelection.PropertyDescriptor.Converter.ConvertToString(e.NewSelection.Value);
+				if (e.NewSelection.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+					grid_textbox.Font = new Font(this.Font, FontStyle.Bold);
+				else
+					grid_textbox.Font = this.Font;
+			}
 
 			Invalidate(/*clip*/this.ClientRectangle);
 			Update();
@@ -518,19 +573,42 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private void HandlePropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
 			if (e.ChangedItem.PropertyDescriptor != null)
+			{
 				grid_textbox.Text = e.ChangedItem.PropertyDescriptor.Converter.ConvertToString(e.ChangedItem.Value);
+				if (e.ChangedItem.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+					grid_textbox.Font = new Font(this.Font, FontStyle.Bold);
+				else
+					grid_textbox.Font = this.Font;
+			}
 		}
 		
 		#region IWindowsFormsEditorService Members
 
 		public void CloseDropDown()
 		{
-			// TODO:  Add PropertyGrid.CloseDropDown implementation
+			dropdown_form_showing = false;
+			dropdown_form.Hide();
 		}
 
 		public void DropDownControl(Control control)
 		{
-			// TODO:  Add PropertyGrid.DropDownControl implementation
+			//dropdown_form.FormBorderStyle = FormBorderStyle.None;
+			dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
+			dropdown_form.Size = control.Size;
+			control.Dock = DockStyle.Fill;
+			dropdown_form.Controls.Clear();
+			dropdown_form.Controls.Add(control);
+			dropdown_form.Location = PointToScreen(new Point(grid_textbox.Location.X,grid_textbox.Location.Y+ROW_HEIGHT));
+			dropdown_form.Width = grid_textbox.Width;
+
+			dropdown_form_showing = true;
+			dropdown_form.Show();
+			System.Windows.Forms.MSG msg = new MSG();
+			while (XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0) && dropdown_form_showing) 
+			{
+				XplatUI.TranslateMessage(ref msg);
+				XplatUI.DispatchMessage(ref msg);
+			}
 		}
 
 		public System.Windows.Forms.DialogResult ShowDialog(Form dialog)
@@ -544,6 +622,87 @@ namespace System.Windows.Forms.PropertyGridInternal
 		#region DropDownForm Class
 		#endregion DropDownForm Class
 
+		#region Internal Classes
+		internal class ITypeDescriptorContextImpl : System.ComponentModel.ITypeDescriptorContext
+		{
+			private PropertyGrid property_grid;
+			public ITypeDescriptorContextImpl(PropertyGrid propertyGrid)
+			{
+				property_grid = propertyGrid;
+			}
+			#region ITypeDescriptorContext Members
+
+			public void OnComponentChanged()
+			{
+				// TODO:  Add SystemComp.OnComponentChanged implementation
+			}
+
+			public IContainer Container
+			{
+				get
+				{
+					return property_grid as IContainer;
+				}
+			}
+
+			public bool OnComponentChanging()
+			{
+				// TODO:  Add SystemComp.OnComponentChanging implementation
+				return false;
+			}
+
+			public object Instance
+			{
+				get
+				{
+					// TODO:  Add SystemComp.Instance getter implementation
+					return null;
+				}
+			}
+
+			public PropertyDescriptor PropertyDescriptor
+			{
+				get
+				{
+					// TODO:  Add SystemComp.PropertyDescriptor getter implementation
+					return null;
+				}
+			}
+
+			#endregion
+
+			#region IServiceProvider Members
+
+			public object GetService(Type serviceType)
+			{
+				// TODO:  Add SystemComp.GetService implementation
+				return null;
+			}
+
+			#endregion
+
+		}
+
+
+		
+		/*
+			class ComboListBox
+		*/
+		internal class PropertyGridDropDown : Form 
+		{
+			protected override CreateParams CreateParams
+			{
+				get 
+				{
+					CreateParams cp = base.CreateParams;				
+						cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
+						cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);				
+					return cp;
+				}
+			}
+
+		}
+		#endregion
 
 	}
 }
