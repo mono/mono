@@ -1,5 +1,7 @@
 2005-06-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* *-ia64.*: Ongoing IA64 work.
+
 	* aot.c: Lower memory usage while loading AOT methods.
 
 	* tramp-x86.c: Avoid allocating+freeing MonoJitInfo structures.
