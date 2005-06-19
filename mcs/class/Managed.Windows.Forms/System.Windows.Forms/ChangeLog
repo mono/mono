@@ -1,3 +1,13 @@
+2005-06-19  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* Mime.cs:
+	- added inodes.
+	- return application/x-zerosize for files with size zero
+	  (if no extension pattern matches).
+	- check matches collection for strings too.
+	- return only the first mime type if the name value
+	  collection has more than one mime type.
+
 2005-06-18  Jonathan Chambers <jonathan.chambers@ansys.com>
 	
 	* PropertyGrid.cs: Cleaned up some TODOs
