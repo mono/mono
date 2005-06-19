@@ -316,7 +316,7 @@ namespace System.Collections.Generic {
 		}
 
 		//
-		// Returns the index of the chain containing key.  Also ensures that the found key is the first element of the chain.
+		// Returns the index of the chain containing key.	 Also ensures that the found key is the first element of the chain.
 		// If the key is not found, returns -h-1, where 'h' is the index of the chain that would've contained the key.
 		// 
 		private int GetSlot (TKey key)
@@ -464,7 +464,7 @@ namespace System.Collections.Generic {
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this, EnumerationMode.DictionaryEntry);
+			return new Enumerator (this);
 		}
 	
 		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator ()
@@ -474,36 +474,29 @@ namespace System.Collections.Generic {
 
 		IDictionaryEnumerator IDictionary.GetEnumerator ()
 		{
-			return new Enumerator (this, EnumerationMode.DictionaryEntry);
+			return new Enumerator (this);
 		}
 	
 		public Enumerator GetEnumerator ()
 		{
-			return new Enumerator (this, EnumerationMode.KeyValuePair);
+			return new Enumerator (this);
 		}
-	
-		internal enum EnumerationMode { DictionaryEntry, KeyValuePair };
 	
 		[Serializable]
 		public struct Enumerator : IEnumerator<KeyValuePair<TKey,TValue>>,
 			IDisposable, IDictionaryEnumerator, IEnumerator
 		{
 			Slot [] _dictionaryTable;
-			EnumerationMode _navigationMode;
 
 			Slot _current;
 			int _nextIndex;
 	
-			public Enumerator (Dictionary<TKey, TValue> dictionary) : this (dictionary, EnumerationMode.KeyValuePair)
-			{
-			}
-	
-			internal Enumerator (Dictionary<TKey, TValue> dictionary, EnumerationMode mode)
+			internal Enumerator (Dictionary<TKey, TValue> dictionary)
 			{
 				_dictionaryTable = dictionary._table;
-				_navigationMode = mode;
 
-				// The following stanza is identical to IEnumerator.Reset (), but because of the
+				// The following stanza is identical to IEnumerator.Reset (),
+				// but because of the
 				// definite assignment rule, we cannot call it here.
 				_nextIndex = 0;
 				_current = null;
@@ -511,46 +504,40 @@ namespace System.Collections.Generic {
 
 			public bool MoveNext ()
 			{
+				if (_dictionaryTable == null)
+					throw new ObjectDisposedException(null);
+
+				// Pre-condition: _current == null => this is the first call
+				// to MoveNext ()
 				if (_current != null)
 					_current = _current.Next;
 
 				while (_current == null && _nextIndex < _dictionaryTable.Length)
 					_current = _dictionaryTable [_nextIndex++];
 
+				// Post-condition: _current == null => this is the last call
+				// to MoveNext()
 				return _current != null;
 			}
 
 			public KeyValuePair<TKey, TValue> Current {
 				get {
-					if (_current == null)
-						throw new InvalidOperationException ();
+					VerifyState();
 					return _current.Data;
 				}
 			}
 	
 			object IEnumerator.Current {
 				get {
-					if (_current == null)
-						throw new InvalidOperationException ();
-					switch (_navigationMode) {
-					case EnumerationMode.DictionaryEntry:
-						DictionaryEntry de = new DictionaryEntry (_current.Data.Key, _current.Data.Value);
-						return de;
-					case EnumerationMode.KeyValuePair:
-					default:
-						return _current.Data;
-					}
+					VerifyState();
+					return new DictionaryEntry(_current.Data.Key, _current.Data.Value);
 				}
 			}
 	
-			DictionaryEntry IDictionaryEnumerator.Entry
-			{
-				get
-				{
-					if (_current == null)
-						throw new InvalidOperationException ();
-					DictionaryEntry entry = new DictionaryEntry (_current.Data.Key, _current.Data.Value);
-					return entry;
+			DictionaryEntry IDictionaryEnumerator.Entry {
+				get {
+					VerifyState();
+					return new DictionaryEntry (_current.Data.Key, _current.Data.Value);
 				}
 			}
 	
@@ -564,8 +551,7 @@ namespace System.Collections.Generic {
 			{
 				get
 				{
-					if (_current == null)
-						throw new InvalidOperationException ();
+					VerifyState();
 					return _current.Data.Key;
 				}
 			}
@@ -573,12 +559,18 @@ namespace System.Collections.Generic {
 			{
 				get
 				{
-					if (_current == null)
-						throw new InvalidOperationException ();
+					VerifyState();
 					return _current.Data.Value;
 				}
 			}
-	
+
+			void VerifyState()
+			{
+				if (_dictionaryTable == null)
+					throw new ObjectDisposedException(null);
+				if (_current == null)
+					throw new InvalidOperationException();
+			}	
 			public void Dispose ()
 			{
 				_current = null;
@@ -588,7 +580,7 @@ namespace System.Collections.Generic {
 	
 		// This collection is a read only collection
 		[Serializable]
-		public class KeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable {
+		public sealed class KeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable {
 			Dictionary<TKey, TValue> _dictionary;
 	
 			public KeyCollection (Dictionary<TKey, TValue> dictionary)
@@ -671,16 +663,16 @@ namespace System.Collections.Generic {
 			}
 	
 			public struct Enumerator : IEnumerator<TKey>, IDisposable, IEnumerator {
-				IEnumerator<KeyValuePair<TKey, TValue>> _hostEnumerator;
+				Dictionary<TKey, TValue>.Enumerator _hostEnumerator;
 
-				internal Enumerator (IEnumerator<KeyValuePair<TKey, TValue>> hostEnumerator)
+				internal Enumerator (Dictionary<TKey, TValue>.Enumerator hostEnumerator)
 				{
 					_hostEnumerator = hostEnumerator;
 				}
 				
 				public void Dispose ()
 				{
-					_hostEnumerator = null;
+					_hostEnumerator.Dispose();
 				}
 				
 				public bool MoveNext ()
@@ -702,14 +694,14 @@ namespace System.Collections.Generic {
 				
 				void IEnumerator.Reset ()
 				{
-					_hostEnumerator.Reset ();
+					((IEnumerator)_hostEnumerator).Reset ();
 				}
 			}
 		}
 
 		// This collection is a read only collection
 		[Serializable]
-		public class ValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable {
+		public sealed class ValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable {
 			Dictionary<TKey, TValue> _dictionary;
 	
 			public ValueCollection (Dictionary<TKey, TValue> dictionary)
@@ -792,16 +784,16 @@ namespace System.Collections.Generic {
 			}
 	
 			public struct Enumerator : IEnumerator<TValue>, IDisposable, IEnumerator {
-				IEnumerator<KeyValuePair<TKey, TValue>> _hostEnumerator;
+				Dictionary<TKey, TValue>.Enumerator _hostEnumerator;
 
-				internal Enumerator (IEnumerator<KeyValuePair<TKey, TValue>> hostEnumerator)
+				internal Enumerator (Dictionary<TKey,TValue>.Enumerator hostEnumerator)
 				{
 					_hostEnumerator = hostEnumerator;
 				}
 				
 				public void Dispose ()
 				{
-					_hostEnumerator = null;
+					_hostEnumerator.Dispose();
 				}
 				
 				public bool MoveNext ()
@@ -823,7 +815,7 @@ namespace System.Collections.Generic {
 				
 				void IEnumerator.Reset ()
 				{
-					_hostEnumerator.Reset ();
+					((IEnumerator)_hostEnumerator).Reset ();
 				}
 			}
 		}

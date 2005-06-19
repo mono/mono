@@ -54,6 +54,7 @@ namespace System.Collections.Generic {
 			}
 		}
 		
+		[Serializable]
 		class DefaultComparer : EqualityComparer<T> {
 	
 			public override int GetHashCode (T obj)
@@ -71,6 +72,7 @@ namespace System.Collections.Generic {
 		}
 	}
 	
+	[Serializable]
 	class IEquatableOfTEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
 
 		public override int GetHashCode (T obj)

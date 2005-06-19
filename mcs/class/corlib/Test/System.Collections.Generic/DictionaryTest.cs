@@ -4,8 +4,10 @@
 // Authors:
 //	Sureshkumar T (tsureshkumar@novell.com)
 //	Ankit Jain (radical@corewars.org)
+//	David Waite (mass@akuma.org)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 David Waite (mass@akuma.org)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +34,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using NUnit.Framework;
 
@@ -67,12 +71,14 @@ namespace MonoTests.System.Collections.Generic {
 	
 		Dictionary <string, object> _dictionary = null;
 		Dictionary <MyClass, MyClass> _dictionary2 = null;
+		Dictionary <int, int> _dictionary3 = null;
 	
 		[SetUp]
 		public void SetUp ()
 		{
 			_dictionary = new Dictionary <string, object> ();
 			_dictionary2 = new Dictionary <MyClass, MyClass> ();
+			_dictionary3 = new Dictionary <int, int>();
 		}
 	
 		[Test]
@@ -96,26 +102,43 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (12, _dictionary2 [m3].Value, "#3");
 		}
 
+		[Test]
+		public void AddTest3 ()
+		{
+			_dictionary3.Add (1, 2);
+			_dictionary3.Add (2, 3);
+			_dictionary3.Add (3, 4);
+			Assert.AreEqual (2, _dictionary3[1], "#1");
+			Assert.AreEqual (3, _dictionary3[2], "#2");
+			Assert.AreEqual (4, _dictionary3[3], "#3");
+		}
+
 		[Test, ExpectedException(typeof(ArgumentNullException))]
-		public void NullTest ()
+		public void AddNullTest ()
 		{
 			_dictionary.Add (null, "");
 		}
 	
+		[Test, ExpectedException(typeof(ArgumentException))]
+		public void AddDuplicateTest ()
+		{
+			_dictionary.Add("foo", "bar");
+			_dictionary.Add("foo", "bar");
+		}
+
 		//Tests Add when resize takes place
 		[Test]
 		public void AddLargeTest ()
 		{
-			Dictionary <int, int> _dict = new Dictionary <int, int> ();
 			int i, numElems = 50;
 	
 			for (i = 0; i < numElems; i++)
 			{
-				_dict.Add (i, i);
+				_dictionary3.Add (i, i);
 			}
 	
 			i = 0;
-			foreach (KeyValuePair <int, int> entry in _dict)
+			foreach (KeyValuePair <int, int> entry in _dictionary3)
 			{
 				i++;
 			}
@@ -134,6 +157,12 @@ namespace MonoTests.System.Collections.Generic {
 		public void IndexerGetNonExistingTest ()
 		{
 			object foo = _dictionary ["foo"];
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void IndexerGetNullTest()
+		{
+			object s = _dictionary[null];
 		}
 
 		[Test]
@@ -156,10 +185,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void RemoveTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			Assert.IsTrue (_dictionary.Remove ("key3"));
 			Assert.IsFalse (_dictionary.Remove ("foo"));
 			Assert.AreEqual (3, _dictionary.Count);
@@ -178,6 +207,12 @@ namespace MonoTests.System.Collections.Generic {
 			_dictionary2.Remove (m1); // m2 is in rehash path
 			Assert.AreEqual (20, _dictionary2 [m2].Value, "#4");
 			
+		}
+	
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void IndexerSetNullTest()
+		{
+			_dictionary[null] = "bar";
 		}
 	
 		[Test]
@@ -226,10 +261,12 @@ namespace MonoTests.System.Collections.Generic {
 			_dictionary.Add ("key3", (object)"value3");
 			_dictionary.Add ("key4", (object)"value4");
 			object value = "";
-			_dictionary.TryGetValue ("key4", out value);
+			bool retrieved = _dictionary.TryGetValue ("key4", out value);
+			Assert.IsTrue (retrieved);
 			Assert.AreEqual ("value4", (string)value, "TryGetValue does not return value!");
 	
-			_dictionary.TryGetValue ("key7", out value);
+			retrieved = _dictionary.TryGetValue ("key7", out value);
+			Assert.IsFalse (retrieved);
 			Assert.IsNull (value, "value for non existant value should be null!");
 		}
 	
@@ -363,26 +400,22 @@ namespace MonoTests.System.Collections.Generic {
 			foreach (KeyValuePair <string, object> entry in _dictionary)
 			{
 				i++;
-				Console.WriteLine (entry.ToString());
 			}
-			if (i != 4)
-				Assert.Fail("fail1: foreach entry failed!");
+			Assert.AreEqual(4, i, "fail1: foreach entry failed!");
 	
 			i = 0;
 			foreach (DictionaryEntry entry in ((IEnumerable)_dictionary))
 			{
 				i++;
 			}
-			if (i != 4)
-				Assert.Fail("fail2: foreach entry failed!");
+			Assert.AreEqual(4, i, "fail2: foreach entry failed!");
 	
 			i = 0;
 			foreach (DictionaryEntry entry in ((IDictionary)_dictionary))
 			{
 				i++;
 			}
-			if (i != 4)
-				Assert.Fail ("fail3: foreach entry failed!");
+			Assert.AreEqual (4, i, "fail3: foreach entry failed!");
 		}
 	
 		[Test]
@@ -416,7 +449,6 @@ namespace MonoTests.System.Collections.Generic {
 			int i = 0;
 			foreach (string key in keys)
 			{
-				Console.WriteLine("keys collection : " + key);
 				i++;
 			}
 			Assert.AreEqual(4, i);
@@ -458,6 +490,46 @@ namespace MonoTests.System.Collections.Generic {
 
 			Assert.IsTrue (ke is Dictionary<string, int>.KeyCollection.Enumerator);
 			Assert.IsTrue (ve is Dictionary<string, int>.ValueCollection.Enumerator);
+		}
+
+		[Test]
+		public void PlainEnumeratorReturnTest ()
+		{
+			// Test that we return a DictionaryEntry for non-generic dictionary iteration
+			_dictionary["foo"] = "bar";
+			IEnumerator<KeyValuePair<string, object>> enumerator = _dictionary.GetEnumerator();
+			Assert.IsTrue(enumerator.MoveNext());
+			Assert.IsTrue(((IEnumerator)enumerator).Current is DictionaryEntry);
+			Assert.IsTrue(((IDictionaryEnumerator)enumerator).Current is DictionaryEntry);
+			Assert.IsFalse(((object)enumerator.Current) is DictionaryEntry);
+		}
+
+		[Test]
+		public void SerializationTest()
+		{
+			for (int i = 0; i < 50; i++)
+			{
+				_dictionary3.Add(i, i);
+			}
+
+			BinaryFormatter formatter = new BinaryFormatter();
+			MemoryStream stream = new MemoryStream();
+			formatter.Serialize(stream, _dictionary3);
+
+			stream.Position = 0;
+			object deserialized = formatter.Deserialize(stream);
+
+			Assert.IsNotNull(deserialized);
+			Assert.IsFalse(deserialized == _dictionary3);
+
+			Assert.IsTrue(deserialized is Dictionary<int, int>);
+			Dictionary<int, int> d3 = deserialized as Dictionary<int, int>;
+
+			Assert.AreEqual(50, d3.Count);
+			for (int i = 0; i < 50; i++)
+			{
+				Assert.AreEqual(i, d3[i]);
+			}
 		}
 	}
 }

@@ -1,3 +1,15 @@
+2005-06-18  David Waite  <mass@akuma.org>
+
+    * DictionaryTest.cs (AddTest3): Added test of simple interaction with
+    struct dictionary
+    (AddDuplicateTest,IndexerGetNullTest,IndexerSetNullTest): Added tests
+    for exceptional cases to verify correct exceptions
+    (TryGetValueTest): check return value from TryGetValue
+    (KeyValueEnumeratorTest): Added test from verification of ms.net beta2
+    behavior for non-generic IEnumerator/IDictionaryEnumerator behavior
+    against Dictionary<>
+    (SerializationTest): Added test to utilize serialization routines.
+    
 2005-06-16  Raja R Harinath  <rharinath@novell.com>
 
 	* DictionaryTest.cs (SliceCollectionsEnumeratorTest): New test

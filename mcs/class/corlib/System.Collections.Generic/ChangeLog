@@ -1,3 +1,23 @@
+2005-06-16  David Waite  <mass@akuma.org>
+
+    * Dictionary.cs (EnumerationMode): Remove.
+    (Enumerator): Remove return type flag - legacy return is expected to
+    always return a DictionaryEntry
+    (Enumerator): Make constructor internal, it is not public on ms.net 
+    beta 2
+    (Enumerator.MoveNext): Fix endless loop on enumerator use
+    (VerifyState): Added method to check state preconditions and throw
+    appropriate exceptions.
+    (KeyCollection,ValueCollection): Mark sealed to match ms.net beta 2
+    (KeyCollection.Enumerator._hostEnumerator): make exact struct type,
+    rather than boxing and using by interface
+    (KeyCollection.Enumerator.Dispose): use default to clear Enumerator
+    (ValueCollection.Enumerator._hostEnumerator): make exact struct type,
+    rather than boxing and using by interface
+    (ValueCollection.Enumerator.Dispose): use default to clear Enumerator
+    * EqualityComparer.cs (DefaultComparer, IEquatableOfTEqualityComparer):
+    Mark as serializable.
+
 2005-06-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Dictionary.cs (GetKeys, GetValues): Remove.
