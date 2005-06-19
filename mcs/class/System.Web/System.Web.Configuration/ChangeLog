@@ -1,3 +1,9 @@
+2005-06-19 Ilya Kharmatsky <ilyak-at-mainsoft.com>
+
+    * HttpRuntimeConfig.cs: Added TARGET_JVM directive in "using clause"
+      in order to exclude in J2EE configuration usage of unsupported
+      CodeDome API.
+       
 2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* CodeSubDirectory.cs:
