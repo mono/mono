@@ -1,5 +1,7 @@
 2005-06-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ia64.c: Ongoing IA64 work.
+
 	* driver.c: Clean up jit_code_hash as well when using --regression.
 
 	* inssel-long.brg: Fix long->i4/u4 conversion rules.
