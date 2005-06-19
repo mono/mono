@@ -1,3 +1,12 @@
+2005-06-08 Ilya Kharmatsky <ilyak-at-mainsoft.com>
+
+    * SessionStateMode.cs: Added TARGET_J2EE directive in order
+    to provide in J2EE configuration additional mode - J2EE
+    * SessionStateModule.cs: Added TARGET_JVM directives in order
+    to resolve unsupported in Ghrasshopper "static variables" issue
+    (When static variable are stored in general place, instead of
+    storing such variables per AppDomain).
+    
 2005-05-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RemoteStateServer.cs:
