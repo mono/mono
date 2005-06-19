@@ -1,3 +1,8 @@
+2005-06-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: fix the index in the socket array for writable/error
+	sockets. Fixes bug #75306.
+
 2005-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: no need to convert from utf16 to utf8 and then back again
