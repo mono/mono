@@ -272,10 +272,12 @@ namespace FirebirdSql.Data.Firebird
 		/// </summary>
 		protected override int Update(DataRow[] dataRows, DataTableMapping tableMapping)
 		{
-			int				updated			= 0;
-			IDbCommand		command			= null;
-			StatementType	statementType	= StatementType.Insert;
-			ArrayList		connections		= new ArrayList();
+			int						updated			= 0;
+			IDbCommand				command			= null;
+			StatementType			statementType	= StatementType.Insert;
+			ArrayList				connections		= new ArrayList();
+			RowUpdatingEventArgs	updatingArgs	= null;
+			Exception				updateException = null;
 
 			foreach (DataRow row in dataRows)
 			{
@@ -304,15 +306,15 @@ namespace FirebirdSql.Data.Firebird
 				}
 
 				/* The order of	execution can be reviewed in the .NET 1.1 documentation
-				 *
-				 * 1. The values in	the	DataRow	are	moved to the parameter values. 
-				 * 2. The OnRowUpdating	event is raised. 
-				 * 3. The command executes.	
-				 * 4. If the command is	set	to FirstReturnedRecord,	then the first returned	result is placed in	the	DataRow. 
-				 * 5. If there are output parameters, they are placed in the DataRow. 
-				 * 6. The OnRowUpdated event is	raised.	
-				 * 7 AcceptChanges is called. 
-				 */
+					*
+					* 1. The values in	the	DataRow	are	moved to the parameter values. 
+					* 2. The OnRowUpdating	event is raised. 
+					* 3. The command executes.	
+					* 4. If the command is	set	to FirstReturnedRecord,	then the first returned	result is placed in	the	DataRow. 
+					* 5. If there are output parameters, they are placed in the DataRow. 
+					* 6. The OnRowUpdated event is	raised.	
+					* 7 AcceptChanges is called. 
+					*/
 
 				try
 				{
@@ -327,7 +329,7 @@ namespace FirebirdSql.Data.Firebird
 					}
 
 					// 2. Raise	RowUpdating	event
-					RowUpdatingEventArgs updatingArgs = this.CreateRowUpdatingEvent(row, command, statementType, tableMapping);
+					updatingArgs = this.CreateRowUpdatingEvent(row, command, statementType, tableMapping);
 					this.OnRowUpdating(updatingArgs);
 
 					if (updatingArgs.Status == UpdateStatus.SkipAllRemainingRows)
@@ -354,13 +356,19 @@ namespace FirebirdSql.Data.Firebird
 						if (command == null)
 						{
 							/* Samples of exceptions thrown	by DbDataAdapter class
-							 *
-							 *	Update requires	a valid	InsertCommand when passed DataRow collection with new rows
-							 *	Update requires	a valid	UpdateCommand when passed DataRow collection with modified rows.
-							 *	Update requires	a valid	DeleteCommand when passed DataRow collection with deleted rows.
-							 */
+								*
+								*	Update requires	a valid	InsertCommand when passed DataRow collection with new rows
+								*	Update requires	a valid	UpdateCommand when passed DataRow collection with modified rows.
+								*	Update requires	a valid	DeleteCommand when passed DataRow collection with deleted rows.
+								*/
 							string message = this.CreateExceptionMessage(statementType);
 							throw new InvalidOperationException(message);
+						}
+
+						/* Validate that the command has a connection */
+						if (command.Connection == null)
+						{
+							throw new InvalidOperationException("Update requires a command with a valid connection.");
 						}
 
 						// 3. Execute the command
@@ -380,17 +388,17 @@ namespace FirebirdSql.Data.Firebird
 						updated++;
 
 						/* 4. If the command is	set	to FirstReturnedRecord,	then the 
-						 * first returned result is	placed in the DataRow. 
-						 * 
-						 * We have nothing to do in	this case as there are no 
-						 * support for batch commands.
-						 */
+							* first returned result is	placed in the DataRow. 
+							* 
+							* We have nothing to do in	this case as there are no 
+							* support for batch commands.
+							*/
 
 						/* 5. Check	if we have output parameters and they should 
-						 * be updated.
-						 *
-						 * Only	output paraneters should be	updated
-						 */
+							* be updated.
+							*
+							* Only	output paraneters should be	updated
+							*/
 						if (command.UpdatedRowSource == UpdateRowSource.OutputParameters ||
 							command.UpdatedRowSource == UpdateRowSource.Both)
 						{
@@ -424,46 +432,59 @@ namespace FirebirdSql.Data.Firebird
 								}
 							}
 						}
-
-						// 6. Raise	RowUpdated event
-						RowUpdatedEventArgs updatedArgs = this.CreateRowUpdatedEvent(row, command, statementType, tableMapping);
-						this.OnRowUpdated(updatedArgs);
-
-						if (updatedArgs.Status == UpdateStatus.SkipAllRemainingRows)
-						{
-							break;
-						}
-						else if (updatedArgs.Status == UpdateStatus.ErrorsOccurred)
-						{
-							if (updatingArgs.Errors == null)
-							{
-								throw new InvalidOperationException("RowUpdatedEvent: Errors occurred; no additional information available.");
-							}
-							throw updatedArgs.Errors;
-						}
-						else if (updatedArgs.Status == UpdateStatus.SkipCurrentRow)
-						{
-						}
-						else if (updatingArgs.Status == UpdateStatus.Continue)
-						{
-							// 7. Call AcceptChanges
-							row.AcceptChanges();
-						}
 					}
 				}
 				catch (Exception ex)
 				{
-					if (this.ContinueUpdateOnError)
-					{
-						row.RowError = ex.Message;
-					}
-					else
-					{
-						this.CloseConnections(connections);
+					row.RowError	= ex.Message;
+					updateException = ex;
+				}
 
-						throw;
+				if (updatingArgs.Status == UpdateStatus.Continue)
+				{
+					// 6. Raise	RowUpdated event
+					RowUpdatedEventArgs	updatedArgs = this.CreateRowUpdatedEvent(row, command, statementType, tableMapping);
+					this.OnRowUpdated(updatedArgs);
+
+					if (updatedArgs.Status == UpdateStatus.SkipAllRemainingRows)
+					{
+						break;
+					}
+					else if (updatedArgs.Status == UpdateStatus.ErrorsOccurred)
+					{
+						if (updatingArgs.Errors == null)
+						{
+							throw new InvalidOperationException("RowUpdatedEvent: Errors occurred; no additional information available.");
+						}
+						throw updatedArgs.Errors;
+					}
+					else if (updatedArgs.Status == UpdateStatus.SkipCurrentRow)
+					{
+					}
+					else if (updatingArgs.Status == UpdateStatus.Continue)
+					{
+						// If the update result is an exception throw it
+						if (!this.ContinueUpdateOnError && updateException != null)
+						{
+							this.CloseConnections(connections);
+							throw updateException;
+						}
+
+						// 7. Call AcceptChanges
+						row.AcceptChanges();
 					}
 				}
+				else
+				{
+					// If the update result is an exception throw it
+					if (!this.ContinueUpdateOnError && updateException != null)
+					{
+						this.CloseConnections(connections);
+						throw updateException;
+					}
+				}
+
+				updateException = null;
 			}
 
 			this.CloseConnections(connections);

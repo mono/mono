@@ -72,31 +72,31 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* TABLE_NAME */
 				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$relation_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " AND rdb$relation_name = @p{0}", index++);
 				}
 
 				/* COLUMN_NAME */
 				if (restrictions.Length >= 4 && restrictions[3] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$field_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " AND rdb$field_name = @p{0}", index++);
 				}
 
 				/* GRANTOR */
 				if (restrictions.Length >= 6 && restrictions[5] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$grantor = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " AND rdb$grantor = @p{0}", index++);
 				}
 
 				/* GRANTEE */
 				if (restrictions.Length >= 5 && restrictions[4] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$user = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " AND rdb$user = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY rdb$relation_name");

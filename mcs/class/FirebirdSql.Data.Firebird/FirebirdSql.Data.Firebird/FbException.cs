@@ -18,7 +18,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
 using System.Security.Permissions;
 using FirebirdSql.Data.Common;
 
@@ -78,8 +77,9 @@ namespace FirebirdSql.Data.Firebird
 
 #if	(!NETCF)
 
-		internal FbException(SerializationInfo info, StreamingContext context)
-			: base(info, context)
+		internal FbException(
+            System.Runtime.Serialization.SerializationInfo info, 
+            System.Runtime.Serialization.StreamingContext context) : base(info, context)
 		{
 			this.errors = (FbErrorCollection)info.GetValue("errors", typeof(FbErrorCollection));
 			this.errorCode = info.GetInt32("errorCode");
@@ -95,7 +95,9 @@ namespace FirebirdSql.Data.Firebird
 
 		/// <include file='Doc/en_EN/FbException.xml' path='doc/class[@name="FbException"]/method[@name="GetObjectData(SerializationInfo, StreamingContext)"]/*'/>
 		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		public override void GetObjectData(
+            System.Runtime.Serialization.SerializationInfo info, 
+            System.Runtime.Serialization.StreamingContext context)
 		{
 			info.AddValue("errors", this.errors);
 			info.AddValue("errorCode", this.errorCode);

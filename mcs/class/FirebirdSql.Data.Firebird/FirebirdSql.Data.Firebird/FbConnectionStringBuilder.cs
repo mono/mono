@@ -209,8 +209,8 @@ namespace FirebirdSql.Data.Firebird
 					{
 						cs.Append(";");
 					}
-					string key = CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(e.Key.ToString());
-					cs.AppendFormat(CultureInfo.CurrentUICulture, "{0}={1}", key, e.Value);
+					string key = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(e.Key.ToString());
+					cs.AppendFormat(CultureInfo.CurrentCulture, "{0}={1}", key, e.Value);
 				}
 			}
 
@@ -239,7 +239,7 @@ namespace FirebirdSql.Data.Firebird
 					values[0] != null && values[0].Length > 0 &&
 					values[1] != null && values[1].Length > 0)
 				{
-					values[0] = values[0].ToLower(CultureInfo.CurrentUICulture);
+					values[0] = values[0].ToLower(CultureInfo.CurrentCulture).Trim();
 
 					if (synonyms.Contains(values[0]))
 					{
@@ -320,7 +320,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			if (this.options.Contains(key))
 			{
-				string il = this.options[key].ToString().ToLower(CultureInfo.CurrentUICulture);
+				string il = this.options[key].ToString().ToLower(CultureInfo.CurrentCulture);
 				switch (il)
 				{
 					case "readcommitted":

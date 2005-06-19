@@ -309,8 +309,7 @@ namespace FirebirdSql.Data.Firebird
 				dpb.Append(IscCodes.isc_dpb_version1);
 
 				// Dummy packet	interval
-				dpb.Append(IscCodes.isc_dpb_dummy_packet_interval,
-					new byte[] { 120, 10, 0, 0 });
+				dpb.Append(IscCodes.isc_dpb_dummy_packet_interval, new byte[] { 120, 10, 0, 0 });
 
 				// User	name
 				dpb.Append(IscCodes.isc_dpb_user_name, options.UserID);
@@ -319,8 +318,10 @@ namespace FirebirdSql.Data.Firebird
 				dpb.Append(IscCodes.isc_dpb_password, options.Password);
 
 				// Database	dialect
-				dpb.Append(IscCodes.isc_dpb_sql_dialect,
-					new byte[] { options.Dialect, 0, 0, 0 });
+				dpb.Append(IscCodes.isc_dpb_sql_dialect, new byte[] { options.Dialect, 0, 0, 0 });
+
+				// Database overwrite
+				dpb.Append(IscCodes.isc_dpb_overwrite, (short)(overwrite ? 1 : 0));
 
 				// Character set
 				if (options.Charset.Length > 0)
@@ -338,6 +339,15 @@ namespace FirebirdSql.Data.Firebird
 							Charset.SupportedCharsets[index].Name);
 					}
 				}
+
+				// Page	Size
+				if (pageSize > 0)
+				{
+					dpb.Append(IscCodes.isc_dpb_page_size, pageSize);
+				}
+
+				// Forced writes
+				dpb.Append(IscCodes.isc_dpb_force_write, (short)(forcedWrites ? 1 : 0));
 
 				if (!overwrite)
 				{
@@ -360,16 +370,6 @@ namespace FirebirdSql.Data.Firebird
 						}
 					}
 				}
-
-				// Page	Size
-				if (pageSize > 0)
-				{
-					dpb.Append(IscCodes.isc_dpb_page_size, pageSize);
-				}
-
-				// Forced writes
-				dpb.Append(IscCodes.isc_dpb_force_write,
-					(short)(forcedWrites ? 1 : 0));
 
 				// Create the new database
 				FbConnectionInternal db = new FbConnectionInternal(options);
@@ -467,20 +467,19 @@ namespace FirebirdSql.Data.Firebird
 				dpb.Append(IscCodes.isc_dpb_version1);
 
 				// Dummy packet	interval
-				dpb.Append(IscCodes.isc_dpb_dummy_packet_interval,
-					new byte[] { 120, 10, 0, 0 });
+				dpb.Append(IscCodes.isc_dpb_dummy_packet_interval, new byte[] { 120, 10, 0, 0 });
 
 				// User	name
-				dpb.Append(IscCodes.isc_dpb_user_name,
-					values["User"].ToString());
+				dpb.Append(IscCodes.isc_dpb_user_name, values["User"].ToString());
 
 				// User	password
-				dpb.Append(IscCodes.isc_dpb_password,
-					values["Password"].ToString());
+				dpb.Append(IscCodes.isc_dpb_password, values["Password"].ToString());
 
 				// Database	dialect
-				dpb.Append(IscCodes.isc_dpb_sql_dialect,
-					new byte[] { dialect, 0, 0, 0 });
+				dpb.Append(IscCodes.isc_dpb_sql_dialect, new byte[] { dialect, 0, 0, 0 });
+
+				// Database overwrite
+				dpb.Append(IscCodes.isc_dpb_overwrite, (short)(overwrite ? 1 : 0));
 
 				// Character set
 				if (values.ContainsKey("Charset"))
@@ -497,6 +496,19 @@ namespace FirebirdSql.Data.Firebird
 							IscCodes.isc_dpb_set_db_charset,
 							Charset.SupportedCharsets[index].Name);
 					}
+				}
+
+				// Page	Size
+				if (values.ContainsKey("PageSize"))
+				{
+					dpb.Append(IscCodes.isc_dpb_page_size, Convert.ToInt32(values["PageSize"], CultureInfo.InvariantCulture));
+				}
+
+				// Forced writes
+				if (values.ContainsKey("ForcedWrite"))
+				{
+					dpb.Append(IscCodes.isc_dpb_force_write,
+						(short)((bool)values["ForcedWrite"] ? 1 : 0));
 				}
 
 				if (!overwrite)
@@ -517,19 +529,6 @@ namespace FirebirdSql.Data.Firebird
 					{
 						throw;
 					}
-				}
-
-				// Page	Size
-				if (values.ContainsKey("PageSize"))
-				{
-					dpb.Append(IscCodes.isc_dpb_page_size, Convert.ToInt32(values["PageSize"], CultureInfo.InvariantCulture));
-				}
-
-				// Forced writes
-				if (values.ContainsKey("ForcedWrite"))
-				{
-					dpb.Append(IscCodes.isc_dpb_force_write,
-						(short)((bool)values["ForcedWrite"] ? 1 : 0));
 				}
 
 				// Create the new database

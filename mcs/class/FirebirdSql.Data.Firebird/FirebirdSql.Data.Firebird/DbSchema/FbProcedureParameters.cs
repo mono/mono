@@ -90,7 +90,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* PROCEDURE_NAME */
 				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, "pp.rdb$procedure_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, "pp.rdb$procedure_name = @p{0}", index++);
 				}
 
 				/* PROCEDURE_PARAMETER */
@@ -101,13 +101,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 						where.Append(" AND ");
 					}
 
-					where.AppendFormat(CultureInfo.CurrentUICulture, "pp.rdb$parameter_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, "pp.rdb$parameter_name = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY pp.rdb$procedure_name, pp.rdb$parameter_type, pp.rdb$parameter_number");
@@ -136,7 +136,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				}
 
 				FbDbType dbType = (FbDbType)TypeHelper.GetDbDataType(blrType, subType, scale);
-				row["PARAMETER_DATA_TYPE"] = TypeHelper.GetDataTypeName((DbDataType)dbType).ToLower(CultureInfo.CurrentUICulture);
+				row["PARAMETER_DATA_TYPE"] = TypeHelper.GetDataTypeName((DbDataType)dbType).ToLower(CultureInfo.CurrentCulture);
 
 				if (dbType == FbDbType.Char || dbType == FbDbType.VarChar)
 				{

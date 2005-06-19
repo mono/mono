@@ -169,34 +169,37 @@ namespace FirebirdSql.Data.Gds
 
 		protected override void Dispose(bool disposing)
 		{
-			if (!this.IsDisposed)
+			lock (this)
 			{
-				try
+				if (!this.IsDisposed)
 				{
-					// release any unmanaged resources
-					this.Release();
-
-					// release any managed resources
-					if (disposing)
+					try
 					{
-						this.Clear();
+						// release any unmanaged resources
+						this.Release();
 
-						this.rows			= null;
-						this.outputParams	= null;
-						this.db				= null;
-						this.fields			= null;
-						this.parameters		= null;
-						this.transaction	= null;
-						this.allRowsFetched = false;
-						this.state			= StatementState.Deallocated;
-						this.handle			= 0;
-						this.fetchSize		= 0;
-						this.recordsAffected = 0;
+						// release any managed resources
+						if (disposing)
+						{
+							this.Clear();
+
+							this.rows			= null;
+							this.outputParams	= null;
+							this.db				= null;
+							this.fields			= null;
+							this.parameters		= null;
+							this.transaction	= null;
+							this.allRowsFetched = false;
+							this.state			= StatementState.Deallocated;
+							this.handle			= 0;
+							this.fetchSize		= 0;
+							this.recordsAffected = 0;
+						}
 					}
-				}
-				finally
-				{
-					base.Dispose(disposing);
+					finally
+					{
+						base.Dispose(disposing);
+					}
 				}
 			}
 		}
@@ -739,28 +742,28 @@ namespace FirebirdSql.Data.Gds
 						case IscCodes.isc_info_sql_field:
 							len = IscHelper.VaxInteger(info, i, 2);
 							i += 2;
-							rowDesc[index - 1].Name = Encoding.Default.GetString(info, i, len);
+							rowDesc[index - 1].Name = this.db.Charset.GetString(info, i, len);
 							i += len;
 							break;
 
 						case IscCodes.isc_info_sql_relation:
 							len = IscHelper.VaxInteger(info, i, 2);
 							i += 2;
-							rowDesc[index - 1].Relation = Encoding.Default.GetString(info, i, len);
+							rowDesc[index - 1].Relation = this.db.Charset.GetString(info, i, len);
 							i += len;
 							break;
 
 						case IscCodes.isc_info_sql_owner:
 							len = IscHelper.VaxInteger(info, i, 2);
 							i += 2;
-							rowDesc[index - 1].Owner = Encoding.Default.GetString(info, i, len);
+							rowDesc[index - 1].Owner = this.db.Charset.GetString(info, i, len);
 							i += len;
 							break;
 
 						case IscCodes.isc_info_sql_alias:
 							len = IscHelper.VaxInteger(info, i, 2);
 							i += 2;
-							rowDesc[index - 1].Alias = Encoding.Default.GetString(info, i, len);
+							rowDesc[index - 1].Alias = this.db.Charset.GetString(info, i, len);
 							i += len;
 							break;
 

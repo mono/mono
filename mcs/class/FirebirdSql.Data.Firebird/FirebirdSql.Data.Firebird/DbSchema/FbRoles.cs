@@ -52,13 +52,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 
 				if (restrictions.Length >= 1 && restrictions[0] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, "rdb$role_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, "rdb$role_name = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY rdb$role_name");

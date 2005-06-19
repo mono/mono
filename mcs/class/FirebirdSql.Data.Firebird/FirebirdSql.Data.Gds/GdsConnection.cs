@@ -96,14 +96,11 @@ namespace FirebirdSql.Data.Gds
 					packetSize);
 #endif
 
-#if	(NET)
 				// Disables	the	Nagle algorithm	for	send coalescing.
-				// This	seems to be	not	supported in Linux (using mono::)
 				this.socket.SetSocketOption(
-					SocketOptionLevel.Socket,
+					SocketOptionLevel.Tcp,
 					SocketOptionName.NoDelay,
 					1);
-#endif
 
 				// Make	the	socket to connect to the Server
 				this.socket.Connect(EPhost);

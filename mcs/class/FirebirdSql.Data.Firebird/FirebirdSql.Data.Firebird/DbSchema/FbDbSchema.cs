@@ -122,13 +122,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 
 				for (int i = 0; i < restrictions.Length; i++)
 				{
-					string rname = restriction[i]["RestrictionDefault"].ToString().ToLower(CultureInfo.CurrentUICulture);
+					string rname = restriction[i]["RestrictionDefault"].ToString().ToLower(CultureInfo.CurrentCulture);
 					if (restrictions[i] != null &&
 						!rname.EndsWith("_catalog") &&
 						!rname.EndsWith("_schema") &&
 						rname != "table_type")
 					{
-						string pname = String.Format(CultureInfo.CurrentUICulture, "@p{0}", index++);
+						string pname = String.Format(CultureInfo.CurrentCulture, "@p{0}", index++);
 
 						FbParameter p = schema.Parameters.Add(pname, restrictions[i].ToString());
 						p.FbDbType = FbDbType.VarChar;

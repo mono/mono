@@ -151,7 +151,7 @@ namespace FirebirdSql.Data.Common
 					{
 						if (message == null)
 						{
-							message = String.Format(CultureInfo.CurrentUICulture, "No message for error code {0} found.", code);
+							message = String.Format(CultureInfo.CurrentCulture, "No message for error code {0} found.", code);
 						}
 					}
 
@@ -181,14 +181,14 @@ namespace FirebirdSql.Data.Common
 								builder.Append("\n");
 							}
 
-							builder.AppendFormat(CultureInfo.CurrentUICulture, message, args);
+							builder.AppendFormat(CultureInfo.CurrentCulture, message, args);
 						}
 					}
 					catch
 					{
-						message = String.Format(CultureInfo.CurrentUICulture, "No message for error code {0} found.", code);
+						message = String.Format(CultureInfo.CurrentCulture, "No message for error code {0} found.", code);
 
-						builder.AppendFormat(CultureInfo.CurrentUICulture, message, args);
+						builder.AppendFormat(CultureInfo.CurrentCulture, message, args);
 					}
 				}
 			}

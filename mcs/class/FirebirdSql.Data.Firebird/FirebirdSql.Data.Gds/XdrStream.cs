@@ -330,7 +330,7 @@ namespace FirebirdSql.Data.Gds
 		{
 			decimal value = 0;
 
-			switch (type)
+			switch (type & ~1)
 			{
 				case IscCodes.SQL_SHORT:
 					value = TypeDecoder.DecodeDecimal(this.ReadInt16(), scale, type);
@@ -399,7 +399,7 @@ namespace FirebirdSql.Data.Gds
 				case DbDataType.Decimal:
 				case DbDataType.Numeric:
 					fieldValue = this.ReadDecimal(
-						field.SqlType,
+						field.DataType,
 						field.NumericScale);
 					break;
 
@@ -556,7 +556,7 @@ namespace FirebirdSql.Data.Gds
 		{
 			object numeric = TypeEncoder.EncodeDecimal(value, scale, type);
 
-			switch (type)
+			switch (type & ~1)
 			{
 				case IscCodes.SQL_SHORT:
 					this.Write((short)numeric);
@@ -661,7 +661,7 @@ namespace FirebirdSql.Data.Gds
 					case DbDataType.Numeric:
 						this.Write(
 							param.DbValue.GetDecimal(),
-							param.SqlType,
+							param.DataType,
 							param.NumericScale);
 						break;
 

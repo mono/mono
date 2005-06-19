@@ -263,7 +263,7 @@ namespace FirebirdSql.Data.Firebird
 				}
 				if (this.PacketSize < 512 || this.PacketSize > 32767)
 				{
-					throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, "'Packet Size' value of {0} is not valid.\r\nThe value should be an integer >= 512 and <= 32767.", this.PacketSize));
+					throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, "'Packet Size' value of {0} is not valid.\r\nThe value should be an integer >= 512 and <= 32767.", this.PacketSize));
 				}
 
 				this.CheckIsolationLevel();
@@ -399,7 +399,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			if (this.options.Contains(key))
 			{
-				return Convert.ToByte(this.options[key], CultureInfo.CurrentUICulture);
+				return Convert.ToByte(this.options[key], CultureInfo.CurrentCulture);
 			}
 			return 0;
 		}
@@ -435,7 +435,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			if (this.options.Contains(key))
 			{
-				string il = this.options[key].ToString().ToLower(CultureInfo.CurrentUICulture);
+				string il = this.options[key].ToString().ToLower(CultureInfo.CurrentCulture);
 				switch (il)
 				{
 					case "readcommitted":
@@ -463,7 +463,7 @@ namespace FirebirdSql.Data.Firebird
 
 		private void CheckIsolationLevel()
 		{
-			string il = this.options["isolation level"].ToString().ToLower(CultureInfo.CurrentUICulture);
+			string il = this.options["isolation level"].ToString().ToLower(CultureInfo.CurrentCulture);
 			switch (il)
 			{
 				case "readcommitted":

@@ -399,7 +399,22 @@ namespace FirebirdSql.Data.Embedded
 						sqlda);
 
 					// Obtain values
-					this.fields = marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
+					Descriptor rowDesc = marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
+
+					if (this.fields.Count == rowDesc.Count)
+					{
+						// Try to preserve Array Handle information
+						for (int i = 0; i < this.fields.Count; i++)
+						{
+							if (this.fields[i].IsArray() && 
+								this.fields[i].ArrayHandle != null)
+							{
+								rowDesc[i].ArrayHandle = this.fields[i].ArrayHandle;
+							}
+						}
+					}
+
+					this.fields = rowDesc;
 
 					// Free	memory
 					marshaler.CleanUpNativeData(ref	sqlda);
@@ -413,7 +428,7 @@ namespace FirebirdSql.Data.Embedded
 					}
 					else
 					{
-						// set row values
+						// Set row values
 						row = new DbValue[this.fields.ActualCount];
 						for (int i = 0; i < row.Length; i++)
 						{

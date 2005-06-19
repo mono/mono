@@ -86,7 +86,7 @@ namespace FirebirdSql.Data.Common
 
 		public string GetString()
 		{
-			if (this.Field.DbDataType == DbDataType.Text)
+			if (this.Field.DbDataType == DbDataType.Text && this.value is long)
 			{
 				this.value = this.GetClobData((long)this.value);
 			}
@@ -96,7 +96,7 @@ namespace FirebirdSql.Data.Common
 
 		public char GetChar()
 		{
-			return Convert.ToChar(this.value, CultureInfo.CurrentUICulture);
+			return Convert.ToChar(this.value, CultureInfo.CurrentCulture);
 		}
 
 		public bool GetBoolean()
@@ -155,7 +155,7 @@ namespace FirebirdSql.Data.Common
 
 		public DateTime GetDateTime()
 		{
-			return Convert.ToDateTime(this.value, CultureInfo.CurrentUICulture.DateTimeFormat);
+			return Convert.ToDateTime(this.value, CultureInfo.CurrentCulture.DateTimeFormat);
 		}
 
 		public Array GetArray()

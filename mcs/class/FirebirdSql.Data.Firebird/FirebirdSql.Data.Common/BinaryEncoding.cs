@@ -18,15 +18,15 @@ namespace FirebirdSql.Data.Common
 	{
 		#region Static Methods
 
-        public static string BytesToString(byte[] byteArray)
-        {
-            // This code isn't great because it requires a double copy,
-            // but it requires unsafe code to solve the problem efficiently.
-            char[] charArray = new char[byteArray.GetLength(0)];
-            Array.Copy(byteArray, charArray, byteArray.Length);
+		public static string BytesToString(byte[] byteArray)
+		{
+			// This code isn't great because it requires a double copy,
+			// but it requires unsafe code to solve the problem efficiently.
+			char[] charArray = new char[byteArray.GetLength(0)];
+			Array.Copy(byteArray, charArray, byteArray.Length);
 
-            return new string(charArray);
-        }
+			return new string(charArray);
+		}
 
 		static void Validate(object data, int dataLength, int index, int count)
 		{
@@ -130,10 +130,14 @@ namespace FirebirdSql.Data.Common
 			return count;
 		}
 
-		public override string GetString(byte[] bytes)
+#if (!NETCF)
+	
+        public override string GetString(byte[] bytes)
 		{
 			return BytesToString(bytes);
 		}
+
+#endif
 
 		public override string GetString(byte[] bytes, int index, int count)
 		{

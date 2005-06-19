@@ -252,6 +252,12 @@ namespace FirebirdSql.Data.Firebird
 			get { return this.GetInt32(IscCodes.isc_info_active_transactions); }
 		}
 
+        /// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ActiveUsers"]/*'/>
+        public ArrayList ActiveUsers
+        {
+            get { return this.GetArrayList(IscCodes.isc_info_user_names); }
+        }
+
 		#endregion
 
 		#region Constructors
@@ -316,6 +322,20 @@ namespace FirebirdSql.Data.Firebird
 
 			return (info.Count > 0 ? (bool)info[0] : false);
 		}
+
+        private ArrayList GetArrayList(byte item)
+        {
+            this.CheckConnection();
+
+            IDatabase db = this.Connection.InnerConnection.Database;
+            byte[] items = new byte[]
+				{
+					item,
+					IscCodes.isc_info_end
+				};
+            
+            return db.GetDatabaseInfo(items);
+        }
 
 		private void CheckConnection()
 		{

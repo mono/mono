@@ -88,13 +88,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* DOMAIN_NAME */
 				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$field_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " AND rdb$field_name = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY rdb$field_name");
@@ -123,7 +123,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				}
 
 				FbDbType dbType = (FbDbType)TypeHelper.GetDbDataType(blrType, subType, scale);
-				row["DOMAIN_DATA_TYPE"] = TypeHelper.GetDataTypeName((DbDataType)dbType).ToLower(CultureInfo.CurrentUICulture);
+				row["DOMAIN_DATA_TYPE"] = TypeHelper.GetDataTypeName((DbDataType)dbType).ToLower(CultureInfo.CurrentCulture);
 
 				if (dbType == FbDbType.Char || dbType == FbDbType.VarChar)
 				{

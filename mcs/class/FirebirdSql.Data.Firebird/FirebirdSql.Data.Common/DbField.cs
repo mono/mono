@@ -563,37 +563,46 @@ namespace FirebirdSql.Data.Common
 					return DbDataType.VarChar;
 
 				case IscCodes.SQL_SHORT:
-					if (this.numericScale < 0)
+					if (this.subType == 2)
 					{
-						if (this.subType == 2)
-						{
-							return DbDataType.Decimal;
-						}
-						else
-						{
-							return DbDataType.Numeric;
-						}
+						return DbDataType.Decimal;
 					}
-					else
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
+                    else
 					{
 						return DbDataType.SmallInt;
 					}
 
 				case IscCodes.SQL_LONG:
-					if (this.numericScale < 0)
+					if (this.subType == 2)
 					{
-						if (this.subType == 2)
-						{
-							return DbDataType.Decimal;
-						}
-						else
-						{
-							return DbDataType.Numeric;
-						}
+						return DbDataType.Decimal;
 					}
-					else
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
+                    else
 					{
 						return DbDataType.Integer;
+					}
+
+				case IscCodes.SQL_QUAD:
+				case IscCodes.SQL_INT64:
+					if (this.subType == 2)
+					{
+						return DbDataType.Decimal;
+					}
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
+                    else
+					{
+						return DbDataType.BigInt;
 					}
 
 				case IscCodes.SQL_FLOAT:
@@ -601,18 +610,15 @@ namespace FirebirdSql.Data.Common
 
 				case IscCodes.SQL_DOUBLE:
 				case IscCodes.SQL_D_FLOAT:
-					if (this.numericScale < 0)
+					if (this.subType == 2)
 					{
-						if (this.subType == 2)
-						{
-							return DbDataType.Decimal;
-						}
-						else
-						{
-							return DbDataType.Numeric;
-						}
+						return DbDataType.Decimal;
 					}
-					else
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
+                    else
 					{
 						return DbDataType.Double;
 					}
@@ -625,24 +631,6 @@ namespace FirebirdSql.Data.Common
 					else
 					{
 						return DbDataType.Binary;
-					}
-
-				case IscCodes.SQL_QUAD:
-				case IscCodes.SQL_INT64:
-					if (this.numericScale < 0)
-					{
-						if (this.subType == 2)
-						{
-							return DbDataType.Decimal;
-						}
-						else
-						{
-							return DbDataType.Numeric;
-						}
-					}
-					else
-					{
-						return DbDataType.BigInt;
 					}
 
 				case IscCodes.SQL_TIMESTAMP:

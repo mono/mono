@@ -41,7 +41,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 		{
 			FbDbSchema returnSchema = null;
 
-			switch (collectionName.ToLower(CultureInfo.CurrentUICulture))
+			switch (collectionName.ToLower(CultureInfo.CurrentCulture))
 			{
 				case "charactersets":
 					returnSchema = new FbCharacterSets();

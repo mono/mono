@@ -256,7 +256,7 @@ namespace FirebirdSql.Data.Firebird
 			}
 			else
 			{
-				spName = spName.ToUpper(CultureInfo.CurrentUICulture);
+				spName = spName.ToUpper(CultureInfo.CurrentCulture);
 			}
 
 			command.Parameters.Clear();
@@ -270,7 +270,7 @@ namespace FirebirdSql.Data.Firebird
 			foreach (DataRow row in spSchema.Rows)
 			{
 				dataTypes.RowFilter = String.Format(
-					CultureInfo.CurrentUICulture,
+					CultureInfo.CurrentCulture,
 					"TypeName = '{0}'",
 					row["PARAMETER_DATA_TYPE"]);
 
@@ -454,7 +454,7 @@ namespace FirebirdSql.Data.Firebird
 			}
 
 			sql.AppendFormat(
-				CultureInfo.CurrentUICulture,
+				CultureInfo.CurrentCulture,
 				this.sqlInsert,
 				this.GetQuotedIdentifier(tableName),
 				fields.ToString(),
@@ -501,7 +501,7 @@ namespace FirebirdSql.Data.Firebird
 
 					// Update SET clausule
 					sets.AppendFormat(
-						CultureInfo.CurrentUICulture,
+						CultureInfo.CurrentCulture,
 						setClausule,
 						this.GetQuotedIdentifier(schemaRow["BaseColumnName"]),
 						parameter.ParameterName);
@@ -544,7 +544,7 @@ namespace FirebirdSql.Data.Firebird
 					if ((bool)schemaRow["IsKey"])
 					{
 						where.AppendFormat(
-							CultureInfo.CurrentUICulture,
+							CultureInfo.CurrentCulture,
 							whereClausule2,
 							quotedId,
 							parameter.ParameterName);
@@ -560,7 +560,7 @@ namespace FirebirdSql.Data.Firebird
 								case "VARCHAR":
 								case "CHAR":
 									typeName = String.Format(
-										CultureInfo.CurrentUICulture,
+										CultureInfo.CurrentCulture,
 										"{0}({1})",
 										typeName,
 										schemaRow["ColumnSize"]);
@@ -569,7 +569,7 @@ namespace FirebirdSql.Data.Firebird
 								case "DECIMAL":
 								case "NUMERIC":
 									typeName = String.Format(
-										CultureInfo.CurrentUICulture,
+										CultureInfo.CurrentCulture,
 										"{0}({1},{2})",
 										typeName,
 										schemaRow["NumericPrecision"],
@@ -578,7 +578,7 @@ namespace FirebirdSql.Data.Firebird
 							}
 
 							where.AppendFormat(
-								CultureInfo.CurrentUICulture,
+								CultureInfo.CurrentCulture,
 								whereClausule1,
 								quotedId,
 								parameter.ParameterName,
@@ -587,7 +587,7 @@ namespace FirebirdSql.Data.Firebird
 						else
 						{
 							where.AppendFormat(
-								CultureInfo.CurrentUICulture,
+								CultureInfo.CurrentCulture,
 								whereClausule1,
 								quotedId,
 								parameter.ParameterName);
@@ -614,7 +614,7 @@ namespace FirebirdSql.Data.Firebird
 			}
 
 			sql.AppendFormat(
-				CultureInfo.CurrentUICulture,
+				CultureInfo.CurrentCulture,
 				this.sqlUpdate,
 				this.GetQuotedIdentifier(tableName),
 				sets.ToString(),
@@ -665,7 +665,7 @@ namespace FirebirdSql.Data.Firebird
 					if ((bool)schemaRow["IsKey"])
 					{
 						where.AppendFormat(
-							CultureInfo.CurrentUICulture,
+							CultureInfo.CurrentCulture,
 							whereClausule2,
 							quotedId,
 							parameter.ParameterName);
@@ -681,7 +681,7 @@ namespace FirebirdSql.Data.Firebird
 								case "VARCHAR":
 								case "CHAR":
 									typeName = String.Format(
-										CultureInfo.CurrentUICulture,
+										CultureInfo.CurrentCulture,
 										"{0}({1})",
 										typeName,
 										schemaRow["ColumnSize"]);
@@ -690,7 +690,7 @@ namespace FirebirdSql.Data.Firebird
 								case "DECIMAL":
 								case "NUMERIC":
 									typeName = String.Format(
-										CultureInfo.CurrentUICulture,
+										CultureInfo.CurrentCulture,
 										"{0}({1},{2})",
 										typeName,
 										schemaRow["NumericPrecision"],
@@ -699,7 +699,7 @@ namespace FirebirdSql.Data.Firebird
 							}
 
 							where.AppendFormat(
-								CultureInfo.CurrentUICulture,
+								CultureInfo.CurrentCulture,
 								whereClausule1,
 								quotedId,
 								parameter.ParameterName,
@@ -708,7 +708,7 @@ namespace FirebirdSql.Data.Firebird
 						else
 						{
 							where.AppendFormat(
-								CultureInfo.CurrentUICulture,
+								CultureInfo.CurrentCulture,
 								whereClausule1,
 								quotedId,
 								parameter.ParameterName);
@@ -735,7 +735,7 @@ namespace FirebirdSql.Data.Firebird
 			}
 
 			sql.AppendFormat(
-				CultureInfo.CurrentUICulture,
+				CultureInfo.CurrentCulture,
 				this.sqlDelete,
 				this.GetQuotedIdentifier(tableName),
 				where.ToString());
@@ -915,7 +915,7 @@ namespace FirebirdSql.Data.Firebird
 		private FbParameter CreateParameter(
 			DataRow schemaRow, int index, bool isWhereParameter)
 		{
-			string pname = String.Format(CultureInfo.CurrentUICulture, "@p{0}", index + 1);
+			string pname = String.Format(CultureInfo.CurrentCulture, "@p{0}", index + 1);
 			FbParameter parameter = new FbParameter(pname, (FbDbType)schemaRow["ProviderType"]);
 
 			parameter.Size = Convert.ToInt32(schemaRow["ColumnSize"], CultureInfo.InvariantCulture);

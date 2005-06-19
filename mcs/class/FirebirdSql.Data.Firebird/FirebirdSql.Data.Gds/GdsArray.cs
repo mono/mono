@@ -345,9 +345,10 @@ namespace FirebirdSql.Data.Gds
 			Charset		charset = this.db.Charset;
 			XdrStream	xdr		= new XdrStream(this.db.Charset);
 			int			type	= 0;
+			int			subtype = (this.Descriptor.Scale < 0) ? 2 : 0;
 
 			type = TypeHelper.GetFbType(this.Descriptor.DataType);
-			dbType = TypeHelper.GetDbDataType(this.Descriptor.DataType, 0, this.Descriptor.Scale);
+			dbType = TypeHelper.GetDbDataType(this.Descriptor.DataType, subtype, this.Descriptor.Scale);
 
 			while (i.MoveNext())
 			{
@@ -388,15 +389,15 @@ namespace FirebirdSql.Data.Gds
 						break;
 
 					case DbDataType.Date:
-						xdr.WriteDate(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat));
+						xdr.WriteDate(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat));
 						break;
 
 					case DbDataType.Time:
-						xdr.WriteTime(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat));
+						xdr.WriteTime(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat));
 						break;
 
 					case DbDataType.TimeStamp:
-						xdr.Write(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat));
+						xdr.Write(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat));
 						break;
 
 					default:

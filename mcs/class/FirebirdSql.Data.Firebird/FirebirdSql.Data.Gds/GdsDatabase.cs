@@ -278,7 +278,7 @@ namespace FirebirdSql.Data.Gds
 					// socketaddr_in (non XDR encoded)
 
 					// sin_port
-					portNumber = BitConverter.ToInt16(this.Receive.ReadBytes(2), 0);
+					portNumber = IscHelper.VaxInteger(this.Receive.ReadBytes(2), 0, 2);
 
 					// sin_Family
 					this.Receive.ReadBytes(2);

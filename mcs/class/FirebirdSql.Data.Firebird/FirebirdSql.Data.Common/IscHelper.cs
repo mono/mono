@@ -64,7 +64,7 @@ namespace FirebirdSql.Data.Common
 						 *		1 byte containing the number 1
 						 *		1 byte containing the version number
 						 */
-						info.Add(String.Format(CultureInfo.CurrentUICulture, "{0}.{1}", buffer[pos], buffer[pos + 1]));
+						info.Add(String.Format(CultureInfo.CurrentCulture, "{0}.{1}", buffer[pos], buffer[pos + 1]));
 						break;
 
 					case IscCodes.isc_info_db_id:
@@ -93,7 +93,7 @@ namespace FirebirdSql.Data.Common
 						 *		• 1	byte containing	the	implementation number
 						 *		• 1	byte containing	a “class” number, either 1 or 12
 						 */
-						info.Add(String.Format(CultureInfo.CurrentUICulture, "{0}.{1}.{2}", buffer[pos], buffer[pos + 1], buffer[pos + 2]));
+						info.Add(String.Format(CultureInfo.CurrentCulture, "{0}.{1}.{2}", buffer[pos], buffer[pos + 1], buffer[pos + 2]));
 						break;
 
 					case IscCodes.isc_info_no_reserve:
@@ -204,7 +204,6 @@ namespace FirebirdSql.Data.Common
 					//
 					// Database	operation counts
 					//
-
 					case IscCodes.isc_info_backout_count:
 						// Number of removals of a version of a	record
 						info.Add(VaxInteger(buffer, pos, length));
@@ -252,7 +251,6 @@ namespace FirebirdSql.Data.Common
 					//
 					// Misc
 					//
-
 					case IscCodes.isc_info_firebird_version:
 						info.Add(Encoding.Default.GetString(buffer, pos + 2, buffer[pos + 1]));
 						break;
@@ -302,6 +300,11 @@ namespace FirebirdSql.Data.Common
 						// Number of active	transactions
 						info.Add(VaxInteger(buffer, pos, length));
 						break;
+
+                    case IscCodes.isc_info_user_names:
+                        // Active user name
+                        info.Add(Encoding.Default.GetString(buffer, pos + 1, buffer[pos]));
+                        break;
 				}
 
 				pos += length;

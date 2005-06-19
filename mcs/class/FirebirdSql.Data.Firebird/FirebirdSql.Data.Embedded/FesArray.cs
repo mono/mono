@@ -341,15 +341,16 @@ namespace FirebirdSql.Data.Embedded
 
 		private	byte[] EncodeSlice(ArrayDesc desc, Array sourceArray, int length)
 		{
-			BinaryWriter	writer = new BinaryWriter(new MemoryStream());
-			IEnumerator		i	 = sourceArray.GetEnumerator();
+			BinaryWriter	writer	= new BinaryWriter(new MemoryStream());
+			IEnumerator		i		= sourceArray.GetEnumerator();
 			Charset			charset = this.db.Charset;
-			DbDataType		dbType = DbDataType.Array;
-			int				type = 0;
+			DbDataType		dbType	= DbDataType.Array;
+			int				type	= 0;
+			int				subtype = (this.Descriptor.Scale < 0) ? 2 : 0;
 
 			// Infer data types
 			type = TypeHelper.GetFbType(this.Descriptor.DataType);
-			dbType = TypeHelper.GetDbDataType(this.Descriptor.DataType, 0,	this.Descriptor.Scale);
+			dbType = TypeHelper.GetDbDataType(this.Descriptor.DataType, subtype,	this.Descriptor.Scale);
 
 			while (i.MoveNext())
 			{
@@ -436,16 +437,16 @@ namespace FirebirdSql.Data.Embedded
 					break;
 
 					case DbDataType.Date:
-						writer.Write(TypeEncoder.EncodeDate(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat)));
+						writer.Write(TypeEncoder.EncodeDate(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat)));
 						break;
 					
 					case DbDataType.Time:
-						writer.Write(TypeEncoder.EncodeTime(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat)));
+						writer.Write(TypeEncoder.EncodeTime(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat)));
 						break;
 
 					case DbDataType.TimeStamp:
-						writer.Write(TypeEncoder.EncodeDate(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat)));
-						writer.Write(TypeEncoder.EncodeTime(Convert.ToDateTime(i.Current, CultureInfo.CurrentUICulture.DateTimeFormat)));
+						writer.Write(TypeEncoder.EncodeDate(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat)));
+						writer.Write(TypeEncoder.EncodeTime(Convert.ToDateTime(i.Current, CultureInfo.CurrentCulture.DateTimeFormat)));
 						break;
 					
 					default:

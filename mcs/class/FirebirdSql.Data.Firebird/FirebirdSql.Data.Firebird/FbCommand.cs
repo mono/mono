@@ -320,6 +320,27 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
+        internal bool IsSelectCommand
+        {
+            get 
+            {
+                if (this.statement.StatementType == DbStatementType.Select ||
+                    this.statement.StatementType == DbStatementType.SelectForUpdate)
+                {
+                    return true;
+                }
+                return false; 
+            }
+        }
+
+        internal bool IsDDLCommand
+        {
+            get
+            {
+                return this.statement.StatementType == DbStatementType.DDL;
+            }
+        }
+
 		#endregion
 
 		#region Constructors
@@ -495,7 +516,7 @@ namespace FirebirdSql.Data.Firebird
 
 				try
 				{
-					this.ExecuteCommand(CommandBehavior.Default, false);
+					this.ExecuteCommand(CommandBehavior.Default);
 
 					if (this.CommandType == CommandType.StoredProcedure)
 					{
@@ -585,7 +606,8 @@ namespace FirebirdSql.Data.Firebird
 		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteScalar"]/*'/>
 		public object ExecuteScalar()
 		{
-			object val = null;
+			DbValue[]	values	= null;
+			object		val		= null;
 
 			lock (this)
 			{
@@ -593,18 +615,25 @@ namespace FirebirdSql.Data.Firebird
 
 				try
 				{
-					this.ExecuteCommand(CommandBehavior.Default, true);
+					this.ExecuteCommand(CommandBehavior.Default);
 
-					// Gets	only the values	of the first row
-					DbValue[] values = this.statement.Fetch();
+					// Gets	only the values	of the first row or
+					// the output parameters values if the CommandType is
+					// StoredProcedure
+					if (this.CommandType == CommandType.StoredProcedure)
+					{
+						values = this.statement.GetOuputParameters();
+						this.SetOutputParameters(values);
+					}
+					else
+					{
+						values = this.statement.Fetch();
+					}
+
+					// Get the return value
 					if (values != null && values.Length > 0)
 					{
 						val = values[0].Value;
-					}
-
-					if (this.CommandType == CommandType.StoredProcedure)
-					{
-						this.SetOutputParameters();
 					}
 
 					if (this.HasImplicitTransaction)
@@ -679,6 +708,11 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void SetOutputParameters()
 		{
+			this.SetOutputParameters(null);
+		}
+
+		internal void SetOutputParameters(DbValue[] outputParameterValues)
+		{
 			if (this.parameters.Count > 0 && this.statement != null)
 			{
 				IEnumerator paramEnumerator = this.parameters.GetEnumerator();
@@ -687,7 +721,11 @@ namespace FirebirdSql.Data.Firebird
 				if (this.statement != null &&
 					this.statement.StatementType == DbStatementType.StoredProcedure)
 				{
-					DbValue[] values = (DbValue[])this.statement.GetOuputParameters();
+					DbValue[] values = outputParameterValues;
+					if (outputParameterValues == null)
+					{
+						values = (DbValue[])this.statement.GetOuputParameters();
+					}
 
 					if (values != null && values.Length > 0)
 					{
@@ -710,7 +748,9 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void CommitImplicitTransaction()
 		{
-			if (this.transaction != null && this.implicitTransaction)
+			if (this.implicitTransaction && 
+				this.transaction != null &&
+				this.transaction.Transaction != null)
 			{
 				try
 				{
@@ -736,7 +776,9 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void RollbackImplicitTransaction()
 		{
-			if (this.transaction != null && this.implicitTransaction)
+			if (this.implicitTransaction &&
+				this.transaction != null &&
+				this.transaction.Transaction != null)
 			{
 				try
 				{
@@ -779,11 +821,6 @@ namespace FirebirdSql.Data.Firebird
 				this.statement.Dispose();
 				this.statement = null;
 			}
-		}
-
-		internal bool IsDDLCommand()
-		{
-			return this.statement.StatementType == DbStatementType.DDL;
 		}
 
 		#endregion
@@ -994,6 +1031,10 @@ namespace FirebirdSql.Data.Firebird
 			// Prepare the statement if	needed
 			if (!this.statement.IsPrepared)
 			{
+                // Close the inner DataReader if needed
+                this.CloseReader();
+
+                // Reformat the SQL statement if needed
 				string sql = this.commandText;
 
 				if (this.commandType == CommandType.StoredProcedure)
@@ -1001,8 +1042,10 @@ namespace FirebirdSql.Data.Firebird
 					sql = this.BuildStoredProcedureSql(sql, returnsSet);
 				}
 
+                // Prepare the command
 				this.statement.Prepare(this.ParseNamedParameters(sql));
 
+                // Describe input parameters
 				this.DescribeInput();
 
 				// Add this	command	to the active command list
@@ -1013,6 +1056,11 @@ namespace FirebirdSql.Data.Firebird
 				// Close statement for subsequently	executions
 				this.Close();
 			}
+		}
+
+		private void ExecuteCommand(CommandBehavior behavior)
+		{
+			this.ExecuteCommand(behavior, false);
 		}
 
 		private void ExecuteCommand(CommandBehavior behavior, bool returnsSet)

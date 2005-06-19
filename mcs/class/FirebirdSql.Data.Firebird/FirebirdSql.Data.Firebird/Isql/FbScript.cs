@@ -59,8 +59,28 @@ namespace FirebirdSql.Data.Firebird.Isql
 		/// <param name="sqlFilename">The filename for the SQL file.</param>
 		public FbScript(string sqlFilename)
 		{
+			string			script = "";
+			StreamReader	reader = null;
+
+			try
+			{
+				reader = File.OpenText(sqlFilename);
+				script = reader.ReadToEnd();
+			}
+			catch
+			{
+				throw;
+			}
+			finally
+			{
+				if (reader != null)
+				{
+					reader.Close();
+				}
+			}
+
 			this.results		= new StringCollection();
-			this.parser			= new StringParser(RemoveComments(File.OpenText(sqlFilename).ReadToEnd()), false);
+			this.parser			= new StringParser(RemoveComments(script), false);
 			this.parser.Token	= ";";
 		}
 
@@ -136,6 +156,7 @@ namespace FirebirdSql.Data.Firebird.Isql
 			int				i				= 0;
 			int				length			= source.Length;
 			bool			insideComment	= false;
+			bool			insideString	= false;
 
 			while (i < length)
 			{
@@ -152,24 +173,49 @@ namespace FirebirdSql.Data.Firebird.Isql
 				}
 				else
 				{
-					if (source[i] == '/' || (source[i] == '-' && ((i < length - 1) && source[i + 1] == '-')))
+					if (source[i] == '\'' || source[i] == '/' || (source[i] == '-' && ((i < length - 1) && source[i + 1] == '-')))
 					{
 						switch (source[i])
 						{
-							case '/':
-								if ((i < length - 1) && (source[i + 1] == '*'))
+							case '\'':
+								if (!insideString && !insideComment)
 								{
-									i++;
-									insideComment = true;
+									insideString = true;
 								}
+								else
+								{
+									if (insideString)
+									{
+										insideString = false;
+									}
+								}
+								result.Append(source[i]);
+								break;
+
+							case '/':
+                                if (!insideString && (i < length - 1) && (source[i + 1] == '*'))
+                                {
+                                    i++;
+                                    insideComment = true;
+                                }
+                                else
+                                {
+                                    if ((source[i + 1] == '*'))
+                                    {
+                                        Console.WriteLine("");
+                                    }
+                                    result.Append(source[i]);
+                                }
 								break;
 
 							case '-':
-								if ((i < length - 1) && (source[i + 1] == '-'))
+								if (!insideString && (i < length - 1) && (source[i + 1] == '-'))
 								{
 									i++;
-									while (source[i] != '\n')
+									while (i < length && source[i] != '\n')
+									{
 										i++;
+									}
 									i--;
 								}
 								break;

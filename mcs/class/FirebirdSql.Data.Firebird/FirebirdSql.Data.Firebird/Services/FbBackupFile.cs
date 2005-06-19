@@ -1,4 +1,4 @@
-﻿/*
+/*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
  *	   The contents of this file are subject to the Initial 
@@ -20,8 +20,8 @@ using System;
 
 namespace FirebirdSql.Data.Firebird.Services
 {
-	/// <include file='Doc/en_EN/FbBackup.xml' path='doc/struct[@name="FbBackupFile"]/overview/*'/>
-	public struct FbBackupFile
+	/// <include file='Doc/en_EN/FbBackup.xml' path='doc/class[@name="FbBackupFile"]/overview/*'/>
+	public class FbBackupFile
 	{
 		#region Fields
 
@@ -32,14 +32,14 @@ namespace FirebirdSql.Data.Firebird.Services
 
 		#region Properties
 
-		/// <include file='Doc/en_EN/FbBackup.xml' path='doc/struct[@name="FbBackupFile"]/property[@name="BackupFile"]/*'/>
+		/// <include file='Doc/en_EN/FbBackup.xml' path='doc/class[@name="FbBackupFile"]/property[@name="BackupFile"]/*'/>
 		public string BackupFile
 		{
 			get { return this.backupFile; }
 			set { this.backupFile = value; }
 		}
 
-		/// <include file='Doc/en_EN/FbBackup.xml' path='doc/struct[@name="FbBackupFile"]/property[@name="BackupLength"]/*'/>
+		/// <include file='Doc/en_EN/FbBackup.xml' path='doc/class[@name="FbBackupFile"]/property[@name="BackupLength"]/*'/>
 		public int BackupLength
 		{
 			get { return this.backupLength; }
@@ -50,10 +50,10 @@ namespace FirebirdSql.Data.Firebird.Services
 
 		#region Constructors
 
-		/// <include file='Doc/en_EN/FbBackup.xml' path='doc/struct[@name="FbBackupFile"]/constructor[@name="ctor(system.String,System.Int32)"]/*'/>
+		/// <include file='Doc/en_EN/FbBackup.xml' path='doc/class[@name="FbBackupFile"]/constructor[@name="ctor(system.String,System.Int32)"]/*'/>
 		public FbBackupFile(string fileName, int fileLength)
 		{
-			this.backupFile		= fileName;
+			this.backupFile	= fileName;
 			this.backupLength	= fileLength;
 		}
 

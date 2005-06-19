@@ -89,7 +89,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* PK_TABLE_NAME */
 				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " and pk.rdb$relation_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " and pk.rdb$relation_name = @p{0}", index++);
 				}
 
 				/* FK_TABLE_CATALOG	*/
@@ -105,13 +105,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* FK_TABLE_NAME */
 				if (restrictions.Length >= 6 && restrictions[5] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, " and fk.rdb$relation_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, " and fk.rdb$relation_name = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY fk.rdb$constraint_name, pk.rdb$relation_name, pkseg.rdb$field_position");

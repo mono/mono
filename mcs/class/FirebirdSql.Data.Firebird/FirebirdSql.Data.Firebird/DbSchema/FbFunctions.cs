@@ -71,7 +71,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* FUNCTION_NAME */
 				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, "rdb$function_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, "rdb$function_name = @p{0}", index++);
 				}
 
 				/* IS_SYSTEM_FUNCTION */
@@ -82,13 +82,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 						where.Append(" AND ");
 					}
 
-					where.AppendFormat(CultureInfo.CurrentUICulture, "rdb$system_flag = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, "rdb$system_flag = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY rdb$function_name");

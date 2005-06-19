@@ -316,13 +316,13 @@ namespace FirebirdSql.Data.Common
 			if (this.tableName != null && this.tableName.Length != 0)
 			{
 				sql.AppendFormat(
-					CultureInfo.CurrentUICulture, " AND X.RDB$RELATION_NAME = '{0}'", tableName);
+					CultureInfo.CurrentCulture, " AND X.RDB$RELATION_NAME = '{0}'", tableName);
 			}
 
 			if (this.fieldName != null && this.fieldName.Length != 0)
 			{
 				sql.AppendFormat(
-					CultureInfo.CurrentUICulture, " AND X.RDB$FIELD_NAME = '{0}'", fieldName);
+					CultureInfo.CurrentCulture, " AND X.RDB$FIELD_NAME = '{0}'", fieldName);
 			}
 
 			return sql.ToString();
@@ -337,7 +337,7 @@ namespace FirebirdSql.Data.Common
 			if (this.fieldName != null && this.fieldName.Length != 0)
 			{
 				sql.AppendFormat(
-					CultureInfo.CurrentUICulture, "WHERE X.RDB$FIELD_NAME = '{0}'", rdbFieldName);
+					CultureInfo.CurrentCulture, "WHERE X.RDB$FIELD_NAME = '{0}'", rdbFieldName);
 			}
 
 			sql.Append(" ORDER BY X.RDB$DIMENSION");

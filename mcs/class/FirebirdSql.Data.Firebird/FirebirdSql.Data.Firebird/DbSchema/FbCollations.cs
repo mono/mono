@@ -68,13 +68,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				/* COLLATION_NAME */
 				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
-					where.AppendFormat(CultureInfo.CurrentUICulture, "coll.rdb$collation_name = @p{0}", index++);
+					where.AppendFormat(CultureInfo.CurrentCulture, "coll.rdb$collation_name = @p{0}", index++);
 				}
 			}
 
 			if (where.Length > 0)
 			{
-				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+				sql.AppendFormat(CultureInfo.CurrentCulture, " WHERE {0} ", where.ToString());
 			}
 
 			sql.Append(" ORDER BY cs.rdb$character_set_name, coll.rdb$collation_name");

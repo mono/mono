@@ -205,20 +205,28 @@ namespace FirebirdSql.Data.Common
 					return DbDataType.Text;
 
 				case IscCodes.blr_short:
-					if (scale < 0)
-					{
-						return DbDataType.Decimal;
-					}
+                    if (subType == 2)
+                    {
+                        return DbDataType.Decimal;
+                    }
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
 					else
 					{
 						return DbDataType.SmallInt;
 					}
 
 				case IscCodes.blr_long:
-					if (scale < 0)
-					{
-						return DbDataType.Decimal;
-					}
+                    if (subType == 2)
+                    {
+                        return DbDataType.Decimal;
+                    }
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
 					else
 					{
 						return DbDataType.Integer;
@@ -227,10 +235,14 @@ namespace FirebirdSql.Data.Common
 				case IscCodes.blr_quad:
 				case IscCodes.blr_int64:
 				case IscCodes.blr_blob_id:
-					if (scale < 0)
-					{
-						return DbDataType.Decimal;
-					}
+                    if (subType == 2)
+                    {
+                        return DbDataType.Decimal;
+                    }
+                    else if (subType == 1)
+                    {
+                        return DbDataType.Numeric;
+                    }
 					else
 					{
 						return DbDataType.BigInt;

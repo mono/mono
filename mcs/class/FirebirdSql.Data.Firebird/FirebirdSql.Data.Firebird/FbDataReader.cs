@@ -58,11 +58,12 @@ namespace FirebirdSql.Data.Firebird
 			FbCommand command, FbConnection connection, CommandBehavior behavior)
 		{
 			this.position			= STARTPOS;
-			this.recordsAffected	= -1;
 			this.command			= command;
 			this.behavior			= behavior;
 			this.connection			= connection;
 			this.fields				= this.command.GetFieldsDescriptor();
+
+			this.UpdateRecordsAffected();
 		}
 
 		#endregion
@@ -131,13 +132,13 @@ namespace FirebirdSql.Data.Firebird
 		/// <include file='Doc/en_EN/FbDataReader.xml' path='doc/class[@name="FbDataReader"]/property[@name="RecordsAffected"]/*'/>
 		public int RecordsAffected
 		{
-			get { return this.IsClosed ? this.recordsAffected : -1; }
+			get { return this.recordsAffected; }
 		}
 
 		/// <include file='Doc/en_EN/FbDataReader.xml' path='doc/class[@name="FbDataReader"]/property[@name="HasRows"]/*'/>
 		public bool HasRows
 		{
-			get { return true; }
+			get { return this.command.IsSelectCommand; }
 		}
 
 		/// <include file='Doc/en_EN/FbDataReader.xml' path='doc/class[@name="FbDataReader"]/method[@name="Close"]/*'/>
@@ -145,16 +146,14 @@ namespace FirebirdSql.Data.Firebird
 		{
 			bool closeConnection = false;
 
-			if (this.isClosed)
+			if (this.IsClosed)
 			{
 				return;
 			}
 
 			this.isClosed = true;
 			this.position = STARTPOS;
-
-			this.UpdateRecordsAffected();
-
+			
 			if (this.connection != null)
 			{
 				if ((this.behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
@@ -670,7 +669,7 @@ namespace FirebirdSql.Data.Firebird
 
 		private void CheckState()
 		{
-			if (this.isClosed)
+			if (this.IsClosed)
 			{
 				throw new InvalidOperationException("Invalid attempt of read when the reader is closed.");
 			}

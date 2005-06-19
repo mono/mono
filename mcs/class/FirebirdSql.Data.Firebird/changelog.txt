@@ -2,6 +2,251 @@ Firebird ADO.NET Data provider for .NET and Mono
 ================================================
 
 
+
+2005-06-13 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep4.cs:
+	* FirebirdSql.Data.firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep7.cs:
+
+		- Allow configuration of quoted identifiers usage. (Thanks to Ernesto Cullen for his help.)
+
+	* FirebirdSql.WizardFramework/WizardForm.cs:
+
+		- Allow to cancel wizard execution using ESC key.
+
+	* FirebirdSql.Data.Firebird/Isql/FbBatchExecution.cs:
+
+		- Updated documentation comments.
+
+		- Added execution of SET GENERATOR commands.
+
+2005-06-11 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep7.cs:
+
+		- Add parameter information for DML statements.
+
+2005-06-07 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/XdrStream.cs:
+
+		- Fixed bug on numeric and decimal reads and writes.
+
+	* FirebirdSql.Data.Gds/GdsArray.cs:
+	* FirebirdSql.Data.Embedded/FesArray.cs:
+
+		- Fixed bug on numeri and decimal array encoding.
+
+
+2005-06-05 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/GdsConnection.cs:
+
+		- Fixed problem with mono on linux when reading port number for firebird events
+		connection (Gabriel Reid)
+
+
+------------------ 1.7 Final Release ----------------------
+
+2005-05-28 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterDataSetGenerator.cs
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/VSExtensibility.cs
+
+		- Bug fixes for the DataSet generation and Visual Studio integration.
+
+	* Update assembly version.
+
+	* FirebirdSql.Data.Firebird/FbDataAdapter.cs:
+
+		- Change to ensure the command has a valid connection before perform an update.
+
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterDesigner.cs
+
+		- Force command initialization on .NET 1.0 and .NET 1.1
+
+2005-05-25 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/GdsConnection.cs:
+
+		- Correctly disable Nagle Algorithm.
+
+2005-05-22 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Services/FbBackupFile.cs:
+
+		- Changed to be class instead of an struct, to allow it be used in C++
+
+2005-05-22 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbDatabaseInfo.cs:
+	* FirebirdSql.Data.Common/IscHelper.cs:
+
+		- Implemented new property ActiveUSers (Tracker item #1198051)
+
+2005-05-18 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Isql/FbBatchExecution.cs:
+
+		- Fixed constructor bug. (Thanks to Julien Ferraro)
+
+2005-05-04 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+	* FirebirdSql.Data.Firebird/FbDataReader.cs:
+
+		- HasRows property will return true only for Select commands.
+
+2005-04-30 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Close DataReader when preparing a new command.
+
+2005-04-29 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Common/TypeHelper.cs:
+	* FirebirdSql.Data.Firebird/Common/DbField.cs:
+	* FirebirdSql.Data.Firebird/Gds/XdrStream.cs:
+
+		- Fixed Decimal and Numeric field handling.
+
+2005-04-27 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbException.cs:
+	* FirebirdSql.Data.Common/BinaryEncoding.cs:
+	
+		- Fixed .NET Compact Framework Beta 2 build problems.
+
+2005-04-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Better handling of comments and strings.
+
+	* FirebirdSql.Data.Firebird/Isql/FbBatchExecution.cs:
+
+		- Fix bug on transaction handling.
+
+2005-04-22 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/Charset.cs:
+
+		- Try to make the SupportedCharsets property thread safe.
+
+2005-04-14 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+
+	* FirebirdSql.Data.Firebird/Isql/FbBatchExecution.cs:
+
+		- Added a new constructor.
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Try to avoid problem with / inside comments (needs tetsting)
+
+
+------------------ Release Candidate 3 ----------------------
+
+
+2005-04-11 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbConnection.cs:
+
+		- Make usage of the isc_dpb_overwrite parameter in CreateDatabase method.
+
+2005-04-9 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Embedded/FesStatement.cs:
+
+		- Try to fix performance problems when reading array fields using the embedded server.
+
+2005-04-7 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/DbValue.cs:
+
+		- Fixed bug in GetString method when reading 
+		Clob values several times (Thanks to Mike Scott for his feedback).
+
+2005-04-6 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Fixed output parameter handling.
+
+2005-04-3 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Try to avoid breaking change on sp calls using ExecuteScalar method.
+
+2005-03-31 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Close the isql file after have readed the contents (Thanks to for Muthu Annamalai his feedback).
+
+2005-03-31 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterDataSetGenerator.cs:
+
+		- Changed the way the DataSet is added to the designer (and serialized into source code)
+
+2005-03-27 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbDataReader.cs:
+
+		- Allow access to the RecordsAffected property when the reader is not closed (Thanks to Andrea Sansottera for his feedback)
+
+	* FirebirdSql.Data.Firebird/FbDataAdapter.cs:
+
+		- Changes to improve the RowUpdated event handling, they
+		needs testing (Thanks to Andrea Sansottera for his feedback)
+
+2005-03-26 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbDataAdapter.cs:
+
+		- Improved error reporting on Updates (Thanks to Andrea Sansottera for his feedback)
+
+2005-03-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Fixed problem with implicit transaction Commit's and Rollback's
+		when the objects are collected by the GC.
+
+2005-03-15 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Changed all references to CurrentUICulture to CurrentCulture.
+
+2005-03-11 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Isql/FbBatchExecution.cs:
+
+		- Added CREATE DESCENDING INDEX command handling. (Thanks to Daniel Letecky)
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Try to improve handling of -- comments (changes doesn't cover all cases of quoted ' usage)
+
+	* FirebirdSql.Data.Gds/GdsStatement.cs
+
+		- Changed encoding of relation, field, alias and owner names, to use
+		the connection character set.
+
+2005-03-07 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Fixed comment removal (Thanks to Daniel Letecky)
+
+2005-02-28 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbConnectionStringBuilder.cs:
+
+		- Fixed problem with space handling. Added NUnit test case.
+
 ------------------ Release Candidate 2 ----------------------
 
 2005-02-21 Carlos Guzman Alvarez  <carlosga@telefonica.net>
