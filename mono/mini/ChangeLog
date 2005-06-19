@@ -1,3 +1,9 @@
+2005-06-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-long.brg: Fix long->i4/u4 conversion rules.
+
+	* basic-long.cs: Add tests for long->u4 conversion.
+
 2005-06-18  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c: Take mono_get_domainvar out of macros. This makes sure
