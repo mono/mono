@@ -1,3 +1,7 @@
+2005-06-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (wait_for_tids_or_state_change): Add missing locking.
+
 2005-06-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: fix the index in the socket array for writable/error
