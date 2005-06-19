@@ -1,3 +1,9 @@
+2005-06-08 Ilya Kharmatsky <ilyak-at-mainsoft.com>
+	
+	* CacheDependency.cs - added TARGET_JVM directives in places,
+	  where file watching is using (Mainsoft's implementation currently
+	  doesn't support the feature).
+	  
 2005-05-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheEntry.cs: credits for this patch should go to mcs. it catched
