@@ -1,0 +1,4 @@
+2005-06-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Collection.cs KeyedCollection.cs ReadOnlyCollection.cs: New files.
+
