@@ -1,3 +1,9 @@
+2005-06-08 Ilya Kharmatsky <ilyak-at-mainsoft.com>
+
+    * SmtpMail.cs: Added TARGET_JVM directive in Send method,
+    where we will use in J2EE configuration the "native" java
+    support for obtaining the network address of localhost.
+    
 2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SmtpClient.cs:
