@@ -1056,7 +1056,11 @@ namespace System.Web
 			internal void Start ()
 			{
 				Reset ();
+#if !TARGET_J2EE
 				ExecuteNextAsync (null);
+#else
+				ExecuteNext(null);
+#endif
 			}
 
 			internal void ExecuteNextAsync (Exception lasterror)
@@ -1131,6 +1135,37 @@ namespace System.Web
 				ExecuteNext ((Exception) obj);
 			}
 
+#if TARGET_J2EE
+			private Exception HandleJavaException(Exception obj)
+			{
+				Exception lasterror = null;
+
+				if (obj is System.Reflection.TargetInvocationException ) 
+				{
+					lasterror = obj.InnerException;
+#if DEBUG
+					if (lasterror is java.lang.reflect.InvocationTargetException) {
+						Console.WriteLine("Got java.lang.reflect.InvocationTargetException caused by");
+						java.lang.reflect.InvocationTargetException e1 = (java.lang.reflect.InvocationTargetException)lasterror;
+						Console.WriteLine("{0},{1}", e1.getTargetException().GetType(), e1.getTargetException().Message);
+						Console.WriteLine(e1.getTargetException().StackTrace);
+					} else
+#endif
+					if (lasterror is vmw.@internal.j2ee.StopExecutionException) 
+					{
+						lasterror = null;
+						_app.CompleteRequest ();
+					}
+#if DEBUG
+					else {
+						Console.WriteLine("Error 1!!! {0}:{1}", lasterror.GetType(), lasterror.Message);
+						Console.WriteLine(lasterror.StackTrace);
+					}
+#endif				
+				}
+				return lasterror;
+			}
+#endif
 			private Exception ExecuteState (IStateHandler state, ref bool readysync)
 			{
 				Exception lasterror = null;
@@ -1146,13 +1181,23 @@ namespace System.Web
 							_app.Context.EndTimeoutPossible ();
 						}
 					}
-
+#if TARGET_J2EE		//Catch case of aborting by timeout
+					if (_app.Context.TimedOut) {
+						_app.CompleteRequest ();
+						return null;
+					}
+#endif
 					if (state.PossibleToTimeout) {
 						// Async Execute
 						_app.Context.TryWaitForTimeout ();
 					}
 
 					readysync = state.CompletedSynchronously;
+#if TARGET_J2EE		// Finishing execution for End without error
+				}catch (vmw.@internal.j2ee.StopExecutionException){
+					lasterror = null;
+					_app.CompleteRequest ();
+#endif
 				} catch (ThreadAbortException obj) {
 					object o = obj.ExceptionState;
 					Type type = (o != null) ? o.GetType () : null;
@@ -1165,7 +1210,11 @@ namespace System.Web
 						_app.CompleteRequest ();
 					}
 				} catch (Exception obj) {
+#if TARGET_J2EE
+					lasterror = HandleJavaException(obj);
+#else
 					lasterror = obj;
+#endif
 				}
 
 				return lasterror;
@@ -1203,10 +1252,16 @@ namespace System.Web
 
 #region Constructor
 
+#if TARGET_J2EE
+		public HttpApplication ()
+		{
+		}
+#else
 		public HttpApplication ()
 		{
 			assemblyLocation = GetType ().Assembly.Location;
 		}
+#endif
 
 #endregion
 
@@ -1341,7 +1396,14 @@ namespace System.Web
 			HttpContext.Context = _savedContext;
 			RestorePrincipal ();
 		}
-
+#if TARGET_J2EE
+		internal void SetPrincipal (IPrincipal principal)
+		{
+		}
+		internal void RestorePrincipal ()
+		{
+		}
+#else
 		internal void SetPrincipal (IPrincipal principal)
 		{
 			// Don't overwrite _savedUser if called from inside a step
@@ -1359,7 +1421,7 @@ namespace System.Web
 			Thread.CurrentPrincipal = _savedUser;
 			_savedUser = null;
 		}
-
+#endif
 		internal void ClearError ()
 		{
 			_lastError = null;
@@ -1583,6 +1645,14 @@ namespace System.Web
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpSessionState Session {
+#if TARGET_J2EE
+			get {
+				if (null != _Context && null != _Context.Session)
+					return _Context.Session;
+
+				throw new HttpException ("Failed to get session object");
+			}
+#else
 			get {
 				if (null != _Session)
 					return _Session;
@@ -1592,6 +1662,7 @@ namespace System.Web
 
 				throw new HttpException ("Failed to get session object");
 			}
+#endif
 		}
 
 		[Browsable (false)]

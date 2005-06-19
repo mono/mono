@@ -113,6 +113,12 @@ namespace System.Web
 			 _WorkerRequest = WorkerRequest;
 		}
 
+#if TARGET_J2EE
+	public HttpWorkerRequest WorkerRequest{
+		get{ return _WorkerRequest; }
+	}
+#endif
+
 		internal void InitializeWriter ()
 		{
 			// We cannot do this in the .ctor because HttpWriter uses configuration and
@@ -156,6 +162,8 @@ namespace System.Web
 			ArrayList oHeaders = new ArrayList (_Headers);
 
 			oHeaders.Add (new HttpResponseHeader ("X-Powered-By", "Mono"));
+
+#if !TARGET_J2EE
 			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ", CultureInfo.InvariantCulture);
 			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
 			oHeaders.Add (date_header);
@@ -167,6 +175,7 @@ namespace System.Web
 				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentLength,
 								      _lContentLength.ToString ()));
 			}
+#endif
 
 			// Apache2 only auto-adds 'charset=blah' for text/plain and text/html
 			if (_sContentType != null) {
@@ -229,7 +238,11 @@ namespace System.Web
 			foreach (HttpResponseHeader oHeader in oHeaders)
 				oHeader.SendContent (_WorkerRequest);
 			
+#if !TARGET_J2EE //in J2EE env. we are setting headers into
+                //HttpServletResponse instance -> headers are
+                //still not sent
 			_bHeadersSent = true;
+#endif
 		}
 
 		public string Status
@@ -737,7 +750,11 @@ namespace System.Web
 				return;
 
 			if (_Context.TimeoutPossible)
+#if !TARGET_J2EE
 				Thread.CurrentThread.Abort (new StepCompleteRequest ());
+#else
+				throw new vmw.@internal.j2ee.StopExecutionException();
+#endif
 
 			Flush ();
 			_bEnded = true;
@@ -981,6 +998,11 @@ namespace System.Web
 
 		public void WriteFile (string filename, bool readIntoMemory)
 		{
+#if TARGET_J2EE
+			if ((this.Request != null) && ((filename.Length <= 2)
+					|| ((filename[0] != '\\') && (filename[1] != ':'))))
+				filename = Request.MapPath(filename);
+#endif
 			FileStream fs = null;
 			try {
 				fs = File.OpenRead (filename);
@@ -999,6 +1021,11 @@ namespace System.Web
 		public void WriteFile (string filename, long offset, long size)
 		{
 			FileStream fs = null;
+#if TARGET_J2EE
+			if ((this.Request != null) && ((filename.Length <= 2)
+				|| ((filename[0] != '\\') && (filename[1] != ':'))))
+				filename = Request.MapPath(filename);
+#endif
 			try {
 				fs = File.OpenRead (filename);
 				WriteFromStream (fs, offset, size, 30702);
@@ -1023,6 +1050,9 @@ namespace System.Web
 		[MonoTODO()]
 		internal void OnCookieAdd (HttpCookie cookie)
 		{
+#if TARGET_J2EE	//naive implementation
+			Request.Cookies.Add(cookie);
+#endif
 		}
 
 		[MonoTODO("Do we need this?")]

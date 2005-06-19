@@ -38,6 +38,10 @@ using System.Text;
 using System.Web.Configuration;
 using System.Web.Util;
 
+#if TARGET_J2EE
+using vmw.common;
+#endif
+
 namespace System.Web {
 	[MonoTODO("Review security in all path access function")]
 	public sealed class HttpRequest {
@@ -98,6 +102,9 @@ namespace System.Web {
 		bool checkedQueryString;
 #endif
 
+#if TARGET_J2EE
+		private string _sGhFilePath;
+#endif
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
 			_iTotalBytes = -1;
@@ -577,6 +584,25 @@ namespace System.Web {
 				return _sFilePath;
 			}
 		}
+
+#if TARGET_J2EE
+		internal string GhFilePath {
+			get {
+				if (null == _sGhFilePath) {
+					_sGhFilePath = FilePath;
+					if (_sGhFilePath == null)
+						return null;
+
+					if (_sGhFilePath.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+						_sGhFilePath = _sGhFilePath.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
+					if (_sGhFilePath.StartsWith(HttpRuntime.AppDomainAppVirtualPath))
+						_sGhFilePath = _sGhFilePath.Substring(HttpRuntime.AppDomainAppVirtualPath.Length);
+				}
+
+				return _sGhFilePath;
+			}
+		}
+#endif
 
 		HttpFileCollection files;
 		public HttpFileCollection Files {
@@ -1120,6 +1146,15 @@ namespace System.Web {
 			if (_WorkerRequest == null)
 				throw new HttpException ("No HttpWorkerRequest!!!");
 
+#if TARGET_J2EE
+			if (baseVirtualDir.Equals(BaseVirtualDir))
+			{
+				string val =  System.Web.GH.PageMapper.GetFromMapPathCache(virtualPath);
+				if (val != null)
+					return val;
+			}
+#endif
+
 			if (virtualPath == null || virtualPath.Length == 0)
 				virtualPath = ".";
 			else
@@ -1127,7 +1162,10 @@ namespace System.Web {
 
 			if (virtualPath.IndexOf (':') != -1)
 				throw new ArgumentException ("Invalid path -> " + virtualPath);
-
+#if TARGET_J2EE
+			if (virtualPath.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+				return 	virtualPath;
+#endif
 			if (System.IO.Path.DirectorySeparatorChar != '/')
 				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
 

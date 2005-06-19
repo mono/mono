@@ -1,3 +1,18 @@
+2005-06-19  Svetlana Zholkovsky <svetlanaz-at-mainsoft.com>
+		* In following classes added TARGET_J2EE or/and TARGET_JVM
+		  directives:
+			- HttpResponse.cs
+			- HttpRuntime.cs
+			- HttpUtility.cs
+			- CapabilitiesLoader.cs
+			- HttpApplication.cs
+			- HttpApplicationFactory.cs
+			- HttpContext.cs
+			- HttpException.cs
+			- HttpRequest.cs
+		* Added Mainsoft's specific files :
+			- GhHttpAsyncResult.jvm.cs
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: avoid one intermediate buffer when reading the request
