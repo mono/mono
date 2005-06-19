@@ -1,3 +1,7 @@
+2005-06-19  Konstantin Triger <kostat@mainsoft.com>
+
+	System.Data.vmwcsproj: keeping up to date with move of Locale.cs and MonoTODOAttribute.cs
+
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Added reference to System.Configuration.

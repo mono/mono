@@ -18,6 +18,8 @@
 			<Include>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Consts.cs" SubType="Code" BuildAction="Compile"/>
+<File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
+ <File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\Aggregation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\ArithmeticExpressions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\BooleanExpressions.cs" SubType="Code" BuildAction="Compile"/>
@@ -119,7 +121,6 @@
 				<File RelPath="System.Data\ITableMappingCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\KeyRestrictionBehavior.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\LoadOption.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\MappingType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\MergeFailedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\MergeFailedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -151,7 +152,6 @@
 				<File RelPath="System.Data\StatementType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\StrongTypingException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\SyntaxErrorException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\TODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\TypeDataSetGeneratorException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\TypedDataSetGenerator.cs" SubType="Code" BuildAction="None"/>
 				<File RelPath="System.Data\UniqueConstraint.cs" SubType="Code" BuildAction="Compile"/>
@@ -166,7 +166,6 @@
 				<File RelPath="System.Data\XmlDiffLoader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlReadMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlSchemaDataImporter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Data\XmlSchemaMapper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlSchemaWriter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data\XmlWriteMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Data.Common\CatalogLocation.cs" SubType="Code" BuildAction="Compile"/>
