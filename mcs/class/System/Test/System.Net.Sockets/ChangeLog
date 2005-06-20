@@ -1,3 +1,7 @@
+2005-06-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SocketTest.cs: added new test for Select.
+
 2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SocketTest.cs: added test for bug #75158 (incompatible address).

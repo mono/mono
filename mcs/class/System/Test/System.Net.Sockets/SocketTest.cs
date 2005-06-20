@@ -2,12 +2,15 @@
 //
 // Authors:
 //    Brad Fitzpatrick (brad@danga.com)
+//    Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // (C) Copyright 2003 Brad Fitzpatrick
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
 using System.Collections;
+using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
@@ -154,7 +157,68 @@ namespace MonoTests.System.Net.Sockets
 				sock.Close ();
 			}
 		}
-	}
 
+		[Test]
+		public void TestSelect1 ()
+		{
+			Socket srv = CreateServer ();
+			ClientSocket clnt = new ClientSocket (srv.LocalEndPoint);
+			Thread th = new Thread (new ThreadStart (clnt.ConnectSleepClose));
+			Socket acc = null;
+			try {
+				th.Start ();
+				acc = srv.Accept ();
+				clnt.Write ();
+				ArrayList list = new ArrayList ();
+				ArrayList empty = new ArrayList ();
+				list.Add (acc);
+				Socket.Select (list, empty, empty, 100);
+				Assertion.AssertEquals ("#01", 0, empty.Count);
+				Assertion.AssertEquals ("#02", 1, list.Count);
+				Socket.Select (empty, list, empty, 100);
+				Assertion.AssertEquals ("#03", 0, empty.Count);
+				Assertion.AssertEquals ("#04", 1, list.Count);
+				Socket.Select (list, empty, empty, -1);
+				Assertion.AssertEquals ("#05", 0, empty.Count);
+				Assertion.AssertEquals ("#06", 1, list.Count);
+			} finally {
+				if (acc != null)
+					acc.Close ();
+				srv.Close ();
+			}
+		}
+
+		static Socket CreateServer ()
+		{
+			Socket sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			sock.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+			sock.Listen (1);
+			return sock;
+		}
+
+		class ClientSocket {
+			Socket sock;
+			EndPoint ep;
+
+			public ClientSocket (EndPoint ep)
+			{
+				this.ep = ep;
+				sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			}
+
+			public void ConnectSleepClose ()
+			{
+				sock.Connect (ep);
+				Thread.Sleep (2000);
+				sock.Close ();
+			}
+
+			public void Write ()
+			{
+				byte [] b = new byte [10];
+				sock.Send (b);
+			}
+		}
+	}
 }
 
