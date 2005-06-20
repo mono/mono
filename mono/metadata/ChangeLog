@@ -1,5 +1,11 @@
 2005-06-20  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_is_assignable_from): Use a custom version of
+	mono_class_has_parent() to make things work for generic instances;
+	fix #75300.
+
+2005-06-20  Martin Baulig  <martin@ximian.com>
+
 	* loader.c (method_from_methodspec): Apply a patch from
 	Kamil Skalski <nazgul@nemerle.org> to fix #75296.
 
