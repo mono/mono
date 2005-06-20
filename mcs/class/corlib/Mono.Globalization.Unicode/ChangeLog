@@ -1,5 +1,11 @@
 2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : was missing most important
+	  kind of blocks - equivalent expansions (e.g. invariant mappings).
+	  More readable mappings.
+
+2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* mono-tailoring-source.txt : new file. It describes tailoring
 	  information. Basically examined under .NET 1.x.
 	* create-mscompat-collation-table.cs : consume the file above.

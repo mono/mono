@@ -401,13 +401,15 @@ sw.Close ();
 			foreach (Tailoring t in tailorings) {
 				if (t.Alias != 0)
 					continue;
+				Result.Write ("/*{0}*/", t.LCID);
 				indexes.Add (t.LCID, count);
 				char [] values = t.ItemToCharArray ();
 				counts.Add (t.LCID, values.Length);
 				foreach (char c in values) {
-					Result.Write ("'\\u{0:X04}', ", (int) c);
+					Result.Write ("'\\x{0:X}', ", (int) c);
+					if (++count % 16 == 0)
+						Result.WriteLine (" // {0:X04}", count - 16);
 				}
-				Result.WriteLine ("// {0}", t.LCID);
 			}
 			Result.WriteLine ("};");
 
@@ -425,7 +427,7 @@ sw.Close ();
 					foreach (Tailoring t2 in tailorings)
 						if (t2.LCID == t.LCID)
 							french = t2.FrenchSort;
-				Result.WriteLine ("new TailoringInfo ({0}, {1}, {2}, {3}), ", t.LCID, idx, cnt, french ? "true" : "false");
+				Result.WriteLine ("new TailoringInfo ({0}, 0x{1:X}, {2}, {3}), ", t.LCID, idx, cnt, french ? "true" : "false");
 			}
 			Result.WriteLine ("};");
 		}
@@ -543,6 +545,13 @@ sw.Close ();
 				t.AddSortKeyMap (ParseTailoringSourceValue (source),
 					b);
 			}
+			idx = s.IndexOf ('=');
+			if (idx > 0)
+				t.AddReplacementMap (
+					ParseTailoringSourceValue (
+						s.Substring (0, idx).Trim ()),
+					ParseTailoringSourceValue (
+						s.Substring (idx + 1).Trim ()));
 		}
 
 		void ParseDerivedAge (string filename)
@@ -3133,6 +3142,11 @@ sw.Close ();
 			items.Add (new SortKeyMap (source, sortkey));
 		}
 
+		public void AddReplacementMap (string source, string replace)
+		{
+			items.Add (new ReplacementMap (source, replace));
+		}
+
 		public char [] ItemToCharArray ()
 		{
 			ArrayList al = new ArrayList ();
@@ -3187,6 +3201,33 @@ sw.Close ();
 				// null terminate
 				for (int i = 0; i < 5; i++)
 					ret [i + Source.Length + 2] = (char) SortKey [i];
+				return ret;
+			}
+		}
+
+		class ReplacementMap : ITailoringMap
+		{
+			public readonly string Source;
+			public readonly string Replace;
+
+			public ReplacementMap (string source, string replace)
+			{
+				Source = source;
+				Replace = replace;
+			}
+
+			public char [] ToCharArray ()
+			{
+				char [] ret = new char [Source.Length + Replace.Length + 3];
+				ret [0] = (char) 03; // kind:ReplaceMap
+				int pos = 1;
+				for (int i = 0; i < Source.Length; i++)
+					ret [pos++] = Source [i];
+				// null terminate
+				pos++;
+				for (int i = 0; i < Replace.Length; i++)
+					ret [pos++] = Replace [i];
+				// null terminate
 				return ret;
 			}
 		}
