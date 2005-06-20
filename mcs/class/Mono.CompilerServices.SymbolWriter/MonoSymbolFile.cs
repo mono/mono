@@ -573,7 +573,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 		}
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 		}

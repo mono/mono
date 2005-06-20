@@ -1,3 +1,7 @@
+2005-06-20  Chris Toshok  <toshok@ximian.com>
+
+	* MonoSymbolFile.cs (MonoSymbolFile.Dispose): make public.
+
 2005-05-25  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SymbolWriterImpl.cs: An implementation of ISymbolWriter. It is just a
