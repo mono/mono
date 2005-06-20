@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Security.Policy;
 using NUnit.Framework;
 
@@ -352,5 +353,28 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("!e2.Equals(e1)", !e2.Equals (e1));
 		}
 #endif
+		[Test]
+		public void AppDomain_NoPermissionRequestEvidence ()
+		{
+			// PermissionRequestEvidence is only used druing policy resolution
+			// and can't be accessed using the Evidence property
+			Evidence e = AppDomain.CurrentDomain.Evidence;
+			foreach (object o in e) {
+				if (o is PermissionRequestEvidence)
+					Fail ("Found PermissionRequestEvidence in AppDomain.CurrentDomain.Evidence");
+			}
+		}
+
+		[Test]
+		public void Assembly_NoPermissionRequestEvidence ()
+		{
+			// PermissionRequestEvidence is only used druing policy resolution
+			// and can't be accessed using the Evidence property
+			Evidence e = Assembly.GetExecutingAssembly ().Evidence;
+			foreach (object o in e) {
+				if (o is PermissionRequestEvidence)
+					Fail ("Found PermissionRequestEvidence in Assembly.GetExecutingAssembly.Evidence");
+			}
+		}
 	}
 }

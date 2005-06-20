@@ -1,3 +1,8 @@
+2005-06-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EvidenceTest.cs: Ensure that PermissionRequestEvidence doesn't
+	show in Assembly and AppDomain evidences.
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameTest.cs: Empty names are only verified in NET_2_0.
