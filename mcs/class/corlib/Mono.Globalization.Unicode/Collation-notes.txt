@@ -74,7 +74,7 @@
 	Actually, even without any IgnoreXXX flags (i.e. "None"), there are 
 	many characters that are ignored ("completely ignorable").
 
-	For LCID 101/1125(div), '\ufdf2' is completely ignorable.
+	Except for LCID 101/1125(div), '\ufdf2' is completely ignorable.
 	This rule even applies to CompareOptions.None.
 
 *** Normalizers
@@ -703,7 +703,7 @@
 	  SortKey : 0C 02 (9F8), 0C 03 - 0C E1 (normal numbers), 0C FF (INF.)
 
 	9 (E) latin letters (alphabets), mixing alphabetical symbols
-	  Alphabets, A to Z, mixing alphabetical symbols.
+	  Alphabets, A to Z, mixing alphabetical symbols. See below.
 	  F8-2B8 except for (1BB-1BD and 1C0-1C3), but not sequential.
 	  2E0-2E3.
 
@@ -714,6 +714,98 @@
 
 	  There are CJK compatibility characters (3800-) and letterlike
 	  symbols (2100-) in those A-to-Z area, ordered by character name.
+
+	  Primary weights are sometimes culture-dependent.
+		FIXME: [0E 0D], [0E 0E], [0E 4B], [0E 75], [0E B2] are unknown
+		02: A
+		03: C4 in sk|vi
+		04: C1 in is|pl|vi
+		05-08: CJKext
+		09: B
+		0A: C
+		0B: 10D in hr|lt|lv|pl, 107 in pl
+		0C: C7 in az|tr, 10D in cs|sk, 106 in hr
+		0F-19: CJKext
+		1A: D
+		1B: 189 (African D)
+		1C: 2A3 (DZ Digraph)
+		1D: 1C6 (dz) in hr
+		1E: 110 (D with stroke) in hr
+		1F-20: CJKext
+		21: E
+		22: 18F=259 in az, E9 in is, 119 in pl, EA in vi, 1EBE-1EC7 in vi
+		23: F
+		24: CJKext
+		25: G
+		26: 11F in az|tr, 123 in lv
+		28-2B: CJKext
+		2C: H
+		2D: 267 (Heng with hook)
+		2E: 33CB in az, 33CA in tr
+		2F-31: CJKext
+		32: I
+		33: CD in is, 79 in lt
+		34: CJKext
+		35: J
+		36: K
+		37-47: CJKext
+		48: L
+		49: 2114
+		4A: 1C9 in hr
+		4C: 142 in pl
+		4D-50: CJKext
+		51: M
+		52-6F: CJKext
+		70: N
+		71: 2116
+		72: 144 in pl
+		73: F1 in es, 1CC in hr
+		74: 14B
+		76-7B: CJKext
+		7C: O
+		7D: F6 in az|hu|tr, 151 in hu, F3 in is|pl, F4 in sk|vi, 1ED0-1ED9 in vi
+		7E: P
+		7F-88: CJKext
+		89: Q
+		8A: R
+		8B: 211E
+		8C: 211F
+		8D: 159 in cs|sk
+		8E-90: CJKext
+		91: S
+		92: 2108
+		93: 2120
+		94-95: CJKext
+		96: 17F (LATIN SMALL LONG S)
+		97: 15F in az|tr, 161 in cs|hr|lt|lv|sk|sl, 7A,179-17C in et, 15B in pl
+		98: 17E in et, 15F in ro, 15B in sl
+		99: T
+		9A: 2121
+		9B: CJKext
+		9C: 2122
+		9D: 2A6
+		9E: 166
+		9F: U
+		A0: FA in is, 1B0,1EE8-1EF1 in vi
+		A1: FC in az|tr, 56,57 in et, FC,171 in hu, FB in vi
+		A2: V
+		A3: 2123
+		A4: W
+		A5: CJKext
+		A6: X
+		A7: Y
+		A8: FD in is
+		A9: Z
+		AA: 292
+		AB: DE in is, 17E in lt|lv, 17A in pl
+		AC: E6 in da|is, 1E3 in is, 17C in pl, 17E in sl
+		AD: 17E in cs|hr|sk, E5 in fi, F6,F8 in is 17A in sl
+		AE: F6,F8,151 in da
+		AF: E4 in fi
+		B0: F6,F8,151 in fi
+		B1: E5 in da, "aa" in da
+		B3: 1BE
+		B4: 298
 
 	10 culture dependent letters (general)
 	  0F: 386-3F2 ... Greek and Coptic
@@ -1043,7 +1135,8 @@
 	With French cultures, diacritical marks must be put in front of the
 	character being decorated (aka French ordering).
 	French ordering does not affect only on some diacritics (Japanese
-	voice mark is not affected).
+	voice mark is not affected). FIXME: I doubt it, because the algorithm
+	does not seem to allow it.
 
 	Some other cultures might also have different ones, but not obvious.
 

@@ -20,12 +20,14 @@ namespace Mono.Globalization.Unicode
 		bool ignoreCase;
 		bool ignoreKanaType;
 		TextInfo textInfo; // for ToLower().
+		bool frenchSort;
 
 		#region GetSortKey()
 
 		public SimpleCollator (CultureInfo culture)
 		{
 			textInfo = culture.TextInfo;
+			// FIXME: fill frenchSort from CultureInfo.
 		}
 
 		public SortKey GetSortKey (string s)
@@ -62,7 +64,7 @@ namespace Mono.Globalization.Unicode
 			SetOptions (options);
 
 			int end = start + length;
-			buf.Initialize (options, s);
+			buf.Initialize (options, s, frenchSort);
 			for (int n = start; n < end; n++) {
 				int i = s [n];
 				if (IsIgnorable (i))

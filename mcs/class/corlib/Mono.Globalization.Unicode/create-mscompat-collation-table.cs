@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Text;
 using System.Xml;
 
 namespace Mono.Globalization.Unicode
@@ -213,13 +214,13 @@ namespace Mono.Globalization.Unicode
 
 		byte [] ignorableFlags = new byte [char.MaxValue + 1];
 
-		double [] unicodeAge = new double [char.MaxValue + 1];
+		static double [] unicodeAge = new double [char.MaxValue + 1];
+
+		ArrayList tailorings = new ArrayList ();
 
 		void Run (string [] args)
 		{
 			string dirname = args.Length == 0 ? "downloaded" : args [0];
-			FillIgnorables ();
-
 			ParseSources (dirname);
 			Console.Error.WriteLine ("parse done.");
 
@@ -228,10 +229,28 @@ namespace Mono.Globalization.Unicode
 			Console.Error.WriteLine ("generation done.");
 			Serialize ();
 			Console.Error.WriteLine ("serialization done.");
+/*
+StreamWriter sw = new StreamWriter ("agelog.txt");
+for (int i = 0; i < char.MaxValue; i++) {
+bool shouldBe = false;
+switch (Char.GetUnicodeCategory ((char) i)) {
+case UnicodeCategory.Format: case UnicodeCategory.OtherNotAssigned:
+	shouldBe = true; break;
+}
+if (unicodeAge [i] >= 3.1)
+	shouldBe = true;
+//if (IsIgnorable (i) != shouldBe)
+sw.WriteLine ("{1} {2} {3} {0:X04} {4} {5}", i, unicodeAge [i], IsIgnorable (i), IsIgnorableSymbol (i), char.GetUnicodeCategory ((char) i), IsIgnorable (i) != shouldBe ? '!' : ' ');
+}
+sw.Close ();
+*/
 		}
 
 		void Serialize ()
 		{
+			// Tailorings
+			SerializeTailorings ();
+
 			// Ignorables
 			Result.WriteLine ("static byte [] ignorableFlags = new byte [] {");
 			for (int i = 0; i <= char.MaxValue; i++) {
@@ -373,6 +392,44 @@ namespace Mono.Globalization.Unicode
 			Result.WriteLine ();
 		}
 
+		void SerializeTailorings ()
+		{
+			Hashtable indexes = new Hashtable ();
+			Hashtable counts = new Hashtable ();
+			Result.WriteLine ("static char [] tailorings = new char [] {");
+			int count = 0;
+			foreach (Tailoring t in tailorings) {
+				if (t.Alias != 0)
+					continue;
+				indexes.Add (t.LCID, count);
+				char [] values = t.ItemToCharArray ();
+				counts.Add (t.LCID, values.Length);
+				foreach (char c in values) {
+					Result.Write ("'\\u{0:X04}', ", (int) c);
+				}
+				Result.WriteLine ("// {0}", t.LCID);
+			}
+			Result.WriteLine ("};");
+
+			Result.WriteLine ("static TailoringInfo [] tailoringInfos = new TailoringInfo [] {");
+			foreach (Tailoring t in tailorings) {
+				int target = t.Alias != 0 ? t.Alias : t.LCID;
+				if (!indexes.ContainsKey (target)) {
+					Console.Error.WriteLine ("WARNING: no corresponding definition for tailoring alias. From {0} to {1}", t.LCID, t.Alias);
+					continue;
+				}
+				int idx = (int) indexes [target];
+				int cnt = (int) counts [target];
+				bool french = t.FrenchSort;
+				if (t.Alias != 0)
+					foreach (Tailoring t2 in tailorings)
+						if (t2.LCID == t.LCID)
+							french = t2.FrenchSort;
+				Result.WriteLine ("new TailoringInfo ({0}, {1}, {2}, {3}), ", t.LCID, idx, cnt, french ? "true" : "false");
+			}
+			Result.WriteLine ("};");
+		}
+
 		#region Parse
 
 		void ParseSources (string dirname)
@@ -392,11 +449,100 @@ namespace Mono.Globalization.Unicode
 			string koXML = dirname + "/common/collation/ko.xml";
 
 			ParseDerivedAge (derivedAge);
+
+			FillIgnorables ();
+
 			ParseJISOrder (cp932); // in prior to ParseUnidata()
 			ParseUnidata (unidata);
 			ParseDerivedCoreProperties (derivedCoreProps);
 			ParseScripts (scripts);
 			ParseCJK (chXML, jaXML, koXML);
+
+			ParseTailorings ("mono-tailoring-source.txt");
+		}
+
+		void ParseTailorings (string filename)
+		{
+			Tailoring t = null;
+			int line = 0;
+			using (StreamReader sr = new StreamReader (filename)) {
+				try {
+					while (sr.Peek () >= 0) {
+						line++;
+						ProcessTailoringLine (ref t,
+							sr.ReadLine ().Trim ());
+					}
+				} catch (Exception) {
+					Console.Error.WriteLine ("ERROR at line {0}", line);
+					throw;
+				}
+			}
+		}
+
+		// For now this is enough.
+		string ParseTailoringSourceValue (string s)
+		{
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < s.Length; i++) {
+				if (s.StartsWith ("\\u")) {
+					sb.Append ((char) int.Parse (
+						s.Substring (2, 4), NumberStyles.HexNumber),
+						1);
+					i += 5;
+				}
+			else
+				sb.Append (s [i]);
+			}
+			return sb.ToString ();
+		}
+
+		void ProcessTailoringLine (ref Tailoring t, string s)
+		{
+			int idx = s.IndexOf ('#');
+			if (idx > 0)
+				s = s.Substring (0, idx).Trim ();
+			if (s.Length == 0 || s [0] == '#')
+				return;
+			if (s [0] == '@') {
+				idx = s.IndexOf ('=');
+				if (idx > 0)
+					t = new Tailoring (
+						int.Parse (s.Substring (1, idx - 1)),
+						int.Parse (s.Substring (idx + 1)));
+				else
+					t = new Tailoring (int.Parse (s.Substring (1)));
+				tailorings.Add (t);
+				return;
+			}
+			if (s.StartsWith ("*FrenchSort")) {
+				t.FrenchSort = true;
+				return;
+			}
+			string d = "*Diacritical";
+			if (s.StartsWith (d)) {
+				idx = s.IndexOf ("->");
+				t.AddDiacriticalMap (
+					byte.Parse (s.Substring (d.Length, idx - d.Length).Trim (),
+						NumberStyles.HexNumber),
+					byte.Parse (s.Substring (idx + 2).Trim (),
+						NumberStyles.HexNumber));
+				return;
+			}
+			idx = s.IndexOf (':');
+			if (idx > 0) {
+				string source = s.Substring (0, idx).Trim ();
+				string [] l = s.Substring (idx + 1).Trim ().Split (' ');
+				byte [] b = new byte [5];
+				for (int i = 0; i < 5; i++) {
+					if (l [i] == "*")
+						b [i] = 0;
+					else
+						b [i] = byte.Parse (l [i],
+							NumberStyles.HexNumber);
+				}
+				t.AddSortKeyMap (ParseTailoringSourceValue (source),
+					b);
+			}
 		}
 
 		void ParseDerivedAge (string filename)
@@ -428,6 +574,7 @@ namespace Mono.Globalization.Unicode
 						unicodeAge [i] = double.Parse (value);
 				}
 			}
+			unicodeAge [0] = double.MaxValue; // never be supported
 		}
 
 		void ParseUnidata (string filename)
@@ -2427,6 +2574,20 @@ namespace Mono.Globalization.Unicode
 		#endregion
 
 		#region IsIgnorable
+/*
+		static bool IsIgnorable (int i)
+		{
+			if (unicodeAge [i] >= 3.1)
+				return true;
+			switch (char.GetUnicodeCategory ((char) i)) {
+			case UnicodeCategory.OtherNotAssigned:
+			case UnicodeCategory.Format:
+				return true;
+			}
+			return false;
+		}
+*/
+
 		// FIXME: In the future use DerivedAge.txt to examine character
 		// versions and set those ones that have higher version than
 		// 1.0 as ignorable.
@@ -2928,6 +3089,106 @@ namespace Mono.Globalization.Unicode
 					return v;
 			}
 			return l1 - l2;
+		}
+	}
+
+	class Tailoring
+	{
+		int lcid;
+		int alias;
+		bool frenchSort;
+		ArrayList items = new ArrayList ();
+
+		public Tailoring (int lcid)
+			: this (lcid, 0)
+		{
+		}
+
+		public Tailoring (int lcid, int alias)
+		{
+			this.lcid = lcid;
+			this.alias = alias;
+		}
+
+		public int LCID {
+			get { return lcid; }
+		}
+
+		public int Alias {
+			get { return alias; }
+		}
+
+		public bool FrenchSort {
+			get { return frenchSort; }
+			set { frenchSort = value; }
+		}
+
+		public void AddDiacriticalMap (byte target, byte replace)
+		{
+			items.Add (new DiacriticalMap (target, replace));
+		}
+
+		public void AddSortKeyMap (string source, byte [] sortkey)
+		{
+			items.Add (new SortKeyMap (source, sortkey));
+		}
+
+		public char [] ItemToCharArray ()
+		{
+			ArrayList al = new ArrayList ();
+			foreach (ITailoringMap m in items)
+				al.AddRange (m.ToCharArray ());
+			return al.ToArray (typeof (char)) as char [];
+		}
+
+		interface ITailoringMap
+		{
+			char [] ToCharArray ();
+		}
+
+		class DiacriticalMap : ITailoringMap
+		{
+			public readonly byte Target;
+			public readonly byte Replace;
+
+			public DiacriticalMap (byte target, byte replace)
+			{
+				Target = target;
+				Replace = replace;
+			}
+
+			public char [] ToCharArray ()
+			{
+				char [] ret = new char [3];
+				ret [0] = (char) 02; // kind:DiacriticalMap
+				ret [1] = (char) Target;
+				ret [2] = (char) Replace;
+				return ret;
+			}
+		}
+
+		class SortKeyMap : ITailoringMap
+		{
+			public readonly string Source;
+			public readonly byte [] SortKey;
+
+			public SortKeyMap (string source, byte [] sortkey)
+			{
+				Source = source;
+				SortKey = sortkey;
+			}
+
+			public char [] ToCharArray ()
+			{
+				char [] ret = new char [Source.Length + 7];
+				ret [0] = (char) 01; // kind:SortKeyMap
+				for (int i = 0; i < Source.Length; i++)
+					ret [i + 1] = Source [i];
+				// null terminate
+				for (int i = 0; i < 5; i++)
+					ret [i + Source.Length + 2] = (char) SortKey [i];
+				return ret;
+			}
 		}
 	}
 }

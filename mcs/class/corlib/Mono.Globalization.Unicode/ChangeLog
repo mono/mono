@@ -1,3 +1,17 @@
+2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-tailoring-source.txt : new file. It describes tailoring
+	  information. Basically examined under .NET 1.x.
+	* create-mscompat-collation-table.cs : consume the file above.
+	* MSCompatUnicodeTable.template : now tailorings is not a stub.
+	* CollationDataStructures.txt : minor fixes.
+	* SortKeyBuffer.cs,
+	  SimpleCollator.cs : added FrenchSort support.
+	* Collation-notes.txt : added description on Latin primary weights.
+	* ldml-limited.rng : added note.
+	* create-tailorings.cs : added note. more serialization (but won't be 
+	  used anyways).
+
 2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SortKeyBuffer.cs : non-primary character is added to previous 

@@ -1,3 +1,10 @@
+//
+// It is not used to provide our collation tailoring sources, but generates
+// easy-to-read summary of LDML tailorings for ASCII-based developers (us).
+//
+// The actual tailoring source is mono-tailoring-source.txt.
+//
+
 using System;
 using System.Collections;
 using System.IO;
@@ -137,6 +144,10 @@ namespace Mono.Globalization.Unicode
 			tailorings.Add (t);
 		}
 
+		public int Count {
+			get { return tailorings.Count; }
+		}
+
 		public void Serialize (TextWriter w)
 		{
 			w.WriteLine ("// Culture: {0} ({1})", culture.LCID, culture.Name);
@@ -209,8 +220,57 @@ namespace Mono.Globalization.Unicode
 
 			tailorings.Sort (TailoringStoreComparer.Instance);
 
+			Serialize (Console.Out);
+		}
+
+		void Serialize (TextWriter output)
+		{
+			output.WriteLine ("static char [] tailorings = new char [] {");
 			foreach (TailoringStore ts in tailorings)
-				ts.Serialize (Console.Out);
+				ts.Serialize (output);
+			output.WriteLine ("};");
+
+			int [] tailoringIndex = new int [0x80];
+			int [] tailoringCount = new int [0x80];
+			bool [] frenchSort = new bool [0x80];
+			int current = 0;
+			foreach (TailoringStore ts in tailorings) {
+				int lcid = ts.Culture.LCID;
+				tailoringIndex [lcid] = current;
+				tailoringCount [lcid] = ts.Count;
+				frenchSort [lcid] = ts.FrenchSort;
+				current += ts.Count;
+			}
+			// process alias
+			foreach (TailoringStore ts in tailorings) {
+				if (ts.Alias == null)
+					continue;
+				int lcid = ts.Culture.LCID;
+				int target = new CultureInfo (ts.Alias).LCID;
+				tailoringIndex [lcid] = tailoringIndex [target];
+				tailoringCount [lcid] = tailoringCount [target];
+				frenchSort [lcid] = frenchSort [target];
+			}
+
+			output.WriteLine (@"
+/*typedef*/ struct TailoringInfo {
+public TailoringInfo (ushort lcid, uint idx, ushort count, bool french) { Lcid = lcid; TailoringIndex = idx; TailoringCount = count; FrenchSort = french; }
+public readonly ushort Lcid;
+/*guint32*/ public readonly uint TailoringIndex;
+/*guint16*/ public readonly ushort TailoringCount;
+/*gboolean*/ public readonly bool FrenchSort;
+}/* TailoringInfo;*/");
+
+			output.WriteLine ("static TailoringInfo [] tailoringIndexes = new TailoringInfo [] {");
+			for (int i = 0; i < tailoringIndex.Length; i++)
+				output.WriteLine ("new TailoringInfo ({0}, {1}, {2}, {3}), ",
+					i,
+					tailoringIndex [i],
+					tailoringCount [i],
+					frenchSort [i]);
+			output.WriteLine ("};");
+
+			output.Flush ();
 		}
 
 		TailoringStore ProcessLdml (XmlDocument doc)

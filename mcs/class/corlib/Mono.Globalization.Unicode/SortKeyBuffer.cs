@@ -15,6 +15,8 @@ namespace Mono.Globalization.Unicode
 
 		string source;
 		bool processLevel2;
+		bool frenchSort;
+		bool frenchSorted;
 
 		public SortKeyBuffer ()
 		{
@@ -32,10 +34,11 @@ namespace Mono.Globalization.Unicode
 			l1b = l2b = l3b = l4sb = l4tb = l4kb = l4wb = l5b = null;
 		}
 
-		internal void Initialize (CompareOptions options, string s)
+		internal void Initialize (CompareOptions options, string s, bool frenchSort)
 		{
 			int len = s.Length;
 			processLevel2 = (options & CompareOptions.IgnoreNonSpace) == 0;
+			this.frenchSort = frenchSort;
 
 			// For Korean text it is likely to be much bigger (for
 			// Jamo), but even in ko-KR most of the compared
@@ -182,6 +185,11 @@ namespace Mono.Globalization.Unicode
 
 		public SortKey GetResult ()
 		{
+			if (frenchSort && !frenchSorted) {
+				Array.Reverse (l2b);
+				frenchSorted = true;
+			}
+
 			l2 = GetOptimizedLength (l2b, l2, 2);
 			l3 = GetOptimizedLength (l3b, l3, 2);
 			bool hasJapaneseWeight = (l4s > 0);

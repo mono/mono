@@ -41,19 +41,19 @@
 	whose max value is char.MaxValue+1.
 
 	// Holds sortkey basis.
-	char [*] category;
-	char [*] level1;
-	char [*] level2;
-	char [*] level3;
-	char [*] ignorableFlags; // 1:complete, 2:symbol, 3:nonspace
+	guint8 [*] category;
+	guint8 [*] level1;
+	guint8 [*] level2;
+	guint8 [*] level3;
+	guint8 [*] ignorableFlags; // 1:complete, 2:symbol, 3:nonspace
 	gunichar [*] widthCompat;
 
 	// Holds special arrays for CJK order which is culture dependent.
-	ushort [*] cjkCHS;
-	ushort [*] cjkCHT;
-	ushort [*] cjkJA;
-	ushort [*] cjkKO;
-	char [*] cjkKOlv2;
+	guint16 [*] cjkCHS;
+	guint16 [*] cjkCHT;
+	guint16 [*] cjkJA;
+	guint16 [*] cjkKO;
+	guint8 [*] cjkKOlv2;
 	gunichar [whole_tailoring_count] tailorings;
 	CollationSource [culture_count] collationSources;
 
