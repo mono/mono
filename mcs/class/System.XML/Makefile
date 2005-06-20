@@ -5,12 +5,6 @@ include ../../build/rules.make
 LIBRARY = System.Xml.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-ifeq ($(PROFILE),atomic)
-SCARY_LIB=
-else
-SCARY_LIB=/lib:$(prefix)/lib /noconfig
-endif
-
 lib_file := $(wildcard ../lib/$(PROFILE)/System.Xml.dll)
 ifndef lib_file
 # In the basic profile, System.Xml.dll is _not_ a dependency of mcs.exe.  So, don't use boot compilation.
@@ -28,7 +22,7 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll /nowarn:0162 /nowarn:0618 /nowarn:0612
+LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:0162 /nowarn:0618 /nowarn:0612
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
 EXTRA_DISTFILES = \
