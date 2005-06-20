@@ -1,5 +1,10 @@
 2005-06-20  Martin Baulig  <martin@ximian.com>
 
+	* loader.c (method_from_methodspec): Apply a patch from
+	Kamil Skalski <nazgul@nemerle.org> to fix #75296.
+
+2005-06-20  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_init): Reverted Zoltan's last change; it
 	breaks generics.
 
