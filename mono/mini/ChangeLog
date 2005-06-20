@@ -1,3 +1,10 @@
+2005-06-18  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini.c: Take mono_get_domainvar out of macros. This makes sure
+	that we do not depend on undefined C behavior: the order stuff
+	gets evaluated within an expression. Fixes mono when compiled on
+	GCC 4.
+
 2005-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Allow STACK_PTR as input to SWITCH.
