@@ -1,3 +1,8 @@
+2005-06-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (centum_tests): Move System.XML ...
+	(default_centum_tests): ... here.
+
 2005-06-17  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (centum_tests): Add System.XML.

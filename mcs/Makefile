@@ -22,13 +22,11 @@ centum_tests := \
 	class/System.Security \
 	class/System.Web \
 	class/System.Web.Services \
-# Doesn't pass on 2.0
-#	class/System.XML \
 	tests \
 	errors
 #	class/System
 
-default_centum_tests := $(centum_tests)
+default_centum_tests := $(centum_tests) class/System.XML
 
 net_2_0_centum_tests := $(centum_tests)
 
