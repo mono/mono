@@ -1997,12 +1997,10 @@ namespace Mono.CSharp {
 			ArrayList list = new ArrayList ();
 			if (at.IsGenericInstance)
 				list.Add (at);
-			else {
-				for (Type bt = at.BaseType; bt != null; bt = bt.BaseType)
-					list.Add (bt);
+			for (Type bt = at.BaseType; bt != null; bt = bt.BaseType)
+				list.Add (bt);
 
-				list.AddRange (TypeManager.GetInterfaces (at));
-			}
+			list.AddRange (TypeManager.GetInterfaces (at));
 
 			bool found_one = false;
 
