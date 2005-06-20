@@ -15,6 +15,7 @@ namespace Mono.Globalization.Unicode
 	{
 		SortKeyBuffer buf = new SortKeyBuffer ();
 		// CompareOptions expanded.
+		bool ignoreNonSpace; // used in IndexOf()
 		bool ignoreSymbols;
 		bool ignoreWidth;
 		bool ignoreCase;
@@ -22,30 +23,25 @@ namespace Mono.Globalization.Unicode
 		TextInfo textInfo; // for ToLower().
 		bool frenchSort;
 
-		#region GetSortKey()
-
 		public SimpleCollator (CultureInfo culture)
 		{
 			textInfo = culture.TextInfo;
 			// FIXME: fill frenchSort from CultureInfo.
 		}
 
-		public SortKey GetSortKey (string s)
-		{
-			return GetSortKey (s, CompareOptions.None);
-		}
-
-		public SortKey GetSortKey (string s, CompareOptions options)
-		{
-			return GetSortKey (s, 0, s.Length, options);
-		}
-
 		void SetOptions (CompareOptions options)
 		{
+			this.ignoreNonSpace = (options & CompareOptions.IgnoreNonSpace) != 0;
 			this.ignoreSymbols = (options & CompareOptions.IgnoreSymbols) != 0;
 			this.ignoreWidth = (options & CompareOptions.IgnoreWidth) != 0;
 			this.ignoreCase = (options & CompareOptions.IgnoreCase) != 0;
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
+		}
+
+		string GetExpansion (int i)
+		{
+			// FIXME: handle tailorings
+			return Uni.GetExpansion ((char) i);
 		}
 
 		int FilterOptions (int i)
@@ -57,6 +53,18 @@ namespace Mono.Globalization.Unicode
 			if (ignoreKanaType)
 				i = Uni.ToKanaTypeInsensitive (i);
 			return i;
+		}
+
+		#region GetSortKey()
+
+		public SortKey GetSortKey (string s)
+		{
+			return GetSortKey (s, CompareOptions.None);
+		}
+
+		public SortKey GetSortKey (string s, CompareOptions options)
+		{
+			return GetSortKey (s, 0, s.Length, options);
 		}
 
 		SortKey GetSortKey (string s, int start, int length, CompareOptions options)
@@ -71,7 +79,7 @@ namespace Mono.Globalization.Unicode
 					continue;
 				i = FilterOptions (i);
 
-				string expansion = Uni.GetExpansion ((char) i);
+				string expansion = GetExpansion (i);
 				if (expansion != null) {
 					foreach (char e in expansion)
 						FillSortKeyRaw (e);
@@ -114,7 +122,7 @@ namespace Mono.Globalization.Unicode
 					Uni.IsJapaneseSmallLetter ((char) i),
 					Uni.GetJapaneseDashType ((char) i),
 					!Uni.IsHiragana ((char) i),
-					!ignoreWidth && Uni.IsHalfWidthKana ((char) i)
+					Uni.IsHalfWidthKana ((char) i)
 					);
 			else
 				buf.AppendNormal (
@@ -201,6 +209,61 @@ namespace Mono.Globalization.Unicode
 				if (d1 [i] != d2 [i])
 					return d1 [i] < d2 [i] ? -1 : 1;
 			return d1.Length == d2.Length ? 0 : d1.Length < d2.Length ? -1 : 1;
+		}
+
+		#endregion
+
+		#region IndexOf()
+
+		public int IndexOf (string s, char target)
+		{
+			return IndexOf (s, target, 0, s.Length, CompareOptions.None);
+		}
+
+		public int IndexOf (string s, char target, CompareOptions opt)
+		{
+			return IndexOf (s, target, 0, s.Length, opt);
+		}
+
+		public int IndexOf (string s, char target, int start, int length, CompareOptions opt)
+		{
+			string expansion = GetExpansion (target);
+			if (expansion != null)
+				return IndexOf (s, expansion, start, length, opt);
+
+			SetOptions (opt);
+
+			int ti = FilterOptions ((int) target);
+			for (int idx = 0; idx < s.Length; idx++) {
+				expansion = GetExpansion (s [idx]);
+				if (expansion != null)
+					continue; // since target cannot be expansion as conditioned above.
+				if (s [idx] == target)
+					return idx;
+				int si = FilterOptions ((int) s [idx]);
+				if (Uni.Categories [si] != Uni.Categories [ti] ||
+					Uni.Level1 [si] != Uni.Level1 [ti] ||
+					!ignoreNonSpace && Uni.Level2 [si] != Uni.Level2 [ti] ||
+					Uni.Level3 [si] != Uni.Level3 [ti])
+					continue;
+				if (!Uni.HasSpecialWeight ((char) si))
+					return idx;
+				if (Uni.IsJapaneseSmallLetter ((char) si) !=
+					Uni.IsJapaneseSmallLetter ((char) ti) ||
+					Uni.GetJapaneseDashType ((char) si) !=
+					Uni.GetJapaneseDashType ((char) ti) ||
+					!Uni.IsHiragana ((char) si) !=
+					!Uni.IsHiragana ((char) ti) ||
+					Uni.IsHalfWidthKana ((char) si) !=
+					Uni.IsHalfWidthKana ((char) ti))
+					continue;
+			}
+			return -1;
+		}
+
+		public int IndexOf (string s, string target, int start, int length, CompareOptions opt)
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion

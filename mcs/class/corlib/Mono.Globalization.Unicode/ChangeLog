@@ -1,5 +1,11 @@
 2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs :
+	  IndexOf(string, char, CompareOptions) implementation.
+	* TestDriver.cs : sample IndexOf() usage.
+
+2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : was missing most important
 	  kind of blocks - equivalent expansions (e.g. invariant mappings).
 	  More readable mappings.
