@@ -1,3 +1,12 @@
+2005-06-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* domain.c:
+	* appdomain.c:
+	* domain-internals.h:
+	* reflection.c: 'domain_assemblies' field is now protected by its own
+	lock. Don't call into managed code to run the AssemblyLoad event if we
+	now there are no registered delegates for it.
+
 2005-06-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: fix the index in the socket array for writable/error
