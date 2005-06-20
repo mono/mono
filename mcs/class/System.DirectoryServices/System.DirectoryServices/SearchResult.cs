@@ -109,7 +109,7 @@ namespace System.DirectoryServices
 								String val = (String)Rproperties[attribute].Value;
 								rpVal.Add(val);
 							}
-							else
+							else if (Rproperties[attribute].Count > 1)
 							{
 								Object[] vals=(Object [])Rproperties[attribute].Value;
 //								String[] aStrVals= new String[_Entry.Properties[attribute].Count];

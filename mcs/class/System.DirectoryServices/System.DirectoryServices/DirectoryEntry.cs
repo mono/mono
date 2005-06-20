@@ -27,6 +27,7 @@
 // Authors:
 //   Sunil Kumar (sunilk@novell.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	 Boris Kirzner (borisk@mainsoft.com)
 //
 // (C)  Novell Inc.
 //
@@ -36,6 +37,8 @@ using Novell.Directory.Ldap;
 using Novell.Directory.Ldap.Utilclass;
 using System.Globalization;
 using System.DirectoryServices.Design;
+using System.Collections.Specialized;
+using System.Configuration;
 
 namespace System.DirectoryServices
 {
@@ -46,7 +49,9 @@ namespace System.DirectoryServices
 	[TypeConverter (typeof (DirectoryEntryConverter))]
 	public class DirectoryEntry : Component	
 	{
-		
+		private static readonly string DEFAULT_LDAP_HOST = "System.DirectoryServices.DefaultLdapHost";
+		private static readonly string DEFAULT_LDAP_PORT = "System.DirectoryServices.DefaultLdapPort";
+
 		private LdapConnection _conn = null;
 		private AuthenticationTypes _AuthenticationType=AuthenticationTypes.None;
 		private DirectoryEntries _Children;
@@ -70,12 +75,12 @@ namespace System.DirectoryServices
 		{
 			get	{
 				if (_Fdn == null) {
-					LdapUrl lUrl = new LdapUrl(Path);
+					LdapUrl lUrl = new LdapUrl (ADsPath);
 					string fDn=lUrl.getDN();
 					if(fDn != null)
 						_Fdn = fDn;
 					else
-						_Fdn="";
+						_Fdn=String.Empty;
 				}
 				return _Fdn;
 			}
@@ -119,7 +124,7 @@ namespace System.DirectoryServices
 		{
 			try			{
 				_conn= new LdapConnection ();
-				LdapUrl lUrl=new LdapUrl (Path);
+				LdapUrl lUrl = new LdapUrl (ADsPath);
 				_conn.Connect(lUrl.Host,lUrl.Port);
 				_conn.Bind(Username,Password);
 			}
@@ -135,15 +140,19 @@ namespace System.DirectoryServices
 		/// Initializes the Entry specific properties e.g entry DN etc.
 		/// </summary>
 		void InitEntry()
-		{
-			LdapUrl lUrl=new LdapUrl (Path);
-			if(lUrl.getDN()!=null)			{
-				DN userDn = new DN(lUrl.getDN());
+		{			
+			LdapUrl lUrl = new LdapUrl (ADsPath);
+			string dn = lUrl.getDN();
+			if (dn != null ) {
+				if (String.Compare (dn,"rootDSE",true) == 0)
+					InitToRootDse (lUrl.Host,lUrl.Port);
+				else {
+				DN userDn = new DN (dn);
 				String[] lRdn = userDn.explodeDN(false);
 				_Name = (string)lRdn[0];
 				_Parent = new DirectoryEntry(conn);
-				LdapUrl cUrl=new LdapUrl(lUrl.Host,lUrl.Port,userDn.Parent.ToString());
-				_Parent.Path=cUrl.ToString();
+				_Parent.Path = GetLdapUrlString (lUrl.Host,lUrl.Port,userDn.Parent.ToString ());
+				}
 			}
 			else			{
 				_Name=lUrl.Host+":"+lUrl.Port;
@@ -273,7 +282,7 @@ namespace System.DirectoryServices
 		{
 			get 
 			{
-				_Children = new DirectoryEntries(Path, conn);
+				_Children = new DirectoryEntries(ADsPath, conn);
 				return _Children;
 			}
 		}
@@ -314,7 +323,7 @@ namespace System.DirectoryServices
 		{
 			get								{
 				if(_Name==null)				{
-					if(CheckEntry(conn,Path))
+					if(CheckEntry(conn,ADsPath))
 						InitEntry();
 					else
 						throw new SystemException("There is no such object on the server");
@@ -334,7 +343,7 @@ namespace System.DirectoryServices
 		{
 			get			{
 				if(_Parent==null)				{
-					if(CheckEntry(conn,Path))
+					if(CheckEntry(conn,ADsPath))
 						InitEntry();
 					else
 						throw new SystemException("There is no such object on the server");
@@ -484,9 +493,28 @@ namespace System.DirectoryServices
 				return _Path;
 			}
 			set			{
-				_Path = value;
+				if (value == null)
+					_Path = String.Empty;
+				else
+					_Path = value;
 			}
+		}
 
+		internal string ADsPath
+		{
+			get	{
+				if (Path == null || Path == String.Empty) {
+					DirectoryEntry rootDse = new DirectoryEntry ();
+					rootDse.InitToRootDse (null,-1);
+					string namingContext = (string) rootDse.Properties ["defaultNamingContext"].Value;
+					if ( namingContext == null )
+						namingContext = (string) rootDse.Properties ["namingContexts"].Value;
+
+					LdapUrl actualUrl= new LdapUrl (DefaultHost,DefaultPort,namingContext);
+					return actualUrl.ToString ();
+				}
+				return Path;
+			}
 		}
 
 		/// <summary>
@@ -501,51 +529,7 @@ namespace System.DirectoryServices
 		public PropertyCollection Properties
 		{
 			get			{
-				if ( _Properties == null )				{
-
-					_Properties =  new PropertyCollection(this);
-					_inPropertiesLoading = true;
-
-					try					{
-						LdapSearchResults lsc=conn.Search(	Fdn,
-															LdapConnection.SCOPE_BASE,
-															"objectClass=*",
-															null,
-															false);
-						while(lsc.hasMore())						{
-
-							LdapEntry nextEntry = null;
-							try 							{
-								nextEntry = lsc.next();
-							}
-							catch(LdapException e) 							{
-								// Exception is thrown, go for next entry
-								throw e;
-							}
-							LdapAttributeSet attributeSet = nextEntry.getAttributeSet();
-							System.Collections.IEnumerator ienum=attributeSet.GetEnumerator();
-							if(ienum!=null)							{
-								while(ienum.MoveNext())				{
-									LdapAttribute attribute=(LdapAttribute)ienum.Current;
-									string attributeName = attribute.Name;
-									_Properties[attributeName].AddRange(attribute.StringValueArray);
-									_Properties[attributeName].Mbit=false;
-									//							string attributeVal = attribute.StringValue;
-									//							_Properties[attributeName].Add(attributeVal);
-								}
-							}
-							break;
-						}
-					}
-					catch( LdapException le)					{
-						if(le.ResultCode == LdapException.NO_SUCH_OBJECT)
-						{	}
-					}
-					finally {
-						_inPropertiesLoading = false;
-					}
-				}
-				return _Properties;
+				return GetProperties (true);
 			}
 		}
 
@@ -581,6 +565,128 @@ namespace System.DirectoryServices
 			[MonoTODO]
 			get			{
 				throw new NotImplementedException();
+			}
+		}
+
+		private string DefaultHost
+		{
+			get {
+				string defaultHost = (string) AppDomain.CurrentDomain.GetData (DEFAULT_LDAP_HOST);
+
+				if (defaultHost == null) {
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					if (config != null) 
+						defaultHost = config ["servername"];
+
+					if (defaultHost == null) 
+						defaultHost = "localhost";
+
+					AppDomain.CurrentDomain.SetData (DEFAULT_LDAP_HOST,defaultHost);
+				}
+				return defaultHost;
+			}
+		}
+
+		private int DefaultPort
+		{
+			get {
+				string defaultPortStr = (string) AppDomain.CurrentDomain.GetData (DEFAULT_LDAP_PORT);
+
+				if (defaultPortStr == null) {
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					if (config != null)
+						defaultPortStr = config ["port"];
+
+					if (defaultPortStr == null) 
+						defaultPortStr = "389";
+
+					AppDomain.CurrentDomain.SetData (DEFAULT_LDAP_PORT,defaultPortStr);
+				}
+				return Int32.Parse (defaultPortStr);
+			}
+		}
+
+		private void InitToRootDse(string host,int port)
+		{
+			if ( host == null )
+				host = DefaultHost;
+			if ( port < 0 )
+				port = DefaultPort;	
+		
+			LdapUrl rootPath = new LdapUrl (host,port,String.Empty);
+			string [] attrs = new string [] {"+","*"};
+			DirectoryEntry rootEntry = new DirectoryEntry (rootPath.ToString (),this.Username,this.Password,this.AuthenticationType);
+			DirectorySearcher searcher = new DirectorySearcher (rootEntry,null,attrs,SearchScope.Base);
+
+			SearchResult result = searcher.FindOne ();			
+			// copy properties from search result
+			PropertyCollection pcoll = new PropertyCollection ();
+			foreach (string propertyName in result.Properties.PropertyNames) {
+				System.Collections.IEnumerator enumerator = result.Properties [propertyName].GetEnumerator ();
+				if (enumerator != null)
+					while (enumerator.MoveNext ())
+						if (String.Compare (propertyName,"ADsPath",true) != 0)
+							pcoll [propertyName].Add (enumerator.Current);
+			}			
+			this.SetProperties (pcoll);
+			this._Name = "rootDSE";
+		}
+
+		private void SetProperties(PropertyCollection pcoll)
+		{
+			_Properties = pcoll;
+		}
+
+		/// <summary>
+		/// Returns entry properties.
+		/// </summary>
+		/// <param name="forceLoad">Specifies whenever to force the properties load from the server if local property cache is empty.</param>
+		/// <returns></returns>
+		private PropertyCollection GetProperties(bool forceLoad)
+		{
+			if (_Properties == null) {
+				// load properties into a different collection 
+				// to preserve original collection state if exception occurs
+				PropertyCollection properties = new PropertyCollection (this);
+				if (forceLoad && !Nflag)				
+					LoadProperties (properties,null);
+
+				_Properties = properties ;
+			}			
+			return _Properties;
+		}
+
+		/// <summary>
+		/// Loads the values of the specified properties into the property cache.
+		/// </summary>
+		/// <param name="propertyNames">An array of the specified properties.</param>
+		private void LoadProperties(PropertyCollection properties,string[] propertyNames)
+		{
+			_inPropertiesLoading = true;
+			try	{
+				LdapSearchResults lsc=conn.Search (Fdn,LdapConnection.SCOPE_BASE,"objectClass=*",null,false);
+				if (lsc.hasMore ()) {
+					LdapEntry nextEntry = lsc.next ();
+					string [] lowcasePropertyNames = null;
+					int length = 0;
+					if (propertyNames != null) {
+						length = propertyNames.Length;
+						lowcasePropertyNames = new string [length];
+						for(int i=0; i < length; i++)
+							lowcasePropertyNames [i] = propertyNames [i].ToLower ();
+					}
+					foreach (LdapAttribute attribute in nextEntry.getAttributeSet ())	{
+						string attributeName = attribute.Name;
+						if ((propertyNames == null) || (Array.IndexOf (lowcasePropertyNames,attributeName.ToLower ()) != -1)) {
+							properties [attributeName].Value = null;
+							properties [attributeName].AddRange (attribute.StringValueArray);
+							properties [attributeName].Mbit=false;
+						}
+					}
+				}
+			}
+			finally {
+				_inPropertiesLoading = false;
 			}
 		}
 
@@ -651,8 +757,12 @@ namespace System.DirectoryServices
 			string eDn=lUrl.getDN();
 			if(eDn==null)
 			{
-				eDn="";
+				eDn = String.Empty;
 			}
+			// rootDSE is a "virtual" entry that always exists
+			else if (String.Compare (eDn,"rootDSE",true) == 0)
+				return true;
+
 			string[] attrs={"objectClass"};
 			try
 			{
@@ -870,30 +980,29 @@ namespace System.DirectoryServices
 
 		private void CommitEntry()
 		{
+			PropertyCollection properties = GetProperties(false);
 			if(!Nflag)
 			{
 				System.Collections.ArrayList modList = new System.Collections.ArrayList();
-				System.Collections.IDictionaryEnumerator id = Properties.GetEnumerator();
-				while(id.MoveNext())
+				foreach (string attribute in properties.PropertyNames)
 				{
-					string attribute=(string)id.Key;
 					LdapAttribute attr=null;
-					if(Properties[attribute].Mbit)
+					if (properties [attribute].Mbit)
 					{
-						if(Properties[attribute].Count==1)
+						if (properties [attribute].Count == 1)
 						{
-							String val = (String)Properties[attribute].Value;
+							string val = (string) properties [attribute].Value;
 							attr = new LdapAttribute( attribute , val);
 						}
 						else
 						{
-							Object[] vals=(Object [])Properties[attribute].Value;
-							String[] aStrVals= new String[Properties[attribute].Count];
-							Array.Copy(vals,0,aStrVals,0,Properties[attribute].Count);
+							object[] vals =(object []) properties [attribute].Value;
+							string[] aStrVals = new string [properties [attribute].Count];
+							Array.Copy (vals,0,aStrVals,0,properties [attribute].Count);
 							attr = new LdapAttribute( attribute , aStrVals);
 						}
 						modList.Add( new LdapModification(LdapModification.REPLACE, attr));
-						Properties[attribute].Mbit=false;
+						properties [attribute].Mbit=false;
 					}
 				}
 				if (modList.Count > 0) {
@@ -906,20 +1015,18 @@ namespace System.DirectoryServices
 			else
 			{
 				LdapAttributeSet attributeSet = new LdapAttributeSet();
-				System.Collections.IDictionaryEnumerator id = Properties.GetEnumerator();
-				while(id.MoveNext())
+				foreach (string attribute in properties.PropertyNames)
 				{
-					string attribute=(string)id.Key;
-					if(Properties[attribute].Count==1)
+					if (properties [attribute].Count == 1)
 					{
-						String val = (String)Properties[attribute].Value;
+						string val = (string) properties [attribute].Value;
 						attributeSet.Add(new LdapAttribute(attribute, val));                
 					}
 					else
 					{
-						Object[] vals=(Object [])Properties[attribute].Value;
-						String[] aStrVals= new String[Properties[attribute].Count];
-						Array.Copy(vals,0,aStrVals,0,Properties[attribute].Count);
+						object[] vals = (object []) properties [attribute].Value;
+						string[] aStrVals = new string [properties [attribute].Count];
+						Array.Copy (vals,0,aStrVals,0,properties [attribute].Count);
 						attributeSet.Add( new LdapAttribute( attribute , aStrVals));
 					}
 				}
@@ -947,16 +1054,23 @@ namespace System.DirectoryServices
 			InitEntry();
 		}
 
-		[MonoTODO]
+		/// <summary>
+		/// Loads the values of the specified properties into the property cache.
+		/// </summary>
 		public void RefreshCache ()
 		{
-			throw new NotImplementedException ("System.DirectoryServices.DirectoryEntry.RefreshCache()");
+			// note that GetProperties must be called with false, elswere infinite loop will be caused
+			LoadProperties(GetProperties(false),null);
 		}
 
-		[MonoTODO]
-		public void RefreshCache (string[] args)
+		/// <summary>
+		/// Loads the values of the specified properties into the property cache.
+		/// </summary>
+		/// <param name="propertyNames">An array of the specified properties. </param>
+		public void RefreshCache (string[] propertyNames)
 		{
-			throw new NotImplementedException ("System.DirectoryServices.DirectoryEntry.RefreshCache(System.String[])");
+			// note that GetProperties must be called with false, elswere infinite loop will be caused
+			LoadProperties(GetProperties(false),propertyNames);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -965,6 +1079,16 @@ namespace System.DirectoryServices
 				Close ();
 			}
 			base.Dispose (disposing);
+		}
+
+		internal static string GetLdapUrlString(string host, int port, string dn)
+		{
+			LdapUrl lUrl;
+			if (port == LdapConnection.DEFAULT_PORT)
+				lUrl = new LdapUrl (host,0,dn);
+			else
+				lUrl = new LdapUrl (host,port,dn);
+			return lUrl.ToString();
 		}
 	}
 }

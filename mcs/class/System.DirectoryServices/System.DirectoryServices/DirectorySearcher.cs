@@ -80,7 +80,7 @@ namespace System.DirectoryServices
 		private void InitBlock()
 		{
 			_conn = new LdapConnection();
-			LdapUrl lUrl=new LdapUrl(SearchRoot.Path);
+			LdapUrl lUrl=new LdapUrl(SearchRoot.ADsPath);
 			_Host=lUrl.Host;
 			_Port=lUrl.Port;
 			_conn.Connect(_Host,_Port);
@@ -657,7 +657,7 @@ namespace System.DirectoryServices
 												connScope,
 												Filter,
 												attrs,
-												false,cons);
+												PropertyNamesOnly,cons);
 
 			while(lsc.hasMore())						
 			{
@@ -680,7 +680,7 @@ namespace System.DirectoryServices
 				DirectoryEntry de = new DirectoryEntry(_conn);
 				PropertyCollection pcoll = new PropertyCollection();
 //				de.SetProperties();
-				de.Path="LDAP://" + _Host+ ":" + _Port + "/" + nextEntry.DN;
+				de.Path = DirectoryEntry.GetLdapUrlString(_Host,_Port,nextEntry.DN); 
 				LdapAttributeSet attributeSet = nextEntry.getAttributeSet();
 				System.Collections.IEnumerator ienum=attributeSet.GetEnumerator();
 				if(ienum!=null)							

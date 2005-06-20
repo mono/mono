@@ -42,6 +42,8 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
+#if (!TARGET_JVM)
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+#endif
 

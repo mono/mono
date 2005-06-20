@@ -1,3 +1,38 @@
+2005-06-19 Boris Kirzner <borisk@mainsoft.coim>
+	* DirectorySearcher.cs: 
+		- Use ADsPath property (always represents an actual url) 
+		instead of Path (may be null or empty string).
+		- Use PropertyNamesOnly property while perfoming search, so property 
+		values retrieved only when needed.
+		- Create parent path in more clean way.
+	* DirectoryEntry.cs:
+		- Use ADsPath property (always represents an actual url) 
+		instead of Path (may be null or empty string).
+		- InitEntry takes special care about rootDse entries.
+		- Path return empty string if assigned to null.
+		- Added ADsPath property. This is an "actual" entry path on the server.
+		If user does not specifies a path, it is resolved using rootDse 
+		server entry properties. We need this since the user-specified Path 
+		property should never change.
+		- Added GetProperties,SetProperties and LoadProperties methods 
+		to handle internal properties load and assignment.
+		- Added DefaultHost and DefaultPort properties, so user can specify the
+		default LDAP server information using app config. If user does not 
+		specify it, the localhost:389 is the default.
+		- Added InitToRootDse method - initializes current entry to specified 
+		server rootDse entry.
+		- CheckEntry takes special care about rootDse entries.
+		- CommitEntry rewrited to use .NET style iteration. In addition, 
+		the method uses entry peroperties whout enforsing their reload.
+		- Implemented RefreshCache methods. 
+		- Added method GetLdapUrlString, returns LDAP URL string representation
+		that omits default port 
+		(i.e. ldap://server/dn instead of ldap://server:389/dn), 
+		as .NET does.
+	* PropertyValueCollection.cs: removed redundant MonoTodo attributes.
+	* SearchResult.cs: if underlined result properties collection is empty, 
+	do not try to load a properties from it.
+		
 2005-06-14  Boris Kirzner <borisk@mainsoft.com>
 	* DirectorySearcher.cs : AdsPath property should not appear in the query, but it still should appear in the SearchResult properties (by initialization from result entry path).
 

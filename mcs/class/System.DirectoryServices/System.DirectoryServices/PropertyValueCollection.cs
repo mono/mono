@@ -135,6 +135,7 @@ namespace System.DirectoryServices
 				copy_to[index++] = o;
 		}
 
+		[MonoTODO]
 		protected override void OnClearComplete ()
 		{
 			if (_parent != null) {
@@ -142,6 +143,7 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[MonoTODO]
 		protected override void OnInsertComplete (int index, object value)
 		{
 			if (_parent != null) {
@@ -149,6 +151,7 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[MonoTODO]
 		protected override void OnRemoveComplete (int index, object value)
 		{
 			if (_parent != null) {
@@ -156,6 +159,7 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[MonoTODO]
 		protected override void OnSetComplete (int index, object oldValue, object newValue)
 		{
 			if (_parent != null) {

@@ -261,16 +261,20 @@ namespace MonoTests.System.DirectoryServices
 
 			SearchResultCollection results = ds.FindAll();
 
-			Assert.AreEqual(results[0].Path,LDAPServerRoot + "dc=myhosting,dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(results[0].Path.ToLower(),(LDAPServerRoot + "dc=myhosting,dc=example").ToLower());
 			Assert.AreEqual(results[0].Path,results[0].GetDirectoryEntry().Path);
 
-			Assert.AreEqual(results[1].Path,LDAPServerRoot + "ou=people,dc=myhosting,dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(results[1].Path.ToLower(),(LDAPServerRoot + "ou=people,dc=myhosting,dc=example").ToLower());
 			Assert.AreEqual(results[1].Path,results[1].GetDirectoryEntry().Path);
 
-			Assert.AreEqual(results[2].Path,LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(results[2].Path.ToLower(),(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
 			Assert.AreEqual(results[2].Path,results[2].GetDirectoryEntry().Path);
 
-			Assert.AreEqual(results[3].Path,LDAPServerRoot + "cn=John Smith,ou=Human Resources,ou=people,dc=myhosting,dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(results[3].Path.ToLower(),(LDAPServerRoot + "cn=John Smith,ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
 			Assert.AreEqual(results[3].Path,results[3].GetDirectoryEntry().Path);
 		}
 
@@ -323,7 +327,8 @@ namespace MonoTests.System.DirectoryServices
 
 			Assert.AreEqual(((ResultPropertyValueCollection)result.Properties["cn"])[0],"Barak Tsabari");
 			Assert.AreEqual(((ResultPropertyValueCollection)result.Properties["objectClass"])[0],"person");
-			Assert.AreEqual(((ResultPropertyValueCollection)result.Properties["AdsPath"])[0],LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(((string)((ResultPropertyValueCollection)result.Properties["AdsPath"])[0]).ToLower(),(LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
 		}
 
 		#endregion Tests

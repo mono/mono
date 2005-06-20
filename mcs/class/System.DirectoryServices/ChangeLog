@@ -1,3 +1,11 @@
+2005-06-19 Boris Kirzner <borisk@mainsoft.coim>
+	* System.DirectoryServices_test.dll.sources: 
+		- added DirectoryServices/DirectoryServicesDirectoryEntryTest.cs
+		- added DirectoryServices/DirectoryServicesDirectorySearcherTest.cs
+		- added DirectoryServices/DirectoryServicesSearchResultTest.cs
+	* App.config - added new file, contaning an example of specifying 
+	default LDAP server information in app config.
+
 2005-02-14  Anil Bhatia  <banil@novell.com>
 	* Fixed DoSearch() in DirectorySearcher.cs: Search scope was hardcoded
 	as LdapConnection.SCOPE_SUB. Chnaged to the value contained by

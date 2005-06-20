@@ -1029,21 +1029,24 @@ namespace MonoTests.System.DirectoryServices
 		{
 			de = new DirectoryEntry(LDAPServerConnectionString);
 
-			Assert.AreEqual(de.Parent.Path,LDAPServerRoot + "dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(de.Parent.Path.ToLower(),(LDAPServerRoot + "dc=example").ToLower());
 
 			de = new DirectoryEntry(LDAPServerConnectionString,
 									LDAPServerUsername,
 									LDAPServerPassword,
 									AuthenticationTypes.ServerBind);
 
-			Assert.AreEqual(de.Parent.Path,LDAPServerRoot + "dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(de.Parent.Path.ToLower(),(LDAPServerRoot + "dc=example").ToLower());
 
 			de = new DirectoryEntry(LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example" ,
 									LDAPServerUsername,
 									LDAPServerPassword,
 									AuthenticationTypes.ServerBind);
 
-			Assert.AreEqual(de.Parent.Path,LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example");
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(de.Parent.Path.ToLower(),(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
 		}
 
 
@@ -1138,6 +1141,12 @@ namespace MonoTests.System.DirectoryServices
 
 			de.Path = wrongPath;
 			Assert.AreEqual(de.Path,wrongPath);
+
+			de = new DirectoryEntry("ldap://myhost:389/ou=people",null,null,AuthenticationTypes.None);
+			Assert.AreEqual(de.Path,"ldap://myhost:389/ou=people");
+
+			de.Path = null;
+			Assert.AreEqual(de.Path,String.Empty);
 		}
 
 
@@ -1272,20 +1281,21 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectoryEntry_SchemaEntry()
 		{
-			//			de = new DirectoryEntry();
-			//			DirectoryEntry schemaEntry = de.SchemaEntry;
-			//
-			//			Assert.AreEqual(schemaEntry.Path,"LDAP://schema/domainDNS");
-			//			Assert.AreEqual(schemaEntry.Name,"domainDNS");
-			//			Assert.AreEqual(schemaEntry.Username,null);
-			//			Assert.AreEqual(schemaEntry.Password,null);
-			//			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
-			//			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
-			//			Assert.AreEqual(schemaEntry.AuthenticationType,AuthenticationTypes.None);
+			de = new DirectoryEntry();
+			DirectoryEntry schemaEntry = de.SchemaEntry;
+
+			// MS works only with "LDAP" while RFC2255 states "ldap"
+			Assert.AreEqual(schemaEntry.Path.ToLower(),"LDAP://schema/domainDNS".ToLower());
+			Assert.AreEqual(schemaEntry.Name,"domainDNS");
+			Assert.AreEqual(schemaEntry.Username,null);
+			Assert.AreEqual(schemaEntry.Password,null);
+			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
+			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
+			Assert.AreEqual(schemaEntry.AuthenticationType,AuthenticationTypes.None);
 
 
 			de = new DirectoryEntry(LDAPServerConnectionString);
-			DirectoryEntry schemaEntry = de.SchemaEntry;
+			schemaEntry = de.SchemaEntry;
 
 			Assert.AreEqual(schemaEntry.Path,LDAPServerRoot + "schema/organization");
 			Assert.AreEqual(schemaEntry.Name,"organization");
