@@ -67,7 +67,7 @@ libMonoPosixHelper_la_LIBADD = \
 	$(Z_LIBS)
 
 # libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
-libMonoPosixHelper_la_LDFLAGS = -no-undefined -module -avoid-version
+libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
 
 # 
 # Use this target to refresh the values in map.[ch]
