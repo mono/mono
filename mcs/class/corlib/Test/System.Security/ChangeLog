@@ -1,3 +1,8 @@
+2005-06-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetTest.cs: Added tests for AddPermission with non-CAS 
+	permissions. Added tests for ContainsNonCodeAccessPermissions.
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs: Added tests for AddPermission and IsSubsetOf.

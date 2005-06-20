@@ -48,6 +48,7 @@ namespace MonoTests.System.Security {
 			Assert ("PermissionStateNone.IsEmpty", ps.IsEmpty ());
 			Assert ("PermissionStateNone.IsReadOnly", !ps.IsReadOnly);
 			AssertEquals ("PermissionStateNone.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
 		}
 
 		[Test]
@@ -58,6 +59,7 @@ namespace MonoTests.System.Security {
 			Assert ("PermissionStateUnrestricted.IsEmpty", !ps.IsEmpty ());
 			Assert ("PermissionStateUnrestricted.IsReadOnly", !ps.IsReadOnly);
 			AssertEquals ("PermissionStateUnrestricted.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
 		}
 
 		[Test]
@@ -74,6 +76,7 @@ namespace MonoTests.System.Security {
 #endif
 			Assert ("PermissionStateNull.IsReadOnly", !ps.IsReadOnly);
 			AssertEquals ("PermissionStateNull.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
 		}
 
 		[Test]
@@ -89,6 +92,7 @@ namespace MonoTests.System.Security {
 			Assert ("PermissionSetPermissionSet.IsEmpty", !ps.IsEmpty ());
 			Assert ("PermissionSetPermissionSet.IsReadOnly", !ps.IsReadOnly);
 			AssertEquals ("PermissionSetPermissionSet.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
 		}
 
 		[Test]
@@ -97,6 +101,7 @@ namespace MonoTests.System.Security {
 			NamedPermissionSet nps = new NamedPermissionSet ("Test", PermissionState.Unrestricted);
 			PermissionSet ps = new PermissionSet (nps);
 			Assert ("IsUnrestricted", ps.IsUnrestricted ());
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
 		}
 
 		[Test]
@@ -190,6 +195,33 @@ namespace MonoTests.System.Security {
 			ps.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
 			AssertEquals ("Count", 1, ps.Count);
 			Assert ("IsEmpty", !ps.IsEmpty ());
+		}
+
+		[Test]
+		public void AddPermission_NonCasPermission_Unrestricted ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
+			ps.AddPermission (new PrincipalPermission ("name", "role"));
+			AssertEquals ("Count", 0, ps.Count);
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+		}
+
+		[Test]
+		public void AddPermission_NonCasPermissionNone_Unrestricted ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
+			ps.AddPermission (new PrincipalPermission (PermissionState.None));
+			AssertEquals ("Count", 0, ps.Count);
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+		}
+
+		[Test]
+		public void AddPermission_NonCasPermissionUnrestricted_Unrestricted ()
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
+			ps.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
+			AssertEquals ("Count", 0, ps.Count);
+			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
 		}
 
 		[Test]
