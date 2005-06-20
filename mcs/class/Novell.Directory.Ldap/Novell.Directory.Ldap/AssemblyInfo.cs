@@ -69,6 +69,8 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyVersion ("1.0.3300.0")]
 #endif
 
+#if (!TARGET_JVM)
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]
+#endif
 

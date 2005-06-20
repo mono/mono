@@ -34,8 +34,10 @@ using System.Threading;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
+#if !TARGET_JVM
 using Mono.Security.Protocol.Tls;
 using Mono.Security.X509.Extensions;
+#endif
 using Syscert = System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Net;
@@ -43,7 +45,9 @@ using System.Net.Sockets;
 using System.Collections;
 using System.IO;
 using System.Text;
+#if !TARGET_JVM
 using Mono.Security.X509;
+#endif
 using System.Text.RegularExpressions;
 using System.Globalization;
 
@@ -682,6 +686,7 @@ namespace Novell.Directory.Ldap
 			{
 				if ((in_Renamed == null) || (out_Renamed == null))
 				{
+#if !TARGET_JVM
 					if(Ssl)
 					{
 						this.host = host;
@@ -704,10 +709,13 @@ namespace Novell.Directory.Ldap
 						out_Renamed = (System.IO.Stream) sslstream;
 					}
 					else{
+#endif
 						socket = new System.Net.Sockets.TcpClient(host, port);				
 						in_Renamed = (System.IO.Stream) socket.GetStream();
 						out_Renamed = (System.IO.Stream) socket.GetStream();
+#if !TARGET_JVM
 					}
+#endif
 				}
 				else
 				{
@@ -1113,7 +1121,7 @@ namespace Novell.Directory.Ldap
 		/* package */
 		internal void  startTLS()
 		{
-			
+#if !TARGET_JVM			
 			try
 			{
 				waitForReader(null);
@@ -1145,6 +1153,7 @@ namespace Novell.Directory.Ldap
 				throw new LdapException("The host is unknown", LdapException.CONNECT_ERROR, null, uhe);
 			}
 			return ;
+#endif
 		}
 		
 		/*
