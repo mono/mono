@@ -1,3 +1,11 @@
+2005-06-20  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CodeAccessPermission.cs: Removed redundant and unrequired TODO.
+	* PermissionSet.cs: Some 2.0 optimizations (because sets are simpler
+	without the special case for identity permissions).
+	* SecurityManager.cs: Shortcut for ResolveIdentityPermissions (in 2.0)
+	and some more declarative security syntax updates.
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PermissionSet.cs: Added support for non-CAS permissions in the

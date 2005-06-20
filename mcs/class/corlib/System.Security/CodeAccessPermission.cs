@@ -96,7 +96,6 @@ namespace System.Security {
 
 		public abstract IPermission Copy ();
 
-		[MonoTODO ("Imperative Assert, Deny and PermitOnly aren't yet supported")]
 		public void Demand ()
 		{
 			// note: here we're sure it's a CAS demand
@@ -171,17 +170,14 @@ namespace System.Security {
 			bool revert = false;
 			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
 				revert = true;
-				// TODO
 				throw new NotSupportedException ("Currently only declarative Assert are supported.");
 			}
 			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
 				revert = true;
-				// TODO
 				throw new NotSupportedException ("Currently only declarative Deny are supported.");
 			}
 			if ((sf.PermitOnly != null) && !sf.PermitOnly.DeclarativeSecurity) {
 				revert = true;
-				// TODO
 				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");
 			}
 
@@ -201,7 +197,6 @@ namespace System.Security {
 
 			SecurityFrame sf = new SecurityFrame (1);
 			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
-				// TODO
 				throw new NotSupportedException ("Currently only declarative Assert are supported.");
 			} else {
 				// we can't revert declarative security (or an empty frame) imperatively
@@ -217,7 +212,6 @@ namespace System.Security {
 
 			SecurityFrame sf = new SecurityFrame (1);
 			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
-				// TODO
 				throw new NotSupportedException ("Currently only declarative Deny are supported.");
 			} else {
 				// we can't revert declarative security (or an empty frame) imperatively
@@ -233,7 +227,6 @@ namespace System.Security {
 
 			SecurityFrame sf = new SecurityFrame (1);
 			if ((sf.PermitOnly != null) && sf.PermitOnly.DeclarativeSecurity) {
-				// TODO
 				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");
 			} else {
 				// we can't revert declarative security (or an empty frame) imperatively

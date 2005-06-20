@@ -379,7 +379,7 @@ namespace System.Security {
 			return al.GetEnumerator ();
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicy () 
 		{
 			IEnumerator e = Hierarchy;
@@ -389,7 +389,7 @@ namespace System.Security {
 			}
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicyLevel (PolicyLevel level) 
 		{
 			// Yes this will throw a NullReferenceException, just like MS (see FDBK13121)
@@ -456,9 +456,13 @@ namespace System.Security {
 			return false;
 		}
 
-		// TODO: this changes in 2.0 as identity permissions can now be unrestricted
 		internal static void ResolveIdentityPermissions (PermissionSet ps, Evidence evidence)
 		{
+#if NET_2_0
+			// in 2.0 identity permissions can now be unrestricted
+			if (ps.IsUnrestricted ())
+				return;
+#endif
 			// Only host evidence are used for policy resolution
 			IEnumerator ee = evidence.GetHostEnumerator ();
 			while (ee.MoveNext ()) {
@@ -479,17 +483,13 @@ namespace System.Security {
 		{
 			// Permission sets from the runtime (declarative security) can be cached
 			// for performance as they can never change (i.e. they are read-only).
-
-			if (_declsecCache == null) {
-				lock (_lockObject) {
-					if (_declsecCache == null) {
-						_declsecCache = new Hashtable ();
-					}
-				}
-			}
-
 			PermissionSet ps = null;
+
 			lock (_lockObject) {
+				if (_declsecCache == null) {
+					_declsecCache = new Hashtable ();
+				}
+
 				object key = (object) (int) permissions;
 				ps = (PermissionSet) _declsecCache [key];
 				if (ps == null) {

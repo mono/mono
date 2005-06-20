@@ -72,9 +72,7 @@ namespace System.Security {
 
 		public PermissionSet (PermissionState state) : this ()
 		{
-			if (!Enum.IsDefined (typeof (PermissionState), state))
-				throw new System.ArgumentException ("state");
-			this.state = state;
+			this.state = CodeAccessPermission.CheckPermissionState (state, true);
 		}
 
 		public PermissionSet (PermissionSet permSet) : this ()
@@ -151,10 +149,9 @@ namespace System.Security {
 		}
 
 		[MonoTODO ("Imperative mode isn't supported")]
+		[SecurityPermission (SecurityAction.Demand, Assertion = true)]
 		public virtual void Assert ()
 		{
-			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
-
 			int count = this.Count;
 
 			// we (current frame) must have the permission to assert it to others
@@ -202,7 +199,6 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("Imperative Assert, Deny and PermitOnly aren't yet supported")]
 		public virtual void Demand ()
 		{
 			// Note: SecurityEnabled only applies to CAS permissions
@@ -381,9 +377,11 @@ namespace System.Security {
 
 		public bool ContainsNonCodeAccessPermissions () 
 		{
-			foreach (IPermission p in list) {
-				if (! p.GetType ().IsSubclassOf (typeof (CodeAccessPermission)))
-					return true;
+			if (list.Count > 0) {
+				foreach (IPermission p in list) {
+					if (! p.GetType ().IsSubclassOf (typeof (CodeAccessPermission)))
+						return true;
+				}
 			}
 			return false;
 		}
@@ -483,20 +481,32 @@ namespace System.Security {
 			if (this.IsUnrestricted () && other.IsUnrestricted ())
 				state = PermissionState.Unrestricted;
 
-			PermissionSet interSet = new PermissionSet (state);
+			PermissionSet interSet = null;
+#if NET_2_0
+			// much simpler with 2.0
+			if (state == PermissionState.Unrestricted) {
+				interSet = new PermissionSet (state);
+			} else if (this.IsUnrestricted ()) {
+				interSet = other.Copy ();
+			} else if (other.IsUnrestricted ()) {
+				interSet = this.Copy ();
+			} else {
+				interSet = new PermissionSet (state);
+				InternalIntersect (interSet, this, other, false);
+			}
+#else
+			interSet = new PermissionSet (state);
 			if (state == PermissionState.Unrestricted) {
 				InternalIntersect (interSet, this, other, true);
 				InternalIntersect (interSet, other, this, true);
-			}
-			else if (this.IsUnrestricted ()) {
+			} else if (this.IsUnrestricted ()) {
 				InternalIntersect (interSet, this, other, true);
-			}
-			else if (other.IsUnrestricted ()) {
+			} else if (other.IsUnrestricted ()) {
 				InternalIntersect (interSet, other, this, true);
-			}
-			else {
+			} else {
 				InternalIntersect (interSet, this, other, false);
 			}
+#endif
 			return interSet;
 		}
 
@@ -601,9 +611,14 @@ namespace System.Security {
 			if (other == null)
 				return this.Copy ();
 
-			PermissionSet copy = this.Copy ();
+			PermissionSet copy = null;
 			if (this.IsUnrestricted () || other.IsUnrestricted ()) {
-				// so we keep the "right" type
+#if NET_2_0
+				// there are no child elements in unrestricted permission sets
+				return new PermissionSet (PermissionState.Unrestricted);
+#else
+				copy = this.Copy ();
+				// so we keep the "right" type (e.g. NamedPermissionSet)
 				copy.Clear ();
 				copy.state = PermissionState.Unrestricted;
 				// copy all permissions that do not implement IUnrestrictedPermission
@@ -615,8 +630,9 @@ namespace System.Security {
 					if (!(p is IUnrestrictedPermission))
 						copy.AddPermission (p);
 				}
-			}
-			else {
+#endif
+			} else {
+				copy = this.Copy ();
 				// PermissionState.None -> copy all permissions
 				foreach (IPermission p in other.list) {
 					copy.AddPermission (p);
@@ -811,7 +827,6 @@ namespace System.Security {
 			string cnam = Encoding.UTF8.GetString (data, position, clen);
 			position += clen;
 
-			// TODO: Unification
 			Type secattr = Type.GetType (cnam);
 			SecurityAttribute sa = (Activator.CreateInstance (secattr, action) as SecurityAttribute);
 			if (sa == null)
