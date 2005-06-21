@@ -20,6 +20,10 @@ namespace Mono.Globalization.Unicode
 
 		void Run ()
 		{
+			DumpSortKey ("AE");
+			DumpSortKey ("\u00C6");
+			DumpSortKey ("ABCABC", 5, 1, CompareOptions.IgnoreCase);
+
 			Compare ("1", "2");
 			Compare ("A", "a");
 			Compare ("A", "a", CompareOptions.IgnoreCase);
@@ -29,24 +33,42 @@ namespace Mono.Globalization.Unicode
 			Compare ("AE", "\u00C6");
 			Compare ("AB\u01c0C", "A\u01c0B\u01c0C", CompareOptions.IgnoreSymbols);
 			Compare ("A\u0304", "\u0100"); // diacritical weight addition
+			Compare ("ABCABC", 5, 1, "c", 0, 1, CompareOptions.IgnoreCase);
 
 			IndexOf ("ABC", '1', CompareOptions.None);
-			IndexOf ("ABC", 'c', CompareOptions.IgnoreCase);
-			IndexOf ("ABC", '\uFF22', CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+			IndexOf ("ABCABC", 'c', CompareOptions.IgnoreCase);
+			IndexOf ("ABCABC", '\uFF22', CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
 			IndexOf ("ABCDE", '\u0117', CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+			IndexOf ("ABCABC", 'B', 1, 5, CompareOptions.IgnoreCase);
+
+			LastIndexOf ("ABC", '1', CompareOptions.None);
+			LastIndexOf ("ABCABC", 'c', CompareOptions.IgnoreCase);
+			LastIndexOf ("ABCABC", '\uFF22', CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+			LastIndexOf ("ABCDE", '\u0117', CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 
 			IsPrefix ("ABC", "c", CompareOptions.IgnoreCase);
 			IsPrefix ("BC", "c", CompareOptions.IgnoreCase);
 			IsPrefix ("C", "c", CompareOptions.IgnoreCase);
-			IsPrefix ("E", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+			IsPrefix ("EDCBA", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+
+			IsSuffix ("ABC", "c", CompareOptions.IgnoreCase);
+			IsSuffix ("BC", "c", CompareOptions.IgnoreCase);
+			IsSuffix ("CBA", "c", CompareOptions.IgnoreCase);
+			IsSuffix ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 
 			IndexOf ("ABC", "1", CompareOptions.None);
-			IndexOf ("ABC", "c", CompareOptions.IgnoreCase);
-			IndexOf ("ABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+			IndexOf ("ABCABC", "c", CompareOptions.IgnoreCase);
+			IndexOf ("ABCABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
 			IndexOf ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+			IndexOf ("ABCABC", "BC", CompareOptions.IgnoreCase);
+			IndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 
-			DumpSortKey ("AE");
-			DumpSortKey ("\u00C6");
+			LastIndexOf ("ABC", "1", CompareOptions.None);
+			LastIndexOf ("ABCABC", "c", CompareOptions.IgnoreCase);
+			LastIndexOf ("ABCABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+			LastIndexOf ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+			LastIndexOf ("ABCABC", "BC", CompareOptions.IgnoreCase);
+			LastIndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 
 /*
 			// dump sortkey for every single character.
@@ -75,10 +97,21 @@ namespace Mono.Globalization.Unicode
 				coll.Compare (s1, s2, opt), s1, s2);
 		}
 
+		void Compare (string s1, int idx1, int len1, string s2, int idx2, int len2, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("{0} {1} / {2}",
+				coll.Compare (s1, idx1, len1, s2, idx2, len2, opt), s1, s2);
+		}
+
 		void IndexOf (string s, char c, CompareOptions opt)
 		{
+			IndexOf (s, c, 0, s.Length, opt);
+		}
+
+		void IndexOf (string s, char c, int idx, int len, CompareOptions opt)
+		{
 			Console.Error.WriteLine ("cIndex: {0} {1} / {2}",
-				coll.IndexOf (s, c, opt), s, c);
+				coll.IndexOf (s, c, idx, len, opt), s, c);
 		}
 
 		void IndexOf (string s1, string s2, CompareOptions opt)
@@ -93,9 +126,32 @@ namespace Mono.Globalization.Unicode
 				coll.IsPrefix (s1, s2, opt), s1, s2);
 		}
 
+		void LastIndexOf (string s, char c, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("cLast: {0} {1} / {2}",
+				coll.LastIndexOf (s, c, opt), s, c);
+		}
+
+		void LastIndexOf (string s1, string s2, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("sLast: {0} {1} / {2}",
+				coll.LastIndexOf (s1, s2, opt), s1, s2);
+		}
+
+		void IsSuffix (string s1, string s2, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("IsSuffix: {0} {1} / {2}",
+				coll.IsSuffix (s1, s2, opt), s1, s2);
+		}
+
 		void DumpSortKey (string s)
 		{
-			byte [] data = coll.GetSortKey (s).KeyData;
+			DumpSortKey (s, 0, s.Length, CompareOptions.None);
+		}
+
+		void DumpSortKey (string s, int idx, int len, CompareOptions opt)
+		{
+			byte [] data = coll.GetSortKey (s, idx, len, opt).KeyData;
 			foreach (byte b in data)
 				Console.Error.Write ("{0:X02} ", b);
 			Console.Error.WriteLine (" : {0}", s);

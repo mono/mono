@@ -67,7 +67,7 @@ namespace Mono.Globalization.Unicode
 			return GetSortKey (s, 0, s.Length, options);
 		}
 
-		SortKey GetSortKey (string s, int start, int length, CompareOptions options)
+		public SortKey GetSortKey (string s, int start, int length, CompareOptions options)
 		{
 			SetOptions (options);
 
@@ -273,6 +273,78 @@ namespace Mono.Globalization.Unicode
 
 		#endregion
 
+		#region IsSuffix()
+
+		public bool IsSuffix (string src, string target, CompareOptions opt)
+		{
+			return IsSuffix (src, target, 0, src.Length, opt);
+		}
+
+		// It is mostly copy of IsPrefix().
+		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
+		{
+			SetOptions (opt);
+
+			int min = length > target.Length ? target.Length : length;
+			int si = start + length - 1;
+
+			// FIXME: this is not enough to handle tailorings.
+			for (int j = min - 1; j >= 0; j--, si--) {
+				int ci = FilterOptions (s [si]);
+				int cj = FilterOptions (target [j]);
+				if (ci == cj)
+					continue;
+				if (IsIgnorable (s [si])) {
+					if (!IsIgnorable (target [j]))
+						j++;
+					continue;
+				}
+				else if (IsIgnorable (target [j])) {
+					si++;
+					continue;
+				}
+
+				// FIXME: should handle expansions (and it 
+				// should be before codepoint comparison).
+				string expansion = GetExpansion (s [si]);
+				if (expansion != null)
+					return false;
+				expansion = GetExpansion (target [j]);
+				if (expansion != null)
+					return false;
+
+				if (Uni.Categories (ci) != Uni.Categories (cj) ||
+					Uni.Level1 (ci) != Uni.Level1 (cj) ||
+					!ignoreNonSpace && Uni.Level2 (ci) != Uni.Level2 (cj) ||
+					Uni.Level3 (ci) != Uni.Level3 (cj))
+					return false;
+				if (!Uni.HasSpecialWeight ((char) ci))
+					continue;
+				if (Uni.IsJapaneseSmallLetter ((char) ci) !=
+					Uni.IsJapaneseSmallLetter ((char) cj) ||
+					Uni.GetJapaneseDashType ((char) ci) !=
+					Uni.GetJapaneseDashType ((char) cj) ||
+					!Uni.IsHiragana ((char) ci) !=
+					!Uni.IsHiragana ((char) cj) ||
+					Uni.IsHalfWidthKana ((char) ci) !=
+					Uni.IsHalfWidthKana ((char) cj))
+					return false;
+			}
+			if (si == min) {
+				// All codepoints in the compared range
+				// matches. In that case, what matters 
+				// is whether the remaining part of 
+				// "target" is ignorable or not.
+				for (int i = target.Length - min - 1; i >= 0; i--)
+					if (!IsIgnorable (target [i]))
+						return false;
+				return true;
+			}
+			return true;
+		}
+
+		#endregion
+
 		#region IndexOf()
 
 		public int IndexOf (string s, char target)
@@ -343,12 +415,93 @@ namespace Mono.Globalization.Unicode
 				// expansions
 				int idx = IndexOf (s, target [0], start, length, opt);
 				if (idx < 0)
-					return idx;
-
-				if (IsPrefix (s, target, start + idx, length - idx, opt))
+					return -1;
+				if (IsPrefix (s, target, idx, length - (idx - start), opt))
 					return idx;
 				start++;
 				length--;
+			} while (length > 0);
+			return -1;
+		}
+
+		#endregion
+
+		#region LastIndexOf()
+
+		public int LastIndexOf (string s, char target)
+		{
+			return LastIndexOf (s, target, 0, s.Length, CompareOptions.None);
+		}
+
+		public int LastIndexOf (string s, char target, CompareOptions opt)
+		{
+			return LastIndexOf (s, target, 0, s.Length, opt);
+		}
+
+		public int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
+		{
+			// If target has an expansion, then use string search.
+			string expansion = GetExpansion (target);
+			if (expansion != null)
+				return LastIndexOf (s, expansion, start, length, opt);
+
+			SetOptions (opt);
+
+			int ti = FilterOptions ((int) target);
+			for (int idx = start + length - 1; idx >= start; idx--) {
+				switch (char.GetUnicodeCategory (s [idx])) {
+				case UnicodeCategory.PrivateUse:
+				case UnicodeCategory.Surrogate:
+					if (s [idx] != target)
+						continue;
+					return idx;
+				}
+
+				expansion = GetExpansion (s [idx]);
+				if (expansion != null)
+					continue; // since target cannot be expansion as conditioned above.
+				if (s [idx] == target)
+					return idx;
+				int si = FilterOptions ((int) s [idx]);
+				if (Uni.Categories (si) != Uni.Categories (ti) ||
+					Uni.Level1 (si) != Uni.Level1 (ti) ||
+					!ignoreNonSpace && Uni.Level2 (si) != Uni.Level2 (ti) ||
+					Uni.Level3 (si) != Uni.Level3 (ti))
+					continue;
+				if (!Uni.HasSpecialWeight ((char) si))
+					return idx;
+				if (Uni.IsJapaneseSmallLetter ((char) si) !=
+					Uni.IsJapaneseSmallLetter ((char) ti) ||
+					Uni.GetJapaneseDashType ((char) si) !=
+					Uni.GetJapaneseDashType ((char) ti) ||
+					!Uni.IsHiragana ((char) si) !=
+					!Uni.IsHiragana ((char) ti) ||
+					Uni.IsHalfWidthKana ((char) si) !=
+					Uni.IsHalfWidthKana ((char) ti))
+					continue;
+			}
+			return -1;
+		}
+
+		public int LastIndexOf (string s, string target, CompareOptions opt)
+		{
+			return LastIndexOf (s, target, 0, s.Length, opt);
+		}
+
+		public int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
+		{
+			SetOptions (opt);
+
+			do {
+				// FIXME: this should be modified to handle
+				// expansions
+				int idx = LastIndexOf (s, target [0], start, length, opt);
+				if (idx < 0)
+					return -1;
+
+				if (IsPrefix (s, target, idx, length - (idx - start), opt))
+					return idx;
+				length = idx - start - 1;
 			} while (length > 0);
 			return -1;
 		}

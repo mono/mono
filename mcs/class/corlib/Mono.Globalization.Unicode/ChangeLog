@@ -1,5 +1,12 @@
 2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs :
+	  Implemented IsSuffix() and LastIndexOf().
+	  Several fixes on index > 0 cases.
+	* TestDriver.cs : sample IsSuffix() and LastIndexOf() usage and more.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : updated (status, impl. classes).
 	* MSCompatUnicodeTable.cs : Korean Jamo are not really expansions.
 
