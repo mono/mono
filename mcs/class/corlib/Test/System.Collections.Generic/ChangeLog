@@ -1,3 +1,7 @@
+2005-06-20  David Waite  <mass@akuma.org>
+
+    * ListTest.cs: Substantial new tests
+
 2005-06-18  David Waite  <mass@akuma.org>
 
     * DictionaryTest.cs (AddTest3): Added test of simple interaction with

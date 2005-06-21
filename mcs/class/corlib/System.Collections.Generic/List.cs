@@ -5,12 +5,15 @@
 //    Ben Maurer (bmaurer@ximian.com)
 //    Martin Baulig (martin@ximian.com)
 //    Carlos Alberto Cortez (calberto.cortez@gmail.com)
+//    David Waite (mass@akuma.org)
 //
 // (C) 2004 Novell, Inc.
+// (C) 2005 David Waite
 //
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 David Waite
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,72 +38,121 @@
 #if NET_2_0
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
 	[Serializable]
-	public class List<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable {
+	public class List <T> : IList <T>, IList, ICollection {
 		T [] data;
 		int size;
 		int version;
-			
+		
+		static readonly T [] EmptyArray = new T [0]; 
 		const int DefaultCapacity = 4;
 		
 		public List ()
 		{
-			data = new T [DefaultCapacity];
+			data = EmptyArray;
 		}
 		
 		public List (IEnumerable <T> collection)
 		{
-			AddRange (collection);
+			CheckCollection (collection);
+
+			// initialize to needed size (if determinable)
+			ICollection <T> c = collection as ICollection <T>;
+			if (c == null)
+			{
+				data = EmptyArray;
+				AddEnumerable (collection);
+			}
+			else
+			{
+				data = new T [c.Count];
+				AddCollection (c);
+			}
 		}
 		
 		public List (int capacity)
 		{
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
 			data = new T [capacity];
 		}
 		
+		internal List (T [] data, int size)
+		{
+			this.data = data;
+			this.size = size;
+		}
 		public void Add (T item)
 		{
-			if (size == data.Length)
-				Capacity = Math.Max (Capacity * 2, DefaultCapacity);
-			
+			GrowIfNeeded (1);
 			data [size ++] = item;
+		}
+		
+		void GrowIfNeeded (int newCount)
+		{
+			int minimumSize = size + newCount;
+			if (minimumSize > data.Length)
+				Capacity = Math.Max (Math.Max (Capacity * 2, DefaultCapacity), minimumSize);
 		}
 		
 		void CheckRange (int idx, int count)
 		{
 			if (idx < 0)
-				throw new ArgumentOutOfRangeException ("index must be equal or larger than zero");
+				throw new ArgumentOutOfRangeException ("index");
 			
-			if (count < 0 || idx > size - count)
-				throw new ArgumentOutOfRangeException ("Count must refer to an element in the list");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if ((uint) idx + (uint) count > (uint) size)
+				throw new ArgumentException ("index and count exceed length of list");
 		}
 		
-		[MonoTODO ("PERFORMANCE: fix if it is an IList <T>")]
-		public void AddRange(IEnumerable<T> collection)
+		void AddCollection (ICollection <T> collection)
 		{
-			foreach (T t in collection)
+			int collectionCount = collection.Count;
+			GrowIfNeeded (collectionCount);			 
+			collection.CopyTo (data, size);
+			size += collectionCount;
+		}
+		void AddEnumerable (IEnumerable <T> enumerable)
+		{
+			foreach (T t in enumerable)
+			{
 				Add (t);
+			}
 		}
-		
-		public IList<T> AsReadOnly ()
+
+		public void AddRange (IEnumerable <T> collection)
 		{
-			return new ReadOnlyList<T>(this);
+			CheckCollection (collection);
+			
+			ICollection <T> c = collection as ICollection <T>;
+			if (c != null)
+				AddCollection (c);
+			else
+				AddEnumerable (collection);
 		}
 		
-		public int BinarySearch(T item)
+		public ReadOnlyCollection <T> AsReadOnly ()
 		{
-			return BinarySearch (item, Comparer <T>.Default);
+			return new ReadOnlyCollection <T> (this);
 		}
 		
-		public int BinarySearch(T item, IComparer<T> comparer)
+		public int BinarySearch (T item)
 		{
-			return BinarySearch (0, size, item, comparer);
+			return Array.BinarySearch (data, item);
 		}
 		
-		public int BinarySearch(int index, int count, T item, IComparer<T> comparer)
+		public int BinarySearch (T item, IComparer <T> comparer)
+		{
+			return Array.BinarySearch (data, item, comparer);
+		}
+		
+		public int BinarySearch (int index, int count, T item, IComparer <T> comparer)
 		{
 			CheckRange (index, count);
 			return Array.BinarySearch (data, index, size, item, comparer);
@@ -109,6 +161,7 @@ namespace System.Collections.Generic {
 		public void Clear ()
 		{
 			Array.Clear (data, 0, data.Length);
+			size = 0;
 		}
 		
 		public bool Contains (T item)
@@ -116,55 +169,54 @@ namespace System.Collections.Generic {
 			return IndexOf (item) != -1;
 		}
 		
-		public List <TOutput> ConvertAll <TOutput> (Converter<T, TOutput> converter)
+		public List <TOutput> ConvertAll <TOutput> (Converter <T, TOutput> converter)
 		{
+			if (converter == null)
+				throw new ArgumentNullException ("converter");
 			List <TOutput> u = new List <TOutput> (size);
-			int i = 0;
 			foreach (T t in this)
-				u [i ++] = converter (t);
-			
+				u.Add (converter (t));
 			return u;
 		}
 		
 		public void CopyTo (T [] array)
 		{
-			CopyTo (array, 0);
+			Array.Copy (data, 0, array, 0, size);
 		}
 		
 		public void CopyTo (T [] array, int arrayIndex)
 		{
-			CopyTo (0, array, arrayIndex, size);
+			Array.Copy (data, 0, array, arrayIndex, size);
 		}
 		
-		public void CopyTo (int index, T[] array, int arrayIndex, int count)
+		public void CopyTo (int index, T [] array, int arrayIndex, int count)
 		{
 			CheckRange (index, count);
 			Array.Copy (data, index, array, arrayIndex, count);
 		}
 
-		public bool Exists (Predicate<T> match)
+		public bool Exists (Predicate <T> match)
 		{
-			foreach (T t in this)
-				if (match (t))
-					return true;
-			
-			return false;
+			return FindIndex (match) != -1;
 		}
 		
-		public T Find (Predicate<T> match)
+		public T Find (Predicate <T> match)
 		{
-			foreach (T t in this)
-				if (match (t))
-					return t;
-			
-			return default (T);
+			int i = FindIndex (match);
+			return (i != -1) ? data [i] : default (T);
+		}
+		void CheckMatch (Predicate <T> match)
+		{
+			if (match == null)
+				throw new ArgumentNullException ("match");
 		}
 		
 		// Maybe we could make this faster. For example, you could
 		// make a bit set with stackalloc for which elements to copy
 		// then you could size the array correctly.
-		public List<T> FindAll (Predicate<T> match)
+		public List <T> FindAll (Predicate <T> match)
 		{
+			CheckMatch (match);
 			List <T> f = new List <T> ();
 			
 			foreach (T t in this)
@@ -176,18 +228,24 @@ namespace System.Collections.Generic {
 		
 		public int FindIndex (Predicate <T> match)
 		{
-			return FindIndex (0, match);
+			CheckMatch (match);
+			return GetIndex (0, size, match);
 		}
 		
 		public int FindIndex (int startIndex, Predicate <T> match)
 		{
-			return FindIndex (startIndex, size - startIndex, match);
+			CheckMatch (match);
+			CheckIndex (startIndex);
+			return GetIndex (startIndex, size - startIndex, match);
 		}
-		
 		public int FindIndex (int startIndex, int count, Predicate <T> match)
 		{
+			CheckMatch (match);
 			CheckRange (startIndex, count);
-			
+			return GetIndex (startIndex, count, match);
+		}
+		int GetIndex (int startIndex, int count, Predicate <T> match)
+		{
 			for (int i = startIndex; i < startIndex + count; i ++)
 				if (match (data [i]))
 					return i;
@@ -197,32 +255,45 @@ namespace System.Collections.Generic {
 		
 		public T FindLast (Predicate <T> match)
 		{
-			int i = FindLastIndex (match);
+			CheckMatch (match);
+			int i = GetLastIndex (0, size, match);
 			return i == -1 ? default (T) : this [i];
 		}
 		
 		public int FindLastIndex (Predicate <T> match)
 		{
-			return FindLastIndex (0, match);
+			CheckMatch (match);
+			return GetLastIndex (0, size, match);
 		}
 		
 		public int FindLastIndex (int startIndex, Predicate <T> match)
 		{
-			return FindLastIndex (startIndex, size - startIndex, match);
+			CheckMatch (match);
+			CheckIndex (startIndex);
+			return GetLastIndex (0, startIndex + 1, match);
 		}
 		
 		public int FindLastIndex (int startIndex, int count, Predicate <T> match)
 		{
-			CheckRange (startIndex, count);
+			CheckMatch (match);
+			int start = startIndex - count + 1;
+			CheckRange (start, count);
+			return GetLastIndex (start, count, match);
+		}
+
+		int GetLastIndex (int startIndex, int count, Predicate <T> match)
+		{
+			// unlike FindLastIndex, takes regular params for search range
 			for (int i = startIndex + count; i != startIndex;)
 				if (match (data [--i]))
 					return i;
-				
 			return -1;	
 		}
 		
 		public void ForEach (Action <T> action)
 		{
+			if (action == null)
+				throw new ArgumentNullException ("action");
 			foreach (T t in this)
 				action (t);
 		}
@@ -235,23 +306,20 @@ namespace System.Collections.Generic {
 		public List <T> GetRange (int index, int count)
 		{
 			CheckRange (index, count);
-			List<T> result = new List<T> (count);
-
-			result.size = count;
-			for (int i = 0; i < count; i++)
-				result.data [i] = data [i+index];
-
-			return result;
+			T [] tmpArray = new T [count];
+			Array.Copy (data, index, tmpArray, 0, count);
+			return new List <T> (tmpArray, count);
 		}
 		
 		public int IndexOf (T item)
 		{
-			return IndexOf (item, 0);
+			return Array.IndexOf (data, item, 0, size);
 		}
 		
 		public int IndexOf (T item, int index)
 		{
-			return IndexOf (item, index, size - index);
+			CheckIndex (index);
+			return Array.IndexOf (data, item, index, size - index);
 		}
 		
 		public int IndexOf (T item, int index, int count)
@@ -269,38 +337,69 @@ namespace System.Collections.Generic {
 			
 			size += delta;
 		}
+
+		void CheckIndex (int index)
+		{
+			if ((uint) index >= (uint) size)
+				throw new ArgumentOutOfRangeException ("index");
+		}
 		
 		public void Insert (int index, T item)
 		{
 			if ((uint) index > (uint) size)
 				throw new ArgumentOutOfRangeException ("index");
 			
-			if (size == data.Length)
-				 Capacity = Math.Max (Capacity * 2, DefaultCapacity);
+			GrowIfNeeded (1);
 			Shift (index, 1);
 			this [index] = item;
 				
 		}
-		[MonoTODO ("Performance for collection")]
-		public void InsertRange (int index, IEnumerable<T> collection)
+
+		void CheckCollection (IEnumerable <T> collection)
 		{
-			foreach (T t in collection)
-				Insert (index ++, t);
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
 		}
 		
+		public void InsertRange (int index, IEnumerable <T> collection)
+		{
+			CheckCollection (collection);
+			CheckIndex (index);
+			ICollection <T> c = collection as ICollection <T>;
+			if (c != null)
+				InsertCollection (index, c);
+			else
+				InsertEnumeration (index, collection);
+		}
+
+		void InsertCollection (int index, ICollection <T> collection)
+		{
+			int collectionCount = collection.Count;
+			GrowIfNeeded (collectionCount);
+			
+			Shift (index, collectionCount);
+			collection.CopyTo (data, index);
+		}
+		void InsertEnumeration (int index, IEnumerable <T> enumerable)
+		{
+			foreach (T t in enumerable)
+				Insert (index++, t);		
+		}
+
 		public int LastIndexOf (T item)
 		{
-			return LastIndexOf  (item, 0);
+			return Array.LastIndexOf (data, item, 0, size);
 		}
 		
-		public int LastIndexOf  (T item, int index)
+		public int LastIndexOf (T item, int index)
 		{
-			return LastIndexOf  (item, index, size - index);
+			CheckIndex (index);
+			return Array.LastIndexOf (data, item, index, size - index);
 		}
 		
 		public int LastIndexOf (T item, int index, int count)
 		{
-			CheckRange (index, count);
+			CheckRange (index, count);			 
 			return Array.LastIndexOf (data, item, index, count);
 		}
 		
@@ -314,32 +413,38 @@ namespace System.Collections.Generic {
 		}
 		
 		[MonoTODO ("I can make it faster than this...")]
-		public int RemoveAll (Predicate<T> match)
+		public int RemoveAll (Predicate <T> match)
 		{
+			CheckMatch (match);
+
 			int index = 0;
 			int c = 0;
-			while ((index = FindIndex (index, match)) != -1) {
+			while ((index = GetIndex (index, size - index, match)) != -1) {
 				RemoveAt (index);
 				c ++;
 			}
 			
+			Array.Clear (data, size, c);
 			return c;
 		}
 		
 		public void RemoveAt (int index)
 		{
-			RemoveRange (index, 1);
+			CheckIndex (index);
+			Shift (index, -1);
+			Array.Clear (data, size, 0);
 		}
 		
 		public void RemoveRange (int index, int count)
 		{
 			CheckRange (index, count);
 			Shift (index, -count);
+			Array.Clear (data, size, count);
 		}
 		
 		public void Reverse ()
 		{
-			Reverse (0, size);
+			Array.Reverse (data, 0, size);
 		}
 		public void Reverse (int index, int count)
 		{
@@ -349,43 +454,43 @@ namespace System.Collections.Generic {
 		
 		public void Sort ()
 		{
-			Sort (Comparer <T>.Default);
+			Array.Sort (data, 0, size, (IComparer) Comparer <T>.Default);
 		}
-		public void Sort (IComparer<T> comparer)
+		public void Sort (IComparer <T> comparer)
 		{
-			Sort (0, size, comparer);
+			Array.Sort (data, 0, size, (IComparer) comparer);
 		}
 		
 		// Waiting on Array
 		[MonoTODO]
-		public void Sort (Comparison<T> comparison)
+		public void Sort (Comparison <T> comparison)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public void Sort (int index, int count, IComparer<T> comparer)
+		public void Sort (int index, int count, IComparer <T> comparer)
 		{
 			CheckRange (index, count);
-			throw new NotImplementedException ();
+			Array.Sort (data, index, count, (IComparer) comparer);
 		}
 
 		public T [] ToArray ()
 		{
 			T [] t = new T [size];
-			if (data != null)
-				Array.Copy (data, t, size);
+			Array.Copy (data, t, size);
 			
 			return t;
 		}
 		
-		public void TrimToSize ()
+		public void TrimExcess ()
 		{
 			Capacity = size;
 		}
 		
 		public bool TrueForAll (Predicate <T> match)
 		{
+			CheckMatch (match);
+
 			foreach (T t in this)
 				if (!match (t))
 					return false;
@@ -412,28 +517,27 @@ namespace System.Collections.Generic {
 		public T this [int index] {
 			get {
 				if ((uint) index >= (uint) size)
-					throw new IndexOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("index");
 				return data [index];
 			}
 			set {
-				if ((uint) index >= (uint) size)
-					throw new IndexOutOfRangeException ();
+				CheckIndex (index);
 				data [index] = value;
 			}
 		}
 		
 #region Interface implementations.
-		IEnumerator <T> IEnumerable <T>.GetEnumerator()
+		IEnumerator <T> IEnumerable <T>.GetEnumerator ()
 		{
 			return GetEnumerator ();
 		}
 		
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
-			Array.Copy (data, 0, data, arrayIndex, size);
+			Array.Copy (data, 0, array, arrayIndex, size);
 		}
 		
-		IEnumerator IEnumerable.GetEnumerator()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
 		}
@@ -487,89 +591,7 @@ namespace System.Collections.Generic {
 			set { this [index] = (T) value; }
 		}
 #endregion
-		
-		[ComVisible (false)]
-		internal class ReadOnlyList<I> : IList<I>, ICollection<I>, IEnumerable<I>
-		{
-			IList<I> list;
-		
-			internal ReadOnlyList (IList<I> list)
-			{
-				this.list = list;
-			}
-
-			public void Add (I item)
-			{
-				throw new NotSupportedException ();
-			}
-			
-			public void Clear ()
-			{
-				throw new NotSupportedException ();
-			}
-
-			public bool Contains (I item)
-			{
-				return list.Contains (item);
-			}
-
-			public void CopyTo (I [] array, int index)
-			{
-				list.CopyTo (array, index);
-			}
-
-			public IEnumerator<I> GetEnumerator ()
-			{
-				return list.GetEnumerator ();
-			}
-
-			IEnumerator IEnumerable.GetEnumerator ()
-			{
-				return ((IEnumerable) list).GetEnumerator ();
-			}
-			
-			public int IndexOf (I item)
-			{
-				return list.IndexOf (item);
-			}
-
-			public void Insert (int index, I item)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public bool Remove (I item)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public void RemoveAt (int index)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public int Count {
-				get {
-					return list.Count;
-				}
-			}
-
-			public bool IsReadOnly {
-				get {
-					return true;
-				}
-			}
-
-			public I this [int index] {
-				get {
-					return list [index];
-				}
-				set {
-					throw new NotSupportedException ();
-				}
-			}
-		}
-		
+				
 		public struct Enumerator : IEnumerator <T>, IDisposable {
 			const int NOT_STARTED = -2;
 			
@@ -627,7 +649,6 @@ namespace System.Collections.Generic {
 			object IEnumerator.Current {
 				get { return Current; }
 			}
-			
 		}
 	}
 }
