@@ -79,14 +79,6 @@ namespace Mono.CSharp {
 			return FindMostEncompassedType (ec, list);
 		}
 
-		static Expression TypeParameterConversion (Expression expr, bool is_reference, Type target_type)
-		{
-			if (is_reference)
-				return new EmptyCast (expr, target_type);
-			else
-				return new BoxedCast (expr, target_type);
-		}
-
 		static Expression ImplicitTypeParameterConversion (EmitContext ec, Expression expr,
 								   Type target_type)
 		{
@@ -102,19 +94,18 @@ namespace Mono.CSharp {
 			}
 
 			// We're converting from a type parameter which is known to be a reference type.
-			bool is_reference = gc.IsReferenceType;
 			Type base_type = TypeParam_EffectiveBaseType (ec, gc);
 
 			if (TypeManager.IsSubclassOf (base_type, target_type))
-				return TypeParameterConversion (expr, is_reference, target_type);
+				return new BoxedCast (expr, target_type);
 
 			if (target_type.IsInterface) {
 				if (TypeManager.ImplementsInterface (base_type, target_type))
-					return TypeParameterConversion (expr, is_reference, target_type);
+					return new BoxedCast (expr, target_type);
 
 				foreach (Type t in gc.InterfaceConstraints) {
 					if (TypeManager.IsSubclassOf (t, target_type))
-						return TypeParameterConversion (expr, is_reference, target_type);
+						return new BoxedCast (expr, target_type);
 				}
 			}
 
@@ -122,7 +113,7 @@ namespace Mono.CSharp {
 				if (!t.IsGenericParameter)
 					continue;
 				if (TypeManager.IsSubclassOf (t, target_type))
-					return TypeParameterConversion (expr, is_reference, target_type);
+					return new BoxedCast (expr, target_type);
 			}
 
 			return null;

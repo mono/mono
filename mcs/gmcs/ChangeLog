@@ -1,5 +1,10 @@
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs (Convert.ImplicitTypeParameterConversion): Always use
+	a BoxedCast - also for reference types - to be compatible with csc.
+
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (MemberAccess.DoResolve): Add support for nested
 	types in a generic instance; fixes #75320.
 
