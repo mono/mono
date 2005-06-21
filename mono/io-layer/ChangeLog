@@ -1,3 +1,13 @@
+2005-06-21  Dick Porter  <dick@ximian.com>
+
+	* mutex-private.h:
+	* thread-private.h:
+	* mutexes.c: 
+	* threads.c: Keep a list of owned mutexes in each thread handle,
+	so that it is easier to abandon them when the thread exits.
+	Removes a bottleneck when multiple threads are finishing in
+	parallel.
+
 2005-06-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: (GetLogicalDrives) when a bogus line is read, don't leak memory.
