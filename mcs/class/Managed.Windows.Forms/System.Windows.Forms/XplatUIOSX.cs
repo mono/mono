@@ -1093,6 +1093,10 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefWndProc(ref Message msg) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
 			switch ((Msg)msg.Msg) {
+				case Msg.WM_ERASEBKGND: {
+					HIViewSetNeedsDisplay (hwnd.whole_window, true);
+					return (IntPtr)1;
+				}
 				case Msg.WM_DESTROY: {
 					if (WindowMapping [hwnd.Handle] != null)
 
@@ -1147,7 +1151,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
-			throw new NotImplementedException();
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			HIViewSetNeedsDisplay (hwnd.whole_window, true);
 		}
 
 
@@ -1295,6 +1300,8 @@ namespace System.Windows.Forms {
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
+			if (clear)
+				hwnd.erase_pending = true;
 			if (hwnd.visible && HIViewIsVisible (handle)) {
 				MSG msg = new MSG ();
 				msg.hwnd = hwnd.Handle;
@@ -1351,6 +1358,12 @@ namespace System.Windows.Forms {
 				Caret.Paused = true;
 				HideCaret();
 			}
+
+			if (hwnd.erase_pending) {
+				NativeWindow.WndProc (hwnd.client_window, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
+				hwnd.erase_pending = false;
+			}
+
 			hwnd.client_dc  = Graphics.FromHwnd (hwnd.client_window);
 			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
 			
