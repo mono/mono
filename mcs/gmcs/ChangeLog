@@ -1,3 +1,13 @@
+2005-05-27  Raja R Harinath  <rharinath@novell.com>
+
+	* parameter.cs (Parameter): Remove TODO comment.
+	(Parameter.DefineParameter): Remove Location parameter.
+	(Parameters.LabelParameters): Likewise.
+	* class.cs (Constructor.Emit): Update to change.
+	(MethodData.Emit): Likewise.
+	* anonymous.cs (AnonymousMethod.EmitMethod): Likewise.	
+	* delegate.cs (Delegate.Define, Delegate.Emit): Likewise.
+
 2005-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* parameter.cs,

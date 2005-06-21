@@ -4750,7 +4750,7 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			Parameters.LabelParameters (ec, ConstructorBuilder, Location);
+			Parameters.LabelParameters (ec, ConstructorBuilder);
 			
 			SourceMethod source = SourceMethod.Create (
 				Parent, ConstructorBuilder, block);
@@ -5197,7 +5197,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, kind);
 
 			if (member is MethodCore)
-				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder, loc);
+				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder);
                         
 			ToplevelBlock block = method.Block;
 			
