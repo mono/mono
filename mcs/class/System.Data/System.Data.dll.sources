@@ -146,6 +146,7 @@ System.Data.Common/DataTableMapping.cs
 System.Data.Common/DataTableMappingConverter.cs
 System.Data.Common/DbCommandBuilder.cs
 System.Data.Common/DbConnectionStringBuilder.cs
+System.Data.Common/DbConnectionStringBuilderHelper.cs
 System.Data.Common/DbCommand.cs
 System.Data.Common/DbCommandOptionalFeatures.cs
 System.Data.Common/DbCommandSet.cs
@@ -313,6 +314,7 @@ System.Data.SqlClient/SqlClientPermissionAttribute.cs
 System.Data.SqlClient/SqlCommand.cs
 System.Data.SqlClient/SqlCommandBuilder.cs
 System.Data.SqlClient/SqlConnection.cs
+System.Data.SqlClient/SqlConnectionStringBuilder.cs
 System.Data.SqlClient/SqlDataAdapter.cs
 System.Data.SqlClient/SqlDataReader.cs
 System.Data.SqlClient/SqlError.cs

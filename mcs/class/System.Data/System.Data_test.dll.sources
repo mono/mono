@@ -50,6 +50,7 @@ System.Data.Odbc/OdbcPermissionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
+System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
 System.Data.SqlClient/SqlClientPermissionTest.cs
 System.Data.Tests.Mainsoft/GHTUtils/DataProvider.cs

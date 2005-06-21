@@ -1,3 +1,8 @@
+2005-06-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlConnectionStringBuilder.cs: Connection String Builder class
+	for SqlClient Data Provider.
+
 2005-06-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SqlParameter.cs: moved the 'using S.D.SqlTypes' out of NET_2_0. Fixes

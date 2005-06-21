@@ -27,20 +27,18 @@
 //
 
 #if NET_2_0
+using System;
+using System.Text;
+using System.Reflection;
+using System.Collections;
+using System.ComponentModel;
+using System.Collections.Generic;
+
+using System.Data;
+using System.Data.Common;
 
 namespace System.Data.Common
 {
-
-        using System;
-        using System.Text;
-        using System.Reflection;
-        using System.Collections;
-        using System.ComponentModel;
-        using System.Collections.Generic;
-
-        using System.Data;
-        using System.Data.Common;
-
 
         [CLSCompliant (true)]
         public class DbConnectionStringBuilder : IDictionary, ICollection, IEnumerable,
@@ -89,7 +87,20 @@ namespace System.Data.Common
                                 conn = conn.TrimEnd (';');
                                 return conn;
                         }
-                        set { throw new NotImplementedException (); }
+                        set { 
+				if (value == null)
+					throw new ArgumentNullException ("ConnectionString cannot be null");
+				
+				string [] parameters = value.Split (new char [] {';'});
+				foreach (string args in parameters) {
+					string [] arg = args.Split (new char [] {'='}, 2);
+					if (arg.Length == 2) {
+						string key = arg [0].Trim ().ToUpper ();
+						string val = arg [1].Trim ();
+						this [key] = val;
+					}
+				}
+			}
                 }
                 public virtual int Count
                 {

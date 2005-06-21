@@ -1,3 +1,11 @@
+2005-06-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: Added SqlConnectionStringBuilder.cs and
+	DbConnectionStringBuilderHelper.cs
+
+	* System.Data_test.dll.sources: Added
+	SqlConnectionStringBuilderTest.cs
+
 2005-06-19  Konstantin Triger <kostat@mainsoft.com>
 
 	System.Data.vmwcsproj: keeping up to date with move of Locale.cs and MonoTODOAttribute.cs

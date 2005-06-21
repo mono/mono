@@ -1,3 +1,13 @@
+2005-06-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbConnectionStringBuilder.cs: Implemented method for parsing
+	connection string through "ConnectionString" property.
+
+	* DbConnectionStringBuilderHelper.cs: Helper class to provide
+	conversion between string=>.net type mapping for connection string
+	builders. The idea is to use between other providers (odbc) as
+	well.
+
 2005-05-29 Boris Kirzner <borisk@mainsoft.com>
 	* DbCommand.cs - added #ifdef NET_2_0 on DbCommandOptionalFeatures (not used in TARGET_JVM). 
 	* ExceptionHelper.cs - removed java references. Exceptions created on formatted text messages. Code styling fixes.
