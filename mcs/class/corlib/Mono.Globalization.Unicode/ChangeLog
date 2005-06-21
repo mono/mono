@@ -1,3 +1,10 @@
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : implemented IndexOf(string,string,CompareOptions)
+	  and IsPrefix(). Tiny code refactory.
+	* TestDriver.cs : sample IsPrefix() and IndexOf() usage.
+	* MSCompatUnicodeTable.cs : tiny refactory for CodePointIndexer use.
+
 2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs :

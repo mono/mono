@@ -21,20 +21,25 @@ namespace Mono.Globalization.Unicode
 
 	internal class MSCompatUnicodeTable
 	{
-		public static byte [] Categories {
-			get { return categories; }
+
+		public static byte Categories (int index)
+		{
+			return categories [index];
 		}
 
-		public static byte [] Level1 {
-			get { return level1; }
+		public static byte Level1 (int index)
+		{
+			return level1 [index];
 		}
 
-		public static byte [] Level2 {
-			get { return level2; }
+		public static byte Level2 (int index)
+		{
+			return level2 [index];
 		}
 
-		public static byte [] Level3 {
-			get { return level3; }
+		public static byte Level3 (int index)
+		{
+			return level3 [index];
 		}
 
 		public static bool IsIgnorable (int i)
@@ -82,6 +87,8 @@ namespace Mono.Globalization.Unicode
 
 		#region Utilities
 
+		// FIXME: this is just a stub. Should be replaced by an
+		// implementation which uses tailorings table.
 		public static string GetExpansion (char c)
 		{
 			switch (c) {

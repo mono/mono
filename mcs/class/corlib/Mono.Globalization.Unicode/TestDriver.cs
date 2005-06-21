@@ -35,9 +35,20 @@ namespace Mono.Globalization.Unicode
 			IndexOf ("ABC", '\uFF22', CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
 			IndexOf ("ABCDE", '\u0117', CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 
+			IsPrefix ("ABC", "c", CompareOptions.IgnoreCase);
+			IsPrefix ("BC", "c", CompareOptions.IgnoreCase);
+			IsPrefix ("C", "c", CompareOptions.IgnoreCase);
+			IsPrefix ("E", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+
+			IndexOf ("ABC", "1", CompareOptions.None);
+			IndexOf ("ABC", "c", CompareOptions.IgnoreCase);
+			IndexOf ("ABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+			IndexOf ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");
 
+/*
 			// dump sortkey for every single character.
 			for (int i = 0; i <= char.MaxValue; i++) {
 				byte [] data = coll.GetSortKey (new string ((char) i, 1)).KeyData;
@@ -50,6 +61,7 @@ namespace Mono.Globalization.Unicode
 					i, Char.GetUnicodeCategory ((char) i));
 			}
 			Output.Close ();
+*/
 		}
 
 		void Compare (string s1, string s2)
@@ -65,8 +77,20 @@ namespace Mono.Globalization.Unicode
 
 		void IndexOf (string s, char c, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("Index: {0} {1} / {2}",
+			Console.Error.WriteLine ("cIndex: {0} {1} / {2}",
 				coll.IndexOf (s, c, opt), s, c);
+		}
+
+		void IndexOf (string s1, string s2, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("sIndex: {0} {1} / {2}",
+				coll.IndexOf (s1, s2, opt), s1, s2);
+		}
+
+		void IsPrefix (string s1, string s2, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("IsPrefix: {0} {1} / {2}",
+				coll.IsPrefix (s1, s2, opt), s1, s2);
 		}
 
 		void DumpSortKey (string s)

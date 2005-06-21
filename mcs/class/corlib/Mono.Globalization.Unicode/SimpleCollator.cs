@@ -99,14 +99,22 @@ namespace Mono.Globalization.Unicode
 		void FillSortKeyRaw (int i)
 		{
 			if (0x3400 <= i && i <= 0x4DB5) {
-				FillCJKExtensionSortKeyRaw (i);
+				int diff = i - 0x3400;
+				buf.AppendCJKExtension (
+					(byte) (0x10 + diff / 254),
+					(byte) (diff % 254 + 2));
 				return;
 			}
 
 			UnicodeCategory uc = char.GetUnicodeCategory ((char) i);
 			switch (uc) {
 			case UnicodeCategory.PrivateUse:
-				FillPrivateUseSortKeyRaw (i);
+				int diff = i - 0xE000;
+				buf.AppendNormal (
+					(byte) (0xE5 + diff / 254),
+					(byte) (diff % 254 + 2),
+					0,
+					0);
 				return;
 			case UnicodeCategory.Surrogate:
 				FillSurrogateSortKeyRaw (i);
@@ -115,10 +123,10 @@ namespace Mono.Globalization.Unicode
 
 			if (Uni.HasSpecialWeight ((char) i))
 				buf.AppendKana (
-					Uni.Categories [i],
-					Uni.Level1 [i],
-					Uni.Level2 [i],
-					Uni.Level3 [i],
+					Uni.Categories (i),
+					Uni.Level1 (i),
+					Uni.Level2 (i),
+					Uni.Level3 (i),
 					Uni.IsJapaneseSmallLetter ((char) i),
 					Uni.GetJapaneseDashType ((char) i),
 					!Uni.IsHiragana ((char) i),
@@ -126,29 +134,10 @@ namespace Mono.Globalization.Unicode
 					);
 			else
 				buf.AppendNormal (
-					Uni.Categories [i],
-					Uni.Level1 [i],
-					Uni.Level2 [i],
-					Uni.Level3 [i]);
-		}
-
-		void FillCJKExtensionSortKeyRaw (int i)
-		{
-			int diff = i - 0x3400;
-
-			buf.AppendCJKExtension (
-				(byte) (0x10 + diff / 254),
-				(byte) (diff % 254 + 2));
-		}
-
-		void FillPrivateUseSortKeyRaw (int i)
-		{
-			int diff = i - 0xE000;
-			buf.AppendNormal (
-				(byte) (0xE5 + diff / 254),
-				(byte) (diff % 254 + 2),
-				0,
-				0);
+					Uni.Categories (i),
+					Uni.Level1 (i),
+					Uni.Level2 (i),
+					Uni.Level3 (i));
 		}
 
 		void FillSurrogateSortKeyRaw (int i)
@@ -213,6 +202,77 @@ namespace Mono.Globalization.Unicode
 
 		#endregion
 
+		#region IsPrefix()
+
+		public bool IsPrefix (string src, string target, CompareOptions opt)
+		{
+			return IsPrefix (src, target, 0, src.Length, opt);
+		}
+
+		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
+		{
+			SetOptions (opt);
+
+			int min = length > target.Length ? target.Length : length;
+			int si = start;
+
+			// FIXME: this is not enough to handle tailorings.
+			for (int j = 0; j < min; j++, si++) {
+				int ci = FilterOptions (s [si]);
+				int cj = FilterOptions (target [j]);
+				if (ci == cj)
+					continue;
+				if (IsIgnorable (s [si])) {
+					if (!IsIgnorable (target [j]))
+						j--;
+					continue;
+				}
+				else if (IsIgnorable (target [j])) {
+					si--;
+					continue;
+				}
+
+				// FIXME: should handle expansions (and it 
+				// should be before codepoint comparison).
+				string expansion = GetExpansion (s [si]);
+				if (expansion != null)
+					return false;
+				expansion = GetExpansion (target [j]);
+				if (expansion != null)
+					return false;
+
+				if (Uni.Categories (ci) != Uni.Categories (cj) ||
+					Uni.Level1 (ci) != Uni.Level1 (cj) ||
+					!ignoreNonSpace && Uni.Level2 (ci) != Uni.Level2 (cj) ||
+					Uni.Level3 (ci) != Uni.Level3 (cj))
+					return false;
+				if (!Uni.HasSpecialWeight ((char) ci))
+					continue;
+				if (Uni.IsJapaneseSmallLetter ((char) ci) !=
+					Uni.IsJapaneseSmallLetter ((char) cj) ||
+					Uni.GetJapaneseDashType ((char) ci) !=
+					Uni.GetJapaneseDashType ((char) cj) ||
+					!Uni.IsHiragana ((char) ci) !=
+					!Uni.IsHiragana ((char) cj) ||
+					Uni.IsHalfWidthKana ((char) ci) !=
+					Uni.IsHalfWidthKana ((char) cj))
+					return false;
+			}
+			if (si == min) {
+				// All codepoints in the compared range
+				// matches. In that case, what matters 
+				// is whether the remaining part of 
+				// "target" is ignorable or not.
+				for (int i = min; i < target.Length; i++)
+					if (!IsIgnorable (target [i]))
+						return false;
+				return true;
+			}
+			return true;
+		}
+
+		#endregion
+
 		#region IndexOf()
 
 		public int IndexOf (string s, char target)
@@ -227,6 +287,7 @@ namespace Mono.Globalization.Unicode
 
 		public int IndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
+			// If target has an expansion, then use string search.
 			string expansion = GetExpansion (target);
 			if (expansion != null)
 				return IndexOf (s, expansion, start, length, opt);
@@ -234,17 +295,25 @@ namespace Mono.Globalization.Unicode
 			SetOptions (opt);
 
 			int ti = FilterOptions ((int) target);
-			for (int idx = 0; idx < s.Length; idx++) {
+			for (int idx = start; idx < length; idx++) {
+				switch (char.GetUnicodeCategory (s [idx])) {
+				case UnicodeCategory.PrivateUse:
+				case UnicodeCategory.Surrogate:
+					if (s [idx] != target)
+						continue;
+					return idx;
+				}
+
 				expansion = GetExpansion (s [idx]);
 				if (expansion != null)
 					continue; // since target cannot be expansion as conditioned above.
 				if (s [idx] == target)
 					return idx;
 				int si = FilterOptions ((int) s [idx]);
-				if (Uni.Categories [si] != Uni.Categories [ti] ||
-					Uni.Level1 [si] != Uni.Level1 [ti] ||
-					!ignoreNonSpace && Uni.Level2 [si] != Uni.Level2 [ti] ||
-					Uni.Level3 [si] != Uni.Level3 [ti])
+				if (Uni.Categories (si) != Uni.Categories (ti) ||
+					Uni.Level1 (si) != Uni.Level1 (ti) ||
+					!ignoreNonSpace && Uni.Level2 (si) != Uni.Level2 (ti) ||
+					Uni.Level3 (si) != Uni.Level3 (ti))
 					continue;
 				if (!Uni.HasSpecialWeight ((char) si))
 					return idx;
@@ -261,9 +330,27 @@ namespace Mono.Globalization.Unicode
 			return -1;
 		}
 
+		public int IndexOf (string s, string target, CompareOptions opt)
+		{
+			return IndexOf (s, target, 0, s.Length, opt);
+		}
+
 		public int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
-			throw new NotImplementedException ();
+			SetOptions (opt);
+			do {
+				// FIXME: this should be modified to handle
+				// expansions
+				int idx = IndexOf (s, target [0], start, length, opt);
+				if (idx < 0)
+					return idx;
+
+				if (IsPrefix (s, target, start + idx, length - idx, opt))
+					return idx;
+				start++;
+				length--;
+			} while (length > 0);
+			return -1;
 		}
 
 		#endregion
