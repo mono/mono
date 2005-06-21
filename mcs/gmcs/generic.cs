@@ -2948,15 +2948,26 @@ namespace Mono.CSharp {
 				if (unwrap != null) {
 					unwrap.EmitCheck (ec);
 					ig.Emit (OpCodes.Brfalse, is_null_label);
+
+					left.Emit (ec);
+					ig.Emit (OpCodes.Br, end_label);
+
+					ig.MarkLabel (is_null_label);
+					expr.Emit (ec);
+
+					ig.MarkLabel (end_label);
+				} else {
+					left.Emit (ec);
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Brtrue, end_label);
+
+					ig.MarkLabel (is_null_label);
+
+					ig.Emit (OpCodes.Pop);
+					expr.Emit (ec);
+
+					ig.MarkLabel (end_label);
 				}
-
-				left.Emit (ec);
-				ig.Emit (OpCodes.Br, end_label);
-
-				ig.MarkLabel (is_null_label);
-				expr.Emit (ec);
-
-				ig.MarkLabel (end_label);
 			}
 		}
 

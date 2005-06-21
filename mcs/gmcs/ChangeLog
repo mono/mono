@@ -1,5 +1,10 @@
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (NullCoalescingOperator.Emit): Make this work if the
+	left-hand side is not a nullable type; fixes #75328.
+
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs
 	(TypeManager.CSharpName): Use GetFullName() instead of `t.FullName'.
 	(TypeManager.GetFullNameSignature): Likewise.
