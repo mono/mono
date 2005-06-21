@@ -261,7 +261,7 @@ namespace Mono.Globalization.Unicode
 					Uni.IsHalfWidthKana ((char) cj))
 					return false;
 			}
-			if (si == min) {
+			if (length == min) {
 				// All codepoints in the compared range
 				// matches. In that case, what matters 
 				// is whether the remaining part of 
@@ -482,6 +482,7 @@ namespace Mono.Globalization.Unicode
 					Uni.IsHalfWidthKana ((char) si) !=
 					Uni.IsHalfWidthKana ((char) ti))
 					continue;
+				return idx;
 			}
 			return -1;
 		}
@@ -495,17 +496,21 @@ namespace Mono.Globalization.Unicode
 		{
 			SetOptions (opt);
 
+			// FIXME: shouldn't it be rejected at CompareInfo?
+			length = s.Length < start + length ? s.Length - start : length;
+
+			int chlen = length;
 			do {
 				// FIXME: this should be modified to handle
 				// expansions
-				int idx = LastIndexOf (s, target [0], start, length, opt);
+				int idx = LastIndexOf (s, target [0], start, chlen, opt);
 				if (idx < 0)
 					return -1;
 
 				if (IsPrefix (s, target, idx, length - (idx - start), opt))
 					return idx;
-				length = idx - start - 1;
-			} while (length > 0);
+				chlen = idx - start - 1;
+			} while (chlen > 0);
 			return -1;
 		}
 

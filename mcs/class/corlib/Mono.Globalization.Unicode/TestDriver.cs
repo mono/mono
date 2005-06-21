@@ -62,6 +62,7 @@ namespace Mono.Globalization.Unicode
 			IndexOf ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 			IndexOf ("ABCABC", "BC", CompareOptions.IgnoreCase);
 			IndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
+			IndexOf ("ABCDEF", "BCD", 0, 3, CompareOptions.IgnoreCase);
 
 			LastIndexOf ("ABC", "1", CompareOptions.None);
 			LastIndexOf ("ABCABC", "c", CompareOptions.IgnoreCase);
@@ -69,6 +70,8 @@ namespace Mono.Globalization.Unicode
 			LastIndexOf ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 			LastIndexOf ("ABCABC", "BC", CompareOptions.IgnoreCase);
 			LastIndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
+			LastIndexOf ("original", "rig", CompareOptions.None);
+			Console.WriteLine ("original".LastIndexOf ("rig"));
 
 /*
 			// dump sortkey for every single character.
@@ -116,8 +119,13 @@ namespace Mono.Globalization.Unicode
 
 		void IndexOf (string s1, string s2, CompareOptions opt)
 		{
+			IndexOf (s1, s2, 0, s1.Length, opt);
+		}
+
+		void IndexOf (string s1, string s2, int idx, int len, CompareOptions opt)
+		{
 			Console.Error.WriteLine ("sIndex: {0} {1} / {2}",
-				coll.IndexOf (s1, s2, opt), s1, s2);
+				coll.IndexOf (s1, s2, idx, len, opt), s1, s2);
 		}
 
 		void IsPrefix (string s1, string s2, CompareOptions opt)
