@@ -1,3 +1,6 @@
+2005-21-06  Boris Kirzner <borisk@mainsoft.com>
+	* Novell.Directory.Ldap.vmwcsproj: Added project file for TARGET_JVM.
+
 2005-19-06  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap/AssemblyInfo.cs, 
 	Novell.Directory.Ldap/Connection.cs, 
