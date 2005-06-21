@@ -399,14 +399,14 @@ namespace Mono.CSharp {
 		///   Currently ResolveLValue wraps DoResolveLValue to perform sanity
 		///   checking and assertion checking on what we expect from Resolve
 		/// </remarks>
-		public Expression ResolveLValue (EmitContext ec, Expression right_side)
+		public Expression ResolveLValue (EmitContext ec, Expression right_side, Location loc)
 		{
 			int errors = Report.Errors;
 			Expression e = DoResolveLValue (ec, right_side);
 
 			if (e == null) {
 				if (errors == Report.Errors)
-					Report.Error (131, Location, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
+					Report.Error (131, loc, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
 				return null;
 			}
 
@@ -2293,7 +2293,7 @@ namespace Mono.CSharp {
 					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
 					
 					if (right_side != null)
-						return var.ResolveLValue (ec, right_side);
+						return var.ResolveLValue (ec, right_side, loc);
 					else
 						return var.Resolve (ec);
 				}
@@ -2301,7 +2301,7 @@ namespace Mono.CSharp {
 				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);
 				if (pref != null) {
 					if (right_side != null)
-						return pref.ResolveLValue (ec, right_side);
+						return pref.ResolveLValue (ec, right_side, loc);
 					else
 						return pref.Resolve (ec);
 				}

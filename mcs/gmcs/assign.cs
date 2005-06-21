@@ -315,7 +315,7 @@ namespace Mono.CSharp {
 			real_source = source = source.Resolve (ec);
 			if (source == null) {
 				// Ensure that we don't propagate the error as spurious "uninitialized variable" errors.
-				target = target.ResolveLValue (ec, EmptyExpression.Null);
+				target = target.ResolveLValue (ec, EmptyExpression.Null, Location);
 				return null;
 			}
 
@@ -348,7 +348,7 @@ namespace Mono.CSharp {
 			if (embedded != null)
 				source = (embedded.temp != null) ? embedded.temp : embedded.source;
 
-			target = target.ResolveLValue (ec, source);
+			target = target.ResolveLValue (ec, source, Location);
 
 			if (target == null)
 				return null;

@@ -1,3 +1,10 @@
+2005-05-31  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75081.
+	* ecore.cs (Expression.ResolveLValue): Add a Location parameter.
+	Use it in the error message.
+	* assign.cs, expression.cs, statement.cs: Update.
+
 2005-05-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75088.

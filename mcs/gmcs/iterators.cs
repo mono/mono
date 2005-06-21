@@ -888,7 +888,7 @@ namespace Mono.CSharp {
 				FieldExpr fexpr = new FieldExpr (field.FieldBuilder, loc);
 				fexpr.InstanceExpression = new ThisParameterReference (
 					iterator.this_type, loc);
-				return fexpr.ResolveLValue (ec, right_side);
+				return fexpr.ResolveLValue (ec, right_side, loc);
 			}
 
 			public override Expression DoResolve (EmitContext ec)

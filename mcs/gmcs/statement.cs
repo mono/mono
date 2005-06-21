@@ -3933,7 +3933,7 @@ namespace Mono.CSharp {
 			foreach (DictionaryEntry e in var_list){
 				Expression var = (Expression) e.Key;
 
-				var = var.ResolveLValue (ec, new EmptyExpression ());
+				var = var.ResolveLValue (ec, new EmptyExpression (), loc);
 				if (var == null)
 					return false;
 
@@ -4430,7 +4430,7 @@ namespace Mono.CSharp {
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				variable = variable.ResolveLValue (ec, conv);
+				variable = variable.ResolveLValue (ec, conv, loc);
 				if (variable == null)
 					ok = false;
 
