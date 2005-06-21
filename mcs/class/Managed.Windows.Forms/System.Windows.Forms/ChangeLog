@@ -1,3 +1,49 @@
+2005-06-21  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs: Set focus to active control when form is activated
+	* TextControl.cs: 
+	  - Added word-wrap functionality to RecalculateLine() 
+	  - Added some short function descriptions for VS.Net to aid in
+	    writing dependent controls
+	  - Added Caret property, returning the current coords of the caret
+	  - Added ViewPortWidth and ViewPortHeight properties
+	  - Added Wrap property
+	  - Added CaretMoved event
+	  - Removed some old debug code
+	  - Split() can now create soft splits
+	  - Added PreviousTag()/NextTag() to allow walking "tag-lists"
+	  - Added method to format existing text
+	  - Fixed size/alignment calculations to use viewport
+	  - RecalculateDocument now can handle changing line-numbers while
+	    calculating lines
+
+	* TextBox.cs:
+	  - Added some wrap logic, we don't wrap if alignment is not left
+	  - Added casts for scrollbar var, base class switched types to
+	    also support RichTextBoxA
+	  - Implemented handling of scrollbar visibility flags
+
+	* TextBoxBase.cs:
+	  - Switched scrollbars type to RichTextBoxScrollBars to support
+	    RichTextBox
+	  - Added tracking of canvas width/height
+	  - Switched scrollbars to be not selectable (to keep focus on text)
+	  - Added central CalculateDocument() method to handle all redraw
+	    requirements
+	  - Added ReadOnly support
+	  - Added WordWrap support
+	  - Fixed handling of Enter key (we now treat it as a DialogKey)
+	  - Fixed caret positioning when h or v scroll is not zero
+	  - Fixed placing/generation of vertical scrollbar
+	  - Added CalculateScrollBars() method to allow updating scrollbar
+	    limits and visibility
+	  - Fixed handling of horizontal scroll
+	  - Added handling of vertical scroll
+	  - Implemented auto-'jump' when caret moves to close to a left or
+	    right border and there is text to be scrolled into view (currently
+	    there's the potential for a stack overflow, until a bug in
+	    scrollbar is fixed)
+
 2005-06-21  Geoff Norton  <gnorton@customerdna.com>
 	
 	* XplatUIOSX.cs: Initial implementation of WM_ERASEBKGND

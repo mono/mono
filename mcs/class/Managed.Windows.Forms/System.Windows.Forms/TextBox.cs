@@ -41,7 +41,7 @@ namespace System.Windows.Forms {
 		public TextBox() {
 			accepts_return = false;
 			password_char = '\u25cf';
-			scrollbars = ScrollBars.None;
+			scrollbars = RichTextBoxScrollBars.None;
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 			this.BackColor = ThemeEngine.Current.ColorWindow;
@@ -102,12 +102,13 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public ScrollBars ScrollBars {
 			get {
-				return scrollbars;
+				return (ScrollBars)scrollbars;
 			}
 
 			set {
-				if (value != scrollbars) {
-					scrollbars = value;
+				if (value != (ScrollBars)scrollbars) {
+					scrollbars = (RichTextBoxScrollBars)value;
+					base.CalculateScrollBars();
 				}
 			}
 		}
@@ -144,6 +145,14 @@ namespace System.Windows.Forms {
 			set {
 				if (value != alignment) {
 					alignment = value;
+
+					// MS word-wraps if alignment isn't left
+					if (alignment != HorizontalAlignment.Left) {
+						document.Wrap = true;
+					} else {
+						document.Wrap = word_wrap;
+					}
+
 					for (int i = 1; i <= document.Lines; i++) {
 						document.GetLine(i).Alignment = value;
 					}

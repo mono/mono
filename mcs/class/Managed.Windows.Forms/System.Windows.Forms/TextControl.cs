@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -80,6 +80,8 @@ namespace System.Windows.Forms {
 		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
+		internal bool			soft_break;		// Tag is 'broken soft' and continuation from previous line
+
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
@@ -99,6 +101,7 @@ namespace System.Windows.Forms {
 			parent = null;
 			text = null;
 			recalc = true;
+			soft_break = false;
 			alignment = HorizontalAlignment.Left;
 
 			if (string_format == null) {
@@ -265,7 +268,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// Find the tag on a line based on the character position
+		/// <summary> Find the tag on a line based on the character position</summary>
 		internal LineTag FindTag(int pos) {
 			LineTag tag;
 
@@ -289,17 +292,22 @@ namespace System.Windows.Forms {
 		}
 
 
-		//
-		// Go through all tags on a line and recalculate all size-related values
-		// returns true if lineheight changed
-		//
-		internal bool RecalculateLine(Graphics g) {
+		/// <summary>
+		/// Go through all tags on a line and recalculate all size-related values;
+		/// returns true if lineheight changed
+		/// </summary>
+		internal bool RecalculateLine(Graphics g, Document doc) {
 			LineTag	tag;
 			int	pos;
 			int	len;
 			SizeF	size;
 			float	w;
 			int	prev_height;
+			bool	retval;
+			bool	wrapped;
+			Line	line;
+			int	wrap_pos;
+			float	wrap_width;
 
 			pos = 0;
 			len = this.text.Length;
@@ -311,17 +319,51 @@ namespace System.Windows.Forms {
 			tag.width = 0;
 			widths[0] = 0;
 			this.recalc = false;
+			retval = false;
+			wrapped = false;
+
+			wrap_pos = 0;
+			wrap_width = 0;
 
 			while (pos < len) {
 				size = g.MeasureString(this.text.ToString(pos, 1), tag.font, 10000, string_format);
 
 				w = size.Width;
 
-				tag.width += w;
+				if (Char.IsWhiteSpace(text[pos])) {
+					wrap_pos = pos + 1;
+					wrap_width = tag.width + w;
+				}
 
-				pos++;
+				if (doc.wrap) {
+					if ((widths[pos] + w) + 27 > doc.viewport_width) {
+						pos = wrap_pos;
+						tag.width = wrap_width;
+						doc.Split(this, tag, pos, true);
+						len = this.text.Length;
+						retval = true;
+						wrapped = true;
+					}
+				}
 
-				widths[pos] = widths[pos-1] + w;
+				// Contract all soft lines that follow back into our line
+				if (!wrapped) {
+					tag.width += w;
+
+					pos++;
+
+					widths[pos] = widths[pos-1] + w;
+
+					if (pos == len) {
+						line = doc.GetLine(this.line_no + 1);
+						if ((line != null) && (line.soft_break)) {
+							// Pull the previous line back into this one
+							doc.Combine(this.line_no, this.line_no + 1);
+							len = this.text.Length;
+							retval = true;
+						}
+					}
+				}
 
 				if (pos == (tag.start-1 + tag.length)) {
 					// We just found the end of our current tag
@@ -366,6 +408,8 @@ namespace System.Windows.Forms {
 					if (tag != null) {
 						tag.width = 0;
 						tag.shift = 0;
+						wrap_pos = pos;
+						wrap_width = tag.width;
 					}
 				}
 			}
@@ -376,9 +420,9 @@ namespace System.Windows.Forms {
 			}
 
 			if (prev_height != this.height) {
-				return true;
+				retval = true;
 			}
-			return false;
+			return retval;
 		}
 		#endregion	// Internal Methods
 
@@ -488,6 +532,8 @@ namespace System.Windows.Forms {
 
 		internal int		viewport_x;
 		internal int		viewport_y;		// The visible area of the document
+		internal int		viewport_width;
+		internal int		viewport_height;
 
 		internal int		document_x;		// Width of the document
 		internal int		document_y;		// Height of the document
@@ -560,6 +606,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal Point Caret {
+			get {
+				return new Point((int)caret.tag.line.widths[caret.pos] + caret.line.align_shift, caret.line.Y + caret.tag.shift);
+			}
+		}
+
 		internal LineTag CaretTag {
 			get {
 				return caret.tag;
@@ -586,6 +638,27 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal int ViewPortWidth {
+			get {
+				return viewport_width;
+			}
+
+			set {
+				viewport_width = value;
+			}
+		}
+
+		internal int ViewPortHeight {
+			get {
+				return viewport_height;
+			}
+
+			set {
+				viewport_height = value;
+			}
+		}
+
+
 		internal int Width {
 			get {
 				return this.document_x;
@@ -595,6 +668,17 @@ namespace System.Windows.Forms {
 		internal int Height {
 			get {
 				return this.document_y;
+			}
+		}
+
+		internal bool Wrap {
+			get {
+				return wrap;
+			}
+
+			set {
+				wrap = value;
+				// FIXME - force recalc/redisplay
 			}
 		}
 
@@ -849,13 +933,13 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, owner.Width, owner.Height - line.Y - viewport_y));
+					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
 					owner.Invalidate();
 				}
 			} else {
-				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, (int)owner.Width, line.height));
+				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height));
 			}
 		}
 
@@ -866,7 +950,7 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, owner.Width, owner.Height - line.Y - viewport_y));
+					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
 					owner.Invalidate();
@@ -903,8 +987,8 @@ namespace System.Windows.Forms {
 			selection_end.line = this.document;
 			selection_end.pos = 0;
 
-			viewport_x = -2;
-			viewport_y = -2;
+			viewport_x = 0;
+			viewport_y = 0;
 
 			document_x = 0;
 			document_y = 0;
@@ -919,6 +1003,8 @@ namespace System.Windows.Forms {
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
+
+			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
 		internal void PositionCaret(int x, int y) {
@@ -929,6 +1015,8 @@ namespace System.Windows.Forms {
 			XplatUI.DestroyCaret(owner.Handle);
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
+
+			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
 		internal void CaretHasFocus() {
@@ -950,6 +1038,8 @@ namespace System.Windows.Forms {
 			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 			XplatUI.CaretVisible(owner.Handle, true);
+
+			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
 		internal void UpdateCaret() {
@@ -959,6 +1049,8 @@ namespace System.Windows.Forms {
 			}
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 			XplatUI.CaretVisible(owner.Handle, true);
+
+			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
 		internal void DisplayCaret() {
@@ -1542,23 +1634,41 @@ namespace System.Windows.Forms {
 
 			line = GetLine(LineNo);
 			tag = LineTag.FindTag(line, pos);
-			Split(line, tag, pos);
+			Split(line, tag, pos, false);
 		}
 
 		internal void Split(Line line, int pos) {
 			LineTag	tag;
 
 			tag = LineTag.FindTag(line, pos);
-			Split(line, tag, pos);
+			Split(line, tag, pos, false);
 		}
 
-		internal void Split(Line line, LineTag tag, int pos) {
+		internal void Split(Line line, LineTag tag, int pos, bool soft) {
 			LineTag	new_tag;
 			Line	new_line;
+			bool	move_caret;
+
+			move_caret = false;
+
+			// Adjust selection and cursors
+			if (soft && (caret.line == line) && (caret.pos >= pos)) {
+				move_caret = true;
+			}
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
 				Add(line.line_no + 1, "", line.alignment, tag.font, tag.color);
+				if (soft) {
+					if (move_caret) {
+						caret.line = GetLine(line.line_no + 1);
+						caret.line.soft_break = true;
+						caret.tag = selection_start.line.tags;
+						caret.pos = 0;
+					} else {
+						GetLine(line.line_no + 1).soft_break = true;
+					}
+				}
 				return;
 			}
 
@@ -1619,6 +1729,16 @@ namespace System.Windows.Forms {
 
 				}
 			}
+
+			if (soft) {
+				if (move_caret) {
+					caret.line = new_line;
+					caret.pos = caret.pos - pos;
+					caret.tag = caret.line.FindTag(caret.pos);
+				}
+				new_line.soft_break = true;
+			}
+
 			line.text.Remove(pos, line.text.Length - pos);
 		}
 
@@ -1744,6 +1864,7 @@ namespace System.Windows.Forms {
 				line1.text = line3.text;
 				line1.widths = line3.widths;
 				line1.Y = line3.Y;
+				line1.soft_break = line3.soft_break;
 
 				tag = line1.tags;
 				while (tag != null) {
@@ -1801,18 +1922,18 @@ namespace System.Windows.Forms {
 
 			// Three invalidates:
 			// First line from start
-			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, owner.Width, l1.height));
+			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
 
 			// lines inbetween
 			if ((l1.line_no + 1) < l2.line_no) {
 				int	y;
 
 				y = GetLine(l1.line_no + 1).Y;
-				owner.Invalidate(new Rectangle(0 - viewport_x, y - viewport_y, owner.Width, GetLine(l2.line_no - 1).Y - y - viewport_y));
+				owner.Invalidate(new Rectangle(0 - viewport_x, y - viewport_y, viewport_width, GetLine(l2.line_no - 1).Y - y - viewport_y));
 			}
 
 			// Last line to end
-			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, owner.Width, l1.height));
+			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
 
 
 		}
@@ -2201,7 +2322,7 @@ if (end != null) {
 		}
 
 
-		// Give it a Line number and it returns the Line object at with that line number
+		/// <summary>Give it a Line number and it returns the Line object at with that line number</summary>
 		internal Line GetLine(int LineNo) {
 			Line	line = document;
 
@@ -2218,8 +2339,51 @@ if (end != null) {
 			return null;
 		}
 
-		// Give it a Y pixel coordinate and it returns the Line covering that Y coordinate
-		///
+		/// <summary>Retrieve the previous tag; walks line boundaries</summary>
+		internal LineTag PreviousTag(LineTag tag) {
+			Line l; 
+
+			if (tag.previous != null) {
+				return tag.previous;
+			}
+
+			// Next line 
+			if (tag.line.line_no == 1) {
+				return null;
+			}
+
+			l = GetLine(tag.line.line_no - 1);
+			if (l != null) {
+				LineTag t;
+
+				t = l.tags;
+				while (t.next != null) {
+					t = t.next;
+				}
+				return t;
+			}
+
+			return null;
+		}
+
+		/// <summary>Retrieve the next tag; walks line boundaries</summary>
+		internal LineTag NextTag(LineTag tag) {
+			Line l;
+
+			if (tag.next != null) {
+				return tag.next;
+			}
+
+			// Next line
+			l = GetLine(tag.line.line_no + 1);
+			if (l != null) {
+				return l.tags;
+			}
+
+			return null;
+		}
+
+		/// <summary>Give it a Y pixel coordinate and it returns the Line covering that Y coordinate</summary>
 		internal Line GetLineByPixel(int y, bool exact) {
 			Line	line = document;
 			Line	last = null;
@@ -2322,6 +2486,24 @@ if (end != null) {
 			}
 		}
 
+		internal void FormatText(Line start_line, int start_pos, Line end_line, int end_pos, Font font, Brush color) {
+			Line    l;
+
+			// First, format the first line
+			LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos, font, color);
+
+			// Format last line
+			if (end_line != start_line) {
+				LineTag.FormatText(end_line, 0, end_pos, font, color);
+			}
+
+			// Now all the lines inbetween
+			for (int i = start_line.line_no + 1; i < end_line.line_no - 1; i++) {
+				l = GetLine(i);
+				LineTag.FormatText(l, 0, l.text.Length, font, color);
+			}
+		}
+
 		internal void RecalculateAlignments() {
 			Line	line;
 			int	line_no;
@@ -2333,9 +2515,9 @@ if (end != null) {
 
 				if (line.alignment != HorizontalAlignment.Left) {
 					if (line.alignment == HorizontalAlignment.Center) {
-						line.align_shift = (document_x - (int)line.widths[line.text.Length]) / 2;
+						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 					} else {
-						line.align_shift = document_x - (int)line.widths[line.text.Length];
+						line.align_shift = viewport_width - (int)line.widths[line.text.Length];
 					}
 				}
 
@@ -2344,22 +2526,22 @@ if (end != null) {
 			return;
 		}
 
-		// Calculate formatting for the whole document
+		/// <summary>Calculate formatting for the whole document</summary>
 		internal bool RecalculateDocument(Graphics g) {
 			return RecalculateDocument(g, 1, this.lines, false);
 		}
 
-		// Calculate formatting starting at a certain line
+		/// <summary>Calculate formatting starting at a certain line</summary>
 		internal bool RecalculateDocument(Graphics g, int start) {
 			return RecalculateDocument(g, start, this.lines, false);
 		}
 
-		// Calculate formatting within two given line numbers
+		/// <summary>Calculate formatting within two given line numbers</summary>
 		internal bool RecalculateDocument(Graphics g, int start, int end) {
 			return RecalculateDocument(g, start, end, false);
 		}
 
-		// With optimize on, returns true if line heights changed
+		/// <summary>With optimize on, returns true if line heights changed</summary>
 		internal bool RecalculateDocument(Graphics g, int start, int end, bool optimize) {
 			Line	line;
 			int	line_no;
@@ -2372,13 +2554,13 @@ if (end != null) {
 				bool	alignment_recalc;
 
 				changed = false;
-				alignment_recalc = false;
+				alignment_recalc = true;
 
 				while (line_no <= end) {
 					line = GetLine(line_no++);
 					line.Y = Y;
 					if (line.recalc) {
-						if (line.RecalculateLine(g)) {
+						if (line.RecalculateLine(g, this)) {
 							changed = true;
 							// If the height changed, all subsequent lines change
 							end = this.lines;
@@ -2392,26 +2574,45 @@ if (end != null) {
 						// Calculate alignment
 						if (line.alignment != HorizontalAlignment.Left) {
 							if (line.alignment == HorizontalAlignment.Center) {
-								line.align_shift = (document_x - (int)line.widths[line.text.Length]) / 2;
+								line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 							} else {
-								line.align_shift = document_x - (int)line.widths[line.text.Length];
+								line.align_shift = viewport_width - (int)line.widths[line.text.Length];
 							}
 						}
 					}
 
 					Y += line.height;
+
+					if (line_no > lines) {
+						break;
+					}
 				}
 
 				if (alignment_recalc) {
 					RecalculateAlignments();
 				}
 
+				line = GetLine(lines);
+				document_y = line.Y + line.height;
+
 				return changed;
 			} else {
-				while (line_no <= end) {
+				int	shift;
+
+				shift = 0;
+
+				while (line_no <= (end + shift)) {
 					line = GetLine(line_no++);
 					line.Y = Y;
-					line.RecalculateLine(g);
+
+					shift = this.lines;
+					line.RecalculateLine(g, this);
+					if (this.lines > shift) {
+						shift = this.lines - shift;
+					} else {
+						shift = 0;
+					}
+
 					if (line.widths[line.text.Length] > this.document_x) {
 						this.document_x = (int)line.widths[line.text.Length];
 					}
@@ -2419,15 +2620,23 @@ if (end != null) {
 					// Calculate alignment
 					if (line.alignment != HorizontalAlignment.Left) {
 						if (line.alignment == HorizontalAlignment.Center) {
-							line.align_shift = (document_x - (int)line.widths[line.text.Length]) / 2;
+							line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 						} else {
-							line.align_shift = document_x - (int)line.widths[line.text.Length];
+							line.align_shift = viewport_width - (int)line.widths[line.text.Length];
 						}
 					}
 
 					Y += line.height;
+
+					if (line_no > lines) {
+						break;
+					}
 				}
 				RecalculateAlignments();
+
+				line = GetLine(lines);
+				document_y = line.Y + line.height;
+
 				return true;
 			}
 		}
@@ -2440,6 +2649,10 @@ if (end != null) {
 			return lines;
 		}
 		#endregion	// Internal Methods
+
+		#region Events
+		internal event EventHandler CaretMoved;
+		#endregion	// Events
 
 		#region Administrative
 		public IEnumerator GetEnumerator() {
@@ -2474,7 +2687,6 @@ if (end != null) {
 		public override string ToString() {
 			return "document " + this.document_id;
 		}
-
 		#endregion	// Administrative
 	}
 
@@ -2496,8 +2708,6 @@ if (end != null) {
 		internal int		ascent;		// Ascent of the font for this tag
 		internal int		shift;		// Shift down for this tag, to stay on baseline
 
-		internal int		soft_break;	// Tag is 'broken soft' and continues in the next line
-
 		// Administrative
 		internal Line		line;		// The line we're on
 		internal LineTag	next;		// Next tag on the same line
@@ -2515,11 +2725,9 @@ if (end != null) {
 		#endregion	// Constructors
 
 		#region Internal Methods
-		//
-		// Applies 'font' to characters starting at 'start' for 'length' chars
-		// Removes any previous tags overlapping the same area
-		// returns true if lineheight has changed
-		//
+		/// <summary>Applies 'font' to characters starting at 'start' for 'length' chars; 
+		/// Removes any previous tags overlapping the same area; 
+		/// returns true if lineheight has changed</summary>
 		internal static bool FormatText(Line line, int start, int length, Font font, Brush color) {
 			LineTag	tag;
 			LineTag	start_tag;
@@ -2615,9 +2823,7 @@ if (end != null) {
 		}
 
 
-		//
-		// Finds the tag that describes the character at position 'pos' on 'line'
-		//
+		/// <summary>Finds the tag that describes the character at position 'pos' on 'line'</summary>
 		internal static LineTag FindTag(Line line, int pos) {
 			LineTag tag = line.tags;
 
@@ -2637,9 +2843,7 @@ if (end != null) {
 			return null;
 		}
 
-		//
-		// Combines 'this' tag with 'other' tag.
-		//
+		/// <summary>Combines 'this' tag with 'other' tag</summary>
 		internal bool Combine(LineTag other) {
 			if (!this.Equals(other)) {
 				return false;
@@ -2656,9 +2860,7 @@ if (end != null) {
 		}
 
 
-		//
-		// Remove 'this' tag ; to be called when formatting is to be removed
-		//
+		/// <summary>Remove 'this' tag ; to be called when formatting is to be removed</summary>
 		internal bool Remove() {
 			if ((this.start == 1) && (this.next == null)) {
 				// We cannot remove the only tag
@@ -2680,9 +2882,7 @@ if (end != null) {
 		}
 
 
-		//
-		// Checks if 'this' tag describes the same formatting options as 'obj'
-		//
+		/// <summary>Checks if 'this' tag describes the same formatting options as 'obj'</summary>
 		public override bool Equals(object obj) {
 			LineTag	other;
 

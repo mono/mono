@@ -1317,11 +1317,10 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_SETFOCUS: {
-#if not
 					if (this.ActiveControl != null) {
 						ActiveControl.Focus();
+						return;	// FIXME - do we need to run base.WndProc, even though we just changed focus?
 					}
-#endif
 					base.WndProc(ref m);
 					return;
 				}

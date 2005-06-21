@@ -54,15 +54,15 @@ namespace System.Windows.Forms {
 		internal Document		document;
 		internal LineTag		caret_tag;		// tag our cursor is in
 		internal int			caret_pos;		// position on the line our cursor is in (can be 0 = beginning of line)
-		internal int			viewport_x;		// left visible pixel
-		internal int			viewport_y;		// top visible pixel
 		internal HScrollBar		hscroll;
 		internal VScrollBar		vscroll;
-		internal ScrollBars		scrollbars;
+		internal RichTextBoxScrollBars	scrollbars;
 		internal bool			grabbed;
 		internal bool			richtext;
 		internal int			requested_height;
-
+		internal int			canvas_width;
+		internal int			canvas_height;
+		internal int			track_width = 20;
 		#if Debug
 		internal static bool	draw_lines = false;
 		#endif
@@ -87,6 +87,8 @@ namespace System.Windows.Forms {
 			word_wrap = true;
 			richtext = false;
 			document = new Document(this);
+			//document.CaretMoved += new EventHandler(CaretMoved);
+			document.Wrap = true;
 			requested_height = -1;
 
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
@@ -96,14 +98,18 @@ namespace System.Windows.Forms {
 			FontChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 			ForeColorChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 			
-			scrollbars = ScrollBars.None;
+			scrollbars = RichTextBoxScrollBars.None;
 
 			hscroll = new HScrollBar();
-			hscroll.ValueChanged +=new EventHandler(hscroll_ValueChanged);
-			hscroll.Enabled = true;
+			hscroll.ValueChanged += new EventHandler(hscroll_ValueChanged);
+			hscroll.control_style &= ~ControlStyles.Selectable;
+			hscroll.Enabled = false;
 			hscroll.Visible = false;
 
 			vscroll = new VScrollBar();
+			vscroll.ValueChanged += new EventHandler(vscroll_ValueChanged);
+			vscroll.control_style &= ~ControlStyles.Selectable;
+			vscroll.Enabled = false;
 			vscroll.Visible = false;
 
 			this.Controls.Add(hscroll);
@@ -112,6 +118,11 @@ namespace System.Windows.Forms {
 			//SetStyle(ControlStyles.ResizeRedraw, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.UserPaint, true);
+
+			canvas_width = this.Width;
+			canvas_height = this.Height;
+
+			CalculateScrollBars();
 		}
 		#endregion	// Internal Constructor
 
@@ -271,7 +282,7 @@ namespace System.Windows.Forms {
 				for (i = 0; i < l; i++) {
 					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
 				}
-				document.RecalculateDocument(CreateGraphics());
+				CalculateDocument();
 				OnTextChanged(EventArgs.Empty);
 			}
 		}
@@ -361,8 +372,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				document.ReplaceSelection(CaseAdjust(value));
-				OnTextChanged(EventArgs.Empty);
+				if (!read_only) {
+					document.ReplaceSelection(CaseAdjust(value));
+					OnTextChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -431,14 +444,14 @@ namespace System.Windows.Forms {
 					for (i = 1; i < document.Lines; i++) {
 						sb.Append(document.GetLine(i).text.ToString() + Environment.NewLine);
 					}
-
 					return sb.ToString();
 				}
 			}
 
 			set {
-				if (value == base.Text)
+				if (value == base.Text) {
 					return;
+				}
 
 				if (value != null) {
 					Line	line;
@@ -463,7 +476,7 @@ namespace System.Windows.Forms {
 					} else {
 						document.Clear();
 						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
-						document.RecalculateDocument(CreateGraphics());
+						CalculateDocument();
 						line = document.GetLine(1);
 						document.SetSelectionStart(line, 0);
 						document.SetSelectionEnd(line, value.Length);
@@ -508,6 +521,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != word_wrap) {
 					word_wrap = value;
+					document.Wrap = value;
 				}
 			}
 		}
@@ -529,7 +543,6 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void AppendText(string text) {
-
 			if (multiline) {
 				string[]	lines;
 				int		linecount;
@@ -553,9 +566,8 @@ namespace System.Windows.Forms {
 					document.Add(document.CaretLine.LineNo+i, CaseAdjust(lines[i]), alignment, document.CaretTag.font, document.CaretTag.color);
 				}
 
-				document.RecalculateDocument(CreateGraphics());
+				CalculateDocument();
 				document.MoveCaret(CaretDirection.CtrlEnd);
-				Invalidate();
 			} else {
 				document.MoveCaret(CaretDirection.CtrlEnd);
 				document.InsertStringAtCaret(text, true);
@@ -639,12 +651,15 @@ namespace System.Windows.Forms {
 
 		protected override bool IsInputKey(Keys keyData) {
 			switch (keyData) {
+#if not
+				// We handle Enter in ProcessDialogKey
 				case Keys.Enter: {
 					if (multiline && (accepts_return || ((keyData & Keys.Control) != 0))) {
 						return true;
 					}
 					return false;
 				}
+#endif
 
 				case Keys.Tab: {
 					if (accepts_tab) {
@@ -727,6 +742,7 @@ namespace System.Windows.Forms {
 					} else {
 						document.MoveCaret(CaretDirection.CharBack);
 					}
+					CaretMoved(this, null);
 					return true;
 				}
 
@@ -738,18 +754,21 @@ namespace System.Windows.Forms {
 					} else {
 						document.MoveCaret(CaretDirection.CharForward);
 					}
+					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Up: {
 					document.SetSelectionToCaret(true);
 					document.MoveCaret(CaretDirection.LineUp);
+					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Down: {
 					document.SetSelectionToCaret(true);
 					document.MoveCaret(CaretDirection.LineDown);
+					CaretMoved(this, null);
 					return true;
 				}
 
@@ -761,6 +780,7 @@ namespace System.Windows.Forms {
 					} else {
 						document.MoveCaret(CaretDirection.Home);
 					}
+					CaretMoved(this, null);
 					return true;
 				}
 
@@ -772,27 +792,33 @@ namespace System.Windows.Forms {
 					} else {
 						document.MoveCaret(CaretDirection.End);
 					}
+					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Enter: {
-					if (multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
+					if (!read_only && multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
+						Line	line;
+
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
 						}
 						document.SetSelectionToCaret(true);
 
-						document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
+						line = document.CaretLine;
+
+						document.Split(document.CaretLine, document.CaretTag, document.CaretPosition, false);
 						OnTextChanged(EventArgs.Empty);
-						document.UpdateView(document.CaretLine, 2, 0);
+						document.UpdateView(line, 2, 0);
 						document.MoveCaret(CaretDirection.CharForward);
+						CaretMoved(this, null);
 						return true;
 					}
 					break;
 				}
 
 				case Keys.Tab: {
-					if (accepts_tab) {
+					if (!read_only && accepts_tab) {
 						document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
@@ -800,6 +826,7 @@ namespace System.Windows.Forms {
 						document.SetSelectionToCaret(true);
 
 						OnTextChanged(EventArgs.Empty);
+						CaretMoved(this, null);
 						return true;
 					}
 					break;
@@ -807,6 +834,10 @@ namespace System.Windows.Forms {
 
 
 				case Keys.Back: {
+					if (read_only) {
+						break;
+					}
+
 					// delete only deletes on the line, doesn't do the combine
 					if (document.selection_visible) {
 						document.ReplaceSelection("");
@@ -831,10 +862,15 @@ namespace System.Windows.Forms {
 						document.MoveCaret(CaretDirection.CharBack);
 						OnTextChanged(EventArgs.Empty);
 					}
+					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Delete: {
+					if (read_only) {
+						break;
+					}
+
 					// delete only deletes on the line, doesn't do the combine
 					if (document.CaretPosition == document.CaretLine.text.Length) {
 						if (document.CaretLine.LineNo < document.Lines) {
@@ -861,6 +897,7 @@ namespace System.Windows.Forms {
 						document.DeleteChar(document.CaretTag, document.CaretPosition, true);
 						OnTextChanged(EventArgs.Empty);
 					}
+					CaretMoved(this, null);
 					return true;
 				}
 			}
@@ -878,6 +915,11 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+
+			document.ViewPortWidth = this.Width;
+			document.ViewPortHeight = this.Height;
+
+			CalculateDocument();
 
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
@@ -924,7 +966,7 @@ Console.WriteLine("Destroying caret");
 						return;
 					}
 
-					if (m.WParam.ToInt32() >= 32) {	// FIXME, tabs should probably go through
+					if (!read_only && (m.WParam.ToInt32() >= 32)) {	// FIXME, tabs should probably go through
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
 						}
@@ -933,18 +975,21 @@ Console.WriteLine("Destroying caret");
 							case CharacterCasing.Normal: {
 								document.InsertCharAtCaret((char)m.WParam, true);
 								OnTextChanged(EventArgs.Empty);
+								CaretMoved(this, null);
 								return;
 							}
 
 							case CharacterCasing.Lower: {
 								document.InsertCharAtCaret(Char.ToLower((char)m.WParam), true);
 								OnTextChanged(EventArgs.Empty);
+								CaretMoved(this, null);
 								return;
 							}
 
 							case CharacterCasing.Upper: {
 								document.InsertCharAtCaret(Char.ToUpper((char)m.WParam), true);
 								OnTextChanged(EventArgs.Empty);
+								CaretMoved(this, null);
 								return;
 							}
 						}
@@ -1000,7 +1045,7 @@ static int current;
 		private void PaintControl(PaintEventArgs pevent) {
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
-			//pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
+			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
 
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
@@ -1008,22 +1053,7 @@ static int current;
 			Rectangle	rect = ClientRectangle;
 			rect.Width--;
 			rect.Height--;
-			pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonShadow), rect);
-
-			// Set the scrollbar
-			switch (scrollbars) {
-				case ScrollBars.Both: {
-					break;
-				}
-				case ScrollBars.Vertical: {
-					break;
-				}
-				case ScrollBars.Horizontal: {
-					hscroll.Minimum = 0;
-					hscroll.Maximum = document.Width - this.Width;
-					break;
-				}
-			}
+			//pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonShadow), rect);
 
 			#if Debug
 				int		start;
@@ -1035,8 +1065,8 @@ static int current;
 				p = new Pen(Color.Red, 1);
 
 				// First, figure out from what line to what line we need to draw
-				start = document.GetLineByPixel(pevent.ClipRectangle.Top - viewport_y, false).line_no;
-				end = document.GetLineByPixel(pevent.ClipRectangle.Bottom - viewport_y, false).line_no;
+				start = document.GetLineByPixel(pevent.ClipRectangle.Top - document.ViewPortY, false).line_no;
+				end = document.GetLineByPixel(pevent.ClipRectangle.Bottom - document.ViewPortY, false).line_no;
 
 				//Console.WriteLine("Starting drawing on line '{0}'", document.GetLine(start));
 				//Console.WriteLine("Ending drawing on line '{0}'", document.GetLine(end));
@@ -1082,7 +1112,7 @@ static int current;
 					return;
 				}
 
-				tag = document.FindTag(e.X, e.Y, out pos, false);
+				tag = document.FindTag(e.X + document.ViewPortX, e.Y + document.ViewPortY, out pos, false);
 
 				Console.WriteLine("Click found tag {0}, character {1}", tag, pos);
 				line = tag.line;
@@ -1111,7 +1141,7 @@ static int current;
 			this.Capture = false;
 			this.grabbed = false;
 			if (e.Button == MouseButtons.Left) {
-				document.PositionCaret(e.X + viewport_x, e.Y + viewport_y);
+				document.PositionCaret(e.X, e.Y);
 				document.SetSelectionToCaret(false);
 				document.DisplayCaret();
 				return;
@@ -1121,24 +1151,84 @@ static int current;
 
 
 		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
-
-			// First, check which scrollbars we need
-			
+			canvas_width = this.Width;
+			canvas_height = this.Height;
+			// We always move them, they just might not be displayed
 			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, Width, hscroll.Height);
+			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, Height);
 			
+		}
+
+		private void CalculateDocument() {
+			document.RecalculateDocument(CreateGraphics());
+			CalculateScrollBars();
+			Invalidate();	// FIXME - do we need this?
+		}
+
+		protected void CalculateScrollBars() {
+			// No scrollbars for a single line
+			if (document.Width >= this.Width) {
+				hscroll.Enabled = true;
+				hscroll.Minimum = 0;
+				hscroll.Maximum = document.Width - this.Width;
+			} else {
+				hscroll.Enabled = false;
+			}
+
+			if (document.Height >= this.Height) {
+				vscroll.Enabled = true;
+				vscroll.Minimum = 0;
+				vscroll.Maximum = document.Height - this.Height;
+			} else {
+				vscroll.Enabled = false;
+			}
+
+
+			if (!multiline) {
+				return;
+			}
+
+			if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
+				if (((scrollbars & RichTextBoxScrollBars.ForcedHorizontal) != 0) || hscroll.Enabled) {
+					hscroll.Visible = true;
+				}
+			}
+
+			if ((scrollbars & RichTextBoxScrollBars.Vertical) != 0) {
+				if (((scrollbars & RichTextBoxScrollBars.ForcedVertical) != 0) || vscroll.Enabled) {
+					vscroll.Visible = true;
+				}
+			}
+
+			if (hscroll.Visible) {
+				vscroll.Maximum += hscroll.Height * 2;
+				canvas_height = this.Height - hscroll.Height * 2;
+			}
+
+			if (vscroll.Visible) {
+				hscroll.Maximum += vscroll.Width * 2;
+				canvas_width = this.Width - vscroll.Width * 2;
+			}
 		}
 
 		private void hscroll_ValueChanged(object sender, EventArgs e) {
 			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, false);
 			document.ViewPortX = this.hscroll.Value;
 			document.UpdateCaret();
-			Console.WriteLine("Dude scrolled");
+			Console.WriteLine("Dude scrolled horizontal");
+		}
+
+		private void vscroll_ValueChanged(object sender, EventArgs e) {
+			XplatUI.ScrollWindow(this.Handle, 0, document.ViewPortY-this.vscroll.Value, false);
+			document.ViewPortX = this.vscroll.Value;
+			document.UpdateCaret();
+			Console.WriteLine("Dude scrolled vertical");
 		}
 
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (grabbed) {
-				document.PositionCaret(e.X + viewport_x, e.Y + viewport_y);
+				document.PositionCaret(e.X, e.Y);
 				document.SetSelectionToCaret(false);
 				document.DisplayCaret();
 			}
@@ -1157,6 +1247,61 @@ static int current;
 				// Make sure the caret height is matching the new font height
 				document.AlignCaret();
 			}
+		}
+
+		/// <summary>Ensure the caret is always visible</summary>
+		internal void CaretMoved(object sender, EventArgs e) {
+			Point	pos;
+			
+			pos = document.Caret;
+			Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
+
+			// Handle horizontal scrolling
+			if (pos.X < (document.ViewPortX + track_width)) {
+				if ((hscroll.Value - track_width) >= hscroll.Minimum) {
+					hscroll.Value -= track_width;
+				} else {
+					hscroll.Value = hscroll.Minimum;
+				}
+			}
+
+			if ((pos.X > (this.Width + document.ViewPortX - track_width)) && (hscroll.Value != hscroll.Maximum)) {
+				if ((hscroll.Value + track_width) <= hscroll.Maximum) {
+					hscroll.Value += track_width;
+				} else {
+					hscroll.Value = hscroll.Maximum;
+				}
+			}
+
+			if (!multiline) {
+				return;
+			}
+#if not
+			// Handle vertical scrolling
+			if (pos.Y < (document.ViewPortY + track_width)) {
+				if ((hscroll.Value - track_width) >= hscroll.Minimum) {
+					hscroll.Value -= track_width;
+				} else {
+					hscroll.Value = hscroll.Minimum;
+				}
+
+				if (pos.X > this.Width + document.ViewPortX) {
+					hscroll.Value = hscroll.Minimum;
+				}
+			}
+
+			if (pos.X > (this.Width + document.ViewPortX - track_width)) {
+				if ((hscroll.Value + track_width) <= hscroll.Maximum) {
+					hscroll.Value += track_width;
+				} else {
+					hscroll.Value = hscroll.Maximum;
+				}
+			}
+
+			if (pos.X < document.ViewPortX) {
+				hscroll.Value = hscroll.Minimum;
+			}
+#endif
 		}
 	}
 }
