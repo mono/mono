@@ -915,7 +915,7 @@ public partial class TypeManager {
 				name = "this";
 		}
 
-		return mb.DeclaringType.FullName.Replace ('+', '.') + '.' + name;
+		return GetFullName (mb.DeclaringType) + '.' + name;
 	}
 
 	private static void GetFullName_recursed (StringBuilder sb, Type t, bool recursed)

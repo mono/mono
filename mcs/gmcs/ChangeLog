@@ -1,7 +1,8 @@
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
-	* typemanager.cs (TypeManager.CSharpName): Use GetFullName()
-	instead of `t.FullName'.
+	* typemanager.cs
+	(TypeManager.CSharpName): Use GetFullName() instead of `t.FullName'.
+	(TypeManager.GetFullNameSignature): Likewise.
 
 	* convert.cs (Convert.Error_CannotImplicitConversion): Compare
 	`source.FullName' and `target.FullName' to check whether there are
