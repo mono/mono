@@ -117,6 +117,7 @@ namespace System.Data.ProviderBase
 		private DbDataReader _currentReader;
 		private bool _nullParametersInPrepare;
 		private bool _hasResultSet;
+		private bool _explicitPrepare;
 
 		internal static ProcedureColumnCache _procedureColumnCache = new ProcedureColumnCache();
 
@@ -133,6 +134,7 @@ namespace System.Data.ProviderBase
 			base.CommandText = cmdText;
 			_transaction = transaction;
 			_isCommandPrepared = false;
+			_explicitPrepare = false;
 			_recordsAffected = -1;
 			if (connection != null) {
 				connection.AddReference(this);
@@ -187,6 +189,7 @@ namespace System.Data.ProviderBase
 				if (CommandText == null || String.Compare(CommandText, value,  true) != 0) {
 					base.CommandText = value;
 					_isCommandPrepared = false;
+					_explicitPrepare = false;
 				}
 			}
 		}
@@ -197,13 +200,13 @@ namespace System.Data.ProviderBase
 			set { _behavior = value; }
 		}
 
-		protected bool IsCommandPrepared
+		bool IsCommandPrepared
 		{
 			get { return _isCommandPrepared; }
 			set { _isCommandPrepared = value; }
 		}
 
-		protected bool NullParametersInPrepare
+		bool NullParametersInPrepare
 		{
 			get { return _nullParametersInPrepare; }
 			set { _nullParametersInPrepare = value; }
@@ -783,7 +786,7 @@ namespace System.Data.ProviderBase
 				Behavior = behavior;
 
 				PrepareInternalParameters();			
-				PrepareInternal(false);
+				PrepareInternal();
 
 				// For SchemaOnly there is no need for statement execution
 				if (Behavior != CommandBehavior.SchemaOnly) {
@@ -834,14 +837,14 @@ namespace System.Data.ProviderBase
 			((AbstractDBConnection)Connection).IsExecuting = true;
 			try {
 				CheckParameters();
-				PrepareInternal(true);	
+				_explicitPrepare = true;
 			}
 			finally {
 				((AbstractDBConnection)Connection).IsExecuting = false;
 			}
 		}
 
-		private void PrepareInternal(bool isExplicit)
+		private void PrepareInternal()
 		{
 			if ((Connection == null) || (Connection.State != ConnectionState.Open)) {
 				throw ExceptionHelper.ConnectionNotOpened("Prepare",(Connection != null) ? Connection.State.ToString() : "");
@@ -905,7 +908,7 @@ namespace System.Data.ProviderBase
 						}
 					}
 					else {
-						if (isExplicit) {
+						if (_explicitPrepare) {
 							_statement = jdbcCon.prepareStatement(_javaCommandText);				
 						}
 						else {

@@ -1,0 +1,3 @@
+2005-06-21  Konstantin  Triger <kostat@mainsoft.com>
+
+	* OleDbConvert.cs: mapping OleDbType.Guid to Types.CHAR

@@ -307,7 +307,7 @@ namespace System.Data.OleDb
 				case OleDbType.Empty : return Types.NULL;
 				case OleDbType.Error : return Types.OTHER;
 				case OleDbType.Filetime : return Types.TIMESTAMP;
-				case OleDbType.Guid : return Types.OTHER;
+				case OleDbType.Guid : return Types.CHAR;
 				case OleDbType.IDispatch : return Types.OTHER; //throw new ArgumentException("The " + oleDbType + " OleDbType value is not supported.");
 				case OleDbType.Integer : return Types.INTEGER;
 				case OleDbType.IUnknown :  return Types.OTHER; //throw new ArgumentException("The " + oleDbType + " OleDbType value is not supported.");

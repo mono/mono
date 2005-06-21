@@ -1,0 +1,3 @@
+2005-21-06  Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractDataReader.cs: if command is preapred, recalculate params on every ExecReader
