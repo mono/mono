@@ -7498,6 +7498,21 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				ConstructedType ct = expr as ConstructedType;
+				if (ct != null) {
+					//
+					// When looking up a nested type in a generic instance
+					// via reflection, we always get a generic type definition
+					// and not a generic instance - so we have to do this here.
+					//
+					// See gtest-172-lib.cs and gtest-172.cs for an example.
+					//
+					ct = new ConstructedType (
+						member_lookup.Type, ct.TypeArguments, loc);
+
+					return ct.ResolveAsTypeStep (ec);
+				}
+
 				return member_lookup;
 			}
 

@@ -1,3 +1,8 @@
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (MemberAccess.DoResolve): Add support for nested
+	types in a generic instance; fixes #75320.
+
 2005-06-20  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.InferType): Also walk the class
