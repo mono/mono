@@ -1,5 +1,14 @@
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.CSharpName): Use GetFullName()
+	instead of `t.FullName'.
+
+	* convert.cs (Convert.Error_CannotImplicitConversion): Compare
+	`source.FullName' and `target.FullName' to check whether there are
+	two conflicting definitions.
+
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs (Convert.ImplicitTypeParameterConversion): Always use
 	a BoxedCast - also for reference types - to be compatible with csc.
 

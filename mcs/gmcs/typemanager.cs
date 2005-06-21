@@ -852,10 +852,9 @@ public partial class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
-		if (t.FullName == null)
-			return t.Name;
+		string name = GetFullName (t);
 
-		return Regex.Replace (t.FullName, 
+		return Regex.Replace (name, 
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +

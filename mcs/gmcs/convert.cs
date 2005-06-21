@@ -1386,7 +1386,7 @@ namespace Mono.CSharp {
 
 		static public void Error_CannotImplicitConversion (Location loc, Type source, Type target)
 		{
-			if (source.Name == target.Name){
+			if (source.FullName == target.FullName){
 				Report.ExtraInformation (loc,
 					 String.Format (
 						"The type {0} has two conflicting definitions, one comes from {1} and the other from {2}",
