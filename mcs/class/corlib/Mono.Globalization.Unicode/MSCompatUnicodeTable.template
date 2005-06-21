@@ -1,6 +1,8 @@
 using System;
 using System.Globalization;
 
+using Util = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
+
 namespace Mono.Globalization.Unicode
 {
 	internal class TailoringInfo
@@ -22,36 +24,37 @@ namespace Mono.Globalization.Unicode
 	internal class MSCompatUnicodeTable
 	{
 
-		public static byte Categories (int index)
+		public static byte Categories (int cp)
 		{
-			return categories [index];
+			return categories [Util.Category.ToIndex (cp)];
 		}
 
-		public static byte Level1 (int index)
+		public static byte Level1 (int cp)
 		{
-			return level1 [index];
+			return level1 [Util.Level1.ToIndex (cp)];
 		}
 
-		public static byte Level2 (int index)
+		public static byte Level2 (int cp)
 		{
-			return level2 [index];
+			return level2 [Util.Level2.ToIndex (cp)];
 		}
 
-		public static byte Level3 (int index)
+		public static byte Level3 (int cp)
 		{
-			return level3 [index];
+			return level3 [Util.Level3.ToIndex (cp)];
 		}
 
-		public static bool IsIgnorable (int i)
+		public static bool IsIgnorable (int cp)
 		{
-			UnicodeCategory uc = Char.GetUnicodeCategory ((char) i);
+			UnicodeCategory uc = Char.GetUnicodeCategory ((char) cp);
 			// This check eliminates some extraneous code areas
 			if (uc == UnicodeCategory.OtherNotAssigned)
 				return true;
 			// Some characters in Surrogate area are ignored.
-			if (0xD880 <= i && i < 0xDB80)
+			if (0xD880 <= cp && cp < 0xDB80)
 				return true;
-			return ignorableFlags [i] == 7;
+			int i = Util.Ignorable.ToIndex (cp);
+			return i >= 0 && ignorableFlags [i] == 7;
 		}
 		// Verifier:
 		// for (int i = 0; i <= char.MaxValue; i++)
@@ -60,14 +63,16 @@ namespace Mono.Globalization.Unicode
 		//		&& ignorableFlags [i] != 7)
 		//		Console.WriteLine ("{0:X04}", i);
 
-		public static bool IsIgnorableSymbol (int i)
+		public static bool IsIgnorableSymbol (int cp)
 		{
-			return (ignorableFlags [i] & 0x2) != 0;
+			int i = Util.Ignorable.ToIndex (cp);
+			return i >= 0 && (ignorableFlags [i] & 0x2) != 0;
 		}
 
-		public static bool IsIgnorableNonSpacing (int i)
+		public static bool IsIgnorableNonSpacing (int cp)
 		{
-			return (ignorableFlags [i] & 0x4) != 0;
+			int i = Util.Ignorable.ToIndex (cp);
+			return i >= 0 && (ignorableFlags [i] & 0x4) != 0;
 		}
 
 		public static int ToKanaTypeInsensitive (int i)
@@ -79,10 +84,11 @@ namespace Mono.Globalization.Unicode
 			return (0x3041 <= i && i <= 0x3094) ? i + 0x60 : i;
 		}
 
-		public static int ToWidthCompat (int i)
+		public static int ToWidthCompat (int cp)
 		{
-			int v = widthCompat [i];
-			return v != 0 ? v : i;
+			int i = Util.WidthCompat.ToIndex (cp);
+			int v = i >= 0 ? widthCompat [i] : 0;
+			return v != 0 ? v : cp;
 		}
 
 		#region Utilities

@@ -26,8 +26,8 @@ namespace Mono.Globalization.Unicode
 				0x3400, 0x10000, 0x1d800, 0x2fb00
 				};
 
-			prop = new CodePointIndexer (propStarts, propEnds);
-			map = new CodePointIndexer (mapStarts, mapEnds);
+			prop = new CodePointIndexer (propStarts, propEnds, 0, 0);
+			map = new CodePointIndexer (mapStarts, mapEnds, 0, 0);
 		}
 
 		public static int PropIdx (int cp)

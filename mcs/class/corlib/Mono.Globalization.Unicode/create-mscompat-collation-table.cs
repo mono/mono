@@ -246,14 +246,56 @@ sw.Close ();
 */
 		}
 
+		byte [] CompressArray (byte [] source, CodePointIndexer i)
+		{
+			return (byte []) CodePointIndexer.CompressArray  (
+				source, typeof (byte), i);
+		}
+
 		void Serialize ()
 		{
 			// Tailorings
 			SerializeTailorings ();
 
+			byte [] categories = new byte [map.Length];
+			byte [] level1 = new byte [map.Length];
+			byte [] level2 = new byte [map.Length];
+			byte [] level3 = new byte [map.Length];
+			int [] widthCompat = new int [map.Length];
+			for (int i = 0; i < map.Length; i++) {
+				categories [i] = map [i].Category;
+				level1 [i] = map [i].Level1;
+				level2 [i] = map [i].Level2;
+				level3 [i] = ComputeLevel3Weight ((char) i);
+				switch (decompType [i]) {
+				case DecompositionNarrow:
+				case DecompositionWide:
+				case DecompositionSuper:
+				case DecompositionSub:
+					// they are always 1 char
+					widthCompat [i] = decompValues [decompIndex [i]];
+					break;
+				}
+			}
+
+			// compress
+			ignorableFlags = CompressArray (ignorableFlags,
+				MSCompatUnicodeTableUtil.Ignorable);
+			categories = CompressArray (categories,
+				MSCompatUnicodeTableUtil.Category);
+			level1 = CompressArray (level1, 
+				MSCompatUnicodeTableUtil.Level1);
+			level2 = CompressArray (level2, 
+				MSCompatUnicodeTableUtil.Level2);
+			level3 = CompressArray (level3, 
+				MSCompatUnicodeTableUtil.Level3);
+			widthCompat = (int []) CodePointIndexer.CompressArray (
+				widthCompat, typeof (int),
+				MSCompatUnicodeTableUtil.WidthCompat);
+
 			// Ignorables
 			Result.WriteLine ("static byte [] ignorableFlags = new byte [] {");
-			for (int i = 0; i <= char.MaxValue; i++) {
+			for (int i = 0; i < ignorableFlags.Length; i++) {
 				byte value = ignorableFlags [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
@@ -267,8 +309,8 @@ sw.Close ();
 
 			// Primary category
 			Result.WriteLine ("static byte [] categories = new byte [] {");
-			for (int i = 0; i < map.Length; i++) {
-				byte value = map [i].Category;
+			for (int i = 0; i < categories.Length; i++) {
+				byte value = categories [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
@@ -281,8 +323,8 @@ sw.Close ();
 
 			// Primary weight value
 			Result.WriteLine ("static byte [] level1 = new byte [] {");
-			for (int i = 0; i < map.Length; i++) {
-				byte value = map [i].Level1;
+			for (int i = 0; i < level1.Length; i++) {
+				byte value = level1 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
@@ -295,8 +337,8 @@ sw.Close ();
 
 			// Secondary weight
 			Result.WriteLine ("static byte [] level2 = new byte [] {");
-			for (int i = 0; i < map.Length; i++) {
-				int value = map [i].Level2;
+			for (int i = 0; i < level2.Length; i++) {
+				int value = level2 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
@@ -309,8 +351,8 @@ sw.Close ();
 
 			// Thirtiary weight
 			Result.WriteLine ("static byte [] level3 = new byte [] {");
-			for (int i = 0; i < map.Length; i++) {
-				byte value = ComputeLevel3Weight ((char) i);
+			for (int i = 0; i < level3.Length; i++) {
+				byte value = level3 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
@@ -325,21 +367,12 @@ sw.Close ();
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
 			Result.WriteLine ("static int [] widthCompat = new int [] {");
-			for (int i = 0; i < char.MaxValue; i++) {
-				int value = 0;
-				switch (decompType [i]) {
-				case DecompositionNarrow:
-				case DecompositionWide:
-				case DecompositionSuper:
-				case DecompositionSub:
-					// they are always 1 char
-					value = decompValues [decompIndex [i]];
-					break;
-				}
+			for (int i = 0; i < widthCompat.Length; i++) {
+				int value = widthCompat [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X04},", value);
+					Result.Write ("0x{0:X02},", value);
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}

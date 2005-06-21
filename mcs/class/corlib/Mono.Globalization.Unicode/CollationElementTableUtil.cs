@@ -33,7 +33,7 @@ namespace Mono.Globalization.Unicode
 			int [] ends = new int [] {
 				0x3410, 0x4e10, 0xa4d0, 0xfa70, 0x10840,
 				0x1d800, 0x2fa20, 0xe0200, 0x110000};
-			Indexer = new CodePointIndexer (starts, ends);
+			Indexer = new CodePointIndexer (starts, ends, 0, 0);
 		}
 	}
 }

@@ -92,7 +92,8 @@ CREATE_MSCOMPAT_TABLE_SOURCES = \
 	create-mscompat-collation-table.cs \
 	CodePointIndexer.cs \
 	CollationElementTable.cs \
-	CollationElementTableUtil.cs
+	CollationElementTableUtil.cs \
+	MSCompatUnicodeTableUtil.cs
 
 $(UCD_TABLE) :
 	wget www.unicode.org/Public/UNIDATA/UnicodeData.txt

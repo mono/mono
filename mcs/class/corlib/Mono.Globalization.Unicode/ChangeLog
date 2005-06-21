@@ -1,5 +1,16 @@
 2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CodePointIndexer.cs : added CompressArray(). Now it requires two more
+	  parameters for default index and codepoint.
+	* CollationElementTableUtil.cs,
+	  NormalizationTableUtil.cs : required changes wrt above change.
+	* MSCompatUnicodeTableUtil.cs : added for several codepoint indexers.
+	* MSCompatUnicodeTable.template : Now it uses codepoint indexer.
+	* create-mscompat-collation-table.cs : Now it outputs compressed array.
+	* Makefile : now collation requires MSCompatUnicodeTableUtil.cs
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs :
 	  Implemented IsSuffix() and LastIndexOf().
 	  Several fixes on index > 0 cases.
