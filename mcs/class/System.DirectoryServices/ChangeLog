@@ -1,3 +1,7 @@
+2005-06-21 Boris Kirzner <borisk@mainsoft.coim>
+	* System.DirectoryServices.sln, System.DirectoryServices.vmwcsproj:
+	Added solution and project files fo rTARGET_JVM.
+
 2005-06-19 Boris Kirzner <borisk@mainsoft.coim>
 	* System.DirectoryServices_test.dll.sources: 
 		- added DirectoryServices/DirectoryServicesDirectoryEntryTest.cs
