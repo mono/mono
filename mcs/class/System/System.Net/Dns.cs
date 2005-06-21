@@ -50,7 +50,7 @@ namespace System.Net {
 			AsyncCallback requestCallback, object stateObject)
 		{
 			if (hostName == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ("hostName");
 
 			GetHostByNameCallback c = new GetHostByNameCallback (GetHostByName);
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
@@ -60,7 +60,8 @@ namespace System.Net {
 			AsyncCallback requestCallback, object stateObject)
 		{
 			if (hostName == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ("hostName");
+
 			ResolveCallback c = new ResolveCallback (Resolve);
 			return c.BeginInvoke (hostName, requestCallback, stateObject);
 		}
@@ -69,6 +70,7 @@ namespace System.Net {
 		{
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
+
 			AsyncResult async = (AsyncResult) asyncResult;
 			GetHostByNameCallback cb = (GetHostByNameCallback) async.AsyncDelegate;
 			return cb.EndInvoke(asyncResult);
@@ -171,9 +173,6 @@ namespace System.Net {
 				h_addrlist));
 		}
 
-		/// <summary>
-		/// This method returns the host name associated with the local host.
-		/// </summary>
 		public static string GetHostName() 
 		{
 			string hostName;
@@ -186,18 +185,10 @@ namespace System.Net {
 			return hostName;
 		}
 
-		/// <summary>
-		/// This method resolves a DNS-style host name or IP
-		/// address.
-		/// </summary>
-		/// <param name=hostName>
-		/// A string containing either a DNS-style host name (e.g.
-		/// www.go-mono.com) or IP address (e.g. 129.250.184.233).
-		/// </param>
 		public static IPHostEntry Resolve(string hostName) 
 		{
 			if (hostName == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ("hostName");
 
 			IPHostEntry ret = null;
 
