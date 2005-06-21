@@ -1,3 +1,8 @@
+2005-06-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* configure.host: remove -fexceptions, messes up with nptl
+	includes, as on fc4.
+
 2005-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pthread_support.c: Workaround gcc-3.3 compiler bug.

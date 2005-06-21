@@ -21,10 +21,7 @@
 
 gc_cflags=""
 
-# We should set -fexceptions if we are using gcc and might be used
-# inside something like gcj.  This is the zeroth approximation:
 if test :"$GCC": = :yes: ; then
-    gc_cflags="${gc_cflags} -fexceptions"
 else
     case "$host" in 
         hppa*-*-hpux* )
