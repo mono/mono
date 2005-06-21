@@ -704,6 +704,12 @@ namespace Mono.CSharp {
 		{
 			Type best = null;
 
+			if (types.Count == 0)
+				return null;
+
+			if (types.Count == 1)
+				return (Type) types [0];
+
 			EmptyExpression expr = EmptyExpression.Grab ();
 
 			foreach (Type t in types) {
@@ -739,6 +745,12 @@ namespace Mono.CSharp {
 		static Type FindMostEncompassingType (EmitContext ec, ArrayList types)
 		{
 			Type best = null;
+
+			if (types.Count == 0)
+				return null;
+
+			if (types.Count == 1)
+				return (Type) types [0];
 
 			EmptyExpression expr = EmptyExpression.Grab ();
 
