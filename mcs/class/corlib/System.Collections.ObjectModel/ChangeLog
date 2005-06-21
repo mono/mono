@@ -1,3 +1,7 @@
+2005-06-19  David Waite  <mass@akuma.org>
+
+        * Collection.cs ReadonlyCollection.cs: Implement all methods
+
 2005-06-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Collection.cs KeyedCollection.cs ReadOnlyCollection.cs: New files.

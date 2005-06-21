@@ -4,12 +4,15 @@
 //
 // Author:
 //    Zoltan Varga (vargaz@gmail.com)
+//    David Waite (mass@akuma.org)
 //
 // (C) 2005 Novell, Inc.
+// (C) 2005 David Waite
 //
 
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 David Waite
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,147 +41,142 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.ObjectModel
 {
-	[ComVisible(false)]
+	[ComVisible (false)]
 	[Serializable]
-	public class ReadOnlyCollection<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable
+	public class ReadOnlyCollection <T> : IList <T>, ICollection <T>, IEnumerable <T>, IList, ICollection, IEnumerable
 	{
-		public ReadOnlyCollection (IList<T> list)
+		IList <T> list;
+		object syncRoot;
+		
+		public ReadOnlyCollection (IList <T> list)
 		{
-			throw new NotImplementedException ();
+			if (list == null)
+				throw new ArgumentNullException ("list");
+			this.list = list;
+			ICollection c = list as ICollection;
+			syncRoot = (c != null) ? c.SyncRoot : new object ();
 		}
 
 		public void Add (T item)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
-
+		
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		public bool Contains (T item)
 		{
-			throw new NotImplementedException ();
+			return list.Contains (item);
 		}
 
-		public void CopyTo (T[] array, int index)
+		public void CopyTo (T [] array, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (array, index);
 		}
 
-		public IEnumerator<T> GetEnumerator ()
+		public IEnumerator <T> GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return list.GetEnumerator ();
 		}
 
 		public int IndexOf (T item)
 		{
-			throw new NotImplementedException ();
+			return list.IndexOf (item);
 		}
 
 		public void Insert (int index, T item)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		public bool Remove (T item)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		public void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
-		public virtual int Count {
-			get {
-				throw new NotImplementedException ();
-			}
+		public int Count {
+			get { return list.Count; }
 		}
 
-		public virtual T this [int index] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public T this [int index] {
+			get { return list [index]; }
+			set { throw new NotSupportedException (); }
 		}
 
 		public bool IsReadOnly {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return true; }
 		}
 
 #region Not generic interface implementations
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
-			throw new NotImplementedException ();
+			T [] target = array as T [];
+			if (target == null)
+				throw new ArgumentException ("array");
+			list.CopyTo (target, arrayIndex);
 		}
-		
-		IEnumerator IEnumerable.GetEnumerator()
+				
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return ((IEnumerable) list).GetEnumerator ();
 		}
 		
 		int IList.Add (object item)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 		
 		bool IList.Contains (object item)
 		{
-			throw new NotImplementedException ();
+			if (Collection <T>.IsValidItem (item))
+				return list.Contains ((T) item);
+			return false;
 		}
 		
 		int IList.IndexOf (object item)
 		{
-			throw new NotImplementedException ();
+			if (Collection <T>.IsValidItem (item))
+				return list.IndexOf ((T) item);
+			return -1;
 		}
 		
 		void IList.Insert (int index, object item)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 		
 		void IList.Remove (object item)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 		
 		bool ICollection.IsSynchronized {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return Collection <T>.IsSynchronized (list); }
 		}
 		
 		object ICollection.SyncRoot {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return syncRoot; }
 		}
+
 		bool IList.IsFixedSize {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return Collection <T>.IsFixedSize (list); }
 		}
 		
 		bool IList.IsReadOnly {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return true; }
 		}
 		
 		object IList.this [int index] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return list [index]; }
+			set { throw new NotSupportedException (); }
 		}
 #endregion
 	}

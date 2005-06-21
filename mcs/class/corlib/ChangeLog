@@ -1,3 +1,7 @@
+2005-06-21  David Waite  <mass@akuma.org>
+
+	* corlib_test.dll.sources: Added System.Collections.ObjectModel.Collection test
+
 2005-06-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Add System.Collections.ObjectModel classes.
