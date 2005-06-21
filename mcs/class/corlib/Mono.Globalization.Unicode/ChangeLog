@@ -1,0 +1,440 @@
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SortKey.cs : Now it is System.Globalization.SortKey.
+	  To replace existing implementation, it now requires lcid and 
+	  CompareOptions. Added required members.
+	* SortKeyBuffer.cs : thus .ctor() requires LCID.
+	* SimpleCollator.cs : made required changes above.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodePointIndexer.cs : added CompressArray(). Now it requires two more
+	  parameters for default index and codepoint.
+	* CollationElementTableUtil.cs,
+	  NormalizationTableUtil.cs : required changes wrt above change.
+	* MSCompatUnicodeTableUtil.cs : added for several codepoint indexers.
+	* MSCompatUnicodeTable.template : Now it uses codepoint indexer.
+	* create-mscompat-collation-table.cs : Now it outputs compressed array.
+	* Makefile : now collation requires MSCompatUnicodeTableUtil.cs
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs :
+	  Implemented IsSuffix() and LastIndexOf().
+	  Several fixes on index > 0 cases.
+	* TestDriver.cs : sample IsSuffix() and LastIndexOf() usage and more.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : updated (status, impl. classes).
+	* MSCompatUnicodeTable.cs : Korean Jamo are not really expansions.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : implemented IndexOf(string,string,CompareOptions)
+	  and IsPrefix(). Tiny code refactory.
+	* TestDriver.cs : sample IsPrefix() and IndexOf() usage.
+	* MSCompatUnicodeTable.cs : tiny refactory for CodePointIndexer use.
+
+2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs :
+	  IndexOf(string, char, CompareOptions) implementation.
+	* TestDriver.cs : sample IndexOf() usage.
+
+2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : was missing most important
+	  kind of blocks - equivalent expansions (e.g. invariant mappings).
+	  More readable mappings.
+
+2005-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-tailoring-source.txt : new file. It describes tailoring
+	  information. Basically examined under .NET 1.x.
+	* create-mscompat-collation-table.cs : consume the file above.
+	* MSCompatUnicodeTable.template : now tailorings is not a stub.
+	* CollationDataStructures.txt : minor fixes.
+	* SortKeyBuffer.cs,
+	  SimpleCollator.cs : added FrenchSort support.
+	* Collation-notes.txt : added description on Latin primary weights.
+	* ldml-limited.rng : added note.
+	* create-tailorings.cs : added note. more serialization (but won't be 
+	  used anyways).
+
+2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SortKeyBuffer.cs : non-primary character is added to previous 
+	  diacritical weight.
+	* TestDriver.cs : added example case of above.
+
+2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : IgnoreSymbols support.
+	* TestDriver.cs : compilation fix. IgnoreSymbols example.
+	* create-mscompat-collation-table.cs : more Hangul fixes.
+
+2005-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : more Hangul fixes.
+	* SortKey.cs : it will replace sys.globalization.SortKey. It has
+	  some internal members.
+	* SortKeyBuffer.cs : now it uses SortKey instead of byte[].
+	* SimpleCollator.cs : CompareOptions support. However I don't think
+	  it will be developed anymore since SortKey never enables IndexOf().
+	* TestDriver.cs : a few CompareOptions cases.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : simple collator implementation that just will
+	  use GetSortKey() for all its basis.
+	* TestDriver.cs : sample code that uses this collator set.
+	* MSCompatUnicodeTable.template : removed test driver from here.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Hangul fixes.
+	  Now less than 300 characters that does not have sortkey weights.
+	* MSCompatUnicodeTable.template : added FIXME info for Hangul Jamo.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Added control picture mappings.
+	  Minor primary weight fixes.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Added mappings for box
+	  drawings and blocks.
+
+2005-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Added mappings for arrows.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : added support for letterlike
+	  characters and squared CJK compatibility characters, ordered by
+	  character names (0x0E category).
+	* Collation-notes.txt : added description on that.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.template : Now expansions are simulated.
+	* create-mscompat-collation-table.cs : filled Korean number level2.
+	  Reordered some code blocks to fill correct diacritical differences.
+	* Collation-notes.txt : some corrections and minor additions.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.template :
+	  Now dumper test driver uses SortKeyBuffer for dogfooding.
+	* create-mscompat-collation-table.cs : some diacritical level fixes
+	  (with non-working extra latin check).
+	* SortKeyBuffer.cs : several fixes to get working as a practical code.
+	* Collator.cs : make it compilable, leaving things as NotImplemented.
+
+2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : some fixes on primary category
+	  07 (miscellaneous symbols and punctuations).
+
+2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : more mapping fix on numbers,
+	  letters, variable weight characters, circled Japanese and CJK.
+	* MSCompatUnicodeTable.template : fixed HasSpecialWeight() to be more
+	  inclusive. Simplified dumper code.
+
+2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : finished Hangul (both Jamo
+	  and Syllables). sortkey dumper diff lines became 8000 from 30000.
+
+2005-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : added some nonspacing marks in
+	  either correct or hacky way.
+
+2005-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : several improvements. Japanese
+	  Kana support, Hebrew accents, Bengali nonspacing marks, sorting of
+	  numeric characters, diacritically decorated latin alphabets. Fixed
+	  some diacritical weights detection.
+	* MSCompatUnicodeTable.cs : tiny Japanese fix. Handle nonspacing
+	  marks' primary weight as empty.
+	* Collation-notes.txt : some updates.
+
+2005-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : don't process nonexact NFKD 
+	  mapping as equivalent, however store CJK extensions into NFKD map
+	  even if one does not strictly match.
+	  Now am going to fill Hangul into tables (unlike UCA it does not look
+	  possible to calculate sortkey value).
+	  Fixed Cyrillic and Georgian UCA based orderings.
+	* MSCompatUnicodeTable.template : added CJK extension sortkey 
+	  calculation.
+
+2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Fixed latin alphabet support.
+	  Added latin with diacritical and CJK extension.
+	* MSCompatUnicodeTable.cs : modified dumper code a bit (for my purpose).
+
+2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : now parses DerivedAge.txt (right
+	  now not used thouth). Filled CJK ideograph, still not perfect.
+	  Fixed number primary keys. NFKD numbers and CJK ideographs are now
+	  considered, including brackets elimination.
+	* Makefile : now it downloads DerivedAge.txt.
+	* MSCompatUnicodeTable.template : added dummy code dumper. It computes
+	  PrivateUse, Surrogate and Hangul Syllables.
+	* Collation-notes.txt : Noted that Hangul Syllables need more love.
+
+2005-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-tailorings.cs : added configuration support. sort them.
+	  I wonder if it is really usable. Having own format might be better.
+	* create-mscompat-collation-table.cs : fixing some sortkey numbers,
+	  making closer to windows. Now it handles NFKD in some places.
+	* MSCompatUnicodeTable.template : Added dummy sortkey dumper driver.
+	* CollationDataStructures.txt : added description on tailoring
+	  fields, though they are subject to change.
+
+2005-06-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-tailorings.cs, ldml-limited.rng : new file.
+	* LdmlReader.cs : removed old file.
+
+2005-06-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SortKeyBuffer.cs : split from Collator.cs. Now it considers
+	  practical use, reflecting updated sortkey constant design.
+	  Especially level 4 weight is split to 4 arrays that are merged in
+	  the last stage of GetSortKey().
+	* Collator.cs : thus SortKeyBuffer is removed from here.
+	  Additionally, removed some extraneous bits in other classes.
+	* Collation-notes.txt : Some editorial fixes. Added information on
+	  Korean matter (how to compute Hangle Syllables / Hangul Jamo cannot
+	  be stored in simple byte arrays).
+	* CodePointIndexer.cs,
+	  create-collation-element-table.cs,
+	  CollationElementTable.template,
+	  NormalizationTableUtil.cs : short CodePointIndexer method names.
+	* create-mscompat-collation-table.cs : Additional info on why some
+	  meaningful characters are ignored in Windows (Unicode version
+	  difference). Removed U+070F from special check (was extraneous).
+
+2005-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.template:
+	  Moved body implementation to table creator and put those bool
+	  results into an array.
+	* create-mscompat-collation-table.cs :
+	  So imported those methods. Modified array output to emit "0x"
+	  only for more than 9.
+	* create-normalization-source.cs : ditto on "0x" output matter.
+	* CollationDataStructures.txt : so now it holds ignorableFlags.
+
+2005-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt, CollationDataStructures.txt :
+	  separate document for data structure design.
+
+2005-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : added culture-dependent CJK
+	  table creation. It uses CLDR as its basis. (Culture independent CJK
+	  is not ready BTW).
+	* Makefile : added CLDR archive downloading support.
+	* MSCompatUnicodeTable.template : tiny renamings.
+	* Collation-notes.txt : additional CJK info.
+
+2005-06-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt, create-mscompat-collation-table.cs :
+	  added secondary weight support for BlahNumber characters.
+
+2005-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* downloaded : added directory. All downloaded files are stored here.
+	* Makefile : use "downloaded" directory.
+	  Added more auto-download stuff.
+	* create-mscompat-collation-table.cs :
+	  Added Japanese square kana support.
+
+2005-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : added Estrangela (ancient Syriac) and Thaana.
+	* create-mscompat-collation-table.cs : added support for Arabic abjad,
+	  Estrangela and Thaana.
+	* MSCompatUnicodeTable.template : removed BOM.
+
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : wrong comment cleanup and spelling fixes.
+	* create-mscompat-collation-table.cs : added diacritic support for
+	  Latin letters (as long as covered in primary weight).
+
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : minor fixes. Added warning lines to generated sources.
+
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-char-mapping-source.cs :
+	  Removed ToWidthInsensitive() generation.
+
+2005-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Now it dumps level1 to 3 values.
+	  ToWidthInsensitive() is implemented here, using an array (which is
+	  to be optimized using CodePointIndexer).
+	* MSCompatUnicodeTable.cs : renamed as MSCompatUnicodeTable.template
+	* MSCompatUnicodeTable.template : now it is used to generate
+	  MSCompatUnicodeTable.cs which got ready to be used.
+	* Makefile : added MSCompatUnicodeTable.cs build support. Now it
+	  supports "make normalization" and "make collation".
+
+2005-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Description on ICU is very incorrect. Now it
+	  became more rational and sane.
+	* create-mscompat-collation-table.cs : fixed some indexes.
+	* Makefile : added "mstablegen" target.
+	* MSCompatUnicodeTable.cs : removed GetPrimaryWeight(). Minor fix.
+
+2005-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more analysis on "letters".
+	* create-mscompat-collation-table.cs : more proof of concepts.
+
+2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more info. Started letter sortkey analysis
+	  (some of other stuff are really non-understandable right now.)
+	* create-mscompat-collation-table.cs : table generator proof-of-
+	  concept source (not compilable).
+	* MSCompatUnicodeTable.cs : moved some code to the new source.
+	  Some more fixes.
+
+2005-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : started level 2 weight analysis.
+
+2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Additional information on how to create
+	  level 3 tables.
+	* MSCompatUnicodeTable.cs : implemented part of GetLevel3Weight().
+
+2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : More case weight (level 3) analysis. I'm
+	  likely to just write table generator.
+
+2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.cs : part of level 4 weight implementation.
+
+2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt :
+	  Added task list.
+	  Revised comparison methods; backward iteration is possible.
+	  More on char-by-char comparison.
+	  Level 4 comparison is actually a bit more complex.
+	  Misc corrections.
+	* Collator.cs : some conceptual updates wrt above.
+
+2005-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Japanese voice mark is level 2, and Hangul
+	  properties are level 3.
+
+2005-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Make it more readable. More analysis on
+	  level 3 and 4 sortkey structures.
+	* Collator.cs : some compilation fixes (not compilable yet).
+
+2005-05-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : Analysis on variable-weighting (level 5)
+	  sortkey format.
+	* Collator.cs : updated corresponding part of level 5, and more.
+
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more updates.
+	* Collator.cs : rewrote from scratch. Some rough sketch for sortkey
+	  buffer, character iterator and collator methods. Not compiling.
+
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collator.cs : Am going to replace it with new one. No need for 
+	  CompareOptions-dependent Comparer.
+
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : There seems a bit more complexity.
+
+2005-05-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more updates, being close to write sortkey
+	  generator code.
+
+2005-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoImpl.cs, Collator.cs : conceptual update
+	* Collation-notes.txt : some corrections and additions.
+	* Makefile : added LDML input (but it won't be used at all).
+
+2005-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more updates.
+
+2005-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : more updates.
+
+2005-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collation-notes.txt : some updates.
+	* create-mapping-char-source.cs : superscripts and subscripts are also
+	  ignored in IgnoreWidth comparison.
+	* Makefile : tiny touch fix.
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoImpl.cs, Collator.cs : conceptual stuff (not working).
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-char-mapping-source.cs : Now it generates
+	  ToWidthInsensitive() from combining category <wide> and <narrow>.
+	* MSCompatUnicodeTable.cs : added ToKanaTypeInsensitive() and
+	  ToWidthInsensitive() for IgnoreKanaType and IgnoreWidth.
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README, LdmlReader.cs, DataStructures.txt : new files.
+
+2005-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodePointIndexer.cs,
+	  Collation-notes.txt,
+	  CollationElementTable.template,
+	  CollationElementTableUtil.cs,
+	  create-char-mapping-source.cs,
+	  create-collation-element-table.cs,
+	  create-combining-class-source.cs,
+	  create-normalization-source.cs,
+	  Makefile,
+	  MSCompatUnicodeTable.cs,
+	  Normalization.template,
+	  NormalizationTableUtil.cs : initial checkin (to private branch).
+
