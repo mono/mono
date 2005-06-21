@@ -184,14 +184,12 @@ namespace Mono.CSharp {
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			//
-			// FIXME: POSSIBLY make these static, as they are always the same
 			Parameter [] fixed_pars = new Parameter [2];
 			fixed_pars [0] = new Parameter (TypeManager.system_object_expr, "object",
-							Parameter.Modifier.NONE, null);
+							Parameter.Modifier.NONE, null, Location);
 			fixed_pars [1] = new Parameter (TypeManager.system_intptr_expr, "method", 
-							Parameter.Modifier.NONE, null);
-			Parameters const_parameters = new Parameters (fixed_pars, null, Location);
+							Parameter.Modifier.NONE, null, Location);
+			Parameters const_parameters = new Parameters (fixed_pars, null);
 			
 			TypeManager.RegisterMethod (
 				ConstructorBuilder,
@@ -364,12 +362,12 @@ namespace Mono.CSharp {
 			
 			async_params [params_num] = new Parameter (
 				TypeManager.system_asynccallback_expr, "callback",
-								   Parameter.Modifier.NONE, null);
+								   Parameter.Modifier.NONE, null, Location);
 			async_params [params_num + 1] = new Parameter (
 				TypeManager.system_object_expr, "object",
-								   Parameter.Modifier.NONE, null);
+								   Parameter.Modifier.NONE, null, Location);
 
-			Parameters async_parameters = new Parameters (async_params, null, Location);
+			Parameters async_parameters = new Parameters (async_params, null);
 			
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
 						    new InternalParameters (async_parameters.GetParameterInfo (ec), async_parameters),
@@ -396,7 +394,7 @@ namespace Mono.CSharp {
 				}
 			}
 			end_param_types [out_params] = TypeManager.iasyncresult_type;
-			end_params [out_params] = new Parameter (TypeManager.system_iasyncresult_expr, "result", Parameter.Modifier.NONE, null);
+			end_params [out_params] = new Parameter (TypeManager.system_iasyncresult_expr, "result", Parameter.Modifier.NONE, null, Location);
 
 			//
 			// Create method, define parameters, register parameters with type system
@@ -412,7 +410,7 @@ namespace Mono.CSharp {
 				EndInvokeBuilder.DefineParameter (i + 1, end_params [i].Attributes, end_params [i].Name);
 			}
 
-			Parameters end_parameters = new Parameters (end_params, null, Location);
+			Parameters end_parameters = new Parameters (end_params, null);
 
 			TypeManager.RegisterMethod (
 				EndInvokeBuilder,

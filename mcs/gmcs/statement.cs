@@ -1586,7 +1586,7 @@ namespace Mono.CSharp {
 			int idx;
 			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
 			if (p != null) {
-				Report.SymbolRelatedToPreviousError (Toplevel.Parameters.Location, name);
+				Report.SymbolRelatedToPreviousError (p.Location, name);
 				Report.Error (136, l, "'{0}' hides a method parameter", name);
 				return null;
 			}

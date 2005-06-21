@@ -1,3 +1,16 @@
+2005-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* parameter.cs,
+	  Removed Parameters.Location and added Parameter.Location instead.
+	  Removed Location parameter from Emit() and GetSignature().
+	* anonymous.cs,
+	  class.cs,
+	  cs-parser.jay,
+	  delegate.cs,
+	  iterators.cs,
+	  statement.cs :
+	  Modified all related calls.
+
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (NullCoalescingOperator.Emit): Make this work if the
