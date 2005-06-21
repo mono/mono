@@ -1,3 +1,7 @@
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
+	* gtest-077.cs: Removed, we don't need this anymore.
+
 2005-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-test-local): Run with $(TEST_RUNTIME).
