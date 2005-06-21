@@ -280,16 +280,15 @@ namespace Mono.Globalization.Unicode
 
 		public bool IsSuffix (string src, string target, CompareOptions opt)
 		{
-			return IsSuffix (src, target, 0, src.Length, opt);
+			return IsSuffix (src, target, src.Length - 1, src.Length, opt);
 		}
 
-		// It is mostly copy of IsPrefix().
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
 
 			int min = length > target.Length ? target.Length : length;
-			int si = start + length - 1;
+			int si = start;
 
 			// FIXME: this is not enough to handle tailorings.
 			for (int j = min - 1; j >= 0; j--, si--) {
@@ -433,12 +432,12 @@ namespace Mono.Globalization.Unicode
 
 		public int LastIndexOf (string s, char target)
 		{
-			return LastIndexOf (s, target, 0, s.Length, CompareOptions.None);
+			return LastIndexOf (s, target, s.Length - 1, s.Length, CompareOptions.None);
 		}
 
 		public int LastIndexOf (string s, char target, CompareOptions opt)
 		{
-			return LastIndexOf (s, target, 0, s.Length, opt);
+			return LastIndexOf (s, target, s.Length - 1, s.Length, opt);
 		}
 
 		public int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
@@ -450,8 +449,10 @@ namespace Mono.Globalization.Unicode
 
 			SetOptions (opt);
 
+			int end = start - length;
+
 			int ti = FilterOptions ((int) target);
-			for (int idx = start + length - 1; idx >= start; idx--) {
+			for (int idx = start; idx > end; idx--) {
 				switch (char.GetUnicodeCategory (s [idx])) {
 				case UnicodeCategory.PrivateUse:
 				case UnicodeCategory.Surrogate:
@@ -489,28 +490,26 @@ namespace Mono.Globalization.Unicode
 
 		public int LastIndexOf (string s, string target, CompareOptions opt)
 		{
-			return LastIndexOf (s, target, 0, s.Length, opt);
+			return LastIndexOf (s, target, s.Length - 1, s.Length, opt);
 		}
 
 		public int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
 
-			// FIXME: shouldn't it be rejected at CompareInfo?
-			length = s.Length < start + length ? s.Length - start : length;
+			int orgStart = start;
 
-			int chlen = length;
 			do {
 				// FIXME: this should be modified to handle
 				// expansions
-				int idx = LastIndexOf (s, target [0], start, chlen, opt);
+				int idx = LastIndexOf (s, target [0], start, length, opt);
 				if (idx < 0)
 					return -1;
-
-				if (IsPrefix (s, target, idx, length - (idx - start), opt))
+				if (IsPrefix (s, target, idx, orgStart - idx + 1, opt))
 					return idx;
-				chlen = idx - start - 1;
-			} while (chlen > 0);
+				length--;
+				start--;
+			} while (length > 0);
 			return -1;
 		}
 

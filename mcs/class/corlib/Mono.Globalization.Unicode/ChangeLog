@@ -1,5 +1,11 @@
 2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : fixed my misunderstanding on LastIndexOf(). It
+	  now starts from "start" and proceeds backward by "length".
+	* TestDriver.cs : fix warning.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TestDriver.cs : more tests.
 	* SimpleCollator.cs : LastIndexOf() is not setting search length
 	  on iteration. Quick workaround fro String.LastIndexOf() bug (maybe).

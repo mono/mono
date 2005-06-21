@@ -7,8 +7,6 @@ namespace Mono.Globalization.Unicode
 {
 	class TestDriver
 	{
-		System.IO.TextWriter Output = Console.Out;
-
 		SimpleCollator coll = new SimpleCollator (CultureInfo.InvariantCulture);
 
 		#region Testing bits
