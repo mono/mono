@@ -1,3 +1,11 @@
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h
+	(MonoGenericMethod): Added `MonoGenericClass *generic_class'.
+
+	* metadata.c (mono_metadata_generic_method_equal): Also
+	distinguish the `generic_class'; fixes #75334.
+
 2005-06-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* domain.c:
