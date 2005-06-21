@@ -1,3 +1,9 @@
+2005-05-27  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* attribute.cs: Use internal MethodBuilder methods to set
+	ExactSpelling and SetLastError on PInvoke methods, instead
+	of passing them via charset.  Fixes #75060.
+
 2005-05-27  Raja R Harinath  <rharinath@novell.com>
 
 	* parameter.cs (Parameter): Remove TODO comment.

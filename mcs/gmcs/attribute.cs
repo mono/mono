@@ -1139,15 +1139,20 @@ namespace Mono.CSharp {
 			string entry_point = name;
 			bool best_fit_mapping = false;
 			bool throw_on_unmappable = false;
+			bool exact_spelling = false;
+			bool set_last_error = false;
 
 			bool best_fit_mapping_set = false;
 			bool throw_on_unmappable_set = false;
+			bool exact_spelling_set = false;
+			bool set_last_error_set = false;
 
 			MethodInfo set_best_fit = null;
 			MethodInfo set_throw_on = null;
+			MethodInfo set_exact_spelling = null;
+			MethodInfo set_set_last_error = null;
 
 			if (field_info_arr != null) {
-				int char_set_extra = 0;
 
 				for (int i = 0; i < field_info_arr.Length; i++) {
 					switch (field_info_arr [i].Name) {
@@ -1165,13 +1170,15 @@ namespace Mono.CSharp {
 							entry_point = (string) field_values_arr [i];
 							break;
 						case "ExactSpelling":
-							char_set_extra |= 0x01;
+							exact_spelling = (bool) field_values_arr [i];
+							exact_spelling_set = true;
 							break;
 						case "PreserveSig":
 							preserve_sig = (bool) field_values_arr [i];
 							break;
 						case "SetLastError":
-							char_set_extra |= 0x40;
+							set_last_error = (bool) field_values_arr [i];
+							set_last_error_set = true;
 							break;
 						case "ThrowOnUnmappableChar":
 							throw_on_unmappable = (bool) field_values_arr [i];
@@ -1181,16 +1188,17 @@ namespace Mono.CSharp {
 							throw new InternalErrorException (field_info_arr [i].ToString ());
 					}
 				}
-				charset |= (CharSet)char_set_extra;
 			}
 
-			if (throw_on_unmappable_set || best_fit_mapping_set) {
+			if (throw_on_unmappable_set || best_fit_mapping_set || exact_spelling_set || set_last_error_set) {
 				set_best_fit = typeof (MethodBuilder).GetMethod ("set_BestFitMapping", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 				set_throw_on = typeof (MethodBuilder).GetMethod ("set_ThrowOnUnmappableChar", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_exact_spelling = typeof (MethodBuilder).GetMethod ("set_ExactSpelling", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_set_last_error = typeof (MethodBuilder).GetMethod ("set_SetLastError", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-				if ((set_best_fit == null) || (set_throw_on == null)) {
+				if ((set_best_fit == null) || (set_throw_on == null) || (set_exact_spelling == null) || (set_set_last_error == null)) {
 					Report.Error (-1, Location,
-								  "The ThrowOnUnmappableChar and BestFitMapping attributes can only be emitted when running on the mono runtime.");
+								  "The ThrowOnUnmappableChar, BestFitMapping, SetLastError, and ExactSpelling attributes can only be emitted when running on the mono runtime.");
 					return null;
 				}
 			}
@@ -1207,6 +1215,10 @@ namespace Mono.CSharp {
 					set_throw_on.Invoke (mb, 0, null, new object [] { throw_on_unmappable }, null);
 				if (best_fit_mapping_set)
 					set_best_fit.Invoke (mb, 0, null, new object [] { best_fit_mapping }, null);
+				if (exact_spelling_set)
+					set_exact_spelling.Invoke  (mb, 0, null, new object [] { exact_spelling }, null);
+				if (set_last_error_set)
+					set_set_last_error.Invoke  (mb, 0, null, new object [] { set_last_error }, null);
 			
 				return mb;
 			}
