@@ -676,44 +676,46 @@ namespace Mono.CSharp {
 						       Location loc)
 		{
 			if (almostMatchedMembers.Count != 0) {
-				if (qualifier_type == null) {
-					foreach (MemberInfo m in almostMatchedMembers)
+				for (int i = 0; i < almostMatchedMembers.Count; ++i) {
+					MemberInfo m = (MemberInfo) almostMatchedMembers [i];
+					for (int j = 0; j < i; ++j) {
+						if (m == almostMatchedMembers [j]) {
+							m = null;
+							break;
+						}
+					}
+					if (m == null)
+						continue;
+					
+					Type declaring_type = m.DeclaringType;
+					
+					Report.SymbolRelatedToPreviousError (m);
+					if (qualifier_type == null) {
 						Report.Error (38, loc, 
 							      "Cannot access non-static member `{0}' via nested type `{1}'", 
 							      TypeManager.GetFullNameSignature (m),
 							      TypeManager.CSharpName (ec.ContainerType));
-					return;
-				}
-
-
-				if (qualifier_type != ec.ContainerType) {
-					// Although a derived class can access protected members of
-					// its base class it cannot do so through an instance of the
-					// base class (CS1540).  If the qualifier_type is a base of the
-					// ec.ContainerType and the lookup succeeds with the latter one,
-					// then we are in this situation.
-					for (int i = 0; i < almostMatchedMembers.Count; ++i) {
-						MemberInfo m = (MemberInfo) almostMatchedMembers [i];
-						for (int j = 0; j < i; ++j) {
-							if (m == almostMatchedMembers [j]) {
-								m = null;
-								break;
-							}
-						}
-						if (m == null)
-							continue;
-
-						Report.SymbolRelatedToPreviousError (m);
+					} else if (qualifier_type != ec.ContainerType &&
+						   TypeManager.IsNestedFamilyAccessible (ec.ContainerType, declaring_type)) {
+						// Although a derived class can access protected members of
+						// its base class it cannot do so through an instance of the
+						// base class (CS1540).  If the qualifier_type is a base of the
+						// ec.ContainerType and the lookup succeeds with the latter one,
+						// then we are in this situation.
 						Report.Error (1540, loc, 
 							      "Cannot access protected member `{0}' via a qualifier of type `{1}';"
 							      + " the qualifier must be of type `{2}' (or derived from it)", 
 							      TypeManager.GetFullNameSignature (m),
 							      TypeManager.CSharpName (qualifier_type),
 							      TypeManager.CSharpName (ec.ContainerType));
+					} else {
+						Report.Error (122, loc, 
+							      "'{0}' is inaccessible due to its protection level", 
+							      TypeManager.GetFullNameSignature (m));
 					}
-					return;
 				}
 				almostMatchedMembers.Clear ();
+				return;
 			}
 
 			MemberInfo[] mi = TypeManager.MemberLookup (queried_type, null, queried_type,
