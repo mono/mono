@@ -5569,19 +5569,12 @@ namespace Mono.CSharp {
                 return; 
 			
 			if (!is_static){
-				this_call = instance_expr == null;
+				this_call = instance_expr is This;
 				if (decl_type.IsValueType || (!this_call && instance_expr.Type.IsValueType))
 					struct_call = true;
 				
-				//
-				// If this is ourselves, push "this"
-				//
 				if (!omit_args) {
-				Type t = null;
-				if (this_call) {
-					ig.Emit (OpCodes.Ldarg_0);
-					t = decl_type;
-				} else {
+					Type t = null;
 					//
 					// Push the instance expression
 					//
@@ -5620,13 +5613,12 @@ namespace Mono.CSharp {
 						instance_expr.Emit (ec);
 						t = instance_expr.Type;
 					}
-				}
-				
-				if (dup_args) {
-					this_arg = new LocalTemporary (ec, t);
-					ig.Emit (OpCodes.Dup);
-					this_arg.Store (ec);
-				}
+
+					if (dup_args) {
+						this_arg = new LocalTemporary (ec, t);
+						ig.Emit (OpCodes.Dup);
+						this_arg.Store (ec);
+					}
 				}
 			}
 

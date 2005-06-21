@@ -1,5 +1,8 @@
 2005-06-21  Raja R Harinath  <rharinath@novell.com>
 
+	* expression.cs (Invocation.EmitCall): Fix initialization
+	'this_call' to reflect current behaviour.  Fix indentation.
+
 	* convert.cs (FindMostEncompassedType): Add two trivial	special
 	cases (number_of_types == 0 || number_of_types == 1).
 	(FindMostEncompasingType): Likewise.
