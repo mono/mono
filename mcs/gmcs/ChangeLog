@@ -147,6 +147,21 @@
 	* statement.cs (Try.DoResolve): Don't create a `finally' if we
 	don't need to.  Fix #75014.
 
+2005-05-24  Duncan Mak  <duncan@novell.com>
+
+	* ecore.cs (CastFromDecimal): New class for casting a decimal to
+	another class, used in Convert.ExplicitNumericConversion.
+	(CastToDecimal): New class, similar to above, but casts to
+	System.Decimal, used in Convert.ImplicitNumericConversion and also
+	in explicit convesion from double/float to decimal.
+
+	* convert.cs (ImplicitNumericConversion): Handle implicit
+	conversions to System.Decimal.
+	(ExplicitNumericConversion): handle explicit conversions to
+	System.Decimal.
+
+	This fixes #68711.
+	
 2005-05-20  Miguel de Icaza  <miguel@novell.com>
 
 	* typemanager.cs: Do not throw an exception in the TypeBuilder
