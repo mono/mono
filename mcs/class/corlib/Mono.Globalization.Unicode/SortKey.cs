@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Globalization;
 
-namespace Mono.Globalization.Unicode
+namespace System.Globalization
 {
-	internal class SortKey
+	public class SortKey
 	{
 		#region Static members
 		public static int Compare (SortKey sk1, SortKey sk2)
@@ -26,7 +26,7 @@ namespace Mono.Globalization.Unicode
 		#endregion
 
 		readonly string source;
-		readonly byte [] data;
+		readonly byte [] key;
 		readonly int lv1Length;
 		readonly int lv2Length;
 		readonly int lv3Length;
@@ -35,15 +35,27 @@ namespace Mono.Globalization.Unicode
 		readonly int katakanaLength;
 		readonly int kanaWidthLength;
 		readonly int identLength;
+		readonly CompareOptions options;
+		readonly int lcid;
 
-		public SortKey (string source, byte [] buffer,
+		// for legacy unmanaged one
+		internal SortKey (int lcid, string source, CompareOptions opt)
+		{
+			this.lcid = lcid;
+			this.source = source;
+			this.options = opt;
+		}
+
+		internal SortKey (int lcid, string source, byte [] buffer, CompareOptions opt,
 			int lv1Length, int lv2Length, int lv3Length,
 			int kanaSmallLength, int markTypeLength,
 			int katakanaLength, int kanaWidthLength,
 			int identLength)
 		{
+			this.lcid = lcid;
 			this.source = source;
-			this.data = buffer;
+			this.key = buffer;
+			this.options = opt;
 			this.lv1Length = lv1Length;
 			this.lv2Length = lv2Length;
 			this.lv3Length = lv3Length;
@@ -59,7 +71,7 @@ namespace Mono.Globalization.Unicode
 		}
 
 		public byte [] KeyData {
-			get { return data; }
+			get { return key; }
 		}
 
 		internal int Level1Length {
@@ -99,11 +111,36 @@ namespace Mono.Globalization.Unicode
 		}
 
 		internal int IdenticalIndex {
-			get { return data.Length - identLength - 1; }
+			get { return key.Length - identLength - 1; }
 		}
 
 		internal int IdenticalLength {
 			get { return identLength; }
+		}
+
+		// copy from original SortKey.cs
+		public override bool Equals (object value)
+		{
+			SortKey other = (value as SortKey);
+			if(other!=null) {
+				if((this.lcid==other.lcid) &&
+				   (this.options==other.options) &&
+				   (Compare (this, other)==0)) {
+					return(true);
+				}
+			}
+
+			return(false);
+		}
+
+		public override int GetHashCode()
+		{
+			return(source.GetHashCode ());
+		}
+
+		public override string ToString()
+		{
+			return("SortKey - "+lcid+", "+options+", "+source);
 		}
 	}
 }

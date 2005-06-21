@@ -17,8 +17,10 @@ namespace Mono.Globalization.Unicode
 		bool processLevel2;
 		bool frenchSort;
 		bool frenchSorted;
+		int lcid;
+		CompareOptions options;
 
-		public SortKeyBuffer ()
+		public SortKeyBuffer (int lcid)
 		{
 		}
 
@@ -36,6 +38,7 @@ namespace Mono.Globalization.Unicode
 
 		internal void Initialize (CompareOptions options, string s, bool frenchSort)
 		{
+			this.options = options;
 			int len = s.Length;
 			processLevel2 = (options & CompareOptions.IgnoreNonSpace) == 0;
 			this.frenchSort = frenchSort;
@@ -235,7 +238,7 @@ namespace Mono.Globalization.Unicode
 				Array.Copy (l5b, 0, ret, cur, l5);
 			cur += l5;
 			ret [cur++] = 0; // end-of-data mark
-			return new SortKey (source, ret, l1, l2, l3, l4s, l4t, l4k, l4w, l5);
+			return new SortKey (lcid, source, ret, options, l1, l2, l3, l4s, l4t, l4k, l4w, l5);
 		}
 	}
 }

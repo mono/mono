@@ -1,5 +1,13 @@
 2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SortKey.cs : Now it is System.Globalization.SortKey.
+	  To replace existing implementation, it now requires lcid and 
+	  CompareOptions. Added required members.
+	* SortKeyBuffer.cs : thus .ctor() requires LCID.
+	* SimpleCollator.cs : made required changes above.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CodePointIndexer.cs : added CompressArray(). Now it requires two more
 	  parameters for default index and codepoint.
 	* CollationElementTableUtil.cs,

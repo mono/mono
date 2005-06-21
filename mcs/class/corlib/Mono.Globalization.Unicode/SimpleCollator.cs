@@ -13,7 +13,7 @@ namespace Mono.Globalization.Unicode
 {
 	internal class SimpleCollator
 	{
-		SortKeyBuffer buf = new SortKeyBuffer ();
+		SortKeyBuffer buf;
 		// CompareOptions expanded.
 		bool ignoreNonSpace; // used in IndexOf()
 		bool ignoreSymbols;
@@ -26,7 +26,10 @@ namespace Mono.Globalization.Unicode
 		public SimpleCollator (CultureInfo culture)
 		{
 			textInfo = culture.TextInfo;
+
 			// FIXME: fill frenchSort from CultureInfo.
+
+			buf = new SortKeyBuffer (culture.LCID);
 		}
 
 		void SetOptions (CompareOptions options)
