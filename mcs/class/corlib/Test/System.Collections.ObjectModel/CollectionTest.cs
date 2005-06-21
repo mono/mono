@@ -148,7 +148,7 @@ namespace MonoTests.System.Collections.ObjectModel
 
 			#region IEnumerable Members
 
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				throw new Exception ("The method or operation is not implemented.");
 			}
