@@ -88,10 +88,11 @@ namespace Mono.Globalization.Unicode
 			if (array.Length < count)
 				throw new ArgumentOutOfRangeException ("count");
 			for (int i = 0; i < count; i++) {
-				if (array [i] < 10)
-					Console.Write ("{0}, ", array [i]);
+				uint value = (uint) array [i];
+				if (value < 10)
+					Console.Write ("{0}, ", value);
 				else
-					Console.Write ("0x{0:X}, ", array [i]);
+					Console.Write ("0x{0:X}, ", value);
 				if (i % 16 == 15) {
 					int l = getCP ? NormalizationTableUtil.PropCP (i) : i;
 					Console.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);

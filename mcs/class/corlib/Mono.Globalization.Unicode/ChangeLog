@@ -1,5 +1,9 @@
 2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-normalization-source.cs : output propValue as uint.
+
+2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SortKey.cs : Now it is System.Globalization.SortKey.
 	  To replace existing implementation, it now requires lcid and 
 	  CompareOptions. Added required members.
