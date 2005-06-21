@@ -460,6 +460,15 @@ namespace MonoTests.System.Text {
 		StringBuilder sb = new StringBuilder ("hola").Append ("lala");
 		AssertEquals ("#01", "holalala", sb.ToString ());
 	}
+
+	[Test]
+	public void ReplaceWithLargerString ()
+	{
+		StringBuilder sb = new StringBuilder ("ABCDE");
+		AssertEquals ("#1", "ABCDE", sb.ToString ());
+		sb.Replace ("ABC", "abcaa", 0, 3);
+		AssertEquals ("#2", "abcaaDE", sb.ToString ());
+	}
 }
 
 }

@@ -1,3 +1,7 @@
+2005-06-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilderTest.cs: Test replacing with a longer string.
+
 2005-05-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringBuilderTest.cs (MaxCapacity_Overflow3): Test for #72244.
