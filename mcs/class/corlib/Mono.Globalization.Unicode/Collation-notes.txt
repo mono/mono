@@ -12,25 +12,33 @@
 		- infer how Windows collation element table is composed
 		  : mostly analyzed.
 		- write table generator source(s)
-		  : mostly implemented as long as they are analyzed.
+		  : mostly implemented. Need to fill 250 blank characters
+		    which should not be, and fix 2000 lines of different
+		    mappings.
 		- culture-specific sortkey data
-		  : I only know them via dumped diffs (shown later)
+		  : Some are written in mono-tailoring-source.txt. They
+		    come from dumped diffs (shown later) and UCA tailorings
+		    (via create-tailorings.exe).
 	* implement collation methods
-		- sortkey collector methods
-		  : left as prototype image
-		- character iterator models and comparison methods
-		  : left as prototype image
-		- string search optimizations
-		  : not at that stage.
+		- GetSortKey() is done.
+		- other methods are implemented in two ways: simple
+		  implementation and practical implementation. Simple ones
+		  are ongoing. Practical one is left as prototype (including
+		  character iterator model).
+		- IndexOf() optimizations
+		  : not yet.
 
 
 ** How to implement CompareInfo members
 
-	GetSortKey()
-		Compute sort key for every characters into byte[].
-		Use collation element table, but Windows specific one.
+	GetSortKey() : done
+		Compute sort key for every character elements into byte[].
 	Compare()
-		Find first difference and compare it. "Larger/smaller" matters.
+		Simple: done
+			Get two sort keys and compare byte data.
+		Practical:
+			Find first difference and compare it.
+			"Larger/smaller" matters.
 	IsPrefix()
 		For each character in the target, examine if it matches from 
 		the head of the searchee and immediately return false if it 
@@ -182,7 +190,7 @@
 	- level 3: case/width sensitivity, and Hangul properties
 	- level 4: kana weight (all of them have primary category 22, at least
 	  in InvariantCulture)
-	- level 5: variable weighting (apostrophe, hyphens etc.)
+	- level 5: shift weight (apostrophe, hyphens etc.)
 
 	Note that these levels does not digitally match IgnoreXXX flags. Thus
 	it is not OK that we omit some levels of sortkey values in reflection
@@ -196,7 +204,7 @@
 	If the collator just returned case difference at first 'e' and 'E',
 	"eB" is still smaller than "EA".
 
-**** level 5: variable weighting by StringSort
+**** level 5: shift weight by StringSort
 
 	There are some characters that are treated specially. Namely they are
 	apostrophe and hyphens. The sortkeys for them is put after level 4
@@ -344,7 +352,7 @@
 
 **** diacritic characters
 
-	Except for those variable-weighting characters, there are only
+	Except for those shift-weight characters, there are only
 	diacritical (or other kinds of nonspacing) characters that don't
 	have primary weights.
 
@@ -399,8 +407,9 @@
 
 	For details, "level 5" description above.
 
-	To handle them simply, we introduce "category 0x01" (which never
-	happens in the actual sortkeys) for those variables in the table.
+	To handle them simply, they are laid out as "category 0x01" (which
+	never happens in the actual sortkeys) for those shift-weight ones
+	in the table.
 
 	There seems no further differences between StringSort and None.
 
@@ -556,7 +565,7 @@
 			- 03 <= x <= 0D in "0E" part
 			- 7B <= x <= 7F in "0E" part
 
-**** character category details
+**** sortkey details by category
 
 	1 specially ignored ones (Japanese, Tamil, Thai)
 
@@ -564,7 +573,7 @@
 		Unicode: 3099-309C, BCD, E47, E4C, FF9E, FF9F
 		SortKey: 01 01 01 01 00
 
-	2 variable weight characters
+	2 shift weight characters
 	
 	They are either at 01 01 01 01 or 06, depending on StringSort. For
 	convenience, I use 06 to describe them.
@@ -1096,7 +1105,7 @@
 	Since they seems based on traditional encodings, we are likely to
 	provide other constant tables and switch depending on the culture.
 
-	<what characters are variable?>
+	<what characters are different from the invariant culture?>
 
 	ko : CJK layout difference (52 -> 80)
 	ja,zh-CHS,zh-TW : dash (5C), CJK layout difference.
@@ -1117,23 +1126,21 @@
 	4EDD,337B,337E,337D,337D,337C
 	They come in front of the first CJK character.
 
-	Korean CJK order looks similar that respects KS C 5619. Note that
-	Korean mixes Hangul and CJK in their order so it's not flat order
-	without indexes (thus, for CJK they are not computable). Also, there
-	is an extra level2 values for Korean CJK map.
+	Maybe Korean CJK order respects KS C 5619. Note that Korean mixes
+	Hangul and CJK in their order so it's not flat order without indexes
+	(thus, for CJK they are not computable). Also, there is an extra
+	level2 values for Korean CJK map.
 
 	For some Chinese such as zh-CHS, character order is based on pinyin.
-
 	And for remaining Chinese such as zh-TW, it is stroke count based.
 
 	CLDR of unicode.org has reference ordering of those characters, so
-	I am going to extract the sorting order data from it:
+	our collation table extracts the sorting order from it.
 	http://www.unicode.org/cldr/
 
 **** Accent evaluation order
 
-	With French cultures, diacritical marks must be put in front of the
-	character being decorated (aka French ordering).
+	With French cultures, diacritical marks are counted in reverse order.
 	French ordering does not affect only on some diacritics (Japanese
 	voice mark is not affected). FIXME: I doubt it, because the algorithm
 	does not seem to allow it.
@@ -1143,23 +1150,31 @@
 
 ** Mono implementation plans
 
-*** CultureInfoImpl
+*** CompareInfoImpl (partly TailoringInfo for now)
 
-	CultureInfo contains many overloaded methods that are just for 
+	CompareInfo contains many overloaded methods that are just for 
 	convenience. This class contains only required members.
 
-*** CollationSource (for now MSCompatUnicodeTable)
-
-	Provides several access to character information:
-
-	- ignorable, ignorable nonspace, normalize width, normalize kanatype
-	- level 4 sortkey provision method(s)
+	This class also provices access to tailoring information which is
+	culture instance dependent:
 
 	- bool HasTailoringAsHead(char)
 	- bool HasTailoringAsTail(char)
 	- int IndexToTailoring(char)
 
 	For data area, see CollationDataStructures.txt for now.
+
+*** UnicodeTable (for now MSCompatUnicodeTable)
+
+	Provides several access to character information with related to
+	the collation element table (of our own).
+	FIXME: I want to fix some bugs in Windows collation table especially
+	to not ignore some characters, but it requires table modification
+	which results in further memory allocation. Maybe it would be done
+	as a patch for the runtime (or classlib) sources.
+
+	- ignorable, ignorable nonspace, normalize width, normalize kanatype
+	- level 4 sortkey provision method(s)
 
 *** CharacterIterator
 
@@ -1216,14 +1231,6 @@
 	- l : the comparison level
 	- f : CompareOption (note that it is different from level)
 
-*** sort key element table
-
-	We will create *our own* collation element table which is closer
-	to the one from Windows than UCA default element table, but should
-	fix their bugs such as ignoring minor culture. We might provide
-	"discriminatory mode" that behaves closer to Windows (that ignores
-	some minor cultures).
-
 **** Characters in the table / characters computed
 
 	Currently I plan not to contain following characters in the table
@@ -1231,24 +1238,17 @@
 
 	- PrivateUse
 	- Surrogate
-	- Hangul Syllables
 
 **** CJK Unified Ideographs
 
-	For CJK unified ideographs, I have to make those culture-dependent
-	tables in memory. They will be in separate table.
-	Since they came from some classical encodings, they are not computed.
-
-	Culture-dependent rules are always "evaluated", except for radical
-	character mapping differences (i.e. ja, kr, zh-*). Other than that,
-	no physical expansion is done to the table loaded in memory.
-	(It's waste of memory.)
+	For CJK unified ideographs, I had to make those culture-dependent
+	tables in memory. Since they came from some classical encodings, they
+	are not computed. Thus, they are in separate table.
 
 **** Level 4: Kana type
 
 	The table is not likely to contain level 4 (kanatype) properties for
-	the whole characters; It will be provided only for Japanese characters
-	and will be single byte information (flags).
+	the whole characters They are simply computed.
 
 **** Level 3: Case properties
 
@@ -1259,8 +1259,10 @@
 
 **** Level 2: Diacritical properties
 
-	The table will be composed as two bytes for a character. Actually when
-	MS compatible (discriminatory) mode, the second byte will be always 0.
+	The table will be composed as a byte for a character. If we provide
+	non-buggy mode (Windows is buggy here by design; it just sums
+	secondary weight values up), the values will come from UCA and
+	non-blocking check will be introduced.
 
 	Note that Japanese voice marks are considered at level 2 but no need to
 	have maps.

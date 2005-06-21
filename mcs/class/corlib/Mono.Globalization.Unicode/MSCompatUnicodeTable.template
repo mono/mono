@@ -155,8 +155,6 @@ namespace Mono.Globalization.Unicode
 			case '\uFB02':
 				return "fl";
 			}
-//			if ('\u1113' <= c && c <= '\u115F') Korean Jamo
-//				return true;
 			return null;
 		}
 		#endregion
