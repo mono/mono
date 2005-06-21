@@ -773,23 +773,11 @@ namespace System.Reflection {
 				// Demand it's too late to evaluate the Minimum permission set as a 
 				// condition to load the assembly into the AppDomain
 				LoadAssemblyPermissions ();
-				_granted = SecurityManager.ResolvePolicy (UnprotectedGetEvidence (),
+				Evidence e = new Evidence (UnprotectedGetEvidence ()); // we need a copy to add PRE
+				e.AddHost (new PermissionRequestEvidence (_minimum, _optional, _refuse));
+				_granted = SecurityManager.ResolvePolicy (e,
 					_minimum, _optional, _refuse, out _denied);
 			}
-#if false
-			Console.WriteLine ("*** ASSEMBLY RESOLVE INPUT ***");
-			if (_minimum != null)
-				Console.WriteLine ("Minimum: {0}", _minimum);
-			if (_optional != null)
-				Console.WriteLine ("Optional: {0}", _optional);
-			if (_refuse != null)
-				Console.WriteLine ("Refuse: {0}", _refuse);
-			Console.WriteLine ("*** ASSEMBLY RESOLVE RESULTS ***");
-			Console.WriteLine ("Granted: {0}", _granted);
-			if (_denied != null)
-				Console.WriteLine ("Denied: {0}", _denied);
-			Console.WriteLine ("*** ASSEMBLY RESOLVE END ***");
-#endif
 		}
 
 		internal PermissionSet GrantedPermissionSet {
