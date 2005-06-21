@@ -395,8 +395,21 @@ namespace System.Net
 			sPoint.SetCertificates (client, server);
 			certsAvailable = (server != null);
 		}
-		
+
+		delegate void MyDelegate (object o);
+
 		internal static void InitRead (object state)
+		{
+			WebConnection cnc = (WebConnection) state;
+			if (!cnc.ssl) {
+				InitRead2 (state);
+			} else {
+				MyDelegate d = new MyDelegate (InitRead2);		
+				d.BeginInvoke (state, null, null);
+			}
+		}
+
+		static void InitRead2 (object state)
 		{
 			WebConnection cnc = (WebConnection) state;
 			Stream ns = cnc.nstream;

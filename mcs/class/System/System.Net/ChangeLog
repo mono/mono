@@ -1,3 +1,9 @@
+2005-06-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: SslClientStream.BeginRead might not be asynchronous
+	if there's no record available to read. This is a workaround that makes
+	the call to BeginRead itself asynchronous. Fixes bug #75342.
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:
