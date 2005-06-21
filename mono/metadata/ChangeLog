@@ -1,5 +1,13 @@
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_init): Don't initialize `class->fields' for
+	generic instances since they're initialized again in
+	compute_field_layout().	
+	(compute_field_layout): Set the field's `generic_info' here; fix
+	#75320.	
+
+2005-06-21  Martin Baulig  <martin@ximian.com>
+
 	* class-internals.h
 	(MonoGenericMethod): Added `MonoGenericClass *generic_class'.
 
