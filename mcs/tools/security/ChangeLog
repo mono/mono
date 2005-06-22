@@ -1,3 +1,8 @@
+2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MakeCert.cs: renamed to makecert.cs
+	* Makefile: s/MakeCert/makecert/
+
 2005-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Bump security tools version to 1.1.8.
