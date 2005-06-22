@@ -1,3 +1,12 @@
+2005-06-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RealProxy.cs: Extract the output arguments from the message's
+	Args list (not from OutArgs), since some message objects
+	may not support OutArgs (for example, when the target MethodBase is
+	not known, there is no way to know which params are out params).
+	I've checked that MS.NET behaves in the same way. This fixes
+	bug #75277.
+
 2005-06-13  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RealProxy.cs: Report invalid return type of values using
