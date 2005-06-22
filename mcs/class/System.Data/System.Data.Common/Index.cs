@@ -379,7 +379,7 @@ namespace System.Data.Common
 		private void Remove(int index)
 		{
 			if (Size > 1) {
-				System.Array.Copy(Array,index+1,Array,index,Size - index);
+				System.Array.Copy(Array,index+1,Array,index,Size - index - 1);
 			}
 			_size--;
 		}
@@ -648,6 +648,23 @@ namespace System.Data.Common
 			_refCount--;
 		}
 
+ 
+		/*
+		// Prints indexes. For debugging.
+		internal void Print ()
+                {
+                        for (int i=0; i < Size; i++) {
+                                Console.Write ("Index {0} record {1}: ", i, Array [i]);
+                                for (int j=0; j < Key.Table.Columns.Count; j++) {
+                                        DataColumn col = Key.Table.Columns [j];
+                                        if (Array [i] >= 0)
+                                                Console.Write ("{0,15} ", col [Array [i]]);
+                                }
+                                Console.WriteLine ();
+                        }
+                }
+		*/
+		
 		#endregion // Methods
 	}
 }

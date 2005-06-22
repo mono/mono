@@ -1,3 +1,8 @@
+2005-06-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Index.cs: Remove : length for Array.Copy (a, i+1, a, i, length -
+	(i+1)) corrected.
+
 2005-06-21  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbConnectionStringBuilder.cs: Implemented method for parsing
