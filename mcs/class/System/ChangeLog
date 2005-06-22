@@ -1,3 +1,8 @@
+2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: added reference to Mono.Security.dll when building the
+	tests.
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Removed LIB_MCS_FLAGS for referencing corlib and added the
