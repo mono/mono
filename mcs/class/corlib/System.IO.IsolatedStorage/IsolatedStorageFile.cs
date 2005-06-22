@@ -121,13 +121,16 @@ namespace System.IO.IsolatedStorage {
 		{
 			Demand (scope);
 
-			if (((scope & IsolatedStorageScope.Domain) != 0) &&  (domainIdentity == null))
+			if (((scope & IsolatedStorageScope.Domain) != 0) && (domainIdentity == null))
 				throw new ArgumentNullException ("domainIdentity");
 
-			if (((scope & IsolatedStorageScope.Assembly) != 0) &&  (assemblyIdentity == null))
+			bool assembly = ((scope & IsolatedStorageScope.Assembly) != 0);
+			if (assembly && (assemblyIdentity == null))
 				throw new ArgumentNullException ("assemblyIdentity");
 
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
+			if (assembly)
+				storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile._domainIdentity = domainIdentity;
 			storageFile._assemblyIdentity = assemblyIdentity;
 			storageFile.PostInit ();
@@ -143,6 +146,7 @@ namespace System.IO.IsolatedStorage {
 			}
 			if ((scope & IsolatedStorageScope.Assembly) != 0) {
 				Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
+				storageFile._fullEvidences = e;
 				storageFile._assemblyIdentity = GetTypeFromEvidence (e, assemblyEvidenceType);
 			}
 			storageFile.PostInit ();
@@ -157,6 +161,7 @@ namespace System.IO.IsolatedStorage {
 
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile._applicationIdentity = applicationIdentity;
+			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -166,6 +171,7 @@ namespace System.IO.IsolatedStorage {
 			Demand (scope);
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, applicationEvidenceType);
+			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -176,6 +182,7 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Application;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, null);
+			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -211,6 +218,7 @@ namespace System.IO.IsolatedStorage {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Application;
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, null);
+			storageFile._fullEvidences = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 			storageFile.PostInit ();
 			return storageFile;
 		}
@@ -404,19 +412,16 @@ namespace System.IO.IsolatedStorage {
 				} else {
 					e = new Evidence ();
 					// otherwise use what was provided
-					if (_domainIdentity != null)
-						e.AddHost (_domainIdentity);
 					if (_assemblyIdentity != null)
 						e.AddHost (_assemblyIdentity);
-					if (_applicationIdentity != null)
-						e.AddHost (_applicationIdentity);
 				}
 				if (e.Count < 1) {
 					throw new InvalidOperationException (
 						Locale.GetText ("Couldn't get the quota from the available evidences."));
 				}
 
-				PermissionSet ps = SecurityManager.ResolvePolicy (e);
+				PermissionSet denied = null;
+				PermissionSet ps = SecurityManager.ResolvePolicy (e, null, null, null, out denied);
 				IsolatedStoragePermission isp = GetPermission (ps);
 				if (isp == null) {
 					if (ps.IsUnrestricted ()) {

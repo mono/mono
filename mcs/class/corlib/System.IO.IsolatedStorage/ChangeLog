@@ -1,3 +1,9 @@
+2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Only assembly evidences are considered to
+	resolve policy. Changed resolve method used (instead of changing it's
+	code).
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileStream.cs: Remove Close method from NET_2_0.
