@@ -1,3 +1,8 @@
+2005-06-22  Andrew Skiba  <andrews@mainsoft.com>
+
+	* XmlNode.cs : cosmetic fix - remove unnecessary argument from
+	  AppendChildValues function.
+	  
 2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : removed some extra IsDefault check (with
