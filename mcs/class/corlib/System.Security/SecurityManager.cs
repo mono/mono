@@ -292,19 +292,6 @@ namespace System.Security {
 
 			ResolveIdentityPermissions (ps, evidence);
 
-			// do we have the right to execute ?
-			if (CheckExecutionRights) {
-				// unless we have "Full Trust"...
-				if (!ps.IsUnrestricted ()) {
-					// ... we need to find a SecurityPermission
-					IPermission security = ps.GetPermission (typeof (SecurityPermission));
-					if (!_execution.IsSubsetOf (security)) {
-						throw new PolicyException (Locale.GetText (
-							"Policy doesn't grant the right to execute to the assembly."));
-					}
-				}
-			}
-
 			return ps;
 		}
 
@@ -349,7 +336,6 @@ namespace System.Security {
 
 		static private SecurityPermission _execution = new SecurityPermission (SecurityPermissionFlag.Execution);
 
-		[MonoTODO()]
 		public static PermissionSet ResolvePolicy (Evidence evidence, PermissionSet reqdPset, PermissionSet optPset, PermissionSet denyPset, out PermissionSet denied)
 		{
 			PermissionSet resolved = ResolvePolicy (evidence);
@@ -357,6 +343,27 @@ namespace System.Security {
 			if ((reqdPset != null) && !reqdPset.IsSubsetOf (resolved)) {
 				throw new PolicyException (Locale.GetText (
 					"Policy doesn't grant the minimal permissions required to execute the assembly."));
+			}
+
+			// do we check for execution rights ?
+			if (CheckExecutionRights) {
+				bool execute = false;
+				// an empty permissionset doesn't include Execution
+				if (resolved != null) {
+					// unless we have "Full Trust"...
+					if (resolved.IsUnrestricted ()) {
+						execute = true;
+					} else {
+						// ... we need to find a SecurityPermission
+						IPermission security = resolved.GetPermission (typeof (SecurityPermission));
+						execute = _execution.IsSubsetOf (security);
+					}
+				}
+
+				if (!execute) {
+					throw new PolicyException (Locale.GetText (
+						"Policy doesn't grant the right to execute the assembly."));
+				}
 			}
 
 			denied = denyPset;

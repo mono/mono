@@ -1,3 +1,16 @@
+2005-06-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CodeAccessPermission.cs: Fix Unrestricted PermitOnly (which is like
+	a no-op). Speed up Assert if Unrestricted.
+	* HostSecurityManager.cs: Updated FIXME description.
+	* PermissionSet.cs: Remove Copy() of the permission set when non-CAS
+	permissions are used (replaced by an array of bools). Completed Assert
+	support by re-using the array of bools. Updated TODO descriptions.
+	* SecurityException.cs: Added evidence (if available) in the ToString
+	description of the exception.
+	* SecurityManager.cs: Reworked CheckExecutionRights to get the correct
+	behavior.
+
 2005-06-20  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CodeAccessPermission.cs: Removed redundant and unrequired TODO.

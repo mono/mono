@@ -73,7 +73,7 @@ namespace System.Security {
 				throw new ArgumentException (string.Format (msg, "ActivationContext", "ActivationArguments"), "applicationEvidence");
 			}
 
-			// FIXME: this part is still untested
+			// FIXME: this part is still untested (requires manifest support)
 			if (ApplicationSecurityManager.DetermineApplicationTrust (aa.ActivationContext, context)) {
 				if (aa.ApplicationIdentity == null)
 					return new ApplicationTrust ();

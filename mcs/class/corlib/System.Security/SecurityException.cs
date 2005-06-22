@@ -59,6 +59,7 @@ namespace System.Security {
 		private MethodInfo _method;
 		private string _url;
 		private SecurityZone _zone;
+		private Evidence _evidence;
 
 		// Properties
 
@@ -259,7 +260,7 @@ namespace System.Security {
 			_firstperm = permThatFailed;
 			if (_firstperm != null)
 				permissionType = _firstperm.GetType ();
-			// FIXME ? evidence ?
+			_evidence = evidence;
 		}
 
 		// Methods
@@ -302,6 +303,9 @@ namespace System.Security {
 				}
 				if (_firstperm != null) {
 					sb.AppendFormat ("{0}Failed Permission: {1}", Environment.NewLine, FirstPermissionThatFailed);
+				}
+				if (_evidence != null) {
+					sb.AppendFormat ("{0}Evidence: {1}", Environment.NewLine, _evidence);
 				}
 			}
 			catch (SecurityException) {

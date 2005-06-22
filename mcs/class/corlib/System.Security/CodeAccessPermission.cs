@@ -321,11 +321,14 @@ namespace System.Security {
 			// 1. CheckPermitOnly
 			if (frame.PermitOnly != null) {
 				// the demanded permission must be in one of the permitted...
-				bool permit = false;
-				foreach (IPermission p in frame.PermitOnly) {
-					if (CheckPermitOnly (p as CodeAccessPermission)) {
-						permit = true;
-						break;
+				bool permit = frame.PermitOnly.IsUnrestricted ();
+				if (!permit) {
+					// check individual permissions
+					foreach (IPermission p in frame.PermitOnly) {
+						if (CheckPermitOnly (p as CodeAccessPermission)) {
+							permit = true;
+							break;
+						}
 					}
 				}
 				if (!permit) {
@@ -347,10 +350,11 @@ namespace System.Security {
 
 			// 3. CheckAssert
 			if (frame.Assert != null) {
+				if (frame.Assert.IsUnrestricted ())
+					return true; // remove permission and continue stack walk
 				foreach (IPermission p in frame.Assert) {
 					if (CheckAssert (p as CodeAccessPermission)) {
-						// FIXME: partial asserts
-						return true; // stop the stack walk
+						return true; // remove permission and continue stack walk
 					}
 				}
 			}

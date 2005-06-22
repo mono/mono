@@ -61,6 +61,7 @@ namespace System.Security {
 		private PolicyLevel _policyLevel;
 		private bool _declsec;
 		private bool _readOnly;
+		private bool[] _ignored; // for asserts and non-CAS permissions
 
 		// constructors
 
@@ -206,25 +207,29 @@ namespace System.Security {
 			if (IsEmpty ())
 				return;
 
-			PermissionSet cas = this;
-			// avoid copy (if possible)
-			if (ContainsNonCodeAccessPermissions ()) {
-				// non CAS permissions (e.g. PrincipalPermission) do not requires a stack walk
-				cas = this.Copy ();
-				foreach (IPermission p in list) {
-					Type t = p.GetType ();
-					if (!t.IsSubclassOf (typeof (CodeAccessPermission))) {
-						p.Demand ();
-						// we wont have to process this one in the stack walk
-						cas.RemovePermission (t);
-					}
+			int n = list.Count;
+			if ((_ignored == null) || (_ignored.Length != n)) {
+				_ignored = new bool [n];
+			}
+
+			bool call_cas_only = this.IsUnrestricted ();
+			// non CAS permissions (e.g. PrincipalPermission) do not requires a stack walk
+			for (int i = 0; i < n; i++) {
+				CodeAccessPermission p = (CodeAccessPermission) list [i];
+				Type t = p.GetType ();
+				if (t.IsSubclassOf (typeof (CodeAccessPermission))) {
+					_ignored [i] = false;
+					call_cas_only = true;
+				} else {
+					_ignored [i] = true;
+					p.Demand ();
 				}
 			}
 
 			// don't start the stack walk if
 			// - the permission set only contains non CAS permissions; or
 			// - security isn't enabled (applis only to CAS!)
-			if (!cas.IsEmpty () && SecurityManager.SecurityEnabled)
+			if (call_cas_only && SecurityManager.SecurityEnabled)
 				CasOnlyDemand (_declsec ? 5 : 3);
 		}
 
@@ -237,6 +242,11 @@ namespace System.Security {
 			Assembly current = null;
 			AppDomain domain = null;
 
+			if (_ignored == null) {
+				// special case when directly called from CodeAccessPermission.Demand
+				_ignored = new bool [list.Count];
+			}
+
 			ArrayList frames = SecurityFrame.GetStack (skip);
 			if ((frames != null) && (frames.Count > 0)) {
 				SecurityFrame first = ((SecurityFrame) frames [0]);
@@ -244,8 +254,10 @@ namespace System.Security {
 				domain = first.Domain;
 				// skip ourself, Demand and other security runtime methods
 				foreach (SecurityFrame sf in frames) {
-					if (ProcessFrame (sf, ref current, ref domain))
-						return; // reached Assert
+					if (ProcessFrame (sf, ref current, ref domain)) {
+						if (AllIgnored ())
+							return; // reached Assert
+					}
 				}
 				SecurityFrame last = ((SecurityFrame) frames [frames.Count - 1]);
 				CheckAssembly (current, last);
@@ -256,8 +268,10 @@ namespace System.Security {
 			CompressedStack stack = Thread.CurrentThread.GetCompressedStack ();
 			if ((stack != null) && !stack.IsEmpty ()) {
 				foreach (SecurityFrame frame in stack.List) {
-					if (ProcessFrame (frame, ref current, ref domain))
-						return; // reached Assert
+					if (ProcessFrame (frame, ref current, ref domain)) {
+						if (AllIgnored ())
+							return; // reached Assert
+					}
 				}
 			}
 		}
@@ -664,7 +678,7 @@ namespace System.Security {
 			set { _declsec = value; }
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("may not be required")]
 		void IDeserializationCallback.OnDeserialization (object sender) 
 		{
 		}
@@ -703,10 +717,9 @@ namespace System.Security {
 			return (list.Count == 0) ? (int) state : base.GetHashCode ();
 		}
 
-		[MonoTODO ("what's it doing here?")]
+		[MonoTODO ("(2.0) what's it doing here? There's probably a reason this was added here.")]
 		static public void RevertAssert ()
 		{
-			// FIXME: There's probably a reason this was added here ?
 			CodeAccessPermission.RevertAssert ();
 		}
 #endif
@@ -721,6 +734,19 @@ namespace System.Security {
 		internal void SetReadOnly (bool value)
 		{
 			_readOnly = value;
+		}
+
+		private bool AllIgnored ()
+		{
+			if (_ignored == null)
+				throw new NotSupportedException ("bad bad bad");
+
+			for (int i=0; i < _ignored.Length; i++) {
+				if (!_ignored [i])
+					return false;
+			}
+			// everything is ignored (i.e. non-CAS permission or asserted permission).
+			return true;
 		}
 
 		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current, ref AppDomain domain)
@@ -738,9 +764,13 @@ namespace System.Security {
 
 			// skip next steps if no Assert, Deny or PermitOnly are present
 			if (frame.HasStackModifiers) {
-				foreach (CodeAccessPermission cap in list) {
-					if (cap.ProcessFrame (frame))
-						return true; // Assert reached - abort stack walk!
+				for (int i = 0; i < list.Count; i++) {
+					CodeAccessPermission cap = (CodeAccessPermission) list [i];
+					if (cap.ProcessFrame (frame)) {
+						_ignored [i] = true; // asserted
+						if (AllIgnored ())
+							return true; // no more, abort stack walk!
+					}
 				}
 			}
 
@@ -820,7 +850,7 @@ namespace System.Security {
 
 		static object[] action = new object [1] { (SecurityAction) 0 };
 
-		// TODO: add support for arrays and enums
+		// TODO: add support for arrays and enums (2.0)
 		internal static IPermission ProcessAttribute (byte[] data, ref int position)
 		{
 			int clen = ReadEncodedInt (data, ref position);
@@ -868,7 +898,7 @@ namespace System.Security {
 				object[] arrayIndex = null;
 				for (int i = 0; i < arrayLength; i++) {
 					if (array) {
-						// TODO - setup index
+						// TODO - setup index (2.0)
 					}
 
 					// sadly type values doesn't match ther TypeCode enum :(
