@@ -1,3 +1,7 @@
+2005-06-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/private/gcconfig.h: Fix amd64 build.
+
 2005-06-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* configure.host: remove -fexceptions, messes up with nptl
