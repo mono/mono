@@ -1,3 +1,18 @@
+2005-06-21  Peter Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs:
+	  - Now calling PositionCaret with absolute space coordinates
+	  - Enabled vertical scrolling
+	  - Better tracking of scrollbar changes, tied into WidthChange
+	    event
+	  - Improved cursor tracking
+	  - Removed debug output
+	* TextControl.cs:
+	  - PositionCaret coordinates are now works in absolute space, not 
+	    the canvas
+	  - Improved tracking of document size
+	  - Added events for width and height changes
+
 2005-06-21  Peter Bartok  <pbartok@novell.com>
 
 	* Form.cs: Set focus to active control when form is activated

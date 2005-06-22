@@ -608,7 +608,7 @@ namespace System.Windows.Forms {
 
 		internal Point Caret {
 			get {
-				return new Point((int)caret.tag.line.widths[caret.pos] + caret.line.align_shift, caret.line.Y + caret.tag.shift);
+				return new Point((int)caret.tag.line.widths[caret.pos] + caret.line.align_shift, caret.line.Y);
 			}
 		}
 
@@ -1008,7 +1008,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void PositionCaret(int x, int y) {
-			caret.tag = FindCursor(x + viewport_x, y + viewport_y, out caret.pos);
+			caret.tag = FindCursor(x, y, out caret.pos);
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
 
@@ -1244,8 +1244,9 @@ namespace System.Windows.Forms {
 			Brush	hilight_text;
 
 			// First, figure out from what line to what line we need to draw
-			start = GetLineByPixel(clip.Top - viewport_y, false).line_no;
-			end = GetLineByPixel(clip.Bottom - viewport_y, false).line_no;
+			start = GetLineByPixel(clip.Top + viewport_y, false).line_no;
+			end = GetLineByPixel(clip.Bottom + viewport_y, false).line_no;
+Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom:{2})", start, end, clip.Bottom);
 
 			// Now draw our elements; try to only draw those that are visible
 			line_no = start;
@@ -2546,9 +2547,12 @@ if (end != null) {
 			Line	line;
 			int	line_no;
 			int	Y;
+			int	new_width;
 
 			Y = GetLine(start).Y;
 			line_no = start;
+			new_width = 0;
+
 			if (optimize) {
 				bool	changed;
 				bool	alignment_recalc;
@@ -2566,9 +2570,8 @@ if (end != null) {
 							end = this.lines;
 						}
 
-						if (line.widths[line.text.Length] > this.document_x) {
-							this.document_x = (int)line.widths[line.text.Length];
-							alignment_recalc = true;
+						if (line.widths[line.text.Length] > new_width) {
+							new_width = (int)line.widths[line.text.Length];
 						}
 
 						// Calculate alignment
@@ -2588,12 +2591,25 @@ if (end != null) {
 					}
 				}
 
+				if (document_x < new_width) {
+					document_x = new_width;
+					alignment_recalc = true;
+					if (WidthChanged != null) {
+						WidthChanged(this, null);
+					}
+				}
+
 				if (alignment_recalc) {
 					RecalculateAlignments();
 				}
 
 				line = GetLine(lines);
-				document_y = line.Y + line.height;
+				if (document_y != line.Y + line.height) {
+					document_y = line.Y + line.height;
+					if (HeightChanged != null) {
+						HeightChanged(this, null);
+					}
+				}
 
 				return changed;
 			} else {
@@ -2613,8 +2629,8 @@ if (end != null) {
 						shift = 0;
 					}
 
-					if (line.widths[line.text.Length] > this.document_x) {
-						this.document_x = (int)line.widths[line.text.Length];
+					if (line.widths[line.text.Length] > new_width) {
+						new_width = (int)line.widths[line.text.Length];
 					}
 
 					// Calculate alignment
@@ -2632,10 +2648,24 @@ if (end != null) {
 						break;
 					}
 				}
+
+				if (document_x != new_width) {
+					document_x = new_width;
+					if (WidthChanged != null) {
+						WidthChanged(this, null);
+					}
+				}
+
 				RecalculateAlignments();
 
 				line = GetLine(lines);
-				document_y = line.Y + line.height;
+
+				if (document_y != line.Y + line.height) {
+					document_y = line.Y + line.height;
+					if (HeightChanged != null) {
+						HeightChanged(this, null);
+					}
+				}
 
 				return true;
 			}
@@ -2652,6 +2682,8 @@ if (end != null) {
 
 		#region Events
 		internal event EventHandler CaretMoved;
+		internal event EventHandler WidthChanged;
+		internal event EventHandler HeightChanged;
 		#endregion	// Events
 
 		#region Administrative

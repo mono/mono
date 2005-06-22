@@ -87,6 +87,7 @@ namespace System.Windows.Forms {
 			word_wrap = true;
 			richtext = false;
 			document = new Document(this);
+			document.WidthChanged += new EventHandler(document_WidthChanged);
 			//document.CaretMoved += new EventHandler(CaretMoved);
 			document.Wrap = true;
 			requested_height = -1;
@@ -1092,7 +1093,7 @@ static int current;
 			int	pos;
 
 			if (e.Button == MouseButtons.Left) {
-				document.PositionCaret(e.X, e.Y);
+				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				document.SetSelectionToCaret(true);
 				this.grabbed = true;
 				this.Capture = true;
@@ -1141,7 +1142,7 @@ static int current;
 			this.Capture = false;
 			this.grabbed = false;
 			if (e.Button == MouseButtons.Left) {
-				document.PositionCaret(e.X, e.Y);
+				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				document.SetSelectionToCaret(false);
 				document.DisplayCaret();
 				return;
@@ -1201,8 +1202,8 @@ static int current;
 			}
 
 			if (hscroll.Visible) {
-				vscroll.Maximum += hscroll.Height * 2;
-				canvas_height = this.Height - hscroll.Height * 2;
+				vscroll.Maximum += hscroll.Height;
+				canvas_height = this.Height - hscroll.Height;
 			}
 
 			if (vscroll.Visible) {
@@ -1211,24 +1212,28 @@ static int current;
 			}
 		}
 
+		private void document_WidthChanged(object sender, EventArgs e) {
+			CalculateScrollBars();
+		}
+
 		private void hscroll_ValueChanged(object sender, EventArgs e) {
 			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, false);
 			document.ViewPortX = this.hscroll.Value;
 			document.UpdateCaret();
-			Console.WriteLine("Dude scrolled horizontal");
+			//Console.WriteLine("Dude scrolled horizontal");
 		}
 
 		private void vscroll_ValueChanged(object sender, EventArgs e) {
 			XplatUI.ScrollWindow(this.Handle, 0, document.ViewPortY-this.vscroll.Value, false);
-			document.ViewPortX = this.vscroll.Value;
+			document.ViewPortY = this.vscroll.Value;
 			document.UpdateCaret();
-			Console.WriteLine("Dude scrolled vertical");
+			//Console.WriteLine("Dude scrolled vertical");
 		}
 
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (grabbed) {
-				document.PositionCaret(e.X, e.Y);
+				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				document.SetSelectionToCaret(false);
 				document.DisplayCaret();
 			}
@@ -1252,56 +1257,46 @@ static int current;
 		/// <summary>Ensure the caret is always visible</summary>
 		internal void CaretMoved(object sender, EventArgs e) {
 			Point	pos;
+			int	height;
 			
 			pos = document.Caret;
-			Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
+			//Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
 
 			// Handle horizontal scrolling
 			if (pos.X < (document.ViewPortX + track_width)) {
-				if ((hscroll.Value - track_width) >= hscroll.Minimum) {
-					hscroll.Value -= track_width;
-				} else {
-					hscroll.Value = hscroll.Minimum;
-				}
+				do {
+					if ((hscroll.Value - track_width) >= hscroll.Minimum) {
+						hscroll.Value -= track_width;
+					} else {
+						hscroll.Value = hscroll.Minimum;
+					}
+				} while (hscroll.Value > pos.X);
 			}
 
-			if ((pos.X > (this.Width + document.ViewPortX - track_width)) && (hscroll.Value != hscroll.Maximum)) {
-				if ((hscroll.Value + track_width) <= hscroll.Maximum) {
-					hscroll.Value += track_width;
-				} else {
-					hscroll.Value = hscroll.Maximum;
-				}
+			if ((pos.X > (this.canvas_width + document.ViewPortX - track_width)) && (hscroll.Value != hscroll.Maximum)) {
+				do {
+					if ((hscroll.Value + track_width) <= hscroll.Maximum) {
+						hscroll.Value += track_width;
+					} else {
+						hscroll.Value = hscroll.Maximum;
+					}
+				} while (pos.X > (hscroll.Value + this.canvas_width));
 			}
 
 			if (!multiline) {
 				return;
 			}
-#if not
+
 			// Handle vertical scrolling
-			if (pos.Y < (document.ViewPortY + track_width)) {
-				if ((hscroll.Value - track_width) >= hscroll.Minimum) {
-					hscroll.Value -= track_width;
-				} else {
-					hscroll.Value = hscroll.Minimum;
-				}
+			height = document.CaretLine.Height;
 
-				if (pos.X > this.Width + document.ViewPortX) {
-					hscroll.Value = hscroll.Minimum;
-				}
+			if (pos.Y < document.ViewPortY) {
+				vscroll.Value = pos.Y;
 			}
 
-			if (pos.X > (this.Width + document.ViewPortX - track_width)) {
-				if ((hscroll.Value + track_width) <= hscroll.Maximum) {
-					hscroll.Value += track_width;
-				} else {
-					hscroll.Value = hscroll.Maximum;
-				}
+			if ((pos.Y + height) > (document.ViewPortY + canvas_height)) {
+				vscroll.Value = pos.Y - canvas_height + height;
 			}
-
-			if (pos.X < document.ViewPortX) {
-				hscroll.Value = hscroll.Minimum;
-			}
-#endif
 		}
 	}
 }
