@@ -471,7 +471,7 @@ namespace Mono.Security.Protocol.Tls
 							this.innerStream.BeginRead (recbuf, 0, recbuf.Length, 
 								new AsyncCallback (NetworkReadCallback), recbuf);
 
-							if (!recordEvent.WaitOne (300000, false)) // 5 minutes
+							if (!recordEvent.WaitOne ()) // 300000, false)) // 5 minutes
 							{
 								// FAILSAFE
 								DebugHelper.WriteLine ("TIMEOUT length {0}, position {1}, count {2} - {3}\n{4}", 
