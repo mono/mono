@@ -1,21 +1,35 @@
+2005-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Dictionary.cs (_generation, _enumeratorGeneration, _enumerators):
+	New fields to implement fail-fast semantics.  All code that
+	modifies the table increment _generation.
+	(GetSlot): Use _hcp to compare keys.  Return the slot containing
+	the key, rather than the index.  Avoid move-to-front heuristic
+	when there's an enumerator coursing through the table.
+	(this, Add, TryGetValue, ContainsKey, Remove): Update to change.
+	(Enumerator.Enumerator): Save the generation of the dictionary.
+	(Enumerator.Dispose): Inform dictionary that the enumerator is no more.
+	(Enumerator.MoveNext, Enumerator.VerifyState): Fail if the
+	dictionary has been modified.
+
 2005-06-20  David waite  <mass@akuma.org>
 
-    * List.cs : substantial changes and optimizations
-    (AddCollection, AddEnumerable): new internal specializations of AddRange
-    (AsReadOnly): returns specific IList<T> to match ms.net 2.0b2 api.
-    (Clear): reset size to zero on clear
-    (ConvertAll): catch null converter, use Add to prevent OutOfBounds
-    exception
-    (FindAll, FindIndex, FindLast, FindLastIndex, RemoveAll, TrueForAll): 
-    check for null match
-    (FindLastIndex): correct index parameters based on ms.net 2005b2 behavior
-    (ForEach): catch null action
-    (CheckIndex): new internal function similar to CheckRange for functions
-    which only provide a starting index
-    (InsertCollection, InsertEnumerable): new internal specializations of
-    InsertRange
-    (ReadOnlyList): removed, ReadOnlyCollection in 
-    System.Collections.ObjectModel is used instead now 
+	* List.cs : substantial changes and optimizations
+	(AddCollection, AddEnumerable): new internal specializations of AddRange
+	(AsReadOnly): returns specific IList<T> to match ms.net 2.0b2 api.
+	(Clear): reset size to zero on clear
+	(ConvertAll): catch null converter, use Add to prevent OutOfBounds
+	exception
+	(FindAll, FindIndex, FindLast, FindLastIndex, RemoveAll, TrueForAll): 
+	check for null match
+	(FindLastIndex): correct index parameters based on ms.net 2005b2 behavior
+	(ForEach): catch null action
+	(CheckIndex): new internal function similar to CheckRange for functions
+	which only provide a starting index
+	(InsertCollection, InsertEnumerable): new internal specializations of
+	InsertRange
+	(ReadOnlyList): removed, ReadOnlyCollection in 
+	System.Collections.ObjectModel is used instead now 
     
 2005-06-16  David Waite  <mass@akuma.org>
 

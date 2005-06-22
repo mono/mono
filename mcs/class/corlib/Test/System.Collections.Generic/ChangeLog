@@ -1,18 +1,23 @@
+2005-06-22  Raja R Harinath  <rharinath@novell.com>
+
+	* DictionaryTest.cs (KeyValueEnumeratorTest): Add test for infloop
+	if dictionary is read while it's being enumerated.
+
 2005-06-20  David Waite  <mass@akuma.org>
 
-    * ListTest.cs: Substantial new tests
+	* ListTest.cs: Substantial new tests
 
 2005-06-18  David Waite  <mass@akuma.org>
 
-    * DictionaryTest.cs (AddTest3): Added test of simple interaction with
-    struct dictionary
-    (AddDuplicateTest,IndexerGetNullTest,IndexerSetNullTest): Added tests
-    for exceptional cases to verify correct exceptions
-    (TryGetValueTest): check return value from TryGetValue
-    (KeyValueEnumeratorTest): Added test from verification of ms.net beta2
-    behavior for non-generic IEnumerator/IDictionaryEnumerator behavior
-    against Dictionary<>
-    (SerializationTest): Added test to utilize serialization routines.
+	* DictionaryTest.cs (AddTest3): Added test of simple interaction with
+	struct dictionary
+	(AddDuplicateTest,IndexerGetNullTest,IndexerSetNullTest): Added tests
+	for exceptional cases to verify correct exceptions
+	(TryGetValueTest): check return value from TryGetValue
+	(KeyValueEnumeratorTest): Added test from verification of ms.net beta2
+	behavior for non-generic IEnumerator/IDictionaryEnumerator behavior
+	against Dictionary<>
+	(SerializationTest): Added test to utilize serialization routines.
     
 2005-06-16  Raja R Harinath  <rharinath@novell.com>
 

@@ -84,7 +84,7 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void AddTest ()
 		{
-			_dictionary.Add ("key1", (object)"value");
+			_dictionary.Add ("key1", "value");
 			Assert.AreEqual ("value", _dictionary ["key1"].ToString (), "Add failed!");
 		}
 	
@@ -149,7 +149,7 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void IndexerGetExistingTest ()
 		{
-			_dictionary.Add ("key1", (object)"value");
+			_dictionary.Add ("key1", "value");
 			Assert.AreEqual ("value", _dictionary ["key1"].ToString (), "Add failed!");
 		}
 		
@@ -168,8 +168,8 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void IndexerSetExistingTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary ["key1"] = (object) "value2";
+			_dictionary.Add ("key1", "value1");
+			_dictionary ["key1"] =  "value2";
 			Assert.AreEqual (1, _dictionary.Count);
 			Assert.AreEqual ("value2", _dictionary ["key1"]);
 		}
@@ -177,7 +177,7 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void IndexerSetNonExistingTest ()
 		{
-			_dictionary ["key1"] = (object) "value1";
+			_dictionary ["key1"] =  "value1";
 			Assert.AreEqual (1, _dictionary.Count);
 			Assert.AreEqual ("value1", _dictionary ["key1"]);
 		}
@@ -218,10 +218,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void ClearTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			_dictionary.Clear ();
 			Assert.AreEqual (0, _dictionary.Count, "Clear method failed!");
 			Assert.IsFalse (_dictionary.ContainsKey ("key2"));
@@ -230,10 +230,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void ContainsKeyTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			bool contains = _dictionary.ContainsKey ("key4");
 			Assert.IsTrue (contains, "ContainsKey does not return correct value!");
 			contains = _dictionary.ContainsKey ("key5");
@@ -243,10 +243,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void ContainsValueTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			bool contains = _dictionary.ContainsValue ("value2");
 			Assert.IsTrue(contains, "ContainsValue does not return correct value!");
 			contains = _dictionary.ContainsValue ("@@daisofja@@");
@@ -256,10 +256,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void TryGetValueTest()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			object value = "";
 			bool retrieved = _dictionary.TryGetValue ("key4", out value);
 			Assert.IsTrue (retrieved);
@@ -310,34 +310,34 @@ namespace MonoTests.System.Collections.Generic {
 		{
 			Dictionary <object, object> dict = new Dictionary <object, object> ();
 			MyTest key1, key2, key3;
-			dict.Add ((object) (key1 = new MyTest ("key1", 234)), (object)"value1");
-			dict.Add ((object) (key2 = new MyTest ("key2", 444)), (object)"value2");
-			dict.Add ((object) (key3 = new MyTest ("key3", 5655)), (object)"value3");
+			dict.Add ( (key1 = new MyTest ("key1", 234)), "value1");
+			dict.Add ( (key2 = new MyTest ("key2", 444)), "value2");
+			dict.Add ( (key3 = new MyTest ("key3", 5655)), "value3");
 	
-			Assert.AreEqual ((object)"value2", dict [key2], "value is not returned!");
-			Assert.AreEqual ((object)"value3", dict [(object)key3], "neg: exception should not be thrown!");
+			Assert.AreEqual ("value2", dict [key2], "value is not returned!");
+			Assert.AreEqual ("value3", dict [key3], "neg: exception should not be thrown!");
 		}
 	
 		[Test, ExpectedException (typeof (ArgumentException))]
 		public void IDictionaryAddTest ()
 		{
 			IDictionary iDict = _dictionary as IDictionary;
-			iDict.Add ((object)"key1", (object)"value1");
-			iDict.Add ((object)"key2", (object)"value3");
+			iDict.Add ("key1", "value1");
+			iDict.Add ("key2", "value3");
 			Assert.AreEqual (2, iDict.Count, "IDictioanry interface add is not working!");
 	
 			//Negative test case
-			iDict.Add ((object)12, (object)"value");
-			iDict.Add ((object)"key", (object)34);
+			iDict.Add (12, "value");
+			iDict.Add ("key", 34);
 		}
 	
 		[Test]
 		public void IEnumeratorTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			IEnumerator itr = ((IEnumerable)_dictionary).GetEnumerator ();
 			while (itr.MoveNext ())	{
 				object o = itr.Current;
@@ -353,10 +353,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void IEnumeratorGenericTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			IEnumerator <KeyValuePair <string, object>> itr = ((IEnumerable <KeyValuePair <string, object>>)_dictionary).GetEnumerator ();
 			while (itr.MoveNext ())	{
 				object o = itr.Current;
@@ -372,10 +372,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void IDictionaryEnumeratorTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 			IDictionaryEnumerator itr = ((IDictionary)_dictionary).GetEnumerator ();
 			while (itr.MoveNext ()) {
 				object o = itr.Current;
@@ -391,10 +391,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void ForEachTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 	
 			int i = 0;
 			foreach (KeyValuePair <string, object> entry in _dictionary)
@@ -422,13 +422,13 @@ namespace MonoTests.System.Collections.Generic {
 		public void ResizeTest ()
 		{
 			Dictionary <string, object> dictionary = new Dictionary <string, object> (3);
-			dictionary.Add ("key1", (object)"value1");
-			dictionary.Add ("key2", (object)"value2");
-			dictionary.Add ("key3", (object)"value3");
+			dictionary.Add ("key1", "value1");
+			dictionary.Add ("key2", "value2");
+			dictionary.Add ("key3", "value3");
 	
 			Assert.AreEqual (3, dictionary.Count);
 	
-			dictionary.Add ("key4", (object)"value4");
+			dictionary.Add ("key4", "value4");
 			Assert.AreEqual (4, dictionary.Count);
 			Assert.AreEqual ("value1", dictionary ["key1"].ToString (), "");
 			Assert.AreEqual ("value2", dictionary ["key2"].ToString (), "");
@@ -439,10 +439,10 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void KeyCollectionTest ()
 		{
-			_dictionary.Add ("key1", (object)"value1");
-			_dictionary.Add ("key2", (object)"value2");
-			_dictionary.Add ("key3", (object)"value3");
-			_dictionary.Add ("key4", (object)"value4");
+			_dictionary.Add ("key1", "value1");
+			_dictionary.Add ("key2", "value2");
+			_dictionary.Add ("key3", "value3");
+			_dictionary.Add ("key4", "value4");
 	
 			ICollection <string> keys = ((IDictionary <string, object>)_dictionary).Keys;
 			Assert.AreEqual (4, keys.Count);
@@ -459,25 +459,32 @@ namespace MonoTests.System.Collections.Generic {
 		{
                 	IDictionary<int, int> d = new Dictionary<int, int>();
 
+			// Values are chosen such that two keys map to the same bucket.
+			// Default dictionary table size == 10
         	        d [9] = 1;
 	                d [10] = 2;
                 	d [19] = 3;
 
-        	        ICollection <int> vs = d.Values;
-	
+			Assert.AreEqual (d.Count, d.Keys.Count, "d and d.Keys don't appear to match");
+			Assert.AreEqual (d.Values.Count, d.Keys.Count, "d.Keys and d.Values don't appear to match");
+
         	        int count = 0;
-	                foreach (int i in vs)
-        	       	        count++;
-
-			Assert.AreEqual (count, vs.Count);
-
-        	        vs = d.Keys;
+	                foreach (int i in d.Values)
+        	       	        ++count;
+			Assert.AreEqual (count, d.Values.Count, "d.Values doesn't have the correct number of elements");
 	
         	        count = 0;
-	                foreach (int i in vs)
-        	       	        count++;
+			foreach (int i in d.Keys)
+				++count;
+			Assert.AreEqual (count, d.Keys.Count, "d.Keys doesn't have the correct number of elements");
 
-			Assert.AreEqual (count, vs.Count);
+			int nkeys = count;
+			count = 0;
+	                foreach (int i in d.Keys) {
+				int foo = d [i];
+				if (count++ >= nkeys)
+					Assert.Fail ("Reading a value appears to trash enumerator state");
+			}
 		}
 
 		[Test] 		// bug 75073
@@ -501,7 +508,7 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsTrue(enumerator.MoveNext());
 			Assert.IsTrue(((IEnumerator)enumerator).Current is DictionaryEntry);
 			Assert.IsTrue(((IDictionaryEnumerator)enumerator).Current is DictionaryEntry);
-			Assert.IsFalse(((object)enumerator.Current) is DictionaryEntry);
+			Assert.IsFalse(((object) enumerator.Current) is DictionaryEntry);
 		}
 
 		[Test]
