@@ -1,3 +1,7 @@
+2005-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : Fixed stupid index search when start != 0.
+
 2005-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : fixed my misunderstanding on LastIndexOf(). It

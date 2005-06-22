@@ -369,7 +369,8 @@ namespace Mono.Globalization.Unicode
 			SetOptions (opt);
 
 			int ti = FilterOptions ((int) target);
-			for (int idx = start; idx < length; idx++) {
+			int end = start + length;
+			for (int idx = start; idx < end; idx++) {
 				switch (char.GetUnicodeCategory (s [idx])) {
 				case UnicodeCategory.PrivateUse:
 				case UnicodeCategory.Surrogate:
