@@ -1,3 +1,8 @@
+2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequestTest.cs: added test for the sslClientStream blocking
+	issue.
+
 2005-06-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddressTest.cs: cleanup and added loopback IPv6 test.
