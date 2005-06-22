@@ -50,6 +50,9 @@ namespace Mono.Http
 				return null;
 	
 			NetworkCredential cred = credentials.GetCredential (request.RequestUri, "NTLM");
+			if (cred == null)
+				return null;
+
 			string userName = cred.UserName;
 			string domain = cred.Domain;
 			string password = cred.Password;
