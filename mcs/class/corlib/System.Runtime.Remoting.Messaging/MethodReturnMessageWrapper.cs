@@ -60,7 +60,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		public virtual int ArgCount {
-			get { return ((IMethodReturnMessage)WrappedMessage).ArgCount; }
+			get { return _args.Length; }
 		}
 
 		public virtual object [] Args 

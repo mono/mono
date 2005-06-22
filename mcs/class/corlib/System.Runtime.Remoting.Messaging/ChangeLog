@@ -1,3 +1,9 @@
+2005-06-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MethodReturnMessageWrapper.cs: ArgCount now returns the count
+	from the internal arg array, since it may change.
+	* MonoMethodMessage.cs: Added NeedsOutProcessing helper method.
+
 2005-05-31  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ReturnMessage.cs: Added some null checks.

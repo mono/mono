@@ -41,23 +41,17 @@ namespace System.Runtime.Remoting.Messaging {
 	[Serializable]
 	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage, IInternalMessage {
 
+		#region keep in sync with MonoMessage in object-internals.h
 		MonoMethod method;
-
 		object []  args;
-
 		string []  names;
-
-		byte [] arg_types; /* 1 == IN; 2 == OUT ; 3 = INOUT */
-
+		byte [] arg_types; /* 1 == IN; 2 == OUT; 3 == INOUT; 4 == COPY OUT */
 		public LogicalCallContext ctx;
-
 		public object rval;
-
 		public Exception exc;
-
 		AsyncResult asyncResult;
-
 		CallType call_type;
+		#endregion
 
 		string uri;
 
@@ -354,6 +348,19 @@ namespace System.Runtime.Remoting.Messaging {
 				return call_type;
 			}
 		}
+		
+		public bool NeedsOutProcessing (out int outCount) {
+			bool res = false;
+			outCount = 0;
+			foreach (byte t in arg_types) {
+				if ((t & 2) != 0)
+					outCount++;
+				else if ((t & 4) != 0)
+					res = true;
+			}
+			return outCount > 0 || res;
+		}
+		
 	}
 
 	internal enum CallType: int
