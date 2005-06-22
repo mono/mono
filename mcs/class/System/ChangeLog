@@ -1,3 +1,9 @@
+2005-06-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Removed LIB_MCS_FLAGS for referencing corlib and added the
+	__SECURITY_BOOTSTRAP_DB export. This will allow the work on #74975 to
+	continue and shouldn't cause any harm to Linux or Cygwin builds.
+
 2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.dll.sources: Added ProviderBase.cs.
