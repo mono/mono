@@ -1,7 +1,7 @@
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
-	* class.c (mono_type_get_name_recurse): For MONO_TYPE_SZARRAY, the
-	recursive call already added the assembly name.
+	* class.c
+	(mono_type_get_name_recurse): Correctly handle MONO_TYPE_SZARRAY.
 
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
