@@ -1,3 +1,7 @@
+2005-06-22  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* ScrollBar.cs: Fixes thumbpos on Maximum values
+
 2005-06-21  Jonathan Chambers <jonathan.chambers@ansys.com>
 	
 	* PropertyGridView.cs: Pass context information to UITypeEditors 

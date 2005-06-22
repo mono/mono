@@ -411,7 +411,11 @@ namespace System.Windows.Forms
 					OnValueChanged (EventArgs.Empty);
 
 					ClearDirty ();
-					UpdatePos (Value, true);
+					
+					if (IsHandleCreated) {
+						UpdateThumbPos (thumb_area.Y + (int)(((float)(position - minimum)) * pixel_per_pos), false);
+					}
+					
 					InvalidateDirty ();
 				}
 			}
@@ -438,8 +442,8 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);		
 
 			CalcButtonSizes ();
-			CalcThumbArea ();
-			UpdatePos (Value, true);
+			CalcThumbArea ();			
+			UpdateThumbPos (thumb_area.Y + (int)(((float)(position - minimum)) * pixel_per_pos), false);			
 		}
 
 		protected virtual void OnScroll (ScrollEventArgs event_args)
