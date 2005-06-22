@@ -1,3 +1,9 @@
+2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: MS implementation follows redirects for POST. Seems
+	to me that this is against 10.3.3 in RFC 2616, but may be the user
+	'authorization' to do this is implicit in AllowAutoRedirect...
+
 2005-06-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: SslClientStream.BeginRead might not be asynchronous
