@@ -1,3 +1,8 @@
+2005-06-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* reflection.c (mono_reflection_create_runtime_class): take the
+	mono_domain_lock in this method. Prevents deadlocks
+
 2005-06-22  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (method_from_methodspec): Fix #75330.
