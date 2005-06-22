@@ -1,3 +1,9 @@
+2005-06-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* reflection.c (mono_reflection_create_runtime_class): Backport
+	from head. Prevents deadlocks by taking the domain lock outside of
+	the loader lock.
+
 2005-06-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* domain.c:
