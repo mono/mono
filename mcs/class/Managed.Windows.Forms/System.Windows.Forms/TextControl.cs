@@ -31,7 +31,6 @@
 // Stuff missing (in no particular order):
 // - Align text after RecalculateLine
 // - Implement tag types to support wrapping (ie have a 'newline' tag), for images, etc.
-// - Wrap and recalculate lines
 // - Implement CaretPgUp/PgDown
 // - Finish selection calculations (invalidate only changed, more ways to select)
 // - Implement C&P
@@ -568,7 +567,7 @@ namespace System.Windows.Forms {
 			selection_end.line = this.document;
 			selection_end.pos = 0;
 
-			viewport_x = -2;
+			viewport_x = 0;
 			viewport_y = -2;
 
 			// Default selection is empty
@@ -2514,7 +2513,7 @@ if (end != null) {
 			while (line_no <= lines) {
 				line = GetLine(line_no);
 
-				if (line.alignment != HorizontalAlignment.Left) {
+				if (line != null && line.alignment != HorizontalAlignment.Left) {
 					if (line.alignment == HorizontalAlignment.Center) {
 						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
 					} else {

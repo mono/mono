@@ -84,12 +84,12 @@ namespace System.Windows.Forms {
 			modified = false;
 			multiline = false;
 			read_only = false;
-			word_wrap = true;
+			word_wrap = false;
 			richtext = false;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
 			//document.CaretMoved += new EventHandler(CaretMoved);
-			document.Wrap = true;
+			document.Wrap = false;
 			requested_height = -1;
 
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
@@ -328,7 +328,6 @@ namespace System.Windows.Forms {
 			set {
 				if (value != multiline) {
 					multiline = value;
-
 					// Make sure we update our size; the user may have already set the size before going to multiline
 					if (multiline && requested_height != -1) {
 						Height = requested_height;
@@ -339,6 +338,12 @@ namespace System.Windows.Forms {
 				}
 
 				document.multiline = multiline;
+
+				if (multiline) {
+					document.wrap = word_wrap;
+				} else {
+					document.wrap = false;
+				}
 			}
 		}
 
@@ -521,8 +526,10 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value != word_wrap) {
-					word_wrap = value;
-					document.Wrap = value;
+					if (multiline) {
+						word_wrap = value;
+						document.Wrap = value;
+					}
 				}
 			}
 		}
@@ -898,6 +905,7 @@ namespace System.Windows.Forms {
 						document.DeleteChar(document.CaretTag, document.CaretPosition, true);
 						OnTextChanged(EventArgs.Empty);
 					}
+					document.UpdateCaret();
 					CaretMoved(this, null);
 					return true;
 				}
@@ -917,8 +925,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			document.ViewPortWidth = this.Width;
-			document.ViewPortHeight = this.Height;
+			document.ViewPortWidth = width;
+			document.ViewPortHeight = height;
 
 			CalculateDocument();
 
@@ -1167,12 +1175,14 @@ static int current;
 		}
 
 		protected void CalculateScrollBars() {
+			// FIXME - need separate calculations for center and right alignment
 			// No scrollbars for a single line
 			if (document.Width >= this.Width) {
 				hscroll.Enabled = true;
 				hscroll.Minimum = 0;
 				hscroll.Maximum = document.Width - this.Width;
 			} else {
+				hscroll.Maximum = document.ViewPortWidth;
 				hscroll.Enabled = false;
 			}
 
@@ -1181,6 +1191,7 @@ static int current;
 				vscroll.Minimum = 0;
 				vscroll.Maximum = document.Height - this.Height;
 			} else {
+				vscroll.Maximum = document.ViewPortHeight;
 				vscroll.Enabled = false;
 			}
 
@@ -1263,24 +1274,39 @@ static int current;
 			//Console.WriteLine("Caret now at {0} (Thumb: {1}x{2}, Canvas: {3}x{4}, Document {5}x{6})", pos, hscroll.Value, vscroll.Value, canvas_width, canvas_height, document.Width, document.Height);
 
 			// Handle horizontal scrolling
-			if (pos.X < (document.ViewPortX + track_width)) {
-				do {
-					if ((hscroll.Value - track_width) >= hscroll.Minimum) {
-						hscroll.Value -= track_width;
+			if (document.CaretLine.alignment == HorizontalAlignment.Left) {
+				if (pos.X < (document.ViewPortX + track_width)) {
+					do {
+						if ((hscroll.Value - track_width) >= hscroll.Minimum) {
+							hscroll.Value -= track_width;
+						} else {
+							hscroll.Value = hscroll.Minimum;
+						}
+					} while (hscroll.Value > pos.X);
+				}
+
+				if ((pos.X > (this.canvas_width + document.ViewPortX - track_width)) && (hscroll.Value != hscroll.Maximum)) {
+					do {
+						if ((hscroll.Value + track_width) <= hscroll.Maximum) {
+							hscroll.Value += track_width;
+						} else {
+							hscroll.Value = hscroll.Maximum;
+						}
+					} while (pos.X > (hscroll.Value + this.canvas_width));
+				}
+			} else if (document.CaretLine.alignment == HorizontalAlignment.Right) {
+				if (pos.X < document.ViewPortX) {
+					if (pos.X > hscroll.Minimum) {
+						hscroll.Value = pos.X;
 					} else {
 						hscroll.Value = hscroll.Minimum;
 					}
-				} while (hscroll.Value > pos.X);
-			}
+				}
 
-			if ((pos.X > (this.canvas_width + document.ViewPortX - track_width)) && (hscroll.Value != hscroll.Maximum)) {
-				do {
-					if ((hscroll.Value + track_width) <= hscroll.Maximum) {
-						hscroll.Value += track_width;
-					} else {
-						hscroll.Value = hscroll.Maximum;
-					}
-				} while (pos.X > (hscroll.Value + this.canvas_width));
+				if ((pos.X > (this.canvas_width + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
+					hscroll.Value = hscroll.Maximum;
+				}
+			} else {
 			}
 
 			if (!multiline) {

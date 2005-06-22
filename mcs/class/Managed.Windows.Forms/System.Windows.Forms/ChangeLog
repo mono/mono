@@ -1,3 +1,13 @@
+2005-06-22  Peter Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs: Added sanity check
+	* TextBoxBase.cs: 
+	  - Fixed wrapping behaviour, don't set wrap on single line controls
+	    (this fixes the breakage of colordialog introduced in an earlier
+	     checkin)
+	  - Added rudimentary support for autoscrolling right-aligned controls
+	    (still needs fixing, also, center alignment scroll is missing)
+
 2005-06-22  Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* ScrollBar.cs: Fixes thumbpos on Maximum values
