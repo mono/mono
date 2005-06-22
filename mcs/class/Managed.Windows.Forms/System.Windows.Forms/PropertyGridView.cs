@@ -147,7 +147,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		protected override void OnMouseMove (MouseEventArgs e) 
 		{
-			if (resizing_grid) {
+			if (resizing_grid) 
+			{
 				splitter_location = Math.Max(e.X,V_INDENT);
 				Refresh();
 			}
@@ -156,8 +157,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private GridItem GetSelectedGridItem (GridItemCollection grid_items, int y) 
 		{
-			foreach (GridItem child_grid_item in grid_items) {
-				if (y > child_grid_item.Top && y < child_grid_item.Top + ROW_HEIGHT) {
+			foreach (GridItem child_grid_item in grid_items) 
+			{
+				if (y > child_grid_item.Top && y < child_grid_item.Top + ROW_HEIGHT) 
+				{
 					return child_grid_item;
 				}
 				GridItem foundItem = GetSelectedGridItem(child_grid_item.GridItems, y);
@@ -169,10 +172,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		protected override void OnMouseDown (MouseEventArgs e) 
 		{
-			if (e.X > splitter_location - RESIZE_WIDTH && e.X < splitter_location + RESIZE_WIDTH) {
+			if (e.X > splitter_location - RESIZE_WIDTH && e.X < splitter_location + RESIZE_WIDTH) 
+			{
 				resizing_grid = true;
 			}
-			else {
+			else 
+			{
 				GridItem foundItem = GetSelectedGridItem(property_grid.grid_items, e.Y);
 				
 				if (foundItem != null)
@@ -317,12 +322,20 @@ namespace System.Windows.Forms.PropertyGridInternal
 					{
 						try
 						{
-						if (grid_item.PropertyDescriptor.Converter.GetStandardValuesSupported()) 
-						{
+							if (grid_item.PropertyDescriptor.Converter != null)
+							{
+								if (grid_item.PropertyDescriptor.Converter.GetStandardValuesSupported()) 
+								{
 							
-							grid_textbox.DropDownButtonVisible = true;
-							grid_textbox.ReadOnly = true;
-						}
+									grid_textbox.DropDownButtonVisible = true;
+									grid_textbox.ReadOnly = true;
+								}
+							}
+							else
+							{
+								System.Console.WriteLine("Converter not available for type {0}",grid_item.PropertyDescriptor.PropertyType);
+							}
+						
 						}
 						catch (Exception ex)
 						{
@@ -343,20 +356,29 @@ namespace System.Windows.Forms.PropertyGridInternal
 					catch (Exception ex)
 					{
 						System.Console.WriteLine(ex.Message);
+						System.Console.WriteLine("Paint Value failed for type {0}",grid_item.PropertyDescriptor.PropertyType);
 						// design time stuff is not playing nice
 					}
 					xLoc += 27;
 				}
 
 				Font font = this.Font;
-				try {
-				string value = grid_item.PropertyDescriptor.Converter.ConvertToString(grid_item.Value);
-				if (grid_item.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
-					font = new Font(font, FontStyle.Bold);
+				try 
+				{
+					if (grid_item.PropertyDescriptor.Converter != null)
+					{
+						string value = grid_item.PropertyDescriptor.Converter.ConvertToString(grid_item.Value);
+						if (grid_item.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+							font = new Font(font, FontStyle.Bold);
 				
-				pevent.Graphics.DrawString(value,font,SystemBrushes.WindowText,new RectangleF(xLoc,rect.Y+2, ClientRectangle.Width-(xLoc), ROW_HEIGHT));
+						pevent.Graphics.DrawString(value,font,SystemBrushes.WindowText,new RectangleF(xLoc,rect.Y+2, ClientRectangle.Width-(xLoc), ROW_HEIGHT));
+					}
+					else
+					{
+						System.Console.WriteLine("No converter for type {0}",grid_item.PropertyDescriptor.PropertyType);
+					}
 
-}
+				}
 				catch (Exception e)
 				{
 				}
@@ -419,13 +441,21 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private void TextBoxValidating (object sender, CancelEventArgs e) 
 		{
-			if (this.property_grid.SelectedGridItem != null) {
+			if (this.property_grid.SelectedGridItem != null) 
+			{
 				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
-				if (desc != null) {
+				if (desc != null) 
+				{
 					try 
 					{
-						
-						SetPropertyValue(desc.Converter.ConvertFromString(grid_textbox.Text));
+						if (desc.Converter != null)
+						{
+							SetPropertyValue(desc.Converter.ConvertFromString(grid_textbox.Text));
+						}
+						else
+						{
+							System.Console.WriteLine("No converter for type {0}",desc.PropertyType);
+						}
 					}
 					catch (Exception ex)
 					{
@@ -449,9 +479,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private void listBox_SelectedIndexChanged (object sender, EventArgs e) 
 		{
-			if (this.property_grid.SelectedGridItem != null) {
+			if (this.property_grid.SelectedGridItem != null) 
+			{
 				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
-				if (desc != null) {
+				if (desc != null) 
+				{
 					SetPropertyValue(((ListBox)sender).SelectedItem);
 				}
 			}
@@ -494,7 +526,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				UITypeEditor editor = (UITypeEditor)property_grid.SelectedGridItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
 				System.ComponentModel.Design.ServiceContainer service_container = new System.ComponentModel.Design.ServiceContainer();
 				service_container.AddService(typeof(System.Windows.Forms.Design.IWindowsFormsEditorService), this);
-				SetPropertyValue(editor.EditValue(null, service_container,property_grid.SelectedGridItem.Value));
+				SetPropertyValue(editor.EditValue(new ITypeDescriptorContextImpl(this.property_grid), service_container,property_grid.SelectedGridItem.Value));
 			}
 		}
 		
@@ -538,13 +570,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 					XplatUI.ScrollWindow(Handle, 0, -ROW_HEIGHT, false);
 					Invalidate(ClientRectangle);
 					break;
-				/*case ScrollEventType.ThumbTrack:
-					XplatUI.ScrollWindow(Handle, 0, -(vbar.Value-e.NewValue), false);
-					Invalidate(ClientRectangle);
-					break;
-				case ScrollEventType.ThumbPosition:
-					Invalidate(ClientRectangle);
-					break;*/
+					/*case ScrollEventType.ThumbTrack:
+						XplatUI.ScrollWindow(Handle, 0, -(vbar.Value-e.NewValue), false);
+						Invalidate(ClientRectangle);
+						break;
+					case ScrollEventType.ThumbPosition:
+						Invalidate(ClientRectangle);
+						break;*/
 			}
 		}
 
@@ -555,7 +587,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			//Region clip = new Region();
 			//if (property_grid.SelectedGridItem != null)
 			//	clip.Union(new Rectangle(0,property_grid.SelectedGridItem.Top, ClientRectangle.Width, ROW_HEIGHT));
-				//	clip.Union(new Rectangle(0,property_grid.SelectedGridItem.Top, ClientRectangle.Width, ROW_HEIGHT));
+			//	clip.Union(new Rectangle(0,property_grid.SelectedGridItem.Top, ClientRectangle.Width, ROW_HEIGHT));
 
 			if (e.NewSelection.PropertyDescriptor != null)
 			{
@@ -655,8 +687,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			{
 				get
 				{
-					// TODO:  Add SystemComp.Instance getter implementation
-					return null;
+					return property_grid.SelectedGridItem.Value;
 				}
 			}
 
@@ -664,8 +695,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			{
 				get
 				{
-					// TODO:  Add SystemComp.PropertyDescriptor getter implementation
-					return null;
+					return property_grid.SelectedGridItem.PropertyDescriptor;
 				}
 			}
 
@@ -695,8 +725,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 				get 
 				{
 					CreateParams cp = base.CreateParams;				
-						cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
-						cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);				
+					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
+					cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);				
 					return cp;
 				}
 			}
