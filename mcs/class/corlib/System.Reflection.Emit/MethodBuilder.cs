@@ -215,7 +215,7 @@ namespace System.Reflection.Emit {
 
 		public void CreateMethodBody( byte[] il, int count) {
 			if ((il != null) && ((count < 0) || (count > il.Length)))
-				throw new ArgumentException ("Index was out of range.  Must be non-negative and less than the size of the collection.");
+				throw new ArgumentOutOfRangeException ("Index was out of range.  Must be non-negative and less than the size of the collection.");
 
 			if ((code != null) || type.is_created)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
@@ -275,7 +275,12 @@ namespace System.Reflection.Emit {
 
 		internal void fixup () {
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
+#if NET_2_0
+				// do not allow zero length method body on MS.NET 2.0 (and higher)
+				if (((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0)) && (code == null || code.Length == 0))
+#else
 				if (((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0)) && (code == null))
+#endif
 					throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
 			}
 			if (ilgen != null)

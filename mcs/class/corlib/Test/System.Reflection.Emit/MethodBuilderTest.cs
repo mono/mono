@@ -123,7 +123,7 @@ public class MethodBuilderTest : Assertion
 	public void TestMethodHandleComplete () {
 		MethodBuilder mb = genClass.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
-		mb.CreateMethodBody (new byte[2], 0);
+		mb.CreateMethodBody (new byte[2], 1);
 		genClass.CreateType ();
 
 		RuntimeMethodHandle handle = mb.MethodHandle;
@@ -192,14 +192,14 @@ public class MethodBuilderTest : Assertion
 		try {
 			mb.CreateMethodBody (new byte[1], -1);
 			Fail ();
-		} catch (ArgumentException) {
+		} catch (ArgumentOutOfRangeException) {
 		}
 
 		// Check arguments 2.
 		try {
 			mb.CreateMethodBody (new byte[1], 2);
 			Fail ();
-		} catch (ArgumentException) {
+		} catch (ArgumentOutOfRangeException) {
 		}
 
 		mb.CreateMethodBody (new byte[2], 1);
@@ -236,7 +236,7 @@ public class MethodBuilderTest : Assertion
 			new Type[2] {
 			typeof(int), typeof(int)
 		});
-		mb.CreateMethodBody (new byte[2], 0);
+		mb.CreateMethodBody (new byte[2], 1);
 		tb.CreateType ();
 		mb.DefineParameter (-5, ParameterAttributes.None, "param1");
 	}
@@ -251,7 +251,7 @@ public class MethodBuilderTest : Assertion
 			new Type[2] {
 			typeof(int), typeof(int)
 		});
-		mb.CreateMethodBody (new byte[2], 0);
+		mb.CreateMethodBody (new byte[2], 1);
 		tb.CreateType ();
 		mb.DefineParameter (1, ParameterAttributes.None, "param1");
 	}
@@ -285,8 +285,7 @@ public class MethodBuilderTest : Assertion
 		mb.DefineParameter (1, 0, "param1");
 		mb.DefineParameter (2, 0, null);
 
-		// Can not be called on a created type
-		mb.CreateMethodBody (new byte[2], 0);
+		mb.CreateMethodBody (new byte[2], 1);
 		tb.CreateType ();
 		try {
 			mb.DefineParameter (1, 0, "param1");
@@ -294,6 +293,31 @@ public class MethodBuilderTest : Assertion
 		}
 		catch (InvalidOperationException) {
 		}
+	}
+
+	[Test]
+#if NET_2_0
+	// MS.NET 2.x no longer allows a zero length method body
+	// to be emitted
+	[ExpectedException (typeof (InvalidOperationException))]
+#endif
+	public void ZeroLengthBodyTest1 ()
+	{
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), 0, typeof (void), 
+			new Type [2] { typeof(int), typeof(int) });
+		mb.CreateMethodBody (new byte[2], 0);
+		genClass.CreateType ();
+	}
+
+	// A zero length method body can be created
+	[Test]
+	public void ZeroLengthBodyTest2 ()
+	{
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), 0, typeof (void), 
+			new Type [2] { typeof(int), typeof(int) });
+		mb.CreateMethodBody (new byte[2], 0);
 	}
 
 	[Test]
@@ -364,8 +388,7 @@ public class MethodBuilderTest : Assertion
 					  MethodImplAttributes.OPTIL, 
 					  mb.GetMethodImplementationFlags ());
 
-		// Can not be called on a created type
-		mb.CreateMethodBody (new byte[2], 0);
+		mb.CreateMethodBody (new byte[2], 1);
 		mb.SetImplementationFlags (MethodImplAttributes.Managed);
 		tb.CreateType ();
 		try {
