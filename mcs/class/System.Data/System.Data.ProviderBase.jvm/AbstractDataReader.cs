@@ -440,6 +440,10 @@ namespace System.Data.Common
 		{
 			FillReaderCache(columnIndex);
 			byte[] byteArr = ((BytesReaderCacheContainer)ReaderCache[columnIndex]).GetBytes();
+			if (byteArr == null)
+				return 0;
+			if (buffer == null)
+				return byteArr.LongLength;
 			long actualLength = ((dataIndex + length) >= byteArr.Length) ? (byteArr.Length - dataIndex) : length;
 			Array.Copy(byteArr,dataIndex,buffer,bufferIndex,actualLength);
 			return actualLength;

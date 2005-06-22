@@ -1,3 +1,7 @@
+2005-22-06  Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractDataReader.cs: GetBytes should return the data length if target buffer is null
+
 2005-21-06  Konstantin Triger <kostat@mainsoft.com>
 
 	* AbstractDataReader.cs: if command is preapred, recalculate params on every ExecReader
