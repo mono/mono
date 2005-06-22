@@ -1,3 +1,13 @@
+2005-06-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs: Added method MergeValuesToRow copy merge two rows
+	according to the merge rules.
+
+	* MergeManager.cs: (MergeRow): use MergeValuesToRow
+	API. CopyValuesToRow simply makes the target row same as source
+	row. Rather, MergeValuesToRow merges with the target row according
+	to the merge rules.
+
 2005-06-19  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataSet.cs: Fixed ReadXml to work with IXmlSerializable

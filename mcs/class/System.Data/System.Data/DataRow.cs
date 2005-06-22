@@ -1509,6 +1509,65 @@ namespace System.Data {
 			}
 		}
 
+		//Merge all values of this DataRow to the row parameter according to merge rules.
+		internal void MergeValuesToRow(DataRow row, bool preserveChanges)
+		{
+			if (row == null)
+				throw new ArgumentNullException("row");
+			if (row == this)
+				throw new ArgumentException("'row' is the same as this object");
+
+			// Original values are anyway copied
+			if (HasVersion(DataRowVersion.Original)) {
+				if (row.Original < 0)
+					row.Original = row.Table.RecordCache.NewRecord();
+				else if (row.Original == row.Current
+					  && !(Original == Current && ! preserveChanges)) {
+					row.Original = row.Table.RecordCache.NewRecord();
+					row.Table.RecordCache.CopyRecord (row.Table, row.Current, row.Original);
+				}
+			} else {
+				if (row.Original == row.Current) { // if target has same current, better create new original
+					row.Original = row.Table.RecordCache.NewRecord();
+					row.Table.RecordCache.CopyRecord (row.Table, row.Current, row.Original);
+				}
+			}
+
+			// if i have current, push all
+			if (HasVersion(DataRowVersion.Current)) {
+				if (! preserveChanges && row.Current < 0)
+					row.Current = row.Table.RecordCache.NewRecord();
+			} else {
+				if (row.Current > 0 && ! preserveChanges) {
+					row.Table.RecordCache.DisposeRecord(row.Current);
+					row.Current = -1;
+				}
+			}
+
+			// copy source record values to target records
+			foreach(DataColumn column in Table.Columns) {
+				DataColumn targetColumn = row.Table.Columns[column.ColumnName];
+				//if a column with the same name exists in both rows copy the values
+				if(targetColumn != null) {
+					if (HasVersion(DataRowVersion.Original)) {
+						object val = column[Original];
+						row.CheckValue(val, targetColumn);
+						targetColumn[row.Original] = val;
+					}
+
+					if (HasVersion(DataRowVersion.Current)
+					    && !preserveChanges) {
+						object val = column[Current];
+						row.CheckValue(val, targetColumn);
+						targetColumn[row.Current] = val;
+					}
+				}
+			}
+			if (HasErrors) {
+				CopyErrors(row);
+			}
+		}
+
 		internal void CopyErrors(DataRow row)
 		{
 			row.RowError = RowError;

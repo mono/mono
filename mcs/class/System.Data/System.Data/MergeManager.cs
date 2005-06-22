@@ -142,9 +142,9 @@ namespace System.Data
 			}
 			// row exists in target table, and presere changes is false - 
 			// change the values of the target row to the values of the source row.
-			else if (!preserveChanges)
+			else
 			{
-				row.CopyValuesToRow(targetRow);
+				row.MergeValuesToRow(targetRow, preserveChanges);
 			}
 		}
 			
