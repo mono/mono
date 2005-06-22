@@ -315,9 +315,11 @@ System.Reflection.Emit/MethodRentalCas.cs
 System.Resources/ResourceReaderCas.cs
 System.Resources/ResourceSetCas.cs
 System.Runtime.InteropServices/RuntimeEnvironmentCas.cs
+System.Security/CodeAccessPermissionCas.cs
 System.Security/PermissionSetCas.cs
 System.Security/SecurityContextCas.cs
 System.Security/SecurityExceptionCas.cs
+System.Security/SecurityManagerCas.cs
 System.Security.Cryptography/CryptoAPITransformCas.cs
 System.Security.Cryptography/CryptoConfigCas.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCas.cs

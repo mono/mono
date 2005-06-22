@@ -1,3 +1,8 @@
+2005-06-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Added CAS unit tests for System.Security.
+	SecurityManager and CodeAccessPermission to the build.
+
 2005-06-21  David Waite  <mass@akuma.org>
 
 	* corlib_test.dll.sources: Added System.Collections.ObjectModel.Collection test
