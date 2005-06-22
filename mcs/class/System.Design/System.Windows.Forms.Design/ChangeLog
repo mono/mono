@@ -1,3 +1,6 @@
+2005-06-21  Jonathan Chambers <jonathan.chambers@ansys.com>
+	* DockEditor.cs: Use context information 
+
 2005-06-18  Jonathan Chambers <jonathan.chambers@ansys.com>
 	* DockEditor.cs: Implemented class
 

@@ -42,14 +42,14 @@ namespace System.Windows.Forms.Design
 		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
-			if (/*context != null && */provider != null)
+			if (context != null && provider != null)
 			{
 				IWindowsFormsEditorService editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
 				if (editorService != null)
 				{
 					// Create the UI editor control
 					DockEditorControl dockEditorControl = new DockEditorControl(editorService); 
-					//dockEditorControl.DockStyle = (DockStyle)context.Instance;
+					dockEditorControl.DockStyle = (DockStyle)context.Instance;
 					editorService.DropDownControl(dockEditorControl);
 
 					return dockEditorControl.DockStyle;
