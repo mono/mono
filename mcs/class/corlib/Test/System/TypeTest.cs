@@ -384,8 +384,8 @@ PublicKeyToken=b77a5c561934e089"));
 			public TakesObject (object x) {}
 		}
 
+		// Filed as bug #75241
 		[Test]
-		[Category ("NotWorking")] // Filed as bug #75241
 		public void GetConstructoNullInTypes ()
 		{
 			// This ends up calling type.GetConstructor ()
