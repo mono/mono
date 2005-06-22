@@ -1,5 +1,10 @@
 2005-06-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : use StringBuilder.ToString(int,int) when it does
+	  not have a large chunk of data, following Ben's idea.
+
+2005-06-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : use StringBuilder to store character values; that
 	  saves 40% memory for large chunk of xml. Patch by Gonzalo.
 

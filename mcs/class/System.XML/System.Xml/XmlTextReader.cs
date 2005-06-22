@@ -776,7 +776,7 @@ namespace System.Xml
 						}
 					}
 
-					valueCache = tmpBuilder.ToString ();
+					valueCache = tmpBuilder.ToString (0, tmpBuilder.Length);
 					return valueCache;
 				}
 
@@ -1441,7 +1441,9 @@ namespace System.Xml
 
 		private string CreateValueString ()
 		{
-			return valueBuffer.ToString ();
+			return (valueBuffer.Capacity < 100) ?
+				valueBuffer.ToString (0, valueBuffer.Length) :
+				valueBuffer.ToString ();
 		}
 
 		private void ClearValueBuffer ()
