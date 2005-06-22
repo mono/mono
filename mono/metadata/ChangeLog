@@ -1,3 +1,10 @@
+2005-06-22  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (type_get_qualified_name): Use
+	mono_type_get_name_full() with MONO_TYPE_NAME_FORMAT_REFLECTION.
+	(_mono_reflection_get_type_from_info): Added `MonoImage *image'
+	argument; use it if we don't have an assembly name.
+
 2005-06-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* object.c: In mono_message_init, set "copy out" flag for in
