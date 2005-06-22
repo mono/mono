@@ -1,3 +1,11 @@
+2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermissionCas.cs: New. CAS unit tests for using the
+	stack modifiers (mostly assert) on permissions.
+	* SecurityManagerCas.cs: New. CAS unit tests for SecurityManager.
+	* SecurityManagerTest.cs: Moved a policy resolution test to 
+	SecurityManagerCas as it required CheckExecutionRights to be on.
+
 2005-06-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs: Added tests for AddPermission with non-CAS 

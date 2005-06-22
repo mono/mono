@@ -172,18 +172,6 @@ namespace MonoTests.System.Security {
 			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
 		}
 #endif
-		[Test]
-		[ExpectedException (typeof (PolicyException))]
-		public void ResolvePolicy_Evidence_AllNull ()
-		{
-			PermissionSet denied = null;
-			SecurityManager.ResolvePolicy (null, null, null, null, out denied);
-			// null is missing the Execution right
-			if (!SecurityManager.CheckExecutionRights) {
-				// unless we turned it off during development ;-)
-				Assert.Ignore ("SecurityManager.CheckExecutionRights turned off");
-			}
-		}
 
 		[Test]
 		public void ResolvePolicy_Evidence_AllNull_NoExecution ()
