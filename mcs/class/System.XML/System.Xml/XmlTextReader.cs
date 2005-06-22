@@ -176,7 +176,7 @@ namespace System.Xml
 #endif
 
 		internal bool CharacterChecking {
-			get { return checkCharacters && normalization; }
+			get { return checkCharacters; }
 			set { checkCharacters = value; }
 		}
 
@@ -706,7 +706,7 @@ namespace System.Xml
 						return valueCache;
 					if (ValueBufferStart >= 0) {
 //Console.WriteLine (NodeType + " / " + ValueBuffer.Length + " / " + ValueBufferStart + " / " + ValueBufferEnd);
-						valueCache = new string (Reader.valueBuffer, ValueBufferStart, ValueBufferEnd - ValueBufferStart);
+						valueCache = Reader.valueBuffer.ToString (ValueBufferStart, ValueBufferEnd - ValueBufferStart);
 						return valueCache;
 					}
 					switch (NodeType) {
@@ -846,10 +846,7 @@ namespace System.Xml
 		private int nameCapacity;
 		private const int initialNameCapacity = 32;
 
-		private char [] valueBuffer;
-		private int valueLength;
-		private int valueCapacity;
-		private const int initialValueCapacity = 256;
+		private StringBuilder valueBuffer;
 
 		private char [] currentTagBuffer;
 		private int currentTagLength;
@@ -924,9 +921,7 @@ namespace System.Xml
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
 
-			valueBuffer = new char [initialValueCapacity];
-			valueLength = 0;
-			valueCapacity = initialValueCapacity;
+			valueBuffer = new StringBuilder ();
 
 			currentTagBuffer = new char [initialCurrentTagCapacity];
 			currentTagLength = 0;
@@ -1432,38 +1427,26 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			if (valueLength == valueCapacity)
-				ExpandValueCapacity ();
 			if (ch < Char.MaxValue)
-				valueBuffer [valueLength++] = (char) ch;
+				valueBuffer.Append ((char) ch);
 			else
 				AppendSurrogatePairValueChar (ch);
 		}
 
 		private void AppendSurrogatePairValueChar (int ch)
 		{
-			valueBuffer [valueLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
-			if (valueLength == valueCapacity)
-				ExpandValueCapacity ();
-			valueBuffer [valueLength++] = (char) (ch % 0x10000 + 0xDC00);
-		}
-
-		private void ExpandValueCapacity ()
-		{
-			valueCapacity = valueCapacity * 2;
-			char [] oldValueBuffer = valueBuffer;
-			valueBuffer = new char [valueCapacity];
-			Array.Copy (oldValueBuffer, valueBuffer, valueLength);
+			valueBuffer.Append ((char) (ch / 0x10000 + 0xD800 - 1));
+			valueBuffer.Append ((char) (ch % 0x10000 + 0xDC00));
 		}
 
 		private string CreateValueString ()
 		{
-			return new string (valueBuffer, 0, valueLength);
+			return valueBuffer.ToString ();
 		}
 
 		private void ClearValueBuffer ()
 		{
-			valueLength = 0;
+			valueBuffer.Length = 0;
 		}
 
 		private void AppendCurrentTagChar (int ch)
@@ -1523,10 +1506,8 @@ namespace System.Xml
 				// FIXME: it might be optimized by the JIT later,
 //				AppendValueChar (ch);
 				{
-					if (valueLength == valueCapacity)
-						ExpandValueCapacity ();
 					if (ch < Char.MaxValue)
-						valueBuffer [valueLength++] = (char) ch;
+						valueBuffer.Append ((char) ch);
 					else
 						AppendSurrogatePairValueChar (ch);
 				}
@@ -1544,7 +1525,7 @@ namespace System.Xml
 				notWhitespace = true;
 			}
 
-			if (returnEntityReference && valueLength == 0) {
+			if (returnEntityReference && valueBuffer.Length == 0) {
 				SetEntityReferenceProperties ();
 			} else {
 				XmlNodeType nodeType = notWhitespace ? XmlNodeType.Text :
@@ -1614,7 +1595,8 @@ namespace System.Xml
 			ReadChar (); // ';'
 
 			// There is no way to save surrogate pairs...
-			if (CharacterChecking && XmlChar.IsInvalid (value))
+			if (CharacterChecking && Normalization &&
+				XmlChar.IsInvalid (value))
 				throw NotWFError ("Referenced character was not allowed in XML. Normalization is " + normalization + ", checkCharacters = " + checkCharacters);
 			return value;
 		}
@@ -1758,7 +1740,7 @@ namespace System.Xml
 			bool isNewToken = true;
 			bool loop = true;
 			int ch = 0;
-			currentAttributeValueToken.ValueBufferStart = valueLength;
+			currentAttributeValueToken.ValueBufferStart = valueBuffer.Length;
 			while (loop) {
 				ch = ReadChar ();
 				if (ch == quoteChar)
@@ -1766,7 +1748,7 @@ namespace System.Xml
 
 				if (incrementToken) {
 					IncrementAttributeValueToken ();
-					currentAttributeValueToken.ValueBufferStart = valueLength;
+					currentAttributeValueToken.ValueBufferStart = valueBuffer.Length;
 					currentAttributeValueToken.LineNumber = line;
 					currentAttributeValueToken.LinePosition = column;
 					incrementToken = false;
@@ -1808,8 +1790,6 @@ namespace System.Xml
 					if (PeekChar () == '#') {
 						ReadChar ();
 						ch = ReadCharacterReference ();
-						if (CharacterChecking && XmlChar.IsInvalid (ch))
-							throw NotWFError ("Not allowed character was found.");
 						AppendValueChar (ch);
 						break;
 					}
@@ -1827,7 +1807,7 @@ namespace System.Xml
 						} else
 #endif
 						{
-							currentAttributeValueToken.ValueBufferEnd = valueLength;
+							currentAttributeValueToken.ValueBufferEnd = valueBuffer.Length;
 							currentAttributeValueToken.NodeType = XmlNodeType.Text;
 							if (!isNewToken)
 								IncrementAttributeValueToken ();
@@ -1846,10 +1826,8 @@ namespace System.Xml
 					// FIXME: it might be optimized by the JIT later,
 //					AppendValueChar (ch);
 					{
-						if (valueLength == valueCapacity)
-							ExpandValueCapacity ();
 						if (ch < Char.MaxValue)
-							valueBuffer [valueLength++] = (char) ch;
+							valueBuffer.Append ((char) ch);
 						else
 							AppendSurrogatePairValueChar (ch);
 					}
@@ -1859,7 +1837,7 @@ namespace System.Xml
 				isNewToken = false;
 			}
 			if (!incrementToken) {
-				currentAttributeValueToken.ValueBufferEnd = valueLength;
+				currentAttributeValueToken.ValueBufferEnd = valueBuffer.Length;
 				currentAttributeValueToken.NodeType = XmlNodeType.Text;
 			}
 			currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
@@ -2169,10 +2147,8 @@ namespace System.Xml
 				// FIXME: it might be optimized by the JIT later,
 //				AppendValueChar (ch);
 				{
-					if (valueLength == valueCapacity)
-						ExpandValueCapacity ();
 					if (ch < Char.MaxValue)
-						valueBuffer [valueLength++] = (char) ch;
+						valueBuffer.Append ((char) ch);
 					else
 						AppendSurrogatePairValueChar (ch);
 				}
@@ -2623,10 +2599,8 @@ namespace System.Xml
 //				AppendValueChar (ReadChar ());
 				{
 					ch = ReadChar ();
-					if (valueLength == valueCapacity)
-						ExpandValueCapacity ();
 					if (ch < Char.MaxValue)
-						valueBuffer [valueLength++] = (char) ch;
+						valueBuffer.Append ((char) ch);
 					else
 						AppendSurrogatePairValueChar (ch);
 				}

@@ -1,8 +1,18 @@
+2005-06-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : use StringBuilder to store character values; that
+	  saves 40% memory for large chunk of xml. Patch by Gonzalo.
+
 2005-06-22  Andrew Skiba  <andrews@mainsoft.com>
 
 	* XmlNode.cs : cosmetic fix - remove unnecessary argument from
 	  AppendChildValues function.
 	  
+2005-06-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : normalization is not required to check character
+	  validity everywhere except for character reference.
+
 2005-06-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : removed some extra IsDefault check (with
