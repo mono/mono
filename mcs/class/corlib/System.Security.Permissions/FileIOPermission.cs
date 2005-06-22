@@ -96,13 +96,13 @@ namespace System.Security.Permissions {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Access Control isn't implemented")]
+		[MonoTODO ("(2.0) Access Control isn't implemented")]
 		public FileIOPermission (FileIOPermissionAccess access, AccessControlActions control, string path)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Access Control isn't implemented")]
+		[MonoTODO ("(2.0) Access Control isn't implemented")]
 		public FileIOPermission (FileIOPermissionAccess access, AccessControlActions control, string[] pathList)
 		{
 			throw new NotImplementedException ();
@@ -384,14 +384,14 @@ namespace System.Security.Permissions {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("(2.0)")]
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			return false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("(2.0)")]
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{

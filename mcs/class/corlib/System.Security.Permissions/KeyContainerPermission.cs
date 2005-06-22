@@ -88,6 +88,7 @@ namespace System.Security.Permissions {
 			return new KeyContainerPermission (_flags, list);
 		}
 
+		[MonoTODO ("(2.0) missing support for AccessEntries")]
 		public override void FromXml (SecurityElement esd) 
 		{
 			// General validation in CodeAccessPermission
@@ -105,13 +106,13 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("(2.0)")]
 		public override IPermission Intersect (IPermission target) 
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("(2.0)")]
 		public override bool IsSubsetOf (IPermission target) 
 		{
 			return false;
@@ -122,14 +123,14 @@ namespace System.Security.Permissions {
 			return (_flags == KeyContainerPermissionFlags.AllFlags);
 		}
 
+		[MonoTODO ("(2.0) missing support for AccessEntries")]
 		public override SecurityElement ToXml () 
 		{
 			SecurityElement e = Element (version);
 			if (IsUnrestricted ()) {
 				e.AddAttribute ("Unrestricted", "true");
-			}
-			else {
-				// TODO
+			} else {
+				// ...
 			}
 			return e;
 		}

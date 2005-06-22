@@ -117,7 +117,7 @@ namespace System.Security.Permissions {
 			}
 		}
 #if NET_2_0
-		[MonoTODO ("Access Control isn't implemented")]
+		[MonoTODO ("(2.0) Access Control isn't implemented")]
 		public void AddPathList (RegistryPermissionAccess access, AccessControlActions control, string pathList) 
 		{
 			throw new NotImplementedException ();

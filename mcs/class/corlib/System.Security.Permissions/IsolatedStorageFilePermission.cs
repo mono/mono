@@ -117,7 +117,7 @@ namespace System.Security.Permissions {
 		}
 
 #if NET_2_0
-		[MonoTODO ("new override - something must have been added ???")]
+		[MonoTODO ("(2.0) new override - something must have been added ???")]
 		[ComVisible (false)]
 		public override SecurityElement ToXml ()
 		{
