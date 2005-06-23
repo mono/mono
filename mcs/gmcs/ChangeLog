@@ -1,3 +1,8 @@
+2005-06-03  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (Expression.Resolve): Emit CS0654 error when
+	-langversion:ISO-1.
+
 2005-06-02  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75080, cs0119.cs.
