@@ -1,3 +1,9 @@
+2005-06-23  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlConnectionStringBuilder.cs: simplified multiple keyword
+	mappings and allowed-key checking. fixed Item, Remove,
+	ContainsKey, ShoudSerialize, TryGetValue implementations.
+
 2005-06-21  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnectionStringBuilder.cs: Connection String Builder class

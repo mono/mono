@@ -30,6 +30,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 using System.Data;
 using System.Data.Common;
@@ -38,6 +39,32 @@ namespace System.Data.SqlClient
 {
 	public sealed class SqlConnectionStringBuilder : DbConnectionStringBuilder
 	{
+
+		private const string 	DEF_APPLICATIONNAME 		= ".NET SqlClient Data Provider";
+		private const bool 	DEF_ASYNCHRONOUSPROCESSING 	= false;
+		private const string 	DEF_ATTACHDBFILENAME 		= "";
+		private const bool 	DEF_CONNECTIONRESET 		= true;
+		private const int 	DEF_CONNECTTIMEOUT 		= 15;
+		private const string 	DEF_CURRENTLANGUAGE 		= "";
+		private const string 	DEF_DATASOURCE 			= "";
+		private const bool 	DEF_ENCRYPT 			= false;
+		private const bool 	DEF_ENLIST 			= false;
+		private const string 	DEF_FAILOVERPARTNER 		= "";
+		private const string 	DEF_INITIALCATALOG 		= "";
+		private const bool 	DEF_INTEGRATEDSECURITY 		= false;
+		private const int 	DEF_LOADBALANCETIMEOUT 		= 0;
+		private const int 	DEF_MAXPOOLSIZE 		= 100;
+		private const int 	DEF_MINPOOLSIZE 		= 0;
+		private const bool 	DEF_MULTIPLEACTIVERESULTSETS 	= false;
+		private const string 	DEF_NETWORKLIBRARY 		= "";
+		private const int 	DEF_PACKETSIZE 			= 8000;
+		private const string 	DEF_PASSWORD 			= "";
+		private const bool 	DEF_PERSISTSECURITYINFO		= false;
+		private const bool 	DEF_POOLING 			= true;
+		private const bool 	DEF_REPLICATION 		= false;
+		private const string 	DEF_USERID 			= "";
+		private const string 	DEF_WORKSTATIONID 		= "";
+
 
 		#region // Fields
  		private string 	_applicationName;
@@ -64,6 +91,8 @@ namespace System.Data.SqlClient
 		private bool 	_replication;
 		private string 	_userID;
 		private string 	_workstationID;
+
+		private static Dictionary <string, string> _keywords; // for mapping duplicate keywords
 		#endregion // Fields
 
 		#region Constructors
@@ -75,6 +104,53 @@ namespace System.Data.SqlClient
 		{
 			Init ();
 			base.ConnectionString = connectionString;
+		}
+
+		static SqlConnectionStringBuilder ()
+		{
+			_keywords = new Dictionary <string, string> ();
+			_keywords ["APP"] 			= "Application Name";
+			_keywords ["APPLICATION NAME"] 		= "Application Name";
+			_keywords ["ATTACHDBFILENAME"] 		= "AttachDBFilename";
+			_keywords ["EXTENDED PROPERTIES"] 	= "Extended Properties";
+			_keywords ["INITIAL FILE NAME"]		= "Initial File Name";
+			_keywords ["TIMEOUT"] 			= "Connect Timeout";
+			_keywords ["CONNECT TIMEOUT"] 		= "Connect Timeout";
+			_keywords ["CONNECTION TIMEOUT"]	= "Connect Timeout";
+			_keywords ["CONNECTION RESET"] 		= "Connection Reset";
+			_keywords ["LANGUAGE"] 			= "Current Language";
+			_keywords ["CURRENT LANGUAGE"] 		= "Current Language";
+			_keywords ["DATA SOURCE"] 		= "Data Source";
+			_keywords ["SERVER"] 			= "Data Source";
+			_keywords ["ADDRESS"] 			= "Data Source";
+			_keywords ["ADDR"] 			= "Data Source";
+			_keywords ["NETWORK ADDRESS"] 		= "Data Source";
+			_keywords ["ENCRYPT"] 			= "Encrypt";
+			_keywords ["ENLIST"] 			= "Enlist";
+			_keywords ["INITIAL CATALOG"] 		= "Initial Catalog";
+			_keywords ["DATABASE"] 			= "Initial Catalog";
+			_keywords ["INTEGRATED SECURITY"]	= "Integrated Security";
+			_keywords ["TRUSTED_CONNECTION"] 	= "Integrated Security";
+			_keywords ["MAX POOL SIZE"] 		= "Max Pool Size";
+			_keywords ["MIN POOL SIZE"] 		= "Min Pool Size";
+			_keywords ["MULTIPLEACTIVERESULTSETS"] 	= "Multipleactiveresultset";
+			_keywords ["ASYNCHRONOUS PROCESSING"] 	= "Asynchronous Processing";
+			_keywords ["ASYNC"] 			= "Async";
+			_keywords ["NET"] 			= "Network Library";
+			_keywords ["NETWORK"] 			= "Network Library";
+			_keywords ["NETWORK LIBRARY"] 		= "Network Library";
+			_keywords ["PACKET SIZE"] 		= "Packet Size";
+			_keywords ["PASSWORD"] 			= "Password";
+			_keywords ["PWD"] 			= "Password";
+			_keywords ["PERSISTSECURITYINFO"]	= "Persist Security Info";
+			_keywords ["PERSIST SECURITY INFO"] 	= "Persist Security Info";
+			_keywords ["POOLING"] 			= "Pooling";
+			_keywords ["UID"] 			= "User Id";
+			_keywords ["USER"] 			= "User Id";
+			_keywords ["USER ID"] 			= "User Id";
+			_keywords ["WSID"] 			= "Workstation Id";
+			_keywords ["WORKSTATION ID"] 		= "Workstation Id";
+
 		}
 		#endregion // Constructors
 
@@ -180,8 +256,11 @@ namespace System.Data.SqlClient
 		}
 
 		public override object this [string keyword] { 
-			get { return base [keyword]; }
-			set { SetValue (keyword, value); }
+			get { 
+				string mapped = MapKeyword (keyword);
+				return base [mapped]; 
+			}
+			set {SetValue (keyword, value);}
 		}
 
 		public override ICollection Keys { 
@@ -275,7 +354,7 @@ namespace System.Data.SqlClient
 				_userID = value; 
 			}
 		}
-
+		
 		public override ICollection Values { 
 			get { return base.Values; }
 		}
@@ -292,30 +371,30 @@ namespace System.Data.SqlClient
 		#region Methods
 		private void Init ()
 		{
-			_applicationName 	= ".NET SqlClient Data Provider";
-			_asynchronousProcessing	= false;
-			_attachDBFilename	= String.Empty;
-			_connectionReset	= true;
-			_connectTimeout		= 15;
-			_currentLanguage	= String.Empty;
-			_dataSource		= String.Empty;
-			_encrypt		= false;
-			_enlist			= true;
-			_failoverPartner	= String.Empty;
-			_initialCatalog		= String.Empty;
-			_integratedSecurity	= false;
-			_loadBalanceTimeout	= 0;
-			_maxPoolSize		= 100;
-			_minPoolSize		= 0;
-			_multipleActiveResultSets= true;
-			_networkLibrary		= String.Empty;
-			_packetSize		= 8000;
-			_password		= String.Empty;
-			_persistSecurityInfo	= false;
-			_pooling		= true;
-			_replication		= false;
-			_userID			= String.Empty;
-			_workstationID		= String.Empty;
+			_applicationName 	= DEF_APPLICATIONNAME;
+			_asynchronousProcessing	= DEF_ASYNCHRONOUSPROCESSING;
+			_attachDBFilename	= DEF_ATTACHDBFILENAME;
+			_connectionReset	= DEF_CONNECTIONRESET;
+			_connectTimeout		= DEF_CONNECTTIMEOUT;
+			_currentLanguage	= DEF_CURRENTLANGUAGE;
+			_dataSource		= DEF_DATASOURCE;
+			_encrypt		= DEF_ENCRYPT;
+			_enlist			= DEF_ENLIST;
+			_failoverPartner	= DEF_FAILOVERPARTNER;
+			_initialCatalog		= DEF_INITIALCATALOG;
+			_integratedSecurity	= DEF_INTEGRATEDSECURITY;
+			_loadBalanceTimeout	= DEF_LOADBALANCETIMEOUT;
+			_maxPoolSize		= DEF_MAXPOOLSIZE;
+			_minPoolSize		= DEF_MINPOOLSIZE;
+			_multipleActiveResultSets= DEF_MULTIPLEACTIVERESULTSETS;
+			_networkLibrary		= DEF_NETWORKLIBRARY;
+			_packetSize		= DEF_PACKETSIZE;
+			_password		= DEF_PASSWORD;
+			_persistSecurityInfo	= DEF_PERSISTSECURITYINFO;
+			_pooling		= DEF_POOLING;
+			_replication		= DEF_REPLICATION;
+			_userID			= DEF_USERID;
+			_workstationID		= DEF_WORKSTATIONID;
 		}
 
 		public override void Clear ()
@@ -326,128 +405,211 @@ namespace System.Data.SqlClient
 
 		public override bool ContainsKey (string keyword)
 		{
-			return base.ContainsKey (keyword);
+			keyword = keyword.ToUpper ().Trim ();
+			if (_keywords.ContainsKey (keyword))
+				return base.ContainsKey (_keywords [keyword]);
+			return false;
 		}
 
 		public override bool Remove (string keyword)
 		{
-			return base.Remove (keyword);
+			if (!ContainsKey (keyword))
+				return false;
+			this [keyword] = null;
+			return true;
 		}
 
 		public override bool ShouldSerialize (string keyword)
 		{
-			return base.ShouldSerialize (keyword);
+			if (!ContainsKey (keyword))
+				return false;
+			keyword = keyword.ToUpper ().Trim ();
+			// Assuming passwords cannot be serialized.
+			if (_keywords [keyword] == "Password")
+				return false;
+			return base.ShouldSerialize (_keywords [keyword]);
 		}
 
 		public override bool TryGetValue (string keyword, out object value)
 		{
-			return base.TryGetValue (keyword, out value);
+			if (! ContainsKey (keyword)) {
+				value = String.Empty;
+				return false;
+			}
+			return base.TryGetValue (_keywords [keyword.ToUpper ().Trim ()], out value);
 		}
 
 		#endregion // Methods
 
 		#region Private Methods
+		private string MapKeyword (string keyword)
+		{
+			keyword = keyword.ToUpper ().Trim ();
+			if (! _keywords.ContainsKey (keyword))
+				throw new ArgumentException("Keyword not supported :" + keyword);
+			return _keywords [keyword];
+		}
+		
 		private void SetValue (string key, object value)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key cannot be null!");
 
-			switch (key.ToUpper ().Trim ()) {
-			case "APP" :
+			string mappedKey = MapKeyword (key);
+
+			switch (mappedKey.ToUpper ().Trim ()) {
 			case "APPLICATION NAME" :
-				this.ApplicationName = value.ToString ();
+				if (value == null) {
+					_applicationName = DEF_APPLICATIONNAME;
+					base.Remove (mappedKey);
+				} else
+					this.ApplicationName = value.ToString ();
 				break;
 			case "ATTACHDBFILENAME" :
-			case "EXTENDED PROPERTIES" :
-			case "INITIAL FILE NAME" :
 				throw new NotImplementedException ("Attachable database support is " +
 								   "not implemented.");
-			case "TIMEOUT" :
 			case "CONNECT TIMEOUT" :
-			case "CONNECTION TIMEOUT" :
-				this.ConnectTimeout = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
+				if (value == null) {
+					_connectTimeout = DEF_CONNECTTIMEOUT;
+					base.Remove (mappedKey);
+				} else 
+					this.ConnectTimeout = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
 				break;
 			case "CONNECTION LIFETIME" :
 				break;
 			case "CONNECTION RESET" :
-				this.ConnectionReset = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
+				if (value == null) {
+					_connectionReset = DEF_CONNECTIONRESET;
+					base.Remove (mappedKey);
+				} else 
+					this.ConnectionReset = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
 				break;
-			case "LANGUAGE" :
 			case "CURRENT LANGUAGE" :
-				this.CurrentLanguage = value.ToString ();
+				if (value == null) {
+					_currentLanguage = DEF_CURRENTLANGUAGE;
+					base.Remove (mappedKey);
+				} else 
+					this.CurrentLanguage = value.ToString ();
 				break;
 			case "DATA SOURCE" :
-			case "SERVER" :
-			case "ADDRESS" :
-			case "ADDR" :
-			case "NETWORK ADDRESS" :
-				this.DataSource = value.ToString ();
+				if (value == null) {
+					_dataSource = DEF_DATASOURCE;
+					base.Remove (mappedKey);
+				} else 
+					this.DataSource = value.ToString ();
 				break;
 			case "ENCRYPT":
-				if (DbConnectionStringBuilderHelper.ConvertToBoolean(value))
+				if (value == null) {
+					_encrypt = DEF_ENCRYPT;
+					base.Remove (mappedKey);
+				}else if (DbConnectionStringBuilderHelper.ConvertToBoolean(value))
 					throw new NotImplementedException("SSL encryption for"
 									  + " data sent between client and server is not"
 									  + " implemented.");
 				break;
 			case "ENLIST" :
-				if ( ! DbConnectionStringBuilderHelper.ConvertToBoolean(value))
+				if (value == null) {
+					_enlist = DEF_ENLIST;
+					base.Remove (mappedKey);
+				} else if ( ! DbConnectionStringBuilderHelper.ConvertToBoolean(value))
 					throw new NotImplementedException("Disabling the automatic"
 									  + " enlistment of connections in the thread's current"
 									  + " transaction context is not implemented.");
 				break;
 			case "INITIAL CATALOG" :
-			case "DATABASE" :
-				this.InitialCatalog = value.ToString ();
+				if (value == null) {
+					_initialCatalog = DEF_INITIALCATALOG;
+					base.Remove (mappedKey);
+				} else 
+					this.InitialCatalog = value.ToString ();
 				break;
 			case "INTEGRATED SECURITY" :
-			case "TRUSTED_CONNECTION" :
-				this.IntegratedSecurity = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
+				if (value == null) {
+					_integratedSecurity = DEF_INTEGRATEDSECURITY;
+					base.Remove (mappedKey);
+				} else 
+					this.IntegratedSecurity = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
 				break;
 			case "MAX POOL SIZE" :
-				this.MaxPoolSize = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
+				if (value == null) {
+					_maxPoolSize = DEF_MAXPOOLSIZE;
+					base.Remove (mappedKey);
+				} else 
+					this.MaxPoolSize = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
 				break;
 			case "MIN POOL SIZE" :
-				this.MinPoolSize = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
+				if (value == null) {
+					_minPoolSize = DEF_MINPOOLSIZE;
+					base.Remove (mappedKey);
+				} else 
+					this.MinPoolSize = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
 				break;
 			case "MULTIPLEACTIVERESULTSETS":
-				if ( DbConnectionStringBuilderHelper.ConvertToBoolean (value))
+				if (value == null) {
+					_multipleActiveResultSets = DEF_MULTIPLEACTIVERESULTSETS;
+					base.Remove (mappedKey);
+				} else if ( DbConnectionStringBuilderHelper.ConvertToBoolean (value))
 					throw new NotImplementedException ("MARS is not yet implemented!");
 				break;
 			case "ASYNCHRONOUS PROCESSING" :
-			case "ASYNC" :
-				this.AsynchronousProcessing = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
+				if (value == null) {
+					_asynchronousProcessing = DEF_ASYNCHRONOUSPROCESSING;
+					base.Remove (mappedKey);
+				} else 
+					this.AsynchronousProcessing = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
 				break;
-			case "NET" :
-			case "NETWORK" :
 			case "NETWORK LIBRARY" :
-				if (!value.ToString ().ToUpper ().Equals ("DBMSSOCN"))
-					throw new ArgumentException ("Unsupported network library.");
-				this.NetworkLibrary = value.ToString ().ToLower ();
+				if (value == null) {
+					_networkLibrary = DEF_NETWORKLIBRARY;
+					base.Remove (mappedKey);
+				} else {
+					if (!value.ToString ().ToUpper ().Equals ("DBMSSOCN"))
+						throw new ArgumentException ("Unsupported network library.");
+					this.NetworkLibrary = value.ToString ().ToLower ();
+				}
 				break;
 			case "PACKET SIZE" :
-				this.PacketSize = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
+				if (value == null) {
+					_packetSize = DEF_PACKETSIZE;
+					base.Remove (mappedKey);
+				} else 
+					this.PacketSize = DbConnectionStringBuilderHelper.ConvertToInt32 (value);
 				break;
 			case "PASSWORD" :
-			case "PWD" :
-				this.Password = value.ToString ();
+				if (value == null) {
+					_password = DEF_PASSWORD;
+					base.Remove (mappedKey);
+				} else 
+					this.Password = value.ToString ();
 				break;
-			case "PERSISTSECURITYINFO" :
 			case "PERSIST SECURITY INFO" :
-				if (DbConnectionStringBuilderHelper.ConvertToBoolean (value))
+				if (value == null) {
+					_persistSecurityInfo = DEF_PERSISTSECURITYINFO;
+					base.Remove (mappedKey);
+				} else if (DbConnectionStringBuilderHelper.ConvertToBoolean (value))
 					throw new NotImplementedException ("Persisting security info" +
 									   " is not yet implemented");
 				break;
 			case "POOLING" :
-				this.Pooling = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
+				if (value == null) {
+					_pooling = DEF_POOLING;
+					base.Remove (mappedKey);
+				} else 
+					this.Pooling = DbConnectionStringBuilderHelper.ConvertToBoolean (value);
 				break;
-			case "UID" :
-			case "USER" :
 			case "USER ID" :
-				this.UserID = value.ToString ();
+				if (value == null) {
+					_userID = DEF_USERID;
+					base.Remove (mappedKey);
+				} else 
+					this.UserID = value.ToString ();
 				break;
-			case "WSID" :
 			case "WORKSTATION ID" :
-				this.WorkstationID = value.ToString ();
+				if (value == null) {
+					_workstationID = DEF_WORKSTATIONID;
+					base.Remove (mappedKey);
+				} else 
+					this.WorkstationID = value.ToString ();
 				break;
 			default :
 				throw new ArgumentException("Keyword not supported :" + key);

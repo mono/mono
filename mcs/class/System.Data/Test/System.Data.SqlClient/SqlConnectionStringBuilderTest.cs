@@ -84,6 +84,45 @@ namespace MonoTests.System.Data.Common
 					 builder.ConnectionString.Contains ("Network Library=dbmssocn"),
 					 "#PT1 network library should exist");
 		}
+
+		public void NullTest ()
+		{
+			builder = new SqlConnectionStringBuilder ("SERVER=localhost;Network=DBMSSOCN");
+			builder ["Network Library"] = null;
+			Assert.AreEqual ("Data Source=localhost", builder.ConnectionString,
+					 "#NT1 should remove the key if set with null");
+		}
+
+		public void ContainsKeyTest ()
+		{
+			builder = new SqlConnectionStringBuilder ("SERVER=localhost;Network=DBMSSOCN");
+			Assert.AreEqual (true, builder.ContainsKey ("NETWORK"),
+					 "#CKT1 should say true");
+			Assert.AreEqual (false, builder.ContainsKey ("ABCD"),
+					 "#CKT2 should say false");
+		}
+		
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void InvalidKeyTest ()
+		{
+			builder = new SqlConnectionStringBuilder ("SERVER=localhost;Network=DBMSSOCN");
+			int value = (int) builder ["ABCD"];
+			value++; // to avoid warning
+		}
+
+		[Test]
+		public void RemoveTest ()
+		{
+			builder = new SqlConnectionStringBuilder ("SERVER = localhost ;Network=DBMSSOCN");
+			// non existing key
+			Assert.AreEqual (false, builder.Remove ("ABCD"),
+					 "#RT1 cannot remove non existant key");
+			Assert.AreEqual (true, builder.Remove ("NETWORK library"),
+					 "#RT2 should remove the key");
+			Assert.AreEqual ("Data Source=localhost", builder.ConnectionString,
+					 "#RT3 should have removed the key");
+		}
+		
 	}
 }
 
