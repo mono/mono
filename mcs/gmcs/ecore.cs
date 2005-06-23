@@ -294,6 +294,30 @@ namespace Mono.CSharp {
 
 			return te;
 		}
+
+		ResolveFlags ExprClassToResolveFlags ()
+		{
+			switch (eclass) {
+			case ExprClass.Type:
+			case ExprClass.Namespace:
+				return ResolveFlags.Type;
+
+			case ExprClass.MethodGroup:
+				return ResolveFlags.MethodGroup;
+
+			case ExprClass.Value:
+			case ExprClass.Variable:
+			case ExprClass.PropertyAccess:
+			case ExprClass.EventAccess:
+			case ExprClass.IndexerAccess:
+				return ResolveFlags.VariableOrValue;
+
+			default:
+				throw new Exception ("Expression " + GetType () +
+						     " ExprClass is Invalid after resolve");
+			}
+
+		}
 	       
 		/// <summary>
 		///   Resolves an expression and performs semantic analysis on it.
@@ -325,52 +349,9 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			if ((e is TypeExpr) || (e is ComposedCast) || (e is Namespace)) {
-				if ((flags & ResolveFlags.Type) == 0) {
-					e.Error_UnexpectedKind (flags, loc);
-					return null;
-				}
-
-				return e;
-			}
-
-			switch (e.eclass) {
-			case ExprClass.Type:
-			case ExprClass.Namespace:
-				if ((flags & ResolveFlags.VariableOrValue) == 0) {
-					e.Error_UnexpectedKind (flags, loc);
-					return null;
-				}
-				break;
-
-			case ExprClass.MethodGroup:
-				if (RootContext.Version == LanguageVersion.ISO_1){
-					if ((flags & ResolveFlags.MethodGroup) == 0) {
-						((MethodGroupExpr) e).ReportUsageError ();
-						return null;
-					}
-				}
-				break;
-
-			case ExprClass.Value:
-			case ExprClass.Variable:
-			case ExprClass.PropertyAccess:
-			case ExprClass.EventAccess:
-			case ExprClass.IndexerAccess:
-				if ((flags & ResolveFlags.VariableOrValue) == 0) {
-					Console.WriteLine ("I got: {0} and {1}", e.GetType (), e);
-					Console.WriteLine ("I am {0} and {1}", this.GetType (), this);
-					FieldInfo fi = ((FieldExpr) e).FieldInfo;
-					
-					Console.WriteLine ("{0} and {1}", fi.DeclaringType, fi.Name);
-					e.Error_UnexpectedKind (flags, loc);
-					return null;
-				}
-				break;
-
-			default:
-				throw new Exception ("Expression " + e.GetType () +
-						     " ExprClass is Invalid after resolve");
+			if ((flags & e.ExprClassToResolveFlags ()) == 0) {
+				e.Error_UnexpectedKind (flags, loc);
+				return null;
 			}
 
 			if (e.type == null && !(e is Namespace)) {
@@ -388,7 +369,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Expression Resolve (EmitContext ec)
 		{
-			return Resolve (ec, ResolveFlags.VariableOrValue);
+			ResolveFlags flags = RootContext.Version == LanguageVersion.ISO_1
+				? ResolveFlags.VariableOrValue
+				: ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup;
+			return Resolve (ec, flags);
 		}
 
 		/// <summary>
@@ -867,39 +851,41 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error_UnexpectedKind (string expected, Location loc)
 		{
-			Report.Error (118, loc, "Expression denotes a `" + ExprClassName () +
-			       "' where a `" + expected + "' was expected");
+			Report.Error (118, loc,
+				"Expression denotes a '{0}', where a '{1}' was expected", ExprClassName (), expected);
 		}
 
 		public void Error_UnexpectedKind (ResolveFlags flags, Location loc)
 		{
-			ArrayList valid = new ArrayList (10);
+			string [] valid = new string [4];
+			int count = 0;
 
 			if ((flags & ResolveFlags.VariableOrValue) != 0) {
-				valid.Add ("variable");
-				valid.Add ("value");
+				valid [count++] = "variable";
+				valid [count++] = "value";
 			}
 
 			if ((flags & ResolveFlags.Type) != 0)
-				valid.Add ("type");
+				valid [count++] = "type";
 
 			if ((flags & ResolveFlags.MethodGroup) != 0)
-				valid.Add ("method group");
+				valid [count++] = "method group";
 
-			if (valid.Count == 0)
-				valid.Add ("unknown");
+			if (count == 0)
+				valid [count++] = "unknown";
 
-			StringBuilder sb = new StringBuilder ();
-			for (int i = 0; i < valid.Count; i++) {
-				if (i > 0)
-					sb.Append (", ");
-				else if (i == valid.Count)
-					sb.Append (" or ");
+			StringBuilder sb = new StringBuilder (valid [0]);
+			for (int i = 1; i < count - 1; i++) {
+				sb.Append ("', '");
 				sb.Append (valid [i]);
 			}
+			if (count > 1) {
+				sb.Append ("' or '");
+				sb.Append (valid [count - 1]);
+			}
 
-			Report.Error (119, loc, "Expression denotes a `" + ExprClassName () + "' where " +
-			       "a `" + sb.ToString () + "' was expected");
+			Report.Error (119, loc, 
+				"Expression denotes a '{0}', where a '{1}' was expected", ExprClassName (), sb);
 		}
 		
 		static public void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)

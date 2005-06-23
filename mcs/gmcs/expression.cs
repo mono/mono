@@ -7268,7 +7268,9 @@ namespace Mono.CSharp {
 			CheckObsoleteAttribute (typearg);
 
 			type = TypeManager.type_type;
-			eclass = ExprClass.Type;
+			// Even though what is returned is a type object, it's treated as a value by the compiler.
+			// In particular, 'typeof (Foo).X' is something totally different from 'Foo.X'.
+			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -7296,7 +7298,8 @@ namespace Mono.CSharp {
 		{
 			type = TypeManager.type_type;
 			typearg = TypeManager.void_type;
-			eclass = ExprClass.Type;
+			// See description in TypeOf.
+			eclass = ExprClass.Value;
 			return this;
 		}
 	}
@@ -7389,8 +7392,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual Expression DoResolve (EmitContext ec, Expression right_side,
-						     ResolveFlags flags)
+		Expression DoResolve (EmitContext ec, Expression right_side)
 		{
 			if (type != null)
 				throw new Exception ();
@@ -7403,7 +7405,9 @@ namespace Mono.CSharp {
 			//
 
 			SimpleName original = expr as SimpleName;
-			expr = expr.Resolve (ec, flags | ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
+			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type |
+				ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
+
 			if (expr == null)
 				return null;
 
@@ -7542,12 +7546,12 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolve (ec, null, ResolveFlags.VariableOrValue | ResolveFlags.Type);
+			return DoResolve (ec, null);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue | ResolveFlags.Type);
+			return DoResolve (ec, right_side);
 		}
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
