@@ -11,6 +11,12 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+#if NET_2_0
+using ValidationException = System.Xml.Schema.XmlSchemaValidationException;
+#else
+using ValidationException = System.Xml.Schema.XmlSchemaException;
+#endif
+
 namespace MonoTests.System.Xml
 {
 //	using XmlValidatingReader = XmlTextReader;
@@ -42,7 +48,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateRootElementOnlyInvalid ()
 		{
 			PrepareReader1 ("1.xsd", "<invalid xmlns='urn:foo' />");
@@ -50,7 +56,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateRootElementOnlyInvalid2 ()
 		{
 			PrepareReader1 ("1.xsd", "<root xmlns='urn:foo'><invalid_child/></root>");
@@ -75,7 +81,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateElementContainsElementInvalid1 ()
 		{
 			PrepareReader1 ("2.xsd", "<root xmlns='urn:foo'></root>");
@@ -84,7 +90,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateElementContainsElementInvalid2 ()
 		{
 			PrepareReader1 ("2.xsd", "<root xmlns='urn:foo'><child/><child/><child/></root>");
@@ -105,7 +111,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateSequenceInvalid1 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'></root>");
@@ -114,7 +120,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateSequenceInvalid2 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child1/></root>");
@@ -123,7 +129,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateSequenceInvalid3 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child1/><child2/><child1/></root>");
@@ -132,7 +138,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateSequenceInvalid4 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child1/><child2/><child1/><child2/><child1/></root>");
@@ -141,7 +147,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateSequenceInvalid5 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child1/><child2/><child1/><child2/><child1/><child2/></root>");
@@ -183,7 +189,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateChoiceInvalid1 ()
 		{
 			PrepareReader1 ("4.xsd", "<root xmlns='urn:foo'><child1/><child1/><child1/></root>");
@@ -192,7 +198,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateChoiceInvalid2 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child2/><child2/><child2/><child2/><child2/></root>");
@@ -201,7 +207,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateChoiceInvalid3 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child2/><child2/><child2/><child1/></root>");
@@ -210,7 +216,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlSchemaException))]
+		[ExpectedException (typeof (ValidationException))]
 		public void ValidateChoiceInvalid4 ()
 		{
 			PrepareReader1 ("3.xsd", "<root xmlns='urn:foo'><child1/><child2/><child2/><child2/></root>");
