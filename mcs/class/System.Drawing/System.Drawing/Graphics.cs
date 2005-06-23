@@ -1270,12 +1270,11 @@ namespace System.Drawing
 
 			return new Graphics (graphics);
 		}
-
-		[MonoTODO]
+		
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHwndInternal (IntPtr hwnd)
 		{
-			throw new NotImplementedException ();
+			return FromHwnd (hwnd);
 		}
 
 		public static Graphics FromImage (Image image)

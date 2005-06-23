@@ -1,3 +1,8 @@
+2005-06-23 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* Graphics.cs: implements FromHwndInternal
+
+
 2005-06-13  Peter Bartok  <pbartok@novell.com>
 
 	* Icon.cs(ToBitmap): If the icon is not 32bits, create the bitmap
