@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
@@ -42,24 +43,38 @@ namespace System.Security.Policy {
 
 		// properties
 
-		[MonoTODO]
+		[MonoTODO ("(2.0) - replace MonoTrustManager with one inside SWF")]
 		public static IApplicationTrustManager ApplicationTrustManager {
-			get { return _appTrustManager; }
+			[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
+			get {
+				if (_appTrustManager == null) {
+					_appTrustManager = new MonoTrustManager ();
+				}
+				return _appTrustManager;
+			}
 		}
 
-		[MonoTODO]
 		public static ApplicationTrustCollection UserApplicationTrusts {
-			get { return _userAppTrusts; }
+			get {
+				if (_userAppTrusts == null) {
+					_userAppTrusts = new ApplicationTrustCollection ();
+				}
+				return _userAppTrusts;
+			}
 		}
 
 		// methods
 
-		[MonoTODO]
+		[MonoTODO ("(2.0) - probably incomplete, missing manifest support")]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true, ControlEvidence = true)]
 		public static bool DetermineApplicationTrust (ActivationContext activationContext, TrustManagerContext context)
 		{
+// FIXME: a null activationContext throw a NullReferenceException but calling directly the ApplicationTrustManager.DetermineApplicationTrust doesn't
 			if (activationContext == null)
-				throw new ArgumentNullException ("activationContext");
-			throw new NotImplementedException ();
+				throw new NullReferenceException ("activationContext");
+//				throw new ArgumentNullException ("activationContext");
+			ApplicationTrust at = ApplicationTrustManager.DetermineApplicationTrust (activationContext, context);
+			return at.IsApplicationTrustedToRun;
 		}
 	}
 }

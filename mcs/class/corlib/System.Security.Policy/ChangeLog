@@ -1,3 +1,8 @@
+2005-06-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* ApplicationSecurityManager.cs: Added basic calls to MonoTrustManager
+	* MonoTrustManager.cs: New. Default (non SWF) trust manager.
+
 2005-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationDirectory.cs, CodeConnectAccess.cs, Hash.cs, 
