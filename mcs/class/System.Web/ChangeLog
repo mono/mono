@@ -1,3 +1,12 @@
+2005-06-23  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.Configuration/VirtualDirectoryMapping.cs
+		System.Web.Configuration/VirtualDirectoryMappingCollection.cs
+		System.Web.Configuration/WebConfigurationFileMap.cs
+		System.Web.Configuration/WebConfigurationHost.cs
+		System.Web.Configuration/WebConfigurationManager.cs
+	
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Added reference to System.Configuration.

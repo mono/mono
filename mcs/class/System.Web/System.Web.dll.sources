@@ -95,6 +95,11 @@ System.Web.Configuration/SiteMapSection.cs
 System.Web.Configuration/TraceConfig.cs
 System.Web.Configuration/TraceConfigurationHandler.cs
 System.Web.Configuration/TraceDisplayMode.cs
+System.Web.Configuration/VirtualDirectoryMapping.cs
+System.Web.Configuration/VirtualDirectoryMappingCollection.cs
+System.Web.Configuration/WebConfigurationFileMap.cs
+System.Web.Configuration/WebConfigurationHost.cs
+System.Web.Configuration/WebConfigurationManager.cs
 System.Web.Configuration/WebConfigurationSettings.cs
 System.Web.Configuration/WebControlsSectionHandler.cs
 System.Web.Handlers/AssemblyResourceLoader.cs
