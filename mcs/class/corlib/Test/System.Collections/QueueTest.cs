@@ -468,6 +468,13 @@ namespace MonoTests.System.Collections {
 			Assert ("clone must be synchronized too", q1syncclone.IsSynchronized);
 			AssertEquals ("q1syncclone.Count", q1.Count, q1syncclone.Count);
 		}
+
+		[Test]		
+		public void TestICollectionCtorUsesEnum ()
+		{
+			BitArray x = new BitArray (10, true);
+			Stack s = new Stack (x);
+		}
 	}
 }
 

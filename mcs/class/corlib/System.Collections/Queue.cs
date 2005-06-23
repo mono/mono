@@ -52,9 +52,11 @@ namespace System.Collections {
 			if (col == null)
 				throw new ArgumentNullException ("col");
 			
-			_size = _array.Length;
-			_tail = _size;
-			col.CopyTo (_array, 0);
+			// We have to do this because msft seems to call the
+			// enumerator rather than CopyTo. This affects classes
+			// like bitarray.
+			foreach (object o in col)
+				Enqueue (o);	
 		}
 			
 		public Queue (int initialCapacity, float growFactor) {

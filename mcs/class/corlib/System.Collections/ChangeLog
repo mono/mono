@@ -1,3 +1,11 @@
+2005-06-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* Queue.cs: Use the enumerator rather than copy to in the
+	ctor. This makes us more compat with msft, for example, when
+	passing a bit array
+
+	* Stack.cs: ditto
+
 2005-06-23  Martin Baulig  <martin@ximian.com>
 
 	* IKeyComparer.cs: Removed.

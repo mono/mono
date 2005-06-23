@@ -376,6 +376,13 @@ namespace MonoTests.System.Collections
 			stack.CopyTo (arr, 0);
 		}
 
+		[Test]	
+		public void TestICollectionCtorUsesEnum ()
+		{
+			BitArray x = new BitArray (10, true);
+			Stack s = new Stack (x);
+		}
+
 		[SetUp]
                 protected  void SetUp()
                 {

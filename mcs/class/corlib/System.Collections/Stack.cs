@@ -59,10 +59,11 @@ namespace System.Collections {
 			if (col == null)
 				throw new ArgumentNullException("col");
 			
-			current = col.Count - 1;
-			count = col.Count;
-
-			col.CopyTo(contents, 0);
+                        // We have to do this because msft seems to call the
+                        // enumerator rather than CopyTo. This affects classes
+                        // like bitarray.
+			foreach (object o in col)
+				Push (o);
 		}
 
 		public Stack (int initialCapacity) {
