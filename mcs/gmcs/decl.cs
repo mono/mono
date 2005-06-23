@@ -701,12 +701,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public void RecordDecl ()
-		{
-			if ((NamespaceEntry != null) && (Parent == RootContext.Tree.Types))
-				NamespaceEntry.DefineName (MemberName.Basename, this);
-		}
-
 		/// <summary>
 		///   Returns the MemberCore associated with a given name in the declaration
 		///   space. It doesn't return method based symbols !!

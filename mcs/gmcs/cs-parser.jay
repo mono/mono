@@ -777,7 +777,7 @@ struct_declaration
 
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name, current_class);
+			RootContext.Tree.RecordDecl (current_namespace.NS, name, current_class);
 		}
 	  }
 	  opt_class_base
@@ -1499,7 +1499,7 @@ interface_declaration
 
 			current_container.AddInterface (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name, current_class);
+			RootContext.Tree.RecordDecl (current_namespace.NS, name, current_class);
 		}
 	  }
 	  opt_class_base
@@ -2440,7 +2440,7 @@ enum_declaration
 		}
 
 		current_container.AddEnum (e);
-		RootContext.Tree.RecordDecl (name, e);
+		RootContext.Tree.RecordDecl (current_namespace.NS, name, e);
 		$$ = e;
 
 	  }
@@ -2544,7 +2544,7 @@ delegate_declaration
 		}
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name, del);
+		RootContext.Tree.RecordDecl (current_namespace.NS, name, del);
 
 		current_delegate = del;
 	  }
@@ -3715,7 +3715,7 @@ class_declaration
 
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name, current_class);
+			RootContext.Tree.RecordDecl (current_namespace.NS, name, current_class);
 		}
 	  }
 	  opt_class_base

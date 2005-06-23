@@ -1,3 +1,17 @@
+2005-06-07  Raja R Harinath  <rharinath@novell.com>
+
+	Ensure that partial classes are registered in their enclosing
+	namespace.  Initial part of fix of #75160.
+	* tree.cs (Tree.RecordDecl): Add new namespace argument.
+	Register declspace with namespace here, not in
+	DeclSpace.RecordDecl.
+	* cs-parser.jay: Pass namespace to RecordDecl.
+	* class.cs (PartialContainer.Create): Likewise.
+	(ClassPart.DefineType): New sanity-check.  Throws an exception if
+	called.
+	* decl.cs (Declspace.RecordDecl): Remove.
+	* namespace.cs (NamespaceEntry.DefineName): Remove.
+
 2005-06-06  Marek Safar  <marek.safar@seznam.cz>
 
 	* rootcontext.cs: Reset TargetExt as well.

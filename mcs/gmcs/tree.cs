@@ -45,34 +45,30 @@ namespace Mono.CSharp
 			decls = new Hashtable ();
 		}
 
-		public void RecordDecl (MemberName name, DeclSpace ds)
+		public void RecordDecl (Namespace ns, MemberName name, DeclSpace ds)
 		{
 			DeclSpace other = (DeclSpace) decls [name];
 			if (other != null){
+				Report.SymbolRelatedToPreviousError (other);
+
 				PartialContainer other_pc = other as PartialContainer;
-				if ((ds is TypeContainer) && (other_pc != null)) {
+				if (ds is TypeContainer && other_pc != null)
 					Report.Error (
 						260, ds.Location, "Missing partial modifier " +
-						"on declaration of type `{0}'; another " +
+						"on declaration of type '{0}'; another " +
 						"partial implementation of this type exists",
 						name);
-
-					Report.LocationOfPreviousError (other.Location);
-					return;
-				}
-
-				Report.SymbolRelatedToPreviousError (
-					other.Location, other.GetSignatureForError ());
-
-				Report.Error (
-					101, ds.Location,
-					"There is already a definition for `" + name + "'");
+				else
+					Report.Error (
+						101, ds.Location,
+						"There is already a definition for '{0}'", name);
 				return;
 			}
 
-			ds.RecordDecl ();
-
 			decls.Add (name, ds);
+
+			if (ds.Parent == Types)
+				ns.DefineName (name.Basename, ds);
 		}
 		
 		//
