@@ -236,6 +236,12 @@ namespace Mono.CSharp {
 			
 			switch (Oper){
 			case Operator.UnaryPlus:
+				if (expr_type == TypeManager.bool_type){
+					result = null;
+					Error23 (expr_type);
+					return false;
+				}
+				
 				result = e;
 				return true;
 				
