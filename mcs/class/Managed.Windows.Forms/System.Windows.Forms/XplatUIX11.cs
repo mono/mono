@@ -1273,7 +1273,13 @@ namespace System.Windows.Forms {
 			get {
 				return new Size(1, 1);
 			}
-		} 
+		}
+
+		internal override Keys ModifierKeys {
+			get {
+				return Keyboard.ModifierKeys;
+			}
+		}
 
 		internal override  Size SmallIconSize {
 			get {
