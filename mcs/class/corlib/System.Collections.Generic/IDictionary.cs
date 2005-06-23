@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic {
 
 	[CLSCompliant(true)]
-	[ComVisible(false)]
 	public interface IDictionary<K,V>
 		: ICollection<KeyValuePair<K,V>>
 		// , IEnumerable<KeyValuePair<K,V>>

@@ -35,7 +35,6 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
-	[ComVisible(false)]
 	public interface IEqualityComparer<T> {
 		bool Equals (T x, T y);
 		int GetHashCode (T obj);

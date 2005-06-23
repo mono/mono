@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-	[ComVisible(false)]
 	public interface ICollection<T> : IEnumerable<T>
 	{
 		int Count {

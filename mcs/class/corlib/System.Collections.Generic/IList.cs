@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-	[ComVisible(false)]
 	public interface IList<T> : ICollection<T>
 	{
 		int IndexOf (T item);
@@ -46,7 +45,7 @@ namespace System.Collections.Generic
 
 		void RemoveAt (int index);
 
-		T this [int switchName] {
+		T this [int index] {
 			get; set;
 		}
 	}
