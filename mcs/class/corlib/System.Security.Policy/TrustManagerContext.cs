@@ -43,7 +43,6 @@ namespace System.Security.Policy {
 		private ApplicationIdentity _previousId;
 		private TrustManagerUIContext _ui;
 
-		[MonoTODO]
 		public TrustManagerContext ()
 			: this (TrustManagerUIContext.Run)
 		{

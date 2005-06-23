@@ -86,13 +86,13 @@ namespace System.Security.Policy {
 		//
 
 #if NET_2_0
-		[MonoTODO ("missing validations")]
+		[MonoTODO ("(2.0) missing validations")]
 		public void AddConnectAccess (string originScheme, CodeConnectAccess connectAccess)
 		{
 			if (originScheme == null)
 				throw new ArgumentException ("originScheme");
 
-			// TODO - invalid characters in originScheme
+			// TODO (2.0) - invalid characters in originScheme
 			if ((originScheme == AbsentOriginScheme) && (connectAccess.Scheme == CodeConnectAccess.OriginScheme)) {
 				throw new ArgumentOutOfRangeException ("connectAccess", Locale.GetText (
 					"Schema == CodeConnectAccess.OriginScheme"));
@@ -251,13 +251,13 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("(2.0) Add new stuff (CodeConnectAccess) into XML")]
 		protected override void CreateXml (SecurityElement element, PolicyLevel level)
 		{
 			base.CreateXml (element, level);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("(2.0) Parse new stuff (CodeConnectAccess) from XML")]
 		protected override void ParseXml (SecurityElement e, PolicyLevel level)
 		{
 			base.ParseXml (e, level);

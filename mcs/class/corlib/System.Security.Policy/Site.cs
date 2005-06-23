@@ -83,10 +83,10 @@ namespace System.Security.Policy {
 
                 public override bool Equals (object o)
                 {
-			if (o is System.Security.Policy.Site) {
-				return (String.Compare (((Site) o).Name, origin_site, true, CultureInfo.InvariantCulture) == 0);
-			}
-			return false;
+			Site s = (o as System.Security.Policy.Site);
+			if (s == null)
+				return false;
+			return (String.Compare (s.Name, origin_site, true, CultureInfo.InvariantCulture) == 0);
                 }
 
                 public override int GetHashCode ()
@@ -115,13 +115,13 @@ namespace System.Security.Policy {
 			return (verbose ? 3 : 1) + origin_site.Length;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("IBuiltInEvidence")]
 		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
 		{
 			return 0;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("IBuiltInEvidence")]
 		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
 		{
 			return 0;

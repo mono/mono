@@ -1,3 +1,11 @@
+2005-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationDirectory.cs, CodeConnectAccess.cs, Hash.cs, 
+	NetCodeGroup.cs, PermissionRequestEvidence.cs, PolicyLevel.cs,
+	Publisher.cs. Site.cs, StrongName.cs, TrustManagerContext.cs. Url.cs:
+	better comments on remaining TODO (all 2.0 related) to ease grepping.
+	Reduced the number of casts in some Equals methods.
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Empty names are only verified in NET_2_0.

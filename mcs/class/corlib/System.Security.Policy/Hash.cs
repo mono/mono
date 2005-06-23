@@ -43,8 +43,8 @@ namespace System.Security.Policy {
 #if NET_2_0
 [ComVisible (true)]
 #else
-[MonoTODO("This doesn't match the MS version perfectly.")]
-// but it does seems to works exactly like Fx 2.0 beta 1 !?!?!
+[MonoTODO ("(1.x) This doesn't match the MS version perfectly.")]
+// but it does seems to works exactly like Fx 2.0 beta 1 (and beta2 too) !?!?!
 #endif
 public sealed class Hash : ISerializable, IBuiltInEvidence {
 
@@ -184,13 +184,13 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		return (verbose ? 5 : 0);	// as documented
 	}
 
-	[MonoTODO]
+	[MonoTODO ("IBuiltInEvidence")]
 	int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
 	{
 		return 0;
 	}
 
-	[MonoTODO]
+	[MonoTODO ("IBuiltInEvidence")]
 	int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
 	{
 		return 0;

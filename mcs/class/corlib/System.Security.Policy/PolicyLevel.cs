@@ -405,7 +405,6 @@ namespace System.Security.Policy {
 				throw new ArgumentNullException ("evidence");
 
 			CodeGroup cg = root_code_group.ResolveMatchingCodeGroups (evidence);
-			// TODO
 			return ((cg != null) ? cg : null);
                 }
 

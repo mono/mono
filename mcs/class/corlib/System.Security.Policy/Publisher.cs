@@ -79,7 +79,7 @@ namespace System.Security.Policy {
 		{
 			Publisher p = (o as Publisher);
 			if (p == null)
-				throw new ArgumentException ("not a Publisher");
+				throw new ArgumentException ("o", Locale.GetText ("not a Publisher instance."));
 			return m_cert.Equals (p.Certificate);
 		}
 	
@@ -102,19 +102,18 @@ namespace System.Security.Policy {
 
 		// interface IBuiltInEvidence
 
-		[MonoTODO]
 		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 		{
 			return (verbose ? 3 : 1) + m_cert.GetRawCertData ().Length;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("IBuiltInEvidence")]
 		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
 		{
 			return 0;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("IBuiltInEvidence")]
 		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
 		{
 			return 0;

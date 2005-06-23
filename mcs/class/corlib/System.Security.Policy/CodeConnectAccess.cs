@@ -45,7 +45,7 @@ namespace System.Security.Policy {
 		private string _scheme;
 		private int _port;
 
-		[MonoTODO ("validations incomplete")]
+		[MonoTODO ("(2.0) validations incomplete")]
 		public CodeConnectAccess (string allowScheme, int allowPort)
 		{
 			// LAME but as documented
@@ -70,10 +70,8 @@ namespace System.Security.Policy {
 
 		public override bool Equals (object o)
 		{
-			if (o == null)
-				return false;
 			CodeConnectAccess cca = (o as CodeConnectAccess);
-			if (o == null)
+			if (cca == null)
 				return false;
 			return ((_scheme == cca._scheme) && (_port == cca._port));
 		}

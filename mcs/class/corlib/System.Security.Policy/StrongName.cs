@@ -83,9 +83,9 @@ public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
 
 	public override bool Equals (object o) 
 	{
-		if (!(o is StrongName))
-			return false;
 		StrongName sn = (o as StrongName);
+		if (sn == null)
+			return false;
 		if (name != sn.Name)
 			return false;
 		if (!Version.Equals (sn.Version))
@@ -110,19 +110,18 @@ public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
 
 	// interface IBuiltInEvidence
 
-	[MonoTODO]
 	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
 	{
 		return (verbose ? 5 : 1) + name.Length;
 	}
 
-	[MonoTODO]
+	[MonoTODO ("IBuiltInEvidence")]
 	int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
 	{
 		return 0;
 	}
 
-	[MonoTODO]
+	[MonoTODO ("IBuiltInEvidence")]
 	int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
 	{
 		return 0;
