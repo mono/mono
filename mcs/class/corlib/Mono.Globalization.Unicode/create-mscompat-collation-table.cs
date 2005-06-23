@@ -2090,6 +2090,34 @@ sw.Close ();
 				}
 			}
 
+			// Some Jamo NFKD.
+			for (int i = 0x3200; i < 0x3300; i++) {
+				if (IsIgnorable (i) || map [i].Defined)
+					continue;
+				int ch = 0;
+				// w/ bracket
+				if (decompLength [i] == 4 &&
+					decompValues [decompIndex [i]] == '(')
+					ch = decompIndex [i] + 1;
+				// circled
+				else if (decompLength [i] == 2 &&
+					decompValues [decompIndex [i] + 1] == '\u1161')
+					ch = decompIndex [i];
+				else if (decompLength [i] == 1)
+					ch = decompIndex [i];
+				else
+					continue;
+				ch = decompValues [ch];
+				if (ch < 0x1100 || 0x1200 < ch &&
+					ch < 0xAC00 || 0xD800 < ch)
+					continue;
+				map [i] = new CharMapEntry (map [ch].Category,
+					(byte) (map [ch].Level1 + 1),
+					map [ch].Level2);
+//					Console.Error.WriteLine ("Jamo {0:X04} -> {1:X04}", i, decompValues [decompIndex [i] + 1]);
+			}
+
+
 			#endregion
 
 			// Letterlike characters and CJK compatibility square

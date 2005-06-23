@@ -1,5 +1,9 @@
 2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : handle some Jamo NKFD.
+
+2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : forgot to commit in the last checkin.
 	* create-mscompat-collation-table.cs : fixed arabic shift weight chars.
 	* TestDriver.cs : switch table dumper and collator testing.
