@@ -760,9 +760,9 @@ namespace System.Web {
 						output.Append (c);
 						entity.Length = 0;
 					} else {
+						number = 0;
 						if (c != '#') {
 							state = 2;
-							number = 0;
 						} else {
 							state = 3;
 						}
@@ -850,13 +850,16 @@ namespace System.Web {
 					output.Append ("&quot;");
 					break;
 				default:
-					if ((int) c > 128) {
+					// MS starts encoding with &# from 160 and stops at 255.
+					// We don't do that. One reason is the 65308/65310 unicode
+					// characters that look like '<' and '>'.
+					if (c > 159) {
 						output.Append ("&#");
-						output.Append (((int) c).ToString ());
+						output.Append (((int) c).ToString (CultureInfo.InvariantCulture));
 						output.Append (";");
-					}
-					else
+					} else {
 						output.Append (c);
+					}
 					break;
 				}
 			return output.ToString ();
