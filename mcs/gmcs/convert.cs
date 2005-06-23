@@ -809,13 +809,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		//
-		// Used internally by FindMostEncompassedType, this is used
-		// to avoid creating lots of objects in the tight loop inside
-		// FindMostEncompassedType
-		//
-		static EmptyExpression priv_fmet_param;
-		
 		/// <summary>
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
@@ -824,31 +817,40 @@ namespace Mono.CSharp {
 		{
 			Type best = null;
 
-			if (priv_fmet_param == null)
-				priv_fmet_param = new EmptyExpression ();
+			if (types.Count == 0)
+				return null;
 
-			foreach (Type t in types){
-				priv_fmet_param.SetType (t);
-				
+			if (types.Count == 1)
+				return (Type) types [0];
+
+			EmptyExpression expr = EmptyExpression.Grab ();
+
+			foreach (Type t in types) {
 				if (best == null) {
 					best = t;
 					continue;
 				}
-				
-				if (ImplicitStandardConversionExists (ec, priv_fmet_param, best))
+
+				expr.SetType (t);
+				if (ImplicitStandardConversionExists (ec, expr, best))
 					best = t;
 			}
 
+			expr.SetType (best);
+			foreach (Type t in types) {
+				if (best == t)
+					continue;
+				if (!ImplicitStandardConversionExists (ec, expr, t)) {
+					best = null;
+					break;
+				}
+			}
+
+			EmptyExpression.Release (expr);
+
 			return best;
 		}
-
-		//
-		// Used internally by FindMostEncompassingType, this is used
-		// to avoid creating lots of objects in the tight loop inside
-		// FindMostEncompassingType
-		//
-		static EmptyExpression priv_fmee_ret;
-		
+	
 		/// <summary>
 		///  Finds "most encompassing type" according to the spec (13.4.2)
 		///  amongst the types in the given set
@@ -857,77 +859,63 @@ namespace Mono.CSharp {
 		{
 			Type best = null;
 
-			if (priv_fmee_ret == null)
-				priv_fmee_ret = new EmptyExpression ();
+			if (types.Count == 0)
+				return null;
 
-			foreach (Type t in types){
-				priv_fmee_ret.SetType (best);
+			if (types.Count == 1)
+				return (Type) types [0];
 
+			EmptyExpression expr = EmptyExpression.Grab ();
+
+			foreach (Type t in types) {
 				if (best == null) {
 					best = t;
 					continue;
 				}
 
-				if (ImplicitStandardConversionExists (ec, priv_fmee_ret, t))
+				expr.SetType (best);
+				if (ImplicitStandardConversionExists (ec, expr, t))
 					best = t;
 			}
-			
+
+			foreach (Type t in types) {
+				if (best == t)
+					continue;
+				expr.SetType (t);
+				if (!ImplicitStandardConversionExists (ec, expr, best)) {
+					best = null;
+					break;
+				}
+			}
+
+			EmptyExpression.Release (expr);
+
 			return best;
 		}
 
-		//
-		// Used to avoid creating too many objects
-		//
-		static EmptyExpression priv_fms_expr;
-		
 		/// <summary>
 		///   Finds the most specific source Sx according to the rules of the spec (13.4.4)
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (EmitContext ec, MethodGroupExpr me,
+		static public Type FindMostSpecificSource (EmitContext ec, IList list,
 							   Expression source, bool apply_explicit_conv_rules,
 							   Location loc)
 		{
 			ArrayList src_types_set = new ArrayList ();
 			
-			if (priv_fms_expr == null)
-				priv_fms_expr = new EmptyExpression ();
-
 			//
 			// If any operator converts from S then Sx = S
 			//
 			Type source_type = source.Type;
-			foreach (MethodBase mb in me.Methods){
+			foreach (MethodBase mb in list){
 				ParameterData pd = TypeManager.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
 
 				if (param_type == source_type)
 					return param_type;
 
-				if (apply_explicit_conv_rules) {
-					//
-					// From the spec :
-					// Find the set of applicable user-defined conversion operators, U.  This set
-					// consists of the
-					// user-defined implicit or explicit conversion operators declared by
-					// the classes or structs in D that convert from a type encompassing
-					// or encompassed by S to a type encompassing or encompassed by T
-					//
-					priv_fms_expr.SetType (param_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, source_type))
-						src_types_set.Add (param_type);
-					else {
-						if (ImplicitStandardConversionExists (ec, source, param_type))
-							src_types_set.Add (param_type);
-					}
-				} else {
-					//
-					// Only if S is encompassed by param_type
-					//
-					if (ImplicitStandardConversionExists (ec, source, param_type))
-						src_types_set.Add (param_type);
-				}
+				src_types_set.Add (param_type);
 			}
 			
 			//
@@ -962,50 +950,21 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Finds the most specific target Tx according to section 13.4.4
 		/// </summary>
-		static public Type FindMostSpecificTarget (EmitContext ec, MethodGroupExpr me,
+		static public Type FindMostSpecificTarget (EmitContext ec, IList list,
 							   Type target, bool apply_explicit_conv_rules,
 							   Location loc)
 		{
 			ArrayList tgt_types_set = new ArrayList ();
 			
-			if (priv_fmt_expr == null)
-				priv_fmt_expr = new EmptyExpression ();
-			
 			//
 			// If any operator converts to T then Tx = T
 			//
-			foreach (MethodInfo mi in me.Methods){
+			foreach (MethodInfo mi in list){
 				Type ret_type = mi.ReturnType;
-
 				if (ret_type == target)
 					return ret_type;
 
-				if (apply_explicit_conv_rules) {
-					//
-					// From the spec :
-					// Find the set of applicable user-defined conversion operators, U.
-					//
-					// This set consists of the
-					// user-defined implicit or explicit conversion operators declared by
-					// the classes or structs in D that convert from a type encompassing
-					// or encompassed by S to a type encompassing or encompassed by T
-					//
-					priv_fms_expr.SetType (ret_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, target))
-						tgt_types_set.Add (ret_type);
-					else {
-						priv_fms_expr.SetType (target);
-						if (ImplicitStandardConversionExists (ec, priv_fms_expr, ret_type))
-							tgt_types_set.Add (ret_type);
-					}
-				} else {
-					//
-					// Only if T is encompassed by param_type
-					//
-					priv_fms_expr.SetType (ret_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, target))
-						tgt_types_set.Add (ret_type);
-				}
+				tgt_types_set.Add (ret_type);
 			}
 
 			//
@@ -1014,12 +973,16 @@ namespace Mono.CSharp {
 			if (apply_explicit_conv_rules) {
 				ArrayList candidate_set = new ArrayList ();
 
+				EmptyExpression expr = EmptyExpression.Grab ();
+
 				foreach (Type ret_type in tgt_types_set){
-					priv_fmt_expr.SetType (ret_type);
+					expr.SetType (ret_type);
 					
-					if (ImplicitStandardConversionExists (ec, priv_fmt_expr, target))
+					if (ImplicitStandardConversionExists (ec, expr, target))
 						candidate_set.Add (ret_type);
 				}
+
+				EmptyExpression.Release (expr);
 
 				if (candidate_set.Count != 0)
 					return FindMostEncompassingType (ec, candidate_set);
@@ -1052,82 +1015,90 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
 
-		static DoubleHash explicit_conv = new DoubleHash (100);
-		static DoubleHash implicit_conv = new DoubleHash (100);
+		static void AddConversionOperators (EmitContext ec, ArrayList list, 
+						    Expression source, Type target_type, 
+						    bool look_for_explicit,
+						    MethodGroupExpr mg)
+		{
+			if (mg == null)
+				return;
+
+			Type source_type = source.Type;
+			EmptyExpression expr = EmptyExpression.Grab ();
+			foreach (MethodInfo m in mg.Methods) {
+				ParameterData pd = TypeManager.GetParameterData (m);
+				Type return_type = m.ReturnType;
+				Type arg_type = pd.ParameterType (0);
+
+				if (source_type != arg_type) {
+					if (!ImplicitStandardConversionExists (ec, source, arg_type)) {
+						if (!look_for_explicit)
+							continue;
+						expr.SetType (arg_type);
+						if (!ImplicitStandardConversionExists (ec, expr, source_type))
+							continue;
+					}
+				}
+
+				if (target_type != return_type) {
+					expr.SetType (return_type);
+					if (!ImplicitStandardConversionExists (ec, expr, target_type)) {
+						if (!look_for_explicit)
+							continue;
+						expr.SetType (target_type);
+						if (!ImplicitStandardConversionExists (ec, expr, return_type))
+							continue;
+					}
+				}
+
+				list.Add (m);
+			}
+
+			EmptyExpression.Release (expr);
+		}
+
 		/// <summary>
-		///   Computes the MethodGroup for the user-defined conversion
+		///   Computes the list of the user-defined conversion
 		///   operators from source_type to target_type.  `look_for_explicit'
 		///   controls whether we should also include the list of explicit
 		///   operators
 		/// </summary>
-		static MethodGroupExpr GetConversionOperators (EmitContext ec,
-							       Type source_type, Type target_type,
-							       Location loc, bool look_for_explicit)
+		static IList GetConversionOperators (EmitContext ec,
+						     Expression source, Type target_type,
+						     Location loc, bool look_for_explicit)
 		{
-			Expression mg1 = null, mg2 = null;
-			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
-			string op_name;
+			ArrayList ret = new ArrayList (4);
 
-			op_name = "op_Implicit";
+			Type source_type = source.Type;
 
-			MethodGroupExpr union3;
-			object r;
-			if ((look_for_explicit ? explicit_conv : implicit_conv).Lookup (source_type, target_type, out r))
-				return (MethodGroupExpr) r;
-
-			mg1 = Expression.MethodLookup (ec, source_type, op_name, loc);
-			if (source_type.BaseType != null)
-				mg2 = Expression.MethodLookup (ec, source_type.BaseType, op_name, loc);
-
-			if (mg1 == null)
-				union3 = (MethodGroupExpr) mg2;
-			else if (mg2 == null)
-				union3 = (MethodGroupExpr) mg1;
-			else
-				union3 = Invocation.MakeUnionSet (mg1, mg2, loc);
-
-			mg1 = Expression.MethodLookup (ec, target_type, op_name, loc);
-			if (mg1 != null){
-				if (union3 != null)
-					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
-				else
-					union3 = (MethodGroupExpr) mg1;
+			if (source_type != TypeManager.decimal_type) {
+				AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
+					Expression.MethodLookup (
+						ec, source_type, "op_Implicit", loc) as MethodGroupExpr);
+				if (look_for_explicit) {
+					AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
+						Expression.MethodLookup (
+							ec, source_type, "op_Explicit", loc) as MethodGroupExpr);
+				}
 			}
 
-			if (target_type.BaseType != null)
-				mg1 = Expression.MethodLookup (ec, target_type.BaseType, op_name, loc);
-			
-			if (mg1 != null){
-				if (union3 != null)
-					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
-				else
-					union3 = (MethodGroupExpr) mg1;
+			if (target_type != TypeManager.decimal_type) {
+				AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
+					Expression.MethodLookup (
+						ec, target_type, "op_Implicit", loc) as MethodGroupExpr);
+				if (look_for_explicit) {
+					AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
+						Expression.MethodLookup (
+							ec, target_type, "op_Explicit", loc) as MethodGroupExpr);
+				}
 			}
 
-			MethodGroupExpr union4 = null;
-
-			if (look_for_explicit) {
-				op_name = "op_Explicit";
-
-				mg5 = Expression.MemberLookup (ec, source_type, op_name, loc);
-				if (source_type.BaseType != null)
-					mg6 = Expression.MethodLookup (ec, source_type.BaseType, op_name, loc);
-				
-				mg7 = Expression.MemberLookup (ec, target_type, op_name, loc);
-				if (target_type.BaseType != null)
-					mg8 = Expression.MethodLookup (ec, target_type.BaseType, op_name, loc);
-				
-				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6, loc);
-				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8, loc);
-
-				union4 = Invocation.MakeUnionSet (union5, union6, loc);
-			}
-			
-			MethodGroupExpr ret = Invocation.MakeUnionSet (union3, union4, loc);
-			(look_for_explicit ? explicit_conv : implicit_conv).Insert (source_type, target_type, ret);
 			return ret;
 		}
-		
+
+		static DoubleHash explicit_conv = new DoubleHash (100);
+		static DoubleHash implicit_conv = new DoubleHash (100);
+
 		/// <summary>
 		///   User-defined conversions
 		/// </summary>
@@ -1135,45 +1106,65 @@ namespace Mono.CSharp {
 								Type target, Location loc,
 								bool look_for_explicit)
 		{
-			MethodGroupExpr union;
 			Type source_type = source.Type;
-			MethodBase method = null;
+			MethodInfo method = null;
+			Type most_specific_source = null;
+			Type most_specific_target = null;
 
 			if (TypeManager.IsNullableType (source_type) && TypeManager.IsNullableType (target))
 				return new Nullable.LiftedConversion (
 					source, target, true, look_for_explicit, loc).Resolve (ec);
 
-			union = GetConversionOperators (ec, source_type, target, loc, look_for_explicit);
-			if (union == null)
-				return null;
-			
-			Type most_specific_source, most_specific_target;
+			object o;
+			DoubleHash hash = look_for_explicit ? explicit_conv : implicit_conv;
 
-			most_specific_source = FindMostSpecificSource (ec, union, source, look_for_explicit, loc);
-			if (most_specific_source == null)
-				return null;
-
-			most_specific_target = FindMostSpecificTarget (ec, union, target, look_for_explicit, loc);
-			if (most_specific_target == null) 
-				return null;
-
-			int count = 0;
-
-			
-			foreach (MethodBase mb in union.Methods){
-				ParameterData pd = TypeManager.GetParameterData (mb);
-				MethodInfo mi = (MethodInfo) mb;
-				
-				if (pd.ParameterType (0) == most_specific_source &&
-				    mi.ReturnType == most_specific_target) {
-					method = mb;
-					count++;
+			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
+				method = (MethodInfo) o;
+				if (method != null) {
+					ParameterData pd = TypeManager.GetParameterData (method);
+					most_specific_source = pd.ParameterType (0);
+					most_specific_target = method.ReturnType;
 				}
+			} else {
+				IList ops = GetConversionOperators (ec, source, target, loc, look_for_explicit);
+				if (ops == null || ops.Count == 0) {
+					method = null;
+					goto skip;
+				}
+					
+				most_specific_source = FindMostSpecificSource (ec, ops, source, look_for_explicit, loc);
+				if (most_specific_source == null) {
+					method = null;
+					goto skip;
+				}
+				
+				most_specific_target = FindMostSpecificTarget (ec, ops, target, look_for_explicit, loc);
+				if (most_specific_target == null) {
+					method = null;
+					goto skip;
+				}
+				
+				int count = 0;
+				
+				foreach (MethodInfo m in ops) {
+					ParameterData pd = TypeManager.GetParameterData (m);
+					
+					if (pd.ParameterType (0) == most_specific_source &&
+					    m.ReturnType == most_specific_target) {
+						method = m;
+						count++;
+					}
+				}
+				if (count > 1)
+					method = null;
+				
+			skip:
+				if (!(source is Constant))
+					hash.Insert (source_type, target, method);
 			}
-			
-			if (method == null || count > 1)
+
+			if (method == null)
 				return null;
-			
 			
 			//
 			// This will do the conversion to the best match that we
@@ -1190,7 +1181,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Expression e;
-			e =  new UserCast ((MethodInfo) method, source, loc);
+			e =  new UserCast (method, source, loc);
 			if (e.Type != target){
 				if (!look_for_explicit)
 					e = ImplicitConversionStandard (ec, e, target, loc);
@@ -1680,18 +1671,20 @@ namespace Mono.CSharp {
 					return new CastToDecimal (ec, expr, true);
 			} else if (expr_type == TypeManager.decimal_type) {
 				//
-				// From decimal to short, ushort, int, uint,
+				// From decimal to sbyte, byte, short, ushort, int, uint,
 				// long, ulong, char, double or float
 				//
-				if (real_target_type == TypeManager.short_type)
-				if (real_target_type == TypeManager.ushort_type)
-				if (real_target_type == TypeManager.int32_type)
-				if (real_target_type == TypeManager.uint32_type)
-				if (real_target_type == TypeManager.int64_type)
-				if (real_target_type == TypeManager.uint64_type)
-				if (real_target_type == TypeManager.char_type)
-				if (real_target_type == TypeManager.double_type)
-				if (real_target_type == TypeManager.float_type)
+				if (real_target_type == TypeManager.sbyte_type ||
+				    real_target_type == TypeManager.byte_type ||
+				    real_target_type == TypeManager.short_type ||
+				    real_target_type == TypeManager.ushort_type ||
+				    real_target_type == TypeManager.int32_type ||
+				    real_target_type == TypeManager.uint32_type ||
+				    real_target_type == TypeManager.int64_type ||
+				    real_target_type == TypeManager.uint64_type ||
+				    real_target_type == TypeManager.char_type ||
+				    real_target_type == TypeManager.double_type ||
+				    real_target_type == TypeManager.float_type)
 					return new CastFromDecimal (ec, expr, target_type);
 			}
 			return null;

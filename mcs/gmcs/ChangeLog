@@ -1,3 +1,9 @@
+2005-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* convert.cs (FindMostEncompassedType): Add two trivial	special
+	cases (number_of_types == 0 || number_of_types == 1).
+	(FindMostEncompasingType): Likewise.
+
 2005-06-17  Raja R Harinath  <rharinath@novell.com>
 
 	Some cleanups preparing for the fix of #75283.
@@ -249,6 +255,25 @@
 
 	* statement.cs (Try.DoResolve): Don't create a `finally' if we
 	don't need to.  Fix #75014.
+
+2005-05-26  Raja R Harinath  <rharinath@novell.com>
+
+	Improve user-defined conversion handling.
+	* convert.cs (GetConversionOperators): Rewrite.  Return only the
+	applicable operators.
+	(AddConversionOperators): New.  Helper for GetConversionOperators.
+	(FindMostEncompassedType, FindMostEncompassingType): Verify that
+	there is only one most encompassed/encompassing type.
+	(FindMostSpecificSource, FindMostSpecificTarget): Remove
+	"applicable operator" handling.
+	(UserConversion): Move cache here from GetConversionOperators.
+	Directly cache the chosen operator, rather than the whole
+	MethodGroup.
+	(ExplicitNumericConversion): Fix buggy implementation of Decimal
+	case.  Allow conversion of decimal to sbyte and byte too.
+	* expression.cs (EmptyExpression.Grab, EmptyExpression.Release):
+	New static methods.  Used to avoid allocating EmptyExpressions in
+	convert.cs.
 
 2005-05-24  Duncan Mak  <duncan@novell.com>
 

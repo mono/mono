@@ -8719,6 +8719,23 @@ namespace Mono.CSharp {
 	public class EmptyExpression : Expression {
 		public static readonly EmptyExpression Null = new EmptyExpression ();
 
+		static EmptyExpression temp = new EmptyExpression ();
+		public static EmptyExpression Grab ()
+		{
+			if (temp == null)
+				throw new InternalErrorException ("Nested Grab");
+			EmptyExpression retval = temp;
+			temp = null;
+			return retval;
+		}
+
+		public static void Release (EmptyExpression e)
+		{
+			if (temp != null)
+				throw new InternalErrorException ("Already released");
+			temp = e;
+		}
+
 		// TODO: should be protected
 		public EmptyExpression ()
 		{
