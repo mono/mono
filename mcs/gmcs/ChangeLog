@@ -1,3 +1,11 @@
+2005-06-17  Raja R Harinath  <rharinath@novell.com>
+
+	Some cleanups preparing for the fix of #75283.
+	* ecore.cs (PropertyExpr.InstanceResolve): Tighten conditions for
+	error testing.
+	(EventExpr.InstanceResolve): Likewise.
+	(EventExpr.DoResolve): Remove redundant checks.
+
 2005-06-08  Miguel de Icaza  <miguel@novell.com>
 
 	* class.cs: Small fix.
