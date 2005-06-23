@@ -1,3 +1,12 @@
+2005-06-23  Martin Baulig  <martin@ximian.com>
+
+	Fix #75331.
+
+	* metadata.c (mono_class_get_overrides): Renamed to
+	mono_class_get_overrides_full() and added a `MonoGenericContext *'.
+	(method_from_method_def_or_ref): Added `MonoGenericContext *' and
+	pass it to mono_get_method_full().
+
 2005-06-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c (mono_reflection_create_runtime_class): take the
