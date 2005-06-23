@@ -1328,7 +1328,8 @@ sw.Close ();
 			for (int i = 0; i < char.MaxValue; i++) {
 				if (Char.GetUnicodeCategory ((char) i)
 					== UnicodeCategory.DashPunctuation)
-					AddCharMapGroupTail ((char) i, 6, 1);
+//					AddCharMapGroupTail ((char) i, 6, 1);
+					AddCharMapGroup ((char) i, 6, 1, 0);
 			}
 
 			// Arabic variable weight chars 06 A0 -

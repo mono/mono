@@ -1,5 +1,10 @@
 2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.template,
+	  SimpleCollator.cs : support for culture dependent CJK table.
+
+2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs,
 	  MSCompatUnicodeTableUtil.cs : make CJK table more compact.
 

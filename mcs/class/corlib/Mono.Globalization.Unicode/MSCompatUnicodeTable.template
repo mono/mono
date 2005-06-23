@@ -23,25 +23,48 @@ namespace Mono.Globalization.Unicode
 
 	internal class MSCompatUnicodeTable
 	{
+		public static ushort [] CjkCHS {
+			get { return cjkCHS; }
+		}
+
+		public static ushort [] CjkCHT {
+			get { return cjkCHT; }
+		}
+
+		public static ushort [] CjkJA {
+			get { return cjkJA; }
+		}
+
+		public static ushort [] CjkKO {
+			get { return cjkKO; }
+		}
+
+		public static byte [] CjkKOLv2 {
+			get { return cjkKOlv2; }
+		}
 
 		public static byte Categories (int cp)
 		{
-			return categories [Util.Category.ToIndex (cp)];
+			int idx = Util.Category.ToIndex (cp);
+			return idx < 0 ? byte.MinValue : categories [idx];
 		}
 
 		public static byte Level1 (int cp)
 		{
-			return level1 [Util.Level1.ToIndex (cp)];
+			int idx = Util.Level1.ToIndex (cp);
+			return idx < 0 ? byte.MinValue : level1 [idx];
 		}
 
 		public static byte Level2 (int cp)
 		{
-			return level2 [Util.Level2.ToIndex (cp)];
+			int idx = Util.Level2.ToIndex (cp);
+			return idx < 0 ? byte.MinValue : level2 [idx];
 		}
 
 		public static byte Level3 (int cp)
 		{
-			return level3 [Util.Level3.ToIndex (cp)];
+			int idx = Util.Level3.ToIndex (cp);
+			return idx < 0 ? byte.MinValue : level3 [idx];
 		}
 
 		public static bool IsIgnorable (int cp)
