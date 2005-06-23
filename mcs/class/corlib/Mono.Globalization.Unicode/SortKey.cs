@@ -27,6 +27,7 @@ namespace System.Globalization
 
 		readonly string source;
 		readonly byte [] key;
+		/*
 		readonly int lv1Length;
 		readonly int lv2Length;
 		readonly int lv3Length;
@@ -35,6 +36,7 @@ namespace System.Globalization
 		readonly int katakanaLength;
 		readonly int kanaWidthLength;
 		readonly int identLength;
+		*/
 		readonly CompareOptions options;
 		readonly int lcid;
 
@@ -56,6 +58,7 @@ namespace System.Globalization
 			this.source = source;
 			this.key = buffer;
 			this.options = opt;
+			/*
 			this.lv1Length = lv1Length;
 			this.lv2Length = lv2Length;
 			this.lv3Length = lv3Length;
@@ -64,6 +67,7 @@ namespace System.Globalization
 			this.katakanaLength = katakanaLength;
 			this.kanaWidthLength = kanaWidthLength;
 			this.identLength = identLength;
+			*/
 		}
 
 		public string OriginalString {
@@ -73,7 +77,7 @@ namespace System.Globalization
 		public byte [] KeyData {
 			get { return key; }
 		}
-
+/*
 		internal int Level1Length {
 			get { return lv1Length; }
 		}
@@ -117,6 +121,7 @@ namespace System.Globalization
 		internal int IdenticalLength {
 			get { return identLength; }
 		}
+*/
 
 		// copy from original SortKey.cs
 		public override bool Equals (object value)

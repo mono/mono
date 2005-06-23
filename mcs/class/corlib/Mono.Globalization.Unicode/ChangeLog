@@ -1,5 +1,12 @@
 2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : forgot to commit in the last checkin.
+	* create-mscompat-collation-table.cs : fixed arabic shift weight chars.
+	* TestDriver.cs : switch table dumper and collator testing.
+	* SortKey.cs : for now comment out internal indexes (not in use).
+
+2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.template,
 	  SimpleCollator.cs : support for culture dependent CJK table.
 

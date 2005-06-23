@@ -8,6 +8,7 @@ using System;
 using System.Globalization;
 
 using Uni = Mono.Globalization.Unicode.MSCompatUnicodeTable;
+using Util = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
 
 namespace Mono.Globalization.Unicode
 {
@@ -22,14 +23,72 @@ namespace Mono.Globalization.Unicode
 		bool ignoreKanaType;
 		TextInfo textInfo; // for ToLower().
 		bool frenchSort;
+		readonly ushort [] cjkTable;
+		readonly CodePointIndexer cjkIndexer;
+		readonly byte [] cjkLv2Table;
+		readonly CodePointIndexer cjkLv2Indexer;
 
 		public SimpleCollator (CultureInfo culture)
 		{
 			textInfo = culture.TextInfo;
+			buf = new SortKeyBuffer (culture.LCID);
 
 			// FIXME: fill frenchSort from CultureInfo.
 
-			buf = new SortKeyBuffer (culture.LCID);
+			// custom CJK table support.
+			switch (GetNeutralCulture (culture).Name) {
+			case "zh-CHS":
+				cjkTable = Uni.CjkCHS;
+				cjkIndexer = Util.CjkCHS;
+				break;
+			case "zh-CHT":
+				cjkTable = Uni.CjkCHT;
+				cjkIndexer = Util.Cjk;
+				break;
+			case "ja":
+				cjkTable = Uni.CjkJA;
+				cjkIndexer = Util.Cjk;
+				break;
+			case "ko":
+				cjkTable = Uni.CjkKO;
+				cjkLv2Table = Uni.CjkKOLv2;
+				cjkIndexer = Util.Cjk;
+				cjkLv2Indexer = Util.Cjk;
+				break;
+			}
+		}
+
+		static CultureInfo GetNeutralCulture (CultureInfo info)
+		{
+			CultureInfo ret = info;
+			while (ret.Parent != null && ret.Parent.LCID != 127)
+				ret = ret.Parent;
+			return ret;
+		}
+
+		byte Category (int cp)
+		{
+			if (cp < 0x3000 || cjkTable == null)
+				return Uni.Categories (cp);
+			ushort cjk = cjkTable [cjkIndexer.ToIndex (cp)];
+			return cjk != 0 ? (byte) ((cjk & 0xFF00) >> 8) :
+				Uni.Categories (cp);
+		}
+
+		byte Level1 (int cp)
+		{
+			if (cp < 0x3000 || cjkTable == null)
+				return Uni.Level1 (cp);
+			ushort cjk = cjkTable [cjkIndexer.ToIndex (cp)];
+			return cjk != 0 ? (byte) (cjk & 0xFF) : Uni.Level1 (cp);
+		}
+
+		byte Level2 (int cp)
+		{
+			if (cp < 0x3000 || cjkLv2Table == null)
+				return Uni.Level2 (cp);
+			byte cjk = cjkLv2Table [cjkLv2Indexer.ToIndex (cp)];
+			return cjk != 0 ? cjk : Uni.Level2 (cp);
 		}
 
 		void SetOptions (CompareOptions options)
@@ -126,9 +185,9 @@ namespace Mono.Globalization.Unicode
 
 			if (Uni.HasSpecialWeight ((char) i))
 				buf.AppendKana (
-					Uni.Categories (i),
-					Uni.Level1 (i),
-					Uni.Level2 (i),
+					Category (i),
+					Level1 (i),
+					Level2 (i),
 					Uni.Level3 (i),
 					Uni.IsJapaneseSmallLetter ((char) i),
 					Uni.GetJapaneseDashType ((char) i),
@@ -137,9 +196,9 @@ namespace Mono.Globalization.Unicode
 					);
 			else
 				buf.AppendNormal (
-					Uni.Categories (i),
-					Uni.Level1 (i),
-					Uni.Level2 (i),
+					Category (i),
+					Level1 (i),
+					Level2 (i),
 					Uni.Level3 (i));
 		}
 
@@ -244,9 +303,9 @@ namespace Mono.Globalization.Unicode
 				if (expansion != null)
 					return false;
 
-				if (Uni.Categories (ci) != Uni.Categories (cj) ||
-					Uni.Level1 (ci) != Uni.Level1 (cj) ||
-					!ignoreNonSpace && Uni.Level2 (ci) != Uni.Level2 (cj) ||
+				if (Category (ci) != Category (cj) ||
+					Level1 (ci) != Level1 (cj) ||
+					!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
 					Uni.Level3 (ci) != Uni.Level3 (cj))
 					return false;
 				if (!Uni.HasSpecialWeight ((char) ci))
@@ -315,9 +374,9 @@ namespace Mono.Globalization.Unicode
 				if (expansion != null)
 					return false;
 
-				if (Uni.Categories (ci) != Uni.Categories (cj) ||
-					Uni.Level1 (ci) != Uni.Level1 (cj) ||
-					!ignoreNonSpace && Uni.Level2 (ci) != Uni.Level2 (cj) ||
+				if (Category (ci) != Category (cj) ||
+					Level1 (ci) != Level1 (cj) ||
+					!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
 					Uni.Level3 (ci) != Uni.Level3 (cj))
 					return false;
 				if (!Uni.HasSpecialWeight ((char) ci))
@@ -385,9 +444,9 @@ namespace Mono.Globalization.Unicode
 				if (s [idx] == target)
 					return idx;
 				int si = FilterOptions ((int) s [idx]);
-				if (Uni.Categories (si) != Uni.Categories (ti) ||
-					Uni.Level1 (si) != Uni.Level1 (ti) ||
-					!ignoreNonSpace && Uni.Level2 (si) != Uni.Level2 (ti) ||
+				if (Category (si) != Category (ti) ||
+					Level1 (si) != Level1 (ti) ||
+					!ignoreNonSpace && Level2 (si) != Level2 (ti) ||
 					Uni.Level3 (si) != Uni.Level3 (ti))
 					continue;
 				if (!Uni.HasSpecialWeight ((char) si))
@@ -468,9 +527,9 @@ namespace Mono.Globalization.Unicode
 				if (s [idx] == target)
 					return idx;
 				int si = FilterOptions ((int) s [idx]);
-				if (Uni.Categories (si) != Uni.Categories (ti) ||
-					Uni.Level1 (si) != Uni.Level1 (ti) ||
-					!ignoreNonSpace && Uni.Level2 (si) != Uni.Level2 (ti) ||
+				if (Category (si) != Category (ti) ||
+					Level1 (si) != Level1 (ti) ||
+					!ignoreNonSpace && Level2 (si) != Level2 (ti) ||
 					Uni.Level3 (si) != Uni.Level3 (ti))
 					continue;
 				if (!Uni.HasSpecialWeight ((char) si))

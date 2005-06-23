@@ -11,9 +11,12 @@ namespace Mono.Globalization.Unicode
 
 		#region Testing bits
 
-		static void Main ()
+		static void Main (string [] args)
 		{
-			new TestDriver ().Run ();
+			if (args.Length > 0 && args [0] == "--generate")
+				new TestDriver ().Generate ();
+			else
+				new TestDriver ().Run ();
 		}
 
 		void Run ()
@@ -70,8 +73,10 @@ namespace Mono.Globalization.Unicode
 			LastIndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 			LastIndexOf ("original", "rig", CompareOptions.None);
 			Console.WriteLine ("original".LastIndexOf ("rig"));
+		}
 
-/*
+		void Generate ()
+		{
 			// dump sortkey for every single character.
 			for (int i = 0; i <= char.MaxValue; i++) {
 				byte [] data = coll.GetSortKey (new string ((char) i, 1)).KeyData;
@@ -79,12 +84,10 @@ namespace Mono.Globalization.Unicode
 					data [2] == 1 && data [3] == 1 && data [4] == 0)
 					continue;
 				foreach (byte b in data)
-					Output.Write ("{0:X02} ", b);
-				Output.WriteLine (" : {0:X04}, {1}",
+					Console.Write ("{0:X02} ", b);
+				Console.WriteLine (" : {0:X04}, {1}",
 					i, Char.GetUnicodeCategory ((char) i));
 			}
-			Output.Close ();
-*/
 		}
 
 		void Compare (string s1, string s2)

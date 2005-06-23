@@ -1254,6 +1254,14 @@ sw.Close ();
 					if (Char.IsNumber ((char) cp))
 						diacritical [cp] = weight;
 
+			// Modify some decomposition equivalence
+			decompType [0xFE31] = 0;
+			decompIndex [0xFE31] = 0;
+			decompLength [0xFE31] = 0;
+			decompType [0xFE32] = 0;
+			decompIndex [0xFE32] = 0;
+			decompLength [0xFE32] = 0;
+
 			// Korean parens numbers
 			for (int i = 0x3200; i <= 0x321C; i++)
 				diacritical [i] = 0xA;
@@ -1326,17 +1334,26 @@ sw.Close ();
 
 			// Hyphen/Dash : 06 81 - 06 90
 			for (int i = 0; i < char.MaxValue; i++) {
-				if (Char.GetUnicodeCategory ((char) i)
-					== UnicodeCategory.DashPunctuation)
-//					AddCharMapGroupTail ((char) i, 6, 1);
-					AddCharMapGroup ((char) i, 6, 1, 0);
+				if (!IsIgnorable (i) &&
+					Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.DashPunctuation) {
+					AddCharMapGroup2 ((char) i, 6, 1, 0);
+					if (i == 0x2011) {
+						// SPECIAL: add 2027 and 2043
+						// Maybe they are regarded the 
+						// same hyphens in "central"
+						// position.
+						AddCharMap ('\u2027', 6, 1);
+						AddCharMap ('\u2043', 6, 1);
+					}
+				}
 			}
 
 			// Arabic variable weight chars 06 A0 -
 			fillIndex [6] = 0xA0;
 			// vowels
 			for (int i = 0x64B; i <= 0x650; i++)
-				AddCharMapGroupTail ((char) i, 6, 1);
+				AddArabicCharMap ((char) i);
 			// sukun
 			AddCharMapGroup ('\u0652', 6, 1, 0);
 			// shadda
@@ -2507,6 +2524,28 @@ sw.Close ();
 				// SPECIAL CASE excluded (FIXME: why?)
 				if (vertical != '\uFE33' && vertical != '\uFE34')
 					AddCharMap (vertical, category, updateCount, level2);
+		}
+
+		private void AddArabicCharMap (char c)
+		{
+			byte category = 6;
+			byte updateCount = 1;
+			byte level2 = 0;
+
+			// itself
+			AddCharMap (c, category, 0, level2);
+
+			// Since nfkdMap is problematic to have two or more
+			// NFKD to an identical character, here I iterate all.
+			for (int c2 = 0; c2 < char.MaxValue; c2++) {
+				if (decompLength [c2] == 0)
+					continue;
+				int idx = decompIndex [c2] + decompLength [c2] - 1;
+				if ((int) (decompValues [idx]) == (int) c)
+					AddCharMap ((char) c2, category,
+						0, level2);
+			}
+			fillIndex [category] += updateCount;
 		}
 
 		char ToFullWidth (char c)
