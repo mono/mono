@@ -1,3 +1,8 @@
+2005-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationSecurityManagerCas.cs: New. CAS unit tests (2.0).
+	* ApplicationSecurityManagerTest.cs: New. Unit tests (2.0).
+
 2005-06-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EvidenceTest.cs: Ensure that PermissionRequestEvidence doesn't
