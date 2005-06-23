@@ -1,3 +1,8 @@
+2005-06-23  Geoff Norton  <gnorton@customerdna.com>
+
+	* mini-x86.h: Add __APPLE__ to the SC_* redefines with the other 
+	BSDs.  Allows the x86 JIT to work on OSX86
+
 2005-06-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-long.brg: Use OP_LSHR_UN_IMM instead of OP_SHR_UN_IMM in
