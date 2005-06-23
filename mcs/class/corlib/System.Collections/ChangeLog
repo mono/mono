@@ -1,3 +1,7 @@
+2005-06-23  Martin Baulig  <martin@ximian.com>
+
+	* IKeyComparer.cs: Removed.
+
 2005-06-12  David Waite  <dwaite@gmail.com>
 
 	* Hashtable.cs: make prime-related functions internal so generic
