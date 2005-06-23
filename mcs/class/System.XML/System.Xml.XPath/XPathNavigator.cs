@@ -871,11 +871,6 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual IKeyComparer NavigatorComparer {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		public virtual string OuterXml {
 			get {
 				StringWriter sw = new StringWriter ();

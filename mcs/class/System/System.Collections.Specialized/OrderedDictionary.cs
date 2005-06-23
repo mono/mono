@@ -40,7 +40,6 @@ namespace System.Collections.Specialized
 	{
 		ArrayList list;
 		Hashtable hash;
-		IKeyComparer comparer;
 		bool readOnly;
 		int initialCapacity;
 		
@@ -50,15 +49,6 @@ namespace System.Collections.Specialized
 			hash = new Hashtable ();
 		}
 		
-		[MonoTODO ("Use Hashtable's key comparer constructor")]
-		public OrderedDictionary (IKeyComparer comparer)
-		{
-			this.comparer = comparer;
-			list = new ArrayList ();
-			hash = new Hashtable ();
-//			hash = new Hashtable (comparer);
-		}
-		
 		public OrderedDictionary (int capacity)
 		{
 			initialCapacity = capacity;
@@ -66,21 +56,8 @@ namespace System.Collections.Specialized
 			hash = new Hashtable (capacity);
 		}
 		
-		[MonoTODO ("Use Hashtable's key comparer constructor")]
-		public OrderedDictionary (int capacity, IKeyComparer comparer)
-		{
-			this.comparer = comparer;
-			initialCapacity = capacity;
-			list = new ArrayList (capacity);
-			hash = new Hashtable (capacity);
-//			hash = new Hashtable (capacity, comparer);
-			
-			this.comparer = comparer;
-		}
-		
 		public OrderedDictionary (SerializationInfo info, StreamingContext context)
 		{
-			comparer = (IKeyComparer) info.GetValue ("KeyComparer", typeof(IKeyComparer));
 			readOnly = info.GetBoolean ("ReadOnly");
 			initialCapacity = info.GetInt32 ("InitialCapacity");
 			hash = (Hashtable) info.GetValue ("HashTable", typeof(Hashtable));
@@ -89,7 +66,6 @@ namespace System.Collections.Specialized
 		
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("KeyComparer", comparer, typeof(IKeyComparer));
 			info.AddValue ("ReadOnly", readOnly);
 			info.AddValue ("InitialCapacity", initialCapacity);
 			info.AddValue ("HashTable", hash);
@@ -214,18 +190,10 @@ namespace System.Collections.Specialized
 		
 		int FindListEntry (object key)
 		{
-			if (comparer != null) {
-				for (int n=0; n<list.Count; n++) {
-					DictionaryEntry de = (DictionaryEntry) list [n];
-					if (comparer.Equals (de.Key, key))
-						return n;
-				}
-			} else {
-				for (int n=0; n<list.Count; n++) {
-					DictionaryEntry de = (DictionaryEntry) list [n];
-					if (de.Key.Equals (key))
-						return n;
-				}
+			for (int n=0; n<list.Count; n++) {
+				DictionaryEntry de = (DictionaryEntry) list [n];
+				if (de.Key.Equals (key))
+					return n;
 			}
 			return -1;
 		}
@@ -241,7 +209,6 @@ namespace System.Collections.Specialized
 			OrderedDictionary od = new OrderedDictionary ();
 			od.list = list;
 			od.hash = hash;
-			od.comparer = comparer;
 			od.readOnly = true;
 			return od;
 		}
