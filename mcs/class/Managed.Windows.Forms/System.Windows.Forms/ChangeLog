@@ -1,5 +1,10 @@
 2005-06-23  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Keyboard handling. We now support CTRL-TAB,
+	CTRL-SHIFT-TAB, and HOME, END are there any others?
+
+2005-06-23  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: Get the modifier keys from the keyboard driver.
 
 2005-06-22  Jordi Mas i Hernandez <jordi@ximian.com>

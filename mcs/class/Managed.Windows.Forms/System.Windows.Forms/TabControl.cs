@@ -410,6 +410,40 @@ namespace System.Windows.Forms {
 			base.OnStyleChanged (e);
 		}
 
+		protected override bool ProcessKeyPreview (ref Message m)
+		{
+			if (ProcessKeyEventArgs (ref m))
+				return true;
+			return base.ProcessKeyPreview (ref m);
+		}
+
+		protected override void OnKeyDown (KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Tab && (e.KeyData & Keys.Control) != 0) {
+				if ((e.KeyData & Keys.Shift) == 0)
+					SelectedIndex = (SelectedIndex + 1) % TabCount;
+				else
+					SelectedIndex = (SelectedIndex - 1) % TabCount;
+				e.Handled = true;
+			} else if (e.KeyCode == Keys.Home) {
+				SelectedIndex = 0;
+			} else if (e.KeyCode == Keys.End) {
+				SelectedIndex = TabCount - 1;
+			}
+
+			base.OnKeyDown (e);
+		}
+
+		protected override bool IsInputKey (Keys key)
+		{
+			switch (key & Keys.KeyCode) {
+			case Keys.Prior:
+			case Keys.Home:
+				return true;
+			}
+			return base.IsInputKey (key);
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
