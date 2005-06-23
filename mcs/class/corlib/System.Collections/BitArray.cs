@@ -228,8 +228,15 @@ namespace System.Collections {
 					barray [index + i] = getByte (i);
 				
 			} else if (array is int []) {
-				
 				Array.Copy (_array, 0, array, index, (_length + 31) / 32);
+			} else if (array is object []) {
+				if (array.Length - index < _length)
+					 throw new ArgumentException ();
+				
+				object [] oarray = (object []) array;
+				
+				for (int i = 0; i < _length; i++)
+					oarray [index + i] = this [i];
 				
 			} else {
 				throw new ArgumentException ("array", "Unsupported type");
