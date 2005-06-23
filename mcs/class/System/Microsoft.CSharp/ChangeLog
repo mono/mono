@@ -1,3 +1,8 @@
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: use UTF8 in the StreamWriter, as it did before
+	r45802 removed it accidentally. Fixes bug #75361.
+
 2005-06-12  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeCompiler.cs: Temp source files should have extension

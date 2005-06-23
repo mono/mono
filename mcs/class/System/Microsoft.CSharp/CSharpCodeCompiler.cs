@@ -308,7 +308,7 @@ namespace Mono.CSharp
 				CodeCompileUnit compileUnit = ea[i];
 				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + ".cs");
 				FileStream f = new FileStream (fileNames[i], FileMode.OpenOrCreate);
-				StreamWriter s = new StreamWriter (f);
+				StreamWriter s = new StreamWriter (f, Encoding.UTF8);
 				if (compileUnit.ReferencedAssemblies != null) {
 					foreach (string str in compileUnit.ReferencedAssemblies) {
 						if (!assemblies.Contains (str))
@@ -338,7 +338,7 @@ namespace Mono.CSharp
 			for (int i = 0; i < sources.Length; i++) {
 				fileNames[i] = GetTempFileNameWithExtension (options.TempFiles, i + ".cs");
 				FileStream f = new FileStream (fileNames[i], FileMode.OpenOrCreate);
-				using (StreamWriter s = new StreamWriter (f)) {
+				using (StreamWriter s = new StreamWriter (f, Encoding.UTF8)) {
 					s.Write (sources[i]);
 					s.Close ();
 				}
