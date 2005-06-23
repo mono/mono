@@ -2782,10 +2782,7 @@ with_statement
 	  {
 	  	Expression e = DecomposeQI ((string) $3, (Location)$2);
 		push_into_stack((int)Start_block.WITH, (Location)$2);
-	  	// Expression e = (Expression) $3;
 		with_stack.Push(e);
-		// Expression e1 = (Expression) $3;
-	  	// Expression e1 = DecomposeQI ((string) $3, (Location)$2);
                 string temp = Convert.ToString(e);
 		with_hash.Add(temp,e);
 
@@ -2797,6 +2794,7 @@ with_statement
 		pop_out_of_stack((int)$7,lexer.Location);
 	  	Block b = end_block();
 		with_stack.Pop();
+		with_hash.Clear();
 		$$ = b;
 	  }
 	;
@@ -4665,21 +4663,15 @@ assignment_expression
 
                         string tempstring = Convert.ToString(estack);
 
-		 	if(with_hash.Contains(tempstring)) {
+		 	if(with_hash.Contains(tempstring)) 
                                	bval = true;
-			}
-                       if (!bval) {
+                       if (!bval) 
                                $$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
-                       }
                        else
-                       {
 				$$ = null;
-                       }
                 }
-                else {
+                else 
                         $$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
-
-		}
           }
 
 
