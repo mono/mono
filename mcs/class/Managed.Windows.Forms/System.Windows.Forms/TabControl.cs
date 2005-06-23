@@ -384,9 +384,40 @@ namespace System.Windows.Forms {
 			ResizeTabPages ();
 		}
 
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			base.OnHandleCreated (e);
+		}
+
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
+
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+			ResizeTabPages ();
+		}
+
+		protected override void OnResize (EventArgs e)
+		{
+			base.OnResize (e);
+		}
+
+		protected override void OnStyleChanged (EventArgs e)
+		{
+			base.OnStyleChanged (e);
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
+		}
+
+		protected void RemoveAll ()
+		{
+			Controls.Clear ();
 		}
 
 		protected virtual object [] GetItems ()
@@ -737,7 +768,7 @@ namespace System.Windows.Forms {
  
 				if (SizeMode == TabSizeMode.Fixed) {
 					width = item_size.Width;
-				} else {                                        
+				} else {					
 					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
 				}
 
@@ -1046,27 +1077,39 @@ namespace System.Windows.Forms {
 
 			int IList.Add (object value)
 			{
-				//	 return owner.Controls.Add ((TabPage) value);
-				return -1;
+				TabPage page = value as TabPage;
+				if (value == null)
+					throw new ArgumentException ("value");
+				owner.Controls.Add (page);
+                                return owner.Controls.IndexOf (page);
 			}
 
-			bool IList.Contains (object page)
+			bool IList.Contains (object value)
 			{
-				return Contains ((TabPage) page);
+				TabPage page = value as TabPage;
+				if (page == null)
+					return false;
+				return Contains (page);
 			}
 
-			int IList.IndexOf (object page)
+			int IList.IndexOf (object value)
 			{
+				TabPage page = value as TabPage;
+				if (page == null)
+					return -1;
 				return IndexOf ((TabPage) page);
 			}
 
 			void IList.Insert (int index, object value)
 			{
-				controls.Insert (index, (TabPage) value);
+				throw new NotSupportedException ();
 			}
 
 			void IList.Remove (object value)
 			{
+				TabPage page = value as TabPage;
+				if (page == null)
+					return;
 				Remove ((TabPage) value);
 			}
 		}

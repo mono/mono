@@ -1,3 +1,9 @@
+2005-06-22  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Add some missing methods that just call into the
+	base. Make the TabPageCollection's IList interface behave in the
+	same manner as the MS implementation.
+
 2005-06-22  Peter Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs: Added sanity check
