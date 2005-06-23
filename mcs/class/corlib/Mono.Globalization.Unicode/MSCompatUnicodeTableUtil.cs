@@ -31,10 +31,7 @@ namespace Mono.Globalization.Unicode
 		public static readonly CodePointIndexer Level3;
 		public static readonly CodePointIndexer WidthCompat;
 		public static readonly CodePointIndexer CjkCHS;
-		public static readonly CodePointIndexer CjkCHT;
-		public static readonly CodePointIndexer CjkJA;
-		public static readonly CodePointIndexer CjkKO;
-		public static readonly CodePointIndexer CjkKOLevel2;
+		public static readonly CodePointIndexer Cjk;
 
 		static MSCompatUnicodeTableUtil ()
 		{
@@ -72,10 +69,7 @@ namespace Mono.Globalization.Unicode
 			Level3 = new CodePointIndexer (lv3Starts, lv3Ends, -1, -1);
 			WidthCompat = new CodePointIndexer (widthStarts, widthEnds, -1, -1);
 			CjkCHS = new CodePointIndexer (chsStarts, chsEnds, -1, -1);
-			CjkCHT = new CodePointIndexer (cjkStarts, cjkEnds, -1, -1);
-			CjkJA = new CodePointIndexer (cjkStarts, cjkEnds, -1, -1);
-			CjkKO = new CodePointIndexer (cjkStarts, cjkEnds, -1, -1);
-			CjkKOLevel2 = new CodePointIndexer (cjkStarts, cjkEnds, -1, -1);
+			Cjk = new CodePointIndexer (cjkStarts, cjkEnds, -1, -1);
 		}
 	}
 }

@@ -206,11 +206,11 @@ namespace Mono.Globalization.Unicode
 		ArrayList jisJapanese = new ArrayList ();
 		ArrayList nonJisJapanese = new ArrayList ();
 
-		ushort [] cjkJA = new ushort [char.MaxValue - 0x4E00];
-		ushort [] cjkCHS = new ushort [char.MaxValue - 0x3100];
-		ushort [] cjkCHT = new ushort [char.MaxValue - 0x4E00];
-		ushort [] cjkKO = new ushort [char.MaxValue - 0x4E00];
-		byte [] cjkKOlv2 = new byte [char.MaxValue - 0x4E00];
+		ushort [] cjkJA = new ushort [char.MaxValue +1];// - 0x4E00];
+		ushort [] cjkCHS = new ushort [char.MaxValue +1];// - 0x3100];
+		ushort [] cjkCHT = new ushort [char.MaxValue +1];// - 0x4E00];
+		ushort [] cjkKO = new ushort [char.MaxValue +1];// - 0x4E00];
+		byte [] cjkKOlv2 = new byte [char.MaxValue +1];// - 0x4E00];
 
 		byte [] ignorableFlags = new byte [char.MaxValue + 1];
 
@@ -250,6 +250,12 @@ sw.Close ();
 		{
 			return (byte []) CodePointIndexer.CompressArray  (
 				source, typeof (byte), i);
+		}
+
+		ushort [] CompressArray (ushort [] source, CodePointIndexer i)
+		{
+			return (ushort []) CodePointIndexer.CompressArray  (
+				source, typeof (ushort), i);
 		}
 
 		void Serialize ()
@@ -292,6 +298,16 @@ sw.Close ();
 			widthCompat = (int []) CodePointIndexer.CompressArray (
 				widthCompat, typeof (int),
 				MSCompatUnicodeTableUtil.WidthCompat);
+			cjkCHS = CompressArray (cjkCHS,
+				MSCompatUnicodeTableUtil.CjkCHS);
+			cjkCHT = CompressArray (cjkCHT,
+				MSCompatUnicodeTableUtil.Cjk);
+			cjkJA = CompressArray (cjkJA,
+				MSCompatUnicodeTableUtil.Cjk);
+			cjkKO = CompressArray (cjkKO,
+				MSCompatUnicodeTableUtil.Cjk);
+			cjkKOlv2 = CompressArray (cjkKOlv2,
+				MSCompatUnicodeTableUtil.Cjk);
 
 			// Ignorables
 			Result.WriteLine ("static byte [] ignorableFlags = new byte [] {");
@@ -389,7 +405,7 @@ sw.Close ();
 
 		void SerializeCJK (string name, ushort [] cjk, int max)
 		{
-			int offset = char.MaxValue - cjk.Length;
+			int offset = 0;//char.MaxValue - cjk.Length;
 			Result.WriteLine ("static ushort [] {0} = new ushort [] {{", name);
 			for (int i = 0; i < cjk.Length; i++) {
 				if (i + offset == max)
@@ -408,7 +424,7 @@ sw.Close ();
 
 		void SerializeCJK (string name, byte [] cjk, int max)
 		{
-			int offset = char.MaxValue - cjk.Length;
+			int offset = 0;//char.MaxValue - cjk.Length;
 			Result.WriteLine ("static byte [] {0} = new byte [] {{", name);
 			for (int i = 0; i < cjk.Length; i++) {
 				if (i + offset == max)
@@ -1129,7 +1145,7 @@ sw.Close ();
 			// Chinese Simplified
 			category = "chs";
 			arr = cjkCHS;
-			offset = char.MaxValue - arr.Length;
+			offset = 0;//char.MaxValue - arr.Length;
 			doc.Load (zhXML);
 			s = doc.SelectSingleNode ("/ldml/collations/collation[@type='pinyin']/rules/pc").InnerText;
 			v = 0x8008;
@@ -1146,7 +1162,7 @@ sw.Close ();
 			// Chinese Traditional
 			category = "cht";
 			arr = cjkCHT;
-			offset = char.MaxValue - arr.Length;
+			offset = 0;//char.MaxValue - arr.Length;
 			s = doc.SelectSingleNode ("/ldml/collations/collation[@type='stroke']/rules/pc").InnerText;
 			v = 0x8002;
 			foreach (char c in s) {
@@ -1162,7 +1178,7 @@ sw.Close ();
 			// Japanese
 			category = "ja";
 			arr = cjkJA;
-			offset = char.MaxValue - arr.Length;
+			offset = 0;//char.MaxValue - arr.Length;
 			doc.Load (jaXML);
 			s = doc.SelectSingleNode ("/ldml/collations/collation/rules/pc").InnerText;
 			v = 0x8008;
@@ -1188,7 +1204,7 @@ sw.Close ();
 			//
 			category = "ko";
 			arr = cjkKO;
-			offset = char.MaxValue - arr.Length;
+			offset = 0;//char.MaxValue - arr.Length;
 			doc.Load (koXML);
 			foreach (XmlElement reset in doc.SelectNodes ("/ldml/collations/collation/rules/reset")) {
 				XmlElement sc = (XmlElement) reset.NextSibling;
