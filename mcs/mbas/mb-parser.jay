@@ -250,6 +250,7 @@ namespace Mono.MonoBASIC
 		// Hash table for const preprocessing directive
 		//
 		public static Hashtable constPreDir = new Hashtable();
+		public static Hashtable with_hash = new Hashtable();
 		
 		static public bool InitialOptionExplicit = false;
 		static public bool InitialOptionStrict = false;
@@ -2688,7 +2689,8 @@ statement
 	    }
 	  | embedded_statement
 	    {
-		  current_block.AddStatement ((Statement) $1);
+		  if ($1 != null)
+		  	current_block.AddStatement ((Statement) $1);
 	    } 
 	  | labeled_statement 
 	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF evt_handler
@@ -2775,12 +2777,18 @@ empty_statement
 */
 
 with_statement
-	: WITH _mark_ expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
+	 // : WITH _mark_ expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
+	 : WITH _mark_ qualified_identifier end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
 	  {
-	  	// was : Expression e = DecomposeQI ((string) $3, (Location)$2);
+	  	Expression e = DecomposeQI ((string) $3, (Location)$2);
 		push_into_stack((int)Start_block.WITH, (Location)$2);
-	  	Expression e = (Expression) $3;
+	  	// Expression e = (Expression) $3;
 		with_stack.Push(e);
+		// Expression e1 = (Expression) $3;
+	  	// Expression e1 = DecomposeQI ((string) $3, (Location)$2);
+                string temp = Convert.ToString(e);
+		with_hash.Add(temp,e);
+
 		start_block();
 	  }
 	  opt_statement_list
@@ -3403,7 +3411,8 @@ if_statement
 pre_embedded_statement
 	: embedded_statement 
 	  {
-		current_block.AddStatement ((Statement) $1);
+		if ($1 != null)
+			current_block.AddStatement ((Statement) $1);
 	  } 
 	;	
 
@@ -3426,7 +3435,8 @@ else_pre_embedded_statement
         tmp_blocks.Push(bl); 
         
 	  	start_block();
-		current_block.AddStatement ((Statement) $2);
+		if ($2 != null)
+			current_block.AddStatement ((Statement) $2);
 	  } 
 	;	
 
@@ -3716,7 +3726,13 @@ expression_statement
 statement_expression
 	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
 	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
-	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
+	| assignment_expression		
+	{
+		if($1 != null) 
+			$$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  
+		else
+			$$ = null;
+	}
 	;
 
 object_creation_expression
@@ -4637,8 +4653,36 @@ conditional_xor_expression
 assignment_expression
 	: prefixed_unary_expression ASSIGN _mark_ expression
 	  { 
-		$$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
-	  }
+		// $$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
+		
+                bool bval = false;
+
+		// Avoid re-assignment of object inside with block
+		// TODO : Similarly do for other assignments
+
+		if (with_stack.Count > 0) {
+			Expression estack = (Expression) $1;
+
+                        string tempstring = Convert.ToString(estack);
+
+		 	if(with_hash.Contains(tempstring)) {
+                               	bval = true;
+			}
+                       if (!bval) {
+                               $$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
+                       }
+                       else
+                       {
+				$$ = null;
+                       }
+                }
+                else {
+                        $$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
+
+		}
+          }
+
+
 	| prefixed_unary_expression OP_EXP ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;

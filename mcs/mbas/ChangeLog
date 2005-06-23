@@ -1,3 +1,6 @@
+2005-06-23 Manjula GHM <mmanjula@novell.com>
+	*mb-parser.jay: To disallow reassignment of object inside 'With...End With' block
+
 2005-06-13 Manjula GHM <mmanjula@novell.com>
 	*statement.cs: To handle Goto in Try, Catch block
 
