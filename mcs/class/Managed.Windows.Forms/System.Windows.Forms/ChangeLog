@@ -1,5 +1,10 @@
 2005-06-23  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Stay in bounds when cycling. Make sure Handled is
+	set.
+
+2005-06-23  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Keyboard handling. We now support CTRL-TAB,
 	CTRL-SHIFT-TAB, and HOME, END are there any others?
 

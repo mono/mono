@@ -421,14 +421,16 @@ namespace System.Windows.Forms {
 		{
 			if (e.KeyCode == Keys.Tab && (e.KeyData & Keys.Control) != 0) {
 				if ((e.KeyData & Keys.Shift) == 0)
-					SelectedIndex = (SelectedIndex + 1) % TabCount;
+					SelectedIndex = (SelectedIndex + 1) % (TabCount - 1);
 				else
-					SelectedIndex = (SelectedIndex - 1) % TabCount;
+					SelectedIndex = (SelectedIndex - 1) % (TabCount - 1);
 				e.Handled = true;
 			} else if (e.KeyCode == Keys.Home) {
 				SelectedIndex = 0;
+                                e.Handled = true;
 			} else if (e.KeyCode == Keys.End) {
 				SelectedIndex = TabCount - 1;
+                                e.Handled = true;
 			}
 
 			base.OnKeyDown (e);
