@@ -1173,6 +1173,7 @@ System.Security.Policy/IConstantMembershipCondition.cs
 System.Security.Policy/IIdentityPermissionFactory.cs
 System.Security.Policy/IMembershipCondition.cs
 System.Security.Policy/MembershipConditionHelper.cs
+System.Security.Policy/MonoTrustManager.cs
 System.Security.Policy/NetCodeGroup.cs
 System.Security.Policy/PermissionRequestEvidence.cs
 System.Security.Policy/PolicyException.cs

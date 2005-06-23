@@ -1,3 +1,10 @@
+2005-06-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib.dll.sources: Added System.Security.Policy.MonoTrustManager to
+	the build (for 2.0).
+	* corlib_test.dll.sources: Added unit tests (normal and CAS) for 
+	System.Security.Policy.ApplicationSecurityManager.
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added CAS unit tests for System.Security.
