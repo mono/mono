@@ -2257,7 +2257,10 @@ namespace Mono.CSharp {
 				}
 			}
 
+			// Can not continue if constants are broken
 			EmitConstants ();
+			if (Report.Errors > 0)
+				return;
 
 			if (default_static_constructor != null)
 				default_static_constructor.Emit ();
