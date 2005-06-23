@@ -138,6 +138,7 @@ namespace System.Configuration
 		public override void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader)
 		{
 			StreamName = streamName;
+			ConfigHost = cfg.ConfigHost;
 			
 			if (reader.LocalName != "configSections")
 			{
@@ -278,17 +279,21 @@ namespace System.Configuration
 					reader.Skip ();
 					continue;
 				}
-				if (reader.LocalName == "location") {
-					Configuration locConfig = new Configuration (config);
+				
+				if (reader.LocalName == "location")
+				{
 					string path = reader.GetAttribute ("path");
 					if (path != null && path.Length > 0) {
+						string xml = reader.ReadOuterXml ();
 						string[] pathList = path.Split (',');
 						foreach (string p in pathList) {
-							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), locConfig);
+							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), xml, config);
 							config.Locations.Add (loc);
 						}
-						ReadData (locConfig, reader);
+					} else {
+						ReadData (config, reader);
 					}
+					continue;
 				}
 				
 				ConfigInfo data = (sections != null) ? (ConfigInfo) sections [reader.LocalName] : (ConfigInfo) null;

@@ -46,6 +46,14 @@ namespace System.Configuration {
 		{
 			InnerList.Add (loc);
 		}
+		
+		internal ConfigurationLocation Find (string location)
+		{
+			foreach (ConfigurationLocation loc in InnerList)
+				if (loc.Path == location)
+					return loc;
+			return null;
+		}
 	}
 }
 

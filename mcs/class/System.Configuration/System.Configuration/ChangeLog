@@ -1,3 +1,22 @@
+2005-06-23  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SectionInfo.cs: Set the config host when loading the section.
+	* InternalConfigurationHost.cs: Implemented some basic methods.
+	* Configuration.cs: Find the correct parent for the configuration,
+	taking into accound locations and such. Use Host functions to get
+	types from names.
+	* ConfigurationLocationCollection.cs: Added find method.
+	* ConfigInfo.cs: Added Host property.
+	* InternalConfigurationFactory.cs: The InitForConfiguration calls
+	are now done in each correspoding configuration.
+	* SectionGroupInfo.cs: When reading a location element, create
+	a Configuration object for each path specified in the location.
+	* ConfigurationElementCollection.cs: Added the CreateNewElementInternal
+	method, which properly initializes the created element.
+	* ConfigurationLocation.cs: OpenConfiguration now has to read the
+	xml contents. It also has to find the correct parent configuration,
+	if it has not been specified.
+
 2005-06-17  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SectionInfo.cs, ConfigInfo.cs, SectionGroupInfo.cs: Minor api fixes.

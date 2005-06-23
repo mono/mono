@@ -29,21 +29,28 @@
 
 #if NET_2_0
 
+using System.Xml;
+using System.IO;
+
 namespace System.Configuration {
 
 	public class ConfigurationLocation
 	{
 		string path;
 		Configuration configuration;
+		Configuration parent;
+		string xmlContent;
+		bool parentResolved;
 		
 		internal ConfigurationLocation()
 		{
 		}
 		
-		internal ConfigurationLocation (string path, Configuration config)
+		internal ConfigurationLocation (string path, string xmlContent, Configuration parent)
 		{
 			this.path = path;
-			configuration = config;
+			this.xmlContent = xmlContent;
+			this.parent = parent;
 		}
 		
 		public string Path {
@@ -52,7 +59,34 @@ namespace System.Configuration {
 
 		public Configuration OpenConfiguration ()
 		{
+			if (configuration == null) {
+				if (!parentResolved) {
+					Configuration parentFile = parent.GetParentWithFile ();
+					if (parentFile != null) {
+						string parentRelativePath = parent.ConfigHost.GetConfigPathFromLocationSubPath (parent.LocationConfigPath, path);
+						parent = parentFile.FindLocationConfiguration (parentRelativePath, parent);
+					}
+				}
+				
+				configuration = new Configuration (parent);
+				XmlTextReader tr = new XmlTextReader (new StringReader (xmlContent));
+				tr.MoveToContent ();
+				tr.ReadStartElement ();
+				tr.MoveToContent ();
+				
+				configuration.ReadData (tr);
+				tr.Close ();
+				xmlContent = null;
+			}
 			return configuration;
+		}
+		
+		internal void SetParentConfiguration (Configuration parent)
+		{
+			parentResolved = true;
+			this.parent = parent;
+			if (configuration != null)
+				configuration.Parent = parent;
 		}
 	}
 }

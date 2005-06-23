@@ -32,6 +32,7 @@ using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
 using System.Text;
+using System.Configuration.Internal;
 
 namespace System.Configuration {
 
@@ -42,10 +43,11 @@ namespace System.Configuration {
 		Type type;
 		string streamName;
 		public ConfigInfo Parent;
+		public IInternalConfigHost ConfigHost;
 		
 		public object CreateInstance ()
 		{
-			if (type == null) type = Type.GetType (TypeName);
+			if (type == null) type = ConfigHost.GetConfigType (TypeName, true);
 			return Activator.CreateInstance (type);
 		}
 		

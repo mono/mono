@@ -39,7 +39,7 @@ namespace System.Configuration {
 		{
 			InternalConfigurationSystem system = new InternalConfigurationSystem ();
 			system.Init (typeConfigHost, hostInitConfigurationParams);
-			return new Configuration (system, system.PathHierarchy);
+			return new Configuration (system, null);
 		}
 		
 		public string NormalizeLocationSubPath (string subPath, IConfigErrorInfo errorInfo)
@@ -52,27 +52,19 @@ namespace System.Configuration {
 	{
 		IInternalConfigHost host;
 		IInternalConfigRoot root;
-		string[] pathHierarchy;
+		object[] hostInitParams;
 		
 		public void Init (Type typeConfigHost, params object[] hostInitParams)
 		{
+			this.hostInitParams = hostInitParams;
 			host = (IInternalConfigHost) Activator.CreateInstance (typeConfigHost);
 			root = new InternalConfigurationRoot ();
-			
-			host.Init (root, hostInitParams);
 			root.Init (host, false);
-			
-			string locationSubPath = null;
-			string configPath;
-			string locationConfigPath;
-
-			ArrayList parentPaths = new ArrayList ();
-			do {
-				host.InitForConfiguration (ref locationSubPath, out configPath, out locationConfigPath, root, hostInitParams);
-				parentPaths.Insert (0, configPath);
-			} while (locationSubPath != null);
-			
-			pathHierarchy = (string[]) parentPaths.ToArray (typeof(string));
+		}
+		
+		public void InitForConfiguration (ref string locationConfigPath, out string parentConfigPath, out string parentLocationConfigPath)
+		{
+			host.InitForConfiguration (ref locationConfigPath, out parentConfigPath, out parentLocationConfigPath, root, hostInitParams);
 		}
 		
 		public IInternalConfigHost Host {
@@ -81,10 +73,6 @@ namespace System.Configuration {
 		
 		public IInternalConfigRoot Root {
 			get { return root; }
-		}
-		
-		public string[] PathHierarchy {
-			get { return pathHierarchy; }
 		}
 	}
 }

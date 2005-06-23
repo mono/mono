@@ -271,6 +271,17 @@ namespace System.Configuration
 			return CreateNewElement ();
 		}
 		
+		ConfigurationElement CreateNewElementInternal (string elementName)
+		{
+			ConfigurationElement elem;
+			if (elementName == null)
+				elem = CreateNewElement ();
+			else
+				elem = CreateNewElement (elementName);
+			elem.Init ();
+			return elem;
+		}
+		
 		public override bool Equals (object compareTo)
 		{
 			ConfigurationElementCollection other = compareTo as ConfigurationElementCollection;
@@ -333,7 +344,7 @@ namespace System.Configuration
 			for (int n=0; n<parent.Count; n++)
 			{
 				ConfigurationElement parentItem = parent.BaseGet (n);
-				ConfigurationElement item = CreateNewElement (parentItem.GetType().FullName);
+				ConfigurationElement item = CreateNewElementInternal (parentItem.GetType().FullName);
 				item.Reset (parentItem);
 				BaseAdd (item);
 				
@@ -406,9 +417,9 @@ namespace System.Configuration
 				ConfigurationElement elem = null;
 				
 				if (elementName == ElementName)
-					elem = CreateNewElement ();
+					elem = CreateNewElementInternal (null);
 				if (IsElementName (elementName))
-					elem = CreateNewElement (elementName);
+					elem = CreateNewElementInternal (elementName);
 
 				if (elem != null) {
 					elem.DeserializeElement (reader, false);
@@ -425,14 +436,14 @@ namespace System.Configuration
 					return true;
 				}
 				else if (elementName == removeElementName) {
-					ConfigurationElement elem = CreateNewElement ();
+					ConfigurationElement elem = CreateNewElementInternal (null);
 					elem.DeserializeElement (reader, true);
 					BaseRemove (GetElementKey (elem));
 					modified = false;
 					return true;
 				}
 				else if (elementName == addElementName) {
-					ConfigurationElement elem = CreateNewElement ();
+					ConfigurationElement elem = CreateNewElementInternal (null);
 					elem.DeserializeElement (reader, false);
 					BaseAdd (elem);
 					modified = false;
@@ -453,13 +464,13 @@ namespace System.Configuration
 				object key = source.GetElementKey (sitem);
 				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
 				if (pitem != null && updateMode != ConfigurationSaveMode.Full) {
-					ConfigurationElement nitem = CreateNewElement (pitem.GetType().FullName);
+					ConfigurationElement nitem = CreateNewElementInternal (pitem.GetType().FullName);
 					nitem.Unmerge (sitem, pitem, serializeCollectionKey, ConfigurationSaveMode.Minimal);
 					if (nitem.HasValues ())
 						BaseAdd (nitem);
 				}
 				else {
-					ConfigurationElement nitem = CreateNewElement (sitem.GetType().FullName);
+					ConfigurationElement nitem = CreateNewElementInternal (sitem.GetType().FullName);
 					nitem.Unmerge (sitem, null, serializeCollectionKey, ConfigurationSaveMode.Full);
 					BaseAdd (nitem);
 				}

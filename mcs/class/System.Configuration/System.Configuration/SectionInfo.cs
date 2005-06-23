@@ -66,6 +66,7 @@ namespace System.Configuration
 		{
 			ConfigurationAllowDefinition allowDefinition;
 			StreamName = streamName;
+			ConfigHost = cfg.ConfigHost;
 
 			while (reader.MoveToNextAttribute ()) {
 				switch (reader.Name)

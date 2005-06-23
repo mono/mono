@@ -69,12 +69,15 @@ namespace System.Configuration
 		
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			Type type = Type.GetType (typeName);
+			if (type == null && throwOnError)
+				throw new ConfigurationErrorsException ("Type '" + typeName + "' not found.");
+			return type;
 		}
 		
 		public virtual string GetConfigTypeName (Type t)
 		{
-			throw new NotImplementedException ();
+			return t.AssemblyQualifiedName;
 		}
 		
 		public virtual void GetRestrictedPermissions (IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady)

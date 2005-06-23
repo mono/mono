@@ -46,25 +46,53 @@ namespace System.Configuration {
 		ConfigurationLocationCollection locations;
 		SectionGroupInfo rootGroup;
 		IConfigSystem system;
+		bool hasFile;
 		
+		string configPath;
+		string locationConfigPath;
+			
 		internal Configuration (Configuration parent)
 		{
 			Init (parent.system, null, parent);
 		}
 		
-		internal Configuration (IConfigSystem system, string file, Configuration parent)
+		internal Configuration (InternalConfigurationSystem system, string locationSubPath)
 		{
-			Init (system, file, parent);
+			hasFile = true;
+			this.system = system;
+			
+			system.InitForConfiguration (ref locationSubPath, out configPath, out locationConfigPath);
+			
+			Configuration parent = null;
+			
+			if (locationSubPath != null) {
+				parent = new Configuration (system, locationSubPath);
+				if (locationConfigPath != null)
+					parent = parent.FindLocationConfiguration (locationConfigPath, parent);
+			}
+			
+			Init (system, configPath, parent);
 		}
 		
-		internal Configuration (IConfigSystem system, string[] paths)
+		internal Configuration FindLocationConfiguration (string relativePath, Configuration defaultConfiguration)
 		{
-			Configuration lastConfig = null;
+			ConfigurationLocation loc = Locations.Find (relativePath);
 			
-			for (int n=0; n < paths.Length - 1; n++)
-				lastConfig = new Configuration (system, paths [n], lastConfig);
+			Configuration parentConfig = defaultConfiguration;
 			
-			Init (system, paths [paths.Length - 1], lastConfig);
+			if (LocationConfigPath != null) {
+				Configuration parentFile = GetParentWithFile ();
+				if (parentFile != null) {
+					string parentRelativePath = system.Host.GetConfigPathFromLocationSubPath (LocationConfigPath, relativePath);
+					parentConfig = parentFile.FindLocationConfiguration (parentRelativePath, defaultConfiguration);
+				}
+			}
+
+			if (loc == null)
+				return parentConfig;
+			
+			loc.SetParentConfiguration (parentConfig);
+			return loc.OpenConfiguration ();
 		}
 		
 		internal void Init (IConfigSystem system, string configPath, Configuration parent)
@@ -79,15 +107,37 @@ namespace System.Configuration {
 				rootGroup.StreamName = streamName;
 			}
 			
-			Load ();
+			if (configPath != null)
+				Load ();
 		}
 		
 		internal Configuration Parent {
 			get { return parent; }
+			set { parent = value; }
+		}
+		
+		internal Configuration GetParentWithFile ()
+		{
+			Configuration parentFile = Parent;
+			while (parentFile != null && !parentFile.HasFile)
+				parentFile = parentFile.Parent;
+			return parentFile;
 		}
 		
 		internal string FileName {
 			get { return streamName; }
+		}
+
+		internal IInternalConfigHost ConfigHost {
+			get { return system.Host; }
+		}
+		
+		internal string LocationConfigPath {
+			get { return locationConfigPath; }
+		}
+
+		internal string ConfigPath {
+			get { return configPath; }
 		}
 
 		public AppSettingsSection AppSettings {
@@ -104,10 +154,10 @@ namespace System.Configuration {
 
 		public bool HasFile {
 			get {
-				return streamName != null;
+				return hasFile;
 			}
 		}
-
+		
 		public ConfigurationLocationCollection Locations {
 			get {
 				if (locations == null) locations = new ConfigurationLocationCollection ();
@@ -210,11 +260,12 @@ namespace System.Configuration {
 		internal void CreateSection (SectionGroupInfo group, string name, ConfigurationSection sec)
 		{
 			if (group.HasChild (name)) throw new ConfigurationException ("Cannot add a ConfigurationSection. A section or section group already exists with the name '" + name + "'");
-			if (sec.SectionInformation.Type == null) sec.SectionInformation.Type = sec.GetType ().AssemblyQualifiedName;
+			if (sec.SectionInformation.Type == null) sec.SectionInformation.Type = system.Host.GetConfigTypeName (sec.GetType ());
 			sec.SectionInformation.SetName (name);
 
 			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition);
 			section.StreamName = streamName;
+			section.ConfigHost = system.Host;
 			group.AddChild (section);
 			elementData [section] = sec;
 		}
@@ -222,11 +273,12 @@ namespace System.Configuration {
 		internal void CreateSectionGroup (SectionGroupInfo parentGroup, string name, ConfigurationSectionGroup sec)
 		{
 			if (parentGroup.HasChild (name)) throw new ConfigurationException ("Cannot add a ConfigurationSectionGroup. A section or section group already exists with the name '" + name + "'");
-			if (sec.Type == null) sec.Type = sec.GetType ().AssemblyQualifiedName;
+			if (sec.Type == null) sec.Type = system.Host.GetConfigTypeName (sec.GetType ());
 			sec.SetName (name);
 
 			SectionGroupInfo section = new SectionGroupInfo (name, sec.Type);
 			section.StreamName = streamName;
+			section.ConfigHost = system.Host;
 			parentGroup.AddChild (section);
 			elementData [section] = sec;
 		}
@@ -341,6 +393,11 @@ namespace System.Configuration {
 				rootGroup.ReadConfig (this, fileName, reader);
 			}
 			
+			rootGroup.ReadRootData (reader, this);
+		}
+		
+		internal void ReadData (XmlTextReader reader)
+		{
 			rootGroup.ReadRootData (reader, this);
 		}
 		
