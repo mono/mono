@@ -942,7 +942,7 @@ namespace Mono.CSharp {
 				TypeExpr[] new_ifaces;
 
 				new_ifaces = part.GetClassBases (out new_base_class);
-				if (new_ifaces == null && base_type != null)
+				if (new_ifaces == null && new_base_class != null)
 					return null;
 
 				if ((base_class != null) && (new_base_class != null) &&
