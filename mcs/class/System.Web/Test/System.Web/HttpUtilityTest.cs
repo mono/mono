@@ -80,5 +80,27 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (0x25, bytes [0], "#4");
 			Assert.AreEqual (0x25, bytes [0], "#5");
 		}
+
+
+		[Test]
+		public void EscapedCharacters ()
+		{
+			for (int i = 0; i < 256; i++) {
+				string str = new string ((char) i, 1);
+				string encoded = HttpUtility.HtmlEncode (str);
+				if ((i > 159 && i < 256 ) || i == '&' || i == '<' || i == '>' || i == '"') {
+					if (encoded [0] != '&' || encoded [encoded.Length - 1] != ';')
+						Assertion.Fail ("Failed for i = " + i);
+				} else if (encoded.Length != 1) {
+					Assertion.Fail ("Wrong length for i = " + i);
+				}
+			}
+		}
+
+		[Test]
+		public void Decode1 ()
+		{
+			Assert.AreEqual ("\xE9", HttpUtility.HtmlDecode ("&#233;"));
+		}
 	}
 }
