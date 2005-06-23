@@ -427,10 +427,10 @@ namespace System.Windows.Forms {
 				e.Handled = true;
 			} else if (e.KeyCode == Keys.Home) {
 				SelectedIndex = 0;
-                                e.Handled = true;
+				e.Handled = true;
 			} else if (e.KeyCode == Keys.End) {
 				SelectedIndex = TabCount - 1;
-                                e.Handled = true;
+				e.Handled = true;
 			}
 
 			base.OnKeyDown (e);
