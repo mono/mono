@@ -233,12 +233,8 @@ namespace System.Windows.Forms
 				backBrush = ThemeEngine.Current.ResPool.GetSolidBrush (grid.SelectionBackColor);
 			}
 						
-			g.FillRectangle (backBrush, bounds);
+			g.FillRectangle (backBrush, bounds);			
 			
-			if (table_style.CurrentGridLineStyle == DataGridLineStyle.Solid) {
-				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor), bounds);
-			}
-
 			switch (GetState (source, rowNum) & ~CheckState.Selected) {
 			case CheckState.Checked:
 				state = ButtonState.Checked;
@@ -253,6 +249,7 @@ namespace System.Windows.Forms
 			}
 
 			ThemeEngine.Current.CPDrawCheckBox (g, rect, state);
+			PaintGridLine (g, bounds);
 		}
 
 		protected internal override void SetColumnValueAtRow (CurrencyManager lm, int row, object obj)

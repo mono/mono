@@ -336,11 +336,15 @@ namespace System.Windows.Forms
 		// - If DataGrid.ReadOnly and DataGridTableStyle.ReadOnly are false, the columns settings are mandatory
 		//
 		internal bool ParentReadOnly {
-			get {
+			get {				
 				if (grid != null) {
 					if (grid.ReadOnly == true) {
 						return true;
 					}
+					
+					if (grid.ListManager != null && grid.ListManager.CanAddRows == false) {
+						return true;
+					}				
 				}
 				
 				if (table_style != null) {
@@ -521,8 +525,8 @@ namespace System.Windows.Forms
 			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
 				bounds.X + bounds.Width - 1, bounds.Y + 2 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 2);
 			
-			bounds.X += 3;
-			bounds.Width -=	3;
+			bounds.X += 2;
+			bounds.Width -=	2;
 			g.DrawString (HeaderText, DataGridTableStyle.HeaderFont, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderForeColor), 
 				bounds, string_format_hdr);
 		}
@@ -530,10 +534,20 @@ namespace System.Windows.Forms
 		internal void PaintNewRow (Graphics g, Rectangle bounds, Brush backBrush, Brush foreBrush)
 		{
 			g.FillRectangle (backBrush, bounds);
-						
-			if (table_style.CurrentGridLineStyle == DataGridLineStyle.Solid) {
-				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor), bounds);
-			}			
+			PaintGridLine (g, bounds);
+		}
+		
+		internal void PaintGridLine (Graphics g, Rectangle bounds)
+		{
+			if (table_style.CurrentGridLineStyle != DataGridLineStyle.Solid) {
+				return;
+			}
+			
+			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor),
+				bounds.X, bounds.Y + bounds.Height - 1, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+			
+			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor),
+				bounds.X + bounds.Width - 1, bounds.Y , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height);
 		}
 		
 		#endregion Private Instance Methods

@@ -1,3 +1,13 @@
+2005-06-22  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* DataGridTextBoxColumn.cs: fixes and enhancements
+	* ThemeWin32Classic.cs: fixes and enhancements
+	* DataGridBoolColumn.cs:  fixes and enhancements
+	* DataGridDrawingLogic.cs:  fixes and enhancements
+	* CurrencyManager.cs: fixes and enhancements
+	* DataGrid.cs: fixes and enhancements
+	* DataGridColumnStyle.cs:  fixes and enhancements
+
 2005-06-22  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Add some missing methods that just call into the

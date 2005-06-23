@@ -452,8 +452,17 @@ namespace System.Windows.Forms
 			set {
 				if (!current_cell.Equals (value)) {
 					CancelEditing ();
+					
+					int old_row = current_cell.RowNumber;
+					
 					EnsureCellVisilibility (value);
-					current_cell = value;
+					current_cell = value;					
+					
+					if (current_cell.RowNumber != old_row) {
+						grid_drawing.InvalidateRowHeader (old_row);
+					}
+			
+					InvalidateCurrentRowHeader ();
 					OnCurrentCellChanged (EventArgs.Empty);
 				}
 			}
@@ -970,6 +979,10 @@ namespace System.Windows.Forms
 		
 		internal bool ShowEditRow {
 			get {
+				if (ListManager != null && ListManager.CanAddRows == false) {
+					return false;
+				}
+								
 				return _readonly == false;
 			}
 		}
@@ -1051,7 +1064,7 @@ namespace System.Windows.Forms
 				is_adding = false;
 			} 
 
-			if (shouldAbort) {
+			if (shouldAbort || gridColumn.ParentReadOnly ==true) {
 				gridColumn.Abort (rowNumber);
 			} else {
 				gridColumn.Commit (ListManager, rowNumber);
@@ -1712,23 +1725,16 @@ namespace System.Windows.Forms
 
 		private void EnsureCellVisilibility (DataGridCell cell)
 		{
-			if (current_cell.RowNumber != cell.RowNumber) {
-				grid_drawing.InvalidateRowHeader (current_cell.RowNumber);
-				grid_drawing.InvalidateRowHeader (cell.RowNumber);
-			}
-
-			if (cell.ColumnNumber < first_visiblecolumn ||
-				cell.ColumnNumber >= first_visiblecolumn + visiblecolumn_count) {
-
-				int col, pixel;
-
-				if (cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {
-					col = 1 + cell.ColumnNumber - visiblecolumn_count;
-				}else {
-					col = cell.RowNumber;
-				}
-
-				pixel = grid_drawing.GetColumnStartingPixel (col);
+			if (cell.ColumnNumber <= first_visiblecolumn ||
+				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
+				
+				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);
+				
+				Console.WriteLine ("GetFirstColumnForColumnVisilibility {0} max {1}",
+					first_visiblecolumn,
+					CurrentTableStyle.GridColumnStyles.Count);
+				
+				int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
 				ScrollToColumnInPixels (pixel);
 			}
 
@@ -1885,7 +1891,7 @@ namespace System.Windows.Forms
 			Rectangle invalidate_column = new Rectangle ();
 
 			if (pixel > horz_pixeloffset) { // ScrollRight
-				int pixels = pixel - horz_pixeloffset;
+				int pixels = pixel - horz_pixeloffset;				
 
 				// Columns header
 				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X + grid_drawing.ColumnsHeadersArea.Width - pixels;
@@ -1899,30 +1905,49 @@ namespace System.Windows.Forms
 				invalidate.Y = grid_drawing.CellsArea.Y;
 				invalidate.Width = pixels;
 				invalidate.Height = grid_drawing.CellsArea.Height;
+				
+				
+				if (columnheaders_visible == true) {
+					invalidate.Y -= grid_drawing.ColumnsHeadersArea.Height;
+					invalidate.Height += grid_drawing.ColumnsHeadersArea.Height;
+				}
+				
 				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, -pixels, 0, false);
+				Invalidate (invalidate_column);
+				Invalidate (invalidate);
+
 
 			} else {
 				int pixels = horz_pixeloffset - pixel;
+				Rectangle area = grid_drawing.CellsArea;
 
 				// Columns header
 				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X;
 				invalidate_column.Y = grid_drawing.ColumnsHeadersArea.Y;
 				invalidate_column.Width = pixels;
 				invalidate_column.Height = grid_drawing.ColumnsHeadersArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, pixels, 0, false);
+				//XplatUI.ScrollWindow (Handle, grid_drawing.ColumnsHeadersArea, pixels, 0, false);
 
 				// Cells
 				invalidate.X =  grid_drawing.CellsArea.X;
 				invalidate.Y =  grid_drawing.CellsArea.Y;
 				invalidate.Width = pixels;
 				invalidate.Height = grid_drawing.CellsArea.Height;
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, pixels, 0, false);
+				
+				if (columnheaders_visible == true) {
+					invalidate.Y -= grid_drawing.ColumnsHeadersArea.Height;
+					invalidate.Height += grid_drawing.ColumnsHeadersArea.Height;
+					area.Y -= grid_drawing.ColumnsHeadersArea.Height;
+					area.Height += grid_drawing.ColumnsHeadersArea.Height;
+				}
+				
+				XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
+				Invalidate (invalidate);
 			}
 
 			horz_pixeloffset = horiz_scrollbar.Value = pixel;
 			grid_drawing.UpdateVisibleColumn ();
-			Invalidate (invalidate_column);
-			Invalidate (invalidate);
+			
 		}
 
 		private void ScrollToRow (int old_row, int new_row)

@@ -36,13 +36,10 @@ namespace System.Windows.Forms {
 		protected int listposition;
 
 		private IList list;
-		private IBindingList binding_list;
-
 		private bool binding_suspended;
 
 		internal CurrencyManager (object data_source)
-		{
-			binding_list = data_source as IBindingList;
+		{			
 			if (data_source is IListSource) {
 				list = ((IListSource) data_source).GetList ();
 			} else if (data_source is IList) {
@@ -154,12 +151,23 @@ namespace System.Windows.Forms {
                 internal override bool IsSuspended {
                         get { return binding_suspended; }
                 }
+                
+                internal bool CanAddRows {
+                	get {
+				if (list as IBindingList == null) {
+					return false;
+				}
+				
+				return true;
+			}
+		}
 
 		public override void AddNew ()
 		{
-			if (binding_list == null)
+			if (list as IBindingList == null)
 				throw new NotSupportedException ();
-			binding_list.AddNew ();
+				
+			(list as IBindingList).AddNew ();
 		}
 
 		public override void CancelCurrentEdit ()
@@ -234,8 +242,8 @@ namespace System.Windows.Forms {
 		internal object GetItem (int index)
 		{
 			return list [index];
-		}
-
+		}		
+		
 		private PropertyDescriptorCollection GetBrowsableProperties (Type t)
 		{
 			Attribute [] att = new System.Attribute [1];

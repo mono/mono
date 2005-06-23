@@ -861,7 +861,7 @@ namespace System.Windows.Forms
 		public override int DataGridMinimumColumnCheckBoxHeight { get { return 16;} }
 		public override int DataGridMinimumColumnCheckBoxWidth { get { return 16;} }
 		public override Color DataGridAlternatingBackColor { get { return ColorWindow;} }
-		public override Color DataGridBackgroundColor { get  { return ColorWindow;} }
+		public override Color DataGridBackgroundColor { get  { return  ColorAppWorkSpace;} }
 		public override Color DataGridCaptionBackColor { get  { return ColorActiveTitle;} }
 		public override Color DataGridCaptionForeColor { get  { return SystemColors.ActiveCaptionText;} }
 		public override Color DataGridGridLineColor { get { return SystemColors.Control;} }

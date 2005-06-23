@@ -175,7 +175,8 @@ namespace System.Windows.Forms
 			textbox.TextAlign = alignment;
 			textbox.Visible = cellIsVisible;
 			
-			if ((ParentReadOnly == false && ReadOnly == true) || 
+			if ((ParentReadOnly == true)  || 
+				(ParentReadOnly == false && ReadOnly == true) || 
 				(ParentReadOnly == false && _ro == true)) {
 				textbox.ReadOnly = true;
 			} else {
@@ -272,14 +273,11 @@ namespace System.Windows.Forms
 				break;
 			}			
 					
-			g.FillRectangle (backBrush, textBounds);
-			
-			if (table_style.CurrentGridLineStyle == DataGridLineStyle.Solid) {
-				g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (table_style.CurrentGridLineColor), textBounds);
-			}
+			g.FillRectangle (backBrush, textBounds);			
 			
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
 			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);
+			PaintGridLine (g, textBounds);
 		}
 		
 		protected internal override void ReleaseHostedControl ()

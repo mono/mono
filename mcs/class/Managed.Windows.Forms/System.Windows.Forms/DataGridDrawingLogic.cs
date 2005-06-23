@@ -105,6 +105,26 @@ namespace System.Windows.Forms
 
 			return 0;
 		}
+		
+		// Which column has to be the first visible column to ensure a column visibility
+		public int GetFirstColumnForColumnVisilibility (int current_first_visiblecolumn, int column)
+		{
+			int new_col = column;
+			int width = 0;
+			
+			if (column > current_first_visiblecolumn) { // Going forward								
+				for (new_col = column; new_col >= 0; new_col--){
+					width += grid.CurrentTableStyle.GridColumnStyles[new_col].Width;
+					
+					if (width >= cells_area.Width)
+						return new_col + 1;
+						//return new_col < grid.CurrentTableStyle.GridColumnStyles.Count ? new_col + 1 : grid.CurrentTableStyle.GridColumnStyles.Count;
+				}
+				return 0;
+			} else {				
+				return  column;
+			}			
+		}
 
 		public void CalcClientArea ()
 		{
@@ -136,10 +156,7 @@ namespace System.Windows.Forms
 
 			UpdateVisibleRowCount (); // need it to be able to calcultate the need of horz scrollbar
 			if (SetUpVerticalScrollBar ()) { // We need a Vertical ScrollBar
-				if (grid.caption_visible) {
-					caption_area.Width -= grid.vert_scrollbar.Width;
-				}
-
+				
 				if (grid.parentrows_visible) {
 					parent_rows.Width -= grid.vert_scrollbar.Width;
 				}
@@ -322,7 +339,10 @@ namespace System.Windows.Forms
 
 			col = FromPixelToColumn (max_pixel);
 			grid.visiblecolumn_count = (col - grid.first_visiblecolumn);
-			grid.visiblecolumn_count++;
+			
+			//if (grid.first_visiblecolumn + grid.visiblecolumn_count + 1 < grid.CurrentTableStyle.GridColumnStyles.Count) { 
+				grid.visiblecolumn_count++; // Partially visible column
+			//}
 
 			//Console.WriteLine ("UpdateVisibleColumn col: {0}, cnt {1}",
 			//	grid.first_visiblecolumn, grid.visiblecolumn_count);
@@ -351,16 +371,8 @@ namespace System.Windows.Forms
 				grid.visiblerow_count = max_rows;
 			} else {
 				grid.visiblerow_count = total_rows;
-			}
+			}			
 			
-			/*if (grid.ShowEditRow && grid.visiblerow_count != grid.RowsCount) {
-				if (grid.first_visiblerow > 0) {
-					grid.first_visiblerow--;
-				}
-				grid.visiblerow_count++;
-				grid.Invalidate ();
-			}*/
-
 			if (grid.visiblerow_count + grid.first_visiblerow > total_rows)
 				grid.visiblerow_count = total_rows - grid.first_visiblerow;
 
@@ -507,7 +519,11 @@ namespace System.Windows.Forms
 				rect_bloc.Width = grid.RowHeaderWidth;
 				rect_bloc.Height = columnshdrs_area.Height;
 				if (clip.IntersectsWith (rect_bloc)) {
-					g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
+					if (grid.visiblecolumn_count > 0) {
+						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
+					}else {
+						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), rect_bloc);
+					}
 				}
 
 				columns_area.X += grid.RowHeaderWidth;
@@ -517,13 +533,10 @@ namespace System.Windows.Forms
 			// Set unused area
 			Rectangle columnshdrs_area_complete = columns_area;
 			columnshdrs_area_complete.Width = columnshdrs_maxwidth;
-			Region not_usedarea = new Region (clip);
-
+			
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				columnshdrs_area_complete.Width -= grid.RowHeaderWidth;
-			}
-
-			not_usedarea.Intersect (columnshdrs_area_complete);
+			}		
 
 			// Set column painting
 			Rectangle rect_columnhdr = new Rectangle ();
@@ -532,6 +545,9 @@ namespace System.Windows.Forms
 			rect_columnhdr.Y = columns_area.Y;
 			rect_columnhdr.Height = columns_area.Height;
 
+			Console.WriteLine ("PaintColumnsHdrs first {0} num {1}",
+				grid.first_visiblecolumn, grid.visiblecolumn_count);
+			
 			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
 			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
 
@@ -541,8 +557,7 @@ namespace System.Windows.Forms
 
 				if (clip.IntersectsWith (rect_columnhdr) == false)
 					continue;
-
-				not_usedarea.Exclude (rect_columnhdr);
+									
 				current_clip = new Region (columns_area);
 				g.Clip = current_clip;
 
@@ -552,13 +567,17 @@ namespace System.Windows.Forms
 				current_clip.Dispose ();
 			}
 
-			// This fills with background colourt the unused part in the row headers
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
-				Rectangle.Ceiling (not_usedarea.GetBounds (g)));
-
-			//Console.WriteLine ("PaintColumnsHdrs Clean {0}", Rectangle.Ceiling (not_usedarea.GetBounds (g)));
-
-			not_usedarea.Dispose ();
+			
+			// This fills with background colour the unused part in the row headers
+			if (rect_columnhdr.X + rect_columnhdr.Height < client_area.X + client_area.Width) {
+				
+				Rectangle not_usedarea = columnshdrs_area_complete;				
+				not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
+				not_usedarea.Width = client_area.X + client_area.Width - rect_columnhdr.X - rect_columnhdr.Height;
+			
+				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
+					not_usedarea);
+			}
 		}
 
 		public void PaintRowsHeaders (Graphics g, Rectangle clip)
@@ -634,10 +653,10 @@ namespace System.Windows.Forms
 				bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
 
 			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-				bounds.X, bounds.Y + 2, bounds.X, bounds.Y + bounds.Height - 2);
+				bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
 
 			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				bounds.X + bounds.Width - 1, bounds.Y + 2 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 2);
+				bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
 
 			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
 				bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
@@ -657,14 +676,14 @@ namespace System.Windows.Forms
 							bounds);
 	
 					} else {
-						int cx = 16;
-						int cy = 16;
+						int cx = 18;
+						int cy = 18;
 						Bitmap	bmp = new Bitmap (cx, cy);
 						Graphics gr = Graphics.FromImage (bmp);
 						Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
 						ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
 						bmp.MakeTransparent ();
-						g.DrawImage (bmp, bounds.X + 1, bounds.Y + 1, cx, cy);
+						g.DrawImage (bmp, bounds.X - 2, bounds.Y, cx, cy);
 						gr.Dispose ();
 						bmp.Dispose ();
 					}
@@ -763,7 +782,12 @@ namespace System.Windows.Forms
 					backcolor =  grid.SelectionBackColor;
 					forecolor =  grid.SelectionForeColor;
 				} else {
-					backcolor =  grid.BackgroundColor;
+					if (row % 2 == 0) {
+						backcolor =  grid.BackColor;
+					} else {
+						backcolor =  grid.AlternatingBackColor;
+					}
+					
 					forecolor =  grid.ForeColor;
 				}			
 
@@ -811,7 +835,7 @@ namespace System.Windows.Forms
 			grid.horiz_scrollbar.Size = new Size (client_area.Width,
 				grid.horiz_scrollbar.Height);
 
-			grid.horiz_scrollbar.Maximum = width_all - cells_area.Width;
+			grid.horiz_scrollbar.Maximum = width_all;// - cells_area.Width;
 			grid.horiz_scrollbar.LargeChange = cells_area.Width;
 			grid.Controls.Add (grid.horiz_scrollbar);
 			grid.horiz_scrollbar.Visible = true;
@@ -821,17 +845,32 @@ namespace System.Windows.Forms
 		// Return true if the scrollbar is needed
 		public bool SetUpVerticalScrollBar ()
 		{
-			if (grid.visiblerow_count == grid.RowsCount) {
+			int y, height;
+			int allrows = grid.RowsCount;
+
+			if (grid.ShowEditRow) {
+				allrows++;
+			}
+			
+			if (grid.visiblerow_count == allrows) {
 				grid.vert_scrollbar.Visible = false;
 				grid.Controls.Remove (grid.vert_scrollbar);
 				return false;
 			}
+			
+			if (grid.caption_visible) {
+				y = client_area.Y + caption_area.Height;
+				height = client_area.Height - caption_area.Height;
+			} else {
+				y = client_area.Y;
+				height = client_area.Height;
+			}
 
 			grid.vert_scrollbar.Location = new Point (client_area.X +
-				client_area.Width - grid.vert_scrollbar.Width, client_area.Y);
+				client_area.Width - grid.vert_scrollbar.Width, y);
 
 			grid.vert_scrollbar.Size = new Size (grid.vert_scrollbar.Width,
-				client_area.Height);
+				height);
 
 			grid.vert_scrollbar.Maximum = grid.RowsCount;
 			
