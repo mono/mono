@@ -1,3 +1,12 @@
+2005-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodePointIndexer.cs :
+	  removed extraneous switch (I could use empty array for that need).
+	* CollationElementTableUtil.cs : primary weight type became ushort.
+	* create-collation-element-table.cs : several bugfixes.
+	  collElem should be int. It was skipping most of entries because of
+	  incorrect string tokenization.
+
 2005-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : handle some Jamo NKFD.

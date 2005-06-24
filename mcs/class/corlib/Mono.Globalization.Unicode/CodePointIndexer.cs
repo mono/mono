@@ -45,9 +45,7 @@ namespace Mono.Globalization.Unicode
 		}
 
 		readonly TableRange [] ranges;
-#if DumpFullArray
-		public const int TotalCount = char.MaxValue + 1;
-#else
+
 		public readonly int TotalCount;
 
 		int defaultIndex;
@@ -70,26 +68,18 @@ namespace Mono.Globalization.Unicode
 //				Console.Error.WriteLine ("RANGES [{0}] : {1:x} to {2:x} index {3:x} to {4:x}. total {5:x}", i, ranges [i].Start, ranges [i].End, ranges [i].IndexStart, ranges [i].IndexEnd, ranges [i].Count);
 //			Console.Error.WriteLine ("Total items: {0:X} ({1})", TotalCount, TotalCount);
 		}
-#endif
 
 		public int ToIndex (int cp)
 		{
-#if DumpFullArray
-			return cp;
-#else
 			for (int t = 0; t < ranges.Length; t++)
 				if (ranges [t].Start <= cp && cp < ranges [t].End)
 					return cp - ranges [t].Start + ranges [t].IndexStart;
 			return defaultIndex;
 //			throw new SystemException (String.Format ("Should not happen: no map definition for cp {0:x}({1})", cp, (char) cp));
-#endif
 		}
 
 		public int ToCodePoint (int i)
 		{
-#if DumpFullArray
-			return i;
-#else
 			for (int t = 0; t < ranges.Length; t++) {
 				if (t > 0 && i < ranges [t - 1].IndexEnd)
 					return -1; // unexpected out of range
@@ -100,7 +90,6 @@ namespace Mono.Globalization.Unicode
 			}
 			return defaultCP;
 //			throw new SystemException (String.Format ("Should not happen: no map definition for index {0:x}({1})", i, i));
-#endif
 		}
 	}
 }

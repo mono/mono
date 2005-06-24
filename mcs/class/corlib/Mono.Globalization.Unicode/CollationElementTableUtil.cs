@@ -6,17 +6,17 @@ namespace Mono.Globalization.Unicode
 {
 	internal struct SortKeyValue {
 		public readonly bool Alt;
-		public readonly int Primary;
+		public readonly ushort Primary;
 		public readonly byte Secondary;
 		public readonly byte Thirtiary;
 		public readonly int Quarternary;
 
-		public SortKeyValue (bool alt, int v1, int v2, int v3, int v4)
+		public SortKeyValue (bool alt, ushort v1, byte v2, byte v3, int v4)
 		{
 			Alt = alt;
 			Primary = v1;
-			Secondary = (byte) v2;
-			Thirtiary = (byte) v3;
+			Secondary = v2;
+			Thirtiary = v3;
 			Quarternary = v4;
 		}
 	}

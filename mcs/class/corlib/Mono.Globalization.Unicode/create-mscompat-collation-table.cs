@@ -193,9 +193,11 @@ namespace Mono.Globalization.Unicode
 
 		// cp -> level1 value
 		Hashtable arabicLetterPrimaryValues = new Hashtable ();
+		Hashtable cyrillicLetterPrimaryValues = new Hashtable ();
 
 		// letterName -> cp
 		Hashtable arabicNameMap = new Hashtable ();
+		Hashtable cyrillicNameMap = new Hashtable ();
 
 		// cp -> Hashtable [decompType] -> cp
 		Hashtable nfkdMap = new Hashtable ();
@@ -628,8 +630,9 @@ sw.Close ();
 					if (cp > char.MaxValue)
 						continue;
 
+					double v = double.Parse (value);
 					for (int i = cp; i <= cpEnd; i++)
-						unicodeAge [i] = double.Parse (value);
+						unicodeAge [i] = v;
 				}
 			}
 			unicodeAge [0] = double.MaxValue; // never be supported
@@ -824,6 +827,26 @@ sw.Close ();
 			if (s.IndexOf ("FULL STOP") > 0 &&
 				(s.IndexOf ("DIGIT") > 0 || s.IndexOf ("NUMBER") > 0))
 				diacritical [cp] |= 0xF4;
+
+			// Cyrillic letter name
+			if (0x0430 <= cp && cp <= 0x0486 &&
+				Char.IsLetter ((char) cp)) {
+				byte value = (byte) (cyrillicNameMap.Count * 3 + 0x06);
+				// Get primary letter name i.e.
+				// XXX part of CYRILLIC LETTER XXX yyy
+				// e.g. "IZHITSA" for "IZHITSA DOUBLE GRAVE".
+				string letterName =
+					values [0].Substring (values [0].IndexOf ("LETTER ") + 7);
+				int tmpIdx = letterName.IndexOf (' ');
+				letterName = tmpIdx < 0 ? letterName : letterName.Substring (0, tmpIdx);
+//Console.Error.WriteLine ("Arabic name for {0:X04} is {1}", cp, letterName);
+				if (cyrillicNameMap.ContainsKey (letterName))
+					value = (byte) cyrillicLetterPrimaryValues [cyrillicNameMap [letterName]];
+				else
+					cyrillicNameMap [letterName] = cp;
+
+				cyrillicLetterPrimaryValues [cp] = value;
+			}
 
 			// Arabic letter name
 			if (0x0621 <= cp && cp <= 0x064A &&
@@ -1668,18 +1691,45 @@ sw.Close ();
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0xF, 1);
 
-			// Cyrillic - UCA order w/ some modification
-			fillIndex [0x10] = 0x3;
+			// Cyrillic - character name order
+			fillIndex [0x10] = 0x6;
+//*
+for (int i = 0; i < orderedCyrillic.Length; i++)
+Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
+
 			// table which is moslty from UCA DUCET.
 			for (int i = 0; i < orderedCyrillic.Length; i++) {
-				char c = orderedCyrillic [i];
-				if (Char.IsLetter (c))
-					AddLetterMap (c, 0x10, 3);
+				char c = Char.ToUpper (orderedCyrillic [i], CultureInfo.InvariantCulture);
+				if (!IsIgnorable ((int) c) &&
+					c <= '\u045C' &&
+					Char.IsLetter (c)) {
+					AddLetterMap (c, 0x10, 0);
+					fillIndex [0x10] += 3;
+				}
 			}
+			/*
 			for (int i = 0x0460; i < 0x0481; i++) {
-				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0x10, 3);
+				if (Char.IsLetter ((char) i)) {
+					AddLetterMap ((char) i, 0x10, 0);
+					fillIndex [0x10] += 3;
+				}
 			}
+			*/
+/*
+			for (int i = 0x0400; i <= 0x0486; i++) {
+				if (!Char.IsLetter ((char) i)) {
+//					AddCharMap ((char) i, 0x1, 1);
+					continue;
+				}
+				if (!cyrillicLetterPrimaryValues.ContainsKey (i)) {
+					Console.Error.WriteLine ("no value for {0:x04}", i);
+					continue;
+				}
+				fillIndex [0x10] = 
+					(byte) cyrillicLetterPrimaryValues [i];
+				AddLetterMap ((char) i, 0x10, 0);
+			}
+*/
 
 			// Armenian
 			fillIndex [0x11] = 0x3;
