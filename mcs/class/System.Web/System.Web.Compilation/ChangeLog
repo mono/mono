@@ -1,3 +1,9 @@
+2005-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: create the assemly in the DynamicBase directory,
+	as all the others, when compiling an assembly from a Src file. Fixes
+	bug #75371.
+
 2005-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: if the property is not found, don't forget
