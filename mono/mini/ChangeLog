@@ -1,5 +1,7 @@
 2005-06-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ia64.c: Ongoing IA64 work.
+
 	* basic-float.cs: Add float->i1 conversion test.
 
 	* iltests.il: Add conv.u4 test.
