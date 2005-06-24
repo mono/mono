@@ -42,7 +42,6 @@ using System.Security.Permissions;
 namespace System.Collections.Generic {
 
 	[Serializable]
-	[CLSCompliant(true)]
 	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 		IDictionary,
 		ICollection,

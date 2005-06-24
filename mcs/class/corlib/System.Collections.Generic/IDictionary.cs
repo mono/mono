@@ -34,21 +34,18 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace System.Collections.Generic {
-
-	[CLSCompliant(true)]
-	public interface IDictionary<K,V>
-		: ICollection<KeyValuePair<K,V>>
-		// , IEnumerable<KeyValuePair<K,V>>
+namespace System.Collections.Generic
+{
+	public interface IDictionary<TKey,TValue> : ICollection<KeyValuePair<TKey,TValue>>
 	{
 		
-		void Add (K key, V value);
-		bool ContainsKey (K key);
-		bool Remove (K key);
-		bool TryGetValue (K key, out V value);
-		V this[K key] { get; set; }
-		ICollection<K> Keys { get; }
-		ICollection<V> Values { get; }
+		void Add (TKey key, TValue value);
+		bool ContainsKey (TKey key);
+		bool Remove (TKey key);
+		bool TryGetValue (TKey key, out TValue value);
+		TValue this[TKey key] { get; set; }
+		ICollection<TKey> Keys { get; }
+		ICollection<TValue> Values { get; }
 	}
 }
 #endif
