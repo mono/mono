@@ -1,3 +1,7 @@
+2005-06-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* iltests.il: Add conv.u4 test.
+
 2005-06-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-long.brg: Fix bug caused by last change.
