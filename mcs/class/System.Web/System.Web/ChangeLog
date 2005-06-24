@@ -1,5 +1,10 @@
 2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpUtility.cs: don't append an extra 0 when no digits seen. Fixes
+	bug #75370.
+
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpUtility.cs: the lower limit for using &#xx; encoding is 160, not
 	128. Reset number back to 0 after use. Fixes bug #75365.
 

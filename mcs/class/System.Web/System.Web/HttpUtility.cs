@@ -731,7 +731,8 @@ namespace System.Web {
 			// 2 -> between '&' and ';' but no '#'
 			// 3 -> '#' found after '&' and getting numbers
 			int state = 0;
-			int number = -1;
+			int number = 0;
+			bool have_trailing_digits = false;
 	
 			for (int i = 0; i < len; i++) {
 				char c = s [i];
@@ -790,14 +791,15 @@ namespace System.Web {
 						}
 						state = 0;
 						entity.Length = 0;
-						number = -1;
+						have_trailing_digits = false;
 					} else if (Char.IsDigit (c)) {
 						number = number * 10 + ((int) c - '0');
+						have_trailing_digits = true;
 					} else {
 						state = 2;
-						if (number >= 0) {
+						if (have_trailing_digits) {
 							entity.Append (number.ToString (CultureInfo.InvariantCulture));
-							number = -1;
+							have_trailing_digits = false;
 						}
 						entity.Append (c);
 					}
@@ -806,7 +808,7 @@ namespace System.Web {
 
 			if (entity.Length > 0) {
 				output.Append (entity.ToString ());
-			} else if (number >= 0) {
+			} else if (have_trailing_digits) {
 				output.Append (number.ToString (CultureInfo.InvariantCulture));
 			}
 			return output.ToString ();
