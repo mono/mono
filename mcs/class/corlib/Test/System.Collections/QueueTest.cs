@@ -473,7 +473,7 @@ namespace MonoTests.System.Collections {
 		public void TestICollectionCtorUsesEnum ()
 		{
 			BitArray x = new BitArray (10, true);
-			Stack s = new Stack (x);
+			Queue s = new Queue (x);
 		}
 	}
 }
