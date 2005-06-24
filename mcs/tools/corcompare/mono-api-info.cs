@@ -265,7 +265,7 @@ namespace Mono.AssemblyInfo
 			AddAttribute (nclass, "type", classType);
 
 			if (type.BaseType != null)
-				AddAttribute (nclass, "base", type.BaseType.FullName);
+				AddAttribute (nclass, "base", type.BaseType.ToString ());
 
 			if (type.IsSealed)
 				AddAttribute (nclass, "sealed", "true");
@@ -297,7 +297,7 @@ namespace Mono.AssemblyInfo
 						continue;
 					}
 					XmlNode iface = document.CreateElement ("interface", null);
-					AddAttribute (iface, "name", t.FullName);
+					AddAttribute (iface, "name", t.ToString ());
 					ifaces.AppendChild (iface);
 				}
 			}
@@ -310,7 +310,7 @@ namespace Mono.AssemblyInfo
 				FieldData fd = new FieldData (document, nclass, fields);
 				// Special case for enum fields
 				if (classType == "enum") {
-					string etype = fields [0].GetType ().FullName;
+					string etype = fields [0].GetType ().ToString ();
 					AddAttribute (nclass, "enumtype", etype);
 				}
 				members.Add (fd);
@@ -541,7 +541,7 @@ namespace Mono.AssemblyInfo
 		{
 			base.AddExtraData (p, member);
 			FieldInfo field = (FieldInfo) member;
-			AddAttribute (p, "fieldtype", field.FieldType.FullName);
+			AddAttribute (p, "fieldtype", field.FieldType.ToString ());
 
 			if (field.IsLiteral) {
 				object value = field.GetValue (null);
@@ -586,7 +586,8 @@ namespace Mono.AssemblyInfo
 		{
 			base.AddExtraData (p, member);
 			PropertyInfo prop = (PropertyInfo) member;
-			AddAttribute (p, "ptype", prop.PropertyType.FullName);
+			Type t = prop.PropertyType;
+			AddAttribute (p, "ptype", prop.PropertyType.ToString ());
 			MethodInfo _get = prop.GetGetMethod (true);
 			MethodInfo _set = prop.GetSetMethod (true);
 			bool haveGet = (_get != null && TypeData.MustDocumentMethod(_get));
@@ -650,7 +651,7 @@ namespace Mono.AssemblyInfo
 		{
 			base.AddExtraData (p, member);
 			EventInfo evt = (EventInfo) member;
-			AddAttribute (p, "eventtype", evt.EventHandlerType.FullName);
+			AddAttribute (p, "eventtype", evt.EventHandlerType.ToString ());
 		}
 
 		public override string ParentTag {
@@ -697,7 +698,7 @@ namespace Mono.AssemblyInfo
 				return;
 
 			MethodInfo method = (MethodInfo) member;
-			AddAttribute (p, "returntype", method.ReturnType.FullName);
+			AddAttribute (p, "returntype", method.ReturnType.ToString ());
 
 			AttributeData.OutputAttributes (document, p,
 				method.ReturnTypeCustomAttributes.GetCustomAttributes (false));
@@ -762,7 +763,7 @@ namespace Mono.AssemblyInfo
 				}
 
 				Type t = parameter.ParameterType;
-				AddAttribute (paramNode, "type", t.FullName);
+				AddAttribute (paramNode, "type", t.ToString ());
 
 				if (parameter.IsOptional) {
 					AddAttribute (paramNode, "optional", "true");
@@ -822,7 +823,7 @@ namespace Mono.AssemblyInfo
 					continue;
 
 				XmlNode node = document.CreateElement ("attribute");
-				AddAttribute (node, "name", t.FullName);
+				AddAttribute (node, "name", t.ToString ());
 
 				XmlNode properties = null;
 				foreach (PropertyInfo pi in TypeData.GetProperties (t)) {

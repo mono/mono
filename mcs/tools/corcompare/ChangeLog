@@ -1,3 +1,9 @@
+2005-06-24  Martin Baulig  <martin@ximian.com>
+
+	* mono-api-info.cs: Use `Type.ToString()' everywhere instead of
+	`Type.FullName' since on the MS runtime `Type.FullName' is the
+	empty string for type parameters (FIXME: bug in the MS runtime?).
+
 2005-06-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (mono-api-info.exe): Copy mdb file from the
