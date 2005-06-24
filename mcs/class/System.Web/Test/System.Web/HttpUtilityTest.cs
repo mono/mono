@@ -102,5 +102,14 @@ namespace MonoTests.System.Web {
 		{
 			Assert.AreEqual ("\xE9", HttpUtility.HtmlDecode ("&#233;"));
 		}
+
+		[Test]
+		public void RoundTrip ()
+		{
+			string x = "<html>& hello+= world!";
+                        string y = HttpUtility.HtmlEncode (x);
+                        string z = HttpUtility.HtmlDecode (y);
+			Assert.AreEqual (x, z);
+		}
 	}
 }

@@ -1,5 +1,9 @@
 2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpUtilityTest.cs: new test for extra '0'.
+
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpUtilityTest.cs: new tests.
 
 2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
