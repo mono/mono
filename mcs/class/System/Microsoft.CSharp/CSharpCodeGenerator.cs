@@ -160,15 +160,8 @@ namespace Mono.CSharp
 		{
 			GenerateCompileUnitStart (compileUnit);
 
-			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
-			if (attributes.Count != 0) {
-				foreach (CodeAttributeDeclaration att in attributes) {
-					GenerateAttributeDeclarationsStart (attributes);
-					Output.Write ("assembly: ");
-					OutputAttributeDeclaration (att);
-					GenerateAttributeDeclarationsEnd (attributes);
-					Output.WriteLine ();
-				}
+			if (compileUnit.AssemblyCustomAttributes.Count > 0) {
+				OutputAttributes (compileUnit.AssemblyCustomAttributes, "assembly: ");
 				Output.WriteLine ("");
 			}
 
@@ -757,8 +750,7 @@ namespace Mono.CSharp
 			TextWriter output = Output;
 			CodeTypeDelegate del = declaration as CodeTypeDelegate;
 
-			if (declaration.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations( declaration.CustomAttributes );
+			OutputAttributes (declaration.CustomAttributes, null);
 
 			TypeAttributes attributes = declaration.TypeAttributes;
 			OutputTypeAttributes( attributes,
@@ -874,6 +866,19 @@ namespace Mono.CSharp
 				}
 			}
 			Output.Write (')');
+		}
+
+		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix)
+		{
+			foreach (CodeAttributeDeclaration att in attributes) {
+				GenerateAttributeDeclarationsStart (attributes);
+				if (prefix != null) {
+					Output.Write ("assembly: ");
+				}
+				OutputAttributeDeclaration (att);
+				GenerateAttributeDeclarationsEnd (attributes);
+				Output.WriteLine ();
+			}
 		}
 
 		protected override void OutputType( CodeTypeReference type )
