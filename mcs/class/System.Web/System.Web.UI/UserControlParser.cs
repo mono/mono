@@ -39,8 +39,14 @@ namespace System.Web.UI
 	internal class UserControlParser : TemplateControlParser
 	{
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
-		: this (virtualPath, inputFile, context, null)
+			: this (virtualPath, inputFile, context, null)
 		{
+		}
+
+		internal UserControlParser (string virtualPath, string inputFile, ArrayList deps, HttpContext context)
+			: this (virtualPath, inputFile, context, null)
+		{
+			this.Dependencies = deps;
 		}
 		
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context, string type)
@@ -53,6 +59,12 @@ namespace System.Web.UI
 			AddApplicationAssembly ();
 		}
 		
+		internal static Type GetCompiledType (string virtualPath, string inputFile, ArrayList deps, HttpContext context)
+		{
+			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, deps, context);
+			return ucp.CompileIntoType ();
+		}
+
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)
 		{
 			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, context);
