@@ -1,0 +1,3 @@
+2005-06-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeMemberFieldTest.cs: Test for default value of Type property.
