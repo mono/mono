@@ -1,5 +1,9 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpResponse.cs: invariant love.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: avoid 1 string concat.
 	* HttpRequest.cs: fix BinaryRead. It was totally wrong.
 

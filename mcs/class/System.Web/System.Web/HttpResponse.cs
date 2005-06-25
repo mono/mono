@@ -648,7 +648,7 @@ namespace System.Web
 			if (_bHeadersSent)
 				throw new HttpException ("Headers has been sent to the client");
 
-			switch (name.ToLower ()) {
+			switch (name.ToLower (CultureInfo.InvariantCulture)) {
 			case "content-length":
 				_lContentLength = Int64.Parse (value);
 				break;
