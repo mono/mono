@@ -164,8 +164,8 @@ namespace System.Web
 			oHeaders.Add (new HttpResponseHeader ("X-Powered-By", "Mono"));
 
 #if !TARGET_J2EE
-			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ", CultureInfo.InvariantCulture);
-			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
+			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
+			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date);
 			oHeaders.Add (date_header);
 			
 			if (IsCached)

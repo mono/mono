@@ -1085,25 +1085,20 @@ namespace System.Web {
                         }
                 }
                 
-		public byte [] BinaryRead(int count) {
-			int iSize = TotalBytes;
-			if (iSize == 0) {
-				throw new ArgumentException();
+		public byte [] BinaryRead (int count)
+		{
+			if (count < 0 || count > TotalBytes)
+				throw new ArgumentOutOfRangeException ("count");
+
+			byte [] data = new byte [count];
+			int nread = InputStream.Read (data, 0, count);
+			if (nread != count) {
+				byte [] tmp = new byte [nread];
+				Buffer.BlockCopy (data, 0, tmp, 0, nread);
+				data = tmp;
 			}
 
-			byte [] arrData = new byte[iSize];
-			
-			int iRetSize = InputStream.Read(arrData, 0, iSize);
-			if (iRetSize != iSize) {
-				byte [] tmpData = new byte[iRetSize];
-				if (iRetSize > 0) {
-					Array.Copy(arrData, 0, tmpData, 0, iRetSize);
-				}
-
-				arrData = tmpData;
-			}
-
-			return arrData;
+			return data;
 		}
 
 		public int [] MapImageCoordinates(string ImageFieldName) {
