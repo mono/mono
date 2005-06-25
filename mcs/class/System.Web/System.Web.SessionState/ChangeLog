@@ -1,7 +1,7 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionInProcHandler.cs: use cache.InsertPrivate.
-	* SessionDictionary.cs: fix typo that made Close useless.
+	* SessionDictionary.cs: fix typo that made Clone useless.
 
 2005-06-08 Ilya Kharmatsky <ilyak-at-mainsoft.com>
 
