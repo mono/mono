@@ -1,3 +1,8 @@
+2005-06-25  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromCompileUnitTest.cs: enabled test for bug
+	#75190.
+
 2005-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeProviderTest.cs: added tests for bug #75221 and

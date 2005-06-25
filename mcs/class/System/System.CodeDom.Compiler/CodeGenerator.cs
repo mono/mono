@@ -465,6 +465,7 @@ namespace System.CodeDom.Compiler {
 				return;
 			}
 
+			Console.Write (e.Value.GetType ());
 			Type type = e.Value.GetType ();
 			if (type == typeof (bool)) {
 				output.Write (e.Value.ToString ().ToLower (CultureInfo.InvariantCulture));
@@ -984,7 +985,12 @@ namespace System.CodeDom.Compiler {
 								 CodeGeneratorOptions options)
 		{
 			InitOutput (output, options);
-			GenerateCompileUnit (compileUnit);
+
+			if (compileUnit is CodeSnippetCompileUnit) {
+				GenerateSnippetCompileUnit ((CodeSnippetCompileUnit) compileUnit);
+			} else {
+				GenerateCompileUnit (compileUnit);
+			}
 		}
 
 		void ICodeGenerator.GenerateCodeFromExpression (CodeExpression expression,

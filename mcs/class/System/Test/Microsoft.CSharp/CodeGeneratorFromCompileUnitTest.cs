@@ -105,7 +105,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Ignore ("Bug #75190")]
 		public void CodeSnippetTest ()
 		{
 			codeUnit = new CodeSnippetCompileUnit ("public class Test1 {}");
