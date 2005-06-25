@@ -203,11 +203,17 @@ namespace System.Web.Caching {
 		// Called from other internal System.Web methods to add non-public objects into
 		// cache, like output cache etc
 		internal void InsertPrivate (string strKey, object objItem, CacheDependency objDependency,
-									DateTime absolutExpiration, TimeSpan slidingExpiration,
-									CacheItemPriority enumPriority, CacheItemRemovedCallback eventRemoveCallback) {
-
+						DateTime absolutExpiration, TimeSpan slidingExpiration,
+						CacheItemPriority enumPriority, CacheItemRemovedCallback eventRemoveCallback)
+		{
 			Add (strKey, objItem, objDependency, absolutExpiration, slidingExpiration, 
 				enumPriority, eventRemoveCallback, false, true);
+		}
+
+		internal void InsertPrivate (string strKey, object objItem, CacheDependency objDependency)
+		{
+			Add (strKey, objItem, objDependency, NoAbsoluteExpiration, NoSlidingExpiration,
+				CacheItemPriority.Default, null, false, true);
 		}
 
 		public object Remove (string strKey) {

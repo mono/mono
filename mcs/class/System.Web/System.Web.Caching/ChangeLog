@@ -1,5 +1,9 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Cache.cs: added new InsertPrivate overload.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Cache.cs: 
 	* CacheEntry.cs: style. Removed doc. comments.
 
