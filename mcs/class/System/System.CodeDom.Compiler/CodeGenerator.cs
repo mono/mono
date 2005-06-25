@@ -465,7 +465,6 @@ namespace System.CodeDom.Compiler {
 				return;
 			}
 
-			Console.Write (e.Value.GetType ());
 			Type type = e.Value.GetType ();
 			if (type == typeof (bool)) {
 				output.Write (e.Value.ToString ().ToLower (CultureInfo.InvariantCulture));
