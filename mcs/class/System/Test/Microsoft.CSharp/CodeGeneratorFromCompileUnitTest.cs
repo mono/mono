@@ -7,6 +7,7 @@
 // (c) 2003 Erik LeBel
 //
 using System;
+using System.Globalization;
 using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -101,7 +102,61 @@ namespace MonoTests.Microsoft.CSharp
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Generate ();
-			Assertion.AssertEquals ("[assembly: A()]", Code.Trim ());
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A()]{0}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void AttributeWithValueTest ()
+		{
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A1",
+				new CodePrimitiveExpression (false)));
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
+				new CodePrimitiveExpression (true)));
+
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A(A1=false, A2=true)]{0}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MultipleAttributeTest ()
+		{
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A()]{0}[assembly: B()]{0}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void AttributeAndSimpleNamespaceTest ()
+		{
+			CodeNamespace ns = new CodeNamespace ("A");
+			codeUnit.Namespaces.Add (ns);
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+
+			Generate ();
+
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A()]{0}[assembly: B()]{0}{0}namespace A {{{0}    {0}"
+				+ "}}{0}", writer.NewLine), Code);
 		}
 
 		[Test]
@@ -110,21 +165,7 @@ namespace MonoTests.Microsoft.CSharp
 			codeUnit = new CodeSnippetCompileUnit ("public class Test1 {}");
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
-			Assertion.AssertEquals ("public class Test1 {}" + writer.NewLine, writer.ToString());
+			Assertion.AssertEquals ("public class Test1 {}" + writer.NewLine, writer.ToString ());
 		}
-
-		/* FIXME
-		[Test]
-		public void AttributeWithValueTest ()
-		{
-			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
-			attrDec.Name = "A";
-			
-
-			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
-			Assertion.AssertEquals ("[assembly: A()]\n\n", Code);
-		}*/
-
 	}
 }

@@ -156,6 +156,27 @@ namespace Mono.CSharp
 			base.GenerateCompileUnitStart (compileUnit);
 		}
 
+		protected override void GenerateCompileUnit (CodeCompileUnit compileUnit)
+		{
+			GenerateCompileUnitStart (compileUnit);
+
+			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
+			if (attributes.Count != 0) {
+				foreach (CodeAttributeDeclaration att in attributes) {
+					GenerateAttributeDeclarationsStart (attributes);
+					Output.Write ("assembly: ");
+					OutputAttributeDeclaration (att);
+					GenerateAttributeDeclarationsEnd (attributes);
+					Output.WriteLine ();
+				}
+				Output.WriteLine ("");
+			}
+
+			foreach (CodeNamespace ns in compileUnit.Namespaces)
+				GenerateNamespace (ns);
+
+			GenerateCompileUnitEnd (compileUnit);
+		}
 
 		protected override void GenerateDelegateCreateExpression( CodeDelegateCreateExpression expression )
 		{
@@ -826,7 +847,7 @@ namespace Mono.CSharp
 		
 		protected override void GenerateAttributeDeclarationsStart( CodeAttributeDeclarationCollection attributes )
 		{
-			Output.Write( '[' );
+			Output.Write ('[');
 			CodeMemberMethod met = CurrentMember as CodeMemberMethod;
 			if (met != null && met.ReturnTypeCustomAttributes == attributes)
 				Output.Write ("return: ");
@@ -834,7 +855,25 @@ namespace Mono.CSharp
 		
 		protected override void GenerateAttributeDeclarationsEnd( CodeAttributeDeclarationCollection attributes )
 		{
-			Output.WriteLine( ']' );
+			Output.Write (']');
+		}
+
+		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)
+		{
+			Output.Write (attribute.Name.Replace ('+', '.'));
+			Output.Write ('(');
+			IEnumerator enumerator = attribute.Arguments.GetEnumerator ();
+			if (enumerator.MoveNext ()) {
+				CodeAttributeArgument argument = (CodeAttributeArgument) enumerator.Current;
+				OutputAttributeArgument (argument);
+
+				while (enumerator.MoveNext ()) {
+					Output.Write (", ");
+					argument = (CodeAttributeArgument) enumerator.Current;
+					OutputAttributeArgument (argument);
+				}
+			}
+			Output.Write (')');
 		}
 
 		protected override void OutputType( CodeTypeReference type )
