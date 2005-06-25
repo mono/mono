@@ -51,7 +51,7 @@ namespace System.Web.Compilation
 		{
 			string [] cacheKeys = new string [] { cachePrefix + filename };
 			CacheDependency dep = new CacheDependency (null, cacheKeys);
-			HttpRuntime.Cache.Insert (cacheTypePrefix + filename, type, dep);
+			HttpRuntime.Cache.InsertPrivate (cacheTypePrefix + filename, type, dep);
 		}
 
 		public static Type GetTypeFromCache (string filename)
@@ -75,7 +75,7 @@ namespace System.Web.Compilation
 				ICodeCompiler comp = compiler.Compiler;
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
-				cache.Insert (key, results, new CacheDependency (deps));
+				cache.InsertPrivate (key, results, new CacheDependency (deps));
 			}
 
 			return results;
@@ -99,7 +99,7 @@ namespace System.Web.Compilation
 				options.IncludeDebugInformation = parser.Debug;
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
-				cache.Insert (key, results, new CacheDependency (deps));
+				cache.InsertPrivate (key, results, new CacheDependency (deps));
 			}
 
 			return results;
@@ -155,7 +155,7 @@ namespace System.Web.Compilation
 				}
 
 				string [] deps = (string []) realdeps.ToArray (typeof (string));
-				cache.Insert (cachePrefix + key, results, new CacheDependency (deps));
+				cache.InsertPrivate (cachePrefix + key, results, new CacheDependency (deps));
 			}
 
 			return results;

@@ -187,7 +187,6 @@ namespace System.Web.Compilation
 		public AspGenerator (TemplateParser tparser)
 		{
 			this.tparser = tparser;
-			tparser.AddDependency (tparser.InputFile);
 			text = new StringBuilder ();
 			stack = new BuilderLocationStack ();
 			rootBuilder = new RootBuilder (tparser);
@@ -270,7 +269,7 @@ namespace System.Web.Compilation
 			CacheDependency cd = new CacheDependency ((string[])
 							tparser.Dependencies.ToArray (typeof (string)));
 
-			HttpRuntime.Cache.Insert ("@@Type" + tparser.InputFile, type, cd);
+			HttpRuntime.Cache.InsertPrivate ("@@Type" + tparser.InputFile, type, cd);
 			return type;
 		}
 

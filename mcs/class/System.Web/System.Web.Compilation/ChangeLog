@@ -1,3 +1,9 @@
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: use cache.InsertPrivate.
+	* AspGenerator.cs: use cache.InsertPrivate. Removed extra call to
+	AddDependency.
+
 2005-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: create the assemly in the DynamicBase directory,
