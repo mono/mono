@@ -1,3 +1,8 @@
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: make this really inactive when there are no events to
+	process.
+
 2005-05-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FAMWatcher.cs: move the call to StartMonitoringDirectory out of any

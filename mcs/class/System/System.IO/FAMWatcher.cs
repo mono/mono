@@ -197,17 +197,26 @@ namespace System.IO {
 
 		void Monitor ()
 		{
+			string filename;
+			int code, request_number;
+
 			while (!stop) {
-				int haveEvents;
-				lock (this) {
-					haveEvents = FAMPending (ref conn);
+				int res = -1;
+
+				try {
+					res = InternalFAMNextEvent (ref conn, out filename, out code, out request_number);
+				} catch (ThreadAbortException) {
+					Thread.ResetAbort ();
+					break;
 				}
 
-				if (haveEvents > 0) {
-					ProcessEvents ();
-				} else {
-					Thread.Sleep (500);
-				}
+				if (res == 0)
+					continue;
+
+				if (res == -1)
+					break;
+
+				ProcessEvents (filename, code, request_number);
 			}
 
 			lock (this) {
@@ -221,98 +230,88 @@ namespace System.IO {
 						NotifyFilters.Size	|
 						NotifyFilters.LastWrite;
 
-		void ProcessEvents ()
+		void ProcessEvents (string filename, int code, int requestNumber)
 		{
 			ArrayList newdirs = null;
 			lock (this) {
-				do {
-					int code;
-					string filename;
-					int requestNumber;
-					FileSystemWatcher fsw;
+				FileSystemWatcher fsw;
+				bool found = false;
+				switch ((FAMCodes) code) {
+				case FAMCodes.Changed:
+				case FAMCodes.Deleted:
+				case FAMCodes.Created:
+					found = requests.ContainsKey (requestNumber);
+					break;
+				case FAMCodes.Moved:
+				case FAMCodes.StartExecuting:
+				case FAMCodes.StopExecuting:
+				case FAMCodes.Acknowledge:
+				case FAMCodes.Exists:
+				case FAMCodes.EndExist:
+				default:
+					found = false;
+					break;
+				}
 
-					if (InternalFAMNextEvent (ref conn, out filename,
-								  out code, out requestNumber) != 1)
-						return;
+				if (!found)
+					return;
+				
+				FAMData data = (FAMData) requests [requestNumber];
+				if (!data.Enabled)
+					return;
 
-					bool found = false;
-					switch ((FAMCodes) code) {
-					case FAMCodes.Changed:
-					case FAMCodes.Deleted:
-					case FAMCodes.Created:
-						found = requests.ContainsKey (requestNumber);
-						break;
-					case FAMCodes.Moved:
-					case FAMCodes.StartExecuting:
-					case FAMCodes.StopExecuting:
-					case FAMCodes.Acknowledge:
-					case FAMCodes.Exists:
-					case FAMCodes.EndExist:
-					default:
-						found = false;
-						break;
+				fsw = data.FSW;
+				NotifyFilters flt = fsw.NotifyFilter;
+				RenamedEventArgs renamed = null;
+				FileAction fa = 0;
+				if (code == (int) FAMCodes.Changed && (flt & changed) != 0)
+					fa = FileAction.Modified;
+				else if (code == (int) FAMCodes.Deleted)
+					fa = FileAction.Removed;
+				else if (code == (int) FAMCodes.Created)
+					fa = FileAction.Added;
+
+				if (fa == 0)
+					return;
+
+				if (fsw.IncludeSubdirectories) {
+					string full = fsw.FullPath;
+					string datadir = data.Directory;
+					if (datadir != full) {
+						string reldir = datadir.Substring (full.Length + 1);
+						datadir = Path.Combine (datadir, filename);
+						filename = Path.Combine (reldir, filename);
+					} else {
+						datadir = Path.Combine (fsw.FullPath, filename);
 					}
 
-					if (!found)
-						continue;
-					
-					FAMData data = (FAMData) requests [requestNumber];
-					if (!data.Enabled)
-						continue;
+					if (fa == FileAction.Added && Directory.Exists (datadir)) {
+						if (newdirs == null)
+							newdirs = new ArrayList (4);
 
-					fsw = data.FSW;
-					NotifyFilters flt = fsw.NotifyFilter;
-					RenamedEventArgs renamed = null;
-					FileAction fa = 0;
-					if (code == (int) FAMCodes.Changed && (flt & changed) != 0)
-						fa = FileAction.Modified;
-					else if (code == (int) FAMCodes.Deleted)
-						fa = FileAction.Removed;
-					else if (code == (int) FAMCodes.Created)
-						fa = FileAction.Added;
-
-					if (fa == 0)
-						continue;
-
-					if (fsw.IncludeSubdirectories) {
-						string full = fsw.FullPath;
-						string datadir = data.Directory;
-						if (datadir != full) {
-							string reldir = datadir.Substring (full.Length + 1);
-							datadir = Path.Combine (datadir, filename);
-							filename = Path.Combine (reldir, filename);
-						} else {
-							datadir = Path.Combine (fsw.FullPath, filename);
-						}
-
-						if (fa == FileAction.Added && Directory.Exists (datadir)) {
-							if (newdirs == null)
-								newdirs = new ArrayList (4);
-
-							FAMData fd = new FAMData ();
-							fd.FSW = fsw;
-							fd.Directory = datadir;
-							fd.FileMask = fsw.MangledFilter;
-							fd.IncludeSubdirs = true;
-							fd.SubDirs = new Hashtable ();
-							fd.Enabled = true;
-							newdirs.Add (fd);
-							newdirs.Add (data);
-							requests [fd.Request.ReqNum] = fd;
-						}
+						FAMData fd = new FAMData ();
+						fd.FSW = fsw;
+						fd.Directory = datadir;
+						fd.FileMask = fsw.MangledFilter;
+						fd.IncludeSubdirs = true;
+						fd.SubDirs = new Hashtable ();
+						fd.Enabled = true;
+						newdirs.Add (fd);
+						newdirs.Add (data);
+						requests [fd.Request.ReqNum] = fd;
 					}
+				}
 
-					if (filename != data.Directory && !fsw.Pattern.IsMatch (filename))
-						continue;
+				if (filename != data.Directory && !fsw.Pattern.IsMatch (filename))
+					return;
 
-					lock (fsw) {
-						fsw.DispatchEvents (fa, filename, ref renamed);
-						if (fsw.Waiting) {
-							fsw.Waiting = false;
-							System.Threading.Monitor.PulseAll (fsw);
-						}
+				lock (fsw) {
+					fsw.DispatchEvents (fa, filename, ref renamed);
+					if (fsw.Waiting) {
+						fsw.Waiting = false;
+						System.Threading.Monitor.PulseAll (fsw);
 					}
-				} while (FAMPending (ref conn) > 0);
+				}
 			}
 
 
