@@ -83,5 +83,87 @@ namespace MonoTests.Microsoft.VisualBasic
 				"<A(),  _{0} B()>  _{0}Public Class Test1{0}End Class{0}", 
 				writer.NewLine), Code);
 		}
+
+		[Test]
+		public void EventMembersTypeTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			evt.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			evt.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (evt);
+
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}    {0}    <A(),  _{0}     B()>  _{0}    "
+				+ "Private Event  As System.Void{0}End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void EventMembersTypeTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "OnClick";
+			evt.Attributes = MemberAttributes.Public;
+			evt.Type = new CodeTypeReference(typeof (int));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}    {0}    "
+				+ "Public Event OnClick As Integer{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void FieldMembersTypeTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberField fld = new CodeMemberField ();
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			fld.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			fld.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (fld);
+
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}    {0}    <A(),  _{0}     B()>  _{0}    "
+				+ "Private  As System.Void{0}End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void FieldMembersTypeTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberField fld = new CodeMemberField ();
+			fld.Name = "Name";
+			fld.Attributes = MemberAttributes.Public;
+			fld.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (fld);
+
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}    {0}    "
+				+ "Public Name As Integer{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
 	}
 }

@@ -569,12 +569,12 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			if (eventRef.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (eventRef.CustomAttributes);
+				OutputAttributes (eventRef.CustomAttributes, null, true);
 
 			MemberAttributes attributes = eventRef.Attributes;
 
 			OutputMemberAccessModifier (attributes);
-			OutputMemberScopeModifier (attributes);
+			OutputMemberScopeModifier (attributes | MemberAttributes.Final);  // Don't output "Overridable"
 
 			output.Write ("Event ");
 			OutputTypeNamePair (eventRef.Type, eventRef.Name);
@@ -586,7 +586,7 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			if (field.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (field.CustomAttributes);
+				OutputAttributes (field.CustomAttributes, null, true);
 
 			MemberAttributes attributes = field.Attributes;
 			OutputMemberAccessModifier (attributes);
@@ -1218,7 +1218,6 @@ namespace Microsoft.VisualBasic
 				output = GetTypeOutput (arrayType);
 			else { 
 				switch (type.BaseType) {
-
 				case "System.Decimal":
 					output = "Decimal";
 					break;
@@ -1228,51 +1227,30 @@ namespace Microsoft.VisualBasic
 				case "System.Single":
 					output = "Single";
 					break;
-				
 				case "System.Byte":
 					output = "Byte";
-					break;
-				case "System.SByte":
-					output = "SByte";
 					break;
 				case "System.Int32":
 					output = "Integer";
 					break;
-				case "System.UInt32":
-					output = "UInt32";
-					break;
 				case "System.Int64":
 					output = "Long";
-					break;
-				case "System.UInt64":
-					output = "UInt64";
 					break;
 				case "System.Int16":
 					output = "Short";
 					break;
-				case "System.UInt16":
-					output = "UInt16";
-					break;
-
 				case "System.Boolean":
 					output = "Boolean";
 					break;
-				
 				case "System.Char":
 					output = "Char";
 					break;
-
 				case "System.String":
 					output = "String";
 					break;
 				case "System.Object":
 					output = "Object";
 					break;
-
-				case "System.Void":
-					output = "Nothing";
-					break;
-
 				default:
 					output = type.BaseType;
 					break;

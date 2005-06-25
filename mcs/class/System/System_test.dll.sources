@@ -13,6 +13,7 @@ Microsoft.VisualBasic/CodeGeneratorFromTypeTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
 System/UriTest2.cs
+System.CodeDom/CodeMemberFieldTest.cs
 System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.Collections.Generic/QueueTest.cs
 System.Collections.Generic/StackTest.cs

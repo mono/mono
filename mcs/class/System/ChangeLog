@@ -1,5 +1,10 @@
 2005-06-25 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* System_test.dll.sources: Added CodeMemberFieldTest.cs from
+	System.CodeDom.
+
+2005-06-25 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* System_test.dll.sources: Added CodeGeneratorFromTypeTest.cs from
 	Microsoft.VisualBasic.
 
