@@ -1192,40 +1192,65 @@ public class Page : TemplateControl, IHttpHandler
 	static readonly object PreLoadEvent = new object ();
 	static readonly object PreRenderCompleteEvent = new object ();
 	static readonly object SaveStateCompleteEvent = new object ();
+	int event_mask;
+	const int initcomplete_mask = 1;
+	const int loadcomplete_mask = 1 << 1;
+	const int preinit_mask = 1 << 2;
+	const int preload_mask = 1 << 3;
+	const int prerendercomplete_mask = 1 << 4;
+	const int savestatecomplete_mask = 1 << 5;
 	
 	public event EventHandler InitComplete {
-		add { Events.AddHandler (InitCompleteEvent, value); }
+		add {
+			event_mask |= initcomplete_mask;
+			Events.AddHandler (InitCompleteEvent, value);
+		}
 		remove { Events.RemoveHandler (InitCompleteEvent, value); }
 	}
 	
 	public event EventHandler LoadComplete {
-		add { Events.AddHandler (LoadCompleteEvent, value); }
+		add {
+			event_mask |= loadcomplete_mask;
+			Events.AddHandler (LoadCompleteEvent, value);
+		}
 		remove { Events.RemoveHandler (LoadCompleteEvent, value); }
 	}
 	
 	public event EventHandler PreInit {
-		add { Events.AddHandler (PreInitEvent, value); }
+		add {
+			event_mask |= preinit_mask;
+			Events.AddHandler (PreInitEvent, value);
+		}
 		remove { Events.RemoveHandler (PreInitEvent, value); }
 	}
 	
 	public event EventHandler PreLoad {
-		add { Events.AddHandler (PreLoadEvent, value); }
+		add {
+			event_mask |= preload_mask;
+			Events.AddHandler (PreLoadEvent, value);
+		}
 		remove { Events.RemoveHandler (PreLoadEvent, value); }
 	}
 	
 	public event EventHandler PreRenderComplete {
-		add { Events.AddHandler (PreRenderCompleteEvent, value); }
+		add {
+			event_mask |= prerendercomplete_mask;
+			Events.AddHandler (PreRenderCompleteEvent, value);
+		}
 		remove { Events.RemoveHandler (PreRenderCompleteEvent, value); }
 	}
 	
 	public event EventHandler SaveStateComplete {
-		add { Events.AddHandler (SaveStateCompleteEvent, value); }
+		add {
+			event_mask |= savestatecomplete_mask;
+			Events.AddHandler (SaveStateCompleteEvent, value);
+		}
 		remove { Events.RemoveHandler (SaveStateCompleteEvent, value); }
 	}
 	
 	protected virtual void OnInitComplete (EventArgs e)
 	{
-		if (Events != null) {
+		if ((event_mask & initcomplete_mask) != 0) {
 			EventHandler eh = (EventHandler) (Events [InitCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}
@@ -1233,7 +1258,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	protected virtual void OnLoadComplete (EventArgs e)
 	{
-		if (Events != null) {
+		if ((event_mask & loadcomplete_mask) != 0) {
 			EventHandler eh = (EventHandler) (Events [LoadCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}
@@ -1241,7 +1266,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	protected virtual void OnPreInit (EventArgs e)
 	{
-		if (Events != null) {
+		if ((event_mask & preinit_mask) != 0) {
 			EventHandler eh = (EventHandler) (Events [PreInitEvent]);
 			if (eh != null) eh (this, e);
 		}
@@ -1249,7 +1274,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	protected virtual void OnPreLoad (EventArgs e)
 	{
-		if (Events != null) {
+		if ((event_mask & preload_mask) != 0) {
 			EventHandler eh = (EventHandler) (Events [PreLoadEvent]);
 			if (eh != null) eh (this, e);
 		}
@@ -1257,7 +1282,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	protected virtual void OnPreRenderComplete (EventArgs e)
 	{
-		if (Events != null) {
+		if ((event_mask & prerendercomplete_mask) != 0) {
 			EventHandler eh = (EventHandler) (Events [PreRenderCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}
@@ -1265,7 +1290,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	protected virtual void OnSaveStateComplete (EventArgs e)
 	{
-		if (Events != null) {
+		if ((event_mask & savestatecomplete_mask) != 0) {
 			EventHandler eh = (EventHandler) (Events [SaveStateCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}

@@ -1,5 +1,11 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs:
+	* Control.cs: avoid the creation of the EventHandlerList and accessing 
+	to it whenever possible. Fix ENABLE_THEMING constant.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateParser.cs:
 	* TemplateControlParser.cs:
 	* UserControlParser.cs: detect circular references when a control tries
