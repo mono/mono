@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web.Configuration;
@@ -223,8 +224,12 @@ namespace System.Web {
 
 		private void ParseFormData ()
 		{
-			string contentType = ContentType;
-			if (0 == String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
+			string content_type = ContentType;
+			if (content_type == null)
+				return;
+
+			content_type = content_type.ToLower (CultureInfo.InvariantCulture);
+			if (content_type == "application/x-www-form-urlencoded") {
 				byte [] arrData = GetRawContent ();
 				Encoding enc = ContentEncoding;
 				string data = enc.GetString (arrData);
@@ -232,24 +237,18 @@ namespace System.Web {
 				return;
 			}
 
-			if (!ContentType.StartsWith ("multipart/form-data")) {
-				if (contentType.Length > 0)
-					Console.WriteLine ("Content-Type -> {0} not supported", contentType);
-
-				GetRawContent (); // at least, read the data and check length validity
-				_oFormData = new HttpValueCollection ();
-				return;
-			}
-			
-			MultipartContentElement [] parts = GetMultipartFormData ();
 			_oFormData = new HttpValueCollection ();
-			if (parts == null) return;
-				
-			foreach (MultipartContentElement p in parts) {
-				if (!p.IsFormItem) continue;
-				_oFormData.Add (p.Name, p.GetString (ContentEncoding));
+			if (content_type == "multipart/form-data") {
+				MultipartContentElement [] parts = GetMultipartFormData ();
+				if (parts == null)
+					return;
+				Encoding content_encoding = ContentEncoding;
+				foreach (MultipartContentElement p in parts) {
+					if (p.IsFormItem) {
+						_oFormData.Add (p.Name, p.GetString (content_encoding));
+					}
+				}
 			}
-
 		}
 
 		[MonoTODO("void Dispose")]

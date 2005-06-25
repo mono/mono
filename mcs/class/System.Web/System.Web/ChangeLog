@@ -1,5 +1,10 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpRequest.cs: don't print anything for unknown content types in
+	ParseFormData. Use lowercase compare.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: invariant love.
 
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
