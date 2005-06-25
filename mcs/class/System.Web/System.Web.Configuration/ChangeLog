@@ -1,3 +1,8 @@
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerItem.cs: the path matches 'path\z', as the previous '\Apath\z'
+	failed for 'dir/*.ext'.
+
 2005-06-23  Lluis Sanchez Gual <lluis@novell.com>
 
 	* VirtualDirectoryMapping.cs: Implemented.
@@ -9,9 +14,9 @@
 
 2005-06-19 Ilya Kharmatsky <ilyak-at-mainsoft.com>
 
-    * HttpRuntimeConfig.cs: Added TARGET_JVM directive in "using clause"
-      in order to exclude in J2EE configuration usage of unsupported
-      CodeDome API.
+	* HttpRuntimeConfig.cs: Added TARGET_JVM directive in "using clause"
+	in order to exclude in J2EE configuration usage of unsupported
+	CodeDome API.
 
 2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
 
