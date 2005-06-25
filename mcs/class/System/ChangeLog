@@ -1,3 +1,8 @@
+2005-06-25 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeGeneratorTestBase.cs and
+	CodeGeneratorFromCompileUnitTest.cs from Microsoft.VisualBasic.
+
 2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: added reference to Mono.Security.dll when building the

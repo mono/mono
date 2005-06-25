@@ -40,6 +40,7 @@
 
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.CodeDom;
@@ -98,6 +99,12 @@ namespace Microsoft.VisualBasic
 			get {
 				return "Nothing";
 			}
+		}
+
+		protected override void ContinueOnNewLine (string st)
+		{
+			Output.Write (st);
+			Output.WriteLine (" _");
 		}
 
 		protected override void GenerateArrayCreateExpression (CodeArrayCreateExpression expression)
@@ -187,7 +194,41 @@ namespace Microsoft.VisualBasic
 				Output.WriteLine("Option Explicit On"); // Strict On implies Explicit On
 				Output.WriteLine("Option Strict On");
 			}
-			Output.WriteLine ();				
+			Output.WriteLine ();
+		}
+
+		protected override void GenerateCompileUnit (CodeCompileUnit compileUnit)
+		{
+			const string prefix = "Assembly: ";
+			GenerateCompileUnitStart (compileUnit);
+
+			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
+			if (attributes.Count != 0) {
+				GenerateAttributeDeclarationsStart (attributes);
+
+				IEnumerator enumerator = attributes.GetEnumerator ();
+				if (enumerator.MoveNext ()) {
+					CodeAttributeDeclaration att = (CodeAttributeDeclaration) enumerator.Current;
+					Output.Write (prefix);
+					OutputAttributeDeclaration (att);
+
+					while (enumerator.MoveNext ()) {
+						Output.Write (", ");
+						ContinueOnNewLine ("");
+						Output.Write (" ");
+						att = (CodeAttributeDeclaration) enumerator.Current;
+						Output.Write (prefix);
+						OutputAttributeDeclaration (att);
+					}
+				}
+				GenerateAttributeDeclarationsEnd (attributes);
+				Output.Write (" ");
+				Output.WriteLine ();
+			}
+
+			GenerateNamespaces (compileUnit);
+
+			GenerateCompileUnitEnd (compileUnit);
 		}
 
 		protected override void GenerateDelegateCreateExpression (CodeDelegateCreateExpression expression)
@@ -311,10 +352,7 @@ namespace Microsoft.VisualBasic
 
 			Type type = e.Value.GetType ();
 			if (type == typeof (bool)) {
-				if ((bool)e.Value)
-					output.Write ("True");
-				else
-					output.Write ("False");
+				output.Write (e.Value.ToString ().ToLower (CultureInfo.InvariantCulture));
 			} 
 			else if (type == typeof (char)) {
 				output.Write ("\"" + e.Value.ToString () + "\"c");
@@ -792,24 +830,10 @@ namespace Microsoft.VisualBasic
 		{
 			GenerateCommentStatements (ns.Comments);
 			
-			bool Imports2MSVBFound;
-			Imports2MSVBFound = false;
-			if (null != ns.Imports) 
-			{
-				foreach (CodeNamespaceImport import in ns.Imports)
-				{
-					if (string.Compare (import.Namespace, "Microsoft.VisualBasic", true, System.Globalization.CultureInfo.InvariantCulture) == 0)
-						Imports2MSVBFound = true;
-				}
-			}
-			// add standard import to Microsoft.VisualBasic if missing
-			if (Imports2MSVBFound == false)
-				Output.WriteLine ("Imports Microsoft.VisualBasic");
 			// add regular imports
 			GenerateNamespaceImports (ns);
 
-			TextWriter output = Output;
-			output.WriteLine(); 
+			Output.WriteLine (); 
 			GenerateNamespaceStart (ns); 
 			GenerateTypes (ns);
 			GenerateNamespaceEnd (ns);
@@ -853,7 +877,35 @@ namespace Microsoft.VisualBasic
 		
 		protected override void GenerateAttributeDeclarationsEnd (CodeAttributeDeclarationCollection attributes)
 		{
-			Output.WriteLine ("> _");
+			Output.Write (">");
+		}
+
+		protected override void OutputAttributeArgument (CodeAttributeArgument argument)
+		{
+			string name = argument.Name;
+			if (name != null) {
+				Output.Write (name);
+				Output.Write (":=");
+			}
+			GenerateExpression (argument.Value);
+		}
+
+		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)
+		{
+			Output.Write (attribute.Name.Replace ('+', '.'));
+			Output.Write ('(');
+			IEnumerator enumerator = attribute.Arguments.GetEnumerator ();
+			if (enumerator.MoveNext ()) {
+				CodeAttributeArgument argument = (CodeAttributeArgument) enumerator.Current;
+				OutputAttributeArgument (argument);
+
+				while (enumerator.MoveNext ()) {
+					Output.Write (", ");
+					argument = (CodeAttributeArgument) enumerator.Current;
+					OutputAttributeArgument (argument);
+				}
+			}
+			Output.Write (')');
 		}
 
 		protected override void OutputDirection (FieldDirection direction)
