@@ -199,32 +199,10 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateCompileUnit (CodeCompileUnit compileUnit)
 		{
-			const string prefix = "Assembly: ";
 			GenerateCompileUnitStart (compileUnit);
 
-			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
-			if (attributes.Count != 0) {
-				GenerateAttributeDeclarationsStart (attributes);
-
-				IEnumerator enumerator = attributes.GetEnumerator ();
-				if (enumerator.MoveNext ()) {
-					CodeAttributeDeclaration att = (CodeAttributeDeclaration) enumerator.Current;
-					Output.Write (prefix);
-					OutputAttributeDeclaration (att);
-
-					while (enumerator.MoveNext ()) {
-						Output.Write (", ");
-						ContinueOnNewLine ("");
-						Output.Write (" ");
-						att = (CodeAttributeDeclaration) enumerator.Current;
-						Output.Write (prefix);
-						OutputAttributeDeclaration (att);
-					}
-				}
-				GenerateAttributeDeclarationsEnd (attributes);
-				Output.Write (" ");
-				Output.WriteLine ();
-			}
+			OutputAttributes (compileUnit.AssemblyCustomAttributes, 
+				"Assembly: ", false);
 
 			GenerateNamespaces (compileUnit);
 
@@ -772,8 +750,7 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			if (declaration.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (declaration.CustomAttributes);
+			OutputAttributes (declaration.CustomAttributes, null, true);
 			TypeAttributes attributes = declaration.TypeAttributes;
 			OutputTypeAttributes (attributes,
 				declaration.IsStruct,
@@ -806,7 +783,7 @@ namespace Microsoft.VisualBasic
 						output.WriteLine ();
 					}
 				}
-			}			
+			}
 		}
 
 		protected override void GenerateTypeEnd (CodeTypeDeclaration declaration)
@@ -878,6 +855,38 @@ namespace Microsoft.VisualBasic
 		protected override void GenerateAttributeDeclarationsEnd (CodeAttributeDeclarationCollection attributes)
 		{
 			Output.Write (">");
+		}
+
+		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, bool continueLine) {
+			if (attributes.Count != 0) {
+				GenerateAttributeDeclarationsStart (attributes);
+
+				IEnumerator enumerator = attributes.GetEnumerator ();
+				if (enumerator.MoveNext ()) {
+					CodeAttributeDeclaration att = (CodeAttributeDeclaration) enumerator.Current;
+					if (prefix != null) {
+						Output.Write (prefix);
+					}
+					OutputAttributeDeclaration (att);
+
+					while (enumerator.MoveNext ()) {
+						ContinueOnNewLine (", ");
+						Output.Write (" ");
+						att = (CodeAttributeDeclaration) enumerator.Current;
+						if (prefix != null) {
+							Output.Write (prefix);
+						}
+						OutputAttributeDeclaration (att);
+					}
+				}
+				GenerateAttributeDeclarationsEnd (attributes);
+				Output.Write (" ");
+				if (continueLine) {
+					ContinueOnNewLine ("");
+				} else {
+					Output.WriteLine ();
+				}
+			}
 		}
 
 		protected override void OutputAttributeArgument (CodeAttributeArgument argument)
