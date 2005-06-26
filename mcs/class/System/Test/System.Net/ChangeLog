@@ -1,3 +1,8 @@
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequestTest.cs: added test for a HTTP/1.1 server returning a
+	chunked response with out a 'last-chunk' mark.
+
 2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequestTest.cs: added test for the sslClientStream blocking

@@ -95,6 +95,8 @@ namespace MonoTests.System.Net
 		[Test]
 		public void SslClientBlock ()
 		{
+			// This tests that the write request/initread/write body sequence does not hang
+			// when using SSL.
 			// If there's a regression for this, the test will hang.
 			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
 			try {
@@ -122,6 +124,55 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void BadServer_ChunkedClose ()
+		{
+			// The server will send a chunked response without a 'last-chunked' mark
+			// and then shutdown the socket for sending.
+			BadChunkedServer server = new BadChunkedServer ();
+			server.Start ();
+			string url = String.Format ("http://{0}:{1}/nothing.html", server.IPAddress, server.Port);
+			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
+			HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
+			string x = null;
+			try {
+				byte [] bytes = new byte [32];
+				// Using StreamReader+UTF8Encoding here fails on MS runtime
+				Stream stream = resp.GetResponseStream ();
+				int nread = stream.Read (bytes, 0, 32);
+				Assertion.AssertEquals ("#01", 16, nread);
+				x = Encoding.ASCII.GetString (bytes, 0, 16);
+			} finally {
+				resp.Close ();
+				server.Stop ();
+			}
+
+			if (server.Error != null)
+				throw server.Error;
+
+			Assertion.AssertEquals ("1234567890123456", x);
+		}
+
+		class BadChunkedServer : HttpServer {
+			protected override void Run ()
+			{
+				Socket client = sock.Accept ();
+				NetworkStream ns = new NetworkStream (client, true);
+				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
+				writer.Write (  "HTTP/1.1 200 OK\r\n" +
+						"Transfer-Encoding: chunked\r\n" +
+						"Connection: close\r\n" +
+						"Content-Type: text/plain; charset=UTF-8\r\n\r\n");
+
+				// This body lacks a 'last-chunk' (see RFC 2616)
+				writer.Write ("10\r\n1234567890123456\r\n");
+				writer.Flush ();
+				client.Shutdown (SocketShutdown.Send);
+				Thread.Sleep (1000);
+				writer.Close ();
+			}
+		}
+
 		class AcceptAllPolicy : ICertificatePolicy {
 			public bool CheckValidationResult (ServicePoint sp, X509Certificate certificate, WebRequest request, int error)
 			{
@@ -129,14 +180,13 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		class SslHttpServer
+		abstract class HttpServer
 		{
-			X509Certificate _certificate;
-			Socket sock;
-			ManualResetEvent evt;
-			Exception error;
+			protected Socket sock;
+			protected Exception error;
+			protected ManualResetEvent evt;
 
-			public SslHttpServer ()
+			public HttpServer ()
 			{
 				sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				sock.Bind (new IPEndPoint (IPAddress.Loopback, 0));
@@ -153,6 +203,7 @@ namespace MonoTests.System.Net
 			public void Stop ()
 			{
 				evt.Set ();
+				sock.Close ();
 			}
 			
 			public IPAddress IPAddress {
@@ -167,7 +218,13 @@ namespace MonoTests.System.Net
 				get { return error; }
 			}
 
-			void Run ()
+			protected abstract void Run ();
+		}
+
+		class SslHttpServer : HttpServer {
+			X509Certificate _certificate;
+
+			protected override void Run ()
 			{
 				try {
 					Socket client = sock.Accept ();
@@ -200,7 +257,6 @@ namespace MonoTests.System.Net
 					writer.Write (answer);
 					writer.Flush ();
 					evt.WaitOne (50000, false);
-					sock.Close ();
 				} catch (Exception e) {
 					error = e;
 				}
