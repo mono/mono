@@ -238,7 +238,7 @@ namespace System.Web {
 			}
 
 			_oFormData = new HttpValueCollection ();
-			if (content_type == "multipart/form-data") {
+			if (content_type.StartsWith ("multipart/form-data")) {
 				MultipartContentElement [] parts = GetMultipartFormData ();
 				if (parts == null)
 					return;

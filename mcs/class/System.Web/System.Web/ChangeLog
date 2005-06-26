@@ -1,5 +1,10 @@
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpRequest.cs: use StartsWith when looking for 'multipart/form-data'.
+	File uploading was broken since a few commits ago.
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: ensure that the last chunk ('0\r\n\r\n') is sent
 	even if response.Close is called before a final flush. MS/IIS fails to
 	do this.
