@@ -1,5 +1,9 @@
 2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* VBCodeGenerator.cs: Minor fixes for compatibility with MS.NET 2.0.
+
+2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* VBCodeGenerator.cs: Fixed generated code for attributes on ctors.
 	Implemented Base/Chained ctor args.
 

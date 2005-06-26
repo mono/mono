@@ -185,8 +185,16 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"Public Class Test1{0}    {0}    <A(),  _{0}     B()>  _{0}    "
-				+ "Private Property  As System.Void{0}    End Property{0}"
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    <A(),  _{0}"
+				+ "     B()>  _{0}"
+#if NET_2_0
+				+ "    Private Property () As System.Void{0}"
+#else
+				+ "    Private Property  As System.Void{0}"
+#endif
+				+ "    End Property{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 
@@ -205,7 +213,155 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}"
 				+ "    {0}"
+#if NET_2_0
+				+ "    Public Overridable Property Name() As Integer{0}"
+#else
 				+ "    Public Overridable Property Name As Integer{0}"
+#endif
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Family;
+			property.HasGet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Protected Overridable ReadOnly Property Name() As Integer{0}"
+#else
+				+ "    Protected Overridable ReadOnly Property Name As Integer{0}"
+#endif
+				+ "        Get{0}"
+				+ "        End Get{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeSetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.FamilyAndAssembly;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Friend WriteOnly Property Name() As Integer{0}"
+#else
+				+ "    Friend WriteOnly Property Name As Integer{0}"
+#endif
+				+ "        Set{0}"
+				+ "        End Set{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetSet ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Family;
+			property.HasGet = true;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Protected Overridable Property Name() As Integer{0}"
+#else
+				+ "    Protected Overridable Property Name As Integer{0}"
+#endif
+				+ "        Get{0}"
+				+ "        End Get{0}"
+				+ "        Set{0}"
+				+ "        End Set{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+#if !NET_2_0
+		// A bug in MS.NET 1.x causes MemberAttributes.FamilyOrAssembly to be 
+		// generated as Protected
+		[Category("NotDotNet")]
+#endif
+		[Test]
+		public void PropertyMembersTypeFamilyOrAssembly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.FamilyOrAssembly;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Protected Friend Property Name() As Integer{0}"
+#else
+				+ "    Protected Friend Property Name As Integer{0}"
+#endif
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+#if !NET_2_0
+		// A bug in MS.NET 1.x causes MemberAttributes.Assembly to be generated
+		// as Protected
+		[Category ("NotDotNet")]
+#endif
+		[Test]
+		public void PropertyMembersTypeAssembly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Assembly;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Friend Overridable Property Name() As Integer{0}"
+#else
+				+ "    Friend Property Name As Integer{0}"
+#endif
 				+ "    End Property{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}

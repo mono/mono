@@ -686,29 +686,29 @@ namespace Microsoft.VisualBasic
 				output.Write ("WriteOnly " );
 
 			output.Write ("Property " );
-			
-			OutputTypeNamePair (property.Type, property.Name);
+
+			Output.Write (property.Name);
+#if NET_2_0
+			Output.Write ('(');
+			Output.Write (')');
+#endif
+			Output.Write (" As ");
+			Output.Write (GetTypeOutput(property.Type));
 			output.WriteLine ();
 			++Indent;
 
 			if (property.HasGet) {
 				output.WriteLine ("Get");
 				++Indent;
-
 				GenerateStatements (property.GetStatements);
-
 				--Indent;
 				output.WriteLine ("End Get");
 			}
 			
 			if (property.HasSet) {
-				output.Write ("Set (");
-				OutputTypeNamePair (property.Type, "Value");
-				output.WriteLine (")");
+				output.WriteLine ("Set");
 				++Indent;
-
 				GenerateStatements (property.SetStatements);
-
 				--Indent;
 				output.WriteLine ("End Set");
 			}
@@ -1022,16 +1022,23 @@ namespace Microsoft.VisualBasic
 				//
 				// FUNNY! if the scope value is
 				// rubbish (0 or >Const), and access
-				// is public or protected, make it
+				// is public, protected make it
 				// "virtual".
 				//
 				// i'm not sure whether this is 100%
 				// correct, but it seems to be MS
-				// behavior. 
+				// behavior.
+				//
+				// On MS.NET 2.0, internal properties
+				// are also marked "virtual".
 				//
 				MemberAttributes access = attributes & MemberAttributes.AccessMask;
-				if ( access == MemberAttributes.Public || 
-					access == MemberAttributes.Family )
+				if (access == MemberAttributes.Public || 
+#if NET_2_0
+					access == MemberAttributes.Family || access == MemberAttributes.Assembly)
+#else
+					access == MemberAttributes.Family)
+#endif
 					Output.Write ("Overridable ");
 				break;
 			}
