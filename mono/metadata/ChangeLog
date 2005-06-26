@@ -1,3 +1,7 @@
+2005-06-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* *.c: Kill some warnings.
+
 2005-06-23  Duncan Mak  <duncan@novell.com>
 
 	* socket-io.c (is_loopback): Cast 'ptr' to 'struct in6_addr *' so
