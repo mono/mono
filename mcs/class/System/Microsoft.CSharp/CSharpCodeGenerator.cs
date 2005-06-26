@@ -161,7 +161,8 @@ namespace Mono.CSharp
 			GenerateCompileUnitStart (compileUnit);
 
 			if (compileUnit.AssemblyCustomAttributes.Count > 0) {
-				OutputAttributes (compileUnit.AssemblyCustomAttributes, "assembly: ");
+				OutputAttributes (compileUnit.AssemblyCustomAttributes, 
+					"assembly: ", false);
 				Output.WriteLine ("");
 			}
 
@@ -525,8 +526,7 @@ namespace Mono.CSharp
 
 		protected override void GenerateEvent( CodeMemberEvent eventRef, CodeTypeDeclaration declaration )
 		{
-			if (eventRef.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (eventRef.CustomAttributes);
+			OutputAttributes (eventRef.CustomAttributes, null, false);
 
 			OutputMemberAccessModifier (eventRef.Attributes);
 			OutputMemberScopeModifier (eventRef.Attributes | MemberAttributes.Final); // Don't output "virtual"
@@ -539,8 +539,7 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			if (field.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations( field.CustomAttributes );
+			OutputAttributes (field.CustomAttributes, null, false);
 
 			if (IsCurrentEnum)
 				Output.Write(GetSafeName (field.Name));
@@ -581,8 +580,7 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			if (method.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations( method.CustomAttributes );
+			OutputAttributes (method.CustomAttributes, null, false);
 
 			if (method.ReturnTypeCustomAttributes.Count > 0)
 				OutputAttributeDeclarations( method.ReturnTypeCustomAttributes );
@@ -634,12 +632,11 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			if (property.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations( property.CustomAttributes );
+			OutputAttributes (property.CustomAttributes, null, false);
 
 			MemberAttributes attributes = property.Attributes;
-			OutputMemberAccessModifier( attributes );
-			OutputMemberScopeModifier( attributes );
+			OutputMemberAccessModifier (attributes);
+			OutputMemberScopeModifier (attributes);
 
 			if (property.Name == "Item")
 			{
@@ -672,7 +669,7 @@ namespace Mono.CSharp
 					GenerateStatements (property.GetStatements);
 
 					--Indent;
-					output.WriteLine ("}");
+					output.WriteLine ('}');
 				}
 
 				if (property.HasSet)
@@ -683,53 +680,40 @@ namespace Mono.CSharp
 					GenerateStatements (property.SetStatements);
 
 					--Indent;
-					output.WriteLine ("}");
+					output.WriteLine ('}');
 				}
 			}
 
 			--Indent;
-			output.WriteLine ("}");
+			output.WriteLine ('}');
 		}
 
 		protected override void GenerateConstructor( CodeConstructor constructor,
 							     CodeTypeDeclaration declaration )
 		{
-			if (constructor.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (constructor.CustomAttributes);
+			OutputAttributes (constructor.CustomAttributes, null, false);
 
 			OutputMemberAccessModifier (constructor.Attributes);
-			Output.Write (GetSafeName (CurrentTypeName) + " (");
+			Output.Write (GetSafeName (CurrentTypeName) + "(");
 			OutputParameters (constructor.Parameters);
-			Output.Write (") ");
-			if (constructor.ChainedConstructorArgs.Count > 0)
-			{
-				Output.Write(": this(");
-				bool first = true;
-				foreach (CodeExpression ex in constructor.ChainedConstructorArgs)
-				{
-					if (!first)
-						Output.Write(", ");
-					first = false;
-					GenerateExpression(ex);
-				}
-				
-				Output.Write(") ");
-			};
- 			if (constructor.BaseConstructorArgs.Count > 0)
-			{
-				Output.Write(": base(");
-				bool first = true;
-				foreach (CodeExpression ex in constructor.BaseConstructorArgs)
-				{
-					if (!first)
-						Output.Write(", ");
-					first = false;
-					GenerateExpression(ex);
-				}
-				
-				Output.Write(") ");
-			};
-			Output.WriteLine ("{");
+			Output.Write (")");
+			if (constructor.BaseConstructorArgs.Count > 0) {
+				Output.WriteLine (" : ");
+				Indent += 2;
+				Output.Write ("base(");
+				OutputExpressionList (constructor.BaseConstructorArgs);
+				Output.Write (')');
+				Indent -= 2;
+			}
+			if (constructor.ChainedConstructorArgs.Count > 0) {
+				Output.WriteLine (" : ");
+				Indent += 2;
+				Output.Write("this(");
+				OutputExpressionList (constructor.ChainedConstructorArgs);
+				Output.Write(')');
+				Indent -= 2;
+			}
+			Output.WriteLine (" {");
 			Indent++;
 			GenerateStatements (constructor.Statements);
 			Indent--;
@@ -750,7 +734,7 @@ namespace Mono.CSharp
 			TextWriter output = Output;
 			CodeTypeDelegate del = declaration as CodeTypeDelegate;
 
-			OutputAttributes (declaration.CustomAttributes, null);
+			OutputAttributes (declaration.CustomAttributes, null, false);
 
 			TypeAttributes attributes = declaration.TypeAttributes;
 			OutputTypeAttributes( attributes,
@@ -850,6 +834,23 @@ namespace Mono.CSharp
 			Output.Write (']');
 		}
 
+		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, bool inline)
+		{
+			foreach (CodeAttributeDeclaration att in attributes) {
+				GenerateAttributeDeclarationsStart (attributes);
+				if (prefix != null) {
+					Output.Write (prefix);
+				}
+				OutputAttributeDeclaration (att);
+				GenerateAttributeDeclarationsEnd (attributes);
+				if (inline) {
+					Output.Write (" ");
+				} else {
+					Output.WriteLine ();
+				}
+			}
+		}
+
 		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)
 		{
 			Output.Write (attribute.Name.Replace ('+', '.'));
@@ -866,19 +867,6 @@ namespace Mono.CSharp
 				}
 			}
 			Output.Write (')');
-		}
-
-		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix)
-		{
-			foreach (CodeAttributeDeclaration att in attributes) {
-				GenerateAttributeDeclarationsStart (attributes);
-				if (prefix != null) {
-					Output.Write ("assembly: ");
-				}
-				OutputAttributeDeclaration (att);
-				GenerateAttributeDeclarationsEnd (attributes);
-				Output.WriteLine ();
-			}
 		}
 
 		protected override void OutputType( CodeTypeReference type )
@@ -901,8 +889,7 @@ namespace Mono.CSharp
 
 		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
 		{
-			if (e.CustomAttributes != null && e.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (e.CustomAttributes);
+			OutputAttributes (e.CustomAttributes, null, true);
 			OutputDirection (e.Direction);
 			OutputType (e.Type);
 			Output.Write (' ');

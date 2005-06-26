@@ -1,3 +1,8 @@
+2005-06-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Fixed generated code for events, fields,
+	properties, methods and ctors to match MS.NET.
+
 2005-06-25 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Also modified generated code for type-level

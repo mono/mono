@@ -1,3 +1,8 @@
+2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Added tests to verify code generated
+	for events, fields, properties, methods and ctors to match MS.NET.
+
 2005-06-25  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added tests to verify code generated
