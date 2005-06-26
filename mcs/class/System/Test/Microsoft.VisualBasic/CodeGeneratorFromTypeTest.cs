@@ -289,6 +289,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			// first parameter
 			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
 				typeof (object), "value");
+			method.Parameters.Add (param);
 
 			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = "A";
@@ -298,7 +299,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			attrDec.Name = "B";
 			param.CustomAttributes.Add (attrDec);
 
-			method.Parameters.Add (param);
 
 			// second parameter
 			param = new CodeParameterDeclarationExpression (typeof (int), "index");
@@ -325,6 +325,270 @@ namespace MonoTests.Microsoft.VisualBasic
 				+ "    {0}"
 				+ "    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer) As Integer{0}"
 				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void ConstructorAttributesTest ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			ctor.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			ctor.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    <A(),  _{0}"
+				+ "     B()>  _{0}"
+				+ "    Private Sub New(){0}"
+				+ "        MyBase.New{0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void ConstructorParametersTest ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Name = "Whatever";
+			ctor.Attributes = MemberAttributes.Public;
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			ctor.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (
+				typeof (object), "value2");
+			param.Direction = FieldDirection.In;
+			ctor.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (typeof (int), "index");
+			param.Direction = FieldDirection.Out;
+			ctor.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (typeof (int), "count");
+			param.Direction = FieldDirection.Ref;
+			ctor.Parameters.Add (param);
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Sub New(ByVal value1 As Object, ByVal value2 As Object, ByRef index As Integer, ByRef count As Integer){0}"
+				+ "        MyBase.New{0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void ConstructorParameterAttributesTest ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Name = "Something";
+			ctor.Attributes = MemberAttributes.Public;
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value");
+			ctor.Parameters.Add (param);
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			param.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			param.CustomAttributes.Add (attrDec);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), "index");
+			param.Direction = FieldDirection.Out;
+			ctor.Parameters.Add (param);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "C";
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A1",
+				new CodePrimitiveExpression (false)));
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
+				new CodePrimitiveExpression (true)));
+			param.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "D";
+			param.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}"
+				+ "        MyBase.New{0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void BaseConstructorSingleArg ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Name = "Something";
+			ctor.Attributes = MemberAttributes.Public;
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			ctor.Parameters.Add (param);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), "value2");
+			param.Direction = FieldDirection.Out;
+			ctor.Parameters.Add (param);
+
+			// base ctor args
+			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}"
+				+ "        MyBase.New(value1){0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void BaseConstructorMultipleArgs ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Name = "Something";
+			ctor.Attributes = MemberAttributes.Public;
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			ctor.Parameters.Add (param);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), "value2");
+			param.Direction = FieldDirection.Out;
+			ctor.Parameters.Add (param);
+
+			// base ctor args
+			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));
+			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value2"));
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}"
+				+ "        MyBase.New(value1, value2){0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void ChainedConstructorSingleArg ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Name = "Something";
+			ctor.Attributes = MemberAttributes.Public;
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			ctor.Parameters.Add (param);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), "value2");
+			param.Direction = FieldDirection.Out;
+			ctor.Parameters.Add (param);
+
+			// chained ctor args
+			ctor.ChainedConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));
+
+			// should be ignored as chained ctor args should take precedence over base 
+			// ctor args
+			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value3"));
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}"
+				+ "        Me.New(value1){0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void ChainedConstructorMultipleArgs ()
+		{
+			type.Name = "Test1";
+
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Name = "Something";
+			ctor.Attributes = MemberAttributes.Public;
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			ctor.Parameters.Add (param);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), "value2");
+			param.Direction = FieldDirection.Out;
+			ctor.Parameters.Add (param);
+
+			// chained ctor args
+			ctor.ChainedConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));
+			ctor.ChainedConstructorArgs.Add (new CodeVariableReferenceExpression ("value2"));
+
+			// should be ignored as chained ctor args should take precedence over base 
+			// ctor args
+			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value3"));
+
+			type.Members.Add (ctor);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}"
+				+ "        Me.New(value1, value2){0}"
+				+ "    End Sub{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 	}

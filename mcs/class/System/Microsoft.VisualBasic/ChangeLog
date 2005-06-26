@@ -1,5 +1,10 @@
 2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* VBCodeGenerator.cs: Fixed generated code for attributes on ctors.
+	Implemented Base/Chained ctor args.
+
+2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* VBCodeGenerator.cs: Fixed generated code for method, property
 	and parameter level attributes. Fixed code generated for
 	FieldDirection.

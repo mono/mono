@@ -313,9 +313,7 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
 		{
-			if (e.CustomAttributes.Count > 0)
-				OutputAttributes (e.CustomAttributes, null,
-					LineHandling.InLine);
+			OutputAttributes (e.CustomAttributes, null, LineHandling.InLine);
 			OutputDirection (e.Direction);
 			OutputTypeNamePair (e.Type, e.Name);
 		}
@@ -569,12 +567,10 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			if (eventRef.CustomAttributes.Count > 0)
-				OutputAttributes (eventRef.CustomAttributes, null, 
-					LineHandling.ContinueLine);
+			OutputAttributes (eventRef.CustomAttributes, null, 
+				LineHandling.ContinueLine);
 
 			MemberAttributes attributes = eventRef.Attributes;
-
 			OutputMemberAccessModifier (attributes);
 			OutputMemberScopeModifier (attributes | MemberAttributes.Final);  // Don't output "Overridable"
 
@@ -587,9 +583,8 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			if (field.CustomAttributes.Count > 0)
-				OutputAttributes (field.CustomAttributes, null, 
-					LineHandling.ContinueLine);
+			OutputAttributes (field.CustomAttributes, null, 
+				LineHandling.ContinueLine);
 
 			MemberAttributes attributes = field.Attributes;
 			OutputMemberAccessModifier (attributes);
@@ -624,12 +619,10 @@ namespace Microsoft.VisualBasic
 
 			TextWriter output = Output;
 
-			if (method.CustomAttributes.Count > 0)
-				OutputAttributes (method.CustomAttributes, null, 
-					LineHandling.ContinueLine);
+			OutputAttributes (method.CustomAttributes, null, 
+				LineHandling.ContinueLine);
 
 			MemberAttributes attributes = method.Attributes;
-
 			OutputMemberAccessModifier (attributes);
 			OutputMemberScopeModifier (attributes);
 
@@ -679,9 +672,8 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			if (property.CustomAttributes.Count > 0)
-				OutputAttributes (property.CustomAttributes, null, 
-					LineHandling.ContinueLine);
+			OutputAttributes (property.CustomAttributes, null, 
+				LineHandling.ContinueLine);
 
 			MemberAttributes attributes = property.Attributes;
 			OutputMemberAccessModifier (attributes);
@@ -725,17 +717,33 @@ namespace Microsoft.VisualBasic
 			output.WriteLine ("End Property");
 		}
 
-		[MonoTODO ("not implemented")]
 		protected override void GenerateConstructor (CodeConstructor constructor, CodeTypeDeclaration declaration)
 		{
-			if (constructor.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (constructor.CustomAttributes);
+			OutputAttributes (constructor.CustomAttributes, null,
+				LineHandling.ContinueLine);
 			OutputMemberAccessModifier (constructor.Attributes);
 			Output.Write ("Sub New(");
 			OutputParameters (constructor.Parameters);
 			Output.WriteLine (")");
-			// Handle BaseConstructorArgs, ChainedConstructorArgs, ImplementationTypes
 			Indent++;
+			// check if ctor passes args on to other ctor in class
+			CodeExpressionCollection ctorArgs = constructor.ChainedConstructorArgs;
+			if (ctorArgs.Count > 0) {
+				Output.Write ("Me.New(");
+				OutputExpressionList (ctorArgs);
+				Output.WriteLine (")");
+			} else {
+				// check if ctor passes args on to ctor in base class
+				ctorArgs = constructor.BaseConstructorArgs;
+				if (ctorArgs.Count > 0) {
+					Output.Write ("MyBase.New(");
+					OutputExpressionList (ctorArgs);
+					Output.WriteLine (")");
+				} else {
+					// call default base ctor
+					Output.WriteLine ("MyBase.New");
+				}
+			}
 			GenerateStatements (constructor.Statements);
 			Indent--;
 			Output.WriteLine ("End Sub");
@@ -757,6 +765,7 @@ namespace Microsoft.VisualBasic
 
 			OutputAttributes (declaration.CustomAttributes, null, 
 				LineHandling.ContinueLine);
+
 			TypeAttributes attributes = declaration.TypeAttributes;
 			OutputTypeAttributes (attributes,
 				declaration.IsStruct,

@@ -1,5 +1,10 @@
 2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorFromTypeTest.cs: Added tests for ctor level attributes
+	and Base/Chained ctor args.
+
+2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromCompileUnitTest.cs: Removed last usage of
 	Assertion class.
 	* CodeGeneratorFromTypeTest.cs: Added tests for method, property and
