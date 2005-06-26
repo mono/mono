@@ -165,5 +165,167 @@ namespace MonoTests.Microsoft.VisualBasic
 				+ "Public Name As Integer{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}
+
+		[Test]
+		public void PropertyMembersTypeTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			property.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			property.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}    {0}    <A(),  _{0}     B()>  _{0}    "
+				+ "Private Property  As System.Void{0}    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overridable Property Name As Integer{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodMembersTypeTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			method.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			method.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" 
+				+ "    {0}"
+				+ "    <A(),  _{0}" 
+				+ "     B()>  _{0}"
+				+ "    Private Sub (){0}"
+				+ "    End Sub{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodMembersTypeTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Something";
+			method.Attributes = MemberAttributes.Public;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof(object), "value1");
+			method.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (
+				typeof (object), "value2");
+			param.Direction = FieldDirection.In;
+			method.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (typeof (int), "index");
+			param.Direction = FieldDirection.Out;
+			method.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (typeof (int), "count");
+			param.Direction = FieldDirection.Ref;
+			method.Parameters.Add (param);
+
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overridable Function Something(ByVal value1 As Object, ByVal value2 As Object, ByRef index As Integer, ByRef count As Integer) As Integer{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodMembersTypeTest3 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Something";
+			method.Attributes = MemberAttributes.Public;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value");
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			param.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			param.CustomAttributes.Add (attrDec);
+
+			method.Parameters.Add (param);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), "index");
+			param.Direction = FieldDirection.Out;
+			method.Parameters.Add (param);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "C";
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A1",
+				new CodePrimitiveExpression (false)));
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
+				new CodePrimitiveExpression (true)));
+			param.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "D";
+			param.CustomAttributes.Add (attrDec);
+
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer) As Integer{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
 	}
 }

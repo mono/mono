@@ -124,6 +124,9 @@ namespace System.CodeDom
 
 		public CodeTypeReference Type {
 			get {
+				if (type == null) {
+					type = new CodeTypeReference(string.Empty);
+				}
 				return type;
 			}
 			set {

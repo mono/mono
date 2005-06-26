@@ -1,3 +1,8 @@
+2005-06-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeMemberPropertyTest.cs from
+	System.CodeDom.
+
 2005-06-25 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeMemberFieldTest.cs from

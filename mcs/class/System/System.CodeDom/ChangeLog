@@ -1,3 +1,8 @@
+2005-06-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeMemberProperty.cs: Default value of Type is empty 
+	CodeTypeReference.
+
 2005-06-25 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeMemberField.cs: Default value of Type is empty CodeTypeReference.

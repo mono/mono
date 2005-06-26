@@ -99,7 +99,7 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<Assembly: A()> {0}", writer.NewLine), Code);
 		}
 

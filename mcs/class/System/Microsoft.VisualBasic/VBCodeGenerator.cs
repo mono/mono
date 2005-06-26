@@ -201,8 +201,8 @@ namespace Microsoft.VisualBasic
 		{
 			GenerateCompileUnitStart (compileUnit);
 
-			OutputAttributes (compileUnit.AssemblyCustomAttributes, 
-				"Assembly: ", false);
+			OutputAttributes (compileUnit.AssemblyCustomAttributes,
+				"Assembly: ", LineHandling.NewLine);
 
 			GenerateNamespaces (compileUnit);
 
@@ -313,8 +313,9 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
 		{
-			if (e.CustomAttributes != null && e.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (e.CustomAttributes);
+			if (e.CustomAttributes.Count > 0)
+				OutputAttributes (e.CustomAttributes, null,
+					LineHandling.InLine);
 			OutputDirection (e.Direction);
 			OutputTypeNamePair (e.Type, e.Name);
 		}
@@ -569,7 +570,8 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			if (eventRef.CustomAttributes.Count > 0)
-				OutputAttributes (eventRef.CustomAttributes, null, true);
+				OutputAttributes (eventRef.CustomAttributes, null, 
+					LineHandling.ContinueLine);
 
 			MemberAttributes attributes = eventRef.Attributes;
 
@@ -586,7 +588,8 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			if (field.CustomAttributes.Count > 0)
-				OutputAttributes (field.CustomAttributes, null, true);
+				OutputAttributes (field.CustomAttributes, null, 
+					LineHandling.ContinueLine);
 
 			MemberAttributes attributes = field.Attributes;
 			OutputMemberAccessModifier (attributes);
@@ -622,7 +625,8 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			if (method.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (method.CustomAttributes);
+				OutputAttributes (method.CustomAttributes, null, 
+					LineHandling.ContinueLine);
 
 			MemberAttributes attributes = method.Attributes;
 
@@ -676,7 +680,8 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			if (property.CustomAttributes.Count > 0)
-				OutputAttributeDeclarations (property.CustomAttributes);
+				OutputAttributes (property.CustomAttributes, null, 
+					LineHandling.ContinueLine);
 
 			MemberAttributes attributes = property.Attributes;
 			OutputMemberAccessModifier (attributes);
@@ -750,7 +755,8 @@ namespace Microsoft.VisualBasic
 		{
 			TextWriter output = Output;
 
-			OutputAttributes (declaration.CustomAttributes, null, true);
+			OutputAttributes (declaration.CustomAttributes, null, 
+				LineHandling.ContinueLine);
 			TypeAttributes attributes = declaration.TypeAttributes;
 			OutputTypeAttributes (attributes,
 				declaration.IsStruct,
@@ -857,7 +863,7 @@ namespace Microsoft.VisualBasic
 			Output.Write (">");
 		}
 
-		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, bool continueLine) {
+		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, LineHandling lineHandling) {
 			if (attributes.Count != 0) {
 				GenerateAttributeDeclarationsStart (attributes);
 
@@ -870,8 +876,11 @@ namespace Microsoft.VisualBasic
 					OutputAttributeDeclaration (att);
 
 					while (enumerator.MoveNext ()) {
-						ContinueOnNewLine (", ");
-						Output.Write (" ");
+						Output.Write (", ");
+						if (lineHandling != LineHandling.InLine) {
+							ContinueOnNewLine ("");
+							Output.Write (" ");
+						}
 						att = (CodeAttributeDeclaration) enumerator.Current;
 						if (prefix != null) {
 							Output.Write (prefix);
@@ -881,10 +890,14 @@ namespace Microsoft.VisualBasic
 				}
 				GenerateAttributeDeclarationsEnd (attributes);
 				Output.Write (" ");
-				if (continueLine) {
-					ContinueOnNewLine ("");
-				} else {
-					Output.WriteLine ();
+
+				switch (lineHandling) {
+					case LineHandling.ContinueLine:
+						ContinueOnNewLine ("");
+						break;
+					case LineHandling.NewLine:
+						Output.WriteLine ();
+						break;
 				}
 			}
 		}
@@ -921,11 +934,9 @@ namespace Microsoft.VisualBasic
 		{
 			switch (direction) {
 			case FieldDirection.In:
-				//there is no "In"
-				break;
-			case FieldDirection.Out:
 				Output.Write ("ByVal ");
 				break;
+			case FieldDirection.Out:
 			case FieldDirection.Ref:
 				Output.Write ("ByRef ");
 				break;
@@ -1279,6 +1290,13 @@ namespace Microsoft.VisualBasic
 		protected override bool Supports (GeneratorSupport supports)
 		{
 			return true;
+		}
+
+		private enum LineHandling
+		{
+			InLine,
+			ContinueLine,
+			NewLine
 		}
 	}
 }

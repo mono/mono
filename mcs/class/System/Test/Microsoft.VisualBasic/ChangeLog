@@ -1,3 +1,10 @@
+2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromCompileUnitTest.cs: Removed last usage of
+	Assertion class.
+	* CodeGeneratorFromTypeTest.cs: Added tests for method, property and
+	parameter level attributes.
+
 2005-06-25  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromCompileUnitTest.cs: Added test for assembly-level
