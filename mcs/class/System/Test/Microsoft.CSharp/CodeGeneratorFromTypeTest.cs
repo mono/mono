@@ -617,7 +617,6 @@ namespace MonoTests.Microsoft.CSharp
 			// base ctor args
 			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));
 
-			// should be ignored as base ctor args should take precedence over 
 			// chained ctor args
 			ctor.ChainedConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));
 			ctor.ChainedConstructorArgs.Add (new CodeVariableReferenceExpression ("value2"));
