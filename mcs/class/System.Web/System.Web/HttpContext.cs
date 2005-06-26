@@ -440,7 +440,7 @@ namespace System.Web
 			}
 
 			path = UrlUtils.Combine (Request.BaseVirtualDir, path);
-			if (!path.StartsWith (HttpRuntime.AppDomainAppVirtualPath))
+			if (!StrUtils.StartsWith (path, HttpRuntime.AppDomainAppVirtualPath))
 				throw new HttpException (404, "The virtual path '" + path +
 							 "' maps to another application.");
 

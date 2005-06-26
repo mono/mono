@@ -1,5 +1,11 @@
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpContext.cs:
+	* HttpResponse.cs:
+	* HttpRequest.cs: use StrUtils (invariant culture).
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRequest.cs: use StartsWith when looking for 'multipart/form-data'.
 	File uploading was broken since a few commits ago.
 

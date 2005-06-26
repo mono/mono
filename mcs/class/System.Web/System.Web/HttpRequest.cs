@@ -238,7 +238,7 @@ namespace System.Web {
 			}
 
 			_oFormData = new HttpValueCollection ();
-			if (content_type.StartsWith ("multipart/form-data")) {
+			if (StrUtils.StartsWith (content_type, "multipart/form-data")) {
 				MultipartContentElement [] parts = GetMultipartFormData ();
 				if (parts == null)
 					return;
@@ -618,7 +618,8 @@ namespace System.Web {
 		
 		void FillPostedFiles ()
 		{
-			if (!ContentType.StartsWith ("multipart/form-data")) return;
+			if (!StrUtils.StartsWith (ContentType, "multipart/form-data"))
+				return;
 			
 			MultipartContentElement [] parts = GetMultipartFormData ();
 			if (parts == null) return;
@@ -1174,7 +1175,7 @@ namespace System.Web {
 			}
 
 			if (!allowCrossAppMapping) {
-				if (!virtualPath.ToLower ().StartsWith (RootVirtualDir.ToLower ()))
+				if (!StrUtils.StartsWith (virtualPath, RootVirtualDir, true))
 					throw new HttpException ("Mapping across applications not allowed.");
 
 				if (RootVirtualDir.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')

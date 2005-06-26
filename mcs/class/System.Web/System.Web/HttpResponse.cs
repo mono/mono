@@ -339,7 +339,7 @@ namespace System.Web
 				string rvd = _Context.Request.RootVirtualDir;
 				string basevd = rvd.Replace (app_path_mod, "");
 
-				if (!virtualPath.StartsWith (basevd))
+				if (!StrUtils.StartsWith (virtualPath, basevd))
 					return virtualPath;
 
 				virtualPath = UrlUtils.Combine (rvd, virtualPath.Substring (basevd.Length));
