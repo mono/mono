@@ -51,7 +51,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		public void DefaultCodeUnitTest ()
 		{
 			Generate ();
-			Assertion.AssertEquals ("", Code);
+			Assert.AreEqual ("", Code);
 		}
 
 		[Test]
@@ -67,7 +67,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			codeUnit.ReferencedAssemblies.Add ("System.dll");
 			Generate();
-			Assertion.AssertEquals ("", Code);
+			Assert.AreEqual ("", Code);
 		}
 
 		[Test]
@@ -76,7 +76,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			CodeNamespace ns = new CodeNamespace ("A");
 			codeUnit.Namespaces.Add (ns);
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}Namespace A{0}End Namespace{0}", writer.NewLine), Code);
 		}
 
@@ -87,12 +87,24 @@ namespace MonoTests.Microsoft.VisualBasic
 			codeUnit.Namespaces.Add (ns);
 			codeUnit.ReferencedAssemblies.Add ("using System;");
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}Namespace A{0}End Namespace{0}", writer.NewLine), Code);
 		}
 
 		[Test]
 		public void SimpleAttributeTest ()
+		{
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+			Generate ();
+			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+				"<Assembly: A()> {0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void AttributeWithValueTest ()
 		{
 			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = "A";
@@ -104,7 +116,7 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Generate ();
-			Assertion.AssertEquals ("<Assembly: A(A1:=false, A2:=true)> " + 
+			Assert.AreEqual ("<Assembly: A(A1:=false, A2:=true)> " + 
 				writer.NewLine, Code);
 		}
 
@@ -119,7 +131,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			attrDec.Name = "B";
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Generate ();
-			Assertion.AssertEquals (string.Format(CultureInfo.InvariantCulture, 
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture, 
 				"<Assembly: A(),  _{0} Assembly: B()> {0}", writer.NewLine),
 				Code);
 		}
@@ -140,7 +152,7 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			Generate ();
 
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<Assembly: A(),  _{0} Assembly: B()> {0}{0}Namespace A{0}End "
 				+ "Namespace{0}",writer.NewLine), Code);
 		}
@@ -156,7 +168,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			codeUnit = new CodeSnippetCompileUnit (sb.ToString ());
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
-			Assertion.AssertEquals (sb.ToString() + writer.NewLine, 
+			Assert.AreEqual (sb.ToString () + writer.NewLine, 
 						writer.ToString());
 		}
 	}

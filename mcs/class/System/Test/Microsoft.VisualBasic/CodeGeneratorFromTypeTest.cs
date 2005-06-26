@@ -44,7 +44,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		public void DefaultTypeTest ()
 		{
 			Generate ();
-			Assertion.AssertEquals (string.Format(CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class {0}End Class{0}", writer.NewLine), Code);
 		}
 
@@ -61,7 +61,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			type.Name = "Test1";
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}End Class{0}", writer.NewLine), Code);
 		}
 
@@ -79,7 +79,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			type.CustomAttributes.Add (attrDec);
 
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<A(),  _{0} B()>  _{0}Public Class Test1{0}End Class{0}", 
 				writer.NewLine), Code);
 		}
@@ -102,7 +102,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			type.Members.Add (evt);
 
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}    {0}    <A(),  _{0}     B()>  _{0}    "
 				+ "Private Event  As System.Void{0}End Class{0}", writer.NewLine), Code);
 		}
@@ -119,7 +119,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			type.Members.Add (evt);
 
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}    {0}    "
 				+ "Public Event OnClick As Integer{0}"
 				+ "End Class{0}", writer.NewLine), Code);
@@ -143,7 +143,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			type.Members.Add (fld);
 
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}    {0}    <A(),  _{0}     B()>  _{0}    "
 				+ "Private  As System.Void{0}End Class{0}", writer.NewLine), Code);
 		}
@@ -160,7 +160,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			type.Members.Add (fld);
 
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}    {0}    "
 				+ "Public Name As Integer{0}"
 				+ "End Class{0}", writer.NewLine), Code);

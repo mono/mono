@@ -1,5 +1,11 @@
 2005-06-25  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorFromCompileUnitTest.cs: Added test for assembly-level
+	attribute without value. Use Assert instead of deprecated Assertion.
+	* CodeGeneratorFromTypeTest.cs: Use Assert instead of Assertion.
+
+2005-06-25  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromTypeTest.cs: Added tests to verify code generated
 	for field and event members.
 
