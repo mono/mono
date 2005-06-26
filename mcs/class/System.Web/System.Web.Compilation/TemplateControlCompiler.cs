@@ -379,7 +379,7 @@ namespace System.Web.Compilation
 			string prop_field = id.Replace ("-", ".");
 			string [] parts = prop_field.Split (new char [] {'.'});
 			int length = parts.Length;
-			if (length < 2 || !InvariantCompare (member.Name, parts [0]))
+			if (length < 2 || !InvariantCompareNoCase (member.Name, parts [0]))
 				return false;
 
 			if (length > 2) {

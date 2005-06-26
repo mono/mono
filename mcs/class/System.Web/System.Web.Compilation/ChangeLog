@@ -1,5 +1,11 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TemplateControlCompiler.cs: comparison between member name and the
+	first part of the id provided by the user should also be
+	case-insensitive. Fixes bug #75379.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CachingCompiler.cs: use cache.InsertPrivate.
 	* AspGenerator.cs: use cache.InsertPrivate. Removed extra call to
 	AddDependency.
