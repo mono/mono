@@ -817,6 +817,7 @@ System.Web.Util/AltSerialization.cs
 System.Web.Util/DataSourceHelper.cs
 System.Web.Util/ICalls.cs
 System.Web.Util/NativeFileChangeEventHandler.cs
+System.Web.Util/StrUtils.cs
 System.Web.Util/TimeUtil.cs
 System.Web.Util/TransactedCallback.cs
 System.Web.Util/Transactions.cs
