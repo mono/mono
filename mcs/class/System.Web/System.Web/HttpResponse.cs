@@ -52,6 +52,7 @@ namespace System.Web
 		bool _bSuppressHeaders;
 		bool _bSuppressContent;
 		bool _bChunked;
+		bool last_chunk_sent;
 		bool _bEnded;
 		bool _bBuffering;
 		bool _bHeadersSent;
@@ -724,6 +725,10 @@ namespace System.Web
 		public void Close ()
 		{
 			if (!closed && !_bClientDisconnected) {
+				if (_bChunked && !last_chunk_sent) {
+					last_chunk_sent = true;
+					_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd, s_arrChunkEnd.Length);
+				}
 				_WorkerRequest.CloseConnection ();
 				_bClientDisconnected = true;
 				closed = true;
@@ -825,8 +830,8 @@ namespace System.Web
 
 				if (length == 0) {
 					if (bFinish && _bChunked) {
-						_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd,
-										s_arrChunkEnd.Length);
+						last_chunk_sent = true;
+						_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd, s_arrChunkEnd.Length);
 					}
 
 					_WorkerRequest.FlushResponse (bFinish);
@@ -856,9 +861,11 @@ namespace System.Web
 
 						_WorkerRequest.SendResponseFromMemory (s_arrChunkSuffix,
 										       s_arrChunkSuffix.Length);
-						if (bFinish)
+						if (bFinish) {
+							last_chunk_sent = true;
 							_WorkerRequest.SendResponseFromMemory (
 									s_arrChunkEnd, s_arrChunkEnd.Length);
+						}
 					} else {
 						_Writer.SendContent (_WorkerRequest);
 					}

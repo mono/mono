@@ -1,3 +1,9 @@
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: ensure that the last chunk ('0\r\n\r\n') is sent
+	even if response.Close is called before a final flush. MS/IIS fails to
+	do this.
+
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: don't print anything for unknown content types in
