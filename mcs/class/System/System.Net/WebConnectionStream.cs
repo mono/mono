@@ -320,9 +320,16 @@ namespace System.Net
 				int nbytes = -1;
 				try {
 					nbytes = cnc.EndRead (result);
-				} catch (Exception) {
+				} catch (Exception exc) {
+					lock (locker) {
+						pendingReads--;
+						if (pendingReads == 0)
+							pending.Set ();
+					}
+
 					nextReadCalled = true;
 					cnc.Close (true);
+					result.SetCompleted (false, exc);
 					throw;
 				}
 

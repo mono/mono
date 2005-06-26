@@ -711,7 +711,7 @@ namespace System.Net
 								WebExceptionStatus.ServerProtocolViolation, null);
 				}
 
-				if ((done || nbytes == 0) && chunkStream.WantMore) {
+				if ((done || nbytes == 0) && chunkStream.ChunkLeft != 0) {
 					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked EndRead");
 					throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
 				}

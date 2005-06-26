@@ -1,3 +1,10 @@
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: if cnc.EndRead throws, mark the asyncresult as done.
+	* WebConnectionStream.cs: if we're done with the body of a chunk, don't
+	require the next chunk header to be there, as some servers might close
+	the connection (while also sending 'Connection: close').
+
 2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: MS implementation follows redirects for POST. Seems
