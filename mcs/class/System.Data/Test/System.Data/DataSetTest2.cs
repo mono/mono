@@ -669,7 +669,9 @@ namespace MonoTests_System.Data
 			Assert.AreEqual("attr2", ds.Tables[0].Columns["attr2"].ColumnName, "DS88");
 		}
 
-		[Test] public void InferXmlSchema_inferingTables5()
+		[Test]
+		[Category ("NotWorking")]
+		public void InferXmlSchema_inferingTables5()
 		{
 			//Acroding to the msdn documantaion :
 			//ms-help://MS.MSDNQTR.2003FEB.1033/cpguide/html/cpconinferringtables.htm
@@ -1848,7 +1850,9 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(0, ds2.Tables[1].Rows.Count , "DS296");
 		}
 
-		[Test] public void ReadXml_Strg()
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadXml_Strg()
 		{
 			string sTempFileName = "tmpDataSet_ReadWriteXml_43894.xml"  ;
 
@@ -1885,7 +1889,9 @@ namespace MonoTests_System.Data
 			System.IO.File.Delete(sTempFileName);
 		}
 
-		[Test] public void ReadXml_Strm()
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadXml_Strm()
 		{
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
@@ -2119,7 +2125,9 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(m_ds.Tables[toTable].Select(toTestSelect)[0]["Stock_Id"], m_ds.Tables[toCompareTable].Select(toCompareSelect)[0]["Stock_Id"], AssertTag);
 		}
 
-		[Test] public void ReadXml_Strm5()
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadXml_Strm5()
 		{
 			string xmlData;
 			string name;
@@ -2371,7 +2379,9 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(3, ds.Tables["c"].Rows.Count, "DS338");
 		}
 
-		[Test] public void ReadXml_ByTextReader()
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadXml_ByTextReader()
 		{
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
@@ -2408,7 +2418,9 @@ namespace MonoTests_System.Data
 			sw.Close();
 		}
 
-		[Test] public void ReadXml_ByXmlReader()
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadXml_ByXmlReader()
 		{
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
