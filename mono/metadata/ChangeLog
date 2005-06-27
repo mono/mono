@@ -1,3 +1,7 @@
+2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* culture-info-table.h: regenerated.
+
 2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: handle spaces correctly for base64 strings.
