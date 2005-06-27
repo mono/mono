@@ -1,8 +1,0 @@
-*.pdb
-*.dll
-*.csproj.user
-*.prj
-*.pws
-.*
-library-deps.stamp
-log

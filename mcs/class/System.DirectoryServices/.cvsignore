@@ -1,9 +1,0 @@
-*.csproj.user
-*.dll
-*.pdb
-*~
-.makefrag
-.response
-System.DirectoryServices_test*
-TestResult.xml
-library-deps.stamp
