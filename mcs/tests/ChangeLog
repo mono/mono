@@ -1,3 +1,8 @@
+2005-06-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Remove old test harness.
+	* harness.mk: Remove.
+
 2005-06-21  Martin Baulig  <martin@ximian.com>
 
 	* gtest-077.cs: Removed, we don't need this anymore.
