@@ -1,3 +1,9 @@
+2005-06-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapDuration.cs: Fixed parsing of TimeSpan values. Based on a fix
+	by Roei Erez. Also fixed issues in the ToString method.
+	Closes bug #75340.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* SoapHexBinary.cs: fixed serialization compatibility with MS.NET
