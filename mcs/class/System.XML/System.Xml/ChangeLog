@@ -1,3 +1,9 @@
+2005-06-27  Andrew Skiba  <andrews@mainsoft.com>
+
+	* DTDReader.cs : don't validate entity values, when the entry is
+	redefined so it will be never used. Fixes valid-sa-086 test from W3C
+	xmlconf suite.
+
 2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlQueryDialect.cs : removed.
