@@ -164,7 +164,7 @@ namespace System.Web.Util
 				return Reduce (basePath + slash + relPath);
 			}
 
-			if (basePath == null || basePath == "")
+			if (basePath == null || basePath == "" || basePath [0] == '~')
 				basePath = HttpRuntime.AppDomainAppVirtualPath;
 
 			if (basePath.Length <= 1)
