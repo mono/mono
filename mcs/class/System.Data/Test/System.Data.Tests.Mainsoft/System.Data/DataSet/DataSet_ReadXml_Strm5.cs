@@ -278,24 +278,23 @@ namespace tests.system_data_dll.System_Data
 
 	private void PrivateTestCase(string a_name, string a_expected, string a_xmlData)
 	{
-		try 
-		{
+		string file_name = null;
+		try {
 			BeginCase(a_name);
 			DataSet ds = new DataSet();
 			System.IO.StringReader sr = new System.IO.StringReader(a_xmlData) ;
 			System.Xml.XmlTextReader xReader = new System.Xml.XmlTextReader(sr) ;
 			ds.ReadXml (xReader);
-			ds.WriteXml(a_name + System.DateTime.Now.Ticks + ".xml");
+			file_name = System.IO.Path.GetTempFileName ();
+			ds.WriteXml (file_name);
 			Compare(this.dataSetDescription(ds), a_expected);
-		} 
-		catch(Exception ex)
-		{
+		} catch (Exception ex) {
 			m_exp = ex;
-		}
-		finally
-		{
+		} finally {
 			EndCase(m_exp);
 			m_exp = null;
+			if (file_name != null)
+				System.IO.File.Delete (file_name);
 		}
 	}
 
