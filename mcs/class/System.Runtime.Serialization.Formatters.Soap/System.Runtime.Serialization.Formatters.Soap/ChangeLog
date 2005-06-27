@@ -1,3 +1,8 @@
+2005-06-27  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapWriter.cs: Serialize TimeSpan values like MS.NET. Fix by Roei Erez
+	for bug #75364.
+
 2005-05-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapTypeMapper.cs: Serialize floats and doubles using the correct

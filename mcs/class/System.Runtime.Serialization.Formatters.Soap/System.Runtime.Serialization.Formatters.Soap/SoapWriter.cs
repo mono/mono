@@ -371,7 +371,12 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_xmlWriter.WriteStartElement(element.Prefix, element.LocalName, element.NamespaceURI);
 				Id(currentObjectId);
 			}
-			if(currentType == typeof(string))
+
+			if (currentType == typeof(TimeSpan))
+			{
+				_xmlWriter.WriteString(SoapTypeMapper.GetXsdValue(currentObject));
+			}
+			else if(currentType == typeof(string))
 			{
 				_xmlWriter.WriteString(currentObject.ToString());
 			}
