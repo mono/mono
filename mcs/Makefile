@@ -15,6 +15,7 @@ centum_tests := \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
 	class/Mono.Posix \
+	class/Mono.C5 \
 	class/Mono.Security \
 	class/System.Configuration.Install \
 	class/System.Runtime.Remoting \
