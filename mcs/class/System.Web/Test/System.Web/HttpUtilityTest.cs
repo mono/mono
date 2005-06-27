@@ -111,5 +111,15 @@ namespace MonoTests.System.Web {
                         string z = HttpUtility.HtmlDecode (y);
 			Assert.AreEqual (x, z);
 		}
+
+		[Test]
+		public void LooksLikeEntity ()
+		{
+			string str = "<%# \"hola\" + \"/somepage.aspx?ItemID=\" + DataBinder.Eval(Container.DataItem,\"Country\")" +
+					" + \"&mid=\" + ModuleID + \"&pageindex=\" + Request.Params.Get(\"pageindex\") %>";
+			Assert.AreEqual (str, HttpUtility.HtmlDecode (str));
+		}
+		
 	}
 }
+
