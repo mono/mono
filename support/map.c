@@ -1390,6 +1390,12 @@ int Mono_Posix_FromSyslogFacility (int x, int *r)
 #else /* def LOG_USRE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_USRE */
+	if ((x & Mono_Posix_SyslogFacility_LOG_USER) == Mono_Posix_SyslogFacility_LOG_USER)
+#ifdef LOG_USER
+		*r |= LOG_USER;
+#else /* def LOG_USER */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_USER */
 	if ((x & Mono_Posix_SyslogFacility_LOG_MAIL) == Mono_Posix_SyslogFacility_LOG_MAIL)
 #ifdef LOG_MAIL
 		*r |= LOG_MAIL;
@@ -1514,6 +1520,10 @@ int Mono_Posix_ToSyslogFacility (int x, int *r)
 	if ((x & LOG_USRE) == LOG_USRE)
 		*r |= Mono_Posix_SyslogFacility_LOG_USRE;
 #endif /* ndef LOG_USRE */
+#ifdef LOG_USER
+	if ((x & LOG_USER) == LOG_USER)
+		*r |= Mono_Posix_SyslogFacility_LOG_USER;
+#endif /* ndef LOG_USER */
 #ifdef LOG_MAIL
 	if ((x & LOG_MAIL) == LOG_MAIL)
 		*r |= Mono_Posix_SyslogFacility_LOG_MAIL;

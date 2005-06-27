@@ -1,3 +1,7 @@
+2005-06-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c, map.h: Add corrected spelling of LOG_USER.
+
 2005-06-13  Miguel de Icaza  <miguel@novell.com>
 
 	*  sys-statvfs.c (copy_statfs): f_flags is the field name on BSD,

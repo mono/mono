@@ -150,6 +150,7 @@ int Mono_Posix_ToSyslogOptions (int x, int *r);
 
 #define Mono_Posix_SyslogFacility_LOG_KERN 0x00000000
 #define Mono_Posix_SyslogFacility_LOG_USRE 0x00000008
+#define Mono_Posix_SyslogFacility_LOG_USER 0x00000008
 #define Mono_Posix_SyslogFacility_LOG_MAIL 0x00000010
 #define Mono_Posix_SyslogFacility_LOG_DAEMON 0x00000018
 #define Mono_Posix_SyslogFacility_LOG_AUTH 0x00000020
