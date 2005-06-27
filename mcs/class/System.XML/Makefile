@@ -25,6 +25,17 @@ endif
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:0162 /nowarn:0618 /nowarn:0612
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
+nist_dom_files = \
+	ChangeLog ITest.cs readme.txt util.cs \
+	fundamental/ChangeLog \
+	files/ChangeLog files/noDTDXMLfile.xml files/otherDoc.xml files/staff.dtd files/staff.html files/staff.xml
+
+xmlfiles_files = \
+	ChangeLog nested-included.dtd literal-data.xml nested-dtd-test.dtd nested-dtd-test.xml simple.xml \
+	xsl/ChangeLog xsl/empty.xsl \
+	XsdValidation/ChangeLog XsdValidation/1.xsd XsdValidation/2.xsd	XsdValidation/3.xsd XsdValidation/4.xsd \
+	xsd/ChangeLog xsd/1.xsd xsd/2.xsd xsd/3.xsd xsd/4.xsd xsd/5.xsd xsd/6.xsd xsd/xml.xsd
+
 EXTRA_DISTFILES = \
 	Mono.System.XML.csproj		\
 	Mono.System.XML.sln		\
@@ -34,14 +45,12 @@ EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
 	System.Xml.XPath/Parser.jay	\
+	Test/ChangeLog			\
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
 	Test/MonoMicro.Test.csproj	\
-	Test/XmlFiles/xsd/xml.xsd	\
-	Test/XmlFiles/xsd/ChangeLog	\
-	Test/XmlFiles/xsl/empty.xsl	\
-	Test/XmlFiles/xsl/ChangeLog	\
-	Test/XmlFiles/ChangeLog
+	$(xmlfiles_files:%=Test/XmlFiles/%) \
+	$(nist_dom_files:%=Test/System.Xml/nist_dom/%)
 
 System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@

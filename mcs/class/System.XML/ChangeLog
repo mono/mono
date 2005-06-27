@@ -1,3 +1,8 @@
+2005-06-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add files in Test/XmlFiles and
+	Test/System.Xml/nist_dom/.
+
 2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : removed XmlQueryDialect.
