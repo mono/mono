@@ -1,3 +1,7 @@
+2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationAndDomains.cs: more tests for bugz.
+
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CultureInfoTest.cs: added test that tries setting the culture to a
