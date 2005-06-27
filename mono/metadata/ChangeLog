@@ -1,3 +1,7 @@
+2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: handle spaces correctly for base64 strings.
+
 2005-06-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* *.c: Kill some warnings.
