@@ -43,10 +43,11 @@ namespace System.Net {
 		// changing socket-io.c in the runtime
 		// The IP address is stored in little-endian order inside the int, 
 		// meaning the lower order bytes contain the netid
-		private long address;
-		private AddressFamily _family = AddressFamily.InterNetwork;
-		private ushort[] _numbers = new ushort[8];	/// ip6 Stored in network order (as ip4)
-		private long _scopeId = 0;
+		private long m_Address;
+		private AddressFamily m_Family = AddressFamily.InterNetwork;
+		private ushort[] m_Numbers = new ushort[8];	/// ip6 Stored in network order (as ip4)
+		private long m_ScopeId = 0;
+		private int m_HashCode;	// Added for serialization compatibility with MS.NET
 
 		public static readonly IPAddress Any = new IPAddress(0);
 		public static readonly IPAddress Broadcast = IPAddress.Parse ("255.255.255.255");
@@ -134,7 +135,7 @@ namespace System.Net {
 		/// </summary>
 		public IPAddress (long addr)
 		{
-			address = addr;
+			m_Address = addr;
 		}
 
 #if NET_1_1
@@ -147,20 +148,20 @@ namespace System.Net {
 			if(address.Length != 16)
 				throw new ArgumentException("address");
 
-			Buffer.BlockCopy(address, 0, _numbers, 0, 16);
-			_family = AddressFamily.InterNetworkV6;
-			_scopeId = scopeId;
+			Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
+			m_Family = AddressFamily.InterNetworkV6;
+			m_ScopeId = scopeId;
 		}
 
 		internal IPAddress(ushort[] address, long scopeId)
 		{
-			_numbers = address;
+			m_Numbers = address;
 
 			for(int i=0; i<8; i++)
-				_numbers[i] = (ushort)HostToNetworkOrder((short)_numbers[i]);
+				m_Numbers[i] = (ushort)HostToNetworkOrder((short)m_Numbers[i]);
 
-			_family = AddressFamily.InterNetworkV6;
-			_scopeId = scopeId;
+			m_Family = AddressFamily.InterNetworkV6;
+			m_ScopeId = scopeId;
 		}
 #endif
 
@@ -247,10 +248,10 @@ namespace System.Net {
 		public long Address 
 		{
 			get {
-				if(_family != AddressFamily.InterNetwork)
+				if(m_Family != AddressFamily.InterNetwork)
 					throw new Exception("The attempted operation is not supported for the type of object referenced");
 
-				return address;
+				return m_Address;
 			}
 			set {
 				/* no need to do this test, ms.net accepts any value.
@@ -259,51 +260,51 @@ namespace System.Net {
 						"the address must be between 0 and 0xFFFFFFFF");
 				*/
 
-				if(_family != AddressFamily.InterNetwork)
+				if(m_Family != AddressFamily.InterNetwork)
 					throw new Exception("The attempted operation is not supported for the type of object referenced");
 
-				address = value;
+				m_Address = value;
 			}
 		}
 
 		internal long InternalIPv4Address {
-			get { return address; }
+			get { return m_Address; }
 		}
 		
 #if NET_1_1
 		public long ScopeId {
 			get {
-				if(_family != AddressFamily.InterNetworkV6)
+				if(m_Family != AddressFamily.InterNetworkV6)
 					throw new Exception("The attempted operation is not supported for the type of object referenced");
 
-				return _scopeId;
+				return m_ScopeId;
 			}
 			set {
-				if(_family != AddressFamily.InterNetworkV6)
+				if(m_Family != AddressFamily.InterNetworkV6)
 					throw new Exception("The attempted operation is not supported for the type of object referenced");
 
-				_scopeId = value;
+				m_ScopeId = value;
 			}
 		}
 
 		public byte [] GetAddressBytes () 
 		{
-			if(_family == AddressFamily.InterNetworkV6) {
+			if(m_Family == AddressFamily.InterNetworkV6) {
 				byte [] addressBytes = new byte [16];
-				Buffer.BlockCopy (_numbers, 0, addressBytes, 0, 16);
+				Buffer.BlockCopy (m_Numbers, 0, addressBytes, 0, 16);
 				return addressBytes;
 			} else {
-				return new byte [4] { (byte)(address & 0xFF),
-						     (byte)((address >> 8) & 0xFF),
-						     (byte)((address >> 16) & 0xFF),
-						     (byte)(address >> 24) }; 
+				return new byte [4] { (byte)(m_Address & 0xFF),
+						     (byte)((m_Address >> 8) & 0xFF),
+						     (byte)((m_Address >> 16) & 0xFF),
+						     (byte)(m_Address >> 24) }; 
 			}
 		}
 #endif
 		public AddressFamily AddressFamily 
 		{
 			get {
-				return _family;
+				return m_Family;
 			}
 		}
 		
@@ -317,15 +318,15 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			if(addr._family == AddressFamily.InterNetwork)
-				return (addr.address & 0xFF) == 127;
+			if(addr.m_Family == AddressFamily.InterNetwork)
+				return (addr.m_Address & 0xFF) == 127;
 			else {
 				for(int i=0; i<6; i++) {
-					if(addr._numbers[i] != 0)
+					if(addr.m_Numbers[i] != 0)
 						return false;
 				}
 
-				return NetworkToHostOrder((short)addr._numbers[7]) == 1;
+				return NetworkToHostOrder((short)addr.m_Numbers[7]) == 1;
 			}
 		}
 
@@ -335,11 +336,11 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
-			if(_family == AddressFamily.InterNetwork)
-				return ToString (address);
+			if(m_Family == AddressFamily.InterNetwork)
+				return ToString (m_Address);
 			else
 			{
-				ushort[] numbers = _numbers.Clone() as ushort[];
+				ushort[] numbers = m_Numbers.Clone() as ushort[];
 
 				for(int i=0; i<numbers.Length; i++)
 					numbers[i] = (ushort)NetworkToHostOrder((short)numbers[i]);
@@ -372,12 +373,12 @@ namespace System.Net {
 					return false;
 
 				if(AddressFamily == AddressFamily.InterNetwork) {
-					return address == otherAddr.address;
+					return m_Address == otherAddr.m_Address;
 				} else {
-					ushort[] vals = otherAddr._numbers;
+					ushort[] vals = otherAddr.m_Numbers;
 
 					for(int i=0; i<8; i++)
-						if(_numbers[i] != vals[i])
+						if(m_Numbers[i] != vals[i])
 							return false;
 
 					return true;
@@ -388,13 +389,13 @@ namespace System.Net {
 
 		public override int GetHashCode ()
 		{
-			if(_family == AddressFamily.InterNetwork)
-				return (int)address;
+			if(m_Family == AddressFamily.InterNetwork)
+				return (int)m_Address;
 			else
-				return Hash (((((int) _numbers[0]) << 16) + _numbers [1]), 
-					((((int) _numbers [2]) << 16) + _numbers [3]),
-					((((int) _numbers [4]) << 16) + _numbers [5]),
-					((((int) _numbers [6]) << 16) + _numbers [7]));
+				return Hash (((((int) m_Numbers[0]) << 16) + m_Numbers [1]), 
+					((((int) m_Numbers [2]) << 16) + m_Numbers [3]),
+					((((int) m_Numbers [4]) << 16) + m_Numbers [5]),
+					((((int) m_Numbers [6]) << 16) + m_Numbers [7]));
 		}
 
 		private static int Hash (int i, int j, int k, int l) 
