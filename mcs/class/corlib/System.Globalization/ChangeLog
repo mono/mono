@@ -1,3 +1,8 @@
+2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NumberFormatInfo.cs: undo workaround for bug 55978 as it's not needed
+	any more. This fixed bug #75396.
+
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CultureInfo.cs: added internal method to check for a culture

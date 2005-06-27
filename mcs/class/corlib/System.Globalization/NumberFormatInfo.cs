@@ -866,10 +866,7 @@ namespace System.Globalization {
 
 		public object GetFormat (Type formatType) 
 		{
-			// work around http://bugzilla.ximian.com/show_bug.cgi?id=55978
-			// the comparison fails because formatType likely comes from another domain
-			//return (formatType == typeof (NumberFormatInfo)) ? this : null;
-			return this;
+			return (formatType == typeof (NumberFormatInfo)) ? this : null;
 		}
 		
 		public object Clone () 
