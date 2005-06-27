@@ -9,6 +9,7 @@ Microsoft.CSharp/CSharpCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorTestBase.cs
 Microsoft.VisualBasic/VBCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromCompileUnitTest.cs
+Microsoft.VisualBasic/CodeGeneratorFromExpressionTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromTypeTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs

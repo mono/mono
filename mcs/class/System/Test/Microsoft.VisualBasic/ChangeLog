@@ -1,3 +1,8 @@
+2005-06-27  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromExpressionTest.cs: Added tests for 
+	GenerateCodeFromExpression.
+
 2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Make tests pass on MS.NET 1.x and 2.0,

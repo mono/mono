@@ -1,3 +1,8 @@
+2005-06-27  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Added short type names for which support was
+	added in .NET 2.0. Added support for Date. 
+
 2005-06-26  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Minor fixes for compatibility with MS.NET 2.0.

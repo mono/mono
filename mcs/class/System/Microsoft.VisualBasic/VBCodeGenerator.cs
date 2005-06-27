@@ -1245,6 +1245,9 @@ namespace Microsoft.VisualBasic
 				output = GetTypeOutput (arrayType);
 			else { 
 				switch (type.BaseType) {
+				case "System.DateTime":
+					output = "Date";
+					break;
 				case "System.Decimal":
 					output = "Decimal";
 					break;
@@ -1278,6 +1281,20 @@ namespace Microsoft.VisualBasic
 				case "System.Object":
 					output = "Object";
 					break;
+#if NET_2_0
+				case "System.SByte":
+					output = "SByte";
+					break;
+				case "System.UInt16":
+					output = "UShort";
+					break;
+				case "System.UInt32":
+					output = "UInteger";
+					break;
+				case "System.UInt64":
+					output = "ULong";
+					break;
+#endif
 				default:
 					output = type.BaseType;
 					break;
