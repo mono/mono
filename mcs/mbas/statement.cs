@@ -888,6 +888,7 @@ namespace Mono.MonoBASIC {
 		public override bool Resolve (EmitContext ec)
 		{
 			label = block.LookupLabel (target);
+
 			if (label == null){
 				Report.Error (
 					30132, loc,
@@ -899,8 +900,8 @@ namespace Mono.MonoBASIC {
 			if (!label.IsDefined)
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
-
+			 ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			label.AddReference ();
 			return true;
 		}
 		
@@ -946,9 +947,10 @@ namespace Mono.MonoBASIC {
 
 		public Label LabelTarget (EmitContext ec)
 		{
-			if (defined)
+			if (defined) 
 				return label;
 			label = ec.ig.DefineLabel ();
+
 			defined = true;
 
 			return label;
@@ -972,18 +974,21 @@ namespace Mono.MonoBASIC {
 				vectors = new ArrayList ();
 
 			vectors.Add (vector.Clone ());
+
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (vectors != null)
+			if (vectors != null) {
 				ec.CurrentBranching.CurrentUsageVector.MergeJumpOrigins (vectors);
+			}
 			else {
 				ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.NEVER;
 				ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.NEVER;
 			}
 
 			referenced = true;
+
 
 			return true;
 		}
@@ -995,6 +1000,10 @@ namespace Mono.MonoBASIC {
 
 			return false;
 		}
+		public void AddReference ()
+                {
+                        referenced = true;
+                }
 	}
 	
 
@@ -2925,6 +2934,7 @@ namespace Mono.MonoBASIC {
 		///   otherwise.
 		/// </returns>
 		///
+/**
 		public bool AddLabel (string name, LabeledStatement target)
 		{
 			if (labels == null)
@@ -2935,17 +2945,98 @@ namespace Mono.MonoBASIC {
 			labels.Add (name, target);
 			return true;
 		}
+**/
 
+
+		 public bool AddLabel (string name, LabeledStatement target, Location loc)
+                {
+/**
+                        if (switch_block != null)
+                                return switch_block.AddLabel (name, target, loc);
+**/
+                        Block cur = this;
+                        while (cur != null) {
+
+                                if (cur.DoLookupLabel (name) != null) {
+                                        Report.Error (
+                                                140, loc, "The label '" + name +"' is a duplicate");
+                                        return false;
+                                }
+
+                                if (!Implicit)
+                                        break;
+
+                                cur = cur.Parent;
+                        }
+
+			 while (cur != null) {
+                                if (cur.DoLookupLabel (name) != null) {
+                                        Report.Error (
+                                                158, loc,
+                                                "The label '"+ name +"' shadows another label " +
+                                                "by the same name in a containing scope.");
+                                        return false;
+                                }
+
+                                if (children != null) {
+                                        foreach (Block b in children) {
+                                                LabeledStatement s = b.DoLookupLabel (name);
+                                                if (s == null)
+                                                        continue;
+                                                Report.Error (
+                                                        158, s.Location,
+                                                        "The label '"+ name +"' shadows another " +
+                                                        "label by the same name in a " +
+                                                        "containing scope.");
+                                                return false;
+                                        }
+                                }
+				cur = cur.Parent;
+                        }
+			 if (labels == null)
+                                labels = new CaseInsensitiveHashtable ();
+                        if (labels.Contains (name))
+                                return false;
+
+                        labels.Add (name, target);
+                        return true;
+
+                }
+		
 		public LabeledStatement LookupLabel (string name)
+                {
+			Block cur = this;
+                        LabeledStatement s = DoLookupLabel (name);
+                        if (s != null) {
+                                return s;
+}
+                        if (children == null)
+                                return null;
+
+                        foreach (Block child in children) {
+                                if (!child.Implicit)
+                                        continue;
+
+                                s = child.LookupLabel (name);
+                                if (s != null) {
+				cur = child;
+                                        return s;
+}
+                        }
+
+                        return null;
+                }
+
+		public LabeledStatement DoLookupLabel (string name)
 		{
 			if (labels != null){
 				if (labels.Contains (name))
 					return ((LabeledStatement) labels [name]);
 			}
-
+/**
 			if (Parent != null)
 				return Parent.LookupLabel (name);
-
+**/
 			return null;
 		}
 
@@ -3455,6 +3546,12 @@ namespace Mono.MonoBASIC {
 			ec.CurrentBlock = prev_block;
 			return has_ret;
 		}
+		
+		public override string ToString ()
+                {
+                        return String.Format ("{0} ({1}:{2})", GetType (),ID, StartLocation);
+                }
+
 	}
 
 	public class StatementSequence : Expression {

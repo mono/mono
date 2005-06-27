@@ -1,3 +1,7 @@
+2005-06-27 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay:
+	*statement.cs: Support and successfully find label definition inside child block
+
 2005-06-23 Manjula GHM <mmanjula@novell.com>
 	*mb-parser.jay: Clear the hashtable in end of block
 

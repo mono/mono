@@ -2739,7 +2739,7 @@ labeled_statement
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
-		if (!current_block.AddLabel ((string) $1, labeled)){
+		if (!current_block.AddLabel ((string) $1, labeled,lexer.Location)){
 			Location l = lexer.Location;
 			Report.Error (140, l, "The label '" + ((string) $1) + "' is a duplicate");
 		}	
@@ -2749,7 +2749,7 @@ labeled_statement
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
-		if (!current_block.AddLabel ((string) $1, labeled)){
+		if (!current_block.AddLabel ((string) $1, labeled,lexer.Location)){
 			Location l = lexer.Location;
 			Report.Error (140, l, "The label '" + ((string) $1) + "' is a duplicate");
 		}	
@@ -3788,7 +3788,6 @@ declaration_statement
 	  {
 		if ($2 != null){
 			DictionaryEntry de = (DictionaryEntry) $2;
-
 			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, (Location)$1);
 		}
 	  }
