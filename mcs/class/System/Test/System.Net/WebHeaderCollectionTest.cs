@@ -99,6 +99,7 @@ public class WebHeaderCollectionTest
 	}
 	
         [Test]
+	[Category ("NotWorking")]
 	public void GetValues ()
 	{			
 		WebHeaderCollection w = new WebHeaderCollection ();
