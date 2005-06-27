@@ -1,3 +1,8 @@
+2005-06-27  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* CultureInfoConverter.cs: Correctly look for verbose name of
+	the culture being converted.
+
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ToolboxItemAttribute.cs: fix the fix that was fixed before.
