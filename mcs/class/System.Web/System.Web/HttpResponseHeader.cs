@@ -28,46 +28,55 @@
 using System;
 
 namespace System.Web {
-   internal class HttpResponseHeader {
-      private string _sHeader;
-      private string _sValue;
-      private int _iKnowHeaderId;
+	class HttpResponseHeader {
+		string header;
+		string val;
+		int header_id;
+		static char [] CRLF = { '\r', '\n' };
 
-      internal HttpResponseHeader(int KnowHeaderId, string value) {
-         _iKnowHeaderId = KnowHeaderId;
-         _sValue = value;
-      }
+		internal HttpResponseHeader (int KnowHeaderId, string val)
+		{
+			header_id = KnowHeaderId;
+			this.val = val;
+		}
 
-      internal HttpResponseHeader(string header, string value) {
-         _sHeader = header;
-         _sValue = value;
-      }
+		internal HttpResponseHeader (string header, string val) {
+			header = header;
+			this.val = val;
+		}
 
-      internal string Name {
-         get {
-            if (null == _sHeader) {
-               return HttpWorkerRequest.GetKnownResponseHeaderName(_iKnowHeaderId);
-            }
+		internal string Name {
+			get {
+				if (null == header)
+					return HttpWorkerRequest.GetKnownResponseHeaderName (header_id);
 
-            return _sHeader;
-         }
-      }
+				return header;
+			}
+		}
 
-      internal string Value {
-         get {
-            return _sValue;
-         }
-	 set {
-		_sValue = value;
-	 }
-      }
+		internal string Value {
+			get { return val; }
+			set { val = value; }
+		}
 
-      internal void SendContent(HttpWorkerRequest WorkerRequest) {
-         if (null != _sHeader) {
-            WorkerRequest.SendUnknownResponseHeader(_sHeader, _sValue);
-         } else {
-            WorkerRequest.SendKnownResponseHeader(_iKnowHeaderId, _sValue);
-         }
-      }
-   }
+		internal void SendContent (HttpWorkerRequest WorkerRequest)
+		{
+			// use URL encoding on the value (see bug #75392)
+			// but only for CR and LF. Other characters are left untouched.
+			string actual_val = val;
+			if (actual_val != null) {
+				int crlf = actual_val.IndexOfAny (CRLF);
+				if (crlf >= 0) {
+					actual_val = actual_val.Replace ("\r", "%0d");
+					actual_val = actual_val.Replace ("\n", "%0a");
+				}
+			}
+
+			if (null != header) {
+				WorkerRequest.SendUnknownResponseHeader (header, actual_val);
+			} else {
+				WorkerRequest.SendKnownResponseHeader (header_id, actual_val);
+			}
+		}
+	}
 }

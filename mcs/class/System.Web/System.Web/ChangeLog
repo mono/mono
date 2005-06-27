@@ -1,3 +1,8 @@
+2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseHeader.cs: URL encode \r and \n in header values. Fixes
+	bug #75392.
+
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: fix another stupid buglet in htmldecode.
