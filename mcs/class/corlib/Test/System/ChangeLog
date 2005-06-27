@@ -1,9 +1,13 @@
+2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConvertTest.cs: added test from Lluis.
+
 2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringTest.cs : added new Trim() tests for bug #75259.
 
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com> 
- 
+
 	* CharCategoryTest.cs: Added new whitespace (to fix failure on Mono, 
 	there are other failures when executed under 2.0 beta 2).
 	* CharTest.cs: Added test to check for all whitespaces.

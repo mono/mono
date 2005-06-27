@@ -2669,6 +2669,16 @@ namespace MonoTests.System {
 		  Convert.FromBase64String(brokenB64);
 		}
 
+		[Test]
+		public void TestBeginWithSpaces ()
+		{
+			byte[] bb = new byte[] { 1, 2, 3};
+			string s = Convert.ToBase64String (bb);
+			byte [] b2 = Convert.FromBase64String ("     " + s);
+			Assertion.AssertEquals ("#01", 3, b2.Length);
+			for (int i = 0; i < 3; i++)
+				Assertion.AssertEquals ("#0" + (i + 2), bb [i], b2 [i]);
+		}
 		
 		public void TestToBase64CharArray ()
 		{
