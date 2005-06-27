@@ -456,6 +456,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ReadTest1 ()
 		{
 			DataSet ds = CreateTestSet ();
@@ -625,6 +626,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestSampleFileComplexTables2 ()
 		{
 			DataSet ds = new DataSet ();

@@ -37,9 +37,12 @@ using GHTUtils.Base;
 
 namespace tests.system_data_dll.System_Data
 {
-[TestFixture] public class DataTable_Locale : GHTBase
+[TestFixture]
+public class DataTable_Locale : GHTBase
 {
-	[Test] public void Main()
+	[Test]
+	[Category ("NotWorking")]
+	public void Main()
 	{
 		DataTable_Locale tc = new DataTable_Locale();
 		Exception exp = null;

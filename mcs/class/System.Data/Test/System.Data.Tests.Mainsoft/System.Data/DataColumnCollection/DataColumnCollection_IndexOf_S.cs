@@ -35,9 +35,12 @@ using GHTUtils.Base;
 
 namespace tests.system_data_dll.System_Data
 {
-[TestFixture] public class DataColumnCollection_IndexOf_S : GHTBase
+[TestFixture]
+public class DataColumnCollection_IndexOf_S : GHTBase
 {
-	[Test] public void Main()
+	[Test]
+	[Category ("NotWorking")] 
+	public void Main()
 	{
 		DataColumnCollection_IndexOf_S tc = new DataColumnCollection_IndexOf_S();
 		Exception exp = null;

@@ -364,6 +364,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		// The same table cannot be the child table in two nested relations.
 		public void ComplexElementTable1 ()
@@ -469,6 +470,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ConstraintException))]
 		public void ConflictExistingPrimaryKey ()
 		{

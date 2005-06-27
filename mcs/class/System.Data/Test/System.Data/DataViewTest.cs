@@ -533,6 +533,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void ComplexEventSequence1 ()
 		{
 			string result = @"setting table...

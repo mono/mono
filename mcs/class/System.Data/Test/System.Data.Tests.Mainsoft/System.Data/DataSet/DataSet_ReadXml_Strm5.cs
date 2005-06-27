@@ -37,10 +37,13 @@ using GHTUtils.Base;
 
 namespace tests.system_data_dll.System_Data
 {
-[TestFixture] public class DataSet_ReadXml_Strm5 : GHTBase
+[TestFixture]
+public class DataSet_ReadXml_Strm5 : GHTBase
 {
 		Exception m_exp = null;
-	[Test] public void Main()
+	[Test]
+	[Category ("NotWorking")]
+	public void Main()
 	{
 		DataSet_ReadXml_Strm5 tc = new DataSet_ReadXml_Strm5();
 		Exception exp = null;

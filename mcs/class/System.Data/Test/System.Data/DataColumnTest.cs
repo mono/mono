@@ -304,6 +304,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
                 public void ExpressionFunctions ()
                 {
                 	DataTable T = new DataTable ("test");

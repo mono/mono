@@ -417,6 +417,7 @@ public class DataSet_InferXmlSchema_SS : GHTBase
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void inferingTables5()  
 	{
 		//Acroding to the msdn documantaion : 

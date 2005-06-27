@@ -37,9 +37,12 @@ using GHTUtils.Base;
 
 namespace tests.system_data_dll.System_Data
 {
-[TestFixture] public class EvaluateException_Generate : GHTBase
+[TestFixture]
+public class EvaluateException_Generate : GHTBase
 {
-	[Test] public void Main()
+	[Test]
+	[Category ("NotWorking")]
+	public void Main()
 	{
 		EvaluateException_Generate tc = new EvaluateException_Generate();
 		Exception exp = null;

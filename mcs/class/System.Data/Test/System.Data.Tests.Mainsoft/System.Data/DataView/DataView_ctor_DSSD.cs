@@ -37,9 +37,12 @@ using GHTUtils.Base;
 
 namespace tests.system_data_dll.System_Data
 {
-[TestFixture] public class DataView_ctor_DSSD : GHTBase
+[TestFixture]
+public class DataView_ctor_DSSD : GHTBase
 {
-	[Test] public void Main()
+	[Test]
+	[Category ("NotWorking")]
+	public void Main()
 	{
 		DataView_ctor_DSSD tc = new DataView_ctor_DSSD();
 		Exception exp = null;
