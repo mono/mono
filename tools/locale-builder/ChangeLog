@@ -1,3 +1,8 @@
+2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : basic pattern string should be added to extra pattern
+	  array. This fixes bug #75353.
+
 2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs, CultureInfoEntry.cs : Use hacky shallow copy to clone

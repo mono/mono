@@ -366,6 +366,12 @@ namespace Mono.Tools.LocaleBuilder {
 			}
 		}
 
+		private void AddPattern (ArrayList al, string pattern)
+		{
+			if (!al.Contains (pattern))
+				al.Add (pattern);
+		}
+
 		private void LookupDateTimeInfo (XPathNavigator nav, CultureInfoEntry ci)
 		{
 			/**
@@ -465,6 +471,7 @@ namespace Mono.Tools.LocaleBuilder {
 								df.LongDatePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
+						AddPattern (df.LongDatePatterns, df.LongDatePattern);
 						break;
 					case "short":
 						if (value != null)
@@ -476,6 +483,7 @@ namespace Mono.Tools.LocaleBuilder {
 								df.ShortDatePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
+						AddPattern (df.ShortDatePatterns, df.ShortDatePattern);
 						break;
 					case "year_month":
 						if (value != null)
@@ -507,6 +515,7 @@ namespace Mono.Tools.LocaleBuilder {
 								df.LongTimePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
+						AddPattern (df.LongTimePatterns, df.LongTimePattern);
 						break;
 					case "short":
 						if (value != null)
@@ -518,6 +527,7 @@ namespace Mono.Tools.LocaleBuilder {
 								df.ShortTimePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
+						AddPattern (df.ShortTimePatterns, df.ShortTimePattern);
 						break;
 					}
 				}
