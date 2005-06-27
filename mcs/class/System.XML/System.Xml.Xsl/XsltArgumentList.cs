@@ -50,6 +50,14 @@ namespace System.Xml.Xsl
 
 		#endregion
 
+		#region Event
+#if NET_2_0
+
+		public event XsltMessageEncounteredEventHandler XsltMessageEncountered;
+
+#endif
+		#endregion
+
 		#region Methods
 
 		public void AddExtensionObject (string namespaceUri, object extension)

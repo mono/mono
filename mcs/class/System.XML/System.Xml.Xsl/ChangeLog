@@ -1,3 +1,10 @@
+2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltSettings.cs,
+	  XsltMessageEncounteredEventArgs.cs,
+	  XsltMessageEncounteredEventHandler.cs : new files for net_2_0.
+	* XsltArgumentList.cs : added 2.0 message event.
+
 2005-04-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* *.cs: Kill unmanaged xslt and the multiplexing hack.
