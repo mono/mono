@@ -77,8 +77,8 @@ public class DataSet_ReadXml_Strg : GHTBase
 	{
 		Exception exp = null;
 	
-		string sTempFileName = "tmpDataSet_ReadWriteXml_43894.xml"  ;
-
+		string temp_file = System.IO.Path.GetTempFileName ();
+		try {
 		DataSet ds1 = new DataSet();
 		ds1.Tables.Add(GHTUtils.DataProvider.CreateParentDataTable());
 		ds1.Tables.Add(GHTUtils.DataProvider.CreateChildDataTable());
@@ -91,14 +91,14 @@ public class DataSet_ReadXml_Strg : GHTBase
 		
 
 		//write xml file, data only
-		ds1.WriteXml(sTempFileName);
+		ds1.WriteXml (temp_file);
 
 		//copy both data and schema
 		DataSet ds2 = ds1.Copy();
 		//clear the data
 		ds2.Clear();
 
-		ds2.ReadXml(sTempFileName);
+		ds2.ReadXml(temp_file);
 	
 		//check xml data
 		try
@@ -126,12 +126,9 @@ public class DataSet_ReadXml_Strg : GHTBase
 		finally	{EndCase(exp); exp = null;}
 
 
-		//try to delete the file
-		try
-		{
-			System.IO.File.Delete(sTempFileName);
+		} finally {
+			System.IO.File.Delete (temp_file);
 		}
-		catch {}
 
 	}
 }
