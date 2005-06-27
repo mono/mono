@@ -1,3 +1,8 @@
+2005-06-27  Andrew Skiba  <andrews@mainsoft.com>
+
+	* knownFailures.lst, fixme.lst: remove fixed testcases
+	* ignored.lst: add a test which causes mono runtime to hang
+
 2005-06-14  Andrew Skiba  <andrews@mainsoft.com>
 
 	* fixme.lst : remove testcases fixed by r45935
