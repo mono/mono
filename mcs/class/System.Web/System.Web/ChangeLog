@@ -1,5 +1,9 @@
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpUtility.cs: fix another stupid buglet in htmldecode.
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpContext.cs:
 	* HttpResponse.cs:
 	* HttpRequest.cs: use StrUtils (invariant culture).

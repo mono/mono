@@ -747,7 +747,12 @@ namespace System.Web {
 				}
 
 				if (c == '&') {
-					state = 0;
+					state = 1;
+					if (have_trailing_digits) {
+						entity.Append (number.ToString (CultureInfo.InvariantCulture));
+						have_trailing_digits = false;
+					}
+
 					output.Append (entity.ToString ());
 					entity.Length = 0;
 					entity.Append ('&');
