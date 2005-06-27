@@ -41,7 +41,7 @@ namespace System.Web {
 		}
 
 		internal HttpResponseHeader (string header, string val) {
-			header = header;
+			this.header = header;
 			this.val = val;
 		}
 
