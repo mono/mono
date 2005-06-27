@@ -133,7 +133,6 @@ System.Xml/XmlNodeType.cs
 System.Xml/XmlParserContext.cs
 System.Xml/XmlProcessingInstruction.cs
 System.Xml/XmlQualifiedName.cs
-System.Xml/XmlQueryDialect.cs
 System.Xml/XmlReader.cs
 System.Xml/XmlReaderBinarySupport.cs
 System.Xml/XmlReaderSettings.cs
@@ -179,6 +178,9 @@ System.Xml.Xsl/XsltArgumentList.cs
 System.Xml.Xsl/XsltCompileException.cs
 System.Xml.Xsl/XsltContext.cs
 System.Xml.Xsl/XsltException.cs
+System.Xml.Xsl/XsltMessageEncounteredEventArgs.cs
+System.Xml.Xsl/XsltMessageEncounteredEventHandler.cs
+System.Xml.Xsl/XsltSettings.cs
 System.Xml.Schema/BuiltInDatatype.cs
 System.Xml.Schema/IXmlSchemaInfo.cs
 System.Xml.Schema/SchemaDataValueType.cs

@@ -1,3 +1,8 @@
+2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : removed XmlQueryDialect.
+	  Added xslt message event stuff.
+
 2005-06-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (SCARY_LIB): Remove.
