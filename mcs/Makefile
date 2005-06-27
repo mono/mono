@@ -30,7 +30,7 @@ centum_tests := \
 default_centum_tests :=		\
 	$(centum_tests) 	\
 	class/System.XML	\
-	class/Ssytem.Data
+	class/System.Data
 
 
 net_2_0_centum_tests := $(centum_tests)
