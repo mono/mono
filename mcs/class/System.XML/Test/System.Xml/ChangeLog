@@ -1,3 +1,8 @@
+2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReaderTests.cs : added a testcase for not-wf entity 
+	  declaration which is actually not used in the instance.
+
 2005-06-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdParticleValidationTests.cs : XmlSchemaException -> 
