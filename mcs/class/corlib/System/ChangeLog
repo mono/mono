@@ -1,3 +1,8 @@
+2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs : added some extra whitespace characters for Trim().
+	  Fixed bug #75259.
+
 2005-06-13  Michal Moskal <malekith@nemerle.org>
 	
 	* MonoType.cs: Don't use MethodHandle in GetMethod/GetConstructor,

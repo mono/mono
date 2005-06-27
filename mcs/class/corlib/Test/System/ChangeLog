@@ -1,3 +1,7 @@
+2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringTest.cs : added new Trim() tests for bug #75259.
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CharCategoryTest.cs: Added new whitespace (to fix failure on Mono, 

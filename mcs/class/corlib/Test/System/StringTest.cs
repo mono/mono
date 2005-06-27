@@ -1523,6 +1523,11 @@ public class StringTest : Assertion
 		char[] delims = {'a', 'b'};
 		AssertEquals("custom trim failed", 
 			     "original", s1.Trim(delims));
+
+#if NET_2_0
+		AssertEquals ("net_2_0 additional char#1", "original", "\u2028original\u2029".Trim ());
+		AssertEquals ("net_2_0 additional char#2", "original", "\u0085original\u1680".Trim ());
+#endif
 	}
 
 	public void TestTrimEnd() {
