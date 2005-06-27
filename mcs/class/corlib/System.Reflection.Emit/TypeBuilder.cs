@@ -1399,10 +1399,10 @@ namespace System.Reflection.Emit {
 		{
 			if (name == null)
 				throw new ArgumentNullException (argName);
-			if (name == "")
-				throw new ArgumentException (argName, "Empty name is not legal.");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name is not legal", argName);
 			if (name.IndexOf ((char)0) != -1)
-				throw new ArgumentException (argName, "Illegal name.");
+				throw new ArgumentException ("Illegal name", argName);
 		}
 
 		public override String ToString ()
