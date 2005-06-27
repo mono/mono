@@ -106,6 +106,11 @@ namespace System.Xml
 			return Create (writer, null);
 		}
 
+		public static XmlWriter Create (XmlWriter writer)
+		{
+			return Create (writer, null);
+		}
+
 		public static XmlWriter Create (StringBuilder builder)
 		{
 			return Create (builder, null);

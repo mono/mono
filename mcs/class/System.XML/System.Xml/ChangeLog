@@ -1,3 +1,9 @@
+2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : added Create(XmlWriter).
+	* XmlValidatingReader.cs : added Read*AsBase64/BinHex().
+	* XmlReaderSettings.cs : added obsolete annoyances to hush corcompare.
+
 2005-06-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : use StringBuilder.ToString(int,int) when it does

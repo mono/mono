@@ -127,6 +127,50 @@ namespace System.Xml
 			set { ignoreComments = value; }
 		}
 
+		[Obsolete ("Use ValidationFlags")]
+		public bool IgnoreIdentityConstraints {
+			get { return (ValidationFlags & XsValidationFlags.IgnoreIdentityConstraints) != 0; }
+			set {
+				if (value)
+					ValidationFlags |= XsValidationFlags.IgnoreIdentityConstraints;
+				else
+					ValidationFlags &= ~XsValidationFlags.IgnoreIdentityConstraints;
+			}
+		}
+
+		[Obsolete ("Use ValidationFlags")]
+		public bool IgnoreInlineSchema {
+			get { return (ValidationFlags & XsValidationFlags.IgnoreInlineSchema) != 0; }
+			set {
+				if (value)
+					ValidationFlags |= XsValidationFlags.IgnoreInlineSchema;
+				else
+					ValidationFlags &= ~XsValidationFlags.IgnoreInlineSchema;
+			}
+		}
+
+		[Obsolete ("Use ValidationFlags")]
+		public bool IgnoreSchemaLocation {
+			get { return (ValidationFlags & XsValidationFlags.IgnoreSchemaLocation) != 0; }
+			set {
+				if (value)
+					ValidationFlags |= XsValidationFlags.IgnoreSchemaLocation;
+				else
+					ValidationFlags &= ~XsValidationFlags.IgnoreSchemaLocation;
+			}
+		}
+
+		[Obsolete ("Use ValidationFlags")]
+		public bool IgnoreValidationWarnings {
+			get { return (ValidationFlags & XsValidationFlags.IgnoreValidationWarnings) != 0; }
+			set {
+				if (value)
+					ValidationFlags |= XsValidationFlags.IgnoreValidationWarnings;
+				else
+					ValidationFlags &= ~XsValidationFlags.IgnoreValidationWarnings;
+			}
+		}
+
 		public bool IgnoreProcessingInstructions {
 			get { return ignoreProcessingInstructions; }
 			set { ignoreProcessingInstructions = value; }
@@ -183,7 +227,6 @@ namespace System.Xml
 			set { validationType = value; }
 		}
 
-		[CLSCompliant(false)]
 		public XmlResolver XmlResolver {
 			internal get { return xmlResolver; }
 			set { xmlResolver = value; }

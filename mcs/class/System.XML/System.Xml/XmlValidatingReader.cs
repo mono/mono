@@ -589,6 +589,44 @@ namespace System.Xml
 			else if (ValidationType != ValidationType.None && e.Severity == XmlSeverityType.Error)
 				throw e.Exception;
 		}
+
+#if NET_2_0
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadContentAsBase64 (byte [] buffer, int offset, int length)
+		{
+			if (validatingReader != null)
+				return validatingReader.ReadContentAsBase64 (buffer, offset, length);
+			else
+				return sourceReader.ReadContentAsBase64 (buffer, offset, length);
+		}
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadContentAsBinHex (byte [] buffer, int offset, int length)
+		{
+			if (validatingReader != null)
+				return validatingReader.ReadContentAsBinHex (buffer, offset, length);
+			else
+				return sourceReader.ReadContentAsBinHex (buffer, offset, length);
+		}
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadElementContentAsBase64 (byte [] buffer, int offset, int length)
+		{
+			if (validatingReader != null)
+				return validatingReader.ReadElementContentAsBase64 (buffer, offset, length);
+			else
+				return sourceReader.ReadElementContentAsBase64 (buffer, offset, length);
+		}
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadElementContentAsBinHex (byte [] buffer, int offset, int length)
+		{
+			if (validatingReader != null)
+				return validatingReader.ReadElementContentAsBinHex (buffer, offset, length);
+			else
+				return sourceReader.ReadElementContentAsBinHex (buffer, offset, length);
+		}
+#endif
 		#endregion // Methods
 
 		#region Events and Delegates
