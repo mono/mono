@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -149,7 +150,7 @@ namespace System.Web.Compilation
 			if (att == null || !got_hashed)
 				return false;
 
-			return (att.StartsWith ("<%#") && att.EndsWith ("%>"));
+			return (StrUtils.StartsWith (att, "<%#") && StrUtils.EndsWith (att, "%>"));
 		}
 		
 		public Hashtable GetDictionary (string key)

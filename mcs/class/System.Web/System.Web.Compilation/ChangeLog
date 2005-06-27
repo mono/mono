@@ -1,3 +1,10 @@
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TagAttributes.cs:
+	* AspParser.cs:
+	* TemplateControlCompiler.cs: use invariant culture versions of starts/
+	endswith.
+
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: comparison between member name and the
