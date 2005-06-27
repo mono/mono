@@ -41,7 +41,7 @@ namespace Schemas {
         System.Xml.Serialization.XmlElement("compound-field",Type=typeof(compoundfield))]
         public basefieldtype[] Items;
     }
-    
+
     public class M {
 	public static void Main () {}
     }

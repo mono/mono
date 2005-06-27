@@ -48,7 +48,7 @@ namespace Schemas
 			return null;
 		}
 	}
-	
+
 	public class M {
 	    public static void Main () {}
 	}
