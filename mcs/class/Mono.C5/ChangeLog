@@ -1,3 +1,7 @@
+2005-06-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile: don't install on the 1.x profiles.
+
 2005-04-29  Martin Baulig  <martin@ximian.com>
 
 	Reflect latest API changes.
