@@ -1,3 +1,10 @@
+2005-06-27  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataControlField.cs: Ignore the ShowHeader property when
+	building the control's content. It is the resposability of
+	the field container to decide if the header should be shown
+	or not.
+
 2005-06-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AdType.cs:

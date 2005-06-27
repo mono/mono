@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls {
 		public virtual void InitializeCell (DataControlFieldCell cell,
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
-			if (cellType == DataControlCellType.Header && ShowHeader)
+			if (cellType == DataControlCellType.Header)
 			{
 				if (HeaderText.Length > 0 || HeaderImageUrl.Length > 0) {
 					if (sortingEnabled && SortExpression.Length > 0)
