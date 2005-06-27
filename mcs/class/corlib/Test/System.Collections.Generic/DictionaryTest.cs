@@ -511,6 +511,48 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsFalse(((object) enumerator.Current) is DictionaryEntry);
 		}
 
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void FailFastTest1 ()
+		{
+			Dictionary<int, int> d = new Dictionary<int, int> ();
+			d [1] = 1;
+			int count = 0;
+			foreach (KeyValuePair<int, int> kv in d) {
+				d [kv.Key + 1] = kv.Value + 1;
+				if (count++ != 0)
+					Assert.Fail ("Should not be reached");
+			}
+			Assert.Fail ("Should not be reached");
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void FailFastTest2 ()
+		{
+			Dictionary<int, int> d = new Dictionary<int, int> ();
+			d [1] = 1;
+			int count = 0;
+			foreach (int i in d.Keys) {
+				d [i + 1] = i + 1;
+				if (count++ != 0)
+					Assert.Fail ("Should not be reached");
+			}
+			Assert.Fail ("Should not be reached");
+		}
+
+		[Test, ExpectedException (typeof (InvalidOperationException))]
+		public void FailFastTest3 ()
+		{
+			Dictionary<int, int> d = new Dictionary<int, int> ();
+			d [1] = 1;
+			int count = 0;
+			foreach (int i in d.Keys) {
+				d [i] = i;
+				if (count++ != 0)
+					Assert.Fail ("Should not be reached");
+			}
+			Assert.Fail ("Should not be reached");
+		}
+
 		[Test]
 		public void SerializationTest()
 		{

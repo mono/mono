@@ -1,3 +1,17 @@
+2005-06-27  Raja R Harinath  <rharinath@novell.com>
+
+	Introduce some thread-safety by removing the modify-on-read
+	move-to-front heuristic.
+	* Dictionary.cs (_enumeratorGeneration, _enumerators): Remove.
+	(Count): Add internal property set.  Invalidate enumerators when
+	Count is changed.  Change all references of _usedSlots to Count.
+	(this): Invalidate enumerators when the value of some slot is
+	changed, even if the layout of the data-structure isn't modified.
+	(DoHash): Remove null-key check.  All codepaths leading to this
+	function already have the check.
+	(GetSlot): Remove move-to-front heuristic.
+	(Remove): Update.
+
 2005-06-24  Martin Baulig  <martin@ximian.com>
 
 	* IDictionary.cs: Use the same type parameter names than on MS.

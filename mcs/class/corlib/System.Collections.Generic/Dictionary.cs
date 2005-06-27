@@ -73,11 +73,14 @@ namespace System.Collections.Generic {
 		SerializationInfo _serializationInfo;
 
 		private uint _generation;
-		private uint _enumeratorGeneration;
-		private uint _enumerators;
 
 		public int Count {
 			get { return _usedSlots; }
+			/* FIXME: this should be 'private' not 'internal'.  */
+			internal set {
+				_usedSlots = value;
+				++_generation;
+			}
 		}
 
 		public TValue this [TKey key] {
@@ -90,13 +93,14 @@ namespace System.Collections.Generic {
 			}
 
 			set {
-				++_generation;
 				int index;
 				Slot slot = GetSlot (key, out index);
-				if (slot == null)
+				if (slot == null) {
 					DoAdd (index, key, value);
-				else
+				} else {
+					++_generation;
 					slot.Data.Value = value;
+				}
 			}
 		}
 
@@ -126,9 +130,8 @@ namespace System.Collections.Generic {
 				throw new ArgumentNullException ("dictionary");
 			int capacity = dictionary.Count;
 			Init (capacity, comparer);
-			foreach (KeyValuePair<TKey, TValue> entry in dictionary) {
+			foreach (KeyValuePair<TKey, TValue> entry in dictionary)
 				this.Add (entry.Key, entry.Value);
-			}
 		}
 
 		public Dictionary (int capacity, IEqualityComparer<TKey> comparer)
@@ -156,8 +159,6 @@ namespace System.Collections.Generic {
 			_table = new Slot [capacity];
 			SetThreshold ();
 			_generation = 0;
-			_enumeratorGeneration = 0;
-			_enumerators = 0;
 		}
 
 		void CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
@@ -168,7 +169,7 @@ namespace System.Collections.Generic {
 				throw new ArgumentOutOfRangeException ("index");
 			if (index >= array.Length)
 				throw new ArgumentException ("index larger than largest valid index of array");
-			if (array.Length - index < _usedSlots)
+			if (array.Length - index < Count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
 			for (int i = 0; i < _table.Length; ++i) {
@@ -205,32 +206,24 @@ namespace System.Collections.Generic {
 
 		public void Add (TKey key, TValue value)
 		{
-			++_generation;
 			int index;
 			Slot slot = GetSlot (key, out index);
-
 			if (slot != null)
 				throw new ArgumentException ("An element with the same key already exists in the dictionary.");
-
 			DoAdd (index, key, value);
 		}
 
 		void DoAdd (int index, TKey key, TValue value)
 		{
-			if (_usedSlots >= _threshold) {
+			if (Count++ >= _threshold) {
 				Resize ();
 				index = DoHash (key);
 			}
-
 			_table [index] = new Slot (key, value, _table [index]);
-			++_usedSlots;
 		}
 
 		private int DoHash (TKey key)
 		{
-			if (key == null)
-				throw new ArgumentNullException ("key", "null key");
-
 			int size = this._table.Length;
 			int h = _hcp.GetHashCode (key) & Int32.MaxValue;
 			int spot = (int) ((uint) h % size);
@@ -243,10 +236,9 @@ namespace System.Collections.Generic {
 
 		public void Clear ()
 		{
-			++_generation;
+			Count = 0;
 			for (int i = 0; i < _table.Length; i++)
 				_table [i] = null;
-			_usedSlots = 0;
 		}
 
 		public bool ContainsKey (TKey key)
@@ -275,9 +267,9 @@ namespace System.Collections.Generic {
 				throw new ArgumentNullException ("info");
 
 			info.AddValue ("hcp", _hcp);
-			KeyValuePair<TKey, TValue>[] data = null;
-			if (_usedSlots > 0) {
-				data = new KeyValuePair<TKey,TValue> [_usedSlots];
+			KeyValuePair<TKey, TValue> [] data = null;
+			if (Count > 0) {
+				data = new KeyValuePair<TKey,TValue> [Count];
 				CopyTo (data, 0);
 			}
 			info.AddValue ("data", data);
@@ -300,7 +292,7 @@ namespace System.Collections.Generic {
 
 			_table = new Slot [buckets];
 			SetThreshold ();
-			_usedSlots = 0;
+			Count = 0;
 
 			if (data != null) {
 				for (int i = 0; i < data.Length; ++i)
@@ -311,24 +303,25 @@ namespace System.Collections.Generic {
 
 		public bool Remove (TKey key)
 		{
-			++_generation;
 			int index;
 			Slot slot = GetSlot (key, out index);
-
 			if (slot == null)
 				return false;
 
-			// If GetSlot returns a valid slot, the given key is at the head of the chain.
-			if (_table [index] != slot)
-				throw new SystemException ("dictionary has inconsistent state, aborting");
-			_table [index] = _table [index].Next;
-			--_usedSlots;
+			--Count;
+			if (slot == _table [index]) {
+				_table [index] = _table [index].Next;
+			} else {
+				Slot prev = _table [index];
+				while (prev.Next != slot)
+					prev = prev.Next;
+				prev.Next = slot.Next;
+			}
 			return true;
 		}
 
 		//
 		// Return the slot containing key, and set 'index' to the chain the key was found in.
-		// Also try to ensure that the found key is the first element of its chain.
 		// If the key is not found, return null and set 'index' to the chain that would've contained the key.
 		//
 		private Slot GetSlot (TKey key, out int index)
@@ -336,22 +329,9 @@ namespace System.Collections.Generic {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			index = DoHash (key);
-			Slot prev = null;
 			Slot slot = _table [index];
-
-			while (slot != null && !_hcp.Equals (key, slot.Data.Key)) {
-				prev = slot;
+			while (slot != null && !_hcp.Equals (key, slot.Data.Key))
 				slot = slot.Next;
-			}
-
-			if (slot != null && prev != null &&
-			    (_enumeratorGeneration != _generation || _enumerators == 0)) {
-				// Move to the head of the list
-				prev.Next = slot.Next;
-				slot.Next = _table [index];
-				_table [index] = slot;
-			}
-
 			return slot;
 		}
 
@@ -495,13 +475,11 @@ namespace System.Collections.Generic {
 
 			internal Enumerator (Dictionary<TKey, TValue> dictionary)
 			{
-				++dictionary._enumerators;
 				_dictionary = dictionary;
-				_stamp = dictionary._enumeratorGeneration = dictionary._generation;
+				_stamp = dictionary._generation;
 
 				// The following stanza is identical to IEnumerator.Reset (),
-				// but because of the
-				// definite assignment rule, we cannot call it here.
+				// but because of the definite assignment rule, we cannot call it here.
 				_nextIndex = 0;
 				_current = null;
 			}
@@ -534,10 +512,13 @@ namespace System.Collections.Generic {
 			}
 
 			object IEnumerator.Current {
-				get {
-					VerifyState ();
-					return new DictionaryEntry (_current.Data.Key, _current.Data.Value);
-				}
+				get { return ((IDictionaryEnumerator) this).Entry; }
+			}
+
+			void IEnumerator.Reset ()
+			{
+				_nextIndex = 0;
+				_current = null;
 			}
 
 			DictionaryEntry IDictionaryEnumerator.Entry {
@@ -547,25 +528,12 @@ namespace System.Collections.Generic {
 				}
 			}
 
-			void IEnumerator.Reset ()
-			{
-				_nextIndex = 0;
-				_current = null;
+			object IDictionaryEnumerator.Key {
+				get { return Current.Key; }
 			}
 
-			object IDictionaryEnumerator.Key
-			{
-				get {
-					VerifyState ();
-					return _current.Data.Key;
-				}
-			}
-			object IDictionaryEnumerator.Value
-			{
-				get {
-					VerifyState ();
-					return _current.Data.Value;
-				}
+			object IDictionaryEnumerator.Value {
+				get { return Current.Value; }
 			}
 
 			void VerifyState ()
@@ -580,7 +548,6 @@ namespace System.Collections.Generic {
 			public void Dispose ()
 			{
 				_current = null;
-				--_dictionary._enumerators;
 				_dictionary = null;
 			}
 		}
@@ -605,7 +572,7 @@ namespace System.Collections.Generic {
 					throw new ArgumentOutOfRangeException ("index");
 				if (index >= array.Length)
 					throw new ArgumentException ("index larger than largest valid index of array");
-				if (array.Length - index < _dictionary._usedSlots)
+				if (array.Length - index < _dictionary.Count)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
 				foreach (TKey k in this)
@@ -721,7 +688,7 @@ namespace System.Collections.Generic {
 					throw new ArgumentOutOfRangeException ("index");
 				if (index >= array.Length)
 					throw new ArgumentException ("index larger than largest valid index of array");
-				if (array.Length - index < _dictionary._usedSlots)
+				if (array.Length - index < _dictionary.Count)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
 				foreach (TValue k in this)

@@ -1,3 +1,9 @@
+2005-06-27  Raja R Harinath  <rharinath@novell.com>
+
+	* DictionaryTest.cs (FailFastTest1, FailFastTest2, FailFastTest3):
+	New tests to ensure that enumerators are invalidated on
+	modifications to the dictionary.
+
 2005-06-22  Raja R Harinath  <rharinath@novell.com>
 
 	* DictionaryTest.cs (KeyValueEnumeratorTest): Add test for infloop
