@@ -35,8 +35,7 @@ namespace NpgsqlTests
 	[TestFixture]
 	public class ConnectionTests
 	{
-		private NpgsqlConnection 	_conn = null;
-		private String 						_connString = "Server=localhost;User ID=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests;maxpoolsize=2;";
+		NpgsqlConnection _conn;
 		
 		[SetUp]
 		protected void SetUp()
@@ -44,13 +43,14 @@ namespace NpgsqlTests
 			//NpgsqlEventLog.Level = LogLevel.None;
 			//NpgsqlEventLog.Level = LogLevel.Debug;
 			//NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
-			_conn = new NpgsqlConnection(_connString);
+			_conn = new NpgsqlConnection (TestConfiguration.NpgsqlConnectionString);
 		}
 		
 		[TearDown]
 		protected void TearDown()
 		{
-			_conn.Close();
+			if (_conn != null)
+				_conn.Close();
 		}
 		
 		

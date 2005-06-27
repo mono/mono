@@ -36,8 +36,7 @@ namespace NpgsqlTests
 	public class DataReaderTests
 	{
 		
-		private NpgsqlConnection 	_conn = null;
-		private String 						_connString = "Server=localhost;User ID=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests;maxpoolsize=2;";
+		NpgsqlConnection _conn;
 		
 		[SetUp]
 		protected void SetUp()
@@ -45,13 +44,13 @@ namespace NpgsqlTests
 			//NpgsqlEventLog.Level = LogLevel.None;
 			//NpgsqlEventLog.Level = LogLevel.Debug;
 			//NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";
-			_conn = new NpgsqlConnection(_connString);
+			_conn = new NpgsqlConnection (TestConfiguration.NpgsqlConnectionString);
 		}
 		
 		[TearDown]
 		protected void TearDown()
 		{
-			if (_conn.State != ConnectionState.Closed)
+			if (_conn != null &&_conn.State != ConnectionState.Closed)
 				_conn.Close();
 		}
 		
@@ -405,7 +404,7 @@ namespace NpgsqlTests
 			_conn.Open();
 			
 						
-			NpgsqlDataAdapter da = new NpgsqlDataAdapter("select * from tablea", _connString);
+			NpgsqlDataAdapter da = new NpgsqlDataAdapter("select * from tablea", TestConfiguration.NpgsqlConnectionString);
 			
 			DataSet ds = new DataSet();
 			
@@ -423,7 +422,7 @@ namespace NpgsqlTests
 			_conn.Open();
 			
 						
-			NpgsqlDataAdapter da = new NpgsqlDataAdapter("select * from tableb", _connString);
+			NpgsqlDataAdapter da = new NpgsqlDataAdapter("select * from tableb", TestConfiguration.NpgsqlConnectionString);
 			
 			DataSet ds = new DataSet();
 			
