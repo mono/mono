@@ -56,8 +56,14 @@ namespace System.Xml.Xsl
 		bool enableScript;
 
 		public XsltSettings ()
-			: this (false)
 		{
+		}
+
+		public XsltSettings (bool enableDocumentFunction,
+			bool enableScript)
+		{
+			this.enableDocument = enableDocumentFunction;
+			this.enableScript = enableScript;
 		}
 
 		private XsltSettings (bool readOnly)

@@ -33,17 +33,12 @@ using System;
 
 namespace System.Xml.Xsl
 {
-	public class XsltMessageEncounteredEventArgs : EventArgs
+	public abstract class XsltMessageEncounteredEventArgs : EventArgs
 	{
-		string message;
+		public abstract string Message { get; }
 
-		public string Message {
-			get { return message; }
-		} 
-
-		internal XsltMessageEncounteredEventArgs (string message)
+		protected XsltMessageEncounteredEventArgs ()
 		{
-			this.message = message;
 		}
 	}
 }
