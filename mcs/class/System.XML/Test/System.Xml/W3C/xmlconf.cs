@@ -4,9 +4,15 @@ using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text;
 
-namespace XmlConfTest {
-	class XmlConfTest: IDisposable {
+namespace MonoTests.stand_alone {
+#if NUNIT_SUPPORT
+	using NUnit.Core;
+	using NUnit.Framework;
+#endif
+
+	class AllTests: IDisposable {
 		
 		#region Command Line Options Handling
 
@@ -35,14 +41,14 @@ namespace XmlConfTest {
 		static void PrintUsage () {
 			Console.Error.WriteLine("Usage: xmlconf <flags>");
 			Console.Error.WriteLine("\tFlags:");
-			foreach (DictionaryEntry de in XmlConfTest.GetOptions())
+			foreach (DictionaryEntry de in AllTests.GetOptions())
 				Console.Error.WriteLine ("\t{0}\t{1}", de.Key, de.Value);
 		}
 
 		public static Hashtable GetOptions() {
 			Hashtable h = new Hashtable();
 
-			foreach (FieldInfo i in typeof (XmlConfTest).GetFields()) {
+			foreach (FieldInfo i in typeof (AllTests).GetFields()) {
 				//FIXME: handle long options, too
 				string option = "-" + i.GetCustomAttributes(typeof(CommandLineOptionAttribute),
 					true)[0].ToString();
@@ -54,14 +60,14 @@ namespace XmlConfTest {
 		}
 
 		public bool ParseOptions () {
-			if (_args.Length < 1)
+			if (_args == null || _args.Length == 0)
 				return true;
 			if(_args[0].Length < 2 || _args[0][0] != '-') {
 				PrintUsage();
 				return false;
 			}
 			string options = _args[0].Substring(1); //FIXME: handle long options
-			foreach (FieldInfo i in typeof (XmlConfTest).GetFields (BindingFlags.NonPublic
+			foreach (FieldInfo i in typeof (AllTests).GetFields (BindingFlags.NonPublic
 				| BindingFlags.Instance)) {
 				//FIXME: report if unknown options were passed
 				object [] attrs = i.GetCustomAttributes(typeof(CommandLineOptionAttribute),true);
@@ -129,12 +135,37 @@ namespace XmlConfTest {
 
 		static int Main (string[] args)
 		{
-			using (XmlConfTest test = new XmlConfTest (args)) {
-				if (!test.Run ())
+			using (AllTests tests = new AllTests (args)) {
+				if (!tests.Run ())
 					return 1;
 				else
 					return 0;
 			}		
+		}
+
+#if NUNIT_SUPPORT
+		TestSuite _suite;
+
+		[Suite]
+		static public TestSuite Suite {
+			get {
+				TestSuite suite = new TestSuite ("W3C_xmlconf");
+				using (AllTests tests = new AllTests (suite)) {
+					tests.Run ();
+				}
+				return suite;
+			}
+		}
+
+		AllTests (TestSuite suite)
+			: this () {
+			_suite = suite;
+		}
+#endif
+
+		AllTests (string [] args)
+			: this () {
+			_args = args;
 		}
 
 		#region ReadStrings ()
@@ -153,9 +184,8 @@ namespace XmlConfTest {
 		}
 		#endregion
 
-		XmlConfTest (string [] args)
+		private AllTests ()
 		{
-			_args = args;
 			failedListWriter = new StreamWriter ("failed.lst", false);
 			fixedListWriter = new StreamWriter ("fixed.lst", false);
 			slowNewListWriter = new StreamWriter ("slow-new.lst", false);
@@ -241,8 +271,6 @@ introduced new bugs! Before you commit, consider one of the following:
 			Uri baseUri = new Uri (test.BaseURI);
 			Uri testUri = new Uri (baseUri, test.GetAttribute ("URI"));
 
-			totalListWriter.Write (testUri.ToString () + "\t");
-
 			bool validatingPassed;
 			bool nonValidatingPassed;
 			try {
@@ -265,7 +293,7 @@ introduced new bugs! Before you commit, consider one of the following:
 			}
 			bool res = isOK (type, nonValidatingPassed, validatingPassed);
 			
-			return Report (test, res, nonValidatingPassed, validatingPassed);
+			return Report (testUri, test, res, nonValidatingPassed, validatingPassed);
 		}
 
 		bool isOK (string type, bool nonValidatingPassed, bool validatingPassed)
@@ -284,9 +312,21 @@ introduced new bugs! Before you commit, consider one of the following:
 			}
 		}
 
-		bool Report (XmlElement test, bool isok, bool nonValidatingPassed, bool validatingPassed)
+		bool Report (Uri testUri, XmlElement test, bool isok, bool nonValidatingPassed, bool validatingPassed)
 		{
 			string testId = test.GetAttribute ("ID");
+
+#if NUNIT_SUPPORT
+			if (_suite != null) {
+				StringBuilder sb = new StringBuilder();
+				sb.Append (testUri.ToString ());
+				sb.Append (test.InnerXml);
+				_suite.Add (new PredefinedTest (testId, isok, sb.ToString ()));
+				return true;
+			}
+#endif
+
+			totalListWriter.Write (testUri.ToString () + "\t");
 			totalListWriter.Write (testId + "\t");
 
 			if (isok) {
@@ -334,6 +374,22 @@ introduced new bugs! Before you commit, consider one of the following:
 				testId, test.GetAttribute ("TYPE"), nonValidatingPassed, validatingPassed);
 			failedListWriter.WriteLine (test.InnerXml);
 			return false;
+		}
+	}
+
+	public class PredefinedTest: NUnit.Core.TestCase {
+		bool _res;
+		string _message;
+		public PredefinedTest (string name, bool res, string message):base (null, name) {
+			_res = res;
+			_message = message;
+		}
+
+		public override void Run (TestCaseResult res) {
+			if (_res)
+				res.Success ();
+			else
+				res.Failure (_message, null);
 		}
 	}
 }
