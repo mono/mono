@@ -177,11 +177,11 @@ namespace Mono.Globalization.Unicode
 			// based on traditional Tamil consonants, except for
 			// Grantha (where Microsoft breaks traditionalism).
 			// http://www.angelfire.com/empire/thamizh/padanGaL
-			'\u0B99', '\u0B9A', '\u0B9E', '\u0B9F', '\u0BA3',
-			'\u0BA4', '\u0BA8', '\u0BAA', '\u0BAE', '\u0BAF',
-			'\u0BB0', '\u0BB2', '\u0BB5', '\u0BB4', '\u0BB3',
-			'\u0BB1', '\u0BA9', '\u0B9C', '\u0BB8', '\u0BB7',
-			'\u0BB9'};
+			'\u0B95', '\u0B99', '\u0B9A', '\u0B9E', '\u0B9F',
+			'\u0BA3', '\u0BA4', '\u0BA8', '\u0BAA', '\u0BAE',
+			'\u0BAF', '\u0BB0', '\u0BB2', '\u0BB5', '\u0BB4',
+			'\u0BB3', '\u0BB1', '\u0BA9', '\u0B9C', '\u0BB8',
+			'\u0BB7', '\u0BB9'};
 
 		// cp -> character name (only for some characters)
 		ArrayList sortableCharNames = new ArrayList ();
@@ -1804,10 +1804,26 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				if (!IsIgnorable (i))
 					AddLetterMap ((char) i, 0x14, 2);
 			fillIndex [0x14] = 0xB;
-			for (int i = 0x0905; i < 0x093A; i++)
+			for (int i = 0x0905; i < 0x093A; i++) {
+				if (i == 0x0928)
+					AddCharMap ('\u0929', 0x14, 0, 8);
+				if (i == 0x0930)
+					AddCharMap ('\u0931', 0x14, 0, 8);
+				if (i == 0x0933)
+					AddCharMap ('\u0934', 0x14, 0, 8);
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0x14, 4);
-			for (int i = 0x093E; i < 0x094F; i++)
+				if (i == 0x090B)
+					AddCharMap ('\u0960', 0x14, 4);
+				if (i == 0x090C)
+					AddCharMap ('\u0961', 0x14, 4);
+			}
+			fillIndex [0x14] = 0xDA;
+			for (int i = 0x093E; i < 0x0945; i++)
+				if (!IsIgnorable (i))
+					AddLetterMap ((char) i, 0x14, 2);
+			fillIndex [0x14] = 0xEC;
+			for (int i = 0x0945; i < 0x094F; i++)
 				if (!IsIgnorable (i))
 					AddLetterMap ((char) i, 0x14, 2);
 
@@ -1857,16 +1873,60 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			}
 
 			// Gujarati. orderedGujarati is from UCA
-			fillIndex [0x17] = 02;
-			for (int i = 0; i < orderedGujarati.Length; i++)
-				AddLetterMap (orderedGujarati [i], 0x17, 4);
+			fillIndex [0x17] = 0x4;
+			// nonspacing marks
+			map [0x0A4D] = new CharMapEntry (1, 0, 0x3);
+			map [0x0ABD] = new CharMapEntry (1, 0, 0x3);
+			map [0x0A3C] = new CharMapEntry (1, 0, 0x4);
+			map [0x0A71] = new CharMapEntry (1, 0, 0x6);
+			map [0x0ABC] = new CharMapEntry (1, 0, 0xB);
+			map [0x0A70] = new CharMapEntry (1, 0, 0xE);
+			// letters go first.
+			for (int i = 0; i < orderedGujarati.Length; i++) {
+				// SPECIAL CASE
+				char c = orderedGujarati [i];
+				if (Char.IsLetter (c)) {
+					// SPECIAL CASES
+					if (c == '\u0AB3' || c == '\u0A32')
+						continue;
+					if (c == '\u0A33') {
+						AddCharMap ('\u0A32', 0x17, 0);
+						AddCharMap ('\u0A33', 0x17, 4, 4);
+						continue;
+					}
+					if (c == '\u0A8B')
+						AddCharMap ('\u0AE0', 0x17, 0, 5);
+					AddCharMap (c, 0x17, 4);
+
+					if (c == '\u0AB9')
+						AddCharMap ('\u0AB3', 0x17, 6);
+				}
+			}
+			// non-letters
+			byte gujaratiShift = 4;
+			fillIndex [0x17] = 0xC0;
+			for (int i = 0; i < orderedGujarati.Length; i++) {
+				char c = orderedGujarati [i];
+				if (fillIndex [0x17] == 0xCC)
+					gujaratiShift = 3;
+				if (!Char.IsLetter (c)) {
+					// SPECIAL CASES
+					if (c == '\u0A82')
+						AddCharMap ('\u0A81', 0x17, 2);
+					if (c == '\u0AC2')
+						fillIndex [0x17]++;
+					AddLetterMap (c, 0x17, gujaratiShift);
+				}
+			}
 
 			// Oriya
+			fillIndex [0x1] = 03;
 			fillIndex [0x18] = 02;
 			for (int i = 0x0B00; i < 0x0B7F; i++) {
 				switch (Char.GetUnicodeCategory ((char) i)) {
 				case UnicodeCategory.NonSpacingMark:
 				case UnicodeCategory.DecimalDigitNumber:
+					AddLetterMap ((char) i, 0x1, 1);
 					continue;
 				}
 				AddLetterMap ((char) i, 0x18, 1);
@@ -1877,13 +1937,11 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			AddCharMap ('\u0BD7', 0x19, 0);
 			fillIndex [0x19] = 0xA;
 			// vowels
-			for (int i = 0x0B82; i < 0x0B94; i++)
+			for (int i = 0x0B82; i <= 0x0B94; i++)
 				if (!IsIgnorable ((char) i))
 					AddCharMap ((char) i, 0x19, 2);
 			// special vowel
-			fillIndex [0x19] = 0x24;
-			AddCharMap ('\u0B94', 0x19, 0);
-			fillIndex [0x19] = 0x26;
+			fillIndex [0x19] = 0x28;
 			// The array for Tamil consonants is a constant.
 			// Windows have almost similar sequence to TAM from
 			// tamilnet but a bit different in Grantha.
@@ -1948,6 +2006,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			fillIndex [0x1F] = 5;
 			for (int i = 0xE2B; i < 0xE30; i++)
 				AddCharMap ((char) i, 0x1F, 6, 3);
+			fillIndex [0x1F] = 0x1E;
 			for (int i = 0xE30; i < 0xE3B; i++)
 				AddCharMap ((char) i, 0x1F, 1, 3);
 			// some Thai characters remains.
