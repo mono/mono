@@ -215,9 +215,12 @@ namespace System.Windows.Forms {
 				SuspendLayout ();
 
 				Rectangle invalid = Rectangle.Empty;
-
-				if (-1 != value && show_slider && value < slider_pos)
+				bool refresh = false;
+				
+				if (-1 != value && show_slider && value < slider_pos) {
 					slider_pos = value;
+					refresh = true;
+				}
 
 				int le = TabPages [value].TabBounds.Right;
 				int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
@@ -229,10 +232,12 @@ namespace System.Windows.Forms {
 						diff -= TabPages [ind++].Width;
 					}
 					slider_pos = ind - 1;
+					refresh = true;
 				}
 
 				if (selected_index != -1) {
-					invalid = GetTabRect (selected_index);
+					if (!refresh)
+						invalid = GetTabRect (selected_index);
 					Controls [selected_index].Visible = false;
 				}
 				selected_index = value;
@@ -249,7 +254,10 @@ namespace System.Windows.Forms {
 
 				ResumeLayout ();
 
-				if (selected_index != -1 && selected.Row != BottomRow) {
+				if (refresh) {
+					SizeTabs ();
+					Refresh ();
+				} else if (selected_index != -1 && selected.Row != BottomRow) {
 					DropRow (TabPages [selected_index].Row);
 					// calculating what to invalidate here seems to be slower then just
 					// refreshing the whole thing
@@ -454,6 +462,12 @@ namespace System.Windows.Forms {
 				e.Handled = true;
 			} else if (e.KeyCode == Keys.End) {
 				SelectedIndex = TabCount - 1;
+				e.Handled = true;
+			} else if (e.KeyCode == Keys.Left && SelectedIndex > 0) {
+				SelectedIndex--;
+				e.Handled = true;
+			} else if (e.KeyCode == Keys.Right && SelectedIndex < TabCount - 1) {
+				SelectedIndex++;
 				e.Handled = true;
 			}
 

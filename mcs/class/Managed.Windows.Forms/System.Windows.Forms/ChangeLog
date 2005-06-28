@@ -1,5 +1,12 @@
 2005-06-27  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Move to the left and right with the arrow
+	keys. These keys don't cycle beyond first and last like
+	tab. Refresh all the tabs when scrolling them to the left or
+	right.
+
+2005-06-27  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs:
 	  - ToString: Added method
 	  - CreateParams: Remove TODO and comment
