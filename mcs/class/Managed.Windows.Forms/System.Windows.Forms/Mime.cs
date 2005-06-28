@@ -57,7 +57,7 @@ using System.Text;
 
 namespace System.Windows.Forms
 {
-	public class Mime
+	internal class Mime
 	{
 		public static Mime Instance = new Mime();
 		
