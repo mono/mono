@@ -1168,7 +1168,7 @@ static int current;
 			
 		}
 
-		private void CalculateDocument() {
+		protected void CalculateDocument() {
 			document.RecalculateDocument(CreateGraphics());
 			CalculateScrollBars();
 			Invalidate();	// FIXME - do we need this?

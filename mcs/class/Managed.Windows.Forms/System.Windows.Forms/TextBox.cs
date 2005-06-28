@@ -147,10 +147,12 @@ namespace System.Windows.Forms {
 					alignment = value;
 
 					// MS word-wraps if alignment isn't left
-					if (alignment != HorizontalAlignment.Left) {
-						document.Wrap = true;
-					} else {
-						document.Wrap = word_wrap;
+					if (multiline) {
+						if (alignment != HorizontalAlignment.Left) {
+							document.Wrap = true;
+						} else {
+							document.Wrap = word_wrap;
+						}
 					}
 
 					for (int i = 1; i <= document.Lines; i++) {

@@ -1,3 +1,31 @@
+2005-06-27  Peter Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs:
+	  - Made line ending size configurable (now allows for counting 
+	    lineendings as \n or \r\n)
+	  - Added margin to viewport to keep caret visible on right side
+	  - Fixed translation routines for line/pos to documentpos to consider
+	    cr/lf when counting (Fixes RichTextBox.SelectionFont issues)
+	  - Fixed some line-endings to be unix style
+	  - Fixed Document.FormatText to perform it's calculations 1-based
+	  - Added descriptions for a few methods that might otherwise get 
+	    used wrong
+	  - Added NOTE section with some basic conventions to remember at 
+	    the top of the file
+	  - Major fixup for RichTextBox selection drawing:
+	    * Fixed crashes when multiple tags on a single line were selected
+	    * fixed selection box drawing not overlaying text
+	    * fixed bogus offset calculation for tags not starting at index 1
+	    * Switched behaviour from using multiple Substrings of a 
+	      StringBuilder.ToString() to using multiple 
+	      StringBuilder.ToString(start, length) statements, hoping this is
+	      faster (kept original version commented out in the code, in case
+	      original version was faster)
+	* TextBox.cs (set_TextAlignment): TextBox always needs to wrap if 
+	  alignment != Left
+	* TextBoxBase.cs (CalculateDocument): Made protected so RichTextBox can
+	  call it as well
+
 2005-06-27  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Move to the left and right with the arrow
