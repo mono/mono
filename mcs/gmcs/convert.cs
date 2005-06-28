@@ -942,11 +942,6 @@ namespace Mono.CSharp {
 				return FindMostEncompassedType (ec, src_types_set);
 		}
 
-		//
-		// Useful in avoiding proliferation of objects
-		//
-		static EmptyExpression priv_fmt_expr;
-		
 		/// <summary>
 		///  Finds the most specific target Tx according to section 13.4.4
 		/// </summary>
