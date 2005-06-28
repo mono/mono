@@ -501,6 +501,71 @@ namespace System.Windows.Forms {
 			return base.IsInputKey (key_data);
 		}
 
+		protected override void OnKeyDown (KeyEventArgs e)
+		{
+			OpenTreeNodeEnumerator ne;
+
+			switch (e.KeyData & Keys.KeyCode) {
+			case Keys.Left:
+				if (selected_node != null)
+					selected_node.Collapse ();
+				break;
+			case Keys.Right:
+				if (selected_node != null)
+					selected_node.Expand ();
+				break;
+			case Keys.Up:
+				if (selected_node != null) {
+					ne = new OpenTreeNodeEnumerator (selected_node);
+					if (ne.MovePrevious () && ne.MovePrevious ())
+						SelectedNode = ne.CurrentNode;
+				}
+				break;
+			case Keys.Down:
+				if (selected_node != null) {
+					ne = new OpenTreeNodeEnumerator (selected_node);
+					if (ne.MoveNext () && ne.MoveNext ())
+						SelectedNode = ne.CurrentNode;
+				}
+				break;
+			case Keys.Home:
+				if (root_node.Nodes.Count > 0) {
+					ne = new OpenTreeNodeEnumerator (root_node.Nodes [0]);
+					if (ne.MoveNext ())
+						SelectedNode = ne.CurrentNode;
+				}
+				break;
+			case Keys.End:
+				if (root_node.Nodes.Count > 0) {
+					ne = new OpenTreeNodeEnumerator (root_node.Nodes [0]);
+					while (ne.MoveNext ())
+					{ }
+					SelectedNode = ne.CurrentNode;
+				}
+				break;
+			case Keys.PageDown:
+				if (selected_node != null) {
+					ne = new OpenTreeNodeEnumerator (selected_node);
+					int move = ViewportRectangle.Height / ItemHeight;
+					for (int i = 0; i < move && ne.MoveNext (); i++) {
+						
+					}
+					SelectedNode = ne.CurrentNode;
+				}
+				break;
+			case Keys.PageUp:
+				if (selected_node != null) {
+					ne = new OpenTreeNodeEnumerator (selected_node);
+					int move = ViewportRectangle.Height / ItemHeight;
+					for (int i = 0; i < move && ne.MovePrevious (); i++)
+					{ }
+					SelectedNode = ne.CurrentNode;
+				}
+				break;
+			}
+			base.OnKeyDown (e);
+		}
+                
 		protected virtual void OnAfterCheck (TreeViewEventArgs e) {
 			if (on_after_check != null)
 				on_after_check (this, e);
