@@ -1450,7 +1450,7 @@ sw.Close ();
 			AddCharMap ('\u2423', 0x7, 1, 0); // open box
 			#endregion
 
-			// FIXME: 09 should be more complete.
+			// category 09 - continued symbols from 08
 			fillIndex [0x9] = 2;
 			// misc tech mark
 			for (int cp = 0x2300; cp <= 0x237A; cp++)
@@ -1649,6 +1649,9 @@ sw.Close ();
 				//   but inside a-to-z range.
 				// 3.there are some expanded characters that
 				//   are not part of Unicode Standard NFKD.
+				// 4. some characters are letter in IsLetter
+				//   but not in sortkeys (maybe unicode version
+				//   difference caused it).
 				switch (i) {
 				// 1. skipping them does not make sense
 //				case 0xD0: case 0xF0: case 0x131: case 0x138:
@@ -1666,11 +1669,12 @@ sw.Close ();
 				case 0xFE: // Icelandic Thorn
 				case 0xDF: // German ss
 				case 0xFF: // German ss
+				// 4.
+				case 0x1C0: case 0x1C1: case 0x1C2: case 0x1C3:
 				// not classified yet
 //				case 0x1A6: case 0x1A7: case 0x1A8: case 0x1A9:
 //				case 0x1AA: case 0x1B1: case 0x1B7: case 0x1B8:
 //				case 0x1B9: case 0x1BA: case 0x1BB: case 0x1BF:
-//				case 0x1C0: case 0x1C1: case 0x1C2: case 0x1C3:
 //				case 0x1DD:
 					continue;
 				}
@@ -1848,8 +1852,8 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			AddCharMap ('\u0BD7', 0x19, 0);
 			fillIndex [0x19] = 0xA;
 			// vowels
-			for (int i = 0x0BD7; i < 0x0B94; i++)
-				if (Char.IsLetter ((char) i))
+			for (int i = 0x0B82; i < 0x0B94; i++)
+				if (!IsIgnorable ((char) i))
 					AddCharMap ((char) i, 0x19, 2);
 			// special vowel
 			fillIndex [0x19] = 0x24;
@@ -2242,6 +2246,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				switch (i) {
 				case 0xAB: // 08
 				case 0xB7: // 0A
+				case 0xBB: // 08
 				case 0x2329: // 09
 				case 0x232A: // 09
 					continue;
@@ -2271,14 +2276,6 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			#endregion
 
 			// FIXME: for 07 xx we need more love.
-
-			// FIXME: 08 should be more complete.
-			fillIndex [0x8] = 2;
-			for (int cp = 0; cp < char.MaxValue; cp++)
-				if (!map [cp].Defined &&
-					Char.GetUnicodeCategory ((char) cp) ==
-					UnicodeCategory.MathSymbol)
-					AddCharMapGroup ((char) cp, 0x8, 1, 0);
 
 			// Characters w/ diacritical marks (NFKD)
 			for (int i = 0; i <= char.MaxValue; i++) {
@@ -2318,6 +2315,54 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				
 			}
 
+			// category 08 - symbols
+			fillIndex [0x8] = 2;
+			// Here Windows mapping is not straightforward. It is
+			// not based on computation but seems manual sorting.
+			AddCharMapGroup ('+', 0x8, 1, 0); // plus
+			AddCharMapGroup ('\u2212', 0x8, 1, 0); // minus
+			AddCharMapGroup ('\u229D', 0x8, 1, 0); // minus
+			AddCharMapGroup ('\u2297', 0x8, 1, 0); // mul
+			AddCharMapGroup ('\u2044', 0x8, 1, 0); // div
+			AddCharMapGroup ('\u2215', 0x8, 1, 0); // div
+			AddCharMapGroup ('\u2217', 0x8, 1, 0); // mul
+			AddCharMapGroup ('\u2218', 0x8, 1, 0); // ring
+			AddCharMapGroup ('\u2219', 0x8, 1, 0); // bullet
+			AddCharMapGroup ('\u2213', 0x8, 1, 0); // minus-or-plus
+			AddCharMapGroup ('\u003C', 0x8, 1, 0); // <
+			AddCharMapGroup ('\u227A', 0x8, 1, 0); // precedes relation
+			AddCharMapGroup ('\u22B0', 0x8, 1, 0); // precedes under relation
+
+			for (int cp = 0; cp < 0x2300; cp++) {
+				if (cp == 0x200)
+					cp = 0x2200; // skip to 2200
+				if (cp == 0xAC) // SPECIAL CASE: skip
+					continue;
+				if (!map [cp].Defined &&
+//					Char.GetUnicodeCategory ((char) cp) ==
+//					UnicodeCategory.MathSymbol)
+					Char.IsSymbol ((char) cp))
+					AddCharMapGroup ((char) cp, 0x8, 1, 0);
+				// SPECIAL CASES: no idea why Windows sorts as such
+				switch (cp) {
+				case 0x3E:
+					AddCharMap ('\u227B', 0x8, 1, 0);
+					AddCharMap ('\u22B1', 0x8, 1, 0);
+					break;
+				case 0xB1:
+					AddCharMapGroup ('\u00AB', 0x8, 1, 0);
+					AddCharMapGroup ('\u226A', 0x8, 1, 0);
+					AddCharMapGroup ('\u00BB', 0x8, 1, 0);
+					AddCharMapGroup ('\u226B', 0x8, 1, 0);
+					break;
+				case 0xF7:
+					AddCharMap ('\u01C0', 0x8, 1, 0);
+					AddCharMap ('\u01C1', 0x8, 1, 0);
+					AddCharMap ('\u01C2', 0x8, 1, 0);
+					break;
+				}
+			}
+
 			#region Level2 adjustment
 			// Arabic Hamzah
 			diacritical [0x624] = 0x5;
@@ -2327,7 +2372,6 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			diacritical [0x625] = 0xB;
 			diacritical [0x649] = 0x5; // 'alif maqs.uurah
 			diacritical [0x64A] = 0x7; // Yaa'
-
 
 			for (int i = 0; i < char.MaxValue; i++) {
 				byte mod = 0;
@@ -2350,15 +2394,23 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			}
 			#endregion
 
-			// FIXME: this is hack but those which are 
-			// NonSpacingMark characters and still undefined
-			// are likely to be nonspacing.
+			// FIXME: this is hack but those NonSpacingMark 
+			// characters and still undefined are likely to
+			// be nonspacing.
 			for (int i = 0; i < char.MaxValue; i++)
 				if (!map [i].Defined &&
 					!IsIgnorable (i) &&
 					Char.GetUnicodeCategory ((char) i) ==
 					UnicodeCategory.NonSpacingMark)
 					AddCharMap ((char) i, 1, 1);
+
+			// FIXME: this is hack but those Symbol characters
+			// are likely to fall into 0xA category.
+			for (int i = 0; i < char.MaxValue; i++)
+				if (!map [i].Defined &&
+					!IsIgnorable (i) &&
+					Char.IsSymbol ((char) i))
+					AddCharMap ((char) i, 0xA, 1);
 		}
 
 		private void IncrementSequentialIndex (ref byte hangulCat)

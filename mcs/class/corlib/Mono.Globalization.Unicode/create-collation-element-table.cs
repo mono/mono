@@ -56,13 +56,13 @@ namespace Mono.Globalization.Unicode
 
 		private void Serialize ()
 		{
-			Console.WriteLine ("static readonly short [] collElem = new short [] {");
+			Console.WriteLine ("static readonly int [] collElem = new int [] {");
 			DumpArray (collElem, CollationElementTableUtil.Indexer.TotalCount, true);
 			Console.WriteLine ("};");
 			Console.WriteLine ("static readonly SortKeyValue [] keyValues = new SortKeyValue [] {");
 			for (int i = 0; i < keyCount; i++) {
 				SortKeyValue s = keyValues [i];
-				Console.WriteLine ("	new SortKeyValue ({0}, {1}, {2}, {3}, {4}),",
+				Console.WriteLine ("	new SortKeyValue ({0}, 0x{1:X04}, 0x{2:X04}, 0x{3:X04}, 0x{4:X04}),",
 					s.Alt ? "true" : "false", s.Primary, s.Secondary,
 					s.Thirtiary, s.Quarternary);
 			}
@@ -87,7 +87,7 @@ namespace Mono.Globalization.Unicode
 
 		private void Parse ()
 		{
-			int [] v = new int [4];
+			ushort [] v = new ushort [4];
 
 			TextReader reader = Console.In;
 			while (reader.Peek () != -1) {
@@ -111,20 +111,29 @@ namespace Mono.Globalization.Unicode
 				line = line.Substring (line.IndexOf (';') + 1).Trim ();
 				// count entries in a line
 				int entryPerLine = 0;
-				for (int e = 0; (e = line.IndexOf ('[', e + 1)) >= 0;)
+				for (int e = 0; (e = line.IndexOf ('[', e) + 1) > 0;)
 					entryPerLine++;
 
 				int start = 0;
 				for (int e = 0; e < entryPerLine; e++) {
 					start = line.IndexOf ('[', start) + 1;
-					string s = line.Substring (start, line.IndexOf (']', start) - start - 1);
+					string s = line.Substring (start, line.IndexOf (']', start) - start);
 
 					bool alt = false;
 					if (s [0] == '*')
 						alt = true;
 					string [] vslist = s.Substring (1).Split ('.');
-					for (int i = 0; i < 4; i++)
-						v [i] = int.Parse (vslist [i], NumberStyles.HexNumber);
+					bool skip = false;
+					for (int i = 0; i < 4; i++) {
+						if (vslist [i].Length > 4)
+							skip = true;
+						else
+							v [i] = ushort.Parse (vslist [i], NumberStyles.HexNumber);
+					}
+					if (skip) {
+//						Console.Error.WriteLine ("WARNING: skipped entry {0:X}", cp);
+						continue;
+					}
 					idx = keyCount;
 					if (entryPerLine == 1) {
 						// idx = 0 means "no matching entry", so here we start from 1
@@ -151,7 +160,7 @@ namespace Mono.Globalization.Unicode
 			reader.Close ();
 		}
 
-		private void AddEntry (bool alt, int [] v)
+		private void AddEntry (bool alt, ushort [] v)
 		{
 			if (keyCount == keyValues.Length) {
 				SortKeyValue [] tmp = new SortKeyValue [keyCount * 2];
@@ -160,7 +169,7 @@ namespace Mono.Globalization.Unicode
 			}
 			keyValues [keyCount] =
 				new SortKeyValue (alt,
-				v [0], v [1], v [2], v [3]);
+				v [0], (byte) v [1], (byte) v [2], v [3]);
 			keyCount++;
 		}
 	}
