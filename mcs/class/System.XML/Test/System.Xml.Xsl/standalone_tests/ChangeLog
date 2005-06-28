@@ -1,3 +1,9 @@
+2004-06-28  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile: touch file, not directory, doh!
+	* fixme.lst: added
+	* knownFailures: remove fixed testcases
+
 2004-06-09  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile, catalog-fixed.diff : Patch the fixed catalog to correct things 

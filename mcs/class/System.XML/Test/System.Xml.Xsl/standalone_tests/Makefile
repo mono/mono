@@ -85,7 +85,7 @@ $(TEST_ARCHIVE) :
 
 $(REFERENCE_RESULTS) : $(REFERENCE_RESULTS_ARCHIVE)
 	tar -xzf $<
-	touch $@
+	touch $@/reference_results
 
 $(REFERENCE_RESULTS_ARCHIVE) :
 	wget $(REFERENCE_RESULTS_URL)
