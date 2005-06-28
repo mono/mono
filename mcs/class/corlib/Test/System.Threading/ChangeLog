@@ -1,3 +1,8 @@
+2005-06-28  Ben Maurer  <bmaurer@ximian.com>
+
+	* MutexTest.cs: Re-enable the mutex tests. They seem to work for
+	me now when I ran them in a loop on the smp box.
+
 2005-06-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadTest.cs: sanitize waiting for a thread that might be already
