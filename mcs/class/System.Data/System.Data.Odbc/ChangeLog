@@ -1,3 +1,10 @@
+2005-06-28  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataReader.cs: GetPrimaryKeys (): use the length indicator
+	for GetString, otherwise, it creates a string of length 255. Use
+	ArrayList for keys as the columns are different from the selected
+	columns. fixes bug #75263.
+
 2005-06-09  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: GetValue (): return decimal in case of odbc

@@ -888,7 +888,7 @@ namespace System.Data.Odbc
                         if (cols.Length <= 0)
                                 return new string [0];
 
-                        string [] keys = new string [cols.Length];
+			ArrayList keys = new ArrayList ();
                         IntPtr handle = IntPtr.Zero;
                         OdbcReturn ret = OdbcReturn.Error;                  
                         try {
@@ -920,8 +920,8 @@ namespace System.Data.Odbc
                                         ret = libodbc.SQLFetch (handle);
                                         if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
                                                 break;
-                                        string pkey = Encoding.Default.GetString (primaryKey);
-                                        keys [i++] = pkey;
+					string pkey = Encoding.Default.GetString (primaryKey, 0, length);
+					keys.Add (pkey);
                                 }
                         } catch (OdbcException){
                                 // FIXME: Try using SQLStatistics
@@ -937,8 +937,7 @@ namespace System.Data.Odbc
                                 }                             
                                         
                         }
-                        
-                        return keys;
+			return (string []) keys.ToArray (typeof (string));
                 }
 
 		public
