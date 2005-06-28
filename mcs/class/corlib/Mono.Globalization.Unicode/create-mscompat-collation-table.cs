@@ -1836,20 +1836,24 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 			// Gurmukhi. orderedGurmukhi is from UCA
 			// FIXME: it does not look equivalent to UCA.
-			fillIndex [0x1] = 03;
-			fillIndex [0x16] = 02;
+			fillIndex [0x16] = 04;
+			fillIndex [0x1] = 3;
 			for (int i = 0; i < orderedGurmukhi.Length; i++) {
 				char c = orderedGurmukhi [i];
 				if (IsIgnorable ((int) c))
 					continue;
-				if (!Char.IsLetter (c)) {
+				if (IsIgnorableNonSpacing (c)) {
 					AddLetterMap (c, 0x1, 1);
 					continue;
 				}
 				if (c == '\u0A3C' || c == '\u0A4D' ||
 					'\u0A66' <= c && c <= '\u0A71')
 					continue;
-				AddLetterMap (c, 0x16, 4);
+				// SPECIAL CASE: U+A38 = U+A36 at primary level (why?)
+				byte shift = 4;
+				if (c == '\u0A36' || c == '\u0A16' || c == '\u0A17' || c == '\u0A5B' || c == '\u0A5E')
+					shift = 0;
+				AddLetterMap (c, 0x16, shift);
 			}
 
 			// Gujarati. orderedGujarati is from UCA
@@ -1911,7 +1915,17 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			for (int i = 0x0C80; i < 0x0CE5; i++) {
 				if (i == 0x0CD5 || i == 0x0CD6)
 					continue; // ignore
+				if (i == 0x0CB1 || i == 0x0CB3 || i == 0x0CDE)
+					continue; // shift after 0xCB9
 				AddCharMap ((char) i, 0x1B, 3);
+				if (i == 0x0CB9) {
+					// SPECIAL CASES: but why?
+					AddCharMap ('\u0CB1', 0x1B, 3); // RRA
+					AddCharMap ('\u0CB3', 0x1B, 3); // LLA
+					AddCharMap ('\u0CDE', 0x1B, 3); // FA
+				}
+				if (i == 0x0CB2)
+					AddCharMap ('\u0CE1', 0x1B, 3); // vocalic LL
 			}
 			
 			// Malayalam
@@ -1950,8 +1964,15 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 			// Georgian. orderedGeorgian is from UCA DUCET.
 			fillIndex [0x21] = 5;
-			for (int i = 0; i < orderedGeorgian.Length; i++)
-				AddLetterMap (orderedGeorgian [i], 0x21, 5);
+			for (int i = 0; i < orderedGeorgian.Length; i++) {
+				char c = orderedGeorgian [i];
+				if (map [(int) c].Defined)
+					continue;
+				AddCharMap (c, 0x21, 0);
+				if (c < '\u10F6')
+					AddCharMap ((char) (c - 0x30), 0x21, 0, 0x12);
+				fillIndex [0x21] += 5;
+			}
 
 			// Japanese Kana.
 			fillIndex [0x22] = 2;
