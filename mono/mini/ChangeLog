@@ -1,3 +1,9 @@
+2005-06-28  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_class_is_system_array): New static method; use this
+	instead of `klass->parent == mono_defaults.array_class' everywhere
+	since this also works for the new generic array class.
+
 2005-06-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* inssel.brg: Remove warnings.
