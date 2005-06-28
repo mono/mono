@@ -149,6 +149,13 @@ namespace System
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
 
+#if NET_2_0
+		public static T CreateInstance <T> ()
+		{
+			return (T) CreateInstance (typeof (T));
+		}
+#endif
+
 		public static object CreateInstance (Type type)
 		{
 			return CreateInstance (type, false);

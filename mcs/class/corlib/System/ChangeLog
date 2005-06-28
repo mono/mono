@@ -1,3 +1,9 @@
+2005-06-28  Elliott Draper  <el@eldiablo.co.uk>
+
+	* Activator.cs: This implements the generic Activator.CreateInstance<T>()
+	function for NET_2_0. It's full signature is:
+		public static T CreateInstance<T>();
+
 2005-06-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Decimal.cs: Renamed internal fields for the sake of serialization
