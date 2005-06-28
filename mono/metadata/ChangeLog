@@ -1,7 +1,37 @@
+2005-06-28  Martin Baulig  <martin@ximian.com>
+
+	Fix #74953 - Arrays now implement the generic IList<T> interface
+	on the 2.0 platform.
+
+	* class-internals.h (MonoDefaults): Added `generic_array_class'.
+
+	* reflection.c (mono_class_bind_generic_parameters): New public
+	function; similar to mono_reflection_bind_generic_parameters(),
+	but operates on a `MonoType *' and not on a `MonoReflectionType *'.
+
+	* domain.c (mono_init_internal): Try to initialize.
+	`mono_defaults.generic_array_class' here; this'll only succeed if
+	we're using the 2.0 corlib.
+
+	* icall.c
+	(ves_icall_System_Array_InternalArray_GetGenericValueImpl): Added
+	interncall for "System.Array/InternalArray`1:GetGenericValueImpl".
+	(mono_lookup_internal_call): Added support for nested classes.
+
+	* loader.c
+	(mono_get_method_from_token): Set `result->signature->pinvoke' if
+	we're an interncall and have generic arguments.
+
+	* class.c
+	(mono_class_inflate_generic_methods): Allow interncalls and PInvoke.
+	(mono_bounded_array_class_get): If we're on the 2.0 corlib, use an
+	instance of System.Array.InternalArray<T> for arrays, so they
+	implement the generic IList<T> interface.
+
 2005-06-27  Zoltan Varga  <vargaz@freemail.hu>
 
-	* marshal.c (emit_marshal_string): Applied patch from Itamar Rogel (chastamar@yahoo.com). Fixes
-	#75374.
+	* marshal.c (emit_marshal_string): Applied patch from Itamar Rogel
+	(chastamar@yahoo.com). Fixes #75374.	
 
 2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
 
