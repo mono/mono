@@ -1,3 +1,12 @@
+2005-05-20  Martin Baulig  <martin@ximian.com>
+
+	Merged r44808 from GMCS.
+
+	* class.cs (TypeContainer.CircularDepException): Removed.
+	(TypeContainer.DefineType): Removed the `InTransit' stuff.
+	(TypeContainer.CheckRecursiveDefinition): Check for circular class
+	(CS0146) and interface (CS0529) dependencies here.
+
 2005-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (Invocation.EmitCall): Fix initialization
