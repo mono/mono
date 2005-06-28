@@ -1,6 +1,6 @@
 2005-06-28  Jackson Harper  <jackson@ximian.com>
 
-	* TabControl.cs: Add missing event.
+	* TreeView.cs: Add missing event.
 
 2005-06-27  Peter Bartok  <pbartok@novell.com> 
 

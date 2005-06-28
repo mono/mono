@@ -1229,7 +1229,7 @@ namespace System.Windows.Forms {
 
 		public event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
-			remoave { base.BackgroundImageChanged -= value; }
+			remove { base.BackgroundImageChanged -= value; }
 		}
 
 		public event TreeViewCancelEventHandler BeforeCheck {
