@@ -1,7 +1,7 @@
 2005-06-28  Sureshkumar T  <tsureshkumar@novell.com>
 
-	* DataRow.cs: Delete (): if row is detached, remove proposed
-	version and do nothing else. fixes bug #75388.
+	* DataRow.cs: Delete (): if row is detached, do nothing.
+	fixes bug #75388.
 
 2005-06-22  Sureshkumar T  <tsureshkumar@novell.com>
 

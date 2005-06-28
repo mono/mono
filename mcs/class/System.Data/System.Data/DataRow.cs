@@ -670,12 +670,7 @@ namespace System.Data {
 				DetachRow();
 				break;
 			case DataRowState.Deleted:
-				break;		
 			case DataRowState.Detached:
-				if (HasVersion (DataRowVersion.Proposed)) {
-					Table.RecordCache.DisposeRecord (Proposed);
-					Proposed = -1;
-				}
 				break;
 			default:
 				// check what to do with child rows
