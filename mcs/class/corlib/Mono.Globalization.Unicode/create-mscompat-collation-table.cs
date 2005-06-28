@@ -1135,24 +1135,35 @@ sw.Close ();
 
 		void ParseJISOrder (string filename)
 		{
-			using (StreamReader file =
-				new StreamReader (filename)) {
-				while (file.Peek () >= 0) {
-					string s = file.ReadLine ();
-					int idx = s.IndexOf ('#');
-					if (idx >= 0)
-						s = s.Substring (0, idx).Trim ();
-					if (s.Length == 0)
-						continue;
-					idx = s.IndexOf (' ');
-					if (idx < 0)
-						continue;
-					// They start with "0x" so cut them out.
-					int jis = int.Parse (s.Substring (2, idx), NumberStyles.HexNumber);
-					int cp = int.Parse (s.Substring (idx + 3).Trim (), NumberStyles.HexNumber);
-					jisJapanese.Add (new JISCharacter (cp, jis));
+			int line = 1;
+			try {
+				using (StreamReader file =
+					new StreamReader (filename)) {
+					for (;file.Peek () >= 0; line++)
+						ProcessJISOrderLine (file.ReadLine ());
 				}
+			} catch (Exception) {
+				Console.Error.WriteLine ("---- line {0}", line);
+				throw;
 			}
+		}
+
+		char [] ws = new char [] {'\t', ' '};
+
+		void ProcessJISOrderLine (string s)
+		{
+			int idx = s.IndexOf ('#');
+			if (idx >= 0)
+				s = s.Substring (0, idx).Trim ();
+			if (s.Length == 0)
+				return;
+			idx = s.IndexOfAny (ws);
+			if (idx < 0)
+				return;
+			// They start with "0x" so cut them out.
+			int jis = int.Parse (s.Substring (2, idx - 2), NumberStyles.HexNumber);
+			int cp = int.Parse (s.Substring (idx).Trim ().Substring (2), NumberStyles.HexNumber);
+			jisJapanese.Add (new JISCharacter (cp, jis));
 		}
 
 		void ParseCJK (string zhXML, string jaXML, string koXML)
@@ -1583,23 +1594,23 @@ sw.Close ();
 				else if (cp == 0x3021) // FIXME: why?
 					fillIndex [0xC]++;
 				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp]);
-
 				if (addnew || cp <= '9') {
+					int mod = (int) currValue - 1;
 					int xcp;
 					if (1 <= currValue && currValue <= 10) {
-						xcp = cp - 0x31 + 0x2776;
+						xcp = mod + 0x2776;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-						xcp = cp - 0x31 + 0x2780;
+						xcp = mod + 0x2780;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-						xcp = cp - 0x31 + 0x278A;
+						xcp = mod + 0x278A;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
 					}
 					if (1 <= currValue && currValue <= 20) {
-						xcp = cp - 0x31 + 0x2460;
+						xcp = mod + 0x2460;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-						xcp = cp - 0x31 + 0x2474;
+						xcp = mod + 0x2474;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-						xcp = cp - 0x31 + 0x2488;
+						xcp = mod + 0x2488;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
 					}
 				}
@@ -1989,7 +2000,8 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			fillIndex [0x22] = 0x97;
 			jisJapanese.Sort (JISComparer.Instance);
 			foreach (JISCharacter j in jisJapanese)
-				AddCharMap ((char) j.CP, 0x22, 1);
+				if (0x3300 <= j.CP && j.CP <= 0x3357)
+					AddCharMap ((char) j.CP, 0x22, 1);
 			// non-JIS Japanese square chars.
 			nonJisJapanese.Sort (NonJISComparer.Instance);
 			foreach (NonJISCharacter j in nonJisJapanese)
@@ -2165,8 +2177,14 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				if (ch < 0x1100 || 0x1200 < ch &&
 					ch < 0xAC00 || 0xD800 < ch)
 					continue;
+
+				// SPECIAL CASE ?
+				int offset = i < 0x3260 ? 1 : 0;
+				if (0x326E <= offset && offset <= 0x3273)
+					offset = 1;
+
 				map [i] = new CharMapEntry (map [ch].Category,
-					(byte) (map [ch].Level1 + 1),
+					(byte) (map [ch].Level1 + offset),
 					map [ch].Level2);
 //					Console.Error.WriteLine ("Jamo {0:X04} -> {1:X04}", i, decompValues [decompIndex [i] + 1]);
 			}
@@ -2735,6 +2753,8 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				return 4;
 			if ('\u3130' <= c && c <= '\u3164')
 				return 5;
+			if ('\u3165' <= c && c <= '\u318E')
+				return 4;
 			// numbers
 			if ('\u2776' <= c && c <= '\u277F')
 				return 4;
@@ -3208,7 +3228,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 		{
 			JISCharacter j1 = (JISCharacter) o1;
 			JISCharacter j2 = (JISCharacter) o2;
-			return j2.JIS - j1.JIS;
+			return j1.JIS - j2.JIS;
 		}
 	}
 
