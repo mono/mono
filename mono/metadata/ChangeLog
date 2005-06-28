@@ -1,5 +1,9 @@
 2005-06-28  Martin Baulig  <martin@ximian.com>
 
+	* loader.c (method_from_methodspec): Fix #75334.
+
+2005-06-28  Martin Baulig  <martin@ximian.com>
+
 	Fix #74953 - Arrays now implement the generic IList<T> interface
 	on the 2.0 platform.
 
