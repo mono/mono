@@ -1,3 +1,8 @@
+2005-06-28  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.MemberLookup_FindMembers): Move the
+	array check after the check for TypeBuilder's.
+
 2005-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* convert.cs (FindMostEncompassedType): Add two trivial	special

@@ -1553,17 +1553,6 @@ public partial class TypeManager {
 		MemberCache cache;
 
 		//
-		// We have to take care of arrays specially, because GetType on
-		// a TypeBuilder array will return a Type, not a TypeBuilder,
-		// and we can not call FindMembers on this type.
-		//
-		if (t == TypeManager.array_type || t.IsSubclassOf (TypeManager.array_type)) {
-			used_cache = true;
-			return TypeHandle.ArrayType.MemberCache.FindMembers (
-				mt, bf, name, FilterWithClosure_delegate, null);
-		}
-
-		//
 		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
 		// and we can ask the DeclSpace for the MemberCache.
 		//
@@ -1591,6 +1580,17 @@ public partial class TypeManager {
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
 			return (MemberInfo []) list;
+		}
+
+		//
+		// We have to take care of arrays specially, because GetType on
+		// a TypeBuilder array will return a Type, not a TypeBuilder,
+		// and we can not call FindMembers on this type.
+		//
+		if (t == TypeManager.array_type || t.IsSubclassOf (TypeManager.array_type)) {
+			used_cache = true;
+			return TypeHandle.ArrayType.MemberCache.FindMembers (
+				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 
 		if (t is GenericTypeParameterBuilder) {
