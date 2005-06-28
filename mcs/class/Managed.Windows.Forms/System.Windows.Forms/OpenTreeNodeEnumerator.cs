@@ -96,7 +96,8 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
-			if (current.parent == null)
+			if (current.parent == null ||
+					current.parent == current.TreeView.root_node)
 				return false;
 
 			current = current.parent;

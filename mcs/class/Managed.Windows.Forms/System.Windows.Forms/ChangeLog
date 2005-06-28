@@ -1,5 +1,10 @@
 2005-06-28  Jackson Harper  <jackson@ximian.com>
 
+	* OpenTreeNodeEnumerator.cs: Don't move past the begining of the
+	tree.
+
+2005-06-28  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Add missing event.
 
 2005-06-27  Peter Bartok  <pbartok@novell.com> 
