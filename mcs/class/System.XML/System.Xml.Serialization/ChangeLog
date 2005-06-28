@@ -1,3 +1,8 @@
+2005-06-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializer.cs: Fix race between XmlSerializer and the
+	serializer generator.
+
 2005-06-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapElementInfo.cs: Added new DataTypeName property for

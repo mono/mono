@@ -530,7 +530,9 @@ namespace System.Xml.Serialization
 			
 			lock (this) {
 				if (serializerData != null) {
-					writer = serializerData.CreateWriter ();
+					lock (serializerData) {
+						writer = serializerData.CreateWriter ();
+					}
 					if (writer != null) return writer;
 				}
 			}
@@ -541,7 +543,9 @@ namespace System.Xml.Serialization
 			CheckGeneratedTypes (typeMapping);
 			
 			lock (this) {
-				writer = serializerData.CreateWriter ();
+				lock (serializerData) {
+					writer = serializerData.CreateWriter ();
+				}
 				if (writer != null) return writer;
 			}
 			
@@ -554,7 +558,9 @@ namespace System.Xml.Serialization
 			
 			lock (this) {
 				if (serializerData != null) {
-					reader = serializerData.CreateReader ();
+					lock (serializerData) {
+						reader = serializerData.CreateReader ();
+					}
 					if (reader != null) return reader;
 				}
 			}
@@ -565,7 +571,9 @@ namespace System.Xml.Serialization
 			CheckGeneratedTypes (typeMapping);
 			
 			lock (this) {
-				reader = serializerData.CreateReader ();
+				lock (serializerData) {
+					reader = serializerData.CreateReader ();
+				}
 				if (reader != null) return reader;
 			}
 			
