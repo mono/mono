@@ -1,3 +1,8 @@
+2005-06-28 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeTypeReferenceTest.cs from
+	System.CodeDom.
+
 2005-06-27 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeGeneratorFromExpressionTest.cs

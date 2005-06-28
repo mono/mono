@@ -53,7 +53,7 @@ namespace System.CodeDom
 		//
 		public CodeTypeReference( string baseType )
 		{
-			if (baseType.Length == 0) {
+			if (baseType == null || baseType.Length == 0) {
 				this.baseType = typeof (void).FullName;
 				return;
 			}
@@ -79,6 +79,11 @@ namespace System.CodeDom
 		
 		public CodeTypeReference( Type baseType )
 		{
+#if NET_2_0
+			if (baseType == null) {
+				throw new ArgumentNullException ("baseType");
+			}
+#endif
 			if (baseType.IsArray) {
 				this.rank = baseType.GetArrayRank ();
 				this.arrayType = new CodeTypeReference (baseType.GetElementType ());

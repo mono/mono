@@ -7,9 +7,12 @@
 // (c) 2003 Erik LeBel
 //
 using System;
-using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.IO;
+using System.Text;
+
+using Microsoft.CSharp;
 
 using NUnit.Framework;
 
@@ -22,36 +25,108 @@ namespace MonoTests.Microsoft.CSharp
 	/// </summary>
 	///
 	[TestFixture]
-	public class CodeGeneratorFromExpressionTest: CodeGeneratorTestBase
+	public class CodeGeneratorFromExpressionTest
 	{
-		CodeExpression expression = null;
+		CSharpCodeProvider provider;
+		ICodeGenerator generator;
+		CodeGeneratorOptions options;
 
 		[SetUp]
-		public void Init ()
+		public void SetUp ()
 		{
-			InitBase ();
-			expression = new CodeExpression ();
+			provider = new CSharpCodeProvider ();
+			generator = provider.CreateGenerator ();
+			options = new CodeGeneratorOptions ();
 		}
-		
-		protected override void Generate ()
-		{
-			generator.GenerateCodeFromExpression (expression, writer, options);
-			writer.Close ();
-		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DefaultExpressionTest ()
 		{
-			Generate ();
+			using (StringWriter sw = new StringWriter ()) {
+				Generate (new CodeExpression (), sw);
+				sw.Close ();
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullExpressionTest ()
 		{
-			expression = null;
-			Generate ();
+			using (StringWriter sw = new StringWriter ()) {
+				Generate (null, sw);
+			}
+		}
+
+		[Test]
+		public void TypeReferenceExpressionTest ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("bool", Generate (new CodeTypeReferenceExpression (typeof (bool)), sw), "#1");
+				sb.Length = 0;
+				Assert.AreEqual ("char", Generate (new CodeTypeReferenceExpression (typeof (char)), sw), "#2");
+				sb.Length = 0;
+				Assert.AreEqual (typeof(DateTime).FullName, Generate (new CodeTypeReferenceExpression (typeof (DateTime)), sw), "#3");
+				sb.Length = 0;
+				Assert.AreEqual ("short", Generate (new CodeTypeReferenceExpression (typeof (short)), sw), "#4");
+				sb.Length = 0;
+				Assert.AreEqual ("int", Generate (new CodeTypeReferenceExpression (typeof (int)), sw), "#5");
+				sb.Length = 0;
+				Assert.AreEqual ("long", Generate (new CodeTypeReferenceExpression (typeof (long)), sw), "#6");
+				sb.Length = 0;
+				Assert.AreEqual ("object", Generate (new CodeTypeReferenceExpression (typeof (object)), sw), "#7");
+				sb.Length = 0;
+				Assert.AreEqual ("void", Generate (new CodeTypeReferenceExpression (typeof (void)), sw), "#8");
+				sb.Length = 0;
+				Assert.AreEqual ("void", Generate (new CodeTypeReferenceExpression ((string) null), sw), "#9");
+				sb.Length = 0;
+				Assert.AreEqual ("void", Generate (new CodeTypeReferenceExpression (""), sw), "#10");
+				sb.Length = 0;
+#if NET_2_0
+				Assert.AreEqual ("byte", Generate (new CodeTypeReferenceExpression (typeof (byte)), sw), "#11");
+				sb.Length = 0;
+				Assert.AreEqual ("decimal", Generate (new CodeTypeReferenceExpression (typeof (decimal)), sw), "#12");
+				sb.Length = 0;
+				Assert.AreEqual ("double", Generate (new CodeTypeReferenceExpression (typeof (double)), sw), "#13");
+				sb.Length = 0;
+				Assert.AreEqual ("sbyte", Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#14");
+				sb.Length = 0;
+				Assert.AreEqual ("ushort", Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#15");
+				sb.Length = 0;
+				Assert.AreEqual ("uint", Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#16");
+				sb.Length = 0;
+				Assert.AreEqual ("ulong", Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#17");
+				sb.Length = 0;
+				Assert.AreEqual ("float", Generate (new CodeTypeReferenceExpression (typeof (float)), sw), "#18");
+				sb.Length = 0;
+#else
+				Assert.AreEqual (typeof (byte).FullName, Generate (new CodeTypeReferenceExpression (typeof (byte)), sw), "#19");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (decimal).FullName, Generate (new CodeTypeReferenceExpression (typeof (decimal)), sw), "#20");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (double).FullName, Generate (new CodeTypeReferenceExpression (typeof (double)), sw), "#21");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (sbyte).FullName, Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#22");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (ushort).FullName, Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#23");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (uint).FullName, Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#24");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (ulong).FullName, Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#25");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (float).FullName, Generate (new CodeTypeReferenceExpression (typeof (float)), sw), "#26");
+				sb.Length = 0;
+#endif
+				sw.Close ();
+			}
+		}
+
+		private string Generate (CodeExpression expression, StringWriter sw)
+		{
+			generator.GenerateCodeFromExpression (expression, sw, options);
+			return sw.ToString ();
 		}
 
 		/*

@@ -16,6 +16,7 @@ System/UriTest.cs
 System/UriTest2.cs
 System.CodeDom/CodeMemberFieldTest.cs
 System.CodeDom/CodeMemberPropertyTest.cs
+System.CodeDom/CodeTypeReferenceTest.cs
 System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.Collections.Generic/QueueTest.cs
 System.Collections.Generic/StackTest.cs

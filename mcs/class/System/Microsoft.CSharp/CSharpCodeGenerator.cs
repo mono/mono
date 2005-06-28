@@ -939,7 +939,37 @@ namespace Mono.CSharp
 			else { 
 
 				switch ( type.BaseType.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
-
+				case "system.int32":
+					output = "int";
+					break;
+				case "system.int64":
+					output = "long";
+					break;
+				case "system.int16":
+					output = "short";
+					break;
+				case "system.boolean":
+					output = "bool";
+					break;
+				case "system.char":
+					output = "char";
+					break;
+				case "system.string":
+					output = "string";
+					break;
+				case "system.object":
+					output = "object";
+					break;
+				case "system.void":
+					output = "void";
+					break;
+#if NET_2_0
+				case "system.byte":
+					output = "byte";
+					break;
+				case "system.sbyte":
+					output = "sbyte";
+					break;
 				case "system.decimal":
 					output = "decimal";
 					break;
@@ -949,51 +979,16 @@ namespace Mono.CSharp
 				case "system.single":
 					output = "float";
 					break;
-					
-				case "system.byte":
-					output = "byte";
-					break;
-				case "system.sbyte":
-					output = "sbyte";
-					break;
-				case "system.int32":
-					output = "int";
+				case "system.uint16":
+					output = "ushort";
 					break;
 				case "system.uint32":
 					output = "uint";
 					break;
-				case "system.int64":
-					output = "long";
-					break;
 				case "system.uint64":
 					output = "ulong";
 					break;
-				case "system.int16":
-					output = "short";
-					break;
-				case "system.uint16":
-					output = "ushort";
-					break;
-
-				case "system.boolean":
-					output = "bool";
-					break;
-					
-				case "system.char":
-					output = "char";
-					break;
-
-				case "system.string":
-					output = "string";
-					break;
-				case "system.object":
-					output = "object";
-					break;
-
-				case "system.void":
-					output = "void";
-					break;
-
+#endif
 				default:
 					output = GetSafeName (type.BaseType);
 					break;

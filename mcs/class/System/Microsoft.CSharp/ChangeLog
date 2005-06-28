@@ -1,3 +1,8 @@
+2005-06-28 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Fixed GetTypeOutput to match MS.NET 1.x
+	and 2.0.	
+
 2005-06-26 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Fixed generated code for events, fields,

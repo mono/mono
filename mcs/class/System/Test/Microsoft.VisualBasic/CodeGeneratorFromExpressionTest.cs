@@ -76,28 +76,35 @@ namespace MonoTests.Microsoft.VisualBasic
 				sb.Length = 0;
 				Assert.AreEqual ("Long", Generate (new CodeTypeReferenceExpression (typeof (long)), sw), "#9");
 				sb.Length = 0;
+				Assert.AreEqual ("Single", Generate (new CodeTypeReferenceExpression (typeof (float)), sw), "#10");
+				sb.Length = 0;
+				Assert.AreEqual ("Object", Generate (new CodeTypeReferenceExpression (typeof (object)), sw), "#11");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (void).FullName, Generate (new CodeTypeReferenceExpression (typeof (void)), sw), "#12");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (void).FullName, Generate (new CodeTypeReferenceExpression ((string) null), sw), "#13");
+				sb.Length = 0;
+				Assert.AreEqual (typeof (void).FullName, Generate (new CodeTypeReferenceExpression (""), sw), "#14");
+				sb.Length = 0;
 #if NET_2_0
-				Assert.AreEqual ("SByte", Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#10");
+				Assert.AreEqual ("SByte", Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#15");
 				sb.Length = 0;
-				Assert.AreEqual ("UShort", Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#11");
+				Assert.AreEqual ("UShort", Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#16");
 				sb.Length = 0;
-				Assert.AreEqual ("UInteger", Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#12");
+				Assert.AreEqual ("UInteger", Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#17");
 				sb.Length = 0;
-				Assert.AreEqual ("ULong", Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#13");
+				Assert.AreEqual ("ULong", Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#18");
 				sb.Length = 0;
 #else
-				Assert.AreEqual (typeof (sbyte).FullName, Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#14");
+				Assert.AreEqual (typeof (sbyte).FullName, Generate (new CodeTypeReferenceExpression (typeof (sbyte)), sw), "#19");
 				sb.Length = 0;
-				Assert.AreEqual (typeof(ushort).FullName, Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#15");
+				Assert.AreEqual (typeof(ushort).FullName, Generate (new CodeTypeReferenceExpression (typeof (ushort)), sw), "#20");
 				sb.Length = 0;
-				Assert.AreEqual (typeof(uint).FullName, Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#16");
+				Assert.AreEqual (typeof(uint).FullName, Generate (new CodeTypeReferenceExpression (typeof (uint)), sw), "#21");
 				sb.Length = 0;
-				Assert.AreEqual (typeof(ulong).FullName, Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#17");
+				Assert.AreEqual (typeof(ulong).FullName, Generate (new CodeTypeReferenceExpression (typeof (ulong)), sw), "#22");
 				sb.Length = 0;
 #endif
-				Assert.AreEqual ("Single", Generate (new CodeTypeReferenceExpression (typeof (float)), sw), "#18");
-				sb.Length = 0;
-				Assert.AreEqual (typeof(void).FullName, Generate (new CodeTypeReferenceExpression (typeof (void)), sw), "#19");
 				sw.Close ();
 			}
 		}

@@ -1,3 +1,8 @@
+2005-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeReferenceTest.cs: Tests for zero-length and null type names,
+	and null type.
+
 2005-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeMemberPropertyTest.cs: Test for default value of Type property.

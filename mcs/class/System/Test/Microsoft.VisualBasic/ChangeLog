@@ -1,3 +1,9 @@
+2005-06-28  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromExpressionTest.cs: Renumbered tests for
+	TypeReferenceExpressionTest. Added tests for zero-length or null
+	type name, and object type.	
+
 2005-06-27  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromExpressionTest.cs: Added tests for 
