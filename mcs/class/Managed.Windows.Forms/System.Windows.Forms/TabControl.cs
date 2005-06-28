@@ -216,6 +216,21 @@ namespace System.Windows.Forms {
 
 				Rectangle invalid = Rectangle.Empty;
 
+				if (-1 != value && show_slider && value < slider_pos)
+					slider_pos = value;
+
+				int le = TabPages [value].TabBounds.Right;
+				int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
+
+				if (-1 != value && show_slider && le > re) {
+					int diff = le - re;
+					int ind = value - 1;
+					while (ind > 0 && diff > 0) {
+						diff -= TabPages [ind++].Width;
+					}
+					slider_pos = ind - 1;
+				}
+
 				if (selected_index != -1) {
 					invalid = GetTabRect (selected_index);
 					Controls [selected_index].Visible = false;
@@ -343,11 +358,9 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Properties
 
 		#region Protected Instance Properties
-		[MonoTODO ("Anything special need to be done?")]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams c = base.CreateParams;
-				// Do we need to do anything here?
 				return c;
 			}
 		}
@@ -368,6 +381,17 @@ namespace System.Windows.Forms {
 		public Control GetControl (int index)
 		{
 			return GetTab (index);
+		}
+
+		public override string ToString ()
+		{
+			string res = String.Concat (base.ToString (),
+					", TabPages.Count: ",
+					TabCount);
+			if (TabCount > 0)
+				res = String.Concat (res, ", TabPages[0]: ",
+						TabPages [0]);
+			return res;
 		}
 
 		#endregion	// Public Instance Methods
@@ -421,9 +445,9 @@ namespace System.Windows.Forms {
 		{
 			if (e.KeyCode == Keys.Tab && (e.KeyData & Keys.Control) != 0) {
 				if ((e.KeyData & Keys.Shift) == 0)
-					SelectedIndex = (SelectedIndex + 1) % (TabCount - 1);
+					SelectedIndex = (SelectedIndex + 1) % (TabCount);
 				else
-					SelectedIndex = (SelectedIndex - 1) % (TabCount - 1);
+					SelectedIndex = (SelectedIndex - 1) % (TabCount);
 				e.Handled = true;
 			} else if (e.KeyCode == Keys.Home) {
 				SelectedIndex = 0;

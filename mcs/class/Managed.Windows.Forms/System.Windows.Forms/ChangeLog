@@ -1,3 +1,12 @@
+2005-06-27  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs:
+	  - ToString: Added method
+	  - CreateParams: Remove TODO and comment
+	  - OnKeyDown: Cycle through bounds properly.
+	  - SelectedIndex: Scroll to the right or left if we need to
+	  display the newly selected tab.
+
 2005-06-23  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Stay in bounds when cycling. Make sure Handled is
