@@ -1,3 +1,8 @@
+2005-06-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (emit_marshal_string): Applied patch from Itamar Rogel (chastamar@yahoo.com). Fixes
+	#75374.
+
 2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* culture-info-table.h: regenerated.
