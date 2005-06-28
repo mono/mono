@@ -1,3 +1,8 @@
+2005-06-28  Miguel de Icaza  <miguel@novell.com>
+
+	* pending.cs: Do not define a proxy if the base method is virtual,
+	it will be picked up by the runtime (bug 75270).
+
 2005-06-28  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (interface_method_declaration): Avoid a
