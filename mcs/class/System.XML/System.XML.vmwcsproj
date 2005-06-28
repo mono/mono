@@ -1,5 +1,5 @@
 <VisualStudioProject>
-	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{10268504-30C6-4B25-A4D7-FB0604173427}" SccProjectName="SAK" SccLocalPath="." SccProvider="MSSCCI:ClearCase">
+	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{10268504-30C6-4B25-A4D7-FB0604173427}">
 		<Build>
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="System.Xml" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" PreBuildEvent="" PostBuildEvent="" RootNamespace="System.XML1" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
 				<Config Name="Debug" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_JVM" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="true" NoStdLib="false" NoWarn="" Optimize="false" OutputPath="bin\Debug\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
@@ -15,9 +15,10 @@
 		</Build>
 		<Files>
 			<Include>
+				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="None"/>
 				<File RelPath="Assembly\ChangeLog" BuildAction="None"/>
-				<File RelPath="Assembly\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml\ChangeLog" BuildAction="None"/>
 				<File RelPath="Mono.Xml\IHasXmlParserContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml\IHasXmlSchemaInfo.cs" SubType="Code" BuildAction="Compile"/>
@@ -118,7 +119,6 @@
 				<File RelPath="System.Xml\NewLineHandling.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\Profile.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\ReadState.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\TODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\ValidationType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\WhitespaceHandling.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\WriteState.cs" SubType="Code" BuildAction="Compile"/>
@@ -166,7 +166,6 @@
 				<File RelPath="System.Xml\XmlProcessingInstruction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlQualifiedName.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlQualifiedNameTable.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\XmlQueryDialect.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlReaderBinarySupport.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlReaderSettings.cs" SubType="Code" BuildAction="Compile"/>
@@ -186,33 +185,6 @@
 				<File RelPath="System.Xml\XmlWriter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlWriterSettings.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XQueryConvert.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\QueryEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\QueryEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\SequenceType.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XmlArgumentList.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XmlCommand.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XmlQueryCompileException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XmlQueryException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XPath2Expression.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XPathSequence.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryArithmeticOperator.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryASTCompiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryCliFunction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryCommandImpl.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryComparisonOperator.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryCompileContext.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryCompileOptions.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryContext.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryExpression.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryFunction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryFunctionCliImpl.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryFunctionContextAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryFunctionTable.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryModuleProlog.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryParser.jay" BuildAction="None"/>
-				<File RelPath="System.Xml.Query\XQueryStaticContext.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XQueryTokenizer.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Query\XsltCommand.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Schema\BUGS.txt" BuildAction="Content"/>
 				<File RelPath="System.Xml.Schema\BUGS-MS.txt" BuildAction="Content"/>
 				<File RelPath="System.Xml.Schema\BuiltInDatatype.cs" SubType="Code" BuildAction="Compile"/>
@@ -339,7 +311,6 @@
 				<File RelPath="System.Xml.Serialization\SoapTypeAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\TypeData.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\TypeMember.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.Serialization\TypeTableEntry.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\TypeTranslator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\UnreferencedObjectEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.Serialization\UnreferencedObjectEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -410,9 +381,7 @@
 				<File RelPath="System.Xml.XPath\Tokenizer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\XmlCaseOrder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\XmlDataType.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.XPath\XmlNodeChangeType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\XmlSortOrder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml.XPath\XPathAtomicValue.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\XPathComparer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\XPathDocument.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml.XPath\XPathException.cs" SubType="Code" BuildAction="Compile"/>
@@ -435,4 +404,4 @@
 		</Files>
 		<UserProperties jarserver="ipa" REFS.JarPath.rt="..\lib\rt.jar" project.JDKType="1.4.2_05" REFS.JarPath.system="..\lib\System.jar" REFS.JarPath.vmwutils="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\vmwutils.jar"/>
 	</CSHARP>
-	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>
+	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>
