@@ -772,7 +772,11 @@ namespace System.CodeDom.Compiler {
 				output.Write ("internal ");
 				break;
 			case MemberAttributes.FamilyAndAssembly:
-				output.Write ("/* FamAndAssem */ internal "); 
+#if NET_2_0
+				output.Write ("internal "); 
+#else
+				output.Write ("/*FamANDAssem*/ internal "); 
+#endif
 				break;
 			case MemberAttributes.Family:
 				output.Write ("protected ");
@@ -816,11 +820,18 @@ namespace System.CodeDom.Compiler {
 				//
 				// i'm not sure whether this is 100%
 				// correct, but it seems to be MS
-				// behavior. 
+				// behavior.
+				//
+				// On .NET 2.0, internal members
+				// are also marked "virtual".
 				//
 				MemberAttributes access = attributes & MemberAttributes.AccessMask;
-				if (access == MemberAttributes.Public || 
-				     access == MemberAttributes.Family)
+				if (access == MemberAttributes.Public ||
+#if NET_2_0
+					access == MemberAttributes.Family || access == MemberAttributes.Assembly)
+#else
+					access == MemberAttributes.Family)
+#endif
 					output.Write ("virtual ");
 				break;
 			}

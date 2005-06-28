@@ -226,6 +226,107 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public void PropertyMembersTypeGetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Family;
+			property.HasGet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    protected virtual int Name {{{0}"
+				+ "        get {{{0}"
+				+ "        }}{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeSetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.FamilyOrAssembly;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    protected internal int Name {{{0}"
+				+ "        set {{{0}"
+				+ "        }}{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetSet ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Assembly;
+			property.HasGet = true;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    internal virtual int Name {{{0}"
+#else
+				+ "    internal int Name {{{0}"
+#endif
+				+ "        get {{{0}"
+				+ "        }}{0}"
+				+ "        set {{{0}"
+				+ "        }}{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeFamilyAndAssembly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.FamilyAndAssembly;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    internal int Name {{{0}"
+#else
+				+ "    /*FamANDAssem*/ internal int Name {{{0}"
+#endif
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
 		public void MethodMembersTypeTest1 ()
 		{
 			type.Name = "Test1";

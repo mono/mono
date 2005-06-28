@@ -1,5 +1,9 @@
 2005-06-28  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorFromTypeTest.cs: Added additional property tests.
+
+2005-06-28  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromExpressionTest.cs: No longer inherit from
 	CodeGeneratorTestBase. Added tests for CodeTypeReference.
 
