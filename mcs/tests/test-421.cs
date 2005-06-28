@@ -20,7 +20,7 @@ public class B : A, I {
 }
 
 public class C : B {
-  public static book ok = false;
+  public static bool ok = false;
   public override void SetObject (string foo) {
     Console.WriteLine ("C.SetObject {0}", foo);
     ok = true;
@@ -34,10 +34,9 @@ public class X {
 
     // Tests that C.SetObject is called here
     i.SetObject ("hi");
-    C c = (C) i;
-    if (!c.ok)
+    if (!C.ok)
 	return 1;
-    return 1;
+    return 0;
   }
 }
 
