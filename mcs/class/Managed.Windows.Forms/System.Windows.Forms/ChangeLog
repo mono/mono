@@ -1,8 +1,8 @@
 2005-06-28  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Implement keyboard navigation, currently supports,
-	LEFT, RIGHT, UP, DOWN, PGUP, PGDOWN, HOME, END. Add support for
-	toggling checkboxes with the space bar.
+	LEFT, RIGHT, UP, DOWN, PGUP, PGDOWN, HOME, END, ADD, SUBTRACT. Add
+	support for toggling checkboxes with the space bar.
 
 2005-06-28  Jackson Harper  <jackson@ximian.com>
 

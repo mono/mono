@@ -506,10 +506,12 @@ namespace System.Windows.Forms {
 			OpenTreeNodeEnumerator ne;
 
 			switch (e.KeyData & Keys.KeyCode) {
+			case Keys.Subtract:
 			case Keys.Left:
 				if (selected_node != null)
 					selected_node.Collapse ();
 				break;
+			case Keys.Add:
 			case Keys.Right:
 				if (selected_node != null)
 					selected_node.Expand ();
