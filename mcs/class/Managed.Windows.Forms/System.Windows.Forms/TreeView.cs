@@ -1227,6 +1227,11 @@ namespace System.Windows.Forms {
 			remove { on_after_select -= value; }
 		}
 
+		public event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remoave { base.BackgroundImageChanged -= value; }
+		}
+
 		public event TreeViewCancelEventHandler BeforeCheck {
 			add { on_before_check += value; }
 			remove { on_before_check -= value; }
