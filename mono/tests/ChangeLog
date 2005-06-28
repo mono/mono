@@ -1,3 +1,9 @@
+2005-06-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs: Add test for #75374.
+
+	* Makefile.am pinvoke18.cs pinvoke2.cs: Merge pinvoke18 into pinvoke2.
+
 2005-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (testaot): Use JITTEST_PROG_RUN for compiling the AOT module.
