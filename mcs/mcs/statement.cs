@@ -4225,8 +4225,7 @@ namespace Mono.CSharp {
 					count++;
 					fb = ec.CurrentIterator.MapVariable (
 						"s_", count.ToString (), type);
-				} else
-					local = ec.ig.DeclareLocal (type);
+				}
 
 				return this;
 			}
@@ -4259,11 +4258,14 @@ namespace Mono.CSharp {
 			{
 				if (fb != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
+				else if (local == null)
+					local = ec.ig.DeclareLocal (type);
+
 				right_side.Emit (ec);
-				if (fb == null)
-					ec.ig.Emit (OpCodes.Stloc, local);
-				else
+				if (fb != null)
 					ec.ig.Emit (OpCodes.Stfld, fb);
+				else
+					ec.ig.Emit (OpCodes.Stloc, local);
 			}
 
 			public void EmitThis (ILGenerator ig)
@@ -4274,10 +4276,13 @@ namespace Mono.CSharp {
 
 			public void EmitStore (ILGenerator ig)
 			{
-				if (fb == null)
-					ig.Emit (OpCodes.Stloc, local);
-				else
+				if (fb != null)
 					ig.Emit (OpCodes.Stfld, fb);
+				else {
+					if (local == null)
+						local = ig.DeclareLocal (type);
+					ig.Emit (OpCodes.Stloc, local);
+				}
 			}
 
 			public void AddressOf (EmitContext ec, AddressOp mode)

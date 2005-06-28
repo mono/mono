@@ -1,3 +1,10 @@
+2005-06-05  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Foreach.TemporaryVariable): Create the
+	LocalBuilder in the Emit phase and not in Resolve since in some
+	situations, we don't have an ILGenerator during Resolve; see
+	2test-19.cs for an example.
+
 2005-06-04  Martin Baulig  <martin@ximian.com>
 
 	**** Merged r45395 from GCS ****
