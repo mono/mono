@@ -3,7 +3,7 @@
 'CharacterLiteral ::= DoubleQuoteCharacter StringCharacter DoubleQuoteCharacter C
 
 Imports System
-Imports Microsoft.Visualbasic
+Imports Microsoft.VisualBasic
 Module ExpressionLiteralsChar 
 	Sub Main ( ) 
 		Dim A as Char = "a"c 	

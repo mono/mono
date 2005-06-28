@@ -3,13 +3,13 @@
 'CharacterLiteral ::= DoubleQuoteCharacter StringCharacter DoubleQuoteCharacter C
 
 Imports System
-Imports Microsoft.Visualbasic
+Imports Microsoft.VisualBasic
 Module ExpressionLiteralsChar 
 	Sub Main ( ) 
 		Dim A as Char = """"c 	
 		Dim B = Chr(34)
 			if  B <> A
-				Throw New Exception ("  Unexpected Result for the Expression :: A should be euqal to (") ")
+				Throw New Exception ("  Unexpected Result for the Expression :: A should be equal to  ")
 			End If
 	End Sub 
 End Module

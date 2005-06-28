@@ -3,7 +3,8 @@
 'Nothing keyword represents the default value of any data type
 
 Imports System
-Imports Microsoft.Visualbasic
+Imports Microsoft.VisualBasic
+
 Module ExpressionLiteralsChar 
 	Sub Main ( ) 
 		Dim L As Long,S As String,B As Boolean,O As Object,D As Date
@@ -16,7 +17,7 @@ Module ExpressionLiteralsChar
 			Throw New Exception ("Unexpected Behavior of Nothing. As S should be assigned Nothing")
 		End If
 		D = Nothing 
-		If D <> #1/1/001 12:00:00 PM # Then
+		If D <> #1/1/001 12:00:00 AM # Then
 			Throw New Exception("Unexpected Behavior of Nothing. D not set to default value")
 		End If
 		L = Nothing 

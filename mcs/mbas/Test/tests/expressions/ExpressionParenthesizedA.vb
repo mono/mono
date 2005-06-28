@@ -2,7 +2,6 @@
 'Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 
 Imports System
-Imports Microsoft.Visualbasic
 
 Module ExpressionParenthesized
 	Sub Main()

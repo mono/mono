@@ -3,7 +3,7 @@
 'Nothing keyword represents the default value of any data type
 
 Imports System
-Imports Microsoft.Visualbasic
+Imports Microsoft.VisualBasic
 
 Module ExpressionLiteralsNothing 
 Public Structure MyStruct
