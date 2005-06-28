@@ -97,9 +97,9 @@ namespace Mono.Unix {
 	[Flags][Map]
 	public enum SyslogFacility {
 		LOG_KERN      = 0 << 3,
+		LOG_USER      = 1 << 3,
 		[Obsolete ("use SyslogFacility.LOG_USER")]
 		LOG_USRE      = 1 << 3,
-		LOG_USER      = 1 << 3,
 		LOG_MAIL      = 2 << 3,
 		LOG_DAEMON    = 3 << 3,
 		LOG_AUTH      = 4 << 3,
@@ -107,7 +107,7 @@ namespace Mono.Unix {
 		LOG_LPR       = 6 << 3,
 		LOG_NEWS      = 7 << 3,
 		LOG_UUCP      = 8 << 3,
-		LOG_CRON      = 8 << 3,
+		LOG_CRON      = 9 << 3,
 		LOG_AUTHPRIV  = 10 << 3,
 		LOG_FTP       = 11 << 3,
 		LOG_LOCAL0    = 16 << 3,
@@ -120,7 +120,7 @@ namespace Mono.Unix {
 		LOG_LOCAL7    = 23 << 3,
 	}
 
-	[Flags][Map]
+	[Map]
 	public enum SyslogLevel {
 		LOG_EMERG   = 0,  // system is unusable
 		LOG_ALERT   = 1,  // action must be taken immediately

@@ -1,3 +1,10 @@
+2005-06-28  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: correct value of LOG_CRON (it shouldn't be identical to
+	  LOG_UUCP).  SyslogLevel shouldn't have [Flags].  Move LOG_USER to be
+	  before LOG_USRE so that the generated map code doesn't return EINVAL when
+	  LOG_USER is specified.
+
 2005-06-15  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: s/LOG_USRE/LOG_USER/.  Fixes #75274.  
