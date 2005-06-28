@@ -138,7 +138,8 @@ namespace Mono.Globalization.Unicode
 			" HORN AND HOOK ABOVE",
 			" HORN AND DOT",
 			// CIRCLED, PARENTHESIZED and so on
-			"CIRCLED DIGIT", "CIRCLED NUMBER", "CIRCLED LATIN", "CIRCLED KATAKANA", "CIRCLED SANS-SERIF DIGIT", "CIRCLED SANS-SERIF NUMBER",
+			"CIRCLED DIGIT", "CIRCLED NUMBER", "CIRCLED LATIN",
+			"CIRCLED KATAKANA", "CIRCLED SANS-SERIF",
 			"PARENTHESIZED DIGIT", "PARENTHESIZED NUMBER", "PARENTHESIZED LATIN",
 			};
 		byte [] diacriticWeights = new byte [] {
@@ -155,8 +156,8 @@ namespace Mono.Globalization.Unicode
 			0x69, 0x69, 0x6A, 0x6D, 0x6E,
 			0x95, 0xAA,
 			// CIRCLED, PARENTHESIZED and so on.
-			0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
-			0xF3, 0xF3, 0xF3, 0xF3
+			0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
+			0xF3, 0xF3, 0xF3
 			};
 
 		int [] numberSecondaryWeightBounds = new int [] {
@@ -830,6 +831,8 @@ sw.Close ();
 					cp, values [0].Substring (7)));
 
 			// diacritical weights by character name
+if (diacritics.Length != diacriticWeights.Length)
+throw new Exception (String.Format ("Should not happen. weights are {0} while labels are {1}", diacriticWeights.Length, diacritics.Length));
 			for (int d = 0; d < diacritics.Length; d++)
 				if (s.IndexOf (diacritics [d]) > 0)
 					diacritical [cp] |= diacriticWeights [d];
@@ -1579,14 +1582,18 @@ sw.Close ();
 						fillIndex [0xC]++;
 
 					int xcp;
-					xcp = (int) prevValue + 0x2170 - 1;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					xcp = (int) prevValue + 0x2160 - 1;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					fillIndex [0xC] += 2;
-					xcp = (int) prevValue + 0x3021 - 1;
-					AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-					fillIndex [0xC]++;
+					if (currValue <= 10) {
+						xcp = (int) prevValue + 0x2170 - 1;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						xcp = (int) prevValue + 0x2160 - 1;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						fillIndex [0xC] += 2;
+						xcp = (int) prevValue + 0x3021 - 1;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						fillIndex [0xC]++;
+					}
+					else if (currValue == 11)
+						fillIndex [0xC]++;
 				}
 				if (prevValue < currValue)
 					prevValue = currValue;
@@ -2179,10 +2186,11 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				+ "\u11B6=\u11D8, \u3140,, \u11D9, \u1106=\u11B7 >"
 			+ "<{\u111C \u111D}, [\u11DA \u11E2], \u1107=\u11B8 >"
 			+ "<{\u111E \u1120}, \u3172,, \u3173, \u11E3, \u1108 >"
-			+ "<{\u1121 \u112C}, \u11B9,,,,,,,,, [\u11E4 \u11E6],,"
-				+ "\u1109=\u11BA,,, \u3214=\u3274 <>"
-			+ "<{\u112D \u1133}, \u11E7,, [\u11E8 \u11E9],,"
-				+ "\u11EA,, \u110A=\u11BB,,, >"
+			+ "<{\u1121 \u112C}, \u3144 \u11B9, \u3174, \u3175,,,, "
+				+ "\u3176,, \u3177, [\u11E4 \u11E6] \u3178,"
+				+ "\u3179, \u1109=\u11BA,,, \u3214=\u3274 <>"
+			+ "<{\u112D \u1133}, \u11E7 \u317A, \u317B, \u317C "
+				+ "[\u11E8 \u11E9],, \u11EA \u317D,, \u110A=\u11BB,,, >"
 			+ "<{\u1134 \u1140}, \u317E,,,,,,, \u11EB,"
 				+ "\u110B=\u11BC, [\u1161 \u11A2], \u1160 >"
 			+ "<{\u1141 \u114C}, \u11EE, \u11EC, \u11ED,,,,, "
@@ -2274,7 +2282,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 				// SPECIAL CASE ?
 				int offset = i < 0x3260 ? 1 : 0;
-				if (0x326E <= offset && offset <= 0x3273)
+				if (0x326E <= i && i <= 0x3273)
 					offset = 1;
 
 				map [i] = new CharMapEntry (map [ch].Category,
