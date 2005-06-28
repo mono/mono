@@ -3849,7 +3849,6 @@ namespace Mono.MonoBASIC {
 
 			if (mi != null && mi.Count > 0) 
 				parent_member = (PropertyInfo) mi [0];
-
 			if (parent_member is PropertyInfo) {
 				PropertyInfo parent_property = (PropertyInfo)parent_member;
 
@@ -3886,20 +3885,6 @@ namespace Mono.MonoBASIC {
 				/*if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (container);
 				*/
-				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-
-					/*
-					if (this is Indexer)
-						Report.Error (115, Location,
-							container.MakeName (Name) +
-							" no suitable indexers found to override");
-					else
-					*/
-						Report.Error (115, Location,
-							container.MakeName (Name) +
-							" no suitable properties found to override");
-					return false;
-				}
 
 				if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) {
 					if ((ModFlags & Modifiers.NONVIRTUAL) != 0)	{

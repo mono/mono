@@ -1,3 +1,6 @@
+2005-06-28 Manjula GHM <mmanjula@novell.com>
+	*class.cs : Support suitable property to override
+
 2005-06-27 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay:
 	*statement.cs: Support and successfully find label definition inside child block
