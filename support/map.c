@@ -1384,18 +1384,18 @@ int Mono_Posix_FromSyslogFacility (int x, int *r)
 #else /* def LOG_KERN */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_KERN */
-	if ((x & Mono_Posix_SyslogFacility_LOG_USRE) == Mono_Posix_SyslogFacility_LOG_USRE)
-#ifdef LOG_USRE
-		*r |= LOG_USRE;
-#else /* def LOG_USRE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_USRE */
 	if ((x & Mono_Posix_SyslogFacility_LOG_USER) == Mono_Posix_SyslogFacility_LOG_USER)
 #ifdef LOG_USER
 		*r |= LOG_USER;
 #else /* def LOG_USER */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_USER */
+	if ((x & Mono_Posix_SyslogFacility_LOG_USRE) == Mono_Posix_SyslogFacility_LOG_USRE)
+#ifdef LOG_USRE
+		*r |= LOG_USRE;
+#else /* def LOG_USRE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_USRE */
 	if ((x & Mono_Posix_SyslogFacility_LOG_MAIL) == Mono_Posix_SyslogFacility_LOG_MAIL)
 #ifdef LOG_MAIL
 		*r |= LOG_MAIL;
@@ -1516,14 +1516,14 @@ int Mono_Posix_ToSyslogFacility (int x, int *r)
 	if ((x & LOG_KERN) == LOG_KERN)
 		*r |= Mono_Posix_SyslogFacility_LOG_KERN;
 #endif /* ndef LOG_KERN */
-#ifdef LOG_USRE
-	if ((x & LOG_USRE) == LOG_USRE)
-		*r |= Mono_Posix_SyslogFacility_LOG_USRE;
-#endif /* ndef LOG_USRE */
 #ifdef LOG_USER
 	if ((x & LOG_USER) == LOG_USER)
 		*r |= Mono_Posix_SyslogFacility_LOG_USER;
 #endif /* ndef LOG_USER */
+#ifdef LOG_USRE
+	if ((x & LOG_USRE) == LOG_USRE)
+		*r |= Mono_Posix_SyslogFacility_LOG_USRE;
+#endif /* ndef LOG_USRE */
 #ifdef LOG_MAIL
 	if ((x & LOG_MAIL) == LOG_MAIL)
 		*r |= Mono_Posix_SyslogFacility_LOG_MAIL;
@@ -1604,55 +1604,55 @@ int Mono_Posix_FromSyslogLevel (int x, int *r)
 	*r = 0;
 	if (x == 0)
 		return 0;
-	if ((x & Mono_Posix_SyslogLevel_LOG_EMERG) == Mono_Posix_SyslogLevel_LOG_EMERG)
+	if (x == Mono_Posix_SyslogLevel_LOG_EMERG)
 #ifdef LOG_EMERG
-		*r |= LOG_EMERG;
+		{*r = LOG_EMERG; return 0;}
 #else /* def LOG_EMERG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_EMERG */
-	if ((x & Mono_Posix_SyslogLevel_LOG_ALERT) == Mono_Posix_SyslogLevel_LOG_ALERT)
+	if (x == Mono_Posix_SyslogLevel_LOG_ALERT)
 #ifdef LOG_ALERT
-		*r |= LOG_ALERT;
+		{*r = LOG_ALERT; return 0;}
 #else /* def LOG_ALERT */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_ALERT */
-	if ((x & Mono_Posix_SyslogLevel_LOG_CRIT) == Mono_Posix_SyslogLevel_LOG_CRIT)
+	if (x == Mono_Posix_SyslogLevel_LOG_CRIT)
 #ifdef LOG_CRIT
-		*r |= LOG_CRIT;
+		{*r = LOG_CRIT; return 0;}
 #else /* def LOG_CRIT */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_CRIT */
-	if ((x & Mono_Posix_SyslogLevel_LOG_ERR) == Mono_Posix_SyslogLevel_LOG_ERR)
+	if (x == Mono_Posix_SyslogLevel_LOG_ERR)
 #ifdef LOG_ERR
-		*r |= LOG_ERR;
+		{*r = LOG_ERR; return 0;}
 #else /* def LOG_ERR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_ERR */
-	if ((x & Mono_Posix_SyslogLevel_LOG_WARNING) == Mono_Posix_SyslogLevel_LOG_WARNING)
+	if (x == Mono_Posix_SyslogLevel_LOG_WARNING)
 #ifdef LOG_WARNING
-		*r |= LOG_WARNING;
+		{*r = LOG_WARNING; return 0;}
 #else /* def LOG_WARNING */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_WARNING */
-	if ((x & Mono_Posix_SyslogLevel_LOG_NOTICE) == Mono_Posix_SyslogLevel_LOG_NOTICE)
+	if (x == Mono_Posix_SyslogLevel_LOG_NOTICE)
 #ifdef LOG_NOTICE
-		*r |= LOG_NOTICE;
+		{*r = LOG_NOTICE; return 0;}
 #else /* def LOG_NOTICE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_NOTICE */
-	if ((x & Mono_Posix_SyslogLevel_LOG_INFO) == Mono_Posix_SyslogLevel_LOG_INFO)
+	if (x == Mono_Posix_SyslogLevel_LOG_INFO)
 #ifdef LOG_INFO
-		*r |= LOG_INFO;
+		{*r = LOG_INFO; return 0;}
 #else /* def LOG_INFO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_INFO */
-	if ((x & Mono_Posix_SyslogLevel_LOG_DEBUG) == Mono_Posix_SyslogLevel_LOG_DEBUG)
+	if (x == Mono_Posix_SyslogLevel_LOG_DEBUG)
 #ifdef LOG_DEBUG
-		*r |= LOG_DEBUG;
+		{*r = LOG_DEBUG; return 0;}
 #else /* def LOG_DEBUG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_DEBUG */
-	return 0;
+	errno = EINVAL; return -1;
 }
 
 int Mono_Posix_ToSyslogLevel (int x, int *r)
@@ -1661,38 +1661,38 @@ int Mono_Posix_ToSyslogLevel (int x, int *r)
 	if (x == 0)
 		return 0;
 #ifdef LOG_EMERG
-	if ((x & LOG_EMERG) == LOG_EMERG)
-		*r |= Mono_Posix_SyslogLevel_LOG_EMERG;
+	if (x == LOG_EMERG)
+		{*r = Mono_Posix_SyslogLevel_LOG_EMERG; return 0;}
 #endif /* ndef LOG_EMERG */
 #ifdef LOG_ALERT
-	if ((x & LOG_ALERT) == LOG_ALERT)
-		*r |= Mono_Posix_SyslogLevel_LOG_ALERT;
+	if (x == LOG_ALERT)
+		{*r = Mono_Posix_SyslogLevel_LOG_ALERT; return 0;}
 #endif /* ndef LOG_ALERT */
 #ifdef LOG_CRIT
-	if ((x & LOG_CRIT) == LOG_CRIT)
-		*r |= Mono_Posix_SyslogLevel_LOG_CRIT;
+	if (x == LOG_CRIT)
+		{*r = Mono_Posix_SyslogLevel_LOG_CRIT; return 0;}
 #endif /* ndef LOG_CRIT */
 #ifdef LOG_ERR
-	if ((x & LOG_ERR) == LOG_ERR)
-		*r |= Mono_Posix_SyslogLevel_LOG_ERR;
+	if (x == LOG_ERR)
+		{*r = Mono_Posix_SyslogLevel_LOG_ERR; return 0;}
 #endif /* ndef LOG_ERR */
 #ifdef LOG_WARNING
-	if ((x & LOG_WARNING) == LOG_WARNING)
-		*r |= Mono_Posix_SyslogLevel_LOG_WARNING;
+	if (x == LOG_WARNING)
+		{*r = Mono_Posix_SyslogLevel_LOG_WARNING; return 0;}
 #endif /* ndef LOG_WARNING */
 #ifdef LOG_NOTICE
-	if ((x & LOG_NOTICE) == LOG_NOTICE)
-		*r |= Mono_Posix_SyslogLevel_LOG_NOTICE;
+	if (x == LOG_NOTICE)
+		{*r = Mono_Posix_SyslogLevel_LOG_NOTICE; return 0;}
 #endif /* ndef LOG_NOTICE */
 #ifdef LOG_INFO
-	if ((x & LOG_INFO) == LOG_INFO)
-		*r |= Mono_Posix_SyslogLevel_LOG_INFO;
+	if (x == LOG_INFO)
+		{*r = Mono_Posix_SyslogLevel_LOG_INFO; return 0;}
 #endif /* ndef LOG_INFO */
 #ifdef LOG_DEBUG
-	if ((x & LOG_DEBUG) == LOG_DEBUG)
-		*r |= Mono_Posix_SyslogLevel_LOG_DEBUG;
+	if (x == LOG_DEBUG)
+		{*r = Mono_Posix_SyslogLevel_LOG_DEBUG; return 0;}
 #endif /* ndef LOG_DEBUG */
-	return 0;
+	errno = EINVAL; return -1;
 }
 
 int Mono_Posix_FromOpenFlags (int x, int *r)

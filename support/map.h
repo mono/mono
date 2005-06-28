@@ -149,8 +149,8 @@ int Mono_Posix_FromSyslogOptions (int x, int *r);
 int Mono_Posix_ToSyslogOptions (int x, int *r);
 
 #define Mono_Posix_SyslogFacility_LOG_KERN 0x00000000
-#define Mono_Posix_SyslogFacility_LOG_USRE 0x00000008
 #define Mono_Posix_SyslogFacility_LOG_USER 0x00000008
+#define Mono_Posix_SyslogFacility_LOG_USRE 0x00000008
 #define Mono_Posix_SyslogFacility_LOG_MAIL 0x00000010
 #define Mono_Posix_SyslogFacility_LOG_DAEMON 0x00000018
 #define Mono_Posix_SyslogFacility_LOG_AUTH 0x00000020
@@ -158,7 +158,7 @@ int Mono_Posix_ToSyslogOptions (int x, int *r);
 #define Mono_Posix_SyslogFacility_LOG_LPR 0x00000030
 #define Mono_Posix_SyslogFacility_LOG_NEWS 0x00000038
 #define Mono_Posix_SyslogFacility_LOG_UUCP 0x00000040
-#define Mono_Posix_SyslogFacility_LOG_CRON 0x00000040
+#define Mono_Posix_SyslogFacility_LOG_CRON 0x00000048
 #define Mono_Posix_SyslogFacility_LOG_AUTHPRIV 0x00000050
 #define Mono_Posix_SyslogFacility_LOG_FTP 0x00000058
 #define Mono_Posix_SyslogFacility_LOG_LOCAL0 0x00000080
