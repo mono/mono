@@ -564,6 +564,20 @@ namespace System.Windows.Forms {
 				break;
 			}
 			base.OnKeyDown (e);
+
+			if (!e.Handled && checkboxes &&
+					selected_node != null &&
+					(e.KeyData & Keys.KeyCode) == Keys.Space) {
+				TreeViewCancelEventArgs args = new TreeViewCancelEventArgs (
+					selected_node, false, TreeViewAction.ByKeyboard);
+				OnBeforeCheck (args);
+				if (!args.Cancel) {
+					selected_node.Checked = !selected_node.Checked;
+					OnAfterCheck (new TreeViewEventArgs (selected_node,
+								      TreeViewAction.ByKeyboard));
+				}
+				e.Handled = true;
+			}
 		}
                 
 		protected virtual void OnAfterCheck (TreeViewEventArgs e) {
