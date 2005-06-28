@@ -289,12 +289,6 @@ namespace Mono.CSharp {
 		public bool IsLastStatement;
 
 		/// <summary>
-		///   Whether remapping of locals, parameters and fields is turned on.
-		///   Used by iterators and anonymous methods.
-		/// </summary>
-		public bool RemapToProxy;
-
-		/// <summary>
 		///  Whether we are inside an unsafe block
 		/// </summary>
 		public bool InUnsafe;
@@ -312,7 +306,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>
-		public AnonymousMethod CurrentAnonymousMethod;
+		public AnonymousContainer CurrentAnonymousMethod;
 		
 		/// <summary>
 		///   Location for this EmitContext
@@ -358,6 +352,15 @@ namespace Mono.CSharp {
 		
 		Phase current_phase;
 		FlowBranching current_flow_branching;
+
+		static int next_id = 0;
+		int id = ++next_id;
+
+		public override string ToString ()
+		{
+			return String.Format ("EmitContext ({0}:{1}:{2})", id,
+					      CurrentIterator, capture_context, loc);
+		}
 		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -372,7 +375,6 @@ namespace Mono.CSharp {
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			MethodIsStatic = IsStatic;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
-			RemapToProxy = InIterator;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
@@ -591,12 +593,17 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool resolved;
+
 		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
 					     InternalParameters ip, Location loc, out bool unreachable)
 		{
 			current_phase = Phase.Resolving;
 			
 			unreachable = false;
+
+			if (resolved)
+				return true;
 
 			capture_context = block.CaptureContext;
 			
@@ -648,20 +655,21 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			if (ReturnType != null && !unreachable){
-				if (!InIterator){
-					if (CurrentAnonymousMethod != null){
-						Report.Error (1643, loc, "Not all code paths return a value in anonymous method of type `{0}'",
-							      CurrentAnonymousMethod.Type);
-					} else {
+			if (ReturnType != null && !unreachable) {
+				if (CurrentAnonymousMethod == null) {
 						Report.Error (161, loc, "Not all code paths return a value");
-					}
-					
+					return false;
+				} else if (!CurrentAnonymousMethod.IsIterator) {
+					Report.Error (
+						1643, loc, "Not all code paths return a " +
+						"value in anonymous method of type `{0}'",
+						CurrentAnonymousMethod.Type);
 					return false;
 				}
 			}
-			block.CompleteContexts ();
 
+			block.CompleteContexts ();
+			resolved = true;
 			return true;
 		}
 
@@ -690,9 +698,12 @@ namespace Mono.CSharp {
 				// this case.
 				//
 
+				bool in_iterator = (CurrentAnonymousMethod != null) &&
+					CurrentAnonymousMethod.IsIterator && InIterator;
+
 				if ((block != null) && block.IsDestructor) {
 					// Nothing to do; S.R.E automatically emits a leave.
-				} else if (HasReturnLabel || (!unreachable && !InIterator)) {
+				} else if (HasReturnLabel || (!unreachable && !in_iterator)) {
 					if (ReturnType != null)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);
@@ -865,46 +876,13 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Creates a field `name' with the type `t' on the proxy class
-		//
-		public FieldBuilder MapVariable (string name, Type t)
-		{
-			if (InIterator)
-				return CurrentIterator.MapVariable ("v_", name, t);
-
-			throw new Exception ("MapVariable for an unknown state");
-		}
-
-		public Expression RemapParameter (int idx)
-		{
-			FieldExpr fe = new FieldExprNoAddress (CurrentIterator.parameter_fields [idx].FieldBuilder, loc);
-			fe.InstanceExpression = new ProxyInstance ();
-			return fe.DoResolve (this);
-		}
-
-		public Expression RemapParameterLValue (int idx, Expression right_side)
-		{
-			FieldExpr fe = new FieldExprNoAddress (CurrentIterator.parameter_fields [idx].FieldBuilder, loc);
-			fe.InstanceExpression = new ProxyInstance ();
-			return fe.DoResolveLValue (this, right_side);
-		}
-		
-		//
 		// Emits the proper object to address fields on a remapped
 		// variable/parameter to field in anonymous-method/iterator proxy classes.
 		//
 		public void EmitThis ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
-			if (InIterator){
-				if (!IsStatic){
-					FieldBuilder this_field = CurrentIterator.this_field.FieldBuilder;
-					if (TypeManager.IsValueType (this_field.FieldType))
-						ig.Emit (OpCodes.Ldflda, this_field);
-					else
-						ig.Emit (OpCodes.Ldfld, this_field);
-				} 
-			} else if (capture_context != null && CurrentAnonymousMethod != null){
+			if (capture_context != null && CurrentAnonymousMethod != null){
 				ScopeInfo si = CurrentAnonymousMethod.Scope;
 				while (si != null){
 					if (si.ParentLink != null)
@@ -924,11 +902,6 @@ namespace Mono.CSharp {
 		//
 		public void EmitCapturedVariableInstance (LocalInfo li)
 		{
-			if (RemapToProxy){
-				ig.Emit (OpCodes.Ldarg_0);
-				return;
-			}
-			
 			if (capture_context == null)
 				throw new Exception ("Calling EmitCapturedContext when there is no capture_context");
 			

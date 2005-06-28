@@ -2954,7 +2954,7 @@ namespace Mono.CSharp {
 
 			if (ec.CurrentAnonymousMethod != null){
 				if (!FieldInfo.IsStatic){
-					if (ec.TypeContainer is Struct){
+					if (!ec.CurrentAnonymousMethod.IsIterator && (ec.TypeContainer is Struct)){
 						Report.Error (1673, loc, "Can not reference instance variables in anonymous methods hosted in structs");
 						return null;
 					}
@@ -3420,10 +3420,8 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
-			if (resolved) {
-				Report.Debug ("Double resolve of " + Name);
+			if (resolved)
 				return this;
-			}
 
 			if (getter != null){
 				if (TypeManager.GetArgumentTypes (getter).Length != 0){

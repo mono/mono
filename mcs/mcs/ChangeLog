@@ -1,3 +1,46 @@
+2005-06-08  Martin Baulig  <martin@ximian.com>
+
+	The big Iterators rewrite :-)
+
+	* iterators.cs: Rewrite this to use the anonymous methods framework.
+
+	* rootcontext.cs (RootContext.DefineTypes): Define Delegates
+	before the TypeContainers; see 2test-21.cs.
+
+	* class.cs
+	(TypeContainer.DefineType): Don't create a new EmitContext if we
+	already have one (this only happens if we're an Iterator).
+	(TypeContainer.Define): Also call Define() on all our iterators.
+	(Method.CreateEmitContext): Added support for iterators.
+
+	* anonymous.cs
+	(AnonymousContainer): New abstract base class for `AnonymousMethod'.
+	(AnonymousContainer.CreateMethodHost): Moved here from
+	AnonymousMethod and made abstract.
+	(AnonymousContainer.CreateScopeType): New abstract method.
+	(AnonymousContainer.IsIterator): New public property.
+	(ScopeInfo.EmitScopeType): Call CreateScopeType() on our Host to
+	get the ScopeTypeBuilder rather than manually defining it here.	
+	(ScopeInfo.EmitScopeInstance): New public method; correctly handle
+	iterators here.
+
+	* driver.cs (Driver.MainDriver): Call TypeManager.InitCodeHelpers()
+	before RootContext.DefineTypes().
+
+	* codegen.cs (EmitContext.RemapToProxy): Removed.
+	(EmitContext.CurrentAnonymousMethod): Changed type from
+	AnonymousMethod -> AnonymousContainer.
+	(EmitContext.ResolveTopBlock): Protect from being called twice.
+	(EmitContext.MapVariable, RemapParameter(LValue)): Removed.
+	(EmitContext.EmitThis): Removed the iterators hacks; use the
+	anonymous methods framework for that.
+
+	* statement.cs
+	(ToplevelBlock.Container): Make this a property, not a field.
+	(ToplevelBlock.ReParent): New public method; move the
+	ToplevelBlock into a new container.
+	(Foreach.TemporaryVariable): Simplify.
+
 2005-06-05  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (LocalInfo.CompilerGenerated): New flag.

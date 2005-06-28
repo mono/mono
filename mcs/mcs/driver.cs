@@ -1585,14 +1585,15 @@ namespace Mono.CSharp
 				RootContext.BootCorlib_PopulateCoreTypes ();
 
 			RootContext.PopulateTypes ();
+
+			TypeManager.InitCodeHelpers ();
+
 			RootContext.DefineTypes ();
 			
 			if (RootContext.Documentation != null &&
 				!RootContext.Documentation.OutputDocComment (
 					output_file))
 				return false;
-
-			TypeManager.InitCodeHelpers ();
 
 			//
 			// Verify using aliases now

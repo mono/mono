@@ -575,6 +575,13 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
+			ArrayList delegates = root.Delegates;
+			if (delegates != null){
+				foreach (Delegate d in delegates)
+					if ((d.ModFlags & Modifiers.NEW) == 0)
+						d.Define ();
+			}
+
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order) {
 					// When compiling corlib, these types have already been
@@ -589,13 +596,6 @@ namespace Mono.CSharp {
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
 						tc.Define ();
 				}
-			}
-
-			ArrayList delegates = root.Delegates;
-			if (delegates != null){
-				foreach (Delegate d in delegates)
-					if ((d.ModFlags & Modifiers.NEW) == 0)
-						d.Define ();
 			}
 
 			ArrayList enums = root.Enums;
