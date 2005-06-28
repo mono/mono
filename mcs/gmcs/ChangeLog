@@ -1,5 +1,11 @@
 2005-06-28  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay (interface_method_declaration): Avoid a
+	reduce/reduce conflict by moving some of the code into a separate
+	`interface_method_declaration_body' rule; fixes #75368.
+
+2005-06-28  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.MemberLookup_FindMembers): Move the
 	array check after the check for TypeBuilder's.
 

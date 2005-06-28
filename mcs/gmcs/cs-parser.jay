@@ -1646,6 +1646,20 @@ opt_new
 	  }
 	;
 
+interface_method_declaration_body
+	: OPEN_BRACE
+	  {
+		lexer.ConstraintsParsing = false;
+	  }
+	  opt_statement_list CLOSE_BRACE
+	  {
+		Report.Error (531, lexer.Location,
+			      "'{0}': interface members cannot have a definition", $4);
+		$$ = null;
+	  }
+	| SEMICOLON
+	;
+
 interface_method_declaration
 	: opt_attributes opt_new type namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
@@ -1653,7 +1667,7 @@ interface_method_declaration
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
-	  SEMICOLON
+	  interface_method_declaration_body
 	  {
 		lexer.ConstraintsParsing = false;
 
@@ -1682,7 +1696,7 @@ interface_method_declaration
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
-	  SEMICOLON
+	  interface_method_declaration_body
 	  {
 		lexer.ConstraintsParsing = false;
 
@@ -1705,19 +1719,6 @@ interface_method_declaration
 		if (RootContext.Documentation != null)
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
-	| opt_attributes opt_new type namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
-	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  opt_type_parameter_constraints_clauses
-	  OPEN_BRACE opt_statement_list CLOSE_BRACE
-	  {
-		lexer.ConstraintsParsing = false;
-		Report.Error (531, lexer.Location, "'{0}': interface members cannot have a definition", $4);
-		$$ = null;
-	  }
-
 	;
 
 interface_property_declaration
