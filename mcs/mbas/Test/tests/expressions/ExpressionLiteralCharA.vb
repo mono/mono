@@ -9,7 +9,7 @@ Module ExpressionLiteralsChar
 		Dim A as Char = "a"c 	
 		Dim B = Chr(97)
 		if  B <> A
-			Throw New Exception (" Unexpected Result for the Expression A should be eual to "a"")
+			Throw New Exception (" Unexpected Result for the Expression A should be eual to a")
 		End If
 	End Sub 
 End Module
