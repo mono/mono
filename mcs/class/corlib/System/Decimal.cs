@@ -99,27 +99,27 @@ namespace System
         private const uint RESERVED_SS32_BITS = 0x7F00FFFF;
 
         // internal representation of decimal
-        private uint ss32;
-        private uint hi32;
-        private uint lo32;
-        private uint mid32;
+        private uint flags;
+        private uint hi;
+        private uint lo;
+        private uint mid;
 
         public Decimal(int lo, int mid, int hi, bool isNegative, byte scale)
         {
             unchecked 
             {
-                lo32 = (uint) lo;
-                mid32 = (uint) mid;
-                hi32 = (uint) hi;
+                this.lo = (uint) lo;
+                this.mid = (uint) mid;
+                this.hi = (uint) hi;
             
                 if (scale > MAX_SCALE) 
                 {
 			throw new ArgumentOutOfRangeException (Locale.GetText ("scale must be between 0 and 28"));
                 }
 
-                ss32 = scale;
-                ss32 <<= SCALE_SHIFT;
-                if (isNegative) ss32 |= SIGN_FLAG;
+                flags = scale;
+                flags <<= SCALE_SHIFT;
+                if (isNegative) flags |= SIGN_FLAG;
             }
         }
 
@@ -127,16 +127,16 @@ namespace System
         {
             unchecked 
             {
-                hi32 = mid32 = 0;
+                hi = mid = 0;
                 if (val < 0) 
                 {
-                    ss32 = SIGN_FLAG;
-                    lo32 = ((uint)~val) + 1;
+                    flags = SIGN_FLAG;
+                    lo = ((uint)~val) + 1;
                 }
                 else 
                 {
-                    ss32 = 0;
-                    lo32 = (uint) val;
+                    flags = 0;
+                    lo = (uint) val;
                 }
             }
         }
@@ -144,28 +144,28 @@ namespace System
         [CLSCompliant(false)]
         public Decimal(uint val) 
         {
-            lo32 = val;
-            ss32 = hi32 = mid32 = 0;
+            lo = val;
+            flags = hi = mid = 0;
         }
 
         public Decimal(long val) 
         {
             unchecked 
             {
-                hi32 = 0;
+                hi = 0;
                 if (val < 0) 
                 {
-                    ss32 = SIGN_FLAG;
+                    flags = SIGN_FLAG;
                     ulong u = ((ulong)~val) + 1;
-                    lo32 = (uint)u;
-                    mid32 = (uint)(u >> 32);
+                    lo = (uint)u;
+                    mid = (uint)(u >> 32);
                 }
                 else 
                 {
-                    ss32 = 0;
+                    flags = 0;
                     ulong u = (ulong)val;
-                    lo32 = (uint)u;
-                    mid32 = (uint)(u >> 32);
+                    lo = (uint)u;
+                    mid = (uint)(u >> 32);
                 }
             }
         }
@@ -175,9 +175,9 @@ namespace System
         {
             unchecked 
             {
-                ss32 = hi32 = 0;
-                lo32 = (uint)uval;
-                mid32 = (uint)(uval >> 32);
+                flags = hi = 0;
+                lo = (uint)uval;
+                mid = (uint)(uval >> 32);
             }
         }
 
@@ -190,10 +190,10 @@ namespace System
 		// we must respect the precision (double2decimal doesn't)
 		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
 				NumberStyles.Float, CultureInfo.InvariantCulture);
-		ss32 = d.ss32;
-		hi32 = d.hi32;
-		lo32 = d.lo32;
-		mid32 = d.mid32;
+		flags = d.flags;
+		hi = d.hi;
+		lo = d.lo;
+		mid = d.mid;
 	}
 
 	public Decimal (double val) 
@@ -205,10 +205,10 @@ namespace System
 		// we must respect the precision (double2decimal doesn't)
 		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
 				NumberStyles.Float, CultureInfo.InvariantCulture);
-		ss32 = d.ss32;
-		hi32 = d.hi32;
-		lo32 = d.lo32;
-		mid32 = d.mid32;
+		flags = d.flags;
+		hi = d.hi;
+		lo = d.lo;
+		mid = d.mid;
         }
 
         public Decimal(int[] bits) 
@@ -224,12 +224,12 @@ namespace System
             }
 
             unchecked {
-                lo32 = (uint) bits[0];
-                mid32 = (uint) bits[1];
-                hi32 = (uint) bits[2];
-                ss32 = (uint) bits[3];
-                byte scale = (byte)(ss32 >> SCALE_SHIFT);
-                if (scale > MAX_SCALE || (ss32 & RESERVED_SS32_BITS) != 0) 
+                lo = (uint) bits[0];
+                mid = (uint) bits[1];
+                hi = (uint) bits[2];
+                flags = (uint) bits[3];
+                byte scale = (byte)(flags >> SCALE_SHIFT);
+                if (scale > MAX_SCALE || (flags & RESERVED_SS32_BITS) != 0) 
                 {
                     throw new ArgumentException(Locale.GetText ("Invalid bits[3]"));
                 }
@@ -245,14 +245,14 @@ namespace System
         {
             unchecked 
             {
-                return new int[] { (int)d.lo32, (int)d.mid32, (int)d.hi32, 
-                                     (int)d.ss32 };
+                return new int[] { (int)d.lo, (int)d.mid, (int)d.hi, 
+                                     (int)d.flags };
             }
         }
 
         public static Decimal Negate(Decimal d) 
         {
-            d.ss32 ^= SIGN_FLAG;
+            d.flags ^= SIGN_FLAG;
             return d;
         }
 
@@ -267,7 +267,7 @@ namespace System
 
         public static Decimal Subtract(Decimal d1, Decimal d2) 
         {
-            d2.ss32 ^= SIGN_FLAG;
+            d2.flags ^= SIGN_FLAG;
 	    int result = decimalIncr(ref d1, ref d2);
             if (result == 0)
                 return d1;
@@ -277,7 +277,7 @@ namespace System
 
 	public override int GetHashCode () 
 	{
-		return (int) (ss32 ^ hi32 ^ lo32 ^ mid32);
+		return (int) (flags ^ hi ^ lo ^ mid);
 	}
 
         public static Decimal operator +(Decimal d1, Decimal d2)
@@ -519,13 +519,13 @@ namespace System
 	// avoid unmanaged call
 	private bool IsZero () 
 	{
-		return ((hi32 == 0) && (lo32 == 0) && (mid32 == 0));
+		return ((hi == 0) && (lo == 0) && (mid == 0));
 	}
 
 	// avoid unmanaged call
 	private bool IsNegative () 
 	{
-		return ((ss32 & 0x80000000) == 0x80000000);
+		return ((flags & 0x80000000) == 0x80000000);
 	}
 
         public static Decimal Floor(Decimal d) 
@@ -548,7 +548,7 @@ namespace System
 
 		bool negative = d.IsNegative ();
 		if (negative)
-			d.ss32 ^= SIGN_FLAG;
+			d.flags ^= SIGN_FLAG;
 
 		// Moved from Math.cs because it's easier to fix the "sign"
 		// issue here :( as the logic is OK only for positive numbers
@@ -564,7 +564,7 @@ namespace System
 
 		// that fixes the precision/scale (which we must keep for output)
 		// (moved and adapted from System.Data.SqlTypes.SqlMoney)
-		long scaleDiff = decimals - ((result.ss32 & 0x7FFF0000) >> 16);
+		long scaleDiff = decimals - ((result.flags & 0x7FFF0000) >> 16);
 		// integrify
 		if (scaleDiff > 0) {
 			// note: here we always work with positive numbers
@@ -581,10 +581,10 @@ namespace System
 				scaleDiff++;
 			}
 		}
-		result.ss32 = (uint)((decimals - scaleDiff) << SCALE_SHIFT);
+		result.flags = (uint)((decimals - scaleDiff) << SCALE_SHIFT);
 
 		if (negative)
-			result.ss32 ^= SIGN_FLAG;
+			result.flags ^= SIGN_FLAG;
 		return result;
         }
 
@@ -607,10 +607,10 @@ namespace System
 		if (d1 == d2)
 			return Decimal.One;
 
-		d1.ss32 ^= SIGN_FLAG;
+		d1.flags ^= SIGN_FLAG;
 		if (d1 == d2)
 			return Decimal.MinusOne;
-		d1.ss32 ^= SIGN_FLAG;
+		d1.flags ^= SIGN_FLAG;
 
 		Decimal result;
 		if (decimalDiv (out result, ref d1, ref d2) != 0)
@@ -628,9 +628,9 @@ namespace System
 
 		bool negative = d1.IsNegative ();
 		if (negative)
-			d1.ss32 ^= SIGN_FLAG;
+			d1.flags ^= SIGN_FLAG;
 		if (d2.IsNegative ())
-			d2.ss32 ^= SIGN_FLAG;
+			d2.flags ^= SIGN_FLAG;
 
 		Decimal result;
 		if (d1 == d2) {
@@ -648,7 +648,7 @@ namespace System
 		}
 
 		if (negative)
-			result.ss32 ^= SIGN_FLAG;
+			result.flags ^= SIGN_FLAG;
 		return result;
         }
 
@@ -1005,7 +1005,7 @@ namespace System
 		}
 
 		if (isNegative)
-			result.ss32 ^= SIGN_FLAG;
+			result.flags ^= SIGN_FLAG;
 		return result;
         }
 

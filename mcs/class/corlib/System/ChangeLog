@@ -1,3 +1,11 @@
+2005-06-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Decimal.cs: Renamed internal fields for the sake of serialization
+	interoperability with MS.NET.
+	* Exception.cs: In the StackTrace property, return the stack trace
+	if it has a value, even if the exception has not been thrown
+	(it may have been deserialized).
+
 2005-06-28  Martin Baulig  <martin@ximian.com>
 
 	* Array.cs (Array.InternalArray<T>): New nested class; derives

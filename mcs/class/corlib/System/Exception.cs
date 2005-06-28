@@ -150,11 +150,11 @@ namespace System
 
 		public virtual string StackTrace {
 			get {
-				if (trace_ips == null)
-					/* Not thrown yet */
-					return null;
-
 				if (stack_trace == null) {
+					if (trace_ips == null)
+						/* Not thrown yet */
+						return null;
+
 					StackTrace st = new StackTrace (this, 0, true, true);
 
 					StringBuilder sb = new StringBuilder ();
