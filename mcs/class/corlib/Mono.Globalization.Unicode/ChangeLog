@@ -1,5 +1,12 @@
 2005-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed Thai character primary
+	  and secondary values. Fixed Thaana letters. Added more LAMESPEC
+	  CJK compat. Fixed some circled CJK secondary weight.
+	  Hacked some nonspacing mark sortkey value adjustment.
+
+2005-06-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : CP932.TXT was not parsed as
 	  expected. JIS ordering was incorrect. OtherNumbers that represents
 	  10 or more values were incorrectly computed the offset. Some Hangul

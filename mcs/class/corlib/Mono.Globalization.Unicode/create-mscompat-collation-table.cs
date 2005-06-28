@@ -138,7 +138,7 @@ namespace Mono.Globalization.Unicode
 			" HORN AND HOOK ABOVE",
 			" HORN AND DOT",
 			// CIRCLED, PARENTHESIZED and so on
-			"CIRCLED DIGIT", "CIRCLED NUMBER", "CIRCLED LATIN", "CIRCLED KATAKANA",
+			"CIRCLED DIGIT", "CIRCLED NUMBER", "CIRCLED LATIN", "CIRCLED KATAKANA", "CIRCLED SANS-SERIF DIGIT", "CIRCLED SANS-SERIF NUMBER",
 			"PARENTHESIZED DIGIT", "PARENTHESIZED NUMBER", "PARENTHESIZED LATIN",
 			};
 		byte [] diacriticWeights = new byte [] {
@@ -155,7 +155,8 @@ namespace Mono.Globalization.Unicode
 			0x69, 0x69, 0x6A, 0x6D, 0x6E,
 			0x95, 0xAA,
 			// CIRCLED, PARENTHESIZED and so on.
-			0xEE, 0xEE, 0xEE, 0xEE, 0xF3, 0xF3, 0xF3, 0xF3
+			0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
+			0xF3, 0xF3, 0xF3, 0xF3
 			};
 
 		int [] numberSecondaryWeightBounds = new int [] {
@@ -692,8 +693,17 @@ sw.Close ();
 					offset = lidx + 7;
 				}
 				char c = lidx > 0 ? s [offset] : char.MinValue;
+				char n = s [offset + 1];
+				char target = char.MinValue;
 				if ('A' <= c && c <= 'Z' &&
-					(s.Length == offset + 1 || s [offset + 1] == ' ')) {
+					(n == ' ') || n == ';') {
+					target = c;
+				// FIXME: they are still not working fine.
+				if (s.Substring (offset).StartsWith ("OI;")) // 01A2,01A3
+					target = 'O';
+				if (s.Substring (offset).StartsWith ("ALPHA"))
+					target = 'A';
+				if (target != char.MinValue);
 					ArrayList entry = (ArrayList) latinMap [c];
 					if (entry == null) {
 						entry = new ArrayList ();
@@ -1917,13 +1927,13 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			// Thai ... note that it breaks 0x1E wall after E2B!
 			// Also, all Thai characters have level 2 value 3.
 			fillIndex [0x1E] = 2;
-			for (int i = 0xE44; i < 0xE48; i++)
+			for (int i = 0xE40; i <= 0xE44; i++)
 				AddCharMap ((char) i, 0x1E, 1, 3);
 			for (int i = 0xE01; i < 0xE2B; i++)
-				AddCharMap ((char) i, 0x1E, 6, 0);
+				AddCharMap ((char) i, 0x1E, 6, 3);
 			fillIndex [0x1F] = 5;
 			for (int i = 0xE2B; i < 0xE30; i++)
-				AddCharMap ((char) i, 0x1F, 6, 0);
+				AddCharMap ((char) i, 0x1F, 6, 3);
 			for (int i = 0xE30; i < 0xE3B; i++)
 				AddCharMap ((char) i, 0x1F, 1, 3);
 			// some Thai characters remains.
@@ -2031,14 +2041,18 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				map [cp] = new CharMapEntry (0x24,
 					(byte) (map [cp - 1].Level1 + 2),
 					0);
+			// FIXME: Syriac NonSpacingMark should go here.
 
 			// Thaana
 			// FIXME: it turned out that it does not look like UCA
 			fillIndex [0x24] = 0x6E;
 			for (int i = 0; i < orderedThaana.Length; i++) {
-				if (IsIgnorableNonSpacing (i))
+				char c = orderedThaana [i];
+				if (IsIgnorableNonSpacing ((int) c))
 					continue;
-				AddCharMap (orderedThaana [i], 0x24, 2);
+				AddCharMap (c, 0x24, 2);
+				if (c == '\u0782') // SPECIAL CASE: why?
+					fillIndex [0x24] += 2;
 			}
 			#endregion
 
@@ -2259,6 +2273,11 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			for (int i = 0xA0; i < char.MaxValue; i++) {
 				if (IsIgnorable (i))
 					continue;
+
+				// FIXME: actually this reset should not be done
+				// but here I put for easy goal.
+				if (i == 0x0700)
+					fillIndex [0x7] = 0xE2;
 
 				// SPECIAL CASES:
 				switch (i) {
@@ -2594,6 +2613,10 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			AddCharMapCJK (c, ref category);
 
 			// LAMESPEC: see below.
+			if (c == '\u5B78') {
+				AddCharMapCJK ('\u32AB', ref category);
+				AddCharMapCJK ('\u323B', ref category);
+			}
 			if (c == '\u52DE') {
 				AddCharMapCJK ('\u3298', ref category);
 				AddCharMapCJK ('\u3238', ref category);
@@ -2623,7 +2646,8 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				// mix Chinise and Japanese Kanji when
 				// ordering those characters.
 				switch (w) {
-				case 0x32A2: case 0x3298: case 0x3238: case 0x32A9:
+				case 0x32A2: case 0x3298: case 0x3238:
+				case 0x32A9: case 0x323B: case 0x32AB:
 					continue;
 				}
 
@@ -2746,6 +2770,9 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 		private byte ComputeLevel3WeightRaw (char c) // add 2 for sortkey value
 		{
+			// CJK compat
+			if ('\u3192' <= c && c <= '\u319F')
+				return 0;
 			// Korean
 			if ('\u11A8' <= c && c <= '\u11F9')
 				return 2;
@@ -2870,6 +2897,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			// those ranges.
 			case 0x4d8: case 0x4d9:
 			case 0x4e8: case 0x4e9:
+			case 0x70F:
 			case 0x3036: case 0x303f:
 			case 0x337b: case 0xfb1e:
 				return false;
