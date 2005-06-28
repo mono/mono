@@ -51,7 +51,7 @@ namespace System
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor
-		private Array ()
+		protected Array ()
 		{
 		}
 
@@ -1690,6 +1690,190 @@ namespace System
 			Copy (s, s_i, d, d_i, c);
 		}
 #endif 
+
+#if NET_2_0
+		//
+		// This is used internally by the runtime to represent arrays; see #74953.
+		//
+		// Note that you normally can't derive a class from System.Array (CS0644),
+		// but GMCS makes an exception here for all classes which are nested inside
+		// System.Array.
+		//
+		internal class InternalArray<T> : Array, IList<T>
+		{
+			new public IEnumerator<T> GetEnumerator ()
+			{
+				return new InternalEnumerator (this);
+			}
+
+			public int Count {
+				get {
+					return Length;
+				}
+			}
+
+			bool ICollection<T>.IsReadOnly {
+				get {
+					return true;
+				}
+			}
+
+			void ICollection<T>.Clear ()
+			{
+				throw new NotSupportedException ("Collection is read-only");
+			}
+
+			void ICollection<T>.Add (T item)
+			{
+				throw new NotSupportedException ("Collection is read-only");
+			}
+
+			bool ICollection<T>.Remove (T item)
+			{
+				throw new NotSupportedException ("Collection is read-only");
+			}
+
+			public bool Contains (T item)
+			{
+				if (this.Rank > 1)
+					throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+
+				int length = this.Length;
+				for (int i = 0; i < length; i++) {
+					T value;
+					GetGenericValueImpl (i, out value);
+					if (item == value)
+						return true;
+				}
+
+				return false;
+			}
+
+			public void CopyTo (T[] array, int index)
+			{
+				if (array == null)
+					throw new ArgumentNullException ("array");
+
+				// The order of these exception checks may look strange,
+				// but that's how the microsoft runtime does it.
+				if (this.Rank > 1)
+					throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+				if (index + this.GetLength (0) > array.GetLowerBound (0) + array.GetLength (0))
+					throw new ArgumentException ();
+				if (array.Rank > 1)
+					throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+				if (index < 0)
+					throw new ArgumentOutOfRangeException (
+						"index", Locale.GetText ("Value has to be >= 0."));
+
+				Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
+			}
+
+			new public T this [int index] {
+				get {
+					if (unchecked ((uint) index) >= unchecked ((uint) Length))
+						throw new ArgumentOutOfRangeException ("index");
+
+					T value;
+					GetGenericValueImpl (index, out value);
+					return value;
+				}
+
+				set {
+					throw new NotSupportedException ("Collection is read-only");
+				}
+			}
+
+			void IList<T>.Insert (int index, T item)
+			{
+				throw new NotSupportedException ("Collection is read-only");
+			}
+
+			void IList<T>.RemoveAt (int index)
+			{
+				throw new NotSupportedException ("Collection is read-only");
+			}
+
+			public int IndexOf (T item)
+			{
+				if (this.Rank > 1)
+					throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+
+				int length = this.Length;
+				for (int i = 0; i < length; i++) {
+					T value;
+					GetGenericValueImpl (i, out value);
+					if (item == value)
+						// array index may not be zero-based.
+						// use lower bound
+						return i + this.GetLowerBound (0);
+				}
+
+				int retVal;
+				unchecked {
+					// lower bound may be MinValue
+					retVal = this.GetLowerBound (0) - 1;
+				}
+
+				return retVal;
+			}
+
+			// CAUTION! No bounds checking!
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			protected extern void GetGenericValueImpl (int pos, out T value);
+
+			internal struct InternalEnumerator : IEnumerator<T>
+			{
+				const int NOT_STARTED = -2;
+			
+				// this MUST be -1, because we depend on it in move next.
+				// we just decr the size, so, 0 - 1 == FINISHED
+				const int FINISHED = -1;
+			
+				InternalArray<T> array;
+				int idx;
+
+				internal InternalEnumerator (InternalArray<T> array)
+				{
+					this.array = array;
+					idx = NOT_STARTED;
+				}
+
+				public void Dispose ()
+				{
+					idx = NOT_STARTED;
+				}
+
+				public bool MoveNext ()
+				{
+					if (idx == NOT_STARTED)
+						idx = array.Length;
+
+					return idx != FINISHED && -- idx != FINISHED;
+				}
+
+				public T Current {
+					get {
+						if (idx < 0)
+							throw new InvalidOperationException ();
+
+						return array [array.Length - 1 - idx];
+					}
+				}
+
+				void IEnumerator.Reset ()
+				{
+					throw new NotImplementedException ();
+				}
+
+				object IEnumerator.Current {
+					get {
+						return Current;
+					}
+				}
+			}
+		}
+#endif
 	}
 
 #if NET_2_0
@@ -1820,7 +2004,6 @@ namespace System
 			return new ReadOnlyArrayEnumerator <T> (this);
 		}
 	}
-
 #endif
 
 #if BOOTSTRAP_WITH_OLDLIB || NET_2_0

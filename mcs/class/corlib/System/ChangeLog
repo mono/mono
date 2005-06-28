@@ -1,3 +1,8 @@
+2005-06-28  Martin Baulig  <martin@ximian.com>
+
+	* Array.cs (Array.InternalArray<T>): New nested class; derives
+	from Array.  This is now used by the runtime for arrays; fixes #74953.
+
 2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs : added some extra whitespace characters for Trim().
