@@ -1,4 +1,4 @@
-// cs0127.cs: Since `X.fn()' returns void, a return keyword must not be followed by an object expression
+// cs0127.cs: A return keyword must not be followed by any expression when method returns void
 // Line: 6
 class X {
 	void fn ()
@@ -6,3 +6,4 @@ class X {
 		return 1;
 	}
 }
+

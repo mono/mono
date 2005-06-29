@@ -1,4 +1,4 @@
-// cs0143.cs: The type 'int' has no constructors defined
+// cs0143.cs: The type `int' has no constructors defined
 // Line: 8
 
 class C

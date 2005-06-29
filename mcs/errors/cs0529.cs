@@ -1,4 +1,4 @@
-// cs0529: Inherited interface 'C' causes a cycle in the interface hierarchy of 'A'
+// cs0529.cs: Inherited interface `A' causes a cycle in the interface hierarchy of `C'
 // Line: 10
 
 interface A : B {

@@ -1,4 +1,4 @@
-// cs3026.cs: CLS-compliant field 'Class.V' cannot be volatile
+// cs3026.cs: CLS-compliant field `Class.V' cannot be volatile
 // Line: 9
 // Compiler options: -warn:1 -warnaserror
 

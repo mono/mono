@@ -1,4 +1,4 @@
-// cs1511.cs: Base modifier not allowed in static code
+// cs1511.cs: Keyword `base' is not available in a static method
 // Line:
 
 class Y {

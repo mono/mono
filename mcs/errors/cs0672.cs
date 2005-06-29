@@ -1,4 +1,4 @@
-// cs0672.cs: Member 'B.Test(string)' overrides obsolete member 'A.Test(string)'. Add the Obsolete attribute to 'B.Test(string)'
+// cs0672.cs: Member `B.Test(string)' overrides obsolete member `A.Test(string)'. Add the Obsolete attribute to `B.Test(string)'
 // Line: 15
 // Compiler options: -warnaserror
 

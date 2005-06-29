@@ -1,4 +1,4 @@
-// cs3003.cs: Type of 'CLSClass.value' is not CLS-compliant
+// cs3003.cs: Type of `CLSClass.value' is not CLS-compliant
 // Line: 8
 
 using System;

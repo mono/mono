@@ -1,4 +1,4 @@
-// cs1030.cs: #warning 'Expected error'
+// cs1030.cs: #warning: `Expected warning'
 // Line: 4
 // Compiler options: -warnaserror
 

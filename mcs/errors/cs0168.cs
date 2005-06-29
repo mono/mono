@@ -1,4 +1,4 @@
-// cs0168.cs: The variable 'p' is declared but never used
+// cs0168.cs: The variable `p' is declared but never used
 // Line: 9
 // Compiler options: -warn:3 -warnaserror
 

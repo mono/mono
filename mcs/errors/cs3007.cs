@@ -1,4 +1,4 @@
-// cs3007.cs: Overloaded method 'CLSClass.(bool[])' differing only by unnamed array types is not CLS-compliant
+// cs3007.cs: Overloaded method `CLSClass.CLSClass(int[][,,])' differing only by unnamed array types is not CLS-compliant
 // Line: 11
 
 using System;

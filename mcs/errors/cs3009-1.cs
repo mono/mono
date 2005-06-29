@@ -1,4 +1,4 @@
-// cs3009.cs: 'Days': base type 'uint' is not CLS-compliant
+// cs3009-1.cs: `Days': base type `uint' is not CLS-compliant
 // Line: 7
 
 using System;

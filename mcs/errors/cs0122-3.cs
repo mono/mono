@@ -1,4 +1,4 @@
-// cs0122.cs: 'A.B' is inaccessible due to its protection level
+// cs0122-3.cs: `A.B' is inaccessible due to its protection level
 // Line: 11
 
 interface r {

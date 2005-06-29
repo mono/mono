@@ -1,4 +1,4 @@
-// cs0509.cs: base class is sealed
+// cs0509.cs: `X': cannot derive from sealed class `V'
 // Line: 7
 struct V {
 	int v;

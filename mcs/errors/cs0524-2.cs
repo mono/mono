@@ -1,4 +1,4 @@
-// cs0524.cs: 'I' : interfaces cannot declare types// Line: 5
+// cs0524-2.cs: `Interface.I': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants
 interface Interface {
         interface I {}
 }

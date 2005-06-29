@@ -1,4 +1,4 @@
-// cs0661.cs: 'T' defines operator == or operator != but does not override Object.GetHashCode()
+// cs0661.cs: `T' defines operator == or operator != but does not override Object.GetHashCode()
 // Line: 5
 // Compiler options: -warnaserror -warn:3
 

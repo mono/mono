@@ -1,4 +1,4 @@
-// cs1518.cs : Attribute cannot be applied to namespaces. Expected class, delegate, enum, interface, or struct
+// cs1671-2.cs: A namespace declaration cannot have modifiers or attributes
 // Line : 14
 
 using System;

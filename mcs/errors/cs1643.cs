@@ -1,4 +1,4 @@
-// cs1643.cs: Not all code paths return a value in anonymous method
+// cs1643.cs: Not all code paths return a value in anonymous method of type `X.T'
 // Line: 12
 using System;
 
@@ -15,5 +15,3 @@ class X {
 		};
 	}
 }
-	
-		

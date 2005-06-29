@@ -5,9 +5,5 @@
 class X {
 	int x;
 
-	void blah ()
-	{
-	}
-
 	static void Main () {}
 }

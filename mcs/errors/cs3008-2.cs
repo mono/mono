@@ -1,4 +1,4 @@
-// cs3008.cs: Identifier 'CLSClass._myEvent' is not CLS-compliant
+// cs3008-2.cs: Identifier `CLSClass._myEvent' is not CLS-compliant
 // Line: 8
 
 using System;

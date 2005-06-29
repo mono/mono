@@ -1,4 +1,4 @@
-// CS1502: This should not compile as void can't be converted to bool
+// cs1502-2.cs: The best overloaded method match for `System.Console.WriteLine(bool)' has some invalid arguments
 // Line: 10
 using System;
 

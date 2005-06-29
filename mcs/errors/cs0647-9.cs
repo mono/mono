@@ -1,4 +1,4 @@
-// cs0647.cs :  Error emitting 'PrincipalPermission' attribute because 'Invalid SecurityAction for non-Code Access Security permission'
+// cs0647-9.cs: Error during emitting `System.Security.Permissions.PrincipalPermissionAttribute' attribute. The reason is `SecurityAction is out of range'
 // Line : 10
 
 using System;

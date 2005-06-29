@@ -1,4 +1,4 @@
-// cs0227.cs: Unsafe code may only appear if compiling with /unsafe
+// cs0227.cs: Unsafe code requires the `unsafe' command line option to be specified
 // Line: 5
 
 class UnsafeClass {

@@ -1,4 +1,4 @@
-// cs1032: tokens seen before define
+// cs1032.cs: Cannot define or undefine preprocessor symbols after first token in file
 // Line: 4
 class X {
 #define A
@@ -6,3 +6,4 @@ class X {
 	static void Main () {
 	}
 }
+

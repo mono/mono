@@ -1,4 +1,4 @@
-// cs1644.cs: Feature 'fixed sized buffers' cannot be used because it is not part of the standardized ISO C# language specificatio
+// cs1644-3.cs: Feature `fixed size buffers' cannot be used because it is not part of the standardized ISO C# language specification
 // Line: 6
 // Compiler options: -langversion:ISO-1
 

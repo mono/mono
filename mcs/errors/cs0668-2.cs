@@ -1,4 +1,4 @@
-// cs0668.cs: Two indexers have different names; the 'IndexerName' attribute must be used with the same name on every indexer within a type across the board.
+// cs0668-2.cs: Two indexers have different names; the IndexerName attribute must be used with the same name on every indexer within a type
 // Line: 11
 
 using System.Runtime.CompilerServices;

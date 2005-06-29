@@ -1,4 +1,4 @@
-// cs1594.cs : Delegate 'Blah.MyDelegate' has some invalid arguments.
+// cs1594.cs: Delegate `Blah.MyDelegate' has some invalid arguments
 // Line : 21
 
 using System;

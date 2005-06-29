@@ -1,4 +1,4 @@
-// cs0506.cs: 'DerivedClass.Show()' : cannot change access modifiers when overriding inherited member 'BaseClass.Show()'
+// cs0507.cs: `DerivedClass.Show()': cannot change access modifiers when overriding `protected' inherited member `BaseClass.Show()'
 // Line: 9
 
 class BaseClass {

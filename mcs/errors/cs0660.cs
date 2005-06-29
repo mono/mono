@@ -1,4 +1,4 @@
-// cs0660.cs: 'T' defines operator == or operator != but does not override Object.Equals(object)
+// cs0660.cs: `T' defines operator == or operator != but does not override Object.Equals(object o)
 // Line: 5
 // Compiler options: -warnaserror -warn:3
 

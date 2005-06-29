@@ -1,4 +1,4 @@
-// cs0540.cs: containing class does not implement interface
+// cs0540.cs: `B.A.B()': containing type does not implement interface `A'
 // Line:
 
 interface A {

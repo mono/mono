@@ -1,4 +1,4 @@
-// cs0111-5.cs: Type `ISample' already defines a member called `Blah' with the same parameter types
+// cs0111-5.cs: `ISample.Blah()' is already defined. Rename this member or use different parameter types
 // Line: 6
 
 public interface ISample {

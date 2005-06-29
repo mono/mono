@@ -1,4 +1,4 @@
-// cs01670.cs: params is not valid in this context
+// cs1670.cs: The `params' modifier is not allowed in anonymous method declaration
 // Line: 10
 
 delegate object D (params object[] args);

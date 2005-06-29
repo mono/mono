@@ -1,4 +1,4 @@
-// CS1558: 'MainClass' does not have a suitable static Main method
+// CS1558: `MainClass' does not have a suitable static Main method
 // Line: 5
 // Compiler options: -main:MainClass
 

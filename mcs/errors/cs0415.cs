@@ -1,4 +1,4 @@
-// cs0415: The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
+// cs0415.cs: The `IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
 // Line: 11
 
 using System.Runtime.CompilerServices;

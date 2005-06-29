@@ -1,4 +1,4 @@
-// cs0575.cs: destructors are only allowed in class types
+// cs0575.cs: Only class types can contain destructor
 // Line: 5
 struct X  {
 
@@ -9,4 +9,6 @@ struct X  {
 	static void Main ()
 	{
 	}
+}
+
 }

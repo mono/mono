@@ -1,4 +1,4 @@
-// cs0173.cs: Type of conditional expression can't be determined because there is no implicit conversion between 'int' and '<null>'
+// cs0173-2.cs: Type of conditional expression cannot be determined because there is no implicit conversion between `int' and `null'
 // Line: 29
 
 public class MainClass {

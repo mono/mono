@@ -1,4 +1,4 @@
-// cs0657.cs : Attribute 'S' is not valid on this declaration type. It is valid on 'return' declarations only.
+// cs0592-9.cs: Attribute `S' is not valid on this declaration type. It is valid on `return' declarations only
 // Line : 12
 
 using System;

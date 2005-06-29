@@ -1,4 +1,4 @@
-// cs1673.cs: Not possible to use `this' in anonymous methods inside structs
+// cs1673.cs: Anonymous methods inside structs cannot access instance members of `this'. Consider copying `this' to a local variable outside the anonymous method and using the local instead
 // Line: 
 using System;
 

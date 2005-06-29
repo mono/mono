@@ -1,4 +1,4 @@
-// cs0647.cs : Error emitting 'System.Security.Permissions.SecurityPermissionAttribute' attribute -- 'SecurityAction RequestMinimum is not valid on this declaration
+// cs0647-3.cs: Error during emitting `System.Security.Permissions.SecurityPermissionAttribute' attribute. The reason is `SecurityAction is out of range'
 // Line : 10
 
 using System;

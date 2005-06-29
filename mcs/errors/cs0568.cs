@@ -1,4 +1,4 @@
-// cs0568.cs: struct can not contain an explicit parameterless constructor
+// cs0568.cs: Structs cannot contain explicit parameterless constructors
 // Line: 5
 struct A {
 	int a;

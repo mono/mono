@@ -1,4 +1,4 @@
-// cs3006-1.cs: Overloaded method 'CLSClass.CLSClass(int[,,])' differing only in ref or out, or in array rank, is not CLS-compliant
+// cs3006-6.cs: Overloaded method `CLSClass.CLSClass(int[,,])' differing only in ref or out, or in array rank, is not CLS-compliant
 // Line: 11
 
 using System;

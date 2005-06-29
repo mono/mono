@@ -1,4 +1,4 @@
-// cs3008.cs: Identifier 'CLSClass._value' is not CLS-compliant
+// cs3008.cs: Identifier `CLSClass._value' is not CLS-compliant
 // Line: 8
 
 using System;

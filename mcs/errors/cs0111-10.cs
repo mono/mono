@@ -1,4 +1,4 @@
-// cs0111-10.cs: Type `Test' already defines a member called `get_Value' with the same parameter types
+// cs0111-10.cs: `Test.get_Value()' is already defined. Rename this member or use different parameter types
 // Line: 7
 
 public class Test

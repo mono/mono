@@ -1,4 +1,4 @@
-// cs0242.cs: The operation in question is undefined on void pointers
+// cs0242.cs: The array index operation is not valid on void pointers
 // Line: 10
 // Compiler options: -unsafe
 using System;
@@ -11,3 +11,4 @@ unsafe class ZZ {
 			return;
 	}
 }
+

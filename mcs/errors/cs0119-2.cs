@@ -1,4 +1,4 @@
-// cs0119-2.cs: `App.SomeEnum()' is a `method', which is not valid in the given context
+// cs0119-2.cs: Expression denotes a `method group', where a `variable', `value' or `type' was expected
 // Line: 9
 
 public class App {

@@ -1,4 +1,4 @@
-// cs3001-4.cs: Argument type 'out IError' is not CLS-compliant
+// cs3001-4.cs: Argument type `out IError' is not CLS-compliant
 // Line: 12
 
 using System;

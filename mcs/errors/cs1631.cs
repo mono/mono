@@ -1,4 +1,4 @@
-// CS1631: Cannot yield in the body of a catch clause
+// cs1631.cs: Cannot yield a value in the body of a catch clause
 // Line: 13
 using System;
 using System.Collections;

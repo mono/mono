@@ -1,4 +1,4 @@
-// cs3010.cs: 'I.Error': CLS-compliant interfaces must have CLS-compliant members
+// cs3010.cs: `I.Error': CLS-compliant interfaces must have only CLS-compliant members
 // Line: 12
 
 using System;

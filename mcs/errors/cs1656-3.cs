@@ -1,4 +1,4 @@
-// cs1656.cs: Cannot assign to 'i' because it is a 'foreach iteration variable'
+// cs1656-3.cs: Cannot assign to `i' because it is a `foreach iteration variable'
 // line: 9
 
 class X {

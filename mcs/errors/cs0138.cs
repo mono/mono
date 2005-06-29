@@ -1,4 +1,4 @@
-// cs0138.cs: A using namespace directive can only be applied to namespaces; `System.Console' is a type not a namespace
+// cs0138.cs: `System.Console is a type not a namespace. A using namespace directive can only be applied to namespaces
 // Line: 5
 
 using System;

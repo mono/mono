@@ -1,4 +1,4 @@
-// cs0619.cs: 'Obsolete' is obsolete: ''
+// cs0619-21.cs: `Obsolete' is obsolete: `'
 // Line: 12
 // Compiler options: -unsafe
 

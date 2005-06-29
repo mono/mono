@@ -1,4 +1,4 @@
-// cs0539.cs: Member in explicit interface declaration is not a member of the interface
+// cs0539.cs: `A.B' in explicit interface declaration is not a member of interface
 // Line:
 
 interface A {

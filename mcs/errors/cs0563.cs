@@ -1,4 +1,4 @@
-// cs0563.cs: One of the parameters to the binary operator should be the containing type
+// cs0563.cs: One of the parameters of a binary operator must be the containing type
 // Line: 4
 class X {
 	public static int operator + (int a, int b)

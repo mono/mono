@@ -1,4 +1,4 @@
-// cs1039.cs : Unterminated string constant
+// cs1039.cs: Unterminated string literal
 // Line : 6
 
 class X

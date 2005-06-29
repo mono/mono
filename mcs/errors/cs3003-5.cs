@@ -1,4 +1,4 @@
-// cs3003.cs: Type of 'S.test2' is not CLS-compliant
+// cs3003-5.cs: Type of `S.test2' is not CLS-compliant
 // Line: 11
 // Compiler options: -unsafe
 

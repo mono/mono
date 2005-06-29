@@ -1,4 +1,4 @@
-// cs0644.cs: Cannot inherit from special class
+// cs0644.cs: `X' cannot derive from special class `System.ValueType'
 // Line: 3
 class X : System.ValueType {
 }

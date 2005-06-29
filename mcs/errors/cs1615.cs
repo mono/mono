@@ -1,4 +1,4 @@
-// CS1615: Argument '1' should not be passed with the 'ref' keyword
+// cs1615.cs: Argument `1' should not be passed with the `ref' keyword
 // Line: 11
 
 class C

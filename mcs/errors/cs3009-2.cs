@@ -1,4 +1,4 @@
-// cs3009.cs: 'CLSClass': base type 'System.Runtime.Serialization.Formatter' is not CLS-compliant
+// cs3009-2.cs: `CLSClass': base type `System.Runtime.Serialization.Formatter' is not CLS-compliant
 // Line: 9
 
 using System;

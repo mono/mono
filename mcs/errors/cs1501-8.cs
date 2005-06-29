@@ -1,4 +1,4 @@
-// cs0143: Can't find the constructor for a determinated class.
+// cs1501-8.cs: No overload for method `cs0143Test.A' takes `2' arguments
 // Line: 11 
 
 namespace cs0143Test

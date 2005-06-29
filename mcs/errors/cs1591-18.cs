@@ -1,4 +1,4 @@
-// cs1591.cs: Missing XML comment for publicly visible type or member 'Testing.Test.InternalStruct'
+// cs1591-18.cs: Missing XML comment for publicly visible type or member `Testing.Test.InternalStruct'
 // Line: 14
 // Compiler options: -doc:dummy.xml -warnaserror -warn:4
 

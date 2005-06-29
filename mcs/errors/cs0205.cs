@@ -1,4 +1,4 @@
-// cs0205.cs: Cannot call an abstract base member: `A.Foobar()'
+// cs0205.cs: Cannot call an abstract base member `A.Foobar()'
 //
 using System;
 

@@ -1,4 +1,4 @@
-// CS3003: Type of 'I.Error' is not CLS-compliant
+// cs3003-4.cs: Type of `I.this[bool]' is not CLS-compliant
 // Line: 8
 
 using System;

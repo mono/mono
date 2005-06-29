@@ -1,4 +1,4 @@
-// cs3006.cs: Overloaded method 'CLSInterface.Test(int[,])' differing only in ref or out, or in array rank, is not CLS-compliant
+// cs3006-4.cs: Overloaded method `CLSInterface.Test(int[,,])' differing only in ref or out, or in array rank, is not CLS-compliant
 // Line: 9
 
 using System;

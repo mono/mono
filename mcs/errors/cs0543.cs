@@ -1,4 +1,4 @@
-// cs1008.cs : Enumerator value for 'Bar' is too large to fit in its type 
+// cs0543.cs: The enumerator value `Blah.MyEnum.Bar' is too large to fit in its type `byte'
 // Line : 9
 
 public class Blah {

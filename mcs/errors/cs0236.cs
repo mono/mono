@@ -1,4 +1,4 @@
-// cs0236.cs: A field initializer cannot reference the nonstatic field, method, or property `X.Foo.get'
+// cs0236.cs: A field initializer cannot reference the nonstatic field, method, or property `X.Foo'
 
 class X
 {
@@ -13,3 +13,4 @@ class X
 	static void Main () {
 	}
 }
+

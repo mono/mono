@@ -1,4 +1,4 @@
-// cs3001.cs: Argument type 'ref ulong' is not CLS-compliant
+// cs3001-2.cs: Argument type `ref ulong' is not CLS-compliant
 // Line: 9
 
 using System;

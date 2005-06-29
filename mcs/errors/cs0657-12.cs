@@ -1,4 +1,4 @@
-// cs0657.cs : 'type' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are 'method, param, return'
+// cs0657-12.cs: `type' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `method, param, return'
 // Line: 14
 
 using System;

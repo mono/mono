@@ -1,4 +1,4 @@
-// cs1530.cs: Keyword new not allowed on namespace elements
+// cs1530.cs: Keyword `new' is not allowed on namespace elements
 // Line: 5
 
 namespace A {

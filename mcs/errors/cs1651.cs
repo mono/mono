@@ -1,4 +1,4 @@
-// cs1651.cs: Members of readonly static field 'B.a' cannot be passed ref or out (except in a constructor)
+// cs1651.cs: Fields of static readonly field `B.a' cannot be passed ref or out (except in a static constructor)
 // Line: 23
 
 class B

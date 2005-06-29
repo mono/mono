@@ -1,4 +1,4 @@
-// cs0617,cs : 'MyNamedArg' is not a valid named attribute argument. Named attribute arguments must be fields which are not readonly, static or const, or properties with a set accessor which are not static.
+// cs0617.cs: `MyNamedArg' is not a valid named attribute argument. Named attribute arguments must be fields which are not readonly, static, const or read-write properties which are public and not static
 // Line : 20
 
 using System;

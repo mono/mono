@@ -1,4 +1,4 @@
-// cs0572: Can't reference type `Foo' through an expression; try `Y.Foo' instead.
+// cs0572.cs: `Foo': cannot reference a type through an expression; try `Y.Foo' instead
 // Line: 13
 using System;
 

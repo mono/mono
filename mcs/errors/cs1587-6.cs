@@ -1,4 +1,4 @@
-// cs1587.cs: XML comment is placed on an invalid language element which can not accept it.
+// cs1587-6.cs: XML comment is not placed on a valid language element
 // Line: 8
 // Compiler options: -doc:dummy.xml -warnaserror -warn:2
 

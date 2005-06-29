@@ -1,4 +1,4 @@
-// cs3001.cs: Argument type 'sbyte' is not CLS-compliant
+// cs3001-5.cs: Argument type `sbyte' is not CLS-compliant
 // Line: 8
 
 using System;

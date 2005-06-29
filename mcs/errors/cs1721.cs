@@ -1,4 +1,4 @@
-// cs1721: type in interface list is not a interface, and the class B already has a base class
+// cs1721.cs: `B': Classes cannot have multiple base classes (`A1' and `A2')
 //
 class A1 {
 }

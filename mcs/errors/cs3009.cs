@@ -1,4 +1,4 @@
-// cs3009.cs: 'CLSClass': base type 'BaseClass' is not CLS-compliant
+// cs3009.cs: `CLSClass': base type `BaseClass' is not CLS-compliant
 // Line: 11
 
 using System;

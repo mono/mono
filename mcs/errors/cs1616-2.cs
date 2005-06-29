@@ -1,4 +1,4 @@
-// cs1616.cs: Option 'keycontainer' overrides 'System.Reflection.AssemblyKeyNameAttribute' given in source
+// cs1616-2.cs: Option `keycontainer' overrides attribute `System.Reflection.AssemblyKeyNameAttribute' given in a source file or added module
 // Line: 0
 // Compiler options: -keycontainer:CS1616.snk -warnaserror
 

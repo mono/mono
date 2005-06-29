@@ -1,4 +1,4 @@
-// cs0133.cs: The expression being assigned to 'S.pathName' must be constant
+// cs0133-2.cs: The expression being assigned to `S.pathName' must be constant
 // Line: 12
 // Compiler options: -unsafe
 

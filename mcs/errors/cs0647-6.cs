@@ -1,4 +1,4 @@
-// cs0647.cs : Security custom attribute 'DebugPermission' attached to invalid parent
+// cs0647-6.cs: Error during emitting `DebugPermissionAttribute' attribute. The reason is `it is attached to invalid parent'
 // Line : 11
 
 using System;

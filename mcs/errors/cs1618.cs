@@ -1,4 +1,4 @@
-// cs1618.cs: Cannot create delegate with 'TestClass.Show(int)' because it has a Conditional attribute
+// cs1618.cs: Cannot create delegate with `TestClass.Show(int)' because it has a Conditional attribute
 // Line: 13
 
 class TestClass

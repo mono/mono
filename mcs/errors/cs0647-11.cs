@@ -1,4 +1,4 @@
-// cs0647.cs: Error emitting 'MarshalAs' attribute because 'SizeParamIndex field is not valid for the specified unmanaged type'
+// cs0647-11.cs: Error during emitting `System.Runtime.InteropServices.MarshalAsAttribute' attribute. The reason is `Specified unmanaged type is only valid on fields'
 // Line: 10
 
 using System;

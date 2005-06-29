@@ -1,4 +1,4 @@
-// cs0657.cs : 'field' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are 'event, method'
+// cs0657-19.cs: `field' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `event, method'
 // Line : 7
 
 using System;

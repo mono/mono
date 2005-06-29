@@ -1,4 +1,4 @@
-// cs1612.cs: Cannot modify expression because it is not a variable.
+// cs1612-2.cs: Cannot modify the return value of `X.P' because it is not a variable
 // Line: 9
 
 using System;

@@ -1,4 +1,4 @@
-// cs0135.cs: 'test' conflicts with the declaration 'ClassMain.test'
+// cs0135.cs: `test' conflicts with a declaration in a child block
 // Line: 11
 
 class ClassMain {

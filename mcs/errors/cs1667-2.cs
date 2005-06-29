@@ -1,4 +1,4 @@
-// cs1667.cs: 'System.Obsolete' is not valid on property or event accessors. It is valid on 'class, struct, enum, constructor, method, property, indexer, field, event, interface, delegate' declarations only.
+// cs1667-2.cs: Attribute `System.ObsoleteAttribute' is not valid on property or event accessors. It is valid on `class, struct, enum, constructor, method, property, indexer, field, event, interface, delegate' declarations only
 // Line: 14
 
 class Test {

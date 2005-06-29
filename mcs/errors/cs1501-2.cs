@@ -1,4 +1,4 @@
-// cs1501: no match for this argument list
+// cs1501-2.cs: No overload for method `X' takes `0' arguments
 // Line: 11
 class X {
 

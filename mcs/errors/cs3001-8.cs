@@ -1,4 +1,4 @@
-// cs3001.cs: Argument type 'int*' is not CLS-compliant
+// cs3001-8.cs: Argument type `int*' is not CLS-compliant
 // Line: 9
 // Compiler options: -unsafe
 

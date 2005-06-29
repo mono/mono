@@ -1,4 +1,4 @@
-// cs0260-2.cs: Missing partial modifier on declaration of type `Foo'; another partial declaration of this type exists
+// cs0260-2.cs: Missing partial modifier on declaration of type `Foo'. Another partial declaration of this type exists
 // Line: 6
 public partial class Foo
 { }

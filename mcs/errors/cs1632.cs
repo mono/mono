@@ -1,4 +1,4 @@
-// cs1632.cs: Control cannot leave body of anonymous method
+// cs1632.cs: Control cannot leave the body of an anonymous method
 // Line: 12
 
 using System;

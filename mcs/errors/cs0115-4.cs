@@ -1,4 +1,4 @@
-// cs0561.cs: 'DerivedClass.get_Value()' : cannot override 'BaseClass.Value.get' because it is a special compiler-generated method
+// cs0115-4.cs: `DerivedClass.get_Value()': no suitable method found to override
 // Line: 13
 
 class BaseClass {

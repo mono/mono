@@ -1,4 +1,4 @@
-// cs0111-9.cs: Type `C' already defines a member called `this' with the same parameter types
+// cs0111-9.cs: `C.this[int]' is already defined. Rename this member or use different parameter types
 // Line: 6
 
 class C

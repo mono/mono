@@ -1,4 +1,4 @@
-// cs1622.cs: Return not allowed in iterator method
+// cs1622.cs: Cannot return a value from iterators. Use the yield return statement to return a value, or yield break to end the iteration
 // Line: 11
 using System.Collections;
 

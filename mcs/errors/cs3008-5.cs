@@ -1,4 +1,4 @@
-// cs3008.cs: Identifier 'I._()' is not CLS-compliant
+// cs3008-5.cs: Identifier `I._()' is not CLS-compliant
 // Line: 8
 
 using System;

@@ -1,4 +1,4 @@
-// cs1518-2.cs : Attributes cannot be applied to namespaces.
+// cs1671.cs: A namespace declaration cannot have modifiers or attributes
 // Line: 5
 using System;
 

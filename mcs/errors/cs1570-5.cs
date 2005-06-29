@@ -1,4 +1,4 @@
-// cs1570.cs: XML comment on 'T:Testing.EnumTest2' has non-well-formed XML (unmatched closing element: expected summary but found incorrect  Line 3, position 12.).
+// cs1570-5.cs: XML comment on `T:Testing.EnumTest2' has non-well-formed XML (unmatched closing element: expected summary but found incorrect  Line 3, position 12.)
 // Line: 17
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

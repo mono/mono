@@ -1,4 +1,4 @@
-// CS0636: The 'FieldOffset' attribute is not allowed on static or const fields
+// cs0637.cs: The FieldOffset attribute is not allowed on static or const fields
 // Line: 10
 
 using System;

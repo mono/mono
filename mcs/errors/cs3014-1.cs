@@ -1,4 +1,4 @@
-// cs3014-1.cs: 'C.Error(bool)' cannot be marked as CLS compliant because the assembly is not marked as compliant
+// cs3014-1.cs: `C.Error(bool)' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant
 // Line: 8
 
 using System;

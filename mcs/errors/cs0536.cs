@@ -1,4 +1,4 @@
-// cs0536.cs: Clone method is not public, so it cant implement ICloneable
+// cs0536.cs: `MyTest' does not implement interface member `System.ICloneable.Clone()'. `MyTest.Clone()' is either static, not public, or has the wrong return type
 // Line: 4
 using System;
 public class MyTest : ICloneable {

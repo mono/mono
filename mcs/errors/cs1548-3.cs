@@ -1,4 +1,4 @@
-// cs1548: Missing private key in strongname file
+// cs1548-3.cs: Error during assembly signing. The speficied file `cs1548.pub' does not have a private key
 // Line: 6
 
 using System.Reflection;

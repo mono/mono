@@ -1,4 +1,4 @@
-// cs2019.cs: Invalid target type for -target: must specify 'exe', 'winexe', 'library', or 'module'
+// cs2019.cs: Invalid target type for -target. Valid options are `exe', `winexe', `library' or `module'
 // Line: 0
 // Compiler options: -target:unknown
 

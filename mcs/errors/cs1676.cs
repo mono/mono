@@ -1,4 +1,4 @@
-// CS1676: Signature mismatch in parameter modifier for parameter #1
+// cs1676.cs: Parameter `1' must be declared with the `ref' keyword
 // Line: 11
 //
 // The delegate has an explicit signature, so it can not be assigned.

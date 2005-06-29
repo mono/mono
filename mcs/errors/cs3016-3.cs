@@ -1,4 +1,4 @@
-// cs3016.cs: Arrays as attribute arguments is not CLS-compliant
+// cs3016-3.cs: Arrays as attribute arguments are not CLS-compliant
 // Line: 12
 
 using System;

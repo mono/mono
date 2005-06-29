@@ -1,4 +1,4 @@
-// cs3008.cs: Identifier '_A' is not CLS-compliant
+// cs3008-3.cs: Identifier `_A' is not CLS-compliant
 // Line: 7
 
 using System;

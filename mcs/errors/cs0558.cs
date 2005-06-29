@@ -1,4 +1,4 @@
-// cs0558.cs: User-defined operator 'SampleClass.implicit operator bool(SampleClass)' must be declared static and public
+// cs0558.cs: User-defined operator `SampleClass.implicit operator bool(SampleClass)' must be declared static and public
 // Line: 5
 
 class SampleClass {

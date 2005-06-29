@@ -1,4 +1,4 @@
-// cs0120.cs: An object reference is required for the nonstatic field, method, or property `test.method()'
+// cs0120.cs: `method()': An object reference is required for the nonstatic field, method or property
 // Line: 11
 
 class test {

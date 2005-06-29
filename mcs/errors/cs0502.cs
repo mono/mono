@@ -1,8 +1,8 @@
-// cs0502.cs: 'Main.Test()' cannot be both abstract and sealed
+// cs0502.cs: `Main.Test()' cannot be both abstract and sealed
 // Line: 10
 
 abstract class Base {
-    public abstract void Test () {}
+    public abstract void Test ();
 }
 
 abstract class Main: Base

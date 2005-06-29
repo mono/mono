@@ -1,4 +1,4 @@
-// cs0619.cs: 'Error' is obsolete: 'Obsolete struct'
+// cs0619-34.cs: `Error' is obsolete: `Obsolete struct'
 // Line: 17
 
 using System;

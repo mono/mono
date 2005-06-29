@@ -1,4 +1,4 @@
-// cs1501.cs: No overload for method 'IndexerNameAttribute' takes '4' arguments
+// cs1501-6.cs: No overload for method `System.Runtime.CompilerServices.IndexerNameAttribute' takes `4' arguments
 // Line: 5
 
 class MainClass {

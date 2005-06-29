@@ -1,4 +1,4 @@
-// cs0255.cs: Can not use stackalloc in finally or catch
+// cs0255.cs: Cannot use stackalloc in finally or catch
 // Line: 12
 // Compiler options: -unsafe
 

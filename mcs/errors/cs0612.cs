@@ -1,4 +1,4 @@
-// cs0612.cs: 'A.Value' is obsolete
+// cs0612.cs: `A.Value' is obsolete
 // Line: 13
 // Compiler options: -warnaserror
 

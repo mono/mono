@@ -1,4 +1,4 @@
-// cs0571.cs: 'MainClass.Value.get' : cannot explicitly call operator or accessor
+// cs0571.cs: `MainClass.Value.get': cannot explicitly call operator or accessor
 // Line: 12
 
 class MainClass {

@@ -1,4 +1,4 @@
-// cs0523.cs: circular structure definition
+// cs0523.cs: Struct member `B.a' of type `A' causes a cycle in the struct layout
 //
 
 struct A {

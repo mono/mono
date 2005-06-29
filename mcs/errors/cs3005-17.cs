@@ -1,4 +1,4 @@
-// cs3005.cs: Identifier 'CLSClass.op_implicit()' differing only in case is not CLS-compliant
+// cs3005-17.cs: Identifier `CLSClass.op_implicit()' differing only in case is not CLS-compliant
 // Line: 12
 
 using System;

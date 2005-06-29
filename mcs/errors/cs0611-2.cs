@@ -1,4 +1,4 @@
-// cs0611.cs: Array elements cannot be of type 'System.TypedReference'
+// cs0611-2.cs: Array elements cannot be of type `System.TypedReference'
 // Line: 5
 
 public class Sample {

@@ -1,4 +1,4 @@
-// cs0664.cs: Literal of type double cannot be implicity converted to Float, use F suffix
+// cs0664.cs: Literal of type double cannot be implicitly converted to type `float'. Add suffix `f' to create a literal of this type
 // Line: 6
 class X {
 	void A ()

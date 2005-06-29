@@ -1,4 +1,4 @@
-// CS3003: Type of 'CLSClass.Index' is not CLS-compliant
+// cs3003-2.cs: Type of `CLSClass.Index' is not CLS-compliant
 // Line: 10
 
 using System;

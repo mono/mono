@@ -1,4 +1,4 @@
-// cs0721.cs: 'StaticClass': static types cannot be used as parameters
+// cs0721.cs: `StaticClass': static types cannot be used as parameters
 // Line: 8
 
 static class StaticClass {

@@ -1,4 +1,4 @@
-// cs0111.cs: Type `Blah' already defines a member called `Foo' with the same parameter types
+// cs0111.cs: `Blah.Foo(int, int)' is already defined. Rename this member or use different parameter types
 // Line : 10
 
 public class Blah {

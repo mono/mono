@@ -1,4 +1,4 @@
-// cs3002-2.cs: Return type of 'CLSClass.Foo()' is not CLS-compliant
+// cs3002-2.cs: Return type of `CLSClass.Foo()' is not CLS-compliant
 // Line: 13
 
 using System;

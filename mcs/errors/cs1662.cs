@@ -1,4 +1,4 @@
-// cs1662: Can not convert the anonymous method, as the returned value does not match the return type of the delegate
+// cs1662.cs: Cannot convert anonymous method block to delegate type `D' because some of the return types in the block are not implicitly convertible to the delegate return type
 // Line: 11
 //
 // Return type mismatch.

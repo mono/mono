@@ -1,4 +1,4 @@
-// cs0619.cs: 'ObsoleteIface ' is obsolete: 'Do not use it'
+// cs0619-3.cs: `ObsoleteEnum' is obsolete: `Yeah, is obsolete'
 // Line: 13
 
 using System;

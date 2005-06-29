@@ -1,4 +1,4 @@
-// cs3002.cs: Argument type 'CLSClass.Test1()' is not CLS-compliant
+// cs3002-5.cs: Return type of `CLSClass.Test1()' is not CLS-compliant
 // Line: 11
 
 using System;

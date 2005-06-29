@@ -1,4 +1,4 @@
-// cs3005.cs: Identifier 'CLSClass.value' differing only in case is not CLS-compliant
+// cs3005-3.cs: Identifier `CLSClass.value' differing only in case is not CLS-compliant
 // Line: 15
 
 [assembly:System.CLSCompliant(true)]

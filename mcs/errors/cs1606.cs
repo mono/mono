@@ -1,4 +1,4 @@
-// cs1606: Couldn't strongname the assembly. ECMA key can only be used to delay-sign assemblies.
+// cs1606.cs: Could not sign the assembly. ECMA key can only be used to delay-sign assemblies
 // Line: 6
 
 using System.Reflection;

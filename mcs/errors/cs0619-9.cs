@@ -1,4 +1,4 @@
-// cs0619.cs: 'ObsoleteInterface' is obsolete: ''
+// cs0619-9.cs: `ObsoleteInterface' is obsolete: `'
 // Line: 11
 
 using System;

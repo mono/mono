@@ -1,4 +1,4 @@
-// cs0619.cs: 'A.MyEvent' is obsolete: 'Do not use it'
+// cs0619-35.cs: `A.MyEvent' is obsolete: `Do not use it'
 // Line: 11
 
 public delegate void MyDelegate();

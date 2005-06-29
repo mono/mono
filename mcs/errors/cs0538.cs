@@ -1,4 +1,4 @@
-// cs0538.cs: 'BaseClass' in explicit interface declaration is not an interface
+// cs0538.cs: `BaseClass' in explicit interface declaration is not an interface
 // Line: 9
 
 class BaseClass {

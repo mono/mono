@@ -1,4 +1,4 @@
-// error CS0122: 'BB.AnEvent' is inaccessible due to its protection level
+// cs0122-7.cs: `BB.AnEvent' is inaccessible due to its protection level
 
 using System;
 

@@ -1,4 +1,4 @@
-// cs1524.cs: expected catch or finally
+// cs1524.cs: Expected catch or finally
 // Line: 12
 
 namespace Test {

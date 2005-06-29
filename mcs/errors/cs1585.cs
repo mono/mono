@@ -1,4 +1,4 @@
-// cs1585: Modifier `static' should appear before type
+// cs1585.cs: Member modifier `static' must precede the member type and name
 // Line:  7
 using System; 
  

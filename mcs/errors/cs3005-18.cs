@@ -1,4 +1,4 @@
-// cs3005.cs: Identifier 'B.TEST()' differing only in case is not CLS-compliant
+// cs3005-18.cs: Identifier `B.TEST()' differing only in case is not CLS-compliant
 // Line: 15
 
 using System;

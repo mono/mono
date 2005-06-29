@@ -1,4 +1,4 @@
-// cs0647.cs: Error emitting 'System.Security.Permissions.FileIOPermissionAttribute' because 'System.ArgumentException was thrown during attribute processing: Absolute path information is required.'
+// cs0647-14.cs: Error during emitting `System.Security.Permissions.FileIOPermissionAttribute' attribute. The reason is `Absolute path information is required
 // Line: 9
 
 using System;

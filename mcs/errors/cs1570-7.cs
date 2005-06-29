@@ -1,4 +1,4 @@
-// cs1570.cs: XML comment on 'T:Testing.Test2' has non-well-formed XML (a name did not start with a legal character 54 (6)  Line 1, position 3.).
+// cs1570-7.cs: XML comment on `T:Testing.Test2' has non-well-formed XML (a name did not start with a legal character 54 (6)  Line 1, position 3.)
 // Line: 18
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

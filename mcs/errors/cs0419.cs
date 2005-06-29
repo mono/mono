@@ -1,4 +1,4 @@
-// cs0419.cs: Ambiguous reference in cref attribute: 'System.String.Replace'. Assuming 'string.Replace(char, char)', but could have also matched other overloads including 'string.Replace(string, string)'.
+// cs0419.cs: Ambiguous reference in cref attribute `System.String.Replace'. Assuming `string.Replace(char, char)' but other overloads including `string.Replace(char, char)' have also matched
 // Line: 1
 // Compiler options: -doc:dummy.xml -warn:3 -warnaserror
 /// <summary>

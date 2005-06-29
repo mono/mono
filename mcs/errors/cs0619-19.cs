@@ -1,4 +1,4 @@
-// cs0619.cs: 'MainClass' is obsolete: ''
+// cs0619-19.cs: `MainClass' is obsolete: `'
 // Line: 8
 
 [System.Obsolete("", true)]

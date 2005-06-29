@@ -1,4 +1,4 @@
-// cs1581.cs: Invalid return type in XML comment cref attribute 'explicit operator int (Test)'
+// cs1581-2.cs: Invalid return type in XML comment cref attribute `explicit operator int (Test)'
 // Line: 7
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 

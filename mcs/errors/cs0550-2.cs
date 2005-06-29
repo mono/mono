@@ -1,4 +1,4 @@
-// cs0550.cs: 'PropertyClass.PropertyInterface.this[bool].get' adds an accessor not found in interface member 'PropertyInterface.Value'
+// cs0550-2.cs: `PropertyClass.PropertyInterface.this[bool].get' is an accessor not found in interface member `PropertyInterface.this[bool]'
 // Line: 13
 
 using System.Runtime.CompilerServices;

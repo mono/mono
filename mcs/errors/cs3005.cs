@@ -1,4 +1,4 @@
-// cs3005: Identifier foo differing only in case is not CLS-Compliant.
+// cs3005.cs: Identifier `ErrorCS3005.FOO' differing only in case is not CLS-compliant
 // Line: 9
 
 using System;

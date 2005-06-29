@@ -1,4 +1,4 @@
-// cs3009.cs: 'AttributesForm': base type 'BaseClass' is not CLS-compliant
+// cs3009-3.cs: `AttributesForm': base type `BaseClass' is not CLS-compliant
 // Line: 14
 // The error is reported intentionally twice.
 

@@ -1,4 +1,4 @@
-// cs3006.cs: Overloaded method 'CLSClass.Test(ref int)' differing only in ref or out, or in array rank, is not CLS-compliant
+// cs3006-7.cs: Overloaded method `CLSClass.Test(ref int)' differing only in ref or out, or in array rank, is not CLS-compliant
 // Line: 14
 
 using System;

@@ -1,4 +1,4 @@
-// cs1572.cs: XML comment on 'Baz' has a 'param' tag for 'mismatch', but there is no such parameter.
+// cs1572.cs: XML comment on `Testing.Test.Baz(int)' has a param tag for `mismatch', but there is no parameter by that name
 // Line: 10
 // Compiler options: -doc:dummy.xml -warn:2 -warnaserror
 

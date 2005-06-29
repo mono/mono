@@ -1,4 +1,4 @@
-// cs0119.cs: 'Test.E()' is a 'method', which is not valid in the given context
+// cs0119.cs: Expression denotes a `method group', where a `variable', 'value' or 'type' was expected
 // Line: 14
 
 using System;

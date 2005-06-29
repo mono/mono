@@ -1,11 +1,11 @@
-// cs0657.cs : 'param' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are 'event, property'
+// cs0657-15.cs: `property' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `event'
 // Line : 8
 
 using System;
 
 class C
 {
-    [param: Obsolete]
+    [property: Obsolete]
     event ResolveEventHandler field { 
         add {}
         remove {}

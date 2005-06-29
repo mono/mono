@@ -1,4 +1,4 @@
-// cs3011-1.cs: 'CLSClass.this[long]': only CLS-compliant members can be abstract
+// cs3011-1.cs: `CLSClass.this[long]': only CLS-compliant members can be abstract
 // Line: 9
 
 using System;

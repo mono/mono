@@ -1,4 +1,4 @@
-// cs3011.cs: 'CLSClass.Error(System.IComparable)': only CLS-compliant members can be abstract
+// cs3011.cs: `CLSClass.Error(System.IComparable)': only CLS-compliant members can be abstract
 // Line: 12
 
 using System;

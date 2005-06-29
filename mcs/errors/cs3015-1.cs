@@ -1,4 +1,4 @@
-// cs3015.cs: 'CLSAttribute' has no accessible constructors which use only CLS compliant types
+// cs3015-1.cs: `CLSAttribute' has no accessible constructors which use only CLS-compliant types
 // Line: 7
 
 using System;

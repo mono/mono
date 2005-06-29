@@ -1,4 +1,4 @@
-// cs0111-14.cs: Type `Test' already defines a member called `set_Item' with the same parameter types
+// cs0111-14.cs: `Test.set_Item(int, string)' is already defined. Rename this member or use different parameter types
 // Line : 6
 
 public class Test

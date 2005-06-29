@@ -1,4 +1,4 @@
-// cs0657.cs : 'type' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are 'param'
+// cs0657-9.cs: `type' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `param'
 // Line : 13
 
 using System;

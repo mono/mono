@@ -1,4 +1,4 @@
-// cs3019.cs: CLS compliance checking will not be performed on 'CLSClass' because it is private or internal
+// cs3019.cs: CLS compliance checking will not be performed on `CLSClass' because it is not visible from outside this assembly
 // Line: 8
 // Compiler options: -warnaserror -warn:2
 

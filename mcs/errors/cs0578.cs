@@ -1,4 +1,4 @@
-// cs0578.cs: Conditional not valid on 'MainClass.Foo()' because its return type is not void
+// cs0578.cs: Conditional not valid on `MainClass.Foo()' because its return type is not void
 // Line: 10
 
 class MainClass {

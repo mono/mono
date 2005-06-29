@@ -1,4 +1,4 @@
-// cs1677: out parameters are not permitted on anonymous delegate declarations.
+// cs1677-2.cs: Parameter `1' should not be declared with the `ref' keyword
 // Line: 11
 //
 // The delegate has an explicit signature, so it can not be assigned.

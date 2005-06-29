@@ -1,4 +1,4 @@
-// cs0647.cs: Error emitting 'DllImport' attribute because 'Argument cannot be null.
+// cs0647-13.cs: Error during emitting `System.Runtime.InteropServices.DllImportAttribute' attribute. The reason is `Argument cannot be null
 // Line: 8
 
 using System.Runtime.InteropServices;

@@ -1,4 +1,4 @@
-// CS1620: Argument '1' must be passed with the 'out' keyword
+// cs1620.cs: Argument `1' must be passed with the `out' keyword
 // Line: 13
 
 class C

@@ -1,4 +1,4 @@
-// cs1642.cs: Fixed buffer fields may only be members of structs
+// cs1642.cs: `C.test_1': Fixed size buffer fields may only be members of structs
 // Line: 7
 // Compiler options: -unsafe
 

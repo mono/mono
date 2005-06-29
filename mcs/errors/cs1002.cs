@@ -1,4 +1,4 @@
-// cs1002.cs: ; expected
+// cs1002.cs: Expecting `;'
 // Line: 8
 
 class T {

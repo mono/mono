@@ -1,4 +1,4 @@
-// cs0120-5.cs: An object reference is required for the nonstatic field, method, or property `Babble.Protocol.Auth.Account.get'
+// cs0120-5.cs: `Account': An object reference is required for the nonstatic field, method or property
 // Line: 28
 
 using System;

@@ -1,4 +1,4 @@
-// cs0619.cs: 'AA' is obsolete: ''
+// cs0619-22.cs: `AA' is obsolete: `'
 // Line: 12
 
 [System.Obsolete ("", true)]

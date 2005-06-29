@@ -1,4 +1,4 @@
-// cs0508.cs: 'DerivedClass.Show()' : cannot change return type when overriding inherited member 'BaseClass.Show()'
+// cs0508.cs: `DerivedClass.Show()': return type must be `void' to match overridden member `BaseClass.Show()'
 // Line: 9
 
 class BaseClass {

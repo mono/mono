@@ -1,4 +1,4 @@
-// cs0524.cs: 'E' : interfaces cannot declare types// Line: 5
+// cs0524-3.cs: `Interface.E': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants
 interface Interface {
         enum E {
             White,

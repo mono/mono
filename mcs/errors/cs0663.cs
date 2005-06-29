@@ -1,4 +1,4 @@
-// cs0663.cs: 'Test' cannot define overloaded methods which differ only on ref and out
+// cs0663.cs: `WrongInterface.Test(ref int)': Methods cannot differ only on their use of ref and out on a parameters
 // Line: 6
 
 public interface WrongInterface {

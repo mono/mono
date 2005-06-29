@@ -1,4 +1,4 @@
-// cs3002.cs: Return type of 'Delegate' is not CLS-compliant
+// cs3002-9.cs: Return type of `Delegate' is not CLS-compliant
 // Line: 7
 
 using System;

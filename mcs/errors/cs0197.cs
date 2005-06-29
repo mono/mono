@@ -1,5 +1,7 @@
-//cs0197.cs: Can not pass fields of a MarshalByRefObject by ref or out
+// cs0197.cs: Passing `T.bar' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class
 // Line: 15
+// Compiler options: -warnaserror -warn:1
+
 using System;
 class T : MarshalByRefObject {
 	int bar;

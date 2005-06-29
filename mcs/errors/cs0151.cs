@@ -1,4 +1,4 @@
-// cs0151.cs: A value of an integral type expected
+// cs0151.cs: A value of an integral type or string expected for switch
 // Line: 12
 class Y {
 	byte b;

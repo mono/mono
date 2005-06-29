@@ -1,4 +1,4 @@
-// cs1648.cs: Members of readonly field 'C.s' cannot be assigned to (except in a constructor or a variable initializer)
+// cs1648.cs: Members of readonly field `C.s' cannot be modified (except in a constructor or a variable initializer)
 // Line: 13
 
 struct S {

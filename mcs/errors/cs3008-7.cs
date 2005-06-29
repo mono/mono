@@ -1,4 +1,4 @@
-// cs3008.cs: Identifier 'System.Error.__ComObject' is not CLS-compliant
+// cs3008-7.cs: Identifier `System.Error.__ComObject' is not CLS-compliant
 // Line: 8
 
 using System;

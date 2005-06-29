@@ -1,4 +1,4 @@
-// cs3005.cs: Identifier 'CLSClass.a.get' differing only in case is not CLS-compliant
+// cs3005-23.cs: Identifier `CLSClass.get_A()' differing only in case is not CLS-compliant
 // Line: 8
 
 [assembly:System.CLSCompliant(true)]

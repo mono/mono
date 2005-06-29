@@ -1,4 +1,4 @@
-// cs1660.cs: Cannot convert anonymous method to `int', since it is not a delegate
+// cs1660-2.cs: Cannot convert anonymous method block to type `int' because it is not a delegate type
 // Line: 9
 
 using System;

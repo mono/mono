@@ -1,4 +1,4 @@
-// cs0557.cs: Duplicate user-defined conversion in class 'SampleClass'
+// cs0557.cs: Duplicate user-defined conversion in type `SampleClass'
 // Line: 5
 
 class SampleClass {

@@ -1,4 +1,4 @@
-// cs0647.cs : Error emitting 'System.Security.Permissions.SecurityPermissionAttribute' attribute -- 'SecurityAction RequestMinimum is not valid on this declaration
+// cs0647-2.cs: Error during emitting `System.Security.Permissions.SecurityPermissionAttribute' attribute. The reason is `SecurityAction 'Demand' is not valid for this declaration'
 // Line : 10
 
 using System;

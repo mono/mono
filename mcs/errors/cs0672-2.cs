@@ -1,4 +1,4 @@
-// cs0672.cs: Member 'C.Method()' overrides obsolete member 'BaseClass.Method()'. Add the Obsolete attribute to 'C.Method()'
+// cs0672-2.cs: Member `C.Method()' overrides obsolete member `BaseClass.Method()'. Add the Obsolete attribute to `C.Method()'
 // Line: 14
 // Compiler options: -warnaserror
 

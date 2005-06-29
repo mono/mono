@@ -1,4 +1,4 @@
-// error CS1510: An lvalue is required as an argument to out or ref
+// cs1510-3.cs: A ref or out argument must be an assignable variable
 // Line: 19
 // this is bug #70402
 

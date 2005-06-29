@@ -1,4 +1,4 @@
-// cs1601.cs: ArgIterator and TypedReference are invalid as ref/out arguments
+// cs1601.cs: Method or delegate parameter cannot be of type `ref System.TypedReference'
 //
 using System;
 

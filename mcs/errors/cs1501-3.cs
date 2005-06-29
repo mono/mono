@@ -1,4 +1,4 @@
-// CS1501: No overload for method 'X' takes '2' arguments
+// cs1501-3.cs: No overload for method `X' takes `2' arguments
 public struct X {
         public X(int i) { }
         

@@ -1,4 +1,4 @@
-// cs0160.cs: A previous catch clause already catches all exceptions of this or a super type 'System.Exception'
+// cs0160.cs: A previous catch clause already catches all exceptions of this or a super type `System.Exception'
 // Line: 8
 
 class ClassMain {

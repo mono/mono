@@ -1,4 +1,4 @@
-// cs0594.cs: Floating-point constant is outside the range of the type 'double'
+// cs0594-3.cs: Floating-point constant is outside the range of type `float'
 // Line: 6
 
 class X {

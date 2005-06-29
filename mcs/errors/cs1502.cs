@@ -1,4 +1,4 @@
-// cs1502.cs: The method has incorrect arguments, passing out to something expecting ref
+// cs1502.cs: The best overloaded method match for `X.foo(ref int)' has some invalid arguments
 // Line: 8
 class X {
 	public void foo (ref int blah) {}

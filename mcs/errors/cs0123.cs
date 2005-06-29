@@ -1,4 +1,4 @@
-// cs0123.cs: Method 'MainClass.Delegate()' does not match delegate 'void TestDelegate()'
+// cs0123.cs: Method `int MainClass.Delegate()' does not match delegate `int TestDelegate(bool)'
 // Line: 12
 
 delegate int TestDelegate(bool b);
@@ -12,3 +12,4 @@ public class MainClass {
                 TestDelegate delegateInstance = new TestDelegate (Delegate);
        }
 }
+

@@ -1,4 +1,4 @@
-// cs0122.cs: 'Base.Base(string)' is inaccessible due to its protection level
+// cs1501-10.cs: No overload for method `Base' takes `0' arguments
 // Line: 12
 class Base {
 	Base (string x)

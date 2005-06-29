@@ -1,4 +1,4 @@
-// cs3001.cs: Argument type 'ulong' is not CLS-compliant
+// cs3001-7.cs: Argument type `ulong' is not CLS-compliant
 // Line: 8
 
 using System;

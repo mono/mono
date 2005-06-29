@@ -1,4 +1,4 @@
-// cs0111-7.cs: Type `T' already defines a member called `T' with the same parameter types
+// cs0111-7.cs: `T.T()' is already defined. Rename this member or use different parameter types
 // Line : 6
 
 class T {

@@ -1,4 +1,4 @@
-// cs3002.cs: Return type of 'CLSClass.MyDelegate' is not CLS-compliant
+// cs3002-3.cs: Return type of `CLSClass.MyDelegate' is not CLS-compliant
 // Line: 8
 
 using System;

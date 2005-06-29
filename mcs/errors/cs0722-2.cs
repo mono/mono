@@ -1,4 +1,4 @@
-// cs0722.cs: 'StaticClass': static types cannot be used as return types
+// cs0722-2.cs: `StaticClass': static types cannot be used as return types
 // Line: 8
 
 static class StaticClass {

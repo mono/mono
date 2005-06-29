@@ -1,4 +1,4 @@
-// cs0647.cs: Error emitting 'DllImport' attribute because 'dllName
+// cs0647-12.cs: Error during emitting `System.Runtime.InteropServices.DllImportAttribute' attribute. The reason is `Empty name is not legal
 // Line: 8
 
 using System.Runtime.InteropServices;

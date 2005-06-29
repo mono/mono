@@ -1,4 +1,4 @@
-// cs0111-4.cs: Type `ErrorClass' already defines a member called `get_Blah' with the same parameter types
+// cs0111-4.cs: `ErrorClass.get_Blah(int)' is already defined. Rename this member or use different parameter types
 // Line: 8
 
 using System.Runtime.CompilerServices;

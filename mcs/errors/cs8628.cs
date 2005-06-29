@@ -1,4 +1,4 @@
-// cs0628.cs: 'B._a': new protected member declared in static class
+// cs8628.cs: `B._a': new protected member declared in static class
 // Line: 6
 // Compiler options: -warnaserror -warn:4
 

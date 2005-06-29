@@ -1,4 +1,4 @@
-// cs0658.cs : Invalid attribute location "blah"
+// cs0658.cs: `blah' is an invalid attribute target
 // Line : 8
 // Compiler options: -warnaserror -warn:1
 

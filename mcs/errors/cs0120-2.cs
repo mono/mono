@@ -1,4 +1,4 @@
-// cs0120-2.cs: An object reference is required for the nonstatic field, method, or property `Test.Add8(int)'
+// cs0120-2.cs: `Add8(int)': An object reference is required for the nonstatic field, method or property
 // Line: 12
 
 using System;
