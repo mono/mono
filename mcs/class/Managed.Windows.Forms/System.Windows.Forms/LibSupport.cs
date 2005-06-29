@@ -33,15 +33,24 @@ namespace System.Windows.Forms
 
 		public static void Register ()
 		{
-			FindWindowW fw = new FindWindowExW (NativeWindow.FindWindow);
+			FindWindowExW fw = new FindWindowExW (FindWindow);
 			list.Add (fw);
 			support_register_delegate ("FindWindowExW", fw);
+		}
+
+		static IntPtr FindWindow (IntPtr hWnd)
+		{
+			NativeWindow nw = NativeWindow.FindWindow (hWnd);
+			if (nw == null)
+				return IntPtr.Zero;
+
+			return nw.Handle;
 		}
 
 		delegate IntPtr FindWindowExW (IntPtr hWnd);
 
 		[DllImport ("supportw")]
-                extern static void support_register_delegate (string fmt, Del d);
+                extern static void support_register_delegate (string fmt, Delegate d);
 	}
 }
 
