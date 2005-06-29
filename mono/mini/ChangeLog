@@ -1,3 +1,7 @@
+2005-06-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c: Revert the last change as it seems to break the build..
+
 2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (peephole_pass): Fix the loadi1/loadi2 rules.
