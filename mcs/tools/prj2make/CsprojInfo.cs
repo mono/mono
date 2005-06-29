@@ -57,7 +57,7 @@ namespace Mfconsulting.General.Prj2Make
 		// Project desirialization
 		protected Mfconsulting.General.Prj2Make.Schema.Csproj.VisualStudioProject LoadPrjFromFile (string strIn)
 		{
-			FileStream fs = new FileStream (strIn, FileMode.Open);
+			FileStream fs = new FileStream (strIn, FileMode.Open, FileAccess.Read);
 	    
 			XmlSerializer xmlSer = new XmlSerializer (typeof(Mfconsulting.General.Prj2Make.Schema.Csproj.VisualStudioProject));
 			Mfconsulting.General.Prj2Make.Schema.Csproj.VisualStudioProject prjObj = (Mfconsulting.General.Prj2Make.Schema.Csproj.VisualStudioProject) xmlSer.Deserialize (fs);
