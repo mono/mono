@@ -1,3 +1,10 @@
+2005-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* supportw.c:
+	* supportw.h:
+	* Makefile.am: new library intended to provide often P/Invoked windows
+	API functions not present in io-layer.
+
 2005-06-29  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c: Handle Syslog-related changes (SyslogFacility isn't a 

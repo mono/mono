@@ -1,4 +1,4 @@
-lib_LTLIBRARIES= libMonoPosixHelper.la
+lib_LTLIBRARIES= libMonoPosixHelper.la libsupportw.la
 
 INCLUDES = \
 	$(GLIB_CFLAGS) \
@@ -68,6 +68,14 @@ libMonoPosixHelper_la_LIBADD = \
 
 # libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
+
+libsupportw_la_SOURCES = \
+		supportw.c \
+		supportw.h
+
+libsupportw_la_LIBADD = \
+		$(top_builddir)/mono/io-layer/libwapi.la \
+		$(top_builddir)/mono/mini/libmono.la
 
 # 
 # Use this target to refresh the values in map.[ch]
