@@ -351,7 +351,7 @@ namespace Mono.Data.TdsClient {
 		{
 			theServerName = "";
 			thePort = 1433; // default TCP port for SQL Server
-                        			
+
 			int idx = 0;
 			if ((idx = theDataSource.IndexOf (",")) > -1) {
 				theServerName = theDataSource.Substring (0, idx);

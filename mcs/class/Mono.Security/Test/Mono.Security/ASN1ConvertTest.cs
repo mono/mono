@@ -49,7 +49,7 @@ namespace MonoTests.Mono.Security {
 			AssertEquals ("DateTime", expected.ToString (), actual.ToString ());
 		}
 
-		[Test]
+		[Test]
 		public void ConvertDateTimeInvalidButExistingFormat () 
 		{
 			string nosecs = "9912312359Z"; 
@@ -82,7 +82,7 @@ namespace MonoTests.Mono.Security {
 			Int32 actual = ASN1Convert.ToInt32 (integer);
 			AssertEquals ("Int32_Zero", expected, actual);
 		}
-		[Test]
+		[Test]
 		public void ConvertInt32_One () 
 		{
 			Int32 expected = 1;
@@ -100,7 +100,7 @@ namespace MonoTests.Mono.Security {
 			AssertEquals ("Int32_Positive", expected, actual);
 		}
 
-		[Test]
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void ConvertToInt32_WrongTag () 
 		{
@@ -108,14 +108,14 @@ namespace MonoTests.Mono.Security {
 			Int32 actual = ASN1Convert.ToInt32 (nul);
 		}
 		
-				[Test]
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConvertToInt32_Null () 
 		{
 			ASN1Convert.ToInt32 (null);
 		}
 
-		[Test]
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConvertFromUnsignedBigInteger_Null () 
 		{
@@ -150,14 +150,14 @@ namespace MonoTests.Mono.Security {
 			AssertEquals ("FromOID", BitConverter.ToString (asn.GetBytes ()), 
 				BitConverter.ToString (ASN1Convert.FromOid (oid).GetBytes ()));
 		}
-				[Test]
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConvertFromOid_Null () 
 		{
 			ASN1Convert.FromOid (null);
 		}
 		
-				[Test]
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConvertToOid_Null () 
 		{

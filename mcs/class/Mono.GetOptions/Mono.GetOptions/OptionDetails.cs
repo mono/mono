@@ -109,7 +109,7 @@ namespace Mono.GetOptions
 				if (parsingMode == OptionsParsingMode.Windows) {
 					shortPrefix = "/";
 					longPrefix = "/";
-				} 
+				}
 				if (this.ShortForm != string.Empty)
 					return shortPrefix+this.ShortForm;
 				else
