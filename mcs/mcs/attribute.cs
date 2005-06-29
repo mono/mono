@@ -106,14 +106,13 @@ namespace Mono.CSharp {
 
 		void Error_InvalidNamedArgument (string name)
 		{
-			Report.Error (617, Location, "Invalid attribute argument: '{0}'.  Argument must be fields " +
-				      "fields which are not readonly, static or const;  or read-write instance properties.",
-				      name);
+			Report.Error (617, Location, "`{0}' is not a valid named attribute argument. Named attribute arguments must be fields which are not readonly, static, const or read-write properties which are public and not static",
+			      name);
 		}
 
 		void Error_InvalidNamedAgrumentType (string name)
 		{
-			Report.Error (655, Location, "'{0}' is not a valid named attribute argument because its type is not valid attribute type", name);
+			Report.Error (655, Location, "`{0}' is not a valid named attribute argument because it is not a valid attribute parameter type", name);
 		}
 
 		static void Error_AttributeArgumentNotValid (string extra, Location loc)
@@ -135,7 +134,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error_AttributeEmitError (string inner)
 		{
-			Report.Error (647, Location, "Error emitting '{0}' attribute because '{1}'", Name, inner);
+			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'", TypeManager.CSharpName (Type), inner);
 		}
 
 		public void Error_InvalidSecurityParent ()
@@ -171,7 +170,7 @@ namespace Mono.CSharp {
 			} else {
 				FullNamedExpression l = ResolveAsTypeStep (LeftExpr, ec);
 				if (l == null) {
-					Report.Error (246, Location, "Couldn't find namespace or type '{0}'", LeftExpr);
+					NamespaceEntry.Error_NamespaceNotFound (Location, LeftExpr.GetSignatureForError ());
 					return;
 				}
 				n1 = new MemberAccess (l, Identifier, Location).ResolveNamespaceOrType (ec, true);
@@ -202,17 +201,18 @@ namespace Mono.CSharp {
 
 			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
 				t1 = null;
-				err0616 = "'{0}' is not an attribute class";
+				err0616 = "`{0}' is not an attribute class";
 			}
 			if (t2 != null && ! t2.IsSubclassOf (TypeManager.attribute_type)) {
 				t2 = null;
 				err0616 = (err0616 != null) 
-					? "Neither '{0}' nor '{0}Attribute' is an attribute class"
-					: "'{0}Attribute': is not an attribute class";
+					? "Neither `{0}' nor `{0}Attribute' is an attribute class"
+					: "`{0}Attribute': is not an attribute class";
 			}
 
 			if (t1 != null && t2 != null) {
-				Report.Error (1614, Location, "'{0}' is ambiguous; use either '@{0}' or '{0}Attribute'", Name);
+				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. Use either `@{0}' or `{0}Attribute'", Name);
+				resolve_error = true;
 				return null;
 			}
 			if (t1 != null)
@@ -225,9 +225,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Report.Error (246, Location, 
-				      "Could not find attribute '{0}' (are you missing a using directive or an assembly reference ?)",
-				      Name);
+			NamespaceEntry.Error_NamespaceNotFound (Location, Name);
 
 			resolve_error = true;
 			return null;
@@ -317,7 +315,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Type.IsAbstract) {
-				Report.Error (653, Location, "Cannot apply attribute class '{0}' because it is abstract", Name);
+				Report.Error (653, Location, "Cannot apply attribute class `{0}' because it is abstract", Name);
 				return null;
 			}
 
@@ -448,13 +446,13 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
-						Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", GetFullMemberName (member_name));
+						Expression.ErrorIsInaccesible (Location, GetFullMemberName (member_name));
 						return null;
 					}
 				}
 
 				if (member == null){
-					Report.Error (117, Location, "Attribute `{0}' does not contain a definition for `{1}'",
+					Report.Error (117, Location, "`{0}' does not contain a definition for `{1}'",
 						      Type, member_name);
 					return null;
 				}
@@ -632,49 +630,52 @@ namespace Mono.CSharp {
 			AttributeTargets targets = GetAttributeUsage (null).ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
-				sb.Append ("'assembly' ");
-
-			if ((targets & AttributeTargets.Class) != 0)
-				sb.Append ("'class' ");
-
-			if ((targets & AttributeTargets.Constructor) != 0)
-				sb.Append ("'constructor' ");
-
-			if ((targets & AttributeTargets.Delegate) != 0)
-				sb.Append ("'delegate' ");
-
-			if ((targets & AttributeTargets.Enum) != 0)
-				sb.Append ("'enum' ");
-
-			if ((targets & AttributeTargets.Event) != 0)
-				sb.Append ("'event' ");
-
-			if ((targets & AttributeTargets.Field) != 0)
-				sb.Append ("'field' ");
-
-			if ((targets & AttributeTargets.Interface) != 0)
-				sb.Append ("'interface' ");
-
-			if ((targets & AttributeTargets.Method) != 0)
-				sb.Append ("'method' ");
+				sb.Append ("assembly, ");
 
 			if ((targets & AttributeTargets.Module) != 0)
-				sb.Append ("'module' ");
+				sb.Append ("module, ");
 
-			if ((targets & AttributeTargets.Parameter) != 0)
-				sb.Append ("'parameter' ");
-
-			if ((targets & AttributeTargets.Property) != 0)
-				sb.Append ("'property' ");
-
-			if ((targets & AttributeTargets.ReturnValue) != 0)
-				sb.Append ("'return' ");
+			if ((targets & AttributeTargets.Class) != 0)
+				sb.Append ("class, ");
 
 			if ((targets & AttributeTargets.Struct) != 0)
-				sb.Append ("'struct' ");
+				sb.Append ("struct, ");
 
-			return sb.ToString ();
+			if ((targets & AttributeTargets.Enum) != 0)
+				sb.Append ("enum, ");
 
+			if ((targets & AttributeTargets.Constructor) != 0)
+				sb.Append ("constructor, ");
+
+			if ((targets & AttributeTargets.Method) != 0)
+				sb.Append ("method, ");
+
+			if ((targets & AttributeTargets.Property) != 0)
+				sb.Append ("property, indexer, ");
+
+			if ((targets & AttributeTargets.Field) != 0)
+				sb.Append ("field, ");
+
+			if ((targets & AttributeTargets.Event) != 0)
+				sb.Append ("event, ");
+
+			if ((targets & AttributeTargets.Interface) != 0)
+				sb.Append ("interface, ");
+
+			if ((targets & AttributeTargets.Parameter) != 0)
+				sb.Append ("parameter, ");
+
+			if ((targets & AttributeTargets.Delegate) != 0)
+				sb.Append ("delegate, ");
+
+			if ((targets & AttributeTargets.ReturnValue) != 0)
+				sb.Append ("return, ");
+
+#if NET_2_0
+			if ((targets & AttributeTargets.GenericParameter) != 0)
+				sb.Append ("type parameter, ");
+#endif			
+			return sb.Remove (sb.Length - 2, 2).ToString ();
 		}
 
 		/// <summary>
@@ -1036,7 +1037,8 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
 			if ((usage_attr.ValidOn & Target) == 0) {
-				Report.Error (592, Location, "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.", Name, GetValidTargets ());
+				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type. It is valid on `{1}' declarations only",
+					Name, GetValidTargets ());
 				return;
 			}
 
@@ -1348,7 +1350,7 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error (657, a.Location, "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'", a.ExplicitTarget, sb.ToString ());
+				Report.Error (657, a.Location, "`{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `{1}'", a.ExplicitTarget, sb.ToString ());
 				return false;
 			}
 			return true;
@@ -1489,7 +1491,7 @@ namespace Mono.CSharp {
 
 			foreach (Parameter arg in fixedParameters) {
 				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
-					Report.Error (3001, loc, "Argument type '{0}' is not CLS-compliant", arg.GetSignatureForError ());
+					Report.Error (3001, loc, "Argument type `{0}' is not CLS-compliant", arg.GetSignatureForError ());
 					return false;
 				}
 			}
@@ -1607,7 +1609,7 @@ namespace Mono.CSharp {
 				else
 					Report.SymbolRelatedToPreviousError ((MemberCore)conflict);
 
-				Report.Error (3005, decl.Location, "Identifier '{0}' differing only in case is not CLS-compliant", decl.GetSignatureForError ());
+				Report.Error (3005, decl.Location, "Identifier `{0}' differing only in case is not CLS-compliant", decl.GetSignatureForError ());
 			}
 		}
 
@@ -1709,16 +1711,16 @@ namespace Mono.CSharp {
 		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
 		{
 			if (oa.IsError) {
-				Report.Error (619, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
+				Report.Error (619, loc, "`{0}' is obsolete: `{1}'", member, oa.Message);
 				return;
 			}
 
 			if (oa.Message == null) {
-				Report.Warning (612, loc, "'{0}' is obsolete", member);
+				Report.Warning (612, loc, "`{0}' is obsolete", member);
 				return;
 			}
 			if (RootContext.WarningLevel >= 2)
-				Report.Warning (618, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
+				Report.Warning (618, loc, "`{0}' is obsolete: `{1}'", member, oa.Message);
 		}
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)

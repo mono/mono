@@ -200,7 +200,7 @@ namespace Mono.CSharp {
 		{
 			object o = root.GetDefinition (name);
 			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
 				return null;
 			}
 
@@ -225,7 +225,7 @@ namespace Mono.CSharp {
 		{
 			object o = root.GetDefinition (name);
 			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
 				return;
 			}
 
@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 		{
 			object o = root.GetDefinition (name);
 			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
 				return;
 			}
 
@@ -275,7 +275,7 @@ namespace Mono.CSharp {
 		{
 			object o = root.GetDefinition (name);
 			if (o == null){
-				Report.Error (518, "The predefined type `" + name + "' is not defined");
+				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
 				return;
 			}
 
@@ -478,11 +478,6 @@ namespace Mono.CSharp {
 			helper_classes.Add (helper_class);
 		}
 		
-		static void Report1530 (Location loc)
-		{
-			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
-		}
-		
 		static public void PopulateCoreType (TypeContainer root, string name)
 		{
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
@@ -533,19 +528,13 @@ namespace Mono.CSharp {
 			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
-					if ((d.ModFlags & Modifiers.NEW) == 0)
-						d.DefineMembers (root);
-					else
-						Report1530 (d.Location);
+					d.DefineMembers (root);
 			}
 
 			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
-					if ((en.ModFlags & Modifiers.NEW) == 0)
-						en.DefineMembers (root);
-					else
-						Report1530 (en.Location);
+					en.DefineMembers (root);
 			}
 
 			//
@@ -578,8 +567,7 @@ namespace Mono.CSharp {
 			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
-					if ((d.ModFlags & Modifiers.NEW) == 0)
-						d.Define ();
+					d.Define ();
 			}
 
 			if (type_container_resolve_order != null){
@@ -593,16 +581,14 @@ namespace Mono.CSharp {
 					     (tc.Name == "System.Runtime.CompilerServices.IndexerNameAttribute")))
 						continue;
 
-					if ((tc.ModFlags & Modifiers.NEW) == 0)
-						tc.Define ();
+					tc.Define ();
 				}
 			}
 
 			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
-					if ((en.ModFlags & Modifiers.NEW) == 0)
-						en.Define ();
+					en.Define ();
 			}
 		}
 
@@ -688,6 +674,14 @@ namespace Mono.CSharp {
 				FieldAttributes.Static | FieldAttributes.Assembly);
 			
 			return fb;
+		}
+
+		public static void CheckUnsafeOption (Location loc)
+		{
+			if (!Unsafe) {
+				Report.Error (227, loc, 
+					"Unsafe code requires the `unsafe' command line option to be specified");
+			}
 		}
 	}
 }

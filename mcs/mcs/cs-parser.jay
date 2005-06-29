@@ -93,7 +93,7 @@ namespace Mono.CSharp
 		/// Current attribute target
 		string current_attr_target;
 		
-		/// assembly and module attribute definition is enabled
+		/// assembly and module attribute definitions are enabled
 		bool global_attrs_enabled = true;
 
 		bool has_get, has_set;
@@ -487,7 +487,7 @@ attribute_sections
 			if (current_attr_target == "module") {
 				CodeGen.Module.AddAttributes (sect);
 				$$ = null;
-			} else if (current_attr_target == "assembly") {
+			} else if (current_attr_target != null && current_attr_target.Length > 0) {
 				CodeGen.Assembly.AddAttributes (sect);
 				$$ = null;
 			} else {
@@ -826,7 +826,7 @@ constant_declaration
 		foreach (VariableDeclaration constant in (ArrayList) $5){
 			Location l = constant.Location;
 			if ((modflags & Modifiers.STATIC) != 0) {
-				Report.Error (504, l, "The constant '{0}' cannot be marked static", current_container.GetSignatureForError () + '.' + (string) constant.identifier);
+				Report.Error (504, l, "The constant `{0}' cannot be marked static", current_container.GetSignatureForError () + '.' + (string) constant.identifier);
 				continue;
 			}
 
@@ -922,7 +922,7 @@ field_declaration
 	  VOID  
 	  variable_declarators
 	  SEMICOLON {
-		Report.Error (670, lexer.Location, "void type is not allowed for fields");
+		Report.Error (670, lexer.Location, "Fields cannot have void type");
 	  }
 	;
 
@@ -1011,22 +1011,6 @@ method_declaration
 	  {
 		Method method = (Method) $1;
 		Block b = (Block) $3;
-		const int extern_abstract = (Modifiers.EXTERN | Modifiers.ABSTRACT);
-
-		if (b == null){
-			if ((method.ModFlags & extern_abstract) == 0){
-				Report.Error (
-					501, lexer.Location,  current_container.MakeName (method.Name) +
-				        "must declare a body because it is not marked abstract or extern");
-			}
-		} else {
-			if ((method.ModFlags & Modifiers.EXTERN) != 0){
-				Report.Error (
-					179, lexer.Location, current_container.MakeName (method.Name) +
-					" is declared extern, but has a body");
-			}
-		}
-
 		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 
@@ -1047,9 +1031,9 @@ opt_error_modifier
 
 		while (m != 0){
 			if ((i & m) != 0){
-				Report.Error (
-					1585, lexer.Location, "Member modifier `" + 
-					Modifiers.Name (i) + "' must precede member type and name");
+				Report.Error (1585, lexer.Location,
+					"Member modifier `{0}' must precede the member type and name",
+					Modifiers.Name (i));
 			}
 			m &= ~i;
 			i = i << 1;
@@ -1100,8 +1084,7 @@ method_header
 	  modifiers namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Report.Error (1585, lexer.Location, 
-			String.Format ("Modifier {0} should appear before type", 
-				Modifiers.Name ((int) $4)));
+			"Member modifier `{0}' must precede the member type and name", Modifiers.Name ((int) $4));
 		MemberName name = (MemberName) $4;
 
 		Method method = new Method (current_class, TypeManager.system_void_expr,
@@ -1113,7 +1096,7 @@ method_header
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
 
-		$$ = method;
+		$$ = null;
 	  }
 	;
 
@@ -1494,8 +1477,8 @@ interface_member_declaration
 		Method m = (Method) $1;
 
 		if (m.IsExplicitImpl)
-		        Report.Error (541, lexer.Location, 
-				"Explicit interface declaration can only be declared in a class or struct");
+		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+				m.GetSignatureForError ());
 
 		current_container.AddMethod (m);
 
@@ -1510,8 +1493,8 @@ interface_member_declaration
 		Property p = (Property) $1;
 
 		if (p.IsExplicitImpl)
-		        Report.Error (541, lexer.Location, 
-				"Explicit interface declaration can only be declared in a class or struct");
+		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+				p.GetSignatureForError ());
 
 		current_container.AddProperty (p);
 
@@ -1524,8 +1507,8 @@ interface_member_declaration
 			Event e = (Event) $1;
 
 			if (e.IsExplicitImpl)
-				Report.Error (541, lexer.Location, 
-				    "Explicit interface declaration can only be declared in a class or struct");
+		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+				e.GetSignatureForError ());
 			
 			current_container.AddEvent (e);
 		}
@@ -1541,8 +1524,8 @@ interface_member_declaration
 		Indexer i = (Indexer) $1;
 
 		if (i.IsExplicitImpl)
-			Report.Error (541, lexer.Location, 
-				"Explicit interface declaration can only be declared in a class or struct");
+		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+				i.GetSignatureForError ());
 
 		current_container.AddIndexer (i);
 
@@ -1551,27 +1534,42 @@ interface_member_declaration
 	  }
 	| delegate_declaration
 	  {
-		Report.Error (524, lexer.Location, "Interfaces can not declare delegates");
+		if ($1 != null) {
+			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+				((MemberCore)$1).GetSignatureForError ());
+		}
 	  }
 	| class_declaration
 	  {
-		Report.Error (524, lexer.Location, "Interfaces can not declare classes");
+		if ($1 != null) {
+			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+				((MemberCore)$1).GetSignatureForError ());
+		}
 	  }
 	| struct_declaration
 	  {
-		Report.Error (524, lexer.Location, "Interfaces can not declare structures");
+		if ($1 != null) {
+			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+				((MemberCore)$1).GetSignatureForError ());
+		}
 	  }
 	| enum_declaration 
 	  {
-		Report.Error (524, lexer.Location, "Interfaces can not declare enumerations");
+		if ($1 != null) {
+			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+				((MemberCore)$1).GetSignatureForError ());
+		}
 	  }
 	| interface_declaration 
 	  {
-		Report.Error (524, lexer.Location, "Interfaces can not declare interfaces");
+		if ($1 != null) {
+			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+				((MemberCore)$1).GetSignatureForError ());
+		}
 	  } 
 	| constant_declaration
 	  {
-		Report.Error (525, lexer.Location, "Interfaces cannot contain constants");
+		Report.Error (525, lexer.Location, "Interfaces cannot contain fields or constants");
 	  }
 	;
 
@@ -1589,10 +1587,8 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		MemberName name = (MemberName) $4;
-
 		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
-				 name, (Parameters) $6, (Attributes) $1, lexer.Location);
+				 (MemberName) $4, (Parameters) $6, (Attributes) $1, lexer.Location);
 		if (RootContext.Documentation != null)
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
@@ -1600,8 +1596,11 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  OPEN_BRACE opt_statement_list CLOSE_BRACE
 	  {
-		Report.Error (531, lexer.Location, "'{0}': interface members cannot have a definition", $4);
-		$$ = null;
+		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
+				 (MemberName) $4, (Parameters) $6, (Attributes) $1, lexer.Location);
+
+		Report.Error (531, lexer.Location, "`{0}': interface members cannot have a definition",
+			((Method)$$).GetSignatureForError ());
 	  }
 	;
 
@@ -1616,12 +1615,18 @@ interface_property_declaration
 	  CLOSE_BRACE
 	  {
 		if ($3 == TypeManager.system_void_expr) {
-			Report.Error (547, lexer.Location, "'{0}': property cannot have void type", $4);
+			Report.Error (547, lexer.Location, "`{0}': property or indexer cannot have void type", $4);
 			break;
 		}
 
-		if ($7 == null)
+		if ($7 == null) {
+			Property p = new Property (current_class, (Expression) $3, (int) $2, true,
+				   new MemberName ((string) $4), (Attributes) $1,
+				   null, null, lexer.Location);
+
+			Report.Error (548, lexer.Location, "`{0}': property or indexer must have at least one accessor", p.GetSignatureForError ());
 			break;
+		}
 
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
@@ -1644,8 +1649,8 @@ interface_accessors
 	{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, lexer.Location, lexer.Location); }
 	| opt_attributes opt_modifiers GET OPEN_BRACE
 	 {  
-		Report.Error (531, lexer.Location, "'{0}': interface members cannot have a definition", ".get");
-		$$ = null;
+		Report.Error (531, lexer.Location, "`{0}': interface members cannot have a definition", ".get");
+		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, lexer.Location, lexer.Location);
 	 }
 	| opt_attributes opt_modifiers SET SEMICOLON		
 	{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, 0, (int) $2, lexer.Location, lexer.Location); }
@@ -1655,7 +1660,7 @@ interface_accessors
 	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $5, (Attributes) $1, (int) $6, (int) $2, lexer.Location, lexer.Location); }
 	|
 	  {
-		Report.Error (548, lexer.Location, "'{0}' : property or indexer must have at least one accessor", "");
+		$$ = null;
 	  }
 	;
 
@@ -1673,7 +1678,7 @@ interface_event_declaration
 		$$ = null;
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER ASSIGN  {
-		Report.Error (68, lexer.Location, "Event declarations on interfaces can not be initialized.");
+		Report.Error (68, lexer.Location, "`{0}.{1}': event in interface cannot have initializer", current_container.Name, $5);
 		$$ = null;
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE
@@ -1699,8 +1704,15 @@ interface_indexer_declaration
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
-		if ($10 == null)
+		if ($10 == null) {
+			Indexer i = new Indexer (current_class, (Expression) $3,
+				  new MemberName (TypeContainer.DefaultIndexerName),
+				  (int) $2, true, (Parameters) $6, (Attributes) $1,
+				  null, null, lexer.Location);
+
+			Report.Error (548, lexer.Location, "`{0}': property or indexer must have at least one accessor", i.GetSignatureForError ());
 			break;
+		}
 
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
@@ -1819,13 +1831,15 @@ operator_declarator
 		type IDENTIFIER
 	  CLOSE_PARENS
 	{
-		Report.Error (1534, lexer.Location, "Overloaded binary operator '{0}' takes two parameters", $3);
+		Report.Error (1534, lexer.Location, "Overloaded binary operator `{0}' takes two parameters",
+			Operator.GetName ((Operator.OpType) $3));
 		$$ = null;
 	}
 	| type OPERATOR overloadable_operator 
 	  OPEN_PARENS CLOSE_PARENS
 	{
-		Report.Error (1535, lexer.Location, "Overloaded unary operator '{0}' takes one parameter", $3);
+		Report.Error (1535, lexer.Location, "Overloaded unary operator `{0}' takes one parameter",
+			Operator.GetName ((Operator.OpType) $3));
 		$$ = null;
 	}
 	;
@@ -1918,24 +1932,22 @@ constructor_declaration
 		if (c.Name == current_container.Basename){
 			if ((c.ModFlags & Modifiers.STATIC) != 0){
 				if ((c.ModFlags & Modifiers.Accessibility) != 0){
-					Report.Error (
-						515, c.Location, String.Format (
-						"`{0}.{1}': static constructor can not have access modifiers",
-						c.Name, current_container.Name));
+					Report.Error (515, c.Location,
+						"`{0}': access modifiers are not allowed on static constructors",
+						c.GetSignatureForError ());
 				}
 	
 				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);	
 	
 				if (c.Initializer != null){
-					Report.Error (
-						514, c.Location, 
-						"Static constructors can not have an explicit this or base " +
-						"constructor invocations");
+					Report.Error (514, c.Location,
+						"`{0}': static constructor cannot have an explicit `this' or `base' constructor call",
+						c.GetSignatureForError ());
 				}
 	
 				if (!c.Parameters.Empty){
-					Report.Error (
-						132, c.Location, "Static constructors should not have parameters");
+					Report.Error (132, c.Location,
+						"`{0}': The static constructor must be parameterless", c.GetSignatureForError ());
 				}
 			} else {
 				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);
@@ -2016,7 +2028,7 @@ destructor_declaration
 		if ((string) $5 != current_container.Basename){
 			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
 		} else if (current_container.Kind != Kind.Class){
-			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
+			Report.Error (575, lexer.Location, "Only class types can contain destructor");
 		} else {
 			Location l = lexer.Location;
 
@@ -2025,14 +2037,6 @@ destructor_declaration
 				m |= Modifiers.PROTECTED | Modifiers.VIRTUAL;
 			else
 				m |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
-                        
-                        if ((m & Modifiers.UNSAFE) != 0){
-                                if (!RootContext.Unsafe){
-                                        Report.Error (227, l,
-					      "Unsafe code requires the -unsafe command " +
-					      "line option to be specified");
-                                }
-                        }
                         
 			Method d = new Destructor (
 				current_class, TypeManager.system_void_expr, m, "Finalize", 
@@ -2083,15 +2087,15 @@ event_declaration
 	  CLOSE_BRACE
 	  {
 		Location loc = (Location) $7;
+		MemberName name = (MemberName) $5;
 
 		if ($9 == null){
-			Report.Error (65, lexer.Location, "Event must have both add and remove accesors");
+			Report.Error (65, lexer.Location, "`{0}.{1}': event property must have both add and remove accessors",
+				current_container.Name, name);
 			$$ = null;
 		} else {
 			Pair pair = (Pair) $9;
 			
-			MemberName name = (MemberName) $5;
-
 			Event e = new EventProperty (
 				current_class, (Expression) $4, (int) $2, false, name, null,
 				(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
@@ -2109,7 +2113,7 @@ event_declaration
 		MemberName mn = (MemberName) $5;
 
 		if (mn.Left != null)
-			Report.Error (71, lexer.Location, "Explicit implementation of events requires property syntax");
+			Report.Error (71, lexer.Location, "An explicit interface implementation of an event must use property syntax");
 		else 
 			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
 
@@ -2156,7 +2160,7 @@ add_accessor_declaration
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
-		Report.Error (73, lexer.Location, "Add or remove accessor must have a body");
+		Report.Error (73, lexer.Location, "An add or remove accessor must have a body");
 		$$ = null;
 	  }
 	| opt_attributes modifiers ADD {
@@ -2184,7 +2188,7 @@ remove_accessor_declaration
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
-		Report.Error (73, lexer.Location, "Add or remove accessor must have a body");
+		Report.Error (73, lexer.Location, "An add or remove accessor must have a body");
 		$$ = null;
 	  }
 	| opt_attributes modifiers REMOVE {
@@ -2203,6 +2207,7 @@ indexer_declaration
 		
 		lexer.PropertyParsing = true;
 		parsing_indexer  = true;
+		iterator_container = SimpleIteratorContainer.GetSimple ();
 		
 		indexer_parameters = decl.param_list;
 	  }
@@ -2236,6 +2241,9 @@ indexer_declaration
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
+		if (SimpleIteratorContainer.Simple.Yields)
+			indexer.SetYields ();
+
 		if (RootContext.Documentation != null)
 			indexer.DocComment = ConsumeStoredComment ();
 
@@ -2244,6 +2252,7 @@ indexer_declaration
 		current_local_parameters = null;
 		implicit_value_parameter_type = null;
 		indexer_parameters = null;
+		iterator_container = null;
 	  }
 	;
 
@@ -2300,7 +2309,7 @@ enum_declaration
 		bool partial = (bool) $3;
 
 		if (partial) {
-			Report.Error (267, lexer.Location, "The partial modifier can only appear before a 'class', 'struct', or 'interface'");
+			Report.Error (267, lexer.Location, "The partial modifier can only appear immediately before `class', `struct' or `interface'");
 			break;	// assumes that the parser put us in a switch
 		}
 
@@ -2717,7 +2726,7 @@ argument_list
 		$$ = list;
 	  }
 	| argument_list error {
-		CheckToken (1026, yyToken, ", or ) expected");
+		CheckToken (1026, yyToken, "Expected `,' or `)'");
 	  }
 	;
 
@@ -2873,7 +2882,7 @@ array_creation_expression
 	  }          
 	| NEW type error 
 	  {
-		Report.Error (1526, lexer.Location, "new expression requires () or [] after type");
+		Report.Error (1526, lexer.Location, "A new expression requires () or [] after type");
 	  }
 	;
 
@@ -3077,7 +3086,7 @@ anonymous_method_parameter
 		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null, lexer.Location);
 	  }
 	| PARAMS type IDENTIFIER {
-		Report.Error (1670, lexer.Location, "params modifier not allowed in anonymous method declaration");
+		Report.Error (1670, lexer.Location, "The `params' modifier is not allowed in anonymous method declaration");
 		$$ = null;
 	  }
 	;
@@ -3484,7 +3493,7 @@ modifiers
 
 		if ((m1 & m2) != 0) {
 			Location l = lexer.Location;
-			Report.Error (1004, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
+			Report.Error (1004, l, "Duplicate `{0}' modifier", Modifiers.Name (m2));
 		}
 		$$ = (int) (m1 | m2);
 	  }
@@ -3596,12 +3605,12 @@ embedded_statement
 	: valid_declaration_statement
 	| declaration_statement
 	  {
-		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration.");
+		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration or labeled statement");
 		  $$ = null;
 	  }
 	| labeled_statement
 	  {
-		  Report.Error (1023, lexer.Location, "An embedded statement may not be a labeled statement.");
+		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration or labeled statement");
 		  $$ = null;
 	  }
 	;
@@ -4201,7 +4210,7 @@ try_statement
 			Catch cc = (Catch) c [i];
 			if (cc.IsGeneral) {
 				if (i != c.Count - 1)
-					Report.Error (1017, cc.loc, "Empty catch block must be the last in a series of catch blocks");
+					Report.Error (1017, cc.loc, "Try statement already has an empty catch block");
 				g = cc;
 				c.RemoveAt (i);
 				i--;
@@ -4334,10 +4343,7 @@ unchecked_statement
 unsafe_statement
 	: UNSAFE 
 	{
-		if (!RootContext.Unsafe){
-			Report.Error (227, lexer.Location, 
-				"Unsafe code can only be used if -unsafe is used");
-		}
+		RootContext.CheckUnsafeOption (lexer.Location);
 	} block {
 		$$ = new Unsafe ((Block) $3);
 	}
@@ -4539,15 +4545,10 @@ public class InterfaceAccessorInfo {
         public InterfaceAccessorInfo (bool has_get, bool has_set,
                                       Attributes get_attrs, Attributes set_attrs, int get_mod, int set_mod, Location get_loc, Location set_loc)
         {
-		if (get_mod != 0)
-			Report.Error (275, get_loc, "Accessibility modifiers can not be used on accessors in interfaces");
-		if (set_mod != 0)
-			Report.Error (275, set_loc, "Accessibility modifiers can not be used on accessors in interfaces");
-			
 		if (has_get)
-			Get = new Accessor (null, 0, get_attrs, get_loc);
+			Get = new Accessor (null, get_mod, get_attrs, get_loc);
 		if (has_set)
-			Set = new Accessor (null, 0, set_attrs, set_loc);
+			Set = new Accessor (null, set_mod, set_attrs, set_loc);
         }
 
 }
@@ -4616,7 +4617,7 @@ public class OperatorDeclaration {
 void Error_ExpectingTypeName (Location l, Expression expr)
 {
 	if (expr is Invocation){
-		Report.Error (1002, l, "; expected");
+		Report.Error (1002, l, "Expecting `;'");
 	} else {
 		Report.Error (-1, l, "Invalid Type definition");
 	}
