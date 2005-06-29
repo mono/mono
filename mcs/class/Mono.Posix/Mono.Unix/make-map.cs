@@ -317,6 +317,11 @@ class SourceFileGenerator : FileGenerator {
 		foreach (FieldInfo fi in t.GetFields ()) {
 			if (!fi.IsLiteral)
 				continue;
+			if (Attribute.GetCustomAttribute (fi, 
+				typeof(ObsoleteAttribute), false) != null) {
+				sc.WriteLine ("\t/* {0}_{1} is obsolete; ignoring */", fn, fi.Name);
+				continue;
+			}
 			if (bits)
 				// properly handle case where [Flags] enumeration has helper
 				// synonyms.  e.g. DEFFILEMODE and ACCESSPERMS for mode_t.

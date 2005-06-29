@@ -94,7 +94,7 @@ namespace Mono.Unix {
 		LOG_PERROR = 0x20   // log to stderr as well
 	}
 
-	[Flags][Map]
+	[Map]
 	public enum SyslogFacility {
 		LOG_KERN      = 0 << 3,
 		LOG_USER      = 1 << 3,

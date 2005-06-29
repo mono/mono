@@ -1,3 +1,18 @@
+2005-06-29  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: SyslogFacility shouldn't be [Flags] either.  Sigh.
+	  Thanks to Vorobiev Maksim for pointing this out.
+	* make-map.cs: Don't generate conversion code for [Obsolete] enum members.
+	  This assumes that (1) the enum member's value is invalid, or (2) a
+	  corrected member with the same value exists.  This fix allows us to
+	  obsolete invalid members (instead of removing them) without screwing up
+	  the generated code -- consider LOG_USRE, the mis-spelling of LOG_USER.
+	  Since SyslogFacility was (incorrectly) a [Flags] enum, since both LOG_USER
+	  and LOG_USRE had the same value, we'd get a EINVAL error trying to convert
+	  a valid value, since LOG_USRE would exist, would be checked for, and the
+	  check would succeed (since it had the same value as LOG_USER).
+	  This change allows us to be slightly more permissive with versioning.
+
 2005-06-28  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: correct value of LOG_CRON (it shouldn't be identical to
