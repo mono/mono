@@ -1,3 +1,7 @@
+2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am appdomain3.cs: Remove appdomain3 test, since it is a duplicate of appdomain-unload.
+
 2005-06-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs: Add test for #75374.
