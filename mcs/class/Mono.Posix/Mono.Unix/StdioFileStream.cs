@@ -356,12 +356,13 @@ namespace Mono.Unix {
 			if (file == InvalidFileStream)
 				return;
 
-			Flush ();
 			if (owner) {
 				int r = Stdlib.fclose (file);
 				if (r != 0)
 					UnixMarshal.ThrowExceptionForLastError ();
-			}
+			} else
+				Flush ();
+				
 			file = InvalidFileStream;
 			canRead = false;
 			canSeek = false;

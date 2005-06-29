@@ -1,3 +1,8 @@
+2005-06-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* StdioFileStreamTest.cs: comment out tests that depend on the
+	underlying Stdio implementation.
+
 2005-05-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* UnixUserTest.cs, UnixGroupTest.cs: Disable tests that might not

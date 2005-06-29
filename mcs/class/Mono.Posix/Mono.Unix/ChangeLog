@@ -1,3 +1,8 @@
+2005-06-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* StdioFileStream.cs: Only flush if we do not own the handle, as
+	fclose does a flush internally.
+
 2005-06-29  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixEnvironment: Add User, Login properties.

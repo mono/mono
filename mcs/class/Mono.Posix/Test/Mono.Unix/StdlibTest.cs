@@ -70,6 +70,7 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		// MSVCRT.DLL doesn't export snprintf(3).
 		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
 		public void Snprintf ()
 		{
 			StringBuilder s = new StringBuilder (1000);
@@ -86,10 +87,10 @@ namespace MonoTests.Mono.Unix {
 	  char: '%c'
 	 short: %i
 	   int: %i
-	  long: %lli
+	  long: %li
 	 float: %g
 	double: %g" + "\n";
-		Stdlib.snprintf (s, fmt, 'a', (short) 16, 32, (long) 64, 32.23f, 64.46);
+		Stdlib.snprintf (s, fmt, 'a', (short) 16, 32, (long) 64, (double) 32.23, 64.46);
 			string expected = 
 @"this is another test:
 	  char: 'a'
