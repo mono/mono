@@ -1,3 +1,8 @@
+2005-06-29  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ArithmeticExpressions.cs: Eval :if any one of the argument is
+	null for an operator, the result is also NULL.
+
 2005-05-02 Konstantin Triger <kostat@mainsoft.com>
 
         * IExpression interface: Added DependsOn(DataColumn) method, which checks whether the Expression contains a specific column
