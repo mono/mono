@@ -1,3 +1,7 @@
+2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_cpu_init): Fix setting of fp precision in the VC build.
+
 2005-06-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (NEW_AOTCONST): make sure to call mono_get_got_var
