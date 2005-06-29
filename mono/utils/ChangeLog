@@ -1,3 +1,7 @@
+2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-compiler.h (trunc): Define this to be floor under win32.
+
 2005-06-13  Geoff Norton  <gnorton@customerdna.com>
 
 	* mono-compiler.h:  Be slightly more conservative on ppc
