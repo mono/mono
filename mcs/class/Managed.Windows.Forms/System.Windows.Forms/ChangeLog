@@ -1,3 +1,9 @@
+2005-06-29  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* ControlBindingsCollection.cs
+		- Throws an exception on null datasource when adding
+		- Checks for duplicated bindings when adding
+
 2005-06-28  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs (OnKeyDown): Support left and right properly

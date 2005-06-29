@@ -72,6 +72,10 @@ namespace System.Windows.Forms {
 
 		public Binding Add (string property_name, object data_source, string data_member)
 		{
+			if (data_source == null) {
+				throw new ArgumentNullException ("DataSource cannot be null.");
+			}			
+			
 			Binding res = new Binding (property_name, data_source, data_member);
 			Add (res);
 			return res;
@@ -106,6 +110,17 @@ namespace System.Windows.Forms {
 
 			if (binding.Control != null && binding.Control != control)
 				  throw new ArgumentException ("dataBinding belongs to another BindingsCollection");
+				  
+			for (int i = 0; i < Count; i++) {
+				Binding bnd = this [i];
+				if (bnd == null || bnd.PropertyName.Length == 0 || binding.PropertyName.Length == 0) {
+					continue;
+				}
+
+				if (String.Compare (bnd.PropertyName, binding.PropertyName, true) == 0) {
+					throw new ArgumentException ("The binding is already in the collection");
+				}
+			}
 
 			binding.SetControl (control);
 			base.AddCore (binding);
