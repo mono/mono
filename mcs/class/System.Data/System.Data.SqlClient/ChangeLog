@@ -1,3 +1,10 @@
+2005-06-29  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlConnection.cs: Open (): catch TdsInternalException and throw
+	SqlException.
+	* SqlException.cs: code re-organised to pass message as well with
+	the exception.
+
 2005-06-23  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnectionStringBuilder.cs: simplified multiple keyword

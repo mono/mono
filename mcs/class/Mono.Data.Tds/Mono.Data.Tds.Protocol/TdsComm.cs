@@ -87,28 +87,33 @@ namespace Mono.Data.Tds.Protocol {
 			outBufferLength = packetSize;
 			inBufferLength = packetSize;
 
-			socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			IPHostEntry hostEntry = Dns.Resolve (dataSource);
 			IPEndPoint endPoint;
-			endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
+			
+			try {
+				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				IPHostEntry hostEntry = Dns.Resolve (dataSource);
+				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 
-			// This replaces the code below for now
-			socket.Connect (endPoint);
+				// This replaces the code below for now
+				socket.Connect (endPoint);
 
-			/*
-			FIXME: Asynchronous socket connection doesn't work right on linux, so comment 
-			       this out for now.  This *does* do the right thing on windows
+				/*
+				  FIXME: Asynchronous socket connection doesn't work right on linux, so comment 
+				  this out for now.  This *does* do the right thing on windows
 
-			connected.Reset ();
-			IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
+				  connected.Reset ();
+				  IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
 
-			if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
-				throw Tds.CreateTimeoutException (dataSource, "Open()");
-			else if (timeout > 0 && !connected.WaitOne ())
-				throw Tds.CreateTimeoutException (dataSource, "Open()");
-			*/
+				  if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
+				  throw Tds.CreateTimeoutException (dataSource, "Open()");
+				  else if (timeout > 0 && !connected.WaitOne ())
+				  throw Tds.CreateTimeoutException (dataSource, "Open()");
+				*/
 
-			stream = new NetworkStream (socket);
+				stream = new NetworkStream (socket);
+			} catch (SocketException e) {
+				throw new TdsInternalException ("Server does not exist or connection refused.", e);
+			}
 		}
 		
 		#endregion // Constructors

@@ -1,3 +1,10 @@
+2005-06-29  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* TdsInternalException.cs: Add ctor for InnerException.
+
+	* TdsComm.cs: Throw TdsInternalException rather than
+	SocketException.
+
 2005-06-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds50.cs: add a special case for datetime parameters to convert

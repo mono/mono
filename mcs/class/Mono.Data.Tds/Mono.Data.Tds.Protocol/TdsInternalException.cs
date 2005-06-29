@@ -38,7 +38,6 @@ namespace Mono.Data.Tds.Protocol {
 
 		byte theClass;
 		int lineNumber;
-		string message;
 		int number;
 		string procedure;
 		string server;
@@ -54,12 +53,16 @@ namespace Mono.Data.Tds.Protocol {
 		{
 		}
 
+		internal TdsInternalException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
+
 		internal TdsInternalException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
 			: base (message)
 		{
 			this.theClass = theClass;
 			this.lineNumber = lineNumber;
-			this.message = message;
 			this.number = number;
 			this.procedure = procedure;
 			this.server = server;
@@ -80,7 +83,7 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		public override string Message {
-			get { return message; }
+			get { return base.Message; }
 		}
 
 		public int Number {

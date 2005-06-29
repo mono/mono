@@ -483,9 +483,10 @@ namespace System.Data.SqlClient {
 					pool = sqlConnectionPools.GetConnectionPool (connectionString, info);
 					tds = pool.GetConnection ();
 				}
-			}
-			catch (TdsTimeoutException e) {
+			} catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			}catch (TdsInternalException e) {
+				throw SqlException.FromTdsInternalException (e);
 			}
 
 			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);

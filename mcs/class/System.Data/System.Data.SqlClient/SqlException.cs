@@ -54,21 +54,37 @@ namespace System.Data.SqlClient {
 		#region Fields
 
 		private SqlErrorCollection errors; 
+		private const string DEF_MESSAGE	= "SQL Exception has occured.";
 
 		#endregion // Fields
 
 		#region Constructors
 
 		internal SqlException () 
-			: base ("a SQL Exception has occurred.") 
+			: this (DEF_MESSAGE, null, null) 
 		{
-			errors = new SqlErrorCollection();
+		}
+		
+		internal SqlException (string message, Exception inner)
+			: this (message, inner, null)
+		{
+		}
+
+		internal SqlException (string message, Exception inner, SqlError sqlError)
+			: base (message == null ? DEF_MESSAGE : message, inner)
+		{
+			errors = new SqlErrorCollection ();
+			if (sqlError != null)
+				errors.Add (sqlError);
 		}
 
 		internal SqlException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
-			: base (message) 
+			: this (message, 
+				null, 
+				new SqlError (theClass, lineNumber, message, 
+					      number, procedure, server, source, 
+					      state)) 
 		{
-			errors = new SqlErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
 		
 		private SqlException(SerializationInfo si, StreamingContext sc)
@@ -94,13 +110,20 @@ namespace System.Data.SqlClient {
 		}
 		
 		public override string Message 	{
-			get { 
+			get {
+				if (Errors.Count == 0)
+					return base.Message;
 				StringBuilder result = new StringBuilder ();
-				foreach (SqlError error in Errors) {
-					if (result.Length > 0)
-						result.Append ('\n');
-					result.Append (error.Message);
+				if (base.Message != DEF_MESSAGE) {
+					result.Append (base.Message);
+					result.Append ("\n");
 				}
+				for (int i=0; i < Errors.Count -1; i++) {
+					result.Append (Errors [i].Message);
+					result.Append ("\n");
+				}
+				if (Errors.Count > 0)
+					result.Append (Errors [Errors.Count - 1].Message);
 				return result.ToString ();
 			}
 		}
@@ -129,9 +152,19 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
+
 		internal static SqlException FromTdsInternalException (TdsInternalException e)
 		{
-			return new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
+			return FromTdsInternalException (null, e);
+		}
+
+		internal static SqlException FromTdsInternalException (string message, 
+								       TdsInternalException e)
+		{
+			SqlError sqlError = new SqlError (e.Class, e.LineNumber, e.Message, 
+							  e.Number, e.Procedure, e.Server, 
+							  "Mono SqlClient Data Provider", e.State);
+			return new SqlException (message, e, sqlError);
 		}
 
 		public override void GetObjectData (SerializationInfo si, StreamingContext context) 
