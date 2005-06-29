@@ -29,6 +29,7 @@ namespace Mono.Globalization.Unicode
 		readonly byte [] cjkLv2Table;
 		readonly CodePointIndexer cjkLv2Indexer;
 
+		#region Tailoring supports
 		// Possible mapping types are:
 		//
 		//	- string to string (ReplacementMap)
@@ -54,7 +55,27 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		internal struct Level2Map
+		internal class ContractionComparer : IComparer
+		{
+			public static readonly ContractionComparer Instance =
+				new ContractionComparer ();
+
+			public int Compare (object o1, object o2)
+			{
+				Contraction c1 = (Contraction) o1;
+				Contraction c2 = (Contraction) o2;
+				char [] a1 = c1.Source;
+				char [] a2 = c2.Source;
+				int min = a1.Length > a2.Length ?
+					a2.Length : a1.Length;
+				for (int i = 0; i < min; i++)
+					if (a1 [i] != a2 [i])
+						return a1 [i] - a2 [i];
+				return a1.Length - a2.Length;
+			}
+		}
+
+		internal class Level2Map
 		{
 			public byte Source;
 			public byte Replace;
@@ -66,8 +87,25 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
+		internal class Level2MapComparer : IComparer
+		{
+			public static readonly Level2MapComparer Instance =
+				new Level2MapComparer ();
+
+			public int Compare (object o1, object o2)
+			{
+				Level2Map m1 = (Level2Map) o1;
+				Level2Map m2 = (Level2Map) o2;
+				return (m1.Source - m2.Source);
+			}
+		}
+
 		readonly Contraction [] contractions;
 		readonly Level2Map [] level2Maps;
+
+		#endregion
+
+		#region .ctor() and split functions
 
 		public SimpleCollator (CultureInfo culture)
 		{
@@ -154,7 +192,8 @@ Console.WriteLine (" -> {0}", c.Replacement);
 					throw new NotImplementedException (String.Format ("Mono INTERNAL ERROR (Should not happen): Collation tailoring table is broken for culture {0} ({1}) at 0x{2:X}", culture.LCID, culture.Name, idx));
 				}
 			}
-			// FIXME: sort contractions and lv2maps
+			cmaps.Sort (ContractionComparer.Instance);
+			dmaps.Sort (Level2MapComparer.Instance);
 			contractions = cmaps.ToArray (typeof (Contraction))
 				as Contraction [];
 			diacriticals = dmaps.ToArray (typeof (Level2Map))
@@ -196,6 +235,8 @@ Console.WriteLine (" -> {0}", c.Replacement);
 			return ret;
 		}
 
+		#endregion
+
 		byte Category (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
@@ -217,8 +258,19 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		{
 			if (cp < 0x3000 || cjkLv2Table == null)
 				return Uni.Level2 (cp);
-			byte cjk = cjkLv2Table [cjkLv2Indexer.ToIndex (cp)];
-			return cjk != 0 ? cjk : Uni.Level2 (cp);
+			byte ret = cjkLv2Table [cjkLv2Indexer.ToIndex (cp)];
+			if (ret != 0)
+				return ret;
+			ret = Uni.Level2 (cp);
+			if (level2Maps.Length == 0)
+				return ret;
+			for (int i = 0; i < level2Maps.Length; i++) {
+				if (level2Maps [i].Source == ret)
+					return level2Maps [i].Replace;
+				else if (level2Maps [i].Source > ret)
+					break;
+			}
+			return ret;
 		}
 
 		void SetOptions (CompareOptions options)

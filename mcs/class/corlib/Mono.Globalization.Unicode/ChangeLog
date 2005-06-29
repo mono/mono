@@ -1,5 +1,11 @@
 2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : sort tailoring tables before actual usage.
+	  Support diacritical remappings (it is customized collation rule
+	  which does not exist in UCA).
+
+2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : build culture specific tailoring table from
 	  TailoringInfo and unified data array.
 	* create-mscompat-collation-table.cs : Added null termination to
