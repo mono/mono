@@ -1,5 +1,13 @@
 2005-06-28  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs (OnKeyDown): Support left and right properly
+	(navigates as well as expanding and collapsing.
+	- Add support for Multiply, this expands all the selected nodes
+	children.
+	- Fix some tabbing.
+
+2005-06-28  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Implement keyboard navigation, currently supports,
 	LEFT, RIGHT, UP, DOWN, PGUP, PGDOWN, HOME, END, ADD, SUBTRACT. Add
 	support for toggling checkboxes with the space bar.

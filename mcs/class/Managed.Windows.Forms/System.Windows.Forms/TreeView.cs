@@ -506,15 +506,35 @@ namespace System.Windows.Forms {
 			OpenTreeNodeEnumerator ne;
 
 			switch (e.KeyData & Keys.KeyCode) {
+                        case Keys.Add:
+				if (selected_node != null && selected_node.IsExpanded)
+					selected_node.Expand ();
+				break;
 			case Keys.Subtract:
-			case Keys.Left:
-				if (selected_node != null)
+				if (selected_node != null && selected_node.IsExpanded)
 					selected_node.Collapse ();
 				break;
-			case Keys.Add:
+			case Keys.Left:
+				if (selected_node != null) {
+					if (selected_node.IsExpanded)
+						selected_node.Collapse ();
+					else {
+						ne = new OpenTreeNodeEnumerator (selected_node);
+						if (ne.MovePrevious () && ne.MovePrevious ())
+							SelectedNode = ne.CurrentNode;
+					}
+				}
+				break;
 			case Keys.Right:
-				if (selected_node != null)
-					selected_node.Expand ();
+				if (selected_node != null) {
+					if (!selected_node.IsExpanded)
+						selected_node.Expand ();
+					else {
+						ne = new OpenTreeNodeEnumerator (selected_node);
+						if (ne.MoveNext () && ne.MoveNext ())
+							SelectedNode = ne.CurrentNode;
+					}
+				}
 				break;
 			case Keys.Up:
 				if (selected_node != null) {
@@ -564,6 +584,10 @@ namespace System.Windows.Forms {
 					SelectedNode = ne.CurrentNode;
 				}
 				break;
+                        case Keys.Multiply:
+                                if (selected_node != null)
+                                        selected_node.ExpandAll ();
+                                break;
 			}
 			base.OnKeyDown (e);
 
@@ -642,17 +666,20 @@ namespace System.Windows.Forms {
 
 		protected override void WndProc(ref Message m) {
 			switch ((Msg) m.Msg) {
-				case Msg.WM_PAINT: {				
-					PaintEventArgs	paint_event;
+			case Msg.WM_PAINT: {				
+				PaintEventArgs	paint_event;
 
-					paint_event = XplatUI.PaintEventStart (Handle);
-					DoPaint (paint_event);
-					XplatUI.PaintEventEnd (Handle);
-					return;
-				}
-				case Msg.WM_LBUTTONDBLCLK:
-					int val = m.LParam.ToInt32();
-					DoubleClickHandler (null, new MouseEventArgs (MouseButtons.Left, 2, val & 0xffff, (val>>16) & 0xffff, 0));
+				paint_event = XplatUI.PaintEventStart (Handle);
+				DoPaint (paint_event);
+				XplatUI.PaintEventEnd (Handle);
+				return;
+			}
+			case Msg.WM_LBUTTONDBLCLK:
+				int val = m.LParam.ToInt32();
+				DoubleClickHandler (null, new
+						MouseEventArgs (MouseButtons.Left,
+								2, val & 0xffff,
+								(val>>16) & 0xffff, 0));
 					break;
 			}
 			base.WndProc (ref m);
