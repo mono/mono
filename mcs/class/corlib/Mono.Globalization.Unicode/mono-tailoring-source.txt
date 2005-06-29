@@ -10,7 +10,10 @@
 #		it means source S has a sortkey. Here * can be used and it
 #		character in S.
 #
-
+# Level 4 tailorings is not supported (it is logically done).
+#
+# Shifted characters (level 5) can be specified by setting category as 6.
+#
 
 @127 # invariant mappings
 	\u00C6 = AE
@@ -61,158 +64,158 @@
 
 
 @2092 # az-AZ-Cyrl
-	\u042B : 10 31 * * *
-	\u044B : 10 31 * * *
-	\u04BA : 10 6B * * *
-	\u04BB : 10 6B * * *
+	\u042B : 10 31 * *
+	\u044B : 10 31 * *
+	\u04BA : 10 6B * *
+	\u04BB : 10 6B * *
 
 @5 # cs
-	ch : 0E 2E 01 01 01
-	\u010C : 0E 0C 01 * *
-	\u010D : 0E 0C 01 * *
-	\u017D : 0E AD 01 * *
-	\u017E : 0E AD 01 * *
-	\u0158 : 0E 8D 01 * *
-	\u0159 : 0E 8D 01 * *
-	\u0160 : 0E 97 01 * *
-	\u0161 : 0E 97 01 * *
-	\u017D : 0E AD 01 * *
-	\u017E : 0E AD 01 * *
-	\u0308 : 01 03 * * * # Actually it seems the same as the secondary change
+	ch : 0E 2E 01 01
+	\u010C : 0E 0C 01 *
+	\u010D : 0E 0C 01 *
+	\u017D : 0E AD 01 *
+	\u017E : 0E AD 01 *
+	\u0158 : 0E 8D 01 *
+	\u0159 : 0E 8D 01 *
+	\u0160 : 0E 97 01 *
+	\u0161 : 0E 97 01 *
+	\u017D : 0E AD 01 *
+	\u017E : 0E AD 01 *
+	\u0308 : 01 03 * * # Actually it seems the same as the secondary change
 	*Diacritical 13 -> 5 # GRAVE
 	*Diacritical 10 -> 4 # DOT ABOVE
 	*Diacritical 11 -> 4 # MIDDLE DOT
 
 @6 # da
-	AA : 0E B1 01 1A 01
-	Aa : 0E B1 01 12 01
-	aa : 0E B1 01 01 01
-	\u00C4 : 0E AC * * *
-	\u00E4 : 0E AC * * *
-	\u00C6 : 0E AC 01 01 *
-	\u00E6 : 0E AC 01 01 *
-	\u01E2 : 0E AC 03 * *
-	\u01E3 : 0E AC 03 * *
-	\u00C5 : 0E B1 * * *
-	\u00E5 : 0E B1 * * *
-	\u00D6 : 0E AE * * *
-	\u00D8 : 0E AE * * *
-	\u00F6 : 0E AE * * *
-	\u00F8 : 0E AE * * *
-	\u0150 : 0E AE 1B * *
-	\u0151 : 0E AE 1B * *
-	\u00DC : 0E A7 7B * *
-	\u00FC : 0E A7 7B * *
-	\u0170 : 0E A7 1B * *
-	\u0171 : 0E A7 1B * *
+	AA : 0E B1 01 1A
+	Aa : 0E B1 01 12
+	aa : 0E B1 01 01
+	\u00C4 : 0E AC * *
+	\u00E4 : 0E AC * *
+	\u00C6 : 0E AC 01 01
+	\u00E6 : 0E AC 01 01
+	\u01E2 : 0E AC 03 *
+	\u01E3 : 0E AC 03 *
+	\u00C5 : 0E B1 * *
+	\u00E5 : 0E B1 * *
+	\u00D6 : 0E AE * *
+	\u00D8 : 0E AE * *
+	\u00F6 : 0E AE * *
+	\u00F8 : 0E AE * *
+	\u0150 : 0E AE 1B *
+	\u0151 : 0E AE 1B *
+	\u00DC : 0E A7 7B *
+	\u00FC : 0E A7 7B *
+	\u0170 : 0E A7 1B *
+	\u0171 : 0E A7 1B *
 
 @10 # es
-	\u00D1 : 0E 73 01 * *
-	\u00F1 : 0E 73 01 * *
+	\u00D1 : 0E 73 01 *
+	\u00F1 : 0E 73 01 *
 
 @11 # fi
-	\u0057 : 0E A2 03 * * # W
-	\u0077 : 0E A2 03 * * # W
-	\u00C4 : 0E AF 01 * *
-	\u00C5 : 0E AD 01 * *
-	\u00E4 : 0E AF 01 * *
-	\u00E5 : 0E AD 01 * *
-	\u00D6 : 0E B0 01 * *
-	\u00D8 : 0E B0 1E * *
-	\u00DC : 0E A7 7B * *
-	\u00F6 : 0E B0 01 * *
-	\u00F8 : 0E B0 1E * *
-	\u00FC : 0E A7 7B * *
-	\u0150 : 0E B0 1B * *
-	\u0151 : 0E B0 1B * *
-	\u0170 : 0E A7 1B * *
-	\u0171 : 0E A7 1B * *
-	\u0174 : 0E A2 * * *
-	\u0175 : 0E A2 * * *
-	\u01BF : 0E A2 7B * *
+	\u0057 : 0E A2 03 * # W
+	\u0077 : 0E A2 03 * # W
+	\u00C4 : 0E AF 01 *
+	\u00C5 : 0E AD 01 *
+	\u00E4 : 0E AF 01 *
+	\u00E5 : 0E AD 01 *
+	\u00D6 : 0E B0 01 *
+	\u00D8 : 0E B0 1E *
+	\u00DC : 0E A7 7B *
+	\u00F6 : 0E B0 01 *
+	\u00F8 : 0E B0 1E *
+	\u00FC : 0E A7 7B *
+	\u0150 : 0E B0 1B *
+	\u0151 : 0E B0 1B *
+	\u0170 : 0E A7 1B *
+	\u0171 : 0E A7 1B *
+	\u0174 : 0E A2 * *
+	\u0175 : 0E A2 * *
+	\u01BF : 0E A2 7B *
 
 @12 # fr
 	*FrenchSort
 
 @14 # hu
-	CS : 0E 0E 01 1A 01
-	Cs : 0E 0E 01 12 01
-	cs : 0E 0E 01 01 01
-	DZ : 0E 1C 01 1A 01
-	Dz : 0E 1C 01 12 01
-	dz : 0E 1C 01 01 01
-	GY : 0E 27 01 1A 01
-	Gy : 0E 27 01 12 01
-	gy : 0E 27 01 01 01
-	LY : 0E 4C 01 1A 01
-	Ly : 0E 4C 01 12 01
-	ly : 0E 4C 01 01 01
-	NY : 0E 75 01 1A 01
-	Ny : 0E 75 01 12 01
-	ny : 0E 75 01 01 01
-	SZ : 0E 98 01 1A 01
-	Sz : 0E 98 01 12 01
-	sz : 0E 98 01 01 01
-	TY : 0E 9E 01 1A 01
-	Ty : 0E 9E 01 12 01
-	ny : 0E 9E 01 01 01
-	ZS : 0E B1 01 1A 01
-	Zs : 0E B1 01 12 01
-	zs : 0E B1 01 01 01
+	CS : 0E 0E 01 1A
+	Cs : 0E 0E 01 12
+	cs : 0E 0E 01 01
+	DZ : 0E 1C 01 1A
+	Dz : 0E 1C 01 12
+	dz : 0E 1C 01 01
+	GY : 0E 27 01 1A
+	Gy : 0E 27 01 12
+	gy : 0E 27 01 01
+	LY : 0E 4C 01 1A
+	Ly : 0E 4C 01 12
+	ly : 0E 4C 01 01
+	NY : 0E 75 01 1A
+	Ny : 0E 75 01 12
+	ny : 0E 75 01 01
+	SZ : 0E 98 01 1A
+	Sz : 0E 98 01 12
+	sz : 0E 98 01 01
+	TY : 0E 9E 01 1A
+	Ty : 0E 9E 01 12
+	ny : 0E 9E 01 01
+	ZS : 0E B1 01 1A
+	Zs : 0E B1 01 12
+	zs : 0E B1 01 01
 	# maybe *Diacritical 1D -> 1B
-	\u00D6 : 0E 7D 01 * *
-	\u00F6 : 0E 7D 01 * *
-	\u0150 : 0E 7D 1B * *
-	\u0151 : 0E 7D 1B * *
-	\u00DC : 0E A1 01 * *
-	\u00FC : 0E A1 01 * *
-	\u0170 : 0E A1 1B * *
-	\u0171 : 0E A1 1B * *
+	\u00D6 : 0E 7D 01 *
+	\u00F6 : 0E 7D 01 *
+	\u0150 : 0E 7D 1B *
+	\u0151 : 0E 7D 1B *
+	\u00DC : 0E A1 01 *
+	\u00FC : 0E A1 01 *
+	\u0170 : 0E A1 1B *
+	\u0171 : 0E A1 1B *
 
 @24 # ro
-	\u00CE : 0E 34 01 * *
-	\u00EE : 0E 34 01 * *
-	\u0102 : 0E 08 01 * *
-	\u0103 : 0E 08 01 * *
-	\u015E : 0E 98 01 * *
-	\u015F : 0E 98 01 * *
-	\u0162 : 0E 9E 01 * *
-	\u0163 : 0E 9E 01 * *
+	\u00CE : 0E 34 01 *
+	\u00EE : 0E 34 01 *
+	\u0102 : 0E 08 01 *
+	\u0103 : 0E 08 01 *
+	\u015E : 0E 98 01 *
+	\u015F : 0E 98 01 *
+	\u0162 : 0E 9E 01 *
+	\u0163 : 0E 9E 01 *
 
 @26 # hr FIXME: finish
-	D\u017D : 0E 1D 04 1A 01
-	D\u017E : 0E 1D 04 12 01
-	d\u017E : 0E 1D 04 01 01
-	\u0106 : 0E 0A 01 * *
-	\u0107 : 0E 0A 01 * *
-	\u010C : 0E 0B 01 * *
-	\u010D : 0E 0B 01 * *
-	\u0110 : 0E 1E 01 * *
-	\u0111 : 0E 1E 01 * *
-	\u0160 : 0E 97 01 * *
-	\u0161 : 0E 97 01 * *
-	\u017D : 0E AD 01 * *
-	\u017E : 0E AD 01 * *
-	\u01C4 : 0E 1D 04 1A *
-	\u01C5 : 0E 1D 04 12 *
-	\u01C6 : 0E 1D 04 01 *
-	\u01C7 : 0E 4A 01 1A *
-	\u01C8 : 0E 4A 01 12 *
-	\u01C9 : 0E 4A 01 01 *
-	\u01CA : 0E 73 01 1A *
-	\u01CB : 0E 73 01 12 *
-	\u01CC : 0E 73 01 01 *
-	\u0306 : 01 03 * * * # Actually it seems the same as the secondary change
-	\u030C : 01 01 * * * # Actually it seems the same as the secondary change
+	D\u017D : 0E 1D 04 1A
+	D\u017E : 0E 1D 04 12
+	d\u017E : 0E 1D 04 01
+	\u0106 : 0E 0A 01 *
+	\u0107 : 0E 0A 01 *
+	\u010C : 0E 0B 01 *
+	\u010D : 0E 0B 01 *
+	\u0110 : 0E 1E 01 *
+	\u0111 : 0E 1E 01 *
+	\u0160 : 0E 97 01 *
+	\u0161 : 0E 97 01 *
+	\u017D : 0E AD 01 *
+	\u017E : 0E AD 01 *
+	\u01C4 : 0E 1D 04 1A
+	\u01C5 : 0E 1D 04 12
+	\u01C6 : 0E 1D 04 01
+	\u01C7 : 0E 4A 01 1A
+	\u01C8 : 0E 4A 01 12
+	\u01C9 : 0E 4A 01 01
+	\u01CA : 0E 73 01 1A
+	\u01CB : 0E 73 01 12
+	\u01CC : 0E 73 01 01
+	\u0306 : 01 03 * * # Actually it seems the same as the secondary change
+	\u030C : 01 01 * * # Actually it seems the same as the secondary change
 	*Diacritical 15 -> 05
 	*Diacritical 14 -> 04
 
 @34 # uk
-	\u042C : 10 8A * * * # [10 7E]
-	\u044C : 10 8A * * * # [10 7E]
+	\u042C : 10 8A * * # [10 7E]
+	\u044C : 10 8A * * # [10 7E]
 
 @47 # mk
-	\u0403 : 10 13 * * *
-	\u0453 : 10 13 * * *
-	\u040C : 10 58 * * *
-	\u045C : 10 58 * * *
+	\u0403 : 10 13 * *
+	\u0453 : 10 13 * *
+	\u040C : 10 58 * *
+	\u045C : 10 58 * *

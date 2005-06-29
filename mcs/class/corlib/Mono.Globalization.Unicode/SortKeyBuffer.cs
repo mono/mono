@@ -150,7 +150,7 @@ namespace Mono.Globalization.Unicode
 		private void AppendLevel5 (byte category, byte lv1)
 		{
 			// offset
-#if FALSE
+#if false
 			// If it strictly matches to Windows, offsetValue is always l2.
 			int offsetValue = l2 - level5LastPos;
 			// If it strictly matches ti Windows, no 0xFF here.

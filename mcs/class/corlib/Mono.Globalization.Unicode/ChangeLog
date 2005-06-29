@@ -1,5 +1,14 @@
 2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs,
+	* mono-tailoring-source.txt : removed extraneous level 4 sortkey
+	  which cannot be supported.
+	* SimpleCollator.cs : added GetContraction() and used in some places.
+	  Now CompareOptions is set only once. Reordered some code (e.g.
+	  ignorable check -> get compat char -> compare).
+
+2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : sort tailoring tables before actual usage.
 	  Support diacritical remappings (it is customized collation rule
 	  which does not exist in UCA).

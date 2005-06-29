@@ -4,6 +4,29 @@
 // This class will demonstrate CompareInfo functionality that will just work.
 //
 
+//
+// Here's a summary for supporting contractions, expansions and diacritical 
+// remappings.
+//
+// Diacritical mapping is a simple tailoring rule that "remaps" diacritical
+// weight value from one to another. For now it applies to all range of
+// characters, but at some stage we might need to limit the remapping ranges.
+//
+// A Contraction consists of a string (actually char[]) and a sortkey entry
+// (i.e. byte[]). It indicates that a sequence of characters is interpreted
+// as a single character that has the mapped sortkey value. There is no
+// character which goes across "special rules". When the collator encountered
+// such a sequence of characters, it just returns the sortkey value without
+// further replacement.
+//
+// Since it is still likely to happen that a contraction sequence matches
+// other character than the identical sequence (depending on CompareOptions
+// and of course, defined sortkey value itself), comparison cannot be done
+// at source char[] level.
+//
+// (to be continued.)
+//
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -15,6 +38,9 @@ namespace Mono.Globalization.Unicode
 {
 	internal class SimpleCollator
 	{
+		static SimpleCollator invariant =
+			new SimpleCollator (CultureInfo.InvariantCulture);
+
 		SortKeyBuffer buf;
 		// CompareOptions expanded.
 		bool ignoreNonSpace; // used in IndexOf()
@@ -28,6 +54,7 @@ namespace Mono.Globalization.Unicode
 		readonly CodePointIndexer cjkIndexer;
 		readonly byte [] cjkLv2Table;
 		readonly CodePointIndexer cjkLv2Indexer;
+		readonly int lcid;
 
 		#region Tailoring supports
 		// Possible mapping types are:
@@ -109,6 +136,7 @@ namespace Mono.Globalization.Unicode
 
 		public SimpleCollator (CultureInfo culture)
 		{
+			lcid = culture.LCID;
 			textInfo = culture.TextInfo;
 			buf = new SortKeyBuffer (culture.LCID);
 
@@ -160,8 +188,8 @@ Console.WriteLine (" -> {0}", c.Replacement);
 						ss++;
 					src = new char [ss - idx];
 					Array.Copy (tarr, idx, src, 0, ss - idx);
-					byte [] sortkey = new byte [5];
-					for (int i = 0; i < 5; i++)
+					byte [] sortkey = new byte [4];
+					for (int i = 0; i < 4; i++)
 						sortkey [i] = (byte) tarr [ss + 1 + i];
 					cmaps.Add (new Contraction (
 						src, null, sortkey));
@@ -282,12 +310,88 @@ Console.WriteLine (" -> {0}", c.Replacement);
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
 		}
 
+		Contraction GetContraction (string s, int start, int end)
+		{
+			Contraction c = GetContraction (s, start, end, contractions);
+			if (c != null || lcid == 127)
+				return c;
+			return GetContraction (s, start, end, invariant.contractions);
+		}
+
+		Contraction GetContraction (string s, int start, int end, Contraction [] clist)
+		{
+			for (int i = 0; i < clist.Length; i++) {
+				Contraction ct = clist [i];
+				if (ct.Source [0] > s [start])
+					return null; // it's already sorted
+				char [] chars = ct.Source;
+				if (end - start != chars.Length)
+					continue;
+				bool match = true;
+				for (int n = 0; n < chars.Length; n++)
+					if (s [start + n] != chars [n]) {
+						match = false;
+						break;
+					}
+				if (match)
+					return ct;
+			}
+			return null;
+		}
+
+		Contraction GetContraction (char c)
+		{
+			Contraction ct = GetContraction (c, contractions);
+			if (ct != null || lcid == 127)
+				return ct;
+			return GetContraction (c, invariant.contractions);
+		}
+
+		Contraction GetContraction (char c, Contraction [] clist)
+		{
+			for (int i = 0; i < clist.Length; i++) {
+				Contraction ct = clist [i];
+				if (ct.Source [0] > c)
+					return null; // it's already sorted
+				if (ct.Source [0] == c && ct.Source.Length == 1)
+					continue;
+				return ct;
+			}
+			return null;
+		}
+
 		// FIXME: It should not be used, since it disregards both
 		// sortkey maps and replacement map from two or more chars.
 		string GetExpansion (int i)
 		{
 			return Uni.GetExpansion ((char) i);
 		}
+
+		/*
+		bool HasContraction (char c, bool strict)
+		{
+			if (HasContraction (c, strict, contractions))
+				return true;
+			if (lcid != 127)
+				return HasContraction (c, strict, invariant.contractions);
+			return false;
+		}
+
+		bool HasContraction (char c, bool strict, Contraction [] clist)
+		{
+			for (int i = 0; i < clist.Length; i++) {
+				Contraction ct = clist [i];
+				if (ct.Source [0] > c)
+					return false; // it's already sorted
+				if (ct.Source [0] == c) {
+					if (strict && ct.Source.Length > 1)
+						continue;
+					return true;
+				}
+			}
+			return false;
+		}
+		*/
 
 		int FilterOptions (int i)
 		{
@@ -457,26 +561,16 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
+			return IsPrefix (s, target, start, length);
+		}
 
+		bool IsPrefix (string s, string target, int start, int length)
+		{
 			int min = length > target.Length ? target.Length : length;
 			int si = start;
 
 			// FIXME: this is not enough to handle tailorings.
 			for (int j = 0; j < min; j++, si++) {
-				int ci = FilterOptions (s [si]);
-				int cj = FilterOptions (target [j]);
-				if (ci == cj)
-					continue;
-				if (IsIgnorable (s [si])) {
-					if (!IsIgnorable (target [j]))
-						j--;
-					continue;
-				}
-				else if (IsIgnorable (target [j])) {
-					si--;
-					continue;
-				}
-
 				// FIXME: should handle expansions (and it 
 				// should be before codepoint comparison).
 				string expansion = GetExpansion (s [si]);
@@ -486,11 +580,27 @@ Console.WriteLine (" -> {0}", c.Replacement);
 				if (expansion != null)
 					return false;
 
+				// char-by-char comparison.
+				if (IsIgnorable (s [si])) {
+					if (!IsIgnorable (target [j]))
+						j--;
+					continue;
+				}
+				else if (IsIgnorable (target [j])) {
+					si--;
+					continue;
+				}
+				int ci = FilterOptions (s [si]);
+				int cj = FilterOptions (target [j]);
+				if (ci == cj)
+					continue;
+				// lv.1 to 3
 				if (Category (ci) != Category (cj) ||
 					Level1 (ci) != Level1 (cj) ||
 					!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
 					Uni.Level3 (ci) != Uni.Level3 (cj))
 					return false;
+				// lv.4 (only when required)
 				if (!Uni.HasSpecialWeight ((char) ci))
 					continue;
 				if (Uni.IsJapaneseSmallLetter ((char) ci) !=
@@ -528,26 +638,16 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
+			return IsSuffix (s, target, start, length);
+		}
 
+		bool IsSuffix (string s, string target, int start, int length)
+		{
 			int min = length > target.Length ? target.Length : length;
 			int si = start;
 
 			// FIXME: this is not enough to handle tailorings.
 			for (int j = min - 1; j >= 0; j--, si--) {
-				int ci = FilterOptions (s [si]);
-				int cj = FilterOptions (target [j]);
-				if (ci == cj)
-					continue;
-				if (IsIgnorable (s [si])) {
-					if (!IsIgnorable (target [j]))
-						j++;
-					continue;
-				}
-				else if (IsIgnorable (target [j])) {
-					si++;
-					continue;
-				}
-
 				// FIXME: should handle expansions (and it 
 				// should be before codepoint comparison).
 				string expansion = GetExpansion (s [si]);
@@ -557,11 +657,27 @@ Console.WriteLine (" -> {0}", c.Replacement);
 				if (expansion != null)
 					return false;
 
+				// char-by-char comparison.
+				if (IsIgnorable (s [si])) {
+					if (!IsIgnorable (target [j]))
+						j++;
+					continue;
+				}
+				else if (IsIgnorable (target [j])) {
+					si++;
+					continue;
+				}
+				int ci = FilterOptions (s [si]);
+				int cj = FilterOptions (target [j]);
+				if (ci == cj)
+					continue;
+				// lv.1 to 3
 				if (Category (ci) != Category (cj) ||
 					Level1 (ci) != Level1 (cj) ||
 					!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
 					Uni.Level3 (ci) != Uni.Level3 (cj))
 					return false;
+				// lv.4 (only when required)
 				if (!Uni.HasSpecialWeight ((char) ci))
 					continue;
 				if (Uni.IsJapaneseSmallLetter ((char) ci) !=
@@ -591,24 +707,29 @@ Console.WriteLine (" -> {0}", c.Replacement);
 
 		#region IndexOf()
 
-		public int IndexOf (string s, char target)
-		{
-			return IndexOf (s, target, 0, s.Length, CompareOptions.None);
-		}
-
 		public int IndexOf (string s, char target, CompareOptions opt)
 		{
 			return IndexOf (s, target, 0, s.Length, opt);
 		}
 
+		// To make implementation simple, it does not handle 
+		// contractions (impossible) expansions. If the character has
+		// an expansion form, it creates a string and invokes
+		// the overload w/ string argument.
 		public int IndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
-			// If target has an expansion, then use string search.
-			string expansion = GetExpansion (target);
-			if (expansion != null)
-				return IndexOf (s, expansion, start, length, opt);
-
 			SetOptions (opt);
+			return IndexOf (s, target, start, length);
+		}
+
+		int IndexOf (string s, char target, int start, int length)
+		{
+			// If target has an contraction, then use string search.
+			Contraction ct = GetContraction (target);
+			if (ct != null)
+				return ct.SortKey != null ?
+					IndexOf (s, new string (target, 1), start, length) :
+					IndexOf (s, ct.Replacement, start, length);
 
 			int ti = FilterOptions ((int) target);
 			int end = start + length;
@@ -621,7 +742,7 @@ Console.WriteLine (" -> {0}", c.Replacement);
 					return idx;
 				}
 
-				expansion = GetExpansion (s [idx]);
+				string expansion = GetExpansion (s [idx]);
 				if (expansion != null)
 					continue; // since target cannot be expansion as conditioned above.
 				if (s [idx] == target)
@@ -655,13 +776,18 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
+			return IndexOf (s, target, start, length);
+		}
+
+		public int IndexOf (string s, string target, int start, int length)
+		{
 			do {
 				// FIXME: this should be modified to handle
 				// expansions
-				int idx = IndexOf (s, target [0], start, length, opt);
+				int idx = IndexOf (s, target [0], start, length);
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, length - (idx - start), opt))
+				if (IsPrefix (s, target, idx, length - (idx - start)))
 					return idx;
 				start++;
 				length--;
@@ -673,24 +799,29 @@ Console.WriteLine (" -> {0}", c.Replacement);
 
 		#region LastIndexOf()
 
-		public int LastIndexOf (string s, char target)
-		{
-			return LastIndexOf (s, target, s.Length - 1, s.Length, CompareOptions.None);
-		}
-
 		public int LastIndexOf (string s, char target, CompareOptions opt)
 		{
 			return LastIndexOf (s, target, s.Length - 1, s.Length, opt);
 		}
 
+		// To make implementation simple, it does not handle 
+		// contractions (impossible) expansions. If the character has
+		// an expansion form, it creates a string and invokes
+		// the overload w/ string argument.
 		public int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
-			// If target has an expansion, then use string search.
-			string expansion = GetExpansion (target);
-			if (expansion != null)
-				return LastIndexOf (s, expansion, start, length, opt);
-
 			SetOptions (opt);
+			return LastIndexOf (s, target, start, length);
+		}
+
+		int LastIndexOf (string s, char target, int start, int length)
+		{
+			// If target has an contraction, then use string search.
+			Contraction ct = GetContraction (target);
+			if (ct != null)
+				return ct.SortKey != null ?
+					LastIndexOf (s, new string (target, 1), start, length) :
+					LastIndexOf (s, ct.Replacement, start, length);
 
 			int end = start - length;
 
@@ -704,7 +835,7 @@ Console.WriteLine (" -> {0}", c.Replacement);
 					return idx;
 				}
 
-				expansion = GetExpansion (s [idx]);
+				string expansion = GetExpansion (s [idx]);
 				if (expansion != null)
 					continue; // since target cannot be expansion as conditioned above.
 				if (s [idx] == target)
@@ -739,16 +870,20 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
+			return LastIndexOf (s, target, start, length);
+		}
 
+		int LastIndexOf (string s, string target, int start, int length)
+		{
 			int orgStart = start;
 
 			do {
 				// FIXME: this should be modified to handle
 				// expansions
-				int idx = LastIndexOf (s, target [0], start, length, opt);
+				int idx = LastIndexOf (s, target [0], start, length);
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, orgStart - idx + 1, opt))
+				if (IsPrefix (s, target, idx, orgStart - idx + 1))
 					return idx;
 				length--;
 				start--;

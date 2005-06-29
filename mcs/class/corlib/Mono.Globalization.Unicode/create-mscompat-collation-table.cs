@@ -587,8 +587,8 @@ sw.Close ();
 			if (idx > 0) {
 				string source = s.Substring (0, idx).Trim ();
 				string [] l = s.Substring (idx + 1).Trim ().Split (' ');
-				byte [] b = new byte [5];
-				for (int i = 0; i < 5; i++) {
+				byte [] b = new byte [4];
+				for (int i = 0; i < 4; i++) {
 					if (l [i] == "*")
 						b [i] = 0;
 					else
@@ -3549,12 +3549,12 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 			public char [] ToCharArray ()
 			{
-				char [] ret = new char [Source.Length + 8];
+				char [] ret = new char [Source.Length + 7];
 				ret [0] = (char) 01; // kind:SortKeyMap
 				for (int i = 0; i < Source.Length; i++)
 					ret [i + 1] = Source [i];
 				// null terminate
-				for (int i = 0; i < 5; i++)
+				for (int i = 0; i < 4; i++)
 					ret [i + Source.Length + 2] = (char) SortKey [i];
 				return ret;
 			}
