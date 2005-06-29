@@ -89,8 +89,16 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		public static uint User {
+			get {return UnixUser.GetCurrentUser ();}
+		}
+
 		public static string UserName {
 			get {return UnixUser.GetCurrentUserName();}
+		}
+
+		public static string Login {
+			get {return UnixUser.GetLogin ();}
 		}
 
 		public static int CreateSession ()

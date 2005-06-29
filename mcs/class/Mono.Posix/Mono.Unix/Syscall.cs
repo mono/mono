@@ -1951,6 +1951,8 @@ namespace Mono.Unix {
 
 		public static readonly int L_cuserid = _L_cuserid ();
 
+		internal static object getlogin_lock = new object ();
+
 		[DllImport (LIBC, SetLastError=true, EntryPoint="cuserid")]
 		private static extern IntPtr sys_cuserid ([Out] StringBuilder @string);
 
@@ -1962,8 +1964,10 @@ namespace Mono.Unix {
 			if (@string.Capacity < L_cuserid) {
 				throw new ArgumentOutOfRangeException ("string", "string.Capacity < L_cuserid");
 			}
-			IntPtr r = sys_cuserid (@string);
-			return UnixMarshal.PtrToString (r);
+			lock (getlogin_lock) {
+				IntPtr r = sys_cuserid (@string);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
 		#endregion
@@ -2795,10 +2799,10 @@ namespace Mono.Unix {
 				"shutdown code.\nUse System.Diagnostics.Process instead")]
 		private static extern int vfork ();
 
+		private static object tty_lock = new object ();
+
 		[DllImport (LIBC, SetLastError=true, EntryPoint="ttyname")]
 		private static extern IntPtr sys_ttyname (int fd);
-
-		private static object tty_lock = new object ();
 
 		public static string ttyname (int fd)
 		{
@@ -2863,11 +2867,12 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getlogin")]
 		private static extern IntPtr sys_getlogin ();
 
-		[Obsolete ("Not re-entrant.  Use getlogin_r instead.")]
 		public static string getlogin ()
 		{
-			IntPtr r = sys_getlogin ();
-			return UnixMarshal.PtrToString (r);
+			lock (getlogin_lock) {
+				IntPtr r = sys_getlogin ();
+				return UnixMarshal.PtrToString (r);
+			}
 		}
 
 		// getlogin_r(3)
@@ -3039,14 +3044,20 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_lockf")]
 		public static extern int lockf (int fd, LockfCommand cmd, long len);
 
+		internal static object crypt_lock = new object ();
+
 		[DllImport (CRYPT, SetLastError=true, EntryPoint="crypt")]
 		private static extern IntPtr sys_crypt (string key, string salt);
 
 		public static string crypt (string key, string salt)
 		{
-			IntPtr r = sys_crypt (key, salt);
-			return UnixMarshal.PtrToString (r);
+			lock (crypt_lock) {
+				IntPtr r = sys_crypt (key, salt);
+				return UnixMarshal.PtrToString (r);
+			}
 		}
+
+		internal static object encrypt_lock = new object ();
 
 		[DllImport (CRYPT, SetLastError=true, EntryPoint="encrypt")]
 		private static extern void sys_encrypt ([In, Out] byte[] block, int edflag);
@@ -3055,7 +3066,9 @@ namespace Mono.Unix {
 		{
 			if (block.Length < 64)
 				throw new ArgumentOutOfRangeException ("block", "Must refer to at least 64 bytes");
-			sys_encrypt (block, decode ? 1 : 0);
+			lock (encrypt_lock) {
+				sys_encrypt (block, decode ? 1 : 0);
+			}
 		}
 
 		// swab(3)

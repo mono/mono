@@ -1,5 +1,10 @@
 2005-06-29  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixEnvironment: Add User, Login properties.
+	* Syscall.cs: Add locking around cuserid, crypt, encrypt, getlogin.
+
+2005-06-29  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Syscall.cs: SyslogFacility shouldn't be [Flags] either.  Sigh.
 	  Thanks to Vorobiev Maksim for pointing this out.
 	* make-map.cs: Don't generate conversion code for [Obsolete] enum members.
