@@ -3549,7 +3549,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 			public char [] ToCharArray ()
 			{
-				char [] ret = new char [Source.Length + 7];
+				char [] ret = new char [Source.Length + 8];
 				ret [0] = (char) 01; // kind:SortKeyMap
 				for (int i = 0; i < Source.Length; i++)
 					ret [i + 1] = Source [i];

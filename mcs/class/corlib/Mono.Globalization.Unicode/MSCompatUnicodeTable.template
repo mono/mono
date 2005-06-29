@@ -23,6 +23,10 @@ namespace Mono.Globalization.Unicode
 
 	internal class MSCompatUnicodeTable
 	{
+		public static char [] TailoringValues {
+			get { return tailorings; }
+		}
+
 		public static ushort [] CjkCHS {
 			get { return cjkCHS; }
 		}

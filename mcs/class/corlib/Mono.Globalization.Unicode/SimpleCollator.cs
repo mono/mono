@@ -5,6 +5,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Globalization;
 
 using Uni = Mono.Globalization.Unicode.MSCompatUnicodeTable;
@@ -28,6 +29,46 @@ namespace Mono.Globalization.Unicode
 		readonly byte [] cjkLv2Table;
 		readonly CodePointIndexer cjkLv2Indexer;
 
+		// Possible mapping types are:
+		//
+		//	- string to string (ReplacementMap)
+		//	- string to SortKey (SortKeyMap)
+		//	- diacritical byte to byte (DiacriticalMap)
+		//
+		// There could be mapping from string to sortkeys, but
+		// for now there is none as such.
+		//
+		internal class Contraction
+		{
+			public readonly char [] Source;
+			// only either of them is used.
+			public readonly string Replacement;
+			public readonly byte [] SortKey;
+
+			public Contraction (char [] source,
+				string replacement, byte [] sortkey)
+			{
+				Source = source;
+				Replacement = replacement;
+				SortKey = sortkey;
+			}
+		}
+
+		internal struct Level2Map
+		{
+			public byte Source;
+			public byte Replace;
+
+			public Level2Map (byte source, byte replace)
+			{
+				Source = source;
+				Replace = replace;
+			}
+		}
+
+		readonly Contraction [] contractions;
+		readonly Level2Map [] level2Maps;
+
 		public SimpleCollator (CultureInfo culture)
 		{
 			textInfo = culture.TextInfo;
@@ -47,7 +88,77 @@ namespace Mono.Globalization.Unicode
 				t = Uni.GetTailoringInfo (127);
 
 			frenchSort = t.FrenchSort;
-			// FIXME: collect tailoring entries.
+			BuildTailoringTables (culture, t, ref contractions,
+				ref level2Maps);
+/*
+Console.WriteLine ("******** building table for {0} : c - {1} d - {2}",
+culture.LCID, contractions.Length, level2Maps.Length);
+foreach (Contraction c in contractions) {
+foreach (char cc in c.Source)
+Console.Write ("{0:X4} ", (int) cc);
+Console.WriteLine (" -> {0}", c.Replacement);
+}
+*/
+		}
+
+		private void BuildTailoringTables (CultureInfo culture,
+			TailoringInfo t,
+			ref Contraction [] contractions,
+			ref Level2Map [] diacriticals)
+		{
+			// collect tailoring entries.
+			ArrayList cmaps = new ArrayList ();
+			ArrayList dmaps = new ArrayList ();
+			char [] tarr = Uni.TailoringValues;
+			int idx = t.TailoringIndex;
+			int end = idx + t.TailoringCount;
+			while (idx < end) {
+				int ss = idx + 1;
+				char [] src = null;
+				switch (tarr [idx]) {
+				case '\x1': // SortKeyMap
+					idx++;
+					while (tarr [ss] != 0)
+						ss++;
+					src = new char [ss - idx];
+					Array.Copy (tarr, idx, src, 0, ss - idx);
+					byte [] sortkey = new byte [5];
+					for (int i = 0; i < 5; i++)
+						sortkey [i] = (byte) tarr [ss + 1 + i];
+					cmaps.Add (new Contraction (
+						src, null, sortkey));
+					// it ends with 0
+					idx = ss + 6;
+					break;
+				case '\x2': // DiacriticalMap
+					dmaps.Add (new Level2Map (
+						(byte) tarr [idx + 1],
+						(byte) tarr [idx + 2]));
+					idx += 3;
+					break;
+				case '\x3': // ReplacementMap
+					idx++;
+					while (tarr [ss] != 0)
+						ss++;
+					src = new char [ss - idx];
+					Array.Copy (tarr, idx, src, 0, ss - idx);
+					int l = ss + 1;
+					while (tarr [l] != 0)
+						l++;
+					string r = new string (tarr, ss, l - ss);
+					cmaps.Add (new Contraction (
+						src, r, null));
+					idx = l + 1;
+					break;
+				default:
+					throw new NotImplementedException (String.Format ("Mono INTERNAL ERROR (Should not happen): Collation tailoring table is broken for culture {0} ({1}) at 0x{2:X}", culture.LCID, culture.Name, idx));
+				}
+			}
+			// FIXME: sort contractions and lv2maps
+			contractions = cmaps.ToArray (typeof (Contraction))
+				as Contraction [];
+			diacriticals = dmaps.ToArray (typeof (Level2Map))
+				as Level2Map [];
 		}
 
 		private void SetCJKTable (CultureInfo culture,
@@ -119,9 +230,10 @@ namespace Mono.Globalization.Unicode
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
 		}
 
+		// FIXME: It should not be used, since it disregards both
+		// sortkey maps and replacement map from two or more chars.
 		string GetExpansion (int i)
 		{
-			// FIXME: handle tailorings
 			return Uni.GetExpansion ((char) i);
 		}
 

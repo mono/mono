@@ -1,5 +1,13 @@
 2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : build culture specific tailoring table from
+	  TailoringInfo and unified data array.
+	* create-mscompat-collation-table.cs : Added null termination to
+	  sortkey map tailorings (mostly to save my eyes).
+	* MSCompatUnicodeTable.template : added public TailoringValues.
+
+2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SortKeyBuffer.cs : handle special weight (category 06) characters.
 	* Collation-notes.txt : Updated description on special weight (it was
 	  incorrect).
