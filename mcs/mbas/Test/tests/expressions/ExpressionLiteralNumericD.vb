@@ -8,7 +8,7 @@ Module SimpleExpressionLiterals
 		Dim A  = &O07
 		If A <> 7
 			Throw New Exception (" Unexpected Result. A= 7 was expected but got A= " &A)
-		nd if
+		End if
 	End Sub
 End Module
 
