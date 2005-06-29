@@ -28,6 +28,7 @@ namespace Mono.Globalization.Unicode
 		{
 			l1 = l2 = l3 = l4s = l4t = l4k = l4w = l5 = 0;
 			level5LastPos = 0;
+			frenchSorted = false;
 		}
 
 		// It is used for CultureInfo.ClearCachedData().
@@ -189,7 +190,11 @@ namespace Mono.Globalization.Unicode
 		public SortKey GetResult ()
 		{
 			if (frenchSort && !frenchSorted) {
-				Array.Reverse (l2b);
+				int i = 0;
+				for (; i < l2b.Length; i++)
+					if (l2b [i] == 0)
+						break;
+				Array.Reverse (l2b, 0, i);
 				frenchSorted = true;
 			}
 

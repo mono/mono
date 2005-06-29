@@ -33,8 +33,27 @@ namespace Mono.Globalization.Unicode
 			textInfo = culture.TextInfo;
 			buf = new SortKeyBuffer (culture.LCID);
 
-			// FIXME: fill frenchSort from CultureInfo.
+			SetCJKTable (culture, ref cjkTable, ref cjkIndexer,
+				ref cjkLv2Table, ref cjkLv2Indexer);
 
+			// Get tailoring info
+			TailoringInfo t = null;
+			for (CultureInfo ci = culture; ci.LCID != 127; ci = ci.Parent) {
+				t = Uni.GetTailoringInfo (ci.LCID);
+				if (t != null)
+					break;
+			}
+			if (t == null) // then use invariant
+				t = Uni.GetTailoringInfo (127);
+
+			frenchSort = t.FrenchSort;
+			// FIXME: collect tailoring entries.
+		}
+
+		private void SetCJKTable (CultureInfo culture,
+			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+		{
 			// custom CJK table support.
 			switch (GetNeutralCulture (culture).Name) {
 			case "zh-CHS":

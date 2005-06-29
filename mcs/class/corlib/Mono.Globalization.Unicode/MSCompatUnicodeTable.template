@@ -43,6 +43,14 @@ namespace Mono.Globalization.Unicode
 			get { return cjkKOlv2; }
 		}
 
+		public static TailoringInfo GetTailoringInfo (int lcid)
+		{
+			for (int i = 0; i < tailoringInfos.Length; i++)
+				if (tailoringInfos [i].LCID == lcid)
+					return tailoringInfos [i];
+			return null;
+		}
+
 		public static byte Categories (int cp)
 		{
 			int idx = Util.Category.ToIndex (cp);
