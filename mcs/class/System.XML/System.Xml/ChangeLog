@@ -1,3 +1,8 @@
+2005-06-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToTimeSpan() should accept milliseconds (according
+	  to ISO 8601 and XSD datatypes 3.2.6.1).
+
 2005-06-27  Andrew Skiba  <andrews@mainsoft.com>
 
 	* DTDReader.cs : don't validate entity values, when the entry is

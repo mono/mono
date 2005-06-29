@@ -1,3 +1,7 @@
+2005-06-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvertTests.cs : added timespan milliseconds testcase.
+
 2005-06-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReaderTests.cs : added a testcase for not-wf entity 

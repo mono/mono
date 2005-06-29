@@ -256,7 +256,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ToTimeSpan ()//not done
 		{
-			
+			AssertEquals ("#1", new TimeSpan (0, 0, 0, 0, 1),
+				XmlConvert.ToTimeSpan ("PT0.001S"));
 		}
 		
 		[Test]

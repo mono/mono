@@ -542,6 +542,8 @@ namespace System.Xml {
 			int hours = 0;
 			int minutes = 0;
 			int seconds = 0;
+			int milliseconds = 0;
+			int parsedDigits = 0;
 
 			bool error = false;
 
@@ -554,11 +556,19 @@ namespace System.Xml {
 					start = i;
 					continue;
 				}
-				for (; i < s.Length; i++) {
-					if (!Char.IsDigit (s [i]))
+				for (; i < s.Length; i++)
+					if (s [i] < '0' || '9' < s [i])
 						break;
-				}
+				if (parseStep == 7)
+					parsedDigits = i - start;
 				int value = int.Parse (s.Substring (start, i - start), CultureInfo.InvariantCulture);
+				if (parseStep == 7) {
+					// adjust to 3 digits so that it makes sense as millisecond digits
+					while (parsedDigits > 3)
+						value /= 10;
+					while (parsedDigits < 3)
+						value *= 10;
+				}
 				switch (s [i]) {
 				case 'Y':
 					days += value * 365;
@@ -593,11 +603,20 @@ namespace System.Xml {
 						parseStep = 5;
 					break;
 				case 'S':
-					seconds = value;
-					if (!isTime || parseStep > 6)
+					if (parseStep == 7)
+						milliseconds = value;
+					else
+						seconds = value;
+					if (!isTime || parseStep > 7)
 						error = true;
 					else
-						parseStep = 7;
+						parseStep = 8;
+					break;
+				case '.':
+					if (parseStep > 7)
+						error = true;
+					seconds = value;
+					parseStep = 7;
 					break;
 				default:
 					error = true;
@@ -610,7 +629,7 @@ namespace System.Xml {
 			}
 			if (error)
 				throw new ArgumentException ("Invalid format string for duration schema datatype.");
-			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds);
+			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds, milliseconds);
 			return minusValue ? -ts : ts;
 		}
 
