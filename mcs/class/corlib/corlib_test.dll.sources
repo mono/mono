@@ -50,7 +50,6 @@ System/FloatingPointFormatterTest.cs
 System.Globalization/CalendarTest.cs
 System.Globalization/CompareInfoTest.cs
 System.Globalization/CultureInfoTest.cs
-System.Globalization/GlobalizationAndDomains.cs
 System.Globalization/TextInfoTest.cs
 System/GuidTest.cs
 System/Int16Test.cs

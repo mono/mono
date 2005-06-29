@@ -1,3 +1,7 @@
+2005-06-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile (TEST_MCS_FLAGS): Remove bad dep on S.Data.
+
 2005-06-23  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib.dll.sources: Added System.Security.Policy.MonoTrustManager to
