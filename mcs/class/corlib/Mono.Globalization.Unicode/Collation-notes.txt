@@ -299,16 +299,37 @@
 
 **** level 5
 
-	[offsetL]* [offsetM + 0x7F]? [3 + offsetS * 4] [6] [char-weight]
+	UPDATED: I noticed offsetL does not exist, so removed it from here.
 
-	where all "offsetL" "offsetM" and "offsetS" represents the offset
-	from the previous level 5 character in the resulting string.
-	"offsetL" continues until the value is 0xFF.
-	"offsetM" is always larger than 0x80.
+	[offsetM + 0x80]? [const 3 + (offsetS + 1) * 4] [category] [level1]
 
-	The actual offset is 8064 * numOffsetL + 63 * offsetM + offsetS
+	where "offsetM" and "offsetS" represents the offset in the input
+	string. "offsetM" is always larger than 0x80.
+	LAMESPEC: This design results in a buggy overflow.
 
-	('3' may actually vary and/or represent another values but no idea.
+	<xmp>
+	byte [] data = new CultureInfo ("").CompareInfo.GetSortKey (s).KeyData;
+	int idx = 0;
+	for (int i = 0; i < 4; i++, idx++)
+		for (; data [idx] != 1; idx++)
+		        ;
+	for (; idx < data.Length; idx++)
+		Console.Write ("{0:X02} ", data [idx]);
+	Console.WriteLine ();
+	</xmp>
+
+	inputs (s) and results:
+
+	80 07 06 82 80 2F 06 82 00 // '-' + new string ('A', 10) + '-'
+	80 07 06 82 81 97 06 82 00 // (100)
+	80 07 06 82 8F A7 06 82 00 // (1000)
+	80 07 06 82 9C 47 06 82 00 // (10000)
+	80 07 06 82 9A 87 06 82 00 // (100000)
+	80 07 06 82 89 07 06 82 00 // (1000000)
+
+	The actual offset is 63 * offsetM + offsetS
+
+	(const '3' may actually vary but no idea.
 	At least 00, 01 and 02 are not acceptable since they are reserved.
 	02 is not reserved by definition above, but the key-size optimizer
 	uses it as a special mark, as mentioned above.)

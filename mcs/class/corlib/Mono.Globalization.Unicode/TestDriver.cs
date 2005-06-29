@@ -24,6 +24,9 @@ namespace Mono.Globalization.Unicode
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");
 			DumpSortKey ("ABCABC", 5, 1, CompareOptions.IgnoreCase);
+			DumpSortKey ("-");
+			DumpSortKey ("--");
+			DumpSortKey ("A-B-C");
 
 			Compare ("1", "2");
 			Compare ("A", "a");

@@ -121,6 +121,12 @@ namespace Mono.Globalization.Unicode
 			if (lv3 == 0)
 				lv3 = 2;
 
+			// Special weight processing
+			if (category == 6 && (options & CompareOptions.StringSort) == 0) {
+				AppendLevel5 (category, lv1);
+				return;
+			}
+
 			// non-primary diacritical weight is added to that of
 			// the previous character (and does not reset level 3
 			// weight).
@@ -139,22 +145,31 @@ namespace Mono.Globalization.Unicode
 		}
 
 		// Append variable-weight character.
-		internal void AppendLevel5 (byte [] table, int idx, int currentIndex)
+		// It uses level 2 index for counting offsets (since level1
+		// might be longer than 1).
+		private void AppendLevel5 (byte category, byte lv1)
 		{
 			// offset
-			int offsetValue = currentIndex - level5LastPos;
+#if FALSE
+			// If it strictly matches to Windows, offsetValue is always l2.
+			int offsetValue = l2 - level5LastPos;
+			// If it strictly matches ti Windows, no 0xFF here.
 			for (; offsetValue > 8064; offsetValue -= 8064)
 				AppendBufferPrimitive (0xFF, ref l5b, ref l5);
-			if (offsetValue > 63)
-				AppendBufferPrimitive ((byte) (offsetValue - 63 / 4 + 0x80), ref l5b, ref l5);
-			AppendBufferPrimitive ((byte) (offsetValue % 63), ref l5b, ref l5);
+#else
+			// LAMESPEC: Windows cannot compute lv5 values for
+			// those string that has length larger than 8064.
+			// (It reminds me of SQL Server varchar length).
+			int offsetValue = l2 % 8064;
+#endif
+			AppendBufferPrimitive ((byte) ((offsetValue / 63) * 4 + 0x80), ref l5b, ref l5);
+			AppendBufferPrimitive ((byte) (offsetValue % 63 * 4 + 7), ref l5b, ref l5);
 
-			level5LastPos = currentIndex;
+			level5LastPos = l2;
 
 			// sortkey value
-			idx++; // skip the "variable" mark: 01
-			while (table [idx] != 0)
-				AppendBufferPrimitive (table [idx++], ref l5b, ref l5);
+			AppendBufferPrimitive (category, ref l5b, ref l5);
+			AppendBufferPrimitive (lv1, ref l5b, ref l5);
 		}
 
 		private void AppendBufferPrimitive (byte value, ref byte [] buf, ref int bidx)

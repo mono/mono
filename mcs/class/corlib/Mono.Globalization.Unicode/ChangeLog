@@ -1,5 +1,12 @@
 2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SortKeyBuffer.cs : handle special weight (category 06) characters.
+	* Collation-notes.txt : Updated description on special weight (it was
+	  incorrect).
+	* TestDriver.cs : added special weight cases.
+
+2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.template : added GetTailoringInfo().
 	* SimpleCollator.cs : Now tailoring information is acquired and used.
 	  (FrenchSort is supported but Compare() won't work expectedly since
