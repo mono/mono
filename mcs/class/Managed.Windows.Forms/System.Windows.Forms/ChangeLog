@@ -1,3 +1,7 @@
+2005-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LibSupport.cs: added libsupport.so init routine.
+
 2005-06-29  Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* ControlBindingsCollection.cs
