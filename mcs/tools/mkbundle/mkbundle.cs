@@ -14,7 +14,7 @@ using System.Collections;
 using System.Reflection;
 using System.IO;
 using System.Runtime.InteropServices;
-using Mono.Posix;
+using Mono.Unix;
 
 class MakeBundle {
 	static string output = "a.out";
@@ -26,6 +26,7 @@ class MakeBundle {
 	static bool static_link = false;
 	static string config_file = null;
 	static string config_dir = null;
+	static string style = "linux";
 	
 	static int Main (string [] args)
 	{
@@ -103,6 +104,8 @@ class MakeBundle {
 			}
 		}
 
+		DetectOS ();
+
 		Console.WriteLine ("Sources: {0} Auto-dependencies: {1}", sources.Count, autodeps);
 		if (sources.Count == 0 || output == null) {
 			Help ();
@@ -122,15 +125,28 @@ class MakeBundle {
 
 	static void WriteSymbol (StreamWriter sw, string name, long size)
 	{
-		sw.WriteLine (
-	        	".globl {0}\n" +
-			"\t.section .rodata\n" +
-			"\t.align 32\n" +
-			"\t.type {0}, @object\n" +
-			"\t.size {0}, {1}\n" +
-			"{0}:\n",
-			name, size);
-
+		switch (style){
+		case "linux":
+			sw.WriteLine (
+				".globl {0}\n" +
+				"\t.section .rodata\n" +
+				"\t.align 32\n" +
+				"\t.type {0}, @object\n" +
+				"\t.size {0}, {1}\n" +
+				"{0}:\n",
+				name, size);
+			break;
+		case "osx":
+			sw.WriteLine (
+				"\t.section __TEXT,__text,regular,pure_instructions\n" + 
+				"\t.section __TEXT,__picsymbolstub1,symbol_stubs,pure_instructions,32\n" + 
+				"\t.globl _{0}\n" +
+				"\t.data\n" +
+				"\t.align 4\n" +
+				"_{0}:\n",
+				name, size);
+			break;
+		}
 	}
 	
 	static void GenerateBundles (ArrayList files)
@@ -254,10 +270,12 @@ class MakeBundle {
 			else
 				tc.WriteLine ("static const char *config_dir = NULL;");
 				      
-			StreamReader s = new StreamReader (Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
-			tc.Write (s.ReadToEnd ());
+			StreamReader s = new StreamReader (
+				Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
+			string template = s.ReadToEnd ();
+			tc.Write (template);
 			tc.Close ();
-
+			
 			if (compile_only)
 				return;
 
@@ -400,5 +418,23 @@ class MakeBundle {
 
 	[DllImport ("libc")]
 	static extern int system (string s);
+	[DllImport ("libc")]
+	static extern int uname (IntPtr buf);
+		
+	static void DetectOS ()
+	{
+		IntPtr buf = UnixMarshal.Alloc (8192);
+		if (uname (buf) != 0){
+			Console.WriteLine ("Warning: Unable to detect OS");
+			return;
+		}
+		string os = Marshal.PtrToStringAnsi (buf);
+		Console.WriteLine ("OS is: " + os);
+		if (os == "Darwin")
+			style = "osx";
+		
+		UnixMarshal.Free (buf);
+	}
+	
 }
 

@@ -1,3 +1,8 @@
+2005-06-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* mkbundle.cs: Add support for OSX in the generated assembly
+	code. 
+
 2005-04-28 James Willcox <james@ximian.com>
 
 	* mkbundle.cs: Add --config-dir option
