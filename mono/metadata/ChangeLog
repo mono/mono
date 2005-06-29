@@ -1,3 +1,7 @@
+2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (unload_thread_main): Mark this as WINAPI.
+
 2005-06-28  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (method_from_methodspec): Fix #75334.
