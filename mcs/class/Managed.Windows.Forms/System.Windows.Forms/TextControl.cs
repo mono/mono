@@ -30,7 +30,7 @@
 // the time to write it all yet.
 // Stuff missing (in no particular order):
 // - Align text after RecalculateLine
-// - Implement tag types to support wrapping (ie have a 'newline' tag), for images, etc.
+// - Implement tag types for hotlinks, images, etc.
 // - Implement CaretPgUp/PgDown
 // - Finish selection calculations (invalidate only changed, more ways to select)
 // - Implement C&P
@@ -287,12 +287,12 @@ namespace System.Windows.Forms {
 
 			tag = this.tags;
 
-			if (pos > text.Length) {
-				pos = text.Length;
+			if (pos >= text.Length) {
+				pos = text.Length - 1;
 			}
 
 			while (tag != null) {
-				if ((tag.start <= pos) && (pos < (tag.start + tag.length))) {
+				if ((tag.start <= pos) && (pos < (tag.start + tag.length - 1))) {
 					return tag;
 				}
 				tag = tag.next;
@@ -538,6 +538,8 @@ namespace System.Windows.Forms {
 		internal Marker		selection_start;
 		internal Marker		selection_end;
 		internal bool		selection_visible;
+		internal Marker		selection_anchor;
+		internal bool		selection_end_anchor;
 
 		internal int		viewport_x;
 		internal int		viewport_y;		// The visible area of the document
@@ -546,6 +548,8 @@ namespace System.Windows.Forms {
 
 		internal int		document_x;		// Width of the document
 		internal int		document_y;		// Height of the document
+
+		internal Rectangle	invalid;
 
 		internal int		crlf_size;		// 1 or 2, depending on whether we use \r\n or just \n
 
@@ -956,12 +960,15 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
+Console.WriteLine("TextControl.cs(961) Invalidate called in UpdateView(line, pos)");
 					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
+Console.WriteLine("TextControl.cs(965) Invalidate called in UpdateView(line, pos)");
 					owner.Invalidate();
 				}
 			} else {
+Console.WriteLine("TextControl.cs(969) Invalidate called in UpdateView(line, pos)");
 				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height));
 			}
 		}
@@ -973,9 +980,11 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
+Console.WriteLine("TextControl.cs(981) Invalidate called in UpdateView(line, line_count, pos)");
 					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
+Console.WriteLine("TextControl.cs(985) Invalidate called in UpdateView(line, line_count, pos)");
 					owner.Invalidate();
 				}
 			} else {
@@ -986,6 +995,7 @@ namespace System.Windows.Forms {
 					end_line = line;
 				}
 
+Console.WriteLine("TextControl.cs(996) Invalidate called in UpdateView(line, line_count, pos)");
 				owner.Invalidate(new Rectangle(0 - viewport_x, line.Y - viewport_y, (int)line.widths[line.text.Length], end_line.Y + end_line.height));
 			}
 		}
@@ -1269,7 +1279,7 @@ namespace System.Windows.Forms {
 			// First, figure out from what line to what line we need to draw
 			start = GetLineByPixel(clip.Top + viewport_y, false).line_no;
 			end = GetLineByPixel(clip.Bottom + viewport_y, false).line_no;
-Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom:{2})", start, end, clip.Bottom);
+//Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom:{2})", start, end, clip.Bottom);
 
 			// Now draw our elements; try to only draw those that are visible
 			line_no = start;
@@ -1594,6 +1604,7 @@ Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom
 		}
 
 		// Inserts n characters at the given position; it will not delete past line limits
+		// pos is 0-based
 		internal void DeleteChars(LineTag tag, int pos, int count) {
 			Line	line;
 			bool	streamline;
@@ -1608,16 +1619,25 @@ Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom
 
 			line.text.Remove(pos, count);
 
+			// Make sure the tag points to the right spot
+			while ((tag != null) && (tag.start + tag.length - 1) <= pos) {
+				tag = tag.next;
+			}
+
+			if (tag == null) {
+				return;
+			}
+
 			// Check if we're crossing tag boundaries
-			if ((pos + count) > (tag.start + tag.length)) {
+			if ((pos + count) > (tag.start + tag.length - 1)) {
 				int	left;
 
 				// We have to delete cross tag boundaries
 				streamline = true;
 				left = count;
 
-				left -= pos - tag.start;
-				tag.length -= pos - tag.start;
+				left -= pos - tag.start + 1;
+				tag.length -= pos - tag.start + 1;
 
 				tag = tag.next;
 				while ((tag != null) && (left > 0)) {
@@ -1635,6 +1655,10 @@ Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom
 				// We got off easy, same tag
 
 				tag.length -= count;
+
+				if (tag.length == 0) {
+					streamline = true;
+				}
 			}
 
 			tag = tag.next;
@@ -2019,12 +2043,20 @@ Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom
 			last_found = sentinel;
 		}
 
-		// Set our selection markers
+		// Invalidate a section of the document to trigger redraw
 		internal void Invalidate(Line start, int start_pos, Line end, int end_pos) {
 			Line	l1;
 			Line	l2;
 			int	p1;
 			int	p2;
+
+			if ((start == end) && (start_pos == end_pos)) {
+				return;
+			}
+
+			if (end_pos == -1) {
+				end_pos = end.text.Length;
+			}
 	
 			// figure out what's before what so the logic below is straightforward
 			if (start.line_no < end.line_no) {
@@ -2054,32 +2086,39 @@ Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom
 					p2 = start_pos;
 				}
 
-				owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, (int)l2.widths[p2] - (int)l1.widths[p1], l1.height));
+				owner.Invalidate(
+					new Rectangle(
+						(int)l1.widths[p1] + l1.align_shift - viewport_x, 
+						l1.Y - viewport_y, 
+						(int)l2.widths[p2] - (int)l1.widths[p1] + 1, 
+						l1.height
+					)
+				);
 				return;
 			}
 
 			// Three invalidates:
 			// First line from start
-			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
+			owner.Invalidate(new Rectangle((int)l1.widths[p1] + l1.align_shift - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
 
 			// lines inbetween
 			if ((l1.line_no + 1) < l2.line_no) {
 				int	y;
 
 				y = GetLine(l1.line_no + 1).Y;
-				owner.Invalidate(new Rectangle(0 - viewport_x, y - viewport_y, viewport_width, GetLine(l2.line_no - 1).Y - y - viewport_y));
+				owner.Invalidate(new Rectangle(0, y - viewport_y, viewport_width, GetLine(l2.line_no).Y - viewport_y));
 			}
 
 			// Last line to end
-			owner.Invalidate(new Rectangle((int)l1.widths[p1] - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
-
-
+			owner.Invalidate(new Rectangle((int)l2.widths[0] + l2.align_shift - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height));
 		}
 
-		// It's nothing short of pathetic to always invalidate the whole control
-		// I will find time to finish the optimization and make it invalidate deltas only
+		
 		internal void SetSelectionToCaret(bool start) {
 			if (start) {
+				// Invalidate old selection; selection is being reset to empty
+				this.Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
+
 				selection_start.line = caret.line;
 				selection_start.tag = caret.tag;
 				selection_start.pos = caret.pos;
@@ -2088,131 +2127,139 @@ Console.WriteLine("Starting drawing at line {0}, ending at line {1} (clip-bottom
 				selection_end.line = caret.line;
 				selection_end.tag = caret.tag;
 				selection_end.pos = caret.pos;
+
+				selection_anchor.line = caret.line;
+				selection_anchor.tag = caret.tag;
+				selection_anchor.pos = caret.pos;
 			} else {
-				if (caret.line.line_no <= selection_end.line.line_no) {
-					if ((caret.line != selection_end.line) || (caret.pos < selection_end.pos)) {
-						selection_start.line = caret.line;
-						selection_start.tag = caret.tag;
-						selection_start.pos = caret.pos;
-					} else {
-						selection_end.line = caret.line;
-						selection_end.tag = caret.tag;
-						selection_end.pos = caret.pos;
+				// Invalidate from previous end to caret (aka new end)
+				if (selection_end_anchor) {
+					if ((selection_start.line != caret.line) || (selection_start.pos != caret.pos)) {
+						this.Invalidate(selection_start.line, selection_start.pos, caret.line, caret.pos);
 					}
 				} else {
+					if ((selection_end.line != caret.line) || (selection_end.pos != caret.pos)) {
+						this.Invalidate(selection_end.line, selection_end.pos, caret.line, caret.pos);
+					}
+				}
+
+				if ((caret.line.line_no < selection_anchor.line.line_no) || ((caret.line == selection_anchor.line) && (caret.pos <= selection_anchor.pos))) {
+					selection_start.line = caret.line;
+					selection_start.tag = caret.tag;
+					selection_start.pos = caret.pos;
+
+					selection_end.line = selection_anchor.line;
+					selection_end.tag = selection_anchor.tag;
+					selection_end.pos = selection_anchor.pos;
+
+					selection_end_anchor = true;
+				} else {
+					selection_start.line = selection_anchor.line;
+					selection_start.tag = selection_anchor.tag;
+					selection_start.pos = selection_anchor.pos;
+
 					selection_end.line = caret.line;
 					selection_end.tag = caret.tag;
 					selection_end.pos = caret.pos;
+
+					selection_end_anchor = false;
 				}
 			}
-
 
 			if ((selection_start.line == selection_end.line) && (selection_start.pos == selection_end.pos)) {
 				selection_visible = false;
 			} else {
 				selection_visible = true;
 			}
-			owner.Invalidate();
 		}
 
-#if buggy
 		internal void SetSelection(Line start, int start_pos, Line end, int end_pos) {
-			// Ok, this is ugly, bad and slow, but I don't have time right now to optimize it.
 			if (selection_visible) {
-				// Try to only invalidate what's changed so we don't redraw the whole thing
-				if ((start != selection_start.line) || (start_pos != selection_start.pos) && ((end == selection_end.line) && (end_pos == selection_end.pos))) {
-					Invalidate(start, start_pos, selection_start.line, selection_start.pos);
-				} else if ((end != selection_end.line) || (end_pos != selection_end.pos) && ((start == selection_start.line) && (start_pos == selection_start.pos))) {
-					Invalidate(end, end_pos, selection_end.line, selection_end.pos);
-				} else {
-					// both start and end changed
-					Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
-				}
+				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
-			selection_start.line = start;
-			selection_start.pos = start_pos;
-if (start != null) {
-			selection_start.tag = LineTag.FindTag(start, start_pos);
-}
 
-			selection_end.line = end;
-			selection_end.pos = end_pos;
-if (end != null) {
-			selection_end.tag = LineTag.FindTag(end, end_pos);
-}
+			if ((end.line_no < start.line_no) || ((end == start) && (end_pos <= start_pos))) {
+				selection_start.line = end;
+				selection_start.tag = LineTag.FindTag(end, end_pos);
+				selection_start.pos = end_pos;
+
+				selection_end.line = start;
+				selection_end.tag = LineTag.FindTag(start, start_pos);
+				selection_end.pos = start_pos;
+
+				selection_end_anchor = true;
+			} else {
+				selection_start.line = start;
+				selection_start.tag = LineTag.FindTag(start, start_pos);
+				selection_start.pos = start_pos;
+
+				selection_end.line = end;
+				selection_end.tag = LineTag.FindTag(end, end_pos);
+				selection_end.pos = end_pos;
+
+				selection_end_anchor = false;
+			}
+
+			selection_anchor.line = start;
+			selection_anchor.tag = selection_start.tag;
+			selection_anchor.pos = start_pos;
 
 			if (((start == end) && (start_pos == end_pos)) || start == null || end == null) {
 				selection_visible = false;
 			} else {
 				selection_visible = true;
-				
+
 			}
-		}
-#endif
-		// Make sure that start is always before end
-		private void FixupSelection() {
-			if (selection_start.line.line_no > selection_end.line.line_no) {
-				Line	line;
-				int	pos;
-				LineTag tag;
-
-				line = selection_start.line;
-				tag = selection_start.tag;
-				pos = selection_start.pos;
-
-				selection_start.line = selection_end.line;
-				selection_start.tag =  selection_end.tag;
-				selection_start.pos = selection_end.pos;
-				
-				selection_end.line = line;
-				selection_end.tag =  tag;
-				selection_end.pos = pos;
-
-				return;
-			}
-
-			if ((selection_start.line == selection_end.line) && (selection_start.pos > selection_end.pos)) {
-				int	pos;
-
-				pos = selection_start.pos;
-				selection_start.pos = selection_end.pos;
-				selection_end.pos = pos;
-				Console.WriteLine("flipped: sel start: {0} end: {1}", selection_start.pos, selection_end.pos);
-				return;
-			}
-
-			return;
 		}
 
 		internal void SetSelectionStart(Line start, int start_pos) {
+			// Invalidate from the previous to the new start pos
+			Invalidate(selection_start.line, selection_start.pos, start, start_pos);
+
 			selection_start.line = start;
 			selection_start.pos = start_pos;
 			selection_start.tag = LineTag.FindTag(start, start_pos);
 
-			FixupSelection();
+			selection_anchor.line = start;
+			selection_anchor.pos = start_pos;
+			selection_anchor.tag = selection_start.tag;
+
+			selection_end_anchor = false;
 
 			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
 				selection_visible = true;
-			}
 
-			if (selection_visible) {
+				// This could be calculated better
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
 
 		}
 
 		internal void SetSelectionEnd(Line end, int end_pos) {
-			selection_end.line = end;
-			selection_end.pos = end_pos;
-			selection_end.tag = LineTag.FindTag(end, end_pos);
+			if ((end.line_no < selection_anchor.line.line_no) || ((end == selection_anchor.line) && (end_pos <= selection_anchor.pos))) {
+				selection_start.line = end;
+				selection_start.tag = LineTag.FindTag(end, end_pos);
+				selection_start.pos = end_pos;
 
-			FixupSelection();
+				selection_end.line = selection_anchor.line;
+				selection_end.tag = selection_anchor.tag;
+				selection_end.pos = selection_anchor.pos;
+
+				selection_end_anchor = true;
+			} else {
+				selection_start.line = selection_anchor.line;
+				selection_start.tag = selection_anchor.tag;
+				selection_start.pos = selection_anchor.pos;
+
+				selection_end.line = end;
+				selection_end.tag = LineTag.FindTag(end, end_pos);
+				selection_end.pos = end_pos;
+
+				selection_end_anchor = false;
+			}
 
 			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
 				selection_visible = true;
-			}
-
-			if (selection_visible) {
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
 		}
@@ -2222,7 +2269,6 @@ if (end != null) {
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
 
-
 			selection_start.line = start;
 			selection_start.pos = start_pos;
 			selection_start.tag = LineTag.FindTag(start, start_pos);
@@ -2231,11 +2277,17 @@ if (end != null) {
 			selection_end.tag = selection_start.tag;
 			selection_end.pos = start_pos;
 
+			selection_anchor.line = start;
+			selection_anchor.tag = selection_start.tag;
+			selection_anchor.pos = start_pos;
+
+			selection_end_anchor = false;
 			selection_visible = false;
 		}
 
 		internal void InvalidateSelectionArea() {
-			// implement me
+			// FIXME - the only place that calls this right now should really calculate the redraw itself; if done this function can go
+			// Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 		}
 
 		// Return the current selection, as string
@@ -2297,7 +2349,7 @@ if (end != null) {
 				end = selection_end.line.line_no;
 
 				// Delete first line
-				DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
+				DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
 
 				start++;
 				if (start < end) {
@@ -2708,127 +2760,73 @@ if (end != null) {
 			int	line_no;
 			int	Y;
 			int	new_width;
+			bool	changed;
+			int	shift;
 
 			Y = GetLine(start).Y;
 			line_no = start;
 			new_width = 0;
-
-			if (optimize) {
-				bool	changed;
-				bool	alignment_recalc;
-
-				changed = false;
-				alignment_recalc = true;
-
-				while (line_no <= end) {
-					line = GetLine(line_no++);
-					line.Y = Y;
-					if (line.recalc) {
-						if (line.RecalculateLine(g, this)) {
-							changed = true;
-							// If the height changed, all subsequent lines change
-							end = this.lines;
-						}
-
-						if (line.widths[line.text.Length] > new_width) {
-							new_width = (int)line.widths[line.text.Length];
-						}
-
-						// Calculate alignment
-						if (line.alignment != HorizontalAlignment.Left) {
-							if (line.alignment == HorizontalAlignment.Center) {
-								line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-							} else {
-								line.align_shift = viewport_width - (int)line.widths[line.text.Length];
-							}
-						}
-					}
-
-					Y += line.height;
-
-					if (line_no > lines) {
-						break;
-					}
-				}
-
-				if (document_x < new_width) {
-					document_x = new_width;
-					alignment_recalc = true;
-					if (WidthChanged != null) {
-						WidthChanged(this, null);
-					}
-				}
-
-				if (alignment_recalc) {
-					RecalculateAlignments();
-				}
-
-				line = GetLine(lines);
-				if (document_y != line.Y + line.height) {
-					document_y = line.Y + line.height;
-					if (HeightChanged != null) {
-						HeightChanged(this, null);
-					}
-				}
-
-				return changed;
+			shift = this.lines;
+			if (!optimize) {
+				changed = true;		// We always return true if we run non-optimized
 			} else {
-				int	shift;
-
-				shift = 0;
-
-				while (line_no <= (end + shift)) {
-					line = GetLine(line_no++);
-					line.Y = Y;
-
-					shift = this.lines;
-					line.RecalculateLine(g, this);
-					if (this.lines > shift) {
-						shift = this.lines - shift;
-					} else {
-						shift = 0;
-					}
-
-					if (line.widths[line.text.Length] > new_width) {
-						new_width = (int)line.widths[line.text.Length];
-					}
-
-					// Calculate alignment
-					if (line.alignment != HorizontalAlignment.Left) {
-						if (line.alignment == HorizontalAlignment.Center) {
-							line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-						} else {
-							line.align_shift = viewport_width - (int)line.widths[line.text.Length];
-						}
-					}
-
-					Y += line.height;
-
-					if (line_no > lines) {
-						break;
-					}
-				}
-
-				if (document_x != new_width) {
-					document_x = new_width;
-					if (WidthChanged != null) {
-						WidthChanged(this, null);
-					}
-				}
-
-				RecalculateAlignments();
-
-				line = GetLine(lines);
-
-				if (document_y != line.Y + line.height) {
-					document_y = line.Y + line.height;
-					if (HeightChanged != null) {
-						HeightChanged(this, null);
-					}
-				}
-
-				return true;
+				changed = false;
 			}
+
+			while (line_no <= (end + this.lines - shift)) {
+				line = GetLine(line_no++);
+				line.Y = Y;
+
+				if (!optimize) {
+					line.RecalculateLine(g, this);
+				} else {
+					if (line.recalc && line.RecalculateLine(g, this)) {
+						changed = true;
+						// If the height changed, all subsequent lines change
+						end = this.lines;
+						shift = this.lines;
+					}
+				}
+
+				if (line.widths[line.text.Length] > new_width) {
+					new_width = (int)line.widths[line.text.Length];
+				}
+
+				// Calculate alignment
+				if (line.alignment != HorizontalAlignment.Left) {
+					if (line.alignment == HorizontalAlignment.Center) {
+						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
+					} else {
+						line.align_shift = viewport_width - (int)line.widths[line.text.Length];
+					}
+				}
+
+				Y += line.height;
+
+				if (line_no > lines) {
+					break;
+				}
+			}
+
+			if (document_x != new_width) {
+				document_x = new_width;
+				if (WidthChanged != null) {
+					WidthChanged(this, null);
+				}
+			}
+
+			RecalculateAlignments();
+
+			line = GetLine(lines);
+
+			if (document_y != line.Y + line.height) {
+				document_y = line.Y + line.height;
+				if (HeightChanged != null) {
+					HeightChanged(this, null);
+				}
+			}
+
+			return changed;
 		}
 
 		internal bool SetCursor(int x, int y) {

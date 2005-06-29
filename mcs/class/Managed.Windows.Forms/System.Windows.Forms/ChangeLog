@@ -1,3 +1,25 @@
+2005-06-29  Peter Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs: 
+	  - Selections now work properly, anchoring at the initial location
+	    and properly extending in either direction (SetSelectionToCaret(),
+	    SetSelectionStart() and SetSelectionEnd())
+	  - No longer redraws the whole control on selection change, now
+	    calculates delta between previous and new selection and only
+	    invalidates/redraws that area
+	  - Fixed FindPos() math off-by-one errors
+	  - Changed DeleteChars() to verify the provided tag covers the
+	    provided position, selections may have a tag that doesn't cover
+	    the position if the selection is at a tag border
+	  - Fixed off-by-one errors in DeleteChars()
+	  - Added missing streamlining check in DeleteChars() to remove
+	    zero-length tags
+	  - Implemented Invalidate() method, now properly calculates exposures
+	    between two given lines/positions
+	  - Implemented SetSelection()
+	  - Obsoleted and removed FixupSelection()
+	  - Improved RecalculateDocument() logic, removing code duplication
+
 2005-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LibSupport.cs: changes to match different input/output arguments.
