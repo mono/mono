@@ -58,7 +58,7 @@ public class Test_4
 {
 	// TODO: Where to apply ?
 
-	[property: Test]
+	[event: Test]
 	public event test_delegate e_1 {
 		add {}
 		remove {}
