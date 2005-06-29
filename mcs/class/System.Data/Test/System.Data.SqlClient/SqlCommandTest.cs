@@ -79,7 +79,7 @@ namespace MonoTests.System.Data.SqlClient {
 				cmd.Connection = conn;
 				cmd.CommandText = "#Insert_Employee";
 				cmd.CommandType = CommandType.StoredProcedure;
-				Object TestPar = System.DBNull.Value;
+				Object TestPar = DBNull.Value;
 				cmd.Parameters.Add("@TestPar1", SqlDbType.Int);
 				cmd.Parameters["@TestPar1"].Value = TestPar;
 				cmd.Parameters.Add("@BirthDate", DateTime.Now);
@@ -134,7 +134,7 @@ namespace MonoTests.System.Data.SqlClient {
 			cmd.Connection = null;
 			cmd.CommandText = "sp_insert";
 			cmd.CommandType = CommandType.StoredProcedure;
-			Object TestPar = System.DBNull.Value;
+			Object TestPar = DBNull.Value;
 			cmd.Parameters.Add("@TestPar1", SqlDbType.Int);
 			cmd.Parameters["@TestPar1"].Value = TestPar;
 			cmd.Parameters.Add("@BirthDate", DateTime.Now);

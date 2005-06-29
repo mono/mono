@@ -69,7 +69,7 @@ namespace MonoTests.System.Data.SqlClient
 				command.ExecuteNonQuery();
 				transaction.Commit();
 			}
-			catch (System.Exception ex)
+			catch (Exception)
 			{
 				transaction.Rollback();
 			}
