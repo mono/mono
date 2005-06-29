@@ -17,7 +17,7 @@ Module ExpressionLiteralsChar
 			Throw New Exception ("Unexpected Behavior of Nothing. As S should be assigned Nothing")
 		End If
 		D = Nothing 
-		If D <> #1/1/001 12:00:00 AM # Then
+		If D <> #1/1/0001 12:00:00 AM # Then
 			Throw New Exception("Unexpected Behavior of Nothing. D not set to default value")
 		End If
 		L = Nothing 
