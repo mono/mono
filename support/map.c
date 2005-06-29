@@ -1378,133 +1378,128 @@ int Mono_Posix_FromSyslogFacility (int x, int *r)
 	*r = 0;
 	if (x == 0)
 		return 0;
-	if ((x & Mono_Posix_SyslogFacility_LOG_KERN) == Mono_Posix_SyslogFacility_LOG_KERN)
+	if (x == Mono_Posix_SyslogFacility_LOG_KERN)
 #ifdef LOG_KERN
-		*r |= LOG_KERN;
+		{*r = LOG_KERN; return 0;}
 #else /* def LOG_KERN */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_KERN */
-	if ((x & Mono_Posix_SyslogFacility_LOG_USER) == Mono_Posix_SyslogFacility_LOG_USER)
+	if (x == Mono_Posix_SyslogFacility_LOG_USER)
 #ifdef LOG_USER
-		*r |= LOG_USER;
+		{*r = LOG_USER; return 0;}
 #else /* def LOG_USER */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_USER */
-	if ((x & Mono_Posix_SyslogFacility_LOG_USRE) == Mono_Posix_SyslogFacility_LOG_USRE)
-#ifdef LOG_USRE
-		*r |= LOG_USRE;
-#else /* def LOG_USRE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_USRE */
-	if ((x & Mono_Posix_SyslogFacility_LOG_MAIL) == Mono_Posix_SyslogFacility_LOG_MAIL)
+	/* Mono_Posix_SyslogFacility_LOG_USRE is obsolete; ignoring */
+	if (x == Mono_Posix_SyslogFacility_LOG_MAIL)
 #ifdef LOG_MAIL
-		*r |= LOG_MAIL;
+		{*r = LOG_MAIL; return 0;}
 #else /* def LOG_MAIL */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_MAIL */
-	if ((x & Mono_Posix_SyslogFacility_LOG_DAEMON) == Mono_Posix_SyslogFacility_LOG_DAEMON)
+	if (x == Mono_Posix_SyslogFacility_LOG_DAEMON)
 #ifdef LOG_DAEMON
-		*r |= LOG_DAEMON;
+		{*r = LOG_DAEMON; return 0;}
 #else /* def LOG_DAEMON */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_DAEMON */
-	if ((x & Mono_Posix_SyslogFacility_LOG_AUTH) == Mono_Posix_SyslogFacility_LOG_AUTH)
+	if (x == Mono_Posix_SyslogFacility_LOG_AUTH)
 #ifdef LOG_AUTH
-		*r |= LOG_AUTH;
+		{*r = LOG_AUTH; return 0;}
 #else /* def LOG_AUTH */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_AUTH */
-	if ((x & Mono_Posix_SyslogFacility_LOG_SYSLOG) == Mono_Posix_SyslogFacility_LOG_SYSLOG)
+	if (x == Mono_Posix_SyslogFacility_LOG_SYSLOG)
 #ifdef LOG_SYSLOG
-		*r |= LOG_SYSLOG;
+		{*r = LOG_SYSLOG; return 0;}
 #else /* def LOG_SYSLOG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_SYSLOG */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LPR) == Mono_Posix_SyslogFacility_LOG_LPR)
+	if (x == Mono_Posix_SyslogFacility_LOG_LPR)
 #ifdef LOG_LPR
-		*r |= LOG_LPR;
+		{*r = LOG_LPR; return 0;}
 #else /* def LOG_LPR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LPR */
-	if ((x & Mono_Posix_SyslogFacility_LOG_NEWS) == Mono_Posix_SyslogFacility_LOG_NEWS)
+	if (x == Mono_Posix_SyslogFacility_LOG_NEWS)
 #ifdef LOG_NEWS
-		*r |= LOG_NEWS;
+		{*r = LOG_NEWS; return 0;}
 #else /* def LOG_NEWS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_NEWS */
-	if ((x & Mono_Posix_SyslogFacility_LOG_UUCP) == Mono_Posix_SyslogFacility_LOG_UUCP)
+	if (x == Mono_Posix_SyslogFacility_LOG_UUCP)
 #ifdef LOG_UUCP
-		*r |= LOG_UUCP;
+		{*r = LOG_UUCP; return 0;}
 #else /* def LOG_UUCP */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_UUCP */
-	if ((x & Mono_Posix_SyslogFacility_LOG_CRON) == Mono_Posix_SyslogFacility_LOG_CRON)
+	if (x == Mono_Posix_SyslogFacility_LOG_CRON)
 #ifdef LOG_CRON
-		*r |= LOG_CRON;
+		{*r = LOG_CRON; return 0;}
 #else /* def LOG_CRON */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_CRON */
-	if ((x & Mono_Posix_SyslogFacility_LOG_AUTHPRIV) == Mono_Posix_SyslogFacility_LOG_AUTHPRIV)
+	if (x == Mono_Posix_SyslogFacility_LOG_AUTHPRIV)
 #ifdef LOG_AUTHPRIV
-		*r |= LOG_AUTHPRIV;
+		{*r = LOG_AUTHPRIV; return 0;}
 #else /* def LOG_AUTHPRIV */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_AUTHPRIV */
-	if ((x & Mono_Posix_SyslogFacility_LOG_FTP) == Mono_Posix_SyslogFacility_LOG_FTP)
+	if (x == Mono_Posix_SyslogFacility_LOG_FTP)
 #ifdef LOG_FTP
-		*r |= LOG_FTP;
+		{*r = LOG_FTP; return 0;}
 #else /* def LOG_FTP */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_FTP */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL0) == Mono_Posix_SyslogFacility_LOG_LOCAL0)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL0)
 #ifdef LOG_LOCAL0
-		*r |= LOG_LOCAL0;
+		{*r = LOG_LOCAL0; return 0;}
 #else /* def LOG_LOCAL0 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL0 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL1) == Mono_Posix_SyslogFacility_LOG_LOCAL1)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL1)
 #ifdef LOG_LOCAL1
-		*r |= LOG_LOCAL1;
+		{*r = LOG_LOCAL1; return 0;}
 #else /* def LOG_LOCAL1 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL1 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL2) == Mono_Posix_SyslogFacility_LOG_LOCAL2)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL2)
 #ifdef LOG_LOCAL2
-		*r |= LOG_LOCAL2;
+		{*r = LOG_LOCAL2; return 0;}
 #else /* def LOG_LOCAL2 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL2 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL3) == Mono_Posix_SyslogFacility_LOG_LOCAL3)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL3)
 #ifdef LOG_LOCAL3
-		*r |= LOG_LOCAL3;
+		{*r = LOG_LOCAL3; return 0;}
 #else /* def LOG_LOCAL3 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL3 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL4) == Mono_Posix_SyslogFacility_LOG_LOCAL4)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL4)
 #ifdef LOG_LOCAL4
-		*r |= LOG_LOCAL4;
+		{*r = LOG_LOCAL4; return 0;}
 #else /* def LOG_LOCAL4 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL4 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL5) == Mono_Posix_SyslogFacility_LOG_LOCAL5)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL5)
 #ifdef LOG_LOCAL5
-		*r |= LOG_LOCAL5;
+		{*r = LOG_LOCAL5; return 0;}
 #else /* def LOG_LOCAL5 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL5 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL6) == Mono_Posix_SyslogFacility_LOG_LOCAL6)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL6)
 #ifdef LOG_LOCAL6
-		*r |= LOG_LOCAL6;
+		{*r = LOG_LOCAL6; return 0;}
 #else /* def LOG_LOCAL6 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL6 */
-	if ((x & Mono_Posix_SyslogFacility_LOG_LOCAL7) == Mono_Posix_SyslogFacility_LOG_LOCAL7)
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL7)
 #ifdef LOG_LOCAL7
-		*r |= LOG_LOCAL7;
+		{*r = LOG_LOCAL7; return 0;}
 #else /* def LOG_LOCAL7 */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_LOCAL7 */
-	return 0;
+	errno = EINVAL; return -1;
 }
 
 int Mono_Posix_ToSyslogFacility (int x, int *r)
@@ -1513,90 +1508,90 @@ int Mono_Posix_ToSyslogFacility (int x, int *r)
 	if (x == 0)
 		return 0;
 #ifdef LOG_KERN
-	if ((x & LOG_KERN) == LOG_KERN)
-		*r |= Mono_Posix_SyslogFacility_LOG_KERN;
+	if (x == LOG_KERN)
+		{*r = Mono_Posix_SyslogFacility_LOG_KERN; return 0;}
 #endif /* ndef LOG_KERN */
 #ifdef LOG_USER
-	if ((x & LOG_USER) == LOG_USER)
-		*r |= Mono_Posix_SyslogFacility_LOG_USER;
+	if (x == LOG_USER)
+		{*r = Mono_Posix_SyslogFacility_LOG_USER; return 0;}
 #endif /* ndef LOG_USER */
 #ifdef LOG_USRE
-	if ((x & LOG_USRE) == LOG_USRE)
-		*r |= Mono_Posix_SyslogFacility_LOG_USRE;
+	if (x == LOG_USRE)
+		{*r = Mono_Posix_SyslogFacility_LOG_USRE; return 0;}
 #endif /* ndef LOG_USRE */
 #ifdef LOG_MAIL
-	if ((x & LOG_MAIL) == LOG_MAIL)
-		*r |= Mono_Posix_SyslogFacility_LOG_MAIL;
+	if (x == LOG_MAIL)
+		{*r = Mono_Posix_SyslogFacility_LOG_MAIL; return 0;}
 #endif /* ndef LOG_MAIL */
 #ifdef LOG_DAEMON
-	if ((x & LOG_DAEMON) == LOG_DAEMON)
-		*r |= Mono_Posix_SyslogFacility_LOG_DAEMON;
+	if (x == LOG_DAEMON)
+		{*r = Mono_Posix_SyslogFacility_LOG_DAEMON; return 0;}
 #endif /* ndef LOG_DAEMON */
 #ifdef LOG_AUTH
-	if ((x & LOG_AUTH) == LOG_AUTH)
-		*r |= Mono_Posix_SyslogFacility_LOG_AUTH;
+	if (x == LOG_AUTH)
+		{*r = Mono_Posix_SyslogFacility_LOG_AUTH; return 0;}
 #endif /* ndef LOG_AUTH */
 #ifdef LOG_SYSLOG
-	if ((x & LOG_SYSLOG) == LOG_SYSLOG)
-		*r |= Mono_Posix_SyslogFacility_LOG_SYSLOG;
+	if (x == LOG_SYSLOG)
+		{*r = Mono_Posix_SyslogFacility_LOG_SYSLOG; return 0;}
 #endif /* ndef LOG_SYSLOG */
 #ifdef LOG_LPR
-	if ((x & LOG_LPR) == LOG_LPR)
-		*r |= Mono_Posix_SyslogFacility_LOG_LPR;
+	if (x == LOG_LPR)
+		{*r = Mono_Posix_SyslogFacility_LOG_LPR; return 0;}
 #endif /* ndef LOG_LPR */
 #ifdef LOG_NEWS
-	if ((x & LOG_NEWS) == LOG_NEWS)
-		*r |= Mono_Posix_SyslogFacility_LOG_NEWS;
+	if (x == LOG_NEWS)
+		{*r = Mono_Posix_SyslogFacility_LOG_NEWS; return 0;}
 #endif /* ndef LOG_NEWS */
 #ifdef LOG_UUCP
-	if ((x & LOG_UUCP) == LOG_UUCP)
-		*r |= Mono_Posix_SyslogFacility_LOG_UUCP;
+	if (x == LOG_UUCP)
+		{*r = Mono_Posix_SyslogFacility_LOG_UUCP; return 0;}
 #endif /* ndef LOG_UUCP */
 #ifdef LOG_CRON
-	if ((x & LOG_CRON) == LOG_CRON)
-		*r |= Mono_Posix_SyslogFacility_LOG_CRON;
+	if (x == LOG_CRON)
+		{*r = Mono_Posix_SyslogFacility_LOG_CRON; return 0;}
 #endif /* ndef LOG_CRON */
 #ifdef LOG_AUTHPRIV
-	if ((x & LOG_AUTHPRIV) == LOG_AUTHPRIV)
-		*r |= Mono_Posix_SyslogFacility_LOG_AUTHPRIV;
+	if (x == LOG_AUTHPRIV)
+		{*r = Mono_Posix_SyslogFacility_LOG_AUTHPRIV; return 0;}
 #endif /* ndef LOG_AUTHPRIV */
 #ifdef LOG_FTP
-	if ((x & LOG_FTP) == LOG_FTP)
-		*r |= Mono_Posix_SyslogFacility_LOG_FTP;
+	if (x == LOG_FTP)
+		{*r = Mono_Posix_SyslogFacility_LOG_FTP; return 0;}
 #endif /* ndef LOG_FTP */
 #ifdef LOG_LOCAL0
-	if ((x & LOG_LOCAL0) == LOG_LOCAL0)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL0;
+	if (x == LOG_LOCAL0)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL0; return 0;}
 #endif /* ndef LOG_LOCAL0 */
 #ifdef LOG_LOCAL1
-	if ((x & LOG_LOCAL1) == LOG_LOCAL1)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL1;
+	if (x == LOG_LOCAL1)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL1; return 0;}
 #endif /* ndef LOG_LOCAL1 */
 #ifdef LOG_LOCAL2
-	if ((x & LOG_LOCAL2) == LOG_LOCAL2)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL2;
+	if (x == LOG_LOCAL2)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL2; return 0;}
 #endif /* ndef LOG_LOCAL2 */
 #ifdef LOG_LOCAL3
-	if ((x & LOG_LOCAL3) == LOG_LOCAL3)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL3;
+	if (x == LOG_LOCAL3)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL3; return 0;}
 #endif /* ndef LOG_LOCAL3 */
 #ifdef LOG_LOCAL4
-	if ((x & LOG_LOCAL4) == LOG_LOCAL4)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL4;
+	if (x == LOG_LOCAL4)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL4; return 0;}
 #endif /* ndef LOG_LOCAL4 */
 #ifdef LOG_LOCAL5
-	if ((x & LOG_LOCAL5) == LOG_LOCAL5)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL5;
+	if (x == LOG_LOCAL5)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL5; return 0;}
 #endif /* ndef LOG_LOCAL5 */
 #ifdef LOG_LOCAL6
-	if ((x & LOG_LOCAL6) == LOG_LOCAL6)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL6;
+	if (x == LOG_LOCAL6)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL6; return 0;}
 #endif /* ndef LOG_LOCAL6 */
 #ifdef LOG_LOCAL7
-	if ((x & LOG_LOCAL7) == LOG_LOCAL7)
-		*r |= Mono_Posix_SyslogFacility_LOG_LOCAL7;
+	if (x == LOG_LOCAL7)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL7; return 0;}
 #endif /* ndef LOG_LOCAL7 */
-	return 0;
+	errno = EINVAL; return -1;
 }
 
 int Mono_Posix_FromSyslogLevel (int x, int *r)
