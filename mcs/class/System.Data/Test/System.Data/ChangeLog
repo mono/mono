@@ -1,3 +1,7 @@
+2005-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetReadXmlSchemaTest.cs : set [Category("InetAccess")]
+
 2005-06-15  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataSetTest.cs: added a test case for DataSet changes cascading
