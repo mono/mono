@@ -1,3 +1,8 @@
+2005-06-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CRL.cs: Fix the case where no entry are present in the CRL (as
+	the structure is optional).
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: DSA and RSA properties are now cached. In 2.0
