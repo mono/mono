@@ -1,3 +1,8 @@
+2005-06-30  Marek Safar <marek.safar@seznam.cz>
+
+	* gtest-180.cs: DefaultCharSetAttribute test.
+	* test-422.cs: New test for #75322.
+
 2005-06-28  Martin Baulig  <martin@ximian.com>
 
 	* gtest-177.cs: New test for #74953.
