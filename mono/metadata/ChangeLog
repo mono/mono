@@ -1,3 +1,7 @@
+2005-06-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* loader.c: map user32 and kernel32 to libMonoSupportW
+
 2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (unload_thread_main): Mark this as WINAPI.
