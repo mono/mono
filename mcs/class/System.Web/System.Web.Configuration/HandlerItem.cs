@@ -53,8 +53,8 @@ namespace System.Web.Configuration
 			_typeName = type;
 			_path = path;
 			_requestType = requestType.Replace (" ", "");
-			requestRegex = GetRegex (_requestType);
-			pathRegex = GetRegex (_path);
+			requestRegex = GetRegex (_requestType, true);
+			pathRegex = GetRegex (_path, false);
 			if (validate)
 				DoValidation ();
 		}
@@ -132,13 +132,13 @@ namespace System.Web.Configuration
 			return result;
 		}
 			
-		static Regex GetRegex (string verb)
+		static Regex GetRegex (string verb, bool match_all)
 		{
 			EnsureCache ();
 			if (regexCache.ContainsKey (verb))
 				return (Regex) regexCache [verb];
 
-			StringBuilder result = new StringBuilder ("\\A");
+			StringBuilder result = new StringBuilder ((match_all) ? "\\A" : "");
 			string [] expressions = verb.Split (',');
 			int end = expressions.Length;
 			for (int i = 0; i < end; i++) {

@@ -48,21 +48,15 @@ namespace System.Web.Configuration
 				ThrowException ("No child nodes allowed here.", section);
 
 			string attvalue = AttValue ("requestEncoding", section, true);
-			if (attvalue == null)
-				config.RequestEncoding = Encoding.Default;
-			else
+			if (attvalue != null)
 				config.RequestEncoding = GetEncoding (section, "requestEncoding", attvalue);
 
 			attvalue = AttValue ("responseEncoding", section, true);
-			if (attvalue == null)
-				config.ResponseEncoding = Encoding.Default;
-			else
+			if (attvalue != null)
 				config.ResponseEncoding = GetEncoding (section, "responseEncoding", attvalue);
 
 			attvalue = AttValue ("fileEncoding", section, true);
-			if (attvalue == null)
-				config.FileEncoding = Encoding.Default;
-			else
+			if (attvalue != null)
 				config.FileEncoding = GetEncoding (section, "fileEncoding", attvalue);
 
 			attvalue = AttValue ("culture", section, true);

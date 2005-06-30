@@ -41,9 +41,13 @@ namespace System.Web.Configuration
 		static ExpressionBuilderCollection ()
 		{
 			props = new ConfigurationPropertyCollection ();
-			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.DefaultCollection;
+			ConfigurationPropertyOptions flags = ConfigurationPropertyOptions.DefaultCollection;
 			ConfigurationProperty prop = new ConfigurationProperty (null, typeof (ExpressionBuilderCollection), null, flags);
 			props.Add (prop);
+		}
+		
+		public ExpressionBuilderCollection (): base (CaseInsensitiveComparer.DefaultInvariant)
+		{
 		}
 
 		public ExpressionBuilder this [int index] {
@@ -82,11 +86,6 @@ namespace System.Web.Configuration
 		public void RemoveAt (int index)
 		{
 			BaseRemoveAt (index);
-		}
-
-		protected override bool CompareKeys (object key1, object key2)
-		{
-			return (0 == CaseInsensitiveComparer.DefaultInvariant.Compare ((string) key1, (string) key2));
 		}
 
 		protected override ConfigurationElement CreateNewElement ()

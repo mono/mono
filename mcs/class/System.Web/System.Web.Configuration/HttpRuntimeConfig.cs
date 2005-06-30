@@ -29,7 +29,9 @@
 //
 
 using System;
+#if !TARGET_J2EE
 using System.CodeDom.Compiler;
+#endif
 using System.Collections;
 using System.Configuration;
 using System.IO;

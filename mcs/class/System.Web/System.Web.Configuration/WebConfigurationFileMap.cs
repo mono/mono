@@ -1,12 +1,8 @@
 //
-// System.Web.Configuration.AssemblyCollection
+// System.Configuration.ExeConfigurationFileMap.cs
 //
 // Authors:
-//	Lluis Sanchez Gual (lluis@novell.com)
-//
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +23,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+//
 
 #if NET_2_0
 
@@ -35,36 +33,33 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public class AssemblyInfo: ConfigurationElement
+	[Serializable]
+	public sealed class WebConfigurationFileMap: ConfigurationFileMap
 	{
-		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty assemblyProp;
+		VirtualDirectoryMappingCollection virtualDirectories;
 		
-		static AssemblyInfo ()
+		public WebConfigurationFileMap ()
 		{
-			properties = new ConfigurationPropertyCollection ();
-//			assemblyProp = new NonEmptyStringConfigurationProperty ("assembly", null, ConfigurationPropertyFlags.IsKey);
-//			properties.Add (assemblyProp);
+			virtualDirectories = new VirtualDirectoryMappingCollection ();
 		}
 		
-		public AssemblyInfo ()
+		public VirtualDirectoryMappingCollection VirtualDirectories {
+			get { return virtualDirectories; }
+		}
+		
+		public override object Clone ()
 		{
+			WebConfigurationFileMap map = new WebConfigurationFileMap ();
+			map.MachineConfigFilename = MachineConfigFilename;
+			
+			map.virtualDirectories = new VirtualDirectoryMappingCollection ();
+			foreach (VirtualDirectoryMapping vmap in virtualDirectories) {
+				VirtualDirectoryMapping nvmap = new VirtualDirectoryMapping (vmap.PhysicalDirectory, vmap.IsAppRoot, vmap.ConfigFileBaseName);
+				map.virtualDirectories.Add (vmap.VirtualDirectory, nvmap);
+			}
+			
+			return map;
 		}
-		
-		public AssemblyInfo (string assemblyName)
-		{
-			base [assemblyProp] = assemblyName;
-		}
-		
-		public string Assembly {
-			get { return (string) base [assemblyProp]; }
-			set { base [assemblyProp] = value; }
-		}
-		
-/*		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
-*/	}
+	}
 }
-
 #endif

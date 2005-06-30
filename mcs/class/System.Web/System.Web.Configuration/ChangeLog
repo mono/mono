@@ -1,3 +1,40 @@
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerItem.cs: the path matches 'path\z', as the previous '\Apath\z'
+	failed for 'dir/*.ext'.
+
+2005-06-23  Lluis Sanchez Gual <lluis@novell.com>
+
+	* VirtualDirectoryMapping.cs: Implemented.
+	* WebConfigurationManager.cs: Initial implementation.
+	* VirtualDirectoryMappingCollection.cs: Implemented.
+	* WebConfigurationFileMap.cs: Implemented.
+	* WebConfigurationHost.cs: Initial implementation of class
+	that supports IInternalConfigHost.
+
+2005-06-19 Ilya Kharmatsky <ilyak-at-mainsoft.com>
+
+	* HttpRuntimeConfig.cs: Added TARGET_JVM directive in "using clause"
+	in order to exclude in J2EE configuration usage of unsupported
+	CodeDome API.
+
+2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* CodeSubDirectory.cs:
+	* ExpressionBuilder.cs:
+	* AssemblyInfo.cs:
+	* BuildProviderCollection.cs:
+	* ExpressionBuilderCollection.cs:
+	* CodeSubDirectoriesCollection.cs:
+	* AnonymousIdentificationSection.cs: Track 2.0 api changes
+	in System.Configuration.
+
+2005-06-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs: when an attribute is not
+	provided, don't assing Encoding.Default to it, as we might override
+	parent's settings.
+
 2005-05-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfiguration.cs: throw if we cannot load the type given
