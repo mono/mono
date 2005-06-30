@@ -1,3 +1,8 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources: Added Mono.Security.X509.X509CrlTest
+	to the build.
+
 2005-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security.dll.sources: Added GeneralNames to Mono.Security.X509.
