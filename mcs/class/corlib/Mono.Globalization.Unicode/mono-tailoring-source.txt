@@ -7,8 +7,9 @@
 #	- S = D
 #		it means source S is considered as equivalent to D
 #	- S : cc pp ss tt ii
-#		it means source S has a sortkey. Here * can be used and it
-#		character in S.
+#		it means source S has a sortkey. For level 2 and 3, * can be 
+#		used to indicate that it copies the corresponding weight of
+#		the first character of S.
 #
 # Level 4 tailorings is not supported (it is logically done).
 #

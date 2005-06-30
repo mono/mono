@@ -55,8 +55,10 @@ namespace Mono.Globalization.Unicode
 		readonly byte [] cjkLv2Table;
 		readonly CodePointIndexer cjkLv2Indexer;
 		readonly int lcid;
+		readonly Contraction [] contractions;
+		readonly Level2Map [] level2Maps;
 
-		#region Tailoring supports
+		#region Tailoring support classes
 		// Possible mapping types are:
 		//
 		//	- string to string (ReplacementMap)
@@ -127,9 +129,6 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		readonly Contraction [] contractions;
-		readonly Level2Map [] level2Maps;
-
 		#endregion
 
 		#region .ctor() and split functions
@@ -156,7 +155,13 @@ namespace Mono.Globalization.Unicode
 			frenchSort = t.FrenchSort;
 			BuildTailoringTables (culture, t, ref contractions,
 				ref level2Maps);
+			// FIXME: Since tailorings are mostly for latin
+			// (and in some cases Cyrillic) characters, it would
+			// be much better for performance to store "start 
+			// indexes" for > 370 (culture-specific letters).
+
 /*
+// dump tailoring table
 Console.WriteLine ("******** building table for {0} : c - {1} d - {2}",
 culture.LCID, contractions.Length, level2Maps.Length);
 foreach (Contraction c in contractions) {
@@ -325,7 +330,7 @@ Console.WriteLine (" -> {0}", c.Replacement);
 				if (ct.Source [0] > s [start])
 					return null; // it's already sorted
 				char [] chars = ct.Source;
-				if (end - start != chars.Length)
+				if (end - start < chars.Length)
 					continue;
 				bool match = true;
 				for (int n = 0; n < chars.Length; n++)
@@ -367,32 +372,6 @@ Console.WriteLine (" -> {0}", c.Replacement);
 			return Uni.GetExpansion ((char) i);
 		}
 
-		/*
-		bool HasContraction (char c, bool strict)
-		{
-			if (HasContraction (c, strict, contractions))
-				return true;
-			if (lcid != 127)
-				return HasContraction (c, strict, invariant.contractions);
-			return false;
-		}
-
-		bool HasContraction (char c, bool strict, Contraction [] clist)
-		{
-			for (int i = 0; i < clist.Length; i++) {
-				Contraction ct = clist [i];
-				if (ct.Source [0] > c)
-					return false; // it's already sorted
-				if (ct.Source [0] == c) {
-					if (strict && ct.Source.Length > 1)
-						continue;
-					return true;
-				}
-			}
-			return false;
-		}
-		*/
-
 		int FilterOptions (int i)
 		{
 			if (ignoreWidth)
@@ -420,23 +399,37 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		{
 			SetOptions (options);
 
-			int end = start + length;
 			buf.Initialize (options, s, frenchSort);
+			int end = start + length;
+			GetSortKey (s, start, end);
+			return buf.GetResultAndReset ();
+		}
+
+		void GetSortKey (string s, int start, int end)
+		{
 			for (int n = start; n < end; n++) {
 				int i = s [n];
 				if (IsIgnorable (i))
 					continue;
 				i = FilterOptions (i);
 
-				string expansion = GetExpansion (i);
-				if (expansion != null) {
-					foreach (char e in expansion)
-						FillSortKeyRaw (e);
+				Contraction ct = GetContraction (s, n, end);
+				if (ct != null) {
+					if (ct.Replacement != null)
+						GetSortKey (ct.Replacement, 0, ct.Replacement.Length);
+					else {
+						byte [] b = ct.SortKey;
+						buf.AppendNormal (
+							b [0],
+							b [1],
+							b [2] != 1 ? b [2] : Level2 (i),
+							b [3] != 1 ? b [3] : Uni.Level3 (i));
+					}
+					n += ct.Source.Length - 1;
 				}
 				else
 					FillSortKeyRaw (i);
 			}
-			return buf.GetResultAndReset ();
 		}
 
 		bool IsIgnorable (int i)

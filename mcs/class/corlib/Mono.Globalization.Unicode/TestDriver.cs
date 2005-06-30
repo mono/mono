@@ -76,6 +76,9 @@ namespace Mono.Globalization.Unicode
 			LastIndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 			LastIndexOf ("original", "rig", CompareOptions.None);
 			Console.WriteLine ("original".LastIndexOf ("rig"));
+
+			coll = new SimpleCollator (new CultureInfo ("hu"));
+			DumpSortKey ("ZSAZS1");
 		}
 
 		void Generate ()
