@@ -1,3 +1,7 @@
+2005-06-30:3 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	*mb-parser.jay: small bits preparing to support automatic definition of variables
+	on first usage with Option Explicit Off
+	
 2005-06-30:2 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*assign.cs: Killed exception occurring when resolving an assignment 
 	to an undefined symbol (Explicit On scenario)

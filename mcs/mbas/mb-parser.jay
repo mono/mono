@@ -257,9 +257,9 @@ namespace Mono.MonoBASIC
 		static public bool InitialOptionCompareBinary = true;
 		static public ArrayList ImportsList = null;
 
-		bool OptionExplicit;
-		bool OptionStrict;
-		bool OptionCompareBinary;
+		static public bool OptionExplicit;
+		static public bool OptionStrict;
+		static public bool OptionCompareBinary;
 
 		static public bool UseExtendedSyntax; // for ".mbs" files
 
@@ -5047,7 +5047,7 @@ public static Expression DecomposeQI (string name, Location loc)
 {
 	Expression o;
 
-	if (name.IndexOf ('.') == -1){
+	if (name.IndexOf ('.') == -1) {
 		return new SimpleName (name, loc);
 	} else {
 		int pos = name.LastIndexOf (".");
