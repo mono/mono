@@ -4812,12 +4812,11 @@ floating_point_type
 	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
 	;
 
-directive_exp 
-	: boolean_literal
-	| constant_expression _mark_  //FIXME: Fix for binary expression
+directive_expression 
+	: constant_expression _mark_  //FIXME: Fix for binary expression
 	 {
 		Expression exp = (Expression) $1;
-		if(exp is SimpleName) {
+		if (exp is SimpleName) {
 			string key = ((SimpleName)exp).Name;	
 			if(constPreDir.Contains(key)) {
 				$$ = new BoolLiteral ((bool)constPreDir [key]);
@@ -4907,7 +4906,7 @@ pp_directive
 			throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		}
 	  }
-  	  directive_exp opt_then  EOL 
+  	  directive_expression opt_then  EOL 
 	  {
 		//FIXME: Fix for constant expression
 
@@ -4923,7 +4922,7 @@ pp_directive
 			      throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		      }
   	  }
-	  directive_exp opt_then  EOL 
+	  directive_expression opt_then  EOL 
 	  {
 		  //FIXME: Fix for constant expression
  

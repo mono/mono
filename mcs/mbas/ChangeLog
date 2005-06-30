@@ -1,3 +1,7 @@
+2005-06-30 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	*mb-parser.jay: Eliminating 'reduce/reduce conflicts' and 'rule never reduced'
+	by simplifying the directive_expression rule (formerly directive_exp).
+
 2005-06-30 Manjula GHM <mmanjula@novell.com>
 	*mb-parser.jay: To support signed exponent
 
