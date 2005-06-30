@@ -2589,6 +2589,32 @@ namespace Mono.CSharp {
 
 			return this;
 		}
+
+		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
+		{
+			if (IsStatic)
+				return;
+
+			if (InstanceExpression == EmptyExpression.Null) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, Name);
+				return;
+			}
+				
+			if (InstanceExpression.Type.IsValueType) {
+				if (InstanceExpression is IMemoryLocation) {
+					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
+				} else {
+					LocalTemporary t = new LocalTemporary (ec, InstanceExpression.Type);
+					InstanceExpression.Emit (ec);
+					t.Store (ec);
+					t.AddressOf (ec, AddressOp.Store);
+				}
+			} else
+				InstanceExpression.Emit (ec);
+
+			if (prepare_for_load)
+				ec.ig.Emit (OpCodes.Dup);
+		}
 	}
 
 	/// <summary>
@@ -3110,7 +3136,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldsfld, FieldInfo);
 			} else {
 				if (!prepared)
-					EmitInstance (ec);
+					EmitInstance (ec, false);
 				
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
@@ -3148,11 +3174,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (!is_static) {
-				EmitInstance (ec);
-				if (prepare_for_load)
-					ig.Emit (OpCodes.Dup);
-			}
+			EmitInstance (ec, prepare_for_load);
 
 			source.Emit (ec);
 			if (leave_copy) {
@@ -3180,21 +3202,6 @@ namespace Mono.CSharp {
 			
 			if (temp != null)
 				temp.Emit (ec);
-		}
-
-		void EmitInstance (EmitContext ec)
-		{
-			if (InstanceExpression.Type.IsValueType) {
-				if (InstanceExpression is IMemoryLocation) {
-					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
-				} else {
-					LocalTemporary t = new LocalTemporary (ec, InstanceExpression.Type);
-					InstanceExpression.Emit (ec);
-					t.Store (ec);
-					t.AddressOf (ec, AddressOp.Store);
-				}
-			} else
-				InstanceExpression.Emit (ec);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -3251,7 +3258,7 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic){
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			} else {
-				EmitInstance (ec);
+				EmitInstance (ec, false);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
@@ -3559,40 +3566,16 @@ namespace Mono.CSharp {
 
 			return this;
 		}
-
-
 		
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
 		}
 		
-		void EmitInstance (EmitContext ec)
-		{
-			if (is_static)
-				return;
-
-			if (InstanceExpression.Type.IsValueType) {
-				if (InstanceExpression is IMemoryLocation) {
-					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
-				} else {
-					LocalTemporary t = new LocalTemporary (ec, InstanceExpression.Type);
-					InstanceExpression.Emit (ec);
-					t.Store (ec);
-					t.AddressOf (ec, AddressOp.Store);
-				}
-			} else
-				InstanceExpression.Emit (ec);
-			
-			if (prepared)
-				ec.ig.Emit (OpCodes.Dup);
-		}
-
-		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			if (!prepared)
-				EmitInstance (ec);
+				EmitInstance (ec, false);
 			
 			//
 			// Special case: length of single dimension array property is turned into ldlen
@@ -3631,7 +3614,7 @@ namespace Mono.CSharp {
 		{
 			prepared = prepare_for_load;
 			
-			EmitInstance (ec);
+			EmitInstance (ec, prepare_for_load);
 
 			source.Emit (ec);
 			if (leave_copy) {

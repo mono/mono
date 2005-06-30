@@ -1,3 +1,13 @@
+2005-06-30  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75283.
+	* ecore.cs (MemberExpr.EmitInstance): New.  Add CS0120 check.
+	Refactored from ...
+	(FieldExpr.EmitInstance, PropertyExpr.EmitInstance): ... these.
+	(FieldExpr.Emit, PropertyExpr.Emit): Update.
+	(FieldExpr.EmitAssign, PropertyExpr.EmitAssign): Update.
+	* expression.cs (Invocation.EmitCall): Add CS0120 check.
+
 2005-06-30  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #75322

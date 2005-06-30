@@ -11,9 +11,10 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
+cs0115-4.cs
 cs0118.cs
+cs0120-8.cs NO ERROR
 cs0121-3.cs NO ERROR
-cs0122-12.cs
 cs0201.cs
 cs0202.cs # new in GMCS
 cs0229.cs NO ERROR
@@ -27,7 +28,6 @@ cs0420-2.cs
 cs0428.cs
 cs0525.cs
 cs0526.cs
-cs0531.cs # new in GMCS; grammar issue
 cs0547-2.cs # new in GMCS; grammar issue
 cs0547.cs
 cs0548-4.cs
@@ -42,6 +42,7 @@ cs0642-5.cs NO ERROR
 cs0642-6.cs NO ERROR
 cs0647-15.cs NO ERROR # corlib bug 73143
 cs0652.cs NO ERROR
+cs0657-15.cs NO ERROR
 cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
 cs1501-5.cs
@@ -57,5 +58,6 @@ cs1638.cs NO ERROR
 cs1641.cs
 cs1666.cs NO ERROR
 cs2007.cs
+cs8628.cs
 gcs0694.cs NO ERROR
 gcs1644-2.cs NO ERROR

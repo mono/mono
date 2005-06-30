@@ -5537,6 +5537,11 @@ namespace Mono.CSharp {
                 return; 
 			
 			if (!is_static){
+				if (instance_expr == EmptyExpression.Null) {
+					SimpleName.Error_ObjectRefRequired (ec, loc, TypeManager.CSharpSignature (method));
+					return;
+				}
+
 				this_call = instance_expr is This;
 				if (decl_type.IsValueType || (!this_call && instance_expr.Type.IsValueType))
 					struct_call = true;
