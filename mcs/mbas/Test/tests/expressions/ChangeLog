@@ -1,4 +1,7 @@
- 2005-06-29  Manjula GHM  <mmanjula@novell.com>
+ 2005-06-30  Manjula GHM  <mmanjula@novell.com>
+	*ExpressionLiteralStringB.vb: Fix compilation breakage
+ 
+2005-06-29  Manjula GHM  <mmanjula@novell.com>
 *ExpressionLiteralNumericD.vb: correction in test case
  2005-06-29  Manjula GHM  <mmanjula@novell.com>
 *ExpressionLiteralNothingA.vb : correction in test case

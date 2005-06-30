@@ -1,7 +1,7 @@
 'Author: Ritvik Mayank <mritvik@novell.com>
 'Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 
-imports Microsoft.Visualbasic
+Imports Microsoft.VisualBasic
 Imports System
 Module ExpressionLiteralString
 	Sub Main() 
