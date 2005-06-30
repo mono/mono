@@ -4280,7 +4280,7 @@ namespace Mono.MonoBASIC {
 			if (ec.InvokingOwnOverload == false && current_block != null && current_block.IsVariableDefined (Name)){
 				LocalVariableReference var;
 
-				var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+				var = new LocalVariableReference (current_block, Name, loc);
 
 				if (right_side != null)
 					return var.ResolveLValue (ec, right_side);
@@ -4340,7 +4340,6 @@ namespace Mono.MonoBASIC {
 // #52067 - Start - Trying to solve
 
 			if (e == null) {
-				
 				ArrayList lookups = new ArrayList();
 				ArrayList typelookups = new ArrayList();
 				
@@ -4380,9 +4379,35 @@ namespace Mono.MonoBASIC {
 
 // #52067 - End
 
-			if (e == null)
-				return DoResolveType (ec);
-
+			if (e == null) {
+			
+		/* preparing to support automatic definition of variables on first usage with Option Explicit Off
+			
+			Isn't good enough to enable just now (tries to define some internal links and breaks on emit)
+			
+				if (Name.IndexOf ('.') == -1 && current_block != null && !Mono.MonoBASIC.Parser.OptionExplicit) {
+				
+					// while looking for a real solution
+					if (Name != "anything")
+						return DoResolveType (ec);
+						
+					Console.WriteLine("Implicitly adding a variable named '{0}'", Name);
+					
+					// TODO: look at type-suffixes to correct name and type
+					Expression type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", loc);
+					
+					current_block.AddVariable(ec, type, Name, loc);
+				
+					LocalVariableReference var = new LocalVariableReference (current_block, Name, loc);
+					if (right_side != null)
+						return var.ResolveLValue (ec, right_side);
+					else
+						return var.Resolve (ec);
+				} else
+		*/
+					return DoResolveType (ec);
+			}
+			
 			if (e is TypeExpr)
 				return e;
 
@@ -4419,13 +4444,14 @@ namespace Mono.MonoBASIC {
 				return e;
 			}
 
-			if (ec.IsStatic || ec.IsFieldInitializer){
+			if (ec.IsStatic || ec.IsFieldInitializer) {
 				if (allow_static)
 					return e;
 
 				return MemberStaticCheck (ec, e);
-			} else
-				return e;
+			}
+						
+			return e;
 		}
 		
 		public override void Emit (EmitContext ec)

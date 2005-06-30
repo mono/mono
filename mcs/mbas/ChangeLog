@@ -1,3 +1,8 @@
+2005-06-30:5 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	*ecore.cs: some tentative code preparing to support automatic definition of variables
+	on first usage with Option Explicit Off commented out as it breaks on emit phase, and 
+	guesses wrong what should be automatically defined
+
 2005-06-30:4 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*statement.cs: some tentative code preparing to support automatic definition of variables
 	on first usage with Option Explicit Off. Converting backticks to apostrophes on messages
