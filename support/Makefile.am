@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
-	libMonoWindowsSupport.la
+	libMonoSupportW.la
 
 INCLUDES =					\
 	$(GLIB_CFLAGS)				\
@@ -68,13 +68,13 @@ libMonoPosixHelper_la_LIBADD =			\
 
 # libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
-libMonoWindowsSupport_la_LDFLAGS = -no-undefined -avoid-version
+libMonoSupportW_la_LDFLAGS = -no-undefined -avoid-version
 
-libMonoWindowsSupport_la_SOURCES =		\
+libMonoSupportW_la_SOURCES =			\
 		supportw.c			\
 		supportw.h
 
-libMonoWindowsSupport_la_LIBADD =				\
+libMonoSupportW_la_LIBADD =					\
 		$(top_builddir)/mono/io-layer/libwapi.la	\
 		$(top_builddir)/mono/mini/libmono.la
 
