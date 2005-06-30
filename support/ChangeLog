@@ -1,3 +1,8 @@
+2005-06-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* supportw.c: HeapDestroy.
+	* Makefile.am: don't build supportw on windows.
+
 2005-06-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile.am: namespace our library.

@@ -1,6 +1,11 @@
+if PLATFORM_WIN32
+SUPPORT=
+else
+SUPPORT=libMonoSupportW.la
+endif
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
-	libMonoSupportW.la
+	$(SUPPORT)
 
 INCLUDES =					\
 	$(GLIB_CFLAGS)				\

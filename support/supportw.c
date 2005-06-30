@@ -30,6 +30,7 @@ gpointer HeapReAlloc (gpointer handle, gint32 flags, gpointer mem, gint32 nbytes
 gint32 HeapSize (gpointer handle, gint32 flags, gpointer mem);
 gboolean HeapFree (gpointer handle, gint32 flags, gpointer mem);
 gboolean HeapValidate (gpointer handle, gpointer mem);
+gboolean HeapDestroy (gpointer handle);
 gpointer GetProcessHeap (void);
 
 static FnPtr functions [] = {
@@ -150,11 +151,12 @@ FindWindowExW (gpointer hwndParent, gpointer hwndChildAfter, const char *classw,
 
 	g_return_val_if_fail (register_assembly ("System.Windows.Forms", &swf_registered), NULL);
 	if (func == NULL)
-		func = (func_type) get_function ("FindwindowExW");
+		func = (func_type) get_function ("FindWindowExW");
 
 	return func (hwndParent, hwndChildAfter, classw, window);
 }
 
+/* begin Heap* functions */
 gpointer
 HeapCreate (gint32 flags, gint32 initial_size, gint32 max_size)
 {
@@ -207,9 +209,17 @@ HeapValidate (gpointer handle, gpointer mem)
 	return TRUE;
 }
 
+gboolean
+HeapDestroy (gpointer handle)
+{
+	return TRUE;
+}
+
+
 gpointer 
 GetProcessHeap ()
 {
 	return (gpointer) 0xDEADBEEF;
 }
+/* end Heap* functions */
 
