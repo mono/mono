@@ -1,5 +1,13 @@
 2005-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TestDriver.cs : added SimpleCollator.ctor() sanity check.
+	  Added replacement contraction example.
+	* SimpleCollator.cs : Now IndexOf() and LastIndexOf() support 
+	  contraction in source string. Extracted matching code to Matches().
+	  Replacement contraction was including extraneous '\x0'.
+
+2005-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : updated status.
 	* CollationDataStructures.txt : tiny fixes.
 	* SimpleCollator.cs :

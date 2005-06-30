@@ -15,8 +15,17 @@ namespace Mono.Globalization.Unicode
 		{
 			if (args.Length > 0 && args [0] == "--generate")
 				new TestDriver ().Generate ();
+			if (args.Length > 0 && args [0] == "--check")
+				new TestDriver ().CheckCultures ();
 			else
 				new TestDriver ().Run ();
+		}
+
+		void CheckCultures ()
+		{
+			foreach (CultureInfo ci in CultureInfo.GetCultures (
+				CultureTypes.AllCultures))
+				Console.WriteLine ("Culture {0}({1}) : OK: {2}", ci.LCID, ci.Name, new SimpleCollator (ci));
 		}
 
 		void Run ()
@@ -46,6 +55,7 @@ namespace Mono.Globalization.Unicode
 			IndexOf ("ABCABC", '\uFF22', CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
 			IndexOf ("ABCDE", '\u0117', CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 			IndexOf ("ABCABC", 'B', 1, 5, CompareOptions.IgnoreCase);
+			IndexOf ("\u00E6", 'a', CompareOptions.None);
 
 			LastIndexOf ("ABC", '1', CompareOptions.None);
 			LastIndexOf ("ABCABC", 'c', CompareOptions.IgnoreCase);
@@ -77,7 +87,7 @@ namespace Mono.Globalization.Unicode
 			LastIndexOf ("ABCABC", "BC", CompareOptions.IgnoreCase);
 			LastIndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 			LastIndexOf ("original", "rig", CompareOptions.None);
-			Console.WriteLine ("original".LastIndexOf ("rig"));
+			LastIndexOf ("\u00E6", "ae", CompareOptions.None);
 
 			coll = new SimpleCollator (new CultureInfo ("hu"));
 			DumpSortKey ("ZSAZS1");
