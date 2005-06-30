@@ -7972,16 +7972,17 @@ namespace Mono.CSharp {
 	}
 	
 	class Indexers {
-		public ArrayList Properties;
-		static Hashtable map;
+		// note that the ArrayList itself in mutable.  We just can't assign to 'Properties' again.
+		public readonly ArrayList Properties;
+		static Indexers empty;
 
 		public struct Indexer {
-			public readonly Type Type;
+			public readonly PropertyInfo PropertyInfo;
 			public readonly MethodInfo Getter, Setter;
 
-			public Indexer (Type type, MethodInfo get, MethodInfo set)
+			public Indexer (PropertyInfo property_info, MethodInfo get, MethodInfo set)
 			{
-				this.Type = type;
+				this.PropertyInfo = property_info;
 				this.Getter = get;
 				this.Setter = set;
 			}
@@ -7989,22 +7990,33 @@ namespace Mono.CSharp {
 
 		static Indexers ()
 		{
-			map = new Hashtable ();
+			empty = new Indexers (null);
 		}
 
-		Indexers ()
+		Indexers (ArrayList array)
 		{
-			Properties = new ArrayList ();
+			Properties = array;
 		}
-				
-		void Append (MemberInfo [] mi)
+
+		static void Append (ref Indexers ix, Type caller_type, MemberInfo [] mi)
 		{
+			bool dummy;
+			if (mi == null)
+				return;
 			foreach (PropertyInfo property in mi){
 				MethodInfo get, set;
 				
 				get = property.GetGetMethod (true);
 				set = property.GetSetMethod (true);
-				Properties.Add (new Indexer (property.PropertyType, get, set));
+				if (get != null && !Expression.IsAccessorAccessible (caller_type, get, out dummy))
+					get = null;
+				if (set != null && !Expression.IsAccessorAccessible (caller_type, set, out dummy))
+					set = null;
+				if (get != null || set != null) {
+					if (ix == empty)
+						ix = new Indexers (new ArrayList ());
+					ix.Properties.Add (new Indexer (property, get, set));
+				}
 			}
 		}
 
@@ -8012,51 +8024,27 @@ namespace Mono.CSharp {
 		{
 			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 
-			MemberInfo [] mi = TypeManager.MemberLookup (
+			return TypeManager.MemberLookup (
 				caller_type, caller_type, lookup_type, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly, p_name, null);
-
-			if (mi == null || mi.Length == 0)
-				return null;
-
-			return mi;
 		}
 		
 		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
 		{
-			Indexers ix = (Indexers) map [lookup_type];
-
-			if (ix != null)
-				return ix;
+			Indexers ix = empty;
 
 			Type copy = lookup_type;
 			while (copy != TypeManager.object_type && copy != null){
-				MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, copy);
-
-				if (mi != null){
-					if (ix == null)
-						ix = new Indexers ();
-
-					ix.Append (mi);
-				}
-					
+				Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, copy));
 				copy = copy.BaseType;
 			}
 
-			if (!lookup_type.IsInterface)
-				return ix;
-
-			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
-			if (ifaces != null) {
-				foreach (Type itype in ifaces) {
-					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
-					if (mi != null){
-						if (ix == null)
-							ix = new Indexers ();
-					
-						ix.Append (mi);
-					}
+			if (lookup_type.IsInterface) {
+				Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
+				if (ifaces != null) {
+					foreach (Type itype in ifaces)
+						Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
 				}
 			}
 
@@ -8118,15 +8106,12 @@ namespace Mono.CSharp {
 			bool found_any = false, found_any_getters = false;
 			Type lookup_type = indexer_type;
 
-			Indexers ilist;
-			ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
-			if (ilist != null) {
+			Indexers ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
+			if (ilist.Properties != null) {
 				found_any = true;
-				if (ilist.Properties != null) {
-					foreach (Indexers.Indexer ix in ilist.Properties) {
-						if (ix.Getter != null)
-							AllGetters.Add(ix.Getter);
-					}
+				foreach (Indexers.Indexer ix in ilist.Properties) {
+					if (ix.Getter != null)
+						AllGetters.Add (ix.Getter);
 				}
 			}
 
@@ -8144,8 +8129,10 @@ namespace Mono.CSharp {
 			}
 
 			if (!found_any_getters) {
-				Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
-				       "XXXXXXXX");
+				PropertyInfo pi = ((Indexers.Indexer) ilist.Properties [0]).PropertyInfo;
+				Report.Error (154, loc, 
+					"The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
+					TypeManager.GetFullNameSignature (pi));
 				return null;
 			}
 
@@ -8183,13 +8170,11 @@ namespace Mono.CSharp {
 			bool found_any = false, found_any_setters = false;
 
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type, loc);
-			if (ilist != null) {
+			if (ilist.Properties != null) {
 				found_any = true;
-				if (ilist.Properties != null) {
-					foreach (Indexers.Indexer ix in ilist.Properties) {
-						if (ix.Setter != null)
-							AllSetters.Add(ix.Setter);
-					}
+				foreach (Indexers.Indexer ix in ilist.Properties) {
+					if (ix.Setter != null)
+						AllSetters.Add (ix.Setter);
 				}
 			}
 			if (AllSetters.Count > 0) {
@@ -8232,11 +8217,11 @@ namespace Mono.CSharp {
 			type = TypeManager.void_type;	// default value
 			foreach (Indexers.Indexer ix in ilist.Properties){
 				if (ix.Setter == set){
-					type = ix.Type;
+					type = ix.PropertyInfo.PropertyType;
 					break;
 				}
 			}
-			
+
 			instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
 
 			eclass = ExprClass.IndexerAccess;
