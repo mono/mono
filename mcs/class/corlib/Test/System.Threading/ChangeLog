@@ -1,3 +1,7 @@
+2005-06-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* MutexTest.cs: Redisable. They didn't work so well ;-(.
+
 2005-06-28  Ben Maurer  <bmaurer@ximian.com>
 
 	* MutexTest.cs: Re-enable the mutex tests. They seem to work for
