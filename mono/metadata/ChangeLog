@@ -1,3 +1,7 @@
+2005-06-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* threads.c (thread_cleanup): assert that thread != NULL
+
 2005-06-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* loader.c: map user32 and kernel32 to libMonoSupportW
