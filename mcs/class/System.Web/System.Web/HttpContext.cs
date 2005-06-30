@@ -65,6 +65,10 @@ namespace System.Web
 		string errorPage;
 		IPrincipal user;
 		
+#if TARGET_J2EE
+		private object LOCK = new object();
+#endif
+
 #if NET_2_0
 		private System.Web.UI.Page lastPage;
 #endif
@@ -202,13 +206,33 @@ namespace System.Web
 			}
 		}
 
+#if TARGET_J2EE
+		public bool IsDebuggingEnabled
+		{
+			get {
+				return false;
+			}
+		}
+#else
 		public bool IsDebuggingEnabled
 		{
 			get {
 				return CompilationConfiguration.GetInstance (this).Debug;
 			}
 		}
+#endif
 
+#if TARGET_J2EE
+		private bool _timedOut;
+		internal bool TimedOut {
+			get {
+				return _timedOut;
+			}
+			set {
+				_timedOut = value;
+			}
+		}
+#endif
 		public IDictionary Items
 		{
 			get {
@@ -280,16 +304,32 @@ namespace System.Web
 			set { user = value; }
 		}
 
+#if TARGET_J2EE
+		internal bool TimeoutPossible {
+			get { return (timeoutPossible==1);}
+		}
+		internal void EndTimeoutPossible () {
+			timeoutPossible = 0;
+		}
+		internal void TryWaitForTimeout () {
+			while (TimeoutPossible) {
+				Thread.Sleep (500);
+			}
+		}
+#endif
+		
+#if !TARGET_J2EE
 		internal bool TimeoutPossible {
 			get { return (Interlocked.CompareExchange (ref timeoutPossible, 1, 1) == 1); }
 		}
-		
+#endif
 		internal void BeginTimeoutPossible ()
 		{
 			timeoutPossible = 1;
 			timeoutBegin = DateTime.UtcNow.Ticks;
 		}
 
+#if !TARGET_J2EE
 		internal void EndTimeoutPossible ()
 		{
 			Interlocked.CompareExchange (ref timeoutPossible, 0, 1);
@@ -301,6 +341,7 @@ namespace System.Web
 				Thread.Sleep (500);
 			}
 		}
+#endif
 
 		internal bool CheckIfTimeout (DateTime dt)
 		{
@@ -399,7 +440,7 @@ namespace System.Web
 			}
 
 			path = UrlUtils.Combine (Request.BaseVirtualDir, path);
-			if (!path.StartsWith (HttpRuntime.AppDomainAppVirtualPath))
+			if (!StrUtils.StartsWith (path, HttpRuntime.AppDomainAppVirtualPath))
 				throw new HttpException (404, "The virtual path '" + path +
 							 "' maps to another application.");
 

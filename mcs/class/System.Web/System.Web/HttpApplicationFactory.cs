@@ -34,8 +34,13 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Web.UI;
-using System.Web.Compilation;
 using System.Web.SessionState;
+#if !TARGET_J2EE
+using System.Web.Compilation;
+#else
+using System.Web.Configuration;
+using vmw.common;
+#endif
 
 namespace System.Web {
 	class HttpApplicationFactory {
@@ -57,8 +62,20 @@ namespace System.Web {
 
 		static IHttpHandler custApplication;
 
+#if TARGET_J2EE
+		static private HttpApplicationFactory s_Factory {
+					get {
+						HttpApplicationFactory factory = (HttpApplicationFactory)AppDomain.CurrentDomain.GetData("HttpApplicationFactory");
+						if (factory == null) {
+							factory = new HttpApplicationFactory();
+							AppDomain.CurrentDomain.SetData("HttpApplicationFactory", factory);
+						}
+						return factory;
+					}
+		}
+#else
 		static private HttpApplicationFactory s_Factory = new HttpApplicationFactory();
-
+#endif
 		public HttpApplicationFactory() {
 			_appInitialized = false;
 			_appFiredEnd = false;
@@ -76,7 +93,25 @@ namespace System.Web {
 
 			return Path.Combine (physicalAppPath, "global.asax");
 		}
+#if TARGET_J2EE
+		void CompileApp(HttpContext context)
+		{
 
+			try
+			{
+				String url = IAppDomainConfig.WAR_ROOT_SYMBOL+"/global.asax";
+				_appType = System.Web.GH.PageMapper.GetObjectType(url);
+			}
+			catch (Exception e)
+			{
+				_appType = typeof (System.Web.HttpApplication);
+			}
+			_state = new HttpApplicationState ();
+
+		}
+#endif
+
+#if !TARGET_J2EE
 		void CompileApp (HttpContext context)
 		{
 			if (File.Exists (_appFilename)) {
@@ -92,6 +127,7 @@ namespace System.Web {
 				_state = new HttpApplicationState ();
 			}
 		}
+#endif
 
 		static bool IsEventHandler (MethodInfo m)
 		{
@@ -333,6 +369,23 @@ namespace System.Web {
 			}
 		}
 
+#if TARGET_J2EE
+		internal HttpApplication GetPublicInstance()
+		{
+			HttpApplication app = null;
+
+			lock (_appFreePublicList)
+			{
+				if (_appFreePublicInstances > 0)
+				{
+					app = (HttpApplication) _appFreePublicList.Pop();
+					_appFreePublicInstances--;
+				}
+			}
+			return app;
+		}
+#endif
+
 		private IHttpHandler GetPublicInstance(HttpContext context) {
 			HttpApplication app = null;
 
@@ -382,6 +435,17 @@ namespace System.Web {
 		}
 		
 		static internal HttpApplicationState ApplicationState {
+#if TARGET_J2EE
+			get {
+				if (null == s_Factory._state) {
+					HttpStaticObjectsCollection app = null;
+					HttpStaticObjectsCollection ses = null;
+					s_Factory._state = new HttpApplicationState (app, ses);
+				}
+
+				return s_Factory._state;
+			}
+#else
 			get {
 				if (null == s_Factory._state) {
 					HttpStaticObjectsCollection app = MakeStaticCollection (GlobalAsaxCompiler.ApplicationObjects);
@@ -391,6 +455,7 @@ namespace System.Web {
 
 				return s_Factory._state;
 			}
+#endif
 		}
 
 		internal static void EndApplication() {

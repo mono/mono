@@ -52,6 +52,7 @@ namespace System.Web
 		bool _bSuppressHeaders;
 		bool _bSuppressContent;
 		bool _bChunked;
+		bool last_chunk_sent;
 		bool _bEnded;
 		bool _bBuffering;
 		bool _bHeadersSent;
@@ -113,6 +114,12 @@ namespace System.Web
 			 _WorkerRequest = WorkerRequest;
 		}
 
+#if TARGET_J2EE
+	public HttpWorkerRequest WorkerRequest{
+		get{ return _WorkerRequest; }
+	}
+#endif
+
 		internal void InitializeWriter ()
 		{
 			// We cannot do this in the .ctor because HttpWriter uses configuration and
@@ -156,8 +163,10 @@ namespace System.Web
 			ArrayList oHeaders = new ArrayList (_Headers);
 
 			oHeaders.Add (new HttpResponseHeader ("X-Powered-By", "Mono"));
-			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ", CultureInfo.InvariantCulture);
-			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
+
+#if !TARGET_J2EE
+			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
+			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date);
 			oHeaders.Add (date_header);
 			
 			if (IsCached)
@@ -167,6 +176,7 @@ namespace System.Web
 				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentLength,
 								      _lContentLength.ToString ()));
 			}
+#endif
 
 			// Apache2 only auto-adds 'charset=blah' for text/plain and text/html
 			if (_sContentType != null) {
@@ -229,7 +239,11 @@ namespace System.Web
 			foreach (HttpResponseHeader oHeader in oHeaders)
 				oHeader.SendContent (_WorkerRequest);
 			
+#if !TARGET_J2EE //in J2EE env. we are setting headers into
+                //HttpServletResponse instance -> headers are
+                //still not sent
 			_bHeadersSent = true;
+#endif
 		}
 
 		public string Status
@@ -325,7 +339,7 @@ namespace System.Web
 				string rvd = _Context.Request.RootVirtualDir;
 				string basevd = rvd.Replace (app_path_mod, "");
 
-				if (!virtualPath.StartsWith (basevd))
+				if (!StrUtils.StartsWith (virtualPath, basevd))
 					return virtualPath;
 
 				virtualPath = UrlUtils.Combine (rvd, virtualPath.Substring (basevd.Length));
@@ -635,7 +649,7 @@ namespace System.Web
 			if (_bHeadersSent)
 				throw new HttpException ("Headers has been sent to the client");
 
-			switch (name.ToLower ()) {
+			switch (name.ToLower (CultureInfo.InvariantCulture)) {
 			case "content-length":
 				_lContentLength = Int64.Parse (value);
 				break;
@@ -711,6 +725,10 @@ namespace System.Web
 		public void Close ()
 		{
 			if (!closed && !_bClientDisconnected) {
+				if (_bChunked && !last_chunk_sent) {
+					last_chunk_sent = true;
+					_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd, s_arrChunkEnd.Length);
+				}
 				_WorkerRequest.CloseConnection ();
 				_bClientDisconnected = true;
 				closed = true;
@@ -737,7 +755,11 @@ namespace System.Web
 				return;
 
 			if (_Context.TimeoutPossible)
+#if !TARGET_J2EE
 				Thread.CurrentThread.Abort (new StepCompleteRequest ());
+#else
+				throw new vmw.@internal.j2ee.StopExecutionException();
+#endif
 
 			Flush ();
 			_bEnded = true;
@@ -808,8 +830,8 @@ namespace System.Web
 
 				if (length == 0) {
 					if (bFinish && _bChunked) {
-						_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd,
-										s_arrChunkEnd.Length);
+						last_chunk_sent = true;
+						_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd, s_arrChunkEnd.Length);
 					}
 
 					_WorkerRequest.FlushResponse (bFinish);
@@ -839,9 +861,11 @@ namespace System.Web
 
 						_WorkerRequest.SendResponseFromMemory (s_arrChunkSuffix,
 										       s_arrChunkSuffix.Length);
-						if (bFinish)
+						if (bFinish) {
+							last_chunk_sent = true;
 							_WorkerRequest.SendResponseFromMemory (
 									s_arrChunkEnd, s_arrChunkEnd.Length);
+						}
 					} else {
 						_Writer.SendContent (_WorkerRequest);
 					}
@@ -981,6 +1005,11 @@ namespace System.Web
 
 		public void WriteFile (string filename, bool readIntoMemory)
 		{
+#if TARGET_J2EE
+			if ((this.Request != null) && ((filename.Length <= 2)
+					|| ((filename[0] != '\\') && (filename[1] != ':'))))
+				filename = Request.MapPath(filename);
+#endif
 			FileStream fs = null;
 			try {
 				fs = File.OpenRead (filename);
@@ -999,6 +1028,11 @@ namespace System.Web
 		public void WriteFile (string filename, long offset, long size)
 		{
 			FileStream fs = null;
+#if TARGET_J2EE
+			if ((this.Request != null) && ((filename.Length <= 2)
+				|| ((filename[0] != '\\') && (filename[1] != ':'))))
+				filename = Request.MapPath(filename);
+#endif
 			try {
 				fs = File.OpenRead (filename);
 				WriteFromStream (fs, offset, size, 30702);
@@ -1023,6 +1057,9 @@ namespace System.Web
 		[MonoTODO()]
 		internal void OnCookieAdd (HttpCookie cookie)
 		{
+#if TARGET_J2EE	//naive implementation
+			Request.Cookies.Add(cookie);
+#endif
 		}
 
 		[MonoTODO("Do we need this?")]

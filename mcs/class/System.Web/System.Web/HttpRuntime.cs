@@ -51,11 +51,30 @@ namespace System.Web {
 		private static IStackWalk unrestrictedStackWalk;
 		private static IStackWalk reflectionStackWalk;
 
+#if !TARGET_JVM
 		private static HttpRuntime _runtime;
 		private static string appDomainAppId;
 		private static string appDomainId;
 		private static string appDomainAppPath;
 		private static string appDomainAppVirtualPath;
+#else		
+		private static object _ghLock = new object(); 
+		static private HttpRuntime _runtime {
+			get {
+				HttpRuntime runtime = (HttpRuntime)AppDomain.CurrentDomain.GetData("HttpRuntime");
+				if (runtime == null)
+					lock (_ghLock) {
+						runtime = (HttpRuntime)AppDomain.CurrentDomain.GetData("HttpRuntime");
+						if (runtime == null) {
+							runtime = new HttpRuntime();
+							runtime.Init();
+							AppDomain.CurrentDomain.SetData("HttpRuntime", runtime);
+						}
+					}
+				return runtime;
+			}
+		}
+#endif
 		private Cache _cache;
 
 		private int _activeRequests;
@@ -73,11 +92,13 @@ namespace System.Web {
 		private WaitCallback doRequestCallback;
 		private int pendingCallbacks;
 
+#if !TARGET_JVM
 		static HttpRuntime ()
 		{
 			_runtime = new HttpRuntime ();
 			_runtime.Init();
 		}
+#endif
 
 		public HttpRuntime ()
 		{
@@ -253,9 +274,8 @@ namespace System.Web {
 			WaitForRequests (2000);
 			queueManager.Dispose (); // Send a 503 to all queued requests
 			queueManager = null;
-			
 			_cache = null;
-			HttpApplicationFactory.EndApplication ();
+			HttpApplicationFactory.EndApplication();
 		}
 
 		void OnDomainUnload (object o, EventArgs args)
@@ -372,6 +392,23 @@ namespace System.Web {
 			}
 		}      
 
+#if TARGET_JVM
+		public static string AppDomainAppId {
+			get { return (string) AppDomain.CurrentDomain.GetData (".appId"); }
+		}
+
+		public static string AppDomainAppPath {
+			get { return (string) AppDomain.CurrentDomain.GetData (".appPath"); }
+		}
+
+		public static string AppDomainAppVirtualPath {
+			get { return (string) AppDomain.CurrentDomain.GetData (".appVPath"); }
+		}
+
+		public static string AppDomainId {
+			get { return (string) AppDomain.CurrentDomain.GetData (".domainId"); }
+		}
+#else
 		public static string AppDomainAppId {
 			get {
 				if (appDomainAppId == null)
@@ -407,6 +444,7 @@ namespace System.Web {
 				return appDomainId;
 			}
 		}
+#endif
 
 		public static string AspInstallDirectory {
 			get {

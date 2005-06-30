@@ -33,10 +33,15 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web.Configuration;
 using System.Web.Util;
+
+#if TARGET_J2EE
+using vmw.common;
+#endif
 
 namespace System.Web {
 	[MonoTODO("Review security in all path access function")]
@@ -98,6 +103,9 @@ namespace System.Web {
 		bool checkedQueryString;
 #endif
 
+#if TARGET_J2EE
+		private string _sGhFilePath;
+#endif
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
 			_iTotalBytes = -1;
@@ -216,8 +224,12 @@ namespace System.Web {
 
 		private void ParseFormData ()
 		{
-			string contentType = ContentType;
-			if (0 == String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
+			string content_type = ContentType;
+			if (content_type == null)
+				return;
+
+			content_type = content_type.ToLower (CultureInfo.InvariantCulture);
+			if (content_type == "application/x-www-form-urlencoded") {
 				byte [] arrData = GetRawContent ();
 				Encoding enc = ContentEncoding;
 				string data = enc.GetString (arrData);
@@ -225,24 +237,18 @@ namespace System.Web {
 				return;
 			}
 
-			if (!ContentType.StartsWith ("multipart/form-data")) {
-				if (contentType.Length > 0)
-					Console.WriteLine ("Content-Type -> {0} not supported", contentType);
-
-				GetRawContent (); // at least, read the data and check length validity
-				_oFormData = new HttpValueCollection ();
-				return;
-			}
-			
-			MultipartContentElement [] parts = GetMultipartFormData ();
 			_oFormData = new HttpValueCollection ();
-			if (parts == null) return;
-				
-			foreach (MultipartContentElement p in parts) {
-				if (!p.IsFormItem) continue;
-				_oFormData.Add (p.Name, p.GetString (ContentEncoding));
+			if (StrUtils.StartsWith (content_type, "multipart/form-data")) {
+				MultipartContentElement [] parts = GetMultipartFormData ();
+				if (parts == null)
+					return;
+				Encoding content_encoding = ContentEncoding;
+				foreach (MultipartContentElement p in parts) {
+					if (p.IsFormItem) {
+						_oFormData.Add (p.Name, p.GetString (content_encoding));
+					}
+				}
 			}
-
 		}
 
 		[MonoTODO("void Dispose")]
@@ -578,6 +584,25 @@ namespace System.Web {
 			}
 		}
 
+#if TARGET_J2EE
+		internal string GhFilePath {
+			get {
+				if (null == _sGhFilePath) {
+					_sGhFilePath = FilePath;
+					if (_sGhFilePath == null)
+						return null;
+
+					if (_sGhFilePath.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+						_sGhFilePath = _sGhFilePath.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
+					if (_sGhFilePath.StartsWith(HttpRuntime.AppDomainAppVirtualPath))
+						_sGhFilePath = _sGhFilePath.Substring(HttpRuntime.AppDomainAppVirtualPath.Length);
+				}
+
+				return _sGhFilePath;
+			}
+		}
+#endif
+
 		HttpFileCollection files;
 		public HttpFileCollection Files {
 			get {
@@ -593,7 +618,8 @@ namespace System.Web {
 		
 		void FillPostedFiles ()
 		{
-			if (!ContentType.StartsWith ("multipart/form-data")) return;
+			if (!StrUtils.StartsWith (ContentType, "multipart/form-data"))
+				return;
 			
 			MultipartContentElement [] parts = GetMultipartFormData ();
 			if (parts == null) return;
@@ -1059,25 +1085,20 @@ namespace System.Web {
                         }
                 }
                 
-		public byte [] BinaryRead(int count) {
-			int iSize = TotalBytes;
-			if (iSize == 0) {
-				throw new ArgumentException();
+		public byte [] BinaryRead (int count)
+		{
+			if (count < 0 || count > TotalBytes)
+				throw new ArgumentOutOfRangeException ("count");
+
+			byte [] data = new byte [count];
+			int nread = InputStream.Read (data, 0, count);
+			if (nread != count) {
+				byte [] tmp = new byte [nread];
+				Buffer.BlockCopy (data, 0, tmp, 0, nread);
+				data = tmp;
 			}
 
-			byte [] arrData = new byte[iSize];
-			
-			int iRetSize = InputStream.Read(arrData, 0, iSize);
-			if (iRetSize != iSize) {
-				byte [] tmpData = new byte[iRetSize];
-				if (iRetSize > 0) {
-					Array.Copy(arrData, 0, tmpData, 0, iRetSize);
-				}
-
-				arrData = tmpData;
-			}
-
-			return arrData;
+			return data;
 		}
 
 		public int [] MapImageCoordinates(string ImageFieldName) {
@@ -1120,6 +1141,15 @@ namespace System.Web {
 			if (_WorkerRequest == null)
 				throw new HttpException ("No HttpWorkerRequest!!!");
 
+#if TARGET_J2EE
+			if (baseVirtualDir.Equals(BaseVirtualDir))
+			{
+				string val =  System.Web.GH.PageMapper.GetFromMapPathCache(virtualPath);
+				if (val != null)
+					return val;
+			}
+#endif
+
 			if (virtualPath == null || virtualPath.Length == 0)
 				virtualPath = ".";
 			else
@@ -1127,7 +1157,10 @@ namespace System.Web {
 
 			if (virtualPath.IndexOf (':') != -1)
 				throw new ArgumentException ("Invalid path -> " + virtualPath);
-
+#if TARGET_J2EE
+			if (virtualPath.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+				return 	virtualPath;
+#endif
 			if (System.IO.Path.DirectorySeparatorChar != '/')
 				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
 
@@ -1142,7 +1175,7 @@ namespace System.Web {
 			}
 
 			if (!allowCrossAppMapping) {
-				if (!virtualPath.ToLower ().StartsWith (RootVirtualDir.ToLower ()))
+				if (!StrUtils.StartsWith (virtualPath, RootVirtualDir, true))
 					throw new HttpException ("Mapping across applications not allowed.");
 
 				if (RootVirtualDir.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')

@@ -1,3 +1,68 @@
+2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseHeader.cs: URL encode \r and \n in header values. Fixes
+	bug #75392.
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: fix another stupid buglet in htmldecode.
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs:
+	* HttpResponse.cs:
+	* HttpRequest.cs: use StrUtils (invariant culture).
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: use StartsWith when looking for 'multipart/form-data'.
+	File uploading was broken since a few commits ago.
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: ensure that the last chunk ('0\r\n\r\n') is sent
+	even if response.Close is called before a final flush. MS/IIS fails to
+	do this.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: don't print anything for unknown content types in
+	ParseFormData. Use lowercase compare.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: invariant love.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: avoid 1 string concat.
+	* HttpRequest.cs: fix BinaryRead. It was totally wrong.
+
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: don't append an extra 0 when no digits seen. Fixes
+	bug #75370.
+
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: the lower limit for using &#xx; encoding is 160, not
+	128. Reset number back to 0 after use. Fixes bug #75365.
+
+2005-06-19  Svetlana Zholkovsky <svetlanaz-at-mainsoft.com>
+		* In following classes added TARGET_J2EE or/and TARGET_JVM
+		  directives:
+			- HttpResponse.cs
+			- HttpRuntime.cs
+			- HttpUtility.cs
+			- CapabilitiesLoader.cs
+			- HttpApplication.cs
+			- HttpApplicationFactory.cs
+			- HttpContext.cs
+			- HttpException.cs
+			- HttpRequest.cs
+		* Added Mainsoft's specific files :
+			- GhHttpAsyncResult.jvm.cs
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: avoid one intermediate buffer when reading the request

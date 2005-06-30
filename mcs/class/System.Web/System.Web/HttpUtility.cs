@@ -731,7 +731,8 @@ namespace System.Web {
 			// 2 -> between '&' and ';' but no '#'
 			// 3 -> '#' found after '&' and getting numbers
 			int state = 0;
-			int number = -1;
+			int number = 0;
+			bool have_trailing_digits = false;
 	
 			for (int i = 0; i < len; i++) {
 				char c = s [i];
@@ -746,7 +747,12 @@ namespace System.Web {
 				}
 
 				if (c == '&') {
-					state = 0;
+					state = 1;
+					if (have_trailing_digits) {
+						entity.Append (number.ToString (CultureInfo.InvariantCulture));
+						have_trailing_digits = false;
+					}
+
 					output.Append (entity.ToString ());
 					entity.Length = 0;
 					entity.Append ('&');
@@ -760,9 +766,9 @@ namespace System.Web {
 						output.Append (c);
 						entity.Length = 0;
 					} else {
+						number = 0;
 						if (c != '#') {
 							state = 2;
-							number = 0;
 						} else {
 							state = 3;
 						}
@@ -790,14 +796,15 @@ namespace System.Web {
 						}
 						state = 0;
 						entity.Length = 0;
-						number = -1;
+						have_trailing_digits = false;
 					} else if (Char.IsDigit (c)) {
 						number = number * 10 + ((int) c - '0');
+						have_trailing_digits = true;
 					} else {
 						state = 2;
-						if (number >= 0) {
+						if (have_trailing_digits) {
 							entity.Append (number.ToString (CultureInfo.InvariantCulture));
-							number = -1;
+							have_trailing_digits = false;
 						}
 						entity.Append (c);
 					}
@@ -806,7 +813,7 @@ namespace System.Web {
 
 			if (entity.Length > 0) {
 				output.Append (entity.ToString ());
-			} else if (number >= 0) {
+			} else if (have_trailing_digits) {
 				output.Append (number.ToString (CultureInfo.InvariantCulture));
 			}
 			return output.ToString ();
@@ -850,13 +857,16 @@ namespace System.Web {
 					output.Append ("&quot;");
 					break;
 				default:
-					if ((int) c > 128) {
+					// MS starts encoding with &# from 160 and stops at 255.
+					// We don't do that. One reason is the 65308/65310 unicode
+					// characters that look like '<' and '>'.
+					if (c > 159) {
 						output.Append ("&#");
-						output.Append (((int) c).ToString ());
+						output.Append (((int) c).ToString (CultureInfo.InvariantCulture));
 						output.Append (";");
-					}
-					else
+					} else {
 						output.Append (c);
+					}
 					break;
 				}
 			return output.ToString ();
