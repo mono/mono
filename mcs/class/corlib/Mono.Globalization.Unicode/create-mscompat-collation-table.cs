@@ -100,6 +100,7 @@ namespace Mono.Globalization.Unicode
 			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
 			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", " RING ABOVE;",
 			" OGONEK;", " CEDILLA;",
+			//
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
 			" STROKE;", " CIRCUMFLEX AND ACUTE;",
 			" DIAERESIS AND ACUTE;", "WITH CIRCUMFLEX AND GRAVE;", " L SLASH;",
@@ -108,6 +109,7 @@ namespace Mono.Globalization.Unicode
 			" CARON AND DOT ABOVE;", " BREVE AND GRAVE;",
 			" MACRON AND ACUTE;",
 			" MACRON AND GRAVE;",
+			//
 			" DIAERESIS AND CARON", " DOT ABOVE AND MACRON", " TILDE AND ACUTE",
 			" RING ABOVE AND ACUTE",
 			" DIAERESIS AND MACRON", " CEDILLA AND ACUTE", " MACRON AND DIAERESIS",
@@ -117,6 +119,7 @@ namespace Mono.Globalization.Unicode
 			" BREVE AND TILDE",
 			" CEDILLA AND BREVE",
 			" OGONEK AND MACRON",
+			//
 			" HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
 			" DOUBLE GRAVE;",
 			" INVERTED BREVE",
@@ -146,10 +149,13 @@ namespace Mono.Globalization.Unicode
 			// LATIN.
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
+			//
 			0x1D, 0x1D, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
 			0x20, 0x21, 0x22, 0x22, 0x23, 0x24,
+			//
 			0x25, 0x25, 0x25, 0x26, 0x28, 0x28, 0x28,
 			0x29, 0x2A, 0x2B, 0x2C, 0x2F, 0x30,
+			//
 			0x43, 0x43, 0x43, 0x44, 0x46, 0x48,
 			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x5A,
 			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 
@@ -833,9 +839,23 @@ sw.Close ();
 			// diacritical weights by character name
 if (diacritics.Length != diacriticWeights.Length)
 throw new Exception (String.Format ("Should not happen. weights are {0} while labels are {1}", diacriticWeights.Length, diacritics.Length));
-			for (int d = 0; d < diacritics.Length; d++)
-				if (s.IndexOf (diacritics [d]) > 0)
+			for (int d = 0; d < diacritics.Length; d++) {
+				if (s.IndexOf (diacritics [d]) > 0) {
 					diacritical [cp] |= diacriticWeights [d];
+					continue;
+				}
+				// also process "COMBINING blah" here
+				// For now it is limited to cp < 0x0370
+//				if (cp < 0x0300 || cp >= 0x0370)
+//					continue;
+				string tmp = diacritics [d].TrimEnd (';');
+				if (tmp.IndexOf ("WITH ") == 0)
+					tmp = tmp.Substring (4);
+				tmp = String.Concat ("COMBINING", (tmp [0] != ' ' ? " " : ""), tmp);
+				if (values [0] == tmp)
+					diacritical [cp] = (byte) (diacriticWeights [d] - 2);
+if (values [0] == tmp) Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'", values [0], tmp, cp);
+			}
 			// Two-step grep required for it.
 			if (s.IndexOf ("FULL STOP") > 0 &&
 				(s.IndexOf ("DIGIT") > 0 || s.IndexOf ("NUMBER") > 0))
@@ -1443,6 +1463,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0x02E4; i <= 0x02E9; i++)
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
+
+			// FIXME: needs more love here (it should eliminate
+			// all the hacky code above).
+			for (int i = 0x0300; i < 0x0370; i++)
+				if (!IsIgnorable (i) && diacritical [i] != 0
+					/* especiall here*/ && !map [i].Defined)
+					map [i] = new CharMapEntry (
+						0x1, 0x1, diacritical [i]);
 
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 

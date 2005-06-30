@@ -27,6 +27,8 @@ namespace Mono.Globalization.Unicode
 			DumpSortKey ("-");
 			DumpSortKey ("--");
 			DumpSortKey ("A-B-C");
+			DumpSortKey ("A\u0304");
+			DumpSortKey ("\u0100");
 
 			Compare ("1", "2");
 			Compare ("A", "a");
