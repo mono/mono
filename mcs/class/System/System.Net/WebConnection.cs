@@ -395,8 +395,21 @@ namespace System.Net
 			sPoint.SetCertificates (client, server);
 			certsAvailable = (server != null);
 		}
-		
+
+		delegate void MyDelegate (object o);
+
 		internal static void InitRead (object state)
+		{
+			WebConnection cnc = (WebConnection) state;
+			if (!cnc.ssl) {
+				InitRead2 (state);
+			} else {
+				MyDelegate d = new MyDelegate (InitRead2);		
+				d.BeginInvoke (state, null, null);
+			}
+		}
+
+		static void InitRead2 (object state)
 		{
 			WebConnection cnc = (WebConnection) state;
 			Stream ns = cnc.nstream;
@@ -698,7 +711,7 @@ namespace System.Net
 								WebExceptionStatus.ServerProtocolViolation, null);
 				}
 
-				if ((done || nbytes == 0) && chunkStream.WantMore) {
+				if ((done || nbytes == 0) && chunkStream.ChunkLeft != 0) {
 					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked EndRead");
 					throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
 				}

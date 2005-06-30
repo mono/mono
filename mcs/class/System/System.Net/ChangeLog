@@ -1,3 +1,22 @@
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: if cnc.EndRead throws, mark the asyncresult as done.
+	* WebConnectionStream.cs: if we're done with the body of a chunk, don't
+	require the next chunk header to be there, as some servers might close
+	the connection (while also sending 'Connection: close').
+
+2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: MS implementation follows redirects for POST. Seems
+	to me that this is against 10.3.3 in RFC 2616, but may be the user
+	'authorization' to do this is implicit in AllowAutoRedirect...
+
+2005-06-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: SslClientStream.BeginRead might not be asynchronous
+	if there's no record available to read. This is a workaround that makes
+	the call to BeginRead itself asynchronous. Fixes bug #75342.
+
 2005-06-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:
