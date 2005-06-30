@@ -1,3 +1,7 @@
+2005-06-30  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* DataColumnCollectionTest2.cs: Added file
+
 2005-06-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* DataTableTest.cs: Add Gonz's test from corlib that should be here.

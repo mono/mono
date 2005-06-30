@@ -18,6 +18,7 @@ System.Data/ConstraintCollectionTest.cs
 System.Data/ConstraintCollectionTest2.cs
 System.Data/ConstraintTest.cs
 System.Data/DataColumnCollectionTest.cs
+System.Data/DataColumnCollectionTest2.cs
 System.Data/DataColumnTest.cs
 System.Data/DataRelationTest.cs
 System.Data/DataRowCollectionTest.cs
@@ -88,16 +89,6 @@ System.Data.Tests.Mainsoft/System.Data/DataColumn/DataColumn_ReadOnly.cs
 System.Data.Tests.Mainsoft/System.Data/DataColumn/DataColumn_Table.cs
 System.Data.Tests.Mainsoft/System.Data/DataColumn/DataColumn_ToString.cs
 System.Data.Tests.Mainsoft/System.Data/DataColumn/DataColumn_Unique.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_Add.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_Add_ST.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_CanRemove_D.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_CollectionChanged.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_Contains_S.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_CopyTo_AI.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_Count.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_IndexOf_D.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_IndexOf_S.cs
-System.Data.Tests.Mainsoft/System.Data/DataColumnCollection/DataColumnCollection_Remove_D.cs
 System.Data.Tests.Mainsoft/System.Data/DataRelation/DataRelation_ChildColumns.cs
 System.Data.Tests.Mainsoft/System.Data/DataRelation/DataRelation_ChildKeyConstraint.cs
 System.Data.Tests.Mainsoft/System.Data/DataRelation/DataRelation_ChildTable.cs

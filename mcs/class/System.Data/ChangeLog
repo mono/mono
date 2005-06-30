@@ -1,3 +1,6 @@
+2005-06-30  Eyal Alalouf  <eyala@mainsoft.com>
+	* System.Data_tests.dll.sources: Unified Mainsoft DataColumnCollection tests into one test in Test/System.Data
+
 2005-06-21  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: Added SqlConnectionStringBuilder.cs and
