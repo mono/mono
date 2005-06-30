@@ -58,8 +58,12 @@ namespace System.Web.Caching
 		bool disposed;
 		CacheEntry [] entries;
 		CacheItemRemovedCallback removedDelegate;
+
+#if !TARGET_J2EE
+
 		FileSystemWatcher [] watchers;
 
+#endif
 		private CacheDependency ()
 		{
 		}
@@ -157,13 +161,17 @@ namespace System.Web.Caching
 				}
 			}
 
+#if !TARGET_J2EE
+
 			if (filenames.Length > 0) {
 				watchers = new FileSystemWatcher [filenames.Length];
 				for (int i=0; i<filenames.Length; i++)
 					watchers [i] = CreateWatcher (filenames [i]);
 			}
+#endif
 		}
 
+#if !TARGET_J2EE
 		private FileSystemWatcher CreateWatcher (string file)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
@@ -184,6 +192,7 @@ namespace System.Web.Caching
 		{
 			OnChanged (sender, e);
 		}
+#endif
 
 		void CacheItemRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
@@ -200,11 +209,17 @@ namespace System.Web.Caching
 				Changed (this, new CacheDependencyChangedArgs (null));
 		}
 
+#if TARGET_J2EE
+		public void Dispose ()
+		{
+		}
+#else
 		public void Dispose ()
 		{
 			for (int i=0; i<watchers.Length; i++)
 				watchers [i].Dispose ();
 		}
+#endif
 
 		public bool HasChanged
 		{
