@@ -5,8 +5,7 @@
 //   Dick Porter (dick@ximian.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +28,7 @@
 //
 
 using System.Security;
+using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Collections;
@@ -40,23 +40,43 @@ namespace System.ComponentModel
 	public class Win32Exception : ExternalException
 	{
 		private int native_error_code;
-		
+
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
 		public Win32Exception ()
-			: base (W32ErrorMessage(Marshal.GetLastWin32Error()),
-				Marshal.GetLastWin32Error()) {
-			native_error_code=Marshal.GetLastWin32Error();
+			: base (W32ErrorMessage (Marshal.GetLastWin32Error ()),
+				Marshal.GetLastWin32Error ()) 
+		{
+			native_error_code = Marshal.GetLastWin32Error ();
 		}
 
-		public Win32Exception(int error)
-			: base (W32ErrorMessage(error), error) {
-			native_error_code=error;
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+		public Win32Exception (int error)
+			: base (W32ErrorMessage (error), error) 
+		{
+			native_error_code = error;
 		}
 
-		public Win32Exception(int error, string message) 
-			: base (message, error) {
-			native_error_code=error;
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+		public Win32Exception (int error, string message) 
+			: base (message, error)
+		{
+			native_error_code = error;
+		}
+#if NET_2_0
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+		public Win32Exception (string message)
+			: base (message)
+		{
+			native_error_code = Marshal.GetLastWin32Error ();
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+		public Win32Exception (string message, Exception innerException)
+			: base (message, innerException)
+		{
+			native_error_code = Marshal.GetLastWin32Error ();
+		}
+#endif
 		protected Win32Exception(SerializationInfo info,
 					 StreamingContext context)
 			: base (info, context) {

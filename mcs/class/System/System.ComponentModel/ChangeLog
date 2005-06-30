@@ -1,3 +1,9 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Win32Exception.cs: Added some declarative security (permission from
+	corlib) as an initial test (outside corlib). Added new constructors
+	for NET_2_0.
+
 2005-06-27  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* CultureInfoConverter.cs: Correctly look for verbose name of
