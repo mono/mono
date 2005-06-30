@@ -1,270 +1,290 @@
 //
 // GuidTest.cs - NUnit Test Cases for the System.Guid struct
 //
-// author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+// Authors:
+//	Duco Fijma (duco@lorentz.xs4all.nl)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-//   (C) 2002 Duco Fijma
+// (C) 2002 Duco Fijma
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 
-namespace MonoTests.System
-{
+namespace MonoTests.System {
 
-public class GuidTest : TestCase
-{
-	public GuidTest () {}
+	[TestFixture]
+	public class GuidTest {
 
-	public void TestCtor1 ()
-	{
-		Guid g =  new Guid (new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f});
-		bool exception;
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_ByteArray_Null ()
+		{
+			new Guid ((byte[]) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_ByteArray_InvalidLength ()
+		{
+			new Guid (new byte[] {0x00, 0x01, 0x02});
+		}
+
+		[Test]
+		public void Constructor_ByteArray ()
+		{
+			Guid g =  new Guid (new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f});
+			Assert.AreEqual ("03020100-0504-0706-0809-0a0b0c0d0e0f", g.ToString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_String_Null ()
+		{
+			new Guid ((string) null);
+		}
+
+		[Test]
+		public void Constructor_String ()
+		{
+			Guid g0 = new Guid ("000102030405060708090a0b0c0d0e0f"); 
+			Guid g1 = new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+			Guid g2 = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
+			Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}");
+			Guid g4 = new Guid ("(00010203-0405-0607-0809-0A0B0C0D0E0F)");
+
+			string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
+			Assert.AreEqual (expected, g0.ToString (), "A0");
+			Assert.AreEqual (expected, g1.ToString (), "A1");
+			Assert.AreEqual (expected, g2.ToString (), "A2");
+			Assert.AreEqual (expected, g3.ToString (), "A3");
+			Assert.AreEqual (expected, g4.ToString (), "A4");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Constructor_String_Invalid ()
+		{
+			new Guid ("invalid");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Constructor_String_MissingAllSeparators ()
+		{
+			new Guid ("{000102030405060708090A0B0C0D0E0F}");	// missing all -
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Constructor_String_MissingSeparator ()
+		{
+			new Guid ("000102030405-0607-0809-0a0b0c0d0e0f");	// missing first -
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void Constructor_String_Mismatch ()
+		{
+			new Guid ("(000102030405-0607-0809-0a0b0c0d0e0f}");	// open (, close }
+		}
+
+		[Test]
+		public void Constructor_Int32_2xInt16_8xByte ()
+		{
+			Guid g1 = new Guid (0x00010203, (short) 0x0405, (short) 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (unchecked ((int) 0xffffffff), unchecked ((short) 0xffff), unchecked((short) 0xffff), 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+			Guid g3 = new Guid (0x00010203u, (ushort) 0x0405u, (ushort) 0x0607u, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g4 = new Guid (0xffffffffu, (ushort) 0xffffu, (ushort) 0xffffu, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
 		
-		if (BitConverter.IsLittleEndian) {
-			AssertEquals ("A1", "03020100-0504-0706-0809-0a0b0c0d0e0f", g.ToString ());
-		}
-		else {
-			AssertEquals ("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ());
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString (), "A1");
+			Assert.AreEqual ("ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString (), "A2");
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString (), "A3");
+			Assert.AreEqual ("ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString (), "A4");
 		}
 
-		try {
-			Guid g1 = new Guid ((byte[]) null);
-			exception = false;
-		}
-		catch (ArgumentNullException) {
-			exception = true;
-		}
-		Assert ("A2", exception);
-
-		try {
-			Guid g1 = new Guid (new byte[] {0x00, 0x01, 0x02});
-			exception = false;
-		}
-		catch (ArgumentException) {
-			exception = true;
-		}
-		Assert ("A3", exception);
-	}
-
-	public void TestCtor2 ()
-	{
-		Guid g0 = new Guid ("000102030405060708090a0b0c0d0e0f"); 
-		Guid g1 = new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0f"); 
-		Guid g2 = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
-		Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}");
-		Guid g4 = new Guid ("(00010203-0405-0607-0809-0A0B0C0D0E0F)"); 
-		Guid g5;
-
-		bool exception;
-
-		AssertEquals ("A0", "00010203-0405-0607-0809-0a0b0c0d0e0f", g0.ToString ()); 
-		AssertEquals ("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString ()); 
-		AssertEquals ("A2", "00010203-0405-0607-0809-0a0b0c0d0e0f", g2.ToString ()); 
-		AssertEquals ("A3", "00010203-0405-0607-0809-0a0b0c0d0e0f", g3.ToString ()); 
-		AssertEquals ("A4", "00010203-0405-0607-0809-0a0b0c0d0e0f", g4.ToString ()); 
-
-		try {
-			g4 = new Guid ((string) null);
-			exception = false;
-		}
-		catch (ArgumentNullException) {
-			exception = true;
-		}
-		Assert ("A4", exception);
-
-		try {
-			g5 = new Guid ("invalid");
-			exception = false;
-		}
-		catch (FormatException) {
-			exception = true;
-		}
-		Assert ("A5", exception);
-
-		try {
-			g5 = new Guid ("{000102030405060708090A0B0C0D0E0F}");
-			exception = false;
-		}
-		catch (FormatException) {
-			exception = true;
-		}
-		Assert ("A6", exception);
-
-		try {
-			g5 = new Guid ("000102030405-0607-0809-0a0b0c0d0e0f");
-			exception = false;
-		}
-		catch (FormatException) {
-			exception = true;
-		}
-		Assert ("A7", exception);
-
-		try {
-			g5 = new Guid ("(000102030405-0607-0809-0a0b0c0d0e0f}");	// open (, close }
-			exception = false;
-		}
-		catch (FormatException) {
-			exception = true;
-		}
-		Assert ("A8", exception);
+		[Test]
+		public void Constructor_UInt32_2xUInt16_8xByte ()
+		{
+			Guid g1 = new Guid (0x00010203u, (ushort) 0x0405u, (ushort) 0x0607u, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0xffffffffu, (ushort) 0xffffu, (ushort) 0xffffu, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
 		
-	}
-
-	public void TestCtor4 ()
-	{
-		Guid g1 = new Guid (0x00010203, (short) 0x0405, (short) 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g2 = new Guid (unchecked ((int) 0xffffffff), unchecked ((short) 0xffff), unchecked((short) 0xffff), 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-		
-		AssertEquals ("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString ());
-		AssertEquals ("A2", "ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString ());
-
-	}
-
-	public void TestCtor5 ()
-	{
-		Guid g1 = new Guid (0x00010203u, (ushort) 0x0405u, (ushort) 0x0607u, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g2 = new Guid (0xffffffffu, (ushort) 0xffffu, (ushort) 0xffffu, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-		
-		AssertEquals ("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString ());
-		AssertEquals ("A2", "ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString ());
-
-	}
-
-	public void TestEmpty ()
-	{
-		AssertEquals ("A1", "00000000-0000-0000-0000-000000000000", Guid.Empty.ToString ());
-	}
-
-	public void TestNewGuid ()
-	{
-		Guid g1 = Guid.NewGuid ();
-		Guid g2 = Guid.NewGuid ();
-		
-		Assert ("A1", g1 != g2);
-	}
-
-	public void TestEqualityOp ()
-	{
-		Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
-
-		AssertEquals ("A1", true, g1 == g1);
-		AssertEquals ("A2", true, g1 == g2);
-		AssertEquals ("A3", false, g1 == g3);
-	}
-
-	public void TestInequalityOp ()
-	{
-		Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
-
-		AssertEquals ("A1", false, g1 != g1);
-		AssertEquals ("A2", false, g1 != g2);
-		AssertEquals ("A3", true, g1 != g3);
-	}
-
-	public void TestEquals ()
-	{
-		Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
-		string s = "This is not a Guid!";
-
-		AssertEquals ("A1", true, g1.Equals (g1));
-		AssertEquals ("A2", true, g1.Equals (g2));
-		AssertEquals ("A3", false, g1.Equals (g3));
-		AssertEquals ("A4", false, g1.Equals (null));
-		AssertEquals ("A5", false, g1.Equals (s));
-	}
-
-	public void TestCompareTo ()
-	{
-		Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g2 = new Guid (0x00010204, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g3 = new Guid (0x00010203, 0x0405, 0x0607, 0x09, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		Guid g4 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x1f);
-		bool exception;
-
-		Assert ("A1", g1.CompareTo (g2) < 0);
-		Assert ("A2", g1.CompareTo (g3) < 0);
-		Assert ("A3", g1.CompareTo (g4) < 0);
-		Assert ("A4", g2.CompareTo (g1) > 0);
-		Assert ("A5", g3.CompareTo (g1) > 0);
-		Assert ("A6", g4.CompareTo (g1) > 0);
-		Assert ("A7", g1.CompareTo (g1) == 0);
-		Assert ("A8", g1.CompareTo (null) > 0);
-		
-		try {
-			g1.CompareTo ("Say what?");
-			exception = false;
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString (), "A1");
+			Assert.AreEqual ("ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString (), "A2");
 		}
-		catch (ArgumentException) {
-			exception = true;
-		}
-		Assert ("A9", exception);
-	}
 
-	public void TestGetHashCode ()
-	{
-		// We don't test anything but the availibility of this member
-		int res = Guid.NewGuid ().GetHashCode ();
-	
-		Assert ("A1", true);
-	}
-
-	public void TestToByteArray ()
-	{
-		Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		byte[] b = g1.ToByteArray ();
+		[Test]
+		public void Constructor_Int32_2xInt16_ByteArray ()
+		{
+			Guid g1 = new Guid (0x00010203, (short) 0x0405, (short) 0x0607, new byte[] { 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f });
+			Guid g2 = new Guid (unchecked ((int) 0xffffffff), unchecked ((short) 0xffff), unchecked((short) 0xffff), new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff });
 		
-		AssertEquals ("A1", 0x00010203, BitConverter.ToInt32 (b, 0));
-		AssertEquals ("A2", (short) 0x0405, BitConverter.ToInt16 (b, 4));
-		AssertEquals ("A3", (short) 0x0607, BitConverter.ToInt16 (b, 6));
-		for (int i=8; i<16; ++i) {
-			AssertEquals ("A1", (byte) i, b [i]);
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g1.ToString (), "A1");
+			Assert.AreEqual ("ffffffff-ffff-ffff-ffff-ffffffffffff", g2.ToString (), "A2");
 		}
-		
+
+		[Test]
+		public void Empty ()
+		{
+			Assert.AreEqual ("00000000-0000-0000-0000-000000000000", Guid.Empty.ToString (), "ToString");
+			Assert.AreEqual (new byte [16], Guid.Empty.ToByteArray (), "ToByteArray");
+		}
+
+		[Test]
+		public void NewGuid ()
+		{
+			Guid g1 = Guid.NewGuid ();
+			Guid g2 = Guid.NewGuid ();
+			Assert.IsFalse (g1 == g2);
+		}
+
+		[Test]
+		public void EqualityOp ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
+
+			Assert.IsTrue (g1 == g1, "A1");
+			Assert.IsTrue (g1 == g2, "A2");
+			Assert.IsFalse (g1 == g3, "A3");
+		}
+
+		[Test]
+		public void InequalityOp ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
+
+			Assert.IsFalse (g1 != g1, "A1");
+			Assert.IsFalse (g1 != g2, "A2");
+			Assert.IsTrue (g1 != g3, "A3");
+		}
+
+		[Test]
+		public void EqualsObject ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
+			// cast everything to object so the test still works under 2.0
+			Assert.IsTrue (g1.Equals ((object)g1), "A1");
+			Assert.IsTrue (g1.Equals ((object)g2), "A2");
+			Assert.IsFalse (g1.Equals ((object)g3), "A3");
+			Assert.IsFalse (g1.Equals ((object)null), "A4");
+			Assert.IsFalse (g1.Equals ((object)"This is not a Guid!"), "A5");
+		}
+
+#if NET_2_0
+		[Test]
+		public void EqualsGuid ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g3 = new Guid (0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
+
+			Assert.IsTrue (g1.Equals (g1), "A1");
+			Assert.IsTrue (g1.Equals (g2), "A2");
+			Assert.IsFalse (g1.Equals (g3), "A3");
+			Assert.IsFalse (g1.Equals (null), "A4");
+			Assert.IsFalse (g1.Equals ("This is not a Guid!"), "A5");
+		}
+#endif
+
+		[Test]
+		public void CompareToObject ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0x00010204, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g3 = new Guid (0x00010203, 0x0405, 0x0607, 0x09, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g4 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x1f);
+			// cast everything to object so the test still works under 2.0
+			Assert.IsTrue (g1.CompareTo ((object)g2) < 0, "A1");
+			Assert.IsTrue (g1.CompareTo ((object)g3) < 0, "A2");
+			Assert.IsTrue (g1.CompareTo ((object)g4) < 0, "A3");
+			Assert.IsTrue (g2.CompareTo ((object)g1) > 0, "A4");
+			Assert.IsTrue (g3.CompareTo ((object)g1) > 0, "A5");
+			Assert.IsTrue (g4.CompareTo ((object)g1) > 0, "A6");
+			Assert.IsTrue (g1.CompareTo ((object)g1) == 0, "A7");
+			Assert.IsTrue (g1.CompareTo ((object)null) > 0, "A8");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CompareToObject_Invalid ()
+		{
+			Guid.Empty.CompareTo ("Say what?");
+		}
+
+#if NET_2_0
+		[Test]
+		public void CompareToGuid ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g2 = new Guid (0x00010204, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g3 = new Guid (0x00010203, 0x0405, 0x0607, 0x09, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Guid g4 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x1f);
+
+			Assert.IsTrue (g1.CompareTo (g2) < 0, "A1");
+			Assert.IsTrue (g1.CompareTo (g3) < 0, "A2");
+			Assert.IsTrue (g1.CompareTo (g4) < 0, "A3");
+			Assert.IsTrue (g2.CompareTo (g1) > 0, "A4");
+			Assert.IsTrue (g3.CompareTo (g1) > 0, "A5");
+			Assert.IsTrue (g4.CompareTo (g1) > 0, "A6");
+			Assert.IsTrue (g1.CompareTo (g1) == 0, "A7");
+		}
+#endif
+
+		[Test]
+		public void GetHashCode_Same ()
+		{
+			Guid copy = new Guid (Guid.Empty.ToString ());
+			Assert.AreEqual (Guid.Empty.GetHashCode (), copy.GetHashCode (), "GetHashCode");
+		}
+
+		[Test]
+		public void GetHashCode_Different ()
+		{
+			Guid g = Guid.NewGuid ();
+			Assert.IsFalse (Guid.Empty.GetHashCode () == g.GetHashCode (), "GetHashCode");
+		}
+
+		[Test]
+		public void ToByteArray ()
+		{
+			Guid g1 = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			byte[] expected = new byte[] { 0x03, 0x02, 0x01, 0x00, 0x05, 0x04, 0x07, 0x06, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+			Assert.AreEqual (expected, g1.ToByteArray (), "ToByteArray");
+		}
+
+		[Test]
+		public void ToString_AllFormats ()
+		{
+			Guid g = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString (), "A1");
+			Assert.AreEqual ("000102030405060708090a0b0c0d0e0f", g.ToString ("N"), "A2");
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ("D"), "A3");
+			Assert.AreEqual ("{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString ("B"), "A4");
+			Assert.AreEqual ("(00010203-0405-0607-0809-0a0b0c0d0e0f)", g.ToString ("P"), "A5");
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString (""), "A6");
+			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ((string)null), "A7");
+			Assert.AreEqual ("{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString ("B", null), "A10");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToString_UnsupportedFormat ()
+		{
+			new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f).ToString ("X");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToString_InvalidFormat ()
+		{
+			new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f).ToString ("This is invalid");
+		}
 	}
-
-	public void TestToString ()
-	{
-		Guid g = new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
-		bool exception;
-		
-		AssertEquals ("A1", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ());
-		AssertEquals ("A2", "000102030405060708090a0b0c0d0e0f", g.ToString ("N"));
-		AssertEquals ("A3", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ("D"));
-		AssertEquals ("A4", "{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString ("B"));
-		AssertEquals ("A5", "(00010203-0405-0607-0809-0a0b0c0d0e0f)", g.ToString ("P"));
-		AssertEquals ("A6", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString (""));
-		AssertEquals ("A7", "00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ((string)null));
-
-		try {
-			g.ToString ("X");
-			exception = false;
-		}
-		catch (FormatException) {
-			exception = true;
-		}
-		Assert ("A8", exception);
-
-		try {
-			g.ToString ("This is invalid");
-			exception = false;
-		}
-		catch (FormatException) {
-			exception = true;
-		}
-		Assert ("A9",  exception);
-
-		AssertEquals ("A10", "{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString ("B", null));
-
-	}
-
-}
-
 }

@@ -1,3 +1,9 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GuidTest.cs: Updated tests to NUnit 2.2 format. Added tests for new
+	2.0 methods. Added missing tests for some constructors. Fixed 2 tests
+	to work on bigendian machines.
+
 2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConvertTest.cs: added test from Lluis.
