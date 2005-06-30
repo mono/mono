@@ -248,6 +248,7 @@ namespace System.Windows.Forms {
 			// tags, but only if there are other tags after us
 			while ((current.length == 0) && (next != null)) {
 				tags = next;
+				tags.previous = null;
 				current = next;
 				next = current.next;
 			}
@@ -1688,8 +1689,18 @@ Console.WriteLine("TextControl.cs(996) Invalidate called in UpdateView(line, lin
 				return;
 			}
 
+
 			if (forward) {
 				line.text.Remove(pos, 1);
+
+				while ((tag != null) && (tag.start + tag.length - 1) <= pos) {
+					tag = tag.next;
+				}
+
+				if (tag == null) {
+					return;
+				}
+
 				tag.length--;
 
 				if (tag.length == 0) {

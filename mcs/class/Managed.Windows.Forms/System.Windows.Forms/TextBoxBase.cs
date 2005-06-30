@@ -579,6 +579,7 @@ namespace System.Windows.Forms {
 			} else {
 				document.MoveCaret(CaretDirection.CtrlEnd);
 				document.InsertStringAtCaret(text, true);
+Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 				Invalidate();
 			}
 			OnTextChanged(EventArgs.Empty);
@@ -905,6 +906,7 @@ namespace System.Windows.Forms {
 						document.DeleteChar(document.CaretTag, document.CaretPosition, true);
 						OnTextChanged(EventArgs.Empty);
 					}
+					document.AlignCaret();
 					document.UpdateCaret();
 					CaretMoved(this, null);
 					return true;
@@ -1055,7 +1057,7 @@ static int current;
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
-
+Console.WriteLine("Redrawing {0}", pevent.ClipRectangle);
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
@@ -1171,6 +1173,7 @@ static int current;
 		protected void CalculateDocument() {
 			document.RecalculateDocument(CreateGraphics());
 			CalculateScrollBars();
+Console.WriteLine("TextBox.cs(1175) Invalidate called in CalculateDocument");
 			Invalidate();	// FIXME - do we need this?
 		}
 

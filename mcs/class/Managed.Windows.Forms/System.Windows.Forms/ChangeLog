@@ -1,3 +1,10 @@
+2005-06-29  Peter Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs: Re-align caret after deleting a character
+	* TextControl.cs:
+	  - DeleteChars(): Ensure that tag covers the provided position
+	  - StreamLine(): Drop reference for dropped tag
+
 2005-06-29  Peter Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs: 
