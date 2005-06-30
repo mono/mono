@@ -1,6 +1,9 @@
 2005-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* threads.c (thread_cleanup): assert that thread != NULL
+	(wait_for_tids_or_state_change): We were using the wrong variable
+	when accessing wait->threads. `i' was always out of the bounds of
+	the array.
 
 2005-06-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
