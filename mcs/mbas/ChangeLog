@@ -1,3 +1,7 @@
+2005-06-30 Manjula GHM <mmanjula@novell.com>
+	*mb-tokenizer.c : Support hexadecimal literals - supports binary value 
+	of the integer literal - like &H8000S is "-32768" and not an overflow exception
+
 2005-06-28 Manjula GHM <mmanjula@novell.com>
 	*class.cs : Support suitable property to override
 

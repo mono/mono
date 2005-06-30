@@ -76,6 +76,7 @@ namespace Mono.MonoBASIC
 		StringBuilder number;
 		int putback_char = -1;
 		Object val;
+		long lon = 0;
 		
 		//
 		// Details about the error encoutered by the tokenizer
@@ -540,7 +541,16 @@ namespace Mono.MonoBASIC
 				switch (c){
 				case 'S': case 's':
 					t =  Token.LITERAL_INTEGER; // SHORT ?
-					val = ((IConvertible)val).ToInt16(null);
+			
+				// hexadecimal literals - like &H8000S is "-32768" 
+				// and not an overflow exception 
+				// Check for other literals ???
+
+					if(lon == 32768) {
+                                                val = (short) lon;
+					}
+					else 
+						val = ((IConvertible)val).ToInt16(null);
 					break;
 				case 'I': case 'i':
 					t = Token.LITERAL_INTEGER;
@@ -614,7 +624,8 @@ namespace Mono.MonoBASIC
 				} else
 					break;
 			}
-			return System.Int64.Parse (hexNumber.ToString(), NumberStyles.HexNumber);
+			lon = System.Int64.Parse (hexNumber.ToString(), NumberStyles.HexNumber);
+			return lon;
 		}
 
 		long octal_digits ()
