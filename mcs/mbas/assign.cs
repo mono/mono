@@ -230,7 +230,7 @@ namespace Mono.MonoBASIC {
 			if (embedded != null)
 				source = (embedded.temp != null) ? embedded.temp : embedded.source;
 			//To support 'Mid' Assignment Statement
-			if(target is Invocation) {
+			if (target is Invocation) {
 
                         	Invocation i = (Invocation) target;
                         	Expression mid_expr;
@@ -291,26 +291,27 @@ namespace Mono.MonoBASIC {
 
 				arguments.Add (new Argument (source, Argument.AType.Expression));
 
-				Expression etmp = lateBindingExpr;
-				Type exprType = lateBindingExpr.Type;
-				// Get the target of the invocation/memberAccess
-				if (exprType == null) {
-					if (etmp is Invocation)
-						etmp = ((Invocation) etmp).Expr;
-					if (etmp is MemberAccess)
-						etmp = ((MemberAccess) etmp).Expr;
-					exprType = etmp.Type;
-				}
+				if (lateBindingExpr != null) {
+					Expression etmp = lateBindingExpr;
+					Type exprType = lateBindingExpr.Type;
+					// Get the target of the invocation/memberAccess
+					if (exprType == null) {
+						if (etmp is Invocation)
+							etmp = ((Invocation) etmp).Expr;
+						if (etmp is MemberAccess)
+							etmp = ((MemberAccess) etmp).Expr;
+						exprType = etmp.Type;
+					}
 
-				if (exprType == TypeManager.object_type) {
-					StatementSequence tmp = new StatementSequence (ec.CurrentBlock, loc, lateBindingExpr, 
-										arguments, false, true);
-					if (!tmp.ResolveArguments (ec))
-						return null;
-					tmp.GenerateLateBindingStatements ();
-					return tmp.Resolve (ec);
+					if (exprType == TypeManager.object_type) {
+						StatementSequence tmp = new StatementSequence (ec.CurrentBlock, loc, lateBindingExpr, 
+											arguments, false, true);
+						if (!tmp.ResolveArguments (ec))
+							return null;
+						tmp.GenerateLateBindingStatements ();
+						return tmp.Resolve (ec);
+					}
 				}
-
 				return null;
 			}
 

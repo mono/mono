@@ -1,3 +1,7 @@
+2005-06-30:2 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	*assign.cs: Killed exception occurring when resolving an assignment 
+	to an undefined symbol (Explicit On scenario)
+
 2005-06-30 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*mb-parser.jay: Eliminating 'reduce/reduce conflicts' and 'rule never reduced'
 	by simplifying the directive_expression rule (formerly directive_exp).
