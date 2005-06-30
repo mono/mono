@@ -42,8 +42,27 @@ namespace System.Web.SessionState
 		internal static readonly string CookieName = "ASPSESSION";
 		internal static readonly string HeaderName = "AspFilterSessionId";
 		
+#if !TARGET_J2EE		
 		static SessionConfig config;
 		static Type handlerType;
+#else
+		static private SessionConfig config {
+			get {
+				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("SessionStateModule.config", value);
+			}
+		}
+		static private Type handlerType {
+			get {
+				return (Type)AppDomain.CurrentDomain.GetData("SessionStateModule.handlerType");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("SessionStateModule.handlerType", value);
+			}
+		}
+#endif		
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
 		
@@ -197,8 +216,10 @@ namespace System.Web.SessionState
 
 		internal void OnEnd ()
 		{
+#if !TARGET_J2EE			
 			if (End != null)
 				End (this, EventArgs.Empty);
+#endif				
 		}
 		
 		public event EventHandler Start;

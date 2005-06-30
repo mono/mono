@@ -35,6 +35,9 @@ public enum SessionStateMode
 	InProc = 1,
 	StateServer = 2,
 	SQLServer = 3
+#if TARGET_J2EE
+	,J2ee = 1024
+#endif
 }
 
 }
