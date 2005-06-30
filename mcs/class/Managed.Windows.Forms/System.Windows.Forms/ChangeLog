@@ -1,3 +1,8 @@
+2005-06-30  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Don't create an infinite loop when setting focus
+	* MenuItem.cs: Don't dirty the parents if we don't have any
+
 2005-06-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* LibSupport.cs: Rename

@@ -284,8 +284,10 @@ namespace System.Windows.Forms
 						mi.Visible = value;
 				}
 
-				parent_menu.IsDirty = true;
-				parent_menu.creating = false;
+				if (parent_menu != null) {
+					parent_menu.IsDirty = true;
+					parent_menu.creating = false;
+				}
 			}
 		}
 
