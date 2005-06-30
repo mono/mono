@@ -60,6 +60,15 @@ namespace System.Web.UI
 		static readonly object PreRenderEvent = new object();
 		static readonly object UnloadEvent = new object();
 		static string[] defaultNameArray;
+		/* */
+		int event_mask;
+		const int databinding_mask = 1;
+		const int disposed_mask = 1 << 1;
+		const int init_mask = 1 << 2;
+		const int load_mask = 1 << 3;
+		const int prerender_mask = 1 << 4;
+		const int unload_mask = 1 << 5;
+		/* */
 
 		string uniqueID;
 		string _userId;
@@ -98,7 +107,7 @@ namespace System.Web.UI
 		const int LOADED		= 1 << 14;
 		const int PRERENDERED		= 1 << 15;
 #if NET_2_0
-		const int ENABLE_THEMING	= 1 << 15;
+		const int ENABLE_THEMING	= 1 << 16;
 #endif
 		/*************/
 		
@@ -594,47 +603,47 @@ namespace System.Web.UI
                 {
                         return false;
                 }
-                protected virtual void OnDataBinding(EventArgs e) //DIT
+
+                protected virtual void OnDataBinding (EventArgs e)
                 {
-                        if (_events != null)
-                        {
-                                EventHandler eh = (EventHandler)(_events[DataBindingEvent]);
-                                if (eh != null) eh(this, e);
+			if ((event_mask & databinding_mask) != 0) {
+                                EventHandler eh = (EventHandler)(_events [DataBindingEvent]);
+                                if (eh != null) eh (this, e);
                         }
                 }
-                protected virtual void OnInit(EventArgs e) //DIT
+
+                protected virtual void OnInit (EventArgs e)
                 {
-                        if (_events != null)
-                        {
-                                EventHandler eh = (EventHandler)(_events[InitEvent]);
-                                if (eh != null) eh(this, e);
+			if ((event_mask & init_mask) != 0) {
+                                EventHandler eh = (EventHandler)(_events [InitEvent]);
+                                if (eh != null) eh (this, e);
                         }
                 }
-                protected virtual void OnLoad(EventArgs e) //DIT
+
+                protected virtual void OnLoad (EventArgs e)
                 {
-                        if (_events != null)
-                        {
-                                EventHandler eh = (EventHandler)(_events[LoadEvent]);
-                                if (eh != null) eh(this, e);
+			if ((event_mask & load_mask) != 0) {
+                                EventHandler eh = (EventHandler)(_events [LoadEvent]);
+                                if (eh != null) eh (this, e);
                         }
                 }
-                protected virtual void OnPreRender(EventArgs e) //DIT
+
+                protected virtual void OnPreRender (EventArgs e)
                 {
-                        if (_events != null)
-                        {
-                                EventHandler eh = (EventHandler)(_events[PreRenderEvent]);
-                                if (eh != null) eh(this, e);
+			if ((event_mask & prerender_mask) != 0) {
+                                EventHandler eh = (EventHandler)(_events [PreRenderEvent]);
+                                if (eh != null) eh (this, e);
                         }
                 }
-                protected virtual void OnUnload(EventArgs e) //DIT
+
+                protected virtual void OnUnload(EventArgs e)
                 {
-                        if (_events != null)
-                        {
-                                EventHandler eh = (EventHandler)(_events[UnloadEvent]);
-                                if (eh != null) eh(this, e);
+			if ((event_mask & unload_mask) != 0) {
+                                EventHandler eh = (EventHandler)(_events [UnloadEvent]);
+                                if (eh != null) eh (this, e);
                         }
                 }
-                
+
                 protected void RaiseBubbleEvent(object source, EventArgs args)
                 {
 			Control c = Parent;
@@ -681,94 +690,68 @@ namespace System.Web.UI
 
                         stateMask |= TRACK_VIEWSTATE;
                 }
-                
-                public virtual void Dispose()
+
+                public virtual void Dispose ()
                 {
-                        if (_events != null)
-                        {
-                                EventHandler eh = (EventHandler) _events [DisposedEvent];
-                                if (eh != null)
-					eh(this, EventArgs.Empty);
+			if ((event_mask & disposed_mask) != 0) {
+                                EventHandler eh = (EventHandler)(_events [DisposedEvent]);
+                                if (eh != null) eh (this, EventArgs.Empty);
                         }
                 }
 
 		[WebCategory ("FIXME")]
 		[WebSysDescription ("Raised when the contols databound properties are evaluated.")]
-                public event EventHandler DataBinding //DIT
-                {
-                        add
-                        {
-                                Events.AddHandler(DataBindingEvent, value);
+                public event EventHandler DataBinding {
+                        add {
+				event_mask |= databinding_mask;
+                                Events.AddHandler (DataBindingEvent, value);
                         }
-                        remove
-                        {
-                                Events.RemoveHandler(DataBindingEvent, value);
-                        }
+                        remove { Events.RemoveHandler (DataBindingEvent, value); }
                 }
 
 		[WebSysDescription ("Raised when the contol is disposed.")]
-                public event EventHandler Disposed //DIT
-                {
-                        add
-                        {
-                                Events.AddHandler(DisposedEvent, value);
+                public event EventHandler Disposed {
+                        add {
+				event_mask |= disposed_mask;
+                                Events.AddHandler (DisposedEvent, value);
                         }
-                        remove
-                        {
-                                Events.RemoveHandler(DisposedEvent, value);
-                        }
+                        remove { Events.RemoveHandler (DisposedEvent, value); }
                 }
 
 		[WebSysDescription ("Raised when the page containing the control is initialized.")]
-                public event EventHandler Init //DIT
-                {
-                        add
-                        {
-                                Events.AddHandler(InitEvent, value);
+                public event EventHandler Init {
+                        add {
+				event_mask |= init_mask;
+                                Events.AddHandler (InitEvent, value);
                         }
-                        remove
-                        {
-                                Events.RemoveHandler(InitEvent, value);
-                        }
+                        remove { Events.RemoveHandler (InitEvent, value); }
                 }
 
 		[WebSysDescription ("Raised after the page containing the control has been loaded.")]
-                public event EventHandler Load //DIT
-                {
-                        add
-                        {
-                                Events.AddHandler(LoadEvent, value);
+                public event EventHandler Load {
+                        add {
+				event_mask |= load_mask;
+                                Events.AddHandler (LoadEvent, value);
                         }
-                        remove
-                        {
-                                Events.RemoveHandler(LoadEvent, value);
-                        }
+                        remove { Events.RemoveHandler (LoadEvent, value); }
                 }
 
 		[WebSysDescription ("Raised before the page containing the control is rendered.")]
-                public event EventHandler PreRender //DIT
-                {
-                        add
-                        {
-                                Events.AddHandler(PreRenderEvent, value);
+                public event EventHandler PreRender {
+                        add {
+				event_mask |= prerender_mask;
+                                Events.AddHandler (PreRenderEvent, value);
                         }
-                        remove
-                        {
-                                Events.RemoveHandler(PreRenderEvent, value);
-                        }
+                        remove { Events.RemoveHandler (PreRenderEvent, value); }
                 }
 
 		[WebSysDescription ("Raised when the page containing the control is unloaded.")]
-                public event EventHandler Unload //DIT
-                {
-                        add
-                        {
-                                Events.AddHandler(UnloadEvent, value);
+                public event EventHandler Unload {
+                        add {
+				event_mask |= unload_mask;
+                                Events.AddHandler (UnloadEvent, value);
                         }
-                        remove
-                        {
-                                Events.RemoveHandler(UnloadEvent, value);
-                        }
+                        remove { Events.RemoveHandler (UnloadEvent, value); }
                 }
 
 		public virtual void DataBind() //DIT

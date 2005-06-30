@@ -114,14 +114,16 @@ namespace System.Web.UI
 					throw new ParseException (Location, "Could not find file \"" 
 						+ realpath + "\".");
 
+				string vpath = UrlUtils.Combine (BaseVirtualDir, src);
+				Type type = null;
 				try {
-					AddDependency (realpath);
-				} catch (Exception e) {
-					throw new ParseException (Location, e.Message);
+					type = UserControlParser.GetCompiledType (vpath, realpath, Dependencies, Context);
+				} catch (ParseException pe) {
+					if (this is UserControlParser)
+						throw new ParseException (Location, pe.Message, pe);
+					throw;
 				}
 
-				string vpath = UrlUtils.Combine (BaseVirtualDir, src);
-				Type type = UserControlParser.GetCompiledType (vpath, realpath, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);
 				return;
@@ -147,7 +149,7 @@ namespace System.Web.UI
 					PageParser pp = new PageParser (page, filepath, Context);
 					ctype = pp.CompileIntoType ();
 				} else {
-					ctype = UserControlParser.GetCompiledType (control, filepath, Context);
+					ctype = UserControlParser.GetCompiledType (control, filepath, Dependencies, Context);
 				}
 
 				AddAssembly (ctype.Assembly, true);

@@ -324,7 +324,16 @@ namespace System.Web.UI
 			if (!imports.Contains (namesp))
 				imports.Add (namesp);
 		}
-		
+
+		internal virtual void AddSourceDependency (string filename)
+		{
+			if (dependencies != null && dependencies.Contains (filename)) {
+				ThrowParseException ("Circular file references are not allowed. File: " + filename);
+			}
+
+			AddDependency (filename);
+		}
+
 		internal virtual void AddDependency (string filename)
 		{
 			if (filename == "")
@@ -453,7 +462,7 @@ namespace System.Web.UI
 			if (!File.Exists (realPath))
 				ThrowParseException ("File " + vpath + " not found");
 
-			AddDependency (realPath);
+			AddSourceDependency (realPath);
 
 			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {
@@ -557,6 +566,7 @@ namespace System.Web.UI
 
 		internal ArrayList Dependencies {
 			get { return dependencies; }
+			set { dependencies = value; }
 		}
 
 		internal string CompilerOptions {

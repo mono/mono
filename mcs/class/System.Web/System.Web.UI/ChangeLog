@@ -1,3 +1,16 @@
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs:
+	* Control.cs: avoid the creation of the EventHandlerList and accessing 
+	to it whenever possible. Fix ENABLE_THEMING constant.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs:
+	* TemplateControlParser.cs:
+	* UserControlParser.cs: detect circular references when a control tries
+	to register itself as a tag. Fixes bug #75376.
+
 2005-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageParser.cs: don't try to compile the master page if it wan't
