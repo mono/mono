@@ -1,3 +1,7 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecurityManager.cs: Fixed inheritance demands for 1.x.
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CodeAccessPermission.cs: Fix Unrestricted PermitOnly (which is like

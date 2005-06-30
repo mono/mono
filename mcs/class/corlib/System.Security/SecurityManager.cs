@@ -99,7 +99,7 @@ namespace System.Security {
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
-		[MonoTODO]
+		[MonoTODO ("works for fulltrust (empty), documentation doesn't really make sense, type wise")]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey = "0x00000000000000000400000000000000")]
 		public static void GetZoneAndOrigin (out ArrayList zone, out ArrayList origin) 
 		{
@@ -182,8 +182,18 @@ namespace System.Security {
 			foreach (IPermission p in ps) {
 				// note: this may contains non CAS permissions
 				if ((!noncas) && (p is CodeAccessPermission)) {
-					if (!SecurityManager.IsGranted (a, p))
+#if NET_2_0
+					if (!IsGranted (a, p))
 						return p;
+#else
+					if (p is IUnrestrictedPermission) {
+						if (!IsGranted (a, p))
+							return p;
+					} else {
+						if (!IsGrantedRestricted (a, p))
+							return p;
+					}
+#endif
 				} else {
 					// but non-CAS will throw on failure...
 					try {
@@ -296,7 +306,7 @@ namespace System.Security {
 		}
 
 #if NET_2_0
-		[MonoTODO ("more tests are needed")]
+		[MonoTODO ("(2.0) more tests are needed")]
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
 			if ((evidences == null) || (evidences.Length == 0) ||
