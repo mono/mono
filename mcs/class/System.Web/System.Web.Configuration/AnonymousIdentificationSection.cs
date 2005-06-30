@@ -51,7 +51,7 @@ namespace System.Web.Configuration
 		
 		static AnonymousIdentificationSection ()
 		{
-/*			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
+			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
 			cookieNameProp = new NonEmptyStringConfigurationProperty ("cookieName", ".ASPXANONYMOUS", ConfigurationPropertyFlags.None);
 			cookieTimeoutProp = new TimeSpanConfigurationProperty ("cookieTimeout", new TimeSpan (69,10,40,0), TimeSpanSerializedFormat.Minutes, TimeSpanPropertyFlags.AllowInfinite | TimeSpanPropertyFlags.ProhibitZero, ConfigurationPropertyFlags.None);
 			cookiePathProp = new NonEmptyStringConfigurationProperty ("cookiePath", "/", ConfigurationPropertyFlags.None);
@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 			properties.Add (cookieProtectionProp);
 			properties.Add (cookilessProp);
 			properties.Add (domainProp);
-*/		}
+		}
 		
 		public HttpCookieMode Cookiless {
 			get { return (HttpCookieMode) base [cookilessProp]; }

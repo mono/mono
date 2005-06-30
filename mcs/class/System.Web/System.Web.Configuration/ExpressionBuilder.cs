@@ -42,7 +42,7 @@ namespace System.Web.Configuration
 
 		static ExpressionBuilder ()
 		{
-/*			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.Required | ConfigurationPropertyFlags.IsKey;
+			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.Required | ConfigurationPropertyFlags.IsKey;
 			type = new NonEmptyStringConfigurationProperty ("type", "", flags);
 			flags = ConfigurationPropertyFlags.Required;
 			expressionPrefix = new NonEmptyStringConfigurationProperty ("expressionPrefix", "", flags);
@@ -50,7 +50,7 @@ namespace System.Web.Configuration
 			props = new ConfigurationPropertyCollection ();
 			props.Add (type);
 			props.Add (expressionPrefix);
-*/		}
+		}
 
 		public string ExpressionPrefix {
 			get { return (string) this [expressionPrefix]; }

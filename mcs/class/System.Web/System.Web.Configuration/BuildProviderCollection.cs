@@ -43,10 +43,6 @@ namespace System.Web.Configuration
 			//FIXME: add properties
 			props = new ConfigurationPropertyCollection ();
 		}
-		
-		public BuildProviderCollection (): base (CaseInsensitiveComparer.DefaultInvariant)
-		{
-		}
 
 		public BuildProvider this [int index] {
 			get { return (BuildProvider) BaseGet (index); }
@@ -84,6 +80,11 @@ namespace System.Web.Configuration
 		public void RemoveAt (int index)
 		{
 			BaseRemoveAt (index);
+		}
+
+		protected override bool CompareKeys (object key1, object key2)
+		{
+			return (0 == CaseInsensitiveComparer.DefaultInvariant.Compare ((string) key1, (string) key2));
 		}
 
 		protected override ConfigurationElement CreateNewElement ()

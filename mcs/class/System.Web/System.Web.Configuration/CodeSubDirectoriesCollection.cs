@@ -43,10 +43,6 @@ namespace System.Web.Configuration
 			//FIXME: add properties
 			props = new ConfigurationPropertyCollection ();
 		}
-		
-		public CodeSubDirectoriesCollection (): base (CaseInsensitiveComparer.DefaultInvariant)
-		{
-		}
 
 		public CodeSubDirectory this [int index] {
 			get { return (CodeSubDirectory) BaseGet (index); }
@@ -73,6 +69,11 @@ namespace System.Web.Configuration
 		public void Add (CodeSubDirectory codeSubDirectory)
 		{
 			BaseAdd (codeSubDirectory);
+		}
+
+		protected override bool CompareKeys (object key1, object key2)
+		{
+			return (0 == CaseInsensitiveComparer.DefaultInvariant.Compare ((string) key1, (string) key2));
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
