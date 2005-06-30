@@ -1,3 +1,8 @@
+2005-06-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* AssemblyTest.cs: Relied on the 1.1 test suite being built when
+	running teh 2.0 test suite, which could cause failures
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyNameCas.cs: Removed execution of AssemblyNameTest.Self as it

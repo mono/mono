@@ -191,9 +191,12 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void LoadWithPartialName ()
 		{
-			Assembly corlib = Assembly.LoadWithPartialName ("corlib_test_default");
-			Assembly corlib2 = Assembly.LoadWithPartialName ("corlib_plattest");
-			Assert.IsTrue (corlib != null || corlib2 != null);
+			string [] names = { "corlib_test_default", "corlib_test_net_2_0", "corlib_plattest" };
+
+			foreach (string s in names)
+				if (Assembly.LoadWithPartialName (s) != null)
+					return;
+			Assertion.Fail ("Was not able to load any corlib test");
 		}
 
 		[Test]
