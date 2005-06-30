@@ -1,3 +1,7 @@
+2005-06-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* LibSupport.cs: Rename
+
 2005-06-29  Peter Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs: Re-align caret after deleting a character
