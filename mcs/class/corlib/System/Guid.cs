@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Duco Fijma
-// Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // References
 // 1.	UUIDs and GUIDs (DRAFT), Section 3.4
@@ -36,15 +36,16 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace System
-{
+namespace System {
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public struct Guid  : IFormattable, IComparable
 #if NET_2_0
-		, IComparable<Guid>, IEquatable <Guid>
+	[ComVisible (true)]
+	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid> {
+#else
+	public struct Guid : IFormattable, IComparable {
 #endif
-	{
 		private int _a; //_timeLow;
 		private short _b; //_timeMid;
 		private short _c; //_timeHighAndVersion;
@@ -342,100 +343,66 @@ namespace System
 				return 1;
 
 			if (!(value is Guid)) {
-				throw new ArgumentException (Locale.GetText (
+				throw new ArgumentException ("value", Locale.GetText (
 					"Argument of System.Guid.CompareTo should be a Guid."));
 			}
 
-			Guid v = (Guid) value;
-
-			if (_a != v._a) {
-				return Compare (_a, v._a);
-			}
-			else if (_b != v._b) {
-				return Compare (_b, v._b);
-			}
-			else if (_c != v._c) {
-				return Compare (_c, v._c);
-			}
-			else if (_d != v._d) {
-				return Compare (_d, v._d);
-			}
-			else if (_e != v._e) {
-				return Compare (_e, v._e);
-			}
-			else if (_f != v._f) {
-				return Compare (_f, v._f);
-			}
-			else if (_g != v._g) {
-				return Compare (_g, v._g);
-			}
-			else if (_h != v._h) {
-				return Compare (_h, v._h);
-			}
-			else if (_i != v._i) {
-				return Compare (_i, v._i);
-			}
-			else if (_j != v._j) {
-				return Compare (_j, v._j);
-			}
-			else if (_k != v._k) {
-				return Compare (_k, v._k);
-			}
-			return 0;
+			return CompareTo ((Guid)value);
 		}
 
 		public override bool Equals (object o)
 		{
-			try {
-				return CompareTo (o) == 0;	
-			}
-			catch (ArgumentException) {
-				return false;
-			}
+			if (o is Guid)
+				return CompareTo ((Guid)o) == 0;
+			return false;
 		}
 
 #if NET_2_0
-		public int CompareTo (Guid v)
+		public int CompareTo (Guid value)
+#else
+		internal int CompareTo (Guid value)
+#endif
 		{
-			if (_a != v._a) {
-				return Compare (_a, v._a);
+			if (_a != value._a) {
+				return Compare (_a, value._a);
 			}
-			else if (_b != v._b) {
-				return Compare (_b, v._b);
+			else if (_b != value._b) {
+				return Compare (_b, value._b);
 			}
-			else if (_c != v._c) {
-				return Compare (_c, v._c);
+			else if (_c != value._c) {
+				return Compare (_c, value._c);
 			}
-			else if (_d != v._d) {
-				return Compare (_d, v._d);
+			else if (_d != value._d) {
+				return Compare (_d, value._d);
 			}
-			else if (_e != v._e) {
-				return Compare (_e, v._e);
+			else if (_e != value._e) {
+				return Compare (_e, value._e);
 			}
-			else if (_f != v._f) {
-				return Compare (_f, v._f);
+			else if (_f != value._f) {
+				return Compare (_f, value._f);
 			}
-			else if (_g != v._g) {
-				return Compare (_g, v._g);
+			else if (_g != value._g) {
+				return Compare (_g, value._g);
 			}
-			else if (_h != v._h) {
-				return Compare (_h, v._h);
+			else if (_h != value._h) {
+				return Compare (_h, value._h);
 			}
-			else if (_i != v._i) {
-				return Compare (_i, v._i);
+			else if (_i != value._i) {
+				return Compare (_i, value._i);
 			}
-			else if (_j != v._j) {
-				return Compare (_j, v._j);
+			else if (_j != value._j) {
+				return Compare (_j, value._j);
 			}
-			else if (_k != v._k) {
-				return Compare (_k, v._k);
+			else if (_k != value._k) {
+				return Compare (_k, value._k);
 			}
 			return 0;
 		}
 
-		public bool Equals (Guid value)
+#if NET_2_0
+		public bool Equals (Guid g)
 		{
-			return CompareTo (value) == 0;
+			return CompareTo (g) == 0;
 		}
 #endif
 

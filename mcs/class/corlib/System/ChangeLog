@@ -1,3 +1,9 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Guid.cs: Avoid code duplication between overriden methods (new in 
+	2.0). Avoid exception processing when possible. Renamed parameters to
+	match the framework. Added ComVisible to NET_2_0.
+
 2005-06-28  Elliott Draper  <el@eldiablo.co.uk>
 
 	* Activator.cs: This implements the generic Activator.CreateInstance<T>()
