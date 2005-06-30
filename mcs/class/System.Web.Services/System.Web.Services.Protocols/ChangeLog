@@ -1,3 +1,7 @@
+2005-06-30  Konstantin Triger <kostat@mainsoft.com>
+
+	HttpSoapWebServiceHandler.cs, HttpSimpleWebServiceHandler.cs: Disposing the WebService instance after a WebMethod invocation.
+
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapHttpClientProtocol.cs: 

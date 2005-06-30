@@ -48,7 +48,6 @@ namespace System.Web.Services.Protocols
 		SoapExtension[] _extensionChainLowPrio;
 		SoapMethodStubInfo methodInfo;
 		SoapServerMessage requestMessage = null;
-		object server;
 
 		public HttpSoapWebServiceHandler (Type type): base (type)
 		{
@@ -105,6 +104,12 @@ namespace System.Web.Services.Protocols
 					SerializeFault (context, requestMessage, ex);
 				}
 			}
+			finally {
+				IDisposable disp = requestMessage.Server as IDisposable;
+				requestMessage = null;
+				if (disp != null)
+					disp.Dispose();
+			}
 		}
 
 		SoapServerMessage DeserializeRequest (HttpRequest request)
@@ -119,7 +124,7 @@ namespace System.Web.Services.Protocols
 				if (ctype != "text/xml")
 					throw new WebException ("Content is not XML: " + ctype);
 					
-				server = CreateServerInstance ();
+				object server = CreateServerInstance ();
 
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);

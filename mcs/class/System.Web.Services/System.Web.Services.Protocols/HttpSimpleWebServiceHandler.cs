@@ -115,9 +115,16 @@ namespace System.Web.Services.Protocols
 			try
 			{
 				object server = CreateServerInstance ();
-				object[] res = method.Invoke (server, parameters);
-				if (!method.IsVoid) return res[0];
-				else return null;
+				try {
+					object[] res = method.Invoke (server, parameters);
+					if (!method.IsVoid) return res[0];
+					else return null;
+				}
+				finally {
+					IDisposable disp = server as IDisposable;
+					if (disp != null)
+						disp.Dispose();
+				}
 			}
 			catch (TargetInvocationException ex)
 			{
