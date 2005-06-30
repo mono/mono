@@ -4460,7 +4460,7 @@ get_type_expression
 	
 exponentiation_expression
 	: prefixed_unary_expression
-	| exponentiation_expression OP_EXP _mark_ primary_expression
+	| exponentiation_expression OP_EXP _mark_ prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Exponentiation,
 			         (Expression) $1, (Expression) $4, (Location)$3);

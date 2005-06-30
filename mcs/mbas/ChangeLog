@@ -1,4 +1,7 @@
 2005-06-30 Manjula GHM <mmanjula@novell.com>
+	*mb-parser.jay: To support signed exponent
+
+2005-06-30 Manjula GHM <mmanjula@novell.com>
 	*mb-tokenizer.c : Support hexadecimal literals - supports binary value 
 	of the integer literal - like &H8000S is "-32768" and not an overflow exception
 
