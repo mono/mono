@@ -1,3 +1,7 @@
+2005-06-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile.am: namespace our library.
+
 2005-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* supportw.c:
