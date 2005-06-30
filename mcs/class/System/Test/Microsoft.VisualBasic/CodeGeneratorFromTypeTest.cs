@@ -366,6 +366,100 @@ namespace MonoTests.Microsoft.VisualBasic
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 
+		/// <summary>
+		/// Apparently VB.NET CodeDOM also allows properties that aren't indexers
+		/// to have parameters.
+		/// </summary>
+		[Test]
+		public void PropertyParametersTest ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (
+				typeof (int), "value2");
+			param.Direction = FieldDirection.Ref;
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overridable Property Name(ByVal value1 As Object, ByRef value2 As Integer) As Integer{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyIndexerTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (
+				typeof (int), "value2");
+			param.Direction = FieldDirection.Ref;
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overridable Default Property iTem(ByVal value1 As Object, ByRef value2 As Integer) As Integer{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensures Default keyword is only output if property is named "Item"
+		/// (case-insensitive comparison) AND parameters are defined.
+		/// </summary>
+		[Test]
+		public void PropertyIndexerTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Public Overridable Property iTem() As Integer{0}"
+#else
+				+ "    Public Overridable Property iTem As Integer{0}"
+#endif
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
 		[Test]
 		public void MethodMembersTypeTest1 ()
 		{

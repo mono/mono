@@ -685,12 +685,25 @@ namespace Microsoft.VisualBasic
 			if (property.HasSet && (!property.HasGet))
 				output.Write ("WriteOnly " );
 
-			output.Write ("Property " );
+			// mark property as default property if we're dealing with an indexer
+			if (string.Compare(property.Name, "Item", true, CultureInfo.InvariantCulture) == 0 && property.Parameters.Count > 0) {
+				output.Write ("Default " );
+			}
 
+			output.Write ("Property " );
 			Output.Write (property.Name);
 #if NET_2_0
+			// in .NET 2.0, always output parantheses (whether or not there 
+			// are any parameters to output
 			Output.Write ('(');
+			OutputParameters (property.Parameters);
 			Output.Write (')');
+#else
+			if (property.Parameters.Count > 0) {
+				Output.Write ('(');
+				OutputParameters (property.Parameters);
+				Output.Write (')');
+			}
 #endif
 			Output.Write (" As ");
 			Output.Write (GetTypeOutput(property.Type));

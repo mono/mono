@@ -34,6 +34,7 @@ namespace Mono.CSharp
 	using System;
 	using System.CodeDom;
 	using System.CodeDom.Compiler;
+	using System.Globalization;
 	using System.IO;
 	using System.Reflection;
 	using System.Collections;
@@ -638,17 +639,14 @@ namespace Mono.CSharp
 			OutputMemberAccessModifier (attributes);
 			OutputMemberScopeModifier (attributes);
 
-			if (property.Name == "Item")
-			{
-				// indexer
-				
-				OutputTypeNamePair( property.Type, "this");
+			// only consider property indexer if name is Item (case-insensitive 
+			// comparison) AND property has parameters
+			if (string.Compare(property.Name, "Item", true, CultureInfo.InvariantCulture) == 0 && property.Parameters.Count > 0) {
+				OutputTypeNamePair(property.Type, "this");
 				output.Write("[");
 				OutputParameters(property.Parameters);
 				output.Write("]");
-			}
-			else
-			{
+			} else {
 				OutputTypeNamePair( property.Type, GetSafeName (property.Name));
 			}
 			output.WriteLine (" {");

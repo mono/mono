@@ -326,6 +326,96 @@ namespace MonoTests.Microsoft.CSharp
 				+ "}}{0}", writer.NewLine), Code);
 		}
 
+		/// <summary>
+		/// C# CodeDOM does not output parameters for properties that aren't
+		/// indexers.
+		/// </summary>
+		[Test]
+		public void PropertyParametersTest ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (
+				typeof (int), "value2");
+			param.Direction = FieldDirection.Ref;
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int Name {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyIndexerTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			param = new CodeParameterDeclarationExpression (
+				typeof (int), "value2");
+			param.Direction = FieldDirection.Ref;
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int this[object value1, ref int value2] {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensures indexer code is only output if property is named "Item"
+		/// (case-insensitive comparison) AND parameters are defined.
+		/// </summary>
+		[Test]
+		public void PropertyIndexerTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int iTem {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
 		[Test]
 		public void MethodMembersTypeTest1 ()
 		{

@@ -1,3 +1,9 @@
+2005-06-30 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Only consider property an indexer if
+	name is Item (case-insensitive comparison) and property has
+	parameters.
+
 2005-06-28 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Fixed GetTypeOutput to match MS.NET 1.x

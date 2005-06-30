@@ -1,3 +1,8 @@
+2005-06-30  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Added property indexer and parameter
+	tests.
+
 2005-06-28  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added additional property tests.
