@@ -1,3 +1,33 @@
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TagAttributes.cs:
+	* AspParser.cs:
+	* TemplateControlCompiler.cs: use invariant culture versions of starts/
+	endswith.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: comparison between member name and the
+	first part of the id provided by the user should also be
+	case-insensitive. Fixes bug #75379.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: use cache.InsertPrivate.
+	* AspGenerator.cs: use cache.InsertPrivate. Removed extra call to
+	AddDependency.
+
+2005-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: create the assemly in the DynamicBase directory,
+	as all the others, when compiling an assembly from a Src file. Fixes
+	bug #75371.
+
+2005-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: if the property is not found, don't forget
+	about trying the field.
+
 2005-06-13  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Directive.cs: Register the MasterType directive.

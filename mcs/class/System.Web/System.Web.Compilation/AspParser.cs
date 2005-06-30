@@ -32,6 +32,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -188,12 +189,12 @@ namespace System.Web.Compilation
 			if (len < 10 || lastQuote != len - 1)
 				return false;
 
-			if (!str.ToLower (CultureInfo.InvariantCulture).StartsWith ("#include "))
+			if (!StrUtils.StartsWith (str, "#include ", true))
 				return false;
 
 			str = str.Substring (9).Trim ();
-			bool isfile = (str.ToLower (CultureInfo.InvariantCulture).StartsWith ("file"));
-			if (!isfile && !str.ToLower (CultureInfo.InvariantCulture).StartsWith ("virtual"))
+			bool isfile = (StrUtils.StartsWith (str ,"file", true));
+			if (!isfile && !StrUtils.StartsWith (str, "virtual", true))
 				return false;
 
 			pathType = (isfile) ? "file" : "virtual";

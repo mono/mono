@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.Util;
 using System.ComponentModel.Design.Serialization;
 #if NET_2_0
 using System.Collections.Specialized;
@@ -294,7 +295,7 @@ namespace System.Web.Compilation
 				return false;
 
 			string str = value.Trim ();
-			return (str.StartsWith ("<%#") && str.EndsWith ("%>"));
+			return (StrUtils.StartsWith (str, "<%#") && StrUtils.EndsWith (str, "%>"));
 		}
 
 #if NET_2_0
@@ -302,7 +303,7 @@ namespace System.Web.Compilation
 		{
 			string str = value.Trim ();
 			str = str.Substring (3).Trim ();	// eats "<%#"
-			if (str.StartsWith ("Bind")) {
+			if (StrUtils.StartsWith (str, "Bind")) {
 				Match match = bindRegex.Match (str);
 				if (match.Success) {
 					string bindingName = match.Groups [1].Value;
@@ -334,15 +335,19 @@ namespace System.Web.Compilation
 
 		static MemberInfo GetFieldOrProperty (Type type, string name)
 		{
+			MemberInfo member = null;
 			try {
-				return type.GetProperty (name, noCaseFlags);
+				member = type.GetProperty (name, noCaseFlags);
 			} catch {}
+			
+			if (member != null)
+				return member;
 
 			try {
-				return type.GetField (name, noCaseFlags);
+				member = type.GetField (name, noCaseFlags);
 			} catch {}
 
-			return null;
+			return member;
 		}
 
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id,
@@ -375,7 +380,7 @@ namespace System.Web.Compilation
 			string prop_field = id.Replace ("-", ".");
 			string [] parts = prop_field.Split (new char [] {'.'});
 			int length = parts.Length;
-			if (length < 2 || !InvariantCompare (member.Name, parts [0]))
+			if (length < 2 || !InvariantCompareNoCase (member.Name, parts [0]))
 				return false;
 
 			if (length > 2) {

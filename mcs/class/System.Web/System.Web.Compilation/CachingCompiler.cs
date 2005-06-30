@@ -42,6 +42,7 @@ namespace System.Web.Compilation
 {
 	class CachingCompiler
 	{
+		static string dynamicBase = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		static object compilationLock = new object ();
 		const string cachePrefix = "@@Assembly";
 		const string cacheTypePrefix = "@@@Type";
@@ -50,7 +51,7 @@ namespace System.Web.Compilation
 		{
 			string [] cacheKeys = new string [] { cachePrefix + filename };
 			CacheDependency dep = new CacheDependency (null, cacheKeys);
-			HttpRuntime.Cache.Insert (cacheTypePrefix + filename, type, dep);
+			HttpRuntime.Cache.InsertPrivate (cacheTypePrefix + filename, type, dep);
 		}
 
 		public static Type GetTypeFromCache (string filename)
@@ -74,7 +75,7 @@ namespace System.Web.Compilation
 				ICodeCompiler comp = compiler.Compiler;
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
-				cache.Insert (key, results, new CacheDependency (deps));
+				cache.InsertPrivate (key, results, new CacheDependency (deps));
 			}
 
 			return results;
@@ -98,7 +99,7 @@ namespace System.Web.Compilation
 				options.IncludeDebugInformation = parser.Debug;
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
-				cache.Insert (key, results, new CacheDependency (deps));
+				cache.InsertPrivate (key, results, new CacheDependency (deps));
 			}
 
 			return results;
@@ -124,6 +125,9 @@ namespace System.Web.Compilation
 			if (results != null)
 				return results;
 
+			if (!Directory.Exists (dynamicBase))
+				Directory.CreateDirectory (dynamicBase);
+
 			lock (compilationLock) {
 				results = (CompilerResults) cache [cachePrefix + key];
 				if (results != null)
@@ -138,6 +142,9 @@ namespace System.Web.Compilation
 
 				ICodeCompiler compiler = provider.CreateCompiler ();
 				CompilerParameters options = GetOptions (assemblies);
+				TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, true);
+				string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
+				options.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
 				results = compiler.CompileAssemblyFromFile (options, file);
 				ArrayList realdeps = new ArrayList (assemblies.Count + 1);
 				realdeps.Add (file);
@@ -148,7 +155,7 @@ namespace System.Web.Compilation
 				}
 
 				string [] deps = (string []) realdeps.ToArray (typeof (string));
-				cache.Insert (cachePrefix + key, results, new CacheDependency (deps));
+				cache.InsertPrivate (cachePrefix + key, results, new CacheDependency (deps));
 			}
 
 			return results;
