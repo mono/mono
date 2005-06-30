@@ -1,3 +1,9 @@
+2005-06-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilder.cs (Replace): Do the correct thing when we replace
+	with a longer string. Thanks to Alexander Beznozdrev
+	<abeznozdrev@croc.ru>
+
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* Encoding.cs: Use static object for locking. `volatile' to

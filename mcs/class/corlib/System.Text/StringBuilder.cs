@@ -296,7 +296,10 @@ namespace System.Text {
 
 			InternalEnsureCapacity (replace.Length + (_length - count));
 
+			string end = _str.Substring (startIndex + count, _length - startIndex - count );
+
 			String.InternalStrcpy (_str, startIndex, replace);
+			String.InternalStrcpy (_str, startIndex + replace.Length, end);
 			
 			_length = replace.Length + (_length - count);
 
