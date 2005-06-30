@@ -1,3 +1,7 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CrlTest.cs: New. Add regression test for bug #75406.
+
 2005-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12Test.cs: Fix a test for 2.0 (where the constructor could be
