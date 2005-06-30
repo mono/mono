@@ -1,3 +1,7 @@
+2005-06-30:4 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	*statement.cs: some tentative code preparing to support automatic definition of variables
+	on first usage with Option Explicit Off. Converting backticks to apostrophes on messages
+
 2005-06-30:3 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*mb-parser.jay: small bits preparing to support automatic definition of variables
 	on first usage with Option Explicit Off

@@ -72,8 +72,8 @@ namespace Mono.MonoBASIC {
 		///    Encapsulates the emission of a boolean test and jumping to a
 		///    destination.
 		///
-		///    This will emit the bool expression in `bool_expr' and if
-		///    `target_is_for_true' is true, then the code will generate a 
+		///    This will emit the bool expression in 'bool_expr' and if
+		///    'target_is_for_true' is true, then the code will generate a 
 		///    brtrue to the target.   Otherwise a brfalse. 
 		/// </remarks>
 		public static void EmitBoolExpression (EmitContext ec, Expression bool_expr,
@@ -431,8 +431,8 @@ namespace Mono.MonoBASIC {
 				ig.Emit (OpCodes.Br, ec.LoopBegin);
 					
 				//
-				// Inform that we are infinite (ie, `we return'), only
-				// if we do not `break' inside the code.
+				// Inform that we are infinite (ie, 'we return'), only
+				// if we do not 'break' inside the code.
 				//
 				ret = may_return == false;
 				ig.MarkLabel (ec.LoopEnd);
@@ -848,7 +848,7 @@ namespace Mono.MonoBASIC {
 				}
 			} else {
 				if (Expr == null){
-					Report.Error (126, loc, "An object of type `" +
+					Report.Error (126, loc, "An object of type '" +
 						      TypeManager.MonoBASIC_Name (ec.ReturnType) + "' is " +
 						      "expected for the return statement");
 					return true;
@@ -892,7 +892,7 @@ namespace Mono.MonoBASIC {
 			if (label == null){
 				Report.Error (
 					30132, loc,
-					"No such label `" + target + "' in this scope");
+					"No such label '" + target + "' in this scope");
 				return false;
 			}
 
@@ -1008,7 +1008,7 @@ namespace Mono.MonoBASIC {
 	
 
 	/// <summary>
-	///   `goto default' statement
+	///   'goto default' statement
 	/// </summary>
 	public class GotoDefault : Statement {
 		
@@ -1040,7 +1040,7 @@ namespace Mono.MonoBASIC {
 	}
 
 	/// <summary>
-	///   `goto case' statement
+	///   'goto case' statement
 	/// </summary>
 	public class GotoCase : Statement {
 		Expression expr;
@@ -1376,7 +1376,8 @@ namespace Mono.MonoBASIC {
 	//   current one.
 	// </summary>
 	public class MyBitVector {
-		public readonly int Count;
+		private int count;
+		public int Count { get { return count; } }
 		public readonly MyBitVector InheritsFrom;
 
 		bool is_dirty;
@@ -1389,7 +1390,7 @@ namespace Mono.MonoBASIC {
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
 		{
 			this.InheritsFrom = InheritsFrom;
-			this.Count = Count;
+			this.count = Count;
 		}
 
 		// <summary>
@@ -1408,12 +1409,12 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   Get/set bit `index' in the bit vector.
+		//   Get/set bit 'index' in the bit vector.
 		// </summary>
 		public bool this [int index]
 		{
 			get {
-				if (index > Count)
+				if (index > count)
 					throw new ArgumentOutOfRangeException ();
 
 				// We're doing a "copy-on-write" strategy here; as long
@@ -1434,7 +1435,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			set {
-				if (index > Count)
+				if (index > count)
 					throw new ArgumentOutOfRangeException ();
 
 				// Only copy the vector if we're actually modifying it.
@@ -1458,7 +1459,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   Performs an `or' operation on the bit vector.  The `new_vector' may have a
+		//   Performs an 'or' operation on the bit vector.  The 'new_vector' may have a
 		//   different size than the current one.
 		// </summary>
 		public void Or (MyBitVector new_vector)
@@ -1478,7 +1479,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
+		//   Perfonrms an 'and' operation on the bit vector.  The 'new_vector' may have
 		//   a different size than the current one.
 		// </summary>
 		public void And (MyBitVector new_vector)
@@ -1512,6 +1513,18 @@ namespace Mono.MonoBASIC {
 			retval.Vector = Vector;
 
 			return retval;
+		}
+		
+		public void ExpandBy(int howMany)
+		{
+			if (howMany < 1)
+				throw new ArgumentException("howMany");
+			initialize_vector();
+			count = vector.Count + howMany;
+			BitArray newVector = new BitArray(count, false);
+			for (int i = 0; i < vector.Count; i++)
+					newVector [i] = vector [i];
+			vector = newVector;
 		}
 
 		BitArray Vector {
@@ -1641,7 +1654,7 @@ namespace Mono.MonoBASIC {
 		int id;
 
 		// <summary>
-		//   Performs an `And' operation on the FlowReturns status
+		//   Performs an 'And' operation on the FlowReturns status
 		//   (for instance, a block only returns ALWAYS if all its siblings
 		//   always return).
 		// </summary>
@@ -1698,6 +1711,12 @@ namespace Mono.MonoBASIC {
 			//   The number of locals in this block.
 			// </summary>
 			public readonly int CountLocals;
+			
+			// <summary>
+			//   The number of locals in this block added after starting usage track.
+			// </summary>
+			public int ExtraLocals 	{ get { return locals.Count - CountLocals; } } 
+
 
 			// <summary>
 			//   If not null, then we inherit our state from this vector and do a
@@ -1746,6 +1765,11 @@ namespace Mono.MonoBASIC {
 				: this (parent, parent.CountParameters, parent.CountLocals)
 			{ }
 
+			public void AddExtraLocals(int howMany)
+			{
+				locals.ExpandBy(howMany);
+			}
+			
 			// <summary>
 			//   This does a deep copy of the usage vector.
 			// </summary>
@@ -1763,7 +1787,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			// 
-			// State of parameter `number'.
+			// State of parameter 'number'.
 			//
 			public bool this [int number]
 			{
@@ -1787,8 +1811,8 @@ namespace Mono.MonoBASIC {
 			}
 
 			//
-			// State of the local variable `vi'.
-			// If the local variable is a struct, use a non-zero `field_idx'
+			// State of the local variable 'vi'.
+			// If the local variable is a struct, use a non-zero 'field_idx'
 			// to check an individual field in it.
 			//
 			public bool this [VariableInfo vi, int field_idx]
@@ -1895,7 +1919,7 @@ namespace Mono.MonoBASIC {
 					if (!child.is_finally) {
 						if (child.Breaks != FlowReturns.UNREACHABLE) {
 							// If Returns is already set, perform an
-							// `And' operation on it, otherwise just set just.
+							// 'And' operation on it, otherwise just set just.
 							if (!new_returns_set) {
 								new_returns = child.Returns;
 								new_returns_set = true;
@@ -1905,7 +1929,7 @@ namespace Mono.MonoBASIC {
 						}
 
 						// If Breaks is already set, perform an
-						// `And' operation on it, otherwise just set just.
+						// 'And' operation on it, otherwise just set just.
 						if (!new_breaks_set) {
 							new_breaks = child.Breaks;
 							new_breaks_set = true;
@@ -1938,7 +1962,7 @@ namespace Mono.MonoBASIC {
 					//    6   Console.WriteLine (a);
 					//
 					// The if block in lines 3-4 always returns, so we must not look
-					// at the initialization of `a' in line 4 - thus it'll still be
+					// at the initialization of 'a' in line 4 - thus it'll still be
 					// uninitialized in line 6.
 					//
 					// On the other hand, the following is allowed:
@@ -1950,7 +1974,7 @@ namespace Mono.MonoBASIC {
 					//    5      return;
 					//    6   Console.WriteLine (a);
 					//
-					// Here, `a' is initialized in line 3 and we must not look at
+					// Here, 'a' is initialized in line 3 and we must not look at
 					// line 5 since it always returns.
 					// 
 					if (child.is_finally) {
@@ -1977,7 +2001,7 @@ namespace Mono.MonoBASIC {
 							new_locals.Or (child.locals);
 						}
 
-						// An `out' parameter must be assigned in all branches which do
+						// An 'out' parameter must be assigned in all branches which do
 						// not always throw an exception.
 						if (parameters != null) {
 							if (child.Breaks != FlowReturns.EXCEPTION) {
@@ -2067,11 +2091,11 @@ namespace Mono.MonoBASIC {
 
 			// <summary>
 			//   Tells control flow analysis that the current code position may be reached with
-			//   a forward jump from any of the origins listed in `origin_vectors' which is a
+			//   a forward jump from any of the origins listed in 'origin_vectors' which is a
 			//   list of UsageVectors.
 			//
 			//   This is used when resolving forward gotos - in the following example, the
-			//   variable `a' is uninitialized in line 8 becase this line may be reached via
+			//   variable 'a' is uninitialized in line 8 becase this line may be reached via
 			//   the goto in line 4:
 			//
 			//      1     int a;
@@ -2128,7 +2152,7 @@ namespace Mono.MonoBASIC {
 				Report.Debug (1, "MERGING FINALLY ORIGIN DONE", this);
 			}
 			// <summary>
-			//   Performs an `or' operation on the locals and the parameters.
+			//   Performs an 'or' operation on the locals and the parameters.
 			// </summary>
 			public void Or (UsageVector new_vector)
 			{
@@ -2138,7 +2162,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			// <summary>
-			//   Performs an `and' operation on the locals.
+			//   Performs an 'and' operation on the locals.
 			// </summary>
 			public void AndLocals (UsageVector new_vector)
 			{
@@ -2202,7 +2226,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   Creates a new flow branching for `block'.
+		//   Creates a new flow branching for 'block'.
 		//   This is used from Block.Resolve to create the top-level branching of
 		//   the block.
 		// </summary>
@@ -2239,8 +2263,8 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   Creates a new flow branching which is contained in `parent'.
-		//   You should only pass non-null for the `block' argument if this block
+		//   Creates a new flow branching which is contained in 'parent'.
+		//   You should only pass non-null for the 'block' argument if this block
 		//   introduces any new variables - in this case, we need to create a new
 		//   usage vector with a different size than our parent's one.
 		// </summary>
@@ -2298,7 +2322,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   Creates a sibling for a `finally' block.
+		//   Creates a sibling for a 'finally' block.
 		// </summary>
 		public void CreateSiblingForFinally ()
 		{
@@ -2486,7 +2510,7 @@ namespace Mono.MonoBASIC {
 
 			case FlowBranchingType.LOOP_BLOCK:
 				// The code following a loop is reachable unless the loop always
-				// returns or it's an infinite loop without any `break's in it.
+				// returns or it's an infinite loop without any 'break's in it.
 				reachable = !CurrentUsageVector.AlwaysReturns &&
 					(CurrentUsageVector.Breaks != FlowReturns.UNREACHABLE);
 				break;
@@ -2690,7 +2714,7 @@ namespace Mono.MonoBASIC {
 
 			MyStructInfo struct_info = StructInfo;
 			if ((struct_info == null) || (struct_info.HasNonPublicFields && (Name != null))) {
-				Report.Error (165, loc, "Use of unassigned local variable `" + Name + "'");
+				Report.Error (165, loc, "Use of unassigned local variable '" + Name + "'");
 				ec.CurrentBranching.SetVariableAssigned (this);
 				return false;
 			}
@@ -2701,7 +2725,7 @@ namespace Mono.MonoBASIC {
 				if (!ec.CurrentBranching.IsVariableAssigned (this, i+1)) {
 					if (Name != null) {
 						Report.Error (165, loc,
-							      "Use of unassigned local variable `" +
+							      "Use of unassigned local variable '" +
 							      Name + "'");
 						ec.CurrentBranching.SetVariableAssigned (this);
 						return false;
@@ -2709,7 +2733,7 @@ namespace Mono.MonoBASIC {
 
 					FieldInfo field = struct_info [i];
 					Report.Error (171, loc,
-						      "Field `" + TypeManager.MonoBASIC_Name (VariableType) +
+						      "Field '" + TypeManager.MonoBASIC_Name (VariableType) +
 						      "." + field.Name + "' must be fully initialized " +
 						      "before control leaves the constructor");
 					return false;
@@ -2731,7 +2755,7 @@ namespace Mono.MonoBASIC {
 
 			if (!ec.CurrentBranching.IsVariableAssigned (this, field_idx)) {
 				Report.Error (170, loc,
-					      "Use of possibly unassigned field `" + name + "'");
+					      "Use of possibly unassigned field '" + name + "'");
 				ec.CurrentBranching.SetVariableAssigned (this, field_idx);
 				return false;
 			}
@@ -3104,7 +3128,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		// <summary>
-		//   This is used by non-static `struct' constructors which do not have an
+		//   This is used by non-static 'struct' constructors which do not have an
 		//   initializer - in this case, the constructor must initialize all of the
 		//   struct's fields.  To do this, we add a "this" variable and use the flow
 		//   analysis code to ensure that it's been fully initialized before control
@@ -3124,6 +3148,29 @@ namespace Mono.MonoBASIC {
 			return this_variable;
 		}
 
+		public VariableInfo AddVariable (EmitContext ec, Expression type, string name, Location l)
+		{
+			if (!variables_initialized)
+				throw new InvalidOperationException();
+				
+			VariableInfo vi = AddVariable(type, name, null, loc);
+
+			int priorCount = count_variables;
+			DeclSpace ds = ec.DeclSpace;
+
+			if (!vi.Resolve (ds)) {
+				vi.Number = -1;
+			} else {
+				vi.Number = ++count_variables;
+				if (vi.StructInfo != null)
+					count_variables += vi.StructInfo.Count;
+			}
+			if (priorCount < count_variables)
+				ec.CurrentBranching.CurrentUsageVector.AddExtraLocals(count_variables - priorCount);
+				
+			return vi;
+		}
+		
 		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
@@ -3132,22 +3179,22 @@ namespace Mono.MonoBASIC {
 			VariableInfo vi = GetVariableInfo (name);
 			if (vi != null) {
 				if (vi.Block != ID)
-					Report.Error (30616, l, "A local variable named `" + name + "' " +
+					Report.Error (30616, l, "A local variable named '" + name + "' " +
 						      "cannot be declared in this scope since it would " +
-						      "give a different meaning to `" + name + "', which " +
-						      "is already used in a `parent or current' scope to " +
+						      "give a different meaning to '" + name + "', which " +
+						      "is already used in a 'parent or current' scope to " +
 						      "denote something else");
 				else
-					Report.Error (30290, l, "A local variable `" + name + "' is already " +
+					Report.Error (30290, l, "A local variable '" + name + "' is already " +
 						      "defined in this scope");
 				return null;
 			}
 
 			if (IsVariableNameUsedInChildBlock (name)) {
-				Report.Error (136, l, "A local variable named `" + name + "' " +
+				Report.Error (136, l, "A local variable named '" + name + "' " +
 					      "cannot be declared in this scope since it would " +
-					      "give a different meaning to `" + name + "', which " +
-					      "is already used in a `child' scope to denote something " +
+					      "give a different meaning to '" + name + "', which " +
+					      "is already used in a 'child' scope to denote something " +
 					      "else");
 				return null;
 			}
@@ -3156,10 +3203,10 @@ namespace Mono.MonoBASIC {
 				int idx = 0;
 				Parameter p = pars.GetParameterByName (name, out idx);
 				if (p != null) {
-					Report.Error (30616, l, "A local variable named `" + name + "' " +
+					Report.Error (30616, l, "A local variable named '" + name + "' " +
 						      "cannot be declared in this scope since it would " +
-						      "give a different meaning to `" + name + "', which " +
-						      "is already used in a `parent or current' scope to " +
+						      "give a different meaning to '" + name + "', which " +
+						      "is already used in a 'parent or current' scope to " +
 						      "denote something else");
 					return null;
 				}
@@ -3169,10 +3216,6 @@ namespace Mono.MonoBASIC {
 
 			variables.Add (name, vi);
 
-			if (variables_initialized)
-				throw new Exception ();
-
-			// Console.WriteLine ("Adding {0} to {1}", name, ID);
 			return vi;
 		}
 
@@ -3412,7 +3455,7 @@ namespace Mono.MonoBASIC {
 
 					if (!(e is Constant)){
 						Report.Error (133, vi.Location,
-							      "The expression being assigned to `" +
+							      "The expression being assigned to '" +
 							      name + "' must be constant (" + e + ")");
 						continue;
 					}
@@ -3446,11 +3489,11 @@ namespace Mono.MonoBASIC {
 						
 					if (vi.Assigned){
 						Report.Warning (
-							219, vi.Location, "The variable `" + name +
+							219, vi.Location, "The variable '" + name +
 							"' is assigned but its value is never used");
 					} else {
 						Report.Warning (
-							168, vi.Location, "The variable `" +
+							168, vi.Location, "The variable '" +
 							name +
 							"' is declared but never used");
 					} 
@@ -3473,7 +3516,7 @@ namespace Mono.MonoBASIC {
 
 			if (!variables_initialized)
 				UpdateVariableInfo (ec);
-
+				
 			ec.StartFlowBranching (this);
 
 			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
@@ -3482,6 +3525,7 @@ namespace Mono.MonoBASIC {
 			bool unreachable = false, warning_shown = false;
 
  			foreach (Statement s in statements){
+
 				if (unreachable && !(s is LabeledStatement)) {
 					if (!warning_shown && !(s is EmptyStatement)) {
 						warning_shown = true;
@@ -3510,7 +3554,7 @@ namespace Mono.MonoBASIC {
 			FlowReturns returns = ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
 
-			// If we're a non-static `struct' constructor which doesn't have an
+			// If we're a non-static 'struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
 			if ((this_variable != null) && (returns != FlowReturns.EXCEPTION) &&
 			    !this_variable.IsAssigned (ec, loc))
@@ -4055,7 +4099,7 @@ namespace Mono.MonoBASIC {
 
 				if (converted != null){
 					Report.Error (-12, loc, "More than one conversion to an integral " +
-						      " type exists for type `" +
+						      " type exists for type '" +
 						      TypeManager.MonoBASIC_Name (Expr.Type)+"'");
 					return null;
 				} else
@@ -4069,7 +4113,7 @@ namespace Mono.MonoBASIC {
 		void error152 (string n)
 		{
 			Report.Error (
-				152, "The label `" + n + ":' " +
+				152, "The label '" + n + ":' " +
 				"is already present on this switch statement");
 		}
 		
@@ -4395,7 +4439,7 @@ namespace Mono.MonoBASIC {
 		}
 		//
 		// This simple emit switch works, but does not take advantage of the
-		// `switch' opcode. 
+		// 'switch' opcode. 
 		// TODO: remove non-string logic from here
 		// TODO: binary search strings?
 		//
@@ -4645,7 +4689,7 @@ namespace Mono.MonoBASIC {
 			
 			if (type.IsValueType){
 				Report.Error (30582, loc, "lock statement requires the expression to be " +
-					      " a reference type (type is: `" +
+					      " a reference type (type is: '" +
 					      TypeManager.MonoBASIC_Name (type) + "'");
 				return false;
 			}
@@ -5266,7 +5310,7 @@ namespace Mono.MonoBASIC {
 				return returns;
 
 			// Unfortunately, System.Reflection.Emit automatically emits a leave
-			// to the end of the finally block.  This is a problem if `returns'
+			// to the end of the finally block.  This is a problem if 'returns'
 			// is true since we may jump to a point after the end of the method.
 			// As a workaround, emit an explicit ret here.
 
@@ -5571,7 +5615,7 @@ namespace Mono.MonoBASIC {
 		}
 		
 		//
-		// Retrieves a `public bool MoveNext ()' method from the Type `t'
+		// Retrieves a 'public bool MoveNext ()' method from the Type 't'
 		//
 		static MethodInfo FetchMethodMoveNext (Type t)
 		{
@@ -5598,7 +5642,7 @@ namespace Mono.MonoBASIC {
 		}
 		
 		//
-		// Retrieves a `public T get_Current ()' method from the Type `t'
+		// Retrieves a 'public T get_Current ()' method from the Type 't'
 		//
 		static MethodInfo FetchMethodGetCurrent (Type t)
 		{
@@ -5696,7 +5740,7 @@ namespace Mono.MonoBASIC {
 
 			//
 			// Ok, we can access it, now make sure that we can do something
-			// with this `GetEnumerator'
+			// with this 'GetEnumerator'
 			//
 
 			if (mi.ReturnType == TypeManager.ienumerator_type ||
@@ -5742,7 +5786,7 @@ namespace Mono.MonoBASIC {
                 void error1579 (Type t)
                 {
                         Report.Error (1579, loc,
-                                      "foreach statement cannot operate on variables of type `" +
+                                      "foreach statement cannot operate on variables of type '" +
                                       t.FullName + "' because that class does not provide a " +
                                       " GetEnumerator method or it is inaccessible");
                 }
@@ -5802,7 +5846,7 @@ namespace Mono.MonoBASIC {
 
 		//
 		// FIXME: possible optimization.
-		// We might be able to avoid creating `empty' if the type is the sam
+		// We might be able to avoid creating 'empty' if the type is the sam
 		//
 		bool EmitCollectionForeach (EmitContext ec)
 		{
@@ -5892,7 +5936,7 @@ namespace Mono.MonoBASIC {
 
 		//
 		// FIXME: possible optimization.
-		// We might be able to avoid creating `empty' if the type is the sam
+		// We might be able to avoid creating 'empty' if the type is the sam
 		//
 		bool EmitArrayForeach (EmitContext ec)
 		{
@@ -5973,7 +6017,7 @@ namespace Mono.MonoBASIC {
 					ig.Emit (OpCodes.Ldloc, dim_count [dim]);
 
 				//
-				// FIXME: Maybe we can cache the computation of `get'?
+				// FIXME: Maybe we can cache the computation of 'get'?
 				//
 				Type [] args = new Type [rank];
 				MethodInfo get;
