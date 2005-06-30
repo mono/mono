@@ -13,6 +13,9 @@
 #
 # Level 4 tailorings is not supported (it is logically done).
 #
+# Non-primary destination value is not allowed in a sortkey mapping.
+# FIXME: it should be rejected in the table generator code.
+#
 # Shifted characters (level 5) can be specified by setting category as 6.
 #
 

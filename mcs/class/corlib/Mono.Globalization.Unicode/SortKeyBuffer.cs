@@ -130,7 +130,7 @@ namespace Mono.Globalization.Unicode
 			// non-primary diacritical weight is added to that of
 			// the previous character (and does not reset level 3
 			// weight).
-			if (processLevel2 &&category == 1 && l1 > 0) {
+			if (processLevel2 && category == 1 && l1 > 0) {
 				lv2 = (byte) (lv2 + l2b [--l2]);
 				lv3 = l3b [--l3];
 			}

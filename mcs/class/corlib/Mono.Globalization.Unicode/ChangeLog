@@ -1,5 +1,22 @@
 2005-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : updated status.
+	* CollationDataStructures.txt : tiny fixes.
+	* SimpleCollator.cs :
+	  Renamed alias Util to UUtil (MS sys.enterprisesvc has sucky global
+	  namespace Util and csc borked).
+	  GetContraction was incorrectly returning first item.
+	  Private IsPrefix() now returns int (but it might not be in real use).
+	  Extracted simple char comparison to CompareCharSimple().
+	  IndexOf() and LastIndexOf() now fully handle contractions (both
+	  binary key and string replacement) in "target" (for "s" not yet).
+	* TestDriver.cs : be more verbose.
+	* mono-tailoring-source.txt : added comment.
+	* MSCompatUnicodeTable.template :
+	  Renamed alias Util to UUtil (MS sys.enterprisesvc has sucky global
+
+2005-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : compute COMBINING blah marks as
 	  well as those characters WITH blah.
 	* TestDriver.cs : added combining sortkey cases.

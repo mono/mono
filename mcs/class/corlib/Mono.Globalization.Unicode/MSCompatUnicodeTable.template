@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-using Util = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
+using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
 
 namespace Mono.Globalization.Unicode
 {
@@ -57,25 +57,25 @@ namespace Mono.Globalization.Unicode
 
 		public static byte Categories (int cp)
 		{
-			int idx = Util.Category.ToIndex (cp);
+			int idx = UUtil.Category.ToIndex (cp);
 			return idx < 0 ? byte.MinValue : categories [idx];
 		}
 
 		public static byte Level1 (int cp)
 		{
-			int idx = Util.Level1.ToIndex (cp);
+			int idx = UUtil.Level1.ToIndex (cp);
 			return idx < 0 ? byte.MinValue : level1 [idx];
 		}
 
 		public static byte Level2 (int cp)
 		{
-			int idx = Util.Level2.ToIndex (cp);
+			int idx = UUtil.Level2.ToIndex (cp);
 			return idx < 0 ? byte.MinValue : level2 [idx];
 		}
 
 		public static byte Level3 (int cp)
 		{
-			int idx = Util.Level3.ToIndex (cp);
+			int idx = UUtil.Level3.ToIndex (cp);
 			return idx < 0 ? byte.MinValue : level3 [idx];
 		}
 
@@ -88,7 +88,7 @@ namespace Mono.Globalization.Unicode
 			// Some characters in Surrogate area are ignored.
 			if (0xD880 <= cp && cp < 0xDB80)
 				return true;
-			int i = Util.Ignorable.ToIndex (cp);
+			int i = UUtil.Ignorable.ToIndex (cp);
 			return i >= 0 && ignorableFlags [i] == 7;
 		}
 		// Verifier:
@@ -100,13 +100,13 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsIgnorableSymbol (int cp)
 		{
-			int i = Util.Ignorable.ToIndex (cp);
+			int i = UUtil.Ignorable.ToIndex (cp);
 			return i >= 0 && (ignorableFlags [i] & 0x2) != 0;
 		}
 
 		public static bool IsIgnorableNonSpacing (int cp)
 		{
-			int i = Util.Ignorable.ToIndex (cp);
+			int i = UUtil.Ignorable.ToIndex (cp);
 			return i >= 0 && (ignorableFlags [i] & 0x4) != 0;
 		}
 
@@ -121,7 +121,7 @@ namespace Mono.Globalization.Unicode
 
 		public static int ToWidthCompat (int cp)
 		{
-			int i = Util.WidthCompat.ToIndex (cp);
+			int i = UUtil.WidthCompat.ToIndex (cp);
 			int v = i >= 0 ? widthCompat [i] : 0;
 			return v != 0 ? v : cp;
 		}

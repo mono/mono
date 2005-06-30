@@ -105,14 +105,15 @@ namespace Mono.Globalization.Unicode
 
 		void Compare (string s1, string s2, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("{0} {1} / {2}",
-				coll.Compare (s1, s2, opt), s1, s2);
+			Console.Error.WriteLine ("compare ({3}): {0} {1} / {2}",
+				coll.Compare (s1, s2, opt), s1, s2, opt);
 		}
 
 		void Compare (string s1, int idx1, int len1, string s2, int idx2, int len2, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("{0} {1} / {2}",
-				coll.Compare (s1, idx1, len1, s2, idx2, len2, opt), s1, s2);
+			Console.Error.WriteLine ("compare ({3} {4} {5} {6} {7}): {0} {1} / {2}",
+				coll.Compare (s1, idx1, len1, s2, idx2, len2, opt), s1, s2,
+					opt, idx1, len1, idx2, len2);
 		}
 
 		void IndexOf (string s, char c, CompareOptions opt)
@@ -122,8 +123,8 @@ namespace Mono.Globalization.Unicode
 
 		void IndexOf (string s, char c, int idx, int len, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("cIndex: {0} {1} / {2}",
-				coll.IndexOf (s, c, idx, len, opt), s, c);
+			Console.Error.WriteLine ("cIndex ({3} {4} {5}): {0} {1} / {2}",
+				coll.IndexOf (s, c, idx, len, opt), s, c, opt, idx, len);
 		}
 
 		void IndexOf (string s1, string s2, CompareOptions opt)
@@ -133,32 +134,32 @@ namespace Mono.Globalization.Unicode
 
 		void IndexOf (string s1, string s2, int idx, int len, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("sIndex: {0} {1} / {2}",
-				coll.IndexOf (s1, s2, idx, len, opt), s1, s2);
+			Console.Error.WriteLine ("sIndex ({3} {4} {5}): {0} {1} / {2}",
+				coll.IndexOf (s1, s2, idx, len, opt), s1, s2, opt, idx, len);
 		}
 
 		void IsPrefix (string s1, string s2, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("IsPrefix: {0} {1} / {2}",
-				coll.IsPrefix (s1, s2, opt), s1, s2);
+			Console.Error.WriteLine ("IsPrefix ({3}): {0} {1} / {2}",
+				coll.IsPrefix (s1, s2, opt), s1, s2, opt);
 		}
 
 		void LastIndexOf (string s, char c, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("cLast: {0} {1} / {2}",
-				coll.LastIndexOf (s, c, opt), s, c);
+			Console.Error.WriteLine ("cLast ({3}): {0} {1} / {2}",
+				coll.LastIndexOf (s, c, opt), s, c, opt);
 		}
 
 		void LastIndexOf (string s1, string s2, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("sLast: {0} {1} / {2}",
-				coll.LastIndexOf (s1, s2, opt), s1, s2);
+			Console.Error.WriteLine ("sLast ({3}): {0} {1} / {2}",
+				coll.LastIndexOf (s1, s2, opt), s1, s2, opt);
 		}
 
 		void IsSuffix (string s1, string s2, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("IsSuffix: {0} {1} / {2}",
-				coll.IsSuffix (s1, s2, opt), s1, s2);
+			Console.Error.WriteLine ("suffix ({3}): {0} {1} / {2}",
+				coll.IsSuffix (s1, s2, opt), s1, s2, opt);
 		}
 
 		void DumpSortKey (string s)
@@ -171,7 +172,7 @@ namespace Mono.Globalization.Unicode
 			byte [] data = coll.GetSortKey (s, idx, len, opt).KeyData;
 			foreach (byte b in data)
 				Console.Error.Write ("{0:X02} ", b);
-			Console.Error.WriteLine (" : {0}", s);
+			Console.Error.WriteLine (" : {0} ({1} {2} {3})", s, opt, idx, len);
 		}
 
 		#endregion

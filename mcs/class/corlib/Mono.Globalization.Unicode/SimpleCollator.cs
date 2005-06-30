@@ -32,7 +32,7 @@ using System.Collections;
 using System.Globalization;
 
 using Uni = Mono.Globalization.Unicode.MSCompatUnicodeTable;
-using Util = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
+using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
 
 namespace Mono.Globalization.Unicode
 {
@@ -57,6 +57,7 @@ namespace Mono.Globalization.Unicode
 		readonly int lcid;
 		readonly Contraction [] contractions;
 		readonly Level2Map [] level2Maps;
+		byte [] charSortKey = new byte [4];
 
 		#region Tailoring support classes
 		// Possible mapping types are:
@@ -241,21 +242,21 @@ Console.WriteLine (" -> {0}", c.Replacement);
 			switch (GetNeutralCulture (culture).Name) {
 			case "zh-CHS":
 				cjkTable = Uni.CjkCHS;
-				cjkIndexer = Util.CjkCHS;
+				cjkIndexer = UUtil.CjkCHS;
 				break;
 			case "zh-CHT":
 				cjkTable = Uni.CjkCHT;
-				cjkIndexer = Util.Cjk;
+				cjkIndexer = UUtil.Cjk;
 				break;
 			case "ja":
 				cjkTable = Uni.CjkJA;
-				cjkIndexer = Util.Cjk;
+				cjkIndexer = UUtil.Cjk;
 				break;
 			case "ko":
 				cjkTable = Uni.CjkKO;
 				cjkLv2Table = Uni.CjkKOLv2;
-				cjkIndexer = Util.Cjk;
-				cjkLv2Indexer = Util.Cjk;
+				cjkIndexer = UUtil.Cjk;
+				cjkLv2Indexer = UUtil.Cjk;
 				break;
 			}
 		}
@@ -359,8 +360,7 @@ Console.WriteLine (" -> {0}", c.Replacement);
 				if (ct.Source [0] > c)
 					return null; // it's already sorted
 				if (ct.Source [0] == c && ct.Source.Length == 1)
-					continue;
-				return ct;
+					return ct;
 			}
 			return null;
 		}
@@ -554,57 +554,31 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return IsPrefix (s, target, start, length);
+			return IsPrefix (s, target, start, length) >= 0;
 		}
 
-		bool IsPrefix (string s, string target, int start, int length)
+		// returns the consumed length in positive number, or -1 if
+		// target was not a prefix.
+		int IsPrefix (string s, string target, int start, int length)
 		{
 			int min = length > target.Length ? target.Length : length;
 			int si = start;
 
 			// FIXME: this is not enough to handle tailorings.
-			for (int j = 0; j < min; j++, si++) {
+			for (int ti = 0; ti < min; ti++, si++) {
 				// FIXME: should handle expansions (and it 
 				// should be before codepoint comparison).
 				string expansion = GetExpansion (s [si]);
 				if (expansion != null)
-					return false;
-				expansion = GetExpansion (target [j]);
+					return -si;
+				expansion = GetExpansion (target [ti]);
 				if (expansion != null)
-					return false;
+					return -si;
 
 				// char-by-char comparison.
-				if (IsIgnorable (s [si])) {
-					if (!IsIgnorable (target [j]))
-						j--;
-					continue;
-				}
-				else if (IsIgnorable (target [j])) {
-					si--;
-					continue;
-				}
-				int ci = FilterOptions (s [si]);
-				int cj = FilterOptions (target [j]);
-				if (ci == cj)
-					continue;
-				// lv.1 to 3
-				if (Category (ci) != Category (cj) ||
-					Level1 (ci) != Level1 (cj) ||
-					!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
-					Uni.Level3 (ci) != Uni.Level3 (cj))
-					return false;
-				// lv.4 (only when required)
-				if (!Uni.HasSpecialWeight ((char) ci))
-					continue;
-				if (Uni.IsJapaneseSmallLetter ((char) ci) !=
-					Uni.IsJapaneseSmallLetter ((char) cj) ||
-					Uni.GetJapaneseDashType ((char) ci) !=
-					Uni.GetJapaneseDashType ((char) cj) ||
-					!Uni.IsHiragana ((char) ci) !=
-					!Uni.IsHiragana ((char) cj) ||
-					Uni.IsHalfWidthKana ((char) ci) !=
-					Uni.IsHalfWidthKana ((char) cj))
-					return false;
+				int ret = CompareCharSimple (s, target, ref si, ref ti);
+				if (ret < 0)
+					return -ret;
 			}
 			if (length == min) {
 				// All codepoints in the compared range
@@ -613,12 +587,48 @@ Console.WriteLine (" -> {0}", c.Replacement);
 				// "target" is ignorable or not.
 				for (int i = min; i < target.Length; i++)
 					if (!IsIgnorable (target [i]))
-						return false;
-				return true;
+						return -si;
+				return si;
 			}
-			return true;
+			return si;
 		}
 
+		private int CompareCharSimple (string s, string target, ref int si, ref int ti)
+		{
+			// char-by-char comparison.
+			if (IsIgnorable (s [si])) {
+				if (!IsIgnorable (target [ti]))
+					ti--;
+				return 0;
+			}
+			else if (IsIgnorable (target [ti])) {
+				si--;
+				return 0;
+			}
+			int ci = FilterOptions (s [si]);
+			int cj = FilterOptions (target [ti]);
+			if (ci == cj)
+				return 0;
+			// lv.1 to 3
+			if (Category (ci) != Category (cj) ||
+				Level1 (ci) != Level1 (cj) ||
+				!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
+				Uni.Level3 (ci) != Uni.Level3 (cj))
+				return -si;
+			// lv.4 (only when required)
+			if (!Uni.HasSpecialWeight ((char) ci))
+				return 0;
+			if (Uni.IsJapaneseSmallLetter ((char) ci) !=
+				Uni.IsJapaneseSmallLetter ((char) cj) ||
+				Uni.GetJapaneseDashType ((char) ci) !=
+				Uni.GetJapaneseDashType ((char) cj) ||
+				!Uni.IsHiragana ((char) ci) !=
+				!Uni.IsHiragana ((char) cj) ||
+				Uni.IsHalfWidthKana ((char) ci) !=
+				Uni.IsHalfWidthKana ((char) cj))
+				return -si;
+			return 0;
+		}
 		#endregion
 
 		#region IsSuffix()
@@ -712,19 +722,32 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public int IndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return IndexOf (s, target, start, length);
-		}
 
-		int IndexOf (string s, char target, int start, int length)
-		{
 			// If target has an contraction, then use string search.
 			Contraction ct = GetContraction (target);
-			if (ct != null)
-				return ct.SortKey != null ?
-					IndexOf (s, new string (target, 1), start, length) :
-					IndexOf (s, ct.Replacement, start, length);
+			if (ct != null) {
+				if (ct.Replacement != null)
+					return IndexOf (s, ct.Replacement, start, length);
+				else
+					return IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+			}
+			else
+				return IndexOfPrimitiveChar (s, start, length, target);
+		}
 
+		int IndexOfPrimitiveChar (string s, int start, int length, char target)
+		{
 			int ti = FilterOptions ((int) target);
+			charSortKey [0] = Category (ti);
+			charSortKey [1] = Level1 (ti);
+			if (!ignoreNonSpace)
+				charSortKey [2] = Level2 (ti);
+			charSortKey [3] = Uni.Level3 (ti);
+			return IndexOfSortKey (s, start, length, charSortKey, target, ti, !Uni.HasSpecialWeight ((char) ti));
+		}
+
+		int IndexOfSortKey (string s, int start, int length, byte [] sortkey, char target, int ti, bool noLv4)
+		{
 			int end = start + length;
 			for (int idx = start; idx < end; idx++) {
 				switch (char.GetUnicodeCategory (s [idx])) {
@@ -735,19 +758,23 @@ Console.WriteLine (" -> {0}", c.Replacement);
 					return idx;
 				}
 
+				// FIXME: what happens if target is *in the 
+				// middle of* expansion?
 				string expansion = GetExpansion (s [idx]);
 				if (expansion != null)
 					continue; // since target cannot be expansion as conditioned above.
 				if (s [idx] == target)
 					return idx;
 				int si = FilterOptions ((int) s [idx]);
-				if (Category (si) != Category (ti) ||
-					Level1 (si) != Level1 (ti) ||
-					!ignoreNonSpace && Level2 (si) != Level2 (ti) ||
-					Uni.Level3 (si) != Uni.Level3 (ti))
+				if (Category (si) != sortkey [0] ||
+					Level1 (si) != sortkey [1] ||
+					!ignoreNonSpace && Level2 (si) != sortkey [2] ||
+					Uni.Level3 (si) != sortkey [3])
 					continue;
-				if (!Uni.HasSpecialWeight ((char) si))
+				if (noLv4 && !Uni.HasSpecialWeight ((char) si))
 					return idx;
+				else if (noLv4)
+					continue;
 				if (Uni.IsJapaneseSmallLetter ((char) si) !=
 					Uni.IsJapaneseSmallLetter ((char) ti) ||
 					Uni.GetJapaneseDashType ((char) si) !=
@@ -757,6 +784,7 @@ Console.WriteLine (" -> {0}", c.Replacement);
 					Uni.IsHalfWidthKana ((char) si) !=
 					Uni.IsHalfWidthKana ((char) ti))
 					continue;
+				return idx;
 			}
 			return -1;
 		}
@@ -772,15 +800,22 @@ Console.WriteLine (" -> {0}", c.Replacement);
 			return IndexOf (s, target, start, length);
 		}
 
-		public int IndexOf (string s, string target, int start, int length)
+		int IndexOf (string s, string target, int start, int length)
 		{
+			Contraction ct = GetContraction (target, 0, target.Length);
+			byte [] sortkey = ct != null ? ct.SortKey : null;
+			string replace = ct != null ? ct.Replacement : null;
 			do {
-				// FIXME: this should be modified to handle
-				// expansions
-				int idx = IndexOf (s, target [0], start, length);
+				int idx = 0;
+				if (sortkey != null)
+					idx = IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+				else if (replace != null)
+					idx = IndexOf (ct.Replacement, target, 0, ct.Replacement.Length);
+				else
+					idx = IndexOfPrimitiveChar (s, start, length, target [0]);
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, length - (idx - start)))
+				if (IsPrefix (s, target, idx, length - (idx - start)) >= 0)
 					return idx;
 				start++;
 				length--;
@@ -804,21 +839,34 @@ Console.WriteLine (" -> {0}", c.Replacement);
 		public int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return LastIndexOf (s, target, start, length);
-		}
 
-		int LastIndexOf (string s, char target, int start, int length)
-		{
 			// If target has an contraction, then use string search.
 			Contraction ct = GetContraction (target);
-			if (ct != null)
-				return ct.SortKey != null ?
-					LastIndexOf (s, new string (target, 1), start, length) :
-					LastIndexOf (s, ct.Replacement, start, length);
+			if (ct != null) {
+				if (ct.Replacement != null)
+					return LastIndexOf (s, ct.Replacement, start, length);
+				else
+					return LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+			}
+			else
+				return LastIndexOfPrimitiveChar (s, start, length, target);
+		}
 
+		int LastIndexOfPrimitiveChar (string s, int start, int length, char target)
+		{
+			int ti = FilterOptions ((int) target);
+			charSortKey [0] = Category (ti);
+			charSortKey [1] = Level1 (ti);
+			if (!ignoreNonSpace)
+				charSortKey [2] = Level2 (ti);
+			charSortKey [3] = Uni.Level3 (ti);
+			return LastIndexOfSortKey (s, start, length, charSortKey, target, ti, !Uni.HasSpecialWeight ((char) ti));
+		}
+
+		int LastIndexOfSortKey (string s, int start, int length, byte [] sortkey, char target, int ti, bool noLv4)
+		{
 			int end = start - length;
 
-			int ti = FilterOptions ((int) target);
 			for (int idx = start; idx > end; idx--) {
 				switch (char.GetUnicodeCategory (s [idx])) {
 				case UnicodeCategory.PrivateUse:
@@ -828,19 +876,23 @@ Console.WriteLine (" -> {0}", c.Replacement);
 					return idx;
 				}
 
+				// FIXME: what happens if target is *in the 
+				// middle of* expansion?
 				string expansion = GetExpansion (s [idx]);
 				if (expansion != null)
 					continue; // since target cannot be expansion as conditioned above.
 				if (s [idx] == target)
 					return idx;
 				int si = FilterOptions ((int) s [idx]);
-				if (Category (si) != Category (ti) ||
-					Level1 (si) != Level1 (ti) ||
-					!ignoreNonSpace && Level2 (si) != Level2 (ti) ||
-					Uni.Level3 (si) != Uni.Level3 (ti))
+				if (Category (si) != sortkey [0] ||
+					Level1 (si) != sortkey [1] ||
+					!ignoreNonSpace && Level2 (si) != sortkey [2] ||
+					Uni.Level3 (si) != sortkey [3])
 					continue;
-				if (!Uni.HasSpecialWeight ((char) si))
+				if (noLv4 && !Uni.HasSpecialWeight ((char) si))
 					return idx;
+				else if (noLv4)
+					continue;
 				if (Uni.IsJapaneseSmallLetter ((char) si) !=
 					Uni.IsJapaneseSmallLetter ((char) ti) ||
 					Uni.GetJapaneseDashType ((char) si) !=
@@ -871,12 +923,20 @@ Console.WriteLine (" -> {0}", c.Replacement);
 			int orgStart = start;
 
 			do {
-				// FIXME: this should be modified to handle
-				// expansions
-				int idx = LastIndexOf (s, target [0], start, length);
+				int idx = 0;
+				Contraction ct = GetContraction (s, start, length);
+				if (ct != null) {
+					if (ct.SortKey != null)
+						idx = LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+					else
+						idx = LastIndexOf (ct.Replacement, target, ct.Replacement.Length - 1, ct.Replacement.Length);
+				}
+				else
+					idx = LastIndexOfPrimitiveChar (s, start, length, target [0]);
+
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, orgStart - idx + 1))
+				if (IsPrefix (s, target, idx, orgStart - idx + 1) >= 0)
 					return idx;
 				length--;
 				start--;

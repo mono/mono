@@ -35,7 +35,7 @@
 		ushort tailoringIndex;
 		ushort tailoringCount;
 		short reverseAccentOrder; /* 1:French sort. 0:Normal */
-	} CollationSource;
+	} TailoringInfo;
 
 	Those [*] characters will be compressed using CodePointIndexer
 	whose max value is char.MaxValue+1.
@@ -76,10 +76,7 @@
 	static CodePointIndexer Ignorable;
 	static CodePointIndexer WidthCompat;
 	static CodePointIndexer CjkCHS;
-	static CodePointIndexer CjkCHT;
-	static CodePointIndexer CjkJA;
-	static CodePointIndexer CjkKO;
-	static CodePointIndexer CjkKOLevel1;
+	static CodePointIndexer Cjk;
 
 ** CollatorSource.cs
 
@@ -96,20 +93,18 @@
 	static ushort [] cjkKO;
 	static byte [] cjkKOlv2;
 
-	class CollationSource // instantiated for each CultureInfo
+	class TailoringInfo // instantiated for each CultureInfo
 	{
 		// Primary constants
 		int tailoringIndex;
 		int tailoringCount;
-		bool reverseAccentOrder;
+		bool frenchSort;
 
+/*
 		// This array is set according to CJK type, and CJK type
 		// will be hardcoded, being identified from LCID.
 		ushort [] cjk;
-
 		// For Korean, level2 table is specially treated.
-
-		// Computed values for optimization in use.
-		byte [*] hasTailoringHead;
-		byte [*] hasTailoringTail;
+		byte [] cjkLevel2;
+*/
 	}
