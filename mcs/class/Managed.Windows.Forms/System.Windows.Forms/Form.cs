@@ -887,13 +887,9 @@ namespace System.Windows.Forms {
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
 			Form		previous;
 
-			#if broken
-			Control		owner = null;
-
 			if (ownerWin32 != null) {
-				owner = Control.FromHandle(ownerWin32.Handle);
+				this.owner = (Form)Control.FromHandle(ownerWin32.Handle);
 			}
-			#endif
 
 			if (is_modal) {
 				return DialogResult.None;
@@ -905,7 +901,7 @@ namespace System.Windows.Forms {
 
 			#if broken
 			// Can't do this, will screw us in the modal loop
-			form_parent_window.Parent = owner;
+			form_parent_window.Parent = this.owner;
 			#endif
 
 			previous = Form.ActiveForm;

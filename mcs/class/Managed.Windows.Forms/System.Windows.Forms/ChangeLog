@@ -1,3 +1,9 @@
+2005-06-30  Peter Bartok  <pbartok@novell.com> 
+
+	* Form.cs (ShowDialog): Assign owner of the dialog
+	* TextBoxBase.cs: Always refresh caret size when deleting, caret
+	  might have been moved to a tag with different height
+
 2005-06-30  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: Don't create an infinite loop when setting focus

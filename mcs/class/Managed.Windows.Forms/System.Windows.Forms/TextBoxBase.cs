@@ -863,6 +863,7 @@ Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 							document.Combine(line, document.CaretLine);
 							document.UpdateView(line, 1, 0);
 							document.PositionCaret(line, new_caret_pos);
+							document.MoveCaret(CaretDirection.CharForward);
 							document.UpdateCaret();
 							OnTextChanged(EventArgs.Empty);
 						}
@@ -890,7 +891,7 @@ Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 							document.UpdateView(document.CaretLine, 2, 0);
 							OnTextChanged(EventArgs.Empty);
 
-#if Debug
+							#if not_Debug
 							Line	check_first;
 							Line	check_second;
 
@@ -898,7 +899,7 @@ Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 							check_second = document.GetLine(check_first.line_no + 1);
 
 							Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
-#endif
+							#endif
 
 							// Caret doesn't move
 						}
