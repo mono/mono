@@ -1,3 +1,8 @@
+2005-06-30  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_semaphores_init): Add some helpful error
+	messages when semget () fails due to lack of resources.
+
 2005-06-21  Dick Porter  <dick@ximian.com>
 
 	* mutex-private.h:
