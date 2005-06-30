@@ -119,6 +119,10 @@ namespace Mono.CSharp {
 
 		public abstract void CreateScopeType (EmitContext ec, ScopeInfo scope);
 
+		public abstract Iterator Iterator {
+			get;
+		}
+
 		public abstract bool IsIterator {
 			get;
 		}
@@ -130,6 +134,10 @@ namespace Mono.CSharp {
 					ToplevelBlock block, Location l)
 			: base (parameters, container, block, l)
 		{
+		}
+
+		public override Iterator Iterator {
+			get { return null; }
 		}
 
 		public override bool IsIterator {

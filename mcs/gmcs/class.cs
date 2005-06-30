@@ -4348,9 +4348,9 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (
 				tc, ds, Location, ig, ReturnType, ModFlags, false);
 
-			ec.CurrentIterator = tc as Iterator;
-			if (ec.CurrentIterator != null)
-				ec.CurrentAnonymousMethod = ec.CurrentIterator.Host;
+			Iterator iterator = tc as Iterator;
+			if (iterator != null)
+				ec.CurrentAnonymousMethod = iterator.Host;
 
 			return ec;
 		}
@@ -7506,7 +7506,7 @@ namespace Mono.CSharp {
 	}
 
  
-	public class Indexer : PropertyBase {
+	public class Indexer : PropertyBase, IIteratorContainer {
 
 		class GetIndexerMethod: GetMethod
 		{
@@ -7694,6 +7694,20 @@ namespace Mono.CSharp {
 				GetBuilder = Get.Define (Parent);
 				if (GetBuilder == null)
 					return false;
+
+				//
+				// Setup iterator if we are one
+				//
+				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
+					Iterator iterator = new Iterator (
+						Parent, "get", MemberType,
+						Get.ParameterInfo,
+						ModFlags, Get.Block, Location);
+					
+					if (!iterator.DefineIterator ())
+						return false;
+					Get.Block = iterator.Block;
+				}
 			}
 			
 			if (!Set.IsDummy){
@@ -7769,6 +7783,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public void SetYields ()
+		{
+			ModFlags |= Modifiers.METHOD_YIELDS;
+		}
 	}
 
 	public class Operator : MethodCore, IIteratorContainer {

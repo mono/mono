@@ -2324,6 +2324,7 @@ indexer_declaration
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
+		iterator_container = SimpleIteratorContainer.GetSimple ();
 	  }
           accessor_declarations 
 	  {
@@ -2355,6 +2356,9 @@ indexer_declaration
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
+		if (SimpleIteratorContainer.Simple.Yields)
+			indexer.SetYields ();
+
 		if (RootContext.Documentation != null)
 			indexer.DocComment = ConsumeStoredComment ();
 
@@ -2363,6 +2367,7 @@ indexer_declaration
 		current_local_parameters = null;
 		implicit_value_parameter_type = null;
 		indexer_parameters = null;
+		iterator_container = null;
 	  }
 	;
 

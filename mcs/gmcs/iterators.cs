@@ -372,7 +372,6 @@ namespace Mono.CSharp {
 		{
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 			ec.CurrentAnonymousMethod = move_next_method;
-			ec.CurrentIterator = this;
 			ec.InIterator = true;
 
 			if (!CheckType (return_type)) {
@@ -461,7 +460,6 @@ namespace Mono.CSharp {
 		protected override bool DoDefineMembers ()
 		{
 			ec.InIterator = true;
-			ec.CurrentIterator = this;
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.capture_context = cc;
 
@@ -481,7 +479,6 @@ namespace Mono.CSharp {
 				return false;
 
 			ec.InIterator = true;
-			ec.CurrentIterator = this;
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.capture_context = cc;
 			ec.TypeContainer = ec.TypeContainer.Parent;
@@ -935,6 +932,10 @@ namespace Mono.CSharp {
 				return CreateMethodHost (ec);
 			}
 
+			public override Iterator Iterator {
+				get { return iterator; }
+			}
+
 			public override bool IsIterator {
 				get { return true; }
 			}
@@ -967,7 +968,6 @@ namespace Mono.CSharp {
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				ec.CurrentIterator = iterator;
 				ec.CurrentAnonymousMethod = iterator.move_next_method;
 				ec.InIterator = true;
 

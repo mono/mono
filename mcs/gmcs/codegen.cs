@@ -344,7 +344,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///    The current iterator
 		/// </summary>
-		public Iterator CurrentIterator;
+		public Iterator CurrentIterator {
+			get {
+				if (CurrentAnonymousMethod != null)
+					return CurrentAnonymousMethod.Iterator;
+				else
+					return null;
+			}
+		}
 
 		/// <summary>
 		///    Whether we are in the resolving stage or not
