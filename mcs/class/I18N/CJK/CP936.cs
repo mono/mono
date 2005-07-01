@@ -548,7 +548,7 @@ namespace I18N.CJK
 							// Invalid second byte
 							chars[posn++] = '?';
 						} else {
-							int idx = ((lastByte - 0xa1) * 94 + (b - 0xa1) * 2);
+							int idx = (((lastByte - 0xa1) * 94 + (b - 0xa1)) * 2);
 
 							if (idx > 0x3fe2) {
 								value = 0;
