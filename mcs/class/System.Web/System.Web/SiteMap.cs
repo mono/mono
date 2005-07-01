@@ -33,6 +33,8 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Configuration.Provider;
+using System.Configuration;
+using System.Web.Configuration;
 
 namespace System.Web {
 	public abstract class SiteMap {
@@ -41,17 +43,39 @@ namespace System.Web {
 		{
 		}
 		
-		[MonoTODO ("Get everything from the config")]
 		private static void Init ()
 		{
 			lock (locker) {
 				if (provider == null) {
+					System.Configuration.Configuration conf = WebConfigurationManager.OpenWebConfiguration ("/");
+					SiteMapSection section = (SiteMapSection) conf.GetSection ("system.web/siteMap");
 					providers = new SiteMapProviderCollection ();
-					provider = new XmlSiteMapProvider ();
-					NameValueCollection attributes = new NameValueCollection ();
-					attributes.Add ("siteMapFile", "Web.sitemap");
-					((ProviderBase)provider).Initialize ("AspNetXmlSiteMapProvider", attributes);
-					providers.Add ((ProviderBase)provider);
+					
+					if (section.Enabled) {
+						foreach (ProviderSettings prov in section.Providers) {
+							Type t = Type.GetType (prov.Type);
+							if (t == null)
+								throw new ConfigurationException ("Cannot find type: " + prov.Type);
+							if (!typeof(SiteMapProvider).IsAssignableFrom (t))
+								throw new ConfigurationException ("The provided type is not a SiteMapProvider subclass: " + prov.Type);
+							
+							SiteMapProvider pr = (SiteMapProvider) Activator.CreateInstance (t);
+							pr.Initialize (prov.Name, prov.Parameters);
+							
+							if (provider == null || prov.Name == section.DefaultProvider)
+								provider = pr;
+
+							providers.Add (pr);
+						}
+					}
+					
+					if (providers.Count == 0) {
+						provider = new XmlSiteMapProvider ();
+						NameValueCollection attributes = new NameValueCollection ();
+						attributes.Add ("siteMapFile", "Web.sitemap");
+						provider.Initialize ("AspNetXmlSiteMapProvider", attributes);
+						providers.Add (provider);
+					}
 				}
 			}
 		}

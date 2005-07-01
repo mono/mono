@@ -1,3 +1,7 @@
+2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SiteMap.cs: Read provider info from the configuration files.
+
 2005-06-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponseHeader.cs: URL encode \r and \n in header values. Fixes
