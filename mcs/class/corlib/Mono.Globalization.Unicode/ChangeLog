@@ -1,3 +1,9 @@
+2005-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : commonized character comparison in IsPrefix()
+	  and IsSuffix(). csc compile fix.
+	* CompareInfoImpl.cs : deleted.
+
 2005-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestDriver.cs : added SimpleCollator.ctor() sanity check.

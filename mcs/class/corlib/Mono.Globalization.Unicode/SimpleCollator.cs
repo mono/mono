@@ -566,7 +566,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		#endregion
 
-		#region IsPrefix()
+		#region IsPrefix() and IsSuffix()
 
 		public bool IsPrefix (string src, string target, CompareOptions opt)
 		{
@@ -598,9 +598,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					return -si;
 
 				// char-by-char comparison.
-				int ret = CompareCharSimple (s, target, ref si, ref ti);
-				if (ret < 0)
-					return -ret;
+				if (Differs (s, target, ref si, ref ti, false))
+					return -si;
 			}
 			if (length == min) {
 				// All codepoints in the compared range
@@ -615,45 +614,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return si;
 		}
 
-		private int CompareCharSimple (string s, string target, ref int si, ref int ti)
-		{
-			// char-by-char comparison.
-			if (IsIgnorable (s [si])) {
-				if (!IsIgnorable (target [ti]))
-					ti--;
-				return 0;
-			}
-			else if (IsIgnorable (target [ti])) {
-				si--;
-				return 0;
-			}
-			int ci = FilterOptions (s [si]);
-			int cj = FilterOptions (target [ti]);
-			if (ci == cj)
-				return 0;
-			// lv.1 to 3
-			if (Category (ci) != Category (cj) ||
-				Level1 (ci) != Level1 (cj) ||
-				!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
-				Uni.Level3 (ci) != Uni.Level3 (cj))
-				return -si;
-			// lv.4 (only when required)
-			if (!Uni.HasSpecialWeight ((char) ci))
-				return 0;
-			if (Uni.IsJapaneseSmallLetter ((char) ci) !=
-				Uni.IsJapaneseSmallLetter ((char) cj) ||
-				Uni.GetJapaneseDashType ((char) ci) !=
-				Uni.GetJapaneseDashType ((char) cj) ||
-				!Uni.IsHiragana ((char) ci) !=
-				!Uni.IsHiragana ((char) cj) ||
-				Uni.IsHalfWidthKana ((char) ci) !=
-				Uni.IsHalfWidthKana ((char) cj))
-				return -si;
-			return 0;
-		}
-		#endregion
-
-		#region IsSuffix()
+		// IsSuffix()
 
 		public bool IsSuffix (string src, string target, CompareOptions opt)
 		{
@@ -663,57 +624,28 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return IsSuffix (s, target, start, length);
+			return IsSuffix (s, target, start, length) >= 0;
 		}
 
-		bool IsSuffix (string s, string target, int start, int length)
+		int IsSuffix (string s, string target, int start, int length)
 		{
 			int min = length > target.Length ? target.Length : length;
 			int si = start;
 
 			// FIXME: this is not enough to handle tailorings.
-			for (int j = min - 1; j >= 0; j--, si--) {
+			for (int ti = min - 1; ti >= 0; ti--, si--) {
 				// FIXME: should handle expansions (and it 
 				// should be before codepoint comparison).
 				string expansion = GetExpansion (s [si]);
 				if (expansion != null)
-					return false;
-				expansion = GetExpansion (target [j]);
+					return -si;
+				expansion = GetExpansion (target [ti]);
 				if (expansion != null)
-					return false;
+					return -si;
 
 				// char-by-char comparison.
-				if (IsIgnorable (s [si])) {
-					if (!IsIgnorable (target [j]))
-						j++;
-					continue;
-				}
-				else if (IsIgnorable (target [j])) {
-					si++;
-					continue;
-				}
-				int ci = FilterOptions (s [si]);
-				int cj = FilterOptions (target [j]);
-				if (ci == cj)
-					continue;
-				// lv.1 to 3
-				if (Category (ci) != Category (cj) ||
-					Level1 (ci) != Level1 (cj) ||
-					!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
-					Uni.Level3 (ci) != Uni.Level3 (cj))
-					return false;
-				// lv.4 (only when required)
-				if (!Uni.HasSpecialWeight ((char) ci))
-					continue;
-				if (Uni.IsJapaneseSmallLetter ((char) ci) !=
-					Uni.IsJapaneseSmallLetter ((char) cj) ||
-					Uni.GetJapaneseDashType ((char) ci) !=
-					Uni.GetJapaneseDashType ((char) cj) ||
-					!Uni.IsHiragana ((char) ci) !=
-					!Uni.IsHiragana ((char) cj) ||
-					Uni.IsHalfWidthKana ((char) ci) !=
-					Uni.IsHalfWidthKana ((char) cj))
-					return false;
+				if (Differs (s, target, ref si, ref ti, true))
+					return -si;
 			}
 			if (si == min) {
 				// All codepoints in the compared range
@@ -722,15 +654,59 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				// "target" is ignorable or not.
 				for (int i = target.Length - min - 1; i >= 0; i--)
 					if (!IsIgnorable (target [i]))
-						return false;
-				return true;
+						return -si;
+				return si;
 			}
-			return true;
+			return si;
+		}
+
+		private bool Differs (string s, string target, ref int si, ref int ti, bool backward)
+		{
+			// char-by-char comparison.
+			if (IsIgnorable (s [si])) {
+				if (!IsIgnorable (target [ti])) {
+					if (backward)
+						ti++;
+					else
+						ti--;
+				}
+				return false;
+			}
+			else if (IsIgnorable (target [ti])) {
+				if (backward)
+					si++;
+				else
+					si--;
+				return false;
+			}
+			int ci = FilterOptions (s [si]);
+			int cj = FilterOptions (target [ti]);
+			if (ci == cj)
+				return false;
+			// lv.1 to 3
+			if (Category (ci) != Category (cj) ||
+				Level1 (ci) != Level1 (cj) ||
+				!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
+				Uni.Level3 (ci) != Uni.Level3 (cj))
+				return true;
+			// lv.4 (only when required)
+			if (!Uni.HasSpecialWeight ((char) ci))
+				return false;
+			if (Uni.IsJapaneseSmallLetter ((char) ci) !=
+				Uni.IsJapaneseSmallLetter ((char) cj) ||
+				Uni.GetJapaneseDashType ((char) ci) !=
+				Uni.GetJapaneseDashType ((char) cj) ||
+				!Uni.IsHiragana ((char) ci) !=
+				!Uni.IsHiragana ((char) cj) ||
+				Uni.IsHalfWidthKana ((char) ci) !=
+				Uni.IsHalfWidthKana ((char) cj))
+				return true;
+			return false;
 		}
 
 		#endregion
 
-		#region IndexOf()
+		#region IndexOf() / LastIndexOf()
 
 		// IndexOf (string, string, CompareOptions)
 		// IndexOf (string, string, int, int, CompareOptions)
@@ -819,10 +795,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			} while (length > 0);
 			return -1;
 		}
-
-		#endregion
-
-		#region LastIndexOf()
 
 		//
 		// There are the same number of IndexOf() related methods,
@@ -914,17 +886,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return -1;
 		}
 
-		#endregion
-
-		#region Index search common
-
 		private bool Matches (string s, ref int idx, int end, int ti, char target, byte [] sortkey, bool noLv4, bool lastIndexOf)
 		{
 			switch (char.GetUnicodeCategory (s [idx])) {
 			case UnicodeCategory.PrivateUse:
 			case UnicodeCategory.Surrogate:
 				if (s [idx] != target)
-					continue;
+					return false;
 				return true;
 			}
 
