@@ -1,3 +1,21 @@
+2005-07-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* System.Configuration.dll.sources: Added new files:
+		System.Configuration/ConfigurationCollectionAttribute.cs
+		System.Configuration/ConfigurationConverterBase.cs
+		System.Configuration/ElementInformation.cs
+		System.Configuration/PositiveTimeSpanValidator.cs
+		System.Configuration/PropertyInformation.cs
+		System.Configuration/PropertyInformationCollection.cs
+		System.Configuration/PropertyValueOrigin.cs
+		System.Configuration/StringValidator.cs
+		System.Configuration/StringValidatorAttribute.cs
+		System.Configuration/TimeSpanMinutesConverter.cs
+		System.Configuration/TimeSpanMinutesOrInfiniteConverter.cs
+		System.Configuration/TimeSpanValidator.cs
+		System.Configuration/TimeSpanValidatorAttribute.cs
+
+
 2005-06-17  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* System.Configuration.sources: Added new files:

@@ -21,6 +21,8 @@ System.Configuration/ConfigInfo.cs
 System.Configuration/Configuration.cs
 System.Configuration/ConfigurationAllowDefinition.cs
 System.Configuration/ConfigurationAllowExeDefinition.cs
+System.Configuration/ConfigurationCollectionAttribute.cs
+System.Configuration/ConfigurationConverterBase.cs
 System.Configuration/ConfigurationElement.cs
 System.Configuration/ConfigurationElementCollection.cs
 System.Configuration/ConfigurationElementCollectionType.cs
@@ -45,6 +47,7 @@ System.Configuration/ConnectionStringsSection.cs
 System.Configuration/ConnectionStringSettingsCollection.cs
 System.Configuration/ConnectionStringSettings.cs
 System.Configuration/ContextInformation.cs
+System.Configuration/ElementInformation.cs
 System.Configuration/ExeConfigurationFileMap.cs
 System.Configuration/ExeContext.cs
 System.Configuration/IConfigXmlNode.cs
@@ -53,6 +56,10 @@ System.Configuration/InternalConfigurationHost.cs
 System.Configuration/InternalConfigurationRoot.cs
 System.Configuration/KeyValueConfigurationCollection.cs
 System.Configuration/KeyValueConfigurationElement.cs
+System.Configuration/PositiveTimeSpanValidator.cs
+System.Configuration/PropertyInformation.cs
+System.Configuration/PropertyInformationCollection.cs
+System.Configuration/PropertyValueOrigin.cs
 System.Configuration/ProtectedConfigurationProvider.cs
 System.Configuration/ProtectedConfigurationSection.cs
 System.Configuration/ProviderSettings.cs
@@ -62,3 +69,9 @@ System.Configuration/SectionInfo.cs
 System.Configuration/SectionGroupInfo.cs
 System.Configuration/SectionInformation.cs
 ../../build/common/MonoTODOAttribute.cs
+System.Configuration/StringValidator.cs
+System.Configuration/StringValidatorAttribute.cs
+System.Configuration/TimeSpanMinutesConverter.cs
+System.Configuration/TimeSpanMinutesOrInfiniteConverter.cs
+System.Configuration/TimeSpanValidator.cs
+System.Configuration/TimeSpanValidatorAttribute.cs
