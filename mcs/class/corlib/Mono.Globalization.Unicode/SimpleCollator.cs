@@ -373,23 +373,23 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		Contraction GetTailContraction (string s, int start, int end)
 		{
-			Contraction c = GetContractionTail (s, start, end, contractions);
+			Contraction c = GetTailContraction (s, start, end, contractions);
 			if (c != null || lcid == 127)
 				return c;
-			return GetContractionTail (s, start, end, invariant.contractions);
+			return GetTailContraction (s, start, end, invariant.contractions);
 		}
 
-		Contraction GetContractionTail (string s, int start, int end, Contraction [] clist)
+		Contraction GetTailContraction (string s, int start, int end, Contraction [] clist)
 		{
 			for (int i = 0; i < clist.Length; i++) {
 				Contraction ct = clist [i];
-				if (ct.Source [0] > s [start])
+				if (ct.Source [0] > s [end])
 					return null; // it's already sorted
 				char [] chars = ct.Source;
-				if (start - end < chars.Length)
+				if (start - end + 1 < chars.Length)
 					continue;
 				bool match = true;
-				int offset = start - chars.Length;
+				int offset = start - chars.Length + 1;
 				for (int n = 0; n < chars.Length; n++)
 					if (s [offset + n] != chars [n]) {
 						match = false;
@@ -676,7 +676,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 							si += ret;
 							i++;
 						}
-						if (i == r.Length && si < end)
+						if (i < r.Length && si >= end)
 							return false;
 					}
 				}
@@ -746,6 +746,147 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			}
 		}
 
+		// IsSuffix()
+
+		public bool IsSuffix (string src, string target, CompareOptions opt)
+		{
+			return IsSuffix (src, target, src.Length - 1, src.Length, opt);
+		}
+
+		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
+		{
+			SetOptions (opt);
+
+			// quick check : simple codepoint comparison
+			if (s.Length >= target.Length) {
+				int si = start;
+				for (int i = target.Length - 1; i >= 0; i--, si--)
+					if (s [si] != target [i])
+						break;
+				if (si == start + target.Length)
+					return true;
+			}
+
+			escapedSourceIndex = -1;
+			return IsSuffix (s, target, start, length);
+		}
+
+		bool IsSuffix (string s, string target, int start, int length)
+		{
+			int si = start;
+			int ti = target.Length - 1;
+			string source = s;
+			int end = start - length + 1;
+
+			while (ti >= 0) {
+				if (IsIgnorable (target [ti])) {
+					ti--;
+					continue;
+				}
+				if (si < 0) {
+					if (s == source)
+						break;
+					s = source;
+					si = escapedSourceIndex;
+					escapedSourceIndex = -1;
+					continue;
+				}
+				if (IsIgnorable (s [si])) {
+					si--;
+					continue;
+				}
+
+				// Check contraction for target.
+				Contraction ctt = GetTailContraction (target, ti, 0);
+				if (ctt != null) {
+					ti -= ctt.Source.Length;
+					if (ctt.SortKey != null) {
+						int ret = GetMatchLengthBack (ref s, ref si, ref end, -1, ctt.SortKey, true);
+						if (ret < 0)
+							return false;
+						si -= ret;
+					} else {
+						string r = ctt.Replacement;
+						int i = r.Length - 1;
+						while (i >= 0 && si >= end) {
+							int ret = GetMatchLengthBack (ref s, ref si, ref end, r [i]);
+							if (ret < 0)
+								return false;
+							si -= ret;
+							i--;
+						}
+						if (i >= 0 && si < end)
+							return false;
+					}
+				}
+				else {
+					int ret = GetMatchLengthBack (ref s, ref si, ref end, target [ti]);
+					if (ret < 0)
+						return false;
+					si -= ret;
+					ti--;
+				}
+			}
+			if (si < end) {
+				// All codepoints in the compared range
+				// matches. In that case, what matters 
+				// is whether the remaining part of 
+				// "target" is ignorable or not.
+				while (ti >= 0)
+					if (!IsIgnorable (target [ti--]))
+						return false;
+				return true;
+			}
+			return true;
+		}
+
+		// WARNING: Don't invoke it outside IsSuffix().
+		int GetMatchLengthBack (ref string s, ref int idx, ref int end, char target)
+		{
+			int it = FilterOptions ((int) target);
+			charSortKey [0] = Category (it);
+			charSortKey [1] = Level1 (it);
+			if (!ignoreNonSpace)
+				charSortKey [2] = Level2 (it);
+			charSortKey [3] = Uni.Level3 (it);
+
+			return GetMatchLengthBack (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
+		}
+
+		// WARNING: Don't invoke it outside IsSuffix().
+		// returns consumed source length (mostly 1, source length in case of contraction)
+		int GetMatchLengthBack (ref string s, ref int idx, ref int end, int it, byte [] sortkey, bool noLv4)
+		{
+			Contraction ct = null;
+			// If there is already expansion, then it should not
+			// process further expansions.
+			if (escapedSourceIndex < 0)
+				ct = GetTailContraction (s, idx, end);
+			if (ct != null) {
+				if (ct.SortKey != null) {
+					if (!noLv4)
+						return -1;
+					for (int i = 0; i < ct.SortKey.Length; i++)
+						if (sortkey [i] != ct.SortKey [i])
+							return -1;
+					return ct.Source.Length;
+				} else {
+					escapedSourceIndex = idx - ct.Source.Length;
+					s = ct.Replacement;
+					idx = s.Length - 1;
+					end = 0;
+					return GetMatchLength (ref s, ref idx, ref end, it, sortkey, noLv4);
+				}
+			} else {
+				// primitive comparison
+				if (Compare (s [idx], it, sortkey) != 0)
+					return -1;
+				return 1;
+			}
+		}
+
+		// Common use methods 
+
 		// returns comparison result.
 		private int Compare (char src, int ct, byte [] sortkey)
 		{
@@ -795,116 +936,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		int CompareFlagPair (bool b1, bool b2)
 		{
 			return b1 == b2 ? 0 : b1 ? 1 : -1;
-		}
-
-		// IsSuffix()
-
-		public bool IsSuffix (string src, string target, CompareOptions opt)
-		{
-			return IsSuffix (src, target, src.Length - 1, src.Length, opt);
-		}
-
-		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
-		{
-			SetOptions (opt);
-
-			// quick check : simple codepoint comparison
-			if (s.Length >= target.Length) {
-				int si = start;
-				for (int i = target.Length - 1; i >= 0; i--, si--)
-					if (s [si] != target [i])
-						break;
-				if (si == start + target.Length)
-					return true;
-			}
-
-			return IsSuffix (s, target, start, length);
-		}
-
-		bool IsSuffix (string s, string target, int start, int length)
-		{
-			int si = start;
-			int ti = target.Length - 1;
-			string source = s;
-
-			while (ti >= 0) {
-				if (IsIgnorable (target [ti])) {
-					ti--;
-					continue;
-				}
-				if (si < 0) {
-					if (s == source)
-						break;
-					s = source;
-					si = escapedSourceIndex;
-					escapedSourceIndex = -1;
-					continue;
-				}
-				if (IsIgnorable (s [si])) {
-					si--;
-					continue;
-				}
-
-				// char-by-char comparison.
-				if (Differs (s, target, ref si, ref ti, true))
-					return false;
-				si--;
-			}
-			if (si == 0) {
-				// All codepoints in the compared range
-				// matches. In that case, what matters 
-				// is whether the remaining part of 
-				// "target" is ignorable or not.
-				while (ti >= 0)
-					if (!IsIgnorable (target [ti--]))
-						return false;
-				return true;
-			}
-			return true;
-		}
-
-		private bool Differs (string s, string target, ref int si, ref int ti, bool backward)
-		{
-			// char-by-char comparison.
-			if (IsIgnorable (s [si])) {
-				if (!IsIgnorable (target [ti])) {
-					if (backward)
-						ti++;
-					else
-						ti--;
-				}
-				return false;
-			}
-			else if (IsIgnorable (target [ti])) {
-				if (backward)
-					si++;
-				else
-					si--;
-				return false;
-			}
-			int ci = FilterOptions (s [si]);
-			int cj = FilterOptions (target [ti]);
-			if (ci == cj)
-				return false;
-			// lv.1 to 3
-			if (Category (ci) != Category (cj) ||
-				Level1 (ci) != Level1 (cj) ||
-				!ignoreNonSpace && Level2 (ci) != Level2 (cj) ||
-				Uni.Level3 (ci) != Uni.Level3 (cj))
-				return true;
-			// lv.4 (only when required)
-			if (!Uni.HasSpecialWeight ((char) ci))
-				return false;
-			if (Uni.IsJapaneseSmallLetter ((char) ci) !=
-				Uni.IsJapaneseSmallLetter ((char) cj) ||
-				Uni.GetJapaneseDashType ((char) ci) !=
-				Uni.GetJapaneseDashType ((char) cj) ||
-				!Uni.IsHiragana ((char) ci) !=
-				!Uni.IsHiragana ((char) cj) ||
-				Uni.IsHalfWidthKana ((char) ci) !=
-				Uni.IsHalfWidthKana ((char) cj))
-				return true;
-			return false;
 		}
 
 		#endregion

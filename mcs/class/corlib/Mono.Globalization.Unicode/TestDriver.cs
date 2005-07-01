@@ -30,8 +30,8 @@ namespace Mono.Globalization.Unicode
 
 		void Run ()
 		{
-//IsPrefix ("\u00E6", "ae", CompareOptions.None);
-//IsPrefix ("ae", "\u00E6", CompareOptions.None);
+//IsSuffix ("\u00E6", "ae", CompareOptions.None);
+//IsSuffix ("ae", "\u00E6", CompareOptions.None);
 //return;
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");
@@ -80,6 +80,11 @@ namespace Mono.Globalization.Unicode
 			IsSuffix ("BC", "c", CompareOptions.IgnoreCase);
 			IsSuffix ("CBA", "c", CompareOptions.IgnoreCase);
 			IsSuffix ("ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+			IsSuffix ("\u00E6", "a", CompareOptions.None);
+			IsSuffix ("\u00E6", "e", CompareOptions.None);
+			IsSuffix ("\u00E6", "ae", CompareOptions.None);
+			IsSuffix ("ae", "\u00E6", CompareOptions.None);
+			IsSuffix ("e", "\u00E6", CompareOptions.None);
 
 			IndexOf ("ABC", "1", CompareOptions.None);
 			IndexOf ("ABCABC", "c", CompareOptions.IgnoreCase);
@@ -100,6 +105,11 @@ namespace Mono.Globalization.Unicode
 
 			coll = new SimpleCollator (new CultureInfo ("hu"));
 			DumpSortKey ("ZSAZS1");
+			IsSuffix ("zs", "z", CompareOptions.None);
+			IsSuffix ("zs", "s", CompareOptions.None);
+			IsSuffix ("zs", "zs", CompareOptions.None);
+			IsSuffix ("sz", "z", CompareOptions.None);
+			IsSuffix ("sz", "s", CompareOptions.None);
 		}
 
 		void Generate ()
