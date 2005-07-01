@@ -19,7 +19,10 @@ SUPPORT_FILES = $(symlinks) mono-wrapper wrapper-config
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' all-profiles
+	d=`pwd`; ok=:; \
+	( cd $(mcs_topdir) && \
+	  $(MAKE) PROFILES='$(build_profiles)' all-profiles ) || ok=false; \
+	./semdel-wrapper || :; $$ok
 
 if INSTALL_2_0
 build_profiles = default net_2_0
@@ -32,8 +35,10 @@ install: install-exec install-data
 
 # override automake
 install-exec: $(SUPPORT_FILES)
-	d=`pwd`; \
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
+	d=`pwd`; ok=:; \
+	( cd $(mcs_topdir) && \
+	  $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles ) || ok=false; \
+	./semdel-wrapper || :; $$ok
 
 # override automake
 install-data:
@@ -41,8 +46,10 @@ install-data:
 
 # override automake
 uninstall:
-	d=`pwd`; \
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
+	d=`pwd`; ok=:; \
+	( cd $(mcs_topdir) && \
+	  $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles ) || ok=false; \
+	./semdel-wrapper || :; $$ok
 
 ## semdel-wrapper will probably not delete the semaphore if someone is crazy enough to do a 'make -j distclean' :-)
 clean-local:
@@ -64,12 +71,14 @@ test_select = ONLY_CENTUM_TESTS=yes
 endif
 
 mcs-do-test-profiles:
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' test-profiles
+	d=`pwd`; ok=:; \
+	( cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' test-profiles ) || ok=false; \
+	./semdel-wrapper || :; $$ok
 
 mcs-do-run-test-profiles: test-support-files
-	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
-	( cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
-	rm -fr $(tmpinst); $$ret
+	d=`pwd`; ok=:; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
+	( cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' run-test-profiles ) || ok=false; \
+	./semdel-wrapper || :; rm -fr $(tmpinst); $$ok
 
 if PLATFORM_WIN32
 cur_dir_cmd = cygpath -w -a .
@@ -81,16 +90,16 @@ endif
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
 mcs-compileall: mono-wrapper wrapper-config
-	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ret=:; \
+	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(build_profiles); do \
 	  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; export MONO_PATH; \
 	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe $(mcs_topdir)/class/Microsoft.VisualBasic/fixup/$$profile/*.dll; do \
 	    if ./mono-wrapper --compile-all $$i; then \
 	      echo $$i verified OK; \
 	    else \
-	      echo $$i verification failed; ret=false; \
+	      echo $$i verification failed; ok=false; \
 	    fi; done; done; \
-	$$ret
+	./semdel-wrapper || :; $$ok
 
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles

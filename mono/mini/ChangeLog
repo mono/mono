@@ -1,3 +1,7 @@
+2005-07-01  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (check-local): Call semdel-wrapper.
+
 2005-06-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c: Revert the last change as it seems to break the build..

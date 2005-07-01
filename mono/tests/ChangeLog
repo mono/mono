@@ -1,3 +1,7 @@
+2005-07-01  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (check-local): Call semdel-wrapper.
+
 2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am appdomain3.cs: Remove appdomain3 test, since it is a duplicate of appdomain-unload.
