@@ -1,5 +1,13 @@
 2005-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : reverted IsSuffix() to return bool (to match w/
+	  what current IsPrefix() does). For expansion of target, IsPrefix()
+	  should check the no-match case that expansion is longer than input.
+	  Some refactory on IsPrefix().
+	  Added GetContractionTal() for IsSuffix() (not used yet).
+
+2005-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TestDriver.cs : added IsPrefix() expansion cases.
 	* SimpleCollator.cs : IsPrefix() now supports contractions (with much
 	  of complexity), and it now returns bool again.

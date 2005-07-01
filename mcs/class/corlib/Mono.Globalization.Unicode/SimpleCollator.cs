@@ -82,8 +82,7 @@ namespace Mono.Globalization.Unicode
 		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
 		// temporary expansion store for IsPrefix/Suffix
-		string escapedSource;
-		int escapedIndex;
+		int escapedSourceIndex;
 
 		#region Tailoring support classes
 		// Possible mapping types are:
@@ -372,6 +371,36 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return null;
 		}
 
+		Contraction GetTailContraction (string s, int start, int end)
+		{
+			Contraction c = GetContractionTail (s, start, end, contractions);
+			if (c != null || lcid == 127)
+				return c;
+			return GetContractionTail (s, start, end, invariant.contractions);
+		}
+
+		Contraction GetContractionTail (string s, int start, int end, Contraction [] clist)
+		{
+			for (int i = 0; i < clist.Length; i++) {
+				Contraction ct = clist [i];
+				if (ct.Source [0] > s [start])
+					return null; // it's already sorted
+				char [] chars = ct.Source;
+				if (start - end < chars.Length)
+					continue;
+				bool match = true;
+				int offset = start - chars.Length;
+				for (int n = 0; n < chars.Length; n++)
+					if (s [offset + n] != chars [n]) {
+						match = false;
+						break;
+					}
+				if (match)
+					return ct;
+			}
+			return null;
+		}
+
 		Contraction GetContraction (char c)
 		{
 			Contraction ct = GetContraction (c, contractions);
@@ -588,9 +617,18 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		// target was not a prefix.
 		bool IsPrefix (string s, string target, int start, int length)
 		{
-			bool ret = IsPrefixInternal (s, target, start, length);
-			escapedSource = null;
-			return ret;
+			// quick check : simple codepoint comparison
+			if (s.Length >= target.Length) {
+				int si = start;
+				for (int i = 0; i < target.Length; i++, si++)
+					if (s [si] != target [i])
+						break;
+				if (si == start + target.Length)
+					return true;
+			}
+
+			escapedSourceIndex = -1;
+			return IsPrefixInternal (s, target, start, length);
 		}
 
 		bool IsPrefixInternal (string s, string target, int start, int length)
@@ -598,20 +636,20 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int si = start;
 			int end = start + length;
 			int ti = 0;
+			string source = s;
 
 			while (ti < target.Length) {
-				if (si >= end) {
-					if (escapedSource == null)
-						break;
-					s = escapedSource;
-					si = escapedIndex;
-					end = start + length;
-					escapedSource = null;
-					continue;
-				}
-
 				if (IsIgnorable (target [ti])) {
 					ti++;
+					continue;
+				}
+				if (si >= end) {
+					if (s == source)
+						break;
+					s = source;
+					si = escapedSourceIndex;
+					end = start + length;
+					escapedSourceIndex = -1;
 					continue;
 				}
 				if (IsIgnorable (s [si])) {
@@ -630,12 +668,16 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						si += ret;
 					} else {
 						string r = ctt.Replacement;
-						for (int i = 0; i < r.Length && si < end; i++) {
+						int i = 0;
+						while (i < r.Length && si < end) {
 							int ret = GetMatchLength (ref s, ref si, ref end, r [i]);
 							if (ret < 0)
 								return false;
 							si += ret;
+							i++;
 						}
+						if (i == r.Length && si < end)
+							return false;
 					}
 				}
 				else {
@@ -651,8 +693,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				// matches. In that case, what matters 
 				// is whether the remaining part of 
 				// "target" is ignorable or not.
-				for (int i = ti; i < target.Length; i++)
-					if (!IsIgnorable (target [i]))
+				while (ti < target.Length)
+					if (!IsIgnorable (target [ti++]))
 						return false;
 				return true;
 			}
@@ -679,7 +721,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = null;
 			// If there is already expansion, then it should not
 			// process further expansions.
-			if (escapedSource == null)
+			if (escapedSourceIndex < 0)
 				ct = GetContraction (s, idx, end);
 			if (ct != null) {
 				if (ct.SortKey != null) {
@@ -690,8 +732,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 							return -1;
 					return ct.Source.Length;
 				} else {
-					escapedSource = s;
-					escapedIndex = idx + ct.Source.Length;
+					escapedSourceIndex = idx + ct.Source.Length;
 					s = ct.Replacement;
 					idx = 0;
 					end = s.Length;
@@ -766,40 +807,60 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return IsSuffix (s, target, start, length) >= 0;
+
+			// quick check : simple codepoint comparison
+			if (s.Length >= target.Length) {
+				int si = start;
+				for (int i = target.Length - 1; i >= 0; i--, si--)
+					if (s [si] != target [i])
+						break;
+				if (si == start + target.Length)
+					return true;
+			}
+
+			return IsSuffix (s, target, start, length);
 		}
 
-		int IsSuffix (string s, string target, int start, int length)
+		bool IsSuffix (string s, string target, int start, int length)
 		{
-			int min = length > target.Length ? target.Length : length;
 			int si = start;
+			int ti = target.Length - 1;
+			string source = s;
 
-			// FIXME: this is not enough to handle tailorings.
-			for (int ti = min - 1; ti >= 0; ti--, si--) {
-				// FIXME: should handle expansions (and it 
-				// should be before codepoint comparison).
-				string expansion = GetExpansion (s [si]);
-				if (expansion != null)
-					return -si;
-				expansion = GetExpansion (target [ti]);
-				if (expansion != null)
-					return -si;
+			while (ti >= 0) {
+				if (IsIgnorable (target [ti])) {
+					ti--;
+					continue;
+				}
+				if (si < 0) {
+					if (s == source)
+						break;
+					s = source;
+					si = escapedSourceIndex;
+					escapedSourceIndex = -1;
+					continue;
+				}
+				if (IsIgnorable (s [si])) {
+					si--;
+					continue;
+				}
 
 				// char-by-char comparison.
 				if (Differs (s, target, ref si, ref ti, true))
-					return -si;
+					return false;
+				si--;
 			}
-			if (si == min) {
+			if (si == 0) {
 				// All codepoints in the compared range
 				// matches. In that case, what matters 
 				// is whether the remaining part of 
 				// "target" is ignorable or not.
-				for (int i = target.Length - min - 1; i >= 0; i--)
-					if (!IsIgnorable (target [i]))
-						return -si;
-				return si;
+				while (ti >= 0)
+					if (!IsIgnorable (target [ti--]))
+						return false;
+				return true;
 			}
-			return si;
+			return true;
 		}
 
 		private bool Differs (string s, string target, ref int si, ref int ti, bool backward)
