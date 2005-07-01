@@ -1,3 +1,10 @@
+2005-07-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tds70.cs: FormatParameter: For uniqueidentifier, pass the guid
+	as '..' rather than hex. Tested with SqlServer 2005.
+
+	patch from jsinger@eggmouse.com & Hubert FONGARNAND.
+
 2005-06-29  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* TdsInternalException.cs: Add ctor for InnerException.

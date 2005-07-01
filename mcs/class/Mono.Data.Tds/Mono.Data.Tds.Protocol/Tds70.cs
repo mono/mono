@@ -436,7 +436,7 @@ namespace Mono.Data.Tds.Protocol {
 				value = String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 				break;
 			case "uniqueidentifier":
-				value = String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+				value = String.Format ("'{0}'", ((Guid) parameter.Value).ToString (""));
 				break;
 			case "bit":
 				if (parameter.Value.GetType () == typeof (bool))
