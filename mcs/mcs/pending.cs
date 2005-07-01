@@ -579,24 +579,24 @@ namespace Mono.CSharp {
 						if (pending_implementations [i].found [j]) {
 							if (mi.IsSpecialName) {
 								string name = TypeManager.CSharpName (mi.DeclaringType) + '.' + mi.Name.Substring (4);
-								Report.Error (551, container.Location, "Explicit interface implementation `{0}.{1}' is missing accessor `{2}'",
-									container.GetSignatureForError (), name, TypeManager.CSharpSignature (mi, true));
+								Report.Error (551, container.Location, "Explicit interface implementation '{0}.{1}' is missing accessor '{1}'",
+									container.Name, name);
 							} else {
 								string[] methodLabel = TypeManager.CSharpSignature (mi).Split ('.');
 								Report.Error (536, container.Location,
-									"`{0}' does not implement interface member `{1}'. `{2}.{3}' " +
+									"'{0}' does not implement interface member '{1}'. '{2}.{3}' " +
 									"is either static, not public, or has the wrong return type",
 									container.Name, TypeManager.CSharpSignature (mi),
 									container.Name, methodLabel[methodLabel.Length - 1]);
 							}
 						}
 						else {
-							Report.Error (535, container.Location, "`{0}' does not implement interface member `{1}'",
-								container.GetSignatureForError (), TypeManager.CSharpSignature (mi));
+							Report.Error (535, container.Location, "'{0}' does not implement interface member '{1}'",
+								container.Name, TypeManager.CSharpSignature (mi));
 						}
 					} else {
-						Report.Error (534, container.Location, "`{0}' does not implement inherited abstract member `{1}'",
-							container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
+						Report.Error (534, container.Location, "'{0}' does not implement inherited abstract member '{1}'",
+							container.Name, TypeManager.CSharpSignature (mi));
 					}
 					errors = true;
 					j++;

@@ -245,8 +245,9 @@ namespace Mono.CSharp {
 			
 			if (amp.Count != invoke_pd.Count){
 				if (!probe){
-					Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-						TypeManager.CSharpName (delegate_type), amp.Count);
+					Report.Error (1593, loc, 
+					      "Anonymous method has {0} parameters, while delegate requires {1}",
+					      amp.Count, invoke_pd.Count);
 					Error_ParameterMismatch (delegate_type);
 				}
 				return null;
@@ -255,29 +256,33 @@ namespace Mono.CSharp {
 			for (int i = 0; i < amp.Count; i++){
 				Parameter.Modifier amp_mod = amp.ParameterModifier (i);
 
-				if (!probe) {
-					if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
-						Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword", 
+				if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
+					if (!probe){
+						Error_ParameterMismatch (delegate_type);
+						Report.Error (1677, loc, "Parameter '{0}' should not be declared with the '{1}' keyword", 
 							i+1, amp.ModifierDesc (i));
-						Error_ParameterMismatch (delegate_type);
-						return null;
 					}
+					return null;
+				}
 
-					if (amp_mod != invoke_pd.ParameterModifier (i)){
-						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
-							i+1, Parameter.GetModifierSignature (invoke_pd.ParameterModifier (i)));
+				if (amp_mod != invoke_pd.ParameterModifier (i)){
+					if (!probe){
+						Report.Error (1676, loc, 
+						      "Signature mismatch in parameter modifier for parameter #0", i + 1);
 						Error_ParameterMismatch (delegate_type);
-						return null;
 					}
+					return null;
+				}
 				
-					if (amp.ParameterType (i) != invoke_pd.ParameterType (i)){
-						Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
-							i+1,
-							TypeManager.CSharpName (amp.ParameterType (i)),
-							TypeManager.CSharpName (invoke_pd.ParameterType (i)));
+				if (amp.ParameterType (i) != invoke_pd.ParameterType (i)){
+					if (!probe){
+						Report.Error (1678, loc, 
+								      "Signature mismatch in parameter {0}: need `{1}' got `{2}'", i + 1,
+								      TypeManager.CSharpName (invoke_pd.ParameterType (i)),
+								      TypeManager.CSharpName (amp.ParameterType (i)));
 						Error_ParameterMismatch (delegate_type);
-						return null;
 					}
+					return null;
 				}
 			}
 
@@ -310,7 +315,7 @@ namespace Mono.CSharp {
 			ContainerAnonymousMethod = ec.CurrentAnonymousMethod;
 			ContainingBlock = ec.CurrentBlock;
 
-			if (aec.ResolveTopBlock (ec, Block, amp, null, out unreachable))
+			if (aec.ResolveTopBlock (ec, Block, amp, loc, out unreachable))
 				return new AnonymousDelegate (this, delegate_type, loc).Resolve (ec);
 
 			return null;
@@ -319,12 +324,6 @@ namespace Mono.CSharp {
 		public MethodBuilder GetMethodBuilder ()
 		{
 			return method.MethodData.MethodBuilder;
-		}
-
-		public override string GetSignatureForError ()
-		{
-			string s = TypeManager.CSharpSignature (invoke_mb);
-			return s.Substring (0, s.IndexOf (".Invoke("));
 		}
 		
 		public bool EmitMethod (EmitContext ec)
@@ -376,8 +375,7 @@ namespace Mono.CSharp {
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
 		{
 			Report.Error (1686, loc,
-				"Local variable `{0}' or its members cannot have their address taken and be used inside an anonymous method block",
-				name);
+				      "Variable {0} is captured in an anonymous method and its address is also being taken: they are exclusive", name);
 		}
 	}
 

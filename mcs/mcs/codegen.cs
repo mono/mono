@@ -578,14 +578,14 @@ namespace Mono.CSharp {
 		// currently can not cope with ig == null during resolve (which must
 		// be fixed for switch statements to work on anonymous methods).
 		//
-		public void EmitTopBlock (IMethodData md, ToplevelBlock block, InternalParameters ip)
+		public void EmitTopBlock (ToplevelBlock block, InternalParameters ip, Location loc)
 		{
 			if (block == null)
 				return;
 			
 			bool unreachable;
 			
-			if (ResolveTopBlock (null, block, ip, md, out unreachable)){
+			if (ResolveTopBlock (null, block, ip, loc, out unreachable)){
 				EmitMeta (block, ip);
 
 				current_phase = Phase.Emitting;
@@ -596,7 +596,7 @@ namespace Mono.CSharp {
 		bool resolved;
 
 		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
-					     InternalParameters ip, IMethodData md, out bool unreachable)
+					     InternalParameters ip, Location loc, out bool unreachable)
 		{
 			current_phase = Phase.Resolving;
 			
@@ -657,11 +657,13 @@ namespace Mono.CSharp {
 
 			if (ReturnType != null && !unreachable) {
 				if (CurrentAnonymousMethod == null) {
-					Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
+						Report.Error (161, loc, "Not all code paths return a value");
 					return false;
 				} else if (!CurrentAnonymousMethod.IsIterator) {
-					Report.Error (1643, CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
-						CurrentAnonymousMethod.GetSignatureForError ());
+					Report.Error (
+						1643, loc, "Not all code paths return a " +
+						"value in anonymous method of type `{0}'",
+						CurrentAnonymousMethod.Type);
 					return false;
 				}
 			}
@@ -987,8 +989,7 @@ namespace Mono.CSharp {
 
 		ListDictionary declarative_security;
 
-		// Module is here just because of error messages
-		static string[] attribute_targets = new string [] { "assembly", "module" };
+		static string[] attribute_targets = new string [] { "assembly" };
 
 		public AssemblyClass (): base ()
 		{
@@ -1046,7 +1047,8 @@ namespace Mono.CSharp {
 				}
 			}
 			catch (Exception) {
-				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' is incorrectly encoded");
+				Report.Error (1548, "Could not strongname the assembly. File `" +
+					RootContext.StrongNameKeyFile + "' incorrectly encoded.");
 				Environment.Exit (1);
 			}
 		}
@@ -1060,8 +1062,8 @@ namespace Mono.CSharp {
 					if (a.ExplicitTarget == null || a.ExplicitTarget != "assembly")
 						continue;
 
-					// TODO: This code is buggy: comparing Attribute name without resolving is wrong.
-					//       However, this is invoked by CodeGen.Init, when none of the namespaces
+					// TODO: This code is buggy: comparing Attribute name without resolving it is wrong.
+					//       However, this is invoked by CodeGen.Init, at which time none of the namespaces
 					//       are loaded yet.
 					switch (a.Name) {
 						case "AssemblyKeyFile":
@@ -1069,8 +1071,7 @@ namespace Mono.CSharp {
 						case "System.Reflection.AssemblyKeyFileAttribute":
 							if (RootContext.StrongNameKeyFile != null) {
 								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
-                                    "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
+								Report.Warning (1616, "Compiler option '{0}' overrides '{1}' given in source", "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 							}
 							else {
 								string value = a.GetString ();
@@ -1083,8 +1084,7 @@ namespace Mono.CSharp {
 						case "System.Reflection.AssemblyKeyNameAttribute":
 							if (RootContext.StrongNameKeyContainer != null) {
 								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
-									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
+								Report.Warning (1616, "keycontainer", "Compiler option '{0}' overrides '{1}' given in source", "System.Reflection.AssemblyKeyNameAttribute");
 							}
 							else {
 								string value = a.GetString ();
@@ -1147,11 +1147,13 @@ namespace Mono.CSharp {
 						catch (CryptographicException) {
 							if (snkeypair.Length == 16) {
 								// error # is different for ECMA key
-								Report.Error (1606, "Could not sign the assembly. " + 
+								Report.Error (1606, "Could not strongname the assembly. " + 
 									"ECMA key can only be used to delay-sign assemblies");
 							}
 							else {
-								Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
+								Report.Error (1548, "Could not strongname the assembly. File `" +
+									RootContext.StrongNameKeyFile +
+									"' doesn't have a private key.");
 							}
 							return null;
 						}
@@ -1159,15 +1161,11 @@ namespace Mono.CSharp {
 				}
 			}
 			else {
-				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not exist");
+				Report.Error (1548, "Could not strongname the assembly. File `" +
+					RootContext.StrongNameKeyFile + "' not found.");
 				return null;
 			}
 			return an;
-		}
-
-		void Error_AssemblySigning (string text)
-		{
-			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)

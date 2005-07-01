@@ -153,7 +153,7 @@ namespace Mono.CSharp
 			try {
 				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file `" + file.Name + "' could not be found");
+				Report.Error (2001, "Source file '" + file.Name + "' could not be opened");
 				return;
 			}
 
@@ -182,7 +182,7 @@ namespace Mono.CSharp
 			try {
 				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file `" + file.Name + "' could not be found");
+				Report.Error (2001, "Source file '" + file.Name + "' could not be opened");
 				return;
 			}
 
@@ -258,7 +258,7 @@ namespace Mono.CSharp
 
 		static void TargetUsage ()
 		{
-			Report.Error (2019, "Invalid target type for -target. Valid options are `exe', `winexe', `library' or `module'");
+			Report.Error (2019, "Valid options for -target: are exe, winexe, library or module");
 		}
 		
 		static void About ()
@@ -608,14 +608,18 @@ namespace Mono.CSharp
 
 		static void SetWarningLevel (string s)
 		{
-			int level = -1;
+			int level = 0;
 
 			try {
 				level = Int32.Parse (s);
 			} catch {
+				Report.Error (
+					1900,
+					"--wlevel requires a value from 0 to 4");
+				return;
 			}
 			if (level < 0 || level > 4){
-				Report.Error (1900, "Warning level must be in the range 0-4");
+				Report.Error (1900, "Warning level must be 0 to 4");
 				return;
 			}
 			RootContext.WarningLevel = level;
@@ -1055,10 +1059,10 @@ namespace Mono.CSharp
 					embedded_resources = new ArrayList ();
 				
 				if (embedded_resources.Contains (value)) {
-					Report.Error (1508, String.Format ("The resource identifier `{0}' has already been used in this assembly.", value));
+					Report.Error (1508, String.Format ("The resource identifier '{0}' has already been used in this assembly.", value));
 				}
 				else if (value.IndexOf (',') != -1 && embedded_resources.Contains (value.Split (',')[1])) {
-					Report.Error (1508, String.Format ("The resource identifier `{0}' has already been used in this assembly.", value));
+					Report.Error (1508, String.Format ("The resource identifier '{0}' has already been used in this assembly.", value));
 				}
 				else {
 					embedded_resources.Add (value);
@@ -1203,7 +1207,7 @@ namespace Mono.CSharp
 						}
 						Report.SetIgnoreWarning (warn);
 					} catch {
-						Report.Error (1904, String.Format("`{0}' is not a valid warning number", wc));
+						Report.Error (1904, String.Format("'{0}' is not a valid warning number", wc));
 					}
 				}
 				return true;
@@ -1287,7 +1291,7 @@ namespace Mono.CSharp
 						SetupV2 ();
 						return true;
 				}
-				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1' or `Default'", value);
+				Report.Error (1617, "Invalid option '{0}' for /langversion; must be ISO-1 or Default", value);
 				return true;
 
 			case "/codepage":
@@ -1311,12 +1315,12 @@ namespace Mono.CSharp
 					encoding = Encoding.GetEncoding (cp);
 					using_default_encoder = false;
 				} catch {
-					Report.Error (2016, "Code page `{0}' is invalid or not installed", value);
+					Report.Error (2016, String.Format("Code page '{0}' is invalid or not installed", cp));
 				}
 				return true;
 			}
 
-			//Report.Error (2007, String.Format ("Unrecognized command-line option: `{0}'", option));
+			//Report.Error (2007, String.Format ("Unrecognized command-line option: '{0}'", option));
 			//Environment.Exit (1);
 			return false;
 		}
@@ -1649,28 +1653,28 @@ namespace Mono.CSharp
 					if (RootContext.MainClass != null) {
 						DeclSpace main_cont = RootContext.Tree.GetDecl (MemberName.FromDotted (RootContext.MainClass));
 						if (main_cont == null) {
-							Report.Error (1555, "Could not find `{0}' specified for Main method", RootContext.MainClass); 
+							Report.Error (1555, output_file, "Could not find '{0}' specified for Main method", RootContext.MainClass); 
 							return false;
 						}
 
 						if (!(main_cont is ClassOrStruct)) {
-							Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
+							Report.Error (1556, output_file, "'{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
 							return false;
 						}
 
-						Report.Error (1558, main_cont.Location, "`{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
+						Report.Error (1558, main_cont.Location, "'{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
 						return false;
 					}
 
 					if (Report.Errors == 0)
-						Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
-							output_file);
+						Report.Error (5001, "Program " + output_file +
+							      " does not have an entry point defined");
 					return false;
 				}
 
 				CodeGen.Assembly.Builder.SetEntryPoint (ep, k);
 			} else if (RootContext.MainClass != null) {
-				Report.Error (2017, "Cannot specify -main if building a module or library");
+				Report.Error (2017, "Can not specify -main: when building module or library");
 			}
 
 			//

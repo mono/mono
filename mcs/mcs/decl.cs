@@ -277,10 +277,15 @@ namespace Mono.CSharp {
 		//
 		public virtual string GetSignatureForError ()
 		{
-			if (Parent == null || Parent.Parent == null)
-				return Name;
+			return Name;
+		}
 
-			return String.Concat (Parent.GetSignatureForError (), '.', Name);
+		/// <summary>
+		/// Use this method when MethodBuilder is null
+		/// </summary>
+		public virtual string GetSignatureForError (TypeContainer tc)
+		{
+			return Name;
 		}
 
 		/// <summary>
@@ -440,24 +445,23 @@ namespace Mono.CSharp {
 			if (!IsClsCompliaceRequired (ds)) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly (ds))
-						Report.Warning (3019, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
+						Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
 					if (!CodeGen.Assembly.IsClsCompliant)
-						Report.Warning (3021, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
+						Report.Warning (3021, Location, "'{0}' does not need a CLSCompliant attribute because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
 				return false;
 			}
 
 			if (!CodeGen.Assembly.IsClsCompliant) {
 				if (HasClsCompliantAttribute) {
-					Report.Error (3014, Location,
-						"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
-						GetSignatureForError ());
+					Report.Error (3014, Location, "'{0}' cannot be marked as CLS-compliant because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
 				return false;
 			}
 
-			if (member_name.Name [0] == '_') {
-				Report.Error (3008, Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError () );
+			int index = Name.LastIndexOf ('.');
+			if (Name [index > 0 ? index + 1 : 0] == '_') {
+				Report.Error (3008, Location, "Identifier '{0}' is not CLS-compliant", GetSignatureForError () );
 			}
 			return true;
 		}
@@ -546,7 +550,7 @@ namespace Mono.CSharp {
 		{
 			if (name == Basename && !(this is Interface) && !(this is Enum)) {
 				Report.SymbolRelatedToPreviousError (this);
-				Report.Error (542,  symbol.Location, "`{0}': member names cannot be the same as their enclosing type", symbol.GetSignatureForError ());
+				Report.Error (542,  symbol.Location, "'{0}': member names cannot be the same as their enclosing type", symbol.GetSignatureForError ());
 				return false;
 			}
 
@@ -560,14 +564,8 @@ namespace Mono.CSharp {
 			if (symbol.MarkForDuplicationCheck () && mc.MarkForDuplicationCheck ())
 				return true;
 
-			if (this is RootTypes) {
-				// TODO: It should not reach this once we merge RecordDecl to AddTo
-				return true;
-			}
-
 			Report.SymbolRelatedToPreviousError (mc);
-			Report.Error (102, symbol.Location, "The type `{0}' already contains a definition for `{1}'",
-				GetSignatureForError (), symbol.MemberName.Name);
+			Report.Error (102, symbol.Location, "The type '{0}' already contains a definition for '{1}'", GetSignatureForError (), name);
 			return false;
 		}
 
@@ -588,7 +586,11 @@ namespace Mono.CSharp {
 		//
 		public bool IsTopLevel {
 			get {
-				return (Parent != null && Parent.Parent == null);
+				if (Parent != null){
+					if (Parent.Parent == null)
+						return true;
+				}
+				return false;
 			}
 		}
 
@@ -628,20 +630,7 @@ namespace Mono.CSharp {
 		///   Define all members, but don't apply any attributes or do anything which may
 		///   access not-yet-defined classes.  This method also creates the MemberCache.
 		/// </summary>
-		public virtual bool DefineMembers (TypeContainer parent)
-		{
-			if (((ModFlags & Modifiers.NEW) != 0) && IsTopLevel) {
-				Report.Error (1530, Location, "Keyword `new' is not allowed on namespace elements");
-				return false;
-			}
-			return true;
-		}
-
-		public override string GetSignatureForError ()
-		{	
-			// Parent.GetSignatureForError
-			return Name;
-		}
+		public abstract bool DefineMembers (TypeContainer parent);
 
 		//
 		// Whether this is an `unsafe context'
@@ -858,7 +847,8 @@ namespace Mono.CSharp {
 
 		public static void Error_AmbiguousTypeReference (Location loc, string name, string t1, string t2)
 		{
-			Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
+			Report.Error (104, loc,
+				      "`{0}' is an ambiguous reference ({1} or {2})",
 				      name, t1, t2);
 		}
 
@@ -1983,10 +1973,10 @@ namespace Mono.CSharp {
  				Report.SymbolRelatedToPreviousError (entry.Member);
 				switch (result) {
 					case AttributeTester.Result.RefOutArrayError:
-						Report.Error (3006, method.Location, "Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
+						Report.Error (3006, method.Location, "Overloaded method '{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
 						continue;
 					case AttributeTester.Result.ArrayArrayError:
-						Report.Error (3007, method.Location, "Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant", method.GetSignatureForError ());
+						Report.Error (3007, method.Location, "Overloaded method '{0}' differing only by unnamed array types is not CLS-compliant", method.GetSignatureForError ());
 						continue;
 				}
 

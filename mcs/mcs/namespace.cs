@@ -98,11 +98,6 @@ namespace Mono.CSharp {
 		{
 			return namespaces_map [name] != null;
 		}
-
-		public override string GetSignatureForError ()
-		{
-			return Name.Length == 0 ? "::global" : Name;
-		}
 		
 		public Namespace GetNamespace (string name, bool create)
 		{
@@ -409,7 +404,7 @@ namespace Mono.CSharp {
 		public void Using (MemberName name, Location loc)
 		{
 			if (DeclarationFound){
-				Report.Error (1529, loc, "A using clause must precede all other namespace elements except extern alias declarations");
+				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
 				return;
 			}
 
@@ -422,7 +417,7 @@ namespace Mono.CSharp {
 			foreach (UsingEntry old_entry in using_clauses) {
 				if (name.Equals (old_entry.Name)) {
 					if (RootContext.WarningLevel >= 3)
-						Report.Warning (105, loc, "The using directive for `{0}' appeared previously in this namespace", name);
+						Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", name);
 					return;
 				}
 			}
@@ -435,7 +430,7 @@ namespace Mono.CSharp {
 		public void UsingAlias (string name, MemberName alias, Location loc)
 		{
 			if (DeclarationFound){
-				Report.Error (1529, loc, "A using clause must precede all other namespace elements except extern alias declarations");
+				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
 				return;
 			}
 
@@ -618,10 +613,10 @@ namespace Mono.CSharp {
 			Console.WriteLine ("    Try using -pkg:" + s);
 		}
 
-		public static void Error_NamespaceNotFound (Location loc, string name)
+		protected void error246 (Location loc, string name)
 		{
-			Report.Error (246, loc, "The type or namespace name `{0}' could not be found. Are you missing a using directive or an assembly reference?",
-				name);
+			Report.Error (246, loc, "The namespace `" + name +
+				      "' can not be found (missing assembly reference?)");
 
 			switch (name) {
 			case "Gtk": case "GtkSharp":
@@ -658,10 +653,10 @@ namespace Mono.CSharp {
 						continue;
 
 					if (ue.resolved == null)
-						Error_NamespaceNotFound (ue.Location, ue.Name.ToString ());
+						error246 (ue.Location, ue.Name.ToString ());
 					else
-						Report.Error (138, ue.Location,
-							"`{0} is a type not a namespace. A using namespace directive can only be applied to namespaces", ue.Name);
+						Report.Error (138, ue.Location, "The using keyword only lets you specify a namespace, " +
+							      "`" + ue.Name + "' is a class not a namespace.");
 
 				}
 			}
@@ -673,7 +668,7 @@ namespace Mono.CSharp {
 					if (alias.Resolve () != null)
 						continue;
 
-					Error_NamespaceNotFound (alias.Location, alias.Alias.ToString ());
+					error246 (alias.Location, alias.Alias.ToString ());
 				}
 			}
 		}

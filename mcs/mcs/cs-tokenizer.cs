@@ -804,7 +804,6 @@ namespace Mono.CSharp
 		int adjust_real (int t)
 		{
 			string s = new String (number_builder, 0, number_pos);
-			const string error_details = "Floating-point constant is outside the range of type `{0}'";
 
 			switch (t){
 			case Token.LITERAL_DECIMAL:
@@ -812,7 +811,8 @@ namespace Mono.CSharp
 					val = System.Decimal.Parse (s, styles, csharp_format_info);
 				} catch (OverflowException) {
 					val = 0m;     
-					Report.Error (594, Location, error_details, "decimal");
+					error_details = "Floating-point constant is outside the range of the type 'decimal'";
+					Report.Error (594, Location, error_details);
 				}
 				break;
 			case Token.LITERAL_FLOAT:
@@ -820,7 +820,8 @@ namespace Mono.CSharp
 					val = (float) System.Double.Parse (s, styles, csharp_format_info);
 				} catch (OverflowException) {
 					val = 0.0f;     
-					Report.Error (594, Location, error_details, "float");
+					error_details = "Floating-point constant is outside the range of the type 'float'";
+					Report.Error (594, Location, error_details);
 				}
 				break;
 				
@@ -831,7 +832,8 @@ namespace Mono.CSharp
 					val = System.Double.Parse (s, styles, csharp_format_info);
 				} catch (OverflowException) {
 					val = 0.0;     
-					Report.Error (594, Location, error_details, "double");
+					error_details = "Floating-point constant is outside the range of the type 'double'";
+					Report.Error (594, Location, error_details);
 				}
 				break;
 			}
@@ -1041,7 +1043,7 @@ namespace Mono.CSharp
 					goto default;
 				return v;
 			default:
-				Report.Error (1009, Location, "Unrecognized escape sequence `\\{0}'", (char)d);
+				Report.Error (1009, Location, "Unrecognized escape sequence in " + (char)d);
 				return d;
 			}
 			getChar ();
@@ -1527,7 +1529,7 @@ namespace Mono.CSharp
 		
 		void Error_InvalidDirective ()
 		{
-			Report.Error (1517, Location, "Invalid preprocessor directive");
+			Report.Error (1517, Location, "Invalid pre-processor directive");
 		}
 
 		void Error_UnexpectedDirective (string extra)
@@ -1539,8 +1541,9 @@ namespace Mono.CSharp
 
 		void Error_TokensSeen ()
 		{
-			Report.Error (1032, Location,
-				"Cannot define or undefine preprocessor symbols after first token in file");
+			Report.Error (
+				1032, Location,
+				"Cannot define or undefine pre-processor symbols after a token in the file");
 		}
 		
 		//
@@ -1582,7 +1585,7 @@ namespace Mono.CSharp
 				if (!PreProcessLine (arg))
 					Report.Error (
 						1576, Location,
-						"The line number specified for #line directive is missing or invalid");
+						"Argument to #line directive is missing or invalid");
 				return caller_is_taking;
 
 			case "region":
@@ -1633,12 +1636,13 @@ namespace Mono.CSharp
 					int pop = (int) ifstack.Pop ();
 					
 					if (region_directive && ((pop & REGION) == 0))
-						Report.Error (1027, Location, "Expected `#endif' directive");
+						Report.Error (1027, Location, "#endif directive expected");
 					else if (!region_directive && ((pop & REGION) != 0))
 						Report.Error (1038, Location, "#endregion directive expected");
 					
 					if (!region_directive && arg.Length != 0) {
-						Report.Error (1025, Location, "Single-line comment or end-of-line expected");
+						Report.Error (1025, Location, 
+							"Single line comment, or end-of-line expected");
 					}
 					
 					if (ifstack.Count == 0)
@@ -1745,11 +1749,11 @@ namespace Mono.CSharp
 				return true;
 
 			case "warning":
-				Report.Warning (1030, Location, "#warning: `{0}'", arg);
+				Report.Warning (1030, Location, "#warning: '{0}'", arg);
 				return true;
 			}
 
-			Report.Error (1024, Location, "Wrong preprocessor directive");
+			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
 			return true;
 
 		}
@@ -2094,7 +2098,7 @@ namespace Mono.CSharp
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					if (c == -1)
-						Report.Error (1027, Location, "Expected `#endif' directive");
+						Report.Error (1027, Location, "#endif/#endregion expected");
 					continue;
 				}
 				
@@ -2222,7 +2226,7 @@ namespace Mono.CSharp
 			doc_state = XmlCommentState.Error;
 			// in csc, it is 'XML comment is not placed on a valid 
 			// language element'. But that does not make sense.
-			Report.Warning (1587, 2, Location, "XML comment is not placed on a valid language element");
+			Report.Warning (1587, 2, Location, "XML comment is placed on an invalid language element which can not accept it.");
 		}
 
 		//
@@ -2246,7 +2250,7 @@ namespace Mono.CSharp
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");
 				else 
-					Report.Error (1027, "Expected `#endif' directive");
+					Report.Error (1027, "#endif directive expected");
 			}
 				
 		}

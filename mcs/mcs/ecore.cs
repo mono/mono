@@ -176,11 +176,6 @@ namespace Mono.CSharp {
 			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
 		}
 
-		public virtual string GetSignatureForError ()
-		{
-			return TypeManager.CSharpName (type);
-		}
-
 		public static bool IsAccessorAccessible (Type invocation_type, MethodInfo mi, out bool must_do_cs1540_check)
 		{
 			MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
@@ -275,13 +270,13 @@ namespace Mono.CSharp {
 
 			if (fne == null) {
 				if (!silent && errors == Report.Errors)
-					NamespaceEntry.Error_NamespaceNotFound (Location, ToString ());
+					Report.Error (246, Location, "Cannot find type '{0}'", ToString ());
 				return null;
 			}
 
 			if (fne.eclass != ExprClass.Type) {
 				if (!silent && errors == Report.Errors)
-					Report.Error (118, Location, "`{0}' denotes a `{1}', where a type was expected",
+					Report.Error (118, Location, "'{0}' denotes a '{1}', where a type was expected",
 						      fne.FullName, fne.ExprClassName ());
 				return null;
 			}
@@ -289,16 +284,11 @@ namespace Mono.CSharp {
 			TypeExpr te = fne as TypeExpr;
 
 			if (!te.CheckAccessLevel (ec.DeclSpace)) {
-				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
+				Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", te.Name);
 				return null;
 			}
 
 			return te;
-		}
-
-		public static void ErrorIsInaccesible (Location loc, string name)
-		{
-			Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", name);
 		}
 
 		ResolveFlags ExprClassToResolveFlags ()
@@ -675,8 +665,9 @@ namespace Mono.CSharp {
 					
 					Report.SymbolRelatedToPreviousError (m);
 					if (qualifier_type == null) {
-						Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
-							      TypeManager.CSharpName (m.DeclaringType),
+						Report.Error (38, loc, 
+							      "Cannot access non-static member `{0}' via nested type `{1}'", 
+							      TypeManager.GetFullNameSignature (m),
 							      TypeManager.CSharpName (ec.ContainerType));
 						
 					} else if (qualifier_type != ec.ContainerType &&
@@ -693,14 +684,16 @@ namespace Mono.CSharp {
 							      TypeManager.CSharpName (qualifier_type),
 							      TypeManager.CSharpName (ec.ContainerType));
 					} else {
-						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
+						Report.Error (122, loc, 
+							      "'{0}' is inaccessible due to its protection level", 
+							      TypeManager.GetFullNameSignature (m));
 					}
 				}
 				almostMatchedMembers.Clear ();
 				return;
 			}
 
-			MemberInfo[] lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
+			object lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
 								  AllMemberTypes, AllBindingFlags |
 								  BindingFlags.NonPublic, name, null);
 
@@ -709,24 +702,27 @@ namespace Mono.CSharp {
 					return;
 
 				if (class_name != null)
-					Report.Error (103, loc, "The name `{0}' does not exist in the context of `{1}'",
-						name, class_name);
+					Report.Error (103, loc, "The name `" + name + "' could not be " +
+						      "found in `" + class_name + "'");
 				else
 					Report.Error (
-						117, loc, "`" + TypeManager.CSharpName (queried_type) + "' does not contain a " +
+						117, loc, "`" + queried_type + "' does not contain a " +
 						"definition for `" + name + "'");
 				return;
 			}
 
-			MemberList ml = TypeManager.FindMembers (qualifier_type, MemberTypes.Constructor,
-				BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, null, null);
-			if (name == ".ctor" && ml.Count == 0)
+			if (name == ".ctor" && TypeManager.FindMembers (qualifier_type, MemberTypes.Constructor,
+				BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, null, null).Count == 0)
 			{
-				Report.Error (143, loc, String.Format ("The type `{0}' has no constructors defined", TypeManager.CSharpName (queried_type)));
+				Report.Error (143, loc, String.Format ("The type '{0}' has no constructors defined", TypeManager.CSharpName (queried_type)));
 				return;
 			}
 
-			ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (lookup [0]));
+			if (qualifier_type != null) {
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", TypeManager.CSharpName (qualifier_type) + "." + name);
+			} else {
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", name);
+			}
 		}
 
 		/// <summary>
@@ -829,7 +825,7 @@ namespace Mono.CSharp {
 		public void Error_UnexpectedKind (string expected, Location loc)
 		{
 			Report.Error (118, loc,
-				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName (), expected);
+				"Expression denotes a '{0}', where a '{1}' was expected", ExprClassName (), expected);
 		}
 
 		public void Error_UnexpectedKind (ResolveFlags flags, Location loc)
@@ -862,7 +858,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (119, loc, 
-				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName (), sb);
+				"Expression denotes a '{0}', where a '{1}' was expected", ExprClassName (), sb);
 		}
 		
 		static public void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
@@ -873,7 +869,7 @@ namespace Mono.CSharp {
 
 		public static void UnsafeError (Location loc)
 		{
-			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
+			Report.Error (214, loc, "Pointers may only be used in an unsafe context");
 		}
 		
 		/// <summary>
@@ -1254,11 +1250,6 @@ namespace Mono.CSharp {
 		public static void Error_NegativeArrayIndex (Location loc)
 		{
 			Report.Error (248, loc, "Cannot create an array with a negative size");
-		}
-
-		protected void Error_CannotCallAbstractBase (string name)
-		{
-			Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
 		}
 		
 		//
@@ -2043,17 +2034,15 @@ namespace Mono.CSharp {
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
 			if (ec.IsFieldInitializer)
-				Report.Error (236, l,
-					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
-					name);
-			else {
-				if (name.LastIndexOf ('.') > 0)
-					name = name.Substring (name.LastIndexOf ('.') + 1);
-
 				Report.Error (
-					120, l, "`{0}': An object reference is required for the nonstatic field, method or property",
-					name);
-			}
+					236, l,
+					"A field initializer cannot reference the non-static field, " +
+					"method or property `"+name+"'");
+			else
+				Report.Error (
+					120, l,
+					"An object reference is required " +
+					"for the non-static field `"+name+"'");
 		}
 
 		public bool IdenticalNameAndTypeName (EmitContext ec, Expression resolved_to, Location loc)
@@ -2213,7 +2202,7 @@ namespace Mono.CSharp {
 
 						if (!me.IsStatic &&
 						    (!intermediate || !IdenticalNameAndTypeName (ec, me, loc))) {
-							Error_ObjectRefRequired (ec, loc, me.GetSignatureForError ());
+							Error_ObjectRefRequired (ec, loc, Name);
 							return null;
 						}
 
@@ -2241,8 +2230,9 @@ namespace Mono.CSharp {
 				    me.InstanceExpression.Type != me.DeclaringType &&
 				    !me.InstanceExpression.Type.IsSubclassOf (me.DeclaringType) &&
 				    (!intermediate || !IdenticalNameAndTypeName (ec, e, loc))) {
-					Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
-						TypeManager.CSharpName (me.DeclaringType), TypeManager.CSharpName (me.InstanceExpression.Type));
+					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
+					       "outer type `" + me.DeclaringType + "' via nested type `" +
+					       me.InstanceExpression.Type + "'");
 					return null;
 				}
 
@@ -2428,11 +2418,11 @@ namespace Mono.CSharp {
 			if (type == null) {
 				FullNamedExpression t = ec.DeclSpace.LookupType (name, Location.Null, /*ignore_cs0104=*/ false);
 				if (t == null) {
-					NamespaceEntry.Error_NamespaceNotFound (loc, name);
+					Report.Error (246, loc, "Cannot find type `" + name + "'");
 					return null;
 				}
 				if (!(t is TypeExpr)) {
-					Report.Error (118, Location, "`{0}' denotes a `{1}', where a type was expected",
+					Report.Error (118, Location, "'{0}' denotes a '{1}', where a type was expected",
 						      t.FullName, t.ExprClassName ());
 
 					return null;
@@ -2553,8 +2543,8 @@ namespace Mono.CSharp {
 
 		public static void error176 (Location loc, string name)
 		{
-			Report.Error (176, loc, "Static member `{0}' cannot be accessed " +
-				      "with an instance reference, qualify it with a type name instead", name);
+			Report.Error (176, loc, "Static member `" + name + "' cannot be accessed " +
+				      "with an instance reference, qualify with a type name instead");
 		}
 
 
@@ -2581,7 +2571,7 @@ namespace Mono.CSharp {
 				if (original != null && original.IdenticalNameAndTypeName (ec, left, loc))
 					return this;
 
-				error176 (loc, GetSignatureForError ());
+				error176 (loc, Name);
 				return null;
 			}
 
@@ -2686,14 +2676,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override string GetSignatureForError ()
-		{
-			return TypeManager.CSharpSignature (Methods [0]);
-		}
-
 		public override string Name {
 			get {
-				return Methods [0].Name;
+                                return Methods [0].Name;
 			}
 		}
 
@@ -2838,11 +2823,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override string GetSignatureForError ()
-		{
-			return TypeManager.GetFullNameSignature (FieldInfo);
-		}
-
 		public VariableInfo VariableInfo {
 			get {
 				return variable_info;
@@ -2905,7 +2885,7 @@ namespace Mono.CSharp {
 				if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 					if (!left_is_type &&
 					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
-						error176 (loc, TypeManager.GetFullNameSignature (FieldInfo));
+						error176 (loc, FieldInfo.Name);
 						return null;
 					}					
 					
@@ -2927,7 +2907,7 @@ namespace Mono.CSharp {
 				Expression exp = Constantify (o, t);
 				
 				if (!left_is_type) {
-					error176 (loc, TypeManager.GetFullNameSignature (FieldInfo));
+					error176 (loc, FieldInfo.Name);
 					return null;
 				}
 				
@@ -2947,17 +2927,17 @@ namespace Mono.CSharp {
 			if (ec.InRefOutArgumentResolving && FieldInfo.IsInitOnly && !ec.IsConstructor && FieldInfo.FieldType.IsValueType) {
 				if (FieldInfo.FieldType is TypeBuilder) {
 					if (FieldInfo.IsStatic)
-						Report.Error (1651, loc, "Fields of static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
-							GetSignatureForError ());
+						Report.Error (1651, loc, "Members of readonly static field '{0}.{1}' cannot be passed ref or out (except in a constructor)",
+							TypeManager.CSharpName (DeclaringType), Name);
 					else
-						Report.Error (1649, loc, "Members of readonly field `{0}.{1}' cannot be passed ref or out (except in a constructor)",
+						Report.Error (1649, loc, "Members of readonly field '{0}.{1}' cannot be passed ref or out (except in a constructor)",
 							TypeManager.CSharpName (DeclaringType), Name);
 				} else {
 					if (FieldInfo.IsStatic)
-						Report.Error (199, loc, "A static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
+						Report.Error (199, loc, "A static readonly field '{0}' cannot be passed ref or out (except in a static constructor)",
 							Name);
 					else
-						Report.Error (192, loc, "A readonly field `{0}' cannot be passed ref or out (except in a constructor)",
+						Report.Error (192, loc, "A readonly field '{0}' cannot be passed ref or out (except in a constructor)",
 							Name);
 				}
 				return null;
@@ -3001,9 +2981,7 @@ namespace Mono.CSharp {
 			if (ec.CurrentAnonymousMethod != null){
 				if (!FieldInfo.IsStatic){
 					if (!ec.CurrentAnonymousMethod.IsIterator && (ec.TypeContainer is Struct)){
-						Report.Error (1673, loc,
-						"Anonymous methods inside structs cannot access instance members of `{0}'. Consider copying `{0}' to a local variable outside the anonymous method and using the local instead",
-							"this");
+						Report.Error (1673, loc, "Can not reference instance variables in anonymous methods hosted in structs");
 						return null;
 					}
 					ec.CaptureField (this);
@@ -3028,9 +3006,11 @@ namespace Mono.CSharp {
 			string msg;
 			
 			if (is_instance)
-				msg = "A readonly field cannot be assigned to (except in a constructor or a variable initializer)";
+				msg = "Readonly field can not be assigned outside " +
+				"of constructor or variable initializer";
 			else
-				msg = "A static readonly field cannot be assigned to (except in a static constructor or a variable initializer)";
+				msg = "A static readonly field can only be assigned in " +
+				"a static constructor";
 
 			Report.Error (is_instance ? 191 : 198, loc, msg);
 		}
@@ -3047,8 +3027,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (!FieldInfo.IsStatic && (InstanceExpression.Type.IsValueType && !(InstanceExpression is IMemoryLocation))) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					InstanceExpression.GetSignatureForError ());
+				// FIXME: Provide better error reporting.
+				Error (1612, "Cannot modify expression because it is not a variable.");
 				return null;
 			}
 
@@ -3080,8 +3060,7 @@ namespace Mono.CSharp {
 		{
 			if (!IsStatic && Type.IsValueType && !container.IsSubclassOf (TypeManager.mbr_type) && DeclaringType.IsSubclassOf (TypeManager.mbr_type)) {
 				Report.SymbolRelatedToPreviousError (DeclaringType);
-				Report.Error (1690, loc, "Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
-					GetSignatureForError ());
+				Report.Error (1690, loc, "Cannot call '{0}' method, property, or indexer because it is a value type member of a marshal-by-reference class", Name);
 			}
 		}
 
@@ -3338,9 +3317,16 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override string GetSignatureForError ()
+		public bool VerifyAssignable ()
 		{
-			return TypeManager.GetFullNameSignature (PropertyInfo);
+			if (setter == null) {
+				Report.Error (200, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be assigned to, as it has not set accessor");
+				return false;
+			}
+
+			return true;
 		}
 
 		void FindAccessors (Type invocation_type)
@@ -3465,8 +3451,10 @@ namespace Mono.CSharp {
 					return null;
 
 				if (InstanceExpression != EmptyExpression.Null) {
-					Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
-						TypeManager.GetFullNameSignature (PropertyInfo));
+					Report.Error (154, loc, 
+						"The property `" + PropertyInfo.Name +
+						"' can not be used in " +
+						"this context because it lacks a get accessor");
 					return null;
 				}
 			} 
@@ -3477,11 +3465,12 @@ namespace Mono.CSharp {
 				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					Report.SymbolRelatedToPreviousError (pm);
-					Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
+					Report.Error (271, loc, "The property or indexer '{0}' cannot be used in this context because the get accessor is inaccessible",
 						TypeManager.CSharpSignature (getter));
 				}
 				else
-					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter));
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+						TypeManager.CSharpSignature (getter));
 				return null;
 			}
 			
@@ -3491,8 +3480,9 @@ namespace Mono.CSharp {
 			//
 			// Only base will allow this invocation to happen.
 			//
-			if (IsBase && getter.IsAbstract) {
-				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
+			if (IsBase && getter.IsAbstract){
+				Report.Error (205, loc, "Cannot call an abstract base property: " +
+					      PropertyInfo.DeclaringType + "." +PropertyInfo.Name);
 				return null;
 			}
 
@@ -3518,8 +3508,9 @@ namespace Mono.CSharp {
 				if (getter == null)
 					return null;
 				
-				Report.Error (200, loc, " Property or indexer `{0}' cannot be assigned to (it is read only)",
-					      TypeManager.GetFullNameSignature (PropertyInfo));
+				// TODO: Print better property name
+				Report.Error (200, loc, "Property or indexer '{0}' cannot be assigned to -- it is read only",
+					      PropertyInfo.Name);
 				return null;
 			}
 
@@ -3536,11 +3527,12 @@ namespace Mono.CSharp {
 				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (setter) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					Report.SymbolRelatedToPreviousError (pm);
-					Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",
+					Report.Error (272, loc, "The property or indexer '{0}' cannot be used in this context because the set accessor is inaccessible",
 						TypeManager.CSharpSignature (setter));
 				}
 				else
-					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (setter));
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+						TypeManager.CSharpSignature (setter));
 				return null;
 			}
 			
@@ -3551,7 +3543,8 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (IsBase && setter.IsAbstract){
-				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
+				Report.Error (205, loc, "Cannot call an abstract base property: " +
+					      PropertyInfo.DeclaringType + "." +PropertyInfo.Name);
 				return null;
 			}
 
@@ -3559,8 +3552,8 @@ namespace Mono.CSharp {
 			// Check that we are not making changes to a temporary memory location
 			//
 			if (InstanceExpression != null && InstanceExpression.Type.IsValueType && !(InstanceExpression is IMemoryLocation)) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					InstanceExpression.GetSignatureForError ());
+				// FIXME: Provide better error reporting.
+				Error (1612, "Cannot modify expression because it is not a variable.");
 				return null;
 			}
 
@@ -3740,7 +3733,9 @@ namespace Mono.CSharp {
 			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null) {
 				if ((InstanceExpression.Type != ec.ContainerType) &&
 					ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
-					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+						DeclaringType.Name + "." + EventInfo.Name);
+
 					return false;
 				}
 			}
@@ -3758,8 +3753,10 @@ namespace Mono.CSharp {
 			bool must_do_cs1540_check;
 			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check) &&
 			      IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
-				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
-				return null;
+				
+                               Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
+                                               DeclaringType.Name + "." + EventInfo.Name);
+                               return null;
 			}
 
 			if (!InstanceResolve (ec, must_do_cs1540_check))
@@ -3771,15 +3768,10 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (InstanceExpression is This)
-				Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of += or -=", GetSignatureForError ());
+				Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of += or -=, try calling the actual delegate", Name);
 			else
 				Report.Error (70, loc, "The event `{0}' can only appear on the left hand side of += or -= "+
 					      "(except on the defining type)", Name);
-		}
-
-		public override string GetSignatureForError ()
-		{
-			return TypeManager.CSharpSignature (EventInfo);
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)

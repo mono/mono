@@ -1,3 +1,17 @@
+2005-07-01  Martin Baulig  <martin@ximian.com>
+
+	Reverted Marek's latest patch (r46724):
+	- it contains structural changes which are neither mentioned in
+	  the ChangeLog nor explained anywhere; for example the additional
+	  argument of EmitContext's and Iterator's .ctor's and the
+	  TypeContainer.DefineMembers() change.
+	- structural changes like this should go in in seperate patches
+	  and not be hidden in a huge patch which just seems to affect
+	  warnings and errors.
+	  a big and hard to understand patch.
+	- it breaks iterators and causes regressions, for instance in
+	  test-iter-03.cs.	
+
 2005-06-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75412.
@@ -18,40 +32,6 @@
 	Fix #75322
 	* class.cs (FieldBase.GetInitializerExpression): One more field
 	for backup.
-
-2005-06-29  Marek Safar  <marek.safar@seznam.cz>
-
-	The big error and warning messages review.
-	
-	* anonymous.cs,
-	* assign.cs,
-	* attribute.cs,
-	* class.cs,
-	* codegen.cs,
-	* convert.cs,
-	* cs-parser.jay,
-	* cs-tokenizer.cs,
-	* decl.cs,
-	* delegate.cs,
-	* doc.cs,
-	* driver.cs,
-	* ecore.cs,
-	* enum.cs,
-	* expression.cs,
-	* flowanalysis.cs,
-	* iterators.cs,
-	* literal.cs,
-	* location.cs,
-	* modifiers.cs,
-	* namespace.cs,
-	* parameter.cs,
-	* pending.cs,
-	* report.cs,
-	* rootcontext.cs,
-	* statement.cs,
-	* support.cs,
-	* tree.cs,
-	* typemanager.cs: Updated.
 
 2005-06-28  Miguel de Icaza  <miguel@novell.com>
 

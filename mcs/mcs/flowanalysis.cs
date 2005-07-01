@@ -1026,8 +1026,9 @@ namespace Mono.CSharp
 				if (var.IsAssigned (parameters))
 					continue;
 
-				Report.Error (177, loc, "The out parameter `{0}' must be assigned to before control leaves the current method",
-					var.Name);
+				Report.Error (177, loc, "The out parameter `" +
+					      var.Name + "' must be " +
+					      "assigned before control leaves the current method.");
 			}
 		}
 
@@ -1475,8 +1476,9 @@ namespace Mono.CSharp
 				return s;
 
 			if (finally_vector != null) {
-				Report.Error (157, loc,
-					"Control cannot leave the body of a finally clause");
+				Report.Error (
+					157, loc, "Control can not leave the body " +
+					"of the finally block");
 				return null;
 			}
 
@@ -1643,8 +1645,9 @@ namespace Mono.CSharp
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					Report.Error (171, loc,
-						"Field `{0}' must be fully assigned before control leaves the constructor",
-						TypeManager.GetFullNameSignature (field));
+						      "Field `" + TypeManager.CSharpName (Type) +
+						      "." + field.Name + "' must be fully initialized " +
+						      "before control leaves the constructor");
 					ok = false;
 				}
 			}
@@ -1743,7 +1746,7 @@ namespace Mono.CSharp
 						field_hash.Add (field.Name, ++Length);
 					else if (sinfo [i].InTransit) {
 						Report.Error (523, String.Format (
-								      "Struct member `{0}.{1}' of type `{2}' causes " +
+								      "Struct member '{0}.{1}' of type '{2}' causes " +
 								      "a cycle in the structure layout",
 								      type, field.Name, sinfo [i].Type));
 						sinfo [i] = null;

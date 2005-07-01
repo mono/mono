@@ -298,9 +298,9 @@ namespace Mono.CSharp {
 
 		public static void error70 (EventInfo ei, Location l)
 		{
-			Report.Error (70, l, "The event `" + TypeManager.CSharpSignature (ei) +
-				      "' can only appear on the left hand side of += or -= (except when" +
-				      " used from within the type `" + ei.DeclaringType + "')");
+			Report.Error (70, l, "The event '" + ei.Name +
+				      "' can only appear on the left-side of a += or -= (except when" +
+				      " used from within the type '" + ei.DeclaringType + "')");
 		}
 
 		//
@@ -400,11 +400,11 @@ namespace Mono.CSharp {
 				field_exp = field_exp.InstanceExpression as FieldExpr;
 				if (field_exp != null && field_exp.FieldInfo.IsInitOnly) {
 					if (field_exp.IsStatic) {
-						Report.Error (1650, loc, "Fields of static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
-							field_exp.GetSignatureForError ());
+						Report.Error (1650, loc, "Members of static readonly field '{0}' cannot be assigned to " +
+							"(except in a static constructor or a variable initializer)", TypeManager.GetFullNameSignature (field_exp.FieldInfo));
 					} else {
-						Report.Error (1648, loc, "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)",
-							field_exp.GetSignatureForError ());
+						Report.Error (1648, loc, "Members of readonly field '{0}' cannot be assigned to " +
+							"(except in a constructor or a variable initializer)", TypeManager.GetFullNameSignature (field_exp.FieldInfo));
 					}
 					return null;
 				}

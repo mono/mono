@@ -842,76 +842,73 @@ public class TypeManager {
 	/// </summary>
 	static public string GetFullNameSignature (MemberInfo mi)
 	{
+		// Unfortunately, there's no dynamic dispatch on the arguments of a function.
 		return (mi is MethodBase)
-			? CSharpSignature (mi as MethodBase) 
-			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
+			? GetFullNameSignature (mi as MethodBase) 
+			: mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+	}
+
+	static public string GetFullNameSignature (MethodBase mb)
+	{
+		string name = mb.Name;
+		if (name == ".ctor")
+			name = mb.DeclaringType.Name;
+
+		if (mb.IsSpecialName) {
+			if (name.StartsWith ("get_") || name.StartsWith ("set_")) {
+				name = name.Remove (0, 4);
+			}
+
+			if (name == "Item")
+				name = "this";
+		}
+
+		return mb.DeclaringType.FullName.Replace ('+', '.') + '.' + name;
 	}
 
 	/// <summary>
-	/// When we need to report accessors as well
+	///   Returns the signature of the property and indexer
 	/// </summary>
-	static public string CSharpSignature (MethodBase mb)
+	static public string CSharpSignature (PropertyBuilder pb, bool is_indexer) 
 	{
-		return CSharpSignature (mb, false);
+		if (!is_indexer) {
+			return GetFullNameSignature (pb);
+		}
+
+		MethodBase mb = pb.GetSetMethod (true) != null ? pb.GetSetMethod (true) : pb.GetGetMethod (true);
+		string signature = GetFullNameSignature (mb);
+		string arg = GetParameterData (mb).ParameterDesc (0);
+		return String.Format ("{0}.this[{1}]", signature.Substring (0, signature.LastIndexOf ('.')), arg);
 	}
 
 	/// <summary>
 	///   Returns the signature of the method
 	/// </summary>
-	static public string CSharpSignature (MethodBase mb, bool show_accessor)
+	static public string CSharpSignature (MethodBase mb)
 	{
-		StringBuilder sig = new StringBuilder (CSharpName (mb.DeclaringType));
-		sig.Append ('.');
+		StringBuilder sig = new StringBuilder ("(");
 
 		ParameterData iparams = GetParameterData (mb);
-		string parameters = iparams.GetSignatureForError ();
-		string accessor = "";
 
 		// Is property
-		if (mb.IsSpecialName) {
-			Operator.OpType ot = Operator.GetOperatorType (mb.Name);
-			if (ot != Operator.OpType.TOP) {
-				sig.Append ("operator ");
-				sig.Append (Operator.GetName (ot));
-				sig.Append (parameters);
-				return sig.ToString ();
+		if (mb.IsSpecialName && iparams.Count == 0 && !mb.IsConstructor)
+			return GetFullNameSignature (mb);
+		
+		for (int i = 0; i < iparams.Count; i++) {
+			if (i > 0) {
+				sig.Append (", ");
 			}
-
-			if (mb.Name.StartsWith ("get_") || mb.Name.StartsWith ("set_")) {
-				accessor = mb.Name.Substring (0, 3);
-			}
+			sig.Append (iparams.ParameterDesc (i));
 		}
+		sig.Append (")");
 
 		// Is indexer
-		if (mb.IsSpecialName && !mb.IsConstructor) {
-			if (iparams.Count > 1) {
-				sig.Append ("this[");
-				int before_ret_val = parameters.LastIndexOf (',');
-				sig.Append (parameters.Substring (1, before_ret_val - 1));
-				sig.Append (']');
-			} else {
-				sig.Append (mb.Name.Substring (4));
-			}
-		} else {
-			if (mb.Name == ".ctor")
-				sig.Append (mb.DeclaringType.Name);
-			else
-				sig.Append (mb.Name);
-
-			sig.Append (parameters);
+		if (mb.IsSpecialName && iparams.Count == 1 && !mb.IsConstructor) {
+			sig.Replace ('(', '[');
+			sig.Replace (')', ']');
 		}
 
-		if (show_accessor && accessor.Length > 0) {
-			sig.Append ('.');
-			sig.Append (accessor);
-		}
-
-		return sig.ToString ();
-	}
-
-	static public string CSharpSignature (EventInfo ei)
-	{
-		return CSharpName (ei.DeclaringType) + '.' + ei.Name;
+		return GetFullNameSignature (mb) + sig.ToString ();
 	}
 
 	/// <summary>
@@ -2327,9 +2324,10 @@ public class TypeManager {
 		if (IsUnmanagedType (t))
 			return true;
 
-		Report.Error (208, loc, "Cannot take the address of, get the size of, or declare a pointer to a managed type `{0}'",
-			CSharpName (t));
-
+		Report.Error (
+			208, loc,
+			"Cannot take the address or size of a variable of a managed type ('" +
+			CSharpName (t) + "')");
 		return false;	
 	}
 	
