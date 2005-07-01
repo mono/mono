@@ -30,6 +30,9 @@ namespace Mono.Globalization.Unicode
 
 		void Run ()
 		{
+//IsPrefix ("\u00E6", "ae", CompareOptions.None);
+//IsPrefix ("ae", "\u00E6", CompareOptions.None);
+//return;
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");
 			DumpSortKey ("ABCABC", 5, 1, CompareOptions.IgnoreCase);
@@ -66,6 +69,12 @@ namespace Mono.Globalization.Unicode
 			IsPrefix ("BC", "c", CompareOptions.IgnoreCase);
 			IsPrefix ("C", "c", CompareOptions.IgnoreCase);
 			IsPrefix ("EDCBA", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+			IsPrefix ("ABC", "AB", CompareOptions.IgnoreCase);
+			IsPrefix ("ae", "\u00E6", CompareOptions.None);
+			IsPrefix ("\u00E6", "ae", CompareOptions.None);
+			IsPrefix ("\u00E6", "a", CompareOptions.None);
+			IsPrefix ("\u00E6s", "ae", CompareOptions.None);
+			IsPrefix ("\u00E6", "aes", CompareOptions.None);
 
 			IsSuffix ("ABC", "c", CompareOptions.IgnoreCase);
 			IsSuffix ("BC", "c", CompareOptions.IgnoreCase);
@@ -150,7 +159,7 @@ namespace Mono.Globalization.Unicode
 
 		void IsPrefix (string s1, string s2, CompareOptions opt)
 		{
-			Console.Error.WriteLine ("IsPrefix ({3}): {0} {1} / {2}",
+			Console.Error.WriteLine ("prefix ({3}): {0} {1} / {2}",
 				coll.IsPrefix (s1, s2, opt), s1, s2, opt);
 		}
 

@@ -78,7 +78,12 @@ namespace Mono.Globalization.Unicode
 		readonly int lcid;
 		readonly Contraction [] contractions;
 		readonly Level2Map [] level2Maps;
+
+		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
+		// temporary expansion store for IsPrefix/Suffix
+		string escapedSource;
+		int escapedIndex;
 
 		#region Tailoring support classes
 		// Possible mapping types are:
@@ -576,42 +581,179 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return IsPrefix (s, target, start, length) >= 0;
+			return IsPrefix (s, target, start, length);
 		}
 
 		// returns the consumed length in positive number, or -1 if
 		// target was not a prefix.
-		int IsPrefix (string s, string target, int start, int length)
+		bool IsPrefix (string s, string target, int start, int length)
 		{
-			int min = length > target.Length ? target.Length : length;
+			bool ret = IsPrefixInternal (s, target, start, length);
+			escapedSource = null;
+			return ret;
+		}
+
+		bool IsPrefixInternal (string s, string target, int start, int length)
+		{
 			int si = start;
+			int end = start + length;
+			int ti = 0;
 
-			// FIXME: this is not enough to handle tailorings.
-			for (int ti = 0; ti < min; ti++, si++) {
-				// FIXME: should handle expansions (and it 
-				// should be before codepoint comparison).
-				string expansion = GetExpansion (s [si]);
-				if (expansion != null)
-					return -si;
-				expansion = GetExpansion (target [ti]);
-				if (expansion != null)
-					return -si;
+			while (ti < target.Length) {
+				if (si >= end) {
+					if (escapedSource == null)
+						break;
+					s = escapedSource;
+					si = escapedIndex;
+					end = start + length;
+					escapedSource = null;
+					continue;
+				}
 
-				// char-by-char comparison.
-				if (Differs (s, target, ref si, ref ti, false))
-					return -si;
+				if (IsIgnorable (target [ti])) {
+					ti++;
+					continue;
+				}
+				if (IsIgnorable (s [si])) {
+					si++;
+					continue;
+				}
+
+				// Check contraction for target.
+				Contraction ctt = GetContraction (target, ti, target.Length);
+				if (ctt != null) {
+					ti += ctt.Source.Length;
+					if (ctt.SortKey != null) {
+						int ret = GetMatchLength (ref s, ref si, ref end, -1, ctt.SortKey, true);
+						if (ret < 0)
+							return false;
+						si += ret;
+					} else {
+						string r = ctt.Replacement;
+						for (int i = 0; i < r.Length && si < end; i++) {
+							int ret = GetMatchLength (ref s, ref si, ref end, r [i]);
+							if (ret < 0)
+								return false;
+							si += ret;
+						}
+					}
+				}
+				else {
+					int ret = GetMatchLength (ref s, ref si, ref end, target [ti]);
+					if (ret < 0)
+						return false;
+					si += ret;
+					ti++;
+				}
 			}
-			if (length == min) {
+			if (si == end) {
 				// All codepoints in the compared range
 				// matches. In that case, what matters 
 				// is whether the remaining part of 
 				// "target" is ignorable or not.
-				for (int i = min; i < target.Length; i++)
+				for (int i = ti; i < target.Length; i++)
 					if (!IsIgnorable (target [i]))
-						return -si;
-				return si;
+						return false;
+				return true;
 			}
-			return si;
+			return true;
+		}
+
+		// WARNING: Don't invoke it outside IsPrefix().
+		int GetMatchLength (ref string s, ref int idx, ref int end, char target)
+		{
+			int it = FilterOptions ((int) target);
+			charSortKey [0] = Category (it);
+			charSortKey [1] = Level1 (it);
+			if (!ignoreNonSpace)
+				charSortKey [2] = Level2 (it);
+			charSortKey [3] = Uni.Level3 (it);
+
+			return GetMatchLength (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
+		}
+
+		// WARNING: Don't invoke it outside IsPrefix().
+		// returns consumed source length (mostly 1, source length in case of contraction)
+		int GetMatchLength (ref string s, ref int idx, ref int end, int it, byte [] sortkey, bool noLv4)
+		{
+			Contraction ct = null;
+			// If there is already expansion, then it should not
+			// process further expansions.
+			if (escapedSource == null)
+				ct = GetContraction (s, idx, end);
+			if (ct != null) {
+				if (ct.SortKey != null) {
+					if (!noLv4)
+						return -1;
+					for (int i = 0; i < ct.SortKey.Length; i++)
+						if (sortkey [i] != ct.SortKey [i])
+							return -1;
+					return ct.Source.Length;
+				} else {
+					escapedSource = s;
+					escapedIndex = idx + ct.Source.Length;
+					s = ct.Replacement;
+					idx = 0;
+					end = s.Length;
+					return GetMatchLength (ref s, ref idx, ref end, it, sortkey, noLv4);
+				}
+			} else {
+				// primitive comparison
+				if (Compare (s [idx], it, sortkey) != 0)
+					return -1;
+				return 1;
+			}
+		}
+
+		// returns comparison result.
+		private int Compare (char src, int ct, byte [] sortkey)
+		{
+			// char-by-char comparison.
+			int cs = FilterOptions (src);
+			if (cs == ct)
+				return 0;
+			// lv.1 to 3
+			int ret = Category (cs) - Category (ct);
+			if (ret != 0)
+				return ret;
+			ret = Level1 (cs) - Level1 (ct);
+			if (ret != 0)
+				return ret;
+			if (!ignoreNonSpace) {
+				ret = Level2 (cs) - Level2 (ct);
+				if (ret != 0)
+					return ret;
+			}
+			ret = Uni.Level3 (cs) - Uni.Level3 (ct);
+			if (ret != 0)
+				return ret;
+			// lv.4 (only when required). No need to check cj coz
+			// there is no pair of characters that has the same
+			// primary level and differs here.
+			if (!Uni.HasSpecialWeight (src))
+				return 0;
+			char target = (char) ct;
+			ret = CompareFlagPair (
+				Uni.IsJapaneseSmallLetter (src),
+				Uni.IsJapaneseSmallLetter (target));
+			if (ret != 0)
+				return ret;
+			ret = Uni.GetJapaneseDashType (src) -
+				Uni.GetJapaneseDashType (target);
+			if (ret != 0)
+				return ret;
+			ret = CompareFlagPair (Uni.IsHiragana (src),
+				Uni.IsHiragana (target));
+			if (ret != 0)
+				return ret;
+			ret = CompareFlagPair (Uni.IsHalfWidthKana (src),
+				Uni.IsHalfWidthKana (target));
+			return ret;
+		}
+
+		int CompareFlagPair (bool b1, bool b2)
+		{
+			return b1 == b2 ? 0 : b1 ? 1 : -1;
 		}
 
 		// IsSuffix()
@@ -739,7 +881,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = GetContraction (target);
 			if (ct != null) {
 				if (ct.Replacement != null)
-					return IndexOf (s, ct.Replacement, start, length);
+					return IndexOfPrimitiveChar (s, start, length, ct.Replacement [0]);
 				else
 					return IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 			}
@@ -788,7 +930,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx = IndexOfPrimitiveChar (s, start, length, target [0]);
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, length - (idx - start)) >= 0)
+				if (IsPrefix (s, target, idx, length - (idx - start)))
 					return idx;
 				start++;
 				length--;
@@ -825,7 +967,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = GetContraction (target);
 			if (ct != null) {
 				if (ct.Replacement != null)
-					return LastIndexOf (s, ct.Replacement, start, length);
+					return LastIndexOfPrimitiveChar (s, start, length, ct.Replacement [0]);
 				else
 					return LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 			}
@@ -878,7 +1020,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, orgStart - idx + 1) >= 0)
+				if (IsPrefix (s, target, idx, orgStart - idx + 1))
 					return idx;
 				length--;
 				start--;
