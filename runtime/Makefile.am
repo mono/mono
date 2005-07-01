@@ -1,13 +1,9 @@
-# This is just used to copy and install the DLL files that are currently
-# being compiled on windows.
-#
-
 # hack to prevent 'check' from depending on 'all'
 AUTOMAKE_OPTIONS = cygnus
 
 tmpinst = _tmpinst
 
-noinst_SCRIPTS = mono-wrapper monodis-wrapper
+noinst_SCRIPTS = mono-wrapper monodis-wrapper semdel-wrapper
 
 etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config
@@ -48,8 +44,10 @@ uninstall:
 	d=`pwd`; \
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
+## semdel-wrapper will probably not delete the semaphore if someone is crazy enough to do a 'make -j distclean' :-)
 clean-local:
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
+	-./semdel-wrapper
 	-rm -fr $(etctmp) $(tmpinst) .wapi
 
 if INSTALL_2_0
@@ -138,11 +136,10 @@ $(tmpinst)/bin/pedump: $(srcdir)/Makefile.am
 	chmod +x $@
 
 # the 'cygnus' option also disables the default 'distdir:' target, which we _do_ want
-MYDISTFILES = Makefile.am Makefile.in mono-wrapper.in monodis-wrapper.in
+MYDISTFILES = $(DIST_COMMON)
 distdir: $(MYDISTFILES)
 	rm -fr $(distdir)
 	mkdir $(distdir)
 	test -z '$(MYDISTFILES)' || for file in ''$(MYDISTFILES); do \
-	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
-	  cp -p $$d/$$file $(distdir) ; done
+	  cp -p $$file $(distdir) ; done
 	find $(distdir) -type f -exec chmod a+r {} ';'
