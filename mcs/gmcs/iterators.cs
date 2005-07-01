@@ -846,11 +846,8 @@ namespace Mono.CSharp {
 
 		protected class CapturedThisReference : Expression
 		{
-			Iterator iterator;
-
 			public CapturedThisReference (Iterator iterator, Location loc)
 			{
-				this.iterator = iterator;
 				this.loc = loc;
 				this.type = iterator.this_type;
 				eclass = ExprClass.Variable;
@@ -863,8 +860,7 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				ec.ig.Emit (OpCodes.Ldarg_0);
-				ec.ig.Emit (OpCodes.Ldfld, iterator.move_next_method.Scope.THIS);
+				ec.EmitThis ();
 			}
 		}
 
