@@ -48,10 +48,11 @@ class TestSslClientStream {
  		ssl.ClientCertSelectionDelegate += new CertificateSelectionCallback (ClientCertificateSelection);
  		ssl.PrivateKeyCertSelectionDelegate += new PrivateKeySelectionCallback (PrivateKeySelection);
 	
-		byte[] buf = { 0 };
-		ssl.Write (buf, 0, buf.Length);
+		StreamWriter sw = new StreamWriter (ssl, System.Text.Encoding.ASCII);
+		sw.WriteLine ("Hello");
 
-		Console.WriteLine ("OK");
+		StreamReader sr = new StreamReader (ssl);
+		Console.WriteLine (sr.ReadToEnd ());
 	}
 
 	static bool CertificateValidation (X509Certificate certificate, int[] certificateErrors)
