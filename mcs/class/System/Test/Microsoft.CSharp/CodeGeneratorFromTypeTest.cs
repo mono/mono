@@ -44,7 +44,7 @@ namespace MonoTests.Microsoft.CSharp
 		public void DefaultTypeTest ()
 		{
 			Generate ();
-			Assertion.AssertEquals ("public class  {\n}\n", Code);
+			Assert.AreEqual ("public class  {\n}\n", Code);
 		}
 
 		[Test]
@@ -60,7 +60,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			type.Name = "Test1";
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}}}{0}", writer.NewLine), Code);
 		}
 
@@ -78,7 +78,7 @@ namespace MonoTests.Microsoft.CSharp
 			type.CustomAttributes.Add (attrDec);
 
 			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[A()]{0}"
 				+ "[B()]{0}"
 				+ "public class Test1 {{{0}"
@@ -121,6 +121,8 @@ namespace MonoTests.Microsoft.CSharp
 			evt.Name = "OnClick";
 			evt.Attributes = MemberAttributes.Public;
 			evt.Type = new CodeTypeReference (typeof (int));
+			// C# does not support Implementation Types, so this should be ignored
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 			type.Members.Add (evt);
 
 			Generate ();
@@ -214,6 +216,8 @@ namespace MonoTests.Microsoft.CSharp
 			property.Name = "Name";
 			property.Attributes = MemberAttributes.Public;
 			property.Type = new CodeTypeReference (typeof (int));
+			// C# does not support Implementation Types, so this should be ignored
+			property.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 			type.Members.Add (property);
 
 			Generate ();
@@ -431,6 +435,9 @@ namespace MonoTests.Microsoft.CSharp
 			attrDec.Name = "B";
 			method.CustomAttributes.Add (attrDec);
 
+			// C# does not support Implementation Types, so this should be ignored
+			method.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+
 			type.Members.Add (method);
 
 			Generate ();
@@ -547,6 +554,9 @@ namespace MonoTests.Microsoft.CSharp
 			attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = "B";
 			ctor.CustomAttributes.Add (attrDec);
+
+			// C# does not support Implementation Types, so this should be ignored
+			ctor.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 
 			type.Members.Add (ctor);
 

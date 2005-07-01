@@ -125,6 +125,25 @@ namespace MonoTests.Microsoft.VisualBasic
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 
+		public void EventImplementationTypes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "OnClick";
+			evt.Attributes = MemberAttributes.FamilyAndAssembly;
+			evt.Type = new CodeTypeReference (typeof (int));
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}    {0}    "
+				+ "Friend Event OnClick As Integer Implements IPolicy.OnClick , IWhatever.OnClick{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
 		[Test]
 		public void FieldMembersTypeTest1 ()
 		{
@@ -461,6 +480,32 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public void PropertyImplementationTypes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			property.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			property.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Public Overridable Property Name() As Integer Implements IPolicy.Name , IWhatever.Name{0}"
+#else
+				+ "    Public Overridable Property Name As Integer Implements IPolicy.Name , IWhatever.Name{0}"
+#endif
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
 		public void MethodMembersTypeTest1 ()
 		{
 			type.Name = "Test1";
@@ -574,6 +619,32 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Class Test1{0}"
 				+ "    {0}"
 				+ "    Public Overridable Function Something(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer) As Integer{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodImplementationTypes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Assembly;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			method.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			method.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Friend Overridable Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}"
+#else
+				+ "    Friend Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}"
+#endif
 				+ "    End Function{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}
@@ -783,6 +854,9 @@ namespace MonoTests.Microsoft.VisualBasic
 			param = new CodeParameterDeclarationExpression (typeof (int), "value2");
 			param.Direction = FieldDirection.Out;
 			ctor.Parameters.Add (param);
+
+			// immplementation types should be ignored on ctors
+			ctor.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 
 			// chained ctor args
 			ctor.ChainedConstructorArgs.Add (new CodeVariableReferenceExpression ("value1"));

@@ -576,6 +576,11 @@ namespace Microsoft.VisualBasic
 
 			output.Write ("Event ");
 			OutputTypeNamePair (eventRef.Type, eventRef.Name);
+
+			if (eventRef.ImplementationTypes.Count > 0) {
+				OutputImplementationTypes (eventRef.ImplementationTypes, eventRef.Name);
+			}
+
 			output.WriteLine ();
 		}
 
@@ -642,14 +647,7 @@ namespace Microsoft.VisualBasic
 			}
 
 			if (method.ImplementationTypes.Count > 0) {
-				output.Write (" Implements ");
-				foreach (CodeTypeReference type in method.ImplementationTypes)
-				{
-					OutputType (type);
-					output.Write ('.');
-					// TODO implementation incomplete
-
-				}
+				OutputImplementationTypes (method.ImplementationTypes, method.Name);
 			}
 
 			// TODO private implementations
@@ -707,6 +705,11 @@ namespace Microsoft.VisualBasic
 #endif
 			Output.Write (" As ");
 			Output.Write (GetTypeOutput(property.Type));
+
+			if (property.ImplementationTypes.Count > 0) {
+				OutputImplementationTypes (property.ImplementationTypes, property.Name);
+			}
+
 			output.WriteLine ();
 			++Indent;
 
@@ -886,41 +889,43 @@ namespace Microsoft.VisualBasic
 		}
 
 		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, LineHandling lineHandling) {
-			if (attributes.Count != 0) {
-				GenerateAttributeDeclarationsStart (attributes);
+			if (attributes.Count == 0) {
+				return;
+			}
 
-				IEnumerator enumerator = attributes.GetEnumerator ();
-				if (enumerator.MoveNext ()) {
-					CodeAttributeDeclaration att = (CodeAttributeDeclaration) enumerator.Current;
+			GenerateAttributeDeclarationsStart (attributes);
+
+			IEnumerator enumerator = attributes.GetEnumerator ();
+			if (enumerator.MoveNext ()) {
+				CodeAttributeDeclaration att = (CodeAttributeDeclaration) enumerator.Current;
+				if (prefix != null) {
+					Output.Write (prefix);
+				}
+				OutputAttributeDeclaration (att);
+
+				while (enumerator.MoveNext ()) {
+					Output.Write (", ");
+					if (lineHandling != LineHandling.InLine) {
+						ContinueOnNewLine ("");
+						Output.Write (" ");
+					}
+					att = (CodeAttributeDeclaration) enumerator.Current;
 					if (prefix != null) {
 						Output.Write (prefix);
 					}
 					OutputAttributeDeclaration (att);
-
-					while (enumerator.MoveNext ()) {
-						Output.Write (", ");
-						if (lineHandling != LineHandling.InLine) {
-							ContinueOnNewLine ("");
-							Output.Write (" ");
-						}
-						att = (CodeAttributeDeclaration) enumerator.Current;
-						if (prefix != null) {
-							Output.Write (prefix);
-						}
-						OutputAttributeDeclaration (att);
-					}
 				}
-				GenerateAttributeDeclarationsEnd (attributes);
-				Output.Write (" ");
+			}
+			GenerateAttributeDeclarationsEnd (attributes);
+			Output.Write (" ");
 
-				switch (lineHandling) {
-					case LineHandling.ContinueLine:
-						ContinueOnNewLine ("");
-						break;
-					case LineHandling.NewLine:
-						Output.WriteLine ();
-						break;
-				}
+			switch (lineHandling) {
+				case LineHandling.ContinueLine:
+					ContinueOnNewLine ("");
+					break;
+				case LineHandling.NewLine:
+					Output.WriteLine ();
+					break;
 			}
 		}
 
@@ -977,6 +982,27 @@ namespace Microsoft.VisualBasic
 			case MemberAttributes.Const:
 				Output.Write ("Const ");
 				break;
+			}
+		}
+
+		private void OutputImplementationTypes (CodeTypeReferenceCollection implementationTypes, string member)
+		{
+			IEnumerator enumerator = implementationTypes.GetEnumerator ();
+			if (enumerator.MoveNext ()) {
+				Output.Write (" Implements ");
+
+				CodeTypeReference typeReference = (CodeTypeReference) enumerator.Current;
+				OutputType (typeReference);
+				Output.Write ('.');
+				OutputIdentifier (member);
+
+				while (enumerator.MoveNext ()) {
+					Output.Write (" , ");
+					typeReference = (CodeTypeReference) enumerator.Current;
+					OutputType (typeReference);
+					Output.Write ('.');
+					OutputIdentifier (member);
+				}
 			}
 		}
 

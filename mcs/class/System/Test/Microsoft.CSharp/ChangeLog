@@ -1,3 +1,8 @@
+2005-07-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Added tests to ensure Implementation
+	Types are ignored in C# CodeDOM.
+
 2005-06-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added property indexer and parameter
