@@ -671,12 +671,15 @@ namespace Mono.Security.Protocol.Tls
 					this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
 				}
 
+				bool certRequested = false;
+
 				// If the negotiated cipher is a KeyEx cipher or
 				// the client certificate is required send the CertificateRequest message
 				if (this.context.Cipher.ExchangeAlgorithmType == ExchangeAlgorithmType.RsaKeyX ||
 					this.context.ClientCertificateRequired)
 				{
 					this.protocol.SendRecord(HandshakeType.CertificateRequest);
+					certRequested = true;
 				}
 
 				// Send ServerHelloDone message
@@ -687,6 +690,20 @@ namespace Mono.Security.Protocol.Tls
 				while (this.context.LastHandshakeMsg != HandshakeType.Finished)
 				{
 					this.protocol.ReceiveRecord (this.innerStream);
+					if (this.context.LastHandshakeMsg == HandshakeType.Certificate)
+						certRequested = false;
+				}
+
+				if (certRequested)
+				{
+					// we asked for a certificate but didn't receive one
+					// e.g. wget for SSL3
+					if (!RaiseClientCertificateValidation (null, new int [0])) 
+					{
+						throw new TlsException(
+							AlertDescription.BadCertificate,
+							"No certificate received from client.");
+					}
 				}
 				
 				// Send ChangeCipherSpec and ServerFinished messages
@@ -703,14 +720,14 @@ namespace Mono.Security.Protocol.Tls
 				this.protocol.SendAlert(ex.Alert);
 				this.Close();
 
-				throw new IOException("The authentication or decryption has failed.");
+				throw new IOException("The authentication or decryption has failed.", ex);
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				this.protocol.SendAlert(AlertDescription.InternalError);
 				this.Close();
 
-				throw new IOException("The authentication or decryption has failed.");
+				throw new IOException("The authentication or decryption has failed.", e);
 			}
 		}
 

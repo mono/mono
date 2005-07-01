@@ -1,3 +1,10 @@
+2005-07-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ServerContext.cs: Build the list of trusted certificates from all
+	the trusted root for the current user and the local machine.
+	* SslServerStream.cs: Add support for client certificate (and the 
+	callback for optional mutual authentication with SSL3).
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Removed failsafe timeout of 5 minutes as some
