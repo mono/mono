@@ -197,6 +197,7 @@ namespace System.Xml.Serialization {
 				case "guid": return XmlConvert.ToString ((Guid)value);
 				case "base64":
 				case "base64Binary": return Convert.ToBase64String ((byte[])value);
+				case "duration": return XmlConvert.ToString ((TimeSpan) value);
 			default: return value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString ();
 			}
 		}
@@ -226,6 +227,7 @@ namespace System.Xml.Serialization {
 				case "guid": return XmlConvert.ToGuid (value);
 				case "base64":
 				case "base64Binary": return Convert.FromBase64String (value);
+				case "duration": return XmlConvert.ToTimeSpan (value);
 				default: 
 					if (type.Type != null)
 						return Convert.ChangeType (value, type.Type);
@@ -257,6 +259,7 @@ namespace System.Xml.Serialization {
 				case "guid": return "XmlConvert.ToString (" + value + ")";
 				case "base64":
 				case "base64Binary": return "Convert.ToBase64String (" + value + ")";
+				case "duration": return "XmlConvert.ToString (" + value + ")";
 				case "NMTOKEN":
 				case "Name":
 				case "NCName":
@@ -295,6 +298,7 @@ namespace System.Xml.Serialization {
 				case "guid": return "XmlConvert.ToGuid (" + value + ")";
 				case "base64:":
 				case "base64Binary": return "Convert.FromBase64String (" + value + ")";
+				case "duration": return "XmlConvert.ToTimeSpan (" + value + ")";
 				default: return value;
 			}
 		}

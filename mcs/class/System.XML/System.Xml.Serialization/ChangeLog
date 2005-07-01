@@ -1,3 +1,7 @@
+2005-07-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlCustomFormatter.cs: Properly read/write duration values.
+
 2005-06-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializer.cs: Fix race between XmlSerializer and the
