@@ -1,3 +1,7 @@
+2005-07-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* remoting1.cs: Test for getting a remote field value which is null.
+
 2005-07-01  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (check-local): Call semdel-wrapper.
