@@ -3223,7 +3223,8 @@ namespace Mono.CSharp {
 						Report.Error (1673, loc, "Can not reference instance variables in anonymous methods hosted in structs");
 						return null;
 					}
-					ec.CaptureField (this);
+					if (!(InstanceExpression is ParameterReference))
+						ec.CaptureField (this);
 				} 
 			}
 			
