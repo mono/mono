@@ -1,3 +1,8 @@
+2005-07-01  Daniel Drake  <dsd@gentoo.org>
+
+	* Syscall.cs: The entire extended attribute API now goes through MPH, to
+	  be shared between both Linux's and FreeBSD's similar EA implementations.
+
 2005-06-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* StdioFileStream.cs: Only flush if we do not own the handle, as

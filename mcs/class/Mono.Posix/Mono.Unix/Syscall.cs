@@ -1096,9 +1096,19 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_setxattr")]
 		public static extern int setxattr (string path, string name, byte[] value, ulong size, XattrFlags flags);
 
+		public static int setxattr (string path, string name, byte [] value, ulong size)
+		{
+			return setxattr (path, name, value, size, XattrFlags.XATTR_AUTO);
+		}
+
 		public static int setxattr (string path, string name, byte [] value, XattrFlags flags)
 		{
 			return setxattr (path, name, value, (ulong) value.Length, flags);
+		}
+
+		public static int setxattr (string path, string name, byte [] value)
+		{
+			return setxattr (path, name, value, (ulong) value.Length);
 		}
 
 		// lsetxattr(2)
@@ -1108,9 +1118,19 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_lsetxattr")]
 		public static extern int lsetxattr (string path, string name, byte[] value, ulong size, XattrFlags flags);
 
+		public static int lsetxattr (string path, string name, byte [] value, ulong size)
+		{
+			return lsetxattr (path, name, value, size, XattrFlags.XATTR_AUTO);
+		}
+
 		public static int lsetxattr (string path, string name, byte [] value, XattrFlags flags)
 		{
 			return lsetxattr (path, name, value, (ulong) value.Length, flags);
+		}
+
+		public static int lsetxattr (string path, string name, byte [] value)
+		{
+			return lsetxattr (path, name, value, (ulong) value.Length);
 		}
 
 		// fsetxattr(2)
@@ -1120,9 +1140,19 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_fsetxattr")]
 		public static extern int fsetxattr (int fd, string name, byte[] value, ulong size, XattrFlags flags);
 
+		public static int fsetxattr (int fd, string name, byte [] value, ulong size)
+		{
+			return fsetxattr (fd, name, value, size, XattrFlags.XATTR_AUTO);
+		}
+
 		public static int fsetxattr (int fd, string name, byte [] value, XattrFlags flags)
 		{
 			return fsetxattr (fd, name, value, (ulong) value.Length, flags);
+		}
+
+		public static int fsetxattr (int fd, string name, byte [] value)
+		{
+			return fsetxattr (fd, name, value, (ulong) value.Length);
 		}
 
 		// getxattr(2)
@@ -1274,13 +1304,16 @@ namespace Mono.Unix {
 			return 0;
 		}
 
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_removexattr")]
 		public static extern int removexattr (string path, string name);
 
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_lremovexattr")]
 		public static extern int lremovexattr (string path, string name);
 
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_fremovexattr")]
 		public static extern int fremovexattr (int fd, string name);
 		#endregion
 
