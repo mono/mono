@@ -1,5 +1,10 @@
 2005-07-01  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (FieldExpr.DoResolve): Don't capture the field if it's
+	instance is a ParameterReference; fixes #75299.
+
+2005-07-01  Martin Baulig  <martin@ximian.com>
+
 	Reverted Marek's latest patch (r46725):
 	- it contains structural changes which are neither mentioned in
 	  the ChangeLog nor explained anywhere; for example the additional

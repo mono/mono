@@ -2978,14 +2978,16 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (ec.CurrentAnonymousMethod != null){
+			AnonymousContainer am = ec.CurrentAnonymousMethod;
+			if (am != null){
 				if (!FieldInfo.IsStatic){
-					if (!ec.CurrentAnonymousMethod.IsIterator && (ec.TypeContainer is Struct)){
+					if (!am.IsIterator && (ec.TypeContainer is Struct)){
 						Report.Error (1673, loc, "Can not reference instance variables in anonymous methods hosted in structs");
 						return null;
 					}
-					ec.CaptureField (this);
-				} 
+					if ((am.ContainerAnonymousMethod == null) && (InstanceExpression is This))
+						ec.CaptureField (this);
+				}
 			}
 			
 			// If the instance expression is a local variable or parameter.
