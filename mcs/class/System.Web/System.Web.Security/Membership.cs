@@ -34,13 +34,46 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.Web.Configuration;
+using System.Configuration;
 
 namespace System.Web.Security
 {
-	public abstract class Membership
+	public static class Membership
 	{
-		private Membership ()
+		static MembershipProviderCollection providers;
+		static MembershipProvider provider;
+		static int onlineTimeWindow;
+		
+		static Membership ()
 		{
+			System.Configuration.Configuration conf = WebConfigurationManager.OpenWebConfiguration ("/");
+			MembershipSection section = (MembershipSection) conf.GetSection ("system.web/membership");
+			providers = new MembershipProviderCollection ();
+			
+			foreach (ProviderSettings prov in section.Providers) {
+				Type t = Type.GetType (prov.Type);
+				if (t == null)
+					throw new ConfigurationException ("Cannot find type: " + prov.Type);
+				if (!typeof(MembershipProvider).IsAssignableFrom (t))
+					throw new ConfigurationException ("The provided type is not a MembershipProvider subclass: " + prov.Type);
+				
+				MembershipProvider pr = (MembershipProvider) Activator.CreateInstance (t);
+				pr.Initialize (prov.Name, prov.Parameters);
+				
+				if (provider == null || prov.Name == section.DefaultProvider)
+					provider = pr;
+
+				providers.Add (pr);
+			}
+			
+			if (providers.Count == 0) {
+				provider = new SqlMembershipProvider ();
+				NameValueCollection attributes = new NameValueCollection ();
+				provider.Initialize ("AspNetSqlMembershipProvider", attributes);
+				providers.Add (provider);
+			}
+			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
 		}
 		
 		public static MembershipUser CreateUser (string username, string password)
@@ -167,8 +200,6 @@ namespace System.Web.Security
 			return Provider.FindUsersByName (nameToMatch, pageIndex, pageSize, out totalRecords);
 		}
 
-		
-		
 		public static string ApplicationName {
 			get { return Provider.ApplicationName; }
 			set { Provider.ApplicationName = value; }
@@ -206,22 +237,20 @@ namespace System.Web.Security
 			get { return Provider.PasswordStrengthRegularExpression; }
 		}
 				
-		[MonoTODO]
 		public static MembershipProvider Provider {
-			get { throw new NotImplementedException (); }
+			get { return provider; }
 		}
 		
-		[MonoTODO]
 		public static MembershipProviderCollection Providers {
-			get { throw new NotImplementedException (); }
+			get { return providers; }
 		}
 		
-		[MonoTODO]
 		public static int UserIsOnlineTimeWindow {
-			get { throw new NotImplementedException (); }
+			get { return onlineTimeWindow; }
 		}
 		
-		public event MembershipValidatePasswordEventHandler ValidatingPassword {
+		[MonoTODO ("Fire it")]
+		public static event MembershipValidatePasswordEventHandler ValidatingPassword {
 			add { Provider.ValidatingPassword += value; }
 			remove { Provider.ValidatingPassword -= value; }
 		}

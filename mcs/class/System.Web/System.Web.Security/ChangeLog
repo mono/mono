@@ -1,3 +1,7 @@
+2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Membership.cs: Read provider info from the config file.
+
 2005-06-10 Lluis Sanchez Gual <lluis@novell.com>
 
 	* MembershipUserCollection.cs:
