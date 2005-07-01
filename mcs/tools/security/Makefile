@@ -45,9 +45,9 @@ clean-local:
 
 dist-local: dist-default
 
-sn_sources = sn.cs StrongNameManager.cs AssemblyInfo.cs
+sn_sources = sn.cs StrongNameManager.cs AssemblyInfo.cs $(topdir)/build/common/MonoVersion.cs
 sn.exe $(topdir)/class/lib/$(PROFILE)/sn.exe: $(sn_sources)
 	$(CSCOMPILE) /out:$@ $(sn_sources)
 
-%.exe: %.cs AssemblyInfo.cs
+%.exe: %.cs AssemblyInfo.cs $(topdir)/build/common/MonoVersion.cs
 	$(CSCOMPILE) $^

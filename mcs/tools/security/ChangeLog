@@ -1,3 +1,9 @@
+2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: restored version numbers in security tools;
+	* makecert.cs: Add support to generate PKCS#12 files. Changed default
+	hash algorithm to SHA1. Using MD5 now shows a warning. Fixed typos.
+
 2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MakeCert.cs: renamed to makecert.cs

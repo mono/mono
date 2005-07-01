@@ -1,11 +1,11 @@
 //
-// MakeCert.cs: makecert clone tool
+// makecert.cs: makecert clone tool
 //
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -35,7 +35,7 @@ namespace Mono.Tools {
 			Console.WriteLine ("Usage: makecert [options] certificate{0}", Environment.NewLine);
 			Console.WriteLine (" -# num{0}\tCertificate serial number", Environment.NewLine);
 			Console.WriteLine (" -n dn{0}\tSubject Distinguished Name", Environment.NewLine);
-			Console.WriteLine (" -in dn{0}\tIssuert Distinguished Name", Environment.NewLine);
+			Console.WriteLine (" -in dn{0}\tIssuer Distinguished Name", Environment.NewLine);
 			Console.WriteLine (" -r{0}\tCreate a self-signed (root) certificate", Environment.NewLine);
 			Console.WriteLine (" -sv pkvfile{0}\tPrivate key file (.PVK) for the subject (created if missing)", Environment.NewLine);
 			Console.WriteLine (" -iv pvkfile{0}\tPrivate key file (.PVK) for the issuer", Environment.NewLine);
@@ -47,17 +47,15 @@ namespace Mono.Tools {
 		static private void ExtendedHelp () 
 		{
 			Console.WriteLine ("Usage: makecert [options] certificate{0}", Environment.NewLine);
-			Console.WriteLine (" -a hash\tSelect hash algorithm. Only MD5 and SHA1 are supported.");
+			Console.WriteLine (" -a hash\tSelect hash algorithm. Only MD5 and SHA1 (default) are supported.");
 			Console.WriteLine (" -b date\tThe date since when the certificate is valid (notBefore).");
 			Console.WriteLine (" -cy [authority|end]\tBasic constraints. Select Authority or End-Entity certificate.");
 			Console.WriteLine (" -e date\tThe date until when the certificate is valid (notAfter).");
 			Console.WriteLine (" -eku oid[,oid]\tAdd some extended key usage OID to the certificate.");
 			Console.WriteLine (" -h number\tAdd a path length restriction to the certificate chain.");
-			Console.WriteLine (" -ic cert\tTake the issuer's name from the specified certificate.");
 			Console.WriteLine (" -in name\tTake the issuer's name from the specified parameter.");
-			Console.WriteLine (" -iv pvkfile\tSign the certificate using the private key inside the PVK file.");
 			Console.WriteLine (" -m number\tCertificate validity period (in months).");
-			Console.WriteLine (" -sv pvkfile\tCreate a new PVK file if non-existant, otherwise use the PVK file as the subject public key.");
+			Console.WriteLine (" -p12 pkcs12file password\tCreate a new PKCS#12 file with the specified password.");
 			Console.WriteLine (" -?\thelp (display basic message)");
 		}
 
@@ -106,12 +104,15 @@ namespace Mono.Tools {
 			RSA subjectKey = (RSA)RSA.Create ();
 
 			bool selfSigned = false;
-			string hashName = "MD5";
+			string hashName = "SHA1";
 
 			CspParameters subjectParams = new CspParameters ();
 			CspParameters issuerParams = new CspParameters ();
 			BasicConstraintsExtension bce = null;
 			ExtendedKeyUsageExtension eku = null;
+			string p12file = null;
+			string p12pwd = null;
+			X509Certificate issuerCertificate = null;
 
 			Header();
 			try {
@@ -151,6 +152,7 @@ namespace Mono.Tools {
 									hashName = "SHA1";
 									break;
 								case "md5":
+									Console.WriteLine ("WARNING: MD5 is no more safe for this usage.");
 									hashName = "MD5";
 									break;
 								default:
@@ -212,8 +214,8 @@ namespace Mono.Tools {
 							bce.PathLenConstraint = Convert.ToInt32 (args [i++]);
 							break;
 						case "-ic":
-							X509Certificate x509 = LoadCertificate (args [i++]);
-							issuer = x509.SubjectName;
+							issuerCertificate = LoadCertificate (args [i++]);
+							issuer = issuerCertificate.SubjectName;
 							break;
 						case "-in":
 							issuer = args [i++];
@@ -338,6 +340,11 @@ namespace Mono.Tools {
 						case "-sy":
 							subjectParams.ProviderType = Convert.ToInt32 (args [i++]);
 							break;
+						// Mono Specific Options
+						case "-p12":
+							p12file = args [i++];
+							p12pwd = args [i++];
+							break;
 						// Other options
 						case "-?":
 							Help ();
@@ -388,7 +395,18 @@ namespace Mono.Tools {
 				// signature
 				cb.Hash = hashName;
 				byte[] rawcert = cb.Sign (issuerKey);
-				WriteCertificate (fileName, rawcert);
+
+				if (p12file == null) {
+					WriteCertificate (fileName, rawcert);
+				} else {
+					PKCS12 p12 = new PKCS12 ();
+					p12.Password = p12pwd;
+					p12.AddCertificate (new X509Certificate (rawcert));
+					if (issuerCertificate != null)
+						p12.AddCertificate (issuerCertificate);
+					p12.AddPkcs8ShroudedKeyBag (subjectKey);
+					p12.SaveToFile (p12file);
+				}
 				Console.WriteLine ("Success");
 				return 0;
 			}
