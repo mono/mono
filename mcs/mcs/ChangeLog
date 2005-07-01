@@ -1,5 +1,10 @@
 2005-07-01  Martin Baulig  <martin@ximian.com>
 
+	* iterators.cs (Iterator.CapturedThisReference.Emit): Use
+	`ec.EmitThis ()' to get the correct scope.
+
+2005-07-01  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (FieldExpr.DoResolve): Don't capture the field if it's
 	instance is a ParameterReference; fixes #75299.
 
