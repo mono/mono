@@ -35,13 +35,16 @@ namespace System.Configuration
 {
 	public sealed class ConfigurationProperty
 	{
+		internal static object NoDefaultValue = new object ();
+		
 		string name;
 		Type type;
-		object default_value;
+		object default_value = NoDefaultValue;
 		TypeConverter converter;
 		ConfigurationValidatorBase validation;
 		ConfigurationPropertyOptions flags;
 		string description;
+		ConfigurationCollectionAttribute collectionAttribute;
 		
 		public ConfigurationProperty (string name, Type type, object default_value)
 			: this (name, type, default_value, ConfigurationPropertyOptions.None)
@@ -132,6 +135,11 @@ namespace System.Configuration
 			get {
 				return (typeof(ConfigurationElement).IsAssignableFrom (type));
 			}
+		}
+		
+		internal ConfigurationCollectionAttribute CollectionAttribute {
+			get { return collectionAttribute; }
+			set { collectionAttribute = value; }
 		}
 	}
 }

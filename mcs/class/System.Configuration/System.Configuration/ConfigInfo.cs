@@ -40,15 +40,15 @@ namespace System.Configuration {
 	{
 		public string Name;
 		public string TypeName;
-		Type type;
+		protected Type Type;
 		string streamName;
 		public ConfigInfo Parent;
 		public IInternalConfigHost ConfigHost;
 		
-		public object CreateInstance ()
+		public virtual object CreateInstance ()
 		{
-			if (type == null) type = ConfigHost.GetConfigType (TypeName, true);
-			return Activator.CreateInstance (type);
+			if (Type == null) Type = ConfigHost.GetConfigType (TypeName, true);
+			return Activator.CreateInstance (Type);
 		}
 		
 		public string XPath {
@@ -78,7 +78,7 @@ namespace System.Configuration {
 		
 		public abstract void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader);
 		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode);
-		public abstract void ReadData (Configuration config, XmlTextReader reader);
+		public abstract void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed);
 		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode);
 	}
 }

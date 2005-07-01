@@ -38,17 +38,29 @@ namespace System.Configuration
 {
 	public abstract class ConfigurationElement
 	{
-		static Hashtable elementMaps = new Hashtable ();
-		Hashtable values;
-		string[] readProperties;
 		string rawXml;
 		bool modified;
 		ElementMap map;
 		ConfigurationPropertyCollection keyProps;
 		bool readOnly;
+		ElementInformation elementInfo;
 		
 		protected ConfigurationElement ()
 		{
+		}
+		
+		internal virtual void InitFromProperty (PropertyInformation propertyInfo)
+		{
+			elementInfo = new ElementInformation (this, propertyInfo);
+			Init ();
+		}
+		
+		public ElementInformation ElementInformation {
+			get {
+				if (elementInfo == null)
+					elementInfo = new ElementInformation (this, null);
+				return elementInfo;
+			}
 		}
 		
 		protected internal virtual void Init ()
@@ -77,51 +89,33 @@ namespace System.Configuration
 		}
 
 		protected internal object this [ConfigurationProperty property] {
-			get {
-				if (values == null || !values.ContainsKey (property)) {
-					if (property.IsElement) {
-						object elem = CreateElement (property.Type);
-						this [property] = elem;
-						return elem;
-					}
-					else
-						return property.DefaultValue;
-				}
-				else
-					return values [property];
-			}
-
-			set {
-				if (object.Equals (value, property.DefaultValue)) {
-					if (values == null) return;
-					values.Remove (property);
-				}
-				else {
-					if (values == null) values = new Hashtable ();
-					values [property] = value;
-				}
-				modified = true;
-			}
+			get { return this [property.Name]; }
+			set { this [property.Name] = value; }
 		}
 
 		protected internal object this [string property_name] {
 			get {
-				ConfigurationProperty prop = Properties [property_name];
-				if (prop == null) throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration section");
-				return this [prop];
+				PropertyInformation pi = ElementInformation.Properties [property_name];
+				if (pi == null)
+					throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration element");
+				
+				return pi.Value;
 			}
 
 			set {
-				ConfigurationProperty prop = Properties [property_name];
-				if (prop == null) throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration section");
-				this [prop] = value;
+				PropertyInformation pi = ElementInformation.Properties [property_name];
+				if (pi == null)
+					throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration element");
+				
+				pi.Value = value;
+				modified = true;
 			}
 		}
 
 		protected internal virtual ConfigurationPropertyCollection Properties {
 			get {
 				if (map == null)
-					map = GetMap (GetType());
+					map = ElementMap.GetMap (GetType());
 				return map.Properties;
 			}
 		}
@@ -147,19 +141,14 @@ namespace System.Configuration
 			return code;
 		}
 
-		internal bool HasValue (string key)
-		{
-			if (values == null) return false;
-			ConfigurationProperty prop = Properties [key];
-			if (prop == null) return false;
-			return values.ContainsKey (prop);
-		}
-		
 		internal virtual bool HasValues ()
 		{
-			return values != null && values.Count > 0;
+			foreach (PropertyInformation pi in ElementInformation.Properties)
+				if (pi.ValueOrigin != PropertyValueOrigin.Default)
+					return true;
+			return false;
 		}
-
+		
 		protected internal virtual void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
 			Hashtable readProps = new Hashtable ();
@@ -167,7 +156,7 @@ namespace System.Configuration
 			reader.MoveToContent ();
 			while (reader.MoveToNextAttribute ())
 			{
-				ConfigurationProperty prop = Properties [reader.LocalName];
+				PropertyInformation prop = ElementInformation.Properties [reader.LocalName];
 				if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
 					if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
@@ -177,9 +166,7 @@ namespace System.Configuration
 				if (readProps.ContainsKey (prop))
 					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
 				
-				object val = prop.ConvertFromString (reader.Value);
-				if (!object.Equals (val, prop.DefaultValue))
-					this [prop] = val;
+				prop.SetStringValue (reader.Value);
 				readProps [prop] = prop.Name;
 			}
 			
@@ -198,7 +185,7 @@ namespace System.Configuration
 						continue;
 					}
 					
-					ConfigurationProperty prop = Properties [reader.LocalName];
+					PropertyInformation prop = ElementInformation.Properties [reader.LocalName];
 					if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
 						if (!OnDeserializeUnrecognizedElement (reader.LocalName, reader))
 							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
@@ -211,7 +198,7 @@ namespace System.Configuration
 					if (readProps.Contains (prop))
 						throw new ConfigurationException ("The element <" + prop.Name + "> may only appear once in this section.");
 					
-					ConfigurationElement val = this [prop] as ConfigurationElement;
+					ConfigurationElement val = (ConfigurationElement) prop.Value;
 					val.DeserializeElement (reader, serializeCollectionKey);
 					readProps [prop] = prop.Name;
 				}
@@ -219,18 +206,15 @@ namespace System.Configuration
 			
 			modified = false;
 				
-			if (readProps.Count > 0) {
-				readProperties = new string [readProps.Count];
-				readProps.Values.CopyTo ((object[])readProperties, 0);
-				
-				foreach (ConfigurationProperty prop in Properties)
-					if (prop.IsRequired && !readProps.ContainsKey (prop)) {
-						object val = OnRequiredPropertyNotFound (prop.Name);
-						if (!object.Equals (val, prop.DefaultValue))
-							this [prop] = val;
+			foreach (PropertyInformation prop in ElementInformation.Properties)
+				if (prop.IsRequired && !readProps.ContainsKey (prop)) {
+					object val = OnRequiredPropertyNotFound (prop.Name);
+					if (!object.Equals (val, prop.DefaultValue)) {
+						prop.Value = val;
+						prop.IsModified = false;
 					}
-			}
-			
+				}
+
 			PostDeserialize ();
 		}
 
@@ -259,7 +243,6 @@ namespace System.Configuration
 
 		protected internal virtual void InitializeDefault ()
 		{
-			values = null;
 		}
 
 		protected internal virtual bool IsModified ()
@@ -284,21 +267,8 @@ namespace System.Configuration
 
 		protected internal virtual void Reset (ConfigurationElement parentElement)
 		{
-			if (parentElement != null) {
-				values = null;
-				foreach (ConfigurationProperty prop in Properties) {
-					if (parentElement.HasValue (prop.Name)) {
-						if (prop.IsElement) {
-							ConfigurationElement parentValue = parentElement [prop.Name] as ConfigurationElement;
-							ConfigurationElement value = CreateElement (parentValue.GetType());
-							value.Reset (parentValue);
-							this [prop] = value;
-						}
-						else
-							this [prop] = parentElement [prop.Name];
-					}
-				}
-			}
+			if (parentElement != null)
+				ElementInformation.Reset (parentElement.ElementInformation);
 			else
 				InitializeDefault ();
 		}
@@ -306,41 +276,40 @@ namespace System.Configuration
 		protected internal virtual void ResetModified ()
 		{
 			modified = false;
+			foreach (PropertyInformation p in ElementInformation.Properties)
+				p.IsModified = false;
 		}
 
 		protected internal virtual bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
 			PreSerialize (writer);
 			
-			if (values == null)
-				return false;
-			
 			if (serializeCollectionKey) {
 				ConfigurationPropertyCollection props = GetKeyProperties ();
 				foreach (ConfigurationProperty prop in props)
-					writer.WriteAttributeString (prop.Name, prop.ConvertToString (this[prop]));
+					writer.WriteAttributeString (prop.Name, prop.ConvertToString (this[prop.Name]));
 				return props.Count > 0;
 			}
 			
 			bool wroteData = false;
 			
-			foreach (DictionaryEntry entry in values)
+			foreach (PropertyInformation prop in ElementInformation.Properties)
 			{
-				ConfigurationProperty prop = (ConfigurationProperty) entry.Key;
-				if (prop.IsElement) continue;
+				if (prop.IsElement || prop.ValueOrigin == PropertyValueOrigin.Default)
+					continue;
 				
-				if (!object.Equals (entry.Value, prop.DefaultValue)) {
-					writer.WriteAttributeString (prop.Name, prop.ConvertToString (entry.Value));
+				if (!object.Equals (prop.Value, prop.DefaultValue)) {
+					writer.WriteAttributeString (prop.Name, prop.GetStringValue ());
 					wroteData = true;
 				}
 			}
 			
-			foreach (DictionaryEntry entry in values)
+			foreach (PropertyInformation prop in ElementInformation.Properties)
 			{
-				ConfigurationProperty prop = (ConfigurationProperty) entry.Key;
-				if (!prop.IsElement) continue;
+				if (!prop.IsElement)
+					continue;
 				
-				ConfigurationElement val = entry.Value as ConfigurationElement;
+				ConfigurationElement val = (ConfigurationElement) prop.Value;
 				if (val != null && val.HasValues ()) {
 					wroteData = val.SerializeToXmlElement (writer, prop.Name) || wroteData;
 				}
@@ -365,39 +334,48 @@ namespace System.Configuration
 			if (parent != null && source.GetType() != parent.GetType())
 				throw new ConfigurationException ("Can't unmerge two elements of different type");
 			
-			foreach (ConfigurationProperty prop in source.Properties)
+			foreach (PropertyInformation prop in source.ElementInformation.Properties)
 			{
-				if (!source.HasValue (prop.Name)) continue;
+				if (prop.ValueOrigin == PropertyValueOrigin.Default)
+					continue;
 				
-				object sourceValue = source [prop];
+				PropertyInformation unmergedProp = ElementInformation.Properties [prop.Name];
+				
+				object sourceValue = prop.Value;
 				if 	(parent == null || !parent.HasValue (prop.Name)) {
-					this [prop] = sourceValue;
+					unmergedProp.Value = sourceValue;
 					continue;
 				}
 				else if (sourceValue != null) {
-					object parentValue = parent [prop];
+					object parentValue = parent [prop.Name];
 					if (prop.IsElement) {
 						if (parentValue != null) {
-							ConfigurationElement copy = (ConfigurationElement) CreateElement (prop.Type);
+							ConfigurationElement copy = (ConfigurationElement) unmergedProp.Value;
 							copy.Unmerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, serializeCollectionKey, updateMode);
-							this [prop] = copy;
 						}
 						else
-							this [prop] = sourceValue;
+							unmergedProp.Value = sourceValue;
 					}
 					else {
 						if (!object.Equals (sourceValue, parentValue) || 
 							(updateMode == ConfigurationSaveMode.Full) ||
-							(updateMode == ConfigurationSaveMode.Modified && source.IsReadFromConfig (prop.Name)))
-							this [prop] = sourceValue;
+							(updateMode == ConfigurationSaveMode.Modified && prop.ValueOrigin == PropertyValueOrigin.SetHere))
+							unmergedProp.Value = sourceValue;
 					}
 				}
 			}
 		}
 		
-		bool IsReadFromConfig (string propName)
+		internal bool HasValue (string propName)
 		{
-			return readProperties != null && Array.IndexOf (readProperties, propName) != -1;
+			PropertyInformation info = ElementInformation.Properties [propName];
+			return info != null && info.ValueOrigin != PropertyValueOrigin.Default;
+		}
+		
+		internal bool IsReadFromConfig (string propName)
+		{
+			PropertyInformation info = ElementInformation.Properties [propName];
+			return info != null && info.ValueOrigin == PropertyValueOrigin.SetHere;
 		}
 
 		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
@@ -418,17 +396,6 @@ namespace System.Configuration
 			return sw.ToString ();
 		}
 		
-		internal static ElementMap GetMap (Type t)
-		{
-			lock (elementMaps) {
-				ElementMap map = elementMaps [t] as ElementMap;
-				if (map != null) return map;
-				map = new ElementMap (t);
-				elementMaps [t] = map;
-				return map;
-			}
-		}
-		
 		ConfigurationElement CreateElement (Type t)
 		{
 			ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (t);
@@ -441,8 +408,23 @@ namespace System.Configuration
 	
 	internal class ElementMap
 	{
+		static Hashtable elementMaps = new Hashtable ();
+		
 		ConfigurationPropertyCollection properties;
 		ConfigurationPropertyCollection keyProperties;
+		
+		ConfigurationCollectionAttribute collectionAttribute;
+		
+		public static ElementMap GetMap (Type t)
+		{
+			lock (elementMaps) {
+				ElementMap map = elementMaps [t] as ElementMap;
+				if (map != null) return map;
+				map = new ElementMap (t);
+				elementMaps [t] = map;
+				return map;
+			}
+		}
 		
 		public ElementMap (Type t)
 		{
@@ -451,6 +433,8 @@ namespace System.Configuration
 		
 		protected void ReflectProperties (Type t)
 		{
+			collectionAttribute = Attribute.GetCustomAttribute (t, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;
+			
 			PropertyInfo[] props = t.GetProperties ();
 			foreach (PropertyInfo prop in props)
 			{
@@ -463,6 +447,8 @@ namespace System.Configuration
 				
 				TypeConverter converter = TypeDescriptor.GetConverter (prop.PropertyType);
 				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
+				
+				cp.CollectionAttribute = Attribute.GetCustomAttribute (prop, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;
 				
 				if (properties == null) properties = new ConfigurationPropertyCollection ();
 				properties.Add (cp);
@@ -493,6 +479,10 @@ namespace System.Configuration
 				}
 				return keyProperties;
 			}
+		}
+		
+		public ConfigurationCollectionAttribute CollectionAttribute {
+			get { return collectionAttribute; }
 		}
 	}
 }

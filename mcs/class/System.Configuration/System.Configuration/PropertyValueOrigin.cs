@@ -1,8 +1,8 @@
 //
-// System.Configuration.ProtectedConfigurationProvider.cs
+// System.Configuration.PropertyValueOrigin.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,23 +23,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
-using System.Xml;
 
 namespace System.Configuration
 {
-	public abstract class ProtectedConfigurationProvider: System.Configuration.Provider.ProviderBase
+	public enum PropertyValueOrigin
 	{
-		protected ProtectedConfigurationProvider ()
-		{
-		}
-
-		public abstract XmlNode Decrypt (XmlNode encrypted_node);
-
-		public abstract XmlNode Encrypt (XmlNode node);
+		Default = 0,
+		Inherited = 1,
+		SetHere = 2
 	}
 }
 #endif

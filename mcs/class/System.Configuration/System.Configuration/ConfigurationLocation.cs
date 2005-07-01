@@ -41,20 +41,34 @@ namespace System.Configuration {
 		Configuration parent;
 		string xmlContent;
 		bool parentResolved;
+		bool allowOverride;
 		
 		internal ConfigurationLocation()
 		{
 		}
 		
-		internal ConfigurationLocation (string path, string xmlContent, Configuration parent)
+		internal ConfigurationLocation (string path, string xmlContent, Configuration parent, bool allowOverride)
 		{
 			this.path = path;
 			this.xmlContent = xmlContent;
 			this.parent = parent;
+			this.allowOverride = allowOverride;
 		}
 		
 		public string Path {
 			get { return path; }
+		}
+		
+		internal bool AllowOverride {
+			get { return allowOverride; }
+		}
+		
+		internal string XmlContent {
+			get { return xmlContent; }
+		}
+		
+		internal Configuration OpenedConfiguration {
+			get { return configuration; }
 		}
 
 		public Configuration OpenConfiguration ()
@@ -74,7 +88,7 @@ namespace System.Configuration {
 				tr.ReadStartElement ();
 				tr.MoveToContent ();
 				
-				configuration.ReadData (tr);
+				configuration.ReadData (tr, allowOverride);
 				tr.Close ();
 				xmlContent = null;
 			}

@@ -35,6 +35,7 @@ using System.Configuration;
 
 namespace System.Configuration
 {
+	[ConfigurationCollection (typeof(ProviderSettings))]
 	public sealed class ProviderSettingsCollection: ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection props = new ConfigurationPropertyCollection ();

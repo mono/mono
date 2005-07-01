@@ -1,8 +1,8 @@
 //
-// System.Configuration.ProtectedConfigurationProvider.cs
+// System.Configuration.StringValidatorAttribute.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,23 +23,44 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
-using System.Xml;
 
 namespace System.Configuration
 {
-	public abstract class ProtectedConfigurationProvider: System.Configuration.Provider.ProviderBase
+	[AttributeUsage (AttributeTargets.Property)]
+	public sealed class StringValidatorAttribute: ConfigurationValidatorAttribute
 	{
-		protected ProtectedConfigurationProvider ()
-		{
+		string invalidCharacters;
+		int maxLength = int.MaxValue;
+		int minLength = 0;
+		ConfigurationValidatorBase instance;
+		
+		public string InvalidCharacters {
+			get { return invalidCharacters; }
+			set { invalidCharacters = value; instance = null; }
 		}
-
-		public abstract XmlNode Decrypt (XmlNode encrypted_node);
-
-		public abstract XmlNode Encrypt (XmlNode node);
+		
+		public int MaxLength {
+			get { return maxLength; }
+			set { maxLength = value; instance = null; }
+		}
+		
+		public int MinLength {
+			get { return minLength; }
+			set { minLength = value; instance = null; }
+		}
+		
+		public override ConfigurationValidatorBase ValidatorInstance {
+			get {
+				if (instance == null)
+					instance = new StringValidator (minLength, maxLength, invalidCharacters);
+				return instance;
+			}
+		}
 	}
 }
+
 #endif

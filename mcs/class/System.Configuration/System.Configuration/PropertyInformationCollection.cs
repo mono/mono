@@ -1,5 +1,5 @@
 //
-// System.Configuration.KeyValueConfigurationElement.cs
+// System.Configuration.PropertyInformationCollection.cs
 //
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
@@ -28,42 +28,68 @@
 
 #if NET_2_0
 using System.Collections;
-using System.Xml;
+using System.Collections.Specialized;
 
 namespace System.Configuration
 {
-	public class KeyValueConfigurationElement: ConfigurationElement
+	[Serializable]
+	public sealed class PropertyInformationCollection: NameObjectCollectionBase
 	{
-//		ConfigurationPropertyCollection properties;
-		
-		internal KeyValueConfigurationElement ()
+		internal PropertyInformationCollection ()
 		{
 		}
 		
-		public KeyValueConfigurationElement (string key, string value)
+		public void CopyTo (PropertyInformation[] array, int index)
 		{
-			this["key"] = key;
-			this ["value"] = value;
+			((ICollection)this).CopyTo (array, index);
 		}
 		
-		[ConfigurationProperty ("key", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
-		public string Key {
-			get { return (string) this["key"]; }
+		public PropertyInformation this [string propertyName] {
+			get { return (PropertyInformation) BaseGet (propertyName); }
 		}
 		
-		[ConfigurationProperty ("value", DefaultValue = "")]
-		public string Value {
-			get { return (string) this["value"]; }
-			set { this ["value"] = value; }
-		}
-		
-/*		protected internal override void Init ()
+		public override IEnumerator GetEnumerator ()
 		{
+			return new PropertyInformationEnumerator (this);
 		}
 		
-		protected internal override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+		internal void Add (PropertyInformation pi)
+		{
+			BaseAdd (pi.Name, pi);
 		}
-*/	}
+
+		class PropertyInformationEnumerator : IEnumerator
+		{
+			private PropertyInformationCollection collection;
+			private int position;
+			
+			public PropertyInformationEnumerator (PropertyInformationCollection collection)
+			{
+				this.collection = collection;
+				position = -1;
+			}
+			
+			public object Current 
+			{
+				get {
+					if ((position < collection.Count) && (position >= 0))
+						return collection.BaseGet (position);
+					else 
+						throw new InvalidOperationException();
+				}
+				
+			}
+			
+			public bool MoveNext ()
+			{
+				return (++position < collection.Count) ? true : false;
+			}
+			
+			public void Reset ()
+			{
+				position = -1;
+			}
+		}
+	}
 }
 #endif

@@ -1,5 +1,5 @@
 //
-// System.Configuration.KeyValueConfigurationElement.cs
+// System.Configuration.StringValidator.cs
 //
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
@@ -27,43 +27,54 @@
 //
 
 #if NET_2_0
-using System.Collections;
-using System.Xml;
 
 namespace System.Configuration
 {
-	public class KeyValueConfigurationElement: ConfigurationElement
+	public class StringValidator: ConfigurationValidatorBase
 	{
-//		ConfigurationPropertyCollection properties;
+		char[] invalidCharacters;
+		int maxLength;
+		int minLength;
 		
-		internal KeyValueConfigurationElement ()
+		public StringValidator (int minLength)
 		{
+			this.minLength = minLength;
+			maxLength = int.MaxValue;
 		}
 		
-		public KeyValueConfigurationElement (string key, string value)
+		public StringValidator (int minLength, int maxLength)
 		{
-			this["key"] = key;
-			this ["value"] = value;
+			this.minLength = minLength;
+			this.maxLength = maxLength;
 		}
 		
-		[ConfigurationProperty ("key", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
-		public string Key {
-			get { return (string) this["key"]; }
-		}
-		
-		[ConfigurationProperty ("value", DefaultValue = "")]
-		public string Value {
-			get { return (string) this["value"]; }
-			set { this ["value"] = value; }
-		}
-		
-/*		protected internal override void Init ()
+		public StringValidator (int minLength, int maxLength, string invalidCharacters)
 		{
+			this.minLength = minLength;
+			this.maxLength = maxLength;
+			if (invalidCharacters != null)
+				this.invalidCharacters = invalidCharacters.ToCharArray ();
 		}
 		
-		protected internal override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+		public override bool CanValidate (Type type)
+		{
+			return type == typeof(string);
 		}
-*/	}
+
+		public override void Validate (object value)
+		{
+			string s = (string) value;
+			if (s.Length < minLength)
+				throw new ConfigurationErrorsException ("Invalid string length. The minimun length is " + minLength + ".");
+			if (s.Length > maxLength)
+				throw new ConfigurationErrorsException ("Invalid string length. The maximim length is " + maxLength + ".");
+			if (invalidCharacters != null) {
+				int i = s.IndexOfAny (invalidCharacters);
+				if (i != -1)
+					throw new ConfigurationErrorsException ("The character '" + s[i] + "' is not allowed in this attribute.");
+			}
+		}
+	}
 }
+
 #endif

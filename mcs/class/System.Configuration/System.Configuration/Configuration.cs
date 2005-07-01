@@ -259,11 +259,23 @@ namespace System.Configuration {
 		
 		internal void CreateSection (SectionGroupInfo group, string name, ConfigurationSection sec)
 		{
-			if (group.HasChild (name)) throw new ConfigurationException ("Cannot add a ConfigurationSection. A section or section group already exists with the name '" + name + "'");
-			if (sec.SectionInformation.Type == null) sec.SectionInformation.Type = system.Host.GetConfigTypeName (sec.GetType ());
+			if (group.HasChild (name))
+				throw new ConfigurationException ("Cannot add a ConfigurationSection. A section or section group already exists with the name '" + name + "'");
+				
+			if (!HasFile && !sec.SectionInformation.AllowLocation)
+				throw new ConfigurationErrorsException ("The configuration section <" + name + "> cannot be defined inside a <location> element."); 
+
+			if (!system.Host.IsDefinitionAllowed (configPath, sec.SectionInformation.AllowDefinition, sec.SectionInformation.AllowExeDefinition)) {
+				object ctx = sec.SectionInformation.AllowExeDefinition != ConfigurationAllowExeDefinition.MachineToApplication ? (object) sec.SectionInformation.AllowExeDefinition : (object) sec.SectionInformation.AllowDefinition;
+				throw new ConfigurationErrorsException ("The section <" + name + "> can't be defined in this configuration file (the allowed definition context is '" + ctx + "').");
+			}
+						
+			if (sec.SectionInformation.Type == null)
+				sec.SectionInformation.Type = system.Host.GetConfigTypeName (sec.GetType ());
+			
 			sec.SectionInformation.SetName (name);
 
-			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition);
+			SectionInfo section = new SectionInfo (name, sec.SectionInformation.Type, sec.SectionInformation.AllowLocation, sec.SectionInformation.AllowDefinition, sec.SectionInformation.AllowExeDefinition);
 			section.StreamName = streamName;
 			section.ConfigHost = system.Host;
 			group.AddChild (section);
@@ -338,12 +350,33 @@ namespace System.Configuration {
 				if (rootGroup.HasConfigContent (this)) {
 					rootGroup.WriteConfig (this, tw, mode);
 				}
-				rootGroup.WriteRootData (tw, this, mode);
+				
+				foreach (ConfigurationLocation loc in Locations) {
+					if (loc.OpenedConfiguration == null) {
+						tw.WriteRaw ("\n");
+						tw.WriteRaw (loc.XmlContent);
+					}
+					else {
+						tw.WriteStartElement ("location");
+						tw.WriteAttributeString ("path", loc.Path); 
+						if (!loc.AllowOverride)
+							tw.WriteAttributeString ("allowOverride", "false");
+						loc.OpenedConfiguration.SaveData (tw, mode, forceUpdateAll);
+						tw.WriteEndElement ();
+					}
+				}
+				
+				SaveData (tw, mode, forceUpdateAll);
 				tw.WriteEndElement ();
 			}
 			finally {
 				tw.Close ();
 			}
+		}
+		
+		void SaveData (XmlTextWriter tw, ConfigurationSaveMode mode, bool forceUpdateAll)
+		{
+			rootGroup.WriteRootData (tw, this, mode);
 		}
 		
 		bool Load ()
@@ -393,12 +426,12 @@ namespace System.Configuration {
 				rootGroup.ReadConfig (this, fileName, reader);
 			}
 			
-			rootGroup.ReadRootData (reader, this);
+			rootGroup.ReadRootData (reader, this, true);
 		}
 		
-		internal void ReadData (XmlTextReader reader)
+		internal void ReadData (XmlTextReader reader, bool allowOverride)
 		{
-			rootGroup.ReadRootData (reader, this);
+			rootGroup.ReadRootData (reader, this, allowOverride);
 		}
 		
 

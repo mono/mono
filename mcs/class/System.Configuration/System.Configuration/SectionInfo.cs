@@ -36,20 +36,34 @@ namespace System.Configuration
 {
 	internal class SectionInfo: ConfigInfo
 	{
-		public bool AllowLocation = true;
-		public ConfigurationAllowDefinition AllowDefinition = ConfigurationAllowDefinition.Everywhere;
+		bool allowLocation = true;
+		ConfigurationAllowDefinition allowDefinition = ConfigurationAllowDefinition.Everywhere;
+		ConfigurationAllowExeDefinition allowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
 
 		public SectionInfo ()
 		{
 		}
 		
 		public SectionInfo (string sectionName, string typeName,
-				    bool allowLocation, ConfigurationAllowDefinition allowDefinition)
+				    bool allowLocation, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
 		{
 			Name = sectionName;
 			TypeName = typeName;
-			AllowLocation = allowLocation;
-			AllowDefinition = allowDefinition;
+			this.allowLocation = allowLocation;
+			this.allowDefinition = allowDefinition;
+			this.allowExeDefinition = allowExeDefinition;
+		}
+		
+		public override object CreateInstance ()
+		{
+			object ob = base.CreateInstance ();
+			ConfigurationSection sec = ob as ConfigurationSection;
+			if (sec != null) {
+				sec.SectionInformation.AllowLocation = allowLocation;
+				sec.SectionInformation.AllowDefinition = allowDefinition;
+				sec.SectionInformation.AllowExeDefinition = allowExeDefinition;
+			}
+			return ob;
 		}
 		
 		public override bool HasDataContent (Configuration config)
@@ -64,7 +78,6 @@ namespace System.Configuration
 
 		public override void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader)
 		{
-			ConfigurationAllowDefinition allowDefinition;
 			StreamName = streamName;
 			ConfigHost = cfg.ConfigHost;
 
@@ -73,8 +86,8 @@ namespace System.Configuration
 				{
 					case "allowLocation":
 						string allowLoc = reader.Value;
-						AllowLocation = (allowLoc == "true");
-						if (!AllowLocation && allowLoc != "false")
+						allowLocation = (allowLoc == "true");
+						if (!allowLocation && allowLoc != "false")
 							ThrowException ("Invalid attribute value", reader);
 						break;
 	
@@ -83,6 +96,16 @@ namespace System.Configuration
 						try {
 							allowDefinition = (ConfigurationAllowDefinition) Enum.Parse (
 									   typeof (ConfigurationAllowDefinition), allowDef);
+						} catch {
+							ThrowException ("Invalid attribute value", reader);
+						}
+						break;
+	
+					case "allowExeDefinition":
+						string allowExeDef = reader.Value;
+						try {
+							allowExeDefinition = (ConfigurationAllowExeDefinition) Enum.Parse (
+									   typeof (ConfigurationAllowExeDefinition), allowExeDef);
 						} catch {
 							ThrowException ("Invalid attribute value", reader);
 						}
@@ -116,15 +139,25 @@ namespace System.Configuration
 			writer.WriteStartElement ("section");
 			writer.WriteAttributeString ("name", Name);
 			writer.WriteAttributeString ("type", TypeName);
-			if (!AllowLocation)
+			if (!allowLocation)
 				writer.WriteAttributeString ("allowLocation", "false");
-			if (AllowDefinition != ConfigurationAllowDefinition.Everywhere)
-				writer.WriteAttributeString ("allowDefinition", AllowDefinition.ToString ());
+			if (allowDefinition != ConfigurationAllowDefinition.Everywhere)
+				writer.WriteAttributeString ("allowDefinition", allowDefinition.ToString ());
+			if (allowExeDefinition != ConfigurationAllowExeDefinition.MachineToApplication)
+				writer.WriteAttributeString ("allowExeDefinition", allowExeDefinition.ToString ());
 			writer.WriteEndElement ();
 		}
 		
-		public override void ReadData (Configuration config, XmlTextReader reader)
+		public override void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed)
 		{
+			if (!config.HasFile && !allowLocation)
+				throw new ConfigurationErrorsException ("The configuration section <" + Name + "> cannot be defined inside a <location> element.", reader); 
+			if (!config.ConfigHost.IsDefinitionAllowed (config.ConfigPath, allowDefinition, allowExeDefinition)) {
+				object ctx = allowExeDefinition != ConfigurationAllowExeDefinition.MachineToApplication ? (object) allowExeDefinition : (object) allowDefinition;
+				throw new ConfigurationErrorsException ("The section <" + Name + "> can't be defined in this configuration file (the allowed definition context is '" + ctx + "').", reader);
+			}
+			if (config.GetSectionXml (this) != null)
+				ThrowException ("The section <" + Name + "> is defined more than once in the same configuration file.", reader);
 			config.SetSectionXml (this, reader.ReadOuterXml ());
 		}
 		
@@ -138,13 +171,14 @@ namespace System.Configuration
 				xml = section.SerializeSection (parentSection, Name, mode);
 			}
 			else {
-				xml = config.GetSectionXml (this);
+				xml = config.GetSectionXml (this)  + " <!-- dd -->";
 			}
 			
 			if (xml != null) {
-				XmlTextReader tr = new XmlTextReader (new StringReader (xml));
+				writer.WriteRaw (xml);
+/*				XmlTextReader tr = new XmlTextReader (new StringReader (xml));
 				writer.WriteNode (tr, true);
-				tr.Close ();
+				tr.Close ();*/
 			}
 		}
 	}

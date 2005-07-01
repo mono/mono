@@ -37,7 +37,8 @@ namespace System.Configuration
 	{
 		ConfigurationSection parent;
 		
-		ConfigurationAllowDefinition allow_definition;
+		ConfigurationAllowDefinition allow_definition = ConfigurationAllowDefinition.Everywhere;
+		ConfigurationAllowExeDefinition allow_exe_definition = ConfigurationAllowExeDefinition.MachineToApplication;
 		bool allow_location, allow_override;
 		bool inherit_on_child_apps;
 		bool restart_on_external_changes;
@@ -60,6 +61,11 @@ namespace System.Configuration
 		public ConfigurationAllowDefinition AllowDefinition {
 			get { return allow_definition; }
 			set { allow_definition = value; }
+		}
+
+		public ConfigurationAllowExeDefinition AllowExeDefinition {
+			get { return allow_exe_definition; }
+			set { allow_exe_definition = value; }
 		}
 
 		public bool AllowLocation {

@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
+using System.Text;
 
 namespace System.Configuration
 {
@@ -42,7 +43,7 @@ namespace System.Configuration
 
 		public SectionGroupInfo ()
 		{
-			TypeName = "System.Configuration.ConfigurationSectionGroup";
+			Type = typeof (ConfigurationSectionGroup);
 		}
 		
 		public SectionGroupInfo (string groupName, string typeName)
@@ -257,41 +258,49 @@ namespace System.Configuration
 			reader.Skip ();
 		}
 
-		public void ReadRootData (XmlTextReader reader, Configuration config)
+		public void ReadRootData (XmlTextReader reader, Configuration config, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
-			ReadContent (reader, config);
+			ReadContent (reader, config, overrideAllowed);
 		}
 		
-		public override void ReadData (Configuration config, XmlTextReader reader)
+		public override void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
 			reader.ReadStartElement ();
-			ReadContent (reader, config);
+			ReadContent (reader, config, overrideAllowed);
 			reader.MoveToContent ();
 			reader.ReadEndElement ();
 		}
 		
-		void ReadContent (XmlTextReader reader, Configuration config)
+		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed)
 		{
+			StringBuilder spacing = new StringBuilder ();
 			while (reader.NodeType != XmlNodeType.EndElement) {
 				if (reader.NodeType != XmlNodeType.Element) {
+					if (reader.NodeType == XmlNodeType.Whitespace)
+						spacing.Append (reader.Value);
 					reader.Skip ();
 					continue;
 				}
 				
 				if (reader.LocalName == "location")
 				{
+					if (!config.HasFile)
+						ThrowException ("<location> elements are only allowed in <configuration> elements.", reader);
+						 
+					string allowOverrideAttr = reader.GetAttribute ("allowOverride");
+					bool allowOverride = allowOverrideAttr == null || allowOverrideAttr.Length == 0 || bool.Parse (allowOverrideAttr);
 					string path = reader.GetAttribute ("path");
 					if (path != null && path.Length > 0) {
 						string xml = reader.ReadOuterXml ();
 						string[] pathList = path.Split (',');
 						foreach (string p in pathList) {
-							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), xml, config);
+							ConfigurationLocation loc = new ConfigurationLocation (p.Trim (), xml, config, allowOverride);
 							config.Locations.Add (loc);
 						}
 					} else {
-						ReadData (config, reader);
+						ReadData (config, reader, allowOverride);
 					}
 					continue;
 				}
@@ -300,7 +309,7 @@ namespace System.Configuration
 				if (data == null) data = (groups != null) ? (ConfigInfo) groups [reader.LocalName] : (ConfigInfo) null;
 				
 				if (data != null)
-					data.ReadData (config, reader);
+					data.ReadData (config, reader, overrideAllowed);
 				else
 					ThrowException ("Unrecognized configuration section <" + reader.LocalName + ">", reader);
 			}

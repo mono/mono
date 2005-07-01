@@ -1,5 +1,5 @@
 //
-// System.Configuration.KeyValueConfigurationElement.cs
+// System.Configuration.TimeSpanValidatorAttribute.cs
 //
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
@@ -27,43 +27,52 @@
 //
 
 #if NET_2_0
-using System.Collections;
-using System.Xml;
 
 namespace System.Configuration
 {
-	public class KeyValueConfigurationElement: ConfigurationElement
+	[AttributeUsage (AttributeTargets.Property)]
+	public sealed class TimeSpanValidatorAttribute: ConfigurationValidatorAttribute
 	{
-//		ConfigurationPropertyCollection properties;
+		bool excludeRange = false;
+		string maxValueString = TimeSpanMaxValue;
+		string minValueString = TimeSpanMinValue;
 		
-		internal KeyValueConfigurationElement ()
-		{
+		public const string TimeSpanMaxValue = "10675199.02:48:05.4775807";
+		public const string TimeSpanMinValue = "-10675199.02:48:05.4775808";
+		
+		ConfigurationValidatorBase instance;
+		
+		public string MaxValueString {
+			get { return maxValueString; }
+			set { maxValueString = value; instance = null; }
 		}
 		
-		public KeyValueConfigurationElement (string key, string value)
-		{
-			this["key"] = key;
-			this ["value"] = value;
+		public string MinValueString {
+			get { return minValueString; }
+			set { minValueString = value; instance = null; }
 		}
 		
-		[ConfigurationProperty ("key", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
-		public string Key {
-			get { return (string) this["key"]; }
+		public TimeSpan MaxValue {
+			get { return TimeSpan.Parse (maxValueString); }
 		}
 		
-		[ConfigurationProperty ("value", DefaultValue = "")]
-		public string Value {
-			get { return (string) this["value"]; }
-			set { this ["value"] = value; }
+		public TimeSpan MinValue {
+			get { return TimeSpan.Parse (minValueString); }
 		}
 		
-/*		protected internal override void Init ()
-		{
+		public bool ExcludeRange {
+			get { return excludeRange; }
+			set { excludeRange = value; instance = null; }
 		}
 		
-		protected internal override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+		public override ConfigurationValidatorBase ValidatorInstance {
+			get {
+				if (instance == null)
+					instance = new TimeSpanValidator (MinValue, MaxValue, excludeRange);
+				return instance;
+			}
 		}
-*/	}
+	}
 }
+
 #endif

@@ -1,8 +1,8 @@
 //
-// System.Configuration.ProtectedConfigurationProvider.cs
+// System.Configuration.PositiveTimeSpanValidator.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,23 +23,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
-using System.Xml;
 
 namespace System.Configuration
 {
-	public abstract class ProtectedConfigurationProvider: System.Configuration.Provider.ProviderBase
+	public class PositiveTimeSpanValidator: ConfigurationValidatorBase
 	{
-		protected ProtectedConfigurationProvider ()
+		public override bool CanValidate (Type t)
 		{
+			return t == typeof(TimeSpan);
 		}
-
-		public abstract XmlNode Decrypt (XmlNode encrypted_node);
-
-		public abstract XmlNode Encrypt (XmlNode node);
+		
+		public override void Validate (object value)
+		{
+			if (((TimeSpan)value).Ticks <= 0)
+				throw new ConfigurationErrorsException ("TimeSpan value must be positive.");
+		}
 	}
 }
 #endif

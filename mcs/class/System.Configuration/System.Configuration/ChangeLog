@@ -1,3 +1,41 @@
+2005-07-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ProviderSettings.cs: Implemented properties using property attributes.
+	* ConfigurationElement.cs: Implemented ElementInformation property and
+	moved there all value management.
+	* ProtectedConfigurationProvider.cs: Set the correct base class.
+	* SectionInformation.cs: Added missing AllowExeDefinition property.
+	* TimeSpanValidatorAttribute.cs: Implemented.
+	* StringValidator.cs: Implemented.
+	* ProviderSettingsCollection.cs: Added missing class attribute.
+	* ConfigurationSaveMode.cs: Fix enum values.
+	* ConfigurationElementCollection.cs: Added Init method for initializing
+	elements from properties.
+	* StringValidatorAttribute.cs: Implemented.
+	* ConfigurationLocation.cs: Added support for allowOverride flag.
+	* TimeSpanMinutesOrInfiniteConverter.cs: Created skeleton class.
+	* PositiveTimeSpanValidator.cs: Implemented.
+	* TimeSpanMinutesConverter.cs: Created skeleton class.
+	* SectionInfo.cs: Properly read, store and check the values of AllowLocation,
+	AllowDefinition and AllowExeDefinition.
+	* TimeSpanValidator.cs: Implemented.
+	* ConfigurationConverterBase.cs: Created skeleton class.
+	* InternalConfigurationHost.cs: Implemented IsDefinitionAllowed and
+	VerifyDefinitionAllowed.
+	* ConfigurationManager.cs: That class must be static.
+	* PropertyInformationCollection.cs: Implemented.
+	* Configuration.cs: Added some checks for AllowLocation, AllowDefinition and
+	so on. In Save(), don't forget to save location elements.
+	* ConfigurationProperty.cs: Keep track of collection attributes.
+	* ConfigInfo.cs: Support overrideAllowed flag.
+	* KeyValueConfigurationElement.cs: Define properties using attributes.
+	* PropertyValueOrigin.cs: implemented.
+	* PropertyInformation.cs: Mostly implemented.
+	* SectionGroupInfo.cs: Properly propagate the overrideAllowed flag.
+	* ElementInformation.cs: Mostly implemented.
+	* ConfigurationPropertyAttribute.cs: Set the correct default value.
+	* ConfigurationCollectionAttribute.cs: Implemented.
+
 2005-06-23  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SectionInfo.cs: Set the config host when loading the section.

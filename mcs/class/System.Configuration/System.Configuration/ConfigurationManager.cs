@@ -37,13 +37,9 @@ using System.Configuration.Internal;
 
 namespace System.Configuration {
 
-	public abstract class ConfigurationManager
+	public static class ConfigurationManager
 	{
 		static InternalConfigurationFactory configFactory = new InternalConfigurationFactory ();
-		
-		ConfigurationManager ()
-		{
-		}
 		
 		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
 		{

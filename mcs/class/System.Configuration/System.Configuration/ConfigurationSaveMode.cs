@@ -33,7 +33,7 @@ namespace System.Configuration
         {
                 Minimal = 1,
                 Full = 2,
-                Modified = 3
+                Modified = 0
         }
 }
 #endif

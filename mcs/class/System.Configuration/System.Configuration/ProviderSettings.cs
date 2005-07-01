@@ -37,21 +37,7 @@ namespace System.Configuration
 {
 	public sealed class ProviderSettings: ConfigurationElement
 	{
-		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
-		
 		ConfigNameValueCollection parameters;
-		
-		static ProviderSettings ()
-		{
-			nameProp = new ConfigurationProperty ("name", typeof(string), null);
-			typeProp = new ConfigurationProperty ("type", typeof(string), null);
-			
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (nameProp);
-			properties.Add (typeProp);
-		}
 		
 		public ProviderSettings ()
 		{
@@ -63,12 +49,6 @@ namespace System.Configuration
 			Type = type;
 		}
 		
-		protected internal override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
-		}
-
 		protected override bool OnDeserializeUnrecognizedAttribute (string name, string value)
 		{
 			if (parameters == null)
@@ -102,14 +82,16 @@ namespace System.Configuration
 			base.Unmerge (source, parent, serializeCollectionKey, updateMode);
 		}
 		
+		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.Required | ConfigurationPropertyOptions.IsKey)]
 		public string Name {
-			get { return (string) this [nameProp]; }
-			set { this [nameProp] = value; }
+			get { return (string) this ["name"]; }
+			set { this ["name"] = value; }
 		}
 		
+		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.Required)]
 		public string Type {
-			get { return (string) this [typeProp]; }
-			set { this [typeProp] = value; }
+			get { return (string) this ["type"]; }
+			set { this ["type"] = value; }
 		}
 		
 		public NameValueCollection Parameters {

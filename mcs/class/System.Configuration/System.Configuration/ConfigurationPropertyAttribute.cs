@@ -35,7 +35,7 @@ namespace System.Configuration
 	public sealed class ConfigurationPropertyAttribute : Attribute
 	{
 		string name;
-		object default_value;
+		object default_value = ConfigurationProperty.NoDefaultValue;
 		ConfigurationPropertyOptions flags;
 		
 		public ConfigurationPropertyAttribute (string name)

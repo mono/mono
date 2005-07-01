@@ -126,7 +126,14 @@ namespace System.Configuration
 		
 		public virtual bool IsDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
 		{
-			throw new NotImplementedException ();
+			switch (allowDefinition) {
+				case ConfigurationAllowDefinition.MachineOnly:
+					return configPath == "machine";
+				case ConfigurationAllowDefinition.MachineToApplication:
+					return configPath == "machine" || configPath == "exe";
+				default:
+					return true;
+			}
 		}
 		
 		public virtual bool IsFile (string streamName)
@@ -174,7 +181,8 @@ namespace System.Configuration
 		
 		public virtual void VerifyDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition, IConfigErrorInfo errorInfo)
 		{
-			throw new NotImplementedException ();
+			if (!IsDefinitionAllowed (configPath, allowDefinition, allowExeDefinition))
+				throw new ConfigurationErrorsException ("The section can't be defined in this file (the allowed definition context is '" + allowDefinition + "').", errorInfo.Filename, errorInfo.LineNumber);
 		}
 		
 		public virtual void WriteCompleted (string streamName, bool success, object writeContext)
