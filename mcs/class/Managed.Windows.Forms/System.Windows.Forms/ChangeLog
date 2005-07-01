@@ -1,3 +1,8 @@
+2005-07-01  Peter Bartok  <pbartok@novell.com> 
+
+	* TextControl.cs: Quick fix for the reported crash on ColorDialog
+	  and other text box usage
+
 2005-07-01  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Make sure the bottom of the tab covers the pages

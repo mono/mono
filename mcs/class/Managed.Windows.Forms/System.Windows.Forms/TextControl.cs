@@ -278,7 +278,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		/// <summary> Find the tag on a line based on the character position</summary>
+		/// <summary> Find the tag on a line based on the character position, pos is 0-based</summary>
 		internal LineTag FindTag(int pos) {
 			LineTag tag;
 
@@ -293,7 +293,7 @@ namespace System.Windows.Forms {
 			}
 
 			while (tag != null) {
-				if ((tag.start <= pos) && (pos < (tag.start + tag.length - 1))) {
+				if (((tag.start - 1) <= pos) && (pos < (tag.start + tag.length - 1))) {
 					return tag;
 				}
 				tag = tag.next;
@@ -961,15 +961,15 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-Console.WriteLine("TextControl.cs(961) Invalidate called in UpdateView(line, pos)");
+//blah Console.WriteLine("TextControl.cs(961) Invalidate called in UpdateView(line, pos)");
 					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
-Console.WriteLine("TextControl.cs(965) Invalidate called in UpdateView(line, pos)");
+//blah Console.WriteLine("TextControl.cs(965) Invalidate called in UpdateView(line, pos)");
 					owner.Invalidate();
 				}
 			} else {
-Console.WriteLine("TextControl.cs(969) Invalidate called in UpdateView(line, pos)");
+//blah Console.WriteLine("TextControl.cs(969) Invalidate called in UpdateView(line, pos)");
 				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height));
 			}
 		}
@@ -981,11 +981,11 @@ Console.WriteLine("TextControl.cs(969) Invalidate called in UpdateView(line, pos
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-Console.WriteLine("TextControl.cs(981) Invalidate called in UpdateView(line, line_count, pos)");
+//blah Console.WriteLine("TextControl.cs(981) Invalidate called in UpdateView(line, line_count, pos)");
 					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
-Console.WriteLine("TextControl.cs(985) Invalidate called in UpdateView(line, line_count, pos)");
+//blah Console.WriteLine("TextControl.cs(985) Invalidate called in UpdateView(line, line_count, pos)");
 					owner.Invalidate();
 				}
 			} else {
@@ -996,7 +996,7 @@ Console.WriteLine("TextControl.cs(985) Invalidate called in UpdateView(line, lin
 					end_line = line;
 				}
 
-Console.WriteLine("TextControl.cs(996) Invalidate called in UpdateView(line, line_count, pos)");
+//blah Console.WriteLine("TextControl.cs(996) Invalidate called in UpdateView(line, line_count, pos)");
 				owner.Invalidate(new Rectangle(0 - viewport_x, line.Y - viewport_y, (int)line.widths[line.text.Length], end_line.Y + end_line.height));
 			}
 		}
