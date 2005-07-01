@@ -33,12 +33,13 @@
 using System;
 using System.Configuration;
 using System.Web.Security;
+using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public class AnonymousIdentificationSection: InternalSection
+	public sealed class AnonymousIdentificationSection: InternalSection
 	{
-		static ConfigurationPropertyCollection properties;
+/*		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty enabledProp;
 		static ConfigurationProperty cookieNameProp;
 		static ConfigurationProperty cookieTimeoutProp;
@@ -48,7 +49,7 @@ namespace System.Web.Configuration
 		static ConfigurationProperty cookieProtectionProp;
 		static ConfigurationProperty cookilessProp;
 		static ConfigurationProperty domainProp;
-		
+*/
 		static AnonymousIdentificationSection ()
 		{
 /*			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
@@ -73,49 +74,62 @@ namespace System.Web.Configuration
 			properties.Add (domainProp);
 */		}
 		
-		public HttpCookieMode Cookiless {
-			get { return (HttpCookieMode) base [cookilessProp]; }
-			set { base [cookilessProp] = value; }
+		[ConfigurationProperty ("cookieless", DefaultValue = HttpCookieMode.UseCookies)]
+		public HttpCookieMode Cookieless {
+			get { return (HttpCookieMode) base ["cookieless"]; }
+			set { base ["cookieless"] = value; }
 		}
 		
+	    [StringValidator (MaxLength = 1)]
+	    [ConfigurationProperty ("cookieName", DefaultValue = ".ASPXANONYMOUS")]
 		public string CookieName {
-			get { return (string) base [cookieNameProp]; }
-			set { base [cookieNameProp] = value; }
+			get { return (string) base ["cookieName"]; }
+			set { base ["cookieName"] = value; }
 		}
 		
+	    [StringValidator (MaxLength = 1)]
+	    [ConfigurationProperty ("cookiePath", DefaultValue = "/")]
 		public string CookiePath {
-			get { return (string) base [cookiePathProp]; }
-			set { base [cookiePathProp] = value; }
+			get { return (string) base ["cookiePath"]; }
+			set { base ["cookiePath"] = value; }
 		}
 		
+		[ConfigurationProperty ("cookieProtection", DefaultValue = CookieProtection.Validation)]
 		public CookieProtection CookieProtection {
-			get { return (CookieProtection) base [cookieProtectionProp]; }
-			set { base [cookieProtectionProp] = value; }
+			get { return (CookieProtection) base ["cookieProtection"]; }
+			set { base ["cookieProtection"] = value; }
 		}
 		
+		[ConfigurationProperty ("cookieRequireSSL", DefaultValue = false)]
 		public bool CookieRequireSSL {
-			get { return (bool) base [cookieRequireSSLProp]; }
-			set { base [cookieRequireSSLProp] = value; }
+			get { return (bool) base ["cookieRequireSSL"]; }
+			set { base ["cookieRequireSSL"] = value; }
 		}
 		
+		[ConfigurationProperty ("cookieSlidingExpiration", DefaultValue = true)]
 		public bool CookieSlidingExpiration {
-			get { return (bool) base [cookieSlidingExpirationProp]; }
-			set { base [cookieSlidingExpirationProp] = value; }
+			get { return (bool) base ["cookieSlidingExpiration"]; }
+			set { base ["cookieSlidingExpiration"] = value; }
 		}
 		
+		[ConfigurationValidator (typeof(PositiveTimeSpanValidator))]
+		[TypeConverter (typeof(TimeSpanMinutesOrInfiniteConverter))]
+		[ConfigurationProperty ("cookieTimeout", DefaultValue = "69.10:40:00")]
 		public TimeSpan CookieTimeout {
-			get { return (TimeSpan) base [cookieTimeoutProp]; }
-			set { base [cookieTimeoutProp] = value; }
+			get { return (TimeSpan) base ["cookieTimeout"]; }
+			set { base ["cookieTimeout"] = value; }
 		}
 		
+		[ConfigurationProperty ("domain", DefaultValue = "")]
 		public string Domain {
-			get { return (string) base [domainProp]; }
-			set { base [domainProp] = value; }
+			get { return (string) base ["domain"]; }
+			set { base ["domain"] = value; }
 		}
 		
+	    [ConfigurationProperty ("enabled", DefaultValue = false)]
 		public bool Enabled {
-			get { return (bool) base [enabledProp]; }
-			set { base [enabledProp] = value; }
+			get { return (bool) base ["enabled"]; }
+			set { base ["enabled"] = value; }
 		}
 
 /*		protected override ConfigurationPropertyCollection Properties {

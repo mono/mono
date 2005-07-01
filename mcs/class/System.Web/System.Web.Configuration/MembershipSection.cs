@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.SiteMapSection.cs
+// System.Web.Configuration.MembershipSection.cs
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
@@ -33,32 +33,38 @@
 using System;
 using System.Configuration;
 using System.Web.Security;
+using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class SiteMapSection: InternalSection
+	public sealed class MembershipSection: InternalSection
 	{
-		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetXmlSiteMapProvider")]
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetSqlMembershipProvider")]
 		public string DefaultProvider {
 			get { return (string) base ["defaultProvider"]; }
 			set { base ["defaultProvider"] = value; }
 		}
 		
-		[ConfigurationProperty ("enabled", DefaultValue = true)]
-		public bool Enabled {
-			get { return (bool) base ["enabled"]; }
-			set { base ["enabled"] = value; }
+		[ConfigurationProperty ("hashAlgorithmType", DefaultValue = "")]
+		public string HashAlgorithmType {
+			get { return (string) base ["hashAlgorithmType"]; }
+			set { base ["hashAlgorithmType"] = value; }
 		}
-
+		
 		[ConfigurationProperty ("providers")]
 		public ProviderSettingsCollection Providers {
 			get { return (ProviderSettingsCollection) base ["providers"]; }
 		}
-
-/*		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+		
+		[TypeConverter (typeof(TimeSpanMinutesConverter))]
+		[ConfigurationProperty ("userIsOnlineTimeWindow", DefaultValue = "00:15:00")]
+		[TimeSpanValidator (MinValueString = "00:01:00")]
+		public TimeSpan UserIsOnlineTimeWindow {
+			get { return (TimeSpan) base ["userIsOnlineTimeWindow"]; }
+			set { base ["userIsOnlineTimeWindow"] = value; }
 		}
-*/	}
+	}
 }
 
 #endif

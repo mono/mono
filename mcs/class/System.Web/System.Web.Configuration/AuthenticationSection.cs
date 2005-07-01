@@ -35,7 +35,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public class AuthenticationSection: ConfigurationSection
+	public sealed class AuthenticationSection: ConfigurationSection
 	{
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty formsProp;

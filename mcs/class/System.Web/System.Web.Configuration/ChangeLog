@@ -1,3 +1,22 @@
+2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
+
+	* MembershipSection.cs: Implemented.
+	* SiteMapSection.cs: Define properties using attributes.
+	* AnonymousIdentificationSection.cs: Define properties using attributes.
+	* WebConfigurationManager.cs: return the correct base path for the
+	  root path.
+	* IRemoteWebConfigurationHostServer.cs: Fixed method signatures.
+	* WebConfigurationHost.cs: Added the machine web.config to the web.config
+	file chain. Several fixes in the chain order. Implemented 
+	IsDefinitionAllowed and VerifyDefinitionAllowed.
+
+	* VirtualDirectoryMappingCollection.cs:
+	* WebConfigurationFileMap.cs:
+	* AdapterDictionary.cs:
+	* AuthenticationSection.cs:
+	* AssemblyCollection.cs:
+	* AssemblyInfo.cs: Minor api fixes.
+	
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerItem.cs: the path matches 'path\z', as the previous '\Apath\z'

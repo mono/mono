@@ -33,7 +33,6 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	[Serializable]
 	public sealed class WebConfigurationFileMap: ConfigurationFileMap
 	{
 		VirtualDirectoryMappingCollection virtualDirectories;

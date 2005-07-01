@@ -40,7 +40,8 @@ namespace System.Web.Configuration
 	class WebConfigurationHost: IInternalConfigHost
 	{
 		WebConfigurationFileMap map;
-		const string MachinePath = "machine:";
+		const string MachinePath = ":machine:";
+		const string MachineWebPath = ":web:";
 		
 		public virtual object CreateConfigurationContext (string configPath, string locationSubPath)
 		{
@@ -97,6 +98,13 @@ namespace System.Web.Configuration
 					return System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
 				else
 					return map.MachineConfigFilename;
+			} else if (configPath == MachineWebPath) {
+				if (map == null) {
+					string mdir = Path.GetDirectoryName (System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile);
+					return GetWebConfigFileName (mdir);
+				}
+				else
+					return null;
 			}
 			
 			string dir = MapPath (configPath);
@@ -128,41 +136,46 @@ namespace System.Web.Configuration
 			
 			map = (WebConfigurationFileMap) hostInitConfigurationParams [0];
 			
-			if (locationSubPath == MachinePath) {
+			if (locationSubPath == MachineWebPath) {
+				locationSubPath = MachinePath;
+				configPath = MachineWebPath;
+				locationConfigPath = null;
+			}
+			else if (locationSubPath == MachinePath) {
 				locationSubPath = null;
 				configPath = MachinePath;
 				locationConfigPath = null;
-				return;
 			}
-			
-			int i;
-			if (locationSubPath == null) {
-				configPath = fullPath;
-				i = fullPath.LastIndexOf ("/");
-			} else {
-				configPath = locationSubPath;
-				if (locationSubPath != "/")
-					i = locationSubPath.LastIndexOf ('/');
-				else
-					i = -1;
-			}
-			
-			if (i != -1) {
-				locationConfigPath = configPath.Substring (i+1);
+			else {
 				
-				if (i == 0)
-					locationSubPath = "/";
-				else
-					locationSubPath = fullPath.Substring (0, i);
-				
-				string dir = MapPath (configPath);
-				if (GetWebConfigFileName (dir) == null) {
-					InitForConfiguration (ref locationSubPath, out configPath, out locationConfigPath, root, hostInitConfigurationParams);
+				int i;
+				if (locationSubPath == null) {
+					configPath = fullPath;
+					i = fullPath.LastIndexOf ("/");
+				} else {
+					configPath = locationSubPath;
+					if (locationSubPath != "/")
+						i = locationSubPath.LastIndexOf ('/');
+					else
+						i = -1;
 				}
-			} else {
-				locationSubPath = MachinePath;
-				locationConfigPath = null;
-				return;
+				
+				if (i != -1) {
+					locationConfigPath = configPath.Substring (i+1);
+					
+					if (i == 0)
+						locationSubPath = "/";
+					else
+						locationSubPath = fullPath.Substring (0, i);
+				} else {
+					locationSubPath = MachineWebPath;
+					locationConfigPath = null;
+				}
+			}
+			
+			if (GetStreamName (configPath) == null) {
+				// There is no config file for this path. Get the next one in the chain.
+				InitForConfiguration (ref locationSubPath, out configPath, out locationConfigPath, root, hostInitConfigurationParams);
 			}
 		}
 		
@@ -241,7 +254,15 @@ namespace System.Web.Configuration
 		
 		public virtual bool IsDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
 		{
-			throw new NotImplementedException ();
+			switch (allowDefinition) {
+				case ConfigurationAllowDefinition.MachineOnly:
+					return configPath == MachinePath || configPath == MachineWebPath;
+				case ConfigurationAllowDefinition.MachineToWebRoot:
+				case ConfigurationAllowDefinition.MachineToApplication:
+					return configPath == MachinePath || configPath == MachineWebPath || configPath == "/";
+				default:
+					return true;
+			}
 		}
 		
 		public virtual bool IsFile (string streamName)
@@ -289,7 +310,8 @@ namespace System.Web.Configuration
 		
 		public virtual void VerifyDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition, IConfigErrorInfo errorInfo)
 		{
-			throw new NotImplementedException ();
+			if (!IsDefinitionAllowed (configPath, allowDefinition, allowExeDefinition))
+				throw new ConfigurationErrorsException ("The section can't be defined in this file (the allowed definition context is '" + allowDefinition + "').", errorInfo.Filename, errorInfo.LineNumber);
 		}
 		
 		public virtual void WriteCompleted (string streamName, bool success, object writeContext)

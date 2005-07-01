@@ -33,6 +33,7 @@ using System.Collections.Specialized;
 
 namespace System.Web.Configuration
 {
+	[Serializable]
 	public sealed class VirtualDirectoryMappingCollection: NameObjectCollectionBase
 	{
 		public void Add (string virtualDirectory, VirtualDirectoryMapping mapping)

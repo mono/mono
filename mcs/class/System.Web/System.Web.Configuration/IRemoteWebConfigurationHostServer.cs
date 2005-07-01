@@ -27,23 +27,26 @@
 //
 
 using System.Resources;
+using System.Runtime.InteropServices;
 
 #if NET_2_0
 namespace System.Web.Configuration
 {
-        public interface IRemoteWebConfigurationHostServer
-        {
-                string DoEncryptOrDecrypt (
-                        bool do_encrypt, string xml_string, string protection_provider_name,
-                        string protection_provider_type, string [] params_keys, string [] param_values);
+	[ComVisibleAttribute (true)]
+	[GuidAttribute ("A99B591A-23C6-4238-8452-C7B0E895063D")]
+	public interface IRemoteWebConfigurationHostServer
+	{
+		string DoEncryptOrDecrypt (
+		    bool do_encrypt, string xml_string, string protection_provider_name,
+		    string protection_provider_type, string [] params_keys, string [] param_values);
 
-                byte [] GetData (string filename, out long readTime);
+		byte [] GetData (string filename, out long readTime);
 
-                void GetFileDetails (string name, out bool exists, out long size, out long create_data, out long last_write_date);
+		void GetFileDetails (string name, out bool exists, out long size, out long create_data, out long last_write_date);
 
-                string GetFilePaths (string path, string site);
+		string GetFilePaths (int webLevel, string path, string site, string locationSubPath);
 
-                void WriteData (string file_name, byte [] data, ref long read_time);
-        }
+		void WriteData (string fileName, string templateFileName, byte [] data, ref long readTime);
+	}
 }
 #endif

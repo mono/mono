@@ -138,6 +138,9 @@ namespace System.Web.Configuration {
 		
 		static string GetBasePath (string path)
 		{
+			if (path == "/")
+				return path;
+			
 			string pd = HttpContext.Current.Request.MapPath (path);
 
 			if (!Directory.Exists (pd)) {

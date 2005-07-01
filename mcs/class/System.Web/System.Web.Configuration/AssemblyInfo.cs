@@ -35,7 +35,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public class AssemblyInfo: ConfigurationElement
+	public sealed class AssemblyInfo: ConfigurationElement
 	{
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty assemblyProp;

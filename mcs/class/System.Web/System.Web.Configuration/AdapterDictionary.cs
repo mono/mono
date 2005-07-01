@@ -31,11 +31,12 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Web.Configuration
 {
-	public class AdapterDictionary: Hashtable
+	[Serializable]
+	public class AdapterDictionary: OrderedDictionary
 	{
 		public string this [string key] {
 			get { return (string) base [key]; }
