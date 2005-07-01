@@ -1,3 +1,7 @@
+2005-07-01  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (find_method): Also look in the interfaces; fixes #75429.
+
 2005-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* threads.c (thread_cleanup): assert that thread != NULL
