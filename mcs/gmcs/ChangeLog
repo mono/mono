@@ -1,7 +1,7 @@
 2005-07-01  Martin Baulig  <martin@ximian.com>
 
-	* ecore.cs (FieldExpr.DoResolve): Don't capture the field if it's
-	instance is a ParameterReference; fixes #75299.
+	* ecore.cs (FieldExpr.DoResolve): Only capture the field if it's
+	instance is `This'; fixes #75299.
 
 2005-06-30  Martin Baulig  <martin@ximian.com>
 
