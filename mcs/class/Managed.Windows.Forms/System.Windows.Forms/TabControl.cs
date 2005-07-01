@@ -913,7 +913,7 @@ namespace System.Windows.Forms {
 				int l = page.TabBounds.Left - 4;
 				int r = page.TabBounds.Right + 4;
 				int y = page.TabBounds.Y;
-				int h = page.TabBounds.Height + 2;
+				int h = page.TabBounds.Height + 3;
 
 				if (l < left_edge)
 					l = left_edge;
