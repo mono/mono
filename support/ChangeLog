@@ -1,3 +1,9 @@
+2005-07-01  Daniel Drake  <dsd@gentoo.org>
+
+	* sys-xattr.c: Support FreeBSD's extattr implementation. Slight API rework
+	  to provide transparency between Linux and FreeBSD EA's.
+	* map-icalls.h: Update as above
+
 2005-06-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* supportw.c: HeapDestroy.

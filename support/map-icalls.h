@@ -108,6 +108,7 @@ int Mono_Posix_Syscall_fgetpwent (void* stream, struct Mono_Posix_Syscall__Passw
 gint64 Mono_Posix_Syscall_fgetxattr (int fd, const char* name, void* value, guint64 size);
 gint64 Mono_Posix_Syscall_flistxattr (int fd, void* list, guint64 size);
 gint64 Mono_Posix_Syscall_fpathconf (int filedes, int name);
+int Mono_Posix_Syscall_fremovexattr (int fd, const char* name);
 int Mono_Posix_Syscall_fsetxattr (int fd, const char* name, void* value, guint64 size, int flags);
 int Mono_Posix_Syscall_fstat (int filedes, struct Mono_Posix_Stat* buf);
 int Mono_Posix_Syscall_fstatvfs (int fd, struct Mono_Posix_Statvfs* buf);
@@ -136,6 +137,7 @@ gint64 Mono_Posix_Syscall_lgetxattr (const char* path, const char* name, void* v
 gint64 Mono_Posix_Syscall_listxattr (const char* path, void* list, guint64 size);
 gint64 Mono_Posix_Syscall_llistxattr (const char* path, void* list, guint64 size);
 int Mono_Posix_Syscall_lockf (int fd, int cmd, gint64 len);
+int Mono_Posix_Syscall_lremovexattr (const char* path, const char* name);
 gint64 Mono_Posix_Syscall_lseek (int fd, gint64 offset, int whence);
 int Mono_Posix_Syscall_lsetxattr (const char* path, const char* name, void* value, guint64 size, int flags);
 int Mono_Posix_Syscall_lstat (const char* file_name, struct Mono_Posix_Stat* buf);
@@ -162,6 +164,7 @@ int Mono_Posix_Syscall_readdir (void* dir, struct Mono_Posix_Syscall__Dirent* de
 int Mono_Posix_Syscall_readdir_r (void* dirp, struct Mono_Posix_Syscall__Dirent* entry, void** result);
 int Mono_Posix_Syscall_readlink (const char* path, char* buf, guint64 bufsiz);
 int Mono_Posix_Syscall_remap_file_pages (void* start, guint64 size, int prot, gint64 pgoff, int flags);
+int Mono_Posix_Syscall_removexattr (const char* path, const char* name);
 int Mono_Posix_Syscall_seekdir (void* dir, gint64 offset);
 gint64 Mono_Posix_Syscall_sendfile (int out_fd, int in_fd, gint64* offset, guint64 count);
 int Mono_Posix_Syscall_setdomainname (const char* name, guint64 len);
