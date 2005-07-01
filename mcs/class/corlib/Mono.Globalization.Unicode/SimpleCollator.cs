@@ -421,13 +421,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return null;
 		}
 
-		// FIXME: It should not be used, since it disregards both
-		// sortkey maps and replacement map from two or more chars.
-		string GetExpansion (int i)
-		{
-			return Uni.GetExpansion ((char) i);
-		}
-
 		int FilterOptions (int i)
 		{
 			if (ignoreWidth)

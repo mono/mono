@@ -1,5 +1,10 @@
 2005-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.template,
+	  SimpleCollator.cs : removed extraneous GetExpansion().
+
+2005-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : IsSuffix() also supports contractions.
 	* TestDriver.cs : IsSuffix() example contraction cases.
 
