@@ -49,3 +49,8 @@ cs1638.cs NO ERROR
 cs1641.cs
 cs1666.cs NO ERROR
 cs2007.cs
+
+
+cs0115-4.cs             # reverted r46725 in MCS
+cs0657-15.cs NO ERROR   # reverted r46725 in MCS
+cs8628.cs               # reverted r46725 in MCS
