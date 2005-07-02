@@ -113,24 +113,26 @@ namespace MonoTests.Microsoft.VisualBasic
 			type.Name = "Test1";
 
 			CodeMemberEvent evt = new CodeMemberEvent ();
-			evt.Name = "OnClick";
+			evt.Name = "Click";
 			evt.Attributes = MemberAttributes.Public;
 			evt.Type = new CodeTypeReference(typeof (int));
 			type.Members.Add (evt);
 
 			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"Public Class Test1{0}    {0}    "
-				+ "Public Event OnClick As Integer{0}"
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Event Click As Integer{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 
+		[Test]
 		public void EventImplementationTypes ()
 		{
 			type.Name = "Test1";
 
 			CodeMemberEvent evt = new CodeMemberEvent ();
-			evt.Name = "OnClick";
+			evt.Name = "Click";
 			evt.Attributes = MemberAttributes.FamilyAndAssembly;
 			evt.Type = new CodeTypeReference (typeof (int));
 			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
@@ -139,8 +141,70 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			Generate ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"Public Class Test1{0}    {0}    "
-				+ "Friend Event OnClick As Integer Implements IPolicy.OnClick , IWhatever.OnClick{0}"
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Friend Event Click As Integer Implements IPolicy.Click , IWhatever.Click{0}"
+#else
+				+ "    Friend Event Click As Integer{0}"
+#endif
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure no access modifiers are output if PrivateImplementationType
+		/// is set.
+		/// </summary>
+		[Test]
+		public void EventPrivateImplementationType ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "Click";
+			evt.Attributes = MemberAttributes.Family | MemberAttributes.Overloaded;
+			evt.Type = new CodeTypeReference (typeof (int));
+			evt.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Protected Event System_Int32_Click As Integer Implements Integer.Click{0}"
+#else
+				+ "    Protected Event Click As Integer{0}"
+#endif
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// If both ImplementationTypes and PrivateImplementationType are set,
+		/// then only ImplementationTypes are output.
+		/// </summary>
+		[Test]
+		public void EventImplementationTypeOrder ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "Click";
+			evt.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			evt.Type = new CodeTypeReference (typeof (int));
+			evt.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Public Event System_Int32_Click As Integer Implements IPolicy.Click{0}"
+#else
+				+ "    Public Event Click As Integer{0}"
+#endif
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 
@@ -479,6 +543,70 @@ namespace MonoTests.Microsoft.VisualBasic
 				+ "End Class{0}", writer.NewLine), Code);
 		}
 
+		/// <summary>
+		/// Ensures Default keyword is output after ReadOnly modifier.
+		/// </summary>
+		[Test]
+		public void PropertyIndexerGetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Family;
+			property.HasGet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Protected Overridable Default ReadOnly Property iTem(ByVal value1 As Object) As Integer{0}"
+				+ "        Get{0}"
+				+ "        End Get{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensures Default keyword is output after WriteOnly modifier.
+		/// </summary>
+		[Test]
+		public void PropertyIndexerSetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Family;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Protected Overridable Default WriteOnly Property iTem(ByVal value1 As Object) As Integer{0}"
+				+ "        Set{0}"
+				+ "        End Set{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
 		[Test]
 		public void PropertyImplementationTypes ()
 		{
@@ -501,6 +629,172 @@ namespace MonoTests.Microsoft.VisualBasic
 #else
 				+ "    Public Overridable Property Name As Integer Implements IPolicy.Name , IWhatever.Name{0}"
 #endif
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure that Overloads keyword is output for a property which has
+		/// explicitly been marked as Overloaded.
+		/// </summary>
+		[Test]
+		public void PropertyOverloadsTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Public Overloads Overridable Property Name() As Integer{0}"
+#else
+				+ "    Public Overloads Overridable Property Name As Integer{0}"
+#endif
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure that Overloads keyword is output if multiple properties with
+		/// the same name are defined.
+		/// </summary>
+		[Test]
+		public void PropertyOverloadsTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Private;
+			property.Type = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Public Overloads Overridable Property Name() As Integer{0}"
+#else
+				+ "    Public Overloads Overridable Property Name As Integer{0}"
+#endif
+				+ "    End Property{0}"
+				+ "    {0}"
+				+ "    Private Overloads Property Name(ByVal value1 As Object) As Integer{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure that a property with a PrivateImplementationType and with 
+		/// the same name does not qualify as an overload.
+		/// </summary>
+		[Test]
+		public void PropertyOverloadsTest3 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Private;
+			property.Type = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    Public Overridable Property Name() As Integer{0}"
+#else
+				+ "    Public Overridable Property Name As Integer{0}"
+#endif
+				+ "    End Property{0}"
+				+ "    {0}"
+				+ "    Property System_Int32_Name(ByVal value1 As Object) As Integer Implements Integer.Name{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure no access modifiers are output if PrivateImplementationType
+		/// is set. Default keyword is also not output in this case.
+		/// </summary>
+		[Test]
+		public void PropertyPrivateImplementationType ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Item";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Type = new CodeTypeReference (typeof (int));
+			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Overridable Property System_Int32_Item(ByVal value1 As Object) As Integer Implements Integer.Item{0}"
+				+ "    End Property{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// If both ImplementationTypes and PrivateImplementationType are set,
+		/// then only ImplementationTypes are output.
+		/// </summary>
+		[Test]
+		public void PropertyImplementationTypeOrder ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Item";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Type = new CodeTypeReference (typeof (int));
+			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			property.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Overridable Property System_Int32_Item(ByVal value1 As Object) As Integer Implements IPolicy.Item{0}"
 				+ "    End Property{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}
@@ -645,6 +939,158 @@ namespace MonoTests.Microsoft.VisualBasic
 #else
 				+ "    Friend Function Execute() As Integer Implements IPolicy.Execute , IWhatever.Execute{0}"
 #endif
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure that Overloads keyword is output for a method which has
+		/// explicitly been marked as Overloaded.
+		/// </summary>
+		[Test]
+		public void MethodOverloadsTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overloads Overridable Function Execute() As Integer{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure that Overloads keyword is output if multiple methods with
+		/// the same name are defined.
+		/// </summary>
+		[Test]
+		public void MethodOverloadsTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			type.Members.Add (method);
+
+			method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Private;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overloads Overridable Sub Execute(){0}"
+				+ "    End Sub{0}"
+				+ "    {0}"
+				+ "    Private Overloads Function Execute(ByVal value1 As Object) As Integer{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure that a method with a PrivateImplementationType and with 
+		/// the same name does not qualify as an overload.
+		/// </summary>
+		[Test]
+		public void MethodOverloadsTest3 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			type.Members.Add (method);
+
+			method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Private;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Public Overridable Sub Execute(){0}"
+				+ "    End Sub{0}"
+				+ "    {0}"
+				+ "    Function System_Int32_Execute(ByVal value1 As Object) As Integer Implements Integer.Execute{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure no access modifiers are output if PrivateImplementationType
+		/// is set.
+		/// </summary>
+		[Test]
+		public void MethodPrivateImplementationType ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Overridable Function System_Int32_Execute(ByVal value1 As Object) As Integer Implements Integer.Execute{0}"
+				+ "    End Function{0}"
+				+ "End Class{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// If both ImplementationTypes and PrivateImplementationType are set,
+		/// then only ImplementationTypes are output.
+		/// </summary>
+		[Test]
+		public void MethodImplementationTypeOrder ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			method.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}"
+				+ "    {0}"
+				+ "    Overridable Function System_Int32_Execute(ByVal value1 As Object) As Integer Implements IPolicy.Execute{0}"
 				+ "    End Function{0}"
 				+ "End Class{0}", writer.NewLine), Code);
 		}

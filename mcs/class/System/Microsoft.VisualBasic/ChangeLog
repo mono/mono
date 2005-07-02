@@ -1,3 +1,9 @@
+2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Added PrivateImplementationType support for
+	properties, methods and event (2.0 only). Added Overloads support
+	for properties and methods.
+
 2005-07-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Added ImplementationTypes support for

@@ -575,11 +575,18 @@ namespace Microsoft.VisualBasic
 			OutputMemberScopeModifier (attributes | MemberAttributes.Final);  // Don't output "Overridable"
 
 			output.Write ("Event ");
-			OutputTypeNamePair (eventRef.Type, eventRef.Name);
+			OutputTypeNamePair (eventRef.Type, GetEventName(eventRef));
 
+#if NET_2_0
 			if (eventRef.ImplementationTypes.Count > 0) {
 				OutputImplementationTypes (eventRef.ImplementationTypes, eventRef.Name);
+			} else if (eventRef.PrivateImplementationType != null) {
+				output.Write (" Implements ");
+				OutputType (eventRef.PrivateImplementationType);
+				output.Write ('.');
+				output.Write (eventRef.Name);
 			}
+#endif
 
 			output.WriteLine ();
 		}
@@ -620,7 +627,7 @@ namespace Microsoft.VisualBasic
 		[MonoTODO ("partially implemented")]
 		protected override void GenerateMethod (CodeMemberMethod method, CodeTypeDeclaration declaration)
 		{
-			bool isSub = method.ReturnType == null || method.ReturnType.BaseType == "System.Void";
+			bool isSub = method.ReturnType.BaseType == typeof(void).FullName;
 
 			TextWriter output = Output;
 
@@ -628,7 +635,14 @@ namespace Microsoft.VisualBasic
 				LineHandling.ContinueLine);
 
 			MemberAttributes attributes = method.Attributes;
-			OutputMemberAccessModifier (attributes);
+
+			if (method.PrivateImplementationType == null) {
+				OutputMemberAccessModifier (attributes);
+				if (IsOverloaded (method, declaration)) {
+					output.Write ("Overloads ");
+				}
+			}
+
 			OutputMemberScopeModifier (attributes);
 
 			if (isSub)
@@ -636,7 +650,7 @@ namespace Microsoft.VisualBasic
 			else
 				output.Write ("Function ");
 
-			output.Write (method.Name);
+			output.Write (GetMethodName(method));
 			output.Write ('(');
 			OutputParameters (method.Parameters);
 			output.Write (')');
@@ -648,9 +662,12 @@ namespace Microsoft.VisualBasic
 
 			if (method.ImplementationTypes.Count > 0) {
 				OutputImplementationTypes (method.ImplementationTypes, method.Name);
+			} else if (method.PrivateImplementationType != null) {
+				output.Write (" Implements ");
+				OutputType (method.PrivateImplementationType);
+				output.Write ('.');
+				output.Write (method.Name);
 			}
-
-			// TODO private implementations
 
 			if ((attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract)
 				output.WriteLine ();
@@ -674,8 +691,18 @@ namespace Microsoft.VisualBasic
 				LineHandling.ContinueLine);
 
 			MemberAttributes attributes = property.Attributes;
-			OutputMemberAccessModifier (attributes);
+			if (property.PrivateImplementationType == null) {
+				OutputMemberAccessModifier (attributes);
+				if (IsOverloaded (property, declaration)) {
+					output.Write ("Overloads ");
+				}
+			}
 			OutputMemberScopeModifier (attributes);
+
+			// mark property as default property if we're dealing with an indexer
+			if (string.Compare (GetPropertyName(property), "Item", true, CultureInfo.InvariantCulture) == 0 && property.Parameters.Count > 0) {
+				output.Write ("Default ");
+			}
 
 			if (property.HasGet && (!property.HasSet))
 				output.Write ("ReadOnly " );
@@ -683,13 +710,8 @@ namespace Microsoft.VisualBasic
 			if (property.HasSet && (!property.HasGet))
 				output.Write ("WriteOnly " );
 
-			// mark property as default property if we're dealing with an indexer
-			if (string.Compare(property.Name, "Item", true, CultureInfo.InvariantCulture) == 0 && property.Parameters.Count > 0) {
-				output.Write ("Default " );
-			}
-
-			output.Write ("Property " );
-			Output.Write (property.Name);
+			output.Write ("Property ");
+			Output.Write (GetPropertyName (property));
 #if NET_2_0
 			// in .NET 2.0, always output parantheses (whether or not there 
 			// are any parameters to output
@@ -708,6 +730,11 @@ namespace Microsoft.VisualBasic
 
 			if (property.ImplementationTypes.Count > 0) {
 				OutputImplementationTypes (property.ImplementationTypes, property.Name);
+			} else if (property.PrivateImplementationType != null) {
+				output.Write (" Implements ");
+				OutputType (property.PrivateImplementationType);
+				output.Write ('.');
+				output.Write (property.Name);
 			}
 
 			output.WriteLine ();
@@ -1362,6 +1389,80 @@ namespace Microsoft.VisualBasic
 		protected override bool Supports (GeneratorSupport supports)
 		{
 			return true;
+		}
+
+		private bool IsOverloaded (CodeMemberProperty property, CodeTypeDeclaration type)
+		{
+			if ((property.Attributes & MemberAttributes.Overloaded) == MemberAttributes.Overloaded) {
+				return true;
+			}
+
+			foreach (CodeTypeMember member in type.Members) {
+				CodeMemberProperty p = member as CodeMemberProperty;
+				if (p == null) {
+					// member is not a property
+					continue;
+				}
+
+				if (p != property && p.Name == property.Name && p.PrivateImplementationType == null) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private bool IsOverloaded (CodeMemberMethod method, CodeTypeDeclaration type)
+		{
+			if ((method.Attributes & MemberAttributes.Overloaded) == MemberAttributes.Overloaded) {
+				return true;
+			}
+
+			foreach (CodeTypeMember member in type.Members) {
+				CodeMemberMethod m = member as CodeMemberMethod;
+				if (m == null) {
+					// member is not a method
+					continue;
+				}
+
+				if (!(m is CodeTypeConstructor) && !(m is CodeConstructor) && m != method && m.Name == method.Name && m.PrivateImplementationType == null) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private string GetEventName (CodeMemberEvent evt)
+		{
+#if NET_2_0
+			if (evt.PrivateImplementationType == null) {
+				return evt.Name;
+			}
+
+			string baseType = evt.PrivateImplementationType.BaseType.Replace ('.', '_');
+			return baseType + "_" + evt.Name;
+#else
+			return evt.Name;
+#endif
+		}
+
+		private string GetMethodName (CodeMemberMethod method)
+		{
+			if (method.PrivateImplementationType == null) {
+				return method.Name;
+			}
+
+			string baseType = method.PrivateImplementationType.BaseType.Replace ('.', '_');
+			return baseType + "_" + method.Name;
+		}
+
+		private string GetPropertyName (CodeMemberProperty property)
+		{
+			if (property.PrivateImplementationType == null) {
+				return property.Name;
+			}
+
+			string baseType = property.PrivateImplementationType.BaseType.Replace ('.', '_');
+			return baseType + "_" + property.Name;
 		}
 
 		private enum LineHandling
