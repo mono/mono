@@ -41,6 +41,9 @@ namespace System.IO {
 	
 	[Serializable]
 	[FileIOPermission (SecurityAction.InheritanceDemand, Unrestricted = true)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class FileSystemInfo : MarshalByRefObject, ISerializable {
 		#region Implementation of ISerializable
 
@@ -239,13 +242,13 @@ namespace System.IO {
 		internal void CheckPath (string path)
 		{
 			if (path == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("path");
 			
 			if (path.Length == 0)
-				throw new ArgumentException ("empty path");
+				throw new ArgumentException ("path", Locale.GetText ("Empty path."));
 			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Invalid characters in path.");
+				throw new ArgumentException ("path", Locale.GetText ("Invalid characters in path."));
 		}
 
 		internal MonoIOStat stat;

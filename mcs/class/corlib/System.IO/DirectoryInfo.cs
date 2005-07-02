@@ -8,10 +8,7 @@
 //
 // Copyright (C) 2002 Ximian, Inc.
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
-// 
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,19 +30,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.IO {
 	
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class DirectoryInfo : FileSystemInfo {
 	
-		public DirectoryInfo (string path) {
+		public DirectoryInfo (string path)
+		{
 			CheckPath (path);
-		
-			OriginalPath = path;
+
 			FullPath = Path.GetFullPath (path);
+	
+			char end = path [path.Length - 1];
+			if ((end == Path.DirectorySeparatorChar) || (end == Path.AltDirectorySeparatorChar))
+				FullPath += Path.DirectorySeparatorChar;
+
+			OriginalPath = path;
 		}
 
 		// properties

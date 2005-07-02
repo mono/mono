@@ -1,3 +1,10 @@
+2005-07-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileSystemInfo.cs: Fixed exception arguments. Added ComVisible for
+	NET_2_0.
+	* DirectoryInfo.cs: Fixed bug #75443 when the directory ends with a
+	separator. Added ComVisible for NET_2_0. Normalized line endings.
+
 2005-05-26  Miguel de Icaza  <miguel@novell.com>
 
 	* File.cs (ReadAllBytes): add.
