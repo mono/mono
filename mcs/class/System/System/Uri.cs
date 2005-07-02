@@ -646,49 +646,10 @@ namespace System
 			if (!IsHexEncoding (pattern, index))
 				return pattern [index++];
 
-			int stage = 0;
-			int c = 0;
-			int b = 0;
-			bool looped = false;
-			do {
-				index++;
-				int msb = FromHex (pattern [index++]);
-				int lsb = FromHex (pattern [index++]);
-				b = (msb << 4) + lsb;
-				if (!IsHexEncoding (pattern, index)) {
-					if (looped)
-						c += (b - 0x80) << ((stage - 1) * 6);
-					else
-						c = b;
-					break;
-				} else if (stage == 0) {
-					if (b < 0xc0)
-						return (char) b;
-					else if (b < 0xE0) {
-						c = b - 0xc0;
-						stage = 2;
-					} else if (b < 0xF0) {
-						c = b - 0xe0;
-						stage = 3;
-					} else if (b < 0xF8) {
-						c = b - 0xf0;
-						stage = 4;
-					} else if (b < 0xFB) {
-						c = b - 0xf8;
-						stage = 5;
-					} else if (b < 0xFE) {
-						c = b - 0xfc;
-						stage = 6;
-					}
-					c <<= (stage - 1) * 6;
-				} else {
-					c += (b - 0x80) << ((stage - 1) * 6);
-				}
-				stage--;
-				looped = true;
-			} while (stage > 0);
-			
-			return (char) c;
+			index++;
+			int msb = FromHex (pattern [index++]);
+			int lsb = FromHex (pattern [index++]);
+			return (char) ((msb << 4) | lsb);
 		}
 
 		public static bool IsHexDigit (char digit) 
@@ -837,11 +798,15 @@ namespace System
 			for (int i = 0; i < len; i++) {
 				char c = str [i];
 				if (c == '%') {
-					char x = HexUnescape (str, ref i);
+					char surrogate;
+					char x = HexUnescapeMultiByte (str, ref i, out surrogate);
 					if (excludeSharp && x == '#')
 						s.Append ("%23");
-					else
+					else {
 						s.Append (x);
+						if (surrogate != char.MinValue)
+							s.Append (surrogate);
+					}
 					i--;
 				} else
 					s.Append (c);
@@ -1122,7 +1087,96 @@ namespace System
 				
 			return res;
 		}
+
+		// A variant of HexUnescape() which can decode multi-byte escaped
+		// sequences such as (e.g.) %E3%81%8B into a single character
+		private static char HexUnescapeMultiByte (string pattern, ref int index, out char surrogate) 
+		{
+			surrogate = char.MinValue;
+
+			if (pattern == null) 
+				throw new ArgumentException ("pattern");
 				
+			if (index < 0 || index >= pattern.Length)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (!IsHexEncoding (pattern, index))
+				return pattern [index++];
+
+			int orig_index = index++;
+			int msb = FromHex (pattern [index++]);
+			int lsb = FromHex (pattern [index++]);
+
+			// We might be dealing with a multi-byte character:
+			// The number of ones at the top-end of the first byte will tell us
+			// how many bytes will make up this character.
+			int msb_copy = msb;
+			int num_bytes = 0;
+			while ((msb_copy & 0x8) == 0x8) {
+				num_bytes++;
+				msb_copy <<= 1;
+			}
+
+			// We might be dealing with a single-byte character:
+			// If there was only 0 or 1 leading ones then we're not dealing
+			// with a multi-byte character.
+			if (num_bytes <= 1)
+				return (char) ((msb << 4) | lsb);
+
+			// Now that we know how many bytes *should* follow, we'll check them
+			// to ensure we are dealing with a valid multi-byte character.
+			byte [] chars = new byte [num_bytes];
+			bool all_invalid = false;
+			chars[0] = (byte) ((msb << 4) | lsb);
+
+			for (int i = 1; i < num_bytes; i++) {
+				if (!IsHexEncoding (pattern, index++)) {
+					all_invalid = true;
+					break;
+				}
+
+				// All following bytes must be in the form 10xxxxxx
+				int cur_msb = FromHex (pattern [index++]);
+				if ((cur_msb & 0xc) != 0x8) {
+					all_invalid = true;
+					break;
+				}
+
+				int cur_lsb = FromHex (pattern [index++]);
+				chars[i] = (byte) ((cur_msb << 4) | cur_lsb);
+			}
+
+			// If what looked like a multi-byte character is invalid, then we'll
+			// just return the first byte as a single byte character.
+			if (all_invalid) {
+				index = orig_index + 3;
+				return (char) chars[0];
+			}
+
+			// Otherwise, we're dealing with a valid multi-byte character.
+			// We need to ignore the leading ones from the first byte:
+			byte mask = (byte) 0xFF;
+			mask >>= (num_bytes + 1);
+			int result = chars[0] & mask;
+
+			// The result will now be built up from the following bytes.
+			for (int i = 1; i < num_bytes; i++) {
+				// Ignore upper two bits
+				result <<= 6;
+				result |= (chars[i] & 0x3F);
+			}
+
+			if (result <= 0xFFFF) {
+				return (char) result;
+			} else {
+				// We need to handle this as a UTF16 surrogate (i.e. return
+				// two characters)
+				result -= 0x10000;
+				surrogate = (char) ((result & 0x3FF) | 0xDC00);
+				return (char) ((result >> 10) | 0xD800);
+			}
+		}
+
 		private struct UriScheme 
 		{
 			public string scheme;

@@ -1,3 +1,10 @@
+2005-07-02  Daniel Drake  <dsd@gentoo.org>
+
+	* Uri.cs: HexUnescape() should only work on single-byte escape
+	sequences, ala HexEscape(). However, we still want to handle multi-byte
+	sequences internally, so introduce a more correct implementation of
+	multi-byte unescaping, HexUnescapeMultiByte(). Fixes bug #74872.
+
 2005-06-11 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Uri.cs: Domain address might have trailing period to indicate
