@@ -104,10 +104,12 @@ namespace Microsoft.JScript {
 
 		public override string Message {
 			get {
-				if (error_number == JSError.ArrayLengthConstructIncorrect) 
+				if (error_number == JSError.ArrayLengthConstructIncorrect)
 					return "Array length must be zero or a positive integer";
-				else
+				else {
+					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
 					throw new NotImplementedException ();
+				}
 			}
 		}
 
