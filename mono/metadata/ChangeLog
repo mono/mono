@@ -1,3 +1,9 @@
+2005-07-02  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h
+	(MonoGenericClass): Move `count_ifaces' and `ifaces' into
+	`MonoDynamicGenericClass'.	
+
 2005-07-01  Lluis Sanchez  <lluis@ximian.com>
 
 	* icall.c: In ves_icall_InternalExecute() dont't assert if the value
