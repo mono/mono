@@ -245,6 +245,20 @@ namespace MonoTests.System.IO
 				DeleteDir (path);
 			}
 		}
+
+		[Test]
+		// from bug #75443
+		public void FullName ()
+		{
+			DirectoryInfo di = new DirectoryInfo ("something");
+			Assert ("FullName", di.FullName.EndsWith ("something"));
+
+			di = new DirectoryInfo ("something" + Path.DirectorySeparatorChar);
+			AssertEquals ("DirectorySeparatorChar", Path.DirectorySeparatorChar, di.FullName [di.FullName.Length - 1]);
+
+			di = new DirectoryInfo ("something" + Path.AltDirectorySeparatorChar);
+			AssertEquals ("AltDirectorySeparatorChar", Path.DirectorySeparatorChar, di.FullName [di.FullName.Length - 1]);
+		}
 		
 		[Test]
 		public void GetDirectories1 ()

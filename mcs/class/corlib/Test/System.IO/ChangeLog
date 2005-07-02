@@ -1,3 +1,7 @@
+2005-07-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryInfoTest.cs: Added tests for FullName (bug #75443).
+
 2005-06-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryInfoTest.cs: Added tests for bug #75285.
