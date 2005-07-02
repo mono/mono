@@ -395,6 +395,45 @@ namespace MonoTests.System
 			AssertEquals ("#6", 5, i);
 			AssertEquals ("#7", '%', Uri.HexUnescape ("testx%xx", ref i));
 			AssertEquals ("#8", 6, i);
+
+			// Tests from bug 74872 - don't handle multi-byte characters as multi-byte
+			i = 1;
+			AssertEquals ("#9", 227, (int) Uri.HexUnescape ("a%E3%81%8B", ref i));
+			AssertEquals ("#10", 4, i);
+			i = 1;
+			AssertEquals ("#11", 240, (int) Uri.HexUnescape ("a%F0%90%84%80", ref i));
+			AssertEquals ("#12", 4, i);
+		}
+
+		[Test]
+		public void HexUnescapeMultiByte () 
+		{
+			// Tests from bug 74872
+			// Note: These won't pass exactly with MS.NET, due to differences in the
+			// handling of backslashes/forwardslashes
+			Uri uri;
+			string path;
+
+			// 3-byte character
+			uri = new Uri ("file:///foo/a%E3%81%8Bb", true);
+			path = uri.LocalPath;
+			AssertEquals ("#1", 8, path.Length);
+			AssertEquals ("#2", 0x304B, path [6]);
+
+			// 4-byte character which should be handled as a surrogate
+			uri = new Uri ("file:///foo/a%F3%A0%84%80b", true);
+			path = uri.LocalPath;
+			AssertEquals ("#3", 9, path.Length);
+			AssertEquals ("#4", 0xDB40, path [6]);
+			AssertEquals ("#5", 0xDD00, path [7]);
+			AssertEquals ("#6", 0x62, path [8]);
+			
+			// 2-byte escape sequence, 2 individual characters
+			uri = new Uri ("file:///foo/a%C2%F8b", true);
+			path = uri.LocalPath;
+			AssertEquals ("#7", 9, path.Length);
+			AssertEquals ("#8", 0xC2, path [6]);
+			AssertEquals ("#9", 0xF8, path [7]);			
 		}
 
 		[Test]

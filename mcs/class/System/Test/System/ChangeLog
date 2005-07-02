@@ -1,3 +1,8 @@
+2005-07-02  Daniel Drake  <dsd@gentoo.org>
+
+	* UriTest.cs: Add some tests for the new multi-byte escaping
+	implementation in bug #74872
+
 2005-06-11 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* UriTest.cs: modify tests to reflect fix for bug #75230.
