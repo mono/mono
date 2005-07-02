@@ -529,10 +529,19 @@ namespace Mono.CSharp
 		{
 			OutputAttributes (eventRef.CustomAttributes, null, false);
 
-			OutputMemberAccessModifier (eventRef.Attributes);
-			OutputMemberScopeModifier (eventRef.Attributes | MemberAttributes.Final); // Don't output "virtual"
+			if (eventRef.PrivateImplementationType == null) {
+				OutputMemberAccessModifier (eventRef.Attributes);
+			}
+
 			Output.Write ("event ");
-			OutputTypeNamePair (eventRef.Type, GetSafeName (eventRef.Name));
+
+			if (eventRef.PrivateImplementationType != null) {
+				OutputTypeNamePair (eventRef.Type,
+					eventRef.PrivateImplementationType.BaseType + "." + 
+					eventRef.Name);
+			} else {
+				OutputTypeNamePair (eventRef.Type, GetSafeName (eventRef.Name));
+			}
 			Output.WriteLine (';');
 		}
 
@@ -584,47 +593,45 @@ namespace Mono.CSharp
 			OutputAttributes (method.CustomAttributes, null, false);
 
 			if (method.ReturnTypeCustomAttributes.Count > 0)
-				OutputAttributeDeclarations( method.ReturnTypeCustomAttributes );
+				OutputAttributeDeclarations (method.ReturnTypeCustomAttributes);
 
 			MemberAttributes attributes = method.Attributes;
 
-			if (method.PrivateImplementationType == null && !declaration.IsInterface)
-				OutputMemberAccessModifier( attributes );
+			if (method.PrivateImplementationType == null && !declaration.IsInterface) {
+				OutputMemberAccessModifier (attributes);
+				OutputMemberScopeModifier (attributes);
+			}
 
-			if (!declaration.IsInterface)
-				OutputMemberScopeModifier( attributes );
-
-			OutputType( method.ReturnType );
-
-			output.Write( ' ' );
+			OutputType (method.ReturnType);
+			output.Write (' ');
 
 			CodeTypeReference privateType = method.PrivateImplementationType;
-			if ( privateType != null ) {
-				OutputType( privateType );
-				output.Write( '.' );
+			if (privateType != null) {
+				output.Write (privateType.BaseType);
+				output.Write ('.');
 			}
-			output.Write( GetSafeName (method.Name) );
+			output.Write (GetSafeName (method.Name));
 
 #if NET_2_0
 			GenerateGenericsParameters (method.TypeParameters);
 #endif
 
-			output.Write( '(' );
-			OutputParameters( method.Parameters );
-			output.Write( ')' );
+			output.Write ('(');
+			OutputParameters (method.Parameters);
+			output.Write (')');
 
 #if NET_2_0
 			GenerateGenericsConstraints (method.TypeParameters);
 #endif
 
 			if ( (attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract || declaration.IsInterface)
-				output.WriteLine( ';' );
+				output.WriteLine (';');
 			else {
-				output.WriteLine( " {" );
+				output.WriteLine (" {");
 				++Indent;
-				GenerateStatements( method.Statements );
+				GenerateStatements (method.Statements);
 				--Indent;
-				output.WriteLine( '}' );
+				output.WriteLine ('}');
 			}
 		}
 
@@ -635,19 +642,28 @@ namespace Mono.CSharp
 
 			OutputAttributes (property.CustomAttributes, null, false);
 
-			MemberAttributes attributes = property.Attributes;
-			OutputMemberAccessModifier (attributes);
-			OutputMemberScopeModifier (attributes);
+			if (property.PrivateImplementationType == null) {
+				MemberAttributes attributes = property.Attributes;
+				OutputMemberAccessModifier (attributes);
+				OutputMemberScopeModifier (attributes);
+			}
+
+			OutputType (property.Type);
+			output.Write (' ');
+
+			if (property.PrivateImplementationType != null) {
+				output.Write (property.PrivateImplementationType.BaseType);
+				output.Write ('.');
+			}
 
 			// only consider property indexer if name is Item (case-insensitive 
 			// comparison) AND property has parameters
 			if (string.Compare(property.Name, "Item", true, CultureInfo.InvariantCulture) == 0 && property.Parameters.Count > 0) {
-				OutputTypeNamePair(property.Type, "this");
-				output.Write("[");
+				output.Write ("this[");
 				OutputParameters(property.Parameters);
-				output.Write("]");
+				output.Write(']');
 			} else {
-				OutputTypeNamePair( property.Type, GetSafeName (property.Name));
+				output.Write (property.Name);
 			}
 			output.WriteLine (" {");
 			++Indent;

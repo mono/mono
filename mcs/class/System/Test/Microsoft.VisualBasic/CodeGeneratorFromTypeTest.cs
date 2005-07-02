@@ -114,7 +114,9 @@ namespace MonoTests.Microsoft.VisualBasic
 
 			CodeMemberEvent evt = new CodeMemberEvent ();
 			evt.Name = "Click";
-			evt.Attributes = MemberAttributes.Public;
+			evt.Attributes = MemberAttributes.Public | MemberAttributes.Override 
+				| MemberAttributes.Static | MemberAttributes.Abstract | 
+				MemberAttributes.New;
 			evt.Type = new CodeTypeReference(typeof (int));
 			type.Members.Add (evt);
 

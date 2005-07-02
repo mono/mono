@@ -119,7 +119,9 @@ namespace MonoTests.Microsoft.CSharp
 
 			CodeMemberEvent evt = new CodeMemberEvent ();
 			evt.Name = "OnClick";
-			evt.Attributes = MemberAttributes.Public;
+			evt.Attributes = MemberAttributes.Public | MemberAttributes.Override
+				| MemberAttributes.Static | MemberAttributes.Abstract |
+				MemberAttributes.New;
 			evt.Type = new CodeTypeReference (typeof (int));
 			// C# does not support Implementation Types, so this should be ignored
 			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
@@ -130,6 +132,76 @@ namespace MonoTests.Microsoft.CSharp
 				"public class Test1 {{{0}"
 				+ "    {0}"
 				+ "    public event int OnClick;{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void EventImplementationTypes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "Click";
+			evt.Attributes = MemberAttributes.FamilyAndAssembly;
+			evt.Type = new CodeTypeReference (typeof (int));
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    internal event int Click;{0}"
+#else
+				+ "    /*FamANDAssem*/ internal event int Click;{0}"
+#endif
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure no access modifiers are output if PrivateImplementationType
+		/// is set.
+		/// </summary>
+		[Test]
+		public void EventPrivateImplementationType ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "Click";
+			evt.Attributes = MemberAttributes.Family | MemberAttributes.Overloaded;
+			evt.Type = new CodeTypeReference (typeof (int));
+			evt.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    event int System.Int32.Click;{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void EventImplementationTypeOrder ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberEvent evt = new CodeMemberEvent ();
+			evt.Name = "Click";
+			evt.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			evt.Type = new CodeTypeReference (typeof (int));
+			evt.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			type.Members.Add (evt);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    event int System.Int32.Click;{0}"
 				+ "}}{0}", writer.NewLine), Code);
 		}
 
@@ -421,6 +493,224 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public void PropertyIndexerGetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Family;
+			property.HasGet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    protected virtual int this[object value1] {{{0}"
+				+ "        get {{{0}"
+				+ "        }}{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyIndexerSetOnly ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			// ensure case-insensitive comparison is done on name of property
+			property.Name = "iTem";
+			property.Attributes = MemberAttributes.Family;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (int));
+
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    protected virtual int this[object value1] {{{0}"
+				+ "        set {{{0}"
+				+ "        }}{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyImplementationTypes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			property.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			property.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int Name {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyOverloadsTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int Name {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyOverloadsTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Private;
+			property.Type = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int Name {{{0}"
+				+ "    }}{0}"
+				+ "    {0}"
+				+ "    private int Name {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyOverloadsTest3 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public;
+			property.Type = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Private;
+			property.Type = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int Name {{{0}"
+				+ "    }}{0}"
+				+ "    {0}"
+				+ "    int System.Int32.Name {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure no access modifiers are output if PrivateImplementationType
+		/// is set.
+		/// </summary>
+		[Test]
+		public void PropertyPrivateImplementationType ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Item";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Type = new CodeTypeReference (typeof (int));
+			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    int System.Int32.this[object value1] {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void PropertyImplementationTypeOrder ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Item";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Type = new CodeTypeReference (typeof (int));
+			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			property.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			property.Parameters.Add (param);
+			type.Members.Add (property);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    int System.Int32.this[object value1] {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
 		public void MethodMembersTypeTest1 ()
 		{
 			type.Name = "Test1";
@@ -536,6 +826,168 @@ namespace MonoTests.Microsoft.CSharp
 				"public class Test1 {{{0}"
 				+ "    {0}"
 				+ "    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodImplementationTypes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Assembly;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			method.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			method.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+#if NET_2_0
+				+ "    internal virtual int Execute() {{{0}"
+#else
+				+ "    internal int Execute() {{{0}"
+#endif
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodOverloadsTest1 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual int Execute() {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodOverloadsTest2 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			type.Members.Add (method);
+
+			method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Private;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual void Execute() {{{0}"
+				+ "    }}{0}"
+				+ "    {0}"
+				+ "    private int Execute(object value1) {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodOverloadsTest3 ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			type.Members.Add (method);
+
+			method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Private;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    public virtual void Execute() {{{0}"
+				+ "    }}{0}"
+				+ "    {0}"
+				+ "    int System.Int32.Execute(object value1) {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		/// <summary>
+		/// Ensure no access modifiers are output if PrivateImplementationType
+		/// is set.
+		/// </summary>
+		[Test]
+		public void MethodPrivateImplementationType ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    int System.Int32.Execute(object value1) {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
+		public void MethodImplementationTypeOrder ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
+			method.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+			type.Members.Add (method);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    int System.Int32.Execute(object value1) {{{0}"
 				+ "    }}{0}"
 				+ "}}{0}", writer.NewLine), Code);
 		}

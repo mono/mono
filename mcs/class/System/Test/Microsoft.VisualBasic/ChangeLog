@@ -1,5 +1,10 @@
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorFromTypeTest.cs: Modified test to ensure that scope
+	modifiers are not output for events.
+
+2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromTypeTest.cs: Added PrivateImplementationType tests
 	for property, event, method. Added Overloads tests for property and
 	method.

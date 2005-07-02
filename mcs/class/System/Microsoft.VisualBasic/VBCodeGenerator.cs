@@ -570,9 +570,7 @@ namespace Microsoft.VisualBasic
 			OutputAttributes (eventRef.CustomAttributes, null, 
 				LineHandling.ContinueLine);
 
-			MemberAttributes attributes = eventRef.Attributes;
-			OutputMemberAccessModifier (attributes);
-			OutputMemberScopeModifier (attributes | MemberAttributes.Final);  // Don't output "Overridable"
+			OutputMemberAccessModifier (eventRef.Attributes);
 
 			output.Write ("Event ");
 			OutputTypeNamePair (eventRef.Type, GetEventName(eventRef));
