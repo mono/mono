@@ -93,6 +93,7 @@ namespace System.Windows.Forms
 				return true;
 				
 			case Keys.Right:
+			case Keys.Tab:
 			case Keys.Up:
 			case Keys.Down:
 			case Keys.PageUp:

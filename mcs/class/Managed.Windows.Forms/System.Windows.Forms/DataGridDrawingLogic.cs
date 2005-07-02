@@ -28,6 +28,7 @@
 // NOT COMPLETE
 
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
@@ -38,15 +39,15 @@ namespace System.Windows.Forms
 		private DataGrid grid;
 
 		// Areas
-		private Rectangle client_area;		// ClientRectangle - BorderStyle decorations, effetive client area
-		private Rectangle caption_area;
-		private Rectangle parent_rows;
-		private Rectangle columnshdrs_area;	// Used columns header area
-		private int columnshdrs_maxwidth; 	// Total width (max width) for columns headrs
-		private Rectangle rowshdrs_area;	// Used Headers rows area
-		private int rowshdrs_maxheight; 	// Total height for rows (max height)
-		private Rectangle cells_area;
-		static private Font font_newrow = new Font (FontFamily.GenericSansSerif, 16);
+		internal Rectangle client_area;		// ClientRectangle - BorderStyle decorations, effetive client area
+		internal Rectangle caption_area;
+		internal Rectangle parent_rows;
+		internal Rectangle columnshdrs_area;	// Used columns header area
+		internal int columnshdrs_maxwidth; 	// Total width (max width) for columns headrs
+		internal Rectangle rowshdrs_area;	// Used Headers rows area
+		internal int rowshdrs_maxheight; 	// Total height for rows (max height)
+		internal Rectangle cells_area;
+		internal Font font_newrow = new Font (FontFamily.GenericSansSerif, 16);
 		#endregion // Local Variables
 
 
@@ -133,11 +134,7 @@ namespace System.Windows.Forms
 			client_area.Y += BorderStyleSize;
 			client_area.Width -= BorderStyleSize * 2;
 			client_area.Height -= BorderStyleSize * 2;
-
-			//Console.WriteLine ("CalcClientArea");
-
-			//Console.WriteLine ("CalcClientArea ClientRectangle {0}, ClientArea {1}, BorderStyleSize {2}",
-			//	 grid.ClientRectangle, client_area, BorderStyleSize);
+			
 		}
 
 		public void CalcGridAreas ()
@@ -338,14 +335,11 @@ namespace System.Windows.Forms
 			grid.first_visiblecolumn = FromPixelToColumn (grid.horz_pixeloffset);
 
 			col = FromPixelToColumn (max_pixel);
-			grid.visiblecolumn_count = (col - grid.first_visiblecolumn);
+			grid.visiblecolumn_count = 1 + col - grid.first_visiblecolumn;
 			
 			//if (grid.first_visiblecolumn + grid.visiblecolumn_count + 1 < grid.CurrentTableStyle.GridColumnStyles.Count) { 
-				grid.visiblecolumn_count++; // Partially visible column
+			//	grid.visiblecolumn_count++; // Partially visible column
 			//}
-
-			//Console.WriteLine ("UpdateVisibleColumn col: {0}, cnt {1}",
-			//	grid.first_visiblecolumn, grid.visiblecolumn_count);
 		}
 
 		public void UpdateVisibleRowCount ()
@@ -468,155 +462,8 @@ namespace System.Windows.Forms
 
 			grid.Invalidate (caption_area);
 		}
-
-		public void OnPaint (PaintEventArgs pe)
-		{
-			Console.WriteLine ("OnPaint {0}", pe.ClipRectangle);
-			if (pe.ClipRectangle.IntersectsWith (parent_rows)) {
-				pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.ParentRowsBackColor), parent_rows);
-			}
-
-			PaintCaption (pe.Graphics, pe.ClipRectangle);
-			PaintColumnsHdrs (pe.Graphics, pe.ClipRectangle);
-			PaintRowsHeaders (pe.Graphics, pe.ClipRectangle);
-			PaintRows (pe.Graphics, cells_area, pe.ClipRectangle);
-
-			// Paint scrollBar corner
-			if (grid.vert_scrollbar.Visible && grid.horiz_scrollbar.Visible) {
-
-				Rectangle corner = new Rectangle (client_area.X + client_area.Width - grid.horiz_scrollbar.Height,
-					 client_area.Y + client_area.Height - grid.horiz_scrollbar.Height,
-					 grid.horiz_scrollbar.Height, grid.horiz_scrollbar.Height);
-
-				if (pe.ClipRectangle.IntersectsWith (corner)) {
-					pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.ParentRowsBackColor),
-						corner);
-				}
-			}
-			
-			ThemeEngine.Current.CPDrawBorderStyle (pe.Graphics, grid.ClientRectangle, grid.border_style);
-		}
-
-		public void PaintCaption (Graphics g, Rectangle clip)
-		{
-			Rectangle modified_area = clip;
-			modified_area.Intersect (caption_area);
-
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CaptionBackColor),
-				modified_area);
-
-			g.DrawString (grid.CaptionText, grid.CaptionFont,
-				ThemeEngine.Current.ResPool.GetSolidBrush (grid.CaptionForeColor),
-				caption_area);		
-		}
-
-		public void PaintColumnsHdrs (Graphics g, Rectangle clip)
-		{
-			Rectangle columns_area = columnshdrs_area;
-
-			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) { // Paint corner shared between row and column header
-				Rectangle rect_bloc = columnshdrs_area;
-				rect_bloc.Width = grid.RowHeaderWidth;
-				rect_bloc.Height = columnshdrs_area.Height;
-				if (clip.IntersectsWith (rect_bloc)) {
-					if (grid.visiblecolumn_count > 0) {
-						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
-					}else {
-						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor), rect_bloc);
-					}
-				}
-
-				columns_area.X += grid.RowHeaderWidth;
-				columns_area.Width -= grid.RowHeaderWidth;
-			}
-
-			// Set unused area
-			Rectangle columnshdrs_area_complete = columns_area;
-			columnshdrs_area_complete.Width = columnshdrs_maxwidth;
-			
-			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
-				columnshdrs_area_complete.Width -= grid.RowHeaderWidth;
-			}		
-
-			// Set column painting
-			Rectangle rect_columnhdr = new Rectangle ();
-			int col_pixel;
-			Region prev_clip = g.Clip, current_clip;
-			rect_columnhdr.Y = columns_area.Y;
-			rect_columnhdr.Height = columns_area.Height;
-
-			Console.WriteLine ("PaintColumnsHdrs first {0} num {1}",
-				grid.first_visiblecolumn, grid.visiblecolumn_count);
-			
-			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
-			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
-
-				col_pixel = GetColumnStartingPixel (column);
-				rect_columnhdr.X = columns_area.X + col_pixel - grid.horz_pixeloffset;
-				rect_columnhdr.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
-
-				if (clip.IntersectsWith (rect_columnhdr) == false)
-					continue;
-									
-				current_clip = new Region (columns_area);
-				g.Clip = current_clip;
-
-				grid.CurrentTableStyle.GridColumnStyles[column].PaintHeader (g, rect_columnhdr, column);
-
-				g.Clip = prev_clip;
-				current_clip.Dispose ();
-			}
-
-			
-			// This fills with background colour the unused part in the row headers
-			if (rect_columnhdr.X + rect_columnhdr.Height < client_area.X + client_area.Width) {
-				
-				Rectangle not_usedarea = columnshdrs_area_complete;				
-				not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
-				not_usedarea.Width = client_area.X + client_area.Width - rect_columnhdr.X - rect_columnhdr.Height;
-			
-				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
-					not_usedarea);
-			}
-		}
-
-		public void PaintRowsHeaders (Graphics g, Rectangle clip)
-		{
-			Rectangle rowshdrs_area_complete = rowshdrs_area;
-			rowshdrs_area_complete.Height = rowshdrs_maxheight;
-			Rectangle rect_row = new Rectangle ();
-			rect_row.X = rowshdrs_area.X;			
-			int last_y = 0;
-			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
-
-			if (rowcnt < grid.RowsCount) { // Paint one row more for partial rows
-				rowcnt++;
-			}
-
-			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
-
-				rect_row.Width = rowshdrs_area.Width;
-				rect_row.Height = grid.RowHeight;
-				rect_row.Y = rowshdrs_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
-
-				if (clip.IntersectsWith (rect_row)) {
-					PaintRowHeader (g, rect_row, row);
-					last_y = rect_row.Y;
-				}
-			}
-
-			// This fills with background colour the unused part in the row headers
-			if (last_y > 0 && rect_row.Y + rect_row.Height < cells_area.Y + cells_area.Height) {
-				Rectangle not_usedarea = clip;
-				not_usedarea.Intersect (rowshdrs_area_complete);
-				
-				not_usedarea.Y = rect_row.Y + rect_row.Height;
-				not_usedarea.Height = rowshdrs_area_complete.Y + rowshdrs_area_complete.Height - rect_row.Height - rect_row.Y;
-				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
-					not_usedarea);
-			}			
-		}
-
+		
+		
 		public void InvalidateRow (int row)
 		{
 			if (row < grid.FirstVisibleRow || row > grid.FirstVisibleRow + grid.VisibleRowCount) {
@@ -640,56 +487,7 @@ namespace System.Windows.Forms
 			rect_rowhdr.Height = grid.RowHeight;
 			rect_rowhdr.Y = rowshdrs_area.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
 			grid.Invalidate (rect_rowhdr);
-		}
-
-		public void PaintRowHeader (Graphics g, Rectangle bounds, int row)
-		{
-			// Background
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
-				bounds);
-
-			// Paint Borders
-			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-				bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
-
-			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-				bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
-
-			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-
-			g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
-
-			if (grid.ShowEditRow && row == grid.RowsCount  && !(row == grid.CurrentCell.RowNumber && grid.is_changing == true)) {
-				
-				g.DrawString ("*", font_newrow,	ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black),
-					bounds);
-				
-			} else {
-				// Draw arrow
-				if (row == grid.CurrentCell.RowNumber) {
-	
-					if (grid.is_changing == true) {
-						g.DrawString ("...", grid.Font,
-							ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black),
-							bounds);
-	
-					} else {
-						int cx = 18;
-						int cy = 18;
-						Bitmap	bmp = new Bitmap (cx, cy);
-						Graphics gr = Graphics.FromImage (bmp);
-						Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
-						ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
-						bmp.MakeTransparent ();
-						g.DrawImage (bmp, bounds.X - 2, bounds.Y, cx, cy);
-						gr.Dispose ();
-						bmp.Dispose ();
-					}
-				}
-			}
-		}
+		}	
 
 		public void InvalidateColumn (DataGridColumnStyle column)
 		{
@@ -710,114 +508,7 @@ namespace System.Windows.Forms
 			rect_col.Height = cells_area.Height;
 			grid.Invalidate (rect_col);
 		}
-
-		public void PaintRows (Graphics g, Rectangle cells, Rectangle clip)
-		{
-			Rectangle rect_row = new Rectangle ();
-			Rectangle not_usedarea = new Rectangle ();
-			rect_row.X = cells.X;
-
-			int rowcnt = grid.FirstVisibleRow + grid.VisibleRowCount;
-			
-			if (grid.ShowEditRow) {
-				rowcnt--;
-			}			
-
-			if (rowcnt < grid.RowsCount) { // Paint one row more for partial rows
-				rowcnt++;
-			}			
-			
-			rect_row.Height = grid.RowHeight;
-			rect_row.Width = cells.Width;
-			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {								
-				rect_row.Y = cells.Y + ((row - grid.FirstVisibleRow) * grid.RowHeight);
-				if (clip.IntersectsWith (rect_row)) {
-					PaintRow (g, row, rect_row, false);					
-				}
-			}
-			
-			if (grid.ShowEditRow && grid.FirstVisibleRow + grid.VisibleRowCount == grid.RowsCount + 1) {
-				rect_row.Y = cells.Y + ((rowcnt - grid.FirstVisibleRow) * grid.RowHeight);
-				if (clip.IntersectsWith (rect_row)) {
-					PaintRow (g, rowcnt, rect_row, true);					
-				}
-			}
-			
-			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
-			not_usedarea.Y = rect_row.Y + rect_row.Height;
-			not_usedarea.Width = rect_row.Width = cells.Width;
-			not_usedarea.X = cells.X;			
-
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
-				not_usedarea);			
-		}
-		
-		public void PaintRow (Graphics g, int row, Rectangle row_rect, bool is_newrow)
-		{
-			//Console.WriteLine ("PaintRow row: {0}, rect {1}, is_newrow {2}", row, row_rect, is_newrow);
-
-			Rectangle rect_cell = new Rectangle ();
-			int col_pixel;
-			Color backcolor, forecolor;
-			Region prev_clip = g.Clip;
-			Region current_clip;
-			Rectangle not_usedarea = new Rectangle ();
-
-			rect_cell.Y = row_rect.Y;
-			rect_cell.Height = row_rect.Height;
-
-			// PaintCells at row, column
-			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
-			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
-
-				col_pixel = GetColumnStartingPixel (column);
-
-				rect_cell.X = row_rect.X + col_pixel - grid.horz_pixeloffset;
-				rect_cell.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
-
-				current_clip = new Region (row_rect);
-				g.Clip = current_clip;
-
-				if (grid.IsSelected (row)) {
-					backcolor =  grid.SelectionBackColor;
-					forecolor =  grid.SelectionForeColor;
-				} else {
-					if (row % 2 == 0) {
-						backcolor =  grid.BackColor;
-					} else {
-						backcolor =  grid.AlternatingBackColor;
-					}
-					
-					forecolor =  grid.ForeColor;
-				}			
-
-				if (is_newrow) {
-					grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
-						ThemeEngine.Current.ResPool.GetSolidBrush (backcolor),
-						ThemeEngine.Current.ResPool.GetSolidBrush (forecolor));						
-					
-				} else {
-					grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
-						ThemeEngine.Current.ResPool.GetSolidBrush (backcolor),
-						ThemeEngine.Current.ResPool.GetSolidBrush (forecolor),
-						grid.RightToLeft == RightToLeft.Yes);
-				}
-
-				g.Clip = prev_clip;
-				current_clip.Dispose ();
-			}
-			
-			if (row_rect.X + row_rect.Width > rect_cell.X + rect_cell.Width) {
-
-				not_usedarea.X = rect_cell.X + rect_cell.Width;
-				not_usedarea.Width = row_rect.X + row_rect.Width - rect_cell.X - rect_cell.Width;
-				not_usedarea.Y = row_rect.Y;
-				not_usedarea.Height = row_rect.Height;
-				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.BackgroundColor),
-					not_usedarea);
-			}
-		}
-
+				
 		// Return true if the scrollbar is needed
 		public bool SetUpHorizontalScrollBar ()
 		{

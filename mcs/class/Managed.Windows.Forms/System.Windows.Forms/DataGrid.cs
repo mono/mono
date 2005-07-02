@@ -181,6 +181,8 @@ namespace System.Windows.Forms
 		private bool shift_pressed;
 		private bool begininit;
 		private CurrencyManager cached_currencymgr;
+		private CurrencyManager cached_currencymgr_events;
+		private bool accept_listmgrevents;
 		#endregion // Local Variables
 
 		#region Public Constructors
@@ -236,7 +238,8 @@ namespace System.Windows.Forms
 			ctrl_pressed = false;
 			shift_pressed = false;
 			preferredrow_height = def_preferredrow_height = FontHeight + 3;
-			cached_currencymgr = null;
+			cached_currencymgr_events = cached_currencymgr = null;
+			accept_listmgrevents = true;
 
 			default_style = new DataGridTableStyle (true);
 			styles_collection = new GridTableStylesCollection (this);
@@ -461,7 +464,10 @@ namespace System.Windows.Forms
 					if (current_cell.RowNumber != old_row) {
 						grid_drawing.InvalidateRowHeader (old_row);
 					}
-			
+					
+					accept_listmgrevents = false;
+					cached_currencymgr_events.Position = current_cell.RowNumber;
+					accept_listmgrevents = true;
 					InvalidateCurrentRowHeader ();
 					OnCurrentCellChanged (EventArgs.Empty);
 				}
@@ -499,7 +505,7 @@ namespace System.Windows.Forms
 			get { return datamember; }
 			set {
 				if (SetDataMember (value)) {					
-					
+					SetDataSource (datasource);
 					if (styles_collection.Contains (value) == true) {
 						CurrentTableStyle = styles_collection[value];
 						current_style.CreateColumnsForTable (true);
@@ -711,7 +717,11 @@ namespace System.Windows.Forms
 					return cached_currencymgr;
 				}
 
+				// If we bind real_datasource object we do not get the events from ListManger
+				// since the object is not the datasource and does not match
 				cached_currencymgr = (CurrencyManager) BindingContext [real_datasource, DataMember];
+				cached_currencymgr_events = (CurrencyManager) BindingContext [datasource, DataMember];
+				ConnectListManagerEvents ();
 				return cached_currencymgr;
 			}
 
@@ -1367,7 +1377,7 @@ namespace System.Windows.Forms
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{
-			grid_drawing.OnPaint (pe);
+			ThemeEngine.Current.DataGridPaint (pe, this);
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs ebe)
@@ -1456,8 +1466,9 @@ namespace System.Windows.Forms
 				}
 				break;
 			}
+			case Keys.Tab:
 			case Keys.Right:
-			{
+			{				
 				if (current_cell.ColumnNumber + 1 < CurrentTableStyle.GridColumnStyles.Count) {
 					CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);
 					EditCell (current_cell);
@@ -1533,8 +1544,7 @@ namespace System.Windows.Forms
 
 			return base.ProcessKeyPreview (ref m);
 		}
-
-		[MonoTODO]	
+		
 		protected bool ProcessTabKey (Keys keyData)
 		{
 			return false;
@@ -1618,7 +1628,10 @@ namespace System.Windows.Forms
 
 		public void SetDataBinding (object dataSource, string dataMember)
 		{
-			if (SetDataSource (dataSource) == false  && SetDataMember (dataMember) == false) {
+			bool member = SetDataMember (dataMember);
+			bool source = SetDataSource (dataSource);
+			
+			if (source == false  && member == false) {
 				return;
 			}
 
@@ -1715,9 +1728,19 @@ namespace System.Windows.Forms
 			grid_drawing.CalcGridAreas ();
 			Invalidate ();
 		}
+		
+		private void ConnectListManagerEvents ()
+		{
+			cached_currencymgr_events.CurrentChanged += new EventHandler (OnListManagerCurrentChanged);			
+		}
+		
+		private void DisconnectListManagerEvents ()
+		{
+			
+		}
 
 		// EndEdit current editing operation
-		public virtual bool EndEdit (bool shouldAbort)
+		internal virtual bool EndEdit (bool shouldAbort)
 		{
 			return EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
 				current_cell.RowNumber, shouldAbort);
@@ -1727,12 +1750,8 @@ namespace System.Windows.Forms
 		{
 			if (cell.ColumnNumber <= first_visiblecolumn ||
 				cell.ColumnNumber + 1 >= first_visiblecolumn + visiblecolumn_count) {			
-				
-				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);
-				
-				Console.WriteLine ("GetFirstColumnForColumnVisilibility {0} max {1}",
-					first_visiblecolumn,
-					CurrentTableStyle.GridColumnStyles.Count);
+					
+				first_visiblecolumn = grid_drawing.GetFirstColumnForColumnVisilibility (first_visiblecolumn, cell.ColumnNumber);						
 				
 				int pixel = grid_drawing.GetColumnStartingPixel (first_visiblecolumn);
 				ScrollToColumnInPixels (pixel);
@@ -1770,26 +1789,24 @@ namespace System.Windows.Forms
 
 			datamember = member;
 			real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, member);
-			cached_currencymgr = null;
+			DisconnectListManagerEvents ();
+			cached_currencymgr = cached_currencymgr_events = null;
 			return true;
 		}
 
 		private bool SetDataSource (object source)
-		{
-			if (datasource != null && datasource.Equals (source)) {
-				return false;
-			}
+		{			
 
 			if (source != null && source as IListSource != null && source as IList != null) {
 				throw new Exception ("Wrong complex data binding source");
 			}
 
 			datasource = source;
-			cached_currencymgr = null;
+			DisconnectListManagerEvents ();
+			cached_currencymgr = cached_currencymgr_events = null;
 			try {
 				real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, DataMember);
-			}catch (Exception e) {
-				datamember = "";
+			}catch (Exception e) {				
 				real_datasource = source;
 			}
 
@@ -1798,13 +1815,11 @@ namespace System.Windows.Forms
 		}
 
 		private void SetNewDataSource ()
-		{
-			// Create Table Style
-			// Create columns Styles
-			// Bind data				
+		{	
+			current_cell = new DataGridCell ();
 			current_style.GridColumnStyles.Clear ();
 			current_style.CreateColumnsForTable (false);
-			CalcAreasAndInvalidate ();
+			CalcAreasAndInvalidate ();			
 		}
 
 		private void OnKeyUpDG (object sender, KeyEventArgs e)
@@ -1819,6 +1834,15 @@ namespace System.Windows.Forms
 			default:
 				break;
 			}
+		}
+		
+		private void OnListManagerCurrentChanged (object sender, EventArgs e)
+		{			
+			if (accept_listmgrevents == false) {
+				return;
+			}
+			
+			CurrentCell = new DataGridCell (cached_currencymgr_events.Position, current_cell.RowNumber);
 		}
 		
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
@@ -1837,7 +1861,7 @@ namespace System.Windows.Forms
 			is_editing = false;
 			is_changing = false;
 			
-			if (ShowEditRow && cell.RowNumber >= RowsCount) {
+			if (ShowEditRow && is_adding == false && cell.RowNumber >= RowsCount) {
 				ListManager.AddNew ();
 				is_adding = true;
 				Invalidate (); // We have just added a new row
@@ -1891,7 +1915,10 @@ namespace System.Windows.Forms
 			Rectangle invalidate_column = new Rectangle ();
 
 			if (pixel > horz_pixeloffset) { // ScrollRight
-				int pixels = pixel - horz_pixeloffset;				
+				int pixels = pixel - horz_pixeloffset;
+				
+				horz_pixeloffset = horiz_scrollbar.Value = pixel;
+				grid_drawing.UpdateVisibleColumn ();
 
 				// Columns header
 				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X + grid_drawing.ColumnsHeadersArea.Width - pixels;
@@ -1920,6 +1947,9 @@ namespace System.Windows.Forms
 			} else {
 				int pixels = horz_pixeloffset - pixel;
 				Rectangle area = grid_drawing.CellsArea;
+				
+				horz_pixeloffset = horiz_scrollbar.Value = pixel;
+				grid_drawing.UpdateVisibleColumn ();
 
 				// Columns header
 				invalidate_column.X = grid_drawing.ColumnsHeadersArea.X;
@@ -1943,10 +1973,7 @@ namespace System.Windows.Forms
 				
 				XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
 				Invalidate (invalidate);
-			}
-
-			horz_pixeloffset = horiz_scrollbar.Value = pixel;
-			grid_drawing.UpdateVisibleColumn ();
+			}		
 			
 		}
 

@@ -1,3 +1,13 @@
+2005-07-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: bug fixes, code refactoring 
+	* ThemeWin32Classic.cs: bug fixes, code refactoring
+	* DataGridDrawingLogic.cs:  bug fixes, code refactoring
+	* DataGrid.cs: bug fixes, code refactoring
+	* DataGridTextBox.cs: bug fixes, code refactoring
+	* DataGridColumnStyle.cs:  bug fixes, code refactoring
+	* Theme.cs:  bug fixes, code refactoring
+
 2005-07-01  Peter Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs: Quick fix for the reported crash on ColorDialog

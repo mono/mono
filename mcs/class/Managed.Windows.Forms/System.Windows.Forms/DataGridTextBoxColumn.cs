@@ -184,6 +184,8 @@ namespace System.Windows.Forms
 			}			
 
 			textbox.Location = new Point (bounds.X, bounds.Y);
+			bounds.X += 2; bounds.Y += 2;
+			bounds.Width -= 2; bounds.Height -= 2;
 			textbox.Size = new Size (bounds.Width, bounds.Height);
 
 			obj = GetColumnValueAtRow (source, rowNum);
