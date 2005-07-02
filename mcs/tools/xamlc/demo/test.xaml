@@ -1,0 +1,10 @@
+<?Mapping ClrNamespace="Xaml.TestVocab.Console" Assembly="TestVocab" XmlNamespace="console" ?>
+
+<ConsoleApp xmlns="console">
+	<ConsoleWriter>IT BEGINS!</ConsoleWriter>
+	<ConsoleWriter Text="Hello World" />
+	<ConsoleWriter>
+		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>
+		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
+	</ConsoleWriter>
+</ConsoleApp>

@@ -1,0 +1,10 @@
+System.Windows/Callbacks.cs
+System.Windows/DependencyObject.cs
+System.Windows/DependencyObjectType.cs
+System.Windows/DependencyProperty.cs
+System.Windows/DependencyPropertyKey.cs
+System.Windows/LocalValueEntry.cs
+System.Windows/LocalValueEnumerator.cs
+System.Windows/PropertyMetadata.cs
+../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs

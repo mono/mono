@@ -1,0 +1,31 @@
+This is my xaml compiler, being written as part of Google's summer of code
+program.
+
+Xaml is a language for concisely describing how to connect up a bunch of 
+objects. As an example, in the avalon world:
+<Window Title="Hi!">
+  <Button>Click</Button>
+</Window>
+
+Would produce a child of Window where the constructor does this:
+this.Title = "Hi!";
+Button button = new Button();
+window.AddChild(button);
+button.AddText("Click");
+
+Except of course it can handle trees of arbitrary depth, so descriptions of
+complicated GUIs are not a problem and much more readable than the code
+version.
+
+To use this thing:
+cd ../WindowsBase
+make install
+cd class/PresentationFramework
+make install
+cd ../../tools/xamlc
+make install
+
+That will get everything compiled. There's a demo in the mcs/tools/xamlc/demo
+directory; to run it, cd into that directory and run make. Look at the
+resulting test.xaml.out file. That Makefile obviously has a sample invocation
+of xamlc.exe.
