@@ -1,3 +1,30 @@
+2005-07-02  Florian Gross  <flgr@ccan.de>
+
+	* ArrayPrototype.cs: Implemented pop, reverse, shift and slice
+	* StringPrototype.cs: Implemented anchor, big, blink, bold, charAt,
+	charCodeAt, fixed, fontcolor, fontsize, indexOf, italics, lastIndexOf,
+	link, localeCompare, slice, small, strike, substring, sup,
+	toLocaleLowerCase, toLocaleUpperCase, toLowerCase, toString, toUpperCase
+	and valueOf
+	* ArrayObject.cs: ArrayObject-ctor works correctly when first argument
+	isn't length and first element gets assigned to 0 slot correctly
+	* NumberObject.cs: Basic constructor / double value made internal
+	* Equality.cs: Added basic logic for TypeCode.Empty, DBNull, Boolean and
+	Char
+	* FunctionObject.cs: ToString matches that of MS JS.NET for internal
+	functions
+	* Convert.cs: IsNumberTypeCode and IsFloatTypeCode utility methods, basic
+	implementation of ToInt32 and ToNumber, more cases for ToString
+	* StrictEquality.cs: Initial working implementation
+	* LateBindings.cs: Call works for Methods that don't have HasEngine and
+	support for getting methods (as in "foo".link) in GetNonMissingValue
+	* Plus.cs: Added support for more types
+	* GlobalObject.cs: Implemented isNaN, isFinite and parseFloat
+	* FunctionPrototype.cs: Implemented toString
+	* NumberPrototype.cs: Implemented valueOf
+	* Globals.cs: Implemented ConstructArrayLiteral
+	* TypeOf.cs: Added more cases
+
 2005-06-10  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* LateBinding.cs: Added field right_hand_side. Initial
