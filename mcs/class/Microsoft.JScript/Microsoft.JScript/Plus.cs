@@ -67,9 +67,23 @@ namespace Microsoft.JScript {
 				case TypeCode.Boolean:
 					return ic1.ToString (null) + Convert.ToString (ic2.ToBoolean (null));
 
+				case TypeCode.Single:
 				case TypeCode.Double:
+				case TypeCode.Char:
+				case TypeCode.Byte:
+				case TypeCode.SByte:
+				case TypeCode.Int16:
+				case TypeCode.UInt16:
+				case TypeCode.Int32:
+				case TypeCode.UInt32:
 				case TypeCode.String:
 					return ic1.ToString (null) + ic2.ToString (null);
+
+				case TypeCode.Empty:
+					return ic1.ToString (null);
+
+				case TypeCode.DBNull:
+					return ic1.ToString (null) + "null";
 				}
 				break;
 				
@@ -88,6 +102,8 @@ namespace Microsoft.JScript {
 			default:
 				return EvaluatePlus (v2, v1);
 			}
+
+			System.Console.WriteLine ("EvaluatePlus: tc1 = {0}, tc2 = {1}", tc1, tc2);
 			throw new NotImplementedException ();
 		}
 

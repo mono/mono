@@ -40,6 +40,7 @@ namespace Microsoft.JScript {
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 			
 			switch (tc) {
+			case TypeCode.Char:
 			case TypeCode.Int32:
 			case TypeCode.Double:
 				return "number";
@@ -48,7 +49,14 @@ namespace Microsoft.JScript {
 				return "string";
 
 			case TypeCode.Object:
+			case TypeCode.DBNull:
 				return "object";
+
+			case TypeCode.Empty:
+				return "undefined";
+
+			case TypeCode.Boolean:
+				return "boolean";
 				
 			default:
 				Console.WriteLine ("TypeOf, tc = {0}", tc);

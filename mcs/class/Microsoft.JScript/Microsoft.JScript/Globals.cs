@@ -33,9 +33,7 @@ using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
 
-
-	public sealed class Globals
-	{
+	public sealed class Globals {
 		public static VsaEngine contextEngine;
 
 	
@@ -47,7 +45,7 @@ namespace Microsoft.JScript {
 
 		public static ArrayObject ConstructArrayLiteral (object [] args)
 		{
-			throw new NotImplementedException ();
+			return new ArrayObject (args);
 		}
 	}
 }

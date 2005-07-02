@@ -42,6 +42,34 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal static bool IsNumberTypeCode (TypeCode tc)
+		{
+			switch (tc) {
+			case TypeCode.Byte:
+			case TypeCode.Char:
+			case TypeCode.Double:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+			case TypeCode.SByte:
+			case TypeCode.Single:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		internal static bool IsFloatTypeCode (TypeCode tc)
+		{
+			switch (tc) {
+			case TypeCode.Double:
+			case TypeCode.Single:
+				return true;
+			default:
+				return false;
+			}
+		}
 
 		public static double CheckIfDoubleIsInteger (double d)
 		{
@@ -71,8 +99,8 @@ namespace Microsoft.JScript {
 		}
 
 
-		public static object Coerce2 (object value, TypeCode target, 
-					      bool truncationPermitted)
+		public static object Coerce2 (object value, TypeCode target,
+						  bool truncationPermitted)
 		{
 			throw new NotImplementedException ();
 		}
@@ -112,12 +140,58 @@ namespace Microsoft.JScript {
 
 		public static int ToInt32 (object value)
 		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			switch (tc) {
+			case TypeCode.Char:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+				return (int) value;
+
+			case TypeCode.Single:
+			case TypeCode.Double:
+				return (int) Math.Floor ((double) value);
+
+			default:
+				Console.WriteLine ("\nToInt32: value.GetType = {0}", value.GetType ());
+				break;
+			}
 			throw new NotImplementedException ();
 		}
 
 
 		public static double ToNumber (object value)
 		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			switch (tc) {
+			case TypeCode.Char:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+				return (double) value;
+
+			case TypeCode.Single:
+			case TypeCode.Double:
+				return (double) value;
+
+			case TypeCode.String:
+				return GlobalObject.parseFloat (value);
+
+			default:
+				Console.WriteLine ("\nToNumber: value.GetType = {0}", value.GetType ());
+				break;
+			}
+
 			throw new NotImplementedException ();
 		}
 
@@ -135,13 +209,23 @@ namespace Microsoft.JScript {
 
 
 		public static object ToObject (object value, VsaEngine engine)
-		{			
+		{
 			IConvertible ic = value as IConvertible;
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 
 			switch (tc) {
 			case TypeCode.String:
 				return new StringObject (ic.ToString (null));
+			case TypeCode.Single:
+			case TypeCode.Double:
+			case TypeCode.Char:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+				return new NumberObject (ic.ToDouble (null));
 			case TypeCode.Object:
 				return value;
 			default:
@@ -171,6 +255,9 @@ namespace Microsoft.JScript {
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 
 			switch (tc) {
+			case TypeCode.Empty:
+				return "";
+
 			case TypeCode.DBNull:
 				return "null";
 
@@ -180,7 +267,16 @@ namespace Microsoft.JScript {
 					return "true";
 				else
 					return "false";
-				
+
+			case TypeCode.Char:
+				return ic.ToInt16 (null).ToString ();
+
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
 			case TypeCode.String:
 			case TypeCode.Double:
 				return ic.ToString (null);
@@ -204,6 +300,8 @@ namespace Microsoft.JScript {
 					return RegExpPrototype.toString (value);
 				else if (value is StringObject)
 					return StringPrototype.toString (value);
+				else if (value is FunctionWrapper)
+					return FunctionPrototype.toString (value);
 				Console.WriteLine ("value.GetType = {0}", value.GetType ());
 				throw new NotImplementedException ();
 			default:
@@ -220,7 +318,7 @@ namespace Microsoft.JScript {
 
 
 		public static string ToString (double d)
-		{	
+		{
 			IConvertible ic = d as IConvertible;
 			return ic.ToString (null);
 		}
@@ -234,8 +332,8 @@ namespace Microsoft.JScript {
 				return TypeCode.Empty;
 			else if (ic == null)
 				return TypeCode.Object;
-			else 
-				return  ic.GetTypeCode ();
+			else
+				return ic.GetTypeCode ();
 		}
 	}
 }

@@ -53,18 +53,20 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_join)]
 		public static string join (object thisObj, object separator)
 		{
+			// TODO: Shouldn't this be generic!?
 			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
 			ArrayObject array_obj = (ArrayObject) thisObj;
-			
+
 			string _separator;
 			if (separator == null)
 				_separator = ",";
-			else 
+			else
 				_separator = Convert.ToString (separator);
 
 			Hashtable elems = array_obj.Elements;
 			StringBuilder str = new StringBuilder ();
 			bool first = true;
+
 			foreach (DictionaryEntry entry in elems) {
 				if (!first)
 					str.Append (_separator);
@@ -77,7 +79,21 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_pop)]
 		public static object pop (object thisObj)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+
+			int n = (int) array_obj.length;
+			if (n > 0) {
+				int new_len = n - 1;
+				array_obj.length = new_len;
+				if (array_obj.elems.ContainsKey (new_len)) {
+					object result = array_obj.elems [new_len];
+					array_obj.elems.Remove (new_len);
+					return result;
+				}
+			}
+			return null;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_push)]
@@ -89,20 +105,83 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_reverse)]
 		public static object reverse (object thisObj)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+
+			int n = (int) array_obj.length;
+			int half_n = n / 2;
+			int j = n - 1;
+			object temp;
+			
+			for (int i = 0; i < half_n; i++, j--) {
+				temp = array_obj.elems [i];
+				array_obj.elems [i] = array_obj.elems [j];
+				array_obj.elems [j] = temp;
+			}
+			return array_obj;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_shift)]
 		public static object shift (object thisObj)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+
+			int n = (int) array_obj.length;
+			if (n > 0) {
+				array_obj.length = n - 1;
+				if (array_obj.elems.ContainsKey (0)) {
+					object result = array_obj.elems [0];
+					array_obj.elems.Remove (0);
+					for (int i = 1; i < n; i++)
+						array_obj.elems [i - 1] = array_obj.elems [i];
+					array_obj.elems.Remove (n - 1);
+					return result;
+				}
+			}
+			return null;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine, JSBuiltin.Array_slice)]
-		public static ArrayObject slice (object thisObj, VsaEngine engine,
-						 double start, object end)
+		public static ArrayObject slice (object thisObj, VsaEngine engine, double start, object end)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+			int array_len = (int) array_obj.length;
+			int _start, _end;
+
+			if (start > array_len)
+				_start = array_len;
+			else {
+				_start = (int) start;
+				if (_start < 0)
+					_start += array_len;
+			}
+
+			if (end == null)
+				_end = array_len;
+			else {
+				_end = (int) (double) end;
+
+				if (_end < 0)
+					_end += array_len;
+				else if (_end > array_len)
+					_end = array_len;
+			}
+
+			if (_end < _start)
+				_end = _start;
+
+			ArrayObject result = new ArrayObject();
+			result.length = _end - _start;
+
+			for (int i = _start; i < _end; i++)
+				result.elems [i - _start] = array_obj.elems [i];
+
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_sort)]

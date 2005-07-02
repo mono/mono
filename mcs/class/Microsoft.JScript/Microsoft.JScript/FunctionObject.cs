@@ -82,20 +82,23 @@ namespace Microsoft.JScript {
 			StringBuilder sb = new StringBuilder ();
 
 			sb.Append ("function ");
-			sb.Append (name + " ");
+			sb.Append (name);
 			sb.Append ("(");
 
 			if (parameters != null)
 				sb.Append (this.parameters.ToString ());
 					
 			sb.Append (")");
-			sb.Append (" : " + return_type);
-			sb.Append ("{");
+			if (return_type != null)
+				sb.Append (" : " + return_type);
+			sb.Append (" {\n");
 
 			if (body != null)
 				sb.Append (body.ToString ());
+			else
+				sb.Append ("    [native code]");
 
-			sb.Append ("}");
+			sb.Append ("\n}");
 
 			return sb.ToString ();		
 		}

@@ -59,6 +59,40 @@ namespace Microsoft.JScript {
 			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
 
 			switch (tc1) {
+			case TypeCode.Empty:
+				switch (tc2) {
+				case TypeCode.Empty:
+					return true;
+				case TypeCode.DBNull:
+					return true;
+				}
+				break;
+
+			case TypeCode.DBNull:
+				switch (tc1) {
+				case TypeCode.DBNull:
+					return true;
+				case TypeCode.Empty:
+					return true;
+				}
+				break;
+
+			case TypeCode.Boolean:
+				switch (tc1) {
+				case TypeCode.Boolean:
+					return ic1.ToBoolean (null) == ic2.ToBoolean (null);
+				}
+				break;
+
+			case TypeCode.Char:
+				switch (tc2) {
+				case TypeCode.Char:
+					return ic1.ToChar (null) == ic2.ToChar (null);
+				case TypeCode.Double:
+					return (double) ic1.ToChar (null) == ic2.ToDouble (null);
+				}
+				break;
+
 			case TypeCode.Double:
 				switch (tc2) {
 				case TypeCode.Double:
@@ -108,8 +142,8 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return  Resolve (context);
-		}	       
+			return Resolve (context);
+		}
 
 		internal override void Emit (EmitContext ec)
 		{
@@ -117,13 +151,13 @@ namespace Microsoft.JScript {
 			LocalBuilder local_builder;
 
 			if (op != JSToken.None) {
-				Type t = typeof (Equality);				
+				Type t = typeof (Equality);
 				local_builder = ig.DeclareLocal (t);
 				if (op == JSToken.Equal)
 					ig.Emit (OpCodes.Ldc_I4_S, (byte) 53);
 				else if (op == JSToken.NotEqual)
 					ig.Emit (OpCodes.Ldc_I4_S, (byte) 54);
-				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
+				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] { typeof (int) }));
 				ig.Emit (OpCodes.Stloc, local_builder);
 				ig.Emit (OpCodes.Ldloc, local_builder);
 			}
@@ -131,8 +165,8 @@ namespace Microsoft.JScript {
 			if (left != null)
 				left.Emit (ec);
 			if (right != null)
-				right.Emit (ec);			       
-			
+				right.Emit (ec);
+
 			if (op == JSToken.Equal || op == JSToken.NotEqual) {
 				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
 
@@ -144,14 +178,14 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Brtrue_S, t_lbl);
 					else if (op == JSToken.NotEqual)
 						ig.Emit (OpCodes.Brfalse_S, t_lbl);
-					
+
 					ig.Emit (OpCodes.Ldc_I4_0);
 					ig.Emit (OpCodes.Br_S, f_lbl);
 					ig.MarkLabel (t_lbl);
 					ig.Emit (OpCodes.Ldc_I4_1);
 					ig.MarkLabel (f_lbl);
 					ig.Emit (OpCodes.Pop);
-				}				
+				}
 			}
 		}
 	}

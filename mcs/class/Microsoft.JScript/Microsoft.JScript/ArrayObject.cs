@@ -30,7 +30,7 @@
 
 using System;
 using System.Collections;
- 
+
 namespace Microsoft.JScript {
 
 	public class ArrayObject : JSObject {
@@ -46,22 +46,26 @@ namespace Microsoft.JScript {
 		{
 			length = 0;
 		}
-		
+
 		internal ArrayObject (object o)
 		{
 			IConvertible ic = o as IConvertible;
 			TypeCode tc = ic.GetTypeCode ();
 
-			if (tc == TypeCode.Int32 || ic.ToDouble (null) < Int32.MaxValue) {
-				int size = ic.ToInt32 (null);
-				if (size > 0)
-					length = o;
-				else 
-					throw new JScriptException (JSError.ArrayLengthConstructIncorrect);
-			} else {
-				elems = new Hashtable ();
-				elems.Add (o, o);
-			}
+			try {
+				if (tc == TypeCode.Int32 || ic.ToDouble (null) < Int32.MaxValue) {
+					int size = ic.ToInt32 (null);
+					if (size > 0) {
+						length = o;
+						return;
+					} else
+						throw new JScriptException (JSError.ArrayLengthConstructIncorrect);
+				}
+			} catch (FormatException) { /* OK */ }
+
+			elems = new Hashtable ();
+			length = 1;
+			elems.Add (0, o);
 		}
 
 		internal ArrayObject (params object [] args)

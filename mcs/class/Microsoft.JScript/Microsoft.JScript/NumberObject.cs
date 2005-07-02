@@ -32,8 +32,8 @@ using System;
 namespace Microsoft.JScript {
 	
 	public class NumberObject : JSObject {
-		
-		double value;
+
+		internal double value;
 
 		internal NumberObject ()
 		{
@@ -41,7 +41,7 @@ namespace Microsoft.JScript {
 
 		internal NumberObject (object value)
 		{
-			throw new NotImplementedException ();
+			this.value = (double) value;
 		}
 
 		public new Type GetType ()

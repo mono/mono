@@ -29,6 +29,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace Microsoft.JScript {
 
@@ -393,13 +394,14 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Global_isNaN)]
 		public static bool isNaN (Object num)
 		{
-			throw new NotImplementedException ();
+			double number = Convert.ToNumber (num);
+			return Double.IsNaN (number);
 		}
 
 		[JSFunctionAttribute(0, JSBuiltin.Global_isFinite)]
 		public static bool isFinite (double number)
 		{
-			throw new NotImplementedException ();
+			return !Double.IsInfinity (number) && !Double.IsNaN (number);
 		}
 
 		public static Type @long {
@@ -421,7 +423,17 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Global_parseFloat)]
 		public static double parseFloat (Object @string)
 		{
-			throw new NotImplementedException ();
+			string string_obj = Convert.ToString (@string);
+			double result;
+
+			if (Double.TryParse (string_obj, NumberStyles.Float, null, out result))
+				return result;
+			else if (string_obj.StartsWith ("Infinity") || string_obj.StartsWith ("+Infinity"))
+				return Double.PositiveInfinity;
+			else if (string_obj.StartsWith ("-Infinity"))
+				return Double.NegativeInfinity;
+			else
+				return Double.NaN;
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_parseInt)]

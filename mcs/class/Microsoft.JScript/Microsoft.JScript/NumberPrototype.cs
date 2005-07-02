@@ -71,7 +71,9 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_valueOf)]
 		public static object valueOf (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
+			NumberObject no = thisObj as NumberObject;
+			return no.value;
 		}
 	}
 }

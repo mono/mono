@@ -42,7 +42,7 @@ namespace Microsoft.JScript {
 		public object obj;
 		private static BindingFlags bind_flags = BindingFlags.Public;
 		private string right_hand_side;
-			
+
 		public LateBinding (string name)
 		{
 			this.right_hand_side = name;
@@ -58,10 +58,10 @@ namespace Microsoft.JScript {
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public object Call (object [] arguments, bool construct, bool brackets,
-				    VsaEngine engine)
+					VsaEngine engine)
 		{
 			if (construct) {
-				if (brackets) {					
+				if (brackets) {
 				} else {
 				}
 			} else {
@@ -73,7 +73,29 @@ namespace Microsoft.JScript {
 						type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
 
 					MethodInfo method = type.GetMethod (right_hand_side, BindingFlags.Public | BindingFlags.Static);
-					object [] args = build_args (arguments, engine);
+					JSFunctionAttribute [] custom_attrs = (JSFunctionAttribute [])
+						method.GetCustomAttributes (typeof (JSFunctionAttribute), true);
+					//
+					// We need to iterate through the JSFunctionAttributes to find out whether the function wants
+					// to get passed the vsaEngine or not so we can pass the right arguments to it.
+					//
+					object [] args = null;
+					foreach (JSFunctionAttribute attr in custom_attrs)
+						if ((attr.GetAttributeValue () & JSFunctionAttributeEnum.HasEngine) != 0) {
+							args = build_args (arguments, engine);
+							break;
+						}
+
+					if (args == null)
+						args = build_args (arguments, null);
+
+					// TODO: Debug logging should be removed
+					string arg_str = "";
+					foreach (object arg in args)
+						arg_str += arg.GetType ().ToString () + ", ";
+
+					//System.Console.WriteLine("\nInvoking {0}.{1} with args {2}", obj.GetType(), method.Name, arg_str);
+
 					return method.Invoke (type, args);
 				}
 			}
@@ -91,7 +113,7 @@ namespace Microsoft.JScript {
 				args.Add (o);
 			return args.ToArray ();
 		}
-		
+
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public static object CallValue (object thisObj, object val, object [] arguments,
@@ -100,7 +122,7 @@ namespace Microsoft.JScript {
 			if (construct) {
 				if (brackets) {
 					return null;
-				} 
+				}
 				return null;
 			} else if (brackets) {
 				if (!(val is JSObject))
@@ -108,9 +130,9 @@ namespace Microsoft.JScript {
 
 				JSObject js_val = (JSObject) val;
 				object res = js_val.GetField (Convert.ToString (arguments [0]));
-				if (res is JSFieldInfo) 
+				if (res is JSFieldInfo)
 					return ((JSFieldInfo) res).GetValue (arguments [0]);
-				else 
+				else
 					throw new NotImplementedException ();
 			} else {
 				return null;
@@ -142,6 +164,9 @@ namespace Microsoft.JScript {
 		public object GetNonMissingValue ()
 		{
 			Type type = obj.GetType ();
+			if (obj is JSObject)
+				type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+
 			MemberInfo [] members = type.GetMember (right_hand_side);
 			if (members.Length > 0) {
 				MemberInfo member = members [0];
@@ -150,7 +175,12 @@ namespace Microsoft.JScript {
 				switch (member_type) {
 				case MemberTypes.Property:
 					MethodInfo method = ((PropertyInfo) member).GetGetMethod ();
-					return method.Invoke (obj, new object [] {});
+					return method.Invoke (obj, new object [] { });
+				case MemberTypes.Method:
+					return new FunctionObject (((MethodInfo) member).Name);
+				default:
+					System.Console.WriteLine ("GetNonMissingValue: type = {0}, member_type = {1}", type, member_type);
+					break;
 				}
 			}
 			throw new NotImplementedException ();

@@ -43,6 +43,46 @@ namespace Microsoft.JScript {
 
 		public static bool JScriptStrictEquals (object v1, object v2)
 		{
+			IConvertible ic1 = v1 as IConvertible;
+			IConvertible ic2 = v2 as IConvertible;
+
+			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
+			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
+
+			bool both_numbers = Convert.IsNumberTypeCode (tc1) && Convert.IsNumberTypeCode (tc2);
+			if (tc1 != tc2 && !both_numbers)
+				return false;
+
+			switch (tc1) {
+			case TypeCode.DBNull:
+			case TypeCode.Empty:
+				return true;
+
+			case TypeCode.Boolean:
+				return ic1.ToBoolean (null) == ic2.ToBoolean (null);
+
+			case TypeCode.String:
+				return ic1.ToString (null) == ic2.ToString (null);
+
+			default:
+				if (both_numbers) {
+					double num1;
+					if (Convert.IsFloatTypeCode (tc1))
+						num1 = ic1.ToDouble (null);
+					else
+						num1 = (double) ic1.ToInt32 (null);
+
+					double num2;
+					if (Convert.IsFloatTypeCode (tc2))
+						num2 = ic2.ToDouble (null);
+					else
+						num2 = (double) ic2.ToInt32 (null);
+
+					return num1 == num2;
+				}
+				Console.WriteLine ("StrictEquality, tc1 = {0}, tc2 = {1}", tc1, tc2);
+				break;
+			}
 			throw new NotImplementedException ();
 		}
 
