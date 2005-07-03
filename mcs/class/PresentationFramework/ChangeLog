@@ -1,3 +1,12 @@
+2005-07-03  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/CodeWriter.cs: use CodeDom to do code
+	generation
+	* Mono.Windows.Serialization/CodeWriter.cs:
+	* Mono.Windows.Serialization/XamlWriter.cs:
+	* Mono.Windows.Serialization/XamlParser.cs: initial TypeConverter
+	support
+
 2005-07-02  Iain McCoy  <iain@mccoy.id.au>
 
 	* whole folder: implementation of Xaml-related namespaces

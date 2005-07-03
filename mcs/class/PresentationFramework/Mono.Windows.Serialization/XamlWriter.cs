@@ -32,9 +32,9 @@ namespace Mono.Windows.Serialization {
 		void CreateObject(string typeName);
 		void CreateProperty(string propertyName);
 		void CreateElementText(string text);
-		void CreatePropertyText(string text);
+		void CreatePropertyText(string text, string converter);
 		void CreateAttachedProperty(string attachedTo, string propertyName, string typeName);
-		void CreateAttachedPropertyText(string text);
+		void CreateAttachedPropertyText(string text, string converter);
 		void EndObject();
 		void EndProperty();
 		void EndAttachedProperty();

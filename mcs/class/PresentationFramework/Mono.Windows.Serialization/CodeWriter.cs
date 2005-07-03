@@ -29,6 +29,8 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 
 namespace Mono.Windows.Serialization {
 	public class CodeWriter : XamlWriter {
@@ -36,20 +38,44 @@ namespace Mono.Windows.Serialization {
 		ArrayList objects = new ArrayList();
 		Hashtable nameClashes = new Hashtable();
 		int tempIndex = 0;
+
+		CodeCompileUnit code;
+		CodeConstructor constructor;
 		
+		// pushes: the code writer
 		public CodeWriter(TextWriter writer)
 		{
 			this.writer = writer;
+			code = new CodeCompileUnit();
+			objects.Add(code);
 		}
-		
+	
+		// pushes: a CodeVariableReferenceExpression to the present
+		// 	instance
 		public void CreateTopLevel(string parentName, string className)
 		{
 			Type parent = Type.GetType(parentName);
-			writer.WriteLine(className + " extends " + 
-					parent.Namespace + "." + parent.Name);	
-			objects.Add("this");
+			int endNamespaceName = className.LastIndexOf(".");
+			string clrNamespace;
+			if (endNamespaceName < 0)
+				clrNamespace = "DefaultNamespace";
+			else
+				clrNamespace = className.Substring(0,
+						endNamespaceName);
+			CodeNamespace ns = new CodeNamespace(clrNamespace);
+			((CodeCompileUnit)objects[0]).Namespaces.Add(ns);
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration(className);
+			type.BaseTypes.Add(new CodeTypeReference(parent));
+			constructor = new CodeConstructor();
+			type.Members.Add(constructor);
+			ns.Types.Add(type);
+			
+			objects.Add(new CodeThisReferenceExpression());
 		}
-	
+
+		// bottom of stack holds CodeVariableReferenceExpression
+		// pushes a reference to the new current type
 		public void CreateObject(string typeName)
 		{
 			Type type = Type.GetType(typeName);
@@ -65,56 +91,94 @@ namespace Mono.Windows.Serialization {
 				nameClashes[varName] = 1 + (int)nameClashes[varName];
 				varName += (int)nameClashes[varName];
 			}
-			
-			writer.WriteLine(type.Name + " " + varName);
-			writer.WriteLine(objects[objects.Count - 1] + ".AddChild(" + varName + ")");
-			objects.Add(varName);
+
+			CodeVariableDeclarationStatement declaration = 
+					new CodeVariableDeclarationStatement(type, varName);
+			CodeVariableReferenceExpression varRef = new CodeVariableReferenceExpression(varName);
+			CodeMethodInvokeExpression addChild = new CodeMethodInvokeExpression(
+					(CodeExpression)objects[objects.Count - 1],
+					"AddChild",
+					varRef);
+			constructor.Statements.Add(declaration);
+			constructor.Statements.Add(addChild);
+			objects.Add(varRef);
 		}
 
+		// top of stack is a reference to an object
+		// pushes a reference to the property
 		public void CreateProperty(string propertyName)
 		{
-			string varName = (string)objects[objects.Count - 1];
-			string prop = varName + "." + propertyName;
+			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression(
+					(CodeExpression)objects[objects.Count - 1],
+					propertyName);
 			objects.Add(prop);
 		}
 
+		// top of stack is a reference to an object
+		// pushes the name of the instance to attach to, the name of 
+		//   the property, and a reference to an object
 		public void CreateAttachedProperty(string attachedTo, string propertyName, string typeName)
 		{
+			// need to:
 			Type t = Type.GetType(typeName);
-			objects.Add(attachedTo);
-			objects.Add(propertyName);
 
 			string name = "temp";
 			if (tempIndex != 0)
 				name += tempIndex;
-			writer.WriteLine(t.Name + " " + name);
-			objects.Add(name);
+			CodeVariableDeclarationStatement decl = new CodeVariableDeclarationStatement(t, name);
+			constructor.Statements.Add(decl);
+
+
+			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
+					new CodeVariableReferenceExpression(attachedTo),
+					"Set" + propertyName,
+					(CodeExpression)objects[objects.Count - 1],
+					new CodeVariableReferenceExpression(name));
+
+			objects.Add(call);
+			objects.Add(new CodeVariableReferenceExpression(name));
 		}
 
+		// pops 2 items: the name of the property, and the object to attach to
 		public void EndAttachedProperty()
 		{
-			string varName = (string)(objects[objects.Count - 1]);
-			string propertyName = (string)(objects[objects.Count - 2]);
-			string attachedTo = (string)(objects[objects.Count - 3]);
 			objects.RemoveAt(objects.Count - 1);
+			CodeExpression call = (CodeExpression)(objects[objects.Count - 1]);
 			objects.RemoveAt(objects.Count - 1);
-			objects.RemoveAt(objects.Count - 1);
-			writer.WriteLine(attachedTo + ".Set" + propertyName + "(" + objects[objects.Count - 1] + ", " + varName + ");");
+			constructor.Statements.Add(call);
 		}
 
+		// top of stack must be an object reference
 		public void CreateElementText(string text)
 		{
-			writer.WriteLine(objects[objects.Count - 1] + ".AddText(\"" + text +"\")");
+			CodeVariableReferenceExpression var = (CodeVariableReferenceExpression)objects[objects.Count - 1];
+			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
+					var,
+					"AddText",
+					new CodePrimitiveExpression(text));
+			constructor.Statements.Add(call);
 		}
 
-		public void CreatePropertyText(string text)
+		// top of stack is reference to a property
+		public void CreatePropertyText(string text, string converter)
 		{
-			writer.WriteLine(objects[objects.Count - 1] + " = " +
-					"\"" + text + "\"");
+			CreateAttachedPropertyText(text, converter);
 		}
-		public void CreateAttachedPropertyText(string text)
+		public void CreateAttachedPropertyText(string text, string converter)
 		{
-			writer.WriteLine(objects[objects.Count - 1] + " = " + text);
+			CodeExpression expr = new CodePrimitiveExpression(text);
+			if (converter != null) {
+				Type t = Type.GetType(converter);
+				expr = new CodeMethodInvokeExpression(
+						new CodeTypeReferenceExpression(t),
+						"ConvertFromString",
+						expr);
+			}
+			CodeAssignStatement assignment = new CodeAssignStatement(
+					(CodeExpression)objects[objects.Count - 1],
+					expr);
+			
+			constructor.Statements.Add(assignment);
 		}
 		
 		public void EndObject()
@@ -129,6 +193,8 @@ namespace Mono.Windows.Serialization {
 
 		public void Finish()
 		{
+			ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+			generator.GenerateCodeFromCompileUnit(code, writer, null);
 			writer.Close();
 		}
 	}

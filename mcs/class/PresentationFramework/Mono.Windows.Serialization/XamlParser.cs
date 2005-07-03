@@ -131,13 +131,42 @@ namespace Mono.Windows.Serialization {
 
 		void parseText()
 		{
-			if (currentState.type == CurrentType.Object)
+			if (currentState.type == CurrentType.Object) {
 				writer.CreateElementText(reader.Value);
-			else if (currentState.type == CurrentType.AttachedProperty)
-				writer.CreateAttachedPropertyText(reader.Value);
-			else
-				writer.CreatePropertyText(reader.Value);
+			} else if (currentState.type == CurrentType.AttachedProperty) {
+				DependencyProperty dp = (DependencyProperty)currentState.obj;
+				writer.CreateAttachedPropertyText(reader.Value, getTypeConverter(dp.PropertyType));
+			} else {
+				PropertyInfo prop = (PropertyInfo)currentState.obj;
+				writer.CreatePropertyText(reader.Value, getTypeConverter(prop.PropertyType));
+			}
 		}
+		
+		string getTypeConverter(Type fromType)
+		{
+			// TODO: this business setting assembly is frankly
+			// grotesque. It should just be something along the
+			// lines of Assembly.Load("System.dll")
+			Assembly assembly = null;
+			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()) {
+				if (a.CodeBase.EndsWith("System.dll")) {
+					assembly = a;
+					break;
+				}
+			}
+
+			
+			if (fromType.Namespace == "System" && 
+					fromType.Name == "String")
+				return null;
+			string converterName = "System.ComponentModel." + fromType.Name + "Converter,System.dll";
+			Console.WriteLine("YY '"+converterName + "'");
+			Type converter = assembly.GetType(converterName);
+			return converter.AssemblyQualifiedName;
+			// TODO: catch NullReferenceException and do something
+			// cool
+		}
+
 		
 		void parseNormalPropertyElement(string propertyName)
 		{
@@ -189,7 +218,7 @@ namespace Mono.Windows.Serialization {
 			
 			oldStates.Add(currentState);
 			currentState = new ParserState();
-			currentState.obj = propField;
+			currentState.obj = dp;
 			currentState.type = CurrentType.AttachedProperty;
 
 			writer.CreateAttachedProperty(attachedTo, propertyName, dp.PropertyType.AssemblyQualifiedName);
@@ -238,10 +267,11 @@ namespace Mono.Windows.Serialization {
 			}
 
 			writer.CreateProperty(propertyName);
-			writer.CreatePropertyText(reader.Value);
+			writer.CreatePropertyText(reader.Value, getTypeConverter(prop.PropertyType));
 
 			parseEndElement();
 		}
+
 
 		void parseContextPropertyAttribute()
 		{
