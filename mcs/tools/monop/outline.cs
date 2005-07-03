@@ -409,7 +409,9 @@ public class Outline {
 		if (fi.IsFamily)   o.Write ("protected ");
 		if (fi.IsPrivate)  o.Write ("private ");
 		if (fi.IsAssembly) o.Write ("internal ");
-		if (fi.IsLiteral) o.Write ("const ");
+		if (fi.IsLiteral)  o.Write ("const ");
+		if (fi.IsInitOnly) o.Write ("readonly ");
+
 		o.Write (FormatType (fi.FieldType));
 		o.Write (" ");
 		o.Write (fi.Name);

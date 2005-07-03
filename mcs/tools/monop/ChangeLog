@@ -1,3 +1,7 @@
+2005-07-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* outline.cs: Add support for readonly fields.
+
 2005-05-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* outline.cs: Don't show static constructors: they are cctors,
