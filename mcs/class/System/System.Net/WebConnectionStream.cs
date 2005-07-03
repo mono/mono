@@ -525,12 +525,12 @@ namespace System.Net
 			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
 				return;
 
+			IAsyncResult result = cnc.BeginWrite (bytes, 0, length, null, null);
 			if (!initRead) {
 				initRead = true;
 				WebConnection.InitRead (cnc);
 			}
 
-			IAsyncResult result = cnc.BeginWrite (bytes, 0, length, null, null);
 			complete_request_written = cnc.EndWrite (result);
 		}
 
