@@ -41,7 +41,10 @@ namespace Mono.Windows.Serialization {
 		private XmlReader reader;
 		private XamlWriter writer;
 
-		private enum CurrentType { Object, Property, AttachedProperty }
+		private enum CurrentType { Object, 
+			Property, 
+			AttachedProperty,
+	       		Code }
 
 		private class ParserState {
 			public object obj;
@@ -60,6 +63,18 @@ namespace Mono.Windows.Serialization {
 		public void Parse()
 		{
 			while (reader.Read()) {
+				if (currentState != null &&
+						currentState.type == CurrentType.Code)
+				{
+					if (reader.NodeType == XmlNodeType.EndElement &&
+							reader.LocalName == "Code" && 
+							reader.NamespaceURI == XAML_NAMESPACE) {
+						parseEndElement();
+					} else {
+						currentState.obj = (string)currentState.obj + reader.Value;
+					}
+					continue;
+				}
 				switch (reader.NodeType) {
 				case XmlNodeType.ProcessingInstruction:
 					parsePI();
@@ -92,6 +107,10 @@ namespace Mono.Windows.Serialization {
 
 		void parseElement()
 		{
+			if (reader.LocalName == "Code" && reader.NamespaceURI == XAML_NAMESPACE) {
+				parseCodeElement();
+				return;
+			}
 			// This element must be an object if:
 			//  - It's a direct child of a property element
 			//  - It's a direct child of an IAddChild element
@@ -129,6 +148,14 @@ namespace Mono.Windows.Serialization {
 			return false;
 		}
 
+		void parseCodeElement()
+		{
+			oldStates.Add(currentState);
+			currentState = new ParserState();
+			currentState.type = CurrentType.Code;
+			currentState.obj = "";
+		}
+
 		void parseText()
 		{
 			if (currentState.type == CurrentType.Object) {
@@ -160,7 +187,6 @@ namespace Mono.Windows.Serialization {
 					fromType.Name == "String")
 				return null;
 			string converterName = "System.ComponentModel." + fromType.Name + "Converter,System.dll";
-			Console.WriteLine("YY '"+converterName + "'");
 			Type converter = assembly.GetType(converterName);
 			return converter.AssemblyQualifiedName;
 			// TODO: catch NullReferenceException and do something
@@ -179,11 +205,10 @@ namespace Mono.Windows.Serialization {
 				// TODO: exception
 			}
 
-			ParserState newState = new ParserState();
-			newState.type = CurrentType.Property;
-			newState.obj = prop;
 			oldStates.Add(currentState);
-			currentState = newState;
+			currentState = new ParserState();
+			currentState.type = CurrentType.Property;
+			currentState.obj = prop;
 
 			writer.CreateProperty(propertyName);
 
@@ -201,7 +226,8 @@ namespace Mono.Windows.Serialization {
 			DependencyProperty dp;
 			Type currentType = (Type)currentState.obj;
 			if (!currentType.IsSubclassOf(typeof(System.Windows.DependencyObject)))
-					throw new Exception("Attached properties can only be set on DependencyObjects (not " + currentType.Name + ")");
+					throw new Exception("Attached properties can only be set on "+
+							"DependencyObjects (not " + currentType.Name + ")");
 			foreach (ParserState state in oldStates) {
 				if (state.type == CurrentType.Object &&
 						((Type)state.obj).Name == attachedTo) {
@@ -221,7 +247,9 @@ namespace Mono.Windows.Serialization {
 			currentState.obj = dp;
 			currentState.type = CurrentType.AttachedProperty;
 
-			writer.CreateAttachedProperty(attachedTo, propertyName, dp.PropertyType.AssemblyQualifiedName);
+			writer.CreateAttachedProperty(typeAttachedTo.AssemblyQualifiedName, 
+					propertyName, 
+					dp.PropertyType.AssemblyQualifiedName);
 		}
 
 		void parseObjectElement()
@@ -241,7 +269,9 @@ namespace Mono.Windows.Serialization {
 			
 			if (reader.MoveToFirstAttribute()) {
 				do {
-					if (reader.LocalName.StartsWith("xmlns"))
+					if (reader.Name.StartsWith("xmlns"))
+						continue;
+					if (reader.NamespaceURI == XAML_NAMESPACE)
 						continue;
 					if (reader.LocalName.IndexOf(".") < 0)
 						parseLocalPropertyAttribute();
@@ -280,6 +310,8 @@ namespace Mono.Windows.Serialization {
 
 		void parseEndElement()
 		{
+			if (currentState.type == CurrentType.Code)
+				writer.CreateCode((string)currentState.obj);
 			if (currentState.type == CurrentType.Object)
 				writer.EndObject();
 			else if (currentState.type == CurrentType.Property)

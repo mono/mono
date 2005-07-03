@@ -1,5 +1,16 @@
 2005-07-03  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/XamlParser.cs: added support for Code
+	elements, provide fully qualified name of type to attach to, skip
+	xmns: attributes when processing, 
+	* Mono.Windows.Serialization/XamlWriter.cs: added WriteCode member,
+	ordered methods by type of thing dealt with
+	* Mono.Windows.Serialization/CodeWriter.cs: added support for Code
+	elements, call empty constructor for objects, call TypeConverter
+	almost correctly.
+
+2005-07-03  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/CodeWriter.cs: use CodeDom to do code
 	generation
 	* Mono.Windows.Serialization/CodeWriter.cs:

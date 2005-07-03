@@ -29,15 +29,21 @@
 namespace Mono.Windows.Serialization {
 	public interface XamlWriter {
 		void CreateTopLevel(string parentName, string className);
+
 		void CreateObject(string typeName);
-		void CreateProperty(string propertyName);
 		void CreateElementText(string text);
+		void EndObject();
+
+		void CreateProperty(string propertyName);
 		void CreatePropertyText(string text, string converter);
+		void EndProperty();
+		
 		void CreateAttachedProperty(string attachedTo, string propertyName, string typeName);
 		void CreateAttachedPropertyText(string text, string converter);
-		void EndObject();
-		void EndProperty();
 		void EndAttachedProperty();
+
+		void CreateCode(string code);
+
 		void Finish();
 	}
 }

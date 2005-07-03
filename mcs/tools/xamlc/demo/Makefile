@@ -3,11 +3,14 @@ include ../../../build/rules.make
 
 SOURCES=TestVocab/ConsoleApp.cs TestVocab/ConsoleWriter.cs TestVocab/IConsoleAction.cs
 
-all-local: TestVocab.dll test.xaml.out
+run:
+	make TestVocab.dll
+	MONO_PATH="." $(RUNTIME) --debug ../xamlc.exe -o:test.xaml.out.cs test.xaml
+	$(CSCOMPILE) -r:TestVocab.dll -o test.exe test.xaml.out.cs
+	$(RUNTIME) --debug test.exe
+
+all-local: TestVocab.dll
 
 TestVocab.dll: $(SOURCES)
 	$(CSCOMPILE) -r:PresentationFramework.dll -r:WindowsBase.dll -out:TestVocab.dll -target:library $(SOURCES)
 
-test.xaml.out:
-	make TestVocab.dll
-	MONO_PATH="." $(RUNTIME) ../xamlc.exe -o:test.xaml.out test.xaml

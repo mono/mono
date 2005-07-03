@@ -40,6 +40,7 @@ namespace Mono.Windows.Serialization {
 		int tempIndex = 0;
 
 		CodeCompileUnit code;
+		CodeTypeDeclaration type;
 		CodeConstructor constructor;
 		
 		// pushes: the code writer
@@ -65,7 +66,7 @@ namespace Mono.Windows.Serialization {
 			CodeNamespace ns = new CodeNamespace(clrNamespace);
 			((CodeCompileUnit)objects[0]).Namespaces.Add(ns);
 
-			CodeTypeDeclaration type = new CodeTypeDeclaration(className);
+			type = new CodeTypeDeclaration(className);
 			type.BaseTypes.Add(new CodeTypeReference(parent));
 			constructor = new CodeConstructor();
 			type.Members.Add(constructor);
@@ -93,7 +94,9 @@ namespace Mono.Windows.Serialization {
 			}
 
 			CodeVariableDeclarationStatement declaration = 
-					new CodeVariableDeclarationStatement(type, varName);
+					new CodeVariableDeclarationStatement(type, 
+							varName,
+							new CodeObjectCreateExpression(type));
 			CodeVariableReferenceExpression varRef = new CodeVariableReferenceExpression(varName);
 			CodeMethodInvokeExpression addChild = new CodeMethodInvokeExpression(
 					(CodeExpression)objects[objects.Count - 1],
@@ -119,8 +122,8 @@ namespace Mono.Windows.Serialization {
 		//   the property, and a reference to an object
 		public void CreateAttachedProperty(string attachedTo, string propertyName, string typeName)
 		{
-			// need to:
 			Type t = Type.GetType(typeName);
+			Type typeAttachedTo = Type.GetType(attachedTo);
 
 			string name = "temp";
 			if (tempIndex != 0)
@@ -130,7 +133,7 @@ namespace Mono.Windows.Serialization {
 
 
 			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
-					new CodeVariableReferenceExpression(attachedTo),
+					new CodeTypeReferenceExpression(typeAttachedTo),
 					"Set" + propertyName,
 					(CodeExpression)objects[objects.Count - 1],
 					new CodeVariableReferenceExpression(name));
@@ -169,10 +172,12 @@ namespace Mono.Windows.Serialization {
 			CodeExpression expr = new CodePrimitiveExpression(text);
 			if (converter != null) {
 				Type t = Type.GetType(converter);
-				expr = new CodeMethodInvokeExpression(
-						new CodeTypeReferenceExpression(t),
-						"ConvertFromString",
-						expr);
+				expr = new CodeCastExpression(
+						new CodeTypeReference(typeof(int)),
+						new CodeMethodInvokeExpression(
+								new CodeObjectCreateExpression(t),
+								"ConvertFromString",
+								expr));
 			}
 			CodeAssignStatement assignment = new CodeAssignStatement(
 					(CodeExpression)objects[objects.Count - 1],
@@ -196,6 +201,11 @@ namespace Mono.Windows.Serialization {
 			ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
 			generator.GenerateCodeFromCompileUnit(code, writer, null);
 			writer.Close();
+		}
+
+		public void CreateCode(string code)
+		{
+			type.Members.Add(new CodeSnippetTypeMember(code));
 		}
 	}
 }

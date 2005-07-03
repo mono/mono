@@ -5,7 +5,7 @@ using System.Windows.Serialization;
 
 namespace Xaml.TestVocab.Console {
 	public class ConsoleApp : IAddChild {
-		private ArrayList actions;
+		private ArrayList actions = new ArrayList();
 		public void AddText(string Text)
 		{
 			actions.Add(new ConsoleWriter(Text));
@@ -36,7 +36,8 @@ namespace Xaml.TestVocab.Console {
 		}
 		public static int GetRepetitions(DependencyObject d)
 		{
-			return (int)d.GetValue(RepetitionsProperty);
+			object v = d.GetValue(RepetitionsProperty);
+			return (v == null ? 1 : (int)v);
 		}
 	}
 }

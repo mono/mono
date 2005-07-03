@@ -1,3 +1,12 @@
+2005-07-03  Iain McCoy  <iain@mccoy.id.au>
+	* demo/Makefile: made more useful - just do "make run" and it should
+	all happen
+	* demo/test.xaml: added Code section, which I think should make this
+	thing a complete, if small, program
+	* demo/TestVocab/*: some small bugfixes, with a little bit of
+	craziness to work around the slightly bogus stuff in DependencyObject
+	at the moment.
+
 2005-07-02  Iain McCoy  <iain@mccoy.id.au>
 
 	* whole folder: first emphatically work-in-progress version of xaml
