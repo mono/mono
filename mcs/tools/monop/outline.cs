@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Collections;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Text;
 	
 public class Outline {
 	
@@ -76,7 +77,7 @@ public class Outline {
 
 			o.Write (FormatType (method.ReturnType));
 			o.Write (" ");
-			o.Write (t.Name);
+			o.Write (GetTypeName (t));
 			o.Write (" (");
 			OutlineParams (method.GetParameters ());
 			o.WriteLine (");");
@@ -84,7 +85,7 @@ public class Outline {
 			return;
 		}
 		
-		o.Write (t.Name);
+		o.Write (GetTypeName (t));
 		if (((parent != null && parent != typeof (object) && parent != typeof (ValueType)) || interfaces.Length != 0) && ! t.IsEnum) {
 			first = true;
 			o.Write (" : ");
@@ -287,7 +288,7 @@ public class Outline {
 	void OutlineConstructor (ConstructorInfo ci)
 	{
 		o.Write (GetMethodVisibility (ci));
-		o.Write (t.Name);
+		o.Write (RemoveGenericArity (t.Name));
 		o.Write (" (");
 		OutlineParams (ci.GetParameters ());
 		o.Write (");");
@@ -487,7 +488,7 @@ public class Outline {
 	
 	string FormatType (Type t)
 	{
-		string type = t.FullName;
+		string type = GetFullName (t);
 		
 		if (!type.StartsWith ("System.")) {
 			if (t.Namespace == this.t.Namespace)
@@ -531,6 +532,85 @@ public class Outline {
 			return type.Substring(7);
 		
 		return type;
+	}
+
+	public static string RemoveGenericArity (string name)
+	{
+		int start = 0;
+		StringBuilder sb = new StringBuilder ();
+		while (start < name.Length) {
+			int pos = name.IndexOf ('`', start);
+			if (pos < 0) {
+				sb.Append (name.Substring (start));
+				break;
+			}
+			sb.Append (name.Substring (start, pos-start));
+
+			pos++;
+
+			while ((pos < name.Length) && Char.IsNumber (name [pos]))
+				pos++;
+
+			start = pos;
+		}
+
+		return sb.ToString ();
+	}
+
+	string GetTypeName (Type t)
+	{
+		StringBuilder sb = new StringBuilder ();
+		GetTypeName (sb, t);
+		return sb.ToString ();
+	}
+
+	void GetTypeName (StringBuilder sb, Type t)
+	{
+		sb.Append (RemoveGenericArity (t.Name));
+#if NET_2_0
+		Type[] args = t.GetGenericArguments ();
+		if (args.Length > 0) {
+			sb.Append ("<");
+			for (int i = 0; i < args.Length; i++) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (FormatType (args [i]));
+			}
+			sb.Append (">");
+		}
+#endif
+	}
+
+	string GetFullName (Type t)
+	{
+		StringBuilder sb = new StringBuilder ();
+		GetFullName_recursed (sb, t, false);
+		return sb.ToString ();
+	}
+
+	void GetFullName_recursed (StringBuilder sb, Type t, bool recursed)
+	{
+#if NET_2_0
+		if (t.IsGenericParameter) {
+			sb.Append (t.Name);
+			return;
+		}
+#endif
+
+		if (t.DeclaringType != null) {
+			GetFullName_recursed (sb, t.DeclaringType, true);
+			sb.Append (".");
+		}
+
+		if (!recursed) {
+			string ns = t.Namespace;
+			if ((ns != null) && (ns != "")) {
+				sb.Append (ns);
+				sb.Append (".");
+			}
+		}
+
+		GetTypeName (sb, t);
 	}
 
 	string OperatorFromName (string name)
