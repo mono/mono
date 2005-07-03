@@ -15,10 +15,11 @@
 		</Build>
 		<Files>
 			<Include>
+				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\ChangeLog" BuildAction="None"/>
 				<File RelPath="Assembly\Consts.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\AuthenticationTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.DirectoryServices\DirectoryEntries.cs" SubType="Code" BuildAction="Compile"/>
@@ -41,7 +42,6 @@
 				<File RelPath="System.DirectoryServices\SearchScope.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\SortDirection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices\SortOption.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.DirectoryServices\TODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.DirectoryServices.Design\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.DirectoryServices.Design\DirectoryEntryConverter.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
