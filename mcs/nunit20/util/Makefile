@@ -9,7 +9,7 @@ LIBRARY_SNK = $(topdir)/nunit.key
 LOCAL_MCS_FLAGS= \
 	/resource:Transform.resources,NUnit.Util.Transform.resources \
 	-r:nunit.framework.dll -r:nunit.core.dll -r:System.dll \
-	-r:System.Xml.dll /d:MONO /d:StronglyNamedAssembly -debug
+	-r:System.Xml.dll /d:MONO /d:StronglyNamedAssembly
 NO_TEST = yo
 
 RESX_RES = Transform.resources
@@ -20,13 +20,14 @@ EXTRA_DISTFILES = \
 
 CLEAN_FILES = $(RESX_RES)
 
+ifeq (net_2_0, $(PROFILE))
+NO_INSTALL = yes
+endif
+
+
 include ../../build/library.make
 
 $(the_lib): $(RESX_RES)
 
 $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
-
-ifeq (net_2_0, $(PROFILE))
-NO_INSTALL = yes
-endif
