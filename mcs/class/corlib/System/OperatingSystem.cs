@@ -38,8 +38,8 @@ namespace System
 	[Serializable]
 	public sealed class OperatingSystem : ICloneable
 	{
-		private System.PlatformID itsPlatform;
-		private Version itsVersion;
+		private System.PlatformID _platform;
+		private Version _version;
 
 		public OperatingSystem (PlatformID platform, Version version)
 		{
@@ -47,32 +47,32 @@ namespace System
 				throw new ArgumentNullException ("version");
 			}
 
-			itsPlatform = platform;
-			itsVersion = version;
+			_platform = platform;
+			_version = version;
 		}
 
 		public PlatformID Platform {
 			get {
-				return itsPlatform;
+				return _platform;
 			}
 		}
 
 		public Version Version {
 			get {
-				return itsVersion;
+				return _version;
 			}
 		}
 
 		public object Clone ()
 		{
-			return new OperatingSystem (itsPlatform, itsVersion);
+			return new OperatingSystem (_platform, _version);
 		}
 
 		public override string ToString ()
 		{
 			string str;
 
-			switch ((int) itsPlatform) {
+			switch ((int) _platform) {
 			case (int) System.PlatformID.Win32NT:
 				str = "Microsoft Windows NT";
 				break;
@@ -96,7 +96,7 @@ namespace System
 				break;
 			}
 
-			return str + " " + itsVersion.ToString();
+			return str + " " + _version.ToString();
 		}
 	}
 }

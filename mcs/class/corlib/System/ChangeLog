@@ -1,3 +1,8 @@
+2005-07-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* OperatingSystem.cs: patch from Aleksandar Dezelin to fix
+	serialization.
+
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Guid.cs: Avoid code duplication between overriden methods (new in 
