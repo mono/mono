@@ -31,7 +31,7 @@ bin_SCRIPTS = \
 	mjs			\
 	mkbundle		\
 	monop			\
-	mono-shlib-cop \
+	mono-shlib-cop 		\
 	permview		\
 	prj2make		\
 	resgen			\
@@ -44,7 +44,10 @@ bin_SCRIPTS = \
 	wsdl			\
 	xsd
 
-bin2_SCRIPTS = gmcs wsdl2
+bin2_SCRIPTS = 					\
+	gmcs					\
+	monop2 					\
+	wsdl2
 
 service_SCRIPTS = mono-service
 
