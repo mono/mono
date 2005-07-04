@@ -613,7 +613,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			// quick check : simple codepoint comparison
 			if (s.Length >= target.Length) {
 				int si = start;
-				for (int i = 0; i < target.Length; i++, si++)
+				for (int i = 0; si < length && i < target.Length; i++, si++)
 					if (s [si] != target [i])
 						break;
 				if (si == start + target.Length)
@@ -753,7 +753,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			// quick check : simple codepoint comparison
 			if (s.Length >= target.Length) {
 				int si = start;
-				for (int i = target.Length - 1; i >= 0; i--, si--)
+				int se = start - length;
+				for (int i = target.Length - 1; si >= se && i >= 0; i--, si--)
 					if (s [si] != target [i])
 						break;
 				if (si == start + target.Length)

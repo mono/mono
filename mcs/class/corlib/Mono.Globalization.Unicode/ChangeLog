@@ -1,5 +1,10 @@
 2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : IsPrefix() and IsSuffix() optimization code was
+	  buggy (length check for source was missing).
+
+2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Fixed tailoring table output
 	  to be in correct and countable order. Now if tailoring alias was not
 	  found, just stop the build.
