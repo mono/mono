@@ -640,6 +640,8 @@ public class Outline {
 		foreach (Type t in args) {
 			bool first = true;
 			Type[] ifaces = t.GetInterfaces();
+			ifaces = Array.FindAll<Type> (ifaces, delegate (Type iface) { return !iface.IsAssignableFrom (t.BaseType); });
+			
 			GenericParameterAttributes attrs = t.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
 			GenericParameterAttributes [] interesting = {
 				GenericParameterAttributes.ReferenceTypeConstraint,
@@ -648,12 +650,10 @@ public class Outline {
 			};
 			
 			if (t.BaseType != typeof (object) || ifaces.Length != 0 || attrs != 0) {
-		    
 				o.Write (" where ");
 				o.Write (FormatType (t));
 				o.Write (" : ");
 			}
-
 
 			if (t.BaseType != typeof (object)) {
 				o.Write (FormatType (t.BaseType));

@@ -1,5 +1,10 @@
 2005-07-04  Ben Maurer  <bmaurer@ximian.com>
 
+	* outline.cs: filter out interfaces in generic constraint clauses
+	that come from the base class.
+
+2005-07-04  Ben Maurer  <bmaurer@ximian.com>
+
 	* outline.cs: use tabs, not spaces, for indentation.
 	
 	* outline.cs: Add support for constraints. Inspired by brada's
