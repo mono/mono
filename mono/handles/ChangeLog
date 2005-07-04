@@ -1,3 +1,8 @@
+2005-07-04  Dick Porter  <dick@ximian.com>
+
+	* semdel.c: Fixed compilation on macos, put an error message back
+	at Hari's suggestion.
+
 2005-07-01  Dick Porter  <dick@ximian.com>
 
 	* semdel.c: Removed output, and always exit (0), to avoid giving
