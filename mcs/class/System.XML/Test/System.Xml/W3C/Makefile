@@ -8,7 +8,8 @@ TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
 TEST_PROG=xmlconf.dll
 nunit_MONO_PATH="../../../../../class/lib/default"
-NUNIT_CONSOLE=/monobuild/mono/runtime/mono-wrapper --debug $(nunit_MONO_PATH)/nunit-console.exe
+mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
+NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug $(nunit_MONO_PATH)/nunit-console.exe
 
 CLEAN_FIXTURE=MonoTests.W3C_xmlconf.CleanTests
 CLEAN_NUNIT_FLAGS=/fixture:$(CLEAN_FIXTURE) /xml=TestsResult.xml
