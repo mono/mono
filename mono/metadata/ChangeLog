@@ -1,3 +1,14 @@
+2005-07-04  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(class_compute_field_layout): Move the check for generic type
+	definitions into mono_class_layout_fields().  Fixes #74684.
+	(mono_class_from_generic_parameter): Correctly compute
+	`klass->parent'; fixes #75457.
+
+	* reflection.c (register_assembly, register_module): Make sure
+	`domain->rejobject_hash' is already created.
+
 2005-07-02  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h
