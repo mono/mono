@@ -251,6 +251,7 @@ namespace MonoTests.System.IO
 		public void FullName ()
 		{
 			DirectoryInfo di = new DirectoryInfo ("something");
+			Assert ("Exists", !di.Exists);
 			Assert ("FullName", di.FullName.EndsWith ("something"));
 
 			di = new DirectoryInfo ("something" + Path.DirectorySeparatorChar);
@@ -258,6 +259,24 @@ namespace MonoTests.System.IO
 
 			di = new DirectoryInfo ("something" + Path.AltDirectorySeparatorChar);
 			AssertEquals ("AltDirectorySeparatorChar", Path.DirectorySeparatorChar, di.FullName [di.FullName.Length - 1]);
+		}
+
+		[Test]
+		public void FullName_RootDirectory ()
+		{
+			DirectoryInfo di = new DirectoryInfo (String.Empty + Path.DirectorySeparatorChar);
+			if (Path.DirectorySeparatorChar == '/') {
+				// can't be sure of the root drive under windows
+				AssertEquals ("FullName", di.FullName, "/");
+			}
+			AssertNull ("Parent", di.Parent);
+
+			di = new DirectoryInfo (String.Empty + Path.AltDirectorySeparatorChar);
+			if (Path.DirectorySeparatorChar == '/') {
+				// can't be sure of the root drive under windows
+				AssertEquals ("FullName-Alt", di.FullName, "/");
+			}
+			AssertNull ("Parent-Alt", di.Parent);
 		}
 		
 		[Test]
