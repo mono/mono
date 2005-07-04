@@ -1,5 +1,16 @@
 2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed tailoring table output
+	  to be in correct and countable order. Now if tailoring alias was not
+	  found, just stop the build.
+	* MSCompatUnicodeTable.cs : several build fixes. Now it works to read
+	  assembly resources.
+	* mono-tailoring-source.txt : commented out CJK aliases that miss
+	  target.
+	* Makefile : needed further filename fixes.
+
+2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.cs : renamed from MSCompatUnicodeTable.template
 	  (now it is working as a standalone file).
 	* Makefile : renamed generated file as MSCompatUnicodeTableGenerated.cs

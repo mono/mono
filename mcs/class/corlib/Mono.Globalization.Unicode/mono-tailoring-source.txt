@@ -53,13 +53,15 @@
 	\uFB02 = fl
 
 # pronounciation-based Chinese (4)
-@2052 = 4 # zh-CN = zh-CHS
-@4100 = 4 # zh-SG = zh-CHS
-@5124 = 4 # zh-MO = zh-CHS
+# FIXME: enable them after zh-CHS tailoring is added.
+#@2052 = 4 # zh-CN = zh-CHS
+#@4100 = 4 # zh-SG = zh-CHS
+#@5124 = 4 # zh-MO = zh-CHS
 
 # stroke-count-based Chinese : zh-CHT (31748)
-@1028 = 31748 # zh-TW = zh-CHT
-@3076 = 31748 # zh-HK = zh-CHT
+# FIXME: enable them after zh-CHT tailoring is added.
+#@1028 = 31748 # zh-TW = zh-CHT
+#@3076 = 31748 # zh-HK = zh-CHT
 
 # other aliases
 @20 = 6 # no = da

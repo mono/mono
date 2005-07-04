@@ -551,10 +551,16 @@ sw.Close ();
 			Result.WriteLine ("};");
 
 			Result.WriteLine ("static TailoringInfo [] tailoringInfos = new TailoringInfo [] {");
+#if Binary
+			byte [] rawdata = ms.ToArray ();
+			ms = new MemoryStream ();
+			binary = new BinaryWriter (ms);
+			binary.Write (tailorings.Count);
+#endif
 			foreach (Tailoring t in tailorings) {
 				int target = t.Alias != 0 ? t.Alias : t.LCID;
 				if (!indexes.ContainsKey (target)) {
-					Console.Error.WriteLine ("WARNING: no corresponding definition for tailoring alias. From {0} to {1}", t.LCID, t.Alias);
+					throw new Exception (String.Format ("WARNING: no corresponding definition for tailoring alias. From {0} to {1}", t.LCID, t.Alias));
 					continue;
 				}
 				int idx = (int) indexes [target];
@@ -574,6 +580,12 @@ sw.Close ();
 			}
 			Result.WriteLine ("};");
 #if Binary
+			binary.Write ((byte) 0xFF);
+			binary.Write ((byte) 0xFF);
+			binary.Write (rawdata.Length / 2);
+			binary.Write (rawdata, 0, rawdata.Length);
+
+
 			using (FileStream fs = File.Create ("../collation.tailoring.bin")) {
 				byte [] array = ms.ToArray ();
 				fs.Write (array, 0, array.Length);
