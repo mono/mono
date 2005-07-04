@@ -1,5 +1,7 @@
 2005-07-03  Ben Maurer  <bmaurer@ximian.com>
 
+	* outline.cs: Support for methods with generic parameters.
+
 	* *: begin support for 2.0
 
 	* outline.cs: Add support for readonly fields.

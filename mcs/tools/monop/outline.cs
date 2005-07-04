@@ -359,6 +359,9 @@ public class Outline {
 		o.Write (FormatType (mi.ReturnType));
 		o.Write (" ");
 		o.Write (mi.Name);
+#if NET_2_0
+		o.Write (FormatGenericParams (mi.GetGenericArguments ()));
+#endif
 		o.Write (" (");
 		OutlineParams (mi.GetParameters ());
 		o.Write (");");
@@ -485,6 +488,22 @@ public class Outline {
                         return "internal";
                 }
 	}
+
+	string FormatGenericParams (Type [] args)
+	{
+		StringBuilder sb = new StringBuilder ();
+		if (args.Length == 0)
+			return "";
+		
+		sb.Append ("<");
+		for (int i = 0; i < args.Length; i++) {
+			if (i > 0)
+				sb.Append (",");
+			sb.Append (FormatType (args [i]));
+		}
+		sb.Append (">");
+		return sb.ToString ();
+	}
 	
 	string FormatType (Type t)
 	{
@@ -568,16 +587,7 @@ public class Outline {
 	{
 		sb.Append (RemoveGenericArity (t.Name));
 #if NET_2_0
-		Type[] args = t.GetGenericArguments ();
-		if (args.Length > 0) {
-			sb.Append ("<");
-			for (int i = 0; i < args.Length; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (FormatType (args [i]));
-			}
-			sb.Append (">");
-		}
+		sb.Append (FormatGenericParams (t.GetGenericArguments ()));
 #endif
 	}
 
