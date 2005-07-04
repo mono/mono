@@ -1,3 +1,8 @@
+2005-07-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryInfo.cs: Fixed recursion problem with root directory 
+	introduced when fixing bug #75443.
+
 2005-07-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileSystemInfo.cs: Fixed exception arguments. Added ComVisible for
