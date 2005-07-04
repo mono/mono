@@ -80,7 +80,11 @@ public class Outline {
 			o.Write (GetTypeName (t));
 			o.Write (" (");
 			OutlineParams (method.GetParameters ());
-			o.WriteLine (");");
+			o.WriteLine (")");
+
+#if NET_2_0
+			WriteGenericConstraints (t.GetGenericArguments ());
+#endif			
 
 			return;
 		}
@@ -108,7 +112,9 @@ public class Outline {
 			if (underlyingType != typeof (int))
 				o.Write (" : {0}", FormatType (underlyingType));
 		}
-		
+#if NET_2_0
+		WriteGenericConstraints (t.GetGenericArguments ());
+#endif		
 		o.WriteLine (" {");
 		o.Indent++;
 
@@ -364,7 +370,11 @@ public class Outline {
 #endif
 		o.Write (" (");
 		OutlineParams (mi.GetParameters ());
-		o.Write (");");
+		o.Write (")");
+#if NET_2_0
+		WriteGenericConstraints (mi.GetGenericArguments ());
+#endif
+		o.Write (";");
 	}
 	
 	void OutlineOperator (MethodInfo mi)
@@ -623,6 +633,65 @@ public class Outline {
 		GetTypeName (sb, t);
 	}
 
+#if NET_2_0
+	void WriteGenericConstraints (Type [] args)
+	{
+
+		foreach (Type t in args) {
+			bool first = true;
+			Type[] ifaces = t.GetInterfaces();
+			GenericParameterAttributes attrs = t.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
+			GenericParameterAttributes [] interesting = {
+				GenericParameterAttributes.ReferenceTypeConstraint,
+				GenericParameterAttributes.ValueTypeConstraint,
+				GenericParameterAttributes.DefaultConstructorConstraint
+			};
+			
+			if (t.BaseType != typeof (object) || ifaces.Length != 0 || attrs != 0) {
+		    
+				o.Write (" where ");
+				o.Write (FormatType (t));
+				o.Write (" : ");
+			}
+
+
+			if (t.BaseType != typeof (object)) {
+				o.Write (FormatType (t.BaseType));
+				first = false;
+			}
+
+			foreach (Type iface in ifaces) {
+				if (!first)
+					o.Write (", ");
+				first = false;
+				
+				o.Write (FormatType (iface));
+			}
+
+			foreach (GenericParameterAttributes a in interesting) {
+				if ((attrs & a) == 0)
+					continue;
+				
+				if (!first)
+					o.Write (", ");
+				first = false;
+				
+				switch (a) {
+				case GenericParameterAttributes.ReferenceTypeConstraint:
+					o.Write ("class");
+					break;
+				case GenericParameterAttributes.ValueTypeConstraint:
+					o.Write ("struct");
+					break;
+				case GenericParameterAttributes.DefaultConstructorConstraint:
+					o.Write ("new ()");
+					break;
+				}
+			}
+		}
+	}
+#endif
+ 
 	string OperatorFromName (string name)
 	{
 		switch (name) {

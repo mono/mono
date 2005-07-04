@@ -1,3 +1,8 @@
+2005-07-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* outline.cs: Add support for constraints. Inspired by brada's
+	blog.
+
 2005-07-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* outline.cs: Support for methods with generic parameters.
