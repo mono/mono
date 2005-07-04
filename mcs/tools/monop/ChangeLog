@@ -1,5 +1,7 @@
 2005-07-04  Ben Maurer  <bmaurer@ximian.com>
 
+	* outline.cs: use tabs, not spaces, for indentation.
+	
 	* outline.cs: Add support for constraints. Inspired by brada's
 	blog.
 

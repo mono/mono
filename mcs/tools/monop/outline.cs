@@ -45,7 +45,7 @@ public class Outline {
 	public Outline (Type t, TextWriter output, Options options)
 	{
 		this.t = t;
-		this.o = new IndentedTextWriter (output, "    ");
+		this.o = new IndentedTextWriter (output, "\t");
 		this.options = options;
 	}
 
