@@ -1,22 +1,36 @@
-.SUFFIXES: .cs .exe
+.SUFFIXES: .cs .exe .dll
 
 RUNTIME=mono
 XMLCONF_OPTIONS=
 CSCOMPILE=mcs
-ifndef NO_NUNIT
 REFERENCES=-d:NUNIT_SUPPORT -r:NUnit.Core -r:NUnit.Framework
-endif
 TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
-TEST_PROG=xmlconf.exe
+TEST_PROG=xmlconf.dll
+nunit_MONO_PATH="../../../../../class/lib/default"
+NUNIT_CONSOLE=/monobuild/mono/runtime/mono-wrapper --debug $(nunit_MONO_PATH)/nunit-console.exe
+
+CLEAN_FIXTURE=MonoTests.W3C_xmlconf.CleanTests
+CLEAN_NUNIT_FLAGS=/fixture:$(CLEAN_FIXTURE) /xml=TestsResult.xml
+
+FAILING_FIXTURE=MonoTests.W3C_xmlconf.KnownFailureTests
+FAILING_NUNIT_FLAGS=/fixture:$(FAILING_FIXTURE) /xml=FailingTestsResult.xml
+
+ALL_FIXTURE=MonoTests.W3C_xmlconf.AllTests
+ALL_NUNIT_FLAGS=/fixture:$(ALL_FIXTURE) /xml=AllTestsResult.xml /out=AllTestsResult.log
+
+
 
 test: $(TEST_PROG) $(TEST_CATALOG)
 
 run-test: test
-	$(RUNTIME) $(TEST_PROG) $(XMLCONF_OPTIONS)
+	MONO_PATH="$(nunit_MONO_PATH);$(MONO_PATH)" $(NUNIT_CONSOLE) $(TEST_PROG) $(CLEAN_NUNIT_FLAGS)
 
-run-nunit-test: test
-	MONO_PATH="../../../../../class/lib/default;;$(MONO_PATH)" /monobuild/mono/runtime/mono-wrapper --debug ../../../../../class/lib/default/nunit-console.exe $(TEST_PROG) /fixture:MonoTests.stand_alone.AllTests /xml=TestResult.xml /out=TestResult.log
+run-failing-test: test
+	MONO_PATH="$(nunit_MONO_PATH);$(MONO_PATH)" $(NUNIT_CONSOLE) $(TEST_PROG) $(FAILING_NUNIT_FLAGS)
+
+run-all-test: test
+	MONO_PATH="$(nunit_MONO_PATH);$(MONO_PATH)" $(NUNIT_CONSOLE) $(TEST_PROG) $(ALL_NUNIT_FLAGS)
 
 test_archive: $(TEST_ARCHIVE)
 
@@ -29,6 +43,6 @@ $(TEST_CATALOG): $(TEST_ARCHIVE)
 	mkdir xmlconf; unzip -un $(TEST_ARCHIVE)
 	touch $(TEST_CATALOG)
 
-.cs.exe :
-	$(CSCOMPILE) $< $(REFERENCES)
+.cs.dll:
+	$(CSCOMPILE) /t:library $< $(REFERENCES)
 

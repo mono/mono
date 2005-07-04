@@ -1,3 +1,9 @@
+2005-06-30  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile: change targets for nunit based tests
+	* xmlconf.cs: remove support for standalone test, add few modes
+	for nunit.
+ 
 2005-06-28  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile, xmlconf.cs: add nunit support

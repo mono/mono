@@ -1,4 +1,2 @@
 0. Add comparation tests, use xmldiff to compare the expected output to actual output.
-1. Add ability to give an individual test id - will help to debug
-2. Add an express test target - when a full suite is run it creates a list of valid and invalid tests, so later there is an ability to quickly read those lists and run only positive tests, exiting on the first regression.
-
+1. Instead of using fixtures to group working and not working tests, use categories  
