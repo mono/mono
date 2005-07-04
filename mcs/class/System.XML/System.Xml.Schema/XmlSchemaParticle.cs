@@ -155,7 +155,10 @@ namespace System.Xml.Schema
 
 		internal XmlSchemaParticle OptimizedParticle;
 
-		internal abstract XmlSchemaParticle GetOptimizedParticle (bool isTop);
+		internal virtual XmlSchemaParticle GetOptimizedParticle (bool isTop)
+		{
+			return null;
+		}
 
 		internal XmlSchemaParticle GetShallowClone ()
 		{
@@ -237,20 +240,32 @@ namespace System.Xml.Schema
 			return this.validatedMinOccurs == 0 || this.GetMinEffectiveTotalRange () == 0;
 		}
 
-		internal abstract bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
-			ValidationEventHandler h, XmlSchema schema, bool raiseError);
+		internal virtual bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
+			return false;
+		}
 
-		internal abstract void ValidateUniqueParticleAttribution (
+		internal virtual void ValidateUniqueParticleAttribution (
 			XmlSchemaObjectTable qnames, ArrayList nsNames,
-			ValidationEventHandler h, XmlSchema schema);
+			ValidationEventHandler h, XmlSchema schema)
+		{
+		}
 
-		internal abstract void ValidateUniqueTypeAttribution (XmlSchemaObjectTable labels,
-			ValidationEventHandler h, XmlSchema schema);
+		internal virtual void ValidateUniqueTypeAttribution (XmlSchemaObjectTable labels,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+		}
 
 		// See http://www.thaiopensource.com/relaxng/simplify.html
-		internal abstract void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema);
+		internal virtual void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		{
+		}
 
-		internal abstract bool ParticleEquals (XmlSchemaParticle other);
+		internal virtual bool ParticleEquals (XmlSchemaParticle other)
+		{
+			return false;
+		}
 
 		#region Internal Class
 		internal class EmptyParticle : XmlSchemaParticle

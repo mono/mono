@@ -58,7 +58,7 @@ namespace System.Xml.Schema
 					Facet.pattern | Facet.enumeration | Facet.whiteSpace |
 					Facet.totalDigits | Facet.fractionDigits;
 		
-		internal abstract Facet ThisFacet { get ; }
+		internal virtual Facet ThisFacet { get { return Facet.None; } }
 		
 		private bool isFixed;
 		private string val;

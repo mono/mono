@@ -86,14 +86,20 @@ namespace System.Xml.Schema
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
 
-		internal abstract ValueType ParseValueType (string s,
-			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
+		internal virtual ValueType ParseValueType (string s,
+			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr)
+		{
+			return null;
+		}
 #else
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
 
-		internal abstract ValueType ParseValueType (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
+		internal virtual ValueType ParseValueType (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return null;
+		}
 #endif
 
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};

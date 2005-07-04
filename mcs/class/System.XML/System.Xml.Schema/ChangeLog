@@ -1,3 +1,8 @@
+2005-07-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatype.cs, XmlSchemaParticle.cs, XmlSchemaContent.cs,
+	  XmlSchemaFacet.cs : eliminated internal abstract members.
+
 2005-06-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaCollection.cs, XmlSchemaCollectionEnumerator.cs :

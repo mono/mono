@@ -37,10 +37,16 @@ namespace System.Xml.Schema
 
 		internal object actualBaseSchemaType;
 
-		internal abstract bool IsExtension { get; }
+		internal virtual bool IsExtension { get { return false; } }
 
-		internal abstract XmlQualifiedName GetBaseTypeName ();
+		internal virtual XmlQualifiedName GetBaseTypeName ()
+		{
+			return null;
+		}
 
-		internal abstract XmlSchemaParticle GetParticle ();
+		internal virtual XmlSchemaParticle GetParticle ()
+		{
+			return null;
+		}
 	}
 }
