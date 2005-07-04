@@ -1,5 +1,12 @@
 2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.cs : renamed from MSCompatUnicodeTable.template
+	  (now it is working as a standalone file).
+	* Makefile : renamed generated file as MSCompatUnicodeTableGenerated.cs
+	  (the generator now creates both binary resources and C# source).
+
+2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Now it generates binary
 	  resources (to parent directory).
 	* MSCompatUnicodeTable.template : added conditional code that fills
