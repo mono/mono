@@ -1,3 +1,7 @@
+2005-07-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* SqlError.cs: Patch from dezelin@gmail.com to fix serialization.
+
 2005-06-29  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnection.cs: Open (): catch TdsInternalException and throw
