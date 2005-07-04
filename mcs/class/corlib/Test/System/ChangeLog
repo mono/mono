@@ -1,3 +1,7 @@
+2005-07-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringTest.cs: Add a test for 63981, which seems to be fixed
+
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GuidTest.cs: Updated tests to NUnit 2.2 format. Added tests for new

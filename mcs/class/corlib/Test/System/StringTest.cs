@@ -1594,6 +1594,12 @@ public class StringTest : Assertion
 		}
 		Assert (ok);
 	}
+	[Test]
+	public void TestComparePeriod ()
+	{
+		// according to bug 63981, this behavior is for all cultures
+		AssertEquals ("#1", -1, String.Compare ("foo.obj", "foobar.obj", false));
+	}
 }
 
 }
