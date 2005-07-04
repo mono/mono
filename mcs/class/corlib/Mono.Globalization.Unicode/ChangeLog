@@ -1,3 +1,12 @@
+2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Now it generates binary
+	  resources (to parent directory).
+	* MSCompatUnicodeTable.template : added conditional code that fills
+	  collation tables from manifest resources.
+	* Makefile : remove collation table binaries as well on "make clean".
+	  Removed extraneous dependency.
+
 2005-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MSCompatUnicodeTable.template,

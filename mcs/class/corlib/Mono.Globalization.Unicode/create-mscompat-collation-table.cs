@@ -24,6 +24,7 @@
 //	If there are characters whose primary weight is 0, they are consumed
 //	and considered as a part of the character element.
 //
+#define Binary
 
 using System;
 using System.IO;
@@ -277,7 +278,7 @@ sw.Close ();
 			byte [] level1 = new byte [map.Length];
 			byte [] level2 = new byte [map.Length];
 			byte [] level3 = new byte [map.Length];
-			int [] widthCompat = new int [map.Length];
+			ushort [] widthCompat = new ushort [map.Length];
 			for (int i = 0; i < map.Length; i++) {
 				categories [i] = map [i].Category;
 				level1 [i] = map [i].Level1;
@@ -289,7 +290,7 @@ sw.Close ();
 				case DecompositionSuper:
 				case DecompositionSub:
 					// they are always 1 char
-					widthCompat [i] = decompValues [decompIndex [i]];
+					widthCompat [i] = (ushort) decompValues [decompIndex [i]];
 					break;
 				}
 			}
@@ -305,8 +306,8 @@ sw.Close ();
 				MSCompatUnicodeTableUtil.Level2);
 			level3 = CompressArray (level3, 
 				MSCompatUnicodeTableUtil.Level3);
-			widthCompat = (int []) CodePointIndexer.CompressArray (
-				widthCompat, typeof (int),
+			widthCompat = (ushort []) CodePointIndexer.CompressArray (
+				widthCompat, typeof (ushort),
 				MSCompatUnicodeTableUtil.WidthCompat);
 			cjkCHS = CompressArray (cjkCHS,
 				MSCompatUnicodeTableUtil.CjkCHS);
@@ -321,12 +322,20 @@ sw.Close ();
 
 			// Ignorables
 			Result.WriteLine ("static byte [] ignorableFlags = new byte [] {");
+#if Binary
+			MemoryStream ms = new MemoryStream ();
+			BinaryWriter binary = new BinaryWriter (ms);
+			binary.Write (ignorableFlags.Length);
+#endif
 			for (int i = 0; i < ignorableFlags.Length; i++) {
 				byte value = ignorableFlags [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
@@ -335,12 +344,18 @@ sw.Close ();
 
 			// Primary category
 			Result.WriteLine ("static byte [] categories = new byte [] {");
+#if Binary
+			binary.Write (categories.Length);
+#endif
 			for (int i = 0; i < categories.Length; i++) {
 				byte value = categories [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
@@ -349,12 +364,18 @@ sw.Close ();
 
 			// Primary weight value
 			Result.WriteLine ("static byte [] level1 = new byte [] {");
+#if Binary
+			binary.Write (level1.Length);
+#endif
 			for (int i = 0; i < level1.Length; i++) {
 				byte value = level1 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
@@ -363,12 +384,18 @@ sw.Close ();
 
 			// Secondary weight
 			Result.WriteLine ("static byte [] level2 = new byte [] {");
+#if Binary
+			binary.Write (level2.Length);
+#endif
 			for (int i = 0; i < level2.Length; i++) {
 				int value = level2 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
@@ -377,12 +404,18 @@ sw.Close ();
 
 			// Thirtiary weight
 			Result.WriteLine ("static byte [] level3 = new byte [] {");
+#if Binary
+			binary.Write (level3.Length);
+#endif
 			for (int i = 0; i < level3.Length; i++) {
 				byte value = level3 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
@@ -392,18 +425,30 @@ sw.Close ();
 			// Width insensitivity mappings
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
-			Result.WriteLine ("static int [] widthCompat = new int [] {");
+			Result.WriteLine ("static ushort [] widthCompat = new ushort [] {");
+#if Binary
+			binary.Write (widthCompat.Length);
+#endif
 			for (int i = 0; i < widthCompat.Length; i++) {
 				int value = widthCompat [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF);
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
+#if Binary
+			using (FileStream fs = File.Create ("../collation.core.bin")) {
+				byte [] array = ms.ToArray ();
+				fs.Write (array, 0, array.Length);
+			}
+#endif
 
 			// CJK
 			SerializeCJK ("cjkCHS", cjkCHS, char.MaxValue);
@@ -417,6 +462,10 @@ sw.Close ();
 		{
 			int offset = 0;//char.MaxValue - cjk.Length;
 			Result.WriteLine ("static ushort [] {0} = new ushort [] {{", name);
+#if Binary
+			MemoryStream ms = new MemoryStream ();
+			BinaryWriter binary = new BinaryWriter (ms);
+#endif
 			for (int i = 0; i < cjk.Length; i++) {
 				if (i + offset == max)
 					break;
@@ -425,17 +474,30 @@ sw.Close ();
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X04},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF + offset);
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
+#if Binary
+			using (FileStream fs = File.Create (String.Format ("../collation.{0}.bin", name))) {
+				byte [] array = ms.ToArray ();
+				fs.Write (array, 0, array.Length);
+			}
+#endif
 		}
 
 		void SerializeCJK (string name, byte [] cjk, int max)
 		{
 			int offset = 0;//char.MaxValue - cjk.Length;
 			Result.WriteLine ("static byte [] {0} = new byte [] {{", name);
+#if Binary
+			MemoryStream ms = new MemoryStream ();
+			BinaryWriter binary = new BinaryWriter (ms);
+#endif
 			for (int i = 0; i < cjk.Length; i++) {
 				if (i + offset == max)
 					break;
@@ -444,11 +506,20 @@ sw.Close ();
 					Result.Write ("{0},", value);
 				else
 					Result.Write ("0x{0:X02},", value);
+#if Binary
+				binary.Write (value);
+#endif
 				if ((i & 0xF) == 0xF)
 					Result.WriteLine ("// {0:X04}", i - 0xF + offset);
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
+#if Binary
+			using (FileStream fs = File.Create (String.Format ("../collation.{0}.bin", name))) {
+				byte [] array = ms.ToArray ();
+				fs.Write (array, 0, array.Length);
+			}
+#endif
 		}
 
 		void SerializeTailorings ()
@@ -457,6 +528,10 @@ sw.Close ();
 			Hashtable counts = new Hashtable ();
 			Result.WriteLine ("static char [] tailorings = new char [] {");
 			int count = 0;
+#if Binary
+			MemoryStream ms = new MemoryStream ();
+			BinaryWriter binary = new BinaryWriter (ms);
+#endif
 			foreach (Tailoring t in tailorings) {
 				if (t.Alias != 0)
 					continue;
@@ -468,6 +543,9 @@ sw.Close ();
 					Result.Write ("'\\x{0:X}', ", (int) c);
 					if (++count % 16 == 0)
 						Result.WriteLine (" // {0:X04}", count - 16);
+#if Binary
+					binary.Write ((ushort) c);
+#endif
 				}
 			}
 			Result.WriteLine ("};");
@@ -487,8 +565,20 @@ sw.Close ();
 						if (t2.LCID == t.LCID)
 							french = t2.FrenchSort;
 				Result.WriteLine ("new TailoringInfo ({0}, 0x{1:X}, {2}, {3}), ", t.LCID, idx, cnt, french ? "true" : "false");
+#if Binary
+				binary.Write (t.LCID);
+				binary.Write (idx);
+				binary.Write (cnt);
+				binary.Write (french);
+#endif
 			}
 			Result.WriteLine ("};");
+#if Binary
+			using (FileStream fs = File.Create ("../collation.tailoring.bin")) {
+				byte [] array = ms.ToArray ();
+				fs.Write (array, 0, array.Length);
+			}
+#endif
 		}
 
 		#region Parse
