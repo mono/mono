@@ -20,27 +20,25 @@ End Sub
 '	Me.button1.Text = "Clicked Another Way"
 'End Sub
 
-Public Sub New(ctest_a as string)   
+Public sub PutButtonOnForm
 	'Dim clicker as ClickHandler
 	 
 	' TODO: this line is giving:
 	'			error BC-0100: Internal error: Could not find delegate constructor!
 	'clicker = New ClickHandler(AddressOf Me.AnotherClick)
 	
-	Me.button1 = New Button()
 	Me.button1.Text = "Click Me"
 	Me.button1.Location = New System.Drawing.Point(100, 10)
 	
 	'Me.button1.Click = clicker
 
 	Me.Controls.Add(Me.button1)
+	System.Console.WriteLine ("PutButtonOnForm")
+End sub
 
-
-	System.Console.WriteLine (ctest_a)
+Public Sub New(ctest_a as string)   
+	Me.button1 = New Button()
+	System.Console.WriteLine(ctest_a)
 End Sub
-
-public shared sub Main(args as string())
-	Application.Run(new TestClass("Just Test It"))
-end sub
 
 End Class
