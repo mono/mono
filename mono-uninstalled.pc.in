@@ -2,5 +2,5 @@ Name: Mono
 Description: Mono Runtime
 Version: @VERSION@
 Requires: glib-2.0 gmodule-2.0 gthread-2.0
-Libs: -L${pc_top_builddir}/mono/mini/.libs -lmono @libmono_ldflags@ -lm
-Cflags: -I${pc_top_builddir}/@srcdir@ -I${pc_top_builddir}/@srcdir@/mono @libmono_cflags@
+Libs: -L@mono_build_root@/mono/mini/.libs -lmono @libmono_ldflags@ -lm
+Cflags: -I@abs_top_srcdir@ -I@abs_top_srcdir@/mono @libmono_cflags@
