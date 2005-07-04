@@ -9,7 +9,7 @@ Module GtkTest
     Sub Main()
         Application.Init ()
         Win = new Window ("VB Gtk+ Hello World")
-        Btn = new Button ("Click Me!") 
+        Btn = new Button ("Click Me! I'm awaiting for your click") 
 		AddHandler Win.DeleteEvent, AddressOf OnQuit
 		AddHandler Btn.Pressed, AddressOf OnPressed
         Win.Add (Btn) 
@@ -18,7 +18,7 @@ Module GtkTest
     End Sub
     
     sub OnPressed (sender as object, a as EventArgs)
-    	Btn.Label = "Clicked"
+    	Btn.Label = "Clicked by Someone!"
 	end sub
 
 	Sub OnQuit (sender as object, a as DeleteEventArgs)

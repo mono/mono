@@ -29,7 +29,7 @@ gtk.exe: gtk.vb Makefile ../../mbas.exe
 	$(BASCOMPILE) -pkg:gtk-sharp gtk.vb &> verbose.gtk.log
 	@grep "Compilation" verbose.gtk.log
 
-profile: WRITEOK_SOURCES Makefile
+profile: $(WRITEOK_SOURCES) Makefile
 	rm -f WriteOK.exe
 	$(MAKE) RUNTIME_FLAGS='--profile' WriteOK.exe > profile
 
