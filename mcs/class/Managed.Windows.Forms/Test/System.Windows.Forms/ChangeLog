@@ -1,3 +1,11 @@
+2005-07-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumnTest.cs: Test case
+	* GridTableStylesCollectionTest.cs: Test case
+	* DataGridTest.cs: Test case
+	* GridColumnStylesCollectionTest.cs: Test case
+	* DataGridTableStyleTest.cs: Test case
+
 
 2005-07-04  Ritvik Mayank  <mritvik@novell.com>
 	
