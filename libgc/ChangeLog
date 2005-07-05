@@ -1,3 +1,10 @@
+2005-07-05  Ben Maurer  <bmaurer@ximian.com>
+
+	* pthread_stop_world.c (pthread_start_world, _GC_suspend_handler):
+	Make sure that all threads have been started before releasing the
+	GC_lock. Otherwise, the thread table can be corrupt in the restart
+	handler, causing deadlocks and segfaults.
+
 2005-06-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* include/private/gcconfig.h: Fix amd64 build.
