@@ -1,3 +1,7 @@
+2005-05-07  Boris Kirzner <borisk@mainsoft.com>
+	* Novell.Directory.Ldap.vmwcsproj: Project file converted 
+	to Developer Edition format. Removed ClearCase references.
+
 2005-21-06  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.vmwcsproj: Added project file for TARGET_JVM.
 
