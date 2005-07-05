@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Data;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -59,7 +58,6 @@ namespace MonoTests.System.Windows.Forms
 			AssertEquals ("HeaderText property", "", col.HeaderText);
 			AssertEquals ("MappingName property", "", col.MappingName);
 			AssertEquals ("NullText property", "(null)", col.NullText);
-			AssertEquals ("PropertyDescriptor property", null, col.PropertyDescriptor);
 			AssertEquals ("ReadOnly property", false, col.ReadOnly);
 			AssertEquals ("Width property", -1, col.Width);
 			AssertEquals ("Format property", "", col.Format);
