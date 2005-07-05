@@ -1,5 +1,10 @@
 2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : Compare() was missing French sort support.
+	* TestDriver.cs : added example case.
+
+2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : updated status. Eliminated descriptions on
 	  "iterator" (I avoided it for performance concern). Fixed misc.
 	  incorrect descriptions.

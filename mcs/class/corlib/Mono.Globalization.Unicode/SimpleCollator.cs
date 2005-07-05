@@ -783,7 +783,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					ret = sk1 [2] - sk2 [2];
 					if (ret != 0) {
 						finalResult = ret;
-						currentLevel = 1;
+						currentLevel = frenchSort ? 2 : 1;
 						continue;
 					}
 				}

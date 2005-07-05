@@ -110,6 +110,15 @@ namespace Mono.Globalization.Unicode
 			IsSuffix ("zs", "zs", CompareOptions.None);
 			IsSuffix ("sz", "z", CompareOptions.None);
 			IsSuffix ("sz", "s", CompareOptions.None);
+
+			coll = new SimpleCollator (new CultureInfo (""));
+			Compare ("c\u00F4te", "cot\u00E9");
+			DumpSortKey ("c\u00F4te");
+			DumpSortKey ("cot\u00E9");
+			coll = new SimpleCollator (new CultureInfo ("fr"));
+			Compare ("c\u00F4te", "cot\u00E9");
+			DumpSortKey ("c\u00F4te");
+			DumpSortKey ("cot\u00E9");
 		}
 
 		void Generate ()
