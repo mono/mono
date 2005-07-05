@@ -1,3 +1,8 @@
+2005-05-07  Boris Kirzner <borisk@mainsoft.com>	
+	* System.DirectoryServices.vmwcsproj: Project file converted 
+	to Developer Edition format. Removed ClearCase references.
+	* System.DirectoryServices.sln: Removed ClearCase references.
+
 2005-07-03 Boris Kirzner <borisk@mainsoft.com>
 	* System.DirectoryServices.vmwcsproj: Reflecting changes in location of 
 	Locale.cs and MonoTODOAttribute.cs

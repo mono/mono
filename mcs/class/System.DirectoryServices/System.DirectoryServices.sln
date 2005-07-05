@@ -9,20 +9,6 @@ Project("{83B010C7-76FC-4FAD-A26C-00D7EFE60256}") = "Novell.Directory.Ldap", "..
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 3
-		SccProjectName0 = SAK
-		SccLocalPath0 = .
-		SccProvider0 = MSSCCI:ClearCase
-		CanCheckoutShared = false
-		SolutionUniqueID = {36388037-8C15-43A1-9251-1E4057561B7C}
-		SccProjectUniqueName1 = System.DirectoryServices.vmwcsproj
-		SccLocalPath1 = .
-		CanCheckoutShared = false
-		SccProjectUniqueName2 = ..\\Novell.Directory.Ldap\\Novell.Directory.Ldap.vmwcsproj
-		SccLocalPath2 = ..\\Novell.Directory.Ldap
-		CanCheckoutShared = false
-	EndGlobalSection
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Debug_Java = Debug_Java
