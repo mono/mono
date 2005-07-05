@@ -1,3 +1,34 @@
+2005-07-05  Raja R Harinath  <rharinath@novell.com>
+
+	* HttpCachePolicyElement.cs: Add CONFIGURATION_DEP guard.
+	* AuthenticationModuleElementCollection.cs: Replace XML_DEP guard
+	with CONFIGURATION_DEP.
+	* AuthenticationModuleElement.cs: Likewise.
+	* AuthenticationModulesSection.cs: Likewise.
+	* BypassElementCollection.cs: Likewise.
+	* BypassElement.cs: Likewise.
+	* ConnectionManagementElementCollection.cs: Likewise.
+	* ConnectionManagementElement.cs: Likewise.
+	* ConnectionManagementSection.cs: Likewise.
+	* DefaultProxySection.cs: Likewise.
+	* HttpWebRequestElement.cs: Likewise.
+	* Ipv6Element.cs: Likewise.
+	* MailSettingsSection.cs: Likewise.
+	* ModuleElement.cs: Likewise.
+	* NetSectionGroup.cs: Likewise.
+	* ProxyElement.cs: Likewise.
+	* RequestCachingSection.cs: Likewise.
+	* ServicePointManagerElement.cs: Likewise.
+	* SettingsSection.cs: Likewise.
+	* SmtpElement.cs: Likewise.
+	* SocketElement.cs: Likewise.
+	* UriParserElementCollection.cs: Likewise.
+	* UriParserElement.cs: Likewise.
+	* UriParserSection.cs: Likewise.
+	* WebRequestModuleElementCollection.cs: Likewise.
+	* WebRequestModuleElement.cs: Likewise.
+	* WebRequestModulesSection.cs: Likewise.
+
 2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HttpCachePolicyElement.cs:

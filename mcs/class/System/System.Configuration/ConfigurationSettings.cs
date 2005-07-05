@@ -68,8 +68,7 @@ namespace System.Configuration
 			}
 		}
 
-#if NET_2_0
-#if XML_DEP
+#if NET_2_0 && CONFIGURATION_DEP
                 public static ConnectionStringSettingsCollection ConnectionStrings
 		{
 			get {
@@ -84,8 +83,7 @@ namespace System.Configuration
 				return connectionStrings;
 			}
 		}
-#endif // XML_DEP
-#endif // NET_2_0
+#endif // NET_2_0 && CONFIGURATION_DEP
 
 		// Invoked from System.Web
 		static IConfigurationSystem ChangeConfigurationSystem (IConfigurationSystem newSystem)

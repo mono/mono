@@ -1,3 +1,8 @@
+2005-07-05  Raja R Harinath  <rharinath@novell.com>
+
+	* ConfigurationSettings.cs (ConnectionStrings): Change XML_DEP
+	guard to CONFIGURATION_DEP.
+
 2005-06-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ProviderBase.cs: Moved here from System.Configuration.dll.
