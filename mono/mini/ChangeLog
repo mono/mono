@@ -1,10 +1,13 @@
 2005-07-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c (mono_compile_assembly): Allocate the GOT in the .bss segment
+	on x86 too.
+	
 	* aot.c: Add new mono_aot_get_method_from_token () function to load AOT methods
 	without loading their metadata. Reorganize the file format so exception handling+
 	debug info is kept separate from normal method info. Create MonoJitInfo 
 	structures for methods lazily.
-	
+
 	* tramp-x86.c (x86_aot_trampoline): Use the new from_token method to avoid
 	loading metadata.
 	(x86_class_init_trampoline): Patch AOT class init trampolines too.
