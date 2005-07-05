@@ -145,7 +145,7 @@ namespace Microsoft.JScript.Vsa {
 
 		public RegExpConstructor GetOriginalRegExpConstructor ()
 		{
-			throw new NotImplementedException ();
+			return RegExpConstructor.Ctr;
 		}
 
 		public void InitVsaEngine (string moniker, IVsaSite site)

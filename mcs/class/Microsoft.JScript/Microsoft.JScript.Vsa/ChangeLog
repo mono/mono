@@ -1,3 +1,7 @@
+2005-07-05  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* VsaEngine.cs: Implemented GetOriginalRegExpConstructor.
+
 2005-03-29  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* VsaEngine.cs: Return top of the stack casted to a ScriptObject.
