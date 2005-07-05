@@ -115,7 +115,7 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		bool VerifyFixed (bool is_expression);
+		bool VerifyFixed ();
 	}
 
 	/// <remarks>
@@ -3066,13 +3066,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool VerifyFixed (bool is_expression)
+		public bool VerifyFixed ()
 		{
 			IVariable variable = InstanceExpression as IVariable;
-			if ((variable == null) || !variable.VerifyFixed (true))
-				return false;
-
-			return true;
+			// A variable of the form V.I is fixed when V is a fixed variable of a struct type.
+			// We defer the InstanceExpression check after the variable check to avoid a 
+			// separate null check on InstanceExpression.
+			return variable != null && InstanceExpression.Type.IsValueType && variable.VerifyFixed ();
 		}
 
 		public override int GetHashCode()

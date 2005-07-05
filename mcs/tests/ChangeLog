@@ -1,3 +1,7 @@
+2005-07-05  Raja R Harinath  <rharinath@novell.com>
+
+	* test-423.cs: New test based on #70807.
+
 2005-06-30  Marek Safar <marek.safar@seznam.cz>
 
 	* gtest-180.cs: DefaultCharSetAttribute test.

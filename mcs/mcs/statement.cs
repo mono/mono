@@ -1079,18 +1079,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		//
-		// Whether the variable is Fixed (because its Pinned or its a value type)
-		//
-		public bool IsFixed {
-			get {
-				if (((flags & Flags.Pinned) != 0) || TypeManager.IsValueType (VariableType))
-					return true;
-
-				return false;
-			}
-		}
-
 		public bool IsCaptured {
 			get {
 				return (flags & Flags.Captured) != 0;

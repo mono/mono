@@ -432,7 +432,7 @@ namespace Mono.CSharp {
 				}
 
 				IVariable variable = Expr as IVariable;
-				bool is_fixed = variable != null && variable.VerifyFixed (false);
+				bool is_fixed = variable != null && variable.VerifyFixed ();
 
 				if (!ec.InFixedInitializer && !is_fixed) {
 					Error (212, "You can only take the address of an unfixed expression inside " +
@@ -750,8 +750,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool VerifyFixed (bool is_expression)
+		public bool VerifyFixed ()
 		{
+			// A pointer-indirection is always fixed.
 			return true;
 		}
 
@@ -3757,9 +3758,10 @@ namespace Mono.CSharp {
 			return ret;
 		}
 
-		public bool VerifyFixed (bool is_expression)
+		public bool VerifyFixed ()
 		{
-			return !is_expression || local_info.IsFixed;
+			// A local Variable is always fixed.
+			return true;
 		}
 
 		public override int GetHashCode()
@@ -3913,9 +3915,10 @@ namespace Mono.CSharp {
 			get { return vi; }
 		}
 
-		public bool VerifyFixed (bool is_expression)
+		public bool VerifyFixed ()
 		{
-			return !is_expression || TypeManager.IsValueType (type);
+			// A parameter is fixed if it's a value parameter (i.e., no modifier like out, ref, param).
+			return mod == Parameter.Modifier.NONE;
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -6858,12 +6861,10 @@ namespace Mono.CSharp {
 			get { return variable_info; }
 		}
 
-		public bool VerifyFixed (bool is_expression)
+		public bool VerifyFixed ()
 		{
-			if ((variable_info == null) || (variable_info.LocalInfo == null))
-				return false;
-			else
-				return variable_info.LocalInfo.IsFixed;
+			// Treat 'this' as a value parameter for the purpose of fixed variable determination.
+			return true;
 		}
 
 		public bool ResolveBase (EmitContext ec)
