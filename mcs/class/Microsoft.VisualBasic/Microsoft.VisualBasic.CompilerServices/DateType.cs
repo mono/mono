@@ -87,10 +87,19 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			if (Value != null
 			    && Value.Length > 2
 			    && Value.StartsWith("#")
-			    && Value.EndsWith("#"))
-			    val = Value.Substring(1, Value.Length - 1);
+			    && Value.EndsWith("#")) {
+			
+				// Remove first "#"
+
+				val = Value.Substring(1, Value.Length - 1);
+				Value = val;
+			
+				// Remove second "#"
+
+				Value = val.Substring(0, Value.Length - 1);
+			}
 			// 15 = DateTymeStyles.AllowWhiteSpaces || DateTymeStyles.NoCurrentDateDefault
-			return DateTime.Parse(val, culture,(System.Globalization.DateTimeStyles)15);
+			return DateTime.Parse(Value, culture,(System.Globalization.DateTimeStyles)15);
 		}
 	}
 }
