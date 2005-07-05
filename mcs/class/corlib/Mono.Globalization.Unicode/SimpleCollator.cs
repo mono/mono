@@ -77,13 +77,13 @@ namespace Mono.Globalization.Unicode
 		internal static readonly CodePointIndexer categoryIndexer =
 			UUtil.Category;
 		internal static readonly CodePointIndexer lv1Indexer =
-			UUtil.Category;
+			UUtil.Level1;
 		internal static readonly CodePointIndexer lv2Indexer =
-			UUtil.Category;
+			UUtil.Level2;
 		internal static readonly CodePointIndexer lv3Indexer =
-			UUtil.Category;
+			UUtil.Level3;
 		internal static readonly CodePointIndexer widthIndexer =
-			UUtil.Category;
+			UUtil.WidthCompat;
 
 
 		SortKeyBuffer buf;
@@ -383,8 +383,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			for (int i = 0; i < clist.Length; i++) {
 				Contraction ct = clist [i];
-				if (ct.Source [0] > s [start])
+				int diff = ct.Source [0] - s [start];
+				if (diff > 0)
 					return null; // it's already sorted
+				else if (diff < 0)
+					continue;
 				char [] chars = ct.Source;
 				if (end - start < chars.Length)
 					continue;
@@ -412,8 +415,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			for (int i = 0; i < clist.Length; i++) {
 				Contraction ct = clist [i];
-				if (ct.Source [0] > s [end])
+				int diff = ct.Source [0] - s [end];
+				if (diff > 0)
 					return null; // it's already sorted
+				else if (diff < 0)
+					continue;
 				char [] chars = ct.Source;
 				if (start - end + 1 < chars.Length)
 					continue;
