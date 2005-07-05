@@ -771,22 +771,20 @@ namespace Microsoft.JScript {
 
 		internal void get_global_scope_or_this (ILGenerator ig)
 		{
-			if (InFunction)
-				ig.Emit (OpCodes.Ldarg_1);
-			else {
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			}
-
+			CodeGenerator.load_engine (InFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
 
 			//
-			//FIXME: when is each of them (GetGlobalScope | GetDefaultThisObject?
+			//FIXME: Find out the exact discrimination for: GetGlobalScope and GetDefaultThisObject
+			// For example, in program: print (function () { return 1; } ());
+			// we invoke GetGlobalScope, in other cases GetDefaultThisObject
 			//
-			// ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetGlobalScope"));
-			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
+			if (member_exp is FunctionExpression)
+				ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetGlobalScope"));
+			else
+				ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
 		}
 
 		void init_late_binding (EmitContext ec, LocalBuilder local)

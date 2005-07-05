@@ -116,18 +116,15 @@ namespace Microsoft.JScript {
 			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
 							      method_builder.GetILGenerator ());
-
-			if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
+			if (InFunction) {
+				local_script_func = ig.DeclareLocal (typeof (ScriptFunction));
+				local_func = ig.DeclareLocal (typeof (FunctionObject));
+			} else {
 				if (name != String.Empty) {
 					field = type.DefineField (name, typeof (object), FieldAttributes.Public | FieldAttributes.Static);
 					local_func = ig.DeclareLocal (typeof (FunctionObject));
 				} else
 					local_func = ig.DeclareLocal (typeof (FunctionObject));
-			} else if (parent != null && 
-				   (parent.GetType () == typeof (FunctionDeclaration)
-				    || parent.GetType () == typeof (FunctionExpression))) {
-				local_script_func = ig.DeclareLocal (typeof (ScriptFunction));
-				local_func = ig.DeclareLocal (typeof (FunctionObject));
 			}
 			build_closure (ec, full_name);
 			func_obj.body.Emit (new_ec);

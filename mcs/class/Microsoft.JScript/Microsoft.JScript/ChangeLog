@@ -1,5 +1,15 @@
+2005-07-05  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	Fixes bug #75442
+	* FunctionExpression.cs (Emit): use InFunction instead of testing by hand.
+	* Parser.cs (MemberExpr): pass parent as the parameter not pn.
+	* expression.cs (get_global_scope_or_this): use
+	CodeGenerator.load_engine for loading the engine, and invoke
+	GetGlobalScope when the member_exp is a function expression.
+
 2005-07-04  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	Fixes bug #75440
 	* expression.cs (emit_late_get_or_set, emit_late_call): Take care the case where
 	the left hand side of a late bound expression is a literal.
 	* SemanticAnalizer.cs: Added IsLiteral method.
