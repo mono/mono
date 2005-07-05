@@ -173,10 +173,8 @@ namespace Mono.CSharp {
 
 		void Error23 (Type t)
 		{
-			Error (
-				23, "Operator " + OperName (Oper) +
-				" cannot be applied to operand of type `" +
-				TypeManager.CSharpName (t) + "'");
+			Report.Error (23, loc, "Operator `{0}' cannot be applied to operand of type `{1}'",
+				OperName (Oper), TypeManager.CSharpName (t));
 		}
 
 		/// <remarks>
@@ -435,13 +433,13 @@ namespace Mono.CSharp {
 				bool is_fixed = variable != null && variable.VerifyFixed ();
 
 				if (!ec.InFixedInitializer && !is_fixed) {
-					Error (212, "You can only take the address of an unfixed expression inside " +
+					Error (212, "You can only take the address of unfixed expression inside " +
 					       "of a fixed statement initializer");
 					return null;
 				}
 
 				if (ec.InFixedInitializer && is_fixed) {
-					Error (213, "You can not fix an already fixed expression");
+					Error (213, "You cannot use the fixed statement to take the address of an already fixed expression");
 					return null;
 				}
 
@@ -471,7 +469,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (!expr_type.IsPointer){
-					Error (193, "The * or -> operator can only be applied to pointers");
+					Error (193, "The * or -> operator must be applied to a pointer");
 					return null;
 				}
 				
@@ -581,7 +579,7 @@ namespace Mono.CSharp {
 				Expr = Expr.DoResolveLValue (ec, new EmptyExpression ());
 
 				if (Expr == null || Expr.eclass != ExprClass.Variable){
-					Error (211, "Cannot take the address of non-variables");
+					Error (211, "Cannot take the address of the given expression");
 					return null;
 				}
 			}
@@ -1180,10 +1178,10 @@ namespace Mono.CSharp {
 			}
 			
 			if (warning_always_matches)
-				Warning (183, "The given expression is always of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
+				Warning (183, "The given expression is always of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
 			else if (warning_never_matches){
 				if (!(probe_type.IsInterface || expr.Type.IsInterface))
-					Warning (184, "The given expression is never of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
+					Warning (184, "The given expression is never of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
 			}
 
 			return this;
@@ -1213,10 +1211,9 @@ namespace Mono.CSharp {
 
 		static void Error_CannotConvertType (Type source, Type target, Location loc)
 		{
-			Report.Error (
-				39, loc, "as operator can not convert from `" +
-				TypeManager.CSharpName (source) + "' to `" +
-				TypeManager.CSharpName (target) + "'");
+			Report.Error (39, loc, "Cannot convert type `{0}' to `{1}' via a built-in conversion",
+				TypeManager.CSharpName (source),
+				TypeManager.CSharpName (target));
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -1231,8 +1228,8 @@ namespace Mono.CSharp {
 			Type etype = expr.Type;
 
 			if (TypeManager.IsValueType (probe_type)){
-				Report.Error (77, loc, "The as operator should be used with a reference type only (" +
-					      TypeManager.CSharpName (probe_type) + " is a value type)");
+				Report.Error (77, loc, "The as operator must be used with a reference type (`" +
+					      TypeManager.CSharpName (probe_type) + "' is a value type)");
 				return null;
 			
 			}
@@ -1805,7 +1802,7 @@ namespace Mono.CSharp {
 			CheckObsoleteAttribute (type);
 
 			if (type.IsAbstract && type.IsSealed) {
-				Report.Error (716, loc, "Cannot convert to static type '{0}'", TypeManager.CSharpName (type));
+				Report.Error (716, loc, "Cannot convert to static type `{0}'", TypeManager.CSharpName (type));
 				return null;
 			}
 
@@ -2175,10 +2172,8 @@ namespace Mono.CSharp {
 
 		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
 		{
-			Report.Error (19, loc,
-			       "Operator " + name + " cannot be applied to operands of type `" +
-			       TypeManager.CSharpName (l) + "' and `" +
-			       TypeManager.CSharpName (r) + "'");
+			Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
+			       name, TypeManager.CSharpName (l), TypeManager.CSharpName (r));
 		}
 		
 		void Error_OperatorCannotBeApplied ()
@@ -2730,7 +2725,7 @@ namespace Mono.CSharp {
 					return null;
 
 				if (left.eclass == ExprClass.Type) {
-					Error (75, "Casting a negative value needs to have the value in parentheses.");
+					Error (75, "To cast a negative value, you must enclose the value in parentheses");
 					return null;
 				}
 			} else
@@ -3388,7 +3383,7 @@ namespace Mono.CSharp {
 			}
 
 			if (method.ReturnType != type) {
-				Report.Error (217, loc, "In order to be applicable as a short circuit operator a user-defined logical operator ('{0}') " +
+				Report.Error (217, loc, "In order to be applicable as a short circuit operator a user-defined logical operator `{0}' " +
 						"must have the same return type as the type of its 2 parameters", TypeManager.CSharpSignature (method));
 				return null;
 			}
@@ -3603,10 +3598,8 @@ namespace Mono.CSharp {
 					type = true_type;
 					falseExpr = conv;
 				} else {
-					Error (173, "The type of the conditional expression can " +
-					       "not be computed because there is no implicit conversion" +
-					       " from `" + TypeManager.CSharpName (trueExpr.Type) + "'" +
-					       " and `" + TypeManager.CSharpName (falseExpr.Type) + "'");
+					Report.Error (173, loc, "Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
+						trueExpr.GetSignatureForError (), falseExpr.GetSignatureForError ());
 					return null;
 				}
 			}
@@ -3699,11 +3692,10 @@ namespace Mono.CSharp {
 			if (lvalue_right_side != null){
 				if (is_readonly){
 					if (lvalue_right_side is LocalVariableReference || lvalue_right_side == EmptyExpression.Null)
-						Report.Error (1657, loc, "Cannot pass '{0}' with '{1}' modifier because it is a '{2}'",
-							Name, lvalue_right_side == EmptyExpression.Null ? "out" : "ref",
-							local_info.GetReadOnlyContext ());
+						Report.Error (1657, loc, "Cannot pass `{0}' as a ref or out argument because it is a `{1}'",
+							Name, local_info.GetReadOnlyContext ());
 					else
-						Report.Error (1656, loc, "Cannot assign to '{0}' because it is a '{1}'",
+						Report.Error (1656, loc, "Cannot assign to `{0}' because it is a `{1}'",
 							Name, local_info.GetReadOnlyContext ());
 					return null;
 				}
@@ -3927,7 +3919,7 @@ namespace Mono.CSharp {
 				return true;
 
 			Report.Error (269, loc,
-				      "Use of unassigned out parameter '{0}'", name);
+				      "Use of unassigned out parameter `{0}'", name);
 			return false;
 		}
 
@@ -3965,8 +3957,8 @@ namespace Mono.CSharp {
 
 			if (ec.CurrentAnonymousMethod != null){
 				if (is_ref){
-					Report.Error (1628, Location,
-						      "Can not reference a ref or out parameter in an anonymous method");
+					Report.Error (1628, Location, "Cannot use ref or out parameter `{0}' inside an anonymous method block",
+						name);
 					return;
 				}
 
@@ -4247,7 +4239,7 @@ namespace Mono.CSharp {
 		
 		void Error_LValueRequired (Location loc)
 		{
-			Report.Error (1510, loc, "An lvalue is required as an argument to out or ref");
+			Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 		}
 
 		public bool Resolve (EmitContext ec, Location loc)
@@ -4297,8 +4289,9 @@ namespace Mono.CSharp {
 					if (instance.GetType () != typeof (This)){
 						if (fe.InstanceExpression.Type.IsSubclassOf (TypeManager.mbr_type)){
 							Report.SymbolRelatedToPreviousError (fe.InstanceExpression.Type);
-							Report.Error (197, loc, "Cannot pass '{0}' as ref or out or take its address because it is a member of a marshal-by-reference class",
-								fe.Name);
+							Report.Warning (197, 1, loc,
+								"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
+								fe.GetSignatureForError ());
 							return false;
 						}
 					}
@@ -4311,10 +4304,8 @@ namespace Mono.CSharp {
 				//
 				if (Expr.eclass == ExprClass.PropertyAccess ||
 				    Expr.eclass == ExprClass.IndexerAccess){
-					Report.Error (
-						206, loc,
-						"A property or indexer can not be passed as an out or ref " +
-						"parameter");
+					Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
+						Expr.GetSignatureForError ());
 				} else {
 					Error_LValueRequired (loc);
 				}
@@ -4351,9 +4342,7 @@ namespace Mono.CSharp {
 					if (Expr is IMemoryLocation)
                                                ((IMemoryLocation) Expr).AddressOf (ec, mode);
 					else {
-						Report.Error (
-							1510, Expr.Location,
-							"An lvalue is required as an argument to out or ref");
+						Error_LValueRequired (Expr.Location);
 						return;
 					}
 				}
@@ -4588,34 +4577,18 @@ namespace Mono.CSharp {
 
 		public static string FullMethodDesc (MethodBase mb)
 		{
-			string ret_type = "";
+			if (mb == null)
+				return "";
 
-                        if (mb == null)
-                                return "";
-
-			if (mb is MethodInfo)
-				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
-			
-			StringBuilder sb = new StringBuilder (ret_type);
-			sb.Append (" ");
-			sb.Append (mb.ReflectedType.ToString ());
-			sb.Append (".");
-			sb.Append (mb.Name);
-			
-			ParameterData pd = TypeManager.GetParameterData (mb);
-
-			int count = pd.Count;
-			sb.Append (" (");
-			
-			for (int i = count; i > 0; ) {
-				i--;
-
-				sb.Append (pd.ParameterDesc (count - i - 1));
-				if (i != 0)
-					sb.Append (", ");
+			StringBuilder sb;
+			if (mb is MethodInfo) {
+				sb = new StringBuilder (TypeManager.CSharpName (((MethodInfo) mb).ReturnType));
+				sb.Append (" ");
 			}
-			
-			sb.Append (")");
+			else
+				sb = new StringBuilder ();
+
+			sb.Append (TypeManager.CSharpSignature (mb));
 			return sb.ToString ();
 		}
 
@@ -4871,27 +4844,27 @@ namespace Mono.CSharp {
 			if (Arguments != null)
 				arg_count = Arguments.Count;
 
-                        if ((me.Name == "Invoke") &&
-			    TypeManager.IsDelegateType (me.DeclaringType)) {
-                                Error_InvokeOnDelegate (loc);
-                                return null;
-                        }
+			if ((me.Name == "Invoke") &&
+				TypeManager.IsDelegateType (me.DeclaringType)) {
+				Error_InvokeOnDelegate (loc);
+				return null;
+			}
 
 			MethodBase[] methods = me.Methods;
 
-                        //
-                        // First we construct the set of applicable methods
-                        //
+			//
+			// First we construct the set of applicable methods
+			//
 			bool is_sorted = true;
 			for (int i = 0; i < methods.Length; i++){
-                                Type decl_type = methods [i].DeclaringType;
+				Type decl_type = methods [i].DeclaringType;
 
-                                //
-                                // If we have already found an applicable method
-                                // we eliminate all base types (Section 14.5.5.1)
-                                //
-                                if ((applicable_type != null) &&
-				    IsAncestralType (decl_type, applicable_type))
+				//
+				// If we have already found an applicable method
+				// we eliminate all base types (Section 14.5.5.1)
+				//
+				if ((applicable_type != null) &&
+					IsAncestralType (decl_type, applicable_type))
 					continue;
 
 				//
@@ -4916,8 +4889,8 @@ namespace Mono.CSharp {
 					ec, me, Arguments, arg_count, ref methods [i]);
 
 				if (!is_applicable &&
-				    (IsParamsMethodApplicable (
-					    ec, me, Arguments, arg_count, ref methods [i]))) {
+					(IsParamsMethodApplicable (
+					ec, me, Arguments, arg_count, ref methods [i]))) {
 					MethodBase candidate = methods [i];
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
@@ -4955,19 +4928,20 @@ namespace Mono.CSharp {
 						continue;
 
 					VerifyArgumentsCompat (ec, Arguments, arg_count,
-							       c, false, null, may_fail, loc);
+						c, false, null, may_fail, loc);
 					break;
 				}
 
-                                if (!may_fail) {
-                                        string report_name = me.Name;
-                                        if (report_name == ".ctor")
-                                                report_name = me.DeclaringType.ToString ();
+				if (!may_fail) {
+
+					string report_name = me.Name;
+					if (report_name == ".ctor")
+						report_name = me.DeclaringType.ToString ();
                                         
 					Error_WrongNumArguments (
 						loc, report_name, arg_count);
 					return null;
-                                }
+				}
                                 
 				return null;
 			}
@@ -5049,7 +5023,7 @@ namespace Mono.CSharp {
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
-			bool ambiguous = false;
+			MethodBase ambiguous = null;
 			for (int ix = 0; ix < candidate_top; ix++){
 				MethodBase candidate = (MethodBase) candidates [ix];
 
@@ -5062,13 +5036,14 @@ namespace Mono.CSharp {
 						     candidate, cand_params,
 						     loc)) {
 					Report.SymbolRelatedToPreviousError (candidate);
-					ambiguous = true;
+					ambiguous = candidate;
 				}
 			}
 
-			if (ambiguous) {
+			if (ambiguous != null) {
 				Report.SymbolRelatedToPreviousError (method);
-				Report.Error (121, loc, "Ambiguous call when selecting function due to implicit casts");
+				Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
+					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (method));
 				return null;
 			}
 
@@ -5105,15 +5080,14 @@ namespace Mono.CSharp {
 			return method;
 		}
 
-		static void Error_WrongNumArguments (Location loc, String name, int arg_count)
+		public static void Error_WrongNumArguments (Location loc, String name, int arg_count)
 		{
 			if (name == "Finalize" && arg_count == 0) {
 				Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
 			}
 			else {
-				Report.Error (1501, loc,
-					"No overload for method `" + name + "' takes `" +
-					arg_count + "' arguments");
+				Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
+					name, arg_count);
 			}
 		}
 
@@ -5127,27 +5101,26 @@ namespace Mono.CSharp {
                                                     Type delegate_type, Argument a, ParameterData expected_par)
 		{
 			if (delegate_type == null) 
-				Report.Error (1502, loc, "The best overloaded match for method '{0}' has some invalid arguments",
+				Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
 					      TypeManager.CSharpSignature (method));
 			else
-				Report.Error (1594, loc,
-					      "Delegate '" + delegate_type.ToString () +
-					      "' has some invalid arguments.");
+				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
+					TypeManager.CSharpName (delegate_type));
 
 			string par_desc = expected_par.ParameterDesc (idx);
 
 			if (a.Modifier != expected_par.ParameterModifier (idx)) {
 				if ((expected_par.ParameterModifier (idx) & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
-					Report.Error (1615, loc, "Argument '{0}' should not be passed with the '{1}' keyword",
+					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
 						idx + 1, Parameter.GetModifierSignature (a.Modifier));
 				else
-					Report.Error (1620, loc, "Argument '{0}' must be passed with the '{1}' keyword",
+					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
 						idx + 1, Parameter.GetModifierSignature (expected_par.ParameterModifier (idx)));
 				return;
 			}
 
 			Report.Error (1503, loc,
-				      String.Format ("Argument {0}: Cannot convert from '{1}' to '{2}'",
+				      String.Format ("Argument {0}: Cannot convert from `{1}' to `{2}'",
 						     idx + 1, Argument.FullDesc (a), par_desc));
 		}
 		
@@ -5228,13 +5201,7 @@ namespace Mono.CSharp {
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!may_fail) {
-						Report.Error (1502, loc,
-						       "The best overloaded match for method '" + FullMethodDesc (method)+
-						       "' has some invalid arguments");
-						Report.Error (1503, loc,
-						       "Argument " + (j+1) +
-						       ": Cannot convert from '" + Argument.FullDesc (a) 
-						       + "' to '" + pd.ParameterDesc (j) + "'");
+						Invocation.Error_InvalidArguments (loc, j, method, null, a, pd);
 					}
 					
 					return false;
@@ -5296,12 +5263,12 @@ namespace Mono.CSharp {
 					    mg.IdenticalTypeName) {
 						mg.InstanceExpression = null;
 					} else {
-						MemberExpr.error176 (loc, mi.Name);
+						MemberExpr.error176 (loc, TypeManager.CSharpSignature (mi));
 						return null;
 					}
 				} else {
 					if (iexpr == null || iexpr is EmptyExpression) {
-						SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+						SimpleName.Error_ObjectRefRequired (ec, loc, TypeManager.CSharpSignature (mi));
 						return null;
 					}
 				}
@@ -5318,8 +5285,7 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (mg.IsBase && method.IsAbstract){
-				Report.Error (205, loc, "Cannot call an abstract base member: " +
-					      FullMethodDesc (method));
+				Error_CannotCallAbstractBase (TypeManager.CSharpSignature (method));
 				return null;
 			}
 
@@ -5330,7 +5296,8 @@ namespace Mono.CSharp {
 
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0) {
 				if (TypeManager.LookupDeclSpace (method.DeclaringType) != null || TypeManager.IsSpecialMethod (method)) {
-					Report.Error (571, loc, TypeManager.CSharpSignature (method) + ": can not call operator or accessor");
+					Report.Error (571, loc, "`{0}': cannot explicitly call operator or accessor",
+						TypeManager.CSharpSignature (method, true));
 					return null;
 				}
 			}
@@ -5940,12 +5907,12 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsAbstract && type.IsSealed) {
-				Report.Error (712, loc, "Cannot create an instance of the static class '{0}'", TypeManager.CSharpName (type));
+				Report.Error (712, loc, "Cannot create an instance of the static class `{0}'", TypeManager.CSharpName (type));
 				return null;
 			}
 
 			if (type.IsInterface || type.IsAbstract){
-				Error (144, "It is not possible to create instances of interfaces or abstract classes");
+				Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));
 				return null;
 			}
 			
@@ -5994,12 +5961,11 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-                                if (!is_struct || Arguments.Count > 0) {
-        				Error (1501, String.Format (
-					    "New invocation: Can not find a constructor in `{0}' for this argument list",
-					    TypeManager.CSharpName (type)));
+				if (!is_struct || Arguments.Count > 0) {
+					Invocation.Error_WrongNumArguments (loc, TypeManager.CSharpName (type),
+						Arguments == null ? 0 : Arguments.Count);
 					return null;
-                                }
+				}
 			}
 
 			return this;
@@ -6197,7 +6163,7 @@ namespace Mono.CSharp {
 
 		void Error_IncorrectArrayInitializer ()
 		{
-			Error (178, "Incorrectly structured array initializer");
+			Error (178, "Invalid rank specifier: expected `,' or `]'");
 		}
 		
 		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
@@ -6238,7 +6204,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 					if (specified_dims && (idx + 1 >= arguments.Count)){
-						Error (623, "Array initializers can only be used in a variable or field initializer, try using the new expression");
+						Error (623, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
 					}
 					
@@ -6422,7 +6388,7 @@ namespace Mono.CSharp {
 			array_element_type = TypeManager.GetElementType (type);
 
 			if (array_element_type.IsAbstract && array_element_type.IsSealed) {
-				Report.Error (719, loc, "'{0}': array elements cannot be of static type", TypeManager.CSharpName (array_element_type));
+				Report.Error (719, loc, "`{0}': array elements cannot be of static type", TypeManager.CSharpName (array_element_type));
 				return null;
 			}
 
@@ -6873,7 +6839,7 @@ namespace Mono.CSharp {
 			type = ec.ContainerType;
 
 			if (ec.IsStatic) {
-				Error (26, "Keyword this not valid in static code");
+				Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
 				return false;
 			}
 
@@ -6892,15 +6858,13 @@ namespace Mono.CSharp {
 				return null;
 
 			if ((variable_info != null) && !variable_info.IsAssigned (ec)) {
-				Error (188, "The this object cannot be used before all " +
-				       "of its fields are assigned to");
+				Error (188, "The `this' object cannot be used before all of its fields are assigned to");
 				variable_info.SetAssigned (ec);
 				return this;
 			}
 
 			if (ec.IsFieldInitializer) {
-				Error (27, "Keyword `this' can't be used outside a constructor, " +
-				       "a method or a property.");
+				Error (27, "Keyword `this' is not available in the current context");
 				return null;
 			}
 
@@ -7107,8 +7071,7 @@ namespace Mono.CSharp {
 			typearg = texpr.ResolveType (ec);
 
 			if (typearg == TypeManager.void_type) {
-				Error (673, "System.Void cannot be used from C# - " +
-				       "use typeof (void) to get the void type object");
+				Error (673, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
 				return null;
 			}
 
@@ -7182,15 +7145,14 @@ namespace Mono.CSharp {
 			}
 
 			if (!ec.InUnsafe) {
-				Report.Error (233, loc, "'{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
+				Report.Error (233, loc, "`{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
 					 TypeManager.CSharpName (type_queried));
 				return null;
 			}
 
 			CheckObsoleteAttribute (type_queried);
 
-			if (!TypeManager.IsUnmanagedType (type_queried)){
-				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
+			if (!TypeManager.VerifyUnManaged (type_queried, loc)){
 				return null;
 			}
 			
@@ -7253,7 +7215,8 @@ namespace Mono.CSharp {
 				Namespace ns = (Namespace) expr;
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
 				if (retval == null)
-					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
+					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
+						Identifier, ns.FullName);
 				return retval;
 			}
 					
@@ -7269,7 +7232,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			if (expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", expr_type);
+					ErrorIsInaccesible (loc, TypeManager.CSharpName (expr_type));
 					return null;
 				}
 
@@ -7320,8 +7283,8 @@ namespace Mono.CSharp {
 			if (member_lookup is TypeExpr) {
 				if (!(expr is TypeExpr) && 
 				    (original == null || !original.IdenticalNameAndTypeName (ec, expr, loc))) {
-					Error (572, "Can't reference type `" + Identifier + "' through an expression; try `" +
-					       member_lookup.Type + "' instead");
+					Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
+						Identifier, member_lookup.GetSignatureForError ());
 					return null;
 				}
 
@@ -7370,7 +7333,8 @@ namespace Mono.CSharp {
 				Namespace ns = (Namespace) new_expr;
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
 				if (!silent && retval == null)
-					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
+					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
+						Identifier, ns.FullName);
 				return retval;
 			}
 
@@ -7388,13 +7352,13 @@ namespace Mono.CSharp {
 				MemberLookupFailed (ec, expr_type, expr_type, Identifier, null, false, loc);
 
 				if (!silent && errors == Report.Errors)
-					Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
+					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?", 
 						      Identifier, new_expr.FullName);
 				return null;
 			}
 
 			if (!(member_lookup is TypeExpr)) {
-				Report.Error (118, loc, "'{0}.{1}' denotes a '{2}', where a type was expected",
+				Report.Error (118, loc, "`{0}.{1}' denotes a `{2}', where a type was expected",
 					      new_expr.FullName, Identifier, member_lookup.ExprClassName ());
 				return null;
 			} 
@@ -7558,11 +7522,11 @@ namespace Mono.CSharp {
 		Expression MakePointerAccess (EmitContext ec, Type t)
 		{
 			if (t == TypeManager.void_ptr_type){
-				Error (242, "The array index operation is not valid for void pointers");
+				Error (242, "The array index operation is not valid on void pointers");
 				return null;
 			}
 			if (Arguments.Count != 1){
-				Error (196, "A pointer must be indexed by a single value");
+				Error (196, "A pointer must be indexed by only one value");
 				return null;
 			}
 			Expression p;
@@ -7587,7 +7551,7 @@ namespace Mono.CSharp {
 			Type t = Expr.Type;
 
 			if (t == TypeManager.array_type){
-				Report.Error (21, loc, "Cannot use indexer on System.Array");
+				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `System.Array'");
 				return null;
 			}
 			
@@ -7624,7 +7588,7 @@ namespace Mono.CSharp {
 				if (ff != null) {
 					if (!(fe.InstanceExpression is LocalVariableReference) && 
 						!(fe.InstanceExpression is This)) {
-						Error (1708, "Fixed buffers can only be accessed through locals or fields");
+						Report.Error (1708, loc, "Fixed size buffers can only be accessed through locals or fields");
 						return null;
 					}
 // TODO: not sure whether it is correct
@@ -7683,10 +7647,8 @@ namespace Mono.CSharp {
 
 			Type t = ea.Expr.Type;
 			if (t.GetArrayRank () != ea.Arguments.Count){
-				ea.Error (22,
-					  "Incorrect number of indexes for array " +
-					  " expected: " + t.GetArrayRank () + " got: " +
-					  ea.Arguments.Count);
+				Report.Error (22, ea.Location, "Wrong number of indexes `{0}' inside [], expected `{1}'",
+					  ea.Arguments.Count, t.GetArrayRank ());
 				return null;
 			}
 
@@ -7705,7 +7667,7 @@ namespace Mono.CSharp {
 				    argtype == TypeManager.uint64_type) {
 					Constant c = a.Expr as Constant;
 					if (c != null && c.IsNegative) {
-						Report.Warning (251, 2, a.Expr.Location, "Indexing an array with a negative index (array indices always start at zero)");
+						Report.Warning (251, 2, ea.Location, "Indexing an array with a negative index (array indices always start at zero)");
 					}
 					continue;
 				}
@@ -8162,21 +8124,19 @@ namespace Mono.CSharp {
 			}
 
 			if (!found_any) {
-				Report.Error (21, loc,
-					      "Type `" + TypeManager.CSharpName (indexer_type) +
-					      "' does not have any indexers defined");
+				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+					      TypeManager.CSharpName (indexer_type));
 				return null;
 			}
 
 			if (!found_any_getters) {
-				Error (154, "indexer can not be used in this context, because " +
-				       "it lacks a `get' accessor");
+				Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
+				       "XXXXXXXX");
 				return null;
 			}
 
 			if (get == null) {
-				Error (1501, "No Overload for method `this' takes `" +
-				       arguments.Count + "' arguments");
+				Invocation.Error_WrongNumArguments (loc, "this", arguments.Count);
 				return null;
 			}
 
@@ -8184,7 +8144,7 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (get.IsAbstract && this is BaseIndexerAccess){
-				Report.Error (205, loc, "Cannot call an abstract base indexer: " + Invocation.FullMethodDesc (get));
+				Error_CannotCallAbstractBase (TypeManager.CSharpSignature (get));
 				return null;
 			}
 
@@ -8226,9 +8186,8 @@ namespace Mono.CSharp {
 			}
 
 			if (!found_any) {
-				Report.Error (21, loc,
-					      "Type `" + TypeManager.CSharpName (indexer_type) +
-					      "' does not have any indexers defined");
+				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+					      TypeManager.CSharpName (indexer_type));
 				return null;
 			}
 
@@ -8239,8 +8198,7 @@ namespace Mono.CSharp {
 			}
 
 			if (set == null) {
-				Error (1501, "No Overload for method `this' takes `" +
-				       arguments.Count + "' arguments");
+				Invocation.Error_WrongNumArguments (loc, "this", arguments.Count);
 				return null;
 			}
 
@@ -8248,7 +8206,7 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (set.IsAbstract && this is BaseIndexerAccess){
-				Report.Error (205, loc, "Cannot call an abstract base indexer: " + Invocation.FullMethodDesc (set));
+				Error_CannotCallAbstractBase (TypeManager.CSharpSignature (set));
 				return null;
 			}
 
@@ -8369,12 +8327,12 @@ namespace Mono.CSharp {
 			Type base_type = current_type.BaseType;
 
 			if (ec.IsStatic){
-				Error (1511, "Keyword base is not allowed in static method");
+				Error (1511, "Keyword `base' is not available in a static method");
 				return null;
 			}
 
 			if (ec.IsFieldInitializer){
-				Error (1512, "Keyword base is not available in the current context");
+				Error (1512, "Keyword `base' is not available in the current context");
 				return null;
 			}
 			
@@ -8580,8 +8538,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (dim == "*" && !TypeManager.IsUnmanagedType (ltype)) {
-				Report.Error (208, loc, "Cannot declare a pointer to a managed type ('{0}')", ltype);
+			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc)) {
 				return null;
 			}
 
@@ -8597,7 +8554,7 @@ namespace Mono.CSharp {
 
 			if (type.IsArray && (type.GetElementType () == TypeManager.arg_iterator_type ||
 				type.GetElementType () == TypeManager.typed_reference_type)) {
-				Report.Error (611, loc, "Array elements cannot be of type '{0}'", TypeManager.CSharpName (type.GetElementType ()));
+				Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (type.GetElementType ()));
 				return null;
 			}
 			
@@ -8736,8 +8693,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ec.InCatch || ec.InFinally) {
-				Error (255,
-				       "stackalloc can not be used in a catch or finally block");
+				Error (255, "Cannot use stackalloc in finally or catch");
 				return null;
 			}
 

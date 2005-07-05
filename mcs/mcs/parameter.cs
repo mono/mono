@@ -13,6 +13,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
+using System.Text;
 
 namespace Mono.CSharp {
 
@@ -160,19 +161,19 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.in_attribute_type && Attributes == ParameterAttributes.Out) {
-				Report.Error (36, a.Location, "Can not use [In] attribute on out parameter");
+				Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
 				return;
 			}
 
 			if (a.Type == TypeManager.param_array_type) {
-				Report.Error (674, a.Location, "Do not use 'System.ParamArrayAttribute'. Use the 'params' keyword instead");
+				Report.Error (674, a.Location, "Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead");
 				return;
 			}
 
 			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) != 0 &&
 			    !OptAttributes.Contains (TypeManager.in_attribute_type, ec)) {
 				Report.Error (662, a.Location,
-					"'{0}' cannot specify only Out attribute on a ref parameter. Use both In and Out attributes, or neither", GetSignatureForError ());
+					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
 				return;
 			}
 
@@ -197,7 +198,7 @@ namespace Mono.CSharp {
 			parameter_type = texpr.ResolveType (ec);
 			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
-				Report.Error (721, Location, "'{0}': static types cannot be used as parameters", GetSignatureForError ());
+				Report.Error (721, Location, "`{0}': static types cannot be used as parameters", GetSignatureForError ());
 				return false;
 			}
 
@@ -209,8 +210,8 @@ namespace Mono.CSharp {
 			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
 				if (parameter_type == TypeManager.typed_reference_type ||
 				    parameter_type == TypeManager.arg_iterator_type){
-					Report.Error (1601, Location,
-						      "out or ref parameter can not be of type TypedReference or ArgIterator");
+					Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
+						GetSignatureForError ());
 					return false;
 				}
 			}
@@ -626,6 +627,21 @@ namespace Mono.CSharp {
 				
 				pb.SetCustomAttribute (a);
 			}
+		}
+
+		public string GetSignatureForError ()
+		{
+			StringBuilder sb = new StringBuilder ("(");
+			if (FixedParameters != null) {
+				for (int i = 0; i < FixedParameters.Length; ++i) {
+					sb.Append (FixedParameters[i].GetSignatureForError ());
+					if (i < FixedParameters.Length - 1)
+						sb.Append (", ");
+				}
+			}
+			sb.Append (')');
+			return sb.ToString ();
+
 		}
 	}
 }

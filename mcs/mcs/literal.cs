@@ -95,6 +95,12 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return true; }
 		}
+
+		public override string GetSignatureForError()
+		{
+			return "null";
+		}
+
 	}
 
 	//
