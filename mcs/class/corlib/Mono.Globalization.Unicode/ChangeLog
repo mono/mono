@@ -1,5 +1,9 @@
 2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : indexers might return -1.
+
+2005-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : IsPrefix() and IsSuffix() optimization code was
 	  buggy (length check for source was missing).
 

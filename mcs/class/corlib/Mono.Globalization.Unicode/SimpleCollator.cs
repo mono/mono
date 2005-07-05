@@ -301,7 +301,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			if (cp < 0x3000 || cjkTable == null)
 				return Uni.Categories (cp);
-			ushort cjk = cjkTable [cjkIndexer.ToIndex (cp)];
+			int idx = cjkIndexer.ToIndex (cp);
+			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
 			return cjk != 0 ? (byte) ((cjk & 0xFF00) >> 8) :
 				Uni.Categories (cp);
 		}
@@ -310,7 +311,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			if (cp < 0x3000 || cjkTable == null)
 				return Uni.Level1 (cp);
-			ushort cjk = cjkTable [cjkIndexer.ToIndex (cp)];
+			int idx = cjkIndexer.ToIndex (cp);
+			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
 			return cjk != 0 ? (byte) (cjk & 0xFF) : Uni.Level1 (cp);
 		}
 
@@ -318,7 +320,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			if (cp < 0x3000 || cjkLv2Table == null)
 				return Uni.Level2 (cp);
-			byte ret = cjkLv2Table [cjkLv2Indexer.ToIndex (cp)];
+			int idx = cjkLv2Indexer.ToIndex (cp);
+			byte ret = idx < 0 ? (byte) 0 : cjkLv2Table [idx];
 			if (ret != 0)
 				return ret;
 			ret = Uni.Level2 (cp);
