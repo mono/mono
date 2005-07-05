@@ -389,7 +389,7 @@ namespace Mono.GetOptions
 		{
 			Hashtable baseForms = new Hashtable(list.Count);
 			foreach (OptionDetails option in list) {
-				if (option.LongForm != null) {
+				if (option.LongForm != null && option.LongForm.Trim().Length > 0) {
 					string[] parts = option.LongForm.Split(':');
 					if (parts.Length < 2) {
 						baseForms.Add(option.LongForm, option);
