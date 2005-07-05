@@ -1,4 +1,13 @@
 2005-06-08  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Mono.GetOptions/OptionDetails.cs: Checks alternate forms first (new method IsAlternate(string compoundArg))
+	this allow for '/debug[+|-]' coexisting with independently listed/described '/debug:full' and '/debug:pdbonly'
+	as needed by mbas. Alternate forms are based on the option long form name ('debug' not 'g').
+	* Mono.GetOptions/OptionList.cs: Register alternates with OptionDetails.LinkAlternatesInsideList(). Same reason.
+	* Mono.GetOptions.Useful/CommonCompilerOptions.cs: fix /debug:full and /debug:pdbonly semantics while positioning
+	the public flags
+	* Mono.GetOptions/Options.cs: Implement new standard option /debugoptions (/~).
+		
+2005-06-08  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* oops Mono.IsPartOfPackage renamed to Mono.IsPartOfPackageAttribute, 
 	as mandates the convention
 	

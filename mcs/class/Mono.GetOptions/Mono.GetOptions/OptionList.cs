@@ -439,6 +439,8 @@ namespace Mono.GetOptions
 			bool OptionWasProcessed;
 
 			list.Sort();
+			
+			OptionDetails.LinkAlternatesInsideList(list);
 
 			args = NormalizeArgs(args);
 

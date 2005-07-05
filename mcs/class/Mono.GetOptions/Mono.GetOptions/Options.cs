@@ -162,6 +162,23 @@ namespace Mono.GetOptions
 			get { return verboseParsingOfOptions; }
 		}
 
+		private bool debuggingOfOptions = false;
+		
+		[Option("Show debugging info while processing options", '~', "debugoptions", SecondLevelHelp = true)]
+		public bool DebuggingOfOptions
+		{
+			set { 
+				debuggingOfOptions = value; 
+				if (value) {
+					Console.WriteLine("ParsingMode = {0}", ParsingMode);
+					Console.WriteLine("BreakSingleDashManyLettersIntoManyOptions = {0}", BreakSingleDashManyLettersIntoManyOptions);
+					Console.WriteLine("EndOptionProcessingWithDoubleDash = {0}", EndOptionProcessingWithDoubleDash);
+					Console.WriteLine("DontSplitOnCommas = {0}", DontSplitOnCommas);
+				}
+			}
+			get { return debuggingOfOptions; }
+		}
+
 
 	}
 	

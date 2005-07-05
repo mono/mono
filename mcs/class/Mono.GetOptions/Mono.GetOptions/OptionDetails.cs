@@ -65,6 +65,8 @@ namespace Mono.GetOptions
 		public bool VBCStyleBoolean;
 		public bool SecondLevelHelp;
 		public bool Hidden;
+		
+		public OptionDetails NextAlternate  = null;
 
 		private string ExtractParamName(string shortDescription)
 		{
@@ -87,7 +89,9 @@ namespace Mono.GetOptions
 
 		public string ParamName { get { return paramName; } }
 				
-		private bool verboseParsing { get { return OptionBundle.VerboseParsingOfOptions; } }
+		private bool verboseParsing { get { return OptionBundle.VerboseParsingOfOptions || OptionBundle.DebuggingOfOptions; } }
+
+//		private bool debugOptions { get { return OptionBundle.DebuggingOfOptions; } }
 
 		private OptionsParsingMode parsingMode { get { return OptionBundle.ParsingMode; } } 
 		
@@ -381,8 +385,42 @@ namespace Mono.GetOptions
 			return false;
 		}
 
+		public static void LinkAlternatesInsideList(ArrayList list)
+		{
+			Hashtable baseForms = new Hashtable(list.Count);
+			foreach (OptionDetails option in list) {
+				if (option.LongForm != null) {
+					string[] parts = option.LongForm.Split(':');
+					if (parts.Length < 2) {
+						baseForms.Add(option.LongForm, option);
+					} else {
+						OptionDetails baseForm = (OptionDetails)baseForms[parts[0]];
+						if (baseForm != null) {
+							// simple linked list
+							option.NextAlternate = baseForm.NextAlternate;
+							baseForm.NextAlternate = option;
+						}
+					}
+				}
+			}
+		}
+
+		private bool IsAlternate(string compoundArg)
+		{
+			OptionDetails next = NextAlternate;
+			while (next != null) {
+				if (next.IsThisOption(compoundArg))
+					return true;
+				next = next.NextAlternate;
+			}
+			return false;
+		}
+
 		public OptionProcessingResult ProcessArgument(string arg, string nextArg)
 		{
+			if (IsAlternate(arg + ":" + nextArg))
+				return OptionProcessingResult.NotThisOption;
+				
 			if (IsThisOption(arg))
 			{
 				if (!NeedsParameter)

@@ -239,14 +239,30 @@ namespace Mono.GetOptions.Useful
 		[Option("Remove integer checks. Default off.", SecondLevelHelp = true, VBCStyleBoolean = true)]
 		public virtual bool removeintchecks { set { CheckedContext = !value; } }
 
-		[Option("Emit debugging information", 'g', "debug", VBCStyleBoolean = true)]
+		[Option("Emit full debugging information", 'g', "debug", VBCStyleBoolean = true)]
 		public bool WantDebuggingSupport = false;
 
 		[Option("Emit full debugging information (default)", "debug:full", SecondLevelHelp = true)]
-		public bool FullDebugging = false;
-
-		[Option("[IGNORED] Emit PDB file only", "debug:pdbonly", SecondLevelHelp = true)]
+		public bool debugfull { 
+			set { 
+				WantDebuggingSupport = value; 
+				FullDebugging = value; 
+				MdbOnly = !value; 
+			}
+		}
+		
+		[Option("Emit MDB file only", "debug:pdbonly", SecondLevelHelp = true)]
+		public bool debugpdbonly {
+			set { 
+				WantDebuggingSupport = value; 
+				FullDebugging = !value; 
+				MdbOnly = value; 
+			}
+		}
+	
 		public bool MdbOnly = false;
+		public bool FullDebugging = true;
+
 
 		// errors and warnings options
 		//------------------------------------------------------------------
