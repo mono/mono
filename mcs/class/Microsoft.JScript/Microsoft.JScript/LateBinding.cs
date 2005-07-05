@@ -121,9 +121,9 @@ namespace Microsoft.JScript {
 		{
 			if (construct) {
 				if (brackets) {
-					return null;
+					throw new NotImplementedException ();
 				}
-				return null;
+				throw new NotImplementedException ();
 			} else if (brackets) {
 				if (!(val is JSObject))
 					throw new Exception ("val has to be a JSObject");
@@ -135,7 +135,7 @@ namespace Microsoft.JScript {
 				else
 					throw new NotImplementedException ();
 			} else {
-				return null;
+				throw new NotImplementedException ();
 			}
 		}
 

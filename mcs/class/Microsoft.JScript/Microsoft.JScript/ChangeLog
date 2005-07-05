@@ -1,5 +1,8 @@
 2005-07-05  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* LateBinding.cs (CallValue): throw a NotImplementedException
+	instead of a returning null.
+
 	Fixes bug #75442
 	* FunctionExpression.cs (Emit): use InFunction instead of testing by hand.
 	* Parser.cs (MemberExpr): pass parent as the parameter not pn.
