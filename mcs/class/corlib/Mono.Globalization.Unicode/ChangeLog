@@ -1,5 +1,10 @@
 2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collator.cs : Now that SimpleCollator became feature complete, it is
+	  not useful anymore.
+
+2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : implemented decent Compare() that immediately
 	  stops at first primary difference.
 
