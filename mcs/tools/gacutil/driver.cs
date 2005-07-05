@@ -193,26 +193,43 @@ namespace Mono.Tools {
 				string gacdir, string link_gacdir, string libdir, string link_libdir)
 		{
 			string failure_msg = "Failure adding assembly to the cache: ";
+			ArrayList resources;
 
 			if (!File.Exists (name)) {
 				WriteLine (failure_msg + "The system cannot find the file specified.");
 				Environment.Exit (1);
 			}
 
+			Assembly assembly = null;
 			AssemblyName an = null;
 			byte [] pub_tok;
 
 			try {
-				an = AssemblyName.GetAssemblyName (name);
+				assembly = Assembly.LoadFrom (name);
 			} catch {
 				WriteLine (failure_msg + "The file specified is not a valid assembly.");
 				return false;
 			}
 
+			an = assembly.GetName ();
 			pub_tok = an.GetPublicKeyToken ();
 			if (pub_tok == null || pub_tok.Length == 0) {
 				WriteLine (failure_msg + "Attempt to install an assembly without a strong name.");
 				return false;
+			}
+
+			resources = new ArrayList ();
+			foreach (string res_name in assembly.GetManifestResourceNames ()) {
+				ManifestResourceInfo res_info = assembly.GetManifestResourceInfo (res_name);
+				
+				if ((res_info.ResourceLocation & ResourceLocation.Embedded) == 0) {
+					if (!File.Exists (res_info.FileName)) {
+						WriteLine (failure_msg + "The system cannot find resource " + res_info.FileName);
+						return false;
+					}
+
+					resources.Add (res_info);
+				}
 			}
 
 			if (check_refs && !CheckReferencedAssemblies (an)) {
@@ -248,6 +265,15 @@ namespace Mono.Tools {
 				string sibling = String.Concat (name, ext);
 				if (File.Exists (sibling))
 					File.Copy (sibling, String.Concat (asmb_path, ext), true);
+			}
+
+			foreach (ManifestResourceInfo resource_info in resources) {
+				try {
+					File.Copy (resource_info.FileName, Path.Combine (full_path, Path.GetFileName (resource_info.FileName)), true);
+				} catch {
+					WriteLine ("ERROR: Could not install resource file " + resource_info.FileName);
+					Environment.Exit (1);
+				}
 			}
 
 			if (package != null) {
