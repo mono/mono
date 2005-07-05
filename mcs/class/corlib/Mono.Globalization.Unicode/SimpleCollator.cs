@@ -81,6 +81,7 @@ namespace Mono.Globalization.Unicode
 
 		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
+		byte [] charSortKey2 = new byte [4];
 		// temporary expansion store for IsPrefix/Suffix
 		int escapedSourceIndex;
 
@@ -580,9 +581,23 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return Compare (s1, 0, s1.Length, s2, 0, s2.Length, options);
 		}
 
+		class Escape
+		{
+			public string Source;
+			public int Index;
+			public int Start;
+			public int End;
+		}
+
+		// Those instances are reused not to invoke instantiation
+		// during Compare().
+		Escape escape1 = new Escape ();
+		Escape escape2 = new Escape ();
+
 		public int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{
+#if false // stable easy version, depends on GetSortKey().
 			SortKey sk1 = GetSortKey (s1, idx1, len1, options);
 			SortKey sk2 = GetSortKey (s2, idx2, len2, options);
 			byte [] d1 = sk1.KeyData;
@@ -592,6 +607,250 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (d1 [i] != d2 [i])
 					return d1 [i] < d2 [i] ? -1 : 1;
 			return d1.Length == d2.Length ? 0 : d1.Length < d2.Length ? -1 : 1;
+#else
+			SetOptions (options);
+			escape1.Source = null;
+			escape2.Source = null;
+			int ret = Compare (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0);
+			return ret == 0 ? 0 : ret < 0 ? -1 : 1;
+#endif
+		}
+
+		int Compare (string s1, int idx1, int len1, string s2,
+			int idx2, int len2, bool stringSort)
+		{
+			int start1 = idx1;
+			int start2 = idx2;
+			int end1 = idx1 + len1;
+			int end2 = idx2 + len2;
+
+			// It holds final result that comes from the comparison
+			// at level 2 or lower. Even if Compare() found the
+			// difference at level 2 or lower, it still has to
+			// continue level 1 comparison. FinalResult is used
+			// when there was no further differences.
+			int finalResult = 0;
+			// It holds the comparison level to do. It starts from
+			// 5, and becomes 1 when we do primary-only comparison.
+			int currentLevel = 5;
+
+			int lv5At1 = -1;
+			int lv5At2 = -1;
+			int lv5Value1 = 0;
+			int lv5Value2 = 0;
+
+			while (true) {
+				int cur1 = idx1;
+				int cur2 = idx2;
+				if (idx1 >= end1) {
+					if (escape1.Source == null)
+						break;
+					s1 = escape1.Source;
+					start1 = escape1.Start;
+					idx1 = escape1.Index;
+					end1 = escape1.End;
+					escape1.Source = null;
+				}
+				if (idx2 >= end2) {
+					if (escape2.Source == null)
+						break;
+					s2 = escape2.Source;
+					start2 = escape2.Start;
+					idx2 = escape2.Index;
+					end2 = escape2.End;
+					escape2.Source = null;
+				}
+/* FIXME: optimization could be done here.
+
+				if (s1 [idx1] == s2 [idx2]) {
+					idx1++;
+					idx2++;
+					continue;
+				}
+				while (idx1 >= start1 && !IsSafe ((int) s [idx1]))
+					idx1--;
+				while (idx2 >= start2 && !IsSafe ((int) s [idx2]))
+					idx2--;
+*/
+
+				byte [] sk1 = null;
+				byte [] sk2 = null;
+				int i1 = FilterOptions (s1 [idx1]);
+				int i2 = FilterOptions (s2 [idx2]);
+				bool special1 = false;
+				bool special2 = false;
+
+				Contraction ct1 = GetContraction (s1, idx1, end1);
+				if (ct1 != null) {
+					idx1 += ct1.Source.Length;
+					if (ct1.SortKey != null)
+						sk1 = ct1.SortKey;
+					else if (escape1.Source == null) {
+						escape1.Source = s1;
+						escape1.Start = start1;
+						escape1.Index = cur1 + ct1.Source.Length;
+						escape1.End = end1;
+						s1 = ct1.Replacement;
+						idx1 = 0;
+						start1 = 0;
+						end1 = s1.Length;
+						continue;
+					}
+				}
+				else {
+					sk1 = charSortKey;
+					sk1 [0] = Category (i1);
+					sk1 [1] = Level1 (i1);
+					if (!ignoreNonSpace && currentLevel > 1)
+						sk1 [2] = Level2 (i1);
+					if (currentLevel > 2)
+						sk1 [3] = Uni.Level3 (i1);
+					if (currentLevel > 3)
+						special1 = Uni.HasSpecialWeight ((char) i1);
+					idx1++;
+				}
+
+				if (!stringSort && sk1 [0] == 6) {
+					lv5At1 = escape1.Source != null ?
+						escape1.Index - escape1.Start :
+						cur1 - start1;
+					lv5Value1 = sk1 [1];
+					continue;
+				}
+
+				// add diacritical marks in s1 here
+				while (idx1 < end1) {
+					if (Category (s1 [idx1]) != 1)
+						break;
+					sk1 [1] = (byte) (sk1 [1] + 
+						Level2 (s1 [idx1]));
+					idx1++;
+				}
+
+				Contraction ct2 = GetContraction (s2, idx2, end2);
+				if (ct2 != null) {
+					idx2 += ct2.Source.Length;
+					if (ct2.SortKey != null)
+						sk2 = ct2.SortKey;
+					else if (escape2.Source == null) {
+						escape2.Source = s2;
+						escape2.Start = 0;
+						escape2.Index = cur2 + ct2.Source.Length;
+						escape2.End = end2;
+						s2 = ct2.Replacement;
+						idx2 = 0;
+						end2 = s2.Length;
+						continue;
+					}
+				}
+				else {
+					sk2 = charSortKey2;
+					sk2 [0] = Category (i2);
+					sk2 [1] = Level1 (i2);
+					if (!ignoreNonSpace && currentLevel > 1)
+						sk2 [2] = Level2 (i2);
+					if (currentLevel > 2)
+						sk2 [3] = Uni.Level3 (i2);
+					if (currentLevel > 3)
+						special2 = Uni.HasSpecialWeight ((char) i2);
+					idx2++;
+				}
+
+				if (!stringSort && sk2 [0] == 6) {
+					lv5At2 = escape2.Source != null ?
+						escape2.Index - escape2.Start :
+						cur2 - start2;
+					lv5Value2 = sk2 [1];
+					continue;
+				}
+
+				// add diacritical marks in s1 here
+				while (idx2 < end2) {
+					if (Category (s2 [idx2]) != 1)
+						break;
+					sk2 [1] = (byte) (sk2 [1] + 
+						Level2 (s2 [idx2]));
+					idx2++;
+				}
+
+				int ret = sk1 [0] - sk2 [0];
+				ret = ret != 0 ? ret : sk1 [1] - sk2 [1];
+				if (ret != 0)
+					return ret;
+				if (currentLevel == 1)
+					continue;
+				if (!ignoreNonSpace) {
+					ret = sk1 [2] - sk2 [2];
+					if (ret != 0) {
+						finalResult = ret;
+						currentLevel = 1;
+						continue;
+					}
+				}
+				if (currentLevel == 2)
+					continue;
+				ret = sk1 [3] - sk2 [3];
+				if (ret != 0) {
+					finalResult = ret;
+					currentLevel = 2;
+					continue;
+				}
+				if (currentLevel == 3)
+					continue;
+				if (special1 != special2) {
+					finalResult = special1 ? 1 : -1;
+					currentLevel = 3;
+					continue;
+				}
+				if (special1) {
+					ret = CompareFlagPair (
+						Uni.IsJapaneseSmallLetter ((char) i1),
+						Uni.IsJapaneseSmallLetter ((char) i2));
+					ret = ret != 0 ? ret :
+						Uni.GetJapaneseDashType ((char) i1) -
+						Uni.GetJapaneseDashType ((char) i2);
+					ret = ret != 0 ? ret : CompareFlagPair (
+						!Uni.IsHiragana ((char) i1),
+						!Uni.IsHiragana ((char) i2));
+					ret = ret != 0 ? ret : CompareFlagPair (
+						Uni.IsHalfWidthKana ((char) i1),
+						Uni.IsHalfWidthKana ((char) i2));
+					if (ret != 0) {
+						finalResult = ret;
+						currentLevel = 3;
+						continue;
+					}
+				}
+			}
+			for (; idx1 < end1; idx1++)
+				if (!IsIgnorable (s1 [idx1]))
+					break;
+			for (; idx2 < end2; idx2++)
+				if (!IsIgnorable (s2 [idx2]))
+					break;
+			// If there were only level 3 or lower differences,
+			// then we still have to find diacritical differences
+			// if any.
+			if (finalResult != 0 && currentLevel > 2) {
+				while (idx1 < end1 && idx2 < end2) {
+					if (!Uni.IsIgnorableNonSpacing (s1 [idx1]))
+						break;
+					if (!Uni.IsIgnorableNonSpacing (s2 [idx2]))
+						break;
+					finalResult = Level2 (FilterOptions ((s1 [idx1]))) - Level2 (FilterOptions (s2 [idx2]));
+					if (finalResult != 0)
+						break;
+					idx1++;
+					idx2++;
+				}
+			}
+			// we still have to handle level 5
+			if (finalResult == 0) {
+				finalResult = lv5At1 - lv5At2;
+				if (finalResult != 0)
+					finalResult = lv5Value1 - lv5Value2;
+			}
+			return idx1 != end1 ? 1 : idx2 == end2 ? finalResult : -1;
 		}
 
 		#endregion
