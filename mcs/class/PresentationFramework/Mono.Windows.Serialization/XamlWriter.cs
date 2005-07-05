@@ -26,20 +26,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
+
 namespace Mono.Windows.Serialization {
 	public interface XamlWriter {
-		void CreateTopLevel(string parentName, string className);
+		void CreateTopLevel(Type parent, string className);
 
-		void CreateObject(string typeName);
+		void CreateObject(Type type);
 		void CreateElementText(string text);
 		void EndObject();
 
-		void CreateProperty(string propertyName);
-		void CreatePropertyText(string text, string converter);
+		void CreateProperty(PropertyInfo property);
+		void CreatePropertyText(string text, Type propertyType, Type converterType);
+		void CreatePropertyDelegate(string functionName, Type propertyType);
 		void EndProperty();
-		
-		void CreateAttachedProperty(string attachedTo, string propertyName, string typeName);
-		void CreateAttachedPropertyText(string text, string converter);
+	
+
+		void CreateEvent(EventInfo evt);
+		void CreateEventDelegate(string functionName, Type eventDelegateType);
+		void EndEvent();
+
+		void CreateAttachedProperty(Type attachedTo, string propertyName, Type propertyType);
+		void CreateAttachedPropertyText(string text, Type propertyType, Type converterType);
 		void EndAttachedProperty();
 
 		void CreateCode(string code);

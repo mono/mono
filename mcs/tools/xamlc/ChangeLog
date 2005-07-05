@@ -1,3 +1,10 @@
+2005-07-05  Iain McCoy  <iain@mccoy.id.au>
+
+	* README: describe the demo as it currently is
+	* demo/TestVocab/ConsoleWriter.cs: delegates demonstration
+	* demo/TestVocab/ConsoleApp.cs: events demonstration
+	* demo/test.xaml: include delegates and events in demonstration
+
 2005-07-03  Iain McCoy  <iain@mccoy.id.au>
 	* demo/Makefile: made more useful - just do "make run" and it should
 	all happen

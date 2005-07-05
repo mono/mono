@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.IO;
 using System.Collections;
 using System.CodeDom;
@@ -53,9 +54,8 @@ namespace Mono.Windows.Serialization {
 	
 		// pushes: a CodeVariableReferenceExpression to the present
 		// 	instance
-		public void CreateTopLevel(string parentName, string className)
+		public void CreateTopLevel(Type parent, string className)
 		{
-			Type parent = Type.GetType(parentName);
 			int endNamespaceName = className.LastIndexOf(".");
 			string clrNamespace;
 			if (endNamespaceName < 0)
@@ -77,9 +77,8 @@ namespace Mono.Windows.Serialization {
 
 		// bottom of stack holds CodeVariableReferenceExpression
 		// pushes a reference to the new current type
-		public void CreateObject(string typeName)
+		public void CreateObject(Type type)
 		{
-			Type type = Type.GetType(typeName);
 			string varName = Char.ToLower(type.Name[0]) + type.Name.Substring(1);
 			// make sure something sensible happens when class
 			// names start with a lowercase letter
@@ -109,37 +108,46 @@ namespace Mono.Windows.Serialization {
 
 		// top of stack is a reference to an object
 		// pushes a reference to the property
-		public void CreateProperty(string propertyName)
+		public void CreateProperty(PropertyInfo property)
 		{
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression(
 					(CodeExpression)objects[objects.Count - 1],
-					propertyName);
+					property.Name);
 			objects.Add(prop);
+		}
+
+		// top of stack is a reference to an object
+		// pushes a reference to the event
+		public void CreateEvent(EventInfo evt)
+		{
+			CodeEventReferenceExpression expr = new CodeEventReferenceExpression(
+					(CodeExpression)objects[objects.Count - 1],
+					evt.Name);
+			objects.Add(expr);
 		}
 
 		// top of stack is a reference to an object
 		// pushes the name of the instance to attach to, the name of 
 		//   the property, and a reference to an object
-		public void CreateAttachedProperty(string attachedTo, string propertyName, string typeName)
+		public void CreateAttachedProperty(Type attachedTo, string propertyName, Type propertyType)
 		{
-			Type t = Type.GetType(typeName);
-			Type typeAttachedTo = Type.GetType(attachedTo);
-
-			string name = "temp";
-			if (tempIndex != 0)
-				name += tempIndex;
-			CodeVariableDeclarationStatement decl = new CodeVariableDeclarationStatement(t, name);
+			string varName = "temp";
+			if (tempIndex != 0) {
+				varName += tempIndex;
+				tempIndex += 1;
+			}
+			CodeVariableDeclarationStatement decl = new CodeVariableDeclarationStatement(propertyType, varName);
 			constructor.Statements.Add(decl);
 
 
 			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
-					new CodeTypeReferenceExpression(typeAttachedTo),
+					new CodeTypeReferenceExpression(attachedTo),
 					"Set" + propertyName,
 					(CodeExpression)objects[objects.Count - 1],
-					new CodeVariableReferenceExpression(name));
+					new CodeVariableReferenceExpression(varName));
 
 			objects.Add(call);
-			objects.Add(new CodeVariableReferenceExpression(name));
+			objects.Add(new CodeVariableReferenceExpression(varName));
 		}
 
 		// pops 2 items: the name of the property, and the object to attach to
@@ -162,20 +170,47 @@ namespace Mono.Windows.Serialization {
 			constructor.Statements.Add(call);
 		}
 
-		// top of stack is reference to a property
-		public void CreatePropertyText(string text, string converter)
+		// top of stack is reference to an event
+		public void CreateEventDelegate(string functionName, Type eventDelegateType)
 		{
-			CreateAttachedPropertyText(text, converter);
+			CodeExpression expr = new CodeObjectCreateExpression(
+					eventDelegateType,
+					new CodeMethodReferenceExpression(
+							new CodeThisReferenceExpression(),
+							functionName));
+			CodeAttachEventStatement attach = new CodeAttachEventStatement(
+					(CodeEventReferenceExpression)objects[objects.Count - 1],
+					expr);
+			constructor.Statements.Add(attach);
+
 		}
-		public void CreateAttachedPropertyText(string text, string converter)
+		// top of stack is reference to a property
+		public void CreatePropertyDelegate(string functionName, Type propertyType)
+		{
+			CodeExpression expr = new CodeObjectCreateExpression(
+					propertyType,
+					new CodeMethodReferenceExpression(
+							new CodeThisReferenceExpression(),
+							functionName));
+			CodeAssignStatement assignment = new CodeAssignStatement(
+					(CodeExpression)objects[objects.Count - 1],
+					expr);
+			constructor.Statements.Add(assignment);
+		}
+		// top of stack is reference to a property
+		public void CreatePropertyText(string text, Type propertyType, Type converterType)
+		{
+			CreateAttachedPropertyText(text, propertyType, converterType);
+		}
+		// top of stack is reference to an attached property
+		public void CreateAttachedPropertyText(string text, Type propertyType, Type converterType)
 		{
 			CodeExpression expr = new CodePrimitiveExpression(text);
-			if (converter != null) {
-				Type t = Type.GetType(converter);
+			if (converterType != null) {
 				expr = new CodeCastExpression(
-						new CodeTypeReference(typeof(int)),
+						new CodeTypeReference(propertyType),
 						new CodeMethodInvokeExpression(
-								new CodeObjectCreateExpression(t),
+								new CodeObjectCreateExpression(converterType),
 								"ConvertFromString",
 								expr));
 			}
@@ -192,6 +227,11 @@ namespace Mono.Windows.Serialization {
 		}
 
 		public void EndProperty()
+		{
+			objects.RemoveAt(objects.Count - 1);
+		}
+		
+		public void EndEvent()
 		{
 			objects.RemoveAt(objects.Count - 1);
 		}

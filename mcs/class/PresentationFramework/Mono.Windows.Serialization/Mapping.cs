@@ -42,7 +42,7 @@ namespace Mono.Windows.Serialization {
 			mappings[mapping.XmlNamespace] = mapping;
 		}
 
-		public string Resolve(string clrNamespace, string classname)
+		public Type Resolve(string clrNamespace, string classname)
 		{
 			return ((Mapping)mappings[clrNamespace]).Resolve(classname);
 		}
@@ -116,14 +116,14 @@ namespace Mono.Windows.Serialization {
 			get { return xmlNamespace; }
 		}
 
-		public string Resolve(string className)
+		public Type Resolve(string className)
 		{
 			Assembly assembly = Assembly.Load(assemblyName);
 			Type type = assembly.GetType(clrNamespace + "." + className);
 			if (type == null) {
 				throw new MappingException(className, XmlNamespace);
 			} else {
-				return type.AssemblyQualifiedName;
+				return type;
 			}
 		}
 	}

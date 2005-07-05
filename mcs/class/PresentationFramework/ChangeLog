@@ -1,3 +1,15 @@
+2005-07-05  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlWriter.cs,
+	  Mono.Windows.Serialization/CodeWriter.cs: add support for delegate
+	  properties and for events
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlWriter.cs,
+	  Mono.Windows.Serialization/CodeWriter.cs,
+	  Mono.Windows.Serialization/Mapper.cs: tighten up types so that Type
+	  and PropertyInfo are passed instead of strings
+
 2005-07-03  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/XamlParser.cs: added support for Code

@@ -4,8 +4,12 @@ using System.Windows;
 using System.Windows.Serialization;
 
 namespace Xaml.TestVocab.Console {
+	public delegate void SomethingHappenedHandler();
 	public class ConsoleApp : IAddChild {
 		private ArrayList actions = new ArrayList();
+
+		public event SomethingHappenedHandler SomethingHappened;
+		
 		public void AddText(string Text)
 		{
 			actions.Add(new ConsoleWriter(Text));
@@ -23,8 +27,12 @@ namespace Xaml.TestVocab.Console {
 		{
 			foreach (IConsoleAction action in actions) {
 				int reps = GetRepetitions((DependencyObject)action);
-				for (int i = 0; i < reps; i++)
+				for (int i = 0; i < reps; i++) {
+					SomethingHappenedHandler s = SomethingHappened;
+					if (s != null)
+						s();
 					action.Run();
+				}
 			}
 		}
 

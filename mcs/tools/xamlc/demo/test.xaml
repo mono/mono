@@ -2,9 +2,11 @@
 
 <ConsoleApp xmlns="console" 
 		xmlns:x="http://schemas.microsoft.com/winfx/xaml/2005" 
-		x:Class="DemoConsoleApp">
+		x:Class="DemoConsoleApp"
+		SomethingHappened="printHi">
 	<ConsoleWriter>IT BEGINS!</ConsoleWriter>
 	<ConsoleWriter Text="Hello World" />
+	<ConsoleWriter Text="I'm surrounded!" Filter="stringFilter" />
 	<ConsoleWriter>
 		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
@@ -14,6 +16,18 @@
 		{
 			Xaml.TestVocab.Console.ConsoleApp c = new DemoConsoleApp();
 			c.Run();
+		}
+
+		private string stringFilter(string s)
+		{
+			return "YYY" + s + "ZZZ";
+		}
+
+		private void printHi()
+		{
+			//this code is run before every call to IConsoleAction.Run() by ConsoleApp, 
+			//uncomment it to see that happening
+			//System.Console.WriteLine("Hi there, something's about to happen!");
 		}
 	]]></x:Code>
 </ConsoleApp>

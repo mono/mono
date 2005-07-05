@@ -3,8 +3,11 @@ using System.Windows;
 using System.Windows.Serialization;
 
 namespace Xaml.TestVocab.Console {
+	public delegate string Filter(string s);
+	
 	public class ConsoleWriter : DependencyObject, IAddChild, IConsoleAction {
 		string text;
+		private Filter filter;
 
 		public ConsoleWriter()
 		{
@@ -20,6 +23,10 @@ namespace Xaml.TestVocab.Console {
 			get { return text; }
 			set { text = value; }
 		}
+		public Filter Filter {
+			get { return Filter; }
+			set { filter = value; }
+		}
 
 		public void AddText(string text)
 		{
@@ -34,7 +41,12 @@ namespace Xaml.TestVocab.Console {
 		
 		public void Run()
 		{
-			System.Console.WriteLine(text);
+			Filter f = filter;
+			string s = text;
+			// apply filter, if it exists
+			if (f != null)
+				s = f(s);
+			System.Console.WriteLine(s);
 		}
 	}
 }

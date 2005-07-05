@@ -140,6 +140,8 @@ namespace Mono.Windows.Serialization {
 		// the given type
 		bool isNameOfAncestorClass(string name, Type t)
 		{
+			if (name == "object")
+				return true;
 			while (t.BaseType != null) {
 				if (t.Name == name)
 					return true;
@@ -162,14 +164,16 @@ namespace Mono.Windows.Serialization {
 				writer.CreateElementText(reader.Value);
 			} else if (currentState.type == CurrentType.AttachedProperty) {
 				DependencyProperty dp = (DependencyProperty)currentState.obj;
-				writer.CreateAttachedPropertyText(reader.Value, getTypeConverter(dp.PropertyType));
+				writer.CreateAttachedPropertyText(reader.Value, dp.PropertyType, 
+						getTypeConverter(dp.PropertyType));
 			} else {
 				PropertyInfo prop = (PropertyInfo)currentState.obj;
-				writer.CreatePropertyText(reader.Value, getTypeConverter(prop.PropertyType));
+				writer.CreatePropertyText(reader.Value, prop.PropertyType,
+						getTypeConverter(prop.PropertyType));
 			}
 		}
 		
-		string getTypeConverter(Type fromType)
+		Type getTypeConverter(Type fromType)
 		{
 			// TODO: this business setting assembly is frankly
 			// grotesque. It should just be something along the
@@ -188,9 +192,8 @@ namespace Mono.Windows.Serialization {
 				return null;
 			string converterName = "System.ComponentModel." + fromType.Name + "Converter,System.dll";
 			Type converter = assembly.GetType(converterName);
-			return converter.AssemblyQualifiedName;
-			// TODO: catch NullReferenceException and do something
-			// cool
+			return converter;
+			// TODO: check if converter == null and do something cool
 		}
 
 		
@@ -199,6 +202,7 @@ namespace Mono.Windows.Serialization {
 			// preconditions: currentState.Type == Object
 			Type currentType = (Type)currentState.obj;
 			PropertyInfo prop = currentType.GetProperty(propertyName);
+
 			if (prop == null) {
 				Console.WriteLine("Property " + propertyName + " not found on " + currentType.Name);
 				return;
@@ -210,7 +214,7 @@ namespace Mono.Windows.Serialization {
 			currentState.type = CurrentType.Property;
 			currentState.obj = prop;
 
-			writer.CreateProperty(propertyName);
+			writer.CreateProperty(prop);
 
 			if (reader.HasAttributes) {
 				Console.WriteLine("Property node should not have attributes");
@@ -247,24 +251,23 @@ namespace Mono.Windows.Serialization {
 			currentState.obj = dp;
 			currentState.type = CurrentType.AttachedProperty;
 
-			writer.CreateAttachedProperty(typeAttachedTo.AssemblyQualifiedName, 
-					propertyName, 
-					dp.PropertyType.AssemblyQualifiedName);
+			writer.CreateAttachedProperty(typeAttachedTo, propertyName, dp.PropertyType);
 		}
 
 		void parseObjectElement()
 		{
-			string parentName, objectName = null;
+			Type parent;
+			string objectName = null;
 			bool isEmpty = reader.IsEmptyElement;
 			
-			parentName = mapper.Resolve(reader.NamespaceURI, reader.Name);
+			parent = mapper.Resolve(reader.NamespaceURI, reader.Name);
 			objectName = reader.GetAttribute("Class", XAML_NAMESPACE);
-			if (Type.GetType(parentName).GetInterface("System.Windows.Serialization.IAddChild") == null)
+			if (parent.GetInterface("System.Windows.Serialization.IAddChild") == null)
 				{} //TODO: throw exception
 			if (currentState == null) {
-				createTopLevel(parentName, objectName);
+				createTopLevel(parent.AssemblyQualifiedName, objectName);
 			} else {
-				addChild(parentName);
+				addChild(parent);
 			}
 			
 			if (reader.MoveToFirstAttribute()) {
@@ -281,26 +284,68 @@ namespace Mono.Windows.Serialization {
 			}
 			
 
-			if (isEmpty)
+			if (isEmpty) {
 				writer.EndObject();
+				pop();
+			}
 		}
+
+		void createTopLevel(string parentName, string objectName)
+		{
+			Type t = Type.GetType(parentName);
+			currentState = new ParserState();
+			currentState.type = CurrentType.Object;
+			currentState.obj = t;
+			if (objectName == null) {
+				objectName = "derived" + t.Name;
+			}
+			writer.CreateTopLevel(t, objectName);
+		}
+
+		void addChild(Type type)
+		{
+			writer.CreateObject(type);
+			oldStates.Add(currentState);
+			currentState = new ParserState();
+			currentState.type = CurrentType.Object;
+			currentState.obj = type;
+		}
+
 		
 		void parseLocalPropertyAttribute()
 		{
 			string propertyName = reader.LocalName;
 			Type currentType = (Type)currentState.obj;
 			PropertyInfo prop = currentType.GetProperty(propertyName);
+			if (parsedAsEventProperty(currentType, propertyName))
+				return;
 			if (prop == null) {
 				Console.WriteLine("Property " + propertyName + " not found on " + currentType.Name);
 				return;
 				// TODO: throw exception
 			}
 
-			writer.CreateProperty(propertyName);
-			writer.CreatePropertyText(reader.Value, getTypeConverter(prop.PropertyType));
+			writer.CreateProperty(prop);
 
-			parseEndElement();
+			if (prop.PropertyType.IsSubclassOf(typeof(Delegate)))
+				writer.CreatePropertyDelegate(reader.Value, prop.PropertyType);
+			else
+				writer.CreatePropertyText(reader.Value, prop.PropertyType, getTypeConverter(prop.PropertyType));
+			
+			writer.EndProperty();
 		}
+		
+		bool parsedAsEventProperty(Type currentType, string eventName)
+		{
+			EventInfo evt = currentType.GetEvent(eventName);
+			if (evt == null)
+				return false;
+			writer.CreateEvent(evt);
+			writer.CreateEventDelegate(reader.Value, evt.EventHandlerType);
+			writer.EndEvent();
+			return true;
+		}
+
 
 
 		void parseContextPropertyAttribute()
@@ -319,7 +364,11 @@ namespace Mono.Windows.Serialization {
 			else if (currentState.type == CurrentType.AttachedProperty)
 				writer.EndAttachedProperty();
 				
+			pop();
+		}
 
+		void pop()
+		{
 			if (oldStates.Count == 0) {
 				currentState = null;
 				writer.Finish();
@@ -328,27 +377,8 @@ namespace Mono.Windows.Serialization {
 			int lastIndex = oldStates.Count - 1;
 			currentState = (ParserState)oldStates[lastIndex];
 			oldStates.RemoveAt(lastIndex);
+
 		}
 
-		void createTopLevel(string parentName, string objectName)
-		{
-			Type t = Type.GetType(parentName);
-			currentState = new ParserState();
-			currentState.type = CurrentType.Object;
-			currentState.obj = t;
-			if (objectName == null) {
-				objectName = "derived" + t.Name;
-			}
-			writer.CreateTopLevel(parentName, objectName);
-		}
-
-		void addChild(string className)
-		{
-			writer.CreateObject(className);
-			oldStates.Add(currentState);
-			currentState = new ParserState();
-			currentState.type = CurrentType.Object;
-			currentState.obj = Type.GetType(className);
-		}
 	}
 }
