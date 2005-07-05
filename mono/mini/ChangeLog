@@ -1,3 +1,21 @@
+2005-07-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Add new mono_aot_get_method_from_token () function to load AOT methods
+	without loading their metadata. Reorganize the file format so exception handling+
+	debug info is kept separate from normal method info. Create MonoJitInfo 
+	structures for methods lazily.
+	
+	* tramp-x86.c (x86_aot_trampoline): Use the new from_token method to avoid
+	loading metadata.
+	(x86_class_init_trampoline): Patch AOT class init trampolines too.
+
+	* mini.c (mini_init): Install the new mono_aot_find_jit_info hook.
+
+	* mini.c (mono_method_to_ir): Reduce the number of class init trampoline calls
+	in AOT code.
+
+	* mini.h: Bump AOT file version.
+
 2005-07-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (peephole_pass): Fix the loadi1/loadi2 rules.
