@@ -1,3 +1,9 @@
+2005-07-04  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (emit_late_get_or_set, emit_late_call): Take care the case where
+	the left hand side of a late bound expression is a literal.
+	* SemanticAnalizer.cs: Added IsLiteral method.
+
 2005-07-02  Florian Gross  <flgr@ccan.de>
 
 	* ArrayPrototype.cs: Implemented pop, reverse, shift and slice

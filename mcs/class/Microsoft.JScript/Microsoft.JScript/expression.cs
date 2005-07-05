@@ -196,7 +196,7 @@ namespace Microsoft.JScript {
 				if (left != null)
 					left.Emit (ec);
 				if (right != null)
-					right.Emit (ec);			       
+					right.Emit (ec);
 				emit_op_eval (ig);
 			}
 			if (no_effect)
@@ -281,21 +281,38 @@ namespace Microsoft.JScript {
 			return local;
 		}
 		
-		void emit_late_get_or_set (EmitContext ec, LocalBuilder local)
+		void emit_late_get_or_set (EmitContext ec, LocalBuilder lb_builder)
 		{
 			ILGenerator ig = ec.ig;
+			Type type = SemanticAnalyser.IsLiteral (left);
 
-			ig.Emit (OpCodes.Ldloc, local);
-			ig.Emit (OpCodes.Dup);
-
+			if (type == null) {
+				ig.Emit (OpCodes.Ldloc, lb_builder);
+				ig.Emit (OpCodes.Dup);
+			}				
 			left.Emit (ec);
+			
+			LocalBuilder local_literal = null;
 
-			CodeGenerator.load_engine (InFunction, ec.ig);
-			ig.Emit (OpCodes.Call , typeof (Convert).GetMethod ("ToObject"));
-
+			//
+			// If the left hand side is as literal we must create a local
+			// var where is kept for future use
+			//
+			if (type != null) {
+				local_literal = ig.DeclareLocal (type);
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Stloc, local_literal);
+				
+				ig.Emit (OpCodes.Ldloc, lb_builder);
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Ldloc, local_literal);
+			} else {
+				CodeGenerator.load_engine (InFunction, ec.ig);
+				ig.Emit (OpCodes.Call , typeof (Convert).GetMethod ("ToObject"));
+			}
 			Type lb_type = typeof (LateBinding);
 			ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
-
+			
 			if (assign) {
 				right_side.Emit (ec);
 				ig.Emit (OpCodes.Call, lb_type.GetMethod ("SetValue"));
@@ -722,7 +739,11 @@ namespace Microsoft.JScript {
 
 			if (member_exp is Binary) {
 				Binary bin = member_exp as Binary;
-				if (bin.right is Identifier) {
+				if (SemanticAnalyser.IsLiteral (bin.left) != null) {
+					member_exp.Emit (ec);
+					setup_late_call_args (ec);
+					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+				} else if (bin.right is Identifier) {
 					Identifier rside = bin.right as Identifier;
 					Type lb_type = typeof (LateBinding);
 				
@@ -740,7 +761,7 @@ namespace Microsoft.JScript {
 					setup_late_call_args (ec);
 					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 				}
-			} else {				
+			} else {
 				get_global_scope_or_this (ec.ig);
 				member_exp.Emit (ec);
 				setup_late_call_args (ec);
@@ -821,11 +842,8 @@ namespace Microsoft.JScript {
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
 			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
-
 			CodeGenerator.load_engine (InFunction, ig);
-
 			args.Emit (ec);
-
 			ig.Emit (OpCodes.Call, mb);
 
 			if (!return_void (mb) && no_effect)

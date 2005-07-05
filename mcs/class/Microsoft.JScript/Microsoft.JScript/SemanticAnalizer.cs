@@ -239,6 +239,17 @@ namespace Microsoft.JScript {
 		internal static VariableDeclaration VarUsedNested (string name)
 		{
 			return (VariableDeclaration) methods_with_vars_used_nested [name];
-		}		
+		}
+
+		internal static Type IsLiteral (AST ast)
+		{
+			if (ast != null) {
+				Type type = ast.GetType ();
+				// FIXME: Add test for other literals
+				if (type == typeof (ArrayLiteral))
+					return type;
+			}
+			return null;
+		}
 	}
 }
