@@ -182,6 +182,16 @@ namespace Npgsql
                 return ConnectionString.ToBool(ConnectionStringKeys.SSL);
             }
         }
+        
+        internal SslMode SslMode
+        {
+            get
+            {
+                return ConnectionString.ToSslMode(ConnectionStringKeys.SslMode);
+            }
+        }
+        
+        
 
         /// <summary>
         /// Gets the current state of the connection.

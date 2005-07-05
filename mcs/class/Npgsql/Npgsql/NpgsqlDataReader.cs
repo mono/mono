@@ -45,16 +45,17 @@ namespace Npgsql
         private DataTable			_currentResultsetSchema;
         private CommandBehavior     _behavior;
         private Boolean             _isClosed;
+        private NpgsqlCommand       _command;
 
 
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlDataReader";
 
-        internal NpgsqlDataReader( ArrayList resultsets, ArrayList responses, NpgsqlConnection connection, CommandBehavior behavior)
+        internal NpgsqlDataReader( ArrayList resultsets, ArrayList responses, CommandBehavior behavior, NpgsqlCommand command)
         {
             _resultsets = resultsets;
             _responses = responses;
-            _connection = connection;
+            _connection = command.Connection;
             _rowIndex = -1;
             _resultsetIndex = 0;
 
@@ -63,6 +64,7 @@ namespace Npgsql
 
             _behavior = behavior;
             _isClosed = false;
+            _command = command;
         }
 
         private Boolean HaveResultSet()
@@ -177,7 +179,7 @@ namespace Npgsql
         {
             get
             {
-                return _currentResultset.Count > 0;
+	    	return (HaveResultSet() ? _currentResultset.Count > 0 : false);
             }
 
         }
@@ -223,10 +225,10 @@ namespace Npgsql
         public Boolean Read()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
-
+	    
             if (!HaveResultSet())
 	    	return false;
-
+		
             if (_rowIndex < _currentResultset.Count)
             {
                 _rowIndex++;
@@ -236,6 +238,8 @@ namespace Npgsql
             {
                 return false;
             }
+
+
         }
 
         /// <summary>
@@ -646,7 +650,15 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetResultsetSchema");
             DataTable result = null;
 
+
             NpgsqlRowDescription rd = _currentResultset.RowDescription;
+
+
+            ArrayList list = null;
+
+            list = GetPrimaryKeys(GetTableNameFromQuery());
+
+
             Int16 numFields = rd.NumFields;
             if(numFields > 0)
             {
@@ -659,8 +671,6 @@ namespace Npgsql
                 result.Columns.Add ("NumericScale", typeof (int));
                 result.Columns.Add ("IsUnique", typeof (bool));
                 result.Columns.Add ("IsKey", typeof (bool));
-                DataColumn dc = result.Columns["IsKey"];
-                dc.AllowDBNull = true; // IsKey can have a DBNull
                 result.Columns.Add ("BaseCatalogName", typeof (string));
                 result.Columns.Add ("BaseColumnName", typeof (string));
                 result.Columns.Add ("BaseSchemaName", typeof (string));
@@ -679,6 +689,10 @@ namespace Npgsql
 
                 DataRow row;
 
+
+
+
+
                 for (Int16 i = 0; i < numFields; i++)
                 {
                     row = result.NewRow();
@@ -689,13 +703,13 @@ namespace Npgsql
                     row["NumericPrecision"] = 0;
                     row["NumericScale"] = 0;
                     row["IsUnique"] = false;
-                    row["IsKey"] = DBNull.Value;
+                    row["IsKey"] = IsKey(GetName(i), list);
                     row["BaseCatalogName"] = "";
                     row["BaseColumnName"] = GetName(i);
                     row["BaseSchemaName"] = "";
                     row["BaseTableName"] = "";
                     row["DataType"] = GetFieldType(i);
-                    row["AllowDBNull"] = false;
+                    row["AllowDBNull"] = IsNullable(i);
                     row["ProviderType"] = (int) rd[i].type_oid;
                     row["IsAliased"] = false;
                     row["IsExpression"] = false;
@@ -708,9 +722,91 @@ namespace Npgsql
 
                     result.Rows.Add(row);
                 }
+
+
+
+
+
             }
 
             return result;
+
+        }
+
+
+        private Boolean IsKey(String ColumnName, ArrayList ListOfKeys)
+        {
+            if (ListOfKeys == null || ListOfKeys.Count == 0)
+                return false;
+
+            foreach(String s in ListOfKeys)
+            {
+
+                if (s == ColumnName)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private ArrayList GetPrimaryKeys(String tablename)
+        {
+
+            if (tablename == String.Empty)
+                return null;
+
+            String getPKColumns = "select a.attname from pg_catalog.pg_class ct, pg_catalog.pg_class ci, pg_catalog.pg_attribute a, pg_catalog.pg_index i  WHERE ct.oid=i.indrelid AND ci.oid=i.indexrelid  AND a.attrelid=ci.oid AND i.indisprimary AND ct.relname = :tablename";
+
+            ArrayList result = new ArrayList();
+            NpgsqlConnection metadataConn = _connection.Clone();
+
+            NpgsqlCommand c = new NpgsqlCommand(getPKColumns, metadataConn);
+            c.Parameters.Add(new NpgsqlParameter("tablename", NpgsqlDbType.Text));
+            c.Parameters["tablename"].Value = tablename;
+
+
+            NpgsqlDataReader dr = c.ExecuteReader();
+
+
+            while (dr.Read())
+                result.Add(dr[0]);
+
+
+            metadataConn.Close();
+
+            return result;
+        }
+
+
+
+        private Boolean IsNullable(Int32 FieldIndex)
+        {
+            return true;
+        }
+
+
+        ///<summary>
+        /// This methods parses the command text and tries to get the tablename
+        /// from it.
+        ///</summary>
+        private String GetTableNameFromQuery()
+        {
+            Int32 fromClauseIndex = _command.CommandText.ToLower().IndexOf("from");
+
+            String tableName = _command.CommandText.Substring(fromClauseIndex + 4).Trim();
+
+            if (tableName == String.Empty)
+                return String.Empty;
+
+            /*if (tableName.EndsWith("."));
+                return String.Empty;
+              */
+            foreach (Char c in tableName.Substring (0, tableName.Length - 1))
+            if (!Char.IsLetterOrDigit (c) && c != '_' && c != '.')
+                return String.Empty;
+
+
+            return tableName;
 
         }
 

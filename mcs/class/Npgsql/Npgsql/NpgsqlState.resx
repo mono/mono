@@ -129,9 +129,13 @@
 	</data>
 	<data name="Log_ConnectedTo">
                 <value>Connected to: {0}:{1}.</value>
-        </data>
+    </data>
 
 	<data name="Log_QuerySent">
                 <value>Query sent: {0}.</value>
-        </data>
+    </data>
+    <data name="Exception_Ssl_RequestError">
+                <value>Ssl connection requested. No Ssl enabled connection from this host is configured.</value>
+    </data>    
+        
 </root>

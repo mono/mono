@@ -347,6 +347,27 @@ namespace Npgsql
 
             }
         }
+        
+        public SslMode ToSslMode(String Key)
+        {
+            return ToSslMode(Key, SslMode.Disable);
+        }
+        
+        ///<summary>
+        ///</summary>
+        
+        public SslMode ToSslMode(String Key, SslMode Default)
+        {
+            if (! connection_string_values.Contains(Key))
+            {
+                return Default;
+            }
+            
+            return (SslMode)Enum.Parse(typeof(SslMode), ToString(Key), true);
+        }
+
+
+        
     }
 
 
@@ -362,6 +383,7 @@ namespace Npgsql
         public static readonly String UserName         = "USER ID";
         public static readonly String Password         = "PASSWORD";
         public static readonly String SSL              = "SSL";
+        public static readonly String SslMode          = "SSLMODE";
         public static readonly String Encoding         = "ENCODING";
         public static readonly String Timeout          = "TIMEOUT";
 
@@ -416,4 +438,15 @@ namespace Npgsql
         public static readonly Int32 MaxPoolSize       = 20;
         public static readonly Int32 Timeout           = 15; // Seconds
     }
+    
+    internal enum SslMode
+    {
+        Disable = 1 << 0,
+        Allow =   1 << 1,
+        Prefer =  1 << 2,
+        Require = 1 << 3
+    }
+
+
+
 }

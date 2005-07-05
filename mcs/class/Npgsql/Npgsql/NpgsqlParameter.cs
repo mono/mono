@@ -60,7 +60,7 @@ namespace Npgsql
         private NpgsqlNativeTypeInfo	type_info;
         private ParameterDirection	    direction = ParameterDirection.Input;
         private Boolean				    is_nullable = false;
-        private String				    name;
+        private String				    name = String.Empty;
         private String				    source_column = String.Empty;
         private DataRowVersion		    source_version = DataRowVersion.Current;
         private Object				    value = DBNull.Value;
@@ -161,7 +161,7 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME, parameterName, parameterType, size, source_column);
 
             this.ParameterName = parameterName;
-
+            
             type_info = NpgsqlTypesHelper.GetNativeTypeInfo(parameterType);
             if (type_info == null)
                 throw new InvalidCastException(String.Format(resman.GetString("Exception_ImpossibleToCast"), parameterType));
@@ -420,6 +420,8 @@ namespace Npgsql
             set
             {
                 name = value;
+                if (value == null)
+                    name = String.Empty;
                 if ( (name.Equals(String.Empty)) || ((name[0] != ':') && (name[0] != '@')) )
                     name = ':' + name;
 

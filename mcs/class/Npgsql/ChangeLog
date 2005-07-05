@@ -1,7 +1,23 @@
 
+
+2005-07-05 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+   
+    * NpgsqlTypes/NpgsqlDbType.cs,
+      NpgsqlTypes/NpgsqlTypesHelper.cs,
+      Npgsql/NpgsqlParameter.cs,
+      Npgsql/NpgsqlConnectionString.cs,
+      Npgsql/NpgsqlState.resx,
+      Npgsql/NpgsqlConnection.cs,
+      Npgsql/NpgsqlClosedState.cs,
+      Npgsql/NpgsqlCommand.cs,
+      Npgsql/NpgsqlConnector.cs,
+      Npgsql/NpgsqlParameterCollection.cs,
+      Npgsql/NpgsqlDataReader.cs,
+      Npgsql/NpgsqlException.cs: Updated to Npgsql 0.7beta6 gborg code.
+
 2005-02-20 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
-   * Npgsql/NpgsqlCommand.cs: Fixed a problem when using prepare commands inside a transaction. Portal wasn't being released. We use the unnamed portal now. Thanks Marcin (marcin at floryan dot neostrada dot pl) for the heads up.
+    * Npgsql/NpgsqlCommand.cs: Fixed a problem when using prepare commands inside a transaction. Portal wasn't being released. We use the unnamed portal now. Thanks Marcin (marcin at floryan dot neostrada dot pl) for the heads up.
 
 2005-02-13 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 

@@ -159,6 +159,17 @@ namespace NpgsqlTypes
                 }
 
                 NativeTypeMapping = new NpgsqlNativeTypeMapping();
+                
+                
+                // Conflicting types should have mapped first the non default mappings.
+                // For example, char, varchar and text map to DbType.String. As the most 
+                // common is to use text with string, it has to be the last mapped, in order
+                // to type mapping has the last entry, in this case, text, as the map value
+                // for DbType.String.
+                
+                NativeTypeMapping.AddType("char", NpgsqlDbType.Char, DbType.String, true, null);
+                
+                NativeTypeMapping.AddType("varchar", NpgsqlDbType.Varchar, DbType.String, true, null);
 
                 NativeTypeMapping.AddType("text", NpgsqlDbType.Text, DbType.String, true, null);
 
@@ -167,8 +178,7 @@ namespace NpgsqlTypes
                 NativeTypeMapping.AddDbTypeAlias("text", DbType.AnsiStringFixedLength);
                 NativeTypeMapping.AddTypeAlias("text", typeof(String));
 
-		NativeTypeMapping.AddType("varchar", NpgsqlDbType.Varchar, DbType.String, true, null);
-
+                                                
                 NativeTypeMapping.AddType("bytea", NpgsqlDbType.Bytea, DbType.Binary, true,
                 new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToBinary));
 
@@ -183,9 +193,11 @@ namespace NpgsqlTypes
                 null);
 
                 NativeTypeMapping.AddTypeAlias("int2", typeof(Int16));
-                
+                                
                 NativeTypeMapping.AddDbTypeAlias("int2", DbType.Byte);
-
+                
+                NativeTypeMapping.AddTypeAlias("int2", typeof(Byte));
+                
                 NativeTypeMapping.AddType("int4", NpgsqlDbType.Integer, DbType.Int32, false,
                 null);
 
@@ -196,12 +208,12 @@ namespace NpgsqlTypes
 
                 NativeTypeMapping.AddTypeAlias("int8", typeof(Int64));
 
-                NativeTypeMapping.AddType("float4", NpgsqlDbType.Real, DbType.Single, false,
+                NativeTypeMapping.AddType("float4", NpgsqlDbType.Real, DbType.Single, true,
                 null);
 
                 NativeTypeMapping.AddTypeAlias("float4", typeof(Single));
 
-                NativeTypeMapping.AddType("float8", NpgsqlDbType.Double, DbType.Double, false,
+                NativeTypeMapping.AddType("float8", NpgsqlDbType.Double, DbType.Double, true,
                 null);
 
                 NativeTypeMapping.AddTypeAlias("float8", typeof(Double));
@@ -290,7 +302,7 @@ namespace NpgsqlTypes
                     new NpgsqlBackendTypeInfo(0, "unknown", NpgsqlDbType.Text, DbType.String, typeof(String),
                         null),
 
-                    new NpgsqlBackendTypeInfo(0, "char", NpgsqlDbType.Text, DbType.String, typeof(String),
+                    new NpgsqlBackendTypeInfo(0, "char", NpgsqlDbType.Char, DbType.String, typeof(String),
                         null),
 
                     new NpgsqlBackendTypeInfo(0, "bpchar", NpgsqlDbType.Text, DbType.String, typeof(String),
@@ -534,6 +546,7 @@ namespace NpgsqlTypes
         private NpgsqlDbType     _NpgsqlDbType;
         private DbType           _DbType;
         private Boolean          _Quote;
+        private Boolean          _UseSize;
         
         static NpgsqlNativeTypeInfo()
         {
@@ -557,6 +570,16 @@ namespace NpgsqlTypes
             _DbType = DbType;
             _Quote = Quote;
             _ConvertNativeToBackend = ConvertNativeToBackend;
+            
+            
+            // The only parameters types which use length currently supported are char and varchar. Check for them.
+            
+            if ( (NpgsqlDbType == NpgsqlDbType.Char)
+                || (NpgsqlDbType == NpgsqlDbType.Varchar))
+                
+                _UseSize = true;
+            else
+                _UseSize = false;
         }
 
         /// <summary>
@@ -585,6 +608,13 @@ namespace NpgsqlTypes
         { get { return _Quote; } }
 
         /// <summary>
+        /// Use parameter size information.
+        /// </summary>
+        public Boolean UseSize
+        { get { return _UseSize; } }
+        
+        
+        /// <summary>
         /// Perform a data conversion from a native object to
         /// a backend representation.
         /// DBNull and null values are handled differently depending if a plain query is used
@@ -608,7 +638,7 @@ namespace NpgsqlTypes
                 return "NULL";  // Plain queries exptects null values as string NULL. 
             
             if (_ConvertNativeToBackend != null)
-                return QuoteString(_ConvertNativeToBackend(this, NativeData));
+                return (this.Quote ? QuoteString(_ConvertNativeToBackend(this, NativeData)) : _ConvertNativeToBackend(this, NativeData));
             else
             {
                 
@@ -621,12 +651,14 @@ namespace NpgsqlTypes
                 }
                 else if (NativeData is IFormattable)
                 {
-                    return QuoteString(((IFormattable) NativeData).ToString(null, ni).Replace("'", "''").Replace("\\", "\\\\"));
+                    return (this.Quote ? QuoteString(((IFormattable) NativeData).ToString(null, ni).Replace("'", "''").Replace("\\", "\\\\")) : 
+                    ((IFormattable) NativeData).ToString(null, ni).Replace("'", "''").Replace("\\", "\\\\"));
                     
                 }
                 
                 // Do special handling of strings when in simple query. Escape quotes and backslashes.
-                return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\").Replace("\0", "\\0"));
+                return (this.Quote ? QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\").Replace("\0", "\\0")) : 
+                NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\").Replace("\0", "\\0"));
                 
             }
     

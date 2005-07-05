@@ -32,6 +32,8 @@ using System.Collections;
 
 using NpgsqlTypes;
 
+using System.Text.RegularExpressions;
+
 #if WITHDESIGN
 using Npgsql.Design;
 #endif
@@ -100,6 +102,7 @@ namespace Npgsql
             planName = String.Empty;
             text = cmdText;
             this.connection = connection;
+            
             if (this.connection != null)
                 this.connector = connection.Connector;
 
@@ -119,6 +122,7 @@ namespace Npgsql
         {
             resman = new System.Resources.ResourceManager(this.GetType());
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
+            
 
             planName = String.Empty;
             text = cmdText;
@@ -579,9 +583,9 @@ namespace Npgsql
             ExecuteCommand();
             
             UpdateOutputParameters();
-
+            
             // Get the resultsets and create a Datareader with them.
-            return new NpgsqlDataReader(Connector.Mediator.ResultSets, Connector.Mediator.CompletedResponses, connection, cb);
+            return new NpgsqlDataReader(Connector.Mediator.ResultSets, Connector.Mediator.CompletedResponses, cb, this);
         }
 
         ///<summary>
@@ -797,41 +801,86 @@ namespace Npgsql
                 result = AddSingleRowBehaviorSupport(result);
                                            
                 return result;
-             }   
+            }   
 
-
-            //CheckParameters();
-
-            for (Int32 i = 0; i < parameters.Count; i++)
+             
+            // Get parameters in query string to translate them to their actual values.
+             
+            // This regular expression gets all the parameters in format :param or @param 
+            // and everythingelse.
+            // This is only needed if query string has parameters. Else, just append the
+            // parameter values in order they were put in parameter collection.
+            
+            
+            // If parenthesis don't need to be added, they were added by user with parameter names. Replace them.
+            if (!addProcedureParenthesis)
             {
-                NpgsqlParameter Param = parameters[i];
-
+            
+                Regex a = new Regex(@"(:[\w]*)|(@[\w]*)|(.)");
                 
-                if ((Param.Direction == ParameterDirection.Input) ||
-                    (Param.Direction == ParameterDirection.InputOutput))
+                //CheckParameters();
+    
+                StringBuilder sb = new StringBuilder();
                 
+                for ( Match m = a.Match(result); m.Success; m = m.NextMatch() )
+                {
+                    String s = m.Groups[0].ToString();
                     
-                    // If parenthesis don't need to be added, they were added by user with parameter names. Replace them.
-                    if (!addProcedureParenthesis)
-                        // FIXME DEBUG ONLY
-                        // adding the '::<datatype>' on the end of a parameter is a highly
-                        // questionable practice, but it is great for debugging!
-                        // Removed as this was going in infinite loop when the parameter name had the same name of parameter
-                        // type name. i.e.: parameter name called :text of type text. It would conflict with the parameter type name ::text.
-                        result = ReplaceParameterValue(
-                                    result,
-                                    Param.ParameterName,
-                                    Param.TypeInfo.ConvertToBackend(Param.Value, false)
-                                );
-                    else
-                        result += Param.TypeInfo.ConvertToBackend(Param.Value, false) + ",";
+                    if ((s.StartsWith(":") ||
+                        s.StartsWith("@")) &&
+			Parameters.Contains(s))
+                    {
+                        // It's a parameter. Lets handle it.
+                    
+                        NpgsqlParameter p = Parameters[s];
+                        if ((p.Direction == ParameterDirection.Input) ||
+                        (p.Direction == ParameterDirection.InputOutput))
+		        {
+                            
+                            // FIXME DEBUG ONLY
+                            // adding the '::<datatype>' on the end of a parameter is a highly
+                            // questionable practice, but it is great for debugging!
+                            sb.Append(p.TypeInfo.ConvertToBackend(p.Value, false));
+		            
+			    // Only add data type info if we are calling an stored procedure
+				                                
+                            if (type == CommandType.StoredProcedure)
+                            {
+                                sb.Append("::");
+			        sb.Append(p.TypeInfo.Name);
+			        if (p.TypeInfo.UseSize && (p.Size > 0))
+			            sb.Append("(").Append(p.Size).Append(")");
+			    }
+                        }   
+                    }   
+                    else 
+                        sb.Append(s);
+                    
+                }
+                
+                result = sb.ToString();
             }
-            
-            
-            if (addProcedureParenthesis)
+                
+                
+            else
             {
+                
+                
+                for (Int32 i = 0; i < parameters.Count; i++)
+                {
+                    NpgsqlParameter Param = parameters[i];
+    
+                    
+                    if ((Param.Direction == ParameterDirection.Input) ||
+                        (Param.Direction == ParameterDirection.InputOutput))
+                    
+                        
+                            result += Param.TypeInfo.ConvertToBackend(Param.Value, false) + "::" + Param.TypeInfo.Name + ",";
+                }
+            
+            
                 // Remove a trailing comma added from parameter handling above. If any.
-                // Maybe there are only output parameters.
+                // Maybe there are only output parameters. If so, there will be no comma.
                 if (result.EndsWith(","))
                     result = result.Remove(result.Length - 1, 1);
                 
@@ -1087,14 +1136,7 @@ namespace Npgsql
 
             while(paramStart > -1)
             {
-                if((resLen > paramEnd) &&
-                        (result[paramEnd] == ' ' ||
-                         result[paramEnd] == ',' ||
-                         result[paramEnd] == ')' ||
-                         result[paramEnd] == ';' ||
-                         result[paramEnd] == '\n' ||
-                         result[paramEnd] == '\r' ||
-                         result[paramEnd] == '\t'))
+                if((resLen > paramEnd) && !Char.IsLetterOrDigit(result, paramEnd))
                 {
                     result = result.Substring(0, paramStart) + paramVal + result.Substring(paramEnd);
                     found = true;
@@ -1179,5 +1221,9 @@ namespace Npgsql
                 }
             }
         }
+        
+        
+         
+        
     }
 }

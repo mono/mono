@@ -78,38 +78,53 @@ namespace Npgsql
 
         public override void Open(NpgsqlConnector context)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
-
-            TcpClient tcpc = new TcpClient();
-            tcpc.Connect(new IPEndPoint(ResolveIPHost(context.Host), context.Port));
-            Stream stream = tcpc.GetStream();
-
-            // If the PostgreSQL server has SSL connectors enabled Open SslClientStream if (response == 'S') {
-            if (context.SSL)
+            
+            try
             {
-                PGUtil.WriteInt32(stream, 8);
-                PGUtil.WriteInt32(stream,80877103);
-                // Receive response
-                Char response = (Char)stream.ReadByte();
-                if (response == 'S')
+                NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
+    
+                TcpClient tcpc = new TcpClient();
+                tcpc.Connect(new IPEndPoint(ResolveIPHost(context.Host), context.Port));
+                Stream stream = tcpc.GetStream();
+    
+                               
+                // If the PostgreSQL server has SSL connectors enabled Open SslClientStream if (response == 'S') {
+                if (context.SSL || (context.SslMode == SslMode.Require) || (context.SslMode == SslMode.Prefer))
                 {
-                    stream = new SslClientStream(
-                                 tcpc.GetStream(),
-                                 context.Host,
-                                 true,
-                                 Mono.Security.Protocol.Tls.SecurityProtocolType.Default
-                             );
-
-                    ((SslClientStream)stream).ClientCertSelectionDelegate = new CertificateSelectionCallback(context.DefaultCertificateSelectionCallback);
-                    ((SslClientStream)stream).ServerCertValidationDelegate = new CertificateValidationCallback(context.DefaultCertificateValidationCallback);
-                    ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = new PrivateKeySelectionCallback(context.DefaultPrivateKeySelectionCallback);
+                    PGUtil.WriteInt32(stream, 8);
+                    PGUtil.WriteInt32(stream,80877103);
+                    // Receive response
+                    
+                    Char response = (Char)stream.ReadByte();
+                    if (response == 'S')
+                    {
+                        stream = new SslClientStream(
+                                    tcpc.GetStream(),
+                                    context.Host,
+                                    true,
+                                    Mono.Security.Protocol.Tls.SecurityProtocolType.Default
+                                );
+    
+                        ((SslClientStream)stream).ClientCertSelectionDelegate = new CertificateSelectionCallback(context.DefaultCertificateSelectionCallback);
+                        ((SslClientStream)stream).ServerCertValidationDelegate = new CertificateValidationCallback(context.DefaultCertificateValidationCallback);
+                        ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = new PrivateKeySelectionCallback(context.DefaultPrivateKeySelectionCallback);
+                    }
+                    else if (context.SslMode == SslMode.Require)
+                        throw new InvalidOperationException(resman.GetString("Exception_Ssl_RequestError"));
+                    
                 }
+    
+                context.Stream = stream;
+    
+                NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.Host, context.Port);
+                ChangeState(context, NpgsqlConnectedState.Instance);
+                
+                
             }
-
-            context.Stream = stream;
-
-            NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.Host, context.Port);
-            ChangeState(context, NpgsqlConnectedState.Instance);
+            catch (Exception e)
+            {
+                throw new NpgsqlException(e.ToString(), e);
+            }
         }
 
     }

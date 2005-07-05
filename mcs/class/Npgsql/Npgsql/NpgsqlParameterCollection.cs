@@ -127,15 +127,15 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Add", value);
 
             // Do not allow parameters without name.
-            if (value.ParameterName == null) {
-                throw new ArgumentNullException(String.Format(this.resman.GetString("Exception_InvalidParameterName"), value.ParameterName));
-						}
-
-						if (value.ParameterName.Trim() == String.Empty ||
-               (value.ParameterName.Length == 1 && value.ParameterName[0] == ':'))
-                throw new ArgumentOutOfRangeException(String.Format(this.resman.GetString("Exception_InvalidParameterName"), value.ParameterName));
-
+            
             this.InternalList.Add(value);
+            
+            // Check if there is a name. If not, add a name based in the index of parameter.
+            if (value.ParameterName.Trim() == String.Empty ||
+            (value.ParameterName.Length == 1 && value.ParameterName[0] == ':'))
+                value.ParameterName = ":" + "Parameter" + (IndexOf(value) + 1);
+        
+            
             return value;
         }
 
@@ -363,7 +363,8 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Add", value);
             CheckType(value);
-            return this.InternalList.Add(value);
+            this.Add((NpgsqlParameter)value);
+            return IndexOf(value);
         }
 
         bool IList.IsFixedSize {

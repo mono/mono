@@ -33,6 +33,7 @@ namespace NpgsqlTypes
         Box,
         Bytea,
         Circle,
+        Char,
         Date,
         Double,
         Integer,
@@ -48,7 +49,7 @@ namespace NpgsqlTypes
         Text,
         Time,
         Timestamp,
-	Varchar
+        Varchar
 
     }
 

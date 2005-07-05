@@ -46,7 +46,9 @@ namespace Npgsql
 
         // To allow deserialization.
         private NpgsqlException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {}
+        {
+            errors = (IList)info.GetValue("errors", typeof(IList));
+        }
 
         /// <summary>
         /// Construct a backend error exception based on a list of one or more
@@ -58,6 +60,27 @@ namespace Npgsql
             NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, Message);
             this.errors = errors;
 
+        }
+        
+        
+        internal NpgsqlException(String message) : base (message)
+        {}
+        
+        internal NpgsqlException(String message, Exception innerException) : base (message, innerException)
+        {}
+        
+        
+        override public void GetObjectData(SerializationInfo info,StreamingContext context) 
+        {
+            base.GetObjectData(info, context);
+            
+            // Add custom data, in this case the list of errors when serializing.
+            // Thanks Robert Chartier for info: http://www.15seconds.com/issue/020903.htm
+            
+            //use the info object to add the items you want serialized
+            info.AddValue("errors", errors, typeof(IList));
+            
+            
         }
 
         /// <summary>
@@ -199,21 +222,27 @@ namespace Npgsql
         /// </summary>
         public override String ToString()
         {
-            StringWriter    S = new StringWriter();
-
-            S.WriteLine("{0}:", this.GetType().FullName);
-
-            foreach (NpgsqlError PgError in Errors)
+        
+            if (Errors != null)
             {
-                AppendString(S, "{0}", PgError.Message);
-                AppendString(S, "Severity: {0}", PgError.Severity);
-                AppendString(S, "Code: {0}", PgError.Code);
-                AppendString(S, "Hint: {0}", PgError.Hint);
+                StringWriter    S = new StringWriter();
+    
+                S.WriteLine("{0}:", this.GetType().FullName);
+    
+                foreach (NpgsqlError PgError in Errors)
+                {
+                    AppendString(S, "{0}", PgError.Message);
+                    AppendString(S, "Severity: {0}", PgError.Severity);
+                    AppendString(S, "Code: {0}", PgError.Code);
+                    AppendString(S, "Hint: {0}", PgError.Hint);
+                }
+    
+                S.Write(StackTrace);
+    
+                return S.ToString();
             }
-
-            S.Write(StackTrace);
-
-            return S.ToString();
+            
+            return base.ToString();
 
         }
 

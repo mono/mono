@@ -722,6 +722,83 @@ namespace Npgsql
                 throw new ObjectDisposedException(CLASSNAME);
             }
         }
+        
+        
+        /// <summary>
+        /// This method returns the collections we support.
+        /// <summary>
+        public DataTable GetSchema()
+        {
+            
+            
+            DataTable result = new DataTable("Schema");
+            
+            result.Columns.Add ("CollectionName", typeof (string));
+            result.Columns.Add ("NumberOfRestrictions", typeof (int));
+            
+            
+            DataRow row = result.NewRow();
+            row["CollectionName"] = "Databases";
+            row["NumberOfRestrictions"] = 0;
+            
+            result.Rows.Add(row);
+            
+            return result;
+        }
+        
+        /// <summary>
+        /// This method returns the collection data.
+        ///
+        /// <summary>
+        public DataTable GetSchema(String CollectionName)
+        {
+           
+            if (CollectionName == "Databases")
+                return GetSchemaDatabases();
+            
+            throw new NotSupportedException(); 
+            
+        }
+        
+        
+        private DataTable GetSchemaDatabases()
+        {
+            NpgsqlConnection conn = new NpgsqlConnection(this.ConnectionString);
+            conn.Open();
+            NpgsqlCommand c = new NpgsqlCommand("SELECT d.datname as \"Name\", u.usename as \"Owner\", pg_catalog.pg_encoding_to_char(d.encoding) as \"Encoding\" FROM pg_catalog.pg_database d LEFT JOIN pg_catalog.pg_user u ON d.datdba = u.usesysid ORDER BY 1;", conn);
+            
+            
+            DataTable result = new DataTable("Databases");
+            
+            result.Columns.Add ("Name", typeof (string));
+            result.Columns.Add ("Owner", typeof (string));
+            result.Columns.Add ("Encoding", typeof (string));
+            
+            
+            NpgsqlDataReader dr = c.ExecuteReader();
+                        
+            while (dr.Read())
+            {
+                        
+                DataRow row = result.NewRow();
+                row["Name"] = dr["Name"];
+                row["Owner"] = dr["Owner"];
+                row["Encoding"] = dr["Encoding"];
+                
+                result.Rows.Add(row);
+            }
+            
+            
+            dr.Close();
+            
+            conn.Close();
+            
+
+            return result;
+        }
+        
+        
+        
 
     }
 
