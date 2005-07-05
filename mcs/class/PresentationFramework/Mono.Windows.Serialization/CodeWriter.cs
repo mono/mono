@@ -132,10 +132,8 @@ namespace Mono.Windows.Serialization {
 		public void CreateAttachedProperty(Type attachedTo, string propertyName, Type propertyType)
 		{
 			string varName = "temp";
-			if (tempIndex != 0) {
-				varName += tempIndex;
-				tempIndex += 1;
-			}
+			varName += tempIndex;
+			tempIndex += 1;
 			CodeVariableDeclarationStatement decl = new CodeVariableDeclarationStatement(propertyType, varName);
 			constructor.Statements.Add(decl);
 

@@ -223,28 +223,13 @@ namespace Mono.Windows.Serialization {
 			}
 		}
 
+
 		void parseAttachedPropertyElement(string attachedTo, string propertyName)
 		{
-			Type typeAttachedTo = null;
-			FieldInfo propField;
-			DependencyProperty dp;
 			Type currentType = (Type)currentState.obj;
-			if (!currentType.IsSubclassOf(typeof(System.Windows.DependencyObject)))
-					throw new Exception("Attached properties can only be set on "+
-							"DependencyObjects (not " + currentType.Name + ")");
-			foreach (ParserState state in oldStates) {
-				if (state.type == CurrentType.Object &&
-						((Type)state.obj).Name == attachedTo) {
-					typeAttachedTo = (Type)state.obj;
-					break;
-				}
-			}
-			if (typeAttachedTo == null)
-				throw new Exception("Nothing to attach to: " + attachedTo + "." + propertyName);
-			propField = typeAttachedTo.GetField(propertyName + "Property");
-			if (propField == null)
-				throw new Exception("Property " + propertyName + " does not exist on " + attachedTo);
-			dp = (DependencyProperty)propField.GetValue(null);
+			ensureDependencyObject(currentType);
+			Type typeAttachedTo = findTypeToAttachTo(attachedTo, propertyName);
+			DependencyProperty dp = getDependencyProperty(typeAttachedTo, propertyName);
 			
 			oldStates.Add(currentState);
 			currentState = new ParserState();
@@ -346,11 +331,50 @@ namespace Mono.Windows.Serialization {
 			return true;
 		}
 
+		void ensureDependencyObject(Type currentType)
+		{
+			if (!currentType.IsSubclassOf(typeof(System.Windows.DependencyObject)))
+					throw new Exception("Attached properties can only be set on "+
+							"DependencyObjects (not " + currentType.Name + ")");
+		}
+		Type findTypeToAttachTo(string attachedTo, string propertyName)
+		{
+			Type typeAttachedTo = null;
+			foreach (ParserState state in oldStates) {
+				if (state.type == CurrentType.Object &&
+						((Type)state.obj).Name == attachedTo) {
+					typeAttachedTo = (Type)state.obj;
+					break;
+				}
+			}
+			if (typeAttachedTo == null)
+				throw new Exception("Nothing to attach to: " + attachedTo + "." + propertyName);
+			return typeAttachedTo;
+		}
 
+		DependencyProperty getDependencyProperty(Type typeAttachedTo, string propertyName)
+		{
+			FieldInfo propField = typeAttachedTo.GetField(propertyName + "Property");
+			if (propField == null)
+				throw new Exception("Property " + propertyName + " does not exist on " + typeAttachedTo.Name);
+			return (DependencyProperty)propField.GetValue(null);
+		}
 
 		void parseContextPropertyAttribute()
 		{
-			throw new NotImplementedException("parseContextPropertyAttribute");
+			int index = reader.LocalName.LastIndexOf('.');
+			string attachedTo = reader.LocalName.Substring(0, index);
+			string propertyName = reader.LocalName.Substring(index + 1);
+			
+			Type currentType = (Type)currentState.obj;
+			ensureDependencyObject(currentType);
+			Type typeAttachedTo = findTypeToAttachTo(attachedTo, propertyName);
+			DependencyProperty dp = getDependencyProperty(typeAttachedTo, propertyName);
+			
+			writer.CreateAttachedProperty(typeAttachedTo, propertyName, dp.PropertyType);
+			writer.CreateAttachedPropertyText(reader.Value, dp.PropertyType, 
+					getTypeConverter(dp.PropertyType));
+			writer.EndAttachedProperty();
 		}
 
 		void parseEndElement()

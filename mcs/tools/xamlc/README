@@ -14,13 +14,13 @@ window.AddChild(button);
 button.AddText("Click");
 
 Except of course it can handle trees of arbitrary depth, so descriptions of
-complicated GUIs are not a problem and much more readable than the code
-version.
+complicated GUIs are not a problem and potentially much more readable than 
+the code version.
 
 To use this thing:
-cd ../WindowsBase
+cd ../../class/WindowsBase
 make install
-cd class/PresentationFramework
+cd ../PresentationFramework
 make install
 cd ../../tools/xamlc
 make install
@@ -29,9 +29,14 @@ That will get everything compiled. There's a demo in the mcs/tools/xamlc/demo
 directory; to run it, cd into that directory and do "make run". Stuff should 
 happen, along the lines of a program test.exe being generated and run to 
 produce this output:
+
 IT BEGINS!
 Hello World
+YYYI'm surrounded!ZZZ
 Goodbye.
 Goodbye.
 Goodbye.
+Bye
+Bye
+
 You should be able to see how that's made from the included test.xaml file

@@ -2,6 +2,14 @@
 
 	* Mono.Windows.Serialization/XamlParser.cs,
 	  Mono.Windows.Serialization/XamlWriter.cs,
+	  Mono.Windows.Serialization/CodeWriter.cs: add support for attached
+	  properties as attributes, supplementing the existing support for
+	  attached properties as elements
+
+2005-07-05  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlWriter.cs,
 	  Mono.Windows.Serialization/CodeWriter.cs: add support for delegate
 	  properties and for events
 	* Mono.Windows.Serialization/XamlParser.cs,
