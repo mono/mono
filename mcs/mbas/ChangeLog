@@ -1,3 +1,6 @@
+2005-07-05 Umadevi S <sumadevi@novell.com>
+	* expression.cs - added support to handle DBNull
+
 2005-06-30:5 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*ecore.cs: some tentative code preparing to support automatic definition of variables
 	on first usage with Option Explicit Off commented out as it breaks on emit phase, and 

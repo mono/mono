@@ -2057,18 +2057,21 @@ namespace Mono.MonoBASIC {
 			Type conv_left_as = null;
 			Type conv_right_as = null;
 
-			if (left is NullLiteral && (r.IsValueType || r == TypeManager.string_type)) {
+			if ((left is NullLiteral ||(Type.GetTypeCode(l)==TypeCode.DBNull)) && (r.IsValueType || r == TypeManager.string_type)) {
 				// Just treat nothing as the other type, implicit conversion 
 				// will return the default value
 				conv_left_as = r;
 				l = r;
+				//incase of DBNull set to NullLiteral
+				left = NullLiteral.Null;
 			}
 
-			if (right is NullLiteral && (l.IsValueType || l == TypeManager.string_type)) {
+			if ((right is NullLiteral ||(Type.GetTypeCode(r)==TypeCode.DBNull)) && (l.IsValueType || l == TypeManager.string_type)) {
 				// Just treat nothing as the other type, implicit conversion 
 				// will return the default value
 				conv_right_as = l;
 				r = l;
+				right = NullLiteral.Null;
 			}
 
 			// deal with objects and reference types first
