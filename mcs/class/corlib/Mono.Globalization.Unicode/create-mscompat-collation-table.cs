@@ -388,7 +388,7 @@ sw.Close ();
 			binary.Write (level2.Length);
 #endif
 			for (int i = 0; i < level2.Length; i++) {
-				int value = level2 [i];
+				byte value = level2 [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else
@@ -430,7 +430,7 @@ sw.Close ();
 			binary.Write (widthCompat.Length);
 #endif
 			for (int i = 0; i < widthCompat.Length; i++) {
-				int value = widthCompat [i];
+				ushort value = widthCompat [i];
 				if (value < 10)
 					Result.Write ("{0},", value);
 				else

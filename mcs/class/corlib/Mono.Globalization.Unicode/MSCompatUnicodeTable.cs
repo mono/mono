@@ -264,7 +264,6 @@ namespace Mono.Globalization.Unicode
 				IsHiragana ((char) reader.ReadByte ()); // dummy
 				// tailorings
 				count = reader.ReadInt32 ();
-				IsHiragana ((char) count);
 				tailorings = new char [count];
 				for (int i = 0; i < count; i++)
 					tailorings [i] = (char) reader.ReadUInt16 ();
