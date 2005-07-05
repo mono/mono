@@ -163,6 +163,12 @@ static void _GC_suspend_handler(int sig)
     /* to accidentally leave a RESTART signal pending, thus causing us to   */
     /* continue prematurely in a future round.				    */ 
 
+    /* Tell the thread that wants to start the world that this  */
+    /* thread has been started.  Note that sem_post() is  	*/
+    /* the only async-signal-safe primitive in LinuxThreads.    */
+    sem_post(&GC_suspend_ack_sem);
+
+
 #if DEBUG_THREADS
     GC_printf1("Continuing 0x%lx\n", my_thread);
 #endif
@@ -421,6 +427,7 @@ static void pthread_start_world()
     register GC_thread p;
     register int n_live_threads = 0;
     register int result;
+    int code;
 
 #   if DEBUG_THREADS
       GC_printf0("World starting\n");
@@ -450,6 +457,20 @@ static void pthread_start_world()
         }
       }
     }
+
+    #if DEBUG_THREADS
+    GC_printf0 ("All threads signaled");
+    #endif
+
+    for (i = 0; i < n_live_threads; i++) {
+	while (0 != (code = sem_wait(&GC_suspend_ack_sem))) {
+	    if (errno != EINTR) {
+		GC_err_printf1("Sem_wait returned %ld\n", (unsigned long)code);
+		ABORT("sem_wait for handler failed");
+	    }
+	}
+    }
+  
     #if DEBUG_THREADS
       GC_printf0("World started\n");
     #endif
