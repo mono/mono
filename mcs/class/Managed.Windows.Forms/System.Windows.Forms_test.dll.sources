@@ -4,6 +4,11 @@ System.Windows.Forms/TreeViewTest.cs
 System.Windows.Forms/LabelPropertyTest.cs
 System.Windows.Forms/ControlTest.cs
 System.Windows.Forms/ControlEventTest.cs
+System.Windows.Forms/DataGridTest.cs
+System.Windows.Forms/DataGridTextBoxColumnTest.cs
+System.Windows.Forms/DataGridTableStyleTest.cs
+System.Windows.Forms/GridTableStylesCollectionTest.cs
+System.Windows.Forms/GridColumnStylesCollectionTest.cs
 System.Windows.Forms/TextBoxTest.cs
 System.Windows.Forms/ButtonTest.cs
 System.Windows.Forms/ListBoxTest.cs
