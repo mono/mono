@@ -1,3 +1,11 @@
+2005-07-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* DelegateSerializationHolder.cs: When the deserialized target is
+	a proxy, call IsInstanceOfType to force the proxy to load the
+	real type of the remote object. This is needed to make sure that
+	subsequent calls to GetType() return the expected type. This fixes
+	bug #75447.
+
 2005-07-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* OperatingSystem.cs: patch from Aleksandar Dezelin to fix

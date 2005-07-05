@@ -32,6 +32,7 @@
 
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.Remoting;
 
 namespace System
 {
@@ -72,8 +73,19 @@ namespace System
 				Assembly dasm = Assembly.Load (assembly);
 				Type dt = dasm.GetType (type);
 				Delegate del;
-				if (realTarget != null)
+				if (realTarget != null) {
+					if (RemotingServices.IsTransparentProxy (realTarget)) {
+						// The call to IsInstanceOfType will force the proxy
+						// to load the real type of the remote object. This is
+						// needed to make sure that subsequent calls to
+						// GetType() return the expected type.
+						Assembly tasm = Assembly.Load (targetTypeAssembly);
+						Type tt = tasm.GetType (targetTypeName);
+						if (!tt.IsInstanceOfType (realTarget))
+							throw new RemotingException ("Unexpected proxy type.");
+					}
 					del = Delegate.CreateDelegate (dt, realTarget, methodName);
+				}
 				else {
 					Assembly tasm = Assembly.Load (targetTypeAssembly);
 					Type tt = tasm.GetType (targetTypeName);
