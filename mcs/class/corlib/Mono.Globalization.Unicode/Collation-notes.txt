@@ -48,14 +48,15 @@
 		For each character in the target, examine if it matches
 		form the tail of the searchee and immediately return false if
 		it didn't match. It uses reversal element query.
-	IndexOf()
-		Try IsPrefix() to the end of the string to find.
-	LastIndexOf()
-		Try IsSuffix() from the end of the string to find.
-		It uses reversal element query.
+	IndexOf(), LastIndexOf()
+		For character search, it finds the matching character element
+		to the end (or start) of the string to find.
+		For string search, it invokes one of private IndexOf() (or
+		LastIndexOf()) overload passing the first character element
+		of the target, and if found, tests if the sequence is a valid
+		start point, using IsPrefix() (or IsSuffix()).
 
-	For IndexOf() and LastIndexOf(), overloads of char argument and string 
-	argument will be unified by providng common CharacterIterator base.
+*** future Optimization
 
 	For GetSortKey(), Compare(), IsPrefix() and IndexOf(), it uses forward
 	iteration, which moves forward and don't stop until either it finds
@@ -69,8 +70,8 @@
 
 ** How to support CompareOptions
 
-	There are two kind of "ignorance" : ignorance which acts as stripper,
-	and ignorance acts as normalizer.
+	There are two kind of "ignorance" : strippers' ignorance and
+	normalizers' ignorance.
 
 	The strippers will "filter characters out" and there will be no
 	corresponding character elements in SortKey binaries.
@@ -369,8 +370,6 @@
 	character in sortkey.
 	Similarly, some single characters are expanded to a sequence of
 	characters.
-
-	The correspoinding implementation will be "CharacterIterator".
 
 **** diacritic characters
 
@@ -1172,17 +1171,18 @@
 
 ** Mono implementation plans
 
-*** CompareInfoImpl (partly TailoringInfo for now)
+*** Collator
 
 	CompareInfo contains many overloaded methods that are just for 
-	convenience. This class contains only required members.
+	convenience. This class contains almost only required members.
 
 	This class also provices access to tailoring information which is
 	culture instance dependent:
 
-	- bool HasTailoringAsHead(char)
-	- bool HasTailoringAsTail(char)
-	- int IndexToTailoring(char)
+	- French sorting
+	- contractions/expansions - returns contraction or expansion
+	- diacritical remapping
+	- CJK custom mapping
 
 	For data area, see CollationDataStructures.txt for now.
 
@@ -1197,30 +1197,6 @@
 
 	- ignorable, ignorable nonspace, normalize width, normalize kanatype
 	- level 4 sortkey provision method(s)
-
-*** CharacterIterator
-
-	The match evaluation could not be done char by char - the longest
-	possible sequence of characters in the tailored table (e.g. "ch" 
-	in Spanish) should be examined.
-
-	(Some examples can be seen in UTR#10).
-
-	It should work like TextElementEnumerator but should not result in a
-	bunch of string instances. The simple set of below is enough:
-
-	- MoveNext(),
-	- MoveBack(),
-	- Current,
-	- ElementLength, and
-	- Reset()
-
-	They could be implemented as an internal virtual method of CompareInfo.
-
-	This resolves combined characters and expanded characters, including
-	French accent orderings. The iteration logic will be, however, only
-	one, and it will use culture-dependent character combination/expansion
-	tables.
 
 **** character comparison
 

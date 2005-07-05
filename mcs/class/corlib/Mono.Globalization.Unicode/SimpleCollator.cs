@@ -594,9 +594,33 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		Escape escape1 = new Escape ();
 		Escape escape2 = new Escape ();
 
+		private int CompareOrdinal (string s1, int idx1, int len1,
+			string s2, int idx2, int len2)
+		{
+			int min = len1 < len2 ? len1 : len2;
+			int end1 = idx1 + min;
+			int end2 = idx2 + min;
+			for (int i1 = idx1, i2 = idx2;
+				i1 < end1 && i2 < end2; i1++, i2++)
+				if (s1 [i1] != s2 [i2])
+					return s1 [i1] - s2 [i2];
+			return len1 == len2 ? 0 :
+				len1 == min ? - 1 : 1;
+		}
+
 		public int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{
+			// quick equality check
+			if (idx1 == idx2 && len1 == len2 &&
+				Object.ReferenceEquals (s1, s2))
+				return 0;
+			// FIXME: this should be done inside Compare() at
+			// any time.
+			int ord = CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
+			if (ord == 0 || options == CompareOptions.Ordinal)
+				return ord;
+
 #if false // stable easy version, depends on GetSortKey().
 			SortKey sk1 = GetSortKey (s1, idx1, len1, options);
 			SortKey sk2 = GetSortKey (s2, idx2, len2, options);
@@ -680,6 +704,28 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				bool special1 = false;
 				bool special2 = false;
 
+				// Handle special weight characters
+				if (!stringSort && Category (i1) == 6) {
+					lv5At1 = escape1.Source != null ?
+						escape1.Index - escape1.Start :
+						cur1 - start1;
+					// here Windows has a bug that it does
+					// not consider thirtiary weight.
+					lv5Value1 = Level1 (i1) << 8 + Uni.Level3 (i1);
+					idx1++;
+					continue;
+				}
+				if (!stringSort && Category (i2) == 6) {
+					lv5At2 = escape2.Source != null ?
+						escape2.Index - escape2.Start :
+						cur2 - start2;
+					// here Windows has a bug that it does
+					// not consider thirtiary weight.
+					lv5Value2 = Level1 (i2) << 8 + Uni.Level3 (i2);
+					idx2++;
+					continue;
+				}
+
 				Contraction ct1 = GetContraction (s1, idx1, end1);
 				if (ct1 != null) {
 					idx1 += ct1.Source.Length;
@@ -708,14 +754,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					if (currentLevel > 3)
 						special1 = Uni.HasSpecialWeight ((char) i1);
 					idx1++;
-				}
-
-				if (!stringSort && sk1 [0] == 6) {
-					lv5At1 = escape1.Source != null ?
-						escape1.Index - escape1.Start :
-						cur1 - start1;
-					lv5Value1 = sk1 [1];
-					continue;
 				}
 
 				// add diacritical marks in s1 here
@@ -754,14 +792,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					if (currentLevel > 3)
 						special2 = Uni.HasSpecialWeight ((char) i2);
 					idx2++;
-				}
-
-				if (!stringSort && sk2 [0] == 6) {
-					lv5At2 = escape2.Source != null ?
-						escape2.Index - escape2.Start :
-						cur2 - start2;
-					lv5Value2 = sk2 [1];
-					continue;
 				}
 
 				// add diacritical marks in s1 here
@@ -847,7 +877,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			// we still have to handle level 5
 			if (finalResult == 0) {
 				finalResult = lv5At1 - lv5At2;
-				if (finalResult != 0)
+				if (finalResult == 0)
 					finalResult = lv5Value1 - lv5Value2;
 			}
 			return idx1 != end1 ? 1 : idx2 == end2 ? finalResult : -1;

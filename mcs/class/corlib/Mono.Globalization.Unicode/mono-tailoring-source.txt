@@ -16,7 +16,8 @@
 # Non-primary destination value is not allowed in a sortkey mapping.
 # FIXME: it should be rejected in the table generator code.
 #
-# Shifted characters (level 5) can be specified by setting category as 6.
+# Shifted characters (level 5) cannot be specified (even by setting category
+# as 6).
 #
 
 @127 # invariant mappings

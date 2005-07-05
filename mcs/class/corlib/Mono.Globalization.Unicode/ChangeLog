@@ -1,5 +1,13 @@
 2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : more updates.
+	* SimpleCollator.cs : Added quick check for Ordinal comparison.
+	  Fixed special weight comparison. It cannot be customizable in the
+	  implementation (and it won't be harmful).
+	* mono-tailoring-source.txt : thus updated comment.
+
+2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Compare() was missing French sort support.
 	* TestDriver.cs : added example case.
 
