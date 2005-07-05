@@ -1,5 +1,11 @@
 2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : updated status. Eliminated descriptions on
+	  "iterator" (I avoided it for performance concern). Fixed misc.
+	  incorrect descriptions.
+
+2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collator.cs : Now that SimpleCollator became feature complete, it is
 	  not useful anymore.
 

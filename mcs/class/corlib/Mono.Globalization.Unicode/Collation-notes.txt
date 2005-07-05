@@ -13,23 +13,21 @@
 		  : mostly analyzed.
 		- write table generator source(s)
 		  : mostly implemented. Need to fill 100 blank characters
-		    which should not be, and fix 1500 lines of different
-		    mappings.
+		    which should not be blank, and fix 1500 lines of
+		    different mappings.
 		- culture-specific sortkey data
 		  : Some are written in mono-tailoring-source.txt. They
 		    come from dumped diffs (shown later) and UCA tailorings
 		    (via create-tailorings.exe).
 	* implement collation methods
-		- GetSortKey() is basically done, including support for
-		  tailoring, contraction and expansion.
-		- IndexOf(),LastIndexOf(),IsPrefix(),IsSuffix() are largely
-		  done, without tailoring/contraction/expansion support.
-		- Compare() is simply implemented by just comparing sortkeys.
-		- IndexOf() optimizations is not yet planned.
+		- All methods are basically implemented in practical level.
+		- except for Compare() and GetSortKey(), they don't handle
+		  nonspacing marks.
+		- Japanese extenders and Arabic shadda are not handled yet.
+		- optimization in IndexOf() and Compare() are not planned yet.
 	* fix design (FIXMEs)
 		- Currently tailored sortkey does not handle CompareOptions.
 		  However the flag is significant.
-		- Some special characters such as U+309B are not handled yet.
 
 
 ** How to implement CompareInfo members
@@ -1014,8 +1012,8 @@
 	   FE FF part) and anyways it can be computed.
 
 	20 (FF FF 01 01 01 01 00) special.
-	   Some Japanese extender marks :
-	   	3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE
+	   Japanese extender marks:
+	   	3005, 3031, 3032, 309D, 309E, 30FC, 30FD, 30FE, FF70
 
 	   LAMESPEC: In native context Microsoft's understanding of Japanese 
 	   3031 and 3032 is wrong. They can never be used to repeat *just
@@ -1024,8 +1022,8 @@
 	   one character but sometimes used to repeat two (or possibly more)
 	   characters.
 
-	   Arabic extenders : FE7C, FE7D, FF70
-	   Actually FE7C and FE7D are not extender in Unicode (PropList.txt)
+	   Arabic shadda: FE7C (isolated), FE7D (medium)
+	   (Actually they are not extender in Unicode PropList.txt)
 
 
 	- by UnicodeCategory -
@@ -1233,27 +1231,16 @@
 	equivalent codepoint, character comparison could not also just be done
 	by comparing "source char" value.
 
-	Collator.CompareChar() compares character elements in two character 
-	iterators and returns the difference "level". The returned value is
-	used either to check equality or save difference level (see Compare()
-	description for details).
+***** future optimizations
 
-	Character iterator comparison is first done by codepoints i.e. it
-	first detects where the codepoints differ.
-
-	From where those codepoints differ, for each iterators it adjusts the
+	From where those codepoints differ, for each strings it adjusts the
 	position so that it represents exactly one character element. That is,
 	find primary character as the start of the range and the last
 	nonprimary character as the end of the range.
 
-	Once the comparer adjusted the character iterator to be valid
-	comparison position, further comparison is done by following steps:
-
-	Then, return comparison results of sortkeys of n(s, l, f), where
-	function n returns keys for such s, l, f that:
-	- s : the source character (or string) of character iterator,
-	- l : the comparison level
-	- f : CompareOption (note that it is different from level)
+	Once Compare() adjusted the character location to be valid
+	comparison position, further comparison is done as usual comparison,
+	i.e. sortkey comparison considering comparisonLevel.
 
 **** Characters in the table / characters computed
 
@@ -1271,10 +1258,10 @@
 
 **** Level 4: Kana type
 
-	The table is not likely to contain level 4 (kanatype) properties for
-	the whole characters They are simply computed.
+	The table does not contain level 4 (kanatype) properties for
+	the whole characters. They can be simply computed.
 
-**** Level 3: Case properties
+**** Level 3: Case/Width properties
 
 	Case properties will be stored as a byte array, with limited areas of
 	codepoint (cp < 3120 || FE00 < cp).
@@ -1320,3 +1307,7 @@
 
 	Mimer has decent materials on culture specific collations:
 	http://developer.mimer.com/collations/
+
+	This is written in Japanese, but awesome analysis on MS Access
+	string sorting:
+	http://www.asahi-net.or.jp/~ez3k-msym/comp/acccoll.htm
