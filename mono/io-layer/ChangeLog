@@ -1,3 +1,9 @@
+2005-07-05  Dick Porter  <dick@ximian.com>
+
+	* io.c: Make sure SIGPIPE is ignored when calling write(2).
+	Prevents the runtime exiting when writing to a closed pipe,
+	fixing bug 75468.
+
 2005-06-30  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_semaphores_init): Add some helpful error
