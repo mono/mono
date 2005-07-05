@@ -592,8 +592,8 @@ namespace Mono.CSharp
 
 			OutputAttributes (method.CustomAttributes, null, false);
 
-			if (method.ReturnTypeCustomAttributes.Count > 0)
-				OutputAttributeDeclarations (method.ReturnTypeCustomAttributes);
+			OutputAttributes (method.ReturnTypeCustomAttributes, 
+				"return: ", false);
 
 			MemberAttributes attributes = method.Attributes;
 
@@ -838,9 +838,6 @@ namespace Mono.CSharp
 		protected override void GenerateAttributeDeclarationsStart( CodeAttributeDeclarationCollection attributes )
 		{
 			Output.Write ('[');
-			CodeMemberMethod met = CurrentMember as CodeMemberMethod;
-			if (met != null && met.ReturnTypeCustomAttributes == attributes)
-				Output.Write ("return: ");
 		}
 		
 		protected override void GenerateAttributeDeclarationsEnd( CodeAttributeDeclarationCollection attributes )

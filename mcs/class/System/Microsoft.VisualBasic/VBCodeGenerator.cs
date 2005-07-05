@@ -655,6 +655,8 @@ namespace Microsoft.VisualBasic
 
 			if (!isSub) {
 				output.Write (" As ");
+				OutputAttributes (method.ReturnTypeCustomAttributes, null,
+					LineHandling.InLine);
 				OutputType (method.ReturnType);
 			}
 

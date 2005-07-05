@@ -993,6 +993,52 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public void MethodReturnTypeAttributes ()
+		{
+			type.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			type.Members.Add (method);
+
+			// method custom attributes
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			method.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			method.CustomAttributes.Add (attrDec);
+
+			// return type custom attributes
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "C";
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A1",
+				new CodePrimitiveExpression (false)));
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
+				new CodePrimitiveExpression (true)));
+			method.ReturnTypeCustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "D";
+			method.ReturnTypeCustomAttributes.Add (attrDec);
+
+			Generate ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}"
+				+ "    {0}"
+				+ "    [A()]{0}"
+				+ "    [B()]{0}"
+				+ "    [return: C(A1=false, A2=true)]{0}"
+				+ "    [return: D()]{0}"
+				+ "    public virtual int Execute() {{{0}"
+				+ "    }}{0}"
+				+ "}}{0}", writer.NewLine), Code);
+		}
+
+		[Test]
 		public void ConstructorAttributesTest ()
 		{
 			type.Name = "Test1";

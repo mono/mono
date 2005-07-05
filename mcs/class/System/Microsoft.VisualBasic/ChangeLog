@@ -1,5 +1,9 @@
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* VBCodeGenerator.cs: Added support for ReturnTypeCustomAttributes.
+
+2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* VBCodeGenerator.cs: Scope modifiers should not be output for
 	events.
 

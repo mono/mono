@@ -1,5 +1,10 @@
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorFromTypeTest.cs: Added test for 
+	ReturnTypeCustomAttributes.
+
+2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromTypeTest.cs: Modified test to ensure that scope
 	modifiers are not output for events.
 

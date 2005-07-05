@@ -1,5 +1,10 @@
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorFromTypeTest.cs: Added test for 
+	ReturnTypeCustomAttributes.
+
+2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromTypeTest.cs: Added event ImplementationTypes
 	tests. Added PrivateImplementationType and property and method
 	overload tests. Added property indexer tests.

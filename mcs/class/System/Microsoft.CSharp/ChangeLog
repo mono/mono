@@ -1,5 +1,9 @@
 2005-07-02 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CSharpCodeGenerator.cs: Fixed output of ReturnTypeCustomAttributes.
+
+2005-07-02 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CSharpCodeGenerator.cs: Added PrivateImplementationType support
 	for events, properties, methods. No longer output scope modifier
 	for events.
