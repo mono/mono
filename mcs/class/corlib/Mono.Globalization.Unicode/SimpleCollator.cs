@@ -62,6 +62,30 @@ namespace Mono.Globalization.Unicode
 		static SimpleCollator invariant =
 			new SimpleCollator (CultureInfo.InvariantCulture);
 
+		internal static readonly byte [] ignorableFlags =
+			Uni.ignorableFlags;
+		internal static readonly byte [] categories =
+			Uni.categories;
+		internal static readonly byte [] level1 =
+			Uni.level1;
+		internal static readonly byte [] level2 =
+			Uni.level2;
+		internal static readonly byte [] level3 =
+			Uni.level3;
+		internal static readonly ushort [] widthCompat =
+			Uni.widthCompat;
+		internal static readonly CodePointIndexer categoryIndexer =
+			UUtil.Category;
+		internal static readonly CodePointIndexer lv1Indexer =
+			UUtil.Category;
+		internal static readonly CodePointIndexer lv2Indexer =
+			UUtil.Category;
+		internal static readonly CodePointIndexer lv3Indexer =
+			UUtil.Category;
+		internal static readonly CodePointIndexer widthIndexer =
+			UUtil.Category;
+
+
 		SortKeyBuffer buf;
 		// CompareOptions expanded.
 		bool ignoreNonSpace; // used in IndexOf()
@@ -301,31 +325,32 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		byte Category (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
-				return Uni.Categories (cp);
+				return categories [categoryIndexer.ToIndex (cp)];
 			int idx = cjkIndexer.ToIndex (cp);
 			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
 			return cjk != 0 ? (byte) ((cjk & 0xFF00) >> 8) :
-				Uni.Categories (cp);
+				categories [categoryIndexer.ToIndex (cp)];
 		}
 
 		byte Level1 (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
-				return Uni.Level1 (cp);
+				return level1 [lv1Indexer.ToIndex (cp)];
 			int idx = cjkIndexer.ToIndex (cp);
 			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
-			return cjk != 0 ? (byte) (cjk & 0xFF) : Uni.Level1 (cp);
+			return cjk != 0 ? (byte) (cjk & 0xFF) :
+				level1 [lv1Indexer.ToIndex (cp)];
 		}
 
 		byte Level2 (int cp)
 		{
 			if (cp < 0x3000 || cjkLv2Table == null)
-				return Uni.Level2 (cp);
+				return level2 [lv2Indexer.ToIndex (cp)];
 			int idx = cjkLv2Indexer.ToIndex (cp);
 			byte ret = idx < 0 ? (byte) 0 : cjkLv2Table [idx];
 			if (ret != 0)
 				return ret;
-			ret = Uni.Level2 (cp);
+			ret = level2 [lv2Indexer.ToIndex (cp)];
 			if (level2Maps.Length == 0)
 				return ret;
 			for (int i = 0; i < level2Maps.Length; i++) {
@@ -428,7 +453,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		int FilterOptions (int i)
 		{
 			if (ignoreWidth)
-				i = Uni.ToWidthCompat (i);
+				i = widthCompat [widthIndexer.ToIndex (i)];
 			if (ignoreCase)
 				i = textInfo.ToLower ((char) i);
 			if (ignoreKanaType)
@@ -476,7 +501,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 							b [0],
 							b [1],
 							b [2] != 1 ? b [2] : Level2 (i),
-							b [3] != 1 ? b [3] : Uni.Level3 (i));
+							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
 					}
 					n += ct.Source.Length - 1;
 				}
@@ -617,9 +642,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return 0;
 			// FIXME: this should be done inside Compare() at
 			// any time.
-			int ord = CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
-			if (ord == 0 || options == CompareOptions.Ordinal)
-				return ord;
+//			int ord = CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
+//			if (ord == 0)
+//				return 0;
+			if (options == CompareOptions.Ordinal)
+				return CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
 
 #if false // stable easy version, depends on GetSortKey().
 			SortKey sk1 = GetSortKey (s1, idx1, len1, options);
@@ -664,8 +691,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int lv5Value2 = 0;
 
 			while (true) {
-				int cur1 = idx1;
-				int cur2 = idx2;
 				if (idx1 >= end1) {
 					if (escape1.Source == null)
 						break;
@@ -684,28 +709,32 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					end2 = escape2.End;
 					escape2.Source = null;
 				}
-/* FIXME: optimization could be done here.
+#if false
+// FIXME: optimization could be done here.
 
 				if (s1 [idx1] == s2 [idx2]) {
 					idx1++;
 					idx2++;
 					continue;
 				}
-				while (idx1 >= start1 && !IsSafe ((int) s [idx1]))
-					idx1--;
-				while (idx2 >= start2 && !IsSafe ((int) s [idx2]))
-					idx2--;
-*/
+//				while (idx1 >= start1 && !IsSafe ((int) s [idx1]))
+//					idx1--;
+//				while (idx2 >= start2 && !IsSafe ((int) s [idx2]))
+//					idx2--;
+#endif
 
+				int cur1 = idx1;
+				int cur2 = idx2;
 				byte [] sk1 = null;
 				byte [] sk2 = null;
 				int i1 = FilterOptions (s1 [idx1]);
 				int i2 = FilterOptions (s2 [idx2]);
 				bool special1 = false;
 				bool special2 = false;
+				byte cat1 = Category (i1);
 
 				// Handle special weight characters
-				if (!stringSort && Category (i1) == 6) {
+				if (!stringSort && cat1 == 6) {
 					lv5At1 = escape1.Source != null ?
 						escape1.Index - escape1.Start :
 						cur1 - start1;
@@ -715,7 +744,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx1++;
 					continue;
 				}
-				if (!stringSort && Category (i2) == 6) {
+
+				byte cat2 = Category (i2);
+
+				if (!stringSort && cat2 == 6) {
 					lv5At2 = escape2.Source != null ?
 						escape2.Index - escape2.Start :
 						cur2 - start2;
@@ -745,7 +777,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 				else {
 					sk1 = charSortKey;
-					sk1 [0] = Category (i1);
+					sk1 [0] = cat1;
 					sk1 [1] = Level1 (i1);
 					if (!ignoreNonSpace && currentLevel > 1)
 						sk1 [2] = Level2 (i1);
@@ -783,7 +815,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 				else {
 					sk2 = charSortKey2;
-					sk2 [0] = Category (i2);
+					sk2 [0] = cat2;
 					sk2 [1] = Level1 (i2);
 					if (!ignoreNonSpace && currentLevel > 1)
 						sk2 [2] = Level2 (i2);

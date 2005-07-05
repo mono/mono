@@ -71,9 +71,12 @@ namespace Mono.Globalization.Unicode
 
 		public int ToIndex (int cp)
 		{
-			for (int t = 0; t < ranges.Length; t++)
-				if (ranges [t].Start <= cp && cp < ranges [t].End)
+			for (int t = 0; t < ranges.Length; t++) {
+				if (cp < ranges [t].Start)
+					return defaultIndex;
+				else if (cp < ranges [t].End)
 					return cp - ranges [t].Start + ranges [t].IndexStart;
+			}
 			return defaultIndex;
 //			throw new SystemException (String.Format ("Should not happen: no map definition for cp {0:x}({1})", cp, (char) cp));
 		}
@@ -81,10 +84,17 @@ namespace Mono.Globalization.Unicode
 		public int ToCodePoint (int i)
 		{
 			for (int t = 0; t < ranges.Length; t++) {
+/*
 				if (t > 0 && i < ranges [t - 1].IndexEnd)
-					return -1; // unexpected out of range
+					return defaultCP; // unexpected out of range
 				if (ranges [t].IndexStart <= i &&
 					i < ranges [t].IndexEnd)
+					return i - ranges [t].IndexStart
+						+ ranges [t].Start;
+*/
+				if (i < ranges [t].IndexStart)
+					return defaultCP;
+				if (i < ranges [t].IndexEnd)
 					return i - ranges [t].IndexStart
 						+ ranges [t].Start;
 			}

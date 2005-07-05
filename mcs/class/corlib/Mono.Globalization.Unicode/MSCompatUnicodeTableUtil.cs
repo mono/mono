@@ -63,11 +63,11 @@ namespace Mono.Globalization.Unicode
 			int [] cjkEnds = new int [] {0xA000};
 
 			Ignorable = new CodePointIndexer (ignoreStarts, ignoreEnds, -1, -1);
-			Category = new CodePointIndexer (catStarts, catEnds, -1, -1);
-			Level1 = new CodePointIndexer (lv1Starts, lv1Ends, -1, -1);
-			Level2 = new CodePointIndexer (lv2Starts, lv2Ends, -1, -1);
-			Level3 = new CodePointIndexer (lv3Starts, lv3Ends, -1, -1);
-			WidthCompat = new CodePointIndexer (widthStarts, widthEnds, -1, -1);
+			Category = new CodePointIndexer (catStarts, catEnds, 0, 0);
+			Level1 = new CodePointIndexer (lv1Starts, lv1Ends, 0, 0);
+			Level2 = new CodePointIndexer (lv2Starts, lv2Ends, 0, 0);
+			Level3 = new CodePointIndexer (lv3Starts, lv3Ends, 0, 0);
+			WidthCompat = new CodePointIndexer (widthStarts, widthEnds, 0, 0);
 			CjkCHS = new CodePointIndexer (chsStarts, chsEnds, -1, -1);
 			Cjk = new CodePointIndexer (cjkStarts, cjkEnds, -1, -1);
 		}

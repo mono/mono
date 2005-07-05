@@ -1,5 +1,14 @@
 2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTableUtil.cs,
+	  MSCompatUnicodeTable.cs,
+	  CodePointIndexer.cs,
+	  create-mscompat-collation-table.cs : made some members internal and
+	  accessible from other classes. Many indexes could be 0 by default.
+	* SimpleCollator.cs : optimizations. avoid method call.
+
+2005-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : more updates.
 	* SimpleCollator.cs : Added quick check for Ordinal comparison.
 	  Fixed special weight comparison. It cannot be customizable in the

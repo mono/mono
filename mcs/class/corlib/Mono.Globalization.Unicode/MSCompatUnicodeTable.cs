@@ -59,26 +59,22 @@ namespace Mono.Globalization.Unicode
 
 		public static byte Categories (int cp)
 		{
-			int idx = UUtil.Category.ToIndex (cp);
-			return idx < 0 ? byte.MinValue : categories [idx];
+			return categories [UUtil.Category.ToIndex (cp)];
 		}
 
 		public static byte Level1 (int cp)
 		{
-			int idx = UUtil.Level1.ToIndex (cp);
-			return idx < 0 ? byte.MinValue : level1 [idx];
+			return level1 [UUtil.Level1.ToIndex (cp)];
 		}
 
 		public static byte Level2 (int cp)
 		{
-			int idx = UUtil.Level2.ToIndex (cp);
-			return idx < 0 ? byte.MinValue : level2 [idx];
+			return level2 [UUtil.Level2.ToIndex (cp)];
 		}
 
 		public static byte Level3 (int cp)
 		{
-			int idx = UUtil.Level3.ToIndex (cp);
-			return idx < 0 ? byte.MinValue : level3 [idx];
+			return level3 [UUtil.Level3.ToIndex (cp)];
 		}
 
 		public static bool IsIgnorable (int cp)
@@ -214,12 +210,12 @@ namespace Mono.Globalization.Unicode
 
 		static readonly char [] tailorings;
 		static readonly TailoringInfo [] tailoringInfos;
-		static readonly byte [] ignorableFlags;
-		static readonly byte [] categories;
-		static readonly byte [] level1;
-		static readonly byte [] level2;
-		static readonly byte [] level3;
-		static readonly ushort [] widthCompat;
+		internal static readonly byte [] ignorableFlags;
+		internal static readonly byte [] categories;
+		internal static readonly byte [] level1;
+		internal static readonly byte [] level2;
+		internal static readonly byte [] level3;
+		internal static readonly ushort [] widthCompat;
 		static ushort [] cjkCHS;
 		static ushort [] cjkCHT;
 		static ushort [] cjkJA;
