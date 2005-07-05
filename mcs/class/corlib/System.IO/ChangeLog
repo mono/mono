@@ -1,3 +1,8 @@
+2005-07-05  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs:
+	* MonoIOError.cs: Add error message for ERROR_WRITE_FAULT.
+
 2005-07-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryInfo.cs: Fixed recursion problem with root directory 

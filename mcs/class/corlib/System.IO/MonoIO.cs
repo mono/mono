@@ -89,6 +89,10 @@ namespace System.IO
 				message = String.Format ("Invalid parameter");
 				return new IOException (message);
 
+			case MonoIOError.ERROR_WRITE_FAULT:
+				message = String.Format ("Write fault on path {0}", path);
+				return new IOException (message);
+
 			case MonoIOError.ERROR_SHARING_VIOLATION:
 				message = String.Format ("Sharing violation on path {0}", path);
 				return new IOException (message);
