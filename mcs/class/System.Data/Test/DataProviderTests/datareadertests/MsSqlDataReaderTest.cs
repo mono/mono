@@ -61,7 +61,7 @@ namespace MonoTests.System.Data {
 			try {
 				con.Open ();
 			} catch (SqlException e) {
-				Console.WriteLine ("Cannot establish connection with the database");
+				Console.WriteLine ("Cannot establish connection with the database " + e);
 				Console.WriteLine ("Probably the database is down");
 				con = null;
 			} catch (InvalidOperationException e) {

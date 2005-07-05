@@ -77,10 +77,10 @@ namespace MonoTests.System.Data {
 		{
 		
 			object value = null;
+			SqlDataReader rdr = (SqlDataReader) reader;
 			if (rdr.IsDBNull (columnIndex))
 				return null;
 			
-			SqlDataReader rdr = (SqlDataReader) reader;
 			if (rdr.GetDataTypeName (columnIndex) == "money") {
 				value = rdr.GetSqlMoney (columnIndex);
 				return value;
