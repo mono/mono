@@ -4,10 +4,14 @@ include ../../../build/rules.make
 SOURCES=TestVocab/ConsoleApp.cs TestVocab/ConsoleWriter.cs TestVocab/IConsoleAction.cs
 
 run:
+	make clean
 	make TestVocab.dll
 	MONO_PATH="." $(RUNTIME) --debug ../xamlc.exe -o:test.xaml.out.cs test.xaml
 	$(CSCOMPILE) -r:TestVocab.dll -o test.exe test.xaml.out.cs
 	$(RUNTIME) --debug test.exe
+
+clean-local:
+	rm -f TestVocab.dll test.xaml.out.cs
 
 all-local: TestVocab.dll
 

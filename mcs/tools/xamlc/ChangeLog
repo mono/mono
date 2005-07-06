@@ -1,5 +1,10 @@
 2005-07-06  Iain McCoy  <iain@mccoy.id.au>
 
+	* xamlc.cs: add support for emitting classes with the partial modifier
+	set
+
+2005-07-06  Iain McCoy  <iain@mccoy.id.au>
+
 	* demo/TestVocab/ConsoleApp.cs: remove default value hack, since we
 	have proper default value support now
 

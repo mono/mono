@@ -28,10 +28,15 @@
 
 using System;
 using System.IO;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using Mono.GetOptions;
 using Mono.Windows.Serialization;
 
 class XamlOptions : Options {
+	[Option("Whether or not the class should be marked as partial", "p", "partial")]
+	public bool Partial;
+	
 	[Option("the file to output to", "o", "output")]
 	public string OutputFile;
 }
@@ -42,11 +47,16 @@ class Driver {
 			Console.WriteLine("Input filenames must end in .xaml");
 			return;
 		}
+		if (Environment.Version.Major < 2 && options.Partial) {
+			Console.WriteLine("This runtime version does not support partial classes");
+			return;
+		}
 		if (options.OutputFile == null) {
 			options.OutputFile = input + ".out";
 		}
+		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
 		TextWriter tw = new StreamWriter(options.OutputFile);
-		CodeWriter cw = new CodeWriter(tw);
+		CodeWriter cw = new CodeWriter(generator, tw, options.Partial);
 		XamlParser r = new XamlParser(input, cw);
 		r.Parse();
 	}

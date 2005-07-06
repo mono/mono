@@ -1,5 +1,10 @@
 2005-07-06  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/CodeWriter.cs: cleaned up a little, added
+	support for the `partial' class modifier
+
+2005-07-06  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/Mapping.cs: removed in favour of
 	System.Windows.Serialization/Mapper.cs
 	* System.Windows.Serialization/Mapper.cs: Added because it is the

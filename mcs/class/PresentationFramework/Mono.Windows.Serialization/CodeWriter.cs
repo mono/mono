@@ -36,6 +36,9 @@ using System.CodeDom.Compiler;
 namespace Mono.Windows.Serialization {
 	public class CodeWriter : XamlWriter {
 		TextWriter writer;
+		ICodeGenerator generator;
+		bool isPartial;
+		
 		ArrayList objects = new ArrayList();
 		Hashtable nameClashes = new Hashtable();
 		int tempIndex = 0;
@@ -45,9 +48,11 @@ namespace Mono.Windows.Serialization {
 		CodeConstructor constructor;
 		
 		// pushes: the code writer
-		public CodeWriter(TextWriter writer)
+		public CodeWriter(ICodeGenerator generator, TextWriter writer, bool isPartial)
 		{
+			this.generator = generator;
 			this.writer = writer;
+			this.isPartial = isPartial;
 			code = new CodeCompileUnit();
 			objects.Add(code);
 		}
@@ -67,6 +72,13 @@ namespace Mono.Windows.Serialization {
 			((CodeCompileUnit)objects[0]).Namespaces.Add(ns);
 
 			type = new CodeTypeDeclaration(className);
+			if (isPartial) {
+#if NET_2_0
+				type.IsPartial = isPartial;
+#else
+				throw new Exception("Cannot create partial class");
+#endif
+			}
 			type.BaseTypes.Add(new CodeTypeReference(parent));
 			constructor = new CodeConstructor();
 			type.Members.Add(constructor);
@@ -238,7 +250,6 @@ namespace Mono.Windows.Serialization {
 
 		public void Finish()
 		{
-			ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
 			generator.GenerateCodeFromCompileUnit(code, writer, null);
 			writer.Close();
 		}
