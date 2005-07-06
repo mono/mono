@@ -77,6 +77,12 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		}
 		
+		public void Close()
+		{
+			Stream.Close();
+			socket.Close();
+		}
+		
 		public int Id;
 		public Stream Stream;
 		public HttpServerTransportSink Sink;
@@ -86,34 +92,38 @@ namespace System.Runtime.Remoting.Channels.Http
 	{
 		public static void ProcessRequest (RequestArguments reqArg)
 		{
-			//Step (1) Start Reciceve the header
-			ArrayList  Headers = RecieveHeader (reqArg);
-				
-			//Step (2) Start Parse the header
-			IDictionary HeaderFields = new Hashtable();
-			IDictionary CustomHeaders = new Hashtable();
-			if (!ParseHeader (reqArg, Headers, HeaderFields, CustomHeaders))
-				return;
-
-			//Step (3)
-			if (!CheckRequest (reqArg, HeaderFields, CustomHeaders))
-				return;
-
-			//Step (4) Recieve the entity body
-			
-			byte[] buffer;
-			object len = HeaderFields["content-length"];
-			if (len != null)
-			{
-				buffer = new byte [(int)len];
-				if (!RecieveEntityBody (reqArg, buffer))
+			try {
+				//Step (1) Start Reciceve the header
+				ArrayList  Headers = RecieveHeader (reqArg);
+					
+				//Step (2) Start Parse the header
+				IDictionary HeaderFields = new Hashtable();
+				IDictionary CustomHeaders = new Hashtable();
+				if (!ParseHeader (reqArg, Headers, HeaderFields, CustomHeaders))
 					return;
-			}
-			else
-				buffer = new byte [0];
+
+				//Step (3)
+				if (!CheckRequest (reqArg, HeaderFields, CustomHeaders))
+					return;
+
+				//Step (4) Recieve the entity body
 				
-			//Step (5)
-			SendRequestForChannel (reqArg, HeaderFields, CustomHeaders, buffer);
+				byte[] buffer;
+				object len = HeaderFields["content-length"];
+				if (len != null)
+				{
+					buffer = new byte [(int)len];
+					if (!RecieveEntityBody (reqArg, buffer))
+						return;
+				}
+				else
+					buffer = new byte [0];
+					
+				//Step (5)
+				SendRequestForChannel (reqArg, HeaderFields, CustomHeaders, buffer);
+			} finally {
+				reqArg.Close ();
+			}
 		}
 
 		private static ArrayList RecieveHeader (RequestArguments reqArg)
