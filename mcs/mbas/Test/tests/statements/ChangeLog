@@ -1,3 +1,10 @@
+2005-07-06  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	Patch submitted by 
+		Aldo Monteiro do Nascimento (aldo@psl-pr.softwarelivre.org)
+		Maverson Eduardo Schulze Rosa (maverson@psl-pr.softwarelivre.org)
+		Renato Suga (renato@psl-pr.softwarelivre.org)
+	* AssignmentStatementsA.vb, AssignmentStatementsC.vb : Comparison values are 
+	valid only for "en-US" culture, so	force that culture on the current thread
 
 2005-05-02  Ritvik Mayank  <mritvik@novell.com>
 	    Patch submitted by Sudharsan V <vsudharsan@novell.com>

@@ -1,9 +1,12 @@
 Imports System
+Imports System.Globalization
+Imports System.Threading
 
 Module AssignmentStatementsA
 
     Sub main()
         Dim i As Integer
+	Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
 
         i = 2
         If i <> 2 Then
@@ -19,7 +22,7 @@ Module AssignmentStatementsA
         If s <> 3.45 Then
             Throw New Exception("#ASA3 - Assignment Statement failed")
         End If
-
+	
         s = New Date(2004, 8, 17)
         If s <> New Date(2004, 8, 17) Then
             Throw New Exception("#ASA4 - Assignment Statement failed")

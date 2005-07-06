@@ -1,5 +1,7 @@
 Imports System
 Imports Microsoft.VisualBasic
+Imports System.Globalization
+Imports System.Threading
 
 Module AssignmentStatementsC
 
@@ -14,7 +16,8 @@ Module AssignmentStatementsC
     End Property
 
     Sub main()
-
+      	Thread.CurrentThread.CurrentCulture = New CultureInfo("en-US")
+      
         Mid(str, 7) = "MS.NET"
         If str <> "Hello MS.NET World" Then
             Throw New Exception("#ASC1 - Assignment Statement failed")
@@ -36,6 +39,7 @@ Module AssignmentStatementsC
         End If
 
         Mid(mystr, 7) = "MS.NET"
+
         If mystr <> "Hello MS.NETBasic " Then
             Throw New Exception("#ASC5 - Assignment Statement failed")
         End If
