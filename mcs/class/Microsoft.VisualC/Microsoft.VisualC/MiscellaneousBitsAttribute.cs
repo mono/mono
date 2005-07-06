@@ -26,5 +26,11 @@ namespace Microsoft.VisualC
 
 	public sealed class MiscellaneousBitsAttribute:System.Attribute
 	{
+		public int m_dwAttrs;
+
+		public MiscellaneousBitsAttribute (int miscellaneousBits)
+		{
+			m_dwAttrs = miscellaneousBits;
+		}
 	}
 }
