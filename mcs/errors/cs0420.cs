@@ -1,6 +1,6 @@
-// cs0420.cs: 'X.j': a reference to a volatile field will not be treated as volatile
+// cs0420.cs: `X.j': A volatile fields cannot be passed using a ref or out parameter
 // Line: 10
-// Compiler options: -unsafe /warnaserror
+// Compiler options: -unsafe /warnaserror /warn:1
 
 unsafe class X {
 	static volatile int j;

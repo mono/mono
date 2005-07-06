@@ -14,5 +14,5 @@ class DerivedClass: BaseClass {
                 return 1;
         }
 
-		static void Main () {}
+	static void Main () {}
 }
