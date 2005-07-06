@@ -125,7 +125,7 @@ namespace Mono.Globalization.Unicode
 		{
 			// dump sortkey for every single character.
 			for (int i = 0; i <= char.MaxValue; i++) {
-				byte [] data = coll.GetSortKey (new string ((char) i, 1)).KeyData;
+				byte [] data = coll.GetSortKey (new string ((char) i, 1), CompareOptions.StringSort).KeyData;
 				if (data.Length == 5 && data [0] == 1 && data [1] == 1 &&
 					data [2] == 1 && data [3] == 1 && data [4] == 0)
 					continue;

@@ -97,9 +97,10 @@ namespace Mono.Globalization.Unicode
 
 		string [] diacritics = new string [] {
 			// LATIN
-			"WITH ACUTE;", "WITH GRAVE;", " DOT ABOVE;", " MIDDLE DOT;",
+			"WITH VERTICAL LINE ABOVE;",
+			"WITH ACUTE;", "WITH GRAVE;", "WITH DOT ABOVE;", " MIDDLE DOT;",
 			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
-			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", " RING ABOVE;",
+			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
 			" OGONEK;", " CEDILLA;",
 			//
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
@@ -121,6 +122,7 @@ namespace Mono.Globalization.Unicode
 			" CEDILLA AND BREVE",
 			" OGONEK AND MACRON",
 			//
+			"WITH OVERLINE",
 			" HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
 			" DOUBLE GRAVE;",
 			" INVERTED BREVE",
@@ -131,9 +133,11 @@ namespace Mono.Globalization.Unicode
 			" DOT BELOW;",
 			" RETROFLEX;", "DIAERESIS BELOW",
 			" RING BELOW",
+			//
 			" CIRCUMFLEX BELOW", "HORN AND ACUTE",
 			" BREVE BELOW;", " HORN AND GRAVE",
 			" TILDE BELOW",
+			" TOPBAR",
 			" DOT BELOW AND DOT ABOVE",
 			" RIGHT HALF RING", " HORN AND TILDE",
 			" CIRCUMFLEX AND DOT BELOW",
@@ -148,6 +152,7 @@ namespace Mono.Globalization.Unicode
 			};
 		byte [] diacriticWeights = new byte [] {
 			// LATIN.
+			5,
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
 			//
@@ -157,9 +162,10 @@ namespace Mono.Globalization.Unicode
 			0x25, 0x25, 0x25, 0x26, 0x28, 0x28, 0x28,
 			0x29, 0x2A, 0x2B, 0x2C, 0x2F, 0x30,
 			//
-			0x43, 0x43, 0x43, 0x44, 0x46, 0x48,
+			0x40, 0x43, 0x43, 0x43, 0x44, 0x46, 0x48,
 			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x5A,
-			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 
+			//
+			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 0x68,
 			0x69, 0x69, 0x6A, 0x6D, 0x6E,
 			0x95, 0xAA,
 			// CIRCLED, PARENTHESIZED and so on.
@@ -785,12 +791,18 @@ sw.Close ();
 
 			string name = values [0];
 
+			// SPECIAL CASE: rename some characters for diacritical
+			// remapping. FIXME: why are they different?
+			// FIXME: it's still not working.
+			if (cp == 0x018B || cp == 0x018C)
+				name = name.Replace ("TOPBAR", "STROKE");
+
 			// isSmallCapital
 			if (s.IndexOf ("SMALL CAPITAL") > 0)
 				isSmallCapital [cp] = true;
 
 			// latin mapping by character name
-			if (s.IndexOf ("LATIN") > 0) {
+			if (s.IndexOf ("LATIN") >= 0) {
 				int lidx = s.IndexOf ("LETTER DOTLESS ");
 				int offset = lidx + 15;
 				if (lidx < 0) {
@@ -805,18 +817,20 @@ sw.Close ();
 				char n = s [offset + 1];
 				char target = char.MinValue;
 				if ('A' <= c && c <= 'Z' &&
-					(n == ' ') || n == ';') {
+					(n == ' ') || n == ';')
 					target = c;
 				// FIXME: they are still not working fine.
 				if (s.Substring (offset).StartsWith ("OI;")) // 01A2,01A3
 					target = 'O';
 				if (s.Substring (offset).StartsWith ("ALPHA"))
 					target = 'A';
-				if (target != char.MinValue);
-					ArrayList entry = (ArrayList) latinMap [c];
+				if (s.Substring (offset).StartsWith ("SCHWA"))
+					target = 'E';
+				if (target != char.MinValue) {
+					ArrayList entry = (ArrayList) latinMap [target];
 					if (entry == null) {
 						entry = new ArrayList ();
-						latinMap [c] = entry;
+						latinMap [target] = entry;
 					}
 					entry.Add (cp);
 				}
@@ -933,10 +947,10 @@ sw.Close ();
 			if (0x2100 <= cp && cp <= 0x213F &&
 				Char.IsSymbol ((char) cp))
 				sortableCharNames.Add (
-					new DictionaryEntry (cp, values [0]));
+					new DictionaryEntry (cp, name));
 			else if (0x3380 <= cp && cp <= 0x33DD)
 				sortableCharNames.Add (new DictionaryEntry (
-					cp, values [0].Substring (7)));
+					cp, name.Substring (7)));
 
 			// diacritical weights by character name
 if (diacritics.Length != diacriticWeights.Length)
@@ -954,9 +968,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (tmp.IndexOf ("WITH ") == 0)
 					tmp = tmp.Substring (4);
 				tmp = String.Concat ("COMBINING", (tmp [0] != ' ' ? " " : ""), tmp);
-				if (values [0] == tmp)
+				if (name == tmp)
 					diacritical [cp] = (byte) (diacriticWeights [d] - 2);
-if (values [0] == tmp) Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'", values [0], tmp, cp);
+//if (name == tmp)
+//Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'", name, tmp, cp);
 			}
 			// Two-step grep required for it.
 			if (s.IndexOf ("FULL STOP") > 0 &&
@@ -971,7 +986,7 @@ if (values [0] == tmp) Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'
 				// XXX part of CYRILLIC LETTER XXX yyy
 				// e.g. "IZHITSA" for "IZHITSA DOUBLE GRAVE".
 				string letterName =
-					values [0].Substring (values [0].IndexOf ("LETTER ") + 7);
+					name.Substring (name.IndexOf ("LETTER ") + 7);
 				int tmpIdx = letterName.IndexOf (' ');
 				letterName = tmpIdx < 0 ? letterName : letterName.Substring (0, tmpIdx);
 //Console.Error.WriteLine ("Arabic name for {0:X04} is {1}", cp, letterName);
@@ -1007,8 +1022,8 @@ if (values [0] == tmp) Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'
 						(cp == 0x0640) ?
 						// 0x0640 is special: it does
 						// not start with ARABIC LETTER
-						values [0] :
-						values [0].Substring (14);
+						name :
+						name.Substring (14);
 					int tmpIdx = letterName.IndexOf (' ');
 					letterName = tmpIdx < 0 ? letterName : letterName.Substring (0, tmpIdx);
 //Console.Error.WriteLine ("Arabic name for {0:X04} is {1}", cp, letterName);
@@ -1024,7 +1039,7 @@ if (values [0] == tmp) Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'
 			// Japanese square letter
 			if (0x3300 <= cp && cp <= 0x3357)
 				if (!ExistsJIS (cp))
-					nonJisJapanese.Add (new NonJISCharacter (cp, values [0]));
+					nonJisJapanese.Add (new NonJISCharacter (cp, name));
 
 			// normalizationType
 			string decomp = values [4];
