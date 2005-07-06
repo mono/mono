@@ -7187,9 +7187,7 @@ namespace Mono.CSharp {
 		}
 
 		public Expression Expr {
-			get {
-				return expr;
-			}
+			get { return expr; }
 		}
 
 		Expression DoResolve (EmitContext ec, Expression right_side)
@@ -7205,21 +7203,22 @@ namespace Mono.CSharp {
 			//
 
 			SimpleName original = expr as SimpleName;
-			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type |
+			Expression new_expr = expr.Resolve (ec,
+				ResolveFlags.VariableOrValue | ResolveFlags.Type |
 				ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
 
-			if (expr == null)
+			if (new_expr == null)
 				return null;
 
-			if (expr is Namespace) {
-				Namespace ns = (Namespace) expr;
+			if (new_expr is Namespace) {
+				Namespace ns = (Namespace) new_expr;
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
 				if (retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);
 				return retval;
 			}
-					
+
 			//
 			// TODO: I mailed Ravi about this, and apparently we can get rid
 			// of this and put it in the right place.
@@ -7229,8 +7228,8 @@ namespace Mono.CSharp {
 			// it will fail to find any members at all
 			//
 
-			Type expr_type = expr.Type;
-			if (expr is TypeExpr){
+			Type expr_type = new_expr.Type;
+			if (new_expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
 					ErrorIsInaccesible (loc, TypeManager.CSharpName (expr_type));
 					return null;
@@ -7241,7 +7240,6 @@ namespace Mono.CSharp {
 
 					if (en != null) {
 						object value = en.LookupEnumValue (Identifier, loc);
-						
 						if (value != null){
 							MemberCore mc = en.GetDefinition (Identifier);
 							ObsoleteAttribute oa = mc.GetObsoleteAttribute (en);
@@ -7268,7 +7266,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
@@ -7281,8 +7279,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (member_lookup is TypeExpr) {
-				if (!(expr is TypeExpr) && 
-				    (original == null || !original.IdenticalNameAndTypeName (ec, expr, loc))) {
+				if (!(new_expr is TypeExpr) && 
+				    (original == null || !original.IdenticalNameAndTypeName (ec, new_expr, loc))) {
 					Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
 						Identifier, member_lookup.GetSignatureForError ());
 					return null;
@@ -7292,7 +7290,7 @@ namespace Mono.CSharp {
 			}
 
 			MemberExpr me = (MemberExpr) member_lookup;
-			member_lookup = me.ResolveMemberAccess (ec, expr, loc, original);
+			member_lookup = me.ResolveMemberAccess (ec, new_expr, loc, original);
 			if (member_lookup == null)
 				return null;
 
@@ -7375,6 +7373,11 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			return expr + "." + Identifier;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return expr.GetSignatureForError () + "." + Identifier;
 		}
 	}
 
