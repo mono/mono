@@ -549,11 +549,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\DataSourceHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\DateBoldEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

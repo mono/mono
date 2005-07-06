@@ -117,17 +117,14 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		public virtual int Add (DataGridColumnStyle column)
 		{
-			int cnt = AddInternal (column);
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
+			int cnt = AddInternal (column);			
 			return cnt;
 		}
 
 		public void AddRange (DataGridColumnStyle[] columns)
 		{
 			foreach (DataGridColumnStyle mi in columns)
-				AddInternal (mi);
-
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
+				AddInternal (mi);			
 		}
 
 		public void Clear ()
@@ -163,10 +160,7 @@ namespace System.Windows.Forms
 
 		int IList.Add (object value)
 		{
-			int cnt = AddInternal ((DataGridColumnStyle)value);
-
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, null));
-			return cnt;
+			return AddInternal ((DataGridColumnStyle)value);			
 		}
 
 		void IList.Clear ()
@@ -253,6 +247,7 @@ namespace System.Windows.Forms
 			
 			column.TableStyle = owner;
 			int cnt = items.Add (column);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
 			return cnt;			
 		}
 		
@@ -260,8 +255,8 @@ namespace System.Windows.Forms
 		{	
 			for (int i = 0; i < items.Count; i++) {
 				DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-
-				if (column.MappingName == null)
+				
+				if (column.MappingName == null || column.MappingName == string.Empty)
 					continue;
 
 				if (String.Compare (column.MappingName, columnName, true) == 0) {

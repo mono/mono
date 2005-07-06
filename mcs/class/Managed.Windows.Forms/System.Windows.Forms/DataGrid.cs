@@ -150,7 +150,7 @@ namespace System.Windows.Forms
 		private Color link_hovercolor;
 		private Color parentrowsback_color;
 		private Color parentrowsfore_color;
-		internal bool parentrows_visible;
+		private bool parentrows_visible;
 		private int preferredcolumn_width;
 		private int preferredrow_height;
 		private bool _readonly;
@@ -215,7 +215,7 @@ namespace System.Windows.Forms
 			link_hovercolor = def_link_hovercolor;
 			parentrowsback_color = def_parentrowsback_color;
 			parentrowsfore_color = def_parentrowsfore_color;
-			parentrows_visible = false; // should be true (temp)
+			parentrows_visible = true;
 			preferredcolumn_width = ThemeEngine.Current.DataGridPreferredColumnWidth;
 			_readonly = false;
 			rowheaders_visible = true;
@@ -458,6 +458,14 @@ namespace System.Windows.Forms
 					
 					int old_row = current_cell.RowNumber;
 					
+					if (value.RowNumber >= RowsCount) {
+						value.RowNumber = RowsCount == 0 ? 0 : RowsCount - 1;
+					}
+					
+					if (value.ColumnNumber >= CurrentTableStyle.GridColumnStyles.Count) {
+						value.ColumnNumber = CurrentTableStyle.GridColumnStyles.Count == 0 ? 0: CurrentTableStyle.GridColumnStyles.Count - 1;
+					}
+					
 					EnsureCellVisilibility (value);
 					current_cell = value;					
 					
@@ -466,7 +474,10 @@ namespace System.Windows.Forms
 					}
 					
 					accept_listmgrevents = false;
-					cached_currencymgr_events.Position = current_cell.RowNumber;
+
+					if (cached_currencymgr_events !=  null) {
+						cached_currencymgr_events.Position = current_cell.RowNumber;
+					}
 					accept_listmgrevents = true;
 					InvalidateCurrentRowHeader ();
 					OnCurrentCellChanged (EventArgs.Empty);
@@ -478,6 +489,10 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentRowIndex {
 			get {
+				if (ListManager == null) {
+					return -1;
+				}
+				
 				return current_cell.RowNumber;
 			}
 
@@ -965,7 +980,7 @@ namespace System.Windows.Forms
 			get { return first_visiblerow; }
 			set { first_visiblerow = value;}
 		}
-
+		
 		internal int RowsCount {
 			get {				
 				if (ListManager != null) {
@@ -996,7 +1011,16 @@ namespace System.Windows.Forms
 				return _readonly == false;
 			}
 		}
-
+		
+		// It should only be shown if there are relations that
+		// we do not support right now
+		internal bool ShowParentRowsVisible {
+			get {
+				//See parentrows_visible;
+				return false;
+			}
+		}
+		
 		#endregion Private Instance Properties
 
 		#region Public Instance Methods
@@ -1014,7 +1038,9 @@ namespace System.Windows.Forms
 
 		protected virtual void CancelEditing ()
 		{			
-			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+			if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count) {
+				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Abort (current_cell.RowNumber);
+			}
 			
 			if (is_adding == true) {
 				ListManager.RemoveAt (RowsCount - 1);
@@ -1131,11 +1157,10 @@ namespace System.Windows.Forms
 			int old_first_visiblerow = first_visiblerow;
 			first_visiblerow = se.NewValue;
 			grid_drawing.UpdateVisibleRowCount ();
-
+			
 			if (first_visiblerow == old_first_visiblerow) {
 				return;
-			}
-
+			}			
 			ScrollToRow (old_first_visiblerow, first_visiblerow);
 		}
 
@@ -1775,6 +1800,57 @@ namespace System.Windows.Forms
 				vert_scrollbar.Value = first_visiblerow;
 			}
 		}
+		
+		internal IEnumerable GetDataSource (object source, string member)
+		{	
+			IListSource src = (IListSource) source;
+			IList list = src.GetList();
+			IListSource listsource;
+			ITypedList typedlist;
+					
+			if (source is IEnumerable) {
+				return (IEnumerable) source;
+			}
+			
+			if(src.ContainsListCollection == false)	{
+				return list;
+			}
+			
+			listsource = (IListSource) source;
+			
+			if (listsource == null) {
+				return null;
+			}
+			
+			list = src.GetList ();
+			
+			if (list == null) {
+				return null;
+			}
+			
+			typedlist = (ITypedList) list;
+				
+			if (typedlist == null) {
+				return null;
+			}			
+
+			PropertyDescriptorCollection col = typedlist.GetItemProperties (new PropertyDescriptor [0]);
+			PropertyDescriptor prop = col.Find (member, true);
+								
+			if (prop == null) {
+				if (col.Count > 0) {
+					prop = col[0];
+
+					if (prop == null) {
+						return null;
+					}
+				}
+			}
+			
+			IEnumerable result =  (IEnumerable)(prop.GetValue (list[0]));
+			return result;		
+			
+		}
 
 		internal void InvalidateCurrentRowHeader ()
 		{
@@ -1788,7 +1864,7 @@ namespace System.Windows.Forms
 			}
 
 			datamember = member;
-			real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, member);
+			real_datasource = GetDataSource (datasource, member);
 			DisconnectListManagerEvents ();
 			cached_currencymgr = cached_currencymgr_events = null;
 			return true;
@@ -1800,12 +1876,13 @@ namespace System.Windows.Forms
 			if (source != null && source as IListSource != null && source as IList != null) {
 				throw new Exception ("Wrong complex data binding source");
 			}
-
+			
+			current_cell = new DataGridCell ();
 			datasource = source;
 			DisconnectListManagerEvents ();
 			cached_currencymgr = cached_currencymgr_events = null;
 			try {
-				real_datasource = DataSourceHelper.GetResolvedDataSource (datasource, DataMember);
+				real_datasource = GetDataSource (datasource, DataMember);
 			}catch (Exception e) {				
 				real_datasource = source;
 			}
@@ -1815,8 +1892,7 @@ namespace System.Windows.Forms
 		}
 
 		private void SetNewDataSource ()
-		{	
-			current_cell = new DataGridCell ();
+		{				
 			current_style.GridColumnStyles.Clear ();
 			current_style.CreateColumnsForTable (false);
 			CalcAreasAndInvalidate ();			
@@ -1847,7 +1923,7 @@ namespace System.Windows.Forms
 		
 		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{	
-			if (String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {			
+			if (ListManager != null && String.Compare (ListManager.ListName, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {			
 				CurrentTableStyle = (DataGridTableStyle)e.Element;
 				((DataGridTableStyle) e.Element).CreateColumnsForTable (false);				
 			}
@@ -1979,21 +2055,23 @@ namespace System.Windows.Forms
 
 		private void ScrollToRow (int old_row, int new_row)
 		{
-			Rectangle invalidate = new Rectangle ();
-
+			Rectangle invalidate = new Rectangle ();			
+			
 			if (new_row > old_row) { // Scrolldown
 				int scrolled_rows = new_row - old_row;
 				int pixels = scrolled_rows * RowHeight;
-
+				Rectangle rows_area = grid_drawing.CellsArea; // Cells area - partial rows space
+				rows_area.Height = grid_drawing.CellsArea.Height - grid_drawing.CellsArea.Height % RowHeight;
+				
 				invalidate.X =  grid_drawing.CellsArea.X;
-				invalidate.Y =  grid_drawing.CellsArea.Y + grid_drawing.CellsArea.Height - pixels;
+				invalidate.Y =  grid_drawing.CellsArea.Y + rows_area.Height - pixels;
 				invalidate.Width = grid_drawing.CellsArea.Width;
 				invalidate.Height = pixels;
 
-				XplatUI.ScrollWindow (Handle, grid_drawing.CellsArea, 0, -pixels, false);
+				XplatUI.ScrollWindow (Handle, rows_area, 0, -pixels, false);
 
 			} else { // ScrollUp
-				int scrolled_rows = old_row - new_row;
+				int scrolled_rows = old_row - new_row;				
 				int pixels = scrolled_rows * RowHeight;
 
 				invalidate.X =  grid_drawing.CellsArea.X;
@@ -2004,7 +2082,7 @@ namespace System.Windows.Forms
 			}
 
 			// Right now we use ScrollWindow Invalidate, let's leave remarked it here for X11 if need it
-			//Invalidate ();
+			//Invalidate (invalidate);
 			Invalidate (grid_drawing.RowsHeadersArea);
 		}
 

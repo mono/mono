@@ -154,7 +154,7 @@ namespace System.Windows.Forms
 			UpdateVisibleRowCount (); // need it to be able to calcultate the need of horz scrollbar
 			if (SetUpVerticalScrollBar ()) { // We need a Vertical ScrollBar
 				
-				if (grid.parentrows_visible) {
+				if (grid.ShowParentRowsVisible) {
 					parent_rows.Width -= grid.vert_scrollbar.Width;
 				}
 
@@ -213,7 +213,7 @@ namespace System.Windows.Forms
 				cells_area.Y = client_area.Y;
 			}
 
-			if (grid.parentrows_visible) {
+			if (grid.ShowParentRowsVisible) {
 				cells_area.Y += parent_rows.Height;
 			}
 
@@ -243,7 +243,7 @@ namespace System.Windows.Forms
 				columnshdrs_area.Y = client_area.Y;
 			}
 
-			if (grid.parentrows_visible) {
+			if (grid.ShowParentRowsVisible) {
 				columnshdrs_area.Y += parent_rows.Height;
 			}
 
@@ -274,7 +274,7 @@ namespace System.Windows.Forms
 
 		public void CalcParentRows ()
 		{
-			if (grid.parentrows_visible == false) {
+			if (grid.ShowParentRowsVisible == false) {
 				parent_rows = Rectangle.Empty;
 				return;
 			}
@@ -306,7 +306,7 @@ namespace System.Windows.Forms
 				rowshdrs_area.Y = client_area.Y;
 			}
 
-			if (grid.parentrows_visible) {
+			if (grid.ShowParentRowsVisible) {
 				rowshdrs_area.Y += parent_rows.Height;
 			}
 

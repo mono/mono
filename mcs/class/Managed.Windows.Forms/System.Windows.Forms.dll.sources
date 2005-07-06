@@ -91,7 +91,6 @@ System.Windows.Forms/DataGridTableStyle.cs
 System.Windows.Forms/DataGridTextBox.cs
 System.Windows.Forms/DataGridTextBoxColumn.cs
 System.Windows.Forms/DataObject.cs
-System.Windows.Forms/DataSourceHelper.cs
 System.Windows.Forms/DateBoldEventArgs.cs
 System.Windows.Forms/DateBoldEventHandler.cs
 System.Windows.Forms/DateRangeEventArgs.cs

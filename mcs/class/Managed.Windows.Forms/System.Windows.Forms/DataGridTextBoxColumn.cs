@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 	{
 		#region	Local Variables
 		private string format;
-		private IFormatProvider format_provider;
+		private IFormatProvider format_provider = null;
 		private StringFormat string_format =  new StringFormat ();
 		private DataGridTextBox textbox = null;
 		#endregion	// Local Variables

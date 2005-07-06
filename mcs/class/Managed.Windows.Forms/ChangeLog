@@ -1,3 +1,12 @@
+2005-07-06  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: default value
+	* GridColumnStylesCollection.cs: fixes event firing, checking MappingName
+	* GridTableStylesCollection.cs: fixes checking MappingName
+	* DataGridDrawingLogic.cs: fixes drawing logic issues
+	* DataSourceHelper.cs: rewritten to make compatible with more data sources
+	* DataGrid.cs: fixes	
+
 
 2005-07-04  Ritvik Mayank  <mritvik@novell.com>
 
