@@ -1,4 +1,4 @@
-2005-06-19  Alexander Olk  <xenomorph2@onlinehome.de>
+2005-07-06  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* MimeGenerated.cs: Use case sensitive comparer for
 	  NameValueCollections
