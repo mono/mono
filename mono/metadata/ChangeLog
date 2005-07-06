@@ -1,5 +1,8 @@
 2005-07-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_create_runtime_vtable): Allow MONO_TYPE_FNPTR as
+	type of fields with RVA.
+
 	* class.c (mono_class_from_generic_parameter): Avoid calling mono_class_init ()
 	for this pseudo class.
 	(my_mono_class_from_generic_parameter): Likewise.
