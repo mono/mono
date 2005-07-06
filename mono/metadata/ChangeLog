@@ -1,5 +1,12 @@
 2005-07-06  Martin Baulig  <martin@ximian.com>
 
+	* icall.c
+	(ves_icall_FieldInfo_SetValueInternal): Add MONO_TYPE_GENERICINST.
+
+	* object.c (set_value): Add MONO_TYPE_GENERICINST; fixes #75299.
+
+2005-07-06  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (mono_metadata_class_equal): Add MONO_TYPE_SZARRAY if
 	we're doing a signature-only comparision; fixes #74945.
 
