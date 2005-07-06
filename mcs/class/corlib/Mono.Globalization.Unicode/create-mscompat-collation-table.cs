@@ -101,7 +101,7 @@ namespace Mono.Globalization.Unicode
 			"WITH ACUTE;", "WITH GRAVE;", "WITH DOT ABOVE;", " MIDDLE DOT;",
 			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
 			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
-			" OGONEK;", " CEDILLA;",
+			"WITH OGONEK;", "WITH CEDILLA;",
 			//
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
 			" STROKE;", " CIRCUMFLEX AND ACUTE;",
@@ -123,7 +123,7 @@ namespace Mono.Globalization.Unicode
 			" OGONEK AND MACRON",
 			//
 			"WITH OVERLINE",
-			" HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
+			"WITH HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
 			" DOUBLE GRAVE;",
 			" INVERTED BREVE",
 			" PRECEDED BY APOSTROPHE",
@@ -2507,10 +2507,12 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				if (IsIgnorable (i))
 					continue;
 
-				// FIXME: actually this reset should not be done
-				// but here I put for easy goal.
+				// FIXME: actually those reset should not be 
+				// done but here I put for easy goal.
 				if (i == 0x0700)
 					fillIndex [0x7] = 0xE2;
+				if (i == 0x2016)
+					fillIndex [0x7] = 0x77;
 
 				// SPECIAL CASES:
 				switch (i) {
@@ -3029,7 +3031,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			// Arabic
 			if ('\u2135' <= c && c <= '\u2138')
 				return 4;
-			if ('\uFE80' <= c && c < '\uFE8E') {
+			if ('\uFE80' <= c && c < '\uFF00') {
 				// 2(Isolated)/8(Final)/0x18(Medial)
 				switch (decompType [(int) c]) {
 				case DecompositionIsolated:

@@ -1,5 +1,10 @@
 2005-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : more diacritical fixes.
+	  primary weight fixes on punctuations in category 07.
+
+2005-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : several diacritical fixes.
 	* TestDriver.cs : sortkey dumper should use StringSort.
 
