@@ -1,5 +1,10 @@
 2005-07-06  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c (mono_metadata_class_equal): Add MONO_TYPE_SZARRAY if
+	we're doing a signature-only comparision; fixes #74945.
+
+2005-07-06  Martin Baulig  <martin@ximian.com>
+
 	* class-internals.h (MonoGenericClass): Moved some things out into
 	a new `MonoInflatedGenericClass' type.	
 	(MonoInflatedGenericClass): New type; the `klass' of a
