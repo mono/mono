@@ -127,9 +127,11 @@ namespace Mono.Windows.Serialization {
 		}
 
 		// top of stack is a reference to an object
-		// pushes the name of the instance to attach to, the name of 
-		//   the property, and a reference to an object
-		public void CreateAttachedProperty(Type attachedTo, string propertyName, Type propertyType)
+		// pushes a reference to the expression that
+		// will set the property and a reference to
+		// the name of the temp variable to hold the
+		// property
+		public void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType)
 		{
 			string varName = "temp";
 			varName += tempIndex;
@@ -149,7 +151,7 @@ namespace Mono.Windows.Serialization {
 		}
 
 		// pops 2 items: the name of the property, and the object to attach to
-		public void EndAttachedProperty()
+		public void EndDependencyProperty()
 		{
 			objects.RemoveAt(objects.Count - 1);
 			CodeExpression call = (CodeExpression)(objects[objects.Count - 1]);
@@ -198,10 +200,10 @@ namespace Mono.Windows.Serialization {
 		// top of stack is reference to a property
 		public void CreatePropertyText(string text, Type propertyType, Type converterType)
 		{
-			CreateAttachedPropertyText(text, propertyType, converterType);
+			CreateDependencyPropertyText(text, propertyType, converterType);
 		}
 		// top of stack is reference to an attached property
-		public void CreateAttachedPropertyText(string text, Type propertyType, Type converterType)
+		public void CreateDependencyPropertyText(string text, Type propertyType, Type converterType)
 		{
 			CodeExpression expr = new CodePrimitiveExpression(text);
 			if (converterType != null) {

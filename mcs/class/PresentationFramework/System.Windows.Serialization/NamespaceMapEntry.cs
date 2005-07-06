@@ -1,5 +1,5 @@
 //
-// XamlWriter.cs
+// NamespaceMapEntry.cs
 //
 // Author:
 //   Iain McCoy (iain@mccoy.id.au)
@@ -26,33 +26,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Reflection;
+namespace System.Windows.Serialization {
+	public class NamespaceMapEntry {
+		private string xmlNamespace, clrNamespace, assemblyName;
+		public NamespaceMapEntry() {
+		}
 
-namespace Mono.Windows.Serialization {
-	public interface XamlWriter {
-		void CreateTopLevel(Type parent, string className);
+		public NamespaceMapEntry(string xmlNamespace, string assemblyName, string clrNamespace)
+		{
+			this.xmlNamespace = xmlNamespace;
+			this.clrNamespace = clrNamespace;
+			this.assemblyName = assemblyName;
+		}
 
-		void CreateObject(Type type);
-		void CreateElementText(string text);
-		void EndObject();
-
-		void CreateProperty(PropertyInfo property);
-		void CreatePropertyText(string text, Type propertyType, Type converterType);
-		void CreatePropertyDelegate(string functionName, Type propertyType);
-		void EndProperty();
-	
-
-		void CreateEvent(EventInfo evt);
-		void CreateEventDelegate(string functionName, Type eventDelegateType);
-		void EndEvent();
-
-		void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType);
-		void CreateDependencyPropertyText(string text, Type propertyType, Type converterType);
-		void EndDependencyProperty();
-
-		void CreateCode(string code);
-
-		void Finish();
+		public string XmlNamespace {
+			get { return xmlNamespace; }
+			set { xmlNamespace = value; }
+		}
+		public string ClrNamespace {
+			get { return clrNamespace; }
+			set { clrNamespace = value; }
+		}
+		public string AssemblyName {
+			get { return assemblyName; }
+			set { assemblyName = value; }
+		}
 	}
 }

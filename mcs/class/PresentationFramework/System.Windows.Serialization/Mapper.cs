@@ -1,5 +1,5 @@
 //
-// Mapping.cs
+// Mapper.cs
 //
 // Author:
 //   Iain McCoy (iain@mccoy.id.au)
@@ -30,34 +30,38 @@ using System;
 using System.Reflection;
 using System.Collections;
 
-namespace Mono.Windows.Serialization {
+namespace System.Windows.Serialization {
 
 	class Mapper {
-		private Hashtable mappings = new Hashtable();
-		public void AddMapping(Mapping mapping)
+		private ArrayList map = new ArrayList();
+		private ArrayList assemblyNames = new ArrayList();
+		private Hashtable assemblyPath = new Hashtable();
+
+		public Mapper(string[] assemblyNames)
 		{
-			if (mappings.ContainsKey(mapping.XmlNamespace))
-				{}// TODO: throw exception
-
-			mappings[mapping.XmlNamespace] = mapping;
+			foreach (string name in assemblyNames) {
+				this.assemblyNames.Add(name);
+			}
 		}
-
-		public Type Resolve(string clrNamespace, string classname)
+		public Mapper(string[] assemblyNames, NamespaceMapEntry[] map) : this(assemblyNames)
 		{
-			return ((Mapping)mappings[clrNamespace]).Resolve(classname);
+			foreach (NamespaceMapEntry entry in map) {
+				this.map.Add(entry);
+			}
 		}
-	}
-
-	class Mapping {
-		string xmlNamespace;
-		string clrNamespace;
-		string assemblyName;
+		
+		public void AddMappingProcessingInstruction(string xmlNamespace, string clrNamespace, string assemblyName)
+		{
+			NamespaceMapEntry entry = new NamespaceMapEntry(xmlNamespace, assemblyName, clrNamespace);
+			map.Add(entry);
+		}
 
 		// this function takes the processing instructions value, which
 		// should be something like: 
 		//   Assembly="Foo.dll" ClrNamespace="Foo" XmlNamespace="foo"
-		public Mapping(string instruction)
+		public void AddMappingProcessingInstruction(string instruction)
 		{
+			string xmlNamespace = null, clrNamespace = null, assemblyName = null;
 			string name = "", value = "";
 			int i = 0;
 			instruction = instruction.Trim();
@@ -103,28 +107,44 @@ namespace Mono.Windows.Serialization {
 					assemblyName == null || 
 					xmlNamespace == null)
 				throw new Exception("underspecified");
+			AddMappingProcessingInstruction(xmlNamespace, clrNamespace, assemblyName);
 		}
 	
-		public Mapping(string clrNamespace, string assembly, string xmlNamespace) 
+		public string[] GetAssemblyNames()
 		{
-			this.clrNamespace = clrNamespace;
-			this.assemblyName = assembly;
-			this.xmlNamespace = xmlNamespace;
+			return (string[])assemblyNames.ToArray(typeof(string));
+		}
+		public NamespaceMapEntry[] GetNamespaceMap()
+		{
+			return (NamespaceMapEntry[])map.ToArray(typeof(NamespaceMapEntry));
 		}
 
-		public string XmlNamespace {
-			get { return xmlNamespace; }
-		}
-
-		public Type Resolve(string className)
+		public Type GetType(string xmlNamespace, string localName)
 		{
-			Assembly assembly = Assembly.Load(assemblyName);
-			Type type = assembly.GetType(clrNamespace + "." + className);
-			if (type == null) {
-				throw new MappingException(className, XmlNamespace);
-			} else {
-				return type;
+			foreach (NamespaceMapEntry entry in map)
+			{
+				Assembly assembly = getAssembly(entry.AssemblyName);
+				Type type = assembly.GetType(entry.ClrNamespace + "." + localName);
+				if (type != null)
+					return type;
 			}
+			return null;
+		}
+
+		Assembly getAssembly(string name)
+		{
+			if (assemblyPath[name] != null)
+				name = (string)assemblyPath[name];
+			return Assembly.Load(name);
+		}
+
+		public void SetAssemblyPath(string assemblyName, string assemblyPath)
+		{
+			this.assemblyPath[assemblyName] = assemblyPath;
+		}
+
+		public static Mapper DefaultMapper {
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

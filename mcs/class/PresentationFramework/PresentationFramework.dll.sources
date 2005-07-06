@@ -1,7 +1,8 @@
 System.Windows.Serialization/IAddChild.cs
+System.Windows.Serialization/Mapper.cs
+System.Windows.Serialization/NamespaceMapEntry.cs
 Mono.Windows.Serialization/CodeWriter.cs
 Mono.Windows.Serialization/Exceptions.cs
-Mono.Windows.Serialization/Mapping.cs
 Mono.Windows.Serialization/XamlParser.cs
 Mono.Windows.Serialization/XamlWriter.cs
 Assembly/AssemblyInfo.cs

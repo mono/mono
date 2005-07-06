@@ -33,17 +33,18 @@ using System.IO;
 using System.Xml;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Serialization;
 
 namespace Mono.Windows.Serialization {
 	public class XamlParser {
 		public const string XAML_NAMESPACE = "http://schemas.microsoft.com/winfx/xaml/2005";
-		private Mapper mapper = new Mapper();
+		private Mapper mapper = new Mapper(new string[] { });
 		private XmlReader reader;
 		private XamlWriter writer;
 
 		private enum CurrentType { Object, 
 			Property, 
-			AttachedProperty,
+			DependencyProperty,
 	       		Code }
 
 		private class ParserState {
@@ -101,8 +102,7 @@ namespace Mono.Windows.Serialization {
 		{
 			if (reader.Name != "Mapping")
 				Console.WriteLine("Unknown processing instruction");
-			Mapping mapping = new Mapping(reader.Value);
-			mapper.AddMapping(mapping);
+			mapper.AddMappingProcessingInstruction(reader.Value);
 		}
 
 		void parseElement()
@@ -133,7 +133,7 @@ namespace Mono.Windows.Serialization {
 			if (isNameOfAncestorClass(beforeDot, (Type)currentState.obj))
 				parseNormalPropertyElement(afterDot);
 			else
-				parseAttachedPropertyElement(beforeDot, afterDot);
+				parseDependencyPropertyElement(beforeDot, afterDot);
 		}
 
 		// check if the given name is the name of an ancestor of 
@@ -162,9 +162,9 @@ namespace Mono.Windows.Serialization {
 		{
 			if (currentState.type == CurrentType.Object) {
 				writer.CreateElementText(reader.Value);
-			} else if (currentState.type == CurrentType.AttachedProperty) {
+			} else if (currentState.type == CurrentType.DependencyProperty) {
 				DependencyProperty dp = (DependencyProperty)currentState.obj;
-				writer.CreateAttachedPropertyText(reader.Value, dp.PropertyType, 
+				writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType, 
 						getTypeConverter(dp.PropertyType));
 			} else {
 				PropertyInfo prop = (PropertyInfo)currentState.obj;
@@ -224,7 +224,7 @@ namespace Mono.Windows.Serialization {
 		}
 
 
-		void parseAttachedPropertyElement(string attachedTo, string propertyName)
+		void parseDependencyPropertyElement(string attachedTo, string propertyName)
 		{
 			Type currentType = (Type)currentState.obj;
 			ensureDependencyObject(currentType);
@@ -234,9 +234,9 @@ namespace Mono.Windows.Serialization {
 			oldStates.Add(currentState);
 			currentState = new ParserState();
 			currentState.obj = dp;
-			currentState.type = CurrentType.AttachedProperty;
+			currentState.type = CurrentType.DependencyProperty;
 
-			writer.CreateAttachedProperty(typeAttachedTo, propertyName, dp.PropertyType);
+			writer.CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
 		}
 
 		void parseObjectElement()
@@ -245,7 +245,7 @@ namespace Mono.Windows.Serialization {
 			string objectName = null;
 			bool isEmpty = reader.IsEmptyElement;
 			
-			parent = mapper.Resolve(reader.NamespaceURI, reader.Name);
+			parent = mapper.GetType(reader.NamespaceURI, reader.Name);
 			objectName = reader.GetAttribute("Class", XAML_NAMESPACE);
 			if (parent.GetInterface("System.Windows.Serialization.IAddChild") == null)
 				{} //TODO: throw exception
@@ -264,7 +264,7 @@ namespace Mono.Windows.Serialization {
 					if (reader.LocalName.IndexOf(".") < 0)
 						parseLocalPropertyAttribute();
 					else
-						parseContextPropertyAttribute();
+						parseDependencyPropertyAttribute();
 				} while (reader.MoveToNextAttribute());
 			}
 			
@@ -334,7 +334,7 @@ namespace Mono.Windows.Serialization {
 		void ensureDependencyObject(Type currentType)
 		{
 			if (!currentType.IsSubclassOf(typeof(System.Windows.DependencyObject)))
-					throw new Exception("Attached properties can only be set on "+
+					throw new Exception("Dependency properties can only be set on "+
 							"DependencyObjects (not " + currentType.Name + ")");
 		}
 		Type findTypeToAttachTo(string attachedTo, string propertyName)
@@ -360,7 +360,7 @@ namespace Mono.Windows.Serialization {
 			return (DependencyProperty)propField.GetValue(null);
 		}
 
-		void parseContextPropertyAttribute()
+		void parseDependencyPropertyAttribute()
 		{
 			int index = reader.LocalName.LastIndexOf('.');
 			string attachedTo = reader.LocalName.Substring(0, index);
@@ -371,10 +371,10 @@ namespace Mono.Windows.Serialization {
 			Type typeAttachedTo = findTypeToAttachTo(attachedTo, propertyName);
 			DependencyProperty dp = getDependencyProperty(typeAttachedTo, propertyName);
 			
-			writer.CreateAttachedProperty(typeAttachedTo, propertyName, dp.PropertyType);
-			writer.CreateAttachedPropertyText(reader.Value, dp.PropertyType, 
+			writer.CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
+			writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType, 
 					getTypeConverter(dp.PropertyType));
-			writer.EndAttachedProperty();
+			writer.EndDependencyProperty();
 		}
 
 		void parseEndElement()
@@ -385,8 +385,8 @@ namespace Mono.Windows.Serialization {
 				writer.EndObject();
 			else if (currentState.type == CurrentType.Property)
 				writer.EndProperty();
-			else if (currentState.type == CurrentType.AttachedProperty)
-				writer.EndAttachedProperty();
+			else if (currentState.type == CurrentType.DependencyProperty)
+				writer.EndDependencyProperty();
 				
 			pop();
 		}

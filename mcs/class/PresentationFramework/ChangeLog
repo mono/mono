@@ -1,3 +1,14 @@
+2005-07-06  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/Mapping.cs: removed in favour of
+	System.Windows.Serialization/Mapper.cs
+	* System.Windows.Serialization/Mapper.cs: Added because it is the
+	microsoft-documented mapping API
+	* Mono.Windows.Serialization/XamlParser.cs: transition to the new
+	mapper system, also some general converging on the name
+	DependencyProperty throughout instead of ContextProperty or
+	AttachedProperty.
+
 2005-07-05  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/XamlParser.cs,
