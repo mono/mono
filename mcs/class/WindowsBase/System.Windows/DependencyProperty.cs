@@ -40,7 +40,7 @@ namespace System.Windows {
 		private DependencyProperty (bool isAttached, string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
 		{
 			this.isAttached = isAttached;
-			this.defaultMetadata = defaultMetadata;
+			this.defaultMetadata = (defaultMetadata == null ? new PropertyMetadata() : defaultMetadata);
 			this.name = name;
 			this.ownerType = ownerType;
 			this.propertyType = propertyType;
@@ -145,7 +145,7 @@ namespace System.Windows {
 		
 		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
 		{
-			DependencyProperty dp = new DependencyProperty(true, name, propertyType, null, null, null);
+			DependencyProperty dp = new DependencyProperty(true, name, propertyType, ownerType, defaultMetadata, validateValueCallback);
 			DependencyObject.register(ownerType, dp);
 			return dp;
 		}

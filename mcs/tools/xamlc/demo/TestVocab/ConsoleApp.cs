@@ -37,15 +37,14 @@ namespace Xaml.TestVocab.Console {
 		}
 
 
-		public static readonly DependencyProperty RepetitionsProperty = DependencyProperty.RegisterAttached("Repetitions", typeof(int), typeof(ConsoleApp));
+		public static readonly DependencyProperty RepetitionsProperty = DependencyProperty.RegisterAttached("Repetitions", typeof(int), typeof(ConsoleApp), new PropertyMetadata(1));
 		public static void SetRepetitions(DependencyObject obj, int number)
 		{
 			obj.SetValue(RepetitionsProperty, number);
 		}
-		public static int GetRepetitions(DependencyObject d)
+		public static int GetRepetitions(DependencyObject obj)
 		{
-			object v = d.GetValue(RepetitionsProperty);
-			return (v == null ? 1 : (int)v);
+			return (int)obj.GetValue(RepetitionsProperty);
 		}
 	}
 }

@@ -30,6 +30,7 @@ namespace System.Windows {
 	public class PropertyMetadata {
 		private object defaultValue;
 		private GetValueOverride getValueOverride;
+		private SetValueOverride setValueOverride;
 		private bool isSealed;
 		private PropertyInvalidatedCallback propertyInvalidatedCallback;
 		private ReadLocalValueOverride readLocalValueOverride;
@@ -61,6 +62,57 @@ namespace System.Windows {
 		public WriteLocalValueOverride WriteLocalValueOverride {
 			get { return writeLocalValueOverride; }
 			set { writeLocalValueOverride = value; }
+		}
+
+		public PropertyMetadata()
+		{
+		}
+		public PropertyMetadata(GetValueOverride getValueOverride)
+		{
+			this.getValueOverride = getValueOverride;
+		}
+		public PropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+		{
+			this.getValueOverride = getValueOverride;
+			this.setValueOverride = setValueOverride;
+		}
+		public PropertyMetadata(object defaultValue)
+		{
+			this.defaultValue = defaultValue;
+		}
+		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback)
+		{
+			this.defaultValue = defaultValue;
+			this.propertyInvalidatedCallback = propertyInvalidatedCallback;
+		}
+		
+		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
+		{
+			this.defaultValue = defaultValue;
+			this.propertyInvalidatedCallback = propertyInvalidatedCallback;
+			this.getValueOverride = getValueOverride;
+		}
+		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+		{
+			this.defaultValue = defaultValue;
+			this.propertyInvalidatedCallback = propertyInvalidatedCallback;
+			this.getValueOverride = getValueOverride;
+			this.setValueOverride = setValueOverride;
+		}
+		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback)
+		{
+			this.propertyInvalidatedCallback = propertyInvalidatedCallback;
+		}
+		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
+		{
+			this.propertyInvalidatedCallback = propertyInvalidatedCallback;
+			this.getValueOverride = getValueOverride;
+		}
+		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride, SetValueOverride setValueOverride)
+		{
+			this.propertyInvalidatedCallback = propertyInvalidatedCallback;
+			this.getValueOverride = getValueOverride;
+			this.setValueOverride = setValueOverride;
 		}
 
 		[MonoTODO()]		

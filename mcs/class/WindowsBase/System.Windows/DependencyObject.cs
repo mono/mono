@@ -58,7 +58,10 @@ namespace System.Windows {
 		
 		public object GetValue(DependencyProperty dp)
 		{
-			return properties[dp];
+			object val = properties[dp];
+			if (val == null)
+				val = dp.DefaultMetadata.DefaultValue;
+			return val;
 		}
 		
 		[MonoTODO()]		

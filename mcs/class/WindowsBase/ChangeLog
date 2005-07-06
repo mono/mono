@@ -1,3 +1,11 @@
+2005-07-06  Iain McCoy  <iain@mccoy.id.au>
+
+	* System.Windows/DependencyObject.cs,
+	  System.Windows/DependencyProperty.cs,
+	  System.Windows/PropertyMetadata.cs,
+	  System.Windows/Callbacks.cs: Added constructors to PropertyMetadata,
+	  added support for default values of properties
+
 2005-07-02  Iain McCoy  <iain@mccoy.id.au>
 
 	* whole folder: initial implementation of the DependencyProperty

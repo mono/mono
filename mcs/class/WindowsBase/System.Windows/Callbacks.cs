@@ -31,6 +31,7 @@ namespace System.Windows {
 	public delegate bool ValidateValueCallback(object value);
 	public delegate void PropertyInvalidatedCallback(DependencyObject d);
 	public delegate Object GetValueOverride(DependencyObject d);
+	public delegate Object SetValueOverride(DependencyObject d);
 	public delegate Object ReadLocalValueOverride(DependencyObject d);
 	public delegate void WriteLocalValueOverride(DependencyObject d, Object value);
 }
