@@ -853,11 +853,11 @@ namespace Mono.CSharp {
 
 			StringBuilder sb = new StringBuilder (valid [0]);
 			for (int i = 1; i < count - 1; i++) {
-				sb.Append ("', '");
+				sb.Append ("', `");
 				sb.Append (valid [i]);
 			}
 			if (count > 1) {
-				sb.Append ("' or '");
+				sb.Append ("' or `");
 				sb.Append (valid [count - 1]);
 			}
 
@@ -3224,7 +3224,8 @@ namespace Mono.CSharp {
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null){
 					if ((f.ModFlags & Modifiers.VOLATILE) != 0){
-						Error (676, "volatile variable: can not take its address, or pass as ref/out parameter");
+						Report.Warning (420, 1, loc, "`{0}': A volatile fields cannot be passed using a ref or out parameter",
+							f.GetSignatureForError ());
 						return;
 					}
 					

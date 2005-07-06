@@ -1880,6 +1880,10 @@ namespace Mono.CSharp
 				identifiers [pos] = new CharArrayHashtable (pos);
 
 			val = new String (id_builder, 0, pos);
+			if (RootContext.Version == LanguageVersion.ISO_1 && ((string)val).IndexOf ("__") != -1) {
+				Report.Error (1638, Location, 
+					"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val);
+			}
 
 			char [] chars = new char [pos];
 			Array.Copy (id_builder, chars, pos);

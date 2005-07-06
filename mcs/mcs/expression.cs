@@ -5082,13 +5082,8 @@ namespace Mono.CSharp {
 
 		public static void Error_WrongNumArguments (Location loc, String name, int arg_count)
 		{
-			if (name == "Finalize" && arg_count == 0) {
-				Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
-			}
-			else {
-				Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
-					name, arg_count);
-			}
+			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
+				name, arg_count);
 		}
 
                 static void Error_InvokeOnDelegate (Location loc)
@@ -5289,8 +5284,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (method.Name == "Finalize" && Arguments == null) {
-				Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
+			if (Arguments == null && method.Name == "Finalize") {
+				if (mg.IsBase)
+					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
+				else
+					Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
 				return null;
 			}
 
