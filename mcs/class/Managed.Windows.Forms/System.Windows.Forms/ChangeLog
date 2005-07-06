@@ -1,3 +1,8 @@
+2005-06-19  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* MimeGenerated.cs: Use case sensitive comparer for
+	  NameValueCollections
+
 2005-07-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: bug fixes, code refactoring 

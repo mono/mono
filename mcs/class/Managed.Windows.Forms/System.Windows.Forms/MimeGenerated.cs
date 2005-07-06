@@ -8,13 +8,13 @@ namespace System.Windows.Forms
 {
 	internal struct MimeGenerated
 	{
-		public static NameValueCollection Aliases = new NameValueCollection();
-		public static NameValueCollection SubClasses = new NameValueCollection();
+		public static NameValueCollection Aliases = new NameValueCollection( new CaseInsensitiveHashCodeProvider(), new Comparer( System.Globalization.CultureInfo.CurrentUICulture ) );
+		public static NameValueCollection SubClasses = new NameValueCollection( new CaseInsensitiveHashCodeProvider(), new Comparer( System.Globalization.CultureInfo.CurrentUICulture ) );
 
-		public static NameValueCollection GlobalPatternsShort = new NameValueCollection();
-		public static NameValueCollection GlobalPatternsLong = new NameValueCollection();
-		public static NameValueCollection GlobalLiterals = new NameValueCollection();
-		public static NameValueCollection GlobalSufPref = new NameValueCollection();
+		public static NameValueCollection GlobalPatternsShort = new NameValueCollection( new CaseInsensitiveHashCodeProvider(), new Comparer( System.Globalization.CultureInfo.CurrentUICulture ) );
+		public static NameValueCollection GlobalPatternsLong = new NameValueCollection( new CaseInsensitiveHashCodeProvider(), new Comparer( System.Globalization.CultureInfo.CurrentUICulture ) );
+		public static NameValueCollection GlobalLiterals = new NameValueCollection( new CaseInsensitiveHashCodeProvider(), new Comparer( System.Globalization.CultureInfo.CurrentUICulture ) );
+		public static NameValueCollection GlobalSufPref = new NameValueCollection( new CaseInsensitiveHashCodeProvider(), new Comparer( System.Globalization.CultureInfo.CurrentUICulture ) );
 		public static Hashtable MimeTypes = new Hashtable();
 
 		public static ArrayList Matches80Plus = new ArrayList();
