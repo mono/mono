@@ -2177,7 +2177,8 @@ namespace Mono.CSharp {
 				param_types [i] = pd.ParameterType (i);
 
 				Argument a = (Argument) arguments [i];
-				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr) ||
+				    (a.Expr is AnonymousMethod))
 					continue;
 
 				arg_types [i] = a.Type;
