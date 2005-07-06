@@ -1,3 +1,7 @@
+2005-07-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* GCHandle.cs: Add 2.0 FromIntPtr/ToIntPtr methods.
+
 2005-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeEnvironment.cs: I get better results when calling Demand.

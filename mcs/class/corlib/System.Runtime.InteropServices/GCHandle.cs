@@ -149,6 +149,16 @@ namespace System.Runtime.InteropServices
 		{
 			return handle.GetHashCode ();
 		}
+
+		public static GCHandle FromIntPtr (IntPtr value)
+		{
+			return (GCHandle)value;
+		}
+
+		public static IntPtr ToIntPtr (GCHandle value)
+		{
+			return (IntPtr)value;
+		}
 #endif
 	} 
 }
