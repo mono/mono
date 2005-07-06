@@ -1,3 +1,10 @@
+2005-07-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_from_generic_parameter): Avoid calling mono_class_init ()
+	for this pseudo class.
+	(my_mono_class_from_generic_parameter): Likewise.
+	(mono_class_init): Allow interfaces to have cctors.
+
 2005-07-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* domain-internals.h domain.c: Add functionality to create MonoJitInfo structures
