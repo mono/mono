@@ -226,7 +226,7 @@ public class Outline {
 		
 		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (DefaultFlags))) {
 			
-			if (! ShowMember (ei.GetAddMethod ()))
+			if (! ShowMember (ei.GetAddMethod (true)))
 				continue;
 			
 			if (first)
@@ -281,7 +281,7 @@ public class Outline {
 
 	void OutlineEvent (EventInfo ei)
 	{
-		MethodBase accessor = ei.GetAddMethod ();
+		MethodBase accessor = ei.GetAddMethod (true);
 		
 		o.Write (GetMethodVisibility (accessor));
 		o.Write ("event ");
