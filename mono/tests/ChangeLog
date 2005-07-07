@@ -1,5 +1,8 @@
 2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* thread6.cs: Disable part of the test that currently doesn't work. Add
+	new tests from a bug report.
+
 	* appdomain-unload.cs: Add tests for threadpools.
 
 2005-07-04  Raja R Harinath  <rharinath@novell.com>
