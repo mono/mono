@@ -1,4 +1,9 @@
-2005-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : More diacritical fixes.
+	  Georgian characters do not have level 2 weights but level 3.
+
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : Roman numeral characters
 	  have diacritical weight. quick hack for control signs (U+2400..)

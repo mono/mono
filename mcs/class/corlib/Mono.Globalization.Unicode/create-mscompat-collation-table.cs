@@ -98,6 +98,7 @@ namespace Mono.Globalization.Unicode
 		string [] diacritics = new string [] {
 			// LATIN
 			"WITH VERTICAL LINE ABOVE;",
+			"WITH GRAVE ACCENT;", "WITH ACUTE ACCENT;", "WITH CIRCUMFLEX ACCENT;",
 			"WITH ACUTE;", "WITH GRAVE;", "WITH DOT ABOVE;", " MIDDLE DOT;",
 			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
 			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
@@ -129,7 +130,7 @@ namespace Mono.Globalization.Unicode
 			" INVERTED BREVE",
 			"ROMAN NUMERAL",
 			" PRECEDED BY APOSTROPHE",
-			" HORN;",
+			"WITH HORN;",
 			" LINE BELOW;", " CIRCUMFLEX AND HOOK ABOVE",
 			" PALATAL HOOK",
 			" DOT BELOW;",
@@ -155,6 +156,7 @@ namespace Mono.Globalization.Unicode
 		byte [] diacriticWeights = new byte [] {
 			// LATIN.
 			5,
+			0xF, 0xE, 0x12,
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
 			//
@@ -2230,7 +2232,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 					continue;
 				AddCharMap (c, 0x21, 0);
 				if (c < '\u10F6')
-					AddCharMap ((char) (c - 0x30), 0x21, 0, 0x12);
+					AddCharMap ((char) (c - 0x30), 0x21, 0);
 				fillIndex [0x21] += 5;
 			}
 
@@ -3060,6 +3062,9 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			// CJK compat
 			if ('\u3192' <= c && c <= '\u319F')
 				return 0;
+			// Japanese reading marks
+			if (c == '\u3001' || c == '\u3002')
+				return 2;
 			// Korean
 			if ('\u11A8' <= c && c <= '\u11F9')
 				return 2;
@@ -3069,6 +3074,9 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				return 5;
 			if ('\u3165' <= c && c <= '\u318E')
 				return 4;
+			// Georgian Capital letters
+			if ('\u10A0' <= c && c <= '\u10C5')
+				return 0x10;
 			// numbers
 			if ('\u2776' <= c && c <= '\u277F')
 				return 4;
