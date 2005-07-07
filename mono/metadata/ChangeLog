@@ -1,3 +1,13 @@
+2005-07-07  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h
+	(MonoInflatedGenericClass): Moved the `MonoType *parent' field
+	into `MonoDynamicGenericClass' since we only need it for dynamic
+	types.
+
+	* reflection.c (mono_class_bind_generic_parameters): We don't need
+	to compute the `parent' here.
+
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
