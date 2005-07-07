@@ -1,5 +1,10 @@
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : math symbols U+25A0-U+2600 are
+	  implemented (no stub). Some other fixes on category 8-A.
+
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : some minor fixes on Arabic,
 	  Korean and Japanese sortkey weights.
 

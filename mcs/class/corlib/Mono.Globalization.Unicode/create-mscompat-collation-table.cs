@@ -919,7 +919,7 @@ sw.Close ();
 			}
 
 			// Box names
-			if (0x2500 <= cp && cp < 0x25B0) {
+			if (0x2500 <= cp && cp < 0x2600) {
 				int value = 0;
 				// flags:
 				// up:1 down:2 right:4 left:8 vert:16 horiz:32
@@ -944,49 +944,93 @@ sw.Close ();
 					10, 10, 11, 11,
 					12, 12, 13, 13,
 					14, 14, 14, 14};
-				if (s.IndexOf ("BOX DRAWINGS ") > 0) {
+				if (s.IndexOf ("BOX DRAWINGS ") >= 0) {
 					int flag = 0;
-					if (s.IndexOf (" UP") > 0)
+					if (s.IndexOf (" UP") >= 0)
 						flag |= 1;
-					if (s.IndexOf (" DOWN") > 0)
+					if (s.IndexOf (" DOWN") >= 0)
 						flag |= 2;
-					if (s.IndexOf (" RIGHT") > 0)
+					if (s.IndexOf (" RIGHT") >= 0)
 						flag |= 4;
-					if (s.IndexOf (" LEFT") > 0)
+					if (s.IndexOf (" LEFT") >= 0)
 						flag |= 8;
-					if (s.IndexOf (" VERTICAL") > 0)
+					if (s.IndexOf (" VERTICAL") >= 0)
 						flag |= 16;
-					if (s.IndexOf (" HORIZONTAL") > 0)
+					if (s.IndexOf (" HORIZONTAL") >= 0)
 						flag |= 32;
 
 					int fidx = flags.IndexOf (flag);
 					value = fidx < 0 ? fidx : offsets [fidx];
-				} else if (s.IndexOf ("BLOCK") > 0) {
-					if (s.IndexOf ("ONE EIGHTH") > 0)
+				} else if (s.IndexOf ("BLOCK") >= 0) {
+					if (s.IndexOf ("ONE EIGHTH") >= 0)
 						value = 0x12;
-					else if (s.IndexOf ("ONE QUARTER") > 0)
+					else if (s.IndexOf ("ONE QUARTER") >= 0)
 						value = 0x13;
-					else if (s.IndexOf ("THREE EIGHTHS") > 0)
+					else if (s.IndexOf ("THREE EIGHTHS") >= 0)
 						value = 0x14;
-					else if (s.IndexOf ("HALF") > 0)
+					else if (s.IndexOf ("HALF") >= 0)
 						value = 0x15;
-					else if (s.IndexOf ("FIVE EIGHTHS") > 0)
+					else if (s.IndexOf ("FIVE EIGHTHS") >= 0)
 						value = 0x16;
-					else if (s.IndexOf ("THREE QUARTERS") > 0)
+					else if (s.IndexOf ("THREE QUARTERS") >= 0)
 						value = 0x17;
-					else if (s.IndexOf ("SEVEN EIGHTHS") > 0)
+					else if (s.IndexOf ("SEVEN EIGHTHS") >= 0)
 						value = 0x18;
 					else
 						value = 0x19;
-				} else if (s.IndexOf ("SHADE") > 0)
+				}
+				else if (s.IndexOf ("SHADE") >= 0)
 					value = 0x19;
+				else if (s.IndexOf ("SQUARE") >= 0)
+					value = 0xBC - 0xE5;
+				else if (s.IndexOf ("VERTICAL RECTANGLE") >= 0)
+					value = 0xBE - 0xE5;
+				else if (s.IndexOf ("RECTANGLE") >= 0)
+					value = 0xBD - 0xE5;
+				else if (s.IndexOf ("PARALLELOGRAM") >= 0)
+					value = 0xBF - 0xE5;
+				else if (s.IndexOf ("TRIANGLE") >= 0) {
+					if (s.IndexOf ("UP-POINTING") >= 0)
+						value = 0xC0 - 0xE5;
+					else if (s.IndexOf ("RIGHT-POINTING") >= 0)
+						value = 0xC1 - 0xE5;
+					else if (s.IndexOf ("DOWN-POINTING") >= 0)
+						value = 0xC2 - 0xE5;
+					else if (s.IndexOf ("LEFT-POINTING") >= 0)
+						value = 0xC3 - 0xE5;
+				}
+				else if (s.IndexOf ("POINTER") >= 0) {
+					if (s.IndexOf ("RIGHT-POINTING") >= 0)
+						value = 0xC4 - 0xE5;
+					else if (s.IndexOf ("LEFT-POINTING") >= 0)
+						value = 0xC5 - 0xE5;
+				}
+				else if (s.IndexOf ("DIAMOND") >= 0)
+					value = 0xC6 - 0xE5;
+				else if (s.IndexOf ("FISHEYE") >= 0)
+					value = 0xC7 - 0xE5;
+				else if (s.IndexOf ("LOZENGE") >= 0)
+					value = 0xC8 - 0xE5;
+				else if (s.IndexOf ("BULLSEYE") >= 0)
+					value = 0xC9 - 0xE5;
+				else if (s.IndexOf ("CIRCLE") >= 0) {
+					if (cp == 0x25D6) // it could be IndexOf ("LEFT HALF BLACK CIRCLE")
+						value = 0xCA - 0xE5;
+					else if (cp == 0x25D7) // it could be IndexOf ("RIGHT HALF BLACK CIRCLE")
+						value = 0xCB - 0xE5;
+					else
+						value = 0xC9 - 0xE5;
+				}
+				if (0x25DA <= cp && cp <= 0x25E5)
+					value = 0xCD + cp - 0x25DA - 0xE5;
+
 				// SPECIAL CASE: BOX DRAWING DIAGONAL patterns
 				switch (cp) {
 				case 0x2571: value = 0xF; break;
 				case 0x2572: value = 0x10; break;
 				case 0x2573: value = 0x11; break;
 				}
-				if (value >= 0)
+				if (value != 0)
 					boxValues.Add (new DictionaryEntry (
 						cp, value));
 			}
@@ -1645,6 +1689,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
 
+			fillIndex [0x1] = 0x0C;
+			for (int i = 0x0EC8; i <= 0x0ECD; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
 			// overflow of level 2 unless we start before 0xDD).
@@ -1698,12 +1747,17 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				boxLv2 [i] = 3;
 			foreach (DictionaryEntry de in boxValues) {
 				int cp = (int) de.Key;
-				int idx = (int) de.Value;
+				int off = (int) de.Value;
 				if (map [cp].Defined)
 					continue;
-				fillIndex [0x9] = (byte) (0xE5 + idx);
-				AddCharMapGroup ((char) cp, 0x9, 0, boxLv2 [idx]);
-				boxLv2 [idx]++;
+				if (off < 0) {
+					fillIndex [0x9] = (byte) (0xE5 + off);
+					AddCharMapGroup ((char) cp, 0x9, 0, boxLv2 [-off]++);
+				}
+				else {
+					fillIndex [0x9] = (byte) (0xE5 + off);
+					AddCharMapGroup ((char) cp, 0x9, 0, boxLv2 [off]++);
+				}
 			}
 			// Some special characters (slanted)
 			fillIndex [0x9] = 0xF4;
@@ -1719,7 +1773,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (!IsIgnorable (cp) &&
 					uc == UnicodeCategory.CurrencySymbol &&
-					cp != '$')
+					cp != '$' ||
+					cp == 0xAC)
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 			// byte other symbols
@@ -1732,6 +1787,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 
+			fillIndex [0xA] = 0x1C; // FIXME: it won't be needed
+			for (int cp = 0x20A0; cp <= 0x20AB; cp++)
+				AddCharMap ((char) cp, 0xA, 1, 0);
 			fillIndex [0xA] = 0x2F; // FIXME: it won't be needed
 			for (int cp = 0x2600; cp <= 0x2613; cp++)
 				AddCharMap ((char) cp, 0xA, 1, 0);
@@ -2675,10 +2733,14 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			AddCharMapGroup ('\u22B0', 0x8, 1, 0); // precedes under relation
 
 			for (int cp = 0; cp < 0x2300; cp++) {
-				if (cp == 0x200)
-					cp = 0x2200; // skip to 2200
 				if (cp == 0xAC) // SPECIAL CASE: skip
 					continue;
+				if (cp == 0x200) {
+					cp = 0x2200; // skip to 2200
+					fillIndex [0x8] = 0x21;
+				}
+				if (cp == 0x2295)
+					fillIndex [0x8] = 0x3;
 				if (!map [cp].Defined &&
 //					Char.GetUnicodeCategory ((char) cp) ==
 //					UnicodeCategory.MathSymbol)
