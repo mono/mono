@@ -104,7 +104,8 @@ namespace Mono.Globalization.Unicode
 			"WITH OGONEK;", "WITH CEDILLA;",
 			//
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
-			" STROKE;", " CIRCUMFLEX AND ACUTE;",
+			"WITH STROKE;", " CIRCUMFLEX AND ACUTE;",
+			"STROKE OVERLAY",
 			" DIAERESIS AND ACUTE;", "WITH CIRCUMFLEX AND GRAVE;", " L SLASH;",
 			" DIAERESIS AND GRAVE;",
 			" BREVE AND ACUTE;",
@@ -156,7 +157,7 @@ namespace Mono.Globalization.Unicode
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
 			//
-			0x1D, 0x1D, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
+			0x1D, 0x1D, 0x1E, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
 			0x20, 0x21, 0x22, 0x22, 0x23, 0x24,
 			//
 			0x25, 0x25, 0x25, 0x26, 0x28, 0x28, 0x28,
@@ -771,7 +772,10 @@ sw.Close ();
 			this.decompValues = (int [])
 				decompValues.ToArray (typeof (int));
 		}
-		
+
+		char previousLatinTarget = char.MinValue;
+		byte [] diacriticalOffset = new byte ['Z' - 'A' + 1];
+
 		void ProcessUnidataLine (string s, ArrayList decompValues)
 		{
 			int idx = s.IndexOf ('#');
@@ -810,6 +814,14 @@ sw.Close ();
 					offset = lidx + 14;
 				}
 				if (lidx < 0) {
+					lidx = s.IndexOf ("LETTER CAPITAL ");
+					offset = lidx + 15;
+				}
+				if (lidx < 0) {
+					lidx = s.IndexOf ("LETTER SCRIPT ");
+					offset = lidx + 14;
+				}
+				if (lidx < 0) {
 					lidx = s.IndexOf ("LETTER ");
 					offset = lidx + 7;
 				}
@@ -817,15 +829,34 @@ sw.Close ();
 				char n = s [offset + 1];
 				char target = char.MinValue;
 				if ('A' <= c && c <= 'Z' &&
-					(n == ' ') || n == ';')
+					(n == ' ') || n == ';') {
 					target = c;
-				// FIXME: they are still not working fine.
-				if (s.Substring (offset).StartsWith ("OI;")) // 01A2,01A3
-					target = 'O';
+					// FIXME: After 'Z', I cannot reset this state.
+					previousLatinTarget = c == 'Z' ? char.MinValue : c;
+				}
+
 				if (s.Substring (offset).StartsWith ("ALPHA"))
 					target = 'A';
-				if (s.Substring (offset).StartsWith ("SCHWA"))
+				else if (s.Substring (offset).StartsWith ("TONE SIX"))
+					target = 'B';
+				else if (s.Substring (offset).StartsWith ("OPEN O"))
+					target = 'C';
+				else if (s.Substring (offset).StartsWith ("SCHWA"))
 					target = 'E';
+				else if (s.Substring (offset).StartsWith ("ENG"))
+					target = 'N';
+				else if (s.Substring (offset).StartsWith ("OI;")) // 01A2,01A3
+					target = 'O';
+				else if (s.Substring (offset).StartsWith ("YR;")) // 01A2,01A3
+					target = 'R';
+				else if (s.Substring (offset).StartsWith ("TONE TWO"))
+					target = 'S';
+				else if (s.Substring (offset).StartsWith ("ESH"))
+					target = 'S';
+
+				if (target == char.MinValue)
+					target = previousLatinTarget;
+
 				if (target != char.MinValue) {
 					ArrayList entry = (ArrayList) latinMap [target];
 					if (entry == null) {
@@ -833,6 +864,14 @@ sw.Close ();
 						latinMap [target] = entry;
 					}
 					entry.Add (cp);
+					// FIXME: This secondary weight is hack.
+					// They are here because they must not
+					// be identical to the corresponding
+					// ASCII latins.
+					if (c != target && diacritical [cp] == 0) {
+						diacriticalOffset [c - 'A']++;
+						diacritical [cp] = (byte) (diacriticalOffset [c - 'A'] + 0x7C);
+					}
 				}
 			}
 
@@ -957,7 +996,9 @@ if (diacritics.Length != diacriticWeights.Length)
 throw new Exception (String.Format ("Should not happen. weights are {0} while labels are {1}", diacriticWeights.Length, diacritics.Length));
 			for (int d = 0; d < diacritics.Length; d++) {
 				if (s.IndexOf (diacritics [d]) > 0) {
-					diacritical [cp] |= diacriticWeights [d];
+					diacritical [cp] += diacriticWeights [d];
+					if (s.IndexOf ("COMBINING") >= 0)
+						diacritical [cp] -= (byte) 2;
 					continue;
 				}
 				// also process "COMBINING blah" here

@@ -130,15 +130,19 @@ namespace Mono.Globalization.Unicode
 		{
 			if (c < '\u3041')
 				return false;
+			else if ('\uFF66' <= c && c < '\uFF9E')
+				return true;
+			else if ('\u3300' <= c)
+				return false;
+			else if (c < '\u3099')
+				return true;
+			else if (c < '\u309D')
+				return false;
 			else if (c < '\u3100')
 				return true;
 			else if (c < '\u32D0')
 				return false;
 			else if (c < '\u32FF')
-				return true;
-			else if (c < '\uFF66')
-				return false;
-			else if (c < '\uFF9F')
 				return true;
 			return false;
 		}
