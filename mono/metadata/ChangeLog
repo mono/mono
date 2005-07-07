@@ -1,3 +1,9 @@
+2005-07-07  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_type_get_name_full): Return NULL for
+	MONO_TYPE_NAME_FORMAT_FULL_NAME if we have any generic parameters;
+	fixes #75408.
+
 2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (mono_threads_abort_appdomain_threads): Wait for threads to
