@@ -274,11 +274,20 @@ namespace System.Data.Odbc
                 
                 public static SQL_C_TYPE ConvertToSqlCType (OdbcType type)
                 {
-                        return OdbcTypeMap [type].SqlCType;
+			// FIXME: currently, odbc provider does not support unicode.
+			// instead of WCHAR, use currently CHAR
+			if (type == OdbcType.VarChar)
+				return SQL_C_TYPE.CHAR;
+			return OdbcTypeMap [type].SqlCType;
+				
                 }
                 
                 public static SQL_TYPE ConvertToSqlType (OdbcType type)
                 {
+			// FIXME: currently, odbc provider does not support unicode.
+			// instead of WVARCHAR, use currently VARCHAR
+			if (type == OdbcType.VarChar)
+				return SQL_TYPE.VARCHAR;
                         return OdbcTypeMap [type].SqlType;
                 }
 

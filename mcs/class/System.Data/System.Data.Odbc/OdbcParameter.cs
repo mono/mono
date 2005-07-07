@@ -32,6 +32,7 @@
 //
 
 using System;
+using System.Text;
 using System.Data;
 using System.Data.Common;
 #if NET_2_0
@@ -45,7 +46,7 @@ namespace System.Data.Odbc
 #if NET_2_0
         public sealed class OdbcParameter : DbParameterBase, ICloneable
 #else
-	public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+		public sealed class OdbcParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 #endif // NET_2_0
 	{
 		#region Fields
@@ -124,7 +125,10 @@ namespace System.Data.Odbc
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public OdbcParameter(string name, OdbcType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
+		public OdbcParameter(string name, OdbcType dataType, int size, 
+				     ParameterDirection direction, bool isNullable, 
+				     byte precision, byte scale, string srcColumn, 
+				     DataRowVersion srcVersion, object value)
 			: this (name, dataType, size, srcColumn)
 		{
 			this.Direction = direction;
@@ -329,21 +333,16 @@ namespace System.Data.Odbc
 				string paramValueString = Value.ToString();
 				// Treat everything else as a string
 				// Init string buffer
-				 if (Value is String)
-                                        paramValueString = "\'"+paramValueString+"\'";
-
-                                 int minSize = Size;
-                                 minSize = Size > 20 ? Size : 20;
-                                 if (Value is String)
-                                         minSize += 2; // for enclosing apos
-				 if (buffer == null || buffer.Length < minSize)
-                                         buffer = new byte[minSize];
-                                 else
-                                         buffer.Initialize();
+				int minSize = Size;
+				minSize = Size > 20 ? Size : 20;
+				if (buffer == null || buffer.Length < minSize)
+					buffer = new byte[minSize];
+				else
+					buffer.Initialize();
                                  
-                                 // Convert value into string and store into buffer
-                                 minSize = paramValueString.Length < minSize ? paramValueString.Length : minSize;
-                                 System.Text.Encoding.ASCII.GetBytes(paramValueString, 0, minSize, buffer, 0);
+				// Convert value into string and store into buffer
+				minSize = paramValueString.Length < minSize ? paramValueString.Length : minSize;
+				Encoding.ASCII.GetBytes(paramValueString, 0, minSize, buffer, 0);
 			}
 			bufferIsSet = true;
 		}
@@ -363,7 +362,6 @@ namespace System.Data.Odbc
                 [MonoTODO]
                 public override void PropertyChanging () 
                 {
-                        throw new NotImplementedException ();
                 }
                 
                 [MonoTODO]

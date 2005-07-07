@@ -1,3 +1,11 @@
+2005-07-07  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcTypeConverter.cs: ConvertToSqlType & ConvertToSqlCType: map
+	VarChar to SQL_C_CHAR and SQL_VARCHAR respective instead of WCHAR
+	and WVARCHAR as temporary fix.
+
+	* OdbcParameter.cs: setBuffer: string types need not be quoted.
+
 2005-06-28  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: GetPrimaryKeys (): use the length indicator
