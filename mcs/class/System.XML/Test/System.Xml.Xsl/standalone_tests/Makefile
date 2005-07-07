@@ -8,7 +8,7 @@
 #	is in failed.lst
 #
 
-.SUFFIXES: .cs .exe
+.SUFFIXES: .cs .exe .dll
 
 RUNTIME = mono
 CSCOMPILE = mcs
@@ -17,31 +17,47 @@ TEST_ARCHIVE = xslt-testsuite-03.ZIP
 CATALOG = testsuite/TESTS/catalog.xml
 FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
-TEST_EXE = xslttest.exe
-TEST_FLAGS = --report:TestResult.xml --xml --details $(TEST_DOM) 
+nunit_MONO_PATH="../../../../../class/lib/default"
+mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
+NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug $(nunit_MONO_PATH)/nunit-console.exe
+
+FIXTURE=MonoTests.oasis_xslt.SuiteBuilder
+CLEAN_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=TestResult.xml /include=Clean
+FAILED_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=FailedTestResult.xml /include=KnownFailures
+ALL_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=AllTestResult.xml /out=AllTestResult.log /include=KnownFailures,Clean
+
+TEST_PROG=xslttest.dll
+GENERATE_EXE=generate.exe
 
 ifdef TEST_DOM
-REFERENCE_RESULTS_NAME = domresults
+REFERENCE_RESULTS_NAME=domresults
 else
-REFERENCE_RESULTS_NAME = results
+REFERENCE_RESULTS_NAME=results
 endif
-REFERENCE_RESULTS_ARCHIVE = xslt-reference-$(REFERENCE_RESULTS_NAME).tar.gz
-REFERENCE_RESULTS_URL = http://svn.myrealbox.com/source/trunk/release/test-ext/xslt-standalone/$(REFERENCE_RESULTS_ARCHIVE)
-REFERENCE_RESULTS = $(REFERENCE_RESULTS_NAME)/timestamp
+REFERENCE_RESULTS_ARCHIVE=xslt-reference-$(REFERENCE_RESULTS_NAME).tar.gz
+REFERENCE_RESULTS_URL=http://svn.myrealbox.com/source/trunk/release/test-ext/xslt-standalone/$(REFERENCE_RESULTS_ARCHIVE)
+REFERENCE_RESULTS=$(REFERENCE_RESULTS_NAME)/timestamp
 
-test : $(TEST_EXE) $(FIXED_CATALOG)
+test : $(TEST_PROG) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
 
-# Redirect stdout to /dev/null because it has only xsl:message garbage
-run-test : $(TEST_EXE) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
-	$(RUNTIME) $(RUNTIME_FLAGS) $(TEST_EXE) $(TEST_FLAGS) >/dev/null
+run-test : $(TEST_PROG) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
+	MONO_PATH="$(nunit_MONO_PATH);$(MONO_PATH)" $(NUNIT_CONSOLE) $(TEST_PROG) $(CLEAN_NUNIT_FLAGS)
+	
+run-all-test : $(TEST_PROG) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
+	MONO_PATH="$(nunit_MONO_PATH);$(MONO_PATH)" $(NUNIT_CONSOLE) $(TEST_PROG) $(ALL_NUNIT_FLAGS)
+	
+run-failed-test : $(TEST_PROG) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
+	XSLTTEST_INVERSE_RESULTS="" MONO_PATH="$(nunit_MONO_PATH);$(MONO_PATH)" $(NUNIT_CONSOLE) $(TEST_PROG) $(FAILED_NUNIT_FLAGS)
+	
 
 clean :
-	rm -f TestResult.xml failed.lst missing.lst
-	rm -f $(TEST_EXE)
+	rm -f *TestResult.xml failed.lst missing.lst AllTestResult.log
+	rm -f $(TEST_PROG) $(GENERATE_EXE)
 
 # Be careful to use it!
 distclean : clean
 	rm -rf testsuite
+	rm -rf results domresults
 	rm -f $(TEST_ARCHIVE) $(REFERENCE_RESULTS_ARCHIVE) $(REFERENCE_LIST)
 
 # Check that we are running on MS.NET - otherwise the reference output can be
@@ -53,20 +69,22 @@ else
 	uname | grep CYGWIN || uname | grep Windows
 endif
 	
-create-reference-output : must-be-dotnet $(TEST_EXE)
+create-reference-output : must-be-dotnet $(GENERATE_EXE) $(FIXED_CATALOG)
 	rm -rf $(REFERENCE_RESULTS_NAME)
 ifdef GENERATE_REFERENCE_ON_MONO
-	$(RUNTIME) ./$(TEST_EXE) $(TEST_DOM) --generate
+	$(RUNTIME) ./$(GENERATE_EXE) $(TEST_DOM)
 else
-	./$(TEST_EXE) $(TEST_DOM) --generate
+	./generate.exe $(TEST_DOM)
 endif
 # Must cd to work with any path separator symbols
 	cd $(REFERENCE_RESULTS_NAME); echo "$(TEST_DOM)" > generate_options 
 	tar -c $(REFERENCE_RESULTS_NAME) | gzip > $(REFERENCE_RESULTS_ARCHIVE)
 	@echo "Now you can upload $(REFERENCE_RESULTS_ARCHIVE) to $(REFERENCE_RESULTS_URL)"
 
-.cs.exe :
-	$(CSCOMPILE) $<
+$(GENERATE_EXE) : generate.cs XsltTestUtils.cs
+	$(CSCOMPILE) generate.cs XsltTestUtils.cs -out:$@
+$(TEST_PROG) : xslttest.cs XsltTestUtils.cs
+	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs -r:NUnit.core -r:NUnit.framework -out:$@ -t:library
 
 catalog-fixed : $(FIXED_CATALOG)
 
@@ -85,7 +103,7 @@ $(TEST_ARCHIVE) :
 
 $(REFERENCE_RESULTS) : $(REFERENCE_RESULTS_ARCHIVE)
 	tar -xzf $<
-	touch $@/reference_results
+	touch $@
 
 $(REFERENCE_RESULTS_ARCHIVE) :
 	wget $(REFERENCE_RESULTS_URL)

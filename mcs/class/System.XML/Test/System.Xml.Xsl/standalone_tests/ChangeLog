@@ -1,3 +1,9 @@
+2004-07-06  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile, xslttest.cs: convert to be executed from NUnit
+	* XsltTestUtils.cs, generate.cs: added
+	* fixme.lst: update with currently failing tests
+
 2004-06-28  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile: touch file, not directory, doh!
