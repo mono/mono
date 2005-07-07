@@ -1,3 +1,6 @@
+2005-07-07 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay: To avoid Array modifiers specified on both a variable and its type
+
 2005-07-06 Umadevi S <sumadevi@novell.com>
 	* statement.cs - suppressing warnings due to unused variables in mbas compiler.
 
