@@ -1,3 +1,8 @@
+2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (CACHE_OBJECT): Don't hold the domain lock between CHECK_OBJECT
+	and CACHE_OBJECT.
+
 2005-07-07  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_type_get_name_full): Return NULL for
