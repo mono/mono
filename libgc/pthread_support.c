@@ -168,9 +168,17 @@ void GC_init_parallel();
 
 /* We don't really support thread-local allocation with DBG_HDRS_ALL */
 
+/* work around a dlopen issue (bug #75390), undefs to avoid warnings with redefinitions */
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#include "mono/utils/mono-compiler.h"
+
 static
 #ifdef USE_COMPILER_TLS
-  __thread
+  __thread MONO_TLS_FAST
 #endif
 GC_key_t GC_thread_key;
 

@@ -1,3 +1,9 @@
+
+Thu Jul 7 11:59:42 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_support.c, Makefile.am: make the __thread var use
+	fast access if available (and avoid dlopen issue, bug #75390).
+
 2005-07-05  Ben Maurer  <bmaurer@ximian.com>
 
 	* pthread_stop_world.c (pthread_start_world, _GC_suspend_handler):

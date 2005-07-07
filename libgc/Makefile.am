@@ -22,6 +22,8 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = include doc
 
+INCLUDES=-I$(top_srcdir)/..
+
 #
 # libtool is not capable of creating shared/static versions of a convenience
 # library, so we have to do it ourselves
