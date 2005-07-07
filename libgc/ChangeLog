@@ -1,4 +1,7 @@
+2005-07-07  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile.am (INCLUDES): Add $(top_builddir)/.. to pick up mono's
+	config.h.
 
 Thu Jul 7 12:15:22 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
