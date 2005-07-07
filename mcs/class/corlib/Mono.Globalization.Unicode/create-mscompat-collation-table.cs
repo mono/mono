@@ -1640,6 +1640,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					map [i] = new CharMapEntry (
 						0x1, 0x1, diacritical [i]);
 
+			fillIndex [0x1] = 0xAC;
+			for (int i = 0x07A6; i <= 0x07B0; i++)
+				if (!IsIgnorable (i))
+					AddCharMap ((char) i, 0x1, 1);
+
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
 			// overflow of level 2 unless we start before 0xDD).
@@ -2259,6 +2264,16 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 						AddKanaMap (cp, kanaLines [gyo]);
 					fillIndex [0x22]++;
 
+					if (cp == 0x30AB) {
+						// add small 'ka' (before normal one)
+						AddKanaMap (0x30F5, 1);
+						kanaOffset++;
+					}
+					if (cp == 0x30B1) {
+						// add small 'ke' (before normal one)
+						AddKanaMap (0x30F6, 1);
+						kanaOffset++;
+					}
 					if (cp == 0x3061) {
 						// add small 'Tsu' (before normal one)
 						AddKanaMap (0x3063, 1);
@@ -2374,7 +2389,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			+ "<{\u1113 \u1116}, \u3165,"
 				+ "\u11C5, \u11C6=\u3166,, \u11C7, \u11C8,"
 				+ "\u11AC, \u11C9, \u11AD, \u1103=\u11AE  >"
-			+ "<\u1117, \u11CA, \u1104, \u11CB > \u1105 >"
+			+ "<\u1117, \u11CA, \u1104, \u11CB > \u1105=\u11AF >"
 			+ "<{\u1118 \u111B}, \u11B0, [\u11CC \u11D0], \u11B1,"
 				+ "[\u11D1 \u11D2], \u11B2,"
 				+ "[\u11D3 \u11D5], \u11B3,"
@@ -2708,7 +2723,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 					mod = diacritical [i];
 					break;
 				case 0x13: // Arabic
-					if (diacritical [i] == 0)
+					if (diacritical [i] == 0 && i >= 0xFE8D)
 						mod = 0x8; // default for arabic
 					break;
 				}
