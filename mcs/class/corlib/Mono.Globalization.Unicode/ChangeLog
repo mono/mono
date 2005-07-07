@@ -1,5 +1,11 @@
 2005-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Roman numeral characters
+	  have diacritical weight. quick hack for control signs (U+2400..)
+	  and box drawings.
+
+2005-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : improving Latin mappings.
 	  Setting non-ASCII Latin characters' primary weight between those
 	  ASCII characters, and setting diacritical weight (hacky).

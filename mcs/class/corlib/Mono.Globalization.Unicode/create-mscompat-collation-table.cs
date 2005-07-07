@@ -127,6 +127,7 @@ namespace Mono.Globalization.Unicode
 			"WITH HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
 			" DOUBLE GRAVE;",
 			" INVERTED BREVE",
+			"ROMAN NUMERAL",
 			" PRECEDED BY APOSTROPHE",
 			" HORN;",
 			" LINE BELOW;", " CIRCUMFLEX AND HOOK ABOVE",
@@ -163,7 +164,7 @@ namespace Mono.Globalization.Unicode
 			0x25, 0x25, 0x25, 0x26, 0x28, 0x28, 0x28,
 			0x29, 0x2A, 0x2B, 0x2C, 0x2F, 0x30,
 			//
-			0x40, 0x43, 0x43, 0x43, 0x44, 0x46, 0x48,
+			0x40, 0x43, 0x43, 0x43, 0x44, 0x46, 0x47, 0x48,
 			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x5A,
 			//
 			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 0x68,
@@ -975,6 +976,13 @@ sw.Close ();
 						value = 0x18;
 					else
 						value = 0x19;
+				} else if (s.IndexOf ("SHADE") > 0)
+					value = 0x19;
+				// SPECIAL CASE: BOX DRAWING DIAGONAL patterns
+				switch (cp) {
+				case 0x2571: value = 0xF; break;
+				case 0x2572: value = 0x10; break;
+				case 0x2573: value = 0x11; break;
 				}
 				if (value >= 0)
 					boxValues.Add (new DictionaryEntry (
@@ -2584,6 +2592,9 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				}
 			}
 			// Control pictures
+			// FIXME: it should not need to reset level 1, but
+			// it's for easy goal.
+			fillIndex [0x7] = 0xB6;
 			for (int i = 0x2400; i <= 0x2421; i++)
 				AddCharMap ((char) i, 0x7, 1, 0);
 			#endregion
@@ -3066,7 +3077,7 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 			if ('\u2776' <= c && c <= '\u2793')
 				return 0xC;
 			if ('\u2160' <= c && c <= '\u216F')
-				return 0x18;
+				return 0x10;
 			if ('\u2181' <= c && c <= '\u2182')
 				return 0x18;
 			// Arabic
