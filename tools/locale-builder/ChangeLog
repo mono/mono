@@ -1,3 +1,8 @@
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : Fixed bug #75499. There were hy_AM.xml and
+	  hy_AM_REVISED.xml files in the locale builder archive.
+
 2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : basic pattern string should be added to extra pattern

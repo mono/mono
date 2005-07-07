@@ -1,3 +1,7 @@
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2005-07-06  Martin Baulig  <martin@ximian.com>
 
 	* icall.c

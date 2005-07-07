@@ -84,6 +84,8 @@ namespace Mono.Tools.LocaleBuilder {
 
 			foreach (string file in Directory.GetFiles ("locales", "*.xml")) {
 				string fn = Path.GetFileNameWithoutExtension (file);
+				if (fn == "hy_AM")
+					continue; // see bug #75499
 				if (locales_regex == null || locales_regex.IsMatch (fn)) {
 					ParseLocale (fn);
                                 }
