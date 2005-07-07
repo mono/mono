@@ -80,8 +80,7 @@ libMonoSupportW_la_SOURCES =			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =					\
-		$(top_builddir)/mono/io-layer/libwapi.la	\
-		$(top_builddir)/mono/mini/libmono.la
+		$(GLIB_LIBS)
 
 # 
 # Use this target to refresh the values in map.[ch]

@@ -1,3 +1,8 @@
+
+Thu Jul 7 12:35:20 EDT 2005 Paolo Molaro <lupus@ximian.com>
+
+	*supportw.c, Makefile.am: remove calls and link to libmono/libwapi.
+
 2005-07-01  Daniel Drake  <dsd@gentoo.org>
 
 	* sys-xattr.c: Support FreeBSD's extattr implementation. Slight API rework

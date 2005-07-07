@@ -86,6 +86,8 @@ supportw_register_delegate (const char *function_name, void *fnptr)
 static gboolean
 register_assembly (const char *name, int *registered)
 {
+/* we can't use mono or wapi funcions in a support lib */
+#if 0
 	MonoAssembly *assembly;
 	MonoImageOpenStatus status;
 	MonoImage *image;
@@ -127,6 +129,9 @@ register_assembly (const char *name, int *registered)
 	*registered = 1;
 	mono_assembly_close (assembly);
 	return TRUE;
+#else
+	return FALSE;
+#endif
 }
 
 void
