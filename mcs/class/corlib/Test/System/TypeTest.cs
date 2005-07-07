@@ -91,8 +91,22 @@ namespace MonoTests.System
 		}
 	}
 
+#if NET_2_0
+	public class Foo<T> {
+		public T Whatever;
+	
+		public T Test {
+			get { throw new NotImplementedException (); }
+		}
+
+		public T Execute(T a) {
+			return a;
+		}
+	}
+#endif
+
 	[TestFixture]
-	public class TypeTest : Assertion
+	public class TypeTest
 	{
 		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k) {
 		}
@@ -100,103 +114,103 @@ namespace MonoTests.System
 		[Test]
 		public void TestIsAssignableFrom () {
 			// Simple tests for inheritance
-			AssertEquals ("#01", typeof (Super).IsAssignableFrom (typeof (Duper)) , true);
-			AssertEquals ("#02", typeof (Duper).IsAssignableFrom (typeof (Duper)) , true);
-			AssertEquals ("#03", typeof (Object).IsAssignableFrom (typeof (Duper)) , true);
-			AssertEquals ("#04", typeof (ICloneable).IsAssignableFrom (typeof (Duper)) , true);
+			Assert.AreEqual (typeof (Super).IsAssignableFrom (typeof (Duper)) , true, "#01");
+			Assert.AreEqual (typeof (Duper).IsAssignableFrom (typeof (Duper)), true, "#02");
+			Assert.AreEqual (typeof (Object).IsAssignableFrom (typeof (Duper)), true, "#03");
+			Assert.AreEqual (typeof (ICloneable).IsAssignableFrom (typeof (Duper)), true, "#04");
 
 			// Tests for arrays
-			AssertEquals ("#05", typeof (Super[]).IsAssignableFrom (typeof (Duper[])) , true);
-			AssertEquals ("#06", typeof (Duper[]).IsAssignableFrom (typeof (Super[])) , false);
-			AssertEquals ("#07", typeof (Object[]).IsAssignableFrom (typeof (Duper[])) , true);
-			AssertEquals ("#08", typeof (ICloneable[]).IsAssignableFrom (typeof (Duper[])) , true);
+			Assert.AreEqual (typeof (Super[]).IsAssignableFrom (typeof (Duper[])), true, "#05");
+			Assert.AreEqual (typeof (Duper[]).IsAssignableFrom (typeof (Super[])), false, "#06");
+			Assert.AreEqual (typeof (Object[]).IsAssignableFrom (typeof (Duper[])), true, "#07");
+			Assert.AreEqual (typeof (ICloneable[]).IsAssignableFrom (typeof (Duper[])), true, "#08");
 
 			// Tests for multiple dimensional arrays
-			AssertEquals ("#09", typeof (Super[][]).IsAssignableFrom (typeof (Duper[][])) , true);
-			AssertEquals ("#10", typeof (Duper[][]).IsAssignableFrom (typeof (Super[][])) , false);
-			AssertEquals ("#11", typeof (Object[][]).IsAssignableFrom (typeof (Duper[][])) , true);
-			AssertEquals ("#12", typeof (ICloneable[][]).IsAssignableFrom (typeof (Duper[][])) , true);
+			Assert.AreEqual (typeof (Super[][]).IsAssignableFrom (typeof (Duper[][])), true, "#09");
+			Assert.AreEqual (typeof (Duper[][]).IsAssignableFrom (typeof (Super[][])), false, "#10");
+			Assert.AreEqual (typeof (Object[][]).IsAssignableFrom (typeof (Duper[][])), true, "#11");
+			Assert.AreEqual (typeof (ICloneable[][]).IsAssignableFrom (typeof (Duper[][])), true, "#12");
 
 			// Tests for vectors<->one dimensional arrays */
 			Array arr1 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0});
 			Array arr2 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {10});
 
-			AssertEquals ("#13", typeof (int[]).IsAssignableFrom (arr1.GetType ()), true);
-			AssertEquals ("#14", typeof (int[]).IsAssignableFrom (arr2.GetType ()), false);
+			Assert.AreEqual (typeof (int[]).IsAssignableFrom (arr1.GetType ()), true, "#13");
+			Assert.AreEqual (typeof (int[]).IsAssignableFrom (arr2.GetType ()), false, "#14");
 
 			// Test that arrays of enums can be cast to their base types
-			AssertEquals ("#15", typeof (int[]).IsAssignableFrom (typeof (TypeCode[])) , true);
+			Assert.AreEqual (typeof (int[]).IsAssignableFrom (typeof (TypeCode[])), true, "#15");
 
 			// Test that arrays of valuetypes can't be cast to arrays of
 			// references
-			AssertEquals ("#16", typeof (object[]).IsAssignableFrom (typeof (TypeCode[])) , false);			
-			AssertEquals ("#17", typeof (ValueType[]).IsAssignableFrom (typeof (TypeCode[])) , false);
-			AssertEquals ("#18", typeof (Enum[]).IsAssignableFrom (typeof (TypeCode[])) , false);
+			Assert.AreEqual (typeof (object[]).IsAssignableFrom (typeof (TypeCode[])), false, "#16");
+			Assert.AreEqual (typeof (ValueType[]).IsAssignableFrom (typeof (TypeCode[])), false, "#17");
+			Assert.AreEqual (typeof (Enum[]).IsAssignableFrom (typeof (TypeCode[])), false, "#18");
 
 			// Test that arrays of enums can't be cast to arrays of references
-			AssertEquals ("#19", typeof (object[]).IsAssignableFrom (typeof (TheEnum[])) , false);
-			AssertEquals ("#20", typeof (ValueType[]).IsAssignableFrom (typeof (TheEnum[])) , false);
-			AssertEquals ("#21", typeof (Enum[]).IsAssignableFrom (typeof (TheEnum[])) , false);
+			Assert.AreEqual (typeof (object[]).IsAssignableFrom (typeof (TheEnum[])), false, "#19");
+			Assert.AreEqual (typeof (ValueType[]).IsAssignableFrom (typeof (TheEnum[])), false, "#20");
+			Assert.AreEqual (typeof (Enum[]).IsAssignableFrom (typeof (TheEnum[])), false, "#21");
 
 			// Check that ValueType and Enum are recognized as reference types
-			AssertEquals ("#22", typeof (object).IsAssignableFrom (typeof (ValueType)) , true);
-			AssertEquals ("#23", typeof (object).IsAssignableFrom (typeof (Enum)) , true);
-			AssertEquals ("#24", typeof (ValueType).IsAssignableFrom (typeof (Enum)) , true);
+			Assert.AreEqual (typeof (object).IsAssignableFrom (typeof (ValueType)), true, "#22");
+			Assert.AreEqual (typeof (object).IsAssignableFrom (typeof (Enum)), true, "#23");
+			Assert.AreEqual (typeof (ValueType).IsAssignableFrom (typeof (Enum)), true, "#24");
 
-			AssertEquals ("#25", typeof (object[]).IsAssignableFrom (typeof (ValueType[])) , true);
-			AssertEquals ("#26", typeof (ValueType[]).IsAssignableFrom (typeof (ValueType[])) , true);
-			AssertEquals ("#27", typeof (Enum[]).IsAssignableFrom (typeof (ValueType[])) , false);
+			Assert.AreEqual (typeof (object[]).IsAssignableFrom (typeof (ValueType[])), true, "#25");
+			Assert.AreEqual (typeof (ValueType[]).IsAssignableFrom (typeof (ValueType[])), true, "#26");
+			Assert.AreEqual (typeof (Enum[]).IsAssignableFrom (typeof (ValueType[])), false, "#27");
 
-			AssertEquals ("#28", typeof (object[]).IsAssignableFrom (typeof (Enum[])) , true);
-			AssertEquals ("#29", typeof (ValueType[]).IsAssignableFrom (typeof (Enum[])) , true);
-			AssertEquals ("#30", typeof (Enum[]).IsAssignableFrom (typeof (Enum[])) , true);
+			Assert.AreEqual (typeof (object[]).IsAssignableFrom (typeof (Enum[])), true, "#28");
+			Assert.AreEqual (typeof (ValueType[]).IsAssignableFrom (typeof (Enum[])), true, "#29");
+			Assert.AreEqual (typeof (Enum[]).IsAssignableFrom (typeof (Enum[])), true, "#30");
 
 			// Tests for byref types
 			MethodInfo mi = typeof (TypeTest).GetMethod ("ByrefMethod", BindingFlags.Instance|BindingFlags.NonPublic);
-			Assert (mi.GetParameters ()[2].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
-			Assert (mi.GetParameters ()[1].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
+			Assert.IsTrue (mi.GetParameters ()[2].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
+			Assert.IsTrue (mi.GetParameters ()[1].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
 		}
 
 		[Test]
 		public void TestIsSubclassOf () {
-			Assert ("#01", typeof (ICloneable).IsSubclassOf (typeof (object)));
+			Assert.IsTrue (typeof (ICloneable).IsSubclassOf (typeof (object)), "#01");
 
 			// Tests for byref types
 			Type paramType = typeof (TypeTest).GetMethod ("ByrefMethod", BindingFlags.Instance|BindingFlags.NonPublic).GetParameters () [0].ParameterType;
-			Assert ("#02", !paramType.IsSubclassOf (typeof (ValueType)));
-			//Assert ("#03", paramType.IsSubclassOf (typeof (Object)));
-			Assert ("#04", !paramType.IsSubclassOf (paramType));
+			Assert.IsTrue (!paramType.IsSubclassOf (typeof (ValueType)), "#02");
+			//Assert.IsTrue (paramType.IsSubclassOf (typeof (Object)), "#03");
+			Assert.IsTrue (!paramType.IsSubclassOf (paramType), "#04");
 		}
 
 		[Test]
 		public void TestGetMethodImpl() {
 			// Test binding of new slot methods (using no types)
-			AssertEquals("#01", typeof (Base), typeof (Base).GetMethod("TestVoid").DeclaringType);
-			AssertEquals("#02", typeof (NewVTable), typeof (NewVTable).GetMethod("TestVoid").DeclaringType);
+			Assert.AreEqual (typeof (Base), typeof (Base).GetMethod("TestVoid").DeclaringType, "#01");
+			Assert.AreEqual (typeof (NewVTable), typeof (NewVTable).GetMethod ("TestVoid").DeclaringType, "#02");
 
 			// Test binding of new slot methods (using types)
-			AssertEquals("#03", typeof (Base), typeof (Base).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
-			AssertEquals("#04", typeof (NewVTable), typeof (NewVTable).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
+			Assert.AreEqual (typeof (Base), typeof (Base).GetMethod ("TestInt", new Type[] { typeof (int) }).DeclaringType, "#03");
+			Assert.AreEqual (typeof (NewVTable), typeof (NewVTable).GetMethod ("TestInt", new Type[] { typeof (int) }).DeclaringType, "#04");
 
 			// Test overload resolution
-			AssertEquals ("#05", 0, typeof (NewVTable).GetMethod ("Overload", new Type [0]).GetParameters ().Length);
+			Assert.AreEqual (0, typeof (NewVTable).GetMethod ("Overload", new Type[0]).GetParameters ().Length, "#05");
 
 			// Test byref parameters
-			AssertEquals ("#06", null, typeof (NewVTable).GetMethod ("byref_method", new Type [] { typeof (int) }));
+			Assert.AreEqual (null, typeof (NewVTable).GetMethod ("byref_method", new Type[] { typeof (int) }), "#06");
 			Type byrefInt = typeof (NewVTable).GetMethod ("byref_method").GetParameters ()[0].ParameterType;
-			AssertNotNull ("#07", typeof (NewVTable).GetMethod ("byref_method", new Type [] { byrefInt }));
+			Assert.IsNotNull (typeof (NewVTable).GetMethod ("byref_method", new Type[] { byrefInt }), "#07");
 		}
 
 		[Test]
 		public void TestGetPropertyImpl() {
 			// Test getting property that is exact
-			AssertEquals("#01", typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int32) }).DeclaringType);
+			Assert.AreEqual (typeof (NewVTable), typeof (NewVTable).GetProperty ("Item", new Type[1] { typeof (Int32) }).DeclaringType, "#01");
 
 			// Test getting property that is not exact
-			AssertEquals("#02", typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int16) }).DeclaringType);
+			Assert.AreEqual (typeof (NewVTable), typeof (NewVTable).GetProperty ("Item", new Type[1] { typeof (Int16) }).DeclaringType, "#02");
 
 			// Test overriding of properties when only the set accessor is overriden
-			AssertEquals ("#03", 1, typeof (Derived1).GetProperties ().Length);
+			Assert.AreEqual (1, typeof (Derived1).GetProperties ().Length, "#03");
 		}
 
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
@@ -211,39 +225,39 @@ namespace MonoTests.System
 		[Test]
 		public void StructLayoutAttribute () {
 			StructLayoutAttribute attr1 = typeof (TypeTest).StructLayoutAttribute;
-			AssertEquals (LayoutKind.Auto, attr1.Value);
+			Assert.AreEqual (LayoutKind.Auto, attr1.Value);
 
 			StructLayoutAttribute attr2 = typeof (Class1).StructLayoutAttribute;
-			AssertEquals (LayoutKind.Explicit, attr2.Value);
-			AssertEquals (4, attr2.Pack);
-			AssertEquals (64, attr2.Size);
+			Assert.AreEqual (LayoutKind.Explicit, attr2.Value);
+			Assert.AreEqual (4, attr2.Pack);
+			Assert.AreEqual (64, attr2.Size);
 
 			StructLayoutAttribute attr3 = typeof (Class2).StructLayoutAttribute;
-			AssertEquals (LayoutKind.Explicit, attr3.Value);
-			AssertEquals (CharSet.Unicode, attr3.CharSet);
+			Assert.AreEqual (LayoutKind.Explicit, attr3.Value);
+			Assert.AreEqual (CharSet.Unicode, attr3.CharSet);
 		}
 #endif
 
 		[Test]
 		public void Namespace () {
-			AssertEquals (null, typeof (NoNamespaceClass).Namespace);
+			Assert.AreEqual (null, typeof (NoNamespaceClass).Namespace);
 		}
 
 		[Test]
 		public void GetInterfaces () {
 			Type[] t = typeof (Duper).GetInterfaces ();
-			AssertEquals (1, t.Length);
-			AssertEquals (typeof (ICloneable), t [0]);
+			Assert.AreEqual (1, t.Length);
+			Assert.AreEqual (typeof (ICloneable), t[0]);
 
 			Type[] t2 = typeof (IFace3).GetInterfaces ();
-			AssertEquals (2, t2.Length);
+			Assert.AreEqual (2, t2.Length);
 		}
 
 		public int AField;
 
 		[Test]
 		public void GetFieldIgnoreCase () {
-			AssertNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
+			Assert.IsNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
 		}
 
 #if NET_2_0
@@ -258,14 +272,14 @@ namespace MonoTests.System
 
 		[Test]
 		public void GetPropertyAccessorModifiers () {
-			AssertNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
-			AssertNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
+			Assert.IsNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
+			Assert.IsNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
 		}
 #endif
 
 		[Test]
 		public void IsPrimitive () {
-			Assert (typeof (IntPtr).IsPrimitive);
+			Assert.IsTrue (typeof (IntPtr).IsPrimitive);
 		}
 
 		[Test]
@@ -273,7 +287,7 @@ namespace MonoTests.System
 		// Depends on the GAC working, which it doesn't durring make distcheck.
 		[Category ("NotWorking")]
 		public void GetTypeWithWhitespace () {
-			AssertNotNull (Type.GetType
+			Assert.IsNotNull (Type.GetType
 						   (@"System.Configuration.NameValueSectionHandler,
 			System,
 Version=1.0.5000.0,
@@ -289,25 +303,25 @@ PublicKeyToken=b77a5c561934e089"));
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterName, "*");
-			AssertEquals(4, mi.Length);
+			Assert.AreEqual (4, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterName, "Test*");
-			AssertEquals(2, mi.Length);
+			Assert.AreEqual (2, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterName, "TestVoid");
-			AssertEquals(1, mi.Length);
+			Assert.AreEqual (1, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterName, "NonExistingMethod");
-			AssertEquals(0, mi.Length);
+			Assert.AreEqual (0, mi.Length);
 		}
 		
 		[Test]
@@ -317,25 +331,25 @@ PublicKeyToken=b77a5c561934e089"));
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterNameIgnoreCase, "*");
-			AssertEquals(4, mi.Length);
+			Assert.AreEqual (4, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterNameIgnoreCase, "test*");
-			AssertEquals(2, mi.Length);
+			Assert.AreEqual (2, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterNameIgnoreCase, "TESTVOID");
-			AssertEquals(1, mi.Length);
+			Assert.AreEqual (1, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
 			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
 			    Type.FilterNameIgnoreCase, "NonExistingMethod");
-			AssertEquals(0, mi.Length);
+			Assert.AreEqual (0, mi.Length);
 		}
 
 		public int byref_field;
@@ -350,14 +364,14 @@ PublicKeyToken=b77a5c561934e089"));
 		public void ByrefTypes ()
 		{
 			Type t = Type.GetType ("MonoTests.System.TypeTest&");
-			AssertEquals (0, t.GetMethods (BindingFlags.Public|BindingFlags.Instance).Length);
-			AssertEquals (0, t.GetConstructors (BindingFlags.Public|BindingFlags.Instance).Length);
-			AssertEquals (0, t.GetEvents (BindingFlags.Public|BindingFlags.Instance).Length);
-			AssertEquals (0, t.GetProperties (BindingFlags.Public|BindingFlags.Instance).Length);
+			Assert.AreEqual (0, t.GetMethods (BindingFlags.Public | BindingFlags.Instance).Length);
+			Assert.AreEqual (0, t.GetConstructors (BindingFlags.Public | BindingFlags.Instance).Length);
+			Assert.AreEqual (0, t.GetEvents (BindingFlags.Public | BindingFlags.Instance).Length);
+			Assert.AreEqual (0, t.GetProperties (BindingFlags.Public | BindingFlags.Instance).Length);
 
-			AssertNull (t.GetMethod ("ByrefTypes"));
-			AssertNull (t.GetField ("byref_field"));
-			AssertNull (t.GetProperty ("byref_property"));
+			Assert.IsNull (t.GetMethod ("ByrefTypes"));
+			Assert.IsNull (t.GetField ("byref_field"));
+			Assert.IsNull (t.GetProperty ("byref_property"));
 		}
 
 		struct B
@@ -392,6 +406,35 @@ PublicKeyToken=b77a5c561934e089"));
 			Activator.CreateInstance (typeof (TakesInt), new object [] { null });
 			Activator.CreateInstance (typeof (TakesObject), new object [] { null });
 		}
+
+#if NET_2_0
+		[Test]
+		public void FullNameGenerics ()
+		{
+			Type fooType = typeof (Foo<>);
+
+			Assert.IsNotNull (fooType.FullName);
+
+			FieldInfo field = fooType.GetField ("Whatever");
+			Assert.IsNotNull (field);
+			Assert.IsNull (field.FieldType.FullName);
+			Assert.IsNotNull (field.FieldType.ToString ());
+
+			PropertyInfo prop = fooType.GetProperty ("Test");
+			Assert.IsNotNull (prop);
+			Assert.IsNull (prop.PropertyType.FullName);
+			Assert.IsNotNull (prop.PropertyType.ToString ());
+
+			MethodInfo method = fooType.GetMethod("Execute");
+			Assert.IsNotNull (method);
+			Assert.IsNull (method.ReturnType.FullName);
+			Assert.IsNotNull (method.ReturnType.ToString ());
+
+			ParameterInfo[] parameters = method.GetParameters();
+			Assert.AreEqual (1, parameters.Length);
+			Assert.IsNull (parameters[0].ParameterType.FullName);
+			Assert.IsNotNull (parameters[0].ParameterType.ToString ());
+		}
+#endif
 	}
 }
-

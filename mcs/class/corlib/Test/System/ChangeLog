@@ -1,3 +1,8 @@
+2005-07-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added test for bug #75408. Modified tests to use
+	Assert instead of inheriting from deprecated Assertion class.
+
 2005-07-04  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringTest.cs: Add a test for 63981, which seems to be fixed
