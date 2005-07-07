@@ -601,9 +601,14 @@ namespace Mono.CSharp
 				soft_references.Insert (p++, def);
 		}
 
-		static void SetOutputFile (string name)
+		public static string OutputFile
 		{
-			output_file = name;
+			set {
+				output_file = value;
+			}
+			get {
+				return Path.GetFileName (output_file);
+			}
 		}
 
 		static void SetWarningLevel (string s)
@@ -711,7 +716,7 @@ namespace Mono.CSharp
 					Usage ();
 					Environment.Exit (1);
 				}
-				SetOutputFile (args [++i]);
+				OutputFile = args [++i];
 				return true;
 
 			case "--checked":
@@ -949,7 +954,7 @@ namespace Mono.CSharp
 					Usage ();
 					Environment.Exit (1);
 				}
-				SetOutputFile (value);
+				OutputFile = value;
 				return true;
 
 			case "/optimize":

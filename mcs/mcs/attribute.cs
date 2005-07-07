@@ -21,6 +21,7 @@ using System.Runtime.CompilerServices;
 using System.Security; 
 using System.Security.Permissions;
 using System.Text;
+using System.IO;
 
 namespace Mono.CSharp {
 
@@ -84,6 +85,7 @@ namespace Mono.CSharp {
 		bool resolve_error;
 
 		static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
+		static Assembly orig_sec_assembly;
 
 		// non-null if named args present after Resolve () is called
 		PropertyInfo [] prop_info_arr;
@@ -838,14 +840,34 @@ namespace Mono.CSharp {
 		/// <returns></returns>
 		public void ExtractSecurityPermissionSet (ListDictionary permissions)
 		{
-			if (TypeManager.LookupDeclSpace (Type) != null && RootContext.StdLib) {
-				Error_AttributeEmitError ("security custom attributes can not be referenced from defining assembly");
-				return;
+			Type orig_assembly_type = null;
+
+			if (TypeManager.LookupDeclSpace (Type) != null) {
+				if (!RootContext.StdLib) {
+					orig_assembly_type = Type.GetType (Type.FullName);
+				} else {
+					string orig_version_path = Environment.GetEnvironmentVariable ("__SECURITY_BOOTSTRAP_DB");
+					if (orig_version_path == null) {
+						Error_AttributeEmitError ("security custom attributes can not be referenced from defining assembly");
+						return;
+					}
+
+					if (orig_sec_assembly == null) {
+						string file = Path.Combine (orig_version_path, Driver.OutputFile);
+						orig_sec_assembly = Assembly.LoadFile (file);
+					}
+
+					orig_assembly_type = orig_sec_assembly.GetType (Type.FullName, true);
+					if (orig_assembly_type == null) {
+						Report.Warning (-112, 1, Location, "Self-referenced security attribute `{0}' was not found in previous version of assembly");
+						return;
+					}
+				}
 			}
 
 			SecurityAttribute sa;
-			// For all assemblies except corlib we can avoid all hacks
-			if (RootContext.StdLib) {
+			// For all non-selfreferencing security attributes we can avoid all hacks
+			if (orig_assembly_type == null) {
 				sa = (SecurityAttribute) Activator.CreateInstance (Type, pos_values);
 
 				if (prop_info_arr != null) {
@@ -855,15 +877,14 @@ namespace Mono.CSharp {
 					}
 				}
 			} else {
-				Type temp_type = Type.GetType (Type.FullName);
-				// HACK: All mscorlib attributes have same ctor syntax
-				sa = (SecurityAttribute) Activator.CreateInstance (temp_type, new object[] { GetSecurityActionValue () } );
+				// HACK: All security attributes have same ctor syntax
+				sa = (SecurityAttribute) Activator.CreateInstance (orig_assembly_type, new object[] { GetSecurityActionValue () } );
 
-				// All types are from newly created corlib but for invocation with old we need to convert them
+				// All types are from newly created assembly but for invocation with old one we need to convert them
 				if (prop_info_arr != null) {
 					for (int i = 0; i < prop_info_arr.Length; ++i) {
 						PropertyInfo emited_pi = prop_info_arr [i];
-						PropertyInfo pi = temp_type.GetProperty (emited_pi.Name, emited_pi.PropertyType);
+						PropertyInfo pi = orig_assembly_type.GetProperty (emited_pi.Name, emited_pi.PropertyType);
 
 						object old_instance = pi.PropertyType.IsEnum ?
 							System.Enum.ToObject (pi.PropertyType, prop_values_arr [i]) :
