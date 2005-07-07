@@ -97,6 +97,7 @@ namespace Mono.Globalization.Unicode
 
 		string [] diacritics = new string [] {
 			// LATIN
+			"DOUBLE-STRUCK",
 			"WITH VERTICAL LINE ABOVE;",
 			"WITH GRAVE ACCENT;", "WITH ACUTE ACCENT;", "WITH CIRCUMFLEX ACCENT;",
 			"WITH ACUTE;", "WITH GRAVE;", "WITH DOT ABOVE;", " MIDDLE DOT;",
@@ -155,7 +156,7 @@ namespace Mono.Globalization.Unicode
 			};
 		byte [] diacriticWeights = new byte [] {
 			// LATIN.
-			5,
+			3, 5,
 			0xF, 0xE, 0x12,
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
@@ -1692,9 +1693,16 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					map [i] = new CharMapEntry (
 						0x1, 0x1, diacritical [i]);
 
-			fillIndex [0x1] = 0xAC;
-			for (int i = 0x07A6; i <= 0x07B0; i++)
-				if (!IsIgnorable (i))
+			fillIndex [0x1] = 0x94;
+			// syriac dotted nonspacing marks
+			AddCharMap ('\u0732', 0x1, 1);
+			AddCharMap ('\u0735', 0x1, 1);
+			AddCharMap ('\u0738', 0x1, 1);
+			AddCharMap ('\u0739', 0x1, 1);
+			AddCharMap ('\u073C', 0x1, 1);
+			fillIndex [0x1] = 0x9F;
+			for (int i = 0x0730; i <= 0x07B0; i++)
+				if (!IsIgnorable (i) && !map [i].Defined)
 					AddCharMap ((char) i, 0x1, 1);
 
 			fillIndex [0x1] = 0x0C;
@@ -2001,7 +2009,8 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				char c = Char.ToUpper (orderedCyrillic [i], CultureInfo.InvariantCulture);
 				if (!IsIgnorable ((int) c) &&
 					c <= '\u045C' &&
-					Char.IsLetter (c)) {
+					Char.IsLetter (c) &&
+					!map [c].Defined) {
 					AddLetterMap (c, 0x10, 0);
 					fillIndex [0x10] += 3;
 				}

@@ -1,5 +1,10 @@
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : diacritical fix for "double-
+	  struck". Syriac nonspacing fixes.
+
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : more math symbol weight fixes.
 
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
