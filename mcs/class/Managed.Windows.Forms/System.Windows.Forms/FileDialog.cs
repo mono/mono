@@ -39,10 +39,34 @@ using System.Collections.Specialized;
 
 namespace System.Windows.Forms
 {
-	[DefaultProperty("FileName")]
-	[DefaultEvent("FileOk")]
+	[DefaultProperty( "FileName" )]
+	[DefaultEvent( "FileOk" )]
 	public abstract class FileDialog : CommonDialog
 	{
+		internal class FileDialogForm : DialogForm
+		{
+			internal FileDialogForm( CommonDialog owner )
+			: base( owner )
+			{}
+			
+			protected override CreateParams CreateParams
+			{
+				get {
+					CreateParams	cp;
+					
+					ControlBox = true;
+					MinimizeBox = false;
+					MaximizeBox = false;
+					
+					cp = base.CreateParams;
+					cp.Style = (int)( WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS );
+					cp.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+					
+					return cp;
+				}
+			}
+		}
+		
 		internal enum FileDialogType
 		{
 			OpenFileDialog,
@@ -79,34 +103,31 @@ namespace System.Windows.Forms
 		private bool showHiddenFiles = false;
 		
 		internal FileDialogType fileDialogType;
-
-		internal FileDialog() : base() {
+		
+		internal FileDialog( ) : base()
+		{
 		}
-
+		
 		[DefaultValue(true)]
 		public bool AddExtension
 		{
-			get
-			{
+			get {
 				return addExtension;
 			}
 			
-			set
-			{
+			set {
 				addExtension = value;
 			}
 		}
-
+		
 		[DefaultValue(false)]
 		public virtual bool CheckFileExists
 		{
-			get
-			{
+			get {
 				return checkFileExists;
 			}
 			
-			set
-			{
+			set {
 				checkFileExists = value;
 			}
 		}
@@ -114,13 +135,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool CheckPathExists
 		{
-			get
-			{
+			get {
 				return checkPathExists;
 			}
 			
-			set
-			{
+			set {
 				checkPathExists = value;
 			}
 		}
@@ -128,13 +147,11 @@ namespace System.Windows.Forms
 		[DefaultValue("")]
 		public string DefaultExt
 		{
-			get
-			{
+			get {
 				return defaultExt;
 			}
 			
-			set
-			{
+			set {
 				defaultExt = value;
 				
 				// if there is a dot remove it and everything before it
@@ -153,13 +170,11 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool DereferenceLinks
 		{
-			get
-			{
+			get {
 				return dereferenceLinks;
 			}
 			
-			set
-			{
+			set {
 				dereferenceLinks = value;
 			}
 		}
@@ -167,41 +182,36 @@ namespace System.Windows.Forms
 		[DefaultValue("")]
 		public string FileName
 		{
-			get
-			{
+			get {
 				return fileName;
 			}
 			
-			set
-			{
+			set {
 				fileName = value;
 			}
 		}
-
+		
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string[] FileNames
 		{
-			get
-			{
+			get {
 				if ( multiSelect )
 					return fileNames;
 				
 				return null;
 			}
 		}
-
+		
 		[DefaultValue("")]
-		[Localizable(true)]		
+		[Localizable(true)]
 		public string Filter
 		{
-			get
-			{
+			get {
 				return filter;
 			}
 			
-			set
-			{
+			set {
 				if ( value == null )
 					throw new NullReferenceException( "Filter" );
 				
@@ -212,31 +222,27 @@ namespace System.Windows.Forms
 				fileDialogPanel.UpdateFilters( );
 			}
 		}
-
+		
 		[DefaultValue(1)]
 		public int FilterIndex
 		{
-			get
-			{
+			get {
 				return filterIndex;
 			}
 			
-			set
-			{
+			set {
 				filterIndex = value;
 			}
 		}
-
+		
 		[DefaultValue("")]
 		public string InitialDirectory
 		{
-			get
-			{
+			get {
 				return initialDirectory;
 			}
 			
-			set
-			{
+			set {
 				initialDirectory = value;
 			}
 		}
@@ -244,13 +250,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool RestoreDirectory
 		{
-			get
-			{
+			get {
 				return restoreDirectory;
 			}
 			
-			set
-			{
+			set {
 				restoreDirectory = value;
 			}
 		}
@@ -258,13 +262,11 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool ShowHelp
 		{
-			get
-			{
+			get {
 				return showHelp;
 			}
 			
-			set
-			{
+			set {
 				showHelp = value;
 				fileDialogPanel.ResizeAndRelocateForHelpOrReadOnly( );
 			}
@@ -274,13 +276,11 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public string Title
 		{
-			get
-			{
+			get {
 				return title;
 			}
 			
-			set
-			{
+			set {
 				title = value;
 				
 				form.Text = title;
@@ -301,81 +301,69 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool ValidateNames
 		{
-			get
-			{
+			get {
 				return validateNames;
 			}
 			
-			set
-			{
+			set {
 				validateNames = value;
 			}
 		}
 		
 		internal string OpenSaveButtonText
 		{
-			set
-			{
+			set {
 				openSaveButtonText = value;
 			}
 			
-			get
-			{
+			get {
 				return openSaveButtonText;
 			}
 		}
 		
 		internal string SearchSaveLabelText
 		{
-			set
-			{
+			set {
 				searchSaveLabelText = value;
 			}
 			
-			get
-			{
+			get {
 				return searchSaveLabelText;
 			}
 		}
 		
 		internal virtual bool ShowReadOnly
 		{
-			set
-			{
+			set {
 				showReadOnly = value;
 				fileDialogPanel.ResizeAndRelocateForHelpOrReadOnly( );
 			}
 			
-			get
-			{
+			get {
 				return showReadOnly;
 			}
 		}
 		
 		internal virtual bool ReadOnlyChecked
 		{
-			set
-			{
+			set {
 				readOnlyChecked = value;
 				fileDialogPanel.CheckBox.Checked = value;
 			}
 			
-			get
-			{
+			get {
 				return readOnlyChecked;
 			}
 		}
 		
 		internal virtual bool Multiselect
 		{
-			set
-			{
+			set {
 				multiSelect = value;
 				fileDialogPanel.MultiSelect = value;
 			}
 			
-			get
-			{
+			get {
 				return multiSelect;
 			}
 		}
@@ -384,52 +372,44 @@ namespace System.Windows.Forms
 		// Must keep this internal, otherwise our signature doesn't match MS
 		internal bool ShowHiddenFiles
 		{
-			set
-			{
+			set {
 				showHiddenFiles = value;
 			}
 			
-			get
-			{
+			get {
 				return showHiddenFiles;
 			}
 		}
 		
 		internal virtual bool CreatePrompt
 		{
-			set
-			{
+			set {
 				createPrompt = value;
 			}
 			
-			get
-			{
+			get {
 				return createPrompt;
 			}
 		}
 		
 		internal virtual bool OverwritePrompt
 		{
-			set
-			{
+			set {
 				overwritePrompt = value;
 			}
 			
-			get
-			{
+			get {
 				return overwritePrompt;
 			}
 		}
 		
 		internal FileFilter FileFilter
 		{
-			set
-			{
+			set {
 				fileFilter = value;
 			}
 			
-			get
-			{
+			get {
 				return fileFilter;
 			}
 		}
@@ -742,6 +722,8 @@ namespace System.Windows.Forms
 				
 				ContextMenu = contextMenu;
 				
+				Dock = DockStyle.Fill;
+				
 				Controls.Add( smallButtonToolBar );
 				Controls.Add( cancelButton );
 				Controls.Add( openSaveButton );
@@ -795,66 +777,56 @@ namespace System.Windows.Forms
 			
 			public ComboBox FileNameComboBox
 			{
-				set
-				{
+				set {
 					fileNameComboBox = value;
 				}
 				
-				get
-				{
+				get {
 					return fileNameComboBox;
 				}
 			}
 			
 			public string CurrentFileName
 			{
-				set
-				{
+				set {
 					currentFileName = value;
 				}
 				
-				get
-				{
+				get {
 					return currentFileName;
 				}
 			}
 			
 			public DirectoryInfo DirectoryInfo
 			{
-				set
-				{
+				set {
 					directoryInfo = value;
 				}
 				
-				get
-				{
+				get {
 					return directoryInfo;
 				}
 			}
 			
 			public bool MultiSelect
 			{
-				set
-				{
+				set {
 					multiSelect = value;
 					mwfFileView.MultiSelect = value;
 				}
 				
-				get
-				{
+				get {
 					return multiSelect;
 				}
 			}
 			
 			public CheckBox CheckBox
 			{
-				set
-				{
+				set {
 					checkBox = value;
 				}
 				
-				get
-				{
+				get {
 					return checkBox;
 				}
 			}
@@ -1098,6 +1070,8 @@ namespace System.Windows.Forms
 						break;
 				}
 				
+				
+				mwfFileView.UpdateFileView( directoryInfo );
 			}
 			
 			void OnKeyUpFileNameComboBox( object sender, KeyEventArgs e )
@@ -1261,28 +1235,24 @@ namespace System.Windows.Forms
 					
 					public Image Image
 					{
-						set
-						{
+						set {
 							image = value;
 							Refresh( );
 						}
 						
-						get
-						{
+						get {
 							return image;
 						}
 					}
 					
 					public PopupButtonState ButtonState
 					{
-						set
-						{
+						set {
 							popupButtonState = value;
 							Refresh( );
 						}
 						
-						get
-						{
+						get {
 							return popupButtonState;
 						}
 					}
@@ -1298,7 +1268,7 @@ namespace System.Windows.Forms
 					{
 						Graphics gr = pe.Graphics;
 						
-						gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush ( BackColor ), ClientRectangle );
+						gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( BackColor ), ClientRectangle );
 						
 						// draw image
 						if ( image != null )
@@ -1312,7 +1282,7 @@ namespace System.Windows.Forms
 						{
 							Rectangle text_rect = Rectangle.Inflate( ClientRectangle, -4, -4 );
 							
-							gr.DrawString( Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor ), text_rect, text_format );
+							gr.DrawString( Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush( ForeColor ), text_rect, text_format );
 						}
 						
 						switch ( popupButtonState )
@@ -1381,10 +1351,13 @@ namespace System.Windows.Forms
 					imageList.ColorDepth = ColorDepth.Depth32Bit;
 					imageList.ImageSize = new Size( 38, 38 );
 					imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
+					//imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
+					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize ) );
+					//imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
+					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize ) );
 					imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
+					//imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
+					imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "network/network", imageList.ImageSize ) );
 					imageList.TransparentColor = Color.Transparent;
 					
 					lastOpenButton = new PopupButton( );
@@ -1512,8 +1485,8 @@ namespace System.Windows.Forms
 	// MWFFileView
 	internal class MWFFileView : ListView
 	{
-		private ImageList fileViewSmallImageList = new ImageList();
-		private ImageList fileViewBigImageList = new ImageList();
+//		private ImageList fileViewSmallImageList = new ImageList();
+//		private ImageList fileViewBigImageList = new ImageList();
 		
 		private ArrayList filterArrayList;
 		// store the FileStruct of all files in the current directory
@@ -1534,111 +1507,85 @@ namespace System.Windows.Forms
 		
 		public MWFFileView( )
 		{
-			fileViewSmallImageList.ColorDepth = ColorDepth.Depth32Bit;
-			fileViewSmallImageList.ImageSize = new Size( 16, 16 );
-			fileViewSmallImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
-			fileViewSmallImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-			fileViewSmallImageList.TransparentColor = Color.Transparent;
-			
-			fileViewBigImageList.ColorDepth = ColorDepth.Depth32Bit;
-			fileViewBigImageList.ImageSize = new Size( 48, 48 );
-			fileViewBigImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
-			fileViewBigImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-			fileViewBigImageList.TransparentColor = Color.Transparent;
-			
-			SmallImageList = fileViewSmallImageList;
-			LargeImageList = fileViewBigImageList;
+			SmallImageList = MimeIconEngine.SmallIcons;
+			LargeImageList = MimeIconEngine.LargeIcons;
 			
 			View = View.List;
 		}
 		
 		public ArrayList FilterArrayList
 		{
-			set
-			{
+			set {
 				filterArrayList = value;
 			}
 			
-			get
-			{
+			get {
 				return filterArrayList;
 			}
 		}
 		
 		public Hashtable FileHashtable
 		{
-			set
-			{
+			set {
 				fileHashtable = value;
 			}
 			
-			get
-			{
+			get {
 				return fileHashtable;
 			}
 		}
 		
 		public bool ShowHiddenFiles
 		{
-			set
-			{
+			set {
 				showHiddenFiles = value;
 			}
 			
-			get
-			{
+			get {
 				return showHiddenFiles;
 			}
 		}
 		
 		public string FileName
 		{
-			set
-			{
+			set {
 				fileName = value;
 			}
 			
-			get
-			{
+			get {
 				return fileName;
 			}
 		}
 		
 		public string FullFileName
 		{
-			set
-			{
+			set {
 				fullFileName = value;
 			}
 			
-			get
-			{
+			get {
 				return fullFileName;
 			}
 		}
 		
 		public int FilterIndex
 		{
-			set
-			{
+			set {
 				filterIndex = value;
 			}
 			
-			get
-			{
+			get {
 				return filterIndex;
 			}
 		}
 		
 		public string SelectedFilesString
 		{
-			set
-			{
+			set {
 				selectedFilesString = value;
 			}
 			
-			get
-			{
+			get {
 				return selectedFilesString;
 			}
 		}
@@ -1687,7 +1634,9 @@ namespace System.Windows.Forms
 				
 				ListViewItem listViewItem = new ListViewItem( directoryInfoi.Name );
 				
-				listViewItem.ImageIndex = 1;
+				int index = MimeIconEngine.GetIconIndexForMimeType( "inode/directory" );
+				
+				listViewItem.ImageIndex = index;
 				
 				listViewItem.SubItems.Add( "" );
 				listViewItem.SubItems.Add( "Directory" );
@@ -1712,7 +1661,7 @@ namespace System.Windows.Forms
 				
 				ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
 				
-				listViewItem.ImageIndex = 0;
+				listViewItem.ImageIndex = MimeIconEngine.GetIconIndexForFile( fileStruct.fullname );
 				
 				long fileLen = 1;
 				if ( fileInfo.Length > 1024 )
@@ -1825,34 +1774,26 @@ namespace System.Windows.Forms
 		
 		public event EventHandler SelectedFileChanged
 		{
-			add
-			{ on_selected_file_changed += value; }
-			remove
-			{ on_selected_file_changed -= value; }
+			add { on_selected_file_changed += value; }
+			remove { on_selected_file_changed -= value; }
 		}
 		
 		public event EventHandler SelectedFilesChanged
 		{
-			add
-			{ on_selected_files_changed += value; }
-			remove
-			{ on_selected_files_changed -= value; }
+			add { on_selected_files_changed += value; }
+			remove { on_selected_files_changed -= value; }
 		}
 		
 		public event EventHandler DirectoryChanged
 		{
-			add
-			{ on_directory_changed += value; }
-			remove
-			{ on_directory_changed -= value; }
+			add { on_directory_changed += value; }
+			remove { on_directory_changed -= value; }
 		}
 		
 		public event EventHandler ForceDialogEnd
 		{
-			add
-			{ on_force_dialog_end += value; }
-			remove
-			{ on_force_dialog_end -= value; }
+			add { on_force_dialog_end += value; }
+			remove { on_force_dialog_end -= value; }
 		}
 	}
 	
@@ -1874,28 +1815,24 @@ namespace System.Windows.Forms
 		
 		public ArrayList FilterArrayList
 		{
-			set
-			{
+			set {
 				filterArrayList = value;
 			}
 			
-			get
-			{
+			get {
 				return filterArrayList;
 			}
 		}
 		
 		public string Filter
 		{
-			set
-			{
+			set {
 				filter = value;
 				
 				SplitFilter( );
 			}
 			
-			get
-			{
+			get {
 				return filter;
 			}
 		}
@@ -1943,52 +1880,44 @@ namespace System.Windows.Forms
 			
 			public int ImageIndex
 			{
-				set
-				{
+				set {
 					imageIndex = value;
 				}
 				
-				get
-				{
+				get {
 					return imageIndex;
 				}
 			}
 			
 			public string Name
 			{
-				set
-				{
+				set {
 					name = value;
 				}
 				
-				get
-				{
+				get {
 					return name;
 				}
 			}
 			
 			public string Path
 			{
-				set
-				{
+				set {
 					path = value;
 				}
 				
-				get
-				{
+				get {
 					return path;
 				}
 			}
 			
 			public int XPos
 			{
-				set
-				{
+				set {
 					xPos = value;
 				}
 				
-				get
-				{
+				get {
 					return xPos;
 				}
 			}
@@ -2008,31 +1937,26 @@ namespace System.Windows.Forms
 			
 			imageList.ColorDepth = ColorDepth.Depth32Bit;
 			imageList.ImageSize = new Size( 16, 16 );
-			imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
-			imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
-			imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
-			imageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-			imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
-			imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
+			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "desktop/desktop", imageList.ImageSize ) );
+			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "directory/home", imageList.ImageSize ) );
+			imageList.Images.Add( MimeIconEngine.GetIconForMimeTypeAndSize( "inode/directory", imageList.ImageSize ) );
 			imageList.TransparentColor = Color.Transparent;
 			
 			Items.AddRange( new object[] {
-					       new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-					       new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+					       new DirComboBoxItem( 0, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+					       new DirComboBoxItem( 1, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
 				       }
 				       );
 		}
 		
 		public string CurrentPath
 		{
-			set
-			{
+			set {
 				currentPath = value;
 				
 				ShowPath( );
 			}
-			get
-			{
+			get {
 				return currentPath;
 			}
 		}
@@ -2056,8 +1980,8 @@ namespace System.Windows.Forms
 			Items.Clear( );
 			
 			Items.AddRange( new object[] {
-					       new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-					       new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+					       new DirComboBoxItem( 0, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+					       new DirComboBoxItem( 1, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
 				       }
 				       );
 			
@@ -2068,7 +1992,7 @@ namespace System.Windows.Forms
 			while ( dirStack.Count != 0 )
 			{
 				DirectoryInfo dii = (DirectoryInfo)dirStack.Pop( );
-				sel = Items.Add( new DirComboBoxItem( 3, dii.Name, dii.FullName, xPos + 4 ) );
+				sel = Items.Add( new DirComboBoxItem( 2, dii.Name, dii.FullName, xPos + 4 ) );
 				xPos += 4;
 			}
 			
@@ -2104,9 +2028,9 @@ namespace System.Windows.Forms
 				foreColor = Color.White;
 			}
 			
-			gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush (backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
+			gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
 			
-			gr.DrawString( dcbi.Name, e.Font , ThemeEngine.Current.ResPool.GetSolidBrush (foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
+			gr.DrawString( dcbi.Name, e.Font , ThemeEngine.Current.ResPool.GetSolidBrush( foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
 			gr.DrawImage( imageList.Images[ dcbi.ImageIndex ], new Rectangle( new Point( xPos + 2, 0 ), new Size( 16, 16 ) ) );
 			
 			e.Graphics.DrawImage( bmp, e.Bounds.X, e.Bounds.Y );
@@ -2134,10 +2058,8 @@ namespace System.Windows.Forms
 		
 		public event EventHandler DirectoryChanged
 		{
-			add
-			{ on_directory_changed += value; }
-			remove
-			{ on_directory_changed -= value; }
+			add { on_directory_changed += value; }
+			remove { on_directory_changed -= value; }
 		}
 	}
 }
