@@ -1,3 +1,9 @@
+2005-07-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.CheckConstraint): Use
+	ResolveAsTypeStep(), not ResolveAsTypeTerminal() so we're not
+	called recursively; fixes #75329.
+
 2005-07-06  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.InferTypeArguments): Added support for

@@ -1165,7 +1165,7 @@ namespace Mono.CSharp {
 				}
 
 				TypeExpr ct = new ConstructedType (ctype, new_args, loc);
-				if (ct.ResolveAsTypeTerminal (ec) == null)
+				if (ct.ResolveAsTypeStep (ec) == null)
 					return false;
 				ctype = ct.Type;
 			}
