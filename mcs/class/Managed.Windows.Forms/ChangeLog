@@ -1,3 +1,7 @@
+2005-07-07  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* System.Windows.Forms_test.dll.sources : Added MimeIcon.cs
+
 2005-07-06  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: default value
