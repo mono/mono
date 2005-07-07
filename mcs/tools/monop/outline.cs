@@ -424,15 +424,23 @@ public class Outline {
 		if (fi.IsPrivate)  o.Write ("private ");
 		if (fi.IsAssembly) o.Write ("internal ");
 		if (fi.IsLiteral)  o.Write ("const ");
+		else if (fi.IsStatic) o.Write ("static ");
 		if (fi.IsInitOnly) o.Write ("readonly ");
 
 		o.Write (FormatType (fi.FieldType));
 		o.Write (" ");
 		o.Write (fi.Name);
-		if (fi.IsLiteral)
-		{
+		if (fi.IsLiteral) { 
+			object v = fi.GetValue (this);
+
+			// TODO: Escape values here
 			o.Write (" = ");
-			o.Write (fi.GetValue (this));
+			if (v is char)
+				o.Write ("'{0}'", v);
+			else if (v is string)
+				o.Write ("\"{0}\"", v);
+			else
+				o.Write (fi.GetValue (this));
 		}
 		o.Write (";");
 	}
@@ -515,6 +523,8 @@ public class Outline {
 		return sb.ToString ();
 	}
 	
+	// TODO: fine tune this so that our output is less verbose. We need to figure
+	// out a way to do this while not making things confusing.
 	string FormatType (Type t)
 	{
 		string type = GetFullName (t);
@@ -559,7 +569,17 @@ public class Outline {
 	
 		if (type.LastIndexOf(".") == 6)
 			return type.Substring(7);
-		
+
+		//
+		// If the namespace of the type is the namespace of what
+		// we are printing (or is a member of one if its children
+		// don't print it. This basically means that in C# we would
+		// automatically get the namespace imported by virtue of the
+		// namespace {} block.
+		//	
+		if (t.Namespace.StartsWith (this.t.Namespace))
+			return type.Substring (t.Namespace.Length + 1);
+	
 		return type;
 	}
 
@@ -822,9 +842,27 @@ public class Comparer : IComparer  {
 	{
 		MethodBase aa = (MethodBase) a, bb = (MethodBase) b;
 		
-		if (aa.IsStatic == bb.IsStatic)
-			return CompareMemberInfo (a, b);
-		
+		if (aa.IsStatic == bb.IsStatic) {
+			int c = CompareMemberInfo (a, b);
+			if (c != 0)
+				return c;
+			ParameterInfo [] ap, bp;
+
+			//
+			// Sort overloads by the names of their types
+			// put methods with fewer params first.
+			//
+			
+			ap = aa.GetParameters ();
+			bp = bb.GetParameters ();
+			int n = Math.Min (ap.Length, bp.Length);
+
+			for (int i = 0; i < n; i ++)
+				if ((c = CompareType (ap [i].ParameterType, bp [i].ParameterType)) != 0)
+					return c;
+
+			return ap.Length.CompareTo (bp.Length);
+		}
 		if (aa.IsStatic)
 			return -1;
 		

@@ -1,3 +1,17 @@
+2005-07-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* outline.cs:
+	   - Print out static for fields (how the hell did I let myself
+	   not put this in earlier!!!!!)
+	   - To print out const fields, we might need to quote
+	   things. This logic is not complete yet (for example, a string
+	   with \n will have a literal new line)
+	   - Try some smarter logic to get less verbosity by printing out
+	   fewer namespaces
+	   - Do a nicer sorting for methods. It sorts things by param
+	   type, then from fewest params to most. This makes overloads
+	   get sorted out cleanly.
+
 2005-07-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* outline.cs: prevent nullref for non-public events.
