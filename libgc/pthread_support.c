@@ -568,7 +568,7 @@ volatile GC_thread GC_threads[THREAD_TABLE_SZ];
  * gcc-3.3.6 miscompiles the &GC_thread_key+sizeof(&GC_thread_key) expression so
  * put it into a separate function.
  */
-#   ifdef __GNUC__
+#   if defined(__GNUC__) && defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
 static __attribute__((noinline)) unsigned char* get_gc_thread_key_addr GC_PROTO((void))
 {
 	return (unsigned char*)&GC_thread_key;

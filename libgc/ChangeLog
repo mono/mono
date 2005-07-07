@@ -1,4 +1,9 @@
 
+
+Thu Jul 7 12:15:22 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_support.c: fix compilation when TLS_ALLOC is not defined.
+
 Thu Jul 7 11:59:42 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* pthread_support.c, Makefile.am: make the __thread var use
