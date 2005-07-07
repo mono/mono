@@ -1,3 +1,9 @@
+
+Thu Jul 7 19:12:23 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mkbundle.cs: link statically just libmono with --static
+	(fixes bug#75445).
+
 2005-06-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* mkbundle.cs: Add support for OSX in the generated assembly

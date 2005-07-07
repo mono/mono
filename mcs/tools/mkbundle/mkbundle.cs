@@ -281,10 +281,8 @@ class MakeBundle {
 
 			if (static_link)
 				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} " +
-						     "`pkg-config --libs-only-L mono` -Wl,-Bstatic " +
-						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lm //\" | " +
-						     "sed -e \"s/\\-ldl //\" | sed -e \"s/\\-lpthread //\"` " +
-						     "-Wl,-Bdynamic -ldl -lm -lrt {1}",
+						     "`pkg-config --libs-only-L mono` -Wl,-Bstatic -lmono -Wl,-Bdynamic " +
+						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lmono //\"` {1}",
 						     temp_c, temp_o, output);
 			else
 				cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
