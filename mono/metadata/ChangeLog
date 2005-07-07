@@ -1,3 +1,12 @@
+2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (mono_threads_abort_appdomain_threads): Wait for threads to
+	exit the appdomain as well being aborted.
+
+	* threadpool.c: Create all threadpool threads inside the root appdomain, and
+	change back to the root domain after calling managed code. This enables
+	appdomains using threadpools to be unloaded.
+
 2005-07-07  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h
