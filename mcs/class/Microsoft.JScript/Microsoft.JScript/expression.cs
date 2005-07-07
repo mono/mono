@@ -533,6 +533,7 @@ namespace Microsoft.JScript {
 		internal Args args;
 		internal object binding;
 		internal Type bind_type;
+		private bool is_dynamic_function = false;
 
 		internal Call (AST parent, AST exp)
 		{
@@ -771,7 +772,13 @@ namespace Microsoft.JScript {
 
 		internal void get_global_scope_or_this (ILGenerator ig)
 		{
-			CodeGenerator.load_engine (InFunction, ig);
+			is_dynamic_function = parent is FunctionExpression && parent == member_exp;
+
+			if (is_dynamic_function) {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			} else
+				CodeGenerator.load_engine (InFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
@@ -824,12 +831,11 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldc_I4_0);
 			ig.Emit (OpCodes.Ldc_I4_0);
 
-			if (InFunction)
-				ig.Emit (OpCodes.Ldarg_1);
-			else {
+			if (is_dynamic_function) {
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			}
+			} else
+				CodeGenerator.load_engine (InFunction, ig);
 		}
 
 		void emit_func_call (MethodBuilder mb, EmitContext ec)

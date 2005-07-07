@@ -1,3 +1,16 @@
+2005-07-06  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* FunctionExpression.cs (build_closure): Use CodeGenerator.load_engine.
+
+	* Parser.cs: Restore pn as the parent.
+	* expression.cs: Added is_dynamic_function field to class
+	Call. It's not enough knowing if the parent is a
+	FunctionExpression/FunctionDeclaration, we must assure that we
+	are really inside a FunctionExpression/FunctionDeclaration in
+	order to know in which place is the engine. setup_late_call_args
+	and get_global_scope_or_this used the new field for loading the
+	engine.
+
 2005-07-05  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* LateBinding.cs (CallValue): throw a NotImplementedException

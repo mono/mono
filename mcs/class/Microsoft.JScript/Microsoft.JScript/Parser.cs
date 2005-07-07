@@ -997,7 +997,7 @@ namespace Microsoft.JScript {
 					pn = PrimaryExpr (parent);
 			} else
 				pn = PrimaryExpr (parent);
-			return MemberExprTail (parent, allow_call_syntax, pn);
+			return MemberExprTail (pn, allow_call_syntax, pn);
 		}
 
 		AST MemberExprTail (AST parent, bool allow_call_syntax, AST pn)

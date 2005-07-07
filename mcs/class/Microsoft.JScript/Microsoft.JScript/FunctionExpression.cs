@@ -154,15 +154,7 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
 			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
-			
-			if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			} else if (parent != null && 
-				   (parent.GetType () == typeof (FunctionDeclaration)
-				    || parent.GetType () == typeof (FunctionExpression)))
-				ig.Emit (OpCodes.Ldarg_1);
-			
+			CodeGenerator.load_engine (InFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (FunctionExpression).GetMethod ("JScriptFunctionExpression"));
 			ig.Emit (OpCodes.Stloc, local_func);
 			ig.Emit (OpCodes.Ldloc, local_func);
