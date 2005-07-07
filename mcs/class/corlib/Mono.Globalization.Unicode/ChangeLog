@@ -1,5 +1,9 @@
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : more math symbol weight fixes.
+
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : fixed Hebrew character sortkeys.
 
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>

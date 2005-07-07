@@ -1045,6 +1045,14 @@ sw.Close ();
 				sortableCharNames.Add (new DictionaryEntry (
 					cp, name.Substring (7)));
 
+			if (Char.GetUnicodeCategory ((char) cp) ==
+				UnicodeCategory.MathSymbol) {
+				if (name.StartsWith ("CIRCLED "))
+					diacritical [cp] = 0xEE;
+				if (name.StartsWith ("SQUARED "))
+					diacritical [cp] = 0xEF;
+			}
+
 			// diacritical weights by character name
 if (diacritics.Length != diacriticWeights.Length)
 throw new Exception (String.Format ("Should not happen. weights are {0} while labels are {1}", diacriticWeights.Length, diacritics.Length));
@@ -2744,11 +2752,13 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 				}
 				if (cp == 0x2295)
 					fillIndex [0x8] = 0x3;
+				if (cp == 0x22B2)
+					fillIndex [0x8] = 0xB9;
 				if (!map [cp].Defined &&
 //					Char.GetUnicodeCategory ((char) cp) ==
 //					UnicodeCategory.MathSymbol)
 					Char.IsSymbol ((char) cp))
-					AddCharMapGroup ((char) cp, 0x8, 1, 0);
+					AddCharMapGroup ((char) cp, 0x8, 1, diacritical [cp]);
 				// SPECIAL CASES: no idea why Windows sorts as such
 				switch (cp) {
 				case 0x3E:
