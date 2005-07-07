@@ -3492,10 +3492,10 @@ namespace Mono.MonoBASIC {
 							219, vi.Location, "The variable '" + name +
 							"' is assigned but its value is never used");
 					} else {
+						if (!(name.Equals(lateBindingArgs)||name.Equals(lateBindingArgNames)||name.Equals(lateBindingCopyBack)))
 						Report.Warning (
 							168, vi.Location, "The variable '" +
-							name +
-							"' is declared but never used");
+							name +"' is declared but never used");
 					} 
 				}
 			}
