@@ -2030,15 +2030,18 @@ Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
 
 			// Hebrew
 			// -Letters
-			fillIndex [0x12] = 0x3;
+			fillIndex [0x12] = 0x2;
 			for (int i = 0x05D0; i < 0x05FF; i++)
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0x12, 1);
 			// -Accents
 			fillIndex [0x1] = 0x3;
-			for (int i = 0x0591; i <= 0x05C2; i++)
+			for (int i = 0x0591; i <= 0x05C2; i++) {
+				if (i == 0x05A3 || i == 0x05BB)
+					fillIndex [0x1]++;
 				if (i != 0x05BE)
 					AddCharMap ((char) i, 0x1, 1);
+			}
 
 			// Arabic
 			fillIndex [0x1] = 0x8E;
