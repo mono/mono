@@ -1,3 +1,7 @@
+2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain-unload.cs: Add tests for threadpools.
+
 2005-07-04  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (MKBUNDLE): Don't set PKG_CONFIG_TOP_BUILDDIR.
