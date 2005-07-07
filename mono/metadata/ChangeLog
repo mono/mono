@@ -1,3 +1,8 @@
+
+Thu Jul 7 19:59:31 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: try to better gues an available RT signal (bug #75387).
+
 2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (CACHE_OBJECT): Don't hold the domain lock between CHECK_OBJECT
