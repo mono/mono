@@ -30,6 +30,7 @@ directory; to run it, cd into that directory and do "make run". Stuff should
 happen, along the lines of a program test.exe being generated and run to 
 produce this output:
 
+Hello World
 IT BEGINS!
 Hello World
 YYYI'm surrounded!ZZZ
@@ -39,4 +40,4 @@ Goodbye.
 Bye
 Bye
 
-You should be able to see how that's made from the included test.xaml file
+Hopefully you can work out how that is produced from the test.xaml file.

@@ -33,7 +33,7 @@ namespace Mono.Windows.Serialization {
 	public interface XamlWriter {
 		void CreateTopLevel(Type parent, string className);
 
-		void CreateObject(Type type);
+		void CreateObject(Type type, string name);
 		void CreateElementText(string text);
 		void EndObject();
 

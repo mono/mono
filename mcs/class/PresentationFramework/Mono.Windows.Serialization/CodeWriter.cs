@@ -89,13 +89,19 @@ namespace Mono.Windows.Serialization {
 
 		// bottom of stack holds CodeVariableReferenceExpression
 		// pushes a reference to the new current type
-		public void CreateObject(Type type)
+		public void CreateObject(Type type, string varName)
 		{
-			string varName = Char.ToLower(type.Name[0]) + type.Name.Substring(1);
-			// make sure something sensible happens when class
-			// names start with a lowercase letter
-			if (varName == type.Name)
-				varName = "_" + varName;
+			bool isDefaultName;
+			if (varName == null) {
+				isDefaultName = true;
+				varName = Char.ToLower(type.Name[0]) + type.Name.Substring(1);
+				// make sure something sensible happens when class
+				// names start with a lowercase letter
+				if (varName == type.Name)
+					varName = "_" + varName;
+			} else {
+				isDefaultName = false;
+			}
 
 			if (!nameClashes.ContainsKey(varName))
 				nameClashes[varName] = 0;
@@ -104,16 +110,23 @@ namespace Mono.Windows.Serialization {
 				varName += (int)nameClashes[varName];
 			}
 
-			CodeVariableDeclarationStatement declaration = 
-					new CodeVariableDeclarationStatement(type, 
-							varName,
-							new CodeObjectCreateExpression(type));
+
+			if (isDefaultName) {
+				CodeVariableDeclarationStatement declaration = 
+						new CodeVariableDeclarationStatement(type, 
+								varName,
+								new CodeObjectCreateExpression(type));
+				constructor.Statements.Add(declaration);
+			} else {
+				CodeMemberField declaration = new CodeMemberField(type, varName);
+				declaration.InitExpression = new CodeObjectCreateExpression(type);
+				this.type.Members.Add(declaration);
+			}
 			CodeVariableReferenceExpression varRef = new CodeVariableReferenceExpression(varName);
 			CodeMethodInvokeExpression addChild = new CodeMethodInvokeExpression(
 					(CodeExpression)objects[objects.Count - 1],
 					"AddChild",
 					varRef);
-			constructor.Statements.Add(declaration);
 			constructor.Statements.Add(addChild);
 			objects.Add(varRef);
 		}

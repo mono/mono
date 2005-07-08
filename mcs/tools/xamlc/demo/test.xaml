@@ -5,7 +5,7 @@
 		x:Class="DemoConsoleApp"
 		SomethingHappened="printHi">
 	<ConsoleWriter>IT BEGINS!</ConsoleWriter>
-	<ConsoleWriter Text="Hello World" />
+	<ConsoleWriter x:Name="_greeter" Text="Hello World" />
 	<ConsoleWriter Text="I'm surrounded!" Filter="stringFilter" />
 	<ConsoleWriter>
 		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>
@@ -15,7 +15,8 @@
 	<x:Code><![CDATA[
 		public static void Main(string[] args)
 		{
-			Xaml.TestVocab.Console.ConsoleApp c = new DemoConsoleApp();
+			DemoConsoleApp c = new DemoConsoleApp();
+			c._greeter.Run();
 			c.Run();
 		}
 

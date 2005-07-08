@@ -1,3 +1,11 @@
+2005-07-08  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlWriter.cs,
+	  Mono.Windows.Serialization/CodeWriter.cs: support for x:Name
+	  attributes and for considering Name properties to have the same
+	  affect.
+
 2005-07-06  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/CodeWriter.cs: cleaned up a little, added

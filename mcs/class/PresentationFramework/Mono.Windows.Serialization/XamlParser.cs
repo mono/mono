@@ -242,17 +242,18 @@ namespace Mono.Windows.Serialization {
 		void parseObjectElement()
 		{
 			Type parent;
-			string objectName = null;
 			bool isEmpty = reader.IsEmptyElement;
 			
 			parent = mapper.GetType(reader.NamespaceURI, reader.Name);
-			objectName = reader.GetAttribute("Class", XAML_NAMESPACE);
 			if (parent.GetInterface("System.Windows.Serialization.IAddChild") == null)
 				{} //TODO: throw exception
 			if (currentState == null) {
-				createTopLevel(parent.AssemblyQualifiedName, objectName);
+				createTopLevel(parent.AssemblyQualifiedName, reader.GetAttribute("Class", XAML_NAMESPACE));
 			} else {
-				addChild(parent);
+				string name = reader.GetAttribute("Name", XAML_NAMESPACE);
+				if (name == null)
+					name = reader.GetAttribute("Name", reader.NamespaceURI);
+				addChild(parent, name);
 			}
 			
 			if (reader.MoveToFirstAttribute()) {
@@ -275,21 +276,21 @@ namespace Mono.Windows.Serialization {
 			}
 		}
 
-		void createTopLevel(string parentName, string objectName)
+		void createTopLevel(string parentName, string className)
 		{
 			Type t = Type.GetType(parentName);
 			currentState = new ParserState();
 			currentState.type = CurrentType.Object;
 			currentState.obj = t;
-			if (objectName == null) {
-				objectName = "derived" + t.Name;
+			if (className == null) {
+				className = "derived" + t.Name;
 			}
-			writer.CreateTopLevel(t, objectName);
+			writer.CreateTopLevel(t, className);
 		}
 
-		void addChild(Type type)
+		void addChild(Type type, string objectName)
 		{
-			writer.CreateObject(type);
+			writer.CreateObject(type, objectName);
 			oldStates.Add(currentState);
 			currentState = new ParserState();
 			currentState.type = CurrentType.Object;
