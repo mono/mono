@@ -186,7 +186,6 @@ namespace Mono.Globalization.Unicode
 			0xE50, 0xE60, 0xED0, 0xEE0
 			};
 
-		char [] orderedCyrillic;
 		char [] orderedGurmukhi;
 		char [] orderedGujarati;
 		char [] orderedGeorgian;
@@ -213,11 +212,9 @@ namespace Mono.Globalization.Unicode
 
 		// cp -> level1 value
 		Hashtable arabicLetterPrimaryValues = new Hashtable ();
-		Hashtable cyrillicLetterPrimaryValues = new Hashtable ();
 
 		// letterName -> cp
 		Hashtable arabicNameMap = new Hashtable ();
-		Hashtable cyrillicNameMap = new Hashtable ();
 
 		// cp -> Hashtable [decompType] -> cp
 		Hashtable nfkdMap = new Hashtable ();
@@ -1082,26 +1079,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				(s.IndexOf ("DIGIT") > 0 || s.IndexOf ("NUMBER") > 0))
 				diacritical [cp] |= 0xF4;
 
-			// Cyrillic letter name
-			if (0x0430 <= cp && cp <= 0x0486 &&
-				Char.IsLetter ((char) cp)) {
-				byte value = (byte) (cyrillicNameMap.Count * 3 + 0x06);
-				// Get primary letter name i.e.
-				// XXX part of CYRILLIC LETTER XXX yyy
-				// e.g. "IZHITSA" for "IZHITSA DOUBLE GRAVE".
-				string letterName =
-					name.Substring (name.IndexOf ("LETTER ") + 7);
-				int tmpIdx = letterName.IndexOf (' ');
-				letterName = tmpIdx < 0 ? letterName : letterName.Substring (0, tmpIdx);
-//Console.Error.WriteLine ("Arabic name for {0:X04} is {1}", cp, letterName);
-				if (cyrillicNameMap.ContainsKey (letterName))
-					value = (byte) cyrillicLetterPrimaryValues [cyrillicNameMap [letterName]];
-				else
-					cyrillicNameMap [letterName] = cp;
-
-				cyrillicLetterPrimaryValues [cp] = value;
-			}
-
 			// Arabic letter name
 			if (0x0621 <= cp && cp <= 0x064A &&
 				Char.GetUnicodeCategory ((char) cp)
@@ -1317,7 +1294,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 		void ParseScripts (string filename)
 		{
-			ArrayList cyrillic = new ArrayList ();
 			ArrayList gurmukhi = new ArrayList ();
 			ArrayList gujarati = new ArrayList ();
 			ArrayList georgian = new ArrayList ();
@@ -1347,11 +1323,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 						continue;
 
 					switch (value) {
-					case "Cyrillic":
-						for (int x = cp; x <= cpEnd; x++)
-							if (!IsIgnorable (x))
-								cyrillic.Add ((char) x);
-						break;
 					case "Gurmukhi":
 						for (int x = cp; x <= cpEnd; x++)
 							if (!IsIgnorable (x))
@@ -1375,12 +1346,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					}
 				}
 			}
-			cyrillic.Sort (UCAComparer.Instance);
 			gurmukhi.Sort (UCAComparer.Instance);
 			gujarati.Sort (UCAComparer.Instance);
 			georgian.Sort (UCAComparer.Instance);
 			thaana.Sort (UCAComparer.Instance);
-			orderedCyrillic = (char []) cyrillic.ToArray (typeof (char));
 			orderedGurmukhi = (char []) gurmukhi.ToArray (typeof (char));
 			orderedGujarati = (char []) gujarati.ToArray (typeof (char));
 			orderedGeorgian = (char []) georgian.ToArray (typeof (char));
@@ -1998,46 +1967,58 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0xF, 1);
 
-			// Cyrillic - character name order
-			fillIndex [0x10] = 0x6;
-//*
-for (int i = 0; i < orderedCyrillic.Length; i++)
-Console.Error.WriteLine ("----- {0:x04}", (int) orderedCyrillic [i]);
+			// Cyrillic.
+			// Cyrillic letters are sorted like Latin letters i.e. 
+			// containing culture-specific letters between the
+			// standard Cyrillic sequence.
+			//
+			// We can't use UCA here; it has different sorting.
+			char [] orderedCyrillic = new char [] {
+				'\u0430', '\u0431', '\u0432', '\u0433', '\u0434',
+				'\u0452', // DJE for Serbocroatian
+				'\u0435',
+				'\u0454', // IE for Ukrainian
+				'\u0436', '\u0437',
+				'\u0455', // DZE
+				'\u0438',
+				'\u0456', // Byelorussian-Ukrainian I
+				'\u0457', // YI
+				'\u0439',
+				'\u0458', // JE
+				'\u043A', '\u043B',
+				'\u0459', // LJE
+				'\u043C', '\u043D',
+				'\u045A', // NJE
+				'\u043E',
+				// 4E9 goes here.
+				'\u043F', '\u0440', '\u0441', '\u0442',
+				'\u045B', // TSHE for Serbocroatian
+				'\u0443',
+				'\u045E', // Short U for Byelorussian
+				'\u04B1', // Straight U w/ stroke (diacritical!)
+				'\u0444', '\u0445', '\u0446', '\u0447',
+				'\u045F', // DZHE
+				'\u0448', '\u0449', '\u044A', '\u044B', '\u044C',
+				'\u044D', '\u044E', '\u044F'};
 
-			// table which is moslty from UCA DUCET.
-			for (int i = 0; i < orderedCyrillic.Length; i++) {
-				char c = Char.ToUpper (orderedCyrillic [i], CultureInfo.InvariantCulture);
-				if (!IsIgnorable ((int) c) &&
-					c <= '\u045C' &&
-					Char.IsLetter (c) &&
-					!map [c].Defined) {
-					AddLetterMap (c, 0x10, 0);
-					fillIndex [0x10] += 3;
-				}
-			}
-			/*
+			fillIndex [0x10] = 0x8D;
 			for (int i = 0x0460; i < 0x0481; i++) {
 				if (Char.IsLetter ((char) i)) {
 					AddLetterMap ((char) i, 0x10, 0);
 					fillIndex [0x10] += 3;
 				}
 			}
-			*/
-/*
-			for (int i = 0x0400; i <= 0x0486; i++) {
-				if (!Char.IsLetter ((char) i)) {
-//					AddCharMap ((char) i, 0x1, 1);
-					continue;
+
+			fillIndex [0x10] = 0x6;
+			for (int i = 0; i < orderedCyrillic.Length; i++) {
+				char c = Char.ToUpper (orderedCyrillic [i], CultureInfo.InvariantCulture);
+				if (!IsIgnorable ((int) c) &&
+					Char.IsLetter (c) &&
+					!map [c].Defined) {
+					AddLetterMap (c, 0x10, 0);
+					fillIndex [0x10] += 3;
 				}
-				if (!cyrillicLetterPrimaryValues.ContainsKey (i)) {
-					Console.Error.WriteLine ("no value for {0:x04}", i);
-					continue;
-				}
-				fillIndex [0x10] = 
-					(byte) cyrillicLetterPrimaryValues [i];
-				AddLetterMap ((char) i, 0x10, 0);
 			}
-*/
 
 			// Armenian
 			fillIndex [0x11] = 0x3;

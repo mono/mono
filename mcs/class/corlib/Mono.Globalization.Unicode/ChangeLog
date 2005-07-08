@@ -1,3 +1,9 @@
+2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Reimplemented Cyrillic weight
+	  computation code, since it looks like the same way as Latin letters
+	  have. Thus removed all other approach (UCA, by letter name).
+
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : diacritical fix for "double-
