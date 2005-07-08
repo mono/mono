@@ -251,8 +251,21 @@ namespace System.Data.OracleClient {
 			return cmd;
 		}
 
+		internal void GetOutParameters () 
+		{
+			if (Parameters.Count > 0) {
+				foreach (OracleParameter parm in Parameters) {
+					if (parm.Direction != ParameterDirection.Input) {
+						parm.Update (this);
+					}
+				}
+			}
+		}
+
 		internal void CloseDataReader ()
 		{
+			GetOutParameters ();
+		
 			Connection.DataReader = null;
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
 				Connection.Close ();
@@ -275,6 +288,8 @@ namespace System.Data.OracleClient {
 				statement.ExecuteNonQuery (useAutoCommit);
 			else
 				statement.ExecuteQuery ();
+
+			GetOutParameters ();
 
 			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
 		
@@ -368,6 +383,7 @@ namespace System.Data.OracleClient {
 							break;
 						}
 					}
+					GetOutParameters ();
 				}
 
 				return output;
@@ -480,6 +496,7 @@ namespace System.Data.OracleClient {
 					}
 					else
 						output = DBNull.Value;
+					GetOutParameters ();
 				}
 			}
 			finally {

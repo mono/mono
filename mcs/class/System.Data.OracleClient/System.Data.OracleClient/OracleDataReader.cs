@@ -114,10 +114,10 @@ namespace System.Data.OracleClient {
 		#region Methods
 
 		public void Close ()
-		{
-			statement.Dispose();
+		{	
 			if (!isClosed) 
 				command.CloseDataReader ();
+			statement.Dispose();
 			isClosed = true;
 		}
 

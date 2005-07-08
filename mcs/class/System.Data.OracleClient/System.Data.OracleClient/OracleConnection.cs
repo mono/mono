@@ -279,7 +279,7 @@ namespace System.Data.OracleClient
 		{
 			byte[] buffer = new Byte[bufflen];
 
-			int st = OciCalls.OCINlsGetInfo (handle, ErrorHandle, 
+			OciCalls.OCINlsGetInfo (handle, ErrorHandle, 
 				ref buffer, bufflen, (ushort) item);
 
 			// Get length of returned string

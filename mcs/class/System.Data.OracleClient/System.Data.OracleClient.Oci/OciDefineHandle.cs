@@ -45,7 +45,9 @@ namespace System.Data.OracleClient.Oci
 
 		// Oracle defines the LONG VARCHAR have a size of 2 to the 31 power - 5
 		// maybe this should settable via a config file for System.Data.OracleClient.dll
-		// see DefineLong
+		// see DefineLong.  Or if the a truncate sql error occurs, then retry?
+		// or maybe allocate the memory yourself and then let oracle return error more data,
+		// then try to get some more data
 		internal static int LongVarCharMaxValue = (int) Int16.MaxValue - 5;
 
 		OciErrorHandle errorHandle;
@@ -464,7 +466,7 @@ namespace System.Data.OracleClient.Oci
 		}
 
 		[MonoTODO ("Be able to handle negative dates... i.e. BCE.")]
-		public DateTime UnpackDate ()
+		internal DateTime UnpackDate ()
 		{
 			byte century = Marshal.ReadByte (value, 0);
 			byte year = Marshal.ReadByte (value, 1);

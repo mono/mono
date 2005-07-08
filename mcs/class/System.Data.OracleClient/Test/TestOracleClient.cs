@@ -863,6 +863,175 @@ namespace Test.OracleClient
 			cmd3.ExecuteNonQuery ();
 		}
 
+		static void OutParmTest1 (OracleConnection con) 
+		{
+			// test stored procedure with 2 parameters
+			// 1. input varchar2
+			// 2. output varchar
+
+			OracleCommand cmd2 = null;
+			Console.WriteLine("  Drop procedure SP_OUTPUTPARMTEST1...");
+			try {
+				cmd2 = con.CreateCommand ();
+				cmd2.CommandText = "DROP PROCEDURE SP_OUTPUTPARMTEST1";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch(OracleException oe1) {
+				// ignore if table already exists
+			}
+			
+			Console.WriteLine("  Create stored procedure SP_OUTPUTPARMTEST1...");
+			// stored procedure concatenates strings
+			cmd2.CommandText = 
+				"CREATE OR REPLACE PROCEDURE SP_TESTOUTPARM1(parm1 IN VARCHAR2,parm2 OUT VARCHAR2) " +
+				"IS " +
+				"BEGIN " +
+				"	parm2 := 'one' || parm1 || 'three';" +
+				"END;";
+
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  COMMIT...");
+			cmd2.CommandText = "COMMIT";
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  Call stored procedure SP_TESTOUTPARM1 with two parameters...");
+			OracleCommand cmd3 = con.CreateCommand ();
+			cmd3.CommandType = CommandType.Text;
+			cmd3.CommandText = 
+				"BEGIN " +
+				"	SP_TESTOUTPARM1(:p1, :p2);" +
+				"END;";
+			OracleParameter myParameter1 = new OracleParameter("p1", OracleType.VarChar);
+			myParameter1.Value = "two";
+			myParameter1.Size = 4;
+			myParameter1.Direction = ParameterDirection.Input;
+		
+			OracleParameter myParameter2 = new OracleParameter("p2", OracleType.VarChar);
+			myParameter2.Size = 12;
+			myParameter2.Direction = ParameterDirection.Output;
+
+			cmd3.Parameters.Add (myParameter1);
+			cmd3.Parameters.Add (myParameter2);
+
+			cmd3.ExecuteNonQuery ();
+			string outValue = (string) myParameter2.Value;
+			Console.WriteLine ("    Out Value should be: onetwothree");
+			Console.WriteLine ("    Out Value: " + outValue);
+		}
+
+		static void OutParmTest2 (OracleConnection con) 
+		{
+			// test stored procedure with 2 parameters
+			// 1. input number(18,2)
+			// 2. output number(18,2)
+
+			OracleCommand cmd2 = null;
+			Console.WriteLine("  Drop procedure SP_OUTPUTPARMTEST2...");
+			try {
+				cmd2 = con.CreateCommand ();
+				cmd2.CommandText = "DROP PROCEDURE SP_OUTPUTPARMTEST2";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch(OracleException oe1) {
+				// ignore if table already exists
+			}
+			
+			Console.WriteLine("  Create stored procedure SP_OUTPUTPARMTEST2...");
+
+			// stored procedure addes two numbers
+			cmd2.CommandText = 
+				"CREATE OR REPLACE PROCEDURE SP_TESTOUTPARM2(parm1 IN NUMBER,parm2 OUT NUMBER) " +
+				"IS " +
+				"BEGIN " +
+				"	parm2 := parm1 + 3; " +
+				"END;";
+
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  COMMIT...");
+			cmd2.CommandText = "COMMIT";
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  Call stored procedure SP_TESTOUTPARM2 with two parameters...");
+			OracleCommand cmd3 = con.CreateCommand ();
+			cmd3.CommandType = CommandType.Text;
+			cmd3.CommandText = 
+				"BEGIN " +
+				"	SP_TESTOUTPARM2(:p1, :p2);" +
+				"END;";
+			OracleParameter myParameter1 = new OracleParameter("p1", OracleType.Number);
+			myParameter1.Value = 2;
+			myParameter1.Direction = ParameterDirection.Input;
+		
+			OracleParameter myParameter2 = new OracleParameter("p2", OracleType.Number);
+			myParameter2.Direction = ParameterDirection.Output;
+
+			cmd3.Parameters.Add (myParameter1);
+			cmd3.Parameters.Add (myParameter2);
+
+			cmd3.ExecuteNonQuery ();
+			decimal outValue = (decimal) myParameter2.Value;
+			Console.WriteLine ("    Out Value should be: 5");
+			Console.WriteLine ("    Out Value: {0}", outValue);
+		}
+
+		static void OutParmTest3 (OracleConnection con) 
+		{
+			// test stored procedure with 2 parameters
+			// 1. input date
+			// 2. output date
+
+			OracleCommand cmd2 = null;
+			Console.WriteLine("  Drop procedure SP_OUTPUTPARMTEST3...");
+			try {
+				cmd2 = con.CreateCommand ();
+				cmd2.CommandText = "DROP PROCEDURE SP_OUTPUTPARMTEST3";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch(OracleException oe1) {
+				// ignore if table already exists
+			}
+			
+			Console.WriteLine("  Create stored procedure SP_OUTPUTPARMTEST3...");
+
+			// stored procedure adds 3 days to date 
+			cmd2.CommandText = 
+				"CREATE OR REPLACE PROCEDURE SP_TESTOUTPARM3(parm1 IN DATE,parm2 OUT DATE) " +
+				"IS " +
+				"BEGIN " +
+				"	parm2 := parm1 + 3; " +
+				"END;";
+
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  COMMIT...");
+			cmd2.CommandText = "COMMIT";
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  Call stored procedure SP_TESTOUTPARM3 with two parameters...");
+			OracleCommand cmd3 = con.CreateCommand ();
+			cmd3.CommandType = CommandType.Text;
+			cmd3.CommandText = 
+				"BEGIN " +
+				"	SP_TESTOUTPARM3(:p1, :p2);" +
+				"END;";
+			OracleParameter myParameter1 = new OracleParameter("p1", OracleType.DateTime);
+			myParameter1.Value = new DateTime(2004,12,15);
+			myParameter1.Direction = ParameterDirection.Input;
+		
+			OracleParameter myParameter2 = new OracleParameter("p2", OracleType.DateTime);
+			myParameter2.Direction = ParameterDirection.Output;
+
+			cmd3.Parameters.Add (myParameter1);
+			cmd3.Parameters.Add (myParameter2);
+
+			cmd3.ExecuteNonQuery ();
+			DateTime outValue = (DateTime) myParameter2.Value;
+			Console.WriteLine ("    Out Value should be: 2004-12-18");
+			Console.WriteLine ("    Out Value: {0}", outValue.ToString ("yyyy-mm-dd"));
+		}
+
 		static void ShowConnectionProperties (OracleConnection con) 
 		{
 			try {
@@ -1114,6 +1283,18 @@ namespace Test.OracleClient
 			ReadSimpleTest(con1, "SELECT * FROM MONO_TEST_TABLE2");
 			Console.WriteLine ("Stored Proc Test 2 END...");
 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 1 BEGIN...");
+			OutParmTest1 (con1); 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 1 END...");
+
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 2 BEGIN...");
+			OutParmTest2 (con1); 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 2 END...");
+
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 3 BEGIN...");
+			OutParmTest3 (con1); 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 3 END...");
+
 			Wait ("");
 
 			Console.WriteLine ("Null Aggregate Warning BEGIN test...");
@@ -1124,9 +1305,9 @@ namespace Test.OracleClient
 			con1.Close ();
 			Console.WriteLine("Closed.");
 
-			conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
-			ConnectionPoolingTest1 ();
-			ConnectionPoolingTest2 ();
+			//conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
+			//ConnectionPoolingTest1 ();
+			//ConnectionPoolingTest2 ();
 
 			Console.WriteLine("Done.");
 		}

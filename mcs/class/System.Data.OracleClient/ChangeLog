@@ -1,3 +1,16 @@
+2005-07-08  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs
+	* System.Data.OracleClient/OracleCommand.cs
+	* System.Data.OracleClient/OracleDataReader.cs: support
+	Output parameters.  Return and InputOutput are TODO.  Input
+	already supported.  TODO for handling NULL indicator on Output params.
+
+	* System.Data.OracleClient/OracleConnection.cs: remove
+	compile warning
+
+	* Test/TestOracleClient.cs: add tests for out parameters
+
 2005-03-06  Daniel Morgan <danielmorgan@verizon.net>
 
 	- Applied patch by Hubert FONGARNAND 
