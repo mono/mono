@@ -59,12 +59,9 @@ System.Web.UI.Design/WebControlToolboxItem.cs
 System.Web.UI.Design/XmlFileEditor.cs
 System.Web.UI.Design/XmlUrlEditor.cs
 System.Web.UI.Design/XslUrlEditor.cs
-System.Web.UI.Design.WebControls/FormatPageInternal.cs
-System.Web.UI.Design.WebControls/GeneralPageDataListInternal.cs
 System.Web.UI.Design.WebControls/PanelDesigner.cs
 System.Web.UI.Design.WebControls/TableDesigner.cs
 System.Web.UI.Design.WebControls/HyperLinkDesigner.cs
-System.Web.UI.Design.WebControls/BordersPageInternal.cs
 System.Web.UI.Design.WebControls/CalendarDesigner.cs
 System.Web.UI.Design.WebControls/CheckBoxDesigner.cs
 System.Web.UI.Design.WebControls/LinkButtonDesigner.cs
@@ -73,7 +70,6 @@ System.Web.UI.Design.WebControls/TableRowsCollectionEditor.cs
 System.Web.UI.Design.WebControls/RepeaterDesigner.cs
 System.Web.UI.Design.WebControls/RegexTypeEditor.cs
 System.Web.UI.Design.WebControls/BaseValidatorDesigner.cs
-System.Web.UI.Design.WebControls/BaseDataListPageInternal.cs
 System.Web.UI.Design.WebControls/BaseDataListDesigner.cs
 System.Web.UI.Design.WebControls/CalendarAutoFormatDialog.cs
 System.Web.UI.Design.WebControls/RegexEditorDialog.cs
