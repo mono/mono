@@ -1,5 +1,12 @@
 2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : Special weight fixes on GetSortKey(). Dash type
+	  should be computed from ExtenderType, and voice mark weight should
+	  be considered.
+	* MSCompatUnicodeTable.cs : added tiny comment.
+
+2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SortKey.cs : It borked when MONO_USE_MANAGED_COLLATION is not yes.
 	* SimpleCollator.cs : support for extender (U+309D etc.).
 

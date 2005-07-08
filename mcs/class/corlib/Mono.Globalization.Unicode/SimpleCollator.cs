@@ -510,8 +510,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 			if (i < 0x309D || i > 0xFF70)
 				return ExtenderType.None;
-			if (i == 0xFE7C || i == 0xFE7D || i == 0xFF70)
+			if (i == 0xFE7C || i == 0xFE7D)
 				return ExtenderType.Simple;
+			if (i == 0xFF70)
+				return ExtenderType.Conditional;
 			if (i > 0x30FE)
 				return ExtenderType.None;
 			if (i == 0x309D || i == 0x30FD)
@@ -521,6 +523,18 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (i == 0x30FC)
 				return ExtenderType.Conditional;
 			return ExtenderType.None;
+		}
+
+		byte ToDashTypeValue (ExtenderType ext)
+		{
+			switch (ext) {
+			case ExtenderType.None:
+				return 3;
+			case ExtenderType.Conditional:
+				return 5;
+			default:
+				return 4;
+			}
 		}
 
 		bool IsIgnorable (int i)
@@ -546,7 +560,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
 					} else
 						FillSortKeyRaw (i,
-							ext == ExtenderType.Conditional);
+							ext);
 					continue;
 				}
 
@@ -572,12 +586,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 				else {
 					previousChar = i;
-					FillSortKeyRaw (i, false);
+					FillSortKeyRaw (i, ExtenderType.None);
 				}
 			}
 		}
 
-		void FillSortKeyRaw (int i, bool kanaExtender)
+		void FillSortKeyRaw (int i, ExtenderType ext)
 		{
 			if (0x3400 <= i && i <= 0x4DB5) {
 				int diff = i - 0x3400;
@@ -604,7 +618,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 			if (Uni.HasSpecialWeight ((char) i)) {
 				byte level1 = Level1 (i);
-				if (kanaExtender)
+				if (ext == ExtenderType.Conditional)
 					level1 = (byte) ((level1 & 0xF) % 8);
 				buf.AppendKana (
 					Category (i),
@@ -612,10 +626,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					Level2 (i),
 					Uni.Level3 (i),
 					Uni.IsJapaneseSmallLetter ((char) i),
-					Uni.GetJapaneseDashType ((char) i),
+					ToDashTypeValue (ext),
 					!Uni.IsHiragana ((char) i),
 					Uni.IsHalfWidthKana ((char) i)
 					);
+				if (ext == ExtenderType.Voiced)
+					// Append voice weight
+					buf.AppendNormal (1, 1, 1, 0);
 			}
 			else
 				buf.AppendNormal (

@@ -150,6 +150,8 @@ namespace Mono.Globalization.Unicode
 			return false;
 		}
 
+		// FIXME: it should be removed at some stage
+		// (will become unused).
 		public static byte GetJapaneseDashType (char c)
 		{
 			switch (c) {
