@@ -544,6 +544,7 @@ namespace Mono.CSharp {
 
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
 				DefineProxy (iface_type, base_method, mi, args);
+
 			return true;
 		}
 
@@ -581,7 +582,7 @@ namespace Mono.CSharp {
 
 						if (base_implements_type || BaseImplements (type, mi))
 							continue;
-
+						
 						if (pending_implementations [i].optional)
 							continue;
 
