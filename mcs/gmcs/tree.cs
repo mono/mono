@@ -45,6 +45,8 @@ namespace Mono.CSharp
 			decls = new Hashtable ();
 		}
 
+		// TODO: Move this check to current_container.Add..... method
+		// I guess we can save cpu&mem
 		public void RecordDecl (Namespace ns, MemberName name, DeclSpace ds)
 		{
 			DeclSpace other = (DeclSpace) decls [name];
@@ -52,16 +54,15 @@ namespace Mono.CSharp
 				Report.SymbolRelatedToPreviousError (other);
 
 				PartialContainer other_pc = other as PartialContainer;
-				if (ds is TypeContainer && other_pc != null)
-					Report.Error (
-						260, ds.Location, "Missing partial modifier " +
-						"on declaration of type '{0}'; another " +
-						"partial implementation of this type exists",
+				if (ds is TypeContainer && other_pc != null) {
+					Report.SymbolRelatedToPreviousError (other);
+					Report.Error (260, ds.Location,
+						"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
 						name);
+				}
 				else
-					Report.Error (
-						101, ds.Location,
-						"There is already a definition for '{0}'", name);
+					Report.Error (101, ds.Location, 
+						"The namespace `{0}' already contains a definition for `{1}'", ns.GetSignatureForError (), name.Name);
 				return;
 			}
 
@@ -109,6 +110,12 @@ namespace Mono.CSharp
 		{
 			return true;
 		}
+
+		public override string GetSignatureForError ()
+		{
+			return "";
+		}
+
 
 	}
 }

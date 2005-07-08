@@ -148,11 +148,6 @@ namespace Mono.CSharp {
 			return TypeBuilder;
 		}
 
- 		public override bool DefineMembers (TypeContainer container)
-		{
-			return true;
-		}
-
  		public override bool Define ()
 		{
 			MethodAttributes mattr;
@@ -218,7 +213,7 @@ namespace Mono.CSharp {
 				if (!Parent.AsAccessible (partype, ModFlags)) {
 					Report.Error (59, Location,
 						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.CSharpName (partype) + "` is less " +
+						      TypeManager.CSharpName (partype) + "' is less " +
 						      "accessible than delegate `" + Name + "'");
 					return false;
 				}
@@ -237,7 +232,7 @@ namespace Mono.CSharp {
 			if (!Parent.AsAccessible (ret_type, ModFlags)) {
 				Report.Error (58, Location,
 					      "Inconsistent accessibility: return type `" +
-					      TypeManager.CSharpName (ret_type) + "` is less " +
+					      TypeManager.CSharpName (ret_type) + "' is less " +
 					      "accessible than delegate `" + Name + "'");
 				return false;
 			}
@@ -454,7 +449,7 @@ namespace Mono.CSharp {
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
 			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
-				Report.Error (3002, Location, "Return type of '{0}' is not CLS-compliant", GetSignatureForError ());
+				Report.Error (3002, Location, "Return type of `{0}' is not CLS-compliant", GetSignatureForError ());
 			}
 			return true;
 		}
@@ -583,9 +578,8 @@ namespace Mono.CSharp {
 				is_applicable = is_params_applicable = true;
 
 			if (!is_applicable && !params_method && arg_count != pd_count) {
-				Report.Error (1593, loc,
-					      "Delegate '{0}' does not take {1} arguments",
-					      delegate_type.ToString (), arg_count);
+				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
+					TypeManager.CSharpName (delegate_type), arg_count);
 				return false;
 			}
 
@@ -642,24 +636,12 @@ namespace Mono.CSharp {
 		
 		public static string FullDelegateDesc (Type del_type, MethodBase mb, ParameterData pd)
 		{
-			StringBuilder sb = new StringBuilder (TypeManager.CSharpName (((MethodInfo) mb).ReturnType));
-			
-			sb.Append (" " + del_type.ToString ());
-			sb.Append (" (");
-
-			int length = pd.Count;
-			
-			for (int i = length; i > 0; ) {
-				i--;
-
-				sb.Append (pd.ParameterDesc (length - i - 1));
-				if (i != 0)
-					sb.Append (", ");
-			}
-			
-			sb.Append (")");
-			return sb.ToString ();
-			
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (TypeManager.CSharpName (((MethodInfo) mb).ReturnType));
+			sb.Append (" ");
+			sb.Append (TypeManager.CSharpName (del_type));
+			sb.Append (pd.GetSignatureForError ());
+			return sb.ToString ();			
 		}
 		
 		// Hack around System.Reflection as found everywhere else
@@ -784,10 +766,9 @@ namespace Mono.CSharp {
 					      "the usage. Try specifying the type " +
 					      "arguments explicitly.", method_desc);
 			else if (method.ReturnType != ((MethodInfo) found_method).ReturnType) {
-				Report.Error (407, loc, "'{0}' has the wrong return type to match delegate '{1}'", method_desc, delegate_desc);
+				Report.Error (407, loc, "`{0}' has the wrong return type to match the delegate `{1}'", method_desc, delegate_desc);
 			} else {
-				Report.Error (123, loc, "Method '" + method_desc + "' does not " +
-					"match delegate '" + delegate_desc + "'");
+				Report.Error (123, loc, "Method `{0}' does not match delegate `{1}'", method_desc, delegate_desc);
 			}
 		}
 		
@@ -855,12 +836,12 @@ namespace Mono.CSharp {
 			IMethodData md = TypeManager.GetMethod (delegate_method);
 			if (md == null) {
 				if (System.Attribute.GetCustomAttribute (delegate_method, TypeManager.conditional_attribute_type) != null) {
-					Report.Error (1618, loc, "Cannot create delegate with '{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
+					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
 				}
 			} else {
 				md.SetMemberIsUsed ();
 				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type, ec) != null) {
-					Report.Error (1618, loc, "Cannot create delegate with '{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
+					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute", TypeManager.CSharpSignature (delegate_method));
 				}
 			}
 			
@@ -868,9 +849,8 @@ namespace Mono.CSharp {
 				delegate_instance_expression = mg.InstanceExpression.Resolve (ec);
 			else if (ec.IsStatic) {
 				if (!delegate_method.IsStatic) {
-					Report.Error (120, loc,
-						      "An object reference is required for the non-static method " +
-						      delegate_method.Name);
+					Report.Error (120, loc, "`{0}': An object reference is required for the nonstatic field, method or property",
+						      TypeManager.CSharpSignature (delegate_method));
 					return null;
 				}
 				delegate_instance_expression = null;

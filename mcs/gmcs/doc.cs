@@ -129,7 +129,7 @@ namespace Mono.CSharp {
 					lineHead, split, 0, j);
 				return el;
 			} catch (XmlException ex) {
-				Report.Warning (1570, 1, mc.Location, "XML comment on '{0}' has non-well-formed XML ({1}).", name, ex.Message);
+				Report.Warning (1570, 1, mc.Location, "XML comment on `{0}' has non-well-formed XML ({1})", name, ex.Message);
 				XmlComment com = doc.CreateComment (String.Format ("FIXME: Invalid documentation markup was found for member {0}", name));
 				return com;
 			}
@@ -174,7 +174,7 @@ namespace Mono.CSharp {
 				Constructor c = mc as Constructor;
 				if (c == null || !c.IsDefault ())
 					Report.Warning (1591, 4, mc.Location,
-						"Missing XML comment for publicly visible type or member '{0}'", mc.GetSignatureForError ());
+						"Missing XML comment for publicly visible type or member `{0}'", mc.GetSignatureForError ());
 			}
 		}
 
@@ -187,11 +187,11 @@ namespace Mono.CSharp {
 			string file = el.GetAttribute ("file");
 			string path = el.GetAttribute ("path");
 			if (file == "") {
-				Report.Warning (1590, 1, mc.Location, "Invalid XML 'include' element; Missing 'file' attribute.");
+				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `file' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
 			}
 			else if (path == "") {
-				Report.Warning (1590, 1, mc.Location, "Invalid XML 'include' element; Missing 'path' attribute.");
+				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `path' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
 			}
 			else {
@@ -202,8 +202,8 @@ namespace Mono.CSharp {
 						doc.Load (file);
 						RootContext.Documentation.StoredDocuments.Add (file, doc);
 					} catch (Exception) {
-						el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (String.Format (" Badly formed XML in at comment file '{0}': cannot be included ", file)), el);
-						Report.Warning (1592, 1, mc.Location, "Badly formed XML in included comments file -- '{0}'", file);
+						el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (String.Format (" Badly formed XML in at comment file `{0}': cannot be included ", file)), el);
+						Report.Warning (1592, 1, mc.Location, "Badly formed XML in included comments file -- `{0}'", file);
 					}
 				}
 				bool keepIncludeNode = false;
@@ -219,7 +219,7 @@ namespace Mono.CSharp {
 							el.ParentNode.InsertBefore (el.OwnerDocument.ImportNode (n, true), el);
 					} catch (Exception ex) {
 						el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Failed to insert some or all of included XML "), el);
-						Report.Warning (1589, 1, mc.Location, "Unable to include XML fragment '{0}' of file {1} -- {2}.", path, file, ex.Message);
+						Report.Warning (1589, 1, mc.Location, "Unable to include XML fragment `{0}' of file `{1}' ({2})", path, file, ex.Message);
 					}
 				}
 				if (!keepIncludeNode)
@@ -442,7 +442,8 @@ namespace Mono.CSharp {
 				default:
 					warningType = 1584;
 					Report.Warning (1020, 1, mc.Location, "Overloadable {0} operator is expected", paramList.Length == 2 ? "binary" : "unary");
-					Report.Warning (1584, 1, mc.Location, "XML comment on '{0}' has syntactically incorrect attribute '{1}'", mc.GetSignatureForError (), cref);
+					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
+						mc.GetSignatureForError (), cref);
 					return null;
 				}
 			}
@@ -466,7 +467,7 @@ namespace Mono.CSharp {
 				Type returnType = FindDocumentedType (mc, returnTypeName, ds, cref);
 				if (returnType == null || returnType != expected) {
 					warningType = 1581;
-					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute '{0}'", cref);
+					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute `{0}'", cref);
 					return null;
 				}
 			}
@@ -544,7 +545,8 @@ namespace Mono.CSharp {
 					Normalize (mc, ref nameElem);
 				if (!Tokenizer.IsValidIdentifier (nameElem)
 					&& nameElem.IndexOf ("operator") < 0) {
-					Report.Warning (1584, 1, mc.Location, "XML comment on '{0}' has syntactically incorrect attribute '{1}'", mc.GetSignatureForError (), cref);
+					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
+						mc.GetSignatureForError (), cref);
 					xref.SetAttribute ("cref", "!:" + signature);
 					return;
 				}
@@ -560,7 +562,7 @@ namespace Mono.CSharp {
 					Normalize (mc, ref paramTypeName);
 					Type paramType = FindDocumentedType (mc, paramTypeName, ds, cref);
 					if (paramType == null) {
-						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter '{0}' in XML comment cref attribute '{1}'", i + 1, cref);
+						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'", i + 1, cref);
 						return;
 					}
 					plist.Add (paramType);
@@ -603,7 +605,7 @@ namespace Mono.CSharp {
 				if (type != null) {
 					MemberInfo mi = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref);
 					if (warnResult == 419)
-						Report419 (mc, memberName);
+						Report419 (mc, name, mi);
 					else if (warnResult > 0)
 						return;
 					if (mi != null) {
@@ -616,7 +618,7 @@ namespace Mono.CSharp {
 				int warnResult;
 				MemberInfo mi = FindDocumentedMember (mc, ds.TypeBuilder, name, parameterTypes, ds, out warnResult, cref);
 				if (warnResult == 419)
-					Report419 (mc, name);
+					Report419 (mc, name, mi);
 				else if (warnResult > 0)
 					return;
 				if (mi != null) {
@@ -625,14 +627,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Report.Warning (1574, 1, mc.Location, "XML comment on '{0}' has cref attribute '{1}' that could not be resolved in '{2}'.", mc.GetSignatureForError (), cref, ds.GetSignatureForError ());
+			Report.Warning (1574, 1, mc.Location, "XML comment on `{0}' has cref attribute `{1}' that could not be resolved",
+				mc.GetSignatureForError (), cref);
 
 			xref.SetAttribute ("cref", "!:" + name);
 		}
 
-		static void Report419 (MemberCore mc, string memberName)
+		static void Report419 (MemberCore mc, string memberName, MemberInfo mi)
 		{
-			Report.Warning (419, 3, mc.Location, "Ambiguous member specification in cref attribute: '{0}'. Check overloaded members and supply exact parameters.", memberName);
+			Report.Warning (419, 3, mc.Location, 
+				"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{1}' have also matched",
+				memberName, TypeManager.GetFullNameSignature (mi));
 		}
 
 		//
@@ -716,16 +721,19 @@ namespace Mono.CSharp {
 				if (xname == "")
 					continue; // really? but MS looks doing so
 				if (xname != "" && mc.Parameters.GetParameterByName (xname, out i) == null)
-					Report.Warning (1572, 2, mc.Location, "XML comment on '{0}' has a 'param' tag for '{1}', but there is no such parameter.", mc.Name, xname);
+					Report.Warning (1572, 2, mc.Location, "XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
+						mc.GetSignatureForError (), xname);
 				else if (paramTags [xname] != null)
-					Report.Warning (1571, 2, mc.Location, "XML comment on '{0}' has a duplicate param tag for '{1}'", mc.Name, xname);
+					Report.Warning (1571, 2, mc.Location, "XML comment on `{0}' has a duplicate param tag for `{1}'",
+						mc.GetSignatureForError (), xname);
 				paramTags [xname] = xname;
 			}
 			Parameter [] plist = mc.Parameters.FixedParameters;
 			if (plist != null) {
 				foreach (Parameter p in plist) {
 					if (paramTags.Count > 0 && paramTags [p.Name] == null)
-						Report.Warning (1573, 4, mc.Location, "Parameter '{0}' has no matching param tag in the XML comment for '{1}' (but other parameters do)", mc.Name, p.Name);
+						Report.Warning (1573, 4, mc.Location, "Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
+							p.Name, mc.GetSignatureForError ());
 				}
 			}
 		}
@@ -745,7 +753,7 @@ namespace Mono.CSharp {
 			if (name.Length > 0 && name [0] == '@')
 				name = name.Substring (1);
 			else if (Tokenizer.IsKeyword (name) && !IsTypeName (name))
-				Report.Warning (1041, 1, mc.Location, String.Format ("Identifier expected, '{0}' is a keyword", name));
+				Report.Warning (1041, 1, mc.Location, "Identifier expected. `{0}' is a keyword", name);
 		}
 
 		private static bool IsTypeName (string name)
@@ -836,7 +844,7 @@ namespace Mono.CSharp {
 				w.WriteEndDocument ();
 				return true;
 			} catch (Exception ex) {
-				Report.Error (1569, "Error generating XML documentation file '{0}' ('{1}')", docfilename, ex.Message);
+				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
 				return false;
 			} finally {
 				if (w != null)

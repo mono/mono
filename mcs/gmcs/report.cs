@@ -219,7 +219,7 @@ namespace Mono.CSharp {
 
 		public static void FeatureIsNotStandardized (Location loc, string feature)
 		{
-			Report.Error (1644, loc, "Feature '{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
+			Report.Error (1644, loc, "Feature `{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
 		}
 		
 		public static string FriendlyStackTrace (Exception e)
@@ -292,7 +292,7 @@ namespace Mono.CSharp {
         
 		static public void RuntimeMissingSupport (Location loc, string feature) 
 		{
-			Report.Error (-88, loc, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.", feature);
+			Report.Error (-88, loc, "Your .NET Runtime does not support `{0}'. Please use the latest Mono runtime instead.", feature);
 		}
 
 		/// <summary>
@@ -315,7 +315,7 @@ namespace Mono.CSharp {
 					while (mb.Mono_IsInflatedMethod)
 						mb = mb.GetGenericMethodDefinition ();
 					IMethodData md = TypeManager.GetMethod (mb);
-					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError (temp_ds));
+					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError ());
 					return;
 				}
 
@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			extra_information.Add (String.Format ("{0}: '{1}' (name of symbol related to previous ", loc, symbol));
+			extra_information.Add (String.Format ("{0}: `{1}' (name of symbol related to previous ", loc, symbol));
 		}
 
 		public static void ExtraInformation (Location loc, string msg)
@@ -690,7 +690,7 @@ namespace Mono.CSharp {
 			if (Report.IsValidWarning (code))
 				return true;
 
-			Report.Warning (1691, 1, loc, "'{0}' is not a valid warning number", code);
+			Report.Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
 			return false;
 		}
 	}

@@ -160,7 +160,7 @@ namespace Mono.CSharp {
 		public void AddEnumMember (string name, Expression expr, Location loc, Attributes opt_attrs, string documentation)
 		{
 			if (name == "value__") {
-				Report.Error (76, loc, "An item in an enumeration can't have an identifier `value__'");
+				Report.Error (76, loc, "An item in an enumeration cannot have an identifier `value__'");
 				return;
 			}
 
@@ -185,8 +185,7 @@ namespace Mono.CSharp {
 
 			if (!(BaseType is TypeLookupExpression)) {
 				Report.Error (1008, Location,
-					      "Type byte, sbyte, short, ushort, int, uint, " +
-					      "long, or ulong expected (got: `{0}')", BaseType);
+					"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
 				return null;
 			}
 
@@ -205,9 +204,7 @@ namespace Mono.CSharp {
 			    UnderlyingType != TypeManager.byte_type  &&
 			    UnderlyingType != TypeManager.sbyte_type) {
 				Report.Error (1008, Location,
-					      "Type byte, sbyte, short, ushort, int, uint, " +
-					      "long, or ulong expected (got: " +
-					      TypeManager.CSharpName (UnderlyingType) + ")");
+					"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
 				return null;
 			}
 
@@ -318,15 +315,9 @@ namespace Mono.CSharp {
 
 		void Error_ConstantValueCannotBeConverted (object val, Location loc)
 		{
-			if (val is Constant)
-				Report.Error (31, loc, "Constant value '" + ((Constant) val).AsString () +
-					      "' cannot be converted" +
-					      " to a " + TypeManager.CSharpName (UnderlyingType));
-			else 
-				Report.Error (31, loc, "Constant value '" + val +
-					      "' cannot be converted" +
-					      " to a " + TypeManager.CSharpName (UnderlyingType));
-			return;
+			Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+				val is Constant ? ((Constant) val).AsString () : val,
+				TypeManager.CSharpName (UnderlyingType));
 		}
 
 		/// <summary>
@@ -518,10 +509,8 @@ namespace Mono.CSharp {
 					return null;
 
 				if (!IsValidEnumConstant (val)) {
-					Report.Error (
-						1008, loc,
-						"Type byte, sbyte, short, ushort, int, uint, long, or " +
-						"ulong expected (have: " + val + ")");
+					Report.Error (1008, loc,
+						"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
 					return null;
 				}
 
@@ -563,11 +552,6 @@ namespace Mono.CSharp {
 
 			return default_value;
 		}
-
-		public override bool DefineMembers (TypeContainer parent)
-		{
-			return true;
-		}
 		
 		public override bool Define ()
 		{
@@ -598,19 +582,14 @@ namespace Mono.CSharp {
 					if (default_value == null)
 						return true;
 				} else {
-					if (name == "value__"){
-						Report.Error (76, loc, "The name `value__' is reserved for enumerations");
-						return false;
-					}
-
 					EnumMember em = (EnumMember) defined_names [name];
 
 					em.DefineMember (TypeBuilder);
 					FieldBuilder fb = em.builder;
 					
 					if (default_value == null) {
-					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
-							      "fit in its type");
+					   Report.Error (543, loc, "The enumerator value `{0}.{1}' is too large to fit in its type `{2}'",
+						   GetSignatureForError (), name, TypeManager.CSharpName (this.UnderlyingType));
 						return false;
 					}
 
@@ -661,7 +640,7 @@ namespace Mono.CSharp {
  				MemberCore conflict = (MemberCore)ht [locase];
  				Report.SymbolRelatedToPreviousError (conflict);
  				conflict = GetDefinition (name);
- 				Report.Error (3005, conflict.Location, "Identifier '{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
+ 				Report.Error (3005, conflict.Location, "Identifier `{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
   			}
   		}
 
@@ -673,7 +652,7 @@ namespace Mono.CSharp {
 			VerifyClsName ();
 
 			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
-				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 			}
 
 			return true;

@@ -52,8 +52,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			if (ec.InCatch){
-				Report.Error (1631, loc, "Cannot yield in the body of a " +
-					      "catch clause");
+				Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
 				return false;
 			}
 
@@ -124,7 +123,6 @@ namespace Mono.CSharp {
 	public class Iterator : Class {
 		protected ToplevelBlock original_block;
 		protected ToplevelBlock block;
-		string original_name;
 
 		Type iterator_type;
 		TypeExpr iterator_type_expr;
@@ -144,8 +142,8 @@ namespace Mono.CSharp {
 		TypeContainer container;
 		TypeExpr current_type;
 		Type this_type;
-		Type return_type;
 		InternalParameters parameters;
+		IMethodData orig_method;
 
 		MethodInfo dispose_method;
 		MoveNextMethod move_next_method;
@@ -192,7 +190,7 @@ namespace Mono.CSharp {
 			resume_points.Add (entry_point);
 			entry_point.Define (ig);
 
-			ec.EmitTopBlock (original_block, parameters, Location);
+			ec.EmitTopBlock (orig_method, original_block, parameters);
 
 			EmitYieldBreak (ig);
 
@@ -348,18 +346,17 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		public Iterator (TypeContainer container, string name, Type return_type,
-				 InternalParameters parameters,
-				 int modifiers, ToplevelBlock block, Location loc)
-			: base (container.NamespaceEntry, container, MakeProxyName (name),
-				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, loc)
+		public Iterator (IMethodData m_container, TypeContainer container,
+				 InternalParameters parameters, int modifiers)
+			: base (container.NamespaceEntry, container, MakeProxyName (m_container.MethodName.Name),
+				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, m_container.Location)
 		{
+			this.orig_method = m_container;
+
 			this.container = container;
-			this.return_type = return_type;
 			this.parameters = parameters;
-			this.original_name = name;
-			this.original_block = block;
-			this.block = new ToplevelBlock (block, parameters.Parameters, loc);
+			this.original_block = orig_method.Block;
+			this.block = new ToplevelBlock (orig_method.Block, parameters.Parameters, orig_method.Location);
 
 			IsStatic = (modifiers & Modifiers.STATIC) != 0;
 		}
@@ -374,12 +371,10 @@ namespace Mono.CSharp {
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.InIterator = true;
 
-			if (!CheckType (return_type)) {
-				Report.Error (
-					1624, Location,
-					"The body of `{0}' cannot be an iterator block " +
-					"because '{1}' is not an iterator interface type",
-					original_name, TypeManager.CSharpName (return_type));
+			if (!CheckType ()) {
+				Report.Error (1624, Location,
+					"The body of `{0}' cannot be an iterator block because `{1}' is not an iterator interface type",
+					orig_method.GetSignatureForError (), TypeManager.CSharpName (orig_method.ReturnType));
 				return false;
 			}
 
@@ -439,6 +434,7 @@ namespace Mono.CSharp {
 			container.AddIterator (this);
 
 			Bases = list;
+			orig_method.Block = block;
 			return true;
 		}
 
@@ -495,10 +491,10 @@ namespace Mono.CSharp {
 
 			bool unreachable;
 
-			if (!ec.ResolveTopBlock (null, original_block, parameters, Location, out unreachable))
+			if (!ec.ResolveTopBlock (null, original_block, parameters, orig_method, out unreachable))
 				return false;
 
-			if (!ec.ResolveTopBlock (null, block, parameters, Location, out unreachable))
+			if (!ec.ResolveTopBlock (null, block, parameters, orig_method, out unreachable))
 				return false;
 
 			original_block.CompleteContexts ();
@@ -1097,10 +1093,6 @@ namespace Mono.CSharp {
 			dispose.Block.AddStatement (new DisposeMethod (this, Location));
 		}
 
-		public ToplevelBlock Block {
-			get { return block; }
-		}
-
 		public Type IteratorType {
 			get { return iterator_type; }
 		}
@@ -1136,26 +1128,29 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool CheckType (Type t)
+		bool CheckType ()
 		{
-			if (t == TypeManager.ienumerable_type) {
+			Type ret = orig_method.ReturnType;
+
+			if (ret == TypeManager.ienumerable_type) {
 				iterator_type = TypeManager.object_type;
 				is_enumerable = true;
 				return true;
-			} else if (t == TypeManager.ienumerator_type) {
+			}
+			if (ret == TypeManager.ienumerator_type) {
 				iterator_type = TypeManager.object_type;
 				is_enumerable = false;
 				return true;
 			}
 
-			if (!t.IsGenericInstance)
+			if (!ret.IsGenericInstance)
 				return false;
 
-			Type[] args = TypeManager.GetTypeArguments (t);
+			Type[] args = TypeManager.GetTypeArguments (ret);
 			if (args.Length != 1)
 				return false;
 
-			Type gt = t.GetGenericTypeDefinition ();
+			Type gt = ret.GetGenericTypeDefinition ();
 			if (gt == TypeManager.generic_ienumerable_type) {
 				iterator_type = args [0];
 				is_enumerable = true;

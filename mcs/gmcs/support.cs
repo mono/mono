@@ -26,6 +26,7 @@ namespace Mono.CSharp {
 		string ParameterName (int pos);
 		string ParameterDesc (int pos);
 		Parameter.Modifier ParameterModifier (int pos);
+		string GetSignatureForError ();
 	}
 
 	public class ReflectionParameters : ParameterData {
@@ -67,6 +68,18 @@ namespace Mono.CSharp {
 				return;
 
 			last_arg_is_params = true;
+		}
+		
+		public string GetSignatureForError ()
+		{
+			StringBuilder sb = new StringBuilder ("(");
+			for (int i = 0; i < pi.Length; ++i) {
+				if (i != 0)
+					sb.Append (", ");
+				sb.Append (ParameterDesc (i));
+			}
+			sb.Append (')');
+			return sb.ToString ();
 		}
 
 		public Type ParameterType (int pos)
@@ -128,7 +141,7 @@ namespace Mono.CSharp {
 			if (pos >= pi.Length - 1 && last_arg_is_params)
 				sb.Append ("params ");
 			
-			sb.Append (TypeManager.CSharpName (partype));
+			sb.Append (TypeManager.CSharpName (partype).Replace ("&", ""));
 
 			return sb.ToString ();
 			
@@ -220,6 +233,18 @@ namespace Mono.CSharp {
 			return Parameters.ArrayParameter;
 		}
 
+		public string GetSignatureForError ()
+		{
+			StringBuilder sb = new StringBuilder ("(");
+			for (int i = 0; i < count; ++i) {
+				if (i != 0)
+					sb.Append (", ");
+				sb.Append (ParameterDesc (i));
+			}
+			sb.Append (')');
+			return sb.ToString ();
+		}
+
 		public Type ParameterType (int pos)
 		{
 			if (has_varargs && pos >= count)
@@ -253,7 +278,7 @@ namespace Mono.CSharp {
 				return "__arglist";
 
 			Type t = ParameterType (pos);
-			return ModifierDesc (pos) + " " + TypeManager.CSharpName (t);
+			return (ModifierDesc (pos) + " " + TypeManager.CSharpName (t).Replace ("&", "")).TrimStart ();
 		}
 
 		public string ModifierDesc (int pos)

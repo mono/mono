@@ -78,6 +78,26 @@ namespace Mono.CSharp {
 			return s;
 		}
 
+		public static string GetDescription (MethodAttributes ma)
+		{
+			if ((ma & MethodAttributes.Assembly) != 0)
+				return "internal";
+
+			if ((ma & MethodAttributes.Family) != 0)
+				return "protected";
+
+			if ((ma & MethodAttributes.Public) != 0)
+				return "public";
+
+			if ((ma & MethodAttributes.FamANDAssem) != 0)
+				return "protected internal";
+
+			if ((ma & MethodAttributes.Private) != 0)
+				return "private";
+
+			throw new NotImplementedException (ma.ToString ());
+		}
+
 		public static TypeAttributes TypeAttr (int mod_flags, bool is_toplevel)
 		{
 			TypeAttributes t = 0;
@@ -200,11 +220,7 @@ namespace Mono.CSharp {
 				int a = mod;
 
 				if ((mod & Modifiers.UNSAFE) != 0){
-					if (!RootContext.Unsafe){
-						Report.Error (227, l,
-							      "Unsafe code requires the -unsafe command " +
-							      "line option to be specified");
-					}
+					RootContext.CheckUnsafeOption (l);
 				}
 				
 				//
@@ -244,7 +260,7 @@ namespace Mono.CSharp {
 
 		public static void Error_InvalidModifier (Location l, string name)
 		{
-			Report.Error (106, l, "the modifier " + name + " is not valid for this item");
+			Report.Error (106, l, "The modifier `" + name + "' is not valid for this item");
 		}
 	}
 }

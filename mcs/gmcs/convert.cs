@@ -1303,8 +1303,8 @@ namespace Mono.CSharp {
 			if (expr_type == TypeManager.anonymous_method_type){
 				if (!TypeManager.IsDelegateType (target_type)){
 					Report.Error (1660, loc,
-							      "Cannot convert anonymous method to `{0}', since it is not a delegate",
-							      TypeManager.CSharpName (target_type));
+						"Cannot convert anonymous method block to type `{0}' because it is not a delegate type",
+						TypeManager.CSharpName (target_type));
 					return null;
 				}
 
@@ -1399,7 +1399,7 @@ namespace Mono.CSharp {
 						source.Name, source.Assembly.FullName, target.Assembly.FullName));
 							 
 			}
-			Report.Error (29, loc, "Cannot convert implicitly from {0} to `{1}'",
+			Report.Error (29, loc, "Cannot implicitly convert type {0} to `{1}'",
 				      source == TypeManager.anonymous_method_type ?
 				      "anonymous method" : "`" + TypeManager.CSharpName (source) + "'",
 				      TypeManager.CSharpName (target));
@@ -1447,7 +1447,7 @@ namespace Mono.CSharp {
 
 		static void Error_664 (Location loc, string type, string suffix) {
 			Report.Error (664, loc,
-				"Literal of type double cannot be implicitly converted to type '{0}'. Add suffix '{1}' to create a literal of this type",
+				"Literal of type double cannot be implicitly converted to type `{0}'. Add suffix `{1}' to create a literal of this type",
 				type, suffix);
 		}
 
@@ -2038,8 +2038,8 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (expr is NullLiteral){
-				Report.Error (37, loc, "Cannot convert null to value type `" +
-					      TypeManager.CSharpName (target_type) + "'");
+				Report.Error (37, loc, "Cannot convert null to `{0}' because it is a value type",
+					      TypeManager.CSharpName (target_type));
 				return null;
 			}
 
