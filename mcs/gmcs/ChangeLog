@@ -1,3 +1,8 @@
+2005-07-08  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (CaptureContext.EmitParameterInstance): Correctly
+	handle parameters in nested scopes; fixes #74808; see gtest-188.cs.
+
 2005-07-07  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.CheckConstraint): Use

@@ -1185,7 +1185,7 @@ namespace Mono.CSharp {
 				cc.EmitParameterInstance (ec, name);
 				return;
 			}
-			
+
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 			if (par_info != null){
 				// 
@@ -1196,14 +1196,14 @@ namespace Mono.CSharp {
 
 			ScopeInfo si;
 
-			if (ec.CurrentBlock.Toplevel == toplevel_owner){
+			if (ec.CurrentBlock.Toplevel == toplevel_owner) {
 				si = GetScopeFromBlock (ec, toplevel_owner);
 				si.EmitScopeInstance (ig);
-				return;
+			} else {
+				si = ec.CurrentAnonymousMethod.Scope;
+				ig.Emit (OpCodes.Ldarg_0);
 			}
 
-			si = ec.CurrentAnonymousMethod.Scope;
-			ig.Emit (OpCodes.Ldarg_0);
 			if (si != null){
 				while (si.ParentLink != null) {
 					ig.Emit (OpCodes.Ldfld, si.ParentLink);
