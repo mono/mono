@@ -485,35 +485,42 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 			buf.Initialize (options, s, frenchSort);
 			int end = start + length;
+			previousSortKey = null;
 			GetSortKey (s, start, end);
 			return buf.GetResultAndReset ();
 		}
 
-		void GetSortKey (string s, int start, int end)
-		{
-			for (int n = start; n < end; n++) {
-				int i = s [n];
-				if (IsIgnorable (i))
-					continue;
-				i = FilterOptions (i);
+		int previousChar = -1;
+		byte [] previousSortKey = null;
 
-				Contraction ct = GetContraction (s, n, end);
-				if (ct != null) {
-					if (ct.Replacement != null)
-						GetSortKey (ct.Replacement, 0, ct.Replacement.Length);
-					else {
-						byte [] b = ct.SortKey;
-						buf.AppendNormal (
-							b [0],
-							b [1],
-							b [2] != 1 ? b [2] : Level2 (i),
-							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
-					}
-					n += ct.Source.Length - 1;
-				}
-				else
-					FillSortKeyRaw (i);
-			}
+		enum ExtenderType {
+			None,
+			Simple,
+			Voiced,
+			Conditional
+		}
+
+		ExtenderType GetExtenderType (int i)
+		{
+			// LAMESPEC: Windows expects true for U+3005, but 
+			// sometimes it does not represent to repeat just
+			// one character.
+			// Windows also expects true for U+3031 and U+3032,
+			// but they should *never* repeat one character.
+
+			if (i < 0x309D || i > 0xFF70)
+				return ExtenderType.None;
+			if (i == 0xFE7C || i == 0xFE7D || i == 0xFF70)
+				return ExtenderType.Simple;
+			if (i > 0x30FE)
+				return ExtenderType.None;
+			if (i == 0x309D || i == 0x30FD)
+				return ExtenderType.Simple;
+			if (i == 0x309E || i == 0x30FE)
+				return ExtenderType.Voiced;
+			if (i == 0x30FC)
+				return ExtenderType.Conditional;
+			return ExtenderType.None;
 		}
 
 		bool IsIgnorable (int i)
@@ -522,7 +529,55 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				ignoreSymbols && Uni.IsIgnorableSymbol (i);
 		}
 
-		void FillSortKeyRaw (int i)
+		void GetSortKey (string s, int start, int end)
+		{
+			for (int n = start; n < end; n++) {
+				int i = s [n];
+
+				ExtenderType ext = GetExtenderType (i);
+				if (ext != ExtenderType.None) {
+					i = previousChar;
+					if (i < 0) {
+						byte [] b = previousSortKey;
+						buf.AppendNormal (
+							b [0],
+							b [1],
+							b [2] != 1 ? b [2] : Level2 (i),
+							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
+					} else
+						FillSortKeyRaw (i,
+							ext == ExtenderType.Conditional);
+					continue;
+				}
+
+				if (IsIgnorable (i))
+					continue;
+				i = FilterOptions (i);
+
+				Contraction ct = GetContraction (s, n, end);
+				if (ct != null) {
+					if (ct.Replacement != null) {
+						GetSortKey (ct.Replacement, 0, ct.Replacement.Length);
+					} else {
+						byte [] b = ct.SortKey;
+						buf.AppendNormal (
+							b [0],
+							b [1],
+							b [2] != 1 ? b [2] : Level2 (i),
+							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
+						previousSortKey = b;
+						previousChar = -1;
+					}
+					n += ct.Source.Length - 1;
+				}
+				else {
+					previousChar = i;
+					FillSortKeyRaw (i, false);
+				}
+			}
+		}
+
+		void FillSortKeyRaw (int i, bool kanaExtender)
 		{
 			if (0x3400 <= i && i <= 0x4DB5) {
 				int diff = i - 0x3400;
@@ -547,10 +602,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return;
 			}
 
-			if (Uni.HasSpecialWeight ((char) i))
+			if (Uni.HasSpecialWeight ((char) i)) {
+				byte level1 = Level1 (i);
+				if (kanaExtender)
+					level1 = (byte) ((level1 & 0xF) % 8);
 				buf.AppendKana (
 					Category (i),
-					Level1 (i),
+					level1,
 					Level2 (i),
 					Uni.Level3 (i),
 					Uni.IsJapaneseSmallLetter ((char) i),
@@ -558,6 +616,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					!Uni.IsHiragana ((char) i),
 					Uni.IsHalfWidthKana ((char) i)
 					);
+			}
 			else
 				buf.AppendNormal (
 					Category (i),

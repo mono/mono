@@ -1,5 +1,10 @@
 2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SortKey.cs : It borked when MONO_USE_MANAGED_COLLATION is not yes.
+	* SimpleCollator.cs : support for extender (U+309D etc.).
+
+2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : some punct/symbols fix.
 	* managed-collation.patch : new (and temporary) file to support
 	  managed collation in mscorlib.

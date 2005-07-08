@@ -26,7 +26,9 @@ namespace System.Globalization
 		#endregion
 
 		readonly string source;
+		readonly CompareOptions options;
 		readonly byte [] key;
+		readonly int lcid;
 		/*
 		readonly int lv1Length;
 		readonly int lv2Length;
@@ -37,8 +39,6 @@ namespace System.Globalization
 		readonly int kanaWidthLength;
 		readonly int identLength;
 		*/
-		readonly CompareOptions options;
-		readonly int lcid;
 
 		// for legacy unmanaged one
 		internal SortKey (int lcid, string source, CompareOptions opt)
