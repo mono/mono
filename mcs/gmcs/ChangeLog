@@ -1,5 +1,10 @@
 2005-06-30  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #75412.
+	* expression.cs (Indexers.map): Remove.
+	(Indexers.Append): Filter out inaccessible setters and getters.
+	(IndexerAccess.DoResolve, IndexerAccess.DoResolveLValue): Update.
+
 	Fix #75283.
 	* ecore.cs (MemberExpr.EmitInstance): New.  Add CS0120 check.
 	Refactored from ...
