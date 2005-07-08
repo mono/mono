@@ -1,5 +1,11 @@
 2005-07-06  Iain McCoy  <iain@mccoy.id.au>
 
+	* demo/runtimetest.xaml
+	  demo/runtimetest.cs,
+	  demo/Makefile: creation of objects at runtime from a xaml file
+
+2005-07-06  Iain McCoy  <iain@mccoy.id.au>
+
 	* demo/test.xaml: add use of x:Name attribute
 
 2005-07-06  Iain McCoy  <iain@mccoy.id.au>

@@ -1,5 +1,12 @@
 2005-07-08  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/ObjectWriter.cs: code to build objects at
+	runtime from a xaml file. Current problems are with events and
+	delegates (current behaviour is untested and possibly useless) and
+	DependencyProperties (not implemented yet)
+
+2005-07-08  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/XamlParser.cs,
 	  Mono.Windows.Serialization/XamlWriter.cs,
 	  Mono.Windows.Serialization/CodeWriter.cs: removed TypeConverter

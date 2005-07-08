@@ -41,3 +41,6 @@ Bye
 Bye
 
 Hopefully you can work out how that is produced from the test.xaml file.
+
+In the same directory, "make run2" should demonstrate the runtime creation of
+objects from xaml files.
