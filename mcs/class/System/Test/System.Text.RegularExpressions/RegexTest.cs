@@ -86,11 +86,15 @@ namespace MonoTests.System.Text.RegularExpressions {
 			new MatchCollectionTrial ("digit", "0 1 2 3 4 5 6a7b8c9d10", "(?<digit>\\d+)", 
 				new string [] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }),
 			new MatchCollectionTrial ("line", story, "(?<line>.+)", 
-						  new string [] { "Two little dragons lived in the forest", "They spent their days collecting honey suckle,", "And eating curds and whey", "Until an evil sorcer came along", "And chased my dragon friends away" }),
+				new string [] { "Two little dragons lived in the forest",
+						"They spent their days collecting honey suckle,",
+						"And eating curds and whey",
+						"Until an evil sorcer came along",
+						"And chased my dragon friends away" }),
 			new MatchCollectionTrial ("nonwhite", "ab 12 cde 456 fghi .,\niou", "(?<nonwhite>\\S+)",
-						  new string [] { "ab", "12", "cde", "456", "fghi", ".,", "iou" }),
+				new string [] { "ab", "12", "cde", "456", "fghi", ".,", "iou" }),
 			new MatchCollectionTrial ("nondigit", "ab0cd1ef2", "(?<nondigit>\\D+)",
-				 new string [] { "ab", "cd", "ef" })
+				new string [] { "ab", "cd", "ef" })
 		};
 
 		static void runTrial (MatchCollectionTrial t)
