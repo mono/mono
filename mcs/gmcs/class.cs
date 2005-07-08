@@ -5676,14 +5676,18 @@ namespace Mono.CSharp {
 			else
 				e = new ArrayCreation (Type, "", (ArrayList)init, Location);
 
+			// TODO: Any reason why we are using parent EC ?
 			EmitContext parent_ec = Parent.EmitContext;
 
 			bool old_is_static = parent_ec.IsStatic;
+			bool old_is_ctor = parent_ec.IsConstructor;
 			parent_ec.IsStatic = ec.IsStatic;
+			parent_ec.IsConstructor = ec.IsConstructor;
 			parent_ec.IsFieldInitializer = true;
 			e = e.DoResolve (parent_ec);
 			parent_ec.IsFieldInitializer = false;
 			parent_ec.IsStatic = old_is_static;
+			parent_ec.IsConstructor = old_is_ctor;
 
 			init_expr = e;
 			init_expr_initialized = true;
