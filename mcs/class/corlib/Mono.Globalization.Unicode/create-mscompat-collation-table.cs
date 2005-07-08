@@ -1686,6 +1686,16 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [0x1] = 0xDC;
 			for (int i = 0x20d0; i <= 0x20e1; i++)
 				AddCharMap ((char) i, 0x1, 1);
+
+			// They are not part of Nonspacing marks, but have
+			// only diacritical weight.
+			for (int i = 0x3099; i <= 0x309C; i++)
+				map [i] = new CharMapEntry (1, 1, 1);
+			map [0x309D] = new CharMapEntry (0xFF, 0xFF, 1);
+			map [0x309E] = new CharMapEntry (0xFF, 0xFF, 1);
+			for (int i = 0x30FC; i <= 0x30FE; i++)
+				map [i] = new CharMapEntry (0xFF, 0xFF, 1);
+
 			#endregion
 
 

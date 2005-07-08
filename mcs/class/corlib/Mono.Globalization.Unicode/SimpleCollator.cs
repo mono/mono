@@ -485,7 +485,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 			buf.Initialize (options, s, frenchSort);
 			int end = start + length;
-			previousSortKey = null;
+			previousChar = -1;
 			GetSortKey (s, start, end);
 			return buf.GetResultAndReset ();
 		}
@@ -497,7 +497,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			None,
 			Simple,
 			Voiced,
-			Conditional
+			Conditional,
+			Buggy,
 		}
 
 		ExtenderType GetExtenderType (int i)
@@ -508,7 +509,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			// Windows also expects true for U+3031 and U+3032,
 			// but they should *never* repeat one character.
 
-			if (i < 0x309D || i > 0xFF70)
+			if (i < 0x3005 || i > 0xFF70)
 				return ExtenderType.None;
 			if (i == 0xFE7C || i == 0xFE7D)
 				return ExtenderType.Simple;
@@ -516,17 +517,28 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return ExtenderType.Conditional;
 			if (i > 0x30FE)
 				return ExtenderType.None;
-			if (i == 0x309D || i == 0x30FD)
+			switch (i) {
+			case 0x3005: // LAMESPEC: see above.
+				return ExtenderType.Buggy;
+			case 0x3031: // LAMESPEC: see above.
+			case 0x3032: // LAMESPEC: see above.
+			case 0x309D:
+			case 0x30FD:
 				return ExtenderType.Simple;
-			if (i == 0x309E || i == 0x30FE)
+			case 0x309E:
+			case 0x30FE:
 				return ExtenderType.Voiced;
-			if (i == 0x30FC)
+			case 0x30FC:
 				return ExtenderType.Conditional;
-			return ExtenderType.None;
+			default:
+				return ExtenderType.None;
+			}
 		}
 
 		byte ToDashTypeValue (ExtenderType ext)
 		{
+			if (ignoreNonSpace) // LAMESPEC: huh, why?
+				return 3;
 			switch (ext) {
 			case ExtenderType.None:
 				return 3;
@@ -551,16 +563,19 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				ExtenderType ext = GetExtenderType (i);
 				if (ext != ExtenderType.None) {
 					i = previousChar;
-					if (i < 0) {
+					if (i >= 0)
+						FillSortKeyRaw (i, ext);
+					else if (previousSortKey != null) {
 						byte [] b = previousSortKey;
 						buf.AppendNormal (
 							b [0],
 							b [1],
 							b [2] != 1 ? b [2] : Level2 (i),
 							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
-					} else
-						FillSortKeyRaw (i,
-							ext);
+					}
+					// otherwise do nothing.
+					// (if the extender is the first char
+					// in the string, then just ignore.)
 					continue;
 				}
 
@@ -616,6 +631,9 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return;
 			}
 
+			byte level2 = Level2 (i);
+			if (ext == ExtenderType.Buggy)
+				level2 = 5;
 			if (Uni.HasSpecialWeight ((char) i)) {
 				byte level1 = Level1 (i);
 				if (ext == ExtenderType.Conditional)
@@ -623,14 +641,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				buf.AppendKana (
 					Category (i),
 					level1,
-					Level2 (i),
+					level2,
 					Uni.Level3 (i),
 					Uni.IsJapaneseSmallLetter ((char) i),
 					ToDashTypeValue (ext),
 					!Uni.IsHiragana ((char) i),
 					Uni.IsHalfWidthKana ((char) i)
 					);
-				if (ext == ExtenderType.Voiced)
+				if (!ignoreNonSpace && ext == ExtenderType.Voiced)
 					// Append voice weight
 					buf.AppendNormal (1, 1, 1, 0);
 			}
@@ -638,7 +656,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				buf.AppendNormal (
 					Category (i),
 					Level1 (i),
-					Level2 (i),
+					level2,
 					Uni.Level3 (i));
 		}
 

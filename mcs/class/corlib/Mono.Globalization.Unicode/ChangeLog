@@ -1,5 +1,13 @@
 2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : to be same as other buggy part, it now handles
+	  U+3005, U+3031 and U+3032 as buggy as Windows. It just repeats
+	  previous character.
+	  Fixed GetSortKey(): if the repeater is U+3005, second weight is 5.
+	* create-mscompat-collation-table.cs : dummy values for extenders.
+
+2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Special weight fixes on GetSortKey(). Dash type
 	  should be computed from ExtenderType, and voice mark weight should
 	  be considered.
