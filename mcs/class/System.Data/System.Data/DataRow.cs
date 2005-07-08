@@ -1645,17 +1645,15 @@ namespace System.Data {
                 ///    state based on the LoadOption.  The matrix of changes for this method are as
                 ///    mentioned in the DataTable.Load (IDataReader, LoadOption) method.
                 /// </summary>
-                [MonoTODO ("Raise necessary Events")]
                 internal void Load (object [] values, LoadOption loadOption)
                 {
                         Index index = null;
-                        DataRowAction action = DataRowAction.Change;
-
                         int temp = -1;
 
                         if (loadOption == LoadOption.OverwriteChanges 
                             || (loadOption == LoadOption.PreserveChanges
                                 && RowState == DataRowState.Unchanged)) {
+				Table.ChangingDataRow (this, DataRowAction.ChangeCurrentAndOriginal);
 				temp = Table.CreateRecord (values);
                                 if (HasVersion (DataRowVersion.Original) && Current != Original)
                                         Table.RecordCache.DisposeRecord (Original);
@@ -1668,18 +1666,17 @@ namespace System.Data {
                                 if (HasVersion (DataRowVersion.Current))
                                         Table.RecordCache.DisposeRecord (Current);
                                 Current = temp;
-                                action = DataRowAction.ChangeCurrentAndOriginal;
+				Table.ChangedDataRow (this, DataRowAction.ChangeCurrentAndOriginal);
                                 return;
                         }
 
                         if (loadOption == LoadOption.PreserveChanges) {
-				if (RowState == DataRowState.Deleted)
-					return;
+				Table.ChangingDataRow (this, DataRowAction.ChangeOriginal);
 				temp = Table.CreateRecord (values);
 				if (HasVersion (DataRowVersion.Original) && Current != Original)
 					Table.RecordCache.DisposeRecord (Original);
 				Original = temp;
-				action   = DataRowAction.ChangeOriginal;
+				Table.ChangedDataRow (this, DataRowAction.ChangeOriginal);
                                 return;
                         }
                                 
@@ -1687,7 +1684,9 @@ namespace System.Data {
                         if (RowState != DataRowState.Deleted) {
                                 int rindex = HasVersion (DataRowVersion.Proposed) ? Proposed : Current;
 				temp = Table.CreateRecord (values);
-				if (Table.CompareRecords (rindex, temp) != 0) {
+				if (RowState == DataRowState.Added 
+				    || Table.CompareRecords (rindex, temp) != 0) {
+					Table.ChangingDataRow (this, DataRowAction.Change);
                                         if (HasVersion (DataRowVersion.Proposed)) {
                                                 Table.RecordCache.DisposeRecord (Proposed);
                                                 Proposed = -1;
@@ -1701,8 +1700,12 @@ namespace System.Data {
                                         if (Original != Current)
                                                 Table.RecordCache.DisposeRecord (Current);
                                         Current = temp;
-                                } else
+					Table.ChangedDataRow (this, DataRowAction.Change);
+                                } else {
+					Table.ChangingDataRow (this, DataRowAction.Nothing);
 					Table.RecordCache.DisposeRecord (temp);
+					Table.ChangedDataRow (this, DataRowAction.Nothing);
+				}
                         }
 
                 }

@@ -1,3 +1,10 @@
+2005-07-08  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRow.cs: Load : Fired necessary events.
+
+	* DataTable.cs: LoadDataRow (object [], LoadOption): Fired
+	necessary events.
+
 2005-06-28  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRow.cs: Delete (): if row is detached, do nothing.

@@ -1222,18 +1222,19 @@ namespace System.Data {
                                         // we have to check that the new row doesn't colide with existing row
                                         Rows.ValidateDataRowInternal(row); // this adds to index ;-)
                                      
-                                Rows.AddInternal(row);		
-	
                                 if (loadOption == LoadOption.OverwriteChanges ||
                                     loadOption == LoadOption.PreserveChanges) {
-                                        row.AcceptChanges ();
-                                }
+					Rows.AddInternal(row);
+					ChangingDataRow (row, DataRowAction.ChangeCurrentAndOriginal);
+					row.Original = row.Current;
+					ChangedDataRow (row, DataRowAction.ChangeCurrentAndOriginal);
+                                } else
+					Rows.AddInternal(row);
                                 return row;
                         }
 
-                        bool deleted = row.RowState == DataRowState.Deleted;
-
-                        if (deleted && loadOption == LoadOption.OverwriteChanges)
+                        if (row.RowState == DataRowState.Deleted 
+			    && loadOption == LoadOption.OverwriteChanges)
                                 row.RejectChanges ();                        
 
                         row.Load (values, loadOption);
