@@ -329,7 +329,7 @@ namespace System.Data {
                                 row ["NumericScale"]    = DBNull.Value;
                                 row ["IsUnique"]        = DBNull.Value;
                                 row ["IsKey"]           = DBNull.Value;
-                                row ["DataType"]        = column.DataType.ToString ();
+                                row ["DataType"]        = column.DataType;
                                 row ["AllowDBNull"]     = column.AllowDBNull;
                                 row ["IsAliased"]       = DBNull.Value;
                                 row ["IsExpression"]    = DBNull.Value;

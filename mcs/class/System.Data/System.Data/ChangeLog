@@ -1,5 +1,8 @@
 2005-07-08  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataTableReader.cs: GetSchemaTable: DataType column should be
+	passed a type of Type.
+
 	* DataRow.cs: Load : Fired necessary events.
 
 	* DataTable.cs: LoadDataRow (object [], LoadOption): Fired
