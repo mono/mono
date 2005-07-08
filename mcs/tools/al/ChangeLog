@@ -1,3 +1,8 @@
+2005-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Al.cs: Applied patch from Sridhar Kulkarni (sridharkulkarni@msn.com).
+	Implement /template option. Fixes #74814.
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Al.cs: Added support for signing/delay-signing/ecma-delay-signing.

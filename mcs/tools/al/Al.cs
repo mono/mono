@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
+using System.Configuration.Assemblies;
 
 using Mono.Security.Cryptography;
 
@@ -49,6 +50,8 @@ namespace Mono.AssemblyLinker
 		string entryPoint;
 		string win32IconFile;
 		string win32ResFile;
+		string templateFile;
+		bool isTemplateFile = false;
 		Target target;
 		bool delaysign;
 		string keyfile;
@@ -66,7 +69,21 @@ namespace Mono.AssemblyLinker
 			return 0;
 		}
 
-		private void ParseArgs (string[] args) {
+		static bool IsStrongNamed (Assembly assembly)
+		{
+			object[] attrs = assembly.GetCustomAttributes (true);
+			foreach (object o in attrs) 
+			{
+				if (o is AssemblyKeyFileAttribute)
+					return true;
+				else if (o is AssemblyKeyNameAttribute)
+					return true;
+			}
+			return false;
+		}
+
+		private void ParseArgs (string[] args) 
+		{
 
 			ArrayList flat_args = new ArrayList ();
 
@@ -344,9 +361,10 @@ namespace Mono.AssemblyLinker
 					break;
 
 				case "template":
-					if (arg == null)
-						ReportMissingFileSpec (opt);
-					ReportNotImplemented (opt);
+                        		if (arg == null)
+                            			ReportMissingFileSpec (opt);
+					isTemplateFile = true;
+					templateFile = arg;
 					break;
 
 				case "title":
@@ -400,7 +418,7 @@ namespace Mono.AssemblyLinker
 				Report (1035, "Libraries cannot have an entry point");
 
 			if (target == Target.Exe && (entryPoint == null))
-				Report (1036, "Entry point required for executable applications");
+				Report (1036, "Entry point required for executable applications");						
 		}
 
 		private string GetCommand (string str, out string command_arg) {
@@ -548,7 +566,7 @@ namespace Mono.AssemblyLinker
 				aname.KeyPair = new StrongNameKeyPair (keyname);
 			}
 		}
-
+		
 		private void DoIt () {
 			AssemblyName aname = new AssemblyName ();
 			aname.Name = Path.GetFileNameWithoutExtension (outFile);
@@ -557,6 +575,28 @@ namespace Mono.AssemblyLinker
 			string fileName = Path.GetFileName (outFile);
 
 			AssemblyBuilder ab;
+			
+			/*
+			 * Emit Manifest
+			 * */
+
+			if(isTemplateFile) {
+				
+				byte[] pk;
+				AssemblyName myAssm = new AssemblyName();
+				myAssm.Name = Path.GetFileNameWithoutExtension (templateFile);
+				Assembly assembly = Assembly.Load(myAssm);
+	
+				if (!IsStrongNamed(assembly)){
+					Report (1055, String.Format ("Assembly specified does not have Strong Name '{0}'","template"));
+                      }
+				pk = assembly.GetName().GetPublicKey();
+
+				aname.SetPublicKey(pk);
+				aname.HashAlgorithm = assembly.GetName().HashAlgorithm;
+				aname.Version = assembly.GetName().Version;
+				aname.HashAlgorithm = assembly.GetName().HashAlgorithm;
+			}
 
 			if (fileName != outFile)
 				ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Save, Path.GetDirectoryName (outFile));
