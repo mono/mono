@@ -1,3 +1,7 @@
+2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_lowering_pass): Fix store_membase_imm -> store_membase_reg rule.
+
 2005-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md: Merge the xp-regalloc-branch for amd64.
