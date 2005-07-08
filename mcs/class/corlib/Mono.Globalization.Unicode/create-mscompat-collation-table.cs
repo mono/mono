@@ -147,6 +147,7 @@ namespace Mono.Globalization.Unicode
 			" CIRCUMFLEX AND DOT BELOW",
 			" BREVE AND DOT BELOW",
 			" DOT BELOW AND MACRON",
+			" TONE TWO",
 			" HORN AND HOOK ABOVE",
 			" HORN AND DOT",
 			// CIRCLED, PARENTHESIZED and so on
@@ -172,7 +173,7 @@ namespace Mono.Globalization.Unicode
 			//
 			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 0x68,
 			0x69, 0x69, 0x6A, 0x6D, 0x6E,
-			0x95, 0xAA,
+			0x87, 0x95, 0xAA,
 			// CIRCLED, PARENTHESIZED and so on.
 			0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
 			0xF3, 0xF3, 0xF3
@@ -1768,11 +1769,21 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					continue; // SPECIAL: skip FIXME: why?
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (!IsIgnorable (cp) &&
-					uc == UnicodeCategory.OtherSymbol)
+					uc == UnicodeCategory.OtherSymbol ||
+					cp == '\u00B5' || cp == '\u00B7')
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 
-			fillIndex [0xA] = 0x1C; // FIXME: it won't be needed
+			fillIndex [0xA] = 0x0F; // FIXME: it won't be needed
+			for (int cp = 0x2020; cp <= 0x2031; cp++)
+				if (Char.IsPunctuation ((char) cp))
+					AddCharMap ((char) cp, 0xA, 1, 0);
+			// SPECIAL CASES: why?
+			AddCharMap ('\u203B', 0xA, 1, 0);
+			AddCharMap ('\u2040', 0xA, 1, 0);
+			AddCharMap ('\u2041', 0xA, 1, 0);
+			AddCharMap ('\u2042', 0xA, 1, 0);
+
 			for (int cp = 0x20A0; cp <= 0x20AB; cp++)
 				AddCharMap ((char) cp, 0xA, 1, 0);
 			fillIndex [0xA] = 0x2F; // FIXME: it won't be needed
@@ -2643,10 +2654,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				// Insert 3001 after ',' and 3002 after '.'
 				if (i == 0x2C)
 					AddCharMapGroup2 ('\u3001', 0x7, 1, 0);
-				else if (i == 0x2E) {
-					fillIndex [0x7]--;
+				else if (i == 0x2E)
 					AddCharMapGroup2 ('\u3002', 0x7, 1, 0);
-				}
 				else if (i == 0x3A)
 					AddCharMap ('\uFE30', 0x7, 1, 0);
 			}
@@ -2682,7 +2691,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				case UnicodeCategory.FinalQuotePunctuation:
 				case UnicodeCategory.ModifierSymbol:
 					// SPECIAL CASES: // 0xA
-					if (0x2020 <= i && i <= 0x2042)
+					if (0x2020 <= i && i <= 0x2031)
 						continue;
 					AddCharMapGroup ((char) i, 0x7, 1, 0);
 					break;
