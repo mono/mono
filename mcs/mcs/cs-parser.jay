@@ -1260,8 +1260,6 @@ property_declaration
 		lexer.PropertyParsing = true;
 
 		$$ = lexer.Location;
-
-		iterator_container = SimpleIteratorContainer.GetSimple ();
 	  }
 	  accessor_declarations 
 	  {
@@ -1283,12 +1281,9 @@ property_declaration
 
 		prop = new Property (current_class, (Expression) $3, (int) $2, false,
 				     name, (Attributes) $1, get_block, set_block, loc);
-		if (SimpleIteratorContainer.Simple.Yields)
-			prop.SetYields ();
 		
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
-		iterator_container = null;
 
 		if (RootContext.Documentation != null)
 			prop.DocComment = ConsumeStoredComment ();
@@ -1334,6 +1329,8 @@ get_accessor_declaration
 		else 
 			current_local_parameters = indexer_parameters;
 		lexer.PropertyParsing = false;
+
+		iterator_container = SimpleIteratorContainer.GetSimple ();
 	  }
           accessor_body
 	  {
@@ -1341,14 +1338,21 @@ get_accessor_declaration
 			Report.Error (1007, lexer.Location, "Property accessor already defined");
 			break;
 		}
-		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		has_get = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
+		if (SimpleIteratorContainer.Simple.Yields)
+			accessor.SetYields ();
+
+		iterator_container = null;
+
 		if (RootContext.Documentation != null)
 			if (Lexer.doc_state == XmlCommentState.Error)
 				Lexer.doc_state = XmlCommentState.NotAllowed;
+
+		$$ = accessor;
 	  }
 	;
 
@@ -1380,6 +1384,8 @@ set_accessor_declaration
 		}
 		
 		lexer.PropertyParsing = false;
+
+		iterator_container = SimpleIteratorContainer.GetSimple ();
 	  }
 	  accessor_body
 	  {
@@ -1387,14 +1393,21 @@ set_accessor_declaration
 			Report.Error (1007, lexer.Location, "Property accessor already defined");
 			break;
 		}
-		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		has_set = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
+		if (SimpleIteratorContainer.Simple.Yields)
+			accessor.SetYields ();
+
+		iterator_container = null;
+
 		if (RootContext.Documentation != null
 			&& Lexer.doc_state == XmlCommentState.Error)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
+
+		$$ = accessor;
 	  }
 	;
 
@@ -2207,7 +2220,6 @@ indexer_declaration
 		
 		lexer.PropertyParsing = true;
 		parsing_indexer  = true;
-		iterator_container = SimpleIteratorContainer.GetSimple ();
 		
 		indexer_parameters = decl.param_list;
 	  }
@@ -2241,8 +2253,6 @@ indexer_declaration
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
-		if (SimpleIteratorContainer.Simple.Yields)
-			indexer.SetYields ();
 
 		if (RootContext.Documentation != null)
 			indexer.DocComment = ConsumeStoredComment ();
@@ -2252,7 +2262,6 @@ indexer_declaration
 		current_local_parameters = null;
 		implicit_value_parameter_type = null;
 		indexer_parameters = null;
-		iterator_container = null;
 	  }
 	;
 

@@ -3118,7 +3118,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		// TODO: why is it done in extra call ?
 		public void SetYields ()
 		{
 			ModFlags |= Modifiers.METHOD_YIELDS;
@@ -5661,7 +5660,7 @@ namespace Mono.CSharp {
 	//
 	// `set' and `get' accessors are represented with an Accessor.
 	// 
-	public class Accessor {
+	public class Accessor : IIteratorContainer {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
@@ -5675,6 +5674,7 @@ namespace Mono.CSharp {
 		public Attributes Attributes;
 		public Location Location;
 		public int ModFlags;
+		public bool Yields;
 		
 		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Location loc)
 		{
@@ -5683,8 +5683,12 @@ namespace Mono.CSharp {
 			Location = loc;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, 0, loc);
 		}
-	}
 
+		public void SetYields ()
+		{
+			Yields = true;
+		}
+	}
 
 	// Ooouh Martin, templates are missing here.
 	// When it will be possible move here a lot of child code and template method type.
@@ -6005,6 +6009,7 @@ namespace Mono.CSharp {
 		{
 			protected readonly MethodCore method;
 			protected MethodAttributes flags;
+			bool yields;
 
 			public PropertyMethod (MethodCore method, string prefix)
 				: base (method, prefix)
@@ -6020,6 +6025,7 @@ namespace Mono.CSharp {
 				this.method = method;
 				Parent = method.Parent;
 				this.ModFlags = accessor.ModFlags;
+				yields = accessor.Yields;
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotStandardized (Location, "access modifiers on properties");
@@ -6074,7 +6080,7 @@ namespace Mono.CSharp {
 				//
 				// Setup iterator if we are one
 				//
-				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
+				if (yields) {
 					Iterator iterator = new Iterator (this,
 						Parent, method.ParameterInfo, ModFlags);
 					
@@ -6363,7 +6369,7 @@ namespace Mono.CSharp {
 		}
 	}
 			
-	public class Property : PropertyBase, IIteratorContainer {
+	public class Property : PropertyBase {
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |

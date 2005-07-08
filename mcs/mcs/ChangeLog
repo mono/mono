@@ -5,6 +5,22 @@
 
 2005-07-08  Martin Baulig  <martin@ximian.com>
 
+	Fix test-iter-10.cs - distinguish whether we `yield' in a property
+	gettter (allowed) or setter (not allowed).
+
+	* class.cs (Accessor): Implement IIteratorContainer.
+	(Accessor.Yields): New public field.
+	(PropertyBase.PropertyMethod.Define): Handle iterators on a
+	per-accessor basis.
+
+	* cs-parser.jay
+	(get_accessor_declaration, set_accessor_declaration): Set the
+	`yields' flag on the accessor, not the property.
+	(property_declaration): Do the iterators check on a per-accessor
+	basis and not for the whole property.
+
+2005-07-08  Martin Baulig  <martin@ximian.com>
+
 	* anonymous.cs (CaptureContext.EmitParameterInstance): Correctly
 	handle parameters in nested scopes; fixes #74808; see gtest-188.cs.
 
