@@ -36,7 +36,7 @@ using System.Data;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.SqlClient
+namespace MonoTests.System.Data
 {
         [TestFixture]
         public class DataTableReaderTest
