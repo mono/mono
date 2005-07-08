@@ -1,3 +1,26 @@
+2005-07-05  Raja R Harinath  <rharinath@novell.com>
+
+	Make 'fixed variable' handling standards compliant. Fix #70807, #72729.
+	* ecore.cs (IVariable.VerifyFixed): Remove 'is_expression' parameter.
+	(FieldExpr.VerifyFixed): Ensure that the field is part of a fixed
+	variable of struct type.
+	* expression.cs (Unary.ResolveOperator): Update to change.
+	(Indirection.VerifyFixed): Likewise.
+	(LocalVariableReference.VerifyFixed): A local variable is always fixed.
+	(ParameterReference.VerifyFixed): Value parameters are fixed.
+	(This.VerifyFixed): Treat 'this' as a value parameter.
+	* statement.cs (LocalInfo.IsFixed): Remove.
+
+2005-07-01  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs (Iterator.CapturedThisReference.Emit): Use
+	`ec.EmitThis ()' to get the correct scope.
+
+2005-07-01  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (FieldExpr.DoResolve): Don't capture the field if it's
+	instance is a ParameterReference; fixes #75299.
+
 2005-06-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75412.
