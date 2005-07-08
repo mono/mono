@@ -38,7 +38,7 @@ namespace Mono.Windows.Serialization {
 		void EndObject();
 
 		void CreateProperty(PropertyInfo property);
-		void CreatePropertyText(string text, Type propertyType, Type converterType);
+		void CreatePropertyText(string text, Type propertyType);
 		void CreatePropertyDelegate(string functionName, Type propertyType);
 		void EndProperty();
 	
@@ -48,7 +48,7 @@ namespace Mono.Windows.Serialization {
 		void EndEvent();
 
 		void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType);
-		void CreateDependencyPropertyText(string text, Type propertyType, Type converterType);
+		void CreateDependencyPropertyText(string text, Type propertyType);
 		void EndDependencyProperty();
 
 		void CreateCode(string code);

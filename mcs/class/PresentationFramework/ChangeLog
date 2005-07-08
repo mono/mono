@@ -2,6 +2,15 @@
 
 	* Mono.Windows.Serialization/XamlParser.cs,
 	  Mono.Windows.Serialization/XamlWriter.cs,
+	  Mono.Windows.Serialization/CodeWriter.cs: removed TypeConverter
+	  stuff from everything except CodeWriter. By using TypeDescriptor,
+	  the generator doesn't need to be told about the converter and since
+	  the framework will find it we don't have to search for it.
+
+2005-07-08  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlWriter.cs,
 	  Mono.Windows.Serialization/CodeWriter.cs: support for x:Name
 	  attributes and for considering Name properties to have the same
 	  affect.

@@ -222,20 +222,29 @@ namespace Mono.Windows.Serialization {
 					expr);
 			constructor.Statements.Add(assignment);
 		}
-		// top of stack is reference to a property
-		public void CreatePropertyText(string text, Type propertyType, Type converterType)
+
+		private CodeExpression fetchConverter(Type propertyType)
 		{
-			CreateDependencyPropertyText(text, propertyType, converterType);
+			return new CodeMethodInvokeExpression(
+					new CodeMethodReferenceExpression(
+							new CodeTypeReferenceExpression(typeof(System.ComponentModel.TypeDescriptor)),
+							"GetConverter"),
+					new CodeTypeOfExpression(propertyType));
+		}
+		// top of stack is reference to a property
+		public void CreatePropertyText(string text, Type propertyType)
+		{
+			CreateDependencyPropertyText(text, propertyType);
 		}
 		// top of stack is reference to an attached property
-		public void CreateDependencyPropertyText(string text, Type propertyType, Type converterType)
+		public void CreateDependencyPropertyText(string text, Type propertyType)
 		{
 			CodeExpression expr = new CodePrimitiveExpression(text);
-			if (converterType != null) {
+			if (propertyType != typeof(string)) {
 				expr = new CodeCastExpression(
 						new CodeTypeReference(propertyType),
 						new CodeMethodInvokeExpression(
-								new CodeObjectCreateExpression(converterType),
+								fetchConverter(propertyType),
 								"ConvertFromString",
 								expr));
 			}

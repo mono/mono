@@ -164,38 +164,12 @@ namespace Mono.Windows.Serialization {
 				writer.CreateElementText(reader.Value);
 			} else if (currentState.type == CurrentType.DependencyProperty) {
 				DependencyProperty dp = (DependencyProperty)currentState.obj;
-				writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType, 
-						getTypeConverter(dp.PropertyType));
+				writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType);
 			} else {
 				PropertyInfo prop = (PropertyInfo)currentState.obj;
-				writer.CreatePropertyText(reader.Value, prop.PropertyType,
-						getTypeConverter(prop.PropertyType));
+				writer.CreatePropertyText(reader.Value, prop.PropertyType);
 			}
 		}
-		
-		Type getTypeConverter(Type fromType)
-		{
-			// TODO: this business setting assembly is frankly
-			// grotesque. It should just be something along the
-			// lines of Assembly.Load("System.dll")
-			Assembly assembly = null;
-			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()) {
-				if (a.CodeBase.EndsWith("System.dll")) {
-					assembly = a;
-					break;
-				}
-			}
-
-			
-			if (fromType.Namespace == "System" && 
-					fromType.Name == "String")
-				return null;
-			string converterName = "System.ComponentModel." + fromType.Name + "Converter,System.dll";
-			Type converter = assembly.GetType(converterName);
-			return converter;
-			// TODO: check if converter == null and do something cool
-		}
-
 		
 		void parseNormalPropertyElement(string propertyName)
 		{
@@ -316,7 +290,7 @@ namespace Mono.Windows.Serialization {
 			if (prop.PropertyType.IsSubclassOf(typeof(Delegate)))
 				writer.CreatePropertyDelegate(reader.Value, prop.PropertyType);
 			else
-				writer.CreatePropertyText(reader.Value, prop.PropertyType, getTypeConverter(prop.PropertyType));
+				writer.CreatePropertyText(reader.Value, prop.PropertyType);
 			
 			writer.EndProperty();
 		}
@@ -373,8 +347,7 @@ namespace Mono.Windows.Serialization {
 			DependencyProperty dp = getDependencyProperty(typeAttachedTo, propertyName);
 			
 			writer.CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
-			writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType, 
-					getTypeConverter(dp.PropertyType));
+			writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType);
 			writer.EndDependencyProperty();
 		}
 
