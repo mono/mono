@@ -761,11 +761,14 @@ namespace Npgsql
 
         private String GetClearCommandText()
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetClearCommandText");
+            if (NpgsqlEventLog.Level == LogLevel.Debug)
+                NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetClearCommandText");
 
-            Boolean addProcedureParenthesis = false;  // Do not add procedure parenthesis by default.
+            Boolean addProcedureParenthesis = false;    // Do not add procedure parenthesis by default.
             
-            Boolean functionReturnsRecord = false;    // Functions don't return record by default.
+            Boolean functionReturnsRecord = false;      // Functions don't return record by default.
+            
+            Boolean functionReturnsRefcursor = false;   // Functions don't return refcursor by default.   
             
             String result = text;
 
@@ -773,6 +776,8 @@ namespace Npgsql
             {
                 
                 functionReturnsRecord = CheckFunctionReturnRecord();
+                
+                functionReturnsRefcursor = CheckFunctionReturnRefcursor();
                 
                 // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection.
                 if (!result.Trim().EndsWith(")"))  
@@ -792,7 +797,15 @@ namespace Npgsql
             if (parameters == null || parameters.Count == 0)
             {
                 if (addProcedureParenthesis)
-                        result += ")";
+                    result += ")";
+                
+                
+                // If function returns ref cursor just process refcursor-result function call 
+                // and return command which will be used to return data from refcursor.
+                
+                if (functionReturnsRefcursor)
+                    return ProcessRefcursorFunctionReturn(result);
+                
                         
                 if (functionReturnsRecord)
                     result = AddFunctionReturnsRecordSupport(result);
@@ -827,31 +840,33 @@ namespace Npgsql
                     String s = m.Groups[0].ToString();
                     
                     if ((s.StartsWith(":") ||
-                        s.StartsWith("@")) &&
-			Parameters.Contains(s))
+                         s.StartsWith("@")) &&
+                         Parameters.Contains(s))
                     {
                         // It's a parameter. Lets handle it.
                     
                         NpgsqlParameter p = Parameters[s];
                         if ((p.Direction == ParameterDirection.Input) ||
-                        (p.Direction == ParameterDirection.InputOutput))
-		        {
+                             (p.Direction == ParameterDirection.InputOutput))
+                        {
                             
                             // FIXME DEBUG ONLY
                             // adding the '::<datatype>' on the end of a parameter is a highly
                             // questionable practice, but it is great for debugging!
                             sb.Append(p.TypeInfo.ConvertToBackend(p.Value, false));
-		            
-			    // Only add data type info if we are calling an stored procedure
-				                                
+                            
+                            // Only add data type info if we are calling an stored procedure.
+                            
                             if (type == CommandType.StoredProcedure)
                             {
                                 sb.Append("::");
-			        sb.Append(p.TypeInfo.Name);
-			        if (p.TypeInfo.UseSize && (p.Size > 0))
-			            sb.Append("(").Append(p.Size).Append(")");
-			    }
-                        }   
+                                sb.Append(p.TypeInfo.Name);
+                                
+                                if (p.TypeInfo.UseSize && (p.Size > 0))
+                                    sb.Append("(").Append(p.Size).Append(")");
+                            }
+                        }
+                            
                     }   
                     else 
                         sb.Append(s);
@@ -864,18 +879,17 @@ namespace Npgsql
                 
             else
             {
-                
-                
+                                
                 for (Int32 i = 0; i < parameters.Count; i++)
                 {
                     NpgsqlParameter Param = parameters[i];
     
                     
                     if ((Param.Direction == ParameterDirection.Input) ||
-                        (Param.Direction == ParameterDirection.InputOutput))
+                         (Param.Direction == ParameterDirection.InputOutput))
                     
                         
-                            result += Param.TypeInfo.ConvertToBackend(Param.Value, false) + "::" + Param.TypeInfo.Name + ",";
+                        result += Param.TypeInfo.ConvertToBackend(Param.Value, false) + "::" + Param.TypeInfo.Name + ",";
                 }
             
             
@@ -889,6 +903,13 @@ namespace Npgsql
 
             if (functionReturnsRecord)
                 result = AddFunctionReturnsRecordSupport(result);
+            
+            // If function returns ref cursor just process refcursor-result function call 
+            // and return command which will be used to return data from refcursor.
+                
+            if (functionReturnsRefcursor)
+                return ProcessRefcursorFunctionReturn(result);
+                
                 
             return AddSingleRowBehaviorSupport(result);
         }
@@ -909,6 +930,34 @@ namespace Npgsql
             {
                 if ((p.Direction == ParameterDirection.Input) ||
                 (p.Direction == ParameterDirection.InputOutput))
+                {
+                    parameterTypes.Append(Connection.Connector.OidToNameMapping[p.TypeInfo.Name].OID + " ");
+                }
+            }
+        
+                
+            NpgsqlCommand c = new NpgsqlCommand(String.Format(returnRecordQuery, parameterTypes.ToString(), CommandText), Connection);
+            
+            Boolean ret = (Boolean) c.ExecuteScalar();
+            
+            // reset any responses just before getting new ones
+            connector.Mediator.ResetResponses();
+            return ret;
+            
+        
+        }
+        
+        private Boolean CheckFunctionReturnRefcursor()
+        {
+            
+            String returnRecordQuery = "select count(*) > 0 from pg_proc where prorettype = ( select oid from pg_type where typname = 'refcursor' ) and proargtypes='{0}' and proname='{1}';";
+            
+            StringBuilder parameterTypes = new StringBuilder("");
+            
+            foreach(NpgsqlParameter p in Parameters)
+            {
+                if ((p.Direction == ParameterDirection.Input) ||
+                     (p.Direction == ParameterDirection.InputOutput))
                 {
                     parameterTypes.Append(Connection.Connector.OidToNameMapping[p.TypeInfo.Name].OID + " ");
                 }
@@ -953,6 +1002,38 @@ namespace Npgsql
             
             return result;
             
+            
+        }
+        
+        ///<summary>
+        /// This methods takes a string with a function call witch returns a refcursor or a set of
+        /// refcursor. It will return the names of the open cursors/portals which will hold
+        /// results. In turn, it returns the string which is needed to get the data of this cursors
+        /// in form of one resultset for each cursor open. This way, clients don't need to do anything
+        /// else besides calling function normally to get results in this way.
+        ///</summary>
+               
+        private String ProcessRefcursorFunctionReturn(String FunctionCall)
+        {
+            NpgsqlCommand c = new NpgsqlCommand(FunctionCall, Connection);
+            
+            NpgsqlDataReader dr = c.ExecuteReader();
+            
+            StringBuilder sb = new StringBuilder();
+            
+            while (dr.Read())
+            {
+                sb.Append("fetch all from \"").Append(dr.GetString(0)).Append("\";");
+                
+            }
+            
+            sb.Append(";"); // Just in case there is no response from refcursor function return.
+            
+            // reset any responses just before getting new ones
+            connector.Mediator.ResetResponses();
+            
+            return sb.ToString();
+                    
             
         }
 
