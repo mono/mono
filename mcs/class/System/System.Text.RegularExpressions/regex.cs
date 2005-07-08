@@ -326,14 +326,8 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public MatchCollection Matches (string input, int startat) {
-			MatchCollection ms = new MatchCollection ();
 			Match m = Match (input, startat);
-			while (m.Success) {
-				ms.Add (m);
-				m = m.NextMatch ();
-			}
-
-			return ms;
+			return new MatchCollection (m);
 		}
 
 		// replace methods

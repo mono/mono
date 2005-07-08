@@ -1,3 +1,12 @@
+2005-07-08  Raja R Harinath  <rharinath@novell.com>
+
+	* RegexTest.cs (Matches1, Matches2, ..., Matches10): Combine into ...
+	(Matches): ... this.  Convert to use a data-driven approach.  Use ...
+	(trials): ... this.  New variable that lists the regexp, input
+	text and expected results.
+	(runTrial): New.  Run a suite of MatchCollection tests on each trial.
+	Tests both incremental and non-incremental modes.
+
 2005-06-14  Raja R Harinath  <harinath@gmail.com>
 
 	* RegexBugs.cs (NameLookupInEmptyMatch): New test from #74753.

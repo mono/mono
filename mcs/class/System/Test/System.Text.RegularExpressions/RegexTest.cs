@@ -16,17 +16,19 @@ using NUnit.Framework;
 namespace MonoTests.System.Text.RegularExpressions {
 	
 	[TestFixture]
-	public class RegexTest : Assertion {
+	public class RegexTest {
 
 		[Test]
-		public void Simple () {
+		public void Simple ()
+		{
 			char[] c = { (char)32, (char)8212, (char)32 };
 			string s = new String(c);			
-			Assertion.AssertEquals ("char", true, Regex.IsMatch(s, s));
+			Assert.IsTrue (Regex.IsMatch(s, s), "char");
 		}
 		
 		[Test]
-		public void Unescape () {
+		public void Unescape ()
+		{
 			string inString = @"\a\b\t\r\v\f\n\e\02400\x231\cC\ufffff\*";
 			char [] c = { (char)7, (char)8, (char)9, (char)13, 
 				      (char)11, (char)12, (char)10, (char)27, (char) 20,
@@ -36,7 +38,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 			string expectedString = new String(c);
 			string outString = Regex.Unescape(inString);
 
-			Assertion.AssertEquals("unescape", outString, expectedString);
+			Assert.AreEqual (outString, expectedString, "unescape");
 		}
 
 		[Test]
@@ -47,189 +49,110 @@ namespace MonoTests.System.Text.RegularExpressions {
 
 			m = email.Match ("mono@go-mono.com");
 
-			Assert ("#m01", m.Success);
-			AssertEquals ("#m02", "mono", m.Groups ["user"].Value);
-			AssertEquals ("#m03", "go-mono.com", m.Groups ["domain"].Value);
+			Assert.IsTrue (m.Success, "#m01");
+			Assert.AreEqual ("mono", m.Groups ["user"].Value, "#m02");
+			Assert.AreEqual ("go-mono.com", m.Groups ["domain"].Value, "#m03");
 
 			m = email.Match ("mono.bugs@go-mono.com");
-			Assert ("#m04", m.Success);
-			AssertEquals ("#m05", "mono.bugs", m.Groups ["user"].Value);
-			AssertEquals ("#m06", "go-mono.com", m.Groups ["domain"].Value);
+			Assert.IsTrue (m.Success, "m04");
+			Assert.AreEqual ("mono.bugs", m.Groups ["user"].Value, "#m05");
+			Assert.AreEqual ("go-mono.com", m.Groups ["domain"].Value, "#m06");
+		}
+
+		static string story =	
+			"Two little dragons lived in the forest\n" +
+			"They spent their days collecting honey suckle,\n" +
+			"And eating curds and whey\n" +
+			"Until an evil sorcer came along\n" +
+			"And chased my dragon friends away";
+
+		struct MatchCollectionTrial {
+			public readonly string name;
+			public readonly string text;
+			public readonly string regex;
+			public readonly string [] matches;
+			public MatchCollectionTrial (string name, string text, string regex, string [] matches)
+			{
+				this.name = name;
+				this.text = text;
+				this.regex = regex;
+				this.matches = matches;
+			}
+		}
+
+		static readonly MatchCollectionTrial [] trials = {
+			new MatchCollectionTrial ("word", "the fat cat ate the rat", "(?<word>\\w+)", 
+				new string [] { "the", "fat", "cat", "ate", "the", "rat" }),
+			new MatchCollectionTrial ("digit", "0 1 2 3 4 5 6a7b8c9d10", "(?<digit>\\d+)", 
+				new string [] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }),
+			new MatchCollectionTrial ("line", story, "(?<line>.+)", 
+						  new string [] { "Two little dragons lived in the forest", "They spent their days collecting honey suckle,", "And eating curds and whey", "Until an evil sorcer came along", "And chased my dragon friends away" }),
+			new MatchCollectionTrial ("nonwhite", "ab 12 cde 456 fghi .,\niou", "(?<nonwhite>\\S+)",
+						  new string [] { "ab", "12", "cde", "456", "fghi", ".,", "iou" }),
+			new MatchCollectionTrial ("nondigit", "ab0cd1ef2", "(?<nondigit>\\D+)",
+				 new string [] { "ab", "cd", "ef" })
+		};
+
+		static void runTrial (MatchCollectionTrial t)
+		{
+			runTrial (t, false);
+			runTrial (t, true);
+		}
+
+		static void runTrial (MatchCollectionTrial t, bool rtl)
+		{
+			int i;
+			MatchCollection mc;
+
+			string name = t.name;
+			if (rtl)
+				name += "-rtl";
+
+			int len = t.matches.Length;
+			Regex r = new Regex (t.regex, rtl ? RegexOptions.RightToLeft : RegexOptions.None);
+
+			// Incremental mode -- this access
+			mc = r.Matches (t.text);
+			for (i = 0; i < len; ++i)
+				Assert.AreEqual (mc [i].Value, t.matches [rtl ? len - i - 1 : i], "{0}:this:{1}", name, i);
+			Assert.AreEqual (i, mc.Count, "{0}:this:count", name);
+
+			// Incremental mode -- enumerator
+			mc = r.Matches (t.text);
+			i = 0;
+			foreach (Match m in mc) {
+				Assert.AreEqual (m.Value, t.matches [rtl ? len - i - 1 : i], "{0}:enum:{1}", name, i);
+				++i;
+			}
+			Assert.AreEqual (i, len, "{0}:enum:count", name);
+
+			// random mode
+			Random rng = new Random ();
+			for (int j = 0; j < len * 5; ++j) {
+				i = rng.Next (len);
+				Assert.AreEqual (mc [i].Value, t.matches [rtl ? len - i - 1 : i], "{0}:random{1}:{2}", name, j, i);
+			}
+
+			// Non-incremental mode
+			mc = r.Matches (t.text);
+			Assert.AreEqual (mc.Count, len);
+			i = 0;
+			foreach (Match m in mc) {
+				Assert.AreEqual (m.Value, t.matches [rtl ? len - i - 1 : i], "{0}:nienum:{1}", name, i);
+				++i;
+			}
+			for (i = 0; i < len; ++i)
+				Assert.AreEqual (mc [i].Value, t.matches [rtl ? len - i - 1 : i], "{0}:nithis:{1}", name, i);
 		}
 
 		[Test]
-		public void Matches1 ()
+		public void Matches ()
 		{
-			Regex words = new Regex ("(?<word>\\w+)");
-
-			MatchCollection mc = words.Matches ("the fat cat ate the rat");
-
-			AssertEquals ("#m01", 6, mc.Count);
-			AssertEquals ("#m02", "the", mc [0].Value);
-			AssertEquals ("#m03", "fat", mc [1].Value);
-			AssertEquals ("#m04", "cat", mc [2].Value);
-			AssertEquals ("#m05", "ate", mc [3].Value);
-			AssertEquals ("#m06", "the", mc [4].Value);
-			AssertEquals ("#m07", "rat", mc [5].Value);
-		}
-
-		[Test]
-		public void Matches2 ()
-		{
-			Regex words = new Regex ("(?<word>\\w+)", RegexOptions.RightToLeft);
-
-			MatchCollection mc = words.Matches ("the fat cat ate the rat");
-
-			AssertEquals ("#m01", 6, mc.Count);
-			AssertEquals ("#m02", "the", mc [5].Value);
-			AssertEquals ("#m03", "fat", mc [4].Value);
-			AssertEquals ("#m04", "cat", mc [3].Value);
-			AssertEquals ("#m05", "ate", mc [2].Value);
-			AssertEquals ("#m06", "the", mc [1].Value);
-			AssertEquals ("#m07", "rat", mc [0].Value);
-		}
-
-		[Test]
-		public void Matches3 ()
-		{
-			Regex digits = new Regex ("(?<digit>\\d+)");
-
-			MatchCollection mc = digits.Matches ("0 1 2 3 4 5 6a7b8c9d10");
-
-			AssertEquals ("#m01", 11, mc.Count);
-			AssertEquals ("#m02", "0", mc [0].Value);
-			AssertEquals ("#m03", "1", mc [1].Value);
-			AssertEquals ("#m04", "2", mc [2].Value);
-			AssertEquals ("#m05", "3", mc [3].Value);
-			AssertEquals ("#m06", "4", mc [4].Value);
-			AssertEquals ("#m07", "5", mc [5].Value);
-			AssertEquals ("#m08", "6", mc [6].Value);
-			AssertEquals ("#m09", "7", mc [7].Value);
-			AssertEquals ("#m10", "8", mc [8].Value);
-			AssertEquals ("#m11", "9", mc [9].Value);
-			AssertEquals ("#m12", "10", mc [10].Value);
-		}
-
-		[Test]
-		public void Matches4 ()
-		{
-			Regex digits = new Regex ("(?<digit>\\d+)", RegexOptions.RightToLeft);
-
-			MatchCollection mc = digits.Matches ("0 1 2 3 4 5 6a7b8c9d10");
-
-			AssertEquals ("#m01", 11, mc.Count);
-			AssertEquals ("#m02", "0", mc [10].Value);
-			AssertEquals ("#m03", "1", mc [9].Value);
-			AssertEquals ("#m04", "2", mc [8].Value);
-			AssertEquals ("#m05", "3", mc [7].Value);
-			AssertEquals ("#m06", "4", mc [6].Value);
-			AssertEquals ("#m07", "5", mc [5].Value);
-			AssertEquals ("#m08", "6", mc [4].Value);
-			AssertEquals ("#m09", "7", mc [3].Value);
-			AssertEquals ("#m10", "8", mc [2].Value);
-			AssertEquals ("#m11", "9", mc [1].Value);
-			AssertEquals ("#m12", "10", mc [0].Value);
-		}
-
-		[Test]
-		public void Matches5 ()
-		{
-			Regex lines = new Regex ("(?<line>.+)");
-
-			MatchCollection mc = lines.Matches (story);
-
-			AssertEquals ("#m01", 5, mc.Count);
-			AssertEquals ("#m02", "Two little dragons lived in the forest", mc [0].Value);
-			AssertEquals ("#m03", "They spent their days collecting honey suckle,",
-					mc [1].Value);
-			AssertEquals ("#m04", "And eating curds and whey", mc [2].Value);
-			AssertEquals ("#m05", "Until an evil sorcer came along", mc [3].Value);
-			AssertEquals ("#m06", "And chased my dragon friends away", mc [4].Value);
-		}
-
-		[Test]
-		public void Matches6 ()
-		{
-			Regex lines = new Regex ("(?<line>.+)", RegexOptions.RightToLeft);
-
-			MatchCollection mc = lines.Matches (story);
-
-			AssertEquals ("#m01", 5, mc.Count);
-			AssertEquals ("#m02", "Two little dragons lived in the forest", mc [4].Value);
-			AssertEquals ("#m03", "They spent their days collecting honey suckle,",
-					mc [3].Value);
-			AssertEquals ("#m04", "And eating curds and whey", mc [2].Value);
-			AssertEquals ("#m05", "Until an evil sorcer came along", mc [1].Value);
-			AssertEquals ("#m06", "And chased my dragon friends away", mc [0].Value);
-		}
-
-		string story =	"Two little dragons lived in the forest\n" +
-				"They spent their days collecting honey suckle,\n" +
-				"And eating curds and whey\n" +
-				"Until an evil sorcer came along\n" +
-				"And chased my dragon friends away";
-
-		[Test]
-		public void Matches7 ()
-		{
-			Regex nonwhite = new Regex ("(?<nonwhite>\\S+)");
-
-			MatchCollection mc = nonwhite.Matches ("ab 12 cde 456 fghi .,\niou");
-
-			AssertEquals ("#m01", 7, mc.Count);
-			AssertEquals ("#m02", "ab", mc [0].Value);
-			AssertEquals ("#m03", "12", mc [1].Value);
-			AssertEquals ("#m04", "cde", mc [2].Value);
-			AssertEquals ("#m05", "456", mc [3].Value);
-			AssertEquals ("#m06", "fghi", mc [4].Value);
-			AssertEquals ("#m07", ".,", mc [5].Value);
-			AssertEquals ("#m08", "iou", mc [6].Value);
-		}
-
-		[Test]
-		public void Matches8 ()
-		{
-			Regex nonwhite = new Regex ("(?<nonwhite>\\S+)", RegexOptions.RightToLeft);
-
-			MatchCollection mc = nonwhite.Matches ("ab 12 cde 456 fghi .,\niou");
-
-			AssertEquals ("#m01", 7, mc.Count);
-			AssertEquals ("#m02", "ab", mc [6].Value);
-			AssertEquals ("#m03", "12", mc [5].Value);
-			AssertEquals ("#m04", "cde", mc [4].Value);
-			AssertEquals ("#m05", "456", mc [3].Value);
-			AssertEquals ("#m06", "fghi", mc [2].Value);
-			AssertEquals ("#m07", ".,", mc [1].Value);
-			AssertEquals ("#m08", "iou", mc [0].Value);
-		}
-
-		[Test]
-		public void Matches9 ()
-		{
-			Regex nondigit = new Regex ("(?<nondigit>\\D+)");
-
-			MatchCollection mc = nondigit.Matches ("ab0cd1ef2");
-
-			AssertEquals ("#m01", 3, mc.Count);
-			AssertEquals ("#m02", "ab", mc [0].Value);
-			AssertEquals ("#m02", "cd", mc [1].Value);
-			AssertEquals ("#m02", "ef", mc [2].Value);
-			
-		}
-
-		[Test]
-		public void Matches10 ()
-		{
-			Regex nondigit = new Regex ("(?<nondigit>\\D+)", RegexOptions.RightToLeft);
-
-			MatchCollection mc = nondigit.Matches ("ab0cd1ef2");
-
-			AssertEquals ("#m01", 3, mc.Count);
-			AssertEquals ("#m02", "ab", mc [2].Value);
-			AssertEquals ("#m02", "cd", mc [1].Value);
-			AssertEquals ("#m02", "ef", mc [0].Value);
-			
+			int i;
+			MatchCollection mc;
+			Regex r;
+			foreach (MatchCollectionTrial t in trials)
+				runTrial (t);
 		}
 	}
 }
-

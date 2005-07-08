@@ -1,3 +1,9 @@
+2005-07-08  Raja R Harinath  <rharinath@novell.com>
+
+	* MatchCollection.cs: Convert to incremental mode.
+	* regex.cs (Regex.Matches): Update.  Pass responsibility of
+	generating all matches to MatchCollection.
+
 2005-06-14  Raja R Harinath  <harinath@gmail.com>
 
 	* parser.cs (Parser.ConsumeWhitespace): Add bounds check.

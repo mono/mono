@@ -17,10 +17,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -33,108 +33,98 @@
 using System;
 using System.Collections;
 
-namespace System.Text.RegularExpressions 
+namespace System.Text.RegularExpressions
 {
 	[Serializable]
-	public class MatchCollection: ICollection, IEnumerable
-	{
+	public class MatchCollection: ICollection, IEnumerable {
+		private Match current;
 		private ArrayList list;
 
 		/* No public constructor */
-		internal MatchCollection () {
+		internal MatchCollection (Match start)
+		{
+			current = start;
 			list = new ArrayList ();
 		}
 
 		public virtual int Count {
 			get {
-				return(list.Count);
+				TryToGet (Int32.MaxValue);
+				return list.Count;
 			}
 		}
 
 		public bool IsReadOnly {
-			get {
-				return(true);
-			}
+			get { return true; }
 		}
 
 		public virtual bool IsSynchronized {
-			get {
-				return(false);
-			}
+			get { return false; }
 		}
 
-		public Match this[int i] {
+		private bool TryToGet (int i)
+		{
+			while (i >= list.Count && current.Success) {
+				list.Add (current);
+				current = current.NextMatch ();
+			}
+			return i < list.Count;
+		}
+
+		public Match this [int i] {
 			get {
-				if (i < 0 ||
-				    i > Count) {
-					throw new ArgumentOutOfRangeException ("Index is out of range");
-				}
-				
-				return((Match)list[i]);
+				if (i < 0 || !TryToGet (i))
+					throw new ArgumentOutOfRangeException ("index out of range", "i");
+				return (Match) list [i];
 			}
 		}
 
 		public virtual object SyncRoot {
-			get {
-				return(list);
-			}
+			get { return list; }
 		}
 
-		public virtual void CopyTo (Array array, int index) {
-			foreach (object o in list) {
-				if (index > array.Length) {
-					break;
-				}
-
-				array.SetValue (o, index++);
-			}
+		public virtual void CopyTo (Array array, int index)
+		{
+			TryToGet (Int32.MaxValue);
+			list.CopyTo (array, index);
 		}
 
-		public virtual IEnumerator GetEnumerator () {
-			return(new Enumerator (list));
+		public virtual IEnumerator GetEnumerator ()
+		{
+			// If !current.Success, the list is fully populated.  So, just use it.
+			return current.Success ? new Enumerator (this) : list.GetEnumerator ();
 		}
 
-		internal void Add (object o) {
-			list.Add (o);
-		}
+		class Enumerator : IEnumerator {
+			int index;
+			MatchCollection coll;
 
-		internal void Reverse () {
-			list.Reverse ();
-		}
-
-		private class Enumerator: IEnumerator {
-			private IList list;
-			private int ptr;
-
-			public Enumerator (IList list) {
-				this.list = list;
-				Reset ();
+			internal Enumerator (MatchCollection coll)
+			{
+				this.coll = coll;
+				index = -1;
 			}
 
-			public object Current {
+			void IEnumerator.Reset ()
+			{
+				index = -1;
+			}
+
+			object IEnumerator.Current {
 				get {
-					if (ptr >= list.Count) {
+					if (index < 0 || index >= coll.list.Count)
 						throw new InvalidOperationException ();
-					}
-
-					return(list[ptr]);
+					return coll.list [index];
 				}
 			}
 
-			public bool MoveNext () {
-				if (ptr > list.Count) {
-					throw new InvalidOperationException ();
-				}
-
-				return(++ptr < list.Count);
-			}
-
-			public void Reset () {
-				ptr = -1;
+			bool IEnumerator.MoveNext ()
+			{
+				if (coll.TryToGet (++index))
+					return true;
+				index = coll.list.Count;
+				return false;
 			}
 		}
 	}
 }
-
-		
-		
