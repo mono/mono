@@ -1,3 +1,7 @@
+2005-07-08  Daniel Drake  <dsd@gentoo.org>
+
+	* Uri.cs: Allow descent multiple times below root. Fixes bug #71053.
+
 2005-07-02  Daniel Drake  <dsd@gentoo.org>
 
 	* Uri.cs: HexUnescape() should only work on single-byte escape

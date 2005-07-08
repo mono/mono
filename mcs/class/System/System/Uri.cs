@@ -1064,9 +1064,8 @@ namespace System
 
 				if (current == "..") {
 					if (result.Count == 0) {
-						if (i == 1) // see bug 52599
-							continue;
-						throw new Exception ("Invalid path.");
+						// see bugs 52599 and 71053
+						continue;
 					}
 
 					result.RemoveAt (result.Count - 1);
