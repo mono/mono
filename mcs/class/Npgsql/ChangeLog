@@ -1,4 +1,7 @@
 
+2005-07-08  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * Npgsql/NpgsqlCommand.cs: Npgsql now can handle functions which return refcursor and setof refcursor. Now, results are returned as NpgsqlDataReader resultsets. There is no need to explicitly call "fetch all ..."
 
 2005-07-05 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
    
