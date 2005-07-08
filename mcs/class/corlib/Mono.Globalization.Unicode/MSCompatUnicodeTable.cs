@@ -106,6 +106,9 @@ namespace Mono.Globalization.Unicode
 		{
 			int i = UUtil.Ignorable.ToIndex (cp);
 			return i >= 0 && (ignorableFlags [i] & 0x4) != 0;
+			// It could be implemented this way, but the above
+			// is faster.
+//			return categories [UUtil.Category.ToIndex (cp)] == 1;
 		}
 
 		public static int ToKanaTypeInsensitive (int i)

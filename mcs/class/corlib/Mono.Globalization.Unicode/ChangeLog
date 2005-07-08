@@ -1,5 +1,11 @@
 2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Further Cyrillic fixes. Handle
+	  U+482-4C8 (though needs diacritical fixes).
+	* MSCompatUnicodeTable.cs : tiny comment for alternative impl.
+
+2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Reimplemented Cyrillic weight
 	  computation code, since it looks like the same way as Latin letters
 	  have. Thus removed all other approach (UCA, by letter name).

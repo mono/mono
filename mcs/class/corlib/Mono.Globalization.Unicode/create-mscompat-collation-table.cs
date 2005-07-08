@@ -96,9 +96,9 @@ namespace Mono.Globalization.Unicode
 		byte [] diacritical = new byte [char.MaxValue + 1];
 
 		string [] diacritics = new string [] {
-			// LATIN
-			"DOUBLE-STRUCK",
-			"WITH VERTICAL LINE ABOVE;",
+			// LATIN, CYRILLIC etc.
+			"UPTURN", "DOUBLE-STRUCK",
+			"MIDDLE HOOK", "WITH VERTICAL LINE ABOVE;",
 			"WITH GRAVE ACCENT;", "WITH ACUTE ACCENT;", "WITH CIRCUMFLEX ACCENT;",
 			"WITH ACUTE;", "WITH GRAVE;", "WITH DOT ABOVE;", " MIDDLE DOT;",
 			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
@@ -127,7 +127,7 @@ namespace Mono.Globalization.Unicode
 			//
 			"WITH OVERLINE",
 			"WITH HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
-			" DOUBLE GRAVE;",
+			" DOUBLE GRAVE",
 			" INVERTED BREVE",
 			"ROMAN NUMERAL",
 			" PRECEDED BY APOSTROPHE",
@@ -156,7 +156,7 @@ namespace Mono.Globalization.Unicode
 			};
 		byte [] diacriticWeights = new byte [] {
 			// LATIN.
-			3, 5,
+			3, 3, 5, 5,
 			0xF, 0xE, 0x12,
 			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x19, 0x1A, 0x1B, 0x1C,
@@ -2001,11 +2001,29 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				'\u0448', '\u0449', '\u044A', '\u044B', '\u044C',
 				'\u044D', '\u044E', '\u044F'};
 
+			// For some characters here is a map to basic cyrillic
+			// letters. See UnicodeData.txt character names for
+			// the sources. Here I simply declare an equiv. array.
+			// The content characters are map from U+490(,491),
+			// skipping small letters.
+			char [] cymap_src = new char [] {
+				'\u0433', '\u0433', '\u0433', '\u0436',
+				'\u0437', '\u043A', '\u043A', '\u043A',
+				'\u043A', '\u043D', '\u043D', '\u043F',
+				'\u0445', '\u0441', '\u0442', '\u0443',
+				'\u0443', '\u0445', '\u0446', '\u0447',
+				'\u0447', '\u0432', '\u0435', '\u0435',
+				'\u0406', '\u0436', '\u043A', '\u043D',
+				'\u0447', '\u0435'};
+
 			fillIndex [0x10] = 0x8D;
 			for (int i = 0x0460; i < 0x0481; i++) {
 				if (Char.IsLetter ((char) i)) {
-					AddLetterMap ((char) i, 0x10, 0);
-					fillIndex [0x10] += 3;
+					if (i == 0x0476)
+						// U+476/477 have the same
+						// primary weight as U+474/475.
+						fillIndex [0x10] -= 3;
+					AddLetterMap ((char) i, 0x10, 3);
 				}
 			}
 
@@ -2018,6 +2036,13 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddLetterMap (c, 0x10, 0);
 					fillIndex [0x10] += 3;
 				}
+			}
+
+			for (int i = 0; i < cymap_src.Length; i++) {
+				char c = cymap_src [i];
+				fillIndex [0x10] = map [c].Level1;
+				AddLetterMap ((char) (0x0490 + i * 2),
+					0x10, 0);
 			}
 
 			// Armenian
