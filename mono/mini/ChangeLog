@@ -1,5 +1,7 @@
 2005-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* cpu-amd64.md: Merge the xp-regalloc-branch for amd64.
+
 	* mini-ops.h mini-amd64.h mini-amd64.c inssel-amd64.brg Makefile.am: Merge
 	the xp-regalloc-branch for amd64.
 
