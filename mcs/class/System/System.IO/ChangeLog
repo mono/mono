@@ -1,5 +1,10 @@
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FAMWatcher.cs: reverting my patch. Seems that something got
+	changed in gamin.
+
+2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FAMWatcher.cs: make this really inactive when there are no events to
 	process.
 
