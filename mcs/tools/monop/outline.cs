@@ -754,7 +754,7 @@ public class Outline {
 
 	bool MethodIsExplicitIfaceImpl (MethodBase mb)
 	{
-		if (!mb.IsFinal && mb.IsVirtual && mb.IsPrivate)
+		if (!(mb.IsFinal && mb.IsVirtual && mb.IsPrivate))
 			return false;
 		
 		// UGH msft has no way to get the info about what method is
