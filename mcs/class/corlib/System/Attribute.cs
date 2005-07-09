@@ -318,10 +318,15 @@ namespace System
 			return element.IsDefined (attributeType, inherit);
 		}
 
+		[MonoTODO]
 		public static bool IsDefined (ParameterInfo element, Type attributeType, bool inherit)
 		{
 			CheckParameters (element, attributeType);
 
+			if (element.IsDefined (attributeType, inherit))
+				return true;
+
+			// FIXME: MS walks up the inheritance chain in some crazy way
 			return IsDefined (element.Member, attributeType, inherit);
 		}
 

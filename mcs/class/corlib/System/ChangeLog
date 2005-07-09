@@ -1,3 +1,8 @@
+2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Attribute.cs (IsDefined): Fix IsDefined for ParameterInfo's. Fixes
+	#75514.
+
 2005-07-05  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* DelegateSerializationHolder.cs: When the deserialized target is
