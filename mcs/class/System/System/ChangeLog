@@ -1,5 +1,11 @@
 2005-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Uri.cs: Modified fix for bug #71053 to match both MS.NET 1.x and
+	2.0 behaviour. Parse method is no longer used on MS.NET 2.0, marked 
+	obsolete.
+
+2005-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Uri.cs: in .NET 2.0, port number should be valid UInt16 instead of
 	UInt32. If outcome of parsing is -1, do not consider this to be the
 	default port.

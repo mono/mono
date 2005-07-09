@@ -301,7 +301,7 @@ namespace MonoTests.System
 			uri = new Uri ("file://server/filename.ext");
 			Assert ("#3", uri.IsUnc);
 
-			uri = new Uri (@"\\server\share\filename.ext");
+			uri = new Uri (@"\\server\share\filename.ext");			
 			Assert ("#6", uri.IsUnc);
 
 			uri = new Uri (@"a:\dir\filename.ext");
@@ -723,6 +723,24 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void RelativeUri ()
+		{
+			Uri u = new Uri("http://localhost/../../../a");
+#if NET_2_0
+			AssertEquals ("http://localhost/a", u.ToString ());
+#else
+			AssertEquals ("http://localhost/../../../a", u.ToString ());
+#endif
+
+			u = new Uri ("http://localhost/../c/b/../a");
+#if NET_2_0
+			AssertEquals ("http://localhost/c/a", u.ToString ());
+#else
+			AssertEquals ("http://localhost/../c/a", u.ToString ());
+#endif
+		}
+
+		[Test]
 		public void ToStringTest()
 		{			
 			Uri uri = new Uri ("dummy://xxx");
@@ -909,6 +927,10 @@ namespace MonoTests.System
 			}
 		}
 
+#if NET_2_0
+		// Parse method is no longer used on .NET 2.0
+		[ExpectedException (typeof (UriFormatException))]
+#endif
 		[Test]
 		public void ParseOverride ()
 		{

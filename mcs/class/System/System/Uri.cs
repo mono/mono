@@ -111,7 +111,11 @@ namespace System
 		{
 			userEscaped = dontEscape;
 			source = uriString;
+#if NET_2_0
+			ParseUri ();
+#else
 			Parse ();
+#endif
 		}
 
 		public Uri (Uri baseUri, string relativeUri) 
@@ -134,7 +138,11 @@ namespace System
 			// Check Windows UNC (for // it is scheme/host separator)
 			if (relativeUri.StartsWith ("\\\\")) {
 				source = relativeUri;
+#if NET_2_0
+				ParseUri ();
+#else
 				Parse ();
+#endif
 				return;
 			}
 
@@ -148,8 +156,11 @@ namespace System
 				if (pos2 > pos || pos2 < 0) {
 					// equivalent to new Uri (relativeUri, dontEscape)
 					source = relativeUri;
+#if NET_2_0
+					ParseUri ();
+#else
 					Parse ();
-
+#endif
 					return;
 				}
 			}
@@ -192,7 +203,11 @@ namespace System
 			if (relativeUri.Length > 0 && relativeUri [0] == '/') {
 				if (relativeUri.Length > 1 && relativeUri [1] == '/') {
 					source = scheme + ':' + relativeUri;
+#if NET_2_0
+					ParseUri ();
+#else
 					Parse ();
+#endif
 					return;
 				} else {
 					path = relativeUri;
@@ -770,20 +785,30 @@ namespace System
 			return s.ToString ();
 		}
 
-		// This method is called from .ctor(). When overriden, we can
-		// avoid the "absolute uri" constraints of the .ctor() by
+		// On .NET 1.x, this method is called from .ctor(). When overriden, we 
+		// can avoid the "absolute uri" constraints of the .ctor() by
 		// overriding with custom code.
+#if NET_2_0
+		[Obsolete("The method has been deprecated. It is not used by the system.")]
+#endif
 		protected virtual void Parse ()
+		{
+#if !NET_2_0
+			ParseUri ();
+#endif
+		}
+
+		private void ParseUri ()
 		{
 			Parse (source);
 
-			if (userEscaped) 
+			if (userEscaped)
 				return;
 
 			host = EscapeString (host, false, true, false);
 			path = EscapeString (path);
 		}
-		
+
 		protected virtual string Unescape (string str)
 		{
 			return Unescape (str, false);
@@ -1072,13 +1097,25 @@ namespace System
 					continue;
 
 				if (current == "..") {
-					if (result.Count == 0) {
-						// see bugs 52599 and 71053
+					int resultCount = result.Count;
+#if NET_2_0
+					// in 2.0 profile, skip leading ".." parts
+					if (resultCount == 0) {
 						continue;
 					}
 
-					result.RemoveAt (result.Count - 1);
+					result.RemoveAt (resultCount - 1);
 					continue;
+#else
+					// in 1.x profile, retain leading ".." parts, and only reduce
+					// URI is previous part is not ".."
+					if (resultCount > 0) {
+						if ((string) result[resultCount - 1] != "..") {
+							result.RemoveAt (resultCount - 1);
+							continue;
+						}
+					}
+#endif
 				}
 
 				result.Add (current);
