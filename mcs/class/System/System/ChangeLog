@@ -1,3 +1,9 @@
+2005-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Uri.cs: in .NET 2.0, port number should be valid UInt16 instead of
+	UInt32. If outcome of parsing is -1, do not consider this to be the
+	default port.
+
 2005-07-08  Daniel Drake  <dsd@gentoo.org>
 
 	* Uri.cs: Allow descent multiple times below root. Fixes bug #71053.

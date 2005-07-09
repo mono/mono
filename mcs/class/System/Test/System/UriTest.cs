@@ -301,7 +301,7 @@ namespace MonoTests.System
 			uri = new Uri ("file://server/filename.ext");
 			Assert ("#3", uri.IsUnc);
 
-			uri = new Uri (@"\\server\share\filename.ext");			
+			uri = new Uri (@"\\server\share\filename.ext");
 			Assert ("#6", uri.IsUnc);
 
 			uri = new Uri (@"a:\dir\filename.ext");
@@ -405,6 +405,11 @@ namespace MonoTests.System
 			AssertEquals ("#12", 4, i);
 		}
 
+#if !NET_2_0
+		// These won't pass exactly with MS.NET 1.x, due to differences in the
+		// handling of backslashes/forwardslashes
+		[Category ("NotDotNet")]
+#endif
 		[Test]
 		public void HexUnescapeMultiByte () 
 		{
@@ -850,15 +855,48 @@ namespace MonoTests.System
 			new Uri ("hey");
 		}
 
+#if NET_2_0
+		// on .NET 2.0 a port number is limited to UInt16.MaxValue
+		[ExpectedException (typeof (UriFormatException))]
+#endif
 		[Test]
-		public void InvalidPortsThatWorkWithMS ()
+		public void InvalidPort1 ()
 		{
-			new Uri ("http://www.contoso.com:12345678/foo/bar/");
-			// UInt32.MaxValue gives port == -1 !!!
-			new Uri ("http://www.contoso.com:4294967295/foo/bar/");
-			// ((uint) Int32.MaxValue + (uint) 1) gives port == -2147483648 !!!
-			new Uri ("http://www.contoso.com:2147483648/foo/bar/");
+			Uri uri = new Uri ("http://www.contoso.com:65536/foo/bar/");
+			AssertEquals (65536, uri.Port);
 		}
+
+#if NET_2_0
+		[ExpectedException (typeof (UriFormatException))]
+#endif
+		[Test]
+		public void InvalidPort2 ()
+		{
+			// UInt32.MaxValue gives port == -1 !!!
+			Uri uri = new Uri ("http://www.contoso.com:4294967295/foo/bar/");
+			AssertEquals (-1, uri.Port);
+		}
+
+#if NET_2_0
+		[ExpectedException (typeof (UriFormatException))]
+#endif
+		[Test]
+		public void InvalidPort3 ()
+		{
+			// ((uint) Int32.MaxValue + (uint) 1) gives port == -2147483648 !!!
+			Uri uri = new Uri ("http://www.contoso.com:2147483648/foo/bar/");
+			AssertEquals (-2147483648, uri.Port);
+		}
+
+#if NET_2_0
+		[Test]
+		public void PortMax ()
+		{
+			// on .NET 2.0 a port number is limited to UInt16.MaxValue
+			Uri uri = new Uri ("http://www.contoso.com:65535/foo/bar/");
+			AssertEquals (65535, uri.Port);
+		}
+#endif
 
 		class UriEx2 : Uri
 		{

@@ -1005,17 +1005,26 @@ namespace System
 				pos = -1;
 			if (pos != -1 && pos != (uriString.Length - 1)) {
 				string portStr = uriString.Remove (0, pos + 1);
-				if (portStr.Length > 1 && portStr [portStr.Length - 1] != ']') {
+				if (portStr.Length > 1 && portStr[portStr.Length - 1] != ']') {
 					try {
+#if NET_2_0
+						port = (int) UInt16.Parse (portStr, CultureInfo.InvariantCulture);
+#else
 						port = (int) UInt32.Parse (portStr, CultureInfo.InvariantCulture);
+#endif
 						uriString = uriString.Substring (0, pos);
 					} catch (Exception) {
 						throw new UriFormatException ("Invalid URI: Invalid port number");
 					}
+				} else {
+					if (port == -1) {
+						port = GetDefaultPort (scheme);
+					}
 				}
-			}
-			if (port == -1) {
-				port = GetDefaultPort (scheme);
+			} else {
+				if (port == -1) {
+					port = GetDefaultPort (scheme);
+				}
 			}
 			
 			// 4 authority

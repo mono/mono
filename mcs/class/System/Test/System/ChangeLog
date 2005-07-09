@@ -1,3 +1,8 @@
+2005-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UriTest.cs: Modified port tests to pass on .NET 2.0. 
+	HexUnescapeMultiByte passes on MS.NET 2.0.
+
 2005-07-02  Daniel Drake  <dsd@gentoo.org>
 
 	* UriTest.cs: Add some tests for the new multi-byte escaping
