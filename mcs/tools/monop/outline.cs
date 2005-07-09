@@ -587,7 +587,7 @@ public class Outline {
 		// automatically get the namespace imported by virtue of the
 		// namespace {} block.
 		//	
-		if (t.Namespace.StartsWith (this.t.Namespace))
+		if (this.t.Namespace.StartsWith (t.Namespace + ".") || t.Namespace == this.t.Namespace)
 			return type.Substring (t.Namespace.Length + 1);
 	
 		return type;

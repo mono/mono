@@ -1,7 +1,10 @@
 2005-07-09  Ben Maurer  <bmaurer@ximian.com>
 
-	* outline.cs: Friendly display of ifaces on -d
+	* outline.cs: Actually get the namespacing conditions right so
+	things look nice
 	
+	* outline.cs: Friendly display of ifaces on -d
+
 	* outline.cs: Always show explicit interface impls. Don't display
 	the wrong flags for them.
 
