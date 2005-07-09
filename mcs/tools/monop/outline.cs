@@ -67,7 +67,7 @@ public class Outline {
 		o.Write (GetTypeKind (t));
 		o.Write (" ");
 		
-		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
+		Type [] interfaces = (Type []) Comparer.Sort (TypeGetInterfaces (t, options.DeclaredOnly));
 		Type parent = t.BaseType;
 
 		if (t.IsSubclassOf (typeof (System.MulticastDelegate))) {
@@ -669,8 +669,7 @@ public class Outline {
 
 		foreach (Type t in args) {
 			bool first = true;
-			Type[] ifaces = t.GetInterfaces();
-			ifaces = Array.FindAll<Type> (ifaces, delegate (Type iface) { return !iface.IsAssignableFrom (t.BaseType); });
+			Type[] ifaces = TypeGetInterfaces (t, true);
 			
 			GenericParameterAttributes attrs = t.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
 			GenericParameterAttributes [] interesting = {
@@ -821,6 +820,25 @@ public class Outline {
 		
 		// What am I !!!
 		return true;
+	}
+
+	static Type [] TypeGetInterfaces (Type t, bool declonly)
+	{
+		Type [] ifaces = t.GetInterfaces ();
+		if (! declonly)
+			return ifaces;
+
+		// Handle Object. Also, optimize for no interfaces
+		if (t.BaseType == null || ifaces.Length == 0)
+			return ifaces;
+
+		ArrayList ar = new ArrayList ();
+
+		foreach (Type i in ifaces)
+			if (! i.IsAssignableFrom (t.BaseType))
+				ar.Add (i);
+
+		return (Type []) ar.ToArray (typeof (Type));
 	}
 }
 
