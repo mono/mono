@@ -1,3 +1,7 @@
+2005-07-09  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* VsaEngine.cs: Return proper constructors.
+
 2005-07-05  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* VsaEngine.cs: Implemented GetOriginalRegExpConstructor.

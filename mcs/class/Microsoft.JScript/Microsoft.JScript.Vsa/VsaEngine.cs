@@ -135,12 +135,12 @@ namespace Microsoft.JScript.Vsa {
 
 		public ArrayConstructor GetOriginalArrayConstructor ()
 		{
-			throw new NotImplementedException ();
+			return ArrayConstructor.Ctr;
 		}
 
 		public ObjectConstructor GetOriginalObjectConstructor ()
 		{
-			throw new NotImplementedException ();
+			return ObjectConstructor.Ctr;
 		}
 
 		public RegExpConstructor GetOriginalRegExpConstructor ()
