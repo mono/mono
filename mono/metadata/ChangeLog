@@ -1,3 +1,7 @@
+2005-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2005-06-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c (mono_reflection_create_runtime_class): Backport

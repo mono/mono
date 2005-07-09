@@ -1,3 +1,32 @@
+2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : Fixed bug #75499. There were hy_AM.xml and
+	  hy_AM_REVISED.xml files in the locale builder archive.
+
+2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : basic pattern string should be added to extra pattern
+	  array. This fixes bug #75353.
+
+2005-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs, CultureInfoEntry.cs : Use hacky shallow copy to clone
+	  zh-CHS into zh-CHT.
+
+2005-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : quick workaround for zh-CHT related breakage.
+
+2005-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Entry.cs :
+	  build fix. Incorrectly allowed access to protected member.
+	* CultureInfoEntry.cs,
+	  Driver.cs :
+	  Handle language "zh-CHS" as special case, since there is no "zh".
+	* Makefile :
+	  use -debug+ instead of -g (convenient when verifying with csc).
+
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : set \n for writer's NewLine explicitly (otherwise it
