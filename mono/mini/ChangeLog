@@ -1,5 +1,8 @@
 2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c mini-amd64.c: Update after latest AOT changes. Split 
+	trampolines into arch-independent and arch-dependent parts.
+
 	* mini-amd64.c (mono_arch_lowering_pass): Fix store_membase_imm -> store_membase_reg rule.
 
 2005-07-08  Zoltan Varga  <vargaz@freemail.hu>
