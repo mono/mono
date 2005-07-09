@@ -360,10 +360,20 @@ public class Outline {
 	
 	void OutlineMethod (MethodInfo mi)
 	{
-		o.Write (GetMethodVisibility (mi));
-		o.Write (GetMethodModifiers  (mi));
-		o.Write (FormatType (mi.ReturnType));
-		o.Write (" ");
+		if (MethodIsExplicitIfaceImpl (mi)) {
+			o.Write (FormatType (mi.ReturnType));
+			o.Write (" ");
+			// MSFT has no way to get the method that we are overriding
+			// from the interface. this would allow us to pretty print
+			// the type name (and be more correct if there compiler
+			// were to do some strange naming thing).
+		} else {
+			o.Write (GetMethodVisibility (mi));
+			o.Write (GetMethodModifiers  (mi));
+			o.Write (FormatType (mi.ReturnType));
+			o.Write (" ");
+		}
+
 		o.Write (mi.Name);
 #if NET_2_0
 		o.Write (FormatGenericParams (mi.GetGenericArguments ()));
@@ -742,6 +752,26 @@ public class Outline {
 		default: return name;
 		}
 	}
+
+	bool MethodIsExplicitIfaceImpl (MethodBase mb)
+	{
+		if (!mb.IsFinal && mb.IsVirtual && mb.IsPrivate)
+			return false;
+		
+		// UGH msft has no way to get the info about what method is
+		// getting overriden. Another reason to use cecil :-)
+		//
+		//MethodInfo mi = mb as MethodInfo;
+		//if (mi == null)
+		//	return false;
+		//
+		//Console.WriteLine (mi.GetBaseDefinition ().DeclaringType);
+		//return mi.GetBaseDefinition ().DeclaringType.IsInterface;
+		
+		// So, we guess that virtual final private methods only come
+		// from ifaces :-)
+		return true;
+	}
 	
 	bool ShowMember (MemberInfo mi)
 	{
@@ -759,6 +789,9 @@ public class Outline {
 			if (mb.IsFamily || mb.IsPublic || mb.IsFamilyOrAssembly)
 				return true;
 			
+			if (MethodIsExplicitIfaceImpl (mb))
+				return true;
+					
 			return false;
 		
 		
