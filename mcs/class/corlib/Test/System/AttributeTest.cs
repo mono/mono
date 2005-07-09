@@ -67,6 +67,10 @@ namespace MonoTests.System
 		internal class MyClass
 		{
 			int Value { get { return 42; } }
+
+			public static void ParamsMethod(params object[] args)
+			{
+			}
 		}
 
 		[MyCustomAttribute ("MyDerivedClass")]
@@ -92,6 +96,7 @@ namespace MonoTests.System
 			AssertEquals ("A7", true, Attribute.IsDefined (typeof(MyDerivedClass), typeof(MyCustomAttribute), false));
 			AssertEquals ("A8", false, Attribute.IsDefined (typeof(MyDerivedClass), typeof(YourCustomAttribute), false));
 			AssertEquals ("A9", false, Attribute.IsDefined (typeof(MyDerivedClass), typeof(UnusedAttribute), false));
+			AssertEquals ("A10", true, Attribute.IsDefined (typeof (MyClass).GetMethod ("ParamsMethod").GetParameters ()[0], typeof (ParamArrayAttribute), false));
 		}
 
 		public void TestGetCustomAttribute ()
