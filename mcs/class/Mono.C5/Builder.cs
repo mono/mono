@@ -53,14 +53,14 @@ namespace C5.ComparerBuilder
 
             if (typeof(IComparable<T>).IsAssignableFrom(t))
             {
-                Type c = naturalComparer.BindGenericParameters(new Type[] { t });
+                Type c = naturalComparer.MakeGenericType (t);
 
                 return (IComparer<T>)(c.GetConstructor(System.Type.EmptyTypes).Invoke(null));
             }
 
             if (t.GetInterface("System.IComparable") != null)
             {
-                Type c = naturalComparerO.BindGenericParameters(new Type[] { t });
+                Type c = naturalComparerO.MakeGenericType (t);
 
                 return (IComparer<T>)(c.GetConstructor(System.Type.EmptyTypes).Invoke(null));
             }
@@ -184,7 +184,7 @@ namespace C5.HasherBuilder
             else
                 return new DefaultReferenceTypeHasher<T>();
 
-            Type c = b.BindGenericParameters(new Type[] { t, v[0] });
+            Type c = b.MakeGenericType ( t, v[0] );
 
             return (IHasher<T>)(c.GetConstructor(System.Type.EmptyTypes).Invoke(null));
         }

@@ -1111,8 +1111,14 @@ namespace System {
 
 #if NET_2_0
 		[ComVisible (true)]
+		[ObsoleteAttribute("BindGenericParameters() has been deprecated. Please use MakeGenericType() instead - this will be removed before Whidbey ships.")]
 #endif		
 		public Type BindGenericParameters (Type [] types)
+		{
+			return MakeGenericType (types);
+		}
+
+		public virtual Type MakeGenericType (params Type[] types)
 		{
 			if (types == null)
 				throw new ArgumentNullException ("types");
@@ -1125,11 +1131,6 @@ namespace System {
 				throw new TypeLoadException ();
 			return res;
 		}
-
-                public Type MakeGenericType (Type[] types)
-                {
-			return BindGenericParameters (types);
-                }
 
 		public abstract bool IsGenericParameter {
 			get;

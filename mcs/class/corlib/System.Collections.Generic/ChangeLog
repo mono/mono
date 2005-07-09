@@ -1,3 +1,8 @@
+2005-07-10  Kamil Skalski <nazgul@nemerle.org>
+
+	* Comparer.cs, EqualityComparer.cs: Use MakeGenericType instead of BindGenericParameters.
+
+
 2005-06-27  Raja R Harinath  <rharinath@novell.com>
 
 	Introduce some thread-safety by removing the modify-on-read

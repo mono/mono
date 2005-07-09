@@ -1,3 +1,7 @@
+2005-07-10  Kamil Skalski <nazgul@nemerle.org>
+
+	* Builder.cs: Use MakeGenericType instead of BindGenericParameters.
+
 2005-06-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile: don't install on the 1.x profiles.

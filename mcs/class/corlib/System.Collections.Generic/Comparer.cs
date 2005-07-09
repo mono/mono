@@ -37,7 +37,7 @@ namespace System.Collections.Generic {
 		static Comparer ()
 		{
 			if (typeof (IComparable<T>).IsAssignableFrom (typeof (T)))
-				_default = (Comparer<T>) Activator.CreateInstance (typeof (IComparableOfTComparer <>).BindGenericParameters (new Type [] { typeof (T) }));
+				_default = (Comparer<T>) Activator.CreateInstance (typeof (IComparableOfTComparer <>).MakeGenericType (typeof (T)));
 			else
 				_default = new DefaultComparer ();
 		}

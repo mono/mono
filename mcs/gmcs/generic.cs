@@ -870,7 +870,7 @@ namespace Mono.CSharp {
 					return dargs [t.GenericParameterPosition];
 				if (t.IsGenericInstance) {
 					t = t.GetGenericTypeDefinition ();
-					t = t.BindGenericParameters (dargs);
+					t = t.MakeGenericType (dargs);
 				}
 
 				return t;
@@ -1350,7 +1350,7 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters.
 			//
-			type = gt.BindGenericParameters (atypes);
+			type = gt.MakeGenericType (atypes);
 			return true;
 		}
 

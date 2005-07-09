@@ -1,3 +1,8 @@
+2005-07-10  Kamil Skalski <nazgul@nemerle.org>
+
+	* Type.cs: Mark BindGenericParameters as deprecated. Use
+	MakeGenericType as default implementation with updated signature.
+
 2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Attribute.cs (IsDefined): Fix IsDefined for ParameterInfo's. Fixes
