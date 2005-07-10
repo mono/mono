@@ -1,5 +1,7 @@
 2005-07-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c: Add some minor changes needed by the IA64 port.
+
 	* *-ia64.*: Ongoing IA64 work.
 
 2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
