@@ -65,6 +65,66 @@ namespace System.Data.OracleClient.Oci {
 			return (OciDataType) GetAttributeInt32 (OciAttributeType.DataType, ErrorHandle);
 		}
 
+		public static OracleType OciDataTypeToOracleType (OciDataType ociType) 
+		{
+			switch (ociType) {
+			case OciDataType.VarChar2:
+				return OracleType.VarChar;
+			case OciDataType.Number:
+				return OracleType.Number;
+			case OciDataType.Integer:
+				return OracleType.UInt32;
+			case OciDataType.Float:
+				return OracleType.Float;
+			case OciDataType.String:
+				return OracleType.VarChar;
+			case OciDataType.VarNum:
+				return OracleType.Number;
+			case OciDataType.Long:
+				return OracleType.LongVarChar;
+			case OciDataType.VarChar:
+				return OracleType.VarChar;
+			case OciDataType.RowId:
+				return OracleType.RowId;
+			case OciDataType.Date:
+				return OracleType.DateTime;
+			case OciDataType.VarRaw:
+				return OracleType.Raw;
+			case OciDataType.Raw:
+				return OracleType.Raw;
+			case OciDataType.LongRaw:
+				return OracleType.Raw;
+			case OciDataType.UnsignedInt:
+				return OracleType.UInt32;
+			case OciDataType.LongVarChar:
+				return OracleType.LongVarChar;
+			case OciDataType.LongVarRaw:
+				return OracleType.Raw;
+			case OciDataType.Char:
+				return OracleType.Char;
+			case OciDataType.CharZ:
+				return OracleType.Char;
+			case OciDataType.RowIdDescriptor:
+				return OracleType.RowId;
+			//case OciDataType.NamedDataType:
+			//	return ???
+			//case OciDataType.Ref:
+			//	return ???
+			case OciDataType.Clob:
+				return OracleType.Clob;
+			case OciDataType.Blob:
+				return OracleType.Blob;
+			case OciDataType.BFile:
+				return OracleType.BFile;
+			case OciDataType.OciString:
+				return OracleType.VarChar;
+			case OciDataType.OciDate:
+				return OracleType.DateTime;
+			default:
+				throw new NotImplementedException ();
+			}
+		}
+
 		public Type GetFieldType (string sDataTypeName) 
 		{
 			switch (sDataTypeName) {

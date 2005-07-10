@@ -1,3 +1,24 @@
+2005-07-10  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleCommand.cs: support
+	CommandBehavior of SchemaOnly
+
+	* System.Data.OracleClient/OracleCommandBuilder.cs:
+	implement OracleCommandBuilder.  Does not work yet.
+
+	* System.Data.OracleClient/OracleDataReader.cs:
+	implement CommandBehavior of KeyInfo which is required
+	for OracleCommandBuilder.  Correct data retreived via
+	GetSchemaTable()
+
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs: add
+	method to convert a OciDataType enum to OracleDataType enum
+	
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs: allow
+	execute of DescribeOnly to support CommandBehavior.SchemaOnly
+
+	* Test/OracleAdapterTest.cs: add file for adapter tests
+	
 2005-07-08  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleParameter.cs

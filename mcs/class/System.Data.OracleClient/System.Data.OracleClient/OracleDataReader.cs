@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -37,6 +38,7 @@ namespace System.Data.OracleClient {
 		bool isClosed;
 		bool hasRows;
 		DataTable schemaTable;
+		CommandBehavior behavior;
 
 		int recordsAffected = -1;
 		OciStatementType statementType;
@@ -46,17 +48,7 @@ namespace System.Data.OracleClient {
 
 		#region Constructors
 
-		internal OracleDataReader (OracleCommand command, OciStatementHandle statement)
-		{
-			this.command = command;
-			this.hasRows = false;
-			this.isClosed = false;
-			this.schemaTable = ConstructSchemaTable ();
-			this.statement = statement;
-			this.statementType = statement.GetStatementType ();
-		}
-
-		internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows ) 
+		internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows, CommandBehavior behavior) 
 		{
 			this.command = command;
 			this.hasRows = extHasRows;
@@ -64,8 +56,8 @@ namespace System.Data.OracleClient {
 			this.schemaTable = ConstructSchemaTable ();
 			this.statement = statement;
 			this.statementType = statement.GetStatementType ();
+			this.behavior = behavior;
 	        }
-
 
 		~OracleDataReader ()
 		{
@@ -136,16 +128,16 @@ namespace System.Data.OracleClient {
 			schemaTable.Columns.Add ("NumericPrecision", shortType);
 			schemaTable.Columns.Add ("NumericScale", shortType);
 			schemaTable.Columns.Add ("DataType", typeType);
+			schemaTable.Columns.Add ("ProviderType", intType);
 			schemaTable.Columns.Add ("IsLong", booleanType);
 			schemaTable.Columns.Add ("AllowDBNull", booleanType);
-			schemaTable.Columns.Add ("IsUnique", booleanType);
+			schemaTable.Columns.Add ("IsAliased", booleanType);
+			schemaTable.Columns.Add ("IsExpression", booleanType);
 			schemaTable.Columns.Add ("IsKey", booleanType);
-			schemaTable.Columns.Add ("IsReadOnly", booleanType);
-			schemaTable.Columns.Add ("BaseSchemaTable", stringType);
-			schemaTable.Columns.Add ("BaseCatalogName", stringType);
+			schemaTable.Columns.Add ("IsUnique", booleanType);
+			schemaTable.Columns.Add ("BaseSchemaName", stringType);
 			schemaTable.Columns.Add ("BaseTableName", stringType);
 			schemaTable.Columns.Add ("BaseColumnName", stringType);
-			schemaTable.Columns.Add ("BaseSchemaName", stringType);
 
 			return schemaTable;
 		}
@@ -387,6 +379,14 @@ namespace System.Data.OracleClient {
 
 		public int GetOrdinal (string name)
 		{
+			int i = GetOrdinalInternal (name);
+			if (i == -1)
+				throw new IndexOutOfRangeException ();
+			return i;
+		}
+
+		private int GetOrdinalInternal (string name)
+		{
 			int i;
 			
 			for (i = 0; i < statement.ColumnCount; i += 1) {
@@ -399,7 +399,7 @@ namespace System.Data.OracleClient {
 					return i;
 			}
 
-			throw new IndexOutOfRangeException ();
+			return -1;
 		}
 
 		private int GetRecordsAffected ()
@@ -409,10 +409,147 @@ namespace System.Data.OracleClient {
 			return recordsAffected;
 		}
 
+		// get the KeyInfo about table columns (primary key)
+		private StringCollection GetKeyInfo (ref string table) 
+		{
+			ArrayList tables = new ArrayList ();
+			ParseSql (command.CommandText, ref tables);
+			// TODO: handle multiple tables
+			table = (string)tables[0];
+			return GetKeyColumns (table);
+		}
+
+		// get the columns in a table that have a primary key
+		private StringCollection GetKeyColumns(string table) 
+		{
+			StringCollection columns = new StringCollection ();
+			OracleCommand cmd = command.Connection.CreateCommand ();
+			
+			if (command.Transaction != null)
+				cmd.Transaction = command.Transaction;
+
+			// FIXME: handle whether or not there is a SchemaName
+			cmd.CommandText = "select col.column_name " +
+				"from all_constraints pk, all_cons_columns col " +
+				"where pk.owner = 'SCOTT' " +
+				"and pk.table_name = '" + table + "' " +
+				"and pk.constraint_type = 'P' " +
+				"and pk.owner = col.owner " +
+				"and pk.table_name = col.table_name " +
+				"and pk.constraint_name = col.constraint_name";
+
+			OracleDataReader rdr = cmd.ExecuteReader ();
+			while (rdr.Read ())
+				columns.Add (rdr.GetString (0));
+
+			return columns;
+		}
+
+		// parse the list of table names in the SQL
+		// TODO: parse the column aliases and table aliases too
+		//       and determine if a column is a true table column
+		//       or an expression
+		private void ParseSql (string sql, ref ArrayList tables) 
+		{
+			if (sql == String.Empty)
+				return;
+
+			char[] chars = sql.ToCharArray ();
+			StringBuilder wb = new StringBuilder ();
+
+			bool bFromFound = false;
+			bool bEnd = false;
+			int i = 0;
+			bool bTableFound = false;
+		
+			for (; bEnd == false && i < chars.Length; i++) {
+				char ch = chars[i];
+			
+				if (Char.IsLetter (ch)) {
+					wb.Append (ch);
+				}
+				else if (Char.IsWhiteSpace (ch)) {
+					if (wb.Length > 0) {
+						if (bFromFound == false) {
+							string word = wb.ToString ().ToUpper ();
+							if (word.Equals ("FROM")) {
+								bFromFound = true;
+							}
+							wb = null;
+							wb = new StringBuilder ();
+							bTableFound = false;
+						}
+						else {
+							switch (wb.ToString ().ToUpper ()) {
+							case "WHERE":
+							case "ORDER":
+							case "GROUP":
+								bEnd = true;
+								bTableFound = false;
+								break;
+							default:
+								if (bTableFound == true)
+									bTableFound = false; // this is done in case of a table alias
+								else {
+									bTableFound = true;
+									tables.Add (wb.ToString ().ToUpper ());
+								}
+								wb = null;
+								wb = new StringBuilder ();	
+								break;
+							}
+						}
+					}
+				}
+				else if (bFromFound == true) {
+					switch (ch) {
+					case ',': 
+						if (bTableFound == true)
+							bTableFound = false;
+						else {
+							tables.Add (wb.ToString ().ToUpper ());
+						}
+						wb = null;
+						wb = new StringBuilder ();
+						break;
+					case '$':
+					case '_':
+						wb.Append (ch);
+						break;
+					}
+				}
+			}
+			if (bEnd == false) {
+				if (wb.Length > 0) {
+					if (bFromFound == false && wb.ToString ().ToUpper ().Equals ("FROM"))
+						bFromFound = true;
+					if (bFromFound == true) {
+						switch(wb.ToString ().ToUpper ()) {
+						case "WHERE":
+						case "ORDER":
+						case "GROUP":
+							bEnd = true;
+							break;
+						default:
+							if (bTableFound == false) {
+								tables.Add (wb.ToString ().ToUpper ());
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
 		public DataTable GetSchemaTable ()
 		{
+			StringCollection keyinfo = null;
+
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
+
+			string table = "";
+			if ((behavior & CommandBehavior.KeyInfo) != 0)
+				keyinfo = GetKeyInfo (ref table);
 
 			dataTypeNames = new ArrayList ();
 
@@ -428,11 +565,43 @@ namespace System.Data.OracleClient {
 				row ["ColumnSize"]		= parameter.GetDataSize ();
 				row ["NumericPrecision"]	= parameter.GetPrecision ();
 				row ["NumericScale"]		= parameter.GetScale ();
-				string sDataTypeName = parameter.GetDataTypeName ();
+				
+				string sDataTypeName		= parameter.GetDataTypeName ();
 				row ["DataType"]		= parameter.GetFieldType (sDataTypeName);
+				
+				OciDataType ociType = parameter.GetDataType();
+				OracleType oraType = OciParameterDescriptor.OciDataTypeToOracleType (ociType);
+				row ["ProviderType"]		= (int) oraType;
+				
+				if (ociType == OciDataType.Blob || ociType == OciDataType.Clob)
+					row ["IsLong"]		= true;
+				else
+					row ["IsLong"]		= false;
+
 				row ["AllowDBNull"]		= parameter.GetIsNull ();
-				row ["BaseColumnName"]		= parameter.GetName ();
-				row ["IsReadOnly"] 		= true;
+
+				row ["IsAliased"]		= DBNull.Value; // TODO:
+				row ["IsExpression"]		= DBNull.Value; // TODO:
+				
+				if ((behavior & CommandBehavior.KeyInfo) != 0) {
+					if (keyinfo.IndexOf ((string)row ["ColumnName"]) >= 0)
+						row ["IsKey"] = true;
+					else
+						row ["IsKey"] = false;
+
+					row ["IsUnique"]	= DBNull.Value; // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
+					row ["BaseSchemaName"]	= DBNull.Value;  // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
+					row ["BaseTableName"]	= table;
+					row ["BaseColumnName"]	= DBNull.Value;  // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
+
+				}	
+				else {
+					row ["IsKey"]		= DBNull.Value;	
+					row ["IsUnique"]	= DBNull.Value; 
+					row ["BaseSchemaName"]	= DBNull.Value; 
+					row ["BaseTableName"]	= DBNull.Value; 
+					row ["BaseColumnName"]	= DBNull.Value; 
+				}
 
 				schemaTable.Rows.Add (row);
 			}

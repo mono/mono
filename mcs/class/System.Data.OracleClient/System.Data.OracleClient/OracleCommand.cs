@@ -287,7 +287,7 @@ namespace System.Data.OracleClient {
 			if (isNonQuery == true)
 				statement.ExecuteNonQuery (useAutoCommit);
 			else
-				statement.ExecuteQuery ();
+				statement.ExecuteQuery (false);
 
 			GetOutParameters ();
 
@@ -370,7 +370,7 @@ namespace System.Data.OracleClient {
 				if (isNonQuery == true)
 					ExecuteNonQueryInternal (statement, false);
 				else {
-					statement.ExecuteQuery ();
+					statement.ExecuteQuery (false);
 
 					if (statement.Fetch ()) {
 						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
@@ -437,10 +437,14 @@ namespace System.Data.OracleClient {
 
 				if (isNonQuery)
 					ExecuteNonQueryInternal (statement, false);
-				else
-					hasRows = statement.ExecuteQuery ();
+				else {
+					if ((behavior & CommandBehavior.SchemaOnly) != 0)
+						statement.ExecuteQuery (true);
+					else
+						hasRows = statement.ExecuteQuery (false);
+				}
 
-				rd = new OracleDataReader (this, statement, hasRows);
+				rd = new OracleDataReader (this, statement, hasRows, behavior);
 			}
 			finally	{
 				if (statement != null && rd == null)
@@ -473,7 +477,7 @@ namespace System.Data.OracleClient {
 				if (isNonQuery == true)
 					ExecuteNonQueryInternal (statement, false);
 				else {
-					statement.ExecuteQuery ();
+					statement.ExecuteQuery (false);
 
 					if (statement.Fetch ()) {
 						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];

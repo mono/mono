@@ -11,8 +11,10 @@
 // 
 // Author: 
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //         
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2005
 // 
 
 using System;
@@ -127,17 +129,17 @@ namespace System.Data.OracleClient.Oci {
 				values.Add (GetDefineHandle (i));
 		}
 
-		public bool ExecuteQuery ()
+		public bool ExecuteQuery (bool schemaOnly)
 		{
-			return Execute (false,false);
+			return Execute (false, false, schemaOnly);
 		}
 
 		public bool ExecuteNonQuery (bool useAutoCommit)
 		{
-			return Execute (true, useAutoCommit);
+			return Execute (true, useAutoCommit, false);
 		}
 
-		public bool Execute (bool nonQuery, bool useAutoCommit)
+		public bool Execute (bool nonQuery, bool useAutoCommit, bool schemaOnly)
 		{
 			int status = 0;
 			columnCount = 0;
@@ -146,8 +148,12 @@ namespace System.Data.OracleClient.Oci {
 
 			if( useAutoCommit)
 				executeMode = (int)OciExecuteMode.CommitOnSuccess;
-			else
-				executeMode = (int)OciExecuteMode.Default;
+			else {
+				if (schemaOnly)
+					executeMode = (int)OciExecuteMode.DescribeOnly;
+				else
+					executeMode = (int)OciExecuteMode.Default;
+			}
 
 			if (this.disposed) 
 			{
