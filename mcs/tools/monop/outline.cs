@@ -473,13 +473,17 @@ public class Outline {
 	{
 		if (method.IsStatic)
 			return "static ";
-	
+		
 		// all interface methods are "virtual" but we don't say that in c#
-		if (method.IsVirtual && !method.DeclaringType.IsInterface)
+		if (method.IsVirtual && !method.DeclaringType.IsInterface) {
+			if (method.IsAbstract)
+				return "abstract ";
+
 			return ((method.Attributes & MethodAttributes.NewSlot) != 0) ?
 				"virtual " :
-				"override ";
-		
+				"override ";	
+		}
+				
 		return null;
 	}
 
