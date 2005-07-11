@@ -1,5 +1,10 @@
 2005-07-11  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_Type_BindGenericParameters): Don't crash here
+	on error.
+
+2005-07-11  Martin Baulig  <martin@ximian.com>
+
 	* loader.c (find_method): Also lookup in
 	`mono_defaults.object_class' if we're an interfaces; fixes #75460.
 
