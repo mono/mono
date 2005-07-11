@@ -1,3 +1,9 @@
+2005-07-11  Pedro Martínez Juliá  <pedromj@gmail.com>
+
+	* Convert.cs: Fix the bug when Convert.ChangeType was using
+	NumberFormatInfo instead of DateTimeFormatInfo when the type to
+	change is a DateTime.
+
 2005-07-11  Martin Baulig  <martin@ximian.com>
 
 	* Array.cs: Use Type.Equals() instead of `==' to compare type

@@ -2427,16 +2427,28 @@ namespace System {
 			if ((value != null) && (conversionType == null))
 				throw new ArgumentNullException ("conversionType");
 			CultureInfo ci = CultureInfo.CurrentCulture;
-			NumberFormatInfo number = ci.NumberFormat;
-			return ToType (value, conversionType, number);
+			IFormatProvider provider;
+			if (conversionType == typeof(DateTime)) {
+				provider = ci.DateTimeFormat;
+			}
+			else {
+				provider = ci.NumberFormat;
+			}
+			return ToType (value, conversionType, provider);
 		}
 		
 		public static object ChangeType (object value, TypeCode typeCode)
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
 			Type conversionType = conversionTable [(int) typeCode];
-			NumberFormatInfo number = ci.NumberFormat;
-			return ToType (value, conversionType, number);
+			IFormatProvider provider;
+			if (conversionType == typeof(DateTime)) {
+				provider = ci.DateTimeFormat;
+			}
+			else {
+				provider = ci.NumberFormat;
+			}
+			return ToType (value, conversionType, provider);
 		}
 
 		public static object ChangeType (object value, Type conversionType, IFormatProvider provider)
