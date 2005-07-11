@@ -1,5 +1,8 @@
 2005-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c tramp-ia64.c Makefile.am: Move arch independent parts 
+	of trampolines to a separate file.
+
 	* mini-trampolines.c: New file.
 
 	* mini.h tramp-x86.c: Move arch independent parts of trampolines to a 
