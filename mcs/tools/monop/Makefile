@@ -2,10 +2,8 @@ thisdir = tools/monop
 SUBDIRS = 
 include ../../build/rules.make
 
-ifeq (net_2_0, $(PROFILE))
-PROGRAM = monop2.exe
-else
-PROGRAM = monop.exe
-endif
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/monop.exe
+
+CLEAN_FILES = monop.exe monop2.exe *.mdb
 
 include ../../build/executable.make
