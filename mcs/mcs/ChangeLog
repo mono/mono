@@ -1,5 +1,14 @@
 2005-07-11  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix #75321
+	* ecore.cs, class.cs: Use SetAssigned instead of direct access.
+
+	* class.cs (TypeContainer.VerifyMembers): Distinguish between
+	not used and not used & assigned.
+	(FieldBase.ASSIGNED): Moved to MemberCore.Flags.
+
+2005-07-11  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix #75053
 	* expression.cs (Is.DoResolve): null is never provided type.
 
