@@ -1,5 +1,12 @@
 2005-07-11  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstructedType.CheckConstraints): Improve the check
+	for the constructor constraint: we do not only have to check
+	whether the class has a public constructor, but also ensure that
+	it's parameterless.  Fixes #75492.
+
+2005-07-11  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Binary.ResolveOperator): Only allow `==' and `!='
 	between type parameters if they either have the reference type
 	constraint or the class constraint.

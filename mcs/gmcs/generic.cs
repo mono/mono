@@ -1270,15 +1270,19 @@ namespace Mono.CSharp {
 				BindingFlags.DeclaredOnly, loc)
 				as MethodGroupExpr;
 
-			if (atype.IsAbstract || (mg == null) || !mg.IsInstance) {
-				Report.Error (310, loc, "The type `{0}' must have a public " +
-					      "parameterless constructor in order to use it " +
-					      "as parameter `{1}' in the generic type or " +
-					      "method `{2}'", atype, ptype, DeclarationName);
-				return false;
+			if (!atype.IsAbstract && (mg != null) && mg.IsInstance) {
+				foreach (MethodBase mb in mg.Methods) {
+					ParameterData pd = TypeManager.GetParameterData (mb);
+					if (pd.Count == 0)
+						return true;
+				}
 			}
 
-			return true;
+			Report.Error (310, loc, "The type `{0}' must have a public " +
+				      "parameterless constructor in order to use it " +
+				      "as parameter `{1}' in the generic type or " +
+				      "method `{2}'", atype, ptype, DeclarationName);
+			return false;
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
