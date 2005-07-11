@@ -1,10 +1,9 @@
-// InstallContext.cs
-//   System.Configuration.Install.InstallContext class implementation
+// System.Configuration.Install.InstallContext.cs
 //
 // Author:
-//    Muthu Kannan (t.manki@gmail.com)
+// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 //
-// (C) 2005 Novell, Inc.  http://www.novell.com/
+// (C) Alejandro Sánchez Acosta
 // 
 
 //
@@ -29,111 +28,45 @@
 //
 
 using System.Collections.Specialized;
-using System.IO;
 
 namespace System.Configuration.Install
 {
-
-public class InstallContext {
-	private StringDictionary parameters;
-
-	// Constructors
-	public InstallContext () : this (null, null)
+	public class InstallContext
 	{
-	}
-
-	public InstallContext (string logFilePath, string [] cmdLine)
-	{
-		parameters = ParseCommandLine(cmdLine);
-
-		// Log file path specified in command line arguments
-		// has higher priority than the logFilePath argument
-		if (parameters.ContainsKey ("logFile")) {
-			logFilePath = parameters ["logFile"];
-			parameters.Remove ("logFile");
+		private StringDictionary parameters;
+		
+		[MonoTODO]
+		public InstallContext () {
+			throw new NotImplementedException ();
 		}
 
-		if (logFilePath == null)
-			logFilePath = "";
-		parameters.Add ("logFile", logFilePath);
-	}
-
-	// Properties
-	public StringDictionary Parameters {
-		get {
-			return parameters;
+		[MonoTODO]
+		public InstallContext (string logFilePath, string[] commandLine) {
+			throw new NotImplementedException ();
 		}
-	}
 
-	// Methods
-	public bool IsParameterTrue (string paramName)
-	{
-		if (Parameters.ContainsKey (paramName)) {
-			string val = (Parameters [paramName]).ToLower ();
-			return val == "true" || val == "yes" || val == "1" || val == "";
-		} else
-			return false;
-	}
-
-	public void LogMessage (string message)
-	{
-		if (message == null)
-			return;
-
-		string logFilePath;
-		if ((logFilePath = parameters ["logFile"]) != "") {
-			StreamWriter logFile = new StreamWriter (logFilePath, true);
-			try {
-				logFile.WriteLine (message);
-			} finally {
-				logFile.Close ();
+		public StringDictionary Parameters {
+			get {
+				return parameters;
 			}
 		}
 
-		if (IsParameterTrue ("logToConsole"))
-			Console.WriteLine (message);
-	}
-
-	internal void addToLog (Exception e)
-	{
-		LogMessage ("Exception: " + e.ToString ());
-		if (e.InnerException != null) {
-			addToLog (e.InnerException);
-			return;
-		}
-		LogMessage (e.StackTrace);
-	}
-
-	protected static StringDictionary ParseCommandLine (string [] args)
-	{
-		string key, val;
-
-		StringDictionary sd = new StringDictionary ();
-
-		if (args == null)
-			return sd;
-
-		foreach (string a in args) {
-			// Remove leading / or - or --
-			string x = a;	// I am using x instead of a
-			if (a.StartsWith ("--"))
-				x = x.Substring (2);
-			else if (x.StartsWith ("/") || x.StartsWith ("-"))
-				x = x.Substring (1);
-
-			int index;
-			if ((index = x.IndexOf ("=")) == -1) {
-				key = x;
-				val = "";
-			} else {
-				key = x.Substring (0, index);
-				val = x.Substring (index + 1);
-			}
-			sd.Add (key, val);
+		[MonoTODO]
+		public bool IsParameterTrue (string paramName)
+		{
+			throw new NotImplementedException ();
 		}
 
-		return sd;
-	}
-}
+		[MonoTODO]
+		public void LogMessage (string message)
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO]
+		protected static StringDictionary ParseCommandLine (string[] args)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }

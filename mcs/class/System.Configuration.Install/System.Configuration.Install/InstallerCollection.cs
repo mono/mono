@@ -1,10 +1,9 @@
-// InstallerCollection.cs
-//   System.Configuration.Install.InstallerCollection class implementation
+// System.Configuration.Install.Installer.cs
 //
 // Author:
-//    Muthu Kannan (t.manki@gmail.com)
+// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 //
-// (C) 2005 Novell, Inc.  http://www.novell.com/
+// (C) Alejandro Sánchez Acosta
 // 
 
 //
@@ -32,84 +31,95 @@ using System.Collections;
 
 namespace System.Configuration.Install
 {
-
-public class InstallerCollection : CollectionBase {
-	private Installer parent;
-
-	// Constructors
-	internal InstallerCollection (Installer parent)
+	public class InstallerCollection : CollectionBase
 	{
-		this.parent = parent;
-	}
+		#region Constructors
 
-	// Properties
-	public Installer this [int index] {
-		get {
-			return (Installer)List [index];
+		internal InstallerCollection(Installer owner)
+		{
+			this.owner = owner;
 		}
-		set {
-			List [index] = value;
+
+		#endregion Constructors
+		
+
+		public Installer this[int index] {
+			get 
+			{
+				return (Installer) base.List[index];
+			}
+			set 
+			{
+				base.List[index] = value;
+			}
 		}
-	}
 
-	// Methods
-	public int Add (Installer installer)
-	{
-		return List.Add (installer);
-	}
+		public int Add (Installer value) {
+			return base.List.Add (value);
+		}
 
-	public void AddRange (Installer [] installers)
-	{
-		foreach (Installer ins in installers)
-			Add (ins);
-	}
+		public void AddRange (Installer[] value) {
+			if (value == null) 
+			{
+				throw new ArgumentNullException ("value");
+			}
 
-	public void AddRange (InstallerCollection installers)
-	{
-		foreach (Installer ins in installers)
-			Add (ins);
-	}
+			for (int counter = 0; counter < value.Length; counter++)
+			{
+				Add (value[counter]);
+			}
+		}
+			
+		public void AddRange (InstallerCollection value) {
+			if (value == null)
+			{
+				throw new ArgumentNullException ("value");
+			}
 
-	public bool Contains (Installer installer)
-	{
-		return List.Contains (installer);
-	}
+			int itemCount = value.Count;
+			for (int counter = 0; counter < itemCount; counter++)
+			{
+				Add (value[counter]);
+			}
+		}
 
-	public void CopyTo (Installer [] array, int index)
-	{
-		List.CopyTo (array, index);
-	}
+		public bool Contains (Installer value) {
+			return base.List.Contains (value);
+		}		
 
-	public int IndexOf (Installer installer)
-	{
-		return List.IndexOf (installer);
-	}
+		public void CopyTo (Installer[] array, int index) {
+			base.List.CopyTo (array, index);
+		}
+		
+		public int IndexOf (Installer value) {
+			return base.List.IndexOf (value);
+		}
 
-	public void Insert (int index, Installer installer)
-	{
-		List.Insert (index, installer);
-	}
+		public void Insert (int index, Installer value) {
+			base.List.Insert (index, value);
+		}
 
-	public void Remove (Installer installer)
-	{
-		List.Remove (installer);
-	}
+		protected override void OnInsert (int index, object value) {
+			((Installer) value).parent = owner;
+		}
 
-	protected override void OnInsert (int index, object val)
-	{
-		((Installer)val).Parent = parent;
-	}
+		protected override void OnRemove (int index, object value) {
+			((Installer) value).parent = null;
+		}
 
-	protected override void OnRemove (int index, object val)
-	{
-		((Installer)val).Parent = null;
-	}
+		protected override void OnSet (int index, object oldValue, object newValue) {
+			((Installer) oldValue).parent = null;
+			((Installer) newValue).parent = owner;
+		}
 
-	protected override void OnSet (int index, object oldVal, object newVal)
-	{
-		((Installer)oldVal).Parent = null;
-		((Installer)newVal).Parent = parent;
-	}
-}
+		public void Remove (Installer value) {
+			base.List.Remove(value);
+		}
 
+		#region Private Instance Fields
+
+		private Installer owner;
+
+		#endregion Private Instance Fields
+	}
 }

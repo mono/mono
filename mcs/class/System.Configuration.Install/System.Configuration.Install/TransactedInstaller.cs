@@ -1,11 +1,10 @@
-// TransactedInstaller.cs
-//   System.Configuration.Install.TransactedInstaller class implementation
+// System.Configuration.Install.TransactedInstaller.cs
 //
 // Author:
-//    Muthu Kannan (t.manki@gmail.com)
+// 	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) 2005 Novell, Inc.  http://www.novell.com/
-// 
+// (C) Novell
+//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,64 +27,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 
 namespace System.Configuration.Install
 {
-
-public class TransactedInstaller : Installer {
-	// Constructors
-	public TransactedInstaller ()
+	public class TransactedInstaller : Installer
 	{
-	}
-
-	// Methods
-	public override void Install (IDictionary state)
-	{
-		if (state == null)
-			throw new ArgumentException ("State saver cannot be null");
-
-		try {
-			Context.LogMessage ("Starting transacted installation.");
-			base.Install (state);
-		} catch (Exception e) {
-			try {
-				Context.LogMessage ("Errors occurred during installation -- starting rollback.");
-				Context.addToLog (e);
-				Rollback (state);
-			} catch (Exception rbke) {
-				Context.LogMessage ("Rollback failed.");
-				Context.addToLog (rbke);
-			}
-			Context.LogMessage ("Rollback phase completed.");
-			throw new Exception ("Transacted installation failed.", e);
+		public TransactedInstaller ()
+		{
 		}
 
-		try {
-			Context.LogMessage ("Installation phase completed successfully -- starting commit.");
-			Commit (state);
-		} catch (Exception e) {
-			Context.LogMessage ("Commit failed.");
-			Context.addToLog (e);
+		[MonoTODO]
+		public override void Install (IDictionary savedState)
+		{
 		}
-		Context.LogMessage ("Commit phase completed.");
-	}
 
-	public override void Uninstall (IDictionary state)
-	{
-		Context.LogMessage ("Uninstallation started.");
-		try {
-			base.Uninstall (state);
-		} catch (Exception e) {
-			if (e is ArgumentException)
-				throw e;
-			Context.LogMessage ("Errors occurred during uninstallation.");
-			Context.addToLog (e);
-		} finally {
-			Context.LogMessage ("Uninstallation completed.");
+		[MonoTODO]
+		public override void Uninstall (IDictionary savedState)
+		{
 		}
 	}
-}
-
 }

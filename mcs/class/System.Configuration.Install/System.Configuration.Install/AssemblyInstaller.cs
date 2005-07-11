@@ -1,11 +1,10 @@
-// AssemblyInstaller.cs
-//   System.Configuration.Install.AssemblyInstaller class implementation
+// System.Configuration.Install.AssemblyInstaller.cs
 //
 // Author:
-//    Muthu Kannan (t.manki@gmail.com)
+// 	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) 2005 Novell, Inc.  http://www.novell.com/
-// 
+// (C) Novell
+//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,267 +27,110 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.IO;
-using System.Text;
 
 namespace System.Configuration.Install
 {
-
-public class AssemblyInstaller : Installer {
-	private string [] cmdLine;
-	private Assembly assembly;
-	private bool useNewContext;
-	private const string STATE_FILE_EXT = ".InstallState";
-
-	// Initialises private members
-	private void initFields ()
+	public class AssemblyInstaller : Installer
 	{
-		UseNewContext = true;
-	}
-
-	// Constructors
-	public AssemblyInstaller ()
-	{
-		Assembly = null;
-		CommandLine = null;
-
-		initFields();
-	}
-
-	public AssemblyInstaller (Assembly ass, string [] args)
-	{
-		Assembly = ass;
-		CommandLine = args;
-
-		initFields();
-	}
-
-	public AssemblyInstaller (string assFile, string [] args)
-	{
-		Path = assFile;
-		CommandLine = args;
-
-		initFields();
-	}
-
-	// Properties
-	public Assembly Assembly {
-		get {
-			return assembly;
+		public AssemblyInstaller ()
+		{
 		}
-		set {
-			assembly = value;
+
+		public AssemblyInstaller (Assembly assembly, string[] commandLine)
+		{
+			_assembly = assembly;
+			_commandLine = commandLine;
+			_useNewContext = true;
 		}
-	}
 
-	public string [] CommandLine {
-		get {
-			return cmdLine;
+		public AssemblyInstaller (string filename, string[] commandLine)
+		{
+			Path = System.IO.Path.GetFullPath (filename);
+			_commandLine = commandLine;
+			_useNewContext = true;
 		}
-		set {
-			cmdLine = value;
+
+		[MonoTODO]
+		public static void CheckIfInstallable (string assemblyName)
+		{
+			throw new NotImplementedException ();
 		}
-	}
 
-	public override string HelpText {
-		get {
-			addSubInstallers ();
-			StringBuilder sb = new StringBuilder ();
-			foreach (Installer ins in Installers)
-				sb.Append (ins.HelpText + "\n");
-			return sb.ToString ();
+		[MonoTODO]
+		public override void Commit (IDictionary savedState)
+		{
+			throw new NotImplementedException ();
 		}
-	}
 
-	public string Path {
-		get {
-			if (Assembly == null)
-				return null;
-			else
-				return Assembly.CodeBase.Substring (7);	// remove leading 'file://'
+		[MonoTODO]
+		public override void Install (IDictionary savedState)
+		{
+			throw new NotImplementedException ();
 		}
-		set {
-			Assembly = Assembly.LoadFrom (value);
+
+		[MonoTODO]
+		public override void Rollback (IDictionary savedState)
+		{
+			throw new NotImplementedException ();
 		}
-	}
 
-	public bool UseNewContext {
-		get {
-			return useNewContext;
+		[MonoTODO]
+		public override void Uninstall (IDictionary savedState)
+		{
+			throw new NotImplementedException ();
 		}
-		set {
-			if (value)
-				Context = new InstallContext (Path + ".InstallLog", null);
-			else
-				Context = new InstallContext (Path + ".InstallLog", CommandLine);
-			useNewContext = value;
-		}
-	}
 
-	// Methods
-	public static void CheckIfInstallable (string assemblyName)
-	{
-		if (! File.Exists (assemblyName))
-			throw new Exception ("The path specified (" + assemblyName + ") does not exist.");
-
-		Assembly ass = Assembly.LoadFrom (assemblyName);
-		if ((getInstallersFromAssembly (ass)).Length == 0)
-			throw new Exception ("Could not find any type with RunInstaller attribute set to True");
-	}
-
-	private void addSubInstallers ()
-	{
-		// Return, if installers have already been filled
-		if (Installers.Count > 0)
-			return;
-
-		foreach (Type t in getInstallersFromAssembly (Assembly)) {
-			Installer i = (Installer) Activator.CreateInstance (t);
-			i.Context = this.Context;
-			Installers.Add (i);
-		}
-	}
-
-	private static Type [] getInstallersFromAssembly (Assembly ass)
-	{
-		ArrayList insTypes = new ArrayList ();
-
-		foreach (Type t in ass.GetExportedTypes ()) {
-			object [] attribs = t.GetCustomAttributes (typeof (RunInstallerAttribute), false);
-			if (attribs.Length > 0) {
-				RunInstallerAttribute atr = (RunInstallerAttribute) attribs [0];
-				if ((typeof (Installer)).IsAssignableFrom (t) && atr.Equals (RunInstallerAttribute.Yes))
-					insTypes.Add (t);
+		public Assembly Assembly {
+			get {
+				return _assembly;
+			}
+			set {
+				_assembly = value;
 			}
 		}
 
-		Type [] ret = new Type [insTypes.Count];
-		for (int i = 0; i < insTypes.Count; ++i)
-			ret [i] = (Type) insTypes [i];
-		return ret;
-	}
-
-	private bool isInstallable ()
-	{
-		try {
-			CheckIfInstallable (Path);
-		} catch (Exception e) {
-			Context.LogMessage ("Assembly " + Path + " does not have any public installers in it.");
-			return false;
-		}
-		return true;
-	}
-
-	public override void Install (IDictionary state)
-	{
-		// Make sure that the assembly is installable
-		if (! isInstallable ())
-			return;
-
-		addSubInstallers ();
-
-		state = new Hashtable ();
-		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
-		try {
-			string logFilePath = Context.Parameters ["LogFile"];
-			if (logFilePath != null && logFilePath != "")
-				Console.WriteLine ("Installation log for assembly " + Path + " is found at " + logFilePath);
-			Context.LogMessage ("Starting installation of assembly: " + Path);
-			base.Install (state);
-		} finally {
-			// Serialise state
-			FileStream file = new FileStream (stateFile, FileMode.Create, FileAccess.Write, FileShare.Read);
-			try {
-				SoapFormatter sf = new SoapFormatter ();
-				sf.Serialize (file, state);
-			} finally {
-				file.Close ();
+		public string[] CommandLine {
+			get {
+				return _commandLine;
+			}
+			set {
+				_commandLine = value;
 			}
 		}
-		Context.LogMessage ("Installation completed");
-	}
 
-	public override void Commit (IDictionary state)
-	{
-		// Make sure that the assembly is installable
-		if (! isInstallable ())
-			return;
+		public override string HelpText {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		public string Path {
+			get {
+				if (_assembly == null)
+					return null;
+				
+				return _assembly.Location;
+			}
+			set {
+				if (value == null)
+					_assembly = null;
 
-		addSubInstallers ();
-		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
-		// Read serialised state
-		FileStream file = new FileStream (stateFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-		try {
-			SoapFormatter sf = new SoapFormatter ();
-			state = (IDictionary) sf.Deserialize (file);
-		} finally {
-			file.Close ();
+				_assembly = Assembly.LoadFrom (value);
+			}
+		}
+		public bool UseNewContext {
+			get {
+				return _useNewContext;
+			}
+			set {
+				_useNewContext = value;
+			}
 		}
 
-		Context.LogMessage ("Starting commit of assembly: " + Path);
-		base.Commit (state);
-		Context.LogMessage ("Commit completed");
+		private Assembly _assembly;
+		private string[] _commandLine;
+		private bool _useNewContext;
 	}
-
-	public override void Rollback (IDictionary state)
-	{
-		// Make sure that the assembly is installable
-		if (! isInstallable ())
-			return;
-
-		addSubInstallers ();
-		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
-
-		// Read serialised state
-		FileStream file = new FileStream (stateFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-		try {
-			SoapFormatter sf = new SoapFormatter ();
-			state = (IDictionary) sf.Deserialize (file);
-		} finally {
-			file.Close ();
-		}
-
-		Context.LogMessage ("Starting rollback of assembly: " + Path);
-		base.Rollback (state);
-
-		File.Delete (stateFile);
-		Context.LogMessage ("Rollback completed");
-	}
-
-	public override void Uninstall (IDictionary state)
-	{
-		// Make sure that the assembly is installable
-		if (! isInstallable ())
-			return;
-
-		addSubInstallers ();
-		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
-
-		// Read serialised state
-		FileStream file = new FileStream (stateFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-		try {
-			SoapFormatter sf = new SoapFormatter ();
-			state = (IDictionary) sf.Deserialize (file);
-			file.Close ();
-		} catch (Exception) {
-			state = null;
-		}
-
-		string logFilePath = Context.Parameters ["LogFile"];
-		if (logFilePath != null && logFilePath != "")
-			Console.WriteLine ("Installation log for assembly " + Path + " is found at " + logFilePath);
-
-		Context.LogMessage ("Starting uninstallation of assembly: " + Path);
-		base.Uninstall (state);
-
-		File.Delete (stateFile);
-		Context.LogMessage ("Uninstallation completed");
-	}
-}
-
 }
