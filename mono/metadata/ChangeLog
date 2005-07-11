@@ -1,3 +1,8 @@
+2005-07-11  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (find_method): Also lookup in
+	`mono_defaults.object_class' if we're an interfaces; fixes #75460.
+
 2005-07-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (mono_domain_unload): Don't free the error message
