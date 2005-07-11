@@ -1,3 +1,10 @@
+2005-07-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : Compare() was ignoring such case that both
+	  entire strings have '-' to be compared.
+	* Collation-notes.txt : more status updates.
+	* TestDriver.cs : added '-' use cases.
+
 2005-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : to be same as other buggy part, it now handles

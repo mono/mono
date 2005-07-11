@@ -52,6 +52,7 @@ namespace Mono.Globalization.Unicode
 			Compare ("AB\u01c0C", "A\u01c0B\u01c0C", CompareOptions.IgnoreSymbols);
 			Compare ("A\u0304", "\u0100"); // diacritical weight addition
 			Compare ("ABCABC", 5, 1, "c", 0, 1, CompareOptions.IgnoreCase);
+			Compare ("-d:NET_1_1", 0, 1, "-", 0, 1, CompareOptions.None);
 
 			IndexOf ("ABC", '1', CompareOptions.None);
 			IndexOf ("ABCABC", 'c', CompareOptions.IgnoreCase);
@@ -75,6 +76,9 @@ namespace Mono.Globalization.Unicode
 			IsPrefix ("\u00E6", "a", CompareOptions.None);
 			IsPrefix ("\u00E6s", "ae", CompareOptions.None);
 			IsPrefix ("\u00E6", "aes", CompareOptions.None);
+			IsPrefix ("--start", "--", CompareOptions.None);
+			IsPrefix ("-d:NET_1_1", "-", CompareOptions.None);
+			IsPrefix ("-d:NET_1_1", "@", CompareOptions.None);
 
 			IsSuffix ("ABC", "c", CompareOptions.IgnoreCase);
 			IsSuffix ("BC", "c", CompareOptions.IgnoreCase);
@@ -93,6 +97,8 @@ namespace Mono.Globalization.Unicode
 			IndexOf ("ABCABC", "BC", CompareOptions.IgnoreCase);
 			IndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 			IndexOf ("ABCDEF", "BCD", 0, 3, CompareOptions.IgnoreCase);
+			IndexOf ("-ABC", "-", CompareOptions.None);
+			IndexOf ("--ABC", "--", CompareOptions.None);
 
 			LastIndexOf ("ABC", "1", CompareOptions.None);
 			LastIndexOf ("ABCABC", "c", CompareOptions.IgnoreCase);
@@ -102,6 +108,8 @@ namespace Mono.Globalization.Unicode
 			LastIndexOf ("BBCBBC", "BC", CompareOptions.IgnoreCase);
 			LastIndexOf ("original", "rig", CompareOptions.None);
 			LastIndexOf ("\u00E6", "ae", CompareOptions.None);
+			LastIndexOf ("-ABC", "-", CompareOptions.None);
+			LastIndexOf ("--ABC", "--", CompareOptions.None);
 
 			coll = new SimpleCollator (new CultureInfo ("hu"));
 			DumpSortKey ("ZSAZS1");
@@ -110,6 +118,8 @@ namespace Mono.Globalization.Unicode
 			IsSuffix ("zs", "zs", CompareOptions.None);
 			IsSuffix ("sz", "z", CompareOptions.None);
 			IsSuffix ("sz", "s", CompareOptions.None);
+			IsSuffix ("--ABC", "--", CompareOptions.None);
+			IsSuffix ("ABC--", "--", CompareOptions.None);
 
 			coll = new SimpleCollator (new CultureInfo (""));
 			Compare ("c\u00F4te", "cot\u00E9");

@@ -832,30 +832,32 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				bool special1 = false;
 				bool special2 = false;
 				byte cat1 = Category (i1);
-
-				// Handle special weight characters
-				if (!stringSort && cat1 == 6) {
-					lv5At1 = escape1.Source != null ?
-						escape1.Index - escape1.Start :
-						cur1 - start1;
-					// here Windows has a bug that it does
-					// not consider thirtiary weight.
-					lv5Value1 = Level1 (i1) << 8 + Uni.Level3 (i1);
-					idx1++;
-					continue;
-				}
-
 				byte cat2 = Category (i2);
 
-				if (!stringSort && cat2 == 6) {
-					lv5At2 = escape2.Source != null ?
-						escape2.Index - escape2.Start :
-						cur2 - start2;
-					// here Windows has a bug that it does
-					// not consider thirtiary weight.
-					lv5Value2 = Level1 (i2) << 8 + Uni.Level3 (i2);
-					idx2++;
-					continue;
+				// Handle special weight characters
+				if (!stringSort && currentLevel > 4) {
+					if (cat1 == 6) {
+						lv5At1 = escape1.Source != null ?
+							escape1.Index - escape1.Start :
+							cur1 - start1;
+						// here Windows has a bug that it does
+						// not consider thirtiary weight.
+						lv5Value1 = Level1 (i1) << 8 + Uni.Level3 (i1);
+						idx1++;
+					}
+					if (cat2 == 6) {
+						lv5At2 = escape2.Source != null ?
+							escape2.Index - escape2.Start :
+							cur2 - start2;
+						// here Windows has a bug that it does
+						// not consider thirtiary weight.
+						lv5Value2 = Level1 (i2) << 8 + Uni.Level3 (i2);
+						idx2++;
+					}
+					if (cat1 == 6 || cat2 == 6) {
+						currentLevel = 4;
+						continue;
+					}
 				}
 
 				Contraction ct1 = GetContraction (s1, idx1, end1);
@@ -926,7 +928,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx2++;
 				}
 
-				// add diacritical marks in s1 here
+				// add diacritical marks in s2 here
 				while (idx2 < end2) {
 					if (Category (s2 [idx2]) != 1)
 						break;
