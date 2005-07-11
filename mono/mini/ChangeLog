@@ -1,5 +1,8 @@
 2005-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-x86.c: Reorganize the trampoline code to be similar to the 
+	amd64/ia64 code.
+
 	* mini-codegen.c: Fix cygwin build.
 
 2005-07-10  Zoltan Varga  <vargaz@freemail.hu>
