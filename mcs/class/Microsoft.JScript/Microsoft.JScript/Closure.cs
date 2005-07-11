@@ -35,14 +35,16 @@ namespace Microsoft.JScript {
 
 		public object arguments;
 		public object caller;
+		internal FunctionObject func;
 
 		public Closure (FunctionObject func)
 		{
+			this.func = func;
 		}
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return "[closure " + func.ToString () + "]";
 		}
 	}
 }

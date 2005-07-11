@@ -1,3 +1,42 @@
+2005-07-07  Florian Gross  <flgr@ccan.de>
+
+	* MathObject.cs: Implemented max and min (untested)
+	* ObjectConstructor.cs: Implemented Invoke
+	* StringConstructor.cs: Implemented Invoke and fromCharCode
+	* PostOrPrefixOperator.cs: Implemented EvaluatePostOrPrefix
+	* NumberConstructor: Implemented CreateInstance and Invoke
+	* expression.cs: Implemented unary operators void, +, -, !, ~ and !
+	* ArrayPrototype.cs: Implemented concat, push and unshift
+	* DatePrototype.cs: Implemented getDate, getDay, getFullYear, getHours,
+	getMilliseconds, getMinutes, getMonth, getSeconds, getTime,
+	getTimezoneOffset, getUTCDate, getUTCDay, getUTCFullYear, getUTCHours,
+	getUTCMilliseconds, getUTCMinutes, getUTCMonth, getUTCSeconds,
+	getVarDate, getYear, toDateString, toGMTString, toLocaleDateString,
+	toLocaleString, toLocaleTimeString, toString, toTimeString,
+	toUTCString and valueOf
+	* ObjectPrototype.cs: Implemented toLocaleString and valueOf
+	* StringPrototype.cs: Implemented substr and concat
+	* Convert.cs: Implemented ToPrimitive, ToBoolean and ToUint16. Added
+	more cases to IsNumberTypeCode, IsFloatTypeCode and ToInt32. Fixed
+	ToString with doubles
+	* Plus.cs: Added more cases. Fixed endless loop for unknown types via
+	ugly goto
+	* ArrayObject.cs: Added GetDefaultValue
+	* NumberObject.cs: Added GetDefaultValue
+	* StringObject.cs: Added GetDefaultValue
+	* BooleanObject.cs: Added GetDefaultValue
+	* GlobalObject.cs: Fixed parseFloat. Added parseInt and ScriptEngine*
+	functions
+	* JSObject.cs: Implemented abstract GetDefaultValue
+	* BitwiseBinary.cs: Implemented &, ^ and | operators
+	* BooleanConstructor.cs: Implemented Invoke
+	* DateConstructor.cs: Implemented infrastructure for DatePrototype.
+	Note: YearFromTime is ported from Rhino. Also implemented Invoke and
+	CreateInstance.
+	* NumberPrototype.cs: Implemented toFixed, toLocaleString and toString
+	* TokenStream.cs: Fixed locale dependant float parsing
+	* LateBinding.cs: Added proper support for varargs passing
+
 2005-07-06  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* FunctionExpression.cs (build_closure): Use CodeGenerator.load_engine.

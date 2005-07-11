@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace Microsoft.JScript {
 
@@ -48,7 +49,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public ScriptFunction Invoke(params Object [] args)
 		{
-			throw new NotImplementedException ();
+			return (ScriptFunction) GetMethod ("CreateInstance", BindingFlags.Static | BindingFlags.Public).Invoke (null, args);
 		}
 	}
 }

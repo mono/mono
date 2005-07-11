@@ -89,7 +89,7 @@ namespace Microsoft.JScript {
 				sb.Append (this.parameters.ToString ());
 					
 			sb.Append (")");
-			if (return_type != null)
+			if (return_type != null && return_type != typeof (void))
 				sb.Append (" : " + return_type);
 			sb.Append (" {\n");
 

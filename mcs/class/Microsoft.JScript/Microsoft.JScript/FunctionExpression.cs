@@ -61,6 +61,9 @@ namespace Microsoft.JScript {
 									VsaEngine engine)
 		{
 			// FIXME: return something useful
+			Console.WriteLine ("JScriptFunctionExpression({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})",
+				handle, name, methodName, formalParams, fields,
+				mustSaveStackLocals, hasArgumentsObject, text);
 			return new FunctionObject (null, null, null, null);
 		}
 

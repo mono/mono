@@ -84,7 +84,7 @@ namespace Microsoft.JScript {
 
 		public override GlobalScope GetGlobalScope ()
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
 		public override FieldInfo GetLocalField (string name)
