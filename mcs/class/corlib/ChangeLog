@@ -1,3 +1,7 @@
+2005-07-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* Makefile: Disable warning 414.
+
 2005-06-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile (TEST_MCS_FLAGS): Remove bad dep on S.Data.
