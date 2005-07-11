@@ -680,6 +680,8 @@ namespace System.Reflection.Emit {
 			if (created != null)
 				return created;
 
+			create_generic_class ();
+
 			// Fire TypeResolve events for fields whose type is an unfinished
 			// value type.
 			if (fields != null) {

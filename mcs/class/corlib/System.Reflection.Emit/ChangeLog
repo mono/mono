@@ -1,3 +1,8 @@
+2005-07-11  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.CreateType): Call
+	create_generic_class() here as well; fixes #75454.
+
 2005-06-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* TypeBuilder.cs (check_name): Wrong exception argument order.
