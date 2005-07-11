@@ -1156,7 +1156,7 @@ namespace Mono.CSharp {
 			// then e != null (objects) or true (value types)
 			//
 			e = Convert.ImplicitConversionStandard (ec, expr, probe_type, loc);
-			if (e != null){
+			if (e != null && !(e is NullCast)){
 				expr = e;
 				if (etype.IsValueType)
 					action = Action.AlwaysTrue;
@@ -1178,10 +1178,10 @@ namespace Mono.CSharp {
 			}
 			
 			if (warning_always_matches)
-				Warning (183, "The given expression is always of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
+				Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
 			else if (warning_never_matches){
 				if (!(probe_type.IsInterface || expr.Type.IsInterface))
-					Warning (184, "The given expression is never of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
+					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
 			}
 
 			return this;
