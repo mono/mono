@@ -1742,7 +1742,7 @@ namespace System
 				for (int i = 0; i < length; i++) {
 					T value;
 					GetGenericValueImpl (i, out value);
-					if (item == value)
+					if (item.Equals (value))
 						return true;
 				}
 
@@ -1803,7 +1803,7 @@ namespace System
 				for (int i = 0; i < length; i++) {
 					T value;
 					GetGenericValueImpl (i, out value);
-					if (item == value)
+					if (item.Equals (value))
 						// array index may not be zero-based.
 						// use lower bound
 						return i + this.GetLowerBound (0);

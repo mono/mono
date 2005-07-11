@@ -1,3 +1,8 @@
+2005-07-11  Martin Baulig  <martin@ximian.com>
+
+	* Array.cs: Use Type.Equals() instead of `==' to compare type
+	parameters.	
+
 2005-07-10  Kamil Skalski <nazgul@nemerle.org>
 
 	* Type.cs: Mark BindGenericParameters as deprecated. Use
