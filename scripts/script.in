@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/@mono_interp@ @mono_one_instdir@/@exe_file@ "$@"
+exec @bindir@/@mono_interp@ @mono_instdir@/@framework_version@/@exe_name@.exe "$@"

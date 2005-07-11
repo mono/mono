@@ -1,18 +1,6 @@
-EXTRA_DIST =                   \
-	script.in              \
-	script2.in             \
-	mono-service.in        \
-	mono-nunit.pc.in       \
-	mono-find-provides.in  \
-	mono-find-requires.in
+bin_SCRIPTS = $(scripts_1.0) $(scripts_2.0) gmcs mono-service $(scripts_rpmhelpers)
 
-DISTCLEANFILES = $(pkgconfig_DATA) $(rpmscripts_SCRIPTS)
-
-bin2dir = $(bindir)
-servicedir = $(bindir)
-rpmscriptsdir = $(bindir)
-
-bin_SCRIPTS = \
+scripts_1.0 = \
 	al			\
 	caspol			\
 	cert2spc		\
@@ -44,54 +32,62 @@ bin_SCRIPTS = \
 	wsdl			\
 	xsd
 
-bin2_SCRIPTS = 					\
-	gmcs					\
-	monop2 					\
+scripts_2.0 = \
+	monop2 			\
 	wsdl2
 
-service_SCRIPTS = mono-service
+scripts_rpmhelpers = mono-find-provides mono-find-requires
 
-rpmscripts_SCRIPTS = mono-find-provides mono-find-requires
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA= mono-nunit.pc
 
-CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS) $(service_SCRIPTS)
+CLEANFILES = $(scripts_1.0) $(scripts_2.0) gmcs mono-service
+DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
+
+EXTRA_DIST =                   \
+	script.in              \
+	mono-service.in        \
+	mono-nunit.pc.in       \
+	mono-find-provides.in  \
+	mono-find-requires.in
 
 if USE_JIT
-MONO_INTERP = mono
+mono_interp = mono
 else
-MONO_INTERP = mint
+mono_interp = mint
 endif
 
 if PLATFORM_WIN32
 plat_bindir = $(shell cygpath -m $(libdir))
-mono_one_instdir = $(shell cygpath -m $(libdir))/mono/1.0
-mono_two_instdir = $(shell cygpath -m $(libdir))/mono/2.0
+mono_instdir = $(shell cygpath -m $(libdir))/mono
 else
 plat_bindir = $(bindir)
-mono_one_instdir = $(prefix)/lib/mono/1.0
-mono_two_instdir = $(prefix)/lib/mono/2.0
+mono_instdir = $(prefix)/lib/mono
 endif
 
 REWRITE = sed \
 	-e 's,@''bindir@,$(bindir),g'				\
 	-e 's,@''plat_bindir@,$(plat_bindir),g'			\
-	-e 's,@''mono_one_instdir@,$(mono_one_instdir),g'	\
-	-e 's,@''mono_two_instdir@,$(mono_two_instdir),g'	\
+	-e 's,@''mono_instdir@,$(mono_instdir),g'		\
 	-e 's,@''gtkdir@,$(gtkdir),g'				\
-	-e 's,@''exe_file@,$@.exe,g'				\
-	-e 's,@''mono_interp@,$(MONO_INTERP),g'
+	-e 's,@''mono_interp@,$(mono_interp),g'
+
+REWRITE1 = $(REWRITE) -e 's,@''framework_version@,1.0,g'
+REWRITE2 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
 
 mono-service: mono-service.in Makefile
-	$(REWRITE) $(srcdir)/mono-service.in > $@.tmp
+	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
 	mv $@.tmp $@
 
-$(bin_SCRIPTS): script.in Makefile
-	$(REWRITE) $(srcdir)/script.in > $@.tmp
+$(scripts_1.0): script.in Makefile
+	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-$(bin2_SCRIPTS): script2.in Makefile
-	$(REWRITE) $(srcdir)/script2.in > $@.tmp
+gmcs: script.in Makefile
+	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA= mono-nunit.pc
-
+$(scripts_2.0): script.in Makefile
+	n=`echo $@ | sed 's,2$$,,'`; \
+	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
