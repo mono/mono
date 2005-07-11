@@ -45,38 +45,30 @@ namespace Microsoft.JScript {
 			if (args == null || args.Length == 0)
 				return new StringObject ();
 
-			object tmp = args [0];
+			object arg = args [0];
 
-			if (tmp == null)
-				return new StringObject ("undefined");
-
-			IConvertible ic = tmp as IConvertible;			       
-			TypeCode tc = ic.GetTypeCode ();
-
-			switch (tc) {
-			case TypeCode.Empty:
-				return new StringObject ("null");
-			case TypeCode.Double:
-			case TypeCode.String:
-				return new StringObject (ic.ToString (null));
-			case TypeCode.DBNull:
-				return new StringObject ("null");
-			default:
-				Console.WriteLine ("tc = {0}", tc);
-				throw new Exception ("unknown TypeCode");
-			}
+			if (arg == null)
+				return new StringObject ();
+			else
+				return new StringObject (Convert.ToString (arg));
 		}
 
 
 		public string Invoke (Object arg)
 		{
-			throw new NotImplementedException ();
+			if (arg == null)
+				return "";
+			else 
+				return Convert.ToString (arg);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.String_fromCharCode)]
 		public static String fromCharCode (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			string result = "";
+			foreach (object arg in args)
+				result += (char) Convert.ToUint16 (arg);
+			return result;
 		}
 	}
 }

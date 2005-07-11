@@ -767,7 +767,7 @@ internal class TokenStream {
 					if (_base == 10 && !is_integer) {
 						try {
 							// Use C# conversion to number from string
-							dval = Double.Parse (num_string);
+							dval = Double.Parse (num_string, CultureInfo.InvariantCulture);
 						} catch (FormatException ex) {
 							ReportCurrentLineError ("msg.caught.nfe");
 							return Token.ERROR;
@@ -1152,7 +1152,7 @@ internal class TokenStream {
 				 * answer.
 				 */
 				try {
-					return Double.Parse (s);
+					return Double.Parse (s, CultureInfo.InvariantCulture);
 				} catch (FormatException fe) {
 					return Double.NaN;
 				}

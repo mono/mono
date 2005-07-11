@@ -93,7 +93,12 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.String_concat)]
 		public static string concat (object thisObj, params object [] args)
 		{
-			throw new NotImplementedException ();
+			string result = Convert.ToString (thisObj);
+
+			foreach (object arg in args)
+				result += Convert.ToString (arg);
+
+			return result;
 		}
 
 
@@ -137,7 +142,17 @@ namespace Microsoft.JScript {
 		{
 			return "<I>" + Convert.ToString (thisObj) + "</I>";
 		}
-
+		
+		//
+		// Note: I think the signature Microsoft uses makes
+		// standards-compliant behavior impossible. If
+		// position is not supplied the standard says to
+		// default to the string's length. We can not do this
+		// with their signature, because position will
+		// automatically be forced to 0 in that case. Because
+		// of that we currently use 'object position' instead
+		// of their 'double position'.
+		//
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_lastIndexOf)]
 		public static int lastIndexOf (object thisObj, object searchString, object position)
 		{
@@ -176,7 +191,10 @@ namespace Microsoft.JScript {
 			int caseless_result = String.Compare (string_a, string_b, true);
 			/* I have no idea if this is enough to fix the behavior in all cases, but it at least makes
 			 * localeCompare("abc", "ABC") work as in MS JS.NET -- this will likely be revised after
-			 * more testing. */
+			 * more testing.
+			 * 
+			 * Related to http://bugzilla.ximian.com/show_bug.cgi?id=70478?
+			 */
 			if (caseless_result == 0)
 				return -String.Compare (string_a, string_b, false);
 			else
@@ -219,7 +237,7 @@ namespace Microsoft.JScript {
 			if (end == null)
 				_end = string_len;
 			else {
-				_end = (int) (double) end;
+				_end = Convert.ToInt32 (end);
 
 				if (_end < 0)
 					_end += string_len;
@@ -261,7 +279,30 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_substr)]
 		public static string substr (object thisObj, double start, object count)
 		{
-			throw new NotImplementedException ();
+			string string_obj = Convert.ToString (thisObj);
+			int string_len = string_obj.Length;
+			int _start, _end;
+
+			if (start > string_len)
+				_start = string_len;
+			else {
+				_start = (int) start;
+				if (_start < 0)
+					_start += string_len;
+			}
+
+			if (count == null)
+				_end = string_len;
+			else {
+				int _count = Convert.ToInt32 (count);
+				_end = _start + _count;
+
+				if (_end < 0)
+					return "";
+				else if (_end > string_len)
+					_end = string_len;
+			}
+			return string_obj.Substring (_start, _end - _start);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_substring)]

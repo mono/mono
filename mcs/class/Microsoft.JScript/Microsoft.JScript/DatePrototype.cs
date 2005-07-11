@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace Microsoft.JScript {
 
@@ -46,121 +47,272 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getDate)]
 		public static double getDate (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.DateFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getDay)]
 		public static double getDay (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.WeekDay (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getFullYear)]
 		public static double getFullYear (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.YearFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getHours)]
 		public static double getHours (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+			
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.HourFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getMilliseconds)]
 		public static double getMilliseconds (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.msFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getMinutes)]
 		public static double getMinutes (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.MinFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getMonth)]
 		public static double getMonth (object thisObj)
-		{	
-			throw new NotImplementedException ();
+		{
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.MonthFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getSeconds)]
 		public static double getSeconds (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.SecFromTime (DateConstructor.LocalTime (val));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getTime)]
 		public static double getTime (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getTimezoneOffset)]
 		public static double getTimezoneOffset (object thisObj)
-		{	
-			throw new NotImplementedException ();
+		{
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else 
+				return (val - DateConstructor.LocalTime (val)) / DateConstructor.MS_PER_MINUTE;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCDate)]
 		public static double getUTCDate (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.DateFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCDay)]
 		public static double getUTCDay (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.WeekDay (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCFullYear)]
 		public static double getUTCFullYear (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.YearFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCHours)]
 		public static double getUTCHours (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.HourFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCMilliseconds)]
 		public static double getUTCMilliseconds (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.msFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCMinutes)]
 		public static double getUTCMinutes (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.MinFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCMonth)]
 		public static double getUTCMonth (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.MonthFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getUTCSeconds)]
 		public static double getUTCSeconds (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date = (DateObject) thisObj;
+			double val = date.ms;
+
+			if (Double.IsNaN (val))
+				return Double.NaN;
+			else
+				return DateConstructor.SecFromTime (val);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getVarDate)]
 		public static object getVarDate (object thisObj)
 		{
-			throw new NotImplementedException ();
+			//
+			// FIXME: This seems to handle the most simple
+			// cases, but surely we need to do more
+			// to comply with Microsoft's implementation.
+			//
+			return thisObj;
 		}
 
+		//
+		// Note: This method is obsolete, but users might
+		// accidently use it instead of getFullYear(). The
+		// standard says to return the year - 1900 (likely for
+		// compatibility), but in this case not confusing the
+		// user's expectations is more important than not
+		// breaking obsolete code.
+		//
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_getYear)]
 		public static double getYear (object thisObj)
 		{
-			throw new NotImplementedException ();
+			return getFullYear (thisObj);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setDate)]
@@ -269,55 +421,128 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toDateString)]
 		public static string toDateString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date_obj = (DateObject) thisObj;
+			double val = date_obj.ms;
+			double lv = DateConstructor.LocalTime (val);
+			int year = DateConstructor.YearFromTime (lv);
+			int month = DateConstructor.MonthFromTime (lv);
+			int date = DateConstructor.DateFromTime (lv);
+			DateTime dt = new DateTime (year, month + 1, date);
+
+			return dt.ToString ("ddd MMM d yyyy", CultureInfo.InvariantCulture);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toGMTString)]
 		public static string toGMTString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			return toUTCString (thisObj);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toLocaleDateString)]
 		public static string toLocaleDateString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date_obj = (DateObject) thisObj;
+			double val = date_obj.ms;
+			double lv = DateConstructor.LocalTime (val);
+			int year = DateConstructor.YearFromTime (lv);
+			int month = DateConstructor.MonthFromTime (lv);
+			int date = DateConstructor.DateFromTime (lv);
+			DateTime dt = new DateTime (year, month + 1, date);
+
+			return dt.ToString ("D");
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toLocaleString)]
 		public static string toLocaleString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date_obj = (DateObject) thisObj;
+			double val = date_obj.ms;
+			double lv = DateConstructor.LocalTime (val);
+			int year = DateConstructor.YearFromTime (lv);
+			int month = DateConstructor.MonthFromTime (lv);
+			int date = DateConstructor.DateFromTime (lv);
+			int hour = DateConstructor.HourFromTime (lv);
+			int min = DateConstructor.MinFromTime (lv);
+			int sec = DateConstructor.SecFromTime (lv);
+			DateTime dt = new DateTime (year, month + 1, date, hour, min, sec);
+
+			return dt.ToString ("F");
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toLocaleTimeString)]
 		public static string toLocaleTimeString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date_obj = (DateObject) thisObj;
+			double val = date_obj.ms;
+			double lv = DateConstructor.LocalTime (val);
+			int year = DateConstructor.YearFromTime (lv);
+			int month = DateConstructor.MonthFromTime (lv);
+			int date = DateConstructor.DateFromTime (lv);
+			int hour = DateConstructor.HourFromTime (lv);
+			int min = DateConstructor.MinFromTime (lv);
+			int sec = DateConstructor.SecFromTime (lv);
+			DateTime dt = new DateTime (year, month + 1, date, hour, min, sec);
+
+			return dt.ToString ("T");
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toString)]
 		public static string toString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			string date_str = toDateString (thisObj);
+
+			return date_str.Insert (date_str.LastIndexOf (' '), " " + toTimeString (thisObj));
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toTimeString)]
 		public static string toTimeString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date_obj = (DateObject) thisObj;
+			double val = date_obj.ms;
+			double lv = DateConstructor.LocalTime (val);
+			int hour = DateConstructor.HourFromTime (lv);
+			int min = DateConstructor.MinFromTime (lv);
+			int sec = DateConstructor.SecFromTime (lv);
+			double off = getTimezoneOffset (thisObj);
+
+			return String.Format (@"{0:00}:{1:00}:{2:00} UTC{3:\+0;\-0;\+0}", hour, min, sec, -off / 60);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toUTCString)]
 		public static string toUTCString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+
+			DateObject date_obj = (DateObject) thisObj;
+			double val = date_obj.ms;
+			int year = DateConstructor.YearFromTime (val);
+			int month = DateConstructor.MonthFromTime (val);
+			int date = DateConstructor.DateFromTime (val);
+			int hour = DateConstructor.HourFromTime (val);
+			int min = DateConstructor.MinFromTime (val);
+			int sec = DateConstructor.SecFromTime (val);
+			DateTime dt = new DateTime (year, month + 1, date);
+			string date_string = dt.ToString ("ddd, d MMM yyyy ", CultureInfo.InvariantCulture);
+			string time_string = String.Format (@"{0:00}:{1:00}:{2:00} UTC", hour, min, sec);
+
+			return date_string + time_string;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_valueOf)]
 		public static double valueOf (object thisObj)
 		{
-			throw new NotImplementedException ();
+			return getTime (thisObj);
 		}
 	}
 }

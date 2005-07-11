@@ -44,7 +44,20 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public object EvaluateBitwiseBinary (object v1, object v2)
 		{
-			return new object ();
+			int num1 = Convert.ToInt32 (v1);
+			int num2 = Convert.ToInt32 (v2);
+
+			switch (operatorTok) {
+			case JSToken.BitwiseAnd:
+				return num1 & num2;
+			case JSToken.BitwiseXor:
+				return num1 ^ num2;
+			case JSToken.BitwiseOr:
+				return num1 | num2;
+			}
+
+			Console.WriteLine ("EvaluateBitwiseBinary: operatorTok = {0}", operatorTok);
+			throw new NotImplementedException ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)

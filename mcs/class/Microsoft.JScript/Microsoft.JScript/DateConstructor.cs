@@ -33,30 +33,83 @@ namespace Microsoft.JScript {
 
 	public class DateConstructor : ScriptFunction {
 
-		const double SECONDS_PER_MINUTE = 60.0;
-		const double HOURS_PER_DAY = 24.0;
-		const double MINUTES_PER_HOUR = 60.0;
-		const double MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
-		const double SECONDS_PER_DAY = MINUTES_PER_DAY * SECONDS_PER_MINUTE;
-		const double MS_PER_SECOND = 1000.0;
-		const double MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND;
-		const double MS_PER_DAY = SECONDS_PER_DAY * MS_PER_SECOND;
+		internal const double SECONDS_PER_MINUTE = 60.0;
+		internal const double HOURS_PER_DAY = 24.0;
+		internal const double MINUTES_PER_HOUR = 60.0;
+		internal const double MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
+		internal const double SECONDS_PER_HOUR = MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+		internal const double SECONDS_PER_DAY = MINUTES_PER_DAY * SECONDS_PER_MINUTE;
+		internal const double MS_PER_SECOND = 1000.0;
+		internal const double MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND;
+		internal const double MS_PER_HOUR = SECONDS_PER_HOUR * MS_PER_SECOND;
+		internal const double MS_PER_DAY = SECONDS_PER_DAY * MS_PER_SECOND;
 
 		internal static DateConstructor Ctr = new DateConstructor ();
 		
 		internal DateConstructor ()
 		{
 		}
-		
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
-		public new DateObject CreateInstance (params Object[] args)
+		public new DateObject CreateInstance (params object [] args)
 		{
-			throw new NotImplementedException ();
+			int argc = args.Length;
+			double year = 0, month = 0, date = 1, hours = 0, minutes = 0, seconds = 0, ms = 0;
+			double result;
+
+			if (argc == 0) {
+				DateTime now = DateTime.Now;
+				year = now.Year;
+				month = now.Month - 1;
+				date = now.Day;
+				hours = now.Hour;
+				minutes = now.Minute;
+				seconds = now.Second;
+				ms = now.Millisecond;
+				goto done;
+			} else if (argc == 1) {
+				object value = Convert.ToPrimitive (args [0], null);
+				if (value.GetType () == typeof (string))
+					result = parse ((string) value);
+				else
+					result = Convert.ToNumber (value);
+				return new DateObject (result);
+			}
+
+			year = Convert.ToNumber (args [0]);
+			--argc;
+			month = Convert.ToNumber (args [1]);
+			if (--argc == 0)
+				goto done;
+			date = Convert.ToNumber (args [2]);
+			if (--argc == 0)
+				goto done;
+			hours = Convert.ToNumber (args [3]);
+			if (--argc == 0)
+				goto done;
+			minutes = Convert.ToNumber (args [4]);
+			if (--argc == 0)
+				goto done;
+			seconds = Convert.ToNumber (args [5]);
+			if (--argc == 0)
+				goto done;
+			ms = Convert.ToNumber (args [6]);
+
+done:
+			if (!Double.IsNaN (year) && year >= 0 && year <= 99)
+				year += 1900;
+
+			DateTime dt = new DateTime ((int) year, (int) month + 1, (int) date,
+				(int) hours, (int) minutes, (int) seconds);
+			ms -= TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
+
+			result = msec_from_date (year, month, date, hours, minutes, seconds, ms);
+			return new DateObject (result);
 		}
 
 		public String Invoke ()
 		{
-			throw new NotImplementedException ();
+			return DatePrototype.toString (CreateInstance ());
 		}
 
 		[JSFunctionAttribute(0, JSBuiltin.Date_parse)]
@@ -306,10 +359,10 @@ namespace Microsoft.JScript {
 			double msec = msec_from_date (year, mon, mday, hour, min, sec, 0);
 			
 			if (tzoffset == -1) { // no time zone specified, have to use local 
-				Console.WriteLine ("FIXME: no time zone specified.");
-				throw new NotImplementedException ();
-			} else
-				return msec + tzoffset * MS_PER_MINUTE;
+				DateTime dt = new DateTime (year, mon + 1, mday, hour, min, sec);
+				tzoffset = TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalHours;
+			}
+			return msec + tzoffset * MS_PER_MINUTE;
 		}
 
 		//
@@ -384,6 +437,234 @@ namespace Microsoft.JScript {
 					  Object hours, Object minutes, Object seconds, Object ms)
 		{
 			throw new NotImplementedException ();
+		}
+
+		/* Ported from Rhino. */
+		internal static int YearFromTime (double t)
+		{
+			int lo = (int) Math.Floor ((t / MS_PER_DAY) / 366) + 1970;
+			int hi = (int) Math.Floor ((t / MS_PER_DAY) / 365) + 1970;
+			int mid;
+
+			/* above doesn't work for negative dates... */
+			if (hi < lo) {
+				int temp = lo;
+				lo = hi;
+				hi = temp;
+			}
+
+			/* Use a simple binary search algorithm to find the right
+			   year.  This seems like brute force... but the computation
+			   of hi and lo years above lands within one year of the
+			   correct answer for years within a thousand years of
+			   1970; the loop below only requires six iterations
+			   for year 270000. */
+			while (hi > lo) {
+				mid = (hi + lo) / 2;
+				if (TimeFromYear (mid) > t)
+					hi = mid - 1;
+				else {
+					lo = mid + 1;
+					if (TimeFromYear (lo) > t)
+						return mid;
+				}
+			}
+			return lo;
+		}
+
+		internal static int MonthFromTime (double t)
+		{
+			int year_days = DayWithinYear (t);
+
+			year_days -= 31;
+
+			if (year_days < 0)
+				return 0;
+
+			if (InLeapYear (t))
+				year_days--;
+
+			year_days -= 28;
+
+			if (year_days < 0)
+				return 1;
+
+			year_days -= 31;
+
+			if (year_days < 0)
+				return 2;
+
+			year_days -= 30;
+
+			if (year_days < 0)
+				return 3;
+
+			year_days -= 31;
+
+			if (year_days < 0)
+				return 4;
+
+			year_days -= 30;
+
+			if (year_days < 0)
+				return 5;
+
+			year_days -= 31;
+
+			if (year_days < 0)
+				return 6;
+
+			year_days -= 31;
+
+			if (year_days < 0)
+				return 7;
+
+			year_days -= 30;
+
+			if (year_days < 0)
+				return 8;
+
+			year_days -= 31;
+
+			if (year_days < 0)
+				return 9;
+
+			year_days -= 30;
+
+			if (year_days < 0)
+				return 10;
+
+			return 11;
+		}
+
+		private static bool InLeapYear (double t)
+		{
+			return DaysInYear (YearFromTime (t)) == 366;
+		}
+
+		private static int DaysInYear (int y)
+		{
+			if (y % 4 != 0)
+				return 365;
+			else if (y % 100 != 0)
+				return 366;
+			else if (y % 400 != 0)
+				return 365;
+			else
+				return 366;
+		}
+
+		private static int DayWithinYear (double t)
+		{
+			int day = (int) Math.Floor (t / MS_PER_DAY);
+			int year_day = (int) DayFromYear (YearFromTime (t));
+			return day - year_day;
+		}
+
+		internal static int DateFromTime (double t)
+		{
+			int month = MonthFromTime (t);
+			int result = DayWithinYear (t) + 1;
+			if (month == 0)
+				return result;
+
+			result -= 31;
+
+			if (--month == 0)
+				return result;
+
+			if (InLeapYear (t))
+				result--;
+
+			result -= 28;
+
+			if (--month == 0)
+				return result;
+
+			result -= 31;
+
+			if (--month == 0)
+				return result;
+
+			result -= 30;
+
+			if (--month == 0)
+				return result;
+
+			result -= 31;
+
+			if (--month == 0)
+				return result;
+
+			result -= 30;
+
+			if (--month == 0)
+				return result;
+
+			result -= 31;
+
+			if (--month == 0)
+				return result;
+
+			result -= 31;
+
+			if (--month == 0)
+				return result;
+
+			result -= 30;
+
+			if (--month == 0)
+				return result;
+
+			result -= 31;
+
+			if (--month == 0)
+				return result;
+
+			result -= 30;
+
+			return result;
+		}
+
+		internal static int WeekDay (double t)
+		{
+			int day = (int) Math.Floor (t / MS_PER_DAY);
+			return (day + 4) % 7;
+		}
+
+		internal static int HourFromTime (double t)
+		{
+			int hour = (int) Math.Floor (t / MS_PER_HOUR);
+			return hour % (int) HOURS_PER_DAY;
+		}
+
+		internal static int MinFromTime (double t)
+		{
+			int min = (int) Math.Floor (t / MS_PER_MINUTE);
+			return min % (int) MINUTES_PER_HOUR;
+		}
+
+		internal static int SecFromTime (double t)
+		{
+			int sec = (int) Math.Floor (t / MS_PER_SECOND);
+			return sec % (int) SECONDS_PER_MINUTE;
+		}
+
+		internal static double msFromTime (double t)
+		{
+			return t % MS_PER_SECOND;
+		}
+
+		internal static double LocalTime (double t)
+		{
+			int year = YearFromTime (t);
+			int month = MonthFromTime (t);
+			int date = DateFromTime (t);
+			int hours = HourFromTime (t);
+			int minutes = MinFromTime (t);
+			int seconds = SecFromTime (t);
+			DateTime dt = new DateTime (year, month + 1, date, hours, minutes, seconds);
+			return t + TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
 		}
 	}
 }

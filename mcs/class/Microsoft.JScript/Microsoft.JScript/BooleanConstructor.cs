@@ -50,7 +50,7 @@ namespace Microsoft.JScript {
 
 		public bool Invoke (Object arg)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToBoolean (arg);
 		}
 	}
 }

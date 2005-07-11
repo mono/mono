@@ -88,7 +88,10 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public Object Invoke(params Object[] args)
 		{
-			throw new NotImplementedException ();
+			if (args == null || args.Length == 0)
+				return ConstructObject ();
+			else
+				return Convert.ToObject (args [0], null);
 		}
 	}
 }

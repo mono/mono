@@ -42,9 +42,30 @@ namespace Microsoft.JScript {
 		public static ArrayObject concat (object thisObj, VsaEngine engine,
 						  params object [] args)
 		{
-			throw new NotImplementedException ();
-		}
+			int i = 0;
+			ArrayObject result = new ArrayObject ();
+			int arg_idx = -1;
+			int arg_count = args.Length;
 
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			object cur_obj = thisObj;
+
+			ArrayObject cur_ary;
+			while (arg_idx < arg_count) {
+				if (cur_obj is ArrayObject) {
+					cur_ary = (ArrayObject) cur_obj;
+
+					int n = (int) cur_ary.length;
+					for (int j = 0; j < n; j++, i++)
+						result [i] = cur_ary [j];
+
+					cur_obj = args [arg_idx++];
+				} else
+					result [++i] = cur_obj;
+			}
+			return result;
+		}
 
 		public static ArrayConstructor constructor {
 			get { return ArrayConstructor.Ctr; }
@@ -82,14 +103,15 @@ namespace Microsoft.JScript {
 			// TODO: Shouldn't this be generic!?
 			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
 			ArrayObject array_obj = (ArrayObject) thisObj;
+			Hashtable elems = array_obj.elems;
 
 			int n = (int) array_obj.length;
 			if (n > 0) {
 				int new_len = n - 1;
 				array_obj.length = new_len;
-				if (array_obj.elems.ContainsKey (new_len)) {
-					object result = array_obj.elems [new_len];
-					array_obj.elems.Remove (new_len);
+				if (elems.ContainsKey (new_len)) {
+					object result = elems [new_len];
+					elems.Remove (new_len);
 					return result;
 				}
 			}
@@ -99,7 +121,19 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_push)]
 		public static long push (object thisObj, params object [] args)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+			Hashtable elems = array_obj.elems;
+
+			int i = (int) array_obj.length;
+			int n = i + args.Length;
+
+			for (int j = 0; i < n; i++, j++)
+				elems [i] = args [j];
+
+			array_obj.length = n;
+			return n;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_reverse)]
@@ -108,6 +142,7 @@ namespace Microsoft.JScript {
 			// TODO: Shouldn't this be generic!?
 			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
 			ArrayObject array_obj = (ArrayObject) thisObj;
+			Hashtable elems = array_obj.elems;
 
 			int n = (int) array_obj.length;
 			int half_n = n / 2;
@@ -115,10 +150,11 @@ namespace Microsoft.JScript {
 			object temp;
 			
 			for (int i = 0; i < half_n; i++, j--) {
-				temp = array_obj.elems [i];
-				array_obj.elems [i] = array_obj.elems [j];
-				array_obj.elems [j] = temp;
+				temp = elems [i];
+				elems [i] = elems [j];
+				elems [j] = temp;
 			}
+
 			return array_obj;
 		}
 
@@ -128,16 +164,17 @@ namespace Microsoft.JScript {
 			// TODO: Shouldn't this be generic!?
 			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
 			ArrayObject array_obj = (ArrayObject) thisObj;
+			Hashtable elems = array_obj.elems;
 
 			int n = (int) array_obj.length;
 			if (n > 0) {
 				array_obj.length = n - 1;
-				if (array_obj.elems.ContainsKey (0)) {
-					object result = array_obj.elems [0];
-					array_obj.elems.Remove (0);
+				if (elems.ContainsKey (0)) {
+					object result = elems [0];
+					elems.Remove (0);
 					for (int i = 1; i < n; i++)
-						array_obj.elems [i - 1] = array_obj.elems [i];
-					array_obj.elems.Remove (n - 1);
+						elems [i - 1] = elems [i];
+					elems.Remove (n - 1);
 					return result;
 				}
 			}
@@ -207,13 +244,40 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_toString)]
 		public static string toString (object thisObj)
 		{
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
 			return ArrayPrototype.join (thisObj, null);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_unshift)]
 		public static object unshift (object thisObj, params object [] args)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+			Hashtable elems = array_obj.elems;
+
+			int old_length = (int) array_obj.length;
+			int arg_length = args.Length;
+			int new_length = old_length + arg_length;
+
+			if (arg_length > 0) {
+				// First let's make some free space for the new items
+				int i = old_length - 1;
+				int j = i + arg_length;
+				for (; i >= 0; i--, j--)
+					elems [j] = elems [i];
+
+				// Then insert the new items in the now free space
+				for (; j >= 0; j--)
+					elems [j] = args [j];
+			}
+			//
+			// NOTE: MSC returns the new array, but
+			// ECMA-262 says to return the new length. We
+			// conform to the standard.
+			//
+			array_obj.length = new_length;
+			return new_length;
 		}
 	}
 }

@@ -29,6 +29,8 @@
 //
 
 using System;
+using System.Text;
+using System.Globalization;
 
 namespace Microsoft.JScript {
 
@@ -47,13 +49,22 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toFixed)]
 		public static string toFixed (object thisObj, double fractionDigits)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
+			NumberObject no = thisObj as NumberObject;
+			int prec = Convert.ToInt32 (fractionDigits);
+
+			if (prec < 0 || prec > 21)
+				throw new JScriptException (JSError.PrecisionOutOfRange);
+
+			return no.value.ToString ("F" + prec, CultureInfo.InvariantCulture);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toLocaleString)]
 		public static string toLocaleString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
+			NumberObject no = thisObj as NumberObject;
+			return no.value.ToString ();
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toPrecision)]
@@ -62,10 +73,89 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal static char [] Digits = new char [] {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+			'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+			'u', 'v', 'w', 'x', 'y', 'z'
+		};
+
+
+		//
+		// We aren't 100% compatible to MS JS.NET here,
+		// because we sometimes produce slightly more of the
+		// fractional digits. This shouldn't cause any
+		// trouble.
+		//
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toString)]
 		public static string toString (object thisObj, object radix)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
+			NumberObject no = thisObj as NumberObject;
+			double value = no.value;
+
+			if (Double.IsNaN (value))
+				return "NaN";
+			else if (Double.IsPositiveInfinity (value))
+				return "Infinity";
+			else if (Double.IsNegativeInfinity (value))
+				return "-Infinity";
+
+			int _radix = 10;
+			if (radix != null) {
+				_radix = Convert.ToInt32 (radix);
+				if (_radix < 2)
+					_radix = 10;
+				else if (_radix > Digits.Length)
+					_radix = 10;
+			}
+			if (_radix == 10)
+				return value.ToString (CultureInfo.InvariantCulture);
+
+			string result = "";
+			bool negative = false;
+			if (value < 0) {
+				negative = true;
+				value = Math.Abs (value);
+			}
+
+			long whole = (long) value;
+			double frac = value - whole;
+			long digit;
+
+			while (whole >= 1) {
+				whole = Math.DivRem (whole, _radix, out digit);
+				result = Digits [digit] + result;
+			}
+
+			if (result.Length == 0)
+				result = "0";
+
+			int frac_digits = _radix;
+			string frac_buf = "";
+			bool has_frac = false;
+
+			while (frac != 0 && frac_digits < 50) {
+				frac *= _radix;
+				digit = (long) frac;
+				frac -= digit;
+
+				if (digit == 0)
+					frac_buf += "0";
+				else {
+					if (!has_frac) result += ".";
+					result += frac_buf + Digits [digit];
+					frac_buf = "";
+					has_frac = true;
+				}
+
+				frac_digits++;
+			}
+
+			if (negative)
+				return "-" + result;
+			else
+				return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_valueOf)]

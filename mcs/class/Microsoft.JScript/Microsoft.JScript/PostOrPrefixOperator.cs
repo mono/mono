@@ -55,7 +55,12 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public object EvaluatePostOrPrefix (ref object v)
 		{
-			throw new NotImplementedException ();
+			double value = Convert.ToNumber (v);
+			int oper = (int) this.oper;
+			if (oper % 2 == 1)
+				return value + 1;
+			else
+				return value - 1;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -101,7 +106,11 @@ namespace Microsoft.JScript {
 
 				if (operand is Identifier)
 					((Identifier) operand).EmitLoad (ec);
-				else throw new NotImplementedException ();
+				else {
+					Console.WriteLine ("PostOrPrefixOperator: prefix = {0}, oper = {1}, operand = {2}",
+						prefix, oper, operand.GetType ());
+					throw new NotImplementedException ();
+				}
 
 				ig.Emit (OpCodes.Stloc, tmp_obj);
 				ig.Emit (OpCodes.Ldloc, post_prefix_local);
@@ -126,7 +135,7 @@ namespace Microsoft.JScript {
 				// before inc/dec was evaluated
 				//
 				if (!(parent is ScriptBlock || parent is FunctionDeclaration ||
-				      parent is FunctionExpression || parent is Block))
+					  parent is FunctionExpression || parent is Block))
 					ig.Emit (OpCodes.Ldloc, tmp_obj);
 			}
 		}

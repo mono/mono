@@ -30,6 +30,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Microsoft.JScript {
 
@@ -42,15 +43,28 @@ namespace Microsoft.JScript {
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
-		public  object EvaluatePlus (object v1, object v2)
+		public object EvaluatePlus (object v1, object v2)
 		{
 			IConvertible ic1 = v1 as IConvertible;
 			IConvertible ic2 = v2 as IConvertible;
 
 			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
 			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
-			
+
+			bool swapped = false;
+			redo:
+
 			switch (tc1) {
+			case TypeCode.Empty:
+				if (tc2 == TypeCode.Empty)
+					return Double.NaN;
+				break;
+
+			case TypeCode.DBNull:
+				if (tc2 == TypeCode.DBNull)
+					return 0;
+				break;
+
 			case TypeCode.Double:
 				switch (tc2) {
 				case TypeCode.Boolean:
@@ -58,7 +72,13 @@ namespace Microsoft.JScript {
 					return ic1.ToDouble (null) + ic2.ToDouble (null);
 
 				case TypeCode.String:
-					return ic1.ToString (null) + ic2.ToString (null);
+					return ic1.ToString (CultureInfo.InvariantCulture) + ic2.ToString (null);
+
+				case TypeCode.Empty:
+					return Double.NaN;
+
+				case TypeCode.DBNull:
+					return ic1.ToDouble (null);
 				}
 				break;
 
@@ -76,11 +96,13 @@ namespace Microsoft.JScript {
 				case TypeCode.UInt16:
 				case TypeCode.Int32:
 				case TypeCode.UInt32:
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
 				case TypeCode.String:
-					return ic1.ToString (null) + ic2.ToString (null);
+					return ic1.ToString (null) + ic2.ToString (CultureInfo.InvariantCulture);
 
 				case TypeCode.Empty:
-					return ic1.ToString (null);
+					return ic1.ToString (null) + "undefined";
 
 				case TypeCode.DBNull:
 					return ic1.ToString (null) + "null";
@@ -97,10 +119,19 @@ namespace Microsoft.JScript {
 
 				case TypeCode.Boolean:
 					return ic1.ToInt32 (null) + ic2.ToInt32 (null);
+
+				case TypeCode.DBNull:
+					return ic1.ToInt32 (null);
 				}
 				break;
 			default:
-				return EvaluatePlus (v2, v1);
+				if (!swapped) {
+					IConvertible tic = ic1; ic1 = ic2; ic2 = tic;
+					TypeCode ttc = tc1; tc1 = tc2; tc2 = ttc;
+					swapped = true;
+					goto redo;
+				}
+				break;
 			}
 
 			System.Console.WriteLine ("EvaluatePlus: tc1 = {0}, tc2 = {1}", tc1, tc2);

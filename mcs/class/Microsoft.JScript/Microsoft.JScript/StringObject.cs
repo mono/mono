@@ -62,5 +62,10 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override object GetDefaultValue (Type hint)
+		{
+			return value;
+		}
 	}
 }

@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -113,13 +114,47 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Math_max)]
 		public static double max (Object x, Object y, params Object [] args)
 		{
-			throw new NotImplementedException ();
+			ArrayList values = new ArrayList (args);
+
+			if (x != null)
+				values.Add (x);
+			if (y != null)
+				values.Add (y);
+
+			double val;
+			double result = Double.NegativeInfinity;
+
+			foreach (object value in values) {
+				val = Convert.ToNumber (value);
+				if (Double.IsNaN (val))
+					return Double.NaN;
+				else if (val > result)
+					result = val;
+			}
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Math_min)]
 		public static double min (Object x, Object y, params Object [] args)
 		{
-			throw new NotImplementedException ();
+			ArrayList values = new ArrayList (args);
+
+			if (x != null)
+				values.Add (x);
+			if (y != null)
+				values.Add (y);
+
+			double val;
+			double result = Double.PositiveInfinity;
+
+			foreach (object value in values) {
+				val = Convert.ToNumber (value);
+				if (Double.IsNaN (val))
+					return Double.NaN;
+				else if (val < result)
+					result = val;
+			}
+			return result;
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_pow)]

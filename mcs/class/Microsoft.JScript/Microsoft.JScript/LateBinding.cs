@@ -80,13 +80,33 @@ namespace Microsoft.JScript {
 					// to get passed the vsaEngine or not so we can pass the right arguments to it.
 					//
 					object [] args = null;
-					foreach (JSFunctionAttribute attr in custom_attrs)
-						if ((attr.GetAttributeValue () & JSFunctionAttributeEnum.HasEngine) != 0) {
-							args = build_args (arguments, engine);
-							break;
-						}
+					bool has_engine = false;
+					bool has_var_args = false;
+					foreach (JSFunctionAttribute attr in custom_attrs) {
+						JSFunctionAttributeEnum flags = attr.GetAttributeValue ();
+						if ((flags & JSFunctionAttributeEnum.HasEngine) != 0)
+							has_engine = true;
+						if ((flags & JSFunctionAttributeEnum.HasVarArgs) != 0)
+							has_var_args = true;
+					}
 
-					if (args == null)
+					if (has_var_args) {
+						// 1 for length to last idx + 1 for thisObj = 2
+						int va_idx = method.GetParameters ().Length - 2;
+						if (has_engine)
+							va_idx--;
+						int va_count = arguments.Length - va_idx;
+
+						ArrayList arg_list = new ArrayList (arguments);
+						object [] var_args = arg_list.GetRange (va_idx, va_count).ToArray ();
+						arg_list.RemoveRange (va_idx, va_count);
+						arg_list.Add (var_args);
+						arguments = arg_list.ToArray ();
+					}
+
+					if (has_engine)
+						args = build_args (arguments, engine);
+					else
 						args = build_args (arguments, null);
 
 					// TODO: Debug logging should be removed
@@ -135,6 +155,7 @@ namespace Microsoft.JScript {
 				else
 					throw new NotImplementedException ();
 			} else {
+				Console.WriteLine ("CallValue -- no brackes, no construct, this = {0}, val = {1}", thisObj.GetType(), val);
 				throw new NotImplementedException ();
 			}
 		}

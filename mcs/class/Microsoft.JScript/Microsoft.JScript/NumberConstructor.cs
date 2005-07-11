@@ -48,12 +48,17 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new NumberObject CreateInstance (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			double value = 0;
+
+			if (args.Length > 0)
+				value = Convert.ToNumber (args [0]);
+
+			return new NumberObject (value);
 		}
 
 		public double Invoke (Object arg)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToNumber (arg);
 		}
 	}
 }

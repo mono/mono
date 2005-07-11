@@ -425,8 +425,7 @@ namespace Microsoft.JScript {
 		{
 			string string_obj = Convert.ToString (@string);
 			double result;
-
-			if (Double.TryParse (string_obj, NumberStyles.Float, null, out result))
+			if (Double.TryParse (string_obj, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
 				return result;
 			else if (string_obj.StartsWith ("Infinity") || string_obj.StartsWith ("+Infinity"))
 				return Double.PositiveInfinity;
@@ -439,7 +438,53 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Global_parseInt)]
 		public static double parseInt(Object @string, Object radix)
 		{
-			throw new NotImplementedException ();
+			String string_obj = Convert.ToString (@string).TrimStart (null).
+				ToLower (CultureInfo.InvariantCulture);
+
+			int result = 0;
+			int _radix = 0;
+			short sign = +1;
+
+			if (radix != null)
+				_radix = Convert.ToInt32 (radix);
+
+			if ((_radix != 0) && ((_radix < 2) || (_radix > 36)))
+				return Double.NaN;
+
+			if (string_obj.Length == 0)
+				return Double.NaN;
+			else if (string_obj.Length > 1) {
+				char first = string_obj [0];
+				if (first == '+' || first == '-') {
+					string_obj = string_obj.Substring (1);
+					if (first == '-')
+						sign = -1;
+				}
+			}
+
+			if ((_radix == 0 || _radix == 16) && string_obj.StartsWith ("0x")) {
+				string_obj = string_obj.Substring (2);
+				_radix = 16;
+			}
+
+			if (_radix == 0 && string_obj.StartsWith ("0"))
+				_radix = 8;
+
+			bool has_result = false;
+			for (int i = 0; i < string_obj.Length; i++) {
+				char digit = string_obj [i];
+
+				int digit_value = System.Array.IndexOf (NumberPrototype.Digits, digit);
+				if (digit_value == -1 || digit_value >= _radix)
+					break;
+
+				result = (result * _radix) + digit_value;
+				has_result = true;
+			}
+
+			if (!has_result)
+				return Double.NaN;
+			return result * sign;
 		}
 
 		public static ErrorConstructor RangeError {
@@ -457,25 +502,25 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Global_ScriptEngine)]
 		public static String ScriptEngine ()
 		{
-			throw new NotImplementedException ();
+			return "JScript";
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_ScriptEngineBuildVersion)]
 		public static int ScriptEngineBuildVersion ()
 		{
-			throw new NotImplementedException ();
+			return 0;
 		}
 
 		[JSFunctionAttribute(0, JSBuiltin.Global_ScriptEngineMajorVersion)]
 		public static int ScriptEngineMajorVersion ()
 		{
-			throw new NotImplementedException ();
+			return 8;
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_ScriptEngineMinorVersion)]
 		public static int ScriptEngineMinorVersion ()
 		{
-			throw new NotImplementedException ();
+			return 0;
 		}
 
 		public static Type @sbyte {

@@ -85,7 +85,7 @@ namespace Microsoft.JScript {
 		{
 			if (operand != null)
 				operand.Emit (ec);
-			if (oper != JSToken.Minus)
+			if (!(operand is NumericLiteral) || (oper != JSToken.Minus))
 				emit_unary_op (ec);
 		}
 
@@ -93,9 +93,33 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 			switch (oper) {
+			case JSToken.Void:
+				ig.Emit (OpCodes.Pop);
+				ig.Emit (OpCodes.Ldnull);
+				break;
 			case JSToken.Typeof:
 				ig.Emit (OpCodes.Call, typeof (Typeof).GetMethod ("JScriptTypeof"));
 				break;
+			case JSToken.Plus:
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
+				/* all clear */
+				break;
+			case JSToken.Minus:
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
+				ig.Emit (OpCodes.Neg);
+				break;
+			case JSToken.BitwiseNot:
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToInt32"));
+				ig.Emit (OpCodes.Not);
+				break;
+			case JSToken.LogicalNot:
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", new Type [] { typeof(object) }));
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.Sub);
+				break;
+			default:
+				Console.WriteLine ("Unimplemented Unary Op: {0}", oper);
+				throw new NotImplementedException ();
 			}
 		}
 	}

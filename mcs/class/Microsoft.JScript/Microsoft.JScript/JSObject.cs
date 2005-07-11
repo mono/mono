@@ -140,5 +140,10 @@ namespace Microsoft.JScript {
 		{
 			return true;
 		}
+
+		internal virtual object GetDefaultValue (Type hint)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -91,5 +91,13 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override object GetDefaultValue (Type hint)
+		{
+			if (hint == typeof (string))
+				return BooleanPrototype.toString (this);
+			else
+				return value;
+		}
 	}
 }

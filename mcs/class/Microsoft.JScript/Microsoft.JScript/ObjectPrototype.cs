@@ -68,7 +68,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toLocaleString)]
 		public static string toLocaleString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			return toString (thisObj);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toString)]
@@ -83,7 +83,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_valueOf)]
 		public static object valueOf (object thisObj)
 		{
-			throw new NotImplementedException ();
+			return thisObj;
 		}
 	}
 }

@@ -32,6 +32,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.JScript.Vsa;
+using System.Globalization;
 
 namespace Microsoft.JScript {
 
@@ -47,13 +48,16 @@ namespace Microsoft.JScript {
 			switch (tc) {
 			case TypeCode.Byte:
 			case TypeCode.Char:
+			case TypeCode.Decimal:
 			case TypeCode.Double:
 			case TypeCode.Int16:
 			case TypeCode.Int32:
+			case TypeCode.Int64:
 			case TypeCode.SByte:
 			case TypeCode.Single:
 			case TypeCode.UInt16:
 			case TypeCode.UInt32:
+			case TypeCode.UInt64:
 				return true;
 			default:
 				return false;
@@ -63,6 +67,7 @@ namespace Microsoft.JScript {
 		internal static bool IsFloatTypeCode (TypeCode tc)
 		{
 			switch (tc) {
+			case TypeCode.Decimal:
 			case TypeCode.Double:
 			case TypeCode.Single:
 				return true;
@@ -112,25 +117,73 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal static object ToPrimitive (object value, Type hint)
+		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+			switch (tc) {
+			case TypeCode.Object:
+				if (value is JSObject)
+					return ((JSObject) value).GetDefaultValue (hint);
+				else
+					throw new NotImplementedException ();
+			default:
+				return value;
+			}
+		}
+
 		public static bool ToBoolean (double d)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToBoolean (d, true);
 		}
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public static bool ToBoolean (object value)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToBoolean (value, true);
 		}
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public static bool ToBoolean (object value, bool explicitConversion)
 		{
-			return false;
-		}
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
 
+			switch (tc) {
+			case TypeCode.Empty:
+			case TypeCode.DBNull:
+				return false;
+
+			case TypeCode.Boolean:
+				return ic.ToBoolean (null);
+
+			case TypeCode.Char:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+			case TypeCode.Single:
+			case TypeCode.Double:
+				double num = ic.ToDouble (null);
+				return !double.IsNaN (num) && (num != 0.0);
+
+			case TypeCode.String:
+				string str = ic.ToString (null);
+				return str.Length != 0;
+
+			case TypeCode.Object:
+				return true;
+
+			default:
+				Console.WriteLine ("\nToBoolean: tc = {0}", tc);
+				break;
+			}
+			throw new NotImplementedException ();
+		}
 
 		public static object ToForInObject (object value, VsaEngine engine)
 		{
@@ -144,6 +197,10 @@ namespace Microsoft.JScript {
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 
 			switch (tc) {
+			case TypeCode.Empty:
+			case TypeCode.DBNull:
+				return 0;
+
 			case TypeCode.Char:
 			case TypeCode.Byte:
 			case TypeCode.SByte:
@@ -157,6 +214,9 @@ namespace Microsoft.JScript {
 			case TypeCode.Double:
 				return (int) Math.Floor ((double) value);
 
+			case TypeCode.String:
+				return (int) Math.Floor (GlobalObject.parseFloat (ic.ToString ()));
+
 			default:
 				Console.WriteLine ("\nToInt32: value.GetType = {0}", value.GetType ());
 				break;
@@ -164,6 +224,14 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal static int ToUint16 (object value)
+		{
+			double val = Convert.ToNumber (value);
+			if (Double.IsInfinity (val) || double.IsNaN (val))
+				return 0;
+			else
+				return (int) val % 65536;
+		}
 
 		public static double ToNumber (object value)
 		{
@@ -171,6 +239,17 @@ namespace Microsoft.JScript {
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 
 			switch (tc) {
+			case TypeCode.Empty:
+				return Double.NaN;
+
+			case TypeCode.DBNull:
+				return 0;
+
+			case TypeCode.Boolean:
+				if (ic.ToBoolean (null))
+					return 1;
+				return 0;
+
 			case TypeCode.Char:
 			case TypeCode.Byte:
 			case TypeCode.SByte:
@@ -198,7 +277,7 @@ namespace Microsoft.JScript {
 
 		public static double ToNumber (string str)
 		{
-			throw new NotImplementedException ();
+			return GlobalObject.parseFloat (str);
 		}
 
 
@@ -279,7 +358,7 @@ namespace Microsoft.JScript {
 			case TypeCode.Int32:
 			case TypeCode.String:
 			case TypeCode.Double:
-				return ic.ToString (null);
+				return ic.ToString (CultureInfo.InvariantCulture);
 
 			case TypeCode.Object:
 				if (value is ArrayObject)
