@@ -1,5 +1,10 @@
 2005-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-trampolines.c: New file.
+
+	* mini.h tramp-x86.c: Move arch independent parts of trampolines to a 
+	separate file.
+	
 	* tramp-x86.c: Reorganize the trampoline code to be similar to the 
 	amd64/ia64 code.
 
