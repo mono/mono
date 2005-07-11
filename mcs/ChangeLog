@@ -1,3 +1,10 @@
+2005-07-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (centum_tests): Add System.Messaging and
+	System.ServiceProcess.  Remove System.Configuration.Install.
+	Move Mono.C5 ...
+	(net_2_0_centum_tests): ... here, and disable it for now.
+
 2005-06-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (centum_tests): Move System.XML ...

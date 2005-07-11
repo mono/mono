@@ -16,12 +16,12 @@ centum_tests := \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
 	class/Mono.Posix \
-	class/Mono.C5 \
 	class/Mono.Security \
-	class/System.Configuration.Install \
+	class/System.Messaging \
 	class/System.Runtime.Remoting \
 	class/System.Runtime.Serialization.Formatters.Soap \
 	class/System.Security \
+	class/System.ServiceProcess \
 	class/System.Web \
 	class/System.Web.Services \
 	tests \
@@ -32,8 +32,7 @@ default_centum_tests :=		\
 	class/System.XML	\
 	class/System.Data
 
-
-net_2_0_centum_tests := $(centum_tests)
+net_2_0_centum_tests := $(centum_tests) # class/Mono.C5
 
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
