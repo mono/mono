@@ -1,3 +1,9 @@
+2005-07-11  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Only allow `==' and `!='
+	between type parameters if they either have the reference type
+	constraint or the class constraint.
+
 2005-07-10  Kamil Skalski <nazgul@nemerle.org>
 
 	* generic.cs: Use MakeGenericType instead of BindGenericParameters.

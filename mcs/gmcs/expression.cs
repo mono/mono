@@ -2437,6 +2437,21 @@ namespace Mono.CSharp {
 					}
 				}
 
+				if (l.IsGenericParameter && r.IsGenericParameter) {
+					GenericConstraints l_gc, r_gc;
+
+					l_gc = TypeManager.GetTypeParameterConstraints (l);
+					r_gc = TypeManager.GetTypeParameterConstraints (r);
+
+					if ((l_gc == null) || (r_gc == null) ||
+					    !(l_gc.HasReferenceTypeConstraint || l_gc.HasClassConstraint) ||
+					    !(r_gc.HasReferenceTypeConstraint || r_gc.HasClassConstraint)) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
+				}
+
 				//
 				// operator != (object a, object b)
 				// operator == (object a, object b)
