@@ -337,14 +337,14 @@ namespace System.Web.Compilation
 		{
 			MemberInfo member = null;
 			try {
-				member = type.GetProperty (name, noCaseFlags);
+				member = type.GetProperty (name, noCaseFlags & ~BindingFlags.NonPublic);
 			} catch {}
 			
 			if (member != null)
 				return member;
 
 			try {
-				member = type.GetField (name, noCaseFlags);
+				member = type.GetField (name, noCaseFlags & ~BindingFlags.NonPublic);
 			} catch {}
 
 			return member;
@@ -689,7 +689,7 @@ namespace System.Web.Compilation
 
 			Type type = builder.BindingContainerType;
 
-			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags);
+			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags & ~BindingFlags.NonPublic);
 			if (prop == null)
 				return type;
 
@@ -697,7 +697,7 @@ namespace System.Web.Compilation
 			if (!typeof (ICollection).IsAssignableFrom (ptype))
 				return type;
 
-			prop = ptype.GetProperty ("Item", noCaseFlags);
+			prop = ptype.GetProperty ("Item", noCaseFlags & ~BindingFlags.NonPublic);
 			if (prop == null)
 				return type;
 

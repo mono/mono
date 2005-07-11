@@ -1,3 +1,8 @@
+2005-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: in these cases, we're only interested in
+	public properties/fields, not protected.
+
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TagAttributes.cs:
