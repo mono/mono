@@ -1,3 +1,7 @@
+2005-07-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-codegen.c: Fix cygwin build.
+
 2005-07-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Add some minor changes needed by the IA64 port.
