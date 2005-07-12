@@ -1,5 +1,17 @@
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 
+	* DataRelationTest2.cs: Added file
+	* DataRowTest2.cs: Added file
+	* DataRowCollectionTest2.cs: Added file
+	* DataRowViewTest2.cs: Added file
+	* DataTableCollectionTest2.cs: Added file
+	* DataTableTest2.cs: Added file
+	* DataViewTest2.cs: Added file
+	* ForeignKeyConstraintTest2.cs: Added file
+	* UniqueConstraintTest2.cs: Added file
+
+2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* DataRelationCollectionTest2.cs: Added file
 
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
