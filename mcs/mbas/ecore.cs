@@ -3068,7 +3068,7 @@ namespace Mono.MonoBASIC {
 		
 		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
-			Report.Error (31, l, "Constant value '" + val + "' cannot be converted to " +
+			Report.Error (30439, l, "Constant value '" + val + "' not representable in type " +
 				      TypeManager.MonoBASIC_Name (t));
 		}
 

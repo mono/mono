@@ -180,7 +180,7 @@ namespace Mono.MonoBASIC {
 				if (parameter_type != ParameterInitializer.Type) {
 					Expression conv = Expression.ConvertImplicit (ec, ParameterInitializer, parameter_type, loc);
 					if (conv == null) {
-						Report.Error (30439, loc, "Constant expression '" + ParameterInitializer + "' not representable as '" + parameter_type + "'");
+						Report.Error (30439, loc, "Constant expression '" + ParameterInitializer + "' not representable in type '" + parameter_type + "'");
 						return false;
 					}
 					ParameterInitializer = conv;

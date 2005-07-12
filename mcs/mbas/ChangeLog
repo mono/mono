@@ -1,4 +1,7 @@
 2005-07-12 Manjula GHM <mmanjula@novell.com>
+	* parameter.cs , ecore.cs : Changed error number and message according to .NET
+
+2005-07-12 Manjula GHM <mmanjula@novell.com>
 	* cfold.cs: Support 'Nothing' for Constants.
 		 Added exception 	
 		
