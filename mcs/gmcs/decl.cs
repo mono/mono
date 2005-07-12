@@ -317,7 +317,8 @@ namespace Mono.CSharp {
 			Excluded_Undetected = 1 << 8,		// Conditional attribute has not been detected yet
 			Excluded = 1 << 9,					// Method is conditional
 			TestMethodDuplication = 1 << 10,		// Test for duplication must be performed
-			IsUsed = 1 << 11
+			IsUsed = 1 << 11,
+			IsAssigned = 1 << 12				// Field is assigned
 		}
   
 		/// <summary>

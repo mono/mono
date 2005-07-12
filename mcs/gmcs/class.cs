@@ -2207,7 +2207,11 @@ namespace Mono.CSharp {
 							continue;
 						
 						if (!f.IsUsed){
-							Report.Warning (169, f.Location, "The private field `{0}' is never used", f.GetSignatureForError ());
+							if ((f.caching_flags & Flags.IsAssigned) == 0)
+								Report.Warning (169, 3, f.Location, "The private field `{0}' is never used", f.GetSignatureForError ());
+							else
+								Report.Warning (414, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
+									f.GetSignatureForError ());
 							continue;
 						}
 						
@@ -2217,7 +2221,7 @@ namespace Mono.CSharp {
 						if (RootContext.WarningLevel < 4)
 							continue;
 						
-						if ((f.status & Field.Status.ASSIGNED) != 0)
+						if ((f.caching_flags & Flags.IsAssigned) != 0)
 							continue;
 						
 						Report.Warning (649, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
@@ -2947,8 +2951,8 @@ namespace Mono.CSharp {
 
 			if ((events != null) && (RootContext.WarningLevel >= 3)) {
 				foreach (Event e in events){
-					if (e.status == 0)
-						Report.Warning (67, e.Location, "The event `{0}' is never used", e.GetSignatureForError ());
+					if ((e.caching_flags & Flags.IsAssigned) == 0)
+						Report.Warning (67, 3, e.Location, "The event `{0}' is never used", e.GetSignatureForError ());
 				}
 			}
 		}
@@ -5558,7 +5562,6 @@ namespace Mono.CSharp {
 
 		[Flags]
 		public enum Status : byte {
-			ASSIGNED = 1,
 			HAS_OFFSET = 4		// Used by FieldMember.
 		}
 
@@ -5712,7 +5715,7 @@ namespace Mono.CSharp {
 
 		public void SetAssigned ()
 		{
-			status |= Status.ASSIGNED;
+			caching_flags |= Flags.IsAssigned;
 		}
 	}
 
@@ -7026,7 +7029,7 @@ namespace Mono.CSharp {
 		public void SetUsed ()
 		{
 			if (my_event != null) {
-				my_event.status = FieldBase.Status.ASSIGNED;
+				my_event.SetAssigned ();
 				my_event.SetMemberIsUsed ();
 			}
 		}

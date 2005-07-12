@@ -3469,7 +3469,7 @@ namespace Mono.CSharp {
 					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 						ig.Emit (OpCodes.Volatile);
 					
-					f.status |= Field.Status.ASSIGNED;
+					f.SetAssigned ();
 				}
 			} 
 
@@ -3501,7 +3501,7 @@ namespace Mono.CSharp {
 					}
 					
 					if ((mode & AddressOp.Store) != 0)
-						f.status |= Field.Status.ASSIGNED;
+						f.SetAssigned ();
 					if ((mode & AddressOp.Load) != 0)
 						f.SetMemberIsUsed ();
 				}
