@@ -71,12 +71,18 @@ public class CompareInfoTest : Assertion
 	void AssertSortKey (string message, byte [] expected, string test, CompareOptions opt, CompareInfo ci)
 	{
 		byte [] actual = ci.GetSortKey (test, opt).KeyData;
-		/*
-		int min = expected.Length < actual.Length ?
-			expected.Length : actual.Length;
-		for (int i = 0; i < min; i++)
-			if (expected
-		*/
+		AssertEquals (message, expected, actual);
+	}
+
+	void AssertSortKeyLevel5 (string message, byte [] expected, string test)
+	{
+		byte [] tmp = invariant.GetSortKey (test).KeyData;
+		int idx = 0;
+		for (int i = 0; i < 4; i++, idx++)
+			for (; tmp [idx] != 1; idx++)
+				;
+		byte [] actual = new byte [tmp.Length - idx];
+		Array.Copy (tmp, idx, actual, 0, actual.Length);
 		AssertEquals (message, expected, actual);
 	}
 
@@ -265,6 +271,38 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+	public void GetSortKeyLevel5 ()
+	{
+		if (!doTest)
+			return;
+
+		// shift weight
+		AssertSortKeyLevel5 ("#8", new byte [] {
+			0x80, 7, 6, 0x82, 0x80, 0x2F, 6, 0x82, 0},
+			'-' + new string ('A', 10) + '-');
+		AssertSortKeyLevel5 ("#9", new byte [] {
+			0x80, 7, 6, 0x82, 0x80, 0xFF, 6, 0x82, 0},
+			'-' + new string ('A', 62) + '-');
+		AssertSortKeyLevel5 ("#10", new byte [] {
+			0x80, 7, 6, 0x82, 0x81, 3, 6, 0x82, 0},
+			'-' + new string ('A', 63) + '-');
+		AssertSortKeyLevel5 ("#11", new byte [] {
+			0x80, 7, 6, 0x82, 0x81, 0x97, 6, 0x82, 0},
+			'-' + new string ('A', 100) + '-');
+		AssertSortKeyLevel5 ("#12", new byte [] {
+			0x80, 7, 6, 0x82, 0x8F, 0xA7, 6, 0x82, 0},
+			'-' + new string ('A', 1000) + '-');
+		AssertSortKeyLevel5 ("#13", new byte [] {
+			0x80, 7, 6, 0x82, 0x9A, 0x87, 6, 0x82, 0},
+			'-' + new string ('A', 100000) + '-');
+		// This shows how Windows is broken.
+//		AssertSortKeyLevel5 ("#14",
+//			0x80, 7, 6, 0x82, 0x89, 0x07, 6, 0x82, 0},
+//			'-' + new string ('A', 1000000) + '-');
+
+	}
+
+	[Test]
 	public void FrenchSort ()
 	{
 		if (!doTest)
@@ -281,8 +319,8 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#fr-1", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 0x12, 1, 1, 1, 0}, "c\u00F4te", CompareOptions.None, french);
 		AssertSortKey ("#fr-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 0xE, 1, 1, 1, 0}, "cot\u00E9", CompareOptions.None, french);
 		AssertCompare ("#fr-3", -1, "c\u00F4te", "cot\u00E9", CompareOptions.None, french);
-		AssertCompare ("#fr-4", -1, "co\u0302te", "cote\u0306", CompareOptions.None, french);
 		// FIXME: why does .NET return 1 ?
+//		AssertCompare ("#fr-4", -1, "co\u0302te", "cote\u0306", CompareOptions.None, french);
 //		AssertCompare ("#fr-4", -1, "co\u030Cte", "cote\u0306", CompareOptions.None, french);
 	}
 
