@@ -1,5 +1,9 @@
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 	* System.Data_tests.dll.sources:
+	  Removed use of obsolete System.Data.Tests.Mainsoft/GHTUtils
+
+2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
+	* System.Data_tests.dll.sources:
 	  Standardized Mainsoft System.Data exception tests
 
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>

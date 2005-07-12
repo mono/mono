@@ -76,12 +76,3 @@ System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
 System.Data.SqlClient/SqlClientPermissionTest.cs
-System.Data.Tests.Mainsoft/GHTUtils/DataProvider.cs
-System.Data.Tests.Mainsoft/GHTUtils/DbTypeParameter.cs
-System.Data.Tests.Mainsoft/GHTUtils/genstrings.cs
-System.Data.Tests.Mainsoft/GHTUtils/GHTBase.cs
-System.Data.Tests.Mainsoft/GHTUtils/GHTTestSuiteResults.cs
-System.Data.Tests.Mainsoft/GHTUtils/GHTValueGen.cs
-System.Data.Tests.Mainsoft/GHTUtils/HttpClientBase.cs
-System.Data.Tests.Mainsoft/GHTUtils/ObjectTester.cs
-System.Data.Tests.Mainsoft/GHTUtils/XmlUtils.cs

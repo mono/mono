@@ -39,8 +39,8 @@ namespace MonoTests_System.Data
 	{
 		[Test] public void Generate()
 		{
-			DataTable dtParent= GHTUtils.DataProvider.CreateParentDataTable(); 
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable(); 
+			DataTable dtParent= DataProvider.CreateParentDataTable(); 
+			DataTable dtChild = DataProvider.CreateChildDataTable(); 
 
 			DataSet ds = new DataSet();
 			ds.Tables.Add(dtChild);

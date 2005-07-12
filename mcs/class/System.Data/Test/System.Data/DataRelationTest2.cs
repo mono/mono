@@ -30,6 +30,7 @@ using NUnit.Framework;
 using System;
 using System.ComponentModel;
 using System.Data;
+using MonoTests.System.Data.Test.Utils;
 
 namespace MonoTests.System.Data
 {
@@ -38,8 +39,8 @@ namespace MonoTests.System.Data
 		[Test] public void ChildColumns()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -57,8 +58,8 @@ namespace MonoTests.System.Data
 		[Test] public void ChildKeyConstraint()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -73,8 +74,8 @@ namespace MonoTests.System.Data
 		[Test] public void ChildTable()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -89,8 +90,8 @@ namespace MonoTests.System.Data
 		[Test] public void DataSet()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -105,8 +106,8 @@ namespace MonoTests.System.Data
 		[Test] public void ParentColumns()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -124,8 +125,8 @@ namespace MonoTests.System.Data
 		[Test] public void ParentKeyConstraint()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -140,8 +141,8 @@ namespace MonoTests.System.Data
 		[Test] public void ParentTable()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -156,8 +157,8 @@ namespace MonoTests.System.Data
 		[Test] public new void ToString()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -181,8 +182,8 @@ namespace MonoTests.System.Data
 		[Test] public void ctor_ByNameDataColumns()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -250,8 +251,8 @@ namespace MonoTests.System.Data
 		[Test] public void ctor_ByNameDataColumnsCreateConstraints()
 		{	
 			DataRelation dRel;		
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 
 			DataSet ds = new DataSet();
 			ds.Tables.Add(dtParent);
@@ -321,8 +322,8 @@ namespace MonoTests.System.Data
 		[Test] public void ctor_ByNameDataColumnsArrays()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -395,8 +396,8 @@ namespace MonoTests.System.Data
 		[Test] public void ctor_ByNameDataColumnsArraysCreateConstraints()
 		{
 			DataRelation dRel;		
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 
 			DataSet ds = new DataSet();
 			ds.Tables.Add(dtParent);
@@ -467,8 +468,8 @@ namespace MonoTests.System.Data
 		[Test] public void extendedProperties()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -489,8 +490,8 @@ namespace MonoTests.System.Data
 		[Test] public void nested()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 
@@ -510,8 +511,8 @@ namespace MonoTests.System.Data
 		[Test] public void relationName()
 		{
 			DataSet ds = new DataSet();
-			DataTable dtChild = GHTUtils.DataProvider.CreateChildDataTable();
-			DataTable dtParent = GHTUtils.DataProvider.CreateParentDataTable();
+			DataTable dtChild = DataProvider.CreateChildDataTable();
+			DataTable dtParent = DataProvider.CreateParentDataTable();
 			ds.Tables.Add(dtParent);
 			ds.Tables.Add(dtChild);
 

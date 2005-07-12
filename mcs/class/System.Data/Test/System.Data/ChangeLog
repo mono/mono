@@ -1,5 +1,10 @@
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 
+	* ConstraintExceptionTest.cs: Removed use of obsolete System.Data.Tests.Mainsoft/GHTUtils
+	* DataRelationTest2.cs: Removed use of obsolete System.Data.Tests.Mainsoft/GHTUtils
+
+2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* DeletedRowInaccessibleExceptionTest: Added file
 	* DuplicateNameExceptionTest: Added file
 	* ConstraintExceptionTest: Added file
