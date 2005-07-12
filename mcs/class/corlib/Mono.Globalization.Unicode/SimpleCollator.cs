@@ -914,11 +914,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					}
 					else if (escape2.Source == null) {
 						escape2.Source = s2;
-						escape2.Start = 0;
+						escape2.Start = start2;
 						escape2.Index = cur2 + ct2.Source.Length;
 						escape2.End = end2;
 						s2 = ct2.Replacement;
 						idx2 = 0;
+						start2 = 0;
 						end2 = s2.Length;
 						continue;
 					}
@@ -1462,7 +1463,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (sortkey != null)
 					idx = IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 				else if (replace != null)
-					idx = IndexOf (ct.Replacement, target, 0, ct.Replacement.Length);
+					idx = IndexOf (s, replace, start, length);
 				else
 					idx = IndexOfPrimitiveChar (s, start, length, target [0]);
 				if (idx < 0)
@@ -1542,16 +1543,16 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		int LastIndexOf (string s, string target, int start, int length)
 		{
 			int orgStart = start;
+			Contraction ct = GetContraction (target, 0, target.Length);
+			byte [] sortkey = ct != null ? ct.SortKey : null;
+			string replace = ct != null ? ct.Replacement : null;
 
 			do {
 				int idx = 0;
-				Contraction ct = GetContraction (s, start, length);
-				if (ct != null) {
-					if (ct.SortKey != null)
-						idx = LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
-					else
-						idx = LastIndexOf (ct.Replacement, target, ct.Replacement.Length - 1, ct.Replacement.Length);
-				}
+				if (sortkey != null)
+					idx = LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+				else if (replace != null)
+					idx = LastIndexOf (s, replace, start, length);
 				else
 					idx = LastIndexOfPrimitiveChar (s, start, length, target [0]);
 

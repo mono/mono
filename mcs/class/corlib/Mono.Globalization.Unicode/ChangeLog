@@ -1,5 +1,12 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : fixed LastIndexOf() to handle _target's_ 
+	  contraction as expected. Fixed Compare() to save s2's contraction
+	  as expected.
+	* TestDriver.cs :added LastIndexOf() tester w/ indexes.
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* managed-collation.patch : Fixed IsPrefix() and IsSuffix(). They
 	  incorrectly use Compare().
 	* TestDriver.cs : more moved to nunit tests.

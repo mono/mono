@@ -32,6 +32,8 @@ namespace Mono.Globalization.Unicode
 		{
 //IsSuffix ("\u00E6", "ae", CompareOptions.None);
 //IsSuffix ("ae", "\u00E6", CompareOptions.None);
+//LastIndexOf ("AE", "A", 1, 2, CompareOptions.None);
+//LastIndexOf ("\u00C6", "AE", CompareOptions.None);
 //return;
 			/*
 			DumpSortKey ("AE");
@@ -80,7 +82,6 @@ namespace Mono.Globalization.Unicode
 			IsPrefix ("--start", "--", CompareOptions.None);
 			IsPrefix ("-d:NET_1_1", "-", CompareOptions.None);
 			IsPrefix ("-d:NET_1_1", "@", CompareOptions.None);
-			*/
 
 			IsSuffix ("ABC", "c", CompareOptions.IgnoreCase);
 			IsSuffix ("BC", "c", CompareOptions.IgnoreCase);
@@ -112,6 +113,7 @@ namespace Mono.Globalization.Unicode
 			LastIndexOf ("\u00E6", "ae", CompareOptions.None);
 			LastIndexOf ("-ABC", "-", CompareOptions.None);
 			LastIndexOf ("--ABC", "--", CompareOptions.None);
+			*/
 
 			coll = new SimpleCollator (new CultureInfo ("hu"));
 			DumpSortKey ("ZSAZS1");
@@ -206,6 +208,12 @@ namespace Mono.Globalization.Unicode
 		{
 			Console.Error.WriteLine ("sLast ({3}): {0} {1} / {2}",
 				coll.LastIndexOf (s1, s2, opt), s1, s2, opt);
+		}
+
+		void LastIndexOf (string s1, string s2, int idx, int len, CompareOptions opt)
+		{
+			Console.Error.WriteLine ("sLast ({3},{4},{5}): {0} {1} / {2}",
+				coll.LastIndexOf (s1, s2, idx, len, opt), s1, s2, opt, idx, len);
 		}
 
 		void IsSuffix (string s1, string s2, CompareOptions opt)
