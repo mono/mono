@@ -13,6 +13,36 @@ namespace Mono.MonoBASIC {
 
 	public class ConstantFold {
 
+		 static public Constant ConvertNothingToDefaultConst (EmitContext ec, 
+                                                                        Type target_type, Location loc)
+                {
+                        switch (Type.GetTypeCode (target_type)) {
+                        case TypeCode.Boolean  :
+                                return new BoolConstant (false);
+                        case TypeCode.Byte  :
+                                return new ByteConstant (0);
+                        case TypeCode.Char  :
+                                return new CharConstant ((char)0);
+                        case TypeCode.SByte :
+                                return new SByteConstant (0);
+                        case TypeCode.Int16 :
+                                return new ShortConstant (0);
+                        case TypeCode.Int32 :
+                                return new IntConstant (0);
+                        case TypeCode.Int64 :
+                                return new LongConstant (0);
+                        case TypeCode.Decimal :
+                                return new DecimalConstant (System.Decimal.Zero);
+                        case TypeCode.Single :
+                                return new FloatConstant (0.0F);
+                        case TypeCode.Double :
+				 return new DoubleConstant (0.0);
+                        }
+
+                        return null;
+                }
+
+
 		//
 		// Performs the numeric promotions on the left and right expresions
 		// and desposits the results on `lc' and `rc'.
@@ -31,6 +61,22 @@ namespace Mono.MonoBASIC {
 							 ref Constant left, ref Constant right,
 							 Location loc)
 		{
+			
+			Type conv_left_as = null;
+			Type conv_right_as = null;
+			Type lt = left.Type;
+			Type rt = right.Type;
+	
+			
+                        if (left is NullLiteral)
+                                conv_left_as = rt;
+                        if (right is NullLiteral)
+                                conv_right_as = lt;
+			
+			 if (conv_left_as != null)
+                                left = ConvertNothingToDefaultConst (ec, conv_left_as, loc);
+                        if (conv_right_as != null)
+                                right = ConvertNothingToDefaultConst (ec, conv_right_as, loc);
 			if (left is DoubleConstant || right is DoubleConstant || 
 			    oper == Binary.Operator.Exponentiation || oper == Binary.Operator.Division) {
 				//
@@ -820,7 +866,10 @@ namespace Mono.MonoBASIC {
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
-				}
+
+				} catch (DivideByZeroException) {
+                                        Report.Error (30542, loc, "Division by constant zero");
+                                }
 				break;
 
 			case Binary.Operator.Exponentiation:

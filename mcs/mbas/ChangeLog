@@ -1,3 +1,7 @@
+2005-07-12 Manjula GHM <mmanjula@novell.com>
+	* cfold.cs: Support 'Nothing' for Constants.
+		 Added exception 	
+		
 2005-07-07 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay: To avoid Array modifiers specified on both a variable and its type
 
