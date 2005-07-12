@@ -59,7 +59,9 @@ namespace System.Web.UI {
 		public string this [string key] {
 			get { return bag [key] as string; }
 
-			set { bag.Add (key, value); }
+			set {
+				Add (key, value);
+			}
 		}
 
 		public ICollection Keys {
@@ -68,10 +70,11 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			if (styleCollection != null && 0 == String.Compare (key, "style", true))
+			if (styleCollection != null && 0 == String.Compare (key, "style", true)) {
+				styleCollection.Clear();
 				styleCollection.FillStyle (value);
-			else
-				bag.Add (key, value);
+			}
+			bag.Add (key, value);
 		}
 
 		public void AddAttributes (HtmlTextWriter writer)
