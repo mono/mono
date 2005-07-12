@@ -2433,6 +2433,11 @@ namespace Mono.CSharp {
 		{
 			return Name;
 		}
+
+		public override string GetSignatureForError ()
+		{
+			return Name;
+		}
 	}
 
 	/// <summary>
@@ -3188,7 +3193,7 @@ namespace Mono.CSharp {
 					
 					return new EnumConstant (c, decl_type);
 				}
-				
+
 				Expression exp = Constantify (o, t);
 				
 				if (!left_is_type) {
