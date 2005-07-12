@@ -1,3 +1,9 @@
+2005-07-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (inflate_generic_class): Fix a leak.
+	(mono_class_init): Fix calculation of gchimpl and has_finalize fields
+	for generic types.
+
 2005-07-11  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_Type_BindGenericParameters): Don't crash here
