@@ -579,21 +579,21 @@ namespace System.Globalization
 
 		public virtual int LastIndexOf(string source, char value)
 		{
-			return(LastIndexOf (source, value, 0, source.Length,
-					    CompareOptions.None));
+			return(LastIndexOf (source, value, source.Length - 1,
+					    source.Length, CompareOptions.None));
 		}
 
 		public virtual int LastIndexOf(string source, string value)
 		{
-			return(LastIndexOf (source, value, 0, source.Length,
-					    CompareOptions.None));
+			return(LastIndexOf (source, value, source.Length - 1,
+					    source.Length, CompareOptions.None));
 		}
 
 		public virtual int LastIndexOf(string source, char value,
 					       CompareOptions options)
 		{
-			return(LastIndexOf (source, value, 0, source.Length,
-					    options));
+			return(LastIndexOf (source, value, source.Length - 1,
+					    source.Length, options));
 		}
 
 		public virtual int LastIndexOf(string source, char value,
@@ -607,8 +607,8 @@ namespace System.Globalization
 		public virtual int LastIndexOf(string source, string value,
 					       CompareOptions options)
 		{
-			return(LastIndexOf (source, value, 0, source.Length,
-					    options));
+			return(LastIndexOf (source, value, source.Length - 1,
+					    source.Length, options));
 		}
 
 		public virtual int LastIndexOf(string source, string value,
