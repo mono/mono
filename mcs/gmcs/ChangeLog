@@ -15,6 +15,15 @@
 
 	* generic.cs: Use MakeGenericType instead of BindGenericParameters.
 
+2005-07-07  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #74975
+	* attribute.cs (orig_sec_assembly): Holds original version of assembly.
+	(ExtractSecurityPermissionSet): Cope with self referencing security
+	attributes properly.
+
+	* driver.cs (SetOutputFile): Made public property OutputFile.
+
 2005-07-07  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75486.
