@@ -274,11 +274,16 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#inv-1", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 0x12, 1, 1, 1, 0}, "c\u00F4te");
 		AssertSortKey ("#inv-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 2, 0xE, 1, 1, 1, 0}, "cot\u00E9");
 		AssertCompare ("#inv-3", 1, "c\u00F4te", "cot\u00E9");
+		AssertCompare ("#inv-4", 1, "co\u0302te", "cote\u0306");
+		AssertCompare ("#inv-4", 1, "co\u030Cte", "cote\u0306");
 
 		// french
 		AssertSortKey ("#fr-1", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 0x12, 1, 1, 1, 0}, "c\u00F4te", CompareOptions.None, french);
 		AssertSortKey ("#fr-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 0xE, 1, 1, 1, 0}, "cot\u00E9", CompareOptions.None, french);
 		AssertCompare ("#fr-3", -1, "c\u00F4te", "cot\u00E9", CompareOptions.None, french);
+		AssertCompare ("#fr-4", -1, "co\u0302te", "cote\u0306", CompareOptions.None, french);
+		// FIXME: why does .NET return 1 ?
+//		AssertCompare ("#fr-4", -1, "co\u030Cte", "cote\u0306", CompareOptions.None, french);
 	}
 
 	[Test]
