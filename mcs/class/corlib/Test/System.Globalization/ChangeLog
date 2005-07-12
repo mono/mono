@@ -1,5 +1,9 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added LastIndexOf() contraction cases and more.
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added tests for IsSuffix(),
 	  IndexOf(string,string) and LastIndexOf(string,string).
 
