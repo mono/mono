@@ -21,8 +21,6 @@
 		    (via create-tailorings.exe).
 	* implement collation methods
 		- All methods are basically implemented in practical level.
-		- except for Compare() and GetSortKey(), they don't handle
-		  nonspacing marks.
 		- except for GetSortKey(), they don't handle Japanese and
 		  Arabic extenders.
 		- optimization in IndexOf() and Compare() : now I can

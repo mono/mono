@@ -1,3 +1,15 @@
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : several fixes on Compare().
+	  - Ignorable characters are skippted at the top of the loop. 
+	  - IgnoreNonSpace is checked to avoid extraneous level 2 comparison.
+	  - In such case that s1 index  is increased while s2 contraction is
+	    replaced, s1 is inconsistently proceeded (bug).
+	  - IsIgnorable() now also checks IgnoreNonSpace.
+	  - Fixed FilterOptions() that does not work for IgnoreWidth at all.
+	* TestDriver.cs : now some are moved to nunit tests.
+	* Collation-notes.txt : minor todo update.
+
 2005-07-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : Compare() was ignoring such case that both

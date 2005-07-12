@@ -458,8 +458,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		int FilterOptions (int i)
 		{
-			if (ignoreWidth)
-				i = widthCompat [widthIndexer.ToIndex (i)];
+			if (ignoreWidth) {
+				int x = widthCompat [widthIndexer.ToIndex (i)];
+				if (x != 0)
+					i = x;
+			}
 			if (ignoreCase)
 				i = textInfo.ToLower ((char) i);
 			if (ignoreKanaType)
@@ -552,7 +555,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		bool IsIgnorable (int i)
 		{
 			return Uni.IsIgnorable (i) ||
-				ignoreSymbols && Uni.IsIgnorableSymbol (i);
+				ignoreSymbols && Uni.IsIgnorableSymbol (i) ||
+				ignoreNonSpace && Uni.IsIgnorableNonSpacing (i);
 		}
 
 		void GetSortKey (string s, int start, int end)
@@ -791,6 +795,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int lv5Value2 = 0;
 
 			while (true) {
+				for (; idx1 < end1; idx1++)
+					if (!IsIgnorable (s1 [idx1]))
+						break;
+				for (; idx2 < end2; idx2++)
+					if (!IsIgnorable (s2 [idx2]))
+						break;
+
 				if (idx1 >= end1) {
 					if (escape1.Source == null)
 						break;
@@ -861,10 +872,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 
 				Contraction ct1 = GetContraction (s1, idx1, end1);
+				int offset1 = 1;
 				if (ct1 != null) {
-					idx1 += ct1.Source.Length;
-					if (ct1.SortKey != null)
-						sk1 = ct1.SortKey;
+					offset1 = ct1.Source.Length;
+					if (ct1.SortKey != null) {
+						sk1 = charSortKey;
+						for (int i = 0; i < ct1.SortKey.Length; i++)
+							sk1 [i] = ct1.SortKey [i];
+					}
 					else if (escape1.Source == null) {
 						escape1.Source = s1;
 						escape1.Start = start1;
@@ -887,23 +902,16 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						sk1 [3] = Uni.Level3 (i1);
 					if (currentLevel > 3)
 						special1 = Uni.HasSpecialWeight ((char) i1);
-					idx1++;
-				}
-
-				// add diacritical marks in s1 here
-				while (idx1 < end1) {
-					if (Category (s1 [idx1]) != 1)
-						break;
-					sk1 [1] = (byte) (sk1 [1] + 
-						Level2 (s1 [idx1]));
-					idx1++;
 				}
 
 				Contraction ct2 = GetContraction (s2, idx2, end2);
 				if (ct2 != null) {
 					idx2 += ct2.Source.Length;
-					if (ct2.SortKey != null)
-						sk2 = ct2.SortKey;
+					if (ct2.SortKey != null) {
+						sk2 = charSortKey2;
+						for (int i = 0; i < ct2.SortKey.Length; i++)
+							sk2 [i] = ct2.SortKey [i];
+					}
 					else if (escape2.Source == null) {
 						escape2.Source = s2;
 						escape2.Start = 0;
@@ -928,13 +936,32 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx2++;
 				}
 
-				// add diacritical marks in s2 here
-				while (idx2 < end2) {
-					if (Category (s2 [idx2]) != 1)
-						break;
-					sk2 [1] = (byte) (sk2 [1] + 
-						Level2 (s2 [idx2]));
-					idx2++;
+				// Add offset here so that it does not skip
+				// idx1 while s2 has a replacement.
+				idx1 += offset1;
+
+				// add diacritical marks in s1 here
+				if (!ignoreNonSpace) {
+					while (idx1 < end1) {
+						if (Category (s1 [idx1]) != 1)
+							break;
+						if (sk1 [2] == 0)
+							sk1 [2] = 2;
+						sk1 [2] = (byte) (sk1 [2] + 
+							Level2 (s1 [idx1]));
+						idx1++;
+					}
+
+					// add diacritical marks in s2 here
+					while (idx2 < end2) {
+						if (Category (s2 [idx2]) != 1)
+							break;
+						if (sk2 [2] == 0)
+							sk2 [2] = 2;
+						sk2 [2] = (byte) (sk2 [2] + 
+							Level2 (s2 [idx2]));
+						idx2++;
+					}
 				}
 
 				int ret = sk1 [0] - sk2 [0];
@@ -953,11 +980,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 				if (currentLevel == 2)
 					continue;
-				ret = sk1 [3] - sk2 [3];
-				if (ret != 0) {
-					finalResult = ret;
-					currentLevel = 2;
-					continue;
+				if (!ignoreWidth) {
+					ret = sk1 [3] - sk2 [3];
+					if (ret != 0) {
+						finalResult = ret;
+						currentLevel = 2;
+						continue;
+					}
 				}
 				if (currentLevel == 3)
 					continue;
@@ -986,16 +1015,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					}
 				}
 			}
-			for (; idx1 < end1; idx1++)
-				if (!IsIgnorable (s1 [idx1]))
-					break;
-			for (; idx2 < end2; idx2++)
-				if (!IsIgnorable (s2 [idx2]))
-					break;
+
 			// If there were only level 3 or lower differences,
 			// then we still have to find diacritical differences
 			// if any.
-			if (finalResult != 0 && currentLevel > 2) {
+			if (!ignoreNonSpace &&
+				finalResult != 0 && currentLevel > 2) {
 				while (idx1 < end1 && idx2 < end2) {
 					if (!Uni.IsIgnorableNonSpacing (s1 [idx1]))
 						break;

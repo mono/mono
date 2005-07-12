@@ -33,6 +33,7 @@ namespace Mono.Globalization.Unicode
 //IsSuffix ("\u00E6", "ae", CompareOptions.None);
 //IsSuffix ("ae", "\u00E6", CompareOptions.None);
 //return;
+			/*
 			DumpSortKey ("AE");
 			DumpSortKey ("\u00C6");
 			DumpSortKey ("ABCABC", 5, 1, CompareOptions.IgnoreCase);
@@ -53,6 +54,7 @@ namespace Mono.Globalization.Unicode
 			Compare ("A\u0304", "\u0100"); // diacritical weight addition
 			Compare ("ABCABC", 5, 1, "c", 0, 1, CompareOptions.IgnoreCase);
 			Compare ("-d:NET_1_1", 0, 1, "-", 0, 1, CompareOptions.None);
+			*/
 
 			IndexOf ("ABC", '1', CompareOptions.None);
 			IndexOf ("ABCABC", 'c', CompareOptions.IgnoreCase);
@@ -121,6 +123,7 @@ namespace Mono.Globalization.Unicode
 			IsSuffix ("--ABC", "--", CompareOptions.None);
 			IsSuffix ("ABC--", "--", CompareOptions.None);
 
+/*
 			coll = new SimpleCollator (new CultureInfo (""));
 			Compare ("c\u00F4te", "cot\u00E9");
 			DumpSortKey ("c\u00F4te");
@@ -129,6 +132,7 @@ namespace Mono.Globalization.Unicode
 			Compare ("c\u00F4te", "cot\u00E9");
 			DumpSortKey ("c\u00F4te");
 			DumpSortKey ("cot\u00E9");
+*/
 		}
 
 		void Generate ()
