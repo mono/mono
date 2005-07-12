@@ -437,10 +437,13 @@ namespace Mono.CSharp {
 		protected Constructor default_static_constructor;
 
 		//
-		// Whether we have at least one non-static field
+		// Points to the first non-static field added to the container.
 		//
-		bool have_nonstatic_fields = false;
-		
+		// This is an arbitrary choice.  We are interested in looking at _some_ non-static field,
+		// and the first one's as good as any.
+		//
+		FieldBase first_nonstatic_field = null;
+
 		//
 		// This one is computed after we can distinguish interfaces
 		// from classes from the arraylist `type_bases' 
@@ -605,14 +608,28 @@ namespace Mono.CSharp {
 
 			if (fields == null)
 				fields = new MemberCoreArrayList ();
-			
+
 			fields.Add (field);
 			
 			if (field.HasInitializer)
 				RegisterFieldForInitialization (field);
 
-			if ((field.ModFlags & Modifiers.STATIC) == 0)
-				have_nonstatic_fields = true;
+			if ((field.ModFlags & Modifiers.STATIC) != 0)
+				return;
+
+			if (first_nonstatic_field == null) {
+				first_nonstatic_field = field;
+				return;
+			}
+
+			if (Kind == Kind.Struct &&
+			    first_nonstatic_field.Parent != field.Parent &&
+			    RootContext.WarningLevel >= 3) {
+				Report.SymbolRelatedToPreviousError (first_nonstatic_field.Parent);
+				Report.Warning (282, field.Location,
+					"struct instance field `{0}' found in different declaration from instance field `{1}'",
+					field.GetSignatureForError (), first_nonstatic_field.GetSignatureForError ());
+			}
 		}
 
 		public void AddProperty (Property prop)
@@ -2226,7 +2243,7 @@ namespace Mono.CSharp {
 			// be specified.
 			//
 
-			if ((Kind == Kind.Struct) && !have_nonstatic_fields){
+			if (Kind == Kind.Struct && first_nonstatic_field == null){
 				FieldBuilder fb = TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
 									   FieldAttributes.Private);
 

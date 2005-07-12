@@ -15,6 +15,14 @@
 
 	* generic.cs: Use MakeGenericType instead of BindGenericParameters.
 
+2005-07-07  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75486.
+	* class.cs (TypeContainer.first_nonstatic_field): Rename from
+	has_nonstatic_fields.  Make into a FieldBase pointer.
+	(TypeContainer.AddField): Add CS0282 check.
+	(TypeContainer.EmitType): Update.
+
 2005-07-06  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-tokenizer.cs (consume_identifier): Do not create strings to
