@@ -54,7 +54,6 @@ namespace Mono.Globalization.Unicode
 			Compare ("A\u0304", "\u0100"); // diacritical weight addition
 			Compare ("ABCABC", 5, 1, "c", 0, 1, CompareOptions.IgnoreCase);
 			Compare ("-d:NET_1_1", 0, 1, "-", 0, 1, CompareOptions.None);
-			*/
 
 			IndexOf ("ABC", '1', CompareOptions.None);
 			IndexOf ("ABCABC", 'c', CompareOptions.IgnoreCase);
@@ -81,6 +80,7 @@ namespace Mono.Globalization.Unicode
 			IsPrefix ("--start", "--", CompareOptions.None);
 			IsPrefix ("-d:NET_1_1", "-", CompareOptions.None);
 			IsPrefix ("-d:NET_1_1", "@", CompareOptions.None);
+			*/
 
 			IsSuffix ("ABC", "c", CompareOptions.IgnoreCase);
 			IsSuffix ("BC", "c", CompareOptions.IgnoreCase);

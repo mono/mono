@@ -1,6 +1,6 @@
 Index: corlib.dll.sources
 ===================================================================
---- corlib.dll.sources	(revision 47028)
+--- corlib.dll.sources	(revision 47189)
 +++ corlib.dll.sources	(working copy)
 @@ -8,6 +8,12 @@
  Microsoft.Win32/Win32RegistryApi.cs
@@ -25,7 +25,7 @@ Index: corlib.dll.sources
  System.Globalization/TextElementEnumerator.cs
 Index: Makefile
 ===================================================================
---- Makefile	(revision 47028)
+--- Makefile	(revision 47189)
 +++ Makefile	(working copy)
 @@ -3,13 +3,24 @@
  include ../../build/rules.make
@@ -47,15 +47,15 @@ Index: Makefile
  # Here, we define a bunch of variables.
  
  corlib_flags = /unsafe /nostdlib
--LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB
-+LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB \
+-LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 /nowarn:414 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB
++LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 /nowarn:414 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB \
 +	$(RESOURCE_FILES:%=/resource:%)
  
  LIBRARY = corlib.dll
  LIBRARY_NAME = mscorlib.dll
 Index: System.Globalization/CompareInfo.cs
 ===================================================================
---- System.Globalization/CompareInfo.cs	(revision 47028)
+--- System.Globalization/CompareInfo.cs	(revision 47196)
 +++ System.Globalization/CompareInfo.cs	(working copy)
 @@ -34,12 +34,25 @@
  using System.Reflection;
@@ -289,7 +289,27 @@ Index: System.Globalization/CompareInfo.cs
  						value, options, true));
  		}
  
-@@ -682,7 +765,7 @@
+@@ -543,6 +626,9 @@
+ 				throw new ArgumentNullException("prefix");
+ 			}
+ 
++			if (UseManagedCollation)
++				return collator.IsPrefix (source, prefix, options);
++
+ 			if(source.Length < prefix.Length) {
+ 				return(false);
+ 			} else {
+@@ -567,6 +653,9 @@
+ 				throw new ArgumentNullException("suffix");
+ 			}
+ 
++			if (UseManagedCollation)
++				return collator.IsSuffix (source, suffix, options);
++
+ 			if(source.Length < suffix.Length) {
+ 				return(false);
+ 			} else {
+@@ -682,7 +771,7 @@
  				}
  				return(-1);
  			} else {
@@ -298,7 +318,7 @@ Index: System.Globalization/CompareInfo.cs
  							count, value, options,
  							false));
  			}
-@@ -713,7 +796,7 @@
+@@ -713,7 +802,7 @@
  				return(0);
  			}
  
@@ -307,7 +327,7 @@ Index: System.Globalization/CompareInfo.cs
  					       value, options, false));
  		}
  
-@@ -724,13 +807,17 @@
+@@ -724,13 +813,17 @@
  
  		void IDeserializationCallback.OnDeserialization(object sender)
  		{

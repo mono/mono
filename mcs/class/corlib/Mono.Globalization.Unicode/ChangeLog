@@ -1,5 +1,11 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* managed-collation.patch : Fixed IsPrefix() and IsSuffix(). They
+	  incorrectly use Compare().
+	* TestDriver.cs : more moved to nunit tests.
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : several fixes on Compare().
 	  - Ignorable characters are skippted at the top of the loop. 
 	  - IgnoreNonSpace is checked to avoid extraneous level 2 comparison.
