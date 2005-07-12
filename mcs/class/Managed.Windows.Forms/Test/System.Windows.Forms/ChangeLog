@@ -1,3 +1,10 @@
+2005-07-12  Ritvik Mayank  <mritvik@novell.com>
+	
+	* CheckBoxTest.cs : Test case for CheckBox
+	* CheckBoxEventTest.cs : Test case for CheckBox events
+	* CheckedListBoxTest.cs : Test case for CheckedListBox
+	* CheckedListBoxEventTest.cs : Test case for CheckedListBox events
+
 2005-07-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumnTest.cs: Test case
