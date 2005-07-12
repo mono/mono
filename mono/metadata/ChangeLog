@@ -1,3 +1,10 @@
+2005-07-12  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_create_runtime_class): Remove the
+	hack for generic type definitions and non-`Run' assemblies.
+	(mono_reflection_bind_generic_parameters): Also use
+	`klass->wastypebuilder' to check for TypeBuilders.
+
 2005-07-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_layout_fields): Fix calculation of has_references
