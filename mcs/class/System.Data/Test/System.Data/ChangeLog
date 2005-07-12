@@ -1,5 +1,18 @@
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 
+	* DeletedRowInaccessibleExceptionTest: Added file
+	* DuplicateNameExceptionTest: Added file
+	* ConstraintExceptionTest: Added file
+	* EvaluateExceptionTest: Added file
+	* InRowChangingEventExceptionTest: Added file
+	* InvalidConstraintExceptionTest: Added file
+	* NoNullAllowedExceptionTest: Added file
+	* ReadOnlyExceptionTest: Added file
+	* SyntaxErrorExceptionTest: Added file
+	* RowNotInTableExceptionTest: Added file
+
+2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* DataRelationTest2.cs: Added file
 	* DataRowTest2.cs: Added file
 	* DataRowCollectionTest2.cs: Added file

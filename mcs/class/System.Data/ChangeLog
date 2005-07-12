@@ -1,5 +1,9 @@
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 	* System.Data_tests.dll.sources:
+	  Standardized Mainsoft System.Data exception tests
+
+2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
+	* System.Data_tests.dll.sources:
 	  Unified Mainsoft DataRelation tests into one test in Test/System.Data
 	  Unified Mainsoft DataRow tests into one test in Test/System.Data
 	  Unified Mainsoft DataRowCollection tests into one test in Test/System.Data
