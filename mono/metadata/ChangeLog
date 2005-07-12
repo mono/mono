@@ -1,5 +1,17 @@
 2005-07-12  Martin Baulig  <martin@ximian.com>
 
+	Applying a patch from Michal Moskal <malekith@nemerle.org>.
+
+	* metadata.c
+	(mono_type_hash): Provide better hashing for generic instances.
+	(mono_generic_inst_hash): Improve hashing.
+	(mono_generic_class_hash): Likewise.
+
+	* reflection.c (mymono_metadata_type_hash): Improve hashing for
+	generic instances.
+
+2005-07-12  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_reflection_create_runtime_class): Remove the
 	hack for generic type definitions and non-`Run' assemblies.
 	(mono_reflection_bind_generic_parameters): Also use
