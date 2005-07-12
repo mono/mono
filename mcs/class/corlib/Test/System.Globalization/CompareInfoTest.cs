@@ -55,6 +55,8 @@ public class CompareInfoTest : Assertion
 
 	CompareOptions ignoreCW =
 		CompareOptions.IgnoreWidth | CompareOptions.IgnoreCase;
+	CompareOptions ignoreCN =
+		CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase;
 
 	void AssertSortKey (string message, byte [] expected, string test)
 	{
@@ -92,15 +94,25 @@ public class CompareInfoTest : Assertion
 	void AssertCompare (string message, int result, string s1, string s2,
 		CompareOptions opt, CompareInfo ci)
 	{
-		AssertCompare (message, result, s1, 0, s1.Length,
-			s2, 0, s2.Length, opt, ci);
+		int ret = ci.Compare (s1, s2, opt);
+		if (result == 0)
+			AssertEquals (message, 0, ret);
+		else if (result < 0)
+			Assert (message, ret < 0);
+		else
+			Assert (message, ret > 0);
 	}
 
 	void AssertCompare (string message, int result,
 		string s1, int idx1, int len1, string s2, int idx2, int len2)
 	{
-		AssertCompare (message, result, s1, idx1, len1, s2, idx2, len2,
-			CompareOptions.None, invariant);
+		int ret = invariant.Compare (s1, idx1, len1, s2, idx2, len2);
+		if (result == 0)
+			AssertEquals (message, 0, ret);
+		else if (result < 0)
+			Assert (message, ret < 0);
+		else
+			Assert (message, ret > 0);
 	}
 
 	void AssertCompare (string message, int result,
@@ -114,6 +126,55 @@ public class CompareInfoTest : Assertion
 			Assert (message, ret < 0);
 		else
 			Assert (message, ret > 0);
+	}
+
+	void AssertIndexOf (string message, int expected,
+		string source, char target)
+	{
+		AssertEquals (message, expected,
+			invariant.IndexOf (source, target));
+	}
+
+	void AssertIndexOf (string message, int expected, string source,
+		char target, CompareOptions opt)
+	{
+		AssertEquals (message, expected,
+			invariant.IndexOf (source, target, opt));
+	}
+
+	void AssertIndexOf (string message, int expected, string source,
+		char target, int idx, int len, CompareOptions opt, CompareInfo ci)
+	{
+		AssertEquals (message, expected,
+			ci.IndexOf (source, target, idx, len, opt));
+	}
+
+	void AssertLastIndexOf (string message, int expected,
+		string source, char target)
+	{
+		AssertEquals (message, expected,
+			invariant.LastIndexOf (source, target));
+	}
+
+	void AssertLastIndexOf (string message, int expected, string source,
+		char target, CompareOptions opt)
+	{
+		AssertEquals (message, expected,
+			invariant.LastIndexOf (source, target, opt));
+	}
+
+	void AssertLastIndexOf (string message, int expected, string source,
+		char target, int idx, int len)
+	{
+		AssertEquals (message, expected,
+			invariant.LastIndexOf (source, target, idx, len));
+	}
+
+	void AssertLastIndexOf (string message, int expected, string source,
+		char target, int idx, int len, CompareOptions opt, CompareInfo ci)
+	{
+		AssertEquals (message, expected,
+			ci.LastIndexOf (source, target, idx, len, opt));
 	}
 
 	[Test]
@@ -174,6 +235,55 @@ public class CompareInfoTest : Assertion
 		AssertCompare ("#9", 0, "A\u0304", "\u0100");
 		AssertCompare ("#10", 1, "ABCABC", 5, 1, "1", 0, 1, CompareOptions.IgnoreCase, invariant);
 		AssertCompare ("#11", 0, "-d:NET_2_0", 0, 1, "-", 0, 1);
+	}
+
+	[Test]
+	public void IndexOfChar ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIndexOf ("#1", -1, "ABC", '1');
+		AssertIndexOf ("#2", 2, "ABCABC", 'c', CompareOptions.IgnoreCase);
+		AssertIndexOf ("#3", 1, "ABCABC", '\uFF22', ignoreCW);
+		AssertIndexOf ("#4", 4, "ABCDE", '\u0117', ignoreCN);
+		AssertIndexOf ("#5", 1, "ABCABC", 'B', 1, 5, CompareOptions.IgnoreCase, invariant);
+		AssertIndexOf ("#6", 4, "ABCABC", 'B', 2, 4, CompareOptions.IgnoreCase, invariant);
+	}
+
+	[Test]
+	[Category ("NotDotNet")]
+	public void IndexOfCharMSBug ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIndexOf ("#1", 0, "\u00E6", 'a');
+	}
+
+	[Test]
+	public void LastIndexOfChar ()
+	{
+		if (!doTest)
+			return;
+
+		AssertLastIndexOf ("#1", -1, "ABC", '1');
+		AssertLastIndexOf ("#2", 5, "ABCABC", 'c', CompareOptions.IgnoreCase);
+		AssertLastIndexOf ("#3", 4, "ABCABC", '\uFF22', ignoreCW);
+		AssertLastIndexOf ("#4", 4, "ABCDE", '\u0117', ignoreCN);
+		AssertLastIndexOf ("#5", 1, "ABCABC", 'B', 3, 3);
+		AssertLastIndexOf ("#6", 4, "ABCABC", 'B', 4, 4);
+		AssertLastIndexOf ("#7", -1, "ABCABC", 'B', 5, 1);
+	}
+
+	[Test]
+	[Category ("NotDotNet")]
+	public void LastIndexOfCharMSBug ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIndexOf ("#1", 0, "\u00E6", 'a');
 	}
 }
 
