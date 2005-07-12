@@ -1070,9 +1070,9 @@ namespace Mono.CSharp {
 				Report.Error (723, Location, "Cannot declare variable of static type `{0}'", TypeManager.CSharpName (VariableType));
 				return false;
 			}
-// TODO: breaks the build
-//			if (VariableType.IsPointer && !ec.InUnsafe)
-//				Expression.UnsafeError (Location);
+
+			if (VariableType.IsPointer && !ec.InUnsafe)
+				Expression.UnsafeError (Location);
 
 			return true;
 		}
@@ -2429,33 +2429,33 @@ namespace Mono.CSharp {
 		//
 		Expression SwitchGoverningType (EmitContext ec, Type t)
 		{
-			if (t == TypeManager.int32_type ||
-			    t == TypeManager.uint32_type ||
-			    t == TypeManager.char_type ||
-			    t == TypeManager.byte_type ||
+			if (t == TypeManager.byte_type ||
 			    t == TypeManager.sbyte_type ||
 			    t == TypeManager.ushort_type ||
 			    t == TypeManager.short_type ||
+			    t == TypeManager.uint32_type ||
+			    t == TypeManager.int32_type ||
 			    t == TypeManager.uint64_type ||
 			    t == TypeManager.int64_type ||
+			    t == TypeManager.char_type ||
 			    t == TypeManager.string_type ||
-				t == TypeManager.bool_type ||
-				t.IsSubclassOf (TypeManager.enum_type))
+			    t == TypeManager.bool_type ||
+			    t.IsSubclassOf (TypeManager.enum_type))
 				return Expr;
 
 			if (allowed_types == null){
 				allowed_types = new Type [] {
-					TypeManager.int32_type,
-					TypeManager.uint32_type,
 					TypeManager.sbyte_type,
 					TypeManager.byte_type,
 					TypeManager.short_type,
 					TypeManager.ushort_type,
+					TypeManager.int32_type,
+					TypeManager.uint32_type,
 					TypeManager.int64_type,
 					TypeManager.uint64_type,
 					TypeManager.char_type,
-					TypeManager.bool_type,
-					TypeManager.string_type
+					TypeManager.string_type,
+					TypeManager.bool_type
 				};
 			}
 
@@ -2477,22 +2477,18 @@ namespace Mono.CSharp {
 				// Ignore over-worked ImplicitUserConversions that do
 				// an implicit conversion in addition to the user conversion.
 				// 
-				if (e is UserCast){
-					UserCast ue = e as UserCast;
+				if (!(e is UserCast))
+					continue;
 
-					if (ue.Source != Expr)
-						e = null;
-				}
-				
 				if (converted != null){
 					Report.ExtraInformation (
 						loc,
 						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
 							       TypeManager.CSharpName (Expr.Type)));
 					return null;
-				} else {
-					converted = e;
 				}
+
+				converted = e;
 			}
 			return converted;
 		}

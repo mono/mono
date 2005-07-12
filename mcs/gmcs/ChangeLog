@@ -15,6 +15,13 @@
 
 	* generic.cs: Use MakeGenericType instead of BindGenericParameters.
 
+2005-07-06  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Switch.SwitchGoverningType): Only look at
+	UserCasts that don't need implicit standard conversions to one of
+	the allowed switch types (Fixes test-322.cs).
+	(LocalInfo.Resolve): Re-enable sanity-test.
+
 2005-07-06  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-tokenizer.cs (consume_identifier): Detect double undescores
