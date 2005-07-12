@@ -1,5 +1,9 @@
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 
+	* DataRelationCollectionTest2.cs: Added file
+
+2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* DataColumnTest2.cs: Added file
 
 2005-07-08  Sureshkumar T  <tsureshkumar@novell.com>
