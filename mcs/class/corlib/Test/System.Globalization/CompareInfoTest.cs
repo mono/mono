@@ -466,6 +466,72 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+	public void GetSortKeyThai ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#i1", new byte [] {
+			0x1E, 7, 0x1F, 0x28, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E3A");
+		AssertSortKey ("#i2", new byte [] {
+			0x1E, 7, 1, 3, 1, 1, 1, 0},
+			"\u0E01\u0E3B");
+// FIXME: not working
+//		AssertSortKey ("#i6", new byte [] {
+//			0x1E, 7, 0xA, 0xF9, 1, 3, 1, 1, 1, 0},
+//			"\u0E01\u0E3F");
+		AssertSortKey ("#i7", new byte [] {
+			0x1E, 7, 0x1E, 2, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E40");
+		AssertSortKey ("#i8", new byte [] {
+			0x1E, 7, 0x1E, 3, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E41");
+		AssertSortKey ("#i9", new byte [] {
+			0x1E, 7, 0x1E, 4, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E42");
+		AssertSortKey ("#i10", new byte [] {
+			0x1E, 7, 0x1E, 5, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E43");
+		AssertSortKey ("#i11", new byte [] {
+			0x1E, 7, 0x1E, 6, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E44");
+// FIXME: not working
+/*
+		AssertSortKey ("#i12", new byte [] {
+			0x1E, 7, 0x1F, 0x29, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E45");
+		AssertSortKey ("#i13", new byte [] {
+			0x1E, 7, 0x1F, 0x2A, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E46");
+		AssertSortKey ("#i14", new byte [] {
+			0x1E, 7, 1, 5, 1, 1, 1, 0},
+			"\u0E01\u0E47");
+		AssertSortKey ("#i15", new byte [] {
+			0x1E, 7, 1, 6, 1, 1, 1, 0},
+			"\u0E01\u0E48");
+		AssertSortKey ("#i16", new byte [] {
+			0x1E, 7, 1, 7, 1, 1, 1, 0},
+			"\u0E01\u0E49");
+		AssertSortKey ("#i17", new byte [] {
+			0x1E, 7, 1, 8, 1, 1, 1, 0},
+			"\u0E01\u0E4A");
+		AssertSortKey ("#i18", new byte [] {
+			0x1E, 7, 1, 9, 1, 1, 1, 0},
+			"\u0E01\u0E4B");
+		AssertSortKey ("#i19", new byte [] {
+			0x1E, 7, 1, 8, 1, 1, 1, 0},
+			"\u0E01\u0E48\u0E47");
+*/
+		AssertSortKey ("#i20", new byte [] {
+			0x1E, 7, 0x1E, 4, 0x1E, 0xD, 1, 3, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E42\u0E02");
+		AssertSortKey ("#i21", new byte [] {
+			0x1E, 7, 0x1E, 0xD, 1, 3, 3, 1, 1, 1, 0},
+			"\u0E01\u0E02");
+	}
+
+	[Test]
 	public void CultureSensitiveCompare ()
 	{
 		if (!doTest)

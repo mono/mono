@@ -1,5 +1,9 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added GetSortKey() test for Thai.
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added special weight GetSortKey() test.
 
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
