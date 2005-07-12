@@ -344,6 +344,74 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+	public void GetSortKeySpecialWeight ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#i1", new byte [] {
+			0x22, 0xA, 0x22, 2, 1, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u3042");
+		AssertSortKey ("#i2", new byte [] {
+			0x22, 0xA, 0x22, 2, 1, 1, 1, 0xFF, 3, 5, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u30FC");
+		AssertSortKey ("#i3", new byte [] {
+			0x22, 0xA, 0x22, 2, 1, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u30FC", CompareOptions.IgnoreNonSpace);
+
+		AssertSortKey ("#i4", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 2, 3, 1, 1, 0xFF, 2, 0xC4, 0xC4, 0xFF, 0xFF, 1, 0},
+			"\u30AB\u30AC");
+		AssertSortKey ("#i5", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 0x22, 2, 1, 1, 1, 0xFF, 3, 3, 5, 2, 0xC4, 0xC4, 0xC4, 0xFF, 0xFF, 1, 0},
+			"\u30AB\u30AB\u30FC");
+		AssertSortKey ("#i6", new byte [] {
+			0x22, 0xA, 0x22, 2, 0x22, 2, 1, 1, 1, 0xFF, 3, 3, 5, 2, 0xC4, 0xC4, 0xC4, 0xFF, 0xFF, 1, 0},
+			"\u30AB\u30A2\u30FC");
+		AssertSortKey ("#i7", new byte [] {
+			0x22, 0xA, 0x22, 2, 0x22, 2, 0x22, 0xA, 1, 1, 1, 0xFF, 3, 3, 5, 2, 0xC4, 0xC4, 0xC4, 0xC4, 0xFF, 0xFF, 1, 0},
+			"\u30AB\u30A2\u30FC\u30AB");
+		AssertSortKey ("#i8", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u309D");
+		AssertSortKey ("#i9", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 2, 3, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u309E");
+		AssertSortKey ("#i10", new byte [] {
+			0x22, 0x2, 0x22, 0x2, 1, 2, 3, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+			"\u3042\u309E");//not possible
+		AssertSortKey ("#i11", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u30FD");//not possible
+		AssertSortKey ("#i12", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 2, 3, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u30FE");//not possible
+		AssertSortKey ("#i13", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 1, 1, 0xFF, 3, 4, 2, 0xC4, 0xC4, 0xFF, 0xFF, 1, 0},
+			"\u30AB\u30FD");
+		AssertSortKey ("#i14", new byte [] {
+			0x22, 0xA, 0x22, 2, 1, 1, 1, 0xFF, 3, 5, 2, 0xC4, 0xC4, 0xFF, 0xC4, 0xC4, 0xFF, 1, 0},
+			"\uFF76\uFF70");
+		AssertSortKey ("#i15", new byte [] {
+			0x22, 0xA, 0x22, 0xA, 1, 2, 5, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+			"\u304B\u3005");
+		AssertSortKey ("#i16", new byte [] {
+			0xAF, 9, 0xAF, 9, 1, 2, 5, 1, 1, 1, 0},
+			"\u5EA6\u3005");
+		AssertSortKey ("#i17", new byte [] {
+			0xE, 2, 0xE, 2, 1, 2, 5, 1, 1, 1, 0},
+			"a\u3005"); // huh
+		// Not working, but I wonder if it is really FIXME.
+//		AssertSortKey ("#i18", new byte [] {
+//			0xFF, 0xFF, 1, 1, 1, 1, 0},
+//			"\u3005");
+		// LAMESPEC. No one can handle \u3031 correctly.
+//		AssertSortKey ("#i19", new byte [] {
+//			0x22, 0x22, 0x22, 0xC, 0x22, 0xC, 1, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
+//			"\u306A\u304F\u3031");
+	}
+
+	[Test]
 	public void GetSortKeyLevel5 ()
 	{
 		if (!doTest)

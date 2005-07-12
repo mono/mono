@@ -1,5 +1,9 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added special weight GetSortKey() test.
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added several GetSortKey() tests.
 
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
