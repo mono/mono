@@ -15,6 +15,11 @@
 
 	* generic.cs: Use MakeGenericType instead of BindGenericParameters.
 
+2005-07-06  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs (consume_identifier): Do not create strings to
+	compare if they start with __.
+
 2005-07-06  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Switch.SwitchGoverningType): Only look at

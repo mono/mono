@@ -2038,7 +2038,7 @@ namespace Mono.CSharp
 				identifiers [pos] = new CharArrayHashtable (pos);
 
 			val = new String (id_builder, 0, pos);
-			if (RootContext.Version == LanguageVersion.ISO_1 && ((string)val).IndexOf ("__") != -1) {
+			if (RootContext.Version == LanguageVersion.ISO_1 && id_builder [0] == '_' && id_builder [1] == '_') {
 				Report.Error (1638, Location, 
 					"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val);
 			}
