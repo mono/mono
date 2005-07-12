@@ -1,5 +1,10 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added tests for IsSuffix(),
+	  IndexOf(string,string) and LastIndexOf(string,string).
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added tests for IsPrefix() and optionally
 	  Compare() (which is currently used inside IsPrefix() which is
 	  however wrong when it comes to managed collation).

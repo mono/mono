@@ -149,6 +149,27 @@ public class CompareInfoTest : Assertion
 			ci.IndexOf (source, target, idx, len, opt));
 	}
 
+	void AssertIndexOf (string message, int expected,
+		string source, string target)
+	{
+		AssertEquals (message, expected,
+			invariant.IndexOf (source, target));
+	}
+
+	void AssertIndexOf (string message, int expected, string source,
+		string target, CompareOptions opt)
+	{
+		AssertEquals (message, expected,
+			invariant.IndexOf (source, target, opt));
+	}
+
+	void AssertIndexOf (string message, int expected, string source,
+		string target, int idx, int len, CompareOptions opt, CompareInfo ci)
+	{
+		AssertEquals (message, expected,
+			ci.IndexOf (source, target, idx, len, opt));
+	}
+
 	void AssertLastIndexOf (string message, int expected,
 		string source, char target)
 	{
@@ -177,10 +198,45 @@ public class CompareInfoTest : Assertion
 			ci.LastIndexOf (source, target, idx, len, opt));
 	}
 
-	void AssertIsPrefix (string message , bool expected, string source,
+	void AssertLastIndexOf (string message, int expected,
+		string source, string target)
+	{
+		AssertEquals (message, expected,
+			invariant.LastIndexOf (source, target));
+	}
+
+	void AssertLastIndexOf (string message, int expected, string source,
+		string target, CompareOptions opt)
+	{
+		AssertEquals (message, expected,
+			invariant.LastIndexOf (source, target, opt));
+	}
+
+	void AssertLastIndexOf (string message, int expected, string source,
+		string target, int idx, int len)
+	{
+		AssertEquals (message, expected,
+			invariant.LastIndexOf (source, target, idx, len));
+	}
+
+	void AssertLastIndexOf (string message, int expected, string source,
+		string target, int idx, int len, CompareOptions opt, CompareInfo ci)
+	{
+		AssertEquals (message, expected,
+			ci.LastIndexOf (source, target, idx, len, opt));
+	}
+
+	void AssertIsPrefix (string message, bool expected, string source,
 		string target, CompareOptions opt)
 	{
 		Assert (message, expected == invariant.IsPrefix (
+			source, target, opt));
+	}
+
+	void AssertIsSuffix (string message, bool expected, string source,
+		string target, CompareOptions opt)
+	{
+		Assert (message, expected == invariant.IsSuffix (
 			source, target, opt));
 	}
 
@@ -317,6 +373,71 @@ public class CompareInfoTest : Assertion
 		AssertIsPrefix ("#11", true, "--start", "--", CompareOptions.None);
 		AssertIsPrefix ("#12", true, "-d:NET_1_1", "-", CompareOptions.None);
 		AssertIsPrefix ("#13", false, "-d:NET_1_1", "@", CompareOptions.None);
+	}
+
+	[Test]
+	public void IsSuffix ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIsSuffix ("#1", true, "ABC", "c", CompareOptions.IgnoreCase);
+		AssertIsSuffix ("#2", true, "BC", "c", CompareOptions.IgnoreCase);
+		AssertIsSuffix ("#3", false, "CBA", "c", CompareOptions.IgnoreCase);
+		AssertIsSuffix ("#4", true, "ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+		AssertIsSuffix ("#5", false, "\u00E6", "a", CompareOptions.None);
+		AssertIsSuffix ("#6", true, "\u00E6", "ae", CompareOptions.None);
+		AssertIsSuffix ("#7", true, "ae", "\u00E6", CompareOptions.None);
+		AssertIsSuffix ("#8", false, "e", "\u00E6", CompareOptions.None);
+
+	}
+
+	[Test]
+	[Category ("NotDotNet")]
+	public void IsSuffixMSBug ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIsSuffix ("#1", true, "\u00E6", "e", CompareOptions.None);
+	}
+
+	[Test]
+	public void IndexOfString ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIndexOf ("#1", -1, "ABC", "1", CompareOptions.None);
+		AssertIndexOf ("#2", 2, "ABCABC", "c", CompareOptions.IgnoreCase);
+		AssertIndexOf ("#3", 1, "ABCABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+		AssertIndexOf ("#4", 4, "ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+		AssertIndexOf ("#5", 1, "ABCABC", "BC", CompareOptions.IgnoreCase);
+		AssertIndexOf ("#6", 1, "BBCBBC", "BC", CompareOptions.IgnoreCase);
+		AssertIndexOf ("#7", -1, "ABCDEF", "BCD", 0, 3, CompareOptions.IgnoreCase, invariant);
+		AssertIndexOf ("#8", 0, "-ABC", "-", CompareOptions.None);
+		AssertIndexOf ("#9", 0, "--ABC", "--", CompareOptions.None);
+		AssertIndexOf ("#9", -1, "--ABC", "--", 1, 2, CompareOptions.None, invariant);
+	}
+
+
+	[Test]
+	public void LastIndexOfString ()
+	{
+		if (!doTest)
+			return;
+
+		AssertLastIndexOf ("#1", -1, "ABC", "1", CompareOptions.None);
+		AssertLastIndexOf ("#2", 5, "ABCABC", "c", CompareOptions.IgnoreCase);
+		AssertLastIndexOf ("#3", 4, "ABCABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
+		AssertLastIndexOf ("#4", 4, "ABCDE", "\u0117", CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
+		AssertLastIndexOf ("#5", 4, "ABCABC", "BC", CompareOptions.IgnoreCase);
+		AssertLastIndexOf ("#6", 4, "BBCBBC", "BC", CompareOptions.IgnoreCase);
+		AssertLastIndexOf ("#7", 1, "original", "rig", CompareOptions.None);
+		AssertLastIndexOf ("#8", 0, "\u00E6", "ae", CompareOptions.None);
+		AssertLastIndexOf ("#9", 0, "-ABC", "-", CompareOptions.None);
+		AssertLastIndexOf ("#10", 0, "--ABC", "--", CompareOptions.None);
+		AssertLastIndexOf ("#11", -1, "--ABC", "--", 2, 2, CompareOptions.None, invariant);
 	}
 }
 
