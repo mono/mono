@@ -1,5 +1,8 @@
 2005-07-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (mono_class_layout_fields): Fix calculation of has_references
+	for generic types.
+	
 	* class.c (inflate_generic_class): Fix a leak.
 	(mono_class_init): Fix calculation of gchimpl and has_finalize fields
 	for generic types.
