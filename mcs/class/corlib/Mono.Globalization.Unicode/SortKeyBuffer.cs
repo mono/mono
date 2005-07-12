@@ -154,16 +154,16 @@ namespace Mono.Globalization.Unicode
 			// If it strictly matches to Windows, offsetValue is always l2.
 			int offsetValue = l2 - level5LastPos;
 			// If it strictly matches ti Windows, no 0xFF here.
-			for (; offsetValue > 8064; offsetValue -= 8064)
+			for (; offsetValue > 8192; offsetValue -= 8192)
 				AppendBufferPrimitive (0xFF, ref l5b, ref l5);
 #else
 			// LAMESPEC: Windows cannot compute lv5 values for
 			// those string that has length larger than 8064.
 			// (It reminds me of SQL Server varchar length).
-			int offsetValue = l2 % 8064;
+			int offsetValue = (l2 + 1) % 8192;
 #endif
-			AppendBufferPrimitive ((byte) ((offsetValue / 63) * 4 + 0x80), ref l5b, ref l5);
-			AppendBufferPrimitive ((byte) (offsetValue % 63 * 4 + 7), ref l5b, ref l5);
+			AppendBufferPrimitive ((byte) ((offsetValue / 64) + 0x80), ref l5b, ref l5);
+			AppendBufferPrimitive ((byte) (offsetValue % 64 * 4 + 3), ref l5b, ref l5);
 
 			level5LastPos = l2;
 

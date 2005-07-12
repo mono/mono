@@ -1,5 +1,9 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SortKeyBuffer.cs : Fixed shift level computation to match w/ Windows.
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : fixed LastIndexOf() to handle _target's_ 
 	  contraction as expected. Fixed Compare() to save s2's contraction
 	  as expected.
