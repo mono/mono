@@ -621,10 +621,10 @@ namespace Mono.CSharp {
 
 					if (anonymous_method_host != null)
 						current_flow_branching = FlowBranching.CreateBranching (
-						anonymous_method_host.CurrentBranching,
-						FlowBranching.BranchingType.Block, block, loc);
+							anonymous_method_host.CurrentBranching,
+							FlowBranching.BranchingType.Block, block, loc);
 					else 
-					current_flow_branching = block.TopLevelBranching;
+						current_flow_branching = block.TopLevelBranching;
 
 					if (!block.Resolve (this)) {
 						current_flow_branching = null;

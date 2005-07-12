@@ -6841,8 +6841,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if ((block != null) && (block.ThisVariable != null))
-				variable_info = block.ThisVariable.VariableInfo;
+			if (block != null && block.Toplevel.ThisVariable != null)
+				variable_info = block.Toplevel.ThisVariable.VariableInfo;
 
 			if (ec.CurrentAnonymousMethod != null)
 				ec.CaptureThis ();
@@ -6967,7 +6967,7 @@ namespace Mono.CSharp {
 			if (!ResolveBase (ec))
 				return null;
 
-			if (ec.IsFieldInitializer || !ec.CurrentBlock.HasVarargs) {
+			if (ec.IsFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) {
 				Error (190, "The __arglist construct is valid only within " +
 				       "a variable argument method.");
 				return null;

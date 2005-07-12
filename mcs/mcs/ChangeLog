@@ -1,3 +1,19 @@
+2005-07-12  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Block.Flags); Remove HasVarargs.
+	(Block.HasVarargs): Move to ToplevelBlock.
+	(Block.ThisVariable, Block.AddThisVariable): Likewise.
+	(Block.Variables): Make protected.  Initialize variable hashtable
+	if necessary.
+	(Block.AddVariable): Update.
+	(Block.Resolve): Update to changes.
+	(ToplevelBlock.HasVarargs): New boolean.
+	(ToplevelBlock.ThisVariable): Move here from Block.
+	(ToplevelBlock.AddThisVariable): Likewise.
+	(ToplevelBlock.IsThisAssigned): New.  Forwards call to this_variable.
+	* expression.cs (This.ResolveBase): Update to changes.
+	(ArglistAccess.DoResolve): Likewise.
+
 2005-07-11  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #75321

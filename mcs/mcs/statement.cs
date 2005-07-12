@@ -1202,46 +1202,23 @@ namespace Mono.CSharp {
 			VariablesInitialized = 8,
 			HasRet = 16,
 			IsDestructor = 32,
-			HasVarargs = 64,
-			IsToplevel = 128,
-			Unsafe = 256
+			IsToplevel = 64,
+			Unsafe = 128
 		}
 		Flags flags;
 
 		public bool Implicit {
-			get {
-				return (flags & Flags.Implicit) != 0;
-			}
+			get { return (flags & Flags.Implicit) != 0; }
 		}
 
 		public bool Unchecked {
-			get {
-				return (flags & Flags.Unchecked) != 0;
-			}
-			set {
-				flags |= Flags.Unchecked;
-			}
+			get { return (flags & Flags.Unchecked) != 0; }
+			set { flags |= Flags.Unchecked; }
 		}
 
 		public bool Unsafe {
-			get {
-				return (flags & Flags.Unsafe) != 0;
-			}
-			set {
-				flags |= Flags.Unsafe;
-			}
-		}
-
-		public bool HasVarargs {
-			get {
-				if (Parent != null)
-					return Parent.HasVarargs;
-				else
-					return (flags & Flags.HasVarargs) != 0;
-			}
-			set {
-				flags |= Flags.HasVarargs;
-			}
+			get { return (flags & Flags.Unsafe) != 0; }
+			set { flags |= Flags.Unsafe; }
 		}
 
 		//
@@ -1334,8 +1311,14 @@ namespace Mono.CSharp {
 		}
 
 		public int ID {
+			get { return this_id; }
+		}
+
+		protected Hashtable Variables {
 			get {
-				return this_id;
+				if (variables == null)
+					variables = new Hashtable ();
+				return variables;
 			}
 		}
 
@@ -1451,23 +1434,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		LocalInfo this_variable = null;
-
-		// <summary>
-		//   Returns the "this" instance variable of this block.
-		//   See AddThisVariable() for more information.
-		// </summary>
-		public LocalInfo ThisVariable {
-			get {
-				for (Block b = this; b != null; b = b.Parent) {
-					if (b.this_variable != null)
-						return b.this_variable;
-				}
-				
-				return null;
-			}
-		}
-
 		Hashtable known_variables;
 
 		// <summary>
@@ -1518,35 +1484,8 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		// <summary>
-		//   This is used by non-static `struct' constructors which do not have an
-		//   initializer - in this case, the constructor must initialize all of the
-		//   struct's fields.  To do this, we add a "this" variable and use the flow
-		//   analysis code to ensure that it's been fully initialized before control
-		//   leaves the constructor.
-		// </summary>
-		public LocalInfo AddThisVariable (TypeContainer tc, Location l)
-		{
-			if (this_variable != null)
-				return this_variable;
-
-			if (variables == null)
-				variables = new Hashtable ();
-
-			this_variable = new LocalInfo (tc, this, l);
-			this_variable.Used = true;
-			this_variable.IsThis = true;
-
-			variables.Add ("this", this_variable);
-
-			return this_variable;
-		}
-
 		public LocalInfo AddVariable (Expression type, string name, Location l)
 		{
-			if (variables == null)
-				variables = new Hashtable ();
-
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
@@ -1575,7 +1514,7 @@ namespace Mono.CSharp {
 
 			vi = new LocalInfo (type, name, this, l);
 
-			variables.Add (name, vi);
+			Variables.Add (name, vi);
 
 			for (Block b = this; b != null; b = b.Parent)
 				b.AddKnownVariable (name, vi);
@@ -1620,12 +1559,6 @@ namespace Mono.CSharp {
 			return li;
 		}
 
-		public Hashtable Variables {
-			get {
-				return variables;
-			}
-		}
-
 		public LocalInfo GetLocalInfo (string name)
 		{
 			for (Block b = this; b != null; b = b.Parent) {
@@ -1641,11 +1574,7 @@ namespace Mono.CSharp {
 		public Expression GetVariableType (string name)
 		{
 			LocalInfo vi = GetLocalInfo (name);
-
-			if (vi != null)
-				return vi.Type;
-
-			return null;
+			return vi == null ? null : vi.Type;
 		}
 
 		public Expression GetConstantExpression (string name)
@@ -1665,20 +1594,8 @@ namespace Mono.CSharp {
 		///  </summary>
 		public bool IsConstant (string name)
 		{
-			Expression e = null;
-			
-			e = GetConstantExpression (name);
-			
+			Expression e = GetConstantExpression (name);
 			return e != null;
-		}
-
-		/// <returns>
-		///   A list of labels that were not used within this block
-		/// </returns>
-		public string [] GetUnreferenced ()
-		{
-			// FIXME: Implement me
-			return null;
 		}
 
 		public void AddStatement (Statement s)
@@ -1688,9 +1605,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool Used {
-			get {
-				return (flags & Flags.BlockUsed) != 0;
-			}
+			get { return (flags & Flags.BlockUsed) != 0; }
 		}
 
 		public void Use ()
@@ -1699,15 +1614,11 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasRet {
-			get {
-				return (flags & Flags.HasRet) != 0;
-			}
+			get { return (flags & Flags.HasRet) != 0; }
 		}
 
 		public bool IsDestructor {
-			get {
-				return (flags & Flags.IsDestructor) != 0;
-			}
+			get { return (flags & Flags.IsDestructor) != 0; }
 		}
 
 		public void SetDestructor ()
@@ -1980,9 +1891,9 @@ namespace Mono.CSharp {
 
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if ((this_variable != null) &&
-			    (vector.Reachability.Throws != FlowBranching.FlowReturns.Always) &&
-			    !this_variable.IsThisAssigned (ec, loc))
+			if ((flags & Flags.IsToplevel) != 0 && 
+			    !Toplevel.IsThisAssigned (ec) &&
+			    vector.Reachability.Throws != FlowBranching.FlowReturns.Always)
 				ok = false;
 
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
@@ -2116,6 +2027,8 @@ namespace Mono.CSharp {
 		Hashtable capture_contexts;
 		ArrayList children;
 
+		public bool HasVarargs = false;
+
 		//
 		// The parameters for the block.
 		//
@@ -2139,15 +2052,11 @@ namespace Mono.CSharp {
 		}
 
 		public CaptureContext ToplevelBlockCaptureContext {
-			get {
-				return capture_context;
-			}
+			get { return capture_context; }
 		}
 
 		public ToplevelBlock Container {
-			get {
-				return container;
-			}
+			get { return container; }
 		}
 
 		protected void AddChild (ToplevelBlock block)
@@ -2198,15 +2107,11 @@ namespace Mono.CSharp {
 		}
 
 		public CaptureContext CaptureContext {
-			get {
-				return capture_context;
-			}
+			get { return capture_context; }
 		}
 
 		public FlowBranching TopLevelBranching {
-			get {
-				return top_level_branching;
-			}
+			get { return top_level_branching; }
 		}
 
 		//
@@ -2266,6 +2171,42 @@ namespace Mono.CSharp {
 					return true;
 			}
 			return false;
+		}
+
+		LocalInfo this_variable = null;
+
+		// <summary>
+		//   Returns the "this" instance variable of this block.
+		//   See AddThisVariable() for more information.
+		// </summary>
+		public LocalInfo ThisVariable {
+			get { return this_variable; }
+		}
+
+
+		// <summary>
+		//   This is used by non-static `struct' constructors which do not have an
+		//   initializer - in this case, the constructor must initialize all of the
+		//   struct's fields.  To do this, we add a "this" variable and use the flow
+		//   analysis code to ensure that it's been fully initialized before control
+		//   leaves the constructor.
+		// </summary>
+		public LocalInfo AddThisVariable (TypeContainer tc, Location l)
+		{
+			if (this_variable == null) {
+				this_variable = new LocalInfo (tc, this, l);
+				this_variable.Used = true;
+				this_variable.IsThis = true;
+
+				Variables.Add ("this", this_variable);
+			}
+
+			return this_variable;
+		}
+
+		public bool IsThisAssigned (EmitContext ec)
+		{
+			return this_variable == null || this_variable.IsThisAssigned (ec, loc);
 		}
 
 		public bool ResolveMeta (EmitContext ec, InternalParameters ip)
