@@ -1,5 +1,11 @@
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added tests for IsPrefix() and optionally
+	  Compare() (which is currently used inside IsPrefix() which is
+	  however wrong when it comes to managed collation).
+
+2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added tests for IndexOf() and LastIndexOf().
 	  Fixed tests for Compare() - it should use overloaded ones of
 	  the tested library (do not call overloaded tests themselves).

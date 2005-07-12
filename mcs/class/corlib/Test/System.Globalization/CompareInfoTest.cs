@@ -177,6 +177,13 @@ public class CompareInfoTest : Assertion
 			ci.LastIndexOf (source, target, idx, len, opt));
 	}
 
+	void AssertIsPrefix (string message , bool expected, string source,
+		string target, CompareOptions opt)
+	{
+		Assert (message, expected == invariant.IsPrefix (
+			source, target, opt));
+	}
+
 	[Test]
 	public void GetSortKey ()
 	{
@@ -235,6 +242,10 @@ public class CompareInfoTest : Assertion
 		AssertCompare ("#9", 0, "A\u0304", "\u0100");
 		AssertCompare ("#10", 1, "ABCABC", 5, 1, "1", 0, 1, CompareOptions.IgnoreCase, invariant);
 		AssertCompare ("#11", 0, "-d:NET_2_0", 0, 1, "-", 0, 1);
+
+		AssertCompare ("#12", 0, "ae", "\u00E6");
+		AssertCompare ("#13", 0, "\u00E6", "ae");
+		AssertCompare ("#14", 0, "\u00E6s", 0, 1, "ae", 0, 2);
 	}
 
 	[Test]
@@ -284,6 +295,28 @@ public class CompareInfoTest : Assertion
 			return;
 
 		AssertIndexOf ("#1", 0, "\u00E6", 'a');
+	}
+
+	[Test]
+	public void IsPrefix ()
+	{
+		if (!doTest)
+			return;
+
+		AssertIsPrefix ("#1", false, "ABC", "c", CompareOptions.IgnoreCase);
+		AssertIsPrefix ("#2", false, "BC", "c", CompareOptions.IgnoreCase);
+		AssertIsPrefix ("#3", true, "C", "c", CompareOptions.IgnoreCase);
+		AssertIsPrefix ("#4", true, "EDCBA", "\u0117", ignoreCN);
+		AssertIsPrefix ("#5", true, "ABC", "AB", CompareOptions.IgnoreCase);
+		AssertIsPrefix ("#6", true, "ae", "\u00E6", CompareOptions.None);
+		AssertIsPrefix ("#7", true, "\u00E6", "ae", CompareOptions.None);
+
+		AssertIsPrefix ("#8", true, "\u00E6", "a", CompareOptions.None);
+		AssertIsPrefix ("#9", true, "\u00E6s", "ae", CompareOptions.None);
+		AssertIsPrefix ("#10", false, "\u00E6", "aes", CompareOptions.None);
+		AssertIsPrefix ("#11", true, "--start", "--", CompareOptions.None);
+		AssertIsPrefix ("#12", true, "-d:NET_1_1", "-", CompareOptions.None);
+		AssertIsPrefix ("#13", false, "-d:NET_1_1", "@", CompareOptions.None);
 	}
 }
 
