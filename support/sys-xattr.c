@@ -1,5 +1,5 @@
 /*
- * Wrapper functions for <sys/xattr.h> and <sys/extattr.h>
+ * Wrapper functions for <sys/xattr.h> (or <attr/xattr.h>) and <sys/extattr.h>
  *
  * Authors:
  *   Daniel Drake (dsd@gentoo.org)
@@ -9,17 +9,30 @@
 
 #include <config.h>
 
-#if defined(HAVE_SYS_XATTR_H) || defined(HAVE_SYS_EXTATTR_H)
+#if defined(HAVE_SYS_XATTR_H) || defined(HAVE_ATTR_ATTR_H) || defined(HAVE_SYS_EXTATTR_H)
 
 #include <sys/types.h>
 
+/*
+ * Where available, we prefer to use the libc implementation of the xattr
+ * syscalls. However, we also support using libattr for this on systems where
+ * libc does not provide this (e.g. glibc-2.2 and older)
+ * (configure-time magic is used to select which library to link to)
+ */
 #ifdef HAVE_SYS_XATTR_H
+// libc
 #include <sys/xattr.h>
-#endif
+#define EA_UNIX
+#elif HAVE_ATTR_ATTR_H
+// libattr
+#include <attr/xattr.h>
+#define EA_UNIX
+#endif /* HAVE_SYS_XATTR_H */
 
 #ifdef HAVE_SYS_EXTATTR_H
 #include <sys/extattr.h>
 #include <sys/uio.h>
+#define EA_BSD
 #endif
 
 #include <unistd.h>
@@ -79,7 +92,7 @@ G_BEGIN_DECLS
 // HELPER FUNCTIONS
 //
 
-#ifdef HAVE_SYS_EXTATTR_H
+#ifdef EA_BSD
 
 struct BsdNamespaceInfo {
 	const char *name;
@@ -307,7 +320,7 @@ bsd_flistxattr (int fd, void *list, mph_size_t size)
 	return full_size;
 }
 
-#endif /* HAVE_SYS_EXTATTR_H */
+#endif /* EA_BSD */
 
 //
 // THE PROVIDED API
@@ -319,7 +332,7 @@ Mono_Posix_Syscall_setxattr (const char *path, const char *name, void *value, mp
 	gint32 ret;
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 	{
 		int _flags;
 		if (Mono_Posix_FromXattrFlags (flags, &_flags) == -1)
@@ -330,7 +343,7 @@ Mono_Posix_Syscall_setxattr (const char *path, const char *name, void *value, mp
 		ret = setxattr (path, name, value, (size_t) size, _flags);
 #endif /* __APPLE__ */
 	}
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -341,7 +354,7 @@ Mono_Posix_Syscall_setxattr (const char *path, const char *name, void *value, mp
 		ret = extattr_set_file (path, namespace, _name, value, (size_t) size);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -353,14 +366,14 @@ Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, void *value, m
 	gint32 ret;
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 	{
 		int _flags;
 		if (Mono_Posix_FromXattrFlags (flags, &_flags) == -1)
 			return -1;
 		ret = lsetxattr (path, name, value, size, _flags);
 	}
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -371,7 +384,7 @@ Mono_Posix_Syscall_lsetxattr (const char *path, const char *name, void *value, m
 		ret = extattr_set_link (path, namespace, _name, value, (size_t) size);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -383,7 +396,7 @@ Mono_Posix_Syscall_fsetxattr (int fd, const char *name, void *value, mph_size_t 
 	gint32 ret;
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 	{
 		int _flags;
 		if (Mono_Posix_FromXattrFlags (flags, &_flags) == -1)
@@ -394,7 +407,7 @@ Mono_Posix_Syscall_fsetxattr (int fd, const char *name, void *value, mph_size_t 
 		ret = fsetxattr (fd, name, value, (size_t) size, _flags);
 #endif /* __APPLE__ */
 	}
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -405,7 +418,7 @@ Mono_Posix_Syscall_fsetxattr (int fd, const char *name, void *value, mph_size_t 
 		ret = extattr_set_fd (fd, namespace, _name, value, (size_t) size);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -416,13 +429,13 @@ Mono_Posix_Syscall_getxattr (const char *path, const char *name, void *value, mp
 	mph_ssize_t ret;
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 #if __APPLE__
 	ret = getxattr (path, name, value, (size_t) size, 0, 0);
 #else /* __APPLE__ */
 	ret = getxattr (path, name, value, (size_t) size);
 #endif /* __APPLE__ */
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -431,7 +444,7 @@ Mono_Posix_Syscall_getxattr (const char *path, const char *name, void *value, mp
 		ret = extattr_get_file (path, namespace, _name, value, (size_t) size);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -443,9 +456,9 @@ Mono_Posix_Syscall_lgetxattr (const char *path, const char *name, void *value, m
 	mph_ssize_t ret;
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 	ret = lgetxattr (path, name, value, (size_t) size);
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -454,7 +467,7 @@ Mono_Posix_Syscall_lgetxattr (const char *path, const char *name, void *value, m
 		ret = extattr_get_link (path, namespace, _name, value, (size_t) size);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -466,13 +479,13 @@ Mono_Posix_Syscall_fgetxattr (int fd, const char *name, void *value, mph_size_t 
 	mph_ssize_t ret;
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 #if __APPLE__
 	ret = fgetxattr (fd, name, value, (size_t) size, 0, 0);
 #else /* __APPLE__ */
 	ret = fgetxattr (fd, name, value, (size_t) size);
 #endif /* __APPLE__ */
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -481,7 +494,7 @@ Mono_Posix_Syscall_fgetxattr (int fd, const char *name, void *value, mph_size_t 
 		ret = extattr_get_fd (fd, namespace, _name, value, (size_t) size);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -491,15 +504,15 @@ Mono_Posix_Syscall_listxattr (const char *path, void *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 #if __APPLE__
 	return listxattr (path, list, (size_t) size, 0);
 #else /* __APPLE__ */
 	return listxattr (path, list, (size_t) size);
 #endif /* __APPLE__ */
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	return bsd_listxattr (path, list, size);
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 }
 
 #if !__APPLE__
@@ -508,11 +521,11 @@ Mono_Posix_Syscall_llistxattr (const char *path, void *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 	return llistxattr (path, list, (size_t) size);
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	return bsd_llistxattr (path, list, size);
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 }
 #endif /* !__APPLE__ */
 
@@ -521,15 +534,15 @@ Mono_Posix_Syscall_flistxattr (int fd, void *list, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 #if __APPLE__
 	return flistxattr (fd, list, (size_t) size, 0);
 #else /* __APPLE__ */
 	return flistxattr (fd, list, (size_t) size);
 #endif /* __APPLE__ */
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	return bsd_flistxattr (fd, list, size);
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 }
 
 gint32
@@ -537,13 +550,13 @@ Mono_Posix_Syscall_removexattr (const char *path, const char *name)
 {
 	gint32 ret;
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 #if __APPLE__
 	ret = removexattr (path, name, 0);
 #else /* __APPLE__ */
 	ret = removexattr (path, name);
 #endif /* __APPLE__ */
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -552,7 +565,7 @@ Mono_Posix_Syscall_removexattr (const char *path, const char *name)
 		ret = extattr_delete_file (path, namespace, _name);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -563,9 +576,9 @@ Mono_Posix_Syscall_lremovexattr (const char *path, const char *name)
 {
 	gint32 ret;
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 	ret = lremovexattr (path, name);
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -574,7 +587,7 @@ Mono_Posix_Syscall_lremovexattr (const char *path, const char *name)
 		ret = extattr_delete_link (path, namespace, _name);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
@@ -585,13 +598,13 @@ Mono_Posix_Syscall_fremovexattr (int fd, const char *name)
 {
 	gint32 ret;
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef EA_UNIX
 #if __APPLE__
 	ret = fremovexattr (fd, name, 0);
 #else /* __APPLE__ */
 	ret = fremovexattr (fd, name);
 #endif /* __APPLE__ */
-#else /* HAVE_SYS_XATTR_H */
+#else /* EA_UNIX */
 	{
 		char *_name;
 		int namespace;
@@ -600,14 +613,14 @@ Mono_Posix_Syscall_fremovexattr (int fd, const char *name)
 		ret = extattr_delete_fd (fd, namespace, _name);
 		g_free (_name);
 	}
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* EA_UNIX */
 
 	return ret;
 }
 
 G_END_DECLS
 
-#endif /* HAVE_SYS_XATTR_H || HAVE_SYS_EXTATTR_H */
+#endif /* HAVE_SYS_XATTR_H || HAVE_ATTR_ATTR_H || HAVE_SYS_EXTATTR_H */
 
 /*
  * vim: noexpandtab

@@ -69,7 +69,8 @@ libMonoPosixHelper_la_SOURCES =			\
 
 libMonoPosixHelper_la_LIBADD =			\
 	$(MPH_LIBS)				\
-	$(Z_LIBS)
+	$(Z_LIBS)				\
+	$(XATTR_LIB)
 
 # libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version

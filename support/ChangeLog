@@ -1,3 +1,9 @@
+2005-07-12  Daniel Drake  <dsd@gentoo.org>
+
+	* sys-xattr.c: Use <attr/attr.h> if <sys/xattr.h> does not exist (e.g. for
+	glibc 2.2)
+	* Makefile.am: Link to libattr if libc does not provide the xattr
+	syscalls.
 
 Thu Jul 7 12:35:20 EDT 2005 Paolo Molaro <lupus@ximian.com>
 
