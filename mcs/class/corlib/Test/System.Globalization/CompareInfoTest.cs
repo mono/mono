@@ -268,6 +268,79 @@ public class CompareInfoTest : Assertion
 			0x17, 1, 0x12, 1, 1, 0}, "A\u0304");
 		AssertSortKey ("#7", new byte [] {0xE, 2, 1,
 			0x17, 1, 0x12, 1, 1, 0}, "\u0100");
+
+		// StringSort
+		AssertSortKey ("#8", new byte [] {
+			0xE, 2, 6, 0x82, 1, 1, 1, 1, 0},
+			"a-", CompareOptions.StringSort);
+		// FIXME: not working
+//		AssertSortKey ("#9", new byte [] {
+//			0xE, 2, 6, 0x82, 1, 1, 2, 0x3, 1, 1, 0},
+//			"a\uFF0D", CompareOptions.StringSort);
+	}
+
+
+	[Test]
+	public void GetSortKeyIgnoreWidth ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#i1", new byte [] {
+			0xE, 2, 1, 1, 0x13, 1, 1, 0}, "\uFF21");
+		AssertSortKey ("#i2", new byte [] {
+			0xE, 2, 1, 1, 0x12, 1, 1, 0}, "\uFF21", CompareOptions.IgnoreWidth);
+		AssertSortKey ("#i3", new byte [] {
+			0xE, 2, 1, 1, 0x3, 1, 1, 0}, "\uFF41");
+		AssertSortKey ("#i4", new byte [] {
+			0xE, 2, 1, 1, 1, 1, 0}, "\uFF41", CompareOptions.IgnoreWidth);
+	}
+
+	[Test]
+	public void GetSortKeyDiacritical ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#i1", new byte [] {
+			0xE, 0x21, 1, 0xE, 1, 1, 1, 0}, "e\u0301");
+		AssertSortKey ("#i2", new byte [] {
+			0xE, 0x21, 1, 0x12, 1, 1, 1, 0}, "e\u0302");
+		AssertSortKey ("#i3", new byte [] {
+			0xE, 0x21, 1, 0x13, 1, 1, 1, 0}, "e\u0308");
+		AssertSortKey ("#i4", new byte [] {
+			0xE, 0x21, 1, 0x1F, 1, 1, 1, 0}, "e\u0308\u0301");
+		// FIXME: not working
+//		AssertSortKey ("#i5", new byte [] {
+//			0xE, 0x21, 1, 0x16, 1, 1, 1, 0}, "e\u0344");
+		AssertSortKey ("#i6", new byte [] {
+			0x22, 2, 1, 0xE, 1, 1, 0xC4, 0xFF, 2, 0xFF, 0xFF, 1, 0}, "\u3041\u0301");
+		AssertSortKey ("#i7", new byte [] {
+			0xC, 0x21, 1, 0xE, 1, 1, 1, 0}, "1\u0301");
+		AssertSortKey ("#i8", new byte [] {
+			0x22, 0xA, 1, 3, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0}, "\u304B\u309B");
+		AssertSortKey ("#i9", new byte [] {
+			0x22, 0xA, 1, 3, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0}, "\u304C");
+	}
+
+	[Test]
+	public void GetSortKeyIgnoreNonSpaceKana ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#i1", new byte [] {
+			0x22, 0x1A, 1, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0},
+			"\u305F");
+		AssertSortKey ("#i2", new byte [] {
+			0x22, 0x1A, 1, 3, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0},
+			"\u3060");
+		AssertSortKey ("#i3", new byte [] {
+			0x22, 0x1A, 1, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0},
+			"\u305F", CompareOptions.IgnoreNonSpace);
+		AssertSortKey ("#i4", new byte [] {
+			0x22, 0x1A, 1, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0},
+			"\u3060", CompareOptions.IgnoreNonSpace);
 	}
 
 	[Test]
