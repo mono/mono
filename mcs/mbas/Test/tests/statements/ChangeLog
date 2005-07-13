@@ -1,3 +1,9 @@
+2005-07-13  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* test-mbas.make : make clean now kills .exe.mdb debug information files
+	
+2005-07-13 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* GotoStatementB.vb : Backward target label out of goto block.
+
 2005-07-06  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	Patch submitted by 
 		Aldo Monteiro do Nascimento (aldo@psl-pr.softwarelivre.org)

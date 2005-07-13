@@ -19,7 +19,7 @@ run-test-ondotnet-local:
 	../test-mbas.pl --compiler='$(COMPILER)' --compilerflags='$(COMPILER_FLAGS)' --pattern='$(PATTERN)' --runtime=
 
 clean-local:
-	rm -f *.exe *.log *.results
+	rm -f *.exe *.log *.results *.exe.mdb
 
 all-local test-local install-local uninstall-local:
 	@:
