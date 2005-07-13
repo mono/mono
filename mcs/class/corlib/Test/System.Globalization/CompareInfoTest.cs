@@ -750,6 +750,10 @@ public class CompareInfoTest : Assertion
 		AssertIsPrefix ("#11", true, "--start", "--", CompareOptions.None);
 		AssertIsPrefix ("#12", true, "-d:NET_1_1", "-", CompareOptions.None);
 		AssertIsPrefix ("#13", false, "-d:NET_1_1", "@", CompareOptions.None);
+		// U+3007 is completely ignored character.
+		AssertIsPrefix ("#14", true, "\uff21\uff21", "\uff21", CompareOptions.None);
+		AssertIsPrefix ("#15", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+		AssertIsPrefix ("#16", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 	}
 
 	[Test]
@@ -766,7 +770,10 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#6", true, "\u00E6", "ae", CompareOptions.None);
 		AssertIsSuffix ("#7", true, "ae", "\u00E6", CompareOptions.None);
 		AssertIsSuffix ("#8", false, "e", "\u00E6", CompareOptions.None);
-
+		// U+3007 is completely ignored character.
+		AssertIsSuffix ("#14", true, "\uff21\uff21", "\uff21", CompareOptions.None);
+		AssertIsSuffix ("#15", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+		AssertIsSuffix ("#16", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 	}
 
 	[Test]
@@ -796,6 +803,10 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#9", 0, "--ABC", "--", CompareOptions.None);
 		AssertIndexOf ("#10", -1, "--ABC", "--", 1, 2, CompareOptions.None, invariant);
 		AssertIndexOf ("#11", 0, "AE", "\u00C6", CompareOptions.None);
+		// U+3007 is completely ignored character.
+		AssertIndexOf ("#12", 0, "\uff21\uff21", "\uff21", CompareOptions.None);
+		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+		AssertIndexOf ("#14", 0, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 	}
 
 
@@ -818,6 +829,10 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#11", -1, "--ABC", "--", 2, 2, CompareOptions.None, invariant);
 		AssertLastIndexOf ("#12", -1, "--ABC", "--", 4, 2, CompareOptions.None, invariant);
 		AssertLastIndexOf ("#13", 0, "AE", "\u00C6", CompareOptions.None);
+		// U+3007 is completely ignored character.
+		AssertLastIndexOf ("#14", 1, "\uff21\uff21", "\uff21", CompareOptions.None);
+		AssertLastIndexOf ("#15", 1, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+		AssertLastIndexOf ("#16", 1, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 	}
 }
 

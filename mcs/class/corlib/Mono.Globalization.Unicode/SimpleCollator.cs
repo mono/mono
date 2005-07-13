@@ -1462,7 +1462,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		// the head is contraction sortkey) and try IsPrefix().
 		int IndexOf (string s, string target, int start, int length)
 		{
-			Contraction ct = GetContraction (target, 0, target.Length);
+			int tidx = 0;
+			for (; tidx < target.Length; tidx++)
+				if (!IsIgnorable (target [tidx]))
+					break;
+			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			byte [] sortkey = ct != null ? ct.SortKey : null;
 			string replace = ct != null ? ct.Replacement : null;
 			do {
@@ -1472,7 +1476,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				else if (replace != null)
 					idx = IndexOf (s, replace, start, length);
 				else
-					idx = IndexOfPrimitiveChar (s, start, length, target [0]);
+					idx = IndexOfPrimitiveChar (s, start, length, target [tidx]);
 				if (idx < 0)
 					return -1;
 				if (IsPrefix (s, target, idx, length - (idx - start)))
@@ -1550,7 +1554,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		int LastIndexOf (string s, string target, int start, int length)
 		{
 			int orgStart = start;
-			Contraction ct = GetContraction (target, 0, target.Length);
+			int tidx = 0;
+			for (; tidx < target.Length; tidx++)
+				if (!IsIgnorable (target [tidx]))
+					break;
+			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			byte [] sortkey = ct != null ? ct.SortKey : null;
 			string replace = ct != null ? ct.Replacement : null;
 
@@ -1561,12 +1569,16 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				else if (replace != null)
 					idx = LastIndexOf (s, replace, start, length);
 				else
-					idx = LastIndexOfPrimitiveChar (s, start, length, target [0]);
+					idx = LastIndexOfPrimitiveChar (s, start, length, target [tidx]);
 
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, orgStart - idx + 1))
+				if (IsPrefix (s, target, idx, orgStart - idx + 1)) {
+					for (;idx < orgStart; idx++)
+						if (!IsIgnorable (s [idx]))
+							break;
 					return idx;
+				}
 				length--;
 				start--;
 			} while (length > 0);

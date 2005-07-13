@@ -1,5 +1,10 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added ignorable character in target for
+	  IsPrefix/IsSuffix/IndexOf/LastIndexOf methods.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added more special weight testcases.
 
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
