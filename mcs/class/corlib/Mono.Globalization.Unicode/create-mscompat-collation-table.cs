@@ -1441,6 +1441,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			offset = 0;//char.MaxValue - arr.Length;
 			doc.Load (jaXML);
 			s = doc.SelectSingleNode ("/ldml/collations/collation/rules/pc").InnerText;
+
+			// SPECIAL CASES
+			arr [0x4EDD] = 0x8002; // Chinese repetition mark?
+			arr [0x337B] = 0x8004; // Those 4 characters are Gengou
+			arr [0x337E] = 0x8005;
+			arr [0x337D] = 0x8006;
+			arr [0x337C] = 0x8007;
+
 			v = 0x8008;
 			foreach (char c in s) {
 				if (c < '\u4E00')
@@ -1450,14 +1458,26 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					if (v % 256 == 0)
 						v += 2;
 
+					// SPECIAL CASES:
+					if (c == '\u662D') // U+337C
+						continue;
+					if (c == '\u5927') // U+337D
+						continue;
+					if (c == '\u5E73') // U+337B
+						continue;
+					if (c == '\u660E') // U+337E
+						continue;
+					if (c == '\u9686') // U+F9DC
+						continue;
+
 					// FIXME: there are still remaining
 					// characters after U+FA0C.
 //					for (int k = 0; k < char.MaxValue; k++) {
 					for (int k = 0; k < '\uFA0C'; k++) {
 						if (decompIndex [k] == 0)
 							continue;
-						if (decompValues [decompIndex [k]] == c &&
-							decompLength [k] == 1 ||
+						if (decompValues [decompIndex [k]] == c /*&&
+							decompLength [k] == 1*/ ||
 							decompLength [k] == 3 &&
 							decompValues [decompIndex [k] + 1] == c) {
 							arr [k - offset] = (ushort) v++;
@@ -1539,6 +1559,21 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// LAMESPEC: these remapping should not be done.
 			// Windows have incorrect CJK compat mappings.
 			decompValues [decompIndex [0x32A9]] = 0x91AB;
+			decompLength [0x323B] = 1;
+			decompValues [decompIndex [0x323B]] = 0x5B78;
+			decompValues [decompIndex [0x32AB]] = 0x5B78;
+			decompValues [decompIndex [0x32A2]] = 0x5BEB;
+			decompLength [0x3238] = 1;
+			decompValues [decompIndex [0x3238]] = 0x52DE;
+			decompValues [decompIndex [0x3298]] = 0x52DE;
+
+			// LAMESPEC: custom remapping (which is not bugs but not fine, non-standard compliant things)
+			decompIndex [0xFA0C] = decompIndex [0xF929]; // borrow U+F929 room (being empty)
+			decompValues [decompIndex [0xFA0C]] = 0x5140;
+			decompLength [0xFA0C] = 1;
+			decompIndex [0xF929] = decompLength [0xF929] = 0;
+
+			decompIndex [0xF92C] = decompLength [0xF92C] = 0;
 		}
 
 		void ModifyParsedValues ()

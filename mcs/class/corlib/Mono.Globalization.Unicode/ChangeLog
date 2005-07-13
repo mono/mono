@@ -1,5 +1,11 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed CJK custom Japanese
+	  mapping. It (maybe as well as other CJK tables) mixes NFKD. For
+	  Japanese, modified NFKD table (because of Windows lame design).
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : added MONO_USE_MANAGED_COLLATION=no almost everywhere.
 	* MSCompatUnicodeTable.cs : FillCJK() was not invoked. Now it is
 	  invoked at any time it is required.
