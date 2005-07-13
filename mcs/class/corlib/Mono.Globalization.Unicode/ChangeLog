@@ -1,5 +1,9 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed missing Japanese bits.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs :
 	  tiny diacritical weight fix for U+20D0-U+20E1.
 

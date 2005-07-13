@@ -1753,6 +1753,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// only diacritical weight.
 			for (int i = 0x3099; i <= 0x309C; i++)
 				map [i] = new CharMapEntry (1, 1, 1);
+			map [0xFF9E] = new CharMapEntry (1, 1, 1);
+			map [0xFF9F] = new CharMapEntry (1, 1, 1);
+
 			map [0x309D] = new CharMapEntry (0xFF, 0xFF, 1);
 			map [0x309E] = new CharMapEntry (0xFF, 0xFF, 1);
 			for (int i = 0x30FC; i <= 0x30FE; i++)
@@ -2470,6 +2473,18 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [0x22] = 0x80;
 			AddLetterMap ((char) 0x3093, 0x22, 0);
 			AddLetterMap ((char) (0x3093 + 0x60), 0x22, 0);
+
+			map [0x30F4] = new CharMapEntry (map [0x30A6].Category,
+				map [0x30A6].Level1, 3);// voiced katakana U
+			map [0x30F5] = new CharMapEntry (map [0x30AB].Category,
+				map [0x30AB].Level1, 0);// small katakana Ka
+			map [0x30F6] = new CharMapEntry (map [0x30B1].Category,
+				map [0x30B1].Level1, 0);// small katakana Ke
+			// voiced Wa lines
+			for (int i = 0x30F7; i < 0x30FB; i++)
+				map [i] = new CharMapEntry (map [i - 8].Category,
+					map [i - 8].Level1,
+					3);
 
 			// JIS Japanese square chars.
 			fillIndex [0x22] = 0x97;
