@@ -784,18 +784,21 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			escape2.Source = null;
 			previousSortKey= previousSortKey2 = null;
 			previousChar = previousChar2 = -1;
-			int ret = Compare (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0);
+			bool dummy;
+			int ret = CompareInternal (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0, out dummy);
 			return ret == 0 ? 0 : ret < 0 ? -1 : 1;
 #endif
 		}
 
-		int Compare (string s1, int idx1, int len1, string s2,
-			int idx2, int len2, bool stringSort)
+		int CompareInternal (string s1, int idx1, int len1, string s2,
+			int idx2, int len2, bool stringSort,
+			out bool targetConsumed)
 		{
 			int start1 = idx1;
 			int start2 = idx2;
 			int end1 = idx1 + len1;
 			int end2 = idx2 + len2;
+			targetConsumed = false;
 
 			// It holds final result that comes from the comparison
 			// at level 2 or lower. Even if Compare() found the
@@ -839,6 +842,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx1 = escape1.Index;
 					end1 = escape1.End;
 					escape1.Source = null;
+					continue;
 				}
 				if (idx2 >= end2) {
 					if (escape2.Source == null)
@@ -848,6 +852,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx2 = escape2.Index;
 					end2 = escape2.End;
 					escape2.Source = null;
+					continue;
 				}
 #if false
 // FIXME: optimization could be done here.
@@ -1120,6 +1125,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (finalResult == 0)
 					finalResult = lv5Value1 - lv5Value2;
 			}
+			if (finalResult == 0 && idx2 == end2)
+				targetConsumed = true;
 			return idx1 != end1 ? 1 : idx2 == end2 ? finalResult : -1;
 		}
 
@@ -1132,12 +1139,28 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return IsPrefix (src, target, 0, src.Length, opt);
 		}
 
+#if true
+		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
+		{
+			SetOptions (opt);
+			bool consumed;
+			escape1.Source = null;
+			escape2.Source = null;
+			previousSortKey= previousSortKey2 = null;
+			previousChar = previousChar2 = -1;
+			int ret = CompareInternal (s, start, length,
+				target, 0, target.Length,
+				(opt & CompareOptions.StringSort) != 0,
+				out consumed);
+			return consumed;
+		}
+#else
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
 			return IsPrefix (s, target, start, length);
 		}
-
+#endif
 		// returns the consumed length in positive number, or -1 if
 		// target was not a prefix.
 		bool IsPrefix (string s, string target, int start, int length)

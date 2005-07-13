@@ -1,5 +1,14 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : when restoring from expansion, go back to the
+	  top of the loop (to avoid index out of range).
+	  Now IsPrefix() is implemented to reuse Compare() and thus it now
+	  supports extender as well.
+	* Collation-notes.txt : status update. Deleted optimization part in
+	  status section (it is duplicate).
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : some code reordering.
 	* create-mscompat-collation-table.cs : it was still missing U+3094.
 
