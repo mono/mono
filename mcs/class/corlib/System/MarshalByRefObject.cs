@@ -76,7 +76,7 @@ namespace System
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-		public object GetLifetimeService ()
+		public virtual object GetLifetimeService ()
 		{
 			if (_identity == null)
 				return null;
