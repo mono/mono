@@ -1439,8 +1439,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			category = "ja";
 			arr = cjkJA;
 			offset = 0;//char.MaxValue - arr.Length;
-			doc.Load (jaXML);
-			s = doc.SelectSingleNode ("/ldml/collations/collation/rules/pc").InnerText;
 
 			// SPECIAL CASES
 			arr [0x4EDD] = 0x8002; // Chinese repetition mark?
@@ -1450,7 +1448,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			arr [0x337C] = 0x8007;
 
 			v = 0x8008;
-			foreach (char c in s) {
+			foreach (JISCharacter jc in jisJapanese) {
+				if (jc.JIS < 0x8800)
+					continue;
+				char c = (char) jc.CP;
+
 				if (c < '\u4E00')
 					Console.Error.WriteLine ("---- warning: for {0} {1:X04} is omitted which should be {2:X04}", category, (int) c, v);
 				else {
@@ -1473,8 +1475,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					// FIXME: there are still remaining
 					// characters after U+FA0C.
 //					for (int k = 0; k < char.MaxValue; k++) {
-					for (int k = 0; k < '\uFA0C'; k++) {
-						if (decompIndex [k] == 0)
+					for (int k = 0; k < '\uFA0D'; k++) {
+						if (decompIndex [k] == 0 || IsIgnorable (k))
 							continue;
 						if (decompValues [decompIndex [k]] == c /*&&
 							decompLength [k] == 1*/ ||
@@ -1573,7 +1575,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			decompLength [0xFA0C] = 1;
 			decompIndex [0xF929] = decompLength [0xF929] = 0;
 
-			decompIndex [0xF92C] = decompLength [0xF92C] = 0;
+			decompValues [decompIndex [0xF92C]] = 0x90DE;
 		}
 
 		void ModifyParsedValues ()

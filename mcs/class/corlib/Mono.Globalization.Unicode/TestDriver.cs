@@ -34,9 +34,9 @@ namespace Mono.Globalization.Unicode
 //IsSuffix ("ae", "\u00E6", CompareOptions.None);
 //LastIndexOf ("AE", "A", 1, 2, CompareOptions.None);
 //LastIndexOf ("\u00C6", "AE", CompareOptions.None);
-//DumpSortKey ("\u4E03\u4E09");
-//coll = new SimpleCollator (new CultureInfo ("ja"));
-//DumpSortKey ("\u4E03\u4E09");
+DumpSortKey ("\u4E03\u4E09");
+coll = new SimpleCollator (new CultureInfo ("ja"));
+DumpSortKey ("\u4E03\u4E09");
 //return;
 			/*
 			DumpSortKey ("AE");

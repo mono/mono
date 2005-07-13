@@ -1,5 +1,9 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : ja CJK ideograph got completed.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Fixed CJK custom Japanese
 	  mapping. It (maybe as well as other CJK tables) mixes NFKD. For
 	  Japanese, modified NFKD table (because of Windows lame design).
