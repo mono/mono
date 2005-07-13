@@ -678,7 +678,12 @@ public class CompareInfoTest : Assertion
 
 		// Japanese (in invariant)
 		AssertCompare ("#15", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
-		AssertCompare ("#15", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertCompare ("#16", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+
+		// target is "empty" (in culture-sensitive context).
+		AssertCompare ("#17", 0, String.Empty, "\u3007");
+		AssertCompare ("#18", 1, "A", "\u3007");
+		AssertCompare ("#19", 1, "ABC", "\u3007");
 	}
 
 	[Test]
@@ -808,6 +813,10 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIndexOf ("#14", 0, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertIndexOf ("#15", 0, "\uff21\uff21", "\u3007", CompareOptions.None);
+		// target is "empty" (in culture-sensitive context).
+		AssertIndexOf ("#16", -1, String.Empty, "\u3007");
+		AssertIndexOf ("#17", 0, "A", "\u3007");
+		AssertIndexOf ("#18", 0, "ABC", "\u3007");
 	}
 
 

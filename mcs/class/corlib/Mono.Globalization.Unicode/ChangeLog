@@ -1,5 +1,11 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* managed-collation.patch : CompareInfo.Compare() should consider
+	  the possibilities that non-empty string might be actually empty
+	  in culture-sensitive context.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : IndexOf() and LastIndexOf() returns start when
 	  target is "empty" (in culture-sensitive context).
 

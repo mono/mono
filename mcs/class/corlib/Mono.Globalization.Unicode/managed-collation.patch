@@ -93,7 +93,7 @@ Index: System.Globalization/CompareInfo.cs
  		
  		/* Hide the .ctor() */
  		CompareInfo() {}
-@@ -57,25 +73,52 @@
+@@ -57,39 +73,59 @@
  		internal CompareInfo (CultureInfo ci)
  		{
  			this.culture = ci.LCID;
@@ -151,26 +151,71 @@ Index: System.Globalization/CompareInfo.cs
 +
  		public virtual int Compare (string string1, string string2)
  		{
- 			/* Short cuts... */
-@@ -89,7 +132,7 @@
- 				return(1);
- 			}
+-			/* Short cuts... */
+-			if(string1.Length == 0) {
+-				if(string2.Length == 0) {
+-					return(0);
+-				} else {
+-					return(-1);
+-				}
+-			} else if(string2.Length == 0) {
+-				return(1);
+-			}
++			/* Short cut... */
++			if(string1.Length == 0 && string2.Length == 0)
++				return(0);
  
 -			return(internal_compare (string1, 0, string1.Length,
 +			return(internal_compare_switch (string1, 0, string1.Length,
  						 string2, 0, string2.Length,
  						 CompareOptions.None));
  		}
-@@ -108,7 +151,7 @@
- 				return(1);
- 			}
+@@ -97,18 +133,11 @@
+ 		public virtual int Compare (string string1, string string2,
+ 					    CompareOptions options)
+ 		{
+-			/* Short cuts... */
+-			if(string1.Length == 0) {
+-				if(string2.Length == 0) {
+-					return(0);
+-				} else {
+-					return(-1);
+-				}
+-			} else if(string2.Length == 0) {
+-				return(1);
+-			}
++			/* Short cut... */
++			if(string1.Length == 0 && string2.Length == 0)
++				return(0);
  
 -			return(internal_compare (string1, 0, string1.Length,
 +			return(internal_compare_switch (string1, 0, string1.Length,
  						 string2, 0, string2.Length,
  						 options));
  		}
-@@ -146,7 +189,7 @@
+@@ -121,18 +150,9 @@
+ 			 * the offset >= string length specified check
+ 			 * in the process...)
+ 			 */
+-			if(string1.Length == 0 ||
+-			   offset1 == string1.Length) {
+-				if(string2.Length == 0 ||
+-				   offset2 == string2.Length) {
+-					return(0);
+-				} else {
+-					return(-1);
+-				}
+-			} else if(string2.Length == 0 ||
+-				  offset2 == string2.Length) {
+-				return(1);
+-			}
++			if ((string1.Length == 0 || offset1 == string1.Length) &&
++				(string2.Length == 0 || offset2 == string2.Length))
++				return(0);
+ 
+ 			if(offset1 < 0 || offset2 < 0) {
+ 				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
+@@ -146,7 +166,7 @@
  				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
  			}
  			
@@ -179,7 +224,29 @@ Index: System.Globalization/CompareInfo.cs
  						 string1.Length-offset1,
  						 string2, offset2,
  						 string2.Length-offset2,
-@@ -187,7 +230,7 @@
+@@ -162,18 +182,9 @@
+ 			 * the offset >= string length specified check
+ 			 * in the process...)
+ 			 */
+-			if(string1.Length == 0 ||
+-			   offset1 == string1.Length) {
+-				if(string2.Length == 0 ||
+-				   offset2 == string2.Length) {
+-					return(0);
+-				} else {
+-					return(-1);
+-				}
+-			} else if(string2.Length == 0 ||
+-				  offset2 == string2.Length) {
+-				return(1);
+-			}
++			if((string1.Length == 0 || offset1 == string1.Length) &&
++				(string2.Length == 0 || offset2 == string2.Length))
++				return(0);
+ 
+ 			if(offset1 < 0 || offset2 < 0) {
+ 				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
+@@ -187,7 +198,7 @@
  				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
  			}
  			
@@ -188,7 +255,36 @@ Index: System.Globalization/CompareInfo.cs
  						 string1.Length-offset1,
  						 string2, offset2,
  						 string2.Length-offset1,
-@@ -240,7 +283,7 @@
+@@ -203,21 +214,13 @@
+ 			 * the offset >= string length specified check
+ 			 * in the process...)
+ 			 */
+-			if(string1.Length == 0 ||
+-			   offset1 == string1.Length ||
+-			   length1 == 0) {
+-				if(string2.Length == 0 ||
+-				   offset2 == string2.Length ||
+-				   length2 == 0) {
+-					return(0);
+-				} else {
+-					return(-1);
+-				}
+-			} else if(string2.Length == 0 ||
+-				  offset2 == string2.Length ||
+-				  length2 == 0) {
+-				return(1);
+-			}
++			if((string1.Length == 0 ||
++				offset1 == string1.Length ||
++				length1 == 0) &&
++				(string2.Length == 0 ||
++				offset2 == string2.Length ||
++				length2 == 0))
++				return(0);
+ 
+ 			if(offset1 < 0 || length1 < 0 ||
+ 			   offset2 < 0 || length2 < 0) {
+@@ -240,7 +243,7 @@
  				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
  			}
  			
@@ -197,7 +293,35 @@ Index: System.Globalization/CompareInfo.cs
  						 string2, offset2, length2,
  						 CompareOptions.None));
  		}
-@@ -292,7 +335,7 @@
+@@ -255,21 +258,13 @@
+ 			 * the offset >= string length specified check
+ 			 * in the process...)
+ 			 */
+-			if(string1.Length == 0 ||
+-			   offset1 == string1.Length ||
+-			   length1 == 0) {
+-				if(string2.Length == 0 ||
+-				   offset2 == string2.Length ||
+-				   length2 == 0) {
++			if((string1.Length == 0 ||
++				offset1 == string1.Length ||
++				length1 == 0) &&
++				(string2.Length == 0 ||
++				offset2 == string2.Length ||
++				length2 == 0))
+ 					return(0);
+-				} else {
+-					return(-1);
+-				}
+-			} else if(string2.Length == 0 ||
+-				  offset2 == string2.Length ||
+-				  length2 == 0) {
+-				return(1);
+-			}
+ 
+ 			if(offset1 < 0 || length1 < 0 ||
+ 			   offset2 < 0 || length2 < 0) {
+@@ -292,7 +287,7 @@
  				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
  			}
  			
@@ -206,7 +330,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string2, offset2, length2,
  						 options));
  		}
-@@ -372,6 +415,8 @@
+@@ -372,6 +367,8 @@
  		public virtual SortKey GetSortKey(string source,
  						  CompareOptions options)
  		{
@@ -215,7 +339,7 @@ Index: System.Globalization/CompareInfo.cs
  			SortKey key=new SortKey (culture, source, options);
  
  			/* Need to do the icall here instead of in the
-@@ -460,7 +505,26 @@
+@@ -460,7 +457,26 @@
  						   int count, char value,
  						   CompareOptions options,
  						   bool first);
@@ -243,7 +367,7 @@ Index: System.Globalization/CompareInfo.cs
  		public virtual int IndexOf (string source, char value,
  					    int startIndex, int count,
  					    CompareOptions options)
-@@ -492,7 +556,7 @@
+@@ -492,7 +508,7 @@
  				}
  				return(-1);
  			} else {
@@ -252,7 +376,7 @@ Index: System.Globalization/CompareInfo.cs
  							count, value, options,
  							true));
  			}
-@@ -503,7 +567,26 @@
+@@ -503,7 +519,26 @@
  						   int count, string value,
  						   CompareOptions options,
  						   bool first);
@@ -280,7 +404,7 @@ Index: System.Globalization/CompareInfo.cs
  		public virtual int IndexOf (string source, string value,
  					    int startIndex, int count,
  					    CompareOptions options)
-@@ -524,7 +607,7 @@
+@@ -524,7 +559,7 @@
  				return(-1);
  			}
  
@@ -289,7 +413,7 @@ Index: System.Globalization/CompareInfo.cs
  						value, options, true));
  		}
  
-@@ -543,6 +626,9 @@
+@@ -543,6 +578,9 @@
  				throw new ArgumentNullException("prefix");
  			}
  
@@ -299,7 +423,7 @@ Index: System.Globalization/CompareInfo.cs
  			if(source.Length < prefix.Length) {
  				return(false);
  			} else {
-@@ -567,6 +653,9 @@
+@@ -567,6 +605,9 @@
  				throw new ArgumentNullException("suffix");
  			}
  
@@ -309,7 +433,7 @@ Index: System.Globalization/CompareInfo.cs
  			if(source.Length < suffix.Length) {
  				return(false);
  			} else {
-@@ -682,7 +771,7 @@
+@@ -682,7 +723,7 @@
  				}
  				return(-1);
  			} else {
@@ -318,7 +442,7 @@ Index: System.Globalization/CompareInfo.cs
  							count, value, options,
  							false));
  			}
-@@ -713,7 +802,7 @@
+@@ -713,7 +754,7 @@
  				return(0);
  			}
  
@@ -327,7 +451,7 @@ Index: System.Globalization/CompareInfo.cs
  					       value, options, false));
  		}
  
-@@ -724,13 +813,17 @@
+@@ -724,13 +765,17 @@
  
  		void IDeserializationCallback.OnDeserialization(object sender)
  		{
