@@ -1,3 +1,14 @@
+2005-07-13  Raja R Harinath  <rharinath@novell.com>
+
+	Make even more lazier.
+	* MatchCollection.cs (TryToGet): Don't generate match i+1 when
+	we're looking for match i.  Change post-conditions.
+	(FullList): New helper property.  Ensures the list is fully populated.
+	(Count, CopyTo): Use it.
+	(Enumerator.Current): Update to new post-conditions of TryToGet.
+	(Enumerator.MoveNext): Likewise.  Don't modify index if we're
+	beyond the end.
+
 2005-07-08  Raja R Harinath  <rharinath@novell.com>
 
 	* MatchCollection.cs: Convert to incremental mode.

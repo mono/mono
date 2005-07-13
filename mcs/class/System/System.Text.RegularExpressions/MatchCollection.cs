@@ -38,6 +38,8 @@ namespace System.Text.RegularExpressions
 	[Serializable]
 	public class MatchCollection: ICollection, IEnumerable {
 		private Match current;
+
+		// Stores all the matches before 'current'.  If !current.Success, it has all the successful matches.
 		private ArrayList list;
 
 		/* No public constructor */
@@ -48,10 +50,7 @@ namespace System.Text.RegularExpressions
 		}
 
 		public virtual int Count {
-			get {
-				TryToGet (Int32.MaxValue);
-				return list.Count;
-			}
+			get { return FullList.Count; }
 		}
 
 		public bool IsReadOnly {
@@ -62,20 +61,12 @@ namespace System.Text.RegularExpressions
 			get { return false; }
 		}
 
-		private bool TryToGet (int i)
-		{
-			while (i >= list.Count && current.Success) {
-				list.Add (current);
-				current = current.NextMatch ();
-			}
-			return i < list.Count;
-		}
 
 		public Match this [int i] {
 			get {
 				if (i < 0 || !TryToGet (i))
-					throw new ArgumentOutOfRangeException ("index out of range", "i");
-				return (Match) list [i];
+					throw new ArgumentOutOfRangeException ("i");
+				return i < list.Count ? (Match) list [i] : current;
 			}
 		}
 
@@ -85,14 +76,38 @@ namespace System.Text.RegularExpressions
 
 		public virtual void CopyTo (Array array, int index)
 		{
-			TryToGet (Int32.MaxValue);
-			list.CopyTo (array, index);
+			FullList.CopyTo (array, index);
 		}
 
 		public virtual IEnumerator GetEnumerator ()
 		{
 			// If !current.Success, the list is fully populated.  So, just use it.
 			return current.Success ? new Enumerator (this) : list.GetEnumerator ();
+		}
+
+		// Returns true when: i < list.Count 			 => this [i] == list [i]
+		//                    i == list.Count && current.Success => this [i] == current
+		private bool TryToGet (int i)
+		{
+			while (i > list.Count && current.Success) {
+				list.Add (current);
+				current = current.NextMatch ();
+			}
+			// Here we have: !(i > list.Count && current.Success)
+			// or in a slightly more useful form: i > list.Count => current.Success == false
+			return i < list.Count || current.Success;
+		}
+
+		private ICollection FullList {
+			get {
+				if (TryToGet (Int32.MaxValue)) {
+					// list.Count == Int32.MaxValue && current.Success
+					// i.e., we have more than Int32.MaxValue matches.
+					// We can't represent that number with Int32.
+					throw new SystemException ("too many matches");
+				}
+				return list;
+			}
 		}
 
 		class Enumerator : IEnumerator {
@@ -112,18 +127,23 @@ namespace System.Text.RegularExpressions
 
 			object IEnumerator.Current {
 				get {
-					if (index < 0 || index >= coll.list.Count)
-						throw new InvalidOperationException ();
-					return coll.list [index];
+					if (index < 0)
+						throw new InvalidOperationException ("'Current' called before 'MoveNext()'");
+					if (index > coll.list.Count)
+						throw new SystemException ("MatchCollection in invalid state");
+					if (index == coll.list.Count && !coll.current.Success)
+						throw new InvalidOperationException ("'Current' called after 'MoveNext()' returned false");
+					return index < coll.list.Count ? coll.list [index] : coll.current;
 				}
 			}
 
 			bool IEnumerator.MoveNext ()
 			{
-				if (coll.TryToGet (++index))
-					return true;
-				index = coll.list.Count;
-				return false;
+				if (index > coll.list.Count)
+					throw new SystemException ("MatchCollection in invalid state");
+				if (index == coll.list.Count && !coll.current.Success)
+					return false;
+				return coll.TryToGet (++index);
 			}
 		}
 	}
