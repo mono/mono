@@ -59,8 +59,8 @@ namespace Mono.Globalization.Unicode
 				0x3100, 0x4E00, 0xE800}; // FIXME: really?
 			int [] chsEnds = new int [] {
 				0x3400, 0xA000, 0x10000};
-			int [] cjkStarts = new int [] {0x4E00};
-			int [] cjkEnds = new int [] {0xA000};
+			int [] cjkStarts = new int [] {0x3100, 0x4E00, 0xF900};
+			int [] cjkEnds = new int [] {0x3400, 0xA000, 0xFB00};
 
 			Ignorable = new CodePointIndexer (ignoreStarts, ignoreEnds, -1, -1);
 			Category = new CodePointIndexer (catStarts, catEnds, 0, 0);

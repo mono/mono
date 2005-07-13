@@ -474,6 +474,7 @@ sw.Close ();
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
+			binary.Write (cjk.Length);
 #endif
 			for (int i = 0; i < cjk.Length; i++) {
 				if (i + offset == max)
@@ -626,6 +627,7 @@ sw.Close ();
 
 			ParseJISOrder (cp932); // in prior to ParseUnidata()
 			ParseUnidata (unidata);
+			ModifyUnidata ();
 			ParseDerivedCoreProperties (derivedCoreProps);
 			ParseScripts (scripts);
 			ParseCJK (chXML, jaXML, koXML);
@@ -1447,6 +1449,22 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					arr [(int) c - offset] = (ushort) v++;
 					if (v % 256 == 0)
 						v += 2;
+
+					// FIXME: there are still remaining
+					// characters after U+FA0C.
+//					for (int k = 0; k < char.MaxValue; k++) {
+					for (int k = 0; k < '\uFA0C'; k++) {
+						if (decompIndex [k] == 0)
+							continue;
+						if (decompValues [decompIndex [k]] == c &&
+							decompLength [k] == 1 ||
+							decompLength [k] == 3 &&
+							decompValues [decompIndex [k] + 1] == c) {
+							arr [k - offset] = (ushort) v++;
+							if (v % 256 == 0)
+								v += 2;
+						}
+					}
 				}
 			}
 
@@ -1502,16 +1520,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 		}
 
-		void ModifyParsedValues ()
+		void ModifyUnidata ()
 		{
-			// number, secondary weights
-			byte weight = 0x38;
-			int [] numarr = numberSecondaryWeightBounds;
-			for (int i = 0; i < numarr.Length; i += 2, weight++)
-				for (int cp = numarr [i]; cp < numarr [i + 1]; cp++)
-					if (Char.IsNumber ((char) cp))
-						diacritical [cp] = weight;
-
 			// Modify some decomposition equivalence
 			decompType [0xFE31] = 0;
 			decompIndex [0xFE31] = 0;
@@ -1525,6 +1535,21 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				diacritical [i] = 0xA;
 			for (int i = 0x3260; i <= 0x327B; i++)
 				diacritical [i] = 0xC;
+
+			// LAMESPEC: these remapping should not be done.
+			// Windows have incorrect CJK compat mappings.
+			decompValues [decompIndex [0x32A9]] = 0x91AB;
+		}
+
+		void ModifyParsedValues ()
+		{
+			// number, secondary weights
+			byte weight = 0x38;
+			int [] numarr = numberSecondaryWeightBounds;
+			for (int i = 0; i < numarr.Length; i += 2, weight++)
+				for (int cp = numarr [i]; cp < numarr [i + 1]; cp++)
+					if (Char.IsNumber ((char) cp))
+						diacritical [cp] = weight;
 
 			// Update name part of named characters
 			for (int i = 0; i < sortableCharNames.Count; i++) {

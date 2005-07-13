@@ -215,6 +215,7 @@ namespace Mono.Globalization.Unicode
 
 		public static readonly bool IsReady = true; // always
 
+		public static void FillCJK (string name) {}
 #else
 
 		static readonly char [] tailorings;
@@ -230,6 +231,7 @@ namespace Mono.Globalization.Unicode
 		static ushort [] cjkJA;
 		static ushort [] cjkKO;
 		static byte [] cjkKOlv2;
+		static string forLock = "forLock";
 
 		public static readonly bool IsReady = false;
 
@@ -288,10 +290,18 @@ namespace Mono.Globalization.Unicode
 			reader.Read (bytes, 0, size);
 		}
 
-		static void FillCJK (string name)
+		public static void FillCJK (string culture)
 		{
+			lock (forLock) {
+				FillCJKCore (culture);
+			}
+		}
+
+		static void FillCJKCore (string culture)
+		{
+			string name = null;
 			ushort [] arr = null;
-			switch (name) {
+			switch (culture) {
 			case "zh-CHS":
 				name = "cjkCHS";
 				arr = cjkCHS;
@@ -310,12 +320,30 @@ namespace Mono.Globalization.Unicode
 				break;
 			}
 
+			if (name == null || arr != null)
+				return;
+
 			using (Stream s = GetResource (String.Format ("collation.{0}.bin", name))) {
 				BinaryReader reader = new BinaryReader (s);
 				int size = reader.ReadInt32 ();
 				arr = new ushort [size];
 				for (int i = 0; i < size; i++)
 					arr [i] = reader.ReadUInt16 ();
+			}
+
+			switch (culture) {
+			case "zh-CHS":
+				cjkCHS = arr;
+				break;
+			case "zh-CHT":
+				cjkCHT = arr;
+				break;
+			case "ja":
+				cjkJA = arr;
+				break;
+			case "ko":
+				cjkKO = arr;
+				break;
 			}
 
 			if (name != "cjkKO")

@@ -1,3 +1,15 @@
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added MONO_USE_MANAGED_COLLATION=no almost everywhere.
+	* MSCompatUnicodeTable.cs : FillCJK() was not invoked. Now it is
+	  invoked at any time it is required.
+	* SimpleCollator.cs : call FillCJK() above in .ctor().
+	* MSCompatUnicodeTableUtil.cs : CJK range was wider.
+	* create-mscompat-collation-table.cs : CJK binary was missing the
+	  length. CJK remapping is being moved to ModifyUnidata().
+	  For cjk-ja mapping, we have to consider compat characters to be
+	  added to the map, besides the raw UCA table.
+
 2005-07-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SortKeyBuffer.cs : Fixed shift level computation to match w/ Windows.

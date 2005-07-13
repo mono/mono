@@ -289,8 +289,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
 			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
+			string name = GetNeutralCulture (culture).Name;
+
+			Uni.FillCJK (name);
+
 			// custom CJK table support.
-			switch (GetNeutralCulture (culture).Name) {
+			switch (name) {
 			case "zh-CHS":
 				cjkTable = Uni.CjkCHS;
 				cjkIndexer = UUtil.CjkCHS;
