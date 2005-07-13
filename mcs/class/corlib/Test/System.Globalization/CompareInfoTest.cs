@@ -52,6 +52,7 @@ public class CompareInfoTest : Assertion
 
 	CompareInfo invariant = CultureInfo.InvariantCulture.CompareInfo;
 	CompareInfo french = new CultureInfo ("fr").CompareInfo;
+	CompareInfo japanese = new CultureInfo ("ja").CompareInfo;
 
 	CompareOptions ignoreCW =
 		CompareOptions.IgnoreWidth | CompareOptions.IgnoreCase;
@@ -529,6 +530,20 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i21", new byte [] {
 			0x1E, 7, 0x1E, 0xD, 1, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E02");
+	}
+
+	[Test]
+	public void CustomCJKTable ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#1", new byte [] {
+			0x9E, 9, 0x9E, 0x11, 1, 1, 1, 1, 0},
+			"\u4E03\u4E09");
+		AssertSortKey ("#2", new byte [] {
+			0x84, 0xD3, 0x84, 0x61, 1, 1, 1, 1, 0},
+			"\u4E03\u4E09", CompareOptions.None, japanese);
 	}
 
 	[Test]
