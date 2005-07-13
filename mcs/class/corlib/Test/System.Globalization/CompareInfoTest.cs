@@ -438,6 +438,14 @@ public class CompareInfoTest : Assertion
 //		AssertSortKey ("#i19", new byte [] {
 //			0x22, 0x22, 0x22, 0xC, 0x22, 0xC, 1, 1, 1, 0xFF, 3, 4, 2, 0xFF, 0xFF, 1, 0},
 //			"\u306A\u304F\u3031");
+
+		// IgnoreWidth -> all Kana becomes half-width
+		AssertSortKey ("#i20", new byte [] {
+			34, 26, 34, 3, 34, 44, 1, 3, 2, 3, 1, 1, 255, 2, 196, 196, 196, 255, 196, 196, 196, 255, 1, 0},
+			"\uFF80\uFF9E\uFF72\uFF8C\uFF9E", CompareOptions.IgnoreWidth);
+		AssertSortKey ("#i21", new byte [] {
+			34, 26, 34, 3, 34, 44, 1, 3, 2, 3, 1, 1, 255, 2, 196, 196, 196, 255, 196, 196, 196, 255, 1, 0},
+			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
 	}
 
 	[Test]
@@ -667,6 +675,10 @@ public class CompareInfoTest : Assertion
 		AssertCompare ("#12", 0, "ae", "\u00E6");
 		AssertCompare ("#13", 0, "\u00E6", "ae");
 		AssertCompare ("#14", 0, "\u00E6s", 0, 1, "ae", 0, 2);
+
+		// Japanese (in invariant)
+		AssertCompare ("#15", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
+		AssertCompare ("#15", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
 	}
 
 	[Test]
