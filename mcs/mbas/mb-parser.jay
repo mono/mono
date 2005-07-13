@@ -2893,7 +2893,14 @@ jump_statement
 goto_statement
 	: GOTO label_name  
 	  {
+		Block block = current_block;
+	  
+		while( current_block.Parent != null )
+			current_block = current_block.Parent;
+
 		$$ = new Goto (current_block, (string) $2, lexer.Location);
+
+		current_block = block;
 	  }
 	;
 	

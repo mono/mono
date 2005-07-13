@@ -1,3 +1,8 @@
+2005-07-13 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* mb-parser.jay:
+	* block.cs: Support and successfully find goto target labels
+	declared out of block that contains the goto statement.
+
 2005-07-13 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*statement.cs: extract class Block into new source block.cs
 	*mbas.exe.sources: added newly extracted block.cs

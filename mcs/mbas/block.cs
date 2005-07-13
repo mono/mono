@@ -257,8 +257,8 @@ namespace Mono.MonoBASIC {
 				return null;
 
 			foreach (Block child in children) {
-				if (!child.Implicit)
-					continue;
+			//	if (!child.Implicit)
+			//		continue;
 
 				s = child.LookupLabel (name);
 				if (s != null) 
