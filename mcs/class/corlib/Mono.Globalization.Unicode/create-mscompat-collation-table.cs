@@ -1745,7 +1745,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
 			// overflow of level 2 unless we start before 0xDD).
-			fillIndex [0x1] = 0xDC;
+			fillIndex [0x1] = 0xDD;
 			for (int i = 0x20d0; i <= 0x20e1; i++)
 				AddCharMap ((char) i, 0x1, 1);
 
