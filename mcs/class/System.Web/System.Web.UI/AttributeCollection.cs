@@ -60,7 +60,12 @@ namespace System.Web.UI {
 			get { return bag [key] as string; }
 
 			set {
-				Add (key, value);
+				if (0 == String.Compare (key, "style", true)) {
+					CssStyle.Clear();
+					CssStyle.FillStyle (value);
+					key = "style";	// Needs to be always lowercase
+				}
+				bag.Add (key, value);
 			}
 		}
 
@@ -70,9 +75,10 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			if (styleCollection != null && 0 == String.Compare (key, "style", true)) {
-				styleCollection.Clear();
-				styleCollection.FillStyle (value);
+			if (0 == String.Compare (key, "style", true)) {
+				CssStyle.Clear();
+				CssStyle.FillStyle (value);
+				key = "style";	// Needs to be always lowercase
 			}
 			bag.Add (key, value);
 		}
