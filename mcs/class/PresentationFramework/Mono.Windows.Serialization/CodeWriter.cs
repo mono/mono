@@ -61,6 +61,9 @@ namespace Mono.Windows.Serialization {
 		// 	instance
 		public void CreateTopLevel(Type parent, string className)
 		{
+			if (className == null) {
+				className = "derived" + parent.Name;
+			}
 			int endNamespaceName = className.LastIndexOf(".");
 			string clrNamespace;
 			if (endNamespaceName < 0)

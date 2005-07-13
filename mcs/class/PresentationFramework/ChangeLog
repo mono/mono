@@ -1,3 +1,11 @@
+2005-07-11  Iain McCoy  <iain@mccoy.id.au>
+
+	* Makefile,
+	  Test/XamlParser.cs: added a few tests
+	* Mono.Windows.Serialization/CodeWriter.cs,
+	  Mono.Windows.Serialization/XamlParser.cs: fixed some bugs that the
+	  new tests turned up
+
 2005-07-08  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/ObjectWriter.cs: code to build objects at

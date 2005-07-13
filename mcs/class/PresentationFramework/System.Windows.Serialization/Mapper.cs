@@ -133,9 +133,15 @@ namespace System.Windows.Serialization {
 
 		Assembly getAssembly(string name)
 		{
-			if (assemblyPath[name] != null)
+			if (assemblyPath.ContainsKey(name))
 				name = (string)assemblyPath[name];
-			return Assembly.Load(name);
+			Assembly result = Assembly.LoadFrom(name);
+			if (result == null)
+				result = Assembly.Load(name);
+			if (result == null)
+				throw new Exception("Could not find assembly with name " + name);
+			else
+				return result;
 		}
 
 		public void SetAssemblyPath(string assemblyName, string assemblyPath)

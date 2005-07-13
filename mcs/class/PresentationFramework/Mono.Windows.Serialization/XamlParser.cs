@@ -52,20 +52,33 @@ namespace Mono.Windows.Serialization {
 			public CurrentType type;
 		}
 	
+		private bool begun = false;
+
 		private ParserState currentState = null;
 		private ArrayList oldStates = new ArrayList();
 	
-		public XamlParser(string filename, XamlWriter writer)
+		public XamlParser(string filename, XamlWriter writer) : this(
+				new XmlTextReader(filename), writer)
 		{
-			reader = new XmlTextReader(filename);
+		}
+		
+		public XamlParser(TextReader reader, XamlWriter writer) : this(
+				new XmlTextReader(reader), writer)
+		{
+		}
+		
+		public XamlParser(XmlReader reader, XamlWriter writer)
+		{
+			this.reader = reader;
 			this.writer = writer;
 		}
 		
 		public void Parse()
 		{
 			while (reader.Read()) {
-				if (currentState != null &&
-						currentState.type == CurrentType.Code)
+				if (begun && currentState == null)
+					throw new Exception("Too far: " + reader.NodeType + ", " + reader.Name);
+				if (currentState != null && currentState.type == CurrentType.Code)
 				{
 					if (reader.NodeType == XmlNodeType.EndElement &&
 							reader.LocalName == "Code" && 
@@ -222,6 +235,10 @@ namespace Mono.Windows.Serialization {
 			if (parent.GetInterface("System.Windows.Serialization.IAddChild") == null)
 				{} //TODO: throw exception
 			if (currentState == null) {
+				if (reader.GetAttribute("Name", XAML_NAMESPACE) != null)
+					throw new Exception("The XAML Name attribute can not be applied to top level elements\n"+
+							"Do you mean the Class attribute?");
+				begun = true;
 				createTopLevel(parent.AssemblyQualifiedName, reader.GetAttribute("Class", XAML_NAMESPACE));
 			} else {
 				string name = reader.GetAttribute("Name", XAML_NAMESPACE);
@@ -256,9 +273,6 @@ namespace Mono.Windows.Serialization {
 			currentState = new ParserState();
 			currentState.type = CurrentType.Object;
 			currentState.obj = t;
-			if (className == null) {
-				className = "derived" + t.Name;
-			}
 			writer.CreateTopLevel(t, className);
 		}
 
@@ -355,13 +369,12 @@ namespace Mono.Windows.Serialization {
 		{
 			if (currentState.type == CurrentType.Code)
 				writer.CreateCode((string)currentState.obj);
-			if (currentState.type == CurrentType.Object)
+			else if (currentState.type == CurrentType.Object)
 				writer.EndObject();
 			else if (currentState.type == CurrentType.Property)
 				writer.EndProperty();
 			else if (currentState.type == CurrentType.DependencyProperty)
 				writer.EndDependencyProperty();
-				
 			pop();
 		}
 
@@ -375,7 +388,6 @@ namespace Mono.Windows.Serialization {
 			int lastIndex = oldStates.Count - 1;
 			currentState = (ParserState)oldStates[lastIndex];
 			oldStates.RemoveAt(lastIndex);
-
 		}
 
 	}
