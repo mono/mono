@@ -293,6 +293,11 @@ sw.Close ();
 				level1 [i] = map [i].Level1;
 				level2 [i] = map [i].Level2;
 				level3 [i] = ComputeLevel3Weight ((char) i);
+				// For Japanese Half-width characters, don't
+				// map widthCompat. It is IgnoreKanaType that
+				// handles those width differences.
+				if (0xFF6D <= i && i <= 0xFF9D)
+					continue;
 				switch (decompType [i]) {
 				case DecompositionNarrow:
 				case DecompositionWide:
@@ -1755,7 +1760,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				map [i] = new CharMapEntry (1, 1, 1);
 			map [0xFF9E] = new CharMapEntry (1, 1, 1);
 			map [0xFF9F] = new CharMapEntry (1, 1, 1);
-
 			map [0x309D] = new CharMapEntry (0xFF, 0xFF, 1);
 			map [0x309E] = new CharMapEntry (0xFF, 0xFF, 1);
 			for (int i = 0x30FC; i <= 0x30FE; i++)

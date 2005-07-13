@@ -366,6 +366,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return ret;
 		}
 
+		bool IsHalfKana (int cp)
+		{
+			return ignoreWidth || Uni.IsHalfWidthKana ((char) cp);
+		}
+
 		void SetOptions (CompareOptions options)
 		{
 			this.ignoreNonSpace = (options & CompareOptions.IgnoreNonSpace) != 0;
@@ -490,7 +495,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			SetOptions (options);
 
-			buf.Initialize (options, s, frenchSort);
+			buf.Initialize (options, lcid, s, frenchSort);
 			int end = start + length;
 			previousChar = -1;
 			GetSortKey (s, start, end);
@@ -654,7 +659,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					Uni.IsJapaneseSmallLetter ((char) i),
 					ToDashTypeValue (ext),
 					!Uni.IsHiragana ((char) i),
-					Uni.IsHalfWidthKana ((char) i)
+					IsHalfKana ((char) i)
 					);
 				if (!ignoreNonSpace && ext == ExtenderType.Voiced)
 					// Append voice weight
@@ -985,13 +990,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 				if (currentLevel == 2)
 					continue;
-				if (!ignoreWidth) {
-					ret = sk1 [3] - sk2 [3];
-					if (ret != 0) {
-						finalResult = ret;
-						currentLevel = 2;
-						continue;
-					}
+				ret = sk1 [3] - sk2 [3];
+				if (ret != 0) {
+					finalResult = ret;
+					currentLevel = 2;
+					continue;
 				}
 				if (currentLevel == 3)
 					continue;
@@ -1002,17 +1005,17 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 				if (special1) {
 					ret = CompareFlagPair (
-						Uni.IsJapaneseSmallLetter ((char) i1),
-						Uni.IsJapaneseSmallLetter ((char) i2));
+						!Uni.IsJapaneseSmallLetter ((char) i1),
+						!Uni.IsJapaneseSmallLetter ((char) i2));
 					ret = ret != 0 ? ret :
 						Uni.GetJapaneseDashType ((char) i1) -
 						Uni.GetJapaneseDashType ((char) i2);
 					ret = ret != 0 ? ret : CompareFlagPair (
-						!Uni.IsHiragana ((char) i1),
-						!Uni.IsHiragana ((char) i2));
+						Uni.IsHiragana ((char) i1),
+						Uni.IsHiragana ((char) i2));
 					ret = ret != 0 ? ret : CompareFlagPair (
-						Uni.IsHalfWidthKana ((char) i1),
-						Uni.IsHalfWidthKana ((char) i2));
+						!IsHalfKana ((char) i1),
+						!IsHalfKana ((char) i2));
 					if (ret != 0) {
 						finalResult = ret;
 						currentLevel = 3;
@@ -1366,8 +1369,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return 0;
 			char target = (char) ct;
 			ret = CompareFlagPair (
-				Uni.IsJapaneseSmallLetter (src),
-				Uni.IsJapaneseSmallLetter (target));
+				!Uni.IsJapaneseSmallLetter (src),
+				!Uni.IsJapaneseSmallLetter (target));
 			if (ret != 0)
 				return ret;
 			ret = Uni.GetJapaneseDashType (src) -
@@ -1378,8 +1381,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				Uni.IsHiragana (target));
 			if (ret != 0)
 				return ret;
-			ret = CompareFlagPair (Uni.IsHalfWidthKana (src),
-				Uni.IsHalfWidthKana (target));
+			ret = CompareFlagPair (!IsHalfKana (src),
+				!IsHalfKana (target));
 			return ret;
 		}
 
@@ -1619,8 +1622,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				Uni.GetJapaneseDashType ((char) ti) ||
 				!Uni.IsHiragana ((char) si) !=
 				!Uni.IsHiragana ((char) ti) ||
-				Uni.IsHalfWidthKana ((char) si) !=
-				Uni.IsHalfWidthKana ((char) ti))
+				IsHalfKana ((char) si) !=
+				IsHalfKana ((char) ti))
 				return false;
 			return true;
 		}

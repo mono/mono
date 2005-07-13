@@ -37,8 +37,10 @@ namespace Mono.Globalization.Unicode
 			l1b = l2b = l3b = l4sb = l4tb = l4kb = l4wb = l5b = null;
 		}
 
-		internal void Initialize (CompareOptions options, string s, bool frenchSort)
+		internal void Initialize (CompareOptions options, int lcid, string s, bool frenchSort)
 		{
+			this.source = s;
+			this.lcid = lcid;
 			this.options = options;
 			int len = s.Length;
 			processLevel2 = (options & CompareOptions.IgnoreNonSpace) == 0;
@@ -215,7 +217,7 @@ namespace Mono.Globalization.Unicode
 
 			l2 = GetOptimizedLength (l2b, l2, 2);
 			l3 = GetOptimizedLength (l3b, l3, 2);
-			bool hasJapaneseWeight = (l4s > 0);
+			bool hasJapaneseWeight = (l4s > 0); // snapshot before being optimized
 			l4s = GetOptimizedLength (l4sb, l4s, 0xE4);
 			l4t = GetOptimizedLength (l4tb, l4t, 3);
 			l4k = GetOptimizedLength (l4kb, l4k, 0xE4);
