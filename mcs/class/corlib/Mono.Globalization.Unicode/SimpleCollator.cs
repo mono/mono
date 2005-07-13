@@ -613,7 +613,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					n += ct.Source.Length - 1;
 				}
 				else {
-					previousChar = i;
+					if (!Uni.IsIgnorableNonSpacing (i))
+						previousChar = i;
 					FillSortKeyRaw (i, ExtenderType.None);
 				}
 			}
@@ -647,6 +648,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			byte level2 = Level2 (i);
 			if (ext == ExtenderType.Buggy)
 				level2 = 5;
+			else if (ext == ExtenderType.Conditional)
+				level2 = 0;
 			if (Uni.HasSpecialWeight ((char) i)) {
 				byte level1 = Level1 (i);
 				if (ext == ExtenderType.Conditional)

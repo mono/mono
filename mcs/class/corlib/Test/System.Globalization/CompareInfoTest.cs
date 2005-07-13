@@ -446,6 +446,18 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i21", new byte [] {
 			34, 26, 34, 3, 34, 44, 1, 3, 2, 3, 1, 1, 255, 2, 196, 196, 196, 255, 196, 196, 196, 255, 1, 0},
 			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
+
+		AssertSortKey ("#i22", new byte [] {
+			0x22, 0x2A, 0x22, 2, 0x22, 0x44, 1, 3, 1, 1, 0xFF,
+			3, 5, 2, 0xC4, 0xC4, 0xC4, 0xFF, 0xC4, 0xC4, 0xC4,
+			0xFF, 1, 0},
+			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
+		// FIXME: half-width extender is not working fine
+		AssertSortKey ("#i23", new byte [] {
+			0x22, 0x2A, 0x22, 2, 0x22, 0x44, 1, 3, 1, 1, 0xFF,
+			3, 5, 2, 0xC4, 0xC4, 0xC4, 0xFF, 0xC4, 0xC4, 0xC4,
+			0xFF, 1, 0},
+			"\uFF8A\uFF9E\uFF70\uFF99", CompareOptions.IgnoreWidth);
 	}
 
 	[Test]
@@ -679,6 +691,11 @@ public class CompareInfoTest : Assertion
 		// Japanese (in invariant)
 		AssertCompare ("#15", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
 		AssertCompare ("#16", 1, "\u30D0\u30FD\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertCompare ("#16-2", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
+			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
+		// FIXME: not working
+//		AssertCompare ("#16-3", 0, "\uFF8A\uFF9E\uFF70\uFF99",
+//			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 
 		// target is "empty" (in culture-sensitive context).
 		AssertCompare ("#17", 0, String.Empty, "\u3007");
