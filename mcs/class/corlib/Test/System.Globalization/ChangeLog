@@ -1,5 +1,9 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added Czech and Hungarian sorting tests.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added more diacritical tests.
 
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>

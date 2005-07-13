@@ -53,6 +53,8 @@ public class CompareInfoTest : Assertion
 	CompareInfo invariant = CultureInfo.InvariantCulture.CompareInfo;
 	CompareInfo french = new CultureInfo ("fr").CompareInfo;
 	CompareInfo japanese = new CultureInfo ("ja").CompareInfo;
+	CompareInfo czech = new CultureInfo ("cs").CompareInfo;
+	CompareInfo hungarian = new CultureInfo ("hu").CompareInfo;
 
 	CompareOptions ignoreCW =
 		CompareOptions.IgnoreWidth | CompareOptions.IgnoreCase;
@@ -556,6 +558,78 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i21", new byte [] {
 			0x1E, 7, 0x1E, 0xD, 1, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E02");
+	}
+
+	[Test]
+	public void GetSortKeyCzechTailoring ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#i1", new byte [] {
+			0xE, 0xA, 0xE, 0x2C, 1, 1, 1, 1, 0},
+			"ch");
+		AssertSortKey ("#cs1", new byte [] {
+			0xE, 0x2E, 1, 1, 1, 1, 0},
+			"ch", CompareOptions.None, czech);
+		AssertSortKey ("#i2", new byte [] {
+			0xE, 0x8A, 1, 0x14, 1, 1, 1, 0},
+			"r\u030C");
+		AssertSortKey ("#cs2", new byte [] {
+			0xE, 0x8A, 1, 0x14, 1, 1, 1, 0},
+			"r\u030C", CompareOptions.None, czech);
+	}
+
+	[Test]
+	public void GetSortKeyHungarianTailoring ()
+	{
+		if (!doTest)
+			return;
+
+		AssertSortKey ("#1", new byte [] {
+			0xE, 0xE, 1, 1, 0x1A, 1, 1, 0},
+			"CS", CompareOptions.None, hungarian);
+		AssertSortKey ("#2", new byte [] {
+			0xE, 0xE, 1, 1, 0x12, 1, 1, 0},
+			"Cs", CompareOptions.None, hungarian);
+		AssertSortKey ("#3", new byte [] {
+			0xE, 0xE, 1, 1, 1, 1, 0},
+			"cs", CompareOptions.None, hungarian);
+		AssertSortKey ("#4", new byte [] {
+			0xE, 0x1C, 1, 1, 0x1A, 1, 1, 0},
+			"DZ", CompareOptions.None, hungarian);
+		AssertSortKey ("#5", new byte [] {
+			0xE, 0x1C, 1, 1, 0x12, 1, 1, 0},
+			"Dz", CompareOptions.None, hungarian);
+		AssertSortKey ("#6", new byte [] {
+			0xE, 0x1C, 1, 1, 1, 1, 0},
+			"dz", CompareOptions.None, hungarian);
+		AssertSortKey ("#7", new byte [] {
+			0xE, 0x75, 1, 1, 0x1A, 1, 1, 0},
+			"NY", CompareOptions.None, hungarian);
+		AssertSortKey ("#8", new byte [] {
+			0xE, 0x75, 1, 1, 0x12, 1, 1, 0},
+			"Ny", CompareOptions.None, hungarian);
+		AssertSortKey ("#9", new byte [] {
+			0xE, 0x75, 1, 1, 1, 1, 0},
+			"ny", CompareOptions.None, hungarian);
+		AssertSortKey ("#10", new byte [] {
+			0xE, 0xB1, 1, 1, 0x1A, 1, 1, 0},
+			"ZS", CompareOptions.None, hungarian);
+		AssertSortKey ("#11", new byte [] {
+			0xE, 0xB1, 1, 1, 0x12, 1, 1, 0},
+			"Zs", CompareOptions.None, hungarian);
+		AssertSortKey ("#12", new byte [] {
+			0xE, 0xB1, 1, 1, 1, 1, 0},
+			"zs", CompareOptions.None, hungarian);
+
+		// Windows seems to have bugs around repetitive characters
+		// that is tailored.
+//		AssertSortKey ("#x", new byte [] {
+//			0xE, 0x2E, 1, 1, 1, 1, 0},
+//			"CCS", CompareOptions.None, hungarian);
+
+		// FIXME: we need to handle case insensitivity
 	}
 
 	[Test]
