@@ -188,10 +188,10 @@ namespace System
 		public extern int GetLowerBound (int dimension);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern object GetValue (int[] indices);
+		public extern object GetValue (params int[] indices);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern void SetValue (object value, int[] indices);
+		public extern void SetValue (object value, params int[] indices);
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -486,7 +486,7 @@ namespace System
 		}
 
 		[ComVisible (false)]
-		public object GetValue (long [] indices)
+		public object GetValue (params long [] indices)
 		{
 			if (indices == null) {
 				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
@@ -497,7 +497,7 @@ namespace System
 		}
 
 		[ComVisible (false)]
-		public void SetValue (object value, long [] indices)
+		public void SetValue (object value, params long [] indices)
 		{
 			if (indices == null) {
 				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET

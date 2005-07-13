@@ -1,3 +1,9 @@
+2005-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	*  Array.cs: Patch from rodrigobamboo@gmail.com that fixes the
+	signature for GetValue and SetValue to make the long [] argument
+	be a params argument. 
+
 2005-07-11  Pedro Martínez Juliá  <pedromj@gmail.com>
 
 	* Convert.cs: Fix the bug when Convert.ChangeType was using
