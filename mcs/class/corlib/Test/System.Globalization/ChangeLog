@@ -1,5 +1,10 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added CompareSpecialWeight() and moved special 
+	  weight comparison there.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added GetSortKey() testcase that tests a
 	  sequence of nonprimary character followed by an extender.
 

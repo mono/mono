@@ -346,8 +346,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				level1 [lv1Indexer.ToIndex (cp)];
 		}
 
-		byte Level2 (int cp)
+		byte Level2 (int cp, ExtenderType ext)
 		{
+			if (ext == ExtenderType.Buggy)
+				return 5;
+			else if (ext == ExtenderType.Conditional)
+				return 0;
+
 			if (cp < 0x3000 || cjkLv2Table == null)
 				return level2 [lv2Indexer.ToIndex (cp)];
 			int idx = cjkLv2Indexer.ToIndex (cp);
@@ -504,6 +509,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		int previousChar = -1;
 		byte [] previousSortKey = null;
+		int previousChar2 = -1;
+		byte [] previousSortKey2 = null;
 
 		enum ExtenderType {
 			None,
@@ -583,7 +590,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						buf.AppendNormal (
 							b [0],
 							b [1],
-							b [2] != 1 ? b [2] : Level2 (i),
+							b [2] != 1 ? b [2] : Level2 (i, ext),
 							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
 					}
 					// otherwise do nothing.
@@ -605,7 +612,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						buf.AppendNormal (
 							b [0],
 							b [1],
-							b [2] != 1 ? b [2] : Level2 (i),
+							b [2] != 1 ? b [2] : Level2 (i, ext),
 							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
 						previousSortKey = b;
 						previousChar = -1;
@@ -645,11 +652,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return;
 			}
 
-			byte level2 = Level2 (i);
-			if (ext == ExtenderType.Buggy)
-				level2 = 5;
-			else if (ext == ExtenderType.Conditional)
-				level2 = 0;
+			byte level2 = Level2 (i, ext);
 			if (Uni.HasSpecialWeight ((char) i)) {
 				byte level1 = Level1 (i);
 				if (ext == ExtenderType.Conditional)
@@ -778,6 +781,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			SetOptions (options);
 			escape1.Source = null;
 			escape2.Source = null;
+			previousSortKey= previousSortKey2 = null;
+			previousChar = previousChar2 = -1;
 			int ret = Compare (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0);
 			return ret == 0 ? 0 : ret < 0 ? -1 : 1;
 #endif
@@ -805,6 +810,17 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int lv5At2 = -1;
 			int lv5Value1 = 0;
 			int lv5Value2 = 0;
+
+			// Skip heading extenders
+			for (; idx1 < end1; idx1++)
+				if (GetExtenderType (s1 [idx1]) == ExtenderType.None)
+					break;
+			for (; idx2 < end2; idx2++)
+				if (GetExtenderType (s2 [idx2]) == ExtenderType.None)
+					break;
+
+			ExtenderType ext1 = ExtenderType.None;
+			ExtenderType ext2 = ExtenderType.None;
 
 			while (true) {
 				for (; idx1 < end1; idx1++)
@@ -854,6 +870,34 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				int i2 = FilterOptions (s2 [idx2]);
 				bool special1 = false;
 				bool special2 = false;
+
+				ext1 = GetExtenderType (i1);
+				if (ext1 != ExtenderType.None) {
+					if (previousChar < 0) {
+						if (previousSortKey == null) {
+							// nothing to extend
+							idx1++;
+							continue;
+						}
+						sk1 = previousSortKey;
+					}
+					else
+						i1 = previousChar;
+				}
+				ext2 = GetExtenderType (i2);
+				if (ext2 != ExtenderType.None) {
+					if (previousChar2 < 0) {
+						if (previousSortKey2 == null) {
+							// nothing to extend
+							idx2++;
+							continue;
+						}
+						sk2 = previousSortKey2;
+					}
+					else
+						i2 = previousChar2;
+				}
+
 				byte cat1 = Category (i1);
 				byte cat2 = Category (i2);
 
@@ -866,6 +910,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						// here Windows has a bug that it does
 						// not consider thirtiary weight.
 						lv5Value1 = Level1 (i1) << 8 + Uni.Level3 (i1);
+						previousChar = i1;
 						idx1++;
 					}
 					if (cat2 == 6) {
@@ -875,6 +920,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						// here Windows has a bug that it does
 						// not consider thirtiary weight.
 						lv5Value2 = Level1 (i2) << 8 + Uni.Level3 (i2);
+						previousChar2 = i2;
 						idx2++;
 					}
 					if (cat1 == 6 || cat2 == 6) {
@@ -883,14 +929,21 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					}
 				}
 
-				Contraction ct1 = GetContraction (s1, idx1, end1);
+				Contraction ct1 = null;
+				if (ext1 == ExtenderType.None)
+					ct1 = GetContraction (s1, idx1, end1);
+
 				int offset1 = 1;
-				if (ct1 != null) {
+				if (sk1 != null)
+					offset1 = 1;
+				else if (ct1 != null) {
 					offset1 = ct1.Source.Length;
 					if (ct1.SortKey != null) {
 						sk1 = charSortKey;
 						for (int i = 0; i < ct1.SortKey.Length; i++)
 							sk1 [i] = ct1.SortKey [i];
+						previousChar = -1;
+						previousSortKey = sk1;
 					}
 					else if (escape1.Source == null) {
 						escape1.Source = s1;
@@ -909,20 +962,29 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					sk1 [0] = cat1;
 					sk1 [1] = Level1 (i1);
 					if (!ignoreNonSpace && currentLevel > 1)
-						sk1 [2] = Level2 (i1);
+						sk1 [2] = Level2 (i1, ext1);
 					if (currentLevel > 2)
 						sk1 [3] = Uni.Level3 (i1);
 					if (currentLevel > 3)
 						special1 = Uni.HasSpecialWeight ((char) i1);
+					if (cat1 > 1)
+						previousChar = i1;
 				}
 
-				Contraction ct2 = GetContraction (s2, idx2, end2);
-				if (ct2 != null) {
+				Contraction ct2 = null;
+				if (ext2 == ExtenderType.None)
+					ct2 = GetContraction (s2, idx2, end2);
+
+				if (sk2 != null)
+					idx2++;
+				else if (ct2 != null) {
 					idx2 += ct2.Source.Length;
 					if (ct2.SortKey != null) {
 						sk2 = charSortKey2;
 						for (int i = 0; i < ct2.SortKey.Length; i++)
 							sk2 [i] = ct2.SortKey [i];
+						previousChar2 = -1;
+						previousSortKey2 = sk2;
 					}
 					else if (escape2.Source == null) {
 						escape2.Source = s2;
@@ -941,11 +1003,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					sk2 [0] = cat2;
 					sk2 [1] = Level1 (i2);
 					if (!ignoreNonSpace && currentLevel > 1)
-						sk2 [2] = Level2 (i2);
+						sk2 [2] = Level2 (i2, ext2);
 					if (currentLevel > 2)
 						sk2 [3] = Uni.Level3 (i2);
 					if (currentLevel > 3)
 						special2 = Uni.HasSpecialWeight ((char) i2);
+					if (cat2 > 1)
+						previousChar = i2;
 					idx2++;
 				}
 
@@ -961,7 +1025,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						if (sk1 [2] == 0)
 							sk1 [2] = 2;
 						sk1 [2] = (byte) (sk1 [2] + 
-							Level2 (s1 [idx1]));
+							Level2 (s1 [idx1], ExtenderType.None));
 						idx1++;
 					}
 
@@ -972,7 +1036,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						if (sk2 [2] == 0)
 							sk2 [2] = 2;
 						sk2 [2] = (byte) (sk2 [2] + 
-							Level2 (s2 [idx2]));
+							Level2 (s2 [idx2], ExtenderType.None));
 						idx2++;
 					}
 				}
@@ -1011,8 +1075,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						!Uni.IsJapaneseSmallLetter ((char) i1),
 						!Uni.IsJapaneseSmallLetter ((char) i2));
 					ret = ret != 0 ? ret :
-						Uni.GetJapaneseDashType ((char) i1) -
-						Uni.GetJapaneseDashType ((char) i2);
+						ToDashTypeValue (ext1) -
+						ToDashTypeValue (ext2);
 					ret = ret != 0 ? ret : CompareFlagPair (
 						Uni.IsHiragana ((char) i1),
 						Uni.IsHiragana ((char) i2));
@@ -1037,11 +1101,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						break;
 					if (!Uni.IsIgnorableNonSpacing (s2 [idx2]))
 						break;
-					finalResult = Level2 (FilterOptions ((s1 [idx1]))) - Level2 (FilterOptions (s2 [idx2]));
+					finalResult = Level2 (FilterOptions ((s1 [idx1])), ext1) - Level2 (FilterOptions (s2 [idx2]), ext2);
 					if (finalResult != 0)
 						break;
 					idx1++;
 					idx2++;
+					// they should work only for the first character
+					ext1 = ExtenderType.None;
+					ext2 = ExtenderType.None;
 				}
 			}
 			// we still have to handle level 5
@@ -1163,7 +1230,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			charSortKey [0] = Category (it);
 			charSortKey [1] = Level1 (it);
 			if (!ignoreNonSpace)
-				charSortKey [2] = Level2 (it);
+				// FIXME: pass ExtenderType
+				charSortKey [2] = Level2 (it, ExtenderType.None);
 			charSortKey [3] = Uni.Level3 (it);
 
 			return GetMatchLength (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
@@ -1303,7 +1371,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			charSortKey [0] = Category (it);
 			charSortKey [1] = Level1 (it);
 			if (!ignoreNonSpace)
-				charSortKey [2] = Level2 (it);
+				// FIXME: pass extender type
+				charSortKey [2] = Level2 (it, ExtenderType.None);
 			charSortKey [3] = Uni.Level3 (it);
 
 			return GetMatchLengthBack (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
@@ -1358,7 +1427,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (ret != 0)
 				return ret;
 			if (!ignoreNonSpace) {
-				ret = Level2 (cs) - Level2 (ct);
+				// FIXME: pass ExtenderType
+				ret = Level2 (cs, ExtenderType.None) - Level2 (ct, ExtenderType.None);
 				if (ret != 0)
 					return ret;
 			}
@@ -1444,7 +1514,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			charSortKey [0] = Category (ti);
 			charSortKey [1] = Level1 (ti);
 			if (!ignoreNonSpace)
-				charSortKey [2] = Level2 (ti);
+				// FIXME: pass ExtenderType
+				charSortKey [2] = Level2 (ti, ExtenderType.None);
 			charSortKey [3] = Uni.Level3 (ti);
 			return IndexOfSortKey (s, start, length, charSortKey, target, ti, !Uni.HasSpecialWeight ((char) ti));
 		}
@@ -1536,7 +1607,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			charSortKey [0] = Category (ti);
 			charSortKey [1] = Level1 (ti);
 			if (!ignoreNonSpace)
-				charSortKey [2] = Level2 (ti);
+				// FIXME: pass ExtenderType
+				charSortKey [2] = Level2 (ti, ExtenderType.None);
 			charSortKey [3] = Uni.Level3 (ti);
 			return LastIndexOfSortKey (s, start, length, charSortKey, target, ti, !Uni.HasSpecialWeight ((char) ti));
 		}
@@ -1628,7 +1700,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int si = FilterOptions ((int) sc);
 			if (Category (si) != sortkey [0] ||
 				Level1 (si) != sortkey [1] ||
-				!ignoreNonSpace && Level2 (si) != sortkey [2] ||
+				// FIXME: pass ExtenderType
+				!ignoreNonSpace && Level2 (si, ExtenderType.None) != sortkey [2] ||
 				Uni.Level3 (si) != sortkey [3])
 				return false;
 			if (noLv4 && !Uni.HasSpecialWeight ((char) si))

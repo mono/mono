@@ -1,5 +1,9 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : Compare() now supports extender (e.g. U+39FC).
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : In GetSortKey(), don't update previousChar when
 	  it is not primary (e.g. don't "extend" diacritical mark).
 
