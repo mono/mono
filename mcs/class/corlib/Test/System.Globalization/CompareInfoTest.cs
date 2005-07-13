@@ -807,6 +807,7 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#12", 0, "\uff21\uff21", "\uff21", CompareOptions.None);
 		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIndexOf ("#14", 0, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
+		AssertIndexOf ("#15", 0, "\uff21\uff21", "\u3007", CompareOptions.None);
 	}
 
 
@@ -833,6 +834,7 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#14", 1, "\uff21\uff21", "\uff21", CompareOptions.None);
 		AssertLastIndexOf ("#15", 1, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertLastIndexOf ("#16", 1, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
+		AssertLastIndexOf ("#17", 1, "\uff21\uff21", "\u3007", CompareOptions.None);
 	}
 }
 

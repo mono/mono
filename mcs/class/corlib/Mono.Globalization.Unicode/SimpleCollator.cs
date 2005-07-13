@@ -1466,6 +1466,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			for (; tidx < target.Length; tidx++)
 				if (!IsIgnorable (target [tidx]))
 					break;
+			if (tidx == target.Length)
+				return start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			byte [] sortkey = ct != null ? ct.SortKey : null;
 			string replace = ct != null ? ct.Replacement : null;
@@ -1558,6 +1560,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			for (; tidx < target.Length; tidx++)
 				if (!IsIgnorable (target [tidx]))
 					break;
+			if (tidx == target.Length)
+				return start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			byte [] sortkey = ct != null ? ct.SortKey : null;
 			string replace = ct != null ? ct.Replacement : null;
