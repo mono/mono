@@ -322,6 +322,32 @@ public class CompareInfoTest : Assertion
 			0x22, 0xA, 1, 3, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0}, "\u304B\u309B");
 		AssertSortKey ("#i9", new byte [] {
 			0x22, 0xA, 1, 3, 1, 1, 0xFF, 2, 0xFF, 0xFF, 1, 0}, "\u304C");
+
+		AssertSortKey ("#i10", new byte [] {
+			0xE, 0x2, 1, 0x12, 1, 0x12, 1, 1, 0},
+			"A\u0302");
+		AssertSortKey ("#i11", new byte [] {
+			0xE, 0x2, 1, 0x65, 1, 0x12, 1, 1, 0},
+			"A\u0302\u0320");
+		AssertSortKey ("#i12", new byte [] {
+			0xE, 0x2, 1, 0xB8, 1, 0x12, 1, 1, 0},
+			"A\u0302\u0320\u0320");
+		// LAMESPEC: Windows just appends diacritical weight without
+//		AssertSortKey ("#i13", new byte [] {
+//			0xE, 0x2, 1, 0xB, 1, 12, 1, 1, 0},
+//			"A\u0302\u0320\u0320\u0320");
+		// FIXME: not working
+//		AssertSortKey ("#i14", new byte [] {
+//			0xE, 0x2, 1, 0xF2, 1, 0x12, 1, 1, 0},
+//			"A\u20E1");
+		// LAMESPEC: It should not be equivalent to \u1EA6
+		AssertSortKey ("#i15", new byte [] {
+			0xE, 0x2, 1, 0x1F, 1, 0x12, 1, 1, 0},
+			"A\u0308\u0301");
+		AssertSortKey ("#i16", new byte [] {
+			0xE, 0x2, 1, 0x1F, 1, 0x12, 1, 1, 0},
+			"\u1EA6");
+
 	}
 
 	[Test]
