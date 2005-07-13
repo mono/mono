@@ -1,3 +1,8 @@
+2005-07-13  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRelationCollection.cs: adding a relation with same set of
+	parent columns & child columns, should not be allowed.
+
 2005-07-08  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTableReader.cs: GetSchemaTable: DataType column should be

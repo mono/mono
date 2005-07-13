@@ -386,6 +386,46 @@ namespace System.Data {
 			if (tmp != -1 &&
 				relation.RelationName == this[tmp].RelationName)
 					throw new DuplicateNameException("A DataRelation named '" + relation.RelationName + "' already belongs to this DataSet.");
+					
+			// check whether the relation exists between the columns already
+			foreach (DataRelation rel in this) {	
+				// compare child columns
+				bool differs = false;
+				foreach (DataColumn current in relation.ChildColumns) {
+					bool exists = false;
+					foreach (DataColumn col in rel.ChildColumns) {
+						if (col == current) {
+							exists = true;
+							break;
+						}
+					}
+					if (!exists) {
+						differs = true;
+						break;
+					}
+				}
+				
+				if (! differs) {
+					// compare parent columns
+					differs = false;
+					foreach (DataColumn current in relation.ParentColumns) {
+						bool exists = false;
+						foreach (DataColumn col in rel.ParentColumns) {
+							if (col == current) {
+								exists = true;
+								break;
+							}
+						}
+						if (!exists) {
+							differs = true;
+							break;
+						}
+					}
+					
+					if (! differs)
+						throw new ArgumentException ("A relation already exists for these child columns");
+				}
+			}		
                         
 			// Add to collection
 			List.Add(relation);
