@@ -2,6 +2,7 @@ argument.cs
 AssemblyInfo.cs
 assign.cs
 attribute.cs
+block.cs
 cfold.cs
 class.cs
 codegen.cs

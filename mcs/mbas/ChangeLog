@@ -1,3 +1,8 @@
+2005-07-13 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	*statement.cs: extract class Block into new source block.cs
+	*mbas.exe.sources: added newly extracted block.cs
+	*block.cs: eliminated "block.cs(252) warning CS0219: The variable 'cur' is assigned but its value is never used"
+
 2005-07-12 Manjula GHM <mmanjula@novell.com>
 	* parameter.cs , ecore.cs : Changed error number and message according to .NET
 
