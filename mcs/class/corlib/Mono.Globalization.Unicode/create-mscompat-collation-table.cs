@@ -2478,8 +2478,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			AddLetterMap ((char) 0x3093, 0x22, 0);
 			AddLetterMap ((char) (0x3093 + 0x60), 0x22, 0);
 
+			map [0x3094] = new CharMapEntry (map [0x30A6].Category,
+				map [0x30A6].Level1, 3);// voiced hiragana U
 			map [0x30F4] = new CharMapEntry (map [0x30A6].Category,
 				map [0x30A6].Level1, 3);// voiced katakana U
+
 			map [0x30F5] = new CharMapEntry (map [0x30AB].Category,
 				map [0x30AB].Level1, 0);// small katakana Ka
 			map [0x30F6] = new CharMapEntry (map [0x30B1].Category,

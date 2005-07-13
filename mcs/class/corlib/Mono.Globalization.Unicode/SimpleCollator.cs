@@ -484,29 +484,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return i;
 		}
 
-		#region GetSortKey()
-
-		public SortKey GetSortKey (string s)
-		{
-			return GetSortKey (s, CompareOptions.None);
-		}
-
-		public SortKey GetSortKey (string s, CompareOptions options)
-		{
-			return GetSortKey (s, 0, s.Length, options);
-		}
-
-		public SortKey GetSortKey (string s, int start, int length, CompareOptions options)
-		{
-			SetOptions (options);
-
-			buf.Initialize (options, lcid, s, frenchSort);
-			int end = start + length;
-			previousChar = -1;
-			GetSortKey (s, start, end);
-			return buf.GetResultAndReset ();
-		}
-
 		int previousChar = -1;
 		byte [] previousSortKey = null;
 		int previousChar2 = -1;
@@ -573,6 +550,30 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return Uni.IsIgnorable (i) ||
 				ignoreSymbols && Uni.IsIgnorableSymbol (i) ||
 				ignoreNonSpace && Uni.IsIgnorableNonSpacing (i);
+		}
+
+
+		#region GetSortKey()
+
+		public SortKey GetSortKey (string s)
+		{
+			return GetSortKey (s, CompareOptions.None);
+		}
+
+		public SortKey GetSortKey (string s, CompareOptions options)
+		{
+			return GetSortKey (s, 0, s.Length, options);
+		}
+
+		public SortKey GetSortKey (string s, int start, int length, CompareOptions options)
+		{
+			SetOptions (options);
+
+			buf.Initialize (options, lcid, s, frenchSort);
+			int end = start + length;
+			previousChar = -1;
+			GetSortKey (s, start, end);
+			return buf.GetResultAndReset ();
 		}
 
 		void GetSortKey (string s, int start, int end)
@@ -871,6 +872,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				bool special1 = false;
 				bool special2 = false;
 
+				// If current character is an expander, then
+				// repeat the previous character.
 				ext1 = GetExtenderType (i1);
 				if (ext1 != ExtenderType.None) {
 					if (previousChar < 0) {

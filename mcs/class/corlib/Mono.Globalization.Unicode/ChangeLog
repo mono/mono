@@ -1,5 +1,10 @@
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : some code reordering.
+	* create-mscompat-collation-table.cs : it was still missing U+3094.
+
+2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Compare() now supports extender (e.g. U+39FC).
 
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
