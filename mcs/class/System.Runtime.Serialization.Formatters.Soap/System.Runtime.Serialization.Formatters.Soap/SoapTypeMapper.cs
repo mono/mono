@@ -251,9 +251,14 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 						namespaceToPrefixTable[namespaceURI] = prefix;
 
 					}
+					int i = typeName.IndexOf ("[");
+					if (i != -1)
+						typeName = XmlConvert.EncodeName (typeName.Substring (0, i)) + typeName.Substring (i);
+					else
+						typeName = XmlConvert.EncodeName (typeName);
 					element = new Element(
 						prefix, 
-						XmlConvert.EncodeName(typeName), 
+						typeName, 
 						namespaceURI);
 				}
 				return element;

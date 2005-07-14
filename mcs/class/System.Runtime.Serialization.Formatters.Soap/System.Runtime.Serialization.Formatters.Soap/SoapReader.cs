@@ -344,11 +344,14 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			// Get the array properties
 			string strArrayType = xmlReader["arrayType", SoapTypeMapper.SoapEncodingNamespace];
-			string[] arrayInfo = strArrayType.Split(':','[',',',']');
-			int numberOfDims = arrayInfo.Length - 3;
+			string[] arrayInfo = strArrayType.Split(':');
+			int arraySuffixInfo = arrayInfo[1].LastIndexOf('[');
+			String arrayElementType = arrayInfo[1].Substring(0, arraySuffixInfo);
+			String arraySuffix = arrayInfo[1].Substring(arraySuffixInfo);
+			string[] arrayDims = arraySuffix.Substring(1,arraySuffix.Length-2).Trim().Split(',');
+			int numberOfDims = arrayDims.Length;
 			int[] lengths = new int[numberOfDims];
-			string[] arrayDims = new String[numberOfDims];
-			Array.Copy(arrayInfo, 2, arrayDims, 0, numberOfDims);
+			
 			for (int i=0; i < numberOfDims; i++)
 			{
 				lengths[i] = Convert.ToInt32(arrayDims[i]);
@@ -357,7 +360,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			int[] indices = new int[numberOfDims];
 
 			// Create the array
-			Type arrayType = mapper[new Element(arrayInfo[0], arrayInfo[1], xmlReader.LookupNamespace(arrayInfo[0]))];
+			Type arrayType = mapper[new Element(arrayInfo[0], arrayElementType, xmlReader.LookupNamespace(arrayInfo[0]))];
 			Array array = Array.CreateInstance(
 				arrayType,
 				lengths);

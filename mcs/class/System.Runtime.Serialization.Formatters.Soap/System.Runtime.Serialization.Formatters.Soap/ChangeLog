@@ -1,3 +1,10 @@
+2005-07-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapReader.cs: Fixed parsing of array dimensions. Patch by Roei Erez
+	for bug #75536.
+	* SoapTypeMapper.cs: When encoding the name of a type, if the type is
+	an array don't encode the array dimensions. 
+
 2005-06-27  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapWriter.cs: Serialize TimeSpan values like MS.NET. Fix by Roei Erez
