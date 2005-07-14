@@ -1,5 +1,11 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : IndexOf() was incorrectly sharing the same
+	  byte[] field in different areas of code. Now extenders in both
+	  source and target really work in IndexOf().
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : fixed U+FF9F diacritical weight.
 	* SimpleCollator.cs : handle U+FF9E and U+FF9F as extenders.
 

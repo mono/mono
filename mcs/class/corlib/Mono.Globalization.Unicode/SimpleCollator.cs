@@ -106,6 +106,7 @@ namespace Mono.Globalization.Unicode
 		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
 		byte [] charSortKey2 = new byte [4];
+		byte [] charSortKeyIndexTarget = new byte [4];
 		// temporary expansion store for IsPrefix/Suffix
 		int escapedSourceIndex;
 
@@ -383,6 +384,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			this.ignoreWidth = (options & CompareOptions.IgnoreWidth) != 0;
 			this.ignoreCase = (options & CompareOptions.IgnoreCase) != 0;
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
+			previousChar = previousChar2 = -1;
+			previousSortKey = previousSortKey2 = null;
 		}
 
 		Contraction GetContraction (string s, int start, int end)
@@ -601,7 +604,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 			buf.Initialize (options, lcid, s, frenchSort);
 			int end = start + length;
-			previousChar = -1;
 			GetSortKey (s, start, end);
 			return buf.GetResultAndReset ();
 		}
@@ -810,17 +812,15 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			SetOptions (options);
 			escape1.Source = null;
 			escape2.Source = null;
-			previousSortKey= previousSortKey2 = null;
-			previousChar = previousChar2 = -1;
 			bool dummy;
-			int ret = CompareInternal (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0, out dummy);
+			int ret = CompareInternal (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0, out dummy, true);
 			return ret == 0 ? 0 : ret < 0 ? -1 : 1;
 #endif
 		}
 
 		int CompareInternal (string s1, int idx1, int len1, string s2,
 			int idx2, int len2, bool stringSort,
-			out bool targetConsumed)
+			out bool targetConsumed, bool skipHeadingExtenders)
 		{
 			int start1 = idx1;
 			int start2 = idx2;
@@ -844,12 +844,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int lv5Value2 = 0;
 
 			// Skip heading extenders
-			for (; idx1 < end1; idx1++)
-				if (GetExtenderType (s1 [idx1]) == ExtenderType.None)
-					break;
-			for (; idx2 < end2; idx2++)
-				if (GetExtenderType (s2 [idx2]) == ExtenderType.None)
-					break;
+			if (skipHeadingExtenders) {
+				for (; idx1 < end1; idx1++)
+					if (GetExtenderType (s1 [idx1]) == ExtenderType.None)
+						break;
+				for (; idx2 < end2; idx2++)
+					if (GetExtenderType (s2 [idx2]) == ExtenderType.None)
+						break;
+			}
 
 			ExtenderType ext1 = ExtenderType.None;
 			ExtenderType ext2 = ExtenderType.None;
@@ -1171,19 +1173,17 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			SetOptions (opt);
 			return IsPrefix (s, target, start, length, 
-				(opt & CompareOptions.StringSort) != 0);
+				(opt & CompareOptions.StringSort) != 0, true);
 		}
 
-		public bool IsPrefix (string s, string target, int start, int length, bool stringSort)
+		public bool IsPrefix (string s, string target, int start, int length, bool stringSort, bool skipHeadingExtenders)
 		{
 			bool consumed;
 			escape1.Source = null;
 			escape2.Source = null;
-			previousSortKey= previousSortKey2 = null;
-			previousChar = previousChar2 = -1;
 			int ret = CompareInternal (s, start, length,
 				target, 0, target.Length, stringSort,
-				out consumed);
+				out consumed, skipHeadingExtenders);
 			return consumed;
 		}
 
@@ -1572,22 +1572,22 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		int IndexOfPrimitiveChar (string s, int start, int length, char target)
 		{
 			int ti = FilterOptions ((int) target);
-			charSortKey [0] = Category (ti);
-			charSortKey [1] = Level1 (ti);
+			charSortKeyIndexTarget [0] = Category (ti);
+			charSortKeyIndexTarget [1] = Level1 (ti);
 			if (!ignoreNonSpace)
-				// FIXME: pass ExtenderType
-				charSortKey [2] = Level2 (ti, ExtenderType.None);
-			charSortKey [3] = Uni.Level3 (ti);
-			return IndexOfSortKey (s, start, length, charSortKey, target, ti, !Uni.HasSpecialWeight ((char) ti));
+				charSortKeyIndexTarget [2] = Level2 (ti, ExtenderType.None);
+			charSortKeyIndexTarget [3] = Uni.Level3 (ti);
+			return IndexOfSortKey (s, start, length, charSortKeyIndexTarget, target, ti, !Uni.HasSpecialWeight ((char) ti));
 		}
 
 		// Searches target byte[] keydata
 		int IndexOfSortKey (string s, int start, int length, byte [] sortkey, char target, int ti, bool noLv4)
 		{
 			int end = start + length;
-			for (int idx = start; idx < end; idx++) {
+			int idx = start;
+			while (idx < end) {
 				int cur = idx;
-				if (Matches (s, ref idx, end, ti, target, sortkey, noLv4, false))
+				if (MatchesForward (s, ref idx, end, ti, sortkey, noLv4))
 					return cur;
 			}
 			return -1;
@@ -1604,21 +1604,47 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (tidx == target.Length)
 				return start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
-			byte [] sortkey = ct != null ? ct.SortKey : null;
 			string replace = ct != null ? ct.Replacement : null;
+			byte [] sk = replace == null ? charSortKeyIndexTarget : null;
+			bool noLv4 = true;
+			char tc = char.MinValue;
+			int ti = -1;
+			if (ct != null && sk != null) {
+				for (int i = 0; i < ct.SortKey.Length; i++)
+					sk [i] = ct.SortKey [i];
+			} else if (sk != null) {
+				tc = target [tidx];
+				ti = FilterOptions (target [tidx]);
+				sk [0] = Category (ti);
+				sk [1] = Level1 (ti);
+				if (!ignoreNonSpace)
+					sk [2] = Level2 (ti, ExtenderType.None);
+				sk [3] = Uni.Level3 (ti);
+				noLv4 = !Uni.HasSpecialWeight ((char) ti);
+			}
+			if (sk != null) {
+				for (tidx++; tidx < target.Length; tidx++) {
+					if (Category (target [tidx]) != 1)
+						break;
+					if (sk [2] == 0)
+						sk [2] = 2;
+					sk [2] = (byte) (sk [2] + Level2 (target [tidx], ExtenderType.None));
+				}
+			}
+
 			do {
 				int idx = 0;
-				if (sortkey != null)
-					idx = IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
-				else if (replace != null)
+				if (replace != null)
 					idx = IndexOf (s, replace, start, length, stringSort);
 				else
-					idx = IndexOfPrimitiveChar (s, start, length, target [tidx]);
+					idx = IndexOfSortKey (s, start, length, sk, tc, ti, noLv4);
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, length - (idx - start), stringSort))
+				length -= idx - start;
+				start = idx;
+				if (IsPrefix (s, target, start, length, stringSort, false))
 					return idx;
-				Contraction cts = GetContraction (s, idx, length - (idx - start));
+				Contraction cts = GetContraction (s, start, length);
 				if (cts != null) {
 					start += cts.Source.Length;
 					length -= cts.Source.Length;
@@ -1720,7 +1746,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, orgStart - idx + 1, stringSort)) {
+				if (IsPrefix (s, target, idx, orgStart - idx + 1, stringSort, false)) {
 					for (;idx < orgStart; idx++)
 						if (!IsIgnorable (s [idx]))
 							break;
@@ -1794,6 +1820,81 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return true;
 		}
 
+		private bool MatchesForward (string s, ref int idx, int end, int ti, byte [] sortkey, bool noLv4)
+		{
+			int si = -1;
+			ExtenderType ext = GetExtenderType (s [idx]);
+			Contraction ct = null;
+			if (ext == ExtenderType.None)
+				ct = GetContraction (s, idx, end);
+			else if (previousChar < 0)
+				charSortKey = previousSortKey;
+			else
+				si = FilterExtender (previousChar, ext);
+			// if lv4 exists, it never matches contraction
+			if (ct != null) {
+				idx += ct.Source.Length;
+				if (!noLv4)
+					return false;
+				if (ct.SortKey != null) {
+					for (int i = 0; i < sortkey.Length; i++)
+						charSortKey [i] = sortkey [i];
+					previousChar = -1;
+					previousSortKey = charSortKey;
+				} else {
+					// Here is the core of LAMESPEC
+					// described at the top of the source.
+					int dummy = 0;
+					return MatchesForward (ct.Replacement, ref dummy,
+						ct.Replacement.Length, ti, sortkey, noLv4);
+				}
+			} else {
+				if (si < 0)
+					si = FilterOptions (s [idx]);
+				charSortKey [0] = Category (si);
+				charSortKey [1] = Level1 (si);
+				if (!ignoreNonSpace)
+					charSortKey [2] = Level2 (si, ext);
+				charSortKey [3] = Uni.Level3 (si);
+				if (charSortKey [0] != 1)
+					previousChar = si;
+				idx++;
+			}
+			for (; idx < end; idx++) {
+				if (Category (s [idx]) != 1)
+					break;
+				if (ignoreNonSpace)
+					continue;
+				if (charSortKey [2] == 0)
+						charSortKey [2] = 2;
+					charSortKey [2] = (byte) (charSortKey [2]
+						+ Level2 (s [idx], ExtenderType.None));
+			}
+
+			if (charSortKey [0] != sortkey [0] ||
+				charSortKey [1] != sortkey [1] ||
+				(!ignoreNonSpace && charSortKey [2] != sortkey [2]) ||
+				charSortKey [3] != sortkey [3])
+				return false;
+			if (noLv4 && (si < 0 || !Uni.HasSpecialWeight ((char) si)))
+				return true;
+			else if (noLv4)
+				return false;
+			// Since target can never be an extender, if the source
+			// is an expander and it matters, then they never match.
+			if (!ignoreNonSpace && ext == ExtenderType.Conditional)
+				return false;
+			if (Uni.IsJapaneseSmallLetter ((char) si) !=
+				Uni.IsJapaneseSmallLetter ((char) ti) ||
+				Uni.GetJapaneseDashType ((char) si) !=
+				Uni.GetJapaneseDashType ((char) ti) ||
+				!Uni.IsHiragana ((char) si) !=
+				!Uni.IsHiragana ((char) ti) ||
+				IsHalfKana ((char) si) !=
+				IsHalfKana ((char) ti))
+				return false;
+			return true;
+		}
 		#endregion
 	}
 }

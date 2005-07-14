@@ -1,5 +1,9 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : removed some FIXMEs. Added more extender tests.
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : some special weight tests got working.
 	  Commented on some FIXME tests why they are so.
 

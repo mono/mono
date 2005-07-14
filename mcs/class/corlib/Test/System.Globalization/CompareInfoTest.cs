@@ -752,6 +752,7 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#4", 4, "ABCDE", '\u0117', ignoreCN);
 		AssertIndexOf ("#5", 1, "ABCABC", 'B', 1, 5, CompareOptions.IgnoreCase, invariant);
 		AssertIndexOf ("#6", 4, "ABCABC", 'B', 2, 4, CompareOptions.IgnoreCase, invariant);
+		AssertIndexOf ("#7", 1, "\u30D1\u30FC", '\u30A2', CompareOptions.IgnoreNonSpace);
 	}
 
 	[Test]
@@ -824,8 +825,11 @@ public class CompareInfoTest : Assertion
 		// Japanese (in invariant)
 		AssertIsPrefix ("#1", false, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
 		AssertIsPrefix ("#2", true, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertIsPrefix ("#2-2", false, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
 		AssertIsPrefix ("#3", true, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
 			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
+		AssertIsPrefix ("#3-2", false, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
+			"\u30C0\u30A4\u30D6");
 		AssertIsPrefix ("#4", false, "\u3042\u309D", "\u3042\u3042");
 		AssertIsPrefix ("#5", true, "\u3042\u309D", "\u3042\u3042", CompareOptions.IgnoreNonSpace);
 		AssertIsPrefix ("#6", true, "\uFF8A\uFF9E\uFF70\uFF99",
@@ -910,16 +914,15 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#1-3", 0, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
 		AssertIndexOf ("#1-4", 0, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working
-//		AssertIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
-		// FIXME: not working
-//		AssertIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
-//			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
+		AssertIndexOf ("#1-5", 1, "\u30D1\u30FC", "\u30A2", CompareOptions.IgnoreNonSpace);
+		AssertIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertIndexOf ("#2-2", -1, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
+		AssertIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
+			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
 		AssertIndexOf ("#4", -1, "\u3042\u309D", "\u3042\u3042");
 		AssertIndexOf ("#5", 0, "\u3042\u309D", "\u3042\u3042", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working
-//		AssertIndexOf ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
-//			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
+		AssertIndexOf ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
+			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 
 	}
 
@@ -962,14 +965,14 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#1-3", 0, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
 		AssertLastIndexOf ("#1-4", 0, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working
+		// FIXME: not working (extender support required)
 //		AssertLastIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
-		// FIXME: not working
+		// FIXME: not working (extender support required)
 //		AssertLastIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
 //			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
 		AssertLastIndexOf ("#4", -1, "\u3042\u309D", "\u3042\u3042");
 		AssertLastIndexOf ("#5", 0, "\u3042\u309D", "\u3042\u3042", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working
+		// FIXME: not working (extender support required)
 //		AssertLastIndexOf ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
 //			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 
