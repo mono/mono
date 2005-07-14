@@ -1,6 +1,11 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : added tests for IndexOf() and LastIndexOf()
+	  with ignorable source character. Added some non-working tests.
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : added tests for IndexOf() and LastIndexOf()
 	  that takes an expansion for target char.
 
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>

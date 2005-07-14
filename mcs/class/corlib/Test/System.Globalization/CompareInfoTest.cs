@@ -864,9 +864,16 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#7", true, "ae", "\u00E6", CompareOptions.None);
 		AssertIsSuffix ("#8", false, "e", "\u00E6", CompareOptions.None);
 		// U+3007 is completely ignored character.
-		AssertIsSuffix ("#14", true, "\uff21\uff21", "\uff21", CompareOptions.None);
-		AssertIsSuffix ("#15", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
-		AssertIsSuffix ("#16", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
+		AssertIsSuffix ("#9", true, "\uff21\uff21", "\uff21", CompareOptions.None);
+		AssertIsSuffix ("#10", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
+		AssertIsSuffix ("#11", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
+		// extender in target
+		// FIXME: not working
+//		AssertIsSuffix ("#12", false, "\u30D1\u30A2", "\u30D1\u30FC");
+//		AssertIsSuffix ("#13", true, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
+		// extender in source
+//		AssertIsSuffix ("#14", false, "\u30D1\u30FC", "\u30D1\u30A2");
+//		AssertIsSuffix ("#15", true, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
 	}
 
 	[Test]
@@ -901,6 +908,7 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#13", 0, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIndexOf ("#14", 0, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertIndexOf ("#15", 0, "\uff21\uff21", "\u3007", CompareOptions.None);
+		AssertIndexOf ("#15-2", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
 		// target is "empty" (in culture-sensitive context).
 		AssertIndexOf ("#16", -1, String.Empty, "\u3007");
 		AssertIndexOf ("#17", 0, "A", "\u3007");
@@ -956,6 +964,7 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#15", 1, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertLastIndexOf ("#16", 1, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#17", 1, "\uff21\uff21", "\u3007", CompareOptions.None);
+		AssertLastIndexOf ("#18", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
 	}
 
 	[Test]

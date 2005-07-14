@@ -107,8 +107,6 @@ namespace Mono.Globalization.Unicode
 		byte [] charSortKey = new byte [4];
 		byte [] charSortKey2 = new byte [4];
 		byte [] charSortKeyIndexTarget = new byte [4];
-		// temporary expansion store for IsPrefix/Suffix
-		int escapedSourceIndex;
 
 		#region Tailoring support classes
 		// Possible mapping types are:
@@ -386,6 +384,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
 			previousChar = previousChar2 = -1;
 			previousSortKey = previousSortKey2 = null;
+			escape1.Source = escape2.Source = null;
 		}
 
 		Contraction GetContraction (string s, int start, int end)
@@ -810,23 +809,23 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return d1.Length == d2.Length ? 0 : d1.Length < d2.Length ? -1 : 1;
 #else
 			SetOptions (options);
-			escape1.Source = null;
-			escape2.Source = null;
-			bool dummy;
-			int ret = CompareInternal (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0, out dummy, true);
+			bool dummy, dummy2;
+			int ret = CompareInternal (s1, idx1, len1, s2, idx2, len2, (options & CompareOptions.StringSort) != 0, out dummy, out dummy2, true);
 			return ret == 0 ? 0 : ret < 0 ? -1 : 1;
 #endif
 		}
 
 		int CompareInternal (string s1, int idx1, int len1, string s2,
 			int idx2, int len2, bool stringSort,
-			out bool targetConsumed, bool skipHeadingExtenders)
+			out bool targetConsumed, out bool sourceConsumed,
+			bool skipHeadingExtenders)
 		{
 			int start1 = idx1;
 			int start2 = idx2;
 			int end1 = idx1 + len1;
 			int end2 = idx2 + len2;
 			targetConsumed = false;
+			sourceConsumed = false;
 
 			// It holds final result that comes from the comparison
 			// at level 2 or lower. Even if Compare() found the
@@ -1155,8 +1154,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (finalResult == 0)
 					finalResult = lv5Value1 - lv5Value2;
 			}
-			if (finalResult == 0 && idx2 == end2)
-				targetConsumed = true;
+			if (finalResult == 0) {
+				if (idx2 == end2)
+					targetConsumed = true;
+				if (idx1 == end1)
+					sourceConsumed = true;
+			}
 			return idx1 != end1 ? 1 : idx2 == end2 ? finalResult : -1;
 		}
 
@@ -1178,12 +1181,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		public bool IsPrefix (string s, string target, int start, int length, bool stringSort, bool skipHeadingExtenders)
 		{
-			bool consumed;
-			escape1.Source = null;
-			escape2.Source = null;
+			bool consumed, dummy;
 			int ret = CompareInternal (s, start, length,
 				target, 0, target.Length, stringSort,
-				out consumed, skipHeadingExtenders);
+				out consumed, out dummy, skipHeadingExtenders);
 			return consumed;
 		}
 
@@ -1196,8 +1197,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
-			SetOptions (opt);
-
 			// quick check : simple codepoint comparison
 			if (s.Length >= target.Length) {
 				int si = start;
@@ -1209,28 +1208,64 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					return true;
 			}
 
-			escapedSourceIndex = -1;
-			return IsSuffix (s, target, start, length);
+			SetOptions (opt);
+			return IsSuffix (s, target, start, length,
+				(opt & CompareOptions.StringSort) != 0);
 		}
 
-		bool IsSuffix (string s, string target, int start, int length)
+		bool New_IsSuffix (string s, string t, int start, int length,
+			bool stringSort)
+		{
+			int tstart = 0;
+			for (;tstart < t.Length; tstart++)
+				if (!IsIgnorable (t [tstart]))
+					break;
+			if (tstart == t.Length)
+				return true; // as if target is String.Empty.
+
+			// FIXME: could be more efficient.
+			bool consumed, dummy;
+			for (int i = 0; i < length; i++) {
+				int ret = CompareInternal (s, start - i, i + 1,
+					t, tstart, t.Length, stringSort,
+					out dummy, out consumed, true);
+				if (ret == 0)
+					return true;
+			}
+			return false;
+		}
+
+		// FIXME: This code has a fatal problem that it cannot handle
+		// extenders :(
+		bool IsSuffix (string s, string t, int start, int length,
+			bool stringSort)
 		{
 			int si = start;
-			int ti = target.Length - 1;
-			string source = s;
+			int ti = t.Length - 1;
 			int end = start - length + 1;
+			int tend = 0;
 
-			while (ti >= 0) {
-				if (IsIgnorable (target [ti])) {
+			while (true) {
+				if (ti < tend) {
+					if (escape2.Source == null)
+						break;
+					t = escape2.Source;
+					ti = escape2.Index;
+					tend = escape2.End;
+					escape2.Source = null;
+					continue;
+				}
+				if (IsIgnorable (t [ti])) {
 					ti--;
 					continue;
 				}
-				if (si < 0) {
-					if (s == source)
+				if (si < end) {
+					if (escape1.Source == null)
 						break;
-					s = source;
-					si = escapedSourceIndex;
-					escapedSourceIndex = -1;
+					s = escape1.Source;
+					si = escape1.Index;
+					end = escape1.End;
+					escape1.Source = null;
 					continue;
 				}
 				if (IsIgnorable (s [si])) {
@@ -1238,30 +1273,53 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					continue;
 				}
 
+				ExtenderType ext1 = GetExtenderType (s [si]);
+				ExtenderType ext2 = GetExtenderType (t [ti]);
+				int vt = -1;
+				byte [] sk = null;
+
 				// Check contraction for target.
-				Contraction ctt = GetTailContraction (target, ti, 0);
-				if (ctt != null) {
-					ti -= ctt.Source.Length;
-					if (ctt.SortKey != null) {
-						if (!MatchesBackward (ref s, ref si, ref end, -1, ctt.SortKey, true))
-							return false;
-					} else {
-						string r = ctt.Replacement;
-						int i = r.Length - 1;
-						while (i >= 0 && si >= end) {
-							if (!MatchesBackward (ref s, ref si, ref end, r [i]))
-								return false;
-							i--;
-						}
-						if (i >= 0 && si < end)
-							return false;
-					}
+				Contraction ctt = null;
+				if (ext2 != ExtenderType.None) {
+					if (previousChar2 < 0)
+						sk = previousSortKey2;
+					else
+						vt = FilterExtender (previousChar2, ext2);
 				}
-				else {
-					if (!MatchesBackward (ref s, ref si, ref end, target [ti]))
-						return false;
+				else if (escape2.Source == null)
+					ctt = GetTailContraction (t, ti, 0);
+				if (ctt != null) {
+					if (ctt.SortKey != null) {
+						ti -= ctt.Source.Length;
+						for (int i = 0; i < ctt.SortKey.Length; i++)
+							charSortKey2 [i] = ctt.SortKey [i];
+						previousChar2 = -1;
+						previousSortKey2 = charSortKey2;
+					} else {
+						escape2.Source = t;
+						escape2.Index = ti - ctt.Source.Length;
+						escape2.End = tend;
+						t = ctt.Replacement;
+						ti = ctt.Replacement.Length - 1;
+						tend = 0;
+						continue;
+					}
+				} else if (sk == null) {
+					if (vt < 0)
+						vt = FilterOptions (t [ti]);
+					sk = charSortKey2;
+					sk [0] = Category (vt);
+					sk [1] = Level1 (vt);
+					if (!ignoreNonSpace)
+						// FIXME: pass extender type
+						sk [2] = Level2 (vt, ext2);
+					sk [3] = Uni.Level3 (vt);
+					if (sk [1] != 1)
+						previousChar2 = vt;
 					ti--;
 				}
+				if (!MatchesBackward (ref s, ref si, ref end, vt, sk, !Uni.HasSpecialWeight ((char) vt)))
+					return false;
 			}
 			if (si < end) {
 				// All codepoints in the compared range
@@ -1269,25 +1327,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				// is whether the remaining part of 
 				// "target" is ignorable or not.
 				while (ti >= 0)
-					if (!IsIgnorable (target [ti--]))
+					if (!IsIgnorable (t [ti--]))
 						return false;
 				return true;
 			}
 			return true;
-		}
-
-		// WARNING: Don't invoke it outside IsSuffix().
-		bool MatchesBackward (ref string s, ref int idx, ref int end, char target)
-		{
-			int it = FilterOptions ((int) target);
-			charSortKey [0] = Category (it);
-			charSortKey [1] = Level1 (it);
-			if (!ignoreNonSpace)
-				// FIXME: pass extender type
-				charSortKey [2] = Level2 (it, ExtenderType.None);
-			charSortKey [3] = Uni.Level3 (it);
-
-			return MatchesBackward (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
 		}
 
 		// WARNING: Don't invoke it outside IsSuffix().
@@ -1297,7 +1341,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = null;
 			// If there is already expansion, then it should not
 			// process further expansions.
-			if (escapedSourceIndex < 0)
+			if (escape1.Source == null)
 				ct = GetTailContraction (s, idx, end);
 			if (ct != null) {
 				if (ct.SortKey != null) {
@@ -1309,7 +1353,9 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					idx -= ct.Source.Length;
 					return true;
 				} else {
-					escapedSourceIndex = idx - ct.Source.Length;
+					escape1.Source = s;
+					escape1.Index = idx - ct.Source.Length;
+					escape1.End = end;
 					s = ct.Replacement;
 					idx = s.Length - 1;
 					end = 0;
