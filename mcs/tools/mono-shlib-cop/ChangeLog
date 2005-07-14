@@ -1,3 +1,10 @@
+2005-07-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mono-shlib-cop.cs: Use RuntimeEnvironment.SystemConfigurationFile to find
+	  $sysconfigdir/etc/mono/config, since $sysconfigdir might not be under 
+	  $prefix (the case for RPMs: $sysconfigdir=/etc, $prefix=/usr).
+	  Fixes 75287.
+
 2005-06-06  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mono-shlib-cop.cs: Use better default prefix handling (don't always assume

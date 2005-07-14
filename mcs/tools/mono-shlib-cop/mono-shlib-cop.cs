@@ -187,7 +187,7 @@ namespace Mono.Unmanaged.Check {
 			mono_configs = new XmlDocument [prefixes.Length];
 			for (int i = 0; i < mono_configs.Length; ++i) {
 				mono_configs [i] = new XmlDocument ();
-				mono_configs [i].Load (prefixes [i] + "/etc/mono/config");
+				mono_configs [i].Load (Path.Combine (prefixes [i], "/etc/mono/config"));
 			}
 		}
 
@@ -503,9 +503,11 @@ namespace Mono.Unmanaged.Check {
 			AssemblyChecker checker = new AssemblyChecker ();
 			AssemblyCheckInfo report = new AssemblyCheckInfo ();
 			if (o.prefixes.Length == 0) {
+				// SystemConfigurationFile is $sysconfdir/mono/VERSION/machine.config
+				// We want $sysconfdir
 				DirectoryInfo configDir = 
-					new DirectoryInfo (RuntimeEnvironment.GetRuntimeDirectory());
-				o.prefixes = new string[]{configDir.Parent.Parent.Parent.ToString ()};
+					new FileInfo (RuntimeEnvironment.SystemConfigurationFile).Directory.Parent.Parent.Parent;
+				o.prefixes = new string[]{configDir.ToString ()};
 			}
 			report.SetInstallationPrefixes (o.prefixes);
 			foreach (string assembly in o.RemainingArguments) {
