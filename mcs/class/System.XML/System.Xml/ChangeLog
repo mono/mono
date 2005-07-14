@@ -1,3 +1,9 @@
+2005-07-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : In WriteQualifiedName(), when there is open
+	  attribute, it calls LookupPrefix() and then if namespace was empty,
+	  it resulted in an exception. Fixed bug #75546.
+
 2005-06-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToTimeSpan() should accept milliseconds (according

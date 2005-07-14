@@ -1,3 +1,7 @@
+2005-07-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : added bug #75546 testcase.
+
 2005-06-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : added timespan milliseconds testcase.

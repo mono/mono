@@ -713,7 +713,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			// WriteQualifiedName internal will reject such
 			// qname whose namespace is not declared.
 			string prefix = null;
-			if (openAttribute && LookupPrefix (ns) == null) {
+			if (openAttribute && ns != String.Empty && LookupPrefix (ns) == null) {
 				prefix = CheckNewPrefix (true, null, ns);
 				namespaceManager.AddNamespace (prefix, ns);
 			}

@@ -1386,5 +1386,19 @@ namespace MonoTests.System.Xml
 			xtw.WriteEndElement ();
 			AssertEquals ("<root xml:space='preserve' />", sw.ToString ());
 		}
+
+		[Test] // bug #75546
+		public void WriteEmptyNSQNameInAttribute ()
+		{
+			XmlTextWriter xtw = new XmlTextWriter (TextWriter.Null);
+			xtw.WriteStartElement ("foo", "urn:goo");
+			xtw.WriteAttributeString ("xmlns:bar", "urn:bar");
+			xtw.WriteStartAttribute ("foo", "");
+			xtw.WriteQualifiedName ("n1", "urn:bar");
+			xtw.WriteEndAttribute ();
+			xtw.WriteStartAttribute ("foo", "");
+			xtw.WriteQualifiedName ("n2", "");
+			xtw.WriteEndAttribute ();
+		}
 	}
 }
