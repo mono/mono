@@ -565,7 +565,7 @@ namespace System.Xml.Serialization
 			
 			if (!typeMap.TypeData.IsValueType)
 			{
-				WriteLine ("if (ob == null)");
+				WriteLine ("if (((object)ob) == null)");
 				WriteLineInd ("{");
 				WriteLineInd ("if (isNullable)");
 				
@@ -1053,7 +1053,7 @@ namespace System.Xml.Serialization
 			bool multichoice = (map.ItemInfo.Count > 1);
 
 			if (multichoice)
-				WriteLine ("if (" + item + " == null) { }");
+				WriteLine ("if (((object)" + item + ") == null) { }");
 			
 			foreach (XmlTypeMapElementInfo info in map.ItemInfo)
 			{
@@ -1976,7 +1976,7 @@ namespace System.Xml.Serialization
 			else
 			{
 				if (list != null) {
-					WriteLineInd ("if (" + list + " == null)");
+					WriteLineInd ("if (((object)" + list + ") == null)");
 					WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
 					Unindent ();
 					WriteLineInd ("if (!ReadNull()) {");
@@ -1984,7 +1984,7 @@ namespace System.Xml.Serialization
 				else {
 					list = GetObTempVar ();
 					WriteLine (typeMap.TypeFullName + " " + list + " = null;");
-					WriteLineInd ("if (" + list + " == null)");
+					WriteLineInd ("if (((object)" + list + ") == null)");
 					WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
 					Unindent ();
 					return list;
@@ -2080,7 +2080,7 @@ namespace System.Xml.Serialization
 			}
 			else	// Must be IEnumerable
 			{
-				WriteLine ("if (" + list + " == null)");
+				WriteLine ("if (((object)" + list + ") == null)");
 				if (canCreateInstance) 
 					WriteLine ("\t" + list + " = new " + listType.FullTypeName + "();");
 				else 
@@ -2105,7 +2105,7 @@ namespace System.Xml.Serialization
 				string metName = GetFillListName (td);
 				WriteLine ("void " + metName + " (object list, object source)");
 				WriteLineInd ("{");
-				WriteLine ("if (list == null) throw CreateReadOnlyCollectionException (" + GetLiteral (td.FullTypeName) + ");");
+				WriteLine ("if (((object)list) == null) throw CreateReadOnlyCollectionException (" + GetLiteral (td.FullTypeName) + ");");
 				WriteLine ("");
 
 				WriteLine (td.FullTypeName + " dest = (" + td.FullTypeName + ") list;");

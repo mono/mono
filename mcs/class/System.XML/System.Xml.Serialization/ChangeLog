@@ -1,3 +1,10 @@
+2005-07-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: In the generated serializer always
+	use the Object equality operator when comparing objects to serialize
+	to null, since those objects may have the equality operator
+	overloaded. This fixes bug #75543.
+
 2005-07-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlCustomFormatter.cs: Properly read/write duration values.
