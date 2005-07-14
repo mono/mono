@@ -66,7 +66,7 @@ namespace System.Web.Configuration
 				return obj;
 
 			DoValidation ();
-			obj = HttpRuntime.CreateInternalObject (_type);
+			obj = Activator.CreateInstance (_type, true);
 			IHttpHandler hnd = obj as IHttpHandler;
 			if (hnd != null && hnd.IsReusable)
 				Interlocked.CompareExchange (ref instance, hnd, null);
