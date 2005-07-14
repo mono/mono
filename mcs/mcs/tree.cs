@@ -69,16 +69,14 @@ namespace Mono.CSharp
 			decls.Add (name, ds);
 
 			if (ds.Parent == Types)
-				ns.DefineName (name.Basename, ds);
+				ns.AddDeclSpace (name.Basename, ds);
 		}
 		
 		//
 		// FIXME: Why are we using Types?
 		//
                 public TypeContainer Types {
-                        get {
-                                return root_types;
-                        }
+                        get { return root_types; }
                 }
 
 		public DeclSpace GetDecl (MemberName name)
@@ -87,9 +85,7 @@ namespace Mono.CSharp
 		}
 
 		public Hashtable AllDecls {
-			get {
-				return decls;
-			}
+			get { return decls; }
 		}
 	}
 
