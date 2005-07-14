@@ -290,7 +290,7 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#8", new byte [] {
 			0xE, 2, 6, 0x82, 1, 1, 1, 1, 0},
 			"a-", CompareOptions.StringSort);
-		// FIXME: not working
+		// FIXME: not working (table fix is required)
 //		AssertSortKey ("#9", new byte [] {
 //			0xE, 2, 6, 0x82, 1, 1, 2, 0x3, 1, 1, 0},
 //			"a\uFF0D", CompareOptions.StringSort);
@@ -327,7 +327,7 @@ public class CompareInfoTest : Assertion
 			0xE, 0x21, 1, 0x13, 1, 1, 1, 0}, "e\u0308");
 		AssertSortKey ("#i4", new byte [] {
 			0xE, 0x21, 1, 0x1F, 1, 1, 1, 0}, "e\u0308\u0301");
-		// FIXME: not working
+		// FIXME: not working (table fix is required)
 //		AssertSortKey ("#i5", new byte [] {
 //			0xE, 0x21, 1, 0x16, 1, 1, 1, 0}, "e\u0344");
 		AssertSortKey ("#i6", new byte [] {
@@ -352,7 +352,7 @@ public class CompareInfoTest : Assertion
 //		AssertSortKey ("#i13", new byte [] {
 //			0xE, 0x2, 1, 0xB, 1, 12, 1, 1, 0},
 //			"A\u0302\u0320\u0320\u0320");
-		// FIXME: not working
+		// FIXME: not working (table fix is required)
 //		AssertSortKey ("#i14", new byte [] {
 //			0xE, 0x2, 1, 0xF2, 1, 0x12, 1, 1, 0},
 //			"A\u20E1");
@@ -543,7 +543,7 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i2", new byte [] {
 			0x1E, 7, 1, 3, 1, 1, 1, 0},
 			"\u0E01\u0E3B");
-// FIXME: not working
+// FIXME: not working (table fix required)
 //		AssertSortKey ("#i6", new byte [] {
 //			0x1E, 7, 0xA, 0xF9, 1, 3, 1, 1, 1, 0},
 //			"\u0E01\u0E3F");
@@ -562,7 +562,7 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i11", new byte [] {
 			0x1E, 7, 0x1E, 6, 1, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E44");
-// FIXME: not working
+// FIXME: not working (table fix required)
 /*
 		AssertSortKey ("#i12", new byte [] {
 			0x1E, 7, 0x1F, 0x29, 1, 3, 3, 1, 1, 1, 0},
@@ -724,15 +724,13 @@ public class CompareInfoTest : Assertion
 
 		// Japanese (in invariant)
 		AssertCompare ("#1", 1, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
-		// FIXME: not working
-//		AssertCompare ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertCompare ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
 		AssertCompare ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
 			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
 		AssertCompare ("#4", 1, "\u3042\u309D", "\u3042\u3042");
 		AssertCompare ("#5", 0, "\u3042\u309D", "\u3042\u3042", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working
-//		AssertCompare ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
-//			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
+		AssertCompare ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
+			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 
 		// extender in target
 		AssertCompare ("#7", -1, "\u30D1\u30A2", "\u30D1\u30FC");
@@ -825,15 +823,13 @@ public class CompareInfoTest : Assertion
 
 		// Japanese (in invariant)
 		AssertIsPrefix ("#1", false, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D");
-		// FIXME: not working
-//		AssertIsPrefix ("#2", true, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertIsPrefix ("#2", true, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
 		AssertIsPrefix ("#3", true, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
 			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
 		AssertIsPrefix ("#4", false, "\u3042\u309D", "\u3042\u3042");
 		AssertIsPrefix ("#5", true, "\u3042\u309D", "\u3042\u3042", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working
-//		AssertIsPrefix ("#6", true, "\uFF8A\uFF9E\uFF70\uFF99",
-//			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
+		AssertIsPrefix ("#6", true, "\uFF8A\uFF9E\uFF70\uFF99",
+			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 
 		// extender in target
 		AssertIsPrefix ("#7", false, "\u30D1\u30A2", "\u30D1\u30FC");
@@ -914,9 +910,8 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#1-3", 0, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
 		AssertIndexOf ("#1-4", 0, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
-
 		// FIXME: not working
-//		AssertIndexOf ("#2", true, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+//		AssertIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
 		// FIXME: not working
 //		AssertIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
 //			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
@@ -967,9 +962,8 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#1-3", 0, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
 		AssertLastIndexOf ("#1-4", 0, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
-
 		// FIXME: not working
-//		AssertLastIndexOf ("#2", true, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+//		AssertLastIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
 		// FIXME: not working
 //		AssertLastIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
 //			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);

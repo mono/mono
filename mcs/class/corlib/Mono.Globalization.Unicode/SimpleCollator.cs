@@ -507,10 +507,18 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 			if (i < 0x3005 || i > 0xFF70)
 				return ExtenderType.None;
-			if (i == 0xFE7C || i == 0xFE7D)
-				return ExtenderType.Simple;
-			if (i == 0xFF70)
-				return ExtenderType.Conditional;
+			if (i >= 0xFE7C) {
+				switch (i) {
+				case 0xFE7C:
+				case 0xFE7D:
+					return ExtenderType.Simple;
+				case 0xFF70:
+					return ExtenderType.Conditional;
+				case 0xFF9E:
+				case 0xFF9F:
+					return ExtenderType.Voiced;
+				}
+			}
 			if (i > 0x30FE)
 				return ExtenderType.None;
 			switch (i) {

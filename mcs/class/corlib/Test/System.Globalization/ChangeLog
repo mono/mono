@@ -1,5 +1,10 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : some special weight tests got working.
+	  Commented on some FIXME tests why they are so.
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : Added extender tests for GetSortKey(),
 	  Compare(), IsPrefix(), IndexOf() and LastIndexOf().
 

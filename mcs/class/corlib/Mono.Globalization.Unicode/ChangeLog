@@ -1,5 +1,10 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : fixed U+FF9F diacritical weight.
+	* SimpleCollator.cs : handle U+FF9E and U+FF9F as extenders.
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Now FilterExtender() handles all extender
 	  support. IndexOf() and LastIndexOf() now supports extenders.
 	  IndexOf() and LastIndexOf() did not proceed contraction source

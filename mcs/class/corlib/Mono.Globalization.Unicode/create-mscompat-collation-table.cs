@@ -1759,7 +1759,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0x3099; i <= 0x309C; i++)
 				map [i] = new CharMapEntry (1, 1, 1);
 			map [0xFF9E] = new CharMapEntry (1, 1, 1);
-			map [0xFF9F] = new CharMapEntry (1, 1, 1);
+			map [0xFF9F] = new CharMapEntry (1, 1, 2);
 			map [0x309D] = new CharMapEntry (0xFF, 0xFF, 1);
 			map [0x309E] = new CharMapEntry (0xFF, 0xFF, 1);
 			for (int i = 0x30FC; i <= 0x30FE; i++)
