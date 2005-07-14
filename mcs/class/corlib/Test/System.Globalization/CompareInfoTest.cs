@@ -753,6 +753,9 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#5", 1, "ABCABC", 'B', 1, 5, CompareOptions.IgnoreCase, invariant);
 		AssertIndexOf ("#6", 4, "ABCABC", 'B', 2, 4, CompareOptions.IgnoreCase, invariant);
 		AssertIndexOf ("#7", 1, "\u30D1\u30FC", '\u30A2', CompareOptions.IgnoreNonSpace);
+		AssertIndexOf ("#8", 1, "UAE", '\u00C6');
+		AssertIndexOf ("#9", -1, "UA", '\u00C6');
+		AssertIndexOf ("#10", -1, "UE", '\u00C6');
 	}
 
 	[Test]
@@ -778,6 +781,9 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#5", 1, "ABCABC", 'B', 3, 3);
 		AssertLastIndexOf ("#6", 4, "ABCABC", 'B', 4, 4);
 		AssertLastIndexOf ("#7", -1, "ABCABC", 'B', 5, 1);
+		AssertLastIndexOf ("#8", 1, "UAE", '\u00C6');
+		AssertLastIndexOf ("#9", -1, "UA", '\u00C6');
+		AssertLastIndexOf ("#10", -1, "UE", '\u00C6');
 	}
 
 	[Test]

@@ -1,5 +1,12 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : Fixed IndexOf() and LasIndexOf() to search the
+	  entire replacement string if char target was an expansion.
+	  IsSuffix() was using a method for IsPrefix() which was incorrect.
+	  Removed old IsPrefix() code.
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : IndexOf() was incorrectly sharing the same
 	  byte[] field in different areas of code. Now extenders in both
 	  source and target really work in IndexOf().

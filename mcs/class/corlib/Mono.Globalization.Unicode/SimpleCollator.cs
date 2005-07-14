@@ -1187,148 +1187,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return consumed;
 		}
 
-/*
-		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
-		{
-			SetOptions (opt);
-			return IsPrefix (s, target, start, length);
-		}
-
-		// returns the consumed length in positive number, or -1 if
-		// target was not a prefix.
-		bool IsPrefix (string s, string target, int start, int length)
-		{
-			// quick check : simple codepoint comparison
-			if (s.Length >= target.Length) {
-				int si = start;
-				for (int i = 0; si < length && i < target.Length; i++, si++)
-					if (s [si] != target [i])
-						break;
-				if (si == start + target.Length)
-					return true;
-			}
-
-			escapedSourceIndex = -1;
-			return IsPrefixInternal (s, target, start, length);
-		}
-
-		bool IsPrefixInternal (string s, string target, int start, int length)
-		{
-			int si = start;
-			int end = start + length;
-			int ti = 0;
-			string source = s;
-
-			while (ti < target.Length) {
-				if (IsIgnorable (target [ti])) {
-					ti++;
-					continue;
-				}
-				if (si >= end) {
-					if (s == source)
-						break;
-					s = source;
-					si = escapedSourceIndex;
-					end = start + length;
-					escapedSourceIndex = -1;
-					continue;
-				}
-				if (IsIgnorable (s [si])) {
-					si++;
-					continue;
-				}
-
-				// Check contraction for target.
-				Contraction ctt = GetContraction (target, ti, target.Length);
-				if (ctt != null) {
-					ti += ctt.Source.Length;
-					if (ctt.SortKey != null) {
-						int ret = GetMatchLength (ref s, ref si, ref end, -1, ctt.SortKey, true);
-						if (ret < 0)
-							return false;
-						si += ret;
-					} else {
-						string r = ctt.Replacement;
-						int i = 0;
-						while (i < r.Length && si < end) {
-							int ret = GetMatchLength (ref s, ref si, ref end, r [i]);
-							if (ret < 0)
-								return false;
-							si += ret;
-							i++;
-						}
-						if (i < r.Length && si >= end)
-							return false;
-					}
-				}
-				else {
-					int ret = GetMatchLength (ref s, ref si, ref end, target [ti]);
-					if (ret < 0)
-						return false;
-					si += ret;
-					ti++;
-				}
-			}
-			if (si == end) {
-				// All codepoints in the compared range
-				// matches. In that case, what matters 
-				// is whether the remaining part of 
-				// "target" is ignorable or not.
-				while (ti < target.Length)
-					if (!IsIgnorable (target [ti++]))
-						return false;
-				return true;
-			}
-			return true;
-		}
-*/
-
-		// WARNING: Don't invoke it outside IsPrefix().
-		int GetMatchLength (ref string s, ref int idx, ref int end, char target)
-		{
-			int it = FilterOptions ((int) target);
-			charSortKey [0] = Category (it);
-			charSortKey [1] = Level1 (it);
-			if (!ignoreNonSpace)
-				// FIXME: pass ExtenderType
-				charSortKey [2] = Level2 (it, ExtenderType.None);
-			charSortKey [3] = Uni.Level3 (it);
-
-			return GetMatchLength (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
-		}
-
-		// WARNING: Don't invoke it outside IsPrefix().
-		// returns consumed source length (mostly 1, source length in case of contraction)
-		int GetMatchLength (ref string s, ref int idx, ref int end, int it, byte [] sortkey, bool noLv4)
-		{
-			Contraction ct = null;
-			// If there is already expansion, then it should not
-			// process further expansions.
-			if (escapedSourceIndex < 0)
-				ct = GetContraction (s, idx, end);
-			if (ct != null) {
-				if (ct.SortKey != null) {
-					if (!noLv4)
-						return -1;
-					for (int i = 0; i < ct.SortKey.Length; i++)
-						if (sortkey [i] != ct.SortKey [i])
-							return -1;
-					return ct.Source.Length;
-				} else {
-					escapedSourceIndex = idx + ct.Source.Length;
-					s = ct.Replacement;
-					idx = 0;
-					end = s.Length;
-					return GetMatchLength (ref s, ref idx, ref end, it, sortkey, noLv4);
-				}
-			} else {
-				// primitive comparison
-				if (Compare (s [idx], it, sortkey) != 0)
-					return -1;
-				return 1;
-			}
-		}
-
 		// IsSuffix()
 
 		public bool IsSuffix (string src, string target, CompareOptions opt)
@@ -1460,7 +1318,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					s = ct.Replacement;
 					idx = s.Length - 1;
 					end = 0;
-					return GetMatchLength (ref s, ref idx, ref end, it, sortkey, noLv4);
+					return GetMatchLengthBack (ref s, ref idx, ref end, it, sortkey, noLv4);
 				}
 			} else {
 				// primitive comparison
@@ -1560,7 +1418,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = GetContraction (target);
 			if (ct != null) {
 				if (ct.Replacement != null)
-					return IndexOfPrimitiveChar (s, start, length, ct.Replacement [0]);
+					return IndexOf (s, ct.Replacement, start, length,
+						(opt & CompareOptions.StringSort) != 0);
 				else
 					return IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 			}
@@ -1686,7 +1545,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = GetContraction (target);
 			if (ct != null) {
 				if (ct.Replacement != null)
-					return LastIndexOfPrimitiveChar (s, start, length, ct.Replacement [0]);
+					return LastIndexOf (s, ct.Replacement, start, length, (opt & CompareOptions.StringSort) != 0);
 				else
 					return LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 			}
