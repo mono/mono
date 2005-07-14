@@ -1,6 +1,6 @@
-bin_SCRIPTS = $(scripts_1.0) $(scripts_2.0) gmcs mono-service $(scripts_rpmhelpers)
+bin_SCRIPTS = $(scripts_1_0) $(scripts_2_0) gmcs mono-service $(scripts_rpmhelpers)
 
-scripts_1.0 = \
+scripts_1_0 = \
 	al			\
 	caspol			\
 	cert2spc		\
@@ -32,7 +32,7 @@ scripts_1.0 = \
 	wsdl			\
 	xsd
 
-scripts_2.0 = \
+scripts_2_0 = \
 	monop2 			\
 	wsdl2
 
@@ -41,7 +41,7 @@ scripts_rpmhelpers = mono-find-provides mono-find-requires
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= mono-nunit.pc
 
-CLEANFILES = $(scripts_1.0) $(scripts_2.0) gmcs mono-service
+CLEANFILES = $(scripts_1_0) $(scripts_2_0) gmcs mono-service
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =                   \
@@ -79,7 +79,7 @@ mono-service: mono-service.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
 	mv $@.tmp $@
 
-$(scripts_1.0): script.in Makefile
+$(scripts_1_0): script.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
@@ -87,7 +87,7 @@ gmcs: script.in Makefile
 	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-$(scripts_2.0): script.in Makefile
+$(scripts_2_0): script.in Makefile
 	n=`echo $@ | sed 's,2$$,,'`; \
 	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
