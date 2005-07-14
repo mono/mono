@@ -1,5 +1,9 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : simplified IsSuffix() code.
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Fixed IndexOf() and LasIndexOf() to search the
 	  entire replacement string if char target was an expansion.
 	  IsSuffix() was using a method for IsPrefix() which was incorrect.

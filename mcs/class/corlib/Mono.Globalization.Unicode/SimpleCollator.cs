@@ -1243,18 +1243,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (ctt != null) {
 					ti -= ctt.Source.Length;
 					if (ctt.SortKey != null) {
-						int ret = GetMatchLengthBack (ref s, ref si, ref end, -1, ctt.SortKey, true);
-						if (ret < 0)
+						if (!MatchesBackward (ref s, ref si, ref end, -1, ctt.SortKey, true))
 							return false;
-						si -= ret;
 					} else {
 						string r = ctt.Replacement;
 						int i = r.Length - 1;
 						while (i >= 0 && si >= end) {
-							int ret = GetMatchLengthBack (ref s, ref si, ref end, r [i]);
-							if (ret < 0)
+							if (!MatchesBackward (ref s, ref si, ref end, r [i]))
 								return false;
-							si -= ret;
 							i--;
 						}
 						if (i >= 0 && si < end)
@@ -1262,10 +1258,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					}
 				}
 				else {
-					int ret = GetMatchLengthBack (ref s, ref si, ref end, target [ti]);
-					if (ret < 0)
+					if (!MatchesBackward (ref s, ref si, ref end, target [ti]))
 						return false;
-					si -= ret;
 					ti--;
 				}
 			}
@@ -1283,7 +1277,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		}
 
 		// WARNING: Don't invoke it outside IsSuffix().
-		int GetMatchLengthBack (ref string s, ref int idx, ref int end, char target)
+		bool MatchesBackward (ref string s, ref int idx, ref int end, char target)
 		{
 			int it = FilterOptions ((int) target);
 			charSortKey [0] = Category (it);
@@ -1293,12 +1287,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				charSortKey [2] = Level2 (it, ExtenderType.None);
 			charSortKey [3] = Uni.Level3 (it);
 
-			return GetMatchLengthBack (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
+			return MatchesBackward (ref s, ref idx, ref end, it, charSortKey, !Uni.HasSpecialWeight ((char) it));
 		}
 
 		// WARNING: Don't invoke it outside IsSuffix().
 		// returns consumed source length (mostly 1, source length in case of contraction)
-		int GetMatchLengthBack (ref string s, ref int idx, ref int end, int it, byte [] sortkey, bool noLv4)
+		bool MatchesBackward (ref string s, ref int idx, ref int end, int it, byte [] sortkey, bool noLv4)
 		{
 			Contraction ct = null;
 			// If there is already expansion, then it should not
@@ -1308,73 +1302,56 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (ct != null) {
 				if (ct.SortKey != null) {
 					if (!noLv4)
-						return -1;
+						return false;
 					for (int i = 0; i < ct.SortKey.Length; i++)
 						if (sortkey [i] != ct.SortKey [i])
-							return -1;
-					return ct.Source.Length;
+							return false;
+					idx -= ct.Source.Length;
+					return true;
 				} else {
 					escapedSourceIndex = idx - ct.Source.Length;
 					s = ct.Replacement;
 					idx = s.Length - 1;
 					end = 0;
-					return GetMatchLengthBack (ref s, ref idx, ref end, it, sortkey, noLv4);
+					return MatchesBackward (ref s, ref idx, ref end, it, sortkey, noLv4);
 				}
 			} else {
 				// primitive comparison
-				if (Compare (s [idx], it, sortkey) != 0)
-					return -1;
-				return 1;
+				if (!MatchesPrimitive (s [idx], it, sortkey))
+					return false;
+				idx--;
+				return true;
 			}
 		}
 
 		// Common use methods 
 
 		// returns comparison result.
-		private int Compare (char src, int ct, byte [] sortkey)
+		private bool MatchesPrimitive (char src, int ct, byte [] sortkey)
 		{
 			// char-by-char comparison.
 			int cs = FilterOptions (src);
 			if (cs == ct)
-				return 0;
+				return true;
 			// lv.1 to 3
-			int ret = Category (cs) - Category (ct);
-			if (ret != 0)
-				return ret;
-			ret = Level1 (cs) - Level1 (ct);
-			if (ret != 0)
-				return ret;
-			if (!ignoreNonSpace) {
-				// FIXME: pass ExtenderType
-				ret = Level2 (cs, ExtenderType.None) - Level2 (ct, ExtenderType.None);
-				if (ret != 0)
-					return ret;
-			}
-			ret = Uni.Level3 (cs) - Uni.Level3 (ct);
-			if (ret != 0)
-				return ret;
+			if (Category (cs) != sortkey [0] ||
+				Level1 (cs) != sortkey [1] ||
+				!ignoreNonSpace && Level2 (cs, ExtenderType.None) != sortkey [2] ||
+				Uni.Level3 (cs) != sortkey [3])
+				return false;
 			// lv.4 (only when required). No need to check cj coz
 			// there is no pair of characters that has the same
 			// primary level and differs here.
 			if (!Uni.HasSpecialWeight (src))
-				return 0;
+				return true;
 			char target = (char) ct;
-			ret = CompareFlagPair (
-				!Uni.IsJapaneseSmallLetter (src),
-				!Uni.IsJapaneseSmallLetter (target));
-			if (ret != 0)
-				return ret;
-			ret = Uni.GetJapaneseDashType (src) -
-				Uni.GetJapaneseDashType (target);
-			if (ret != 0)
-				return ret;
-			ret = CompareFlagPair (Uni.IsHiragana (src),
-				Uni.IsHiragana (target));
-			if (ret != 0)
-				return ret;
-			ret = CompareFlagPair (!IsHalfKana (src),
-				!IsHalfKana (target));
-			return ret;
+			return Uni.IsJapaneseSmallLetter (src) !=
+				Uni.IsJapaneseSmallLetter (target) ||
+				Uni.GetJapaneseDashType (src) !=
+				Uni.GetJapaneseDashType (target) ||
+				Uni.IsHiragana (src) !=
+				Uni.IsHiragana (target) ||
+				IsHalfKana (src) != IsHalfKana (target);
 		}
 
 		int CompareFlagPair (bool b1, bool b2)
