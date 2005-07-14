@@ -1,5 +1,10 @@
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : rewrote IsSuffix() to use CompareInternal().
+	  Thus supported extenders in IsSuffix().
+
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : more IsSuffix() simplification, but it will be
 	  stopped here since it cannot handle extenders (implementing new
 	  approach one).

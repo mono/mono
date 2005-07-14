@@ -869,15 +869,16 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#11", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		// extender in target
 		// FIXME: not working
-//		AssertIsSuffix ("#12", false, "\u30D1\u30A2", "\u30D1\u30FC");
-//		AssertIsSuffix ("#13", true, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
+		AssertIsSuffix ("#12", false, "\u30D1\u30A2", "\u30D1\u30FC");
+		AssertIsSuffix ("#13", true, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
-//		AssertIsSuffix ("#14", false, "\u30D1\u30FC", "\u30D1\u30A2");
-//		AssertIsSuffix ("#15", true, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
+		AssertIsSuffix ("#14", false, "\u30D1\u30FC", "\u30D1\u30A2");
+		AssertIsSuffix ("#15", true, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
 	}
 
 	[Test]
 	[Category ("NotDotNet")]
+	[Category ("NotWorking")]
 	public void IsSuffixMSBug ()
 	{
 		if (!doTest)

@@ -1163,6 +1163,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return idx1 != end1 ? 1 : idx2 == end2 ? finalResult : -1;
 		}
 
+		int CompareFlagPair (bool b1, bool b2)
+		{
+			return b1 == b2 ? 0 : b1 ? 1 : -1;
+		}
+
 		#endregion
 
 		#region IsPrefix() and IsSuffix()
@@ -1213,7 +1218,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				(opt & CompareOptions.StringSort) != 0);
 		}
 
-		bool New_IsSuffix (string s, string t, int start, int length,
+		bool IsSuffix (string s, string t, int start, int length,
 			bool stringSort)
 		{
 			int tstart = 0;
@@ -1223,186 +1228,23 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (tstart == t.Length)
 				return true; // as if target is String.Empty.
 
-			// FIXME: could be more efficient.
-			bool consumed, dummy;
+			// FIXME: it is not efficient.
+			bool sourceConsumed, targetConsumed;
 			for (int i = 0; i < length; i++) {
+				escape1.Source = escape2.Source = null;
+				previousSortKey = previousSortKey2 = null;
+				previousChar = previousChar2 = -1;
+
 				int ret = CompareInternal (s, start - i, i + 1,
-					t, tstart, t.Length, stringSort,
-					out dummy, out consumed, true);
+					t, tstart, t.Length - tstart,
+					stringSort, out targetConsumed,
+					out sourceConsumed, true);
 				if (ret == 0)
 					return true;
+				if (!sourceConsumed && targetConsumed)
+					return false;
 			}
 			return false;
-		}
-
-		// FIXME: This code has a fatal problem that it cannot handle
-		// extenders :(
-		bool IsSuffix (string s, string t, int start, int length,
-			bool stringSort)
-		{
-			int si = start;
-			int ti = t.Length - 1;
-			int end = start - length + 1;
-			int tend = 0;
-
-			while (true) {
-				if (ti < tend) {
-					if (escape2.Source == null)
-						break;
-					t = escape2.Source;
-					ti = escape2.Index;
-					tend = escape2.End;
-					escape2.Source = null;
-					continue;
-				}
-				if (IsIgnorable (t [ti])) {
-					ti--;
-					continue;
-				}
-				if (si < end) {
-					if (escape1.Source == null)
-						break;
-					s = escape1.Source;
-					si = escape1.Index;
-					end = escape1.End;
-					escape1.Source = null;
-					continue;
-				}
-				if (IsIgnorable (s [si])) {
-					si--;
-					continue;
-				}
-
-				ExtenderType ext1 = GetExtenderType (s [si]);
-				ExtenderType ext2 = GetExtenderType (t [ti]);
-				int vt = -1;
-				byte [] sk = null;
-
-				// Check contraction for target.
-				Contraction ctt = null;
-				if (ext2 != ExtenderType.None) {
-					if (previousChar2 < 0)
-						sk = previousSortKey2;
-					else
-						vt = FilterExtender (previousChar2, ext2);
-				}
-				else if (escape2.Source == null)
-					ctt = GetTailContraction (t, ti, 0);
-				if (ctt != null) {
-					if (ctt.SortKey != null) {
-						ti -= ctt.Source.Length;
-						for (int i = 0; i < ctt.SortKey.Length; i++)
-							charSortKey2 [i] = ctt.SortKey [i];
-						previousChar2 = -1;
-						previousSortKey2 = charSortKey2;
-					} else {
-						escape2.Source = t;
-						escape2.Index = ti - ctt.Source.Length;
-						escape2.End = tend;
-						t = ctt.Replacement;
-						ti = ctt.Replacement.Length - 1;
-						tend = 0;
-						continue;
-					}
-				} else if (sk == null) {
-					if (vt < 0)
-						vt = FilterOptions (t [ti]);
-					sk = charSortKey2;
-					sk [0] = Category (vt);
-					sk [1] = Level1 (vt);
-					if (!ignoreNonSpace)
-						// FIXME: pass extender type
-						sk [2] = Level2 (vt, ext2);
-					sk [3] = Uni.Level3 (vt);
-					if (sk [1] != 1)
-						previousChar2 = vt;
-					ti--;
-				}
-				if (!MatchesBackward (ref s, ref si, ref end, vt, sk, !Uni.HasSpecialWeight ((char) vt)))
-					return false;
-			}
-			if (si < end) {
-				// All codepoints in the compared range
-				// matches. In that case, what matters 
-				// is whether the remaining part of 
-				// "target" is ignorable or not.
-				while (ti >= 0)
-					if (!IsIgnorable (t [ti--]))
-						return false;
-				return true;
-			}
-			return true;
-		}
-
-		// WARNING: Don't invoke it outside IsSuffix().
-		// returns consumed source length (mostly 1, source length in case of contraction)
-		bool MatchesBackward (ref string s, ref int idx, ref int end, int it, byte [] sortkey, bool noLv4)
-		{
-			Contraction ct = null;
-			// If there is already expansion, then it should not
-			// process further expansions.
-			if (escape1.Source == null)
-				ct = GetTailContraction (s, idx, end);
-			if (ct != null) {
-				if (ct.SortKey != null) {
-					if (!noLv4)
-						return false;
-					for (int i = 0; i < ct.SortKey.Length; i++)
-						if (sortkey [i] != ct.SortKey [i])
-							return false;
-					idx -= ct.Source.Length;
-					return true;
-				} else {
-					escape1.Source = s;
-					escape1.Index = idx - ct.Source.Length;
-					escape1.End = end;
-					s = ct.Replacement;
-					idx = s.Length - 1;
-					end = 0;
-					return MatchesBackward (ref s, ref idx, ref end, it, sortkey, noLv4);
-				}
-			} else {
-				// primitive comparison
-				if (!MatchesPrimitive (s [idx], it, sortkey))
-					return false;
-				idx--;
-				return true;
-			}
-		}
-
-		// Common use methods 
-
-		// returns comparison result.
-		private bool MatchesPrimitive (char src, int ct, byte [] sortkey)
-		{
-			// char-by-char comparison.
-			int cs = FilterOptions (src);
-			if (cs == ct)
-				return true;
-			// lv.1 to 3
-			if (Category (cs) != sortkey [0] ||
-				Level1 (cs) != sortkey [1] ||
-				!ignoreNonSpace && Level2 (cs, ExtenderType.None) != sortkey [2] ||
-				Uni.Level3 (cs) != sortkey [3])
-				return false;
-			// lv.4 (only when required). No need to check cj coz
-			// there is no pair of characters that has the same
-			// primary level and differs here.
-			if (!Uni.HasSpecialWeight (src))
-				return true;
-			char target = (char) ct;
-			return Uni.IsJapaneseSmallLetter (src) !=
-				Uni.IsJapaneseSmallLetter (target) ||
-				Uni.GetJapaneseDashType (src) !=
-				Uni.GetJapaneseDashType (target) ||
-				Uni.IsHiragana (src) !=
-				Uni.IsHiragana (target) ||
-				IsHalfKana (src) != IsHalfKana (target);
-		}
-
-		int CompareFlagPair (bool b1, bool b2)
-		{
-			return b1 == b2 ? 0 : b1 ? 1 : -1;
 		}
 
 		#endregion
