@@ -5,7 +5,6 @@
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
 test-308.cs
-test-322.cs
 test-377.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
