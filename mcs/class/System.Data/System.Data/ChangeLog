@@ -1,5 +1,10 @@
 2005-07-14  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataView.cs: Patch from Marc Haisenko to throw descriptive error
+	message when accessing Item, with invalid index.
+
+2005-07-14  Sureshkumar T  <tsureshkumar@novell.com>
+
 	reapplied patch from Marc Haisenko.
 	* DataView.cs: Patch from Marc Haisenko that ensures that rowCache
 	is never null.

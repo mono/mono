@@ -197,6 +197,9 @@ namespace System.Data
 		public DataRowView this[int recordIndex] {
 			[MonoTODO]
 			get {
+				if (recordIndex > rowCache.Length)
+					throw new IndexOutOfRangeException ("There is no row at " +
+									    "position: " + recordIndex + ".");
 				return rowCache [recordIndex];
 			}
 		}
