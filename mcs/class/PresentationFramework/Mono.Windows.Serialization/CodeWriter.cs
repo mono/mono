@@ -325,7 +325,7 @@ namespace Mono.Windows.Serialization {
 
 			
 			CodeExpression expr;
-			if (destType == sourceType)
+			if (sourceType == destType || sourceType.IsSubclassOf(destType))
 				expr = varRef;
 			else
 				expr = new CodeCastExpression(

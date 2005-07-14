@@ -8,7 +8,7 @@ run:
 	make TestVocab.dll
 	MONO_PATH="." $(RUNTIME) --debug ../xamlc.exe -o:test.xaml.out.cs test.xaml
 	$(CSCOMPILE) -r:TestVocab.dll -o test.exe test.xaml.out.cs
-	$(RUNTIME) --debug test.exe
+	echo "INPUTINPUT" | $(RUNTIME) --debug test.exe
 
 run2:
 	make runtimetest.exe

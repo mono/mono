@@ -6,20 +6,20 @@ namespace Xaml.TestVocab.Console {
 	public delegate string Filter(string s);
 	
 	public class ConsoleWriter : DependencyObject, IAddChild, IConsoleAction {
-		string text;
+		ConsoleValue text;
 		private Filter filter;
 
 		public ConsoleWriter()
 		{
-			text = "";
+			text = new ConsoleValueString("");
 		}
 		
 		public ConsoleWriter(ConsoleValue text)
 		{
-			this.text = text.Value;
+			this.text = text;
 		}
 
-		public string Text {
+		public ConsoleValue Text {
 			get { return text; }
 			set { text = value; }
 		}
@@ -30,19 +30,19 @@ namespace Xaml.TestVocab.Console {
 
 		public void AddText(string text)
 		{
-			this.text += text;
+			this.text = new ConsoleValueAppend(this.text, new ConsoleValueString(text));
 		}
 
 		public void AddChild(Object o)
 		{
-			this.text += ((ConsoleValue)o).Value;
+			this.text = new ConsoleValueAppend(this.text, (ConsoleValue)o);
 		}
 
 		
 		public void Run()
 		{
 			Filter f = filter;
-			string s = text;
+			string s = text.Value;
 			// apply filter, if it exists
 			if (f != null)
 				s = f(s);

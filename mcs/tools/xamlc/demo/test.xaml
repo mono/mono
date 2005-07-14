@@ -13,9 +13,7 @@
 		</ConsoleReader.Prompt>
 	</ConsoleReader>
 	<ConsoleWriter>
-		<ConsoleWriter.Text>
-			<ConsoleValueVar Variable="thingo" />
-		</ConsoleWriter.Text>
+		<ConsoleWriter.Text>I say: <ConsoleValueVar Variable="thingo" /></ConsoleWriter.Text>
 	</ConsoleWriter>
 	<ConsoleWriter>
 		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>

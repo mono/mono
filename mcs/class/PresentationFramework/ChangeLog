@@ -1,5 +1,10 @@
 2005-07-15  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/CodeWriter.cs: don't try to convert
+	objects into their parent types.
+
+2005-07-15  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/CodeWriter.cs: Better debugging
 	information
 	* Mono.Windows.Serialization/XamlParser.cs: Better debugging

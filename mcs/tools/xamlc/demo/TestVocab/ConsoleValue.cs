@@ -52,6 +52,20 @@ namespace Xaml.TestVocab.Console {
 		}
 	}
 
+	public class ConsoleValueAppend : ConsoleValue {
+		ConsoleValue a, b;
+		public ConsoleValueAppend(ConsoleValue a, ConsoleValue b)
+		{
+			this.a = a;
+			this.b = b;
+		}
+
+		public override string Value {
+			get { return a.Value + b.Value; }
+		}
+	}
+
+
 	public class ConsoleValueVar : ConsoleValue {
 		string var;
 		public ConsoleValueVar()
