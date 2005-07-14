@@ -103,6 +103,15 @@ namespace Mono.Windows.Serialization {
 			p.SetValue(o, text, null);
 		}
 		
+		public void CreatePropertyObject(Type type, string name)
+		{
+			throw new NotImplementedException();
+		}
+		public void EndPropertyObject(Type sourceType)
+		{
+			throw new NotImplementedException();
+		}
+
 		// top of stack is reference to an attached property
 		public void CreateDependencyPropertyText(string text, Type propertyType)
 		{

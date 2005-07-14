@@ -1,3 +1,16 @@
+2005-07-14  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlWriter.cs,
+	  Mono.Windows.Serialization/CodeWriter.cs: Initial support for
+	creating complex objects as values of properties
+
+2005-07-13  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs: fixed bug in the code
+	detecting that the file's contents must be finished, where it forbade
+	whitespace after the XAML code
+
 2005-07-11  Iain McCoy  <iain@mccoy.id.au>
 
 	* Makefile,

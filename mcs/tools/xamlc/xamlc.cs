@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Mono.GetOptions;
@@ -55,10 +56,17 @@ class Driver {
 			options.OutputFile = input + ".out";
 		}
 		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+		XmlTextReader xr = new XmlTextReader(input);
 		TextWriter tw = new StreamWriter(options.OutputFile);
 		CodeWriter cw = new CodeWriter(generator, tw, options.Partial);
-		XamlParser r = new XamlParser(input, cw);
-		r.Parse();
+		XamlParser r = new XamlParser(xr, cw);
+		try {
+			r.Parse();
+		}
+		catch (Exception ex) {
+			Console.WriteLine("Line " + xr.LineNumber + ", Column " + xr.LinePosition);
+			throw ex;
+		}
 	}
 	
 	public static void Main(string[] args) {

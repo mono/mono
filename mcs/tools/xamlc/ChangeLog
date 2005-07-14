@@ -1,3 +1,25 @@
+2005-07-14  Iain McCoy  <iain@mccoy.id.au>
+
+	* demo/test.xaml: added first test of complex objects as property values
+
+
+2005-07-13  Iain McCoy  <iain@mccoy.id.au>
+
+	* demo/TestVocab/ConsoleReader.cs,
+	  demo/TestVocab/ConsoleVars.cs: more functionality that will provide
+	uses for more complicated xaml code.
+	* xamlc.cs: much more useful error reporting.
+
+2005-07-08  Iain McCoy  <iain@mccoy.id.au>
+
+	* demo/TestVocab/ConsoleWriter.cs,
+	  demo/TestVocab/ConsoleValue.cs,
+	  demo/Makefile: Added ConsoleValue class to allow testing of more
+	complicated property scenarios
+	* demo/TestVocab/ConsoleVars.cs,
+	  demo/TestVocab/ConsoleReader.cs: classes to put in more complicated
+	test
+
 2005-07-08  Iain McCoy  <iain@mccoy.id.au>
 
 	* demo/runtimetest.xaml

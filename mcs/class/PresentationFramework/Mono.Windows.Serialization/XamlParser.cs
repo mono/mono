@@ -76,7 +76,7 @@ namespace Mono.Windows.Serialization {
 		public void Parse()
 		{
 			while (reader.Read()) {
-				if (begun && currentState == null)
+				if (begun && currentState == null && reader.NodeType != XmlNodeType.Whitespace)
 					throw new Exception("Too far: " + reader.NodeType + ", " + reader.Name);
 				if (currentState != null && currentState.type == CurrentType.Code)
 				{
@@ -103,7 +103,8 @@ namespace Mono.Windows.Serialization {
 					parseText();
 					break;
 				case XmlNodeType.Whitespace:
-					// skip whitespace
+				case XmlNodeType.Comment:
+					// skip whitespace and comments
 					break;
 				default:
 					Console.Out.WriteLine("Unknown element type " + reader.NodeType);
@@ -244,7 +245,13 @@ namespace Mono.Windows.Serialization {
 				string name = reader.GetAttribute("Name", XAML_NAMESPACE);
 				if (name == null)
 					name = reader.GetAttribute("Name", reader.NamespaceURI);
-				addChild(parent, name);
+
+				if (currentState.type == CurrentType.Object)
+					addChild(parent, name);
+				else if (currentState.type == CurrentType.Property)
+					addPropertyChild(parent, name);
+				else
+					throw new NotImplementedException();
 			}
 			
 			if (reader.MoveToFirstAttribute()) {
@@ -270,10 +277,11 @@ namespace Mono.Windows.Serialization {
 		void createTopLevel(string parentName, string className)
 		{
 			Type t = Type.GetType(parentName);
+
+			writer.CreateTopLevel(t, className);
 			currentState = new ParserState();
 			currentState.type = CurrentType.Object;
 			currentState.obj = t;
-			writer.CreateTopLevel(t, className);
 		}
 
 		void addChild(Type type, string objectName)
@@ -284,6 +292,18 @@ namespace Mono.Windows.Serialization {
 			currentState.type = CurrentType.Object;
 			currentState.obj = type;
 		}
+		
+		void addPropertyChild(Type type, string objectName)
+		{
+//			writer.CreatePropertyObject(type, objectName);
+			writer.CreatePropertyObject(((PropertyInfo)currentState.obj).PropertyType, objectName);
+
+			oldStates.Add(currentState);
+			currentState = new ParserState();
+			currentState.type = CurrentType.Object;
+			currentState.obj = type;
+		}
+
 
 		
 		void parseLocalPropertyAttribute()
@@ -367,14 +387,22 @@ namespace Mono.Windows.Serialization {
 
 		void parseEndElement()
 		{
-			if (currentState.type == CurrentType.Code)
+			if (currentState.type == CurrentType.Code) {
 				writer.CreateCode((string)currentState.obj);
-			else if (currentState.type == CurrentType.Object)
-				writer.EndObject();
-			else if (currentState.type == CurrentType.Property)
+			} else if (currentState.type == CurrentType.Object) {
+				ParserState prev = null;
+				if (oldStates.Count > 1)
+					prev = (ParserState)oldStates[oldStates.Count - 1];
+				
+				if (prev != null && prev.type == CurrentType.Property)
+					writer.EndPropertyObject((Type)currentState.obj);
+				else
+					writer.EndObject();
+			} else if (currentState.type == CurrentType.Property) {
 				writer.EndProperty();
-			else if (currentState.type == CurrentType.DependencyProperty)
+			} else if (currentState.type == CurrentType.DependencyProperty) {
 				writer.EndDependencyProperty();
+			}
 			pop();
 		}
 

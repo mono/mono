@@ -14,9 +14,9 @@ namespace Xaml.TestVocab.Console {
 			text = "";
 		}
 		
-		public ConsoleWriter(string text)
+		public ConsoleWriter(ConsoleValue text)
 		{
-			this.text = text;
+			this.text = text.Value;
 		}
 
 		public string Text {
@@ -35,7 +35,7 @@ namespace Xaml.TestVocab.Console {
 
 		public void AddChild(Object o)
 		{
-			throw new NotImplementedException();
+			this.text += ((ConsoleValue)o).Value;
 		}
 
 		

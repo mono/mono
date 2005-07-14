@@ -234,6 +234,7 @@ namespace Mono.Windows.Serialization {
 							"GetConverter"),
 					new CodeTypeOfExpression(propertyType));
 		}
+
 		// top of stack is reference to a property
 		public void CreatePropertyText(string text, Type propertyType)
 		{
@@ -256,6 +257,72 @@ namespace Mono.Windows.Serialization {
 					expr);
 			
 			constructor.Statements.Add(assignment);
+		}
+
+		public void CreatePropertyObject(Type type, string varName)
+		{
+			bool isDefaultName;
+			if (varName == null) {
+				isDefaultName = true;
+				varName = Char.ToLower(type.Name[0]) + type.Name.Substring(1);
+				// make sure something sensible happens when class
+				// names start with a lowercase letter
+				if (varName == type.Name)
+					varName = "_" + varName;
+			} else {
+				isDefaultName = false;
+			}
+
+			if (!nameClashes.ContainsKey(varName))
+				nameClashes[varName] = 0;
+			else {
+				nameClashes[varName] = 1 + (int)nameClashes[varName];
+				varName += (int)nameClashes[varName];
+			}
+
+
+			if (isDefaultName) {
+				CodeVariableDeclarationStatement declaration = 
+						new CodeVariableDeclarationStatement(type, 
+								varName,
+								new CodeObjectCreateExpression(type));
+				constructor.Statements.Add(declaration);
+			} else {
+				CodeMemberField declaration = new CodeMemberField(type, varName);
+				declaration.InitExpression = new CodeObjectCreateExpression(type);
+				this.type.Members.Add(declaration);
+			}
+			CodeVariableReferenceExpression varRef = new CodeVariableReferenceExpression(varName);
+
+			objects.Add(type);
+			objects.Add(varRef);
+		
+		}
+
+		public void EndPropertyObject(Type sourceType)
+		{
+			CodeExpression varRef = (CodeExpression)objects[objects.Count - 1];
+			objects.RemoveAt(objects.Count - 1);
+			Type destType = (Type)objects[objects.Count - 1];
+			objects.RemoveAt(objects.Count - 1);
+
+			
+			CodeExpression expr;
+			if (destType == sourceType)
+				expr = varRef;
+			else
+				expr = new CodeCastExpression(
+						new CodeTypeReference(destType),
+						new CodeMethodInvokeExpression(
+								fetchConverter(sourceType),
+								"ConvertTo",
+								varRef,
+								new CodeTypeOfExpression(destType)));
+			CodeAssignStatement assignment = new CodeAssignStatement(
+					(CodeExpression)objects[objects.Count - 1],
+					expr);
+			constructor.Statements.Add(assignment);
+
 		}
 		
 		public void EndObject()

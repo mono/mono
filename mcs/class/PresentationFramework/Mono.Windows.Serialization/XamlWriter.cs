@@ -40,6 +40,8 @@ namespace Mono.Windows.Serialization {
 		void CreateProperty(PropertyInfo property);
 		void CreatePropertyText(string text, Type propertyType);
 		void CreatePropertyDelegate(string functionName, Type propertyType);
+		void CreatePropertyObject(Type destType, string name);
+		void EndPropertyObject(Type sourceType);
 		void EndProperty();
 	
 

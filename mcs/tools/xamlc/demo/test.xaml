@@ -1,4 +1,4 @@
-<?Mapping ClrNamespace="Xaml.TestVocab.Console" Assembly="TestVocab" XmlNamespace="console" ?>
+<?Mapping ClrNamespace="Xaml.TestVocab.Console" Assembly="TestVocab.dll" XmlNamespace="console" ?>
 
 <ConsoleApp xmlns="console" 
 		xmlns:x="http://schemas.microsoft.com/winfx/xaml/2005" 
@@ -7,6 +7,18 @@
 	<ConsoleWriter>IT BEGINS!</ConsoleWriter>
 	<ConsoleWriter x:Name="_greeter" Text="Hello World" />
 	<ConsoleWriter Text="I'm surrounded!" Filter="stringFilter" />
+	<ConsoleReader Variable="thingo">
+		<ConsoleReader.Prompt>
+			<ConsoleWriter>What should I say?</ConsoleWriter>
+		</ConsoleReader.Prompt>
+	</ConsoleReader>
+<!--
+	<ConsoleWriter>
+		<ConsoleWriter.Text>
+			<ConsoleValueVar Variable="thingo" />
+		</ConsoleWriter.Text>
+	</ConsoleWriter>
+-->
 	<ConsoleWriter>
 		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>

@@ -12,7 +12,8 @@ namespace Xaml.TestVocab.Console {
 		
 		public void AddText(string Text)
 		{
-			actions.Add(new ConsoleWriter(Text));
+			actions.Add(new ConsoleWriter(
+						new ConsoleValueString(Text)));
 		}
 
 		public void AddChild(object Value)

@@ -1,7 +1,7 @@
 thisdir = tools/xaml/demo
 include ../../../build/rules.make
 
-SOURCES=TestVocab/ConsoleApp.cs TestVocab/ConsoleWriter.cs TestVocab/IConsoleAction.cs
+SOURCES=TestVocab/ConsoleApp.cs TestVocab/ConsoleWriter.cs TestVocab/ConsoleReader.cs TestVocab/IConsoleAction.cs TestVocab/ConsoleValue.cs TestVocab/ConsoleVars.cs
 
 run:
 	make clean
