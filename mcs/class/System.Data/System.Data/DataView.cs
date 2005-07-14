@@ -41,7 +41,7 @@ namespace System.Data
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
 		protected DataViewRowState rowState;
-		protected DataRowView[] rowCache = null;
+		protected DataRowView[] rowCache = new DataRowView [0];
 
 		// BeginInit() support
 		bool isInitPhase = false;
@@ -535,7 +535,7 @@ namespace System.Data
 			if (dataTable != null)
 				UnregisterEventHandlers ();
 			Index = null;
-			rowCache = null;
+			rowCache = new DataRowView [0];
 			isOpen = false;
 		}
 
@@ -703,7 +703,7 @@ namespace System.Data
 		{
 			// TODO: what really happens?
 			Close ();
-			rowCache = null;
+			rowCache = new DataRowView [0];
 			Open ();
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1 ));
 		}
