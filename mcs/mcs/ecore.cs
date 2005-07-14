@@ -233,7 +233,7 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		public virtual FullNamedExpression ResolveAsTypeStep (EmitContext ec,  bool silent)
 		{
 			return null;
 		}
@@ -247,18 +247,14 @@ namespace Mono.CSharp {
 		{
 			int errors = Report.Errors;
 
-			FullNamedExpression fne = ResolveAsTypeStep (ec);
+			FullNamedExpression fne = ResolveAsTypeStep (ec, silent);
 
-			if (fne == null) {
-				if (!silent && errors == Report.Errors)
-					NamespaceEntry.Error_NamespaceNotFound (Location, ToString ());
+			if (fne == null)
 				return null;
-			}
 
 			if (fne.eclass != ExprClass.Type) {
 				if (!silent && errors == Report.Errors)
-					Report.Error (118, Location, "`{0}' denotes a `{1}', where a type was expected",
-						      fne.FullName, fne.ExprClassName ());
+					fne.Error_UnexpectedKind (null, "type", loc);
 				return null;
 			}
 
@@ -312,7 +308,7 @@ namespace Mono.CSharp {
 		public Expression Resolve (EmitContext ec, ResolveFlags flags)
 		{
 			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) 
-				return ResolveAsTypeStep (ec);
+				return ResolveAsTypeStep (ec, false);
 
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
 			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
@@ -772,7 +768,7 @@ namespace Mono.CSharp {
 			return operator_true;
 		}
 		
-		public string ExprClassName ()
+		string ExprClassName ()
 		{
 			switch (eclass){
 			case ExprClass.Invalid:
@@ -802,10 +798,19 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (string expected, Location loc)
+		public void Error_UnexpectedKind (EmitContext ec, string expected, Location loc)
 		{
-			Report.Error (118, loc,
-				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName (), expected);
+			Error_UnexpectedKind (ec, expected, ExprClassName (), loc);
+		}
+
+		public void Error_UnexpectedKind (EmitContext ec, string expected, string was, Location loc)
+		{
+			string name = GetSignatureForError ();
+			if (ec != null)
+				name = ec.DeclSpace.GetSignatureForError () + '.' + name;
+
+			Report.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected",
+			      name, was, expected);
 		}
 
 		public void Error_UnexpectedKind (ResolveFlags flags, Location loc)
@@ -2055,14 +2060,39 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, intermediate);
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
 			int errors = Report.Errors;
-			FullNamedExpression dt = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
-			if (Report.Errors != errors)
+			FullNamedExpression fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
+
+			if (fne != null)
+				return fne;
+
+			if (silent || errors != Report.Errors)
 				return null;
 
-			return dt;
+			MemberCore mc = ec.DeclSpace.GetDefinition (Name);
+			if (mc != null) {
+				Error_UnexpectedKind (ec, "type", GetMemberType (mc), loc);
+			} else {
+				NamespaceEntry.Error_NamespaceNotFound (loc, Name);
+			}
+
+			return null;
+		}
+
+		// TODO: I am still not convinced about this. If someone else will need it
+		// implement this as virtual property in MemberCore hierarchy
+		string GetMemberType (MemberCore mc)
+		{
+			if (mc is PropertyBase)
+				return "property";
+			if (mc is Indexer)
+				return "indexer";
+			if (mc is FieldBase)
+				return "field";
+
+			return "type";
 		}
 
 		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool intermediate)
@@ -2159,7 +2189,7 @@ namespace Mono.CSharp {
 					almost_matched_type = ec.ContainerType;
 					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
 				}
-				e = ResolveAsTypeStep (ec);
+				e = ResolveAsTypeStep (ec, false);
 			}
 
 			if (e == null) {
@@ -2258,7 +2288,7 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
 			return this;
 		}
@@ -2272,7 +2302,7 @@ namespace Mono.CSharp {
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression {
-		override public FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		override public FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
 			if (t == null)
@@ -2413,9 +2443,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 				if (!(t is TypeExpr)) {
-					Report.Error (118, Location, "`{0}' denotes a `{1}', where a type was expected",
-						      t.FullName, t.ExprClassName ());
-
+					t.Error_UnexpectedKind (ec, "type", loc);
 					return null;
 				}
 				type = ((TypeExpr) t).ResolveType (ec);

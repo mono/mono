@@ -1,3 +1,24 @@
+2005-07-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.ResolveAttributeType): Renamed from
+	CheckAttributeType and refactored.
+	(Attribute.ResolvePossibleAttributeType): Changed to reuse
+	ResolveAsTypeTerminal error handling.
+	(ResolveAsTypeTerminal): Introduced because of global attributes extra
+	handling.
+	(GetSignatureForError): Print errors in same way.
+
+	* class.cs,
+	* codegen.cs: Reflect attribute GetSignatureForError change.
+
+	* ecore.cs,
+	* expression.cs: Add silent parameter to ResolveAsTypeStep.
+
+	* namespace.cs (UsingEntry): Refactored to make fields private.
+
+	* assign.cs,
+	statement.cs: Error_UnexpectedKind has extra parameter.
+
 2005-07-14  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (IAlias): Remove.

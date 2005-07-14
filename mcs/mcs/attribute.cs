@@ -72,6 +72,7 @@ namespace Mono.CSharp {
 		public readonly string ExplicitTarget;
 		public AttributeTargets Target;
 
+		// TODO: remove this member
 		public readonly string    Name;
 		public readonly Expression LeftExpr;
 		public readonly string Identifier;
@@ -144,105 +145,90 @@ namespace Mono.CSharp {
 			Error_AttributeEmitError ("it is attached to invalid parent");
 		}
 
-		void Error_AttributeConstructorMismatch ()
+		protected virtual FullNamedExpression ResolveAsTypeTerminal (Expression expr, EmitContext ec, bool silent)
 		{
-			Report.Error (-6, Location,
-                                      "Could not find a constructor for this argument list.");
+			return expr.ResolveAsTypeTerminal (ec, silent);
 		}
 
-
-		protected virtual FullNamedExpression ResolveAsTypeStep (Expression expr, EmitContext ec)
+		protected virtual FullNamedExpression ResolveAsTypeStep (Expression expr, EmitContext ec, bool silent)
 		{
-			return expr.ResolveAsTypeStep (ec);
+			return expr.ResolveAsTypeStep (ec, silent);
 		}
 
-		void ResolvePossibleAttributeTypes (EmitContext ec, out Type t1, out Type t2)
+		Type ResolvePossibleAttributeType (EmitContext ec, string name, bool silent, ref bool is_attr)
 		{
-			t1 = null;
-			t2 = null;
-
-			FullNamedExpression n1 = null;
-			FullNamedExpression n2 = null;
-			string IdentifierAttribute = Identifier + "Attribute";
+			FullNamedExpression fn;
 			if (LeftExpr == null) {
-				n1 = ResolveAsTypeStep (new SimpleName (Identifier, Location), ec);
-
-				// FIXME: Shouldn't do this for quoted attributes: [@A]
-				n2 = ResolveAsTypeStep (new SimpleName (IdentifierAttribute, Location), ec);
+				fn = ResolveAsTypeTerminal (new SimpleName (name, Location), ec, silent);
 			} else {
-				FullNamedExpression l = ResolveAsTypeStep (LeftExpr, ec);
-				if (l == null) {
-					NamespaceEntry.Error_NamespaceNotFound (Location, LeftExpr.GetSignatureForError ());
-					return;
-				}
-				n1 = new MemberAccess (l, Identifier, Location).ResolveNamespaceOrType (ec, true);
-
-				// FIXME: Shouldn't do this for quoted attributes: [X.@A]
-				n2 = new MemberAccess (l, IdentifierAttribute, Location).ResolveNamespaceOrType (ec, true);
+				fn = ResolveAsTypeStep (LeftExpr, ec, silent);
+				if (fn == null)
+					return null;
+				fn = new MemberAccess (fn, name, Location).ResolveAsTypeTerminal (ec, silent);
 			}
 
-			TypeExpr te1 = n1 == null ? null : n1 as TypeExpr;
-			TypeExpr te2 = n2 == null ? null : n2 as TypeExpr;			
+			TypeExpr te = fn as TypeExpr;
+			if (te == null)
+				return null;
 
-			if (te1 != null)
-				t1 = te1.ResolveType (ec);
-			if (te2 != null)
-				t2 = te2.ResolveType (ec);
+			Type t = te.Type;
+			if (t.IsSubclassOf (TypeManager.attribute_type)) {
+				is_attr = true;
+			} else if (!silent) {
+				Report.SymbolRelatedToPreviousError (t);
+				Report.Error (616, Location, "`{0}': is not an attribute class", TypeManager.CSharpName (t));
+			}
+			return t;
 		}
 
 		/// <summary>
-                ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
-                /// </summary>
-		Type CheckAttributeType (EmitContext ec)
+		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
+		/// </summary>
+		void ResolveAttributeType (EmitContext ec)
 		{
-			Type t1, t2;
+			bool t1_is_attr = false;
+			Type t1 = ResolvePossibleAttributeType (ec, Identifier, true, ref t1_is_attr);
 
-			ResolvePossibleAttributeTypes (ec, out t1, out t2);
+			// FIXME: Shouldn't do this for quoted attributes: [@A]
+			bool t2_is_attr = false;
+			Type t2 = ResolvePossibleAttributeType (ec, Identifier + "Attribute", true, ref t2_is_attr);
 
-			String err0616 = null;
-
-			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
-				t1 = null;
-				err0616 = "`{0}' is not an attribute class";
-			}
-			if (t2 != null && ! t2.IsSubclassOf (TypeManager.attribute_type)) {
-				t2 = null;
-				err0616 = (err0616 != null) 
-					? "Neither `{0}' nor `{0}Attribute' is an attribute class"
-					: "`{0}Attribute': is not an attribute class";
-			}
-
-			if (t1 != null && t2 != null) {
-				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. Use either `@{0}' or `{0}Attribute'", Name);
+			if (t1_is_attr && t2_is_attr) {
+				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. Use either `@{0}' or `{0}Attribute'", GetSignatureForError ());
 				resolve_error = true;
-				return null;
+				return;
 			}
+
+			if (t1_is_attr) {
+				Type = t1;
+				return;
+			}
+
+			if (t2_is_attr) {
+				Type = t2;
+				return;
+			}
+
+			if (t1 == null && t2 == null)
+				ResolvePossibleAttributeType (ec, Identifier, false, ref t1_is_attr);
 			if (t1 != null)
-				return t1;
+				ResolvePossibleAttributeType (ec, Identifier, false, ref t1_is_attr);
 			if (t2 != null)
-				return t2;
-
-			if (err0616 != null) {
-				Report.Error (616, Location, err0616, Name);
-				return null;
-			}
-
-			NamespaceEntry.Error_NamespaceNotFound (Location, Name);
+				ResolvePossibleAttributeType (ec, Identifier + "Attribute", false, ref t2_is_attr);
 
 			resolve_error = true;
-			return null;
 		}
 
 		public virtual Type ResolveType (EmitContext ec)
 		{
 			if (Type == null && !resolve_error)
-				Type = CheckAttributeType (ec);
+				ResolveAttributeType (ec);
 			return Type;
 		}
 
-		string GetFullMemberName (string member)
+		public string GetSignatureForError ()
 		{
-			return Type.FullName + '.' + member;
+			return LeftExpr == null ? Identifier : LeftExpr.GetSignatureForError () + "." + Identifier;
 		}
 
 		//
@@ -310,14 +296,13 @@ namespace Mono.CSharp {
 			resolve_error = true;
 
 			if (Type == null) {
-				Type = CheckAttributeType (ec);
-
+				ResolveAttributeType (ec);
 				if (Type == null)
 					return null;
 			}
 
 			if (Type.IsAbstract) {
-				Report.Error (653, Location, "Cannot apply attribute class `{0}' because it is abstract", Name);
+				Report.Error (653, Location, "Cannot apply attribute class `{0}' because it is abstract", GetSignatureForError ());
 				return null;
 			}
 
@@ -330,6 +315,9 @@ namespace Mono.CSharp {
 			}
 
 			ConstructorInfo ctor = ResolveArguments (ec);
+			if (ctor == null)
+				return null;
+
 			CustomAttributeBuilder cb;
 
 			try {
@@ -448,7 +436,7 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
-						Expression.ErrorIsInaccesible (Location, GetFullMemberName (member_name));
+						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError ());
 						return null;
 					}
 				}
@@ -516,11 +504,6 @@ namespace Mono.CSharp {
 				ec, Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
                                 Location);
-
-			if (mg == null) {
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
 
 			MethodBase constructor = Invocation.OverloadResolve (
 				ec, (MethodGroupExpr) mg, pos_args, false, Location);
@@ -1059,7 +1042,7 @@ namespace Mono.CSharp {
 			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
 			if ((usage_attr.ValidOn & Target) == 0) {
 				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type. It is valid on `{1}' declarations only",
-					Name, GetValidTargets ());
+					GetSignatureForError (), GetValidTargets ());
 				return;
 			}
 
@@ -1077,7 +1060,7 @@ namespace Mono.CSharp {
 					emitted_targets = new ArrayList ();
 					emitted_attr.Add (Type, emitted_targets);
 				} else if (emitted_targets.Contains (Target)) {
-					Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
+					Report.Error (579, Location, "Duplicate `{0}' attribute", GetSignatureForError ());
 					return;
 				}
 				emitted_targets.Add (Target);
@@ -1299,11 +1282,23 @@ namespace Mono.CSharp {
 			RootContext.Tree.Types.NamespaceEntry = null;
 		}
 
-		protected override FullNamedExpression ResolveAsTypeStep (Expression expr, EmitContext ec)
+		protected override FullNamedExpression ResolveAsTypeStep (Expression expr, EmitContext ec, bool silent)
 		{
 			try {
 				Enter ();
-				return base.ResolveAsTypeStep (expr, ec);
+				return base.ResolveAsTypeStep (expr, ec, silent);
+			}
+			finally {
+				Leave ();
+			}
+		}
+
+
+		protected override FullNamedExpression ResolveAsTypeTerminal (Expression expr, EmitContext ec, bool silent)
+		{
+			try {
+				Enter ();
+				return base.ResolveAsTypeTerminal (expr, ec, silent);
 			}
 			finally {
 				Leave ();

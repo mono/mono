@@ -877,7 +877,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 			} else {
-				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
+				expr.Error_UnexpectedKind (ec, "variable, indexer or property access", loc);
 				return null;
 			}
 
@@ -5795,7 +5795,7 @@ namespace Mono.CSharp {
 			value_target = value;
 			value_target_set = true;
 			if (!(value_target is IMemoryLocation)){
-				Error_UnexpectedKind ("variable", loc);
+				Error_UnexpectedKind (null, "variable", loc);
 				return false;
 			}
 			return true;
@@ -5935,7 +5935,7 @@ namespace Mono.CSharp {
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
-					ml.Error_UnexpectedKind ("method group", loc);
+					ml.Error_UnexpectedKind (ec, "method group", loc);
 					return null;
 				}
 			}
@@ -6405,7 +6405,7 @@ namespace Mono.CSharp {
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)) {
-					ml.Error_UnexpectedKind ("method group", loc);
+					ml.Error_UnexpectedKind (ec, "method group", loc);
 					return null;
 				}
 				
@@ -7313,14 +7313,14 @@ namespace Mono.CSharp {
 			return DoResolve (ec, right_side);
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
-			return ResolveNamespaceOrType (ec, false);
+			return ResolveNamespaceOrType (ec, silent);
 		}
 
 		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
 		{
-			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
+			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
 
 			if (new_expr == null)
 				return null;
@@ -7354,8 +7354,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(member_lookup is TypeExpr)) {
-				Report.Error (118, loc, "`{0}.{1}' denotes a `{2}', where a type was expected",
-					      new_expr.FullName, Identifier, member_lookup.ExprClassName ());
+				new_expr.Error_UnexpectedKind (ec, "type", loc);
 				return null;
 			} 
 

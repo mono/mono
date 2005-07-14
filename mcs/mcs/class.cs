@@ -2885,7 +2885,7 @@ namespace Mono.CSharp {
 			if (a.Type == TypeManager.attribute_usage_type) {
 				if (ptype != TypeManager.attribute_type && !ptype.IsSubclassOf (TypeManager.attribute_type) &&
 					TypeBuilder.FullName != "System.Attribute") {
-					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.Name);
+					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
 
