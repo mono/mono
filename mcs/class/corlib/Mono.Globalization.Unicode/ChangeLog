@@ -1,3 +1,11 @@
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : Now FilterExtender() handles all extender
+	  support. IndexOf() and LastIndexOf() now supports extenders.
+	  IndexOf() and LastIndexOf() did not proceed contraction source
+	  length as expected. Tiny refactoring on private IsPrefix() to take
+	  stringSort argument.
+
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : when restoring from expansion, go back to the

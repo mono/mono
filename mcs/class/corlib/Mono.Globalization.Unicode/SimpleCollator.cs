@@ -545,6 +545,28 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			}
 		}
 
+		int FilterExtender (int i, ExtenderType ext)
+		{
+			if (ext == ExtenderType.Conditional &&
+				Uni.HasSpecialWeight ((char) i)) {
+				bool half = IsHalfKana ((char) i);
+				bool katakana = !Uni.IsHiragana ((char) i);
+				switch (Level1 (i) & 7) {
+				case 2:
+					return half ? 0xFF71 : katakana ? 0x30A2 : 0x3042;
+				case 3:
+					return half ? 0xFF72 : katakana ? 0x30A4 : 0x3044;
+				case 4:
+					return half ? 0xFF73 : katakana ? 0x30A6 : 0x3046;
+				case 5:
+					return half ? 0xFF74 : katakana ? 0x30A8 : 0x3048;
+				case 6:
+					return half ? 0xFF75 : katakana ? 0x30AA : 0x304A;
+				}
+			}
+			return i;
+		}
+
 		bool IsIgnorable (int i)
 		{
 			return Uni.IsIgnorable (i) ||
@@ -583,7 +605,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 				ExtenderType ext = GetExtenderType (i);
 				if (ext != ExtenderType.None) {
-					i = previousChar;
+					i = FilterExtender (previousChar, ext);
 					if (i >= 0)
 						FillSortKeyRaw (i, ext);
 					else if (previousSortKey != null) {
@@ -656,8 +678,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			byte level2 = Level2 (i, ext);
 			if (Uni.HasSpecialWeight ((char) i)) {
 				byte level1 = Level1 (i);
-				if (ext == ExtenderType.Conditional)
-					level1 = (byte) ((level1 & 0xF) % 8);
 				buf.AppendKana (
 					Category (i),
 					level1,
@@ -890,7 +910,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						sk1 = previousSortKey;
 					}
 					else
-						i1 = previousChar;
+						i1 = FilterExtender (previousChar, ext1);
 				}
 				ext2 = GetExtenderType (i2);
 				if (ext2 != ExtenderType.None) {
@@ -903,7 +923,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						sk2 = previousSortKey2;
 					}
 					else
-						i2 = previousChar2;
+						i2 = FilterExtender (previousChar2, ext2);
 				}
 
 				byte cat1 = Category (i1);
@@ -1017,7 +1037,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					if (currentLevel > 3)
 						special2 = Uni.HasSpecialWeight ((char) i2);
 					if (cat2 > 1)
-						previousChar = i2;
+						previousChar2 = i2;
 					idx2++;
 				}
 
@@ -1139,28 +1159,33 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return IsPrefix (src, target, 0, src.Length, opt);
 		}
 
-#if true
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
+			return IsPrefix (s, target, start, length, 
+				(opt & CompareOptions.StringSort) != 0);
+		}
+
+		public bool IsPrefix (string s, string target, int start, int length, bool stringSort)
+		{
 			bool consumed;
 			escape1.Source = null;
 			escape2.Source = null;
 			previousSortKey= previousSortKey2 = null;
 			previousChar = previousChar2 = -1;
 			int ret = CompareInternal (s, start, length,
-				target, 0, target.Length,
-				(opt & CompareOptions.StringSort) != 0,
+				target, 0, target.Length, stringSort,
 				out consumed);
 			return consumed;
 		}
-#else
+
+/*
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
 			return IsPrefix (s, target, start, length);
 		}
-#endif
+
 		// returns the consumed length in positive number, or -1 if
 		// target was not a prefix.
 		bool IsPrefix (string s, string target, int start, int length)
@@ -1248,6 +1273,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			}
 			return true;
 		}
+*/
 
 		// WARNING: Don't invoke it outside IsPrefix().
 		int GetMatchLength (ref string s, ref int idx, ref int end, char target)
@@ -1509,7 +1535,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		public int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return IndexOf (s, target, start, length);
+			return IndexOf (s, target, start, length,
+				(opt & CompareOptions.StringSort) != 0);
 		}
 
 		public int IndexOf (string s, char target, CompareOptions opt)
@@ -1560,7 +1587,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		// Searches string. Search head character (or keydata when
 		// the head is contraction sortkey) and try IsPrefix().
-		int IndexOf (string s, string target, int start, int length)
+		int IndexOf (string s, string target, int start, int length, bool stringSort)
 		{
 			int tidx = 0;
 			for (; tidx < target.Length; tidx++)
@@ -1576,15 +1603,21 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (sortkey != null)
 					idx = IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 				else if (replace != null)
-					idx = IndexOf (s, replace, start, length);
+					idx = IndexOf (s, replace, start, length, stringSort);
 				else
 					idx = IndexOfPrimitiveChar (s, start, length, target [tidx]);
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, length - (idx - start)))
+				if (IsPrefix (s, target, idx, length - (idx - start), stringSort))
 					return idx;
-				start++;
-				length--;
+				Contraction cts = GetContraction (s, idx, length - (idx - start));
+				if (cts != null) {
+					start += cts.Source.Length;
+					length -= cts.Source.Length;
+				} else {
+					start++;
+					length--;
+				}
 			} while (length > 0);
 			return -1;
 		}
@@ -1602,7 +1635,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		public int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			SetOptions (opt);
-			return LastIndexOf (s, target, start, length);
+			return LastIndexOf (s, target, start, length,
+				(opt & CompareOptions.StringSort) != 0);
 		}
 
 		public int LastIndexOf (string s, char target, CompareOptions opt)
@@ -1654,7 +1688,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		// Searches string. Search head character (or keydata when
 		// the head is contraction sortkey) and try IsPrefix().
-		int LastIndexOf (string s, string target, int start, int length)
+		int LastIndexOf (string s, string target, int start, int length, bool stringSort)
 		{
 			int orgStart = start;
 			int tidx = 0;
@@ -1672,20 +1706,26 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (sortkey != null)
 					idx = LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
 				else if (replace != null)
-					idx = LastIndexOf (s, replace, start, length);
+					idx = LastIndexOf (s, replace, start, length, stringSort);
 				else
 					idx = LastIndexOfPrimitiveChar (s, start, length, target [tidx]);
 
 				if (idx < 0)
 					return -1;
-				if (IsPrefix (s, target, idx, orgStart - idx + 1)) {
+				if (IsPrefix (s, target, idx, orgStart - idx + 1, stringSort)) {
 					for (;idx < orgStart; idx++)
 						if (!IsIgnorable (s [idx]))
 							break;
 					return idx;
 				}
-				length--;
-				start--;
+				Contraction cts = GetContraction (s, idx, orgStart - idx + 1);
+				if (cts != null) {
+					start -= cts.Source.Length;
+					length -= cts.Source.Length;
+				} else {
+					start--;
+					length--;
+				}
 			} while (length > 0);
 			return -1;
 		}

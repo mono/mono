@@ -1,3 +1,8 @@
+2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : Added extender tests for GetSortKey(),
+	  Compare(), IsPrefix(), IndexOf() and LastIndexOf().
+
 2005-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : Added Compare() test that contains expansion.
