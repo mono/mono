@@ -1,3 +1,8 @@
+2005-07-15  Iain McCoy  <iain@mccoy.id.au>
+
+	* demo/test.xaml: uncommented second test of complex objects as
+	property values
+
 2005-07-14  Iain McCoy  <iain@mccoy.id.au>
 
 	* demo/test.xaml: added first test of complex objects as property values

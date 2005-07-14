@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Reflection;
@@ -44,6 +45,7 @@ namespace Mono.Windows.Serialization {
 
 		private enum CurrentType { Object, 
 			Property, 
+			PropertyObject,
 			DependencyProperty,
 	       		Code }
 
@@ -76,6 +78,7 @@ namespace Mono.Windows.Serialization {
 		public void Parse()
 		{
 			while (reader.Read()) {
+				Debug.WriteLine("NOW PARSING: " + reader.NodeType + "; " + reader.Name + "; " + reader.Value);
 				if (begun && currentState == null && reader.NodeType != XmlNodeType.Whitespace)
 					throw new Exception("Too far: " + reader.NodeType + ", " + reader.Name);
 				if (currentState != null && currentState.type == CurrentType.Code)
@@ -166,15 +169,12 @@ namespace Mono.Windows.Serialization {
 
 		void parseCodeElement()
 		{
-			oldStates.Add(currentState);
-			currentState = new ParserState();
-			currentState.type = CurrentType.Code;
-			currentState.obj = "";
+			push(CurrentType.Code, "");
 		}
 
 		void parseText()
 		{
-			if (currentState.type == CurrentType.Object) {
+			if (currentState.type == CurrentType.Object || currentState.type == CurrentType.PropertyObject) {
 				writer.CreateElementText(reader.Value);
 			} else if (currentState.type == CurrentType.DependencyProperty) {
 				DependencyProperty dp = (DependencyProperty)currentState.obj;
@@ -197,10 +197,7 @@ namespace Mono.Windows.Serialization {
 				// TODO: exception
 			}
 
-			oldStates.Add(currentState);
-			currentState = new ParserState();
-			currentState.type = CurrentType.Property;
-			currentState.obj = prop;
+			push(CurrentType.Property, prop);
 
 			writer.CreateProperty(prop);
 
@@ -219,10 +216,7 @@ namespace Mono.Windows.Serialization {
 			Type typeAttachedTo = findTypeToAttachTo(attachedTo, propertyName);
 			DependencyProperty dp = getDependencyProperty(typeAttachedTo, propertyName);
 			
-			oldStates.Add(currentState);
-			currentState = new ParserState();
-			currentState.obj = dp;
-			currentState.type = CurrentType.DependencyProperty;
+			push(CurrentType.DependencyProperty, dp);
 
 			writer.CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
 		}
@@ -269,7 +263,12 @@ namespace Mono.Windows.Serialization {
 			
 
 			if (isEmpty) {
-				writer.EndObject();
+				if (currentState.type == CurrentType.Object) {
+					writer.EndObject();
+				} else if (currentState.type == CurrentType.PropertyObject) {
+					ParserState state = (ParserState)oldStates[oldStates.Count - 1];
+					writer.EndPropertyObject(((PropertyInfo)state.obj).PropertyType);
+				}
 				pop();
 			}
 		}
@@ -287,21 +286,14 @@ namespace Mono.Windows.Serialization {
 		void addChild(Type type, string objectName)
 		{
 			writer.CreateObject(type, objectName);
-			oldStates.Add(currentState);
-			currentState = new ParserState();
-			currentState.type = CurrentType.Object;
-			currentState.obj = type;
+			push(CurrentType.Object, type);
 		}
 		
 		void addPropertyChild(Type type, string objectName)
 		{
-//			writer.CreatePropertyObject(type, objectName);
-			writer.CreatePropertyObject(((PropertyInfo)currentState.obj).PropertyType, objectName);
+			writer.CreatePropertyObject(type, objectName);
 
-			oldStates.Add(currentState);
-			currentState = new ParserState();
-			currentState.type = CurrentType.Object;
-			currentState.obj = type;
+			push(CurrentType.PropertyObject, type);
 		}
 
 
@@ -350,7 +342,8 @@ namespace Mono.Windows.Serialization {
 		{
 			Type typeAttachedTo = null;
 			foreach (ParserState state in oldStates) {
-				if (state.type == CurrentType.Object &&
+				if ((state.type == CurrentType.Object || 
+						state.type == CurrentType.PropertyObject) &&
 						((Type)state.obj).Name == attachedTo) {
 					typeAttachedTo = (Type)state.obj;
 					break;
@@ -387,27 +380,30 @@ namespace Mono.Windows.Serialization {
 
 		void parseEndElement()
 		{
-			if (currentState.type == CurrentType.Code) {
+			Debug.WriteLine("IN ENDELEMENT, SWITCHING ON " + currentState.type);
+			switch (currentState.type) {
+			case CurrentType.Code:
 				writer.CreateCode((string)currentState.obj);
-			} else if (currentState.type == CurrentType.Object) {
-				ParserState prev = null;
-				if (oldStates.Count > 1)
-					prev = (ParserState)oldStates[oldStates.Count - 1];
-				
-				if (prev != null && prev.type == CurrentType.Property)
-					writer.EndPropertyObject((Type)currentState.obj);
-				else
-					writer.EndObject();
-			} else if (currentState.type == CurrentType.Property) {
+				break;
+			case CurrentType.Object:
+				writer.EndObject();
+				break;
+			case CurrentType.PropertyObject:
+				writer.EndPropertyObject((Type)currentState.obj);
+				break;
+			case CurrentType.Property:
 				writer.EndProperty();
-			} else if (currentState.type == CurrentType.DependencyProperty) {
+				break;
+			case CurrentType.DependencyProperty:
 				writer.EndDependencyProperty();
+				break;
 			}
 			pop();
 		}
 
 		void pop()
 		{
+			Debug.WriteLine("POPPING: " + currentState.type);
 			if (oldStates.Count == 0) {
 				currentState = null;
 				writer.Finish();
@@ -417,6 +413,13 @@ namespace Mono.Windows.Serialization {
 			currentState = (ParserState)oldStates[lastIndex];
 			oldStates.RemoveAt(lastIndex);
 		}
-
+		void push(CurrentType type, Object obj)
+		{
+			Debug.WriteLine("PUSHING: " + type);
+			oldStates.Add(currentState);
+			currentState = new ParserState();
+			currentState.type = type;
+			currentState.obj = obj;
+		}
 	}
 }

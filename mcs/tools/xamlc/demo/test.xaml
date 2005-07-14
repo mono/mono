@@ -12,13 +12,11 @@
 			<ConsoleWriter>What should I say?</ConsoleWriter>
 		</ConsoleReader.Prompt>
 	</ConsoleReader>
-<!--
 	<ConsoleWriter>
 		<ConsoleWriter.Text>
 			<ConsoleValueVar Variable="thingo" />
 		</ConsoleWriter.Text>
 	</ConsoleWriter>
--->
 	<ConsoleWriter>
 		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>

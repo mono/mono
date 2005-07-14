@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 using System.Collections;
@@ -61,6 +62,7 @@ namespace Mono.Windows.Serialization {
 		// 	instance
 		public void CreateTopLevel(Type parent, string className)
 		{
+			debug();
 			if (className == null) {
 				className = "derived" + parent.Name;
 			}
@@ -94,6 +96,7 @@ namespace Mono.Windows.Serialization {
 		// pushes a reference to the new current type
 		public void CreateObject(Type type, string varName)
 		{
+			debug();
 			bool isDefaultName;
 			if (varName == null) {
 				isDefaultName = true;
@@ -138,6 +141,7 @@ namespace Mono.Windows.Serialization {
 		// pushes a reference to the property
 		public void CreateProperty(PropertyInfo property)
 		{
+			debug();
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression(
 					(CodeExpression)objects[objects.Count - 1],
 					property.Name);
@@ -148,6 +152,7 @@ namespace Mono.Windows.Serialization {
 		// pushes a reference to the event
 		public void CreateEvent(EventInfo evt)
 		{
+			debug();
 			CodeEventReferenceExpression expr = new CodeEventReferenceExpression(
 					(CodeExpression)objects[objects.Count - 1],
 					evt.Name);
@@ -161,6 +166,7 @@ namespace Mono.Windows.Serialization {
 		// property
 		public void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType)
 		{
+			debug();
 			string varName = "temp";
 			varName += tempIndex;
 			tempIndex += 1;
@@ -181,7 +187,9 @@ namespace Mono.Windows.Serialization {
 		// pops 2 items: the name of the property, and the object to attach to
 		public void EndDependencyProperty()
 		{
-			objects.RemoveAt(objects.Count - 1);
+			debug();
+			objects.RemoveAt(objects.Count - 1); // pop the variable name - we don't need it since it's already 
+							     // baked into the call
 			CodeExpression call = (CodeExpression)(objects[objects.Count - 1]);
 			objects.RemoveAt(objects.Count - 1);
 			constructor.Statements.Add(call);
@@ -190,6 +198,7 @@ namespace Mono.Windows.Serialization {
 		// top of stack must be an object reference
 		public void CreateElementText(string text)
 		{
+			debug();
 			CodeVariableReferenceExpression var = (CodeVariableReferenceExpression)objects[objects.Count - 1];
 			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
 					var,
@@ -201,6 +210,7 @@ namespace Mono.Windows.Serialization {
 		// top of stack is reference to an event
 		public void CreateEventDelegate(string functionName, Type eventDelegateType)
 		{
+			debug();
 			CodeExpression expr = new CodeObjectCreateExpression(
 					eventDelegateType,
 					new CodeMethodReferenceExpression(
@@ -215,6 +225,7 @@ namespace Mono.Windows.Serialization {
 		// top of stack is reference to a property
 		public void CreatePropertyDelegate(string functionName, Type propertyType)
 		{
+			debug();
 			CodeExpression expr = new CodeObjectCreateExpression(
 					propertyType,
 					new CodeMethodReferenceExpression(
@@ -238,11 +249,13 @@ namespace Mono.Windows.Serialization {
 		// top of stack is reference to a property
 		public void CreatePropertyText(string text, Type propertyType)
 		{
+			debug();
 			CreateDependencyPropertyText(text, propertyType);
 		}
 		// top of stack is reference to an attached property
 		public void CreateDependencyPropertyText(string text, Type propertyType)
 		{
+			debug();
 			CodeExpression expr = new CodePrimitiveExpression(text);
 			if (propertyType != typeof(string)) {
 				expr = new CodeCastExpression(
@@ -261,6 +274,7 @@ namespace Mono.Windows.Serialization {
 
 		public void CreatePropertyObject(Type type, string varName)
 		{
+			debug();
 			bool isDefaultName;
 			if (varName == null) {
 				isDefaultName = true;
@@ -299,12 +313,15 @@ namespace Mono.Windows.Serialization {
 		
 		}
 
-		public void EndPropertyObject(Type sourceType)
+		public void EndPropertyObject(Type destType)
 		{
+			debug();
 			CodeExpression varRef = (CodeExpression)objects[objects.Count - 1];
 			objects.RemoveAt(objects.Count - 1);
-			Type destType = (Type)objects[objects.Count - 1];
+			Type sourceType = (Type)objects[objects.Count - 1];
 			objects.RemoveAt(objects.Count - 1);
+
+			Debug.WriteLine(destType + "->" + sourceType);
 
 			
 			CodeExpression expr;
@@ -322,33 +339,42 @@ namespace Mono.Windows.Serialization {
 					(CodeExpression)objects[objects.Count - 1],
 					expr);
 			constructor.Statements.Add(assignment);
-
 		}
 		
 		public void EndObject()
 		{
+			debug();
 			objects.RemoveAt(objects.Count - 1);
 		}
 
 		public void EndProperty()
 		{
+			debug();
 			objects.RemoveAt(objects.Count - 1);
 		}
 		
 		public void EndEvent()
 		{
+			debug();
 			objects.RemoveAt(objects.Count - 1);
 		}
 
 		public void Finish()
 		{
+			debug();
 			generator.GenerateCodeFromCompileUnit(code, writer, null);
 			writer.Close();
 		}
 
 		public void CreateCode(string code)
 		{
+			debug();
 			type.Members.Add(new CodeSnippetTypeMember(code));
+		}
+
+		private void debug()
+		{
+			Debug.WriteLine(new System.Diagnostics.StackTrace());
 		}
 	}
 }

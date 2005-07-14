@@ -1,3 +1,16 @@
+2005-07-15  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/CodeWriter.cs: Better debugging
+	information
+	* Mono.Windows.Serialization/XamlParser.cs: Better debugging
+	information, consolidated push() code
+	* Mono.Windows.Serialization/CodeWriter.cs: inverted sourceType and
+	destType in endPropertyObject
+	* Mono.Windows.Serialization/XamlParser.cs: changed parseElement so
+	that it doesn't stuff up the stack on empty elements and replaced 
+	an if statement spanning CurrentState with a case statement for 
+	clarity
+
 2005-07-14  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/XamlParser.cs,

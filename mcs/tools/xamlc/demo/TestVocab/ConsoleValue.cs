@@ -30,6 +30,7 @@ namespace Xaml.TestVocab.Console {
 		{
 			if (destinationType != typeof(string))
 				throw new NotSupportedException();
+
 			if (o is ConsoleValue)
 				return ((ConsoleValue)o).Value;
 			else
