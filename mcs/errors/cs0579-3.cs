@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate 'Obsolete' attribute
+// cs0579.cs : Duplicate `Obsolete' attribute
 // Line : 8
 
 using System;

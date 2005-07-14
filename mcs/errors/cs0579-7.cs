@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate 'CLSCompliant' attribute
+// cs0579.cs : Duplicate `CLSCompliant' attribute
 // Line : 10
 
 using System;

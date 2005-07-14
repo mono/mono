@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate 'AssemblyKeyName' attribute
+// cs0579.cs : Duplicate `AssemblyKeyName' attribute
 // Line : 
 
 using System.Reflection;

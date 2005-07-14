@@ -1,4 +1,4 @@
-// cs0118.cs: X.s denotes a 'field' where a class was expected
+// cs0118.cs: `X.s' is a `field' but a `type' was expected
 // Line: 6
 class X {
 	string s;

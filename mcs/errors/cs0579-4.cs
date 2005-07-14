@@ -1,4 +1,4 @@
-// cs0579.cs : Duplicate 'AssemblyKeyName' attribute
+// cs0579.cs : Duplicate `AssemblyKeyName' attribute
 // Line : 7
 // Compiler options: CS0579-4-1.cs
 
