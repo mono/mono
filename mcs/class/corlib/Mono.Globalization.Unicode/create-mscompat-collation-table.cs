@@ -2181,7 +2181,18 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 //					(byte) arabicLetterPrimaryValues [i], 1);
 				fillIndex [0x13] = 
 					(byte) arabicLetterPrimaryValues [i];
-				AddLetterMap ((char) i, 0x13, 0);
+				byte formDiacritical = 8; // default
+				// SPECIAL CASES:
+				switch (i) {
+				case 0x0622: formDiacritical = 9; break;
+				case 0x0623: formDiacritical = 0xA; break;
+				case 0x0624: formDiacritical = 5; break;
+				case 0x0625: formDiacritical = 0xB; break;
+				case 0x0626: formDiacritical = 7; break;
+				case 0x0649: formDiacritical = 5; break;
+				case 0x064A: formDiacritical = 7; break;
+				}
+				AddLetterMapCore ((char) i, 0x13, 1, formDiacritical);
 			}
 			fillIndex [0x13] = 0x84;
 			for (int i = 0x0674; i < 0x06D6; i++)
@@ -2409,7 +2420,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			char [] specialThai = new char [] {'\u0E45', '\u0E46',
 				'\u0E4E', '\u0E4F', '\u0E5A', '\u0E5B'};
 			foreach (char c in specialThai)
-				AddCharMap (c, 0x1F, 1);
+				AddCharMap (c, 0x1F, 1, 3);
 
 			for (int i = 0xE00; i < 0xE80; i++)
 				if (Char.GetUnicodeCategory ((char) i) ==

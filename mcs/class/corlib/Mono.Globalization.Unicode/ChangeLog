@@ -1,5 +1,10 @@
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed some Thai and Arabic
+	  level 2 weight.
+
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Fixed Syriac nonspacing marks.
 
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>

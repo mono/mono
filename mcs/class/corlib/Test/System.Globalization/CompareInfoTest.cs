@@ -562,17 +562,16 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i11", new byte [] {
 			0x1E, 7, 0x1E, 6, 1, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E44");
-// FIXME: not working (table fix required)
-/*
 		AssertSortKey ("#i12", new byte [] {
 			0x1E, 7, 0x1F, 0x29, 1, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E45");
 		AssertSortKey ("#i13", new byte [] {
 			0x1E, 7, 0x1F, 0x2A, 1, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E46");
-		AssertSortKey ("#i14", new byte [] {
-			0x1E, 7, 1, 5, 1, 1, 1, 0},
-			"\u0E01\u0E47");
+// FIXME: not working (U+E47 table fix required)
+//		AssertSortKey ("#i14", new byte [] {
+//			0x1E, 7, 1, 5, 1, 1, 1, 0},
+//			"\u0E01\u0E47");
 		AssertSortKey ("#i15", new byte [] {
 			0x1E, 7, 1, 6, 1, 1, 1, 0},
 			"\u0E01\u0E48");
@@ -585,10 +584,10 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#i18", new byte [] {
 			0x1E, 7, 1, 9, 1, 1, 1, 0},
 			"\u0E01\u0E4B");
-		AssertSortKey ("#i19", new byte [] {
-			0x1E, 7, 1, 8, 1, 1, 1, 0},
-			"\u0E01\u0E48\u0E47");
-*/
+// FIXME: not working (U+E47 table fix required)
+//		AssertSortKey ("#i19", new byte [] {
+//			0x1E, 7, 1, 8, 1, 1, 1, 0},
+//			"\u0E01\u0E48\u0E47");
 		AssertSortKey ("#i20", new byte [] {
 			0x1E, 7, 0x1E, 4, 0x1E, 0xD, 1, 3, 3, 3, 1, 1, 1, 0},
 			"\u0E01\u0E42\u0E02");
