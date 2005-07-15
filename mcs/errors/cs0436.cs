@@ -1,4 +1,4 @@
-// cs0436.cs: Ignoring imported type `System.Console' since there exists a declaration with the same name
+// cs0436.cs: Ignoring imported type `System.Console' since the current assembly already has a declaration with the same name
 // Line: 16
 // Compiler options: -warn:2 -warnaserror
 

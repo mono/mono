@@ -163,7 +163,7 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (t);
 				Report.SymbolRelatedToPreviousError (rt);
 				Report.Warning (436, loc,
-					"Ignoring imported type `{0}' since there exists a declaration with the same name in the current assembly", 
+					"Ignoring imported type `{0}' since the current assembly already has a declaration with the same name", 
 					rt.FullName);
 			}
 
