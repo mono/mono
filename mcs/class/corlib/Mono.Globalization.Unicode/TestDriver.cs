@@ -30,10 +30,7 @@ namespace Mono.Globalization.Unicode
 
 		void Run ()
 		{
-//IsSuffix ("\u00E6", "ae", CompareOptions.None);
-IsSuffix ("ae", "\u00E6", CompareOptions.None);
-//LastIndexOf ("AE", "A", 1, 2, CompareOptions.None);
-//LastIndexOf ("\u00C6", "AE", CompareOptions.None);
+LastIndexOf ("\u30D1\u30FC", "\u30A2", CompareOptions.IgnoreNonSpace);
 return;
 			/*
 			DumpSortKey ("AE");

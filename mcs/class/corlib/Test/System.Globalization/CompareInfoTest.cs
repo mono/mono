@@ -868,7 +868,6 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#10", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIsSuffix ("#11", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		// extender in target
-		// FIXME: not working
 		AssertIsSuffix ("#12", false, "\u30D1\u30A2", "\u30D1\u30FC");
 		AssertIsSuffix ("#13", true, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
@@ -981,17 +980,20 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#1-3", 0, "\u30D1\u30A2", "\u30D1\u30FC", CompareOptions.IgnoreNonSpace);
 		// extender in source
 		AssertLastIndexOf ("#1-4", 0, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working (extender support required)
-//		AssertLastIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
-		// FIXME: not working (extender support required)
-//		AssertLastIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
-//			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
+		// FIXME: not working (extender support is not complete. 
+		// Currently private IsPrefix() cannot handle heading
+		// extenders to consume previous primary char.)
+//		AssertLastIndexOf ("#1-5", 1, "\u30D1\u30FC", "\u30A2", CompareOptions.IgnoreNonSpace);
+		// this shows that Windows accesses beyond the length and
+		// acquires the corresponding character to expand.
+//		AssertLastIndexOf ("#1-6", 1, "\u30D1\u30FC", "\u30A2", 1, 1, CompareOptions.IgnoreNonSpace, invariant);
+		AssertLastIndexOf ("#2", 0, "\u30D1\u30FC\u30B9", "\uFF8A\uFF9F\uFF70\uFF7D", CompareOptions.IgnoreWidth);
+		AssertLastIndexOf ("#3", 0, "\uFF80\uFF9E\uFF72\uFF8C\uFF9E", 
+			"\u30C0\u30A4\u30D6", CompareOptions.IgnoreWidth);
 		AssertLastIndexOf ("#4", -1, "\u3042\u309D", "\u3042\u3042");
 		AssertLastIndexOf ("#5", 0, "\u3042\u309D", "\u3042\u3042", CompareOptions.IgnoreNonSpace);
-		// FIXME: not working (extender support required)
-//		AssertLastIndexOf ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
-//			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
-
+		AssertLastIndexOf ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
+			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 	}
 }
 

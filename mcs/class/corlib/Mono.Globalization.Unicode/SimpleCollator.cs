@@ -1251,13 +1251,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		#region IndexOf() / LastIndexOf()
 
-		// IndexOf (string, string, CompareOptions)
-		// IndexOf (string, string, int, int, CompareOptions)
-		// IndexOf (string, char, int, int, CompareOptions)
-		// IndexOfPrimitiveChar (string, int, int, char)
-		// IndexOfSortKey (string, int, int, byte[], char, int, bool)
-		// IndexOf (string, string, int, int)
-
 		public int IndexOf (string s, string target, CompareOptions opt)
 		{
 			return IndexOf (s, target, 0, s.Length, opt);
@@ -1287,21 +1280,18 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						(opt & CompareOptions.StringSort) != 0);
 				else
 					return IndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+			} else {
+				int ti = FilterOptions ((int) target);
+				charSortKeyIndexTarget [0] = Category (ti);
+				charSortKeyIndexTarget [1] = Level1 (ti);
+				if (!ignoreNonSpace)
+					charSortKeyIndexTarget [2] =
+						Level2 (ti, ExtenderType.None);
+				charSortKeyIndexTarget [3] = Uni.Level3 (ti);
+				return IndexOfSortKey (s, start, length,
+					charSortKeyIndexTarget, target, ti,
+					!Uni.HasSpecialWeight ((char) ti));
 			}
-			else
-				return IndexOfPrimitiveChar (s, start, length, target);
-		}
-
-		// Searches target char w/o checking contractions
-		int IndexOfPrimitiveChar (string s, int start, int length, char target)
-		{
-			int ti = FilterOptions ((int) target);
-			charSortKeyIndexTarget [0] = Category (ti);
-			charSortKeyIndexTarget [1] = Level1 (ti);
-			if (!ignoreNonSpace)
-				charSortKeyIndexTarget [2] = Level2 (ti, ExtenderType.None);
-			charSortKeyIndexTarget [3] = Uni.Level3 (ti);
-			return IndexOfSortKey (s, start, length, charSortKeyIndexTarget, target, ti, !Uni.HasSpecialWeight ((char) ti));
 		}
 
 		// Searches target byte[] keydata
@@ -1412,33 +1402,27 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (ct.Replacement != null)
 					return LastIndexOf (s, ct.Replacement, start, length, (opt & CompareOptions.StringSort) != 0);
 				else
-					return LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
+					return LastIndexOfSortKey (s, start, start, length, ct.SortKey, char.MinValue, -1, true);
 			}
-			else
-				return LastIndexOfPrimitiveChar (s, start, length, target);
-		}
-
-		// Searches target char w/o checking contractions
-		int LastIndexOfPrimitiveChar (string s, int start, int length, char target)
-		{
-			int ti = FilterOptions ((int) target);
-			charSortKey [0] = Category (ti);
-			charSortKey [1] = Level1 (ti);
-			if (!ignoreNonSpace)
-				// FIXME: pass ExtenderType
-				charSortKey [2] = Level2 (ti, ExtenderType.None);
-			charSortKey [3] = Uni.Level3 (ti);
-			return LastIndexOfSortKey (s, start, length, charSortKey, target, ti, !Uni.HasSpecialWeight ((char) ti));
+			else {
+				int ti = FilterOptions ((int) target);
+				charSortKeyIndexTarget [0] = Category (ti);
+				charSortKeyIndexTarget [1] = Level1 (ti);
+				if (!ignoreNonSpace)
+					charSortKeyIndexTarget [2] = Level2 (ti, ExtenderType.None);
+				charSortKeyIndexTarget [3] = Uni.Level3 (ti);
+				return LastIndexOfSortKey (s, start, start, length, charSortKeyIndexTarget, target, ti, !Uni.HasSpecialWeight ((char) ti));
+			}
 		}
 
 		// Searches target byte[] keydata
-		int LastIndexOfSortKey (string s, int start, int length, byte [] sortkey, char target, int ti, bool noLv4)
+		int LastIndexOfSortKey (string s, int start, int orgStart, int length, byte [] sortkey, char target, int ti, bool noLv4)
 		{
 			int end = start - length;
-
-			for (int idx = start; idx > end; idx--) {
+			int idx = start;
+			while (idx > end) {
 				int cur = idx;
-				if (Matches (s, ref idx, end, ti, target, sortkey, noLv4, true))
+				if (MatchesBackward (s, ref idx, end, orgStart, ti, sortkey, noLv4))
 					return cur;
 			}
 			return -1;
@@ -1456,20 +1440,47 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (tidx == target.Length)
 				return start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
-			byte [] sortkey = ct != null ? ct.SortKey : null;
 			string replace = ct != null ? ct.Replacement : null;
+			byte [] sk = replace == null ? charSortKeyIndexTarget : null;
+
+			bool noLv4 = true;
+			char tc = char.MinValue;
+			int ti = -1;
+			if (ct != null && sk != null) {
+				for (int i = 0; i < ct.SortKey.Length; i++)
+					sk [i] = ct.SortKey [i];
+			} else if (sk != null) {
+				tc = target [tidx];
+				ti = FilterOptions (target [tidx]);
+				sk [0] = Category (ti);
+				sk [1] = Level1 (ti);
+				if (!ignoreNonSpace)
+					sk [2] = Level2 (ti, ExtenderType.None);
+				sk [3] = Uni.Level3 (ti);
+				noLv4 = !Uni.HasSpecialWeight ((char) ti);
+			}
+			if (sk != null) {
+				for (tidx++; tidx < target.Length; tidx++) {
+					if (Category (target [tidx]) != 1)
+						break;
+					if (sk [2] == 0)
+						sk [2] = 2;
+					sk [2] = (byte) (sk [2] + Level2 (target [tidx], ExtenderType.None));
+				}
+			}
 
 			do {
 				int idx = 0;
-				if (sortkey != null)
-					idx = LastIndexOfSortKey (s, start, length, ct.SortKey, char.MinValue, -1, true);
-				else if (replace != null)
+
+				if (replace != null)
 					idx = LastIndexOf (s, replace, start, length, stringSort);
 				else
-					idx = LastIndexOfPrimitiveChar (s, start, length, target [tidx]);
-
+					idx = LastIndexOfSortKey (s, start, orgStart, length, sk, tc, ti, noLv4);
 				if (idx < 0)
 					return -1;
+				length -= start - idx;
+				start = idx;
+
 				if (IsPrefix (s, target, idx, orgStart - idx + 1, stringSort, false)) {
 					for (;idx < orgStart; idx++)
 						if (!IsIgnorable (s [idx]))
@@ -1488,62 +1499,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return -1;
 		}
 
-		private bool Matches (string s, ref int idx, int end, int ti, char target, byte [] sortkey, bool noLv4, bool lastIndexOf)
-		{
-			switch (char.GetUnicodeCategory (s [idx])) {
-			case UnicodeCategory.PrivateUse:
-			case UnicodeCategory.Surrogate:
-				if (s [idx] != target)
-					return false;
-				return true;
-			}
-
-			char sc = char.MinValue;
-			Contraction ct = GetContraction (s, idx, end);
-			// if lv4 exists, it never matches contraction
-			if (ct != null && noLv4) {
-				if (lastIndexOf)
-					idx -= ct.Source.Length - 1;
-				else
-					idx += ct.Source.Length - 1;
-				if (ct.SortKey != null) {
-					for (int i = 0; i < sortkey.Length; i++)
-						if (ct.SortKey [i] != sortkey [i])
-							return false;
-					return true;
-				}
-				// Here is the core of LAMESPEC
-				// described at the top of the source.
-				sc = ct.Replacement [0];
-			}
-			else
-				sc = s [idx];
-
-			if (sc == target)
-				return true;
-			int si = FilterOptions ((int) sc);
-			if (Category (si) != sortkey [0] ||
-				Level1 (si) != sortkey [1] ||
-				// FIXME: pass ExtenderType
-				!ignoreNonSpace && Level2 (si, ExtenderType.None) != sortkey [2] ||
-				Uni.Level3 (si) != sortkey [3])
-				return false;
-			if (noLv4 && !Uni.HasSpecialWeight ((char) si))
-				return true;
-			else if (noLv4)
-				return false;
-			if (Uni.IsJapaneseSmallLetter ((char) si) !=
-				Uni.IsJapaneseSmallLetter ((char) ti) ||
-				Uni.GetJapaneseDashType ((char) si) !=
-				Uni.GetJapaneseDashType ((char) ti) ||
-				!Uni.IsHiragana ((char) si) !=
-				!Uni.IsHiragana ((char) ti) ||
-				IsHalfKana ((char) si) !=
-				IsHalfKana ((char) ti))
-				return false;
-			return true;
-		}
-
 		private bool MatchesForward (string s, ref int idx, int end, int ti, byte [] sortkey, bool noLv4)
 		{
 			int si = -1;
@@ -1551,8 +1506,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			Contraction ct = null;
 			if (ext == ExtenderType.None)
 				ct = GetContraction (s, idx, end);
-			else if (previousChar < 0)
+			else if (previousChar < 0) {
+				if (previousSortKey == null) {
+					idx++;
+					return false;
+				}
 				charSortKey = previousSortKey;
+			}
 			else
 				si = FilterExtender (previousChar, ext);
 			// if lv4 exists, it never matches contraction
@@ -1595,6 +1555,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						+ Level2 (s [idx], ExtenderType.None));
 			}
 
+			return MatchesPrimitive (charSortKey, si, ext, sortkey, ti, noLv4);
+		}
+
+		private bool MatchesPrimitive (byte [] charSortKey, int si, ExtenderType ext, byte [] sortkey, int ti, bool noLv4)
+		{
 			if (charSortKey [0] != sortkey [0] ||
 				charSortKey [1] != sortkey [1] ||
 				(!ignoreNonSpace && charSortKey [2] != sortkey [2]) ||
@@ -1610,14 +1575,98 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return false;
 			if (Uni.IsJapaneseSmallLetter ((char) si) !=
 				Uni.IsJapaneseSmallLetter ((char) ti) ||
-				Uni.GetJapaneseDashType ((char) si) !=
-				Uni.GetJapaneseDashType ((char) ti) ||
+				ToDashTypeValue (ext) !=
+				// FIXME: we will have to specify correct value for target
+				ToDashTypeValue (ExtenderType.None) ||
 				!Uni.IsHiragana ((char) si) !=
 				!Uni.IsHiragana ((char) ti) ||
 				IsHalfKana ((char) si) !=
 				IsHalfKana ((char) ti))
 				return false;
 			return true;
+		}
+
+		private bool MatchesBackward (string s, ref int idx, int end, int orgStart, int ti, byte [] sortkey, bool noLv4)
+		{
+			int cur = idx;
+			int si = -1;
+			ExtenderType ext = GetExtenderType (s [idx]);
+			// To handle extenders in source, we need to
+			// check next _primary_ character.
+			if (ext != ExtenderType.None) {
+				byte diacritical = 0;
+				for (int tmp = 0; ; tmp--) {
+					if (tmp < 0) // heading extender
+						return false;
+					if (IsIgnorable (s [tmp]))
+						continue;
+					int tmpi = FilterOptions (s [tmp]);
+					byte category = Category (tmpi);
+					if (category == 1) {
+						diacritical = Level2 (tmpi, ExtenderType.None);
+						continue;
+					}
+					si = FilterExtender (tmpi, ext);
+					charSortKey [0] = category;
+					charSortKey [1] = Level1 (si);
+					if (!ignoreNonSpace)
+						charSortKey [2] = Level2 (si, ext);
+					charSortKey [3] = Uni.Level3 (si);
+					if (ext != ExtenderType.Conditional &&
+						diacritical != 0)
+						charSortKey [2] =
+							(charSortKey [2] == 0) ?
+							(byte) (diacritical + 2) :
+							diacritical;
+					break;
+				}
+				idx--;
+			}
+			Contraction ct = null;
+			if (ext == ExtenderType.None)
+				ct = GetContraction (s, idx, end);
+			// if lv4 exists, it never matches contraction
+			if (ct != null) {
+				idx -= ct.Source.Length;
+				if (!noLv4)
+					return false;
+				if (ct.SortKey != null) {
+					for (int i = 0; i < sortkey.Length; i++)
+						charSortKey [i] = sortkey [i];
+					previousChar = -1;
+					previousSortKey = charSortKey;
+				} else {
+					// Here is the core of LAMESPEC
+					// described at the top of the source.
+					int dummy = ct.Replacement.Length - 1;
+					return MatchesBackward (ct.Replacement, 
+						ref dummy, dummy, -1, ti, sortkey, noLv4);
+				}
+			} else if (ext == ExtenderType.None) {
+				if (si < 0)
+					si = FilterOptions (s [idx]);
+				charSortKey [0] = Category (si);
+				charSortKey [1] = Level1 (si);
+				if (!ignoreNonSpace)
+					charSortKey [2] = Level2 (si, ext);
+				charSortKey [3] = Uni.Level3 (si);
+				if (charSortKey [0] != 1)
+					previousChar = si;
+				idx--;
+			}
+			if (ext == ExtenderType.None) {
+				for (int tmp = cur + 1; tmp < orgStart; tmp++) {
+					if (Category (s [tmp]) != 1)
+						break;
+					if (ignoreNonSpace)
+						continue;
+					if (charSortKey [2] == 0)
+							charSortKey [2] = 2;
+					charSortKey [2] = (byte) (charSortKey [2]
+						+ Level2 (s [tmp], ExtenderType.None));
+				}
+			}
+			return MatchesPrimitive (charSortKey, si, ext, sortkey, ti, noLv4);
 		}
 		#endregion
 	}

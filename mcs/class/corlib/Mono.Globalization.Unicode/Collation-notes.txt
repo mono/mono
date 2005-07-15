@@ -36,13 +36,13 @@
 		Find first difference and compare it.
 		"Larger/smaller" matters (beyond "different").
 	IsPrefix()
-		For each character in the target, examine if it matches from 
-		the head of the searchee and immediately return false if it 
-		didn't match.
+		It calls CompareInternal() which also answers if the target
+		is fully consumed, so it just returns true if it says that
+		the target is fully consumed.
 	IsSuffix()
-		For each character in the target, examine if it matches
-		form the tail of the searchee and immediately return false if
-		it didn't match. It uses reversal element query.
+		It tries CompareInternal() to compare source and target at
+		the end, where source varies from minimum tail to the
+		original args.
 	IndexOf(), LastIndexOf()
 		For character search, it finds the matching character element
 		to the end (or start) of the string to find.

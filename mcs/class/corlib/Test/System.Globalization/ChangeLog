@@ -1,3 +1,8 @@
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : Uncommented tests that got working. Added two
+	  cornercase notworking LastIndexOf() tests.
+
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : IsSuffix() extender tests got working.

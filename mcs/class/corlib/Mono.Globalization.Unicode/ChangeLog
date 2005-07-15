@@ -1,3 +1,10 @@
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : rewrote LastIndexOf() to handle source extenders.
+	  Some refactoring on IndexOf() code. Removed unused Matches().
+	* Collation-notes.txt : some methods needed to be reimplemented, so
+	  rewrote the description.
+
 2005-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : rewrote IsSuffix() to use CompareInternal().
