@@ -20,11 +20,14 @@ cs0201.cs
 cs0202.cs # new in GMCS
 cs0229-2.cs
 cs0229.cs NO ERROR
+cs0252.cs NO ERROR
+cs0253.cs NO ERROR
 cs0266-2.cs NO ERROR
 cs0266-3.cs
 cs0266.cs
 cs0426.cs
 cs0428.cs
+cs0436.cs NO ERROR
 cs0525.cs
 cs0526.cs
 cs0547-2.cs # new in GMCS; grammar issue
