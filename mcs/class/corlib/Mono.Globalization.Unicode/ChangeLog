@@ -1,5 +1,9 @@
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* managed-collation.patch : forgot to add System.String patch.
+
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.cs : added resource existence check (required
 	  for mscorlib transient time from the one without resources to the
 	  one with resources.

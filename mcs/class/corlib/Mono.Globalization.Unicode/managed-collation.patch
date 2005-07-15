@@ -1,6 +1,6 @@
 Index: corlib.dll.sources
 ===================================================================
---- corlib.dll.sources	(revision 47189)
+--- corlib.dll.sources	(revision 47350)
 +++ corlib.dll.sources	(working copy)
 @@ -8,6 +8,12 @@
  Microsoft.Win32/Win32RegistryApi.cs
@@ -25,7 +25,7 @@ Index: corlib.dll.sources
  System.Globalization/TextElementEnumerator.cs
 Index: Makefile
 ===================================================================
---- Makefile	(revision 47189)
+--- Makefile	(revision 47350)
 +++ Makefile	(working copy)
 @@ -3,13 +3,24 @@
  include ../../build/rules.make
@@ -53,9 +53,22 @@ Index: Makefile
  
  LIBRARY = corlib.dll
  LIBRARY_NAME = mscorlib.dll
+Index: System/String.cs
+===================================================================
+--- System/String.cs	(revision 47350)
++++ System/String.cs	(working copy)
+@@ -746,7 +746,7 @@
+ 			if (this.length < value.length)
+ 				return false;
+ 
+-			return (0 == Compare (this, 0, value, 0 , value.length));
++			return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value);
+ 		}
+ 
+ 		/* This method is culture insensitive */
 Index: System.Globalization/CompareInfo.cs
 ===================================================================
---- System.Globalization/CompareInfo.cs	(revision 47196)
+--- System.Globalization/CompareInfo.cs	(revision 47350)
 +++ System.Globalization/CompareInfo.cs	(working copy)
 @@ -34,12 +34,25 @@
  using System.Reflection;
