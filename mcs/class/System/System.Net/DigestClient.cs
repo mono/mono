@@ -329,7 +329,7 @@ namespace System.Net
 			auth.AppendFormat ("response=\"{0}\", ", Response (userName, password, request));
 
 			if (QOP != null) { // quality of protection (server decision)
-				auth.AppendFormat ("qop={0}, ", QOP);
+				auth.AppendFormat ("qop=\"{0}\", ", QOP);
 			}
 
 			lock (this) {

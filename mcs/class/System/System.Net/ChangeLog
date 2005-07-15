@@ -1,3 +1,9 @@
+2005-07-15  Miguel de Icaza  <miguel@novell.com>
+
+	* DigestClient.cs: Fix bug #75556, the qop argument must be
+	quoted, per http://www.faqs.org/rfcs/rfc2617.html section
+	`quo-options'.
+
 2005-07-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: initiate writing the body before trying to
