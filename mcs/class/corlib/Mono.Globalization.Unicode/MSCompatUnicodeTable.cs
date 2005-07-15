@@ -244,6 +244,17 @@ namespace Mono.Globalization.Unicode
 		static MSCompatUnicodeTable ()
 		{
 			using (Stream s = GetResource ("collation.core.bin")) {
+				// FIXME: remove those lines later.
+				// actually this line should not be required,
+				// but when we switch from the corlib that
+				// does not have resources to the corlib that
+				// do have, it tries to read resource from
+				// the corlib that runtime kicked and returns
+				// null (because old one does not have it).
+				// In such cases managed collation won't work.
+				if (s == null)
+					return;
+
 				BinaryReader reader = new BinaryReader (s);
 				FillTable (reader, ref ignorableFlags);
 				FillTable (reader, ref categories);
@@ -258,6 +269,9 @@ namespace Mono.Globalization.Unicode
 			}
 
 			using (Stream s = GetResource ("collation.tailoring.bin")) {
+				if (s == null) // see FIXME above.
+					return;
+
 				BinaryReader reader = new BinaryReader (s);
 				// tailoringInfos
 				int count = reader.ReadInt32 ();
@@ -299,6 +313,9 @@ namespace Mono.Globalization.Unicode
 
 		static void FillCJKCore (string culture)
 		{
+			if (!IsReady)
+				return;
+
 			string name = null;
 			ushort [] arr = null;
 			switch (culture) {
