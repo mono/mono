@@ -201,6 +201,8 @@ namespace Mono.Globalization.Unicode
 				case '\u30E5':
 				case '\u30E7':
 				case '\u30EE':
+				case '\u30F5':
+				case '\u30F6':
 					return true;
 				}
 			}

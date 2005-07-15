@@ -1,5 +1,11 @@
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : some Gurmukhi fixes on level 1 
+	  and level 3. Tiny Hangul weight fixes.
+	* MSCompatUnicodeTable.cs : U+30F5 and U+30F6 are small Japanese.
+
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : some normal characters who have
 	  "narrow" NFKD mapping are regarded as "wide" and thus level 3 weight
 	  values were different.  Handle U+30FB as category A.

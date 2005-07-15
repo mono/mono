@@ -2292,10 +2292,16 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (c == '\u0A3C' || c == '\u0A4D' ||
 					'\u0A66' <= c && c <= '\u0A71')
 					continue;
-				// SPECIAL CASE: U+A38 = U+A36 at primary level (why?)
+				// SPECIAL CASES
 				byte shift = 4;
-				if (c == '\u0A36' || c == '\u0A16' || c == '\u0A17' || c == '\u0A5B' || c == '\u0A5E')
+				switch (c) {
+				case '\u0A33': case '\u0A36': case '\u0A16':
+				case '\u0A17': case '\u0A5B': case '\u0A5E':
 					shift = 0;
+					break;
+				}
+				if (c == '\u0A3E') // Skip
+					fillIndex [0x16] = 0xC0;
 				AddLetterMap (c, 0x16, shift);
 			}
 
@@ -2656,9 +2662,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				+ "[\u11E8 \u11E9],, \u11EA \u317D,, \u110A=\u11BB,,, >"
 			+ "<{\u1134 \u1140}, \u317E,,,,,,, \u11EB,"
 				+ "\u110B=\u11BC, [\u1161 \u11A2], \u1160 >"
-			+ "<{\u1141 \u114C}, \u11EE, \u11EC, \u11ED,,,,, "
+			+ "<{\u1141 \u114C}, \u3180=\u11EE, \u11EC, \u11ED,,,,, "
 				+ "\u11F1,, \u11F2,,,"
-				+ "\u11EF,,, \u11F0, \u110C=\u11BD,, >"
+				+ "\u11EF,,, \u3181=\u11F0, \u110C=\u11BD,, >"
 			+ "<\u114D, \u110D,,  >"
 			+ "<{\u114E \u1151},, \u110E=\u11BE,,  >"
 			+ "<{\u1152 \u1155},,, \u110F=\u11BF >"
@@ -3372,6 +3378,13 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				return 0x20;
 			case '\u06AA':
 				return 0x28;
+			// Gurmukhi
+			case '\u0A39':
+			case '\u0A59':
+			case '\u0A5A':
+			case '\u0A5B':
+			case '\u0A5E':
+				return 0x10;
 			}
 
 			byte ret = 0;
