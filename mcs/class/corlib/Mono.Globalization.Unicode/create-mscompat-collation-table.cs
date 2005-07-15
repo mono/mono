@@ -1737,15 +1737,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			AddCharMap ('\u0738', 0x1, 1);
 			AddCharMap ('\u0739', 0x1, 1);
 			AddCharMap ('\u073C', 0x1, 1);
-			fillIndex [0x1] = 0x9F;
-			for (int i = 0x0730; i <= 0x07B0; i++)
-				if (!IsIgnorable (i) && !map [i].Defined)
-					AddCharMap ((char) i, 0x1, 1);
-
-			fillIndex [0x1] = 0x0C;
-			for (int i = 0x0EC8; i <= 0x0ECD; i++)
-				if (!IsIgnorable (i))
-					AddCharMap ((char) i, 0x1, 1);
 
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
@@ -1990,7 +1981,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// ASCII Latin alphabets
 			for (int i = 0; i < alphabets.Length; i++)
 				AddAlphaMap (alphabets [i], 0xE, alphaWeights [i]);
-
 
 			// non-ASCII Latin alphabets
 			// FIXME: there is no such characters that are placed
@@ -2370,17 +2360,22 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			
 			// Malayalam
 			fillIndex [0x1C] = 2;
-			for (int i = 0x0D02; i < 0x0D61; i++)
+			fillIndex [0x1] = 3;
+			for (int i = 0x0D02; i < 0x0D61; i++) {
 				// FIXME: I avoided MSCompatUnicodeTable usage
 				// here (it results in recursion). So check if
 				// using NonSpacingMark makes sense or not.
 				if (Char.GetUnicodeCategory ((char) i) != UnicodeCategory.NonSpacingMark)
 //				if (!MSCompatUnicodeTable.IsIgnorable ((char) i))
 					AddCharMap ((char) i, 0x1C, 1);
+				else if (!IsIgnorable ((char) i))
+					AddCharMap ((char) i, 1, 1);
+			}
 
 			// Thai ... note that it breaks 0x1E wall after E2B!
 			// Also, all Thai characters have level 2 value 3.
 			fillIndex [0x1E] = 2;
+			fillIndex [0x1] = 3;
 			for (int i = 0xE40; i <= 0xE44; i++)
 				AddCharMap ((char) i, 0x1E, 1, 3);
 			for (int i = 0xE01; i < 0xE2B; i++)
@@ -2397,11 +2392,23 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			foreach (char c in specialThai)
 				AddCharMap (c, 0x1F, 1);
 
+			for (int i = 0xE00; i < 0xE80; i++)
+				if (Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 1, 1);
+
 			// Lao
 			fillIndex [0x1F] = 2;
-			for (int i = 0xE80; i < 0xEDF; i++)
-				if (Char.IsLetter ((char) i))
+			fillIndex [0x1] = 3;
+			for (int i = 0xE80; i < 0xEDF; i++) {
+				if (IsIgnorable ((char) i))
+					continue;
+				else if (Char.IsLetter ((char) i))
 					AddCharMap ((char) i, 0x1F, 1);
+				else if (Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 1, 1);
+			}
 
 			// Georgian. orderedGeorgian is from UCA DUCET.
 			fillIndex [0x21] = 5;
