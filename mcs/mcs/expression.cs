@@ -7349,9 +7349,10 @@ namespace Mono.CSharp {
 				int errors = Report.Errors;
 				MemberLookupFailed (ec, expr_type, expr_type, Identifier, null, false, loc);
 
-				if (!silent && errors == Report.Errors)
-					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?", 
-						      Identifier, new_expr.FullName);
+				if (!silent && errors == Report.Errors) {
+					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
+						Identifier, new_expr.GetSignatureForError ());
+				}
 				return null;
 			}
 
