@@ -1,5 +1,11 @@
 2005-07-15  Iain McCoy  <iain@mccoy.id.au>
 
+	* demo/test.xaml: enhanced testing of complex objects as property
+	values and documented test file.
+	* demo/runtimetest.xaml: added dependency property test
+
+2005-07-15  Iain McCoy  <iain@mccoy.id.au>
+
 	* demo/TestVocab/ConsoleValues.cs: Add ConsoleValueAppend to avoid
 	resolving read value too early
 	* demo/TestVocab/ConsoleWriter.cs: Use ConsoleValue as type of Text

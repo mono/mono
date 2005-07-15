@@ -1,5 +1,12 @@
 2005-07-15  Iain McCoy  <iain@mccoy.id.au>
 
+	* System.Windows.Serialization/Mapper.cs: make assembly loading more
+	resilient
+	* Mono.Windows.Serialization/ObjectWriter.cs: do conversions from
+	strings and support dependency properties
+
+2005-07-15  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/CodeWriter.cs: don't try to convert
 	objects into their parent types.
 

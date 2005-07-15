@@ -135,9 +135,12 @@ namespace System.Windows.Serialization {
 		{
 			if (assemblyPath.ContainsKey(name))
 				name = (string)assemblyPath[name];
-			Assembly result = Assembly.LoadFrom(name);
-			if (result == null)
+			Assembly result;
+			try {
+				result = Assembly.LoadFrom(name);
+			} catch {
 				result = Assembly.Load(name);
+			}
 			if (result == null)
 				throw new Exception("Could not find assembly with name " + name);
 			else

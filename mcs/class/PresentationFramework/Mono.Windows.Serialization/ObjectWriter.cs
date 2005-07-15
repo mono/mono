@@ -32,6 +32,7 @@ using System.IO;
 using System.Collections;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.ComponentModel;
 using System.Windows.Serialization;
 
 namespace Mono.Windows.Serialization {
@@ -66,12 +67,18 @@ namespace Mono.Windows.Serialization {
 
 		public void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType)
 		{
-			throw new NotImplementedException();
+			objects.Add(attachedTo);
+			objects.Add(propertyName);
 		}
 
 		public void EndDependencyProperty()
 		{
-			throw new NotImplementedException();
+			object value = pop();
+			string propertyName = (string)pop();
+			Type attachedTo = (Type)pop();
+
+			MethodInfo setter = attachedTo.GetMethod("Set" + propertyName);
+			setter.Invoke(null, new object[] { objects[objects.Count - 1], value});
 		}
 
 		public void CreateElementText(string text)
@@ -96,11 +103,14 @@ namespace Mono.Windows.Serialization {
 
 		public void CreatePropertyText(string text, Type propertyType)
 		{
-			if (propertyType != typeof(string))
-				throw new NotImplementedException();
+			object value = text;
+			if (propertyType != typeof(string)) {
+				TypeConverter tc = TypeDescriptor.GetConverter(propertyType);
+				value = tc.ConvertFromString(text);
+			}
 			PropertyInfo p = (PropertyInfo)objects[objects.Count-1];
 			object o = objects[objects.Count-2];
-			p.SetValue(o, text, null);
+			p.SetValue(o, value, null);
 		}
 		
 		public void CreatePropertyObject(Type type, string name)
@@ -115,7 +125,12 @@ namespace Mono.Windows.Serialization {
 		// top of stack is reference to an attached property
 		public void CreateDependencyPropertyText(string text, Type propertyType)
 		{
-			throw new NotImplementedException();
+			object value = text;
+			if (propertyType != typeof(string)) {
+				TypeConverter tc = TypeDescriptor.GetConverter(propertyType);
+				value = tc.ConvertFromString(text);
+			}
+			objects.Add(value);
 		}
 		
 		public void EndObject()
@@ -140,6 +155,13 @@ namespace Mono.Windows.Serialization {
 		public void CreateCode(string code)
 		{
 			throw new NotImplementedException();
+		}
+
+		private object pop()
+		{
+			object v = objects[objects.Count - 1];
+			objects.RemoveAt(objects.Count - 1);
+			return v;
 		}
 	}
 }

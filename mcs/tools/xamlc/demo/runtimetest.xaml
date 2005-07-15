@@ -3,7 +3,7 @@
 <ConsoleApp xmlns="console" 
 		xmlns:x="http://schemas.microsoft.com/winfx/xaml/2005" 
 		x:Class="DemoConsoleApp">
-	<ConsoleWriter>IT BEGINS!</ConsoleWriter>
+	<ConsoleWriter ConsoleApp.Repetitions="2">IT BEGINS!</ConsoleWriter>
 	<ConsoleWriter x:Name="_greeter" Text="Hello World" />
 	<ConsoleWriter>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>

@@ -4,22 +4,50 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/xaml/2005" 
 		x:Class="DemoConsoleApp"
 		SomethingHappened="printHi">
+	<!-- create a ConsoleWriter and populate it with IAddChild -->
 	<ConsoleWriter>IT BEGINS!</ConsoleWriter>
+	<!-- create a ConsoleWriter specifying a name and setting its text
+	     property with an xml attribute -->
 	<ConsoleWriter x:Name="_greeter" Text="Hello World" />
+	<!-- create a ConsoleWriter with the text property again set with an
+	     xml attribute but also set a property with a delegate type -->
 	<ConsoleWriter Text="I'm surrounded!" Filter="stringFilter" />
+	<!-- create a ConsoleReader and explicitly set its prompt to a 
+	     ConsoleWriter -->
 	<ConsoleReader Variable="thingo">
 		<ConsoleReader.Prompt>
 			<ConsoleWriter>What should I say?</ConsoleWriter>
 		</ConsoleReader.Prompt>
 	</ConsoleReader>
+	<!--
+	create a ConsoleReader where a ConsoleWriter is implicitly created
+	and AddText called on it 
+	NOT USED due to uncertainty about if this is an actual feature
+	<ConsoleReader Variable="thingo2">
+		<ConsoleReader.Prompt>Then I shall say?</ConsoleReader.Prompt>
+	</ConsoleReader>
+	-->
+	<!-- Create a ConsoleWriter where a ConsoleValueVar object is created
+	     and added as a child alongside text children -->
 	<ConsoleWriter>
-		<ConsoleWriter.Text>I say: <ConsoleValueVar Variable="thingo" /></ConsoleWriter.Text>
+I say I say: <ConsoleValueVar Variable="thingo" />
+I say.
 	</ConsoleWriter>
+	<!-- Explicitly set the ConsoleWriter's Text property to a
+	     ConsoleValueVar instance -->
+	<ConsoleWriter>
+		<ConsoleWriter.Text><ConsoleValueVar Variable="thingo2" /></ConsoleWriter.Text>
+	</ConsoleWriter>
+	<!-- Create a ConsoleWriter and set the ConsoleApp.Repetitions
+	     dependency property as an element -->
 	<ConsoleWriter>
 		<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
 	</ConsoleWriter>
+	<!-- Create a ConsoleWriter and set the ConsoleApp.Repetitions
+	     dependency property as an attribute -->
 	<ConsoleWriter ConsoleApp.Repetitions="2">Bye</ConsoleWriter>
+	<!-- a fairly standard Code element -->
 	<x:Code><![CDATA[
 		public static void Main(string[] args)
 		{
