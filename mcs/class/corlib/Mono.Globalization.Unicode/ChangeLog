@@ -1,5 +1,10 @@
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : fixed punctuations and hyphen
+	  (shift) primary weight.
+
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : more nonspacing mark fixes.
 	  Some non-basic Cyrillic diacritical weight fixes.
 

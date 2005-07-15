@@ -1661,14 +1661,25 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 			#region Specially ignored // 01
 			// This will raise "Defined" flag up.
+			// FIXME: Check If it is really fine. Actually for
+			// Japanese voice marks this code does remapping.
 			foreach (char c in specialIgnore)
 				map [(int) c] = new CharMapEntry (0, 0, 0);
 			#endregion
 
+			#region Extenders (FF FF)
+			fillIndex [0xFF] = 0xFF;
+			char [] specialBiggest = new char [] {
+				'\u3005', '\u3031', '\u3032', '\u309D',
+				'\u309E', '\u30FC', '\u30FD', '\u30FE',
+				'\uFE7C', '\uFE7D', '\uFF70'};
+			foreach (char c in specialBiggest)
+				AddCharMap (c, 0xFF, 0);
+			#endregion
 
 			#region Variable weights
 			// Controls : 06 03 - 06 3D
-			fillIndex [6] = 3;
+			fillIndex [0x6] = 3;
 			for (int i = 0; i < 65536; i++) {
 				if (IsIgnorable (i))
 					continue;
@@ -1681,9 +1692,13 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 
 			// Apostrophe 06 80
-			fillIndex [6] = 0x80;
+			fillIndex [0x6] = 0x80;
 			AddCharMapGroup ('\'', 6, 1, 0);
 			AddCharMap ('\uFE63', 6, 1);
+
+			// SPECIAL CASE: fill FE32 here in prior to be added
+			// at 2013. Windows does not always respect NFKD.
+			map [0xFE32] = new CharMapEntry (6, 0x90, 0);
 
 			// Hyphen/Dash : 06 81 - 06 90
 			for (int i = 0; i < char.MaxValue; i++) {
@@ -1701,6 +1716,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					}
 				}
 			}
+			// They are regarded as primarily equivalent to '-'
+			map [0x208B] = new CharMapEntry (6, 0x82, 0);
+			map [0x207B] = new CharMapEntry (6, 0x82, 0);
+			map [0xFF0D] = new CharMapEntry (6, 0x82, 0);
 
 			// Arabic variable weight chars 06 A0 -
 			fillIndex [6] = 0xA0;
@@ -2811,16 +2830,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// PrivateUse ... computed.
 			// remaining Surrogate ... computed.
 
-			#region Special "biggest" area (FF FF)
-			fillIndex [0xFF] = 0xFF;
-			char [] specialBiggest = new char [] {
-				'\u3005', '\u3031', '\u3032', '\u309D',
-				'\u309E', '\u30FC', '\u30FD', '\u30FE',
-				'\uFE7C', '\uFE7D', '\uFF70'};
-			foreach (char c in specialBiggest)
-				AddCharMap (c, 0xFF, 0);
-			#endregion
-
 			#region 07 - ASCII non-alphanumeric + 3001, 3002 // 07
 			// non-alphanumeric ASCII except for: + - < = > '
 			for (int i = 0x21; i < 0x7F; i++) {
@@ -2864,6 +2873,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				case UnicodeCategory.OtherPunctuation:
 				case UnicodeCategory.ClosePunctuation:
 				case UnicodeCategory.OpenPunctuation:
+				case UnicodeCategory.ConnectorPunctuation:
 				case UnicodeCategory.InitialQuotePunctuation:
 				case UnicodeCategory.FinalQuotePunctuation:
 				case UnicodeCategory.ModifierSymbol:
@@ -2884,6 +2894,51 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [0x7] = 0xB6;
 			for (int i = 0x2400; i <= 0x2421; i++)
 				AddCharMap ((char) i, 0x7, 1, 0);
+
+			// Actually 3008-301F and FE33-FE5D are mixed, so
+			// it's somewhat countable, but not as a whole. Thus
+			// manual remapping is quicker.
+			fillIndex [0x7] = 0x8D;
+			int [] cjkCompatMarks1 = new int [] {
+				0xFE33, 0xFE49, 0xFE4A, 0xFE4B, 0xFE4C};
+			int [] cjkCompatMarks2 = new int [] {
+				0xFE34, 0xFE3F, 0xFE40, 0xFE3D, 0xFE3E, 0xFE41,
+				0xFE42, 0xFE43, 0xFE44, 0xFE3B, 0xFE3C/*FE5D*/,
+				0xFE39/*FE5E*/, 0xFE3A};
+			for (int i = 0; i < cjkCompatMarks1.Length; i++)
+				map [cjkCompatMarks1 [i]] = new CharMapEntry (
+					0x7, fillIndex [0x7]++, 0);
+			for (int i = 0; i < cjkCompatMarks2.Length; i++) {
+				map [cjkCompatMarks2 [i]] = new CharMapEntry (
+					0x7, fillIndex [0x7], 0);
+				fillIndex [0x7] += 2;
+				switch (cjkCompatMarks2 [i]) {
+				case 0xFE3C:
+					map [0xFE5D] = new CharMapEntry (
+						0x7, fillIndex [0x7]++, 0);
+					break;
+				case 0xFE39:
+					map [0xFE5D] = new CharMapEntry (
+						0x7, fillIndex [0x7]++, 0);
+					break;
+				}
+			}
+
+			fillIndex [0x7] = 0x93;
+			for (int i = 0x3008; i <= 0x3011; i++) {
+				map [i] = new CharMapEntry (0x7,
+					fillIndex [0x7], 0);
+				fillIndex [0x7] += 2;
+			}
+			fillIndex [0x7] += 3;
+			map [0x3014] = new CharMapEntry (0x7, fillIndex [0x7], 0);
+			fillIndex [0x7] += 3;
+			map [0x3015] = new CharMapEntry (0x7, fillIndex [0x7], 0);
+			fillIndex [0x7] += 2;
+			for (int i = 0x3016; i < 0x301F; i++)
+				map [i] = new CharMapEntry (0x7,
+					fillIndex [0x7]++, 0);
+
 			#endregion
 
 			// FIXME: for 07 xx we need more love.
