@@ -1601,6 +1601,18 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 		void ModifyParsedValues ()
 		{
+			// some cyrillic diacritical weight. They seem to be
+			// based on old character names, so it's quicker to
+			// set them directly here.
+			diacritical [0x0496] = diacritical [0x0497] = 7;
+			diacritical [0x0498] = diacritical [0x0499] = 0x1A;
+			diacritical [0x049A] = diacritical [0x049B] = 0x17;
+			diacritical [0x049C] = diacritical [0x049D] = 9;
+			diacritical [0x049E] = diacritical [0x049F] = 4;
+			diacritical [0x04A0] = diacritical [0x04A1] = 0xA;
+			diacritical [0x04A2] = diacritical [0x04A3] = 7;
+			diacritical [0x04A4] = diacritical [0x04A5] = 8;
+
 			// number, secondary weights
 			byte weight = 0x38;
 			int [] numarr = numberSecondaryWeightBounds;
@@ -1714,10 +1726,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0x0329; i <= 0x0334; i++)
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
+			fillIndex [0x1]++;
 			for (int i = 0x0339; i <= 0x0341; i++)
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
-			fillIndex [0x1] = 0x72;
+			fillIndex [0x1] = 0x74;
 			for (int i = 0x0346; i <= 0x0348; i++)
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
@@ -1730,6 +1743,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0x02CE; i <= 0x02CF; i++)
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
+			fillIndex [0x1]++;
 			for (int i = 0x02D1; i <= 0x02D3; i++)
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
@@ -2165,8 +2179,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0; i < cymap_src.Length; i++) {
 				char c = cymap_src [i];
 				fillIndex [0x10] = map [c].Level1;
-				AddLetterMap ((char) (0x0490 + i * 2),
-					0x10, 0);
+				int c2 = 0x0490 + i * 2;
+				AddLetterMapCore ((char) c2, 0x10, 0, diacritical [c2]);
 			}
 
 			// Armenian

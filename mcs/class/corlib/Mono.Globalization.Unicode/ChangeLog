@@ -1,5 +1,10 @@
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : more nonspacing mark fixes.
+	  Some non-basic Cyrillic diacritical weight fixes.
+
+2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : some Gurmukhi fixes on level 1 
 	  and level 3. Tiny Hangul weight fixes.
 	* MSCompatUnicodeTable.cs : U+30F5 and U+30F6 are small Japanese.
