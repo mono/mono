@@ -1730,13 +1730,32 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					map [i] = new CharMapEntry (
 						0x1, 0x1, diacritical [i]);
 
-			fillIndex [0x1] = 0x94;
-			// syriac dotted nonspacing marks
+			fillIndex [0x1] = 0x8D;
+			// syriac dotted nonspacing marks (1)
+			AddCharMap ('\u0740', 0x1, 1);
+			AddCharMap ('\u0741', 0x1, 1);
+			AddCharMap ('\u0742', 0x1, 1);
+			// syriac oblique nonspacing marks
+			AddCharMap ('\u0747', 0x1, 1);
+			AddCharMap ('\u0748', 0x1, 1);
+			// syriac dotted nonspacing marks (2)
+			fillIndex [0x1] = 0x94; // this reset is mandatory
 			AddCharMap ('\u0732', 0x1, 1);
 			AddCharMap ('\u0735', 0x1, 1);
 			AddCharMap ('\u0738', 0x1, 1);
 			AddCharMap ('\u0739', 0x1, 1);
 			AddCharMap ('\u073C', 0x1, 1);
+			// SPECIAL CASES: superscripts
+			AddCharMap ('\u073F', 0x1, 1);
+			AddCharMap ('\u0711', 0x1, 1);
+			// syriac "DOTS"
+			for (int i = 0x0743; i <= 0x0746; i++)
+				AddCharMap ((char) i, 0x1, 1);
+			for (int i = 0x0730; i <= 0x0780; i++)
+				if (!map [i].Defined &&
+					Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 0x1, 1);
 
 			// LAMESPEC: It should not stop at '\u20E1'. There are
 			// a few more characters (that however results in 
