@@ -1,3 +1,7 @@
+2005-07-15  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0436.cs: New test from #72969.
+
 2005-07-07  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0282.cs: New test from #75486.

@@ -7210,7 +7210,7 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
 				if (retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);
@@ -7329,7 +7329,7 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
 				if (!silent && retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);

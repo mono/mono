@@ -1,10 +1,15 @@
 2005-07-15  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #72969.
+	* namespace.cs (Namespace.Lookup): Add back location parameter.
+	(Namespace.LookupType): Add CS0436 report.  Add location parameter.
+	* delegate.cs, ecore.cs, expression.cs: Update to changes.
+
 	* codegen.cs (EmitContext.DeclSpace): Make readonly.
 	* namespace.cs (Namespace.Lookup): Carve out type lookup into ...
 	(Namespace.LookupType): ... this.
 	(NamespaceEntry.GetUsingTable): Allocate only one zero-sized array
-	of namespaces.1
+	of namespaces.
 	* typemanager.cs (LookupTypeReflection): Remove buggy code that
 	purported to handle pointers.
 	(char_ptr_type, void_ptr_type): Use GetPointerType rather than
