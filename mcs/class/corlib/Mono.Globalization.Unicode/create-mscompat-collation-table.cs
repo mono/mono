@@ -1886,8 +1886,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					cp == '\u00B5' || cp == '\u00B7')
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
+			// U+30FB here
+			AddCharMapGroup ('\u30FB', 0xA, 1, 0);
 
-			fillIndex [0xA] = 0x0F; // FIXME: it won't be needed
 			for (int cp = 0x2020; cp <= 0x2031; cp++)
 				if (Char.IsPunctuation ((char) cp))
 					AddCharMap ((char) cp, 0xA, 1, 0);
@@ -3304,9 +3305,27 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// CJK compat
 			if ('\u3192' <= c && c <= '\u319F')
 				return 0;
-			// Japanese reading marks
-			if (c == '\u3001' || c == '\u3002')
+
+			// They have <narrow> NFKD mapping, and on Windows
+			// those narrow characters are regarded as "normal",
+			// thus those characters themselves are regarded as
+			// "wide". grep "<narrow>" and you can pick them up
+			// (ignoring Kana, Hangul etc.)
+			switch (c) {
+			case '\u3002':
+			case '\u300C':
+			case '\u300D':
+			case '\u3001':
+			case '\u30FB':
+			case '\u2502':
+			case '\u2190':
+			case '\u2191':
+			case '\u2192':
+			case '\u2193':
+			case '\u25A0':
+			case '\u25CB':
 				return 1;
+			}
 			// Korean
 			if ('\u11A8' <= c && c <= '\u11F9')
 				return 2;

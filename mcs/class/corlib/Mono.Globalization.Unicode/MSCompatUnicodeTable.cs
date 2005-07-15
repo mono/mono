@@ -137,12 +137,10 @@ namespace Mono.Globalization.Unicode
 				return true;
 			else if ('\u3300' <= c)
 				return false;
-			else if (c < '\u3099')
-				return true;
 			else if (c < '\u309D')
-				return false;
+				return (c < '\u3099');
 			else if (c < '\u3100')
-				return true;
+				return c != '\u30FB';
 			else if (c < '\u32D0')
 				return false;
 			else if (c < '\u32FF')
