@@ -863,6 +863,21 @@ sw.Close ();
 				else if (s.Substring (offset).StartsWith ("ESH"))
 					target = 'S';
 
+				// For remaining IPA chars, direct mapping is
+				// much faster.
+				switch (cp) {
+				case 0x0299: target = 'B'; break;
+				case 0x029A: target = 'E'; break;
+				case 0x029B: target = 'G'; break;
+				case 0x029C: target = 'H'; break;
+				case 0x029D: target = 'J'; break;
+				case 0x029E: target = 'K'; break;
+				case 0x029F: target = 'L'; break;
+				case 0x02A0: target = 'Q'; break;
+				case 0x02A7: target = 'T'; break;
+				case 0x02A8: target = 'T'; break;
+				}
+
 				if (target == char.MinValue)
 					target = previousLatinTarget;
 
@@ -1459,7 +1474,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				char c = (char) jc.CP;
 
 				if (c < '\u4E00')
-					Console.Error.WriteLine ("---- warning: for {0} {1:X04} is omitted which should be {2:X04}", category, (int) c, v);
+					// Console.Error.WriteLine ("---- warning: for {0} {1:X04} is omitted which should be {2:X04}", category, (int) c, v);
+					continue;
 				else {
 					arr [(int) c - offset] = (ushort) v++;
 					if (v % 256 == 0)
@@ -1729,6 +1745,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					/* especiall here*/ && !map [i].Defined)
 					map [i] = new CharMapEntry (
 						0x1, 0x1, diacritical [i]);
+
+			// Cyrillic and Armenian nonspacing mark
+			fillIndex [0x1] = 0x94;
+			for (int i = 0x400; i < 0x580; i++)
+				if (!IsIgnorable (i) &&
+					Char.GetUnicodeCategory ((char) i) ==
+					UnicodeCategory.NonSpacingMark)
+					AddCharMap ((char) i, 1, 1);
 
 			fillIndex [0x1] = 0x8D;
 			// syriac dotted nonspacing marks (1)
@@ -2570,10 +2594,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// Thaana
 			// FIXME: it turned out that it does not look like UCA
 			fillIndex [0x24] = 0x6E;
+			fillIndex [0x1] = 0xAC;
 			for (int i = 0; i < orderedThaana.Length; i++) {
 				char c = orderedThaana [i];
 				if (IsIgnorableNonSpacing ((int) c))
-					continue;
+					AddCharMap (c, 1, 1);
 				AddCharMap (c, 0x24, 2);
 				if (c == '\u0782') // SPECIAL CASE: why?
 					fillIndex [0x24] += 2;
@@ -3059,19 +3084,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			return true;
 		}
 
-		private void AddCharMapGroupTail (char c, byte category, byte updateCount)
-		{
-			char c2 = ToSmallFormTail (c);
-			if (c2 != c)
-				AddCharMap (c2, category, updateCount, 0);
-			// itself
-			AddCharMap (c, category, updateCount, 0);
-			// <full>
-			c2 = ToFullWidthTail (c);
-			if (c2 != c)
-				AddCharMapGroupTail (c2, category, updateCount);
-		}
-
 		//
 		// Adds characters to table in the order below 
 		// (+ increases weight):
@@ -3254,24 +3266,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [category] += updateCount;
 		}
 
-		char ToFullWidth (char c)
-		{
-			return ToDecomposed (c, DecompositionFull, false);
-		}
-
-		char ToFullWidthTail (char c)
-		{
-			return ToDecomposed (c, DecompositionFull, true);
-		}
-
 		char ToSmallForm (char c)
 		{
 			return ToDecomposed (c, DecompositionSmall, false);
-		}
-
-		char ToSmallFormTail (char c)
-		{
-			return ToDecomposed (c, DecompositionSmall, true);
 		}
 
 		char ToDecomposed (char c, byte d, bool tail)
@@ -3309,7 +3306,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				return 0;
 			// Japanese reading marks
 			if (c == '\u3001' || c == '\u3002')
-				return 2;
+				return 1;
 			// Korean
 			if ('\u11A8' <= c && c <= '\u11F9')
 				return 2;
