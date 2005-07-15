@@ -1,3 +1,15 @@
+2005-07-15  Raja R Harinath  <rharinath@novell.com>
+
+	* codegen.cs (EmitContext.DeclSpace): Make readonly.
+	* namespace.cs (Namespace.Lookup): Carve out type lookup into ...
+	(Namespace.LookupType): ... this.
+	(NamespaceEntry.GetUsingTable): Allocate only one zero-sized array
+	of namespaces.1
+	* typemanager.cs (LookupTypeReflection): Remove buggy code that
+	purported to handle pointers.
+	(char_ptr_type, void_ptr_type): Use GetPointerType rather than
+	CoreLookupType.
+
 2005-07-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (MemberAccess.ResolveNamespaceOrType): Don't report nested
