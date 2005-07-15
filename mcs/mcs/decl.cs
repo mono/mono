@@ -853,12 +853,6 @@ namespace Mono.CSharp {
 			return ~ (~ mAccess | pAccess) == 0;
 		}
 
-		public static void Error_AmbiguousTypeReference (Location loc, string name, string t1, string t2)
-		{
-			Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
-				      name, t1, t2);
-		}
-
 		//
 		// Return the nested type with name @name.  Ensures that the nested type
 		// is defined if necessary.  Do _not_ use this when you have a MemberCache handy.
@@ -897,8 +891,7 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Public function used to locate types, this can only
-		// be used after the ResolveTree function has been invoked.
+		// Public function used to locate types.
 		//
 		// Set 'ignore_cs0104' to true if you want to ignore cs0104 errors.
 		//

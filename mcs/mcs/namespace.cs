@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 			return Root.GetNamespace (name, create);
 		}
 
-		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
+		public FullNamedExpression Lookup (DeclSpace ds, string name)
 		{
 			Namespace ns = GetNamespace (name, false);
 			if (ns != null)
@@ -372,15 +372,11 @@ namespace Mono.CSharp {
 		public readonly bool IsImplicit;
 
 		public Namespace NS {
-			get {
-				return ns;
-			}
+			get { return ns; }
 		}
 
 		public NamespaceEntry Parent {
-			get {
-				return parent;
-			}
+			get { return parent; }
 		}
 
 		public NamespaceEntry ImplicitParent {
@@ -434,7 +430,7 @@ namespace Mono.CSharp {
 
 			if (aliases == null)
 				aliases = new Hashtable ();
-			
+
 			if (aliases.Contains (name)){
 				AliasEntry ae = (AliasEntry)aliases [name];
 				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
@@ -446,72 +442,31 @@ namespace Mono.CSharp {
 			aliases [name] = new AliasEntry (Doppelganger, name, alias, loc);
 		}
 
-		public FullNamedExpression LookupAlias (string alias)
-		{
-			AliasEntry entry = null;
-			if (aliases != null)
-				entry = (AliasEntry) aliases [alias];
-
-			return entry == null ? null : entry.Resolve ();
-		}
-
-		static readonly char [] dot_array = { '.' };
-
 		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
 		{
+			// Precondition: Only simple names (no dots) will be looked up with this function.
 			FullNamedExpression resolved = null;
-			string rest = null;
-
-			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
-			int pos = name.IndexOf ('.');
-			if (pos >= 0) {
-				rest = name.Substring (pos + 1);
-				name = name.Substring (0, pos);
-			}
-
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
 				if ((resolved = curr_ns.Lookup (ds, name, loc, ignore_cs0104)) != null)
 					break;
 			}
+			return resolved;
+		}
 
-			if (resolved == null || rest == null)
-				return resolved;
-
-			// Now handle the rest of the the name.
-			string [] elements = rest.Split (dot_array);
-			int count = elements.Length;
-			int i = 0;
-			while (i < count && resolved != null && resolved is Namespace) {
-				Namespace ns = resolved as Namespace;
-				resolved = ns.Lookup (ds, elements [i++], loc);
-			}
-
-			if (resolved == null || resolved is Namespace)
-				return resolved;
-
-			Type t = ((TypeExpr) resolved).Type;
-			
-			while (t != null) {
-				if (ds != null && !ds.CheckAccessLevel (t))
-					break;
-				if (i == count)
-					return new TypeExpression (t, Location.Null);
-				t = TypeManager.GetNestedType (t, elements [i++]);
-			}
-
-			return null;
+		static void Error_AmbiguousTypeReference (Location loc, string name, FullNamedExpression t1, FullNamedExpression t2)
+		{
+			Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
+				name, t1.FullName, t2.FullName);
 		}
 
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
 		{
-			// Precondition: Only simple names (no dots) will be looked up with this function.
-
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression o = NS.Lookup (ds, name, loc);
-			if (o != null)
-				return o;
+			FullNamedExpression fne = NS.Lookup (ds, name);
+			if (fne != null)
+				return fne;
 
 			if (IsImplicit)
 				return null;
@@ -519,29 +474,29 @@ namespace Mono.CSharp {
 			//
 			// Check aliases.
 			//
-			o = LookupAlias (name);
-			if (o != null)
-				return o;
+			if (aliases != null) {
+				AliasEntry entry = aliases [name] as AliasEntry;
+				if (entry != null)
+					return entry.Resolve ();
+			}
 
 			//
 			// Check using entries.
 			//
-			FullNamedExpression t = null, match = null;
+			FullNamedExpression match = null;
 			foreach (Namespace using_ns in GetUsingTable ()) {
-				match = using_ns.Lookup (ds, name, loc);
-				if ((match != null) && (match is TypeExpr)) {
-					if (t != null) {
-						if (!ignore_cs0104)
-							DeclSpace.Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
-						
-						return null;
-					} else {
-						t = match;
-					}
+				match = using_ns.Lookup (ds, name);
+				if (match == null || !(match is TypeExpr))
+					continue;
+				if (fne != null) {
+					if (!ignore_cs0104)
+						Error_AmbiguousTypeReference (loc, name, fne, match);
+					return null;
 				}
+				fne = match;
 			}
 
-			return t;
+			return fne;
 		}
 
 		// Our cached computation.
@@ -571,6 +526,8 @@ namespace Mono.CSharp {
 			return namespace_using_table;
 		}
 
+		readonly string [] empty_using_list = new string [0];
+
 		public void DefineNamespace (SymbolWriter symwriter)
 		{
 			if (symfile_id != 0)
@@ -578,14 +535,12 @@ namespace Mono.CSharp {
 			if (parent != null)
 				parent.DefineNamespace (symwriter);
 
-			string[] using_list;
+			string [] using_list = empty_using_list;
 			if (using_clauses != null) {
 				using_list = new string [using_clauses.Count];
 				for (int i = 0; i < using_clauses.Count; i++)
 					using_list [i] = ((UsingEntry) using_clauses [i]).Name.ToString ();
-			} else {
-				using_list = new string [0];
-			}
+			} 
 
 			int parent_id = parent != null ? parent.symfile_id : 0;
 			if (file.SourceFileEntry == null)
@@ -596,9 +551,7 @@ namespace Mono.CSharp {
 		}
 
 		public int SymbolFileID {
-			get {
-				return symfile_id;
-			}
+			get { return symfile_id; }
 		}
 
 		static void MsgtryRef (string s)
@@ -645,14 +598,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void VerifyUsing ()
 		{
-			if (using_clauses != null){
+			if (using_clauses != null) {
 				foreach (UsingEntry ue in using_clauses){
 					ue.Resolve ();
 				}
 			}
 
 			if (aliases != null){
-				foreach (DictionaryEntry de in aliases){
+				foreach (DictionaryEntry de in aliases) {
 					AliasEntry alias = (AliasEntry) de.Value;
 
 					if (alias.Resolve () != null)

@@ -7210,7 +7210,7 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier);
 				if (retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);
@@ -7322,12 +7322,14 @@ namespace Mono.CSharp {
 		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
 
-			if (new_expr == null)
+			if (new_expr == null) {
+				Report.Error (234, "No such name or typespace {0}", expr);
 				return null;
+			}
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, Identifier);
 				if (!silent && retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 						Identifier, ns.FullName);

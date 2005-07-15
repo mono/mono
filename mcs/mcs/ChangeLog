@@ -1,3 +1,17 @@
+2005-07-15  Raja R Harinath  <rharinath@novell.com>
+
+	* namespace.cs (Namespace.Lookup): Drop location parameter.
+	(NamespaceEntry.LookupAlias): Remove.  Merge into ...
+	(NamespaceEntry.Lookup): ... this.
+	(NamespaceEntry.Error_AmbiguousTypeReference):
+	Move here from DeclSpace.
+	(NamespaceEntry.LookupNamespaceOrType): Move support for dotted
+	names ...
+	* ecore.cs (TypeLookupExpression.DoResolveAsTypeStep): ... here.
+	* decl.cs (DeclSpace.ErrorAmbiguousTypeReference):
+	Move to	NamespaceEntry.
+	* delegate.cs, expression.cs: Update to changes.
+
 2005-07-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.ResolveAttributeType): Renamed from
