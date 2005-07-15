@@ -1,3 +1,13 @@
+2005-07-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #60638.
+	* expression.cs (Binary.Warning_UnintendeReferenceComparison):
+	New.  Reports CS0252/CS0253.
+	Mostly taken from preliminary patch by Duncak Mak.
+	(Binary.DoResolveOperator): Store results of operator lookup.
+	Use them to detect if we need to warn about unintended reference
+	comparisons.
+
 2005-07-15  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #72969.
