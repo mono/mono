@@ -90,7 +90,11 @@ namespace System.Data.SqlClient {
 		public new SqlDataAdapter DataAdapter {
 			get { return adapter; }
 			set { 
+				if (adapter != null)
+					adapter.RowUpdating -= new SqlRowUpdatingEventHandler (RowUpdatingHandler);
+
 				adapter = value; 
+
 				if (adapter != null)
 					adapter.RowUpdating += new SqlRowUpdatingEventHandler (RowUpdatingHandler);
 			}
@@ -212,9 +216,13 @@ namespace System.Data.SqlClient {
 				if (!isKey) {
 					parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
-					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+					dsColumnName = parameter.SourceColumn;
+					if (tableMapping != null 
+					    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
+						dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+				
 					if (row != null)
-						parameter.Value = row [dsColumnName, DataRowVersion.Current];
+						parameter.Value = row [dsColumnName, DataRowVersion.Original];
 					whereClause.Append ("(");
 					whereClause.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 					whereClause.Append (" OR ");
@@ -224,9 +232,13 @@ namespace System.Data.SqlClient {
 					
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
-				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+				dsColumnName = parameter.SourceColumn;
+				if (tableMapping != null 
+				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
+					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+
 				if (row != null)
-					parameter.Value = row [dsColumnName, DataRowVersion.Current];
+					parameter.Value = row [dsColumnName, DataRowVersion.Original];
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
@@ -267,7 +279,11 @@ namespace System.Data.SqlClient {
 
 				SqlParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
-				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+				dsColumnName = parameter.SourceColumn;
+				if (tableMapping != null 
+				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
+					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+
 				if (row != null)
 					parameter.Value = row [dsColumnName];
 
@@ -314,9 +330,13 @@ namespace System.Data.SqlClient {
 
 				SqlParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
-				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+				dsColumnName = parameter.SourceColumn;
+				if (tableMapping != null 
+				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
+					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+
 				if (row != null)
-					parameter.Value = row [dsColumnName, DataRowVersion.Proposed];
+					parameter.Value = row [dsColumnName, DataRowVersion.Original];
 
 				columns.Append (String.Format ("{0} = {1}", GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 			}
@@ -337,9 +357,13 @@ namespace System.Data.SqlClient {
 				if (!isKey) {
 					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
-					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+					dsColumnName = parameter.SourceColumn;
+					if (tableMapping != null 
+					    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
+						dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+
 					if (row != null)
-						parameter.Value = row [dsColumnName];
+						parameter.Value = row [dsColumnName, DataRowVersion.Original];
 
 					whereClause.Append ("(");
 					whereClause.Append (String.Format (clause1, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
@@ -350,9 +374,13 @@ namespace System.Data.SqlClient {
 					
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
 
-				dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+				dsColumnName = parameter.SourceColumn;
+				if (tableMapping != null 
+				    && tableMapping.ColumnMappings.Contains (parameter.SourceColumn))
+					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
+
 				if (row != null)
-					parameter.Value = row [dsColumnName];
+					parameter.Value = row [dsColumnName, DataRowVersion.Original];
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 
@@ -557,8 +585,9 @@ namespace System.Data.SqlClient {
 				}
 
 				if (e.Command != null && e.Row != null) {
-					e.Row.AcceptChanges ();
-					e.Status = UpdateStatus.SkipCurrentRow;
+					if (e.StatementType != StatementType.Delete)
+						e.Row.AcceptChanges ();
+					e.Status = UpdateStatus.Continue;
 				}
 			}
 			catch (Exception exception) {

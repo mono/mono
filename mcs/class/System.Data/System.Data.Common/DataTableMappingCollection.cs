@@ -207,7 +207,8 @@ namespace System.Data.Common {
 			if (tableMappings.Contains (sourceTable))
 				return tableMappings[sourceTable];
 			if (mappingAction == MissingMappingAction.Error)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException (String.Format ("Missing source table mapping: '{0}'",
+										    sourceTable));
 			if (mappingAction == MissingMappingAction.Ignore)
 				return null;
 			return new DataTableMapping (sourceTable, dataSetTable);

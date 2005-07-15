@@ -1031,14 +1031,16 @@ namespace System.Data.Common {
 		public int Update (DataSet dataSet, string sourceTable) 
 		{
 			MissingMappingAction mappingAction = MissingMappingAction;
+
 			if (mappingAction == MissingMappingAction.Ignore)
 				mappingAction = MissingMappingAction.Error;
+
 			DataTableMapping tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTable, sourceTable, mappingAction);
 
 			DataTable dataTable = dataSet.Tables[tableMapping.DataSetTable];
 			if (dataTable == null)
-			    throw new ArgumentException ("sourceTable");
-
+			    throw new ArgumentException (String.Format ("Missing table {0}",
+									sourceTable));
 			return Update (dataTable, tableMapping);
 		}
 

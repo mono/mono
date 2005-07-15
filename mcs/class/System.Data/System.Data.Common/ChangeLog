@@ -1,3 +1,10 @@
+2005-07-15  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableMappingCollection.cs: GetTableMappingBySchemaAction:
+	meaningful error message if mapping is missing.
+
+	* DbDataAdapter.cs: Update: meaningful message if table is missing.
+
 2005-06-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Index.cs: Remove : length for Array.Copy (a, i+1, a, i, length -
