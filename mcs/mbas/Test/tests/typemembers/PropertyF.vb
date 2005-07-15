@@ -3,11 +3,19 @@
 '
 ' (C) 2005 Novell, Inc.
 '
-' Properties taking arguments
+' Properties taking arguments, overloading of properties
 
 Imports System
 Module M
 	Dim a As Integer() = {1,2,3}
+	Property Prop (ByVal i As Integer, ByVal j As Integer) As Integer
+		Get
+			return a(i)
+		End Get
+		Set
+			a (i) = Value
+		End Set
+	End Property
 	Property Prop (ByVal i As Integer) As Integer
 		Get
 			return a(i)
