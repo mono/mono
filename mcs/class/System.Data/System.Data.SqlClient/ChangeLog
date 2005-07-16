@@ -1,3 +1,8 @@
+2005-07-16  Daniel Morgan <danielmorgan@verizon.net>
+
+	* SqlCommandBuilder.cs: CreateUpdateCommand should get the current value, not
+	the orginal value when setting one of the SET variables
+
 2005-07-15  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlCommandBuilder.cs:

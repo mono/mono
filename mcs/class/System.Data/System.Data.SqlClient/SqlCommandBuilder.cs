@@ -336,7 +336,7 @@ namespace System.Data.SqlClient {
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
 				if (row != null)
-					parameter.Value = row [dsColumnName, DataRowVersion.Original];
+					parameter.Value = row [dsColumnName];
 
 				columns.Append (String.Format ("{0} = {1}", GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
 			}
