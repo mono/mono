@@ -1,3 +1,9 @@
+2005-07-16  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/XamlParser.cs: fix a bug in property tests, add tests for
+	dependency properties and complex objects as property values. Actually
+	include file in svn, oops.
+
 2005-07-15  Iain McCoy  <iain@mccoy.id.au>
 
 	* System.Windows.Serialization/Mapper.cs: make assembly loading more
