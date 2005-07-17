@@ -1,5 +1,11 @@
 2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
 
+	* System.Data.OracleClient/OracleDataReader.cs:
+	should allow getting RecordsAffected property
+	after Close
+
+2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
+
 	* System.Data.OracleClient/OracleCommandBuilder.cs:
 	fix build for NET_2_0 profile
 

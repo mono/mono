@@ -737,6 +737,7 @@ namespace Test.OracleClient
 				reader.Read();
 				Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
 				reader.Close();
+				Console.WriteLine("   RowsAffected after close: " + reader.RecordsAffected.ToString());
 				trans.Commit();
 			}
 			catch(OracleException e) {
@@ -755,6 +756,7 @@ namespace Test.OracleClient
 			reader.Read();
 			Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
 			reader.Close();
+			Console.WriteLine("   RowsAffected after close: " + reader.RecordsAffected.ToString());
 			trans.Commit();
 
 			Console.WriteLine("Insert into table mono_adapter_test...");
@@ -787,6 +789,7 @@ namespace Test.OracleClient
 			reader.Read();
 			Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
 			reader.Close();
+			Console.WriteLine("   RowsAffected after close: " + reader.RecordsAffected.ToString());
 
 			// insert another record
 			Console.WriteLine("   Insert another record...");
@@ -797,6 +800,7 @@ namespace Test.OracleClient
 			reader.Read();
 			Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
 			reader.Close();
+			Console.WriteLine("   RowsAffected after close: " + reader.RecordsAffected.ToString());
 
 			trans.Commit();
 			trans = null;

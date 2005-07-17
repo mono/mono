@@ -94,10 +94,7 @@ namespace System.Data.OracleClient {
 
 		public int RecordsAffected {
 			get { 
-				if (statementType == OciStatementType.Select)
-					return -1;
-				else
-					return GetRecordsAffected ();
+				return GetRecordsAffected ();				
 			}
 		}
 
@@ -107,8 +104,10 @@ namespace System.Data.OracleClient {
 
 		public void Close ()
 		{	
-			if (!isClosed) 
+			if (!isClosed) {
+				GetRecordsAffected();
 				command.CloseDataReader ();
+			}
 			statement.Dispose();
 			isClosed = true;
 		}
@@ -404,11 +403,13 @@ namespace System.Data.OracleClient {
 
 		private int GetRecordsAffected ()
 		{
-			if (recordsAffected == -1) {
-				try {
-					recordsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, command.ErrorHandle);
+			if (statementType == OciStatementType.Select)
+				return -1;
+			else {
+				if (this.isClosed == false) {
+					if (recordsAffected == -1)
+						recordsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, command.ErrorHandle);
 				}
-				catch { }
 			}
 			
 			return recordsAffected;
