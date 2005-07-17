@@ -291,8 +291,8 @@ namespace Test.OracleClient
 						sOraDataType = "DBNull.Value";
 					}
 					else {
-						ovalue = reader.GetValue (f);
-						//ovalue = reader.GetOracleValue (f);
+						//ovalue = reader.GetValue (f);
+						ovalue = reader.GetOracleValue (f);
 						object oravalue = null;
 					
 						sDataType = ovalue.GetType ().ToString ();
@@ -315,12 +315,12 @@ namespace Test.OracleClient
 							oravalue = GetHexString((byte[])ovalue);
 							break;
 						case "System.Decimal":
-							Console.WriteLine("           *** Get Decimal, Int16, Int32, Int64, Float, Double, ...");
+							//Console.WriteLine("           *** Get Decimal, Int16, Int32, Int64, Float, Double, ...");
 							decimal dec = reader.GetDecimal (f);
-							Console.WriteLine("             GetDecimal: " + dec.ToString ());
+							//Console.WriteLine("             GetDecimal: " + dec.ToString ());
 
 							oravalue = (object) dec;
-
+/*
 							try {
 								reader.GetInt16 (f);
 							} catch (NotSupportedException e) {
@@ -339,7 +339,7 @@ namespace Test.OracleClient
 							} catch (OverflowException oe1) {
 								Console.WriteLine ("            ** Overflow exception for numbers to big or too small: " + oe1.Message);
 								}
-						
+							*/
 							break;
 						default:
 							oravalue = ovalue.ToString ();
@@ -398,6 +398,419 @@ namespace Test.OracleClient
 				Console.WriteLine ();
 				rowCount += 1;
 			}
+		}
+
+		public static void DataAdapterTest2 (OracleConnection con) 
+		{
+			DataAdapterTest2_Setup (con);
+			ReadSimpleTest (con, "SELECT * FROM mono_adapter_test");
+		
+			GetMetaData (con, "SELECT * FROM mono_adapter_test");
+
+			DataAdapterTest2_Insert (con);
+			ReadSimpleTest (con, "SELECT * FROM mono_adapter_test");
+		
+			DataAdapterTest2_Update (con);
+			ReadSimpleTest (con, "SELECT * FROM mono_adapter_test");
+
+			DataAdapterTest2_Delete (con);
+			ReadSimpleTest (con, "SELECT * FROM mono_adapter_test");
+		}
+
+		public static void GetMetaData (OracleConnection con, string sql) 
+		{
+			OracleCommand cmd = null;
+			OracleDataReader rdr = null;
+		
+			cmd = con.CreateCommand();
+			cmd.CommandText = sql;
+
+			Console.WriteLine("Read Schema With KeyInfo");
+			rdr = cmd.ExecuteReader(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly);
+		
+			DataTable dt;
+			dt = rdr.GetSchemaTable();
+			foreach (DataRow schemaRow in dt.Rows) {
+				foreach (DataColumn schemaCol in dt.Columns) {
+					Console.WriteLine(schemaCol.ColumnName + 
+						" = " + 
+						schemaRow[schemaCol]);
+					Console.WriteLine("---Type: " + schemaRow[schemaCol].GetType ().ToString());
+				}
+				Console.WriteLine("");
+			}
+
+			Console.WriteLine("Read Schema with No KeyInfo");
+
+			rdr = cmd.ExecuteReader();
+
+			dt = rdr.GetSchemaTable();
+			foreach (DataRow schemaRow in dt.Rows) {
+				foreach (DataColumn schemaCol in dt.Columns) {
+					Console.WriteLine(schemaCol.ColumnName + 
+						" = " + 
+						schemaRow[schemaCol]);
+					Console.WriteLine("---Type: " + schemaRow[schemaCol].GetType ().ToString());
+					Console.WriteLine();
+				}
+			}
+
+		}
+
+		public static void DataAdapterTest2_Setup (OracleConnection con) 
+		{
+			Console.WriteLine ("  Drop table mono_adapter_test ...");
+			try {
+				OracleCommand cmd2 = con.CreateCommand ();
+				cmd2.CommandText = "DROP TABLE mono_adapter_test";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch (OracleException oe1) {
+				// ignore if table already exists
+			}
+
+			OracleCommand cmd = null;
+			int rowsAffected = 0;
+
+			Console.WriteLine("  Creating table mono_adapter_test...");
+			cmd = new OracleCommand ();
+			cmd.Connection = con;
+			cmd.CommandText = "CREATE TABLE mono_adapter_test ( " +
+				" varchar2_value VarChar2(32),  " +
+				" number_whole_value Number(18) PRIMARY KEY, " +
+				" number_scaled_value Number(18,2), " +
+				" number_integer_value Integer, " +
+				" float_value Float, " +
+				" date_value Date, " +
+				" clob_value Clob, " +
+				" blob_value Blob ) ";
+		
+			// FIXME: char_value does not work
+			/*
+			cmd.CommandText = "CREATE TABLE mono_adapter_test ( " +
+				" varchar2_value VarChar2(32),  " +
+				" number_whole_value Number(18) PRIMARY KEY, " +
+				" number_scaled_value Number(18,2), " +
+				" number_integer_value Integer, " +
+				" float_value Float, " +
+				" date_value Date, " +
+				" char_value Char(32), " +
+				" clob_value Clob, " +
+				" blob_value Blob ) ";
+			*/
+
+			rowsAffected = cmd.ExecuteNonQuery();
+
+			Console.WriteLine("  Begin Trans for table mono_adapter_test...");
+			OracleTransaction trans = con.BeginTransaction ();
+
+			Console.WriteLine("  Inserting value into mono_adapter_test...");
+			cmd = new OracleCommand();
+			cmd.Connection = con;
+			cmd.Transaction = trans;
+		
+			cmd.CommandText = "INSERT INTO mono_adapter_test " +
+				" ( varchar2_value,  " +
+				"  number_whole_value, " +
+				"  number_scaled_value, " +
+				"  number_integer_value, " +
+				"  float_value, " +
+				"  date_value, " +
+				"  clob_value, " +
+				"  blob_value " +
+				") " +
+				" VALUES( " +
+				"  'Mono', " +
+				"  11, " +
+				"  456.78, " +
+				"  8765, " +
+				"  235.2, " +
+				"  TO_DATE( '2004-12-31', 'YYYY-MM-DD' ), " +
+				"  EMPTY_CLOB(), " +
+				"  EMPTY_BLOB() " +
+				")";
+
+			/*
+					cmd.CommandText = "INSERT INTO mono_adapter_test " +
+						" ( varchar2_value,  " +
+						"  number_whole_value, " +
+						"  number_scaled_value, " +
+						"  number_integer_value, " +
+						"  float_value, " +
+						"  date_value, " +
+						"  char_value, " +
+						"  clob_value, " +
+						"  blob_value " +
+						") " +
+						" VALUES( " +
+						"  'Mono', " +
+						"  11, " +
+						"  456.78, " +
+						"  8765, " +
+						"  235.2, " +
+						"  TO_DATE( '2004-12-31', 'YYYY-MM-DD' ), " +
+						"  'US', " +
+						"  EMPTY_CLOB(), " +
+						"  EMPTY_BLOB() " +
+						")";
+			*/
+			rowsAffected = cmd.ExecuteNonQuery();
+
+			Console.WriteLine("  Select/Update CLOB columns on table mono_adapter_test...");
+		
+			// update BLOB and CLOB columns
+			OracleCommand select = con.CreateCommand ();
+			select.Transaction = trans;
+			select.CommandText = "SELECT CLOB_VALUE, BLOB_VALUE FROM mono_adapter_test FOR UPDATE";
+			OracleDataReader reader = select.ExecuteReader ();
+			if (!reader.Read ())
+				Console.WriteLine ("ERROR: RECORD NOT FOUND");
+		
+			// update clob_value
+			Console.WriteLine("     Update CLOB column on table mono_adapter_test...");
+			OracleLob clob = reader.GetOracleLob (0);
+			byte[] bytes = null;
+			UnicodeEncoding encoding = new UnicodeEncoding ();
+			bytes = encoding.GetBytes ("Mono is fun!");
+			clob.Write (bytes, 0, bytes.Length);
+			clob.Close ();
+		
+			// update blob_value
+			Console.WriteLine("     Update BLOB column on table mono_adapter_test...");
+			OracleLob blob = reader.GetOracleLob (1);
+			bytes = new byte[6] { 0x31, 0x32, 0x33, 0x34, 0x35, 0x036 };
+			blob.Write (bytes, 0, bytes.Length);
+			blob.Close ();
+			
+			Console.WriteLine("  Commit trans for table mono_adapter_test...");
+			trans.Commit ();
+
+			CommitCursor (con);
+		}
+
+		public static void DataAdapterTest2_Insert (OracleConnection con) 
+		{
+			Console.WriteLine("================================");
+			Console.WriteLine("=== Adapter Insert =============");
+			Console.WriteLine("================================");
+			OracleTransaction transaction = con.BeginTransaction ();
+		
+			Console.WriteLine("   Create adapter...");
+			OracleDataAdapter da = new OracleDataAdapter("select * from mono_adapter_test", con);
+			da.SelectCommand.Transaction = transaction;
+		
+			Console.WriteLine("   Create command builder...");
+			OracleCommandBuilder mycb = new OracleCommandBuilder(da);
+
+			Console.WriteLine("   Create data set ...");
+			DataSet ds = new DataSet();
+		
+			Console.WriteLine("   Fill data set via adapter...");
+			da.Fill(ds, "mono_adapter_test");
+
+			Console.WriteLine("   New Row...");
+			DataRow myRow;
+			myRow = ds.Tables["mono_adapter_test"].NewRow();
+
+			byte[] bytes = new byte[] { 0x45,0x46,0x47,0x48,0x49,0x50 };
+
+			Console.WriteLine("   Set values in the new DataRow...");
+			myRow["varchar2_value"] = "OracleClient";
+			myRow["number_whole_value"] = 22;
+			myRow["number_scaled_value"] = 12.34;
+			myRow["number_integer_value"] = 456;
+			myRow["float_value"] = 98.76;
+			myRow["date_value"] = new DateTime(2001,07,09);
+			Console.WriteLine("   *** FIXME; char value not working");
+			//myRow["char_value"] = "Romeo";
+			myRow["clob_value"] = "clobtest";
+			myRow["blob_value"] = bytes;
+		
+			Console.WriteLine("    Add DataRow to DataTable...");		
+			ds.Tables["mono_adapter_test"].Rows.Add(myRow);
+
+			Console.WriteLine("da.Update(ds...");
+			da.Update(ds, "mono_adapter_test");
+
+			transaction.Commit();
+		}
+
+		public static void DataAdapterTest2_Update (OracleConnection con) 
+		{
+			Console.WriteLine("================================");
+			Console.WriteLine("=== Adapter Update =============");
+			Console.WriteLine("================================");
+
+			OracleTransaction transaction = con.BeginTransaction ();
+
+			Console.WriteLine("   Create adapter...");
+			OracleCommand selectCmd = con.CreateCommand ();
+			selectCmd.Transaction = transaction;
+			selectCmd.CommandText = "SELECT * FROM mono_adapter_test";
+			OracleDataAdapter da = new OracleDataAdapter(selectCmd);
+			Console.WriteLine("   Create command builder...");
+			OracleCommandBuilder mycb = new OracleCommandBuilder(da);
+			Console.WriteLine("   Create data set ...");
+			DataSet ds = new DataSet();
+
+			Console.WriteLine("   Set missing schema action...");
+		
+			Console.WriteLine("  Fill data set via adapter...");
+			da.Fill(ds, "mono_adapter_test");
+			DataRow myRow;
+
+			Console.WriteLine("   New Row...");
+			myRow = ds.Tables["mono_adapter_test"].Rows[0];
+
+			Console.WriteLine("Tables Count: " + ds.Tables.Count.ToString());
+
+			DataTable table = ds.Tables["mono_adapter_test"];
+			DataRowCollection rows;
+			rows = table.Rows;
+			Console.WriteLine("   Row Count: " + rows.Count.ToString());
+			myRow = rows[0];
+
+			byte[] bytes = new byte[] { 0x62,0x63,0x64,0x65,0x66,0x67 };
+
+			Console.WriteLine("   Set values in the new DataRow...");
+
+			myRow["varchar2_value"] = "Super Power!";
+		
+			myRow["number_scaled_value"] = 12.35;
+			myRow["number_integer_value"] = 457;
+			myRow["float_value"] = 198.76;
+			myRow["date_value"] = new DateTime(2002,08,09);
+			//myRow["char_value"] = "Juliet";
+			myRow["clob_value"] = "this is a clob";
+			myRow["blob_value"] = bytes;
+
+			Console.WriteLine("da.Update(ds...");
+			da.Update(ds, "mono_adapter_test");
+
+			transaction.Commit();
+		}
+
+		public static void DataAdapterTest2_Delete (OracleConnection con) 
+		{
+			Console.WriteLine("================================");
+			Console.WriteLine("=== Adapter Delete =============");
+			Console.WriteLine("================================");
+			OracleTransaction transaction = con.BeginTransaction ();
+		
+			Console.WriteLine("   Create adapter...");
+			OracleDataAdapter da = new OracleDataAdapter("SELECT * FROM mono_adapter_test", con);
+			Console.WriteLine("   Create command builder...");
+			OracleCommandBuilder mycb = new OracleCommandBuilder(da);
+			Console.WriteLine("   set transr...");
+			da.SelectCommand.Transaction = transaction;
+
+			Console.WriteLine("   Create data set ...");
+			DataSet ds = new DataSet();
+		
+			Console.WriteLine("Fill data set via adapter...");
+			da.Fill(ds, "mono_adapter_test");
+
+			Console.WriteLine("delete row...");
+			ds.Tables["mono_adapter_test"].Rows[0].Delete();
+
+			Console.WriteLine("da.Update(table...");
+			da.Update(ds, "mono_adapter_test");
+
+			Console.WriteLine("Commit...");
+			transaction.Commit();
+		}
+
+		static void TestNonQueryUsingExecuteReader(OracleConnection con) 
+		{
+			OracleDataReader reader = null;
+			OracleTransaction trans = null;
+
+			Console.WriteLine("   drop table mono_adapter_test...");
+			OracleCommand cmd = con.CreateCommand();
+
+			cmd.CommandText = "DROP TABLE MONO_ADAPTER_TEST";
+			trans = con.BeginTransaction();
+			cmd.Transaction = trans;
+			try {
+				reader = cmd.ExecuteReader();
+				Console.WriteLine("   RowsAffected before read: " + reader.RecordsAffected.ToString());
+				reader.Read();
+				Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
+				reader.Close();
+				trans.Commit();
+			}
+			catch(OracleException e) {
+				Console.WriteLine("   OracleException caught: " + e.Message);
+				trans.Commit();
+			}
+
+			Console.WriteLine("   Create table mono_adapter_test...");
+			cmd.CommandText = "CREATE TABLE MONO_ADAPTER_TEST ( " +
+				" varchar2_value VarChar2(32),  " +
+				" number_whole_value Number(18,0) PRIMARY KEY ) ";
+			trans = con.BeginTransaction();
+			cmd.Transaction = trans;
+			reader = cmd.ExecuteReader();
+			Console.WriteLine("   RowsAffected before read: " + reader.RecordsAffected.ToString());
+			reader.Read();
+			Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
+			reader.Close();
+			trans.Commit();
+
+			Console.WriteLine("Insert into table mono_adapter_test...");
+			
+			string sql =
+				"INSERT INTO MONO_ADAPTER_TEST " +
+				"(VARCHAR2_VALUE,NUMBER_WHOLE_VALUE) " +
+				"VALUES(:p1,:p2)";
+
+			OracleCommand cmd2 = con.CreateCommand();
+			trans = con.BeginTransaction();
+			cmd2.Transaction = trans;
+			cmd2.CommandText = sql;
+			
+			OracleParameter myParameter1 = new OracleParameter("p1", OracleType.VarChar, 32);
+			myParameter1.Direction = ParameterDirection.Input;
+		
+			OracleParameter myParameter2 = new OracleParameter("p2", OracleType.Number);
+			myParameter2.Direction = ParameterDirection.Input;
+
+			myParameter2.Value = 182;
+			myParameter1.Value = "Mono";
+
+			cmd2.Parameters.Add (myParameter1);
+			cmd2.Parameters.Add (myParameter2);
+			
+			// insert 1 record
+			reader = cmd2.ExecuteReader();
+			Console.WriteLine("   RowsAffected before read: " + reader.RecordsAffected.ToString());
+			reader.Read();
+			Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
+			reader.Close();
+
+			// insert another record
+			Console.WriteLine("   Insert another record...");
+			myParameter2.Value = 183;
+			myParameter1.Value = "Oracle";
+			reader = cmd2.ExecuteReader();
+			Console.WriteLine("   RowsAffected before read: " + reader.RecordsAffected.ToString());
+			reader.Read();
+			Console.WriteLine("   RowsAffected after read: " + reader.RecordsAffected.ToString());
+			reader.Close();
+
+			trans.Commit();
+			trans = null;
+			
+			ReadSimpleTest(con, "SELECT * FROM MONO_ADAPTER_TEST");
+		}
+
+		static void CommitCursor (OracleConnection con) 
+		{
+			OracleCommand cmd = con.CreateCommand ();
+			cmd.CommandText = "COMMIT";
+			cmd.ExecuteNonQuery ();
+			cmd.Dispose ();
+			cmd = null;
 		}
 
 		static void RollbackTest (OracleConnection connection)
@@ -468,7 +881,106 @@ namespace Test.OracleClient
 			transaction.Commit ();
 		}
 
-		public static void ParameterTest (OracleConnection connection)
+		public static void ParameterTest2 (OracleConnection connection)
+		{
+			Console.WriteLine("  Setting NLS_DATE_FORMAT...");
+
+			OracleCommand cmd2 = connection.CreateCommand();
+			cmd2.CommandText = "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS'";
+		
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  Drop table MONO_TEST_TABLE2...");
+			try {
+				cmd2.CommandText = "DROP TABLE MONO_TEST_TABLE7";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch(OracleException oe1) {
+				// ignore if table already exists
+			}
+
+			Console.WriteLine("  Create table MONO_TEST_TABLE7...");
+
+			cmd2.CommandText = "CREATE TABLE MONO_TEST_TABLE7(" +
+				" COL1 VARCHAR2(8) NOT NULL, " +
+				" COL2 VARCHAR2(32), " +
+				" COL3 NUMBER(18,2), " +
+				" COL4 NUMBER(18,2), " +
+				" COL5 DATE NOT NULL, " +
+				" COL6 DATE, " +
+				" COL7 BLOB NOT NULL, " +
+				" COL8 BLOB, " +
+				" COL9 CLOB NOT NULL, " +
+				" COL10 CLOB " +
+				")";
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  COMMIT...");
+			cmd2.CommandText = "COMMIT";
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  create insert command...");
+
+			OracleTransaction trans = connection.BeginTransaction ();
+			OracleCommand cmd = connection.CreateCommand ();
+			cmd.Transaction = trans;
+
+			cmd.CommandText = "INSERT INTO MONO_TEST_TABLE7 " + 
+				"(COL1,COL2,COL3,COL4,COL5,COL6,COL7,COL8,COL9,COL10) " + 
+				"VALUES(:P1,:P2,:P3,:P4,:P5,:P6,:P7,:P8,:P9,:P10)";
+		
+			Console.WriteLine("  Add parameters...");
+
+			OracleParameter parm1 = cmd.Parameters.Add (":P1", OracleType.VarChar, 8);
+			OracleParameter parm2 = cmd.Parameters.Add (":P2", OracleType.VarChar, 32);
+		
+			OracleParameter parm3 = cmd.Parameters.Add (":P3", OracleType.Number);
+			OracleParameter parm4 = cmd.Parameters.Add (":P4", OracleType.Number);
+		
+			OracleParameter parm5 = cmd.Parameters.Add (":P5", OracleType.DateTime);
+			OracleParameter parm6 = cmd.Parameters.Add (":P6", OracleType.DateTime);
+
+			// FIXME: fix BLOBs and CLOBs in OracleParameter
+
+			OracleParameter parm7 = cmd.Parameters.Add (":P7", OracleType.Blob);
+			OracleParameter parm8 = cmd.Parameters.Add (":P8", OracleType.Blob);
+
+			OracleParameter parm9 = cmd.Parameters.Add (":P9", OracleType.Clob);
+			OracleParameter parm10 = cmd.Parameters.Add (":P10", OracleType.Clob);
+
+			// TODO: implement out, return, and ref parameters
+
+			string s = "Mono";
+			decimal d = 123456789012345.678M;
+			DateTime dt = DateTime.Now;
+
+			string clob = "Clob";
+			byte[] blob = new byte[] { 0x31, 0x32, 0x33, 0x34, 0x35 };
+		
+			Console.WriteLine("  Set Values...");
+
+			parm1.Value = s;
+			parm2.Value = DBNull.Value;
+		
+			parm3.Value = d;
+			parm4.Value = DBNull.Value;
+		
+			parm5.Value = dt;
+			parm6.Value = DBNull.Value;
+		
+			parm7.Value = blob;
+			parm8.Value = DBNull.Value;
+
+			parm9.Value = clob;
+			parm10.Value = DBNull.Value;
+		
+			Console.WriteLine("  ExecuteNonQuery...");
+
+			cmd.ExecuteNonQuery ();
+			trans.Commit();
+		}
+
+		public static void ParameterTest (OracleConnection connection) 
 		{
 			Console.WriteLine("  Setting NLS_DATE_FORMAT...");
 
@@ -1252,6 +1764,12 @@ namespace Test.OracleClient
 
 			Wait ("");
 
+			Console.WriteLine ("DataAdapter Test 2 BEGIN...");
+			DataAdapterTest2(con1);
+			Console.WriteLine ("DataAdapter Test 2 END.");
+
+			Wait ("");
+
 			Console.WriteLine ("Rollback Test BEGIN...");
                         RollbackTest(con1);
 			Console.WriteLine ("Rollback Test END.");
@@ -1294,6 +1812,12 @@ namespace Test.OracleClient
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 3 BEGIN...");
 			OutParmTest3 (con1); 
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 3 END...");
+
+			Wait ("");
+
+			Console.WriteLine ("Test a Non Query using Execute Reader BEGIN...");
+			TestNonQueryUsingExecuteReader (con1);
+			Console.WriteLine ("Test a Non Query using Execute Reader END...");
 
 			Wait ("");
 

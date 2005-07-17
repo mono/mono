@@ -276,6 +276,16 @@ namespace System.Data.OracleClient {
 			return new OracleParameter ();
 		}
 
+		internal void DeriveParameters () 
+		{
+			if (commandType != CommandType.StoredProcedure)
+				throw new InvalidOperationException (String.Format ("OracleCommandBuilder DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{0}", commandType));
+
+			//OracleParameterCollection localParameters = new OracleParameterCollection (this);
+
+			throw new NotImplementedException ();
+		}
+
 		private int ExecuteNonQueryInternal (OciStatementHandle statement, bool useAutoCommit)
 		{
 			if (preparedStatement == null)

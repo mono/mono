@@ -1,3 +1,29 @@
+2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
+
+    * System.Data.OracleClient/OracleCommandBuilder.cs:
+    implemented a working OracleCommandBuilder based on
+    current SqlCommandBuilder	
+
+	* System.Data.OracleClient/OracleCommand.cs: added 
+	placeholder for DeriveParamters
+
+	* System.Data.OracleClient/OracleDataReader.cs:
+		- sometimes trying to get records affected 
+		  throws an exception
+		- set BaseColumnName to the ColumnName 
+		  in the Schema table
+		  if the command behavior is KeyInfo
+		- only try to Read if there are rows to read
+
+	* Test/OracleAdapterTest.cs: removed file
+	because adapter tests added to TestOracleClient.cs
+		  
+	* Test/TestOracleClient.cs: added tests
+		- test ExecuteReader and records affected
+		  executing a Non-Query
+		- test Inserts/Updates/Deletes with a
+		  DataSet, Data Adapter, and Command Builder
+
 2005-07-10  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleCommand.cs: support

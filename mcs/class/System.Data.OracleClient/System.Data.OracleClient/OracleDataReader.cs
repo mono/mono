@@ -404,8 +404,13 @@ namespace System.Data.OracleClient {
 
 		private int GetRecordsAffected ()
 		{
-			if (recordsAffected == -1) 
-				recordsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, command.ErrorHandle);
+			if (recordsAffected == -1) {
+				try {
+					recordsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, command.ErrorHandle);
+				}
+				catch { }
+			}
+			
 			return recordsAffected;
 		}
 
@@ -540,6 +545,7 @@ namespace System.Data.OracleClient {
 				}
 			}
 		}
+
 		public DataTable GetSchemaTable ()
 		{
 			StringCollection keyinfo = null;
@@ -590,10 +596,9 @@ namespace System.Data.OracleClient {
 						row ["IsKey"] = false;
 
 					row ["IsUnique"]	= DBNull.Value; // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
-					row ["BaseSchemaName"]	= DBNull.Value;  // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
+					row ["BaseSchemaName"]	= DBNull.Value; // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
 					row ["BaseTableName"]	= table;
-					row ["BaseColumnName"]	= DBNull.Value;  // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
-
+					row ["BaseColumnName"]	= row ["ColumnName"];
 				}	
 				else {
 					row ["IsKey"]		= DBNull.Value;	
@@ -681,9 +686,12 @@ namespace System.Data.OracleClient {
 
 		public bool Read ()
 		{
-			bool retval = statement.Fetch ();
-			hasRows = retval;
-			return retval;
+			if (hasRows) {
+				bool retval = statement.Fetch ();
+				hasRows = retval;
+				return retval;
+			}
+			return false;
 		}
 
 		#endregion // Methods
