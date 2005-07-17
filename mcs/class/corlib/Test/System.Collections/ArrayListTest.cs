@@ -916,6 +916,23 @@ public class ArrayListTest : Assertion {
 			AssertEquals("Munging 'a' should mess up 'b'",
 				     true, errorThrown);
 		}
+		{
+			char[] chars = {'a', 'b', 'c', 'd', 'e', 'f'};
+			ArrayList a = new ArrayList(chars);
+			ArrayList b = a.GetRange(3, 3);
+			object[] obj_chars = b.ToArray ();
+			for (int i = 0; i < 3; i++) {
+				char c = (char) obj_chars[i];
+				AssertEquals("range.ToArray didn't work",
+					     chars[i+1], c);
+			}
+			char[] new_chars = (char[]) b.ToArray (typeof (char));
+			for (int i = 0; i < 3; i++) {
+				AssertEquals("range.ToArray with type didn't work",
+					     chars[i+1], new_chars[i]);
+			}
+
+		}
 	}
 
 	[Test]
