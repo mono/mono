@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Xml;
 using System.Reflection;
 using System.Windows;
 using Mono.Windows.Serialization;
@@ -33,6 +34,42 @@ public class XamlParserTest : Assertion {
 	[Test]
 	public void TestTopLevel()
 	{
+		string s = "<ConsoleApp xmlns=\"console\"></ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Class 'ConsoleApple' not found.")]
+	public void TestTopLevelWithIncorrectClassName()
+	{
+		string s = "<ConsoleApple xmlns=\"console\"></ConsoleApple>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	[ExpectedException(typeof(XmlException))]
+	public void TestTopLevelWithWrongEndingTag()
+	{
+		string s = "<ConsoleApp xmlns=\"console\"></ConsoleApple>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "No xml namespace specified.")]
+	public void TestTopLevelWithoutNamespace()
+	{
 		string s = "<ConsoleApp></ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
 				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
@@ -40,10 +77,11 @@ public class XamlParserTest : Assertion {
 				new FinishHappening());
 		pt.Test();
 	}
+
 	[Test]
-	public void TestTopLevelWithClass()
+	public void TestTopLevelWithClassName()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"nnn\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"nnn\">\n"+
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
 				new CreateTopLevelHappening(typeof(ConsoleApp), "nnn"), 
@@ -53,10 +91,10 @@ public class XamlParserTest : Assertion {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(Exception))]
+	[ExpectedException(typeof(Exception), "The XAML Name attribute can not be applied to top level elements\nDo you mean the Class attribute?")]
 	public void TestTopLevelWithName()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Name=\"nnn\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Name=\"nnn\">\n"+
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
 				new CreateTopLevelHappening(typeof(ConsoleApp), "nnn"), // this is a lie, actually we expect
@@ -69,7 +107,7 @@ public class XamlParserTest : Assertion {
 	[Test]
 	public void TestSimplestAddChild()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter></ConsoleWriter>" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
@@ -82,9 +120,26 @@ public class XamlParserTest : Assertion {
 	}
 
 	[Test]
+	[ExpectedException(typeof(Exception), "Class 'ConsoleWritttter' not found.")]
+	public void TestSimplestAddChildWithIncorrectName()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWritttter></ConsoleWritttter>" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+
+	[Test]
 	public void TestSimplestAddChildAndText()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter>Hello</ConsoleWriter>" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
@@ -100,7 +155,7 @@ public class XamlParserTest : Assertion {
 	[Test]
 	public void TestTextProperty()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter Text=\"Hello\" />" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
@@ -114,10 +169,30 @@ public class XamlParserTest : Assertion {
 				new FinishHappening());
 		pt.Test();
 	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
+	public void TestTextPropertyWithIncorrectName()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Texxxt=\"Hello\" />" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
+				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
+				new EndPropertyHappening(),
+				new EndObjectHappening(), //ConsoleWriter
+				new EndObjectHappening(), //ConsoleApp
+				new FinishHappening());
+		pt.Test();
+	}
+
 	[Test]
 	public void TestTextPropertyAsElement()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter><ConsoleWriter.Text>Hello</ConsoleWriter.Text></ConsoleWriter>\n" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
@@ -133,10 +208,67 @@ public class XamlParserTest : Assertion {
 	}
 
 	[Test]
-	public void testDependencyProperty()
+	[ExpectedException(typeof(Exception), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
+	public void TestTextPropertyAsElementWithIncorrectName()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter><ConsoleWriter.Texxxt>Hello</ConsoleWriter.Text></ConsoleWriter>\n" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
+				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
+				new EndPropertyHappening(),
+				new EndObjectHappening(), //ConsoleWriter
+				new EndObjectHappening(), //ConsoleApp
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	public void TestDependencyProperty()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter ConsoleApp.Repetitions=\"3\" />" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
+				new CreateDependencyPropertyTextHappening("3"),
+				new EndDependencyPropertyHappening(),
+				new EndObjectHappening(), // ConsoleWriter
+				new EndObjectHappening(), // ConsoleApp
+				new FinishHappening());
+		pt.Test();
+	}
+	
+	[Test]
+	[ExpectedException(typeof(Exception), "Property 'Reps' does not exist on 'ConsoleApp'.")]
+	public void TestDependencyPropertyWithIncorrectName()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter ConsoleApp.Reps=\"3\" />" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
+				new CreateDependencyPropertyTextHappening("3"),
+				new EndDependencyPropertyHappening(),
+				new EndObjectHappening(), // ConsoleWriter
+				new EndObjectHappening(), // ConsoleApp
+				new FinishHappening());
+		pt.Test();
+	}
+
+
+	[Test]
+	public void TestDependencyPropertyAsChildElement()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter><ConsoleApp.Repetitions>3</ConsoleApp.Repetitions></ConsoleWriter>" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s,
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
@@ -151,10 +283,11 @@ public class XamlParserTest : Assertion {
 	}
 
 	[Test]
-	public void testDependencyPropertyAsChildElement()
+	[ExpectedException(typeof(Exception), "Property 'Reps' does not exist on 'ConsoleApp'.")]
+	public void TestDependencyPropertyAsChildElementWithIncorrectName()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleWriter><ConsoleApp.Repetitions>3</ConsoleApp.Repetitions></ConsoleWriter>" +
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter><ConsoleApp.Reps>3</ConsoleApp.Reps></ConsoleWriter>" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s,
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
@@ -167,9 +300,12 @@ public class XamlParserTest : Assertion {
 				new FinishHappening());
 		pt.Test();
 	}
-	public void testObjectAsPropertyValue()
+
+
+	[Test]
+	public void TestObjectAsPropertyValue()
 	{
-		string s = "<ConsoleApp xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleReader>\n" +
 			"<ConsoleReader.Prompt><ConsoleWriter /></ConsoleReader.Prompt>\n" +
 			"</ConsoleReader>\n" +

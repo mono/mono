@@ -79,7 +79,7 @@ namespace Mono.Windows.Serialization {
 		{
 			while (reader.Read()) {
 				Debug.WriteLine("NOW PARSING: " + reader.NodeType + "; " + reader.Name + "; " + reader.Value);
-				if (begun && currentState == null && reader.NodeType != XmlNodeType.Whitespace)
+				if (begun && currentState == null && reader.NodeType != XmlNodeType.Whitespace && reader.NodeType != XmlNodeType.Comment)
 					throw new Exception("Too far: " + reader.NodeType + ", " + reader.Name);
 				if (currentState != null && currentState.type == CurrentType.Code)
 				{
@@ -124,6 +124,8 @@ namespace Mono.Windows.Serialization {
 
 		void parseElement()
 		{
+			if (reader.NamespaceURI == "")
+				throw new Exception("No xml namespace specified.");
 			if (reader.LocalName == "Code" && reader.NamespaceURI == XAML_NAMESPACE) {
 				parseCodeElement();
 				return;
@@ -192,9 +194,7 @@ namespace Mono.Windows.Serialization {
 			PropertyInfo prop = currentType.GetProperty(propertyName);
 
 			if (prop == null) {
-				Console.WriteLine("Property " + propertyName + " not found on " + currentType.Name);
-				return;
-				// TODO: exception
+				throw new Exception("Property '" + propertyName + "' not found on '" + currentType.Name + "'.");
 			}
 
 			push(CurrentType.Property, prop);
@@ -227,6 +227,8 @@ namespace Mono.Windows.Serialization {
 			bool isEmpty = reader.IsEmptyElement;
 			
 			parent = mapper.GetType(reader.NamespaceURI, reader.Name);
+			if (parent == null)
+				throw new Exception("Class '" + reader.Name + "' not found.");
 			if (parent.GetInterface("System.Windows.Serialization.IAddChild") == null)
 				{} //TODO: throw exception
 			if (currentState == null) {
@@ -305,11 +307,8 @@ namespace Mono.Windows.Serialization {
 			PropertyInfo prop = currentType.GetProperty(propertyName);
 			if (parsedAsEventProperty(currentType, propertyName))
 				return;
-			if (prop == null) {
-				Console.WriteLine("Property " + propertyName + " not found on " + currentType.Name);
-				return;
-				// TODO: throw exception
-			}
+			if (prop == null)
+				throw new Exception ("Property '" + propertyName + "' not found on '" + currentType.Name + "'.");
 
 			writer.CreateProperty(prop);
 
@@ -358,7 +357,7 @@ namespace Mono.Windows.Serialization {
 		{
 			FieldInfo propField = typeAttachedTo.GetField(propertyName + "Property");
 			if (propField == null)
-				throw new Exception("Property " + propertyName + " does not exist on " + typeAttachedTo.Name);
+				throw new Exception("Property '" + propertyName + "' does not exist on '" + typeAttachedTo.Name + "'.");
 			return (DependencyProperty)propField.GetValue(null);
 		}
 

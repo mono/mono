@@ -1,3 +1,9 @@
+2005-07-17  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/XamlParser.cs: add a bunch of tests
+	* Mono.Windows.Serialization/XamlParser.cs: improve error reporting,
+	don't accept elements without namespaces
+
 2005-07-16  Iain McCoy  <iain@mccoy.id.au>
 
 	* Test/XamlParser.cs: fix a bug in property tests, add tests for
