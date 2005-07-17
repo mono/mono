@@ -1,5 +1,10 @@
 2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
 
+	* System.Data.OracleClient/OracleCommandBuilder.cs:
+	fix build for NET_2_0 profile
+
+2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
+
     * System.Data.OracleClient/OracleCommandBuilder.cs:
     implemented a working OracleCommandBuilder based on
     current SqlCommandBuilder	

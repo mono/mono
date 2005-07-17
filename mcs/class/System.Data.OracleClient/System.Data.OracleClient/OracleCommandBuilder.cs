@@ -43,8 +43,9 @@ namespace System.Data.OracleClient {
 #if NET_2_0
 	public sealed class OracleCommandBuilder : DbCommandBuilder
 #else
-	public sealed class OracleCommandBuilder : Component {
+	public sealed class OracleCommandBuilder : Component
 #endif // NET_2_0
+	{
 		#region Fields
 
 		bool disposed = false;
