@@ -1,3 +1,8 @@
+2005-07-16  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile: Make sure that tests use the same flags as the
+	assembly itself. Also, unverbosify warnings.
+
 2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added MembershipSection.cs

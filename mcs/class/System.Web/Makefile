@@ -60,6 +60,8 @@ LIB_MCS_FLAGS = \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(OTHER_RES:%=/resource:%)
 
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219
+
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 
 include ../../build/library.make
