@@ -1,3 +1,12 @@
+2005-07-18  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs: some refactoring and
+	improvements in error reporting
+	* Test/XamlParser.cs: added a few tests and improved the readability
+	of the baked-in	XAML documents somewhat. Additionally added some
+	comments explaining the approach taken by the tests and test
+	scaffolding.
+
 2005-07-17  Iain McCoy  <iain@mccoy.id.au>
 
 	* Test/XamlParser.cs: add a bunch of tests

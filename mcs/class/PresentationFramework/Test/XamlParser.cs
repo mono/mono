@@ -4,6 +4,24 @@
 //
 // (C) iain@mccoy.id.au
 // 
+//
+// As you may be aware, testing a parser is something of a beastly job. The
+// approach taken by these tests is to feed a file to XamlParser and see if it
+// tells the code generator to do what you'd expect. This tests both the parsing
+// and type-checking bits of XamlParser.
+//
+// The various Happening classes each represent methods on the XamlWriter
+// interface that XamlParser could call. The constructor of a Happening takes 
+// the same arguments as the XamlWriter method it represents, and merely stashes
+// those values in the suitable public fields.
+//
+// The ParserTester class takes a Xaml document and a list of Happenings, and 
+// handles comparison of the calls to ParserTester's methods to the expected 
+// sequence of Happenings.
+//
+// I think this strikes a tolerable balance between the need to keep the tests 
+// simple and the need to avoid writing 10 zillion lines of hard-to-follow test
+// code.
 
 using NUnit.Framework;
 using System;
@@ -193,7 +211,30 @@ public class XamlParserTest : Assertion {
 	public void TestTextPropertyAsElement()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleWriter><ConsoleWriter.Text>Hello</ConsoleWriter.Text></ConsoleWriter>\n" +
+			"<ConsoleWriter>\n" + 
+			"<ConsoleWriter.Text>Hello</ConsoleWriter.Text>\n" +
+			"</ConsoleWriter>\n" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
+				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
+				new EndPropertyHappening(),
+				new EndObjectHappening(), //ConsoleWriter
+				new EndObjectHappening(), //ConsoleApp
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Property node should not have attributes.")]
+	public void TestTextPropertyAsElementWithAttribute()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter>\n" + 
+			"<ConsoleWriter.Text z=\"y\">Hello</ConsoleWriter.Text>\n"+
+			"</ConsoleWriter>\n" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
@@ -212,7 +253,9 @@ public class XamlParserTest : Assertion {
 	public void TestTextPropertyAsElementWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleWriter><ConsoleWriter.Texxxt>Hello</ConsoleWriter.Text></ConsoleWriter>\n" +
+			"<ConsoleWriter>\n" + 
+			"<ConsoleWriter.Texxxt>Hello</ConsoleWriter.Text>\n" + 
+			"</ConsoleWriter>\n" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s, 
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
@@ -268,7 +311,9 @@ public class XamlParserTest : Assertion {
 	public void TestDependencyPropertyAsChildElement()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleWriter><ConsoleApp.Repetitions>3</ConsoleApp.Repetitions></ConsoleWriter>" +
+			"<ConsoleWriter>\n" + 
+			"<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>\n" +
+			"</ConsoleWriter>" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s,
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
@@ -287,7 +332,9 @@ public class XamlParserTest : Assertion {
 	public void TestDependencyPropertyAsChildElementWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleWriter><ConsoleApp.Reps>3</ConsoleApp.Reps></ConsoleWriter>" +
+			"<ConsoleWriter>\n"+
+			"<ConsoleApp.Reps>3</ConsoleApp.Reps>\n" + 
+			"</ConsoleWriter>" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s,
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
@@ -322,6 +369,47 @@ public class XamlParserTest : Assertion {
 				new FinishHappening());
 		pt.Test();
 	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Cannot add object to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
+	public void TestRestrictionOfAddingObjectsToIAddChilds()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleValueString>\n" +
+			"<ConsoleWriter />" +
+			"</ConsoleValueString>\n" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleValueString), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Cannot add text to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
+	public void TestRestrictionOfAddingTextToIAddChilds()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleValueString>\n" +
+			"xyz" +
+			"</ConsoleValueString>\n" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleValueString), null),
+				new CreateElementTextHappening("xyz"),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
 }
 
 

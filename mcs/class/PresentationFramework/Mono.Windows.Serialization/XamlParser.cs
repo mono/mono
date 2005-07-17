@@ -79,17 +79,11 @@ namespace Mono.Windows.Serialization {
 		{
 			while (reader.Read()) {
 				Debug.WriteLine("NOW PARSING: " + reader.NodeType + "; " + reader.Name + "; " + reader.Value);
-				if (begun && currentState == null && reader.NodeType != XmlNodeType.Whitespace && reader.NodeType != XmlNodeType.Comment)
+				if (goneTooFar())
 					throw new Exception("Too far: " + reader.NodeType + ", " + reader.Name);
 				if (currentState != null && currentState.type == CurrentType.Code)
 				{
-					if (reader.NodeType == XmlNodeType.EndElement &&
-							reader.LocalName == "Code" && 
-							reader.NamespaceURI == XAML_NAMESPACE) {
-						parseEndElement();
-					} else {
-						currentState.obj = (string)currentState.obj + reader.Value;
-					}
+					processElementInCodeState();
 					continue;
 				}
 				switch (reader.NodeType) {
@@ -115,10 +109,32 @@ namespace Mono.Windows.Serialization {
 				}
 			}
 		}
+		void processElementInCodeState()
+		{
+			if (reader.NodeType == XmlNodeType.EndElement &&
+					reader.LocalName == "Code" && 
+					reader.NamespaceURI == XAML_NAMESPACE) {
+				parseEndElement();
+			} else {
+				currentState.obj = (string)currentState.obj + reader.Value;
+			}
+		}
+		bool goneTooFar()
+		{
+
+			if (begun && 
+					currentState == null && 
+					reader.NodeType != XmlNodeType.Whitespace && 
+					reader.NodeType != XmlNodeType.Comment)
+				return true;
+			else
+				return false;
+		}
+
 		void parsePI()
 		{
 			if (reader.Name != "Mapping")
-				Console.WriteLine("Unknown processing instruction");
+				throw new Exception("Unknown processing instruction");
 			mapper.AddMappingProcessingInstruction(reader.Value);
 		}
 
@@ -135,7 +151,9 @@ namespace Mono.Windows.Serialization {
 			//  - It's a direct child of an IAddChild element
 			//    and does not have a dot in its name
 			//    
-			//  parseObjectElement will verify the second case
+			//  We just check that it doesn't have a dot in it here
+			//  since parseObjectElement will confirm that it is
+			//  a direct child of an IAddChild.
 			//
 			//  If it's a dotted name, then it is a property.
 			//  What it is a property of depends on the bit of the
@@ -169,6 +187,9 @@ namespace Mono.Windows.Serialization {
 			return false;
 		}
 
+		// handle an x:Code element. Most of the handling for this is
+		// at the start of the main parsing loop, in the 
+		// processElementInCodeState() function
 		void parseCodeElement()
 		{
 			push(CurrentType.Code, "");
@@ -176,15 +197,32 @@ namespace Mono.Windows.Serialization {
 
 		void parseText()
 		{
-			if (currentState.type == CurrentType.Object || currentState.type == CurrentType.PropertyObject) {
+			switch (currentState.type) {
+			case CurrentType.Object:
+			case CurrentType.PropertyObject:
+				abortIfNotAddChild("text");
 				writer.CreateElementText(reader.Value);
-			} else if (currentState.type == CurrentType.DependencyProperty) {
+				break;
+			case CurrentType.DependencyProperty:
 				DependencyProperty dp = (DependencyProperty)currentState.obj;
 				writer.CreateDependencyPropertyText(reader.Value, dp.PropertyType);
-			} else {
+				break;
+			case CurrentType.Property:
 				PropertyInfo prop = (PropertyInfo)currentState.obj;
 				writer.CreatePropertyText(reader.Value, prop.PropertyType);
+				break;
+			default:
+				throw new NotImplementedException();
 			}
+		}
+
+		void abortIfNotAddChild(string thing)
+		{
+			if (!isAddChild((Type)currentState.obj))
+				throw new Exception("Cannot add " + thing +
+						" to instance of '" + 
+						((Type)currentState.obj) + 
+						"'.");
 		}
 		
 		void parseNormalPropertyElement(string propertyName)
@@ -202,9 +240,7 @@ namespace Mono.Windows.Serialization {
 			writer.CreateProperty(prop);
 
 			if (reader.HasAttributes) {
-				Console.WriteLine("Property node should not have attributes");
-				return;
-				// TODO: exception
+				throw new Exception("Property node should not have attributes.");
 			}
 		}
 
@@ -220,7 +256,10 @@ namespace Mono.Windows.Serialization {
 
 			writer.CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
 		}
-
+		bool isAddChild(Type t)
+		{
+			return (t.GetInterface("System.Windows.Serialization.IAddChild") != null);
+		}
 		void parseObjectElement()
 		{
 			Type parent;
@@ -229,27 +268,46 @@ namespace Mono.Windows.Serialization {
 			parent = mapper.GetType(reader.NamespaceURI, reader.Name);
 			if (parent == null)
 				throw new Exception("Class '" + reader.Name + "' not found.");
-			if (parent.GetInterface("System.Windows.Serialization.IAddChild") == null)
-				{} //TODO: throw exception
+		
+			// whichever of these functions runs will push something
 			if (currentState == null) {
-				if (reader.GetAttribute("Name", XAML_NAMESPACE) != null)
-					throw new Exception("The XAML Name attribute can not be applied to top level elements\n"+
-							"Do you mean the Class attribute?");
-				begun = true;
-				createTopLevel(parent.AssemblyQualifiedName, reader.GetAttribute("Class", XAML_NAMESPACE));
+				parseTopLevelObjectElement(parent);
 			} else {
-				string name = reader.GetAttribute("Name", XAML_NAMESPACE);
-				if (name == null)
-					name = reader.GetAttribute("Name", reader.NamespaceURI);
-
-				if (currentState.type == CurrentType.Object)
-					addChild(parent, name);
-				else if (currentState.type == CurrentType.Property)
-					addPropertyChild(parent, name);
-				else
-					throw new NotImplementedException();
+				parseChildObjectElement(parent);
 			}
 			
+			processObjectAttributes();
+
+			if (isEmpty) {
+				closeEmptyObjectElement();
+			}
+		}
+		void parseTopLevelObjectElement(Type parent)
+		{
+			if (reader.GetAttribute("Name", XAML_NAMESPACE) != null)
+				throw new Exception("The XAML Name attribute can not be applied to top level elements\n"+
+						"Do you mean the Class attribute?");
+			begun = true;
+			createTopLevel(parent.AssemblyQualifiedName, reader.GetAttribute("Class", XAML_NAMESPACE));
+		}
+
+		void parseChildObjectElement(Type parent)
+		{
+			string name = reader.GetAttribute("Name", XAML_NAMESPACE);
+			if (name == null)
+				name = reader.GetAttribute("Name", reader.NamespaceURI);
+
+			if (currentState.type == CurrentType.Object) {
+				abortIfNotAddChild("object");
+				addChild(parent, name);
+			} else if (currentState.type == CurrentType.Property) {
+				addPropertyChild(parent, name);
+			} else {
+				throw new NotImplementedException();
+			}
+		}
+		void processObjectAttributes()
+		{
 			if (reader.MoveToFirstAttribute()) {
 				do {
 					if (reader.Name.StartsWith("xmlns"))
@@ -262,17 +320,17 @@ namespace Mono.Windows.Serialization {
 						parseDependencyPropertyAttribute();
 				} while (reader.MoveToNextAttribute());
 			}
-			
+		}
 
-			if (isEmpty) {
-				if (currentState.type == CurrentType.Object) {
-					writer.EndObject();
-				} else if (currentState.type == CurrentType.PropertyObject) {
-					ParserState state = (ParserState)oldStates[oldStates.Count - 1];
-					writer.EndPropertyObject(((PropertyInfo)state.obj).PropertyType);
-				}
-				pop();
+		void closeEmptyObjectElement()
+		{
+			if (currentState.type == CurrentType.Object) {
+				writer.EndObject();
+			} else if (currentState.type == CurrentType.PropertyObject) {
+				ParserState state = (ParserState)oldStates[oldStates.Count - 1];
+				writer.EndPropertyObject(((PropertyInfo)state.obj).PropertyType);
 			}
+			pop();
 		}
 
 		void createTopLevel(string parentName, string className)
