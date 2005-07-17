@@ -2082,7 +2082,7 @@ namespace System.Collections
 
 				array = new object[m_InnerCount];
 
-				m_InnerArrayList.CopyTo(0, array, 0, m_InnerCount);
+				m_InnerArrayList.CopyTo (m_InnerIndex, array, 0, m_InnerCount);
 
 				return array;
 			}
@@ -2093,7 +2093,7 @@ namespace System.Collections
 
 				array = Array.CreateInstance(elementType, m_InnerCount);
 
-				m_InnerArrayList.CopyTo(0, array, 0, m_InnerCount);
+				m_InnerArrayList.CopyTo(m_InnerIndex, array, 0, m_InnerCount);
 
 				return array;
 			}

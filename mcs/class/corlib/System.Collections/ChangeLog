@@ -1,3 +1,8 @@
+2005-07-17  Florian Gross  <flgr@ccan.de>
+
+	* ArrayList.cs: pass along index offset in RangedArrayList:ToArray.
+	Fixes bug #75545
+
 2005-06-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* Queue.cs: Use the enumerator rather than copy to in the
