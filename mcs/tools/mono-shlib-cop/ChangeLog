@@ -1,3 +1,10 @@
+2005-07-18  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mono-shlib-cop.exe.config: .config file to help with testing.
+	* mono-shlib-cop.exe.out: Output generated from 
+	  `mono mono-shlib-cop.exe mono-shlib-cop.exe`
+	* Makefile: Add support for regression tests.
+
 2005-07-14  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mono-shlib-cop.cs: Use RuntimeEnvironment.SystemConfigurationFile to find
