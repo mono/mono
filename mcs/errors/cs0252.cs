@@ -1,4 +1,4 @@
-// cs0252.cs: Possible unintended reference comparison; to get a value comparison, cast the left hand side to type `string'.
+// cs0252.cs: Possible unintended reference comparison; to get a value comparison, cast the left hand side to type `string'
 // Line: 10
 // Compiler options: -warn:2 -warnaserror
 
