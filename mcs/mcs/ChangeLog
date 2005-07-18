@@ -1,3 +1,12 @@
+2005-07-18  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #57707
+	* codegen.cs (AssemblyClass.ApplyAttributeBuilder): Check whether
+	AssemblyCultureAttribute is not used on executable.
+
+	* rootcontext.cs,
+	* typemanager.cs: Add System.Reflection.AssemblyCultureAttribute.
+
 2005-07-16  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #60638.

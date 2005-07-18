@@ -1181,6 +1181,17 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == TypeManager.assembly_culture_attribute_type) {
+				string value = a.GetString ();
+				if (value == null || value.Length == 0)
+					return;
+
+				if (RootContext.Target == Target.Exe) {
+					a.Error_AttributeEmitError ("The executables cannot be satelite assemblies, remove the attribute or keep it empty");
+					return;
+				}
+			}
+
 			Builder.SetCustomAttribute (customBuilder);
 		}
 

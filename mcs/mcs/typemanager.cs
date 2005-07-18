@@ -99,6 +99,7 @@ public class TypeManager {
 	static public Type security_attr_type;
 	static public Type required_attr_type;
 	static public Type guid_attr_type;
+	static public Type assembly_culture_attribute_type;
 
 	/// 
 	/// .NET 2.0
@@ -1100,6 +1101,7 @@ public class TypeManager {
 		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
 		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices.RequiredAttributeAttribute");
 		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
+		assembly_culture_attribute_type = CoreLookupType ("System.Reflection.AssemblyCultureAttribute");
 
 		//
 		// .NET 2.0
