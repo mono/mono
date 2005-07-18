@@ -1653,8 +1653,8 @@ namespace System.Windows.Forms
 
 		public void SetDataBinding (object dataSource, string dataMember)
 		{
-			bool member = SetDataMember (dataMember);
 			bool source = SetDataSource (dataSource);
+			bool member = SetDataMember (dataMember);
 			
 			if (source == false  && member == false) {
 				return;
