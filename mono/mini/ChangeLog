@@ -1,5 +1,7 @@
 2005-07-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-exceptions.c: Ongoing IA64 work.
+
 	* mini-ia64.c inssel-long.brg: Ongoing IA64 work.
 
 	* mini.c: Use the default optimization set when embedding. Fixes
