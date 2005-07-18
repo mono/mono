@@ -1,5 +1,13 @@
 2005-07-18  Iain McCoy  <iain@mccoy.id.au>
 
+	* Test/CodeWriter.cs: added a bunch of tests for the code generator
+	* Mono.Windows.Serialization/CodeWriter.cs: fixed a few bugs turned up
+	by the tests
+	* Test/CodeWriter.cs, Test/XamlParser.cs: added copyright/license
+	notices
+
+2005-07-18  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/XamlParser.cs: some refactoring and
 	improvements in error reporting
 	* Test/XamlParser.cs: added a few tests and improved the readability

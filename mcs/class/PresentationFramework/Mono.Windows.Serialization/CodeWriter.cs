@@ -68,11 +68,13 @@ namespace Mono.Windows.Serialization {
 			}
 			int endNamespaceName = className.LastIndexOf(".");
 			string clrNamespace;
-			if (endNamespaceName < 0)
+			if (endNamespaceName < 0) {
 				clrNamespace = "DefaultNamespace";
-			else
+			} else {
 				clrNamespace = className.Substring(0,
 						endNamespaceName);
+				className = className.Substring(endNamespaceName+1);
+			}
 			CodeNamespace ns = new CodeNamespace(clrNamespace);
 			((CodeCompileUnit)objects[0]).Namespaces.Add(ns);
 
@@ -111,10 +113,9 @@ namespace Mono.Windows.Serialization {
 
 			if (!nameClashes.ContainsKey(varName))
 				nameClashes[varName] = 0;
-			else {
-				nameClashes[varName] = 1 + (int)nameClashes[varName];
-				varName += (int)nameClashes[varName];
-			}
+
+			nameClashes[varName] = 1 + (int)nameClashes[varName];
+			varName += (int)nameClashes[varName];
 
 
 			if (isDefaultName) {
@@ -289,10 +290,8 @@ namespace Mono.Windows.Serialization {
 
 			if (!nameClashes.ContainsKey(varName))
 				nameClashes[varName] = 0;
-			else {
-				nameClashes[varName] = 1 + (int)nameClashes[varName];
-				varName += (int)nameClashes[varName];
-			}
+			nameClashes[varName] = 1 + (int)nameClashes[varName];
+			varName += (int)nameClashes[varName];
 
 
 			if (isDefaultName) {

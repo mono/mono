@@ -1,9 +1,33 @@
+//
 // XamlParser.cs - NUnit Test Cases for the xaml parser
 // 
-// Iain McCoy (iain@mccoy.id.au)
+// Author:
+//   Iain McCoy (iain@mccoy.id.au)
 //
-// (C) iain@mccoy.id.au
+// (C) 2005 Iain McCoy
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 // 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+//
+//
+//
 //
 // As you may be aware, testing a parser is something of a beastly job. The
 // approach taken by these tests is to feed a file to XamlParser and see if it
@@ -279,7 +303,7 @@ public class XamlParserTest : Assertion {
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleWriter), null),
 				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3"),
+				new CreateDependencyPropertyTextHappening("3", typeof(int)),
 				new EndDependencyPropertyHappening(),
 				new EndObjectHappening(), // ConsoleWriter
 				new EndObjectHappening(), // ConsoleApp
@@ -298,7 +322,7 @@ public class XamlParserTest : Assertion {
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleWriter), null),
 				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3"),
+				new CreateDependencyPropertyTextHappening("3", typeof(int)),
 				new EndDependencyPropertyHappening(),
 				new EndObjectHappening(), // ConsoleWriter
 				new EndObjectHappening(), // ConsoleApp
@@ -319,7 +343,7 @@ public class XamlParserTest : Assertion {
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleWriter), null),
 				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3"),
+				new CreateDependencyPropertyTextHappening("3", typeof(int)),
 				new EndDependencyPropertyHappening(),
 				new EndObjectHappening(), // ConsoleWriter
 				new EndObjectHappening(), // ConsoleApp
@@ -340,7 +364,7 @@ public class XamlParserTest : Assertion {
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleWriter), null),
 				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3"),
+				new CreateDependencyPropertyTextHappening("3", typeof(int)),
 				new EndDependencyPropertyHappening(),
 				new EndObjectHappening(), // ConsoleWriter
 				new EndObjectHappening(), // ConsoleApp
@@ -520,8 +544,10 @@ class CreateDependencyPropertyHappening : Happening
 class CreateDependencyPropertyTextHappening : Happening
 {
 	public string text;
-	public CreateDependencyPropertyTextHappening(string text) {
+	public Type propertyType;
+	public CreateDependencyPropertyTextHappening(string text, Type propertyType) {
 		this.text = text;
+		this.propertyType = propertyType;
 	}
 }
 
@@ -679,6 +705,7 @@ class ParserTester : XamlWriter {
 		
 		CreateDependencyPropertyTextHappening h = (CreateDependencyPropertyTextHappening)getHappening();
 		Assert.AreEqual(h.text, text);
+		Assert.AreEqual(h.propertyType, propertyType);
 	}
 
 	public void EndDependencyProperty(){
