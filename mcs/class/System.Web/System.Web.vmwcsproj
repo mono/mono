@@ -4,11 +4,10 @@
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="System.Web" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" PreBuildEvent="" PostBuildEvent="" RootNamespace="System.Web" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
 				<Config Name="Debug" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="true" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="false" OutputPath="bin\Debug\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 				<Config Name="Release" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
-				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 			</Settings>
 			<References>
-				<Reference Name="j2ee" AssemblyName="j2ee" HintPath="..\lib\j2ee.dll" Private="False"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\lib\System.Xml.dll" Private="False"/>
 				<Reference Name="SystemDll" AssemblyName="System" HintPath="..\lib\System.dll" Private="True"/>
 				<Reference Name="System.Drawing" AssemblyName="System.Drawing" HintPath="..\lib\System.Drawing.dll" Private="True"/>
@@ -16,6 +15,7 @@
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\lib\J2SE.Helpers.dll" Private="True"/>
 				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\lib\System.Data.dll" Private="False"/>
 				<Reference Name="rt" AssemblyName="rt" HintPath="..\lib\j2sdk1.4.1\rt.dll" Private="False"/>
+				<Reference Name="j2ee" AssemblyName="j2ee" HintPath="..\lib\j2ee.dll"/>
 			</References>
 		</Build>
 		<Files>
@@ -224,10 +224,14 @@
 				<File RelPath="System.Web.Hosting\IQueueHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IRegisteredObject.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\ISAPIRuntime.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Hosting\ServletWorkerRequest.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\SimpleWorkerRequest.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.J2EE\j2EEConsts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\BaseHttpServlet.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\BaseStaticHttpServlet.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\J2EEConsts.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\J2EEUtils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\PageMapper.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\SessionListener.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\Base64AttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.Web.Mail\IAttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
@@ -305,7 +309,7 @@
 				<File RelPath="System.Web.Security\WindowsAuthenticationEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\WindowsAuthenticationEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\WindowsAuthenticationModule.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.SessionState\HttpSessionState.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.SessionState\HttpSessionState.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\IHttpSessionState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\IReadOnlySessionState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\IRequiresSessionState.cs" SubType="Code" BuildAction="Compile"/>
@@ -317,7 +321,7 @@
 				<File RelPath="System.Web.SessionState\SessionConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionDictionary.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionId.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.SessionState\SessionInProcHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.SessionState\SessionInProcHandler.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionSQLServerHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionStateActionFlags.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionStateItemExpireCallback.cs" SubType="Code" BuildAction="Compile"/>
@@ -596,7 +600,7 @@
 				<File RelPath="System.Web.UI.WebControls\DataGridLinkButton.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridPageChangedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridPageChangedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DataGridPagerStyle.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DataGridPagerStyle.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridSortCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridSortCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridTableInternal.cs" SubType="Code" BuildAction="Compile"/>
@@ -819,7 +823,7 @@
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceStatusEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\StringArrayConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\Style.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\Style.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SubMenuStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SubMenuStyleCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Table.cs" SubType="Code" BuildAction="Compile"/>
@@ -829,11 +833,11 @@
 				<File RelPath="System.Web.UI.WebControls\TableCellControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableHeaderCell.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableHeaderScope.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\TableItemStyle.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableItemStyle.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRow.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRowCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRowSection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\TableStyle.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableStyle.cs" SubType="Component" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TargetConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TemplateColumn.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TemplateField.cs" SubType="Code" BuildAction="Compile"/>
@@ -939,6 +943,6 @@
 				<File RelPath="System.Web.Util\WorkItemCallback.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties REFS.JarPath.System.Drawing="..\lib\System.Drawing.jar" REFS.JarPath.j2ee.helpers="..\lib\J2EE.Helpers.jar" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" project.JDKType="1.4.2_05" REFS.JarPath.System="..\lib\System.jar" REFS.JarPath.j2ee="..\lib\j2ee.jar" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.System.Data="..\lib\System.Data.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" jarserver="ipa"/>
+		<UserProperties jarserver="ipa" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Data="..\lib\System.Data.jar" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.j2ee="..\lib\j2ee.jar" REFS.JarPath.System="..\lib\System.jar" project.JDKType="1.4.2_05" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" REFS.JarPath.j2ee.helpers="..\lib\J2EE.Helpers.jar" REFS.JarPath.System.Drawing="..\lib\System.Drawing.jar"/>
 	</CSHARP>
 	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8009" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8007" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="8000" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>

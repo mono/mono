@@ -1,3 +1,7 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+	* Added HttpSessionState.jvm.cs
+	* Added SessionInProcHandler.jvm.cs
+
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionInProcHandler.cs: use cache.InsertPrivate.

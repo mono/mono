@@ -1,3 +1,6 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+	* Location.cs: Added set to the FileName property.
+
 2005-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: in these cases, we're only interested in

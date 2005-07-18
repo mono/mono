@@ -1,3 +1,7 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* Added ServletWorkerRequest.jvm.cs
+
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IISAPIRuntime.cs: GUID changed.

@@ -1,5 +1,17 @@
 2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
 
+	* System.Web.vmwcsproj:
+	  Added System.Web.J2EE/BaseHttpServlet.cs
+	  Added System.Web.J2EE/BaseStaticHttpServlet.cs
+	  Added System.Web.J2EE/SessionListener.cs
+	  Removed System.Web.SessionState/HttpSessionState.cs
+	  Added System.Web.SessionState/HttpSessionState.jvm.cs
+	  Removed System.Web.SessionState/SessionInProcHandler.cs
+	  Added System.Web.SessionState/SessionInProcHandler.jvm.cs
+	  Added System.Web.Hosting/ServletWorkerRequest.jvm.cs
+
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* System.Web.J2EE: Added namespace and folder for J2EE hosting and specific files.
 	* System.Web.vmwcsproj: Added System.Web.J2EE files
 

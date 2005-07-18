@@ -61,6 +61,7 @@ namespace System.Web.Compilation
 
 		public string Filename {
 			get { return fileName; }
+			set { fileName = value; }
 		}
 
 		public int BeginLine {
