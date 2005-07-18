@@ -31,26 +31,34 @@ using System.Collections;
 
 namespace System.Windows {
 	public struct LocalValueEnumerator : IEnumerator {
-		[MonoTODO()]		
-		public int Count {
-			get { throw new NotImplementedException(); }
+		private IDictionaryEnumerator propertyEnumerator;
+		private Hashtable properties;
+
+		private int count;
+		internal LocalValueEnumerator(Hashtable properties)
+		{
+			this.count = properties.Count;
+			this.properties = properties;
+			this.propertyEnumerator = properties.GetEnumerator();
 		}
-		[MonoTODO()]		
+
+		public int Count {
+			get { return count; }
+		}
 		public LocalValueEntry Current {
-			get { throw new NotImplementedException(); }
+			get { return new LocalValueEntry((DependencyProperty)propertyEnumerator.Key, 
+					propertyEnumerator.Value); }
 		}
 		object IEnumerator.Current {
 			get { return this.Current; }
 		}
-		[MonoTODO()]		
 		public bool MoveNext()
 		{
-			throw new NotImplementedException();
+			return propertyEnumerator.MoveNext();
 		}
-		[MonoTODO()]		
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			propertyEnumerator.Reset();
 		}
 	}
 }

@@ -152,7 +152,7 @@ public class CodeWriterTest {
 	{
 		cw.CreateTopLevel(typeof(ConsoleApp), null);
 		cw.CreateObject(typeof(ConsoleWriter), null);
-		cw.CreateElementText("Hello");
+		cw.CreateObjectText("Hello");
 		cw.EndObject();
 		cw.EndObject();
 		cw.Finish();

@@ -28,13 +28,24 @@ class X {
 	{
 		return (int)obj.GetValue(AProperty);
 	}
+
+	public static readonly DependencyProperty BProperty = DependencyProperty.RegisterAttached("B", typeof(string), typeof(X));
+	public static void SetB(DependencyObject obj, string value)
+	{
+		obj.SetValue(BProperty, value);
+	}
+	public static string GetB(DependencyObject obj)
+	{
+		return (string)obj.GetValue(BProperty);
+	}
+
 }
 
 class Y : DependencyObject {
 }
 	
 [TestFixture]
-public class DependencyObjectTest : Assertion {
+public class DependencyObjectTest {
 	
 	[SetUp]
 	public void GetReady() {}
@@ -47,7 +58,7 @@ public class DependencyObjectTest : Assertion {
 	{
 		Y y1 = new Y();
 		X.SetA(y1, 2);
-		AssertEquals(2, X.GetA(y1));
+		Assert.AreEqual(2, X.GetA(y1));
 	}
 	
 	[Test]
@@ -57,8 +68,27 @@ public class DependencyObjectTest : Assertion {
 		Y y2 = new Y();
 		X.SetA(y1, 2);
 		X.SetA(y2, 3);
-		AssertEquals(2, X.GetA(y1));
-		AssertEquals(3, X.GetA(y2));
+		Assert.AreEqual(2, X.GetA(y1));
+		Assert.AreEqual(3, X.GetA(y2));
+	}
+	
+	[Test]
+	public void TestEnumerationOfAttachedProperties()
+	{
+		Y y = new Y();
+		X.SetA(y, 2);
+		X.SetB(y, "Hi");
+		// This test is a bit dodgy, because no guarantees are 
+		// made about the order in which properties and their
+		// values will be returned
+		LocalValueEnumerator e = y.GetLocalValueEnumerator();
+		Assert.IsTrue(e.MoveNext());
+		Assert.AreEqual(e.Current.Property, X.AProperty);
+		Assert.AreEqual(e.Current.Value, 2);
+		Assert.IsTrue(e.MoveNext());
+		Assert.AreEqual(e.Current.Property, X.BProperty);
+		Assert.AreEqual(e.Current.Value, "Hi");
+		Assert.IsFalse(e.MoveNext());
 	}
 
 	// An nice way to test for exceptions the class under test should 

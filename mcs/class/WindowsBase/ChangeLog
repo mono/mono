@@ -1,3 +1,12 @@
+2005-07-19  Iain McCoy  <iain@mccoy.id.au>
+
+	* System.Windows/DependencyObject.cs,
+	  System.Windows/LocalValueEnumerator.cs: implemented
+	GetLocalValueEnumerator() and the LocalValueEnumerator class to
+	support it.
+	* Test/DependencyObject.cs: added test for LocalValueEnumerator
+	
+
 2005-07-06  Iain McCoy  <iain@mccoy.id.au>
 
 	* System.Windows/DependencyObject.cs,

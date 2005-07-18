@@ -5,5 +5,5 @@ Mono.Windows.Serialization/CodeWriter.cs
 Mono.Windows.Serialization/ObjectWriter.cs
 Mono.Windows.Serialization/Exceptions.cs
 Mono.Windows.Serialization/XamlParser.cs
-Mono.Windows.Serialization/XamlWriter.cs
+Mono.Windows.Serialization/IXamlWriter.cs
 Assembly/AssemblyInfo.cs

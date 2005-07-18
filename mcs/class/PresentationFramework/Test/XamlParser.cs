@@ -34,9 +34,9 @@
 // tells the code generator to do what you'd expect. This tests both the parsing
 // and type-checking bits of XamlParser.
 //
-// The various Happening classes each represent methods on the XamlWriter
+// The various Happening classes each represent methods on the IXamlWriter
 // interface that XamlParser could call. The constructor of a Happening takes 
-// the same arguments as the XamlWriter method it represents, and merely stashes
+// the same arguments as the IXamlWriter method it represents, and merely stashes
 // those values in the suitable public fields.
 //
 // The ParserTester class takes a Xaml document and a list of Happenings, and 
@@ -203,7 +203,7 @@ public class XamlParserTest : Assertion {
 		ParserTester pt = new ParserTester(MAPPING + s, 
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreateElementTextHappening("Hello"),
+				new CreateObjectTextHappening("Hello"),
 				new EndObjectHappening(),
 				new EndObjectHappening(),
 				new FinishHappening());
@@ -442,7 +442,7 @@ public class XamlParserTest : Assertion {
 		ParserTester pt = new ParserTester(MAPPING + s,
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleValueString), null),
-				new CreateElementTextHappening("xyz"),
+				new CreateObjectTextHappening("xyz"),
 				new EndObjectHappening(),
 				new EndObjectHappening(),
 				new EndObjectHappening(),
@@ -477,10 +477,10 @@ class CreateObjectHappening : Happening
 	}
 }
 
-class CreateElementTextHappening : Happening
+class CreateObjectTextHappening : Happening
 {
 	public string text;
-	public CreateElementTextHappening(string text) {
+	public CreateObjectTextHappening(string text) {
 		this.text = text;
 	}
 }
@@ -580,7 +580,7 @@ class FinishHappening : Happening
 }
 
 		
-class ParserTester : XamlWriter {
+class ParserTester : IXamlWriter {
 	string document;
 	Happening[] happenings;
 	int c;
@@ -640,11 +640,11 @@ class ParserTester : XamlWriter {
 		Assert.AreEqual(h.objectName, objectName);
 	}
 
-	public void CreateElementText(string text){
-		d("CreateElementText");
-		AssertSubclass(typeof(CreateElementTextHappening), false);
+	public void CreateObjectText(string text){
+		d("CreateObjectText");
+		AssertSubclass(typeof(CreateObjectTextHappening), false);
 		
-		CreateElementTextHappening h = (CreateElementTextHappening)getHappening();
+		CreateObjectTextHappening h = (CreateObjectTextHappening)getHappening();
 		Assert.AreEqual(h.text, text);
 	}
 

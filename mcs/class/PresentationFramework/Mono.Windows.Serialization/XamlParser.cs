@@ -41,7 +41,7 @@ namespace Mono.Windows.Serialization {
 		public const string XAML_NAMESPACE = "http://schemas.microsoft.com/winfx/xaml/2005";
 		private Mapper mapper = new Mapper(new string[] { });
 		private XmlReader reader;
-		private XamlWriter writer;
+		private IXamlWriter writer;
 
 		private enum CurrentType { Object, 
 			Property, 
@@ -59,17 +59,17 @@ namespace Mono.Windows.Serialization {
 		private ParserState currentState = null;
 		private ArrayList oldStates = new ArrayList();
 	
-		public XamlParser(string filename, XamlWriter writer) : this(
+		public XamlParser(string filename, IXamlWriter writer) : this(
 				new XmlTextReader(filename), writer)
 		{
 		}
 		
-		public XamlParser(TextReader reader, XamlWriter writer) : this(
+		public XamlParser(TextReader reader, IXamlWriter writer) : this(
 				new XmlTextReader(reader), writer)
 		{
 		}
 		
-		public XamlParser(XmlReader reader, XamlWriter writer)
+		public XamlParser(XmlReader reader, IXamlWriter writer)
 		{
 			this.reader = reader;
 			this.writer = writer;
@@ -201,7 +201,7 @@ namespace Mono.Windows.Serialization {
 			case CurrentType.Object:
 			case CurrentType.PropertyObject:
 				abortIfNotAddChild("text");
-				writer.CreateElementText(reader.Value);
+				writer.CreateObjectText(reader.Value);
 				break;
 			case CurrentType.DependencyProperty:
 				DependencyProperty dp = (DependencyProperty)currentState.obj;

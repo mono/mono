@@ -47,5 +47,23 @@ namespace Xaml.TestVocab.Console {
 		{
 			return (int)obj.GetValue(RepetitionsProperty);
 		}
+
+		public override bool Equals(object o)
+		{
+			ConsoleApp app = (ConsoleApp)o;
+			if (app.actions.Count != actions.Count)
+				return false;
+			if (app.SomethingHappened != SomethingHappened)
+				return false;
+
+			for (int i = 0; i < actions.Count; i++)
+				if (!actions[i].Equals(app.actions[i]))
+					return false;
+			return true;
+		}
+		public override int GetHashCode()
+		{
+			return actions.GetHashCode();
+		}
 	}
 }

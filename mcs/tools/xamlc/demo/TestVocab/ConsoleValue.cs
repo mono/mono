@@ -8,6 +8,16 @@ namespace Xaml.TestVocab.Console {
 	[TypeConverter(typeof(ConsoleValueConverter))]
 	public abstract class ConsoleValue {
 		public abstract string Value { get; }
+
+
+		public override bool Equals(Object o)
+		{
+			return (((ConsoleValue)o).Value == Value);
+		}
+		public override int GetHashCode()
+		{
+			return Value.GetHashCode();
+		}
 	}
 
 	public class ConsoleValueConverter : TypeConverter {
@@ -50,6 +60,7 @@ namespace Xaml.TestVocab.Console {
 		public override string Value {
 			get { return val; }
 		}
+
 	}
 
 	public class ConsoleValueAppend : ConsoleValue {
@@ -84,6 +95,15 @@ namespace Xaml.TestVocab.Console {
 		public string Variable {
 			get { return var; }
 			set { var = value; }
+		}
+
+		public override bool Equals(object o)
+		{
+			return (((ConsoleValueVar)o).var == var);
+		}
+		public override int GetHashCode()
+		{
+			return var.GetHashCode();
 		}
 	}
 

@@ -1,5 +1,10 @@
 2005-07-18  Iain McCoy  <iain@mccoy.id.au>
 
+	* demo/TestVocab/*.cs: add implementations of equals so that tests for
+	the ObjectWriter can be written.
+
+2005-07-18  Iain McCoy  <iain@mccoy.id.au>
+
 	* demo/runtimetest.xaml: added testing of complex objects as property
 	values
 

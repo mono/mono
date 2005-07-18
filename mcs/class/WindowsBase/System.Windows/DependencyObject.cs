@@ -53,7 +53,7 @@ namespace System.Windows {
 		[MonoTODO()]		
 		public LocalValueEnumerator GetLocalValueEnumerator()
 		{
-			throw new NotImplementedException("GetLocalValueEnumerator()");
+			return new LocalValueEnumerator(properties);
 		}
 		
 		public object GetValue(DependencyProperty dp)

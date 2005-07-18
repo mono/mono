@@ -35,7 +35,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 
 namespace Mono.Windows.Serialization {
-	public class CodeWriter : XamlWriter {
+	public class CodeWriter : IXamlWriter {
 		TextWriter writer;
 		ICodeGenerator generator;
 		bool isPartial;
@@ -199,7 +199,7 @@ namespace Mono.Windows.Serialization {
 		}
 
 		// top of stack must be an object reference
-		public void CreateElementText(string text)
+		public void CreateObjectText(string text)
 		{
 			debug();
 			CodeVariableReferenceExpression var = (CodeVariableReferenceExpression)objects[objects.Count - 1];

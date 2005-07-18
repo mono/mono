@@ -48,5 +48,15 @@ namespace Xaml.TestVocab.Console {
 				s = f(s);
 			System.Console.WriteLine(s);
 		}
+
+		public override bool Equals(object o)
+		{
+			ConsoleWriter writer = (ConsoleWriter)o;
+			return (writer.filter == filter) && (writer.text == text);
+		}
+		public override int GetHashCode()
+		{
+			return filter.GetHashCode() + text.GetHashCode();
+		}
 	}
 }

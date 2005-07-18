@@ -30,11 +30,11 @@ using System;
 using System.Reflection;
 
 namespace Mono.Windows.Serialization {
-	public interface XamlWriter {
+	public interface IXamlWriter {
 		void CreateTopLevel(Type parent, string className);
 
 		void CreateObject(Type type, string name);
-		void CreateElementText(string text);
+		void CreateObjectText(string text);
 		void EndObject();
 
 		void CreateProperty(PropertyInfo property);

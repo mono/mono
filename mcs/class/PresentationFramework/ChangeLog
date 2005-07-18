@@ -1,5 +1,11 @@
 2005-07-18  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/*, Test/*: change stupid
+	CreateElementText name of method on XamlWriter to something marginally
+	more sensible
+
+2005-07-18  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/CodeWriter.cs, 
 	  Test/CodeWriter.cs
 	  Test/XamlWriter.cs: fix bug with explicitly naming objects in

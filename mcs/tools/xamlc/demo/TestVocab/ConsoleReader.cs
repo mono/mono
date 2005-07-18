@@ -20,5 +20,15 @@ namespace Xaml.TestVocab.Console {
 			string s = System.Console.ReadLine();
 			ConsoleVars.Set(variable, s);
 		}
+
+		public override bool Equals(object o)
+		{
+			ConsoleReader reader = (ConsoleReader)o;
+			return (reader.variable == variable) && (reader.prompt == prompt);
+		}
+		public override int GetHashCode()
+		{
+			return variable.GetHashCode() + prompt.GetHashCode();
+		}
 	}
 }

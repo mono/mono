@@ -36,7 +36,7 @@ using System.ComponentModel;
 using System.Windows.Serialization;
 
 namespace Mono.Windows.Serialization {
-	public class ObjectWriter : XamlWriter {
+	public class ObjectWriter : IXamlWriter {
 		public object instance;
 		ArrayList objects = new ArrayList();
 	
@@ -81,7 +81,7 @@ namespace Mono.Windows.Serialization {
 			setter.Invoke(null, new object[] { objects[objects.Count - 1], value});
 		}
 
-		public void CreateElementText(string text)
+		public void CreateObjectText(string text)
 		{
 			((IAddChild)objects[objects.Count - 1]).AddText(text);
 		}
