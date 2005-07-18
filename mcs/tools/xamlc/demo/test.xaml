@@ -33,6 +33,10 @@
 I say I say: <ConsoleValueVar Variable="thingo" />
 I say.
 	</ConsoleWriter>
+	<ConsoleWriter>
+		<ConsoleWriter.Text>H</ConsoleWriter.Text>
+		<ConsoleWriter.Text>V</ConsoleWriter.Text>
+	</ConsoleWriter>
 	<!-- Explicitly set the ConsoleWriter's Text property to a
 	     ConsoleValueVar instance -->
 	<ConsoleWriter>

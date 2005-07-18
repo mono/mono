@@ -5,6 +5,14 @@
 		x:Class="DemoConsoleApp">
 	<ConsoleWriter ConsoleApp.Repetitions="2">IT BEGINS!</ConsoleWriter>
 	<ConsoleWriter x:Name="_greeter" Text="Hello World" />
+	<ConsoleReader Variable="comment">
+		<ConsoleReader.Prompt>
+			<ConsoleWriter>What shall I say?</ConsoleWriter>
+		</ConsoleReader.Prompt>
+	</ConsoleReader>
+	<ConsoleWriter>
+		<ConsoleValueVar Variable="comment" />
+	</ConsoleWriter>
 	<ConsoleWriter>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
 	</ConsoleWriter>

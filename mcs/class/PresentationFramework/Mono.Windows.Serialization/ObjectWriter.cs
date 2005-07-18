@@ -115,11 +115,21 @@ namespace Mono.Windows.Serialization {
 		
 		public void CreatePropertyObject(Type type, string name)
 		{
-			throw new NotImplementedException();
+			object value = Activator.CreateInstance(type);
+			objects.Add(value);
 		}
-		public void EndPropertyObject(Type sourceType)
+		public void EndPropertyObject(Type destType)
 		{
-			throw new NotImplementedException();
+			object value = objects[objects.Count - 1];
+			objects.RemoveAt(objects.Count - 1);
+			Type sourceType = value.GetType();
+			if (destType != sourceType && !sourceType.IsSubclassOf(destType)) {
+				TypeConverter tc = TypeDescriptor.GetConverter(destType);
+				value = tc.ConvertFrom(value);
+			}
+			PropertyInfo p = (PropertyInfo)objects[objects.Count-1];
+			object o = objects[objects.Count-2];
+			p.SetValue(o, value, null);
 		}
 
 		// top of stack is reference to an attached property

@@ -111,11 +111,13 @@ namespace Mono.Windows.Serialization {
 				isDefaultName = false;
 			}
 
-			if (!nameClashes.ContainsKey(varName))
-				nameClashes[varName] = 0;
+			if (isDefaultName) {
+				if (!nameClashes.ContainsKey(varName))
+					nameClashes[varName] = 0;
 
-			nameClashes[varName] = 1 + (int)nameClashes[varName];
-			varName += (int)nameClashes[varName];
+				nameClashes[varName] = 1 + (int)nameClashes[varName];
+				varName += (int)nameClashes[varName];
+			}
 
 
 			if (isDefaultName) {
@@ -288,10 +290,12 @@ namespace Mono.Windows.Serialization {
 				isDefaultName = false;
 			}
 
-			if (!nameClashes.ContainsKey(varName))
-				nameClashes[varName] = 0;
-			nameClashes[varName] = 1 + (int)nameClashes[varName];
-			varName += (int)nameClashes[varName];
+			if (isDefaultName) {
+				if (!nameClashes.ContainsKey(varName))
+					nameClashes[varName] = 0;
+				nameClashes[varName] = 1 + (int)nameClashes[varName];
+				varName += (int)nameClashes[varName];
+			}
 
 
 			if (isDefaultName) {

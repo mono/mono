@@ -125,6 +125,27 @@ public class CodeWriterTest {
 				"}"
 		);							
 	}
+
+	[Test]
+	public void TestSimplestAddChildWithInstanceName()
+	{
+		cw.CreateTopLevel(typeof(ConsoleApp), null);
+		cw.CreateObject(typeof(ConsoleWriter), "XX");
+		cw.EndObject();
+		cw.EndObject();
+		cw.Finish();
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private Xaml.TestVocab.Console.ConsoleWriter XX = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
+				"		private derivedConsoleApp() {\n"+
+				"			this.AddChild(XX);\n" +
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+
 	
 	[Test]
 	public void TestSimplestAddChildAndText()
@@ -261,6 +282,13 @@ public class CodeWriterTest {
 		}
 		expected = String.Join("\n", expectedLines);
 		
+		if (expected != actual) {
+			Debug.WriteLine("FULL EXPECTED:");
+			Debug.WriteLine(expected);
+			Debug.WriteLine("===============================================");
+			Debug.WriteLine("FULL ACTUAL:");
+			Debug.WriteLine(actual);
+		}
 		Assert.AreEqual(expected, actual);
 	}
 

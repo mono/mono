@@ -12,7 +12,7 @@ run:
 
 run2:
 	make runtimetest.exe
-	$(RUNTIME) --debug runtimetest.exe
+	echo "INPUTINPUT" | $(RUNTIME) --debug runtimetest.exe
 
 clean-local:
 	rm -f TestVocab.dll test.xaml.out.cs

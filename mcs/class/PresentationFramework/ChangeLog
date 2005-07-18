@@ -1,5 +1,14 @@
 2005-07-18  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/CodeWriter.cs, 
+	  Test/CodeWriter.cs
+	  Test/XamlWriter.cs: fix bug with explicitly naming objects in
+	IAddChild blocks and add tests for same
+	* Mono.Windows.Serialization/ObjectWriter.cs: support for arbitrary
+	objects as property values.
+
+2005-07-18  Iain McCoy  <iain@mccoy.id.au>
+
 	* Test/CodeWriter.cs: added a bunch of tests for the code generator
 	* Mono.Windows.Serialization/CodeWriter.cs: fixed a few bugs turned up
 	by the tests

@@ -162,6 +162,22 @@ public class XamlParserTest : Assertion {
 	}
 
 	[Test]
+	public void TestSimplestAddChildWithObjectName()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter x:Name=\"XXX\"></ConsoleWriter>" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), "XXX"),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+
+	[Test]
 	[ExpectedException(typeof(Exception), "Class 'ConsoleWritttter' not found.")]
 	public void TestSimplestAddChildWithIncorrectName()
 	{
