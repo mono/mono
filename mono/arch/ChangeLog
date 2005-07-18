@@ -1,3 +1,7 @@
+2005-07-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h (ia64_is_adds_imm): Ongoing IA64 work.
+
 2005-06-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ia64/ia64-codegen.h: Add some new pseudo ops.
