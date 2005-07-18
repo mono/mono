@@ -1,6 +1,12 @@
 2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleDataReader.cs:
+	handle Owner (BaseSchemaName) correctly when
+	looking up KeyInfo on a table
+
+2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleDataReader.cs:
 	should allow getting RecordsAffected property
 	after Close
 

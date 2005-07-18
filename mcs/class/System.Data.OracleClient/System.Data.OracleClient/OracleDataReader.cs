@@ -416,28 +416,28 @@ namespace System.Data.OracleClient {
 		}
 
 		// get the KeyInfo about table columns (primary key)
-		private StringCollection GetKeyInfo (ref string table) 
+		private StringCollection GetKeyInfo (out string ownerName, out string tableName) 
 		{
 			ArrayList tables = new ArrayList ();
 			ParseSql (command.CommandText, ref tables);
 			// TODO: handle multiple tables
-			table = (string)tables[0];
-			return GetKeyColumns (table);
+			GetOwnerAndName ((string)tables[0], out ownerName, out tableName);
+			return GetKeyColumns (ownerName, tableName);
 		}
 
 		// get the columns in a table that have a primary key
-		private StringCollection GetKeyColumns(string table) 
+		private StringCollection GetKeyColumns(string owner, string table) 
 		{
-			StringCollection columns = new StringCollection ();
 			OracleCommand cmd = command.Connection.CreateCommand ();
 			
+			StringCollection columns = new StringCollection ();
+						
 			if (command.Transaction != null)
 				cmd.Transaction = command.Transaction;
 
-			// FIXME: handle whether or not there is a SchemaName
 			cmd.CommandText = "select col.column_name " +
 				"from all_constraints pk, all_cons_columns col " +
-				"where pk.owner = 'SCOTT' " +
+				"where pk.owner = '" + owner + "' " +
 				"and pk.table_name = '" + table + "' " +
 				"and pk.constraint_type = 'P' " +
 				"and pk.owner = col.owner " +
@@ -448,6 +448,11 @@ namespace System.Data.OracleClient {
 			while (rdr.Read ())
 				columns.Add (rdr.GetString (0));
 
+			rdr.Close();
+			rdr = null;
+			cmd.Dispose();
+			cmd = null;
+
 			return columns;
 		}
 
@@ -455,8 +460,7 @@ namespace System.Data.OracleClient {
 		// TODO: parse the column aliases and table aliases too
 		//       and determine if a column is a true table column
 		//       or an expression
-		private void ParseSql (string sql, ref ArrayList tables) 
-		{
+		private void ParseSql (string sql, ref ArrayList tables) {
 			if (sql == String.Empty)
 				return;
 
@@ -520,6 +524,7 @@ namespace System.Data.OracleClient {
 						break;
 					case '$':
 					case '_':
+					case '.':
 						wb.Append (ch);
 						break;
 					}
@@ -547,6 +552,29 @@ namespace System.Data.OracleClient {
 			}
 		}
 
+		// takes a object name like "owner.name" and parses it into "owner" and "name" strings
+		// if object name is only "name", then it gets the username as the owner and returns
+		// the name
+		private void GetOwnerAndName (string objectName, out string owner, out string name) 
+		{
+			int idx = objectName.IndexOf (".");
+			if (idx == -1) {
+				OracleCommand cmd = command.Connection.CreateCommand ();
+				if (command.Transaction != null)
+					cmd.Transaction = command.Transaction;
+
+				cmd.CommandText = "SELECT USER FROM DUAL";
+				owner = (string) cmd.ExecuteScalar();
+				name = objectName;
+				cmd.Dispose();
+				cmd = null;
+			}
+			else {
+				owner = objectName.Substring (0, idx);
+				name = objectName.Substring (idx + 1);
+			}
+		}
+
 		public DataTable GetSchemaTable ()
 		{
 			StringCollection keyinfo = null;
@@ -554,9 +582,10 @@ namespace System.Data.OracleClient {
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
 
-			string table = "";
+			string owner = String.Empty;
+			string table = String.Empty;
 			if ((behavior & CommandBehavior.KeyInfo) != 0)
-				keyinfo = GetKeyInfo (ref table);
+				keyinfo = GetKeyInfo (out owner, out table);
 
 			dataTypeNames = new ArrayList ();
 
@@ -597,7 +626,7 @@ namespace System.Data.OracleClient {
 						row ["IsKey"] = false;
 
 					row ["IsUnique"]	= DBNull.Value; // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
-					row ["BaseSchemaName"]	= DBNull.Value; // TODO: only set this if CommandBehavior.KeyInfo, otherwise, null
+					row ["BaseSchemaName"]	= owner;
 					row ["BaseTableName"]	= table;
 					row ["BaseColumnName"]	= row ["ColumnName"];
 				}	
