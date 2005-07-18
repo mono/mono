@@ -590,6 +590,9 @@ namespace Mono.MonoBASIC {
 			if (mi [0] is MethodBase)
 				return new MethodGroupExpr (mi, loc);
 
+			if (mi [0] is PropertyInfo)
+				return new PropertyGroupExpr (mi, loc);
+
 			if (count > 1)
 				return null;
 
@@ -4151,6 +4154,13 @@ namespace Mono.MonoBASIC {
 	/// </remarks>
 	public class SimpleName : Expression, ITypeExpression {
 		public readonly string Name;
+		bool is_invocation = false;
+
+		public bool IsInvocation {
+			set {
+				is_invocation = value;
+			}
+		}
 		
 		public SimpleName (string name, Location l)
 		{
@@ -4416,6 +4426,9 @@ namespace Mono.MonoBASIC {
 				if (e == null)
 					return null;
 
+				if (e is PropertyGroupExpr && is_invocation) // We dont know the arguments yet
+					return e;
+
 				IMemberExpr me = e as IMemberExpr;
 				if (me == null)
 					return e;
@@ -4436,11 +4449,15 @@ namespace Mono.MonoBASIC {
 					return null;
 				}
 */
+				bool isPropertyGroup = (e is PropertyGroupExpr);
 				if (right_side != null)
 					e = e.DoResolveLValue (ec, right_side);
 				else
 					e = e.DoResolve (ec);
 
+				if (e == null && isPropertyGroup && !is_invocation)
+					 Error (30057, "Property '" + Name + "' cannot be invoked with given arguments");
+					 
 				return e;
 			}
 
@@ -4450,7 +4467,7 @@ namespace Mono.MonoBASIC {
 
 				return MemberStaticCheck (ec, e);
 			}
-						
+
 			return e;
 		}
 		
@@ -4691,6 +4708,255 @@ namespace Mono.MonoBASIC {
 		{
 			return RemoveMethods (false);
 		}
+	}
+
+	/// <summary>
+	///   Property Group Expression.
+	///  
+	/// </summary>
+	public class PropertyGroupExpr : ExpressionStatement, IMemberExpr {
+		public PropertyInfo [] Properties;
+		Expression instance_expression = null;
+		bool is_explicit_impl = false;
+		MethodBase method = null;
+		bool indexer_access_req = false;
+		ArrayList arguments = null;
+		
+		public PropertyGroupExpr (MemberInfo [] mi, Location l)
+		{
+			Properties = new PropertyInfo [mi.Length];
+			mi.CopyTo (Properties, 0);
+			eclass = ExprClass.PropertyAccess;
+			type = TypeManager.object_type;
+			loc = l;
+		}
+
+		public PropertyGroupExpr (MemberInfo [] mi, ArrayList args, Expression expr, Location l)
+			: this (mi, l)
+		{
+			arguments = args;
+			instance_expression = expr;
+		}
+
+		public PropertyGroupExpr (ArrayList list, Location l)
+		{
+			Properties = new PropertyInfo [list.Count];
+
+			try {
+				list.CopyTo (Properties, 0);
+			} catch {
+				foreach (MemberInfo m in list){
+					if (!(m is PropertyInfo)){
+						Console.WriteLine ("Name " + m.Name);
+						Console.WriteLine ("Found a: " + m.GetType ().FullName);
+					}
+				}
+				throw;
+			}
+			loc = l;
+			eclass = ExprClass.PropertyAccess;
+			type = TypeManager.object_type;
+		}
+
+		public ArrayList Arguments {
+			get {
+				return arguments;
+			}
+			set {
+				arguments = value;
+			}
+		}
+
+		public Type DeclaringType {
+			get {
+				return Properties [0].DeclaringType;
+			}
+		}
+
+		public bool IndexerAccessRequired {
+			get {
+				return indexer_access_req;
+			}
+		}
+
+		//
+		// 'A method group may have associated an instance expression' 
+		// 
+		public Expression InstanceExpression {
+			get {
+				return instance_expression;
+			}
+
+			set {
+				instance_expression = value;
+			}
+		}
+
+		public bool IsExplicitImpl {
+			get {
+				return is_explicit_impl;
+			}
+
+			set {
+				is_explicit_impl = value;
+			}
+		}
+
+		public string Name {
+			get {
+				return Properties [0].Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				foreach (PropertyInfo pi in Properties) {
+					MethodInfo mi = pi.GetGetMethod ();
+					if (mi != null && !mi.IsStatic)
+						return true;
+					mi = pi.GetSetMethod ();
+					if (mi != null && !mi.IsStatic)
+						return true;
+				}		
+				return false;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return (!IsInstance);
+			}
+		}
+		
+		public ArrayList GetAccessors () {
+			ArrayList GetAccessors = new ArrayList ();
+			foreach (PropertyInfo pi in Properties) {
+				if (pi.GetGetMethod () != null)
+					GetAccessors.Add (pi.GetGetMethod ());
+			}
+			return GetAccessors;
+		}
+		
+		public ArrayList SetAccessors () {
+			ArrayList SetAccessors = new ArrayList ();
+			foreach (PropertyInfo pi in Properties) {
+				if (pi.GetSetMethod () != null)
+					SetAccessors.Add (pi.GetSetMethod ());
+			}
+			return SetAccessors;
+		}
+
+		override public Expression DoResolve (EmitContext ec)
+		{
+			if (instance_expression != null) {
+				instance_expression = instance_expression.DoResolve (ec);
+				if (instance_expression == null)
+					return null;
+			}
+
+			ArrayList members = GetAccessors ();
+			if (members == null || members.Count == 0) {
+				Report.Error (30524, loc, "Property '" + Name + "' lacks a 'get' accesor");
+				return null;
+			}
+
+			MethodGroupExpr m_expr = new MethodGroupExpr (members, loc);
+			method = Invocation.OverloadResolve (ec, m_expr, ref arguments, loc);
+			if ((method as MethodInfo) != null) {
+				MethodInfo mi = method as MethodInfo;
+				type = TypeManager.TypeToCoreType (mi.ReturnType);
+				indexer_access_req = false;
+				eclass = ExprClass.Value;
+				return this;
+			} else {
+				// find a get method that doesnt take any arguments. Check the return type of
+				// that method to find out if indexer access is required. Leave the rest to
+				// 'Invocation's Resolve'
+				method = Invocation.OverloadResolve (ec, m_expr, null, loc);
+				if (method != null) {
+					MethodInfo mi = method as MethodInfo;
+					Type ret_type = mi.ReturnType;
+					if (ret_type.IsArray)
+						indexer_access_req = true;
+					else {
+						Indexers list = Indexers.GetIndexersForType (ec.ContainerType, ret_type, loc);
+						if (list != null && list.getters.Count > 0)
+							indexer_access_req = true;
+						else 
+							return null;
+					}
+					Arguments = null;
+					type = mi.ReturnType;
+					return this;
+				}
+			}
+
+			return null;
+		}
+
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side) {
+			if (instance_expression != null) {
+				instance_expression = instance_expression.DoResolve (ec);
+				if (instance_expression == null)
+					return null;
+			}
+
+			ArrayList members = SetAccessors ();
+			if (members == null || members.Count == 0) {
+				Report.Error (30524, loc, "Property '" + Name + "' lacks a 'set' accesor");
+				return null;
+			}
+
+			MethodGroupExpr m_expr = new MethodGroupExpr (members, loc);
+			if (arguments == null)
+				arguments = new ArrayList ();
+			arguments.Add (new Argument (right_side, Argument.AType.Expression));
+			method = Invocation.OverloadResolve (ec, m_expr, ref arguments, loc);
+			if (method != null) {
+				//MethodInfo mi = method as MethodInfo;
+				type = TypeManager.void_type; //TypeManager.TypeToCoreType (mi.ReturnType);
+				eclass = ExprClass.Value;
+				indexer_access_req = false;
+				return this;
+			} else {
+				// Look for properties that do not take any arguments.
+				// Check if the return type has any indexers
+				arguments = null;
+				DoResolve (ec);
+				if (method != null) {
+					MethodInfo mi = method as MethodInfo;
+					Type ret_type = mi.ReturnType;
+					if (ret_type.IsArray)
+						indexer_access_req = true;
+					else {
+
+						Indexers list = Indexers.GetIndexersForType (ec.ContainerType, 
+									ret_type, loc);
+						if (list != null && list.setters.Count > 0)
+							indexer_access_req = true;
+						else 
+							return null;
+					}
+					type = mi.ReturnType;
+					return this;
+				}
+			}
+
+			return null;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			if (Arguments == null)
+				Arguments = new ArrayList ();
+			Invocation.EmitCall (ec, false, IsStatic, instance_expression, method, null, Arguments, loc);
+		}
+
+		override public void EmitStatement (EmitContext ec) 
+		{
+			Emit (ec);
+		}
+
 	}
 
 	/// <summary>

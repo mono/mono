@@ -2416,8 +2416,9 @@ public class TypeManager {
 			// name
 			//
 			if (list [0] is PropertyInfo) {
-				if ((list.Count == 2) && (list [1] is FieldInfo))
-					return new MemberInfo [] {list [1]};
+				foreach (MemberInfo mi in list)
+					if (mi is FieldInfo)
+						return new MemberInfo [] {mi};
 				return (MemberInfo []) list;
 			}
 

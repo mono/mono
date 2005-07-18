@@ -249,8 +249,8 @@ namespace Mono.MonoBASIC
 		//	
 		// Hash table for const preprocessing directive
 		//
-		public static Hashtable constPreDir = new Hashtable();
-		public static Hashtable with_hash = new Hashtable();
+		public static CaseInsensitiveHashtable constPreDir = new CaseInsensitiveHashtable();
+		public static CaseInsensitiveHashtable with_hash = new CaseInsensitiveHashtable();
 		
 		static public bool InitialOptionExplicit = false;
 		static public bool InitialOptionStrict = false;

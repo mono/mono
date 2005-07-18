@@ -2801,8 +2801,8 @@ namespace Mono.MonoBASIC {
 			return "VariableInfo (" + Number + "," + Type + "," + Location + ")";
 		}
 	}
-		
 
+		
 	public class StatementSequence : Expression {
 		Block stmtBlock;
 		ArrayList args, originalArgs;
@@ -5440,6 +5440,11 @@ namespace Mono.MonoBASIC {
 		
 		public RedimClause (Expression e, ArrayList args)
 		{
+			if (e is SimpleName)
+				((SimpleName) e).IsInvocation = false;
+			if (e is MemberAccess)
+				((MemberAccess) e).IsInvocation = false;
+		
 			Expr = e;
 			NewIndexes = args;
 		}
@@ -5449,6 +5454,8 @@ namespace Mono.MonoBASIC {
 		ArrayList RedimTargets;
 		Type BaseType;
 		bool Preserve;
+		LocalTemporary localTmp = null;
+		Expression origRedimTarget = null;
 
 		private StatementExpression ReDimExpr;
 
@@ -5467,8 +5474,8 @@ namespace Mono.MonoBASIC {
 			foreach (RedimClause rc in RedimTargets) {
 				RedimTarget = rc.Expr;
 				NewIndexes = rc.NewIndexes;
-
 				RedimTarget = RedimTarget.Resolve (ec);
+	
 				if (!RedimTarget.Type.IsArray)
 					Report.Error (49, "'ReDim' statement requires an array");
 
@@ -5493,7 +5500,16 @@ namespace Mono.MonoBASIC {
 				// TODO: we are in a foreach we probably can't reuse ReDimExpr, must turn it into an array(list)
 				if (Preserve)
 				{
-					ExpressionStatement PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
+					ExpressionStatement PreserveExpr = null;
+					if (RedimTarget is PropertyGroupExpr) {
+						localTmp = new LocalTemporary (ec, RedimTarget.Type);
+						PropertyGroupExpr pe = RedimTarget as PropertyGroupExpr;
+						origRedimTarget = new PropertyGroupExpr (pe.Properties, pe.Arguments, pe.InstanceExpression, loc);
+						if ((origRedimTarget = origRedimTarget.Resolve (ec)) == null) 
+							return false;
+						PreserveExpr = (ExpressionStatement) new Preserve(localTmp, acExpr, loc);
+					} else
+						PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
 					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
 				}
 				else
@@ -5505,6 +5521,10 @@ namespace Mono.MonoBASIC {
 				
 		protected override bool DoEmit (EmitContext ec)
 		{
+			if (localTmp != null) {
+				origRedimTarget.Emit (ec);
+				localTmp.Store (ec);
+			}
 			ReDimExpr.Emit(ec);
 			return false;
 		}		

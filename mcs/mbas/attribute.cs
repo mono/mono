@@ -242,15 +242,28 @@ namespace Mono.MonoBASIC {
 					BindingFlags.Public | BindingFlags.Instance,
 					Location);
 
-				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
+				if (member == null || !(member is PropertyGroupExpr || member is FieldExpr)) {
 					Error_InvalidNamedArgument (member_name);
 					return null;
 				}
 
 				e = a.Expr;
-				if (member is PropertyExpr) {
-					PropertyExpr pe = (PropertyExpr) member;
-					PropertyInfo pi = pe.PropertyInfo;
+				if (member is PropertyGroupExpr) {
+					PropertyGroupExpr pe = (PropertyGroupExpr) member;
+					PropertyInfo pi = null;
+					if (pe.Properties.Length == 1) 
+						pi = pe.Properties [0];
+					else {
+						// find a property which doesnt take any arguments
+						// Might be wrong, but this is just a temporary work-around
+						foreach (PropertyInfo p in pe.Properties) {
+							MethodInfo mi = p.GetGetMethod ();
+							if (mi.GetParameters().Length == 0) {
+								pi = p;
+								break;
+							}
+						}
+					}
 
 					if (!pi.CanWrite) {
 						Error_InvalidNamedArgument (member_name);

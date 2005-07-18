@@ -3580,9 +3580,10 @@ namespace Mono.MonoBASIC {
 		public Invocation (Expression expr, ArrayList arguments, Location l)
 		{
 			this.expr = expr;
-			if (this.expr is MemberAccess) {
+			if (this.expr is MemberAccess)
 				((MemberAccess) this.expr).IsInvocation = true;
-			}
+			if (this.expr is SimpleName)
+				((SimpleName) this.expr).IsInvocation = true;
 			this.is_retval_required = false;
 			this.is_left_hand = false;
 			Arguments = arguments;
@@ -3797,9 +3798,9 @@ namespace Mono.MonoBASIC {
 
 		static ConversionType CheckParameterAgainstArgument (EmitContext ec, ParameterData pd, int i, Argument a, Type ptype)
 		{
-                       if (a.ArgType == Argument.AType.NoArg)  {
-                               return ConversionType.Widening;
-                       }
+			if (a.ArgType == Argument.AType.NoArg)  {
+				return ConversionType.Widening;
+			}
 
 			Parameter.Modifier a_mod = a.GetParameterModifier () &
 				~(Parameter.Modifier.REF);
@@ -4190,7 +4191,7 @@ namespace Mono.MonoBASIC {
 
 					bool dummy;
 					if (narrow_count != 0) {
-					 	if (IsApplicable (ec, Arguments, c, out dummy) == ConversionType.None)
+						if (IsApplicable (ec, Arguments, c, out dummy) == ConversionType.None)
 							continue;
 						Report.Error (1502, loc,
 							"Overloaded match for method '" +
@@ -4212,17 +4213,17 @@ namespace Mono.MonoBASIC {
 
 			if (candidates != null) {
 				foreach (MethodBase candidate in candidates){
- 					if (candidate == method)
- 						continue;
+					if (candidate == method)
+						continue;
 
 
 					if (BetterFunction (ec, Arguments, candidate, method,
 								false, loc) == Applicability.Better) {
- 						Report.Error (
- 							121, loc,
- 							"Ambiguous call of '" + me.Name + "' when selecting function due to implicit casts");
+						Report.Error (
+							121, loc,
+							"Ambiguous call of '" + me.Name + "' when selecting function due to implicit casts");
 						return null;
- 					}
+					}
 				}
 			}
 
@@ -4242,7 +4243,6 @@ namespace Mono.MonoBASIC {
 				if (newarglist == null)
 					return null;
 			}
-
 			Arguments = ConstructArgumentList(ec, newarglist, namedArgs, method);
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
 						   chose_params_expanded, null, loc))
@@ -4389,7 +4389,7 @@ namespace Mono.MonoBASIC {
 					return false;	
 				}
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
-			    	chose_params_expanded)
+				chose_params_expanded)
 					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
 				// By pass conversion for foll. case and handle it in EmitArguments()
 
@@ -4454,16 +4454,52 @@ namespace Mono.MonoBASIC {
 
 			return true;
 		}
-	
+		
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			this.is_left_hand = true;
 			Expression expr_to_return = DoResolve (ec);
+			if (expr_to_return is PropertyGroupExpr) {
+				PropertyGroupExpr pe = expr_to_return as PropertyGroupExpr;
+				pe = (PropertyGroupExpr) pe.ResolveLValue (ec, right_side);
+				if (pe == null)
+					return null;
+				if (pe.IndexerAccessRequired) {
+					if (pe.Type.IsArray) {
+						// If we are here, expr must be an ArrayAccess
+						ArrayList idxs = new ArrayList();
+						foreach (Argument a in Arguments)
+						{
+							idxs.Add (a.Expr);
+						}
+						ElementAccess ea = new ElementAccess (expr_to_return, idxs, expr.Location);
+						ArrayAccess aa = new ArrayAccess (ea, expr_to_return.Location);
+						expr_to_return = aa.DoResolve(ec);
+						expr_to_return.eclass = ExprClass.Variable;
+					} else {
+						//
+						// check whether this is a indexer
+						//
+						ArrayList idxs = new ArrayList();
+						foreach (Argument a in Arguments) {
+							idxs.Add (a.Expr);
+						}
+						ElementAccess ea = new ElementAccess (expr_to_return, idxs, expr.Location);
+						IndexerAccess ia = new IndexerAccess (ea, expr_to_return.Location);
+						if (is_left_hand)
+							expr_to_return = ia.DoResolveLValue (ec, right_side);
+						else
+							expr_to_return = ia.DoResolve(ec);
+					}
+					return expr_to_return;
+				}
+			}
 
-			if (expr_to_return is IndexerAccess) {
+			if (expr_to_return is IndexerAccess && is_left_hand) {
 				IndexerAccess ia = expr_to_return as IndexerAccess;
 				expr_to_return = ia.DoResolveLValue (ec, right_side);
 			}
+
 			return expr_to_return;
 		}
 
@@ -4520,7 +4556,7 @@ namespace Mono.MonoBASIC {
 				expr = expr.Resolve(ec);
 			}
 
-			if (!(expr is MethodGroupExpr)) 
+			if (!(expr is MethodGroupExpr || expr is PropertyGroupExpr)) 
 			{
 				Type expr_type = expr.Type;
 
@@ -4599,41 +4635,24 @@ namespace Mono.MonoBASIC {
 				return expr_to_return;
 			}
 
-			if (expr is PropertyExpr) 
+			if (expr is PropertyGroupExpr) 
 			{
-				PropertyExpr pe = ((PropertyExpr) expr);
-				if (pe.PropertyArgs != null)
+				PropertyGroupExpr pe = ((PropertyGroupExpr) expr);
+				if (pe.Arguments != null)
 					goto skip_already_resolved_property;
-				pe.PropertyArgs = (ArrayList) Arguments;
-				MethodBase mi = pe.PropertyInfo.GetGetMethod(true);
-				int argCount = 0;
-				if (Arguments != null)
-					argCount = Arguments.Count;
-
-				bool expanded = false;
-				if (IsApplicable(ec, pe.PropertyArgs, mi, out expanded) != ConversionType.None) {
-					if(VerifyArgumentsCompat (ec, pe.PropertyArgs,
-						argCount, mi, expanded, null, loc, pe.Name))
-					{
-						expr_to_return = pe.DoResolve (ec);
-						expr_to_return.eclass = ExprClass.PropertyAccess;
-						Arguments = new ArrayList ();
-						return expr_to_return;
-					}
-					else
-					{
-						throw new Exception("Error resolving Property Access expression\n" + pe.ToString());
-					}
-				} else {
-					pe.PropertyArgs = new ArrayList ();
-					if (VerifyArgumentsCompat (ec, pe.PropertyArgs,
-						0, mi, false, null, loc, pe.Name)) {
-						expr = pe.DoResolve (ec);
-						expr.eclass = ExprClass.PropertyAccess;
-					} else {
-						throw new Exception("Error resolving Property Access expression\n" + pe.ToString());
-					}
+				pe.Arguments = (ArrayList) Arguments.Clone ();
+				if (is_left_hand)
+					return pe;
+				string name = pe.Name;
+				pe = (PropertyGroupExpr) pe.Resolve (ec);
+				if (pe == null) {
+					Error (30057, "Property '" + name + "' cannot be invoked with given arguments");
+					return null;
 				}
+
+				if (!pe.IndexerAccessRequired)
+					return pe;
+				expr = pe;
 			}
 
 			skip_already_resolved_property:
@@ -4730,7 +4749,6 @@ namespace Mono.MonoBASIC {
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
 		{
 			ParameterData pd = GetParameterData (mb);
-
 			//
 			// If we are calling a params method with no arguments, special case it
 			//
@@ -4786,8 +4804,18 @@ namespace Mono.MonoBASIC {
 						if(argtype.IsByRef)
 							argtype = argtype.GetElementType();
 						conv = ConvertImplicit (ec, localtmp, argtype, Location.Null);
-						 tempvars.Add (new Assign (a.Expr, conv, Location.Null));
+						tempvars.Add (new Assign (a.Expr, conv, Location.Null));
 
+					} else if (a.Expr is PropertyGroupExpr) {
+						// FIXME: We shouldnt be doing Resolve from inside 'Emit'. 
+						// Have to find a way to push this up to 'Resolve'
+						Expression conv;
+						if(argtype.IsByRef)
+							argtype = argtype.GetElementType();
+						conv = ConvertImplicit (ec, localtmp, argtype, Location.Null);
+						Assign assgn = new Assign (a.Expr, conv, Location.Null);
+						Expression e = assgn.Resolve (ec);
+						tempvars.Add (e);
 					}
                                        	localtmp.Store (ec);
                                     	a = new Argument (localtmp, a.ArgType);
@@ -4978,7 +5006,7 @@ namespace Mono.MonoBASIC {
 		public override void Emit (EmitContext ec)
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
-
+ 
 			EmitCall (
 				ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments, loc);
 		}
@@ -4996,8 +5024,12 @@ namespace Mono.MonoBASIC {
 					ec.ig.Emit (OpCodes.Pop);
 
 					if (tempvars != null) {
-						foreach (ExpressionStatement s in tempvars)
-							s.EmitStatement (ec);
+						foreach (Expression s in tempvars) {
+							if (s is ExpressionStatement)
+								((ExpressionStatement) s).EmitStatement (ec);
+							else
+								s.Emit (ec);
+						}
 						tempvars.Clear ();
 					}
 				}
@@ -6358,17 +6390,31 @@ namespace Mono.MonoBASIC {
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
 
-				if (left_is_type){
-					MethodGroupExpr mg = me as MethodGroupExpr;
-					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
-						mg.IsExplicitImpl = left_is_explicit;
-
-					if (!me.IsStatic){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return member_lookup;
-
-						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
-						return null;
+				if (left_is_type) {
+					if (me is PropertyGroupExpr) {
+						PropertyGroupExpr mg = me as PropertyGroupExpr;
+						if ((mg != null) && left_is_explicit && left.Type.IsInterface)
+							mg.IsExplicitImpl = left_is_explicit;
+	
+						if (!me.IsStatic){
+							if (IdenticalNameAndTypeName (ec, left_original, loc))
+								return member_lookup;
+	
+							SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
+							return null;
+						}
+					} else {
+						MethodGroupExpr mg = me as MethodGroupExpr;
+						if ((mg != null) && left_is_explicit && left.Type.IsInterface)
+							mg.IsExplicitImpl = left_is_explicit;
+	
+						if (!me.IsStatic){
+							if (IdenticalNameAndTypeName (ec, left_original, loc))
+								return member_lookup;
+	
+							SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
+							return null;
+						}
 					}
 
 				} else {
@@ -6484,7 +6530,6 @@ namespace Mono.MonoBASIC {
 			}
 
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
-
 			if (member_lookup == null)
 			{
 				// Error has already been reported.
@@ -6577,8 +6622,12 @@ namespace Mono.MonoBASIC {
 				return null;
 			
 			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
+
 			if (member_lookup == null)
 				return null;
+
+			if (member_lookup is PropertyGroupExpr && is_invocation) // As we dont know the arguments yet
+				return member_lookup;
 
 			// The following DoResolve/DoResolveLValue will do the definite assignment
 			// check.
@@ -7247,11 +7296,6 @@ namespace Mono.MonoBASIC {
 						return ix;
 				}
 			}
-
-			if (lookup_type != TypeManager.object_type)
-				Report.Error (21, loc,
-					      "Type '" + TypeManager.MonoBASIC_Name (lookup_type) +
-					      "' does not have any indexers defined");
 			return null;
 		}
 	}
@@ -7319,9 +7363,17 @@ namespace Mono.MonoBASIC {
 			//
 			// This is a group of properties, piles of them.  
 
-			if (ilist == null)
+			if (ilist == null) {
 				ilist = Indexers.GetIndexersForType (
 					current_type, indexer_type, loc);
+
+				if (ilist == null && indexer_type != TypeManager.object_type) {
+					Report.Error (21, loc,
+					      	"Type '" + TypeManager.MonoBASIC_Name (indexer_type) +
+					      	"' does not have any indexers defined");
+					return null;
+				}
+			}
 
 			//
 			// Step 2: find the proper match
@@ -7354,9 +7406,16 @@ namespace Mono.MonoBASIC {
 
 			Type right_type = right_side.Type;
 
-			if (ilist == null)
+			if (ilist == null) {
 				ilist = Indexers.GetIndexersForType (
 					current_type, indexer_type, loc);
+				if (ilist == null && indexer_type != TypeManager.object_type) {
+					Report.Error (21, loc,
+					      	"Type '" + TypeManager.MonoBASIC_Name (indexer_type) +
+					      	"' does not have any indexers defined");
+					return null;
+				}
+			}
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				set_arguments = (ArrayList) arguments.Clone ();

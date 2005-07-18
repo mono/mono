@@ -332,23 +332,8 @@ namespace Mono.MonoBASIC {
 			// set the `value' field on the property, and Resolve
 			// it.
 			//
-			if (target is PropertyExpr){
-				PropertyExpr property_assign = (PropertyExpr) target;
-
-				if (source_type != target_type){
-					source = ConvertImplicitRequired (ec, source, target_type, loc);
-					if (source == null)
-						return null;
-				}
-
-				//
-				// FIXME: Maybe handle this in the LValueResolve
-				//
-				if (!property_assign.VerifyAssignable ())
-					return null;
-
-				return this;
-			}
+			if (target is PropertyGroupExpr)
+				return target;
 
 			if (target is IndexerAccess) {
 				return this;

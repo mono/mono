@@ -1,3 +1,6 @@
+2005-07-18 Satya Sudha K <ksathyasudha@novell.com>
+	* Supported overloading of properties (has to be tested thoroughly)
+
 2005-07-13 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* mb-parser.jay:
 	* block.cs: Support and successfully find goto target labels
