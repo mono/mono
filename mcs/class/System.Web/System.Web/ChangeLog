@@ -1,3 +1,7 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* CapabilitiesLoader.cs: Fix compilation error in TARGET_J2EE config.
+
 2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SiteMap.cs: Read provider info from the configuration files.

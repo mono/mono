@@ -1,3 +1,7 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* System.Web.vmwcsproj: Added file for compiling System.Web in J2EE configuration
+
 2005-07-16  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile: Make sure that tests use the same flags as the

@@ -1,3 +1,7 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* Icalls.jvm.cs: Added TARGET_JVM Grasshopper specific version of the file.
+
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: (Combine) if the base path is "~", expand it.

@@ -56,8 +56,11 @@ using System.Web.UI;
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
-
+#if TARGET_JVM
+[assembly: CLSCompliant(false)]
+#else
 [assembly: CLSCompliant(true)]
+#endif
 [assembly: ComVisible(false)]
 [assembly: AssemblyDefaultAlias("System.Web.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
@@ -65,9 +68,10 @@ using System.Web.UI;
 
 [assembly: AllowPartiallyTrustedCallers()]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
-
+#if !TARGET_JVM
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+#endif
 
 // Resources
 

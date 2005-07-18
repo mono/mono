@@ -182,7 +182,7 @@ namespace System.Web
 				if (loaded)
 					return;
 #if TARGET_J2EE
-				string filepath = "browscap.ini"
+				string filepath = "browscap.ini";
 #else
 				string dir = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
 				string filepath = Path.Combine (dir, "browscap.ini");
@@ -216,7 +216,7 @@ namespace System.Web
 		{
 			return null;
 		}
-		return = new StreamReader (s);
+		return new StreamReader (s);
 	}
 #endif
 		static void LoadFile (string filename)
