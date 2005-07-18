@@ -1,3 +1,8 @@
+2005-07-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Use the default optimization set when embedding. Fixes
+	#75194.
+
 2005-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c tramp-ia64.c Makefile.am: Move arch independent parts 
