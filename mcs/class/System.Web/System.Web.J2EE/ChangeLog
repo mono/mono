@@ -1,0 +1,5 @@
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* J2EEConsts.cs: Added file.
+	* J2EEUtils.cs: Added file.
+	* PageMapper.cs: Added file. The PageMapper implements the Grasshopper limited compilation model of ASPX in Grasshopper.

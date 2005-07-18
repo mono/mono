@@ -1,5 +1,10 @@
 2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
 
+	* System.Web.J2EE: Added namespace and folder for J2EE hosting and specific files.
+	* System.Web.vmwcsproj: Added System.Web.J2EE files
+
+2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* System.Web.vmwcsproj: Added file for compiling System.Web in J2EE configuration
 
 2005-07-16  Ben Maurer  <bmaurer@ximian.com>

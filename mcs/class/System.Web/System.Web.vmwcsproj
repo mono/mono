@@ -225,6 +225,9 @@
 				<File RelPath="System.Web.Hosting\IRegisteredObject.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\ISAPIRuntime.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\SimpleWorkerRequest.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\j2EEConsts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\J2EEUtils.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.J2EE\PageMapper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\Base64AttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.Web.Mail\IAttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
@@ -593,7 +596,7 @@
 				<File RelPath="System.Web.UI.WebControls\DataGridLinkButton.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridPageChangedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridPageChangedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DataGridPagerStyle.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DataGridPagerStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridSortCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridSortCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridTableInternal.cs" SubType="Code" BuildAction="Compile"/>
@@ -816,7 +819,7 @@
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceStatusEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\StringArrayConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\Style.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\Style.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SubMenuStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SubMenuStyleCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Table.cs" SubType="Code" BuildAction="Compile"/>
@@ -826,11 +829,11 @@
 				<File RelPath="System.Web.UI.WebControls\TableCellControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableHeaderCell.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableHeaderScope.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\TableItemStyle.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableItemStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRow.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRowCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRowSection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\TableStyle.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TargetConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TemplateColumn.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TemplateField.cs" SubType="Code" BuildAction="Compile"/>

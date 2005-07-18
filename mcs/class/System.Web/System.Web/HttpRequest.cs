@@ -1144,7 +1144,7 @@ namespace System.Web {
 #if TARGET_J2EE
 			if (baseVirtualDir.Equals(BaseVirtualDir))
 			{
-				string val =  System.Web.GH.PageMapper.GetFromMapPathCache(virtualPath);
+				string val =  System.Web.J2EE.PageMapper.GetFromMapPathCache(virtualPath);
 				if (val != null)
 					return val;
 			}

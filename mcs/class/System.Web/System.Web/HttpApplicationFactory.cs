@@ -100,7 +100,7 @@ namespace System.Web {
 			try
 			{
 				String url = IAppDomainConfig.WAR_ROOT_SYMBOL+"/global.asax";
-				_appType = System.Web.GH.PageMapper.GetObjectType(url);
+				_appType = System.Web.J2EE.PageMapper.GetObjectType(url);
 			}
 			catch (Exception e)
 			{
