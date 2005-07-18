@@ -1,3 +1,7 @@
+2005-07-19  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlWriter.cs: renamed to IXamlWriter.cs
+
 2005-07-18  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/*, Test/*: change stupid
