@@ -1,5 +1,8 @@
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Rename this
+	to mono_arch_get_vcall_slot_addr.
+
 	* Makefile.am tramp-sparc.c: Update the sparc port to use the generic
 	trampoline code.
 
