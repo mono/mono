@@ -1,3 +1,7 @@
+2005-07-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ia64.c: Add optimized TLS access support.
+
 2005-07-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c: Ongoing IA64 work.
