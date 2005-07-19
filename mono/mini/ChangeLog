@@ -1,5 +1,10 @@
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Fix warning.
+
+	* tramp-sparc.c (mono_arch_create_trampoline_code): Fix order of
+	trampoline parameters.
+
 	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Fix signature.
 	
 	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Rename this
