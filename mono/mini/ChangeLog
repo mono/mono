@@ -1,5 +1,8 @@
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Call 
+	mono_sparc_is_virtual_call ().
+	
 	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Fix warning.
 
 	* tramp-sparc.c (mono_arch_create_trampoline_code): Fix order of
