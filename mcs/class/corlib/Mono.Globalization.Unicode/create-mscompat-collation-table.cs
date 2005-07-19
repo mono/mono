@@ -98,7 +98,7 @@ namespace Mono.Globalization.Unicode
 		string [] diacritics = new string [] {
 			// LATIN, CYRILLIC etc.
 			"UPTURN", "DOUBLE-STRUCK",
-			"MIDDLE HOOK", "WITH VERTICAL LINE ABOVE;",
+			"MIDDLE HOOK", "WITH VERTICAL LINE ABOVE;", "WITH TONOS",
 			"WITH ACUTE ACCENT;", "WITH GRAVE ACCENT;",
 			"WITH ACUTE;", "WITH GRAVE;",
 			//
@@ -161,7 +161,7 @@ namespace Mono.Globalization.Unicode
 			};
 		byte [] diacriticWeights = new byte [] {
 			// LATIN.
-			3, 3, 5, 5,
+			3, 3, 5, 5, 5,
 			0xE, 0xF,
 			0xE, 0xF,
 			//
@@ -1109,6 +1109,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			if (s.IndexOf ("FULL STOP") > 0 &&
 				(s.IndexOf ("DIGIT") > 0 || s.IndexOf ("NUMBER") > 0))
 				diacritical [cp] |= 0xF4;
+			if (s.StartsWith ("SCRIPT") || s.IndexOf (" SCRIPT ") > 0)
+				diacritical [cp] = (byte) (s.IndexOf ("SMALL") > 0 ? 3 :
+					s.IndexOf ("CAPITAL") > 0 ? 5 : 4);
 
 			// Arabic letter name
 			if (0x0621 <= cp && cp <= 0x064A &&
@@ -2217,14 +2220,18 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				char c = cymap_src [i];
 				fillIndex [0x10] = map [c].Level1;
 				int c2 = 0x0490 + i * 2;
-				AddLetterMapCore ((char) c2, 0x10, 0, diacritical [c2]);
+				AddLetterMapCore ((char) c2, 0x10, 0, diacritical [c2], false);
 			}
 
 			// Armenian
 			fillIndex [0x11] = 0x3;
-			for (int i = 0x0531; i < 0x0586; i++)
+			fillIndex [0x1] = 0x98;
+			for (int i = 0x0531; i < 0x0586; i++) {
+				if (i == 0x0559 || i == 0x55A)
+					AddCharMap ((char) i, 1, 1);
 				if (Char.IsLetter ((char) i))
 					AddLetterMap ((char) i, 0x11, 1);
+			}
 
 			// Hebrew
 			// -Letters
@@ -2268,12 +2275,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				case 0x0649: formDiacritical = 5; break;
 				case 0x064A: formDiacritical = 7; break;
 				}
-				AddLetterMapCore ((char) i, 0x13, 1, formDiacritical);
+				AddLetterMapCore ((char) i, 0x13, 1, formDiacritical, false);
 			}
+			for (int i = 0x0670; i < 0x0673; i++)
+				map [i] = new CharMapEntry (0x13, 0xB, (byte) (0xC + i - 0x670));
 			fillIndex [0x13] = 0x84;
 			for (int i = 0x0674; i < 0x06D6; i++)
 				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0x13, 1);
+					AddLetterMapCore ((char) i, 0x13, 1, 0, false);
 
 			// Devanagari
 			// FIXME: it does seem straight codepoint mapping.
@@ -2882,6 +2891,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				case 0xAB: // 08
 				case 0xB7: // 0A
 				case 0xBB: // 08
+				case 0x02B9: // 01
+				case 0x02BA: // 01
 				case 0x2329: // 09
 				case 0x232A: // 09
 					continue;
@@ -2901,7 +2912,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddCharMapGroup ((char) i, 0x7, 1, 0);
 					break;
 				default:
-					if (i == 0xA6) // SPECIAL CASE. FIXME: why?
+					if (i == 0xA6 || i == 0x1C3) // SPECIAL CASE. FIXME: why?
 						goto case UnicodeCategory.OtherPunctuation;
 					break;
 				}
@@ -3088,15 +3099,24 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// characters and still undefined are likely to
 			// be nonspacing.
 			for (int i = 0; i < char.MaxValue; i++) {
-				if (!map [i].Defined &&
-					!IsIgnorable (i) &&
-					Char.GetUnicodeCategory ((char) i) ==
-					UnicodeCategory.NonSpacingMark) {
-					if (diacritical [i] != 0)
-						map [i] = new CharMapEntry (1, 1, diacritical [i]);
-					else
-						AddCharMap ((char) i, 1, 1);
+				if (map [i].Defined ||
+					IsIgnorable (i))
+					continue;
+				switch (i) {
+				// SPECIAL CASES.
+				case 0x02B9:
+				case 0x02BA:
+					break;
+				default:
+					if (Char.GetUnicodeCategory ((char) i) !=
+					UnicodeCategory.NonSpacingMark)
+						continue;
+					break;
 				}
+				if (diacritical [i] != 0)
+					map [i] = new CharMapEntry (1, 1, diacritical [i]);
+				else
+					AddCharMap ((char) i, 1, 1);
 			}
 
 			// FIXME: this is hack but those Symbol characters
@@ -3137,32 +3157,32 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				char c = (char) (i + b);
 				byte arg = (byte) (b > 0 ? b + 2 : 0);
 				// Hiragana
-				AddLetterMapCore (c, 0x22, 0, arg);
+				AddLetterMapCore (c, 0x22, 0, arg, false);
 				// Katakana
-				AddLetterMapCore ((char) (c + 0x60), 0x22, 0, arg);
+				AddLetterMapCore ((char) (c + 0x60), 0x22, 0, arg, false);
 			}
 		}
 
 		private void AddLetterMap (char c, byte category, byte updateCount)
 		{
-			AddLetterMapCore (c, category, updateCount, 0);
+			AddLetterMapCore (c, category, updateCount, 0, true);
 		}
 
-		private void AddLetterMapCore (char c, byte category, byte updateCount, byte level2)
+		private void AddLetterMapCore (char c, byte category, byte updateCount, byte level2, bool deferLevel2)
 		{
 			char c2;
 			// <small> updates index
 			c2 = ToSmallForm (c);
 			if (c2 != c)
-				AddCharMapGroup (c2, category, updateCount, level2);
+				AddCharMapGroup (c2, category, updateCount, level2, deferLevel2);
 			c2 = Char.ToLower (c, CultureInfo.InvariantCulture);
 			if (c2 != c && !map [(int) c2].Defined)
-				AddLetterMapCore (c2, category, 0, level2);
+				AddLetterMapCore (c2, category, 0, level2, deferLevel2);
 			bool doUpdate = true;
 			if (IsIgnorable ((int) c) || map [(int) c].Defined)
 				doUpdate = false;
 			else
-				AddCharMapGroup (c, category, 0, level2);
+				AddCharMapGroup (c, category, 0, level2, deferLevel2);
 			if (doUpdate)
 				fillIndex [category] += updateCount;
 		}
