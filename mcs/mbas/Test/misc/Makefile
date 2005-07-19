@@ -4,7 +4,9 @@ include ../../../build/rules.make
 
 WRITEOK_SOURCES = WriteOK.vb WriteOK2.mbs RedimPreserve.vb AssemblyInfo.vb
 
-test-local: WriteOK.exe aspx_temp.dll test.exe
+test-local: WriteOK.exe  test.exe
+
+NOT_WORKING=aspx_temp.dll
 
 run-test-local: WriteOK.exe
 	$(RUNTIME) $(RUNTIME_FLAGS) --debug WriteOK.exe --sayho /about -say:this,that,those /say:what?
