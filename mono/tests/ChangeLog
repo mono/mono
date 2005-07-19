@@ -1,3 +1,7 @@
+2005-07-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs libtest.c: Add some IA64 struct passing tests.
+
 2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (PLATFORM_DISABLED_TESTS): Ignore thread6.exe on amd64.
