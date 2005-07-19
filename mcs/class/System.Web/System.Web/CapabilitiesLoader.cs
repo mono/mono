@@ -199,26 +199,28 @@ namespace System.Web
 				loaded = true;
 			}
 		}
+
 #if TARGET_J2EE
-	private static TextReader GetJavaTextReader(string filename)
-	{
-		Stream s;
-		try
+		private static TextReader GetJavaTextReader(string filename)
 		{
-			java.lang.ClassLoader cl = (java.lang.ClassLoader)
-						AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
-			if (cl == null)
+			Stream s;
+			try
+			{
+				java.lang.ClassLoader cl = (java.lang.ClassLoader)
+					AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
+				if (cl == null)
+					return null;
+				java.io.InputStream inputStream = cl.getResourceAsStream(filename);
+				s = (Stream)vmw.common.IOUtils.getStream(inputStream);
+			}
+			catch (Exception e)
+			{
 				return null;
-			java.io.InputStream inputStream = cl.getResourceAsStream(filename);
-			s = (Stream)vmw.common.IOUtils.getStream(inputStream);
+			}
+			return new StreamReader (s);
 		}
-		catch (Exception e)
-		{
-			return null;
-		}
-		return new StreamReader (s);
-	}
 #endif
+
 		static void LoadFile (string filename)
 		{
 #if TARGET_J2EE

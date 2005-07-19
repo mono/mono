@@ -1,4 +1,7 @@
 2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
+	* CapabilitiesLoader.cs: Indentation fixes in TARGET_J2EE specific code.
+
+2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
 	* Grasshopper compilation fixes. Disabled use of unsupported features under TARGET_JVM/J2EE configuration.
 
 2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
