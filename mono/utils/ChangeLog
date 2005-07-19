@@ -1,3 +1,7 @@
+2005-07-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-compiler.h: Add TLS offset detection for ia64.
+
 2005-06-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-compiler.h (trunc): Define this to be floor under win32.
