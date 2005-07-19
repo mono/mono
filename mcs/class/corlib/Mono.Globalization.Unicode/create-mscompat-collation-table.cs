@@ -941,6 +941,10 @@ sw.Close ();
 				else if (s.IndexOf ("UPWARDS") >= 0 &&
 					s.IndexOf ("DOWNWARDS") >= 0)
 					value = 0xE2 - 0xD8;
+				else if (s.IndexOf ("ARROW") >= 0 &&
+					s.IndexOf ("COMBINING") < 0 &&
+					s.IndexOf ("CLOCKWISE") >= 0)
+					value = s.IndexOf ("ANTICLOCKWISE") >= 0 ? 0xE4 - 0xD8 : 0xE3 - 0xD8;
 				if (value == 0)
 					for (int i = 1; value == 0 && i < arrowTargets.Length; i++)
 						if (s.IndexOf (arrowTargets [i]) > 0 &&
@@ -1595,6 +1599,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			decompIndex [0xFE32] = 0;
 			decompLength [0xFE32] = 0;
 
+			// Hangzhou numbers
+			for (int i = 0x3021; i <= 0x3029; i++)
+				diacritical [i] = 0x4E;
 			// Korean parens numbers
 			for (int i = 0x3200; i <= 0x321C; i++)
 				diacritical [i] = 0xA;
@@ -1895,7 +1902,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				AddCharMap ((char) cp, 0x9, 1, 0);
 
 			// arrows
-			byte [] arrowLv2 = new byte [] {0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+			byte [] arrowLv2 = new byte [] {0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
 			foreach (DictionaryEntry de in arrowValues) {
 				int idx = (int) de.Value;
 				int cp = (int) de.Key;
@@ -2005,11 +2012,15 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			ArrayList numberValues = new ArrayList ();
 			foreach (int i in numbers)
 				numberValues.Add (new DictionaryEntry (i, decimalValue [(char) i]));
+			// SPECIAL CASE: Cyrillic Thousand sign
+			numberValues.Add (new DictionaryEntry (0x0482, 1000m));
 			numberValues.Sort (DecimalDictionaryValueComparer.Instance);
 
 //foreach (DictionaryEntry de in numberValues)
 //Console.Error.WriteLine ("****** number {0:X04} : {1} {2}", de.Key, de.Value, decompType [(int) de.Key]);
 
+			// FIXME: fillIndex adjustment lines are too
+			// complicated. It must be simpler.
 			decimal prevValue = -1;
 			foreach (DictionaryEntry de in numberValues) {
 				int cp = (int) de.Key;
@@ -2027,18 +2038,25 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 						fillIndex [0xC]++;
 
 					int xcp;
-					if (currValue <= 10) {
-						xcp = (int) prevValue + 0x2170 - 1;
-						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+					if (currValue <= 13) {
+						if (currValue == 4)
+							fillIndex [0xC]++;
+						// SPECIAL CASE
+						if (currValue == 11)
+							AddCharMap ('\u0BF0', 0xC, 1);
 						xcp = (int) prevValue + 0x2160 - 1;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
-						fillIndex [0xC] += 2;
+						xcp = (int) prevValue + 0x2170 - 1;
+						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
+						fillIndex [0xC]++;
+					}
+					if (currValue < 12)
+						fillIndex [0xC]++;
+					if (currValue <= 10) {
 						xcp = (int) prevValue + 0x3021 - 1;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
 						fillIndex [0xC]++;
 					}
-					else if (currValue == 11)
-						fillIndex [0xC]++;
 				}
 				if (prevValue < currValue)
 					prevValue = currValue;
@@ -2046,20 +2064,19 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					continue;
 				// HangZhou and Roman are add later 
 				// (code is above)
-				else if (0x3021 <= cp && cp < 0x302A
-					|| 0x2160 <= cp && cp < 0x216A
-					|| 0x2170 <= cp && cp < 0x217A)
+				if (0x3021 <= cp && cp < 0x302A
+					|| 0x2160 <= cp && cp < 0x216C
+					|| 0x2170 <= cp && cp < 0x217C)
 					continue;
 
-				if (cp ==  0x215B) // FIXME: why?
+				if (cp == 0x215B) // FIXME: why?
 					fillIndex [0xC] += 2;
 				else if (cp == 0x3021) // FIXME: why?
 					fillIndex [0xC]++;
-				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp], true);
 				if (addnew || cp <= '9') {
 					int mod = (int) currValue - 1;
 					int xcp;
-					if (1 <= currValue && currValue <= 10) {
+					if (1 <= currValue && currValue <= 11) {
 						xcp = mod + 0x2776;
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
 						xcp = mod + 0x2780;
@@ -2076,9 +2093,27 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 						AddCharMap ((char) xcp, 0xC, 0, diacritical [xcp]);
 					}
 				}
-
-				if (cp != 0x09E7 && cp != 0x09EA)
+				if (addnew && currValue >= 10 && currValue < 13 || cp == 0x09F9)
 					fillIndex [0xC]++;
+				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp], true);
+
+				switch (cp) {
+				// Maybe Bengali digit numbers do not increase
+				// indexes, but 0x09E6 does.
+				case 0x09E7: case 0x09E8: case 0x09E9:
+				case 0x09EA:
+				// SPECIAL CASES
+				case 0x0BF0: case 0x2180: case 0x2181:
+					break;
+				// SPECIAL CASE
+				case 0x0BF1:
+					fillIndex [0xC]++;
+					break;
+				default:
+					if (currValue < 11 || currValue == 1000)
+						fillIndex [0xC]++;
+					break;
+				}
 
 				// Add special cases that are not regarded as 
 				// numbers in UnicodeCategory speak.
@@ -2087,7 +2122,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddCharMapGroup ('\u01BD', 0xC, 0, 0);
 					AddCharMapGroup ('\u01BC', 0xC, 1, 0);
 				}
-				else if (cp == '6') // FIXME: why?
+				else if (cp == '2' || cp == '6') // FIXME: why?
 					fillIndex [0xC]++;
 			}
 
@@ -3504,7 +3539,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			if ('\u2160' <= c && c <= '\u216F')
 				return 0x10;
 			if ('\u2181' <= c && c <= '\u2182')
-				return 0x18;
+				return 0x10;
 			// Arabic
 			if ('\u2135' <= c && c <= '\u2138')
 				return 4;
