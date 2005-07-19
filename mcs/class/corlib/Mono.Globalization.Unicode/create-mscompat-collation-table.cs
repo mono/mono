@@ -935,20 +935,19 @@ sw.Close ();
 					"LEFT RIGHT",
 					"UP DOWN",
 					};
+				if (s.IndexOf ("RIGHTWARDS") >= 0 &&
+					s.IndexOf ("LEFTWARDS") >= 0)
+					value = 0xE1 - 0xD8;
+				else if (s.IndexOf ("UPWARDS") >= 0 &&
+					s.IndexOf ("DOWNWARDS") >= 0)
+					value = 0xE2 - 0xD8;
 				if (value == 0)
-					for (int i = 1; value == 0 && i < arrowTargets.Length; i++) {
+					for (int i = 1; value == 0 && i < arrowTargets.Length; i++)
 						if (s.IndexOf (arrowTargets [i]) > 0 &&
 							s.IndexOf ("BARB " + arrowTargets [i]) < 0 &&
 							s.IndexOf (" OVER") < 0
 						)
 							value = i;
-						else if (s.IndexOf ("RIGHTWARDS") > 0 &&
-							s.IndexOf ("LEFTWARDS") > 0)
-							value = 0xE1 - 0xD8;
-						else if (s.IndexOf ("UPWARDS") > 0 &&
-							s.IndexOf ("DOWNWARDS") > 0)
-							value = 0xE2 - 0xD8;
-					}
 				if (value > 0)
 					arrowValues.Add (new DictionaryEntry (
 						cp, value));
@@ -956,7 +955,7 @@ sw.Close ();
 
 			// Box names
 			if (0x2500 <= cp && cp < 0x2600) {
-				int value = 0;
+				int value = int.MinValue;
 				// flags:
 				// up:1 down:2 right:4 left:8 vert:16 horiz:32
 				// [h,rl] [r] [l]
@@ -996,7 +995,8 @@ sw.Close ();
 						flag |= 32;
 
 					int fidx = flags.IndexOf (flag);
-					value = fidx < 0 ? fidx : offsets [fidx];
+					if (fidx >= 0)
+						value = offsets [fidx];
 				} else if (s.IndexOf ("BLOCK") >= 0) {
 					if (s.IndexOf ("ONE EIGHTH") >= 0)
 						value = 0x12;
@@ -1057,6 +1057,8 @@ sw.Close ();
 					else
 						value = 0xC9 - 0xE5;
 				}
+				else if (s.IndexOf ("BULLET") >= 0)
+					value = 0xCC - 0xE5;
 				if (0x25DA <= cp && cp <= 0x25E5)
 					value = 0xCD + cp - 0x25DA - 0xE5;
 
@@ -1066,7 +1068,7 @@ sw.Close ();
 				case 0x2572: value = 0x10; break;
 				case 0x2573: value = 0x11; break;
 				}
-				if (value != 0)
+				if (value != int.MinValue)
 					boxValues.Add (new DictionaryEntry (
 						cp, value));
 			}
@@ -2984,47 +2986,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 			#endregion
 
-			// FIXME: for 07 xx we need more love.
-
-			// Characters w/ diacritical marks (NFKD)
-			for (int i = 0; i <= char.MaxValue; i++) {
-				if (map [i].Defined || IsIgnorable (i))
-					continue;
-				if (decompIndex [i] == 0)
-					continue;
-
-				int start = decompIndex [i];
-				int primaryChar = decompValues [start];
-				int secondary = diacritical [i];
-				bool skip = false;
-				int length = decompLength [i];
-				// special processing for parenthesized ones.
-				if (length == 3 &&
-					decompValues [start] == '(' &&
-					decompValues [start + 2] == ')') {
-					primaryChar = decompValues [start + 1];
-					length = 1;
-				}
-
-				if (map [primaryChar].Level1 == 0)
-					continue;
-
-				for (int l = 1; l < length; l++) {
-					int c = decompValues [start + l];
-					if (map [c].Level1 != 0)
-						skip = true;
-					secondary += diacritical [c];
-				}
-				if (skip)
-					continue;
-				map [i] = new CharMapEntry (
-					map [primaryChar].Category,
-					map [primaryChar].Level1,
-					(byte) secondary);
-				
-			}
-
-			// category 08 - symbols
+			#region category 08 - symbols
 			fillIndex [0x8] = 2;
 			// Here Windows mapping is not straightforward. It is
 			// not based on computation but seems manual sorting.
@@ -3077,8 +3039,50 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					break;
 				}
 			}
+			#endregion
 
-			#region Level2 adjustment
+			#region Hack!
+
+			// Characters w/ diacritical marks (NFKD)
+			for (int i = 0; i <= char.MaxValue; i++) {
+				if (map [i].Defined || IsIgnorable (i))
+					continue;
+				if (decompIndex [i] == 0)
+					continue;
+
+				int start = decompIndex [i];
+				int primaryChar = decompValues [start];
+				int secondary = diacritical [i];
+				bool skip = false;
+				int length = decompLength [i];
+				// special processing for parenthesized ones.
+				if (length == 3 &&
+					decompValues [start] == '(' &&
+					decompValues [start + 2] == ')') {
+					primaryChar = decompValues [start + 1];
+					length = 1;
+				}
+
+				if (map [primaryChar].Level1 == 0)
+					continue;
+
+				for (int l = 1; l < length; l++) {
+					int c = decompValues [start + l];
+					if (map [c].Level1 != 0)
+						skip = true;
+					secondary += diacritical [c];
+				}
+				if (skip)
+					continue;
+				map [i] = new CharMapEntry (
+					map [primaryChar].Category,
+					map [primaryChar].Level1,
+					(byte) secondary);
+				
+			}
+
+			// Diacritical weight adjustment
+
 			// Arabic Hamzah
 			diacritical [0x624] = 0x5;
 			diacritical [0x626] = 0x7;
@@ -3107,7 +3111,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					map [i] = new CharMapEntry (
 						cat, map [i].Level1, mod);
 			}
-			#endregion
 
 			// FIXME: this is halfly hack but those NonSpacingMark 
 			// characters and still undefined are likely to
@@ -3140,6 +3143,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					!IsIgnorable (i) &&
 					Char.IsSymbol ((char) i))
 					AddCharMap ((char) i, 0xA, 1);
+			#endregion
 		}
 
 		private void IncrementSequentialIndex (ref byte hangulCat)

@@ -1,5 +1,10 @@
 2005-07-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : more fix on arrows. Fix on box
+	  drawings. Some code refactoring to eliminate hack.
+
+2005-07-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Fixed some secondary weight
 	  in Devanagari and arrows.
 
