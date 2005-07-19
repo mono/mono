@@ -1,3 +1,9 @@
+2005-07-19  Martin Baulig  <martin@ximian.com>
+
+	* Timer.cs (Timer.Runner.Start): Fix a race condition which was
+	causing a hang on exit int he debugger: check `!disposed' before
+	`start_event.WaitOne ()' and again after it.
+
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Thread.cs: check that the culture is valid for formatting

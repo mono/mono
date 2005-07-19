@@ -105,7 +105,10 @@ namespace System.Threading
 
 			public void Start ()
 			{
-				while (start_event.WaitOne () && !disposed) {
+				while (!disposed && start_event.WaitOne ()) {
+					if (disposed)
+						return;
+
 					aborted = false;
 
 					if (dueTime == Timeout.Infinite)
