@@ -1,3 +1,26 @@
+2005-07-19  Ben Maurer  <bmaurer@ximian.com>
+
+	There were issues when multiple threads tried to load
+	assemblies. A deadlock was created between assemblies_mutex and
+	mono_domain_assemblies_lock. This fixes the issue by making the
+	assembly ref counting be lock free. See bug 75586.
+	
+	* image.c (mono_image_close): The add ref function here was using
+	Interlocked operations while the unref was using a mutex and a
+	--. I don't think this was ever a bug that would be exposed in a
+	non-pendantic way (ie, by an embedder doing a ref on one thread
+	and an unref on another), but for the sake of correctness, this is
+	now Interlocked.
+
+	* assembly.c (mono_assembly_addref): Use InterlockedIncrement
+	(mono_assembly_load_reference): Call mono_assembly_addref rather
+	than touching the refcount ourselves.
+	(mono_assembly_close): Use InterlockedDecrement to unref the
+	assembly. Don't acquire the lock unless it is actually needed.
+
+	* metadata-internals.h (_MonoAssembly.ref_count): Make this
+	volatile since we are going to use atomic ops.
+
 2005-07-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_layout_fields): Fix calculation of has_references
