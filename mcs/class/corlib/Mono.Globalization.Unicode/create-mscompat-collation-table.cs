@@ -99,10 +99,14 @@ namespace Mono.Globalization.Unicode
 			// LATIN, CYRILLIC etc.
 			"UPTURN", "DOUBLE-STRUCK",
 			"MIDDLE HOOK", "WITH VERTICAL LINE ABOVE;",
-			"WITH GRAVE ACCENT;", "WITH ACUTE ACCENT;", "WITH CIRCUMFLEX ACCENT;",
-			"WITH ACUTE;", "WITH GRAVE;", "WITH DOT ABOVE;", " MIDDLE DOT;",
-			"WITH CIRCUMFLEX;", "WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
-			" DIALYTIKA AND TONOS;", "WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
+			"WITH ACUTE ACCENT;", "WITH GRAVE ACCENT;",
+			"WITH ACUTE;", "WITH GRAVE;",
+			//
+			"WITH DOT ABOVE;", " MIDDLE DOT;",
+			"WITH CIRCUMFLEX ACCENT;", "WITH CIRCUMFLEX;",
+			"WITH DIALYTIKA;",
+			"WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
+			"DIALYTIKA TONOS", "DIALYTIKA AND TONOS", "WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
 			"WITH OGONEK;", "WITH CEDILLA;",
 			//
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
@@ -158,9 +162,11 @@ namespace Mono.Globalization.Unicode
 		byte [] diacriticWeights = new byte [] {
 			// LATIN.
 			3, 3, 5, 5,
-			0xF, 0xE, 0x12,
-			0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
-			0x17, 0x19, 0x1A, 0x1B, 0x1C,
+			0xE, 0xF,
+			0xE, 0xF,
+			//
+			0x10, 0x11, 0x12, 0x12, 0x13, 0x13, 0x14, 0x15, 0x16,
+			0x16, 0x17, 0x19, 0x1A, 0x1B, 0x1C,
 			//
 			0x1D, 0x1D, 0x1E, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
 			0x20, 0x21, 0x22, 0x22, 0x23, 0x24,
@@ -1092,8 +1098,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (tmp.IndexOf ("WITH ") == 0)
 					tmp = tmp.Substring (4);
 				tmp = String.Concat ("COMBINING", (tmp [0] != ' ' ? " " : ""), tmp);
-				if (name == tmp)
+				if (name == tmp) {
 					diacritical [cp] = (byte) (diacriticWeights [d] - 2);
+					break;
+				}
 //if (name == tmp)
 //Console.Error.WriteLine ("======= {2:X04} : '{0}' / '{1}'", name, tmp, cp);
 			}
@@ -1693,7 +1701,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 			// Apostrophe 06 80
 			fillIndex [0x6] = 0x80;
-			AddCharMapGroup ('\'', 6, 1, 0);
+			AddCharMap ('\'', 6, 0);
+			AddCharMap ('\uFF07', 6, 1);
 			AddCharMap ('\uFE63', 6, 1);
 
 			// SPECIAL CASE: fill FE32 here in prior to be added
@@ -1818,7 +1827,16 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// a few more characters (that however results in 
 			// overflow of level 2 unless we start before 0xDD).
 			fillIndex [0x1] = 0xDD;
-			for (int i = 0x20d0; i <= 0x20e1; i++)
+			for (int i = 0x20D0; i <= 0x20DC; i++)
+				AddCharMap ((char) i, 0x1, 1);
+			fillIndex [0x1] = 0xEC;
+			for (int i = 0x20DD; i <= 0x20E1; i++)
+				AddCharMap ((char) i, 0x1, 1);
+			fillIndex [0x1] = 0x7;
+			for (int i = 0x302A; i <= 0x302D; i++)
+				AddCharMap ((char) i, 0x1, 1);
+			fillIndex [0x1] = 0x50; // I wonder how they are sorted
+			for (int i = 0x02D4; i <= 0x02D7; i++)
 				AddCharMap ((char) i, 0x1, 1);
 
 			// They are not part of Nonspacing marks, but have
@@ -1950,7 +1968,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [0xC] = 2;
 
 			// 9F8 : Bengali "one less than the denominator"
-			AddCharMap ('\u09F8', 0xC, 1);
+			AddCharMap ('\u09F8', 0xC, 1, 0x3C);
 
 			ArrayList numbers = new ArrayList ();
 			for (int i = 0; i < 65536; i++)
@@ -2012,7 +2030,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					fillIndex [0xC] += 2;
 				else if (cp == 0x3021) // FIXME: why?
 					fillIndex [0xC]++;
-				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp]);
+				AddCharMapGroup ((char) cp, 0xC, 0, diacritical [cp], true);
 				if (addnew || cp <= '9') {
 					int mod = (int) currValue - 1;
 					int xcp;
@@ -3066,15 +3084,20 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 			#endregion
 
-			// FIXME: this is hack but those NonSpacingMark 
+			// FIXME: this is halfly hack but those NonSpacingMark 
 			// characters and still undefined are likely to
 			// be nonspacing.
-			for (int i = 0; i < char.MaxValue; i++)
+			for (int i = 0; i < char.MaxValue; i++) {
 				if (!map [i].Defined &&
 					!IsIgnorable (i) &&
 					Char.GetUnicodeCategory ((char) i) ==
-					UnicodeCategory.NonSpacingMark)
-					AddCharMap ((char) i, 1, 1);
+					UnicodeCategory.NonSpacingMark) {
+					if (diacritical [i] != 0)
+						map [i] = new CharMapEntry (1, 1, diacritical [i]);
+					else
+						AddCharMap ((char) i, 1, 1);
+				}
+			}
 
 			// FIXME: this is hack but those Symbol characters
 			// are likely to fall into 0xA category.
@@ -3183,8 +3206,16 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			};
 		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2)
 		{
+			AddCharMapGroup (c, category, updateCount, level2, false);
+		}
+
+		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2, bool deferLevel2)
+		{
 			if (map [(int) c].Defined)
 				return;
+
+			if (deferLevel2)
+				level2 = diacritical [(int) c];
 
 			char small = char.MinValue;
 			char vertical = char.MinValue;
@@ -3199,8 +3230,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 
 			// <small> updates index
-			if (small != char.MinValue)
-				AddCharMap (small, category, updateCount);
+			if (small != char.MinValue) {
+				if (level2 == 0 && deferLevel2)
+					level2 = diacritical [small];
+				AddCharMap (small, category, updateCount, level2);
+			}
 
 			// itself
 			AddCharMap (c, category, 0, level2);
@@ -3208,16 +3242,22 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			if (nfkd != null) {
 				foreach (int weight in sameWeightItems) {
 					object wv = nfkd [(byte) weight];
-					if (wv != null)
+					if (wv != null) {
+						if (deferLevel2)
+							level2 = diacritical [(int) wv];
 						AddCharMap ((char) ((int) wv), category, 0, level2);
+					}
 				}
 			}
 
 			// update index here.
 			fillIndex [category] += updateCount;
 
-			if (vertical != char.MinValue)
+			if (vertical != char.MinValue) {
+				if (level2 == 0 && deferLevel2)
+					level2 = diacritical [vertical];
 				AddCharMap (vertical, category, updateCount, level2);
+			}
 		}
 
 		private void AddCharMapCJK (char c, ref byte category)

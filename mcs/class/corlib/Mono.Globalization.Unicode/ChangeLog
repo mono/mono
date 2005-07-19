@@ -1,3 +1,9 @@
+2005-07-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : some diacritical fixes for
+	  Latin. Added batch mapping method that considers computed
+	  diacritical weight (for numbers).
+
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* managed-collation.patch : forgot to add System.String patch.
