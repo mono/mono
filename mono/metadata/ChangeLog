@@ -18,9 +18,6 @@
 	(mono_assembly_close): Use InterlockedDecrement to unref the
 	assembly. Don't acquire the lock unless it is actually needed.
 
-	* metadata-internals.h (_MonoAssembly.ref_count): Make this
-	volatile since we are going to use atomic ops.
-
 2005-07-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_layout_fields): Fix calculation of has_references
