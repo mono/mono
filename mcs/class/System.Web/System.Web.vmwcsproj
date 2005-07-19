@@ -116,30 +116,9 @@
 				<File RelPath="System.Web.Caching\CacheExpires.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\ExpiresBuckets.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\OutputCacheModule.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\AspComponentFoundry.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\AspGenerator.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\AspParser.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\AspTokenizer.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\BaseCompiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\BuildProviderResultFlags.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\CachingCompiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\CompilationException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\Directive.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\ExpressionBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\ExpressionBuilderContext.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\GlobalAsaxCompiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\IImplicitResourceProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\ILocation.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\ImplicitResourceKey.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\IResourceReader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\Location.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\PageCompiler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\ParseException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\TagAttributes.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\TagType.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\TemplateControlCompiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\UserControlCompiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Compilation\WebServiceCompiler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AdapterDictionary.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AnonymousIdentificationSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\AssemblyCollection.cs" SubType="Code" BuildAction="Compile"/>
@@ -157,11 +136,8 @@
 				<File RelPath="System.Web.Configuration\ClientTargetSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CodeSubDirectoriesCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CodeSubDirectory.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CompilationConfiguration.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CompilationConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CompilationSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\Compiler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\CompilerCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CustomErrorsConfigHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CustomErrorsMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ExpressionBuilder.cs" SubType="Code" BuildAction="Compile"/>
@@ -210,20 +186,16 @@
 				<File RelPath="System.Web.Configuration\WebControlsSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Handlers\AssemblyResourceLoader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Handlers\TraceHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Hosting\AppDomainFactory.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Hosting\ApplicationHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IAppDomainFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IApplicationHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IAppManagerAppDomainFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IHttpWorkerRequestHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Hosting\IISAPIRuntime.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IProcessHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IProcessHostFactoryHelper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IProcessHostSupportFunction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IProcessPingCallback.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IQueueHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IRegisteredObject.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Hosting\ISAPIRuntime.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\ServletWorkerRequest.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\SimpleWorkerRequest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\BaseHttpServlet.cs" SubType="Code" BuildAction="Compile"/>
@@ -328,28 +300,22 @@
 				<File RelPath="System.Web.SessionState\SessionStateMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionStateModule.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionStateSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.SessionState\SessionStateServerHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionStateStoreData.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\StateRuntime.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\StateServerItem.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\ApplicationFileParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\AttributeCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\BaseParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\BasePartialCachingControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\BoundPropertyEntry.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\BuildMethod.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\BuildTemplateMethod.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ClientScriptManager.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\CodeBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\CodeRenderBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\CollectionBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\CompilationMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\CompiledBindableTemplateBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\CompiledTemplateBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ConflictOptions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ConstructorNeedsTagAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Control.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\ControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\ControlBuilder.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlBuilderAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlSkinProc.cs" SubType="Code" BuildAction="Compile"/>
@@ -357,7 +323,6 @@
 				<File RelPath="System.Web.UI\CssStyleCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataBinder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataBinding.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\DataBindingBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataBindingCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataBindingHandlerAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataBoundLiteralControl.cs" SubType="Code" BuildAction="Compile"/>
@@ -371,7 +336,6 @@
 				<File RelPath="System.Web.UI\DataSourceViewSelectCallback.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DesignerDataBoundLiteralControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DesignTimeParseData.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\DesignTimeTemplateParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\EmptyControlCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ExpressionBinding.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ExpressionBindingCollection.cs" SubType="Code" BuildAction="Compile"/>
@@ -440,11 +404,9 @@
 				<File RelPath="System.Web.UI\ObjectConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ObjectStateFormatter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ObjectTag.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\ObjectTagBuilder.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\ObjectTagBuilder.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\OutputCacheLocation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Page.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\PageHandlerFactory.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\PageParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Pair.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ParseChildrenAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\PartialCachingAttribute.cs" SubType="Code" BuildAction="Compile"/>
@@ -456,22 +418,16 @@
 				<File RelPath="System.Web.UI\PropertyConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\PropertyEntry.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\RenderMethod.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\RootBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\SimpleHandlerFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\SimplePropertyEntry.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\SimpleWebHandlerParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\StateBag.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\StateItem.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\StateManagedCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\StaticPartialCachingControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\TagPrefixAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\TemplateBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\TemplateContainerAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\TemplateContentType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\TemplateControl.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\TemplateControlParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\TemplateInstance.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\TemplateParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ThemeableAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ToolboxDataAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Triplet.cs" SubType="Code" BuildAction="Compile"/>
@@ -480,16 +436,13 @@
 				<File RelPath="System.Web.UI\UrlTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\UserControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\UserControlControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\UserControlParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Utils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ValidationPropertyAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ValidatorCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\VerificationConditionalOperator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\VerificationReportLevel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\VerificationRule.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\WebHandlerParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\WebResourceAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\WebServiceParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\XhtmlMobileDocType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\XPathBinder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.Adapters\WmlPostFieldType.cs" SubType="Code" BuildAction="Compile"/>
@@ -882,7 +835,7 @@
 				<File RelPath="System.Web.UI.WebControls\WizardStepControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\WizardStepType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Xml.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\XmlBuilder.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\XmlBuilder.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\XmlDataSource.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\XmlDataSourceNodeDescriptor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\XmlDataSourcePropertyDescriptor.cs" SubType="Code" BuildAction="Compile"/>
