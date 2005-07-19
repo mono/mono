@@ -1,3 +1,6 @@
+2005-07-19  Eyal Alaluf <eyala@mainsoft.com>
+	* Added XmlBuilder.jvm.cs for the TARGET_J2EE configuration.
+
 2005-06-27  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataControlField.cs: Ignore the ShowHeader property when
