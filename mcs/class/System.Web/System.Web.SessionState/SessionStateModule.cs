@@ -90,11 +90,16 @@ namespace System.Web.SessionState
 				if (config ==  null)
 					config = new SessionConfig (null);
 
+#if TARGET_J2EE
+				if (config.Mode == SessionStateMode.SQLServer || config.Mode == SessionStateMode.StateServer)
+					throw new NotImplementedException("You must use web.xml to specify session state handling");
+#else
 				if (config.Mode == SessionStateMode.StateServer)
 					handlerType = typeof (SessionStateServerHandler);
 
 				if (config.Mode == SessionStateMode.SQLServer)
 					handlerType = typeof (SessionSQLServerHandler);
+#endif
 				
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
