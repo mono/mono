@@ -1937,8 +1937,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (!IsIgnorable (cp) &&
 					uc == UnicodeCategory.CurrencySymbol &&
-					cp != '$' ||
-					cp == 0xAC)
+					cp != '$')
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 			// byte other symbols
@@ -1948,7 +1947,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				uc = Char.GetUnicodeCategory ((char) cp);
 				if (!IsIgnorable (cp) &&
 					uc == UnicodeCategory.OtherSymbol ||
-					cp == '\u00B5' || cp == '\u00B7')
+					cp == '\u00AC' || cp == '\u00B5' || cp == '\u00B7')
 					AddCharMapGroup ((char) cp, 0xA, 1, 0);
 			}
 			// U+30FB here
@@ -1965,7 +1964,15 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 			for (int cp = 0x20A0; cp <= 0x20AB; cp++)
 				AddCharMap ((char) cp, 0xA, 1, 0);
-			fillIndex [0xA] = 0x2F; // FIXME: it won't be needed
+
+			// 3004 is skipped at first...
+			for (int cp = 0x3010; cp <= 0x3040; cp++)
+				if (Char.IsSymbol ((char) cp))
+					AddCharMap ((char) cp, 0xA, 1, 0);
+			// SPECIAL CASES: added here
+			AddCharMap ('\u3004', 0xA, 1, 0);
+			AddCharMap ('\u327F', 0xA, 1, 0);
+
 			for (int cp = 0x2600; cp <= 0x2613; cp++)
 				AddCharMap ((char) cp, 0xA, 1, 0);
 			// Dingbats
@@ -1976,6 +1983,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0x2440; i < 0x2460; i++)
 				AddCharMap ((char) i, 0xA, 1, 0);
 
+			// SPECIAL CASES: why?
+			AddCharMap ('\u0E3F', 0xA, 1, 0);
+			AddCharMap ('\u2117', 0xA, 1, 0);
+			AddCharMap ('\u20AC', 0xA, 1, 0);
 			#endregion
 
 			#region Numbers // 0C 02 - 0C E1
@@ -3135,14 +3146,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				else
 					AddCharMap ((char) i, 1, 1);
 			}
-
-			// FIXME: this is hack but those Symbol characters
-			// are likely to fall into 0xA category.
-			for (int i = 0; i < char.MaxValue; i++)
-				if (!map [i].Defined &&
-					!IsIgnorable (i) &&
-					Char.IsSymbol ((char) i))
-					AddCharMap ((char) i, 0xA, 1);
 			#endregion
 		}
 
