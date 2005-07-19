@@ -1,3 +1,6 @@
+2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
+	* WebConfigurationSettings.cs: Grasshopper doesn't support remoting and the FileSystemWatcher
+
 2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* MembershipSection.cs: Implemented.

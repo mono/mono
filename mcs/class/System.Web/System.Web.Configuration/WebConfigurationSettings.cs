@@ -201,7 +201,9 @@ namespace System.Web.Configuration
 				data.DirName = dir;
 				data.LoadFromFile (wcfile);
 				fileToConfig [dir] = data;
+#if !TARGET_JVM // no remoting support yet in Grasshopper
 				RemotingConfiguration.Configure (wcfile);
+#endif
 			}
 
 			return data;
@@ -237,7 +239,9 @@ namespace System.Web.Configuration
                 Hashtable cacheTable;
 		string path;
 		string filename;
+#if !TARGET_JVM // no file watcher support yet in Grasshopper
 		FileSystemWatcher watcher;
+#endif
 		ConfigurationData data;
 
                 public FileWatcherCache (ConfigurationData data)
@@ -249,14 +253,17 @@ namespace System.Web.Configuration
 			if (!Directory.Exists (path))
 				return;
 
+#if !TARGET_JVM
 			watcher = new FileSystemWatcher (this.path, this.filename);
 			FileSystemEventHandler handler = new FileSystemEventHandler (SetChanged);
 			watcher.Created += handler;
 			watcher.Changed += handler;
 			watcher.Deleted += handler;
 			watcher.EnableRaisingEvents = true;
+#endif
                 }
 
+#if !TARGET_JVM
 		void SetChanged (object o, FileSystemEventArgs args)
 		{
 			lock (data) {
@@ -269,6 +276,7 @@ namespace System.Web.Configuration
 					data.LoadFromFile (args.FullPath);
 			}
 		}
+#endif
 		
 		public object this [string key] {
 			get {
@@ -284,10 +292,12 @@ namespace System.Web.Configuration
 
 		public void Close ()
 		{
+#if !TARGET_JVM
 			if (watcher != null)
 				watcher.EnableRaisingEvents = false;
+#endif
 		}
-        }
+	}
 
 	enum AllowDefinition
 	{
