@@ -932,14 +932,23 @@ sw.Close ();
 					"SOUTH WEST",
 					"LEFTWARDS",
 					"NORTH WEST",
+					"LEFT RIGHT",
+					"UP DOWN",
 					};
 				if (value == 0)
-					for (int i = 1; value == 0 && i < arrowTargets.Length; i++)
+					for (int i = 1; value == 0 && i < arrowTargets.Length; i++) {
 						if (s.IndexOf (arrowTargets [i]) > 0 &&
 							s.IndexOf ("BARB " + arrowTargets [i]) < 0 &&
 							s.IndexOf (" OVER") < 0
 						)
 							value = i;
+						else if (s.IndexOf ("RIGHTWARDS") > 0 &&
+							s.IndexOf ("LEFTWARDS") > 0)
+							value = 0xE1 - 0xD8;
+						else if (s.IndexOf ("UPWARDS") > 0 &&
+							s.IndexOf ("DOWNWARDS") > 0)
+							value = 0xE2 - 0xD8;
+					}
 				if (value > 0)
 					arrowValues.Add (new DictionaryEntry (
 						cp, value));
@@ -1884,7 +1893,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				AddCharMap ((char) cp, 0x9, 1, 0);
 
 			// arrows
-			byte [] arrowLv2 = new byte [] {0, 3, 3, 3, 3, 3, 3, 3, 3};
+			byte [] arrowLv2 = new byte [] {0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
 			foreach (DictionaryEntry de in arrowValues) {
 				int idx = (int) de.Value;
 				int cp = (int) de.Key;
@@ -2285,6 +2294,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddLetterMapCore ((char) i, 0x13, 1, 0, false);
 
 			// Devanagari
+
+			// FIXME: this could be fixed in more decent way
+			for (int i = 0x0958; i <= 0x095F; i++)
+				diacritical [i] = 8;
+
 			// FIXME: it does seem straight codepoint mapping.
 			fillIndex [0x14] = 04;
 			for (int i = 0x0901; i < 0x0905; i++)
@@ -2981,7 +2995,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 				int start = decompIndex [i];
 				int primaryChar = decompValues [start];
-				int secondary = 0;
+				int secondary = diacritical [i];
 				bool skip = false;
 				int length = decompLength [i];
 				// special processing for parenthesized ones.
