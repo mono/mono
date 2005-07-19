@@ -1,3 +1,7 @@
+2005-07-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Binding.cs: Binding to properties should be case unsensitive
+
 2005-07-18 vlindos@nucleusys.com
 
 	* DataGrid.cs: fixes setmember order

@@ -123,14 +123,14 @@ namespace System.Windows.Forms {
 			if (control == this.control)
 				return;
 
-			prop_desc = TypeDescriptor.GetProperties (control).Find (property_name, false);
-			data_type = prop_desc.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
+			prop_desc = TypeDescriptor.GetProperties (control).Find (property_name, true);			
 			
 			if (prop_desc == null)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' on target control."));
 			if (prop_desc.IsReadOnly)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' because it is read only."));
-
+				
+			data_type = prop_desc.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
 			control.Validating += new CancelEventHandler (ControlValidatingHandler);
 
 			this.control = control;
