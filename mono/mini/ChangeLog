@@ -1,5 +1,8 @@
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am tramp-sparc.c: Update the sparc port to use the generic
+	trampoline code.
+
 	* *-sparc.*: Merge the mini-xp-regalloc branch for sparc.
 
 2005-07-19  Zoltan Varga  <vargaz@freemail.hu>
