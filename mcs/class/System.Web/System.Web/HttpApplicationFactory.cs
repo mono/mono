@@ -53,8 +53,10 @@ namespace System.Web {
 		private Stack _appFreePublicList;
 		private int _appFreePublicInstances;
 
+#if !TARGET_JVM
 		FileSystemWatcher appFileWatcher;
 		FileSystemWatcher binWatcher;
+#endif
 		
 		static private int _appMaxFreePublicInstances = 32;
 
@@ -121,7 +123,9 @@ namespace System.Web {
 					throw new ApplicationException (msg);
 				}
 
+#if !TARGET_JVM
 				appFileWatcher = CreateWatcher (_appFilename, new FileSystemEventHandler (OnAppFileChanged));
+#endif
 			} else {
 				_appType = typeof (System.Web.HttpApplication);
 				_state = new HttpApplicationState ();
@@ -219,6 +223,7 @@ namespace System.Web {
 			app.Dispose ();
 		}
 
+#if !TARGET_JVM
 		FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
@@ -234,11 +239,14 @@ namespace System.Web {
 
 			return watcher;
 		}
+#endif
 
 		void OnAppFileChanged (object sender, FileSystemEventArgs args)
 		{
+#if !TARGET_JVM
 			binWatcher.EnableRaisingEvents = false;
 			appFileWatcher.EnableRaisingEvents = false;
+#endif
 			HttpRuntime.UnloadAppDomain ();
 		}
 
@@ -259,7 +267,9 @@ namespace System.Web {
 			if (Directory.Exists (binFiles))
 				binFiles = Path.Combine (binFiles, "*.*");
 
+#if !TARGET_JVM
 			binWatcher = CreateWatcher (binFiles, new FileSystemEventHandler (OnAppFileChanged));
+#endif
 
 			// Fire OnAppStart
 			HttpApplicationFactory.FireOnAppStart (app);

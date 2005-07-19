@@ -521,6 +521,7 @@ namespace System.Web
 		public abstract void SendResponseFromFile (string filename, long offset, long length);
 		public abstract void SendResponseFromMemory (byte [] data, int length);
 
+#if !TARGET_JVM
 		public virtual void SendResponseFromMemory (IntPtr data, int length)
 		{
 			if (length <= 0)
@@ -530,6 +531,7 @@ namespace System.Web
 			Marshal.Copy (data, dataBytes, 0, length);
 			SendResponseFromMemory (dataBytes, length);
 		}
+#endif
 
 		public abstract void SendStatus (int statusCode, string statusDescription);
 		public abstract void SendUnknownResponseHeader (string name, string value);

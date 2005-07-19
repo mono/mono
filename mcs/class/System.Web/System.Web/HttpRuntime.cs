@@ -117,8 +117,10 @@ namespace System.Web {
 
 				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification (OnEndOfSend);
 				_handlerCallback = new AsyncCallback (OnHandlerReady);
+#if !TARGET_JVM
 				unloadDomainCallback = new WaitCallback (DoUnload);
 				AppDomain.CurrentDomain.DomainUnload += new EventHandler (OnDomainUnload);
+#endif
 			} 
 			catch (Exception error) {
 				_initError = error;
@@ -263,12 +265,14 @@ namespace System.Web {
 			_runtime.FinishRequest (context, exception);
 		}
 
+#if !TARGET_JVM
 		void DoUnload (object state)
 		{
 			try { 
 				AppDomain.Unload (AppDomain.CurrentDomain);
 			} catch {}
 		}
+#endif
 
 		internal void Dispose() {
 			WaitForRequests (2000);
@@ -470,6 +474,9 @@ namespace System.Web {
 			}
 		}
 
+#if TARGET_JVM
+		public static bool IsOnUNCShare { get { return false; } }
+#else
 		public static bool IsOnUNCShare {
 			get {
 				// IsUnc broken under unix?
@@ -481,6 +488,7 @@ namespace System.Web {
 					new Uri ("file://" + ClrInstallDirectory).IsUnc);
 			}
 		}
+#endif
 
 		public static string MachineConfigurationDirectory {
 			get {
@@ -562,6 +570,7 @@ namespace System.Web {
 		}
 
 		#region Security Internal Methods (not impl)
+#if !TARGET_JVM
 		[MonoTODO ("Get Application path from the appdomain object")]
 		internal static IStackWalk AppPathDiscovery {
 			get {
@@ -633,6 +642,8 @@ namespace System.Web {
 		{
 			return new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path);
 		}
+#endif
+
 		#endregion
 	}
 }

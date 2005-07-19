@@ -1197,7 +1197,7 @@ namespace System.Web
 				}catch (vmw.@internal.j2ee.StopExecutionException){
 					lasterror = null;
 					_app.CompleteRequest ();
-#endif
+#else
 				} catch (ThreadAbortException obj) {
 					object o = obj.ExceptionState;
 					Type type = (o != null) ? o.GetType () : null;
@@ -1209,6 +1209,7 @@ namespace System.Web
 						Thread.ResetAbort ();
 						_app.CompleteRequest ();
 					}
+#endif
 				} catch (Exception obj) {
 #if TARGET_J2EE
 					lasterror = HandleJavaException(obj);

@@ -1042,6 +1042,7 @@ namespace System.Web
 			}
 		}
 
+#if !TARGET_J2EE
 		public void WriteFile (IntPtr fileHandle, long offset, long size)
 		{
 			FileStream fs = null;
@@ -1053,6 +1054,7 @@ namespace System.Web
 					fs.Close ();
 			}
 		}   
+#endif
 
 		[MonoTODO()]
 		internal void OnCookieAdd (HttpCookie cookie)

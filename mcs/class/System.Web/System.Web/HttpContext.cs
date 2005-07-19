@@ -65,8 +65,8 @@ namespace System.Web
 		string errorPage;
 		IPrincipal user;
 		
-#if TARGET_J2EE
-		private object LOCK = new object();
+#if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
+		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
 #endif
 
 #if NET_2_0
@@ -101,6 +101,14 @@ namespace System.Web
 			}
 		}
 
+#if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
+		[MonoTODO("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
+		internal static HttpContext Context
+		{
+			get { return (HttpContext) Thread.GetData (_ContextSlot); }
+			set { Thread.SetData (_ContextSlot, value); }
+		}
+#else
 		internal static HttpContext Context
 		{
 			get {
@@ -111,6 +119,7 @@ namespace System.Web
 				CallContext.SetData ("Context", value);
 			}
 		}
+#endif
 
 		public Exception [] AllErrors
 		{
