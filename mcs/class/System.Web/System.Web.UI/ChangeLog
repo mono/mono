@@ -1,4 +1,8 @@
 2005-07-19 Eyal Alaluf (eyala@mainsoft.com)
+	* Added TemplateControl.jvm.cs that implements Grasshopper (TARGET_J2EE)
+	  limited model of compiling ASP pages.
+
+2005-07-19 Eyal Alaluf (eyala@mainsoft.com)
 	* Added ControlBuilder.jvm.cs ObjectTagBuilder.jvm.cs as part of the TARGET_J2EE configuration.
 
 2005-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>

@@ -1,4 +1,8 @@
 2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
+	* System.Web.vmwcsproj:
+	  Replaced System.Web.UI/TemplateControl.cs with System.Web.UI/TemplateControl.jvm.cs
+
+2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
 	* System.Web.vmwcsproj: Removed files related to dynamic compilation of ASP
 	  pages. This feature is currently not supported in Grasshopper.
 
