@@ -1,3 +1,16 @@
+2005-07-19  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTable.cs - CopyConstraints (): copy constraints only if it
+	does not exist.
+
+	* DataSet.cs - Copy ():
+	- use activator.CreateInstance to create a typed dataset.
+	- copy tables if target does not exist, otherwise, just add rows.
+	- add relation only if it does not exists.
+
+	Typed datasets create the constraints & relations through
+	constructors. Fixes bug #75211.
+
 2005-07-14  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataView.cs: Patch from Marc Haisenko to throw descriptive error

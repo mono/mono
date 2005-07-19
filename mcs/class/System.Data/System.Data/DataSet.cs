@@ -387,12 +387,20 @@ namespace System.Data {
 		// Copies both the structure and data for this DataSet.
 		public DataSet Copy ()
 		{
-			DataSet Copy = new DataSet ();
+			// need to return the same type as this...
+			DataSet Copy = (DataSet) Activator.CreateInstance(GetType(), true);
+
 			CopyProperties (Copy);
 
 			// Copy DatSet's tables
-			foreach (DataTable Table in Tables) 
-				Copy.Tables.Add (Table.Copy ());
+			foreach (DataTable Table in Tables) {
+				if (! Copy.Tables.Contains (Table.TableName)) {
+					Copy.Tables.Add (Table.Copy ());
+					continue;
+				}
+				foreach (DataRow row in Table.Rows)
+					Copy.Tables [Table.TableName].ImportRow (row);
+			}
 
 			//Copy Relationships between tables after existance of tables
 			//and setting properties correctly
@@ -432,6 +440,11 @@ namespace System.Data {
 			//parameters are pre-configured and sent to the most general constructor
 
 			foreach (DataRelation MyRelation in this.Relations) {
+
+				// typed datasets create relations through ctor.
+				if (Copy.Relations.Contains (MyRelation.RelationName))
+				    continue;
+
 				string pTable = MyRelation.ParentTable.TableName;
 				string cTable = MyRelation.ChildTable.TableName;
 				DataColumn[] P_DC = new DataColumn[MyRelation.ParentColumns.Length]; 

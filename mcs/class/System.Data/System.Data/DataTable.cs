@@ -848,6 +848,10 @@ namespace System.Data {
 			{
 				if (this.Constraints[i] is UniqueConstraint)
 				{
+					// typed ds can already contain the constraints
+					if (copy.Constraints.Contains (this.Constraints [i].ConstraintName))
+						continue;
+					
 					origUc = (UniqueConstraint)this.Constraints[i];
 					DataColumn[] columns = new DataColumn[origUc.Columns.Length];
 					for (int j = 0; j < columns.Length; j++)
