@@ -176,8 +176,11 @@ namespace Mono.CSharp {
 		// Tests whether an implicit reference conversion exists between expr_type
 		// and target_type
 		//
-		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
+		static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
 		{
+			if (target_type.IsValueType)
+				return false;
+
 			Type expr_type = expr.Type;
 
 			//
@@ -627,7 +630,7 @@ namespace Mono.CSharp {
 					if (value >= SByte.MinValue && value <= SByte.MaxValue)
 						return true;
 				} else if (target_type == TypeManager.byte_type){
-					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+					if (value >= 0 && value <= Byte.MaxValue)
 						return true;
 				} else if (target_type == TypeManager.short_type){
 					if (value >= Int16.MinValue && value <= Int16.MaxValue)
@@ -1304,7 +1307,7 @@ namespace Mono.CSharp {
 			if (source is Constant){
 				Constant c = (Constant) source;
 
-				Expression.Error_ConstantValueCannotBeConverted (loc, c.AsString (), target_type);
+				c.Error_ConstantValueCannotBeConverted (loc, target_type);
 				return null;
 			}
 			
@@ -1878,8 +1881,7 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (expr is NullLiteral){
-				Report.Error (37, loc, "Cannot convert null to `{0}' because it is a value type",
-					      TypeManager.CSharpName (target_type));
+				((NullLiteral)expr).Error_ConstantValueCannotBeConverted (loc, target_type);
 				return null;
 			}
 

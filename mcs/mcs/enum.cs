@@ -309,13 +309,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		void Error_ConstantValueCannotBeConverted (object val, Location loc)
-		{
-			Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-				val is Constant ? ((Constant) val).AsString () : val,
-				TypeManager.CSharpName (UnderlyingType));
-		}
-
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
@@ -514,7 +507,7 @@ namespace Mono.CSharp {
 				default_value = c.GetValue ();
 
 				if (default_value == null) {
-					Error_ConstantValueCannotBeConverted (c, loc);
+					c.Error_ConstantValueCannotBeConverted (loc, UnderlyingType);
 					return null;
 				}
 
@@ -535,7 +528,7 @@ namespace Mono.CSharp {
 			bool fail;
 			default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
 			if (fail){
-				Error_ConstantValueCannotBeConverted (c, loc);
+				c.Error_ConstantValueCannotBeConverted (loc, UnderlyingType);
 				return null;
 			}
 
@@ -592,8 +585,8 @@ namespace Mono.CSharp {
 					bool fail;
 					default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
 					if (fail){
-						Error_ConstantValueCannotBeConverted (default_value, loc);
-						return false;
+						//TODO: really interested if can be reached
+						throw new NotImplementedException ();
 					}
 
 					fb.SetConstant (default_value);
