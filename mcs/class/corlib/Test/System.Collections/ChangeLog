@@ -1,3 +1,10 @@
+2005-07-19  Ben Maurer  <bmaurer@ximian.com>
+
+	* ArrayListTest.cs: The patch below was not committed with the
+	same text as the patch on the bug. There was an s/1/3. Doing the
+	patch as specified on the bug makes buildbot work and the test
+	work on msft
+
 2005-07-17  Florian Gross  <flgr@ccan.de>
 
 	* ArrayListTest.cs: Test for #75545.

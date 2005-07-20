@@ -924,12 +924,12 @@ public class ArrayListTest : Assertion {
 			for (int i = 0; i < 3; i++) {
 				char c = (char) obj_chars[i];
 				AssertEquals("range.ToArray didn't work",
-					     chars[i+1], c);
+					     chars [i + 3], c);
 			}
 			char[] new_chars = (char[]) b.ToArray (typeof (char));
 			for (int i = 0; i < 3; i++) {
 				AssertEquals("range.ToArray with type didn't work",
-					     chars[i+1], new_chars[i]);
+					     chars [i + 3], new_chars [i]);
 			}
 
 		}
