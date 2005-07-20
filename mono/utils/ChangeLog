@@ -1,3 +1,8 @@
+2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Use the nice way of
+	getting the tls offsets on amd64 too.
+
 2005-07-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-compiler.h: Add TLS offset detection for ia64.
