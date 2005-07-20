@@ -1,3 +1,9 @@
+
+Wed Jul 20 18:05:19 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c, mini-arm.c, tramp-arm.c, cpu-arm.md,
+	inssel-arm.brg,	mini-arm.h: ARM port work in progress.
+
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix build.
