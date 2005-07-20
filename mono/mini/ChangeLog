@@ -1,3 +1,8 @@
+2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_setup_jit_tls_data): Use the nice way of
+	getting TLS offsets on AMD64 too.
+
 2005-07-20  Kornél Pál <kornelpal@hotmail.com>
 
 	* driver.c: Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32
