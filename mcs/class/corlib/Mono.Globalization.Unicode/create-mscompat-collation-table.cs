@@ -1871,6 +1871,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int i = 0x30FC; i <= 0x30FE; i++)
 				map [i] = new CharMapEntry (0xFF, 0xFF, 1);
 
+			fillIndex [0x1] = 0xA;
+			for (int i = 0x0951; i <= 0x0954; i++)
+				AddCharMap ((char) i, 0x1, 2);
+
 			#endregion
 
 
@@ -2924,6 +2928,12 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			#region 07 - ASCII non-alphanumeric + 3001, 3002 // 07
 			// non-alphanumeric ASCII except for: + - < = > '
 			for (int i = 0x21; i < 0x7F; i++) {
+				// SPECIAL CASE: 02C6 looks regarded as 
+				// equivalent to '^', which does not conform 
+				// to Unicode standard character database.
+				if (i == 0x5E)
+					AddCharMap ('\u02C6', 0x7, 0, 3);
+
 				if (Char.IsLetterOrDigit ((char) i)
 					|| "+-<=>'".IndexOf ((char) i) >= 0)
 					continue; // they are not added here.
@@ -2973,6 +2983,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					// SPECIAL CASES: // 0xA
 					if (0x2020 <= i && i <= 0x2031)
 						continue;
+					if (i == 0x3003) // added later
+						continue;
 					AddCharMapGroup ((char) i, 0x7, 1, 0);
 					break;
 				default:
@@ -2985,8 +2997,19 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// FIXME: it should not need to reset level 1, but
 			// it's for easy goal.
 			fillIndex [0x7] = 0xB6;
-			for (int i = 0x2400; i <= 0x2421; i++)
+			for (int i = 0x2400; i <= 0x2424; i++)
 				AddCharMap ((char) i, 0x7, 1, 0);
+
+			// FIXME: what are they?
+			AddCharMap ('\u3003', 0x7, 1);
+			AddCharMap ('\u3006', 0x7, 1);
+			AddCharMap ('\u02D0', 0x7, 1);
+			AddCharMap ('\u10FB', 0x7, 1);
+			AddCharMap ('\u0950', 0x7, 1);
+			AddCharMap ('\u093D', 0x7, 1);
+			AddCharMap ('\u0964', 0x7, 1);
+			AddCharMap ('\u0965', 0x7, 1);
+			AddCharMap ('\u0970', 0x7, 1);
 
 			// Actually 3008-301F and FE33-FE5D are mixed, so
 			// it's somewhat countable, but not as a whole. Thus
@@ -3426,11 +3449,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			for (int c2 = 0; c2 < char.MaxValue; c2++) {
 				if (decompLength [c2] == 1 &&
 					(int) (decompValues [decompIndex [c2]]) == (int) c) {
-					switch (decompType [c2]) {
-					case DecompositionCompat:
+//					switch (decompType [c2]) {
+//					case DecompositionCompat:
 						AddCharMap ((char) c2, category, updateCount, level2);
-						break;
-					}
+//						break;
+//					}
 				}
 			}
 

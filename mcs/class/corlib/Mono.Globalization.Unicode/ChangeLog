@@ -1,5 +1,10 @@
 2005-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : minor mapping fixes on accent 
+	  marks and punctuations.
+
+2005-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Fixed some MathSymbol mapping
 	  and Box drawing mapping.
 
