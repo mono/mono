@@ -1,5 +1,8 @@
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c mini-*.h tramp-*.c: Move more cross platform trampoline code
+	to mini.c.
+
 	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Call 
 	mono_sparc_is_virtual_call ().
 	
