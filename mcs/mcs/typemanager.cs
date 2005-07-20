@@ -221,24 +221,6 @@ public class TypeManager {
 	// </remarks>
 	static Module [] modules;
 
-	// <remarks>
-	//   This is the type_cache from the assemblies to avoid
-	//   hitting System.Reflection on every lookup.
-	// </summary>
-	static Hashtable types;
-
-	// <remarks>
-	//  This is used to hotld the corresponding TypeContainer objects
-	//  since we need this in FindMembers
-	// </remarks>
-	static Hashtable typecontainers;
-
-	// <remarks>
-	//   Keeps track of those types that are defined by the
-	//   user's program
-	// </remarks>
-	static ArrayList user_types;
-
 	static PtrHashtable builder_to_declspace;
 
 	static PtrHashtable builder_to_member_cache;
@@ -296,9 +278,6 @@ public class TypeManager {
 		// Lets get everything clean so that we can collect before generating code
 		assemblies = null;
 		modules = null;
-		types = null;
-		typecontainers = null;
-		user_types = null;
 		builder_to_declspace = null;
 		builder_to_member_cache = null;
 		builder_to_ifaces = null;
@@ -401,10 +380,6 @@ public class TypeManager {
 	{
 		assemblies = new Assembly [0];
 		modules = null;
-		user_types = new ArrayList ();
-		
-		types = new Hashtable ();
-		typecontainers = new Hashtable ();
 		
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_member_cache = new PtrHashtable ();
@@ -423,44 +398,9 @@ public class TypeManager {
 		type_hash = new DoubleHash ();
 	}
 
-	public static void HandleDuplicate (string name, Type t)
+	public static void AddUserType (string name, DeclSpace ds)
 	{
-		Type prev = (Type) types [name];
-		TypeContainer tc = builder_to_declspace [prev] as TypeContainer;
-		
-		if (tc != null){
-			//
-			// This probably never happens, as we catch this before
-			//
-			Report.Error (-17, "The type `" + name + "' has already been defined.");
-			return;
-		}
-		
-		tc = builder_to_declspace [t] as TypeContainer;
-		if (tc != null){
-			Report.Warning (
-					1595, "The type `" + name + "' is defined in an existing assembly;"+
-					" Using the new definition from: " + tc.Location);
-		} else {
-			Report.Warning (
-					1595, "The type `" + name + "' is defined in an existing assembly;");
-		}
-		
-		Report.Warning (1595, "Previously defined in: " + prev.Assembly.FullName);
-		
-		types.Remove (name);
-		types.Add (name, t);
-	}
-	
-	public static void AddUserType (string name, TypeBuilder t)
-	{
-		try {
-			types.Add (name, t);
-		} catch {
-			HandleDuplicate (name, t); 
-		}
-
-		user_types.Add (t);
+		builder_to_declspace.Add (ds.TypeBuilder, ds);
 	}
 
 	//
@@ -470,35 +410,7 @@ public class TypeManager {
 	{
 		if (ifaces != null)
 			builder_to_ifaces [tb] = ifaces;
-	}
-	
-	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc)
-	{
-		builder_to_declspace.Add (t, tc);
-		typecontainers.Add (name, tc);
-		AddUserType (name, t);
-	}
-
-	public static void AddDelegateType (string name, TypeBuilder t, Delegate del)
-	{
-		try {
-			types.Add (name, t);
-		} catch {
-			HandleDuplicate (name, t);
-		}
-		
-		builder_to_declspace.Add (t, del);
-	}
-	
-	public static void AddEnumType (string name, TypeBuilder t, Enum en)
-	{
-		try {
-			types.Add (name, t);
-		} catch {
-			HandleDuplicate (name, t);
-		}
-		builder_to_declspace.Add (t, en);
-	}
+	}	
 
 	public static void AddMethod (MethodBase builder, IMethodData method)
 	{
@@ -666,8 +578,8 @@ public class TypeManager {
 	{
 		object ret = null;
 		if (!type_hash.Lookup (t, name, out ret)) {
-			string lookup = t.ToString () + "+" + name;
-			ret = t.Module.GetType (lookup);
+			ret = t.GetNestedType (name,
+			       BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 			type_hash.Insert (t, name, ret);
 		}
 		return (Type) ret;
@@ -903,18 +815,13 @@ public class TypeManager {
 	///   Looks up a type, and aborts if it is not found.  This is used
 	///   by types required by the compiler
 	/// </summary>
-	static Type CoreLookupType (string name)
+	static Type CoreLookupType (string ns_name, string name)
 	{
-		Type t = null;
-		if (types.Contains (name))
-			t = (Type) types [name];
-		else
-			t = LookupTypeReflection (name);
-
+		Namespace ns = Namespace.LookupNamespace (ns_name, true);
+		FullNamedExpression fne = ns.Lookup (RootContext.Tree.Types, name, Location.Null);
+		Type t = fne == null ? null : fne.Type;
 		if (t == null)
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-
-		types [name] = t;
 		return t;
 	}
 
@@ -1014,14 +921,14 @@ public class TypeManager {
 	public static void InitEnumUnderlyingTypes ()
 	{
 
-		int32_type    = CoreLookupType ("System.Int32");
-		int64_type    = CoreLookupType ("System.Int64");
-		uint32_type   = CoreLookupType ("System.UInt32"); 
-		uint64_type   = CoreLookupType ("System.UInt64"); 
-		byte_type     = CoreLookupType ("System.Byte");
-		sbyte_type    = CoreLookupType ("System.SByte");
-		short_type    = CoreLookupType ("System.Int16");
-		ushort_type   = CoreLookupType ("System.UInt16");
+		int32_type    = CoreLookupType ("System", "Int32");
+		int64_type    = CoreLookupType ("System", "Int64");
+		uint32_type   = CoreLookupType ("System", "UInt32"); 
+		uint64_type   = CoreLookupType ("System", "UInt64"); 
+		byte_type     = CoreLookupType ("System", "Byte");
+		sbyte_type    = CoreLookupType ("System", "SByte");
+		short_type    = CoreLookupType ("System", "Int16");
+		ushort_type   = CoreLookupType ("System", "UInt16");
 	}
 	
 	/// <remarks>
@@ -1031,85 +938,85 @@ public class TypeManager {
 	/// </remarks>
 	public static void InitCoreTypes ()
 	{
-		object_type   = CoreLookupType ("System.Object");
-		value_type    = CoreLookupType ("System.ValueType");
+		object_type   = CoreLookupType ("System", "Object");
+		value_type    = CoreLookupType ("System", "ValueType");
 
 		InitEnumUnderlyingTypes ();
 
-		char_type     = CoreLookupType ("System.Char");
-		string_type   = CoreLookupType ("System.String");
-		float_type    = CoreLookupType ("System.Single");
-		double_type   = CoreLookupType ("System.Double");
+		char_type     = CoreLookupType ("System", "Char");
+		string_type   = CoreLookupType ("System", "String");
+		float_type    = CoreLookupType ("System", "Single");
+		double_type   = CoreLookupType ("System", "Double");
 		char_ptr_type = GetPointerType (char_type);
-		decimal_type  = CoreLookupType ("System.Decimal");
-		bool_type     = CoreLookupType ("System.Boolean");
-		enum_type     = CoreLookupType ("System.Enum");
+		decimal_type  = CoreLookupType ("System", "Decimal");
+		bool_type     = CoreLookupType ("System", "Boolean");
+		enum_type     = CoreLookupType ("System", "Enum");
 
-		multicast_delegate_type = CoreLookupType ("System.MulticastDelegate");
-		delegate_type           = CoreLookupType ("System.Delegate");
+		multicast_delegate_type = CoreLookupType ("System", "MulticastDelegate");
+		delegate_type           = CoreLookupType ("System", "Delegate");
 
-		array_type    = CoreLookupType ("System.Array");
-		void_type     = CoreLookupType ("System.Void");
-		type_type     = CoreLookupType ("System.Type");
+		array_type    = CoreLookupType ("System", "Array");
+		void_type     = CoreLookupType ("System", "Void");
+		type_type     = CoreLookupType ("System", "Type");
 
-		runtime_field_handle_type = CoreLookupType ("System.RuntimeFieldHandle");
-		runtime_argument_handle_type = CoreLookupType ("System.RuntimeArgumentHandle");
-		runtime_helpers_type = CoreLookupType ("System.Runtime.CompilerServices.RuntimeHelpers");
-		default_member_type  = CoreLookupType ("System.Reflection.DefaultMemberAttribute");
-		runtime_handle_type  = CoreLookupType ("System.RuntimeTypeHandle");
-		asynccallback_type   = CoreLookupType ("System.AsyncCallback");
-		iasyncresult_type    = CoreLookupType ("System.IAsyncResult");
-		ienumerator_type     = CoreLookupType ("System.Collections.IEnumerator");
-		ienumerable_type     = CoreLookupType ("System.Collections.IEnumerable");
-		idisposable_type     = CoreLookupType ("System.IDisposable");
-		icloneable_type      = CoreLookupType ("System.ICloneable");
-		iconvertible_type    = CoreLookupType ("System.IConvertible");
-		monitor_type         = CoreLookupType ("System.Threading.Monitor");
-		intptr_type          = CoreLookupType ("System.IntPtr");
+		runtime_field_handle_type = CoreLookupType ("System", "RuntimeFieldHandle");
+		runtime_argument_handle_type = CoreLookupType ("System", "RuntimeArgumentHandle");
+		runtime_helpers_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeHelpers");
+		default_member_type  = CoreLookupType ("System.Reflection", "DefaultMemberAttribute");
+		runtime_handle_type  = CoreLookupType ("System", "RuntimeTypeHandle");
+		asynccallback_type   = CoreLookupType ("System", "AsyncCallback");
+		iasyncresult_type    = CoreLookupType ("System", "IAsyncResult");
+		ienumerator_type     = CoreLookupType ("System.Collections", "IEnumerator");
+		ienumerable_type     = CoreLookupType ("System.Collections", "IEnumerable");
+		idisposable_type     = CoreLookupType ("System", "IDisposable");
+		icloneable_type      = CoreLookupType ("System", "ICloneable");
+		iconvertible_type    = CoreLookupType ("System", "IConvertible");
+		monitor_type         = CoreLookupType ("System.Threading", "Monitor");
+		intptr_type          = CoreLookupType ("System", "IntPtr");
 
-		attribute_type       = CoreLookupType ("System.Attribute");
-		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
-		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
-		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
-		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
-		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
-		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
-		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices.OutAttribute");
-		typed_reference_type = CoreLookupType ("System.TypedReference");
-		arg_iterator_type    = CoreLookupType ("System.ArgIterator");
-		mbr_type             = CoreLookupType ("System.MarshalByRefObject");
-		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices.DecimalConstantAttribute");
+		attribute_type       = CoreLookupType ("System", "Attribute");
+		attribute_usage_type = CoreLookupType ("System", "AttributeUsageAttribute");
+		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices", "DllImportAttribute");
+		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "MethodImplAttribute");
+		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices", "MarshalAsAttribute");
+		param_array_type     = CoreLookupType ("System", "ParamArrayAttribute");
+		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices", "InAttribute");
+		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute");
+		typed_reference_type = CoreLookupType ("System", "TypedReference");
+		arg_iterator_type    = CoreLookupType ("System", "ArgIterator");
+		mbr_type             = CoreLookupType ("System", "MarshalByRefObject");
+		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices", "DecimalConstantAttribute");
 
-		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
+		unverifiable_code_type= CoreLookupType ("System.Security", "UnverifiableCodeAttribute");
 
 		void_ptr_type         = GetPointerType (void_type);
 
-		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
+		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices", "IndexerNameAttribute");
 
-		exception_type        = CoreLookupType ("System.Exception");
-		invalid_operation_exception_type = CoreLookupType ("System.InvalidOperationException");
-		not_supported_exception_type = CoreLookupType ("System.NotSupportedException");
+		exception_type        = CoreLookupType ("System", "Exception");
+		invalid_operation_exception_type = CoreLookupType ("System", "InvalidOperationException");
+		not_supported_exception_type = CoreLookupType ("System", "NotSupportedException");
 
 		//
 		// Attribute types
 		//
-		obsolete_attribute_type = CoreLookupType ("System.ObsoleteAttribute");
-		conditional_attribute_type = CoreLookupType ("System.Diagnostics.ConditionalAttribute");
-		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
-		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
-		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
-		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
-		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices.RequiredAttributeAttribute");
-		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
-		assembly_culture_attribute_type = CoreLookupType ("System.Reflection.AssemblyCultureAttribute");
+		obsolete_attribute_type = CoreLookupType ("System", "ObsoleteAttribute");
+		conditional_attribute_type = CoreLookupType ("System.Diagnostics", "ConditionalAttribute");
+		cls_compliant_attribute_type = CoreLookupType ("System", "CLSCompliantAttribute");
+		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "StructLayoutAttribute");
+		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "FieldOffsetAttribute");
+		security_attr_type = CoreLookupType ("System.Security.Permissions", "SecurityAttribute");
+		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute");
+		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
+		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
 
 		//
 		// .NET 2.0
 		//
 #if NET_2_0
-		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
-		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices.FixedBufferAttribute");
-		default_charset_type = CoreLookupType ("System.Runtime.InteropServices.DefaultCharSetAttribute");
+		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute");
+		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute");
+		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
 #endif
 		//
 		// When compiling corlib, store the "real" types here.
@@ -1689,21 +1596,6 @@ public class TypeManager {
 	public static bool HasElementType (Type t)
 	{
 		return t.IsArray || t.IsPointer || t.IsByRef;
-	}
-
-	/// <summary>
-	///   Returns the User Defined Types
-	/// </summary>
-	public static ArrayList UserTypes {
-		get {
-			return user_types;
-		}
-	}
-
-	public static Hashtable TypeContainers {
-		get {
-			return typecontainers;
-		}
 	}
 
 	static Hashtable builder_to_constant;
@@ -2622,31 +2514,12 @@ public class TypeManager {
 		Type current_type = queried_type;
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool skip_iface_check = true, used_cache = false;
-		bool always_ok_flag = false;
+		bool always_ok_flag = invocation_type != null && IsNestedChildOf (invocation_type, queried_type);
 
 		closure.invocation_type = invocation_type;
 		closure.invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
 		closure.qualifier_type = qualifier_type;
 		closure.almost_match = almost_match;
-
-		//
-		// If we are a nested class, we always have access to our container
-		// type names
-		//
-		if (invocation_type != null){
-			string invocation_name = invocation_type.FullName;
-			if (invocation_name.IndexOf ('+') != -1){
-				string container = queried_type.FullName + "+";
-				int container_length = container.Length;
-
-				if (invocation_name.Length > container_length){
-					string shared = invocation_name.Substring (0, container_length);
-				
-					if (shared == container)
-						always_ok_flag = true;
-				}
-			}
-		}
 		
 		// This is from the first time we find a method
 		// in most cases, we do not actually find a method in the base class

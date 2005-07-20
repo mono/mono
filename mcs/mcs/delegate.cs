@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 					name, TypeAttr, TypeManager.multicast_delegate_type);
 			}
 
-			TypeManager.AddDelegateType (Name, TypeBuilder, this);
+			TypeManager.AddUserType (Name, this);
 
 			return TypeBuilder;
 		}
