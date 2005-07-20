@@ -1,4 +1,8 @@
 
+2005-07-19  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * NpgsqlTypes/NpgsqlTypeConverters.cs:  Gborg 1370. Fixed problems with Money type when using a culture which doesn't use dot as decimal separator. Also fixed problem where only Decimal types (i.e.: 7.4M) could be used as Money type values. Now Float values can be used too.
+	
 2005-07-08  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * Npgsql/NpgsqlCommand.cs: Npgsql now can handle functions which return refcursor and setof refcursor. Now, results are returned as NpgsqlDataReader resultsets. There is no need to explicitly call "fetch all ..."
