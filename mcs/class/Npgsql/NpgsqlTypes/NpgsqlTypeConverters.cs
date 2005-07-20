@@ -181,6 +181,7 @@ namespace NpgsqlTypes
             // It's a number with a $ on the beginning...
             return Convert.ToDecimal(BackendData.Substring(1, BackendData.Length - 1), CultureInfo.InvariantCulture);
         }
+        
     }
 
     /// <summary>
@@ -247,8 +248,10 @@ namespace NpgsqlTypes
         /// </summary>
         internal static String ToMoney(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
         {
-            return "$" + ((Decimal)NativeData).ToString(DateTimeFormatInfo.InvariantInfo);
+            return "$" + ((IFormattable)NativeData).ToString(null, CultureInfo.InvariantCulture.NumberFormat);
         }
+        
+        
     }
 
 
@@ -273,7 +276,11 @@ namespace NpgsqlTypes
             
             Match m = pointRegex.Match(BackendData);
             
-            return new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(m.Groups[2].ToString()));
+            return new NpgsqlPoint(
+                    Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(m.Groups[2].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat));
             
             
             
@@ -287,8 +294,17 @@ namespace NpgsqlTypes
             
             Match m = boxlsegRegex.Match(BackendData);
             
-            return new NpgsqlBox(new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(m.Groups[2].ToString())),
-            						new NpgsqlPoint(Single.Parse(m.Groups[3].ToString()), Single.Parse(m.Groups[4].ToString())));
+            return new NpgsqlBox(
+                    new NpgsqlPoint(
+                    Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(m.Groups[2].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat)),
+                    new NpgsqlPoint(
+                    Single.Parse(m.Groups[3].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(m.Groups[4].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat)));
         }
 
         /// <summary>
@@ -298,8 +314,17 @@ namespace NpgsqlTypes
         {
             Match m = boxlsegRegex.Match(BackendData);
             
-            return new NpgsqlLSeg(new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(m.Groups[2].ToString())),
-            						new NpgsqlPoint(Single.Parse(m.Groups[3].ToString()), Single.Parse(m.Groups[4].ToString())));
+            return new NpgsqlLSeg(
+                    new NpgsqlPoint(
+                    Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(m.Groups[2].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat)),
+                    new NpgsqlPoint(
+                    Single.Parse(m.Groups[3].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(m.Groups[4].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat)));
         }
 
         /// <summary>
@@ -316,7 +341,11 @@ namespace NpgsqlTypes
         	{
         		
         		if (open)
-        			points.Add(new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(m.Groups[2].ToString())));
+                    points.Add(new NpgsqlPoint(
+                        Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                                     CultureInfo.InvariantCulture.NumberFormat),
+                        Single.Parse(m.Groups[2].ToString(), NumberStyles.Any,
+                                     CultureInfo.InvariantCulture.NumberFormat)));
         		else
         		{
         			// Here we have to do a little hack, because as of 2004-08-11 mono cvs version, the last group is returned with
@@ -329,7 +358,11 @@ namespace NpgsqlTypes
         			if (group2.EndsWith(")"))
         				group2 = group2.Remove(group2.Length - 1, 1);
         				
-        			points.Add(new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(group2)));
+        			points.Add(new NpgsqlPoint(
+                    Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                                CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(group2, NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat)));
         		}
         			
         		m = m.NextMatch();
@@ -365,7 +398,11 @@ namespace NpgsqlTypes
 	   			if (group2.EndsWith(")"))
 	   				group2 = group2.Remove(group2.Length - 1, 1);
 	   				
-	   			points.Add(new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(group2)));
+                points.Add(new NpgsqlPoint(
+                Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                            CultureInfo.InvariantCulture.NumberFormat), 
+                Single.Parse(group2, NumberStyles.Any,
+                             CultureInfo.InvariantCulture.NumberFormat)));
 
 	        			
 	       		m = m.NextMatch();
@@ -382,7 +419,14 @@ namespace NpgsqlTypes
         internal static Object ToCircle(NpgsqlBackendTypeInfo TypeInfo, String BackendData, Int16 TypeSize, Int32 TypeModifier)
         {
         	Match m = circleRegex.Match(BackendData);
-            return new NpgsqlCircle(new NpgsqlPoint(Single.Parse(m.Groups[1].ToString()), Single.Parse(m.Groups[2].ToString())), Single.Parse(m.Groups[3].ToString()));
+            return new NpgsqlCircle(
+                    new NpgsqlPoint(
+                    Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat),
+                    Single.Parse(m.Groups[2].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat)),
+                    Single.Parse(m.Groups[3].ToString(), NumberStyles.Any,
+                                 CultureInfo.InvariantCulture.NumberFormat));
             
         }
     }
