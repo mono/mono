@@ -1,5 +1,9 @@
 2005-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : fixed Arabic thirtial weight.
+
+2005-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Mapping for hyphens and 
 	  punctuation are kinda finished. Rewrote batch mapping method to
 	  collect all NFKD. Required modification on mapping is done.

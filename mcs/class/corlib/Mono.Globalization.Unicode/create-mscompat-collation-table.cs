@@ -3192,6 +3192,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				else
 					AddCharMap ((char) i, 1, 1);
 			}
+
 			#endregion
 		}
 
@@ -3577,6 +3578,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// Arabic
 			if ('\u2135' <= c && c <= '\u2138')
 				return 4;
+			byte [] arabicTmp = new byte [] {0x18, 0, 0x8, 0x10};
+			if ('\uFEB5' <= c && c < '\uFEED' ||
+				'\uFEF1' <= c && c < '\uFEF5')
+				return arabicTmp [c % 4];
 			if ('\uFE80' <= c && c < '\uFF00') {
 				// 2(Isolated)/8(Final)/0x18(Medial)
 				switch (decompType [(int) c]) {
