@@ -1,5 +1,7 @@
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix build.
+
 	* mini.h mini.c mini-*.h tramp-*.c: Move more cross platform trampoline code
 	to mini.c.
 
