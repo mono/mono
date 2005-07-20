@@ -1,3 +1,8 @@
+
+Wed Jul 20 18:01:54 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* arm/*: more codegen macros.
+
 2005-07-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ia64/ia64-codegen.h (ia64_is_adds_imm): Ongoing IA64 work.
