@@ -1,3 +1,6 @@
+2005-07-20 Aldo Monteiro <aldo@psl-pr.softwarelivre.org>, Renato Suga <renato@psl-pr.softwarelivre.org>
+	* Modified the test DecimalLiteralTestA.vb (to differentiate error numbers)
+
 2005-05-02  Ritvik Mayank  <mritvik@novell.com>
             Patch submitted by Sudharsan V <vsudharsan@novell.com>
 		Following Tests were modified     

@@ -10,16 +10,16 @@ Module DecimalLiteral
 			Throw New Exception ("#A1-DecimalLiteralA:Failed") 
 		End If
 		If b<>1.23E+10D Then
-			Throw New Exception ("#A1-DecimalLiteralA:Failed")
+			Throw New Exception ("#A2-DecimalLiteralA:Failed")
 		End If
 		If c<>9.2233720368547808E+18D Then
-			Throw New Exception ("#A1-DecimalLiteralA:Failed") 
+			Throw New Exception ("#A3-DecimalLiteralA:Failed") 
 		End If
 		If d<>0.23D Then
-			Throw New Exception ("#A1-DecimalLiteralA:Failed") 
+			Throw New Exception ("#A4-DecimalLiteralA:Failed") 
 		End If
 		If f<>0 Then
-			Throw New Exception ("#A1-DecimalLiteralA:Failed") 
+			Throw New Exception ("#A5-DecimalLiteralA:Failed") 
 		End If             
 	End Sub
 End Module
