@@ -1,3 +1,8 @@
+2005-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs : Fixed some MathSymbol mapping
+	  and Box drawing mapping.
+
 2005-07-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : Fixed almost all numbers.

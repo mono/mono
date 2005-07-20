@@ -1914,6 +1914,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 			// boxes
 			byte [] boxLv2 = new byte [128];
+			// 0-63 will be used for those offsets are positive,
+			// and 64-127 are for negative ones.
 			for (int i = 0; i < boxLv2.Length; i++)
 				boxLv2 [i] = 3;
 			foreach (DictionaryEntry de in boxValues) {
@@ -1923,7 +1925,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					continue;
 				if (off < 0) {
 					fillIndex [0x9] = (byte) (0xE5 + off);
-					AddCharMapGroup ((char) cp, 0x9, 0, boxLv2 [-off]++);
+					AddCharMapGroup ((char) cp, 0x9, 0, boxLv2 [128 + off]++);
 				}
 				else {
 					fillIndex [0x9] = (byte) (0xE5 + off);
@@ -3059,6 +3061,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				}
 				if (cp == 0x2295)
 					fillIndex [0x8] = 0x3;
+				if (cp == 0x22A2)
+					fillIndex [0x8] = 0xAB;
 				if (cp == 0x22B2)
 					fillIndex [0x8] = 0xB9;
 				if (!map [cp].Defined &&
