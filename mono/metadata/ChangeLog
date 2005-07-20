@@ -1,3 +1,7 @@
+2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.h image.c: Add mono_image_get_guid () API function.
+
 2005-07-19  Ben Maurer  <bmaurer@ximian.com>
 
 	There were issues when multiple threads tried to load
