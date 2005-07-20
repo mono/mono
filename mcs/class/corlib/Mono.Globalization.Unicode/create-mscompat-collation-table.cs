@@ -1592,12 +1592,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 		void ModifyUnidata ()
 		{
 			// Modify some decomposition equivalence
-			decompType [0xFE31] = 0;
-			decompIndex [0xFE31] = 0;
-			decompLength [0xFE31] = 0;
-			decompType [0xFE32] = 0;
-			decompIndex [0xFE32] = 0;
-			decompLength [0xFE32] = 0;
+			for (int i = 0xFE31; i <= 0xFE34; i++) {
+				decompType [i] = 0;
+				decompIndex [i] = 0;
+				decompLength [i] = 0;
+			}
+			decompType [0x037E] = 0;
+			decompIndex [0x037E] = 0;
+			decompLength [0x037E] = 0;
 
 			// Hangzhou numbers
 			for (int i = 0x3021; i <= 0x3029; i++)
@@ -1897,6 +1899,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// while they aren't.
 			AddCharMap ('\u2422', 0x7, 1, 0); // blank symbol
 			AddCharMap ('\u2423', 0x7, 1, 0); // open box
+
 			#endregion
 
 			// category 09 - continued symbols from 08
@@ -2931,13 +2934,20 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				// SPECIAL CASE: 02C6 looks regarded as 
 				// equivalent to '^', which does not conform 
 				// to Unicode standard character database.
-				if (i == 0x5E)
+				if (i == 0x005B)
+					AddCharMap ('\u2045', 0x7, 0, 0x1C);
+				if (i == 0x005D)
+					AddCharMap ('\u2046', 0x7, 0, 0x1C);
+				if (i == 0x005E)
 					AddCharMap ('\u02C6', 0x7, 0, 3);
+				if (i == 0x0060)
+					AddCharMap ('\u02CB', 0x7, 0, 3);
 
 				if (Char.IsLetterOrDigit ((char) i)
 					|| "+-<=>'".IndexOf ((char) i) >= 0)
 					continue; // they are not added here.
-					AddCharMapGroup2 ((char) i, 0x7, 1, 0);
+
+				AddCharMapGroup2 ((char) i, 0x7, 1, 0);
 				// Insert 3001 after ',' and 3002 after '.'
 				if (i == 0x2C)
 					AddCharMapGroup2 ('\u3001', 0x7, 1, 0);
@@ -2955,10 +2965,27 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 				// FIXME: actually those reset should not be 
 				// done but here I put for easy goal.
+				if (i == 0x05C3)
+					fillIndex [0x7]++;
 				if (i == 0x0700)
 					fillIndex [0x7] = 0xE2;
 				if (i == 0x2016)
 					fillIndex [0x7] = 0x77;
+				if (i == 0x3008)
+					fillIndex [0x7] = 0x93;
+
+				if (0x02C8 <= i && i <= 0x02CD)
+					continue; // nonspacing marks
+
+				// SPECIAL CASE: maybe they could be allocated
+				// dummy NFKD mapping and no special processing
+				// would be required here.
+				if (i == 0x00AF)
+					AddCharMap ('\u02C9', 0x7, 0, 3);
+				if (i == 0x00B4)
+					AddCharMap ('\u02CA', 0x7, 0, 3);
+				if (i == 0x02C7)
+					AddCharMap ('\u02D8', 0x7, 0, 3);
 
 				// SPECIAL CASES:
 				switch (i) {
@@ -2985,14 +3012,15 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 						continue;
 					if (i == 0x3003) // added later
 						continue;
-					AddCharMapGroup ((char) i, 0x7, 1, 0);
+					AddCharMapGroup2 ((char) i, 0x7, 1, 0);
 					break;
 				default:
-					if (i == 0xA6 || i == 0x1C3) // SPECIAL CASE. FIXME: why?
+					if (i == 0xA6 || i == 0x1C3 || i == 0x037A) // SPECIAL CASE. FIXME: why?
 						goto case UnicodeCategory.OtherPunctuation;
 					break;
 				}
 			}
+
 			// Control pictures
 			// FIXME: it should not need to reset level 1, but
 			// it's for easy goal.
@@ -3010,50 +3038,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			AddCharMap ('\u0964', 0x7, 1);
 			AddCharMap ('\u0965', 0x7, 1);
 			AddCharMap ('\u0970', 0x7, 1);
-
-			// Actually 3008-301F and FE33-FE5D are mixed, so
-			// it's somewhat countable, but not as a whole. Thus
-			// manual remapping is quicker.
-			fillIndex [0x7] = 0x8D;
-			int [] cjkCompatMarks1 = new int [] {
-				0xFE33, 0xFE49, 0xFE4A, 0xFE4B, 0xFE4C};
-			int [] cjkCompatMarks2 = new int [] {
-				0xFE34, 0xFE3F, 0xFE40, 0xFE3D, 0xFE3E, 0xFE41,
-				0xFE42, 0xFE43, 0xFE44, 0xFE3B, 0xFE3C/*FE5D*/,
-				0xFE39/*FE5E*/, 0xFE3A};
-			for (int i = 0; i < cjkCompatMarks1.Length; i++)
-				map [cjkCompatMarks1 [i]] = new CharMapEntry (
-					0x7, fillIndex [0x7]++, 0);
-			for (int i = 0; i < cjkCompatMarks2.Length; i++) {
-				map [cjkCompatMarks2 [i]] = new CharMapEntry (
-					0x7, fillIndex [0x7], 0);
-				fillIndex [0x7] += 2;
-				switch (cjkCompatMarks2 [i]) {
-				case 0xFE3C:
-					map [0xFE5D] = new CharMapEntry (
-						0x7, fillIndex [0x7]++, 0);
-					break;
-				case 0xFE39:
-					map [0xFE5D] = new CharMapEntry (
-						0x7, fillIndex [0x7]++, 0);
-					break;
-				}
-			}
-
-			fillIndex [0x7] = 0x93;
-			for (int i = 0x3008; i <= 0x3011; i++) {
-				map [i] = new CharMapEntry (0x7,
-					fillIndex [0x7], 0);
-				fillIndex [0x7] += 2;
-			}
-			fillIndex [0x7] += 3;
-			map [0x3014] = new CharMapEntry (0x7, fillIndex [0x7], 0);
-			fillIndex [0x7] += 3;
-			map [0x3015] = new CharMapEntry (0x7, fillIndex [0x7], 0);
-			fillIndex [0x7] += 2;
-			for (int i = 0x3016; i < 0x301F; i++)
-				map [i] = new CharMapEntry (0x7,
-					fillIndex [0x7]++, 0);
 
 			#endregion
 
@@ -3423,23 +3407,44 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 		// For now it is only for 0x7 category.
 		private void AddCharMapGroup2 (char c, byte category, byte updateCount, byte level2)
 		{
-			char small = char.MinValue;
-			char vertical = char.MinValue;
-			Hashtable nfkd = (Hashtable) nfkdMap [(int) c];
-			if (nfkd != null) {
-				object smv = nfkd [(byte) DecompositionSmall];
-				if (smv != null)
-					small = (char) ((int) smv);
-				object vv = nfkd [(byte) DecompositionVertical];
-				if (vv != null)
-					vertical = (char) ((int) vv);
-			}
+			if (map [(int) c].Defined)
+				return;
 
-			// <small> updates index
-			if (small != char.MinValue)
-				// SPECIAL CASE excluded (FIXME: why?)
-				if (small != '\u2024')
-					AddCharMap (small, category, updateCount);
+			bool updateWeight = false;
+			// Process in advance (lower primary weight)
+			for (int c2 = 0; c2 < char.MaxValue; c2++) {
+				if (!map [c2].Defined &&
+					decompLength [c2] == 1 &&
+					(int) (decompValues [decompIndex [c2]]) == (int) c) {
+					switch (decompType [c2]) {
+					case DecompositionSmall:
+						updateWeight = true;
+						AddCharMap ((char) c2, category,
+							0, level2);
+						break;
+					}
+				}
+			}
+			if (updateWeight)
+				fillIndex [category] = (byte)
+					(fillIndex [category] + updateCount);
+
+			// Identical weight
+			for (int c2 = 0; c2 < char.MaxValue; c2++) {
+				if (!map [c2].Defined &&
+					decompLength [c2] == 1 &&
+					(int) (decompValues [decompIndex [c2]]) == (int) c) {
+					switch (decompType [c2]) {
+					case DecompositionSub:
+					case DecompositionSuper:
+					case DecompositionWide:
+					case DecompositionNarrow:
+						AddCharMap ((char) c2, category,
+							0, level2);
+						break;
+					}
+				}
+			}
 
 			// itself
 			AddCharMap (c, category, updateCount, level2);
@@ -3447,20 +3452,22 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// Since nfkdMap is problematic to have two or more
 			// NFKD to an identical character, here I iterate all.
 			for (int c2 = 0; c2 < char.MaxValue; c2++) {
-				if (decompLength [c2] == 1 &&
+				if (!map [c2].Defined &&
+					decompLength [c2] == 1 &&
 					(int) (decompValues [decompIndex [c2]]) == (int) c) {
-//					switch (decompType [c2]) {
-//					case DecompositionCompat:
+					switch (decompType [c2]) {
+					case DecompositionWide:
+					case DecompositionNarrow:
+					case DecompositionSmall:
+					case DecompositionSub:
+					case DecompositionSuper:
+						continue;
+					default:
 						AddCharMap ((char) c2, category, updateCount, level2);
-//						break;
-//					}
+						break;
+					}
 				}
 			}
-
-			if (vertical != char.MinValue)
-				// SPECIAL CASE excluded (FIXME: why?)
-				if (vertical != '\uFE33' && vertical != '\uFE34')
-					AddCharMap (vertical, category, updateCount, level2);
 		}
 
 		private void AddArabicCharMap (char c)
@@ -3604,10 +3611,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			case '\u03C2':
 			case '\u2104':
 			case '\u212B':
-				ret |= 8;
+				ret = 8;
 				break;
 			case '\uFE42':
-				ret |= 0xC;
+				ret = 0xA;
 				break;
 			}
 
