@@ -1195,7 +1195,7 @@ namespace Mono.CSharp {
 		public readonly ToplevelBlock Toplevel;
 
 		[Flags]
-		public enum Flags {
+		public enum Flags : ushort {
 			Implicit  = 1,
 			Unchecked = 2,
 			BlockUsed = 4,
@@ -1203,9 +1203,10 @@ namespace Mono.CSharp {
 			HasRet = 16,
 			IsDestructor = 32,
 			IsToplevel = 64,
-			Unsafe = 128
+			Unsafe = 128,
+			HasVarargs = 256 // Used in ToplevelBlock
 		}
-		Flags flags;
+		protected Flags flags;
 
 		public bool Implicit {
 			get { return (flags & Flags.Implicit) != 0; }
@@ -2027,7 +2028,10 @@ namespace Mono.CSharp {
 		Hashtable capture_contexts;
 		ArrayList children;
 
-		public bool HasVarargs = false;
+		public bool HasVarargs {
+			get { return (flags & Flags.HasVarargs) != 0; }
+			set { flags |= Flags.HasVarargs; }
+		}
 
 		//
 		// The parameters for the block.

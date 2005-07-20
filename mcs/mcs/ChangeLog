@@ -1,5 +1,9 @@
 2005-07-20  Raja R Harinath  <rharinath@novell.com>
 
+	* statement.cs (Block.Flags): Add back HasVarargs.
+	(Block.flags): Make protected.
+	(ToplevelBlock.HasVarargs): Convert to a property that updates flags.
+
 	* typemanager.cs (types, typecontainers, user_types): Remove.
 	(UserTypes, TypeContainers): Likewise.
 	(HandleDuplicate, AddDelegateType, AddEnumType): Likewise.
