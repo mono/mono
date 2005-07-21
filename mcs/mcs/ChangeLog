@@ -1,5 +1,10 @@
 2005-07-21  Raja R Harinath  <rharinath@novell.com>
 
+	* namespace.cs (NamespaceLookupType): Avoid a string allocation when we
+	already found a typebuilder.
+	* class.cs (MethodCore.IsDuplicateImplementation): Compare
+	MemberNames, not strings.
+
 	* const.cs (Error_ExpressionMustBeConst): 
 	Rename from Error_EpressionMustBeConst.
 	* const.cs, class.cs, statement.cd: Update.

@@ -66,6 +66,9 @@ namespace Mono.CSharp {
 			else
 				fullname = parent.Name + "." + name;
 
+			if (fullname == null)
+				throw new InternalErrorException ("Namespace has a null fullname");
+
 			if (parent != null && parent.MemberName != MemberName.Null)
 				MemberName = new MemberName (parent.MemberName, name);
 			else if (name == "")
@@ -155,7 +158,7 @@ namespace Mono.CSharp {
 				tdecl.DefineType ();
 				t = tdecl.TypeBuilder;
 			}
-			string lookup = this == Namespace.Root ? name : fullname + "." + name;
+			string lookup = t != null ? t.FullName : (fullname == "" ? name : fullname + "." + name);
 			Type rt = TypeManager.LookupTypeReflection (lookup);
 			if (t == null)
 				t = rt;
