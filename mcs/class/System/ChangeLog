@@ -1,3 +1,8 @@
+2005-07-21 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeGeneratorFromTypeTestBase.cs
+	and CodeGeneratorTestBase.cs from System.CodeDom.Compiler.
+
 2005-06-28 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeTypeReferenceTest.cs from

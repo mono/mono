@@ -1,3 +1,10 @@
+2005-07-21  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Inherit from
+	System.CodeDom.CodeGeneratorFromTypeTestBase. Added testfixture
+	for testing enum, interface and delegate, but for now these are
+	marked NotWorking.
+
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added test for 

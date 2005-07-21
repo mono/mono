@@ -1,3 +1,9 @@
+2005-07-21  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTestBase.cs: Base class for unit tests for
+	CodeGenerator.GenerateCodeFromType.
+	* CodeGeneratorTestBase.cs: Base class for CodeGenerator unit tests.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IndentedTextWriterTest.cs: added test for IndentedTextWriter
