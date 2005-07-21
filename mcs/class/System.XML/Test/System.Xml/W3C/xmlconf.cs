@@ -31,6 +31,7 @@ namespace MonoTests.W3C_xmlconf {
 					if (s.Length > 0)
 						array.Add (s);
 				}
+				reader.Close();
 			}
 		}
 		#endregion
@@ -164,8 +165,9 @@ namespace MonoTests.W3C_xmlconf {
 
 		bool TestNonValidating (string uri)
 		{
+			XmlTextReader trd = null;
 			try {
-				XmlTextReader trd = new XmlTextReader (uri);
+				trd = new XmlTextReader (uri);
 				new XmlDocument ().Load (trd);
 				return true;
 			}
@@ -173,12 +175,17 @@ namespace MonoTests.W3C_xmlconf {
 				_stackTrace = e.StackTrace;
 				return false;
 			}
+			finally {
+				if (trd != null)
+					trd.Close();
+			}
 		}
 
 		bool TestValidating (string uri)
 		{
+			XmlTextReader rd = null;
 			try {
-				XmlTextReader rd = new XmlTextReader (uri);
+				rd = new XmlTextReader (uri);
 				XmlValidatingReader vrd = new XmlValidatingReader (rd);
 				new XmlDocument ().Load (vrd);
 				return true;
@@ -186,6 +193,10 @@ namespace MonoTests.W3C_xmlconf {
 			catch (Exception e) {
 				_stackTrace = e.StackTrace; //rewrites existing, possibly, but it's ok
 				return false;
+			}
+			finally {
+				if (rd != null) 
+					rd.Close();				
 			}
 		}
 
