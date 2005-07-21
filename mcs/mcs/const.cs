@@ -223,8 +223,7 @@ namespace Mono.CSharp {
 			in_transit = false;
 
 			if (Expr == null) {
-				if (errors == Report.Errors)
-					Report.Error (150, Location, "A constant value is expected");
+				Error_EpressionMustBeConstant (Location, GetSignatureForError ());
 				value = null;
 				return false;
 			}
@@ -311,6 +310,12 @@ namespace Mono.CSharp {
 			LookupConstantValue (out value);
 			base.Emit ();
 		}
+
+		public static void Error_EpressionMustBeConstant (Location loc, string e_name)
+		{
+			Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
+		}
+
 	}
 }
 

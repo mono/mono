@@ -1726,8 +1726,7 @@ namespace Mono.CSharp {
 
 					Constant ce = e as Constant;
 					if (ce == null){
-						Report.Error (133, vi.Location,
-							      "The expression being assigned to `{0}' must be constant", name);
+						Const.Error_EpressionMustBeConstant (vi.Location, name);
 						continue;
 					}
 
