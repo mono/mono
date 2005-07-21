@@ -455,6 +455,9 @@ public sealed class TypeDescriptor
 
 	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
+		if (component == null)
+			throw new ArgumentNullException ("component");
+
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
 			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
 		else {
