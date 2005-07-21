@@ -1,5 +1,9 @@
 2005-07-21  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* CodeGeneratorTest.cs: Added unit tests for CodeGenerator.IsCurrent*.
+
+2005-07-21  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* CodeGeneratorFromTypeTestBase.cs: Base class for unit tests for
 	CodeGenerator.GenerateCodeFromType.
 	* CodeGeneratorTestBase.cs: Base class for CodeGenerator unit tests.

@@ -18,6 +18,7 @@ System.CodeDom/CodeMemberFieldTest.cs
 System.CodeDom/CodeMemberPropertyTest.cs
 System.CodeDom/CodeTypeReferenceTest.cs
 System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
+System.CodeDom.Compiler/CodeGeneratorTest.cs
 System.CodeDom.Compiler/CodeGeneratorTestBase.cs
 System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.Collections.Generic/QueueTest.cs

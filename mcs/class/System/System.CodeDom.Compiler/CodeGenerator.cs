@@ -92,7 +92,7 @@ namespace System.CodeDom.Compiler {
 			get {
 				if (currentType == null)
 					return false;
-				return currentType.IsClass;
+				return currentType.IsClass && !(currentType is CodeTypeDelegate);
 			}
 		}
 
@@ -1064,20 +1064,15 @@ namespace System.CodeDom.Compiler {
 
 		private void GenerateDelegate (CodeTypeDelegate type)
 		{
-			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
 
 			GenerateTypeStart (type);
-
 			OutputParameters (type.Parameters);
-
 			GenerateTypeEnd (type);
-			this.currentType = prevType;
 		}
 		
 		private void GenerateNonDelegateType (CodeTypeDeclaration type)
 		{
-			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
 
 			GenerateTypeStart (type);
@@ -1120,6 +1115,7 @@ namespace System.CodeDom.Compiler {
 				subtype = member as CodeTypeDeclaration;
 				if (subtype != null) {
 					GenerateType (subtype);
+					this.currentType = type;
 					continue;
 				}
 
@@ -1194,9 +1190,8 @@ namespace System.CodeDom.Compiler {
 					GenerateDirectives (currentMember.EndDirectives);
 #endif
 			}
-				
+			this.currentType = type;
 			GenerateTypeEnd (type);
-			this.currentType = prevType;
 		}
 
 		protected abstract string GetTypeOutput (CodeTypeReference type);
