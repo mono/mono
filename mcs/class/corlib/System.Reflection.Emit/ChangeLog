@@ -1,3 +1,8 @@
+2005-07-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs (BeginFaultBlock): Call InternalEndClause () here
+	too. Reported by Jeroen Frijters.
+
 2005-07-11  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.CreateType): Call

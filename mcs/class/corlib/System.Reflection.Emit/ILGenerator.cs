@@ -383,6 +383,7 @@ namespace System.Reflection.Emit {
 		{
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
+			InternalEndClause ();
 			//System.Console.WriteLine ("Begin fault Block");
 			ex_handlers [cur_block].AddFault (code_len);
 		}
