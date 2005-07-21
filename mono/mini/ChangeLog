@@ -1,3 +1,7 @@
+2005-07-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (load_patch_info): Fix handling of stfld_remote wrapper.
+
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_setup_jit_tls_data): Use the nice way of
