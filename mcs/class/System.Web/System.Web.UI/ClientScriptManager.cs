@@ -126,8 +126,14 @@ namespace System.Web.UI
 			
 			return string.Format ("WebForm_DoCallback ('{0}', {1}, {2}, {3}, {4})", control.UniqueID, argument, clientCallback, context, clientErrorCallback);
 		}
+#endif
 		
-		public string GetWebResourceUrl(Type type, string resourceName)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		string GetWebResourceUrl(Type type, string resourceName)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
@@ -138,7 +144,6 @@ namespace System.Web.UI
 			return System.Web.Handlers.AssemblyResourceLoader.GetResourceUrl (type, resourceName); 
 		}
 		
-#endif
 
 		public bool IsClientScriptBlockRegistered (string key)
 		{

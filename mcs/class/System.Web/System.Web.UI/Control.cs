@@ -33,6 +33,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// This will provide extra information when trace is enabled. Might be too verbose.
+#define MONO_TRACE
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -115,7 +118,7 @@ namespace System.Web.UI
 		{
 			defaultNameArray = new string [100];
 			for (int i = 0 ; i < 100 ; i++)
-				defaultNameArray [i] = "_ctrl" + i;
+				defaultNameArray [i] = "_ctl" + i;
 		}
 
                 public Control()
@@ -418,7 +421,7 @@ namespace System.Web.UI
 		{
 			string defaultName;
 			if (defaultNumberID > 99) {
-				defaultName = "_ctrl" + defaultNumberID++;
+				defaultName = "_ctl" + defaultNumberID++;
 			} else {
 				defaultName = defaultNameArray [defaultNumberID++];
 			}
@@ -448,7 +451,7 @@ namespace System.Web.UI
 			if (nc != null) {
 				control._namingContainer = nc;
 				if (control.AutoID == true && control._userId == null)
-					control._userId =  nc.GetDefaultName () + "a";
+					control._userId =  nc.GetDefaultName ();
 			}
 
 			if ((stateMask & (INITING | INITED)) != 0)
@@ -476,12 +479,8 @@ namespace System.Web.UI
 
                 protected virtual void AddParsedSubObject(object obj) //DIT
                 {
-			WebTrace.PushContext ("Control.AddParsedSubobject ()");
                         Control c = obj as Control;
-			WebTrace.WriteLine ("Start: {0} -> {1}", obj, (c != null) ? c.ID : String.Empty);
                         if (c != null) Controls.Add(c);
-			WebTrace.WriteLine ("End");
-			WebTrace.PopContext ();
                 }
 
                 protected void BuildProfileTree(string parentId, bool calcViewState)
@@ -601,6 +600,14 @@ namespace System.Web.UI
 
                 protected virtual bool OnBubbleEvent(object source, EventArgs args) //DIT
                 {
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("OnBubbleEvent {0} {1}", _userId, type_name));
+			}
+#endif
                         return false;
                 }
 
@@ -608,7 +615,17 @@ namespace System.Web.UI
                 {
 			if ((event_mask & databinding_mask) != 0) {
                                 EventHandler eh = (EventHandler)(_events [DataBindingEvent]);
-                                if (eh != null) eh (this, e);
+                                if (eh != null) {
+#if MONO_TRACE
+					TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+					string type_name = null;
+					if (trace != null) {
+						type_name = GetType ().Name;
+						trace.Write ("control", String.Format ("OnDataBinding {0} {1}", _userId, type_name));
+					}
+#endif
+					eh (this, e);
+				}
                         }
                 }
 
@@ -616,7 +633,17 @@ namespace System.Web.UI
                 {
 			if ((event_mask & init_mask) != 0) {
                                 EventHandler eh = (EventHandler)(_events [InitEvent]);
-                                if (eh != null) eh (this, e);
+                                if (eh != null) {
+#if MONO_TRACE
+					TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+					string type_name = null;
+					if (trace != null) {
+						type_name = GetType ().Name;
+						trace.Write ("control", String.Format ("OnInit {0} {1}", _userId, type_name));
+					}
+#endif
+					eh (this, e);
+				}
                         }
                 }
 
@@ -624,7 +651,17 @@ namespace System.Web.UI
                 {
 			if ((event_mask & load_mask) != 0) {
                                 EventHandler eh = (EventHandler)(_events [LoadEvent]);
-                                if (eh != null) eh (this, e);
+                                if (eh != null) {
+#if MONO_TRACE
+					TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+					string type_name = null;
+					if (trace != null) {
+						type_name = GetType ().Name;
+						trace.Write ("control", String.Format ("OnLoad {0} {1}", _userId, type_name));
+					}
+#endif
+					eh (this, e);
+				}
                         }
                 }
 
@@ -632,7 +669,17 @@ namespace System.Web.UI
                 {
 			if ((event_mask & prerender_mask) != 0) {
                                 EventHandler eh = (EventHandler)(_events [PreRenderEvent]);
-                                if (eh != null) eh (this, e);
+                                if (eh != null) {
+#if MONO_TRACE
+					TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+					string type_name = null;
+					if (trace != null) {
+						type_name = GetType ().Name;
+						trace.Write ("control", String.Format ("OnPreRender {0} {1}", _userId, type_name));
+					}
+#endif
+					eh (this, e);
+				}
                         }
                 }
 
@@ -640,7 +687,17 @@ namespace System.Web.UI
                 {
 			if ((event_mask & unload_mask) != 0) {
                                 EventHandler eh = (EventHandler)(_events [UnloadEvent]);
-                                if (eh != null) eh (this, e);
+                                if (eh != null) {
+#if MONO_TRACE
+					TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+					string type_name = null;
+					if (trace != null) {
+						type_name = GetType ().Name;
+						trace.Write ("control", String.Format ("OnUnload {0} {1}", _userId, type_name));
+					}
+#endif
+					eh (this, e);
+				}
                         }
                 }
 
@@ -648,8 +705,25 @@ namespace System.Web.UI
                 {
 			Control c = Parent;
 			while (c != null) {
-				if (c.OnBubbleEvent (source, args))
+#if MONO_TRACE
+				TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+				string type_name = null;
+				if (trace != null) {
+					type_name = GetType ().Name;
+					trace.Write ("control", String.Format ("RaiseBubbleEvent {0} {1}", _userId, type_name));
+				}
+#endif
+				if (c.OnBubbleEvent (source, args)) {
+#if MONO_TRACE
+					if (trace != null)
+						trace.Write ("control", String.Format ("End RaiseBubbleEvent (false) {0} {1}", _userId, type_name));
+#endif
 					break;
+				}
+#if MONO_TRACE
+				if (trace != null)
+					trace.Write ("control", String.Format ("End RaiseBubbleEvent (true) {0} {1}", _userId, type_name));
+#endif
 				c = c.Parent;
 			}
                 }
@@ -828,6 +902,14 @@ namespace System.Web.UI
 
                 internal void LoadRecursive()
                 {
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("LoadRecursive {0} {1}", _userId, type_name));
+			}
+#endif
                         OnLoad (EventArgs.Empty);
                         if (HasControls ()) {
 				int len = Controls.Count;
@@ -837,11 +919,24 @@ namespace System.Web.UI
 					c.LoadRecursive ();
 				}
 			}
+
+#if MONO_TRACE
+			if (trace != null)
+				trace.Write ("control", String.Format ("End LoadRecursive {0} {1}", _userId, type_name));
+#endif
 			stateMask |= LOADED;
                 }
 
                 internal void UnloadRecursive(Boolean dispose)
                 {
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("UnloadRecursive {0} {1}", _userId, type_name));
+			}
+#endif
 			if (HasControls ()) {
 				int len = Controls.Count;
 				for (int i=0;i<len;i++)
@@ -851,6 +946,10 @@ namespace System.Web.UI
 				}
 			}
 
+#if MONO_TRACE
+			if (trace != null)
+				trace.Write ("control", String.Format ("End UnloadRecursive {0} {1}", _userId, type_name));
+#endif
                         OnUnload (EventArgs.Empty);
                         if (dispose)
 				Dispose();
@@ -860,6 +959,14 @@ namespace System.Web.UI
                 {
 			if ((stateMask & VISIBLE) != 0) {
 				EnsureChildControls ();
+#if MONO_TRACE
+				TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+				string type_name = null;
+				if (trace != null) {
+					type_name = GetType ().Name;
+					trace.Write ("control", String.Format ("PreRenderRecursive {0} {1}", _userId, type_name));
+				}
+#endif
 				OnPreRender (EventArgs.Empty);
 				if (!HasControls ())
 					return;
@@ -870,12 +977,25 @@ namespace System.Web.UI
 					Control c = Controls[i];
 					c.PreRenderRecursiveInternal ();
 				}
+#if MONO_TRACE
+				if (trace != null)
+					trace.Write ("control", String.Format ("End PreRenderRecursive {0} {1}", _userId, type_name));
+#endif
 			}
 			stateMask |= PRERENDERED;
                 }
 
                 internal void InitRecursive(Control namingContainer)
                 {
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("InitRecursive {0} {1}", _userId, type_name));
+			}
+#endif
+
                         if (HasControls ()) {
 				if ((stateMask & IS_NAMING_CONTAINER) != 0)
 					namingContainer = this;
@@ -899,6 +1019,10 @@ namespace System.Web.UI
 
 			stateMask |= INITING;
                         OnInit (EventArgs.Empty);
+#if MONO_TRACE
+			if (trace != null)
+				trace.Write ("control", String.Format ("End InitRecursive {0} {1}", _userId, type_name));
+#endif
 			TrackViewState ();
 			stateMask |= INITED;
 			stateMask &= ~INITING;
@@ -908,6 +1032,15 @@ namespace System.Web.UI
                 {
 			if (!EnableViewState)
 				return null;
+
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("SaveViewStateRecursive {0} {1}", _userId, type_name));
+			}
+#endif
 
 			ArrayList controlList = null;
 			ArrayList controlStates = null;
@@ -936,9 +1069,22 @@ namespace System.Web.UI
 			}
 
 			object thisState = SaveViewState ();
-			if (thisState == null && controlList == null && controlStates == null)
+			if (thisState == null && controlList == null && controlStates == null) {
+#if MONO_TRACE
+				if (trace != null) {
+					trace.Write ("control", String.Format ("End SaveViewStateRecursive {0} {1} saved nothing", _userId, type_name));
+					trace.SaveViewState (this, null);
+				}
+#endif
 				return null;
+			}
 
+#if MONO_TRACE
+			if (trace != null) {
+				trace.Write ("control", String.Format ("End SaveViewStateRecursive {0} {1} saved a Triplet", _userId, type_name));
+				trace.SaveViewState (this, thisState);
+			}
+#endif
 			return new Triplet (thisState, controlList, controlStates);
                 }
                 
@@ -947,6 +1093,14 @@ namespace System.Web.UI
 			if (!EnableViewState || savedState == null)
 				return;
 
+#if MONO_TRACE
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			string type_name = null;
+			if (trace != null) {
+				type_name = GetType ().Name;
+				trace.Write ("control", String.Format ("LoadViewStateRecursive {0} {1}", _userId, type_name));
+			}
+#endif
 			Triplet savedInfo = (Triplet) savedState;
 			LoadViewState (savedInfo.First);
 
@@ -968,32 +1122,13 @@ namespace System.Web.UI
 				}
 			}
 
+#if MONO_TRACE
+			if (trace != null)
+				trace.Write ("control", String.Format ("End LoadViewStateRecursive {0} {1}", _userId, type_name));
+#endif
 			stateMask |= VIEWSTATE_LOADED;
                 }
                 
-                void IParserAccessor.AddParsedSubObject(object obj)
-                {
-                	AddParsedSubObject(obj);
-                }
-                
-                DataBindingCollection IDataBindingsAccessor.DataBindings
-                {
-                	get
-                	{
-                		if(dataBindings == null)
-                			dataBindings = new DataBindingCollection();
-                		return dataBindings;
-                	}
-                }
-                
-                bool IDataBindingsAccessor.HasDataBindings
-                {
-                	get
-                	{
-                		return (dataBindings!=null && dataBindings.Count>0);
-                	}
-                }
- 
 		internal bool AutoID
 		{
 			get { return (stateMask & AUTOID) != 0; }
@@ -1017,6 +1152,7 @@ namespace System.Web.UI
 			control._page = null;
 			control._namingContainer = null;
 		}
+
 
 #if NET_2_0
 
@@ -1122,5 +1258,26 @@ namespace System.Web.UI
 		
 		
 #endif
+		void IParserAccessor.AddParsedSubObject (object obj) {
+			this.AddParsedSubObject (obj);
+		}
+
+		DataBindingCollection IDataBindingsAccessor.DataBindings {
+			get {
+				if (dataBindings == null) {
+					dataBindings = new DataBindingCollection ();
+				}
+				return dataBindings;
+			}
+		}
+
+		bool IDataBindingsAccessor.HasDataBindings {
+			get {
+				if (dataBindings != null && dataBindings.Count > 0) {
+					return true;
+				}
+				return false;
+			}
+		}
         }
 }
