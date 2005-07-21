@@ -1,5 +1,11 @@
 2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : There were still missing
+	  math symbol mappings. Added several hacky diacritical weight for
+	  Latin characters.
+
+2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : fixed a few diacritical weight
 	  on Cyrillic characters. Fixed ParseTailoringSource() to handle
 	  non-heading escape sequence (\uXXXX) as expected.

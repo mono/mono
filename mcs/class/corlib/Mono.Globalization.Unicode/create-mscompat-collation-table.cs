@@ -866,10 +866,10 @@ sw.Close ();
 					target = 'B';
 				else if (s.Substring (offset).StartsWith ("OPEN O"))
 					target = 'C';
+				else if (s.Substring (offset).StartsWith ("ETH"))
+					target = 'D';
 				else if (s.Substring (offset).StartsWith ("SCHWA"))
 					target = 'E';
-				else if (s.Substring (offset).StartsWith ("ENG"))
-					target = 'N';
 				else if (s.Substring (offset).StartsWith ("OI;")) // 01A2,01A3
 					target = 'O';
 				else if (s.Substring (offset).StartsWith ("YR;")) // 01A2,01A3
@@ -882,6 +882,9 @@ sw.Close ();
 				// For remaining IPA chars, direct mapping is
 				// much faster.
 				switch (cp) {
+				case 0x0166: case 0x0167:
+					// Though they are 'T', they have different weight
+					target = char.MinValue; break;
 				case 0x0299: target = 'B'; break;
 				case 0x029A: target = 'E'; break;
 				case 0x029B: target = 'G'; break;
@@ -1642,6 +1645,28 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 		void ModifyParsedValues ()
 		{
+			// Sometimes STROKE don't work fine
+			diacritical [0xD8] = diacritical [0xF8] = 0x21;
+			diacritical [0x141] = diacritical [0x142] = 0x1F;
+			// FIXME: why?
+			diacritical [0xAA] = diacritical [0xBA] = 3;
+			diacritical [0xD0] = diacritical [0xF0] = 0x68;
+			diacritical [0x131] = 3;
+			diacritical [0x138] = 3;
+			// TOPBAR does not work as an identifier for the weight
+			diacritical [0x182] = diacritical [0x183] = 0x68; // B
+			diacritical [0x18B] = diacritical [0x18C] = 0x1E; // D
+			// TONE SIX
+			diacritical [0x184] = diacritical [0x185] = 0x87;
+			// OPEN E
+			diacritical [0x190] = diacritical [0x25B] = 0x7B;
+			// There are many letters w/ diacritical weight 0x7B
+			diacritical [0x0192] = diacritical [0x0194] =
+			diacritical [0x0195] = diacritical [0x0196] =
+			diacritical [0x019C] = diacritical [0x019E] =
+			diacritical [0x01A6] = diacritical [0x01B1] =
+			diacritical [0x01B2] = diacritical [0x01BF] = 0x7B;
+
 			// some cyrillic diacritical weight. They seem to be
 			// based on old character names, so it's quicker to
 			// set them directly here.
@@ -3060,10 +3085,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			AddCharMapGroup ('\u229D', 0x8, 1, 0); // minus
 			AddCharMapGroup ('\u2297', 0x8, 1, 0); // mul
 			AddCharMapGroup ('\u2044', 0x8, 1, 0); // div
-			AddCharMapGroup ('\u2215', 0x8, 1, 0); // div
-			AddCharMapGroup ('\u2217', 0x8, 1, 0); // mul
-			AddCharMapGroup ('\u2218', 0x8, 1, 0); // ring
-			AddCharMapGroup ('\u2219', 0x8, 1, 0); // bullet
+			AddCharMapGroup ('\u2215', 0x8, 0, 0); // div
+			AddCharMapGroup ('\u2298', 0x8, 1, 0); // div slash
+			AddCharMapGroup ('\u2217', 0x8, 0, 0); // mul
+			AddCharMapGroup ('\u229B', 0x8, 1, 0); // asterisk oper
+			AddCharMapGroup ('\u2218', 0x8, 0, 0); // ring
+			AddCharMapGroup ('\u229A', 0x8, 1, 0); // ring
+			AddCharMapGroup ('\u2219', 0x8, 0, 0); // bullet
+			AddCharMapGroup ('\u2299', 0x8, 1, 0); // dot oper
 			AddCharMapGroup ('\u2213', 0x8, 1, 0); // minus-or-plus
 			AddCharMapGroup ('\u003C', 0x8, 1, 0); // <
 			AddCharMapGroup ('\u227A', 0x8, 1, 0); // precedes relation
