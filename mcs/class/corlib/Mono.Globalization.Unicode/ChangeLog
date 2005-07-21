@@ -1,5 +1,10 @@
 2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : Fixed most of Greek mappings.
+	* MSCompatUnicodeTable.cs : don't lock string.
+
+2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : More Cyrillic diacritical fixes.
 
 2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>

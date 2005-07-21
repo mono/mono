@@ -233,7 +233,7 @@ namespace Mono.Globalization.Unicode
 		static ushort [] cjkJA;
 		static ushort [] cjkKO;
 		static byte [] cjkKOlv2;
-		static string forLock = "forLock";
+		static object forLock = new object ();
 
 		public static readonly bool IsReady = false;
 

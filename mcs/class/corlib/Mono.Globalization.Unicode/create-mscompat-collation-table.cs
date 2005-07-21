@@ -872,6 +872,8 @@ sw.Close ();
 					target = 'S';
 				else if (s.Substring (offset).StartsWith ("ESH"))
 					target = 'S';
+				else if (s.Substring (offset).StartsWith ("OUNCE"))
+					target = 'Z';
 
 				// For remaining IPA chars, direct mapping is
 				// much faster.
@@ -1674,6 +1676,18 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// ... as well as 0x7C
 			diacritical [0x01A2] = diacritical [0x01A3] = 0x7C;
 
+			// <font> NFKD characters seem to have diacritical
+			// weight as 3,4,5... but the order does not look
+			// by codepoint and I have no idea how they are sorted.
+			diacritical [0x210E] = 3;
+			diacritical [0x210F] = 0x68;
+			diacritical [0x2110] = 4;
+			diacritical [0x2111] = 5;
+			diacritical [0x2112] = 4;
+			diacritical [0x2113] = 4;
+			diacritical [0x211B] = 4;
+			diacritical [0x211C] = 5;
+
 			// some cyrillic diacritical weight. They seem to be
 			// based on old character names, so it's quicker to
 			// set them directly here.
@@ -2250,18 +2264,26 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 
 			// Greek and Coptic
-			fillIndex [0xF] = 02;
-			for (int i = 0x0380; i < 0x0390; i++)
-				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0xF, 1);
-			fillIndex [0xF] = 02;
-			for (int i = 0x0391; i < 0x03CF; i++)
-				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0xF, 1);
+			fillIndex [0xF] = 2;
+			for (int i = 0x0391; i < 0x03AA; i++)
+				if (i != 0x03A2)
+					AddCharMap ((char) i, 0xF, 1);
+			fillIndex [0xF] = 2;
+			for (int i = 0x03B1; i < 0x03CA; i++)
+				if (i != 0x03C2)
+					AddCharMap ((char) i, 0xF, 1);
+			// Final Sigma
+			map [0x03C2] = new CharMapEntry (0xF,
+				map [0x03C3].Level1, map [0x03C3].Level2);
+
 			fillIndex [0xF] = 0x40;
-			for (int i = 0x03D0; i < 0x0400; i++)
-				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0xF, 1);
+			for (int i = 0x03DA; i < 0x03F0; i++)
+				AddCharMap ((char) i, 0xF,
+					(byte) (i % 2 == 0 ? 0 : 2));
+
+			// NFKD
+			for (int i = 0x0386; i <= 0x0400; i++)
+				FillLetterNFKD (i);
 
 			// Cyrillic.
 			// Cyrillic letters are sorted like Latin letters i.e. 
@@ -3252,6 +3274,50 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			#endregion
 		}
 
+		TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
+
+		private void FillLetterNFKD (int i)
+		{
+			if (map [i].Defined)
+				return;
+			int up = (int) ti.ToUpper ((char) i);
+			if (map [up].Category == 0xF) {
+				if (i == up)
+					return;
+				FillLetterNFKD (up);
+				map [i] = new CharMapEntry (0xF,
+					map [up].Level1,
+					map [up].Level2);
+			} else {
+				int idx = decompIndex [i];
+				if (idx == 0)
+					return;
+				int primary = decompValues [decompIndex [i]];
+				FillLetterNFKD (primary);
+				if (map [primary].Category == 0xF) {
+					int lv2 = map [primary].Level2;
+					byte off = 0;
+					for (int l = 1; l < decompLength [i]; l++) {
+						int tmp = decompValues [idx + l];
+						if (map [tmp].Category != 1)
+							return;
+						if (map [tmp].Level2 == 0xC)
+							off = 5;
+						else if (map [tmp].Level2 == 0x11)
+							off = 0x13;
+						if (off > 0) {
+							if (lv2 > 0)
+								lv2 -= 2;
+							lv2 += off;
+						}
+					}
+					map [i] = new CharMapEntry (0xF,
+						map [primary].Level1,
+						(byte) lv2);
+				}
+			}
+		}
+
 		private void IncrementSequentialIndex (ref byte hangulCat)
 		{
 			fillIndex [hangulCat]++;
@@ -3649,6 +3715,12 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					return 0x18;
 				}
 			}
+
+			// I have no idea why those symbols have level 3 weight
+			if (c == '\u212B')
+				return 0x18;
+			if ('\u211E' <= c && c <= '\u212B')
+				return 0x10;
 
 			// actually I dunno the reason why they have weights.
 			switch (c) {
