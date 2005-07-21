@@ -937,9 +937,7 @@ namespace Mono.CSharp {
 
 			c = new Constructor (constructor_parent, Basename, mods,
 					     Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (
-						     null, Parameters.EmptyReadOnlyParameters,
-						     Location),
+					     new ConstructorBaseInitializer (null, Location),
 					     Location);
 			
 			AddConstructor (c);
@@ -1485,8 +1483,6 @@ namespace Mono.CSharp {
 
 		void ReportStructInitializedInstanceError ()
 		{
-			string n = TypeBuilder.FullName;
-			
 			foreach (Field f in initialized_fields){
 				Report.Error (573, Location,
 					"`{0}': Structs cannot have instance field initializers",
@@ -4063,14 +4059,11 @@ namespace Mono.CSharp {
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
 		protected ConstructorInfo base_constructor;
-		Parameters parameters;
 		Location loc;
 		
-		public ConstructorInitializer (ArrayList argument_list, Parameters parameters,
-					       Location loc)
+		public ConstructorInitializer (ArrayList argument_list, Location loc)
 		{
 			this.argument_list = argument_list;
-			this.parameters = parameters;
 			this.loc = loc;
 		}
 
@@ -4162,15 +4155,15 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list, Parameters pars, Location l) :
-			base (argument_list, pars, l)
+		public ConstructorBaseInitializer (ArrayList argument_list, Location l) :
+			base (argument_list, l)
 		{
 		}
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list, Parameters pars, Location l) :
-			base (argument_list, pars, l)
+		public ConstructorThisInitializer (ArrayList argument_list, Location l) :
+			base (argument_list, l)
 		{
 		}
 	}
@@ -4368,8 +4361,7 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
-					Initializer = new ConstructorBaseInitializer (
-						null, Parameters.EmptyReadOnlyParameters, Location);
+					Initializer = new ConstructorBaseInitializer (null, Location);
 
 
 				//

@@ -4305,7 +4305,7 @@ namespace Mono.CSharp {
 		{
 			Expression variable, expr, conv;
 			Statement statement;
-			Type array_type, element_type;
+			Type array_type;
 			Type var_type;
 			TemporaryVariable[] lengths;
 			ArrayCounter[] counter;
@@ -4327,7 +4327,6 @@ namespace Mono.CSharp {
 			public override bool Resolve (EmitContext ec)
 			{
 				array_type = expr.Type;
-				element_type = TypeManager.GetElementType (array_type);
 				rank = array_type.GetArrayRank ();
 
 				copy = new TemporaryVariable (array_type, loc);

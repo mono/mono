@@ -32,7 +32,6 @@ namespace Mono.CSharp {
 	public class Yield : Statement {
 		Expression expr;
 		ArrayList finally_blocks;
-		bool resolved;
 
 		public Yield (Expression expr, Location l)
 		{
@@ -76,8 +75,6 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
-
-			resolved = true;
 
 			if (!CheckContext (ec, loc))
 				return false;
@@ -132,8 +129,6 @@ namespace Mono.CSharp {
 		bool is_enumerable;
 		public readonly bool IsStatic;
 
-		Hashtable fields;
-
 		//
 		// The state as we generate the iterator
 		//
@@ -145,7 +140,6 @@ namespace Mono.CSharp {
 		// Context from the original method
 		//
 		TypeContainer container;
-		TypeExpr current_type;
 		Type this_type;
 		InternalParameters parameters;
 		IMethodData orig_method;
@@ -357,8 +351,6 @@ namespace Mono.CSharp {
 			this.original_block = orig_method.Block;
 			this.block = new ToplevelBlock (orig_method.Block, parameters.Parameters, orig_method.Location);
 
-			fields = new Hashtable ();
-
 			IsStatic = (modifiers & Modifiers.STATIC) != 0;
 		}
 
@@ -469,8 +461,6 @@ namespace Mono.CSharp {
 		//
 		protected override bool DefineNestedTypes ()
 		{
-			current_type = new TypeExpression (TypeBuilder, Location);
-
 			Define_Fields ();
 			Define_Current ();
 			Define_MoveNext ();
@@ -487,11 +477,8 @@ namespace Mono.CSharp {
 			return base.DefineNestedTypes ();
 		}
 
-
 		Field pc_field;
 		Field current_field;
-		LocalInfo pc_local;
-		LocalInfo current_local;
 		Method dispose;
 
 		void Create_Block ()
@@ -569,8 +556,7 @@ namespace Mono.CSharp {
 
 			ctor = new Constructor (
 				this, Name, Modifiers.PUBLIC, ctor_params,
-				new ConstructorBaseInitializer (
-					null, Parameters.EmptyReadOnlyParameters, Location),
+				new ConstructorBaseInitializer (null, Location),
 				Location);
 			AddConstructor (ctor);
 
@@ -587,7 +573,7 @@ namespace Mono.CSharp {
 				new SetState (this, State.Running, Location),
 				Location));
 
-			ctor.Block.AddStatement (new InitScope (this, cc, Location));
+			ctor.Block.AddStatement (new InitScope (this, Location));
 		}
 
 		Statement Create_ThrowInvalidOperation ()
@@ -984,12 +970,10 @@ namespace Mono.CSharp {
 		protected class InitScope : Statement
 		{
 			Iterator iterator;
-			CaptureContext cc;
 
-			public InitScope (Iterator iterator, CaptureContext cc, Location loc)
+			public InitScope (Iterator iterator, Location loc)
 			{
 				this.iterator = iterator;
-				this.cc = cc;
 				this.loc = loc;
 			}
 
@@ -1056,7 +1040,6 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 
-				FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 				ec.CurrentBranching.CurrentUsageVector.Return ();
 
 				return true;
