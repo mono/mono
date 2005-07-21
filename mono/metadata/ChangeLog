@@ -1,3 +1,8 @@
+2005-07-21  Jb Evain  <jbevain@gmail.com>
+
+	* reflection.c (method_encode_clauses/class): Handle filters clauses.
+	Fixes #75010.
+
 2005-07-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_custom): Implement byref marshalling. Fixes
