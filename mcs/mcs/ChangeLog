@@ -1,3 +1,9 @@
+2005-07-21  Raja R Harinath  <rharinath@novell.com>
+
+	* const.cs (Error_ExpressionMustBeConst): 
+	Rename from Error_EpressionMustBeConst.
+	* const.cs, class.cs, statement.cd: Update.
+
 2005-07-21  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #65573

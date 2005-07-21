@@ -5468,7 +5468,7 @@ namespace Mono.CSharp {
 
 			Constant c = e as Constant;
 			if (c == null) {
-				Const.Error_EpressionMustBeConstant (e.Location, GetSignatureForError ());
+				Const.Error_ExpressionMustBeConstant (e.Location, GetSignatureForError ());
 				return false;
 			}
 
