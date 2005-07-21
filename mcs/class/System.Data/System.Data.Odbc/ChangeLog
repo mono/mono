@@ -1,3 +1,8 @@
+2005-07-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataReader.cs: GetValue (): added case for OdbcType.Bit. and
+	Formatting corrections.
+
 2005-07-07  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcTypeConverter.cs: ConvertToSqlType & ConvertToSqlCType: map
