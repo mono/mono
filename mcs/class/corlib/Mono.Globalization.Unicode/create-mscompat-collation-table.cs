@@ -98,8 +98,11 @@ namespace Mono.Globalization.Unicode
 		byte [] diacritical = new byte [char.MaxValue + 1];
 
 		string [] diacritics = new string [] {
+			"DOUBLE VERTICAL LINE ABOVE",
+			"ABKHASIAN CHE WITH DESCENDER",
 			// LATIN, CYRILLIC etc.
-			"UPTURN", "DOUBLE-STRUCK",
+			"VERTICAL LINE ABOVE", "UPTURN", "DOUBLE-STRUCK",
+			"ABKHASIAN",
 			"MIDDLE HOOK", "WITH VERTICAL LINE ABOVE;", "WITH TONOS",
 			"WITH ACUTE ACCENT;", "WITH GRAVE ACCENT;",
 			"WITH ACUTE;", "WITH GRAVE;",
@@ -162,8 +165,14 @@ namespace Mono.Globalization.Unicode
 			"PARENTHESIZED DIGIT", "PARENTHESIZED NUMBER", "PARENTHESIZED LATIN",
 			};
 		byte [] diacriticWeights = new byte [] {
+			// this is to pick U+30E (DOUBLE VERTICAL LINE ABOVE)
+			// before being picked as VERTICAL LINE ABOVE
+			41,
+			// this is to pick ABKHASIAN CHE WITH DESCENDER before
+			// being picked as ABKHASIAN
+			17,
 			// LATIN.
-			3, 3, 5, 5, 5,
+			3, 3, 3, 5, 5, 5, 5,
 			0xE, 0xF,
 			0xE, 0xF,
 			//
@@ -667,14 +676,17 @@ sw.Close ();
 		{
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < s.Length; i++) {
-				if (s.StartsWith ("\\u")) {
-					sb.Append ((char) int.Parse (
-						s.Substring (2, 4), NumberStyles.HexNumber),
+				if (i + 5 < s.Length &&
+					s [i] == '\\' && s [i + 1] == 'u') {
+					sb.Append (
+						(char) int.Parse (
+							s.Substring (i + 2, 4),
+							NumberStyles.HexNumber),
 						1);
 					i += 5;
 				}
-			else
-				sb.Append (s [i]);
+				else
+					sb.Append (s [i]);
 			}
 			return sb.ToString ();
 		}
