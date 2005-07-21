@@ -384,6 +384,11 @@ namespace Mono.MonoBASIC {
 					return this;
 				}
 				if (target_type.IsValueType) {
+					if (source_type != target_type) {
+		 				source = ConvertImplicitRequired (ec, source, target_type, loc);
+                        			if (source == null)
+                                			return null;
+					}
 					New n = (New) source;
 					n.ValueTypeVariable = target;
 					return n;
