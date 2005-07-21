@@ -1,3 +1,7 @@
+2005-07-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_aot_get_method_from_token): Fix a potential crash here.
+
 2005-07-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (load_patch_info): Fix handling of stfld_remote wrapper.
