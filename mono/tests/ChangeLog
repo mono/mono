@@ -1,3 +1,7 @@
+2005-07-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs pinvoke1.cs Makefile.am: Merge pinvoke1.cs into pinvoke2.cs.
+
 2005-07-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs libtest.c: Add some IA64 struct passing tests.
