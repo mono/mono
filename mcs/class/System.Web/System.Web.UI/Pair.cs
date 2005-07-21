@@ -1,10 +1,4 @@
-// 
-// System.Web.UI.Pair
-//
-// Author:
-//        Ben Maurer <bmaurer@novell.com>
-//
-// (c) 2005 Novell
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,21 +19,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/**
+ * Namespace: System.Web.UI
+ * Class:     Pair
+ * 
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Implementation: yes
+ * Contact: <gvaish@iitk.ac.in>
+ * Status:  100%
+ * 
+ * (C) Gaurav Vaish (2001)
+ */
 
-namespace System.Web.UI {
-	public class Pair {
-	
-		public Pair (object first, object second)
-		{
-			First = first;
-			Second = second;
-		}
+using System;
+using System.Web;
+using System.Collections;
+using System.Collections.Specialized;
 
-		public Pair ()
-		{
-		}
-	
+namespace System.Web.UI
+{
+#if NET_2_0
+	[Serializable]
+	sealed
+#endif
+	public class Pair
+	{
 		public object First;
 		public object Second;
+		
+		public Pair(object first, object second)
+		{
+			First  = first;
+			Second = second;
+		}
+		
+		public Pair()
+		{
+		}
 	}
 }

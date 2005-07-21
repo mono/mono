@@ -1,3 +1,4 @@
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -18,54 +19,61 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//
-// System.Web.UI.ToolboxDataAttribute.cs
-//
-// Authors:
-//	Jackson Harper (jackson@ximian.com)
-//
-// (C) 2005 Novell, Inc.
+/**
+ * Namespace: System.Web.UI
+ * Class:     ToolboxDataAttribute
+ *
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Implementation: yes
+ * Status:  100%
+ *
+ * (C) Gaurav Vaish (2002)
+ */
 
 using System;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	[AttributeUsage(AttributeTargets.Class)]
-	public sealed class ToolboxDataAttribute : Attribute {
-
-		public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute (String.Empty);
+	public sealed class ToolboxDataAttribute : Attribute
+	{
+		public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute("");
 
 		private string data;
 
-		public ToolboxDataAttribute (string data)
+		public ToolboxDataAttribute(string data)
 		{
 			this.data = data;
 		}
 
-		public string Data {
-			get { return data; }
+		public string Data
+		{
+			get
+			{
+				return data;
+			}
 		}
 
-		public override bool Equals (object obj)
+		public override bool IsDefaultAttribute()
 		{
-			ToolboxDataAttribute other = obj as ToolboxDataAttribute;
-			if (other == null)
-				return false;
-			return other.Data == data;
+			return Default.Equals(this);
 		}
 
-		public override int GetHashCode ()
+		public override bool Equals(object obj)
 		{
-			if (data == null)
-				return 0;
-			return data.GetHashCode ();
+			if(obj != null && obj is ToolboxDataAttribute)
+			{
+				ToolboxDataAttribute tda = (ToolboxDataAttribute)obj;
+				return (tda.Data == Data);
+			}
+			return false;
 		}
 
-		public override bool IsDefaultAttribute ()
+		public override int GetHashCode()
 		{
-			return Equals (Default);
+			return base.GetHashCode();
 		}
 	}
 }
-
-

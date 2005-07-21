@@ -27,14 +27,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_2_0
 namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	sealed class WebResourceAttribute : Attribute {
+	public sealed class WebResourceAttribute : Attribute {
 		public WebResourceAttribute (string webResource, string contentType) : this (webResource, contentType, false) {}
 		public WebResourceAttribute (string webResource, string contentType, bool performSubstitution)
 		{
@@ -51,3 +47,4 @@ namespace System.Web.UI {
 		string webResource, contentType;
 	}
 }
+#endif

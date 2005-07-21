@@ -1,10 +1,4 @@
-// 
-// System.Web.UI.StateBag
-//
-// Author:
-//        Ben Maurer <bmaurer@novell.com>
-//
-// (c) 2005 Novell
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,258 +19,259 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/**
+ * Namespace: System.Web.UI
+ * Class:     StateBag
+ * 
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Implementation: yes
+ * Contact: <gvaish@iitk.ac.in>
+ * Status:  100%
+ * 
+ * (C) Gaurav Vaish (2001)
+ */
 
+using System;
+using System.Web;
 using System.Collections;
 using System.Collections.Specialized;
 
-namespace System.Web.UI 
+namespace System.Web.UI
 {
-	
-
-	public sealed class StateBag : IDictionary, IStateManager {
-
-		HybridDictionary ht;
-		bool track;
+	public sealed class StateBag : IStateManager, IDictionary, ICollection, IEnumerable
+	{
+		private bool marked;
+		private HybridDictionary bag;
 		
 		public StateBag (bool ignoreCase)
 		{
-			ht = new HybridDictionary (ignoreCase);
-		}
-	
-		public StateBag () : this (false)
-		{
-		}
-
-		void IStateManager.LoadViewState (object savedState)
-		{
-			LoadViewState (savedState);
-		}
-
-		object IStateManager.SaveViewState ()
-		{
-			return SaveViewState ();
+			Initialize (ignoreCase);
 		}
 		
-		
-		void IStateManager.TrackViewState ()
+		public StateBag ()
 		{
-			TrackViewState ();
+			Initialize (false);
 		}
 
-		bool IStateManager.IsTrackingViewState {
+		private void Initialize (bool ignoreCase)
+		{
+			marked = false;
+			bag = new HybridDictionary (ignoreCase);
+		}
+		
+		public int Count {
+			get { return bag.Count; }
+		}
+
+		
+		public object this [string key] {
 			get {
-				return track;
-			}
-		}
-		
-		internal bool IsTrackingViewState {
-			get {
-				return track;
-			}
-		}	
+				if (key == null || key.Length == 0)
+					throw new ArgumentException (HttpRuntime.FormatResourceString ("Key_Cannot_Be_Null"));
 
-		
-		internal void LoadViewState (object savedState)
-		{
-			if (savedState == null)
-				return;
-			
-			foreach (DictionaryEntry de in (Hashtable) savedState)
-				Add ((string) de.Key, de.Value);
-		}
-		
-		internal object SaveViewState ()
-		{
-			Hashtable h = null;
+				object val = bag [key];
 
-			foreach (DictionaryEntry de in ht) {
-				StateItem si = (StateItem) de.Value;
-				if (si.IsDirty) {
-					if (h == null)
-						h = new Hashtable ();
-					h.Add (de.Key, si.Value);
-				}
+				if (val is StateItem)
+					return ((StateItem) val).Value;
+
+				return null; // 
 			}
 
-			return h;
+			set { Add (key, value); }
+		}
+
+		object IDictionary.this [object key] {
+			get { return this [(string) key] as object; }
+
+			set { Add ((string) key, value); }
 		}
 		
-		internal void TrackViewState ()
-		{
-			track = true;
+		public ICollection Keys {
+			get { return bag.Keys; }
 		}
-	
+		
+		public ICollection Values {
+			get { return bag.Values; }
+		}
+		
 		public StateItem Add (string key, object value)
 		{
-			StateItem si = ht [key] as StateItem;
-			if (si == null)
-				ht [key] = si = new StateItem (value);
-			si.Value = value;
-			si.IsDirty |= track;
-			
-			return si;
-		}
+			if (key == null || key.Length == 0)
+				throw new ArgumentException (HttpRuntime.FormatResourceString ("Key_Cannot_Be_Null"));
 
-		internal string GetString (string key, string def)
-		{
-			string s = (string) this [key];
-			return s == null ? def : s;
-		}
-		
-		internal bool GetBool (string key, bool def)
-		{
-			object o = this [key];
-			return o == null ? def : (bool) o;
-		}
+			StateItem val = bag [key] as StateItem; //don't throw exception when null
+			if(val == null) {
+				if(value != null || marked) {
+					val = new StateItem (value);
+					bag.Add (key, val);
+				}
+			}
+			else if (value == null && !marked)
+				bag.Remove (key);
+			else
+				val.Value = value;
 
-		internal int GetInt (string key, int def)
-		{
-			object o = this [key];
-			return o == null ? def : (int) o;
-		}
+			if (val != null && marked) {
+				val.IsDirty = true;
+			}
 
-		internal short GetShort (string key, short def)
-		{
-			object o = this [key];
-			return o == null ? def : (short) o;
+			return val;
 		}
 		
 		public void Clear ()
 		{
-			ht.Clear ();
+			bag.Clear ();
 		}
-	
+		
 		public IDictionaryEnumerator GetEnumerator ()
 		{
-			return ht.GetEnumerator ();
+			return bag.GetEnumerator ();
 		}
+		
+		public bool IsItemDirty (string key)
+		{
+			object o = bag [key];
 
+			if (o is StateItem)
+				return ((StateItem) o).IsDirty;
+			
+			return false;
+		}
+		
+		public void Remove (string key)
+		{
+			bag.Remove (key);
+		}
+		
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		public void SetItemDirty (string key, bool dirty)
+		{
+			if (bag [key] is StateItem)
+				((StateItem) bag [key]).IsDirty = dirty;
+		}
+		
+		internal bool IsTrackingViewState {
+			get { return marked; }
+		}
+		
+		internal void LoadViewState (object state)
+		{
+			if(state!=null) {
+				Pair pair = (Pair) state;
+				ArrayList keyList = (ArrayList) (pair.First);
+				ArrayList valList = (ArrayList) (pair.Second);
+
+				int valCount = valList.Count;
+				for(int i = 0; i < keyList.Count; i++) {
+					if (i < valCount)
+						Add ((string) keyList [i], valList [i]);
+					else
+						Add ((string) keyList [i], null);
+				}
+			}
+		}
+		
+		internal object SaveViewState ()
+		{
+			if(bag.Count > 0) {
+				ArrayList keyList = null, valList = null;
+
+				foreach (string key in bag.Keys) {
+					StateItem item = (StateItem) bag [key];
+
+					if (item.IsDirty) {
+						if (keyList == null) {
+							keyList = new ArrayList ();
+							valList = new ArrayList ();
+						}
+						
+						keyList.Add (key);
+						valList.Add (item.Value);
+					}
+				}
+
+				if (keyList!=null)
+					return new Pair (keyList, valList);
+			}
+			return null;
+		}
+		
+		internal void TrackViewState()
+		{
+			marked = true;
+		}
+		
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
 		}
 		
-		public bool IsItemDirty (string key)
+		void IStateManager.LoadViewState (object savedState)
 		{
-			StateItem si = ht [key] as StateItem;
-			return si != null && si.IsDirty;
+			LoadViewState (savedState);
 		}
-	
-		public void Remove (string key)
-		{
-			ht.Remove (key);
-		}
-	
-		public void SetItemDirty (string key, bool dirty) 
-		{
-			StateItem si = (StateItem) ht [key];
-			if (si != null)
-				si.IsDirty = dirty;
-		}
-
-		public int Count {
-			get {
-				return ht.Count;
-			}
-		}
-	
-		public object this [string key] {
-			get {
-				StateItem i = ht [key] as StateItem;
-				if (i != null)
-					return i.Value;
-				return null;
-				
-			}
 		
-			set {
-				if (value == null)
-					ht.Remove (key);
-
-				Add (key, value);
-			}
+		object IStateManager.SaveViewState ()
+		{
+			return SaveViewState ();
 		}
-	
-		public ICollection Keys {
-			get {
-				return ht.Keys;
-			}
 		
+		void IStateManager.TrackViewState ()
+		{
+			TrackViewState ();
 		}
-	
-		public ICollection Values {
-			get {
-				return ht.Values;
-			}
+		
+		bool IStateManager.IsTrackingViewState {
+			get { return IsTrackingViewState; }
 		}
-
+		
+		void ICollection.CopyTo (Array array, int index)
+		{
+			Values.CopyTo (array, index);
+		}
+		
+		bool ICollection.IsSynchronized {
+			get { return false; }
+		}
+		
+		object ICollection.SyncRoot
+		{
+			get { return this; }
+		}
+		
 		void IDictionary.Add (object key, object value)
 		{
 			Add ((string) key, value);
 		}
-	
+		
 		void IDictionary.Remove (object key)
 		{
 			Remove ((string) key);
 		}
-
-		void ICollection.CopyTo (Array array, int index)
-		{
-			ht.CopyTo (array, index);
-		}
-	
-		bool IDictionary.Contains (object key) 
-		{
-			return ht.Contains (key);
-		}
-
-		bool ICollection.IsSynchronized {
-			get {
-				return false;
-			}
-		}
-
-		object ICollection.SyncRoot {
-			get {
-				return ht;
-			}	
-		}
-
-		object IDictionary.this [object key] {
-			get {
-				return this [(string) key];
-			}
 		
-			set {
-				this [(string) key] = value;
-			}
+		bool IDictionary.Contains (object key)
+		{
+			return bag.Contains ((string) key);
 		}
-
+		
 		bool IDictionary.IsFixedSize {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
-	
+		
 		bool IDictionary.IsReadOnly {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
-
+		
 #if NET_2_0
-		public void SetDirty (bool dirty)
+		public void SetDirty ()
 		{
-			foreach (DictionaryEntry de in ht) {
-				StateItem si = (StateItem) de.Value;
-				si.IsDirty = dirty;
-			}
-		}
-
-		internal void SetDirty ()
-		{
-			// Just lets me compile
+			foreach (string key in bag.Keys)
+				SetItemDirty (key, true);
 		}
 #endif
+
 	}
 }

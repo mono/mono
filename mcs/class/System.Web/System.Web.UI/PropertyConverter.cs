@@ -1,3 +1,4 @@
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -18,61 +19,127 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//
-// System.Web.UI.PropertyConverter.cs
-//
-// Authors:
-//	Jackson Harper (jackson@ximian.com)
-//
-// (C) 2005 Novell, Inc.
+/**
+ * Namespace: System.Web.UI
+ * Class:     PropertyConverter
+ *
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Implementation: yes
+ * Contact: <gvaish@iitk.ac.in>
+ * Status:  100%
+ *
+ * (C) Gaurav Vaish (2001)
+ */
 
 using System;
-using System.Reflection;
 using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 
-namespace System.Web.UI {
+namespace System.Web.UI
+{
+	public sealed class PropertyConverter
+	{
+		private static Type[] parseMethodTypes;
+		private static Type[] parseMethodTypesWithSOP;
 
-	public sealed class PropertyConverter {
-
-		private PropertyConverter ()
+		static PropertyConverter()
 		{
-			// no instantiation for you
+			parseMethodTypes = new Type[1];
+			parseMethodTypes[0] = typeof(string);
+			parseMethodTypesWithSOP = new Type[2];
+			parseMethodTypesWithSOP[0] = typeof(string);
+			parseMethodTypesWithSOP[1] = typeof(IServiceProvider);
 		}
 
-		public static object EnumFromString (Type enumType, string value)
+		private PropertyConverter()
 		{
-			object res = null;
+			// Prevent any instance
+		}
 
-			try {
-				res = Enum.Parse (enumType, value, true);
-			} catch {
-				res = null;
+		public static object EnumFromString(Type enumType, string enumValue)
+		{
+			object retVal = null;
+			try
+			{
+				retVal = Enum.Parse(enumType, enumValue, true);
+			} catch
+			{
+				retVal = null;
 			}
-			return res;
+			return retVal;
 		}
 
-		public static string EnumToString (Type enumType, object enumValue)
+		public static string EnumToString(Type enumType, object enumValue)
 		{
-			return Enum.Format (enumType, enumValue, "G");
+			string retVal = Enum.Format(enumType, enumValue, "G");
+			return retVal.Replace('_','-');
 		}
 
-		public static object ObjectFromString (Type objType,
-				MemberInfo propertyInfo, string value)
+		public static object ObjectFromString(Type objType, MemberInfo propertyInfo, string objValue)
 		{
-			if (objType == typeof (string))
-				return value;
-
-			// Is there a less kludgy way to get the converter?
-			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (
-				propertyInfo.ReflectedType);
-			PropertyDescriptor pd = col.Find (propertyInfo.Name, false);
-			if (pd.Converter == null || !pd.Converter.CanConvertFrom (typeof (string))) {
-				throw new HttpException (Locale.GetText ("Cannot create an object " +
-				      "of type '{0}' from its string representation '{1}' for the " +
-				      "'{2}' property", objType, value, propertyInfo.Name));
+			if(objValue == null)
+				return null;
+			if(! (!objType.Equals(typeof(Boolean)) || objValue.Length > 0) )
+			{
+				return null;
 			}
-			return pd.Converter.ConvertFromInvariantString (value);
+			if(objType.IsEnum)
+			{
+				return EnumFromString(objType, objValue);
+			}
+			if(objType.Equals(typeof(string)))
+			{
+				return objValue;
+			}
+			PropertyDescriptor pc = null;
+			if(propertyInfo != null)
+			{
+				pc = (TypeDescriptor.GetProperties(propertyInfo.ReflectedType))[propertyInfo.Name];
+			}
+			if(pc != null)
+			{
+				TypeConverter converter = pc.Converter;
+				if(converter!=null && converter.CanConvertFrom(typeof(string)))
+				{
+					return converter.ConvertFromInvariantString(objValue);
+				}
+			}
+			MethodInfo mi = objType.GetMethod("Parse", parseMethodTypesWithSOP);
+			object o = null;
+			if(mi != null)
+			{
+				object[] parameters = new object[2];
+				parameters[0] = objValue;
+				parameters[1] = CultureInfo.InvariantCulture;
+				try
+				{
+					o = Utils.InvokeMethod(mi, null, parameters);
+				} catch
+				{
+				}
+			}
+			if(o == null)
+			{
+				mi = objType.GetMethod("Parse", parseMethodTypes);
+				if(mi!=null)
+				{
+					object[] parameters = new object[1];
+					parameters[0] = objValue;
+					try
+					{
+						o = Utils.InvokeMethod(mi, null, parameters);
+					} catch
+					{
+					}
+				}
+			}
+			if(o == null)
+			{
+				throw new HttpException(/*HttpRuntime.FormatResourceString(*/"Type_not_creatable_from_string"/*, objType.FullName, objValue, propertyInfo.Name)*/);
+			}
+			return o;
 		}
 	}
 }
-

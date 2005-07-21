@@ -1,9 +1,4 @@
-//
-// System.Web.UI.WebControls.CommandEventArgs.cs
-//
-// Author: Duncan Mak (duncan@novell.com)
-//
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,38 +19,52 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+/**
+ * Namespace: System.Web.UI
+ * Class:     DataBindingHandlerAttribute
+ *
+ * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Implementation: yes
+ * Status:  100%
+ *
+ * (C) Gaurav Vaish (2002)
+ */
 
-namespace System.Web.UI {
+using System;
+using System.Reflection;
 
-	[AttributeUsage (AttributeTargets.Class)]
+namespace System.Web.UI
+{
+	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class DataBindingHandlerAttribute : Attribute
 	{
-		string name;		
-
-		static DataBindingHandlerAttribute ()
-		{
-			Default = new DataBindingHandlerAttribute ();
-		}
-
-		public DataBindingHandlerAttribute ()
-			: this (String.Empty)
-		{
-		}
-
-		public DataBindingHandlerAttribute (string name)
-		{
-			this.name = name;
-		}
-
-		public DataBindingHandlerAttribute (Type type)
-		{
-			this.name = type.AssemblyQualifiedName;
-		}
-
 		public static readonly DataBindingHandlerAttribute Default;
 
-		public string HandlerTypeName {
-			get { return name; }
+		private string handlerTypeName;
+
+		public DataBindingHandlerAttribute()
+		{
+			handlerTypeName = String.Empty;
+		}
+
+		public DataBindingHandlerAttribute(string typeName)
+		{
+			handlerTypeName = typeName;
+		}
+
+		public DataBindingHandlerAttribute(Type type)
+		{
+			handlerTypeName = type.AssemblyQualifiedName;
+		}
+
+		public string HandlerTypeName
+		{
+			get
+			{
+				return handlerTypeName;
+			}
 		}
 	}
 }

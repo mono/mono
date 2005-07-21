@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
 
 namespace System.Web.UI {
 
@@ -61,7 +60,7 @@ namespace System.Web.UI {
 			get { return bag [key] as string; }
 
 			set {
-				if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
+				if (0 == String.Compare (key, "style", true)) {
 					CssStyle.Clear();
 					CssStyle.FillStyle (value);
 					key = "style";	// Needs to be always lowercase
@@ -76,7 +75,7 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
+			if (0 == String.Compare (key, "style", true)) {
 				CssStyle.Clear();
 				CssStyle.FillStyle (value);
 				key = "style";	// Needs to be always lowercase

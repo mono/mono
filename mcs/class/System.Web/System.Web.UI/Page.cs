@@ -722,11 +722,6 @@ public class Page : TemplateControl, IHttpHandler
 		return sr.GetStringBuilder ().ToString ();
 	}
 
-	internal object GetSavedViewState ()
-	{
-		return _savedViewState;
-	}
-
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
 		scriptManager.WriteArrayDeclares (writer);
