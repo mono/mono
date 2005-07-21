@@ -1,3 +1,9 @@
+2005-07-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CollectionBase.cs: Lazily create the inner list. MS.NET does
+	it and we need to do the same for the sake of serialization
+	interoperability. Fixes bug #75575. 
+
 2005-07-17  Florian Gross  <flgr@ccan.de>
 
 	* ArrayList.cs: pass along index offset in RangedArrayList:ToArray.
@@ -497,7 +503,7 @@
 
 	* Queue.cs: fixed bug #39046.
 
-2003-02-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-02-15  Pedro Martnez Juli  <yoros@wanadoo.es>
 
 	* Hashtable.cs: Make hashtable serializable (at least with binary
 	formatter). This process was started by the Hashtable maintainer.

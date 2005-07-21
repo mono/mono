@@ -61,11 +61,17 @@ namespace System.Collections {
 		
 		// Protected Instance Constructors
 		protected CollectionBase() { 
-			this.list = new ArrayList();
 		}
 		
 		// Protected Instance Properties
-		protected ArrayList InnerList {get { return this.list; } }
+		protected ArrayList InnerList {
+			get {
+				if (list == null)
+					list = new ArrayList ();
+				return list;
+			} 
+		}
+		
 		protected IList List {get { return this; } }
 		
 		// Protected Instance Methods
