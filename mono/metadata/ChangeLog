@@ -1,3 +1,8 @@
+2005-07-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (emit_marshal_custom): Implement byref marshalling. Fixes
+	#75587.
+
 2005-07-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.h image.c: Add mono_image_get_guid () API function.
