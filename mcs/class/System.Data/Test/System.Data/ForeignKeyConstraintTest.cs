@@ -468,5 +468,46 @@ namespace MonoTests.System.Data
 			Assert( "Hash Code Failed. 2", fkc.GetHashCode() != fkcDiff.GetHashCode() );
 	
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ViolationTest ()
+		{
+			DataTable parent = _ds.Tables [0];
+			DataTable child  = _ds.Tables [1];
+			
+			parent.Rows.Add (new object [] {1, 1, 1});
+			child.Rows.Add (new object [] {2, 2, 2});
+
+			try {
+				child.Constraints.Add (new ForeignKeyConstraint ( parent.Columns [0],
+										  child.Columns [0])
+						       );
+			} finally {
+				// clear the rows for further testing
+				_ds.Clear ();
+			}
+		}
+
+		[Test]
+		public void NoViolationTest ()
+		{
+			DataTable parent = _ds.Tables [0];
+			DataTable child  = _ds.Tables [1];
+			
+			parent.Rows.Add (new object [] {1, 1, 1});
+			child.Rows.Add (new object [] {2, 2, 2});
+
+			try {
+				_ds.EnforceConstraints = false;
+				child.Constraints.Add (new ForeignKeyConstraint ( parent.Columns [0],
+										  child.Columns [0])
+						       );
+			} finally {
+				// clear the rows for further testing
+				_ds.Clear ();
+				_ds.EnforceConstraints = true;
+			}
+		}
 	}
 }

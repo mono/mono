@@ -1,3 +1,8 @@
+2005-07-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ForeignKeyConstraintTest.cs: added tests when adding fk
+	constraints with existing rows.
+
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 
 	* ConstraintExceptionTest.cs: Removed use of obsolete System.Data.Tests.Mainsoft/GHTUtils

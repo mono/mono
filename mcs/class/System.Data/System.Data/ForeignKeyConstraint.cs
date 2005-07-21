@@ -460,8 +460,11 @@ namespace System.Data {
 			
 			//Make sure we can create this thing
 			//AssertConstraint(); 
-			if (IsConstraintViolated())
-				throw new ArgumentException("This constraint cannot be enabled as not all values have corresponding parent values.");
+			if ( (Table.DataSet != null && Table.DataSet.EnforceConstraints)
+			     || (Table.DataSet == null && Table.EnforceConstraints)) {
+				if (IsConstraintViolated())
+					throw new ArgumentException("This constraint cannot be enabled as not all values have corresponding parent values.");
+			}
 			//FIXME : if this fails and we created a unique constraint
 			//we should probably roll it back
 			// and remove index form Table			
@@ -478,9 +481,6 @@ namespace System.Data {
 			if (Table.DataSet == null || RelatedTable.DataSet == null) 
 				return false;
 			
-			if (!Table.DataSet.EnforceConstraints && !Table.EnforceConstraints)
-				return false;
-				
 			bool hasErrors = false;
 			foreach (DataRow row in Table.Rows) {
 				// first we check if all values in _childColumns place are nulls.

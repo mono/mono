@@ -1,3 +1,12 @@
+2005-07-21  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ForeignKeyConstraint.cs: 
+	- IsConstraintViolated (): no matter what EnforceConstraints is,
+	this function now honestly validates. It is upto the caller to run
+	this or not.
+	- AddToConstraintCollectionSetup (): AssertConstraint according to
+	EnforceConstraints.
+
 2005-07-19  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataTable.cs - CopyConstraints (): copy constraints only if it
