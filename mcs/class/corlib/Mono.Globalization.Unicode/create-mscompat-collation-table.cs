@@ -1598,6 +1598,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 		void ModifyUnidata ()
 		{
+			ArrayList decompValues = new ArrayList (this.decompValues);
+
 			// Modify some decomposition equivalence
 			for (int i = 0xFE31; i <= 0xFE34; i++) {
 				decompType [i] = 0;
@@ -1629,12 +1631,19 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			decompValues [decompIndex [0x3298]] = 0x52DE;
 
 			// LAMESPEC: custom remapping (which is not bugs but not fine, non-standard compliant things)
-			decompIndex [0xFA0C] = decompIndex [0xF929]; // borrow U+F929 room (being empty)
-			decompValues [decompIndex [0xFA0C]] = 0x5140;
+			decompIndex [0xFA0C] = decompValues.Count;
+			decompValues.Add ((int) 0x5140);
 			decompLength [0xFA0C] = 1;
 			decompIndex [0xF929] = decompLength [0xF929] = 0;
 
 			decompValues [decompIndex [0xF92C]] = 0x90DE;
+
+			decompIndex [0x2125] = decompValues.Count;
+			decompValues.Add ((int) 0x005A);
+			decompLength [0x2125] = 1;
+			decompType [0x2125] = DecompositionFont;
+
+			this.decompValues = decompValues.ToArray (typeof (int)) as int [];
 		}
 
 		void ModifyParsedValues ()
@@ -1668,6 +1677,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// some cyrillic diacritical weight. They seem to be
 			// based on old character names, so it's quicker to
 			// set them directly here.
+			// FIXME: they are by mostly unknown reason
 			diacritical [0x0496] = diacritical [0x0497] = 7;
 			diacritical [0x0498] = diacritical [0x0499] = 0x1A;
 			diacritical [0x049A] = diacritical [0x049B] = 0x17;
@@ -1676,6 +1686,15 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			diacritical [0x04A0] = diacritical [0x04A1] = 0xA;
 			diacritical [0x04A2] = diacritical [0x04A3] = 7;
 			diacritical [0x04A4] = diacritical [0x04A5] = 8;
+			diacritical [0x04AA] = diacritical [0x04AB] = 0x1A; // ES CEDILLA?
+			diacritical [0x04AC] = diacritical [0x04AD] = 7; // RIGHT DESCENDER? but U+4B2
+			diacritical [0x04AE] = diacritical [0x04AF] = 0xB; // STRAIGHT U?
+			diacritical [0x04B2] = diacritical [0x04B3] = 0x17; // RIGHT DESCENDER? but U+4AC
+			diacritical [0x04B4] = diacritical [0x04B5] = 3;
+			diacritical [0x04B6] = 8;
+			diacritical [0x04B7] = 7;
+			diacritical [0x04B8] = diacritical [0x04B9] = 9;
+			diacritical [0x04BA] = diacritical [0x04BB] = 9;
 
 			// number, secondary weights
 			byte weight = 0x38;
