@@ -478,7 +478,7 @@ namespace System.Data {
 			if (Table.DataSet == null || RelatedTable.DataSet == null) 
 				return false;
 			
-			if (!Table.DataSet.EnforceConstraints)
+			if (!Table.DataSet.EnforceConstraints && !Table.EnforceConstraints)
 				return false;
 				
 			bool hasErrors = false;

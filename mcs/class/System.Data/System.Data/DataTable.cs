@@ -559,7 +559,7 @@ namespace System.Data {
 			}
 		}
 		
-		private bool EnforceConstraints {
+		internal bool EnforceConstraints {
 			get { return enforceConstraints; }
 			set {
 				if (value != enforceConstraints) {

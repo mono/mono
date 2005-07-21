@@ -1,3 +1,8 @@
+2005-07-21 Boris Kirzner <borisk@mainsoft.com>
+	* ForeignKeyConstraint.cs - IsConstraintViolated() should check also for Table.EnforceConstraints.
+	* DataTable.cs - EnforceConstraints becomes internal so it can be used by ForeignKeyConstraint.
+	* DataRowTest2.cs - Added RowError testcases.
+
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 	* System.Data_tests.dll.sources:
 	  Removed use of obsolete System.Data.Tests.Mainsoft/GHTUtils

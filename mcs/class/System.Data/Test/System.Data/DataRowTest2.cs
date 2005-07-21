@@ -1283,5 +1283,40 @@ namespace MonoTests.System.Data
 			// ToString
 			Assert.AreEqual(true, dr.ToString().ToLower().StartsWith("system.data.datarow") , "DRW123");
 		}
+		
+		[Test] public void DataRow_RowError()
+		{
+			DataTable dt = new DataTable ("myTable"); 
+			DataRow dr = dt.NewRow ();
+	
+			Assert.AreEqual ( dr.RowError, string.Empty );
+						
+			dr.RowError = "Err";
+			Assert.AreEqual ( dr.RowError , "Err" );
+		}
+		
+		[Test] 
+		[ExpectedException (typeof (ConstraintException))]
+		public void DataRow_RowError2()
+		{
+			DataTable dt1 = DataProvider.CreateUniqueConstraint();
+
+			dt1.BeginLoadData();
+
+			DataRow  dr = dt1.NewRow();
+			dr[0] = 3;
+			dt1.Rows.Add(dr);
+			dt1.EndLoadData();
+		}
+		
+		[Test] 
+		[ExpectedException (typeof (ConstraintException))]
+		public void DataRow_RowError3()
+		{
+			DataSet ds= DataProvider.CreateForigenConstraint();
+			ds.Tables[0].BeginLoadData();
+			ds.Tables[0].Rows[0][0] = 10; 
+			ds.Tables[0].EndLoadData(); //Foreign constraint violation
+		}
 	}
 }
