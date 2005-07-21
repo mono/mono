@@ -6,6 +6,10 @@
 	this or not.
 	- AddToConstraintCollectionSetup (): AssertConstraint according to
 	EnforceConstraints.
+	
+2005-07-21 Boris Kirzner <borisk@mainsoft.com>
+	* ForeignKeyConstraint.cs - IsConstraintViolated() should check also for Table.EnforceConstraints.
+	* DataTable.cs - EnforceConstraints becomes internal so it can be used by ForeignKeyConstraint.
 
 2005-07-19  Sureshkumar T  <tsureshkumar@novell.com>
 

@@ -2,6 +2,9 @@
 
 	* ForeignKeyConstraintTest.cs: added tests when adding fk
 	constraints with existing rows.
+	
+2005-07-21 Boris Kirzner <borisk@mainsoft.com>
+	* DataRowTest2.cs - Added RowError testcases.
 
 2005-07-12  Eyal Alalouf  <eyala@mainsoft.com>
 
