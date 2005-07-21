@@ -1,3 +1,6 @@
+2005-07-21 Satya Sudha K <ksathyasudha@novell.com>
+	* Support method invocation without '()'
+
 2005-07-21 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay: Support type specifier for "ReDim" statements
 

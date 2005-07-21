@@ -4155,10 +4155,17 @@ namespace Mono.MonoBASIC {
 	public class SimpleName : Expression, ITypeExpression {
 		public readonly string Name;
 		bool is_invocation = false;
+		bool is_addressof = false;
 
 		public bool IsInvocation {
 			set {
 				is_invocation = value;
+			}
+		}
+
+		public bool IsAddressOf {
+			set {
+				is_addressof = value;
 			}
 		}
 		
@@ -4422,6 +4429,10 @@ namespace Mono.MonoBASIC {
 				return e;
 
 			if (e is IMemberExpr) {
+				if ((e is MethodGroupExpr) && !is_invocation && !is_addressof) {
+					Expression inv = new Invocation (this, new ArrayList (), loc);
+					return inv.Resolve (ec);
+				}
 				e = MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
 				if (e == null)
 					return null;
@@ -4833,6 +4844,11 @@ namespace Mono.MonoBASIC {
 			foreach (PropertyInfo pi in Properties) {
 				if (pi.GetGetMethod () != null)
 					GetAccessors.Add (pi.GetGetMethod ());
+/*
+				else if (pi.GetGetMethod (true) != null)
+					GetAccessors.Add (pi.GetGetMethod (true));
+*/
+					
 			}
 			return GetAccessors;
 		}
@@ -4842,6 +4858,10 @@ namespace Mono.MonoBASIC {
 			foreach (PropertyInfo pi in Properties) {
 				if (pi.GetSetMethod () != null)
 					SetAccessors.Add (pi.GetSetMethod ());
+/*
+				else if (pi.GetSetMethod (true) != null)
+					SetAccessors.Add (pi.GetSetMethod (true));
+*/
 			}
 			return SetAccessors;
 		}

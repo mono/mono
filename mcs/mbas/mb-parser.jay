@@ -693,6 +693,7 @@ namespace Mono.MonoBASIC
 %token LITERAL_DATE              "datetime literal"
 
 %token IDENTIFIER
+%token LABELNAME
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -2727,7 +2728,7 @@ opt_raise_event_args
 	;
 
 label_name
-	: identifier
+	: LABELNAME
 	| LITERAL_INTEGER
 	{
 		$$ = $1.ToString();
@@ -3731,6 +3732,11 @@ expression_statement
 statement_expression
 	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
 	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
+	| qualified_identifier		{ 
+						Expression e = Parser.DecomposeQI ((string)$1, lexer.Location);
+						e = new Invocation (e, new ArrayList (), lexer.Location);
+						$$ = new StatementExpression ((ExpressionStatement) e, lexer.Location);  
+					}
 	| assignment_expression		
 	{
 		if($1 != null) 
@@ -4743,7 +4749,9 @@ assignment_expression
 	| prefixed_unary_expression ASSIGN ADDRESSOF _mark_ expression
 	  { 
 	    ArrayList args = new ArrayList();
-		Argument arg = new Argument ((Expression) $5, Argument.AType.Expression);
+		Expression expr = (Expression) $5;
+		expr = SetAddressOf (expr);
+		Argument arg = new Argument (expr, Argument.AType.Expression);
 		args.Add (arg);
 		
 		New n = new New ((Expression) $1, (ArrayList) args, (Location)$4);
@@ -5656,6 +5664,20 @@ public static Expression SetValueRequiredFlag (Expression expr) {
 		Unary unary = (Unary) expr;
 		unary.Expr = SetValueRequiredFlag (unary.Expr);
 		return unary;
+	}
+	return expr;
+}
+
+public static Expression SetAddressOf (Expression expr) {
+	if (expr is SimpleName) {
+		SimpleName sname = expr as SimpleName;
+		sname.IsAddressOf = true;
+		return sname;
+	}
+	if (expr is MemberAccess) {
+		MemberAccess ma = expr as MemberAccess;
+		ma.IsAddressOf = true;
+		return ma;
 	}
 	return expr;
 }

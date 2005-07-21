@@ -4640,7 +4640,8 @@ namespace Mono.MonoBASIC {
 				PropertyGroupExpr pe = ((PropertyGroupExpr) expr);
 				if (pe.Arguments != null)
 					goto skip_already_resolved_property;
-				pe.Arguments = (ArrayList) Arguments.Clone ();
+				if (Arguments != null)
+					pe.Arguments = (ArrayList) Arguments.Clone ();
 				if (is_left_hand)
 					return pe;
 				string name = pe.Name;
@@ -6221,8 +6222,9 @@ namespace Mono.MonoBASIC {
 		public readonly string Identifier;
 		Expression expr;
 		Expression member_lookup;
-		bool is_invocation;
+		bool is_invocation = false;
 		bool is_left_hand;
+		bool is_addressof = false;
 		
 		public MemberAccess (Expression expr, string id, Location l)
 		{
@@ -6245,6 +6247,12 @@ namespace Mono.MonoBASIC {
 			}
 			set {
 				is_invocation = value;
+			}
+		}
+
+		public bool IsAddressOf {
+			set {
+				is_addressof = value;
 			}
 		}
 
@@ -6622,9 +6630,13 @@ namespace Mono.MonoBASIC {
 				return null;
 			
 			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
-
 			if (member_lookup == null)
 				return null;
+
+			if ((member_lookup is MethodGroupExpr) && ! is_invocation && !is_addressof) {
+				Expression inv = new Invocation (this, new ArrayList (), loc);
+				return inv.Resolve (ec);
+			}
 
 			if (member_lookup is PropertyGroupExpr && is_invocation) // As we dont know the arguments yet
 				return member_lookup;
@@ -6635,6 +6647,7 @@ namespace Mono.MonoBASIC {
 				member_lookup = member_lookup.DoResolveLValue (ec, right_side);
 			else
 				member_lookup = member_lookup.DoResolve (ec);
+
 
 			return member_lookup;
 		}

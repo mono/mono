@@ -836,6 +836,13 @@ namespace Mono.MonoBASIC
 				return null;
 		}
 
+		private bool IsLabel ()
+		{
+			char c = (char) peekChar();
+			//putback (c);
+			return (c == ':');
+		}
+
 		private string GetIdentifier(int c)
 		{
 			StringBuilder id = new StringBuilder ();
@@ -941,13 +948,21 @@ namespace Mono.MonoBASIC
 				// Handle unescaped identifiers
 				if (is_identifier_start_character ((char) c))
 				{
+					int last_token = current_token;
 					string id;
+					bool is_first_token_in_line = !tokens_seen;
 					if ((id = GetIdentifier(c)) == null)
 						break;
 					val = id;
 					tokens_seen = true;
 					if (is_keyword(id) && (current_token != Token.DOT))
 						return getKeyword(id);
+
+					if (IsLabel() && is_first_token_in_line)
+						return Token.LABELNAME;
+
+					if (last_token == Token.GOTO)
+						return Token.LABELNAME;
 					return Token.IDENTIFIER;
 				}
 

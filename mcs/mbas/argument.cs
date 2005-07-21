@@ -41,6 +41,8 @@ namespace Mono.MonoBASIC {
 		{
 			this.ParamName = paramName;
 			expr = Parser.SetValueRequiredFlag (expr);
+			if (type == AType.AddressOf)
+				expr = Parser.SetAddressOf (expr);
 			this.Expr = expr;
 			this.ArgType = type;
 		}

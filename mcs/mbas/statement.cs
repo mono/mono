@@ -5299,7 +5299,7 @@ namespace Mono.MonoBASIC {
 		public AddHandler (Expression evt_id, Expression evt_handler, Location l)
 		{
 			EvtId = evt_id;
-			EvtHandler = evt_handler;
+			EvtHandler = Parser.SetAddressOf (evt_handler);
 			loc = l;
 			resolved = false;
 			//Console.WriteLine ("Adding handler '" + evt_handler + "' for Event '" + evt_id +"'");
@@ -5381,7 +5381,7 @@ namespace Mono.MonoBASIC {
 		public RemoveHandler (Expression evt_id, Expression evt_handler, Location l)
 		{
 			EvtId = evt_id;
-			EvtHandler = evt_handler;
+			EvtHandler = Parser.SetAddressOf (evt_handler);
 			loc = l;
 		}
 
