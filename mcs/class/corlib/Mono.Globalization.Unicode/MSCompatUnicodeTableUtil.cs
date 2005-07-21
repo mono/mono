@@ -42,19 +42,19 @@ namespace Mono.Globalization.Unicode
 			int [] ignoreEnds = new int [] {
 				0x3400, 0xA500, 0x10000};
 			int [] catStarts = new int [] {
-				0, 0xAC00, 0xF900};
+				0, 0x1E00, 0x3000, 0x4E00, 0xAC00, 0xF900};
 			int [] catEnds = new int [] {
-				0xA000, 0xD7B0, 0x10000};
+				0x1200, 0x2800, 0x3400, 0xA000, 0xD7B0, 0x10000};
 			int [] lv1Starts = new int [] {
-				0, 0xAC00, 0xF900};
+				0, 0x1E00, 0x3000, 0x4E00, 0xAC00, 0xF900};
 			int [] lv1Ends = new int [] {
-				0xA000, 0xD7B0, 0x10000};
-			int [] lv2Starts = new int [] {0, 0xFB00};
-			int [] lv2Ends = new int [] {0x3400, 0x10000};
-			int [] lv3Starts = new int [] {0, 0xFB00};
-			int [] lv3Ends = new int [] {0x3400, 0x10000};
-			int [] widthStarts = new int [] {0, 0xFF00};
-			int [] widthEnds = new int [] {0x3400, 0x10000};
+				0x1200, 0x2800, 0x3400, 0xA000, 0xD7B0, 0x10000};
+			int [] lv2Starts = new int [] {0, 0x1E00, 0x3000, 0xFB00};
+			int [] lv2Ends = new int [] {0xF00, 0x2800, 0x3400, 0x10000};
+			int [] lv3Starts = new int [] {0, 0x1E00, 0x3000, 0xFB00};
+			int [] lv3Ends = new int [] {0x1200, 0x2800, 0x3400, 0x10000};
+			int [] widthStarts = new int [] {0, 0x2000, 0x3100, 0xFF00};
+			int [] widthEnds = new int [] {0x300, 0x2200, 0x3200, 0x10000};
 			int [] chsStarts = new int [] {
 				0x3100, 0x4E00, 0xE800}; // FIXME: really?
 			int [] chsEnds = new int [] {

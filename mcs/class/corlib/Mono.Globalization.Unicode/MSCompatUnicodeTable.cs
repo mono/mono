@@ -120,6 +120,8 @@ namespace Mono.Globalization.Unicode
 			return (0x3041 <= i && i <= 0x3094) ? i + 0x60 : i;
 		}
 
+		// Note that currently indexer optimizes this table a lot,
+		// which might have resulted in bugs.
 		public static int ToWidthCompat (int cp)
 		{
 			int i = UUtil.WidthCompat.ToIndex (cp);

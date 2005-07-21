@@ -1,3 +1,10 @@
+2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs,
+	  MSCompatUnicodeTableUtil.cs,
+	  MSCompatUnicodeTable.cs : added more aggressive index limits for
+	  table optimization at data size, in cost of speed.
+
 2005-07-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : fixed Arabic thirtial weight.

@@ -33,6 +33,8 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 
+using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
+
 namespace Mono.Globalization.Unicode
 {
 	internal class MSCompatSortKeyTableGenerator
@@ -317,28 +319,18 @@ sw.Close ();
 
 			// compress
 			ignorableFlags = CompressArray (ignorableFlags,
-				MSCompatUnicodeTableUtil.Ignorable);
-			categories = CompressArray (categories,
-				MSCompatUnicodeTableUtil.Category);
-			level1 = CompressArray (level1, 
-				MSCompatUnicodeTableUtil.Level1);
-			level2 = CompressArray (level2, 
-				MSCompatUnicodeTableUtil.Level2);
-			level3 = CompressArray (level3, 
-				MSCompatUnicodeTableUtil.Level3);
+				UUtil.Ignorable);
+			categories = CompressArray (categories, UUtil.Category);
+			level1 = CompressArray (level1, UUtil.Level1);
+			level2 = CompressArray (level2, UUtil.Level2);
+			level3 = CompressArray (level3, UUtil.Level3);
 			widthCompat = (ushort []) CodePointIndexer.CompressArray (
-				widthCompat, typeof (ushort),
-				MSCompatUnicodeTableUtil.WidthCompat);
-			cjkCHS = CompressArray (cjkCHS,
-				MSCompatUnicodeTableUtil.CjkCHS);
-			cjkCHT = CompressArray (cjkCHT,
-				MSCompatUnicodeTableUtil.Cjk);
-			cjkJA = CompressArray (cjkJA,
-				MSCompatUnicodeTableUtil.Cjk);
-			cjkKO = CompressArray (cjkKO,
-				MSCompatUnicodeTableUtil.Cjk);
-			cjkKOlv2 = CompressArray (cjkKOlv2,
-				MSCompatUnicodeTableUtil.Cjk);
+				widthCompat, typeof (ushort), UUtil.WidthCompat);
+			cjkCHS = CompressArray (cjkCHS, UUtil.CjkCHS);
+			cjkCHT = CompressArray (cjkCHT,UUtil.Cjk);
+			cjkJA = CompressArray (cjkJA, UUtil.Cjk);
+			cjkKO = CompressArray (cjkKO, UUtil.Cjk);
+			cjkKOlv2 = CompressArray (cjkKOlv2, UUtil.Cjk);
 
 			// Ignorables
 			Result.WriteLine ("internal static readonly byte [] ignorableFlags = new byte [] {");
@@ -357,7 +349,8 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF);
+					Result.WriteLine ("// {0:X04}",
+						UUtil.Ignorable.ToCodePoint (i - 0xF));
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
@@ -377,7 +370,8 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF);
+					Result.WriteLine ("// {0:X04}",
+						UUtil.Category.ToCodePoint (i - 0xF));
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
@@ -397,7 +391,8 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF);
+					Result.WriteLine ("// {0:X04}",
+						UUtil.Level1.ToCodePoint (i - 0xF));
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
@@ -417,7 +412,8 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF);
+					Result.WriteLine ("// {0:X04}",
+						UUtil.Level2.ToCodePoint (i - 0xF));
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
@@ -437,7 +433,8 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF);
+					Result.WriteLine ("// {0:X04}",
+						UUtil.Level3.ToCodePoint (i - 0xF));
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
@@ -459,7 +456,8 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF);
+					Result.WriteLine ("// {0:X04}",
+						UUtil.WidthCompat.ToCodePoint (i - 0xF));
 			}
 			Result.WriteLine ("};");
 			Result.WriteLine ();
