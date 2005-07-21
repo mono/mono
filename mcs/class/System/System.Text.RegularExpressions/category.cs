@@ -252,7 +252,7 @@ namespace System.Text.RegularExpressions {
 
 			case Category.EcmaDigit:
 				return
-					'0' <= c && c <= 9;
+					'0' <= c && c <= '9';
 			
 			case Category.EcmaWhiteSpace:
 				return

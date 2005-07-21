@@ -1,3 +1,7 @@
+2005-07-21  Florian Gross  <flgr@ccan.de>
+
+	* Fixed a bug in category.cs that caused ECMAScript \d to fail.
+
 2005-07-13  Raja R Harinath  <rharinath@novell.com>
 
 	Make even more lazier.
