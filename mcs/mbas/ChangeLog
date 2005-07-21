@@ -1,3 +1,6 @@
+2005-07-21 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay: Support type specifier for "ReDim" statements
+
 2005-07-18 Satya Sudha K <ksathyasudha@novell.com>
 	* Supported overloading of properties (has to be tested thoroughly)
 

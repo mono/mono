@@ -2838,7 +2838,7 @@ redim_clauses
 	;
 
 redim_clause
-	: invocation_expression
+	: invocation_expression opt_type_spec
 	  {
 	  	Invocation i = (Invocation) $1;
 		RedimClause rc = new RedimClause (i.expr, i.Arguments);
