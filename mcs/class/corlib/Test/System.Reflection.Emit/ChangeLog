@@ -1,3 +1,7 @@
+2005-07-21  Jb Evain  <jbevain@gmail.com>
+
+	* ILGeneratorTest.cs: Add tests for exception filters (bug #75010).
+
 2005-06-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodBuilderTest.cs: Updated existing tests to no longer define
