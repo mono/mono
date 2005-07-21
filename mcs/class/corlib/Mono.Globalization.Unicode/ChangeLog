@@ -1,5 +1,9 @@
 2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : More Latin diacritical fixes.
+
+2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : There were still missing
 	  math symbol mappings. Added several hacky diacritical weight for
 	  Latin characters.

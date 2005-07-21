@@ -98,8 +98,6 @@ namespace Mono.Globalization.Unicode
 		byte [] diacritical = new byte [char.MaxValue + 1];
 
 		string [] diacritics = new string [] {
-			"DOUBLE VERTICAL LINE ABOVE",
-			"ABKHASIAN CHE WITH DESCENDER",
 			// LATIN, CYRILLIC etc.
 			"VERTICAL LINE ABOVE", "UPTURN", "DOUBLE-STRUCK",
 			"ABKHASIAN",
@@ -111,7 +109,9 @@ namespace Mono.Globalization.Unicode
 			"WITH CIRCUMFLEX ACCENT;", "WITH CIRCUMFLEX;",
 			"WITH DIALYTIKA;",
 			"WITH DIAERESIS;", "WITH CARON;", "WITH BREVE;",
-			"DIALYTIKA TONOS", "DIALYTIKA AND TONOS", "WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
+			"DIALYTIKA TONOS", "DIALYTIKA AND TONOS",
+			"ABKHASIAN CHE WITH DESCENDER",
+			"WITH MACRON;", "WITH TILDE;", "WITH RING ABOVE;",
 			"WITH OGONEK;", "WITH CEDILLA;",
 			//
 			" DOUBLE ACUTE;", " ACUTE AND DOT ABOVE;",
@@ -133,8 +133,8 @@ namespace Mono.Globalization.Unicode
 			" BREVE AND TILDE",
 			" CEDILLA AND BREVE",
 			" OGONEK AND MACRON",
-			//
-			"WITH OVERLINE",
+			// 0x40
+			"WITH OVERLINE", "DOUBLE VERTICAL LINE ABOVE",
 			"WITH HOOK;", "LEFT HOOK;", " WITH HOOK ABOVE;",
 			" DOUBLE GRAVE",
 			" INVERTED BREVE",
@@ -144,7 +144,7 @@ namespace Mono.Globalization.Unicode
 			" LINE BELOW;", " CIRCUMFLEX AND HOOK ABOVE",
 			" PALATAL HOOK",
 			" DOT BELOW;",
-			" RETROFLEX;", "DIAERESIS BELOW",
+			" RETROFLEX;", "DIAERESIS BELOW", "RETROFLEX HOOK",
 			" RING BELOW",
 			//
 			" CIRCUMFLEX BELOW", "HORN AND ACUTE",
@@ -165,19 +165,13 @@ namespace Mono.Globalization.Unicode
 			"PARENTHESIZED DIGIT", "PARENTHESIZED NUMBER", "PARENTHESIZED LATIN",
 			};
 		byte [] diacriticWeights = new byte [] {
-			// this is to pick U+30E (DOUBLE VERTICAL LINE ABOVE)
-			// before being picked as VERTICAL LINE ABOVE
-			41,
-			// this is to pick ABKHASIAN CHE WITH DESCENDER before
-			// being picked as ABKHASIAN
-			17,
 			// LATIN.
 			3, 3, 3, 5, 5, 5, 5,
 			0xE, 0xF,
 			0xE, 0xF,
 			//
 			0x10, 0x11, 0x12, 0x12, 0x13, 0x13, 0x14, 0x15, 0x16,
-			0x16, 0x17, 0x19, 0x1A, 0x1B, 0x1C,
+			0x16, 0x17, 0x17, 0x19, 0x1A, 0x1B, 0x1C,
 			//
 			0x1D, 0x1D, 0x1E, 0x1E, 0x1E, 0x1F, 0x1F, 0x1F,
 			0x20, 0x21, 0x22, 0x22, 0x23, 0x24,
@@ -185,8 +179,8 @@ namespace Mono.Globalization.Unicode
 			0x25, 0x25, 0x25, 0x26, 0x28, 0x28, 0x28,
 			0x29, 0x2A, 0x2B, 0x2C, 0x2F, 0x30,
 			//
-			0x40, 0x43, 0x43, 0x43, 0x44, 0x46, 0x47, 0x48,
-			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x5A,
+			0x40, 0x41, 0x43, 0x43, 0x43, 0x44, 0x46, 0x47, 0x48,
+			0x52, 0x55, 0x55, 0x57, 0x58, 0x59, 0x59, 0x59, 0x5A,
 			//
 			0x60, 0x60, 0x61, 0x61, 0x63, 0x68, 0x68,
 			0x69, 0x69, 0x6A, 0x6D, 0x6E,
@@ -1111,7 +1105,7 @@ sw.Close ();
 			// diacritical weights by character name
 if (diacritics.Length != diacriticWeights.Length)
 throw new Exception (String.Format ("Should not happen. weights are {0} while labels are {1}", diacriticWeights.Length, diacritics.Length));
-			for (int d = 0; d < diacritics.Length; d++) {
+			for (int d = diacritics.Length - 1; d >= 0; d--) {
 				if (s.IndexOf (diacritics [d]) > 0) {
 					diacritical [cp] += diacriticWeights [d];
 					if (s.IndexOf ("COMBINING") >= 0)
@@ -1656,6 +1650,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// TOPBAR does not work as an identifier for the weight
 			diacritical [0x182] = diacritical [0x183] = 0x68; // B
 			diacritical [0x18B] = diacritical [0x18C] = 0x1E; // D
+			// TONE TWO
+			diacritical [0x1A7] = diacritical [0x1A8] = 0x87;
 			// TONE SIX
 			diacritical [0x184] = diacritical [0x185] = 0x87;
 			// OPEN E
@@ -1666,6 +1662,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			diacritical [0x019C] = diacritical [0x019E] =
 			diacritical [0x01A6] = diacritical [0x01B1] =
 			diacritical [0x01B2] = diacritical [0x01BF] = 0x7B;
+			// ... as well as 0x7C
+			diacritical [0x01A2] = diacritical [0x01A3] = 0x7C;
 
 			// some cyrillic diacritical weight. They seem to be
 			// based on old character names, so it's quicker to
