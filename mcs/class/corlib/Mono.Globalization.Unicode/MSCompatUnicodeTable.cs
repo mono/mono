@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -23,38 +24,178 @@ namespace Mono.Globalization.Unicode
 		}
 	}
 
+	#region Tailoring support classes
+	// Possible mapping types are:
+	//
+	//	- string to string (ReplacementMap)
+	//	- string to SortKey (SortKeyMap)
+	//	- diacritical byte to byte (DiacriticalMap)
+	//
+	// There could be mapping from string to sortkeys, but
+	// for now there is none as such.
+	//
+	internal class Contraction
+	{
+		public readonly char [] Source;
+		// only either of them is used.
+		public readonly string Replacement;
+		public readonly byte [] SortKey;
+
+		public Contraction (char [] source,
+			string replacement, byte [] sortkey)
+		{
+			Source = source;
+			Replacement = replacement;
+			SortKey = sortkey;
+		}
+	}
+
+	internal class ContractionComparer : IComparer
+	{
+		public static readonly ContractionComparer Instance =
+			new ContractionComparer ();
+
+		public int Compare (object o1, object o2)
+		{
+			Contraction c1 = (Contraction) o1;
+			Contraction c2 = (Contraction) o2;
+			char [] a1 = c1.Source;
+			char [] a2 = c2.Source;
+			int min = a1.Length > a2.Length ?
+				a2.Length : a1.Length;
+			for (int i = 0; i < min; i++)
+				if (a1 [i] != a2 [i])
+					return a1 [i] - a2 [i];
+			return a1.Length - a2.Length;
+		}
+	}
+
+	internal class Level2Map
+	{
+		public byte Source;
+		public byte Replace;
+
+		public Level2Map (byte source, byte replace)
+		{
+			Source = source;
+			Replace = replace;
+		}
+	}
+
+	internal class Level2MapComparer : IComparer
+	{
+		public static readonly Level2MapComparer Instance =
+			new Level2MapComparer ();
+
+		public int Compare (object o1, object o2)
+		{
+			Level2Map m1 = (Level2Map) o1;
+			Level2Map m2 = (Level2Map) o2;
+			return (m1.Source - m2.Source);
+		}
+	}
+
+	#endregion
+
 	internal class MSCompatUnicodeTable
 	{
-		public static char [] TailoringValues {
-			get { return tailorings; }
-		}
-
-		public static ushort [] CjkCHS {
-			get { return cjkCHS; }
-		}
-
-		public static ushort [] CjkCHT {
-			get { return cjkCHT; }
-		}
-
-		public static ushort [] CjkJA {
-			get { return cjkJA; }
-		}
-
-		public static ushort [] CjkKO {
-			get { return cjkKO; }
-		}
-
-		public static byte [] CjkKOLv2 {
-			get { return cjkKOlv2; }
-		}
-
 		public static TailoringInfo GetTailoringInfo (int lcid)
 		{
 			for (int i = 0; i < tailoringInfos.Length; i++)
 				if (tailoringInfos [i].LCID == lcid)
 					return tailoringInfos [i];
 			return null;
+		}
+
+		public static void BuildTailoringTables (CultureInfo culture,
+			TailoringInfo t,
+			ref Contraction [] contractions,
+			ref Level2Map [] diacriticals)
+		{
+			// collect tailoring entries.
+			ArrayList cmaps = new ArrayList ();
+			ArrayList dmaps = new ArrayList ();
+			char [] tarr = tailorings;
+			int idx = t.TailoringIndex;
+			int end = idx + t.TailoringCount;
+			while (idx < end) {
+				int ss = idx + 1;
+				char [] src = null;
+				switch (tarr [idx]) {
+				case '\x1': // SortKeyMap
+					idx++;
+					while (tarr [ss] != 0)
+						ss++;
+					src = new char [ss - idx];
+					Array.Copy (tarr, idx, src, 0, ss - idx);
+					byte [] sortkey = new byte [4];
+					for (int i = 0; i < 4; i++)
+						sortkey [i] = (byte) tarr [ss + 1 + i];
+					cmaps.Add (new Contraction (
+						src, null, sortkey));
+					// it ends with 0
+					idx = ss + 6;
+					break;
+				case '\x2': // DiacriticalMap
+					dmaps.Add (new Level2Map (
+						(byte) tarr [idx + 1],
+						(byte) tarr [idx + 2]));
+					idx += 3;
+					break;
+				case '\x3': // ReplacementMap
+					idx++;
+					while (tarr [ss] != 0)
+						ss++;
+					src = new char [ss - idx];
+					Array.Copy (tarr, idx, src, 0, ss - idx);
+					ss++;
+					int l = ss;
+					while (tarr [l] != 0)
+						l++;
+					string r = new string (tarr, ss, l - ss);
+					cmaps.Add (new Contraction (
+						src, r, null));
+					idx = l + 1;
+					break;
+				default:
+					throw new NotImplementedException (String.Format ("Mono INTERNAL ERROR (Should not happen): Collation tailoring table is broken for culture {0} ({1}) at 0x{2:X}", culture.LCID, culture.Name, idx));
+				}
+			}
+			cmaps.Sort (ContractionComparer.Instance);
+			dmaps.Sort (Level2MapComparer.Instance);
+			contractions = cmaps.ToArray (typeof (Contraction))
+				as Contraction [];
+			diacriticals = dmaps.ToArray (typeof (Level2Map))
+				as Level2Map [];
+		}
+
+		static void SetCJKReferences (string name,
+			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+		{
+			// as a part of mscorlib.dll, this invocation is
+			// somewhat extraneous (pointers were already assigned).
+
+			switch (name) {
+			case "zh-CHS":
+				cjkTable = cjkCHS;
+				cjkIndexer = UUtil.CjkCHS;
+				break;
+			case "zh-CHT":
+				cjkTable = cjkCHT;
+				cjkIndexer = UUtil.Cjk;
+				break;
+			case "ja":
+				cjkTable = cjkJA;
+				cjkIndexer = UUtil.Cjk;
+				break;
+			case "ko":
+				cjkTable = cjkKO;
+				cjkLv2Table = cjkKOlv2;
+				cjkIndexer = UUtil.Cjk;
+				cjkLv2Indexer = UUtil.Cjk;
+				break;
+			}
 		}
 
 		public static byte Category (int cp)
@@ -217,7 +358,13 @@ namespace Mono.Globalization.Unicode
 
 		public static readonly bool IsReady = true; // always
 
-		public static void FillCJK (string name) {}
+		public static void FillCJK (string name,
+			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+		{
+			SetCJKReferences (name, ref cjkTable, ref cjkIndexer,
+				ref cjkLv2Table, ref cjkLv2Indexer);
+		}
 #else
 
 		static readonly char [] tailorings;
@@ -306,72 +453,79 @@ namespace Mono.Globalization.Unicode
 			reader.Read (bytes, 0, size);
 		}
 
-		public static void FillCJK (string culture)
+		public static void FillCJK (string culture,
+			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			lock (forLock) {
-				FillCJKCore (culture);
+				FillCJKCore (culture,
+					ref cjkTable, ref cjkIndexer,
+					ref cjkLv2Table, ref cjkLv2Indexer);
+				SetCJKReferences (culture, ref cjkTable, ref cjkIndexer,
+					ref cjkLv2Table, ref cjkLv2Indexer);
 			}
 		}
 
-		static void FillCJKCore (string culture)
+		static void FillCJKCore (string culture,
+			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			if (!IsReady)
 				return;
 
 			string name = null;
-			ushort [] arr = null;
 			switch (culture) {
 			case "zh-CHS":
 				name = "cjkCHS";
-				arr = cjkCHS;
+				cjkTable = cjkCHS;
 				break;
 			case "zh-CHT":
 				name = "cjkCHT";
-				arr = cjkCHT;
+				cjkTable = cjkCHT;
 				break;
 			case "ja":
 				name = "cjkJA";
-				arr = cjkJA;
+				cjkTable = cjkJA;
 				break;
 			case "ko":
 				name = "cjkKO";
-				arr = cjkKO;
+				cjkTable = cjkKO;
 				break;
 			}
 
-			if (name == null || arr != null)
+			if (name == null || cjkTable != null)
 				return;
 
 			using (Stream s = GetResource (String.Format ("collation.{0}.bin", name))) {
 				BinaryReader reader = new BinaryReader (s);
 				int size = reader.ReadInt32 ();
-				arr = new ushort [size];
+				cjkTable = new ushort [size];
 				for (int i = 0; i < size; i++)
-					arr [i] = reader.ReadUInt16 ();
+					cjkTable [i] = reader.ReadUInt16 ();
 			}
 
 			switch (culture) {
 			case "zh-CHS":
-				cjkCHS = arr;
+				cjkCHS = cjkTable;
 				break;
 			case "zh-CHT":
-				cjkCHT = arr;
+				cjkCHT = cjkTable;
 				break;
 			case "ja":
-				cjkJA = arr;
+				cjkJA = cjkTable;
 				break;
 			case "ko":
-				cjkKO = arr;
+				cjkKO = cjkTable;
 				break;
 			}
 
 			if (name != "cjkKO")
 				return;
-
 			using (Stream s = GetResource ("collation.cjkKOlv2.bin")) {
 				BinaryReader reader = new BinaryReader (s);
 				FillTable (reader, ref cjkKOlv2);
 			}
+			cjkLv2Table = cjkKOlv2;
 		}
 	}
 }

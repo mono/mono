@@ -1,5 +1,13 @@
 2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.cs,
+	  SimpleCollator.cs : Moved tailoring support classes to 
+	  MSCompatUnicodeTable.cs and drawn out from SimpleCollator.
+	  Now that cjk and tailoring support are filled inside 
+	  MSCompatUnicodeTable, no managed array is exposed.
+
+2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs,
 	  SimpleCollator.cs,
 	  MSCompatUnicodeTable.cs : Now it's not exposing collation table

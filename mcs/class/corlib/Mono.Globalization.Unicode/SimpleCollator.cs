@@ -84,79 +84,6 @@ namespace Mono.Globalization.Unicode
 		byte [] charSortKey2 = new byte [4];
 		byte [] charSortKeyIndexTarget = new byte [4];
 
-		#region Tailoring support classes
-		// Possible mapping types are:
-		//
-		//	- string to string (ReplacementMap)
-		//	- string to SortKey (SortKeyMap)
-		//	- diacritical byte to byte (DiacriticalMap)
-		//
-		// There could be mapping from string to sortkeys, but
-		// for now there is none as such.
-		//
-		internal class Contraction
-		{
-			public readonly char [] Source;
-			// only either of them is used.
-			public readonly string Replacement;
-			public readonly byte [] SortKey;
-
-			public Contraction (char [] source,
-				string replacement, byte [] sortkey)
-			{
-				Source = source;
-				Replacement = replacement;
-				SortKey = sortkey;
-			}
-		}
-
-		internal class ContractionComparer : IComparer
-		{
-			public static readonly ContractionComparer Instance =
-				new ContractionComparer ();
-
-			public int Compare (object o1, object o2)
-			{
-				Contraction c1 = (Contraction) o1;
-				Contraction c2 = (Contraction) o2;
-				char [] a1 = c1.Source;
-				char [] a2 = c2.Source;
-				int min = a1.Length > a2.Length ?
-					a2.Length : a1.Length;
-				for (int i = 0; i < min; i++)
-					if (a1 [i] != a2 [i])
-						return a1 [i] - a2 [i];
-				return a1.Length - a2.Length;
-			}
-		}
-
-		internal class Level2Map
-		{
-			public byte Source;
-			public byte Replace;
-
-			public Level2Map (byte source, byte replace)
-			{
-				Source = source;
-				Replace = replace;
-			}
-		}
-
-		internal class Level2MapComparer : IComparer
-		{
-			public static readonly Level2MapComparer Instance =
-				new Level2MapComparer ();
-
-			public int Compare (object o1, object o2)
-			{
-				Level2Map m1 = (Level2Map) o1;
-				Level2Map m2 = (Level2Map) o2;
-				return (m1.Source - m2.Source);
-			}
-		}
-
-		#endregion
-
 		#region .ctor() and split functions
 
 		public SimpleCollator (CultureInfo culture)
@@ -179,7 +106,7 @@ namespace Mono.Globalization.Unicode
 				t = Uni.GetTailoringInfo (127);
 
 			frenchSort = t.FrenchSort;
-			BuildTailoringTables (culture, t, ref contractions,
+			Uni.BuildTailoringTables (culture, t, ref contractions,
 				ref level2Maps);
 			// FIXME: Since tailorings are mostly for latin
 			// (and in some cases Cyrillic) characters, it would
@@ -198,6 +125,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 */
 		}
 
+/*
 		private void BuildTailoringTables (CultureInfo culture,
 			TailoringInfo t,
 			ref Contraction [] contractions,
@@ -259,6 +187,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			diacriticals = dmaps.ToArray (typeof (Level2Map))
 				as Level2Map [];
 		}
+*/
 
 		private void SetCJKTable (CultureInfo culture,
 			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
@@ -266,29 +195,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		{
 			string name = GetNeutralCulture (culture).Name;
 
-			Uni.FillCJK (name);
-
-			// custom CJK table support.
-			switch (name) {
-			case "zh-CHS":
-				cjkTable = Uni.CjkCHS;
-				cjkIndexer = UUtil.CjkCHS;
-				break;
-			case "zh-CHT":
-				cjkTable = Uni.CjkCHT;
-				cjkIndexer = UUtil.Cjk;
-				break;
-			case "ja":
-				cjkTable = Uni.CjkJA;
-				cjkIndexer = UUtil.Cjk;
-				break;
-			case "ko":
-				cjkTable = Uni.CjkKO;
-				cjkLv2Table = Uni.CjkKOLv2;
-				cjkIndexer = UUtil.Cjk;
-				cjkLv2Indexer = UUtil.Cjk;
-				break;
-			}
+			Uni.FillCJK (name, ref cjkTable, ref cjkIndexer, ref cjkLv2Table, ref cjkLv2Indexer);
 		}
 
 		static CultureInfo GetNeutralCulture (CultureInfo info)
