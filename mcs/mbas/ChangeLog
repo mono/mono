@@ -1,3 +1,6 @@
+2005-07-22 Manjula GHM <mmanjula@novell.com>
+	*mb-parser.jay: Check for type before resolving
+	
 2005-07-22 Ankit Jain <jankit@novell.com>
 
 	* mb-parser.jay: evt_handler_list: New.

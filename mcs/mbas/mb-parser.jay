@@ -4054,8 +4054,14 @@ opt_type_spec
 	  	$$ = null; 		
 	  }
 	| AS type	
-	  { 
-	  	$$ = (Expression) $2;
+	  {
+		if ($2 != null) 
+	  		$$ = (Expression) $2;
+		else
+		{
+			Report.Error(30182, lexer.Location, "Identifier Expected");
+                	$$ = null;
+        	}
 	  }
 	;
 		
@@ -4063,7 +4069,13 @@ opt_type_with_ranks
 	: opt_type_spec	
 	| AS type _mark_ rank_specifiers
 	  {
-		$$ = DecomposeQI ($2.ToString() + VariableDeclaration.BuildRanks ((ArrayList)$4, true, (Location)$3), (Location)$3);
+		if ($2 == null)
+		{
+			Report.Error(30182,  (Location)$3, "Identifier Expected");
+                	$$ = null;
+		}
+		else
+			$$ = DecomposeQI ($2.ToString() + VariableDeclaration.BuildRanks ((ArrayList)$4, true, (Location)$3), (Location)$3);
 	  }
 	;
 	
