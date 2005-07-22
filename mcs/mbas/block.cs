@@ -170,6 +170,26 @@ namespace Mono.MonoBASIC {
 		}
 
 		/// <summary>
+		///   Verify if the current block has a labeled statement. 
+		/// </summary>
+		///
+		/// <returns>
+		///   false if desn't exist a labeled statement in this block or in its children. true
+		///   otherwise.
+		/// </returns>
+		public bool HasLabeledStatement {
+			get {
+				foreach( Statement s in statements ) {
+					if( s is LabeledStatement )
+						return true;
+					else if (s is Block )
+						return ( ((Block) s).HasLabeledStatement);
+				}
+				return false;
+			}
+		}
+				
+		/// <summary>
 		///   Adds a label to the current block. 
 		/// </summary>
 		///
@@ -741,18 +761,20 @@ namespace Mono.MonoBASIC {
 			ArrayList new_statements = new ArrayList ();
 			bool unreachable = false, warning_shown = false;
 
- 			foreach (Statement s in statements){
-
+			foreach (Statement s in statements) {
+				
 				if (unreachable && !(s is LabeledStatement)) {
-					if (!warning_shown && !(s is EmptyStatement)) {
-						warning_shown = true;
-						Warning_DeadCodeFound (s.loc);
+					if ( !(s is Block && ((Block)s).HasLabeledStatement) ) {
+						if (!warning_shown && !(s is EmptyStatement)) {
+							warning_shown = true;
+							Warning_DeadCodeFound (s.loc);
+						}
+						continue;
 					}
-					continue;
-				}
+				}			
 
 				if (s.Resolve (ec) == false) {
- 					ok = false;
+					ok = false;
 					continue;
 				}
 

@@ -1,3 +1,6 @@
+2005-07-22 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* block.cs: Fix dead code detection
+ 
 2005-07-22 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-tokenizer.cs: Fix for statements ending with ':'
 
