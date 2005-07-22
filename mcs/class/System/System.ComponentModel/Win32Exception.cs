@@ -161,6 +161,12 @@ namespace System.ComponentModel
 			case 10051:
 				message = Locale.GetText ("Network is unreachable");
 				break;
+			case 10052:
+			    	message = Locale.GetText ("Connection broken, keep-alive detected a problem");
+				break;
+			case 10053:
+			    	message = Locale.GetText ("An established connection was aborted in your host machine.");
+			    	break;
 			case 10054:
 				message = Locale.GetText ("Connection reset by peer");
 				break;
