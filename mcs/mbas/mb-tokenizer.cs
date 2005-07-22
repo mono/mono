@@ -33,6 +33,7 @@ namespace Mono.MonoBASIC
 		int line = 0;
 		int col = 1;
 		public int current_token = Token.ERROR;
+		public int last_token = Token.ERROR;
 		bool handle_get_set = false;
 		bool cant_have_a_type_character = false;
 
@@ -806,7 +807,8 @@ namespace Mono.MonoBASIC
 			
 		public int token ()
 		{
-			int lastToken = current_token;
+			int before_last_token = last_token;
+			last_token = current_token;
 			do
 			{
 				current_token = xtoken ();
@@ -818,11 +820,25 @@ namespace Mono.MonoBASIC
 					 else 
 						return Token.END;
 				}	
+				if (current_token == Token.COLON) {
+					next_token = xtoken();
+					putbacktoken = true;
+					if (next_token == Token.EOL) {
+						if (last_token != Token.LABELNAME && last_token != Token.LITERAL_INTEGER) {
+							current_token = Token.EOL;
+							putbacktoken = false;
+						}
+						else if (before_last_token == Token.GOTO) {
+							current_token = Token.EOL;
+							putbacktoken = false;
+						}
+					}
+				}
 				if (current_token == 0) 
 					return Token.EOF;
 				if (current_token == Token.REM)
 					current_token = DropComments();
-			} while (lastToken == Token.EOL && current_token == Token.EOL);
+			} while (last_token == Token.EOL && current_token == Token.EOL);
 
 			return current_token;
 		}
@@ -937,18 +953,23 @@ namespace Mono.MonoBASIC
 				// Handle escaped identifiers
 				if (c == '[')
 				{
+					bool is_first_token_in_line = !tokens_seen;
 					if ((val = GetIdentifier()) == null)
 						break;
 					if ((c = getChar()) != ']')
 						break;
 					tokens_seen = true;
+					if (IsLabel() && is_first_token_in_line)
+						return Token.LABELNAME;
+
+					if (last_token == Token.GOTO)
+						return Token.LABELNAME;
 					return Token.IDENTIFIER;
 				}
 
 				// Handle unescaped identifiers
 				if (is_identifier_start_character ((char) c))
 				{
-					int last_token = current_token;
 					string id;
 					bool is_first_token_in_line = !tokens_seen;
 					if ((id = GetIdentifier(c)) == null)
