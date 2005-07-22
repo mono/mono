@@ -1,3 +1,10 @@
+2005-07-22  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (do-profile-check): Make the "silent"
+	compilation check even more silent.  Refuse to use monolite if the
+	corlib version of monolite/mscorlib.dll doesn't match the corlib
+	version of the source.
+
 2005-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* executable.make (dist-local): Copy from library.make.
