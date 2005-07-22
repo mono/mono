@@ -57,7 +57,7 @@ namespace Mono.Globalization.Unicode
 			return null;
 		}
 
-		public static byte Categories (int cp)
+		public static byte Category (int cp)
 		{
 			return categories [UUtil.Category.ToIndex (cp)];
 		}
@@ -222,12 +222,12 @@ namespace Mono.Globalization.Unicode
 
 		static readonly char [] tailorings;
 		static readonly TailoringInfo [] tailoringInfos;
-		internal static readonly byte [] ignorableFlags;
-		internal static readonly byte [] categories;
-		internal static readonly byte [] level1;
-		internal static readonly byte [] level2;
-		internal static readonly byte [] level3;
-		internal static readonly ushort [] widthCompat;
+		static readonly byte [] ignorableFlags;
+		static readonly byte [] categories;
+		static readonly byte [] level1;
+		static readonly byte [] level2;
+		static readonly byte [] level3;
+		static readonly ushort [] widthCompat;
 		static ushort [] cjkCHS;
 		static ushort [] cjkCHT;
 		static ushort [] cjkJA;

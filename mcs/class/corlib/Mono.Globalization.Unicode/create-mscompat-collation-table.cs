@@ -338,7 +338,7 @@ sw.Close ();
 			cjkKOlv2 = CompressArray (cjkKOlv2, UUtil.Cjk);
 
 			// Ignorables
-			Result.WriteLine ("internal static readonly byte [] ignorableFlags = new byte [] {");
+			Result.WriteLine ("static readonly byte [] ignorableFlags = new byte [] {");
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -361,7 +361,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Primary category
-			Result.WriteLine ("internal static readonly byte [] categories = new byte [] {");
+			Result.WriteLine ("static readonly byte [] categories = new byte [] {");
 #if Binary
 			binary.Write (categories.Length);
 #endif
@@ -382,7 +382,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Primary weight value
-			Result.WriteLine ("internal static readonly byte [] level1 = new byte [] {");
+			Result.WriteLine ("static readonly byte [] level1 = new byte [] {");
 #if Binary
 			binary.Write (level1.Length);
 #endif
@@ -403,7 +403,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Secondary weight
-			Result.WriteLine ("internal static readonly byte [] level2 = new byte [] {");
+			Result.WriteLine ("static readonly byte [] level2 = new byte [] {");
 #if Binary
 			binary.Write (level2.Length);
 #endif
@@ -424,7 +424,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Thirtiary weight
-			Result.WriteLine ("internal static readonly byte [] level3 = new byte [] {");
+			Result.WriteLine ("static readonly byte [] level3 = new byte [] {");
 #if Binary
 			binary.Write (level3.Length);
 #endif
@@ -447,7 +447,7 @@ sw.Close ();
 			// Width insensitivity mappings
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
-			Result.WriteLine ("internal static readonly ushort [] widthCompat = new ushort [] {");
+			Result.WriteLine ("static readonly ushort [] widthCompat = new ushort [] {");
 #if Binary
 			binary.Write (widthCompat.Length);
 #endif

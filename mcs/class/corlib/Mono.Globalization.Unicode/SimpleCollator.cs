@@ -62,30 +62,6 @@ namespace Mono.Globalization.Unicode
 		static SimpleCollator invariant =
 			new SimpleCollator (CultureInfo.InvariantCulture);
 
-		internal static readonly byte [] ignorableFlags =
-			Uni.ignorableFlags;
-		internal static readonly byte [] categories =
-			Uni.categories;
-		internal static readonly byte [] level1 =
-			Uni.level1;
-		internal static readonly byte [] level2 =
-			Uni.level2;
-		internal static readonly byte [] level3 =
-			Uni.level3;
-		internal static readonly ushort [] widthCompat =
-			Uni.widthCompat;
-		internal static readonly CodePointIndexer categoryIndexer =
-			UUtil.Category;
-		internal static readonly CodePointIndexer lv1Indexer =
-			UUtil.Level1;
-		internal static readonly CodePointIndexer lv2Indexer =
-			UUtil.Level2;
-		internal static readonly CodePointIndexer lv3Indexer =
-			UUtil.Level3;
-		internal static readonly CodePointIndexer widthIndexer =
-			UUtil.WidthCompat;
-
-
 		SortKeyBuffer buf;
 		// CompareOptions expanded.
 		bool ignoreNonSpace; // used in IndexOf()
@@ -328,21 +304,21 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		byte Category (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
-				return categories [categoryIndexer.ToIndex (cp)];
+				return Uni.Category (cp);
 			int idx = cjkIndexer.ToIndex (cp);
 			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
 			return cjk != 0 ? (byte) ((cjk & 0xFF00) >> 8) :
-				categories [categoryIndexer.ToIndex (cp)];
+				Uni.Category (cp);
 		}
 
 		byte Level1 (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
-				return level1 [lv1Indexer.ToIndex (cp)];
+				return Uni.Level1 (cp);
 			int idx = cjkIndexer.ToIndex (cp);
 			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
 			return cjk != 0 ? (byte) (cjk & 0xFF) :
-				level1 [lv1Indexer.ToIndex (cp)];
+				Uni.Level1 (cp);
 		}
 
 		byte Level2 (int cp, ExtenderType ext)
@@ -353,12 +329,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return 0;
 
 			if (cp < 0x3000 || cjkLv2Table == null)
-				return level2 [lv2Indexer.ToIndex (cp)];
+				return Uni.Level2 (cp);
 			int idx = cjkLv2Indexer.ToIndex (cp);
 			byte ret = idx < 0 ? (byte) 0 : cjkLv2Table [idx];
 			if (ret != 0)
 				return ret;
-			ret = level2 [lv2Indexer.ToIndex (cp)];
+			ret = Uni.Level2 (cp);
 			if (level2Maps.Length == 0)
 				return ret;
 			for (int i = 0; i < level2Maps.Length; i++) {
@@ -475,7 +451,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		int FilterOptions (int i)
 		{
 			if (ignoreWidth) {
-				int x = widthCompat [widthIndexer.ToIndex (i)];
+				int x = Uni.ToWidthCompat (i);
 				if (x != 0)
 					i = x;
 			}
@@ -623,7 +599,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 							b [0],
 							b [1],
 							b [2] != 1 ? b [2] : Level2 (i, ext),
-							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
+							b [3] != 1 ? b [3] : Uni.Level3 (i));
 					}
 					// otherwise do nothing.
 					// (if the extender is the first char
@@ -645,7 +621,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 							b [0],
 							b [1],
 							b [2] != 1 ? b [2] : Level2 (i, ext),
-							b [3] != 1 ? b [3] : level3 [lv3Indexer.ToIndex (i)]);
+							b [3] != 1 ? b [3] : Uni.Level3 (i));
 						previousSortKey = b;
 						previousChar = -1;
 					}

@@ -1,5 +1,12 @@
 2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs,
+	  SimpleCollator.cs,
+	  MSCompatUnicodeTable.cs : Now it's not exposing collation table
+	  internals as managed arrays (to switch to unmanaged pointers).
+
+2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : tiny nonspacing mark fix.
 
 2005-07-21  Atsushi Enomoto  <atsushi@ximian.com>
