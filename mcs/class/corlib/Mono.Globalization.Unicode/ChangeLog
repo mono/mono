@@ -1,5 +1,14 @@
 2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs,
+	  MSCompatUnicodeTable.cs,
+	  create-mscompat-collation-table.cs : Now they use unmanaged pointers
+	  instead of managed arrays.
+	* managed-collation.patch : Now it contains patch for IntPtrStream.cs
+	  and Assembly.cs as well.
+
+2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.cs,
 	  SimpleCollator.cs : Moved tailoring support classes to 
 	  MSCompatUnicodeTable.cs and drawn out from SimpleCollator.

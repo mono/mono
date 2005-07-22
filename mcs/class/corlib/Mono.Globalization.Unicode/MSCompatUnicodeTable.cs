@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 
 using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
+using PtrStream = System.IO.UnmanagedMemoryStream;
 
 namespace Mono.Globalization.Unicode
 {
@@ -97,7 +98,7 @@ namespace Mono.Globalization.Unicode
 
 	#endregion
 
-	internal class MSCompatUnicodeTable
+	unsafe internal class MSCompatUnicodeTable
 	{
 		public static TailoringInfo GetTailoringInfo (int lcid)
 		{
@@ -170,8 +171,8 @@ namespace Mono.Globalization.Unicode
 		}
 
 		static void SetCJKReferences (string name,
-			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			// as a part of mscorlib.dll, this invocation is
 			// somewhat extraneous (pointers were already assigned).
@@ -354,13 +355,63 @@ namespace Mono.Globalization.Unicode
 
 		#endregion
 
+
+		static readonly byte* ignorableFlags;
+		static readonly byte* categories;
+		static readonly byte* level1;
+		static readonly byte* level2;
+		static readonly byte* level3;
+		static readonly ushort* widthCompat;
+		static ushort* cjkCHS;
+		static ushort* cjkCHT;
+		static ushort* cjkJA;
+		static ushort* cjkKO;
+		static byte* cjkKOlv2;
+
 #if GENERATE_TABLE
 
 		public static readonly bool IsReady = true; // always
 
+		static MSCompatUnicodeTable ()
+		{
+			fixed (byte* tmp = ignorableFlagsArr) {
+				ignorableFlags = tmp;
+			}
+			fixed (byte* tmp = categoriesArr) {
+				categories = tmp;
+			}
+			fixed (byte* tmp = level1Arr) {
+				level1 = tmp;
+			}
+			fixed (byte* tmp = level2Arr) {
+				level2 = tmp;
+			}
+			fixed (byte* tmp = level3Arr) {
+				level3 = tmp;
+			}
+			fixed (ushort* tmp = widthCompatArr) {
+				widthCompat = tmp;
+			}
+			fixed (ushort* tmp = cjkCHSArr) {
+				cjkCHS = tmp;
+			}
+			fixed (ushort* tmp = cjkCHTArr) {
+				cjkCHT = tmp;
+			}
+			fixed (ushort* tmp = cjkJAArr) {
+				cjkJA = tmp;
+			}
+			fixed (ushort* tmp = cjkKOArr) {
+				cjkKO = tmp;
+			}
+			fixed (byte* tmp = cjkKOlv2Arr) {
+				cjkKOlv2 = tmp;
+			}
+		}
+
 		public static void FillCJK (string name,
-			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			SetCJKReferences (name, ref cjkTable, ref cjkIndexer,
 				ref cjkLv2Table, ref cjkLv2Indexer);
@@ -369,17 +420,6 @@ namespace Mono.Globalization.Unicode
 
 		static readonly char [] tailorings;
 		static readonly TailoringInfo [] tailoringInfos;
-		static readonly byte [] ignorableFlags;
-		static readonly byte [] categories;
-		static readonly byte [] level1;
-		static readonly byte [] level2;
-		static readonly byte [] level3;
-		static readonly ushort [] widthCompat;
-		static ushort [] cjkCHS;
-		static ushort [] cjkCHT;
-		static ushort [] cjkJA;
-		static ushort [] cjkKO;
-		static byte [] cjkKOlv2;
 		static object forLock = new object ();
 
 		public static readonly bool IsReady = false;
@@ -390,9 +430,21 @@ namespace Mono.Globalization.Unicode
 				.GetManifestResourceStream (name);
 		}
 
+		static uint ReadUInt32FromStream (Stream s)
+		{
+			return (uint) (s.ReadByte () + (s.ReadByte () << 8) +
+				(s.ReadByte () << 16) + (s.ReadByte () << 24));
+		}
+
+		static ushort ReadUInt16FromStream (Stream s)
+		{
+			return (ushort) (s.ReadByte () + (s.ReadByte () << 8));
+		}
+
 		static MSCompatUnicodeTable ()
 		{
 			using (Stream s = GetResource ("collation.core.bin")) {
+				PtrStream ms = s as PtrStream;
 				// FIXME: remove those lines later.
 				// actually this line should not be required,
 				// but when we switch from the corlib that
@@ -401,20 +453,18 @@ namespace Mono.Globalization.Unicode
 				// the corlib that runtime kicked and returns
 				// null (because old one does not have it).
 				// In such cases managed collation won't work.
-				if (s == null)
+				if (ms == null)
 					return;
 
-				BinaryReader reader = new BinaryReader (s);
-				FillTable (reader, ref ignorableFlags);
-				FillTable (reader, ref categories);
-				FillTable (reader, ref level1);
-				FillTable (reader, ref level2);
-				FillTable (reader, ref level3);
+				FillTable (ms, ref ignorableFlags);
+				FillTable (ms, ref categories);
+				FillTable (ms, ref level1);
+				FillTable (ms, ref level2);
+				FillTable (ms, ref level3);
 
-				int size = reader.ReadInt32 ();
-				widthCompat = new ushort [size];
-				for (int i = 0; i < size; i++)
-					widthCompat [i] = reader.ReadUInt16 ();
+				uint size = ReadUInt32FromStream (s);
+				widthCompat = (ushort*) ((void*) ms.PositionPointer);
+				ms.Seek (size * 2, SeekOrigin.Current);
 			}
 
 			using (Stream s = GetResource ("collation.tailoring.bin")) {
@@ -435,7 +485,7 @@ namespace Mono.Globalization.Unicode
 					tailoringInfos [i] = ti;
 				}
 				reader.ReadByte (); // dummy
-				IsHiragana ((char) reader.ReadByte ()); // dummy
+				reader.ReadByte (); // dummy
 				// tailorings
 				count = reader.ReadInt32 ();
 				tailorings = new char [count];
@@ -446,16 +496,16 @@ namespace Mono.Globalization.Unicode
 			IsReady = true;
 		}
 
-		static void FillTable (BinaryReader reader, ref byte [] bytes)
+		static void FillTable (PtrStream s, ref byte* bytes)
 		{
-			int size = reader.ReadInt32 ();
-			bytes = new byte [size];
-			reader.Read (bytes, 0, size);
+			uint size = ReadUInt32FromStream (s);
+			bytes = (byte*) ((void*) s.PositionPointer);
+			s.Seek (size, SeekOrigin.Current);
 		}
 
 		public static void FillCJK (string culture,
-			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			lock (forLock) {
 				FillCJKCore (culture,
@@ -467,8 +517,8 @@ namespace Mono.Globalization.Unicode
 		}
 
 		static void FillCJKCore (string culture,
-			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			if (!IsReady)
 				return;
@@ -497,11 +547,12 @@ namespace Mono.Globalization.Unicode
 				return;
 
 			using (Stream s = GetResource (String.Format ("collation.{0}.bin", name))) {
-				BinaryReader reader = new BinaryReader (s);
-				int size = reader.ReadInt32 ();
-				cjkTable = new ushort [size];
-				for (int i = 0; i < size; i++)
-					cjkTable [i] = reader.ReadUInt16 ();
+				PtrStream ms = s as PtrStream;
+				if (ms != null) {
+					uint size = ReadUInt32FromStream (s);
+					cjkTable = (ushort*) ((void*) ms.PositionPointer);
+					ms.Seek (size * 2, SeekOrigin.Current);
+				}
 			}
 
 			switch (culture) {
@@ -522,8 +573,9 @@ namespace Mono.Globalization.Unicode
 			if (name != "cjkKO")
 				return;
 			using (Stream s = GetResource ("collation.cjkKOlv2.bin")) {
-				BinaryReader reader = new BinaryReader (s);
-				FillTable (reader, ref cjkKOlv2);
+				PtrStream ms = s as PtrStream;
+				if (ms != null)
+					FillTable (ms, ref cjkKOlv2);
 			}
 			cjkLv2Table = cjkKOlv2;
 		}

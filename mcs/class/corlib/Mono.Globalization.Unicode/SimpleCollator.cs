@@ -71,9 +71,9 @@ namespace Mono.Globalization.Unicode
 		bool ignoreKanaType;
 		TextInfo textInfo; // for ToLower().
 		bool frenchSort;
-		readonly ushort [] cjkTable;
+		unsafe readonly ushort* cjkTable;
 		readonly CodePointIndexer cjkIndexer;
-		readonly byte [] cjkLv2Table;
+		unsafe readonly byte* cjkLv2Table;
 		readonly CodePointIndexer cjkLv2Indexer;
 		readonly int lcid;
 		readonly Contraction [] contractions;
@@ -92,8 +92,11 @@ namespace Mono.Globalization.Unicode
 			textInfo = culture.TextInfo;
 			buf = new SortKeyBuffer (culture.LCID);
 
-			SetCJKTable (culture, ref cjkTable, ref cjkIndexer,
-				ref cjkLv2Table, ref cjkLv2Indexer);
+			unsafe {
+				SetCJKTable (culture,
+					ref cjkTable, ref cjkIndexer,
+					ref cjkLv2Table, ref cjkLv2Indexer);
+			}
 
 			// Get tailoring info
 			TailoringInfo t = null;
@@ -189,9 +192,9 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		}
 */
 
-		private void SetCJKTable (CultureInfo culture,
-			ref ushort [] cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte [] cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+		unsafe private void SetCJKTable (CultureInfo culture,
+			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
+			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
 		{
 			string name = GetNeutralCulture (culture).Name;
 
@@ -208,7 +211,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		#endregion
 
-		byte Category (int cp)
+		unsafe byte Category (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
 				return Uni.Category (cp);
@@ -218,7 +221,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				Uni.Category (cp);
 		}
 
-		byte Level1 (int cp)
+		unsafe byte Level1 (int cp)
 		{
 			if (cp < 0x3000 || cjkTable == null)
 				return Uni.Level1 (cp);
@@ -228,7 +231,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				Uni.Level1 (cp);
 		}
 
-		byte Level2 (int cp, ExtenderType ext)
+		unsafe byte Level2 (int cp, ExtenderType ext)
 		{
 			if (ext == ExtenderType.Buggy)
 				return 5;

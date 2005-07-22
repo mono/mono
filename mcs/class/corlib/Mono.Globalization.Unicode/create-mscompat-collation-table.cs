@@ -338,7 +338,7 @@ sw.Close ();
 			cjkKOlv2 = CompressArray (cjkKOlv2, UUtil.Cjk);
 
 			// Ignorables
-			Result.WriteLine ("static readonly byte [] ignorableFlags = new byte [] {");
+			Result.WriteLine ("static readonly byte [] ignorableFlagsArr = new byte [] {");
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -361,7 +361,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Primary category
-			Result.WriteLine ("static readonly byte [] categories = new byte [] {");
+			Result.WriteLine ("static readonly byte [] categoriesArr = new byte [] {");
 #if Binary
 			binary.Write (categories.Length);
 #endif
@@ -382,7 +382,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Primary weight value
-			Result.WriteLine ("static readonly byte [] level1 = new byte [] {");
+			Result.WriteLine ("static readonly byte [] level1Arr = new byte [] {");
 #if Binary
 			binary.Write (level1.Length);
 #endif
@@ -403,7 +403,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Secondary weight
-			Result.WriteLine ("static readonly byte [] level2 = new byte [] {");
+			Result.WriteLine ("static readonly byte [] level2Arr = new byte [] {");
 #if Binary
 			binary.Write (level2.Length);
 #endif
@@ -424,7 +424,7 @@ sw.Close ();
 			Result.WriteLine ();
 
 			// Thirtiary weight
-			Result.WriteLine ("static readonly byte [] level3 = new byte [] {");
+			Result.WriteLine ("static readonly byte [] level3Arr = new byte [] {");
 #if Binary
 			binary.Write (level3.Length);
 #endif
@@ -447,7 +447,7 @@ sw.Close ();
 			// Width insensitivity mappings
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
-			Result.WriteLine ("static readonly ushort [] widthCompat = new ushort [] {");
+			Result.WriteLine ("static readonly ushort [] widthCompatArr = new ushort [] {");
 #if Binary
 			binary.Write (widthCompat.Length);
 #endif
@@ -484,7 +484,7 @@ sw.Close ();
 		void SerializeCJK (string name, ushort [] cjk, int max)
 		{
 			int offset = 0;//char.MaxValue - cjk.Length;
-			Result.WriteLine ("static ushort [] {0} = new ushort [] {{", name);
+			Result.WriteLine ("static ushort [] {0}Arr = new ushort [] {{", name);
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -517,7 +517,7 @@ sw.Close ();
 		void SerializeCJK (string name, byte [] cjk, int max)
 		{
 			int offset = 0;//char.MaxValue - cjk.Length;
-			Result.WriteLine ("static byte [] {0} = new byte [] {{", name);
+			Result.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
