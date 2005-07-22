@@ -40,7 +40,8 @@ using System.Runtime.InteropServices;
 using System.Data.Common;
 
 namespace System.Data {
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.UniqueConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
 	[Serializable]
 	public class UniqueConstraint : Constraint 

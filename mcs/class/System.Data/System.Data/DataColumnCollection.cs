@@ -39,7 +39,8 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data {
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[Serializable]
 	[DefaultEvent ("CollectionChanged")]
 	public class DataColumnCollection : InternalDataCollectionBase

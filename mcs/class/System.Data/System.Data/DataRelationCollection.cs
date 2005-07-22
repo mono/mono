@@ -43,7 +43,8 @@ namespace System.Data {
 	/// <summary>
 	/// Represents the collection of DataRelation objects for this DataSet.
 	/// </summary>
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[DefaultProperty ("Table")]
 	[Serializable]

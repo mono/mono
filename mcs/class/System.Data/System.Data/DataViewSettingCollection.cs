@@ -43,7 +43,8 @@ namespace System.Data {
 	/// <summary>
 	/// Contains a read-only collection of DataViewSetting objects for each DataTable in a DataSet.
 	/// </summary>
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DataViewSettingsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[Serializable]
 	public class DataViewSettingCollection : ICollection, IEnumerable 
 	{

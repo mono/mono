@@ -1,3 +1,10 @@
+2005-07-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommandBuilder.cs, SqlParameterCollection.cs,
+	SqlConnection.cs, SqlParameter.cs:
+	- updated attributes & attribute descriptions to match with
+	masterinfos.
+
 2005-07-16  Daniel Morgan <danielmorgan@verizon.net>
 
 	* SqlCommandBuilder.cs: CreateUpdateCommand should get the current value, not

@@ -1,5 +1,8 @@
 2005-07-22  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* OdbcParameter.cs: updated attributes & attribute descriptions to
+	match with masterinfos.
+
 	* OdbcDataReader.cs: NextRow (): made private.
 
 2005-07-21  Sureshkumar T  <tsureshkumar@novell.com>

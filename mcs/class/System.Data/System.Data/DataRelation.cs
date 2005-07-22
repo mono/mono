@@ -44,7 +44,8 @@ namespace System.Data
 	/// DataRelation is used for a parent/child relationship 
 	/// between two DataTable objects
 	/// </summary>
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("RelationName")]
 	[Serializable]
 	[MonoTODO]

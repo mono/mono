@@ -310,7 +310,7 @@ namespace System.Data.SqlClient {
 
 		[DataCategory ("Data")]
 #if ONLY_1_0 || ONLY_1_1
-		[DataSysDescription ("Size of variable length data types (strings & arrays).")]
+		[DataSysDescription ("Size of variable length data types (string & arrays).")]
 		[DefaultValue (0)]
 #endif
                 public 

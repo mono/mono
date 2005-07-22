@@ -1,5 +1,12 @@
 2005-07-22  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataViewSettingCollection.cs, DataTableCollection.cs,
+	DataSet.cs, DataView.cs, DataColumn.cs, ForeignKeyConstraint.cs,
+	DataRelationCollection.cs, UniqueConstraint.cs, DataTable.cs,
+	DataColumnCollection.cs, DataRelation.cs, DataSet.cs:
+	- updated attributes & attribute descriptions to match with
+	masterinfos.
+
 	* DataView.cs: changed protected members
 	rowstate,rowcache,dataTable to protected internal.
 	* Constraint.cs, ForeignKeyConstraint.cs, UniqueConstraint.cs:

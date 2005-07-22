@@ -1810,7 +1810,7 @@ namespace System.Data {
 		/// DataColumn in a DataRow.
 		/// </summary>
 		[DataCategory ("Data")]
-		[DataSysDescription ("Occurs when a value has been submitted for this column. The user can modify the proposed value and should throw an exception to cancel the edit.")]
+		[DataSysDescription ("Occurs when a value has been submitted for this column.  The user can modify the proposed value and should throw an exception to cancel the edit.")]
 		public event DataColumnChangeEventHandler ColumnChanging;
 
 		/// <summary>
@@ -1838,7 +1838,7 @@ namespace System.Data {
 		/// Occurs before a row in the table is about to be deleted.
 		/// </summary>
 		[DataCategory ("Data")]	
-		[DataSysDescription ("Occurs when a row in the table marked for deletion. Throw an exception to cancel the deletion.")]
+		[DataSysDescription ("Occurs when a row in the table marked for deletion.  Throw an exception to cancel the deletion.")]
 		public event DataRowChangeEventHandler RowDeleting;
 
 #if NET_2_0

@@ -53,7 +53,8 @@ namespace System.Data {
 	/// Summary description for DataColumn.
 	/// </summary>
 
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DataColumnEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[ToolboxItem (false)]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
@@ -537,7 +538,7 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-		[DataSysDescription ("Indicates the maximum length of the value this column allows.")]
+		[DataSysDescription ("Indicates the maximum length of the value this column allows. ")]
 		[DefaultValue (-1)]
 		public int MaxLength
 		{
@@ -555,7 +556,7 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-		[DataSysDescription ("Indicates the XML uri for elements stored in this  column.")]
+		[DataSysDescription ("Indicates the XML uri for elements or attributes stored in this column.")]
 		public string Namespace
 		{
 			get {
@@ -593,7 +594,7 @@ namespace System.Data {
 		}
 
 		[DataCategory ("Data")]
-		[DataSysDescription ("Indicates the prefix used for this DataColumn in the xml representation.")]
+		[DataSysDescription ("Indicates the Prefix used for this DataColumn in xml representation.")]
 		[DefaultValue ("")]
 		public string Prefix
 		{

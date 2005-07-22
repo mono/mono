@@ -49,7 +49,8 @@ using System.Collections;
 
 namespace System.Data.SqlClient {
 	[ListBindable (false)]
-	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if NET_2_0
 	public sealed class SqlParameterCollection : DbParameterBaseCollection, IDataParameterCollection, IList, ICollection, IEnumerable
 #else

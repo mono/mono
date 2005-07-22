@@ -121,7 +121,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[Browsable (false)]
-		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
+		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters. ")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0

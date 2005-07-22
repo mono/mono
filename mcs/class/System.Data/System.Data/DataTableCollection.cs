@@ -41,7 +41,8 @@ namespace System.Data {
 	/// <summary>
 	/// Represents the collection of tables for the DataSet.
 	/// </summary>
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.TablesCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[ListBindable (false)]
 	[Serializable]

@@ -163,7 +163,7 @@ namespace System.Data.SqlClient {
 			get { return connectionTimeout; }
 		}
 
-		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the ConnectionString.")]
+		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the connection string.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -182,7 +182,7 @@ namespace System.Data.SqlClient {
 			set { dataReader = value; }
 		}
 
-		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the ConnectionString.")]	
+		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the connection string. ")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -192,7 +192,7 @@ namespace System.Data.SqlClient {
 			get { return dataSource; }
 		}
 
-		[DataSysDescription ("Network packet size, 'Packet Size=x' in the ConnectionString.")]	
+		[DataSysDescription ("Network packet size, 'Packet Size=x' in the connection string.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
 			get { return packetSize; }
@@ -229,7 +229,7 @@ namespace System.Data.SqlClient {
 			set { transaction = value; }
 		}
 
-		[DataSysDescription ("Workstation Id, 'Workstation Id=x' in the ConnectionString.")]	
+		[DataSysDescription ("Workstation Id, 'Workstation ID=x' in the connection string.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string WorkstationId {
 			get { return parms.Hostname; }

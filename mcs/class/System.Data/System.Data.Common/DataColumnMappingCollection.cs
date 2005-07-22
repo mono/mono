@@ -82,7 +82,7 @@ namespace System.Data.Common {
 		}
 
 		[Browsable (false)]
-                [DataSysDescription ("DataTableMappings_Item")]
+                [DataSysDescription ("The specified DataColumnMapping object.")]
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [string sourceColumn] {
 			get {

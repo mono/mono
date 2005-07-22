@@ -52,7 +52,7 @@ using System.Data.Common;
 
 namespace System.Data {
 
-	[ToolboxItem (false)]
+	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 

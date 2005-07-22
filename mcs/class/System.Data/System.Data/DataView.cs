@@ -30,7 +30,8 @@ namespace System.Data
 	/// navigation, searching, and sorting.
 	/// </summary>
 	//[Designer]
-	[Editor]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DataSourceEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
@@ -504,11 +505,11 @@ namespace System.Data
 		#endregion // PublicMethods
 		
 		[DataCategory ("Data")]
-		[DataSysDescription ("Indicates the data returned by this DataView has somehow changed.")]
+		[DataSysDescription ("Indicates that the data returned by this DataView has somehow changed.")]
 		public event ListChangedEventHandler ListChanged;
 
 		[Browsable (false)]
-		[DataSysDescription ("Indicates whether the view is open.")]
+		[DataSysDescription ("Indicates whether the view is open.  ")]
 		protected bool IsOpen {
 			get { return isOpen; }
 		}

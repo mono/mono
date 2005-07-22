@@ -240,7 +240,7 @@ namespace System.Data.Odbc
 		
                 [OdbcDescription ("DataParameter_SourceVersion")]
                 [OdbcCategory ("DataCategory_Data")]
-                [DefaultValue (512)]			
+                [DefaultValue ("Current")]			
 		public DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
