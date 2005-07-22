@@ -24,7 +24,7 @@ DISTFILES = \
 	$(wildcard known-issues-*)
 
 TEST_SUPPORT_FILES = \
-	CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll \
+	CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0433-lib.dll CS0433-2-lib.dll \
 	CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
 	CS3005-16-lib.dll CS3013-module.dll
@@ -59,9 +59,6 @@ run-mcs-tests: $(TEST_SUPPORT_FILES)
 run-mcs-tests:
 	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 	
-run-csc-tests:
-	$(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative $(TEST_PATTERN) C:\WINDOWS\Microsoft.NET\Framework\v2.0.50215\csc.exe known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
-
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
 
