@@ -1,3 +1,11 @@
+2005-07-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #57245
+	* namespace.cs (LookupType): Moved same type check to...
+	
+	* typemanager.cs (LookupTypeReflection): Don't allow to import more types
+	with the same name.
+
 2005-07-21  Raja R Harinath  <rharinath@novell.com>
 
 	* namespace.cs (NamespaceLookupType): Avoid a string allocation when we

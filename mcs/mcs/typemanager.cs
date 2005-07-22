@@ -585,31 +585,51 @@ public class TypeManager {
 		return (Type) ret;
 	}
 
-	public static Type LookupTypeReflection (string name)
+	public static Type LookupTypeReflection (string name, Location loc)
 	{
-		Type t;
+		Type found_type = null;
 
 		foreach (Assembly a in assemblies) {
-			t = a.GetType (name);
-			if (t != null) {
-				if (t.IsPointer)
-					throw new InternalErrorException ("Use GetPointerType() to get a pointer");
-				TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-				if (ta != TypeAttributes.NotPublic &&
-				    ta != TypeAttributes.NestedPrivate &&
-				    ta != TypeAttributes.NestedAssembly &&
-				    ta != TypeAttributes.NestedFamANDAssem)
-					return t;
+			Type t = a.GetType (name);
+			if (t == null)
+				continue;
+
+			if (t.IsPointer)
+				throw new InternalErrorException ("Use GetPointerType() to get a pointer");
+
+			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
+			if (ta != TypeAttributes.NotPublic && ta != TypeAttributes.NestedPrivate &&
+				ta != TypeAttributes.NestedAssembly && ta != TypeAttributes.NestedFamANDAssem) {
+				if (found_type == null) {
+					found_type = t;
+					continue;
+				}
+
+				Report.SymbolRelatedToPreviousError (found_type);
+				Report.SymbolRelatedToPreviousError (t);
+				Report.Error (433, loc, "The imported type `{0}' is defined multiple times", name);
+				return found_type;
 			}
 		}
 
 		foreach (Module mb in modules) {
-			t = mb.GetType (name);
-			if (t != null) 
-				return t;
+			Type t = mb.GetType (name);
+			if (t == null)
+				continue;
+			
+			if (found_type == null) {
+				found_type = t;
+				continue;
+			}
+
+			Report.SymbolRelatedToPreviousError (t);
+			Report.SymbolRelatedToPreviousError (found_type);
+			Report.Warning (436, 2, loc, "Ignoring imported type `{0}' since the current assembly already has a declaration with the same name",
+				TypeManager.CSharpName (t));
+			return t;
 		}
 
-		return null;
+		return found_type;
 	}
 
 	/// <summary>

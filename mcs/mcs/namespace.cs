@@ -159,16 +159,9 @@ namespace Mono.CSharp {
 				t = tdecl.TypeBuilder;
 			}
 			string lookup = t != null ? t.FullName : (fullname == "" ? name : fullname + "." + name);
-			Type rt = TypeManager.LookupTypeReflection (lookup);
+			Type rt = TypeManager.LookupTypeReflection (lookup, loc);
 			if (t == null)
 				t = rt;
-			else if (rt != null && t != rt && RootContext.WarningLevel >= 2) {
-				Report.SymbolRelatedToPreviousError (t);
-				Report.SymbolRelatedToPreviousError (rt);
-				Report.Warning (436, loc,
-					"Ignoring imported type `{0}' since the current assembly already has a declaration with the same name", 
-					rt.FullName);
-			}
 
 			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
 			cached_types [name] = te;
