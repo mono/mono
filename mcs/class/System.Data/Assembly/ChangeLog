@@ -1,3 +1,8 @@
+2005-07-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Consts.cs (Consts.AssemblyMicrosoft_VSDesigner): Fix version to
+	match masterinfo.
+
 2005-05-29  Boris Kirzner <borisk@mainsoft.com>
 
 	* AssemblyInfo.cs: added #if !TARGET_JVM for attribues not currently supported in TARGET_JVM.
