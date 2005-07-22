@@ -1,5 +1,12 @@
 2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs,
+	  MSCompatUnicodeTableUtil.cs,
+	  MSCompatUnicodeTable.cs : Added resource version output (and ignore
+	  in case of version mismatch). Removed obsolete, commented out code.
+
+2005-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs,
 	  MSCompatUnicodeTable.cs,
 	  create-mscompat-collation-table.cs : Now they use unmanaged pointers

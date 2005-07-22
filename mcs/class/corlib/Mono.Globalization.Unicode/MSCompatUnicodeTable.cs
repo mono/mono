@@ -426,8 +426,14 @@ namespace Mono.Globalization.Unicode
 
 		static Stream GetResource (string name)
 		{
-			return Assembly.GetExecutingAssembly ()
+			Stream s = Assembly.GetExecutingAssembly ()
 				.GetManifestResourceStream (name);
+			if (s == null)
+				return null;
+			int version = s.ReadByte ();
+			if (version != UUtil.ResourceVersion)
+				return null;
+			return s;
 		}
 
 		static uint ReadUInt32FromStream (Stream s)

@@ -4,26 +4,10 @@ using System.Text;
 
 namespace Mono.Globalization.Unicode
 {
-/*
-	// Represents a text element that consists of either contraction or
-	// expansion.
-	internal class TextElementSequence
-	{
-		public readonly char [] Sources;
-		public readonly byte [] SortKey;
-
-		public TextElementSequence (char [] sources, byte [] sortkey)
-		{
-			Sources = new char [sources.Length];
-			Array.Copy (sources, Sources, sources.Length);
-
-			SortKey = new byte [sortkey.Length];
-			Array.Copy (sortkey, SortKey, sortkey.Length);
-		}
-	}
-*/
 	internal /*static*/ class MSCompatUnicodeTableUtil
 	{
+		public const byte ResourceVersion = 1;
+
 		public static readonly CodePointIndexer Ignorable;
 		public static readonly CodePointIndexer Category;
 		public static readonly CodePointIndexer Level1;

@@ -342,6 +342,7 @@ sw.Close ();
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
+			binary.Write (UUtil.ResourceVersion);
 			binary.Write (ignorableFlags.Length);
 #endif
 			for (int i = 0; i < ignorableFlags.Length; i++) {
@@ -488,6 +489,7 @@ sw.Close ();
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
+			binary.Write (UUtil.ResourceVersion);
 			binary.Write (cjk.Length);
 #endif
 			for (int i = 0; i < cjk.Length; i++) {
@@ -521,6 +523,7 @@ sw.Close ();
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
+			binary.Write (UUtil.ResourceVersion);
 #endif
 			for (int i = 0; i < cjk.Length; i++) {
 				if (i + offset == max)
@@ -555,6 +558,8 @@ sw.Close ();
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
+			// Here we don't need to output resource version.
+			// This is cached.
 #endif
 			foreach (Tailoring t in tailorings) {
 				if (t.Alias != 0)
@@ -579,6 +584,7 @@ sw.Close ();
 			byte [] rawdata = ms.ToArray ();
 			ms = new MemoryStream ();
 			binary = new BinaryWriter (ms);
+			binary.Write (UUtil.ResourceVersion);
 			binary.Write (tailorings.Count);
 #endif
 			foreach (Tailoring t in tailorings) {
