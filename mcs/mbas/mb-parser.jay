@@ -1596,45 +1596,46 @@ sub_declaration
 		$$ = method;
 
 		if ($5 != null) { 
-			// we have an event handler to take care of 
+		  // we have event handlers to take care of 
 
-		  Expression handles_exp = (Expression) $5;
+		  ArrayList list = (ArrayList) $5; 
 		  Location loc = (Location)$3;
 		  
-		  if (handles_exp is MemberAccess) {
-			string evt_def = ((MemberAccess)$5).ToString();
-			int pos = evt_def.LastIndexOf (".");
-			string evt_target = evt_def.Substring (0, pos);
-			bool found = false;
-		
-			if (current_container.Properties != null) {
-				foreach (Property p in current_container.Properties) {
-					if (p.Name == evt_target) {
-						
-
-						Statement addhnd = (Statement) new AddHandler ((Expression) $5, 
-											DecomposeQI((string) $2, loc), 
-											loc);
-
-						current_container.AddEventHandler (addhnd);
-						found = true;
-						break;
-					}
-				}		
-			}
+		  foreach (Expression handles_exp in list) {
+			  if (handles_exp is MemberAccess) {
+				string evt_def = ((MemberAccess)handles_exp).ToString();
+				int pos = evt_def.LastIndexOf (".");
+				string evt_target = evt_def.Substring (0, pos);
+				bool found = false;
 			
-			if (!found){
-				Report.Error(30506, (Location)$3,
-						evt_target + " is not declared with WithEvents");
-			}
-		  } else if (handles_exp is BaseAccess) {
-				Statement addhnd = (Statement) new AddHandler ((Expression) $5, 
-											DecomposeQI((string) $2, loc), 
-											loc);	
-											
-				current_container.AddEventHandler (addhnd);
-		  }
-		  
+				if (current_container.Properties != null) {
+					foreach (Property p in current_container.Properties) {
+						if (p.Name == evt_target) {
+							
+
+							Statement addhnd = (Statement) new AddHandler (handles_exp, 
+												DecomposeQI((string) $2, loc), 
+												loc);
+
+							current_container.AddEventHandler (addhnd);
+							found = true;
+							break;
+						}
+					}		
+				}
+				
+				if (!found){
+					Report.Error(30506, (Location)$3,
+							evt_target + " is not declared with WithEvents");
+				}
+			  } else if (handles_exp is BaseAccess) {
+					Statement addhnd = (Statement) new AddHandler (handles_exp, 
+												DecomposeQI((string) $2, loc), 
+												loc);	
+												
+					current_container.AddEventHandler (addhnd);
+			  }
+		  }  
 		}	
 	  }	  
 	;
@@ -2500,8 +2501,23 @@ delegate_declaration
 	
 opt_evt_handler
 	: /* empty */		{ 	$$ = null; }
-	  | HANDLES evt_handler		{ 	$$ = $2; }
+	  | HANDLES evt_handler_list		{ 	$$ = $2; }
     ;
+
+evt_handler_list
+	: evt_handler
+	 {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+	        $$ = list;
+	 }
+	| evt_handler_list COMMA evt_handler
+	 {
+		((ArrayList) $1).Add ($3);
+		$$ = $1;
+	 }
+	;
+
 
 evt_handler
 	: qualified_identifier _mark_ 

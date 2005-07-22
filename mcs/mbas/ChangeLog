@@ -1,3 +1,8 @@
+2005-07-22 Ankit Jain <jankit@novell.com>
+
+	* mb-parser.jay: evt_handler_list: New.
+	  opt_evt_handler, sub_declaration: Support multiple event handlers.
+
 2005-07-21 Manjula GHM <mmanjula@novell.com>
 	*assign.cs: Support conversions in "new" assignment statement
 
