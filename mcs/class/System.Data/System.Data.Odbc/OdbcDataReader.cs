@@ -831,7 +831,7 @@ namespace System.Data.Odbc
 		/// <remarks>
 		///	Load the next row in the current result set.
 		/// </remarks>
-		public bool NextRow ()
+		private bool NextRow ()
 		{
 			OdbcReturn ret=libodbc.SQLFetch (hstmt);
 			if (ret != OdbcReturn.Success)

@@ -36,12 +36,12 @@ namespace System.Data
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 	{
-		protected DataTable dataTable = null;
+		protected internal DataTable dataTable = null;
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
-		protected DataViewRowState rowState;
-		protected DataRowView[] rowCache = new DataRowView [0];
+		protected internal DataViewRowState rowState;
+		protected internal DataRowView[] rowCache = new DataRowView [0];
 
 		// BeginInit() support
 		bool isInitPhase = false;

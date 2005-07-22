@@ -31,7 +31,7 @@
 //
 
 
-
+#if NET_2_0
 namespace System.Data {
 	public enum FillOptions 
 	{
@@ -42,4 +42,5 @@ namespace System.Data {
 	}
 }
 
+#endif // NET_2_0
 

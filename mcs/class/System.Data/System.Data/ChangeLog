@@ -1,3 +1,12 @@
+2005-07-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataView.cs: changed protected members
+	rowstate,rowcache,dataTable to protected internal.
+	* Constraint.cs, ForeignKeyConstraint.cs, UniqueConstraint.cs:
+	changed InConstraintViolated to protected internal.
+	* ConflictOptions.cs, UpdateOptions.cs, FillOptions.cs: enclosed
+	with NET_2_0 define.
+
 2005-07-21  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ForeignKeyConstraint.cs: 
