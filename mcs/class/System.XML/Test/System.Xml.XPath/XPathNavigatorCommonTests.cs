@@ -392,5 +392,24 @@ namespace MonoTests.System.Xml
 			AssertEquals (XPathNodeType.Text, nav.NodeType);
 			AssertEquals ("test string", nav.Value);
 		}
+
+		// bug #75609
+		[Test]
+		public void SelectChildren ()
+		{
+			string xml = "<root><foo xmlns='urn:foo' /><ns:foo xmlns:ns='urn:foo' /></root>";
+
+			nav = GetXmlDocumentNavigator (xml);
+			SelectChildrenNS (nav);
+			nav = GetXPathDocumentNavigator (document);
+			SelectChildrenNS (nav);
+		}
+
+		private void SelectChildrenNS (XPathNavigator nav)
+		{
+			nav.MoveToFirstChild (); // root
+			XPathNodeIterator iter = nav.SelectChildren ("foo", "urn:foo");
+			AssertEquals (2, iter.Count);
+		}
 	}
 }

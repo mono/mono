@@ -1,3 +1,7 @@
+2005-07-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorCommonTests.cs : added test for bug #75609
+
 2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorTests.cs : new test code was broken.

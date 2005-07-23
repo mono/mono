@@ -1609,11 +1609,11 @@ namespace System.Xml.XPath
 
 			// get the prefix for the given name
 			String strURI1 = "";
-			if (nsm != null && _name.Namespace != "")
+			if (_name.Namespace != "")
 			{
 				if (resolvedName)
 					strURI1 = _name.Namespace;
-				else
+				else if (nsm != null)
 // We still need to have such tricky switch, because the behavior is 
 // inconsistent between .NET 1.x and 2.0 when the argument is not
 // atomic string.

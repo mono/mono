@@ -1,3 +1,9 @@
+2004-07-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : don't expect namespace resolver; namespace could be
+	  supplied in QName without nsresolver need (i.e. SelectChildren()).
+	  Fixed bug #75609.
+
 2005-06-09  Andrew Skiba  <andrews@mainsoft.com>
 
         * XmlDefaultContext.cs : add TARGET_JVM for roundtrip bug
