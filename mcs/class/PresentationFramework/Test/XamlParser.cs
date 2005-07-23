@@ -450,11 +450,45 @@ public class XamlParserTest : Assertion {
 		pt.Test();
 	}
 
+	[Test]
+	public void TestEvent()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" SomethingHappened=\"handleSomething\">\n"+
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateEventHappening(typeof(ConsoleApp).GetEvent("SomethingHappened")),
+				new CreateEventDelegateHappening("handleSomething", typeof(SomethingHappenedHandler)),
+				new EndEventHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	public void TestDelegateAsPropertyValue()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Filter=\"filterfilter\" />\n"+
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
+				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Filter")),
+				new CreatePropertyDelegateHappening("filterfilter", typeof(Filter)),
+				new EndPropertyHappening(),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
 }
 
 
 
 abstract class Happening {
+	// this space deliberately left blank
 }
 
 class CreateTopLevelHappening : Happening
@@ -487,6 +521,7 @@ class CreateObjectTextHappening : Happening
 
 class EndObjectHappening : Happening
 {
+	// this space deliberately left blank
 }
 
 class CreatePropertyHappening : Happening
@@ -527,22 +562,41 @@ class EndPropertyObjectHappening : Happening
 }
 class CreatePropertyDelegateHappening : Happening
 {
+	public string functionName;
+	public Type propertyType;
+
+	public CreatePropertyDelegateHappening(string functionName, Type propertyType) {
+		this.functionName = functionName;
+		this.propertyType = propertyType;
+	}
 }
 
 class EndPropertyHappening : Happening
 {
+	// this space deliberately left blank
 }
 
 class CreateEventHappening : Happening
 {
+	public EventInfo evt;
+	public CreateEventHappening(EventInfo evt) {
+		this.evt = evt;
+	}
 }
 
 class CreateEventDelegateHappening : Happening
 {
+	public string functionName;
+	public Type eventDelegateType;
+	public CreateEventDelegateHappening(string functionName, Type eventDelegateType) {
+		this.functionName = functionName;
+		this.eventDelegateType = eventDelegateType;
+	}
 }
 
 class EndEventHappening : Happening
 {
+	// this space deliberately left blank
 }
 
 class CreateDependencyPropertyHappening : Happening
@@ -569,14 +623,20 @@ class CreateDependencyPropertyTextHappening : Happening
 
 class EndDependencyPropertyHappening : Happening
 {
+	// this space deliberately left blank
 }
 
 class CreateCodeHappening : Happening
 {
+	public string code;
+	public CreateCodeHappening(string code) {
+		this.code = code;
+	}
 }
 
 class FinishHappening : Happening
 {
+	// this space deliberately left blank
 }
 
 		
@@ -612,8 +672,7 @@ class ParserTester : IXamlWriter {
 		Debug.WriteLine("WRITER CURRENT EXPECTED THING: " + child.GetType());
 //		
 		if (child.GetType() != parent)
-			Assert.Fail("WARNING, I CAN'T GET THIS ERROR MESSAGE RIGHT, MAY BE MISLEADING\n" + 
-					"The happening was " + parent + ", but was expecting a " + child.GetType());
+			Assert.Fail("The method called was a " + parent + ", but was expecting a " + child.GetType());
 		if (consume)
 			c++;
 	}
@@ -621,6 +680,8 @@ class ParserTester : IXamlWriter {
 	{
 		Debug.WriteLine("WRITER IN STEP" + step);
 	}
+
+
 	public void CreateTopLevel(Type parent, string className)
 	{
 		d("CreateTopLevel");
@@ -687,6 +748,12 @@ class ParserTester : IXamlWriter {
 	}
 
 	public void CreatePropertyDelegate(string functionName, Type propertyType){
+		d("CreatePropertyDelegate");
+		AssertSubclass(typeof(CreatePropertyDelegateHappening), false);
+
+		CreatePropertyDelegateHappening h = (CreatePropertyDelegateHappening)getHappening();
+		Assert.AreEqual(h.functionName, functionName);
+		Assert.AreEqual(h.propertyType, propertyType);
 	}
 
 	public void EndProperty(){
@@ -696,12 +763,25 @@ class ParserTester : IXamlWriter {
 
 
 	public void CreateEvent(EventInfo evt){
+		d("CreateEvent");
+		AssertSubclass(typeof(CreateEventHappening), false);
+
+		CreateEventHappening h = (CreateEventHappening)getHappening();
+		Assert.AreEqual(h.evt, evt);
 	}
 
 	public void CreateEventDelegate(string functionName, Type eventDelegateType){
+		d("CreateEventDelegate");
+		AssertSubclass(typeof(CreateEventDelegateHappening), false);
+		
+		CreateEventDelegateHappening h = (CreateEventDelegateHappening)getHappening();
+		Assert.AreEqual(h.functionName, functionName);
+		Assert.AreEqual(h.eventDelegateType, eventDelegateType);
 	}
 
 	public void EndEvent(){
+		d("EndEvent");
+		AssertSubclass(typeof(EndEventHappening), true);
 	}
 
 
@@ -731,6 +811,11 @@ class ParserTester : IXamlWriter {
 
 
 	public void CreateCode(string code){
+		d("CreateCode");
+		AssertSubclass(typeof(CreateCodeHappening), false);
+
+		CreateCodeHappening h = (CreateCodeHappening)getHappening();
+		Assert.AreEqual(h.code, code);
 	}
 
 

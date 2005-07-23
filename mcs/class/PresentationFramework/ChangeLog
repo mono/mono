@@ -1,3 +1,8 @@
+2005-07-23  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/XamlParser.cs: added test for events and delegates as property
+	values
+
 2005-07-19  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/XamlWriter.cs: renamed to IXamlWriter.cs
