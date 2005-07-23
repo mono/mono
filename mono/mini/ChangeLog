@@ -1,3 +1,7 @@
+2005-07-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ia64.c mini-ia64.h: Add support for tracing/profiling.
+
 2005-07-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_get_method_from_token): Fix a potential crash here.
