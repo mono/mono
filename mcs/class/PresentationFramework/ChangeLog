@@ -2,6 +2,8 @@
 
 	* Test/XamlParser.cs: added test for events and delegates as property
 	values
+	* Test/CodeWriter.cs: added tests for events and for delegates as
+	property values
 
 2005-07-19  Iain McCoy  <iain@mccoy.id.au>
 

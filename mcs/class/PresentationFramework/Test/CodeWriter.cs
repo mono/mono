@@ -247,6 +247,49 @@ public class CodeWriterTest {
 		);							
 	}
 
+	[Test]
+	public void TestEvent()
+	{
+		cw.CreateTopLevel(typeof(ConsoleApp), null);
+		cw.CreateEvent(typeof(ConsoleApp).GetEvent("SomethingHappened"));
+		cw.CreateEventDelegate("handleSomething", typeof(SomethingHappenedHandler));
+		cw.EndEvent();
+		cw.EndObject();
+		cw.Finish();
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private derivedConsoleApp() {\n"+
+				"			this.SomethingHappened += new Xaml.TestVocab.Console.SomethingHappenedHandler(this.handleSomething);\n"+
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+
+	[Test]
+	public void TestDelegateAsPropertyValue()
+	{
+		cw.CreateTopLevel(typeof(ConsoleApp), null);
+		cw.CreateObject(typeof(ConsoleWriter), null);
+		cw.CreateProperty(typeof(ConsoleWriter).GetProperty("Filter"));
+		cw.CreatePropertyDelegate("filterfilter", typeof(Filter));
+		cw.EndProperty();
+		cw.EndObject();
+		cw.EndObject();
+		cw.Finish();
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private derivedConsoleApp() {\n"+
+				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
+				"			this.AddChild(consoleWriter1);\n" +
+				"			consoleWriter1.Filter = new Xaml.TestVocab.Console.Filter(this.filterfilter);\n" +
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
 
 
 	private void compare(string expected)
