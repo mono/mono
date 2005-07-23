@@ -1,8 +1,10 @@
+#define USE_MANAGED_RESOURCE
 using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
 using PtrStream = System.IO.UnmanagedMemoryStream;
@@ -421,9 +423,13 @@ namespace Mono.Globalization.Unicode
 		static readonly char [] tailorings;
 		static readonly TailoringInfo [] tailoringInfos;
 		static object forLock = new object ();
+		public static readonly bool isReady;
 
-		public static readonly bool IsReady = false;
+		public static bool IsReady {
+			get { return isReady; }
+		}
 
+#if USE_MANAGED_RESOURCE
 		static Stream GetResource (string name)
 		{
 			Stream s = Assembly.GetExecutingAssembly ()
@@ -446,9 +452,99 @@ namespace Mono.Globalization.Unicode
 		{
 			return (ushort) (s.ReadByte () + (s.ReadByte () << 8));
 		}
+#endif
+
+		const int CollationResourceCore = 0;
+		const int CollationResourceCJKCHS = 1;
+		const int CollationResourceCJKCHT = 2;
+		const int CollationResourceCJKJA = 3;
+		const int CollationResourceCJKKO = 4;
+		const int CollationResourceCJKKOlv2 = 5;
+		const int CollationResourceTailoring = 6;
+		const int ResourceVersionSize = 1;
+
+		static uint UInt32FromBytePtr (byte* raw, uint idx)
+		{
+			return (uint) (raw [idx] + (raw [idx + 1] << 8)
+				+ (raw [idx + 2] << 16) + (raw [idx + 3] << 24));
+		}
 
 		static MSCompatUnicodeTable ()
 		{
+#if !USE_MANAGED_RESOURCE
+			byte* raw;
+			int rawsize;
+			byte *tailor;
+			int trawsize;
+			uint size;
+			uint idx = 0;
+
+			lock (forLock) {
+				load_collation_resource (corlibPath, CollationResourceCore, &raw, &rawsize);
+				load_collation_resource (corlibPath, CollationResourceTailoring, &tailor, &trawsize);
+			}
+
+			if (raw == null || tailor == null)
+				return;
+			// check resource version
+			if (raw [0] != UUtil.ResourceVersion ||
+				tailor [0] != UUtil.ResourceVersion)
+				return;
+
+			idx = 1;
+			size = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			ignorableFlags = raw + idx;
+			idx += size;
+
+			size = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			categories = raw + idx;
+			idx += size;
+
+			size = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			level1 = raw + idx;
+			idx += size;
+
+			size = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			level2 = raw + idx;
+			idx += size;
+
+			size = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			level3 = raw + idx;
+			idx += size;
+
+			size = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			widthCompat = (ushort*) (raw + idx);
+			idx += size * 2;
+
+			idx = 1;
+			uint count = UInt32FromBytePtr (tailor, idx);
+			idx += 4;
+			tailoringInfos = new TailoringInfo [count];
+			for (int i = 0; i < count; i++) {
+				int i1 = (int) UInt32FromBytePtr (tailor, idx);
+				idx += 4;
+				int i2 = (int) UInt32FromBytePtr (tailor, idx);
+				idx += 4;
+				int i3 = (int) UInt32FromBytePtr (tailor, idx);
+				idx += 4;
+				TailoringInfo ti = new TailoringInfo (
+					i1, i2, i3, tailor [idx++] != 0);
+				tailoringInfos [i] = ti;
+			}
+			idx += 2; // dummy
+			// tailorings
+			count = UInt32FromBytePtr (tailor, idx);
+			idx += 4;
+			tailorings = new char [count];
+			for (int i = 0; i < count; i++, idx += 2)
+				tailorings [i] = (char) (ushort) (tailor [idx] + (tailor [idx + 1] << 8));
+#else
 			using (Stream s = GetResource ("collation.core.bin")) {
 				PtrStream ms = s as PtrStream;
 				// FIXME: remove those lines later.
@@ -476,7 +572,6 @@ namespace Mono.Globalization.Unicode
 			using (Stream s = GetResource ("collation.tailoring.bin")) {
 				if (s == null) // see FIXME above.
 					return;
-
 				BinaryReader reader = new BinaryReader (s);
 				// tailoringInfos
 				int count = reader.ReadInt32 ();
@@ -498,16 +593,23 @@ namespace Mono.Globalization.Unicode
 				for (int i = 0; i < count; i++)
 					tailorings [i] = (char) reader.ReadUInt16 ();
 			}
-
-			IsReady = true;
+#endif
+			isReady = true;
 		}
 
+		static readonly string corlibPath = Assembly.GetExecutingAssembly ().Location;
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void load_collation_resource (string path, int resource_index, byte** data, int* size);
+
+#if USE_MANAGED_RESOURCE
 		static void FillTable (PtrStream s, ref byte* bytes)
 		{
 			uint size = ReadUInt32FromStream (s);
 			bytes = (byte*) ((void*) s.PositionPointer);
 			s.Seek (size, SeekOrigin.Current);
 		}
+#endif
 
 		public static void FillCJK (string culture,
 			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
@@ -552,7 +654,25 @@ namespace Mono.Globalization.Unicode
 			if (name == null || cjkTable != null)
 				return;
 
-			using (Stream s = GetResource (String.Format ("collation.{0}.bin", name))) {
+#if !USE_MANAGED_RESOURCE
+			int residx = -1;
+			switch (culture) {
+			case "zh-CHS": residx = CollationResourceCJKCHS; break;
+			case "zh-CHT": residx = CollationResourceCJKCHT; break;
+			case "ja": residx = CollationResourceCJKJA; break;
+			case "ko": residx = CollationResourceCJKKO; break;
+			}
+			if (residx < 0)
+				return;
+
+			byte* raw;
+			int size;
+			load_collation_resource (corlibPath, residx, &raw, &size);
+			cjkTable = (ushort*) ((byte*) raw + ResourceVersionSize + 4);
+#else
+			string filename =
+				String.Format ("collation.{0}.bin", name);
+			using (Stream s = GetResource (filename)) {
 				PtrStream ms = s as PtrStream;
 				if (ms != null) {
 					uint size = ReadUInt32FromStream (s);
@@ -560,6 +680,7 @@ namespace Mono.Globalization.Unicode
 					ms.Seek (size * 2, SeekOrigin.Current);
 				}
 			}
+#endif
 
 			switch (culture) {
 			case "zh-CHS":
@@ -578,11 +699,16 @@ namespace Mono.Globalization.Unicode
 
 			if (name != "cjkKO")
 				return;
+#if !USE_MANAGED_RESOURCE
+			load_collation_resource (corlibPath, CollationResourceCJKKOlv2, &raw, &size);
+			cjkKOlv2 = raw + ResourceVersionSize + 4;
+#else
 			using (Stream s = GetResource ("collation.cjkKOlv2.bin")) {
 				PtrStream ms = s as PtrStream;
 				if (ms != null)
 					FillTable (ms, ref cjkKOlv2);
 			}
+#endif
 			cjkLv2Table = cjkKOlv2;
 		}
 	}
