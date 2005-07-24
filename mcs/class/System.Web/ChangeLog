@@ -1,3 +1,6 @@
+2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
+	* System.Web.vmwcsproj added System.Web.UI/PageHandlerFactory.jvm.cs
+
 2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
 	* System.Web.vmwcsproj:
 	  Replaced System.Web.UI/TemplateControl.cs with System.Web.UI/TemplateControl.jvm.cs

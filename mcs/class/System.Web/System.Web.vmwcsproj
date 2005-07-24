@@ -407,6 +407,7 @@
 				<File RelPath="System.Web.UI\ObjectTagBuilder.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\OutputCacheLocation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Page.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\PageHandlerFactory.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Pair.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ParseChildrenAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\PartialCachingAttribute.cs" SubType="Code" BuildAction="Compile"/>
