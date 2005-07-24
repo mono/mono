@@ -1,6 +1,6 @@
 Index: corlib.dll.sources
 ===================================================================
---- corlib.dll.sources	(revision 47495)
+--- corlib.dll.sources	(revision 47603)
 +++ corlib.dll.sources	(working copy)
 @@ -8,6 +8,12 @@
  Microsoft.Win32/Win32RegistryApi.cs
@@ -25,7 +25,7 @@ Index: corlib.dll.sources
  System.Globalization/TextElementEnumerator.cs
 Index: Makefile
 ===================================================================
---- Makefile	(revision 47495)
+--- Makefile	(revision 47603)
 +++ Makefile	(working copy)
 @@ -3,13 +3,24 @@
  include ../../build/rules.make
@@ -55,7 +55,7 @@ Index: Makefile
  LIBRARY_NAME = mscorlib.dll
 Index: System/String.cs
 ===================================================================
---- System/String.cs	(revision 47495)
+--- System/String.cs	(revision 47603)
 +++ System/String.cs	(working copy)
 @@ -746,7 +746,7 @@
  			if (this.length < value.length)
@@ -68,9 +68,9 @@ Index: System/String.cs
  		/* This method is culture insensitive */
 Index: System.Globalization/CompareInfo.cs
 ===================================================================
---- System.Globalization/CompareInfo.cs	(revision 47495)
+--- System.Globalization/CompareInfo.cs	(revision 47603)
 +++ System.Globalization/CompareInfo.cs	(working copy)
-@@ -34,12 +34,25 @@
+@@ -34,12 +34,21 @@
  using System.Reflection;
  using System.Runtime.Serialization;
  using System.Runtime.CompilerServices;
@@ -86,17 +86,13 @@ Index: System.Globalization/CompareInfo.cs
 +			== "yes";
 +
 +		public static bool UseManagedCollation {
-+			get {
-+				if (!useManagedCollation)
-+					return false;
-+				return MSCompatUnicodeTable.IsReady;
-+			}
++			get { return useManagedCollation && MSCompatUnicodeTable.IsReady; }
 +		}
 +
  		// Keep in synch with MonoCompareInfo in the runtime. 
  		private int culture;
  		[NonSerialized]
-@@ -47,6 +60,9 @@
+@@ -47,6 +56,9 @@
  		[NonSerialized]
  		private IntPtr ICU_collator;
  		private int win32LCID;	// Unused, but MS.NET serializes this
@@ -106,7 +102,7 @@ Index: System.Globalization/CompareInfo.cs
  		
  		/* Hide the .ctor() */
  		CompareInfo() {}
-@@ -57,39 +73,59 @@
+@@ -57,39 +69,56 @@
  		internal CompareInfo (CultureInfo ci)
  		{
  			this.culture = ci.LCID;
@@ -126,11 +122,7 @@ Index: System.Globalization/CompareInfo.cs
 +
  		~CompareInfo ()
  		{
--			free_internal_collator ();
-+			if (UseManagedCollation)
-+				collator = null;
-+			else
-+				free_internal_collator ();
+ 			free_internal_collator ();
  		}
 -		
 -		
@@ -183,7 +175,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string2, 0, string2.Length,
  						 CompareOptions.None));
  		}
-@@ -97,18 +133,11 @@
+@@ -97,18 +126,11 @@
  		public virtual int Compare (string string1, string string2,
  					    CompareOptions options)
  		{
@@ -206,7 +198,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string2, 0, string2.Length,
  						 options));
  		}
-@@ -121,18 +150,9 @@
+@@ -121,18 +143,9 @@
  			 * the offset >= string length specified check
  			 * in the process...)
  			 */
@@ -228,7 +220,7 @@ Index: System.Globalization/CompareInfo.cs
  
  			if(offset1 < 0 || offset2 < 0) {
  				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
-@@ -146,7 +166,7 @@
+@@ -146,7 +159,7 @@
  				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
  			}
  			
@@ -237,7 +229,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string1.Length-offset1,
  						 string2, offset2,
  						 string2.Length-offset2,
-@@ -162,18 +182,9 @@
+@@ -162,18 +175,9 @@
  			 * the offset >= string length specified check
  			 * in the process...)
  			 */
@@ -259,7 +251,7 @@ Index: System.Globalization/CompareInfo.cs
  
  			if(offset1 < 0 || offset2 < 0) {
  				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
-@@ -187,7 +198,7 @@
+@@ -187,7 +191,7 @@
  				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
  			}
  			
@@ -268,7 +260,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string1.Length-offset1,
  						 string2, offset2,
  						 string2.Length-offset1,
-@@ -203,21 +214,13 @@
+@@ -203,21 +207,13 @@
  			 * the offset >= string length specified check
  			 * in the process...)
  			 */
@@ -297,7 +289,7 @@ Index: System.Globalization/CompareInfo.cs
  
  			if(offset1 < 0 || length1 < 0 ||
  			   offset2 < 0 || length2 < 0) {
-@@ -240,7 +243,7 @@
+@@ -240,7 +236,7 @@
  				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
  			}
  			
@@ -306,7 +298,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string2, offset2, length2,
  						 CompareOptions.None));
  		}
-@@ -255,21 +258,13 @@
+@@ -255,21 +251,13 @@
  			 * the offset >= string length specified check
  			 * in the process...)
  			 */
@@ -334,7 +326,7 @@ Index: System.Globalization/CompareInfo.cs
  
  			if(offset1 < 0 || length1 < 0 ||
  			   offset2 < 0 || length2 < 0) {
-@@ -292,7 +287,7 @@
+@@ -292,7 +280,7 @@
  				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
  			}
  			
@@ -343,7 +335,7 @@ Index: System.Globalization/CompareInfo.cs
  						 string2, offset2, length2,
  						 options));
  		}
-@@ -372,6 +367,8 @@
+@@ -372,6 +360,8 @@
  		public virtual SortKey GetSortKey(string source,
  						  CompareOptions options)
  		{
@@ -352,7 +344,7 @@ Index: System.Globalization/CompareInfo.cs
  			SortKey key=new SortKey (culture, source, options);
  
  			/* Need to do the icall here instead of in the
-@@ -460,7 +457,26 @@
+@@ -460,7 +450,26 @@
  						   int count, char value,
  						   CompareOptions options,
  						   bool first);
@@ -380,7 +372,7 @@ Index: System.Globalization/CompareInfo.cs
  		public virtual int IndexOf (string source, char value,
  					    int startIndex, int count,
  					    CompareOptions options)
-@@ -492,7 +508,7 @@
+@@ -492,7 +501,7 @@
  				}
  				return(-1);
  			} else {
@@ -389,7 +381,7 @@ Index: System.Globalization/CompareInfo.cs
  							count, value, options,
  							true));
  			}
-@@ -503,7 +519,26 @@
+@@ -503,7 +512,26 @@
  						   int count, string value,
  						   CompareOptions options,
  						   bool first);
@@ -417,7 +409,7 @@ Index: System.Globalization/CompareInfo.cs
  		public virtual int IndexOf (string source, string value,
  					    int startIndex, int count,
  					    CompareOptions options)
-@@ -524,7 +559,7 @@
+@@ -524,7 +552,7 @@
  				return(-1);
  			}
  
@@ -426,7 +418,7 @@ Index: System.Globalization/CompareInfo.cs
  						value, options, true));
  		}
  
-@@ -543,6 +578,9 @@
+@@ -543,6 +571,9 @@
  				throw new ArgumentNullException("prefix");
  			}
  
@@ -436,7 +428,7 @@ Index: System.Globalization/CompareInfo.cs
  			if(source.Length < prefix.Length) {
  				return(false);
  			} else {
-@@ -567,6 +605,9 @@
+@@ -567,6 +598,9 @@
  				throw new ArgumentNullException("suffix");
  			}
  
@@ -446,7 +438,7 @@ Index: System.Globalization/CompareInfo.cs
  			if(source.Length < suffix.Length) {
  				return(false);
  			} else {
-@@ -682,7 +723,7 @@
+@@ -682,7 +716,7 @@
  				}
  				return(-1);
  			} else {
@@ -455,7 +447,7 @@ Index: System.Globalization/CompareInfo.cs
  							count, value, options,
  							false));
  			}
-@@ -713,7 +754,7 @@
+@@ -713,7 +747,7 @@
  				return(0);
  			}
  
@@ -464,7 +456,7 @@ Index: System.Globalization/CompareInfo.cs
  					       value, options, false));
  		}
  
-@@ -724,13 +765,17 @@
+@@ -724,13 +758,17 @@
  
  		void IDeserializationCallback.OnDeserialization(object sender)
  		{
@@ -489,98 +481,16 @@ Index: System.Globalization/CompareInfo.cs
  			}
  		}
  
-Index: System.IO/IntPtrStream.cs
-===================================================================
---- System.IO/IntPtrStream.cs	(revision 47495)
-+++ System.IO/IntPtrStream.cs	(working copy)
-@@ -1,5 +1,5 @@
- //
--// System.IO.IntPtrStream: A stream that is backed up by unmanaged memory
-+// System.IO.UnmanagedMemoryStream: A stream that is backed up by unmanaged memory
- //
- // Author:
- //   Miguel de Icaza (miguel@ximian.com)
-@@ -40,23 +40,31 @@
- using System.Runtime.InteropServices;
- namespace System.IO {
- 
--	internal class IntPtrStream : Stream {
-+#if NET_2_0
-+	public
-+#else
-+	internal
-+#endif
-+	class UnmanagedMemoryStream : Stream {
- 		unsafe byte *base_address;
--		int size;
--		int position;
-+		long size;
-+		long position;
- 		bool closed;
- 
- 		public event EventHandler Closed;
--		
--		public IntPtrStream (IntPtr base_address, int size)
-+
-+		[CLSCompliant (false)]
-+		public unsafe UnmanagedMemoryStream (byte *base_address, long size)
- 		{
--			unsafe {
--				this.base_address = (byte*)((void *)base_address);
--			}
-+			this.base_address = base_address;
- 			this.size = size;
- 			position = 0;
- 		}
- 
-+		public IntPtr PositionPointer {
-+			get { unsafe { return new IntPtr (base_address + position); } }
-+		}
-+
- 		public override bool CanRead {
- 			get {
- 				return true;
-@@ -115,7 +123,7 @@
- 				return 0;
- 
- 			if (position > size - count)
--				count = size - position;
-+				count = (int) (size - position);
- 
- 			unsafe {
- 				Marshal.Copy ((IntPtr) (base_address + position), buffer, offset, count);
-@@ -146,7 +154,7 @@
- 			if (closed)
- 				throw new ObjectDisposedException ("Stream has been closed");
- 
--			int ref_point;
-+			long ref_point;
- 			switch (loc) {
- 			case SeekOrigin.Begin:
- 				if (offset < 0)
-@@ -165,7 +173,7 @@
- 
- 			checked {
- 				try {
--					ref_point += (int) offset;
-+					ref_point += offset;
- 				} catch {
- 					throw new ArgumentOutOfRangeException ("Too large seek destination");
- 				}
 Index: System.Reflection/Assembly.cs
 ===================================================================
---- System.Reflection/Assembly.cs	(revision 47495)
+--- System.Reflection/Assembly.cs	(revision 47603)
 +++ System.Reflection/Assembly.cs	(working copy)
-@@ -274,7 +274,11 @@
- 			if (data == (IntPtr) 0)
- 				return null;
- 			else {
--				IntPtrStream stream = new IntPtrStream (data, size);
-+				UnmanagedMemoryStream stream = null;
-+				unsafe {
-+					stream = new UnmanagedMemoryStream (
-+						(byte*) ((void *) data), size);
-+				}
- 				/* 
- 				 * The returned pointer points inside metadata, so
- 				 * we have to increase the refcount of the module, and decrease
+@@ -247,7 +247,7 @@
+ 		}
+ 
+ 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+-		private extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
++		internal extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
+ 
+ 		public virtual Stream GetManifestResourceStream (String name)
+ 		{

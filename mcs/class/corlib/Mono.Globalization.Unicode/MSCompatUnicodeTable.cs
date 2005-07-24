@@ -2,12 +2,10 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
-using PtrStream = System.IO.UnmanagedMemoryStream;
 
 namespace Mono.Globalization.Unicode
 {
@@ -430,10 +428,11 @@ namespace Mono.Globalization.Unicode
 		}
 
 #if USE_MANAGED_RESOURCE
-		static Stream GetResource (string name)
+		static IntPtr GetResource (string name)
 		{
-			return Assembly.GetExecutingAssembly ()
-				.GetManifestResourceStream (name);
+			int size;
+			Module module;
+			return Assembly.GetExecutingAssembly ().GetManifestResourceInternal (name, out size, out module);
 		}
 #else
 		static readonly string corlibPath = Assembly.GetExecutingAssembly ().Location;
@@ -466,16 +465,14 @@ namespace Mono.Globalization.Unicode
 			uint idx = 0;
 
 #if USE_MANAGED_RESOURCE
-			PtrStream s = GetResource ("collation.core.bin")
-				as PtrStream;
-			if (s == null)
+			IntPtr ptr = GetResource ("collation.core.bin");
+			if (ptr == IntPtr.Zero)
 				return;
-			raw = (byte*) ((void*) s.PositionPointer);
-			s = GetResource ("collation.tailoring.bin")
-				as PtrStream;
-			if (s == null)
+			raw = (byte*) ((void*) ptr);
+			ptr = GetResource ("collation.tailoring.bin");
+			if (ptr == IntPtr.Zero)
 				return;
-			tailor = (byte*) ((void*) s.PositionPointer);
+			tailor = (byte*) ((void*) ptr);
 #else
 			int rawsize;
 			int trawsize;
@@ -596,10 +593,10 @@ namespace Mono.Globalization.Unicode
 #if USE_MANAGED_RESOURCE
 			string filename =
 				String.Format ("collation.{0}.bin", name);
-			PtrStream s = GetResource (filename) as PtrStream;
-			if (s == null)
+			IntPtr ptr = GetResource (filename);
+			if (ptr == IntPtr.Zero)
 				return;
-			raw = (byte*) ((void*) s.PositionPointer);
+			raw = (byte*) ((void*) ptr);
 #else
 			int size;
 			int residx = -1;
@@ -633,11 +630,10 @@ namespace Mono.Globalization.Unicode
 			if (name != "cjkKO")
 				return;
 #if USE_MANAGED_RESOURCE
-			s = GetResource ("collation.cjkKOlv2.bin") as PtrStream;
-			if (s == null)
+			ptr = GetResource ("collation.cjkKOlv2.bin");
+			if (ptr == IntPtr.Zero)
 				return;
-			raw = (byte*) ((void*) s.PositionPointer);
-			s.Close ();
+			raw = (byte*) ((void*) ptr);
 #else
 			load_collation_resource (corlibPath, CollationResourceCJKKOlv2, &raw, &size);
 #endif
