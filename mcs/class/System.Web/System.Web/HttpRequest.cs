@@ -103,9 +103,6 @@ namespace System.Web {
 		bool checkedQueryString;
 #endif
 
-#if TARGET_J2EE
-		private string _sGhFilePath;
-#endif
 		public HttpRequest(string Filename, string Url, string Querystring) {
 			_iContentLength = -1;
 			_iTotalBytes = -1;
@@ -583,25 +580,6 @@ namespace System.Web {
 				return _sFilePath;
 			}
 		}
-
-#if TARGET_J2EE
-		internal string GhFilePath {
-			get {
-				if (null == _sGhFilePath) {
-					_sGhFilePath = FilePath;
-					if (_sGhFilePath == null)
-						return null;
-
-					if (_sGhFilePath.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
-						_sGhFilePath = _sGhFilePath.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
-					if (_sGhFilePath.StartsWith(HttpRuntime.AppDomainAppVirtualPath))
-						_sGhFilePath = _sGhFilePath.Substring(HttpRuntime.AppDomainAppVirtualPath.Length);
-				}
-
-				return _sGhFilePath;
-			}
-		}
-#endif
 
 		HttpFileCollection files;
 		public HttpFileCollection Files {
