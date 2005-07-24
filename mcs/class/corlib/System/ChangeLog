@@ -1,3 +1,8 @@
+2005-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Enum.cs: remove obsolete code that throwed/catched an exception for
+	every enum value when parsing.
+
 2005-07-13  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MarshalByRefObject.cs: GetLifetimeService() should be virtual.
