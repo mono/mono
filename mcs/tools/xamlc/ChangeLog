@@ -1,3 +1,10 @@
+2005-07-24  Iain McCoy  <iain@mccoy.id.au>
+
+	* demo/TestVocab/ConsoleWriter.cs,
+	  demo/TestVocab/ConsoleReader.cs,
+	  demo/TestVocab/ConsoleApp.cs: fix up definitions of Equals methods
+	so that the object builder's tests work.
+
 2005-07-18  Iain McCoy  <iain@mccoy.id.au>
 
 	* demo/TestVocab/*.cs: add implementations of equals so that tests for

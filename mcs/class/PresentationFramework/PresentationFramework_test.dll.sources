@@ -1,2 +1,3 @@
 XamlParser.cs
 CodeWriter.cs
+ObjectWriter.cs

@@ -1,3 +1,14 @@
+2005-07-24  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/XamlParser.cs,
+	  Mono.Windows.Serialization/XamlParser.cs: added a test for 
+	inappropriate usage of the Class attribute and fixed bug revealed by
+	the test
+	* Test/ObjectWriter.cs,
+	  PresentationFramework_test.dll.sources: added tests for object
+	builder (based on tests for code generator)
+
+
 2005-07-23  Iain McCoy  <iain@mccoy.id.au>
 
 	* Test/XamlParser.cs: added test for events and delegates as property

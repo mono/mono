@@ -293,6 +293,9 @@ namespace Mono.Windows.Serialization {
 
 		void parseChildObjectElement(Type parent)
 		{
+			if (reader.GetAttribute("Class", XAML_NAMESPACE) != null)
+				throw new Exception("The XAML Class attribute can not be applied to child elements\n"+
+						"Do you mean the Name attribute?");
 			string name = reader.GetAttribute("Name", XAML_NAMESPACE);
 			if (name == null)
 				name = reader.GetAttribute("Name", reader.NamespaceURI);

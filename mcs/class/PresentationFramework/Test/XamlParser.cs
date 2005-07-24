@@ -192,6 +192,22 @@ public class XamlParserTest : Assertion {
 				new FinishHappening());
 		pt.Test();
 	}
+	
+	[Test]
+	[ExpectedException(typeof(Exception), "The XAML Class attribute can not be applied to child elements\nDo you mean the Name attribute?")]
+	public void TestSimplestAddChildWithWrongNamingAttribute()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter x:Class=\"abc\"></ConsoleWriter>" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleWriter), "abc"),
+				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
 
 
 	[Test]

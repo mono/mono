@@ -297,11 +297,13 @@ public class CodeWriterTest {
 		int i, j;
 		string[] actualLines = w.ToString().Split('\n');
 		for (i = 0; i < actualLines.Length; i++) {
+			// set commented-out lines to null
 			if (actualLines[i].StartsWith("//")) {
 				actualLines[i] = null;
 				continue;
 			}
 			
+			// set lines containing only whitespace to null
 			j = 0;
 			while (j < actualLines[i].Length && 
 					Char.IsWhiteSpace(actualLines[i][j])) {
@@ -312,6 +314,7 @@ public class CodeWriterTest {
 				continue;
 			}
 		}
+		// shift all null elements to end of list and join all non-null elements
 		j = 0;
 		for (i = 0; i < actualLines.Length; i++) {
 			if (actualLines[i] != null)

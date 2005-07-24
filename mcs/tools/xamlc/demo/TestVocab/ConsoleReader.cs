@@ -24,11 +24,11 @@ namespace Xaml.TestVocab.Console {
 		public override bool Equals(object o)
 		{
 			ConsoleReader reader = (ConsoleReader)o;
-			return (reader.variable == variable) && (reader.prompt == prompt);
+			return (reader.variable == variable) && (reader.prompt == prompt) && (ConsoleApp.GetRepetitions(reader) == ConsoleApp.GetRepetitions(this));
 		}
 		public override int GetHashCode()
 		{
-			return variable.GetHashCode() + prompt.GetHashCode();
+			return variable.GetHashCode() + prompt.GetHashCode() + ConsoleApp.GetRepetitions(this).GetHashCode();
 		}
 	}
 }
