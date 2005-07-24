@@ -432,27 +432,11 @@ namespace Mono.Globalization.Unicode
 #if USE_MANAGED_RESOURCE
 		static Stream GetResource (string name)
 		{
-			Stream s = Assembly.GetExecutingAssembly ()
+			return Assembly.GetExecutingAssembly ()
 				.GetManifestResourceStream (name);
-			if (s == null)
-				return null;
-			int version = s.ReadByte ();
-			if (version != UUtil.ResourceVersion)
-				return null;
-			return s;
 		}
-
-		static uint ReadUInt32FromStream (Stream s)
-		{
-			return (uint) (s.ReadByte () + (s.ReadByte () << 8) +
-				(s.ReadByte () << 16) + (s.ReadByte () << 24));
-		}
-
-		static ushort ReadUInt16FromStream (Stream s)
-		{
-			return (ushort) (s.ReadByte () + (s.ReadByte () << 8));
-		}
-#endif
+#else
+		static readonly string corlibPath = Assembly.GetExecutingAssembly ().Location;
 
 		const int CollationResourceCore = 0;
 		const int CollationResourceCJKCHS = 1;
@@ -461,6 +445,11 @@ namespace Mono.Globalization.Unicode
 		const int CollationResourceCJKKO = 4;
 		const int CollationResourceCJKKOlv2 = 5;
 		const int CollationResourceTailoring = 6;
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void load_collation_resource (string path, int resource_index, byte** data, int* size);
+#endif
+
 		const int ResourceVersionSize = 1;
 
 		static uint UInt32FromBytePtr (byte* raw, uint idx)
@@ -471,18 +460,31 @@ namespace Mono.Globalization.Unicode
 
 		static MSCompatUnicodeTable ()
 		{
-#if !USE_MANAGED_RESOURCE
 			byte* raw;
-			int rawsize;
 			byte *tailor;
-			int trawsize;
 			uint size;
 			uint idx = 0;
+
+#if USE_MANAGED_RESOURCE
+			PtrStream s = GetResource ("collation.core.bin")
+				as PtrStream;
+			if (s == null)
+				return;
+			raw = (byte*) ((void*) s.PositionPointer);
+			s = GetResource ("collation.tailoring.bin")
+				as PtrStream;
+			if (s == null)
+				return;
+			tailor = (byte*) ((void*) s.PositionPointer);
+#else
+			int rawsize;
+			int trawsize;
 
 			lock (forLock) {
 				load_collation_resource (corlibPath, CollationResourceCore, &raw, &rawsize);
 				load_collation_resource (corlibPath, CollationResourceTailoring, &tailor, &trawsize);
 			}
+#endif
 
 			if (raw == null || tailor == null)
 				return;
@@ -544,72 +546,8 @@ namespace Mono.Globalization.Unicode
 			tailorings = new char [count];
 			for (int i = 0; i < count; i++, idx += 2)
 				tailorings [i] = (char) (ushort) (tailor [idx] + (tailor [idx + 1] << 8));
-#else
-			using (Stream s = GetResource ("collation.core.bin")) {
-				PtrStream ms = s as PtrStream;
-				// FIXME: remove those lines later.
-				// actually this line should not be required,
-				// but when we switch from the corlib that
-				// does not have resources to the corlib that
-				// do have, it tries to read resource from
-				// the corlib that runtime kicked and returns
-				// null (because old one does not have it).
-				// In such cases managed collation won't work.
-				if (ms == null)
-					return;
-
-				FillTable (ms, ref ignorableFlags);
-				FillTable (ms, ref categories);
-				FillTable (ms, ref level1);
-				FillTable (ms, ref level2);
-				FillTable (ms, ref level3);
-
-				uint size = ReadUInt32FromStream (s);
-				widthCompat = (ushort*) ((void*) ms.PositionPointer);
-				ms.Seek (size * 2, SeekOrigin.Current);
-			}
-
-			using (Stream s = GetResource ("collation.tailoring.bin")) {
-				if (s == null) // see FIXME above.
-					return;
-				BinaryReader reader = new BinaryReader (s);
-				// tailoringInfos
-				int count = reader.ReadInt32 ();
-				HasSpecialWeight ((char) count); // dummy
-				tailoringInfos = new TailoringInfo [count];
-				for (int i = 0; i < count; i++) {
-					TailoringInfo ti = new TailoringInfo (
-						reader.ReadInt32 (),
-						reader.ReadInt32 (),
-						reader.ReadInt32 (),
-						reader.ReadBoolean ());
-					tailoringInfos [i] = ti;
-				}
-				reader.ReadByte (); // dummy
-				reader.ReadByte (); // dummy
-				// tailorings
-				count = reader.ReadInt32 ();
-				tailorings = new char [count];
-				for (int i = 0; i < count; i++)
-					tailorings [i] = (char) reader.ReadUInt16 ();
-			}
-#endif
 			isReady = true;
 		}
-
-		static readonly string corlibPath = Assembly.GetExecutingAssembly ().Location;
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void load_collation_resource (string path, int resource_index, byte** data, int* size);
-
-#if USE_MANAGED_RESOURCE
-		static void FillTable (PtrStream s, ref byte* bytes)
-		{
-			uint size = ReadUInt32FromStream (s);
-			bytes = (byte*) ((void*) s.PositionPointer);
-			s.Seek (size, SeekOrigin.Current);
-		}
-#endif
 
 		public static void FillCJK (string culture,
 			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
@@ -654,7 +592,16 @@ namespace Mono.Globalization.Unicode
 			if (name == null || cjkTable != null)
 				return;
 
-#if !USE_MANAGED_RESOURCE
+			byte* raw;
+#if USE_MANAGED_RESOURCE
+			string filename =
+				String.Format ("collation.{0}.bin", name);
+			PtrStream s = GetResource (filename) as PtrStream;
+			if (s == null)
+				return;
+			raw = (byte*) ((void*) s.PositionPointer);
+#else
+			int size;
 			int residx = -1;
 			switch (culture) {
 			case "zh-CHS": residx = CollationResourceCJKCHS; break;
@@ -664,23 +611,9 @@ namespace Mono.Globalization.Unicode
 			}
 			if (residx < 0)
 				return;
-
-			byte* raw;
-			int size;
 			load_collation_resource (corlibPath, residx, &raw, &size);
-			cjkTable = (ushort*) ((byte*) raw + ResourceVersionSize + 4);
-#else
-			string filename =
-				String.Format ("collation.{0}.bin", name);
-			using (Stream s = GetResource (filename)) {
-				PtrStream ms = s as PtrStream;
-				if (ms != null) {
-					uint size = ReadUInt32FromStream (s);
-					cjkTable = (ushort*) ((void*) ms.PositionPointer);
-					ms.Seek (size * 2, SeekOrigin.Current);
-				}
-			}
 #endif
+			cjkTable = (ushort*) ((byte*) raw + ResourceVersionSize + 4);
 
 			switch (culture) {
 			case "zh-CHS":
@@ -699,16 +632,16 @@ namespace Mono.Globalization.Unicode
 
 			if (name != "cjkKO")
 				return;
-#if !USE_MANAGED_RESOURCE
-			load_collation_resource (corlibPath, CollationResourceCJKKOlv2, &raw, &size);
-			cjkKOlv2 = raw + ResourceVersionSize + 4;
+#if USE_MANAGED_RESOURCE
+			s = GetResource ("collation.cjkKOlv2.bin") as PtrStream;
+			if (s == null)
+				return;
+			raw = (byte*) ((void*) s.PositionPointer);
+			s.Close ();
 #else
-			using (Stream s = GetResource ("collation.cjkKOlv2.bin")) {
-				PtrStream ms = s as PtrStream;
-				if (ms != null)
-					FillTable (ms, ref cjkKOlv2);
-			}
+			load_collation_resource (corlibPath, CollationResourceCJKKOlv2, &raw, &size);
 #endif
+			cjkKOlv2 = raw + ResourceVersionSize + 4;
 			cjkLv2Table = cjkKOlv2;
 		}
 	}

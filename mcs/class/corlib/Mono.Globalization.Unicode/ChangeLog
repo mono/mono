@@ -1,3 +1,8 @@
+2005-07-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.cs : the pointer based icall code could be
+	  also applicable for USE_MANAGED_RESOURCE mode.
+
 2005-07-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MSCompatUnicodeTable.cs : added icall support code (not enabled
