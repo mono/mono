@@ -49,15 +49,6 @@ namespace Microsoft.JScript {
 			return fi;
 		}
 
-		internal JSFieldInfo GetField (string name)
-		{
-			object res = elems [name];
-
-			if (res is JSFieldInfo)
-				return (JSFieldInfo) res;
-			return null;
-		}
-
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return elems.GetEnumerator ();
@@ -98,7 +89,7 @@ namespace Microsoft.JScript {
 
 		public void SetMemberValue2 (string name, Object value)
 		{
-			throw new NotImplementedException ();
+			AddField (name, value);
 		}
 
 		void IExpando.RemoveMember (MemberInfo m)
@@ -123,6 +114,20 @@ namespace Microsoft.JScript {
 					return "Number";
 				else if (this is DatePrototype)
 					return "Date";
+				else if (this is EvalErrorObject)
+					return "EvalError";
+				else if (this is RangeErrorObject)
+					return "RangeError";
+				else if (this is ReferenceErrorObject)
+					return "ReferenceError";
+				else if (this is SyntaxErrorObject)
+					return "SyntaxError";
+				else if (this is TypeErrorObject)
+					return "TypeError";
+				else if (this is URIErrorObject)
+					return "URIError";
+				else if (this is ErrorPrototype)
+					return "Error";
 				else
 					return this.GetType ().ToString ();
 			}
@@ -147,9 +152,17 @@ namespace Microsoft.JScript {
 			return true;
 		}
 
-		internal virtual object GetDefaultValue (Type hint)
+		internal virtual object GetDefaultValue (Type hint, bool avoid_toString)
 		{
-			return ObjectPrototype.toString (this);
+			if (avoid_toString)
+				return this;
+			else
+				return ObjectPrototype.toString (this);				
+		}
+
+		internal object GetDefaultValue (Type hint)
+		{
+			return GetDefaultValue (hint, false);
 		}
 	}
 }

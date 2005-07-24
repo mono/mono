@@ -29,7 +29,12 @@
 //
 
 namespace Microsoft.JScript {
-	public sealed class EvalErrorObject : ErrorObject
-	{
+
+	public sealed class EvalErrorObject : ErrorObject {
+
+		internal EvalErrorObject (string message)
+			: base (message)
+		{
+		}
 	}
 }

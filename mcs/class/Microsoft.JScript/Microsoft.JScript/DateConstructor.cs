@@ -71,8 +71,13 @@ namespace Microsoft.JScript {
 				object value = Convert.ToPrimitive (args [0], null);
 				if (value.GetType () == typeof (string))
 					result = parse ((string) value);
-				else
+				else {
 					result = Convert.ToNumber (value);
+					if (Double.IsNaN (result) || Double.IsInfinity (result))
+						result = Double.NaN;
+					else
+						result = Math.Floor (result);
+				}
 				return new DateObject (result);
 			}
 
@@ -99,11 +104,14 @@ done:
 			if (!Double.IsNaN (year) && year >= 0 && year <= 99)
 				year += 1900;
 
-			DateTime dt = new DateTime ((int) year, (int) month + 1, (int) date,
-				(int) hours, (int) minutes, (int) seconds);
-			ms -= TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
+			double utc_off = 0;
+			try {
+				DateTime dt = new DateTime ((int) year, (int) month + 1, (int) date,
+					(int) hours, (int) minutes, (int) seconds);
+				utc_off = TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
+			} catch (ArgumentOutOfRangeException) { /* OK */ }
 
-			result = msec_from_date (year, month, date, hours, minutes, seconds, ms);
+			result = msec_from_date (year, month, date, hours, minutes, seconds, ms - utc_off);
 			return new DateObject (result);
 		}
 
@@ -704,8 +712,14 @@ done:
 			int hours = HourFromTime (t);
 			int minutes = MinFromTime (t);
 			int seconds = SecFromTime (t);
-			DateTime dt = new DateTime (year, month + 1, date, hours, minutes, seconds);
-			return t + TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
+
+			double utc_off = 0;
+			try {
+				DateTime dt = new DateTime (year, month + 1, date, hours, minutes, seconds);
+				utc_off = TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
+			} catch (ArgumentOutOfRangeException) { /* OK */ }
+
+			return t + utc_off;
 		}
 
 		internal static double ToUTC (double t)

@@ -52,50 +52,15 @@ namespace Microsoft.JScript {
 
 			switch (op) {
 			case JSToken.Minus:
-				switch (tc1) {
-				case TypeCode.Boolean:
-				case TypeCode.Double:
-				case TypeCode.String:
-					switch (tc2) {
-					case TypeCode.Boolean:
-					case TypeCode.Double:
-					case TypeCode.String:
-						return ic1.ToDouble (null) - ic2.ToDouble (null);
-					}
-					break;
-				}
-				break;
+				return Convert.ToNumber (ic1) - Convert.ToNumber (ic2);
 
 			case JSToken.Multiply:
-				switch (tc1) {
-				case TypeCode.Boolean:
-				case TypeCode.Double:
-				case TypeCode.String:
-					switch (tc2) {
-					case TypeCode.Boolean:
-					case TypeCode.Double:
-					case TypeCode.String:
-						return ic1.ToDouble (null) * ic2.ToDouble (null);
-					}
-					break;
-				}
-				break;
+				return Convert.ToNumber (ic1) * Convert.ToNumber (ic2);
 
 			case JSToken.Divide:
-				switch (tc1) {
-				case TypeCode.Boolean:
-				case TypeCode.Double:
-				case TypeCode.String:
-					switch (tc2) {
-					case TypeCode.Boolean:
-					case TypeCode.Double:
-					case TypeCode.String:
-						return ic1.ToDouble (null) / ic2.ToDouble (null);
-					}
-					break;
-				}
-				break;
+				return Convert.ToNumber (ic1) / Convert.ToNumber (ic2);
 			}
+
 			Console.WriteLine ("v1 = {0}, tc1 = {1}, v2 = {2}, tc2 = {3}", v1, tc1, v2, tc2);
 			throw new NotImplementedException ();
 		}

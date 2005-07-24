@@ -771,6 +771,8 @@ internal class TokenStream {
 						} catch (FormatException ex) {
 							ReportCurrentLineError ("msg.caught.nfe");
 							return Token.ERROR;
+						} catch (OverflowException) {
+							dval = Double.NaN;
 						}
 					} else
 						dval = StringToNumber (num_string, 0, _base);

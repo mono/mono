@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.JScript {
 
@@ -38,6 +39,27 @@ namespace Microsoft.JScript {
 
 		internal RegExpConstructor ()
 		{
+			AddField ("$_");
+			AddField ("$&");
+			AddField ("$+");
+			AddField ("$`");
+			AddField ("$'");
+			AddField ("$*", false);
+		}
+
+		static internal void UpdateLastMatch (Match md, string input)
+		{
+			GroupCollection groups = md.Groups;
+			int n = groups.Count - 1;
+			string left_context = Convert.ToString (input).Substring (0, md.Index);
+			string right_context = Convert.ToString (input).Substring (md.Index + md.Length);
+
+			Ctr._lastmatch = md;
+			Ctr.GetField ("$_").SetValue ("$_", input);
+			Ctr.GetField ("$&").SetValue ("$&", md.Value);
+			Ctr.GetField ("$+").SetValue ("$+", n > 0 ? groups [n].Value : "");
+			Ctr.GetField ("$`").SetValue ("$`", left_context);
+			Ctr.GetField ("$'").SetValue ("$'", right_context);
 		}
 
 		public Object Construct (string pattern, bool ignoreCase, bool global, bool multiLine)
@@ -63,7 +85,9 @@ namespace Microsoft.JScript {
 		{
 			if (args != null) {
 				int length = args.Length;
-				if (length > 0) {
+				if (length == 0)
+					return new RegExpObject ("", false, false, false);
+				else if (length > 0) {
 					object o = args [0];
 					if (o is RegExpObject)
 						return (RegExpObject) o;
@@ -80,33 +104,99 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		#region Properties $1 .. $9
+		public Object dollar_1 {
+			get { return _lastmatch.Groups [1].Value; }
+		}
+
+		public Object dollar_2 {
+			get { return _lastmatch.Groups [2].Value; }
+		}
+
+		public Object dollar_3 {
+			get { return _lastmatch.Groups [3].Value; }
+		}
+
+		public Object dollar_4 {
+			get { return _lastmatch.Groups [4].Value; }
+		}
+
+		public Object dollar_5 {
+			get { return _lastmatch.Groups [5].Value; }
+		}
+
+		public Object dollar_6 {
+			get { return _lastmatch.Groups [6].Value; }
+		}
+
+		public Object dollar_7 {
+			get { return _lastmatch.Groups [7].Value; }
+		}
+
+		public Object dollar_8 {
+			get { return _lastmatch.Groups [8].Value; }
+		}
+
+		public Object dollar_9
+		{
+			get { return _lastmatch.Groups [9].Value; }
+		}
+		#endregion
+
 		public Object index {
 			get { throw new NotImplementedException (); }
 		}
 
 		public Object input {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return RegExpConstructor.Ctr.GetField ("$_").GetValue ("$_");
+			}
+
+			set {
+				RegExpConstructor.Ctr.GetField ("$_").SetValue ("$_", value);
+			}
 		}
 
 		public Object lastIndex {
 			get { throw new NotImplementedException (); }
 		}
 
+		internal Match _lastmatch = null;
+
 		public Object lastMatch {
-			get { throw new NotImplementedException (); }
+			get { return _lastmatch.Value; }
 		}
 
 		public Object lastParen {
-			get { throw new NotImplementedException (); }
+			get {
+				GroupCollection groups = _lastmatch.Groups;
+				int n = groups.Count - 1;
+				if (n > 0)
+					return groups [n].Value;
+				else
+					return "";
+			}
 		}
 
 		public Object leftContext {
-			get { throw new NotImplementedException (); }
+			get {
+				return RegExpConstructor.Ctr.GetField ("$`").GetValue ("$`");
+			}
 		}
 
 		public Object rightContext {
-			get { throw new NotImplementedException (); }
+			get {
+				return RegExpConstructor.Ctr.GetField ("$'").GetValue ("$'");
+			}
+		}
+
+		public Object multiline {
+			get {
+				return Convert.ToBoolean (RegExpConstructor.Ctr.GetField ("$*").GetValue ("$*"));
+			}
+			set {
+				RegExpConstructor.Ctr.GetField ("$*").SetValue ("$*", value);
+			}
 		}
 	}
 }

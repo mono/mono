@@ -37,13 +37,16 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Function_apply)]
 		public static object apply (object thisObj, object thisArg, object argArray)
 		{
-			throw new NotImplementedException ();
+			object [] args = (object []) Convert.ToNativeArray (argArray, typeof (object).TypeHandle);
+			return call (thisObj, thisArg, args);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Function_call)]
 		public static object call (object thisObj, object thisArg, params object [] args)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (FunctionObject));
+			FunctionObject fun = (FunctionObject) thisObj;
+			return fun.Invoke (thisArg, args);
 		}
 
 

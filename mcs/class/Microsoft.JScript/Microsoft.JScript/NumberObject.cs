@@ -49,7 +49,7 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal override object GetDefaultValue (Type hint)
+		internal override object GetDefaultValue (Type hint, bool avoid_toString)
 		{
 			if (hint == typeof (string))
 				return NumberPrototype.toString (this, 10);

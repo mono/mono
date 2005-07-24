@@ -62,7 +62,12 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_propertyIsEnumerable)]
 		public static bool propertyIsEnumerable (object thisObj, object name)
 		{
-			throw new NotImplementedException ();
+			if (thisObj == null || name == null)
+				return false;
+			Type type = thisObj.GetType ();
+			FieldInfo res = type.GetField (Convert.ToString (name));
+			// TODO: Implement me.
+			return true;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toLocaleString)]
@@ -74,9 +79,14 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toString)]
 		public static string toString (object thisObj)
 		{
-			if (thisObj is JSObject)
-				return "[object " + ((JSObject) thisObj).ClassName + "]";
-			else
+			if (thisObj is JSObject) {
+				JSObject obj = (JSObject) thisObj;
+				object val = obj.GetDefaultValue (typeof (string), true);
+				if (val == thisObj)
+					return "[object " + obj.ClassName + "]";
+				else
+					return Convert.ToString (val);
+			} else
 				throw new NotImplementedException ();
 		}
 

@@ -56,9 +56,13 @@ namespace Microsoft.JScript {
 
 		public string Invoke (Object arg)
 		{
-			if (arg == null)
-				return "";
-			else 
+			if (arg is Object []) {
+				Object [] args = (Object []) arg;
+				if (args.Length == 0)
+					return "";
+				else
+					return Invoke (args [0]);
+			} else
 				return Convert.ToString (arg);
 		}
 

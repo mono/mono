@@ -30,6 +30,7 @@
 using System;
 using System.Text;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.JScript {
 
@@ -357,10 +358,31 @@ namespace Microsoft.JScript {
 			get { return ErrorConstructor.Ctr; }
 		}
 
+		internal const string no_escape_chars =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@*_+-./";
+
 		[JSFunctionAttribute (0, JSBuiltin.Global_escape)]
 		public static String escape (Object @string)
 		{
-			throw new NotImplementedException ();
+			string str = Convert.ToString (@string);
+			StringBuilder sb = new StringBuilder ();
+			int n = str.Length;
+
+			char c;
+			for (int i = 0; i < n; i++) {
+				c = str [i];
+				if (no_escape_chars.IndexOf (c) != -1)
+					sb.Append (c);
+				else if (c < 256) {
+					sb.Append ("%");
+					sb.Append (((int) c).ToString ("X2"));
+				} else {
+					sb.Append ("%u");
+					sb.Append (((int) c).ToString ("X4"));
+				}
+			}
+
+			return sb.ToString ();
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_eval)]
@@ -378,7 +400,7 @@ namespace Microsoft.JScript {
 		}
 
 		public static FunctionConstructor Function {
-			get { throw new NotImplementedException (); }
+			get { return FunctionConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Global_GetObject)]
@@ -420,17 +442,22 @@ namespace Microsoft.JScript {
 			get { return ObjectConstructor.Ctr; }
 		}
 
+		internal static Regex float_re = new Regex (@"[\d+\-.eE]+");
+
 		[JSFunctionAttribute (0, JSBuiltin.Global_parseFloat)]
 		public static double parseFloat (Object @string)
 		{
-			string string_obj = Convert.ToString (@string);
-			double result;
-			if (Double.TryParse (string_obj, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
-				return result;
-			else if (string_obj.StartsWith ("Infinity") || string_obj.StartsWith ("+Infinity"))
+			string string_obj = Convert.ToString (@string).Trim ();
+			if (string_obj.StartsWith ("Infinity") || string_obj.StartsWith ("+Infinity"))
 				return Double.PositiveInfinity;
 			else if (string_obj.StartsWith ("-Infinity"))
 				return Double.NegativeInfinity;
+
+			string_obj = float_re.Match (string_obj).Value;
+
+			double result;
+			if (Double.TryParse (string_obj, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+				return result;
 			else
 				return Double.NaN;
 		}
@@ -475,7 +502,7 @@ namespace Microsoft.JScript {
 				char digit = string_obj [i];
 
 				int digit_value = System.Array.IndexOf (NumberPrototype.Digits, digit);
-				if (digit_value == -1 || digit_value >= _radix)
+				if (digit_value == -1 || digit_value > _radix)
 					break;
 
 				result = (result * _radix) + digit_value;
@@ -546,7 +573,43 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Global_unescape)]
 		public static String unescape (Object @string)
 		{
-			throw new NotImplementedException ();
+			string str = Convert.ToString (@string);
+			StringBuilder sb = new StringBuilder ();
+			int n = str.Length;
+
+			char c;
+			string d;
+			int s;
+			for (int i = 0; i < n; i++) {
+				c = str [i];
+				if (c != '%' || i == n - 1)
+					sb.Append (c);
+				else {
+					i++;
+					if (str [i] == 'u' && i < n - 4) {
+						i++;
+						s = 4;
+					} else if (i <= n - 2)
+						s = 2;
+					else
+						s = 0;
+					
+					d = str.Substring (i, s);
+					i += s - 1;
+
+					char res = (char) parseInt (d, 16);
+					if (((int) res).ToString ("X" + s) == d)
+						sb.Append ((char) res);
+					else {
+						sb.Append ('%');
+						if (s == 4)
+							sb.Append ('u');
+						sb.Append (d);
+					}
+				}
+			}
+
+			return sb.ToString ();
 		}
 
 		public static ErrorConstructor URIError {

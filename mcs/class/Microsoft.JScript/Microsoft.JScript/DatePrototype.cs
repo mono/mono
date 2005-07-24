@@ -645,6 +645,8 @@ namespace Microsoft.JScript {
 			return setFullYear (thisObj, dyear, null, null);
 		}
 
+		internal const string InvalidDateString = "Invalid Date";
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toDateString)]
 		public static string toDateString (object thisObj)
 		{
@@ -656,7 +658,13 @@ namespace Microsoft.JScript {
 			int year = DateConstructor.YearFromTime (lv);
 			int month = DateConstructor.MonthFromTime (lv);
 			int date = DateConstructor.DateFromTime (lv);
-			DateTime dt = new DateTime (year, month + 1, date);
+
+			DateTime dt;
+			try {
+				dt = new DateTime (year, month + 1, date);
+			} catch (ArgumentOutOfRangeException) {
+				return InvalidDateString;
+			}
 
 			return dt.ToString ("ddd MMM d yyyy", CultureInfo.InvariantCulture);
 		}
@@ -678,7 +686,13 @@ namespace Microsoft.JScript {
 			int year = DateConstructor.YearFromTime (lv);
 			int month = DateConstructor.MonthFromTime (lv);
 			int date = DateConstructor.DateFromTime (lv);
-			DateTime dt = new DateTime (year, month + 1, date);
+
+			DateTime dt;
+			try {
+				dt = new DateTime (year, month + 1, date);
+			} catch (ArgumentOutOfRangeException) {
+				return InvalidDateString;
+			}
 
 			return dt.ToString ("D");
 		}
@@ -697,7 +711,13 @@ namespace Microsoft.JScript {
 			int hour = DateConstructor.HourFromTime (lv);
 			int min = DateConstructor.MinFromTime (lv);
 			int sec = DateConstructor.SecFromTime (lv);
-			DateTime dt = new DateTime (year, month + 1, date, hour, min, sec);
+
+			DateTime dt;
+			try {
+				dt = new DateTime (year, month + 1, date, hour, min, sec);
+			} catch (ArgumentOutOfRangeException) {
+				return InvalidDateString;
+			}
 
 			return dt.ToString ("F");
 		}
@@ -716,7 +736,13 @@ namespace Microsoft.JScript {
 			int hour = DateConstructor.HourFromTime (lv);
 			int min = DateConstructor.MinFromTime (lv);
 			int sec = DateConstructor.SecFromTime (lv);
-			DateTime dt = new DateTime (year, month + 1, date, hour, min, sec);
+
+			DateTime dt;
+			try {
+				dt = new DateTime (year, month + 1, date, hour, min, sec);
+			} catch (ArgumentOutOfRangeException) {
+				return InvalidDateString;
+			}
 
 			return dt.ToString ("T");
 		}
@@ -726,6 +752,8 @@ namespace Microsoft.JScript {
 		{
 			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
 			string date_str = toDateString (thisObj);
+			if (date_str == InvalidDateString)
+				return date_str;
 
 			return date_str.Insert (date_str.LastIndexOf (' '), " " + toTimeString (thisObj));
 		}
@@ -759,7 +787,14 @@ namespace Microsoft.JScript {
 			int hour = DateConstructor.HourFromTime (val);
 			int min = DateConstructor.MinFromTime (val);
 			int sec = DateConstructor.SecFromTime (val);
-			DateTime dt = new DateTime (year, month + 1, date);
+
+			DateTime dt;
+			try {
+				dt = new DateTime (year, month + 1, date);
+			} catch (ArgumentOutOfRangeException) {
+				return InvalidDateString;
+			}
+
 			string date_string = dt.ToString ("ddd, d MMM yyyy ", CultureInfo.InvariantCulture);
 			string time_string = String.Format (@"{0:00}:{1:00}:{2:00} UTC", hour, min, sec);
 

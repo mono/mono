@@ -53,6 +53,27 @@ namespace Microsoft.JScript {
 		internal static ErrorConstructor TypeErrorCtr = new ErrorConstructor (ErrorType.TypeError);
 		internal static ErrorConstructor URIErrorCtr = new ErrorConstructor (ErrorType.URIError);
 
+		static Type ErrorTypeToClass (ErrorType type)
+		{
+			switch (type) {
+			case ErrorType.EvalError:
+				return typeof (EvalErrorObject);
+			case ErrorType.RangeError:
+				return typeof (RangeErrorObject);
+			case ErrorType.ReferenceError:
+				return typeof (ReferenceErrorObject);
+			case ErrorType.SyntaxError:
+				return typeof (SyntaxErrorObject);
+			case ErrorType.TypeError:
+				return typeof (TypeErrorObject);
+			case ErrorType.URIError:
+				return typeof (URIErrorObject);
+			}
+
+			Console.WriteLine ("ErrorTypeToClass: unknown type {0}", type);
+			throw new NotImplementedException ();
+		}
+
 		internal ErrorConstructor ()
 		{
 		}
@@ -65,7 +86,12 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new ErrorObject CreateInstance (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			string message = "";
+			if (args.Length >= 1)
+				message = Convert.ToString (args[0]);
+
+			Type type = ErrorTypeToClass (error_type);
+			return (ErrorObject) Activator.CreateInstance (type, new object [] { message });
 		}
 
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]

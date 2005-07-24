@@ -45,7 +45,7 @@ namespace Microsoft.JScript {
 		}
 
 		public int length {
-			get { throw new NotImplementedException (); }
+			get { return value.Length; }
 		}
 
 		public override bool Equals (Object obj)
@@ -63,7 +63,7 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal override object GetDefaultValue (Type hint)
+		internal override object GetDefaultValue (Type hint, bool avoid_toString)
 		{
 			return value;
 		}

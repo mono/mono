@@ -29,6 +29,12 @@
 //
 
 namespace Microsoft.JScript {
-	public sealed class URIErrorObject : ErrorObject
-	{}
+
+	public sealed class URIErrorObject : ErrorObject {
+
+		internal URIErrorObject (string message)
+			: base (message)
+		{
+		}
+	}
 }

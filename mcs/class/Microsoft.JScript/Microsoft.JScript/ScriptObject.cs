@@ -48,6 +48,18 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal JSFieldInfo GetField (string name)
+		{
+			if (elems == null)
+				return null;
+
+			object res = elems [name];
+
+			if (res is JSFieldInfo)
+				return (JSFieldInfo) res;
+			return null;
+		}
+
 		public virtual FieldInfo [] GetFields (BindingFlags bindFlags)
 		{
 			throw new NotImplementedException ();
@@ -142,7 +154,12 @@ namespace Microsoft.JScript {
 
 		internal object CallMethod (string name, params object [] args)
 		{
-			MethodInfo method = GetMethod (name, BindingFlags.InvokeMethod | BindingFlags.Public);
+			Type prototype = SemanticAnalyser.map_to_prototype (this);
+			MethodInfo method = prototype.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+			if (method == null)
+				method = typeof (ObjectPrototype).GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+			if (method == null)
+				Console.WriteLine ("CallMethod: method is null! this = {0}, prototype = {1}, name = {2}", this, prototype, name);
 			return CallMethod (method, args);
 		}
 

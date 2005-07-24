@@ -29,6 +29,12 @@
 //
 
 namespace Microsoft.JScript {
-	public sealed class TypeErrorObject : ErrorObject
-	{}
+
+	public sealed class TypeErrorObject : ErrorObject {
+
+		internal TypeErrorObject (string message)
+			: base (message)
+		{
+		}
+	}
 }

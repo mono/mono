@@ -75,8 +75,14 @@ namespace Microsoft.JScript {
 		}
 
 		public virtual int length {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				if (method != null)
+					return LateBinding.GetRequiredArgumentCount (method);
+
+				Console.WriteLine ("Called ScriptFunction:length on user function");
+				throw new NotImplementedException ();
+			}
+			set { throw new JScriptException (JSError.AssignmentToReadOnly); }
 		}
 
 		public override string ToString ()

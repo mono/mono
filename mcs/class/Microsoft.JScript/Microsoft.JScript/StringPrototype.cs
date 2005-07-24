@@ -32,6 +32,7 @@ using System;
 using Microsoft.JScript.Vsa;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Microsoft.JScript {
 	
@@ -82,8 +83,8 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_charCodeAt)]
 		public static object charCodeAt (object thisObj, double arg)
 		{
-			int pos = Convert.ToInt32 (arg);
 			string string_obj = Convert.ToString (thisObj);
+			int pos = Convert.ToInt32 (arg);
 
 			if (pos < 0 || pos >= string_obj.Length)
 				return Double.NaN;
@@ -156,6 +157,7 @@ namespace Microsoft.JScript {
 		// (which we use from our own compiler) and a wrapper
 		// around that for when we run MS IL.
 		//
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject)]
 		public static int lastIndexOfGood (object thisObj, object searchString, object position)
 		{
 			string string_obj = Convert.ToString (thisObj);
@@ -226,7 +228,9 @@ namespace Microsoft.JScript {
 
 			MatchCollection md = regex_obj.regex.Matches (string_obj);
 			int n = md.Count;
-			regex_obj.lastIndex = md [n - 1].Index + 1;
+			Match lastMatch = md [n - 1];
+			regex_obj.lastIndex = lastMatch.Index + 1;
+			RegExpConstructor.UpdateLastMatch (lastMatch, string_obj);
 
 			ArrayObject result = new ArrayObject ();
 			result.length = n;
@@ -259,7 +263,20 @@ namespace Microsoft.JScript {
 			if (!(replacement is FunctionObject))
 				return regex_obj.regex.Replace (string_obj, Convert.ToString (replacement), count);
 
-			throw new NotImplementedException ();
+			FunctionObject fun = (FunctionObject) replacement;
+			MatchEvaluator wrap_fun = delegate (Match md)
+			{
+				ArrayList arg_list = new ArrayList ();
+
+				foreach (Group cap in md.Groups)
+					arg_list.Add (cap.Value);
+
+				arg_list.Add (md.Index);
+				arg_list.Add (string_obj);
+
+				return Convert.ToString (fun.Invoke (null, arg_list.ToArray ()));
+			};
+			return regex_obj.regex.Replace (string_obj, wrap_fun, count);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine, JSBuiltin.String_search)]
@@ -372,18 +389,24 @@ namespace Microsoft.JScript {
 
 			Match match = null;
 			for (int i = 0; i < n; i++) {
+				if (max_count != -1 && count >= max_count)
+					break;
+
 				match = md [i];
 				sep_len = match.Length;
 				end_pos = match.Index;
 				match_len = end_pos - start_pos;
 
-				if (start_pos != 0 || match_len > 0) {
+				if (sep_len > 0 || start_pos > 0 || match_len > 0) {
 					result.elems [count] = string_obj.Substring (start_pos, match_len);
 					count++;
 				}
 
 				bool first_cap = true;
 				foreach (Capture cap in match.Groups) {
+					if (max_count != -1 && count >= max_count)
+						break;
+
 					if (first_cap) {
 						first_cap = false;
 						continue;
@@ -396,13 +419,17 @@ namespace Microsoft.JScript {
 				start_pos += match_len + sep_len;
 			}
 
-			if (n > 0) {
+			if (n > 0 && (max_count == -1 || count < max_count)) {
 				sep_re.lastIndex = match.Index + match.Length;
+				RegExpConstructor.UpdateLastMatch (match, string_obj);
 
 				if (start_pos < length) {
 					result.elems [count] = string_obj.Substring (start_pos);
 					count++;
 				}
+			} else if (n == 0) {
+				result.elems [0] = string_obj;
+				count++;
 			}
 
 			result.length = count;

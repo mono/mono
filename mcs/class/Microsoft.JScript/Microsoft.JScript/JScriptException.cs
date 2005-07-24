@@ -110,6 +110,8 @@ namespace Microsoft.JScript {
 					return "The number of fractional digits is out of range";
 				else if (error_number == JSError.RegExpSyntax)
 					return "Syntax error in regular expression";
+				else if (error_number == JSError.TypeMismatch)
+					return "Unexpected type";
 				else {
 					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
 					throw new NotImplementedException ();

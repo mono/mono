@@ -41,7 +41,30 @@ namespace Microsoft.JScript {
 
 		public static bool JScriptInstanceof (object v1, object v2)
 		{
-			return false;
+			if (v2 is ArrayConstructor)
+				return v1 is ArrayObject;
+			else if (v2 is BooleanConstructor)
+				return v1 is BooleanObject;
+			else if (v2 is DateConstructor)
+				return v1 is DateObject;
+			else if (v2 is EnumeratorConstructor)
+				return v1 is EnumeratorObject;
+			else if (v2 is ErrorConstructor)
+				return v1 is ErrorObject;
+			else if (v2 is FunctionConstructor)
+				return v1 is FunctionObject;
+			else if (v2 is NumberConstructor)
+				return v1 is NumberObject;
+			else if (v2 is ObjectConstructor)
+				return v1 is JSObject;
+			else if (v2 is RegExpConstructor)
+				return v1 is RegExpObject;
+			else if (v2 is StringConstructor)
+				return v1 is StringObject;
+			else if (v2 is ScriptFunction)
+				return false;
+			else
+				throw new JScriptException (JSError.TypeMismatch);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

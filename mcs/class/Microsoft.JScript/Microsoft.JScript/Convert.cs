@@ -33,6 +33,7 @@ using System;
 using System.Diagnostics;
 using Microsoft.JScript.Vsa;
 using System.Globalization;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -169,8 +170,10 @@ namespace Microsoft.JScript {
 			case TypeCode.Object:
 				if (value is JSObject)
 					return ((JSObject) value).GetDefaultValue (hint);
-				else
+				else {
+					Console.WriteLine ("value = {0} ({1})", value, value.GetType ());
 					throw new NotImplementedException ();
+				}
 			default:
 				return value;
 			}
@@ -203,18 +206,6 @@ namespace Microsoft.JScript {
 			case TypeCode.Boolean:
 				return ic.ToBoolean (null);
 
-			case TypeCode.Char:
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.UInt16:
-			case TypeCode.UInt32:
-			case TypeCode.Int16:
-			case TypeCode.Int32:
-			case TypeCode.Single:
-			case TypeCode.Double:
-				double num = ic.ToDouble (null);
-				return !double.IsNaN (num) && (num != 0.0);
-
 			case TypeCode.String:
 				string str = ic.ToString (null);
 				return str.Length != 0;
@@ -223,6 +214,11 @@ namespace Microsoft.JScript {
 				return true;
 
 			default:
+				if (IsNumberTypeCode (tc)) {
+					double num = ic.ToDouble (null);
+					return !double.IsNaN (num) && (num != 0.0);
+				}
+
 				Console.WriteLine ("\nToBoolean: tc = {0}", tc);
 				break;
 			}
@@ -244,23 +240,15 @@ namespace Microsoft.JScript {
 			case TypeCode.DBNull:
 				return 0;
 
-			case TypeCode.Char:
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.UInt16:
-			case TypeCode.UInt32:
-			case TypeCode.Int16:
-			case TypeCode.Int32:
-				return (int) value;
-
-			case TypeCode.Single:
-			case TypeCode.Double:
-				return (int) Math.Floor ((double) value);
-
 			case TypeCode.String:
 				return (int) Math.Floor (GlobalObject.parseFloat (ic.ToString ()));
 
 			default:
+				if (IsFloatTypeCode (tc))
+					return (int) Math.Floor ((double) value);
+				else if (IsNumberTypeCode (tc))
+					return (int) value;
+
 				Console.WriteLine ("\nToInt32: value.GetType = {0}", value.GetType ());
 				break;
 			}
@@ -293,25 +281,35 @@ namespace Microsoft.JScript {
 					return 1;
 				return 0;
 
-			case TypeCode.Char:
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.UInt16:
-			case TypeCode.UInt32:
-			case TypeCode.Int16:
-			case TypeCode.Int32:
-				return ic.ToDouble (null);
-
-			case TypeCode.Single:
-			case TypeCode.Double:
-				return (double) value;
-
 			case TypeCode.String:
-				return GlobalObject.parseFloat (value);
+				return ToNumber ((string) value);
 
 			case TypeCode.Object:
 				if (value is NumberObject)
 					return ((NumberObject) value).value;
+				else if (value is BooleanObject)
+					return ((BooleanObject) value).value ? 1 : 0;
+				else if (value is StringObject)
+					return ToNumber (((StringObject) value).value);
+				else if (value is DateObject)
+					return ((DateObject) value).ms;
+				else if (value is ArrayObject) {
+					ArrayObject ary = (ArrayObject) value;
+					Hashtable elems = ary.elems;
+					int i = (int) ary.length - 1;
+					if (elems.ContainsKey (i))
+						return Convert.ToNumber (elems [i]);
+					else
+						return Double.NaN;
+				} else
+					return Double.NaN;
+				break;
+
+			default:
+				if (IsFloatTypeCode (tc))
+					return (double) value;
+				else if (IsNumberTypeCode (tc))
+					return ic.ToDouble (null);
 				break;
 			}
 
@@ -322,13 +320,36 @@ namespace Microsoft.JScript {
 
 		public static double ToNumber (string str)
 		{
-			return GlobalObject.parseFloat (str);
+			if (str == "")
+				return 0;
+
+			if (str.IndexOfAny (new char [] { 'x', 'X' }) != -1)
+				return GlobalObject.parseInt (str, null);
+			else
+				return GlobalObject.parseFloat (str);
 		}
 
 
 		public static object ToNativeArray (object value, RuntimeTypeHandle handle)
 		{
-			throw new NotImplementedException ();
+			ArrayObject ary = null;
+			if (value is ArrayObject)
+				ary = (ArrayObject) value;
+			else
+				ary = Convert.ToArray (value);
+
+			Hashtable elems = ary.elems;
+			int n = (int) ary.length;
+			object [] result = new object [n];
+			for (int i = 0; i < n; i++)
+				result [i] = elems [i];
+
+			return result;
+		}
+
+		private static ArrayObject ToArray (object value)
+		{
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
 
@@ -338,21 +359,19 @@ namespace Microsoft.JScript {
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 
 			switch (tc) {
+			case TypeCode.DBNull:
+			case TypeCode.Empty:
+				throw new JScriptException (JSError.TypeMismatch);
+			case TypeCode.Boolean:
+				return new BooleanObject (ic.ToBoolean (null));
 			case TypeCode.String:
 				return new StringObject (ic.ToString (null));
-			case TypeCode.Single:
-			case TypeCode.Double:
-			case TypeCode.Char:
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.UInt16:
-			case TypeCode.UInt32:
-			case TypeCode.Int16:
-			case TypeCode.Int32:
-				return new NumberObject (ic.ToDouble (null));
 			case TypeCode.Object:
 				return value;
 			default:
+				if (IsNumberTypeCode (tc))
+					return new NumberObject (ic.ToDouble (null));
+
 				Console.WriteLine ("\nToObject: value.GetType = {0}", value.GetType ());
 				break;
 			}
@@ -362,7 +381,7 @@ namespace Microsoft.JScript {
 
 		public static object ToObject2 (object value, VsaEngine engine)
 		{
-			throw new NotImplementedException ();
+			return ToObject (value, engine);
 		}
 
 
@@ -410,14 +429,15 @@ namespace Microsoft.JScript {
 				throw new NotImplementedException ();
 
 			default:
-				if (IsNumberTypeCode (tc))
-					return ic.ToString (CultureInfo.InvariantCulture);
+				if (IsNumberTypeCode (tc)) {
+					double val = ic.ToDouble (null);
+					return ToString (val);
+				}
 
 				Console.WriteLine ("tc = {0}", tc);
 				throw new NotImplementedException ();
 			}
 		}
-
 
 		internal static RegExpObject ToRegExp (object regExp)
 		{
@@ -432,11 +452,13 @@ namespace Microsoft.JScript {
 			return b ? "true" : "false";
 		}
 
-
 		public static string ToString (double d)
 		{
-			IConvertible ic = d as IConvertible;
-			return ic.ToString (null);
+			double exp = Math.Log10 (d);
+			if (exp > -6 && exp < 1)
+				return d.ToString ("0.##########", CultureInfo.InvariantCulture);
+			else
+				return d.ToString ("g21", CultureInfo.InvariantCulture);
 		}
 
 		//

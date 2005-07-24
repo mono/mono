@@ -74,6 +74,7 @@ namespace Microsoft.JScript {
 			prototypes.Add (typeof (DateObject), typeof (DatePrototype));
 			prototypes.Add (typeof (RegExpObject), typeof (RegExpPrototype));
 			prototypes.Add (typeof (RegExpMatch), typeof (ArrayPrototype));
+			prototypes.Add (typeof (ObjectPrototype), typeof (ObjectPrototype));
 			prototypes.Add (typeof (ErrorObject), typeof (ErrorPrototype));
 			prototypes.Add (typeof (EvalErrorObject), typeof (ErrorPrototype));
 			prototypes.Add (typeof (RangeErrorObject), typeof (ErrorPrototype));

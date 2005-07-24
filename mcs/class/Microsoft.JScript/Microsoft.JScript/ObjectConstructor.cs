@@ -51,37 +51,11 @@ namespace Microsoft.JScript {
 				return ConstructObject ();
 			else {
 				object value = args [0];
-				
-				if (value == null)
-					return ConstructObject ();
-				else if (value is ScriptObject)
-					return value;
 
-				IConvertible ic = value as IConvertible;
-				TypeCode tc = ic.GetTypeCode ();
-				
-				switch (tc) {
-				case TypeCode.Empty:
-				case TypeCode.DBNull:
+				if (value == null || value == DBNull.Value)
 					return ConstructObject ();
-				case TypeCode.String:
-					return new StringObject (ic.ToString (null));
-				case TypeCode.Boolean:
-					return new BooleanObject (ic.ToBoolean (null));
-				case TypeCode.Byte:
-				case TypeCode.Char:
-				case TypeCode.Decimal:
-				case TypeCode.Double:
-				case TypeCode.Int16:
-				case TypeCode.Int32:
-				case TypeCode.Int64:
-				case TypeCode.UInt16:
-				case TypeCode.UInt32:
-				case TypeCode.UInt64:					
-					return new NumberObject (ic.ToDouble (null));
-				default:
-					throw new Exception ("unknown TypeCode, " + tc.ToString ());
-				}
+				else
+					return Convert.ToObject (value, null);
 			}
 		}
 
@@ -90,8 +64,13 @@ namespace Microsoft.JScript {
 		{
 			if (args == null || args.Length == 0)
 				return ConstructObject ();
-			else
-				return Convert.ToObject (args [0], null);
+			else {
+				object arg = args [0];
+				if (arg == null || arg == DBNull.Value)
+					return ConstructObject ();
+				else
+					return Convert.ToObject (arg, null);
+			}
 		}
 	}
 }

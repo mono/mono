@@ -100,7 +100,7 @@ namespace Microsoft.JScript {
 
 
 		public override string Name {
-			get { throw new NotImplementedException (); }
+			get { return name; }
 		}
 
 

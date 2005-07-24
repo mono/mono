@@ -39,12 +39,21 @@ namespace Microsoft.JScript {
 
 		public virtual object length {
 			get { return _length; }
-			set { _length = value; }
+			set {
+				int new_length = Convert.ToInt32 (value);
+				int old_length = (int) _length;
+
+				for (int i = new_length; i < old_length; i++)
+					if (elems.ContainsKey (i))
+						elems.Remove (i);
+
+				_length = new_length;
+			}
 		}
 
 		internal ArrayObject ()
 		{
-			length = 0;
+			_length = 0;
 		}
 
 		internal ArrayObject (object o)
@@ -56,7 +65,7 @@ namespace Microsoft.JScript {
 				if (Convert.IsNumberTypeCode (tc)) {
 					int size = ic.ToInt32 (null);
 					if (size > 0) {
-						length = o;
+						_length = o;
 						return;
 					} else
 						throw new JScriptException (JSError.ArrayLengthConstructIncorrect);
@@ -64,7 +73,7 @@ namespace Microsoft.JScript {
 			} catch (FormatException) { /* OK */ }
 
 			elems = new Hashtable ();
-			length = 1;
+			_length = 1;
 			elems.Add (0, o);
 		}
 
@@ -72,7 +81,7 @@ namespace Microsoft.JScript {
 		{
 			if (args != null) {
 				int size = args.Length;
-				length = (object) size;
+				_length = (object) size;
 				elems = new Hashtable ();
 
 				int idx = 0;
@@ -93,7 +102,7 @@ namespace Microsoft.JScript {
 			ArrayPrototype.splice (outArray, null, start, deleteCount, args);
 		}
 
-		internal override object GetDefaultValue (Type hint)
+		internal override object GetDefaultValue (Type hint, bool avoid_toString)
 		{
 			return ArrayPrototype.toString (this);
 		}

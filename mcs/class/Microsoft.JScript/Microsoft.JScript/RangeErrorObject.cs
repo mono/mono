@@ -29,7 +29,13 @@
 //
 
 namespace Microsoft.JScript {
-	public sealed class RangeErrorObject : ErrorObject
-	{}
+
+	public sealed class RangeErrorObject : ErrorObject {
+
+		internal RangeErrorObject (string message)
+			: base (message)
+		{
+		}
+	}
 }
 		

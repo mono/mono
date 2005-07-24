@@ -29,6 +29,12 @@
 //
 
 namespace Microsoft.JScript {
-	public sealed class ReferenceErrorObject : ErrorObject
-	{}
+
+	public sealed class ReferenceErrorObject : ErrorObject {
+
+		internal ReferenceErrorObject (string message) 
+			: base (message)
+		{
+		}
+	}
 }

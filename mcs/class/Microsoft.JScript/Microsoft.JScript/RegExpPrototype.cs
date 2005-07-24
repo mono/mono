@@ -62,7 +62,12 @@ namespace Microsoft.JScript {
 		public static object exec (object thisObj, object input)
 		{
 			RegExpObject re = Convert.ToRegExp (thisObj);
-			string str = Convert.ToString (input);
+			string str = null;
+			if (input == null) {
+				RegExpConstructor ctr = RegExpConstructor.Ctr;
+				str = Convert.ToString (ctr.GetField ("$_").GetValue ("$_"));
+			} else
+				str = Convert.ToString (input);
 			bool global = re.global;
 			int lastIndex = global ? (int) re.lastIndex : 0;
 			bool success = lastIndex >= 0 && lastIndex <= str.Length;
@@ -82,6 +87,7 @@ namespace Microsoft.JScript {
 			int endIndex = index + md.Length;
 			if (global)
 				re.lastIndex = endIndex;
+			RegExpConstructor.UpdateLastMatch (md, str);
 
 			GroupCollection caps = md.Groups;
 			int len = caps.Count;
@@ -90,6 +96,7 @@ namespace Microsoft.JScript {
 			result.AddField ("index", index);
 			result.AddField ("input", input);
 			result.length = len;
+			Capture cap;
 			for (int j = 0; j < len; j++)
 				result.elems [j] = caps [j].Value;
 

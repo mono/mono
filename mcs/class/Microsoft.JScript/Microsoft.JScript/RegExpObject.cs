@@ -47,13 +47,16 @@ namespace Microsoft.JScript {
 		{
 			StringBuilder str = new StringBuilder ();
 			str.Append ("/");
-			str.Append (_source);
+			if (_source == "")
+				str.Append ("(?:)");
+			else
+				str.Append (_source);
 			str.Append ("/");
 
+			if (_global)
+				str.Append ("g");
 			if (_ignoreCase)
 				str.Append ("i");
-			if(_global)
-				str.Append ("g");
 			if (_multiline)
 				str.Append ("m");
 
@@ -88,20 +91,27 @@ namespace Microsoft.JScript {
 
 		internal void Initialize (string pattern, bool ignoreCase, bool global, bool multiLine)
 		{
+			RegExpConstructor ctr = RegExpConstructor.Ctr;
 			_source = pattern;
 			_ignoreCase = ignoreCase;
 			_global = global;
-			_multiline = multiLine;
+			_multiline = multiLine || Convert.ToBoolean (ctr.GetField ("$*").GetValue ("$*"));
+
 			RegexOptions options = RegexOptions.ECMAScript | RegexOptions.Compiled;
 			if (ignoreCase)
 				options |= RegexOptions.IgnoreCase;
-			if (multiLine)
+			if (_multiline)
 				options |= RegexOptions.Multiline;
 			try {
 				regex = new Regex (source, options);
 			} catch (ArgumentException) {
 				throw new JScriptException (JSError.RegExpSyntax);
 			}
+		}
+
+		internal override object GetDefaultValue (Type hint, bool avoid_toString)
+		{
+			return ToString ();
 		}
 	}
 }

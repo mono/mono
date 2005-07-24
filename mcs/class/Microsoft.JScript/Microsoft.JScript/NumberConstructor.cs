@@ -56,8 +56,16 @@ namespace Microsoft.JScript {
 			return new NumberObject (value);
 		}
 
-		public double Invoke (Object arg)
+		public double Invoke (object arg)
 		{
+			if (arg is Object []) {
+				Object [] args = (Object []) arg;
+				if (args.Length == 0)
+					return 0;
+				else
+					return Convert.ToNumber (args [0]);
+			}
+
 			return Convert.ToNumber (arg);
 		}
 	}

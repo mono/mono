@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.Text;
 using Microsoft.JScript.Vsa;
+using System.Globalization;
 
 namespace Microsoft.JScript {
 
@@ -114,16 +115,15 @@ namespace Microsoft.JScript {
 			Hashtable elems = array_obj.elems;
 
 			int n = (int) array_obj.length;
+			object result = null;
 			if (n > 0) {
 				int new_len = n - 1;
+				if (elems.ContainsKey (new_len))
+					result = elems [new_len];
+				// Element gets removed automatically
 				array_obj.length = new_len;
-				if (elems.ContainsKey (new_len)) {
-					object result = elems [new_len];
-					elems.Remove (new_len);
-					return result;
-				}
 			}
-			return null;
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_push)]
@@ -175,18 +175,18 @@ namespace Microsoft.JScript {
 			Hashtable elems = array_obj.elems;
 
 			int n = (int) array_obj.length;
+			object result = null;
 			if (n > 0) {
-				array_obj.length = n - 1;
 				if (elems.ContainsKey (0)) {
-					object result = elems [0];
+					result = elems [0];
 					elems.Remove (0);
 					for (int i = 1; i < n; i++)
 						elems [i - 1] = elems [i];
-					elems.Remove (n - 1);
-					return result;
 				}
+				// Last element gets removed automatically
+				array_obj.length = n - 1;
 			}
-			return null;
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine, JSBuiltin.Array_slice)]
@@ -315,7 +315,26 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_toLocaleString)]
 		public static string toLocaleString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+
+			string separator = CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ";
+
+			Hashtable elems = array_obj.elems;
+			int n = (int) array_obj.length;
+			StringBuilder str = new StringBuilder ();
+			bool first = true;
+
+			for (int i = 0; i < n; i++) {
+				ScriptObject elem = (ScriptObject) Convert.ToObject (elems [i], null);
+				if (!first && elem != null)
+					str.Append (separator);
+				first = false;
+				if (elem != null)
+					str.Append (Convert.ToString (elem.CallMethod ("toLocaleString", new object [] { } )));
+			}
+			return str.ToString ();
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_toString)]

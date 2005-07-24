@@ -73,7 +73,7 @@ namespace Microsoft.JScript {
 						type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
 
 					if (type == null)
-						Console.WriteLine ("LateBinding:Call: type is null for {0}.{1}!", obj, right_hand_side);
+						type = obj.GetType ();
 
 					string name = right_hand_side == "lastIndexOf" ? "lastIndexOfGood" : right_hand_side;
 					MethodInfo method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
@@ -87,7 +87,7 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal static object [] assemble_args (object obj, MethodInfo method, object [] arguments, VsaEngine engine)
+		internal static void GetMethodFlags (MethodInfo method, out bool has_engine, out bool has_var_args, out bool has_this)
 		{
 			JSFunctionAttribute [] custom_attrs = (JSFunctionAttribute [])
 				method.GetCustomAttributes (typeof (JSFunctionAttribute), true);
@@ -95,35 +95,67 @@ namespace Microsoft.JScript {
 			// We need to iterate through the JSFunctionAttributes to find out whether the function wants
 			// to get passed the vsaEngine or not so we can pass the right arguments to it.
 			//
-			bool has_engine = false;
-			bool has_var_args = false;
+			has_engine = false;
+			has_var_args = false;
+			has_this = false;
 			foreach (JSFunctionAttribute attr in custom_attrs) {
 				JSFunctionAttributeEnum flags = attr.GetAttributeValue ();
 				if ((flags & JSFunctionAttributeEnum.HasEngine) != 0)
 					has_engine = true;
 				if ((flags & JSFunctionAttributeEnum.HasVarArgs) != 0)
 					has_var_args = true;
+				if ((flags & JSFunctionAttributeEnum.HasThisObject) != 0)
+					has_this = true;
 			}
-
-			return assemble_args (obj, has_var_args, has_engine, method.GetParameters ().Length, arguments, engine);
 		}
 
-		internal static object [] assemble_args (object obj, bool has_var_args, bool has_engine,
+		internal static int GetRequiredArgumentCount (MethodInfo method)
+		{
+			bool has_engine, has_var_args, has_this;
+			GetMethodFlags (method, out has_engine, out has_var_args, out has_this);
+			return GetRequiredArgumentCount (method.GetParameters ().Length, has_engine, has_var_args, has_this);
+		}
+
+		private static int GetRequiredArgumentCount (int argc, bool has_engine, bool has_var_args, bool has_this)
+		{
+			if (has_this)
+				argc--;
+			if (has_engine)
+				argc--;
+			if (has_var_args)
+				argc--;
+			return argc;
+		}
+
+		internal static object [] assemble_args (object obj, MethodInfo method, object [] arguments, VsaEngine engine)
+		{
+			bool has_engine, has_var_args, has_this;
+			GetMethodFlags (method, out has_engine, out has_var_args, out has_this);
+
+			return assemble_args (obj, has_engine, has_var_args, has_this,
+				method.GetParameters ().Length, arguments, engine);
+		}
+
+		internal static object [] assemble_args (object obj, bool has_engine, bool has_var_args, bool has_this,
 			int target_argc, object [] arguments, VsaEngine engine)
 		{
 			ArrayList arg_list = new ArrayList (arguments);
-			int req_argc = target_argc - 1; /* -1 for thisObj */
-			if (has_engine)
-				req_argc--;
-			if (has_var_args)
-				req_argc--;
+			int req_argc = GetRequiredArgumentCount (target_argc, has_engine, has_var_args, has_this);
 
 			int missing_args = req_argc - arg_list.Count;
 			for (int i = 0; i < missing_args; i++)
 				arg_list.Add (null);
 
-			if (has_var_args) {
+			if (!has_var_args) {
+				int added_args = -missing_args;
+				/*if (added_args > 0)
+					Console.WriteLine ("warning JS1148: There are too many arguments. The extra arguments will be ignored");*/
+				for (int i = 0; i < added_args; i++)
+					arg_list.RemoveAt (arg_list.Count - 1);
+			} else {
 				int va_idx = req_argc;
+				if (!has_this)
+					va_idx--;
 				int va_count = arg_list.Count - va_idx;
 
 				object [] var_args = new object [va_count];
@@ -140,13 +172,14 @@ namespace Microsoft.JScript {
 				arg_list.Add (var_args);
 			}
 
-			return build_args (obj, arg_list.ToArray (), engine, has_engine);
+			return build_args (obj, arg_list.ToArray (), engine, has_engine, has_this);
 		}
 
-		internal static object [] build_args (object obj, object [] arguments, VsaEngine engine, bool has_engine)
+		internal static object [] build_args (object obj, object [] arguments, VsaEngine engine,
+			bool has_engine, bool has_this)
 		{
 			ArrayList args = new ArrayList ();
-			if (obj != null)
+			if (has_this)
 				args.Add (obj);
 			if (has_engine)
 				args.Add (engine);
@@ -163,6 +196,11 @@ namespace Microsoft.JScript {
 			if (construct) {
 				if (brackets) {
 				}
+
+				if (val is Closure)
+					return ((Closure) val).func.Invoke (thisObj, arguments);
+				else if (val is FunctionObject)
+					return ((FunctionObject) val).Invoke (thisObj, arguments);
 			} else if (brackets) {
 				if (!(val is JSObject))
 					throw new Exception ("val has to be a JSObject");
@@ -173,20 +211,22 @@ namespace Microsoft.JScript {
 					return ((JSFieldInfo) res).GetValue (arguments [0]);
 				else {
 					res = js_val.elems [Convert.ToInt32 (arguments [0])];
-					if (res != null)
-						return res;
+					return res;
 				}
 				if (res == null)
+					return null;
 					Console.WriteLine ("res is null!");
 			} else {
 				if (val is Closure)
 					return ((Closure) val).func.Invoke (thisObj, arguments);
 				else if (val is FunctionObject)
 					return ((FunctionObject) val).Invoke (thisObj, arguments);
+				else if (val is RegExpObject)
+					return RegExpPrototype.exec (val, arguments [0]);
 			}
 
-			Console.WriteLine ("CallValue: construct = {0}, brackets = {1}, this = {2}, val = {3} ({4})",
-				construct, brackets, thisObj.GetType (), val, val.GetType ());
+			Console.WriteLine ("CallValue: construct = {0}, brackets = {1}, this = {2}, val = {3} ({4}), arg[0] = {5}",
+				construct, brackets, thisObj.GetType (), val, val.GetType (), arguments [0]);
 			throw new NotImplementedException ();
 		}
 
@@ -215,15 +255,19 @@ namespace Microsoft.JScript {
 		public object GetNonMissingValue ()
 		{
 			Type type = obj.GetType ();
+			if (obj is GlobalScope)
+				type = typeof (GlobalObject);
 
-			MemberInfo [] members = type.GetMember (right_hand_side);
-			if (obj is JSObject && members.Length == 0) {
-				JSObject jsobj = obj as JSObject;
+			MemberInfo [] members = type.GetMember (right_hand_side,
+				BindingFlags.FlattenHierarchy | BindingFlags.GetField | BindingFlags.GetProperty |
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			if (obj is ScriptObject && members.Length == 0) {
+				ScriptObject jsobj = obj as ScriptObject;
 				JSFieldInfo field = jsobj.GetField (right_hand_side);
 				if (field != null)
 					return field.GetValue (right_hand_side);
 
-				type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+				type = SemanticAnalyser.map_to_prototype (jsobj);
 				members = type.GetMember (right_hand_side);
 			}
 
@@ -232,6 +276,8 @@ namespace Microsoft.JScript {
 				MemberTypes member_type = member.MemberType;
 
 				switch (member_type) {
+				case MemberTypes.Field:
+					return ((FieldInfo) member).GetValue (obj);
 				case MemberTypes.Property:
 					MethodInfo method = ((PropertyInfo) member).GetGetMethod ();
 					return method.Invoke (obj, new object [] { });
@@ -264,15 +310,74 @@ namespace Microsoft.JScript {
 				throw new Exception ("obj should be a JSObject");
 
 			JSObject js_obj = (JSObject) obj;
-			foreach (object o in arguments)
-				js_obj.AddField (o, value);
+			foreach (object o in arguments) {
+				if (js_obj.elems.ContainsKey (o)) {
+					object old_value = js_obj.elems [o];
+					JSFieldInfo field = old_value as JSFieldInfo;
+					if (field != null)
+						field.SetValue (o, value);
+					else
+						js_obj.elems [o] = value;
+				} else {
+					if (js_obj is ArrayObject) {
+						int index = (int) Convert.ToInt32 (o);
+						if (index > 0 && index != 4294967295 &&
+							Convert.ToString (index) == Convert.ToString (o))
+							((ArrayObject) js_obj).length = index + 1;
+					}
+
+					js_obj.AddField (o, value);
+				}
+			}
 		}
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public void SetValue (object value)
 		{
-			throw new NotImplementedException ();
+			Type type = obj.GetType ();
+			if (obj is GlobalScope)
+				type = typeof (GlobalObject);
+			
+			MemberInfo [] members = type.GetMember (right_hand_side);
+			if (obj is JSObject && members.Length == 0) {
+				type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+				members = type.GetMember (right_hand_side);
+			}
+
+			if (members.Length > 0) {
+				MemberInfo member = members [0];
+				MemberTypes member_type = member.MemberType;
+
+				switch (member_type) {
+				case MemberTypes.Property:
+					MethodInfo method = ((PropertyInfo) member).GetSetMethod ();
+					method.Invoke (obj, new object [] { value });
+					return;
+
+				default:
+					if (obj is JSObject) {
+						JSObject js_obj = (JSObject) obj;
+						if (js_obj.elems.ContainsKey (right_hand_side)) {
+							object old_value = js_obj.elems [right_hand_side];
+							if (old_value is JSFieldInfo) {
+								JSFieldInfo field = (JSFieldInfo) old_value;
+								field.SetValue (js_obj, value);
+							} else
+								js_obj.elems [right_hand_side] = value;
+						} else {
+							if (js_obj is ArrayObject)
+								throw new NotImplementedException ("didn't expect SetValue for ArrayObject");
+
+							js_obj.AddField (right_hand_side, value);
+						}
+						return;
+					}
+					break;
+				}
+			}
+
+			Console.WriteLine ("SetValue: obj = {0}, rhs = {1}", obj, right_hand_side);
 		}
 	}
 }

@@ -29,6 +29,12 @@
 //
 
 namespace Microsoft.JScript {
-	public sealed class SyntaxErrorObject : ErrorObject
-	{}
+
+	public sealed class SyntaxErrorObject : ErrorObject {
+
+		internal SyntaxErrorObject (string message) 
+			: base (message)
+		{
+		}
+	}
 }

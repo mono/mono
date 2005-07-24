@@ -67,7 +67,7 @@ namespace Microsoft.JScript {
 			if (!Convert.IsNumber (thisObj))
 				throw new JScriptException (JSError.NumberExpected);
 			else
-				return Convert.ToNumber (thisObj).ToString ();
+				return Convert.ToNumber (thisObj).ToString ("N");
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toPrecision)]

@@ -37,13 +37,15 @@ namespace Microsoft.JScript {
 		public readonly string name;
 
 		public ErrorConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return ErrorConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Error_toString)]
 		public static string toString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (ErrorObject));
+			ErrorObject error = (ErrorObject) thisObj;
+			return error.ClassName + ": " + error.message;
 		}
 	}
 }

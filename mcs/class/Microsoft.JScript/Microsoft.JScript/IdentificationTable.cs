@@ -65,6 +65,7 @@ namespace Microsoft.JScript {
 		/// </summary>
 		internal static Symbol CreateSymbol (string n)
 		{
+			n = n.Replace ("$", "dollar_");
 			string u = String.Intern (n);
 			Symbol s = (Symbol) dict [u];
 		
@@ -180,7 +181,15 @@ namespace Microsoft.JScript {
 				//
 				top = key;					
 			}
-			((Hashtable) locals.Peek ()).Add (key.Value, value);
+			Hashtable top = (Hashtable) locals.Peek ();
+			string val = key.Value;
+			//
+			// This is to allow the same argument name to appear multiple times
+			// in the same function argument list.
+			//
+			if (top.ContainsKey (val))
+				top.Remove (val);
+			top.Add (val, value);
 		}
 
 		/// <summary>

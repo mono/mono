@@ -1,11 +1,79 @@
+2005-07-24  Florian Gross  <flgr@ccan.de>
+
+	* DateConstructor.cs: CreateInstance handles Infinity, NaN and double
+	with decimal places correctly and won't fail when trying to get the
+	timezone offset for invalid values anymore. LocalTime keeps the date
+	in the correct timezone
+	* ScriptObject.cs: Moved GetField from JSObject.cs. CallMethod can be
+	used to call ObjectPrototype methods on objects of derived prototypes.
+	* JSObject.cs: Implemented SetMemberValue2, more cases for ClassName,
+	added avoid_toString argument to GetDefaultValue to avoid infinite
+	recursion from ObjectPrototype:toString
+	* ArrayPrototype.cs: Fixed pop, shift to work with the auto-popping
+	ArrayObject:length setter. Implemented toLocaleString
+	* ObjectConstructor.cs: Refactored to use Convert.ToObject. Invoke
+	works with null / undefined argument
+	* StringConstructor.cs: Handles Object []
+	* RegexpPrototype.cs: exec made aware of $_ and UpdateLastMatch
+	* JScriptInstanceOf.cs: Implemented JScriptInstanceof
+	* NumberConstructor.cs: Handles Object []
+	* ObjectPrototype.cs: toString uses GetDefaultValue if available
+	* StringPrototype.cs: match uses UpdateLastMatch, replace works with
+	replacement function, split handles max_count correctly in all cases
+	and calls UpdateLastMatch and handles no match case correctly
+	* IdentificationTable.cs: CreateSymbol mangles "$" to "dollar_" so
+	we can support RegExp.$1, Enter handles case where symbol exists
+	already so that  function foo (a, b, a) { }  works
+	* ArrayObject.cs: length setter pops elements if new size < old size
+	* ErrorPrototype.cs: Implemented constructor, toString
+	* JSFieldInfo.cs: Implemented Name
+	* DatePrototype.cs: Made toDateString, toLocaleDateString,
+	toLocaleString, toLocaleTimeString, toString, toUTCString handle
+	invalid date value cases
+	* NumericBinary.cs: Refactored to use Convert.ToNumber
+	* Convert.cs: Refactored ToBoolean, ToInt32, ToNumber, ToObject to
+	use IsNumberTypeCode. Added more object cases to ToNumber. ToNumber
+	with string correctly choses parseInt or parseFloat instead of always
+	using parseFloat. Implemented ToNativeArray. Added more cases to
+	ToObject. Fixed ToString with double to be more standards conform
+	* StringObject.cs: Implemented length getter
+	* LateBinding.cs: Added GetMethodFlags, GetRequiredArgumentCount.
+	Made assemble_args ignore trailing unneeded arguments and handle
+	methods that don't have a thisObj argument. Added Invoke logic for
+	Closure, FunctionObject and RegExpObject. Made GetNonMissingValue
+	work correctly for GlobalScope. Correctly sets length when adding
+	index properties to ArrayObjects. Implemented SetValue
+	* GlobalObject.cs: Implemented escape, Function, unescape. Made
+	parseFloat ignore some leading / trailing garbage
+	* FunctionPrototype.cs: Implemented apply, call
+	* RegExpObject.cs: ToString handles empty RegExp case correctly.
+	Initialize made aware of $*. Implemented GetDefaultValue
+	* TokenStream.cs: Handle overflows from float literals
+	* ErrorConstructor.cs: Added ErrorTypeToClass, implemented
+	CreateInstance
+	* RegExpConstructor.cs: RegExpConstructor adds fields for $_,
+	$&, $+, $`, $', $*. Added UpdateLastMatch. Invoke handles zero
+	argument case. Added getters for $1 to $9. Implemented input,
+	lastMatch, lastParen, leftContext, rightContext, multiline
+	* ScriptFunction.cs: Implemented length getter and setter
+
+	* SyntaxErrorObject.cs, ReferenceErrorObject.cs,
+	TypeErrorObject.cs, ErrorObject.cs, EvalErrorObject.cs,
+	RangeErrorObject.cs, URIErrorObject.cs: Added new ctr, which is used at
+	ErrorConstructor::CreateInstance.
+	
+	* expression.cs: Use Missing.Value for missed parameters in method
+	invocations.
+	
 2005-07-17  Florian Gross  <flgr@ccan.de>
+
 	* DateConstructor.cs: Implemented UTC
 	* ScriptObject.cs: Implemented GetMethod, CallMethod
 	* JSObject.cs: Implemented fallback ToString, more ClassName cases and
 	fallback GetDefaultValue
 	* ArrayPrototype.cs: Fixed concat, join and added splice
 	* RegExpPrototype.cs: Implemented compile, exec, test
-	* expression.cs: Emit JS undef instead of JS null for missing args
+	* expression.cs: Emit JS undef instead of JS null for missing args.
 	* StringPrototype.cs: changed lastIndexOf to be compatible with JSC.
 	Implemented match, replace (no replacement closure), search, split.
 	No longer uses assert_type for ensuring right type of thisObj

@@ -41,5 +41,10 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal ErrorObject (string message)
+		{
+			this.message = message;
+		}
 	}
 }
