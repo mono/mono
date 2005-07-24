@@ -298,9 +298,6 @@ namespace System.Web.UI {
 			string assemblyName = "dll.ghres";
 			
 			java.io.InputStream inputStream = contextClassLoader.getResourceAsStream(assemblyName);
-			if (inputStream == null)
-				throw new System.IO.IOException("couldn't open resource file:" + assemblyName);
-			
 			System.IO.Stream strim = null;
 			if (inputStream == null) {
 				string descPath = String.Join("/", new string[]{"assemblies", this.GetType().Assembly.GetName().Name, assemblyName});
@@ -315,13 +312,11 @@ namespace System.Web.UI {
 				if (strim == null)
 					throw new System.IO.IOException("couldn't open resource file:" + assemblyName);
 			}
-			
-			
+
 			try
 			{
 				if (strim == null)
 					strim = (System.IO.Stream)vmw.common.IOUtils.getStream(inputStream);
-				strim = (System.IO.Stream)vmw.common.IOUtils.getStream(inputStream);
 				int capacity = (int)strim.Length;
 				byte[] resourceBytes = new byte[capacity];
 				strim.Read(resourceBytes,0,capacity);
