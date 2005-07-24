@@ -87,7 +87,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Global_CollectGarbage)]
 		public static void CollectGarbage ()
 		{
-			throw new NotImplementedException ();
+			GC.Collect ();
 		}
 
 		public static DateConstructor Date {
@@ -100,7 +100,7 @@ namespace Microsoft.JScript {
 
 		
 		//
-		// ECMA 3, 15.1.3 URI hnadling Function Properties
+		// ECMA 3, 15.1.3 URI handling Function Properties
 		//
 		// The following are implementations of the algorithms
 		// given in the ECMA specification for the hidden functions

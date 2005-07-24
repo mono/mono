@@ -57,7 +57,7 @@ namespace Microsoft.JScript {
 		{
 			double value = Convert.ToNumber (v);
 			int oper = (int) this.oper;
-			if (oper % 2 == 1)
+			if (oper % 2 == 1) /* prefix? */
 				return value + 1;
 			else
 				return value - 1;

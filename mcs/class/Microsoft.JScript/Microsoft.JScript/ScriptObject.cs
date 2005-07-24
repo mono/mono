@@ -59,7 +59,11 @@ namespace Microsoft.JScript {
 
 		public MethodInfo GetMethod (string name, BindingFlags bindFlags)
 		{
-			throw new NotImplementedException ();
+			Type prototype = SemanticAnalyser.map_to_prototype (this);
+			if (prototype != null)
+				return prototype.GetMethod (name, bindFlags | BindingFlags.Static);
+			else
+				throw new NotImplementedException ();
 		}
 
 		public MethodInfo GetMethod (string name, BindingFlags bindFlags, 
@@ -134,6 +138,17 @@ namespace Microsoft.JScript {
 
 		public virtual Type UnderlyingSystemType {
 			get { throw new NotImplementedException (); }
+		}
+
+		internal object CallMethod (string name, params object [] args)
+		{
+			MethodInfo method = GetMethod (name, BindingFlags.InvokeMethod | BindingFlags.Public);
+			return CallMethod (method, args);
+		}
+
+		internal object CallMethod (MethodInfo method, params object [] args)
+		{
+			return method.Invoke (null, LateBinding.assemble_args (this, method, args, null));
 		}
 	}
 }	

@@ -31,6 +31,7 @@
 using System;
 using Microsoft.JScript.Vsa;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.JScript {
 	
@@ -151,10 +152,11 @@ namespace Microsoft.JScript {
 		// with their signature, because position will
 		// automatically be forced to 0 in that case. Because
 		// of that we currently use 'object position' instead
-		// of their 'double position'.
+		// of their 'double position' in lastIndexOfGood
+		// (which we use from our own compiler) and a wrapper
+		// around that for when we run MS IL.
 		//
-		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_lastIndexOf)]
-		public static int lastIndexOf (object thisObj, object searchString, object position)
+		public static int lastIndexOfGood (object thisObj, object searchString, object position)
 		{
 			string string_obj = Convert.ToString (thisObj);
 			string search_obj = Convert.ToString (searchString);
@@ -173,6 +175,17 @@ namespace Microsoft.JScript {
 			if (result == -1 && pos == 0 && string_obj.StartsWith (search_obj))
 				return 0;
 			return result;
+		}
+
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_lastIndexOf)]
+		public static int lastIndexOf (object thisObj, object searchString, object position)
+		{
+			return lastIndexOfGood (thisObj, searchString, position);
+		}
+
+		public static int lastIndexOf (object thisObj, object searchString, double position)
+		{
+			return lastIndexOfGood (thisObj, searchString, position);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_link)]
@@ -204,19 +217,63 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine, JSBuiltin.String_match)]
 		public static object match (object thisObj, VsaEngine engine, object regExp)
 		{
-			throw new NotImplementedException ();
+			string string_obj = Convert.ToString (thisObj);
+			RegExpObject regex_obj = Convert.ToRegExp (regExp);
+			bool global = regex_obj.global;
+
+			if (!global)
+				return RegExpPrototype.exec (regex_obj, string_obj);
+
+			MatchCollection md = regex_obj.regex.Matches (string_obj);
+			int n = md.Count;
+			regex_obj.lastIndex = md [n - 1].Index + 1;
+
+			ArrayObject result = new ArrayObject ();
+			result.length = n;
+			for (int i = 0; i < n; i++)
+				result.elems [i] = md [i].Value;
+
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_replace)]
 		public static string replace (object thisObj, object regExp, object replacement)
 		{
+			string string_obj = Convert.ToString (thisObj);
+
+			if (!(regExp is RegExpObject)) {
+				string match_str = Convert.ToString (regExp);
+				string replace_str = Convert.ToString (replacement);
+				int match_pos = string_obj.IndexOf (match_str);
+
+				if (match_pos == -1)
+					return string_obj;
+
+				return String.Concat (string_obj.Substring (0, match_pos), replace_str,
+					string_obj.Substring (match_pos + match_str.Length));
+			}
+
+			RegExpObject regex_obj = (RegExpObject) regExp;
+			int count = regex_obj.global ? -1 : 1;
+
+			if (!(replacement is FunctionObject))
+				return regex_obj.regex.Replace (string_obj, Convert.ToString (replacement), count);
+
 			throw new NotImplementedException ();
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine, JSBuiltin.String_search)]
 		public static int search (object thisObj, VsaEngine engine, object regExp)
 		{
-			throw new NotImplementedException ();
+			string string_obj = Convert.ToString (thisObj);
+			RegExpObject regex_obj = Convert.ToRegExp (regExp);
+			Match md = regex_obj.regex.Match (string_obj);
+			/* Note: Microsoft's implementation updates the lastIndex property of regex_obj here, but
+			 * ECMA-262, 15.5.4.12, NOTE 1 explicitely says not to do so. We do the ECMA-262 behavior. */
+			if (md.Success)
+				return md.Index;
+			else
+				return -1;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_slice)]
@@ -261,7 +318,95 @@ namespace Microsoft.JScript {
 		public static ArrayObject split (object thisObj, VsaEngine engine,
 						 object separator, object limit)
 		{
-			throw new NotImplementedException ();
+			string string_obj = Convert.ToString (thisObj);
+			int length = string_obj.Length;
+			int max_count = (limit != null) ? Convert.ToInt32 (limit) : -1;
+			ArrayObject result = new ArrayObject ();
+
+			if (separator == null) {
+				result.length = 1;
+				result.elems [0] = string_obj;
+				return result;
+			}
+
+			int start_pos = 0;
+			int end_pos = -1;
+			int match_len = 0;
+			int count = 0;
+			int sep_len = 0;
+
+			if (!(separator is RegExpObject)) {
+				string sep_str = Convert.ToString (separator);
+				sep_len = sep_str.Length;
+
+				if (string_obj.Length == 0) {
+					if (sep_len > 0) {
+						result.length = 1;
+						result.elems [0] = string_obj;
+					}
+
+					return result;
+				}
+
+				while (end_pos != length && (max_count == -1 || count < max_count)) {
+					end_pos = (length != 0) ? string_obj.IndexOf (sep_str, start_pos) : length;
+					if (end_pos == -1)
+						end_pos = length;
+					else if (sep_len == 0)
+						end_pos++;
+
+					match_len = end_pos - start_pos;
+					result.elems [count] = string_obj.Substring (start_pos, match_len);
+
+					start_pos += match_len + sep_len;
+					count++;
+				}
+
+				result.length = count;
+				return result;
+			}
+
+			RegExpObject sep_re = (RegExpObject) separator;
+			MatchCollection md = sep_re.regex.Matches (string_obj);
+			int n = md.Count;
+
+			Match match = null;
+			for (int i = 0; i < n; i++) {
+				match = md [i];
+				sep_len = match.Length;
+				end_pos = match.Index;
+				match_len = end_pos - start_pos;
+
+				if (start_pos != 0 || match_len > 0) {
+					result.elems [count] = string_obj.Substring (start_pos, match_len);
+					count++;
+				}
+
+				bool first_cap = true;
+				foreach (Capture cap in match.Groups) {
+					if (first_cap) {
+						first_cap = false;
+						continue;
+					}
+
+					result.elems [count] = cap.Value;
+					count++;
+				}
+
+				start_pos += match_len + sep_len;
+			}
+
+			if (n > 0) {
+				sep_re.lastIndex = match.Index + match.Length;
+
+				if (start_pos < length) {
+					result.elems [count] = string_obj.Substring (start_pos);
+					count++;
+				}
+			}
+
+			result.length = count;
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_strike)]
@@ -322,7 +467,7 @@ namespace Microsoft.JScript {
 			if (end == null)
 				_end = string_len;
 			else {
-				_end = (int) (double) end;
+				_end = Convert.ToInt32 (end);
 
 				if (_end == Double.NaN || _end < 0)
 					_end = 0;
@@ -374,9 +519,10 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.String_toString)]
 		public static string toString (object thisObj)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (StringObject));
-			StringObject str_obj = thisObj as StringObject;
-			return str_obj.value;
+			if (!Convert.IsString (thisObj))
+				throw new JScriptException (JSError.StringExpected);
+			else
+				return Convert.ToString (thisObj);
 		}
 
 		[MonoTODO ("I18N Needs checking -- contact flgr@ccan.de for details")]

@@ -1,3 +1,38 @@
+2005-07-17  Florian Gross  <flgr@ccan.de>
+	* DateConstructor.cs: Implemented UTC
+	* ScriptObject.cs: Implemented GetMethod, CallMethod
+	* JSObject.cs: Implemented fallback ToString, more ClassName cases and
+	fallback GetDefaultValue
+	* ArrayPrototype.cs: Fixed concat, join and added splice
+	* RegExpPrototype.cs: Implemented compile, exec, test
+	* expression.cs: Emit JS undef instead of JS null for missing args
+	* StringPrototype.cs: changed lastIndexOf to be compatible with JSC.
+	Implemented match, replace (no replacement closure), search, split.
+	No longer uses assert_type for ensuring right type of thisObj
+	* ArrayObject.cs: Better length argument handling in constructor. Added
+	SpliceSlowly
+	* DatePrototype.cs: Added setDate, setFullYear, setHours, setMinutes,
+	setMilliseconds, setMonth, setSeconds, setTime, setUTCDate,
+	setUTCFullYear, setUTCHours, setUTCMinutes, setUTCMilliseconds,
+	setUTCMonth, setUTCSeconds, setYear
+	* FunctionObject.cs: Moved MethodAttributes to ScriptFunction. Added
+	MethodInfo-taking constructor
+	* Convert.cs: Added IsNumber, IsString, ToRegExp. More cases in
+	ToNumber. Refactored ToString
+	* ScriptEquality.cs: More cases
+	* LateBindings.cs: Big refactoring. Introduced assemble_args. Handles
+	missing arguments. build_args can pass null as engine. More CallValue,
+	GetNonMissingValue cases
+	* Plus.cs: Heavily refactored EvaluatePlus from 90 to 12 lines
+	* GlobalObject.cs: Added CollectGarbage
+	* NumberPrototype.cs: No longer uses assert_type for unsuring right
+	type of thisObj
+	* RegExpObject: Added lastIndex, Initialize, stores compiled Regex
+	* SemanticAnalizer: Added missing prototypes. Made assert_type work
+	with derived types
+	* ScriptFunction.cs: Moved MethodAttributes from FunctionObject. Added
+	MethodInfo. Implemented Invoke for built-in functions.
+
 2005-07-07  Florian Gross  <flgr@ccan.de>
 
 	* MathObject.cs: Implemented max and min (untested)

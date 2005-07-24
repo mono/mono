@@ -30,6 +30,8 @@
 //
 
 using System;
+using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Microsoft.JScript {	
 
@@ -38,9 +40,19 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_compile)]
 		public static RegExpObject compile (object thisObj, object source, object flags)
 		{
-			throw new NotImplementedException ();
-		}
+			//
+			// Note: We always compile RegExp internals so all this method is useful for is for
+			// changing the properties of the otherwise immutable RegExp objects.
+			//
+			RegExpObject re = Convert.ToRegExp (thisObj);
+			string flag_str = Convert.ToString (flags);
 
+			re.Initialize (Convert.ToString (source),
+				flag_str.IndexOfAny (new char [] { 'i' }) > -1,
+				flag_str.IndexOfAny (new char [] { 'g' }) > -1,
+				flag_str.IndexOfAny (new char [] { 'm' }) > -1);
+			return re;
+		}
 
 		public static RegExpConstructor constructor {
 			get { return RegExpConstructor.Ctr; }
@@ -49,14 +61,46 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_exec)]
 		public static object exec (object thisObj, object input)
 		{
-			throw new NotImplementedException ();
+			RegExpObject re = Convert.ToRegExp (thisObj);
+			string str = Convert.ToString (input);
+			bool global = re.global;
+			int lastIndex = global ? (int) re.lastIndex : 0;
+			bool success = lastIndex >= 0 && lastIndex <= str.Length;
+
+			Match md = null;
+			if (success) {
+				md = re.regex.Match (str, lastIndex);
+				success = md.Success;
+			}
+
+			if (!success) {
+				re.lastIndex = 0;
+				return DBNull.Value;
+			}
+
+			int index = md.Index;
+			int endIndex = index + md.Length;
+			if (global)
+				re.lastIndex = endIndex;
+
+			GroupCollection caps = md.Groups;
+			int len = caps.Count;
+			RegExpMatch result = new RegExpMatch ();
+
+			result.AddField ("index", index);
+			result.AddField ("input", input);
+			result.length = len;
+			for (int j = 0; j < len; j++)
+				result.elems [j] = caps [j].Value;
+
+			return result;
 		}
 
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_test)]
 		public static bool test (object thisObj, object input)
 		{
-			throw new NotImplementedException ();
+			return exec (thisObj, input) != DBNull.Value;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_toString)]

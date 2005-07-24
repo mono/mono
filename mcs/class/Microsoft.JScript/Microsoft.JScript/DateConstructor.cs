@@ -368,7 +368,7 @@ done:
 		//
 		// find UTC time from given date... no 1900 correction!
 		//
-		static double msec_from_date (double year, double mon, double mday, double hour, double min, double sec, double msec)
+		internal static double msec_from_date (double year, double mon, double mday, double hour, double min, double sec, double msec)
 		{
 			double day, time, result;
 			day = MakeDay (year, mon, mday);
@@ -377,7 +377,7 @@ done:
 			return result;
 		}
 
-		static double MakeDay (double year, double month, double date)
+		internal static double MakeDay (double year, double month, double date)
 		{
 			year += Math.Floor (month / 12);
 			month = month % 12;
@@ -390,27 +390,27 @@ done:
 			return year_day + month_day + date - 1;
 		}
 
-		static double MakeTime (double hour, double min, double sec, double ms)
+		internal static double MakeTime (double hour, double min, double sec, double ms)
 		{
 			return ((hour * MINUTES_PER_HOUR + min) * SECONDS_PER_MINUTE + sec) * MS_PER_SECOND + ms;
 		}
 
-		static double MakeDate (double day, double time)
+		internal static double MakeDate (double day, double time)
 		{
 			return day * MS_PER_DAY + time;
 		}
 
-		static double TimeFromYear (double y)
+		internal static double TimeFromYear (double y)
 		{
 			return DayFromYear (y) * MS_PER_DAY;
 		}
 
-		static double DayFromYear (double y)
+		internal static double DayFromYear (double y)
 		{
 			return ((365 * ((y) - 1970) + Math.Floor (((y) - 1969) / 4.0) - Math.Floor(((y) - 1901) / 100.0) + Math.Floor (((y) - 1601) / 400.0)));
 		}
 
-		static double DayFromMonth (int m , int year)
+		internal static double DayFromMonth (int m, int year)
 		{
 			int day = m * 30;
 
@@ -427,7 +427,7 @@ done:
 			return day;
 		}
 
-		static bool IsLeapYear (int year)
+		internal static bool IsLeapYear (int year)
 		{
 			return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 		}
@@ -436,7 +436,48 @@ done:
 		public static double UTC (Object year, Object month, Object date, 
 					  Object hours, Object minutes, Object seconds, Object ms)
 		{
-			throw new NotImplementedException ();
+			double _year = 0, _month = 0, _date = 1, _hours = 0, _minutes = 0, _seconds = 0, _ms = 0;
+
+			if (year == null && month == null) {
+				DateTime now = DateTime.Now;
+				_year = now.Year;
+				_month = now.Month - 1;
+				_date = now.Day;
+				_hours = now.Hour;
+				_minutes = now.Minute;
+				_seconds = now.Second;
+				_ms = now.Millisecond;
+				_ms -= TimeZone.CurrentTimeZone.GetUtcOffset (now).TotalMilliseconds;
+				goto done;
+			}
+
+			_year = Convert.ToNumber (year);
+			if (month != null)
+				_month = Convert.ToNumber (month);
+			if (date != null)
+				_date = Convert.ToNumber (date);
+			if (hours != null)
+				_hours = Convert.ToNumber (hours);
+			if (minutes != null)
+				_minutes = Convert.ToNumber (minutes);
+			if (seconds != null)
+				_seconds = Convert.ToNumber (seconds);
+			if (ms != null)
+				_ms = Convert.ToNumber (ms);
+
+			if (!Double.IsNaN (_year) && _year >= 0 && _year <= 99)
+				_year += 1900;
+
+done:
+			return TimeClip (msec_from_date (_year, _month, _date, _hours, _minutes, _seconds, _ms));
+		}
+
+		internal static double TimeClip (double p)
+		{
+			if (Double.IsInfinity (p) || Double.IsNaN (p) || Math.Abs (p) > 8.64e15)
+				return Double.NaN;
+			else
+				return p;
 		}
 
 		/* Ported from Rhino. */
@@ -665,6 +706,18 @@ done:
 			int seconds = SecFromTime (t);
 			DateTime dt = new DateTime (year, month + 1, date, hours, minutes, seconds);
 			return t + TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
+		}
+
+		internal static double ToUTC (double t)
+		{
+			int year = YearFromTime (t);
+			int month = MonthFromTime (t);
+			int date = DateFromTime (t);
+			int hours = HourFromTime (t);
+			int minutes = MinFromTime (t);
+			int seconds = SecFromTime (t);
+			DateTime dt = new DateTime (year, month + 1, date, hours, minutes, seconds);
+			return t - TimeZone.CurrentTimeZone.GetUtcOffset (dt).TotalMilliseconds;
 		}
 	}
 }

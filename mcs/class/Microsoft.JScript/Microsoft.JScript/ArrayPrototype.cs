@@ -38,7 +38,8 @@ namespace Microsoft.JScript {
 
 	public class ArrayPrototype : ArrayObject {
 		
-		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs | JSFunctionAttributeEnum.HasEngine, JSBuiltin.Array_concat)]
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine |
+			JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_concat)]
 		public static ArrayObject concat (object thisObj, VsaEngine engine,
 						  params object [] args)
 		{
@@ -52,18 +53,22 @@ namespace Microsoft.JScript {
 			object cur_obj = thisObj;
 
 			ArrayObject cur_ary;
-			while (arg_idx < arg_count) {
+			while (cur_obj != null) {
 				if (cur_obj is ArrayObject) {
 					cur_ary = (ArrayObject) cur_obj;
 
 					int n = (int) cur_ary.length;
 					for (int j = 0; j < n; j++, i++)
-						result [i] = cur_ary [j];
-
-					cur_obj = args [arg_idx++];
+						result.elems [i] = cur_ary.elems [j];
 				} else
-					result [++i] = cur_obj;
+					result.elems [i++] = cur_obj;
+
+				arg_idx++;
+				cur_obj = arg_idx < arg_count ? args [arg_idx] : null;
 			}
+
+			result.length = i;
+
 			return result;
 		}
 
@@ -84,15 +89,18 @@ namespace Microsoft.JScript {
 			else
 				_separator = Convert.ToString (separator);
 
-			Hashtable elems = array_obj.Elements;
+			Hashtable elems = array_obj.elems;
+			int n = (int) array_obj.length;
 			StringBuilder str = new StringBuilder ();
 			bool first = true;
 
-			foreach (DictionaryEntry entry in elems) {
+			for (int i = 0; i < n; i++) {
 				if (!first)
 					str.Append (_separator);
 				first = false;
-				str.Append (Convert.ToString (entry.Value));
+				object elem = elems [i];
+				if (elem != null)
+					str.Append (Convert.ToString (elem));
 			}
 			return str.ToString ();
 		}
@@ -201,7 +209,7 @@ namespace Microsoft.JScript {
 			if (end == null)
 				_end = array_len;
 			else {
-				_end = (int) (double) end;
+				_end = Convert.ToInt32 (end);
 
 				if (_end < 0)
 					_end += array_len;
@@ -232,7 +240,76 @@ namespace Microsoft.JScript {
 						  double start, double deleteCnt, 
 						  params object [] args)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic!?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+			ArrayObject result = new ArrayObject ();
+			Hashtable elems = array_obj.elems;
+			Hashtable del_elems = result.elems;
+
+			int old_length = (int) array_obj.length;
+			start = (int) start;
+			if (start < 0)
+				start = Math.Max (start + old_length, 0);
+			else
+				start = Math.Min (old_length, start);
+
+			deleteCnt = (int) deleteCnt;
+			deleteCnt = Math.Min (Math.Max (deleteCnt, 0), old_length - start);
+
+			int arg_length = args.Length;
+			int add_length = arg_length - (int) deleteCnt;
+			add_length = Math.Max (add_length, -old_length);
+			int del_length = -add_length;
+			int new_length = old_length + add_length;
+
+			int i, j, m;
+			// First let's make some free space for the new items (if needed)
+			if (add_length > 0) {
+				i = old_length - 1;
+				j = i + add_length;
+				for (; i >= start; i--, j--)
+					elems [j] = elems [i];
+			}
+
+			// Then insert the new items in the now free space / replace existing ones
+			j = m = 0;
+			int old_start = (int) start + add_length;
+			for (i = (int) start; j < arg_length; i++, j++) {
+				if (i >= old_start && elems.ContainsKey (i)) {
+					del_elems [m] = elems [i];
+					m++;
+					elems.Remove (i);
+				}
+
+				if (j < arg_length)
+					elems [i] = args [j];
+			}
+
+			// Finally, delete elements which have no replacement elements
+			if (add_length < 0) {
+				int last_elem_idx = i + del_length;
+				for (int k = 0; k < del_length; i++, j++, k++) {
+					if (elems.ContainsKey (i)) {
+						del_elems [m] = elems [i];
+						m++;
+						elems.Remove (i);
+					}
+				}
+
+				// And move up trailing elements
+				int l = last_elem_idx - del_length;
+				for (int k = last_elem_idx; l < old_length; k++, l++) {
+					if (elems.ContainsKey (k))
+						elems [l] = elems [k];
+					else if (elems.ContainsKey (l))
+						elems.Remove (l);
+				}
+			}
+
+			array_obj.length = new_length;
+			result.length = (int) deleteCnt;
+			return result;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_toLocaleString)]

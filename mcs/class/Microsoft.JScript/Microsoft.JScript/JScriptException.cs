@@ -108,6 +108,8 @@ namespace Microsoft.JScript {
 					return "Array length must be zero or a positive integer";
 				else if (error_number == JSError.PrecisionOutOfRange)
 					return "The number of fractional digits is out of range";
+				else if (error_number == JSError.RegExpSyntax)
+					return "Syntax error in regular expression";
 				else {
 					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
 					throw new NotImplementedException ();

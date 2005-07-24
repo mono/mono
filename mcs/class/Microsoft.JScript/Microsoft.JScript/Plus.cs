@@ -45,97 +45,12 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public object EvaluatePlus (object v1, object v2)
 		{
-			IConvertible ic1 = v1 as IConvertible;
-			IConvertible ic2 = v2 as IConvertible;
-
-			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
-			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
-
-			bool swapped = false;
-			redo:
-
-			switch (tc1) {
-			case TypeCode.Empty:
-				if (tc2 == TypeCode.Empty)
-					return Double.NaN;
-				break;
-
-			case TypeCode.DBNull:
-				if (tc2 == TypeCode.DBNull)
-					return 0;
-				break;
-
-			case TypeCode.Double:
-				switch (tc2) {
-				case TypeCode.Boolean:
-				case TypeCode.Double:
-					return ic1.ToDouble (null) + ic2.ToDouble (null);
-
-				case TypeCode.String:
-					return ic1.ToString (CultureInfo.InvariantCulture) + ic2.ToString (null);
-
-				case TypeCode.Empty:
-					return Double.NaN;
-
-				case TypeCode.DBNull:
-					return ic1.ToDouble (null);
-				}
-				break;
-
-			case TypeCode.String:
-				switch (tc2) {
-				case TypeCode.Boolean:
-					return ic1.ToString (null) + Convert.ToString (ic2.ToBoolean (null));
-
-				case TypeCode.Single:
-				case TypeCode.Double:
-				case TypeCode.Char:
-				case TypeCode.Byte:
-				case TypeCode.SByte:
-				case TypeCode.Int16:
-				case TypeCode.UInt16:
-				case TypeCode.Int32:
-				case TypeCode.UInt32:
-				case TypeCode.Int64:
-				case TypeCode.UInt64:
-				case TypeCode.String:
-					return ic1.ToString (null) + ic2.ToString (CultureInfo.InvariantCulture);
-
-				case TypeCode.Empty:
-					return ic1.ToString (null) + "undefined";
-
-				case TypeCode.DBNull:
-					return ic1.ToString (null) + "null";
-				}
-				break;
-				
-			case TypeCode.Boolean:
-				switch (tc2) {
-				case TypeCode.Double:
-					return ic1.ToDouble (null) + ic2.ToDouble (null);
-
-				case TypeCode.String:
-					return Convert.ToString (ic1.ToBoolean (null)) + ic2.ToString (null);
-
-				case TypeCode.Boolean:
-					return ic1.ToInt32 (null) + ic2.ToInt32 (null);
-
-				case TypeCode.DBNull:
-					return ic1.ToInt32 (null);
-				}
-				break;
-			default:
-				if (!swapped) {
-					IConvertible tic = ic1; ic1 = ic2; ic2 = tic;
-					TypeCode ttc = tc1; tc1 = tc2; tc2 = ttc;
-					swapped = true;
-					goto redo;
-				}
-				break;
-			}
-
-			System.Console.WriteLine ("EvaluatePlus: tc1 = {0}, tc2 = {1}", tc1, tc2);
-			throw new NotImplementedException ();
+			object val1 = Convert.ToPrimitive (v1, null);
+			object val2 = Convert.ToPrimitive (v2, null);
+			if (Convert.IsString (val1) || Convert.IsString (val2))
+				return Convert.ToString (val1) + Convert.ToString (val2);
+			else
+				return Convert.ToNumber (val1) + Convert.ToNumber (val2);
 		}
 
 		public static object DoOp (object v1, object v2)

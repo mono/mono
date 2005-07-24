@@ -50,10 +50,10 @@ namespace Microsoft.JScript {
 		internal ArrayObject (object o)
 		{
 			IConvertible ic = o as IConvertible;
-			TypeCode tc = ic.GetTypeCode ();
+			TypeCode tc = Convert.GetTypeCode (o, ic);
 
 			try {
-				if (tc == TypeCode.Int32 || ic.ToDouble (null) < Int32.MaxValue) {
+				if (Convert.IsNumberTypeCode (tc)) {
 					int size = ic.ToInt32 (null);
 					if (size > 0) {
 						length = o;
@@ -90,7 +90,7 @@ namespace Microsoft.JScript {
 
 		protected void SpliceSlowly (uint start, uint deleteCount, object [] args, ArrayObject outArray, uint oldLength, uint newLength)
 		{
-			throw new NotImplementedException ();
+			ArrayPrototype.splice (outArray, null, start, deleteCount, args);
 		}
 
 		internal override object GetDefaultValue (Type hint)

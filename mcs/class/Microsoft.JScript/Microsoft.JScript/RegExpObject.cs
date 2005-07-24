@@ -30,6 +30,7 @@
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.JScript {
 
@@ -39,6 +40,8 @@ namespace Microsoft.JScript {
 		private bool _ignoreCase;
 		private bool _global;
 		private bool _multiline;
+		private int _lastindex = 0;
+		internal Regex regex;
 			
 		public override string ToString ()
 		{
@@ -74,16 +77,31 @@ namespace Microsoft.JScript {
 		}
 
 		public Object lastIndex {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _lastindex; }
+			set { _lastindex = Convert.ToInt32 (value); }
 		}
 
-		internal RegExpObject  (string pattern, bool ignoreCase, bool global, bool multiLine)
+		internal RegExpObject (string pattern, bool ignoreCase, bool global, bool multiLine)
+		{
+			Initialize (pattern, ignoreCase, global, multiLine);
+		}
+
+		internal void Initialize (string pattern, bool ignoreCase, bool global, bool multiLine)
 		{
 			_source = pattern;
 			_ignoreCase = ignoreCase;
 			_global = global;
 			_multiline = multiLine;
+			RegexOptions options = RegexOptions.ECMAScript | RegexOptions.Compiled;
+			if (ignoreCase)
+				options |= RegexOptions.IgnoreCase;
+			if (multiLine)
+				options |= RegexOptions.Multiline;
+			try {
+				regex = new Regex (source, options);
+			} catch (ArgumentException) {
+				throw new JScriptException (JSError.RegExpSyntax);
+			}
 		}
 	}
 }

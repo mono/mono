@@ -73,7 +73,13 @@ namespace Microsoft.JScript {
 			prototypes.Add (typeof (NumberObject), typeof (NumberPrototype));
 			prototypes.Add (typeof (DateObject), typeof (DatePrototype));
 			prototypes.Add (typeof (RegExpObject), typeof (RegExpPrototype));
-			// FIXME: Error objects missing
+			prototypes.Add (typeof (RegExpMatch), typeof (ArrayPrototype));
+			prototypes.Add (typeof (ErrorObject), typeof (ErrorPrototype));
+			prototypes.Add (typeof (EvalErrorObject), typeof (ErrorPrototype));
+			prototypes.Add (typeof (RangeErrorObject), typeof (ErrorPrototype));
+			prototypes.Add (typeof (SyntaxErrorObject), typeof (ErrorPrototype));
+			prototypes.Add (typeof (TypeErrorObject), typeof (ErrorPrototype));
+			prototypes.Add (typeof (URIErrorObject), typeof (ErrorPrototype));
 		}
 
 		internal static string ImplementationName (string name)
@@ -138,7 +144,7 @@ namespace Microsoft.JScript {
 
 		internal static void assert_type (object thisObj, Type expType)
 		{
-			if (thisObj == null || thisObj.GetType () != expType)
+			if (thisObj == null || (thisObj.GetType () != expType && !thisObj.GetType ().IsSubclassOf (expType)))
 				throw new Exception ("Type error");
 		}
 
@@ -186,7 +192,7 @@ namespace Microsoft.JScript {
 			return null;
 		}
 
-		internal static Type map_to_prototype (JSObject jsObj)
+		internal static Type map_to_prototype (ScriptObject jsObj)
 		{
 			if (jsObj == null)
 				throw new Exception ("jsObj can't be null");

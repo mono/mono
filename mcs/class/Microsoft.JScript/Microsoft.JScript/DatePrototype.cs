@@ -318,104 +318,331 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setDate)]
 		public static double setDate (object thisObj, double ddate)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (date.ms);
+			double day = DateConstructor.MakeDay ((double) DateConstructor.YearFromTime (t),
+				(double) DateConstructor.MonthFromTime (t), ddate);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, t % DateConstructor.MS_PER_DAY));
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setFullYear)]
 		public static double setFullYear (object thisObj, double dyear,
 						  object month, object date)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject dt = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (dt.ms);
+			if (Double.IsNaN (t))
+				t = 0;
+
+			double new_month;
+			if (month == null)
+				new_month = DateConstructor.MonthFromTime (t);
+			else
+				new_month = Convert.ToNumber (month);
+
+			double new_date;
+			if (date == null)
+				new_date = DateConstructor.DateFromTime (t);
+			else
+				new_date = Convert.ToNumber (date);
+
+			double day = DateConstructor.MakeDay (dyear, new_month, new_date);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, t % DateConstructor.MS_PER_DAY));
+			dt.ms = DateConstructor.TimeClip (new_val);
+			return dt.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setHours)]
 		public static double setHours (object thisObj, double dhour, object min,
 					       object sec, object msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (date.ms);
+
+			double new_min;
+			if (min == null)
+				new_min = DateConstructor.MinFromTime (t);
+			else
+				new_min = Convert.ToNumber (min);
+
+			double new_sec;
+			if (sec == null)
+				new_sec = DateConstructor.SecFromTime (t);
+			else
+				new_sec = Convert.ToNumber (sec);
+
+			double new_ms;
+			if (msec == null)
+				new_ms = DateConstructor.msFromTime (t);
+			else
+				new_ms = Convert.ToNumber (msec);
+
+			double time = DateConstructor.MakeTime (dhour, new_min, new_sec, new_ms);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, time));
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setMinutes)]
 		public static double setMinutes (object thisObj, double dmin,
 						 object sec, object msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (date.ms);
+
+			double new_sec;
+			if (sec == null)
+				new_sec = DateConstructor.SecFromTime (t);
+			else
+				new_sec = Convert.ToNumber (sec);
+
+			double new_ms;
+			if (msec == null)
+				new_ms = DateConstructor.msFromTime (t);
+			else
+				new_ms = Convert.ToNumber (msec);
+
+			double time = DateConstructor.MakeTime (DateConstructor.HourFromTime (t), dmin, new_sec, new_ms);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, time));
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setMilliseconds)]
 		public static double setMilliseconds (object thisObj, double dmsec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (date.ms);
+			double time = DateConstructor.MakeTime (DateConstructor.HourFromTime (t), DateConstructor.MinFromTime (t),
+				DateConstructor.SecFromTime (t), dmsec);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, time));
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setMonth)]
 		public static double setMonth (object thisObj, double dmonth,
 					       object date)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject dt = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (dt.ms);
+
+			double new_date;
+			if (date == null)
+				new_date = DateConstructor.DateFromTime (t);
+			else
+				new_date = Convert.ToNumber (date);
+			
+			double day = DateConstructor.MakeDay ((double) DateConstructor.YearFromTime (t),
+				dmonth, new_date);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, t % DateConstructor.MS_PER_DAY));
+			dt.ms = DateConstructor.TimeClip (new_val);
+			return dt.ms;
 		}
 
-		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setSeconds)]
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject,
+			JSBuiltin.Date_setSeconds)]
 		public static double setSeconds (object thisObj, double dsec, object msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = DateConstructor.LocalTime (date.ms);
+
+			double new_ms;
+			if (msec == null)
+				new_ms = DateConstructor.msFromTime (t);
+			else
+				new_ms = Convert.ToNumber (msec);
+
+			double time = DateConstructor.MakeTime (DateConstructor.HourFromTime (t), DateConstructor.MinFromTime (t),
+				dsec, new_ms);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.ToUTC (DateConstructor.MakeDate (day, time));
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setTime)]
 		public static double setTime (object thisObj, double time)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			date.ms = DateConstructor.TimeClip (time);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCDate)]
 		public static double setUTCDate (object thisObj, double ddate)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = date.ms;
+			double day = DateConstructor.MakeDay ((double) DateConstructor.YearFromTime (t),
+				(double) DateConstructor.MonthFromTime (t), ddate);
+			double new_val = DateConstructor.MakeDate (day, t % DateConstructor.MS_PER_DAY);
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCFullYear)]
 		public static double setUTCFullYear (object thisObj, double dyear,	
 						     object month, object date)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject dt = (DateObject) thisObj;
+			double t = dt.ms;
+			if (Double.IsNaN (t))
+				t = 0;
+
+			double new_month;
+			if (month == null)
+				new_month = DateConstructor.MonthFromTime (t);
+			else
+				new_month = Convert.ToNumber (month);
+
+			double new_date;
+			if (date == null)
+				new_date = DateConstructor.DateFromTime (t);
+			else
+				new_date = Convert.ToNumber (date);
+
+			double day = DateConstructor.MakeDay (dyear, new_month, new_date);
+			double new_val = DateConstructor.MakeDate (day, t % DateConstructor.MS_PER_DAY);
+			dt.ms = DateConstructor.TimeClip (new_val);
+			return dt.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCHours)]
 		public static double setUTCHours (object thisObj, double dhour,
 						  object min, object sec, object msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = date.ms;
+
+			double new_min;
+			if (min == null)
+				new_min = DateConstructor.MinFromTime (t);
+			else
+				new_min = Convert.ToNumber (min);
+
+			double new_sec;
+			if (sec == null)
+				new_sec = DateConstructor.SecFromTime (t);
+			else
+				new_sec = Convert.ToNumber (sec);
+
+			double new_ms;
+			if (msec == null)
+				new_ms = DateConstructor.msFromTime (t);
+			else
+				new_ms = Convert.ToNumber (msec);
+
+			double time = DateConstructor.MakeTime (dhour, new_min, new_sec, new_ms);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.MakeDate (day, time);
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCMinutes)]
 		public static double setUTCMinutes (object thisObj, double dmin,
 						    object sec, object msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = date.ms;
+
+			double new_sec;
+			if (sec == null)
+				new_sec = DateConstructor.SecFromTime (t);
+			else
+				new_sec = Convert.ToNumber (sec);
+
+			double new_ms;
+			if (msec == null)
+				new_ms = DateConstructor.msFromTime (t);
+			else
+				new_ms = Convert.ToNumber (msec);
+
+			double time = DateConstructor.MakeTime (DateConstructor.HourFromTime (t), dmin, new_sec, new_ms);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.MakeDate (day, time);
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCMilliseconds)]
 		public static double setUTCMilliseconds (object thisObj, double msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = date.ms;
+			double time = DateConstructor.MakeTime (DateConstructor.HourFromTime (t), DateConstructor.MinFromTime (t),
+				DateConstructor.SecFromTime (t), msec);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.MakeDate (day, time);
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCMonth)]
 		public static double setUTCMonth (object thisObj, double dmonth, object date)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject dt = (DateObject) thisObj;
+			double t = dt.ms;
+
+			double new_date;
+			if (date == null)
+				new_date = DateConstructor.DateFromTime (t);
+			else
+				new_date = Convert.ToNumber (date);
+
+			double day = DateConstructor.MakeDay ((double) DateConstructor.YearFromTime (t),
+				dmonth, new_date);
+			double new_val = DateConstructor.MakeDate (day, t % DateConstructor.MS_PER_DAY);
+			dt.ms = DateConstructor.TimeClip (new_val);
+			return dt.ms;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setUTCSeconds)]
 		public static double setUTCSeconds (object thisObj, double dsec, object msec)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (DateObject));
+			DateObject date = (DateObject) thisObj;
+			double t = date.ms;
+
+			double new_ms;
+			if (msec == null)
+				new_ms = DateConstructor.msFromTime (t);
+			else
+				new_ms = Convert.ToNumber (msec);
+
+			double time = DateConstructor.MakeTime (DateConstructor.HourFromTime (t), DateConstructor.MinFromTime (t),
+				dsec, new_ms);
+			double day = Math.Floor (t / DateConstructor.MS_PER_DAY);
+			double new_val = DateConstructor.MakeDate (day, time);
+			date.ms = DateConstructor.TimeClip (new_val);
+			return date.ms;
 		}
 
+		/* Note: See Note for GetYear() for an explanation why we do not emulate obsolete behavior here. */
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_setYear)]
 		public static double setYear (object thisObj, double dyear)
 		{
-			throw new NotImplementedException ();
+			return setFullYear (thisObj, dyear, null, null);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Date_toDateString)]

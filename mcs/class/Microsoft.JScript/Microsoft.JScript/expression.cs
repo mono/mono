@@ -1404,7 +1404,7 @@ namespace Microsoft.JScript {
 					missing = params_info.Length - n;
 
 				for (int k = 0; k < missing; k++)
-					ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
+					ig.Emit (OpCodes.Ldnull);
 			}
 		}
 

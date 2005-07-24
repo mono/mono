@@ -64,19 +64,22 @@ namespace Microsoft.JScript {
 			case TypeCode.String:
 				return ic1.ToString (null) == ic2.ToString (null);
 
+			case TypeCode.Object:
+				return v1 == v2;
+
 			default:
 				if (both_numbers) {
 					double num1;
 					if (Convert.IsFloatTypeCode (tc1))
 						num1 = ic1.ToDouble (null);
 					else
-						num1 = (double) ic1.ToInt32 (null);
+						num1 = (double) ic1.ToInt64 (null);
 
 					double num2;
 					if (Convert.IsFloatTypeCode (tc2))
 						num2 = ic2.ToDouble (null);
 					else
-						num2 = (double) ic2.ToInt32 (null);
+						num2 = (double) ic2.ToInt64 (null);
 
 					return num1 == num2;
 				}

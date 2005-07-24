@@ -31,10 +31,14 @@ using System;
 using System.Reflection;
 using System.Diagnostics;
 using System.Globalization;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
 	public abstract class ScriptFunction : JSObject {
+
+		internal MethodInfo method;
+		internal MethodAttributes attr;
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
@@ -49,6 +53,14 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs)]
 		public Object Invoke (Object thisOb, params Object [] args)
 		{
+			if (method != null) {
+				if ((attr & MethodAttributes.Static) != 0)
+					return method.Invoke (null, LateBinding.assemble_args (thisOb, method, args, null));
+				else
+					return method.Invoke (thisOb, LateBinding.assemble_args (null, method, args, null));
+			}
+
+			Console.WriteLine ("Called ScriptFunction:Invoke on user function");
 			throw new NotImplementedException ();
 		}
 

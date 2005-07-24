@@ -71,7 +71,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]
 		public Object Invoke (params Object [] args)
 		{
-			return GetMethod ("CreateInstance", BindingFlags.Static | BindingFlags.Public).Invoke (null, args);
+			return CreateInstance (args);
 		}
 	}
 }

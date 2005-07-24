@@ -27,8 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript {
+using System;
 
+namespace Microsoft.JScript {
+		[FlagsAttribute]
 		public enum JSFunctionAttributeEnum {
 			HasArguments    = 0x01,
 			HasThisObject   = 0x02,

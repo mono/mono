@@ -52,9 +52,7 @@ namespace Microsoft.JScript {
 		internal JSFieldInfo GetField (string name)
 		{
 			object res = elems [name];
-			
-			if (res == null)
-				throw new Exception ("JSObject.GetField: search somewhere else");
+
 			if (res is JSFieldInfo)
 				return (JSFieldInfo) res;
 			return null;
@@ -110,15 +108,23 @@ namespace Microsoft.JScript {
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return String.Format ("[{0}]", ClassName);
 		}
 
 		internal string ClassName {
-			get { 
+			get {
 				if (this is ObjectPrototype)
-					return "Object";				
+					return "Object";
+				else if (this is ArrayPrototype)
+					return "Array";
+				else if (this is StringPrototype)
+					return "String";
+				else if (this is NumberPrototype)
+					return "Number";
+				else if (this is DatePrototype)
+					return "Date";
 				else
-					throw new NotImplementedException ();
+					return this.GetType ().ToString ();
 			}
 		}
 
@@ -143,7 +149,7 @@ namespace Microsoft.JScript {
 
 		internal virtual object GetDefaultValue (Type hint)
 		{
-			throw new NotImplementedException ();
+			return ObjectPrototype.toString (this);
 		}
 	}
 }

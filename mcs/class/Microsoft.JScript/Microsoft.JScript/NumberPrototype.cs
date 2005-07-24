@@ -49,22 +49,25 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toFixed)]
 		public static string toFixed (object thisObj, double fractionDigits)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
-			NumberObject no = thisObj as NumberObject;
+			if (!Convert.IsNumber (thisObj))
+				throw new JScriptException (JSError.NumberExpected);
+
+			double value = Convert.ToNumber (thisObj);
 			int prec = Convert.ToInt32 (fractionDigits);
 
 			if (prec < 0 || prec > 21)
 				throw new JScriptException (JSError.PrecisionOutOfRange);
 
-			return no.value.ToString ("F" + prec, CultureInfo.InvariantCulture);
+			return value.ToString ("F" + prec, CultureInfo.InvariantCulture);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toLocaleString)]
 		public static string toLocaleString (object thisObj)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
-			NumberObject no = thisObj as NumberObject;
-			return no.value.ToString ();
+			if (!Convert.IsNumber (thisObj))
+				throw new JScriptException (JSError.NumberExpected);
+			else
+				return Convert.ToNumber (thisObj).ToString ();
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toPrecision)]
@@ -82,17 +85,16 @@ namespace Microsoft.JScript {
 
 
 		//
-		// We aren't 100% compatible to MS JS.NET here,
-		// because we sometimes produce slightly more of the
-		// fractional digits. This shouldn't cause any
-		// trouble.
+		// We aren't 100% compatible to MS JS.NET here, because we sometimes produce slightly more
+		// of the fractional digits. This shouldn't cause any trouble.
 		//
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_toString)]
 		public static string toString (object thisObj, object radix)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
-			NumberObject no = thisObj as NumberObject;
-			double value = no.value;
+			if (!Convert.IsNumber (thisObj))
+				throw new JScriptException (JSError.NumberExpected);
+
+			double value = Convert.ToNumber (thisObj);
 
 			if (Double.IsNaN (value))
 				return "NaN";
@@ -161,9 +163,10 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Number_valueOf)]
 		public static object valueOf (object thisObj)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (NumberObject));
-			NumberObject no = thisObj as NumberObject;
-			return no.value;
+			if (!Convert.IsNumber (thisObj))
+				throw new JScriptException (JSError.NumberExpected);
+			else
+				return Convert.ToNumber (thisObj);
 		}
 	}
 }

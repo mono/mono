@@ -74,7 +74,7 @@ namespace Microsoft.JScript {
 								  bool hasArgumentsObjects, string text, 
 								  Object declaringObject, VsaEngine engine)
 		{
-			FunctionObject f = null;
+			FunctionObject f = new FunctionObject (name, null, null, null);
 			return new Closure (f);
 		}
 

@@ -38,13 +38,11 @@ namespace Microsoft.JScript {
 		{
 			IConvertible ic = value as IConvertible;
 			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			if (Convert.IsNumberTypeCode (tc))
+				return "number";
 			
 			switch (tc) {
-			case TypeCode.Char:
-			case TypeCode.Int32:
-			case TypeCode.Double:
-				return "number";
-
 			case TypeCode.String:
 				return "string";
 

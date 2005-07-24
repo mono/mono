@@ -43,6 +43,50 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal static bool IsNumber (object value)
+		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			switch (tc) {
+			case TypeCode.Char:
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.UInt16:
+			case TypeCode.UInt32:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+			case TypeCode.Single:
+			case TypeCode.Double:
+				return true;
+
+			case TypeCode.Object:
+				if (value is NumberObject)
+					return true;
+				break;
+			}
+
+			return false;
+		}
+
+		internal static bool IsString (object value)
+		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+
+			switch (tc) {
+			case TypeCode.String:
+				return true;
+
+			case TypeCode.Object:
+				if (value is StringObject)
+					return true;
+				break;
+			}
+
+			return false;
+		}
+
 		internal static bool IsNumberTypeCode (TypeCode tc)
 		{
 			switch (tc) {
@@ -190,7 +234,6 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-
 		public static int ToInt32 (object value)
 		{
 			IConvertible ic = value as IConvertible;
@@ -257,7 +300,7 @@ namespace Microsoft.JScript {
 			case TypeCode.UInt32:
 			case TypeCode.Int16:
 			case TypeCode.Int32:
-				return (double) value;
+				return ic.ToDouble (null);
 
 			case TypeCode.Single:
 			case TypeCode.Double:
@@ -266,11 +309,13 @@ namespace Microsoft.JScript {
 			case TypeCode.String:
 				return GlobalObject.parseFloat (value);
 
-			default:
-				Console.WriteLine ("\nToNumber: value.GetType = {0}", value.GetType ());
+			case TypeCode.Object:
+				if (value is NumberObject)
+					return ((NumberObject) value).value;
 				break;
 			}
 
+			Console.WriteLine ("\nToNumber: value.GetType = {0}", value.GetType ());
 			throw new NotImplementedException ();
 		}
 
@@ -335,7 +380,7 @@ namespace Microsoft.JScript {
 
 			switch (tc) {
 			case TypeCode.Empty:
-				return "";
+				return "undefined";
 
 			case TypeCode.DBNull:
 				return "null";
@@ -350,45 +395,37 @@ namespace Microsoft.JScript {
 			case TypeCode.Char:
 				return ic.ToInt16 (null).ToString ();
 
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.UInt16:
-			case TypeCode.UInt32:
-			case TypeCode.Int16:
-			case TypeCode.Int32:
 			case TypeCode.String:
-			case TypeCode.Double:
-				return ic.ToString (CultureInfo.InvariantCulture);
+				return ic.ToString (null);
 
 			case TypeCode.Object:
-				if (value is ArrayObject)
-					return ArrayPrototype.toString (value);
-				else if (value is BooleanObject)
-					return BooleanPrototype.toString (value);
-				else if (value is DateObject)
-					return DatePrototype.toString (value);
-				else if (value is ErrorObject)
-					return ErrorPrototype.toString (value);
-				else if (value is FunctionObject)
-					return FunctionPrototype.toString (value);
-				else if (value is NumberObject)
-					return NumberPrototype.toString (value, 10);
-				else if (value is ObjectPrototype)
-					return ObjectPrototype.toString (value);
-				else if (value is RegExpObject)
-					return RegExpPrototype.toString (value);
-				else if (value is StringObject)
-					return StringPrototype.toString (value);
-				else if (value is FunctionWrapper)
-					return FunctionPrototype.toString (value);
+				if (value is StringObject)
+					return ((StringObject) value).value;
+				else if (value is Closure)
+					return FunctionPrototype.toString (((Closure) value).func);
+				else if (value is ScriptObject)
+					return (string) ((ScriptObject) value).CallMethod ("toString");
+
 				Console.WriteLine ("value.GetType = {0}", value.GetType ());
 				throw new NotImplementedException ();
+
 			default:
+				if (IsNumberTypeCode (tc))
+					return ic.ToString (CultureInfo.InvariantCulture);
+
 				Console.WriteLine ("tc = {0}", tc);
 				throw new NotImplementedException ();
 			}
 		}
 
+
+		internal static RegExpObject ToRegExp (object regExp)
+		{
+			if (regExp is RegExpObject)
+				return (RegExpObject) regExp;
+			else
+				return RegExpConstructor.Ctr.Invoke (regExp);
+		}
 
 		public static string ToString (bool b)
 		{

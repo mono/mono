@@ -37,7 +37,6 @@ namespace Microsoft.JScript {
 
 	public class FunctionObject : ScriptFunction {
 
-		internal MethodAttributes attr;
 		internal string name;
 		internal string type_annot;
 		internal Type return_type;
@@ -47,6 +46,14 @@ namespace Microsoft.JScript {
 		internal FunctionObject (string name)
 		{
 			this.name = name;
+		}
+
+		internal FunctionObject (MethodInfo info)
+		{
+			this.method = info;
+			this.name = info.Name;
+			this.attr = info.Attributes;
+			this.return_type = info.ReturnType;
 		}
 
 		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body)
