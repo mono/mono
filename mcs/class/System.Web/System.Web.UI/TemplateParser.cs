@@ -386,18 +386,21 @@ namespace System.Web.UI
 			}
 
 			Assembly assembly = null;
-			try {
-				assembly = Assembly.Load (name);
-			} catch (Exception) {
+			Exception error = null;
+			if (name.IndexOf (',') != -1) {
+				try {
+					assembly = Assembly.Load (name);
+				} catch (Exception e) { error = e; }
+			}
+
+			if (assembly == null) {
 				try {
 					assembly = Assembly.LoadWithPartialName (name);
-				} catch (Exception e) {
-					ThrowParseException ("Assembly " + name + " not found", e);
-				}
-
-				if (assembly == null)
-					ThrowParseException ("Assembly " + name + " not found", null);
+				} catch (Exception e) { error = e; }
 			}
+
+			if (assembly == null)
+				ThrowParseException ("Assembly " + name + " not found", error);
 
 			AddAssembly (assembly, true);
 			return assembly;
