@@ -88,6 +88,7 @@ namespace System.Web.J2EE
 				// Very important - to update Virtual Path!!!
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				servletDomain.SetData(IAppDomainConfig.APP_VIRT_DIR, req.getContextPath());
+				servletDomain.SetData(".hostingVirtualPath", req.getContextPath());
 				//put request to the TLS
 				Thread.SetData(_servletRequestSlot, req);
 				//put response to the TLS
@@ -180,7 +181,7 @@ namespace System.Web.J2EE
 				servletDomain.SetData(J2EEConsts.DESERIALIZER_CONST , this.GetDeserializer());
 
 				//servletDomain.SetData(".hostingVirtualPath", "/");
-				//servletDomain.SetData(".hostingInstallDir", "/");
+				servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;
 			}
 			catch(Exception e)

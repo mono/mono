@@ -39,36 +39,6 @@ namespace System.Web.J2EE
 		{
 		}
 
-		public static bool FileExists(string fileName)
-		{
-			//First reduce virtual or phys path
-			if (fileName.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
-				fileName = fileName.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
-			if (fileName.StartsWith(HttpRuntime.AppDomainAppVirtualPath + "/"))
-				fileName = fileName.Substring(HttpRuntime.AppDomainAppVirtualPath.Length + 1);	
-			if (fileName.StartsWith(HttpRuntime.AppDomainAppPath))
-				fileName = fileName.Substring(HttpRuntime.AppDomainAppPath.Length);
-
-			IResourceLoader resLoader = (IResourceLoader)AppDomain.CurrentDomain.GetData("GH_ResourceLoader");
-			if (resLoader == null)
-				throw new HttpException("Unexpected exception in GHUtils.FileExists method. Resource loader not initialized under current domain");
-
-			java.net.URL res = resLoader.getResource(fileName);
-			if (res == null)
-			{
-				if(fileName.StartsWith("/"))
-					fileName = fileName.Substring(1);
-				java.lang.ClassLoader cl = (java.lang.ClassLoader)AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
-				if (cl != null)
-					res = cl.getResource(fileName);
-			}
-
-			if (res == null)
-				return false;
-
-			return true;
-		}
-
 		public static string GetApplicationRealPath(ServletConfig config) 
 		{
 			string realFs = config.getInitParameter(J2EEConsts.FILESYSTEM_ACCESS);

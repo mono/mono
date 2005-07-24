@@ -1,3 +1,7 @@
+2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
+    * BaseHttpServlet.cs: Set values of .hostingInstallDir & .hostingVirtualPath
+	  necessary for integration.
+    * J2EEUtils.cs: Removed obsolete function FileExists
 2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
 
 	* BaseHttpServlet.cs: Added file
