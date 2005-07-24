@@ -432,30 +432,34 @@ namespace System.IO
 				throw new ArgumentException ("Path is invalid", "path");
 			}
 
-			find = MonoIO.FindFirstFile (wild, out stat, out error);
-			if (find == MonoIO.InvalidHandle) {
-				switch (error) {
-				case MonoIOError.ERROR_PATH_NOT_FOUND:
-					string message = String.Format ("Could not find a part of the path \"{0}\"",
-									wildpath);
-					throw new DirectoryNotFoundException (message);
-				case MonoIOError.ERROR_FILE_NOT_FOUND:
-				case MonoIOError.ERROR_NO_MORE_FILES:
-					return new string [0];
+			ArrayList entries = null;
+			find = MonoIO.InvalidHandle;
+			try {
+				find = MonoIO.FindFirstFile (wild, out stat, out error);
+				if (find == MonoIO.InvalidHandle) {
+					switch (error) {
+					case MonoIOError.ERROR_PATH_NOT_FOUND:
+						string message = String.Format ("Could not find a part of the path \"{0}\"",
+										wildpath);
+						throw new DirectoryNotFoundException (message);
+					case MonoIOError.ERROR_FILE_NOT_FOUND:
+					case MonoIOError.ERROR_NO_MORE_FILES:
+						return new string [0];
 
-				default:
-					throw MonoIO.GetException (wildpath, error);
+					default:
+						throw MonoIO.GetException (wildpath, error);
+					}
 				}
+
+				entries = new ArrayList ();
+				do {
+					if ((stat.Attributes & mask) == attrs)
+						entries.Add (Path.Combine (wildpath, stat.Name));
+				} while (MonoIO.FindNextFile (find, out stat, out error));
+			} finally {
+				if (find != MonoIO.InvalidHandle)
+					MonoIO.FindClose (find, out error);
 			}
-			
-			ArrayList entries = new ArrayList ();
-
-			do {
-				if ((stat.Attributes & mask) == attrs)
-					entries.Add (Path.Combine (wildpath, stat.Name));
-			} while (MonoIO.FindNextFile (find, out stat, out error));
-
-			MonoIO.FindClose (find, out error);
 
 			return (string []) entries.ToArray (typeof (string));
 		}

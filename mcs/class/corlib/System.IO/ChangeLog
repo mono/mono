@@ -1,3 +1,7 @@
+2005-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs: don't leak 'find' handles.
+
 2005-07-05  Dick Porter  <dick@ximian.com>
 
 	* MonoIO.cs:
