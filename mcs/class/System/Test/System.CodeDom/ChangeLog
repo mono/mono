@@ -1,3 +1,7 @@
+2005-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeDelegateTest.cs: Added tests for BaseTypes and ReturnType.
+
 2005-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeTypeReferenceTest.cs: Tests for zero-length and null type names,

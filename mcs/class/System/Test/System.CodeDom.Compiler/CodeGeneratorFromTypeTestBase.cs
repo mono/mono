@@ -8,6 +8,9 @@
 //
 
 using System.CodeDom;
+using System.Reflection;
+using System.Security;
+using System.Security.Principal;
 
 using NUnit.Framework;
 
@@ -28,6 +31,9 @@ namespace MonoTests.System.CodeDom.Compiler
 
 		[Test]
 		public abstract void SimpleTypeTest ();
+
+		[Test]
+		public abstract void DerivedTypeTest ();
 
 		[Test]
 		public abstract void AttributesAndTypeTest ();
@@ -158,6 +164,9 @@ namespace MonoTests.System.CodeDom.Compiler
 		[Test]
 		public abstract void ChainedConstructorMultipleArgs ();
 
+		[Test]
+		public abstract void TypeConstructorTest ();
+
 		protected string GenerateDefaultType ()
 		{
 			return GenerateCodeFromType (TypeDeclaration);
@@ -171,6 +180,18 @@ namespace MonoTests.System.CodeDom.Compiler
 		protected string GenerateSimpleType ()
 		{
 			TypeDeclaration.Name = "Test1";
+			return GenerateCodeFromType (TypeDeclaration);
+		}
+
+		protected string GenerateDerivedType ()
+		{
+			TypeDeclaration.Name = "Test1";
+			TypeDeclaration.TypeAttributes |= TypeAttributes.NestedFamily | 
+				TypeAttributes.Abstract;
+			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (int)));
+			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (IIdentity)));
+			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (string)));
+			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (IPermission)));
 			return GenerateCodeFromType (TypeDeclaration);
 		}
 
@@ -294,6 +315,7 @@ namespace MonoTests.System.CodeDom.Compiler
 			fld.Name = "Name";
 			fld.Attributes = MemberAttributes.Public;
 			fld.Type = new CodeTypeReference (typeof (int));
+			fld.InitExpression = new CodePrimitiveExpression (2);
 			TypeDeclaration.Members.Add (fld);
 
 			return GenerateCodeFromType (TypeDeclaration);
@@ -865,7 +887,7 @@ namespace MonoTests.System.CodeDom.Compiler
 			param.Direction = FieldDirection.Out;
 			ctor.Parameters.Add (param);
 
-			// immplementation types should be ignored on ctors
+			// implementation types should be ignored on ctors
 			ctor.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 
 			// chained ctor args
@@ -880,6 +902,48 @@ namespace MonoTests.System.CodeDom.Compiler
 			ctor.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("value3"));
 
 			TypeDeclaration.Members.Add (ctor);
+
+			return GenerateCodeFromType (TypeDeclaration);
+		}
+
+		protected string GenerateTypeConstructor ()
+		{
+			TypeDeclaration.Name = "Test1";
+
+			CodeTypeConstructor typeCtor = new CodeTypeConstructor ();
+			TypeDeclaration.Members.Add (typeCtor);
+
+			// custom attributes
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			typeCtor.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			typeCtor.CustomAttributes.Add (attrDec);
+
+			// parameter should be ignored
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			typeCtor.Parameters.Add (param);
+
+			// implementation types should be ignored on type ctors
+			typeCtor.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
+
+			// private immplementation type should be ignored on type ctors
+			typeCtor.PrivateImplementationType = new CodeTypeReference (typeof (int));
+
+			// return type should be ignored on type ctors
+			typeCtor.ReturnType = new CodeTypeReference (typeof (int));
+
+			// return TypeDeclaration custom attributes
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A1",
+				new CodePrimitiveExpression (false)));
+			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
+				new CodePrimitiveExpression (true)));
+			typeCtor.ReturnTypeCustomAttributes.Add (attrDec);
 
 			return GenerateCodeFromType (TypeDeclaration);
 		}

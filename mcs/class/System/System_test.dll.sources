@@ -16,6 +16,7 @@ System/UriTest.cs
 System/UriTest2.cs
 System.CodeDom/CodeMemberFieldTest.cs
 System.CodeDom/CodeMemberPropertyTest.cs
+System.CodeDom/CodeTypeDelegateTest.cs
 System.CodeDom/CodeTypeReferenceTest.cs
 System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
 System.CodeDom.Compiler/CodeGeneratorTest.cs

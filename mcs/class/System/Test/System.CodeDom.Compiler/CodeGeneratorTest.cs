@@ -7,8 +7,6 @@
 // (c) Novell
 //
 
-using NUnit.Framework;
-
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;

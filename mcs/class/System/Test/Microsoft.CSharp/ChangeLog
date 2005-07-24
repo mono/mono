@@ -1,3 +1,8 @@
+2005-07-24  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Added BaseTypes and TypeConstructor
+	tests. Added enum, interface and delegate tests.
+
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added test for 

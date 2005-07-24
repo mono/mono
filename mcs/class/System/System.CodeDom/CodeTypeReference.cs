@@ -42,6 +42,7 @@ namespace System.CodeDom
 		private string baseType;
 		private CodeTypeReference arrayType;
 		private int rank;
+		private bool isInterface;
 
 #if NET_2_0
 		CodeTypeReferenceCollection typeArguments;
@@ -88,9 +89,10 @@ namespace System.CodeDom
 				this.rank = baseType.GetArrayRank ();
 				this.arrayType = new CodeTypeReference (baseType.GetElementType ());
 				this.baseType = arrayType.BaseType;
-				return;
+			} else {
+				this.baseType = baseType.FullName;
 			}
-			this.baseType = baseType.FullName;
+			this.isInterface = baseType.IsInterface;
 		}
 
 		public CodeTypeReference( CodeTypeReference arrayType, int rank )
@@ -163,6 +165,10 @@ namespace System.CodeDom
 			set {
 				baseType = value;
 			}
+		}
+
+		internal bool IsInterface {
+			get { return isInterface; }
 		}
 
 #if NET_2_0

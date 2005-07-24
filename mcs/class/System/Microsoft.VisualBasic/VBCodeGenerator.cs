@@ -565,6 +565,10 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateEvent (CodeMemberEvent eventRef, CodeTypeDeclaration declaration)
 		{
+			if (IsCurrentDelegate || IsCurrentEnum) {
+				return;
+			}
+
 			TextWriter output = Output;
 
 			OutputAttributes (eventRef.CustomAttributes, null, 
@@ -591,16 +595,23 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateField (CodeMemberField field)
 		{
+			if (IsCurrentDelegate || IsCurrentInterface) {
+				return;
+			}
+
 			TextWriter output = Output;
 
 			OutputAttributes (field.CustomAttributes, null, 
 				LineHandling.ContinueLine);
 
-			MemberAttributes attributes = field.Attributes;
-			OutputMemberAccessModifier (attributes);
-			OutputFieldScopeModifier (attributes);
-
-			OutputTypeNamePair (field.Type, field.Name);
+			if (IsCurrentEnum) {
+				output.Write (field.Name);
+			} else {
+				MemberAttributes attributes = field.Attributes;
+				OutputMemberAccessModifier (attributes);
+				OutputFieldScopeModifier (attributes);
+				OutputTypeNamePair (field.Type, field.Name);
+			}
 
 			CodeExpression initExpression = field.InitExpression;
 			if (initExpression != null) {
@@ -625,6 +636,10 @@ namespace Microsoft.VisualBasic
 		[MonoTODO ("partially implemented")]
 		protected override void GenerateMethod (CodeMemberMethod method, CodeTypeDeclaration declaration)
 		{
+			if (IsCurrentDelegate || IsCurrentEnum) {
+				return;
+			}
+
 			bool isSub = method.ReturnType.BaseType == typeof(void).FullName;
 
 			TextWriter output = Output;
@@ -634,14 +649,15 @@ namespace Microsoft.VisualBasic
 
 			MemberAttributes attributes = method.Attributes;
 
-			if (method.PrivateImplementationType == null) {
-				OutputMemberAccessModifier (attributes);
-				if (IsOverloaded (method, declaration)) {
-					output.Write ("Overloads ");
+			if (!IsCurrentInterface) {
+				if (method.PrivateImplementationType == null) {
+					OutputMemberAccessModifier (attributes);
+					if (IsOverloaded (method, declaration)) {
+						output.Write ("Overloads ");
+					}
 				}
+				OutputMemberScopeModifier (attributes);
 			}
-
-			OutputMemberScopeModifier (attributes);
 
 			if (isSub)
 				output.Write ("Sub ");
@@ -669,35 +685,41 @@ namespace Microsoft.VisualBasic
 				output.Write (method.Name);
 			}
 
-			if ((attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract)
-				output.WriteLine ();
-			else {
-				output.WriteLine ();
-				++Indent;
-				GenerateStatements (method.Statements);
-				--Indent;
-				if (isSub)
-					output.WriteLine ("End Sub");
-				else
-					output.WriteLine ("End Function");
+			output.WriteLine ();
+			if (!IsCurrentInterface) {
+				if ((attributes & MemberAttributes.ScopeMask) != MemberAttributes.Abstract) {
+					++Indent;
+					GenerateStatements (method.Statements);
+					--Indent;
+					if (isSub)
+						output.WriteLine ("End Sub");
+					else
+						output.WriteLine ("End Function");
+				}
 			}
 		}
 
 		protected override void GenerateProperty (CodeMemberProperty property, CodeTypeDeclaration declaration)
 		{
+			if (IsCurrentDelegate || IsCurrentEnum) {
+				return;
+			}
+
 			TextWriter output = Output;
 
 			OutputAttributes (property.CustomAttributes, null, 
 				LineHandling.ContinueLine);
 
-			MemberAttributes attributes = property.Attributes;
-			if (property.PrivateImplementationType == null) {
-				OutputMemberAccessModifier (attributes);
-				if (IsOverloaded (property, declaration)) {
-					output.Write ("Overloads ");
+			if (!IsCurrentInterface) {
+				MemberAttributes attributes = property.Attributes;
+				if (property.PrivateImplementationType == null) {
+					OutputMemberAccessModifier (attributes);
+					if (IsOverloaded (property, declaration)) {
+						output.Write ("Overloads ");
+					}
 				}
+				OutputMemberScopeModifier (attributes);
 			}
-			OutputMemberScopeModifier (attributes);
 
 			// mark property as default property if we're dealing with an indexer
 			if (string.Compare (GetPropertyName(property), "Item", true, CultureInfo.InvariantCulture) == 0 && property.Parameters.Count > 0) {
@@ -738,30 +760,36 @@ namespace Microsoft.VisualBasic
 			}
 
 			output.WriteLine ();
-			++Indent;
 
-			if (property.HasGet) {
-				output.WriteLine ("Get");
+			if (!IsCurrentInterface) {
 				++Indent;
-				GenerateStatements (property.GetStatements);
-				--Indent;
-				output.WriteLine ("End Get");
-			}
-			
-			if (property.HasSet) {
-				output.WriteLine ("Set");
-				++Indent;
-				GenerateStatements (property.SetStatements);
-				--Indent;
-				output.WriteLine ("End Set");
-			}
+				if (property.HasGet) {
+					output.WriteLine ("Get");
+					++Indent;
+					GenerateStatements (property.GetStatements);
+					--Indent;
+					output.WriteLine ("End Get");
+				}
 
-			--Indent;
-			output.WriteLine ("End Property");
+				if (property.HasSet) {
+					output.WriteLine ("Set");
+					++Indent;
+					GenerateStatements (property.SetStatements);
+					--Indent;
+					output.WriteLine ("End Set");
+				}
+
+				--Indent;
+				output.WriteLine ("End Property");
+			}
 		}
 
 		protected override void GenerateConstructor (CodeConstructor constructor, CodeTypeDeclaration declaration)
 		{
+			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface) {
+				return;
+			}
+
 			OutputAttributes (constructor.CustomAttributes, null,
 				LineHandling.ContinueLine);
 			OutputMemberAccessModifier (constructor.Attributes);
@@ -782,7 +810,11 @@ namespace Microsoft.VisualBasic
 					Output.Write ("MyBase.New(");
 					OutputExpressionList (ctorArgs);
 					Output.WriteLine (")");
+#if NET_2_0
+				} else if (IsCurrentClass) {
+#else
 				} else {
+#endif
 					// call default base ctor
 					Output.WriteLine ("MyBase.New");
 				}
@@ -794,6 +826,15 @@ namespace Microsoft.VisualBasic
 		
 		protected override void GenerateTypeConstructor (CodeTypeConstructor constructor)
 		{
+			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface) {
+				return;
+			}
+
+#if NET_2_0
+			OutputAttributes (constructor.CustomAttributes, null,
+				LineHandling.ContinueLine);
+#endif
+
 			Output.WriteLine ("Shared Sub New()");
 			Indent++;
 			GenerateStatements (constructor.Statements);
@@ -810,42 +851,76 @@ namespace Microsoft.VisualBasic
 				LineHandling.ContinueLine);
 
 			TypeAttributes attributes = declaration.TypeAttributes;
-			OutputTypeAttributes (attributes,
-				declaration.IsStruct,
-				declaration.IsEnum);
 
-			output.WriteLine (declaration.Name);
+			if (IsCurrentDelegate) {
+				CodeTypeDelegate delegateDecl = (CodeTypeDelegate) declaration;
 
-			++Indent;
-			
-			IEnumerator enumerator = declaration.BaseTypes.GetEnumerator();
-			if (enumerator.MoveNext()) 
-			{
-				CodeTypeReference type = (CodeTypeReference)enumerator.Current;
-			
-				if (type != null)
-				{
-					output.Write ("Inherits ");
-					OutputType (type);
-					output.WriteLine ();
+				if ((attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public) {
+					output.Write ("Public ");
 				}
-				
-				while (enumerator.MoveNext()) 
-				{
-					type = (CodeTypeReference)enumerator.Current;
-				
-					if (type != null)
-					{
-						output.Write ("Implements ");
-						OutputType (type);
-						output.WriteLine ();
+
+				bool isSub = delegateDecl.ReturnType.BaseType == typeof (void).FullName;
+				if (isSub) {
+					output.Write ("Delegate Sub ");
+				} else {
+					output.Write ("Delegate Function ");
+				}
+
+				output.Write (delegateDecl.Name);
+				output.Write ("(");
+				Output.Write (")");
+				if (!isSub) {
+					Output.Write (" As ");
+					OutputType (delegateDecl.ReturnType);
+				}
+				Output.WriteLine ("");
+			} else {
+				OutputTypeAttributes (declaration);
+
+				output.Write (declaration.Name);
+
+				if (IsCurrentEnum) {
+					if (declaration.BaseTypes.Count > 0) {
+						output.Write (" As ");
+						OutputType (declaration.BaseTypes[0]);
 					}
+					output.WriteLine ();
+					++Indent;
+				} else {
+					++Indent;
+
+					bool firstInherits = true;
+					bool firstImplements = true;
+
+					for (int i = 0; i < declaration.BaseTypes.Count; i++) {
+						// a struct can only implement interfaces
+						// an interface can only inherit from other interface
+
+						CodeTypeReference typeRef = declaration.BaseTypes[i];
+						
+						if (firstInherits && !declaration.IsStruct && !typeRef.IsInterface) {
+							output.WriteLine ();
+							output.Write ("Inherits ");
+							firstInherits = false;
+						} else if (!declaration.IsInterface && firstImplements) {
+							output.WriteLine ();
+							output.Write ("Implements ");
+							firstImplements = false;
+						} else {
+							output.Write (", ");
+						}
+						OutputType (typeRef);
+					}
+					output.WriteLine ();
 				}
 			}
 		}
 
 		protected override void GenerateTypeEnd (CodeTypeDeclaration declaration)
 		{
+			if (IsCurrentDelegate) {
+				return;
+			}
 			string output = string.Empty;
 
 			--Indent;
@@ -1079,11 +1154,12 @@ namespace Microsoft.VisualBasic
 			case MemberAttributes.Overloaded:
 				// based on http://gendotnet.com/Code%20Gen%20Articles/codedom.htm
 				Output.Write ("Overloads ");
-                                MemberAttributes access_ovl = attributes & MemberAttributes.AccessMask;
-                                if ( access_ovl == MemberAttributes.Public || 
-                                        access_ovl == MemberAttributes.Family )
-                                        Output.Write ("Overridable ");
-                                break;
+
+				MemberAttributes access_ovl = attributes & MemberAttributes.AccessMask;
+				if (access_ovl == MemberAttributes.Public || access_ovl == MemberAttributes.Family) {
+					Output.Write ("Overridable ");
+				}
+				break;
 			default:
 				//
 				// FUNNY! if the scope value is
@@ -1167,55 +1243,48 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-		protected override void OutputTypeAttributes (TypeAttributes attributes, bool isStruct, bool isEnum)
+		private void OutputTypeAttributes (CodeTypeDeclaration declaration)
 		{
 			TextWriter output = Output;
+			TypeAttributes attributes = declaration.TypeAttributes;
 
 			switch (attributes & TypeAttributes.VisibilityMask) {
-			case TypeAttributes.NotPublic:
-				// Does this mean friend access?
-				output.Write ("Friend ");
-				break; 
-
-			case TypeAttributes.Public:
-			case TypeAttributes.NestedPublic:
-				output.Write ("Public ");
-				break;
-
-			case TypeAttributes.NestedPrivate:
-				output.Write ("Private ");
-				break;
-			case TypeAttributes.NestedAssembly:
-				output.Write ("Friend ");
-				break;
-			case TypeAttributes.NestedFamily:
-				output.Write ("Protected ");
-				break;
-			case TypeAttributes.NestedFamORAssem:
-				output.Write ("Protected Friend ");
-				break;
-			case TypeAttributes.NestedFamANDAssem:
-				output.Write ("Friend ");
-				break;
+				case TypeAttributes.Public:
+				case TypeAttributes.NestedPublic:
+					output.Write ("Public ");
+					break;
+				case TypeAttributes.NestedPrivate:
+					output.Write ("Private ");
+					break;
+#if NET_2_0
+				case TypeAttributes.NotPublic:
+				case TypeAttributes.NestedFamANDAssem:
+				case TypeAttributes.NestedAssembly:
+					output.Write ("Friend ");
+					break; 
+				case TypeAttributes.NestedFamily:
+					output.Write ("Protected ");
+					break;
+				case TypeAttributes.NestedFamORAssem:
+					output.Write ("Protected Friend ");
+					break;
+#endif
 			}
 
-			if (isStruct)
+			if (declaration.IsStruct) {
 				output.Write ("Structure ");
-
-			else if (isEnum)
-				output.Write ("Enumeration ");
-
-			else {
-				if ((attributes & TypeAttributes.Interface) != 0) 
+			} else if (declaration.IsEnum) {
+				output.Write ("Enum ");
+			} else {
+				if ((attributes & TypeAttributes.Interface) != 0) {
 					output.Write ("Interface ");
-
-				else {
+				} else {
 					if ((attributes & TypeAttributes.Sealed) != 0)
 						output.Write ("NotInheritable ");
 
 					if ((attributes & TypeAttributes.Abstract) != 0)
 						output.Write ("MustInherit ");
-					
+
 					output.Write ("Class ");
 				}
 			}

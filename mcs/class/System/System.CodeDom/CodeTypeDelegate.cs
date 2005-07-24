@@ -35,10 +35,9 @@ namespace System.CodeDom
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
-	public class CodeTypeDelegate
-		: CodeTypeDeclaration
+	public class CodeTypeDelegate : CodeTypeDeclaration
 	{
-		private	CodeParameterDeclarationExpressionCollection parameters;
+		private CodeParameterDeclarationExpressionCollection parameters;
 		private CodeTypeReference returnType;
 
 		//
@@ -46,9 +45,10 @@ namespace System.CodeDom
 		//
 		public CodeTypeDelegate()
 		{
+			base.BaseTypes.Add (new CodeTypeReference ("System.Delegate"));
 		}
 
-		public CodeTypeDelegate( string name )
+		public CodeTypeDelegate(string name) : this()
 		{
 			this.Name = name;
 		}
@@ -58,14 +58,18 @@ namespace System.CodeDom
 		//
 		public CodeParameterDeclarationExpressionCollection Parameters {
 			get {
-				if ( parameters == null )
-					parameters = new CodeParameterDeclarationExpressionCollection();
+				if (parameters == null) {
+					parameters = new CodeParameterDeclarationExpressionCollection ();
+				}
 				return parameters;
 			}
 		}
 
 		public CodeTypeReference ReturnType {
 			get {
+				if (returnType == null) {
+					this.returnType = new CodeTypeReference(string.Empty);
+				}
 				return returnType;
 			}
 			set {

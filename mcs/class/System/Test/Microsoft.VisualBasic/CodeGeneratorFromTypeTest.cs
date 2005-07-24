@@ -72,6 +72,21 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void DerivedTypeTest ()
+		{
+			string code = GenerateDerivedType ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Friend MustInherit Class Test1{0}" +
+#else
+				"MustInherit Class Test1{0}" +
+#endif
+				"    Inherits Integer{0}" +
+				"    Implements System.Security.Principal.IIdentity, String, System.Security.IPermission{0}" +
+				"End Class{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void AttributesAndTypeTest ()
 		{
 			string code = GenerateAttributesAndType ();
@@ -179,7 +194,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-				"    Public Name As Integer{0}" +
+				"    Public Name As Integer = 2{0}" +
 				"End Class{0}", Writer.NewLine), code);
 		}
 
@@ -767,10 +782,25 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Class{0}", Writer.NewLine), code);
 		}
+
+		[Test]
+		public override void TypeConstructorTest ()
+		{
+			string code = GenerateTypeConstructor ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    <A(),  _{0}" +
+				"     B()>  _{0}" +
+#endif
+				"    Shared Sub New(){0}" +
+				"    End Sub{0}" +
+				"End Class{0}", Writer.NewLine), code);
+		}
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class CodeGeneratorFromTypeTest_Delegate : CodeGeneratorFromTypeTestBase
 	{
 		private CodeTypeDeclaration _typeDeclaration;
@@ -820,13 +850,26 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void DerivedTypeTest ()
+		{
+			string code = GenerateDerivedType ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Delegate Sub Test1(){0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void AttributesAndTypeTest ()
 		{
+			CodeTypeDelegate delegateDecl = new CodeTypeDelegate ();
+			delegateDecl.ReturnType = new CodeTypeReference (typeof (int));
+
+			_typeDeclaration = delegateDecl;
+
 			string code = GenerateAttributesAndType ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<A(),  _{0}" +
 				" B()>  _{0}" +
-				"Public Delegate Sub Test1(){0}", Writer.NewLine), code);
+				"Public Delegate Function Test1() As Integer{0}", Writer.NewLine), code);
 		}
 
 		[Test]
@@ -1182,10 +1225,17 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
 		}
+
+		[Test]
+		public override void TypeConstructorTest ()
+		{
+			string code = GenerateTypeConstructor ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
+		}
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class CodeGeneratorFromTypeTest_Interface : CodeGeneratorFromTypeTestBase
 	{
 		private CodeTypeDeclaration _typeDeclaration;
@@ -1234,6 +1284,20 @@ namespace MonoTests.Microsoft.VisualBasic
 			string code = GenerateSimpleType ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
+				"End Interface{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void DerivedTypeTest ()
+		{
+			string code = GenerateDerivedType ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Friend Interface Test1{0}" +
+#else
+				"Interface Test1{0}" +
+#endif
+				"    Inherits Integer, System.Security.Principal.IIdentity, String, System.Security.IPermission{0}" +
 				"End Interface{0}", Writer.NewLine), code);
 		}
 
@@ -1786,10 +1850,19 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    {0}" +
 				"End Interface{0}", Writer.NewLine), code);
 		}
+
+		[Test]
+		public override void TypeConstructorTest ()
+		{
+			string code = GenerateTypeConstructor ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Interface Test1{0}" +
+				"    {0}" +
+				"End Interface{0}", Writer.NewLine), code);
+		}
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class CodeGeneratorFromTypeTest_Struct : CodeGeneratorFromTypeTestBase
 	{
 		private CodeTypeDeclaration _typeDeclaration;
@@ -1838,6 +1911,20 @@ namespace MonoTests.Microsoft.VisualBasic
 			string code = GenerateSimpleType ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
+				"End Structure{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void DerivedTypeTest ()
+		{
+			string code = GenerateDerivedType ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Friend Structure Test1{0}" +
+#else
+				"Structure Test1{0}" +
+#endif
+				"    Implements Integer, System.Security.Principal.IIdentity, String, System.Security.IPermission{0}" +
 				"End Structure{0}", Writer.NewLine), code);
 		}
 
@@ -1941,7 +2028,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-				"    Public Name As Integer{0}" +
+				"    Public Name As Integer = 2{0}" +
 				"End Structure{0}", Writer.NewLine), code);
 		}
 
@@ -2476,10 +2563,25 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Structure{0}", Writer.NewLine), code);
 		}
+
+		[Test]
+		public override void TypeConstructorTest ()
+		{
+			string code = GenerateTypeConstructor ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Structure Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    <A(),  _{0}" +
+				"     B()>  _{0}" +
+#endif
+				"    Shared Sub New(){0}" +
+				"    End Sub{0}" +
+				"End Structure{0}", Writer.NewLine), code);
+		}
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class CodeGeneratorFromTypeTest_Enum : CodeGeneratorFromTypeTestBase
 	{
 		private CodeTypeDeclaration _typeDeclaration;
@@ -2528,6 +2630,19 @@ namespace MonoTests.Microsoft.VisualBasic
 			string code = GenerateSimpleType ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
+				"End Enum{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void DerivedTypeTest ()
+		{
+			string code = GenerateDerivedType ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+#if NET_2_0
+				"Friend Enum Test1 As Integer{0}" +
+#else
+				"Enum Test1 As Integer{0}" +
+#endif
 				"End Enum{0}", Writer.NewLine), code);
 		}
 
@@ -2612,7 +2727,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +
-				"    Name{0}" +
+				"    Name = 2{0}" +
 				"End Enum{0}", Writer.NewLine), code);
 		}
 
@@ -2974,6 +3089,16 @@ namespace MonoTests.Microsoft.VisualBasic
 		public override void ChainedConstructorMultipleArgs ()
 		{
 			string code = GenerateChainedConstructor (true);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Enum Test1{0}" +
+				"    {0}" +
+				"End Enum{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void TypeConstructorTest ()
+		{
+			string code = GenerateTypeConstructor ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +

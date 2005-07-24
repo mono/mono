@@ -1,3 +1,8 @@
+2005-07-24  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Fixed generated code for enums, interfaces and
+	delegates to match MS.NET.
+
 2005-07-02  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Added support for ReturnTypeCustomAttributes.

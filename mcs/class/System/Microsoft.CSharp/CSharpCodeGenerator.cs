@@ -43,10 +43,9 @@ namespace Mono.CSharp
 	internal class CSharpCodeGenerator
 		: CodeGenerator
 	{
-            
 		// It is used for beautiful "for" syntax
 		bool dont_write_semicolon;
-            
+
 		//
 		// Constructors
 		//
@@ -527,6 +526,10 @@ namespace Mono.CSharp
 
 		protected override void GenerateEvent( CodeMemberEvent eventRef, CodeTypeDeclaration declaration )
 		{
+			if (IsCurrentDelegate || IsCurrentEnum) {
+				return;
+			}
+
 			OutputAttributes (eventRef.CustomAttributes, null, false);
 
 			if (eventRef.PrivateImplementationType == null) {
@@ -547,6 +550,10 @@ namespace Mono.CSharp
 
 		protected override void GenerateField( CodeMemberField field )
 		{
+			if (IsCurrentDelegate || IsCurrentInterface) {
+				return;
+			}
+
 			TextWriter output = Output;
 
 			OutputAttributes (field.CustomAttributes, null, false);
@@ -588,6 +595,10 @@ namespace Mono.CSharp
 		protected override void GenerateMethod( CodeMemberMethod method,
 							CodeTypeDeclaration declaration )
 		{
+			if (IsCurrentDelegate || IsCurrentEnum) {
+				return;
+			}
+
 			TextWriter output = Output;
 
 			OutputAttributes (method.CustomAttributes, null, false);
@@ -638,20 +649,26 @@ namespace Mono.CSharp
 		protected override void GenerateProperty( CodeMemberProperty property,
 							  CodeTypeDeclaration declaration )
 		{
+			if (IsCurrentDelegate || IsCurrentEnum) {
+				return;
+			}
+
 			TextWriter output = Output;
 
 			OutputAttributes (property.CustomAttributes, null, false);
 
-			if (property.PrivateImplementationType == null) {
-				MemberAttributes attributes = property.Attributes;
-				OutputMemberAccessModifier (attributes);
-				OutputMemberScopeModifier (attributes);
+			if (!IsCurrentInterface) {
+				if (property.PrivateImplementationType == null) {
+					MemberAttributes attributes = property.Attributes;
+					OutputMemberAccessModifier (attributes);
+					OutputMemberScopeModifier (attributes);
+				}
 			}
 
 			OutputType (property.Type);
 			output.Write (' ');
 
-			if (property.PrivateImplementationType != null) {
+			if (!IsCurrentInterface && property.PrivateImplementationType != null) {
 				output.Write (property.PrivateImplementationType.BaseType);
 				output.Write ('.');
 			}
@@ -670,8 +687,8 @@ namespace Mono.CSharp
 
 			if (declaration.IsInterface)
 			{
-				if (property.HasGet) output.WriteLine("get; ");
-				if (property.HasSet) output.WriteLine("set; ");
+				if (property.HasGet) output.WriteLine("get;");
+				if (property.HasSet) output.WriteLine("set;");
 			}
 			else
 			{
@@ -702,9 +719,12 @@ namespace Mono.CSharp
 			output.WriteLine ('}');
 		}
 
-		protected override void GenerateConstructor( CodeConstructor constructor,
-							     CodeTypeDeclaration declaration )
+		protected override void GenerateConstructor( CodeConstructor constructor, CodeTypeDeclaration declaration )
 		{
+			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface) {
+				return;
+			}
+
 			OutputAttributes (constructor.CustomAttributes, null, false);
 
 			OutputMemberAccessModifier (constructor.Attributes);
@@ -736,6 +756,14 @@ namespace Mono.CSharp
 		
 		protected override void GenerateTypeConstructor( CodeTypeConstructor constructor )
 		{
+			if (IsCurrentDelegate || IsCurrentEnum || IsCurrentInterface) {
+				return;
+			}
+
+#if NET_2_0
+			OutputAttributes (constructor.CustomAttributes, null, false);
+#endif
+
 			Output.WriteLine ("static " + GetSafeName (CurrentTypeName) + "() {");
 			Indent++;
 			GenerateStatements (constructor.Statements);
@@ -743,65 +771,63 @@ namespace Mono.CSharp
 			Output.WriteLine ('}');
 		}
 
-		protected override void GenerateTypeStart( CodeTypeDeclaration declaration )
+		protected override void GenerateTypeStart(CodeTypeDeclaration declaration)
 		{
 			TextWriter output = Output;
-			CodeTypeDelegate del = declaration as CodeTypeDelegate;
 
 			OutputAttributes (declaration.CustomAttributes, null, false);
 
-			TypeAttributes attributes = declaration.TypeAttributes;
-			OutputTypeAttributes( attributes,
-					      declaration.IsStruct,
-					      declaration.IsEnum );
+			if (!IsCurrentDelegate) {
+				OutputTypeAttributes (declaration);
 
-			if (del != null) {
-				if (del.ReturnType != null)
-					OutputType (del.ReturnType);
-				else
-					Output.Write ("void");
-				output.Write(' ');
-			}
-
-			output.Write( GetSafeName (declaration.Name) );
+				output.Write (GetSafeName (declaration.Name));
 
 #if NET_2_0
-			GenerateGenericsParameters (declaration.TypeParameters);
+				GenerateGenericsParameters (declaration.TypeParameters);
 #endif
-			
-			IEnumerator enumerator = declaration.BaseTypes.GetEnumerator();
-			if ( enumerator.MoveNext() ) {
-				CodeTypeReference type = (CodeTypeReference)enumerator.Current;
-			
-				output.Write( ": " );
-				OutputType( type );
-				
-				while ( enumerator.MoveNext() ) {
-					type = (CodeTypeReference)enumerator.Current;
-				
-					output.Write( ", " );
-					OutputType( type );
-				}
-			}
 
-			if (del != null)
-				output.Write ( " (" );
-			else {
+				IEnumerator enumerator = declaration.BaseTypes.GetEnumerator ();
+				if (enumerator.MoveNext ()) {
+					CodeTypeReference type = (CodeTypeReference) enumerator.Current;
+
+					output.Write (" : ");
+					OutputType (type);
+
+					while (enumerator.MoveNext ()) {
+						type = (CodeTypeReference) enumerator.Current;
+
+						output.Write (", ");
+						OutputType (type);
+					}
+				}
+
 #if NET_2_0
 				GenerateGenericsConstraints (declaration.TypeParameters);
 #endif
-				output.WriteLine ( " {" );
+				output.WriteLine (" {");
+				++Indent;
+			} else {
+				if ((declaration.TypeAttributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public) {
+					output.Write ("public ");
+				}
+
+				CodeTypeDelegate delegateDecl = (CodeTypeDelegate) declaration;
+				output.Write ("delegate ");
+				OutputType (delegateDecl.ReturnType);
+				output.Write (" ");
+				output.Write (GetSafeName (declaration.Name));
+				output.Write ("(");
+				OutputParameters (delegateDecl.Parameters);
+				output.WriteLine (");");
 			}
-			++Indent;
 		}
 
 		protected override void GenerateTypeEnd( CodeTypeDeclaration declaration )
 		{
-			--Indent;
-			if (declaration is CodeTypeDelegate)
-				Output.WriteLine (");");
-			else
+			if (!IsCurrentDelegate) {
+				--Indent;
 				Output.WriteLine ("}");
+			}
 		}
 
 		protected override void GenerateNamespaceStart( CodeNamespace ns )
@@ -883,6 +909,66 @@ namespace Mono.CSharp
 		protected override void OutputType( CodeTypeReference type )
 		{
 			Output.Write( GetTypeOutput( type ) );
+		}
+
+		private void OutputTypeAttributes (CodeTypeDeclaration declaration)
+		{
+			TextWriter output = Output;
+			TypeAttributes attributes = declaration.TypeAttributes;
+
+			switch (attributes & TypeAttributes.VisibilityMask) {
+				case TypeAttributes.Public:
+				case TypeAttributes.NestedPublic:
+					output.Write ("public ");
+					break;
+				case TypeAttributes.NestedPrivate:
+					output.Write ("private ");
+					break;
+#if NET_2_0
+				case TypeAttributes.NotPublic:
+				case TypeAttributes.NestedFamANDAssem:
+				case TypeAttributes.NestedAssembly:
+					output.Write ("internal ");
+					break; 
+				case TypeAttributes.NestedFamily:
+					output.Write ("protected ");
+					break;
+				case TypeAttributes.NestedFamORAssem:
+					output.Write ("protected internal ");
+					break;
+#endif
+			}
+
+			if (declaration.IsStruct) {
+#if NET_2_0
+				if (declaration.IsPartial) {
+					output.Write ("partial ");
+				}
+#endif
+				output.Write ("struct ");
+			} else if (declaration.IsEnum) {
+				output.Write ("enum ");
+			} else {
+				if ((attributes & TypeAttributes.Interface) != 0) {
+#if NET_2_0
+					if (declaration.IsPartial) {
+						output.Write ("partial ");
+					}
+#endif
+					output.Write ("interface ");
+				} else {
+					if ((attributes & TypeAttributes.Sealed) != 0)
+						output.Write ("sealed ");
+					if ((attributes & TypeAttributes.Abstract) != 0)
+						output.Write ("abstract ");
+#if NET_2_0
+					if (declaration.IsPartial) {
+						output.Write ("partial ");
+					}
+#endif
+					output.Write ("class ");
+				}
+			}
 		}
 
 		[MonoTODO ("Implement missing special characters")]
@@ -1138,14 +1224,7 @@ namespace Mono.CSharp
 			sb [sb.Length - 1] = '>';
 			return sb.ToString ();
 		}
-
-		internal override void OutputExtraTypeAttribute (CodeTypeDeclaration type)
-		{
-			if (type.IsPartial)
-				Output.Write ("partial ");
-		}
 #endif
-
 
 #if false
 		//[MonoTODO]

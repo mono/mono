@@ -927,9 +927,6 @@ namespace System.CodeDom.Compiler {
 				break;
 			}
 
-			if (!IsCurrentClass)
-				OutputExtraTypeAttribute (currentType);
-
 			if (isStruct)
 				output.Write ("struct ");
 
@@ -946,16 +943,11 @@ namespace System.CodeDom.Compiler {
 					if ((attributes & TypeAttributes.Abstract) != 0)
 						output.Write ("abstract ");
 					
-					OutputExtraTypeAttribute (currentType);
 					output.Write ("class ");
 				}
 			}
 		}
 
-		internal virtual void OutputExtraTypeAttribute (CodeTypeDeclaration type)
-		{
-		}
-		
 		protected virtual void OutputTypeNamePair (CodeTypeReference type,
 							   string name)
 		{
@@ -1037,6 +1029,8 @@ namespace System.CodeDom.Compiler {
 
 		private void GenerateType (CodeTypeDeclaration type)
 		{
+			this.currentType = type;
+
 #if NET_2_0
 			if (type.StartDirectives.Count > 0)
 				GenerateDirectives (type.StartDirectives);
@@ -1047,56 +1041,27 @@ namespace System.CodeDom.Compiler {
 			if (type.LinePragma != null)
 				GenerateLinePragmaStart (type.LinePragma);
 
-			CodeTypeDelegate del = type as CodeTypeDelegate;
-			if (del != null)
-				GenerateDelegate (del);
-			else
-				GenerateNonDelegateType (type);
-
-			if (type.LinePragma != null)
-				GenerateLinePragmaEnd (type.LinePragma);
-
-#if NET_2_0
-			if (type.EndDirectives.Count > 0)
-				GenerateDirectives (type.EndDirectives);
-#endif
-		}
-
-		private void GenerateDelegate (CodeTypeDelegate type)
-		{
-			this.currentType = type;
-
-			GenerateTypeStart (type);
-			OutputParameters (type.Parameters);
-			GenerateTypeEnd (type);
-		}
-		
-		private void GenerateNonDelegateType (CodeTypeDeclaration type)
-		{
-			this.currentType = type;
-
 			GenerateTypeStart (type);
 
-			CodeTypeMember [] members = new CodeTypeMember [type.Members.Count];
+			CodeTypeMember[] members = new CodeTypeMember[type.Members.Count];
 			type.Members.CopyTo (members, 0);
 
 #if NET_2_0
 			if (!Options.VerbatimOrder)
 #endif
-			{
+ {
 				int[] order = new int[members.Length];
-				for (int n=0; n<members.Length; n++)
-					order[n] = Array.IndexOf(memberTypes, members[n].GetType()) * members.Length + n;
+				for (int n = 0; n < members.Length; n++)
+					order[n] = Array.IndexOf (memberTypes, members[n].GetType ()) * members.Length + n;
 
 				Array.Sort (order, members);
 			}
-			
+
 			// WARNING: if anything is missing in the foreach loop and you add it, add the type in
 			// its corresponding place in CodeTypeMemberComparer class (below)
 
 			CodeTypeDeclaration subtype = null;
-			foreach (CodeTypeMember member in members) 
-			{
+			foreach (CodeTypeMember member in members) {
 				CodeTypeMember prevMember = this.currentMember;
 				this.currentMember = member;
 
@@ -1130,54 +1095,46 @@ namespace System.CodeDom.Compiler {
 					GenerateLinePragmaStart (member.LinePragma);
 
 				CodeMemberEvent eventm = member as CodeMemberEvent;
-				if (eventm != null) 
-				{
+				if (eventm != null) {
 					GenerateEvent (eventm, type);
 					continue;
 				}
 				CodeMemberField field = member as CodeMemberField;
-				if (field != null) 
-				{
+				if (field != null) {
 					GenerateField (field);
 					continue;
 				}
 				CodeEntryPointMethod epmethod = member as CodeEntryPointMethod;
-				if (epmethod != null) 
-				{
+				if (epmethod != null) {
 					GenerateEntryPointMethod (epmethod, type);
 					continue;
 				}
 				CodeTypeConstructor typeCtor = member as CodeTypeConstructor;
-				if (typeCtor != null) 
-				{
+				if (typeCtor != null) {
 					GenerateTypeConstructor (typeCtor);
 					continue;
 				}
 				CodeConstructor ctor = member as CodeConstructor;
-				if (ctor != null) 
-				{
+				if (ctor != null) {
 					GenerateConstructor (ctor, type);
 					continue;
 				}
 				CodeMemberMethod method = member as CodeMemberMethod;
-				if (method != null) 
-				{
+				if (method != null) {
 					GenerateMethod (method, type);
 					continue;
 				}
 				CodeMemberProperty property = member as CodeMemberProperty;
-				if (property != null) 
-				{
+				if (property != null) {
 					GenerateProperty (property, type);
 					continue;
 				}
 				CodeSnippetTypeMember snippet = member as CodeSnippetTypeMember;
-				if (snippet != null) 
-				{
+				if (snippet != null) {
 					GenerateSnippetMember (snippet);
 					continue;
 				}
-				
+
 				this.currentMember = prevMember;
 			}
 
@@ -1190,8 +1147,17 @@ namespace System.CodeDom.Compiler {
 					GenerateDirectives (currentMember.EndDirectives);
 #endif
 			}
+
 			this.currentType = type;
 			GenerateTypeEnd (type);
+
+			if (type.LinePragma != null)
+				GenerateLinePragmaEnd (type.LinePragma);
+
+#if NET_2_0
+			if (type.EndDirectives.Count > 0)
+				GenerateDirectives (type.EndDirectives);
+#endif
 		}
 
 		protected abstract string GetTypeOutput (CodeTypeReference type);

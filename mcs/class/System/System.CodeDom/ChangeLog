@@ -1,3 +1,9 @@
+2005-07-24 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeTypeReference.cs: Added internal IsInterface property.
+	* CodeTypeDelegate.cs: System.Delegate is base type, and make sure 
+	ReturnType is initialized.
+
 2005-06-28 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeTypeReference.cs: Also consider null type name as void, throw

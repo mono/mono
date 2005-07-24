@@ -1,3 +1,8 @@
+2005-07-24 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeTypeDelegateTest.cs from
+	System.CodeDom.
+
 2005-07-21 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeGeneratorTest.cs from
