@@ -137,7 +137,9 @@ namespace System.Web.Hosting
 					  string Query,
 					  ServletOutputStream output) : this (Page, Query)
 		{
+#if DEBUG
 			Console.WriteLine("Constructor 3 of ServletWorkerRequest!! -->");
+#endif
 			if (AppDomain.CurrentDomain.GetData (".appPath") == null)
 				throw new HttpException ("Invalid app domain");
 
