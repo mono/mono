@@ -1,4 +1,11 @@
+2005-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MachineKeyConfigHandler.cs:
+	* MachineKeyConfig.cs: patch from Miguel that moves code from
+	MachineKeyConfigHandler to MachineKeyConfig.
+
 2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* WebConfigurationSettings.cs: TARGET_J2EE changes. static variables in
 	  AppDomain.
 
