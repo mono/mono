@@ -36,13 +36,38 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Web.Util;
 using System.Xml;
+#if TARGET_J2EE
+using vmw.@internal.io;
+using vmw.common;
+using System.Web.J2EE;
+#endif
 
 namespace System.Web.Configuration
 {
 	class WebConfigurationSettings
 	{
+#if !TARGET_J2EE
 		static IConfigurationSystem oldConfig;
 		static WebDefaultConfig config;
+#else
+		static private IConfigurationSystem oldConfig {
+			get {
+				return (IConfigurationSystem)AppDomain.CurrentDomain.GetData("WebConfigurationSettings.oldConfig");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("WebConfigurationSettings.oldConfig", value);
+			}
+		}
+
+		static private WebDefaultConfig config {
+			get {
+				return (WebDefaultConfig)AppDomain.CurrentDomain.GetData("WebConfigurationSettings.config");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("WebConfigurationSettings.config", value);
+			}
+		}
+#endif
 		static string machineConfigPath;
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
 		static readonly object lockobj = new object ();
@@ -116,7 +141,23 @@ namespace System.Web.Configuration
 	//
 	class WebDefaultConfig : IConfigurationSystem
 	{
+#if !TARGET_J2EE
 		static WebDefaultConfig instance;
+#else
+		static private WebDefaultConfig instance {
+			get {
+				WebDefaultConfig val = (WebDefaultConfig)AppDomain.CurrentDomain.GetData("WebDefaultConfig.instance");
+				if (val == null) {
+					val = new WebDefaultConfig();
+					AppDomain.CurrentDomain.SetData("WebDefaultConfig.instance", val);
+				}
+				return val;
+			}
+			set {
+				AppDomain.CurrentDomain.SetData("WebDefaultConfig.instance", value);
+			}
+		}
+#endif
 		Hashtable fileToConfig;
 		HttpContext firstContext;
 		bool initCalled;
@@ -188,7 +229,6 @@ namespace System.Web.Configuration
 				tempDir = "";
 				realpath = HttpRuntime.AppDomainAppPath;
 			}
-
 			ConfigurationData parent = GetConfigFromFileName (tempDir, context);
 			if (wcfile == null) {
 				data = new ConfigurationData (parent, null, realpath);
@@ -401,6 +441,56 @@ namespace System.Web.Configuration
 			factories = new Hashtable ();
 		}
 
+#if TARGET_J2EE
+		public bool LoadFromFile (string fileName)
+		{
+			this.fileName = fileName;
+			if (fileName == null)
+				return false;
+			XmlTextReader reader = null;
+			java.io.InputStream inputStream = null;
+			try {
+				IResourceLoader resLoader = (IResourceLoader)AppDomain.CurrentDomain.GetData("GH_ResourceLoader");
+				if (resLoader == null)
+					throw new HttpException("Unexpected exception. Resource loader not initialized under current domain");
+				if (fileName.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+					fileName = fileName.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
+
+				inputStream = resLoader.getResourceAsStream(fileName);
+
+				// patch for machine.config
+				if (inputStream == null && fileName.EndsWith("machine.config"))
+				{
+					if (fileName.StartsWith("/"))
+						fileName = fileName.Substring(1);
+					java.lang.ClassLoader cl = (java.lang.ClassLoader)AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
+					if (cl != null)
+						inputStream = cl.getResourceAsStream(fileName);
+				}
+				if (inputStream == null)
+					return false;
+
+				Stream fs = (Stream)IOUtils.getStream(inputStream);
+				reader = new XmlTextReader (fs);
+				InitRead (reader);
+				ReadConfig (reader, false);
+			} 
+			catch (ConfigurationException) { throw; }
+			catch (Exception e)
+			{
+				throw new ConfigurationException ("Error reading " + fileName, e);
+			}
+			finally
+			{
+				if (reader != null)
+					reader.Close();
+				if (inputStream != null)
+					inputStream.close();
+			}
+
+			return true;
+		}
+#else
 		public bool LoadFromFile (string fileName)
 		{
 			this.fileName = fileName;
@@ -425,6 +515,7 @@ namespace System.Web.Configuration
 
 			return true;
 		}
+#endif
 
 		public void LoadFromReader (XmlTextReader reader, string fakeFileName, bool isLocation)
 		{

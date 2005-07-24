@@ -1,3 +1,7 @@
+2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
+	* WebConfigurationSettings.cs: TARGET_J2EE changes. static variables in
+	  AppDomain.
+
 2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
 	* WebConfigurationSettings.cs: Grasshopper doesn't support remoting and the FileSystemWatcher
 
