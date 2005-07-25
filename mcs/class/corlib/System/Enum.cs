@@ -339,8 +339,14 @@ namespace System
 						break;
 					}
 				}
-				if (!found)
-					throw new ArgumentException ("The requested value was not found.");
+				if (!found){
+					try {
+						// Attempt to convert to numeric type
+						return ToObject (enumType, Convert.ChangeType (value, typeCode) );
+					} catch {
+						throw new ArgumentException ("The requested value was not found.");
+					}
+				}
 				
 			}
 			return ToObject (enumType, retVal);
