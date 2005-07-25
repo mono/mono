@@ -54,7 +54,7 @@ namespace System.Web.Security
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
 			AuthConfig config = (AuthConfig) context.GetConfig ("system.web/authentication");
-			if (config.Mode != AuthenticationMode.Forms) {
+			if (config == null || config.Mode != AuthenticationMode.Forms) {
 				return;
 			}
 
