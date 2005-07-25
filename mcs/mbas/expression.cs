@@ -6495,6 +6495,7 @@ namespace Mono.MonoBASIC {
 				SimpleName child_expr = (SimpleName) expr;
 
 				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
+				((SimpleName) new_expr).IsInvocation = is_invocation;
 
 				if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type)
 					return new_expr.Resolve (ec, flags);

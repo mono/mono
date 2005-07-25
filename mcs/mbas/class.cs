@@ -3304,11 +3304,14 @@ namespace Mono.MonoBASIC {
 						TypeManager.ExpandAllInterfaces (tbases, ref bases);
 
 						foreach (Type tbase in bases) {
+							/*
 							string bname = tbase.Name;
 							if (bname.LastIndexOf(".") != -1)
 								bname = bname.Substring(bname.LastIndexOf("."));
+							*/
 
-							if (bname == iname)	{
+							//if (bname == iname)	{
+							if (tbase == InterfaceType) {
 								iface_found = true;
 								break;
 							}
