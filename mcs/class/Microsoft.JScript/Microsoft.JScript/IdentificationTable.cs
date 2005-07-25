@@ -181,15 +181,9 @@ namespace Microsoft.JScript {
 				//
 				top = key;					
 			}
-			Hashtable top = (Hashtable) locals.Peek ();
+			Hashtable top_ht = (Hashtable) locals.Peek ();
 			string val = key.Value;
-			//
-			// This is to allow the same argument name to appear multiple times
-			// in the same function argument list.
-			//
-			if (top.ContainsKey (val))
-				top.Remove (val);
-			top.Add (val, value);
+			top_ht[val] = value;
 		}
 
 		/// <summary>

@@ -1,3 +1,7 @@
+2005-07-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* IdentificationTable.cs: Fixed build.
+
 2005-07-24  Florian Gross  <flgr@ccan.de>
 
 	* DateConstructor.cs: CreateInstance handles Infinity, NaN and double
