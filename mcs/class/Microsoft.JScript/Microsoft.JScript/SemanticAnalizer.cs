@@ -62,6 +62,7 @@ namespace Microsoft.JScript {
 			obj_ctrs.Add ("Date", typeof (DateConstructor));
 			obj_ctrs.Add ("Math", typeof (MathObject));
 			obj_ctrs.Add ("Number", typeof (NumberConstructor));
+			obj_ctrs.Add ("Object", typeof (ObjectConstructor));
 			obj_ctrs.Add ("String", typeof (StringConstructor));
 			obj_ctrs.Add ("RegExp", typeof (RegExpConstructor));
 
