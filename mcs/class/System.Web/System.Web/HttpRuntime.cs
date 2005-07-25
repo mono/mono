@@ -86,7 +86,9 @@ namespace System.Web {
 		//private bool _firstRequestExecuted;
 
 		private Exception _initError;
+#if !TARGET_J2EE
 		private TimeoutManager timeoutManager;
+#endif
 		private QueueManager queueManager;
 		private TraceManager traceManager;
 		private WaitCallback doRequestCallback;
@@ -113,7 +115,9 @@ namespace System.Web {
 		{
 			try {
 				_cache = new Cache ();
+#if !TARGET_J2EE
 				timeoutManager = new TimeoutManager ();
+#endif
 
 				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification (OnEndOfSend);
 				_handlerCallback = new AsyncCallback (OnHandlerReady);
@@ -276,7 +280,8 @@ namespace System.Web {
 
 		internal void Dispose() {
 			WaitForRequests (2000);
-			queueManager.Dispose (); // Send a 503 to all queued requests
+			if (queueManager != null)
+				queueManager.Dispose (); // Send a 503 to all queued requests
 			queueManager = null;
 			_cache = null;
 			HttpApplicationFactory.EndApplication();
@@ -496,11 +501,13 @@ namespace System.Web {
 			}
 		}
 
+#if !TARGET_J2EE
 		internal static TimeoutManager TimeoutManager {
 			get {
 				return HttpRuntime._runtime.timeoutManager;
 			}
 		}
+#endif
 
                 internal static TraceManager TraceManager {
                         get {

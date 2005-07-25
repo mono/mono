@@ -231,17 +231,6 @@ namespace System.Web
 		}
 #endif
 
-#if TARGET_J2EE
-		private bool _timedOut;
-		internal bool TimedOut {
-			get {
-				return _timedOut;
-			}
-			set {
-				_timedOut = value;
-			}
-		}
-#endif
 		public IDictionary Items
 		{
 			get {

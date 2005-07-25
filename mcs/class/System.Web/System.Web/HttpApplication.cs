@@ -1056,10 +1056,10 @@ namespace System.Web
 			internal void Start ()
 			{
 				Reset ();
-#if !TARGET_J2EE
-				ExecuteNextAsync (null);
-#else
+#if TARGET_J2EE
 				ExecuteNext(null);
+#else
+				ExecuteNextAsync (null);
 #endif
 			}
 
@@ -1138,7 +1138,7 @@ namespace System.Web
 #if TARGET_J2EE
 			private Exception HandleJavaException(Exception obj)
 			{
-				Exception lasterror = null;
+				Exception lasterror = obj;
 
 				if (obj is System.Reflection.TargetInvocationException ) 
 				{
@@ -1181,12 +1181,6 @@ namespace System.Web
 							_app.Context.EndTimeoutPossible ();
 						}
 					}
-#if TARGET_J2EE		//Catch case of aborting by timeout
-					if (_app.Context.TimedOut) {
-						_app.CompleteRequest ();
-						return null;
-					}
-#endif
 					if (state.PossibleToTimeout) {
 						// Async Execute
 						_app.Context.TryWaitForTimeout ();
@@ -1386,14 +1380,18 @@ namespace System.Web
 			SaveThreadCulture ();
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
+#if !TARGET_J2EE
 			HttpRuntime.TimeoutManager.Add (_Context);
+#endif
 			SetPrincipal (_Context.User);
 		}
 
 		internal void OnStateExecuteLeave ()
 		{
 			RestoreThreadCulture ();
+#if !TARGET_J2EE
 			HttpRuntime.TimeoutManager.Remove (_Context);
+#endif
 			HttpContext.Context = _savedContext;
 			RestorePrincipal ();
 		}
