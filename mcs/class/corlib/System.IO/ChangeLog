@@ -1,3 +1,8 @@
+2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BinaryReader.cs: use Buffer.BlockCopy instead of Array.Copy when
+	expanding the buffer.
+
 2005-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: don't leak 'find' handles.

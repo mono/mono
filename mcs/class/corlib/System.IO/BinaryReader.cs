@@ -497,8 +497,7 @@ namespace System.IO {
 		{
 			if(m_buffer.Length <= length) {
 				byte[] new_buffer=new byte[length];
-				Array.Copy(m_buffer, new_buffer,
-					   m_buffer.Length);
+				Buffer.BlockCopy (m_buffer, 0, new_buffer, 0, m_buffer.Length);
 				m_buffer=new_buffer;
 			}
 		}
