@@ -187,7 +187,15 @@ namespace Mono.CSharp
 			}
 
 			SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
-				
+
+			// Check 'MZ' header
+			if (reader.Read () == 77 && reader.Read () == 90) {
+				Report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
+				input.Close ();
+				return;
+			}
+
+			reader.Position = 0;
 			parser = new CSharpParser (reader, file, defines);
 			parser.ErrorOutput = Report.Stderr;
 			try {
