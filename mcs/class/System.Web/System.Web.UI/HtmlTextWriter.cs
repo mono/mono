@@ -305,7 +305,11 @@ private void AddAttribute(string name, string value, HtmlTextWriterAttribute key
 		System.Array.Copy(_attrList, rAttrArr, (int) _attrList.Length);
 		_attrList = rAttrArr;
 	}
+#if TARGET_JVM // RenderAttribute is a class and not a struct under TARGET_JVM
+	RenderAttribute rAttr = new RenderAttribute();
+#else
 	RenderAttribute rAttr;
+#endif
 	rAttr.name = name;
 	rAttr.value = value;
 	rAttr.key = key;
@@ -327,7 +331,11 @@ protected virtual void AddStyleAttribute(string name, string value, HtmlTextWrit
 		System.Array.Copy(_styleList, rAttrArr, (int) _styleList.Length);
 		_styleList = rAttrArr;
 	}
+#if TARGET_JVM // RenderStyle is a class and not a struct under TARGET_JVM
+	RenderStyle rAttr = new RenderStyle();
+#else
 	RenderStyle rAttr;
+#endif
 	rAttr.name = name;
 	rAttr.value = value;
 	rAttr.key = key;
@@ -377,7 +385,7 @@ protected virtual void FilterAttributes(){
 	}
 	_styleCount = count;
 	count = 0;
-	for(int i=0; i <= _attrCount; i++){
+	for(int i=0; i < _attrCount; i++){
 		RenderAttribute rAttr = _attrList[i];
 		if (OnAttributeRender(rAttr.name, rAttr.value, rAttr.key)) {
 			count++;
@@ -512,6 +520,9 @@ protected void PushEndTag(string endTag){
 		System.Array.Copy(_endTags, temp, (int) _endTags.Length);
 		_endTags = temp;
 	}
+#if TARGET_JVM // TagStackEntry is a class and not a struct under TARGET_JVM
+	_endTags[_endTagCount] = new TagStackEntry();
+#endif
 	_endTags[_endTagCount].tagKey = _tagKey;
 	_endTags[_endTagCount].endTagText = endTag;
 	_endTagCount++;
@@ -1069,14 +1080,22 @@ struct AttributeInformation {
 	}
 } 
  
+#if TARGET_JVM
+class RenderAttribute {
+#else
 struct RenderAttribute {
+#endif
 	public bool encode;
 	public HtmlTextWriterAttribute key;
 	public string name;
 	public string value;
 } 
  
+#if TARGET_JVM
+class RenderStyle {
+#else
 struct RenderStyle {
+#endif
 	public HtmlTextWriterStyle key;
 	public string name;
 	public string value;
@@ -1094,7 +1113,11 @@ struct TagInformation {
 	}
 } 
  
+#if TARGET_JVM
+class TagStackEntry {
+#else
 struct TagStackEntry {
+#endif
 	public string endTagText;
 	public HtmlTextWriterTag tagKey;
 } 

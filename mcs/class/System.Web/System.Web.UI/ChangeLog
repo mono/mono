@@ -1,3 +1,7 @@
+2005-07-25 Eyal Alaluf (eyala@mainsoft.com)
+	* HtmlTextWriter.cs: Make several structs into clases under TARGET_JVM.
+	  (Perf issue with array of structs under TARGET_JVM).
+
 2005-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: if there are no commas in the assembly name, just
