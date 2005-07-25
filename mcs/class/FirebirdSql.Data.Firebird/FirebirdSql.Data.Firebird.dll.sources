@@ -104,6 +104,7 @@ FirebirdSql.Data.Firebird/Isql/CommandExecutingEventArgs.cs
 FirebirdSql.Data.Firebird/Isql/FbBatchExecution.cs
 FirebirdSql.Data.Firebird/Isql/FbScript.cs
 FirebirdSql.Data.Firebird/Isql/StringParser.cs
+FirebirdSql.Data.Firebird/Isql/SqlStatementType.cs
 FirebirdSql.Data.Firebird/Services/FbBackup.cs
 FirebirdSql.Data.Firebird/Services/FbBackupFile.cs
 FirebirdSql.Data.Firebird/Services/FbBackupFlags.cs
