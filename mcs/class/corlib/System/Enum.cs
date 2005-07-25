@@ -268,6 +268,40 @@ namespace System
 			return Parse (enumType, value, false);
 		}
 
+		private static int FindName (string [] names, string name,  bool ignoreCase)
+		{
+			for (int i = 0; i < names.Length; ++i) {
+				if (String.Compare (name, names [i], ignoreCase, CultureInfo.InvariantCulture) == 0)
+					return i;
+			}
+			return -1;
+		}
+
+		public static long GetValue (object value, TypeCode typeCode)
+		{
+			switch (typeCode) {
+			case TypeCode.Byte:
+				return (byte) value;
+			case TypeCode.SByte:
+				return (sbyte) value;
+			case TypeCode.Int16:
+				return (short) value;
+			case TypeCode.Int32:
+				return (int) value;
+			case TypeCode.Int64:
+				return (long) value;
+			case TypeCode.UInt16:
+				return (ushort) value;
+			case TypeCode.UInt32:
+				return (uint) value;
+			case TypeCode.UInt64:
+				return (long) ((ulong) value);
+			}
+			throw new ArgumentException ("typeCode is not a valid type code for an Enum");
+		}
+
+		private static char [] split_char = { ',' };
+
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
 			if (enumType == null)
@@ -277,79 +311,43 @@ namespace System
 				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum type.");
+				throw new ArgumentException ("not an Enum type", "enumType");
 
-			if (String.Empty == value.Trim())
-				throw new ArgumentException ("value cannot be empty string.");
+			value = value.Trim ();
+			if (String.Empty == value)
+				throw new ArgumentException ("cannot be an empty string", "value");
 
 			MonoEnumInfo info;
 			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
 
 			long retVal = 0;
+			// is 'value' a named constant?
+			int loc = FindName (info.names, value, ignoreCase);
+			if (loc >= 0)
+				return info.values.GetValue (loc);
 
 			TypeCode typeCode = ((Enum) info.values.GetValue (0)).GetTypeCode ();
 
-			try {
-				// Attempt to convert to numeric type
-				return ToObject (enumType, Convert.ChangeType (value, typeCode) );
-			} catch {}
-
-			string[] names = value.Split (new char[] {','});
-			for (i = 0; i < names.Length; ++i)
-				names [i] = names [i].Trim ();
-
-			foreach (string name in names) {
-				bool found = false;
-				for (i = 0; i < info.values.Length; ++i) {
-					if (String.Compare (name, info.names [i], ignoreCase, CultureInfo.InvariantCulture) == 0) {
-						switch (typeCode) {
-							case TypeCode.Byte:
-								retVal |= (long)((byte)info.values.GetValue (i));
-								break;
-							case TypeCode.SByte:
-								// use the unsigned version in the cast to avoid 
-								// compiler warning
-								retVal |= (long)((byte)(SByte)info.values.GetValue (i));
-								break;
-							case TypeCode.Int16:
-								// use the unsigned version in the cast to avoid 
-								// compiler warning
-								retVal |= (long)((ushort)(short)info.values.GetValue (i));
-								break;
-							case TypeCode.Int32:
-								// use the unsigned version in the cast to avoid 
-								// compiler warning
-								retVal |= (long)((uint)(int)info.values.GetValue (i));
-								break;
-							case TypeCode.Int64:
-								retVal |= (long)info.values.GetValue (i);
-								break;
-							case TypeCode.UInt16:
-								retVal |= (long)((UInt16)info.values.GetValue (i));
-								break;
-							case TypeCode.UInt32:
-								retVal |= (long)((UInt32)info.values.GetValue (i));
-								break;
-							case TypeCode.UInt64:
-								retVal |= (long)((UInt64)info.values.GetValue (i));
-								break;
-						}
-						found = true;
-						break;
-					}
-				}
-				if (!found){
-					try {
-						// Attempt to convert to numeric type
-						return ToObject (enumType, Convert.ChangeType (value, typeCode) );
-					} catch {
+			// is 'value' a list of named constants?
+			if (value.IndexOf (',') != -1) {
+				string [] names = value.Split (split_char);
+				retVal = 0;
+				for (i = 0; i < names.Length; ++i) {
+					loc = FindName (info.names, names [i].Trim (), ignoreCase);
+					if (loc < 0)
 						throw new ArgumentException ("The requested value was not found.");
-					}
+					retVal |= GetValue (info.values.GetValue (loc), typeCode);
 				}
-				
+				return ToObject (enumType, retVal);
 			}
-			return ToObject (enumType, retVal);
+
+			// is 'value' a number?
+			try {
+				return ToObject (enumType, Convert.ChangeType (value, typeCode));
+			} catch (Exception e) {
+				throw new ArgumentException ("The requested value was not found", e);
+			}
 		}
 
 		/// <summary>

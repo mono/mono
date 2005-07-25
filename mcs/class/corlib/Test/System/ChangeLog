@@ -1,3 +1,7 @@
+2005-07-25  Raja R Harinath  <rharinath@novell.com>
+
+	* EnumTest.cs (TestParse2): Enable testcases.
+
 2005-07-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AttributeTest.cs: Add test for bug #75514.

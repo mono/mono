@@ -555,7 +555,7 @@ public class EnumTest : TestCase
 	}
 	public void TestParse2() {
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				String name = "huh?";
 				Enum.Parse(null, name, true);
@@ -566,7 +566,7 @@ public class EnumTest : TestCase
 			       errorThrown);
 		}
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				TestingEnum x = TestingEnum.Test;
 				Enum.Parse(x.GetType(), null, true);
@@ -577,7 +577,7 @@ public class EnumTest : TestCase
 			       errorThrown);
 		}
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				String bad = "huh?";
 				Enum.Parse(bad.GetType(), bad, true);
@@ -588,7 +588,7 @@ public class EnumTest : TestCase
 			       errorThrown);
 		}
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				TestingEnum x = TestingEnum.Test;
 				String bad = "";
@@ -600,7 +600,7 @@ public class EnumTest : TestCase
 			       errorThrown);
 		}
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				TestingEnum x = TestingEnum.Test;
 				String bad = " ";
@@ -612,7 +612,7 @@ public class EnumTest : TestCase
 			       errorThrown);
 		}
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				String bad = "huh?";
 				TestingEnum x = TestingEnum.Test;
@@ -624,7 +624,7 @@ public class EnumTest : TestCase
 			       errorThrown);
 		}
 		{
-			bool errorThrown = true;
+			bool errorThrown = false;
 			try {
 				String bad = "test";
 				TestingEnum x = TestingEnum.Test;

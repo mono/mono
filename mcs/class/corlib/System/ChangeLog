@@ -1,3 +1,11 @@
+2005-07-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Enum.cs (FindName, GetValue): New.  Carved out of ...
+	(Parse): ... this.  Refactor and simplify code.  Avoid incurring
+	exceptions when parsing names.  Avoid allocating arrays unless
+	necessary.  Avoid conversion of an enumeration constant	to its own
+	type.  (Incorporates ideas from a patch by Gonzalo Paniagua Javier.)
+
 2005-07-13  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MarshalByRefObject.cs: GetLifetimeService() should be virtual.
@@ -5,7 +13,7 @@
 
 2005-07-13  Miguel de Icaza  <miguel@novell.com>
 
-	*  Array.cs: Patch from rodrigobamboo@gmail.com that fixes the
+	* Array.cs: Patch from rodrigobamboo@gmail.com that fixes the
 	signature for GetValue and SetValue to make the long [] argument
 	be a params argument. 
 
