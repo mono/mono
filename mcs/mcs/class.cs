@@ -2071,9 +2071,15 @@ namespace Mono.CSharp {
 						if (!f.IsUsed){
 							if ((f.caching_flags & Flags.IsAssigned) == 0)
 								Report.Warning (169, 3, f.Location, "The private field `{0}' is never used", f.GetSignatureForError ());
-							else
-								Report.Warning (414, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
+							else {
+#if NET_2_0
+								const int error_code = 414;
+#else
+								const int error_code = 169;
+#endif
+								Report.Warning (error_code, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
 									f.GetSignatureForError ());
+							}
 							continue;
 						}
 						

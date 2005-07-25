@@ -1,5 +1,9 @@
 2005-07-25  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (TypeContainer.VerifyMembers): Be compatible in warning 169.
+
+2005-07-25  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (MethodData.Define): Check whether accessor implementing
 	interface is public.
 
