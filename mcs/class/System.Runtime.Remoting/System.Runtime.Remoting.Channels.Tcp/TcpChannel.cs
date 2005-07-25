@@ -41,8 +41,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		private string _name = "tcp";
 		private int _priority = 1;
 	
-		public TcpChannel (): this (0)
+		public TcpChannel ()
         {
+			Init (new Hashtable(), null, null);
 		}
 
 		public TcpChannel (int port)

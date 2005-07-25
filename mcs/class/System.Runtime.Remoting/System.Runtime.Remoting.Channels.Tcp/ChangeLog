@@ -1,3 +1,8 @@
+2005-07-25  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* TcpChannel.cs: Don't create a server channel when the
+	default constructor is used. Fixes bug #75626.
+
 2005-05-31  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* TcpServerTransportSink.cs: Remove the channel uri from the
