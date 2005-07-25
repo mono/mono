@@ -31,7 +31,7 @@
 //
 
 
-#if NET_2_0
+#if NET_2_0 || TARGET_JVM
 namespace System.Data {
 	public enum FillOptions 
 	{
