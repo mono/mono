@@ -1,3 +1,7 @@
+2005-07-25 Eyal Alaluf <eyala@mainsoft.com>
+    * ExpiresBuckets.cs: Removed unused field (that if used would lead to
+	  serious runtime errors).
+
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cache.cs: added new InsertPrivate overload.

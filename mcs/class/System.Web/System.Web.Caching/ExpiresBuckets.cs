@@ -37,7 +37,6 @@ namespace System.Web.Caching {
 	/// </summary>
 	internal struct ExpiresEntry {
 		internal CacheEntry Entry;
-		internal long TicksExpires;
 		internal int _intNext;
 	}
 
