@@ -74,6 +74,19 @@ public class XamlParserTest : Assertion {
 	public void Clean() {}
 
 	[Test]
+	[ExpectedException(typeof(Exception), "Unknown processing instruction.")]
+	public void TestIncorrectPIName()
+	{
+		string s = "<?Mapppping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
+		ParserTester pt = new ParserTester(s, 
+				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+
+	}
+
+	[Test]
 	public void TestTopLevel()
 	{
 		string s = "<ConsoleApp xmlns=\"console\"></ConsoleApp>";
@@ -342,7 +355,26 @@ public class XamlParserTest : Assertion {
 				new FinishHappening());
 		pt.Test();
 	}
-	
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Dependency properties can only be set on DependencyObjects (not ConsoleValueString)")]
+	public void TestDependencyPropertyOnNotDependencyObject()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleValueString ConsoleApp.Repetitions=\"3\" />" +
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateObjectHappening(typeof(ConsoleValueString), null),
+				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
+				new CreateDependencyPropertyTextHappening("3", typeof(int)),
+				new EndDependencyPropertyHappening(),
+				new EndObjectHappening(), // ConsoleWriter
+				new EndObjectHappening(), // ConsoleApp
+				new FinishHappening());
+		pt.Test();
+	}
+
 	[Test]
 	[ExpectedException(typeof(Exception), "Property 'Reps' does not exist on 'ConsoleApp'.")]
 	public void TestDependencyPropertyWithIncorrectName()
@@ -452,20 +484,20 @@ public class XamlParserTest : Assertion {
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleValueString>\n" +
-			"xyz" +
+			"ABC" +
 			"</ConsoleValueString>\n" +
 			"</ConsoleApp>";
 		ParserTester pt = new ParserTester(MAPPING + s,
 				new CreateTopLevelHappening(typeof(ConsoleApp), null),
 				new CreateObjectHappening(typeof(ConsoleValueString), null),
-				new CreateObjectTextHappening("xyz"),
+				new CreateObjectHappening(typeof(ConsoleWriter), null),
 				new EndObjectHappening(),
 				new EndObjectHappening(),
 				new EndObjectHappening(),
 				new FinishHappening());
 		pt.Test();
 	}
-
+	
 	[Test]
 	public void TestEvent()
 	{
@@ -494,6 +526,36 @@ public class XamlParserTest : Assertion {
 				new CreatePropertyDelegateHappening("filterfilter", typeof(Filter)),
 				new EndPropertyHappening(),
 				new EndObjectHappening(),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+	[Test]
+	public void TestCode()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<x:Code><![CDATA[Hi there <thing /> here there everywhere]]></x:Code>\n"+
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateCodeHappening("Hi there <thing /> here there everywhere"),
+				new EndObjectHappening(),
+				new FinishHappening());
+		pt.Test();
+	}
+
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Code element children must be either text or CDATA nodes.")]
+	public void TestCodeWithIncorrectChildren()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<x:Code>Hi there <thing /> here there everywhere</x:Code>\n"+
+			"</ConsoleApp>";
+		ParserTester pt = new ParserTester(MAPPING + s,
+				new CreateTopLevelHappening(typeof(ConsoleApp), null),
+				new CreateCodeHappening("Hi there <thing /> here there everywhere"),
 				new EndObjectHappening(),
 				new FinishHappening());
 		pt.Test();

@@ -1,3 +1,14 @@
+2005-07-25  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/XamlParser.cs: added tests for correct catching of non-existent
+	processing instructions, attempting to set a dependency property on an
+	object that is not a dependency object and for code elements.
+	* Test/CodeWriter.cs: added tests for partial class generation and for
+	giving a specific name to an object to be stored as a property value
+	* Mono.Windows.Serialization/XamlParser.cs: be more paranoid about
+	children of code elements, have better punctuation if objecting to an
+	incorrect mapping and throw exceptions on unknown property types.
+
 2005-07-24  Iain McCoy  <iain@mccoy.id.au>
 
 	* Test/XamlParser.cs,

@@ -74,6 +74,54 @@ public class CodeWriterTest {
 		);							
 	}
 
+#if NET_2_0
+	[Test]
+	public void TestPartialTopLevel()
+	{
+		// we duplicate the setup code here, with the one change that
+		// the third parameter (determining partialness) of CodeWriter's
+		// constructor is set to true
+		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+		w = new StringWriter();
+		cw = new CodeWriter(generator, w, true);
+		cw.CreateTopLevel(typeof(ConsoleApp), null);
+		cw.EndObject();
+		cw.Finish();
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public partial class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private derivedConsoleApp() {\n"+
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+#else
+	[ExpectedException(typeof(Exception), "Cannot create partial class")]
+	[Test]
+	public void TestPartialTopLevel()
+	{
+		// we duplicate the setup code here, with the one change that
+		// the third parameter (determining partialness) of CodeWriter's
+		// constructor is set to true
+		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+		w = new StringWriter();
+		cw = new CodeWriter(generator, w, true);
+		cw.CreateTopLevel(typeof(ConsoleApp), null);
+		cw.EndObject();
+		cw.Finish();
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public partial class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private derivedConsoleApp() {\n"+
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+#endif
+
+
 	[Test]
 	public void TestTopLevelWithClassName()
 	{
@@ -240,6 +288,34 @@ public class CodeWriterTest {
 				"			this.AddChild(consoleReader1);\n" +
 				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"			consoleReader1.Prompt = consoleWriter1;\n" +
+				    
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+
+	[Test]
+	public void TestObjectAsPropertyValueWithSpecifiedName()
+	{
+		cw.CreateTopLevel(typeof(ConsoleApp), null);
+		cw.CreateObject(typeof(ConsoleReader), null);
+		cw.CreateProperty(typeof(ConsoleReader).GetProperty("Prompt"));
+		cw.CreatePropertyObject(typeof(ConsoleWriter), "prompt");
+		cw.EndPropertyObject(typeof(ConsoleWriter));
+		cw.EndProperty();
+		cw.EndObject();
+		cw.EndObject();
+		cw.Finish();
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private Xaml.TestVocab.Console.ConsoleWriter prompt = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
+				"		private derivedConsoleApp() {\n"+
+				"			Xaml.TestVocab.Console.ConsoleReader consoleReader1 = new Xaml.TestVocab.Console.ConsoleReader();\n"+
+				"			this.AddChild(consoleReader1);\n" +
+//				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
+				"			consoleReader1.Prompt = prompt;\n" +
 				    
 				"		}\n" +
 				"	}\n" +

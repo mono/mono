@@ -104,7 +104,7 @@ namespace Mono.Windows.Serialization {
 					// skip whitespace and comments
 					break;
 				default:
-					Console.Out.WriteLine("Unknown element type " + reader.NodeType);
+					throw new Exception("Unknown element type " + reader.NodeType);
 					break;
 				}
 			}
@@ -115,6 +115,8 @@ namespace Mono.Windows.Serialization {
 					reader.LocalName == "Code" && 
 					reader.NamespaceURI == XAML_NAMESPACE) {
 				parseEndElement();
+			} else if (reader.NodeType != XmlNodeType.CDATA && reader.NodeType != XmlNodeType.Text) {
+				throw new Exception("Code element children must be either text or CDATA nodes.");
 			} else {
 				currentState.obj = (string)currentState.obj + reader.Value;
 			}
@@ -134,7 +136,7 @@ namespace Mono.Windows.Serialization {
 		void parsePI()
 		{
 			if (reader.Name != "Mapping")
-				throw new Exception("Unknown processing instruction");
+				throw new Exception("Unknown processing instruction.");
 			mapper.AddMappingProcessingInstruction(reader.Value);
 		}
 
