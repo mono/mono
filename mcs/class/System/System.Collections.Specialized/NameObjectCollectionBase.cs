@@ -331,8 +331,12 @@ namespace System.Collections.Specialized
 		public virtual void OnDeserialization (object sender)
 		{
 			SerializationInfo info = infoCopy;
+			
+			// If a subclass overrides the serialization constructor
+			// and inplements its own serialization process, infoCopy will
+			// be null and we can ignore this callback.
 			if (info == null)
-				throw new SerializationException ("The object is not a SerializationInfo");
+				return;
 
 			infoCopy = null;
 			m_hashprovider = (IHashCodeProvider) info.GetValue ("m_hashprovider",
