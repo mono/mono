@@ -104,44 +104,50 @@ namespace System.Web.Security
 			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
 			bool all = (protection == FormsProtectionEnum.All);
 
-			byte [] unencrypted = bytes;
+			byte [] result = bytes;
 			if (all || protection == FormsProtectionEnum.Encryption) {
 				ICryptoTransform decryptor;
 				decryptor = new TripleDESCryptoServiceProvider().CreateDecryptor (config.DecryptionKey192Bits, init_vector);
-				unencrypted = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
+				result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
 				bytes = null;
 			}
 
 			if (all || protection == FormsProtectionEnum.Validation) {
-				byte [] hash = null;
-				int offset = 0, count = 0;
+				int count;
 
+				if (config.ValidationType == MachineKeyValidation.MD5)
+					count = MD5_hash_size;
+				else
+					count = SHA1_hash_size; // 3DES and SHA1
+
+				byte [] vk = config.ValidationKey;
+				byte [] mix = new byte [result.Length - count + vk.Length];
+				Buffer.BlockCopy (result, 0, mix, 0, result.Length - count);
+				Buffer.BlockCopy (vk, 0, mix, result.Length - count, vk.Length);
+
+				byte [] hash = null;
 				switch (config.ValidationType) {
 				case MachineKeyValidation.MD5:
-					count = MD5_hash_size;
-					offset = unencrypted.Length - count;
-					hash = MD5.Create ().ComputeHash (unencrypted, 0, unencrypted.Length - count);
+					hash = MD5.Create ().ComputeHash (mix);
 					break;
 				// From MS docs: "When 3DES is specified, forms authentication defaults to SHA1"
 				case MachineKeyValidation.TripleDES:
 				case MachineKeyValidation.SHA1:
-					count = SHA1_hash_size;
-					offset = unencrypted.Length - count;
-					hash = SHA1.Create ().ComputeHash (unencrypted, 0, unencrypted.Length - count);
+					hash = SHA1.Create ().ComputeHash (mix);
 					break;
 				}
 
-				if (unencrypted.Length < count)
+				if (result.Length < count)
 					throw new ArgumentException ("Error validating ticket (length).", "encryptedTicket");
 
 				int i, k;
-				for (i = offset, k = 0; k < count; i++, k++) {
-					if (unencrypted [i] != hash [k])
+				for (i = result.Length - count, k = 0; k < count; i++, k++) {
+					if (result [i] != hash [k])
 						throw new ArgumentException ("Error validating ticket.", "encryptedTicket");
 				}
 			}
 
-			return FormsAuthenticationTicket.FromByteArray (unencrypted);
+			return FormsAuthenticationTicket.FromByteArray (result);
 		}
 
 		public static FormsAuthenticationTicket Decrypt (string encryptedTicket)
@@ -172,36 +178,41 @@ namespace System.Web.Security
 			if (protection == FormsProtectionEnum.None)
 				return GetHexString (ticket_bytes);
 
-			byte [] all_bytes = ticket_bytes;
+			byte [] result = ticket_bytes;
 			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
 			bool all = (protection == FormsProtectionEnum.All);
 			if (all || protection == FormsProtectionEnum.Validation) {
 				byte [] valid_bytes = null;
+				byte [] vk = config.ValidationKey;
+				byte [] mix = new byte [ticket_bytes.Length + vk.Length];
+				Buffer.BlockCopy (ticket_bytes, 0, mix, 0, ticket_bytes.Length);
+				Buffer.BlockCopy (vk, 0, mix, result.Length, vk.Length);
+
 				switch (config.ValidationType) {
 				case MachineKeyValidation.MD5:
-					valid_bytes = MD5.Create ().ComputeHash (ticket_bytes);
+					valid_bytes = MD5.Create ().ComputeHash (mix);
 					break;
 				// From MS docs: "When 3DES is specified, forms authentication defaults to SHA1"
 				case MachineKeyValidation.TripleDES:
 				case MachineKeyValidation.SHA1:
-					valid_bytes = SHA1.Create ().ComputeHash (ticket_bytes);
+					valid_bytes = SHA1.Create ().ComputeHash (mix);
 					break;
 				}
 
 				int tlen = ticket_bytes.Length;
 				int vlen = valid_bytes.Length;
-				all_bytes = new byte [tlen + vlen];
-				Buffer.BlockCopy (ticket_bytes, 0, all_bytes, 0, tlen);
-				Buffer.BlockCopy (valid_bytes, 0, all_bytes, tlen, vlen);
+				result = new byte [tlen + vlen];
+				Buffer.BlockCopy (ticket_bytes, 0, result, 0, tlen);
+				Buffer.BlockCopy (valid_bytes, 0, result, tlen, vlen);
 			}
 
 			if (all || protection == FormsProtectionEnum.Encryption) {
 				ICryptoTransform encryptor;
 				encryptor = new TripleDESCryptoServiceProvider().CreateEncryptor (config.DecryptionKey192Bits, init_vector);
-				all_bytes = encryptor.TransformFinalBlock (all_bytes, 0, all_bytes.Length);
+				result = encryptor.TransformFinalBlock (result, 0, result.Length);
 			}
 
-			return GetHexString (all_bytes);
+			return GetHexString (result);
 		}
 
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie)

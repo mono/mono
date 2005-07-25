@@ -1,5 +1,11 @@
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FormsAuthentication.cs: my previous patch missed a "small" detail: it
+	didn't include the verification key when computing/checking the
+	validation hash. Now this is really a MAC or HMAC or...
+
+2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FormsAuthentication.cs:
 	* FormsAuthenticationTicket.cs: added support for validation and
 	encryption of the auth. cookie and improved serialization of the ticket.
