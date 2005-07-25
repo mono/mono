@@ -441,66 +441,32 @@ namespace System.Web.Configuration
 			factories = new Hashtable ();
 		}
 
-#if TARGET_J2EE
 		public bool LoadFromFile (string fileName)
 		{
 			this.fileName = fileName;
-			if (fileName == null)
-				return false;
-			XmlTextReader reader = null;
-			java.io.InputStream inputStream = null;
-			try {
-				IResourceLoader resLoader = (IResourceLoader)AppDomain.CurrentDomain.GetData("GH_ResourceLoader");
-				if (resLoader == null)
-					throw new HttpException("Unexpected exception. Resource loader not initialized under current domain");
-				if (fileName.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
-					fileName = fileName.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
-
-				inputStream = resLoader.getResourceAsStream(fileName);
-
-				// patch for machine.config
-				if (inputStream == null && fileName.EndsWith("machine.config"))
+			Stream fs = null;
+			if (fileName == null || !File.Exists (fileName)) {
+#if TARGET_J2EE
+				if (fileName != null && fileName.EndsWith("machine.config"))
 				{
 					if (fileName.StartsWith("/"))
 						fileName = fileName.Substring(1);
 					java.lang.ClassLoader cl = (java.lang.ClassLoader)AppDomain.CurrentDomain.GetData("GH_ContextClassLoader");
-					if (cl != null)
-						inputStream = cl.getResourceAsStream(fileName);
+					if (cl == null)
+						return false;
+					java.io.InputStream inputStream = cl.getResourceAsStream(fileName);
+					fs = (Stream)IOUtils.getStream(inputStream);
 				}
-				if (inputStream == null)
+				else
+#endif
 					return false;
-
-				Stream fs = (Stream)IOUtils.getStream(inputStream);
-				reader = new XmlTextReader (fs);
-				InitRead (reader);
-				ReadConfig (reader, false);
-			} 
-			catch (ConfigurationException) { throw; }
-			catch (Exception e)
-			{
-				throw new ConfigurationException ("Error reading " + fileName, e);
 			}
-			finally
-			{
-				if (reader != null)
-					reader.Close();
-				if (inputStream != null)
-					inputStream.close();
-			}
-
-			return true;
-		}
-#else
-		public bool LoadFromFile (string fileName)
-		{
-			this.fileName = fileName;
-			if (fileName == null || !File.Exists (fileName))
-				return false;
 
 			XmlTextReader reader = null;
 
 			try {
-				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+				if (fs == null)
+					fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
 				reader = new XmlTextReader (fs);
 				InitRead (reader);
 				ReadConfig (reader, false);
@@ -515,7 +481,6 @@ namespace System.Web.Configuration
 
 			return true;
 		}
-#endif
 
 		public void LoadFromReader (XmlTextReader reader, string fakeFileName, bool isLocation)
 		{
