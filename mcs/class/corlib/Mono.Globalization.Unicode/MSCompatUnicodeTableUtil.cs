@@ -6,7 +6,7 @@ namespace Mono.Globalization.Unicode
 {
 	internal /*static*/ class MSCompatUnicodeTableUtil
 	{
-		public const byte ResourceVersion = 2;
+		public const byte ResourceVersion = 3;
 
 		public static readonly CodePointIndexer Ignorable;
 		public static readonly CodePointIndexer Category;

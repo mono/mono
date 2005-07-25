@@ -171,30 +171,35 @@ namespace Mono.Globalization.Unicode
 		}
 
 		static void SetCJKReferences (string name,
-			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref CodePointIndexer cjkIndexer,
+			ref byte* catTable, ref byte* lv1Table,
+			ref CodePointIndexer lv2Indexer, ref byte* lv2Table)
 		{
 			// as a part of mscorlib.dll, this invocation is
 			// somewhat extraneous (pointers were already assigned).
 
 			switch (name) {
 			case "zh-CHS":
-				cjkTable = cjkCHS;
+				catTable = cjkCHScategory;
+				lv1Table = cjkCHSlv1;
 				cjkIndexer = UUtil.CjkCHS;
 				break;
 			case "zh-CHT":
-				cjkTable = cjkCHT;
+				catTable = cjkCHTcategory;
+				lv1Table = cjkCHTlv1;
 				cjkIndexer = UUtil.Cjk;
 				break;
 			case "ja":
-				cjkTable = cjkJA;
+				catTable = cjkJAcategory;
+				lv1Table = cjkJAlv1;
 				cjkIndexer = UUtil.Cjk;
 				break;
 			case "ko":
-				cjkTable = cjkKO;
-				cjkLv2Table = cjkKOlv2;
+				catTable = cjkKOcategory;
+				lv1Table = cjkKOlv1;
+				lv2Table = cjkKOlv2;
 				cjkIndexer = UUtil.Cjk;
-				cjkLv2Indexer = UUtil.Cjk;
+				lv2Indexer = UUtil.Cjk;
 				break;
 			}
 		}
@@ -430,10 +435,14 @@ namespace Mono.Globalization.Unicode
 		static readonly byte* level2;
 		static readonly byte* level3;
 //		static readonly ushort* widthCompat;
-		static ushort* cjkCHS;
-		static ushort* cjkCHT;
-		static ushort* cjkJA;
-		static ushort* cjkKO;
+		static byte* cjkCHScategory;
+		static byte* cjkCHTcategory;
+		static byte* cjkJAcategory;
+		static byte* cjkKOcategory;
+		static byte* cjkCHSlv1;
+		static byte* cjkCHTlv1;
+		static byte* cjkJAlv1;
+		static byte* cjkKOlv1;
 		static byte* cjkKOlv2;
 
 #if GENERATE_TABLE
@@ -460,17 +469,21 @@ namespace Mono.Globalization.Unicode
 //			fixed (ushort* tmp = widthCompatArr) {
 //				widthCompat = tmp;
 //			}
-			fixed (ushort* tmp = cjkCHSArr) {
-				cjkCHS = tmp;
+			fixed (byte* tmp = cjkCHSArr) {
+				cjkCHScategory = tmp;
+				cjkCHSlv1 = tmp + cjkCHSArrLength;
 			}
-			fixed (ushort* tmp = cjkCHTArr) {
-				cjkCHT = tmp;
+			fixed (byte* tmp = cjkCHTArr) {
+				cjkCHTcategory = tmp;
+				cjkCHTlv1 = tmp + cjkCHTArrLength;
 			}
-			fixed (ushort* tmp = cjkJAArr) {
-				cjkJA = tmp;
+			fixed (byte* tmp = cjkJAArr) {
+				cjkJAcategory = tmp;
+				cjkJAlv1 = tmp + cjkJAArrLength;
 			}
-			fixed (ushort* tmp = cjkKOArr) {
-				cjkKO = tmp;
+			fixed (byte* tmp = cjkKOArr) {
+				cjkKOcategory = tmp;
+				cjkKOlv1 = tmp + cjkKOArrLength;
 			}
 			fixed (byte* tmp = cjkKOlv2Arr) {
 				cjkKOlv2 = tmp;
@@ -478,11 +491,14 @@ namespace Mono.Globalization.Unicode
 		}
 
 		public static void FillCJK (string name,
-			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref CodePointIndexer cjkIndexer,
+			ref byte* catTable, ref byte* lv1Table,
+			ref CodePointIndexer cjkLv2Indexer,
+			ref byte* lv2Table)
 		{
-			SetCJKReferences (name, ref cjkTable, ref cjkIndexer,
-				ref cjkLv2Table, ref cjkLv2Indexer);
+			SetCJKReferences (name, ref cjkIndexer,
+				ref catTable, ref lv1Table,
+				ref cjkLv2Indexer, ref lv2Table);
 		}
 #else
 
@@ -528,7 +544,7 @@ namespace Mono.Globalization.Unicode
 		static MSCompatUnicodeTable ()
 		{
 			byte* raw;
-			byte *tailor;
+			byte* tailor;
 			uint size;
 			uint idx = 0;
 
@@ -615,21 +631,26 @@ namespace Mono.Globalization.Unicode
 		}
 
 		public static void FillCJK (string culture,
-			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref CodePointIndexer cjkIndexer,
+			ref byte* catTable,
+			ref byte* lv1Table,
+			ref CodePointIndexer lv2Indexer,
+			ref byte* lv2Table)
 		{
 			lock (forLock) {
-				FillCJKCore (culture,
-					ref cjkTable, ref cjkIndexer,
-					ref cjkLv2Table, ref cjkLv2Indexer);
-				SetCJKReferences (culture, ref cjkTable, ref cjkIndexer,
-					ref cjkLv2Table, ref cjkLv2Indexer);
+				FillCJKCore (culture, ref cjkIndexer,
+					ref catTable, ref lv1Table,
+					ref lv2Indexer, ref lv2Table);
+				SetCJKReferences (culture, ref cjkIndexer,
+					ref catTable, ref lv1Table,
+					ref lv2Indexer, ref lv2Table);
 			}
 		}
 
 		static void FillCJKCore (string culture,
-			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+			ref CodePointIndexer cjkIndexer,
+			ref byte* catTable, ref byte* lv1Table,
+			ref CodePointIndexer cjkLv2Indexer, ref byte* lv2Table)
 		{
 			if (!IsReady)
 				return;
@@ -638,23 +659,27 @@ namespace Mono.Globalization.Unicode
 			switch (culture) {
 			case "zh-CHS":
 				name = "cjkCHS";
-				cjkTable = cjkCHS;
+				catTable = cjkCHScategory;
+				lv1Table = cjkCHSlv1;
 				break;
 			case "zh-CHT":
 				name = "cjkCHT";
-				cjkTable = cjkCHT;
+				catTable = cjkCHTcategory;
+				lv1Table = cjkCHTlv1;
 				break;
 			case "ja":
 				name = "cjkJA";
-				cjkTable = cjkJA;
+				catTable = cjkJAcategory;
+				lv1Table = cjkJAlv1;
 				break;
 			case "ko":
 				name = "cjkKO";
-				cjkTable = cjkKO;
+				catTable = cjkKOcategory;
+				lv1Table = cjkKOlv1;
 				break;
 			}
 
-			if (name == null || cjkTable != null)
+			if (name == null || lv1Table != null)
 				return;
 
 			byte* raw;
@@ -678,20 +703,26 @@ namespace Mono.Globalization.Unicode
 				return;
 			load_collation_resource (corlibPath, residx, &raw, &size);
 #endif
-			cjkTable = (ushort*) ((byte*) raw + ResourceVersionSize + 4);
+			uint count = UInt32FromBytePtr (raw, ResourceVersionSize);
+			catTable = (byte*) raw + ResourceVersionSize + 4;
+			lv1Table = (byte*) raw + ResourceVersionSize + 4 + count;
 
 			switch (culture) {
 			case "zh-CHS":
-				cjkCHS = cjkTable;
+				cjkCHScategory = catTable;
+				cjkCHSlv1 = lv1Table;
 				break;
 			case "zh-CHT":
-				cjkCHT = cjkTable;
+				cjkCHTcategory = catTable;
+				cjkCHTlv1 = lv1Table;
 				break;
 			case "ja":
-				cjkJA = cjkTable;
+				cjkJAcategory = catTable;
+				cjkJAlv1 = lv1Table;
 				break;
 			case "ko":
-				cjkKO = cjkTable;
+				cjkKOcategory = catTable;
+				cjkKOlv1 = lv1Table;
 				break;
 			}
 
@@ -706,7 +737,7 @@ namespace Mono.Globalization.Unicode
 			load_collation_resource (corlibPath, CollationResourceCJKKOlv2, &raw, &size);
 #endif
 			cjkKOlv2 = raw + ResourceVersionSize + 4;
-			cjkLv2Table = cjkKOlv2;
+			lv2Table = cjkKOlv2;
 		}
 	}
 }

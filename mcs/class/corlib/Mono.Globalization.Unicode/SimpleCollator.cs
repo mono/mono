@@ -71,7 +71,8 @@ namespace Mono.Globalization.Unicode
 		bool ignoreKanaType;
 		TextInfo textInfo; // for ToLower().
 		bool frenchSort;
-		unsafe readonly ushort* cjkTable;
+		unsafe readonly byte* cjkCatTable;
+		unsafe readonly byte* cjkLv1Table;
 		readonly CodePointIndexer cjkIndexer;
 		unsafe readonly byte* cjkLv2Table;
 		readonly CodePointIndexer cjkLv2Indexer;
@@ -93,9 +94,9 @@ namespace Mono.Globalization.Unicode
 			buf = new SortKeyBuffer (culture.LCID);
 
 			unsafe {
-				SetCJKTable (culture,
-					ref cjkTable, ref cjkIndexer,
-					ref cjkLv2Table, ref cjkLv2Indexer);
+				SetCJKTable (culture, ref cjkIndexer,
+					ref cjkCatTable, ref cjkLv1Table,
+					ref cjkLv2Indexer, ref cjkLv2Table);
 			}
 
 			// Get tailoring info
@@ -192,13 +193,15 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		}
 */
 
-		unsafe private void SetCJKTable (CultureInfo culture,
-			ref ushort* cjkTable, ref CodePointIndexer cjkIndexer,
-			ref byte* cjkLv2Table, ref CodePointIndexer cjkLv2Indexer)
+		unsafe private void SetCJKTable (
+			CultureInfo culture, ref CodePointIndexer cjkIndexer,
+			ref byte* catTable, ref byte* lv1Table,
+			ref CodePointIndexer lv2Indexer, ref byte* lv2Table)
 		{
 			string name = GetNeutralCulture (culture).Name;
 
-			Uni.FillCJK (name, ref cjkTable, ref cjkIndexer, ref cjkLv2Table, ref cjkLv2Indexer);
+			Uni.FillCJK (name, ref cjkIndexer, ref catTable,
+				ref lv1Table, ref lv2Indexer, ref lv2Table);
 		}
 
 		static CultureInfo GetNeutralCulture (CultureInfo info)
@@ -213,22 +216,18 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		unsafe byte Category (int cp)
 		{
-			if (cp < 0x3000 || cjkTable == null)
+			if (cp < 0x3000 || cjkCatTable == null)
 				return Uni.Category (cp);
 			int idx = cjkIndexer.ToIndex (cp);
-			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
-			return cjk != 0 ? (byte) ((cjk & 0xFF00) >> 8) :
-				Uni.Category (cp);
+			return idx < 0 ? Uni.Category (cp) : cjkCatTable [idx];
 		}
 
 		unsafe byte Level1 (int cp)
 		{
-			if (cp < 0x3000 || cjkTable == null)
+			if (cp < 0x3000 || cjkLv1Table == null)
 				return Uni.Level1 (cp);
 			int idx = cjkIndexer.ToIndex (cp);
-			ushort cjk = idx < 0 ? (ushort) 0 : cjkTable [idx];
-			return cjk != 0 ? (byte) (cjk & 0xFF) :
-				Uni.Level1 (cp);
+			return idx < 0 ? Uni.Level1 (cp) : cjkLv1Table [idx];
 		}
 
 		unsafe byte Level2 (int cp, ExtenderType ext)

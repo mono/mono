@@ -527,34 +527,57 @@ sw.Close ();
 			SerializeCJK ("cjkKOlv2", cjkKOlv2, 0x9FB0);
 		}
 
-		void SerializeCJK (string name, ushort [] cjk, int max)
+		void SerializeCJK (string name, ushort [] cjk, int max_unused)
 		{
-			int offset = 0;//char.MaxValue - cjk.Length;
-			CResult.WriteLine ("static const guint16* collation_table_collation_cjk_{0} [] = {{", name);
-			CSResult.WriteLine ("static ushort [] {0}Arr = new ushort [] {{", name);
+			CResult.WriteLine ("static const int collation_table_collation_cjk_{0}_size [] = {1};", name, cjk.Length);
+			CSResult.WriteLine ("const int {0}ArrLength = {1};", name, cjk.Length);
+
+			CResult.WriteLine ("static const guint8* collation_table_collation_cjk_{0} [] = {{", name);
+			CSResult.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
 			binary.Write (UUtil.ResourceVersion);
-			binary.Write (cjk.Length);
+			binary.Write (cjk.Length); // the actual size is *2.
 #endif
+			// category
 			for (int i = 0; i < cjk.Length; i++) {
-				if (i + offset == max)
-					break;
-				ushort value = cjk [i];
+//				if (i == max)
+//					break;
+				byte value = (byte) (cjk [i] >> 8);
 				if (value < 10)
 					CSResult.Write ("{0},", value);
 				else
-					CSResult.Write ("0x{0:X04},", value);
+					CSResult.Write ("0x{0:X02},", value);
 				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF) {
-					CSResult.WriteLine ("// {0:X04}", i - 0xF + offset);
+					CSResult.WriteLine ("// {0:X04}", i - 0xF);
 					CResult.WriteLine ();
 				}
 			}
+
+			// level 1
+			for (int i = 0; i < cjk.Length; i++) {
+//				if (i == max)
+//					break;
+				byte value = (byte) (cjk [i] & 0xFF);
+				if (value < 10)
+					CSResult.Write ("{0},", value);
+				else
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
+#if Binary
+				binary.Write (value);
+#endif
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}", i - 0xF);
+					CResult.WriteLine ();
+				}
+			}
+
 			CResult.WriteLine ("0};");
 			CSResult.WriteLine ("};");
 			CSResult.WriteLine ();
@@ -568,7 +591,6 @@ sw.Close ();
 
 		void SerializeCJK (string name, byte [] cjk, int max)
 		{
-			int offset = 0;//char.MaxValue - cjk.Length;
 			CResult.WriteLine ("static const guint8* collation_table_collation_cjk_{0} [] = {{", name);
 			CSResult.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
 #if Binary
@@ -577,7 +599,7 @@ sw.Close ();
 			binary.Write (UUtil.ResourceVersion);
 #endif
 			for (int i = 0; i < cjk.Length; i++) {
-				if (i + offset == max)
+				if (i == max)
 					break;
 				byte value = cjk [i];
 				if (value < 10)
@@ -589,7 +611,7 @@ sw.Close ();
 				binary.Write (value);
 #endif
 				if ((i & 0xF) == 0xF) {
-					CSResult.WriteLine ("// {0:X04}", i - 0xF + offset);
+					CSResult.WriteLine ("// {0:X04}", i - 0xF);
 					CResult.WriteLine ();
 				}
 			}

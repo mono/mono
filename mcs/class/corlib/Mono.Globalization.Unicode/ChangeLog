@@ -1,5 +1,14 @@
 2005-07-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs
+	  create-mscompat-collation-table.cs
+	  MSCompatUnicodeTableUtil.cs
+	  MSCompatUnicodeTable.cs : Now CJK mapping data is stored as byte
+	  arrays. Thus SimpleCollator does not need to use bitwise and shift
+	  operations to get sortkey value and they could be managed resources.
+
+2005-07-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs,
 	  MSCompatUnicodeTable.cs,
 	  MSCompatUnicodeTableUtil.cs : From the result of sortkey comparison
