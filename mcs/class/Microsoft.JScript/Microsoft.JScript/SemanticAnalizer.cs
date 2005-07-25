@@ -58,6 +58,7 @@ namespace Microsoft.JScript {
 			label_set = new IdentificationTable ();
 			
 			obj_ctrs = new Hashtable ();
+			obj_ctrs.Add ("Array", typeof (ArrayConstructor));
 			obj_ctrs.Add ("Date", typeof (DateConstructor));
 			obj_ctrs.Add ("Math", typeof (MathObject));
 			obj_ctrs.Add ("Number", typeof (NumberConstructor));
