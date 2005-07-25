@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -41,13 +42,17 @@ namespace System.Web.Security
 {
 	public sealed class FormsAuthentication
 	{
+		const int MD5_hash_size = 16;
+		const int SHA1_hash_size = 20;
+
 		static string authConfigPath = "system.web/authentication";
 		static bool initialized;
 		static string cookieName;
 		static string cookiePath;
 		static int timeout;
-		//static FormsProtectionEnum protection;
+		static FormsProtectionEnum protection;
 		static object locker = new object ();
+		static byte [] init_vector; // initialization vector used for 3DES
 #if NET_1_1
 		static bool requireSSL;
 		static bool slidingExpiration;
@@ -91,28 +96,65 @@ namespace System.Web.Security
 			return (password == stored);
 		}
 
+		static FormsAuthenticationTicket Decrypt2 (byte [] bytes)
+		{
+			if (protection == FormsProtectionEnum.None)
+				return FormsAuthenticationTicket.FromByteArray (bytes);
+
+			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+			bool all = (protection == FormsProtectionEnum.All);
+
+			byte [] unencrypted = bytes;
+			if (all || protection == FormsProtectionEnum.Encryption) {
+				ICryptoTransform decryptor;
+				decryptor = new TripleDESCryptoServiceProvider().CreateDecryptor (config.DecryptionKey192Bits, init_vector);
+				unencrypted = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
+				bytes = null;
+			}
+
+			if (all || protection == FormsProtectionEnum.Validation) {
+				byte [] hash = null;
+				int offset = 0, count = 0;
+
+				switch (config.ValidationType) {
+				case MachineKeyValidation.MD5:
+					count = MD5_hash_size;
+					offset = unencrypted.Length - count;
+					hash = MD5.Create ().ComputeHash (unencrypted, 0, unencrypted.Length - count);
+					break;
+				// From MS docs: "When 3DES is specified, forms authentication defaults to SHA1"
+				case MachineKeyValidation.TripleDES:
+				case MachineKeyValidation.SHA1:
+					count = SHA1_hash_size;
+					offset = unencrypted.Length - count;
+					hash = SHA1.Create ().ComputeHash (unencrypted, 0, unencrypted.Length - count);
+					break;
+				}
+
+				if (unencrypted.Length < count)
+					throw new ArgumentException ("Error validating ticket (length).", "encryptedTicket");
+
+				int i, k;
+				for (i = offset, k = 0; k < count; i++, k++) {
+					if (unencrypted [i] != hash [k])
+						throw new ArgumentException ("Error validating ticket.", "encryptedTicket");
+				}
+			}
+
+			return FormsAuthenticationTicket.FromByteArray (unencrypted);
+		}
+
 		public static FormsAuthenticationTicket Decrypt (string encryptedTicket)
 		{
 			if (encryptedTicket == null || encryptedTicket == String.Empty)
 				throw new ArgumentException ("Invalid encrypted ticket", "encryptedTicket");
 
 			Initialize ();
-			byte [] bytes = MachineKeyConfigHandler.GetBytes (encryptedTicket, encryptedTicket.Length);
-			string decrypted = Encoding.ASCII.GetString (bytes);
-			FormsAuthenticationTicket ticket = null;
+
+			FormsAuthenticationTicket ticket;
+			byte [] bytes = MachineKeyConfig.GetBytes (encryptedTicket, encryptedTicket.Length);
 			try {
-				string [] values = decrypted.Split ((char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7);
-				if (values.Length != 8)
-					throw new Exception (values.Length + " " + encryptedTicket);
-
-
-				ticket = new FormsAuthenticationTicket (Int32.Parse (values [0]),
-									values [1],
-									new DateTime (Int64.Parse (values [2])),
-									new DateTime (Int64.Parse (values [3])),
-									(values [4] == "1"),
-									values [5],
-									values [6]);
+				ticket = Decrypt2 (bytes);
 			} catch (Exception) {
 				ticket = null;
 			}
@@ -126,24 +168,40 @@ namespace System.Web.Security
 				throw new ArgumentNullException ("ticket");
 
 			Initialize ();
-			StringBuilder allTicket = new StringBuilder ();
-			allTicket.Append (ticket.Version);
-			allTicket.Append ('\u0001');
-			allTicket.Append (ticket.Name);
-			allTicket.Append ('\u0002');
-			allTicket.Append (ticket.IssueDate.Ticks);
-			allTicket.Append ('\u0003');
-			allTicket.Append (ticket.Expiration.Ticks);
-			allTicket.Append ('\u0004');
-			allTicket.Append (ticket.IsPersistent ? '1' : '0');
-			allTicket.Append ('\u0005');
-			allTicket.Append (ticket.UserData);
-			allTicket.Append ('\u0006');
-			allTicket.Append (ticket.CookiePath);
-			allTicket.Append ('\u0007');
-			//if (protection == FormsProtectionEnum.None)
-				return GetHexString (allTicket.ToString ());
-			//TODO: encrypt and validate
+			byte [] ticket_bytes = ticket.ToByteArray ();
+			if (protection == FormsProtectionEnum.None)
+				return GetHexString (ticket_bytes);
+
+			byte [] all_bytes = ticket_bytes;
+			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+			bool all = (protection == FormsProtectionEnum.All);
+			if (all || protection == FormsProtectionEnum.Validation) {
+				byte [] valid_bytes = null;
+				switch (config.ValidationType) {
+				case MachineKeyValidation.MD5:
+					valid_bytes = MD5.Create ().ComputeHash (ticket_bytes);
+					break;
+				// From MS docs: "When 3DES is specified, forms authentication defaults to SHA1"
+				case MachineKeyValidation.TripleDES:
+				case MachineKeyValidation.SHA1:
+					valid_bytes = SHA1.Create ().ComputeHash (ticket_bytes);
+					break;
+				}
+
+				int tlen = ticket_bytes.Length;
+				int vlen = valid_bytes.Length;
+				all_bytes = new byte [tlen + vlen];
+				Buffer.BlockCopy (ticket_bytes, 0, all_bytes, 0, tlen);
+				Buffer.BlockCopy (valid_bytes, 0, all_bytes, tlen, vlen);
+			}
+
+			if (all || protection == FormsProtectionEnum.Encryption) {
+				ICryptoTransform encryptor;
+				encryptor = new TripleDESCryptoServiceProvider().CreateEncryptor (config.DecryptionKey192Bits, init_vector);
+				all_bytes = encryptor.TransformFinalBlock (all_bytes, 0, all_bytes.Length);
+			}
+
+			return GetHexString (all_bytes);
 		}
 
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie)
@@ -187,7 +245,6 @@ namespace System.Web.Security
 			if (userName == null)
 				return null;
 
-			//TODO: what's createPersistentCookie used for?
 			Initialize ();
 			HttpRequest request = HttpContext.Current.Request;
 			string returnUrl = request ["RETURNURL"];
@@ -215,7 +272,7 @@ namespace System.Web.Security
 
 		static string GetHexString (string str)
 		{
-			return GetHexString (Encoding.ASCII.GetBytes (str));
+			return GetHexString (Encoding.UTF8.GetBytes (str));
 		}
 
 		static string GetHexString (byte [] bytes)
@@ -265,7 +322,7 @@ namespace System.Web.Security
 					cookieName = authConfig.CookieName;
 					timeout = authConfig.Timeout;
 					cookiePath = authConfig.CookiePath;
-					//protection = authConfig.Protection;
+					protection = authConfig.Protection;
 #if NET_1_1
 					requireSSL = authConfig.RequireSSL;
 					slidingExpiration = authConfig.SlidingExpiration;
@@ -274,12 +331,14 @@ namespace System.Web.Security
 					cookieName = ".MONOAUTH";
 					timeout = 30;
 					cookiePath = "/";
-					//protection = FormsProtectionEnum.All;
+					protection = FormsProtectionEnum.All;
 #if NET_1_1
 					slidingExpiration = true;
 #endif
 				}
-
+				TripleDESCryptoServiceProvider tDES = new TripleDESCryptoServiceProvider ();
+				tDES.GenerateIV ();
+				init_vector = tDES.IV;
 				initialized = true;
 			}
 		}

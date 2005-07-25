@@ -1,3 +1,9 @@
+2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs:
+	* FormsAuthenticationTicket.cs: added support for validation and
+	encryption of the auth. cookie and improved serialization of the ticket.
+
 2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Membership.cs: Read provider info from the config file.
