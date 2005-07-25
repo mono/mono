@@ -123,9 +123,7 @@ namespace System.Web {
 					throw new ApplicationException (msg);
 				}
 
-#if !TARGET_JVM
 				appFileWatcher = CreateWatcher (_appFilename, new FileSystemEventHandler (OnAppFileChanged));
-#endif
 			} else {
 				_appType = typeof (System.Web.HttpApplication);
 				_state = new HttpApplicationState ();
