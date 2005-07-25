@@ -1,3 +1,6 @@
+2005-07-25  Eyal Alaluf <eyala@mainsoft.com>
+	* FormsAuthenticationModule.cs: Check for null config
+
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: my previous patch missed a "small" detail: it
