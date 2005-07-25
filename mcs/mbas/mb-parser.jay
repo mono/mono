@@ -5588,10 +5588,15 @@ private void AddHandler (Block b, Expression evt_id, Expression handles_exp)
 private void RaiseEvent (string evt_name, ArrayList args)
 {
 	Location loc = lexer.Location;
+	Expression qi = DecomposeQI (evt_name, loc);
 	
-	Invocation evt_call = new Invocation (DecomposeQI(evt_name, loc), args, lexer.Location);
+	Invocation evt_call = new Invocation (qi, args, lexer.Location);
    	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) evt_call, loc)); 
-   	current_block.AddStatement (s);	
+
+	Binary bin = new Binary (Binary.Operator.Is, qi, (Expression) NullLiteral.Null, loc);
+	If if_s = new If (bin, new EmptyStatement (), s, loc);
+
+   	current_block.AddStatement (if_s);	
 }
 
 private void RemoveHandler (Block b, Expression evt_definition, Expression handler_exp)
