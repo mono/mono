@@ -1,3 +1,8 @@
+2005-07-25  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs: Fixes error for cases like Constructor.Property.
+	* SemanticAnalizer.cs: Added Array/ArrayConstructor to the ctrs.
+
 2005-07-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* IdentificationTable.cs: Fixed build.
