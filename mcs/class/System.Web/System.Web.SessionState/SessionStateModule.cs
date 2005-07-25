@@ -42,10 +42,7 @@ namespace System.Web.SessionState
 		internal static readonly string CookieName = "ASPSESSION";
 		internal static readonly string HeaderName = "AspFilterSessionId";
 		
-#if !TARGET_J2EE		
-		static SessionConfig config;
-		static Type handlerType;
-#else
+#if TARGET_J2EE		
 		static private SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
@@ -62,6 +59,9 @@ namespace System.Web.SessionState
 				AppDomain.CurrentDomain.SetData("SessionStateModule.handlerType", value);
 			}
 		}
+#else
+		static SessionConfig config;
+		static Type handlerType;
 #endif		
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
