@@ -1,3 +1,7 @@
+2005-07-25  Marek Safar  <marek.safar@seznam.cz>
+
+	*  ResourceReader.cs: Implemented reading of primitives for version 2.
+
 2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	*  ResourceReader.cs, ResourceSet.cs: Added a LinkDemand for 

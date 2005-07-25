@@ -5,6 +5,7 @@
 // 	Duncan Mak <duncan@ximian.com>
 //	Nick Drochak <ndrochak@gol.com>
 //	Dick Porter <dick@ximian.com>
+//	Marek Safar <marek.safar@seznam.cz>
 //
 // (C) 2001, 2002 Ximian Inc, http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
@@ -39,6 +40,30 @@ using System.Security.Permissions;
 
 namespace System.Resources
 {
+	internal enum PredefinedResourceType
+	{
+		Null		= 0,
+		String		= 1,
+		Bool		= 2,
+		Char		= 3,
+		Byte		= 4,
+		SByte		= 5,
+		Int16		= 6,
+		UInt16		= 7,
+		Int32		= 8,
+		UInt32		= 9,
+		Int64		= 10,
+		UInt64		= 11,
+		Single		= 12,
+		Double		= 13,
+		Decimal		= 14,
+		DateTime	= 15,
+		TimeSpan	= 16,
+		ByteArray	= 32,
+		Stream		= 33,
+		FistCustom	= 64
+	}
+
 	public sealed class ResourceReader : IResourceReader, IEnumerable, IDisposable
 	{
 		BinaryReader reader;
@@ -50,6 +75,7 @@ namespace System.Resources
 		long[] positions;
 		int dataSectionOffset;
 		long nameSectionOffset;
+		int resource_ver;
 		
 		// Constructors
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -114,27 +140,23 @@ namespace System.Resources
 				}
 
 				/* Now read the ResourceReader header */
-				int reader_ver = reader.ReadInt32();
+				resource_ver = reader.ReadInt32();
 
-				if(reader_ver != 1) {
-					throw new NotSupportedException("This .resources file requires unsupported set class version: " + reader_ver.ToString());
+				if(resource_ver != 1
+#if NET_2_0
+					&& resource_ver != 2
+#endif
+					) {
+					throw new NotSupportedException("This .resources file requires unsupported set class version: " + resource_ver.ToString());
 				}
 
 				resourceCount = reader.ReadInt32();
 				typeCount = reader.ReadInt32();
 				
 				types=new Type[typeCount];
-				for(int i=0; i<typeCount; i++) {
-					string type_name=reader.ReadString();
 
-					/* FIXME: Should we ask for
-					 * type loading exceptions
-					 * here?
-					 */
-					types[i]=Type.GetType(type_name);
-					if(types[i]==null) {
-						throw new ArgumentException("Could not load type {0}", type_name);
-					}
+				for(int i=0; i<typeCount; i++) {
+					types[i]=Type.GetType(reader.ReadString(), true);
 				}
 
 				/* There are between 0 and 7 bytes of
@@ -222,6 +244,131 @@ namespace System.Resources
 			}
 		}
 
+		// TODO: Read complex types
+		object ReadValueVer2 (int type_index)
+		{
+			switch ((PredefinedResourceType)type_index)
+			{
+				case PredefinedResourceType.Null:
+					return null;
+
+				case PredefinedResourceType.String:
+					return reader.ReadString();
+
+				case PredefinedResourceType.Bool:
+					return reader.ReadBoolean ();
+
+				case PredefinedResourceType.Char:
+					return (char)reader.ReadUInt16();
+
+				case PredefinedResourceType.Byte:
+					return reader.ReadByte();
+
+				case PredefinedResourceType.SByte:
+					return reader.ReadSByte();
+
+				case PredefinedResourceType.Int16:
+					return reader.ReadInt16();
+
+				case PredefinedResourceType.UInt16:
+					return reader.ReadUInt16();
+
+				case PredefinedResourceType.Int32:
+					return reader.ReadInt32();
+
+				case PredefinedResourceType.UInt32:
+					return reader.ReadUInt32();
+
+				case PredefinedResourceType.Int64:
+					return reader.ReadInt64();
+
+				case PredefinedResourceType.UInt64:
+					return reader.ReadUInt64();
+
+				case PredefinedResourceType.Single:
+					return reader.ReadSingle();
+
+				case PredefinedResourceType.Double:
+					return reader.ReadDouble();
+
+				case PredefinedResourceType.Decimal:
+					return reader.ReadDecimal();
+
+				case PredefinedResourceType.DateTime:
+					return new DateTime(reader.ReadInt64());
+
+				case PredefinedResourceType.TimeSpan:
+					return new TimeSpan(reader.ReadInt64());
+
+				case PredefinedResourceType.ByteArray:
+					throw new NotImplementedException (PredefinedResourceType.ByteArray.ToString ());
+
+				case PredefinedResourceType.Stream:
+					throw new NotImplementedException (PredefinedResourceType.Stream.ToString ());
+			}
+
+			type_index -= (int)PredefinedResourceType.FistCustom;
+			return ReadNonPredefinedValue (types[type_index]);
+		}
+
+		object ReadValueVer1 (Type type)
+		{
+			// The most common first
+			if (type==typeof(String))
+				return reader.ReadString();
+			if (type==typeof(Int32))
+				return reader.ReadInt32();
+			if (type==typeof(Byte))
+				return(reader.ReadByte());
+			if (type==typeof(Double))
+				return(reader.ReadDouble());
+			if (type==typeof(Int16))
+				return(reader.ReadInt16());
+			if (type==typeof(Int64))
+				return(reader.ReadInt64());
+			if (type==typeof(SByte))
+				return(reader.ReadSByte());
+			if (type==typeof(Single))
+				return(reader.ReadSingle());
+			if (type==typeof(TimeSpan))
+				return(new TimeSpan(reader.ReadInt64()));
+			if (type==typeof(UInt16))
+				return(reader.ReadUInt16());
+			if (type==typeof(UInt32))
+				return(reader.ReadUInt32());
+			if (type==typeof(UInt64))
+				return(reader.ReadUInt64());
+			if (type==typeof(Decimal))
+				return(reader.ReadDecimal());
+			if (type==typeof(DateTime))
+				return(new DateTime(reader.ReadInt64()));
+
+			return ReadNonPredefinedValue(type);
+		}
+
+		// TODO: Add security checks
+		object ReadNonPredefinedValue (Type exp_type)
+		{
+			object obj=formatter.Deserialize(reader.BaseStream);
+			if(obj.GetType() != exp_type) {
+				/* We got a bogus
+						 * object.  This
+						 * exception is the
+						 * best match I could
+						 * find.  (.net seems
+						 * to throw
+						 * BadImageFormatException,
+						 * which the docs
+						 * state is used when
+						 * file or dll images
+						 * cant be loaded by
+						 * the runtime.)
+						 */
+				throw new InvalidOperationException("Deserialized object is wrong type");
+			}
+			return obj;
+		}
+
 		private object ResourceValue(int index)
 		{
 			lock(this)
@@ -240,65 +387,15 @@ namespace System.Resources
 				long data_offset=reader.ReadInt32();
 				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
 				int type_index=Read7BitEncodedInt();
+
+#if NET_2_0
+				if (resource_ver == 2)
+					return ReadValueVer2 (type_index);
+#endif
 				if (type_index == -1)
 					return null;
-				Type type=types[type_index];
-				
-				if (type==typeof(Byte)) {
-					return(reader.ReadByte());
-				/* for some reason Char is serialized */
-				/*} else if (type==typeof(Char)) {
-					return(reader.ReadChar());*/
-				} else if (type==typeof(Decimal)) {
-					return(reader.ReadDecimal());
-				} else if (type==typeof(DateTime)) {
-					return(new DateTime(reader.ReadInt64()));
-				} else if (type==typeof(Double)) {
-					return(reader.ReadDouble());
-				} else if (type==typeof(Int16)) {
-					return(reader.ReadInt16());
-				} else if (type==typeof(Int32)) {
-					return(reader.ReadInt32());
-				} else if (type==typeof(Int64)) {
-					return(reader.ReadInt64());
-				} else if (type==typeof(SByte)) {
-					return(reader.ReadSByte());
-				} else if (type==typeof(Single)) {
-					return(reader.ReadSingle());
-				} else if (type==typeof(String)) {
-					return(reader.ReadString());
-				} else if (type==typeof(TimeSpan)) {
-					return(new TimeSpan(reader.ReadInt64()));
-				} else if (type==typeof(UInt16)) {
-					return(reader.ReadUInt16());
-				} else if (type==typeof(UInt32)) {
-					return(reader.ReadUInt32());
-				} else if (type==typeof(UInt64)) {
-					return(reader.ReadUInt64());
-				} else {
-					/* non-intrinsic types are
-					 * serialized
-					 */
-					object obj=formatter.Deserialize(reader.BaseStream);
-					if(obj.GetType() != type) {
-						/* We got a bogus
-						 * object.  This
-						 * exception is the
-						 * best match I could
-						 * find.  (.net seems
-						 * to throw
-						 * BadImageFormatException,
-						 * which the docs
-						 * state is used when
-						 * file or dll images
-						 * cant be loaded by
-						 * the runtime.)
-						 */
-						throw new InvalidOperationException("Deserialized object is wrong type");
-					}
-					
-					return(obj);
-				}
+
+				return ReadValueVer1 (types[type_index]);
 			}
 		}
 
