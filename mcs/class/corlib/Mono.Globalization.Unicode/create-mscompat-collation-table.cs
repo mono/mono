@@ -2291,7 +2291,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 			// NFKD
 			for (int i = 0x0386; i <= 0x0400; i++)
-				FillLetterNFKD (i);
+				FillLetterNFKD (i, true, true);
 
 			// Cyrillic.
 			// Cyrillic letters are sorted like Latin letters i.e. 
@@ -2363,6 +2363,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					fillIndex [0x10] += 3;
 				}
 			}
+
+			// NFKD
+			for (int i = 0x0401; i <= 0x045F; i++)
+				FillLetterNFKD (i, false, false);
 
 			for (int i = 0; i < cymap_src.Length; i++) {
 				char c = cymap_src [i];
@@ -3284,15 +3288,15 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 		TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
 
-		private void FillLetterNFKD (int i)
+		private void FillLetterNFKD (int i, bool checkUpper, bool greekRemap)
 		{
 			if (map [i].Defined)
 				return;
 			int up = (int) ti.ToUpper ((char) i);
-			if (map [up].Category == 0xF) {
+			if (checkUpper && map [up].Category == 0xF) {
 				if (i == up)
 					return;
-				FillLetterNFKD (up);
+				FillLetterNFKD (up, checkUpper, greekRemap);
 				map [i] = new CharMapEntry (0xF,
 					map [up].Level1,
 					map [up].Level2);
@@ -3301,28 +3305,28 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (idx == 0)
 					return;
 				int primary = decompValues [decompIndex [i]];
-				FillLetterNFKD (primary);
-				if (map [primary].Category == 0xF) {
-					int lv2 = map [primary].Level2;
-					byte off = 0;
-					for (int l = 1; l < decompLength [i]; l++) {
-						int tmp = decompValues [idx + l];
-						if (map [tmp].Category != 1)
-							return;
-						if (map [tmp].Level2 == 0xC)
-							off = 5;
-						else if (map [tmp].Level2 == 0x11)
-							off = 0x13;
-						if (off > 0) {
-							if (lv2 > 0)
-								lv2 -= 2;
-							lv2 += off;
-						}
-					}
-					map [i] = new CharMapEntry (0xF,
-						map [primary].Level1,
-						(byte) lv2);
+				FillLetterNFKD (primary, checkUpper, greekRemap);
+
+				int lv2 = map [primary].Level2;
+				byte off = 0;
+				for (int l = 1; l < decompLength [i]; l++) {
+					int tmp = decompValues [idx + l];
+					if (map [tmp].Category != 1)
+						return;
+					if (greekRemap && map [tmp].Level2 == 0xC)
+						off += 3;
+					else
+						off += map [tmp].Level2;
 				}
+				if (off > 0) {
+					if (lv2 == 0)
+						lv2 += 2;
+					lv2 += off;
+				}
+				map [i] = new CharMapEntry (
+					map [primary].Category,
+					map [primary].Level1,
+					(byte) lv2);
 			}
 		}
 
