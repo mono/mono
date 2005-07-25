@@ -308,12 +308,16 @@ sw.Close ();
 			byte [] level1 = new byte [map.Length];
 			byte [] level2 = new byte [map.Length];
 			byte [] level3 = new byte [map.Length];
-			ushort [] widthCompat = new ushort [map.Length];
+// widthCompat is now removed from the mapping table.
+// If it turned out that it is still required, grep this source and uncomment
+// widthCompat related lines. FIXME: remove those lines in the future.
+//			ushort [] widthCompat = new ushort [map.Length];
 			for (int i = 0; i < map.Length; i++) {
 				categories [i] = map [i].Category;
 				level1 [i] = map [i].Level1;
 				level2 [i] = map [i].Level2;
 				level3 [i] = ComputeLevel3Weight ((char) i);
+/*
 				// For Japanese Half-width characters, don't
 				// map widthCompat. It is IgnoreKanaType that
 				// handles those width differences.
@@ -328,6 +332,7 @@ sw.Close ();
 					widthCompat [i] = (ushort) decompValues [decompIndex [i]];
 					break;
 				}
+*/
 			}
 
 			// compress
@@ -337,8 +342,8 @@ sw.Close ();
 			level1 = CompressArray (level1, UUtil.Level1);
 			level2 = CompressArray (level2, UUtil.Level2);
 			level3 = CompressArray (level3, UUtil.Level3);
-			widthCompat = (ushort []) CodePointIndexer.CompressArray (
-				widthCompat, typeof (ushort), UUtil.WidthCompat);
+//			widthCompat = (ushort []) CodePointIndexer.CompressArray (
+//				widthCompat, typeof (ushort), UUtil.WidthCompat);
 			cjkCHS = CompressArray (cjkCHS, UUtil.CjkCHS);
 			cjkCHT = CompressArray (cjkCHT,UUtil.Cjk);
 			cjkJA = CompressArray (cjkJA, UUtil.Cjk);
@@ -477,6 +482,7 @@ sw.Close ();
 			CSResult.WriteLine ("};");
 			CSResult.WriteLine ();
 
+/*
 			// Width insensitivity mappings
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
@@ -504,6 +510,8 @@ sw.Close ();
 			CResult.WriteLine ("0};");
 			CSResult.WriteLine ("};");
 			CSResult.WriteLine ();
+*/
+
 #if Binary
 			using (FileStream fs = File.Create ("../collation.core.bin")) {
 				byte [] array = ms.ToArray ();

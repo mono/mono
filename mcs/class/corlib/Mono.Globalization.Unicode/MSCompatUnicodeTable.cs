@@ -264,11 +264,79 @@ namespace Mono.Globalization.Unicode
 
 		// Note that currently indexer optimizes this table a lot,
 		// which might have resulted in bugs.
-		public static int ToWidthCompat (int cp)
+		public static int ToWidthCompat (int i)
 		{
-			int i = UUtil.WidthCompat.ToIndex (cp);
-			int v = i >= 0 ? (int) widthCompat [i] : 0;
-			return v != 0 ? v : cp;
+			if (i < 0x2190)
+				return i;
+			if (i > 0xFF00) {
+				if (i <= 0xFF5E)
+					return i - 0xFF00 + 0x20;
+				switch (i) {
+				case 0xFFE0:
+					return 0xA2;
+				case 0xFFE1:
+					return 0xA3;
+				case 0xFFE2:
+					return 0xAC;
+				case 0xFFE3:
+					return 0xAF;
+				case 0xFFE4:
+					return 0xA6;
+				case 0xFFE5:
+					return 0xA5;
+				case 0xFFE6:
+					return 0x20A9;
+				}
+			}
+			if (i > 0x32FE)
+				return i;
+
+			if (i <= 0x2193)
+				return 0xFFE9 - 0x2190 + i;
+			if (i < 0x2502)
+				return i;
+			if (i <= 0x25CB) {
+				switch (i) {
+				case 0x2502:
+					return 0xFFE8;
+				case 0x25A0:
+					return 0xFFED;
+				case 0x25CB:
+					return 0xFFEE;
+				default:
+					return i;
+				}
+			}
+			if (i < 0x3000)
+				return i;
+			if (i < 0x3131) {
+				switch (i) {
+				case 0x3000:
+					return 0x20;
+				case 0x3001:
+					return 0xFF64;
+				case 0x3002:
+					return 0xFF61;
+				case 0x300C:
+					return 0xFF62;
+				case 0x300D:
+					return 0xFF63;
+				case 0x30FB:
+					return 0xFF65;
+				// Other Kana compat characters' width
+				// compatibility is considered in special weight.
+				default:
+					return i;
+				}
+			}
+			if (i < 0x3164) { // Hangul compat
+				return i - 0x3130 + 0xFFA0;
+			}
+			if (i == 0x3164)
+				return 0xFFA0;
+			// 0x32D0-0x32FE are Kana compat characters, whose
+			// width compatibility is considered in special weight.
+			return i;
 		}
 
 		#region Level 4 properties (Kana)
@@ -361,7 +429,7 @@ namespace Mono.Globalization.Unicode
 		static readonly byte* level1;
 		static readonly byte* level2;
 		static readonly byte* level3;
-		static readonly ushort* widthCompat;
+//		static readonly ushort* widthCompat;
 		static ushort* cjkCHS;
 		static ushort* cjkCHT;
 		static ushort* cjkJA;
@@ -389,9 +457,9 @@ namespace Mono.Globalization.Unicode
 			fixed (byte* tmp = level3Arr) {
 				level3 = tmp;
 			}
-			fixed (ushort* tmp = widthCompatArr) {
-				widthCompat = tmp;
-			}
+//			fixed (ushort* tmp = widthCompatArr) {
+//				widthCompat = tmp;
+//			}
 			fixed (ushort* tmp = cjkCHSArr) {
 				cjkCHS = tmp;
 			}
@@ -516,10 +584,10 @@ namespace Mono.Globalization.Unicode
 			level3 = raw + idx;
 			idx += size;
 
-			size = UInt32FromBytePtr (raw, idx);
-			idx += 4;
-			widthCompat = (ushort*) (raw + idx);
-			idx += size * 2;
+//			size = UInt32FromBytePtr (raw, idx);
+//			idx += 4;
+//			widthCompat = (ushort*) (raw + idx);
+//			idx += size * 2;
 
 			idx = 1;
 			uint count = UInt32FromBytePtr (tailor, idx);
