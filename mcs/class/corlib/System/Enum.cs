@@ -277,25 +277,26 @@ namespace System
 			return -1;
 		}
 
-		public static long GetValue (object value, TypeCode typeCode)
+		// Helper function for dealing with [Flags]-style enums.
+		private static ulong GetValue (object value, TypeCode typeCode)
 		{
 			switch (typeCode) {
 			case TypeCode.Byte:
 				return (byte) value;
 			case TypeCode.SByte:
-				return (sbyte) value;
+				return (byte) ((sbyte) value);
 			case TypeCode.Int16:
-				return (short) value;
+				return (ushort) ((short) value);
 			case TypeCode.Int32:
-				return (int) value;
+				return (uint) ((int) value);
 			case TypeCode.Int64:
-				return (long) value;
+				return (ulong) ((long) value);
 			case TypeCode.UInt16:
 				return (ushort) value;
 			case TypeCode.UInt32:
 				return (uint) value;
 			case TypeCode.UInt64:
-				return (long) ((ulong) value);
+				return (ulong) value;
 			}
 			throw new ArgumentException ("typeCode is not a valid type code for an Enum");
 		}
@@ -318,10 +319,8 @@ namespace System
 				throw new ArgumentException ("cannot be an empty string", "value");
 
 			MonoEnumInfo info;
-			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
 
-			long retVal = 0;
 			// is 'value' a named constant?
 			int loc = FindName (info.names, value, ignoreCase);
 			if (loc >= 0)
@@ -332,8 +331,8 @@ namespace System
 			// is 'value' a list of named constants?
 			if (value.IndexOf (',') != -1) {
 				string [] names = value.Split (split_char);
-				retVal = 0;
-				for (i = 0; i < names.Length; ++i) {
+				ulong retVal = 0;
+				for (int i = 0; i < names.Length; ++i) {
 					loc = FindName (info.names, names [i].Trim (), ignoreCase);
 					if (loc < 0)
 						throw new ArgumentException ("The requested value was not found.");

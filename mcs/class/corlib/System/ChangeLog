@@ -1,3 +1,9 @@
+2005-07-26  Raja R Harinath  <harinath@gmail.com>
+
+	* Enum.cs (GetValue): Make private.  Return an ulong.
+	(Parse): Tighten scope of couple of variables.  Use ulong when
+	twiddling bits.
+
 2005-07-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Enum.cs (FindName, GetValue): New.  Carved out of ...
