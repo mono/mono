@@ -66,7 +66,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"		}\n" +
 				"	}\n" +
@@ -89,7 +89,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public partial class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public partial class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"		}\n" +
 				"	}\n" +
@@ -112,7 +112,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public partial class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public partial class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"		}\n" +
 				"	}\n" +
@@ -130,7 +130,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class MyConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class MyConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private MyConsoleApp() {\n"+
 				"		}\n" +
 				"	}\n" +
@@ -146,7 +146,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace Test.Thing {\n"+
-				"	public class MyConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class MyConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private MyConsoleApp() {\n"+
 				"		}\n" +
 				"	}\n" +
@@ -164,7 +164,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"			this.AddChild(consoleWriter1);\n" +
@@ -184,7 +184,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private Xaml.TestVocab.Console.ConsoleWriter XX = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"		private derivedConsoleApp() {\n"+
 				"			this.AddChild(XX);\n" +
@@ -206,7 +206,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"			this.AddChild(consoleWriter1);\n" +
@@ -230,7 +230,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"			this.AddChild(consoleWriter1);\n" +
@@ -254,7 +254,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"			this.AddChild(consoleWriter1);\n" +
@@ -282,7 +282,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleReader consoleReader1 = new Xaml.TestVocab.Console.ConsoleReader();\n"+
 				"			this.AddChild(consoleReader1);\n" +
@@ -309,7 +309,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private Xaml.TestVocab.Console.ConsoleWriter prompt = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleReader consoleReader1 = new Xaml.TestVocab.Console.ConsoleReader();\n"+
@@ -334,7 +334,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			this.SomethingHappened += new Xaml.TestVocab.Console.SomethingHappenedHandler(this.handleSomething);\n"+
 				"		}\n" +
@@ -356,7 +356,7 @@ public class CodeWriterTest {
 		cw.Finish();
 		compare(
 				"namespace DefaultNamespace {\n"+
-				"	public class derivedConsoleApp: Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n"+
 				"			this.AddChild(consoleWriter1);\n" +

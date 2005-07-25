@@ -1,5 +1,10 @@
 2005-07-25  Iain McCoy  <iain@mccoy.id.au>
 
+	* Test/CodeWriter.cs: updated tests to reflect change in code
+	generator
+
+2005-07-25  Iain McCoy  <iain@mccoy.id.au>
+
 	* Test/XamlParser.cs: added tests for correct catching of non-existent
 	processing instructions, attempting to set a dependency property on an
 	object that is not a dependency object and for code elements.
