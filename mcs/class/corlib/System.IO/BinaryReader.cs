@@ -308,7 +308,7 @@ namespace System.IO {
 				
 			if (pos!=count) {
 				byte[] new_buffer=new byte[pos];
-				Array.Copy(buf, new_buffer, pos);
+				Buffer.BlockCopy (buf, 0, new_buffer, 0, pos);
 				return(new_buffer);
 			}
 			
