@@ -37,33 +37,6 @@ namespace System.Web.Configuration
 {
 	class MachineKeyConfigHandler : IConfigurationSectionHandler
 	{
-		static byte ToHexValue (char c, bool high)
-		{
-			byte v;
-			if (c >= '0' && c <= '9')
-				v = (byte) (c - '0');
-			else if (c >= 'a' && c <= 'f')
-				v = (byte) (c - 'a' + 10);
-			else if (c >= 'A' && c <= 'F')
-				v = (byte) (c - 'A' + 10);
-			else
-				throw new ArgumentException ("Invalid hex character");
-
-			if (high)
-				v <<= 4;
-
-			return v;
-		}
-		
-		internal static byte [] GetBytes (string key, int len)
-		{
-			byte [] result = new byte [len / 2];
-			for (int i = 0; i < len; i += 2)
-				result [i / 2] = (byte) (ToHexValue (key [i], true) + ToHexValue (key [i + 1], false));
-
-			return result;
-		}
-
 		public object Create (object parent, object context, XmlNode section)
 		{
 			if (section.HasChildNodes)
@@ -84,10 +57,17 @@ namespace System.Web.Configuration
 			}
 
 			string validation = AttValue ("validation", section);
-			if (validation != "SHA1" && validation != "MD5" && validation != "3DES")
+			MachineKeyValidation valid = 0;
+			if (validation == "SHA1")
+				valid = MachineKeyValidation.SHA1;
+			else if (validation == "MD5")
+				valid = MachineKeyValidation.MD5;
+			else if (validation == "TripleDES")
+				valid = MachineKeyValidation.TripleDES;
+			else
 				ThrowException ("Invalid 'validation' value", section);
 
-			config.ValidationType = validation;
+			config.ValidationType = valid;
 
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				ThrowException ("Unrecognized attribute", section);

@@ -28,14 +28,19 @@
 
 using System.Resources;
 
-#if NET_2_0
 namespace System.Web.Configuration
 {
-        public enum MachineKeyValidation
-        {
-                MD5 = 0,
-                SHA1 = 1,
-                TripleDES = 2,
-        }
-}
+#if NET_2_0
+	public
+#else
+	internal
 #endif
+	enum MachineKeyValidation
+	{
+		MD5 = 0,
+		SHA1 = 1,
+		TripleDES = 2,
+		AES = 3
+	}
+}
+
