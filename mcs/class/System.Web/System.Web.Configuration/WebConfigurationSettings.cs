@@ -46,10 +46,7 @@ namespace System.Web.Configuration
 {
 	class WebConfigurationSettings
 	{
-#if !TARGET_J2EE
-		static IConfigurationSystem oldConfig;
-		static WebDefaultConfig config;
-#else
+#if TARGET_J2EE
 		static private IConfigurationSystem oldConfig {
 			get {
 				return (IConfigurationSystem)AppDomain.CurrentDomain.GetData("WebConfigurationSettings.oldConfig");
@@ -67,6 +64,9 @@ namespace System.Web.Configuration
 				AppDomain.CurrentDomain.SetData("WebConfigurationSettings.config", value);
 			}
 		}
+#else
+		static IConfigurationSystem oldConfig;
+		static WebDefaultConfig config;
 #endif
 		static string machineConfigPath;
 		const BindingFlags privStatic = BindingFlags.NonPublic | BindingFlags.Static;
@@ -141,9 +141,7 @@ namespace System.Web.Configuration
 	//
 	class WebDefaultConfig : IConfigurationSystem
 	{
-#if !TARGET_J2EE
-		static WebDefaultConfig instance;
-#else
+#if TARGET_J2EE
 		static private WebDefaultConfig instance {
 			get {
 				WebDefaultConfig val = (WebDefaultConfig)AppDomain.CurrentDomain.GetData("WebDefaultConfig.instance");
@@ -157,6 +155,8 @@ namespace System.Web.Configuration
 				AppDomain.CurrentDomain.SetData("WebDefaultConfig.instance", value);
 			}
 		}
+#else
+		static WebDefaultConfig instance;
 #endif
 		Hashtable fileToConfig;
 		HttpContext firstContext;

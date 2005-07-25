@@ -1,3 +1,6 @@
+2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
+	* WebConfigurationSettings.cs: TARGET_J2EE ifdef reorder for readability.
+
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MachineKeyConfigHandler.cs: removed unused code. Use
