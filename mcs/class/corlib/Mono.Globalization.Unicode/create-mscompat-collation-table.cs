@@ -63,7 +63,8 @@ namespace Mono.Globalization.Unicode
 		const int DecompositionCompat = 0x11;
 		const int DecompositionCanonical = 0x12;
 
-		TextWriter Result = Console.Out;
+		TextWriter CSResult = Console.Out;
+		TextWriter CResult = TextWriter.Null;
 
 		byte [] fillIndex = new byte [256]; // by category
 		CharMapEntry [] map = new CharMapEntry [char.MaxValue + 1];
@@ -260,7 +261,9 @@ namespace Mono.Globalization.Unicode
 			ModifyParsedValues ();
 			GenerateCore ();
 			Console.Error.WriteLine ("generation done.");
+			CResult = new StreamWriter ("collation-tables.h", false);
 			Serialize ();
+			CResult.Close ();
 			Console.Error.WriteLine ("serialization done.");
 /*
 StreamWriter sw = new StreamWriter ("agelog.txt");
@@ -289,6 +292,11 @@ sw.Close ();
 		{
 			return (ushort []) CodePointIndexer.CompressArray  (
 				source, typeof (ushort), i);
+		}
+
+		void WriteByte (byte value)
+		{
+			
 		}
 
 		void Serialize ()
@@ -338,7 +346,8 @@ sw.Close ();
 			cjkKOlv2 = CompressArray (cjkKOlv2, UUtil.Cjk);
 
 			// Ignorables
-			Result.WriteLine ("static readonly byte [] ignorableFlagsArr = new byte [] {");
+			CResult.WriteLine ("static const guint8* collation_table_ignorableFlags [] = {");
+			CSResult.WriteLine ("static readonly byte [] ignorableFlagsArr = new byte [] {");
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -348,125 +357,153 @@ sw.Close ();
 			for (int i = 0; i < ignorableFlags.Length; i++) {
 				byte value = ignorableFlags [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}",
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}",
 						UUtil.Ignorable.ToCodePoint (i - 0xF));
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 
 			// Primary category
-			Result.WriteLine ("static readonly byte [] categoriesArr = new byte [] {");
+			CResult.WriteLine ("static const guint8* collation_table_category [] = {");
+			CSResult.WriteLine ("static readonly byte [] categoriesArr = new byte [] {");
 #if Binary
 			binary.Write (categories.Length);
 #endif
 			for (int i = 0; i < categories.Length; i++) {
 				byte value = categories [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}",
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}",
 						UUtil.Category.ToCodePoint (i - 0xF));
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 
 			// Primary weight value
-			Result.WriteLine ("static readonly byte [] level1Arr = new byte [] {");
+			CResult.WriteLine ("static const guint8* collation_table_level1 [] = {");
+			CSResult.WriteLine ("static readonly byte [] level1Arr = new byte [] {");
 #if Binary
 			binary.Write (level1.Length);
 #endif
 			for (int i = 0; i < level1.Length; i++) {
 				byte value = level1 [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}",
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}",
 						UUtil.Level1.ToCodePoint (i - 0xF));
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 
 			// Secondary weight
-			Result.WriteLine ("static readonly byte [] level2Arr = new byte [] {");
+			CResult.WriteLine ("static const guint8* collation_table_level2 [] = {");
+			CSResult.WriteLine ("static readonly byte [] level2Arr = new byte [] {");
 #if Binary
 			binary.Write (level2.Length);
 #endif
 			for (int i = 0; i < level2.Length; i++) {
 				byte value = level2 [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}",
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}",
 						UUtil.Level2.ToCodePoint (i - 0xF));
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 
 			// Thirtiary weight
-			Result.WriteLine ("static readonly byte [] level3Arr = new byte [] {");
+			CResult.WriteLine ("static const guint8* collation_table_level3 [] = {");
+			CSResult.WriteLine ("static readonly byte [] level3Arr = new byte [] {");
 #if Binary
 			binary.Write (level3.Length);
 #endif
 			for (int i = 0; i < level3.Length; i++) {
 				byte value = level3 [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}",
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}",
 						UUtil.Level3.ToCodePoint (i - 0xF));
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 
 			// Width insensitivity mappings
 			// (for now it is more lightweight than dumping the
 			// entire NFKD table).
-			Result.WriteLine ("static readonly ushort [] widthCompatArr = new ushort [] {");
+			CResult.WriteLine ("static const guint16* widthCompat [] = {");
+			CSResult.WriteLine ("static readonly ushort [] widthCompatArr = new ushort [] {");
 #if Binary
 			binary.Write (widthCompat.Length);
 #endif
 			for (int i = 0; i < widthCompat.Length; i++) {
 				ushort value = widthCompat [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}",
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}",
 						UUtil.WidthCompat.ToCodePoint (i - 0xF));
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 #if Binary
 			using (FileStream fs = File.Create ("../collation.core.bin")) {
 				byte [] array = ms.ToArray ();
@@ -485,7 +522,8 @@ sw.Close ();
 		void SerializeCJK (string name, ushort [] cjk, int max)
 		{
 			int offset = 0;//char.MaxValue - cjk.Length;
-			Result.WriteLine ("static ushort [] {0}Arr = new ushort [] {{", name);
+			CResult.WriteLine ("static const guint16* collation_table_collation_cjk_{0} [] = {{", name);
+			CSResult.WriteLine ("static ushort [] {0}Arr = new ushort [] {{", name);
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -497,17 +535,21 @@ sw.Close ();
 					break;
 				ushort value = cjk [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X04},", value);
+					CSResult.Write ("0x{0:X04},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF + offset);
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}", i - 0xF + offset);
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 #if Binary
 			using (FileStream fs = File.Create (String.Format ("../collation.{0}.bin", name))) {
 				byte [] array = ms.ToArray ();
@@ -519,7 +561,8 @@ sw.Close ();
 		void SerializeCJK (string name, byte [] cjk, int max)
 		{
 			int offset = 0;//char.MaxValue - cjk.Length;
-			Result.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
+			CResult.WriteLine ("static const guint8* collation_table_collation_cjk_{0} [] = {{", name);
+			CSResult.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -530,17 +573,21 @@ sw.Close ();
 					break;
 				byte value = cjk [i];
 				if (value < 10)
-					Result.Write ("{0},", value);
+					CSResult.Write ("{0},", value);
 				else
-					Result.Write ("0x{0:X02},", value);
+					CSResult.Write ("0x{0:X02},", value);
+				CResult.Write ("{0},", value);
 #if Binary
 				binary.Write (value);
 #endif
-				if ((i & 0xF) == 0xF)
-					Result.WriteLine ("// {0:X04}", i - 0xF + offset);
+				if ((i & 0xF) == 0xF) {
+					CSResult.WriteLine ("// {0:X04}", i - 0xF + offset);
+					CResult.WriteLine ();
+				}
 			}
-			Result.WriteLine ("};");
-			Result.WriteLine ();
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
+			CSResult.WriteLine ();
 #if Binary
 			using (FileStream fs = File.Create (String.Format ("../collation.{0}.bin", name))) {
 				byte [] array = ms.ToArray ();
@@ -553,7 +600,8 @@ sw.Close ();
 		{
 			Hashtable indexes = new Hashtable ();
 			Hashtable counts = new Hashtable ();
-			Result.WriteLine ("static char [] tailorings = new char [] {");
+			CResult.WriteLine ("static const guint16*collation_table_tailoring = {");
+			CSResult.WriteLine ("static char [] tailorings = new char [] {");
 			int count = 0;
 #if Binary
 			MemoryStream ms = new MemoryStream ();
@@ -564,22 +612,29 @@ sw.Close ();
 			foreach (Tailoring t in tailorings) {
 				if (t.Alias != 0)
 					continue;
-				Result.Write ("/*{0}*/", t.LCID);
+				CResult.Write ("/*{0}*/", t.LCID);
+				CSResult.Write ("/*{0}*/", t.LCID);
 				indexes.Add (t.LCID, count);
 				char [] values = t.ItemToCharArray ();
 				counts.Add (t.LCID, values.Length);
 				foreach (char c in values) {
-					Result.Write ("'\\x{0:X}', ", (int) c);
-					if (++count % 16 == 0)
-						Result.WriteLine (" // {0:X04}", count - 16);
+					CSResult.Write ("'\\x{0:X}', ", (int) c);
+					CResult.Write ("{0},", (int) c);
+					if (++count % 16 == 0) {
+						CSResult.WriteLine (" // {0:X04}", count - 16);
+						CResult.WriteLine ();
+					}
 #if Binary
 					binary.Write ((ushort) c);
 #endif
 				}
 			}
-			Result.WriteLine ("};");
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
 
-			Result.WriteLine ("static TailoringInfo [] tailoringInfos = new TailoringInfo [] {");
+			CResult.WriteLine ("static const int collation_tailoring_count = {0};", tailorings.Count);
+			CResult.WriteLine ("static const int* collation_tailoring_infos = {");
+			CSResult.WriteLine ("static TailoringInfo [] tailoringInfos = new TailoringInfo [] {");
 #if Binary
 			byte [] rawdata = ms.ToArray ();
 			ms = new MemoryStream ();
@@ -600,7 +655,8 @@ sw.Close ();
 					foreach (Tailoring t2 in tailorings)
 						if (t2.LCID == t.LCID)
 							french = t2.FrenchSort;
-				Result.WriteLine ("new TailoringInfo ({0}, 0x{1:X}, {2}, {3}), ", t.LCID, idx, cnt, french ? "true" : "false");
+				CSResult.WriteLine ("new TailoringInfo ({0}, 0x{1:X}, {2}, {3}), ", t.LCID, idx, cnt, french ? "true" : "false");
+				CResult.WriteLine ("{0},{1},{2},{3},", t.LCID, idx, cnt, french ? 1 : 0);
 #if Binary
 				binary.Write (t.LCID);
 				binary.Write (idx);
@@ -608,7 +664,8 @@ sw.Close ();
 				binary.Write (french);
 #endif
 			}
-			Result.WriteLine ("};");
+			CResult.WriteLine ("0};");
+			CSResult.WriteLine ("};");
 #if Binary
 			binary.Write ((byte) 0xFF);
 			binary.Write ((byte) 0xFF);
@@ -3729,7 +3786,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 
 			// I have no idea why those symbols have level 3 weight
-			if (c == '\u212B')
+			if (c == '\u2104' || c == '\u212B')
 				return 0x18;
 			if ('\u211E' <= c && c <= '\u212B')
 				return 0x10;
@@ -3754,7 +3811,6 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			byte ret = 0;
 			switch (c) {
 			case '\u03C2':
-			case '\u2104':
 			case '\u212B':
 				ret = 8;
 				break;
