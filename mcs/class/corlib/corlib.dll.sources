@@ -196,6 +196,7 @@ System/Single.cs
 System/StackOverflowException.cs
 System/STAThreadAttribute.cs
 System/String.cs
+System/StringComparer.cs
 System/SystemException.cs
 System/TermInfoBooleans.cs
 System/TermInfoDriver.cs

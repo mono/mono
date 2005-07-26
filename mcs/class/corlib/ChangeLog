@@ -1,3 +1,7 @@
+2005-07-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* corlib.dll.sources: Added System.StringComparer.cs.
+
 2005-07-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* Makefile: `if' for 2.0 warnings only.

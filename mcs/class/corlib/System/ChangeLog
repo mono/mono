@@ -1,3 +1,7 @@
+2005-07-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* StringComparer.cs: New file.
+
 2005-07-26  Raja R Harinath  <harinath@gmail.com>
 
 	* Enum.cs (GetValue): Make private.  Return an ulong.
