@@ -1,4 +1,12 @@
+2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: the init_vector must be the same accross
+	restarts, otherwise the cookie does not work even when a decryption
+	key is provided. Initialize it to the bytes of the cookie name. Fixes
+	bug #75635.
+
 2005-07-25  Eyal Alaluf <eyala@mainsoft.com>
+
 	* FormsAuthenticationModule.cs: Check for null config
 
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>

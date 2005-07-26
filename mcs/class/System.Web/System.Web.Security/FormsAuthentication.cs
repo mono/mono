@@ -347,9 +347,17 @@ namespace System.Web.Security
 					slidingExpiration = true;
 #endif
 				}
-				TripleDESCryptoServiceProvider tDES = new TripleDESCryptoServiceProvider ();
-				tDES.GenerateIV ();
-				init_vector = tDES.IV;
+
+				// IV is 8 bytes long for 3DES
+				init_vector = new byte [8];
+				int len = cookieName.Length;
+				for (int i = 0; i < 8; i++) {
+					if (i >= len)
+						break;
+
+					init_vector [i] = (byte) cookieName [i];
+				}
+
 				initialized = true;
 			}
 		}
