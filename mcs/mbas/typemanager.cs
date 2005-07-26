@@ -85,17 +85,17 @@ public class TypeManager {
 	// Expressions representing the internal types.  Used during declaration
 	// definition.
 	//
-	static public Expression system_object_expr, system_string_expr; 
-	static public Expression system_boolean_expr, system_decimal_expr;
-	static public Expression system_single_expr, system_double_expr;
-	static public Expression system_sbyte_expr, system_byte_expr;
-	static public Expression system_int16_expr, system_uint16_expr;
-	static public Expression system_int32_expr, system_uint32_expr;
-	static public Expression system_int64_expr, system_uint64_expr;
-	static public Expression system_char_expr, system_void_expr;
-	static public Expression system_date_expr;
-	static public Expression system_asynccallback_expr;
-	static public Expression system_iasyncresult_expr;
+	static public TypeExpr system_object_expr, system_string_expr; 
+	static public TypeExpr system_boolean_expr, system_decimal_expr;
+	static public TypeExpr system_single_expr, system_double_expr;
+	static public TypeExpr system_sbyte_expr, system_byte_expr;
+	static public TypeExpr system_int16_expr, system_uint16_expr;
+	static public TypeExpr system_int32_expr, system_uint32_expr;
+	static public TypeExpr system_int64_expr, system_uint64_expr;
+	static public TypeExpr system_char_expr, system_void_expr;
+	static public TypeExpr system_date_expr;
+	static public TypeExpr system_asynccallback_expr;
+	static public TypeExpr system_iasyncresult_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -1931,6 +1931,53 @@ public class TypeManager {
 		}
 	}
 
+	public static TypeExpr TypeToCoreTypeExpr (Type t)
+	{
+		if (t == null)
+			return null;
+
+		TypeCode tc = Type.GetTypeCode (t);
+
+		switch (tc){
+		case TypeCode.Boolean:
+			return TypeManager.system_boolean_expr;
+		case TypeCode.Byte:
+			return TypeManager.system_byte_expr;
+		case TypeCode.SByte:
+			return TypeManager.system_sbyte_expr;
+		case TypeCode.Char:
+			return TypeManager.system_char_expr;
+		case TypeCode.Int16:
+			return TypeManager.system_int16_expr;
+		case TypeCode.UInt16:
+			return TypeManager.system_uint16_expr;
+		case TypeCode.Int32:
+			return TypeManager.system_int32_expr;
+		case TypeCode.UInt32:
+			return TypeManager.system_uint32_expr;
+		case TypeCode.Int64:
+			return TypeManager.system_int64_expr;
+		case TypeCode.UInt64:
+			return TypeManager.system_uint64_expr;
+		case TypeCode.String:
+			return TypeManager.system_string_expr;
+		case TypeCode.Decimal:
+			return TypeManager.system_decimal_expr;
+		case TypeCode.Single:
+			return TypeManager.system_single_expr;
+		case TypeCode.Double:
+			return TypeManager.system_double_expr;
+		case TypeCode.DateTime:
+			return TypeManager.system_date_expr;
+		default:
+			if (t == typeof (void))
+				return TypeManager.system_void_expr;
+			if (t == typeof (object))
+				return TypeManager.system_object_expr;
+			//FIXME : return t; What should be returned here?
+			return null;
+		}
+	}
 	/// <summary>
 	///   Utility function that can be used to probe whether a type
 	///   is managed or not.  

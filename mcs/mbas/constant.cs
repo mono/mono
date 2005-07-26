@@ -593,6 +593,11 @@ namespace Mono.MonoBASIC {
 		{
 			return new FloatConstant (Value);
 		}
+		
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return new DecimalConstant (Value);
+		}
 
 		public override ULongConstant ConvertToULong ()
 		{
@@ -884,7 +889,12 @@ namespace Mono.MonoBASIC {
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return null;
+			return new FloatConstant ((float) Value);
+		}
+
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return new DecimalConstant ((decimal) Value);
 		}
 
 		public override ULongConstant ConvertToULong ()

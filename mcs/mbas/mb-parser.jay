@@ -890,12 +890,12 @@ identifier
 	;
 
 type_character
-	: PERCENT 			{ $$ = TypeManager.system_int32_expr; }
-	| LONGTYPECHAR 			{ $$ = TypeManager.system_int64_expr; }
-	| AT_SIGN		 	{ $$ = TypeManager.system_decimal_expr; }
-	| SINGLETYPECHAR 		{ $$ = TypeManager.system_single_expr; }
-	| NUMBER_SIGN 			{ $$ = TypeManager.system_double_expr; }
-	| DOLAR_SIGN 			{ $$ = TypeManager.system_string_expr; }
+	: PERCENT 			{ $$ = typeof (int); }
+	| LONGTYPECHAR 			{ $$ = typeof (long); }
+	| AT_SIGN		 	{ $$ = typeof (decimal); }
+	| SINGLETYPECHAR 		{ $$ = typeof (float); }
+	| NUMBER_SIGN 			{ $$ = typeof (double); }
+	| DOLAR_SIGN 			{ $$ = typeof (string); }
 	;	
 	
 opt_type_character
@@ -1548,7 +1548,7 @@ must_override_func_declaration
 	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params _mark_ opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {	
 		Expression ftype = ($7 == null) ? (($4 == null) ? TypeManager.	
-			system_object_expr : (Expression) $4 ) : (Expression) $7;
+			system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $4) ) : (Expression) $7;
 
 	  	if (current_container is Module)
 	  		Report.Error (30433, (Location)$6,"Methods in a Module cannot be declared 'MustOverride'.");
@@ -1648,7 +1648,7 @@ func_declaration
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
 				
-		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
+		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $3) ) : (Expression) $6;
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -1666,7 +1666,7 @@ func_declaration
 	  }
 	  logical_end_of_line
 	  {
-		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
+		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $3) ) : (Expression) $6;
 
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes,/* (Attributes) currx ent_attributes,  */
@@ -1987,7 +1987,7 @@ interface_method_declaration
 	| FUNCTION identifier opt_type_character opt_params _mark_ opt_type_with_ranks logical_end_of_line
 	  {
 		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.	
-			system_object_expr : (Expression) $3 ) : (Expression) $6;
+			system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $3) ) : (Expression) $6;
 		
 	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
 						(string) $2,(Parameters) $4, current_attributes, null, 
@@ -2001,7 +2001,7 @@ interface_property_declaration
 	: PROPERTY identifier _mark_ opt_type_character opt_property_parameters opt_type_with_ranks logical_end_of_line
 	  {
 		Expression ftype = ($6 == null) ? (($4 == null) ? 
-				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $6;
+				TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $4) ) : (Expression) $6;
 
 		current_local_parameters = (Parameters) $5;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
@@ -2085,7 +2085,7 @@ abstract_propery_declaration
 	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters _mark_ opt_type_with_ranks logical_end_of_line
 	  {	
 		Expression ftype = ($7 == null) ? (($4 == null) ? 
-				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $7;
+				TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $4) ) : (Expression) $7;
 
 	  	if (current_container is Module)
 	  		Report.Error (30503, (Location) $6 , "Properties in a Module cannot be declared 'MustOverride'.");
@@ -2160,7 +2160,7 @@ abstract_propery_declaration
 	  
 		get_implicit_value_parameter_type  = 
 			($6 == null) ? (($3 == null) ? 
-				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
+				TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $3) ): (Expression) $6;
 		get_implicit_value_parameter_name = (string) $2;
 		
 		current_local_parameters = (Parameters) $4;
@@ -2650,10 +2650,11 @@ parameter
   		if ((pm & Parameter.Modifier.REF) !=0)
   			pm |= Parameter.Modifier.ISBYREF;
 		
-	  	if ($5 != null && $7 != null && $5 != $7)
+		TypeExpr tc_expr = TypeManager.TypeToCoreTypeExpr ((Type) $5);
+	  	if (tc_expr != null && $7 != null && tc_expr != $7)
 			Report.Error (30302, (Location)$4, "Type character conflicts with declared type."); // TODO: Correct error number and message text
 
-		ptype = (Expression)(($7 == null) ? (($5 == null) ? TypeManager.system_object_expr : $5) : $7);
+		ptype = (Expression)(($7 == null) ? ((tc_expr == null) ? TypeManager.system_object_expr : tc_expr) : $7);
 		if ($6 != null)	{
 	  		string t = ptype.ToString ();
 	  		if (t.IndexOf('[') >= 0)
@@ -4044,7 +4045,7 @@ variable_names
 variable_name
 	: identifier opt_type_character opt_array_name_modifier
 	  {
-		$$ = new VarName ($1, $2, $3);
+		$$ = new VarName ($1, TypeManager.TypeToCoreTypeExpr ((Type) $2), $3);
 	  }
 	;
 
@@ -4222,17 +4223,55 @@ opt_dim_specifiers
 	;
 	
 primary_expression
-	: literal
+	: literal 
+	| literal type_character
 	  {
-	  	//TODO
+		$$ = $1;
+		
+		Constant literal = (Constant) $1;
+		Type literal_type = literal.GetValue ().GetType ();
+		Type typechar = (Type) $2;
+
+		if (literal_type == typechar)
+			//no conversion required
+			break;
+
+		if (literal_type == typeof (bool)) {
+			Report.Error (30687, lexer.Location, "Keyword cannot have a type character.");
+			break;
+		}
+
+		if (literal_type == typeof (DateTime) || literal_type == typeof (char) || literal_type == typeof (string) || typechar == typeof (string) ) {
+			Report.Error (30037, lexer.Location, "Character is not valid");
+			break;
+		}
+			
+		if (literal_type == typeof (int) || literal_type == typeof (short) || literal_type == typeof (long)) {
+			//integer literal
+			$$ = ConvertLiteral (literal, typechar);
+		} else
+		if (literal_type == typeof (float) || literal_type == typeof (double) || literal_type == typeof (decimal)) {
+			//real literal
+			if (typechar == typeof (int))
+				Report.Error (30037, lexer.Location, "Character is not valid.");
+			else
+			if (typechar == typeof (long))
+				Report.Error (30201, lexer.Location, "Expression expected.");
+			else
+				//Valid type char
+				$$ = ConvertLiteral (literal, typechar);
+		}/* FIXME: throw error here? */ 
 	  }
 	| parenthesized_expression
 	| this_access
 	| base_access
 	| qualified_identifier opt_type_character _mark_
 	  {
-		string name = (string) $1;
-		$$ = DecomposeQI (name, (Location)$3);
+		Expression left = DecomposeQI ((string) $1, (Location) $3);
+		if ($2 != null)
+			$$ = new DecoratedIdentifier (left, (Type) $2);
+		else
+			$$ = left;
 	  }
 	| get_type_expression
 	| member_access
@@ -5607,6 +5646,31 @@ private void RemoveHandler (Block b, Expression evt_definition, Expression handl
 													handler_exp, 
 													loc);
 	b.AddStatement (rmhnd);
+}
+
+private Constant ConvertLiteral (Constant literal, Type target_type)
+{
+	if (literal.GetValue ().GetType () == target_type)
+		//no conversion required
+		return literal;
+
+	if (target_type == typeof (float))
+		return new FloatLiteral ((float) literal.ConvertToFloat ().Value);
+	else
+	if (target_type == typeof (decimal))
+		return new DecimalLiteral ((decimal) literal.ConvertToDecimal ().Value);
+	else
+	if (target_type == typeof (double))
+		return new DoubleLiteral ((double) literal.ConvertToDouble ().Value);
+	else
+	if (target_type == typeof (long))
+		return new LongLiteral ((Int64) literal.ConvertToLong ().Value);
+	else
+	if (target_type == typeof (int))
+		return new IntLiteral ((Int32) literal.ConvertToInt ().Value);
+
+	/* FIXME: throw error? */
+	return null;
 }
 
 // <summary>

@@ -997,7 +997,7 @@ namespace Mono.MonoBASIC
 
 				if (Char.IsDigit ((char) c))
                                 {
-                                        cant_have_a_type_character = true;
+                                        cant_have_a_type_character = false;
                                         tokens_seen = true;
                                         return is_number (c);
                                 }

@@ -4499,6 +4499,36 @@ namespace Mono.MonoBASIC {
 			return Name;
 		}
 	}
+
+	public class DecoratedIdentifier : Expression {
+		Expression id;
+		Type decoration;
+
+		public DecoratedIdentifier (Expression id, Type decoration)
+		{
+			this.id = id;
+			this.decoration = decoration;
+		}
+
+		override public Expression DoResolve (EmitContext ec)
+		{
+			if (id == null || decoration == null)
+				return null;
+			
+			Expression ret = id.DoResolve (ec);
+			if (ret.Type != TypeManager.TypeToCoreType (decoration)) {
+				Report.Error (30277, id.Location, "Type character '" + decoration + "' does not match declared type '" + ret.Type  + "'."); 
+				return null;
+			}
+
+			return ret;
+		}
+		
+		override public void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("Should never be called");
+		}
+	}
 	
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
