@@ -202,6 +202,28 @@ namespace System
 			return InternalSplit (separator, count);
 		}
 
+#if NET_2_0
+		[ComVisible (false)]
+		[MonoTODO]
+		public String[] Split (char[] separator, StringSplitOptions options)
+		{
+			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
+				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
+
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public String[] Split (string[] separator, StringSplitOptions options)
+		{
+			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
+				throw new ArgumentException ("Illegal enum value: " + options + ".", "options");
+
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public unsafe String Substring (int startIndex)
 		{
 			if (startIndex < 0 || startIndex > this.length)

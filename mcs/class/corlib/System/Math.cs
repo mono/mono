@@ -358,6 +358,26 @@ namespace System
 			return Decimal.Round (d, decimals);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static decimal Round (decimal d, MidpointRounding mode)
+		{
+			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
+				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static decimal Round (decimal d, int decimals, MidpointRounding mode)
+		{
+			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
+				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
+
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Round (double d);
 
@@ -371,6 +391,27 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static double Round2 (double value, int digits);
+
+
+#if NET_2_0
+		[MonoTODO]
+		public static double Round (double value, MidpointRounding mode)
+		{
+			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
+				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static double Round (double value, int digits, MidpointRounding mode)
+		{
+			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
+				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
+
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public static int Sign (decimal value)
 		{
