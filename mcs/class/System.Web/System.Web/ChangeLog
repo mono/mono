@@ -1,8 +1,15 @@
+2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: fixed typo when checking for local address. Patch by
+	Mike Morano that closes bug #75633.
+
 2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* HttpContext.cs HttpRuntime.cs HttpApplication.cs: timeout is not supported
 	  in TARGET_J2EE configuration (no Thread.Abort support).
 
 2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
+
 	* QueueManager.cs: TARGET_J2EE fixes.
 	* HttpApplicationFactory.cs: TARGET_J2EE fixes.
 

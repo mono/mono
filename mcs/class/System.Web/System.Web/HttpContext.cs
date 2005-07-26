@@ -211,7 +211,7 @@ namespace System.Web
 					return true;
 
 				return (mode == CustomErrorMode.RemoteOnly &&
-					_oRequest.ServerVariables ["LOCAL_ADDR"] == _oRequest.UserHostAddress);
+					_oRequest.ServerVariables ["LOCAL_ADDR"] != _oRequest.UserHostAddress);
 			}
 		}
 
