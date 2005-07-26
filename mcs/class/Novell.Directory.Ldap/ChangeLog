@@ -1,3 +1,25 @@
+2005-26-07  Boris Kirzner <borisk@mainsoft.com>
+	* Novell.Directory.Ldap/AssemblyInfo.cs, 
+	Novell.Directory.Ldap.Asn1/Asn1Enumerated.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Choice.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Set.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Tagged.cs,
+	Novell.Directory.Ldap.Asn1/Asn1SequenceOf.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Integer.cs,
+	Novell.Directory.Ldap.Asn1/LBEREncoder.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Numeric.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Structured.cs,
+	Novell.Directory.Ldap.Asn1/Asn1OctetString.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Object.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Sequence.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Null.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Encoder.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Boolean.cs,
+	Novell.Directory.Ldap.Asn1/Asn1SetOf.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Length.cs,
+	Novell.Directory.Ldap.Asn1/Asn1Identifier.cs,
+	Novell.Directory.Ldap.Asn1/LBERDecoder.cs: added ifdef for TARGET_JVM.
+
 2005-05-07  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.vmwcsproj: Project file converted 
 	to Developer Edition format. Removed ClearCase references.

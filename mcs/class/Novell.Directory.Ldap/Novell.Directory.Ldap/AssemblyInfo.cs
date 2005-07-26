@@ -48,7 +48,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright(" (C) 2003 Novell, Inc")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
+#if !TARGET_JVM 
 [assembly: CLSCompliant(true)]
+#endif
 
 //
 // Version information for an assembly consists of the following four values:

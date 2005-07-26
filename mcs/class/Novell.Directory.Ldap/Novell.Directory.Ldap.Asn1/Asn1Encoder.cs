@@ -50,7 +50,9 @@ namespace Novell.Directory.Ldap.Asn1
 	/// includes a BER encoder no application provided encoder is needed for 
 	/// building Ldap packets.
 	/// </summary>
+#if !TARGET_JVM 
 	[CLSCompliantAttribute(true)]
+#endif
 	public interface Asn1Encoder : System.Runtime.Serialization.ISerializable
 		{
 			

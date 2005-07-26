@@ -37,7 +37,9 @@ namespace Novell.Directory.Ldap.Asn1
 	/// <summary> This class serves as the base type for all ASN.1
 	/// structured types.
 	/// </summary>
+#if !TARGET_JVM 
 	[CLSCompliantAttribute(true)]
+#endif
 	public abstract class Asn1Structured:Asn1Object
 	{
 		private Asn1Object[] content;

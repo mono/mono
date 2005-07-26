@@ -35,7 +35,9 @@ namespace Novell.Directory.Ldap.Asn1
 {
 	
 	/// <summary> This class encapsulates the ASN.1 INTEGER type.</summary>
+#if !TARGET_JVM 
 	[CLSCompliantAttribute(true)]
+#endif
 	public class Asn1Integer:Asn1Numeric
 	{
 		

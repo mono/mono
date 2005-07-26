@@ -37,7 +37,9 @@ namespace Novell.Directory.Ldap.Asn1
 	/// <summary> This class provides a means to manipulate ASN.1 Length's. It will
 	/// be used by Asn1Encoder's and Asn1Decoder's by composition.
 	/// </summary>
+#if !TARGET_JVM 
 	[CLSCompliantAttribute(true)]
+#endif
 	public class Asn1Length
 	{
 		/// <summary> Returns the length of this Asn1Length.</summary>
