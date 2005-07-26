@@ -1,3 +1,8 @@
+2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* error.c: map ENOENT to WSAECONNREFUSED. It might happen when
+	connecting to unix sockets. Closes bug #75632.
+
 2005-07-05  Dick Porter  <dick@ximian.com>
 
 	* io.c: Make sure SIGPIPE is ignored when calling write(2).
