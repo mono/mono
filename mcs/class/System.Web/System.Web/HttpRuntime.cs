@@ -283,6 +283,9 @@ namespace System.Web {
 			if (queueManager != null)
 				queueManager.Dispose (); // Send a 503 to all queued requests
 			queueManager = null;
+#if TARGET_J2EE
+			_cache.Destroy();
+#endif
 			_cache = null;
 			HttpApplicationFactory.EndApplication();
 		}

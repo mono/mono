@@ -1,3 +1,6 @@
+2005-07-26 Eyal Alaluf <eyala@mainsoft.com>
+    * Cache.cs CacheExpires.cs: In TARGET_j2EE dispose the timer thread when done.
+
 2005-07-25 Eyal Alaluf <eyala@mainsoft.com>
     * ExpiresBuckets.cs: Removed unused field (that if used would lead to
 	  serious runtime errors).

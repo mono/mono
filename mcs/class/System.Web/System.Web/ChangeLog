@@ -1,3 +1,6 @@
+2005-07-26  Eyal Alalouf  <eyala@mainsoft.com>
+	* HttpRuntime.cs: Under TARGET_J2EE dispose the cache as well in Dispose.
+
 2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: fixed typo when checking for local address. Patch by

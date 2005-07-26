@@ -57,6 +57,14 @@ namespace System.Web.Caching {
 			_objExpires = new CacheExpires (this);
 		}
 
+#if TARGET_J2EE
+		internal void Destroy()
+		{
+			_arrEntries = null;
+			_objExpires.Close();
+		}
+#endif
+
 		private IDictionaryEnumerator CreateEnumerator () {
 			Hashtable objTable;
 

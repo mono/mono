@@ -75,6 +75,14 @@ namespace System.Web.Caching {
 			_objTimer = new System.Threading.Timer (new System.Threading.TimerCallback (GarbageCleanup), null, 10000, 60000);
 		}
 
+#if TARGET_J2EE
+		internal void Close()
+		{
+			_arrBuckets = null;
+			_objTimer.Dispose();
+		}
+#endif
+
 		/// <summary>
 		/// Adds a Cache entry to the correct flush bucket.
 		/// </summary>
