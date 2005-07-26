@@ -1,3 +1,7 @@
+2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringComparer.cs : implemented StringCultureComparer.GetHashCode().
+
 2005-07-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StringSplitOptions.cs MidpointRounding.cs: New files.

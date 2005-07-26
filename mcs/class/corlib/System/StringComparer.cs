@@ -59,15 +59,12 @@ namespace System
 				return Compare (x, y) == 0;
 			}
 
-			[MonoTODO]
 			public override int GetHashCode (string s)
 			{
 				if (s == null)
 					throw new ArgumentNullException("s");
 
-				return 0;
-				// TODO:
-				//return ci.GetHashCode (s);
+				return ci.GetSortKey (s, co).GetHashCode ();
 			}
 		}
 
