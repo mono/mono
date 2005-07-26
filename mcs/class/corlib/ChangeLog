@@ -1,3 +1,7 @@
+2005-07-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System/StringSplitOptions.cs and System/MidpointRounding.cs.
+
 2005-07-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Minor re-org for better readability.  Remove an

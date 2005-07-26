@@ -154,6 +154,7 @@ System/MarshalByRefObject.cs
 System/Math.cs
 System/MemberAccessException.cs
 System/MethodAccessException.cs
+System/MidpointRounding.cs
 System/MissingFieldException.cs
 System/MissingMemberException.cs
 System/MissingMethodException.cs
@@ -196,6 +197,7 @@ System/Single.cs
 System/StackOverflowException.cs
 System/STAThreadAttribute.cs
 System/String.cs
+System/StringSplitOptions.cs
 System/StringComparer.cs
 System/SystemException.cs
 System/TermInfoBooleans.cs
