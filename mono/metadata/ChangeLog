@@ -1,3 +1,8 @@
+2005-07-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_bounded_array_class_get): Avoid crash if eclass is
+	in a module. Fixes #75629.
+
 2005-07-26  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_wrapper): New static method.
