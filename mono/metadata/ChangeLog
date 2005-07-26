@@ -1,3 +1,11 @@
+2005-07-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* mono-debug.c, debug-mono-symfile.c: Replace the use of the
+	loader lock with the debugger lock. Prevents deadlocks for beagle.
+
+	Beagle can now run on an smp box for a weekend without any
+	issues. Woohoo!
+
 2005-07-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_bounded_array_class_get): Avoid crash if eclass is
