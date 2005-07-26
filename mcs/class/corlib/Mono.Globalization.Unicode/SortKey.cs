@@ -29,16 +29,6 @@ namespace System.Globalization
 		readonly CompareOptions options;
 		readonly byte [] key;
 		readonly int lcid;
-		/*
-		readonly int lv1Length;
-		readonly int lv2Length;
-		readonly int lv3Length;
-		readonly int kanaSmallLength;
-		readonly int markTypeLength;
-		readonly int katakanaLength;
-		readonly int kanaWidthLength;
-		readonly int identLength;
-		*/
 
 		// for legacy unmanaged one
 		internal SortKey (int lcid, string source, CompareOptions opt)
@@ -58,16 +48,6 @@ namespace System.Globalization
 			this.source = source;
 			this.key = buffer;
 			this.options = opt;
-			/*
-			this.lv1Length = lv1Length;
-			this.lv2Length = lv2Length;
-			this.lv3Length = lv3Length;
-			this.kanaSmallLength = kanaSmallLength;
-			this.markTypeLength = markTypeLength;
-			this.katakanaLength = katakanaLength;
-			this.kanaWidthLength = kanaWidthLength;
-			this.identLength = identLength;
-			*/
 		}
 
 		public string OriginalString {
@@ -77,51 +57,6 @@ namespace System.Globalization
 		public byte [] KeyData {
 			get { return key; }
 		}
-/*
-		internal int Level1Length {
-			get { return lv1Length; }
-		}
-
-		internal int Level2Index {
-			get { return lv1Length + 1; }
-		}
-
-		internal int Level2Length {
-			get { return lv2Length; }
-		}
-
-		internal int Level3Index {
-			get { return lv1Length + lv2Length + 2; }
-		}
-
-		internal int Level3Length {
-			get { return lv3Length; }
-		}
-
-		internal int Level4Index {
-			get { return lv1Length + lv2Length + lv3Length + 3; }
-		}
-
-		internal int MarkTypeLength {
-			get { return markTypeLength; }
-		}
-
-		internal int KatakanaLength {
-			get { return katakanaLength; }
-		}
-
-		internal int KanaWidthLength {
-			get { return kanaWidthLength; }
-		}
-
-		internal int IdenticalIndex {
-			get { return key.Length - identLength - 1; }
-		}
-
-		internal int IdenticalLength {
-			get { return identLength; }
-		}
-*/
 
 		// copy from original SortKey.cs
 		public override bool Equals (object value)
@@ -138,11 +73,17 @@ namespace System.Globalization
 			return(false);
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return(source.GetHashCode ());
+			if (key.Length == 0)
+				return 0; // should not happen though.
+			int val = key [0];
+			for (int i = 1; i < key.Length; i++)
+				val ^= (int) key [i] << (i & 3);
+			return (int) val;
 		}
 
+		// copy from original SortKey.cs
 		public override string ToString()
 		{
 			return("SortKey - "+lcid+", "+options+", "+source);

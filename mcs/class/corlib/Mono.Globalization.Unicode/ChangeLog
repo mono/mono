@@ -1,5 +1,10 @@
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SortKey.cs : GetHashCode() returns a value based on its byte data.
+	  Removed unused code.
+
+2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : consider extractions in invariant culture.
 
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
