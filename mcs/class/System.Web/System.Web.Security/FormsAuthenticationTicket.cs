@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -29,6 +30,7 @@
 //
 
 using System;
+using System.IO;
 
 namespace System.Web.Security
 {
@@ -36,12 +38,74 @@ namespace System.Web.Security
 	public sealed class FormsAuthenticationTicket
 	{
 		int version;
-		string name;
-		DateTime issueDate;
+		bool persistent;
+		DateTime issue_date;
 		DateTime expiration;
-		bool isPersistent;
-		string userData;
-		string cookiePath;
+		string name;
+		string cookie_path;
+		string user_data;
+
+		/*
+		internal void ToStr ()
+		{
+			Console.WriteLine ("version: {0}", version);
+			Console.WriteLine ("persistent: {0}", persistent);
+			Console.WriteLine ("issue_date: {0}", issue_date);
+			Console.WriteLine ("expiration: {0}", expiration);
+			Console.WriteLine ("name: {0}", name);
+			Console.WriteLine ("cookie_path: {0}", cookie_path);
+			Console.WriteLine ("user_data: {0}", user_data);
+		}
+		*/
+
+		internal byte [] ToByteArray ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			BinaryWriter writer = new BinaryWriter (ms);
+			writer.Write (version);
+			writer.Write (persistent);
+			writer.Write (issue_date.Ticks);
+			writer.Write (expiration.Ticks);
+			writer.Write (name != null);
+			if (name != null)
+				writer.Write (name);
+
+			writer.Write (cookie_path != null);
+			if (cookie_path != null)
+				writer.Write (cookie_path);
+
+			writer.Write (user_data != null);
+			if (user_data != null)
+				writer.Write (user_data);
+
+			writer.Flush ();
+			return ms.ToArray ();
+		}
+
+		internal static FormsAuthenticationTicket FromByteArray (byte [] bytes)
+		{
+			MemoryStream ms = new MemoryStream (bytes);
+			BinaryReader reader = new BinaryReader (ms);
+			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket ();
+			ticket.version = reader.ReadInt32 ();
+			ticket.persistent = reader.ReadBoolean ();
+			ticket.issue_date = new DateTime (reader.ReadInt64 ());
+			ticket.expiration = new DateTime (reader.ReadInt64 ());
+			if (reader.ReadBoolean ())
+				ticket.name = reader.ReadString ();
+
+			if (reader.ReadBoolean ())
+				ticket.cookie_path = reader.ReadString ();
+
+			if (reader.ReadBoolean ())
+				ticket.user_data = reader.ReadString ();
+
+			return ticket;
+		}
+
+		private FormsAuthenticationTicket ()
+		{
+		}
 
 		public FormsAuthenticationTicket (int version,
 						  string name,
@@ -52,11 +116,11 @@ namespace System.Web.Security
 		{
 			this.version = version;
 			this.name = name;
-			this.issueDate = issueDate;
+			this.issue_date = issueDate;
 			this.expiration = expiration;
-			this.isPersistent = isPersistent;
-			this.userData = userData;
-			this.cookiePath = "/";
+			this.persistent = isPersistent;
+			this.user_data = userData;
+			this.cookie_path = "/";
 		}
 
 		public FormsAuthenticationTicket (int version,
@@ -69,31 +133,31 @@ namespace System.Web.Security
 		{
 			this.version = version;
 			this.name = name;
-			this.issueDate = issueDate;
+			this.issue_date = issueDate;
 			this.expiration = expiration;
-			this.isPersistent = isPersistent;
-			this.userData = userData;
-			this.cookiePath = cookiePath;
+			this.persistent = isPersistent;
+			this.user_data = userData;
+			this.cookie_path = cookiePath;
 		}
 
 		public FormsAuthenticationTicket (string name, bool isPersistent, int timeout)
 		{
 			this.version = 1;
 			this.name = name;
-			this.issueDate = DateTime.Now;
-			this.isPersistent = isPersistent;
-			if (isPersistent)
-				expiration = issueDate.AddYears (50);
+			this.issue_date = DateTime.Now;
+			this.persistent = isPersistent;
+			if (persistent)
+				expiration = issue_date.AddYears (50);
 			else
-				expiration = issueDate.AddMinutes ((double) timeout);
+				expiration = issue_date.AddMinutes ((double) timeout);
 
-			this.userData = String.Empty;
-			this.cookiePath = "/";
+			this.user_data = "";
+			this.cookie_path = "/";
 		}
 
-		internal void SetDates (DateTime issueDate, DateTime expiration)
+		internal void SetDates (DateTime issue_date, DateTime expiration)
 		{
-			this.issueDate = issueDate;
+			this.issue_date = issue_date;
 			this.expiration = expiration;
 		}
 		
@@ -101,67 +165,43 @@ namespace System.Web.Security
 		{
 			return new FormsAuthenticationTicket   (version,
 								name,
-								issueDate,
+								issue_date,
 								expiration,
-								isPersistent,
-								userData,
-								cookiePath);
+								persistent,
+								user_data,
+								cookie_path);
 		}
 
-		public string CookiePath
-		{
-			get {
-				return cookiePath;
-			}
+		public string CookiePath {
+			get { return cookie_path; }
 		}
 
-		public DateTime Expiration
-		{
-			get {
-				return expiration;
-			}
+		public DateTime Expiration {
+			get { return expiration; }
 		}
 
-		public bool Expired
-		{
-			get {
-				return DateTime.Now > expiration;
-			}
+		public bool Expired {
+			get { return DateTime.Now > expiration; }
 		}
 
-		public bool IsPersistent
-		{
-			get {
-				return isPersistent;
-			}
+		public bool IsPersistent {
+			get { return persistent; }
 		}
 
-		public DateTime IssueDate
-		{
-			get {
-				return issueDate;
-			}
+		public DateTime IssueDate {
+			get { return issue_date; }
 		}
 
-		public string Name
-		{
-			get {
-				return name;
-			}
+		public string Name {
+			get { return name; }
 		}
 
-		public string UserData
-		{
-			get {
-				return userData;
-			}
+		public string UserData {
+			get { return user_data; }
 		}
 
-		public int Version
-		{
-			get {
-				return version;
-			}
+		public int Version {
+			get { return version; }
 		}
 	}
 }
