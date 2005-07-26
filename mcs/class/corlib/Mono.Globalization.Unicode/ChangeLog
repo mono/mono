@@ -1,5 +1,11 @@
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : Implemented quick codepoint comparison in
+	  Compare(). Comparison became 125x faster.
+	* mono-tailoring-source.txt : added tiny comment.
+
+2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* mono-tailoring-source.txt : Added all single sortkey remapping to
 	  all cultures (still need to fill contractions and annotate possible
 	  buggy mapping referencing to CLDR).

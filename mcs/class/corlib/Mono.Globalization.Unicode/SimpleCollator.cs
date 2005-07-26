@@ -80,6 +80,12 @@ namespace Mono.Globalization.Unicode
 		readonly Contraction [] contractions;
 		readonly Level2Map [] level2Maps;
 
+		// This flag marks characters as "unsafe", where the character
+		// could be used as part of a contraction (whose length > 1).
+		readonly bool [] unsafeFlags;
+
+		const int UnsafeFlagLength = 0x300;
+
 		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
 		byte [] charSortKey2 = new byte [4];
@@ -112,6 +118,12 @@ namespace Mono.Globalization.Unicode
 			frenchSort = t.FrenchSort;
 			Uni.BuildTailoringTables (culture, t, ref contractions,
 				ref level2Maps);
+			unsafeFlags = new bool [UnsafeFlagLength];
+			foreach (Contraction c in contractions)
+				if (c.Source.Length > 1)
+					foreach (char ch in c.Source)
+						unsafeFlags [(int) ch] = true;
+
 			// FIXME: Since tailorings are mostly for latin
 			// (and in some cases Cyrillic) characters, it would
 			// be much better for performance to store "start 
@@ -328,6 +340,11 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			// Windows also expects true for U+3031 and U+3032,
 			// but they should *never* repeat one character.
 
+			// U+2015 becomes an extender only when it is Japanese
+			if (i == 0x2015)
+				return lcid == 16 ? ExtenderType.Conditional :
+					ExtenderType.None;
+
 			if (i < 0x3005 || i > 0xFF70)
 				return ExtenderType.None;
 			if (i >= 0xFE7C) {
@@ -405,6 +422,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				ignoreNonSpace && Uni.IsIgnorableNonSpacing (i);
 		}
 
+		bool IsSafe (int i)
+		{
+			return i >= unsafeFlags.Length ? true : !unsafeFlags [i];
+		}
 
 		#region GetSortKey()
 
@@ -582,6 +603,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			public int Index;
 			public int Start;
 			public int End;
+			public int Optional;
 		}
 
 		// Those instances are reused not to invoke instantiation
@@ -676,6 +698,9 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			ExtenderType ext1 = ExtenderType.None;
 			ExtenderType ext2 = ExtenderType.None;
 
+			int quickCheckPos1 = idx1;
+			int quickCheckPos2 = idx2;
+
 			while (true) {
 				for (; idx1 < end1; idx1++)
 					if (!IsIgnorable (s1 [idx1]))
@@ -691,6 +716,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					start1 = escape1.Start;
 					idx1 = escape1.Index;
 					end1 = escape1.End;
+					quickCheckPos1 = escape1.Optional;
 					escape1.Source = null;
 					continue;
 				}
@@ -701,21 +727,48 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					start2 = escape2.Start;
 					idx2 = escape2.Index;
 					end2 = escape2.End;
+					quickCheckPos2 = escape2.Optional;
 					escape2.Source = null;
 					continue;
 				}
-#if false
-// FIXME: optimization could be done here.
+#if true
+// If comparison is unstable, then this part is one of the most doubtful part.
+// Here we run quick codepoint comparison and run back to "stable" area to
+// compare characters.
 
-				if (s1 [idx1] == s2 [idx2]) {
-					idx1++;
-					idx2++;
-					continue;
+				// Strictly to say, even the first character
+				// could be compared here, but it messed
+				// backward step, so I just avoided mess.
+				if (quickCheckPos1 < idx1 && quickCheckPos2 < idx2) {
+					while (idx1 < end1 && idx2 < end2 &&
+						s1 [idx1] == s2 [idx2]) {
+						idx1++;
+						idx2++;
+					}
+					if (idx1 == end1 || idx2 == end2)
+						continue; // check replacement
+
+					int backwardEnd1 = quickCheckPos1;
+					int backwardEnd2 = quickCheckPos2;
+					quickCheckPos1 = idx1;
+					quickCheckPos2 = idx2;
+
+					idx1--;
+					idx2--;
+
+					for (;idx1 > backwardEnd1; idx1--)
+						if (Category (s1 [idx1]) != 1)
+							break;
+					for (;idx2 > backwardEnd2; idx2--)
+						if (Category (s2 [idx2]) != 1)
+							break;
+					for (;idx1 > backwardEnd1; idx1--)
+						if (IsSafe (s1 [idx1]))
+							break;
+					for (;idx2 > backwardEnd2; idx2--)
+						if (IsSafe (s2 [idx2]))
+							break;
 				}
-//				while (idx1 >= start1 && !IsSafe ((int) s [idx1]))
-//					idx1--;
-//				while (idx2 >= start2 && !IsSafe ((int) s [idx2]))
-//					idx2--;
 #endif
 
 				int cur1 = idx1;
@@ -808,10 +861,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						escape1.Start = start1;
 						escape1.Index = cur1 + ct1.Source.Length;
 						escape1.End = end1;
+						escape1.Optional = quickCheckPos1;
 						s1 = ct1.Replacement;
 						idx1 = 0;
 						start1 = 0;
 						end1 = s1.Length;
+						quickCheckPos1 = 0;
 						continue;
 					}
 				}
@@ -849,10 +904,12 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 						escape2.Start = start2;
 						escape2.Index = cur2 + ct2.Source.Length;
 						escape2.End = end2;
+						escape2.Optional = quickCheckPos2;
 						s2 = ct2.Replacement;
 						idx2 = 0;
 						start2 = 0;
 						end2 = s2.Length;
+						quickCheckPos2 = 0;
 						continue;
 					}
 				}
@@ -968,6 +1025,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					ext1 = ExtenderType.None;
 					ext2 = ExtenderType.None;
 				}
+			}
+			if (currentLevel == 1 && finalResult != 0) {
+				while (idx1 < end1)
+					if (Uni.IsIgnorableNonSpacing (s1 [idx1]))
+						idx1++;
+				while (idx2 < end2)
+					if (Uni.IsIgnorableNonSpacing (s2 [idx2]))
+						idx2++;
 			}
 			// we still have to handle level 5
 			if (finalResult == 0) {

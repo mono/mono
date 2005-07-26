@@ -80,6 +80,8 @@
 	\u04BA : 10 6B * *
 	\u04BB : 10 6B * *
 
+#@3 ca : contraction "ch" and "ll" are not handled
+
 @4 # zh-CHS : actually no mapping is required, but needed for aliases
 
 @5 # cs
