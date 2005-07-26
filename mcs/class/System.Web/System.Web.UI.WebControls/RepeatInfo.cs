@@ -45,6 +45,11 @@ namespace System.Web.UI.WebControls
 		private int             repeatColumns;
 		private RepeatDirection repeatDirection;
 		private RepeatLayout    repeatLayout;
+#if NET_1_1
+		private string caption = "";
+		private TableCaptionAlign captionAlign = TableCaptionAlign.NotSet;
+		private  bool useAccessibleHeader = false;
+#endif
 
 		public RepeatInfo()
 		{
@@ -144,6 +149,13 @@ namespace System.Web.UI.WebControls
 				if(RepeatLayout == RepeatLayout.Table)
 				{
 					ctrl = new Table();
+#if NET_1_1
+					if (Caption.Length != 0)
+					{
+						((Table) ctrl).CaptionAlign = CaptionAlign;
+						((Table) ctrl).Caption = Caption; 						
+					}
+#endif
 					isTable = true;
 				} else
 				{
@@ -173,12 +185,24 @@ namespace System.Web.UI.WebControls
 							colSpan += colsCount;
 						writer.AddAttribute(HtmlTextWriterAttribute.Colspan, colSpan.ToString(NumberFormatInfo.InvariantInfo));
 					}
+#if NET_1_1
+					if (UseAccessibleHeader)					
+						writer.AddAttribute("scope", "col", false);
+ 
+#endif
 					itemStyle = user.GetItemStyle(ListItemType.Header, -1);
 					if(itemStyle != null)
 					{
 						itemStyle.AddAttributesToRender(writer);
 					}
+#if NET_1_1
+					if (UseAccessibleHeader)
+						writer.RenderBeginTag(HtmlTextWriterTag.Th);
+					else
+						writer.RenderBeginTag(HtmlTextWriterTag.Td);
+#else
 					writer.RenderBeginTag(HtmlTextWriterTag.Td);
+#endif
 				}
 				user.RenderItem(ListItemType.Header, -1, this, writer);
 				if(isTable)
@@ -302,7 +326,19 @@ namespace System.Web.UI.WebControls
 			bool hasSeps = user.HasSeparators;
 			if (!outerTableImp){
 				isTable = (RepeatLayout == RepeatLayout.Table);
-				ctrl = (isTable) ? new Table () : new WebControl (HtmlTextWriterTag.Span);
+				if (isTable)
+				{
+					ctrl = new Table ();
+#if NET_1_1
+					if (Caption.Length != 0)
+					{
+						((Table) ctrl).CaptionAlign = CaptionAlign;
+						((Table) ctrl).Caption = Caption; 
+					}
+#endif
+				}
+				else 
+					ctrl = new WebControl (HtmlTextWriterTag.Span);
 				ctrl.ID = baseControl.ClientID;
 				ctrl.CopyBaseAttributes (baseControl);
 				ctrl.ApplyStyle (controlStyle);
@@ -321,10 +357,21 @@ namespace System.Web.UI.WebControls
 						writer.AddAttribute (HtmlTextWriterAttribute.Colspan,
 						     colSpan.ToString (NumberFormatInfo.InvariantInfo));
 					}
+#if NET_1_1
+					if (UseAccessibleHeader)
+						writer.AddAttribute("scope", "col", false);
+#endif
 					itemStyle = user.GetItemStyle (ListItemType.Header, -1);
 					if (itemStyle != null)
 						itemStyle.AddAttributesToRender (writer);
+#if NET_1_1
+					if (UseAccessibleHeader)
+						writer.RenderBeginTag(HtmlTextWriterTag.Th);
+					else
+						writer.RenderBeginTag(HtmlTextWriterTag.Td);
+#else
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+#endif
 				}
 
 				user.RenderItem (ListItemType.Header, -1, this, writer);
@@ -404,5 +451,28 @@ namespace System.Web.UI.WebControls
 			if (ctrl != null)
 				ctrl.RenderEndTag(writer);
 		}
+
+#if NET_1_1
+
+		public string Caption
+		{
+			get {return caption;}
+			set { caption = value; }
+		}
+
+		public TableCaptionAlign CaptionAlign
+		{
+			get {return captionAlign;}
+			set { captionAlign = value; }
+		}
+
+		
+
+		public bool UseAccessibleHeader
+		{
+			get {return useAccessibleHeader;}
+			set { useAccessibleHeader = value; }		
+		}
+#endif
 	}
 }

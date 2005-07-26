@@ -944,6 +944,10 @@ namespace System.Web.UI.WebControls
 
 			Table display = (Table) Controls [0];
 			display.CopyBaseAttributes (this);
+#if NET_1_1
+			display.Caption = Caption;
+			display.CaptionAlign = CaptionAlign;
+#endif
 			if (ControlStyleCreated) {
 				display.ApplyStyle (ControlStyle);
 			} else {
@@ -1182,6 +1186,10 @@ namespace System.Web.UI.WebControls
 					current.Initialize();
 				}
 				deployTable = new DataGridTableInternal();
+#if NET_1_1
+				deployTable.Caption = Caption;
+				deployTable.CaptionAlign = CaptionAlign;
+#endif
 				Controls.Add(deployTable);
 				deployRows = deployTable.Rows;
 
@@ -1334,7 +1342,17 @@ namespace System.Web.UI.WebControls
 			
 			for(int i = 0; i < columns.Length; i++)
 			{
+#if NET_1_1
+				if (item.ItemType == ListItemType.Header && this.UseAccessibleHeader) 
+				{
+					cCell = new TableHeaderCell();
+					cCell.Attributes["scope"] = "col";
+				}
+				else
+					cCell = new TableCell();
+#else
 				cCell = new TableCell();
+#endif
 				columns[i].InitializeCell(cCell, i, item.ItemType);
 				cells.Add(cCell);
 			}

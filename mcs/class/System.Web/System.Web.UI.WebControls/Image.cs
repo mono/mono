@@ -129,11 +129,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-#if NET_2_0
+#if NET_1_1
 		[WebCategory ("Accessibility")]
 		[DefaultValueAttribute ("")]
+#if NET_2_0
 		[UrlPropertyAttribute]
 		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 		public string DescriptionUrl {
 			get {
 				object o = ViewState["DescriptionUrl"];
@@ -170,9 +172,9 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl(ImageUrl));
 			}
 
-#if NET_2_0
+#if NET_1_1
 			if (DescriptionUrl.Length > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Longdesc, DescriptionUrl);
+				writer.AddAttribute ("longdesc", DescriptionUrl);
 				
 			if (AlternateText.Length > 0 || GenerateEmptyAlternateText)
 				writer.AddAttribute(HtmlTextWriterAttribute.Alt, AlternateText);

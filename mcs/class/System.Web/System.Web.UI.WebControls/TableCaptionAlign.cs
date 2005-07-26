@@ -25,7 +25,7 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
+#if NET_1_1
 namespace System.Web.UI.WebControls {
         public enum TableCaptionAlign {
                 NotSet = 0,

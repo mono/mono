@@ -72,12 +72,14 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Text"] = value; }
 		}
 		
+#if NET_1_1
+		[WebCategory ("Accessibility")]
+		[DefaultValueAttribute ("")]
 #if NET_2_0
 		[ThemeableAttribute (false)]
-		[DefaultValueAttribute ("")]
 		[IDReferencePropertyAttribute (typeof(System.Web.UI.Control))]
-		[WebCategory ("Accessibility")]
 		[TypeConverterAttribute (typeof(AssociatedControlConverter))]
+#endif
 		public string AssociatedControlID
 		{
 			get {

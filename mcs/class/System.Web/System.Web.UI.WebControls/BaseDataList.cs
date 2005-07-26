@@ -479,5 +479,29 @@ namespace System.Web.UI.WebControls
 					return null; 
 			}
 		#endif
+
+#if NET_1_1
+		public virtual TableCaptionAlign CaptionAlign
+		{
+			get 
+			{
+				object o = ViewState ["CaptionAlign"];
+				return (o == null) ? TableCaptionAlign.NotSet : (TableCaptionAlign) o;
+			}
+
+			set { ViewState ["CaptionAlign"] = value; }
+		}
+
+		public virtual bool UseAccessibleHeader
+		{
+			get 
+			{
+				object o = ViewState ["UseAccessibleHeader"];
+				return (o == null) ? false : (Boolean) o;
+			}
+
+			set { ViewState ["UseAccessibleHeader"] = value; }
+		}
+#endif
 	}
 }

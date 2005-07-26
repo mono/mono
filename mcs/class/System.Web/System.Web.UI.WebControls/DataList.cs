@@ -744,11 +744,20 @@ namespace System.Web.UI.WebControls
 				templateTable.ID = ClientID;
 				templateTable.CopyBaseAttributes (this);
 				templateTable.ApplyStyle (ControlStyle);
+#if NET_1_1
+				templateTable.CaptionAlign = CaptionAlign;
+				templateTable.Caption = Caption;
+#endif
 				templateTable.RenderBeginTag (writer);
 			} else {
 				repeater.RepeatDirection = RepeatDirection;
 				repeater.RepeatLayout = RepeatLayout;
 				repeater.RepeatColumns = RepeatColumns;
+#if NET_1_1
+				repeater.CaptionAlign = CaptionAlign;
+				repeater.Caption = Caption;
+				repeater.UseAccessibleHeader = UseAccessibleHeader;
+#endif
 			}
 
 			repeater.RenderRepeater (writer, this, ControlStyle, this);

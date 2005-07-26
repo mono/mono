@@ -1,3 +1,8 @@
+2005-07-25  Eyal Alaluf <eyala@mainsoft.com>
+	* Table.cs Label.cs Image.cs BaseDataList.cs DataList.cs RepeatInfo.cs
+	  DataGrid.cs TableCaptionAlign.cs: Accessiblity feature is part of NET_1_1
+	  service pack fixes. In Mono it was available only under NET_2_0 config.
+
 2005-07-19  Eyal Alaluf <eyala@mainsoft.com>
 	* Added XmlBuilder.jvm.cs for the TARGET_J2EE configuration.
 

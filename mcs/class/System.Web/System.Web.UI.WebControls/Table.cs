@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls
 			set { ((TableStyle) ControlStyle).BackImageUrl = value; }
 		}
 
-#if NET_2_0
+#if NET_1_1
 		[DefaultValue (""), WebCategory ("Accessibility"), Localizable (true)]
 		public virtual string Caption
 		{
@@ -227,12 +227,13 @@ namespace System.Web.UI.WebControls
 			return new TableStyle (ViewState);
 		}
 		
-#if NET_2_0
+#if NET_1_1
     	public override void RenderBeginTag (HtmlTextWriter writer)
 		{
 			base.RenderBeginTag (writer);
 			if (Caption != "") {
-				writer.AddAttribute ("align", CaptionAlign.ToString());
+				if (CaptionAlign != TableCaptionAlign.NotSet)				
+					writer.AddAttribute(HtmlTextWriterAttribute.Align, CaptionAlign.ToString());
 				writer.RenderBeginTag (HtmlTextWriterTag.Caption);
 				writer.Write (Caption);
 				writer.RenderEndTag ();
