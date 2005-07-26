@@ -3,6 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Configuration.dll
+LIBRARY_USE_INTERMEDIATE_FILE = yes
+
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
