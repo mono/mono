@@ -626,7 +626,7 @@ namespace Mono.Globalization.Unicode
 			idx += 4;
 			tailorings = new char [count];
 			for (int i = 0; i < count; i++, idx += 2)
-				tailorings [i] = (char) (ushort) (tailor [idx] + (tailor [idx + 1] << 8));
+				tailorings [i] = (char) (tailor [idx] + (tailor [idx + 1] << 8));
 			isReady = true;
 		}
 
