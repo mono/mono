@@ -77,9 +77,9 @@ namespace Mono.Globalization.Unicode
 
 		// This flag marks characters as "unsafe", where the character
 		// could be used as part of a contraction (whose length > 1).
-		readonly bool [] unsafeFlags;
+		readonly byte [] unsafeFlags;
 
-		const int UnsafeFlagLength = 0x300;
+		const int UnsafeFlagLength = 0x300 / 8;
 
 		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
@@ -113,11 +113,11 @@ namespace Mono.Globalization.Unicode
 			frenchSort = t.FrenchSort;
 			Uni.BuildTailoringTables (culture, t, ref contractions,
 				ref level2Maps);
-			unsafeFlags = new bool [UnsafeFlagLength];
+			unsafeFlags = new byte [UnsafeFlagLength];
 			foreach (Contraction c in contractions)
 				if (c.Source.Length > 1)
 					foreach (char ch in c.Source)
-						unsafeFlags [(int) ch] = true;
+						unsafeFlags [(int) ch / 8 ] |= (byte) ((int) ch % 8);
 
 			// FIXME: Since tailorings are mostly for latin
 			// (and in some cases Cyrillic) characters, it would
@@ -419,7 +419,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		bool IsSafe (int i)
 		{
-			return i >= unsafeFlags.Length ? true : !unsafeFlags [i];
+			return i / 8 >= unsafeFlags.Length ? true : (unsafeFlags [i / 8] & (1 << (i % 8))) == 0;
 		}
 
 		#region GetSortKey()
