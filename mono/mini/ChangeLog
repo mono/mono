@@ -1,3 +1,13 @@
+2005-07-26  Martin Baulig  <martin@ximian.com>
+
+	* mini.c
+	(trampoline_code): Renamed to `mono_trampoline_code' and made it
+	public; this is now accessed directly by the debugger.
+	(mono_generic_trampoline_code): Removed.
+
+	* debug-mini.c
+	(mono_debug_init_method): Also add interncalls and wrappers.
+
 2005-07-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ia64.c mini-ia64.h: Add support for tracing/profiling.
