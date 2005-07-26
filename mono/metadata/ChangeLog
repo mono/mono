@@ -1,3 +1,17 @@
+2005-07-26  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_add_wrapper): New static method.
+	(mono_debug_add_method): Call mono_debug_add_wrapper() if we're an
+	interncall or a wrapper.
+
+	* mono-debug.h (MonoDebugWrapperData): New public typedef.
+	(MonoDebugDataItemType): Added `MONO_DEBUG_DATA_ITEM_WRAPPER'.
+	(MONO_DEBUGGER_VERSION): Bump to 51.
+
+	* mono-debug-debugger.c
+	(mono_debugger_add_type): Removed this empty function.
+	(mono_debugger_add_method): Likewise.
+
 2005-07-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Call setup_vtable () 
