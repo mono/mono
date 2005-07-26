@@ -1,3 +1,8 @@
+2005-07-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Minor re-org for better readability.  Remove an
+	outdated comment.
+
 2005-07-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* corlib.dll.sources: Added System.StringComparer.cs.
