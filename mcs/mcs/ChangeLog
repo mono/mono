@@ -1,3 +1,9 @@
+2005-07-26  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75628.
+	* class.cs (Constructor.Emit): Reset block to null if the block
+	resolve fails.
+
 2005-07-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (TypeContainer.VerifyMembers): Be compatible in warning 169.

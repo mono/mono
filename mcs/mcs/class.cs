@@ -4362,8 +4362,10 @@ namespace Mono.CSharp {
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 				Block.AddThisVariable (Parent, Location);
 
-			if (block != null)
-				block.ResolveMeta (ec, ParameterInfo);
+			if (block != null) {
+				if (!block.ResolveMeta (ec, ParameterInfo))
+					block = null;
+			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
