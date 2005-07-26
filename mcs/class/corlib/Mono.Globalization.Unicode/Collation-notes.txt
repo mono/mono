@@ -12,17 +12,15 @@
 		- infer how Windows collation element table is composed
 		  : mostly analyzed.
 		- write table generator source(s)
-		  : mostly implemented. Need to fill 50 blank characters
-		    which should not be blank, and fix 1100 lines of
-		    different mappings.
+		  : mostly implemented. Need to fill 30 blank characters
+		    which should not be blank, and fix nearly 400 mappings.
 		- culture-specific sortkey data
-		  : Some are written in mono-tailoring-source.txt. They
-		    come from dumped diffs (shown later) and UCA tailorings
-		    (via create-tailorings.exe).
+		  : They are defined in mono-tailoring-source.txt.
+		    All single sortkey remapping in all cultures are filled.
+		    Contractions are not fully checked yet (should be filled
+		    from UCA tailorings via create-tailorings.exe).
 	* implement collation methods
-		- All methods are basically implemented in practical level.
-		- except for GetSortKey(), Compare() and Prefix(), they don't
-		  handle Japanese and Arabic extenders.
+		- all done.
 	* fix design (FIXMEs)
 		- Currently tailored sortkey does not handle CompareOptions.
 		  However the flag is significant.
@@ -53,17 +51,19 @@
 
 *** future Optimization
 
-	For GetSortKey(), Compare(), IsPrefix() and IndexOf(), it uses forward
-	iteration, which moves forward and don't stop until either it finds
-	next "primary" character or it reached the end of the string, checking
-	HasContractHead(char) for composite.
+	For GetSortKey() and IndexOf(), it uses forward iteration, which moves
+	forward and don't stop until either it finds next "primary" character
+	or it reached the end of the string, checking with IsSafe(char).
+
+	For Compare() and IsPrefix(), it is already implemented.
 
 	For IsSuffix() and LastIndexOf(), it uses backward iteration, which
 	moves backward and don't stop until either it finds "primary"
-	characters or it reached the beginning of the string, checking
-	HasContractTail(char) for composite.
+	characters or it reached the beginning of the string, checking with
+	IsSafe(char).
 
-	Porting them to C code is an alternative possible approach.
+	Porting them to C code is an alternative possible approach, but from
+	Compare() optimization experience, it is quick enough.
 
 ** How to support CompareOptions
 

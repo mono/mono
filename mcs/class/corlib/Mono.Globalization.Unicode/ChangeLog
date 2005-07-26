@@ -1,5 +1,9 @@
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Collation-notes.txt : updated implementation status.
+
+2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Implemented quick codepoint comparison in
 	  Compare(). Comparison became 125x faster.
 	* mono-tailoring-source.txt : added tiny comment.
