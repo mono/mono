@@ -180,7 +180,7 @@ namespace Novell.Directory.Ldap
 		{
 			get
 			{
-				return rootException;
+				return InnerException;
 			}
 			
 		}
@@ -251,8 +251,6 @@ namespace Novell.Directory.Ldap
 		private System.Object[] arguments = null;
 		// The Matched DN
 		private System.String matchedDN = null;
-		// The Root Cause
-		private System.Exception rootException = null;
 		// A message from the server
 		private System.String serverMessage = null;
 		
@@ -1002,14 +1000,13 @@ namespace Novell.Directory.Ldap
 		/// be matched by the server on a search operation.
 		/// </param>
 		/* package */
-		internal LdapException(System.String messageOrKey, System.Object[] arguments, int resultCode, System.String serverMsg, System.String matchedDN, System.Exception rootException)
+		internal LdapException(System.String messageOrKey, System.Object[] arguments, int resultCode, System.String serverMsg, System.String matchedDN, System.Exception rootException):base(messageOrKey, rootException)
 			    //:base(Novell.Directory.Ldap.Utilclass.ResourcesHandler.getMessage(messageOrKey, arguments))
 		//Once resorcehandler starts working properly need to uncomment
 		{
 			this.messageOrKey = messageOrKey;
 			this.arguments = arguments;
 			this.resultCode = resultCode;
-			this.rootException = rootException;
 			this.matchedDN = matchedDN;
 			this.serverMessage = serverMsg;
 			return ;
@@ -1132,9 +1129,9 @@ namespace Novell.Directory.Ldap
 				msg = msg + '\n' + tmsg;
 			}
 			
-			if (rootException != null)
+			if (InnerException != null)
 			{
-				msg = msg + '\n' + rootException.ToString();
+				msg = msg + '\n' + InnerException.ToString();
 			}
 			return msg;
 		}
