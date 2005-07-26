@@ -1,5 +1,14 @@
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : When the tail of the target does not match more
+	  than 3 times, then IsSuffix() will never be true (3 is the max
+	  length of an expansion; \uFB03 -> ffi). It brings significant
+	  performance boost when "source" string is very long.
+	* MSCompatUnicodeTable.cs : added MaxExpansionLength constant.
+	  Reordered code lines.
+
+2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Collation-notes.txt : updated implementation status.
 
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>

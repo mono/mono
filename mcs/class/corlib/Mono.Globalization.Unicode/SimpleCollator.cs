@@ -24,10 +24,6 @@
 // and of course, defined sortkey value itself), comparison cannot be done
 // at source char[] level.
 //
-// (to be continued.)
-//
-
-//
 // In IndexOf(), the first character in the target string or the target char
 // itself is turned into sortkey bytes. If the character has a contraction and
 // that is sortkey map, then it is used instead. If the contraction exists and
@@ -37,7 +33,6 @@
 // tries IsPrefix() from that location. If it returns true, then it returns
 // the index.
 //
-
 // LAMESPEC: IndexOf() is lame as a whole API. It never matches in the middle
 // of expansion and there is no proper way to return such indexes within
 // a single int return value.
@@ -1114,8 +1109,49 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			if (tstart == t.Length)
 				return true; // as if target is String.Empty.
 
-			// FIXME: it is not efficient.
+#if false
+// This is still not working. If it is not likely to get working, then just remove it.
+			int si = start;
+			int send = start - length;
+			int ti = t.Length - 1;
+			int tend = -1;
+
+			int sStep = start + 1;
+			int tStep = t.Length;
 			bool sourceConsumed, targetConsumed;
+			while (true) {
+				for (; send < si; si--)
+					if (!IsIgnorable (s [si]))
+						break;
+				for (; tend < ti; ti--)
+					if (!IsIgnorable (t [ti]))
+						break;
+				if (tend == ti)
+					break;
+				for (; send < si; si--)
+					if (IsSafe (s [si]))
+						break;
+				for (; tend < ti; ti--)
+					if (IsSafe (t [ti]))
+						break;
+Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, length, t, ti, tstart, sStep - si, tStep - ti);
+				if (CompareInternal (s, si, sStep - si,
+					t, ti, tStep - ti, stringSort,
+					out targetConsumed, out sourceConsumed,
+					true) != 0)
+					return false;
+				if (send == si)
+					return false;
+				sStep = si;
+				tStep = ti;
+				si--;
+				ti--;
+			}
+			return true;
+#else
+			// FIXME: it is not efficient for very long target.
+			bool sourceConsumed, targetConsumed;
+			int mismatchCount = 0;
 			for (int i = 0; i < length; i++) {
 				escape1.Source = escape2.Source = null;
 				previousSortKey = previousSortKey2 = null;
@@ -1129,8 +1165,19 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					return true;
 				if (!sourceConsumed && targetConsumed)
 					return false;
+				if (!targetConsumed) {
+					mismatchCount++;
+					if (mismatchCount > Uni.MaxExpansionLength)
+						// The largest length of an
+						// expansion is 3, so if the
+						// target was not consumed more
+						// than 3 times, then the tail
+						// character does not match.
+						return false;
+				}
 			}
 			return false;
+#endif
 		}
 
 		#endregion

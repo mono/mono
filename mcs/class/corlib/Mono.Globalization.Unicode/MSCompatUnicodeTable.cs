@@ -100,6 +100,26 @@ namespace Mono.Globalization.Unicode
 
 	unsafe internal class MSCompatUnicodeTable
 	{
+		public static int MaxExpansionLength = 3;
+
+		static readonly byte* ignorableFlags;
+		static readonly byte* categories;
+		static readonly byte* level1;
+		static readonly byte* level2;
+		static readonly byte* level3;
+//		static readonly ushort* widthCompat;
+		static byte* cjkCHScategory;
+		static byte* cjkCHTcategory;
+		static byte* cjkJAcategory;
+		static byte* cjkKOcategory;
+		static byte* cjkCHSlv1;
+		static byte* cjkCHTlv1;
+		static byte* cjkJAlv1;
+		static byte* cjkKOlv1;
+		static byte* cjkKOlv2;
+
+		const int ResourceVersionSize = 1;
+
 		public static TailoringInfo GetTailoringInfo (int lcid)
 		{
 			for (int i = 0; i < tailoringInfos.Length; i++)
@@ -428,23 +448,6 @@ namespace Mono.Globalization.Unicode
 
 		#endregion
 
-
-		static readonly byte* ignorableFlags;
-		static readonly byte* categories;
-		static readonly byte* level1;
-		static readonly byte* level2;
-		static readonly byte* level3;
-//		static readonly ushort* widthCompat;
-		static byte* cjkCHScategory;
-		static byte* cjkCHTcategory;
-		static byte* cjkJAcategory;
-		static byte* cjkKOcategory;
-		static byte* cjkCHSlv1;
-		static byte* cjkCHTlv1;
-		static byte* cjkJAlv1;
-		static byte* cjkKOlv1;
-		static byte* cjkKOlv2;
-
 #if GENERATE_TABLE
 
 		public static readonly bool IsReady = true; // always
@@ -532,8 +535,6 @@ namespace Mono.Globalization.Unicode
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void load_collation_resource (string path, int resource_index, byte** data, int* size);
 #endif
-
-		const int ResourceVersionSize = 1;
 
 		static uint UInt32FromBytePtr (byte* raw, uint idx)
 		{
