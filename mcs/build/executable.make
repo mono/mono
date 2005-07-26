@@ -78,7 +78,7 @@ PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
 $(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response)
-	$(PROGRAM_COMPILE) /target:exe /out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+	$(PROGRAM_COMPILE) -target:exe -out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))
 	mv $(base_prog) $(PROGRAM)
 	test ! -f $(base_prog).mdb || mv $(base_prog).mdb $(PROGRAM).mdb

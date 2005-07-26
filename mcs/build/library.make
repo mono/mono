@@ -59,7 +59,7 @@ endif
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
+test_flags = -r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
 library_CLEAN_FILES += $(LIBRARY:.dll=_test*.dll) $(LIBRARY:.dll=_test*.pdb) $(test_response) $(test_makefrag)
 
 ifndef btest_lib
@@ -71,7 +71,7 @@ endif
 btest_pdb = $(btest_lib:.dll=.pdb)
 btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
-btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
+btest_flags = -r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
 library_CLEAN_FILES += $(LIBRARY:.dll=_btest*.dll) $(LIBRARY:.dll=_btest*.pdb) $(btest_response) $(btest_makefrag)
 
 ifndef HAVE_CS_TESTS
@@ -266,12 +266,12 @@ endif
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
 	mv $(LIBRARY_NAME) $@
 	test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
 else
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
 
@@ -293,7 +293,7 @@ endif
 ifdef HAVE_CS_TESTS
 
 $(test_lib): $(test_dep) $(test_response) $(test_nunit_dep)
-	$(TEST_COMPILE) /target:library /out:$@ $(test_flags) @$(test_response)
+	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) @$(test_response)
 
 $(test_response): $(test_sourcefile)
 	@echo Creating $@ ...
@@ -310,7 +310,7 @@ endif
 ifdef HAVE_VB_TESTS
 
 $(btest_lib): $(test_dep) $(btest_response) $(test_nunit_dep)
-	$(BTEST_COMPILE) /target:library /out:$@ $(btest_flags) @$(btest_response)
+	$(BTEST_COMPILE) -target:library -out:$@ $(btest_flags) @$(btest_response)
 
 $(btest_response): $(btest_sourcefile)
 	@echo Creating $@ ...

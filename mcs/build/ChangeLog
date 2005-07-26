@@ -1,3 +1,9 @@
+2005-07-26  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make, library.make: Use unix-style commandline options.
+	* profiles/basic.make (FRAMEWORK_VERSION): Set.
+	* profiles/net_1_1_bootstrap.make (FRAMEWORK_VERSION): Likewise.
+
 2005-07-22  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (do-profile-check): Make the "silent"

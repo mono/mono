@@ -7,6 +7,7 @@ PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:BOOTSTRAP_WITH_OLDLIB
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
+FRAMEWORK_VERSION = 1.0
 
 .PHONY: profile-check do-profile-check
 profile-check:
