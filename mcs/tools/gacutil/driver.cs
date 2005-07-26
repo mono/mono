@@ -291,6 +291,10 @@ namespace Mono.Tools {
  				if (Path.DirectorySeparatorChar == '/') {
 					string pkg_path = "../gac/" + an.Name + "/" + version_token + "/" + asmb_file;
  					symlink (pkg_path, ref_path);
+					foreach (string ext in siblings) {
+						string sibling = String.Concat (pkg_path, ext);
+						symlink (String.Concat (ref_path, ext), sibling);
+					}
 					WriteLine ("Package exported to: {0} -> {1}", ref_path, pkg_path);
  				} else {
 					// string link_path = Path.Combine (Path.Combine (link_gacdir, an.Name), version_token);
