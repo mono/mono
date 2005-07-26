@@ -616,31 +616,31 @@ namespace Mono.CSharp {
 				if (!block.ResolveMeta (this, ip))
 					return false;
 
-					bool old_do_flow_analysis = DoFlowAnalysis;
-					DoFlowAnalysis = true;
+				bool old_do_flow_analysis = DoFlowAnalysis;
+				DoFlowAnalysis = true;
 
-					if (anonymous_method_host != null)
-						current_flow_branching = FlowBranching.CreateBranching (
-							anonymous_method_host.CurrentBranching,
-							FlowBranching.BranchingType.Block, block, loc);
-					else 
-						current_flow_branching = block.TopLevelBranching;
+				if (anonymous_method_host != null)
+					current_flow_branching = FlowBranching.CreateBranching (
+						anonymous_method_host.CurrentBranching,
+						FlowBranching.BranchingType.Block, block, loc);
+				else 
+					current_flow_branching = block.TopLevelBranching;
 
-					if (!block.Resolve (this)) {
-						current_flow_branching = null;
-						DoFlowAnalysis = old_do_flow_analysis;
-						return false;
-					}
-
-					FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
+				if (!block.Resolve (this)) {
 					current_flow_branching = null;
-					
 					DoFlowAnalysis = old_do_flow_analysis;
+					return false;
+				}
 
-					if (reachability.AlwaysReturns ||
-					    reachability.AlwaysThrows ||
-					    reachability.IsUnreachable)
-						unreachable = true;
+				FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
+				current_flow_branching = null;
+
+				DoFlowAnalysis = old_do_flow_analysis;
+
+				if (reachability.AlwaysReturns ||
+				    reachability.AlwaysThrows ||
+				    reachability.IsUnreachable)
+					unreachable = true;
 #if PRODUCTION
 			} catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
