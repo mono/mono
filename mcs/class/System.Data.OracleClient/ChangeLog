@@ -1,3 +1,12 @@
+2005-07-25  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: apply
+	patch from 
+	Hubert FONGARNAND <informatique.internet@fiducial.fr>
+	to tranmit an input paramter that is a date in a binary format
+	instead of a character format to avoid culture 
+	dependent problems
+
 2005-07-17  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleDataReader.cs:

@@ -10,9 +10,11 @@
 // Authors: 
 //    Tim Coleman <tim@timcoleman.com>
 //    Daniel Moragn <danielmorgan@verizon.net>
+//    Hubert FONGARNAND <informatique.internet@fiducial.fr>
 //
 // Copyright (C) Tim Coleman , 2003
 // Copyright (C) Daniel Morgan, 2005
+// Copyright (C) Hubert FONGARNAND, 2005
 //
 // Licensed under the MIT/X11 License.
 //
@@ -347,19 +349,9 @@ namespace System.Data.OracleClient {
 					else
 						throw new NotImplementedException (); // ?
 
-					sDate = dt.ToString (sysDateFormat);
-					rsize = 0;
-			
-					// Get size of buffer
-					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, sDate, out rsize);
-			
-					// Fill buffer
-					bytes = new byte[rsize];
-					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, sDate, out rsize);
-					
-					bindType = OciDataType.VarChar2; 
-					//bindValue = Marshal.StringToHGlobalAnsi (sDate);
-					bindSize = sDate.Length;
+					bytes = PackDate (dt);
+					bindType = OciDataType.Date;
+					bindSize = bytes.Length;
 				}
 				else if (oracleType == OracleType.Blob) {
 					bytes = (byte[]) v;
@@ -780,6 +772,21 @@ namespace System.Data.OracleClient {
 						minute - 1,
 						second - 1);
 
+		}
+
+		internal byte[] PackDate (DateTime dateValue) 
+		{
+			byte[] buffer = new byte[7];
+
+			buffer[0] = (byte)((dateValue.Year / 100) + 100); //century
+			buffer[1] = (byte)((dateValue.Year % 100) + 100); // Year
+			buffer[2] = (byte)dateValue.Month;
+			buffer[3] = (byte)dateValue.Day;
+			buffer[4] = (byte)(dateValue.Hour+1);
+			buffer[5] = (byte)(dateValue.Minute+1);
+			buffer[6] = (byte)(dateValue.Second+1);
+
+			return buffer;
 		}
 
 		#endregion // Methods
