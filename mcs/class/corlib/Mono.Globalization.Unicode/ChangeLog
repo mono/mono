@@ -1,5 +1,9 @@
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : consider extractions in invariant culture.
+
+2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : (unsafeFlags) be compact ;-)
 
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>

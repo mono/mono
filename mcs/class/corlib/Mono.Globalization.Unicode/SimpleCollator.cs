@@ -117,7 +117,14 @@ namespace Mono.Globalization.Unicode
 			foreach (Contraction c in contractions)
 				if (c.Source.Length > 1)
 					foreach (char ch in c.Source)
-						unsafeFlags [(int) ch / 8 ] |= (byte) ((int) ch % 8);
+						unsafeFlags [(int) ch / 8 ]
+							|= (byte) ((int) ch % 8);
+			if (lcid != 127)
+				foreach (Contraction c in invariant.contractions)
+					if (c.Source.Length > 1)
+						foreach (char ch in c.Source)
+							unsafeFlags [(int) ch / 8 ] 
+								|= (byte) ((int) ch % 8);
 
 			// FIXME: Since tailorings are mostly for latin
 			// (and in some cases Cyrillic) characters, it would
