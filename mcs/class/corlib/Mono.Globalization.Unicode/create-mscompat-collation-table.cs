@@ -1918,7 +1918,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [6] = 0xA0;
 			// vowels
 			for (int i = 0x64B; i <= 0x650; i++)
-				AddArabicCharMap ((char) i);
+				AddArabicCharMap ((char) i, 6, 1, 0);
 			// sukun
 			AddCharMapGroup ('\u0652', 6, 1, 0);
 			// shadda
@@ -2514,7 +2514,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				case 0x0649: formDiacritical = 5; break;
 				case 0x064A: formDiacritical = 7; break;
 				}
-				AddLetterMapCore ((char) i, 0x13, 1, formDiacritical, false);
+//				AddLetterMapCore ((char) i, 0x13, 1, formDiacritical, false);
+				AddArabicCharMap ((char) i, 0x13, 1, formDiacritical);
 			}
 			for (int i = 0x0670; i < 0x0673; i++)
 				map [i] = new CharMapEntry (0x13, 0xB, (byte) (0xC + i - 0x670));
@@ -3335,6 +3336,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					mod = diacritical [i];
 					break;
 				case 0x13: // Arabic
+					if (i == 0x0621)
+						break; // 0
+					if (diacritical [i] == 0 && decompLength [i] != 0)
+						diacritical [i] = map [decompValues [decompIndex [i]]].Level2;
 					if (diacritical [i] == 0 && i >= 0xFE8D)
 						mod = 0x8; // default for arabic
 					break;
@@ -3692,12 +3697,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 		}
 
-		private void AddArabicCharMap (char c)
+		private void AddArabicCharMap (char c, byte category, byte updateCount, byte level2)
 		{
-			byte category = 6;
-			byte updateCount = 1;
-			byte level2 = 0;
-
 			// itself
 			AddCharMap (c, category, 0, level2);
 
