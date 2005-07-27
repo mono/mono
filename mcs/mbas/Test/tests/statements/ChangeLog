@@ -1,3 +1,7 @@
+2005-07-13 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	*  LocalDeclarationB.vb : Static local on classes and modules test.
+	*  LocalDeclarationC.vb : Inner block static local test.
+
 2005-07-13  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* test-mbas.make : make clean now kills .exe.mdb debug information files
 	
