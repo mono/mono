@@ -1,3 +1,7 @@
+2005-07-27 Andrew Skiba <andrews@mainsoft.com>
+
+	* Color.cs: Fixes equality operators, change isXXXcolor booleans into flags enum.
+
 2005-07-27 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* RectangleF.cs: Fixes IsEmpty logic

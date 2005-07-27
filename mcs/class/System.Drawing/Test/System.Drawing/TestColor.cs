@@ -898,6 +898,12 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("#YellowGreen.B", 50, color.B);
 		}
 		
+		static bool FloatsAlmostEqual (float v1, float v2)
+		{
+			float error = Math.Abs(v1-v2)/(v1+v2+float.Epsilon);
+			return error < 0.0001;
+		}
+
 		[Test]
 		public void TestHBSValues ()
 		{
@@ -905,14 +911,32 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("BrightnessWhite", 1.0f, Color.White.GetBrightness ());
 		
 			Color c1 = Color.FromArgb (0, 13, 45, 7); //just some random color
-			AssertEquals ("Hue1",        110.5263f, c1.GetHue ());
-			AssertEquals ("Brightness1", 0.1019608f, c1.GetBrightness ());
-			AssertEquals ("Saturation1", 0.7307692f, c1.GetSaturation ());
+			Assert ("Hue1",        FloatsAlmostEqual (110.5263f, c1.GetHue ()));
+			Assert ("Brightness1", FloatsAlmostEqual (0.1019608f, c1.GetBrightness ()));
+			Assert ("Saturation1", FloatsAlmostEqual (0.7307692f, c1.GetSaturation ()));
 	
 			Color c2 = Color.FromArgb (0, 112, 75, 29); //another random color
-			AssertEquals ("Hue2",        33.25302f, c2.GetHue ());
-			AssertEquals ("Brightness2", 0.2764706f, c2.GetBrightness ());
-			AssertEquals ("Saturation2", 0.5886525f, c2.GetSaturation ());
+			Assert ("Hue2",        FloatsAlmostEqual (33.25302f, c2.GetHue ()));
+			Assert ("Brightness2", FloatsAlmostEqual (0.2764706f, c2.GetBrightness ()));
+			Assert ("Saturation2", FloatsAlmostEqual (0.5886525f, c2.GetSaturation ()));
+		}
+		[Test]
+		public void TestEquals ()
+		{
+			Color color = Color.Red;
+			Color color1 = Color.FromArgb (color.R, color.G, color.B);
+			Assert ("Named color not == unnamed color", !(color==color1));
+			Assert ("Named color not equals unnamed color", !color.Equals (color1));
+			Assert ("Named color != unnamed color", color!=color1);
+			color = Color.FromArgb (0, color1);
+			Assert ("Alpha takes part in comparison", !color.Equals (color1));
+		}
+		[Test]
+		public void TestIsEmpty ()
+		{
+			Color color = Color.Empty;
+			Assert ("Empty color", color.IsEmpty);
+			Assert ("Not empty color", !Color.FromArgb (0, Color.Black).IsEmpty);
 		}
 	}
 }

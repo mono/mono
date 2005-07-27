@@ -1,3 +1,7 @@
+2005-07-27  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TestColor.cs: added tests for equality operators, IsEmpty property and fixed GetHBS tests to use tolerance.
+
 2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
 
 	* TestColor.cs: Added tests for GetHue, GetBrightness

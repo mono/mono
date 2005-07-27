@@ -46,7 +46,9 @@ namespace System.Drawing
 {
 	[TypeConverter(typeof(ColorConverter))]
 	[ComVisible (true)]
+#if !TARGET_JVM
 	[Editor ("System.Drawing.Design.ColorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 	[Serializable]
 	public struct Color
 	{
@@ -64,9 +66,15 @@ namespace System.Drawing
 		// The specs also indicate that all three of these propities are true
 		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
 		// Per Microsoft and ECMA specs these varibles are set by which constructor is used, not by their values.
-		private bool isknowncolor;
-		private bool isnamedcolor;
-		private bool issystemcolor;
+		[Flags]
+		enum ColorType {
+			Empty=0,
+			ARGB=1,
+			Known=2,
+			Named=4,
+			System=8
+		}
+		private ColorType colorType;
 		private KnownColor knownColor;
 
 		private string myname;
@@ -81,21 +89,19 @@ namespace System.Drawing
 
 		public bool IsKnownColor {
 			get{
-				return isknowncolor;
+				return (colorType & ColorType.Known) != 0;
 			}
 		}
 
 		public bool IsSystemColor {
 			get{
-				return issystemcolor;
+				return (colorType & ColorType.System) != 0;
 			}
 		}
 
 		public bool IsNamedColor {
 			get{
-				if (!isnamedcolor)
-					return IsKnownColor;
-				return isnamedcolor;
+				return (colorType & (ColorType.Known|ColorType.Named)) != 0;
 			}
 		}
 
@@ -109,6 +115,7 @@ namespace System.Drawing
 		{
 			CheckARGBValues (alpha, red, green, blue);
 			Color color = new Color ();
+			color.colorType = ColorType.ARGB;
 			color.a = (byte) alpha;
 			color.r = (byte) red;
 			color.g = (byte) green;
@@ -120,8 +127,7 @@ namespace System.Drawing
 		private static Color FromArgbNamed (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
 		{
 			Color color = FromArgb (alpha, red, green, blue);
-			color.isknowncolor = true;
-			color.isnamedcolor = true;
+			color.colorType = ColorType.Known|ColorType.Named;
 			//color.issystemcolor = false; //???
 			color.myname = name;
 			// FIXME: here happens SEGFAULT.
@@ -133,7 +139,7 @@ namespace System.Drawing
 		internal static Color FromArgbSystem (int alpha, int red, int green, int blue, string name, KnownColor knownColor)
 		{
 			Color color = FromArgbNamed (alpha, red, green, blue, name, knownColor);
-			color.issystemcolor = true;
+			color.colorType |= ColorType.System;
 			return color;
 		}
 
@@ -161,7 +167,7 @@ namespace System.Drawing
 				// This is what it returns!
 				Color d = FromArgb (0, 0, 0, 0);
 				d.myname = c.ToString ();
-				d.isnamedcolor = true;
+				d.colorType |= ColorType.Named;
 				d.knownColor = c;
 				return d;
 			}
@@ -220,7 +226,7 @@ namespace System.Drawing
 					// This is what it returns!
 					Color d = FromArgb (0, 0, 0, 0);
 					d.myname = colorName;
-					d.isnamedcolor = true;
+					d.colorType |= ColorType.Named;
 					c = d;
 				}
 			}
@@ -270,9 +276,23 @@ namespace System.Drawing
 
 		public static bool operator == (Color colorA, Color colorB)
 		{
-			return ((colorA.a == colorB.a) && (colorA.r == colorB.r)
-			&& (colorA.g == colorB.g) && (colorA.b == colorB.b) &&
-			(colorA.myname == colorB.myname));
+			if (colorA.a != colorB.a)
+				return false;
+			if (colorA.r != colorB.r)
+				return false;
+            if (colorA.g != colorB.g)
+				return false;
+			if (colorA.b != colorB.b)
+				return false;
+			if (colorA.IsNamedColor != colorB.IsNamedColor)
+				return false;
+			if (colorA.IsSystemColor != colorB.IsSystemColor)
+				return false;
+			if (colorA.Name != colorB.Name)
+				return false;
+			if (colorA.IsEmpty != colorB.IsEmpty)
+				return false;
+			return true;
 		}
 		
 		/// <summary>
@@ -287,11 +307,9 @@ namespace System.Drawing
 
 		public static bool operator != (Color colorA, Color colorB)
 		{
-			return ((colorA.a != colorB.a) || (colorA.r != colorB.r)
-			|| (colorA.g != colorB.g) || (colorA.b != colorB.b) ||
-			(colorA.myname != colorB.myname));
+			return ! (colorA == colorB);
 		}
-
+		
 		public float GetBrightness ()
 		{
 			byte minval = Math.Min (r, Math.Min (g, b));
@@ -368,7 +386,7 @@ namespace System.Drawing
 		public bool IsEmpty 
 		{
 			get {
-				return (a + r + g + b) == 0;
+				return colorType == ColorType.Empty;
 			}
 		}
 
@@ -442,16 +460,10 @@ namespace System.Drawing
 		
 		public override bool Equals (object o)
 		{
-			if (!(o is Color))
+			if (! (o is Color))
 				return false;
-
 			Color c = (Color) o;
-			if (c.r == r && c.g == g && c.b == b) {
-				if (myname != null || c.myname != null)
-					return (myname == c.myname);
-				return true;
-			}
-			return false;
+			return this == c;
 		}
 
 		/// <summary>
