@@ -11,7 +11,7 @@
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\lib\J2SE.Helpers.dll" Private="True"/>
 				<Reference Name="System" AssemblyName="System" HintPath="..\lib\System.dll" Private="False"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\lib\System.Xml.dll" Private="False"/>
-				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\j2sdk1.4\rt.dll" Private="False"/>
+				<Reference Name="rt" AssemblyName="rt" HintPath="..\lib\j2sdk1.4.1\rt.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>

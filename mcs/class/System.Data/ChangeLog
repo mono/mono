@@ -1,3 +1,6 @@
+2005-07-27 Boris Kirzner <borisk@mainsoft.com>
+	* System.Data.vmwcsproj: changed location of rt.dll in TARGET_JVM project file.
+	
 2005-07-21 Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.vmwcsproj, System.Data.sln - removed source control 
 	information from TARGET_JVM project and solution files.
