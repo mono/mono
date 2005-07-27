@@ -1,3 +1,6 @@
+2005-07-13 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* Added LocalDeclarationD.vb : Static local on structures.
+	
 2005-05-02  Ritvik Mayank <mritvik@novell.vom>
 		
 		Removed Executable Property from the files
