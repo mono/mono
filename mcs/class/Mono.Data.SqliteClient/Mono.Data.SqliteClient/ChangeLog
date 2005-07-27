@@ -1,3 +1,16 @@
+2005-07-26  Joshua Tauberer <tauberer@for.net>
+
+	SQL commands can have multiple statements within them (i.e.
+	separated by semicolons).  Sqlite has to be instructed to
+	process each command.
+	
+	* Sqlite.cs: Pass the sql command as an IntPtr so we can
+	  see where pzTail takes us.
+	* SqliteCommand.cs: Lazily load sql_params for good measure.
+	  Iterate compile/prepare until each statement in the string
+	  has been processed, and retain pointers to each compiled
+	  statement.  When executing, run all of the statements.
+
 2005-06-14  Thomas Zoechling <thomas.zoechling@gmx.at>
 
 	* Sqlite.cs:

@@ -123,7 +123,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern void sqliteFree (IntPtr ptr);
 		
 		[DllImport ("sqlite")]
-		internal static extern SqliteError sqlite_compile (IntPtr sqlite_handle, string zSql, out IntPtr pzTail, out IntPtr pVm, out IntPtr errstr);
+		internal static extern SqliteError sqlite_compile (IntPtr sqlite_handle, IntPtr zSql, out IntPtr pzTail, out IntPtr pVm, out IntPtr errstr);
 
 		[DllImport ("sqlite")]
 		internal static extern SqliteError sqlite_step (IntPtr pVm, out int pN, out IntPtr pazValue, out IntPtr pazColName);
@@ -150,7 +150,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern int sqlite3_last_insert_rowid (IntPtr sqlite_handle);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_prepare (IntPtr sqlite_handle, string zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
+		internal static extern SqliteError sqlite3_prepare (IntPtr sqlite_handle, IntPtr zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_step (IntPtr pVm);

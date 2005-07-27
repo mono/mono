@@ -33,6 +33,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -54,7 +55,7 @@ namespace Mono.Data.SqliteClient
 		private UpdateRowSource upd_row_source;
 		private SqliteParameterCollection sql_params;
 		private bool prepared = false;
-		private IntPtr pStmt;
+		private ArrayList pStmts;
 
 		#endregion
 
@@ -63,20 +64,17 @@ namespace Mono.Data.SqliteClient
 		public SqliteCommand ()
 		{
 			sql = "";
-			sql_params = new SqliteParameterCollection ();
 		}
 				
 		public SqliteCommand (string sqlText)
 		{
 			sql = sqlText;
-			sql_params = new SqliteParameterCollection ();
 		}
 		
 		public SqliteCommand (string sqlText, SqliteConnection dbConn)
 		{
 			sql = sqlText;
 			parent_conn = dbConn;
-			sql_params = new SqliteParameterCollection ();
 		}
 		
 		public SqliteCommand (string sqlText, SqliteConnection dbConn, IDbTransaction trans)
@@ -84,7 +82,6 @@ namespace Mono.Data.SqliteClient
 			sql = sqlText;
 			parent_conn = dbConn;
 			transaction = trans;
-			sql_params = new SqliteParameterCollection ();
 		}
 		
 		public void Dispose ()
@@ -142,7 +139,11 @@ namespace Mono.Data.SqliteClient
 		
 		public SqliteParameterCollection Parameters 
 		{
-			get { return sql_params; }
+			get
+			{
+				if (sql_params == null) sql_params = new SqliteParameterCollection();
+				return sql_params;
+			}
 		}
 		
 		public IDbTransaction Transaction 
@@ -220,110 +221,127 @@ namespace Mono.Data.SqliteClient
 		
 		public void Prepare ()
 		{
-			SqliteError err = SqliteError.OK;
-			IntPtr pzTail = IntPtr.Zero;
-			pStmt = IntPtr.Zero;	
-			if (parent_conn.Version == 3)  
+			pStmts = new ArrayList();
+			string sqlcmds = sql;
+			
+			if (Parameters.Count > 0 && parent_conn.Version == 2)
 			{
-				err = Sqlite.sqlite3_prepare (parent_conn.Handle, sql, sql.Length, out pStmt, out pzTail);
-				if (err != SqliteError.OK)
-					throw new ApplicationException ("Sqlite error in prepare " + err);
-				int pcount = Sqlite.sqlite3_bind_parameter_count (pStmt);
-
-				for (int i = 1; i <= pcount; i++) 
-				{
-					String name = Sqlite.sqlite3_bind_parameter_name (pStmt, i);
-					SqliteParameter param = sql_params[name];
-					Type ptype = param.Value.GetType ();
-					
-					if (ptype.Equals (typeof (String))) 
-					{
-						String s = (String)param.Value;
-						err = Sqlite.sqlite3_bind_text (pStmt, i, s, s.Length, (IntPtr)(-1));
-					} 
-					else if (ptype.Equals (typeof (DBNull))) 
-					{
-						err = Sqlite.sqlite3_bind_null (pStmt, i);
-					}
-					else if (ptype.Equals (typeof (Boolean))) 
-					{
-						bool b = (bool)param.Value;
-						err = Sqlite.sqlite3_bind_int (pStmt, i, b ? 1 : 0);
-					} else if (ptype.Equals (typeof (Byte))) 
-					{
-						err = Sqlite.sqlite3_bind_int (pStmt, i, (Byte)param.Value);
-					}
-					else if (ptype.Equals (typeof (Char))) 
-					{
-						err = Sqlite.sqlite3_bind_int (pStmt, i, (Char)param.Value);
-					} 
-					else if (ptype.Equals (typeof (Int16))) 
-					{
-						err = Sqlite.sqlite3_bind_int (pStmt, i, (Int16)param.Value);
-					} 
-					else if (ptype.Equals (typeof (Int32))) 
-					{
-						err = Sqlite.sqlite3_bind_int (pStmt, i, (Int32)param.Value);
-					}
-					else if (ptype.Equals (typeof (SByte))) 
-					{
-						err = Sqlite.sqlite3_bind_int (pStmt, i, (SByte)param.Value);
-					} 
-					else if (ptype.Equals (typeof (UInt16))) 
-					{
-						err = Sqlite.sqlite3_bind_int (pStmt, i, (UInt16)param.Value);
-					}
-					else if (ptype.Equals (typeof (DateTime))) 
-					{
-						DateTime dt = (DateTime)param.Value;
-						err = Sqlite.sqlite3_bind_int64 (pStmt, i, dt.ToFileTime ());
-					} 
-					else if (ptype.Equals (typeof (Double))) 
-					{
-						err = Sqlite.sqlite3_bind_double (pStmt, i, (Double)param.Value);
-					}
-					else if (ptype.Equals (typeof (Single))) 
-					{
-						err = Sqlite.sqlite3_bind_double (pStmt, i, (Single)param.Value);
-					} 
-					else if (ptype.Equals (typeof (UInt32))) 
-					{
-						err = Sqlite.sqlite3_bind_int64 (pStmt, i, (UInt32)param.Value);
-					}
-					else if (ptype.Equals (typeof (Int64))) 
-					{
-						err = Sqlite.sqlite3_bind_int64 (pStmt, i, (Int64)param.Value);
-					} 
-					else 
-					{
-						throw new ApplicationException("Unkown Parameter Type");
-					}
-					if (err != SqliteError.OK) 
-					{
-						throw new ApplicationException ("Sqlite error in bind " + err);
-					}
-				}
+				sqlcmds = ProcessParameters();
 			}
-			else 
-			{
-				IntPtr errMsg = IntPtr.Zero;
-				string msg = "";
-				string sqlData = sql;
-				if (Parameters.Count > 0)
-				{
-					sqlData = ProcessParameters();
-				}
-				err = Sqlite.sqlite_compile (parent_conn.Handle, sqlData, out pzTail, out pStmt, out errMsg);
-				
-				if (err != SqliteError.OK) 
-				{
-					if (errMsg != IntPtr.Zero) 
+			
+			SqliteError err = SqliteError.OK;
+			IntPtr psql = Marshal.StringToCoTaskMemAnsi(sqlcmds);
+			IntPtr pzTail = psql;
+			try {
+				do { // sql may contain multiple sql commands, loop until they're all processed
+					IntPtr pStmt = IntPtr.Zero;
+					if (parent_conn.Version == 3)
 					{
-						msg = Marshal.PtrToStringAnsi (errMsg);
-						Sqlite.sqliteFree (errMsg);
+						err = Sqlite.sqlite3_prepare (parent_conn.Handle, pzTail, sql.Length, out pStmt, out pzTail);
+						if (err != SqliteError.OK)
+							throw new ApplicationException ("Sqlite error in prepare " + err);
 					}
-					throw new ApplicationException ("Sqlite error " + msg);
-				}
+					else
+					{
+						IntPtr errMsg;
+						err = Sqlite.sqlite_compile (parent_conn.Handle, pzTail, out pzTail, out pStmt, out errMsg);
+						
+						if (err != SqliteError.OK) 
+						{
+							string msg = "unknown error";
+							if (errMsg != IntPtr.Zero) 
+							{
+								msg = Marshal.PtrToStringAnsi (errMsg);
+								Sqlite.sqliteFree (errMsg);
+							}
+							throw new ApplicationException ("Sqlite error: " + msg);
+						}
+					}
+						
+					pStmts.Add(pStmt);
+					
+					if (parent_conn.Version == 3) 
+					{
+						int pcount = Sqlite.sqlite3_bind_parameter_count (pStmt);
+						if (sql_params == null) pcount = 0;
+		
+						for (int i = 1; i <= pcount; i++) 
+						{
+							String name = Sqlite.sqlite3_bind_parameter_name (pStmt, i);
+							SqliteParameter param = sql_params[name];
+							Type ptype = param.Value.GetType ();
+							
+							if (ptype.Equals (typeof (String))) 
+							{
+								String s = (String)param.Value;
+								err = Sqlite.sqlite3_bind_text (pStmt, i, s, s.Length, (IntPtr)(-1));
+							} 
+							else if (ptype.Equals (typeof (DBNull))) 
+							{
+								err = Sqlite.sqlite3_bind_null (pStmt, i);
+							}
+							else if (ptype.Equals (typeof (Boolean))) 
+							{
+								bool b = (bool)param.Value;
+								err = Sqlite.sqlite3_bind_int (pStmt, i, b ? 1 : 0);
+							} else if (ptype.Equals (typeof (Byte))) 
+							{
+								err = Sqlite.sqlite3_bind_int (pStmt, i, (Byte)param.Value);
+							}
+							else if (ptype.Equals (typeof (Char))) 
+							{
+								err = Sqlite.sqlite3_bind_int (pStmt, i, (Char)param.Value);
+							} 
+							else if (ptype.Equals (typeof (Int16))) 
+							{
+								err = Sqlite.sqlite3_bind_int (pStmt, i, (Int16)param.Value);
+							} 
+							else if (ptype.Equals (typeof (Int32))) 
+							{
+								err = Sqlite.sqlite3_bind_int (pStmt, i, (Int32)param.Value);
+							}
+							else if (ptype.Equals (typeof (SByte))) 
+							{
+								err = Sqlite.sqlite3_bind_int (pStmt, i, (SByte)param.Value);
+							} 
+							else if (ptype.Equals (typeof (UInt16))) 
+							{
+								err = Sqlite.sqlite3_bind_int (pStmt, i, (UInt16)param.Value);
+							}
+							else if (ptype.Equals (typeof (DateTime))) 
+							{
+								DateTime dt = (DateTime)param.Value;
+								err = Sqlite.sqlite3_bind_int64 (pStmt, i, dt.ToFileTime ());
+							} 
+							else if (ptype.Equals (typeof (Double))) 
+							{
+								err = Sqlite.sqlite3_bind_double (pStmt, i, (Double)param.Value);
+							}
+							else if (ptype.Equals (typeof (Single))) 
+							{
+								err = Sqlite.sqlite3_bind_double (pStmt, i, (Single)param.Value);
+							} 
+							else if (ptype.Equals (typeof (UInt32))) 
+							{
+								err = Sqlite.sqlite3_bind_int64 (pStmt, i, (UInt32)param.Value);
+							}
+							else if (ptype.Equals (typeof (Int64))) 
+							{
+								err = Sqlite.sqlite3_bind_int64 (pStmt, i, (Int64)param.Value);
+							} 
+							else 
+							{
+								throw new ApplicationException("Unkown Parameter Type");
+							}
+							if (err != SqliteError.OK) 
+							{
+								throw new ApplicationException ("Sqlite error in bind " + err);
+							}
+						}
+					}
+				} while ((int)pzTail - (int)psql < sql.Length);
+			} finally {
+				Marshal.FreeCoTaskMem(psql);
 			}
 			prepared=true;
 		}
@@ -385,23 +403,29 @@ namespace Mono.Data.SqliteClient
 			IntPtr errMsg = IntPtr.Zero; 
 			parent_conn.StartExec ();
 		  
-			string msg = "";
 			try 
 			{
 				if (!prepared)
 				{
 					Prepare ();
 				}
-				if (want_results) 
-				{
-					reader = new SqliteDataReader (this, pStmt, parent_conn.Version);
-				} 
-				else 
-				{
+				for (int i = 0; i < pStmts.Count; i++) {
+					IntPtr pStmt = (IntPtr)pStmts[i];
+					
+					// If want_results, return the results of the last statement
+					// via the SqliteDataReader, and execute but ignore the results
+					// of the other statements.
+					if (i == pStmts.Count-1 && want_results) 
+					{
+						reader = new SqliteDataReader (this, pStmt, parent_conn.Version);
+						break;
+					} 
+					
+					// Execute but ignore the results of these statements.
 					if (parent_conn.Version == 3) 
 					{
 						err = Sqlite.sqlite3_step (pStmt);
-					} 
+					}
 					else 
 					{
 						int cols;
@@ -409,15 +433,21 @@ namespace Mono.Data.SqliteClient
 						IntPtr pazColName = IntPtr.Zero;
 						err = Sqlite.sqlite_step (pStmt, out cols, out pazValue, out pazColName);
 					}
+					// On error, misuse, or busy, don't bother with the rest of the statements.
+					if (err != SqliteError.ROW && err != SqliteError.DONE) break;
 				}
 			}
 			finally 
 			{	
-				if (parent_conn.Version == 3) 
-				{}
-				else
-				{
-					err = Sqlite.sqlite_finalize (pStmt, out errMsg);
+				foreach (IntPtr pStmt in pStmts) {
+					if (parent_conn.Version == 3) 
+					{
+						err = Sqlite.sqlite3_finalize (pStmt, out errMsg);
+					}
+					else
+					{
+						err = Sqlite.sqlite_finalize (pStmt, out errMsg);
+					}
 				}
 				parent_conn.EndExec ();
 				prepared = false;
@@ -429,18 +459,9 @@ namespace Mono.Data.SqliteClient
 			{
  				if (errMsg != IntPtr.Zero) 
 				{
- 					//msg = Marshal.PtrToStringAnsi (errMsg);
-					if (parent_conn.Version == 3)
-					{
-						err = Sqlite.sqlite3_finalize (pStmt, out errMsg);
-					}
-					else
-					{
-						err = Sqlite.sqlite_finalize (pStmt, out errMsg);
-						Sqlite.sqliteFree (errMsg);
-					}
+					// TODO: Get the message text
 				}
-				throw new ApplicationException ("Sqlite error " + msg);
+				throw new ApplicationException ("Sqlite error");
 			}
 			rows_affected = NumChanges ();
 			return reader;
