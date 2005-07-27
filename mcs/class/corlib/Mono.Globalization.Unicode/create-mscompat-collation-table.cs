@@ -1697,6 +1697,12 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 		{
 			ArrayList decompValues = new ArrayList (this.decompValues);
 
+			// Hebrew uppercase letters.
+			foreach (int i in new int []
+				{0x05DB, 0x05DE, 0x05E0, 0x05E4, 0x05E6})
+				isUppercase [i] = true;
+
+
 			// Modify some decomposition equivalence
 			for (int i = 0xFE31; i <= 0xFE34; i++) {
 				decompType [i] = 0;
@@ -2476,8 +2482,14 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// -Letters
 			fillIndex [0x12] = 0x2;
 			for (int i = 0x05D0; i < 0x05FF; i++)
-				if (Char.IsLetter ((char) i))
-					AddLetterMap ((char) i, 0x12, 1);
+				if (Char.IsLetter ((char) i)) {
+					if (isUppercase [i]) {
+						fillIndex [0x12]--;
+						AddLetterMap ((char) i, 0x12, 2);
+					}
+					else
+						AddLetterMap ((char) i, 0x12, 1);
+				}
 			// -Accents
 			fillIndex [0x1] = 0x3;
 			for (int i = 0x0591; i <= 0x05C2; i++) {
@@ -2667,7 +2679,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddLetterMap ((char) i, 0x1, 1);
 					continue;
 				}
-				AddLetterMap ((char) i, 0x18, 1);
+				AddLetterMapCore ((char) i, 0x18, 1, 0, true);
 			}
 
 			// Tamil
@@ -3220,22 +3232,22 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// Here Windows mapping is not straightforward. It is
 			// not based on computation but seems manual sorting.
 			AddCharMapGroup ('+', 0x8, 1, 0); // plus
-			AddCharMapGroup ('\u2212', 0x8, 1, 0); // minus
-			AddCharMapGroup ('\u229D', 0x8, 1, 0); // minus
-			AddCharMapGroup ('\u2297', 0x8, 1, 0); // mul
-			AddCharMapGroup ('\u2044', 0x8, 1, 0); // div
-			AddCharMapGroup ('\u2215', 0x8, 0, 0); // div
-			AddCharMapGroup ('\u2298', 0x8, 1, 0); // div slash
-			AddCharMapGroup ('\u2217', 0x8, 0, 0); // mul
-			AddCharMapGroup ('\u229B', 0x8, 1, 0); // asterisk oper
-			AddCharMapGroup ('\u2218', 0x8, 0, 0); // ring
-			AddCharMapGroup ('\u229A', 0x8, 1, 0); // ring
-			AddCharMapGroup ('\u2219', 0x8, 0, 0); // bullet
-			AddCharMapGroup ('\u2299', 0x8, 1, 0); // dot oper
-			AddCharMapGroup ('\u2213', 0x8, 1, 0); // minus-or-plus
-			AddCharMapGroup ('\u003C', 0x8, 1, 0); // <
-			AddCharMapGroup ('\u227A', 0x8, 1, 0); // precedes relation
-			AddCharMapGroup ('\u22B0', 0x8, 1, 0); // precedes under relation
+			AddCharMapGroup ('\u2212', 0x8, 1); // minus
+			AddCharMapGroup ('\u229D', 0x8, 1); // minus
+			AddCharMapGroup ('\u2297', 0x8, 1); // mul
+			AddCharMapGroup ('\u2044', 0x8, 1); // div
+			AddCharMapGroup ('\u2215', 0x8, 0); // div
+			AddCharMapGroup ('\u2298', 0x8, 1); // div slash
+			AddCharMapGroup ('\u2217', 0x8, 0); // mul
+			AddCharMapGroup ('\u229B', 0x8, 1); // asterisk oper
+			AddCharMapGroup ('\u2218', 0x8, 0); // ring
+			AddCharMapGroup ('\u229A', 0x8, 1); // ring
+			AddCharMapGroup ('\u2219', 0x8, 0); // bullet
+			AddCharMapGroup ('\u2299', 0x8, 1); // dot oper
+			AddCharMapGroup ('\u2213', 0x8, 1); // minus-or-plus
+			AddCharMapGroup ('\u003C', 0x8, 1); // <
+			AddCharMapGroup ('\u227A', 0x8, 1); // precedes relation
+			AddCharMapGroup ('\u22B0', 0x8, 1); // precedes under relation
 
 			for (int cp = 0; cp < 0x2300; cp++) {
 				if (cp == 0xAC) // SPECIAL CASE: skip
@@ -3254,7 +3266,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 //					Char.GetUnicodeCategory ((char) cp) ==
 //					UnicodeCategory.MathSymbol)
 					Char.IsSymbol ((char) cp))
-					AddCharMapGroup ((char) cp, 0x8, 1, diacritical [cp]);
+					AddCharMapGroup ((char) cp, 0x8, 1);
 				// SPECIAL CASES: no idea why Windows sorts as such
 				switch (cp) {
 				case 0x3E:
@@ -3262,10 +3274,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					AddCharMap ('\u22B1', 0x8, 1, 0);
 					break;
 				case 0xB1:
-					AddCharMapGroup ('\u00AB', 0x8, 1, 0);
-					AddCharMapGroup ('\u226A', 0x8, 1, 0);
-					AddCharMapGroup ('\u00BB', 0x8, 1, 0);
-					AddCharMapGroup ('\u226B', 0x8, 1, 0);
+					AddCharMapGroup ('\u00AB', 0x8, 1);
+					AddCharMapGroup ('\u226A', 0x8, 1);
+					AddCharMapGroup ('\u00BB', 0x8, 1);
+					AddCharMapGroup ('\u226B', 0x8, 1);
 					break;
 				case 0xF7:
 					AddCharMap ('\u01C0', 0x8, 1, 0);
@@ -3518,6 +3530,11 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			DecompositionWide,
 			DecompositionNarrow,
 			};
+		private void AddCharMapGroup (char c, byte category, byte updateCount)
+		{
+			AddCharMapGroup (c, category, updateCount, 0, true);
+		}
+
 		private void AddCharMapGroup (char c, byte category, byte updateCount, byte level2)
 		{
 			AddCharMapGroup (c, category, updateCount, level2, false);

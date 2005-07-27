@@ -1,5 +1,10 @@
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : some Hebrew case letter fixes.
+	  Some diacritical fixes on symbols.
+
+2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : Fixed level 3 weight of
 	  Arabic presentation forms.
 
