@@ -1,5 +1,10 @@
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-mscompat-collation-table.cs : diacritical weight is not
+	  treated correctly when they are picked from letter names, as flags.
+
+2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-mscompat-collation-table.cs : fixed culture-dependent 
 	  nonspacing mark weight.
 

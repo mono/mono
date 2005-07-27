@@ -1207,7 +1207,7 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					diacritical [cp] += diacriticWeights [d];
 					if (s.IndexOf ("COMBINING") >= 0)
 						diacritical [cp] -= (byte) 2;
-					continue;
+					break;
 				}
 				// also process "COMBINING blah" here
 				// For now it is limited to cp < 0x0370
@@ -1977,11 +1977,12 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				if (!IsIgnorable (i))
 					AddCharMap ((char) i, 0x1, 1);
 
+
 			// FIXME: needs more love here (it should eliminate
 			// all the hacky code above).
 			for (int i = 0x0300; i < 0x0370; i++)
 				if (!IsIgnorable (i) && diacritical [i] != 0
-					/* especiall here*/ && !map [i].Defined)
+					&& !map [i].Defined)
 					map [i] = new CharMapEntry (
 						0x1, 0x1, diacritical [i]);
 
