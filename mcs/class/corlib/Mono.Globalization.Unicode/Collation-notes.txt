@@ -19,11 +19,6 @@
 		    All single sortkey remapping in all cultures are filled.
 		    Contractions are not fully checked yet (should be filled
 		    from UCA tailorings via create-tailorings.exe).
-	* implement collation methods
-		- all done.
-	* fix design (FIXMEs)
-		- Currently tailored sortkey does not handle CompareOptions.
-		  However the flag is significant.
 
 
 ** How to implement CompareInfo members
@@ -49,18 +44,26 @@
 		of the target, and if found, tests if the sequence is a valid
 		start point, using IsPrefix() (or IsSuffix()).
 
-*** future Optimization
+*** Optimizations
 
-	For GetSortKey() and IndexOf(), it uses forward iteration, which moves
+	For Compare() and IsPrefix(), it uses forward iteration, which moves
 	forward and don't stop until either it finds next "primary" character
 	or it reached the end of the string, checking with IsSafe(char).
 
-	For Compare() and IsPrefix(), it is already implemented.
+	For IndexOf(char) and LastIndexOf(char), there is no special 
+	optimization (since the codepoints usually do not match, while they
+	often matches as a natural collation), but it omits extraneous sortkey
+	value computation.
 
-	For IsSuffix() and LastIndexOf(), it uses backward iteration, which
-	moves backward and don't stop until either it finds "primary"
-	characters or it reached the beginning of the string, checking with
-	IsSafe(char).
+	IsSuffix() reuses Compare() and returns false if it does not consume
+	the target string more than 3 times. 3 is kind of magic number that
+	represents the longest expansion.
+
+	IndexOf(string) is implemented as a combination of IndexOf(char) and
+	IsPrefix().
+
+	LastIndexOf(string) is implemented as a combination of
+	LastIndexOf(char) and IsPrefix().
 
 	Porting them to C code is an alternative possible approach, but from
 	Compare() optimization experience, it is quick enough.

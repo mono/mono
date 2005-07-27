@@ -1,5 +1,10 @@
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : more status updates. It's almost complete,
+	  except for sortkey values.
+
+2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : similar optimization also for LastIndexOf().
 
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
