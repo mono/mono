@@ -1,5 +1,10 @@
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : the previous patch was missing IgnoreNonSpace
+	  case.
+
+2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : reduced extra sortkey value computation in
 	  MatchesForward(). It makes IndexOf() roughly 30% faster.
 
