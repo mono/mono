@@ -1,5 +1,11 @@
 2005-07-27  Martin Baulig  <martin@ximian.com>
 
+	* mini-codegen.c
+	(create_copy_ins): Added `const unsigned char *ip' argument; set
+	`copy->cil_code' from it.
+
+2005-07-27  Martin Baulig  <martin@ximian.com>
+
 	* mini-exceptions.c (mono_handle_exception): Don't call
 	mono_debugger_handle_exception() for filters.
 
