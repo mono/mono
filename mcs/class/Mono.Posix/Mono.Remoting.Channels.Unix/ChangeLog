@@ -1,0 +1,7 @@
+2005-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* UnixChannel.cs, UnixClientChannel.cs, UnixClientTransportSink.cs,
+	UnixClientTransportSinkProvider.cs, UnixMessageIO.cs,
+	UnixServerChannel.cs, UnixServerTransportSink.cs,
+	UnixConnectionPool.cs: The new Unix socket remoting channel.
+
