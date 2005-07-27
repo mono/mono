@@ -1819,6 +1819,13 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					if (Char.IsNumber ((char) cp))
 						diacritical [cp] = weight;
 
+			// Gurmukhi special letters' diacritical weight
+			for (int i = 0x0A50; i < 0x0A60; i++)
+				diacritical [i] = 4;
+			// Oriya special letters' diacritical weight
+			for (int i = 0x0B5C; i < 0x0B60; i++)
+				diacritical [i] = 6;
+
 			// Update name part of named characters
 			for (int i = 0; i < sortableCharNames.Count; i++) {
 				DictionaryEntry de =
@@ -2022,9 +2029,15 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [0x1] = 0xEC;
 			for (int i = 0x20DD; i <= 0x20E1; i++)
 				AddCharMap ((char) i, 0x1, 1);
-			fillIndex [0x1] = 0x7;
+			fillIndex [0x1] = 0x4;
+			AddCharMap ('\u0CD5', 0x1, 1);
+			AddCharMap ('\u0CD6', 0x1, 1);
+			AddCharMap ('\u093C', 0x1, 1);
 			for (int i = 0x302A; i <= 0x302D; i++)
 				AddCharMap ((char) i, 0x1, 1);
+			AddCharMap ('\u0C55', 0x1, 1);
+			AddCharMap ('\u0C56', 0x1, 1);
+
 			fillIndex [0x1] = 0x50; // I wonder how they are sorted
 			for (int i = 0x02D4; i <= 0x02D7; i++)
 				AddCharMap ((char) i, 0x1, 1);
