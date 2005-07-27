@@ -12,8 +12,11 @@
 		- infer how Windows collation element table is composed
 		  : mostly analyzed.
 		- write table generator source(s)
-		  : mostly implemented. Need to fill 30 blank characters
-		    which should not be blank, and fix nearly 400 mappings.
+		  : mostly implemented. Need to fix nearly 400 mappings.
+		    They are mainly 1) IPA extensions (U+250-U+300),
+		    2) Latin extensions (U+1E00-U+1F00), 3) Letterlike
+		    symbols (U+2100-U+2140), 4) some Cyrillic letters
+		    (U+460-U+500), and 5) some Hangul characters.
 		- culture-specific sortkey data
 		  : They are defined in mono-tailoring-source.txt.
 		    All single sortkey remapping in all cultures are filled.

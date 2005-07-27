@@ -2378,6 +2378,31 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 				AddCharMapGroup ((char) i, 0xE, 1, 0);
 			}
 
+			// IPA extensions
+			// FIXME: this results in not equivalent values to
+			// Windows, but is safer for comparison.
+			char [] ipaArray = new char [0x300 - 0x250 + 0x20];
+			for (int i = 0x40; i < 0x60; i++)
+				if (Char.IsLetter ((char) i))
+					ipaArray [i - 0x40] = (char) (i);
+			for (int i = 0x250; i < 0x300; i++)
+				if (Char.IsLetter ((char) i))
+					ipaArray [i - 0x250 + 0x20] = (char) i;
+			Array.Sort (ipaArray, UCAComparer.Instance);
+			int targetASCII = 0;
+			byte latinDiacritical = 0x7B;
+			foreach (char c in ipaArray) {
+				if (c <= 'Z') {
+					targetASCII = c;
+					latinDiacritical = 0x7B;
+				}
+				else
+					map [(int) c] = new CharMapEntry (
+						0xE,
+						map [targetASCII].Level1,
+						latinDiacritical++);
+			}
+
 			// Greek and Coptic
 
 			// FIXME: this is (mysterious and) incomplete.
