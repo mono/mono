@@ -2,8 +2,8 @@
 // Mono.Cairo.Matrix.cs
 //
 // Author: Duncan Mak
-//
-// (C) Ximian Inc, 2003.
+//         Hisham Mardam Bey (hisham.mardambey@gmail.com)
+// (C) Ximian Inc, 2003 - 2005.
 //
 // This is an OO wrapper API for the Cairo API
 //
@@ -35,106 +35,119 @@ using System.Runtime.InteropServices;
 using Cairo;
 
 namespace Cairo {
-
+   
+                  
+   [StructLayout(LayoutKind.Sequential)]
+   public struct Matrix_T
+   {
+	   public double xx; 
+	   public double yx;
+	   public double xy; 
+	   public double yy;
+	   public double x0; 
+	   public double y0;	   
+   }
+   
+   
+   
         public class Matrix
-        {
-                internal IntPtr matrix = IntPtr.Zero;
-
-                public Matrix ()
-                        : this (Create ())
-                {                        
+        {		
+		internal Matrix_T matrix;
+		
+                public Matrix ()       
+                {               
+			//CreateIdentify();
                 }
-
-                internal Matrix (IntPtr ptr)
+		
+                internal Matrix (Matrix_T ptr)
                 {
-                        if (ptr == IntPtr.Zero)
-                                ptr =  Create ();
-
+                        //if (ptr == null)
+			//  CreateIdentify ();
+			
                         matrix = ptr;
                 }
-
-                public static IntPtr Create ()
+		
+                public void CreateIdentify ()
+                {			
+			CairoAPI.cairo_matrix_init_identity (ref matrix);
+                }
+		
+		public void Init (double xx, double yx, double xy, double yy,
+				  double x0, double y0)
+		{
+			matrix.xx = xx; matrix.yx = yx; matrix.xy = xy;
+			matrix.yy = yy; matrix.x0 = x0; matrix.y0 = y0;
+		}
+		
+		public void InitTranslate (double tx, double ty)
+		{		
+			CairoAPI.cairo_matrix_init_translate (ref matrix, tx, ty);
+		}		
+		  			       
+		public void Translate (double tx, double ty)
+		{
+			CairoAPI.cairo_matrix_translate (ref matrix, tx, ty);
+		}
+		
+                public void InitScale (double sx, double sy)
                 {
-                        return CairoAPI.cairo_matrix_create ();
+			CairoAPI.cairo_matrix_init_scale (ref matrix, sx, sy);
+                }		
+		
+                public void Scale (double sx, double sy)
+                {
+			CairoAPI.cairo_matrix_scale (ref matrix, sx, sy);
                 }
 
-                public void Destroy ()
+                public void InitRotate (double radians)
                 {
-                        CairoAPI.cairo_matrix_destroy (matrix);
-                }
-
-                public Cairo.Status Copy (out Cairo.Matrix other)
+			CairoAPI.cairo_matrix_init_rotate (ref matrix, radians);
+                }		
+		
+                public void Rotate (double radians)
                 {
-                        IntPtr p = IntPtr.Zero;
-                        
-                        Cairo.Status status = CairoAPI.cairo_matrix_copy (matrix, out p);
-
-                        other = new Cairo.Matrix (p);
-
-                        return status;
-                }
-
-                public IntPtr Pointer {
-                        get { return matrix; }
-                }
-
-                public Cairo.Status SetIdentity ()
-                {
-                        return CairoAPI.cairo_matrix_set_identity (matrix);
-                }
-
-                public Cairo.Status SetAffine (
-                        double a, double b, double c, double d, double tx, double ty)
-                {
-                        return CairoAPI.cairo_matrix_set_affine (
-                                matrix, a, b, c, d, tx, ty);
-                }
-                
-                public Cairo.Status GetAffine (
-                        out double a, out double b, out double c, out double d, out double tx, out double ty)
-                {
-                        return CairoAPI.cairo_matrix_get_affine (
-                                matrix, out a, out b, out c, out d, out tx, out ty);
-                }
-
-                public Cairo.Status Scale (double sx, double sy)
-                {
-                        return CairoAPI.cairo_matrix_scale (matrix, sx, sy);
-                }
-
-                public Cairo.Status Rotate (double radians)
-                {
-                        return CairoAPI.cairo_matrix_rotate (matrix, radians);
+			CairoAPI.cairo_matrix_rotate (ref matrix, radians);
                 }
 
                 public Cairo.Status Invert ()
                 {
-                        return CairoAPI.cairo_matrix_invert (matrix);
+			return  CairoAPI.cairo_matrix_invert (ref matrix);
                 }
 
-                public static Cairo.Status Multiply (
-                        out Cairo.Matrix result, Cairo.Matrix a, Cairo.Matrix b)
+
+                public static void Multiply (ref Cairo.Matrix res, 
+					 ref Cairo.Matrix a, ref Cairo.Matrix b)
+                {	
+			if (res == null)
+			  res = new Matrix ();
+						
+                        CairoAPI.cairo_matrix_multiply (ref res.matrix, 
+							ref a.matrix, 
+							ref b.matrix);
+                }
+		
+                public void TransformDistance (ref double dx, ref double dy)
                 {
-                        IntPtr p = IntPtr.Zero;
-                        
-                        Cairo.Status status = CairoAPI.cairo_matrix_multiply (
-                                out p, a.Pointer, b.Pointer);
-
-                        result = new Cairo.Matrix (p);
-
-                        return status;
+                        CairoAPI.cairo_matrix_transform_distance (ref matrix, ref dx, ref dy);
                 }
 
-                public Cairo.Status TransformDistance (ref double dx, ref double dy)
+                public void TransformPoint (ref double x, ref double y)
                 {
-                        return CairoAPI.cairo_matrix_transform_distance (
-                                matrix, ref dx, ref dy);
+                        CairoAPI.cairo_matrix_transform_point (ref matrix, ref x, ref y);
+		}
+		
+                public Matrix_T Pointer {
+                        get { return matrix; }
+			set { matrix = value; }
                 }
-
-                public Cairo.Status TransformPoint (ref double x, ref double y)
-                {
-                        return CairoAPI.cairo_matrix_transform_distance (
-                                matrix, ref x, ref y);
-                }
+		
+		public IntPtr Raw {
+			get {
+				IntPtr p = Marshal.AllocCoTaskMem ( Marshal.SizeOf (matrix));
+				Marshal.StructureToPtr (matrix, p, true);
+				return p;
+			}
+		}
+				
         }
 }

@@ -2,7 +2,7 @@
 // Mono.Cairo.Pattern.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
-//
+//         Hisham Mardam Bey (hisham.mardambey@gmail.com)
 // (C) Ximian Inc, 2004.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -32,34 +32,55 @@ using System.Runtime.InteropServices;
 using Cairo;
 
 namespace Cairo {
+   
+        public class PatternLinear : Pattern
+        {		
+	        public PatternLinear (double x0, double y0, double x1, double y1) : base()
+                {
+                        pattern = CairoAPI.cairo_pattern_create_linear (x0, y0, x1, y1);
+			Reference ();
+                }		
+	}
+   
+        public class PatternRadial : Pattern
+        {
+		public PatternRadial (double cx0, double cy0, double radius0,
+				      double cx1, double cy1, double radius1) : base()
+                {
+                        pattern = CairoAPI.cairo_pattern_create_radial (cx0, cy0, radius0,
+								    cx1, cy1, radius1);
+			Reference ();
+                }
+	}
 
+        public class PatternRgba : Pattern
+        {
+	        public PatternRgba (double r, double g, double b, double a) : base ()
+		{
+			pattern = CairoAPI.cairo_pattern_create_rgba (r, g, b, a);
+			Reference();
+		}
+	}
+   
         public class Pattern
         {
-                IntPtr pattern = IntPtr.Zero;
-
-                private Pattern ()
+                protected IntPtr pattern = IntPtr.Zero;
+		
+                protected Pattern ()
                 {
                 }
 
+		internal Pattern (IntPtr ptr)
+		{			
+			pattern = ptr;
+		}		
+		
                 public Pattern (Surface surface)
                 {
                         pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Pointer);
                 }
-
-                public Pattern (double x0, double y0, double x1, double y1)
-                {
-                        pattern = CairoAPI.cairo_pattern_create_linear (x0, y0, x1, y1);
-
-                }
-
-                public Pattern (double cx0, double cy0, double radius0,
-		        	     double cx1, double cy1, double radius1)
-                {
-                        pattern = CairoAPI.cairo_pattern_create_radial (cx0, cy0, radius0,
-                                cx1, cy1, radius1);
-                }
-
-                public void Reference ()
+		
+                protected void Reference ()
                 {
                         CairoAPI.cairo_pattern_reference (pattern);
                 }
@@ -69,53 +90,53 @@ namespace Cairo {
                         CairoAPI.cairo_pattern_destroy (pattern);
                 }
 
-                public Status AddColorStop (double offset, double red, double green,
-                        double blue, double alpha)
+                public Status AddColorStop (double offset, Cairo.Color c)
                 {
-                        return CairoAPI.cairo_pattern_add_color_stop (pattern,
-                                offset, red, green, blue, alpha);                
+                        return CairoAPI.cairo_pattern_add_color_stop_rgba (pattern, offset, 
+								  c.R, c.G, c.B, c.A);                
                 }
-
+		
+                public Status AddColorStopRgb (double offset, Cairo.Color c)
+                {
+                        return CairoAPI.cairo_pattern_add_color_stop_rgb (pattern, offset, 
+								  c.R, c.G, c.B);
+                }		
+		
+		public Status Status
+		{
+			get { return CairoAPI.cairo_pattern_status (pattern); }
+		}
+		
                 public Matrix Matrix {
-                        set {
-                                CairoAPI.cairo_pattern_set_matrix (pattern, value.Pointer);
-
-                        }
+                        set { 
+				CairoAPI.cairo_pattern_set_matrix (pattern,
+								   value.Raw);
+			}
 
                         get {
-                                IntPtr matrix;
-
-                                CairoAPI.cairo_pattern_get_matrix (pattern, out matrix);
-                          return new Cairo.Matrix (matrix);
+				Matrix_T matrix = new Matrix_T ();				
+				IntPtr p = Marshal.AllocCoTaskMem ( Marshal.SizeOf (matrix));
+				Marshal.StructureToPtr (matrix, p, true);
+				CairoAPI.cairo_pattern_get_matrix (pattern, p);
+				matrix = (Matrix_T)Marshal.PtrToStructure(p, typeof(Matrix_T));
+				Marshal.FreeCoTaskMem (p);
+				return new Cairo.Matrix (matrix);
                         }
                 }
-
+		
                 public Extend Extend {
-                        set {
-                                CairoAPI.cairo_pattern_set_extend (pattern, value);
-
-                        }
-
-                        get {
-                                return CairoAPI.cairo_pattern_get_extend (pattern);                        
-                        }
+                        set { CairoAPI.cairo_pattern_set_extend (pattern, value); }
+                        get { return CairoAPI.cairo_pattern_get_extend (pattern); }
                 }
 
                 public Filter Filter {
-                        set {
-                                CairoAPI.cairo_pattern_set_filter (pattern, value);
-
-                        }
-
-                        get {
-                                return CairoAPI.cairo_pattern_get_filter (pattern);
-                        }
+                        set { CairoAPI.cairo_pattern_set_filter (pattern, value); }
+                        get { return CairoAPI.cairo_pattern_get_filter (pattern); }
                 }
 
                 public IntPtr Pointer {
                         get { return pattern; }
-                }
-
+                }		
         }
 }
 

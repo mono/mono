@@ -34,57 +34,33 @@ using Cairo;
 
 namespace Gdk 
 {		
-        public class Graphics
+	class Graphics
 	{		
 		//Use [DllImport("libgdk-win32-2.0-0.dll")] for  Win32 
 		[DllImport("libgdk-x11-2.0.so")]
-		  internal static extern IntPtr gdk_x11_drawable_get_xdisplay (IntPtr raw);
-		
+		internal static extern IntPtr gdk_x11_drawable_get_xdisplay (IntPtr raw);
+	
 		[DllImport("libgdk-x11-2.0.so")]
-		  internal static extern IntPtr gdk_x11_drawable_get_xid (IntPtr raw);
-		
-		[DllImport("libgdk-x11-2.0.so")]
-		  internal static extern IntPtr gdk_drawable_get_visual (IntPtr raw);
-		
-		[DllImport("libgdk-x11-2.0.so")]
-		  internal static extern IntPtr gdk_x11_visual_get_xvisual (IntPtr raw);
-		
-		[DllImport("libgdk-x11-2.0.so")]
-		  internal static extern IntPtr gdk_cairo_create (IntPtr raw);
-		
-	        public static Cairo.Graphics CreateDrawable (Gdk.Drawable drawable)
+		internal static extern IntPtr gdk_x11_drawable_get_xid (IntPtr raw);
+	
+		public static void CreateDrawable (Gdk.Drawable drawable, Cairo.Graphics g)
 		{
 			IntPtr x_drawable = IntPtr.Zero;
 			int x_off = 0, y_off = 0;			
 			
-			int x, y, w, h, d;
-			((Gdk.Window)drawable).GetGeometry(out x, out y, out w, out h, out d);
-			
 			if (drawable is Gdk.Window)
-			  ((Gdk.Window) drawable).GetInternalPaintInfo(out drawable, 
-								    out x_off, out y_off);
+				((Gdk.Window) drawable).GetInternalPaintInfo(out drawable, out x_off, out y_off);
+
+			x_drawable = drawable.Handle;
 			
-			x_drawable = drawable.Handle;			
-			IntPtr visual = gdk_drawable_get_visual(x_drawable);
-			
-			IntPtr Xdisplay = gdk_x11_drawable_get_xdisplay(x_drawable);
-			IntPtr Xvisual = gdk_x11_visual_get_xvisual(visual);
+			IntPtr display = gdk_x11_drawable_get_xdisplay (x_drawable);
 			IntPtr Xdrawable = gdk_x11_drawable_get_xid (x_drawable);
-			
-			Cairo.Surface s = Cairo.Surface.CreateForXlib(Xdisplay,
-								   Xdrawable,
-								   Xvisual,
-								   w, h);
-			
-			Cairo.Graphics g = new Cairo.Graphics (s);
-			
-			// this can be safely removed now, just keep it for a bit more
-			//Cairo.Graphics g = new Cairo.Graphics (
-			//                    gdk_cairo_create (x_drawable ));
-			
+   
+    			g.SetTargetDrawable (display, Xdrawable);			
+    
 			if (drawable is Gdk.Window)
-			  g.Translate (-(double)x_off,-(double)y_off);
-			return g;
+				g.Translate (-(double)x_off,-(double)y_off);
+			
 		}
 	}
 }

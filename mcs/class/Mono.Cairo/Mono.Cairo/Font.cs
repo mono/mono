@@ -1,8 +1,8 @@
-//                                                   
 // Mono.Cairo.Font.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
-//
+//         Hisham Mardam Bey (hisham.mardambey@gmail.com)
+//         
 // (C) Ximian Inc, 2004.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -35,7 +35,7 @@ using Cairo;
 namespace Cairo {
 
         /* Font object encapsulates all the functionality related to font handeling */
-        public class Font
+        public class _Font
         {
                 internal IntPtr font = IntPtr.Zero;
 
@@ -79,19 +79,20 @@ namespace Cairo {
                 }
 
 
-                private Font ()
+                private _Font ()
                 {
                                      
                 }
 
                 
-                public Font (string family, FontSlant fcslant, FontWeight fcweight)
+                public _Font (string family, FontSlant fcslant, FontWeight fcweight)
                 {
                         font =  _create (family, fcslant, fcweight);
+			Reference();
                 }
                 
 
-                internal Font (IntPtr native)
+                internal _Font (IntPtr native)
                 {
                         font = native;
                 }
@@ -102,12 +103,13 @@ namespace Cairo {
                         CairoAPI.cairo_font_destroy (font);
                 }
 
-                public void Reference ()
+                protected void Reference ()
                 {
                         CairoAPI.cairo_font_reference (font);
 
                 }
-
+		
+		/*
                 public Cairo.Matrix Transform {
                         set {
                                 CairoAPI.cairo_font_set_transform (font, value.Pointer);
@@ -120,7 +122,7 @@ namespace Cairo {
                                 return new Cairo.Matrix (matrix);
                         }
                 }
-
+		 */ 
                 public IntPtr Pointer {
                         get { return font; }
                 }

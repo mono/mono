@@ -40,11 +40,37 @@ using Cairo;
 
 namespace Cairo {
 
-	public class Surface : IDisposable 
+        public class SurfaceImage : Surface
         {
-		static Hashtable surfaces = new Hashtable ();
+		
+		public SurfaceImage (string filename)
+		{
+			surface = CairoAPI.cairo_image_surface_create_from_png (filename);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
+			
+			CairoAPI.cairo_surface_reference (surface);
+		}
+		
+		public int Width {
+			get { return CairoAPI.cairo_image_surface_get_width (surface); }
+		}
+		
+		public int Height {
+			get { return CairoAPI.cairo_image_surface_get_height (surface); }
+		}
+		
+	}
+   
+	public class Surface : IDisposable 
+        {						
+		protected static Hashtable surfaces = new Hashtable ();
                 internal IntPtr surface = IntPtr.Zero;
 
+		protected Surface()
+		{}
+		
                 private Surface (IntPtr ptr, bool owns)
                 {
                         surface = ptr;
@@ -64,8 +90,18 @@ namespace Cairo {
 				}
 				return (Surface) o;
 			}
+		}		
+		
+		public static Cairo.Surface CreateForXlib (IntPtr display, IntPtr win,
+							   IntPtr visual, int w, 
+							   int h)
+		{
+			IntPtr p = CairoAPI.cairo_xlib_surface_create (display, win,
+								   visual, w, h);
+			if(p == IntPtr.Zero) System.Console.WriteLine("Failed creating surface");
+			return new Cairo.Surface (p, false);
 		}
-
+		
                 public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
@@ -111,7 +147,8 @@ namespace Cairo {
 
 		public void Show (Graphics gr, int width, int height) 
 		{
-			CairoAPI.cairo_show_surface (gr.Handle, surface, width,  height);
+			CairoAPI.cairo_set_source_surface (gr.Handle, surface, width, height);
+			CairoAPI.cairo_paint (gr.Handle);
 		}
 
 		void IDisposable.Dispose ()
@@ -131,6 +168,11 @@ namespace Cairo {
 			surface = (IntPtr) 0;
 		}
 		
+		public Cairo.Status Finish ()
+		{
+			return CairoAPI.cairo_surface_finish (surface);
+		}
+		
                 public IntPtr Handle {
                         get { return surface; }
                 }
@@ -140,25 +182,25 @@ namespace Cairo {
                                 CairoAPI.cairo_surface_set_repeat (surface, value);
                         } 
                 }
-
-                public Cairo.Matrix Matrix {
-                        set {
-                                CairoAPI.cairo_surface_set_matrix (surface, value.Pointer);
-                        }
-
-                        get {
-                                IntPtr p = IntPtr.Zero;
-                                CairoAPI.cairo_surface_get_matrix (surface, out p);
-                                return new Cairo.Matrix (p);
-                        }
-                }
-
+		
+		public PointD DeviceOffset {
+			set { CairoAPI.cairo_surface_set_device_offset (surface,
+								    value.X,
+								    value.Y);
+			}
+		}
+		
                 public Cairo.Filter Filter {
                         set {
                                 CairoAPI.cairo_surface_set_filter (surface, value);
                         }
                 }
 
+		public void Destroy()
+		{
+			CairoAPI.cairo_surface_destroy (surface);
+		}
+		
                 public IntPtr Pointer {
                         get { return surface; }
                 }

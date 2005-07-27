@@ -4,6 +4,7 @@
 // Author:
 //   Duncan Mak (duncan@ximian.com)
 //   Miguel de Icaza (miguel@novell.com)
+//   Hisham Mardam Bey (hisham.mardambey@gmail.com)
 //
 // (C) Ximian Inc, 2003.
 // (C) Novell Inc, 2003.
@@ -39,16 +40,70 @@ using Cairo;
 
 namespace Cairo {
 
+        public class Point
+        {
+		public int X;
+		public int Y;
+		
+		public Point (int x, int y)
+		{
+			X = x;
+			Y = y;
+		}		
+	}
+	   
+        public class PointD
+        {
+		public double X;
+		public double Y;
+		
+		public PointD (double x, double y)
+		{
+			X = x;
+			Y = y;
+		}
+	}
+   
+
+        public class Distance
+        {
+		public double Dx;
+		public double Dy;
+		
+		public Distance (double x, double y)
+		{
+			Dx = x;
+			Dy = y;
+		}		
+	}
+	      
+        public class Color
+        {
+		public double R;
+		public double G;
+		public double B;
+		public double A;
+		
+		public Color(double r, double g, double b, double a)
+		{
+			R = r;
+			G = g;
+			B = b;
+			A = a;
+		}
+	}
+   
         public class Graphics : IDisposable 
         {
                 internal IntPtr state = IntPtr.Zero;
-
-                public Graphics ()
+		//private Surface surface;
+		
+                public Graphics (Surface surface)
                 {
-			state = CairoAPI.cairo_create ();
+			state = CairoAPI.cairo_create (surface.Pointer);
                 }
-
-		private Graphics (IntPtr state)
+		
+		public Graphics (IntPtr state)
 		{
 			this.state = state;
 		}
@@ -56,7 +111,6 @@ namespace Cairo {
 		~Graphics ()
 		{
 			Console.WriteLine ("Cairo not thread safe, you might want to call IDisposable.Dispose on Cairo.Surface");
-
 		}
 
 		void IDisposable.Dispose ()
@@ -72,11 +126,11 @@ namespace Cairo {
 				return;
 			}
 			
-			if (state == (IntPtr) 0)
+			if (state == IntPtr.Zero)
 				return;
 
                         CairoAPI.cairo_destroy (state);
-			state = (IntPtr) 0;
+			state = IntPtr.Zero;
                 }
 
                 public Cairo.Graphics Copy ()
@@ -101,13 +155,14 @@ namespace Cairo {
                                 return CairoAPI.cairo_status (state);
                         }
                 }
-
+		
+		/*
                 public string StatusString {
-                        get {
-                                return CairoAPI.cairo_status_string (state);
+		 get {
+                                return CairoAPI.cairo_status_to_string (state);
                         }
-                }
-
+		 }
+		 */ 
                 public IntPtr Handle {
                         get {
                                 return state;
@@ -120,32 +175,28 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_current_operator (state);
+                                return CairoAPI.cairo_get_operator (state);
                         }
                 }
                 
-                public void SetRGBColor (double r, double g, double b)
-                {
-                        CairoAPI.cairo_set_rgb_color (state, r, g, b);
+                public Cairo.Color Color {
+			set { 
+				CairoAPI.cairo_set_source_rgba (state, value.R, 
+							  value.G, value.B,
+							  value.A);
+			}			
                 }
+		
+                public Cairo.Color ColorRgb {
+			set { 
+				CairoAPI.cairo_set_source_rgb (state, value.R, 
+							   value.G, value.B);
+			}
+                }		
 
                 public double Tolerance {
                         set {
                                 CairoAPI.cairo_set_tolerance (state, value);
-                        }
-
-                        get {
-                                return CairoAPI.cairo_current_tolerance (state);
-                        }
-                }                                
-
-                public double Alpha {
-                        set {
-                                CairoAPI.cairo_set_alpha (state, value);
-                        }
-
-                        get {
-                                return CairoAPI.cairo_current_alpha (state);
                         }
                 }
                 
@@ -155,7 +206,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_current_fill_rule (state);
+                                return CairoAPI.cairo_get_fill_rule (state);
                         }
                 }
                                         
@@ -194,11 +245,25 @@ namespace Cairo {
                         CairoAPI.cairo_set_dash (state, dashes, ndash, offset);
                 }
 
-                public Cairo.Surface Pattern {
+                public Pattern Pattern {
                         set {
-                                CairoAPI.cairo_set_pattern (state, value.Handle);
+                                CairoAPI.cairo_set_source (state, value.Pointer);
                         }
+			
+			get {
+				return new Pattern (CairoAPI.cairo_current_pattern (state));
+			}
                 }
+		
+                public Pattern Source {
+                        set {
+                                CairoAPI.cairo_set_source (state, value.Pointer);
+                        }
+			
+			get {
+				return new Pattern (CairoAPI.cairo_current_pattern (state));
+			}
+                }		
 
                 public double MiterLimit {
                         set {
@@ -210,27 +275,23 @@ namespace Cairo {
                         }
                 }
 
-                public void GetCurrentPoint (out double x, out double y)
-                {
-                        CairoAPI.cairo_current_point (state, out x, out y);
-                }
-
-                public Point CurrentPoint {
+                public PointD CurrentPoint {
                         get {
                                 double x, y;
                                 CairoAPI.cairo_current_point (state, out x, out y);
-                                return new Point ((int) x, (int) y);
+                                return new PointD (x, y);
                         }
                 }
 
                 public Cairo.Surface TargetSurface {
                         set {
-                                CairoAPI.cairo_set_target_surface (state, value.Handle);
+				state = CairoAPI.cairo_create (value.Pointer);				
+                                //CairoAPI.cairo_set_target_surface (state, value.Handle);
                         }
 
                         get {
                                 return Cairo.Surface.LookupExternalSurface (
-                                        CairoAPI.cairo_current_target_surface (state));
+                                        CairoAPI.cairo_get_target (state));
                         }
                 }
 
@@ -240,35 +301,39 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_new_path (state);
                 }
-                
-                public void MoveTo (double x, double y)
+        
+		public void CurrentPath (CairoAPI.MoveToCallback move_to, 
+					 CairoAPI.LineToCallback line_to,
+					 CairoAPI.CurveToCallback curve_to,
+					 CairoAPI.ClosePathCallback close_path,
+					 object closure)
+		{
+			
+		}
+		
+                public void MoveTo (PointD p)
                 {
-                        CairoAPI.cairo_move_to (state, x, y);
+                        CairoAPI.cairo_move_to (state, p.X, p.Y);
                 }
                 
-                public void LineTo (double x, double y)
+                public void LineTo (PointD p)
                 {
-                        CairoAPI.cairo_line_to (state, x, y);
+                        CairoAPI.cairo_line_to (state, p.X, p.Y);
                 }
 
-                public void CurveTo (double x1, double y1, double x2, double y2, double x3, double y3)
-                {
-                        CairoAPI.cairo_curve_to (state, x1, y1, x2, y2, x3, y3);
-                }
-
-                public void CurveTo (Point p1, Point p2, Point p3)
+                public void CurveTo (PointD p1, PointD p2, PointD p3)
                 {
                         CairoAPI.cairo_curve_to (state, p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y);
                 }
 
-                public void RelMoveTo (double dx, double dy)
+                public void RelMoveTo (PointD p)
                 {
-                        CairoAPI.cairo_rel_move_to (state, dx, dy);
+                        CairoAPI.cairo_rel_move_to (state, p.X, p.Y);
                 }
 
-                public void RelLineTo (double dx, double dy)
+                public void RelLineTo (PointD p)
                 {
-                        CairoAPI.cairo_rel_line_to (state, dx, dy);
+                        CairoAPI.cairo_rel_line_to (state, p.X, p.Y);
                 }
 
                 public void RelCurveTo (double dx1, double dy1, double dx2, double dy2, double dx3, double dy3)
@@ -285,10 +350,15 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_arc_negative (state, xc, yc, radius, angel1, angel2);
                 }
+		
+		public void ArcTo (PointD p1, PointD p2, double radius)
+		{
+			CairoAPI.cairo_arc_to (state, p1.X, p1.Y, p2.X, p2.Y, radius);
+		}
                 
-                public void Rectangle (double x, double y, double width, double height)
+                public void Rectangle (PointD p, double width, double height)
                 {
-                        CairoAPI.cairo_rectangle (state, x, y, width, height);
+                        CairoAPI.cairo_rectangle (state, p.X, p.Y, width, height);
                 }
                 
                 public void ClosePath ()
@@ -308,6 +378,11 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_fill (state);
                 }
+		
+		public void FillPreserve ()
+		{
+			CairoAPI.cairo_fill_preserve (state);
+		}
 
 #endregion
 
@@ -339,11 +414,6 @@ namespace Cairo {
 		{
 			CairoAPI.cairo_set_target_drawable (state, dpy, drawable);
 		}
-
-		public void SetPattern (Pattern pattern)
-		{
-			CairoAPI.cairo_set_pattern (state, pattern.Pointer);
-		}
 #endregion
 
                 public void Rotate (double angle)
@@ -361,44 +431,54 @@ namespace Cairo {
                         CairoAPI.cairo_translate (state, tx, ty);
                 }
 
-                public void TransformPoint (ref double x, ref double y)
+                public PointD TransformPoint
                 {
-                        CairoAPI.cairo_transform_point (state, ref x, ref y);
+			get {
+				double x; double y;				
+				CairoAPI.cairo_transform_point (state, out x, out y);
+				return new PointD(x, y);
+			}
+                }
+		
+                public Distance TransformDistance 
+                {
+			get {
+				double dx; double dy;
+				CairoAPI.cairo_transform_distance (state, out dx, out dy);
+				return new Distance(dx, dy);
+			}
                 }
 
-                public void TransformDistance (ref double dx, ref double dy)
+                public PointD InverseTransformPoint
                 {
-                        CairoAPI.cairo_transform_distance (state, ref dx, ref dy);
+			get {
+				double x; double y;
+				CairoAPI.cairo_inverse_transform_point (state, out x, out y);
+				return new PointD (x, y);
+			}
                 }
 
-                public void InverseTransformPoint (ref double x, ref double y)
+                public Distance InverseTransformDistance
                 {
-                        CairoAPI.cairo_inverse_transform_point (state, ref x, ref y);
+			get {
+				double dx; double dy;
+				CairoAPI.cairo_inverse_transform_distance (state, out dx, out dy);
+				return new Distance (dx, dy);
+			}
                 }
-
-                public void InverseTransformDistance (ref double dx, ref double dy)
-                {
-                        CairoAPI.cairo_inverse_transform_distance (state, ref dx, ref dy);
-                }
-
-                public void ConcatMatrix (Cairo.Matrix matrix)
-                {
-                        CairoAPI.cairo_concat_matrix (state, matrix.Pointer);
-                }
-
+		
                 public Cairo.Matrix Matrix {
                         set {
                                 CairoAPI.cairo_set_matrix (state, value.Pointer);
                         }
 
                         get {
-								IntPtr p = CairoAPI.cairo_matrix_create ();
-								CairoAPI.cairo_current_matrix (state, p);
-                                Matrix mat = new Cairo.Matrix (p);
-								return mat;
+				Matrix_T m = new Matrix_T ();
+				CairoAPI.cairo_get_matrix (state, m);
+                                return new Matrix (m);
                         }
                 }
-
+		/*
                 public Font Font {
                         set {
                                 CairoAPI.cairo_set_font (state, value.Pointer);
@@ -413,24 +493,19 @@ namespace Cairo {
                                 return new Font (fnt);
                         }
                 }
-
+		 */ 
 
                 public void ScaleFont (double scale)
                 {
                         CairoAPI.cairo_scale_font (state, scale);
                 }
-
-                public void SetText (string str)
-                {
-                        /* Use UTF8 encoding*/
-                        CairoAPI.cairo_show_text (state, str);
-                }
                 
+		/*
                 public void TransformFont (Matrix matrix)
                 {
                         CairoAPI.cairo_transform_font (state, matrix.Pointer);
                 }
-
+		 */ 
 
                 
 		static internal IntPtr FromGlyphToUnManagedMemory(Glyph [] glyphs)
@@ -459,11 +534,6 @@ namespace Cairo {
                      
                 }
 
-                public void TextPath (string str)
-                {
-                        CairoAPI.cairo_text_path  (state, str);
-                }
-
                 public void GlyphPath (Matrix matrix, Glyph[] glyphs)
                 {
 
@@ -477,21 +547,32 @@ namespace Cairo {
 
                 }
 
-                public void SelectFont (string key, FontSlant slant, FontWeight weight)
-                {
-                        CairoAPI.cairo_select_font (state, key, slant, weight);
-                }
-
-
-
-                public Extents Extents {
+                public FontExtents FontExtents {
                         get {
-
-                                Extents extents = new Extents();
-                                CairoAPI.cairo_current_font_extents (state, ref extents);
-                                return extents;
+				
+                                FontExtents f_extents = new FontExtents();
+                                CairoAPI.cairo_font_extents (state, ref f_extents);
+                                return f_extents;
                         }
                 }
-
+		
+		public void FontFace (string family, FontSlant s, FontWeight w)
+		{
+			CairoAPI.cairo_select_font_face (state, family, s, w);
+		}
+		
+		public double FontSize {
+			set { CairoAPI.cairo_set_font_size (state, value); }
+		}
+		
+                public void ShowText (string str)
+                {
+                        CairoAPI.cairo_show_text (state, str);
+                }		
+		
+                public void TextPath (string str)
+                {
+                        CairoAPI.cairo_text_path  (state, str);
+                }		
         }
 }

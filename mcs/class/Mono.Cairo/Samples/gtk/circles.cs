@@ -2,6 +2,7 @@
 //
 //	Mono.Cairo drawing samples using GTK# as drawing surface
 //	Autor: Jordi Mas <jordi@ximian.com>. Based on work from Owen Taylor
+//	       Hisham Mardam Bey <hisham@hisham.cc>
 //
 
 //
@@ -33,9 +34,9 @@ using System.Runtime.InteropServices;
 using Cairo;
 using Gtk;
 	
-class GtkCairo
+public class GtkCairo
 {
-	static DrawingArea a,b;
+	static DrawingArea a;
 	
 	static void Main ()
 	{		
@@ -56,22 +57,22 @@ class GtkCairo
 
 }
 
-class CairoGraphic : DrawingArea 
+public class CairoGraphic : DrawingArea 
 {
-	static readonly double  M_PI = 3.14159265358979323846;
-
+        static readonly double  M_PI = 3.14159265358979323846;
+   
 	static void oval_path (Cairo.Graphics gr, double xc, double yc, double xr, double yr)
 	{
 		Matrix matrix  = gr.Matrix;
 		
 		gr.Translate (xc, yc);
 		gr.Scale (1.0, yr / xr);
-		gr.MoveTo (xr, 0.0);
+		gr.MoveTo (new PointD (xr, 0.0) );
 		gr.Arc (0, 0, xr, 0, 2 * M_PI);
 		gr.ClosePath ();
 		
 		gr.Matrix = matrix;
-		matrix.Destroy();		
+		//matrix.Destroy();
 	}
 	
 	/* 
@@ -82,7 +83,7 @@ class CairoGraphic : DrawingArea
 	{
 		double subradius = radius * (2 / 3.0 - 0.1);
 		
-		gr.SetRGBColor (1, 0, 0);
+		gr.Color =  new Color (1, 0, 0, 0.5);
 		
 		oval_path (gr,
 			xc + radius / 3 * Math.Cos (M_PI * (0.5)),
@@ -91,7 +92,7 @@ class CairoGraphic : DrawingArea
 			
 		gr.Fill ();
 		
-		gr.SetRGBColor (0, 1, 0);
+		gr.Color  = new Color (0, 1, 0, 0.5);
 		oval_path (gr,
 			xc + radius / 3 * Math.Cos (M_PI * (0.5 + 2/.3)),
 			yc - radius / 3 * Math.Sin (M_PI * (0.5 + 2/.3)),
@@ -99,7 +100,7 @@ class CairoGraphic : DrawingArea
 			
 		gr.Fill ();
 		
-		gr.SetRGBColor (0, 0, 1);
+		gr.Color = new Color (0, 0, 1, 0.5);
 		
 		oval_path (gr,
 			xc + radius / 3 * Math.Cos (M_PI * (0.5 + 4/.3)),
@@ -128,7 +129,7 @@ class CairoGraphic : DrawingArea
 		/* Draw a black circle on the overlay
 		*/
 		
-		gr.SetRGBColor (0, 0, 0);
+		gr.Color = new Color (0, 0, 0, 1);
 		
 		oval_path (gr, xc, yc, radius, radius);
 		gr.Fill ();		
@@ -154,7 +155,7 @@ class CairoGraphic : DrawingArea
 		gr.Save ();
 		gr.TargetSurface =  circles;
 		
-		gr.Alpha = 0.5;
+		//gr.Alpha = 0.5;
 		gr.Operator = Operator.Over;
 		draw_3circles (gr, xc, yc, radius);
 		
@@ -166,27 +167,21 @@ class CairoGraphic : DrawingArea
 		
 		gr.Restore ();
 		
-		overlay.Show (gr, width, height);
-		
-		/*
-		cairo_surface_destroy (overlay);
-		cairo_surface_destroy (punch);
-		cairo_surface_destroy (circles);
-		*/
-		
+		overlay.Show (gr, width, height);				
 	}
 
 	protected override bool OnExposeEvent (Gdk.EventExpose args)
 	{
-		Gdk.Window win = args.Window;
-		Gdk.Rectangle area = args.Area;
+                Gdk.Window win = args.Window;
+		//Gdk.Rectangle area = args.Area;
 		
-		Cairo.Graphics g = new Cairo.Graphics ();
-		Gdk.Graphics.CreateDrawable (win,  g);
+		Cairo.Graphics g = Gdk.Graphics.CreateDrawable (win);
 		
-		draw (g, 500, 500);
+		int x, y, w, h, d;
+		win.GetGeometry(out x, out y, out w, out h, out d);
 		
-		return true;
+		draw (g, w, h);
+		return true;		
 	}
 }
 

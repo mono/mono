@@ -1,3 +1,45 @@
+2005-07-12 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+	* General fixups, this is becoming ready for SVN
+
+2005-07-09 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+        * Cairo.cs / Graphics.cs: Binded font functions for Cairo 0.5.x
+	* More cleanups to fonts and Graphics.cs
+
+2005-07-08 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+	* Matrix.cs: binded all functions from Cairo 0.5.x
+	* Surface.cs: binded all functions from Cairo 0.5.x
+	* Pattern.cs: binded all functions from Cairo 0.5.x
+	
+2005-07-07 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+	* Removed dependency on GTK 2.7.x in Samples
+	* Added more Matrix constructors
+	* Fixed typo in enum Extend
+	* Cairo.cs: fixed matrix_init* methods (dont use ref)
+	* Matrix.cs: moved to 0.5.x API, needs more work
+	
+2005-07-06 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+	* Moved a major part of the API to follow Cairo 0.5.x
+	* *_current_* are being replaced by *_get_*
+	* move *_set_* function to new API
+	* Add SurfaceImage type
+	* Matrix operations are somehow broken right now
+	
+2005-07-05 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+	* Graphics.cs: added get for Pattern property
+	* Cairo.cs: added FontExtents / TextExtents structs
+	* Cairo.cs: added several other functions from C API
+	  cairo_text_extents
+	* Started move to Cairo 0.5.x
+
+2005-07-04 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+        * Graphics.cs: Added helper types (PointD, Point, Distance)
+	* Incorporated Reference() into some constructors
+	* Pattern.cs: Split patter into 3 object types
+	* Use double precision for sub-pixel rendering all over
+	* Use IntPtr.Zero instead of (IntPtr) 0
+	* Graphics.cs: Remove SetRGBColor and use Color type
+	* Matrix.cs: add Affine type as a subclass.
+   
 2005-04-24  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Graphics.cs: Adds InStroke/InFill (patch from Pedro Kiefer)
 	* Cairo.cs  Adds InStroke/InFill (patch from Pedro Kiefer)
