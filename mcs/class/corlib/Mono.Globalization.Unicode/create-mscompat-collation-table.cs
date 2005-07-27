@@ -2379,14 +2379,24 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			}
 
 			// Greek and Coptic
+
+			// FIXME: this is (mysterious and) incomplete.
+			for (int i = 0x0380; i < 0x0400; i++)
+				if (diacritical [i] == 0 &&
+					decompLength [i] == 1 &&
+					decompType [i] == DecompositionCompat)
+					diacritical [i] = 3;
+
 			fillIndex [0xF] = 2;
 			for (int i = 0x0391; i < 0x03AA; i++)
 				if (i != 0x03A2)
-					AddCharMap ((char) i, 0xF, 1);
+					AddCharMap ((char) i, 0xF, 1,
+						diacritical [i]);
 			fillIndex [0xF] = 2;
 			for (int i = 0x03B1; i < 0x03CA; i++)
 				if (i != 0x03C2)
-					AddCharMap ((char) i, 0xF, 1);
+					AddCharMap ((char) i, 0xF, 1,
+						diacritical [i]);
 			// Final Sigma
 			map [0x03C2] = new CharMapEntry (0xF,
 				map [0x03C3].Level1, map [0x03C3].Level2);
@@ -2394,7 +2404,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			fillIndex [0xF] = 0x40;
 			for (int i = 0x03DA; i < 0x03F0; i++)
 				AddCharMap ((char) i, 0xF,
-					(byte) (i % 2 == 0 ? 0 : 2));
+					(byte) (i % 2 == 0 ? 0 : 2),
+					diacritical [i]);
 
 			// NFKD
 			for (int i = 0x0386; i <= 0x0400; i++)
@@ -3441,6 +3452,9 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 						lv2 += 2;
 					lv2 += off;
 				}
+				// ... but override if the value already exists.
+				if (diacritical [i] != 0)
+					lv2 = diacritical [i];
 				map [i] = new CharMapEntry (
 					map [primary].Category,
 					map [primary].Level1,
