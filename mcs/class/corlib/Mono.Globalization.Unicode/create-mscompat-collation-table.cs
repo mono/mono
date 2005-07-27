@@ -3800,19 +3800,19 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			// Arabic
 			if ('\u2135' <= c && c <= '\u2138')
 				return 4;
-			byte [] arabicTmp = new byte [] {0x18, 0, 0x8, 0x10};
-			if ('\uFEB5' <= c && c < '\uFEED' ||
-				'\uFEF1' <= c && c < '\uFEF5')
-				return arabicTmp [c % 4];
-			if ('\uFE80' <= c && c < '\uFF00') {
+			// I believe that Windows has a bug on setting level 3
+			// weight here. NFKD results in different values.
+			if ('\uFE80' < c && c < '\uFF00') {
 				// 2(Isolated)/8(Final)/0x18(Medial)
 				switch (decompType [(int) c]) {
 				case DecompositionIsolated:
-					return 2;
+					return 0; // 2;
 				case DecompositionFinal:
 					return 8;
 				case DecompositionMedial:
 					return 0x18;
+				case DecompositionInitial:
+					return 0x10;
 				}
 			}
 
