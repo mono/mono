@@ -1,5 +1,9 @@
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : similar optimization also for LastIndexOf().
+
+2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : the previous patch was missing IgnoreNonSpace
 	  case.
 

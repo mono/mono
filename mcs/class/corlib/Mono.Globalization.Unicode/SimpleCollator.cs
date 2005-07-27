@@ -1598,14 +1598,22 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			} else if (ext == ExtenderType.None) {
 				if (si < 0)
 					si = FilterOptions (s [idx]);
+				idx--;
+				bool noMatch = false;
 				charSortKey [0] = Category (si);
-				charSortKey [1] = Level1 (si);
-				if (!ignoreNonSpace)
+				if (charSortKey [0] == sortkey [0])
+					charSortKey [1] = Level1 (si);
+				else
+					noMatch = true;
+				if (!ignoreNonSpace && charSortKey [1] == sortkey [1])
 					charSortKey [2] = Level2 (si, ext);
+				else if (!ignoreNonSpace)
+					noMatch = true;
+				if (noMatch)
+					return false;
 				charSortKey [3] = Uni.Level3 (si);
 				if (charSortKey [0] != 1)
 					previousChar = si;
-				idx--;
 			}
 			if (ext == ExtenderType.None) {
 				for (int tmp = cur + 1; tmp < orgStart; tmp++) {
