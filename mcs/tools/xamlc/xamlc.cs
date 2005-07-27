@@ -31,8 +31,19 @@ using System.IO;
 using System.Xml;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Reflection;
 using Mono.GetOptions;
 using Mono.Windows.Serialization;
+
+[assembly: AssemblyTitle ("xamlc.exe")]
+[assembly: AssemblyVersion ("1.0.*")]
+[assembly: AssemblyDescription ("Compiler from XAML to more conventional languages")]
+[assembly: AssemblyCopyright ("(c) Iain McCoy")]
+
+[assembly: Mono.UsageComplement ("")]
+
+[assembly: Mono.About("Compiler to create normal clr-based high level language source code from XAML")]
+[assembly: Mono.Author ("Iain McCoy")]
 
 class XamlOptions : Options {
 	[Option("Whether or not the class should be marked as partial", "p", "partial")]
@@ -40,6 +51,9 @@ class XamlOptions : Options {
 	
 	[Option("the file to output to", "o", "output")]
 	public string OutputFile;
+
+	[Option("the language in which to write the output file", "l", "lang")]
+	public string OutputLanguage;
 }
 
 class Driver {
@@ -55,7 +69,7 @@ class Driver {
 		if (options.OutputFile == null) {
 			options.OutputFile = input + ".out";
 		}
-		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+		ICodeGenerator generator = getGenerator(options.OutputLanguage);
 		XmlTextReader xr = new XmlTextReader(input);
 		TextWriter tw = new StreamWriter(options.OutputFile);
 		CodeWriter cw = new CodeWriter(generator, tw, options.Partial);
@@ -66,6 +80,19 @@ class Driver {
 		catch (Exception ex) {
 			Console.WriteLine("Line " + xr.LineNumber + ", Column " + xr.LinePosition);
 			throw ex;
+		}
+	}
+
+	private static ICodeGenerator getGenerator(string language)
+	{
+		if (language == null || language == "cs" || language == "c#") {
+			return (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+		} else if (language == "vb") {
+			return (new Microsoft.VisualBasic.VBCodeProvider()).CreateGenerator();
+		} else {
+			Console.WriteLine("Unknown language: " + language);
+			Environment.Exit(1);
+			return null;
 		}
 	}
 	

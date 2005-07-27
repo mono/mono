@@ -1,3 +1,8 @@
+2005-07-28  Iain McCoy  <iain@mccoy.id.au>
+
+	* xamlc.cs: added support for choosing source code language to
+	generate and improved --help and --V output.
+
 2005-07-24  Iain McCoy  <iain@mccoy.id.au>
 
 	* demo/TestVocab/ConsoleWriter.cs,
