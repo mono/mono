@@ -1,3 +1,7 @@
+2005-07-27 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* RectangleF.cs: Fixes IsEmpty logic
+
 2005-06-23 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* Graphics.cs: implements FromHwndInternal

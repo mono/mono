@@ -300,7 +300,7 @@ namespace System.Drawing
 		[Browsable (false)]
 		public bool IsEmpty {
 			get {
-				return ((x == 0) && (y == 0) && (width == 0) && (height == 0));
+				return (width == 0 || height == 0);
 			}
 		}
 

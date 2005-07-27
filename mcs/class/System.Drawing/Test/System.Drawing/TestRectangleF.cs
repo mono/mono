@@ -40,6 +40,7 @@ namespace MonoTests.System.Drawing
 		RectangleF rect_3;
 		RectangleF rect_4;
 		RectangleF rect_5;
+		RectangleF rect_6;
 
 		[TearDown]
 		public void Clean () {}
@@ -53,6 +54,7 @@ namespace MonoTests.System.Drawing
 			rect_3 = new RectangleF (25, 25, 0, 0);
 			rect_4 = new RectangleF (25, 252, 10, 20);
 			rect_5 = new RectangleF (40, 40, 50, 50);
+			rect_6 = new RectangleF (40, 40, 0, 50);
 		}
 
 		[Test]
@@ -79,7 +81,8 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals (rect_0.IsEmpty, false);
 			AssertEquals (rect_2.IsEmpty, true);
-			AssertEquals (rect_3.IsEmpty, false);
+			AssertEquals (rect_3.IsEmpty, true);
+			AssertEquals (rect_6.IsEmpty, true);
 		}
 
 		[Test]
