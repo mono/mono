@@ -239,11 +239,7 @@ namespace System.Web
 			foreach (HttpResponseHeader oHeader in oHeaders)
 				oHeader.SendContent (_WorkerRequest);
 			
-#if !TARGET_J2EE //in J2EE env. we are setting headers into
-                //HttpServletResponse instance -> headers are
-                //still not sent
 			_bHeadersSent = true;
-#endif
 		}
 
 		public string Status
@@ -1059,9 +1055,7 @@ namespace System.Web
 		[MonoTODO()]
 		internal void OnCookieAdd (HttpCookie cookie)
 		{
-#if TARGET_J2EE	//naive implementation
 			Request.Cookies.Add(cookie);
-#endif
 		}
 
 		[MonoTODO("Do we need this?")]
