@@ -33,3 +33,11 @@
 ./Mono.Posix/PeerCred.cs
 ./Mono.Posix/Syscall.cs
 ./Mono.Posix/UnixEndPoint.cs
+./Mono.Remoting.Channels.Unix/UnixChannel.cs
+./Mono.Remoting.Channels.Unix/UnixClientChannel.cs
+./Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs
+./Mono.Remoting.Channels.Unix/UnixClientTransportSinkProvider.cs
+./Mono.Remoting.Channels.Unix/UnixMessageIO.cs
+./Mono.Remoting.Channels.Unix/UnixServerChannel.cs
+./Mono.Remoting.Channels.Unix/UnixServerTransportSink.cs
+./Mono.Remoting.Channels.Unix/UnixConnectionPool.cs

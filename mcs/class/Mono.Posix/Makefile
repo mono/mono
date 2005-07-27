@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Posix.dll
-LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll
+LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /r:System.Runtime.Remoting
 TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll /nowarn:0219,0618
 
 include ../../build/library.make
