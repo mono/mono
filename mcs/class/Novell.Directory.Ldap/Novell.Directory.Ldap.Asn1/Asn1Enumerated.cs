@@ -35,9 +35,6 @@ namespace Novell.Directory.Ldap.Asn1
 {
 	
 	/// <summary> This class encapsulates the ASN.1 ENUMERATED type.</summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1Enumerated:Asn1Numeric
 	{
 		

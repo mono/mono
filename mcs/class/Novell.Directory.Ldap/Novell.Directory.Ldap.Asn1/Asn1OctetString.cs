@@ -35,9 +35,6 @@ namespace Novell.Directory.Ldap.Asn1
 {
 	
 	/// <summary> This class encapsulates the OCTET STRING type.</summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1OctetString:Asn1Object
 	{
 		

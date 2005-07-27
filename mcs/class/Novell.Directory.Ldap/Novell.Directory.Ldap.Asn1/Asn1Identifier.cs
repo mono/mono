@@ -72,9 +72,6 @@ namespace Novell.Directory.Ldap.Asn1
 	/// 1 1 1 1 1 (> 30) multiple octet tag, more octets follow
 	/// </pre>
 	/// </summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1Identifier:System.Object, System.ICloneable
 	{
 		/// <summary> Returns the CLASS of this Asn1Identifier as an int value.

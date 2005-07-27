@@ -39,9 +39,6 @@ namespace Novell.Directory.Ldap.Asn1
 	/// </summary>
 	/* Can a CHOICE contain anything BUT a TAGGED Type?
 	*/
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1Choice:Asn1Object
 	{
 		/// <summary> Sets the CHOICE value stored in this Asn1Choice.

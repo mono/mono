@@ -40,9 +40,6 @@ namespace Novell.Directory.Ldap.Asn1
 	/// This class inherits from the Asn1Structured class which
 	/// provides functionality to hold multiple Asn1 components.
 	/// </summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1Sequence:Asn1Structured
 	{
 		

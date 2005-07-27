@@ -67,9 +67,6 @@ namespace Novell.Directory.Ldap.Asn1
 	/// Canonical, and Distinguished Encoding Rules", 1994.
 	/// 
 	/// </summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class LBEREncoder : Asn1Encoder
 	{
 		

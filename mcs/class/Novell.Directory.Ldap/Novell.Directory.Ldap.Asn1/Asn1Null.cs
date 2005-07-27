@@ -35,9 +35,6 @@ namespace Novell.Directory.Ldap.Asn1
 {
 	
 	/// <summary> This class represents the ASN.1 NULL type.</summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1Null:Asn1Object
 	{
 		

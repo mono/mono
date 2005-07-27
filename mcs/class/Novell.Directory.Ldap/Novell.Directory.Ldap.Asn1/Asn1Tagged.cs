@@ -46,9 +46,6 @@ namespace Novell.Directory.Ldap.Asn1
 	/// If the type is to be encoded EXPLICITLY, the base type will be encoded as
 	/// usual after the Asn1Tagged identifier has been encoded.
 	/// </summary>
-#if !TARGET_JVM 
-	[CLSCompliantAttribute(true)]
-#endif
 	public class Asn1Tagged:Asn1Object
 	{
 		/// <summary> Sets the Asn1Object tagged value</summary>
