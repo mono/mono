@@ -11,20 +11,20 @@ system = $(topdir)/class/lib/$(PROFILE)/System.dll
 endif
 	
 ifeq (net_2_0, $(PROFILE))
-OTHER_LIB_MCS_FLAGS = /r:System.Configuration.dll
+OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll
 endif
 
 LIBRARY = System.Data.dll
 LIB_MCS_FLAGS = \
-	/nowarn:649 /nowarn:169 /nowarn:219 /nowarn:168 /nowarn:1595 \
-	/r:$(corlib)				\
-	/r:$(system)			 	\
-	/r:System.Xml.dll 			\
-	/r:System.EnterpriseServices.dll 	\
-	/r:Mono.Data.Tds.dll \
+	-nowarn:649 -nowarn:169 -nowarn:219 -nowarn:168 -nowarn:1595 \
+	-r:$(corlib)				\
+	-r:$(system)			 	\
+	-r:System.Xml.dll 			\
+	-r:System.EnterpriseServices.dll 	\
+	-r:Mono.Data.Tds.dll \
 	$(OTHER_LIB_MCS_FLAGS)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
 
 EXTRA_DISTFILES = \
 	TODO					\
