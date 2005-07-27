@@ -1,3 +1,8 @@
+2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : reduced extra sortkey value computation in
+	  MatchesForward(). It makes IndexOf() roughly 30% faster.
+
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SortKey.cs : GetHashCode() returns a value based on its byte data.

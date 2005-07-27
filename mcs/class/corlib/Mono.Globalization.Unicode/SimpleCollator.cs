@@ -1475,14 +1475,27 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			} else {
 				if (si < 0)
 					si = FilterOptions (s [idx]);
+				idx++;
 				charSortKey [0] = Category (si);
-				charSortKey [1] = Level1 (si);
-				if (!ignoreNonSpace)
+				bool noMatch = false;
+				if (sortkey [0] == charSortKey [0])
+					charSortKey [1] = Level1 (si);
+				else
+					noMatch = true;
+				if (!ignoreNonSpace && sortkey [1] == charSortKey [1])
 					charSortKey [2] = Level2 (si, ext);
+				else
+					noMatch = true;
+				if (noMatch) {
+					for (; idx < end; idx++) {
+						if (Category (s [idx]) != 1)
+							break;
+					}
+					return false;
+				}
 				charSortKey [3] = Uni.Level3 (si);
 				if (charSortKey [0] != 1)
 					previousChar = si;
-				idx++;
 			}
 			for (; idx < end; idx++) {
 				if (Category (s [idx]) != 1)
