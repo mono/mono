@@ -1,16 +1,16 @@
-<Combine fileversion="1.0" name="mbas" description="">
-  <StartMode startupentry="mbas" single="True">
-    <Execute entry="mbas" type="None" />
-  </StartMode>
-  <Entries>
-    <Entry filename="./mbas.prjx" />
-  </Entries>
+<Combine name="mbas" fileversion="2.0">
   <Configurations active="Debug">
-    <Configuration name="Release">
-      <Entry name="mbas" configurationname="Debug" build="False" />
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry build="False" name="mbas" />
     </Configuration>
-    <Configuration name="Debug">
-      <Entry name="mbas" configurationname="Debug" build="False" />
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry build="False" name="mbas" />
     </Configuration>
   </Configurations>
+  <StartMode startupentry="mbas" single="True">
+    <Execute type="None" entry="mbas" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./mbas.mdp" />
+  </Entries>
 </Combine>

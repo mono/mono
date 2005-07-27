@@ -1,3 +1,14 @@
+2005-07-22 Maverson Eduardo Schulze Rosa <maverson@gmail.com> and Alexandre
+Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>
+	* block.cs: Local variable alias and static flag  support and
+  	  MethodBlock class that knows the name of the Method that owns it
+	* class.cs: Static local specialname modificator emission
+	* expression.cs: Hidden static field access using the static local
+	  alias
+	* statement.cs: Local variable alias support and Static local flag
+	* mb-parser.jay: Static local identification and related erros
+	
+	
 2005-07-26 Ankit Jain <jankit@novell.com>
 
 	* typemanager.cs (TypeManager): Change types of system_*_expr from Expression

@@ -1455,6 +1455,9 @@ namespace Mono.MonoBASIC {
 				foreach (Field f in fields) {
 					if ((f.ModFlags & Modifiers.PUBLIC) != 0)
 						continue;
+						
+					if (f.Name.StartsWith(@"$STATIC$"))
+						continue;
 
 					if (f.status == 0){
 						Report.Warning (
@@ -3549,8 +3552,14 @@ namespace Mono.MonoBASIC {
 					      "' causes a cycle in the structure layout");
 				return false;
 			}
-			FieldBuilder = parent.TypeBuilder.DefineField (
-				Name, t, Modifiers.FieldAttr (ModFlags));
+			
+			//Local Static Variable
+                        if (Name.StartsWith(@"$STATIC$"))
+                                FieldBuilder = parent.TypeBuilder.DefineField (
+                                        Name, t, Modifiers.FieldAttr (ModFlags) | FieldAttributes.SpecialName);
+                        else
+                                FieldBuilder = parent.TypeBuilder.DefineField (
+                                        Name, t, Modifiers.FieldAttr (ModFlags));
 
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 			return true;

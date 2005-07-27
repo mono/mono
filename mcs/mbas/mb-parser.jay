@@ -1574,7 +1574,7 @@ sub_declaration
 	  { 
 		push_into_stack((int)Start_block.SUB, (Location)$3);
 	  	current_local_parameters = (Parameters) $4;
-		start_block(); 
+		start_method_block((string) $2); 
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -1646,7 +1646,7 @@ func_declaration
 	  { 
 		push_into_stack((int)Start_block.FUNCTION, (Location)$5);
 	  	current_local_parameters = (Parameters) $4;
-		start_block(); 
+		start_method_block((string) $2); 
 				
 		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $3) ) : (Expression) $6;
 
@@ -3829,6 +3829,48 @@ declaration_statement
 			$$ = declare_local_constant ((Expression) de.Key, (ArrayList) de.Value);
 		}
 	  }
+	| STATIC _mark_ opt_dim_stmt variable_declarators
+          {
+	  	//Static variables may not be declared in structures.
+                if (($4 != null) && !(current_container is Struct)) {
+			Block block = current_block ;
+			
+			DictionaryEntry de = new DictionaryEntry (DecomposeQI("_local_vars_", (Location)$2), $4);
+			
+			int mod = (int) current_modifiers;
+	
+			VariableDeclaration.FixupTypes ((ArrayList) de.Value);
+			VariableDeclaration.FixupArrayTypes ((ArrayList) de.Value);
+	
+			if (current_container is Module)
+				mod = mod | Modifiers.STATIC;
+	
+			if ((mod & Modifiers.Accessibility) == 0)
+				mod |= Modifiers.PRIVATE;
+	
+			foreach (VariableDeclaration var in (ArrayList) de.Value){
+				Location l = var.Location;
+				Field field = new Field (var.type, mod, var.identifier,
+							var.expression_or_array_initializer,
+							null, l);
+				
+				while (	!(block is MethodBlock) && (block.Parent != null) )
+					block = block.Parent;
+					
+				field.Name = @"$STATIC$" + ((MethodBlock) block).MethodName + @"$" + ((Location) $2).Row + @"$" + field.Name;
+				CheckDef (current_container.AddField (field), field.Name, l);
+				var.Alias = field.Name;
+				var.Static = true;
+			}
+		
+			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, (Location) $2);
+		}
+		else {
+			if (current_container is Struct)
+				Report.Error ( 31400, (Location)$2,"Local variables within structures methods can't be declared 'Static'.");
+			$$ = null;
+		}	
+          }
 	;	 
 	
 local_variable_declaration
@@ -5182,11 +5224,22 @@ Block declare_local_variables (Expression dummy_type, ArrayList variable_declara
 
 	foreach (VariableDeclaration decl in variable_declarators){
 		Expression type = decl.type;
-		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, loc) != null) {
-			if (decl.expression_or_array_initializer != null){
-				if (inits == null)
-					inits = new ArrayList ();
-				inits.Add (decl);
+		if (decl.Alias != null) {
+			if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, loc, decl.Alias, decl.Static) != null) {
+				if (decl.expression_or_array_initializer != null){
+					if (inits == null)
+						inits = new ArrayList ();
+					inits.Add (decl);
+				}
+			}
+		}
+		else {
+			if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, loc) != null) {
+				if (decl.expression_or_array_initializer != null){
+					if (inits == null)
+						inits = new ArrayList ();
+					inits.Add (decl);
+				}
 			}
 		}
 	}
@@ -5257,13 +5310,33 @@ struct VarName {
 // </summary>
 public class VariableDeclaration {
 	public string identifier;
+	public string Alias;
+	public bool Static;
 	public object expression_or_array_initializer;
 	public Location Location;
 	public Attributes OptAttributes;
 	public Expression type;
 	public ArrayList dims;
 		
-	public VariableDeclaration (string id, Expression t, object eoai, Location l, Attributes opt_attrs)
+	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs, string Alias) :	this 
+					(id, TypeManager.system_object_expr, eoai, l, opt_attrs, Alias)
+	{
+	}	
+
+	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
+					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
+	{
+	}	
+
+	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, (Attributes) null)
+	{
+	}
+	
+	public VariableDeclaration (string id, object eoai, Location l, string Alias) : this (id, eoai, l, (Attributes) null, Alias)
+	{
+	}
+
+	public VariableDeclaration (string id, Expression t, object eoai, Location l, Attributes opt_attrs, string Alias)
 	{
 		this.identifier = id;
 		this.expression_or_array_initializer = eoai;
@@ -5271,21 +5344,22 @@ public class VariableDeclaration {
 		this.OptAttributes = opt_attrs;
 		this.type = t;
 		this.dims = null;
+		this.Alias = Alias;
 	}	
-
-	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, null)
+	
+	public VariableDeclaration (string id, Expression t, object eoai, Location l, Attributes opt_attrs)
+		: this (id, t, eoai, l, opt_attrs,  null)	
 	{
 	}
 	
-	public VariableDeclaration (string id, Expression t, Location l) : this (id, t, null, l, null)
+	public VariableDeclaration (string id, Expression t, Location l) : this (id, t, null, l, (Attributes) null)
 	{
 	}	
 	
-	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
-					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
+	public VariableDeclaration (string id, Expression t, Location l, string Alias) : this (id, t, null, l, (Attributes) null, Alias)
 	{
 	}	
-	
+			
 	public static ArrayCreation BuildArrayCreator (Expression vartype, ArrayList a_dims, ArrayList varinit, Location l)
 	{	
 		// FIXME : This is broken: only the first rank is parsed
@@ -5498,6 +5572,12 @@ void start_block ()
 {
 	current_block = new Block (current_block, current_local_parameters,
 			   lexer.Location, Location.Null);
+} 
+
+void start_method_block (string Name) 
+{
+	current_block = new MethodBlock (current_block, current_local_parameters,
+			   lexer.Location, Location.Null, Name);
 } 
 
 Block end_block ()

@@ -408,6 +408,19 @@ namespace Mono.MonoBASIC {
 			return vi;
 		}
 		
+		
+		
+		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l, string Alias, bool Static)
+		{
+			VariableInfo vi = AddVariable (type, name, pars, l);
+			if (vi != null) {
+				vi.Alias = Alias;
+				vi.Static = Static;
+			}
+					
+			return vi;
+		}
+		
 		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
@@ -813,7 +826,7 @@ namespace Mono.MonoBASIC {
 
 			return ok;
 		}
-		
+
 		protected override bool DoEmit (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
@@ -836,5 +849,65 @@ namespace Mono.MonoBASIC {
 		}
 
 	} // class Block
+	
+	/// <summary>
+	///   Block represents a VB.NET method block.
+	/// </summary>
+	///
+	/// <remarks>
+	///   This class is used in a number of places: either to represent
+	///   explicit blocks that the programmer places or implicit blocks.
+	///
+	///   Implicit blocks are used as labels or to introduce variable
+	///   declarations.
+	/// </remarks>
+	public class MethodBlock : Block {
+		public readonly string MethodName;
+		
+		public MethodBlock (Block parent, string MethodName)
+			: base (parent, false, Location.Null, Location.Null)
+		{
+			this.MethodName = MethodName;
+		}
+
+		public MethodBlock (Block parent, bool implicit_block, string MethodName)
+			: base (parent, implicit_block, Location.Null, Location.Null)
+		{
+			this.MethodName = MethodName;
+		}
+
+		public MethodBlock (Block parent, bool implicit_block, Parameters parameters, string MethodName)
+			: base (parent, implicit_block, parameters, Location.Null, Location.Null)
+		{
+			this.MethodName = MethodName;
+		}
+
+		public MethodBlock (Block parent, Location start, Location end, String MethodName)
+			: base (parent, false, start, end)
+		{
+			this.MethodName = MethodName;
+		}
+
+		public MethodBlock (Block parent, Parameters parameters, Location start, Location end, string MethodName)
+			: base (parent, false, parameters, start, end)
+		{
+			this.MethodName = MethodName;
+		}
+
+		public MethodBlock (Block parent, bool implicit_block, Location start, Location end, string MethodName)
+			: base (parent, implicit_block, Parameters.EmptyReadOnlyParameters,
+				start, end)
+		{
+			this.MethodName = MethodName;
+		}
+
+		public MethodBlock (Block parent, bool implicit_block, Parameters parameters,
+			      Location start, Location end, string MethodName)
+			: base (parent, implicit_block, parameters, start, end)
+		{
+			this.MethodName = MethodName;
+		}
+		
+	}
 
 } // namespace Mono.MonoBASIC

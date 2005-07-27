@@ -3304,8 +3304,9 @@ namespace Mono.MonoBASIC {
 		{
 			VariableInfo vi = VariableInfo;
 
-			if (ec.DoFlowAnalysis)
+			if (ec.DoFlowAnalysis) {
 				ec.SetVariableAssigned (vi);
+			}
 
 			Expression e = DoResolve (ec);
 
@@ -3325,7 +3326,24 @@ namespace Mono.MonoBASIC {
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
 
-			ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+			if (vi.Alias != null && vi.Static) {
+				ArrayList fields = ec.TypeContainer.Fields;
+				FieldBase fb;						
+				for (int i = 0; i < fields.Count; i++) {
+					if (((Field) fields[i]).Name == vi.Alias) {
+						fb = (Field) fields[i];
+						break;
+					}
+				}
+				if ((fb.ModFlags & Modifiers.STATIC) != 0)
+					ig.Emit (OpCodes.Ldsfld, fb.FieldBuilder);
+				else {
+					ig.Emit (OpCodes.Ldarg_0);		
+					ig.Emit (OpCodes.Ldfld, fb.FieldBuilder);
+				}
+			} else
+				ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+
 			vi.Used = true;
 		}
 		
@@ -3336,16 +3354,52 @@ namespace Mono.MonoBASIC {
 
 			vi.Assigned = true;
 
-			source.Emit (ec);
-			
-			ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+			if (vi.Alias != null && vi.Static) {
+				ArrayList fields = ec.TypeContainer.Fields;
+				FieldBase fb;						
+				for (int i = 0; i < fields.Count; i++) {
+					if (((Field) fields[i]).Name == vi.Alias) {
+						fb = (Field) fields[i];
+						break;
+					}
+				}
+				if ((fb.ModFlags & Modifiers.STATIC) != 0) {
+					source.Emit (ec);
+					ig.Emit (OpCodes.Stsfld, fb.FieldBuilder);
+				}
+				else {
+					ig.Emit (OpCodes.Ldarg_0);
+					source.Emit (ec);
+					ig.Emit (OpCodes.Stfld, fb.FieldBuilder);
+				}
+			}
+			else {
+				source.Emit (ec);
+				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			VariableInfo vi = VariableInfo;
 
-			ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
+			if (vi.Alias != null && vi.Static) {
+				ArrayList fields = ec.TypeContainer.Fields;
+				FieldBase fb;						
+				for (int i = 0; i < fields.Count; i++) {
+					if (((Field) fields[i]).Name == vi.Alias) {
+						fb = (Field) fields[i];
+						break;
+					}
+				}
+				if ((fb.ModFlags & Modifiers.STATIC) != 0)
+					ec.ig.Emit (OpCodes.Ldsflda, fb.FieldBuilder);
+				else {
+					ec.ig.Emit (OpCodes.Ldarg_0);
+					ec.ig.Emit (OpCodes.Ldflda, fb.FieldBuilder);
+				}
+			} else
+				ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
 		}
 	}
 

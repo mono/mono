@@ -2672,15 +2672,33 @@ namespace Mono.MonoBASIC {
 		public Expression Type;
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
+		public string Alias;
+		
+		bool mod_static;
+		public bool Static {
+			get {
+				return mod_static;
+			}
+			set {
+				mod_static = value;
+			}
+		}
+
 		public readonly string Name;
 		public readonly Location Location;
 		public readonly int Block;
-
+		
 		public int Number;
 		
 		public bool Used;
 		public bool Assigned;
 		public bool ReadOnly;
+		
+		public VariableInfo (Expression type, string name, int block, Location l, string Alias)
+			: this (type, name, block, l)
+		{
+			this.Alias = Alias;
+		}
 		
 		public VariableInfo (Expression type, string name, int block, Location l)
 		{
@@ -2691,6 +2709,12 @@ namespace Mono.MonoBASIC {
 			Location = l;
 		}
 
+		public VariableInfo (TypeContainer tc, int block, Location l, string Alias)
+			: this (tc, block, l)
+		{
+			this.Alias = Alias;
+		}
+		
 		public VariableInfo (TypeContainer tc, int block, Location l)
 		{
 			VariableType = tc.TypeBuilder;
