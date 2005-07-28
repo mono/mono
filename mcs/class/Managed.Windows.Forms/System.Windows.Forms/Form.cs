@@ -1060,6 +1060,16 @@ namespace System.Windows.Forms {
 				this.is_visible = visible;
 			}
 			
+			switch (StartPosition) {			
+				case FormStartPosition.CenterScreen:
+					this.CenterToScreen();
+					break;
+				case FormStartPosition.CenterParent:
+					this.CenterToParent ();
+					break;
+			}
+						
+			
 			if (menu != null) {
 				XplatUI.SetMenu(window.Handle, menu.Handle);
 			}

@@ -1,3 +1,13 @@
+2005-07-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* Control.cs (PaintControlBackground): Draw background image
+	corrrectly.
+	(CheckForIllegalCrossThreadCalls): Stubbed.
+	
+	* Form.cs (OnCreateControl): Center when should be centered.
+	
+	* ThemeWin32Classic.cs (DrawPictureBox): Pass size.
+
 2005-07-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Binding.cs: Binding to properties should be case unsensitive

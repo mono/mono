@@ -23,7 +23,7 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Peter Bartok, pbartok@novell.com
 //	John BouAntoun, jba-mono@optusnet.com.au
-//
+//  Marek Safar, marek.safar@seznam.cz
 //
 
 
@@ -2566,7 +2566,7 @@ namespace System.Windows.Forms
 					break;
 				default:
 					// Normal, AutoSize
-					dc.DrawImage(pb.Image, 0, 0);
+					dc.DrawImage(pb.Image, 0, 0, pb.Image.Width, pb.Image.Height);
 					break;
 				}
 			}

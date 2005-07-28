@@ -765,8 +765,17 @@ namespace System.Windows.Forms
 		// This method exists so controls overriding OnPaintBackground can have default background painting done
 		internal void PaintControlBackground (PaintEventArgs pevent)
 		{
-			if (background_image != null)
-				pevent.Graphics.DrawImage (background_image, 0, 0);
+			if (background_image == null)
+				return;
+
+			DrawBackgroundImage (pevent.Graphics);
+		}
+
+		void DrawBackgroundImage (Graphics g)
+		{
+			using (TextureBrush b = new TextureBrush (background_image)) {
+				g.FillRectangle (b, ClientRectangle);
+			}
 		}
 
 		internal void DndEnter (DragEventArgs e)
@@ -996,6 +1005,18 @@ namespace System.Windows.Forms
 				return Cursor.Position;
 			}
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		public static bool CheckForIllegalCrossThreadCalls 
+		{
+			set {
+			}
+			get {
+				return false;
+			}
+		}
+#endif
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
