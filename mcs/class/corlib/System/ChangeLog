@@ -1,3 +1,7 @@
+2005-07-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* StringComparer.cs: Add generics version of string interfaces.
+
 2005-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringComparer.cs : implemented StringCultureComparer.GetHashCode().

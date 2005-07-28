@@ -32,11 +32,12 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace System
 {
 	[Serializable, ComVisible(true)]
-	public abstract class StringComparer : IComparer, IEqualityComparer
+	public abstract class StringComparer : IComparer, IEqualityComparer, IComparer<string>, IEqualityComparer<string>
 	{
 		class StringCultureComparer: StringComparer
 		{
