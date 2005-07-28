@@ -35,7 +35,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	[DefaultProperty ("DataSourceID")]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class BaseDataBoundControl: WebControl
 	{
 		public event EventHandler DataBound;

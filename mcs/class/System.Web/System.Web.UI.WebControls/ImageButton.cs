@@ -40,7 +40,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 #if NET_2_0
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.PreviewControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #endif
 	[DefaultEvent("Click")]
 	public class ImageButton: Image, IPostBackDataHandler, IPostBackEventHandler
@@ -175,7 +175,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[ThemeableAttribute (false)]
-		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		[UrlProperty]
 		public string PostBackUrl {

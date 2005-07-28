@@ -1,3 +1,7 @@
+2005-07-29  Kornél Pál <kornelpal@hotmail.com>
+
+	* Consts.cs: Added NET_2_0 assembly references.
+
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Consts.cs: updated revision for Microsoft.VSDesigner.

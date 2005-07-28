@@ -38,7 +38,7 @@ using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls {
 
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.BulletedListDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.BulletedListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultEventAttribute ("Click")]
 	[DefaultPropertyAttribute ("BulletStyle")]
 	public class BulletedList : ListControl, IPostBackEventHandler {
@@ -189,7 +189,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute ("")]
-		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlPropertyAttribute]
 		public virtual string BulletImageUrl {
 			get {

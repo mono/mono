@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItemFilterAttribute ("Microsoft.VisualStudio.Web.WebForms.MasterPageWebFormDesigner", ToolboxItemFilterType.Require)]
 	[ToolboxItemFilterAttribute ("System.Web.UI", ToolboxItemFilterType.Allow)]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentPlaceHolderDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentPlaceHolderDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxDataAttribute ("<{0}:ContentPlaceHolder runat='server'></{0}:ContentPlaceHolder>")]
 	[ControlBuilder(typeof(ContentPlaceHolderBuilder))] 
 	public class ContentPlaceHolder: Control, INamingContainer

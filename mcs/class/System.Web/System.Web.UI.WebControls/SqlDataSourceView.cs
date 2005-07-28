@@ -333,19 +333,19 @@ namespace System.Web.UI.WebControls {
 		
 		[DefaultValueAttribute (null)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public ParameterCollection DeleteParameters {
 			get { return GetParameterCollection (ref deleteParameters); }
 		}
 		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection FilterParameters {
 			get { return GetParameterCollection (ref filterParameters); }
 		}
 		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection InsertParameters {
@@ -356,7 +356,7 @@ namespace System.Web.UI.WebControls {
 			get { return GetParameterCollection (ref selectParameters); }
 		}
 		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection UpdateParameters {

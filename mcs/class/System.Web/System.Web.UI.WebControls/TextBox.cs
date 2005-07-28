@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls
 {
 #if NET_2_0
 	[ControlValuePropertyAttribute ("Text")]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.PreviewControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #endif
 	[ControlBuilder (typeof (TextBoxControlBuilder))]
 	[DefaultEvent("TextChanged")]
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls
 
 #if NET_2_0
 	    [LocalizableAttribute (true)]
-	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[PersistenceMode (PersistenceMode.EncodedInnerDefaultProperty)]

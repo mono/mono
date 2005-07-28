@@ -59,6 +59,13 @@ internal sealed class Consts
 	public const string AssemblySystem_Drawing_Design = "System.Drawing.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 	public const string AssemblyMicrosoft_VSDesigner = "Microsoft.VSDesigner, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
+#elif (NET_2_0)
+
+	public const string AssemblySystem_Design = "System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing = "System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblySystem_Drawing_Design = "System.Drawing.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	public const string AssemblyMicrosoft_VSDesigner = "Microsoft.VSDesigner, Version=8.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+	
 //#elif (NET_1_1)
 #else
 	// NET_1_1 is seen as default if somebody 'forgets' to specify any of the symbols

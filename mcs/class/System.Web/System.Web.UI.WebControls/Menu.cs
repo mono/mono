@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEvent ("MenuItemClick")]
 	[ControlValueProperty ("SelectedValue")]
-	[Designer ("System.Web.UI.Design.WebControls.MenuDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[Designer ("System.Web.UI.Design.WebControls.MenuDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class Menu : HierarchicalDataBoundControl, IPostBackEventHandler, INamingContainer
 	{
 		MenuItemStyle dynamicMenuItemStyle;

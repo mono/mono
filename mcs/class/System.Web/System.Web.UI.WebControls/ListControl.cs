@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
-	    [Editor ("System.Web.UI.Design.WebControls.ListItemsCollectionEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [Editor ("System.Web.UI.Design.WebControls.ListItemsCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #endif
 		[DefaultValue (null), MergableProperty (false), WebCategory ("Misc")]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]

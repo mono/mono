@@ -39,7 +39,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	[ParseChildrenAttribute (false)]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.ViewDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.ViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxDataAttribute ("<{0}:View runat=\"server\"></{0}:View>")]
 	public class View: Control
 	{

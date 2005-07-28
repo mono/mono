@@ -39,7 +39,7 @@ using System.IO;
 
 namespace System.Web.UI.WebControls {
 
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.XmlDataSourceDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.XmlDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty ("DataFile")]
 	[DefaultEvent ("Transforming")]
 	[ParseChildren (true)]
@@ -183,7 +183,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("Inline XML data.")]
 		[WebCategory ("Data")]
-	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 //		[TypeConverter (typeof(MultilineStringConverter))]
 		public virtual string Data {
 			get {
@@ -200,7 +200,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute ("")]
-		[EditorAttribute ("System.Web.UI.Design.XmlDataFileEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.XmlDataFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string DataFile {
 			get {
 				string ret = ViewState ["DataFile"] as string;
@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 //		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter)]
-		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute ("")]
 		public virtual string Schema {
@@ -244,7 +244,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute ("")]
-		[EditorAttribute ("System.Web.UI.Design.XsdSchemaFileEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.XsdSchemaFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string SchemaFile {
 			get {
 				string ret = ViewState ["SchemaFile"] as string;
@@ -268,7 +268,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 //		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter))]
 		public virtual string Transform {
@@ -285,7 +285,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		[EditorAttribute ("System.Web.UI.Design.XslTransformFileEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.XslTransformFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		public virtual string TransformFile {
 			get {

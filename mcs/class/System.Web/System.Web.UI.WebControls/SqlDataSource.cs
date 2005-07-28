@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls {
 	[ParseChildrenAttribute (true)]
 	[PersistChildrenAttribute (false)]
 	[DefaultPropertyAttribute ("SelectQuery")]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultEventAttribute ("Selecting")]
 	public class SqlDataSource : DataSourceControl {
 
@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		
-		[EditorAttribute ("System.Web.UI.Design.ConnectionStringEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.ConnectionStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		public virtual string ConnectionString {
 			get {
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls {
 			set { View.DeleteCommand = value; }
 		}
 		
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MergablePropertyAttribute (false)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
@@ -181,7 +181,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute (null)]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MergablePropertyAttribute (false)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection FilterParameters {
@@ -197,7 +197,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		[MergablePropertyAttribute (false)]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public ParameterCollection InsertParameters {
 			get { return View.InsertParameters; }
 		}
@@ -211,7 +211,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute (null)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[MergablePropertyAttribute (false)]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public ParameterCollection SelectParameters {
 			get { return View.SelectParameters; }
 		}
@@ -223,7 +223,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MergablePropertyAttribute (false)]
 		[DefaultValueAttribute (null)]
 		public ParameterCollection UpdateParameters {

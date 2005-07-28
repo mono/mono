@@ -39,7 +39,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 //	[ControlBuilder (typeof(MultiViewControlBuilder)]
-	[Designer ("System.Web.UI.Design.WebControls.MultiViewDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[Designer ("System.Web.UI.Design.WebControls.MultiViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxData ("<{0}:MultiView runat=\"server\"></{0}:MultiView>")]
 	[ParseChildren (false, ChildControlType = typeof(View))]
 	[DefaultEvent ("ActiveViewChanged")]

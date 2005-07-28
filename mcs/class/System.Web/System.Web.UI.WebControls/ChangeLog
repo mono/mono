@@ -1,3 +1,7 @@
+2005-07-29  Kornél Pál <kornelpal@hotmail.com>
+
+	* *.cs: Replaced assembly references with constants in Consts.cs.
+
 2005-07-25  Eyal Alaluf <eyala@mainsoft.com>
 	* Table.cs Label.cs Image.cs BaseDataList.cs DataList.cs RepeatInfo.cs
 	  DataGrid.cs TableCaptionAlign.cs: Accessiblity feature is part of NET_1_1
