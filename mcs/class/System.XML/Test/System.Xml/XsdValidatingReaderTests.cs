@@ -183,5 +183,30 @@ namespace MonoTests.System.Xml
 			AssertEquals (12, n);
 			Assert (xvr.ReadAttributeValue ());	// can read = seems not proceed.
 		}
+
+		[Test]
+		public void DuplicateSchemaAssignment ()
+		{
+			string xml = @"<data
+			xmlns='http://www.test.com/schemas/'
+			xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+			xsi:schemaLocation='http://www.test.com/schemas/ /home/user/schema.xsd' />";
+			string xsd = @"<xs:schema
+			targetNamespace='http://www.test.com/schemas/'
+			xmlns:xs='http://www.w3.org/2001/XMLSchema'
+			xmlns='http://www.test.com/schemas/' >
+		        <xs:element name='data' /></xs:schema>";
+
+			string xmlns = "http://www.test.com/schemas/";
+
+			XmlValidatingReader xvr = new XmlValidatingReader (
+				xml, XmlNodeType.Document, null);
+			XmlSchemaCollection schemas = new XmlSchemaCollection ();
+			schemas.Add (XmlSchema.Read (new XmlTextReader (
+				xsd, XmlNodeType.Document, null), null));
+			xvr.Schemas.Add (schemas);
+			while (!xvr.EOF)
+				xvr.Read ();
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2005-07-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : added test case for duplicating
+	  assignment of both Schemas.Add() and xsi:schemaLocation where
+	  schemaLocation could not be resolved.
+
 2005-07-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : added bug #75546 testcase.

@@ -1484,16 +1484,20 @@ namespace Mono.Xml.Schema
 					schemaLocation = XsDatatype.FromName ("token", XmlSchema.Namespace).Normalize (schemaLocation);
 					tmp = schemaLocation.Split (XmlChar.WhitespaceChars);
 				} catch (Exception ex) {
-					HandleError ("Invalid schemaLocation attribute format.", ex, true);
+					if (schemas.Count == 0)
+						HandleError ("Invalid schemaLocation attribute format.", ex, true);
 					tmp = new string [0];
 				}
 				if (tmp.Length % 2 != 0)
-					HandleError ("Invalid schemaLocation attribute format.");
+					if (schemas.Count == 0)
+						HandleError ("Invalid schemaLocation attribute format.");
 				for (int i = 0; i < tmp.Length; i += 2) {
 					try {
 						schema = ReadExternalSchema (tmp [i + 1]);
 					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
-						HandleError ("Could not resolve schema location URI: " + tmp [i + 1], null, true);
+						if (!schemas.Contains (tmp [i]))
+							HandleError (String.Format ("Could not resolve schema location URI: {0}",
+								i + 1 < tmp.Length ? tmp [i + 1] : String.Empty), null, true);
 						continue;
 					}
 					if (schema.TargetNamespace == null)
@@ -1514,7 +1518,8 @@ namespace Mono.Xml.Schema
 				try {
 					schema = ReadExternalSchema (noNsSchemaLocation);
 				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
-					HandleError ("Could not resolve schema location URI: " + noNsSchemaLocation, null, true);
+					if (schemas.Count != 0)
+						HandleError ("Could not resolve schema location URI: " + noNsSchemaLocation, null, true);
 				}
 				if (schema != null && schema.TargetNamespace != null)
 					HandleError ("Specified schema has different target namespace.");
