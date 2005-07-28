@@ -338,7 +338,7 @@ sw.Close ();
 			cjkKOlv2 = CompressArray (cjkKOlv2, UUtil.Cjk);
 
 			// Ignorables
-			CResult.WriteLine ("static const guint8* collation_table_ignorableFlags [] = {");
+			CResult.WriteLine ("static const guint8  collation_table_ignorableFlags [] = {");
 			CSResult.WriteLine ("static readonly byte [] ignorableFlagsArr = new byte [] {");
 #if Binary
 			MemoryStream ms = new MemoryStream ();
@@ -362,11 +362,12 @@ sw.Close ();
 					CResult.WriteLine ();
 				}
 			}
+			CResult.WriteLine ("0};");
 			CSResult.WriteLine ("};");
 			CSResult.WriteLine ();
 
 			// Primary category
-			CResult.WriteLine ("static const guint8* collation_table_category [] = {");
+			CResult.WriteLine ("static const guint8 collation_table_category [] = {");
 			CSResult.WriteLine ("static readonly byte [] categoriesArr = new byte [] {");
 #if Binary
 			binary.Write (categories.Length);
@@ -392,7 +393,7 @@ sw.Close ();
 			CSResult.WriteLine ();
 
 			// Primary weight value
-			CResult.WriteLine ("static const guint8* collation_table_level1 [] = {");
+			CResult.WriteLine ("static const guint8 collation_table_level1 [] = {");
 			CSResult.WriteLine ("static readonly byte [] level1Arr = new byte [] {");
 #if Binary
 			binary.Write (level1.Length);
@@ -418,7 +419,7 @@ sw.Close ();
 			CSResult.WriteLine ();
 
 			// Secondary weight
-			CResult.WriteLine ("static const guint8* collation_table_level2 [] = {");
+			CResult.WriteLine ("static const guint8 collation_table_level2 [] = {");
 			CSResult.WriteLine ("static readonly byte [] level2Arr = new byte [] {");
 #if Binary
 			binary.Write (level2.Length);
@@ -444,7 +445,7 @@ sw.Close ();
 			CSResult.WriteLine ();
 
 			// Thirtiary weight
-			CResult.WriteLine ("static const guint8* collation_table_level3 [] = {");
+			CResult.WriteLine ("static const guint8 collation_table_level3 [] = {");
 			CSResult.WriteLine ("static readonly byte [] level3Arr = new byte [] {");
 #if Binary
 			binary.Write (level3.Length);
@@ -516,11 +517,19 @@ sw.Close ();
 
 		void SerializeCJK (string name, ushort [] cjk, int max_unused)
 		{
-			CResult.WriteLine ("static const int collation_table_collation_cjk_{0}_size [] = {1};", name, cjk.Length);
+//			CResult.WriteLine ("static const int collation_table_collation_cjk_{0}_size [] = {1};", name, cjk.Length);
 			CSResult.WriteLine ("const int {0}ArrLength = {1};", name, cjk.Length);
 
-			CResult.WriteLine ("static const guint8* collation_table_collation_cjk_{0} [] = {{", name);
+			int len = cjk.Length;
+			CResult.WriteLine ("static const guint8 collation_table_collation_cjk_{0} [] = {{", name);
 			CSResult.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
+			// the actual length is *2
+			for (int i = 0; i < 4; i++, len /= 256) {
+				CResult.Write ("{0},", len & 0xFF);
+				CSResult.Write ("0x{0:X04},", len & 0xFF);
+			}
+			CResult.WriteLine ();
+			CSResult.WriteLine ();
 #if Binary
 			MemoryStream ms = new MemoryStream ();
 			BinaryWriter binary = new BinaryWriter (ms);
@@ -578,7 +587,7 @@ sw.Close ();
 
 		void SerializeCJK (string name, byte [] cjk, int max)
 		{
-			CResult.WriteLine ("static const guint8* collation_table_collation_cjk_{0} [] = {{", name);
+			CResult.WriteLine ("static const guint8 collation_table_collation_cjk_{0} [] = {{", name);
 			CSResult.WriteLine ("static byte [] {0}Arr = new byte [] {{", name);
 #if Binary
 			MemoryStream ms = new MemoryStream ();
@@ -617,8 +626,8 @@ sw.Close ();
 		{
 			Hashtable indexes = new Hashtable ();
 			Hashtable counts = new Hashtable ();
-			CResult.WriteLine ("static const guint16*collation_table_tailoring = {");
-			CSResult.WriteLine ("static char [] tailorings = new char [] {");
+			CResult.WriteLine ("static const guint16 collation_table_tailoring [] = {");
+			CSResult.WriteLine ("static char [] tailoringArr = new char [] {");
 			int count = 0;
 #if Binary
 			MemoryStream ms = new MemoryStream ();
@@ -649,8 +658,8 @@ sw.Close ();
 			CResult.WriteLine ("0};");
 			CSResult.WriteLine ("};");
 
-			CResult.WriteLine ("static const int collation_tailoring_count = {0};", tailorings.Count);
-			CResult.WriteLine ("static const int* collation_tailoring_infos = {");
+			CResult.WriteLine ("static const guint32 collation_table_tailoring_infos [] = {");
+			CResult.WriteLine ("{0}, /*count*/", tailorings.Count);
 			CSResult.WriteLine ("static TailoringInfo [] tailoringInfos = new TailoringInfo [] {");
 #if Binary
 			byte [] rawdata = ms.ToArray ();

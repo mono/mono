@@ -1,9 +1,11 @@
 #define USE_MANAGED_RESOURCE
+//#define USE_C_HEADER
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using UUtil = Mono.Globalization.Unicode.MSCompatUnicodeTableUtil;
 
@@ -108,6 +110,7 @@ namespace Mono.Globalization.Unicode
 		static readonly byte* level2;
 		static readonly byte* level3;
 //		static readonly ushort* widthCompat;
+		static readonly char* tailoring;
 		static byte* cjkCHScategory;
 		static byte* cjkCHTcategory;
 		static byte* cjkJAcategory;
@@ -136,7 +139,7 @@ namespace Mono.Globalization.Unicode
 			// collect tailoring entries.
 			ArrayList cmaps = new ArrayList ();
 			ArrayList dmaps = new ArrayList ();
-			char [] tarr = tailorings;
+			char* tarr = tailoring;
 			int idx = t.TailoringIndex;
 			int end = idx + t.TailoringCount;
 			while (idx < end) {
@@ -148,7 +151,8 @@ namespace Mono.Globalization.Unicode
 					while (tarr [ss] != 0)
 						ss++;
 					src = new char [ss - idx];
-					Array.Copy (tarr, idx, src, 0, ss - idx);
+//					Array.Copy (tarr, idx, src, 0, ss - idx);
+					Marshal.Copy ((IntPtr) (tarr + idx), src, 0, ss - idx);
 					byte [] sortkey = new byte [4];
 					for (int i = 0; i < 4; i++)
 						sortkey [i] = (byte) tarr [ss + 1 + i];
@@ -168,7 +172,8 @@ namespace Mono.Globalization.Unicode
 					while (tarr [ss] != 0)
 						ss++;
 					src = new char [ss - idx];
-					Array.Copy (tarr, idx, src, 0, ss - idx);
+//					Array.Copy (tarr, idx, src, 0, ss - idx);
+					Marshal.Copy ((IntPtr) (tarr + idx), src, 0, ss - idx);
 					ss++;
 					int l = ss;
 					while (tarr [l] != 0)
@@ -472,6 +477,9 @@ namespace Mono.Globalization.Unicode
 //			fixed (ushort* tmp = widthCompatArr) {
 //				widthCompat = tmp;
 //			}
+			fixed (char* tmp = tailoringArr) {
+				tailoring = tmp;
+			}
 			fixed (byte* tmp = cjkCHSArr) {
 				cjkCHScategory = tmp;
 				cjkCHSlv1 = tmp + cjkCHSArrLength;
@@ -505,7 +513,9 @@ namespace Mono.Globalization.Unicode
 		}
 #else
 
-		static readonly char [] tailorings;
+#if !USE_C_HEADER
+		static readonly char [] tailoringArr;
+#endif
 		static readonly TailoringInfo [] tailoringInfos;
 		static object forLock = new object ();
 		public static readonly bool isReady;
@@ -521,6 +531,24 @@ namespace Mono.Globalization.Unicode
 			Module module;
 			return Assembly.GetExecutingAssembly ().GetManifestResourceInternal (name, out size, out module);
 		}
+#elif USE_C_HEADER
+		const int CollationResourceTailoringChars = 7;
+
+		const int CollationTableIdxIgnorables = 0;
+		const int CollationTableIdxCategory = 1;
+		const int CollationTableIdxLevel1 = 2;
+		const int CollationTableIdxLevel2 = 3;
+		const int CollationTableIdxLevel3 = 4;
+		const int CollationTableIdxTailoringInfos = 5;
+		const int CollationTableIdxTailoringChars = 6;
+		const int CollationTableIdxCjkCHS = 7;
+		const int CollationTableIdxCjkCHT = 8;
+		const int CollationTableIdxCjkJA = 9;
+		const int CollationTableIdxCjkKO = 10;
+		const int CollationTableIdxCjkKOLv2 = 11;
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void load_collation_resource (int resource_index, byte** data);
 #else
 		static readonly string corlibPath = Assembly.GetExecutingAssembly ().Location;
 
@@ -544,6 +572,44 @@ namespace Mono.Globalization.Unicode
 
 		static MSCompatUnicodeTable ()
 		{
+#if USE_C_HEADER
+			byte* raw;
+			uint* tailor;
+			uint size;
+			uint idx = 0;
+
+			lock (forLock) {
+				load_collation_resource (CollationTableIdxIgnorables, &raw);
+				ignorableFlags = raw;
+				load_collation_resource (CollationTableIdxCategory, &raw);
+				categories = raw;
+				load_collation_resource (CollationTableIdxLevel1, &raw);
+				level1 = raw;
+				load_collation_resource (CollationTableIdxLevel2, &raw);
+				level2 = raw;
+				load_collation_resource (CollationTableIdxLevel3, &raw);
+				level3 = raw;
+				load_collation_resource (CollationTableIdxTailoringInfos, &raw);
+				tailor = (uint*) raw;
+				load_collation_resource (CollationTableIdxTailoringChars, &raw);
+				tailoring = (char*) raw;
+			}
+
+			idx = 0;
+			uint count = tailor [idx++];
+			tailoringInfos = new TailoringInfo [count];
+			for (int i = 0; i < count; i++) {
+				int i1 = (int) tailor [idx++];
+				int i2 = (int) tailor [idx++];
+				int i3 = (int) tailor [idx++];
+				TailoringInfo ti = new TailoringInfo (
+					i1, i2, i3, tailor [idx++] != 0);
+				tailoringInfos [i] = ti;
+			}
+
+			isReady = true;
+#else
+
 			byte* raw;
 			byte* tailor;
 			uint size;
@@ -565,6 +631,7 @@ namespace Mono.Globalization.Unicode
 			lock (forLock) {
 				load_collation_resource (corlibPath, CollationResourceCore, &raw, &rawsize);
 				load_collation_resource (corlibPath, CollationResourceTailoring, &tailor, &trawsize);
+				load_collation_resource (corlibPath, CollationResourceTailoringChars, &tailorChars, &trawsize);
 			}
 #endif
 
@@ -606,6 +673,8 @@ namespace Mono.Globalization.Unicode
 //			widthCompat = (ushort*) (raw + idx);
 //			idx += size * 2;
 
+			// tailoring
+
 			idx = 1;
 			uint count = UInt32FromBytePtr (tailor, idx);
 			idx += 4;
@@ -625,10 +694,15 @@ namespace Mono.Globalization.Unicode
 			// tailorings
 			count = UInt32FromBytePtr (tailor, idx);
 			idx += 4;
-			tailorings = new char [count];
+
+			tailoringArr = new char [count];
 			for (int i = 0; i < count; i++, idx += 2)
-				tailorings [i] = (char) (tailor [idx] + (tailor [idx + 1] << 8));
+				tailoringArr [i] = (char) (tailor [idx] + (tailor [idx + 1] << 8));
+			fixed (char *tmpCP = tailoringArr) {
+				tailoring = tmpCP;
+			}
 			isReady = true;
+#endif
 		}
 
 		public static void FillCJK (string culture,
@@ -684,6 +758,7 @@ namespace Mono.Globalization.Unicode
 				return;
 
 			byte* raw;
+			uint idx = 0;
 #if USE_MANAGED_RESOURCE
 			string filename =
 				String.Format ("collation.{0}.bin", name);
@@ -691,6 +766,18 @@ namespace Mono.Globalization.Unicode
 			if (ptr == IntPtr.Zero)
 				return;
 			raw = (byte*) ((void*) ptr);
+			idx += ResourceVersionSize;
+#elif USE_C_HEADER
+			int residx = -1;
+			switch (culture) {
+			case "zh-CHS": residx = CollationTableIdxCjkCHS; break;
+			case "zh-CHT": residx = CollationTableIdxCjkCHT; break;
+			case "ja": residx = CollationTableIdxCjkJA; break;
+			case "ko": residx = CollationTableIdxCjkKO; break;
+			}
+			if (residx < 0)
+				return;
+			load_collation_resource (residx, &raw);
 #else
 			int size;
 			int residx = -1;
@@ -703,10 +790,12 @@ namespace Mono.Globalization.Unicode
 			if (residx < 0)
 				return;
 			load_collation_resource (corlibPath, residx, &raw, &size);
+			idx += ResourceVersionSize;
 #endif
-			uint count = UInt32FromBytePtr (raw, ResourceVersionSize);
-			catTable = (byte*) raw + ResourceVersionSize + 4;
-			lv1Table = (byte*) raw + ResourceVersionSize + 4 + count;
+			uint count = UInt32FromBytePtr (raw, idx);
+			idx += 4;
+			catTable = (byte*) raw + idx;
+			lv1Table = (byte*) raw + idx + count;
 
 			switch (culture) {
 			case "zh-CHS":
@@ -734,10 +823,14 @@ namespace Mono.Globalization.Unicode
 			if (ptr == IntPtr.Zero)
 				return;
 			raw = (byte*) ((void*) ptr);
+			idx = ResourceVersionSize + 4;
+#elif USE_C_HEADER
+			load_collation_resource (CollationTableIdxCjkKOLv2, &raw);
 #else
 			load_collation_resource (corlibPath, CollationResourceCJKKOlv2, &raw, &size);
+			idx = ResourceVersionSize + 4;
 #endif
-			cjkKOlv2 = raw + ResourceVersionSize + 4;
+			cjkKOlv2 = raw + idx;
 			lv2Table = cjkKOlv2;
 		}
 	}
