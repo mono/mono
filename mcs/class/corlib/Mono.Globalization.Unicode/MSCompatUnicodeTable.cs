@@ -532,8 +532,6 @@ namespace Mono.Globalization.Unicode
 			return Assembly.GetExecutingAssembly ().GetManifestResourceInternal (name, out size, out module);
 		}
 #elif USE_C_HEADER
-		const int CollationResourceTailoringChars = 7;
-
 		const int CollationTableIdxIgnorables = 0;
 		const int CollationTableIdxCategory = 1;
 		const int CollationTableIdxLevel1 = 2;
