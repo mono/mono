@@ -252,7 +252,8 @@ namespace Microsoft.JScript {
 					CodeGenerator.load_engine (InFunction, ig);
 					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToObject2"));
 					ig.Emit (OpCodes.Castclass, decl_type);
-				} else if (decl_type == typeof (ScriptFunction)) {
+				} else if (decl_type == typeof (ScriptFunction) ||
+					   decl_type == typeof (ScriptObject)) {
 					t = typeof (GlobalObject);
 					ig.Emit (OpCodes.Call, t.GetProperty (((Identifier) obj).name.Value).GetGetMethod ());
 				}

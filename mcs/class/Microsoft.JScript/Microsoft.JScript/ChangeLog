@@ -1,3 +1,8 @@
+2005-07-28  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (emit_access): Take into account that __proto__
+	property (Mozilla extension) is contained in ScriptObject.
+
 2005-07-27  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalizer.cs: Added Boolean/BooleanConstructor and
