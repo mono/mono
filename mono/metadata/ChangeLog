@@ -1,3 +1,7 @@
+2005-07-28  Zoltan Varga  <vargaz@freemail.hu>
+	
+	* reflection.c (mono_method_get_object): Fix warning.
+
 2005-07-28  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c
