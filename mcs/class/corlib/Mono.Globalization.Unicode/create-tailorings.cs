@@ -220,7 +220,9 @@ namespace Mono.Globalization.Unicode
 
 			tailorings.Sort (TailoringStoreComparer.Instance);
 
-			Serialize (Console.Out);
+			using (TextWriter tw = new StreamWriter ("create-tailoring.out", false, System.Text.Encoding.UTF8)) {
+				Serialize (tw);
+			}
 		}
 
 		void Serialize (TextWriter output)

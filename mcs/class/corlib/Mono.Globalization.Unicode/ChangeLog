@@ -1,3 +1,14 @@
+2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NormalizationTableUtil.cs,
+	  Normalization.template,
+	  create-combining-class-source.cs : GetCombiningClass is now 
+	  implemented as indexer based array.
+	* Makefile : renamed output filename.
+	* create-mscompat-collation-table.cs : removed comments that does not
+	  make sense now.
+	* create-tailoring.cs : use utf-8 output (and fixed filename).
+
 2005-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-mscompat-collation-table.cs : hacked safer IPA extensions.

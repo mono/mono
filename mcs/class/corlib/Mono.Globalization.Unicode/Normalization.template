@@ -2,6 +2,8 @@ using System;
 using System.Globalization;
 using System.Text;
 
+using Util = Mono.Globalization.Unicode.NormalizationTableUtil;
+
 namespace Mono.Globalization.Unicode
 {
 	internal enum NormalizationCheck {
@@ -33,12 +35,12 @@ namespace Mono.Globalization.Unicode
 
 		static int PropIdx (int cp)
 		{
-			return propIdx [NormalizationTableUtil.PropIdx (cp)];
+			return propIdx [Util.PropIdx (cp)];
 		}
 
 		static int MapIdx (int cp)
 		{
-			return mapIndex [NormalizationTableUtil.MapIdx (cp)];
+			return mapIndex [Util.MapIdx (cp)];
 		}
 
 		static int GetComposedStringLength (int mapIdx)
@@ -47,6 +49,11 @@ namespace Mono.Globalization.Unicode
 			while (mappedChars [i] != 0)
 				i++;
 			return i - mapIdx;
+		}
+
+		static byte GetCombiningClass (int c)
+		{
+			return combiningClass [Util.ToIdx (c)];
 		}
 
 		static int GetPrimaryCompositeCharIndex (object chars, int start, int charsLength)

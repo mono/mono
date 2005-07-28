@@ -14,11 +14,16 @@ using System;
 using System.Globalization;
 using System.IO;
 
+using Util = Mono.Globalization.Unicode.NormalizationTableUtil;
+
 namespace Mono.Globalization.Unicode
 {
 	internal class CombiningClassCodeGenerator
 	{
 		private int lineCount = 0;
+
+		TextWriter CSCodeOut = TextWriter.Null;//Console.Out;
+		TextWriter CSTableOut = Console.Out;//TextWriter.Null;
 
 		public static void Main ()
 		{
@@ -36,9 +41,9 @@ namespace Mono.Globalization.Unicode
 
 		private void Process ()
 		{
-			Console.WriteLine ("public static byte GetCombiningClass (int c)");
-			Console.WriteLine ("{");
-			Console.WriteLine ("	switch (c) {");
+			CSCodeOut.WriteLine ("public static byte GetCombiningClass (int c)");
+			CSCodeOut.WriteLine ("{");
+			CSCodeOut.WriteLine ("	switch (c) {");
 
 			TextReader reader = Console.In;
 			while (reader.Peek () != -1) {
@@ -64,16 +69,33 @@ namespace Mono.Globalization.Unicode
 				SetProp (cp, cpEnd, short.Parse (val));
 			}
 
-			Console.WriteLine ("		return {0};", prevVal);
-			Console.WriteLine ("	default:");
-			Console.WriteLine ("		return 0;");
-			Console.WriteLine ("	}");
-			Console.WriteLine ("}");
+			CSCodeOut.WriteLine ("		return {0};", prevVal);
+			CSCodeOut.WriteLine ("	default:");
+			CSCodeOut.WriteLine ("		return 0;");
+			CSCodeOut.WriteLine ("	}");
+			CSCodeOut.WriteLine ("}");
 
 			reader.Close ();
+
+			byte [] ret = CodePointIndexer.CompressArray (
+				values, typeof (byte), Util.Combining) as byte [];
+
+			CSTableOut.WriteLine ("public static byte [] combiningClass = new byte [] {");
+			for (int i = 0; i < ret.Length; i++) {
+				byte value = ret [i];
+				if (value < 10)
+					CSTableOut.Write ("{0},", value);
+				else
+					CSTableOut.Write ("0x{0:X02},", value);
+				if (i % 16 == 15)
+					CSTableOut.WriteLine (" // {0:X04}", Util.Combining.ToCodePoint (i - 15));
+			}
+			CSTableOut.WriteLine ("};");
 		}
 
 		private short prevVal;
+
+		byte [] values = new byte [0x20000];
 
 		private void SetProp (int cp, int cpEnd, short val)
 		{
@@ -81,14 +103,18 @@ namespace Mono.Globalization.Unicode
 				return;
 
 			if (prevVal != val && prevVal != 0)
-				Console.WriteLine ("\t\treturn {0};", prevVal);
+				CSCodeOut.WriteLine ("\t\treturn {0};", prevVal);
 			prevVal = val;
 
-			if (cpEnd < 0)
-				Console.WriteLine ("\tcase 0x{0:X}:", cp);
+			if (cpEnd < 0) {
+				CSCodeOut.WriteLine ("\tcase 0x{0:X}:", cp);
+				values [cp] = (byte) val;
+			}
 			else
-				for (int i = cp; i <= cpEnd; i++)
-					Console.WriteLine ("\tcase 0x{0:X}:", i);
+				for (int i = cp; i <= cpEnd; i++) {
+					CSCodeOut.WriteLine ("\tcase 0x{0:X}:", i);
+					values [i] = (byte) val;
+				}
 		}
 	}
 }

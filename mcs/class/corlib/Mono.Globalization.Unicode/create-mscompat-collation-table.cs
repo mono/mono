@@ -11,19 +11,6 @@
 // Though it is possible to "compute" level 3 weights, they are still dumped
 // to an array to avoid execution cost.
 //
-
-//
-// * sortkey getter signature
-//
-//	int GetSortKey (string s, int index, SortKeyBuffer buf)
-//	Stores sort key for corresponding character element into buf and
-//	returns the length of the consumed _source_ character element in s.
-//
-// * character length to consume
-//
-//	If there are characters whose primary weight is 0, they are consumed
-//	and considered as a part of the character element.
-//
 #define Binary
 
 using System;
