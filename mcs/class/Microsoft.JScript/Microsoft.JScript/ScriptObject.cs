@@ -38,7 +38,26 @@ using Microsoft.JScript.Vsa;
 namespace Microsoft.JScript {
 
 	public abstract class ScriptObject : IReflect {
+		public object __proto__ {
+			get {
+				if (this == ObjectPrototype.Proto)
+					return DBNull.Value;
 
+				Type prototype = SemanticAnalyser.map_to_prototype (this);
+				if (prototype == null)
+					Console.WriteLine ("No prototype for {0}", this.GetType ());
+				FieldInfo field = prototype.GetField ("Proto", BindingFlags.NonPublic | BindingFlags.Static);
+				if (field != null) {
+					JSObject result = field.GetValue (prototype) as JSObject;
+					if (result != null)
+						return result;
+				}
+
+				Console.WriteLine ("No Proto for {0}", prototype);
+				throw new NotImplementedException ();
+			}
+		}
+		
 		public VsaEngine engine;
 		protected GlobalScope parent;
 		internal Hashtable elems;

@@ -34,6 +34,8 @@ namespace Microsoft.JScript {
 
 	public class BooleanPrototype : BooleanObject {
 
+		internal static BooleanPrototype Proto = new BooleanPrototype (null, null);
+
 		public static BooleanConstructor constructor {
 			get { return BooleanConstructor.Ctr; }
 		}
@@ -56,7 +58,6 @@ namespace Microsoft.JScript {
 
 		protected BooleanPrototype (ObjectPrototype prototype, Type baseType)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }

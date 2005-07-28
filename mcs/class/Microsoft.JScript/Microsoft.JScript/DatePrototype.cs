@@ -40,6 +40,8 @@ namespace Microsoft.JScript {
 		{
 		}
 
+		internal static DatePrototype Proto = new DatePrototype ();
+
 		public static DateConstructor constructor {
 			get { return DateConstructor.Ctr; }
 		}

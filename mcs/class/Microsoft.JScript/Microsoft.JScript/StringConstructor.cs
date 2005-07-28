@@ -37,6 +37,7 @@ namespace Microsoft.JScript {
 
 		internal StringConstructor ()
 		{
+			_prototype = StringPrototype.Proto;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]

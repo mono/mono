@@ -58,70 +58,84 @@ namespace Microsoft.JScript {
 			TypeCode tc1 = Convert.GetTypeCode (v1, ic1);
 			TypeCode tc2 = Convert.GetTypeCode (v2, ic2);
 
-			switch (tc1) {
-			case TypeCode.Empty:
-				switch (tc2) {
-				case TypeCode.Empty:
-					return true;
-				case TypeCode.DBNull:
-					return true;
-				}
-				break;
-
-			case TypeCode.DBNull:
+			bool both_numbers = Convert.IsNumberTypeCode (tc1) && Convert.IsNumberTypeCode (tc2);
+			if ((tc1 == tc2) || both_numbers) {
 				switch (tc1) {
 				case TypeCode.DBNull:
-					return true;
 				case TypeCode.Empty:
 					return true;
-				}
-				break;
 
-			case TypeCode.Boolean:
-				switch (tc1) {
 				case TypeCode.Boolean:
 					return ic1.ToBoolean (null) == ic2.ToBoolean (null);
-				}
-				break;
 
-			case TypeCode.Char:
-				switch (tc2) {
-				case TypeCode.Char:
-					return ic1.ToChar (null) == ic2.ToChar (null);
-				case TypeCode.Double:
-					return (double) ic1.ToChar (null) == ic2.ToDouble (null);
-				}
-				break;
-
-			case TypeCode.Double:
-				switch (tc2) {
-				case TypeCode.Double:
-					return ic1.ToDouble (null) == ic2.ToDouble (null);
-				}
-				break;
-
-			case TypeCode.String:
-				switch (tc2) {
 				case TypeCode.String:
 					return ic1.ToString (null) == ic2.ToString (null);
 
-				case TypeCode.Double:
-					return ic1.ToDouble (null) == ic2.ToDouble (null);
-				}
-				break;
+				case TypeCode.Object:
+					if (v1 is ScriptFunction && v2 is ScriptFunction)
+						return v1 == v2 || v1.Equals (v2);
+					else
+						return v1 == v2;
 
-			case TypeCode.Int32:
-				switch (tc2) {
-				case TypeCode.Double:
-					return ic1.ToDouble (null) == ic2.ToDouble (null);
-				}
-				break;
+				default:
+					if (both_numbers) {
+						double num1;
+						if (Convert.IsFloatTypeCode (tc1))
+							num1 = ic1.ToDouble (null);
+						else
+							num1 = (double) ic1.ToInt64 (null);
 
-			default:
-				Console.WriteLine ("Equality, tc1 = {0}, tc2 = {1}", tc1, tc2);
-				break;
+						double num2;
+						if (Convert.IsFloatTypeCode (tc2))
+							num2 = ic2.ToDouble (null);
+						else
+							num2 = (double) ic2.ToInt64 (null);
+
+						return num1 == num2;
+					} else
+						return false;
+				}
+			} else {
+				bool swapped = false;
+
+			redo:
+				switch (tc1) {
+				case TypeCode.DBNull:
+					if (tc2 == TypeCode.Empty)
+						return true;
+					break;
+
+				case TypeCode.String:
+					if (Convert.IsNumberTypeCode (tc2))
+						return EvaluateEquality (Convert.ToNumber (v1), v2);
+					break;
+
+				case TypeCode.Boolean:
+					return EvaluateEquality (Convert.ToNumber (v1), v2);
+
+				case TypeCode.Object:
+					if (tc2 == TypeCode.String || Convert.IsNumberTypeCode (tc2))
+						return EvaluateEquality (Convert.ToPrimitive (v1, null), v2);
+					break;
+				}
+
+				if (!swapped) {
+					swapped = true;
+
+					object vt = v1;
+					v1 = v2;
+					v2 = vt;
+
+					ic1 = v1 as IConvertible;
+					ic2 = v2 as IConvertible;
+
+					tc1 = Convert.GetTypeCode (v1, ic1);
+					tc2 = Convert.GetTypeCode (v2, ic2);
+
+					goto redo;
+				} else
+					return false;
 			}
-			throw new Exception ("error: Not an equality operator");
 		}
 
 		public static bool JScriptEquals (object v1, object v2)

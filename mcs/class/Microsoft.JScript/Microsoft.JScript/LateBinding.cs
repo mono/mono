@@ -67,21 +67,36 @@ namespace Microsoft.JScript {
 			} else {
 				if (brackets) {
 				} else {
-					Type type = null;
+					MethodInfo method = null;
 
-					if (obj is JSObject)
-						type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+					JSFieldInfo field = null;
+					JSObject js_obj = obj as JSObject;
+					if (js_obj != null)
+						field = js_obj.GetField (right_hand_side) as JSFieldInfo;
+					if (field != null) {
+						object value = field.GetValue (right_hand_side);
+						if (value is ScriptFunction)
+							method = ((ScriptFunction) value).method;
+					}
 
-					if (type == null)
-						type = obj.GetType ();
+					if (method == null) {
+						Type type = null;
 
-					string name = right_hand_side == "lastIndexOf" ? "lastIndexOfGood" : right_hand_side;
-					MethodInfo method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+						if (obj is JSObject)
+							type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+
+						if (type == null)
+							type = obj.GetType ();
+
+						string name = right_hand_side == "lastIndexOf" ? "lastIndexOfGood" : right_hand_side;
+						method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+					}
+					
 					if (method == null)
 						Console.WriteLine ("LateBinding:Call: method is null for {0}.{1}!", obj, right_hand_side);
 
 					object [] args = assemble_args (obj, method, arguments, engine);
-					return method.Invoke (type, args);
+					return method.Invoke (obj, args);
 				}
 			}
 			throw new NotImplementedException ();
@@ -132,21 +147,55 @@ namespace Microsoft.JScript {
 			bool has_engine, has_var_args, has_this;
 			GetMethodFlags (method, out has_engine, out has_var_args, out has_this);
 
-			return assemble_args (obj, has_engine, has_var_args, has_this,
-				method.GetParameters ().Length, arguments, engine);
+			ParameterInfo [] args = method.GetParameters ();
+			int total_argc = args.Length;
+			int req_argc = GetRequiredArgumentCount (total_argc, has_engine, has_var_args, has_this);
+			Type [] arg_types = new Type [req_argc];
+
+			int j = total_argc - req_argc;
+			for (int i = 0; i < req_argc; i++, j++)
+				arg_types [i] = args [j].ParameterType;
+
+			return assemble_args (obj, has_engine, has_var_args, has_this, arg_types, arguments, engine);
 		}
 
 		internal static object [] assemble_args (object obj, bool has_engine, bool has_var_args, bool has_this,
-			int target_argc, object [] arguments, VsaEngine engine)
+			Type [] arg_types, object [] arguments, VsaEngine engine)
 		{
 			ArrayList arg_list = new ArrayList (arguments);
-			int req_argc = GetRequiredArgumentCount (target_argc, has_engine, has_var_args, has_this);
-
+			int req_argc = arg_types.Length;
 			int missing_args = req_argc - arg_list.Count;
+
+			// Add missing args
 			for (int i = 0; i < missing_args; i++)
 				arg_list.Add (null);
 
+			// Convert types of argument to match method signature if necessary
+			for (int i = 0; i < req_argc; i++) {
+				Type arg_type = arg_types [i];
+				object arg = arg_list [i];
+				if (!arg_type.IsInstanceOfType (arg)) {
+					object new_arg = null;
+					if (arg_type == typeof (object)) {
+						if (arg != null && arg != DBNull.Value)
+							new_arg = Convert.ToObject (arg, engine);
+						else
+							new_arg = arg;
+					} else if (arg_type == typeof (double))
+						new_arg = Convert.ToNumber (arg);
+					else if (arg_type == typeof (string))
+						new_arg = Convert.ToString (arg);
+					else {
+						Console.WriteLine ("assemble_args: Can not convert to type {0}", arg_type);
+						throw new NotImplementedException ();
+					}
+
+					arg_list [i] = new_arg;
+				}
+			}
+
 			if (!has_var_args) {
+				// Remove unneeded args
 				int added_args = -missing_args;
 				/*if (added_args > 0)
 					Console.WriteLine ("warning JS1148: There are too many arguments. The extra arguments will be ignored");*/
@@ -203,19 +252,19 @@ namespace Microsoft.JScript {
 					return ((FunctionObject) val).Invoke (thisObj, arguments);
 			} else if (brackets) {
 				if (!(val is JSObject))
-					throw new Exception ("val has to be a JSObject");
+					throw new Exception ("val has to be a JSObject, but is " + (val == null ? "null" : val.GetType ().ToString ()));
 
 				JSObject js_val = (JSObject) val;
-				object res = js_val.GetField (Convert.ToString (arguments [0]));
-				if (res is JSFieldInfo)
-					return ((JSFieldInfo) res).GetValue (arguments [0]);
+				JSFieldInfo field = js_val.GetField (Convert.ToString (arguments [0]));
+				if (field != null)
+					return field.GetValue (arguments [0]);
 				else {
-					res = js_val.elems [Convert.ToInt32 (arguments [0])];
-					return res;
+					object result = js_val.elems [Convert.ToUint32 (arguments [0])];
+					if (result != null)
+						return result;
+					else
+						return null;
 				}
-				if (res == null)
-					return null;
-					Console.WriteLine ("res is null!");
 			} else {
 				if (val is Closure)
 					return ((Closure) val).func.Invoke (thisObj, arguments);
@@ -301,6 +350,15 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		private static void SetArrayLength (ArrayObject ary, object field)
+		{
+			uint old_len = (uint) ary.length;
+			uint index = Convert.ToUint32 (field);
+			if (index > 0 && index != 4294967295 && index > old_len &&
+				Convert.ToString (index) == Convert.ToString (field))
+				ary.length = index + 1;
+		}
+
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public static void SetIndexedPropertyValueStatic (object obj, object [] arguments,
@@ -319,12 +377,9 @@ namespace Microsoft.JScript {
 					else
 						js_obj.elems [o] = value;
 				} else {
-					if (js_obj is ArrayObject) {
-						int index = (int) Convert.ToInt32 (o);
-						if (index > 0 && index != 4294967295 &&
-							Convert.ToString (index) == Convert.ToString (o))
-							((ArrayObject) js_obj).length = index + 1;
-					}
+					ArrayObject ary = js_obj as ArrayObject;
+					if (ary != null)
+						SetArrayLength(ary, o);
 
 					js_obj.AddField (o, value);
 				}
@@ -354,30 +409,30 @@ namespace Microsoft.JScript {
 					MethodInfo method = ((PropertyInfo) member).GetSetMethod ();
 					method.Invoke (obj, new object [] { value });
 					return;
-
-				default:
-					if (obj is JSObject) {
-						JSObject js_obj = (JSObject) obj;
-						if (js_obj.elems.ContainsKey (right_hand_side)) {
-							object old_value = js_obj.elems [right_hand_side];
-							if (old_value is JSFieldInfo) {
-								JSFieldInfo field = (JSFieldInfo) old_value;
-								field.SetValue (js_obj, value);
-							} else
-								js_obj.elems [right_hand_side] = value;
-						} else {
-							if (js_obj is ArrayObject)
-								throw new NotImplementedException ("didn't expect SetValue for ArrayObject");
-
-							js_obj.AddField (right_hand_side, value);
-						}
-						return;
-					}
-					break;
 				}
 			}
 
-			Console.WriteLine ("SetValue: obj = {0}, rhs = {1}", obj, right_hand_side);
+			if (obj is JSObject) {
+				JSObject js_obj = (JSObject) obj;
+				if (js_obj.elems.ContainsKey (right_hand_side)) {
+					object old_value = js_obj.elems [right_hand_side];
+					if (old_value is JSFieldInfo) {
+						JSFieldInfo field = (JSFieldInfo) old_value;
+						field.SetValue (js_obj, value);
+					} else
+						js_obj.elems [right_hand_side] = value;
+				} else {
+					ArrayObject ary = js_obj as ArrayObject;
+					if (ary != null)
+						SetArrayLength (ary, right_hand_side);
+
+					js_obj.AddField (right_hand_side, value);
+				}
+				return;
+			}
+
+			Console.WriteLine ("SetValue: obj = {0}, rhs = {1}, count = {2}", obj, right_hand_side, members.Length);
+			throw new NotImplementedException ();
 		}
 	}
 }

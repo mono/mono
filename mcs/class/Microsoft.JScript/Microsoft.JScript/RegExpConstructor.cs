@@ -39,6 +39,7 @@ namespace Microsoft.JScript {
 
 		internal RegExpConstructor ()
 		{
+			_prototype = RegExpPrototype.Proto;
 			AddField ("$_");
 			AddField ("$&");
 			AddField ("$+");

@@ -39,6 +39,7 @@ namespace Microsoft.JScript {
 
 		internal MethodInfo method;
 		internal MethodAttributes attr;
+		internal ScriptObject _prototype;
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
@@ -91,8 +92,27 @@ namespace Microsoft.JScript {
 		}
 
 		public Object prototype {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_prototype == null) {
+					Console.WriteLine ("No prototype for {0}", this.GetType ());
+					throw new NotImplementedException ();
+				} else
+					return _prototype;
+			}
 			set { throw new NotImplementedException (); }
+		}
+
+		public override bool Equals (object obj)
+		{
+			ScriptFunction other = obj as ScriptFunction;
+			if (other == null)
+				return false;
+			else {
+				if (other.method != null && this.method != null)
+					return other.method == this.method;
+				else
+					throw new NotImplementedException ("Called Equals on user function");
+			}
 		}
 	}
 }

@@ -69,6 +69,26 @@ namespace Microsoft.JScript {
 			obj_ctrs.Add ("RegExp", typeof (RegExpConstructor));
 
 			prototypes = new Hashtable ();
+			// Constructors
+			prototypes.Add (typeof (FunctionConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (ArrayConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (StringConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (BooleanConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (NumberConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (DateConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (RegExpConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (ObjectConstructor), typeof (FunctionPrototype));
+			prototypes.Add (typeof (ErrorConstructor), typeof (FunctionPrototype));
+			// Prototypes
+			prototypes.Add (typeof (FunctionPrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (ArrayPrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (StringPrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (BooleanPrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (NumberPrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (DatePrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (RegExpPrototype), typeof (ObjectPrototype));
+			prototypes.Add (typeof (ErrorPrototype), typeof (ObjectPrototype));
+			// Regular objects
 			prototypes.Add (typeof (object), typeof (ObjectPrototype));
 			prototypes.Add (typeof (FunctionObject), typeof (FunctionPrototype));
 			prototypes.Add (typeof (ArrayObject), typeof (ArrayPrototype));

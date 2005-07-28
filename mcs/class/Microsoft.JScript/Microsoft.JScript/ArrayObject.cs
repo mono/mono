@@ -40,10 +40,10 @@ namespace Microsoft.JScript {
 		public virtual object length {
 			get { return _length; }
 			set {
-				int new_length = Convert.ToInt32 (value);
-				int old_length = (int) _length;
+				uint new_length = Convert.ToUint32 (value);
+				uint old_length = (uint) _length;
 
-				for (int i = new_length; i < old_length; i++)
+				for (uint i = new_length; i < old_length; i++)
 					if (elems.ContainsKey (i))
 						elems.Remove (i);
 
@@ -53,7 +53,7 @@ namespace Microsoft.JScript {
 
 		internal ArrayObject ()
 		{
-			_length = 0;
+			_length = (uint) 0;
 		}
 
 		internal ArrayObject (object o)
@@ -63,28 +63,30 @@ namespace Microsoft.JScript {
 
 			try {
 				if (Convert.IsNumberTypeCode (tc)) {
-					int size = ic.ToInt32 (null);
-					if (size > 0) {
-						_length = o;
+					uint size = Convert.ToUint32 (o);
+					if (size >= 0) {
+						_length = size;
 						return;
-					} else
+					} else {
+						Console.WriteLine ("size = {0}", size);
 						throw new JScriptException (JSError.ArrayLengthConstructIncorrect);
+					}
 				}
 			} catch (FormatException) { /* OK */ }
 
 			elems = new Hashtable ();
-			_length = 1;
+			_length = (uint) 1;
 			elems.Add (0, o);
 		}
 
 		internal ArrayObject (params object [] args)
 		{
 			if (args != null) {
-				int size = args.Length;
-				_length = (object) size;
+				uint size = (uint) args.Length;
+				_length = size;
 				elems = new Hashtable ();
 
-				int idx = 0;
+				uint idx = 0;
 				foreach (object o in args) {
 					elems.Add (idx, o);
 					idx++;

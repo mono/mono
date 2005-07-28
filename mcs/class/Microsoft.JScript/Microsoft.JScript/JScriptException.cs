@@ -112,6 +112,10 @@ namespace Microsoft.JScript {
 					return "Syntax error in regular expression";
 				else if (error_number == JSError.TypeMismatch)
 					return "Unexpected type";
+				else if (error_number == JSError.NumberExpected)
+					return "Invoked Number.prototype.toString or Number.prototype.valueOf method on non-number";
+				else if (error_number == JSError.StringExpected)
+					return "Invoked String.prototype.toString or String.prototype.valueOf method on non-string";
 				else {
 					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
 					throw new NotImplementedException ();

@@ -36,6 +36,8 @@ namespace Microsoft.JScript {
 
 	public class NumberPrototype : NumberObject {
 
+		internal static NumberPrototype Proto = new NumberPrototype ();
+
 		public static NumberConstructor constructor {
 			get { return NumberConstructor.Ctr; }
 		}
@@ -102,7 +104,7 @@ namespace Microsoft.JScript {
 				return "Infinity";
 			else if (Double.IsNegativeInfinity (value))
 				return "-Infinity";
-
+			
 			int _radix = 10;
 			if (radix != null) {
 				_radix = Convert.ToInt32 (radix);

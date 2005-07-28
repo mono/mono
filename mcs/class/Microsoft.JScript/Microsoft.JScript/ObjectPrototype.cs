@@ -39,6 +39,8 @@ namespace Microsoft.JScript {
 		{
 		}
 
+		internal static ObjectPrototype Proto = new ObjectPrototype ();
+
 		public static ObjectConstructor constructor {
 			get { return ObjectConstructor.Ctr; }
 		}
@@ -81,11 +83,7 @@ namespace Microsoft.JScript {
 		{
 			if (thisObj is JSObject) {
 				JSObject obj = (JSObject) thisObj;
-				object val = obj.GetDefaultValue (typeof (string), true);
-				if (val == thisObj)
-					return "[object " + obj.ClassName + "]";
-				else
-					return Convert.ToString (val);
+				return "[object " + obj.ClassName + "]";
 			} else
 				throw new NotImplementedException ();
 		}
@@ -94,6 +92,16 @@ namespace Microsoft.JScript {
 		public static object valueOf (object thisObj)
 		{
 			return thisObj;
+		}
+
+		internal static object smartToString (JSObject thisObj)
+		{
+			JSObject obj = (JSObject) thisObj;
+			object val = obj.GetDefaultValue (typeof (string), true);
+			if (val == thisObj)
+				return "[object " + obj.ClassName + "]";
+			else
+				return Convert.ToString (val);
 		}
 	}
 }

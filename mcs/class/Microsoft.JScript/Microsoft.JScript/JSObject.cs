@@ -106,13 +106,15 @@ namespace Microsoft.JScript {
 			get {
 				if (this is ObjectPrototype)
 					return "Object";
-				else if (this is ArrayPrototype)
+				else if (this is ArrayObject)
 					return "Array";
-				else if (this is StringPrototype)
+				else if (this is BooleanObject)
+					return "Boolean";
+				else if (this is StringObject)
 					return "String";
-				else if (this is NumberPrototype)
+				else if (this is NumberObject)
 					return "Number";
-				else if (this is DatePrototype)
+				else if (this is DateObject)
 					return "Date";
 				else if (this is EvalErrorObject)
 					return "EvalError";
@@ -126,7 +128,7 @@ namespace Microsoft.JScript {
 					return "TypeError";
 				else if (this is URIErrorObject)
 					return "URIError";
-				else if (this is ErrorPrototype)
+				else if (this is ErrorObject)
 					return "Error";
 				else
 					return this.GetType ().ToString ();
@@ -157,7 +159,7 @@ namespace Microsoft.JScript {
 			if (avoid_toString)
 				return this;
 			else
-				return ObjectPrototype.toString (this);				
+				return ObjectPrototype.smartToString (this);
 		}
 
 		internal object GetDefaultValue (Type hint)

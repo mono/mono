@@ -1414,13 +1414,13 @@ namespace Microsoft.JScript {
 		{
 			Type param_type = pinfo.ParameterType;
 			if (ast.GetType () == typeof (NumericLiteral)) {
-				if (param_type == typeof (double))
-					ig.Emit (OpCodes.Conv_R8);
-				else if (param_type == typeof (object))
+				if (param_type == typeof (double)) {
+					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
+					//ig.Emit (OpCodes.Conv_R8);
+				} else if (param_type == typeof (object))
 					;
 				else throw new NotImplementedException ();
 			} else {
-
 				if (param_type == typeof (double))
 					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] {typeof (object)}));
 				else if (param_type == typeof (string)) {

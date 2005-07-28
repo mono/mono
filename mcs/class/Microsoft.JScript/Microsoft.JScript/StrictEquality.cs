@@ -65,7 +65,10 @@ namespace Microsoft.JScript {
 				return ic1.ToString (null) == ic2.ToString (null);
 
 			case TypeCode.Object:
-				return v1 == v2;
+				if (v1 is ScriptFunction && v2 is ScriptFunction)
+					return v1 == v2 || v1.Equals (v2);
+				else
+					return v1 == v2;
 
 			default:
 				if (both_numbers) {

@@ -37,6 +37,7 @@ namespace Microsoft.JScript {
 
 		internal ObjectConstructor ()
 		{
+			_prototype = ObjectPrototype.Proto;
 		}
 
 		public JSObject ConstructObject ()

@@ -34,6 +34,8 @@ namespace Microsoft.JScript {
 
 	public class FunctionPrototype : ScriptFunction	{
 
+		internal static FunctionPrototype Proto = new FunctionPrototype ();
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Function_apply)]
 		public static object apply (object thisObj, object thisArg, object argArray)
 		{

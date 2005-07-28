@@ -465,7 +465,7 @@ namespace Microsoft.JScript {
 					return false;
 				else
 					return true;
-			} else 
+			} else
 				return false;
 		}
 		

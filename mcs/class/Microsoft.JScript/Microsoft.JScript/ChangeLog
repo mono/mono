@@ -1,3 +1,51 @@
+2005-07-28  Florian Gross  <flgr@ccan.de>
+
+	* DateConstructor.cs: Sets _prototype. Added DateMod. MakeDay,
+	IsLeapYear, DaysInYear, WeekDay, HourFromTime, MinFromTime,
+	SecFromTime, msFromTime use DateMod (important for negative date
+	values!)
+	* ScriptObject.cs: Added implementation of proprietary __proto__
+	* JSObject.cs: Added more ClassName cases and fixed old ones.
+	GetDefaultValue uses smartToString instead of toString
+	* ArrayPrototype.cs: Added Proto. Switched indices and length values
+	to use uint instead of int so we can represent the full Array size
+	range from ECMA-262
+	* StringConstructor.cs: Sets _prototype
+	* ObjectConstructor.cs: Sets _prototype
+	* RegExpPrototype.cs: Added Proto. Uses uint instead of int for
+	RegExpMatch length and indices
+	* NumberConstructor.cs: Sets _prototype
+	* expression.cs: force_strong_type always uses ToNumber (fixes
+	broken arguments for Math.pow and so on)
+	* ObjectPrototype.cs: Added Proto. toString is dumb and will output
+	[object Array] when called on an Array instead of using
+	ArrayPrototype.toString. Added smartToString which does the old
+	behavior
+	* StringPrototype.cs: Added Proto. Uses uint instead of int for
+	arrays
+	* JScriptException.cs: Added more cases to Message
+	* ArrayObject.cs: Switched to uint for indices and length
+	* FunctionConstructor.cs: Sets _prototype
+	* Equality.cs: Rewrote equality logic. More cases covered, less code
+	* DatePrototype.cs: Added Proto
+	* Convert.cs: Added ToUint32. ToNumber with Arrays switched to uint
+	* StrictEquality.cs: Added logic for function equality
+	* StringObject.cs: Initializes value to "". Implemented Equals
+	* LateBinding.cs: More cases covered. Added logic for converting
+	arguments to match the signature. Added SetArrayLength. Refactored
+	to use SetArrayLength
+	* BooleanPrototype.cs: Added Proto and empty implementation of
+	constructor
+	* BooleanConstructor.cs: Sets _prototype
+	* FunctionPrototype.cs: Added Proto
+	* NumberPrototype.cs: Added Proto
+	* ArrayConstructor.cs: Sets _prototype
+	* SemanticAnalizer.cs: Added constructor and prototype information
+	to prototypes lookup table
+	* RegExpConstructor.cs: Sets _prototype
+	* ScriptFunction.cs: Added _prototype and implemented prototype
+	using it. Implemented Equals for built-in functions
+
 2005-07-28  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs (emit_access): Take into account that __proto__

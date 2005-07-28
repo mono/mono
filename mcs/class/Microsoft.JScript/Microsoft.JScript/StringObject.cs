@@ -37,6 +37,7 @@ namespace Microsoft.JScript {
 
 		internal StringObject ()
 		{
+			this.value = "";
 		}
 
 		internal StringObject (string value)
@@ -50,7 +51,11 @@ namespace Microsoft.JScript {
 
 		public override bool Equals (Object obj)
 		{
-			throw new NotImplementedException ();
+			StringObject other = obj as StringObject;
+			if (other == null)
+				return false;
+			else
+				return other.value == this.value;
 		}
 
 		public override int GetHashCode ()

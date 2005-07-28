@@ -37,6 +37,8 @@ namespace Microsoft.JScript {
 
 	public class RegExpPrototype : JSObject	{
 
+		internal static RegExpPrototype Proto = new RegExpPrototype ();
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.RegExp_compile)]
 		public static RegExpObject compile (object thisObj, object source, object flags)
 		{
@@ -90,15 +92,14 @@ namespace Microsoft.JScript {
 			RegExpConstructor.UpdateLastMatch (md, str);
 
 			GroupCollection caps = md.Groups;
-			int len = caps.Count;
+			uint len = (uint) caps.Count;
 			RegExpMatch result = new RegExpMatch ();
 
 			result.AddField ("index", index);
 			result.AddField ("input", input);
 			result.length = len;
-			Capture cap;
-			for (int j = 0; j < len; j++)
-				result.elems [j] = caps [j].Value;
+			for (uint j = 0; j < len; j++)
+				result.elems [j] = caps [(int) j].Value;
 
 			return result;
 		}

@@ -39,6 +39,8 @@ namespace Microsoft.JScript {
 
 	public class ArrayPrototype : ArrayObject {
 		
+		internal static ArrayPrototype Proto = new ArrayPrototype ();
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine |
 			JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_concat)]
 		public static ArrayObject concat (object thisObj, VsaEngine engine,
@@ -91,11 +93,11 @@ namespace Microsoft.JScript {
 				_separator = Convert.ToString (separator);
 
 			Hashtable elems = array_obj.elems;
-			int n = (int) array_obj.length;
+			uint n = (uint) array_obj.length;
 			StringBuilder str = new StringBuilder ();
 			bool first = true;
 
-			for (int i = 0; i < n; i++) {
+			for (uint i = 0; i < n; i++) {
 				if (!first)
 					str.Append (_separator);
 				first = false;
@@ -114,10 +116,10 @@ namespace Microsoft.JScript {
 			ArrayObject array_obj = (ArrayObject) thisObj;
 			Hashtable elems = array_obj.elems;
 
-			int n = (int) array_obj.length;
+			uint n = (uint) array_obj.length;
 			object result = null;
 			if (n > 0) {
-				int new_len = n - 1;
+				uint new_len = n - 1;
 				if (elems.ContainsKey (new_len))
 					result = elems [new_len];
 				// Element gets removed automatically
@@ -134,10 +136,10 @@ namespace Microsoft.JScript {
 			ArrayObject array_obj = (ArrayObject) thisObj;
 			Hashtable elems = array_obj.elems;
 
-			int i = (int) array_obj.length;
-			int n = i + args.Length;
+			uint i = (uint) array_obj.length;
+			long n = i + args.Length;
 
-			for (int j = 0; i < n; i++, j++)
+			for (uint j = 0; i < n; i++, j++)
 				elems [i] = args [j];
 
 			array_obj.length = n;
@@ -152,12 +154,12 @@ namespace Microsoft.JScript {
 			ArrayObject array_obj = (ArrayObject) thisObj;
 			Hashtable elems = array_obj.elems;
 
-			int n = (int) array_obj.length;
-			int half_n = n / 2;
-			int j = n - 1;
+			uint n = (uint) array_obj.length;
+			uint half_n = n / 2;
+			uint j = n - 1;
 			object temp;
 			
-			for (int i = 0; i < half_n; i++, j--) {
+			for (uint i = 0; i < half_n; i++, j--) {
 				temp = elems [i];
 				elems [i] = elems [j];
 				elems [j] = temp;
@@ -174,13 +176,13 @@ namespace Microsoft.JScript {
 			ArrayObject array_obj = (ArrayObject) thisObj;
 			Hashtable elems = array_obj.elems;
 
-			int n = (int) array_obj.length;
+			uint n = (uint) array_obj.length;
 			object result = null;
 			if (n > 0) {
-				if (elems.ContainsKey (0)) {
-					result = elems [0];
-					elems.Remove (0);
-					for (int i = 1; i < n; i++)
+				if (elems.ContainsKey ((uint) 0)) {
+					result = elems [(uint) 0];
+					elems.Remove ((uint) 0);
+					for (uint i = 1; i < n; i++)
 						elems [i - 1] = elems [i];
 				}
 				// Last element gets removed automatically
@@ -195,13 +197,13 @@ namespace Microsoft.JScript {
 			// TODO: Shouldn't this be generic!?
 			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
 			ArrayObject array_obj = (ArrayObject) thisObj;
-			int array_len = (int) array_obj.length;
-			int _start, _end;
+			uint array_len = (uint) array_obj.length;
+			uint _start, _end;
 
 			if (start > array_len)
 				_start = array_len;
 			else {
-				_start = (int) start;
+				_start = (uint) start;
 				if (_start < 0)
 					_start += array_len;
 			}
@@ -209,7 +211,7 @@ namespace Microsoft.JScript {
 			if (end == null)
 				_end = array_len;
 			else {
-				_end = Convert.ToInt32 (end);
+				_end = Convert.ToUint32 (end);
 
 				if (_end < 0)
 					_end += array_len;
@@ -223,7 +225,7 @@ namespace Microsoft.JScript {
 			ArrayObject result = new ArrayObject();
 			result.length = _end - _start;
 
-			for (int i = _start; i < _end; i++)
+			for (uint i = _start; i < _end; i++)
 				result.elems [i - _start] = array_obj.elems [i];
 
 			return result;
@@ -247,7 +249,7 @@ namespace Microsoft.JScript {
 			Hashtable elems = array_obj.elems;
 			Hashtable del_elems = result.elems;
 
-			int old_length = (int) array_obj.length;
+			uint old_length = (uint) array_obj.length;
 			start = (int) start;
 			if (start < 0)
 				start = Math.Max (start + old_length, 0);
@@ -257,25 +259,25 @@ namespace Microsoft.JScript {
 			deleteCnt = (int) deleteCnt;
 			deleteCnt = Math.Min (Math.Max (deleteCnt, 0), old_length - start);
 
-			int arg_length = args.Length;
-			int add_length = arg_length - (int) deleteCnt;
-			add_length = Math.Max (add_length, -old_length);
+			uint arg_length = (uint) args.Length;
+			int add_length = (int) (arg_length - (int) deleteCnt);
+			add_length = (int) Math.Max (add_length, -old_length);
 			int del_length = -add_length;
-			int new_length = old_length + add_length;
+			uint new_length = (uint) (old_length + add_length);
 
-			int i, j, m;
+			uint i, j, m;
 			// First let's make some free space for the new items (if needed)
 			if (add_length > 0) {
 				i = old_length - 1;
-				j = i + add_length;
+				j = (uint) (i + add_length);
 				for (; i >= start; i--, j--)
 					elems [j] = elems [i];
 			}
 
 			// Then insert the new items in the now free space / replace existing ones
 			j = m = 0;
-			int old_start = (int) start + add_length;
-			for (i = (int) start; j < arg_length; i++, j++) {
+			uint old_start = (uint) (start + add_length);
+			for (i = (uint) start; j < arg_length; i++, j++) {
 				if (i >= old_start && elems.ContainsKey (i)) {
 					del_elems [m] = elems [i];
 					m++;
@@ -288,8 +290,8 @@ namespace Microsoft.JScript {
 
 			// Finally, delete elements which have no replacement elements
 			if (add_length < 0) {
-				int last_elem_idx = i + del_length;
-				for (int k = 0; k < del_length; i++, j++, k++) {
+				uint last_elem_idx = (uint) (i + del_length);
+				for (uint k = 0; k < del_length; i++, j++, k++) {
 					if (elems.ContainsKey (i)) {
 						del_elems [m] = elems [i];
 						m++;
@@ -298,8 +300,8 @@ namespace Microsoft.JScript {
 				}
 
 				// And move up trailing elements
-				int l = last_elem_idx - del_length;
-				for (int k = last_elem_idx; l < old_length; k++, l++) {
+				uint l = (uint) (last_elem_idx - del_length);
+				for (uint k = last_elem_idx; l < old_length; k++, l++) {
 					if (elems.ContainsKey (k))
 						elems [l] = elems [k];
 					else if (elems.ContainsKey (l))
@@ -308,7 +310,7 @@ namespace Microsoft.JScript {
 			}
 
 			array_obj.length = new_length;
-			result.length = (int) deleteCnt;
+			result.length = (uint) deleteCnt;
 			return result;
 		}
 
@@ -322,11 +324,11 @@ namespace Microsoft.JScript {
 			string separator = CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ";
 
 			Hashtable elems = array_obj.elems;
-			int n = (int) array_obj.length;
+			uint n = (uint) array_obj.length;
 			StringBuilder str = new StringBuilder ();
 			bool first = true;
 
-			for (int i = 0; i < n; i++) {
+			for (uint i = 0; i < n; i++) {
 				ScriptObject elem = (ScriptObject) Convert.ToObject (elems [i], null);
 				if (!first && elem != null)
 					str.Append (separator);
@@ -352,20 +354,20 @@ namespace Microsoft.JScript {
 			ArrayObject array_obj = (ArrayObject) thisObj;
 			Hashtable elems = array_obj.elems;
 
-			int old_length = (int) array_obj.length;
-			int arg_length = args.Length;
-			int new_length = old_length + arg_length;
+			uint old_length = (uint) array_obj.length;
+			uint arg_length = (uint) args.Length;
+			uint new_length = old_length + arg_length;
 
 			if (arg_length > 0) {
 				// First let's make some free space for the new items
-				int i = old_length - 1;
-				int j = i + arg_length;
+				long i = old_length - 1;
+				long j = i + arg_length;
 				for (; i >= 0; i--, j--)
-					elems [j] = elems [i];
+					elems [(uint) j] = elems [(uint) i];
 
 				// Then insert the new items in the now free space
 				for (; j >= 0; j--)
-					elems [j] = args [j];
+					elems [(uint) j] = args [(uint) j];
 			}
 			//
 			// NOTE: MSC returns the new array, but

@@ -37,6 +37,7 @@ namespace Microsoft.JScript {
 
 		internal NumberConstructor ()
 		{
+			_prototype = NumberPrototype.Proto;
 		}
 
 		public const double MAX_VALUE = Double.MaxValue;

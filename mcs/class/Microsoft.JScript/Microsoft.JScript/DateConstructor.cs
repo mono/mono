@@ -48,6 +48,7 @@ namespace Microsoft.JScript {
 		
 		internal DateConstructor ()
 		{
+			_prototype = DatePrototype.Proto;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
@@ -388,7 +389,7 @@ done:
 		internal static double MakeDay (double year, double month, double date)
 		{
 			year += Math.Floor (month / 12);
-			month = month % 12;
+			month = DateMod (month, 12);
 
 			if (month < 0)
 				month += 12;
@@ -415,7 +416,10 @@ done:
 
 		internal static double DayFromYear (double y)
 		{
-			return ((365 * ((y) - 1970) + Math.Floor (((y) - 1969) / 4.0) - Math.Floor(((y) - 1901) / 100.0) + Math.Floor (((y) - 1601) / 400.0)));
+			return ((365 * ((y) - 1970) +
+				Math.Floor (((y) - 1969) / 4.0) -
+				Math.Floor (((y) - 1901) / 100.0) +
+				Math.Floor (((y) - 1601) / 400.0)));
 		}
 
 		internal static double DayFromMonth (int m, int year)
@@ -437,7 +441,7 @@ done:
 
 		internal static bool IsLeapYear (int year)
 		{
-			return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+			return DateMod (year, 4) == 0 && (DateMod (year, 100) != 0 || DateMod (year, 400) == 0);
 		}
 		
 		[JSFunctionAttribute(0, JSBuiltin.Date_UTC)]
@@ -593,11 +597,11 @@ done:
 
 		private static int DaysInYear (int y)
 		{
-			if (y % 4 != 0)
+			if (DateMod (y, 4) != 0)
 				return 365;
-			else if (y % 100 != 0)
+			else if (DateMod (y, 100) != 0)
 				return 366;
-			else if (y % 400 != 0)
+			else if (DateMod (y, 400) != 0)
 				return 365;
 			else
 				return 366;
@@ -678,30 +682,35 @@ done:
 		internal static int WeekDay (double t)
 		{
 			int day = (int) Math.Floor (t / MS_PER_DAY);
-			return (day + 4) % 7;
+			return (int) DateMod (day + 4, 7);
 		}
 
 		internal static int HourFromTime (double t)
 		{
 			int hour = (int) Math.Floor (t / MS_PER_HOUR);
-			return hour % (int) HOURS_PER_DAY;
+			return (int) DateMod (hour, (int) HOURS_PER_DAY);
 		}
 
 		internal static int MinFromTime (double t)
 		{
 			int min = (int) Math.Floor (t / MS_PER_MINUTE);
-			return min % (int) MINUTES_PER_HOUR;
+			return (int) DateMod (min, (int) MINUTES_PER_HOUR);
 		}
 
 		internal static int SecFromTime (double t)
 		{
 			int sec = (int) Math.Floor (t / MS_PER_SECOND);
-			return sec % (int) SECONDS_PER_MINUTE;
+			return (int) DateMod (sec, (int) SECONDS_PER_MINUTE);
+		}
+
+		internal static double DateMod (double x, double y)
+		{
+			return x - (y * Math.Floor (x / y));
 		}
 
 		internal static double msFromTime (double t)
 		{
-			return t % MS_PER_SECOND;
+			return DateMod (t, MS_PER_SECOND);
 		}
 
 		internal static double LocalTime (double t)

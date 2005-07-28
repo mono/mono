@@ -255,13 +255,22 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal static int ToUint16 (object value)
+		internal static uint ToUint16 (object value)
 		{
 			double val = Convert.ToNumber (value);
 			if (Double.IsInfinity (val) || double.IsNaN (val))
 				return 0;
 			else
-				return (int) val % 65536;
+				return (uint) (val % 65536);
+		}
+
+		internal static uint ToUint32 (object value)
+		{
+			double val = Convert.ToNumber (value);
+			if (Double.IsInfinity (val) || double.IsNaN (val))
+				return 0;
+			else
+				return (uint) (val % 4294967296);
 		}
 
 		public static double ToNumber (object value)
@@ -296,14 +305,12 @@ namespace Microsoft.JScript {
 				else if (value is ArrayObject) {
 					ArrayObject ary = (ArrayObject) value;
 					Hashtable elems = ary.elems;
-					int i = (int) ary.length - 1;
+					uint n = (uint) ary.length;
+					uint i = n - 1;
 					if (elems.ContainsKey (i))
 						return Convert.ToNumber (elems [i]);
-					else
-						return Double.NaN;
-				} else
-					return Double.NaN;
-				break;
+				}
+				return Double.NaN;
 
 			default:
 				if (IsFloatTypeCode (tc))

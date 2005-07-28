@@ -38,6 +38,8 @@ namespace Microsoft.JScript {
 	
 	public class StringPrototype : StringObject {
 
+		internal static StringPrototype Proto = new StringPrototype ();
+
 		/* Note that the implementation of this HTML tag stuff is pretty dumb.
 		 * It does not do any escaping of HTML characters like '<', '>' or '"' which means that you can do
 		 * HTML injection via for example "foo".anchor("NAME\" style=\"font-size: 500pt;") which will result
@@ -227,15 +229,15 @@ namespace Microsoft.JScript {
 				return RegExpPrototype.exec (regex_obj, string_obj);
 
 			MatchCollection md = regex_obj.regex.Matches (string_obj);
-			int n = md.Count;
-			Match lastMatch = md [n - 1];
+			uint n = (uint) md.Count;
+			Match lastMatch = md [(int) (n - 1)];
 			regex_obj.lastIndex = lastMatch.Index + 1;
 			RegExpConstructor.UpdateLastMatch (lastMatch, string_obj);
 
 			ArrayObject result = new ArrayObject ();
 			result.length = n;
-			for (int i = 0; i < n; i++)
-				result.elems [i] = md [i].Value;
+			for (uint i = 0; i < n; i++)
+				result.elems [i] = md [(int) i].Value;
 
 			return result;
 		}
@@ -341,15 +343,15 @@ namespace Microsoft.JScript {
 			ArrayObject result = new ArrayObject ();
 
 			if (separator == null) {
-				result.length = 1;
-				result.elems [0] = string_obj;
+				result.length = (uint) 1;
+				result.elems [(uint) 0] = string_obj;
 				return result;
 			}
 
 			int start_pos = 0;
 			int end_pos = -1;
 			int match_len = 0;
-			int count = 0;
+			uint count = 0;
 			int sep_len = 0;
 
 			if (!(separator is RegExpObject)) {
@@ -358,8 +360,8 @@ namespace Microsoft.JScript {
 
 				if (string_obj.Length == 0) {
 					if (sep_len > 0) {
-						result.length = 1;
-						result.elems [0] = string_obj;
+						result.length = (uint) 1;
+						result.elems [(uint) 0] = string_obj;
 					}
 
 					return result;
@@ -385,7 +387,7 @@ namespace Microsoft.JScript {
 
 			RegExpObject sep_re = (RegExpObject) separator;
 			MatchCollection md = sep_re.regex.Matches (string_obj);
-			int n = md.Count;
+			uint n = (uint) md.Count;
 
 			Match match = null;
 			for (int i = 0; i < n; i++) {
@@ -397,7 +399,13 @@ namespace Microsoft.JScript {
 				end_pos = match.Index;
 				match_len = end_pos - start_pos;
 
-				if (sep_len > 0 || start_pos > 0 || match_len > 0) {
+				//
+				// The specification says that "ab".split(/a*/) is ["", "b"], but would
+				// that would also mean that "abcdef".split(/./).length would not be 6.
+				// I'm currently going with the Rhino behavior that seems to make more
+				// sense.
+				//
+				if (!(end_pos == 0 && sep_len == 0)) {
 					result.elems [count] = string_obj.Substring (start_pos, match_len);
 					count++;
 				}
@@ -428,7 +436,7 @@ namespace Microsoft.JScript {
 					count++;
 				}
 			} else if (n == 0) {
-				result.elems [0] = string_obj;
+				result.elems [(uint) 0] = string_obj;
 				count++;
 			}
 
