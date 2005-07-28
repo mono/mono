@@ -1,5 +1,12 @@
 2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Normalization.cs,
+	  NormalizationTableUtil.cs,
+	  create-char-mapping-source.cs : more aggressive data compression.
+	  It now ignores characters that are >= U+10000.
+
+2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile,
 	  Normalization.template,
 	  Normalization.cs : renamed existing file.

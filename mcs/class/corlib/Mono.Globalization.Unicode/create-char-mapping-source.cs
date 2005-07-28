@@ -7,6 +7,8 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 
+using Util = Mono.Globalization.Unicode.NormalizationTableUtil;
+
 namespace Mono.Globalization.Unicode
 {
 	internal class CharMappingGenerator
@@ -120,23 +122,25 @@ namespace Mono.Globalization.Unicode
 			mappedCharCount = count;
 		}
 
+		TextWriter CSOut = Console.Out;
+		TextWriter CSTableOut = Console.Out;
+
 		private void Serialize ()
 		{
 			// mappedChars
-			Console.WriteLine ("static readonly int [] mappedChars = new int [] {");
+			CSOut.WriteLine ("static readonly int [] mappedChars = new int [] {");
 			DumpArray (mappedChars, mappedCharCount, false);
-			Console.WriteLine ("};");
+			CSOut.WriteLine ("};");
 
 			// mapIndex
-			Console.WriteLine ("static readonly short [] mapIndex= new short [] {");
+			CSOut.WriteLine ("static readonly short [] mapIndex= new short [] {");
 			DumpArray (mapIndex, NormalizationTableUtil.MapCount, true);
-			Console.WriteLine ("};");
+			CSOut.WriteLine ("};");
+
+			short [] helperIndexes = new short [0x30000];
 
 			// GetPrimaryCompositeHelperIndex ()
-			Console.WriteLine ("static short GetPrimaryCompositeHelperIndex (int head)");
-			Console.WriteLine ("{");
 			int currentHead = 0;
-			Console.WriteLine ("	switch (head) {");
 			foreach (CharMapping m in mappings) {
 				if (mappedChars [m.MapIndex] == currentHead)
 					continue; // has the same head
@@ -144,28 +148,51 @@ namespace Mono.Globalization.Unicode
 //				if (!m.IsCanonical)
 //					continue;
 				currentHead = mappedChars [m.MapIndex];
-				Console.WriteLine ("	case 0x{0:X}: return 0x{1:X};", currentHead, m.MapIndex);
+				helperIndexes [currentHead] = (short) m.MapIndex;
 			}
-			Console.WriteLine ("	}");
-			Console.WriteLine ("	return 0;");
-			Console.WriteLine ("}");
+
+			helperIndexes = CodePointIndexer.CompressArray (
+				helperIndexes, typeof (short), Util.Helper)
+				as short [];
+
+			CSTableOut.WriteLine ("static short [] helperIndexes = new short [] {");
+			for (int i = 0; i < helperIndexes.Length; i++) {
+				short value = helperIndexes [i];
+				if (value < 10)
+					CSTableOut.Write ("{0},", value);
+				else
+					CSTableOut.Write ("0x{0:X04},", value);
+				if (i % 16 == 15)
+					CSTableOut.WriteLine (" // {0:X04}", Util.Helper.ToCodePoint (i - 15));
+			}
+			CSTableOut.WriteLine ("};");
+
+			int [] mapIndexes = new int [0x2600];
 
 			// GetPrimaryCompositeFromMapIndex ()
-			Console.WriteLine ("static int GetPrimaryCompositeFromMapIndex (int idx)");
-			Console.WriteLine ("{");
-			Console.WriteLine ("	switch (idx) {");
 			int currentIndex = -1;
 			foreach (CharMapping m in mappings) {
 				if (m.MapIndex == currentIndex)
 					continue;
 				if (!m.IsCanonical)
 					continue;
-				Console.WriteLine ("	case 0x{0:X}: return 0x{1:X};", m.MapIndex, m.CodePoint);
+				mapIndexes [m.MapIndex] = m.CodePoint;
 				currentIndex = m.MapIndex;
 			}
-			Console.WriteLine ("	}");
-			Console.WriteLine ("	return 0;");
-			Console.WriteLine ("}");
+
+			mapIndexes = CodePointIndexer.CompressArray (mapIndexes, typeof (int), Util.MapIndexes) as int [];
+
+			CSTableOut.WriteLine ("static int [] mapIndexes = new int [] {");
+			for (int i = 0; i < mapIndexes.Length; i++) {
+				int value = mapIndexes [i];
+				if (value < 10)
+					CSTableOut.Write ("{0},", value);
+				else
+					CSTableOut.Write ("0x{0:X04},", value);
+				if (i % 16 == 15)
+					CSTableOut.WriteLine (" // {0:X04}", Util.MapIndexes.ToCodePoint (i - 15));
+			}
+			CSTableOut.WriteLine ("};");
 		}
 
 		private void DumpArray (int [] array, int count, bool getCP)
@@ -174,12 +201,12 @@ namespace Mono.Globalization.Unicode
 				throw new ArgumentOutOfRangeException ("count");
 			for (int i = 0; i < count; i++) {
 				if (array [i] == 0)
-					Console.Write ("0, ");
+					CSOut.Write ("0, ");
 				else
-					Console.Write ("0x{0:X}, ", array [i]);
+					CSOut.Write ("0x{0:X}, ", array [i]);
 				if (i % 16 == 15) {
 					int l = getCP ? NormalizationTableUtil.MapCP (i) : i;
-					Console.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
+					CSOut.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
 				}
 			}
 		}

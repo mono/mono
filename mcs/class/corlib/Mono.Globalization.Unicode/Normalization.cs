@@ -53,7 +53,17 @@ namespace Mono.Globalization.Unicode
 
 		static byte GetCombiningClass (int c)
 		{
-			return combiningClass [Util.ToIdx (c)];
+			return combiningClass [Util.Combining.ToIndex (c)];
+		}
+
+		static int GetPrimaryCompositeFromMapIndex (int src)
+		{
+			return mapIndexes [Util.MapIndexes.ToIndex (src)];
+		}
+
+		static short GetPrimaryCompositeHelperIndex (int cp)
+		{
+			return helperIndexes [Util.Helper.ToIndex (cp)];
 		}
 
 		static int GetPrimaryCompositeCharIndex (object chars, int start, int charsLength)
