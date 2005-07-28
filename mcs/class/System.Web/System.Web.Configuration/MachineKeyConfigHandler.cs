@@ -72,7 +72,6 @@ namespace System.Web.Configuration
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				ThrowException ("Unrecognized attribute", section);
 
-			MachineKeyConfig.MachineKey = config;
 			return config;
 		}
 

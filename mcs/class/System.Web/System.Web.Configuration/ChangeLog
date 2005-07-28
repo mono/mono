@@ -1,9 +1,19 @@
-2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
-	* WebConfigurationSettings.cs: Fixed LoadFromFile to find web.config under
-	  TARGET_J2EE (case sensitivity).
+2005-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MachineKeyConfigHandler.cs:
+	* MachineKeyConfig.cs: removed unused property. The CryptoGod has spoken
+	and told me to use RandomNumberGenerator.Create to let the
+	implementation choose the generator.
 
 2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
-	* WebConfigurationSettings.cs: TARGET_J2EE ifdef reorder for readability.
+
+	* WebConfigurationSettings.cs: Fixed LoadFromFile to find web.config
+	under TARGET_J2EE (case sensitivity).
+
+2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
+
+	* WebConfigurationSettings.cs: TARGET_J2EE ifdef reorder for
+	readability.
 
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
