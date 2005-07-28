@@ -107,7 +107,7 @@ namespace System.Web.Security
 			byte [] result = bytes;
 			if (all || protection == FormsProtectionEnum.Encryption) {
 				ICryptoTransform decryptor;
-				decryptor = new TripleDESCryptoServiceProvider().CreateDecryptor (config.DecryptionKey192Bits, init_vector);
+				decryptor = TripleDES.Create ().CreateDecryptor (config.DecryptionKey192Bits, init_vector);
 				result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
 				bytes = null;
 			}
@@ -208,7 +208,7 @@ namespace System.Web.Security
 
 			if (all || protection == FormsProtectionEnum.Encryption) {
 				ICryptoTransform encryptor;
-				encryptor = new TripleDESCryptoServiceProvider().CreateEncryptor (config.DecryptionKey192Bits, init_vector);
+				encryptor = TripleDES.Create ().CreateEncryptor (config.DecryptionKey192Bits, init_vector);
 				result = encryptor.TransformFinalBlock (result, 0, result.Length);
 			}
 
