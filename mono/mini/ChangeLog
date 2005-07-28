@@ -1,5 +1,8 @@
 2005-07-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c (mono_create_jit_trampoline_from_token): Remove some
+	dead code.
+
 	* aot.c: Save/load MonoCachedClassInfo->has_nested_classes.
 
 	* mini.h: Bump corlib version.
