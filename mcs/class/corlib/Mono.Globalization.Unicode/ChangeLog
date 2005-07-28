@@ -1,5 +1,9 @@
 2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-tailoring.cfg : added for convenience of contraction check.
+
+2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-normalization-source.cs,
 	  SimpleCollator.cs,
 	  SortKeyBuffer.cs,
