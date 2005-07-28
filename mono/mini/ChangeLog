@@ -1,5 +1,7 @@
 2005-07-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TODO: Remove out-of-data todo stuff.
+
 	* mini.h mini.c (mono_create_jit_trampoline_from_token): Remove some
 	dead code.
 
