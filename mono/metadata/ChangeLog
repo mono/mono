@@ -1,3 +1,10 @@
+2005-07-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class-internals.h (MonoCachedClassInfo): Add has_nested_classes field.
+	
+	* class.c (mono_class_init): Avoid reading nested classes if the AOT
+	data indicates the class has none.
+
 2005-07-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* mono-debug.c, debug-mono-symfile.c: Replace the use of the
