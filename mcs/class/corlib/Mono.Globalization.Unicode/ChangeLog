@@ -1,5 +1,18 @@
 2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-normalization-source.cs,
+	  SimpleCollator.cs,
+	  SortKeyBuffer.cs,
+	  create-mscompat-collation-table.cs,
+	  MSCompatUnicodeTableUtil.cs,
+	  SortKey.cs,
+	  create-collation-element-table.cs,
+	  MSCompatUnicodeTable.cs,
+	  CodePointIndexer.cs,
+	  create-combining-class-source.cs : added copyright lines.
+
+2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	  MSCompatUnicodeTable.cs : removed extraneous definition.
 
 2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
