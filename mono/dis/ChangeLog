@@ -1,3 +1,8 @@
+2005-07-28  Ankit Jain <jankit@novell.com>
+
+	* get.c (dis_stringify_method_signature): Fix handling of marshal info for
+	  method params. Also, handle possible gaps in the PARAM table.
+
 2005-07-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c: Fix noinline->noinlining.
