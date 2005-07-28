@@ -1,5 +1,11 @@
 2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile,
+	  Normalization.template,
+	  Normalization.cs : renamed existing file.
+
+2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NormalizationTableUtil.cs,
 	  Normalization.template,
 	  create-combining-class-source.cs : GetCombiningClass is now 
