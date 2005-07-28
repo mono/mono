@@ -1,3 +1,8 @@
+2005-07-27  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalizer.cs: Added Boolean/BooleanConstructor and
+	Function/FunctionConstructor. Delete method Dump.
+	
 2005-07-25  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalizer.cs: Added Object/ObjectConstructor to the obj_ctrs.

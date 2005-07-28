@@ -59,7 +59,9 @@ namespace Microsoft.JScript {
 			
 			obj_ctrs = new Hashtable ();
 			obj_ctrs.Add ("Array", typeof (ArrayConstructor));
+			obj_ctrs.Add ("Boolean", typeof (BooleanConstructor));
 			obj_ctrs.Add ("Date", typeof (DateConstructor));
+			obj_ctrs.Add ("Function", typeof (FunctionConstructor));
 			obj_ctrs.Add ("Math", typeof (MathObject));
 			obj_ctrs.Add ("Number", typeof (NumberConstructor));
 			obj_ctrs.Add ("Object", typeof (ObjectConstructor));
@@ -96,11 +98,6 @@ namespace Microsoft.JScript {
 			context = new IdentificationTable ();
 			context.BuildGlobalEnv ();
 			return prog.Resolve (context);
-		}
-
-		public static void Dump ()
-		{
-			Console.WriteLine (context.ToString ());
 		}
 
 		static int anon_method_counter = -1;
