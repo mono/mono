@@ -1,3 +1,8 @@
+2005-07-28  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c
+	(mono_debug_add_wrapper): Also write the wrapper type.
+
 2005-07-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class-internals.h (MonoCachedClassInfo): Add has_nested_classes field.
