@@ -26,16 +26,9 @@ namespace Mono.Globalization.Unicode
 //		public const int ExpandOnNfkd = 512;
 //		public const int ExpandOnNfkc = 1024;
 
-		private delegate NormalizationCheck Checker (char c);
-
-		private static Checker noNfd = new Checker (IsNfd);
-		private static Checker noNfc = new Checker (IsNfc);
-		private static Checker noNfkd = new Checker (IsNfkd);
-		private static Checker noNfkc = new Checker (IsNfkc);
-
-		static int PropIdx (int cp)
+		static uint PropValue (int cp)
 		{
-			return propIdx [Util.PropIdx (cp)];
+			return props [Util.PropIdx (cp)];
 		}
 
 		static int MapIdx (int cp)
@@ -100,35 +93,35 @@ namespace Mono.Globalization.Unicode
 			return 0;
 		}
 
-		private static string Compose (string source, Checker checker)
+		private static string Compose (string source, int checkType)
 		{
 			StringBuilder sb = null;
-			Decompose (source, ref sb, checker);
+			Decompose (source, ref sb, checkType);
 			if (sb == null)
-				sb = Combine (source, 0, checker);
+				sb = Combine (source, 0, checkType);
 			else
-				Combine (sb, 0, checker);
+				Combine (sb, 0, checkType);
 
 			return sb != null ? sb.ToString () : source;
 		}
 
-		private static StringBuilder Combine (string source, int start, Checker checker)
+		private static StringBuilder Combine (string source, int start, int checkType)
 		{
 			for (int i = 0; i < source.Length; i++) {
-				if (checker (source [i]) == NormalizationCheck.Yes)
+				if (QuickCheck (source [i], checkType) == NormalizationCheck.Yes)
 					continue;
 				StringBuilder sb = new StringBuilder (source.Length);
 				sb.Append (source);
-				Combine (sb, 0, checker);
+				Combine (sb, 0, checkType);
 				return sb;
 			}
 			return null;
 		}
-		
-		private static void Combine (StringBuilder sb, int start, Checker checker)
+
+		private static void Combine (StringBuilder sb, int start, int checkType)
 		{
 			for (int i = start; i < sb.Length; i++) {
-				switch (checker (sb [i])) {
+				switch (QuickCheck (sb [i], checkType)) {
 				case NormalizationCheck.Yes:
 					continue;
 				case NormalizationCheck.No:
@@ -152,7 +145,7 @@ namespace Mono.Globalization.Unicode
 
 		static int GetPrimaryComposite (object o, int cur, int length, int bufferPos, ref int ch)
 		{
-			if ((propValue [PropIdx (cur)] & FullCompositionExclusion) != 0)
+			if ((PropValue (cur) & FullCompositionExclusion) != 0)
 				return 0;
 			if (GetCombiningClass (cur) != 0)
 				return 0; // not a starter
@@ -162,46 +155,20 @@ namespace Mono.Globalization.Unicode
 			return GetPrimaryCompositeFromMapIndex (idx);
 		}
 
-		static bool IsNormalized (string source,
-			Checker checker)
-		{
-			int prevCC = -1;
-			for (int i = 0; i < source.Length; i++) {
-				int cc = GetCombiningClass (source [i]);
-				if (cc != 0 && cc < prevCC)
-					return false;
-				prevCC = cc;
-				switch (checker (source [i])) {
-				case NormalizationCheck.Yes:
-					break;
-				case NormalizationCheck.No:
-					return false;
-				case NormalizationCheck.Maybe:
-					int ch = 0;
-					if (GetPrimaryComposite (source,
-						source [i], source.Length,
-						i, ref ch) != 0)
-						return false;
-					break;
-				}
-			}
-			return true;
-		}
-
-		static string Decompose (string source, Checker checker)
+		static string Decompose (string source, int checkType)
 		{
 			StringBuilder sb = null;
-			Decompose (source, ref sb, checker);
+			Decompose (source, ref sb, checkType);
 			return sb != null ? sb.ToString () : source;
 		}
 
 		static void Decompose (string source,
-			ref StringBuilder sb, Checker checker)
+			ref StringBuilder sb, int checkType)
 		{
 			int [] buf = null;
 			int start = 0;
 			for (int i = 0; i < source.Length; i++)
-				if (checker (source [i]) == NormalizationCheck.No)
+				if (QuickCheck (source [i], checkType) == NormalizationCheck.No)
 					DecomposeChar (ref sb, ref buf, source,
 						i, ref start);
 			if (sb != null)
@@ -262,51 +229,46 @@ namespace Mono.Globalization.Unicode
 			start = i + 1;
 		}
 
-		public static NormalizationCheck IsNfd (char c)
+		public static NormalizationCheck QuickCheck (char c, int type)
 		{
-			if ('\uAC00' <= c && c <= '\uD7A3')
-				return NormalizationCheck.No;
-			return (propValue [PropIdx ((int) c)] & NoNfd) == 0 ?
-				NormalizationCheck.Yes : NormalizationCheck.No;
-		}
-
-		public static NormalizationCheck IsNfc (char c)
-		{
-			uint v = propValue [PropIdx ((int) c)];
-			return (v & NoNfc) == 0 ?
-				(v & MaybeNfc) == 0 ?
-				NormalizationCheck.Yes :
-				NormalizationCheck.Maybe :
-				NormalizationCheck.No;
-		}
-
-		public static NormalizationCheck IsNfkd (char c)
-		{
-			if ('\uAC00' <= c && c <= '\uD7A3')
-				return NormalizationCheck.No;
-			return (propValue [PropIdx ((int) c)] & NoNfkd) == 0 ?
-				NormalizationCheck.Yes : NormalizationCheck.No;
-		}
-
-		public static NormalizationCheck IsNfkc (char c)
-		{
-			uint v = propValue [PropIdx ((int) c)];
-			return (v & NoNfkc) == 0 ?
-				(v & MaybeNfkc) == 0 ?
-				NormalizationCheck.Yes :
-				NormalizationCheck.Maybe :
-				NormalizationCheck.No;
+			uint v;
+			switch (type) {
+			default: // NFC
+				v = PropValue ((int) c);
+				return (v & NoNfc) == 0 ?
+					(v & MaybeNfc) == 0 ?
+					NormalizationCheck.Yes :
+					NormalizationCheck.Maybe :
+					NormalizationCheck.No;
+			case 1: // NFD
+				if ('\uAC00' <= c && c <= '\uD7A3')
+					return NormalizationCheck.No;
+				return (PropValue ((int) c) & NoNfd) == 0 ?
+					NormalizationCheck.Yes : NormalizationCheck.No;
+			case 2: // NFKC
+				v = PropValue ((int) c);
+				return (v & NoNfkc) == 0 ?
+					(v & MaybeNfkc) == 0 ?
+					NormalizationCheck.Yes :
+					NormalizationCheck.Maybe :
+					NormalizationCheck.No;
+			case 3: // NFKD
+				if ('\uAC00' <= c && c <= '\uD7A3')
+					return NormalizationCheck.No;
+				return (PropValue ((int) c) & NoNfkd) == 0 ?
+					NormalizationCheck.Yes : NormalizationCheck.No;
+			}
 		}
 
 		/* for now we don't use FC_NFKC closure
 		public static bool IsMultiForm (char c)
 		{
-			return (propValue [PropIdx ((int) c)] & 0xF0000000) != 0;
+			return (PropValue ((int) c) & 0xF0000000) != 0;
 		}
 
 		public static char SingleForm (char c)
 		{
-			uint v = propValue [PropIdx ((int) c)];
+			uint v = PropValue ((int) c);
 			int idx = (int) ((v & 0x7FFF0000) >> 16);
 			return (char) singleNorm [idx];
 		}
@@ -314,7 +276,7 @@ namespace Mono.Globalization.Unicode
 		public static void MultiForm (char c, char [] buf, int index)
 		{
 			// FIXME: handle surrogate
-			uint v = propValue [PropIdx ((int) c)];
+			uint v = PropValue ((int) c);
 			int midx = (int) ((v & 0x7FFF0000) >> 16);
 			buf [index] = (char) multiNorm [midx];
 			buf [index + 1] = (char) multiNorm [midx + 1];
@@ -334,29 +296,37 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsNormalized (string source, int type)
 		{
-			switch (type) {
-			default:
-				return IsNormalized (source, noNfc);
-			case 1:
-				return IsNormalized (source, noNfd);
-			case 2:
-				return IsNormalized (source, noNfkc);
-			case 3:
-				return IsNormalized (source, noNfkd);
+			int prevCC = -1;
+			for (int i = 0; i < source.Length; i++) {
+				int cc = GetCombiningClass (source [i]);
+				if (cc != 0 && cc < prevCC)
+					return false;
+				prevCC = cc;
+				switch (QuickCheck (source [i], type)) {
+				case NormalizationCheck.Yes:
+					break;
+				case NormalizationCheck.No:
+					return false;
+				case NormalizationCheck.Maybe:
+					int ch = 0;
+					if (GetPrimaryComposite (source,
+						source [i], source.Length,
+						i, ref ch) != 0)
+						return false;
+					break;
+				}
 			}
+			return true;
 		}
 
 		public static string Normalize (string source, int type)
 		{
 			switch (type) {
 			default:
-				return Compose (source, noNfc);
-			case 1:
-				return Decompose (source, noNfd);
 			case 2:
-				return Compose (source, noNfkc);
-			case 3:
-				return Decompose (source, noNfkd);
+				return Compose (source, type);
+			case 1:
+				return Decompose (source, type);
 			}
 		}
 

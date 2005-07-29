@@ -38,8 +38,7 @@ namespace Mono.Globalization.Unicode
 		int singleCount = 1, multiCount = 1, propValueCount = 1;
 //		int [] singleNorm = new int [550];
 //		int [] multiNorm = new int [280];
-		int [] prop = new int [char.MaxValue]; // maybe it will be enough when we use CodePointIndexer
-		int [] propValues = new int [1024];
+		int [] prop = new int [char.MaxValue];
 
 		public const int NoNfd = 1;
 		public const int NoNfkd = 2;
@@ -62,32 +61,9 @@ namespace Mono.Globalization.Unicode
 		{
 			try {
 				Parse ();
-				MakeIndex ();
 				Serialize ();
 			} catch (Exception ex) {
 				throw new InvalidOperationException ("Internal error at line " + lineCount + " : " + ex);
-			}
-		}
-
-		private void MakeIndex ()
-		{
-			for (int i = 0; i < prop.Length; i++) {
-				bool add = true;
-				for (int v = 0; v < propValueCount; v++)
-					if (propValues [v] == prop [i]) {
-						prop [i] = v;
-						add = false;
-						break;
-					}
-				if (!add)
-					continue;
-				if (propValueCount == propValues.Length) {
-					int [] tmp = new int [propValueCount * 2];
-					Array.Copy (propValues, tmp, propValueCount);
-					propValues = tmp;
-				}
-				propValues [propValueCount] = prop [i];
-				prop [i] = propValueCount++;
 			}
 		}
 
@@ -101,11 +77,8 @@ namespace Mono.Globalization.Unicode
 			DumpArray (multiNorm, multiCount, false);
 			Console.WriteLine ("};");
 			*/
-			Console.WriteLine ("static readonly byte [] propIdx = new byte [] {");
+			Console.WriteLine ("static readonly byte [] props = new byte [] {");
 			DumpArray (prop, NormalizationTableUtil.PropCount, true);
-			Console.WriteLine ("};");
-			Console.WriteLine ("static readonly uint [] propValue = new uint [] {");
-			DumpArray (propValues, propValueCount, false);
 			Console.WriteLine ("};");
 		}
 
