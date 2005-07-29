@@ -1,3 +1,8 @@
+2005-07-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CustomAttributeTypedArgument: Return the name of the
+	enum if the type is an enum in ToString ().
+	
 2005-06-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Create a copy of the evidences and add an instance of 

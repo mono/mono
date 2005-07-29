@@ -65,6 +65,8 @@ namespace System.Reflection {
 				return "\"" + val + "\"";
 			if (argumentType == typeof (Type)) 
 				return "typeof (" + val + ")";
+			if (argumentType.IsEnum)
+				return "(" + argumentType.Name + ")" + val;
 
 			return val;
 		}
