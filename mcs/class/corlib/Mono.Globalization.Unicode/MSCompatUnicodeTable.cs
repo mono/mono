@@ -288,6 +288,7 @@ namespace Mono.Globalization.Unicode
 			case 0:
 			case 0x0640:
 			case 0xFEFF:
+				return true;
 			}
 			return 0x180B <= cp && cp <= 0x180E ||
 				0x200C <= cp && cp <= 0x200F ||
