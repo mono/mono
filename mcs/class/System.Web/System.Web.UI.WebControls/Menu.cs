@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls
 
 	    [DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [MergablePropertyAttribute (false)]
 		public virtual MenuItemBindingCollection DataBindings {
 			get {
@@ -443,7 +443,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual MenuItemStyleCollection LevelMenuItemStyles {
 			get {
 				if (levelMenuItemStyles == null) {
@@ -457,7 +457,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual MenuItemStyleCollection LevelSelectedStyles {
 			get {
 				if (levelSelectedStyles == null) {
@@ -471,7 +471,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual SubMenuStyleCollection LevelSubMenuStyles {
 			get {
 				if (levelSubMenuStyles == null) {

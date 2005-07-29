@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
 		public virtual string DataAlternateTextField {
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
 		public virtual string DataImageUrlField {
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [UrlPropertyAttribute]
 	    [WebCategoryAttribute ("Behavior")]
 		public virtual string NullImageUrl {

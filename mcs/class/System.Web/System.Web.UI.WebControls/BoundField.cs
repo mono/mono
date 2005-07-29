@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
 		public virtual string DataField {

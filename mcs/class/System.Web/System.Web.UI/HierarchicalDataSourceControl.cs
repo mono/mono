@@ -39,7 +39,7 @@ using System.ComponentModel;
 namespace System.Web.UI
 {
 	[NonVisualControlAttribute]
-	[DesignerAttribute ("System.Web.UI.Design.HierarchicalDataSourceDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.HierarchicalDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 //	[ControlBuilderAttribute (typeof(DataSourceControlBuilder))]
 	[BindableAttribute (false)]
 	public abstract class HierarchicalDataSourceControl : Control, IHierarchicalDataSource

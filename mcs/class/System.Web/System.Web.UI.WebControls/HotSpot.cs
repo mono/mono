@@ -83,7 +83,7 @@ namespace System.Web.UI.WebControls
 		
 	    [DefaultValueAttribute ("")]
 	    [BindableAttribute (true)]
-	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [NotifyParentPropertyAttribute (true)]
 	    [UrlPropertyAttribute]
 		public virtual string NavigateUrl {

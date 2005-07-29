@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls
 	
 	[DefaultEventAttribute ("Selecting")]
 	[DefaultPropertyAttribute ("TypeName")]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.ObjectDataSourceDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.ObjectDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildrenAttribute (true)]
 	[PersistChildrenAttribute (false)]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls
 		
 	    [WebCategoryAttribute ("Data")]
 	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute (null)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection DeleteParameters {
@@ -178,7 +178,7 @@ namespace System.Web.UI.WebControls
 		
 	    [WebCategoryAttribute ("Data")]
 	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute (null)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection FilterParameters {
@@ -194,7 +194,7 @@ namespace System.Web.UI.WebControls
 		
 	    [WebCategoryAttribute ("Data")]
 	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute (null)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection InsertParameters {
@@ -231,7 +231,7 @@ namespace System.Web.UI.WebControls
 		
 	    [WebCategoryAttribute ("Data")]
 	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute (null)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection SelectParameters {
@@ -268,7 +268,7 @@ namespace System.Web.UI.WebControls
 		
 	    [WebCategoryAttribute ("Data")]
 	    [MergablePropertyAttribute (false)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute (null)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection UpdateParameters {

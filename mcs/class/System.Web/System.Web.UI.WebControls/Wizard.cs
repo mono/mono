@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEventAttribute ("FinishButtonClick")]
 	[BindableAttribute (false)]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.WizardDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.WizardDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class Wizard: CompositeControl
 	{
 		public static readonly string CancelCommandName = "Cancel";
@@ -216,7 +216,7 @@ namespace System.Web.UI.WebControls
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string CancelButtonImageUrl {
 			get {
 				object v = ViewState ["CancelButtonImageUrl"];
@@ -268,7 +268,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [UrlPropertyAttribute]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute ("")]
 		public string CancelDestinationPageUrl {
 			get {
@@ -332,7 +332,7 @@ namespace System.Web.UI.WebControls
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string FinishCompleteButtonImageUrl {
 			get {
 				object v = ViewState ["FinishCompleteButtonImageUrl"];
@@ -384,7 +384,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [UrlPropertyAttribute]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute ("")]
 		public string FinishDestinationPageUrl {
 			get {
@@ -407,7 +407,7 @@ namespace System.Web.UI.WebControls
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string FinishPreviousButtonImageUrl {
 			get {
 				object v = ViewState ["FinishPreviousButtonImageUrl"];
@@ -575,7 +575,7 @@ namespace System.Web.UI.WebControls
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string StartNextButtonImageUrl {
 			get {
 				object v = ViewState ["StartNextButtonImageUrl"];
@@ -637,7 +637,7 @@ namespace System.Web.UI.WebControls
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string StepNextButtonImageUrl {
 			get {
 				object v = ViewState ["StepNextButtonImageUrl"];
@@ -690,7 +690,7 @@ namespace System.Web.UI.WebControls
 		
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string StepPreviousButtonImageUrl {
 			get {
 				object v = ViewState ["StepPreviousButtonImageUrl"];
@@ -757,7 +757,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.WizardStepCollectionEditor,System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.WizardStepCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 	    [ThemeableAttribute (false)]
 		public WizardStepCollection WizardSteps {

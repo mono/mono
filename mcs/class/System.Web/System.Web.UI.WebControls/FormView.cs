@@ -40,7 +40,7 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.FormViewDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.FormViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("PageIndexChanging")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -282,7 +282,7 @@ namespace System.Web.UI.WebControls
 		[UrlPropertyAttribute]
 		[WebCategoryAttribute ("Appearance")]
 		[DefaultValueAttribute ("")]
-		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string BackImageUrl {
 			get {
 				object ob = ViewState ["BackImageUrl"];
@@ -389,7 +389,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (null)]
 		[WebCategoryAttribute ("Data")]
 		[TypeConverter (typeof(StringArrayConverter))]
-		[EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string[] DataKeyNames
 		{
 			get {
