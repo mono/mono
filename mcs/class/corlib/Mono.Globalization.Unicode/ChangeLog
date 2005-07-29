@@ -1,5 +1,12 @@
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* NormalizationTableUtil.cs : further table range optimization.
+	* create-normalization-source.cs,
+	  create-char-mapping-source.cs,
+	  create-combining-class-source.cs : added C header output support.
+
+2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-normalization-source.cs, Normalization.cs :
 	  Now property size is < 256, so directly embed value in "props" array.
 	  Add QuickCheck(c,checkType) and remove IsNFD/C/KD/KC and delegates.

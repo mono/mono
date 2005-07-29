@@ -39,8 +39,8 @@ namespace Mono.Globalization.Unicode
 	{
 		private int lineCount = 0;
 
-		TextWriter CSCodeOut = TextWriter.Null;//Console.Out;
 		TextWriter CSTableOut = Console.Out;//TextWriter.Null;
+		TextWriter COut = TextWriter.Null;
 
 		public static void Main ()
 		{
@@ -58,10 +58,6 @@ namespace Mono.Globalization.Unicode
 
 		private void Process ()
 		{
-			CSCodeOut.WriteLine ("public static byte GetCombiningClass (int c)");
-			CSCodeOut.WriteLine ("{");
-			CSCodeOut.WriteLine ("	switch (c) {");
-
 			TextReader reader = Console.In;
 			while (reader.Peek () != -1) {
 				string line = reader.ReadLine ();
@@ -89,17 +85,14 @@ namespace Mono.Globalization.Unicode
 				SetProp (cp, cpEnd, short.Parse (val));
 			}
 
-			CSCodeOut.WriteLine ("		return {0};", prevVal);
-			CSCodeOut.WriteLine ("	default:");
-			CSCodeOut.WriteLine ("		return 0;");
-			CSCodeOut.WriteLine ("	}");
-			CSCodeOut.WriteLine ("}");
-
 			reader.Close ();
 
 			byte [] ret = CodePointIndexer.CompressArray (
 				values, typeof (byte), Util.Combining) as byte [];
 
+			COut = new StreamWriter ("normalization-tables.h", true);
+
+			COut.WriteLine ("static const guint8 combiningClass [] = {");
 			CSTableOut.WriteLine ("public static byte [] combiningClass = new byte [] {");
 			for (int i = 0; i < ret.Length; i++) {
 				byte value = ret [i];
@@ -107,10 +100,16 @@ namespace Mono.Globalization.Unicode
 					CSTableOut.Write ("{0},", value);
 				else
 					CSTableOut.Write ("0x{0:X02},", value);
-				if (i % 16 == 15)
+				COut.Write ("{0},", value);
+				if (i % 16 == 15) {
 					CSTableOut.WriteLine (" // {0:X04}", Util.Combining.ToCodePoint (i - 15));
+					COut.WriteLine ();
+				}
 			}
 			CSTableOut.WriteLine ("};");
+			COut.WriteLine ("0};");
+
+			COut.Close ();
 		}
 
 		private short prevVal;
@@ -121,18 +120,10 @@ namespace Mono.Globalization.Unicode
 		{
 			if (val == 0)
 				return;
-
-			if (prevVal != val && prevVal != 0)
-				CSCodeOut.WriteLine ("\t\treturn {0};", prevVal);
-			prevVal = val;
-
-			if (cpEnd < 0) {
-				CSCodeOut.WriteLine ("\tcase 0x{0:X}:", cp);
+			if (cpEnd < 0)
 				values [cp] = (byte) val;
-			}
 			else
 				for (int i = cp; i <= cpEnd; i++) {
-					CSCodeOut.WriteLine ("\tcase 0x{0:X}:", i);
 					values [i] = (byte) val;
 				}
 		}

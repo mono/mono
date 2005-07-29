@@ -124,17 +124,24 @@ namespace Mono.Globalization.Unicode
 
 		TextWriter CSOut = Console.Out;
 		TextWriter CSTableOut = Console.Out;
+		TextWriter COut = TextWriter.Null;
 
 		private void Serialize ()
 		{
+			COut = new StreamWriter ("normalization-tables.h", true);
+
 			// mappedChars
+			COut.WriteLine ("static const guint32 mappedChars [] = {");
 			CSOut.WriteLine ("static readonly int [] mappedChars = new int [] {");
 			DumpArray (mappedChars, mappedCharCount, false);
+			COut.WriteLine ("0};");
 			CSOut.WriteLine ("};");
 
 			// mapIndex
+			COut.WriteLine ("static const guint16 mapIndex [] = {");
 			CSOut.WriteLine ("static readonly short [] mapIndex= new short [] {");
 			DumpArray (mapIndex, NormalizationTableUtil.MapCount, true);
+			COut.WriteLine ("0};");
 			CSOut.WriteLine ("};");
 
 			short [] helperIndexes = new short [0x30000];
@@ -155,6 +162,7 @@ namespace Mono.Globalization.Unicode
 				helperIndexes, typeof (short), Util.Helper)
 				as short [];
 
+			COut.WriteLine ("static const guint16 helperIndexes = {");
 			CSTableOut.WriteLine ("static short [] helperIndexes = new short [] {");
 			for (int i = 0; i < helperIndexes.Length; i++) {
 				short value = helperIndexes [i];
@@ -162,12 +170,16 @@ namespace Mono.Globalization.Unicode
 					CSTableOut.Write ("{0},", value);
 				else
 					CSTableOut.Write ("0x{0:X04},", value);
-				if (i % 16 == 15)
+				COut.Write ("{0},", value);
+				if (i % 16 == 15) {
 					CSTableOut.WriteLine (" // {0:X04}", Util.Helper.ToCodePoint (i - 15));
+					COut.WriteLine ();
+				}
 			}
+			COut.WriteLine ("0};");
 			CSTableOut.WriteLine ("};");
 
-			int [] mapIndexes = new int [0x2600];
+			ushort [] mapIndexes = new ushort [0x2600];
 
 			// GetPrimaryCompositeFromMapIndex ()
 			int currentIndex = -1;
@@ -176,23 +188,30 @@ namespace Mono.Globalization.Unicode
 					continue;
 				if (!m.IsCanonical)
 					continue;
-				mapIndexes [m.MapIndex] = m.CodePoint;
+				mapIndexes [m.MapIndex] = (ushort) m.CodePoint;
 				currentIndex = m.MapIndex;
 			}
 
-			mapIndexes = CodePointIndexer.CompressArray (mapIndexes, typeof (int), Util.MapIndexes) as int [];
+			mapIndexes = CodePointIndexer.CompressArray (mapIndexes, typeof (ushort), Util.MapIndexes) as ushort [];
 
-			CSTableOut.WriteLine ("static int [] mapIndexes = new int [] {");
+			COut.WriteLine ("static const guint16 mapIndexes [] = {");
+			CSTableOut.WriteLine ("static ushort [] mapIndexes = new ushort [] {");
 			for (int i = 0; i < mapIndexes.Length; i++) {
-				int value = mapIndexes [i];
+				ushort value = (ushort) mapIndexes [i];
 				if (value < 10)
 					CSTableOut.Write ("{0},", value);
 				else
 					CSTableOut.Write ("0x{0:X04},", value);
-				if (i % 16 == 15)
+				COut.Write ("{0},", value);
+				if (i % 16 == 15) {
 					CSTableOut.WriteLine (" // {0:X04}", Util.MapIndexes.ToCodePoint (i - 15));
+					COut.WriteLine ();
+				}
 			}
+			COut.WriteLine ("0};");
 			CSTableOut.WriteLine ("};");
+
+			COut.Close ();
 		}
 
 		private void DumpArray (int [] array, int count, bool getCP)
@@ -200,13 +219,16 @@ namespace Mono.Globalization.Unicode
 			if (array.Length < count)
 				throw new ArgumentOutOfRangeException ("count");
 			for (int i = 0; i < count; i++) {
-				if (array [i] == 0)
-					CSOut.Write ("0, ");
+				int value = array [i];
+				if (value < 10)
+					CSOut.Write ("{0}, ", value);
 				else
-					CSOut.Write ("0x{0:X}, ", array [i]);
+					CSOut.Write ("0x{0:X}, ", value);
+				COut.Write ("{0},", value);
 				if (i % 16 == 15) {
 					int l = getCP ? NormalizationTableUtil.MapCP (i) : i;
 					CSOut.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
+					COut.WriteLine ();
 				}
 			}
 		}

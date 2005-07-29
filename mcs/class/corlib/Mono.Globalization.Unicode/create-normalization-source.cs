@@ -67,19 +67,28 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
+		TextWriter CSOut = Console.Out;
+		TextWriter COut = TextWriter.Null;
+
 		private void Serialize ()
 		{
+			COut = new StreamWriter ("normalization-tables.h", false);
+
 			/*
-			Console.WriteLine ("static readonly int [] singleNorm = new int [] {");
+			CSOut.WriteLine ("static readonly int [] singleNorm = new int [] {");
 			DumpArray (singleNorm, singleCount, false);
-			Console.WriteLine ("};");
-			Console.WriteLine ("static readonly int [] multiNorm = new int [] {");
+			CSOut.WriteLine ("};");
+			CSOut.WriteLine ("static readonly int [] multiNorm = new int [] {");
 			DumpArray (multiNorm, multiCount, false);
-			Console.WriteLine ("};");
+			CSOut.WriteLine ("};");
 			*/
-			Console.WriteLine ("static readonly byte [] props = new byte [] {");
+			CSOut.WriteLine ("static readonly byte [] props = new byte [] {");
+			COut.WriteLine ("static const guint8 props [] = {");
 			DumpArray (prop, NormalizationTableUtil.PropCount, true);
-			Console.WriteLine ("};");
+			CSOut.WriteLine ("};");
+			COut.WriteLine ("0};");
+
+			COut.Close ();
 		}
 
 		private void DumpArray (int [] array, int count, bool getCP)
@@ -89,12 +98,14 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < count; i++) {
 				uint value = (uint) array [i];
 				if (value < 10)
-					Console.Write ("{0}, ", value);
+					CSOut.Write ("{0}, ", value);
 				else
-					Console.Write ("0x{0:X}, ", value);
+					CSOut.Write ("0x{0:X}, ", value);
+				COut.Write ("{0},", value);
 				if (i % 16 == 15) {
 					int l = getCP ? NormalizationTableUtil.PropCP (i) : i;
-					Console.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
+					CSOut.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
+					COut.WriteLine ();
 				}
 			}
 		}
