@@ -1,3 +1,7 @@
+2005-07-29  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* All files at current dir: set svn:eol-style to native.
+
 2005-07-28  Florian Gross  <flgr@ccan.de>
 
 	* DateConstructor.cs: Sets _prototype. Added DateMod. MakeDay,
