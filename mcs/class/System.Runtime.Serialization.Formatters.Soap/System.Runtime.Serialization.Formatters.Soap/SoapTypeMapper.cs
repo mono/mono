@@ -37,6 +37,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Xml.Schema;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Globalization;
+using System.Text;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
 
@@ -45,6 +46,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private string _prefix;
 		private string _localName;
 		private string _namespaceURI;
+		private MethodInfo _parseMethod;
 
 		public Element(string prefix, string localName, string namespaceURI) 
 		{
@@ -81,6 +83,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 		}
 
+		public MethodInfo ParseMethod {
+			get { return _parseMethod; }
+			set { _parseMethod = value; }
+		}
+
 		public override bool Equals(object obj) 
 		{
 			Element element = obj as Element;
@@ -101,7 +108,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 	}
 
-	internal class SoapTypeMapper {
+	internal class SoapTypeMapper
+	{
 		private static Hashtable xmlNodeToTypeTable = new Hashtable();
 		private static Hashtable typeToXmlNodeTable = new Hashtable();
 		public static readonly string SoapEncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
@@ -163,245 +171,208 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			InitMappingTables();
 			
 		}
-
-		public Type this[Element element]
+		
+		static string GetKey (string localName, string namespaceUri)
 		{
-			get 
+			return localName + " " +  namespaceUri;
+		}
+		
+/*		public Type this [Element element]
+		{
+		}
+*/
+		public Type GetType (string xmlName, string xmlNamespace)
+		{
+			Type type = null;
+
+			string localName = XmlConvert.DecodeName (xmlName);
+			string namespaceURI = XmlConvert.DecodeName (xmlNamespace);
+			string typeNamespace, assemblyName;
+			
+			SoapServices.DecodeXmlNamespaceForClrTypeNamespace(
+				xmlNamespace, 
+				out typeNamespace, 
+				out assemblyName);
+
+			string typeName = typeNamespace + Type.Delimiter + localName;
+
+			if(assemblyName != null && assemblyName != string.Empty && _binder != null) 
 			{
-				Type type = null;
-
-				string localName = XmlConvert.DecodeName(element.LocalName);
-				string namespaceURI = XmlConvert.DecodeName(element.NamespaceURI);
-				string typeNamespace, assemblyName;
-				SoapServices.DecodeXmlNamespaceForClrTypeNamespace(
-					element.NamespaceURI, 
-					out typeNamespace, 
-					out assemblyName);
-				string typeName = typeNamespace + Type.Delimiter + localName;
-
-				if(assemblyName != null && assemblyName != string.Empty && _binder != null) 
+				type = _binder.BindToType(assemblyName, typeName);
+			}
+			if(type == null) 
+			{
+				string assemblyQualifiedName = (string)xmlNodeToTypeTable [GetKey (xmlName, xmlNamespace)];
+				if(assemblyQualifiedName != null)
+					type = Type.GetType(assemblyQualifiedName);
+				else
 				{
-					type = _binder.BindToType(assemblyName, typeName);
-				}
-				if(type == null) 
-				{
-					string assemblyQualifiedName = (string)xmlNodeToTypeTable[element];
-					if(assemblyQualifiedName != null)
-						type = Type.GetType(assemblyQualifiedName);
-					else
+					type = Type.GetType(xmlName);
+					if(type == null) 
 					{ 
 
-						type = Type.GetType(element.LocalName);
+						type = Type.GetType(typeName);
 						if(type == null) 
-						{ 
+						{
 
-							type = Type.GetType(typeName);
-							if(type == null) 
-							{
-
-								if(assemblyName == null || assemblyName == String.Empty)
-									throw new SerializationException(
-										String.Format("Parse Error, no assembly associated with XML key {0} {1}", 
-										localName, 
-										namespaceURI));
-								type = FormatterServices.GetTypeFromAssembly(
-									Assembly.Load(assemblyName), 
-									typeName);
-							}
+							if(assemblyName == null || assemblyName == String.Empty)
+								throw new SerializationException(
+									String.Format("Parse Error, no assembly associated with XML key {0} {1}", 
+									localName, 
+									namespaceURI));
+							type = FormatterServices.GetTypeFromAssembly(
+								Assembly.Load(assemblyName), 
+								typeName);
 						}
 					}
-					if(type == null)
-						throw new SerializationException();
 				}
-				return type;
+				if(type == null)
+					throw new SerializationException();
 			}
+			return type;
 		}
 
-
-		public Element this[string typeFullName, string assemblyName]
+		public Element GetXmlElement (string typeFullName, string assemblyName)
 		{
-			get 
+			Element element;
+			string typeNamespace = string.Empty;
+			string typeName = typeFullName;
+			if(_assemblyFormat == FormatterAssemblyStyle.Simple)
 			{
-				Element element;
-				string typeNamespace = string.Empty;
-				string typeName = typeFullName;
-				if(_assemblyFormat == FormatterAssemblyStyle.Simple)
-				{
-					string[] items = assemblyName.Split(',');
-					assemblyName = items[0];
-				}
-				string assemblyQualifiedName = typeFullName + ", " + assemblyName;
-				element = (Element) typeToXmlNodeTable[assemblyQualifiedName];
-				if(element == null)
-				{
-					int typeNameIndex = typeFullName.LastIndexOf('.');
-					if(typeNameIndex != -1) 
-					{
-						typeNamespace = typeFullName.Substring(0, typeNameIndex);
-						typeName = typeFullName.Substring(typeNamespace.Length + 1);
-					}
-					string namespaceURI = 
-						SoapServices.CodeXmlNamespaceForClrTypeNamespace(
-						typeNamespace, 
-						(!assemblyName.StartsWith("mscorlib"))?assemblyName:String.Empty);
-					string prefix = (string) namespaceToPrefixTable[namespaceURI];
-					if(prefix == null || prefix == string.Empty)
-					{
-						prefix = "a" + (_prefixNumber++).ToString();
-						namespaceToPrefixTable[namespaceURI] = prefix;
-
-					}
-					int i = typeName.IndexOf ("[");
-					if (i != -1)
-						typeName = XmlConvert.EncodeName (typeName.Substring (0, i)) + typeName.Substring (i);
-					else
-						typeName = XmlConvert.EncodeName (typeName);
-					element = new Element(
-						prefix, 
-						typeName, 
-						namespaceURI);
-				}
-				return element;
+				string[] items = assemblyName.Split(',');
+				assemblyName = items[0];
 			}
+			string assemblyQualifiedName = typeFullName + ", " + assemblyName;
+			element = (Element) typeToXmlNodeTable[assemblyQualifiedName];
+			if(element == null)
+			{
+				int typeNameIndex = typeFullName.LastIndexOf('.');
+				if(typeNameIndex != -1) 
+				{
+					typeNamespace = typeFullName.Substring(0, typeNameIndex);
+					typeName = typeFullName.Substring(typeNamespace.Length + 1);
+				}
+				string namespaceURI = 
+					SoapServices.CodeXmlNamespaceForClrTypeNamespace(
+					typeNamespace, 
+					(!assemblyName.StartsWith("mscorlib"))?assemblyName:String.Empty);
+				string prefix = (string) namespaceToPrefixTable[namespaceURI];
+				if(prefix == null || prefix == string.Empty)
+				{
+					prefix = "a" + (_prefixNumber++).ToString();
+					namespaceToPrefixTable[namespaceURI] = prefix;
+
+				}
+				int i = typeName.IndexOf ("[");
+				if (i != -1)
+					typeName = XmlConvert.EncodeName (typeName.Substring (0, i)) + typeName.Substring (i);
+				else
+					typeName = XmlConvert.EncodeName (typeName);
+				element = new Element(
+					prefix, 
+					typeName, 
+					namespaceURI);
+			}
+			return element;
 		}
 
-		public Element this[Type type]
+		public Element GetXmlElement (Type type)
 		{
-			get 
+			if(type == typeof(string)) return elementString;
+			Element element = (Element) typeToXmlNodeTable[type.AssemblyQualifiedName];
+			if(element == null)
 			{
-				if(type == typeof(string)) return elementString;
-				Element element = (Element) typeToXmlNodeTable[type.AssemblyQualifiedName];
-				if(element == null)
-				{
-					element = this[type.FullName, type.Assembly.FullName];
+				element = GetXmlElement (type.FullName, type.Assembly.FullName);
 //					if(_assemblyFormat == FormatterAssemblyStyle.Full)
 //						element = this[type.FullName, type.Assembly.FullName];
 //					else
 //						element = this[type.FullName, type.Assembly.GetName().Name];
 
-				}
-				else
-				{
-					element = new Element((element.Prefix == null)?_xmlWriter.LookupPrefix(element.NamespaceURI):element.Prefix, element.LocalName, element.NamespaceURI);
-				}
-				if(element == null)
-					throw new SerializationException("Oooops");
-				return element;
 			}
+			else if (_xmlWriter != null)
+			{
+				element = new Element((element.Prefix == null)?_xmlWriter.LookupPrefix(element.NamespaceURI):element.Prefix, element.LocalName, element.NamespaceURI);
+			}
+			if(element == null)
+				throw new SerializationException("Oooops");
+			return element;
 		}
 
-		public static bool CanBeValue(Type type)
+		static void RegisterType (Type type, string name, string namspace)
 		{
-			if(type.IsPrimitive) return true;
-			if(type.IsEnum) return true;
-			if(_canBeValueTypeList.BinarySearch(type.ToString()) >= 0) 
-			{
-				return true;
-			}
-			return false;
+			RegisterType (type, name, namspace, true);
+		}
+		
+		static Element RegisterType (Type type, string name, string namspace, bool reverseMap)
+		{
+			Element element = new Element (name, namspace);
+			xmlNodeToTypeTable.Add (GetKey (name, namspace), type.AssemblyQualifiedName);
+			if (reverseMap)
+				typeToXmlNodeTable.Add (type.AssemblyQualifiedName, element);
+			return element;
+		}
+		
+		static void RegisterType (Type type)
+		{
+			string name = (string) type.GetProperty ("XsdType", BindingFlags.Public | BindingFlags.Static).GetValue (null, null);
+			Element element = RegisterType (type, name, XmlSchema.Namespace, true);
+			element.ParseMethod = type.GetMethod ("Parse", BindingFlags.Public | BindingFlags.Static);
+			if (element.ParseMethod == null)
+				throw new InvalidOperationException ("Parse method not found in class " + type);
 		}
 
 		private static void InitMappingTables() 
 		{
-			Element element;
-			Type elementType;
-			element = new Element("Array", SoapEncodingNamespace);
-			elementType = typeof(System.Array);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("string", XmlSchema.Namespace);
-			elementType = typeof(string);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-//			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("string", SoapEncodingNamespace);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-
-			element = new Element("boolean", XmlSchema.Namespace);
-			elementType = typeof(bool);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("byte", XmlSchema.Namespace);
-			elementType = typeof(sbyte);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("unsignedByte", XmlSchema.Namespace);
-			elementType = typeof(byte);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("long", XmlSchema.Namespace);
-			elementType = typeof(long);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("unsignedLong", XmlSchema.Namespace);
-			elementType = typeof(ulong);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("int", XmlSchema.Namespace);
-			elementType = typeof(int);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("unsignedInt", XmlSchema.Namespace);
-			elementType = typeof(uint);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("float", XmlSchema.Namespace);
-			elementType = typeof(float);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("double", XmlSchema.Namespace);
-			elementType = typeof(double);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("decimal", XmlSchema.Namespace);
-			elementType = typeof(decimal);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("short", XmlSchema.Namespace);
-			elementType = typeof(short);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("unsignedShort", XmlSchema.Namespace);
-			elementType = typeof(ushort);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("anyType", XmlSchema.Namespace);
-			elementType = typeof(object);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("dateTime", XmlSchema.Namespace);
-			elementType = typeof(DateTime);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("duration", XmlSchema.Namespace);
-			elementType = typeof(TimeSpan);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("Fault", SoapEnvelopeNamespace);
-			elementType = typeof(System.Runtime.Serialization.Formatters.SoapFault);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
-
-			element = new Element("base64", SoapEncodingNamespace);
-			elementType = typeof(byte[]);
-			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
-			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+			RegisterType (typeof(System.Array), "Array", SoapEncodingNamespace);
+			RegisterType (typeof(string), "string", XmlSchema.Namespace, false);
+			RegisterType (typeof(string), "string", SoapEncodingNamespace, false);
+			RegisterType (typeof(bool), "boolean", XmlSchema.Namespace);
+			RegisterType (typeof(sbyte), "byte", XmlSchema.Namespace);
+			RegisterType (typeof(byte), "unsignedByte", XmlSchema.Namespace);
+			RegisterType (typeof(long), "long", XmlSchema.Namespace);
+			RegisterType (typeof(ulong), "unsignedLong", XmlSchema.Namespace);
+			RegisterType (typeof(int), "int", XmlSchema.Namespace);
+			RegisterType (typeof(uint), "unsignedInt", XmlSchema.Namespace);
+			RegisterType (typeof(float), "float", XmlSchema.Namespace);
+			RegisterType (typeof(double), "double", XmlSchema.Namespace);
+			RegisterType (typeof(decimal), "decimal", XmlSchema.Namespace);
+			RegisterType (typeof(short), "short", XmlSchema.Namespace);
+			RegisterType (typeof(ushort), "unsignedShort", XmlSchema.Namespace);
+			RegisterType (typeof(object), "anyType", XmlSchema.Namespace);
+			RegisterType (typeof(DateTime), "dateTime", XmlSchema.Namespace);
+			RegisterType (typeof(TimeSpan), "duration", XmlSchema.Namespace);
+			RegisterType (typeof(SoapFault), "Fault", SoapEnvelopeNamespace);
+			RegisterType (typeof(byte[]), "base64", SoapEncodingNamespace);
+			RegisterType (typeof(MethodSignature), "methodSignature", SoapEncodingNamespace);
+			RegisterType (typeof(SoapAnyUri));
+			RegisterType (typeof(SoapEntity));
+			RegisterType (typeof(SoapMonth));
+			RegisterType (typeof(SoapNonNegativeInteger));
+			RegisterType (typeof(SoapToken));
+			RegisterType (typeof(SoapBase64Binary));
+			RegisterType (typeof(SoapHexBinary));
+			RegisterType (typeof(SoapMonthDay));
+			RegisterType (typeof(SoapNonPositiveInteger));
+			RegisterType (typeof(SoapYear));
+			RegisterType (typeof(SoapDate));
+			RegisterType (typeof(SoapId));
+			RegisterType (typeof(SoapName));
+			RegisterType (typeof(SoapNormalizedString));
+			RegisterType (typeof(SoapYearMonth));
+			RegisterType (typeof(SoapIdref));
+			RegisterType (typeof(SoapNcName));
+			RegisterType (typeof(SoapNotation));
+			RegisterType (typeof(SoapDay));
+			RegisterType (typeof(SoapIdrefs));
+			RegisterType (typeof(SoapNegativeInteger));
+			RegisterType (typeof(SoapPositiveInteger));
+			RegisterType (typeof(SoapInteger));
+			RegisterType (typeof(SoapNmtoken));
+			RegisterType (typeof(SoapQName));
+			RegisterType (typeof(SoapEntities));
+			RegisterType (typeof(SoapLanguage));
+			RegisterType (typeof(SoapNmtokens));
+			RegisterType (typeof(SoapTime));
 		}
 		
 		public static string GetXsdValue (object value)
@@ -423,6 +394,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			else if (value is bool) {
 				return ((bool) value) ? "true" : "false";
+			}
+			else if (value is MethodSignature) {
+				return null;
 			}
 			else {
 				return value.ToString ();
@@ -453,6 +427,99 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				return Convert.ChangeType (value, type, CultureInfo.InvariantCulture);
 			}
 		}
-
+		
+		public static bool CanBeValue (Type type)
+		{
+			if(type.IsPrimitive) return true;
+			if(type.IsEnum) return true;
+			if(_canBeValueTypeList.BinarySearch(type.ToString()) >= 0) 
+			{
+				return true;
+			}
+			return false;
+		}
+		
+		public bool IsInternalSoapType (Type type)
+		{
+			if (CanBeValue (type))
+				return true;
+			if (typeof(ISoapXsd).IsAssignableFrom (type))
+				return true;
+			if (type == typeof (MethodSignature))
+				return true;
+			return false;
+		}
+		
+		public object ReadInternalSoapValue (SoapReader reader, Type type)
+		{
+			if (CanBeValue (type))
+				return ParseXsdValue (reader.XmlReader.ReadElementString (), type);
+			
+			if (type == typeof(MethodSignature)) {
+				return MethodSignature.ReadXmlValue (reader);
+			}
+			
+			string val = reader.XmlReader.ReadElementString ();
+			
+			Element elem = GetXmlElement (type);
+			if (elem.ParseMethod != null)
+				return elem.ParseMethod.Invoke (null, new object[] { val });
+			
+			throw new SerializationException ("Can't parse type " + type);
+		}
+		
+		public string GetInternalSoapValue (SoapWriter writer, object value)
+		{
+			if (CanBeValue (value.GetType()))
+				return GetXsdValue (value);
+			else if (value is MethodSignature)
+				return ((MethodSignature)value).GetXmlValue (writer);
+			else
+				return value.ToString ();
+		}
+	}
+	
+	class MethodSignature
+	{
+		Type[] types;
+		
+		public MethodSignature (Type[] types)
+		{
+			this.types = types;
+		}
+		
+		public static object ReadXmlValue (SoapReader reader)
+		{
+			reader.XmlReader.MoveToElement ();
+			if (reader.XmlReader.IsEmptyElement) {
+				reader.XmlReader.Skip ();
+				return null;
+			}
+			reader.XmlReader.ReadStartElement ();
+			string names = reader.XmlReader.ReadString ();
+			while (reader.XmlReader.NodeType != XmlNodeType.EndElement)
+				reader.XmlReader.Skip ();
+				
+			ArrayList types = new ArrayList ();
+			string[] tns = names.Split (' ');
+			foreach (string tn in tns) {
+				if (tn.Length == 0) continue;
+				types.Add (reader.GetTypeFromQName (tn));
+			}
+			reader.XmlReader.ReadEndElement ();
+			return (Type[]) types.ToArray (typeof(Type));
+		}
+		
+		public string GetXmlValue (SoapWriter writer)
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (Type t in types) {
+				Element elem = writer.Mapper.GetXmlElement (t);
+				if (sb.Length > 0) sb.Append (' ');
+				string prefix = writer.GetNamespacePrefix (elem);
+				sb.Append (prefix).Append (':').Append (elem.LocalName);
+			}
+			return sb.ToString ();
+		}
 	}
 }

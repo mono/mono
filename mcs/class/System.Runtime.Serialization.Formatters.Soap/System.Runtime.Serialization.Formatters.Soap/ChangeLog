@@ -1,3 +1,14 @@
+2005-07-29  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapWriter.cs: Wrap method signature headers in a MethodSignature
+	object before serializing. Track changes in SoapTypeMapper.
+	* SoapReader.cs: Track changes in SoapTypeMapper. Factorized some code.
+	* SoapTypeMapper.cs: Replaced indexers by regular methods, this makes
+	code easier to read an understand. Simplified the code for registering
+	basic soap types. Added support for types from
+	System.Runtime.Remoting.Metadata.W3cXsd2001. Implemented support
+	for MethodSignature serialization. All this fixes bug #75537.
+
 2005-07-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapReader.cs: Fixed parsing of array dimensions. Patch by Roei Erez

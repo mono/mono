@@ -152,6 +152,14 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 		
 		#endregion
+		
+		public SoapTypeMapper Mapper {
+			get { return mapper; }
+		}
+		
+		public XmlTextReader XmlReader {
+			get { return xmlReader; }
+		}
 
 		#region Private Methods
 
@@ -193,18 +201,12 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		private Type GetComponentType()
 		{
-			Type type = null;
-			
 			string strValue = xmlReader["type", XmlSchema.InstanceNamespace];
 			if(strValue == null) {
 				if(GetId() != 0) return typeof(string);
 				return null;
 			}
-			string[] strName = strValue.Split(':');
-			string namespaceURI = xmlReader.LookupNamespace(strName[0]);
-			type = mapper[new Element(string.Empty, strName[1], namespaceURI)];
-
-			return type;
+			return GetTypeFromQName (strValue);
 		}
 
 		private bool DeserializeMessage(ISoapMessage message) 
@@ -360,7 +362,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			int[] indices = new int[numberOfDims];
 
 			// Create the array
-			Type arrayType = mapper[new Element(arrayInfo[0], arrayElementType, xmlReader.LookupNamespace(arrayInfo[0]))];
+			Type arrayType = mapper.GetType (arrayElementType, xmlReader.LookupNamespace(arrayInfo[0]));
 			Array array = Array.CreateInstance(
 				arrayType,
 				lengths);
@@ -435,13 +437,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private object Deserialize()
 		{
 			object objReturn = null;
-			Element element = new Element(
-				xmlReader.Prefix,
-				xmlReader.LocalName,
-				xmlReader.NamespaceURI);
-
-
-			Type type = mapper[element];
+			Type type = mapper.GetType (xmlReader.LocalName, xmlReader.NamespaceURI);
 
 			// Get the Id
 			long id = GetId();
@@ -472,10 +468,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			bool NeedsSerializationInfo = false;
 			bool hasFixup;
 
-			if(SoapTypeMapper.CanBeValue(type)) 
+			if(mapper.IsInternalSoapType (type)) 
 			{
-				string elementString = xmlReader.ReadElementString();
-				object obj = SoapTypeMapper.ParseXsdValue (elementString, type);
+				object obj = mapper.ReadInternalSoapValue (this, type);
 				
 				if(id != 0) 
 					RegisterObject(id, obj, info, parentId, parentMemberInfo, indices);
@@ -750,6 +745,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			_fieldIndices[type] = tm;
 			return tm;
+		}
+		
+		public Type GetTypeFromQName (string qname)
+		{
+			string[] strName = qname.Split(':');
+			string namespaceURI = xmlReader.LookupNamespace (strName[0]);
+			return mapper.GetType (strName[1], namespaceURI);
 		}
 		
 		#endregion

@@ -111,6 +111,14 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 
 		#endregion
+		
+		public SoapTypeMapper Mapper {
+			get { return _mapper; }
+		}
+		
+		public XmlTextWriter XmlWriter {
+			get { return _xmlWriter; }
+		}
 
 		#region Internal Properties
 
@@ -315,7 +323,17 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			if (header.MustUnderstand)
 				_xmlWriter.WriteAttributeString ("mustUnderstand", SoapTypeMapper.SoapEnvelopeNamespace, "1");
 			_xmlWriter.WriteAttributeString ("root", SoapTypeMapper.SoapEncodingNamespace, "1");
-			SerializeComponent (header.Value, true);
+			
+			if (header.Name == "__MethodSignature") {
+				// This is a lame way of identifying the signature header, but looks like it is
+				// what MS.NET does.
+				Type[] val = header.Value as Type[];
+				if (val == null)
+					throw new SerializationException ("Invalid method signature.");
+				SerializeComponent (new MethodSignature (val), true);
+			} else
+				SerializeComponent (header.Value, true);
+				
 			_xmlWriter.WriteEndElement();
 		}
 
@@ -367,7 +385,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			// with a id = 0
 			if(currentObjectId > 0)
 			{
-				Element element = _mapper[currentType];
+				Element element = _mapper.GetXmlElement (currentType);
 				_xmlWriter.WriteStartElement(element.Prefix, element.LocalName, element.NamespaceURI);
 				Id(currentObjectId);
 			}
@@ -420,7 +438,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			// Same as above
 			if(currentObjectId > 0L)
 			{
-				Element element = _mapper[info.FullTypeName, info.AssemblyName];
+				Element element = _mapper. GetXmlElement (info.FullTypeName, info.AssemblyName);
 				_xmlWriter.WriteStartElement(element.Prefix, element.LocalName, element.NamespaceURI);
 				Id(currentObjectId);
 			}
@@ -438,12 +456,12 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		private void SerializeArray(Array currentArray, long currentArrayId) 
 		{
-			Element element = _mapper[typeof(System.Array)];
+			Element element = _mapper.GetXmlElement (typeof(System.Array));
 			
 
 			// Set the arrayType attribute
 			Type arrayType = currentArray.GetType().GetElementType();
-			Element xmlArrayType = _mapper[arrayType];
+			Element xmlArrayType = _mapper.GetXmlElement (arrayType);
 			_xmlWriter.WriteStartElement(element.Prefix, element.LocalName, element.NamespaceURI);
 			if(currentArrayId > 0) Id(currentArrayId);
 			
@@ -454,17 +472,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				return;
 			}
 
-			if(_xmlWriter.LookupPrefix(xmlArrayType.NamespaceURI) == null)
-			{
-				_xmlWriter.WriteAttributeString(
-					"xmlns",
-					xmlArrayType.Prefix,
-					"http://www.w3.org/2000/xmlns/",
-					xmlArrayType.NamespaceURI);
-			}
+			string prefix = GetNamespacePrefix (xmlArrayType);
 
 			StringBuilder str = new StringBuilder();
-			str.AppendFormat("{0}:{1}[",xmlArrayType.Prefix, xmlArrayType.LocalName);
+			str.AppendFormat("{0}:{1}[", prefix, xmlArrayType.LocalName);
 			for(int i = 0; i < currentArray.Rank; i++)
 			{
 				str.AppendFormat("{0},", currentArray.GetUpperBound(i) + 1);
@@ -517,10 +528,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				return;
 			}
 			Type objType = obj.GetType();
-			bool canBeValue = SoapTypeMapper.CanBeValue(objType);
+			bool canBeValue = _mapper.IsInternalSoapType (objType);
 			bool firstTime;
 			long id = 0;
-
+			
 			// An object already serialized
 			if((id = idGen.HasId(obj, out firstTime)) != 0L) 
 			{
@@ -563,7 +574,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				return;
 			}
 
-			_xmlWriter.WriteString (SoapTypeMapper.GetXsdValue (obj));
+			_xmlWriter.WriteString (_mapper.GetInternalSoapValue (this, obj));
 		}
 		
 		private void EncodeType(Type type) 
@@ -571,14 +582,20 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			if(type == null) 
 				throw new SerializationException("Oooops");
 
-			Element xmlType = _mapper[type];
+			Element xmlType = _mapper.GetXmlElement (type);
 
-			_xmlWriter.WriteAttributeString(
+			string prefix = GetNamespacePrefix (xmlType);
+			
+			_xmlWriter.WriteAttributeString (
 				"xsi",
 				"type",
 				"http://www.w3.org/2001/XMLSchema-instance",
-				xmlType.Prefix + ":" + xmlType.LocalName);
-			string prefix = _xmlWriter.LookupPrefix(xmlType.NamespaceURI);
+				prefix + ":" + xmlType.LocalName);
+		}
+		
+		public string GetNamespacePrefix (Element xmlType)
+		{
+			string prefix = _xmlWriter.LookupPrefix (xmlType.NamespaceURI);
 			if(prefix == null || prefix == string.Empty) 
 			{
 				_xmlWriter.WriteAttributeString(
@@ -586,9 +603,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 					xmlType.Prefix,
 					"http://www.w3.org/2000/xmlns/",
 					xmlType.NamespaceURI);
-
+				return xmlType.Prefix;
 			}
-
+			return prefix;
 		}
 	}
 }
