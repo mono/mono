@@ -4853,7 +4853,7 @@ assignment_expression
 
 		// FIXME should be strings only
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Concat, (Expression) $1, (Expression) $5, l);
 	  }
 	| prefixed_unary_expression ASSIGN ADDRESSOF _mark_ expression
 	  { 

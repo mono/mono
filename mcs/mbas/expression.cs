@@ -1643,7 +1643,7 @@ namespace Mono.MonoBASIC {
 		public enum Operator : byte {
 			Exponentiation,
 			Multiply, Division, IntDivision, Modulus,
-			Addition, Subtraction,
+			Addition, Subtraction, Concat,
 			LeftShift, RightShift,
 			LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual, 
 			Equality, Inequality,
@@ -2610,6 +2610,10 @@ namespace Mono.MonoBASIC {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (oper == Operator.Concat) {
+				Expression e = new StringConcat (loc, left, right);
+				return e.Resolve (ec);
+			}
 			left = left.Resolve (ec);
 			right = right.Resolve (ec);
 

@@ -68,6 +68,8 @@ namespace Mono.MonoBASIC {
 
 		public Expression DefaultValue (int pos)
 		{
+			if (pi [pos].DefaultValue == null)
+				return NullLiteral.Null;
 			Type type = pi [pos].DefaultValue.GetType();
 
 			//
