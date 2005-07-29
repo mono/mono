@@ -141,7 +141,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern void sqlite3_close (IntPtr sqlite_handle);
 
 		[DllImport("sqlite3")]
-		internal static extern string sqlite3_errmsg (IntPtr sqlite_handle);
+		internal static extern IntPtr sqlite3_errmsg (IntPtr sqlite_handle);
 
 		[DllImport("sqlite3")]
 		internal static extern int sqlite3_changes (IntPtr handle);
@@ -156,7 +156,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern SqliteError sqlite3_step (IntPtr pVm);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_finalize (IntPtr pVm, out IntPtr pzErrMsg);
+		internal static extern SqliteError sqlite3_finalize (IntPtr pVm);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);

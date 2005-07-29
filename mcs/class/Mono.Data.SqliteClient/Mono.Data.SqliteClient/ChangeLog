@@ -1,3 +1,8 @@
+2005-07-28  Joshua Tauberer <tauberer@for.net>
+
+	* Sqlite.cs, SqliteCommand.cs: Report string error messages
+	in prepare, for version 3.
+
 2005-07-26  Joshua Tauberer <tauberer@for.net>
 
 	SQL commands can have multiple statements within them (i.e.

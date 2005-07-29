@@ -243,7 +243,7 @@ namespace Mono.Data.SqliteClient
 			if (Version == 3) {
 				int err = Sqlite.sqlite3_open(db_file, out sqlite_handle);
 				if (err == (int)SqliteError.ERROR)
-					throw new ApplicationException (Sqlite.sqlite3_errmsg (sqlite_handle));
+					throw new ApplicationException (Marshal.PtrToStringAnsi( Sqlite.sqlite3_errmsg (sqlite_handle)));
 			} else {
 				sqlite_handle = Sqlite.sqlite_open(db_file, db_mode, out errmsg);
 			

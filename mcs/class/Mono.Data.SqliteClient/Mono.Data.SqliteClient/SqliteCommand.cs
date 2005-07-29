@@ -238,8 +238,10 @@ namespace Mono.Data.SqliteClient
 					if (parent_conn.Version == 3)
 					{
 						err = Sqlite.sqlite3_prepare (parent_conn.Handle, pzTail, sql.Length, out pStmt, out pzTail);
-						if (err != SqliteError.OK)
-							throw new ApplicationException ("Sqlite error in prepare " + err);
+						if (err != SqliteError.OK) {
+							string msg = Marshal.PtrToStringAnsi (Sqlite.sqlite3_errmsg (parent_conn.Handle));
+							throw new ApplicationException (msg);
+						}
 					}
 					else
 					{
@@ -442,7 +444,7 @@ namespace Mono.Data.SqliteClient
 				foreach (IntPtr pStmt in pStmts) {
 					if (parent_conn.Version == 3) 
 					{
-						err = Sqlite.sqlite3_finalize (pStmt, out errMsg);
+						err = Sqlite.sqlite3_finalize (pStmt);
 					}
 					else
 					{
