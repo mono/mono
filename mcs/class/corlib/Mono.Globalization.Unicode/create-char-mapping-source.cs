@@ -226,6 +226,9 @@ namespace Mono.Globalization.Unicode
 				while (Char.IsDigit (line [n]) || Char.IsLetter (line [n]))
 					n++;
 				int cp = int.Parse (line.Substring (0, n), NumberStyles.HexNumber);
+				// Windows does not handle surrogate characters.
+				if (cp >= 0x10000)
+					continue;
 
 				string [] values = line.Substring (n + 1).Split (';');
 				string canon = values [4];

@@ -36,8 +36,8 @@ namespace Mono.Globalization.Unicode
 	{
 		private int lineCount = 0;
 		int singleCount = 1, multiCount = 1, propValueCount = 1;
-		int [] singleNorm = new int [550];
-		int [] multiNorm = new int [280];
+//		int [] singleNorm = new int [550];
+//		int [] multiNorm = new int [280];
 		int [] prop = new int [char.MaxValue]; // maybe it will be enough when we use CodePointIndexer
 		int [] propValues = new int [1024];
 
@@ -47,11 +47,11 @@ namespace Mono.Globalization.Unicode
 		public const int MaybeNfc = 8;
 		public const int NoNfkc = 16;
 		public const int MaybeNfkc = 32;
-		public const int ExpandOnNfd = 64;
-		public const int ExpandOnNfc = 128;
-		public const int ExpandOnNfkd = 256;
-		public const int ExpandOnNfkc = 512;
-		public const int FullCompositionExclusion = 1024;
+		public const int FullCompositionExclusion = 64;
+//		public const int ExpandOnNfd = 128;
+//		public const int ExpandOnNfc = 256;
+//		public const int ExpandOnNfkd = 512;
+//		public const int ExpandOnNfkc = 1024;
 
 		public static void Main ()
 		{
@@ -93,12 +93,14 @@ namespace Mono.Globalization.Unicode
 
 		private void Serialize ()
 		{
+			/*
 			Console.WriteLine ("static readonly int [] singleNorm = new int [] {");
 			DumpArray (singleNorm, singleCount, false);
 			Console.WriteLine ("};");
 			Console.WriteLine ("static readonly int [] multiNorm = new int [] {");
 			DumpArray (multiNorm, multiCount, false);
 			Console.WriteLine ("};");
+			*/
 			Console.WriteLine ("static readonly byte [] propIdx = new byte [] {");
 			DumpArray (prop, NormalizationTableUtil.PropCount, true);
 			Console.WriteLine ("};");
@@ -139,6 +141,9 @@ namespace Mono.Globalization.Unicode
 				while (Char.IsDigit (line [n]) || Char.IsLetter (line [n]))
 					n++;
 				int cp = int.Parse (line.Substring (0, n), NumberStyles.HexNumber);
+				// Windows does not handle surrogate characters.
+				if (cp >= 0x10000)
+					continue;
 
 				int cpEnd = -1;
 				if (line [n] == '.' && line [n + 1] == '.')
@@ -155,31 +160,38 @@ namespace Mono.Globalization.Unicode
 					SetProp (cp, cpEnd, FullCompositionExclusion);
 					break;
 				case "NFD_QC":
-					SetProp (cp, cpEnd, NoNfd);
+					if (cp != 0xAC00) // Hangul Syllables are computed
+						SetProp (cp, cpEnd, NoNfd);
 					break;
 				case "NFC_QC":
 					SetProp (cp, cpEnd, (values == "M") ?
 						MaybeNfc :NoNfc);
 					break;
 				case "NFKD_QC":
-					SetProp (cp, cpEnd, NoNfkd);
+					if (cp != 0xAC00) // Hangul Syllables are computed
+						SetProp (cp, cpEnd, NoNfkd);
 					break;
 				case "NFKC_QC":
 					SetProp (cp, cpEnd, (values == "M") ?
 						MaybeNfkc :NoNfkc);
 					break;
+				/*
 				case "Expands_On_NFD":
-					SetProp (cp, cpEnd, ExpandOnNfd);
+					if (cp != 0xAC00) // Hangul Syllables are computed
+						SetProp (cp, cpEnd, ExpandOnNfd);
 					break;
 				case "Expands_On_NFC":
 					SetProp (cp, cpEnd, ExpandOnNfc);
 					break;
 				case "Expands_On_NFKD":
-					SetProp (cp, cpEnd, ExpandOnNfkd);
+					if (cp != 0xAC00) // Hangul Syllables are computed
+						SetProp (cp, cpEnd, ExpandOnNfkd);
 					break;
 				case "Expands_On_NFKC":
 					SetProp (cp, cpEnd, ExpandOnNfkc);
 					break;
+				*/
+				/*
 				case "FC_NFKC":
 					int v1 = 0, v2 = 0, v3 = 0, v4 = 0;
 					foreach (string s in values.Split (' ')) {
@@ -199,6 +211,7 @@ namespace Mono.Globalization.Unicode
 					}
 					SetNFKC (cp, cpEnd, v1, v2, v3, v4);
 					break;
+				*/
 				}
 			}
 			reader.Close ();
@@ -216,6 +229,7 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
+		/*
 		private void SetNFKC (int cp, int cpEnd, int v1, int v2, int v3, int v4)
 		{
 			if (v2 == 0) {
@@ -249,6 +263,7 @@ namespace Mono.Globalization.Unicode
 				multiNorm [multiCount++] = v4;
 			}
 		}
+		*/
 	}
 }
 

@@ -23,36 +23,6 @@ Index: corlib.dll.sources
  System.Globalization/StringInfo.cs
  System.Globalization/TaiwanCalendar.cs
  System.Globalization/TextElementEnumerator.cs
-Index: Makefile
-===================================================================
---- Makefile	(revision 47603)
-+++ Makefile	(working copy)
-@@ -3,13 +3,24 @@
- include ../../build/rules.make
- export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
- 
-+
-+RESOURCE_FILES = \
-+	collation.core.bin \
-+	collation.tailoring.bin \
-+	collation.cjkCHS.bin \
-+	collation.cjkCHT.bin \
-+	collation.cjkJA.bin \
-+	collation.cjkKO.bin \
-+	collation.cjkKOlv2.bin
-+
- # corlib is crazy to build so we skip build/library.make and do stuff
- # ourselves.
- #
- # Here, we define a bunch of variables.
- 
- corlib_flags = /unsafe /nostdlib
--LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 /nowarn:414 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB
-+LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 /nowarn:414 -nowarn:612 -nowarn:618 -d:INSIDE_CORLIB \
-+	$(RESOURCE_FILES:%=/resource:%)
- 
- LIBRARY = corlib.dll
- LIBRARY_NAME = mscorlib.dll
 Index: System/String.cs
 ===================================================================
 --- System/String.cs	(revision 47603)
@@ -481,16 +451,3 @@ Index: System.Globalization/CompareInfo.cs
  			}
  		}
  
-Index: System.Reflection/Assembly.cs
-===================================================================
---- System.Reflection/Assembly.cs	(revision 47603)
-+++ System.Reflection/Assembly.cs	(working copy)
-@@ -247,7 +247,7 @@
- 		}
- 
- 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
--		private extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
-+		internal extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
- 
- 		public virtual Stream GetManifestResourceStream (String name)
- 		{

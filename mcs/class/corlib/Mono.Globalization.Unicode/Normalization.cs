@@ -12,7 +12,7 @@ namespace Mono.Globalization.Unicode
 		Maybe
 	}
 
-	internal /*static*/ class Normalization
+	internal class Normalization
 	{
 		public const int NoNfd = 1;
 		public const int NoNfkd = 2;
@@ -20,11 +20,11 @@ namespace Mono.Globalization.Unicode
 		public const int MaybeNfc = 8;
 		public const int NoNfkc = 16;
 		public const int MaybeNfkc = 32;
-		public const int ExpandOnNfd = 64;
-		public const int ExpandOnNfc = 128;
-		public const int ExpandOnNfkd = 256;
-		public const int ExpandOnNfkc = 512;
-		public const int FullCompositionExclusion = 1024;
+		public const int FullCompositionExclusion = 64;
+//		public const int ExpandOnNfd = 128;
+//		public const int ExpandOnNfc = 256;
+//		public const int ExpandOnNfkd = 512;
+//		public const int ExpandOnNfkc = 1024;
 
 		private delegate NormalizationCheck Checker (char c);
 
@@ -264,6 +264,8 @@ namespace Mono.Globalization.Unicode
 
 		public static NormalizationCheck IsNfd (char c)
 		{
+			if ('\uAC00' <= c && c <= '\uD7A3')
+				return NormalizationCheck.No;
 			return (propValue [PropIdx ((int) c)] & NoNfd) == 0 ?
 				NormalizationCheck.Yes : NormalizationCheck.No;
 		}
@@ -280,6 +282,8 @@ namespace Mono.Globalization.Unicode
 
 		public static NormalizationCheck IsNfkd (char c)
 		{
+			if ('\uAC00' <= c && c <= '\uD7A3')
+				return NormalizationCheck.No;
 			return (propValue [PropIdx ((int) c)] & NoNfkd) == 0 ?
 				NormalizationCheck.Yes : NormalizationCheck.No;
 		}

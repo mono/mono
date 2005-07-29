@@ -1,5 +1,17 @@
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-combining-class-source.cs,
+	  create-char-mapping-source.cs,
+	  create-normalization-source.cs,
+	  NormalizationTableUtil.cs,
+	  Normalization.cs : String.Normalize() does not handle surrogate
+	  characters. mapping information in DerivedNormalizationProps.txt
+	  are not used in the code (those from UnicodeData.txt is used).
+	  Hangul syllables are computed instead of embedded in the tables.
+	* managed-collation.patch : removed IntPtrStream and Makefile patches.
+
+2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.cs : IsSortable() was broken.
 
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
