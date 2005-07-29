@@ -653,6 +653,23 @@ public class AssemblyBuilderTest
 		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
 	}
 
+	[Test]
+	public void GetType_IgnoreCase ()
+	{
+		TypeBuilder tb = mb.DefineType ("Foo.Test2", TypeAttributes.Public, typeof (object));
+
+		Type t;
+
+		t = ab.GetType ("foo.Test2", true, true);
+		Assert.AreEqual ("Test2", t.Name);
+
+		t = ab.GetType ("foo.test2", true, true);
+		Assert.AreEqual ("Test2", t.Name);
+
+		t = ab.GetType ("Foo.test2", true, true);
+		Assert.AreEqual ("Test2", t.Name);
+	}
+
 	private static void AssertAssemblyName (string tempDir, AssemblyName assemblyName, string abName, string fullName)
 	{
 		AppDomain currentDomain = AppDomain.CurrentDomain;

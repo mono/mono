@@ -1,3 +1,7 @@
+2005-07-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilderTest.cs: Add test for #75650.
+
 2005-07-21  Jb Evain  <jbevain@gmail.com>
 
 	* ILGeneratorTest.cs: Add tests for exception filters (bug #75010).
