@@ -278,6 +278,25 @@ namespace Mono.Globalization.Unicode
 			return level3 [UUtil.Level3.ToIndex (cp)];
 		}
 
+		public static bool IsSortable (int cp)
+		{
+			// LAMESPEC: they should strictly match with
+			// IsIgnorable() result, but sometimes it does not.
+			if (!IsIgnorable (cp))
+				return true;
+			switch (cp) {
+			case 0:
+			case 0x0640:
+			case 0xFEFF:
+			}
+			return 0x180B <= cp && cp <= 0x180E ||
+				0x200C <= cp && cp <= 0x200F ||
+				0x202A <= cp && cp <= 0x202E ||
+				0x206A <= cp && cp <= 0x206F ||
+				0x200C <= cp && cp <= 0x200F ||
+				0xFFF9 <= cp && cp <= 0xFFFD;
+		}
+
 		public static bool IsIgnorable (int cp)
 		{
 			UnicodeCategory uc = Char.GetUnicodeCategory ((char) cp);

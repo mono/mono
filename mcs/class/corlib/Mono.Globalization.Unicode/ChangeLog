@@ -1,3 +1,7 @@
+2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MSCompatUnicodeTable.cs : added helper for CompareInfo.IsSortable().
+
 2005-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-tailoring.cfg : added for convenience of contraction check.
