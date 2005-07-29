@@ -771,6 +771,9 @@ mono_debug_source_location_from_address (MonoMethod *method, guint32 address, gu
 	char *res = NULL;
 	gint32 offset;
 
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return NULL;
+
 	mono_debugger_lock ();
 	minfo = _mono_debug_lookup_method (method);
 	if (!minfo || !minfo->handle || !minfo->handle->symfile || !minfo->handle->symfile->offset_table) {
@@ -808,6 +811,9 @@ mono_debug_source_location_from_il_offset (MonoMethod *method, guint32 offset, g
 	char *res;
 	MonoDebugMethodInfo *minfo;
 
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return NULL;
+
 	mono_debugger_lock ();
 	minfo = _mono_debug_lookup_method (method);
 	if (!minfo || !minfo->handle || !minfo->handle->symfile) {
@@ -835,7 +841,7 @@ mono_debug_il_offset_from_address (MonoMethod *method, gint32 address, MonoDomai
 	MonoDebugMethodInfo *minfo;
 	gint32 res;
 
-	if (address < 0)
+	if ((address < 0) || (mono_debug_format == MONO_DEBUG_FORMAT_NONE))
 		return -1;
 
 	mono_debugger_lock ();
@@ -867,7 +873,7 @@ mono_debug_address_from_il_offset (MonoMethod *method, gint32 il_offset, MonoDom
 	MonoDebugMethodJitInfo *jit;
 	gint32 res;
 
-	if (il_offset < 0)
+	if ((il_offset < 0) || (mono_debug_format == MONO_DEBUG_FORMAT_NONE))
 		return -1;
 
 	mono_debugger_lock ();
