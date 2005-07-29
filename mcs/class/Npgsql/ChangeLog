@@ -1,4 +1,10 @@
 
+
+2005-07-29  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * NpgsqlCommand.cs: Fixed problem with query strings with newlines. Regexp used to parse parameters were removing new line bytes creating query strings with errors. Thanks Jaroslaw Kowalski (jaak at jkowalski dot net) for fix.
+	
+
 2005-07-19  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
         * NpgsqlTypes/NpgsqlTypeConverters.cs:  Gborg 1370. Fixed problems with Money type when using a culture which doesn't use dot as decimal separator. Also fixed problem where only Decimal types (i.e.: 7.4M) could be used as Money type values. Now Float values can be used too.

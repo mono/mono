@@ -829,7 +829,7 @@ namespace Npgsql
             if (!addProcedureParenthesis)
             {
             
-                Regex a = new Regex(@"(:[\w]*)|(@[\w]*)|(.)");
+                Regex a = new Regex(@"(:[\w]*)|(@[\w]*)|(.)", RegexOptions.Singleline);
                 
                 //CheckParameters();
     
