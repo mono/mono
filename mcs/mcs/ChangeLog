@@ -1,3 +1,9 @@
+2005-07-29  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (SwitchLabel.ResolveAndReduce): Refactored.
+	(SwitchLabel.Erorr_AlreadyOccurs): Share error message.
+	(Switch.CheckSwitch): Just save 50kb for SWF.
+
 2005-07-27  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs (CaptureContext.AddField): Added
