@@ -1,5 +1,13 @@
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-normalization-source.cs,
+	  Normalization.cs,
+	  create-char-mapping-source.cs,
+	  create-combining-class-source.cs,
+	  Makefile : converted managed array to pointers (like collation stuff).
+
+2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NormalizationTableUtil.cs : further table range optimization.
 	* create-normalization-source.cs,
 	  create-char-mapping-source.cs,

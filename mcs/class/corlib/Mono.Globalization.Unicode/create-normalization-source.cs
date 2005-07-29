@@ -82,7 +82,7 @@ namespace Mono.Globalization.Unicode
 			DumpArray (multiNorm, multiCount, false);
 			CSOut.WriteLine ("};");
 			*/
-			CSOut.WriteLine ("static readonly byte [] props = new byte [] {");
+			CSOut.WriteLine ("static readonly byte [] propsArr = new byte [] {");
 			COut.WriteLine ("static const guint8 props [] = {");
 			DumpArray (prop, NormalizationTableUtil.PropCount, true);
 			CSOut.WriteLine ("};");

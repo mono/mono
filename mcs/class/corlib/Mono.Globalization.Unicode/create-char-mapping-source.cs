@@ -123,7 +123,6 @@ namespace Mono.Globalization.Unicode
 		}
 
 		TextWriter CSOut = Console.Out;
-		TextWriter CSTableOut = Console.Out;
 		TextWriter COut = TextWriter.Null;
 
 		private void Serialize ()
@@ -132,14 +131,14 @@ namespace Mono.Globalization.Unicode
 
 			// mappedChars
 			COut.WriteLine ("static const guint32 mappedChars [] = {");
-			CSOut.WriteLine ("static readonly int [] mappedChars = new int [] {");
+			CSOut.WriteLine ("static readonly int [] mappedCharsArr = new int [] {");
 			DumpArray (mappedChars, mappedCharCount, false);
 			COut.WriteLine ("0};");
 			CSOut.WriteLine ("};");
 
-			// mapIndex
-			COut.WriteLine ("static const guint16 mapIndex [] = {");
-			CSOut.WriteLine ("static readonly short [] mapIndex= new short [] {");
+			// charMapIndex
+			COut.WriteLine ("static const guint16 charMapIndex [] = {");
+			CSOut.WriteLine ("static readonly short [] charMapIndexArr = new short [] {");
 			DumpArray (mapIndex, NormalizationTableUtil.MapCount, true);
 			COut.WriteLine ("0};");
 			CSOut.WriteLine ("};");
@@ -162,22 +161,22 @@ namespace Mono.Globalization.Unicode
 				helperIndexes, typeof (short), Util.Helper)
 				as short [];
 
-			COut.WriteLine ("static const guint16 helperIndexes = {");
-			CSTableOut.WriteLine ("static short [] helperIndexes = new short [] {");
+			COut.WriteLine ("static const guint16 helperIndex = {");
+			CSOut.WriteLine ("static short [] helperIndexArr = new short [] {");
 			for (int i = 0; i < helperIndexes.Length; i++) {
 				short value = helperIndexes [i];
 				if (value < 10)
-					CSTableOut.Write ("{0},", value);
+					CSOut.Write ("{0},", value);
 				else
-					CSTableOut.Write ("0x{0:X04},", value);
+					CSOut.Write ("0x{0:X04},", value);
 				COut.Write ("{0},", value);
 				if (i % 16 == 15) {
-					CSTableOut.WriteLine (" // {0:X04}", Util.Helper.ToCodePoint (i - 15));
+					CSOut.WriteLine (" // {0:X04}", Util.Helper.ToCodePoint (i - 15));
 					COut.WriteLine ();
 				}
 			}
 			COut.WriteLine ("0};");
-			CSTableOut.WriteLine ("};");
+			CSOut.WriteLine ("};");
 
 			ushort [] mapIndexes = new ushort [0x2600];
 
@@ -194,22 +193,22 @@ namespace Mono.Globalization.Unicode
 
 			mapIndexes = CodePointIndexer.CompressArray (mapIndexes, typeof (ushort), Util.MapIndexes) as ushort [];
 
-			COut.WriteLine ("static const guint16 mapIndexes [] = {");
-			CSTableOut.WriteLine ("static ushort [] mapIndexes = new ushort [] {");
+			COut.WriteLine ("static const guint16 mapIdxToComposite [] = {");
+			CSOut.WriteLine ("static ushort [] mapIdxToCompositeArr = new ushort [] {");
 			for (int i = 0; i < mapIndexes.Length; i++) {
 				ushort value = (ushort) mapIndexes [i];
 				if (value < 10)
-					CSTableOut.Write ("{0},", value);
+					CSOut.Write ("{0},", value);
 				else
-					CSTableOut.Write ("0x{0:X04},", value);
+					CSOut.Write ("0x{0:X04},", value);
 				COut.Write ("{0},", value);
 				if (i % 16 == 15) {
-					CSTableOut.WriteLine (" // {0:X04}", Util.MapIndexes.ToCodePoint (i - 15));
+					CSOut.WriteLine (" // {0:X04}", Util.MapIndexes.ToCodePoint (i - 15));
 					COut.WriteLine ();
 				}
 			}
 			COut.WriteLine ("0};");
-			CSTableOut.WriteLine ("};");
+			CSOut.WriteLine ("};");
 
 			COut.Close ();
 		}

@@ -93,7 +93,7 @@ namespace Mono.Globalization.Unicode
 			COut = new StreamWriter ("normalization-tables.h", true);
 
 			COut.WriteLine ("static const guint8 combiningClass [] = {");
-			CSTableOut.WriteLine ("public static byte [] combiningClass = new byte [] {");
+			CSTableOut.WriteLine ("public static byte [] combiningClassArr = new byte [] {");
 			for (int i = 0; i < ret.Length; i++) {
 				byte value = ret [i];
 				if (value < 10)
