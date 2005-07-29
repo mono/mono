@@ -251,5 +251,26 @@ namespace MonoTests.System.Xml.Xsl
 			t.Transform (doc, null, TextWriter.Null, null);
 			return wr;
 		}
+
+		[Test]
+		// bug #75663.
+		public void ErrorOnDocumentResolution ()
+		{
+			// XslTransform recovers from errors on document resolution.
+			string xslText = @"<xsl:stylesheet
+				xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+				version='1.0'>
+				<xsl:variable name='n'
+					select='document(""notexist.xml"")' />
+				<xsl:template match='/'>xx</xsl:template>
+				</xsl:stylesheet>";
+			string xmlText = @"<root />";
+			XslTransform transform = new XslTransform ();
+			XPathDocument doc = new XPathDocument (
+				new XmlTextReader ("a.xsl", new StringReader (xslText)));
+			transform.Load (doc);
+			XPathDocument xmlDocument = new XPathDocument (new StringReader (xmlText));
+			transform.Transform (xmlDocument, null, TextWriter.Null);
+		}
 	}
 }

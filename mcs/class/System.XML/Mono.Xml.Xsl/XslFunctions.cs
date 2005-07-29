@@ -262,35 +262,45 @@ namespace Mono.Xml.Xsl
 		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, XPathNodeIterator itr, string baseUri)
 		{
 			ArrayList list = new ArrayList ();
-			Hashtable got = new Hashtable ();
+			try {
+				Hashtable got = new Hashtable ();
 			
-			while (itr.MoveNext()) {
-				Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : /*itr.Current.BaseURI*/doc.BaseURI, xsltContext.Processor);
-				if (!got.ContainsKey (uri)) {
-					got.Add (uri, null);
-					if (uri != null && uri.ToString () == "") {
-						XPathNavigator n = doc.Clone ();
-						n.MoveToRoot ();
-						list.Add (n);
-					} else
-						list.Add (xsltContext.Processor.GetDocument (uri));
+				while (itr.MoveNext()) {
+					Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : /*itr.Current.BaseURI*/doc.BaseURI, xsltContext.Processor);
+					if (!got.ContainsKey (uri)) {
+						got.Add (uri, null);
+						if (uri != null && uri.ToString () == "") {
+							XPathNavigator n = doc.Clone ();
+							n.MoveToRoot ();
+							list.Add (n);
+						} else
+							list.Add (xsltContext.Processor.GetDocument (uri));
+					}
 				}
+			} catch (Exception) {
+				// Error recovery.
+				// See http://www.w3.org/TR/xslt#document and
+				// bug #75663.
+				list.Clear ();
 			}
-			
 			return new ListIterator (list, xsltContext);
 		}
 	
 		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, string arg0, string baseUri)
 		{
-			Uri uri = Resolve (arg0, baseUri != null ? baseUri : doc.BaseURI, xsltContext.Processor);
-			XPathNavigator n;
-			if (uri != null && uri.ToString () == "") {
-				n = doc.Clone ();
-				n.MoveToRoot ();
-			} else
-				n = xsltContext.Processor.GetDocument (uri);
+			try {
+				Uri uri = Resolve (arg0, baseUri != null ? baseUri : doc.BaseURI, xsltContext.Processor);
+				XPathNavigator n;
+				if (uri != null && uri.ToString () == "") {
+					n = doc.Clone ();
+					n.MoveToRoot ();
+				} else
+					n = xsltContext.Processor.GetDocument (uri);
 			
-			return new SelfIterator (n, xsltContext);
+				return new SelfIterator (n, xsltContext);
+			} catch (Exception) {
+				return new ListIterator (new ArrayList (), xsltContext);
+			}
 		}
 
 		public override string ToString ()

@@ -1,3 +1,8 @@
+2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslFunctions.cs : XslTransform recovers from errors on document
+	  resolution. Fixed bug #75663.
+
 2005-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HtmlEmitter.cs : Boolean attribute values should be omitted, but

@@ -1,3 +1,7 @@
+2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformTests.cs : added testcase for bug #75663.
+
 2005-05-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MSXslScriptTests.cs : added testcase for bug #74859.
