@@ -54,10 +54,13 @@ namespace MonoTests.System.CodeDom.Compiler
 		public abstract void EventImplementationTypeOrder ();
 
 		[Test]
-		public abstract void FieldMembersTypeTest1 ();
+		public abstract void FieldMembersAttributesTest ();
 
 		[Test]
-		public abstract void FieldMembersTypeTest2 ();
+		public abstract void FieldMembersTypeTest ();
+
+		[Test]
+		public abstract void FieldNewSlotTest ();
 
 		[Test]
 		public abstract void PropertyMembersTypeTest1 ();
@@ -114,6 +117,9 @@ namespace MonoTests.System.CodeDom.Compiler
 		public abstract void PropertyImplementationTypeOrder ();
 
 		[Test]
+		public abstract void PropertyNewSlotTest ();
+
+		[Test]
 		public abstract void MethodMembersTypeTest1 ();
 
 		[Test]
@@ -142,6 +148,9 @@ namespace MonoTests.System.CodeDom.Compiler
 
 		[Test]
 		public abstract void MethodReturnTypeAttributes ();
+
+		[Test]
+		public abstract void MethodNewSlotTest ();
 
 		[Test]
 		public abstract void ConstructorAttributesTest ();
@@ -288,7 +297,7 @@ namespace MonoTests.System.CodeDom.Compiler
 			return GenerateCodeFromType (TypeDeclaration);
 		}
 
-		protected string GenerateFieldMembersType1 ()
+		protected string GenerateFieldMembersAttributes ()
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -307,13 +316,13 @@ namespace MonoTests.System.CodeDom.Compiler
 			return GenerateCodeFromType (TypeDeclaration);
 		}
 
-		protected string GenerateFieldMembersType2 ()
+		protected string GenerateFieldMembersType (MemberAttributes memberAttributes)
 		{
 			TypeDeclaration.Name = "Test1";
 
 			CodeMemberField fld = new CodeMemberField ();
 			fld.Name = "Name";
-			fld.Attributes = MemberAttributes.Public;
+			fld.Attributes = memberAttributes;
 			fld.Type = new CodeTypeReference (typeof (int));
 			fld.InitExpression = new CodePrimitiveExpression (2);
 			TypeDeclaration.Members.Add (fld);
@@ -425,7 +434,7 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			CodeMemberProperty property = new CodeMemberProperty ();
 			property.Name = "Name";
-			property.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			property.Attributes = MemberAttributes.Family | MemberAttributes.Overloaded;
 			property.Type = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (property);
 
@@ -627,7 +636,7 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			CodeMemberMethod method = new CodeMemberMethod ();
 			method.Name = "Execute";
-			method.Attributes = MemberAttributes.Public | MemberAttributes.Overloaded;
+			method.Attributes = MemberAttributes.Assembly | MemberAttributes.Overloaded;
 			method.ReturnType = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (method);
 
@@ -766,6 +775,19 @@ namespace MonoTests.System.CodeDom.Compiler
 			return GenerateCodeFromType (TypeDeclaration);
 		}
 
+		protected string GenerateMethodNewSlot ()
+		{
+			TypeDeclaration.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Execute";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.New;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+			TypeDeclaration.Members.Add (method);
+
+			return GenerateCodeFromType (TypeDeclaration);
+		}
+
 		protected string GenerateConstructorParameters ()
 		{
 			TypeDeclaration.Name = "Test1";
@@ -773,6 +795,12 @@ namespace MonoTests.System.CodeDom.Compiler
 			CodeConstructor ctor = new CodeConstructor ();
 			ctor.Name = "Whatever";
 			ctor.Attributes = MemberAttributes.Public;
+
+			// scope and vtable modifiers should be ignored
+			ctor.Attributes |= MemberAttributes.Abstract | MemberAttributes.Const
+				| MemberAttributes.Final | MemberAttributes.New
+				| MemberAttributes.Overloaded | MemberAttributes.Override
+				| MemberAttributes.Static;
 
 			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
 				typeof (object), "value1");
@@ -802,7 +830,7 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			CodeConstructor ctor = new CodeConstructor ();
 			ctor.Name = "Something";
-			ctor.Attributes = MemberAttributes.Public;
+			ctor.Attributes = MemberAttributes.Private;
 
 			// first parameter
 			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
@@ -845,7 +873,7 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			CodeConstructor ctor = new CodeConstructor ();
 			ctor.Name = "Something";
-			ctor.Attributes = MemberAttributes.Public;
+			ctor.Attributes = MemberAttributes.Family;
 
 			// first parameter
 			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
@@ -911,6 +939,11 @@ namespace MonoTests.System.CodeDom.Compiler
 			TypeDeclaration.Name = "Test1";
 
 			CodeTypeConstructor typeCtor = new CodeTypeConstructor ();
+			// access, scope and vtable modifiers should be ignored
+			typeCtor.Attributes |= MemberAttributes.Public | MemberAttributes.Abstract
+				| MemberAttributes.Const | MemberAttributes.Final
+				| MemberAttributes.New | MemberAttributes.Overloaded
+				| MemberAttributes.Override | MemberAttributes.Static;
 			TypeDeclaration.Members.Add (typeCtor);
 
 			// custom attributes

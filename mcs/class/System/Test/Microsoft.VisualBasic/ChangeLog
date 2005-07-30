@@ -1,3 +1,7 @@
+2005-07-30  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Added NewSlot tests.
+
 2005-07-24  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added BaseTypes and TypeConstructor

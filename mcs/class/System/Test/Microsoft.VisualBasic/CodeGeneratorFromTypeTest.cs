@@ -175,9 +175,9 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest1 ()
+		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersType1 ();
+			string code = GenerateFieldMembersAttributes ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
@@ -188,13 +188,25 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest2 ()
+		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType2 ();
+			string code = GenerateFieldMembersType (MemberAttributes.Public);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
 				"    Public Name As Integer = 2{0}" +
+				"End Class{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void FieldNewSlotTest ()
+		{
+			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
+				MemberAttributes.New);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+				"    Friend Shadows Name As Integer = 2{0}" +
 				"End Class{0}", Writer.NewLine), code);
 		}
 
@@ -450,9 +462,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Class Test1{0}" +
 				"    {0}" +
 #if NET_2_0
-				"    Public Overloads Overridable Property Name() As Integer{0}" +
+				"    Protected Overloads Overridable Property Name() As Integer{0}" +
 #else
-				"    Public Overloads Overridable Property Name As Integer{0}" +
+				"    Protected Overloads Overridable Property Name As Integer{0}" +
 #endif
 				"    End Property{0}" +
 				"End Class{0}", Writer.NewLine), code);
@@ -537,6 +549,27 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void PropertyNewSlotTest ()
+		{
+			string code = GeneratePropertyMembersType (MemberAttributes.Private |
+				MemberAttributes.New, true, true);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Private Shadows Property Name() As Integer{0}" +
+#else
+				"    Private Shadows Property Name As Integer{0}" +
+#endif
+				"        Get{0}" +
+				"        End Get{0}" +
+				"        Set{0}" +
+				"        End Set{0}" +
+				"    End Property{0}" +
+				"End Class{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
 			string code = GenerateMethodMembersType1 ();
@@ -601,7 +634,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-				"    Public Overloads Overridable Function Execute() As Integer{0}" +
+#if NET_2_0
+				"    Friend Overloads Overridable Function Execute() As Integer{0}" +
+#else
+				"    Friend Overloads Function Execute() As Integer{0}" +
+#endif
 				"    End Function{0}" +
 				"End Class{0}", Writer.NewLine), code);
 		}
@@ -691,6 +728,18 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void MethodNewSlotTest ()
+		{
+			string code = GenerateMethodNewSlot ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+				"    Public Shadows Overridable Function Execute() As Integer{0}" +
+				"    End Function{0}" +
+				"End Class{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void ConstructorAttributesTest ()
 		{
 			string code = GenerateConstructorAttributes ();
@@ -725,7 +774,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-				"    Public Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
+				"    Private Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
 				"        MyBase.New{0}" +
 				"    End Sub{0}" +
 				"End Class{0}", Writer.NewLine), code);
@@ -738,7 +787,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-				"    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
+				"    Protected Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
 				"        MyBase.New(value1){0}" +
 				"    End Sub{0}" +
 				"End Class{0}", Writer.NewLine), code);
@@ -751,7 +800,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
-				"    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
+				"    Protected Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
 				"        MyBase.New(value1, value2){0}" +
 				"    End Sub{0}" +
 				"End Class{0}", Writer.NewLine), code);
@@ -921,17 +970,26 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest1 ()
+		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersType1 ();
+			string code = GenerateFieldMembersAttributes ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest2 ()
+		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType2 ();
+			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void FieldNewSlotTest ()
+		{
+			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
+				MemberAttributes.New);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
 		}
@@ -1091,6 +1149,15 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void PropertyNewSlotTest ()
+		{
+			string code = GeneratePropertyMembersType (MemberAttributes.Private |
+				MemberAttributes.New, true, true);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
 			string code = GenerateMethodMembersType1 ();
@@ -1166,6 +1233,14 @@ namespace MonoTests.Microsoft.VisualBasic
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void MethodNewSlotTest ()
+		{
+			string code = GenerateMethodNewSlot ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}", Writer.NewLine), code);
 		}
@@ -1382,9 +1457,9 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest1 ()
+		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersType1 ();
+			string code = GenerateFieldMembersAttributes ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
@@ -1392,9 +1467,20 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest2 ()
+		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType2 ();
+			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Interface Test1{0}" +
+				"    {0}" +
+				"End Interface{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void FieldNewSlotTest ()
+		{
+			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
+				MemberAttributes.New);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
@@ -1664,6 +1750,22 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void PropertyNewSlotTest ()
+		{
+			string code = GeneratePropertyMembersType (MemberAttributes.Private |
+				MemberAttributes.New, true, true);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Interface Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Shadows Property Name() As Integer{0}" +
+#else
+				"    Shadows Property Name As Integer{0}" +
+#endif
+				"End Interface{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
 			string code = GenerateMethodMembersType1 ();
@@ -1778,6 +1880,17 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
 				"    Function Execute() As <C(A1:=false, A2:=true), D()> Integer{0}" +
+				"End Interface{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void MethodNewSlotTest ()
+		{
+			string code = GenerateMethodNewSlot ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Interface Test1{0}" +
+				"    {0}" +
+				"    Shadows Function Execute() As Integer{0}" +
 				"End Interface{0}", Writer.NewLine), code);
 		}
 
@@ -2009,9 +2122,9 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest1 ()
+		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersType1 ();
+			string code = GenerateFieldMembersAttributes ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
@@ -2022,13 +2135,25 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest2 ()
+		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType2 ();
+			string code = GenerateFieldMembersType (MemberAttributes.Public);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Public Name As Integer = 2{0}" +
+				"End Structure{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void FieldNewSlotTest ()
+		{
+			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
+				MemberAttributes.New);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Structure Test1{0}" +
+				"    {0}" +
+				"    Friend Shadows Name As Integer = 2{0}" +
 				"End Structure{0}", Writer.NewLine), code);
 		}
 
@@ -2261,9 +2386,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Structure Test1{0}" +
 				"    {0}" +
 #if NET_2_0
-				"    Public Overloads Overridable Property Name() As Integer{0}" +
+				"    Protected Overloads Overridable Property Name() As Integer{0}" +
 #else
-				"    Public Overloads Overridable Property Name As Integer{0}" +
+				"    Protected Overloads Overridable Property Name As Integer{0}" +
 #endif
 				"    End Property{0}" +
 				"End Structure{0}", Writer.NewLine), code);
@@ -2332,6 +2457,27 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void PropertyNewSlotTest ()
+		{
+			string code = GeneratePropertyMembersType (MemberAttributes.Private |
+				MemberAttributes.New, true, true);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Structure Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Private Shadows Property Name() As Integer{0}" +
+#else
+				"    Private Shadows Property Name As Integer{0}" +
+#endif
+				"        Get{0}" +
+				"        End Get{0}" +
+				"        Set{0}" +
+				"        End Set{0}" +
+				"    End Property{0}" +
+				"End Structure{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
 			string code = GenerateMethodMembersType1 ();
@@ -2392,7 +2538,11 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-				"    Public Overloads Overridable Function Execute() As Integer{0}" +
+#if NET_2_0
+				"    Friend Overloads Overridable Function Execute() As Integer{0}" +
+#else
+				"    Friend Overloads Function Execute() As Integer{0}" +
+#endif
 				"    End Function{0}" +
 				"End Structure{0}", Writer.NewLine), code);
 		}
@@ -2466,6 +2616,18 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void MethodNewSlotTest ()
+		{
+			string code = GenerateMethodNewSlot ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Structure Test1{0}" +
+				"    {0}" +
+				"    Public Shadows Overridable Function Execute() As Integer{0}" +
+				"    End Function{0}" +
+				"End Structure{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void ConstructorAttributesTest ()
 		{
 			string code = GenerateConstructorAttributes ();
@@ -2504,7 +2666,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-				"    Public Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
+				"    Private Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
 #if !NET_2_0
 				"        MyBase.New{0}" +
 #endif
@@ -2519,7 +2681,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-				"    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
+				"    Protected Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
 				"        MyBase.New(value1){0}" +
 				"    End Sub{0}" +
 				"End Structure{0}", Writer.NewLine), code);
@@ -2532,7 +2694,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
-				"    Public Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
+				"    Protected Sub New(ByVal value1 As Object, ByRef value2 As Integer){0}" +
 				"        MyBase.New(value1, value2){0}" +
 				"    End Sub{0}" +
 				"End Structure{0}", Writer.NewLine), code);
@@ -2708,9 +2870,9 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest1 ()
+		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersType1 ();
+			string code = GenerateFieldMembersAttributes ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +
@@ -2721,9 +2883,21 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		public override void FieldMembersTypeTest2 ()
+		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType2 ();
+			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Enum Test1{0}" +
+				"    {0}" +
+				"    Name = 2{0}" +
+				"End Enum{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void FieldNewSlotTest ()
+		{
+			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
+				MemberAttributes.New);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +
@@ -2924,6 +3098,17 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void PropertyNewSlotTest ()
+		{
+			string code = GeneratePropertyMembersType (MemberAttributes.Private |
+				MemberAttributes.New, true, true);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Enum Test1{0}" +
+				"    {0}" +
+				"End Enum{0}", Writer.NewLine), code);
+		}
+
+		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
 			string code = GenerateMethodMembersType1 ();
@@ -3019,6 +3204,16 @@ namespace MonoTests.Microsoft.VisualBasic
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes ();
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Enum Test1{0}" +
+				"    {0}" +
+				"End Enum{0}", Writer.NewLine), code);
+		}
+
+		[Test]
+		public override void MethodNewSlotTest ()
+		{
+			string code = GenerateMethodNewSlot ();
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +

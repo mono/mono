@@ -768,72 +768,69 @@ namespace System.CodeDom.Compiler {
 		protected virtual void OutputMemberAccessModifier (MemberAttributes attributes)
 		{
 			switch (attributes & MemberAttributes.AccessMask) {
-			case MemberAttributes.Assembly:
-				output.Write ("internal ");
-				break;
-			case MemberAttributes.FamilyAndAssembly:
+				case MemberAttributes.Assembly:
+					output.Write ("internal ");
+					break;
+				case MemberAttributes.FamilyAndAssembly:
 #if NET_2_0
-				output.Write ("internal "); 
+					output.Write ("internal "); 
 #else
-				output.Write ("/*FamANDAssem*/ internal "); 
+					output.Write ("/*FamANDAssem*/ internal "); 
 #endif
-				break;
-			case MemberAttributes.Family:
-				output.Write ("protected ");
-				break;
-			case MemberAttributes.FamilyOrAssembly:
-				output.Write ("protected internal ");
-				break;
-			case MemberAttributes.Private:
-				output.Write ("private ");
-				break;
-			case MemberAttributes.Public:
-				output.Write ("public ");
-				break;
+					break;
+				case MemberAttributes.Family:
+					output.Write ("protected ");
+					break;
+				case MemberAttributes.FamilyOrAssembly:
+					output.Write ("protected internal ");
+					break;
+				case MemberAttributes.Private:
+					output.Write ("private ");
+					break;
+				case MemberAttributes.Public:
+					output.Write ("public ");
+					break;
 			}
 		}
 
 		protected virtual void OutputMemberScopeModifier (MemberAttributes attributes)
 		{
+#if NET_2_0
 			if ((attributes & MemberAttributes.VTableMask) == MemberAttributes.New)
 				output.Write( "new " );
+#endif
 
 			switch (attributes & MemberAttributes.ScopeMask) {
-			case MemberAttributes.Abstract:
-				output.Write ("abstract ");
-				break;
-			case MemberAttributes.Final:
-				// Do nothing
-				break;
-			case MemberAttributes.Static:
-				output.Write ("static ");
-				break;
-			case MemberAttributes.Override:
-				output.Write ("override ");
-				break;
-			default:
-				//
-				// FUNNY! if the scope value is
-				// rubbish (0 or >Const), and access
-				// is public or protected, make it
-				// "virtual".
-				//
-				// i'm not sure whether this is 100%
-				// correct, but it seems to be MS
-				// behavior.
-				//
-				// On .NET 2.0, internal members
-				// are also marked "virtual".
-				//
-				MemberAttributes access = attributes & MemberAttributes.AccessMask;
-				if (access == MemberAttributes.Public ||
-#if NET_2_0
-					access == MemberAttributes.Family || access == MemberAttributes.Assembly)
-#else
-					access == MemberAttributes.Family)
-#endif
-					output.Write ("virtual ");
-				break;
+				case MemberAttributes.Abstract:
+					output.Write ("abstract ");
+					break;
+				case MemberAttributes.Final:
+					// Do nothing
+					break;
+				case MemberAttributes.Static:
+					output.Write ("static ");
+					break;
+				case MemberAttributes.Override:
+					output.Write ("override ");
+					break;
+				default:
+					//
+					// FUNNY! if the scope value is
+					// rubbish (0 or >Const), and access
+					// is public or protected, make it
+					// "virtual".
+					//
+					// i'm not sure whether this is 100%
+					// correct, but it seems to be MS
+					// behavior.
+					//
+					// On .NET 2.0, internal members
+					// are also marked "virtual".
+					//
+					MemberAttributes access = attributes & MemberAttributes.AccessMask;
+					if (access == MemberAttributes.Public || access == MemberAttributes.Family)
+						output.Write ("virtual ");
+					break;
 			}
 		}
 				

@@ -558,14 +558,15 @@ namespace Mono.CSharp
 
 			OutputAttributes (field.CustomAttributes, null, false);
 
-			if (IsCurrentEnum)
-				Output.Write(GetSafeName (field.Name));
-			else {
+			if (IsCurrentEnum) {
+				Output.Write (GetSafeName (field.Name));
+			} else {
 				MemberAttributes attributes = field.Attributes;
-				OutputMemberAccessModifier( attributes );
-				OutputFieldScopeModifier( attributes );
+				OutputMemberAccessModifier (attributes);
+				OutputVTableModifier (attributes);
+				OutputFieldScopeModifier (attributes);
 
-				OutputTypeNamePair( field.Type, GetSafeName (field.Name) );
+				OutputTypeNamePair (field.Type, GetSafeName (field.Name));
 			}
 
 			CodeExpression initExpression = field.InitExpression;
@@ -608,9 +609,14 @@ namespace Mono.CSharp
 
 			MemberAttributes attributes = method.Attributes;
 
-			if (method.PrivateImplementationType == null && !declaration.IsInterface) {
-				OutputMemberAccessModifier (attributes);
-				OutputMemberScopeModifier (attributes);
+			if (!IsCurrentInterface) {
+				if (method.PrivateImplementationType == null) {
+					OutputMemberAccessModifier (attributes);
+					OutputVTableModifier (attributes);
+					OutputMemberScopeModifier (attributes);
+				}
+			} else {
+				OutputVTableModifier (attributes);
 			}
 
 			OutputType (method.ReturnType);
@@ -657,12 +663,16 @@ namespace Mono.CSharp
 
 			OutputAttributes (property.CustomAttributes, null, false);
 
+			MemberAttributes attributes = property.Attributes;
+
 			if (!IsCurrentInterface) {
 				if (property.PrivateImplementationType == null) {
-					MemberAttributes attributes = property.Attributes;
 					OutputMemberAccessModifier (attributes);
+					OutputVTableModifier (attributes);
 					OutputMemberScopeModifier (attributes);
 				}
+			} else {
+				OutputVTableModifier (attributes);
 			}
 
 			OutputType (property.Type);
@@ -910,6 +920,80 @@ namespace Mono.CSharp
 		{
 			Output.Write( GetTypeOutput( type ) );
 		}
+
+		private void OutputVTableModifier (MemberAttributes attributes)
+		{
+			if ((attributes & MemberAttributes.VTableMask) == MemberAttributes.New) {
+				Output.Write ("new ");
+			}
+		}
+
+		protected override void OutputFieldScopeModifier (MemberAttributes attributes)
+		{
+			switch (attributes & MemberAttributes.ScopeMask) {
+				case MemberAttributes.Static:
+					Output.Write ("static ");
+					break;
+				case MemberAttributes.Const:
+					Output.Write ("const ");
+					break;
+			}
+		}
+
+#if NET_2_0
+
+		// Note: this method should in fact be private as in .NET 2.0, the 
+		// CSharpCodeGenerator no longer derives from CodeGenerator but we
+		// still need to make this change.
+		protected override void OutputMemberAccessModifier (MemberAttributes attributes)
+		{
+			switch (attributes & MemberAttributes.AccessMask) {
+				case MemberAttributes.Assembly:
+				case MemberAttributes.FamilyAndAssembly:
+					Output.Write ("internal "); 
+					break;
+				case MemberAttributes.Family:
+					Output.Write ("protected ");
+					break;
+				case MemberAttributes.FamilyOrAssembly:
+					Output.Write ("protected internal ");
+					break;
+				case MemberAttributes.Private:
+					Output.Write ("private ");
+					break;
+				case MemberAttributes.Public:
+					Output.Write ("public ");
+					break;
+			}
+		}
+
+		// Note: this method should in fact be private as in .NET 2.0, the 
+		// CSharpCodeGenerator no longer derives from CodeGenerator but we
+		// still need to make this change.
+		protected override void OutputMemberScopeModifier (MemberAttributes attributes)
+		{
+			switch (attributes & MemberAttributes.ScopeMask) {
+				case MemberAttributes.Abstract:
+					Output.Write ("abstract ");
+					break;
+				case MemberAttributes.Final:
+					// do nothing
+					break;
+				case MemberAttributes.Static:
+					Output.Write ("static ");
+					break;
+				case MemberAttributes.Override:
+					Output.Write ("override ");
+					break;
+				default:
+					MemberAttributes access = attributes & MemberAttributes.AccessMask;
+					if (access == MemberAttributes.Assembly || access == MemberAttributes.Family || access == MemberAttributes.Public) {
+						Output.Write ("virtual ");
+					}
+					break;
+			}
+		}
+#endif
 
 		private void OutputTypeAttributes (CodeTypeDeclaration declaration)
 		{

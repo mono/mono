@@ -609,6 +609,7 @@ namespace Microsoft.VisualBasic
 			} else {
 				MemberAttributes attributes = field.Attributes;
 				OutputMemberAccessModifier (attributes);
+				OutputVTableModifier (attributes);
 				OutputFieldScopeModifier (attributes);
 				OutputTypeNamePair (field.Type, field.Name);
 			}
@@ -656,7 +657,10 @@ namespace Microsoft.VisualBasic
 						output.Write ("Overloads ");
 					}
 				}
+				OutputVTableModifier (attributes);
 				OutputMemberScopeModifier (attributes);
+			} else {
+				OutputVTableModifier (attributes);
 			}
 
 			if (isSub)
@@ -710,15 +714,19 @@ namespace Microsoft.VisualBasic
 			OutputAttributes (property.CustomAttributes, null, 
 				LineHandling.ContinueLine);
 
+			MemberAttributes attributes = property.Attributes;
+
 			if (!IsCurrentInterface) {
-				MemberAttributes attributes = property.Attributes;
 				if (property.PrivateImplementationType == null) {
 					OutputMemberAccessModifier (attributes);
 					if (IsOverloaded (property, declaration)) {
 						output.Write ("Overloads ");
 					}
 				}
+				OutputVTableModifier (attributes);
 				OutputMemberScopeModifier (attributes);
+			} else {
+				OutputVTableModifier (attributes);
 			}
 
 			// mark property as default property if we're dealing with an indexer
@@ -1074,16 +1082,13 @@ namespace Microsoft.VisualBasic
 
 		protected override void OutputFieldScopeModifier (MemberAttributes attributes)
 		{
-			if ((attributes & MemberAttributes.VTableMask) == MemberAttributes.New)
-				Output.Write ("New ");
-
 			switch (attributes & MemberAttributes.ScopeMask) {
-			case MemberAttributes.Static:
-				Output.Write ("Shared ");
-				break;
-			case MemberAttributes.Const:
-				Output.Write ("Const ");
-				break;
+				case MemberAttributes.Static:
+					Output.Write ("Shared ");
+					break;
+				case MemberAttributes.Const:
+					Output.Write ("Const ");
+					break;
 			}
 		}
 
@@ -1111,78 +1116,79 @@ namespace Microsoft.VisualBasic
 		protected override void OutputMemberAccessModifier (MemberAttributes attributes)
 		{
 			switch (attributes & MemberAttributes.AccessMask) {
-			case MemberAttributes.Assembly:
-				Output.Write ("Friend ");
-				break;
-			case MemberAttributes.FamilyAndAssembly:
-				Output.Write ("Friend "); 
-				break;
-			case MemberAttributes.Family:
-				Output.Write ("Protected ");
-				break;
-			case MemberAttributes.FamilyOrAssembly:
-				Output.Write ("Protected Friend ");
-				break;
-			case MemberAttributes.Private:
-				Output.Write ("Private ");
-				break;
-			case MemberAttributes.Public:
-				Output.Write ("Public ");
-				break;
+				case MemberAttributes.Assembly:
+				case MemberAttributes.FamilyAndAssembly:
+					Output.Write ("Friend "); 
+					break;
+				case MemberAttributes.Family:
+					Output.Write ("Protected ");
+					break;
+				case MemberAttributes.FamilyOrAssembly:
+					Output.Write ("Protected Friend ");
+					break;
+				case MemberAttributes.Private:
+					Output.Write ("Private ");
+					break;
+				case MemberAttributes.Public:
+					Output.Write ("Public ");
+					break;
+			}
+		}
+
+		private void OutputVTableModifier (MemberAttributes attributes)
+		{
+			if ((attributes & MemberAttributes.VTableMask) == MemberAttributes.New) {
+				Output.Write ("Shadows ");
 			}
 		}
 
 		protected override void OutputMemberScopeModifier (MemberAttributes attributes)
 		{
-			if ((attributes & MemberAttributes.VTableMask) == MemberAttributes.New)
-				Output.Write ("New ");
-
 			switch (attributes & MemberAttributes.ScopeMask) {
-			case MemberAttributes.Abstract:
-				Output.Write ("MustOverride ");
-				break;
-			case MemberAttributes.Final:
-				//JW 2004-06-03: seems to be the "sealed" keyword in C# and the "NotOverridable" keyword in VB, but conflicts with ASP.NET generation
-				//Output.Write ("NotOverridable ");
-				break;
-			case MemberAttributes.Static:
-				Output.Write ("Shared ");
-				break;
-			case MemberAttributes.Override:
-				Output.Write ("Overrides ");
-				break;
-			case MemberAttributes.Overloaded:
-				// based on http://gendotnet.com/Code%20Gen%20Articles/codedom.htm
-				Output.Write ("Overloads ");
+				case MemberAttributes.Abstract:
+					Output.Write ("MustOverride ");
+					break;
+				case MemberAttributes.Final:
+					// do nothing
+					break;
+				case MemberAttributes.Static:
+					Output.Write ("Shared ");
+					break;
+				case MemberAttributes.Override:
+					Output.Write ("Overrides ");
+					break;
+				case MemberAttributes.Overloaded:
+					// based on http://gendotnet.com/Code%20Gen%20Articles/codedom.htm
+					Output.Write ("Overloads ");
 
-				MemberAttributes access_ovl = attributes & MemberAttributes.AccessMask;
-				if (access_ovl == MemberAttributes.Public || access_ovl == MemberAttributes.Family) {
-					Output.Write ("Overridable ");
-				}
-				break;
-			default:
-				//
-				// FUNNY! if the scope value is
-				// rubbish (0 or >Const), and access
-				// is public, protected make it
-				// "virtual".
-				//
-				// i'm not sure whether this is 100%
-				// correct, but it seems to be MS
-				// behavior.
-				//
-				// On MS.NET 2.0, internal properties
-				// are also marked "virtual".
-				//
-				MemberAttributes access = attributes & MemberAttributes.AccessMask;
-				if (access == MemberAttributes.Public || 
+					MemberAttributes access_ovl = attributes & MemberAttributes.AccessMask;
+					if (access_ovl == MemberAttributes.Public || access_ovl == MemberAttributes.Family) {
+						Output.Write ("Overridable ");
+					}
+					break;
+				default:
+					//
+					// FUNNY! if the scope value is
+					// rubbish (0 or >Const), and access
+					// is public, protected make it
+					// "virtual".
+					//
+					// i'm not sure whether this is 100%
+					// correct, but it seems to be MS
+					// behavior.
+					//
+					// On MS.NET 2.0, internal properties
+					// are also marked "virtual".
+					//
+					MemberAttributes access = attributes & MemberAttributes.AccessMask;
+					if (access == MemberAttributes.Public || 
 #if NET_2_0
-					access == MemberAttributes.Family || access == MemberAttributes.Assembly)
+						access == MemberAttributes.Family || access == MemberAttributes.Assembly)
 #else
-					access == MemberAttributes.Family)
+						access == MemberAttributes.Family)
 #endif
-					Output.Write ("Overridable ");
-				break;
+						Output.Write ("Overridable ");
+					break;
 			}
 		}
 

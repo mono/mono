@@ -1,3 +1,7 @@
+2005-07-30 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Fixed code generated for NewSlot members.
+
 2005-07-24 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Fixed generated code for enums, interfaces
