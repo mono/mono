@@ -1,3 +1,8 @@
+2005-07-24  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/AttachedProperties.cs: made LocalValueEnumerator test not
+	depend on unstable implementation details
+
 2005-07-19  Iain McCoy  <iain@mccoy.id.au>
 
 	* System.Windows/DependencyObject.cs,

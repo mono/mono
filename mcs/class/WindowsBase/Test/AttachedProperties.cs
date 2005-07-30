@@ -75,20 +75,24 @@ public class DependencyObjectTest {
 	[Test]
 	public void TestEnumerationOfAttachedProperties()
 	{
+		int count = 0;
 		Y y = new Y();
 		X.SetA(y, 2);
 		X.SetB(y, "Hi");
-		// This test is a bit dodgy, because no guarantees are 
-		// made about the order in which properties and their
-		// values will be returned
+
 		LocalValueEnumerator e = y.GetLocalValueEnumerator();
-		Assert.IsTrue(e.MoveNext());
-		Assert.AreEqual(e.Current.Property, X.AProperty);
-		Assert.AreEqual(e.Current.Value, 2);
-		Assert.IsTrue(e.MoveNext());
-		Assert.AreEqual(e.Current.Property, X.BProperty);
-		Assert.AreEqual(e.Current.Value, "Hi");
-		Assert.IsFalse(e.MoveNext());
+		while (e.MoveNext()) {
+			count++;
+			if (e.Current.Property == X.AProperty)
+				Assert.AreEqual(e.Current.Value, 2);
+			else if (e.Current.Property == X.BProperty)
+				Assert.AreEqual(e.Current.Value, "Hi");
+			else
+				Assert.Fail("Wrong sort of property" + e.Current.Property);
+		}
+
+		
+		Assert.AreEqual(2, count);
 	}
 
 	// An nice way to test for exceptions the class under test should 
