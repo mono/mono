@@ -1,3 +1,7 @@
+2005-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-debug.c: Fix some (not all) alignment problems.
+
 2005-07-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* appdomain.c (ves_icall_System_AppDomain_LoadAssemblyRaw):
