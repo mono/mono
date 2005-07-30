@@ -1,5 +1,7 @@
 2005-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ia64.c (ia64_emit_bundle): Ongoing IA64 work.
+
 	* inssel.brg (mini_emit_memset): Add support for unaligned access.
 
 	* *-ia64.*: Ongoing IA64 work.
