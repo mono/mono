@@ -1,3 +1,6 @@
+2005-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h: Ongoing IA64 work.
 
 Wed Jul 20 18:01:54 BST 2005 Paolo Molaro <lupus@ximian.com>
 
