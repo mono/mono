@@ -1459,29 +1459,57 @@ namespace Mono.CSharp {
 
 		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
-			LocalInfo kvi = GetKnownVariableInfo (name);
-			if (kvi == null || kvi.Block == this)
+			Block b = this;
+			LocalInfo kvi = b.GetKnownVariableInfo (name);
+			while (kvi == null) {
+				while (b.Implicit)
+					b = b.Parent;
+				b = b.Parent;
+				if (b == null)
+					return true;
+				kvi = b.GetKnownVariableInfo (name);
+			}
+
+			if (kvi.Block == b)
 				return true;
 
-			if (known_variables != kvi.Block.known_variables) {
-				Report.SymbolRelatedToPreviousError (kvi.Location, name);
-				Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", name);
-				return false;
+			// Is kvi.Block nested inside 'b'
+			if (b.known_variables != kvi.Block.known_variables) {
+				//
+				// If a variable by the same name it defined in a nested block of this
+				// block, we violate the invariant meaning in a block.
+				//
+				if (b == this) {
+					Report.SymbolRelatedToPreviousError (kvi.Location, name);
+					Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", name);
+					return false;
+				}
+
+				//
+				// It's ok if the definition is in a nested subblock of b, but not
+				// nested inside this block -- a definition in a sibling block
+				// should not affect us.
+				//
+				return true;
 			}
 
 			//
-			// this block and kvi.Block are the same textual block.
+			// Block 'b' and kvi.Block are the same textual block.
 			// However, different variables are extant.
 			//
 			// Check if the variable is in scope in both blocks.  We use
 			// an indirect check that depends on AddVariable doing its
 			// part in maintaining the invariant-meaning-in-block property.
 			//
-			if (e is LocalVariableReference || (e is Constant && GetLocalInfo (name) != null))
+			if (e is LocalVariableReference || (e is Constant && b.GetLocalInfo (name) != null))
 				return true;
 
-			Report.SymbolRelatedToPreviousError (kvi.Location, name);
-			Error_AlreadyDeclared (loc, name, "parent or current");
+			//
+			// Even though we detected the error when the name is used, we
+			// treat it as if the variable declaration was in error.
+			//
+			Report.SymbolRelatedToPreviousError (loc, name);
+			Error_AlreadyDeclared (kvi.Location, name, "child");
 			return false;
 		}
 
