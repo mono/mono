@@ -1,5 +1,60 @@
 2005-07-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssemblyRaw):
+	Invoke mono_image_load_from_data_full passing the refonly
+	parameter.
+
+	* assembly.c
+	(mono_assembly_open_from_bundle): Add the refonly argument, 
+	in order to pass it to other methods it calls to.
+	(do_mono_assembly_open): Add the refonly argument, in order 
+	to pass it to other methods it calls to.
+	(mono_assembly_open_full): Invoke do_mono_assembly_open passing
+	the refonly parameter to it.
+
+	* image.c: Add loaded_images_refonly_hash and
+	loaded_images_refonly_guid_hash to cache the reflection
+	only loaded images.
+	(mono_images_init): Initialize the hash tables used for
+	caching the reflection only images.
+	(load_modules): Invoke mono_image_open_full passing the refonly
+	parameter to load the modules the correct way.
+	(build_guid_table): Add the refonly argument, to re-build the 
+	correct hash table.
+	(do_mono_image_open): Added the refonly argument, in order to
+	define it for the loaded image.
+	(mono_image_loaded_full): New function, which receives an
+	additional parameter to look for the image in the refonly or
+	non-refonly section.
+	(mono_image_loaded): Updated, using mono_image_loaded_full.
+	(mono_image_loaded_by_guid_full): The same case that happens
+	with mono_image_loaded_full.
+	(mono_image_loaded_by_guid): Likewise.
+	(register_image): Use the ref_only variable inside MonoImage
+	to decide in which hash table store the current image.
+	(mono_image_open_from_data_full): Rename
+	mono_image_open_from_data to mono_image_open_from_data_full,
+	adding the refonly argument, to define the ref_only variable 
+	inside MonoImage.
+	(mono_image_open_from_data): Return 
+	mono_image_open_from_data_full.
+	(mono_image_open_full): Rename mono_image_open to
+	mono_image_open_full, receiving the new refonly argument,
+	to pass it to inner methods.
+	(mono_pe_file_open): Update this function, to open
+	a MonoImage as a non-refonly image.
+	(mono_image_close): Use the refonly variable inside
+	MonoImage to remove the image from the correct caches.
+
+	* image.h: Add the signatures of mono_image_open_full,
+	mono_image_open_from_data_full, mono_image_loaded_full,
+	mono_image_loaded_by_guid_full.
+
+	* metadata-internals.h: Add the ref_only field to 
+	MonoImage.
+	
+2005-07-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* icall.c (ves_icall_System_Reflection_GetReferencedAssemblies):
 	Fix the last behavior, which used to load the assemblies and
 	extract MonoReflectionAssemblyName information, instead of
