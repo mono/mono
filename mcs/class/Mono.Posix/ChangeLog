@@ -1,3 +1,7 @@
+2005-07-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : csc build fix.
+
 2005-07-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Mono.Posix.dll.sources: Add the Unix remoting channel to the build.
