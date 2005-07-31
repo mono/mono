@@ -55,6 +55,7 @@ cs0652.cs NO ERROR
 cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
 cs1501-5.cs
+cs1502-4.cs
 cs1513.cs
 cs1518.cs
 cs1525.cs
