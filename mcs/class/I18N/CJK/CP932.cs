@@ -470,12 +470,14 @@ public unsafe class CP932 : Encoding
 							(Strings.GetString("Arg_InsufficientSpace"),
 							 "chars");
 					}
+					/*
 					if(byteval == 0x5C)
 					{
 						// Yen sign.
 						chars[posn++] = '\u00A5';
 						continue;
 					}
+					*/
 					else if(byteval == 0x7E)
 					{
 						// Overline symbol.
@@ -781,11 +783,13 @@ public unsafe class CP932 : Encoding
 								// First byte in a double-byte sequence.
 								last = byteval;
 							}
+							/*
 							else if(byteval == 0x5C)
 							{
 								// Yen sign.
 								chars[posn++] ='\u00A5';
 							}
+							*/
 							else if(byteval == 0x7E)
 							{
 								// Overline symbol.
