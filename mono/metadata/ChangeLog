@@ -1,3 +1,8 @@
+2005-07-31  Kamil Skalski  <nazgul@omega.pl>
+
+	* reflection.c: Make buffer used in emitting types larger for some
+	big generic types (patch by Michal Moskal).
+
 2005-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-debug.c: Fix some (not all) alignment problems.
