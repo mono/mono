@@ -1,3 +1,8 @@
+2005-07-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngGrammar.cs : spec 7.3 check is kinda implemented but cannot
+	  verify now because of weird exception handling in the runtime.
+
 2005-06-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngReader.cs : When ReadPattern() if no valid pattern appears

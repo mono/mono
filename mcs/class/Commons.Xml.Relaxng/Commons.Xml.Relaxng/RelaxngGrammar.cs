@@ -253,10 +253,12 @@ namespace Commons.Xml.Relaxng
 			// 7.2
 			RdpContentType ct = startPattern.ContentType;
 
-			// TODO: 7.3
-
 			// 4.19 (c) expandRef - actual replacement
 			startPattern = compiledStart.ExpandRef (assembledDefs);
+
+			// FIXME: support 7.3 (implemented but cannot verify it 
+			// because of weird exception handling in the runtime)
+//			startPattern.CheckAttributeDuplicates ();
 
 			// return its start pattern.
 			IsCompiled = true;

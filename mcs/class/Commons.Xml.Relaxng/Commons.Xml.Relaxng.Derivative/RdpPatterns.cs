@@ -203,6 +203,10 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal abstract void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept);
 
+		internal virtual void CheckAttributeDuplicates ()
+		{
+		}
+
 		internal abstract bool ContainsText ();
 
 		internal virtual RdpPattern ExpandRef (Hashtable defs)
@@ -222,6 +226,8 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal void AddNameLabel (LabelList names, RdpNameClass nc)
 		{
+			if (names == null)
+				return;
 			RdpName name = nc as RdpName;
 			if (name != null) {
 				XmlQualifiedName qname = new XmlQualifiedName (
@@ -642,6 +648,32 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return l.ContainsText () || r.ContainsText ();
 		}
+
+		internal override void CheckAttributeDuplicates ()
+		{
+			LValue.CheckAttributeDuplicates ();
+			RValue.CheckAttributeDuplicates ();
+		}
+
+		// 7.3
+		internal void CheckAttributeDuplicatesCore ()
+		{
+			// expecting all items are interned
+			bool checkAttributes = false;
+			Hashtable lc = new Hashtable ();
+			LValue.GetLabels (null, lc);
+			if (lc.Count == 0)
+				return;
+
+			Hashtable rc = new Hashtable ();
+			RValue.GetLabels (null, rc);
+			if (rc.Count == 0)
+				return;
+
+			foreach (XmlQualifiedName name in lc.Values)
+				if (rc.Contains (name))
+					throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
+		}
 	}
 
 	// Choice
@@ -876,6 +908,13 @@ namespace Commons.Xml.Relaxng.Derivative
 			if (LValue.PatternType == RelaxngPatternType.Text && RValue.PatternType == RelaxngPatternType.Text)
 				throw new RelaxngException ("Both branches of the interleave contains a text pattern.");
 		}
+
+		// 7.3
+		internal override void CheckAttributeDuplicates ()
+		{
+			base.CheckAttributeDuplicates ();
+			CheckAttributeDuplicatesCore ();
+		}
 	}
 
 	// Group
@@ -901,6 +940,8 @@ namespace Commons.Xml.Relaxng.Derivative
 			LValue.GetLabels (elements, attributes);
 			if (LValue.Nullable)
 				RValue.GetLabels (elements, attributes);
+			else
+				RValue.GetLabels (null, attributes);
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
@@ -957,6 +998,13 @@ namespace Commons.Xml.Relaxng.Derivative
 			LValue.CheckConstraints (attribute, oneOrMore, oneOrMore, oneOrMoreInterleave, list, dataExcept);
 			RValue.CheckConstraints (attribute, oneOrMore, oneOrMore, oneOrMoreInterleave, list, dataExcept);
 		}
+
+		// 7.3
+		internal override void CheckAttributeDuplicates ()
+		{
+			base.CheckAttributeDuplicates ();
+			CheckAttributeDuplicatesCore ();
+		}
 	}
 
 	public abstract class RdpAbstractSingleContent : RdpPattern
@@ -989,6 +1037,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		internal override bool ContainsText()
 		{
 			return child.ContainsText ();
+		}
+
+		internal override void CheckAttributeDuplicates ()
+		{
+			child.CheckAttributeDuplicates ();
 		}
 	}
 
@@ -1085,7 +1138,6 @@ namespace Commons.Xml.Relaxng.Derivative
 				throw new RelaxngException ("oneOrMore is not allowed under except of a data.");
 			this.Child.CheckConstraints (attribute, true, oneOrMoreGroup, oneOrMoreInterleave, list, dataExcept);
 		}
-
 	}
 
 	// List
@@ -1555,6 +1607,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		internal override bool ContainsText()
 		{
 			return children.ContainsText ();
+		}
+
+		internal override void CheckAttributeDuplicates ()
+		{
+			children.CheckAttributeDuplicates ();
 		}
 	}
 

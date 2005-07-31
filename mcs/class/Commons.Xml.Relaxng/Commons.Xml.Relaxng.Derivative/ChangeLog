@@ -1,3 +1,9 @@
+2005-07-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs : GetLabels() for RdpGroup should check attributes
+	  when the left branch is not nullable (it works like an interleave).
+	  Implemented spec 7.3 attribute check (though not enabled for now).
+
 2005-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Util.cs : tiny debug string fix.
