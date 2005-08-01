@@ -1,5 +1,14 @@
 2005-08-01  Ankit Jain <jankit@novell.com>
 
+	* get.c (dis_stringify_marshal_spec): Include "marshal (..)" as part of the
+	  returned string. And fix memory leak.
+	  (dis_stringify_method_signature): Fix usage of dis_stringify_marshal_spec
+	  accordingly.
+	* main.c (dis_field_list): Fix usage of dis_stringify_marshal_spec. Cleanup
+	  output of spaces.
+
+2005-08-01  Ankit Jain <jankit@novell.com>
+
 	* get.c (dis_stringify_marshal_spec): Make it non-static.
 	* main.c (dis_field_list): Print marshal info for fields.
 	
