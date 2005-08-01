@@ -1,3 +1,10 @@
+
+Mon Aug 1 16:52:12 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, threads.c, null-gc.c, boehm-gc.c: added interface
+	to handle threads not started by the GC (patch by Michael Meeks
+	<michael.meeks@novell.com>).
+
 2005-07-31  Kamil Skalski  <nazgul@omega.pl>
 
 	* reflection.c: Make buffer used in emitting types larger for some
