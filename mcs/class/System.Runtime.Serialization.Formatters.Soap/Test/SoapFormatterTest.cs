@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.IO;
 using NUnit.Framework;
 
@@ -346,5 +347,46 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			Assertion.AssertEquals("#_value", 123, ((Version2) objReturn)._value);
 			Assertion.AssertEquals("#_foo", "Default value", ((Version2) objReturn)._foo);
 		}
+		
+		[Test]
+		public void TestMethodSignatureSerialization ()
+		{
+			Header h = new Header ("__MethodSignature", new Type [] { typeof(string),typeof(SignatureTest[]) }, false, "http://schemas.microsoft.com/clr/soap/messageProperties");
+
+			SoapMessage msg = new SoapMessage ();
+			msg.MethodName = "Run";
+			msg.ParamNames = new string [] { "nom" };
+			msg.ParamTypes = new Type [] { typeof(SignatureTest) };
+			msg.ParamValues = new object[] { new SignatureTest () };
+			msg.Headers = new Header[] { h};
+
+			MemoryStream ms = new MemoryStream ();
+			SoapFormatter sf = new SoapFormatter ();
+			sf.Serialize (ms, msg);
+
+			ms.Position = 0;
+
+			SoapMessage t = new SoapMessage ();
+			sf.TopObject = t;
+			t = (SoapMessage) sf.Deserialize (ms);
+			
+			Assertion.AssertNotNull ("#1", t.Headers[0].Value);
+			Assertion.AssertEquals ("#2", t.Headers[0].Value.GetType (), typeof(Type[]));
+			
+			Type[] ts = (Type[]) t.Headers[0].Value;
+			
+			Assertion.AssertEquals ("#3", 2, ts.Length);
+			Assertion.AssertNotNull ("#4", ts[0]);
+			Assertion.AssertNotNull ("#5", ts[1]);
+			Console.WriteLine ("PPP:" + ts[0].GetType());
+			Assertion.AssertEquals ("#6", typeof(string), ts[0]);
+			Assertion.AssertEquals ("#7", typeof(SignatureTest[]), ts[1]);
+		}
 	}
+	
+	[Serializable]
+	public class SignatureTest
+	{
+		public SoapQName qn = new SoapQName ("e", "name", "espai");
+	}	
 }
