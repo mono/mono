@@ -1,5 +1,9 @@
 2005-08-01  Ankit Jain <jankit@novell.com>
 
+	* get.c (field_flags_map): Use C comments instead of C#.
+
+2005-08-01  Ankit Jain <jankit@novell.com>
+
 	* get.c (dis_stringify_marshal_spec): Include "marshal (..)" as part of the
 	  returned string. And fix memory leak.
 	  (dis_stringify_method_signature): Fix usage of dis_stringify_marshal_spec
