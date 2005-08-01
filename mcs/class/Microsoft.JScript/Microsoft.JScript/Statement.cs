@@ -604,24 +604,22 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 			Type t = typeof (object);
-			bool not_in_func = parent == null;
+			bool in_function = InFunction;
 
-			if (not_in_func)
-				field_info = ec.type_builder.DefineField (mangle_id (id), t, FieldAttributes.Public | FieldAttributes.Static);
-			else
+			if (in_function)
 				local_builder = ig.DeclareLocal (t);
+			else
+				field_info = ec.type_builder.DefineField (mangle_id (id), t, FieldAttributes.Public | FieldAttributes.Static);
 
 			ig.BeginCatchBlock (typeof (Exception));
-			if (not_in_func) {
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-				ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
-				ig.Emit (OpCodes.Stsfld, field_info);
-			} else {
-				ig.Emit (OpCodes.Ldarg_1);
-				ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
+			CodeGenerator.load_engine (in_function, ig);
+			ig.Emit (OpCodes.Call, typeof (Try).GetMethod ("JScriptExceptionValue"));
+			
+			if (in_function)
 				ig.Emit (OpCodes.Stloc, local_builder);
-			}
+			else
+				ig.Emit (OpCodes.Stsfld, field_info);
+
 			stms.Emit (ec);			
 		}
 

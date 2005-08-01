@@ -1,3 +1,8 @@
+2005-08-01  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Statement.cs (Catch.Emit): Fix for properly emit code for
+	loading the script engine.
+
 2005-07-29  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* All files at current dir: set svn:eol-style to native.
