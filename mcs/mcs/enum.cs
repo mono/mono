@@ -3,6 +3,7 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
+//         Marek Safar     (marek.safar@seznam.cz)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -11,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
@@ -618,19 +620,19 @@ namespace Mono.CSharp {
 		
  		void VerifyClsName ()
   		{
- 			Hashtable ht = new Hashtable ();
- 			foreach (string name in ordered_enums) {
- 				string locase = name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
- 				if (!ht.Contains (locase)) {
- 					ht.Add (locase, defined_names [name]);
- 					continue;
- 				}
- 
- 				MemberCore conflict = (MemberCore)ht [locase];
- 				Report.SymbolRelatedToPreviousError (conflict);
- 				conflict = GetDefinition (name);
- 				Report.Error (3005, conflict.Location, "Identifier `{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
-  			}
+			HybridDictionary dict = new HybridDictionary (defined_names.Count, true);
+			foreach (EnumMember em in defined_names.Values) {
+				if (!em.IsClsCompliaceRequired (this))
+					continue;
+
+				try {
+					dict.Add (em.Name, em);
+				}
+				catch (ArgumentException) {
+					Report.SymbolRelatedToPreviousError ((MemberCore)dict [em.Name]);
+					Report.Error (3005, em.Location, "Identifier `{0}' differing only in case is not CLS-compliant", em.GetSignatureForError ());
+				}
+			}
   		}
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)

@@ -1,3 +1,8 @@
+2005-08-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* enum.cs (Enum.VerifyClsName): Fixed to allow not CLSCompliant
+	enum member.
+
 2005-07-31  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs: Copy the local exception into the exception

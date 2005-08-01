@@ -99,3 +99,10 @@ namespace System {
     public class sByte {
     }
 }
+
+
+public enum CLSEnum {
+        label,
+        [CLSCompliant (false)]
+        Label
+}
