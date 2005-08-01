@@ -1,3 +1,8 @@
+2005-08-01  Ankit Jain <jankit@novell.com>
+
+	* get.c (dis_stringify_marshal_spec): Make it non-static.
+	* main.c (dis_field_list): Print marshal info for fields.
+	
 2005-07-29  Ankit Jain <jankit@novell.com>
 
 	* get.c (get_constant): Fix printing of some constant types and make it consistent.
