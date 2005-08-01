@@ -1,3 +1,8 @@
+2005-07-31  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs: Copy the local exception into the exception
+	captured local.  Fixes 75674
+
 2005-07-31  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #75658.
