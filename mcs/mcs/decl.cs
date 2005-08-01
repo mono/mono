@@ -561,14 +561,22 @@ namespace Mono.CSharp {
 			if (symbol.MarkForDuplicationCheck () && mc.MarkForDuplicationCheck ())
 				return true;
 
-			if (this is RootTypes) {
-				// TODO: It should not reach this once we merge RecordDecl to AddTo
-				return true;
+			Report.SymbolRelatedToPreviousError (mc);
+			if (symbol is PartialContainer || mc is PartialContainer) {
+				Report.Error (260, symbol.Location,
+					"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
+					name);
+				return false;
 			}
 
-			Report.SymbolRelatedToPreviousError (mc);
-			Report.Error (102, symbol.Location, "The type `{0}' already contains a definition for `{1}'",
-				GetSignatureForError (), symbol.MemberName.Name);
+			if (this is RootTypes) {
+				Report.Error (101, symbol.Location, 
+					"The namespace `{0}' already contains a definition for `{1}'",
+					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
+			} else {
+				Report.Error (102, symbol.Location, "The type `{0}' already contains a definition for `{1}'",
+					GetSignatureForError (), symbol.MemberName.Name);
+			}
 			return false;
 		}
 

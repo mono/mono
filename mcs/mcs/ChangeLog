@@ -1,3 +1,19 @@
+2005-08-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (AddToTypeContainer): Use inheritance insted of if(s).
+	(PartialContainer.Create): Moved logic AddToContainer.
+	(PartialContainer.MarkForDuplicationCheck): Shares name.
+	
+	* decl.cs (DeclSpace.AddToContainer): Check name collisions at one
+	place.
+	
+	* namespace.cs (Namespace.AddDeclSpace): Lazy declspaces
+	initialization.
+	(Namespace.GetSignatureForError): New method.
+	
+	* tree.cs (Tree.RecordDecl): Moved to AddToContainer.
+	(RootTypes.AddToTypeContainer): se inheritance insted of if(s).
+
 2005-08-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75669.

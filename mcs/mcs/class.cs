@@ -491,10 +491,9 @@ namespace Mono.CSharp {
 			return AddToContainer (symbol, symbol.Name);
 		}
 
-		bool AddToTypeContainer (DeclSpace ds)
+		protected virtual bool AddToTypeContainer (DeclSpace ds)
 		{
-			// Parent == null ==> this == RootContext.Tree.Types
-			return AddToContainer (ds, (Parent == null) ? ds.Name : ds.Basename);
+			return AddToContainer (ds, ds.Basename);
 		}
 
 		public void AddConstant (Const constant)
@@ -519,12 +518,13 @@ namespace Mono.CSharp {
 			enums.Add (e);
 		}
 		
-		public void AddClassOrStruct (TypeContainer c)
+		public bool AddClassOrStruct (TypeContainer c)
 		{
 			if (!AddToTypeContainer (c))
-				return;
+				return false;
 
 			types.Add (c);
+			return true;
 		}
 
 		public void AddDelegate (Delegate d)
@@ -591,16 +591,17 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public void AddInterface (TypeContainer iface)
+		public bool AddInterface (TypeContainer iface)
 		{
 			if (!AddToTypeContainer (iface))
-				return;
+				return false;
 
 			if (interfaces == null) {
 				interfaces = new MemberCoreArrayList ();
 			}
 
 			interfaces.Add (iface);
+			return true;
 		}
 
 		public void AddField (FieldMember field)
@@ -2534,20 +2535,8 @@ namespace Mono.CSharp {
 						MemberName member_name, int mod_flags, Kind kind,
 						Location loc)
 		{
-			PartialContainer pc;
-			DeclSpace ds = RootContext.Tree.GetDecl (member_name);
-			if (ds != null) {
-				pc = ds as PartialContainer;
-
-				if (pc == null) {
-					Report.LocationOfPreviousError (loc);
-					Report.Error (260, ds.Location,
-						"Missing partial modifier on declaration of type `{0}'. Another partial declaration of this type exists",
-						member_name.GetPartialName());
-
-					return null;
-				}
-
+			PartialContainer pc = RootContext.Tree.GetDecl (member_name) as PartialContainer;
+			if (pc != null) {
 				if (pc.Kind != kind) {
 					Report.Error (
 						261, loc, "Partial declarations of `{0}' " +
@@ -2571,15 +2560,17 @@ namespace Mono.CSharp {
 				parent = ((ClassPart) parent).PartialContainer;
 
 			pc = new PartialContainer (ns.NS, parent, member_name, mod_flags, kind, loc);
-			RootContext.Tree.RecordDecl (ns.NS, member_name, pc);
 
-			if (kind == Kind.Interface)
-				parent.AddInterface (pc);
-			else if (kind == Kind.Class || kind == Kind.Struct)
-				parent.AddClassOrStruct (pc);
-			else
+			if (kind == Kind.Interface) {
+				if (!parent.AddInterface (pc))
+					return null;
+			} else if (kind == Kind.Class || kind == Kind.Struct) {
+				if (!parent.AddClassOrStruct (pc))
+					return null;
+			} else {
 				throw new InvalidOperationException ();
-
+			}
+			RootContext.Tree.RecordDecl (ns.NS, member_name, pc);
 			return pc;
 		}
 
@@ -2638,6 +2629,11 @@ namespace Mono.CSharp {
 		public override PendingImplementation GetPendingImplementations ()
 		{
 			return PendingImplementation.GetPendingImplementations (this);
+		}
+
+		public override bool MarkForDuplicationCheck ()
+		{
+			return true;
 		}
 
 		protected override TypeAttributes TypeAttr {

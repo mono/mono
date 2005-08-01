@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace Mono.CSharp {
 
@@ -25,7 +26,7 @@ namespace Mono.CSharp {
 		string fullname;
 		ArrayList entries;
 		Hashtable namespaces;
-		Hashtable declspaces;
+		IDictionary declspaces;
 		Hashtable cached_types;
 
 		public readonly MemberName MemberName;
@@ -78,7 +79,6 @@ namespace Mono.CSharp {
 
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
-			declspaces = new Hashtable ();
 			cached_types = new Hashtable ();
 
 			all_namespaces.Add (this);
@@ -144,19 +144,21 @@ namespace Mono.CSharp {
 				return cached_types [name] as TypeExpr;
 
 			Type t = null;
-			DeclSpace tdecl = declspaces [name] as DeclSpace;
-			if (tdecl != null) {
-				//
-				// Note that this is not:
-				//
-				//   t = tdecl.DefineType ()
-				//
-				// This is to make it somewhat more useful when a DefineType
-				// fails due to problems in nested types (more useful in the sense
-				// of fewer misleading error messages)
-				//
-				tdecl.DefineType ();
-				t = tdecl.TypeBuilder;
+			if (declspaces != null) {
+				DeclSpace tdecl = declspaces [name] as DeclSpace;
+				if (tdecl != null) {
+					//
+					// Note that this is not:
+					//
+					//   t = tdecl.DefineType ()
+					//
+					// This is to make it somewhat more useful when a DefineType
+					// fails due to problems in nested types (more useful in the sense
+					// of fewer misleading error messages)
+					//
+					tdecl.DefineType ();
+					t = tdecl.TypeBuilder;
+				}
 			}
 			string lookup = t != null ? t.FullName : (fullname == "" ? name : fullname + "." + name);
 			Type rt = TypeManager.LookupTypeReflection (lookup, loc);
@@ -188,6 +190,8 @@ namespace Mono.CSharp {
 
 		public void AddDeclSpace (string name, DeclSpace ds)
 		{
+			if (declspaces == null)
+				declspaces = new HybridDictionary ();
 			declspaces.Add (name, ds);
 		}
 
@@ -619,6 +623,14 @@ namespace Mono.CSharp {
 						Error_NamespaceNotFound (alias.Location, alias.Alias.ToString ());
 				}
 			}
+		}
+
+		public string GetSignatureForError ()
+		{
+			if (NS == Namespace.Root)
+				return "::global";
+			else
+				return ns.Name;
 		}
 
 		public override string ToString ()
