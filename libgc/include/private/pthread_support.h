@@ -33,6 +33,7 @@ typedef struct GC_Thread_Rep {
 #	define FINISHED 1   	/* Thread has exited.	*/
 #	define DETACHED 2	/* Thread is intended to be detached.	*/
 #	define MAIN_THREAD 4	/* True for the original thread only.	*/
+#       define FOREIGN_THREAD 8 /* Will not be de-registered by us      */
     short thread_blocked;	/* Protected by GC lock.		*/
     				/* Treated as a boolean value.  If set,	*/
     				/* thread will acquire GC lock before	*/
@@ -90,6 +91,8 @@ extern volatile GC_thread GC_threads[THREAD_TABLE_SZ];
 extern GC_bool GC_thr_initialized;
 
 GC_thread GC_lookup_thread(pthread_t id);
+
+void *GC_thread_deregister_foreign (void *data);
 
 void GC_stop_init();
 

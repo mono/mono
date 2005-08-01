@@ -1,3 +1,10 @@
+
+Mon Aug 1 16:49:45 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* include/private/pthread_support.h, pthread_support.c: added
+	patch to support registering new threads at runtime (from
+	Michael Meeks <michael.meeks@novell.com>).
+
 2005-07-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (INCLUDES): Add $(top_builddir)/.. to pick up mono's

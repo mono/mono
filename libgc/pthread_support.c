@@ -221,6 +221,20 @@ static void return_freelists(ptr_t *fl, ptr_t *gfl)
 /* we arrange for those to fault asap.)					*/
 static ptr_t size_zero_object = (ptr_t)(&size_zero_object);
 
+void GC_delete_thread(pthread_t id);
+
+void *GC_thread_deregister_foreign (void *data)
+{
+    GC_thread me = (GC_thread)data;
+ /*   GC_fprintf1( "\n\n\n\n --- Deregister %x ---\n\n\n\n\n", me->flags ); */
+    if (me -> flags & FOREIGN_THREAD) {
+	LOCK();
+ /*	GC_fprintf0( "\n\n\n\n --- FOO ---\n\n\n\n\n" ); */
+	GC_delete_thread(me->id);
+	UNLOCK();
+    }
+}
+
 /* Each thread structure must be initialized.	*/
 /* This call must be made from the new thread.	*/
 /* Caller holds allocation lock.		*/
@@ -229,7 +243,7 @@ void GC_init_thread_local(GC_thread p)
     int i;
 
     if (!keys_initialized) {
-	if (0 != GC_key_create(&GC_thread_key, 0)) {
+	if (0 != GC_key_create(&GC_thread_key, GC_thread_deregister_foreign)) {
 	    ABORT("Failed to create key for local allocator");
         }
 	keys_initialized = TRUE;
@@ -1201,15 +1215,14 @@ WRAP_FUNC(pthread_detach)(pthread_t thread)
 
 GC_bool GC_in_thread_creation = FALSE;
 
-void * GC_start_routine(void * arg)
+typedef void *(*ThreadStartFn)(void *);
+void * GC_start_routine_head(void * arg, void *base_addr,
+			     ThreadStartFn *start, void **start_arg )
 {
-    int dummy;
     struct start_info * si = arg;
     void * result;
     GC_thread me;
     pthread_t my_pthread;
-    void *(*start)(void *);
-    void *start_arg;
 
     my_pthread = pthread_self();
 #   ifdef DEBUG_THREADS
@@ -1232,7 +1245,7 @@ void * GC_start_routine(void * arg)
     /* one for the main thread.  There is a strong argument that that's	*/
     /* a kernel bug, but a pervasive one.				*/
 #   ifdef STACK_GROWS_DOWN
-      me -> stack_end = (ptr_t)(((word)(&dummy) + (GC_page_size - 1))
+      me -> stack_end = (ptr_t)(((word)(base_addr) + (GC_page_size - 1))
 		                & ~(GC_page_size - 1));
 #	  ifndef GC_DARWIN_THREADS
         me -> stop_info.stack_ptr = me -> stack_end - 0x10;
@@ -1240,7 +1253,7 @@ void * GC_start_routine(void * arg)
 	/* Needs to be plausible, since an asynchronous stack mark	*/
 	/* should not crash.						*/
 #   else
-      me -> stack_end = (ptr_t)((word)(&dummy) & ~(GC_page_size - 1));
+      me -> stack_end = (ptr_t)((word)(base_addr) & ~(GC_page_size - 1));
       me -> stop_info.stack_ptr = me -> stack_end + 0x10;
 #   endif
     /* This is dubious, since we may be more than a page into the stack, */
@@ -1252,18 +1265,55 @@ void * GC_start_routine(void * arg)
       /* from /proc, but the hook to do so isn't there yet.		*/
 #   endif /* IA64 */
     UNLOCK();
-    start = si -> start_routine;
-#   ifdef DEBUG_THREADS
-	GC_printf1("start_routine = 0x%lx\n", start);
-#   endif
-    start_arg = si -> arg;
+
+    if (start) *start = si -> start_routine;
+    if (start_arg) *start_arg = si -> arg;
+
     sem_post(&(si -> registered));	/* Last action on si.	*/
     					/* OK to deallocate.	*/
-    pthread_cleanup_push(GC_thread_exit_proc, 0);
 #   if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
  	LOCK();
         GC_init_thread_local(me);
 	UNLOCK();
+#   endif
+
+    return me;
+}
+
+int GC_thread_register_foreign (void *base_addr)
+{
+    struct start_info si = { 0, }; /* stacked for legibility & locking */
+    GC_thread me;
+
+    GC_printf1( "GC_thread_register_foreign %p\n", &si );
+
+    si.flags = FOREIGN_THREAD;
+
+    if (!parallel_initialized) GC_init_parallel();
+    LOCK();
+    if (!GC_thr_initialized) GC_thr_init();
+
+    UNLOCK();
+
+    me = GC_start_routine_head(&si, base_addr, NULL, NULL);
+
+    return me != NULL;
+}
+
+void * GC_start_routine(void * arg)
+{
+    int dummy;
+    struct start_info * si = arg;
+    void * result;
+    GC_thread me;
+    ThreadStartFn start;
+    void *start_arg;
+
+    me = GC_start_routine_head (arg, &dummy, &start, &start_arg);
+
+    pthread_cleanup_push(GC_thread_exit_proc, 0);
+#   ifdef DEBUG_THREADS
+	GC_printf1("start_routine = 0x%lx\n", start);
 #   endif
     result = (*start)(start_arg);
 #if DEBUG_THREADS
