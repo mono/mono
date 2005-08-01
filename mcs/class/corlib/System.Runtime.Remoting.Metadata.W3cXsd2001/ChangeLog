@@ -1,3 +1,7 @@
+2005-08-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapPositiveInteger.cs: Set correct XsdType name for SoapPositiveInteger.
+
 2005-06-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapDuration.cs: Fixed parsing of TimeSpan values. Based on a fix

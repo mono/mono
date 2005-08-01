@@ -57,7 +57,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		}
 
 		public static string XsdType {
-			get { return "nonPositiveInteger"; }
+			get { return "positiveInteger"; }
 		}
 
 		public string GetXsdType()
