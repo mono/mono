@@ -1,3 +1,9 @@
+
+Mon Aug 1 18:37:38 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-arm.c, mini-arm.c, cpu-arm.md, inssel-arm.brg: more
+	ARM port work in progress.
+
 2005-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ia64.c (mono_arch_call_opcode): Ongoing IA64 work.
