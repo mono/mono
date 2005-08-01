@@ -1,3 +1,10 @@
+2005-08-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75669.
+	* ecore.cs (Expression.MemberLookupFailed): Use queried_type for
+	member lookup rather than qualifier_type, since qualifier_type can
+	be null.
+
 2005-08-01  Marek Safar  <marek.safar@seznam.cz>
 
 	* enum.cs (Enum.VerifyClsName): Fixed to allow not CLSCompliant
