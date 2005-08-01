@@ -43,7 +43,7 @@ namespace System.Xml.Serialization
 
 		public SoapIncludeAttribute( Type type) 
 		{
-			Type = type;
+			this.type = type;
 		}
 
 		public Type Type 

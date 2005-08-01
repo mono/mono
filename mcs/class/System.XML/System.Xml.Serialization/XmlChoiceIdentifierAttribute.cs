@@ -46,16 +46,17 @@ namespace System.Xml.Serialization
 		}
 		public XmlChoiceIdentifierAttribute (string name)
 		{
-			MemberName = name;
+			memberName = name;
 		}
 
 		public string MemberName {
 			get {
+				if (memberName == null) {
+					return string.Empty;
+				}
 				return memberName;
-			} 
-			set {
-				memberName = value;
 			}
+			set { memberName = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)

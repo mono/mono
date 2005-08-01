@@ -46,15 +46,18 @@ namespace System.Xml.Serialization
 
 		public SoapEnumAttribute (string name)
 		{
-			Name = name;
+			this.name = name;
 		}
 
 		public string Name {
-			get { 
-				return name; 
+			get {
+				if (name == null) {
+					return string.Empty;
+				}
+				return name;
 			}
-			set { 
-				name = value; 
+			set {
+				name = value;
 			}
 		}
 		

@@ -55,24 +55,22 @@ namespace System.Xml.Serialization
 		public XmlAnyElementAttribute (string name, string ns)
 		{
 			elementName = name;
-			Namespace = ns;
+			this.ns = ns;
 		}
 
 		public string Name {
 			get {
+				if (elementName == null) {
+					return string.Empty;
+				}
 				return elementName;
-			} 
-			set {
-				elementName = value;
 			}
+			set { elementName = value; }
 		}
+
 		public string Namespace {
-			get {
-				return ns;
-			}
-			set {
-				ns = value;
-			}
+			get { return ns; }
+			set { ns = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)

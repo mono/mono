@@ -48,12 +48,12 @@ namespace System.Xml.Serialization
 		}
 		public SoapTypeAttribute (string typeName)
 		{
-			TypeName = typeName;
+			this.typeName = typeName;
 		}
 		public SoapTypeAttribute (string typeName, string ns)
 		{
-			TypeName = typeName;
-			Namespace = ns;
+			this.typeName = typeName;
+			this.ns = ns;
 		}
 		
 		public bool IncludeInSchema 
@@ -63,16 +63,17 @@ namespace System.Xml.Serialization
 		}
 
 		public string Namespace {
-			get { return ns;
-			}
-			set { ns = value;
-			}
+			get { return ns; }
+			set { ns = value; }
 		}
 		public string TypeName {
-			get { return typeName;
+			get {
+				if (typeName == null) {
+					return string.Empty;
+				}
+				return typeName;
 			}
-			set { typeName = value;
-			}
+			set { typeName = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)

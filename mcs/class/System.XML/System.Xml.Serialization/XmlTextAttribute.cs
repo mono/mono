@@ -39,7 +39,7 @@ namespace System.Xml.Serialization
 		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
 	public class XmlTextAttribute : Attribute
 	{
-		private string dataType = "";
+		private string dataType;
 		private Type type;
 
 		public XmlTextAttribute ()
@@ -48,25 +48,22 @@ namespace System.Xml.Serialization
 
 		public XmlTextAttribute (Type type)
 		{
-			Type = type;
+			this.type = type;
 		}
 		
 		public string DataType {
-			get { 
+			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
 				return dataType; 
 			}
-			set { 
-				dataType = value; 
-			}
+			set { dataType = value; }
 		}
-		public Type Type 
-		{
-			get { 
-				return type; 
-			}
-			set { 
-				type = value; 
-			}
+
+		public Type Type {
+			get { return type; }
+			set { type = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
@@ -75,6 +72,6 @@ namespace System.Xml.Serialization
 			KeyHelper.AddField (sb, 1, type);
 			KeyHelper.AddField (sb, 2, dataType);
 			sb.Append ('|');
-		}			
+		}
 	}
 }

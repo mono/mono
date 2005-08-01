@@ -51,19 +51,17 @@ namespace System.Xml.Serialization
 
 		public XmlArrayAttribute(string elementName)
 		{
-			ElementName = elementName;
+			this.elementName = elementName;
 		}
 
-		public string ElementName 
-		{
-			get
-			{
+		public string ElementName {
+			get {
+				if (elementName == null) {
+					return string.Empty;
+				}
 				return elementName;
-			} 
-			set
-			{
-				elementName = value;
 			}
+			set { elementName = value; }
 		}
 		public XmlSchemaForm Form 
 		{

@@ -49,33 +49,27 @@ namespace System.Xml.Serialization
 
 		public XmlTypeAttribute (string typeName)
 		{
-			TypeName = typeName;
+			this.typeName = typeName;
 		}
 
 		public bool IncludeInSchema {
-			get { 
-				return includeInSchema; 
-			}
-			set { 
-				includeInSchema = value; 
-			}
+			get { return includeInSchema; }
+			set { includeInSchema = value; }
 		}
 
 		public string Namespace {
-			get { 
-				return ns; 
-			} 
-			set { 
-				ns = value; 
-			}
+			get { return ns; } 
+			set { ns = value; }
 		}
+
 		public string TypeName {
-			get { 
-				return typeName; 
-			} 
-			set { 
-				typeName = value; 
+			get {
+				if (typeName == null) {
+					return string.Empty;
+				}
+				return typeName;
 			}
+			set { typeName = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
@@ -85,6 +79,6 @@ namespace System.Xml.Serialization
 			KeyHelper.AddField (sb, 2, typeName);
 			KeyHelper.AddField (sb, 4, includeInSchema);
 			sb.Append ('|');
-		}			
+		}
 	}
 }

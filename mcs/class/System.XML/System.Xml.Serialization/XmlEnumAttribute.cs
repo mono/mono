@@ -46,16 +46,12 @@ namespace System.Xml.Serialization
 
 		public XmlEnumAttribute (string name) 
 		{
-			Name = name;
+			this.name = name;
 		}
 
 		public string Name {
-			get { 
-				return name; 
-			}
-			set { 
-				name = value; 
-			}
+			get { return name; }
+			set { name = value; }
 		}
 
 		internal void AddKeyHash (System.Text.StringBuilder sb)

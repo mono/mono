@@ -1,3 +1,8 @@
+2005-07-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Xml_test.dll.sources: Added tests for default values of
+	Xml Serialization attribute classes.
+
 2005-06-27  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add files in Test/XmlFiles and

@@ -48,33 +48,39 @@ namespace System.Xml.Serialization
 		}
 		public SoapElementAttribute (string elementName) 
 		{
-			ElementName = elementName;
+			this.elementName = elementName;
 		}
 
 		public string DataType {
-			get { 
-				return dataType; 
+			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
+				return dataType;
 			}
-			set { 
-				dataType = value; 
+			set {
+				dataType = value;
 			}
 		}
 
 		public string ElementName {
-			get { 
-				return elementName; 
+			get {
+				if (elementName == null) {
+					return string.Empty;
+				}
+				return elementName;
 			}
-			set { 
-				elementName = value; 
+			set {
+				elementName = value;
 			}
 		}
 
 		public bool IsNullable {
-			get { 
-				return isNullable; 
+			get {
+				return isNullable;
 			} 
-			set { 
-				isNullable = value; 
+			set {
+				isNullable = value;
 			}
 		}
 		

@@ -39,7 +39,7 @@ namespace System.Xml.Serialization
 
 		public XmlIncludeAttribute (Type type)
 		{
-			Type = type;
+			this.type = type;
 		}
 
 		public Type Type {

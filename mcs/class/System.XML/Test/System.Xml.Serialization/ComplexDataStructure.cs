@@ -556,7 +556,7 @@ namespace MonoTests.System.XmlSerialization
 	[XmlType(Namespace="mm")]
 	public class DblStringContainer
 	{
-		[XmlArrayItem (NestingLevel=1)]
+		[XmlArrayItem (NestingLevel=1, IsNullable=true)]
 		public string [][] doublestring;
 		public object at;
 	}

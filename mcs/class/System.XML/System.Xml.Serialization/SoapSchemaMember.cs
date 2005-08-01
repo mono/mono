@@ -35,8 +35,8 @@ namespace System.Xml.Serialization {
 
 		#region Fields
 
-		string memberName;
-		XmlQualifiedName memberType;
+		private string memberName;
+		private XmlQualifiedName memberType = XmlQualifiedName.Empty;
 
 		#endregion
 
@@ -51,7 +51,12 @@ namespace System.Xml.Serialization {
 		#region Properties
 
 		public string MemberName {
-			get { return memberName; }
+			get {
+				if (memberName == null) {
+					return string.Empty;
+				}
+				return memberName;
+			}
 			set { memberName = value; }
 		}
 

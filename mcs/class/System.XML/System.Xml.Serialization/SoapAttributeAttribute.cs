@@ -50,20 +50,26 @@ namespace System.Xml.Serialization
 
 		public SoapAttributeAttribute (string attrName) 
 		{
-			AttributeName = attrName;
+			this.attrName = attrName;
 		}
 
 		public string AttributeName {
-			get	{
+			get {
+				if (attrName == null) {
+					return string.Empty;
+				}
 				return attrName;
 			} 
-			set	{
+			set {
 				attrName = value;
 			}
 		}
 
 		public string DataType {
 			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
 				return dataType;
 			} 
 			set {

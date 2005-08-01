@@ -52,34 +52,38 @@ namespace System.Xml.Serialization
 		}
 		public XmlElementAttribute (string elementName)
 		{
-			ElementName = elementName;
+			this.elementName = elementName;
 		}
 		public XmlElementAttribute (Type type)
 		{
-			Type = type;
+			this.type = type;
 		}
 		public XmlElementAttribute (string elementName, Type type)
 		{
-			ElementName = elementName;
-			Type = type;
+			this.elementName = elementName;
+			this.type = type;
 		}
 
 		public string DataType {
 			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
 				return dataType;
 			}
-			set {
-				dataType = value;
-			}
+			set { dataType = value; }
 		}
+
 		public string ElementName {
 			get {
+				if (elementName == null) {
+					return string.Empty;
+				}
 				return elementName;
 			}
-			set {
-				elementName = value;
-			}
+			set { elementName = value; }
 		}
+
 		public XmlSchemaForm Form {
 			get {
 				return form;
@@ -88,6 +92,7 @@ namespace System.Xml.Serialization
 				form = value;
 			}
 		}
+
 		public string Namespace {
 			get {
 				return ns;
@@ -96,6 +101,7 @@ namespace System.Xml.Serialization
 				ns = value;
 			}
 		}
+
 		public bool IsNullable {
 			get {
 				return isNullable;
@@ -104,6 +110,7 @@ namespace System.Xml.Serialization
 				isNullable = value;
 			}
 		}
+
 		public Type Type {
 			get {
 				return type;
@@ -123,6 +130,6 @@ namespace System.Xml.Serialization
 			KeyHelper.AddField (sb, 5, type);
 			KeyHelper.AddField (sb, 6, isNullable);
 			sb.Append ('|');
-		}			
+		}
 	}
 }

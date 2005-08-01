@@ -47,48 +47,41 @@ namespace System.Xml.Serialization
 
 		public XmlRootAttribute ()
 		{
-		
-		}
-		public XmlRootAttribute (string elementName)
-		{
-			ElementName = elementName;
 		}
 
-		public string DataType 
+		public XmlRootAttribute (string elementName)
 		{
-			get { 
-				return dataType; 
-			} 
-			set { 
-				dataType = value; 
-			}
+			this.elementName = elementName;
 		}
-		public string ElementName 
-		{
-			get { 
-				return elementName; 
+
+		public string DataType {
+			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
+				return dataType;
 			}
-			set { 
-				elementName = value; 
-			}
+			set { dataType = value; }
 		}
-		public bool IsNullable 
-		{
-			get { 
-				return isNullable; 
+
+		public string ElementName {
+			get {
+				if (elementName == null) {
+					return string.Empty;
+				}
+				return elementName;
 			}
-			set { 
-				isNullable = value; 
-			}
+			set { elementName = value; }
 		}
-		public string Namespace 
-		{
-			get { 
-				return ns; 
-			} 
-			set { 
-				ns = value; 
-			}
+
+		public bool IsNullable {
+			get { return isNullable; }
+			set { isNullable = value; }
+		}
+
+		public string Namespace {
+			get { return ns; } 
+			set { ns = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
@@ -99,6 +92,6 @@ namespace System.Xml.Serialization
 			KeyHelper.AddField (sb, 3, dataType);
 			KeyHelper.AddField (sb, 4, isNullable);
 			sb.Append ('|');
-		}			
+		}
 	}
 }

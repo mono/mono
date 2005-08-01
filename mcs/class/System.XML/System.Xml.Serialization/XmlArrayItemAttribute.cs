@@ -44,7 +44,7 @@ namespace System.Xml.Serialization
 		private string elementName;
 		private XmlSchemaForm form;
 		private string ns;
-		private bool isNullable = true;
+		private bool isNullable = false;
 		private int nestingLevel;
 		private Type type;
 
@@ -53,42 +53,60 @@ namespace System.Xml.Serialization
 		}
 		public XmlArrayItemAttribute (string elementName)
 		{
-			ElementName = elementName;
+			this.elementName = elementName;
 		}
+
 		public XmlArrayItemAttribute (Type type)
 		{
-			Type = type;
+			this.type = type;
 		}
+
 		public XmlArrayItemAttribute (string elementName, Type type)
 		{
-			ElementName = elementName;
-			Type = type;
+			this.elementName = elementName;
+			this.type = type;
 		}
 
 		public string DataType {
-			get { return dataType; }
+			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
+				return dataType;
+			}
 			set { dataType = value; }
 		}
+
 		public string ElementName {
-			get { return elementName; }
+			get {
+				if (elementName == null) {
+					return string.Empty;
+				}
+				return elementName;
+			}
 			set { elementName = value; }
 		}
+
 		public XmlSchemaForm Form {
 			get { return form; }
 			set { form = value; }
 		}
+
 		public string Namespace {
 			get { return ns; }
 			set { ns = value; }
 		}
+
 		public bool IsNullable {
 			get { return isNullable; } 
 			set { isNullable = value; }
 		}
+
 		public Type Type {
 			get { return type; }
 			set { type = value; }
 		}
+
 		public int NestingLevel {
 			get { return nestingLevel; }
 			set { nestingLevel = value; }

@@ -1,3 +1,26 @@
+2005-07-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComplexDataStructure.cs: Fixed test due to change in default value
+	of XmlArrayItemAttribute.IsNullable.
+	* SoapAttributeAttributeTests.cs: Added tests for default values.
+	* SoapElementAttributeTests.cs: Added tests for default values.
+	* SoapEnumAttributeTests.cs: Added tests for default values.
+	* SoapIncludeAttributeTests.cs: Added tests for default values.
+	* SoapSchemaMemberTests.cs: Added tests for default values.
+	* SoapTypeAttributeTests.cs: Added tests for default values.
+	* XmlAnyElementAttributeTests.cs: Added tests for default values.
+	* XmlArrayAttributeTests.cs: Added tests for default values.
+	* XmlArrayItemAttributeTests.cs: Added tests for default values.
+	* XmlAttributeAttributeTests.cs: Added tests for default values.
+	* XmlChoiceIdentifierAttributeTests.cs: Added tests for default 
+	values.
+	* XmlElementAttributeTests.cs: Added tests for default values.
+	* XmlEnumAttributeTests.cs: Added tests for default values.
+	* XmlIncludeAttributeTests.cs: Added tests for default values.
+	* XmlRootAttributeTests.cs: Added tests for default values.
+	* XmlTextAttributeTests.cs: Added tests for default values.
+	* XmlTypeAttributeTests.cs: Added tests for default values.
+
 2005-06-17  Raja R Harinath  <rharinath@novell.com>
 
 	* XmlSerializerTests.cs (TestSerializeDateTime): Avoid rounding

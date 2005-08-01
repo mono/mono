@@ -1,3 +1,39 @@
+2005-07-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapAttributeAttribute.cs: Return zero-length string if 
+	AttributeName or DataType are null.
+	* SoapEnumAttribute.cs: Return zero-length string if Name is null.
+	* SoapIncludeAttribute.cs: Avoid using property in ctor.
+	* SoapSchemaMember.cs: Return zero-length string if MemberName is
+	null. MemberType should be XmlQualifiedName.Empty by default.
+	* SoapTypeAttribute.cs: Return zero-length string if TypeName is
+	null. Avoid using property in ctor.
+	* XmlArrayAttribute.cs: Return zero-length string if ElementName is
+	null. Avoid using property in ctor.
+	* XmlArrayItemAttribute.cs: IsNullable must be false by default.
+	Return zero-length string if DataType or ElementName are null. Avoid
+	using property in ctor.
+	* SoapElementAttribute.cs: Return zero-length string when DataType
+	or ElementName are null. Avoid using property in ctor.
+	* XmlAnyElementAttribute.cs: Return zero-length string when Name is
+	null. Avoid using property in ctor.
+	* XmlAttributeAttribute.cs: Avoid using property in ctor. Return
+	zero-length string if AttributeName or DataType are null.
+	* XmlChoiceIdentifierAttribute.cs: Return zero-length string when
+	MemberName is null.
+	* XmlElementAttribute.cs: Return zero-length string when DataType or
+	ElementName are null. Avoid using property in ctor.
+	* XmlEnumAttribute.cs: Avoid using property in ctor.
+	* XmlIncludeAttribute.cs: Avoid using property in ctor.
+	* XmlReflectionImporter.cs: AttributeName, ElementName and DataType
+	can no longer be null. Use check for zero-length string to determine
+	whether they are set. Corrected exception message when DataType is
+	set for complex type.
+	* XmlRootAttribute.cs: Return zero-length string if DataType or
+	ElementName are null. Avoid using property in ctor.
+	* XmlTextAttribute.cs: Return zero-length string if DataType is null.
+	* XmlTypeAttribute.cs: Return zero-length string if TypeName is null.
+
 2005-07-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: In the generated serializer always

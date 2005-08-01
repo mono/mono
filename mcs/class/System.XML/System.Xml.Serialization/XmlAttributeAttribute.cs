@@ -52,63 +52,53 @@ namespace System.Xml.Serialization
 
 		public XmlAttributeAttribute (string attributeName)
 		{
-			AttributeName = attributeName;
+			this.attributeName = attributeName;
 		}
 		
 		public XmlAttributeAttribute (Type type)
 		{
-			Type = type;
+			this.type = type;
 		}
 
 		public XmlAttributeAttribute (string attributeName, Type type)
 		{
-			AttributeName = attributeName;
-			Type = type;
+			this.attributeName = attributeName;
+			this.type = type;
 		}
 
 		public string AttributeName {
 			get {
+				if (attributeName == null) {
+					return string.Empty;
+				}
 				return attributeName;
 			}
-			set {
-				attributeName = value;
-			}
-		}
-		public string DataType {
-			get {
-				return dataType;
-			}
-			set {
-				dataType = value;
-			}
-		}
-		public XmlSchemaForm Form {
-			get {
-				return form;
-			}
-			set {
-				form = value;
-			}
-		}
-		public string Namespace {
-			get {
-				return ns;
-			}
-			set {
-				ns = value;
-			}
+			set { attributeName = value; }
 		}
 
-		public Type Type
-		{
-			get 
-			{
-				return type;
+		public string DataType {
+			get {
+				if (dataType == null) {
+					return string.Empty;
+				}
+				return dataType;
 			}
-			set 
-			{
-				type = value;
-			}
+			set { dataType = value; }
+		}
+
+		public XmlSchemaForm Form {
+			get { return form; }
+			set { form = value; }
+		}
+
+		public string Namespace {
+			get { return ns; }
+			set { ns = value; }
+		}
+
+		public Type Type {
+			get { return type; }
+			set { type = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
