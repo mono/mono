@@ -1,3 +1,8 @@
+2005-08-02  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tokenizer.cs: ReadString (): added an overload where the
+	terminator can be escaped by repeating twice.
+
 2005-06-29  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ArithmeticExpressions.cs: Eval :if any one of the argument is

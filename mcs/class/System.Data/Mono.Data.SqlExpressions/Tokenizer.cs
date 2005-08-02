@@ -171,17 +171,34 @@ namespace Mono.Data.SqlExpressions {
 
 		private string ReadString (char terminator)
 		{
-			StringBuilder sb = new StringBuilder ();
-			char next;
-			while ((next = Next ()) != terminator) {
-				sb.Append (ProcessEscapes (next));
-				if (!MoveNext ())
-					break;
-			}
+			return ReadString (terminator, false /* canEscape */);
+		}
 
-			MoveNext ();
-				
-			return sb.ToString ();
+		private string ReadString (char terminator, 
+					   bool canEscape // twice the terminator is not a terminator
+					   )
+		{
+			bool terminated = false;
+			StringBuilder sb = new StringBuilder ();
+			while (MoveNext ()) {
+				if (Current () == terminator) {
+					if (Next () == terminator) {
+						sb.Append (ProcessEscapes (Current ()));
+						MoveNext ();
+						continue;
+					}
+					terminated = true;
+					break;
+				}
+				sb.Append (ProcessEscapes (Current ()));
+			}
+			
+			if (! terminated)
+				throw new SyntaxErrorException (String.Format ("invalid string at {0}{1}<--",
+									       terminator,
+									       sb.ToString ())
+								);
+			return sb.ToString ();			
 		}
 
 		private string ReadIdentifier ()
@@ -262,7 +279,7 @@ namespace Mono.Data.SqlExpressions {
 
 			case '\'':
 			case '\"':
-				val = ReadString (cur);
+				val = ReadString (cur, true);
 				return Token.StringLiteral;
 
 			default:

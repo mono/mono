@@ -117,6 +117,11 @@ namespace MonoTests.System.Data
                 	Row [0] = "Teresa";
                 	Row [1] = "Mack";
                 	Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+                	Row [0] = "'Jhon O'' Collenal'";
+                	Row [1] = "Pack";
+                	Mom.Rows.Add (Row);
                 	
                 	Row = Child.NewRow ();
                 	Row [0] = "Nick";
@@ -147,9 +152,18 @@ namespace MonoTests.System.Data
                 	Row [0] = "Mack";
                 	Row [1] = 99;
                 	Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+                	Row [0] = "Pack";
+                	Row [1] = 66;
+                	Child.Rows.Add (Row);
                 	
                 	DataRow [] Rows = Mom.Select ("Name = 'Teresa'");
                 	AssertEquals ("test#01", 2, Rows.Length);
+
+			// test with apos escaped
+			Rows = Mom.Select ("Name = '''Jhon O'''' Collenal'''");
+                	AssertEquals ("test#01.1", 1, Rows.Length);
                 	
                 	Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Nick'");
                 	AssertEquals ("test#02", 0, Rows.Length);
@@ -161,7 +175,7 @@ namespace MonoTests.System.Data
                 	AssertEquals ("test#04", "Mack", Rows [0] [1]);
                 	
                 	Rows = Mom.Select ("Name = 'Teresa' or ChildName <> 'Jack'");
-                	AssertEquals ("test#05", 5, Rows.Length);
+                	AssertEquals ("test#05", 6, Rows.Length);
 			
                 	Rows = Child.Select ("age = 20 - 1");
                 	AssertEquals ("test#06", 1, Rows.Length);
@@ -170,7 +184,7 @@ namespace MonoTests.System.Data
                 	AssertEquals ("test#07", 3, Rows.Length);
 			
                 	Rows = Child.Select ("age >= 20");
-                	AssertEquals ("test#08", 3, Rows.Length);
+                	AssertEquals ("test#08", 4, Rows.Length);
 			
                 	Rows = Child.Select ("age >= 20 and name = 'Mack' or name = 'Nick'");
                 	AssertEquals ("test#09", 2, Rows.Length);
@@ -180,7 +194,7 @@ namespace MonoTests.System.Data
                 	AssertEquals ("test#11", "Mack", Rows [0] [0]);
                 	
                 	Rows = Child.Select ("not (Name = 'Jack')");
-                	AssertEquals ("test#12", 5, Rows.Length);
+                	AssertEquals ("test#12", 6, Rows.Length);
                 }
                 
 		[Test]
