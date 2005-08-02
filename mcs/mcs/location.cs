@@ -244,10 +244,10 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			if (column_bits == 0)
-				return Name + ": (" + Row + ")";
+				return Name + "(" + Row + "):";
 			else
-				return Name + ": (" + Row + ", " + Column +
-					(Column == column_mask ? "+)" : ")");
+				return Name + "(" + Row + "," + Column +
+					(Column == column_mask ? "+):" : "):");
 		}
 		
 		/// <summary>
