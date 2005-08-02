@@ -13,3 +13,15 @@ System.Windows.Forms/TextBoxTest.cs
 System.Windows.Forms/ButtonTest.cs
 System.Windows.Forms/ListBoxTest.cs
 System.Windows.Forms/ListBoxEventTest.cs
+System.Windows.Forms/ListViewTest.cs
+System.Windows.Forms/ListViewEventTest.cs
+System.Windows.Forms/ComboBoxTest.cs
+System.Windows.Forms/CheckBoxEventTest.cs
+System.Windows.Forms/CheckBoxTest.cs
+System.Windows.Forms/CheckedListBoxEventTest.cs
+System.Windows.Forms/CheckedListBoxTest.cs
+System.Windows.Forms/FormTest.cs
+System.Windows.Forms/FormEventTest.cs
+System.Windows.Forms/MenuTest.cs
+System.Windows.Forms/GroupBoxTest.cs
+System.Windows.Forms/ImageListTest.cs

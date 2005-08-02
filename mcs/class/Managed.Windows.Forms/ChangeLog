@@ -1,3 +1,11 @@
+
+2005-08-02  Ritvik Mayank  <mritvik@novell.com>
+	
+	* M.gif : used by some of the test-cases
+	* System.Windows.Forms_test.dll.sources : Added test-case for
+	  ListView, ComboBox, CheckBox, CheckedList, Form, Menu, GroupBox
+	  and ImageList
+
 2005-07-07  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* System.Windows.Forms_test.dll.sources : Added MimeIcon.cs

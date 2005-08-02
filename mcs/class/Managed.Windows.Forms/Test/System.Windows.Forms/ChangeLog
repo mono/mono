@@ -1,3 +1,10 @@
+2005-08-02  Ritvik Mayank  <mritvik@novell.com>
+	
+	* FormTest.cs : Test case for Form
+	* GropBoxTest : Test case for GroupBox
+	* MenuTest.cs : Test case for Menu
+	* ImageListTest.cs : Test case for ImageList
+
 2005-07-26  Ritvik Mayank  <mritvik@novell.com>
 	
 	* ListViewTest.cs : Test case for ListView
