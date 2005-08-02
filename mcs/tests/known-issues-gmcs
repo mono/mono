@@ -13,5 +13,6 @@ test-anon-27.cs
 test-xml-027.cs
 
 gtest-187.cs IGNORE
+gtest-179.cs IGNORE
 
 test-cls-05.cs
