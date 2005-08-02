@@ -31,40 +31,54 @@ namespace Mono.CSharp {
 		public readonly MemberName Left;
 		public readonly Location Location;
 
+		bool is_double_colon;
+
 		public static readonly MemberName Null = new MemberName ("");
 
+		private MemberName (MemberName left, string name, bool is_double_colon, Location loc)
+		{
+			this.Name = name;
+			this.Location = loc;
+			this.is_double_colon = is_double_colon;
+			this.Left = left;
+		}
+
 		public MemberName (string name)
-			: this (name, Location.Null)
+			: this (null, name, false, Location.Null)
 		{
 		}
 
 		public MemberName (MemberName left, string name)
-			: this (left, name, left != null ? left.Location : Location.Null)
+			: this (left, name, false, left != null ? left.Location : Location.Null)
 		{
 		}
 
 		public MemberName (string name, Location loc)
+			: this (null, name, false, loc)
 		{
-			this.Name = name;
-			this.Location = loc;
 		}
 
 		public MemberName (MemberName left, string name, Location loc)
-			: this (name, loc)
+			: this (left, name, false, loc)
 		{
-			this.Left = left;
+		}
+
+		public MemberName (string alias, string name, Location loc)
+			: this (new MemberName (alias), name, true, loc)
+		{
 		}
 
 		public MemberName (MemberName left, MemberName right)
-			: this (left, right, left != null ? left.Location : right != null ? right.Location : Location.Null)
+			: this (left, right, right.Location)
 		{
 		}
 
 		public MemberName (MemberName left, MemberName right, Location loc)
+			: this (null, right.Name, false, loc)
 		{
-			Name = right.Name;
-			Left = (right.Left == null) ? left : new MemberName (left, right.Left);
-			Location = loc;
+			if (right.is_double_colon)
+				throw new InternalErrorException ("Cannot append double_colon member name");
+			this.Left = (right.Left == null) ? left : new MemberName (left, right.Left);
 		}
 
 		static readonly char [] dot_array = { '.' };
@@ -88,8 +102,9 @@ namespace Mono.CSharp {
 		public string GetName (bool is_generic)
 		{
 			string name = is_generic ? Basename : Name;
+			string connect = is_double_colon ? "::" : ".";
 			if (Left != null)
-				return Left.GetName (is_generic) + "." + name;
+				return Left.GetName (is_generic) + connect + name;
 			else
 				return name;
 		}
@@ -100,49 +115,51 @@ namespace Mono.CSharp {
 		///
 		public string GetPartialName ()
 		{
+			string connect = is_double_colon ? "::" : ".";
 			if (Left != null)
-				return Left.GetPartialName () + "." + Name;
+				return Left.GetPartialName () + connect + Name;
 			else
 				return Name;
 		}
 
 		public string GetTypeName ()
 		{
+			string connect = is_double_colon ? "::" : ".";
 			if (Left != null)
-				return Left.GetTypeName () + "." + Name;
+				return Left.GetTypeName () + connect + Name;
 			else
 				return Name;
 		}
 
 		public Expression GetTypeExpression ()
 		{
-			if (Left != null) {
-				Expression lexpr = Left.GetTypeExpression ();
-
-				return new MemberAccess (lexpr, Name, Location);
-			} else {
+			if (Left == null)
 				return new SimpleName (Name, Location);
+			if (is_double_colon) {
+				if (Left.Left != null)
+					throw new InternalErrorException ("The left side of a :: should be an identifier");
+				return new QualifiedAliasMember (Left.Name, Name, Location);
 			}
+
+			Expression lexpr = Left.GetTypeExpression ();
+			return new MemberAccess (lexpr, Name, Location);
 		}
 
 		public MemberName Clone ()
 		{
-			if (Left != null)
-				return new MemberName (Left.Clone (), Name, Location);
-			else
-				return new MemberName (Name, Location);
+			MemberName left_clone = Left == null ? null : Left.Clone ();
+			return new MemberName (left_clone, Name, is_double_colon, Location);
 		}
 
 		public string Basename {
-			get {
-				return Name;
-			}
+			get { return Name; }
 		}
 
 		public override string ToString ()
 		{
+			string connect = is_double_colon ? "::" : ".";
 			if (Left != null)
-				return Left + "." + Name;
+				return Left + connect + Name;
 			else
 				return Name;
 		}
@@ -157,6 +174,8 @@ namespace Mono.CSharp {
 			if (this == other)
 				return true;
 			if (other == null || Name != other.Name)
+				return false;
+			if (is_double_colon != other.is_double_colon)
 				return false;
 #if NET_2_0
 			if (TypeArguments == null)
@@ -176,7 +195,8 @@ namespace Mono.CSharp {
 			int hash = Name.GetHashCode ();
 			for (MemberName n = Left; n != null; n = n.Left)
 				hash ^= n.Name.GetHashCode ();
-
+			if (is_double_colon)
+				hash ^= 0xbadc01d;
 #if NET_2_0
 			if (TypeArguments != null)
 				hash ^= TypeArguments.Count << 5;

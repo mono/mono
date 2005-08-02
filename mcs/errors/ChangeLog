@@ -1,3 +1,8 @@
+2005-08-03  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0431.cs, cs0432.cs, cs0432-2.cs, cs0440.cs, cs0687.cs:
+	New tests for the qualified-alias-member (::) feature.
+
 2005-08-01  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0122-17.cs: New test from #75669.

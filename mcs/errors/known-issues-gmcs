@@ -33,8 +33,12 @@ cs0266.cs
 cs0277.cs
 cs0426.cs
 cs0428.cs
+cs0431.cs
+cs0432.cs
+cs0432-2.cs
 cs0433.cs NO ERROR
 cs0436.cs NO ERROR
+cs0440.cs
 cs0525.cs
 cs0526.cs
 cs0536-2.cs
@@ -53,6 +57,7 @@ cs0642.cs NO ERROR
 cs0647-15.cs NO ERROR # corlib bug 73143
 cs0647-16.cs NO ERROR
 cs0652.cs NO ERROR
+cs0687.cs
 cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
 cs1501-5.cs

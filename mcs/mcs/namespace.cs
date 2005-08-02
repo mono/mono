@@ -451,6 +451,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (RootContext.Version == LanguageVersion.Default &&
+			    name == "global" && RootContext.WarningLevel >= 2)
+				Report.Warning (440, loc, "An alias named `global' will not be used when resolving 'global::';" +
+					" the global namespace will be used instead");
+
 			aliases [name] = new AliasEntry (Doppelganger, name, alias, loc);
 		}
 
@@ -469,6 +474,22 @@ namespace Mono.CSharp {
 		{
 			Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
 				name, t1.FullName, t2.FullName);
+		}
+
+		// Looks-up a alias named @name in this and surrounding namespace declarations
+		public FullNamedExpression LookupAlias (string name)
+		{
+			AliasEntry entry = null;
+			// We use Parent rather than ImplicitParent since we know implicit namespace declarations
+			// cannot have using entries.
+			for (NamespaceEntry n = this; n != null; n = n.Parent) {
+				if (n.aliases == null)
+					continue;
+				entry = n.aliases [name] as AliasEntry;
+				if (entry != null)
+					return entry.Resolve ();
+			}
+			return null;
 		}
 
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)

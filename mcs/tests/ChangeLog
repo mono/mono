@@ -1,3 +1,10 @@
+2005-08-03  Raja R Harinath  <rharinath@novell.com>
+
+	* test-426.cs, test-427.cs, test-428.cs, test-429.cs,
+	test-430.cs, test-431.cs, test-432.cs, test-433.cs,
+	test-434.cs, test-435.cs, test-436.cs: New tests for the
+	qualified-alias-member (::) feature.
+
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-425.cs, known-issues-gmcs : added test for bug #57047, which is

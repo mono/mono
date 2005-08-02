@@ -4,15 +4,24 @@
 # csXXXX.cs		: test case causes error
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
+gtest-179.cs IGNORE
+gtest-187.cs IGNORE
 test-308.cs
 test-377.cs
 test-425.cs
+test-426.cs
+test-427.cs
+test-428.cs
+test-429.cs
+test-430.cs
+test-431.cs
+test-432.cs
+test-433.cs
+test-434.cs
+test-435.cs
+test-436.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs
-test-xml-027.cs
-
-gtest-187.cs IGNORE
-gtest-179.cs IGNORE
-
 test-cls-05.cs
+test-xml-027.cs
