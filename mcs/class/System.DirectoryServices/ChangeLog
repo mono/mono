@@ -1,3 +1,7 @@
+2005-28-07  Boris Kirzner <borisk@mainsoft.com>
+	* System.DirectoryServices.vmwcsproj: updated TARGET_JVM project file.
+	* App.config: added addition supported key examples.
+
 2005-05-07  Boris Kirzner <borisk@mainsoft.com>	
 	* System.DirectoryServices.vmwcsproj: Project file converted 
 	to Developer Edition format. Removed ClearCase references.

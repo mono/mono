@@ -126,7 +126,7 @@ namespace System.DirectoryServices
 				_conn= new LdapConnection ();
 				LdapUrl lUrl = new LdapUrl (ADsPath);
 				_conn.Connect(lUrl.Host,lUrl.Port);
-				_conn.Bind(Username,Password);
+				_conn.Bind(Username,Password, (Novell.Directory.Ldap.AuthenticationTypes)AuthenticationType);
 			}
 			catch(LdapException ex)			{
 				throw ex;

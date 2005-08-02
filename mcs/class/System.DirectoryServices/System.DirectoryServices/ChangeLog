@@ -1,3 +1,7 @@
+2005-28-07  Boris Kirzner <borisk@mainsoft.com>
+	* DirectoryEntry.cs: pass AuthenticationType as a parameter for
+	LdapConnection.Bind.
+
 2005-06-19 Boris Kirzner <borisk@mainsoft.coim>
 	* DirectorySearcher.cs: 
 		- Use ADsPath property (always represents an actual url) 
