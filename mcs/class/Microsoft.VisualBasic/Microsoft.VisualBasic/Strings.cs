@@ -638,7 +638,7 @@ namespace Microsoft.VisualBasic
 					   CompareMethod Compare)
 		{
 			if ((Start == 0) || (Start < -1))
-				throw new ArgumentException("Argument 'StringCheck' must be greater than 0 or equal to -1", "StringCheck");
+				throw new ArgumentException("Argument 'Start' must be greater than 0 or equal to -1", "Start");
 
 			if (StringCheck == null)
 				return 0;
@@ -646,41 +646,20 @@ namespace Microsoft.VisualBasic
 			if (Start == -1)
 				Start = StringCheck.Length;
 										
-			if (Start > StringCheck.Length || StringCheck.Length == 0)
-				return 0;
-																		  
 			if (StringMatch == null || StringMatch.Length == 0)
 				return Start;
 
-			int retindex = -1;
-			int index = -1;
-			while (index == 0){
-				switch (Compare)
-				{
-				case CompareMethod.Text:
-					index = System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(
-														    StringCheck.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
-														    StringMatch.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
-														    Start - 1) + 1;
-					break;
-				case CompareMethod.Binary:
-					index = StringCheck.IndexOf(StringMatch, Start - 1) + 1;
-					break;
-				default:
-					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
-				}
-				if (index == 0){
-					if (retindex == -1)
-						return index;
-					else
-						return retindex;
-				}
-				else {
-					retindex = index;
-					Start = index;
-				}
+			if (Start > StringCheck.Length || StringCheck.Length == 0)
+				return 0;																		  
+
+			if (Compare == CompareMethod.Text) {
+				// FIXME: this wastes memory and time, remove when CompareInfo.LastIndexOf works correctly 
+				StringCheck = StringCheck.ToLower();
+				StringMatch = StringMatch.ToLower();
+				// FIXME: depends on Managed Collation being ready to be able to use with CompareOptions.IgnoreCase
+				// return CultureInfo.CurrentCulture.CompareInfo.LastIndexOf(StringCheck, StringMatch, Start - 1, CompareOptions.IgnoreCase) + 1; 
 			}
-			return retindex;
+			return StringCheck.LastIndexOf(StringMatch, Start - 1) + 1;
 		}
 
 		public static string Join(string[] SourceArray, 

@@ -1,3 +1,8 @@
+2005-08-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Strigns.cs: Correcting InStrRev function
+		- parameter name in message for first exception
+		- use LastIndexOf (FIXME pending managed collation(corlib) working)
+		
 2005-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Collection.cs : csc build fix.
