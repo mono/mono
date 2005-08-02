@@ -63,7 +63,18 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			if (Value == null)
 				return 0.0f;
 
-			return Convert.ToSingle(Value,numberFormat);
+			long [] val = new long [1];
+			try {
+				if (StringType.IsHexOrOctValue (Value, val))
+					return (float) val [0];
+
+				return Convert.ToSingle(Value,numberFormat);
+			} catch (FormatException e) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Float"));
+			}
+			return 0.0f;
 
 			//Actually we may need to downcast to long if H or O
 

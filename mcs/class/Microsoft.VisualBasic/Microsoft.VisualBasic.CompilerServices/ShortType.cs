@@ -67,8 +67,18 @@ namespace Microsoft.VisualBasic.CompilerServices
 		 */
 		public static short FromString(string Value) {
 			if (Value == null)return 0;
+			long [] val = new long [1];
+			try {
+				if (StringType.IsHexOrOctValue (Value, val))
+					return Convert.ToInt16 (val [0]);
 
-			return short.Parse(Value); 
+				return Convert.ToInt16 (Convert.ToDouble (Value)); 
+			} catch (FormatException e) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Short"));
+			}
+			return 0;
 		}
 
 	}

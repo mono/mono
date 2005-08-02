@@ -76,21 +76,17 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			//return Parse(Value, numberFormat);
 
 			//TODO convert this to C# and uncomment
-			//try {
-				//double d;
+			try {
 				long[] lRes = new long[1];
 				bool b = StringType.IsHexOrOctValue(Value, lRes);
 				if (b == true)return (decimal)lRes[0];
 				return Parse(Value, numberFormat);
-			//}
-			//catch (OverflowException exp) {
-			//	throw (RuntimeException)ExceptionUtils.VbMakeException(6);
-			//}
-			//catch (FormatException exp) {
-			//	throw new InvalidCastException(
-			//		Utils.GetResourceString("InvalidCast_FromStringTo", 
-			//		str, "Decimal"));
-			//}
+			}
+			catch (FormatException exp) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Decimal"));
+			}
 		}
 		/**
 		 * The method converts given object to decimal by the following logic:

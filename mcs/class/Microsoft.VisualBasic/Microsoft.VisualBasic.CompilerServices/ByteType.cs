@@ -75,22 +75,21 @@ namespace Microsoft.VisualBasic.CompilerServices
 		public static System.Byte FromString (string Value) {
 			if(Value == null)return 0;
     
-			int Base = 10;
-			int start = 0;
-			if(Value.Substring(0,1) == "&"){
-				//is diff base
-				if(Value.Substring(1,1).ToUpper() == "H")
-					Base = 16;
-				else if(Value.Substring(1,1).ToUpper() == "O")
-					Base = 8;
-				else {
-					// I think we should just let convert take care of the execption.
-					// Should we throw a special execption instead?
-					// I think the Mainsoft java code below just converts execptions from java to C#
+			byte byteVal = 0;
+			long[] val = new long [1];
+			try {
+				if (StringType.IsHexOrOctValue (Value, val) == true) {
+					return Convert.ToByte (val [0]);
 				}
-				start = 2;
+
+				// Using Convert.ToDouble to handle any floating point nos
+				byteVal =  Convert.ToByte ((Convert.ToDouble(Value)));
+			} catch (FormatException e) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Byte"));
 			}
-			return Convert.ToByte(Value.Substring(start,Value.Length - start), Base);
+			return byteVal;
   
 			// Mainsoft java implmentation.
 			// isNumber checks for leading &H or &O

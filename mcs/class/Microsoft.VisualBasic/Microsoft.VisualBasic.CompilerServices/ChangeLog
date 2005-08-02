@@ -1,3 +1,11 @@
+2005-08-02  Satya Sudha K <ksathyasudha@novell.com>
+	* ByteType.cs, ShortType.cs, IntegerType.cs, LongType.cs, 
+	* DecimalType.cs, SingleType.cs, DoubleType.cs :
+		Modified the 'FromString' method to :
+		- Throw an InvalidCastException whenever 'Convert.ToDouble' throws a FormatException
+		- Support conversion of octal and hex literals to all numeric types.
+		
+
 2005-06-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* VBBinder.cs : Made it internal as it isn't public in 1.1 API
 	* DoubleType.cs: corrected, TryParse is now internal

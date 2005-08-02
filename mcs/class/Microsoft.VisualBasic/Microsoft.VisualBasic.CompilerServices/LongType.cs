@@ -67,8 +67,18 @@ namespace Microsoft.VisualBasic.CompilerServices
 		 */
 		public static long FromString(string Value) {
 			if (Value == null)return 0;
+			long [] val = new long [1];
+			try {
+				if (StringType.IsHexOrOctValue (Value, val))
+					return val [0];
 
-			return long.Parse(Value); 
+				return Convert.ToInt64 (Convert.ToDouble (Value)); 
+			} catch (FormatException e) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Long"));
+			}
+			return 0;
 		}
 
 	}

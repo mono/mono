@@ -59,8 +59,14 @@ namespace Microsoft.VisualBasic.CompilerServices
 
 			//try {
 				double[] lRes = new double[1];
-			if (VBUtils.isNumber(Value, lRes))
-				return lRes[0];
+			try {
+				if (VBUtils.isNumber(Value, lRes))
+					return lRes[0];
+			} catch (FormatException e) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Double"));
+			}
 			//}
 			//catch (Exception e) {
 			//	throw new InvalidCastException(

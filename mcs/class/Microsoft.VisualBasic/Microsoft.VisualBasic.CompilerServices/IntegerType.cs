@@ -54,14 +54,16 @@ namespace Microsoft.VisualBasic.CompilerServices
 		public static System.Int32 FromString (string Value) {
 			if(Value == null)return 0;
 
-			double[] lRes = new double[1];
-			//the following handles &H &O and other stuff. int.parse does not.
-			if (VBUtils.isNumber(Value, lRes)) {
-				long val = (long)Math.Round(lRes[0]);
-				if (val > Int32.MaxValue || val < Int32.MinValue)
-					throw new OverflowException(
-						/*Environment.GetResourceString(*/"Overflow_Int32")/*)*/;
-				return (int) val;
+			long [] val = new long [1];
+			try {
+				if (StringType.IsHexOrOctValue (Value, val))
+					return Convert.ToInt32 (val [0]);
+
+				return Convert.ToInt32 (Convert.ToDouble (Value)); 
+			} catch (FormatException e) {
+				throw new InvalidCastException(
+					Utils.GetResourceString("InvalidCast_FromStringTo", 
+					Value, "Integer"));
 			}
 			return 0;
 		}
