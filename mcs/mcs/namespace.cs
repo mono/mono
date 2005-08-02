@@ -273,7 +273,7 @@ namespace Mono.CSharp {
 			public UsingEntry (NamespaceEntry entry, MemberName name, Location loc)
 			{
 				Name = name;
-				Expr = name.GetTypeExpression (loc);
+				Expr = name.GetTypeExpression ();
 				NamespaceEntry = entry;
 				Location = loc;
 			}
@@ -313,7 +313,7 @@ namespace Mono.CSharp {
 			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
 			{
 				Name = name;
-				Alias = alias.GetTypeExpression (loc);
+				Alias = alias.GetTypeExpression ();
 				NamespaceEntry = entry;
 				Location = loc;
 			}

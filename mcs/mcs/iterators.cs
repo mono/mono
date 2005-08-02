@@ -326,13 +326,13 @@ namespace Mono.CSharp {
 			point.Define (ig);
 		}
 
-		private static MemberName MakeProxyName (string name)
+		private static MemberName MakeProxyName (string name, Location loc)
 		{
 			int pos = name.LastIndexOf ('.');
 			if (pos > 0)
 				name = name.Substring (pos + 1);
 
-			return new MemberName ("<" + name + ">__" + (proxy_count++));
+			return new MemberName ("<" + name + ">__" + (proxy_count++), loc);
 		}
 
 		//
@@ -341,8 +341,8 @@ namespace Mono.CSharp {
 		public Iterator (IMethodData m_container, TypeContainer container,
 				 InternalParameters parameters,
 				 int modifiers)
-			: base (container.NamespaceEntry, container, MakeProxyName (m_container.MethodName.Name),
-				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, m_container.Location)
+			: base (container.NamespaceEntry, container, MakeProxyName (m_container.MethodName.Name, m_container.Location),
+				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
 		{
 			this.orig_method = m_container;
 
@@ -597,13 +597,13 @@ namespace Mono.CSharp {
 			ToplevelBlock get_block = new ToplevelBlock (
 				block, parameters.Parameters, Location);
 			MemberName left = new MemberName ("System.Collections.IEnumerator");
-			MemberName name = new MemberName (left, "Current");
+			MemberName name = new MemberName (left, "Current", Location);
 
 			get_block.AddStatement (new If (
 				new Binary (
 					Binary.Operator.LessThanOrEqual,
 					new FieldExpression (this, pc_field),
-					new IntLiteral ((int) State.Running), Location),
+					new IntLiteral ((int) State.Running)),
 				Create_ThrowInvalidOperation (),
 				new Return (
 					new FieldExpression (this, current_field), Location),
@@ -613,7 +613,7 @@ namespace Mono.CSharp {
 
 			Property current = new Property (
 				this, iterator_type_expr, 0,
-				false, name, null, getter, null, Location);
+				false, name, null, getter, null);
 			AddProperty (current);
 		}
 
@@ -632,14 +632,13 @@ namespace Mono.CSharp {
 		{
 			MemberName left = new MemberName ("System.Collections.IEnumerable");
 
-			MemberName name = new MemberName (left, "GetEnumerator");
+			MemberName name = new MemberName (left, "GetEnumerator", Location);
 
 			Method get_enumerator = new Method (
 				this,
 				new TypeExpression (TypeManager.ienumerator_type, Location),
 				0, false, name,
-				Parameters.EmptyReadOnlyParameters, null,
-				Location.Null);
+				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (get_enumerator);
 
 			get_enumerator.Block = new ToplevelBlock (
@@ -663,8 +662,8 @@ namespace Mono.CSharp {
 			get_enumerator.Block.AddStatement (new If (
 				new Binary (
 					Binary.Operator.Equality,
-					new Invocation (ce, args, Location),
-					uninitialized, Location),
+					new Invocation (ce, args),
+					uninitialized),
 				new Return (new ThisParameterReference (
 						    TypeManager.ienumerator_type, Location),
 					    Location),
@@ -835,8 +834,8 @@ namespace Mono.CSharp {
 			{
 				method = new Method (
 					iterator, TypeManager.system_boolean_expr,
-					Modifiers.PUBLIC, false, new MemberName ("MoveNext"),
-					Parameters.EmptyReadOnlyParameters, null, loc);
+					Modifiers.PUBLIC, false, new MemberName ("MoveNext", loc),
+					Parameters.EmptyReadOnlyParameters, null);
 
 				method.Block = Block;
 
@@ -992,8 +991,8 @@ namespace Mono.CSharp {
 		{
 			Method reset = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, new MemberName ("Reset"),
-				Parameters.EmptyReadOnlyParameters, null, Location);
+				false, new MemberName ("Reset", Location),
+				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
 
 			reset.Block = new ToplevelBlock (Location);
@@ -1007,8 +1006,8 @@ namespace Mono.CSharp {
 		{
 			dispose = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, new MemberName ("Dispose"),
-				Parameters.EmptyReadOnlyParameters, null, Location);
+				false, new MemberName ("Dispose", Location),
+				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (dispose);
 
 			dispose.Block = new ToplevelBlock (block, parameters.Parameters, Location);

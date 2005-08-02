@@ -29,24 +29,42 @@ namespace Mono.CSharp {
 	public class MemberName {
 		public readonly string Name;
 		public readonly MemberName Left;
+		public readonly Location Location;
 
 		public static readonly MemberName Null = new MemberName ("");
 
 		public MemberName (string name)
+			: this (name, Location.Null)
 		{
-			this.Name = name;
 		}
 
 		public MemberName (MemberName left, string name)
-			: this (name)
+			: this (left, name, left != null ? left.Location : Location.Null)
+		{
+		}
+
+		public MemberName (string name, Location loc)
+		{
+			this.Name = name;
+			this.Location = loc;
+		}
+
+		public MemberName (MemberName left, string name, Location loc)
+			: this (name, loc)
 		{
 			this.Left = left;
 		}
 
 		public MemberName (MemberName left, MemberName right)
+			: this (left, right, left != null ? left.Location : right != null ? right.Location : Location.Null)
+		{
+		}
+
+		public MemberName (MemberName left, MemberName right, Location loc)
 		{
 			Name = right.Name;
 			Left = (right.Left == null) ? left : new MemberName (left, right.Left);
+			Location = loc;
 		}
 
 		static readonly char [] dot_array = { '.' };
@@ -96,23 +114,23 @@ namespace Mono.CSharp {
 				return Name;
 		}
 
-		public Expression GetTypeExpression (Location loc)
+		public Expression GetTypeExpression ()
 		{
 			if (Left != null) {
-				Expression lexpr = Left.GetTypeExpression (loc);
+				Expression lexpr = Left.GetTypeExpression ();
 
-				return new MemberAccess (lexpr, Name, loc);
+				return new MemberAccess (lexpr, Name, Location);
 			} else {
-				return new SimpleName (Name, loc);
+				return new SimpleName (Name, Location);
 			}
 		}
 
 		public MemberName Clone ()
 		{
 			if (Left != null)
-				return new MemberName (Left.Clone (), Name);
+				return new MemberName (Left.Clone (), Name, Location);
 			else
-				return new MemberName (Name);
+				return new MemberName (Name, Location);
 		}
 
 		public string Basename {
@@ -202,7 +220,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Location where this declaration happens
 		/// </summary>
-		public readonly Location Location;
+		public Location Location {
+			get { return member_name.Location; }
+		}
 
 		/// <summary>
 		///   XML documentation comment
@@ -237,8 +257,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		internal Flags caching_flags;
 
-		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs,
-				   Location loc)
+		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs)
 			: base (attrs)
 		{
 			if (parent is PartialContainer && !(this is PartialContainer))
@@ -246,7 +265,6 @@ namespace Mono.CSharp {
 
 			Parent = parent;
 			member_name = name;
-			Location = loc;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 		}
 
@@ -532,8 +550,8 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
-				  Attributes attrs, Location l)
-			: base (parent, name, attrs, l)
+				  Attributes attrs)
+			: base (parent, name, attrs)
 		{
 			NamespaceEntry = ns;
 			Basename = name.Name;

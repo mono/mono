@@ -74,8 +74,7 @@ namespace Mono.CSharp
 	public sealed class RootTypes : TypeContainer
 	{
 		public RootTypes ()
-			: base (null, null, MemberName.Null, null, Kind.Root,
-				Location.Null)
+			: base (null, null, MemberName.Null, null, Kind.Root)
 		{
 			ec = new EmitContext (null, this, Location.Null, null, null, 0, false);
 		}

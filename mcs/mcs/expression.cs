@@ -91,7 +91,7 @@ namespace Mono.CSharp {
 	{
 		public Expression Expr;
 
-		public ParenthesizedExpression (Expression expr, Location loc)
+		public ParenthesizedExpression (Expression expr)
 		{
 			this.Expr = expr;
 			this.loc = loc;
@@ -1261,6 +1261,11 @@ namespace Mono.CSharp {
 		Expression target_type;
 		Expression expr;
 			
+		public Cast (Expression cast_type, Expression expr)
+			: this (cast_type, expr, cast_type.Location)
+		{
+		}
+
 		public Cast (Expression cast_type, Expression expr, Location loc)
 		{
 			this.target_type = cast_type;
@@ -1880,12 +1885,12 @@ namespace Mono.CSharp {
 			oper_names [(int) Operator.LogicalAnd] = "op_LogicalAnd";
 		}
 
-		public Binary (Operator oper, Expression left, Expression right, Location loc)
+		public Binary (Operator oper, Expression left, Expression right)
 		{
 			this.oper = oper;
 			this.left = left;
 			this.right = right;
-			this.loc = loc;
+			this.loc = left.Location;
 		}
 
 		public Operator Oper {
@@ -2237,10 +2242,10 @@ namespace Mono.CSharp {
 				type = e.Type;
 
 				if (type == TypeManager.int32_type || type == TypeManager.uint32_type){
-					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (31), loc);
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (31));
 					right = right.DoResolve (ec);
 				} else {
-					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (63), loc);
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (63));
 					right = right.DoResolve (ec);
 				}
 
@@ -3547,12 +3552,12 @@ namespace Mono.CSharp {
 	public class Conditional : Expression {
 		Expression expr, trueExpr, falseExpr;
 		
-		public Conditional (Expression expr, Expression trueExpr, Expression falseExpr, Location l)
+		public Conditional (Expression expr, Expression trueExpr, Expression falseExpr)
 		{
 			this.expr = expr;
 			this.trueExpr = trueExpr;
 			this.falseExpr = falseExpr;
-			this.loc = l;
+			this.loc = expr.Location;
 		}
 
 		public Expression Expr {
@@ -4394,11 +4399,11 @@ namespace Mono.CSharp {
 		// FIXME: only allow expr to be a method invocation or a
 		// delegate invocation (7.5.5)
 		//
-		public Invocation (Expression expr, ArrayList arguments, Location l)
+		public Invocation (Expression expr, ArrayList arguments)
 		{
 			this.expr = expr;
 			Arguments = arguments;
-			loc = l;
+			loc = expr.Location;
 		}
 
 		public Expression Expr {
@@ -5674,11 +5679,11 @@ namespace Mono.CSharp {
 		Expression expr;
 		Expression argument;
 
-		public InvocationOrCast (Expression expr, Expression argument, Location loc)
+		public InvocationOrCast (Expression expr, Expression argument)
 		{
 			this.expr = expr;
 			this.argument = argument;
-			this.loc = loc;
+			this.loc = expr.Location;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -7497,11 +7502,11 @@ namespace Mono.CSharp {
 		public ArrayList  Arguments;
 		public Expression Expr;
 		
-		public ElementAccess (Expression e, ArrayList e_list, Location l)
+		public ElementAccess (Expression e, ArrayList e_list)
 		{
 			Expr = e;
 
-			loc  = l;
+			loc  = e.Location;
 			
 			if (e_list == null)
 				return;
@@ -8528,6 +8533,11 @@ namespace Mono.CSharp {
 		Expression left;
 		string dim;
 		
+		public ComposedCast (Expression left, string dim)
+			: this (left, dim, left.Location)
+		{
+		}
+
 		public ComposedCast (Expression left, string dim, Location l)
 		{
 			this.left = left;

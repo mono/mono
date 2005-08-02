@@ -169,8 +169,8 @@ namespace Mono.CSharp {
 			method = new Method (
 				(TypeContainer) ec.TypeContainer,
 				new TypeExpression (invoke_mb.ReturnType, loc),
-				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++),
-				Parameters, null, loc);
+				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++, loc),
+				Parameters, null);
 			method.Block = Block;
 			
 			//

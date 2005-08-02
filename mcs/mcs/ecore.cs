@@ -123,7 +123,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error (int error, string s)
 		{
-			if (!Location.IsNull (loc))
+			if (loc.IsNull)
 				Report.Error (error, loc, s);
 			else
 				Report.Error (error, s);

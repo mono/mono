@@ -334,17 +334,18 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
+		LocatedToken lt = (LocatedToken) $2;
+		current_namespace.UsingAlias (lt.Value, (MemberName) $4, (Location) $1);
 	  }
 	| USING error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($2));
 	  }
 	;
 
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		current_namespace.Using ((MemberName) $2, lexer.Location);
+		current_namespace.Using ((MemberName) $2, (Location) $1);
           }
 	;
 
@@ -356,14 +357,14 @@ using_namespace_directive
 namespace_declaration
 	: opt_attributes NAMESPACE namespace_or_type_name
 	  {
-		if ($1 != null) {
-			Report.Error(1671, Lexer.Location, "A namespace declaration cannot have modifiers or attributes");
-		}
-
 		MemberName name = (MemberName) $3;
 
+		if ($1 != null) {
+			Report.Error(1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
+		}
+
 		current_namespace = new NamespaceEntry (
-			current_namespace, file, name.GetName (), lexer.Location);
+			current_namespace, file, name.GetName (), name.Location);
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -418,7 +419,7 @@ namespace_member_declaration
 			DeclSpace ds = (DeclSpace)$1;
 
 			if ((ds.ModFlags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
-				Report.Error (1527, lexer.Location, 
+				Report.Error (1527, ds.Location, 
 				"Namespace elements cannot be explicitly declared as private, protected or protected internal");
 			}
 		}
@@ -429,10 +430,10 @@ namespace_member_declaration
 	  }
 
 	| field_declaration {
-		Report.Error (116, lexer.Location, "A namespace can only contain types and namespace declarations");
+		Report.Error (116, ((MemberCore) $1).Location, "A namespace can only contain types and namespace declarations");
 	  }
 	| method_declaration {
-		Report.Error (116, lexer.Location, "A namespace can only contain types and namespace declarations");
+		Report.Error (116, ((MemberCore) $1).Location, "A namespace can only contain types and namespace declarations");
 	  }
 	;
 
@@ -447,7 +448,7 @@ type_declaration
 //
 //	| error {
 //		Console.WriteLine ("Token=" + yyToken);
-//		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
+//		Report.Error (1518, GetLocation ($1), "Expected class, struct, interface, enum or delegate");
 //	  }
 	;
 
@@ -556,8 +557,9 @@ attribute_target_specifier
 attribute_target
 	: IDENTIFIER
 	  {
-		CheckAttributeTarget ((string) $1);
-		$$ = $1;
+		LocatedToken lt = (LocatedToken) $1;
+		CheckAttributeTarget (lt.Value, lt.Location);
+		$$ = lt.Value; // Location won't be required anymore.
 	  }
         | EVENT  { $$ = "event"; }	  
         | RETURN { $$ = "return"; }
@@ -582,24 +584,21 @@ attribute_list
 	;
 
 attribute
-	: attribute_name
+	: attribute_name opt_attribute_arguments
 	  {
-		$$ = lexer.Location;
-	  }
-	  opt_attribute_arguments
-	  {
-		  Location loc = (Location) $2;
 		MemberName mname = (MemberName) $1;
+		ArrayList arguments = (ArrayList) $2;
 		MemberName left = mname.Left;
 		string identifier = mname.Name;
 
-		Expression left_expr = left == null ? null : left.GetTypeExpression (loc);
+		Expression left_expr = left == null ? null : left.GetTypeExpression ();
 
 		if (current_attr_target == "assembly" || current_attr_target == "module")
+			// FIXME: supply "nameEscaped" parameter here.
 			$$ = new GlobalAttribute (current_class, current_attr_target,
-						  left_expr, identifier, (ArrayList) $3, loc);
+						  left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
 		else
-			$$ = new Attribute (current_attr_target, left_expr, identifier, (ArrayList) $3, loc);
+			$$ = new Attribute (current_attr_target, left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
 	  }
 	;
 
@@ -686,7 +685,7 @@ named_argument_list
 	  }
 	  | named_argument_list COMMA expression
 	    {
-		  Report.Error (1016, lexer.Location, "Named attribute argument expected");
+		  Report.Error (1016, ((Expression) $3).Location, "Named attribute argument expected");
 		  $$ = null;
 		}
         ;
@@ -694,8 +693,9 @@ named_argument_list
 named_argument
 	: IDENTIFIER ASSIGN expression
 	  {
+		// FIXME: keep location
 		$$ = new DictionaryEntry (
-			(string) $1, 
+			((LocatedToken) $1).Value, 
 			new Argument ((Expression) $3, Argument.AType.Expression));
 	  }
 	;
@@ -736,19 +736,17 @@ struct_declaration
 	  STRUCT member_name
 	  { 
 		MemberName name = MakeName ((MemberName) $5);
-		bool partial = (bool) $3;
-
-		if (partial) {
+		if ($3 != null) {
 			ClassPart part = PartialContainer.CreatePart (
 				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1, Kind.Struct, lexer.Location);
+				(Attributes) $1, Kind.Struct, (Location) $3);
 
 			current_container = part.PartialContainer;
 			current_class = part;
 		} else {
 			current_class = new Struct (
 				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1, lexer.Location);
+				(Attributes) $1);
 
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
@@ -773,7 +771,7 @@ struct_declaration
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial STRUCT error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($5));
 	  }
 	;
 
@@ -864,12 +862,12 @@ constant_declarators
 constant_declarator
 	: IDENTIFIER ASSIGN constant_expression
 	  {
-		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
 	  }
 	| IDENTIFIER
 	  {
 		// A const field requires a value to be provided
-		Report.Error (145, lexer.Location, "A const field requires a value to be provided");
+		Report.Error (145, ((LocatedToken) $1).Location, "A const field requires a value to be provided");
 		$$ = null;
 	  }
 	;
@@ -894,6 +892,7 @@ field_declaration
 				Lexer.doc_state = XmlCommentState.Allowed;
 			}
 			current_container.AddField (field);
+			$$ = field; // FIXME: might be better if it points to the top item
 		}
 	  }
 	| opt_attributes
@@ -915,6 +914,7 @@ field_declaration
 					Lexer.doc_state = XmlCommentState.Allowed;
 				}
 				current_container.AddField (field);
+				$$ = field; // FIXME: might be better if it points to the top item
 			}
 	  }
 	| opt_attributes
@@ -922,7 +922,7 @@ field_declaration
 	  VOID  
 	  variable_declarators
 	  SEMICOLON {
-		Report.Error (670, lexer.Location, "Fields cannot have void type");
+		Report.Error (670, (Location) $3, "Fields cannot have void type");
 	  }
 	;
 
@@ -944,7 +944,7 @@ fixed_variable_declarators
 fixed_variable_declarator
 	: IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET
 	  {
-		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
 	  }
 	;
 
@@ -967,15 +967,15 @@ variable_declarators
 variable_declarator
 	: IDENTIFIER ASSIGN variable_initializer
 	  {
-		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
 	  }
 	| IDENTIFIER
 	  {
-		$$ = new VariableDeclaration ((string) $1, null, lexer.Location);
+		$$ = new VariableDeclaration ((LocatedToken) $1, null);
 	  }
 	| IDENTIFIER OPEN_BRACKET opt_expression CLOSE_BRACKET
 	  {
-		Report.Error (650, lexer.Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
+		Report.Error (650, ((LocatedToken) $1).Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
 			"To declare a fixed size buffer field, use the fixed keyword before the field type");
 		$$ = null;
 	  }
@@ -992,11 +992,11 @@ variable_initializer
 	  }
 	| STACKALLOC type OPEN_BRACKET expression CLOSE_BRACKET
 	  {
-		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
+		$$ = new StackAlloc ((Expression) $2, (Expression) $4, (Location) $1);
 	  }
 	| STACKALLOC type
 	  {
-		Report.Error (1575, lexer.Location, "A stackalloc expression requires [] after type");
+		Report.Error (1575, (Location) $1, "A stackalloc expression requires [] after type");
                 $$ = null;
 	  }
 	;
@@ -1049,8 +1049,7 @@ method_header
 		MemberName name = (MemberName) $4;
 
 		Method method = new Method (current_class, (Expression) $3, (int) $2,
-					    false, name,  (Parameters) $6, (Attributes) $1,
-					    lexer.Location);
+					    false, name,  (Parameters) $6, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -1068,7 +1067,7 @@ method_header
 
 		Method method = new Method (current_class, TypeManager.system_void_expr,
 					    (int) $2, false, name, (Parameters) $6,
-					    (Attributes) $1, lexer.Location);
+					    (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -1082,13 +1081,12 @@ method_header
 	  type 
 	  modifiers namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
-		Report.Error (1585, lexer.Location, 
+		MemberName name = (MemberName) $5;
+		Report.Error (1585, name.Location, 
 			"Member modifier `{0}' must precede the member type and name", Modifiers.Name ((int) $4));
-		MemberName name = (MemberName) $4;
 
 		Method method = new Method (current_class, TypeManager.system_void_expr,
-					    0, false, name, (Parameters) $7, (Attributes) $1,
-					    lexer.Location);
+					    0, false, name, (Parameters) $7, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $7;
 
@@ -1139,12 +1137,13 @@ formal_parameter_list
 	  }
 	| parameter_array COMMA fixed_parameters
 	  {
-		Report.Error (231, lexer.Location, "A params parameter must be the last parameter in a formal parameter list");
+		if ($1 != null)
+			Report.Error (231, ((Parameter) $1).Location, "A params parameter must be the last parameter in a formal parameter list");
 		$$ = null;
 	  }
 	| ARGLIST COMMA fixed_parameters
 	  {
-		Report.Error (257, lexer.Location, "An __arglist parameter must be the last parameter in a formal parameter list");
+		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
 		$$ = null;
 	  }
 	| parameter_array 
@@ -1180,28 +1179,30 @@ fixed_parameter
 	  type
 	  IDENTIFIER
 	  {
-		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1, lexer.Location);
+		LocatedToken lt = (LocatedToken) $4;
+		$$ = new Parameter ((Expression) $3, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
 	  IDENTIFIER OPEN_BRACKET CLOSE_BRACKET
 	  {
-		Report.Error (1552, lexer.Location, "Array type specifier, [], must appear before parameter name");
+		LocatedToken lt = (LocatedToken) $4;
+		Report.Error (1552, lt.Location, "Array type specifier, [], must appear before parameter name");
 		$$ = null;
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
 	  {
-		Report.Error (1001, lexer.Location, "Identifier expected");
+		Report.Error (1001, GetLocation ($3), "Identifier expected");
 		$$ = null;
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
 	  error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($4));
 		$$ = null;
 	  }
 	| opt_attributes
@@ -1211,7 +1212,8 @@ fixed_parameter
 	  ASSIGN
 	  constant_expression
 	   {
-		 Report.Error (241, lexer.Location, "Default parameter specifiers are not permitted");
+		LocatedToken lt = (LocatedToken) $4;
+		Report.Error (241, lt.Location, "Default parameter specifiers are not permitted");
 		 $$ = null;
 	   }
 	;
@@ -1229,16 +1231,17 @@ parameter_modifier
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
-		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1, lexer.Location);
+		LocatedToken lt = (LocatedToken) $4;
+		$$ = new Parameter ((Expression) $3, lt.Value, Parameter.Modifier.PARAMS, (Attributes) $1, lt.Location);
 		note ("type must be a single-dimension array type"); 
 	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
 	  {
-		Report.Error (1611, lexer.Location, "The params parameter cannot be declared as ref or out");
+		Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
                 $$ = null;
 	  }
 	| opt_attributes PARAMS type error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($4));
 		$$ = null;
 	  }
 	;
@@ -1257,8 +1260,6 @@ property_declaration
 		implicit_value_parameter_type = (Expression) $3;
 
 		lexer.PropertyParsing = true;
-
-		$$ = lexer.Location;
 	  }
 	  accessor_declarations 
 	  {
@@ -1275,11 +1276,10 @@ property_declaration
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
-		Location loc = (Location) $7;
 		MemberName name = (MemberName) $4;
 
-		prop = new Property (current_class, (Expression) $3, (int) $2, false,
-				     name, (Attributes) $1, get_block, set_block, loc);
+		prop = new Property (current_class, (Expression) $3, (int) $2,
+			false, name, (Attributes) $1, get_block, set_block);
 		
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
@@ -1313,7 +1313,7 @@ accessor_declarations
 	 }
 	| error
 	  {
-		Report.Error (1014, lexer.Location, "A get or set accessor expected");
+		Report.Error (1014, GetLocation ($1), "A get or set accessor expected");
 		$$ = null;
 	  }
 	;
@@ -1334,10 +1334,10 @@ get_accessor_declaration
           accessor_body
 	  {
 		if (has_get) {
-			Report.Error (1007, lexer.Location, "Property accessor already defined");
+			Report.Error (1007, (Location) $3, "Property accessor already defined");
 			break;
 		}
-		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, (Location) $3);
 		has_get = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
@@ -1361,7 +1361,7 @@ set_accessor_declaration
 		Parameter [] args;
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, lexer.Location);
+			Parameter.Modifier.NONE, null, (Location) $3);
 
 		if (parsing_indexer == false) {
 			args  = new Parameter [1];
@@ -1389,10 +1389,10 @@ set_accessor_declaration
 	  accessor_body
 	  {
 		if (has_set) {
-			Report.Error (1007, lexer.Location, "Property accessor already defined");
+			Report.Error (1007, ((LocatedToken) $3).Location, "Property accessor already defined");
 			break;
 		}
-		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, (Location) $3);
 		has_set = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
@@ -1422,19 +1422,18 @@ interface_declaration
 	  INTERFACE member_name
 	  {
 		MemberName name = MakeName ((MemberName) $5);
-		bool partial = (bool) $3;
 
-		if (partial) {
+		if ($3 != null) {
 			ClassPart part = PartialContainer.CreatePart (
 				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1, Kind.Interface, lexer.Location);
+				(Attributes) $1, Kind.Interface, (Location) $3);
 
 			current_container = part.PartialContainer;
 			current_class = part;
 		} else {
 			current_class = new Interface (
 				current_namespace, current_class, name, (int) $2,
-				(Attributes) $1, lexer.Location);
+				(Attributes) $1);
 
 			current_container.AddInterface (current_class);
 			current_container = current_class;
@@ -1460,7 +1459,7 @@ interface_declaration
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial INTERFACE error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($5));
 	  }
 	;
 
@@ -1489,7 +1488,7 @@ interface_member_declaration
 		Method m = (Method) $1;
 
 		if (m.IsExplicitImpl)
-		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+		        Report.Error (541, m.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
 				m.GetSignatureForError ());
 
 		current_container.AddMethod (m);
@@ -1505,7 +1504,7 @@ interface_member_declaration
 		Property p = (Property) $1;
 
 		if (p.IsExplicitImpl)
-		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+		        Report.Error (541, p.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
 				p.GetSignatureForError ());
 
 		current_container.AddProperty (p);
@@ -1519,7 +1518,7 @@ interface_member_declaration
 			Event e = (Event) $1;
 
 			if (e.IsExplicitImpl)
-		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+		        Report.Error (541, e.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
 				e.GetSignatureForError ());
 			
 			current_container.AddEvent (e);
@@ -1536,7 +1535,7 @@ interface_member_declaration
 		Indexer i = (Indexer) $1;
 
 		if (i.IsExplicitImpl)
-		        Report.Error (541, lexer.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
+		        Report.Error (541, i.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
 				i.GetSignatureForError ());
 
 		current_container.AddIndexer (i);
@@ -1547,41 +1546,41 @@ interface_member_declaration
 	| delegate_declaration
 	  {
 		if ($1 != null) {
-			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
 				((MemberCore)$1).GetSignatureForError ());
 		}
 	  }
 	| class_declaration
 	  {
 		if ($1 != null) {
-			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
 				((MemberCore)$1).GetSignatureForError ());
 		}
 	  }
 	| struct_declaration
 	  {
 		if ($1 != null) {
-			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
 				((MemberCore)$1).GetSignatureForError ());
 		}
 	  }
 	| enum_declaration 
 	  {
 		if ($1 != null) {
-			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
 				((MemberCore)$1).GetSignatureForError ());
 		}
 	  }
 	| interface_declaration 
 	  {
 		if ($1 != null) {
-			Report.Error (524, lexer.Location, "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
+			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
 				((MemberCore)$1).GetSignatureForError ());
 		}
 	  } 
 	| constant_declaration
 	  {
-		Report.Error (525, lexer.Location, "Interfaces cannot contain fields or constants");
+		Report.Error (525, GetLocation ($1), "Interfaces cannot contain fields or constants");
 	  }
 	;
 
@@ -1589,7 +1588,7 @@ opt_new
 	: opt_modifiers 
 	  {
 		int val = (int) $1;
-		val = Modifiers.Check (Modifiers.NEW | Modifiers.UNSAFE, val, 0, lexer.Location);
+		val = Modifiers.Check (Modifiers.NEW | Modifiers.UNSAFE, val, 0, GetLocation ($1));
 		$$ = val;
 	  }
 	;
@@ -1600,7 +1599,7 @@ interface_method_declaration
 	  SEMICOLON
 	  {
 		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
-				 (MemberName) $4, (Parameters) $6, (Attributes) $1, lexer.Location);
+				 (MemberName) $4, (Parameters) $6, (Attributes) $1);
 		if (RootContext.Documentation != null)
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
@@ -1609,7 +1608,7 @@ interface_method_declaration
 	  OPEN_BRACE opt_statement_list CLOSE_BRACE
 	  {
 		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
-				 (MemberName) $4, (Parameters) $6, (Attributes) $1, lexer.Location);
+				 (MemberName) $4, (Parameters) $6, (Attributes) $1);
 
 		Report.Error (531, lexer.Location, "`{0}': interface members cannot have a definition",
 			((Method)$$).GetSignatureForError ());
@@ -1626,15 +1625,18 @@ interface_property_declaration
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
+		LocatedToken lt = (LocatedToken) $4;
+		MemberName name = new MemberName (lt.Value, lt.Location);
+
 		if ($3 == TypeManager.system_void_expr) {
-			Report.Error (547, lexer.Location, "`{0}': property or indexer cannot have void type", $4);
+			Report.Error (547, lt.Location, "`{0}': property or indexer cannot have void type", $4);
 			break;
 		}
 
 		if ($7 == null) {
 			Property p = new Property (current_class, (Expression) $3, (int) $2, true,
-				   new MemberName ((string) $4), (Attributes) $1,
-				   null, null, lexer.Location);
+				   name, (Attributes) $1,
+				   null, null);
 
 			Report.Error (548, lexer.Location, "`{0}': property or indexer must have at least one accessor", p.GetSignatureForError ());
 			break;
@@ -1643,15 +1645,15 @@ interface_property_declaration
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
 		$$ = new Property (current_class, (Expression) $3, (int) $2, true,
-				   new MemberName ((string) $4), (Attributes) $1,
-				   pinfo.Get, pinfo.Set, lexer.Location);
+				   name, (Attributes) $1,
+				   pinfo.Get, pinfo.Set);
 		if (RootContext.Documentation != null)
 			((Property) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes
 	  opt_new
 	  type error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($4));
 		$$ = null;
 	  }
 	;
@@ -1659,24 +1661,24 @@ interface_property_declaration
 interface_accessors
 	: opt_attributes opt_modifiers GET SEMICOLON	
 	  { 
-		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, lexer.Location, lexer.Location); 
+		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, (Location) $3, (Location) $3); 
  	  }
 	| opt_attributes opt_modifiers GET OPEN_BRACE
 	  {  
-		Report.Error (531, lexer.Location, "`{0}': interface members cannot have a definition", ".get");
-		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, lexer.Location, lexer.Location);
+		Report.Error (531, (Location) $3, "`{0}': interface members cannot have a definition", ".get");
+		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, (Location) $3, (Location) $3);
 	  }
 	| opt_attributes opt_modifiers SET SEMICOLON		
 	  { 
-		$$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, 0, (int) $2, lexer.Location, lexer.Location); 
+		$$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, 0, (int) $2, (Location) $3, (Location) $3); 
 	  }
 	| opt_attributes opt_modifiers GET SEMICOLON opt_attributes opt_modifiers SET SEMICOLON 
 	  { 
-		$$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $5, (int) $2, (int) $6, lexer.Location, lexer.Location); 
+		$$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $5, (int) $2, (int) $6, (Location) $3, (Location) $7); 
 	  }
 	| opt_attributes opt_modifiers SET SEMICOLON opt_attributes opt_modifiers GET SEMICOLON
 	  { 
-		$$ = new InterfaceAccessorInfo (true, true, (Attributes) $5, (Attributes) $1, (int) $6, (int) $2, lexer.Location, lexer.Location); 
+		$$ = new InterfaceAccessorInfo (true, true, (Attributes) $5, (Attributes) $1, (int) $6, (int) $2, (Location) $3, (Location) $3); 
 	  }
 	|
 	  {
@@ -1687,18 +1689,19 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
+		LocatedToken lt = (LocatedToken) $5;
 		$$ = new EventField (current_class, (Expression) $4, (int) $2, true,
-				     new MemberName ((string) $5), null,
-				     (Attributes) $1, lexer.Location);
+				     new MemberName (lt.Value, lt.Location), null,
+				     (Attributes) $1);
 		if (RootContext.Documentation != null)
 			((EventField) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes opt_new EVENT type error {
-		CheckIdentifierToken (yyToken);
+		CheckIdentifierToken (yyToken, GetLocation ($5));
 		$$ = null;
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER ASSIGN  {
-		Report.Error (68, lexer.Location, "`{0}.{1}': event in interface cannot have initializer", current_container.Name, $5);
+		Report.Error (68, (Location) $3, "`{0}.{1}': event in interface cannot have initializer", current_container.Name, $5);
 		$$ = null;
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE
@@ -1710,7 +1713,7 @@ interface_event_declaration
 		lexer.EventParsing = false;
 	  }
 	  CLOSE_BRACE {
-		Report.Error (69, lexer.Location, "Event in interface cannot have add or remove accessors");
+		Report.Error (69, (Location) $3, "Event in interface cannot have add or remove accessors");
  		$$ = null;
  	  }
 	;
@@ -1728,7 +1731,7 @@ interface_indexer_declaration
 			Indexer i = new Indexer (current_class, (Expression) $3,
 				  new MemberName (TypeContainer.DefaultIndexerName),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				  null, null, lexer.Location);
+				  null, null);
 
 			Report.Error (548, lexer.Location, "`{0}': property or indexer must have at least one accessor", i.GetSignatureForError ());
 			break;
@@ -1737,9 +1740,9 @@ interface_indexer_declaration
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
 		$$ = new Indexer (current_class, (Expression) $3,
-				  new MemberName (TypeContainer.DefaultIndexerName),
+				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				  info.Get, info.Set, lexer.Location);
+				  info.Get, info.Set);
 		if (RootContext.Documentation != null)
 			((Indexer) $$).DocComment = ConsumeStoredComment ();
 	  }
@@ -1792,8 +1795,9 @@ operator_declarator
 	: type OPERATOR overloadable_operator 
 	  OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
+		LocatedToken lt = (LocatedToken) $6;
 		Operator.OpType op = (Operator.OpType) $3;
-		CheckUnaryOperator (op);
+		CheckUnaryOperator (op, lt.Location);
 
 		if (op == Operator.OpType.Addition)
 			op = Operator.OpType.UnaryPlus;
@@ -1804,7 +1808,7 @@ operator_declarator
 		Parameter [] pars = new Parameter [1];
 		Expression type = (Expression) $5;
 
-		pars [0] = new Parameter (type, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
+		pars [0] = new Parameter (type, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
 		current_local_parameters = new Parameters (pars, null);
 
@@ -1813,8 +1817,8 @@ operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (op, (Expression) $1, type, (string) $6,
-					      null, null, lexer.Location);
+		$$ = new OperatorDeclaration (op, (Expression) $1, type, lt.Value,
+					      null, null, (Location) $2);
 	  }
 	| type OPERATOR overloadable_operator
 	  OPEN_PARENS 
@@ -1822,15 +1826,17 @@ operator_declarator
 	  	type IDENTIFIER 
 	  CLOSE_PARENS
           {
-		CheckBinaryOperator ((Operator.OpType) $3);
+		LocatedToken ltParam1 = (LocatedToken) $6;
+		LocatedToken ltParam2 = (LocatedToken) $9;
+		CheckBinaryOperator ((Operator.OpType) $3, (Location) $2);
 
 		Parameter [] pars = new Parameter [2];
 
 		Expression typeL = (Expression) $5;
 		Expression typeR = (Expression) $8;
 
-	       pars [0] = new Parameter (typeL, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
-	       pars [1] = new Parameter (typeR, (string) $9, Parameter.Modifier.NONE, null, lexer.Location);
+	       pars [0] = new Parameter (typeL, ltParam1.Value, Parameter.Modifier.NONE, null, ltParam1.Location);
+	       pars [1] = new Parameter (typeR, ltParam2.Value, Parameter.Modifier.NONE, null, ltParam2.Location);
 
 	       current_local_parameters = new Parameters (pars, null);
 
@@ -1840,8 +1846,8 @@ operator_declarator
 		}
 	       
 	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (Expression) $1, 
-					     typeL, (string) $6,
-					     typeR, (string) $9, lexer.Location);
+					     typeL, ltParam1.Value,
+					     typeR, ltParam2.Value, (Location) $2);
           }
 	| conversion_operator_declarator
 	| type OPERATOR overloadable_operator
@@ -1851,14 +1857,14 @@ operator_declarator
 		type IDENTIFIER
 	  CLOSE_PARENS
 	  {
-		Report.Error (1534, lexer.Location, "Overloaded binary operator `{0}' takes two parameters",
+		Report.Error (1534, (Location) $2, "Overloaded binary operator `{0}' takes two parameters",
 			Operator.GetName ((Operator.OpType) $3));
 		$$ = null;
 	  }
 	| type OPERATOR overloadable_operator 
 	  OPEN_PARENS CLOSE_PARENS
 	  {
-		Report.Error (1535, lexer.Location, "Overloaded unary operator `{0}' takes one parameter",
+		Report.Error (1535, (Location) $2, "Overloaded unary operator `{0}' takes one parameter",
 			Operator.GetName ((Operator.OpType) $3));
 		$$ = null;
 	  }
@@ -1895,9 +1901,10 @@ overloadable_operator
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
+		LocatedToken lt = (LocatedToken) $6;
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
+		pars [0] = new Parameter ((Expression) $5, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
 		current_local_parameters = new Parameters (pars, null);  
 		  
@@ -1906,14 +1913,15 @@ conversion_operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $5, (string) $6,
-					      null, null, lexer.Location);
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $5, lt.Value,
+					      null, null, (Location) $2);
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	  {
+		LocatedToken lt = (LocatedToken) $6;
 		Parameter [] pars = new Parameter [1];
 
-		pars [0] = new Parameter ((Expression) $5, (string) $6, Parameter.Modifier.NONE, null, lexer.Location);
+		pars [0] = new Parameter ((Expression) $5, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
 		current_local_parameters = new Parameters (pars, null);  
 		  
@@ -1922,16 +1930,16 @@ conversion_operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $5, (string) $6,
-					      null, null, lexer.Location);
+		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $5, lt.Value,
+					      null, null, (Location) $2);
 	  }
 	| IMPLICIT error 
 	  {
-		syntax_error (lexer.Location, "'operator' expected");
+		syntax_error ((Location) $1, "'operator' expected");
 	  }
 	| EXPLICIT error 
 	  {
-		syntax_error (lexer.Location, "'operator' expected");
+		syntax_error ((Location) $1, "'operator' expected");
 	  }
 	;
 
@@ -1993,14 +2001,15 @@ constructor_declarator
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS _mark_
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		current_local_parameters = (Parameters) $4;
 	  }
 	  opt_constructor_initializer
 	  {
-		$$ = new Constructor (current_class, (string) $1, 0, (Parameters) $4,
-				      (ConstructorInitializer) $8, (Location) $6);
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new Constructor (current_class, lt.Value, 0, (Parameters) $4,
+				      (ConstructorInitializer) $7, lt.Location);
 	  }
 	;
 
@@ -2017,14 +2026,14 @@ opt_constructor_initializer
 constructor_initializer
 	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorBaseInitializer ((ArrayList) $4, lexer.Location);
+		$$ = new ConstructorBaseInitializer ((ArrayList) $4, (Location) $2);
 	  }
 	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorThisInitializer ((ArrayList) $4, lexer.Location);
+		$$ = new ConstructorThisInitializer ((ArrayList) $4, (Location) $2);
 	  }
 	| COLON error {
-		Report.Error (1018, lexer.Location, "Keyword this or base expected");
+		Report.Error (1018, (Location) $1, "Keyword this or base expected");
 		$$ = null;
 	  }
 	;
@@ -2045,12 +2054,13 @@ destructor_declaration
 	  }
 	  IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		if ((string) $5 != current_container.Basename){
-			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
+		LocatedToken lt = (LocatedToken) $5;
+		if (lt.Value != current_container.Basename){
+			Report.Error (574, lt.Location, "Name of destructor must match name of class");
 		} else if (current_container.Kind != Kind.Class){
-			Report.Error (575, lexer.Location, "Only class types can contain destructor");
+			Report.Error (575, lt.Location, "Only class types can contain destructor");
 		} else {
-			Location l = lexer.Location;
+			Location l = lt.Location;
 
 			int m = (int) $2;
 			if (!RootContext.StdLib && current_container.Name == "System.Object")
@@ -2077,12 +2087,12 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			MemberName name = new MemberName (var.identifier);
+			MemberName name = new MemberName (var.identifier,
+				var.Location);
 
 			Event e = new EventField (
 				current_class, (Expression) $4, (int) $2, false, name,
-				var.expression_or_array_initializer, (Attributes) $1,
-				lexer.Location);
+				var.expression_or_array_initializer, (Attributes) $1);
 
 			current_container.AddEvent (e);
 
@@ -2095,7 +2105,7 @@ event_declaration
 	| opt_attributes
 	  opt_modifiers
 	  EVENT type namespace_or_type_name
-	  OPEN_BRACE _mark_
+	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (Expression) $4;  
 		lexer.EventParsing = true;
@@ -2106,36 +2116,38 @@ event_declaration
 	  }
 	  CLOSE_BRACE
 	  {
-		Location loc = (Location) $7;
 		MemberName name = (MemberName) $5;
 
-		if ($9 == null){
-			Report.Error (65, lexer.Location, "`{0}.{1}': event property must have both add and remove accessors",
+		if ($8 == null){
+			Report.Error (65, (Location) $3, "`{0}.{1}': event property must have both add and remove accessors",
 				current_container.Name, name);
 			$$ = null;
 		} else {
-			Pair pair = (Pair) $9;
-			
-			Event e = new EventProperty (
-				current_class, (Expression) $4, (int) $2, false, name, null,
-				(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
-				loc);
-			if (RootContext.Documentation != null) {
-				e.DocComment = Lexer.consume_doc_comment ();
-				Lexer.doc_state = XmlCommentState.Allowed;
-			}
+			Pair pair = (Pair) $8;
+			if (pair.First == null || pair.Second == null)
+				// CS0073 is already reported, so no CS0065 here.
+				$$ = null;
+			else {
+				Event e = new EventProperty (
+					current_class, (Expression) $4, (int) $2, false, name, null,
+					(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second);
+				if (RootContext.Documentation != null) {
+					e.DocComment = Lexer.consume_doc_comment ();
+					Lexer.doc_state = XmlCommentState.Allowed;
+				}
 
-			current_container.AddEvent (e);
-			implicit_value_parameter_type = null;
+				current_container.AddEvent (e);
+				implicit_value_parameter_type = null;
+			}
 		}
 	  }
 	| opt_attributes opt_modifiers EVENT type namespace_or_type_name error {
 		MemberName mn = (MemberName) $5;
 
 		if (mn.Left != null)
-			Report.Error (71, lexer.Location, "An explicit interface implementation of an event must use property syntax");
+			Report.Error (71, mn.Location, "An explicit interface implementation of an event must use property syntax");
 		else 
-			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
+			Report.Error (71, mn.Location, "Event declaration should use property syntax");
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -2155,7 +2167,7 @@ event_accessor_declarations
 	| remove_accessor_declaration { $$ = null; } 
 	| error
 	  { 
-		Report.Error (1055, lexer.Location, "An add or remove accessor expected");
+		Report.Error (1055, GetLocation ($1), "An add or remove accessor expected");
 		$$ = null;
 	  }
 	| { $$ = null; }
@@ -2167,7 +2179,7 @@ add_accessor_declaration
 		Parameter [] args = new Parameter [1];
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, lexer.Location);
+			Parameter.Modifier.NONE, null, (Location) $2);
 
 		args [0] = implicit_value_parameter;
 		
@@ -2176,15 +2188,15 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
-		Report.Error (73, lexer.Location, "An add or remove accessor must have a body");
+		Report.Error (73, (Location) $2, "An add or remove accessor must have a body");
 		$$ = null;
 	  }
 	| opt_attributes modifiers ADD {
-		Report.Error (1609, lexer.Location, "Modifiers cannot be placed on event accessor declarations");
+		Report.Error (1609, (Location) $3, "Modifiers cannot be placed on event accessor declarations");
 		$$ = null;
 	  }
 	;
@@ -2195,7 +2207,7 @@ remove_accessor_declaration
 		Parameter [] args = new Parameter [1];
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, lexer.Location);
+			Parameter.Modifier.NONE, null, (Location) $2);
 
 		args [0] = implicit_value_parameter;
 		
@@ -2204,22 +2216,22 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
-		Report.Error (73, lexer.Location, "An add or remove accessor must have a body");
+		Report.Error (73, (Location) $2, "An add or remove accessor must have a body");
 		$$ = null;
 	  }
 	| opt_attributes modifiers REMOVE {
-		Report.Error (1609, lexer.Location, "Modifiers cannot be placed on event accessor declarations");
+		Report.Error (1609, (Location) $3, "Modifiers cannot be placed on event accessor declarations");
 		$$ = null;
 	  }
 	;
 
 indexer_declaration
 	: opt_attributes opt_modifiers indexer_declarator 
-	  OPEN_BRACE _mark_
+	  OPEN_BRACE
 	  {
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
 
@@ -2238,28 +2250,28 @@ indexer_declaration
 	  }
 	  CLOSE_BRACE
 	  { 
-		if ($7 == null)
+		if ($6 == null)
 			break;
 
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
-		Location loc = (Location) $5;
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
-		Pair pair = (Pair) $7;
+		Location loc = decl.location;
+		Pair pair = (Pair) $6;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
 		MemberName name;
 		if (decl.interface_type != null)
 			name = new MemberName (decl.interface_type,
-					       TypeContainer.DefaultIndexerName);
+					       TypeContainer.DefaultIndexerName, decl.location);
 		else
-			name = new MemberName (TypeContainer.DefaultIndexerName);
+			name = new MemberName (TypeContainer.DefaultIndexerName, decl.location);
 
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
-				       get_block, set_block, loc);
+				       get_block, set_block);
 
 		if (RootContext.Documentation != null)
 			indexer.DocComment = ConsumeStoredComment ();
@@ -2278,16 +2290,16 @@ indexer_declarator
 		Parameters pars = (Parameters) $4;
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
-			Report.Error (1669, lexer.Location, "__arglist is not valid in this context");
+			Report.Error (1669, (Location) $2, "__arglist is not valid in this context");
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
-			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
+			Report.Error (1551, (Location) $2, "Indexers must have at least one parameter");
 		}
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 
-		$$ = new IndexerDeclaration ((Expression) $1, null, pars);
+		$$ = new IndexerDeclaration ((Expression) $1, null, pars, (Location) $2);
 	  }
 	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
@@ -2295,13 +2307,13 @@ indexer_declarator
 
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
-			Report.Error (1669, lexer.Location, "__arglist is not valid in this context");
+			Report.Error (1669, (Location) $4, "__arglist is not valid in this context");
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
-			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
+			Report.Error (1551, (Location) $4, "Indexers must have at least one parameter");
 		}
 
 		MemberName name = (MemberName) $2;
-		$$ = new IndexerDeclaration ((Expression) $1, name, pars);
+		$$ = new IndexerDeclaration ((Expression) $1, name, pars, (Location) $4);
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -2322,18 +2334,17 @@ enum_declaration
 	  enum_body
 	  opt_semicolon
 	  {
-		bool partial = (bool) $3;
+		LocatedToken lt = (LocatedToken) $5;
+		Location enum_location = lt.Location;
 
-		if (partial) {
-			Report.Error (267, lexer.Location, "The partial modifier can only appear immediately before `class', `struct' or `interface'");
+		if ($3 != null) {
+			Report.Error (267, lt.Location, "The partial modifier can only appear immediately before `class', `struct' or `interface'");
 			break;	// assumes that the parser put us in a switch
 		}
 
-		Location enum_location = lexer.Location;
-
-		MemberName name = MakeName (new MemberName ((string) $5));
+		MemberName name = MakeName (new MemberName (lt.Value, enum_location));
 		Enum e = new Enum (current_namespace, current_class, (Expression) $6, (int) $2,
-				   name, (Attributes) $1, enum_location);
+				   name, (Attributes) $1);
 		
 		if (RootContext.Documentation != null)
 			e.DocComment = enumTypeComment;
@@ -2401,7 +2412,8 @@ enum_member_declarations
 enum_member_declaration
 	: opt_attributes IDENTIFIER 
 	  {
-		VariableDeclaration vd = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
+		VariableDeclaration vd = new VariableDeclaration (
+			(LocatedToken) $2, null, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
 			vd.DocComment = Lexer.consume_doc_comment ();
@@ -2412,7 +2424,6 @@ enum_member_declaration
 	  }
 	| opt_attributes IDENTIFIER
 	  {
-		$$ = lexer.Location;
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
@@ -2420,7 +2431,8 @@ enum_member_declaration
 	  }
           ASSIGN expression
 	  { 
-		VariableDeclaration vd = new VariableDeclaration ((string) $2, $5, lexer.Location, (Attributes) $1);
+		VariableDeclaration vd = new VariableDeclaration (
+			(LocatedToken) $2, $5, (Attributes) $1);
 
 		if (RootContext.Documentation != null)
 			vd.DocComment = ConsumeStoredComment ();
@@ -2436,10 +2448,9 @@ delegate_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Location l = lexer.Location;
 		MemberName name = MakeName ((MemberName) $5);
 		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
-					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
+					     (int) $2, name, (Parameters) $7, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
 			del.DocComment = Lexer.consume_doc_comment ();
@@ -2455,13 +2466,15 @@ delegate_declaration
 namespace_or_type_name
 	: member_name
 	| namespace_or_type_name DOT IDENTIFIER {
-		$$ = new MemberName ((MemberName) $1, (string) $3);
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new MemberName ((MemberName) $1, lt.Value);
 	  }
 	;
 
 member_name
 	: IDENTIFIER {
-		$$ = new MemberName ((string) $1);
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, lt.Location);
 	  }
 	;
 
@@ -2474,7 +2487,8 @@ member_name
 type
 	: namespace_or_type_name
 	  {
-		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
+		MemberName name = (MemberName) $1;
+		$$ = name.GetTypeExpression ();
 	  }
 	| builtin_types
 	| array_type
@@ -2490,11 +2504,11 @@ pointer_type
 		// can't perform checks during this phase - we do it during
 		// semantic analysis.
 		//
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, "*");
 	  }
 	| VOID STAR
 	  {
-		$$ = new ComposedCast (TypeManager.system_void_expr, "*", lexer.Location);
+		$$ = new ComposedCast (TypeManager.system_void_expr, "*", (Location) $1);
 	  }
 	;
 
@@ -2502,19 +2516,19 @@ non_expression_type
 	: builtin_types	
 	| non_expression_type rank_specifier
 	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, (string) $2);
 	  }
 	| non_expression_type STAR
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, "*");
 	  }
 	| expression rank_specifiers 
 	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, (string) $2);
 	  }
 	| expression STAR 
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, "*");
 	  }
 	
 	//
@@ -2523,7 +2537,7 @@ non_expression_type
 	//
 	| multiplicative_expression STAR 
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, "*");
 	  }
 	;
 
@@ -2574,7 +2588,7 @@ integral_type
 array_type
 	: type rank_specifiers
 	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, (string) $2);
 	  }
 	;
 
@@ -2589,7 +2603,8 @@ primary_expression
  
 	| member_name
 	  {
-		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
+		MemberName mn = (MemberName) $1;
+		$$ = mn.GetTypeExpression ();
 	  }
 	| parenthesized_expression
 	| member_access
@@ -2673,18 +2688,20 @@ parenthesized_expression
 		// If a parenthesized expression is followed by a minus, we need to wrap
 		// the expression inside a ParenthesizedExpression for the CS0075 check
 		// in Binary.DoResolve().
-		$$ = new ParenthesizedExpression ((Expression) $1, lexer.Location);
+		$$ = new ParenthesizedExpression ((Expression) $1);
 	  }
 	;;
 
 member_access
 	: primary_expression DOT IDENTIFIER
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new MemberAccess ((Expression) $1, lt.Value, lt.Location);
 	  }
 	| predefined_type DOT IDENTIFIER
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new MemberAccess ((Expression) $1, lt.Value, lt.Location);
 	  }
 	;
 
@@ -2693,33 +2710,35 @@ predefined_type
 	;
 
 invocation_expression
-	: primary_expression OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: primary_expression {
+		$$ = lexer.Location;
+	  } OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
 		if ($1 == null) {
-			Location l = lexer.Location;
+			Location l = (Location) $3;
 			Report.Error (1, l, "Parse error");
 		}
-		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
+		$$ = new Invocation ((Expression) $1, (ArrayList) $4);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS CLOSE_PARENS
 	  {
-		$$ = new Invocation ((Expression) $1, new ArrayList (), lexer.Location);
+		$$ = new Invocation ((Expression) $1, new ArrayList ());
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS primary_expression
 	  {
-		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3, lexer.Location);
+		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS non_simple_argument CLOSE_PARENS
 	  {
 		ArrayList args = new ArrayList (1);
 		args.Add ($4);
-		$$ = new Invocation ((Expression) $1, args, lexer.Location);
+		$$ = new Invocation ((Expression) $1, args);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS argument_list COMMA argument CLOSE_PARENS
 	  {
 		ArrayList args = ((ArrayList) $4);
 		args.Add ($6);
-		$$ = new Invocation ((Expression) $1, args, lexer.Location);
+		$$ = new Invocation ((Expression) $1, args);
 	  }
 	;
 
@@ -2742,7 +2761,8 @@ argument_list
 		$$ = list;
 	  }
 	| argument_list error {
-		CheckToken (1026, yyToken, "Expected `,' or `)'");
+		CheckToken (1026, yyToken, "Expected `,' or `)'", GetLocation ($2));
+		$$ = null;
 	  }
 	;
 
@@ -2772,12 +2792,12 @@ non_simple_argument
 		Argument[] args = new Argument [list.Count];
 		list.CopyTo (args, 0);
 
-		Expression expr = new Arglist (args, lexer.Location);
+		Expression expr = new Arglist (args, (Location) $1);
 		$$ = new Argument (expr, Argument.AType.Expression);
 	  }
 	| ARGLIST
 	  {
-		$$ = new Argument (new ArglistAccess (lexer.Location), Argument.AType.ArgList);
+		$$ = new Argument (new ArglistAccess ((Location) $1), Argument.AType.ArgList);
 	  }
 	;
 
@@ -2788,7 +2808,7 @@ variable_reference
 element_access
 	: primary_expression OPEN_BRACKET expression_list CLOSE_BRACKET	
 	  {
-		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
+		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
 	  }
 	| primary_expression rank_specifiers
 	  {
@@ -2801,16 +2821,16 @@ element_access
 		  
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
-			$$ = new ComposedCast (expr, (string) $2, lexer.Location);
+			$$ = new ComposedCast (expr, (string) $2);
 		} else if (!(expr is SimpleName || expr is MemberAccess)){
-			Error_ExpectingTypeName (lexer.Location, expr);
+			Error_ExpectingTypeName (expr);
 			$$ = TypeManager.system_object_expr;
 		} else {
 			//
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			// 
-			$$ = new ComposedCast (expr, (string) $2, lexer.Location);
+			$$ = new ComposedCast (expr, (string) $2);
 		}
 	  }
 	;
@@ -2833,21 +2853,22 @@ expression_list
 this_access
 	: THIS
 	  {
-		$$ = new This (current_block, lexer.Location);
+		$$ = new This (current_block, (Location) $1);
 	  }
 	;
 
 base_access
 	: BASE DOT IDENTIFIER
 	  {
-		$$ = new BaseAccess ((string) $3, lexer.Location);
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new BaseAccess (lt.Value, lt.Location);
 	  }
 	| BASE OPEN_BRACKET expression_list CLOSE_BRACKET
 	  {
-		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
+		$$ = new BaseIndexerAccess ((ArrayList) $3, (Location) $1);
 	  }
 	| BASE error {
-		Report.Error (175, lexer.Location, "Use of keyword `base' is not valid in this context");
+		Report.Error (175, (Location) $1, "Use of keyword `base' is not valid in this context");
 		$$ = null;
 	  }
 	;
@@ -2856,7 +2877,7 @@ post_increment_expression
 	: primary_expression OP_INC
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement,
-				       (Expression) $1, lexer.Location);
+				       (Expression) $1, (Location) $2);
 	  }
 	;
 
@@ -2864,7 +2885,7 @@ post_decrement_expression
 	: primary_expression OP_DEC
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement,
-				       (Expression) $1, lexer.Location);
+				       (Expression) $1, (Location) $2);
 	  }
 	;
 
@@ -2876,7 +2897,7 @@ new_expression
 object_or_delegate_creation_expression
 	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);
+		$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
 	  }
 	;
 
@@ -2885,20 +2906,21 @@ array_creation_expression
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((Expression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, lexer.Location);
+		$$ = new ArrayCreation ((Expression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
 	  }
 	| NEW type rank_specifiers array_initializer
 	  {
-		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, lexer.Location);
+		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, (Location) $1);
 	  }
 	| NEW error
 	  {
-		Report.Error (1031, lexer.Location, "Type expected");
+		Report.Error (1031, (Location) $1, "Type expected");
                 $$ = null;
 	  }          
 	| NEW type error 
 	  {
-		Report.Error (1526, lexer.Location, "A new expression requires () or [] after type");
+		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
+		$$ = null;
 	  }
 	;
 
@@ -2990,31 +3012,31 @@ variable_initializer_list
 typeof_expression
 	: TYPEOF OPEN_PARENS VOID CLOSE_PARENS
 	  {
-		$$ = new TypeOfVoid (lexer.Location);
+		$$ = new TypeOfVoid ((Location) $1);
 	  }
 	| TYPEOF OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((Expression) $3, lexer.Location);
+		$$ = new TypeOf ((Expression) $3, (Location) $1);
 	  }
 	;
 
 sizeof_expression
 	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
-		$$ = new SizeOf ((Expression) $3, lexer.Location);
+		$$ = new SizeOf ((Expression) $3, (Location) $1);
 	  }
 	;
 
 checked_expression
 	: CHECKED OPEN_PARENS expression CLOSE_PARENS
 	  {
-		$$ = new CheckedExpr ((Expression) $3, lexer.Location);
+		$$ = new CheckedExpr ((Expression) $3, (Location) $1);
 	  }
 	;
 
 unchecked_expression
 	: UNCHECKED OPEN_PARENS expression CLOSE_PARENS
 	  {
-		$$ = new UnCheckedExpr ((Expression) $3, lexer.Location);
+		$$ = new UnCheckedExpr ((Expression) $3, (Location) $1);
 	  }
 	;
 
@@ -3022,14 +3044,15 @@ pointer_member_access
 	: primary_expression OP_PTR IDENTIFIER
 	  {
 		Expression deref;
+		LocatedToken lt = (LocatedToken) $3;
 
-		deref = new Unary (Unary.Operator.Indirection, (Expression) $1, lexer.Location);
-		$$ = new MemberAccess (deref, (string) $3, lexer.Location);
+		deref = new Unary (Unary.Operator.Indirection, (Expression) $1, lt.Location);
+		$$ = new MemberAccess (deref, lt.Value, lt.Location);
 	  }
 	;
 
 anonymous_method_expression
-	: DELEGATE opt_anonymous_method_signature _mark_
+	: DELEGATE opt_anonymous_method_signature
 	  {
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
@@ -3041,14 +3064,14 @@ anonymous_method_expression
 	  } 
 	  block
 	  {
-		Location loc = (Location) $3;
+		Location loc = (Location) $1;
 		top_current_block = (Block) oob_stack.Pop ();
 		current_block = (Block) oob_stack.Pop ();
 		if (RootContext.Version == LanguageVersion.ISO_1){
-				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
-				$$ = null;
+			Report.FeatureIsNotStandardized (loc, "anonymous methods");
+			$$ = null;
 		} else  {
-			ToplevelBlock anon_block = (ToplevelBlock) $5;
+			ToplevelBlock anon_block = (ToplevelBlock) $4;
 
 			anon_block.Parent = current_block;
 			$$ = new AnonymousMethod ((Parameters) $2, (ToplevelBlock) top_current_block, 
@@ -3099,10 +3122,11 @@ anonymous_method_parameter_list
 
 anonymous_method_parameter
 	: opt_parameter_modifier type IDENTIFIER {
-		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null, lexer.Location);
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new Parameter ((Expression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
 	  }
 	| PARAMS type IDENTIFIER {
-		Report.Error (1670, lexer.Location, "The `params' modifier is not allowed in anonymous method declaration");
+		Report.Error (1670, ((LocatedToken) $3).Location, "The `params' modifier is not allowed in anonymous method declaration");
 		$$ = null;
 	  }
 	;
@@ -3111,11 +3135,11 @@ unary_expression
 	: primary_expression
 	| BANG prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, (Location) $1);
 	  }
 	| TILDE prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, (Location) $1);
 	  }
 	| cast_expression
 	;
@@ -3123,11 +3147,11 @@ unary_expression
 cast_list
 	: parenthesized_expression_0 CLOSE_PARENS_CAST unary_expression
 	  {
-		$$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
+		$$ = new Cast ((Expression) $1, (Expression) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS cast_expression
 	  {
-		$$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
+		$$ = new Cast ((Expression) $1, (Expression) $3);
 	  }	
 	;
 
@@ -3135,7 +3159,7 @@ cast_expression
 	: cast_list
 	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
 	  {
-		$$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
+		$$ = new Cast ((Expression) $2, (Expression) $4);
 	  }
 	;
 
@@ -3147,29 +3171,29 @@ prefixed_unary_expression
 	: unary_expression
 	| PLUS prefixed_unary_expression
 	  { 
-	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, lexer.Location);
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, (Location) $1);
 	  } 
 	| MINUS prefixed_unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, (Location) $1);
 	  }
 	| OP_INC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
-				       (Expression) $2, lexer.Location);
+				       (Expression) $2, (Location) $1);
 	  }
 	| OP_DEC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
-				       (Expression) $2, lexer.Location);
+				       (Expression) $2, (Location) $1);
 	  }
 	| STAR prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2, (Location) $1);
 	  }
 	| BITWISE_AND prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, (Location) $1);
 	  }
 	;
 
@@ -3177,7 +3201,7 @@ pre_increment_expression
 	: OP_INC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
-				       (Expression) $2, lexer.Location);
+				       (Expression) $2, (Location) $1);
 	  }
 	;
 
@@ -3185,7 +3209,7 @@ pre_decrement_expression
 	: OP_DEC prefixed_unary_expression 
 	  {
 		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
-				       (Expression) $2, lexer.Location);
+				       (Expression) $2, (Location) $1);
 	  }
 	;
 
@@ -3194,17 +3218,17 @@ multiplicative_expression
 	| multiplicative_expression STAR prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Multiply, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| multiplicative_expression DIV prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Division, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| multiplicative_expression PERCENT prefixed_unary_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Modulus, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3213,12 +3237,12 @@ additive_expression
 	| additive_expression PLUS multiplicative_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Addition, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
 		$$ = new Binary (Binary.Operator.Subtraction, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3227,12 +3251,12 @@ shift_expression
 	| shift_expression OP_SHIFT_LEFT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.LeftShift, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.RightShift, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	; 
 
@@ -3241,30 +3265,30 @@ relational_expression
 	| relational_expression OP_LT shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThan, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| relational_expression OP_GT shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThan, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| relational_expression OP_LE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThanOrEqual, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| relational_expression OP_GE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| relational_expression IS type
 	  {
-		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
+		$$ = new Is ((Expression) $1, (Expression) $3, (Location) $2);
 	  }
 	| relational_expression AS type
 	  {
-		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
+		$$ = new As ((Expression) $1, (Expression) $3, (Location) $2);
 	  }
 	;
 
@@ -3273,12 +3297,12 @@ equality_expression
 	| equality_expression OP_EQ relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equality, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	| equality_expression OP_NE relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.Inequality, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	; 
 
@@ -3287,7 +3311,7 @@ and_expression
 	| and_expression BITWISE_AND equality_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseAnd, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3296,7 +3320,7 @@ exclusive_or_expression
 	| exclusive_or_expression CARRET and_expression
 	  {
 		$$ = new Binary (Binary.Operator.ExclusiveOr, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3305,7 +3329,7 @@ inclusive_or_expression
 	| inclusive_or_expression BITWISE_OR exclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseOr, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3314,7 +3338,7 @@ conditional_and_expression
 	| conditional_and_expression OP_AND inclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalAnd, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3323,7 +3347,7 @@ conditional_or_expression
 	| conditional_or_expression OP_OR conditional_and_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalOr, 
-			         (Expression) $1, (Expression) $3, lexer.Location);
+			         (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3331,84 +3355,64 @@ conditional_expression
 	: conditional_or_expression
 	| conditional_or_expression INTERR expression COLON expression 
 	  {
-		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5, lexer.Location);
+		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5);
 	  }
 	;
 
 assignment_expression
 	: prefixed_unary_expression ASSIGN expression
 	  {
-		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
+		$$ = new Assign ((Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.Multiply, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_DIV_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.Division, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_MOD_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Modulus, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.Modulus, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.Addition, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_SUB_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.RightShift, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.RightShift, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_AND_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_OR_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3);
 	  }
 	| prefixed_unary_expression OP_XOR_ASSIGN expression
 	  {
-		Location l = lexer.Location;
-
 		$$ = new CompoundAssign (
-			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3, l);
+			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
 	  }
 	;
 
@@ -3435,13 +3439,12 @@ class_declaration
 	  CLASS member_name
 	  {
 		MemberName name = MakeName ((MemberName) $5);
-		bool partial = (bool) $3;
 		int mod_flags = (int) $2;
 
-		if (partial) {
+		if ($3 != null) {
 			ClassPart part = PartialContainer.CreatePart (
 				current_namespace, current_class, name, mod_flags,
-				(Attributes) $1, Kind.Class, lexer.Location);
+				(Attributes) $1, Kind.Class, (Location) $3);
 
 			current_container = part.PartialContainer;
 			current_class = part;
@@ -3449,11 +3452,11 @@ class_declaration
 			if ((mod_flags & Modifiers.STATIC) != 0) {
 				current_class = new StaticClass (
 					current_namespace, current_class, name,
-					mod_flags, (Attributes) $1, lexer.Location);
+					mod_flags, (Attributes) $1);
 			} else {
 				current_class = new Class (
 					current_namespace, current_class, name,
-					mod_flags, (Attributes) $1, lexer.Location);
+					mod_flags, (Attributes) $1);
 			}
 
 			current_container.AddClassOrStruct (current_class);
@@ -3490,9 +3493,9 @@ class_declaration
 
 opt_partial
 	: /* empty */
-	  { $$ = (bool) false; }
+	  { $$ = null; }
 	| PARTIAL
-	  { $$ = (bool) true; }
+	  { $$ = $1; } // location
 	;
 
 opt_modifiers
@@ -3558,10 +3561,10 @@ block
 	: OPEN_BRACE 
 	  {
 		if (current_block == null){
-			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, lexer.Location);
+			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, (Location) $1);
 			top_current_block = current_block;
 		} else {
-		current_block = new Block (current_block, lexer.Location, Location.Null);
+		current_block = new Block (current_block, (Location) $1, Location.Null);
 		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
@@ -3569,7 +3572,7 @@ block
 		while (current_block.Implicit)
 			current_block = current_block.Parent;
 		$$ = current_block;
-		current_block.SetEndLocation (lexer.Location);
+		current_block.SetEndLocation ((Location) $4);
 		current_block = current_block.Parent;
 		if (current_block == null)
 			top_current_block = null;
@@ -3621,12 +3624,12 @@ embedded_statement
 	: valid_declaration_statement
 	| declaration_statement
 	  {
-		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration or labeled statement");
+		  Report.Error (1023, GetLocation ($1), "An embedded statement may not be a declaration or labeled statement");
 		  $$ = null;
 	  }
 	| labeled_statement
 	  {
-		  Report.Error (1023, lexer.Location, "An embedded statement may not be a declaration or labeled statement");
+		  Report.Error (1023, GetLocation ($1), "An embedded statement may not be a declaration or labeled statement");
 		  $$ = null;
 	  }
 	;
@@ -3641,9 +3644,10 @@ empty_statement
 labeled_statement
 	: IDENTIFIER COLON 
 	  {
-		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
+		LocatedToken lt = (LocatedToken) $1;
+		LabeledStatement labeled = new LabeledStatement (lt.Value, lt.Location);
 
-		if (current_block.AddLabel ((string) $1, labeled, lexer.Location))
+		if (current_block.AddLabel (lt.Value, labeled, lt.Location))
 			current_block.AddStatement (labeled);
 	  }
 	  statement
@@ -3654,8 +3658,9 @@ declaration_statement
 	  {
 		if ($1 != null){
 			DictionaryEntry de = (DictionaryEntry) $1;
+			Expression e = (Expression) de.Key;
 
-			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+			$$ = declare_local_variables (e, (ArrayList) de.Value, e.Location);
 		}
 	  }
 
@@ -3696,7 +3701,7 @@ local_variable_type
 		  
 		Expression expr = (Expression) $1;  
 		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast)) {
-			Error_ExpectingTypeName (lexer.Location, expr);
+			Error_ExpectingTypeName (expr);
 			$$ = null;
 		} else {
 			//
@@ -3707,7 +3712,7 @@ local_variable_type
 			if ((string) $2 == "")
 				$$ = $1;
 			else
-				$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+				$$ = new ComposedCast ((Expression) $1, (string) $2);
 		}
 	  }
 	| builtin_types opt_rank_specifier
@@ -3715,7 +3720,7 @@ local_variable_type
 		if ((string) $2 == "")
 			$$ = $1;
 		else
-			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+			$$ = new ComposedCast ((Expression) $1, (string) $2);
 	  }
         ;
 
@@ -3723,26 +3728,25 @@ local_variable_pointer_type
 	: primary_expression STAR
 	  {
 		Expression expr = (Expression) $1;  
-		Location l = lexer.Location;
 
 		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast)) {
-			Error_ExpectingTypeName (l, expr);
+			Error_ExpectingTypeName (expr);
 
 			$$ = null;
 		} else 
-			$$ = new ComposedCast ((Expression) $1, "*", l);
+			$$ = new ComposedCast ((Expression) $1, "*");
 	  }
         | builtin_types STAR
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);;
+		$$ = new ComposedCast ((Expression) $1, "*");
 	  }
         | VOID STAR
 	  {
-		$$ = new ComposedCast (TypeManager.system_void_expr, "*", lexer.Location);;
+		$$ = new ComposedCast (TypeManager.system_void_expr, "*", (Location) $1);
 	  }
 	| local_variable_pointer_type STAR
           {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((Expression) $1, "*");
 	  }
         ;
 
@@ -3762,7 +3766,7 @@ local_variable_declaration
 			if ((string) $2 == "")
 				t = (Expression) $1;
 			else
-				t = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+				t = new ComposedCast ((Expression) $1, (string) $2);
 			$$ = new DictionaryEntry (t, $3);
 		} else 
 			$$ = null;
@@ -3791,15 +3795,15 @@ expression_statement
 	// because statement_expression is used for example in for_statement
 	//
 statement_expression
-	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
-	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
-	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
-	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
-	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
-	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
-	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
 	| error {
-		Report.Error (1002, lexer.Location, "Expecting `;'");
+		Report.Error (1002, GetLocation ($1), "Expecting `;'");
 		$$ = null;
 	  }
 	;
@@ -3815,37 +3819,37 @@ selection_statement
 	; 
 
 if_statement
-	: IF OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS 
+	: IF OPEN_PARENS boolean_expression CLOSE_PARENS 
 	  embedded_statement
 	  { 
-		Location l = (Location) $3;
+		Location l = (Location) $1;
 
-		$$ = new If ((Expression) $4, (Statement) $6, l);
+		$$ = new If ((Expression) $3, (Statement) $5, l);
 
 		if (RootContext.WarningLevel >= 4){
-			if ($6 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
+			if ($5 == EmptyStatement.Value)
+				Report.Warning (642, l, "Possible mistaken empty statement");
 		}
 
 	  }
-	| IF OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS
+	| IF OPEN_PARENS boolean_expression CLOSE_PARENS
 	  embedded_statement ELSE embedded_statement
 	  {
-		Location l = (Location) $3;
+		Location l = (Location) $1;
 
-		$$ = new If ((Expression) $4, (Statement) $6, (Statement) $8, l);
+		$$ = new If ((Expression) $3, (Statement) $5, (Statement) $7, l);
 	  }
 	;
 
 switch_statement
-	: SWITCH OPEN_PARENS _mark_
+	: SWITCH OPEN_PARENS
 	  { 
 		switch_stack.Push (current_block);
 	  }
 	  expression CLOSE_PARENS 
 	  switch_block
 	  {
-		$$ = new Switch ((Expression) $5, (ArrayList) $7, (Location) $3);
+		$$ = new Switch ((Expression) $4, (ArrayList) $6, (Location) $1);
 		current_block = (Block) switch_stack.Pop ();
 	  }
 	;
@@ -3917,11 +3921,11 @@ switch_labels
 	;
 
 switch_label
-	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, lexer.Location); }
-	| DEFAULT COLON				{ $$ = new SwitchLabel (null, lexer.Location); }
+	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, (Location) $1); }
+	| DEFAULT COLON				{ $$ = new SwitchLabel (null, (Location) $1); }
 	| error {
 		Report.Error (
-			1523, lexer.Location, 
+			1523, GetLocation ($1), 
 			"The keyword case or default must precede code in switch block");
 	  }
 	;
@@ -3934,31 +3938,31 @@ iteration_statement
 	;
 
 while_statement
-	: WHILE OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS embedded_statement
+	: WHILE OPEN_PARENS boolean_expression CLOSE_PARENS embedded_statement
 	  {
-		Location l = (Location) $3;
-		$$ = new While ((Expression) $4, (Statement) $6, l);
+		Location l = (Location) $1;
+		$$ = new While ((Expression) $3, (Statement) $5, l);
 	
 		if (RootContext.WarningLevel >= 4){
-			if ($6 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
+			if ($5 == EmptyStatement.Value)
+				Report.Warning (642, l, "Possible mistaken empty statement");
 		}
 	  }
 	;
 
 do_statement
 	: DO embedded_statement 
-	  WHILE OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS SEMICOLON
+	  WHILE OPEN_PARENS boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		Location l = (Location) $5;
+		Location l = (Location) $1;
 
-		$$ = new Do ((Statement) $2, (Expression) $6, l);
+		$$ = new Do ((Statement) $2, (Expression) $5, l);
 	  }
 	;
 
 for_statement
 	: FOR OPEN_PARENS 
-	  opt_for_initializer SEMICOLON _mark_
+	  opt_for_initializer SEMICOLON
 	  {
 		Block assign_block = new Block (current_block);
 		current_block = assign_block;
@@ -3994,12 +3998,12 @@ for_statement
 				if (expr != null) {
 					Assign a = new Assign (var, expr, decl.Location);
 					
-					assign_block.AddStatement (new StatementExpression (a, lexer.Location));
+					assign_block.AddStatement (new StatementExpression (a));
 				}
 			}
 			
 			// Note: the $$ below refers to the value of this code block, not of the LHS non-terminal.
-			// This can be referred to as $6 below.
+			// This can be referred to as $5 below.
 			$$ = null;
 		} else {
 			$$ = $3;
@@ -4009,13 +4013,13 @@ for_statement
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
-		Location l = (Location) $5;
+		Location l = (Location) $1;
 
-		For f = new For ((Statement) $6, (Expression) $7, (Statement) $9, (Statement) $11, l);
+		For f = new For ((Statement) $5, (Expression) $6, (Statement) $8, (Statement) $10, l);
 
 		if (RootContext.WarningLevel >= 4){
-			if ($11 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
+			if ($10 == EmptyStatement.Value)
+				Report.Warning (642, (Location) $4, "Possible mistaken empty statement");
 		}
 
 		current_block.AddStatement (f);
@@ -4071,38 +4075,39 @@ statement_expression_list
 foreach_statement
 	: FOREACH OPEN_PARENS type IN expression CLOSE_PARENS
 	  {
-		Report.Error (230, lexer.Location, "Type and identifier are both required in a foreach statement");
+		Report.Error (230, (Location) $1, "Type and identifier are both required in a foreach statement");
 		$$ = null;
 	  }
-	| FOREACH OPEN_PARENS type IDENTIFIER IN _mark_
+	| FOREACH OPEN_PARENS type IDENTIFIER IN
 	  expression CLOSE_PARENS 
 	  {
 		Block foreach_block = new Block (current_block);
 		current_block = foreach_block;
 
-		Location l = lexer.Location;
+		LocatedToken lt = (LocatedToken) $4;
+		Location l = lt.Location;
 		LocalInfo vi;
 
-		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, l);
+		vi = foreach_block.AddVariable ((Expression) $3, lt.Value, l);
 		if (vi != null) {
 			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Foreach);
 
 			// Get a writable reference to this read-only variable.
 			//
 			// Note that the $$ here refers to the value of _this_ code block,
-			// not the value of the LHS non-terminal.  This can be referred to as $9 below.
-			$$ = new LocalVariableReference (foreach_block, (string) $4, l, vi, false);
+			// not the value of the LHS non-terminal.  This can be referred to as $8 below.
+			$$ = new LocalVariableReference (foreach_block, lt.Value, l, vi, false);
 		} else {
 			$$ = null;
 		}
 	  } 
 	  embedded_statement 
 	  {
-		LocalVariableReference v = (LocalVariableReference) $9;
-		Location l = (Location) $6;
+		LocalVariableReference v = (LocalVariableReference) $8;
+		Location l = (Location) $1;
 
 		if (v != null) {
-			Foreach f = new Foreach ((Expression) $3, v, (Expression) $7, (Statement) $10, l);
+			Foreach f = new Foreach ((Expression) $3, v, (Expression) $6, (Statement) $9, l);
 			current_block.AddStatement (f);
 		}
 
@@ -4125,88 +4130,91 @@ jump_statement
 break_statement
 	: BREAK SEMICOLON
 	  {
-		$$ = new Break (lexer.Location);
+		$$ = new Break ((Location) $1);
 	  }
 	;
 
 continue_statement
 	: CONTINUE SEMICOLON
 	  {
-		$$ = new Continue (lexer.Location);
+		$$ = new Continue ((Location) $1);
 	  }
 	;
 
 goto_statement
 	: GOTO IDENTIFIER SEMICOLON 
 	  {
-		$$ = new Goto ((string) $2, lexer.Location);
+		LocatedToken lt = (LocatedToken) $2;
+		$$ = new Goto (lt.Value, lt.Location);
 	  }
 	| GOTO CASE constant_expression SEMICOLON
 	  {
-		$$ = new GotoCase ((Expression) $3, lexer.Location);
+		$$ = new GotoCase ((Expression) $3, (Location) $1);
 	  }
 	| GOTO DEFAULT SEMICOLON 
 	  {
-		$$ = new GotoDefault (lexer.Location);
+		$$ = new GotoDefault ((Location) $1);
 	  }
 	; 
 
 return_statement
 	: RETURN opt_expression SEMICOLON
 	  {
-		$$ = new Return ((Expression) $2, lexer.Location);
+		$$ = new Return ((Expression) $2, (Location) $1);
 	  }
 	;
 
 throw_statement
 	: THROW opt_expression SEMICOLON
 	  {
-		$$ = new Throw ((Expression) $2, lexer.Location);
+		$$ = new Throw ((Expression) $2, (Location) $1);
 	  }
 	;
 
 yield_statement 
 	: IDENTIFIER RETURN expression SEMICOLON
 	  {
-		string s = (string) $1;
+		LocatedToken lt = (LocatedToken) $1;
+		string s = lt.Value;
 		if (s != "yield"){
-			Report.Error (1003, lexer.Location, "; expected");
+			Report.Error (1003, lt.Location, "; expected");
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (lexer.Location, "yield statement");
+			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){
-			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+			Report.Error (204, lt.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
 		} else {
 			iterator_container.SetYields ();
-			$$ = new Yield ((Expression) $3, lexer.Location); 
+			$$ = new Yield ((Expression) $3, lt.Location); 
 		}
 	  }
 	| IDENTIFIER RETURN SEMICOLON
 	  {
-		Report.Error (1627, lexer.Location, "Expression expected after yield return");
+		Report.Error (1627, (Location) $2, "Expression expected after yield return");
 		$$ = null;
 	  }
 	| IDENTIFIER BREAK SEMICOLON
 	  {
-		string s = (string) $1;
+		LocatedToken lt = (LocatedToken) $1;
+		string s = lt.Value;
 		if (s != "yield"){
-			Report.Error (1003, lexer.Location, "; expected");
+			Report.Error (1003, lt.Location, "; expected");
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized (lexer.Location, "yield statement");
+			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){
-			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+			Report.Error (204, lt.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
 		} else {
 			iterator_container.SetYields ();
-			$$ = new YieldBreak (lexer.Location);
+			$$ = new YieldBreak (lt.Location);
 		}
 	  }
 	;
@@ -4257,7 +4265,8 @@ try_statement
 	  }
 	| TRY block error 
 	  {
-		Report.Error (1524, lexer.Location, "Expected catch or finally");
+		Report.Error (1524, (Location) $1, "Expected catch or finally");
+		$$ = null;
 	  }
 	;
 
@@ -4297,16 +4306,15 @@ catch_clause
 		if ($2 != null) {
 			DictionaryEntry cc = (DictionaryEntry) $2;
 			type = (Expression) cc.Key;
-			id   = (string) cc.Value;
+			LocatedToken lt = (LocatedToken) cc.Value;
 
-			if (id != null){
+			if (lt != null){
 				ArrayList one = new ArrayList (4);
-				Location loc = lexer.Location;
 
-				one.Add (new VariableDeclaration (id, null, loc));
+				one.Add (new VariableDeclaration (lt, null));
 
 				current_block = new Block (current_block);
-				Block b = declare_local_variables (type, one, loc);
+				Block b = declare_local_variables (type, one, lt.Location);
 				current_block = b;
 			}
 		}
@@ -4317,9 +4325,10 @@ catch_clause
 		if ($2 != null){
 			DictionaryEntry cc = (DictionaryEntry) $2;
 			type = (Expression) cc.Key;
-			id   = (string) cc.Value;
+			LocatedToken lt = (LocatedToken) cc.Value;
 
-			if (id != null){
+			if (lt != null){
+				id = lt.Value;
 				while (current_block.Implicit)
 					current_block = current_block.Parent;
 				current_block = current_block.Parent;
@@ -4360,7 +4369,7 @@ unchecked_statement
 unsafe_statement
 	: UNSAFE 
 	  {
-		RootContext.CheckUnsafeOption (lexer.Location);
+		RootContext.CheckUnsafeOption ((Location) $1);
 	  } block {
 		$$ = new Unsafe ((Block) $3);
 	  }
@@ -4369,11 +4378,11 @@ unsafe_statement
 fixed_statement
 	: FIXED OPEN_PARENS 
 	  type fixed_pointer_declarators 
-	  CLOSE_PARENS _mark_
+	  CLOSE_PARENS
 	  {
 		ArrayList list = (ArrayList) $4;
 		Expression type = (Expression) $3;
-		Location l = lexer.Location;
+		Location l = (Location) $1;
 		int top = list.Count;
 
 		Block assign_block = new Block (current_block);
@@ -4395,13 +4404,13 @@ fixed_statement
 	  }
 	  embedded_statement 
 	  {
-		Location l = (Location) $6;
+		Location l = (Location) $1;
 
-		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $8, l);
+		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
 
 		if (RootContext.WarningLevel >= 4){
-			if ($8 == EmptyStatement.Value)
-				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
+			if ($7 == EmptyStatement.Value)
+				Report.Warning (642, l, "Possible mistaken empty statement");
 		}
 
 		current_block.AddStatement (f);
@@ -4430,12 +4439,14 @@ fixed_pointer_declarators
 
 fixed_pointer_declarator
 	: IDENTIFIER ASSIGN expression
-	  {	
-		$$ = new Pair ($1, $3);
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		// FIXME: keep location
+		$$ = new Pair (lt.Value, $3);
 	  }
 	| IDENTIFIER
 	  {
-		Report.Error (210, lexer.Location, "You must provide an initializer in a fixed or using statement declaration");
+		Report.Error (210, ((LocatedToken) $1).Location, "You must provide an initializer in a fixed or using statement declaration");
 		$$ = null;
 	  }
 	;
@@ -4447,19 +4458,19 @@ lock_statement
  	  } 
 	  embedded_statement
 	  {
-		$$ = new Lock ((Expression) $3, (Statement) $6, lexer.Location);
+		$$ = new Lock ((Expression) $3, (Statement) $6, (Location) $1);
 	  }
 	;
 
 using_statement
-	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS _mark_
+	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS
 	  {
 		Block assign_block = new Block (current_block);
 		current_block = assign_block;
 
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
-			Location l = lexer.Location;
+			Location l = (Location) $1;
 
 			Expression type = (Expression) de.Key;
 			ArrayList var_declarators = (ArrayList) de.Value;
@@ -4496,11 +4507,11 @@ using_statement
 				vars.Add (new DictionaryEntry (var, expr));				
 
 				// Assign a = new Assign (var, expr, decl.Location);
-				// assign_block.AddStatement (new StatementExpression (a, lexer.Location));
+				// assign_block.AddStatement (new StatementExpression (a));
 			}
 
 			// Note: the $$ here refers to the value of this code block and not of the LHS non-terminal.
-			// It can be referred to as $6 below.
+			// It can be referred to as $5 below.
 			$$ = new DictionaryEntry (type, vars);
 		 } else {
 			$$ = $3;
@@ -4508,7 +4519,7 @@ using_statement
 	  } 
 	  embedded_statement
 	  {
-		Using u = new Using ($6, (Statement) $7, (Location) $5);
+		Using u = new Using ($5, (Statement) $6, (Location) $1);
 		current_block.AddStatement (u);
 		while (current_block.Implicit)
 			current_block = current_block.Parent;
@@ -4522,11 +4533,6 @@ resource_acquisition
 	| expression
 	;
 
-// Utility rule to save location information
-_mark_
-	: /* empty */
-	{ $$ = lexer.Location; }
-
 %%
 
 // <summary>
@@ -4539,15 +4545,15 @@ public class VariableDeclaration {
 	public Attributes OptAttributes;
 	public string DocComment;
 
-	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs)
+	public VariableDeclaration (LocatedToken lt, object eoai, Attributes opt_attrs)
 	{
-		this.identifier = id;
+		this.identifier = lt.Value;
 		this.expression_or_array_initializer = eoai;
-		this.Location = l;
+		this.Location = lt.Location;
 		this.OptAttributes = opt_attrs;
 	}
 
-	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, null)
+	public VariableDeclaration (LocatedToken lt, object eoai) : this (lt, eoai, null)
 	{
 	}
 }
@@ -4578,13 +4584,15 @@ public class IndexerDeclaration {
 	public Expression type;
 	public MemberName interface_type;
 	public Parameters param_list;
+	public Location location;
 
 	public IndexerDeclaration (Expression type, MemberName interface_type,
-				   Parameters param_list)
+				   Parameters param_list, Location loc)
 	{
 		this.type = type;
 		this.interface_type = interface_type;
 		this.param_list = param_list;
+		this.location = loc;
 	}
 }
 
@@ -4631,12 +4639,12 @@ public class OperatorDeclaration {
 
 }
 
-void Error_ExpectingTypeName (Location l, Expression expr)
+void Error_ExpectingTypeName (Expression expr)
 {
 	if (expr is Invocation){
-		Report.Error (1002, l, "Expecting `;'");
+		Report.Error (1002, expr.Location, "Expecting `;'");
 	} else {
-		Report.Error (-1, l, "Invalid Type definition");
+		Report.Error (-1, expr.Location, "Invalid Type definition");
 	}
 }
 
@@ -4733,7 +4741,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 
 		assign = new Assign (var, expr, decl.Location);
 
-		implicit_block.AddStatement (new StatementExpression (assign, lexer.Location));
+		implicit_block.AddStatement (new StatementExpression (assign));
 	}
 	
 	return implicit_block;
@@ -4755,7 +4763,7 @@ Block declare_local_constants (Expression type, ArrayList declarators)
 	return implicit_block;
 }
 
-void CheckAttributeTarget (string a)
+void CheckAttributeTarget (string a, Location l)
 {
 	switch (a) {
 
@@ -4763,14 +4771,13 @@ void CheckAttributeTarget (string a)
 		return;
 		
 	default :
-		Location l = lexer.Location;
 		Report.Error (658, l, "`" + a + "' is an invalid attribute target");
 		break;
 	}
 
 }
 
-void CheckUnaryOperator (Operator.OpType op)
+void CheckUnaryOperator (Operator.OpType op, Location l)
 {
 	switch (op) {
 		
@@ -4786,14 +4793,13 @@ void CheckUnaryOperator (Operator.OpType op)
 		break;
 		
 	default :
-		Location l = lexer.Location;
 		Report.Error (1019, l, "Overloadable unary operator expected"); 
 		break;
 		
 	}
 }
 
-void CheckBinaryOperator (Operator.OpType op)
+void CheckBinaryOperator (Operator.OpType op, Location l)
 {
 	switch (op) {
 		
@@ -4816,7 +4822,6 @@ void CheckBinaryOperator (Operator.OpType op)
 		break;
 		
 	default :
-		Location l = lexer.Location;
 		Report.Error (1020, l, "Overloadable binary operator expected");
 		break;
 	}
@@ -4878,18 +4883,18 @@ public void parse ()
 	RootContext.Tree.Types.NamespaceEntry = null;
 }
 
-void CheckToken (int error, int yyToken, string msg)
+void CheckToken (int error, int yyToken, string msg, Location loc)
 {
 	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD){
-		Report.Error (error, lexer.Location, String.Format ("{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ()));
+		Report.Error (error, loc, String.Format ("{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ()));
 		return;
 	}		
-	Report.Error (error, lexer.Location, msg);
+	Report.Error (error, loc, msg);
 }
 
-void CheckIdentifierToken (int yyToken)
+void CheckIdentifierToken (int yyToken, Location loc)
 {
-	CheckToken (1041, yyToken, "Identifier expected");
+	CheckToken (1041, yyToken, "Identifier expected", loc);
 }
 
 string ConsumeStoredComment ()
@@ -4898,6 +4903,19 @@ string ConsumeStoredComment ()
 	tmpComment = null;
 	Lexer.doc_state = XmlCommentState.Allowed;
 	return s;
+}
+
+Location GetLocation (object obj)
+{
+	if (obj is MemberCore)
+		return ((MemberCore) obj).Location;
+	if (obj is MemberName)
+		return ((MemberName) obj).Location;
+	if (obj is LocatedToken)
+		return ((LocatedToken) obj).Location;
+	if (obj is Location)
+		return (Location) obj;
+	return lexer.Location;
 }
 
 /* end end end */
