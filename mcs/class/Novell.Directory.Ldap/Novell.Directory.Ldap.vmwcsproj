@@ -8,14 +8,14 @@
 			</Settings>
 			<References>
 				<Reference Name="System" AssemblyName="System" HintPath="..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"/>
-				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"/>
-				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll"/>
+				<Reference Name="rt" AssemblyName="rt" HintPath="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\j2sdk1.4\rt.dll" Private="False"/>
+				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
 			<Include>
-				<File RelPath="Novell.Directory.Ldap\.cvsignore" BuildAction="None"/>
 				<File RelPath="Novell.Directory.Ldap\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap\AuthenticationTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap\Connection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap\InterThreadException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap\LdapAbandonRequest.cs" SubType="Code" BuildAction="Compile"/>
@@ -207,6 +207,13 @@
 				<File RelPath="Novell.Directory.Ldap.Rfc2251\RfcSearchResultReference.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Rfc2251\RfcSubstringFilter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Rfc2251\RfcUnbindRequest.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\AuthenticationCallbackHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\CreateContextPrivilegedAction.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\ExchangeTokenPrivilegedAction.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\Krb5Helper.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\SecureStream.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\UnwrapPrivilegedAction.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Security.jvm\WrapPrivilegedAction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\ArrayEnumeration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\AttributeQualifier.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\Base64.cs" SubType="Code" BuildAction="Compile"/>
@@ -228,6 +235,6 @@
 				<File RelPath="Novell.Directory.Ldap.Utilclass\TokenTypes.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties project.JDKType="1.4.2_05" REFS.JarPath.system.xml="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.system.data="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Data.jar" REFS.JarPath.system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar"/>
+		<UserProperties REFS.JarPath.j2se.helpers="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.jar" REFS.JarPath.rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\j2sdk1.4\lib\rt.jar" REFS.JarPath.system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" project.JDKType="1.4.2_05"/>
 	</CSHARP>
 	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug_Java"/></Configs></VisualMainWin></VisualStudioProject>

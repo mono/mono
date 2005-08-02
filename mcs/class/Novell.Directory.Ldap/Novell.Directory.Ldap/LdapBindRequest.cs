@@ -88,6 +88,34 @@ namespace Novell.Directory.Ldap
 		{
 			return ;
 		}
+
+		/// <summary> Constructs a secure bind request.
+		/// 
+		/// </summary>
+		/// <param name="version"> The Ldap protocol version, use Ldap_V3.
+		/// Ldap_V2 is not supported.
+		/// 
+		/// </param>
+		/// <param name="dn">     If non-null and non-empty, specifies that the
+		/// connection and all operations through it should
+		/// be authenticated with dn as the distinguished
+		/// name.
+		/// 
+		/// </param>
+		/// <param name="mechanism"> Security mechanism code
+		/// 
+		/// </param>
+		/// <param name="passwd"> Security credentials
+		/// 
+		/// </param>
+		/// <param name="cont">Any controls that apply to the simple bind request,
+		/// or null if none.
+		/// </param>
+		[CLSCompliantAttribute(false)]
+		public LdapBindRequest(int version, System.String dn, String mechanism, sbyte[] credentials, LdapControl[] cont):base(LdapMessage.BIND_REQUEST, new RfcBindRequest(version, dn, mechanism, credentials), cont)
+		{
+			return ;
+		}
 		
 		/// <summary> Return an Asn1 representation of this add request.
 		/// 

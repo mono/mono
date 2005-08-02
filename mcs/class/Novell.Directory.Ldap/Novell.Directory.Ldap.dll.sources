@@ -86,6 +86,7 @@ Novell.Directory.Ldap.Rfc2251/RfcUnbindRequest.cs
 Novell.Directory.Ldap.Rfc2251/RfcExtendedRequest.cs
 Novell.Directory.Ldap.Rfc2251/RfcExtendedResponse.cs
 Novell.Directory.Ldap.Rfc2251/RfcIntermediateResponse.cs
+Novell.Directory.Ldap/AuthenticationTypes.cs
 Novell.Directory.Ldap/LdapConnection.cs
 Novell.Directory.Ldap/LdapAuthHandler.cs
 Novell.Directory.Ldap/LdapBindHandler.cs

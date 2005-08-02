@@ -1207,6 +1207,25 @@ namespace Novell.Directory.Ldap
 		}
 ///TLS not supported in first release		
 
+		internal Stream InputStream
+		{
+			get { return in_Renamed; }
+		}
+
+		internal Stream OutputStream
+		{
+			get { return out_Renamed; }
+		}
+
+		internal void ReplaceStreams(Stream newIn, Stream newOut)
+		{
+			// wait for reader to stop, see LdapConnection.Bind
+			waitForReader(null);
+			in_Renamed = newIn;
+			out_Renamed = newOut;
+			startReader();
+		}
+
 		public class ReaderThread
 		{
 			private void  InitBlock(Connection enclosingInstance)

@@ -36,6 +36,15 @@ using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
 #if !TARGET_JVM
 using Mono.Security.Protocol.Tls;
+#else
+using org.ietf.jgss;
+using javax.security.auth;
+using javax.security.auth.login;
+using java.security;
+
+using Novell.Directory.Ldap.Security;
+using System.Collections.Specialized;
+using System.Configuration;
 #endif
 using System.Security.Cryptography.X509Certificates;
 
@@ -471,6 +480,9 @@ namespace Novell.Directory.Ldap
 		private static System.Object nameLock; // protect agentNum
 		private static int lConnNum = 0; // Debug, LdapConnection number
 		private System.String name; // String name for debug
+
+		private const string LDAP_SECURITY_MECH = "System.DirectoryServices.SecurityMech";
+		private const string LDAP_SECURITY_APP_NAME = "System.DirectoryServices.SecurityAppName";
 		
 		/// <summary> Used with search to specify that the scope of entrys to search is to
 		/// search only the base obect.
@@ -1172,7 +1184,21 @@ namespace Novell.Directory.Ldap
 		/// </exception>
 		public virtual void  Bind(System.String dn, System.String passwd)
 		{
-			Bind(Ldap_V3, dn, passwd, defSearchCons);
+			Bind(dn, passwd, AuthenticationTypes.None);
+			return ;
+		}
+		
+		public virtual void  Bind(System.String dn, System.String passwd, AuthenticationTypes authenticationTypes)
+		{
+#if TARGET_JVM
+			if (authenticationTypes != AuthenticationTypes.None &&
+				authenticationTypes != AuthenticationTypes.ServerBind &&
+				authenticationTypes != AuthenticationTypes.Anonymous)
+				BindSecure(dn, passwd, authenticationTypes);
+			else
+#endif
+				Bind(Ldap_V3, dn, passwd, defSearchCons);		
+
 			return ;
 		}
 		
@@ -1388,7 +1414,7 @@ namespace Novell.Directory.Ldap
 		[CLSCompliantAttribute(false)]
 		public virtual void  Bind(int version, System.String dn, sbyte[] passwd, LdapConstraints cons)
 		{
-			LdapResponseQueue queue = Bind(version, dn, passwd, null, cons);
+			LdapResponseQueue queue = Bind(version, dn, passwd, null, cons, null);
 			LdapResponse res = (LdapResponse) queue.getResponse();
 			if (res != null)
 			{
@@ -1440,7 +1466,7 @@ namespace Novell.Directory.Ldap
 		[CLSCompliantAttribute(false)]
 		public virtual LdapResponseQueue Bind(int version, System.String dn, sbyte[] passwd, LdapResponseQueue queue)
 		{
-			return Bind(version, dn, passwd, queue, defSearchCons);
+			return Bind(version, dn, passwd, queue, defSearchCons, null);
 		}
 		
 		/// <summary> Asynchronously authenticates to the Ldap server (that the object is
@@ -1480,7 +1506,7 @@ namespace Novell.Directory.Ldap
 		/// message and an Ldap error code.
 		/// </exception>
 		[CLSCompliantAttribute(false)]
-		public virtual LdapResponseQueue Bind(int version, System.String dn, sbyte[] passwd, LdapResponseQueue queue, LdapConstraints cons)
+		public virtual LdapResponseQueue Bind(int version, System.String dn, sbyte[] passwd, LdapResponseQueue queue, LdapConstraints cons, string mech)
 		{
 			int msgId;
 			BindProperties bindProps;
@@ -1506,7 +1532,13 @@ namespace Novell.Directory.Ldap
 				dn = ""; // set to null if anonymous
 			}
 
-			LdapMessage msg = new LdapBindRequest(version, dn, passwd, cons.getControls());
+			LdapMessage msg;
+#if TARGET_JVM
+			if (mech != null)
+				msg = new LdapBindRequest(version, "", mech, passwd, cons.getControls());
+			else
+#endif
+				msg = new LdapBindRequest(version, dn, passwd, cons.getControls());
 			
 			msgId = msg.MessageID;
 			bindProps = new BindProperties(version, dn, "simple", anonymous, null, null);
@@ -1524,11 +1556,88 @@ namespace Novell.Directory.Ldap
 				}
 			}
 			
+#if TARGET_JVM
+			// stopping reader to enable stream replace after secure binding is complete, see Connection.ReplaceStreams()
+			if (mech != null)
+				conn.stopReaderOnReply(msgId);
+#endif
 			// The semaphore is released when the bind response is queued.
 			conn.acquireWriteSemaphore(msgId);
 			
 			return SendRequestToServer(msg, cons.TimeLimit, queue, bindProps);
 		}
+
+#if TARGET_JVM
+		private void BindSecure(System.String username, System.String password, AuthenticationTypes authenticationTypes)
+		{
+			if ((authenticationTypes & AuthenticationTypes.Secure) != 0) {			
+				LoginContext loginContext = null;
+				try {					
+					AuthenticationCallbackHandler callbackHandler = new AuthenticationCallbackHandler (username,password);
+					loginContext = new LoginContext (SecurityAppName, callbackHandler);
+					loginContext.login ();
+				}
+				catch (LoginException e) {
+					throw new LdapException ("Failed to create login security context", 80, "", e);
+				}
+
+				Subject subject = loginContext.getSubject ();
+
+				Krb5Helper krb5Helper = new Krb5Helper ("ldap@" + conn.Host, subject, authenticationTypes, SecurityMech);
+				sbyte [] token = krb5Helper.ExchangeTokens (Krb5Helper.EmptyToken);
+
+				LdapResponseQueue queue = Bind(LdapConnection.Ldap_V3, username, token, null, null, "GSS-SPNEGO");
+				LdapResponse res = (LdapResponse) queue.getResponse ();
+				token = ((RfcBindResponse)res.Asn1Object.Response).ServerSaslCreds.byteValue ();
+
+				token = krb5Helper.ExchangeTokens(token == null ? Krb5Helper.EmptyToken : token);
+
+				System.IO.Stream inStream = conn.InputStream;
+				System.IO.Stream newIn = new SecureStream (inStream, krb5Helper);
+				System.IO.Stream outStream = conn.OutputStream;
+				System.IO.Stream newOut = new SecureStream (outStream, krb5Helper);
+				conn.ReplaceStreams (newIn,newOut);
+			}		
+		}
+
+		private string SecurityMech
+		{
+			get {
+				string securityMech = (string) AppDomain.CurrentDomain.GetData (LDAP_SECURITY_MECH);
+
+				if (securityMech == null) {
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					if (config != null) 
+						securityMech = config ["securitymech"];
+
+					if (securityMech == null) 
+						throw new ArgumentException("Security mechanism id not found in application settings");
+
+					AppDomain.CurrentDomain.SetData (LDAP_SECURITY_MECH,securityMech);
+				}
+				return securityMech;
+			}
+		}
+
+		private string SecurityAppName
+		{
+			get {
+				string securityAppName = (string) AppDomain.CurrentDomain.GetData (LDAP_SECURITY_APP_NAME);
+
+				if (securityAppName == null) {
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					if (config != null) 
+						securityAppName = config ["securityappname"];
+
+					if (securityAppName == null) 
+						throw new ArgumentException("Application section name not found in application settings");
+
+					AppDomain.CurrentDomain.SetData (LDAP_SECURITY_APP_NAME,securityAppName);
+				}
+				return securityAppName;
+			}
+		}
+#endif
 		
 		//*************************************************************************
 		// compare methods

@@ -1,3 +1,23 @@
+2005-28-07  Boris Kirzner <borisk@mainsoft.com>
+	* Novell.Directory.Ldap.Security.jvm: added new directory containing 
+	TARGET_JVM specific classes for kerberos authentication.
+	* Novell.Directory.Ldap/AuthenticationTypes.cs: added new enum, 
+	corresponding to System.DirectoryServices.AuthenticationTypes. Used in
+	LdapConnection.Bind methods.
+	* Novell.Directory.Ldap.dll.sources: updated sources files.
+	* Novell.Directory.Ldap/LdapBindRequest.cs: added new constructor with 
+	credentials parameter passed as sbyte.
+	* Novell.Directory.Ldap/Connection.cs: added properties for accessing 
+	private input and output streams. Added method for streams replacing.
+	* Novell.Directory.Ldap/LdapConnection.cs: 
+		- changed Bind api to receive AuthenticationTypes as parameter.
+		- added TARGET_JVM-specific BindSecure method.
+		- added TARGET_JVM-specific support for creating bind requests
+		with security credentials.
+		- added TARGET_JVM-specific properties for security mechanism
+		and application section name in configuration.
+	* Novell.Directory.Ldap.vmwcsproj: updated TARGET_JVM project file.
+
 2005-27-07  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.Asn1/Asn1Enumerated.cs,
 	Novell.Directory.Ldap.Asn1/Asn1Choice.cs,
