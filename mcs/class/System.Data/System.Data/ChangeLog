@@ -1,3 +1,7 @@
+2005-08-02 Boris Kirzner <borisk@mainsoft.com>
+	* XmlSchemaDataImporter.cs : Data relations should be processed after the
+	keys, so no redundant constraints created while relations processing.
+
 2005-07-25 Boris Kirzner <borisk@mainsoft.com>
 	* FillOptions.cs, ConflictOptions.cs, UpdateOptions.cs: 
 	added ifdef TARGET_JVM.

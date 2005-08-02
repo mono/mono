@@ -336,9 +336,6 @@ el.ElementType != schemaAnyType)
 				if (obj is XmlSchemaAnnotation)
 					HandleAnnotations ((XmlSchemaAnnotation) obj, false);
 
-			foreach (RelationStructure rs in this.relations)
-				dataset.Relations.Add (GenerateRelationship (rs));
-
 			if (datasetElement != null) {
 				// Handle constraints in the DataSet element. First keys.
 				foreach (XmlSchemaObject obj in datasetElement.Constraints)
@@ -349,6 +346,9 @@ el.ElementType != schemaAnyType)
 					if (obj is XmlSchemaKeyref)
 						ProcessReferenceKey (datasetElement, (XmlSchemaKeyref) obj);
 			}
+
+			foreach (RelationStructure rs in this.relations)
+				dataset.Relations.Add (GenerateRelationship (rs));
 		}
 
 		private bool IsDataSetElement (XmlSchemaElement el)

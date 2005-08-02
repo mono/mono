@@ -2380,6 +2380,44 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
+		public void ReadXmlSchema_2()
+		{
+			DataSet ds = new DataSet();
+			string xmlData = string.Empty;
+			xmlData += "<?xml version=\"1.0\"?>";
+			xmlData += "<xs:schema id=\"SiteConfiguration\" targetNamespace=\"http://tempuri.org/PortalCfg.xsd\" xmlns:mstns=\"http://tempuri.org/PortalCfg.xsd\" xmlns=\"http://tempuri.org/PortalCfg.xsd\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" attributeFormDefault=\"qualified\" elementFormDefault=\"qualified\">";
+			xmlData += 	"<xs:element name=\"SiteConfiguration\" msdata:IsDataSet=\"true\" msdata:EnforceConstraints=\"False\">";
+			xmlData += 		"<xs:complexType>";
+			xmlData += 			"<xs:choice maxOccurs=\"unbounded\">";
+			xmlData += 				"<xs:element name=\"Tab\">";
+			xmlData += 					"<xs:complexType>";
+			xmlData += 						"<xs:sequence>";
+			xmlData += 							"<xs:element name=\"Module\" minOccurs=\"0\" maxOccurs=\"unbounded\">";
+			xmlData += 								"<xs:complexType>";
+			xmlData += 									"<xs:attribute name=\"ModuleId\" form=\"unqualified\" type=\"xs:int\" />";
+			xmlData += 								"</xs:complexType>";
+			xmlData += 							"</xs:element>";
+			xmlData += 						"</xs:sequence>";
+			xmlData += 						"<xs:attribute name=\"TabId\" form=\"unqualified\" type=\"xs:int\" />";
+			xmlData += 					"</xs:complexType>";
+			xmlData += 				"</xs:element>";
+			xmlData += 			"</xs:choice>";
+			xmlData +=	 "</xs:complexType>";
+			xmlData += 		"<xs:key name=\"TabKey\" msdata:PrimaryKey=\"true\">";
+			xmlData += 			"<xs:selector xpath=\".//mstns:Tab\" />";
+			xmlData += 			"<xs:field xpath=\"@TabId\" />";
+			xmlData += 		"</xs:key>";
+			xmlData += 		"<xs:key name=\"ModuleKey\" msdata:PrimaryKey=\"true\">";
+			xmlData += 			"<xs:selector xpath=\".//mstns:Module\" />";
+			xmlData += 			"<xs:field xpath=\"@ModuleID\" />";
+			xmlData += 		"</xs:key>";
+			xmlData += 	"</xs:element>";
+			xmlData += "</xs:schema>";
+
+			ds.ReadXmlSchema(new StringReader(xmlData));
+		}
+
+		[Test]
 		[Category ("NotWorking")]
 		public void ReadXml_ByTextReader()
 		{
