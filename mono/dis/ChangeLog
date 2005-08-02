@@ -1,3 +1,7 @@
+2005-08-02  Ankit Jain <jankit@novell.com>
+
+	* main.c (dis_directive_moduleref): Escape module ref names.
+
 2005-08-01  Ankit Jain <jankit@novell.com>
 
 	* get.c (field_flags_map): Use C comments instead of C#.
