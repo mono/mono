@@ -1,5 +1,12 @@
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* managed-collation.patch : added Normalization support.
+	* managed-collation-icall.patch : added, including normalization stuff.
+
+	  BTW when will collation code checked in?
+
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-normalization-source.cs : Unified three normalization source
 	  generators, to compute IsUnsafe flag. Fixed helperIndex array type
 	  in C header output.
