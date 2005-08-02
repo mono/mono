@@ -600,7 +600,7 @@ namespace System.Globalization
 					       int startIndex)
 		{
 			return(LastIndexOf (source, value, startIndex,
-					    source.Length - startIndex,
+					    startIndex + 1,
 					    CompareOptions.None));
 		}
 
@@ -615,7 +615,7 @@ namespace System.Globalization
 					       int startIndex)
 		{
 			return(LastIndexOf (source, value, startIndex,
-					    source.Length - startIndex,
+					    startIndex + 1,
 					    CompareOptions.None));
 		}
 
@@ -624,7 +624,7 @@ namespace System.Globalization
 					       CompareOptions options)
 		{
 			return(LastIndexOf (source, value, startIndex,
-					    source.Length - startIndex,
+					    startIndex + 1,
 					    options));
 		}
 
@@ -640,7 +640,7 @@ namespace System.Globalization
 					       CompareOptions options)
 		{
 			return(LastIndexOf (source, value, startIndex,
-					    source.Length - startIndex,
+					    startIndex + 1,
 					    options));
 		}
 
