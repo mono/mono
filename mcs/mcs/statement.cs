@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 
 		public void Error (int error, string s)
 		{
-			if (!Location.IsNull (loc))
+			if (!loc.IsNull)
 				Report.Error (error, loc, s);
 			else
 				Report.Error (error, s);
@@ -527,10 +527,10 @@ namespace Mono.CSharp {
 	public class StatementExpression : Statement {
 		ExpressionStatement expr;
 		
-		public StatementExpression (ExpressionStatement expr, Location l)
+		public StatementExpression (ExpressionStatement expr)
 		{
 			this.expr = expr;
-			loc = l;
+			loc = expr.Location;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -4281,7 +4281,7 @@ namespace Mono.CSharp {
 					list.Add (counter [i]);
 				}
 
-				access = new ElementAccess (copy, list, loc).Resolve (ec);
+				access = new ElementAccess (copy, list).Resolve (ec);
 				if (access == null)
 					return false;
 
@@ -4607,7 +4607,7 @@ namespace Mono.CSharp {
 				enumerator = new TemporaryVariable (enumerator_type, loc);
 				enumerator.Resolve (ec);
 
-				init = new Invocation (get_enumerator, new ArrayList (), loc);
+				init = new Invocation (get_enumerator, new ArrayList ());
 				init = init.Resolve (ec);
 				if (init == null)
 					return false;
@@ -4618,7 +4618,7 @@ namespace Mono.CSharp {
 					MethodGroupExpr mg = new MethodGroupExpr (mi, loc);
 					mg.InstanceExpression = enumerator;
 
-					move_next_expr = new Invocation (mg, new ArrayList (), loc);
+					move_next_expr = new Invocation (mg, new ArrayList ());
 				}
 
 				get_current.InstanceExpression = enumerator;
