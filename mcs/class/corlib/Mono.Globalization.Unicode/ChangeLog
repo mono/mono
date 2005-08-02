@@ -1,3 +1,14 @@
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-normalization-source.cs : Unified three normalization source
+	  generators, to compute IsUnsafe flag. Fixed helperIndex array type
+	  in C header output.
+	* create-char-mapping-source.cs,
+	  create-combining-class-source.cs : thus removed.
+	* Makefile : thus modified for the above integration.
+	* NormalizationTableUtil.cs : Extended to contain IsUnsafe flag.
+	* Normalization.cs : Several fixes to make Normalize() actually work.
+
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-normalization-source.cs,

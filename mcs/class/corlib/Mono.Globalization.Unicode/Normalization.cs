@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 using Util = Mono.Globalization.Unicode.NormalizationTableUtil;
 
@@ -21,10 +22,11 @@ namespace Mono.Globalization.Unicode
 		public const int NoNfkc = 16;
 		public const int MaybeNfkc = 32;
 		public const int FullCompositionExclusion = 64;
-//		public const int ExpandOnNfd = 128;
-//		public const int ExpandOnNfc = 256;
-//		public const int ExpandOnNfkd = 512;
-//		public const int ExpandOnNfkc = 1024;
+		public const int IsSafe = 128;
+//		public const int ExpandOnNfd = 256;
+//		public const int ExpandOnNfc = 512;
+//		public const int ExpandOnNfkd = 1024;
+//		public const int ExpandOnNfkc = 2048;
 
 		static uint PropValue (int cp)
 		{
@@ -111,7 +113,7 @@ namespace Mono.Globalization.Unicode
 					continue;
 				StringBuilder sb = new StringBuilder (source.Length);
 				sb.Append (source);
-				Combine (sb, 0, checkType);
+				Combine (sb, i, checkType);
 				return sb;
 			}
 			return null;
@@ -126,18 +128,33 @@ namespace Mono.Globalization.Unicode
 				case NormalizationCheck.No:
 					break;
 				case NormalizationCheck.Maybe:
-					break;
+					if (i == 0)
+						continue;
+					else
+						break;
 				}
 
-				// x is starter, or sb[i] is blocked
-				int x = i - 1;
+				int cur = i;
+				// FIXME: It should use IsUnsafe flag.
+				// FIXME: It should check "blocked" too
+				for (;i >= 0; i--)
+					if (QuickCheck (sb [i], checkType) == NormalizationCheck.Yes)
+						break;
+				i++;
+
+				// Now i is the "starter"
 
 				int ch = 0;
-				int idx = GetPrimaryComposite (sb, (int) sb [i], sb.Length, x, ref ch);
+				int idx = 0;
+				for (; i < cur; i++) {
+					idx = GetPrimaryComposite (sb, (int) sb [i], sb.Length, i, ref ch);
+					if (idx > 0)
+						break;
+				}
 				if (idx == 0)
 					continue;
-				sb.Remove (x, GetComposedStringLength (idx));
-				sb.Insert (x, (char) ch);
+				sb.Remove (i, GetComposedStringLength (idx));
+				sb.Insert (i, (char) ch);
 				i--; // apply recursively
 			}
 		}
@@ -172,7 +189,7 @@ namespace Mono.Globalization.Unicode
 						i, ref start);
 			if (sb != null)
 				sb.Append (source, start, source.Length - start);
-			ReorderCanonical (source, ref sb, 1);
+//			ReorderCanonical (source, ref sb, 1);
 		}
 
 		static void ReorderCanonical (string src, ref StringBuilder sb, int start)
@@ -242,20 +259,19 @@ namespace Mono.Globalization.Unicode
 			case 1: // NFD
 				if ('\uAC00' <= c && c <= '\uD7A3')
 					return NormalizationCheck.No;
-				return (PropValue ((int) c) & NoNfd) == 0 ?
-					NormalizationCheck.Yes : NormalizationCheck.No;
+				return (PropValue ((int) c) & NoNfd) != 0 ?
+					NormalizationCheck.No : NormalizationCheck.Yes;
 			case 2: // NFKC
 				v = PropValue ((int) c);
-				return (v & NoNfkc) == 0 ?
-					(v & MaybeNfkc) == 0 ?
-					NormalizationCheck.Yes :
+				return (v & NoNfkc) != 0 ? NormalizationCheck.No :
+					(v & MaybeNfkc) != 0 ?
 					NormalizationCheck.Maybe :
-					NormalizationCheck.No;
+					NormalizationCheck.Yes;
 			case 3: // NFKD
 				if ('\uAC00' <= c && c <= '\uD7A3')
 					return NormalizationCheck.No;
-				return (PropValue ((int) c) & NoNfkd) == 0 ?
-					NormalizationCheck.Yes : NormalizationCheck.No;
+				return (PropValue ((int) c) & NoNfkd) != 0 ?
+					NormalizationCheck.No : NormalizationCheck.Yes;
 			}
 		}
 
@@ -370,19 +386,28 @@ namespace Mono.Globalization.Unicode
 			get { return isReady; }
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern void load_normalization_resource (
-			byte** props, int** mappedChars, short** charMapIndex,
-			short** helperIndex, ushort** mapIdxToComposite,
+			byte** props, byte** mappedChars, byte** charMapIndex,
+			byte** helperIndex, byte** mapIdxToComposite,
 			byte** combiningClass);
 
 		static Normalization ()
 		{
 			lock (forLock) {
-				load_normalization_resource (&props,
-					&mappedChars, &charMapIndex,
-					&helperIndex, &mapIdxToComposite,
-					&combiningClass);
+			fixed (byte** addrProps = &props) {
+			fixed (int** addrMappedChars = &mappedChars) {
+			fixed (short** addrCharMapIndex = &charMapIndex) {
+			fixed (short** addrHelperIndex = &helperIndex) {
+			fixed (ushort** addrMapIdxToComposite = &mapIdxToComposite) {
+			fixed (byte** addrCombiningClass = &combiningClass) {
+				load_normalization_resource (addrProps,
+				(byte**) addrMappedChars,
+				(byte**) addrCharMapIndex,
+				(byte**) addrHelperIndex,
+				(byte**) addrMapIdxToComposite,
+				(byte**) addrCombiningClass);
+			} } } } } }
 			}
 
 			isReady = true;
