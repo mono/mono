@@ -1,3 +1,7 @@
+2005-08-02 Andrew Skiba <andrews@mainsoft.com>
+
+	* Color.cs: TARGET_JVM - NativeObject property
+
 2005-07-27 Andrew Skiba <andrews@mainsoft.com>
 
 	* Color.cs: Fixes equality operators, change isXXXcolor booleans into flags enum.

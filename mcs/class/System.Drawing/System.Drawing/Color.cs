@@ -79,6 +79,14 @@ namespace System.Drawing
 
 		private string myname;
 
+#if TARGET_JVM
+		internal java.awt.Color NativeObject {
+			get {
+				return new java.awt.Color (R/256F, G/256F, B/256F, A/256F);
+			}
+		}
+#endif
+
 		public string Name {
 			get{
 				if (myname == null || myname == String.Empty)
