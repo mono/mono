@@ -1,3 +1,8 @@
+2005-08-02  Raja R Harinath  <rharinath@novell.com>
+
+	* HttpCachePolicyElement.cs: Fix compilation with mcs 1.0.
+	CONFIGURATION_DEP implies XML_DEP.
+
 2005-07-05  Raja R Harinath  <rharinath@novell.com>
 
 	* HttpCachePolicyElement.cs: Add CONFIGURATION_DEP guard.
