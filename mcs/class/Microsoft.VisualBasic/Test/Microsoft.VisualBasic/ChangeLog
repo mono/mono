@@ -1,3 +1,7 @@
+2005-08-02	Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* StringsTest.cs:
+		Implement tests for InStrRev
+
 2004-08-04  Jochen Wezel <jwezel@compumaster.de>
 	* StringsTest.cs: reenabled Split and StrComp tests which had been 
 		disabled because of compilation trouble in the past

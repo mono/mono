@@ -30,16 +30,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.VisualBasic;
 using System;
 using System.Text;
 using System.Globalization;
+
+using Microsoft.VisualBasic;
+
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.VisualBasic
 {
 	[TestFixture]
-	public class StringsTest : Assertion 
+	public class StringsTest 
 	{
 		private string TextStringOfMultipleLanguages;
 		private string TextStringUninitialized;
@@ -53,7 +55,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		const string MSWebSiteContent_Korean = "보안 캠페인 - 스스로 지킨 당신의 PC! 더욱 안전해집니다!";
 		const string ArabynetComWebSiteContent_Arabic = "كل الحقوق محفوظة ليديعوت إنترنت";
 		const string GermanUmlauts_German = "äöüÄÖÜß";
-
+		 
 		private char Letter_Empty;
 		private char Letter_English;
 		private char Letter_Japanese;
@@ -679,36 +681,88 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			*/
 		}
-
-		//[Test]
-		public void InStrRev()
+/* 
+		public static int InStrRev(string StringCheck, 
+					   string StringMatch, 
+					   [Optional, __DefaultArgumentValue(-1)] 
+					   int Start,
+					   [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
+					   CompareMethod Compare)
+*/
+		const string FakePath = @"/aaa/bbb/ccc.log";
+		
+		[Test, ExpectedException(typeof(ArgumentException))]
+		public void InStrRev_StartArgumentZero()
 		{
-			InStrRev_4Parameters();
-			InStrRev_5Parameters();
+			Strings.InStrRev(FakePath, "/", 0, CompareMethod.Text);
 		}
 
-		// [MonoToDo("Not implemented")]
-		//TODO: [Test]
-		public void InStrRev_4Parameters()
+		[Test, ExpectedException(typeof(ArgumentException))]
+		public void InStrRev_StartArgumentLessThanMinusOne()
 		{
-
-			// 2 InStrRev functions exists+ACEAIQ- Create tests for both versions+ACE-
-
-			/*
-			if ((Start +AD0APQ- 0) +AHwAfA- (Start +ADw- -1))
-				throw new ArgumentException("Argument 'Start' must be greater than 0 or equal to -1", "Start");
- 
-			//FIXME: Use LastIndexOf()
-			throw new NotImplementedException();
-			*/
+			Strings.InStrRev(FakePath, "/", -2, CompareMethod.Text);
 		}
-
-		// [MonoToDo("Not implemented")]
-		//TODO: [Test]
-		public void InStrRev_5Parameters()
+		
+		[Test]
+		public void InStrRev_EmptyStringCheck()
 		{
+			Assert.AreEqual( 0, Strings.InStrRev(null, "a", -1, CompareMethod.Text));
+			Assert.AreEqual( 0, Strings.InStrRev("",   "a", -1, CompareMethod.Text));
+			Assert.AreEqual( 0, Strings.InStrRev(null, "a", -1, CompareMethod.Binary));
+			Assert.AreEqual( 0, Strings.InStrRev("",   "a", -1, CompareMethod.Binary));
+			Assert.AreEqual( 0, Strings.InStrRev(null, "a",  3, CompareMethod.Text));
+			Assert.AreEqual( 0, Strings.InStrRev("",   "a",  3, CompareMethod.Binary));
 		}
-			
+		
+		[Test]
+		public void InStrRev_EmptyStringMatch()
+		{
+			Assert.AreEqual(FakePath.Length, Strings.InStrRev(FakePath, null, -1, CompareMethod.Text));
+			Assert.AreEqual(FakePath.Length, Strings.InStrRev(FakePath, ""  , -1, CompareMethod.Text));
+			Assert.AreEqual( 5, Strings.InStrRev(FakePath, null,  5, CompareMethod.Text));
+			Assert.AreEqual( 5, Strings.InStrRev(FakePath, ""  ,  5, CompareMethod.Text));
+			Assert.AreEqual(25, Strings.InStrRev(FakePath, null, 25, CompareMethod.Text));
+			Assert.AreEqual(25, Strings.InStrRev(FakePath, ""  , 25, CompareMethod.Text));
+			Assert.AreEqual(FakePath.Length, Strings.InStrRev(FakePath, null, -1, CompareMethod.Binary));
+			Assert.AreEqual(FakePath.Length, Strings.InStrRev(FakePath, ""  , -1, CompareMethod.Binary));
+			Assert.AreEqual( 5, Strings.InStrRev(FakePath, null,  5, CompareMethod.Binary));
+			Assert.AreEqual( 5, Strings.InStrRev(FakePath, ""  ,  5, CompareMethod.Binary));
+			Assert.AreEqual(25, Strings.InStrRev(FakePath, null, 25, CompareMethod.Binary));
+			Assert.AreEqual(25, Strings.InStrRev(FakePath, ""  , 25, CompareMethod.Binary));
+		}
+		
+		[Test]
+		public void InStrRev_BigStart()
+		{
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "aa", 25, CompareMethod.Text));
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "aa", 25, CompareMethod.Text));
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "aa", 25, CompareMethod.Binary));
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "aa", 25, CompareMethod.Binary));
+		}
+		
+		[Test]
+		public void InStrRev_KnownToMatchSubPatterns()
+		{
+			Assert.AreEqual( 4, Strings.InStrRev(FakePath, "a",   -1, CompareMethod.Text));
+			Assert.AreEqual( 4, Strings.InStrRev(FakePath, "A",   -1, CompareMethod.Text));
+			Assert.AreEqual(11, Strings.InStrRev(FakePath, "c",   11, CompareMethod.Binary));
+			Assert.AreEqual(10, Strings.InStrRev(FakePath, "ccc", -1, CompareMethod.Binary));
+			Assert.AreEqual( 7, Strings.InStrRev(FakePath, "bb",  -1, CompareMethod.Binary));
+			Assert.AreEqual( 9, Strings.InStrRev(FakePath, "/",   -1, CompareMethod.Text));
+			Assert.AreEqual(12, Strings.InStrRev("ação ou inação", "çã", -1, CompareMethod.Text));
+			Assert.AreEqual(12, Strings.InStrRev("ação OU INAÇÃO", "çã", -1, CompareMethod.Text));
+			Assert.AreEqual( 2, Strings.InStrRev("ação OU INAÇÃO", "çã", -1, CompareMethod.Binary));
+		}
+		
+		[Test]
+		public void InStrRev_KnownNotToMatchSubPatterns()
+		{
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "d",  -1, CompareMethod.Text));
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "A",  -1, CompareMethod.Binary));
+			Assert.AreEqual( 0, Strings.InStrRev(FakePath, "c",   7, CompareMethod.Binary));
+			Assert.AreEqual( 0, Strings.InStrRev("AÇÃO",   "çã", -1, CompareMethod.Binary));
+		}		
+		
 		// [MonoToDo("Not implemented")]
 		//TODO: [Test]
 		public void Join_Strings()
