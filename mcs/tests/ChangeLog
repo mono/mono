@@ -1,3 +1,8 @@
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-425.cs, known-issues-gmcs : added test for bug #57047, which is
+	  fixed at r47909.
+
 2005-07-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* gtest-179.cs: Re-enable gtest-179.cs, since bug #75417 

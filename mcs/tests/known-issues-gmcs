@@ -6,6 +6,7 @@
 
 test-308.cs
 test-377.cs
+test-425.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs
