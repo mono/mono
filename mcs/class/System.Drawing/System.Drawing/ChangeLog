@@ -1,4 +1,8 @@
 2005-08-02 Andrew Skiba <andrews@mainsoft.com>
+	
+	* SolidBrush.jvm.cs: added TARGET_JVM implementation of this class
+
+2005-08-02 Andrew Skiba <andrews@mainsoft.com>
 
 	* Color.cs: TARGET_JVM - NativeObject property
 
