@@ -1,5 +1,9 @@
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* location.cs : it borked when no argument was specified.
+
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* location.cs : tiny ToString() format fix.
 
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>

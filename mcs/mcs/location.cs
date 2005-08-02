@@ -145,7 +145,8 @@ namespace Mono.CSharp {
 		static public void Initialize ()
 		{
 			checkpoints = new Checkpoint [source_list.Count * 2];
-			checkpoints [0] = new Checkpoint (0, 0);
+			if (checkpoints.Length > 0)
+				checkpoints [0] = new Checkpoint (0, 0);
 
 			column_bits = 8;
 			column_mask = 0xFF;
