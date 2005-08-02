@@ -1,3 +1,9 @@
+2005-08-02  Ankit Jain  <ankit@corewars.org>
+
+	Fix #61512.
+	* TypeDef.cs (TypeDef.Define): Use default values for pack and size if only
+	  one of them is unspecified.
+
 2005-05-10  Ankit Jain  <ankit@corewars.org>
 
 	Fix #74768.

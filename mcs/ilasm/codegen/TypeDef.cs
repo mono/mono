@@ -295,8 +295,8 @@ namespace Mono.ILASM {
                                         classdef.SpecialNoSuper ();
                         }
 
-                        if (size != -1)
-                                classdef.AddLayoutInfo (pack, size);
+                        if (size != -1 || pack != -1)
+                                classdef.AddLayoutInfo ( (pack == -1) ? 1 : pack, (size == -1) ? 0 : size);
 
                         if (impl_list != null) {
                                 foreach (IClassRef impl in impl_list) {
