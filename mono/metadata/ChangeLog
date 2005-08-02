@@ -1,3 +1,7 @@
+2005-08-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* socket-io.c (convert_sockopt_level_and_name): Applied patch from 
+	Julien Puydt (julien.puydt@laposte.net). Add check for IPV6_PKTINFO.
 
 Mon Aug 1 16:52:12 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
