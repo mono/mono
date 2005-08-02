@@ -1618,7 +1618,6 @@ namespace Mono.CSharp
 				if (CodeGen.Assembly.IsClsCompliant) {
 					AttributeTester.VerifyModulesClsCompliance ();
 					TypeManager.LoadAllImportedTypes ();
-					AttributeTester.VerifyTopLevelNameClsCompliance ();
 				}
 			}
 			if (Report.Errors > 0)

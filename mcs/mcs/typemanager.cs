@@ -263,7 +263,7 @@ public class TypeManager {
 	//  Contains all public types from referenced assemblies.
 	//  This member is used only if CLS Compliance verification is required.
 	// </remarks>
-	public static Hashtable all_imported_types;
+	public static Hashtable AllClsTopLevelTypes;
 
 	static Hashtable fieldbuilders_to_fields;
 	static Hashtable fields;
@@ -651,7 +651,7 @@ public class TypeManager {
 				Assembly a = assemblies [i];
 				string [] namespaces = (string []) assembly_get_namespaces.Invoke (a, null);
 				foreach (string ns in namespaces){
-					if (ns == "")
+					if (ns.Length == 0)
 						continue;
 					Namespace.LookupNamespace (ns, true);
 				}
@@ -697,10 +697,10 @@ public class TypeManager {
 	/// </summary>
 	public static void LoadAllImportedTypes ()
 	{
-		all_imported_types = new Hashtable ();
+		AllClsTopLevelTypes = new Hashtable (1500);
 		foreach (Assembly a in assemblies) {
 			foreach (Type t in a.GetExportedTypes ()) {
-				all_imported_types [t.FullName] = t;
+				AllClsTopLevelTypes [t.FullName.ToLower (System.Globalization.CultureInfo.InvariantCulture)] = null;
 			}
 		}
 	}
