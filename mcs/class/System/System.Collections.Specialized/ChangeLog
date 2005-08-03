@@ -1,3 +1,12 @@
+2005-08-03  Raja R Harinath  <rharinath@novell.com>
+
+	* HybridDictionary.cs: Rewrite to avoid a test on each operation.
+	(list, hashtable): Remove.
+	(inner): New IDictionary field that can hold either a list
+	dictionary or a hashtable.
+	(is_list): New.  Notes whether 'inner' holds a list dictionary or not.
+	(Clear): Don't change a hashtable to a list dictionary.
+
 2005-07-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* NameObjectCollectionBase.cs: Don't throw an exception in
