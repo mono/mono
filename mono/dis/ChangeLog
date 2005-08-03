@@ -1,5 +1,9 @@
 2005-08-03  Ankit Jain <jankit@novell.com>
 
+	* main.c (call_conv_map): Oops. Add a sentinel entry (-1, NULL).
+
+2005-08-03  Ankit Jain <jankit@novell.com>
+
 	* main.c (call_conv_map): Map call conv value of 0 to "".
 
 2005-08-02  Ankit Jain <jankit@novell.com>
