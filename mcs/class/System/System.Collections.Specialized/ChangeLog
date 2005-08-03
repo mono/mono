@@ -1,5 +1,17 @@
 2005-08-03  Raja R Harinath  <rharinath@novell.com>
 
+	* ListDictionary.cs: Rewrite to reduce key comparison overhead.
+	Unify all list traversals into FindEntry.
+	(AreEqual): Remove.
+	(FindEntry): Split into two duplicate loops, one when comparer ==
+	null, the other when it isn't.  Add new out parameter that points
+	to the entry preceding the result.
+	(Add, AddImpl, this []): Update.
+	(Remove): Use FindEntry for traversal.
+	(CopyTo): Add more tests.
+	(ListEntryEnumerator): Simplify.
+	(ListEntryCollection, ListEntryCollectionEnumerator): Likewise.
+
 	* HybridDictionary.cs: Rewrite to avoid a test on each operation.
 	(list, hashtable): Remove.
 	(inner): New IDictionary field that can hold either a list
