@@ -122,6 +122,8 @@ namespace Microsoft.JScript {
 					return "RangeError";
 				else if (this is ReferenceErrorObject)
 					return "ReferenceError";
+				else if (this is RegExpObject)
+					return "RegExp";
 				else if (this is SyntaxErrorObject)
 					return "SyntaxError";
 				else if (this is TypeErrorObject)

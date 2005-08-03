@@ -266,7 +266,21 @@ namespace Microsoft.JScript {
 				return regex_obj.regex.Replace (string_obj, Convert.ToString (replacement), count);
 
 			FunctionObject fun = (FunctionObject) replacement;
-			MatchEvaluator wrap_fun = delegate (Match md)
+			MatchEvaluator wrap_fun = new MatchEvaluator (new ReplaceDelegate (fun, string_obj).Replace);
+			return regex_obj.regex.Replace (string_obj, wrap_fun, count);
+		}
+
+		private class ReplaceDelegate {
+			private FunctionObject fun;
+			private string string_obj;
+
+			internal ReplaceDelegate (FunctionObject fun, string string_obj)
+			{
+				this.fun = fun;
+				this.string_obj = string_obj;
+			}
+
+			internal string Replace (Match md)
 			{
 				ArrayList arg_list = new ArrayList ();
 
@@ -277,8 +291,7 @@ namespace Microsoft.JScript {
 				arg_list.Add (string_obj);
 
 				return Convert.ToString (fun.Invoke (null, arg_list.ToArray ()));
-			};
-			return regex_obj.regex.Replace (string_obj, wrap_fun, count);
+			}
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasEngine, JSBuiltin.String_search)]

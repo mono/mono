@@ -54,12 +54,14 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public object Call (object [] arguments, bool construct, bool brackets,
 					VsaEngine engine)
 		{
+			if (obj is Closure)
+				obj = ((Closure) obj).func;
+
 			if (construct) {
 				if (brackets) {
 				} else {
@@ -79,17 +81,31 @@ namespace Microsoft.JScript {
 							method = ((ScriptFunction) value).method;
 					}
 
+					string name = MapToInternalName (right_hand_side);
+					Type type = null;
 					if (method == null) {
-						Type type = null;
-
-						if (obj is JSObject)
-							type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
-
-						if (type == null)
-							type = obj.GetType ();
-
-						string name = right_hand_side == "lastIndexOf" ? "lastIndexOfGood" : right_hand_side;
+						type = obj.GetType ();
 						method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+					}
+
+					if (js_obj != null) {
+						if (method == null) {
+							type = SemanticAnalyser.map_to_prototype (js_obj);
+							if (type == null)
+								Console.WriteLine ("prototype is null for {0} ({1})", js_obj, js_obj.GetType ());
+							method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+						}
+
+						if (method == null) {
+							JSObject proto_obj = js_obj.proto as JSObject;
+							if (proto_obj != null) {
+								JSFieldInfo fi = proto_obj.GetField (right_hand_side);
+								if (fi != null) {
+									JSObject val = fi.GetValue (right_hand_side) as JSObject;
+									return CallValue (obj, val, arguments, false, false, engine);
+								}
+							}
+						}
 					}
 					
 					if (method == null)
@@ -100,6 +116,18 @@ namespace Microsoft.JScript {
 				}
 			}
 			throw new NotImplementedException ();
+		}
+
+		internal static string MapToInternalName (string name)
+		{
+			switch (name) {
+			case "lastIndexOf":
+				return "lastIndexOfGood";
+			case "__proto__":
+				return "proto";
+			default:
+				return name;
+			}
 		}
 
 		internal static void GetMethodFlags (MethodInfo method, out bool has_engine, out bool has_var_args, out bool has_this)
@@ -151,8 +179,9 @@ namespace Microsoft.JScript {
 			int total_argc = args.Length;
 			int req_argc = GetRequiredArgumentCount (total_argc, has_engine, has_var_args, has_this);
 			Type [] arg_types = new Type [req_argc];
+			// var args are not at the beginning of the argument list so we need to adjust the index
+			int j = total_argc - req_argc - (has_var_args ? 1 : 0);
 
-			int j = total_argc - req_argc;
 			for (int i = 0; i < req_argc; i++, j++)
 				arg_types [i] = args [j].ParameterType;
 
@@ -303,6 +332,9 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public object GetNonMissingValue ()
 		{
+			if (obj is Closure)
+				obj = ((Closure) obj).func;
+
 			Type type = obj.GetType ();
 			if (obj is GlobalScope)
 				type = typeof (GlobalObject);
@@ -317,7 +349,10 @@ namespace Microsoft.JScript {
 					return field.GetValue (right_hand_side);
 
 				type = SemanticAnalyser.map_to_prototype (jsobj);
-				members = type.GetMember (right_hand_side);
+				if (type == null)
+					Console.WriteLine ("prototype for {0} ({1}) is null!", jsobj, jsobj.GetType ());
+				else
+					members = type.GetMember (right_hand_side);
 			}
 
 			if (members.Length > 0) {
@@ -390,6 +425,9 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public void SetValue (object value)
 		{
+			if (obj is Closure)
+				obj = ((Closure) obj).func;
+
 			Type type = obj.GetType ();
 			if (obj is GlobalScope)
 				type = typeof (GlobalObject);
@@ -397,6 +435,8 @@ namespace Microsoft.JScript {
 			MemberInfo [] members = type.GetMember (right_hand_side);
 			if (obj is JSObject && members.Length == 0) {
 				type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
+				if (type == null)
+					Console.WriteLine ("prototype is null for {0} ({1})", obj, obj.GetType ());
 				members = type.GetMember (right_hand_side);
 			}
 
@@ -418,7 +458,7 @@ namespace Microsoft.JScript {
 					object old_value = js_obj.elems [right_hand_side];
 					if (old_value is JSFieldInfo) {
 						JSFieldInfo field = (JSFieldInfo) old_value;
-						field.SetValue (js_obj, value);
+						field.SetValue (right_hand_side, value);
 					} else
 						js_obj.elems [right_hand_side] = value;
 				} else {

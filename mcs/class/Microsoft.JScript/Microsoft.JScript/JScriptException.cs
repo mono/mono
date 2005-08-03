@@ -39,12 +39,18 @@ namespace Microsoft.JScript {
 	public class JScriptException : ApplicationException, IVsaError	{
 
 		private JSError error_number;
+		private string user_error = null;
 
 		public JScriptException (JSError errorNumber)
 		{
 			error_number = errorNumber;
 		}
 
+		internal JScriptException (string user_err)
+		{
+			error_number = JSError.NoError;
+			user_error = user_err;
+		}
 
 		public string SourceMoniker {
 			get { throw new NotImplementedException (); }
@@ -104,7 +110,9 @@ namespace Microsoft.JScript {
 
 		public override string Message {
 			get {
-				if (error_number == JSError.ArrayLengthConstructIncorrect)
+				if (error_number == JSError.NoError)
+					return user_error;
+				else if (error_number == JSError.ArrayLengthConstructIncorrect)
 					return "Array length must be zero or a positive integer";
 				else if (error_number == JSError.PrecisionOutOfRange)
 					return "The number of fractional digits is out of range";
@@ -116,6 +124,8 @@ namespace Microsoft.JScript {
 					return "Invoked Number.prototype.toString or Number.prototype.valueOf method on non-number";
 				else if (error_number == JSError.StringExpected)
 					return "Invoked String.prototype.toString or String.prototype.valueOf method on non-string";
+				else if (error_number == JSError.FunctionExpected)
+					return "Invoked Function.prototype.toString on non-function";
 				else {
 					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
 					throw new NotImplementedException ();

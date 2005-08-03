@@ -346,9 +346,9 @@ namespace Microsoft.JScript {
 				ary = Convert.ToArray (value);
 
 			Hashtable elems = ary.elems;
-			int n = (int) ary.length;
+			uint n = (uint) ary.length;
 			object [] result = new object [n];
-			for (int i = 0; i < n; i++)
+			for (uint i = 0; i < n; i++)
 				result [i] = elems [i];
 
 			return result;

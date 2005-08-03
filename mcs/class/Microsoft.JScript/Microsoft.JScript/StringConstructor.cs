@@ -49,7 +49,7 @@ namespace Microsoft.JScript {
 			object arg = args [0];
 
 			if (arg == null)
-				return new StringObject ();
+				return new StringObject ("undefined");
 			else
 				return new StringObject (Convert.ToString (arg));
 		}

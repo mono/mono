@@ -1154,7 +1154,7 @@ namespace Microsoft.JScript {
 
 			bool contains_method;
 			contains_method = SemanticAnalyser.object_contains (
-					   SemanticAnalyser.map_to_ctr (obj_name), prop_name);
+					   SemanticAnalyser.map_to_ctr (obj_name), LateBinding.MapToInternalName (prop_name));
 			if (!contains_method)
 				throw new Exception ("error: JS0438: Object " + obj_name + " doesn't support this property or method:" + prop_name);
 			return true;

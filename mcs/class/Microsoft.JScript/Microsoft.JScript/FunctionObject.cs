@@ -37,7 +37,7 @@ namespace Microsoft.JScript {
 
 	public class FunctionObject : ScriptFunction {
 
-		internal string name;
+		public string name;
 		internal string type_annot;
 		internal Type return_type;
 		internal FormalParameterList parameters;
@@ -80,6 +80,16 @@ namespace Microsoft.JScript {
 
 			this.body = body;
 			this.location = location;
+		}
+
+		public override int length {
+			get {
+				if (this.parameters != null)
+					return this.parameters.ids.Count;
+				else
+					return base.length;
+			}
+			set { base.length = value; }
 		}
 	    
 		internal FunctionObject ()

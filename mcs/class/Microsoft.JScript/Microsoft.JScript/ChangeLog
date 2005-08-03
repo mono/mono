@@ -1,3 +1,28 @@
+2005-08-03  Florian Gross  <flgr@ccan.de>
+
+	* ScriptObject.cs: Renamed __proto__ to proto for 1.1 compatibility
+	* expression.cs: Uses LateBinding.MapToInternalName to map __proto__
+	to proto
+	* StringPrototype.cs: replace doesn't use anonymous delegate anymore
+	for 1.1 compatibility
+	* JScriptException.cs: Added another case to ErrorMessage.
+	* IdentificationTable.cs: Uses LateBinding.MapToInternalName to map
+	__proto__ to proto
+	* LateBinding.cs: Added MapToInternalName and changed code to use it.
+	Fixed type mapping with varargs. Unwraps Closure objects to
+	FunctionObjects. Fixed bug in SetField logic
+	* JSObject.cs: Added ClassName for RegExpObject
+	* ArrayPrototype.cs: More uint / int fixes for concat, splice,
+	unshift
+	* StringConstructor.cs: String() ought to be "undefined"
+	* JScriptException.cs: Added code for user exceptions (eg. throw "x")
+	* FunctionObject.cs: Implemented length for user functions
+	* Convert.cs: uint / uint fix for Convert.ToNativeArray
+	* Throw.cs: Implemented JScriptThrow
+	* FunctionPrototype.cs: Correctly throws JSError.FunctionExpected
+	instead of NotImplementedException
+	* ScriptFunction.cs: Added arity as an alias for length (Mozilla)
+
 2005-08-02  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* TokenStream.cs: Display source name and line number.

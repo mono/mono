@@ -114,8 +114,10 @@ namespace Microsoft.JScript {
 			string str_name = Convert.ToString (obj);
 			if (str_name == name)
 				this.value = value;
-			else
+			else {
+				Console.WriteLine ("arg {0} != name {1}", str_name, name);
 				throw new NotImplementedException ();
+			}
 		}
 
 

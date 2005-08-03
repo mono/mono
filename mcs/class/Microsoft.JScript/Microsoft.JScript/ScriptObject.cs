@@ -38,7 +38,7 @@ using Microsoft.JScript.Vsa;
 namespace Microsoft.JScript {
 
 	public abstract class ScriptObject : IReflect {
-		public object __proto__ {
+		public object proto {
 			get {
 				if (this == ObjectPrototype.Proto)
 					return DBNull.Value;

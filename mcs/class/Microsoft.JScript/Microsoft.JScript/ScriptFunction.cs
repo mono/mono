@@ -80,10 +80,15 @@ namespace Microsoft.JScript {
 				if (method != null)
 					return LateBinding.GetRequiredArgumentCount (method);
 
-				Console.WriteLine ("Called ScriptFunction:length on user function");
+				Console.WriteLine ("Called ScriptFunction:length on user function without known length");
 				throw new NotImplementedException ();
 			}
 			set { throw new JScriptException (JSError.AssignmentToReadOnly); }
+		}
+
+		public int arity {
+			get { return length; }
+			set { length = value; }
 		}
 
 		public override string ToString ()

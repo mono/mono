@@ -61,7 +61,8 @@ namespace Microsoft.JScript {
 		{
 			if (thisObj is FunctionObject)
 				return (((FunctionObject) thisObj).ToString ());
-			throw new NotImplementedException ();
+
+			throw new JScriptException (JSError.FunctionExpected);
 		}
 	}
 }

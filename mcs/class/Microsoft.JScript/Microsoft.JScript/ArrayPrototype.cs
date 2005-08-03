@@ -46,7 +46,7 @@ namespace Microsoft.JScript {
 		public static ArrayObject concat (object thisObj, VsaEngine engine,
 						  params object [] args)
 		{
-			int i = 0;
+			uint i = 0;
 			ArrayObject result = new ArrayObject ();
 			int arg_idx = -1;
 			int arg_count = args.Length;
@@ -60,8 +60,8 @@ namespace Microsoft.JScript {
 				if (cur_obj is ArrayObject) {
 					cur_ary = (ArrayObject) cur_obj;
 
-					int n = (int) cur_ary.length;
-					for (int j = 0; j < n; j++, i++)
+					uint n = (uint) cur_ary.length;
+					for (uint j = 0; j < n; j++, i++)
 						result.elems [i] = cur_ary.elems [j];
 				} else
 					result.elems [i++] = cur_obj;
@@ -250,52 +250,52 @@ namespace Microsoft.JScript {
 			Hashtable del_elems = result.elems;
 
 			uint old_length = (uint) array_obj.length;
-			start = (int) start;
+			start = (long) start;
 			if (start < 0)
 				start = Math.Max (start + old_length, 0);
 			else
 				start = Math.Min (old_length, start);
 
-			deleteCnt = (int) deleteCnt;
+			deleteCnt = (long) deleteCnt;
 			deleteCnt = Math.Min (Math.Max (deleteCnt, 0), old_length - start);
 
 			uint arg_length = (uint) args.Length;
-			int add_length = (int) (arg_length - (int) deleteCnt);
-			add_length = (int) Math.Max (add_length, -old_length);
-			int del_length = -add_length;
-			uint new_length = (uint) (old_length + add_length);
+			long add_length = (long) ((long) arg_length - (uint) deleteCnt);
+			add_length = (long) Math.Max (add_length, -((long) old_length));
+			long del_length = -add_length;
+			uint new_length = (uint) ((long) old_length + add_length);
 
-			uint i, j, m;
+			long i, j, m;
 			// First let's make some free space for the new items (if needed)
 			if (add_length > 0) {
-				i = old_length - 1;
+				i = (long) old_length - 1;
 				j = (uint) (i + add_length);
 				for (; i >= start; i--, j--)
-					elems [j] = elems [i];
+					elems [(uint) j] = elems [(uint) i];
 			}
 
 			// Then insert the new items in the now free space / replace existing ones
 			j = m = 0;
-			uint old_start = (uint) (start + add_length);
-			for (i = (uint) start; j < arg_length; i++, j++) {
-				if (i >= old_start && elems.ContainsKey (i)) {
-					del_elems [m] = elems [i];
+			long old_start = (long) (start + add_length);
+			for (i = (long) start; j < arg_length; i++, j++) {
+				if (i >= old_start && elems.ContainsKey ((uint) i)) {
+					del_elems [(uint) m] = elems [(uint) i];
 					m++;
-					elems.Remove (i);
+					elems.Remove ((uint) i);
 				}
 
 				if (j < arg_length)
-					elems [i] = args [j];
+					elems [(uint) i] = args [(uint) j];
 			}
 
 			// Finally, delete elements which have no replacement elements
 			if (add_length < 0) {
 				uint last_elem_idx = (uint) (i + del_length);
 				for (uint k = 0; k < del_length; i++, j++, k++) {
-					if (elems.ContainsKey (i)) {
-						del_elems [m] = elems [i];
+					if (elems.ContainsKey ((uint) i)) {
+						del_elems [(uint) m] = elems [(uint) i];
 						m++;
-						elems.Remove (i);
+						elems.Remove ((uint) i);
 					}
 				}
 
@@ -360,8 +360,8 @@ namespace Microsoft.JScript {
 
 			if (arg_length > 0) {
 				// First let's make some free space for the new items
-				long i = old_length - 1;
-				long j = i + arg_length;
+				long i = (long) old_length - 1;
+				long j = i + (long) arg_length;
 				for (; i >= 0; i--, j--)
 					elems [(uint) j] = elems [(uint) i];
 

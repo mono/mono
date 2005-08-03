@@ -44,7 +44,7 @@ namespace Microsoft.JScript {
 
 		public static Exception JScriptThrow (object value)
 		{
-			throw new NotImplementedException ();
+			return new JScriptException (Convert.ToString (value));
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -57,7 +57,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			expression.Emit (ec);
 			ig.Emit (OpCodes.Call, typeof (Throw).GetMethod ("JScriptThrow"));
-			ig.Emit (OpCodes.Throw);				
+			ig.Emit (OpCodes.Throw);
 		}
 	}
 }
