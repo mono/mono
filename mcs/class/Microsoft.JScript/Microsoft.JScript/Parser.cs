@@ -63,6 +63,25 @@ namespace Microsoft.JScript {
 		CaseAfterDefault
 	}
 
+	internal class Location {
+		private string source_name;
+		private int line_number;
+
+		internal string SourceName {
+			get { return source_name; }
+		}
+
+		internal int LineNumber {
+			get { return line_number; }
+		}
+
+		internal Location (string source_name, int line_number)
+		{
+			this.source_name = source_name;
+			this.line_number = line_number;
+		}
+	}
+
 	internal class Parser {
 
 		TokenStream ts;
@@ -126,9 +145,8 @@ namespace Microsoft.JScript {
 	
 		AST Parse ()
 		{
-			current_script_or_fn = new ScriptBlock ();
+			current_script_or_fn = new ScriptBlock (new Location (ts.SourceName, ts.LineNumber));
 			ok = true;
-			int base_line_number = ts.LineNumber; // line number where source starts
 
 			try {
 				for (;;) {
@@ -174,7 +192,7 @@ namespace Microsoft.JScript {
 		Block ParseFunctionBody (AST parent)
 		{
 			++nesting_of_function;
-			Block pn = new Block (ts.LineNumber);
+			Block pn = new Block (parent, new Location (ts.SourceName, ts.LineNumber));
 			try {
 				int tt;
 				while ((tt = ts.PeekToken ()) > Token.EOF && tt != Token.RC) {
@@ -197,7 +215,6 @@ namespace Microsoft.JScript {
 		AST Function (AST parent, FunctionType ft)
 		{
 			FunctionType synthetic_type = ft;
-			int base_line_number = ts.LineNumber; // line number where source starts
 			string name;
 			AST member_expr = null;
 
@@ -208,7 +225,8 @@ namespace Microsoft.JScript {
 						// Extension to ECMA: if 'function <name>' does not follow
 						// by '(', assume <name> starts memberExpr
 						// FIXME: is StringLiteral the correct AST to build?
-						AST member_expr_head = new StringLiteral (null, name);
+						AST member_expr_head = new StringLiteral (null, name, 
+									  new Location (ts.SourceName, ts.LineNumber));
 						name = "";
 						member_expr = MemberExprTail (parent, false, member_expr_head);
 					}
@@ -250,16 +268,15 @@ namespace Microsoft.JScript {
 			int saved_nesting_of_with = nesting_of_with;
 			nesting_of_with = 0;
 
-			FormalParameterList _params = new FormalParameterList ();
+			FormalParameterList _params = new FormalParameterList (new Location (ts.SourceName, ts.LineNumber));
 			Block body;
-			string source;
 
 			try {
 				if (!ts.MatchToken (Token.RP)) {
 					do {
 						MustMatchToken (Token.NAME, "msg.no.parm");
 						string s = ts.GetString;
-						_params.Add (s, String.Empty);
+						_params.Add (s, String.Empty, new Location (ts.SourceName, ts.LineNumber));
 					} while (ts.MatchToken (Token.COMMA));
 					MustMatchToken (Token.RP, "msg.no.paren.after.parms");
 				}
@@ -287,7 +304,7 @@ namespace Microsoft.JScript {
 			} else {
 				// FIXME
 				pn = fn;
-				pn = new Assign (null, member_expr, pn, JSToken.Assign, false);
+				pn = new Assign (null, member_expr, pn, JSToken.Assign, false, new Location (ts.SourceName, ts.LineNumber));
 				// FIXME, research about createExprStatement
 				if (ft != FunctionType.Expression)
 					;
@@ -298,10 +315,12 @@ namespace Microsoft.JScript {
 		Function CreateFunction (AST parent, FunctionType func_type, string name)
 		{
 			Function func;
+			Location location = new Location (ts.SourceName, ts.LineNumber);
+
 			if (func_type == FunctionType.Statement)
-				func = new FunctionDeclaration (parent, name);
+				func = new FunctionDeclaration (parent, name, location);
 			else if (func_type == FunctionType.Expression)
-				func = new FunctionExpression (parent, name);
+				func = new FunctionExpression (parent, name, location);
 			else if (func_type == FunctionType.ExpressionStatement)
 				throw new NotImplementedException ();
 			else
@@ -312,7 +331,7 @@ namespace Microsoft.JScript {
 		AST Statements (AST parent)
 		{
 			int tt;
-			Block pn = new Block (parent);
+			Block pn = new Block (parent, new Location (ts.SourceName, ts.LineNumber));
 			while ((tt = ts.PeekToken ()) > Token.EOF && tt != Token.RC)
 				pn.Add (Statement (pn));
 			return pn;
@@ -364,7 +383,6 @@ namespace Microsoft.JScript {
 				return StatementHelper (parent);
 			} catch (ParserException e) {
 				// skip to end of statement
-				int line_number = ts.LineNumber;
 				int t;
 				do {
 					t = ts.GetToken ();
@@ -393,16 +411,15 @@ namespace Microsoft.JScript {
 
 			if (tt == Token.IF) {
 				skip_semi = true;
-				int line_number = ts.LineNumber;
 				AST cond = Condition (parent);
 				AST if_true = Statement (parent);
 				AST if_false = null;
 				if (ts.MatchToken (Token.ELSE))
 					if_false = Statement (parent);
-				pn = new If (parent, cond, if_true, if_false, line_number);
+				pn = new If (parent, cond, if_true, if_false, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.SWITCH) {
 				skip_semi = true;
-				pn = new Switch (parent, ts.LineNumber);
+				pn = new Switch (parent, new Location (ts.SourceName, ts.LineNumber));
 				Clause cur_case;
 				MustMatchToken (Token.LP, "msg.no.paren.switch");
 				((Switch) pn).exp = Expr (parent, false);
@@ -412,7 +429,7 @@ namespace Microsoft.JScript {
 
 				while ((tt = ts.GetToken ()) != Token.RC && tt != Token.EOF) {
 					if (tt == Token.CASE) {
-						cur_case = new Clause (pn);
+						cur_case = new Clause (pn, new Location (ts.SourceName, ts.LineNumber));
 						cur_case.exp = Expr (pn, false);
 						if (clause_type == ClauseType.Default)
 							clause_type = ClauseType.CaseAfterDefault;
@@ -435,23 +452,21 @@ namespace Microsoft.JScript {
 				}
 			} else if (tt == Token.WHILE) {
 				skip_semi = true;
-				int line_number = ts.LineNumber;
-				While w = new While ();
+				While w = new While (new Location (ts.SourceName, ts.LineNumber));
 				AST cond = Condition (w);
 				AST body = Statement (w);
-				w.Init (parent, cond, body, line_number);
+				w.Init (parent, cond, body);
 				pn = w;
 			} else if (tt == Token.DO) {
 				int line_number = ts.LineNumber;
-				DoWhile do_while = new DoWhile ();
+				DoWhile do_while = new DoWhile (new Location (ts.SourceName, ts.LineNumber));
 				AST body = Statement (do_while);
 				MustMatchToken (Token.WHILE, "msg.no.while.do");
 				AST cond = Condition (do_while);
-				do_while.Init (parent, body, cond, line_number);
+				do_while.Init (parent, body, cond);
 				pn  = do_while;
 			} else if (tt == Token.FOR) {
 				skip_semi = true;
-				int line_number = ts.LineNumber;
 				AST init, cond, incr = null, body;
 
 				MustMatchToken (Token.LP, "msg.no.paren.for");
@@ -491,9 +506,9 @@ namespace Microsoft.JScript {
 				body = Statement (pn);
 								
 				if (incr == null) // cond could be null if 'in obj' got eaten by the init node. 
-					pn = new ForIn (parent, line_number, init, cond, body);
+					pn = new ForIn (parent, init, cond, body, new Location (ts.SourceName, ts.LineNumber));
 				else
-					pn = new For (parent, line_number, init, cond, incr, body);
+					pn = new For (parent, init, cond, incr, body, new Location (ts.SourceName, ts.LineNumber));
 				body.parent = pn;
 			} else if (tt == Token.TRY) {
 				int line_number = ts.LineNumber;
@@ -527,7 +542,7 @@ namespace Microsoft.JScript {
 						MustMatchToken (Token.LC, "msg.no.brace.catchblock");
 
 						catch_blocks.Add (new Catch (var_name, catch_cond, 
-									     Statements (null), parent, ts.LineNumber));
+									     Statements (null), parent, new Location (ts.SourceName, ts.LineNumber)));
 						MustMatchToken (Token.RC, "msg.no.brace.after.body");
 					}
 				} else if (peek != Token.FINALLY)
@@ -535,25 +550,22 @@ namespace Microsoft.JScript {
 				
 				if (ts.MatchToken (Token.FINALLY))
 					finally_block = Statement (parent);
-				pn = new Try (try_block, catch_blocks, finally_block, parent, line_number);
+				pn = new Try (try_block, catch_blocks, finally_block, parent, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.THROW) {
 				int line_number = ts.LineNumber;
-				pn = new Throw (Expr (parent, false), line_number);
+				pn = new Throw (Expr (parent, false), new Location (ts.SourceName, ts.LineNumber));
 
 				if (line_number == ts.LineNumber)
 					CheckWellTerminated ();
 			} else if (tt == Token.BREAK) {
-				int line_number = ts.LineNumber;
 				// MatchLabel only matches if there is one
 				string label = MatchLabel ();
-				pn = new Break (parent, label, line_number);
+				pn = new Break (parent, label, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.CONTINUE) {
-				int line_number = ts.LineNumber;
 				string label = MatchLabel ();
-				pn = new Continue (parent, label, line_number);
+				pn = new Continue (parent, label, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.WITH) {
 				skip_semi = true;
-				int line_number = ts.LineNumber;
 				MustMatchToken (Token.LP, "msg.no.paren.with");
 				AST obj = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren.after.with");
@@ -564,7 +576,7 @@ namespace Microsoft.JScript {
 				} finally {
 					--nesting_of_with;
 				}
-				pn = new With (parent, obj, body, line_number);
+				pn = new With (parent, obj, body, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.VAR) {
 				int line_number = ts.LineNumber;
 				pn = Variables (parent, false);
@@ -572,7 +584,7 @@ namespace Microsoft.JScript {
 					CheckWellTerminated ();
 			} else if (tt == Token.RETURN) {
 				AST ret_expr = null;
-				pn = new Return ();
+				pn = new Return (new Location (ts.SourceName, ts.LineNumber));
 
 				if (!InsideFunction)
 					ReportError ("msg.bad.return");
@@ -588,7 +600,7 @@ namespace Microsoft.JScript {
 					if (ts.LineNumber == line_number)
 						CheckWellTerminated ();
 				}
-				((Return) pn).Init (parent, ret_expr, line_number);
+				((Return) pn).Init (parent, ret_expr);
 			} else if (tt == Token.LC) { 
 				skip_semi = true;
 				pn = Statements (parent);
@@ -619,8 +631,8 @@ namespace Microsoft.JScript {
 					string name = ts.GetString;
 
 					// bind 'Statement (pn)' to the label
-					Labelled labelled = new Labelled ();
-					labelled.Init (parent, name, Statement (labelled), line_number);
+					Labelled labelled = new Labelled (parent, new Location (ts.SourceName, ts.LineNumber));
+					labelled.Init (parent, name, Statement (labelled), new Location (ts.SourceName, ts.LineNumber));
 					pn = labelled;
 					return pn;
 				}
@@ -635,13 +647,13 @@ namespace Microsoft.JScript {
 		
 		AST Variables (AST parent, bool in_for_init)
 		{
-			VariableStatement pn = new VariableStatement (parent, ts.LineNumber);
+			VariableStatement pn = new VariableStatement (parent, new Location (ts.SourceName, ts.LineNumber));
 			for (;;) {
 				VariableDeclaration name;
 				AST init = null;
 				MustMatchToken (Token.NAME, "msg.bad.var");
 				string s = ts.GetString;				
-				name = new VariableDeclaration (parent, s, null, null);
+				name = new VariableDeclaration (parent, s, null, null, new Location (ts.SourceName, ts.LineNumber));
 
 				// ommited check for argument hiding				
 				if (ts.MatchToken (Token.ASSIGN)) {
@@ -658,7 +670,7 @@ namespace Microsoft.JScript {
 
 		AST Expr (AST parent, bool in_for_init)
 		{
-			Expression pn = new Expression (parent);
+			Expression pn = new Expression (parent, new Location (ts.SourceName, ts.LineNumber));
 			AST init = AssignExpr (parent, in_for_init);
 			pn.Add (init);
 
@@ -678,12 +690,13 @@ namespace Microsoft.JScript {
 			// omitted: "invalid assignment left-hand side" check.
 			if (tt == Token.ASSIGN) {
 				ts.GetToken ();
-				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false);
+				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false, new Location (ts.SourceName, ts.LineNumber));
 				return pn;
 			} else if (tt == Token.ASSIGNOP) {
 				ts.GetToken ();
 				int op = ts.GetOp ();
-				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), ToJSToken (op, tt), false);
+				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), ToJSToken (op, tt), false, 
+					 new Location (ts.SourceName, ts.LineNumber));
 			}
 			return pn;
 		}
@@ -698,7 +711,7 @@ namespace Microsoft.JScript {
 				if_true = AssignExpr (parent, false);
 				MustMatchToken (Token.COLON, "msg.no.colon.cond");
 				if_false = AssignExpr (parent, in_for_init);
-				return new Conditional (parent, pn, if_true, if_false);
+				return new Conditional (parent, pn, if_true, if_false, new Location (ts.SourceName, ts.LineNumber));
 			}
 			return pn;
 		}
@@ -707,7 +720,8 @@ namespace Microsoft.JScript {
 		{
 			AST pn = AndExpr (parent, in_for_init);
 			if (ts.MatchToken (Token.OR))
-				return new Binary (parent, pn, OrExpr (parent, in_for_init), JSToken.LogicalOr);
+				return new Binary (parent, pn, OrExpr (parent, in_for_init), JSToken.LogicalOr, 
+					   new Location (ts.SourceName, ts.LineNumber));
 			return pn;
 		}
 
@@ -715,7 +729,8 @@ namespace Microsoft.JScript {
 		{
 			AST pn = BitOrExpr (parent, in_for_init);
 			if (ts.MatchToken (Token.AND)) {
-				return new Binary (parent, pn, AndExpr (parent, in_for_init), JSToken.LogicalAnd);
+				return new Binary (parent, pn, AndExpr (parent, in_for_init), JSToken.LogicalAnd,
+					   new Location (ts.SourceName, ts.LineNumber));
 			}
 			return pn;
 		}
@@ -724,7 +739,8 @@ namespace Microsoft.JScript {
 		{
 			AST pn = BitXorExpr (parent, in_for_init);
 			while (ts.MatchToken (Token.BITOR)) {
-				pn = new Binary (parent, pn, BitXorExpr (parent, in_for_init), JSToken.BitwiseOr);
+				pn = new Binary (parent, pn, BitXorExpr (parent, in_for_init), JSToken.BitwiseOr,
+					 new Location (ts.SourceName, ts.LineNumber));
 			}
 			return pn;
 		}
@@ -733,7 +749,8 @@ namespace Microsoft.JScript {
 		{
 			AST pn = BitAndExpr (parent, in_for_init);
 			while (ts.MatchToken (Token.BITXOR))
-				pn = new Binary (parent, pn, BitAndExpr (parent, in_for_init), JSToken.BitwiseXor);
+				pn = new Binary (parent, pn, BitAndExpr (parent, in_for_init), JSToken.BitwiseXor,
+					 new Location (ts.SourceName, ts.LineNumber));
 			return pn;
 		}
 
@@ -741,7 +758,8 @@ namespace Microsoft.JScript {
 		{
 			AST pn = EqExpr (parent, in_for_init);
 			while (ts.MatchToken (Token.BITAND))
-				pn = new Binary (parent, pn, EqExpr (parent, in_for_init), JSToken.BitwiseAnd);
+				pn = new Binary (parent, pn, EqExpr (parent, in_for_init), JSToken.BitwiseAnd,
+					 new Location (ts.SourceName, ts.LineNumber));
 			return pn;
 		}
 
@@ -752,11 +770,12 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.EQ || tt == Token.NE) {
 					ts.GetToken ();
-					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt));
+					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt), 
+						   new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				} else if (tt == Token.SHEQ || tt == Token.SHNE) {
 					ts.GetToken ();
-					pn = new StrictEquality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt));
+					pn = new StrictEquality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt), new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}				
 				break;
@@ -774,7 +793,7 @@ namespace Microsoft.JScript {
 						break;
 				} else if (tt == Token.INSTANCEOF || tt == Token.LE || tt == Token.LT || tt == Token.GE || tt == Token.GT) {
 					ts.GetToken ();
-					pn = new Relational (parent, pn, ShiftExpr (parent), ToJSToken (tt));
+					pn = new Relational (parent, pn, ShiftExpr (parent), ToJSToken (tt), new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}
 				break;
@@ -789,7 +808,8 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.LSH || tt == Token.URSH || tt == Token.RSH) {
 					ts.GetToken ();
-					pn = new Binary (parent, pn, AddExpr (parent), JSToken.LeftShift);
+					pn = new Binary (parent, pn, AddExpr (parent), JSToken.LeftShift,
+						 new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}
 				break;
@@ -804,7 +824,8 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.ADD || tt == Token.SUB) {
 					ts.GetToken ();
-					pn = new Binary (parent, pn, MulExpr (parent), ToJSToken (tt));
+					pn = new Binary (parent, pn, MulExpr (parent), ToJSToken (tt),
+						 new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}
 				break;
@@ -819,7 +840,8 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.MUL || tt == Token.DIV || tt == Token.MOD) {
 					ts.GetToken ();					
-					pn = new Binary (parent, pn, UnaryExpr (parent), ToJSToken (tt));
+					pn = new Binary (parent, pn, UnaryExpr (parent), ToJSToken (tt),
+						 new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}
 				break;
@@ -837,11 +859,12 @@ namespace Microsoft.JScript {
 
 			if (tt == Token.VOID || tt == Token.NOT || tt == Token.BITNOT || tt == Token.TYPEOF ||
 			    tt == Token.ADD || tt == Token.SUB || tt == Token.DELPROP) {
-				Unary u = new Unary (parent, ToJSToken (tt));
+				Unary u = new Unary (parent, ToJSToken (tt), new Location (ts.SourceName, ts.LineNumber));
 				u.operand = UnaryExpr (u);
 				return u;
 			} else if (tt == Token.INC || tt == Token.DEC) {
-				return new PostOrPrefixOperator (parent, MemberExpr (parent, true), ToJSToken (tt), true);
+				return new PostOrPrefixOperator (parent, MemberExpr (parent, true), ToJSToken (tt), true,
+							 new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.ERROR) {
 				;
 			} else {
@@ -860,11 +883,12 @@ namespace Microsoft.JScript {
 				int peeked;				
 				if (((peeked = ts.PeekToken ()) == Token.INC || peeked == Token.DEC) && ts.LineNumber == line_number) {
 					int pf = ts.GetToken ();
-					return new PostOrPrefixOperator (parent, pn, ToJSToken (peeked), false);
+					return new PostOrPrefixOperator (parent, pn, ToJSToken (peeked), false,
+								 new Location (ts.SourceName, ts.LineNumber));
 				}
 				return pn;
 			}
-			return new StringLiteral (null, "Error");  // Only reached on error.  Try to continue.
+			return new StringLiteral (null, "Error", new Location (ts.SourceName, ts.LineNumber));  // Only reached on error.  Try to continue.
 		}
 
 		JSToken ToJSToken (int tt)
@@ -977,7 +1001,7 @@ namespace Microsoft.JScript {
 				ts.GetToken ();
 
 				/* Make a NEW node to append to. */
-				pn = new New (parent, MemberExpr (parent, false));
+				pn = new New (parent, MemberExpr (parent, false), new Location (ts.SourceName, ts.LineNumber));
 
 				if (ts.MatchToken (Token.LP))
 					ArgumentList (parent, (ICallable) pn);
@@ -1009,15 +1033,18 @@ namespace Microsoft.JScript {
 					MustMatchToken (Token.NAME, "msg.no.name.after.dot");
 					string s = ts.GetString;
 					// FIXME: is 'new Identifier' appropriate here?
-					pn = new Binary (parent, pn, new Identifier (parent, ts.GetString), JSToken.AccessField);
+					pn = new Binary (parent, pn, 
+						 new Identifier (parent, ts.GetString, new Location (ts.SourceName, ts.LineNumber)),
+						 JSToken.AccessField, new Location (ts.SourceName, ts.LineNumber));
 				} else if (tt == Token.LB) {
-					Binary b = new Binary (parent, pn, JSToken.LeftBracket);
+					Binary b = new Binary (parent, pn, JSToken.LeftBracket, 
+						       new Location (ts.SourceName, ts.LineNumber));
 					b.right = Expr (b, false);
 					pn = b;
 					MustMatchToken (Token.RB, "msg.no.bracket.index");
 				} else if (allow_call_syntax && tt == Token.LP) {
 					/* make a call node */
-					pn = new Call (parent, pn);
+					pn = new Call (parent, pn, new Location (ts.SourceName, ts.LineNumber));
 					
 					/* Add the arguments to pn, if any are supplied. */
 					ArgumentList (parent, (ICallable) pn);
@@ -1041,7 +1068,7 @@ namespace Microsoft.JScript {
 			if (tt == Token.FUNCTION) {
 				return Function (parent, FunctionType.Expression);
 			} else if (tt == Token.LB) {
-				ASTList elems = new ASTList ();
+				ASTList elems = new ASTList (parent, new Location (ts.SourceName, ts.LineNumber));
 				int skip_count = 0;
 				bool after_lb_or_comma = true;
 				for (;;) {
@@ -1068,8 +1095,9 @@ namespace Microsoft.JScript {
 					}
 				}
 				// FIXME: pass a real Context
-				return new ArrayLiteral (null, elems, skip_count);
+				return new ArrayLiteral (null, elems, skip_count, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.LC) {
+				Location location = new Location (ts.SourceName, ts.LineNumber);
 				ArrayList elems = new ArrayList ();
 
 				if (!ts.MatchToken (Token.RC)) {
@@ -1109,37 +1137,37 @@ namespace Microsoft.JScript {
 					leave_commaloop:
 					;
 				}
-				return new ObjectLiteral (elems);
+				return new ObjectLiteral (elems, location);
 			} else if (tt == Token.LP) {
 				pn = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren");
 				return pn;
 			} else if (tt == Token.NAME) {
 				string name = ts.GetString;
-				return new Identifier (parent, name);
+				return new Identifier (parent, name, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.NUMBER) {
 				double n = ts.GetNumber;
-				return new NumericLiteral (parent, n);
+				return new NumericLiteral (parent, n, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.STRING) {
 				string s = ts.GetString;
-				return new StringLiteral (null, s);
+				return new StringLiteral (null, s, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.REGEXP) {
 				string flags = ts.reg_exp_flags;
 				ts.reg_exp_flags = null;
 				string re = ts.GetString;
-				return new RegExpLiteral (parent, re, flags);
+				return new RegExpLiteral (parent, re, flags, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.NULL) {
 				// FIXME, build the null object;
 				return null;
 			} else if (tt ==  Token.THIS) {
-				return new This (parent); 
+				return new This (parent, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.FALSE || tt == Token.TRUE) {
 				bool v;	
 				if (tt == Token.FALSE)
 					v = false;
 				else
 					v = true;
-				return new BooleanLiteral (null, v);
+				return new BooleanLiteral (null, v, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.RESERVED) {
 				ReportError ("msg.reserved.id");
 			} else if (tt == Token.ERROR) {

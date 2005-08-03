@@ -41,13 +41,18 @@ namespace Microsoft.JScript {
 	public abstract class Exp : AST {
 		internal bool no_effect;
 		internal abstract bool Resolve (IdentificationTable context, bool no_effect);
+
+		internal Exp (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
 	}
 	
 	internal class Unary : UnaryOp {
 
-		internal Unary (AST parent, JSToken oper)
+		internal Unary (AST parent, JSToken oper, Location location)
+			: base (parent, location)
 		{		
-			this.parent = parent;
 			this.oper = oper;
 		}
 
@@ -113,6 +118,9 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Not);
 				break;
 			case JSToken.LogicalNot:
+				// FIXME: here we can infer the type
+				// of the operand so that unneeded
+				// ToBoolean can be avoided
 				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", new Type [] { typeof(object) }));
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.Emit (OpCodes.Sub);
@@ -129,15 +137,14 @@ namespace Microsoft.JScript {
 		bool assign, late_bind = false;
 		AST right_side;
 
-		internal Binary (AST parent, AST left, JSToken op)
-			: this (parent, left, null, op)
+		internal Binary (AST parent, AST left, JSToken op, Location location)
+			: this (parent, left, null, op, location)
 		{
 		}
 		
-		internal Binary (AST parent, AST left, AST right, JSToken op)
-			: base (left, right, op)
+		internal Binary (AST parent, AST left, AST right, JSToken op, Location location)
+			: base (parent, left, right, op, location)
 		{
-			this.parent = parent;
 		}
 		
 		public override string ToString ()
@@ -160,17 +167,23 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			bool r = true;
+			bool found = true;
+
 			if (left != null)
-				r &= left.Resolve (context);
-			if (right != null) 
-				if (op == JSToken.AccessField && right is IAccesible) {
-					r &= ((IAccesible) right).ResolveFieldAccess (left);
-					if (!r)
+				if (op == JSToken.AccessField && left is ICanLookupPrototype) {
+					found &= ((ICanLookupPrototype) left).ResolveFieldAccess (right);
+					if (!found)
 						late_bind = true;
 				} else
-					r &= right.Resolve (context);
-			return r;
+					found &= left.Resolve (context);
+			if (right != null)
+				if (op == JSToken.AccessField && right is IAccessible) {
+					found &= ((IAccessible) right).ResolveFieldAccess (left);
+					if (!found)
+						late_bind = true;
+				} else
+					found &= right.Resolve (context);
+			return found;
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
@@ -187,7 +200,7 @@ namespace Microsoft.JScript {
 				this.right_side = right_side;
 				return Resolve (context);
 			} else 
-				throw new Exception ("error JS5008: Illegal assignment");
+				throw new Exception (location.SourceName + " (" + location.LineNumber + ",0): error JS5008: Illegal assignment");
 		}
 
 		internal MemberInfo Binding {
@@ -492,7 +505,8 @@ namespace Microsoft.JScript {
 
 		AST cond_exp, true_exp, false_exp;
 
-		internal Conditional (AST parent, AST expr, AST  trueExpr, AST falseExpr)
+		internal Conditional (AST parent, AST expr, AST  trueExpr, AST falseExpr, Location location)
+			: base (parent, location)
 		{
 			this.cond_exp = expr;
 			this.true_exp = trueExpr;
@@ -560,12 +574,13 @@ namespace Microsoft.JScript {
 		internal object binding;
 		internal Type bind_type;
 		private bool is_dynamic_function = false;
+		private bool need_this = false;
 
-		internal Call (AST parent, AST exp)
+		internal Call (AST parent, AST exp, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.member_exp = exp;
-			this.args = new Args ();
+			this.args = new Args (location);
 		}
 		
 		public override string ToString ()
@@ -586,7 +601,6 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
-			int n = -1;
 
 			if (member_exp != null) {
 				if (member_exp is Identifier) {
@@ -609,36 +623,30 @@ namespace Microsoft.JScript {
 								if (cont_func != null)
 									SemanticAnalyser.AddMethodWithEval (cont_func.func_obj.name);
 							}
-							args.params_info = built_in.Parameters;
-							n = built_in.NumOfArgs;
 						}
-					} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
-						args.func = (Function) binding;
-						n = (binding as Function).NumOfArgs;
 					}
 				} else if (member_exp is Binary) {
 					member_exp.Resolve (context);
 					Binary bin = (Binary) member_exp;
 					if (bin.AccessField)
 						binding = bin.Binding;
-					if (binding is MethodInfo) {
-						MethodInfo method_info = (MethodInfo) binding;
-						args.has_var_args (method_info);
-						args.params_info = method_info.GetParameters ();
-						if (args.params_info != null)
-							n = args.params_info.Length;
-						else n = 0;
-					}
+					if (binding is MethodInfo)
+						NeedThis ((MethodInfo) binding);
 				} else
 					r &= member_exp.Resolve (context);
-		
-				if (args != null) {
-					args.DesiredNumOfArgs = n;
+
+				args.BoundToMethod = binding;
+
+				if (args != null)
 					r &= args.Resolve (context);
-				}
 			} else
 				throw new Exception ("Call.Resolve, member_exp can't be null");
 			return r;
+		}
+
+		private void NeedThis (MethodInfo method)
+		{
+			need_this = SemanticAnalyser.Needs (JSFunctionAttributeEnum.HasThisObject, method);
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
@@ -708,14 +716,23 @@ namespace Microsoft.JScript {
 				ILGenerator ig = ec.ig;				
 				
 				if (member_type == MemberTypes.Method) {
+					if (member_exp is Binary) {
+						Binary bin = (Binary) member_exp;
+						if (bin.left is StringLiteral && need_this)
+							bin.left.Emit (ec);
+					}						
 					args.Emit (ec);
 					MethodInfo method = (MethodInfo) minfo;
 					ig.Emit (OpCodes.Call, method);
 					Type return_type = method.ReturnType;
-					if (return_type != typeof (void))
+					if (return_type != typeof (void) && return_type != typeof (string))
 						ig.Emit (OpCodes.Box, return_type);
-				} else
+				} else {
+					Console.WriteLine ("member_type = {0}", member_type);
+					Console.WriteLine ("member_exp = {0}", member_exp);
+					Console.WriteLine ("line_number = {0}", location.LineNumber);
 					throw new NotImplementedException ();
+				}
 			} else
 				emit_late_call (ec);
 			
@@ -742,7 +759,7 @@ namespace Microsoft.JScript {
 			int n = args.Size - 1;
 
 			for (int i = 0; i <= n; i++) {
-				ast = args.get_element (i);				
+				ast = args.get_element (i);
 				ast.Emit (ec);
 				
 				if (ast is StringLiteral)
@@ -810,9 +827,10 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Castclass, iact_obj);
 
 			//
-			//FIXME: Find out the exact discrimination for: GetGlobalScope and GetDefaultThisObject
+			// FIXME: Find out the exact discrimination
+			// for: GetGlobalScope and GetDefaultThisObject.
 			// For example, in program: print (function () { return 1; } ());
-			// we invoke GetGlobalScope, in other cases GetDefaultThisObject
+			// we invoke GetGlobalScope, in other cases GetDefaultThisObject 
 			//
 			if (member_exp is FunctionExpression)
 				ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetGlobalScope"));
@@ -1030,11 +1048,15 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	interface IAccesible {
+	interface IAccessible {
 		bool ResolveFieldAccess (AST parent);
 	}
 
-	internal class Identifier : Exp, IAssignable, IAccesible {
+	internal interface ICanLookupPrototype {
+		bool ResolveFieldAccess (AST parent);
+	}
+
+	internal class Identifier : Exp, IAssignable, IAccessible {
 		
 		internal Symbol name;
 		internal AST binding;
@@ -1046,9 +1068,9 @@ namespace Microsoft.JScript {
 		bool no_field;
 		LocalBuilder local_builder;
 
-		internal Identifier (AST parent, string id)
+		internal Identifier (AST parent, string id, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.name = Symbol.CreateSymbol (id);
 		}
 
@@ -1078,7 +1100,8 @@ namespace Microsoft.JScript {
 					}
 				}
 			} else
-				throw new Exception ("variable not found: " +  name);
+				throw new Exception (location.SourceName + "(" + location.LineNumber + 
+				     ",0) : error JS1135: Variable '" + name + "' has not been declared");
 			return true;
 		}
 
@@ -1178,7 +1201,7 @@ namespace Microsoft.JScript {
 			else if (binding is FunctionDeclaration)
 				load_script_func (ec, (FunctionDeclaration) binding);
 			else if (binding == null) // it got referenced before was declared and initialized
-				Console.WriteLine ("id = {0}, Identifier.Emit, binding == null? {1}", name.Value, binding == null);
+				; // Console.WriteLine ("id = {0}, Identifier.Emit, binding == null? {1}", name.Value, binding == null);
 			else
 				Console.WriteLine ("Identifier.Emit, binding.GetType = {0}", binding.GetType ());
 
@@ -1304,15 +1327,29 @@ namespace Microsoft.JScript {
 
 	internal class Args : AST {
 
-		internal ArrayList elems;
-		int num_of_args = -1;
-		internal Function func;
-		internal bool is_print;
-		internal ParameterInfo [] params_info;
-		internal bool late_bind = false;
-		internal bool var_args = false;
-		
-		internal Args ()
+		private ArrayList elems;
+
+		//
+		// BoundToMethod can be of type:
+		// - Function (when we have a function expression or declaration)
+		// - MethodInfo (prototype's method invoked through a
+		//   literal or access to a method from any built-in
+		// object.
+		// - BuiltIn for methods from the GlobalObject
+		//
+		internal object BoundToMethod;
+
+		private bool BoundToDeclaredFunction {
+			get { return BoundToMethod is Function; }
+		}
+
+		private int expected_args = 0;
+		private bool has_this = false;
+		private bool var_args = false;
+		private bool has_engine = false;
+
+		internal Args (Location location)
+			: base (null, location)
 		{
 			elems = new ArrayList ();
 		}
@@ -1321,39 +1358,45 @@ namespace Microsoft.JScript {
 		{
 			elems.Add (e);
 		}
-		
-		internal int DesiredNumOfArgs {
-			set { 
-				if (!(value < 0))
-					num_of_args = value; 
-			}
-		}
-		
-		internal bool IsPrint {
-			set { is_print = value; }
-		}
 
-		internal void has_var_args (MethodInfo minfo)
+		internal AST get_element (int i)
 		{
-			JSFunctionAttribute [] custom_attrs = (JSFunctionAttribute []) 
-				minfo.GetCustomAttributes (typeof (JSFunctionAttribute), true);
+			if (0 <= i && i < elems.Count)
+				return (AST) elems [i];
+			return null;
+		}
 
-			foreach (JSFunctionAttribute attr in custom_attrs)
-				if (attr.GetAttributeValue () == JSFunctionAttributeEnum.HasVarArgs) {
-					var_args = true;
-					return;
-				}
-			var_args = false;
+		internal int Size {
+			get {
+				if (elems == null)
+					return 0;
+				return elems.Count;
+			}
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			int n = elems.Count;
 			AST tmp;
 			bool r = true;
 
-			if (!is_print && !var_args &&  num_of_args >= 0 && n > num_of_args)
-				Console.WriteLine ("warning JS1148: There are too many arguments. The extra arguments will be ignored");
+			if (BoundToMethod is Function)
+				expected_args = ((Function) BoundToMethod).NumOfArgs;
+			if (BoundToMethod is MethodInfo) {
+				MethodInfo method = (MethodInfo) BoundToMethod;
+				has_this = SemanticAnalyser.Needs (JSFunctionAttributeEnum.HasThisObject, method);
+				var_args = SemanticAnalyser.Needs (JSFunctionAttributeEnum.HasVarArgs, method);
+				has_engine = SemanticAnalyser.Needs (JSFunctionAttributeEnum.HasEngine, method);
+				expected_args = method.GetParameters ().Length;
+			} else if (BoundToMethod is BuiltIn) {
+				BuiltIn built_in = (BuiltIn) BoundToMethod;
+				if (built_in.IsConstructor)
+					expected_args = elems.Count;
+				else
+					expected_args = ((BuiltIn) BoundToMethod).NumOfArgs;
+			}
+
+			int n = Size;
+
 			for (int i = 0; i < n; i++) {
 				tmp = (AST) elems [i];
 				r &= tmp.Resolve (context);
@@ -1361,52 +1404,130 @@ namespace Microsoft.JScript {
 			return r;
 		}
 
-		internal AST get_element (int i)
-		{
-			if (i >= 0 && i < elems.Count)
-				return (AST) elems [i];
-			else
-				return null;
-		}
-
-		internal int Size {
-			get { return elems.Count; }
-		}
-
 		internal override void Emit (EmitContext ec)
 		{
-			int n;
-			ILGenerator ig = ec.ig;
+			bool strong_type = BoundToMethod is MethodInfo;
+			ParameterInfo [] parameters = null;
+
+			if (!BoundToDeclaredFunction) {
+				if (has_this)
+					expected_args--;
+				if (has_engine)
+					expected_args--;
+				if (var_args)
+					expected_args--;
+			}
+
+			if (expected_args < 0) {
+				if (BoundToDeclaredFunction)
+					expected_args = ((Function) BoundToMethod).NumOfArgs;
+				else
+					throw new Exception ("expected_args can't be negative");
+			}
+
+			//
+			// When BoundToMethod is null and the semantic
+			// analysis passed means that the method is 'print'
+			//
+			// This should be on Resolve but it's here as
+			// a work around of the various passes that
+			// get performed of Resolve that affect the
+			// state of expected_args.
+			//
+			// When the fix for calling just one time
+			// Resolve is applied, this must be moved back
+			// to Resolve.
+			//
+			if (BoundToMethod != null && !var_args) {
+				if (elems.Count > expected_args) {
+					Console.WriteLine (
+					   location.SourceName + "(" + location.LineNumber + ",0) : " +
+					   "warning JS1148: There are too many arguments. The extra arguments will be ignored");
+				}
+				if (elems.Count < expected_args) {
+					string name = String.Empty;
+
+					if (BoundToMethod is MethodInfo)
+						name = ((MethodInfo) BoundToMethod).Name;
+					else if (BoundToDeclaredFunction)
+						name = ((Function) BoundToMethod).func_obj.name;
+
+					Console.WriteLine (location.SourceName + "(" + location.LineNumber + ",0) : " +
+						   "warning JS1204: Not all required arguments have been supplied" + 
+						   " to method " + name);
+				}
+			}
+
+			if (strong_type)
+				parameters = ((MethodInfo) BoundToMethod).GetParameters ();
+
+			if (has_engine)
+				CodeGenerator.load_engine (InFunction, ec.ig);
 
 			if (var_args) {
-				n = elems.Count;
-				ig.Emit (OpCodes.Ldc_I4, n);
-				ig.Emit (OpCodes.Newarr, typeof (object));
-				for (int i = 0; i < n; i++) {
-					ig.Emit (OpCodes.Dup);
-					ig.Emit (OpCodes.Ldc_I4, i);
-					get_element (i).Emit (ec);
-					ig.Emit (OpCodes.Stelem_Ref);
-				}
-			} else {
-				n = elems.Count;
-				if (num_of_args < 0)
-					num_of_args = n;
-				AST ast;
-				for (int j = 0; j < n && j < num_of_args; j++) {
-					ast = get_element (j);
-					ast.Emit (ec);
-					if (!late_bind && params_info != null)
-						force_strong_type (ig, ast, params_info [j]);
-				}
-				int missing = 0;
-				if (func != null) 
-					missing = func.NumOfArgs - n;
-				else if (params_info != null)
-					missing = params_info.Length - n;
+				if (expected_args > 1)
+					emit_default_args_case (ec, expected_args, strong_type, parameters);
 
-				for (int k = 0; k < missing; k++)
-					ig.Emit (OpCodes.Ldsfld, typeof (Missing).GetField ("Value"));
+				ILGenerator ig = ec.ig;
+
+				int remains = elems.Count - expected_args;
+				
+				if (remains >= 0)
+					ig.Emit (OpCodes.Ldc_I4, remains);
+				else
+					ig.Emit (OpCodes.Ldc_I4_0);
+
+				ig.Emit (OpCodes.Newarr, typeof (object));
+
+				int n = elems.Count;
+				AST ast = null;
+
+				for (int j = expected_args, k = 0; j < n; j++, k++) {
+					ast = get_element (j);
+					if (ast != null) {
+						ig.Emit (OpCodes.Dup);
+						ig.Emit (OpCodes.Ldc_I4, k);
+						ast.Emit (ec);
+						ig.Emit (OpCodes.Stelem_Ref);
+					}
+				}
+			} else
+				emit_default_args_case (ec, expected_args, strong_type, parameters);
+		}
+
+		internal void emit_default_args_case (EmitContext ec, int n, bool strong_type,
+					      ParameterInfo [] parameters)
+		{
+			AST ast = null;
+			ILGenerator ig = ec.ig;
+
+			// tracks the proper index of the formal params
+			// from the strong typed method
+			int j = 0;
+
+			if (!BoundToDeclaredFunction) {
+				if (has_this)
+					j++;
+				if (has_engine)
+					j++;
+			}
+
+			for (int i = 0; i < n; i++, j++) {
+				ast = get_element (i);
+				if (ast != null) {
+					ast.Emit (ec);
+					if (strong_type)
+						force_strong_type (ig, ast, parameters [j]);
+				} else {
+					//
+					// ast was null and we need
+					// to provide a parameter
+					//
+					if (strong_type)
+						CodeGenerator.emit_default_value (ig, parameters [j]);
+					else
+						ig.Emit (OpCodes.Ldsfld, typeof (Missing).GetField ("Value"));
+				}
 			}
 		}
 
@@ -1419,7 +1540,10 @@ namespace Microsoft.JScript {
 					//ig.Emit (OpCodes.Conv_R8);
 				} else if (param_type == typeof (object))
 					;
-				else throw new NotImplementedException ();
+				else {
+					Console.WriteLine ("#1. ast.GetType = {0}, param_type = {1}", ast.GetType (), param_type);
+					throw new NotImplementedException ();
+				}
 			} else {
 				if (param_type == typeof (double))
 					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] {typeof (object)}));
@@ -1428,8 +1552,11 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToString", new Type [] {typeof (object), typeof (bool)}));
 				} else if (param_type == typeof (object))
 					;
-				else throw new NotImplementedException ();
-			}			
+				else {
+					Console.WriteLine ("#2. ast.GetType = {0}, param_type = {1}", ast.GetType (), param_type);
+					throw new NotImplementedException ();
+				}
+			}
 		}
 	}
 
@@ -1441,9 +1568,9 @@ namespace Microsoft.JScript {
 			get { return exprs.Count; }
 		}
 
-		internal Expression (AST parent)
+		internal Expression (AST parent, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			exprs = new ArrayList ();
 		}
 
@@ -1518,10 +1645,9 @@ namespace Microsoft.JScript {
 
 		internal bool is_embedded;
 
-		internal Assign (AST parent, AST left, AST right, JSToken op, bool is_embedded)
-			: base (left, right, op)
+		internal Assign (AST parent, AST left, AST right, JSToken op, bool is_embedded, Location location)
+			: base (parent, left, right, op, location)
 		{
-			this.parent = parent;
 			this.is_embedded = is_embedded;
 		}
 
@@ -1536,7 +1662,7 @@ namespace Microsoft.JScript {
 			if (left is IAssignable)
 				r = ((IAssignable) left).ResolveAssign (context, right);
 			else
-				throw new Exception ("(" + line_number + ",0): error JS5008: Illegal assignment");
+				throw new Exception (location.SourceName + " (" + location.LineNumber + ",0): error JS5008: Illegal assignment");
 			if (right is Exp)
 				r &=((Exp) right).Resolve (context, false);
 			else
@@ -1693,11 +1819,11 @@ namespace Microsoft.JScript {
 		Args args;
 		bool late_bind = false;
 
-		internal New (AST parent, AST exp)
+		internal New (AST parent, AST exp, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.exp = exp;
-			this.args = new Args ();
+			this.args = new Args (location);
 		}
 
 		public void AddArg (AST arg)
@@ -1818,6 +1944,7 @@ namespace Microsoft.JScript {
 		bool allowed_as_func;
 
 		internal BuiltIn (string name, bool allowed_as_ctr, bool allowed_as_func)
+			: base (null, null)
 		{
 			this.name = name;
 			this.allowed_as_ctr = allowed_as_ctr;
@@ -1840,7 +1967,7 @@ namespace Microsoft.JScript {
 		internal bool IsFunction {
 			get { return allowed_as_func; }
 		}
-
+		
 		internal bool IsPrint {
 			get { return String.Equals (name, "print"); }
 		}

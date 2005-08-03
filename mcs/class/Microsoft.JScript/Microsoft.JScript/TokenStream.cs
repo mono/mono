@@ -1439,7 +1439,7 @@ internal class TokenStream {
 
 	internal void ReportCurrentLineError (string message)
 	{
-		Console.WriteLine ("error: {0}, {1}, {2}", message, SourceName, LineNumber);
+		Console.WriteLine ("{0} ({1}, 0): error: {2}", SourceName, LineNumber, message);
 	}
 
 	// FIXME: we don't check for combining mark yet

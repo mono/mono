@@ -38,7 +38,7 @@ namespace Microsoft.JScript {
 	internal class SemanticAnalyser {
 
 		internal static bool print = true;
-		public static bool allow_member_expr_as_function_name;
+		internal static bool allow_member_expr_as_function_name;
 		static IdentificationTable context;
 		static IdentificationTable label_set;
 
@@ -93,6 +93,7 @@ namespace Microsoft.JScript {
 			prototypes.Add (typeof (FunctionObject), typeof (FunctionPrototype));
 			prototypes.Add (typeof (ArrayObject), typeof (ArrayPrototype));
 			prototypes.Add (typeof (StringObject), typeof (StringPrototype));
+			prototypes.Add (typeof (StringLiteral), typeof (StringPrototype));
 			prototypes.Add (typeof (BooleanObject), typeof (BooleanPrototype));
 			prototypes.Add (typeof (NumberObject), typeof (NumberPrototype));
 			prototypes.Add (typeof (DateObject), typeof (DatePrototype));
@@ -113,7 +114,7 @@ namespace Microsoft.JScript {
 			return name.Substring (i + 1);
 		}
 
-		public static bool Run (ScriptBlock prog)
+		internal static bool Run (ScriptBlock prog)
 		{
 			context = new IdentificationTable ();
 			context.BuildGlobalEnv ();
@@ -198,21 +199,38 @@ namespace Microsoft.JScript {
 
 		internal static MemberInfo get_member (AST left, AST right)
 		{
-			if (left != null && right != null && left is Identifier && right is Identifier) {
-				string obj =  ((Identifier) left).name.Value;
-				string prop_name = ((Identifier) right).name.Value;
-				Type target_type = SemanticAnalyser.map_to_ctr (obj);
+			bool right_is_identifier = false;
+			
+			if (left != null && right != null) {
+				right_is_identifier = right is Identifier;
 
-				if (target_type != null) {
-					MemberInfo [] members = target_type.GetMember (prop_name);
-					if (members != null && members.Length > 0)
-						return members [0];
+				Type target_type = null;
+				string prop_name = string.Empty;
+				string obj = string.Empty;
+					
+				if (left is Identifier && right_is_identifier) {
+					obj =  ((Identifier) left).name.Value;
+					prop_name = ((Identifier) right).name.Value;
+					target_type = SemanticAnalyser.map_to_ctr (obj);
+				} else if (left is StringLiteral && right_is_identifier) {
+					prop_name = ((Identifier) right).name.Value;
+					target_type = SemanticAnalyser.map_to_prototype (left);
 				}
+				if (target_type != null && prop_name != string.Empty)
+					return Find (target_type, prop_name);
 			}
 			return null;
 		}
 
-		internal static Type map_to_prototype (ScriptObject jsObj)
+		internal static MemberInfo Find (Type type, string propertyName)
+		{
+			MemberInfo [] members = type.GetMember (propertyName);
+			if (members != null && members.Length > 0)
+				return members [0];
+			return null;
+		}
+
+		internal static Type map_to_prototype (object jsObj)
 		{
 			if (jsObj == null)
 				throw new Exception ("jsObj can't be null");
@@ -271,11 +289,22 @@ namespace Microsoft.JScript {
 		{
 			if (ast != null) {
 				Type type = ast.GetType ();
-				// FIXME: Add test for other literals
+				// FIXME: Add test for other literals (exclude StringLiteral)
 				if (type == typeof (ArrayLiteral))
 					return type;
 			}
 			return null;
+		}
+
+		internal static bool Needs (JSFunctionAttributeEnum targetAttr, MethodInfo method)
+		{
+			JSFunctionAttribute [] custom_attrs = (JSFunctionAttribute [])
+				method.GetCustomAttributes (typeof (JSFunctionAttribute), true);
+
+			foreach (JSFunctionAttribute attr in custom_attrs)
+				if ((attr.GetAttributeValue () & targetAttr) != 0)
+					return true;
+			return false;
 		}
 	}
 }

@@ -564,5 +564,19 @@ namespace Microsoft.JScript {
 			for (int i = 0; i < lexical_difference; i++)
 				ig.Emit (OpCodes.Call, typeof (ScriptObject).GetMethod ("GetParent"));
 		}
+
+		internal static void emit_default_value (ILGenerator ig, ParameterInfo param)
+		{
+			Type param_type = param.ParameterType;
+
+			if (param_type == typeof (Double))
+				ig.Emit (OpCodes.Ldc_R8, GlobalObject.NaN);
+			else if (param_type == typeof (object))
+				ig.Emit (OpCodes.Ldsfld, typeof (Missing).GetField ("Value"));
+			else {
+				Console.WriteLine ("param_type = " + param_type);
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }
