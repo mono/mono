@@ -4,7 +4,7 @@
 using foo = A;
 
 class A {
-	class B { }
+	public class B { }
 }
 
 class X {
