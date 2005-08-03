@@ -1,3 +1,12 @@
+2005-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-normalization-source.cs,
+	  NormalizationTableUtil.cs,
+	  Normalization.cs : several bugfixes on index miscomputation.
+	  Renamed using aliases (csc will bork). Primary combine safety is now
+	  computed during UnicodeData.txt parse.
+	  Maximum NFKD length was 18, not 4 (U+FDFA).
+
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* managed-collation.patch : added Normalization support.

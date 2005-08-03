@@ -9,7 +9,7 @@ namespace Mono.Globalization.Unicode
 		public static readonly CodePointIndexer prop;
 		public static readonly CodePointIndexer map;
 		public static readonly CodePointIndexer Combining;
-		public static readonly CodePointIndexer MapIndexes;
+		public static readonly CodePointIndexer Composite;
 		public static readonly CodePointIndexer Helper;
 
 		static NormalizationTableUtil ()
@@ -52,10 +52,12 @@ namespace Mono.Globalization.Unicode
 				0x3030, 0x30A0, 0xA810, 0xFB20, 0xFE30,
 //				0x10A40, 0x1D1B0, 0x1D250
 				};
-			int [] mapIndexStarts = new int [] {
+			// since mapToCompositeIndex only holds canonical
+			// mappings, those indexes could be still shorten.
+			int [] compositeStarts = new int [] {
 				0x480, 0x1450, 0x16D0
 				};
-			int [] mapIndexEnds = new int [] {
+			int [] compositeEnds = new int [] {
 				0x10C0, 0x15D0, 0x2190
 				};
 			int [] helperStarts = new int [] {
@@ -75,8 +77,8 @@ namespace Mono.Globalization.Unicode
 			map = new CodePointIndexer (mapStarts, mapEnds, 0, 0);
 			Combining = new CodePointIndexer (combiningStarts,
 				combiningEnds, 0, 0);
-			MapIndexes = new CodePointIndexer (mapIndexStarts,
-				mapIndexEnds, 0, 0);
+			Composite = new CodePointIndexer (compositeStarts,
+				compositeEnds, 0, 0);
 			Helper = new CodePointIndexer (helperStarts, helperEnds,
 				0, 0);
 		}

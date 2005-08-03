@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Runtime.CompilerServices;
 
-using Util = Mono.Globalization.Unicode.NormalizationTableUtil;
+using NUtil = Mono.Globalization.Unicode.NormalizationTableUtil;
 
 namespace Mono.Globalization.Unicode
 {
@@ -22,7 +22,7 @@ namespace Mono.Globalization.Unicode
 		public const int NoNfkc = 16;
 		public const int MaybeNfkc = 32;
 		public const int FullCompositionExclusion = 64;
-		public const int IsSafe = 128;
+		public const int IsUnsafe = 128;
 //		public const int ExpandOnNfd = 256;
 //		public const int ExpandOnNfc = 512;
 //		public const int ExpandOnNfkd = 1024;
@@ -30,35 +30,36 @@ namespace Mono.Globalization.Unicode
 
 		static uint PropValue (int cp)
 		{
-			return props [Util.PropIdx (cp)];
+			return props [NUtil.PropIdx (cp)];
 		}
 
 		static int CharMapIdx (int cp)
 		{
-			return charMapIndex [Util.MapIdx (cp)];
+			return charMapIndex [NUtil.MapIdx (cp)];
 		}
 
-		static int GetComposedStringLength (int mapIdx)
+		static int GetComposedStringLength (int ch)
 		{
-			int i = mapIdx;
+			int start = charMapIndex [NUtil.MapIdx (ch)];
+			int i = start;
 			while (mappedChars [i] != 0)
 				i++;
-			return i - mapIdx;
+			return i - start;
 		}
 
 		static byte GetCombiningClass (int c)
 		{
-			return combiningClass [Util.Combining.ToIndex (c)];
+			return combiningClass [NUtil.Combining.ToIndex (c)];
 		}
 
 		static int GetPrimaryCompositeFromMapIndex (int src)
 		{
-			return mapIdxToComposite [Util.MapIndexes.ToIndex (src)];
+			return mapIdxToComposite [NUtil.Composite.ToIndex (src)];
 		}
 
 		static short GetPrimaryCompositeHelperIndex (int cp)
 		{
-			return helperIndex [Util.Helper.ToIndex (cp)];
+			return helperIndex [NUtil.Helper.ToIndex (cp)];
 		}
 
 		static int GetPrimaryCompositeCharIndex (object chars, int start, int charsLength)
@@ -119,6 +120,13 @@ namespace Mono.Globalization.Unicode
 			return null;
 		}
 
+		private static bool CanBePrimaryComposite (int i)
+		{
+			if (i >= 0x3400 && i <= 0x9FBB)
+				return GetPrimaryCompositeHelperIndex (i) != 0;
+			return (PropValue (i) & IsUnsafe) != 0;
+		}
+
 		private static void Combine (StringBuilder sb, int start, int checkType)
 		{
 			for (int i = start; i < sb.Length; i++) {
@@ -135,40 +143,43 @@ namespace Mono.Globalization.Unicode
 				}
 
 				int cur = i;
-				// FIXME: It should use IsUnsafe flag.
 				// FIXME: It should check "blocked" too
 				for (;i >= 0; i--)
-					if (QuickCheck (sb [i], checkType) == NormalizationCheck.Yes)
+					if (!CanBePrimaryComposite ((int) sb [i]))
 						break;
 				i++;
-
 				// Now i is the "starter"
-
-				int ch = 0;
 				int idx = 0;
 				for (; i < cur; i++) {
-					idx = GetPrimaryComposite (sb, (int) sb [i], sb.Length, i, ref ch);
+					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], sb.Length, i);
 					if (idx > 0)
 						break;
 				}
-				if (idx == 0)
+				if (idx == 0) {
+					i = cur;
 					continue;
-				sb.Remove (i, GetComposedStringLength (idx));
-				sb.Insert (i, (char) ch);
-				i--; // apply recursively
+				}
+				int ch = GetPrimaryCompositeFromMapIndex (idx);
+				int len = GetComposedStringLength (ch);
+				if (ch == 0 || len == 0) {
+					// FIXME: this actually happens
+					// throw new SystemException ("Internal error: should not happen.");
+					i = cur;
+					continue;
+				}
+				sb.Remove (i, len);
+				sb.Insert (i, (char) ch); // always single character
+				i = cur - 1; // apply recursively
 			}
 		}
 
-		static int GetPrimaryComposite (object o, int cur, int length, int bufferPos, ref int ch)
+		static int GetPrimaryCompositeMapIndex (object o, int cur, int length, int bufferPos)
 		{
 			if ((PropValue (cur) & FullCompositionExclusion) != 0)
 				return 0;
 			if (GetCombiningClass (cur) != 0)
 				return 0; // not a starter
-			int idx = GetPrimaryCompositeCharIndex (o, bufferPos, length);
-			if (idx == 0)
-				return 0;
-			return GetPrimaryCompositeFromMapIndex (idx);
+			return GetPrimaryCompositeCharIndex (o, bufferPos, length);
 		}
 
 		static string Decompose (string source, int checkType)
@@ -230,7 +241,7 @@ namespace Mono.Globalization.Unicode
 				sb = new StringBuilder (s.Length + 100);
 			sb.Append (s, start, i - start);
 			if (buf == null)
-				buf = new int [5];
+				buf = new int [19];
 			GetCanonical (s [i], buf, 0);
 			for (int x = 0; ; x++) {
 				if (buf [x] == 0)
@@ -311,23 +322,30 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsNormalized (string source, int type)
 		{
-			int prevCC = -1;
+//			int prevCC = -1;
 			for (int i = 0; i < source.Length; i++) {
-				int cc = GetCombiningClass (source [i]);
-				if (cc != 0 && cc < prevCC)
-					return false;
-				prevCC = cc;
+//				int cc = GetCombiningClass (source [i]);
+//				if (cc != 0 && cc < prevCC)
+//					return false;
+//				prevCC = cc;
 				switch (QuickCheck (source [i], type)) {
 				case NormalizationCheck.Yes:
 					break;
 				case NormalizationCheck.No:
 					return false;
 				case NormalizationCheck.Maybe:
-					int ch = 0;
-					if (GetPrimaryComposite (source,
-						source [i], source.Length,
-						i, ref ch) != 0)
-						return false;
+					// partly copied from Combine()
+					int cur = i;
+					// FIXME: It should check "blocked" too
+					for (;i >= 0; i--)
+						if (!CanBePrimaryComposite ((int) source [i]))
+							break;
+					i++;
+					// Now i is the "starter"
+					for (; i < cur; i++) {
+						if (GetPrimaryCompositeCharIndex (source, i, source.Length) != 0)
+							return false;
+					}
 					break;
 				}
 			}

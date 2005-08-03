@@ -80,7 +80,6 @@ namespace Mono.Globalization.Unicode
 			} catch (Exception ex) {
 				throw new InvalidOperationException ("Internal error at line " + lineCount + " : " + ex);
 			}
-			ComputeSafety ();
 			CompressUCD ();
 			Serialize ();
 			ProcessCombiningClass ();
@@ -148,7 +147,7 @@ namespace Mono.Globalization.Unicode
 			COut.WriteLine ("0};");
 			CSOut.WriteLine ("};");
 
-			ushort [] mapIndexes = new ushort [0x2600];
+			ushort [] mapIndexes = new ushort [char.MaxValue + 1];
 
 			// GetPrimaryCompositeFromMapIndex ()
 			int currentIndex = -1;
@@ -157,11 +156,12 @@ namespace Mono.Globalization.Unicode
 					continue;
 				if (!m.IsCanonical)
 					continue;
-				mapIndexes [m.MapIndex] = (ushort) m.CodePoint;
+				// FIXME: why this shift happens?
+				mapIndexes [m.MapIndex - 2] = (ushort) m.CodePoint;
 				currentIndex = m.MapIndex;
 			}
 
-			mapIndexes = CodePointIndexer.CompressArray (mapIndexes, typeof (ushort), NUtil.MapIndexes) as ushort [];
+			mapIndexes = CodePointIndexer.CompressArray (mapIndexes, typeof (ushort), NUtil.Composite) as ushort [];
 
 			COut.WriteLine ("static const guint16 mapIdxToComposite [] = {");
 			CSOut.WriteLine ("static ushort [] mapIdxToCompositeArr = new ushort [] {");
@@ -173,7 +173,7 @@ namespace Mono.Globalization.Unicode
 					CSOut.Write ("0x{0:X04},", value);
 				COut.Write ("{0},", value);
 				if (i % 16 == 15) {
-					CSOut.WriteLine (" // {0:X04}", NUtil.MapIndexes.ToCodePoint (i - 15));
+					CSOut.WriteLine (" // {0:X04}", NUtil.Composite.ToCodePoint (i - 15));
 					COut.WriteLine ();
 				}
 			}
@@ -239,17 +239,6 @@ namespace Mono.Globalization.Unicode
 					CSOut.WriteLine ("// {0:X04}-{1:X04}", l - 15, l);
 					COut.WriteLine ();
 				}
-			}
-		}
-
-		private void ComputeSafety ()
-		{
-			foreach (int i in mappedChars) {
-				if (i == 0 || i > char.MaxValue)
-					continue;
-				if (0x3400 <= i && i <= 0xA000)
-					continue;
-				SetProp (i, -1, IsUnsafe);
 			}
 		}
 
@@ -322,6 +311,7 @@ namespace Mono.Globalization.Unicode
 				if (combiningCategory.Length > 0)
 					mappedCharsValue = canon.Substring (combiningCategory.Length + 2).Trim ();
 				if (mappedCharsValue.Length > 0) {
+					int start = mappedCharCount;
 					mappings.Add (new CharMapping (cp,
 						mappedCharCount, 
 						combiningCategory.Length == 0));
@@ -330,10 +320,24 @@ namespace Mono.Globalization.Unicode
 						AddMappedChars (cp,
 							int.Parse (v, NumberStyles.HexNumber));
 					AddMappedChars (cp, 0);
+					// For canonical composite, set IsUnsafe
+					if (combiningCategory == "") {
+						for (int ca = start; ca < mappedCharCount - 1; ca++)
+							FillUnsafe (mappedChars [ca]);
+					}
 				}
 			}
 			if (reader != Console.In)
 				reader.Close ();
+		}
+
+		private void FillUnsafe (int i)
+		{
+			if (i < 0 || i > char.MaxValue)
+				return;
+			if (0x3400 <= i && i <= 0x9FBB)
+				return;
+			SetProp (i, -1, IsUnsafe);
 		}
 
 		private void AddMappedChars (int cp, int cv)
