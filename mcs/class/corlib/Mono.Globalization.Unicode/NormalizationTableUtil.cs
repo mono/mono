@@ -93,7 +93,7 @@ namespace Mono.Globalization.Unicode
 			return Prop.ToCodePoint (index);
 		}
 
-		public static int PropCount { get { return prop.TotalCount; } }
+		public static int PropCount { get { return Prop.TotalCount; } }
 
 		public static int MapIdx (int cp)
 		{
@@ -115,6 +115,6 @@ namespace Mono.Globalization.Unicode
 			return Combining.ToCodePoint (index);
 		}
 
-		public static int MapCount { get { return map.TotalCount; } }
+		public static int MapCount { get { return Map.TotalCount; } }
 	}
 }

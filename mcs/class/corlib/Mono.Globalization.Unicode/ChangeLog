@@ -1,5 +1,12 @@
 2005-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* NormalizationTableUtil.cs : oops, it does not compile.
+	* managed-collation.patch : I guess having managed resource would be
+	  better for collation. At least current code has such #define so
+	  Makefile should be in sync with it.
+
+2005-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-normalization-source.cs : Fixed CharMapComparer which 
 	  incorrectly returned 0 when the second arg is shorter. Reduced
 	  extraneous helperIndex map. Other minor fixes and code removal.

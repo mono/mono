@@ -1,6 +1,6 @@
 Index: corlib.dll.sources
 ===================================================================
---- corlib.dll.sources	(revision 47880)
+--- corlib.dll.sources	(revision 47945)
 +++ corlib.dll.sources	(working copy)
 @@ -8,6 +8,14 @@
  Microsoft.Win32/Win32RegistryApi.cs
@@ -25,9 +25,38 @@ Index: corlib.dll.sources
  System.Globalization/StringInfo.cs
  System.Globalization/TaiwanCalendar.cs
  System.Globalization/TextElementEnumerator.cs
+Index: Makefile
+===================================================================
+--- Makefile	(revision 47945)
++++ Makefile	(working copy)
+@@ -3,6 +3,15 @@
+ include ../../build/rules.make
+ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
+ 
++RESOURCE_FILES = \
++	collation.core.bin \
++	collation.tailoring.bin \
++	collation.cjkCHS.bin \
++	collation.cjkCHT.bin \
++	collation.cjkJA.bin \
++	collation.cjkKO.bin \
++	collation.cjkKOlv2.bin
++
+ corlib_flags = -unsafe -nostdlib
+ LOCAL_MCS_FLAGS = -nowarn:169,612,618,649 -d:INSIDE_CORLIB
+ 
+@@ -12,7 +21,7 @@
+ 
+ LIBRARY = corlib.dll
+ LIBRARY_NAME = mscorlib.dll
+-LIB_MCS_FLAGS = $(corlib_flags)
++LIB_MCS_FLAGS = $(corlib_flags) $(RESOURCE_FILES:%=/resource:%)
+ LIBRARY_USE_INTERMEDIATE_FILE = yes
+ 
+ LIBRARY_COMPILE = $(BOOT_COMPILE)
 Index: System/String.cs
 ===================================================================
---- System/String.cs	(revision 47880)
+--- System/String.cs	(revision 47945)
 +++ System/String.cs	(working copy)
 @@ -38,6 +38,7 @@
  #if NET_2_0
@@ -93,7 +122,7 @@ Index: System/String.cs
  		/* This method is culture insensitive */
 Index: System.Globalization/CompareInfo.cs
 ===================================================================
---- System.Globalization/CompareInfo.cs	(revision 47880)
+--- System.Globalization/CompareInfo.cs	(revision 47945)
 +++ System.Globalization/CompareInfo.cs	(working copy)
 @@ -34,12 +34,21 @@
  using System.Reflection;
