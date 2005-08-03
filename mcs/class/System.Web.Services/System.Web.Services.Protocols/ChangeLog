@@ -1,6 +1,13 @@
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SoapDocumentationHandler.cs: workaround for a bug in the HttpRequest
+	QueryString property. Under MS, GetKey (0) yields null.
+
 2005-06-30  Konstantin Triger <kostat@mainsoft.com>
 
-	HttpSoapWebServiceHandler.cs, HttpSimpleWebServiceHandler.cs: Disposing the WebService instance after a WebMethod invocation.
+	* HttpSoapWebServiceHandler.cs:
+	* HttpSimpleWebServiceHandler.cs: Disposing the WebService instance
+	after a WebMethod invocation.
 
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 

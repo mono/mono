@@ -31,6 +31,7 @@
 using System;
 using System.Web;
 using System.IO;
+using System.Globalization;
 using System.Xml;
 using System.Text;
 using System.Xml.Serialization;
@@ -62,8 +63,14 @@ namespace System.Web.Services.Protocols
 			
 			HttpRequest req = context.Request;
 			string key = null;
-			if (req.QueryString.Count == 1)
-				key = req.QueryString.GetKey(0).ToLower();
+			if (req.QueryString.Count == 1) {
+				key = req.QueryString.GetKey (0);
+				if (key == null)
+					key = req.QueryString [0];
+
+				if (key != null)
+					key = key.ToLower (CultureInfo.InvariantCulture);
+			}
 				
 			if (key == "wsdl" || key == "schema" || key == "code" || key == "disco")
 				return;
@@ -113,7 +120,13 @@ namespace System.Web.Services.Protocols
 			else
 			{
 				HttpRequest req = context.Request;
-				string key = req.QueryString.GetKey(0).ToLower();
+				string key = req.QueryString.GetKey (0);
+				if (key == null)
+					key = req.QueryString [0];
+
+				if (key != null)
+					key = key.ToLower (CultureInfo.InvariantCulture);
+
 				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
 				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
 				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
