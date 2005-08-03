@@ -36,6 +36,7 @@ namespace Microsoft.JScript {
 	public sealed class NumericUnary : UnaryOp {
 
 		public NumericUnary (int operatorTok)
+			: base (null, null)
 		{
 			throw new NotImplementedException ();
 		}

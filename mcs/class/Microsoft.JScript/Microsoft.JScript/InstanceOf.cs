@@ -35,7 +35,7 @@ namespace Microsoft.JScript {
 	public sealed class Instanceof : BinaryOp {
 
 		internal Instanceof ()
-			: base (null, null, (JSToken) 0)
+			: base (null, null, null, (JSToken) 0, null)
 		{
 		}
 

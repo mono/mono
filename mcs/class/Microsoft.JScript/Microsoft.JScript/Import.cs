@@ -36,6 +36,11 @@ namespace Microsoft.JScript {
 
 		string name;
 
+		internal Import (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
+
 		public static void JScriptImport (string name, VsaEngine engine)
 		{}
 

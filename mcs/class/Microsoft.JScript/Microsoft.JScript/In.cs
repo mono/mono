@@ -35,7 +35,7 @@ namespace Microsoft.JScript {
 	public sealed class In : BinaryOp {
 
 		internal In ()
-			: base (null, null, (JSToken) 0)
+			: base (null, null, null, (JSToken) 0, null)
 		{
 		}
 

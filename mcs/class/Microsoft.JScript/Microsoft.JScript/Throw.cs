@@ -36,10 +36,10 @@ namespace Microsoft.JScript {
 	
 		internal AST expression;
 
-		internal Throw (AST exp, int line_number)
+		internal Throw (AST exp, Location location)
+			: base (null, location)
 		{
 			expression = exp;
-			this.line_number = line_number;
 		}
 
 		public static Exception JScriptThrow (object value)

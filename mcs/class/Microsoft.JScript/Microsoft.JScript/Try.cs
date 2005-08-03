@@ -45,9 +45,9 @@ namespace Microsoft.JScript {
 		internal AST finally_block;
 
 
-		internal Try (AST guarded_block, ArrayList catch_block, AST finally_block, AST parent, int line_number)
+		internal Try (AST guarded_block, ArrayList catch_block, AST finally_block, AST parent, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.guarded_block = guarded_block;
 			this.catch_blocks = catch_block;
 			this.finally_block = finally_block;

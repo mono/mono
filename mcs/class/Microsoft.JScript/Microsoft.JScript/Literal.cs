@@ -39,9 +39,9 @@ namespace Microsoft.JScript {
 
 	internal class This : AST {
 
-		internal This (AST parent)
+		internal This (AST parent, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -62,9 +62,9 @@ namespace Microsoft.JScript {
 
 		internal bool val;
 
-		internal BooleanLiteral (AST parent, bool val)
+		internal BooleanLiteral (AST parent, bool val, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.val = val;
 		}
 
@@ -104,9 +104,9 @@ namespace Microsoft.JScript {
 
 		double val;
 
-		internal NumericLiteral (AST parent, double val)
+		internal NumericLiteral (AST parent, double val, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.val = val;
 		}
 
@@ -143,15 +143,10 @@ namespace Microsoft.JScript {
 		
 		internal ArrayList elems;
 		
-		internal ObjectLiteral (ArrayList elems)
+		internal ObjectLiteral (ArrayList elems, Location location)
+			: base (null, location)
 		{
 			this.elems = elems;
-		}
-
-		internal ObjectLiteral (AST parent)
-		{
-			this.parent = parent;
-			elems = new ArrayList ();
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
@@ -197,6 +192,7 @@ namespace Microsoft.JScript {
 		internal AST exp;
 
 		internal ObjectLiteralItem (object obj)
+			: base (null, null)
 		{
 			if (obj != null)
 				property_name = obj.ToString ();
@@ -230,9 +226,9 @@ namespace Microsoft.JScript {
 		const char GLOBAL = 'g';
 		const char MULTI_LINE = 'm';
 		
-		internal RegExpLiteral (AST parent, string re, string flags)
+		internal RegExpLiteral (AST parent, string re, string flags, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.re = re;
 			this.flags = flags;
 		}

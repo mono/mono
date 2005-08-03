@@ -38,22 +38,11 @@ namespace Microsoft.JScript {
 		internal ArrayList elems;
 		private Hashtable ocurrences;
 
-		Block ()
+		internal Block (AST parent, Location location)
+			: base (parent, location)
 		{
 			elems = new ArrayList ();
 			ocurrences = new Hashtable ();
-		}
-
-		internal Block (int line_number)
-			: this ()
-		{
-			this.line_number = line_number;
-		}
-
-		internal Block (AST parent)
-			: this ()
-		{
-			this.parent = parent;
 		}
 
 		internal void Add (AST e)

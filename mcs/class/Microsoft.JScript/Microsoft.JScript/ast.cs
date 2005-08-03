@@ -38,7 +38,17 @@ namespace Microsoft.JScript {
 	public abstract class AST {
 
 		internal AST parent;
-		internal int line_number;
+
+		internal Location location;
+		internal Location Location {
+			get { return location; }
+		}
+
+		internal AST (AST parent, Location location)
+		{
+			this.parent = parent;
+			this.location = location;
+		}
 
 		//
 		// Here the actual IL code generation happens.
@@ -112,6 +122,11 @@ namespace Microsoft.JScript {
 		protected bool not_void_return = false;
 		protected ILGenerator ig;
 
+		internal Function (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
+
 		internal bool CheckThis {
 			get { return check_this; }
 			set { check_this = value; }
@@ -131,6 +146,11 @@ namespace Microsoft.JScript {
 			get { 
 				if (func_obj != null)
 					return func_obj.parameters.size;
+				// throw new Exception ("func_obj is null, can't obtain the number of arguments");
+
+				// indicate that at the later stage we
+				// must check the proper number of
+				// args and formal parameters
 				return -1;
 			}
 		}

@@ -39,7 +39,8 @@ namespace Microsoft.JScript {
 
 		internal ArrayList elems;
 
-		internal ASTList ()
+		internal ASTList (AST parent, Location location)
+			: base (parent, location)
 		{
 			elems = new ArrayList ();
 		}

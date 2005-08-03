@@ -66,9 +66,9 @@ namespace Microsoft.JScript {
 		{
 			if (thisObj == null || name == null)
 				return false;
-			Type type = thisObj.GetType ();
-			FieldInfo res = type.GetField (Convert.ToString (name));
 			// TODO: Implement me.
+			// Type type = thisObj.GetType ();
+			// FieldInfo res = type.GetField (Convert.ToString (name));
 			return true;
 		}
 

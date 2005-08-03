@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// Copyright (C) 2005, Novell Inc. (http://novell.com)
 //
 
 //
@@ -29,23 +30,19 @@
 //
 
 using System;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	internal class StringLiteral : Exp {
+	internal class StringLiteral : Exp, ICanLookupPrototype {
 
 		internal string str;
 
-		internal StringLiteral (AST parent, string s)
+		internal StringLiteral (AST parent, string s, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			str = s;
-		}
-
-		public override string ToString ()
-		{
-			return str;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -65,6 +62,17 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldstr, str);
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
+		}
+
+		bool ICanLookupPrototype.ResolveFieldAccess (AST ast)
+		{
+			if (ast is Identifier) {
+				Identifier name = (Identifier) ast;
+				Type prototype = typeof (StringPrototype);
+				MemberInfo [] members = prototype.GetMember (name.name.Value);
+				return members.Length > 0;
+			} else
+				return false;
 		}
 	}
 }

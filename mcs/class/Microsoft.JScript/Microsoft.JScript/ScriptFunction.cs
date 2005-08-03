@@ -102,6 +102,11 @@ namespace Microsoft.JScript {
 			set { throw new NotImplementedException (); }
 		}
 
+		public override int GetHashCode ()
+		{
+			return 1;
+		}
+
 		public override bool Equals (object obj)
 		{
 			ScriptFunction other = obj as ScriptFunction;

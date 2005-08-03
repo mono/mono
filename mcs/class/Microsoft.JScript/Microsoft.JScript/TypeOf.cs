@@ -34,6 +34,11 @@ namespace Microsoft.JScript {
 
 	public sealed class Typeof : UnaryOp {
 
+		internal Typeof ()
+			: base (null, null)
+		{
+		}
+
 		public static string JScriptTypeof (object value)
 		{
 			IConvertible ic = value as IConvertible;

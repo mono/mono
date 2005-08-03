@@ -35,6 +35,11 @@ namespace Microsoft.JScript {
 
 	public class Eval : AST {
 
+		private Eval ()
+			: base (null, null)
+		{
+		}
+
 		public static object JScriptEvaluate (object src, VsaEngine engine)
 		{
 			throw new NotImplementedException ();

@@ -42,7 +42,9 @@ namespace Microsoft.JScript {
 		}
 
 		internal Print ()
-		{}
+			: base (null, null)
+		{
+		}
 
 		public override string ToString ()
 		{

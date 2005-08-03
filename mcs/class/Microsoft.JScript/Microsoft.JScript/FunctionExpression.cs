@@ -40,18 +40,18 @@ namespace Microsoft.JScript {
 		internal LocalBuilder local_script_func;
 		internal FieldBuilder field;
 
-		internal FunctionExpression (AST parent, string name)
-			: this (parent, name, null, String.Empty, null)
+		internal FunctionExpression (AST parent, string name, Location location)
+			: this (parent, name, null, String.Empty, null, location)
 		{
 		}
 
 		internal FunctionExpression (AST parent, string name, 
 					     FormalParameterList p,
-					     string return_type, Block body)
+					     string return_type, Block body, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			set_prefix ();
-			func_obj = new FunctionObject (name, p, return_type, body);
+			func_obj = new FunctionObject (name, p, return_type, body, location);
 		}
 						
 		public static FunctionObject JScriptFunctionExpression (RuntimeTypeHandle handle, string name,
@@ -64,7 +64,7 @@ namespace Microsoft.JScript {
 			Console.WriteLine ("JScriptFunctionExpression({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})",
 				handle, name, methodName, formalParams, fields,
 				mustSaveStackLocals, hasArgumentsObject, text);
-			return new FunctionObject (null, null, null, null);
+			return new FunctionObject (null, null, null, null, null);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

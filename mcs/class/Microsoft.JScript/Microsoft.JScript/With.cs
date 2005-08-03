@@ -38,12 +38,11 @@ namespace Microsoft.JScript {
 
 		AST exp, stm;
 
-		internal With (AST parent, AST exp, AST stm, int line_number)
+		internal With (AST parent, AST exp, AST stm, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.exp = exp;
 			this.stm = stm;
-			this.line_number = line_number;
 		}
 
 		public static Object JScriptWith (object withObj, VsaEngine engine)

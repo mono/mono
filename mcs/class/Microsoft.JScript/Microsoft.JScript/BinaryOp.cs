@@ -42,7 +42,8 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal BinaryOp (AST left, AST right, JSToken op)
+		internal BinaryOp (AST parent, AST left, AST right, JSToken op, Location location)
+			: base (parent, location)
 		{
 			operand1 = left;
 			operand2 = right;

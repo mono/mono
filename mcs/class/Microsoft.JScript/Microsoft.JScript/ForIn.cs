@@ -38,10 +38,9 @@ namespace Microsoft.JScript {
 
 		AST lhs, obj, body;
 		
-		internal ForIn (AST parent, int line_number, AST lhs, AST obj, AST body)
+		internal ForIn (AST parent, AST lhs, AST obj, AST body, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
-			this.line_number = line_number;
 			this.lhs = lhs;
 			this.obj = obj;
 			this.body = body;

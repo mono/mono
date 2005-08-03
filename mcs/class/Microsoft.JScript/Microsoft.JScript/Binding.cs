@@ -44,6 +44,11 @@ namespace Microsoft.JScript {
 		protected abstract Object GetObject ();
 		protected abstract void HandleNoSuchMemberError ();
 
+		private Binding ()
+			: base (null, null)
+		{
+		}
+
 		protected void ResolveRHValue ()
 		{
 			throw new NotImplementedException ();

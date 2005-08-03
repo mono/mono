@@ -36,8 +36,8 @@ namespace Microsoft.JScript {
 
 	public class StrictEquality : BinaryOp {
 
-		internal StrictEquality (AST parent, AST left, AST right, JSToken op)
-			: base (left, right, op)
+		internal StrictEquality (AST parent, AST left, AST right, JSToken op, Location location)
+			: base (parent, left, right, op, location)
 		{
 		}
 

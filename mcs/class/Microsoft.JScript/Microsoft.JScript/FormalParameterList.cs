@@ -47,7 +47,8 @@ namespace Microsoft.JScript {
 		//
 		internal Type type = typeof (Object);
 
-		internal FormalParam (string id, string type_annot)
+		internal FormalParam (string id, string type_annot, Location location)
+			: base (null, location)
 		{
 			this.id = id;
 			this.type_annot = type_annot;
@@ -73,15 +74,16 @@ namespace Microsoft.JScript {
 
 		internal ArrayList ids;
 
-		internal FormalParameterList ()
+		internal FormalParameterList (Location location)
+			: base (null, location)
 		{
 			ids = new ArrayList ();
 		}
 
-		internal void Add (string id, string type_annot)
+		internal void Add (string id, string type_annot, Location location)
 		{
-			FormalParam p = new FormalParam (id, type_annot);	
-			ids.Add (p);	
+			FormalParam p = new FormalParam (id, type_annot, location);
+			ids.Add (p); 
 		}
 
 		public override string ToString ()

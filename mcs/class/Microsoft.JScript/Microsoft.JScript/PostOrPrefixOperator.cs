@@ -39,13 +39,14 @@ namespace Microsoft.JScript {
 		bool prefix;
 
 		public PostOrPrefixOperator (int operatorTok)
+			: base (null, null)
 		{
 			oper = (JSToken) operatorTok;
 		}
 
-		internal PostOrPrefixOperator (AST parent, AST operand, JSToken oper, bool prefix)
+		internal PostOrPrefixOperator (AST parent, AST operand, JSToken oper, bool prefix, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.operand = operand;
 			this.oper = oper;
 			this.prefix = prefix;

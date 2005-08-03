@@ -34,5 +34,10 @@ namespace Microsoft.JScript {
 
 		internal AST operand;
 		internal JSToken oper;
+
+		internal UnaryOp (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
 	}
 }

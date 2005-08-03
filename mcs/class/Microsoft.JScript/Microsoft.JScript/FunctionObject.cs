@@ -43,6 +43,8 @@ namespace Microsoft.JScript {
 		internal FormalParameterList parameters;
 		internal Block body;
 
+		internal Location location;
+
 		internal FunctionObject (string name)
 		{
 			this.name = name;
@@ -56,7 +58,7 @@ namespace Microsoft.JScript {
 			this.return_type = info.ReturnType;
 		}
 
-		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body)
+		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body, Location location)
 		{
 			//
 			// FIXME
@@ -77,11 +79,12 @@ namespace Microsoft.JScript {
 			this.return_type = typeof (void);
 
 			this.body = body;
+			this.location = location;
 		}
 	    
 		internal FunctionObject ()
 		{
-			this.parameters = new FormalParameterList ();
+			this.parameters = new FormalParameterList (location);
 		}
 
 		public override string ToString ()

@@ -1,3 +1,25 @@
+2005-08-02  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* TokenStream.cs: Display source name and line number.
+	* SemanticAnalizer.cs: Added StringLiteral to prototypes.
+	* Parser.cs: Added Location class, which tracks the SourceName and
+	line number. Build every node from the AST tree with location info.
+	* CodeGenerator.cs: Add emit_default_value.
+	* expression.cs: (Binary.Resolve) Fix for calling directly the
+	method from the prototype if the lhs binary expression is a
+	literal, added ICanLookupPrototype interface. Display the source
+	file name and line number in the errors. (Call) Added field
+	need_this, simplify the logic infering the exact number of
+	parameters from the called method. Added NeedThis. Re-implement
+	Resolve and Emit from Args, delete DesiredNumOfArgs, IsPrint,
+	has_var_args. Added Size, emit_default_args_case. Added location
+	field to FunctionObject. StringLiteral implements ICanLookupPrototype.
+	Fix typo from IAccessible :).
+
+	* All classes that inherit from abstract class AST: Use
+	constructor from AST that stores the parent and the new info from
+	Location.	
+
 2005-08-01  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Statement.cs (Catch.Emit): Fix for properly emit code for

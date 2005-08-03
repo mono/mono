@@ -40,12 +40,12 @@ namespace Microsoft.JScript {
 
 		internal AST cond, true_stm, false_stm;
 
-		internal If (AST parent, AST condition, AST true_stm, AST false_stm, int line_number)
+		internal If (AST parent, AST condition, AST true_stm, AST false_stm, Location location)
+			: base (parent, location)
 		{
 			this.cond = condition;
 			this.true_stm = true_stm;
 			this.false_stm = false_stm;
-			this.line_number = line_number;
 		}
 
 		public override string ToString ()
@@ -103,6 +103,11 @@ namespace Microsoft.JScript {
 	abstract class Jump : AST {
 		protected string label = String.Empty;
 		protected object binding;
+		
+		internal Jump (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
 
 		bool IsLabel (object binding)
 		{
@@ -119,11 +124,10 @@ namespace Microsoft.JScript {
 	}
 
 	internal class Continue : Jump {
-		internal Continue (AST parent, string label, int line_number)
+		internal Continue (AST parent, string label, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.label += label;
-			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -147,11 +151,10 @@ namespace Microsoft.JScript {
 
 	internal class Break : Jump {
 
-		internal Break (AST parent, string label, int line_number)
+		internal Break (AST parent, string label, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.label += label;
-			this.line_number = line_number;
 		}
 
 		 internal override bool Resolve (IdentificationTable context)
@@ -182,7 +185,11 @@ namespace Microsoft.JScript {
 
 		internal AST expression;		
 		public event NotVoidReturnEventHandler not_void_return;
-		
+	
+		internal Return (Location location)
+			: base (null, location)
+		{
+		}
 		
 		internal void OnNotVoidReturn (NotVoidReturnEventArgs args)
 		{
@@ -190,11 +197,10 @@ namespace Microsoft.JScript {
 				not_void_return (this, args);
 		}
 
-		internal void Init (AST parent, AST exp, int line_number)
+		internal void Init (AST parent, AST exp)
 		{
 			this.parent = parent;
 			expression = exp;
-			this.line_number = line_number;
 			Function cont_func = GetContainerFunction;
 			this.not_void_return = new NotVoidReturnEventHandler (cont_func.NotVoidReturnHappened);
 		}
@@ -241,13 +247,17 @@ namespace Microsoft.JScript {
 	internal class DoWhile : AST {
 
 		AST stm, exp;
-		
-		internal void Init (AST parent, AST stm, AST exp, int line_number)
+
+		internal DoWhile (Location location)
+			: base (null, location)
+		{
+		}
+
+		internal void Init (AST parent, AST stm, AST exp)
 		{
 			this.parent = parent;
 			this.stm = stm;
 			this.exp = exp;
-			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -293,12 +303,16 @@ namespace Microsoft.JScript {
 	internal class While : AST {		
 		AST exp, stm;
 
-		internal void Init (AST parent, AST exp, AST stm, int line_number)
+		internal While (Location location)
+			: base (null, location)
+		{
+		}
+
+		internal void Init (AST parent, AST exp, AST stm)
 		{
 			this.parent = parent;
 			this.exp = exp;
 			this.stm = stm;
-			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -354,10 +368,9 @@ namespace Microsoft.JScript {
 		AST [] exprs = new AST [3];
 		AST stms;
 
-		internal For (AST parent, int line_number, AST init, AST test, AST incr, AST body)
+		internal For (AST parent, AST init, AST test, AST incr, AST body, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
-			this.line_number = line_number;
 			exprs [0] = init;
 			exprs [1] = test;
 			exprs [2] = incr;
@@ -447,10 +460,9 @@ namespace Microsoft.JScript {
 		internal ArrayList default_clauses;
 		internal ArrayList sec_case_clauses;
 
-		internal Switch (AST parent, int line_number)
+		internal Switch (AST parent, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
-			this.line_number = line_number;
 			case_clauses = new ArrayList ();
 			default_clauses = new ArrayList ();
 			sec_case_clauses = new ArrayList ();
@@ -534,9 +546,9 @@ namespace Microsoft.JScript {
 		internal ArrayList stm_list;
 		internal Label matched_block;
 
-		internal Clause (AST parent)
+		internal Clause (AST parent, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			stm_list = new ArrayList ();
 		}
 
@@ -584,12 +596,12 @@ namespace Microsoft.JScript {
 		internal FieldBuilder field_info;
 		internal LocalBuilder local_builder;
 
-		internal Catch (string id, AST catch_cond, AST stms, AST parent, int line_number)
+		internal Catch (string id, AST catch_cond, AST stms, AST parent, Location location)
+			: base (parent, location)
 		{
 			this.id = id;
 			this.catch_cond = catch_cond;
 			this.stms = stms;
-			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -635,6 +647,11 @@ namespace Microsoft.JScript {
 		Label end_addrs;
 		AST stm;
 
+		internal Labelled (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
+
 		internal Label InitAddrs {
 			set { init_addrs = value; }
 			get { return init_addrs; }
@@ -645,12 +662,12 @@ namespace Microsoft.JScript {
 			get { return end_addrs; }
 		}
 
-		internal void Init (AST parent, string name, AST stm, int line_number)
+		internal void Init (AST parent, string name, AST stm, Location location)
 		{
 			this.parent = parent;
 			this.name = name;
 			this.stm = stm;
-			this.line_number = line_number;
+			this.location = location;
 		}
 
 		internal override bool Resolve (IdentificationTable context)

@@ -38,6 +38,11 @@ namespace Microsoft.JScript {
 		internal string Name;
 		internal ArrayList Members;
 
+		private Package (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
+
 		public static void JScriptPackage (string rootName, VsaEngine engine)
 		{}
 

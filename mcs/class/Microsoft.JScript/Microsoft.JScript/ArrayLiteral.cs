@@ -41,20 +41,16 @@ namespace Microsoft.JScript {
 		int skip_count;
 
 		public ArrayLiteral (Context context, ASTList elems)
+			: base (null, null)
 		{
 			this.elems = elems;
 		}
 		
-		internal ArrayLiteral (Context context, ASTList elems, int skip_count)
+		internal ArrayLiteral (Context context, ASTList elems, int skip_count, Location location)
 			: this (context, elems)
 		{
 			this.skip_count = skip_count;
-		}
-
-		internal ArrayLiteral (AST parent)
-		{
-			this.parent = parent;
-			elems = new ASTList ();
+			this.location = location;
 		}
 
 		internal override bool Resolve (IdentificationTable context)

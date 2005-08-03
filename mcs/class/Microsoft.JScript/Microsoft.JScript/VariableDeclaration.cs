@@ -48,9 +48,9 @@ namespace Microsoft.JScript {
 		internal int lexical_depth;
 		internal Function func_decl;
 
-		internal VariableDeclaration (AST parent, string id, string t, AST init)
+		internal VariableDeclaration (AST parent, string id, string t, AST init, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			this.id = id;
 
 			if (t == null)

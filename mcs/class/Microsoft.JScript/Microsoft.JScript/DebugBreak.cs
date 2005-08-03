@@ -33,6 +33,11 @@ namespace Microsoft.JScript {
 
 	public class DebugBreak : AST {
 
+		private DebugBreak ()
+			: base (null, null)
+		{
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
 			throw new NotImplementedException ();

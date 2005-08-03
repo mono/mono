@@ -43,11 +43,12 @@ namespace Microsoft.JScript {
 		private int lexical_depth;
 
 		internal FunctionDeclaration ()
+			: base (null, null)
 		{
 		}
 
-		internal FunctionDeclaration (AST parent, string name)
-			: this (parent, name, null, String.Empty, null)
+		internal FunctionDeclaration (AST parent, string name, Location location)
+			: this (parent, name, null, String.Empty, null, location)
 		{
 		}
 
@@ -55,17 +56,17 @@ namespace Microsoft.JScript {
 		{
 			this.parent = parent;
 			set_prefix ();
-			func_obj = new FunctionObject (name, p, return_type, body);
+			func_obj = new FunctionObject (name, p, return_type, body, location);
 		}
 		
 		internal FunctionDeclaration (AST parent, string name, 
 					      FormalParameterList p,
 					      string return_type,
-					      Block body)
+					      Block body, Location location)
+			: base (parent, location)
 		{
-			this.parent = parent;
 			set_prefix ();
-			func_obj = new FunctionObject (name, p, return_type, body);
+			func_obj = new FunctionObject (name, p, return_type, body, location);
 		}
 
 		public static Closure JScriptFunctionDeclaration (RuntimeTypeHandle handle, string name, 
@@ -74,7 +75,7 @@ namespace Microsoft.JScript {
 								  bool hasArgumentsObjects, string text, 
 								  Object declaringObject, VsaEngine engine)
 		{
-			FunctionObject f = new FunctionObject (name, null, null, null);
+			FunctionObject f = new FunctionObject (name, null, null, null, null);
 			return new Closure (f);
 		}
 

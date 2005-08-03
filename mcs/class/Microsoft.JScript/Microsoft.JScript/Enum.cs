@@ -41,7 +41,8 @@ namespace Microsoft.JScript {
 		private string type;		
 		private ArrayList pairs;
 
-		internal Enum ()
+		internal Enum (AST parent, Location location)
+			: base (parent, location)
 		{
 			Modifiers = new ArrayList ();
 			Pairs = new ArrayList ();
