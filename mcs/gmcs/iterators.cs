@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock original_block;
 		protected ToplevelBlock block;
 
-		Type iterator_type;
+		Type original_iterator_type;
 		TypeExpr iterator_type_expr;
 		bool is_enumerable;
 		public readonly bool IsStatic;
@@ -139,10 +139,12 @@ namespace Mono.CSharp {
 		//
 		// Context from the original method
 		//
+		GenericMethod generic_method;
 		TypeContainer container;
 		TypeExpr current_type;
 		Type this_type;
 		InternalParameters parameters;
+		InternalParameters original_parameters;
 		IMethodData orig_method;
 
 		MethodInfo dispose_method;
@@ -334,29 +336,47 @@ namespace Mono.CSharp {
 			point.Define (ig);
 		}
 
-		private static MemberName MakeProxyName (string name)
+		private static MemberName MakeProxyName (string name, GenericMethod generic, Location loc)
 		{
 			int pos = name.LastIndexOf ('.');
 			if (pos > 0)
 				name = name.Substring (pos + 1);
 
-			return new MemberName ("<" + name + ">__" + (proxy_count++));
+			string proxy_name = "<" + name + ">__" + (proxy_count++);
+
+			if (generic != null) {
+				TypeArguments args = new TypeArguments (loc);
+				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
+					args.Add (new SimpleName (tparam.Name, loc));
+				return new MemberName (proxy_name, args);
+			} else
+				return new MemberName (proxy_name);
 		}
 
 		//
 		// Our constructor
 		//
-		public Iterator (IMethodData m_container, TypeContainer container,
+		public Iterator (IMethodData m_container, TypeContainer container, GenericMethod generic,
 				 InternalParameters parameters, int modifiers)
-			: base (container.NamespaceEntry, container, MakeProxyName (m_container.MethodName.Name),
+			: base (container.NamespaceEntry, container,
+				MakeProxyName (m_container.MethodName.Name, generic, m_container.Location),
 				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, m_container.Location)
 		{
 			this.orig_method = m_container;
 
+			this.generic_method = generic;
 			this.container = container;
-			this.parameters = parameters;
+			this.original_parameters = parameters;
 			this.original_block = orig_method.Block;
 			this.block = new ToplevelBlock (orig_method.Block, parameters.Parameters, orig_method.Location);
+
+			if (generic != null) {
+				ArrayList constraints = new ArrayList ();
+				foreach (TypeParameter tparam in generic.TypeParameters)
+					constraints.Add (tparam.Constraints);
+
+				SetParameterInfo (constraints);
+			}
 
 			IsStatic = (modifiers & Modifiers.STATIC) != 0;
 		}
@@ -367,7 +387,7 @@ namespace Mono.CSharp {
 
 		public bool DefineIterator ()
 		{
-			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+			ec = new EmitContext (this, Location, null, null, ModFlags);
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.InIterator = true;
 
@@ -378,8 +398,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			for (int i = 0; i < parameters.Count; i++){
-				Parameter.Modifier mod = parameters.ParameterModifier (i);
+			for (int i = 0; i < original_parameters.Count; i++){
+				Parameter.Modifier mod = original_parameters.ParameterModifier (i);
 				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
 					Report.Error (
 						1623, Location,
@@ -392,7 +412,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (parameters.ParameterType (i).IsPointer) {
+				if (original_parameters.ParameterType (i).IsPointer) {
 					Report.Error (1637, Location, "Iterators cannot have unsafe parameters or yield types");
 					return false;
 				}
@@ -403,37 +423,8 @@ namespace Mono.CSharp {
 			else
 				this_type = container.TypeBuilder;
 
-			generic_args = new TypeArguments (Location);
-			generic_args.Add (new TypeExpression (iterator_type, Location));
-
-			ArrayList list = new ArrayList ();
-			if (is_enumerable) {
-				enumerable_type = new TypeExpression (
-					TypeManager.ienumerable_type, Location);
-				list.Add (enumerable_type);
-
-				generic_enumerable_type = new ConstructedType (
-					TypeManager.generic_ienumerable_type,
-					generic_args, Location);
-				list.Add (generic_enumerable_type);
-			}
-
-			enumerator_type = new TypeExpression (
-				TypeManager.ienumerator_type, Location);
-			list.Add (enumerator_type);
-
-			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
-
-			generic_enumerator_type = new ConstructedType (
-				TypeManager.generic_ienumerator_type,
-				generic_args, Location);
-			list.Add (generic_enumerator_type);
-
-			iterator_type_expr = new TypeExpression (iterator_type, Location);
-
 			container.AddIterator (this);
 
-			Bases = list;
 			orig_method.Block = block;
 			return true;
 		}
@@ -477,6 +468,7 @@ namespace Mono.CSharp {
 			ec.InIterator = true;
 			ec.CurrentAnonymousMethod = move_next_method;
 			ec.capture_context = cc;
+
 			ec.TypeContainer = ec.TypeContainer.Parent;
 
 			if (ec.TypeContainer.CurrentType != null)
@@ -504,6 +496,95 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		TypeExpr InflateType (Type it)
+		{
+			if (generic_method == null)
+				return new TypeExpression (it, Location);
+
+			if (it.IsGenericParameter && (it.DeclaringMethod != null)) {
+				int pos = it.GenericParameterPosition;
+				it = CurrentTypeParameters [pos].Type;
+			} else if (it.IsGenericInstance) {
+				Type[] args = it.GetGenericArguments ();
+
+				TypeArguments inflated = new TypeArguments (Location);
+				foreach (Type t in args)
+					inflated.Add (InflateType (t));
+
+				return new ConstructedType (it, inflated, Location);
+			} else if (it.IsArray) {
+				TypeExpr et_expr = InflateType (it.GetElementType ());
+				int rank = it.GetArrayRank ();
+
+				Type et = et_expr.ResolveAsTypeTerminal (ec).Type;
+				it = et.MakeArrayType (rank);
+			}
+
+			return new TypeExpression (it, Location);
+		}
+
+		Parameter InflateParameter (Parameter param)
+		{
+			TypeExpr te = InflateType (param.ParameterType);
+			return new Parameter (
+				te, param.Name, param.ModFlags, param.OptAttributes, param.Location);
+		}
+
+		InternalParameters InflateParameters (Parameters parameters, EmitContext ec)
+		{
+			Parameter[] fixed_params = null;
+			if (parameters.FixedParameters != null) {
+				fixed_params = new Parameter [parameters.FixedParameters.Length];
+				for (int i = 0; i < fixed_params.Length; i++)
+					fixed_params [i] = InflateParameter (parameters.FixedParameters [i]);
+			}
+
+			Parameters new_params;
+			if (parameters.ArrayParameter != null) {
+				Parameter array_param = InflateParameter (parameters.ArrayParameter);
+				new_params = new Parameters (fixed_params, array_param);
+			} else
+				new_params = new Parameters (fixed_params, parameters.HasArglist);
+
+			Type [] types = new_params.GetParameterInfo (ec);
+			return new InternalParameters (types, new_params);
+		}
+
+		protected override TypeExpr [] GetClassBases (out TypeExpr base_class)
+		{
+			iterator_type_expr = InflateType (original_iterator_type);
+
+			generic_args = new TypeArguments (Location);
+			generic_args.Add (iterator_type_expr);
+
+			ArrayList list = new ArrayList ();
+			if (is_enumerable) {
+				enumerable_type = new TypeExpression (
+					TypeManager.ienumerable_type, Location);
+				list.Add (enumerable_type);
+
+				generic_enumerable_type = new ConstructedType (
+					TypeManager.generic_ienumerable_type,
+					generic_args, Location);
+				list.Add (generic_enumerable_type);
+			}
+
+			enumerator_type = new TypeExpression (
+				TypeManager.ienumerator_type, Location);
+			list.Add (enumerator_type);
+
+			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
+
+			generic_enumerator_type = new ConstructedType (
+				TypeManager.generic_ienumerator_type,
+				generic_args, Location);
+			list.Add (generic_enumerator_type);
+
+			Bases = list;
+
+			return base.GetClassBases (out base_class);
+		}
+
 		//
 		// Returns the new block for the method, or null on failure
 		//
@@ -514,6 +595,8 @@ namespace Mono.CSharp {
 			else
 				current_type = new TypeExpression (TypeBuilder, Location);
 
+			parameters = InflateParameters (original_parameters.Parameters, ec);
+
 			Define_Fields ();
 			Define_Current (false);
 			Define_Current (true);
@@ -521,9 +604,9 @@ namespace Mono.CSharp {
 			Define_Reset ();
 			Define_Dispose ();
 
-			Create_Block ();
-
 			Define_Constructor ();
+
+			Create_Block ();
 
 			if (is_enumerable) {
 				Define_GetEnumerator (false);
@@ -558,17 +641,31 @@ namespace Mono.CSharp {
 			args.Add (new Argument (new BoolLiteral (false)));
 
 			for (int i = 0; i < parameters.Count; i++) {
-				Type t = parameters.ParameterType (i);
+				Type t = original_parameters.ParameterType (i);
+				Type inflated = parameters.ParameterType (i);
 				string name = parameters.ParameterName (i);
 
 				args.Add (new Argument (
 					new SimpleParameterReference (t, first + i, Location)));
 
-				cc.AddParameterToContext (move_next_method, name, t, first + i);
+				cc.AddParameterToContext (move_next_method, name, inflated, first + i);
 			}
 
-			Expression new_expr = new New (current_type, args, Location);
+			TypeExpr proxy_type;
+			if (generic_method != null) {
+				TypeArguments new_args = new TypeArguments (Location);
+				if (Parent.IsGeneric) {
+					foreach (TypeParameter tparam in Parent.TypeParameters)
+						new_args.Add (new TypeParameterExpr (tparam, Location));
+				}
+				foreach (TypeParameter tparam in generic_method.TypeParameters)
+					new_args.Add (new TypeParameterExpr (tparam, Location));
+				ConstructedType ct = new ConstructedType (CurrentType, new_args, Location);
+				proxy_type = ct.ResolveAsTypeTerminal (ec);
+			} else
+				proxy_type = current_type;
 
+			Expression new_expr = new New (proxy_type, args, Location);
 			block.AddStatement (new NoCheckReturn (new_expr, Location));
 		}
 
@@ -607,11 +704,10 @@ namespace Mono.CSharp {
 			Parameter[] fixed_params = new Parameter [list.Count];
 			list.CopyTo (fixed_params);
 
-			ctor_params = new Parameters (
-				fixed_params, parameters.Parameters.ArrayParameter);
+			ctor_params = new Parameters (fixed_params, parameters.Parameters.ArrayParameter);
 
 			ctor = new Constructor (
-				this, Name, Modifiers.PUBLIC, ctor_params,
+				this, MemberName.Name, Modifiers.PUBLIC, ctor_params,
 				new ConstructorBaseInitializer (null, Location),
 				Location);
 			AddConstructor (ctor);
@@ -1094,7 +1190,7 @@ namespace Mono.CSharp {
 		}
 
 		public Type IteratorType {
-			get { return iterator_type; }
+			get { return iterator_type_expr.Type; }
 		}
 
 		//
@@ -1133,12 +1229,12 @@ namespace Mono.CSharp {
 			Type ret = orig_method.ReturnType;
 
 			if (ret == TypeManager.ienumerable_type) {
-				iterator_type = TypeManager.object_type;
+				original_iterator_type = TypeManager.object_type;
 				is_enumerable = true;
 				return true;
 			}
 			if (ret == TypeManager.ienumerator_type) {
-				iterator_type = TypeManager.object_type;
+				original_iterator_type = TypeManager.object_type;
 				is_enumerable = false;
 				return true;
 			}
@@ -1152,11 +1248,11 @@ namespace Mono.CSharp {
 
 			Type gt = ret.GetGenericTypeDefinition ();
 			if (gt == TypeManager.generic_ienumerable_type) {
-				iterator_type = args [0];
+				original_iterator_type = args [0];
 				is_enumerable = true;
 				return true;
 			} else if (gt == TypeManager.generic_ienumerator_type) {
-				iterator_type = args [0];
+				original_iterator_type = args [0];
 				is_enumerable = false;
 				return true;
 			}

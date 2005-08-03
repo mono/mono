@@ -156,9 +156,13 @@ namespace Mono.CSharp {
 		Type class_constraint_type;
 		Type[] iface_constraint_types;
 		Type effective_base_type;
+		bool resolved;
 
 		public bool Resolve (EmitContext ec)
 		{
+			if (resolved)
+				return true;
+
 			iface_constraints = new ArrayList ();
 			type_param_constraints = new ArrayList ();
 
@@ -245,6 +249,7 @@ namespace Mono.CSharp {
 				num_constraints++;
 			}
 
+			resolved = true;
 			return true;
 		}
 

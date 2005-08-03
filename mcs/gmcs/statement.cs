@@ -2114,8 +2114,11 @@ namespace Mono.CSharp {
 		//
 		// The parameters for the block.
 		//
-		public readonly Parameters Parameters;
-			
+		Parameters parameters;
+		public Parameters Parameters {
+			get { return parameters; }
+		}
+
 		public void RegisterCaptureContext (CaptureContext cc)
 		{
 			if (capture_contexts == null)
@@ -2175,7 +2178,7 @@ namespace Mono.CSharp {
 		public ToplevelBlock (ToplevelBlock container, Flags flags, Parameters parameters, Location start) :
 			base (null, flags | Flags.IsToplevel, start, Location.Null)
 		{
-			Parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
+			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
 			this.container = container;
 
 			if (container != null)
@@ -2269,6 +2272,9 @@ namespace Mono.CSharp {
 
 			if (top_level_branching != null)
 				return true;
+
+			if (ip != null)
+				parameters = ip.Parameters;
 
 			ResolveMeta (this, ec, ip);
 

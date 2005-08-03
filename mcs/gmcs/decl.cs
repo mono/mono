@@ -1252,6 +1252,8 @@ namespace Mono.CSharp {
 				Constraints constraints = null;
 				if (constraints_list != null) {
 					foreach (Constraints constraint in constraints_list) {
+						if (constraint == null)
+							continue;
 						if (constraint.TypeParameter == name) {
 							constraints = constraint;
 							break;

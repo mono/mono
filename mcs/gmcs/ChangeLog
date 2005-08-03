@@ -1,5 +1,26 @@
 2005-08-03  Martin Baulig  <martin@ximian.com>
 
+	Make iterators in generic methods work; see gtest-191.cs.
+
+	* generic.cs
+	(Constraints.Resolve): Protect against being called twice.
+
+	* class.cs
+	(TypeContainer.GetClassBases): Make this `protected virtual'.
+
+	* iterator.cs (Iterator.ctor): Added `GenericMethod' argument.
+	(Iterator.GetClassBases): Override this and compute the base
+	classes here.
+	(Iterator.DefineNestedTypes): If we're a generic method, all our
+	method type parameters become class type parameters on the proxy
+	class.
+
+	* statement.cs
+	(ToplevelBlock.Parameters): Make this a property, not a field.
+	(ToplevelBlock.ResolveMeta): Update the `parameters' from the `ip'.
+
+2005-08-03  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.IsSubclassOf): Use
 	`TypeManager.IsEqual' instead of `Type.Equals'; fixes gtest-190.cs.
 	(TypeManager.GetFullName_recursed): Improved.

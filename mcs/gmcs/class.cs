@@ -1054,7 +1054,7 @@ namespace Mono.CSharp {
 		///   The @base_class argument is set to the base object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		TypeExpr [] GetClassBases (out TypeExpr base_class)
+		protected virtual TypeExpr [] GetClassBases (out TypeExpr base_class)
 		{
 			int i;
 
@@ -4199,7 +4199,7 @@ namespace Mono.CSharp {
 			//
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
 				Iterator iterator = new Iterator (
-					this, Parent, ParameterInfo, ModFlags);
+					this, Parent, GenericMethod, ParameterInfo, ModFlags);
 
 				if (!iterator.DefineIterator ())
 					return false;
@@ -6516,8 +6516,8 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if (yields) {
-					Iterator iterator = new Iterator (this,
-						Parent, method.ParameterInfo, ModFlags);
+					Iterator iterator = new Iterator (
+						this, Parent, null, method.ParameterInfo, ModFlags);
 					
 					if (!iterator.DefineIterator ())
 						return null;
@@ -7620,7 +7620,7 @@ namespace Mono.CSharp {
 				//
 				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
 					Iterator iterator = new Iterator (
-						Get, Parent, Get.ParameterInfo, ModFlags);
+						Get, Parent, null, Get.ParameterInfo, ModFlags);
 
 					if (!iterator.DefineIterator ())
 						return false;
