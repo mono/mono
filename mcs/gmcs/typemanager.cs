@@ -898,17 +898,13 @@ public partial class TypeManager {
 			? CSharpSignature (mi as MethodBase) 
 			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
 	}
-		
-	private static void GetFullName_recursed (StringBuilder sb, Type t, bool recursed)
+
+	private static void GetFullName_recursed (StringBuilder sb, Type t, Type original_type,
+						  ref int pos, bool recursed)
 	{
 		if (t.IsGenericParameter) {
 			sb.Append (t.Name);
 			return;
-		}
-
-		if (t.DeclaringType != null) {
-			GetFullName_recursed (sb, t.DeclaringType, true);
-			sb.Append (".");
 		}
 
 		if (!recursed) {
@@ -919,24 +915,34 @@ public partial class TypeManager {
 			}
 		}
 
+		if (t.DeclaringType != null) {
+			GetFullName_recursed (sb, t.DeclaringType, t, ref pos, true);
+			sb.Append (".");
+		}
+
 		sb.Append (SimpleName.RemoveGenericArity (t.Name));
 
-		Type[] args = GetTypeArguments (t);
-		if (args.Length > 0) {
+		Type[] args = GetTypeArguments (original_type);
+		Type[] this_args = GetTypeArguments (t);
+
+		if (this_args.Length > pos) {
 			sb.Append ("<");
-			for (int i = 0; i < args.Length; i++) {
-				if (i > 0)
+			for (int i = pos; i < this_args.Length; i++) {
+				if (i > pos)
 					sb.Append (",");
 				sb.Append (GetFullName (args [i]));
 			}
 			sb.Append (">");
 		}
+
+		pos += this_args.Length;
 	}
 
 	static public string GetFullName (Type t)
 	{
 		StringBuilder sb = new StringBuilder ();
-		GetFullName_recursed (sb, t, false);
+		int pos = 0;
+		GetFullName_recursed (sb, t, t, ref pos, false);
 		return sb.ToString ();
 	}
 
@@ -1790,7 +1796,7 @@ public partial class TypeManager {
 		}
 
 		do {
-			if (type.Equals (base_type))
+			if (IsEqual (type, base_type))
 				return true;
 
 			type = type.BaseType;

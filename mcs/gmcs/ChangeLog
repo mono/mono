@@ -1,3 +1,9 @@
+2005-08-03  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.IsSubclassOf): Use
+	`TypeManager.IsEqual' instead of `Type.Equals'; fixes gtest-190.cs.
+	(TypeManager.GetFullName_recursed): Improved.
+
 2005-07-27  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs (CaptureContext.AddField): Added
