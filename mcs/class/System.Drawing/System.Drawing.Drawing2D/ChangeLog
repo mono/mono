@@ -1,3 +1,11 @@
+2005-08-03 Andrew Skiba <andrews@mainsoft.com>
+
+	* DashStyle.cs: TARGET_JVM - add internal dash attribs arrays
+	* AdjustableArrowCap.jvm.cs, CustomLineCap.jvm.cs, GraphicsPath.jvm.cs,
+	GraphicsPathIterator.jvm.cs, HatchBrush.jvm.cs, LinearGradientBrush.jvm.cs,
+	Matrix.jvm.cs, PathGradientBrush.jvm.cs: added TARGET_JVM implementation of
+	these classes.
+
 2005-03-15 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* GraphicsState.cs: should only contain the nativeState cookie

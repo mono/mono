@@ -1,10 +1,12 @@
 //
-// System.Drawing.Drawing2D.DashStyle.cs
+// System.Drawing.Drawing2D.AdjustableArrowCap.cs
 //
-// Author:
-//   Dennis Hayes (dennish@Raytek.com)
+// Authors:
+//	Dennis Hayes (dennish@Raytek.com)
+//	Ravindra (rkumar@novell.com)
 //
-// (C) 2002/3 Ximian, Inc
+// Copyright (C) 2002/3 Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
 //
 
 //
@@ -29,29 +31,67 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 
 namespace System.Drawing.Drawing2D
 {
 	/// <summary>
-	/// Summary description for DashStyle.
+	/// Summary description for AdjustableArrowCap.
 	/// </summary>
-	[Serializable]
-	public enum DashStyle {
-		Custom = 5,
-		Dash = 1,
-		DashDot = 3,
-		DashDotDot = 4,
-		Dot = 2,
-		Solid = 0
-	}
-#if TARGET_JVM
-	internal class DashAttribs
+	public sealed class AdjustableArrowCap : CustomLineCap
 	{
-		public  static float [] DASH_ARRAY = {4.0f,1.0f};
-		public  static float [] DASHDOT_ARRAY = {4.0f,1.0f,1.0f,1.0f};
-		public  static float [] DASHDOTDOT_ARRAY = {4.0f,1.0f,1.0f,1.0f,1.0f,1.0f};
-		public  static float [] DOT_ARRAY = {1.0f,1.0f};
+		// Constructors
+
+		public AdjustableArrowCap (float width, float height) : this (width, height, true)
+		{
+		}
+
+		public AdjustableArrowCap (float width, float height, bool isFilled)
+		{
+			throw new NotImplementedException();
+		}
+
+		// Public Properities
+
+		public bool Filled {
+			get {
+				throw new NotImplementedException();
+			}
+
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		public float Width {
+			get {
+				throw new NotImplementedException();
+			}
+
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		public float Height {
+			get {
+				throw new NotImplementedException();
+			}
+
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		public float MiddleInset {
+			get {
+				throw new NotImplementedException();
+			}
+
+			set {
+				throw new NotImplementedException();
+			}
+		}
 	}
-#endif
 }
