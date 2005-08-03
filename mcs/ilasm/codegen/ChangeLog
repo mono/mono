@@ -1,3 +1,8 @@
+2005-08-03  Ankit Jain  <jankit@novell.com>
+
+	* GlobalMethodRef.cs (GlobalMethodRef.Resolve): Use CreateVarargSignature
+	  to create method's signature for a vararg method.
+
 2005-08-02  Ankit Jain  <ankit@corewars.org>
 
 	Fix #61512.
