@@ -1,3 +1,8 @@
+2005-08-03  Andrew Skiba <andrews@mainsoft.com>
+
+	* FontCollection.jvm.cs, InstalledFontCollection.jvm.cs,
+	PrivateFontCollection.jvm.cs: added TARGET_JVM implementation
+
 2005-04-04  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* PrivateFontCollection.cs: nativeFontCollection equals IntPtr.Zero to
