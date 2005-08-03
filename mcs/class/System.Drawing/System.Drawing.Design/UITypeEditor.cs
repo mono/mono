@@ -68,6 +68,7 @@ namespace System.Drawing.Design
 		{
 			return false;
 		}
+#if !TARGET_JVM
 		public void PaintValue (object value, Graphics canvas, Rectangle rectangle)
 		{
 			PaintValue (new PaintValueEventArgs (null, value, canvas, rectangle));
@@ -79,5 +80,6 @@ namespace System.Drawing.Design
 			// but on the other hand the class is not abstract. Could never observe it did paint anything
 			return;
 		}
+#endif
 	}
 }

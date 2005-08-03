@@ -70,7 +70,7 @@ namespace System.Drawing
 		
 		protected override void Dispose (bool disposing)
 		{
-			if (!_isModifiable && disposing)
+			if (!isModifiable && disposing)
 				throw new ArgumentException ("This SolidBrush object can't be modified.");
 		}
 	}

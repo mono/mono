@@ -1,5 +1,9 @@
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
+	* Metafile.jvm.cs: add TARGET_JVM implementation
+
+2005-08-03 Andrew Skiba <andrews@mainsoft.com>
+
 	* ColorPalette.cs, FrameDimension.cs, EncoderParameters.cs: TARGET_JVM
 	exclude not supported internal methods
 	* EncoderParameter.jvm.cs, ImageAttributes.jvm.cs, ImageFormat.jvm.cs,

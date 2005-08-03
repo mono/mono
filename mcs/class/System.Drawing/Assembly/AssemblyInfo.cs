@@ -60,7 +60,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
 
+#if !TARGET_JVM
 [assembly: CLSCompliant(true)]
+#endif
 [assembly: AssemblyDefaultAlias("System.Drawing.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
@@ -68,6 +70,10 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: AllowPartiallyTrustedCallers]
 
+#if TARGET_JVM
+[assembly: AssemblyDelaySign(false)]
+#else
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+#endif
 

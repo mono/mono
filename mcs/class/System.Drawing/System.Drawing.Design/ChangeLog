@@ -1,3 +1,7 @@
+2005-08-03  Andrew Skiba <andrews@mainsoft.com>
+
+	* UITypeEditor.cs: Added TARGET_JVM support
+
 2003-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ToolboxItem.cs: Added serialization/deserialization support

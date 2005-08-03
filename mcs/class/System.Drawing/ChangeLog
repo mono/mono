@@ -1,3 +1,7 @@
+2005-08-03  Andrew Skiba  <andrews@mainsoft.com>
+
+	* System.Drawing.vmwcsproj, System.Drawing.sln: add a project file and solution for building System.Drawing for Grasshopper
+
 2004-12-09  Geoff Norton  <gnorton@customerdna.com>
 
 	* System.Drawing.dll.sources: Add System.Drawing/carbonFunctions.cs to the build

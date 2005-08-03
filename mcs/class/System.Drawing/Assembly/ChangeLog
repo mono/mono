@@ -1,3 +1,7 @@
+2005-08-03  Andrew Skiba <andrews@mainsoft.com>
+
+	* AssemblyInfo.cs: add TARGET_JVM mode
+
 2004-02-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Locale.cs: Added

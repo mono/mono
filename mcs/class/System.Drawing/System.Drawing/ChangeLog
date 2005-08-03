@@ -1,5 +1,9 @@
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
+	* SolidBrush.jvm.cs: fix a typo
+
+2005-08-03 Andrew Skiba <andrews@mainsoft.com>
+
 	* Image.jvm.cs, StringFormat.jvm.cs, FontFamily.jvm.cs, Bitmap.jvm.cs,
 	Pen.jvm.cs, Region.jvm.cs, Brush.jvm.cs, Graphics.jvm.cs, TextureBrush.jvm.cs,
 	Font.jvm.cs: Added TARGET_JVM implementation
