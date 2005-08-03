@@ -70,7 +70,7 @@ namespace System.Drawing.Imaging
 				return flags;
 			}
 		}
-		
+#if !TARGET_JVM
 		/* Caller should call FreeHGlobal*/
 		internal IntPtr getGDIPalette() 
 		{
@@ -111,5 +111,6 @@ namespace System.Drawing.Imaging
 				ptr = (IntPtr) (ptr.ToInt32() + 4);
 			}
 		}
+#endif
 	}
 }

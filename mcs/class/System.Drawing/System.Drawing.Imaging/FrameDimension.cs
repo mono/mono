@@ -51,7 +51,7 @@ public sealed class FrameDimension {
 			return guid;
 		}
 	}
-																	   																							 
+	
 	public static FrameDimension Page {
 		get {
 			return new FrameDimension (new Guid ("7462dc86-6180-4c7e-8e3f-ee7333a7a483"));
@@ -69,7 +69,15 @@ public sealed class FrameDimension {
 			return new FrameDimension (new Guid ("6aedbd6d-3fb5-418a-83a6-7f45229dc872" ));			
 		}
 	}
-	
+
+#if TARGET_JVM
+	internal static FrameDimension PixelFormat { 
+		get {
+			return new FrameDimension (new Guid ("9BCCD13D-9D8C-401a-B9ED-BB548E5B3329" ));
+	    }
+	}
+#endif
+
 	//methods
 	public override bool Equals(object o) 
 	{

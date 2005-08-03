@@ -61,7 +61,7 @@ namespace System.Drawing.Imaging
 		public void Dispose () {
 			// Nothing
 		}
-
+#if TARGET_JVM
 		internal IntPtr ToNativePtr () {
 			IntPtr result;
 			IntPtr ptr;
@@ -109,5 +109,6 @@ namespace System.Drawing.Imaging
 
 			return result;
 		}
+#endif
 	}
 }
