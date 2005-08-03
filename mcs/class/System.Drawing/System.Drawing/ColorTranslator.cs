@@ -92,13 +92,77 @@ namespace System.Drawing
 
 		public static string ToHtml (Color c)
 		{
+			KnownColor kc;
 			if (c.IsEmpty)
 				return "";
 
 			string result;
+			if(c.IsSystemColor) {
+				kc = c.ToKnownColor();
+				switch (kc) {
+				case KnownColor.ActiveBorder:
+					return "activeborder";
+				case KnownColor.ActiveCaption:
+					return "activecaption";
+				case KnownColor.ActiveCaptionText:
+					return "captiontext";
+				case KnownColor.AppWorkspace:
+					return "appworkspace";
+				case KnownColor.Control:
+					return "buttonface";
+				case KnownColor.ControlDark:
+					return "buttonshadow";
+				case KnownColor.ControlDarkDark:
+					return "threeddarkshadow";
+				case KnownColor.ControlLight:
+					return "buttonface";
+				case KnownColor.ControlLightLight:
+					return "buttonhighlight";
+				case KnownColor.ControlText:
+					return "buttontext";
+				case KnownColor.Desktop:
+					return "background";
+				case KnownColor.GrayText:
+					return "graytext";
+				case KnownColor.Highlight:
+				case KnownColor.HotTrack:
+					return "highlight";
+				case KnownColor.HighlightText:
+					return "highlighttext";
+				case KnownColor.InactiveBorder:
+					return "inactiveborder";
+				case KnownColor.InactiveCaption:
+					return "inactivecaption";
+				case KnownColor.InactiveCaptionText:
+					return "inactivecaptiontext";
+				case KnownColor.Info:
+					return "infobackground";
+				case KnownColor.InfoText:
+					return "infotext";
+				case KnownColor.Menu:
+					return "menu";
+				case KnownColor.MenuText:
+					return "menutext";
+				case KnownColor.ScrollBar:
+					return "scrollbar";
+				case KnownColor.Window:
+					return "window";
+				case KnownColor.WindowFrame:
+					return "windowframe";
+				case KnownColor.WindowText:
+					return "windowtext";
+				default:
+					return String.Empty;
+				}
+			}
 
-			if (c.IsNamedColor)
-				result = c.Name;
+			if (c.IsNamedColor) {
+				if (c == Color.LightGray) {
+					result =  "LightGrey";
+				}
+				else
+					result = c.Name;
+			}
 			else
 				result = String.Format ("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
 
