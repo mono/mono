@@ -41,7 +41,7 @@ namespace Mono.Globalization.Unicode
 		int singleCount = 1, multiCount = 1, propValueCount = 1;
 //		int [] singleNorm = new int [550];
 //		int [] multiNorm = new int [280];
-		int [] prop = new int [char.MaxValue];
+		int [] prop = new int [char.MaxValue + 1];
 
 		public const int NoNfd = 1;
 		public const int NoNfkd = 2;
@@ -60,7 +60,7 @@ namespace Mono.Globalization.Unicode
 
 		int mappedCharCount = 1;
 		int [] mappedChars = new int [100];
-		int [] mapIndex = new int [0x5000];
+		int [] mapIndex = new int [char.MaxValue + 1];
 
 		ArrayList mappings = new ArrayList ();
 
@@ -80,7 +80,7 @@ namespace Mono.Globalization.Unicode
 			} catch (Exception ex) {
 				throw new InvalidOperationException ("Internal error at line " + lineCount + " : " + ex);
 			}
-			CompressUCD ();
+			RebaseUCD ();
 			Serialize ();
 			ProcessCombiningClass ();
 		}
@@ -119,9 +119,8 @@ namespace Mono.Globalization.Unicode
 			foreach (CharMapping m in mappings) {
 				if (mappedChars [m.MapIndex] == currentHead)
 					continue; // has the same head
-// FIXME: should be applied
-//				if (!m.IsCanonical)
-//					continue;
+				if (!m.IsCanonical)
+					continue;
 				currentHead = mappedChars [m.MapIndex];
 				helperIndexes [currentHead] = (short) m.MapIndex;
 			}
@@ -156,8 +155,7 @@ namespace Mono.Globalization.Unicode
 					continue;
 				if (!m.IsCanonical)
 					continue;
-				// FIXME: why this shift happens?
-				mapIndexes [m.MapIndex - 2] = (ushort) m.CodePoint;
+				mapIndexes [m.MapIndex] = (ushort) m.CodePoint;
 				currentIndex = m.MapIndex;
 			}
 
@@ -242,10 +240,9 @@ namespace Mono.Globalization.Unicode
 			}
 		}
 
-		private void CompressUCD ()
+		private void RebaseUCD ()
 		{
 			mappings.Sort (comparer);
-
 			// mappedChars[0] = 0. This assures that value 0 of
 			// mapIndex means there is no mapping.
 			int count = 1;
@@ -305,7 +302,6 @@ namespace Mono.Globalization.Unicode
 
 				string [] values = line.Substring (n + 1).Split (';');
 				string canon = values [4];
-//if (values [2] != "0") Console.Error.WriteLine ("----- {0:X03} : {1:x}", int.Parse (values [2]), cp);
 				string combiningCategory = canon.IndexOf ('>') < 0 ? "" : canon.Substring (1, canon.IndexOf ('>') - 1);
 				string mappedCharsValue = canon;
 				if (combiningCategory.Length > 0)
@@ -538,13 +534,14 @@ namespace Mono.Globalization.Unicode
 			// Note that this never considers IsCanonical
 			public int CompareArray (int idx1, int idx2)
 			{
-				for (int i = 0; parent.mappedChars [idx2 + i] != 0; i++) {
+				for (int i = 0; ; i++) {
 					int l = parent.mappedChars [idx1 + i];
 					int r = parent.mappedChars [idx2 + i];
 					if (l != r)
 						return l - r;
+					if (l == 0)
+						return 0;
 				}
-				return 0;
 			}
 		}
 

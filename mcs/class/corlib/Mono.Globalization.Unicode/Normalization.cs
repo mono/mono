@@ -62,24 +62,42 @@ namespace Mono.Globalization.Unicode
 			return helperIndex [NUtil.Helper.ToIndex (cp)];
 		}
 
-		static int GetPrimaryCompositeCharIndex (object chars, int start, int charsLength)
+		static int GetPrimaryCompositeCharIndex (object chars, int start)
 		{
 			string s = chars as string;
 			StringBuilder sb = chars as StringBuilder;
 			char startCh = s != null ? s [start] : sb [start];
+			int charsLength = sb != null ? sb.Length : s.Length;
 
 			int idx = GetPrimaryCompositeHelperIndex ((int) startCh);
 			if (idx == 0)
 				return 0;
 			while (mappedChars [idx] == startCh) {
-				for (int i = 1; ; i++) {
+				for (int i = 1, j = 1; ; i++, j++) {
 					if (mappedChars [idx + i] == 0)
-						// match
+						// matched
 						return idx;
-					if (start + i < charsLength)
-						return 0; // no match
-					char curCh = s != null ?
-						s [start + i] : sb [start + i];
+					if (start + i >= charsLength)
+						return 0; // didn't match
+
+					// handle blocked characters here.
+					char curCh;
+					int combiningClass;
+					int nextCB = 0;
+					do {
+						curCh = s != null ?
+							s [start + j] :
+							sb [start + j];
+						combiningClass = GetCombiningClass (curCh);
+						if (++j + start >= charsLength ||
+							combiningClass == 0)
+							break;
+						nextCB = GetCombiningClass (
+							s != null ?
+							s [start + j] :
+							sb [start + j]);
+					} while (nextCB > 0 && combiningClass >= nextCB);
+					j--;
 					if (mappedChars [idx + i] == curCh)
 						continue;
 					if (mappedChars [idx + i] > curCh)
@@ -87,7 +105,7 @@ namespace Mono.Globalization.Unicode
 					// otherwise move idx to next item
 					while (mappedChars [i] != 0)
 						i++;
-					idx = i + 1;
+					idx += i + 1;
 					break;
 				}
 			}
@@ -112,7 +130,7 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < source.Length; i++) {
 				if (QuickCheck (source [i], checkType) == NormalizationCheck.Yes)
 					continue;
-				StringBuilder sb = new StringBuilder (source.Length);
+				StringBuilder sb = new StringBuilder (source.Length + source.Length / 10);
 				sb.Append (source);
 				Combine (sb, i, checkType);
 				return sb;
@@ -148,10 +166,10 @@ namespace Mono.Globalization.Unicode
 					if (!CanBePrimaryComposite ((int) sb [i]))
 						break;
 				i++;
-				// Now i is the "starter"
+				int starter = i;
 				int idx = 0;
 				for (; i < cur; i++) {
-					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], sb.Length, i);
+					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], i);
 					if (idx > 0)
 						break;
 				}
@@ -161,25 +179,37 @@ namespace Mono.Globalization.Unicode
 				}
 				int ch = GetPrimaryCompositeFromMapIndex (idx);
 				int len = GetComposedStringLength (ch);
-				if (ch == 0 || len == 0) {
-					// FIXME: this actually happens
-					// throw new SystemException ("Internal error: should not happen.");
-					i = cur;
-					continue;
+				if (ch == 0 || len == 0)
+					throw new SystemException ("Internal error: should not happen.");
+				int removed = 0;
+				sb.Insert (i++, (char) ch); // always single character
+
+				// handle blocked characters here.
+				while (removed < len) {
+					if (i + 1 < sb.Length) {
+						int cb = GetCombiningClass (sb [i]);
+						if (cb > 0) {
+							int next = GetCombiningClass (sb [i + 1]);
+							if (next != 0 && cb >= next) {
+								i++;
+								continue;
+							}
+						}
+					}
+					sb.Remove (i, 1);
+					removed++;
 				}
-				sb.Remove (i, len);
-				sb.Insert (i, (char) ch); // always single character
 				i = cur - 1; // apply recursively
 			}
 		}
 
-		static int GetPrimaryCompositeMapIndex (object o, int cur, int length, int bufferPos)
+		static int GetPrimaryCompositeMapIndex (object o, int cur, int bufferPos)
 		{
 			if ((PropValue (cur) & FullCompositionExclusion) != 0)
 				return 0;
 			if (GetCombiningClass (cur) != 0)
 				return 0; // not a starter
-			return GetPrimaryCompositeCharIndex (o, bufferPos, length);
+			return GetPrimaryCompositeCharIndex (o, bufferPos);
 		}
 
 		static string Decompose (string source, int checkType)
@@ -343,7 +373,7 @@ namespace Mono.Globalization.Unicode
 					i++;
 					// Now i is the "starter"
 					for (; i < cur; i++) {
-						if (GetPrimaryCompositeCharIndex (source, i, source.Length) != 0)
+						if (GetPrimaryCompositeCharIndex (source, i) != 0)
 							return false;
 					}
 					break;

@@ -6,8 +6,8 @@ namespace Mono.Globalization.Unicode
 {
 	internal class NormalizationTableUtil
 	{
-		public static readonly CodePointIndexer prop;
-		public static readonly CodePointIndexer map;
+		public static readonly CodePointIndexer Prop;
+		public static readonly CodePointIndexer Map;
 		public static readonly CodePointIndexer Combining;
 		public static readonly CodePointIndexer Composite;
 		public static readonly CodePointIndexer Helper;
@@ -73,8 +73,8 @@ namespace Mono.Globalization.Unicode
 //				0x20640, 0x208E0, 0x20A30, 0x20B70, 0x214F0,
 				};
 
-			prop = new CodePointIndexer (propStarts, propEnds, 0, 0);
-			map = new CodePointIndexer (mapStarts, mapEnds, 0, 0);
+			Prop = new CodePointIndexer (propStarts, propEnds, 0, 0);
+			Map = new CodePointIndexer (mapStarts, mapEnds, 0, 0);
 			Combining = new CodePointIndexer (combiningStarts,
 				combiningEnds, 0, 0);
 			Composite = new CodePointIndexer (compositeStarts,
@@ -85,24 +85,24 @@ namespace Mono.Globalization.Unicode
 
 		public static int PropIdx (int cp)
 		{
-			return prop.ToIndex (cp);
+			return Prop.ToIndex (cp);
 		}
 
 		public static int PropCP (int index)
 		{
-			return prop.ToCodePoint (index);
+			return Prop.ToCodePoint (index);
 		}
 
 		public static int PropCount { get { return prop.TotalCount; } }
 
 		public static int MapIdx (int cp)
 		{
-			return map.ToIndex (cp);
+			return Map.ToIndex (cp);
 		}
 
 		public static int MapCP (int index)
 		{
-			return map.ToCodePoint (index);
+			return Map.ToCodePoint (index);
 		}
 
 		public static int CbIdx (int cp)

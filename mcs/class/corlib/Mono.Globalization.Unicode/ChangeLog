@@ -1,5 +1,13 @@
 2005-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* create-normalization-source.cs : Fixed CharMapComparer which 
+	  incorrectly returned 0 when the second arg is shorter. Reduced
+	  extraneous helperIndex map. Other minor fixes and code removal.
+	* Normalization.cs : several fixes to support blocked combine handling.
+	* NormalizationTableUtil.cs : tiny member renaming.
+
+2005-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* create-normalization-source.cs,
 	  NormalizationTableUtil.cs,
 	  Normalization.cs : several bugfixes on index miscomputation.
