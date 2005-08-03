@@ -1,3 +1,9 @@
+2005-08-03  Ankit Jain  <jankit@novell.com>
+
+	Fix #75683.
+	* loader.c (mono_method_signature_full): Use MONO_CALL_DEFAULT if
+	  PInvoke calling convention is 0.
+
 2005-08-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* socket-io.c (convert_sockopt_level_and_name): Applied patch from 
