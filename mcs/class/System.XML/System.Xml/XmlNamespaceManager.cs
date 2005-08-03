@@ -33,6 +33,9 @@
 //
 
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Collections.Specialized;
 
 namespace System.Xml
@@ -198,15 +201,24 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		public virtual IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			IDictionary namespaceTable = GetNamespacesInScopeImpl (scope);
+			IDictionary<string, string> namespaces = new Dictionary<string, string>(namespaceTable.Count);
+
+			foreach (DictionaryEntry entry in namespaceTable) {
+				namespaces[(string) entry.Key] = (string) entry.Value;
+			}
+			return namespaces;
+		}
 #else
 		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			return GetNamespacesInScope (scope);
+			return GetNamespacesInScopeImpl (scope);
 		}
-
-		internal virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
 #endif
+
+		internal virtual IDictionary GetNamespacesInScopeImpl (XmlNamespaceScope scope)
 		{
 			Hashtable table = new Hashtable ();
 

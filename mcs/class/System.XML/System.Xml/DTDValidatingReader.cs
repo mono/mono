@@ -30,6 +30,9 @@
 //
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -172,10 +175,10 @@ namespace Mono.Xml
 		}
 
 #if NET_2_0
-		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IXmlNamespaceResolver res = reader as IXmlNamespaceResolver;
-			return res != null ? res.GetNamespacesInScope (scope) : new Hashtable ();
+			return res != null ? res.GetNamespacesInScope (scope) : new Dictionary<string, string> ();
 		}
 #endif
 

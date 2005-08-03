@@ -31,7 +31,9 @@
 //
 
 using System;
-using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
@@ -242,7 +244,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return ((IXmlNamespaceResolver) Current).GetNamespacesInScope (scope);
 		}

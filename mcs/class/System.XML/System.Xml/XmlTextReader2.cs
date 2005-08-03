@@ -33,7 +33,7 @@
 using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -419,7 +419,7 @@ namespace System.Xml
 			return Current.GetAttribute (localName, namespaceURI);
 		}
 
-		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return ((IXmlNamespaceResolver) Current).GetNamespacesInScope (scope);
 		}

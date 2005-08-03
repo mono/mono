@@ -31,7 +31,9 @@
 //
 
 using System;
-using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
@@ -622,9 +624,9 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		public virtual IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			Hashtable table = new Hashtable ();
+			IDictionary<string, string> table = new Dictionary<string, string> ();
 			XPathNamespaceScope xpscope =
 				scope == XmlNamespaceScope.Local ?
 					XPathNamespaceScope.Local :

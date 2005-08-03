@@ -46,15 +46,11 @@ namespace System.Xml.Serialization
 		
 #if NET_2_0
 		string key;
-		
+#endif		
+
 		internal XmlMapping ()
 		{
 		}
-#else
-		protected XmlMapping ()
-		{
-		}
-#endif
 
 		internal XmlMapping (string elementName, string ns)
 		{
@@ -73,7 +69,6 @@ namespace System.Xml.Serialization
 			get { return _namespace; }
 		}
 		
-		[Obsolete]
 		public void SetKey (string key)
 		{
 			this.key = key;

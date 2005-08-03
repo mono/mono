@@ -85,7 +85,6 @@ namespace System.Xml.Xsl
 		public XsltException (string message, Exception innerException)
 			: base (message, innerException)
 		{
-//			this.message = message;
 		}
 
 		protected XsltException (SerializationInfo info, StreamingContext context)
@@ -124,8 +123,6 @@ namespace System.Xml.Xsl
 			get { return linePosition; }
 		}
 
-#if NET_2_0
-#else
 		public override string Message {
 			get {
 				string msg = base.Message;
@@ -138,7 +135,6 @@ namespace System.Xml.Xsl
 				return msg;
 			}
 		}
-#endif
 
 		public string SourceUri {
 			get { return sourceUri; }

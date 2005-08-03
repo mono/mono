@@ -1,3 +1,11 @@
+2005-08-03  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlSchemaInference.cs: Is sealed in Beta 2.
+	* XmlSchemaInfo.cs: Added ContentType property.
+	* XmlSchemaObjectEnumerator.cs: No longer sealed in Beta 2.
+	* XmlSchemaSet.cs: No longer sealed in Beta 2. XmlResolver property
+	is now CLSCompliant.
+
 2005-07-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatype.cs, XmlSchemaParticle.cs, XmlSchemaContent.cs,

@@ -34,7 +34,9 @@
 //
 
 using System;
-using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Xml;
 using System.Text;
 using Mono.Xml;
@@ -480,9 +482,9 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			Hashtable table = new Hashtable ();
+			IDictionary<string, string> table = new Dictionary<string, string> ();
 			XmlNode n = current;
 			do {
 				if (n.NodeType == XmlNodeType.Document)

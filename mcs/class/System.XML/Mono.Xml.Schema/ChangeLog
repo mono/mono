@@ -1,3 +1,10 @@
+2005-08-03  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XsdValidationReader.cs: GetNamespacesInScope returns generic
+	IDictionary in .NET 2.0 Beta 2.
+	* XmlSchemaValidatingReader.cs: GetNamespacesInScope returns generic
+	IDictionary in .NET 2.0 Beta 2.
+
 2005-07-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : when xsi:schemaLocation could not be

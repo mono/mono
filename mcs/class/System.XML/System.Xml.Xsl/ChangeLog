@@ -1,3 +1,8 @@
+2005-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XsltArgumentList.cs: No longer sealed in .NET 2.0.
+	* XsltException.cs: Message override is back in .NET 2.0 Beta 2.
+
 2005-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltMessageEncounteredEventArgs.cs : it seems abstract.

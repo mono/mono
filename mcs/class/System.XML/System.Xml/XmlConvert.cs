@@ -287,7 +287,7 @@ namespace System.Xml {
 			string modestr = null;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
-			case XmlDateTimeSerializationMode.RoundTripKind:
+			case XmlDateTimeSerializationMode.RoundtripKind:
 			default:
 				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
 			case XmlDateTimeSerializationMode.Utc:
@@ -497,7 +497,7 @@ namespace System.Xml {
 			string modestr = null;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
-			case XmlDateTimeSerializationMode.RoundTripKind:
+			case XmlDateTimeSerializationMode.RoundtripKind:
 			default:
 				return value.ToString (
 					"yyyy-MM-ddTHH:mm:ss.fffffffzzz",

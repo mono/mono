@@ -29,7 +29,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -60,7 +60,6 @@ namespace Mono.Xml
 			get { return initial ? 0 : Reader.AttributeCount; }
 		}
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return Reader.CanReadBinaryContent; }
 		}
@@ -68,7 +67,6 @@ namespace Mono.Xml
 		public override bool CanReadValueChunk {
 			get { return Reader.CanReadValueChunk; }
 		}
-#endif
 
 		public override int Depth {
 			get { return Reader.Depth - startDepth; }
@@ -154,9 +152,10 @@ namespace Mono.Xml
 			return initial ? null : Reader.GetAttribute (local, ns);
 		}
 
-		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			return nsResolver != null ? nsResolver.GetNamespacesInScope (scope) : new Hashtable ();
+			return nsResolver != null ? nsResolver.GetNamespacesInScope (scope) : 
+				new Dictionary<string, string> ();
 		}
 
 		public bool HasLineInfo ()

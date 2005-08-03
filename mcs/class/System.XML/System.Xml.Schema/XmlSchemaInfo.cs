@@ -41,6 +41,7 @@ namespace System.Xml.Schema
 		XmlSchemaElement elem;
 		XmlSchemaType type;
 		XmlSchemaValidity validity;
+		XmlSchemaContentType contentType;
 
 		public XmlSchemaInfo ()
 		{
@@ -55,6 +56,12 @@ namespace System.Xml.Schema
 			elem = info.SchemaElement;
 			type = info.SchemaType;
 			validity = info.Validity;
+		}
+
+		[MonoTODO]
+		public XmlSchemaContentType ContentType {
+			get { return contentType; }
+			set { contentType = value; }
 		}
 
 		[MonoTODO]

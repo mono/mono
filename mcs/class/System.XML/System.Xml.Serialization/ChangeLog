@@ -1,3 +1,8 @@
+2005-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlMapping.cs: API compatibility fixes. Ctor is not protected
+	in .NET 1.1. SetKey is not obsolete in .NET 2.0 Beta 2.
+
 2005-07-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SoapAttributeAttribute.cs: Return zero-length string if 

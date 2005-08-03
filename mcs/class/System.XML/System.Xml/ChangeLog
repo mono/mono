@@ -1,3 +1,25 @@
+2005-08-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlConvert.cs: Renamed RoundTripKind to RoundtripKind.
+	* XmlDateTimeSerializationMode.cs: Renamed RoundTripKind to
+	RoundtripKind to match .NET 2.0 Beta 2.
+	* XmlNodeReader2.cs: GetNamespacesInScope returns generic IDictionary
+	in .NET 2.0 Beta 2, and is explicit interface implementation.
+	* XmlTextReader.cs: GetNamespacesInScope returns generic IDictionary
+	in .NET 2.0 Beta 2.
+	* XmlTextReader2.cs: GetNamespacesInScope returns generic IDictionary
+	in .NET 2.0 Beta 2.
+	* XmlValidatingReader.cs: GetNamespacesInScope returns generic 
+	IDictionary in .NET 2.0 Beta 2.
+	* IXmlNamespaceResolver.cs: GetNamespacesInScope returns generic
+	IDictionary in .NET 2.0 Beta 2.
+	* XmlNamespaceManager.cs: GetNamespacesInScope returns generic 
+	IDictionary in .NET 2.0 Beta 2.
+	* XmlNodeReaderImpl.cs: GetNamespacesInScope returns generic 
+	IDictionary in .NET 2.0 Beta 2.
+	* DTDValidatingReader.cs: GetNamespacesInScope returns generic
+	IDictionary in .NET 2.0 Beta 2.
+
 2005-07-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : In WriteQualifiedName(), when there is open

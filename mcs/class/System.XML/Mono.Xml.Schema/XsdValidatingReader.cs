@@ -29,6 +29,9 @@
 //
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
@@ -192,7 +195,12 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+#if NET_2_0
+		IDictionary<string, string> 
+#else
+		IDictionary
+#endif
+		IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
 			if (resolver == null)

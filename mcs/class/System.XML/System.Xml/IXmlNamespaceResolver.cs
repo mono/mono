@@ -27,9 +27,11 @@
 //
 
 using System;
+#if NET_2_0
+using System.Collections.Generic;
+#else
 using System.Collections;
-using System.Security.Policy;
-using System.Xml.XPath;
+#endif
 
 namespace System.Xml
 {
@@ -42,10 +44,14 @@ namespace System.Xml
 	internal interface IXmlNamespaceResolver
 #endif
 	{
+#if NET_2_0
+		IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope);
+#else
 		IDictionary GetNamespacesInScope (XmlNamespaceScope scope);
+#endif
 
-		string LookupNamespace (string prefix);  
+		string LookupNamespace (string prefix);
 
-		string LookupPrefix (string ns);  
+		string LookupPrefix (string ns);
 	}
 }

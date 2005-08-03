@@ -40,6 +40,7 @@ using Mono.Xml;
 
 #if NET_2_0
 
+using System.Collections.Generic;
 using QName = System.Xml.XmlQualifiedName;
 using Form = System.Xml.Schema.XmlSchemaForm;
 using Use = System.Xml.Schema.XmlSchemaUse;
@@ -280,7 +281,7 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		public IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IXmlNamespaceResolver resolver = reader as IXmlNamespaceResolver;
 			if (resolver == null)

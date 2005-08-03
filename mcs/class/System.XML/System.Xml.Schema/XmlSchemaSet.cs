@@ -40,7 +40,7 @@ using System.Xml.XPath;
 namespace System.Xml.Schema
 {
 #if NET_2_0
-	public sealed class XmlSchemaSet
+	public class XmlSchemaSet
 #else
 	internal sealed class XmlSchemaSet
 #endif
@@ -130,7 +130,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[CLSCompliant(false)]
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
 #if NET_2_0

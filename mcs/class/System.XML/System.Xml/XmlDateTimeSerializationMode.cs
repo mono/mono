@@ -35,7 +35,7 @@ namespace System.Xml {
 		Local,
 		Utc,
 		Unspecified,
-		RoundTripKind,
+		RoundtripKind,
 	}
 
 }

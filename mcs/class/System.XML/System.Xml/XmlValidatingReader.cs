@@ -30,7 +30,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.IO;
 using System.Text;
 using System.Xml.Schema;
@@ -382,7 +384,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return ((IHasXmlParserContext) this).ParserContext.NamespaceManager.GetNamespacesInScope (scope);
 		}
