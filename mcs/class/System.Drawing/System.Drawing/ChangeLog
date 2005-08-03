@@ -1,5 +1,9 @@
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
+	* Icon.jvm.cs, SystemColors.jvm.cs: Added TARGET_JVM implementations
+
+2005-08-03 Andrew Skiba <andrews@mainsoft.com>
+
 	* ColorTranslator.cs: (GH merge) recognise HTML system colors
 
 2005-08-02 Andrew Skiba <andrews@mainsoft.com>
