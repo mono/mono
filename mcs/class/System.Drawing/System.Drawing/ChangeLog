@@ -1,5 +1,9 @@
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
+	* Rectangle.cs, RectangleF.cs: TARGET_JVM - Add NativeObect property
+
+2005-08-03 Andrew Skiba <andrews@mainsoft.com>
+
 	* BasicShape.jvm.cs: Added TARGET_JVM specific class
 
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
