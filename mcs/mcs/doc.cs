@@ -889,6 +889,8 @@ namespace Mono.CSharp {
 
 			IDictionary table = new ListDictionary ();
 			foreach (ClassPart cp in PartialComments.Keys) {
+				// FIXME: IDictionary does not guarantee that the keys will be
+				//        accessed in the order they were added.
 				table [cp.PartialContainer] += cp.DocComment;
 			}
 			foreach (PartialContainer pc in table.Keys) {
