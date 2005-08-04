@@ -73,6 +73,7 @@ namespace Microsoft.JScript {
 	internal class CodeGenerator {
 
 		private static string MODULE = "JScript Module";
+		private static string CORLIB = typeof (object).Assembly.FullName;
 
 		internal static string mod_name;
 		internal static AppDomain app_domain;
@@ -122,9 +123,7 @@ namespace Microsoft.JScript {
 					     Dirname (file_name));
 
 			ConstructorInfo ctr_info = typeof (Microsoft.JScript.ReferenceAttribute).GetConstructor (new Type [] { typeof (string) });
-			// FIXME: find out which is the blob.
-			byte [] blob  = new byte [] {};
-			assembly_builder.SetCustomAttribute (ctr_info, blob); 
+			assembly_builder.SetCustomAttribute (new CustomAttributeBuilder (ctr_info, new object [] {CORLIB}));
 
 			module_builder = assembly_builder.DefineDynamicModule (
 					       mod_name,
@@ -257,9 +256,7 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Dup);
 			ig.Emit (OpCodes.Ldc_I4_0);
 
-			ig.Emit (OpCodes.Ldstr,
-				 "mscorlib, Version=1.0.3300.0, Culture=neutral, Pub" + 
-				 "licKeyToken=b77a5c561934e089");
+			ig.Emit (OpCodes.Ldstr, CORLIB);
 
 			ig.Emit (OpCodes.Stelem_Ref);
 

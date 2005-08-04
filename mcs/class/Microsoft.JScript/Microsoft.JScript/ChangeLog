@@ -1,3 +1,7 @@
+2005-08-04  Jb Evain  <jbevain@gmail.com>
+
+	* CodeGenerator.cs: write a valid RequestAttribute on the assembly
+
 2005-08-03  Florian Gross  <flgr@ccan.de>
 
 	* ScriptObject.cs: Renamed __proto__ to proto for 1.1 compatibility
