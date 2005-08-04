@@ -205,7 +205,8 @@ namespace Mono.CSharp {
 			if (row <= 0)
 				token = 0;
 			else {
-				column &= column_mask;
+				if (column > 255)
+					column = 255;
 				int target = -1;
 				int delta = 0;
 				int max = checkpoint_index < 10 ?
