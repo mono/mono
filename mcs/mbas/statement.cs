@@ -5479,18 +5479,18 @@ namespace Mono.MonoBASIC {
 			AsType = e_as;
 		}
 
-		public void Resolve (EmitContext ec, bool Preserve, Location loc)
+		public bool Resolve (EmitContext ec, bool Preserve, Location loc)
 		{
 			RedimTarget = RedimTarget.Resolve (ec);
 
 			if (AsType != null) {
-				Report.Error (30811, "'ReDim' statements can no longer be used to declare array variables");
-				return;
+				Report.Error (30811, loc, "'ReDim' statements can no longer be used to declare array variables");
+				return false;
 			}
 			
 			if (!RedimTarget.Type.IsArray) {
-				Report.Error (49, "'ReDim' statement requires an array");
-				return;
+				Report.Error (49, loc, "'ReDim' statement requires an array");
+				return false;
 			}
 
 			ArrayList args = new ArrayList();
@@ -5506,8 +5506,8 @@ namespace Mono.MonoBASIC {
 
 			NewIndexes = args;
 			if (RedimTarget.Type.GetArrayRank() != NewIndexes.Count) {
-				Report.Error (30415, "'ReDim' cannot change the number of dimensions of an array.");
-				return;
+				Report.Error (30415, loc, "'ReDim' cannot change the number of dimensions of an array.");
+				return false;
 			}
 			
 			Type BaseType = RedimTarget.Type.GetElementType();
@@ -5521,8 +5521,8 @@ namespace Mono.MonoBASIC {
 					PropertyGroupExpr pe = RedimTarget as PropertyGroupExpr;
 					origRedimTarget = new PropertyGroupExpr (pe.Properties, pe.Arguments, pe.InstanceExpression, loc);
 					if ((origRedimTarget = origRedimTarget.Resolve (ec)) == null)  {
-						Report.Error (-1, "'ReDim' vs PropertyGroup");
-						return;
+						Report.Error (-1, loc, "'ReDim' vs PropertyGroup");
+						return false;
 					}
 					PreserveExpr = (ExpressionStatement) new Preserve(localTmp, acExpr, loc);
 				} else
@@ -5531,12 +5531,16 @@ namespace Mono.MonoBASIC {
 			}
 			else
 				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
-			ReDimExpr.Resolve(ec);			
+			ReDimExpr.Resolve(ec);	
+			return true;		
 		}
 
 		public void DoEmit (EmitContext ec)
 		{
-			if (localTmp != null) {
+			if (ReDimExpr == null)
+				return;
+				
+			if (localTmp != null && origRedimTarget != null) {
 				origRedimTarget.Emit (ec);
 				localTmp.Store (ec);
 			}
@@ -5558,9 +5562,10 @@ namespace Mono.MonoBASIC {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			bool result = true;
 			foreach (RedimClause rc in RedimTargets)
-				rc.Resolve(ec, Preserve, loc);
-			return true;
+				result = rc.Resolve(ec, Preserve, loc) && result;
+			return result;
 		}
 				
 		protected override bool DoEmit (EmitContext ec)

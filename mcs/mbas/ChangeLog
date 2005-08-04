@@ -1,3 +1,8 @@
+2005-08-04:2  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* statement.cs:  
+		Oops, line number on Redim errors as Aldo/Renato intended
+		Better logic flow when redim errors occur to avoid exceptions later
+		
 2005-08-04  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* statement.cs:  Refactored code/fields from Redim to RedimClause 
 	so that it works for multiple arrays being redimensioned in the same statement 
