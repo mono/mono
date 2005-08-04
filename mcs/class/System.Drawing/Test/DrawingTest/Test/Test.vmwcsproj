@@ -1,5 +1,5 @@
 <VisualStudioProject>
-	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{D92997D0-B8BD-49A8-A7D0-8B6043930A07}" SccProjectName="System.Drawing.Test" SccLocalPath=".." SccProvider="MSSCCI:ClearCase">
+	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{D92997D0-B8BD-49A8-A7D0-8B6043930A07}">
 		<Build>
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="Test" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" PreBuildEvent="" PostBuildEvent="" RootNamespace="Test" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
 				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="DEBUG;TRACE;TARGET_JVM" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
@@ -13,64 +13,24 @@
 				<Reference Name="System.Drawing" AssemblyName="System.Drawing" HintPath="..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll" Private="False"/>
 				<Reference Name="System.Data" AssemblyName="System.Data" HintPath="..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll"/>
-				<Reference Name="nunit.core.dll.J2EE" Project="{7C52A6A5-71ED-4468-9564-2FF5CD6E6E6C}" Package="{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"/>
-				<Reference Name="nunit.framework.dll.J2EE" Project="{39CC8FF7-EF1A-41A1-B727-42684211ECD1}" Package="{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"/>
-				<Reference Name="nunit.util.dll.J2EE" Project="{36BE0465-4DE4-44CE-AF8D-6E50D0C40BC6}" Package="{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"/>
+				<Reference Name="nunit.core" AssemblyName="nunit.core" HintPath="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\nunit.core.dll" Private="True"/>
+				<Reference Name="nunit.framework" AssemblyName="nunit.framework" HintPath="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\nunit.framework.dll" Private="True"/>
+				<Reference Name="nunit.util" AssemblyName="nunit.util" HintPath="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\nunit.util.dll" Private="True"/>
 			</References>
 		</Build>
 		<Files>
 			<Include>
 				<File RelPath="AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Bitmap.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Bitmap1.png" BuildAction="None"/>
+				<File RelPath="Brush.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Graphics.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Image.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Pen.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Region.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="SampIcon.ico" BuildAction="Content"/>
-				<File RelPath="System.Drawing\Bitmap.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Brush.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Graphics.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Image.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Pen.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\Region.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestBitmap.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestBrushes.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestColor.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestFont.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestIcon.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestImageFormatConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestPens.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestPoint.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestPointConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestPointF.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestRectangle.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestRectangleConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestRectangleF.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestRegion.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestSize.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestSizeConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestSizeF.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestStringFormat.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestSystemBrushes.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\TestSystemPens.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver1bit.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver24bits.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver24bits1.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver32bits.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver8bits.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver-os2.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\maketransparent.bmp" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\nature24bits.gif" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\nature24bits.jpg" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\smiley.ico" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\VisualPng.ico" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing\bitmaps\VisualPng1.ico" BuildAction="Content"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Drawing2D\TestBlend.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Drawing2D\TestColorBlend.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Drawing2D\TestHatchBrush.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Imaging\TestColorMatrix.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Imaging\TestImageAttributes.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Imaging\TestImageCodecInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\MonoTests\System.Drawing.Imaging\TestJpegCodec.cs" SubType="Code" BuildAction="Compile"/>
-				<Folder RelPath="System.Drawing\MonoTests\System.Drawing.Text\"/>
 			</Include>
 		</Files>
-		<UserProperties REFS.JarPath.nunit.util="..\..\..\..\..\..\..\..\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.util.jar" REFS.JarPath.nunit.core="..\..\..\..\..\..\..\..\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.core.jar" REFS.JarPath.nunit.framework="..\..\..\..\..\..\..\..\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.framework.jar" jarserver="ipa" project.JDKType="1.4.2_05" REFS.JarPath.rt="..\..\..\..\..\..\..\..\..\j2sdk1.4\lib\rt.jar" REFS.JarPath.system.xml="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.system.data="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Data.jar" REFS.JarPath.system="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" REFS.JarPath.system.drawing="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Drawing.jar"/>
+		<UserProperties jarserver="ipa" REFS.JarPath.system.drawing="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Drawing.jar" REFS.JarPath.system="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.jar" REFS.JarPath.system.data="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Data.jar" REFS.JarPath.system.xml="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\System.Xml.jar" REFS.JarPath.rt="..\..\..\..\..\..\..\..\..\j2sdk1.4\lib\rt.jar" project.JDKType="1.4.2_05" REFS.JarPath.nunit.framework="..\..\..\..\..\..\..\..\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.framework.jar" REFS.JarPath.nunit.core="..\..\..\..\..\..\..\..\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.core.jar" REFS.JarPath.nunit.util="..\..\..\..\..\..\..\..\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit.util.jar"/>
 	</CSHARP>
-	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="1" Prop2006="C:\views\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit-console.jar" Prop2007="" Prop2008="" Prop2009="Test.jar /wait /fixture:MonoTests.System.Drawing" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="1" Prop2006="C:\Program Files\NUnit 2.2\bin\nunit-gui.exe" Prop2007="" Prop2008="" Prop2009="Test.dll" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/></Configs></VisualMainWin></VisualStudioProject>
+	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="1" Prop2006="C:\Program Files\NUnit 2.2\bin\nunit-gui.exe" Prop2007="" Prop2008="" Prop2009="Test.dll" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="1" Prop2006="C:\views\DevQA\studio\GH\DevQA\tests\utils\nunit\nunit-2.2.0\nunit-console\bin\Debug_Java\nunit-console.jar" Prop2007="" Prop2008="" Prop2009="Test.jar /wait /fixture:MonoTests.System.Drawing" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug_Java"/></Configs></VisualMainWin></VisualStudioProject>

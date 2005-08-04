@@ -4,9 +4,6 @@
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
         ProjectGuid = "{8EF9FC71-4D70-4F89-BF4D-B83EF37D4A0C}"
-        SccProjectName = "SAK"
-        SccLocalPath = "..\..\..\..\.."
-        SccProvider = "MSSCCI:ClearCase"
     >
         <Build>
             <Settings

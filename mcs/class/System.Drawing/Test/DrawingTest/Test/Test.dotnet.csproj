@@ -4,9 +4,6 @@
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
         ProjectGuid = "{DFE29E81-D6A8-45D4-A627-161F462BE767}"
-        SccProjectName = "System.Drawing.Test"
-        SccLocalPath = ".."
-        SccProvider = "MSSCCI:ClearCase"
     >
         <Build>
             <Settings
@@ -73,12 +70,6 @@
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.framework.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
-                />
-                <Reference
                     Name = "System.Drawing"
                     AssemblyName = "System.Drawing"
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
@@ -86,11 +77,6 @@
                 <Reference
                     Name = "DrawingTestHelper_java"
                     Project = "{8EF9FC71-4D70-4F89-BF4D-B83EF37D4A0C}"
-                    Package = "{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"
-                />
-                <Reference
-                    Name = "Exocortex.DSP.v1.J2EE"
-                    Project = "{8D602CEF-DC13-48F1-AF0C-F6201A634FD2}"
                     Package = "{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"
                 />
                 <Reference

@@ -1,3 +1,10 @@
 2005-08-04 Andrew Skiba <andrews@mainsoft.com>
 
+	* Test/Test.vmwcsproj, Test/Test.dotnet.csproj, System.Drawing.Test.dotnet.sln,
+	Exocortex.DSP/src/Exocortex.DSP.v1.J2EE.vmwcsproj, System.Drawing.Test.sln,
+	DrawingTestHelper/DrawingTestHelper_java.vmwcsproj,
+	DrawingTestHelper/DrawingTestHelper.csproj: Projects builds on GH
+
+2005-08-04 Andrew Skiba <andrews@mainsoft.com>
+
 	Initial commit
