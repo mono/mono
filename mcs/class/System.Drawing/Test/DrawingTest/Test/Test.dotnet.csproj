@@ -75,11 +75,6 @@
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
                 />
                 <Reference
-                    Name = "DrawingTestHelper_java"
-                    Project = "{8EF9FC71-4D70-4F89-BF4D-B83EF37D4A0C}"
-                    Package = "{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"
-                />
-                <Reference
                     Name = "System.Data"
                     AssemblyName = "System.Data"
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
@@ -88,6 +83,29 @@
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
                     HintPath = "..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "nunit.core"
+                    AssemblyName = "nunit.core"
+                    HintPath = "..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.core.dll"
+                    AssemblyFolderKey = "hklm\dn\nunit.framework"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.framework.dll"
+                    AssemblyFolderKey = "hklm\dn\nunit.framework"
+                />
+                <Reference
+                    Name = "nunit.util"
+                    AssemblyName = "nunit.util"
+                    HintPath = "..\..\..\..\..\..\..\..\Program Files\NUnit 2.2\bin\nunit.util.dll"
+                    AssemblyFolderKey = "hklm\dn\nunit.framework"
+                />
+                <Reference
+                    Name = "DrawingTestHelper"
+                    Project = "{8EF9FC71-4D70-4F89-BF4D-B83EF37D4A0C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -105,214 +123,6 @@
                 <File
                     RelPath = "SampIcon.ico"
                     BuildAction = "None"
-                />
-                <File
-                    RelPath = "System.Drawing\Bitmap.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\Brush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\Graphics.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\Image.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\Pen.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\Region.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestBitmap.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestBrushes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestColor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestFont.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestImageFormatConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestPens.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestPoint.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestPointConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestPointF.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestRectangle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestRectangleConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestRectangleF.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestRegion.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestSize.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestSizeConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestSizeF.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestStringFormat.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestSystemBrushes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\TestSystemPens.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver1bit.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver24bits.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver24bits1.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver32bits.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver8bits.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\almogaver-os2.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\maketransparent.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\nature24bits.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\nature24bits.jpg"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\smiley.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\VisualPng.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing\bitmaps\VisualPng1.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Drawing2D\TestBlend.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Drawing2D\TestColorBlend.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Drawing2D\TestHatchBrush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Imaging\TestColorMatrix.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Imaging\TestImageAttributes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Imaging\TestImageCodecInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing\MonoTests\System.Drawing.Imaging\TestJpegCodec.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
             </Include>
         </Files>
