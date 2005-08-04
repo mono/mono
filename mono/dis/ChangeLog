@@ -1,3 +1,7 @@
+2005-08-04  Ankit Jain <jankit@novell.com>
+
+	* main.c (dis_directive_moduleref): Always escape module ref names.
+
 2005-08-03  Ankit Jain <jankit@novell.com>
 
 	* main.c (call_conv_map): Oops. Add a sentinel entry (-1, NULL).
