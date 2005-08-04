@@ -2824,12 +2824,11 @@ array_handling_statement
 	;
 	
 redim_statement
-	: REDIM opt_preserve redim_clauses
+	: REDIM _mark_ opt_preserve redim_clauses
 	  {
-	  	ArrayList list = (ArrayList) $3;
-		ReDim r = new ReDim (list, (bool) $2, lexer.Location);
+	  	ArrayList list = (ArrayList) $4;
+		ReDim r = new ReDim (list, (bool) $3, (Location)$2);
 		$$ = r;
-
 	  }
 	;
 	
@@ -2849,7 +2848,7 @@ redim_clauses
 	| redim_clauses COMMA redim_clause
 	  {
 		ArrayList clauses = (ArrayList) ($1);
-		clauses.Add ($2);
+		clauses.Add ($3);
 
 		$$ = clauses;
 	  }
@@ -2859,7 +2858,7 @@ redim_clause
 	: invocation_expression opt_type_spec
 	  {
 	  	Invocation i = (Invocation) $1;
-		RedimClause rc = new RedimClause (i.expr, i.Arguments);
+		RedimClause rc = new RedimClause (i.expr, i.Arguments, (Expression) $2);
 		$$ = rc;
 	  }
 	;

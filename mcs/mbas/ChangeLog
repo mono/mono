@@ -1,3 +1,15 @@
+2005-08-04  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* statement.cs:  Refactored code/fields from Redim to RedimClause 
+	so that it works for multiple arrays being redimensioned in the same statement 
+	* mb-parser.jay: redim_clauses rule was losing additional items
+
+2005-08-04  Aldo Monteiro <aldo@psl-pr.softwarelivre.org>, 
+	Renato Suga <renato@psl-pr.softwarelivre.org>
+	* mb-parser.jay: treatment of opt_type_spec in redim_clause
+	* statement.cs: changed constructor in class RedimClause so that it gets
+	an Expression. Report.Error now emits the line number too for ReDim
+	errors. New attribute in RedimClause: Expression ExprAs 
+
 2005-08-04 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* mb-parser.jay: Fix local static variables initialization
 	

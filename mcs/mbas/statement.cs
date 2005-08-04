@@ -5459,29 +5459,95 @@ namespace Mono.MonoBASIC {
 	}
 
 	public class RedimClause {
-		public Expression Expr;
-		public ArrayList NewIndexes;
+		private Expression RedimTarget;
+		private ArrayList NewIndexes;
+		private Expression AsType;
 		
-		public RedimClause (Expression e, ArrayList args)
+		private LocalTemporary localTmp = null;
+		private Expression origRedimTarget = null;
+		private StatementExpression ReDimExpr;
+
+		public RedimClause (Expression e, ArrayList args, Expression e_as)
 		{
 			if (e is SimpleName)
 				((SimpleName) e).IsInvocation = false;
 			if (e is MemberAccess)
 				((MemberAccess) e).IsInvocation = false;
 		
-			Expr = e;
+			RedimTarget = e;
 			NewIndexes = args;
+			AsType = e_as;
 		}
+
+		public void Resolve (EmitContext ec, bool Preserve, Location loc)
+		{
+			RedimTarget = RedimTarget.Resolve (ec);
+
+			if (AsType != null) {
+				Report.Error (30811, "'ReDim' statements can no longer be used to declare array variables");
+				return;
+			}
+			
+			if (!RedimTarget.Type.IsArray) {
+				Report.Error (49, "'ReDim' statement requires an array");
+				return;
+			}
+
+			ArrayList args = new ArrayList();
+			foreach (Argument a in NewIndexes) {
+				if (a.Resolve(ec, loc))
+					args.Add (a.Expr);
+			}
+
+			for (int x = 0; x < args.Count; x++) {
+				args[x] = new Binary (Binary.Operator.Addition,
+							(Expression) args[x], new IntLiteral (1), Location.Null);	
+			}
+
+			NewIndexes = args;
+			if (RedimTarget.Type.GetArrayRank() != NewIndexes.Count) {
+				Report.Error (30415, "'ReDim' cannot change the number of dimensions of an array.");
+				return;
+			}
+			
+			Type BaseType = RedimTarget.Type.GetElementType();
+			Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
+			ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", null, Location.Null); 	
+			if (Preserve)
+			{
+				ExpressionStatement PreserveExpr = null;
+				if (RedimTarget is PropertyGroupExpr) {
+					localTmp = new LocalTemporary (ec, RedimTarget.Type);
+					PropertyGroupExpr pe = RedimTarget as PropertyGroupExpr;
+					origRedimTarget = new PropertyGroupExpr (pe.Properties, pe.Arguments, pe.InstanceExpression, loc);
+					if ((origRedimTarget = origRedimTarget.Resolve (ec)) == null)  {
+						Report.Error (-1, "'ReDim' vs PropertyGroup");
+						return;
+					}
+					PreserveExpr = (ExpressionStatement) new Preserve(localTmp, acExpr, loc);
+				} else
+					PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
+				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
+			}
+			else
+				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+			ReDimExpr.Resolve(ec);			
+		}
+
+		public void DoEmit (EmitContext ec)
+		{
+			if (localTmp != null) {
+				origRedimTarget.Emit (ec);
+				localTmp.Store (ec);
+			}
+			ReDimExpr.Emit(ec);
+		}		
+
 	}
 
 	public class ReDim : Statement {
 		ArrayList RedimTargets;
-		Type BaseType;
 		bool Preserve;
-		LocalTemporary localTmp = null;
-		Expression origRedimTarget = null;
-
-		private StatementExpression ReDimExpr;
 
 		public ReDim (ArrayList targets, bool opt_preserve, Location l)
 		{
@@ -5492,64 +5558,15 @@ namespace Mono.MonoBASIC {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			Expression RedimTarget;
-			ArrayList NewIndexes;
-
-			foreach (RedimClause rc in RedimTargets) {
-				RedimTarget = rc.Expr;
-				NewIndexes = rc.NewIndexes;
-				RedimTarget = RedimTarget.Resolve (ec);
-	
-				if (!RedimTarget.Type.IsArray)
-					Report.Error (49, "'ReDim' statement requires an array");
-
-				ArrayList args = new ArrayList();
-				foreach (Argument a in NewIndexes) {
-					if (a.Resolve(ec, loc))
-						args.Add (a.Expr);
-				}
-
-				for (int x = 0; x < args.Count; x++) {
-					args[x] = new Binary (Binary.Operator.Addition,
-								(Expression) args[x], new IntLiteral (1), Location.Null);	
-				}
-
-				NewIndexes = args;
-				if (RedimTarget.Type.GetArrayRank() != args.Count)
-					Report.Error (30415, "'ReDim' cannot change the number of dimensions of an array.");
-
-				BaseType = RedimTarget.Type.GetElementType();
-				Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
-				ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", null, Location.Null); 	
-				// TODO: we are in a foreach we probably can't reuse ReDimExpr, must turn it into an array(list)
-				if (Preserve)
-				{
-					ExpressionStatement PreserveExpr = null;
-					if (RedimTarget is PropertyGroupExpr) {
-						localTmp = new LocalTemporary (ec, RedimTarget.Type);
-						PropertyGroupExpr pe = RedimTarget as PropertyGroupExpr;
-						origRedimTarget = new PropertyGroupExpr (pe.Properties, pe.Arguments, pe.InstanceExpression, loc);
-						if ((origRedimTarget = origRedimTarget.Resolve (ec)) == null) 
-							return false;
-						PreserveExpr = (ExpressionStatement) new Preserve(localTmp, acExpr, loc);
-					} else
-						PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
-					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
-				}
-				else
-					ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
-				ReDimExpr.Resolve(ec);
-			}
+			foreach (RedimClause rc in RedimTargets)
+				rc.Resolve(ec, Preserve, loc);
 			return true;
 		}
 				
 		protected override bool DoEmit (EmitContext ec)
 		{
-			if (localTmp != null) {
-				origRedimTarget.Emit (ec);
-				localTmp.Store (ec);
-			}
-			ReDimExpr.Emit(ec);
+			foreach (RedimClause rc in RedimTargets)
+				rc.DoEmit(ec);
 			return false;
 		}		
 		
