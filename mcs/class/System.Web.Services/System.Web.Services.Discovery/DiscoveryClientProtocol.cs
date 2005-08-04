@@ -126,7 +126,10 @@ namespace System.Web.Services.Discovery {
 						int i = url.LastIndexOf ('/');
 						if (i == -1)
 							throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
-						url = url.Substring (0,i+1) + m.Groups[1];
+
+						Uri tmp = new Uri (url);
+						tmp = new Uri (tmp, m.Groups [1].ToString ());
+						url = tmp.ToString ();
 					}
 					stream = Download (ref url);
 				}

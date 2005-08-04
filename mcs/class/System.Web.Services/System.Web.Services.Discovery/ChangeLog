@@ -1,3 +1,8 @@
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DiscoveryClientProtocol.cs: use Uri so that relative paths are handled
+	gracefully.
+
 2005-05-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SchemaReference.cs: fixed the setter for TargetNamespace.
