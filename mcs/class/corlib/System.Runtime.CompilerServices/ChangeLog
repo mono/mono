@@ -1,3 +1,9 @@
+2005-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* InternalsVisibleToAttribute.cs: Add BOOTSTRAP_NET_2_0
+	directive, since we need it to implement friend assemblies
+	in gmcs.
+	
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* RuntimeHelpers.cs: Add some missing 2.0 attributes.
