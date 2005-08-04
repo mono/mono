@@ -19,17 +19,13 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Structure Person
         Const str21 As String = "09876543210987654321"
         Dim int4 As Integer
         Const str3 As String = "abc"
     End Structure
-
     Public Function Test() As String
         Dim fn As Integer
         Dim RecLength As Long
@@ -37,15 +33,11 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         fn = FreeFile()
         ' Calculate the record length.
         RecLength = Len(Employee)
         FileOpen(fn, "data\random.txt", OpenMode.Random, , , RecLength)
         FileClose(fn)
-
         Return "success"
-
     End Function
 End Class

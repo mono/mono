@@ -19,12 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -33,19 +30,26 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
-        '// Target file(s) open.        caughtException = False        fn = FreeFile()
+        '// Target file(s) open.
+        caughtException = False
+        fn = FreeFile()
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6829.txt", OpenMode.Output)
         Kill(System.IO.Directory.GetCurrentDirectory() + "\data\6829.txt")
         If caughtException = False Then Return "sub test 1 failed"
         FileClose(fn)
-        '// Target file(s) missing.        caughtException = False        Kill(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")        If caughtException = False Then Return "sub test 2 failed"        Return "success"Handle_Exception:        Select Case Err.Number            Case 55 'Target file(s) open.
+        '// Target file(s) missing.
+        caughtException = False
+        Kill(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+        If caughtException = False Then Return "sub test 2 failed"
+        Return "success"
+Handle_Exception:
+        Select Case Err.Number
+            Case 55 'Target file(s) open.
                 caughtException = True
                 Resume Next
             Case 53 'Target file(s) missing.
                 caughtException = 2
                 Resume Next
-        End Select
+        End Select
     End Function
 End Class

@@ -19,19 +19,14 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 'When PathName is not found, A zero-length string ("") is returned if 
 Imports Microsoft.VisualBasic.FileSystem
-
 Public Class TestClass
     Public Function Test() As String
         Dim str1 As String
-
         'check if directory has files
         str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\notfound")
         If str1 <> "" Then Return "failed to check that directory not found"
-
         Return "success"
     End Function
 End Class

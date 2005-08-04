@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -33,32 +30,24 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName1 = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strPathName2 = System.IO.Directory.GetCurrentDirectory() + "\data\dir_readonly\"
         OldName = "rename.txt"
         NewName = "rename2.txt"
-
         ' create the file
         fn = FreeFile()
         FileOpen(fn, strPathName1 & OldName, OpenMode.Output)
         FileClose(fn)
-
         'if new file exists - kill it
         If (NewName = Dir(strPathName2 & NewName)) Then
             Kill(strPathName2 & NewName)
         End If
-
         ' Rename file.
         Rename(strPathName1 & OldName, strPathName2 & NewName)
-
         'if new file exists 
         If (NewName <> Dir(strPathName2 & NewName)) Then
             Return "failed"
         End If
-
         Return "success"
-
     End Function
 End Class

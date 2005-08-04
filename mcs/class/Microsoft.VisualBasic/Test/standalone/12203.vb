@@ -19,18 +19,13 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Integer
-
         Dim MyVar As Object   ' No instance assigned to this variable yet.
         Dim MyCheck As Boolean
         ' ...
         MyCheck = IsNothing(MyVar)   ' Returns True.
-
         Return MyCheck
     End Function
 End Class
-

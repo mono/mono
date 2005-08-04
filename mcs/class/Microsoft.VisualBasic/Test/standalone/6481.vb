@@ -19,9 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
-
 Imports Microsoft.VisualBasic
 Imports System
 Public Class TestClass
@@ -34,7 +31,6 @@ Public Class TestClass
         For Each i In a
             s &= " " & DateDiff(CType(i, DateInterval), CDate("1/1/03"), CDate("2/2/03")).ToString
         Next
-
         Return s
         'EndCode
     End Function

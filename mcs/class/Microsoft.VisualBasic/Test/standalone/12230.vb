@@ -19,18 +19,40 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim i As Integer
-
-        Dim caughtException As Boolean        '// Green, Blue, or Red outside of range 0 and 255, inclusive.        caughtException = False        Try            i = rgb(-1, 0, 0)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 1"        caughtException = False        Try            i = rgb(0, -1, 0)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 2"
-        caughtException = False        Try            i = rgb(0, 0, -1)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 3"
+        Dim caughtException As Boolean
+        '// Green, Blue, or Red outside of range 0 and 255, inclusive.
+        caughtException = False
+        Try
+            i = rgb(-1, 0, 0)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 1"
+        caughtException = False
+        Try
+            i = rgb(0, -1, 0)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 2"
+        caughtException = False
+        Try
+            i = rgb(0, 0, -1)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 3"
         Return "success"
-
     End Function
 End Class

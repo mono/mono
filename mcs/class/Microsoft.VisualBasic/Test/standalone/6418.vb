@@ -19,24 +19,18 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
         Dim oDT As New CBase()
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(oDT)
         col.Add(oDT)
         col.Add(oDT)
-
         Return col.Count
         'EndCode
     End Function
 End Class
 Public Class CBase
-
 End Class

@@ -19,12 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -34,40 +31,69 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6969.txt"
-
         Dim caughtException As Boolean
-
-        '// file number does not exist.        caughtException = False        Try            InputString(256, 1)
-        Catch e As IOException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"        '// CharCount < 0 or > 2^14.        caughtException = False        Try            InputString(256, -1) '-1 is checked before file number
-        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
+        '// file number does not exist.
+        caughtException = False
+        Try
+            InputString(256, 1)
+        Catch e As IOException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
+        '// CharCount < 0 or > 2^14.
+        caughtException = False
+        Try
+            InputString(256, -1) '-1 is checked before file number
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         '   MS documentation error
         '   reading above 2^14 = 16384 does not throw an exception
         '
-        'caughtException = False        'Try        '    ' Write more then 16384 text to file.
+        'caughtException = False
+        'Try
+        '    ' Write more then 16384 text to file.
         '    fn = FreeFile()
         '    FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         '    Print(fn, Space(16384) + "abcd")
-        '    FileClose(fn)        '    'read from the file
+        '    FileClose(fn)
+        '    'read from the file
         '    fn = FreeFile()
         '    FileOpen(fn, strPathName & strFileName, OpenMode.Input)
         '    str1 = InputString(fn, 16384 + 1) ' 2^14 = 16384
-        '    FileClose(fn)        'Catch e As ArgumentException        '    If Err.Number = 5 Then        '        caughtException = True        '    End If        'End Try        'If caughtException = False Then Return "sub test 3 failed"
+        '    FileClose(fn)
+        'Catch e As ArgumentException
+        '    If Err.Number = 5 Then
+        '        caughtException = True
+        '    End If
+        'End Try
+        'If caughtException = False Then Return "sub test 3 failed"
         '// past end of file
-        caughtException = False        Try            ' Write text to file.
+        caughtException = False
+        Try
+            ' Write text to file.
             fn = FreeFile()
             FileOpen(fn, strPathName & strFileName, OpenMode.Output)
             Print(fn, "abcd")
-            FileClose(fn)            'read from the file
+            FileClose(fn)
+            'read from the file
             fn = FreeFile()
             FileOpen(fn, strPathName & strFileName, OpenMode.Input)
             str1 = InputString(fn, 1000)
-            FileClose(fn)        Catch e As EndOfStreamException            If Err.Number = 62 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 4 failed"
-
+            FileClose(fn)
+        Catch e As EndOfStreamException
+            If Err.Number = 62 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 4 failed"
         Return "success"
     End Function
 End Class
-

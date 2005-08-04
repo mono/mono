@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Public Class TestClass
@@ -28,7 +26,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
@@ -39,12 +36,9 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
-
         Dim fn1 As Integer
         Dim fn2 As Integer
         Dim fn3 As Integer
-
         'open and close 3 files
         fn1 = FreeFile()
         FileOpen(fn1, DestinationFile, OpenMode.Input, , OpenShare.Shared)
@@ -53,8 +47,6 @@ Public Class TestClass
         fn3 = FreeFile()
         FileOpen(fn3, DestinationFile, OpenMode.Input, , OpenShare.Shared)
         FileClose(fn1, fn2, fn3)
-
         Return "success"
-
     End Function
 End Class

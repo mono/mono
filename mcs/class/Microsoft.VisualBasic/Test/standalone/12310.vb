@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -28,7 +26,6 @@ Public Class TestClass
         Dim str1 As String
         Dim str2 As String
         Dim str3 As String
-
         d = 3.1
         str1 = CStr(Choose(d, "a1", "a2", "a3"))
         d = 1.1
@@ -37,7 +34,6 @@ Public Class TestClass
         'MS Documentation Error: they do Mod(), 2.9 is treated as 2
         d = 2.9
         str3 = CStr(Choose(d, "a1", "a2", "a3"))
-
         Return str1 & str2 & str3
     End Function
 End Class

@@ -19,18 +19,14 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim VbLongName As String = "Long"
         Dim VbDateName As String = "Date"
         Dim MySysName As String
-
         MySysName = SystemTypeName(VbLongName)   ' Returns "System.Int64".
         MySysName = MySysName & SystemTypeName(VbDateName)    ' Returns "System.DateTime".
-
         Return MySysName
     End Function
 End Class

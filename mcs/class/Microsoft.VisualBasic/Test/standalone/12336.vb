@@ -19,14 +19,11 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim CityName As String
         CityName = "London"
         Return Microsoft.VisualBasic.Switch(CityName = "London", "English", CityName = "Rome", "Italian", CityName = "Paris", "French")
-
     End Function
 End Class

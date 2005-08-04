@@ -19,17 +19,12 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
-
 Public Class TestClass
     Public Function Test() As String
-
         Dim SourceFile As String
         Dim DestinationFile As String
-
         SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
         DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6630.txt"
         Dim f as FileInfo = new FileInfo(DestinationFile)
@@ -37,8 +32,6 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
         Return "success"
-
     End Function
 End Class

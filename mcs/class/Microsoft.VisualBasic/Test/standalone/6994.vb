@@ -19,13 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
-
         ' MSDN: With files opened for Binary access, 
         ' an attempt to read through the file using the Input function until 
         ' EOF returns True generates an error. 
@@ -35,7 +31,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
@@ -46,14 +41,12 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
         fn = FreeFile()
         FileOpen(fn, DestinationFile, OpenMode.Binary)
         Do While Not EOF(fn)
             Input(fn, c1)
         Loop
         FileClose(fn)
-
         Return c1
     End Function
 End Class

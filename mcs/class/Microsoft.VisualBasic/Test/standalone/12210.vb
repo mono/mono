@@ -19,18 +19,13 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Integer
         Dim MyVar As Object
         Dim MyCheck As Boolean
-
         MyVar = "45 Help"   ' Assign value.
         MyCheck = IsNumeric(MyVar)   ' Returns False.
-
         Return MyCheck
     End Function
 End Class
-

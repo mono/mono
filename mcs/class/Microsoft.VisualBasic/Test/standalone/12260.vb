@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -30,13 +28,8 @@ Public Class TestClass
         'class System.Drawing.Printing.PaperSource, 
         'TypeName returns "PaperSource".
         Dim oCa As New Ca()
-
         Return TypeName(oCa)
-
     End Function
-
     Public Class Ca
-
     End Class
-
 End Class

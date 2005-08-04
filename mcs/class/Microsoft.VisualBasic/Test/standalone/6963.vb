@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -36,22 +33,19 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6963.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         PrintLine(fn, "1234", "", "abcd")
         FileClose(fn)
-        ' Input binary text from a file.        fn = FreeFile()
+        ' Input binary text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         FileGet(fn, c1) 'read the first string
         str1 = str1 & c1
@@ -66,7 +60,6 @@ Public Class TestClass
         'omit output
         FileGet(fn, cVBCr) 'read the Carridge
         FileGet(fn, cVBLf) 'read the line feed
-
         FileGet(fn, c1) 'read the second string
         str2 = str2 & c1
         FileGet(fn, c1)
@@ -76,9 +69,7 @@ Public Class TestClass
         FileGet(fn, c1)
         str2 = str2 & c1
         FileClose(fn)
-
         Return "failed to understand the documentation" ' rafi ;(
         Return "success"
-
     End Function
 End Class

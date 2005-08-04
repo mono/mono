@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As String
         'BeginCode
@@ -30,13 +27,10 @@ Public Class TestClass
         Dim s2 As String = "b"
         Dim s3 As String = "c"
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(s1)
         col.Add(s2)
         col.Add(s3)
-
         Return col.item(2).tostring
         'EndCode
     End Function
 End Class
-

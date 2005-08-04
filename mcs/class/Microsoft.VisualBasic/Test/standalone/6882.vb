@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
-
 Public Class TestClass
     Public Function Test() As String
         Dim caughtException As Boolean
@@ -31,7 +28,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
@@ -42,18 +38,29 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
-
-        '// File mode is invalid.        caughtException = False        Try            fn = FreeFile()
+        '// File mode is invalid.
+        caughtException = False
+        Try
+            fn = FreeFile()
             FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6882.txt", OpenMode.Input)
             Printline(fn, "abc")
             FileClose(fn)
-        Catch e As IOException            If Err.Number = 54 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
-
+        Catch e As IOException
+            If Err.Number = 54 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
         '// FileNumber does not exist.
-        caughtException = False        Try            Printline(256, "abc")        Catch e As IOException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
-
+        caughtException = False
+        Try
+            Printline(256, "abc")
+        Catch e As IOException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         Return "success"
-
     End Function
 End Class

@@ -19,16 +19,12 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         'When you write strings that contain embedded quotation marks for 
         'use with the Input function (for example, "1,2""X"): 
         'the Input function parses this string as two complete and separate strings.
-
         Dim fn As Integer
         Dim strOut As String
         Dim strIn1 As String
@@ -38,29 +34,24 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6962.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         strOut = """abcd""""efgh"""
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         FilePut(fn, strOut)
         FileClose(fn)
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         Input(fn, strIn1)
         Input(fn, strIn2)
         FileClose(fn)
-
         Return strIn1 & strIn2
     End Function
 End Class

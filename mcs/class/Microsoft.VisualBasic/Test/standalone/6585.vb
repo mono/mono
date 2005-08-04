@@ -19,23 +19,36 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim caughtException As Boolean
-
-        '// bad file number         caughtException = False        Try            FileClose(-2)
-        Catch e As ArgumentOutOfRangeException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
-
-        '// file number does not exist        ' closing a file nuumber that does not exist        ' does not throw an exception        '        'caughtException = False        'Try        '    FileClose(256)   'file number does not exist.
-        'Catch e As IOException        '    If Err.Number = 52 Then        '        caughtException = True        '    End If        'End Try        'If caughtException = False Then Return "sub test 2 failed"
+        '// bad file number 
+        caughtException = False
+        Try
+            FileClose(-2)
+        Catch e As ArgumentOutOfRangeException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
+        '// file number does not exist
+        ' closing a file nuumber that does not exist
+        ' does not throw an exception
+        '
+        'caughtException = False
+        'Try
+        '    FileClose(256)   'file number does not exist.
+        'Catch e As IOException
+        '    If Err.Number = 52 Then
+        '        caughtException = True
+        '    End If
+        'End Try
+        'If caughtException = False Then Return "sub test 2 failed"
         Return "success"
     End Function
 End Class
-

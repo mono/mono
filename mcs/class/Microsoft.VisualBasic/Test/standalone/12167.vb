@@ -19,15 +19,14 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As Integer
-        Dim myError As System.Exception        'GetException with no error is Nothing
-        myError = Err.GetException()        If myError Is Nothing Then Return 0        Return 1
-
+        Dim myError As System.Exception
+        'GetException with no error is Nothing
+        myError = Err.GetException()
+        If myError Is Nothing Then Return 0
+        Return 1
     End Function
 End Class

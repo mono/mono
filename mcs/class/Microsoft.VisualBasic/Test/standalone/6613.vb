@@ -19,19 +19,23 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim w As Long
-
         Dim caughtException As Boolean
-
-        '// File does not exist        caughtException = False        Try            w = Filelen(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")        Catch e As FileNotFoundException            If Err.Number = 53 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
+        '// File does not exist
+        caughtException = False
+        Try
+            w = Filelen(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+        Catch e As FileNotFoundException
+            If Err.Number = 53 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
         Return "success"
     End Function
 End Class

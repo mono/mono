@@ -19,12 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -34,26 +31,22 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6982.txt"
-
         Dim f as FileInfo = new FileInfo(strPathName & strFileName)
         If (f.Exists) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         Print(fn, "abcd")
-        FileClose(fn)        'read from the file
+        FileClose(fn)
+        'read from the file
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Input)
         str1 = InputString(fn, 1)
-        FileClose(fn)
+        FileClose(fn)
         Return str1
     End Function
 End Class
-

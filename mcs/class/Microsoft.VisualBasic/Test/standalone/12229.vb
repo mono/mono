@@ -19,28 +19,21 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim d1 As Decimal
         Dim d2 As Decimal
-
         'greater than 255, 255 is used
-
         d1 = RGB(255, 0, 0)
         d2 = RGB(256, 0, 0)
         If d1 <> d2 Then Return "failed 1"
-
         d1 = RGB(0, 255, 0)
         d2 = RGB(0, 256, 0)
         If d1 <> d2 Then Return "failed 2"
-
         d1 = RGB(0, 0, 255)
         d2 = RGB(0, 0, 256)
         If d1 <> d2 Then Return "failed 3"
-
         Return "success"
     End Function
 End Class

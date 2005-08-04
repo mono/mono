@@ -19,18 +19,13 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim oDT1(2) As Ca
-
         If Not IsArray(oDT1) Then Return "failed"
-
         Return "Success"
     End Function
 End Class
 Public Class Ca
-
 End Class

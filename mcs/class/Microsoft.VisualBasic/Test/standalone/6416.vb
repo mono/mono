@@ -19,22 +19,16 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
         Dim s As String = "abc"
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(s)
         col.Add(s)
         col.Add(s)
-
         Return col.count
         'EndCode
     End Function
 End Class
-

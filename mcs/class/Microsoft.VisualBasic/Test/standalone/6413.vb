@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
 Public Class TestClass
     Public Function Test() As Integer
@@ -30,4 +28,3 @@ Public Class TestClass
         'EndCode
     End Function
 End Class
-

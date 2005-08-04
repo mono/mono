@@ -19,13 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
-
         Dim fn As Integer
         Dim c1 As Char
         Dim cVBCr As Char
@@ -37,16 +33,12 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6964.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
@@ -55,7 +47,8 @@ Public Class TestClass
         writeLine(fn)
         writeLine(fn, "abcd")
         FileClose(fn)
-        ' Input binary text from a file.        fn = FreeFile()
+        ' Input binary text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         FileGet(fn, c1) 'read "
         FileGet(fn, c1) 'read the first string
@@ -72,7 +65,6 @@ Public Class TestClass
         'omit output
         FileGet(fn, cVBCr) 'read the Carridge
         FileGet(fn, cVBLf) 'read the line feed
-
         FileGet(fn, c1) 'read "
         FileGet(fn, c1) 'read the second string
         str2 = str2 & c1
@@ -84,13 +76,10 @@ Public Class TestClass
         str2 = str2 & c1
         FileGet(fn, c1) 'read "
         FileClose(fn)
-
         If Asc(cVBCr) <> 13 Then Return "failed to get Carrige Return"
         If Asc(cVBLf) <> 10 Then Return "failed to get Line Feed"
         If str1 <> "1234" Then Return "failed to get fisrt string"
         If str2 <> "abcd" Then Return "failed to get second string"
-
         Return "success"
-
     End Function
 End Class

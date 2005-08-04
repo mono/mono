@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim strPathName1 As String
@@ -31,9 +28,7 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         strPathName1 = System.IO.Directory.GetCurrentDirectory() + "\data\6884\"
-
         'make directory 
         Try
              Try
@@ -41,7 +36,6 @@ Public Class TestClass
               Catch
         End Try
             MkDir(strPathName1)
-
         Catch
         End Try
         
@@ -49,16 +43,12 @@ Public Class TestClass
         fn = FreeFile()
         FileOpen(fn, strPathName1 & "6884.txt", OpenMode.Output)
         FileClose(fn)
-
         'if file exists 
         If ("6884.txt" <> Dir(strPathName1 & "6884.txt")) Then
             Return "failed"
         End If
-
         Kill(strPathName1 & "6884.txt")
         RmDir(strPathName1)
-
         Return "success"
-
     End Function
 End Class

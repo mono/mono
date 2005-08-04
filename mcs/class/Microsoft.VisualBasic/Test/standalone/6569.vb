@@ -19,22 +19,16 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim i As Integer
-
         Dim caughtException As Boolean
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
@@ -45,14 +39,19 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
-
-        '// IOException More than 255 files are in use.         caughtException = False        Try            For i = 0 To 255
+        '// IOException More than 255 files are in use. 
+        caughtException = False
+        Try
+            For i = 0 To 255
                 fn = FreeFile()
                 FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6569.txt", OpenMode.Input, , OpenShare.Shared)
             Next i
-        Catch e As IOException            If Err.Number = 67 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
+        Catch e As IOException
+            If Err.Number = 67 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
         Return "success"
     End Function
 End Class
-

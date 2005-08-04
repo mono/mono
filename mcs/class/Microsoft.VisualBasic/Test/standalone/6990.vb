@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -29,8 +27,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         Dim oDT2_1 As Boolean = True
         Dim oDT2_2 As Boolean
         Dim oDT3_1 As Byte = 1
@@ -53,24 +49,20 @@ Public Class TestClass
         Dim oDT11_2 As String
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
-
         'if this file exists - kill it
         If ("6990.txt" = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt")) Then
             Kill(System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt")
         End If
-
         fput = FreeFile()
         FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt", OpenMode.Output)
         Print(fput, oDT2_1, oDT3_1, oDT4_1, oDT5_1, oDT6_1, oDT7_1, oDT8_1, oDT9_1, oDT10_1, oDT11_1, oDT12_1)
         FileClose(fput)
-
         fget = FreeFile()
         FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt", OpenMode.Binary)
         Dim strIn As String
         strIn = Space(1000)
         FileGet(fget, strIn)
         FileClose(fget)
-
         Return strIn
     End Function
 End Class

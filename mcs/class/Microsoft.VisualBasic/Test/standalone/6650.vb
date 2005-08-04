@@ -19,14 +19,11 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
         Dim MyDateTime As Date = #1/27/2001 5:04:23 PM#
-
         'Return format(MyDateTime, "dddd, MMMM, d, yyyy")
         Return MyDateTime.Day
         'EndCode

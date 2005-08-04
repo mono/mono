@@ -19,52 +19,118 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn1 As Integer
         Dim fn2 As Integer
-
         Dim caughtException As Boolean
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         '// create the file
         fn1 = FreeFile()
         FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Append)
         FileClose(fn1)
-
-        '// Invalid Access, Share, or Mode        'caughtException = False        'Try        'Catch e As ArgumentException        '   If Err.Number = 5 Then        '       caughtException = True        '   End If        'End Try        'If caughtException = False Then return "sub test 1 failed"
-
-        '// WriteOnly file is opened for Input        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Input, OpenAccess.Write)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
-
+        '// Invalid Access, Share, or Mode
+        'caughtException = False
+        'Try
+        'Catch e As ArgumentException
+        '   If Err.Number = 5 Then
+        '       caughtException = True
+        '   End If
+        'End Try
+        'If caughtException = False Then return "sub test 1 failed"
+        '// WriteOnly file is opened for Input
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Input, OpenAccess.Write)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         '// ReadOnly file is opened for Output
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Output, OpenAccess.Read)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 3 failed"
-
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Output, OpenAccess.Read)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 3 failed"
         '// ReadOnly file is opened for Append
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Append, OpenAccess.Read)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 4 failed"
-
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Append, OpenAccess.Read)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 4 failed"
         '// Record length is negative (and not equal to -1).
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random, , , 0)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 5 failed"
-
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random, , , -2)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 6 failed"
-
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random, , , 0)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 5 failed"
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random, , , -2)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 6 failed"
         '// file number is invalid (<-1 or >255), or file number is already in use.
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(256, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)        Catch e As IOException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 7 failed"
-
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(256, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)
+        Catch e As IOException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 7 failed"
         '// FileName is already open, or FileName is invalid.
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)        Catch e As IOException            If Err.Number = 55 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 9 failed"
-
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)
+        Catch e As IOException
+            If Err.Number = 55 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 9 failed"
         '// or FileName is invalid.
-        caughtException = False        Try            fn1 = FreeFile()            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt", OpenMode.Input)        Catch e As IOException            If Err.Number = 53 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 10 failed"
-
+        caughtException = False
+        Try
+            fn1 = FreeFile()
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt", OpenMode.Input)
+        Catch e As IOException
+            If Err.Number = 53 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 10 failed"
         Return "success"
     End Function
 End Class

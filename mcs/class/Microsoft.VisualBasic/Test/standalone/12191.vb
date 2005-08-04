@@ -19,15 +19,11 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim oDT1 As Date
-
         If Not isdate(oDT1) Then Return "failed"
-
         Return "Success"
     End Function
 End Class

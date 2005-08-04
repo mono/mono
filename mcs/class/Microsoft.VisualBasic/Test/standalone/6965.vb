@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -31,8 +28,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         Dim oDT1_1(3) As String
         Dim oDT1_2(3) As String
         Dim oDT2_1 As Boolean = True
@@ -57,26 +52,20 @@ Public Class TestClass
         Dim oDT11_2 As String
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
-
         Dim strin As String
-
         oDT1_1(0) = "abc"
         oDT1_1(1) = "def"
         oDT1_1(2) = "ghi"
         oDT1_1(3) = "jkl"
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6965.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
-
         PrintLine(fn, oDT1_1)
         PrintLine(fn, oDT2_1)
         PrintLine(fn, oDT3_1)
@@ -90,7 +79,8 @@ Public Class TestClass
         PrintLine(fn, oDT11_1)
         PrintLine(fn, oDT12_1)
         FileClose(fn)
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         strin = LineInput(fn)
         If strin <> "abc           def           ghi           jkl" Then Return "failed"
@@ -117,8 +107,6 @@ Public Class TestClass
         strin = LineInput(fn)
         If strin <> "31/05/1993 " Then Return "failed"
         FileClose(fn)
-
         Return "success"
-
     End Function
 End Class

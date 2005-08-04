@@ -2,7 +2,6 @@
 '
 ' Author:
 '   Sathya Sudha (ksathyasudha@novell.com)
-
 ' Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
@@ -24,10 +23,8 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-
 Imports Microsoft.VisualBasic
 Imports System
-
 Public Class TestClass
     Public Function Test() As Integer
         Dim str1 As Integer
@@ -35,13 +32,11 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         '// create a file for the test
         Dim SourceFile As String
         SourceFile = System.IO.Directory.GetCurrentDirectory() + "/invalid.file"
 	Try 
         str1= FileLen(SourceFile)
-
 	Catch e As System.IO.FileNotFoundException 
 		Console.WriteLine("Exception raised")
 		return Err.Number
@@ -49,4 +44,3 @@ Public Class TestClass
 	return str1
     End Function
 End Class
-

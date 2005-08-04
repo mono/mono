@@ -2,7 +2,6 @@
 '
 ' Author:
 '   Roopa Wilson (rowilson@novell.com)
-
 ' Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
@@ -24,7 +23,6 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-
 Imports Microsoft.VisualBasic 
 Imports System
 Public Class TestClass 
@@ -35,7 +33,6 @@ Public Class TestClass
 			FilePut (1, "Hello", 1)
 			FilePut (1, "World", 6)
 			FileClose (1)
-
 			FileOpen(1, "5229.txt", OpenMode.Binary)
 			seek (1, 2)	
 			FileGet (1, result)

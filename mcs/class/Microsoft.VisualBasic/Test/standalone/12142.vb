@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         ' Produce overflow error
@@ -31,12 +28,9 @@ Public Class TestClass
         Dim zero As Integer = 0
         Dim result As Integer = 8 / zero
         Dim ex As SystemException
-
         Err.Clear()
-
         ex = Err.GetException
         If Not ex Is Nothing Then Return "faild to clear Err.GetException"
-
         Return "success"
     End Function
 End Class

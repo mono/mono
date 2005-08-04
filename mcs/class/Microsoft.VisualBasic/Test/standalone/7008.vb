@@ -20,7 +20,6 @@
   ' DEALINGS IN THE SOFTWARE.
   '
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As Date
         'BeginCode    

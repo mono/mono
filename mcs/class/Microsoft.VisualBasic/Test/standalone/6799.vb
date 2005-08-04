@@ -19,30 +19,39 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
-
         Dim caughtException As Boolean
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
-        '// Target file(s) open.        caughtException = False        Try            fn = FreeFile()
+        '// Target file(s) open.
+        caughtException = False
+        Try
+            fn = FreeFile()
             FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6799.txt", OpenMode.Output)
             kill(System.IO.Directory.GetCurrentDirectory() + "\data\6799.txt")
-        Catch e As IOException            If err.number = 55 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
+        Catch e As IOException
+            If err.number = 55 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
         FileClose(fn)
-        '// Target file(s) missing.        caughtException = False        Try            kill(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
-        Catch e As FileNotFoundException            If err.number = 53 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
-
+        '// Target file(s) missing.
+        caughtException = False
+        Try
+            kill(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+        Catch e As FileNotFoundException
+            If err.number = 53 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         Return "success"
     End Function
 End Class

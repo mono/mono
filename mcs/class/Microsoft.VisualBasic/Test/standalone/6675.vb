@@ -19,12 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Public Class TestClass
     Public Function Test () as String
-
         Return "not implemented yet"
-
     End Function
 End Class

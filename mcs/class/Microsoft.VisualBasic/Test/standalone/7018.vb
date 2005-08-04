@@ -2,7 +2,6 @@
 '
 ' Author:
 '   Sathya Sudha (ksathyasudha@novell.com)
-
 ' Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
@@ -24,10 +23,8 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         'BeginCod
@@ -39,7 +36,6 @@ Public Class TestClass
         DestFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
         SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/6499.txt"
         FileCopy(SourceFile, DestFile)
-
         fn = freefile
         FileOpen(fn, "data/textfile.txt", OpenMode.Input)
         FileClose(fn)

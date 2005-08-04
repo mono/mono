@@ -19,22 +19,17 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim strIn As String
         Dim strBuffer As String
-
         Dim strFileName As String
         Dim strPathName As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
@@ -45,16 +40,12 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6986.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
@@ -71,7 +62,8 @@ Public Class TestClass
         '   errornumber (variable is an object tagged as an error)
         PrintLine(fn, "#ERROR 52#")
         FileClose(fn)
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         Input(fn, strIn)
         strBuffer = strBuffer & strIn
@@ -86,7 +78,6 @@ Public Class TestClass
         Input(fn, strIn)
         strBuffer = strBuffer & strIn
         FileClose(fn)
-
         Return strBuffer
     End Function
 End Class

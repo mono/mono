@@ -19,17 +19,31 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim i As Integer
-
-        Dim caughtException As Boolean        '// Color is outside of range 0 to 15, inclusive.        caughtException = False        Try            i = QBColor(-1)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 1"        caughtException = False        Try            i = QBColor(16)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 2"
+        Dim caughtException As Boolean
+        '// Color is outside of range 0 to 15, inclusive.
+        caughtException = False
+        Try
+            i = QBColor(-1)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 1"
+        caughtException = False
+        Try
+            i = QBColor(16)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 2"
         Return "success"
-
     End Function
 End Class

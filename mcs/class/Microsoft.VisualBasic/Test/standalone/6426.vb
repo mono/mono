@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
@@ -32,20 +29,15 @@ Public Class TestClass
         Dim s4 As String = "d"
         Dim s5 As String = "e"
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(s1, "key1", Nothing, Nothing)
         col.Add(s2, "key2", 1, Nothing)
         col.Add(s3, "key3", 1, Nothing)
         col.Add(s4, "key4", "key3", Nothing)
         col.Add(s5, "key5", "key2", Nothing)
-
         If col.Count <> 5 Then Return 2
         If col(4).ToString <> "b" Then Return 4
         If col(1).ToString <> "d" Then Return 8
         If col("key2").ToString <> "b" Then Return 16
-
         Return 1
-
     End Function
 End Class
-

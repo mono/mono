@@ -19,12 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Integer
-
         Dim ReturnVal As Object
         Dim BadArg As String   ' Name of out-of-range argument.
         Dim MyCheck As Boolean
@@ -32,8 +29,6 @@ Public Class TestClass
         ReturnVal = New System.ArgumentOutOfRangeException(BadArg)
         ' ...
         MyCheck = IsError(ReturnVal)   ' Returns True.
-
         Return MyCheck
     End Function
 End Class
-

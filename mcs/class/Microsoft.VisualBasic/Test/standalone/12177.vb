@@ -19,15 +19,25 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim i As Integer
-        Dim caughtException As Boolean        caughtException = False        Try            Err.Raise(6, "test_source", "test_description", "test_helpfile", 10)        Catch ex As Exception            If Err.Number = 6 Then                caughtException = True                If Err.Source <> "test_source" Then Return "failed at raise with source"                If Err.Description <> "test_description" Then Return "failed at raise with description"                If Err.HelpFile <> "test_helpfile" Then Return "failed at raise with helpfile"                If Err.HelpContext <> 10 Then Return "failed at raise with helpcontext"            End If        End Try        If caughtException = False Then Return "failed at sub test 1"
+        Dim caughtException As Boolean
+        caughtException = False
+        Try
+            Err.Raise(6, "test_source", "test_description", "test_helpfile", 10)
+        Catch ex As Exception
+            If Err.Number = 6 Then
+                caughtException = True
+                If Err.Source <> "test_source" Then Return "failed at raise with source"
+                If Err.Description <> "test_description" Then Return "failed at raise with description"
+                If Err.HelpFile <> "test_helpfile" Then Return "failed at raise with helpfile"
+                If Err.HelpContext <> 10 Then Return "failed at raise with helpcontext"
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 1"
         Return "success"
     End Function
 End Class

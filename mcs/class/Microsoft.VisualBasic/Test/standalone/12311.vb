@@ -19,18 +19,14 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim i As Integer
         Dim str1 As String
-
         i = 4
         str1 = CStr(Choose(i, "a1", "a2", "a3"))
         If Not str1 Is Nothing Then Return "failed"
-
         Return "success"
     End Function
 End Class

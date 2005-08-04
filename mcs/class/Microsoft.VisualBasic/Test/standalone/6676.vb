@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -48,7 +46,6 @@ Public Class TestClass
             s &= FormatDateTime(d, DateFormat.LongDate)
         Next
         Return s
-
         'EndCode
     End Function
 End Class

@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As String
         'BeginCode
@@ -34,7 +31,6 @@ Public Class TestClass
         Try
             col.Add(s1, "key1")
             col.Add(s2, "key2", ,3)
-
         Catch e As ArgumentException
             Return col(1).ToString
         End Try
@@ -46,4 +42,3 @@ Public Class TestClass
         'EndCode
     End Function
 End Class
-

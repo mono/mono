@@ -19,12 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
-
 Imports Microsoft.VisualBasic
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         'BeginCode    
@@ -35,7 +31,6 @@ Public Class TestClass
         IntervalArr = [Enum].GetValues(GetType(DateInterval))
         FirstDayArr = [Enum].GetValues(GetType(FirstDayOfWeek))
         FirstWeekArr = [Enum].GetValues(GetType(FirstWeekOfYear))
-
         For Each a In IntervalArr
             For Each b In FirstDayArr
                 For Each c In FirstWeekArr

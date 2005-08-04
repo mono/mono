@@ -19,38 +19,31 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim strFileName As String
         Dim strPathName As String
-
         Dim oneChar As Char
         Dim strBuffer As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6984.txt"
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         Print(fn, "abcd")
-        FileClose(fn)        'read from the file
+        FileClose(fn)
+        'read from the file
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         strBuffer = inputString(fn, 4)
-        FileClose(fn)
+        FileClose(fn)
         Return strBuffer
     End Function
 End Class
-

@@ -19,15 +19,11 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
         Dim col As New Microsoft.VisualBasic.Collection()
-
         Dim oDT1 As Byte = 1
         Dim oDT2 As Short = 1
         Dim oDT3 As Integer = 1
@@ -40,7 +36,6 @@ Public Class TestClass
         Dim oDT10 As Boolean = True
         Dim oDT11 As Char = "c"c
         Dim oDT12 As Date = #5/31/1993#
-
         col.Add(oDT1)
         col.Add(oDT2)
         col.Add(oDT3)
@@ -53,9 +48,7 @@ Public Class TestClass
         col.Add(oDT10)
         col.Add(oDT11)
         col.Add(oDT12)
-
         Return col.Count
         'EndCode
     End Function
 End Class
-

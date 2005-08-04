@@ -19,23 +19,33 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim TextLine As String
-
         Dim caughtException As Boolean
-
-        '// file number does not exist.        caughtException = False        Try            FileAttr(256) 'file number does not exist.
-        Catch e As IOException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
+        '// file number does not exist.
+        caughtException = False
+        Try
+            FileAttr(256) 'file number does not exist.
+        Catch e As IOException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
         ''// File mode is invalid.
-        'caughtException = False        'Try        '    'not tested yet        'Catch e As IOException        'If Err.Number = 54 Then        '    caughtException = True        'End If        'End Try        'If caughtException = False Then return "sub test 2 failed"
+        'caughtException = False
+        'Try
+        '    'not tested yet
+        'Catch e As IOException
+        'If Err.Number = 54 Then
+        '    caughtException = True
+        'End If
+        'End Try
+        'If caughtException = False Then return "sub test 2 failed"
         Return "success"
     End Function
 End Class
-

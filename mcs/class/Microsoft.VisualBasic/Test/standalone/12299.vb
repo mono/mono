@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim str1 As String
@@ -32,6 +29,5 @@ Public Class TestClass
         str1 = GetSetting("MyApp", "Startup", "Left", "25")
         'DeleteSetting("MyApp")
         Return str1
-
     End Function
 End Class

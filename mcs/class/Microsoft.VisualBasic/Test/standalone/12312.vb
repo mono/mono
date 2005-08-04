@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     'The expressions in the argument list can include function calls. 
@@ -28,16 +26,12 @@ Public Class TestClass
     'the Visual Basic compiler calls every function in every expression. 
     'This means that you cannot rely on a particular function 
     'not being called if a different expression is selected by Index.
-
     Private m_str As String
-
     Public Function Test() As String
         Dim i As Integer
         Dim str1 As String
-
         i = 2
         str1 = CStr(Choose(i, foo1("a", "b"), foo2("c")))
-
         Return str1
     End Function
     Public Function foo1(ByVal val1 As String, ByVal val2 As String) As String

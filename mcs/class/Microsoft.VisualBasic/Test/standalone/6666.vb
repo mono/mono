@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -31,27 +28,20 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6666.txt"
-
         '// create a file
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Append)
         FileClose(fn)
-
         'if created file not exists - return fails
         If Not (strFileName = Dir(strPathName & strFileName)) Then
             Return "failed to create in OpenMode.Append"
         End If
-
         'if created file not exists - return fails
         If (strFileName <> Dir(strPathName & strFileName)) Then
             Return "failed to kill"
         End If
-
         Return "success"
-
     End Function
 End Class

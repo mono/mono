@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -31,8 +28,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         Dim oDT1_1(3) As String
         Dim oDT1_2(3) As String
         Dim oDT2_1 As Boolean = True
@@ -57,26 +52,20 @@ Public Class TestClass
         Dim oDT11_2 As String
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
-
         Dim strin As String
-
         oDT1_1(0) = "abc"
         oDT1_1(1) = "def"
         oDT1_1(2) = "ghi"
         oDT1_1(3) = "jkl"
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6879.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
-
         Print(fn, oDT1_1)
         Print(fn, oDT2_1)
         Print(fn, oDT3_1)
@@ -90,12 +79,12 @@ Public Class TestClass
         Print(fn, oDT11_1)
         Print(fn, oDT12_1)
         FileClose(fn)
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         strin = Space(1000)
         FileGet(fn, strin)
         FileClose(fn)
-
         If strin <> "abc           def           ghi           jklTrue 1  100  1000  100000 c 2.2  8.8  10000000 zzz31/05/1993 " Then Return "failed"
         Return "success"
     End Function

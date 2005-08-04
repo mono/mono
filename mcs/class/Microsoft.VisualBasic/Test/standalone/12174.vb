@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         On Error Resume Next
@@ -33,11 +30,9 @@ Public Class TestClass
         Dim result As Integer
         zero = 0
         result = 8 / zero
-
         i = Err.Number
         Err.Number = i + 1
         i = Err.Number
-
         Return i
     End Function
 End Class

@@ -19,12 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
-
 Imports Microsoft.VisualBasic
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         'BeginCode    
@@ -34,7 +30,6 @@ Public Class TestClass
         Dim s As String
         FirstDayArr = [Enum].GetValues(GetType(FirstDayOfWeek))
         FirstWeekArr = [Enum].GetValues(GetType(FirstWeekOfYear))
-
         For Each b In FirstDayArr
            s &= vbCrLf & DatePart(DateInterval.WeekDay, d, CType(b, FirstDayOfWeek), FirstWeekOfYear.Jan1)
         Next

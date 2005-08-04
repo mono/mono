@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         'if Output list data is DBNull, Null is written to the file
@@ -35,39 +32,31 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6880.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         Dim c As Char 'c is null
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         Print(fn, "dbnull:", DBNull.Value)
-
         ' Generate an overflow exception.
         On Error Resume Next
         Dim zero As Integer
         Dim result As Integer
         zero = 0
         result = 8 / zero
-
         Print(fn, "err object:", Err)
         FileClose(fn)
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Input)
         str2 = Space(100)
         Input(fn, str2)
         FileClose(fn)
-
         Return str2
-
     End Function
 End Class

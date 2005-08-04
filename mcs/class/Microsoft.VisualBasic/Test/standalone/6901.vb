@@ -19,13 +19,10 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Public Class TestClass
     Public Function Test () as String
         'BeginCode    
         Return Microsoft.VisualBasic.Hex(-15)
-
         'EndCode
     End Function
 End Class

@@ -19,20 +19,14 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
-
         'open and close one file
         fn = FreeFile()
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt", OpenMode.Input)
         FileClose(fn)
-
         Return "success"
-
     End Function
 End Class

@@ -19,27 +19,29 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
 Imports System.Collections
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
         Dim s() As String = {"a", "b", "c", "d"}
         Dim col As New Microsoft.VisualBasic.Collection()
         Dim e As IEnumerator
-        Dim i As Integer = 0
+        Dim i As Integer = 0
         col.Add(s(0), Nothing, Nothing, Nothing)
         col.Add(s(1), Nothing, Nothing, Nothing)
         col.Add(s(2), Nothing, Nothing, Nothing)
         col.Add(s(3), Nothing, Nothing, Nothing)
-        e = col.GetEnumerator()        If e Is Nothing Then Return 2
-        While (e.MoveNext())            If s(i).ToString <> e.Current.tostring Then Return i * 2            i = i + 1        End While
-        e.Reset()        e.MoveNext()        If s(0).ToString <> e.Current.tostring Then Return 32
+        e = col.GetEnumerator()
+        If e Is Nothing Then Return 2
+        While (e.MoveNext())
+            If s(i).ToString <> e.Current.tostring Then Return i * 2
+            i = i + 1
+        End While
+        e.Reset()
+        e.MoveNext()
+        If s(0).ToString <> e.Current.tostring Then Return 32
         Return 1
-
         'EndCode
     End Function
 End Class

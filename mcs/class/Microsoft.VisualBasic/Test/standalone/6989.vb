@@ -19,21 +19,16 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         Dim fn As Integer
         Dim str1 As String
         Dim strFileName As String
         Dim strPathName As String
-
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
@@ -44,18 +39,14 @@ Public Class TestClass
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6989.txt"
-
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Input)
         str1 = LineInput(fn)
         str1 = str1 & " " & LineInput(fn)
         FileClose(fn)
-
         Return str1
-
     End Function
 End Class

@@ -19,17 +19,13 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim SysBadName As String = "Nonsense"
         Dim MyVbName As String
-
         MyVbName = VbTypeName(SysBadName)   ' Returns Nothing.
         If Not MyVbName Is Nothing Then Return "failed"
-
         Return "success"
     End Function
 End Class

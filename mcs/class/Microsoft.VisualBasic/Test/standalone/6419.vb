@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
@@ -31,17 +28,15 @@ Public Class TestClass
         Dim s3 As String = "c"
         Dim s As String
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(s1, "key1")
         col.Add(s2, "key2")
         col.Add(s3, "key3")
-
-        If col.count <> 3 Then Return 2        'Collection class is 1-based        If col(2).tostring <> "b" Then Return 4
+        If col.count <> 3 Then Return 2
+        'Collection class is 1-based
+        If col(2).tostring <> "b" Then Return 4
         s = col("key2").tostring
         If s <> "b" Then Return 8
-
         Return 1
         'EndCode
     End Function
 End Class
-

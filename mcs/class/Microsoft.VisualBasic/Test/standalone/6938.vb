@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System
 Public Class TestClass
@@ -32,7 +30,6 @@ Public Class TestClass
         Catch Ex As Exception
             Return Err.Number
         End Try
-
         'EndCode
     End Function
 End Class

@@ -19,21 +19,17 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System
 Public Class TestClass
     Public Function Test() As String
         Try
             Dim oDT1 As NullReferenceException
-
             ' Generate an overflow exception.
             Dim zero As Integer
             Dim result As Integer
             zero = 0
             result = 8 / zero
-
         Catch ex As Exception
             Return VarType(ex)
         End Try

@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As Long
         Dim fn As Integer
@@ -33,15 +30,12 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         'create and write into file
         fn = FreeFile()
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6928.txt", OpenMode.Output)
         WriteLine(fn, "abcdefg")
         WriteLine(fn, "abcdefg")
         FileClose(fn)
-
         'read from file and check the location
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6928.txt", OpenMode.Binary)
         location = 0
@@ -51,7 +45,6 @@ Public Class TestClass
             wSum = wSum + location
         End While
         FileClose(fn)
-
         Return wSum
     End Function
 End Class

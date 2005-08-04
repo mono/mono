@@ -2,7 +2,6 @@
 '
 ' Author:
 '   Sathya Sudha (ksathyasudha@novell.com)
-
 ' Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 '
 ' Permission is hereby granted, free of charge, to any person obtaining
@@ -24,11 +23,9 @@
 ' OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ' WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As Integer
         Dim fput As Integer
@@ -41,26 +38,19 @@ Public Class TestClass
         Dim item7 As Boolean
         Dim item8 As Date
         Dim item9 As String
-
         Dim caughtException As Boolean
-
         Dim strFileName As String
         Dim strPathName As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() 
         strFileName = "/6748.txt"
-
         '// RecordNumber < 1 and not equal to -1.
         caughtException = False
         Try
             fput = FreeFile()
-
             FileOpen(fput, strPathName & strFileName, OpenMode.Random, , ,22) 
-
             FileGet(fput, item1, 1)
             FileGet(fput, item2, 2)
             FileGet(fput, item3, 3)
@@ -70,7 +60,6 @@ Public Class TestClass
             FileGet(fput, item7, 7)
             FileGet(fput, item8, 8)
             'FileGet(fput, item9, 9)
-
 	System.Console.WriteLine(item1)
 	System.Console.WriteLine(item2)
 	System.Console.WriteLine(item3)
@@ -86,10 +75,5 @@ Public Class TestClass
         End Try
 	FileClose(fput)
         Return 0
-
-
-
     End Function
-
 End Class
-

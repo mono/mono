@@ -19,35 +19,26 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
-
         Dim strFileName As String
         Dim strPathName As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = "data\"
         strFileName = "6540.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         'create the file
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Append)
         FileClose(fn)
         fn = FreeFile()
-
         'open with all modes
         FileOpen(fn, strPathName & strFileName, OpenMode.Append, OpenAccess.Default, OpenShare.Default)
         FileClose(fn)
@@ -224,8 +215,6 @@ Public Class TestClass
         FileClose(fn)
         FileOpen(fn, strPathName & strFileName, OpenMode.Random, OpenAccess.Write, OpenShare.Shared)
         FileClose(fn)
-
         Return "success"
-
     End Function
 End Class

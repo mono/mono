@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -35,8 +32,6 @@ Public Class TestClass
             
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         Dim f as FileInfo = new FileInfo( System.IO.Directory.GetCurrentDirectory() + "\data\6949.txt")
         if (f.Exists)then
             Kill(  System.IO.Directory.GetCurrentDirectory() + "\data\6949.txt") 
@@ -50,7 +45,6 @@ Public Class TestClass
         Seek(fn, 5) 'move back to position 5 
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         FileClose(fn)
-
         'read from file and check the location
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6949.txt", OpenMode.Binary)
         location = 0
@@ -62,6 +56,5 @@ Public Class TestClass
         strbuffer = Strings.Replace(strbuffer, vbCr, "")
         strbuffer = Strings.Replace(strbuffer, vbLf, "")
         Return strbuffer
-
     End Function
 End Class

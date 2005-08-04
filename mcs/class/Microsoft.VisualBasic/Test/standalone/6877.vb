@@ -19,13 +19,9 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
-
         Dim fn As Integer
         Dim c1 As Char
         Dim cVBCr As Char
@@ -35,22 +31,19 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6877.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         PrintLine(fn, "1234")
         FileClose(fn)
-        ' Input text from a file.        fn = FreeFile()
+        ' Input text from a file.
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         FileGet(fn, c1) 'read the string
         FileGet(fn, c1)
@@ -59,11 +52,8 @@ Public Class TestClass
         FileGet(fn, cVBCr) 'read the Carridge
         FileGet(fn, cVBLf) 'read the line feed
         FileClose(fn)
-
         If Asc(cVBCr) <> 13 Then Return "failed"
         If Asc(cVBLf) <> 10 Then Return "failed"
-
         Return "success"
-
     End Function
 End Class

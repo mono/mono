@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -28,7 +26,6 @@ Public Class TestClass
         Dim MySysName As String
         MySysName = SystemTypeName(VbBadName)   ' Returns Nothing.
         If Not MySysName Is Nothing Then Return "failed"
-
         Return "success"
     End Function
 End Class

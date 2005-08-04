@@ -1,3 +1,7 @@
+2005-08-04  Satya Sudha K <ksathyasudha@novell.com>
+
+	* Replaced '^M' characters with new lines (was affecting compilation of few files)
+
 2004-07-22  Sachin Kumar <skumar1@novell.com>
 
 	* Added around 700 tests written by Mainsoft

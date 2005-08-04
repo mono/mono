@@ -19,14 +19,11 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Structure MyStruct
         Dim Tel As Integer
     End Structure
-
     Public Function Test() As String
         Dim MyVarType As VariantType
         Dim oDT1 As MyStruct

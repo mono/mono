@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -37,7 +35,6 @@ Public Class TestClass
         Dim oDT11 As Char = "c"c
         Dim oDT12 As Date = #5/31/1993#
         Dim oDT13 As String = ""
-
         If Not IsNumeric(oDT1) Then Return "failed 1"
         If Not IsNumeric(oDT2) Then Return "failed 2"
         If Not IsNumeric(oDT3) Then Return "failed 3"
@@ -51,7 +48,6 @@ Public Class TestClass
         If IsNumeric(oDT11) Then Return "failed 11"
         If IsNumeric(oDT12) Then Return "failed 12"
         If IsNumeric(oDT13) Then Return "failed 13"
-
         Return "Success"
     End Function
 End Class

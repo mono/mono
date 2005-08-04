@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -32,8 +30,6 @@ Public Class TestClass
         If Not IsReference(MyString) Then Return "failed 2"
         If Not IsReference(MyObject) Then Return "failed 3"
         If IsReference(MyNumber) Then Return "failed 4"
-
         Return "Success"
     End Function
 End Class
-

@@ -19,19 +19,15 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim oCa As New Ca()
         Dim str1 As String
-
         '  Set a property.
         CallByName(oCa, "prop", CallType.Set, "New Text")
         '  Retrieve the value of a property.
         str1 = CallByName(oCa, "prop", CallType.Get)
-
         Return str1
     End Function
 End Class

@@ -19,27 +19,42 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
-
         Dim fa As FileAttribute
         Dim caughtException As Boolean
-
-        '// Pathname is invalid or contains wildcards.        caughtException = False        Try            SetAttr(System.IO.Directory.GetCurrentDirectory() + "\data\*.txt", FileAttribute.Normal)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
-
-        caughtException = False        Try            SetAttr(System.IO.Directory.GetCurrentDirectory() + "\dir_notfound\foo.txt", FileAttribute.Normal)        Catch e As DirectoryNotFoundException            If Err.Number = 76 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
-
-
+        '// Pathname is invalid or contains wildcards.
+        caughtException = False
+        Try
+            SetAttr(System.IO.Directory.GetCurrentDirectory() + "\data\*.txt", FileAttribute.Normal)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
+        caughtException = False
+        Try
+            SetAttr(System.IO.Directory.GetCurrentDirectory() + "\dir_notfound\foo.txt", FileAttribute.Normal)
+        Catch e As DirectoryNotFoundException
+            If Err.Number = 76 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         '// Target file does not exist.
-        caughtException = False        Try            SetAttr(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt", FileAttribute.Normal)        Catch e As FileNotFoundException            If Err.Number = 53 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 3 failed"
-
+        caughtException = False
+        Try
+            SetAttr(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt", FileAttribute.Normal)
+        Catch e As FileNotFoundException
+            If Err.Number = 53 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 3 failed"
         Return "success"
-
     End Function
 End Class

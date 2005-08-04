@@ -19,45 +19,69 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fget As Integer
         Dim str1 As String
         Dim caughtException As Boolean
-
         Dim strFileName As String
         Dim strPathName As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6736.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
-        '// RecordNumber < 1 and not equal to -1.        caughtException = False        Try            fget = FreeFile()
+        '// RecordNumber < 1 and not equal to -1.
+        caughtException = False
+        Try
+            fget = FreeFile()
             FileOpen(fget, strPathName & strFileName, OpenMode.Random, , , 22)
             FileGet(fget, str1, 0)
-        Catch e As ArgumentException            If Err.Number = 63 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
-        caughtException = False        Try            FileGet(fget, str1, -2)
-        Catch e As ArgumentException            If Err.Number = 63 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"        '// file number does not exist        caughtException = False        Try            FileGet(256, str1)
-        Catch e As IOException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 3 failed"        FileClose(fget)        '// File mode is invalid.        caughtException = False        Try            fget = FreeFile()
+        Catch e As ArgumentException
+            If Err.Number = 63 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
+        caughtException = False
+        Try
+            FileGet(fget, str1, -2)
+        Catch e As ArgumentException
+            If Err.Number = 63 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
+        '// file number does not exist
+        caughtException = False
+        Try
+            FileGet(256, str1)
+        Catch e As IOException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 3 failed"
+        FileClose(fget)
+        '// File mode is invalid.
+        caughtException = False
+        Try
+            fget = FreeFile()
             FileOpen(fget, strPathName & strFileName, OpenMode.Output, , , 22)
             FileGet(fget, str1)
-        Catch e As IOException            If Err.Number = 54 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 4 failed"
-
+        Catch e As IOException
+            If Err.Number = 54 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 4 failed"
         Return "success"
     End Function
 End Class
-

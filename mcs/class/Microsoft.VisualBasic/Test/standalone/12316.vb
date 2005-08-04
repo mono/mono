@@ -19,16 +19,12 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
-
     'the Visual Basic compiler calls every function in every expression. 
     'This means that you cannot rely on a particular function not being called 
     'if the other argument is selected by Expression
     Private m_value As String
-
     Public Function Test() As String
         Dim i As Integer
         i = 1001

@@ -19,23 +19,33 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim d As Date
-
         Dim caughtException As Boolean
-
-        '// PathName is invalid or contains wildcards        caughtException = False        Try            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\*.txt")
-        Catch e As ArgumentException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
-        '// Target file does not exist        caughtException = False        Try            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
-        Catch e As FileNotFoundException            If Err.Number = 53 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
+        '// PathName is invalid or contains wildcards
+        caughtException = False
+        Try
+            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\*.txt")
+        Catch e As ArgumentException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
+        '// Target file does not exist
+        caughtException = False
+        Try
+            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+        Catch e As FileNotFoundException
+            If Err.Number = 53 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         Return "success"
     End Function
 End Class
-

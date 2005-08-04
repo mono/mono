@@ -19,15 +19,12 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
         Dim s1 As String = Nothing
         Dim s2 As String = Nothing
-
         s2 = Microsoft.VisualBasic.RTrim(s1)
         Return Not CBool(s2 = "")
         'EndCode

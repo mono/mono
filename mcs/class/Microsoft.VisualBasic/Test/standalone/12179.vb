@@ -19,16 +19,32 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim i As Integer
-        Dim caughtException As Boolean        'Number is greater than 65535
-        caughtException = False        Try            Err.Raise(65536)        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 1"        'Number is greater than 513
-        caughtException = False        Try            Err.Raise(514)        Catch e As Exception            If Err.Number = 514 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 1"        Return "success"
+        Dim caughtException As Boolean
+        'Number is greater than 65535
+        caughtException = False
+        Try
+            Err.Raise(65536)
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 1"
+        'Number is greater than 513
+        caughtException = False
+        Try
+            Err.Raise(514)
+        Catch e As Exception
+            If Err.Number = 514 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 1"
+        Return "success"
     End Function
 End Class

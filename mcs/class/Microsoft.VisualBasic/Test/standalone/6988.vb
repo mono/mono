@@ -19,30 +19,22 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim strOut As String
-
         Dim strFileName As String
         Dim strPathName As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6988.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         ' Write text to file.
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
@@ -59,13 +51,20 @@ Public Class TestClass
         '   errornumber (variable is an object tagged as an error)
         Write(fn, "#ERROR 52#")
         FileClose(fn)
-        ' Input text from a file.        Dim strIn As String        Dim objIn As Object        Dim b1 As Boolean        Dim b2 As Boolean        Dim d1 As Date        Dim d2 As Date        Dim ierr1 As Integer        fn = FreeFile()
+        ' Input text from a file.
+        Dim strIn As String
+        Dim objIn As Object
+        Dim b1 As Boolean
+        Dim b2 As Boolean
+        Dim d1 As Date
+        Dim d2 As Date
+        Dim ierr1 As Integer
+        fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Input)
         Input(fn, strIn)
         If strIn <> "," Then Return "failed to input Delimiting comma"
         Input(fn, strIn)
         If strIn <> "" Then Return "failed to input blank line"
-
         Input(fn, strIn)
         If strIn <> "#NULL#" Then Return "failed to input DBNull"
         Input(fn, b1)
@@ -79,8 +78,6 @@ Public Class TestClass
         Input(fn, strIn)
         If strIn <> "#ERROR 52#" Then Return "failed to input Error Number"
         FileClose(fn)
-
         Return "success"
-
     End Function
 End Class

@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
-
 Public Class TestClass
     Public Function Test() As String
         'BeginCode
@@ -30,13 +27,16 @@ Public Class TestClass
         Dim s2 As String = "b"
         Dim s3 As String = "c"
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(s1, Nothing, Nothing, Nothing)
         col.Add(s2, Nothing, Nothing, Nothing)
         col.Add(s3, Nothing, Nothing, Nothing)
-
         Return col(2).ToString
-        '			c.Add(typeof(int), null, null, null);        '			c.Add(typeof(double), null, null, null);        '			c.Add(typeof(string), null, null, null);        '			AssertEquals("#ANK01", 3, c.Count);        '// Collection class is 1-based        'AssertEquals("#ANK02", typeof(string), c[3]);        'EndCode
+        '			c.Add(typeof(int), null, null, null);
+        '			c.Add(typeof(double), null, null, null);
+        '			c.Add(typeof(string), null, null, null);
+        '			AssertEquals("#ANK01", 3, c.Count);
+        '// Collection class is 1-based
+        'AssertEquals("#ANK02", typeof(string), c[3]);
+        'EndCode
     End Function
 End Class
-

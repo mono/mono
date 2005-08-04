@@ -19,9 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
@@ -30,7 +27,6 @@ Public Class TestClass
         myStrings(0) = "Dado"
         myStrings(1) = "Ben"
         myStrings(2) = "David"
-
         Dim result() As String = Filter(myStrings, "Da", True, CompareMethod.Binary)
         Return result(0)
         'EndCode

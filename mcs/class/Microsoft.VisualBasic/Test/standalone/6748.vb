@@ -19,46 +19,69 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fput As Integer
         Dim str1 As String
-
         Dim caughtException As Boolean
-
         Dim strFileName As String
         Dim strPathName As String
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6748.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
-        '// RecordNumber < 1 and not equal to -1.        caughtException = False        Try            fput = FreeFile()
+        '// RecordNumber < 1 and not equal to -1.
+        caughtException = False
+        Try
+            fput = FreeFile()
             FileOpen(fput, strPathName & strFileName, OpenMode.Random, , , 22)
             FilePut(fput, str1, 0)
-        Catch e As ArgumentException            If Err.Number = 63 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed to run sub test 1"
-        caughtException = False        Try            FilePut(fput, str1, -2)
-        Catch e As ArgumentException            If Err.Number = 63 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed to run sub test 2"        '// file number does not exist        caughtException = False        Try            FilePut(256, str1)
-        Catch e As IOException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed to run sub test 3"        FileClose(fput)        '// File mode is invalid.        caughtException = False        Try            fput = FreeFile()
+        Catch e As ArgumentException
+            If Err.Number = 63 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed to run sub test 1"
+        caughtException = False
+        Try
+            FilePut(fput, str1, -2)
+        Catch e As ArgumentException
+            If Err.Number = 63 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed to run sub test 2"
+        '// file number does not exist
+        caughtException = False
+        Try
+            FilePut(256, str1)
+        Catch e As IOException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed to run sub test 3"
+        FileClose(fput)
+        '// File mode is invalid.
+        caughtException = False
+        Try
+            fput = FreeFile()
             FileOpen(fput, strPathName & strFileName, OpenMode.Input, , , 22)
             FilePut(fput, str1)
-        Catch e As IOException            If Err.Number = 54 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed to run sub test 4"
-
+        Catch e As IOException
+            If Err.Number = 54 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed to run sub test 4"
         Return "success"
-
     End Function
 End Class

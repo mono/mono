@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         'If the file specified by FileName doesn't exist, 
@@ -33,16 +30,12 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
         strFileName = "6786.txt"
-
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then
             Kill(strPathName & strFileName)
         End If
-
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Append)
         FileClose(fn)
@@ -52,7 +45,6 @@ Public Class TestClass
         Else
             Return "failed to create in OpenMode.Append"
         End If
-
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Binary)
         FileClose(fn)
@@ -62,7 +54,6 @@ Public Class TestClass
         Else
             Return "failed to create in OpenMode.Binary"
         End If
-
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Output)
         FileClose(fn)
@@ -72,7 +63,6 @@ Public Class TestClass
         Else
             Return "failed to create in OpenMode.Output"
         End If
-
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Random)
         FileClose(fn)
@@ -82,8 +72,6 @@ Public Class TestClass
         Else
             Return "failed to create in OpenMode.Random"
         End If
-
         Return "success"
-
     End Function
 End Class

@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Public Class TestClass
     Public Function Test () as String
         'BeginCode    
@@ -33,7 +31,5 @@ Public Class TestClass
         'EndCode
     End Function
 End Class
-
 Class A
-
 End Class

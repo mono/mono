@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Integer
@@ -29,8 +27,6 @@ Public Class TestClass
         ' ...
         MyVar = "53"   ' Assign value.
         MyCheck = IsNumeric(MyVar)   ' Returns True.
-
         Return MyCheck
     End Function
 End Class
-

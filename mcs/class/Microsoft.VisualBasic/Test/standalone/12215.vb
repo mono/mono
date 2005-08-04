@@ -19,23 +19,17 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim oDT1 As Ca
         Dim oDT2 As Ia
-
         If Not IsReference(oDT1) Then Return "failed 1"
         If Not IsReference(oDT2) Then Return "failed 2"
-
         Return "Success"
     End Function
 End Class
 Public Class Ca
-
 End Class
 Public Interface Ia
-
 End Interface

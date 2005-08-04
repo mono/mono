@@ -19,8 +19,6 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Decimal
@@ -28,7 +26,6 @@ Public Class TestClass
         Dim j As Integer
         Dim k As Integer
         Dim d As Decimal
-
         For i = 0 To 255 Step 255
             For j = 0 To 255 Step 255
                 For k = 0 To 255 Step 255
@@ -36,7 +33,6 @@ Public Class TestClass
                 Next k
             Next j
         Next i
-
         Return d
     End Function
 End Class

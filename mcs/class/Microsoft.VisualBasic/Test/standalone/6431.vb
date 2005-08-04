@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.Collection
 Imports System.Collections
-
 Public Class TestClass
     Public Function Test() As Integer
         'BeginCode
@@ -31,14 +28,25 @@ Public Class TestClass
         Dim oDT2 As Double = 1.1
         Dim oDT3 As String = "abc"
         Dim oDT4 As String = "def"
-
         Dim col As New Microsoft.VisualBasic.Collection()
-
         col.Add(oDT1, "key1", Nothing, Nothing)
         col.Add(oDT2, "key2", Nothing, Nothing)
         col.Add(oDT3, "key3", Nothing, Nothing)
         col.Add(oDT4, "key4", Nothing, Nothing)
-        If col.Count <> 4 Then Return 2        col.Remove("key3")        If col.Count <> 3 Then Return 4        '// Collection class is 1-based        If col(3).ToString <> "def" Then Return 8        col.Remove("key1")        If col.Count <> 2 Then Return 16        If col(1).ToString <> "1.1" Then Return 32        If col(2).ToString <> "def" Then Return 64        col.Remove("key2")        If col.Count <> 1 Then Return 128        If col(1).ToString <> "def" Then Return 256        col.Remove("key4")        If col.Count <> 0 Then Return 512
+        If col.Count <> 4 Then Return 2
+        col.Remove("key3")
+        If col.Count <> 3 Then Return 4
+        '// Collection class is 1-based
+        If col(3).ToString <> "def" Then Return 8
+        col.Remove("key1")
+        If col.Count <> 2 Then Return 16
+        If col(1).ToString <> "1.1" Then Return 32
+        If col(2).ToString <> "def" Then Return 64
+        col.Remove("key2")
+        If col.Count <> 1 Then Return 128
+        If col(1).ToString <> "def" Then Return 256
+        col.Remove("key4")
+        If col.Count <> 0 Then Return 512
         Return 1
     End Function
 End Class

@@ -19,18 +19,12 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic.FileSystem
-
 Public Class TestClass
     Public Function Test() As String
-
         ChDrive("")
         ChDrive("c:\")
         ChDrive("c")
-
         Return "failed - not implemented"
-
     End Function
 End Class

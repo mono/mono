@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As Date
         Dim d As Date
@@ -30,7 +27,6 @@ Public Class TestClass
         ' Assume English/U.S. locale settings.
         ' Returns "10/12/2001 4:35:47 PM".
         d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt")
-
         Return d
     End Function
 End Class

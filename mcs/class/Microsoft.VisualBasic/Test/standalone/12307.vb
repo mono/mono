@@ -19,19 +19,25 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim i As Integer
         Dim oCa As New Ca()
         Dim str1 As String
-
-        Dim caughtException As Boolean        '// Invalid UseCallType value; must be Method, Get, or Set.        caughtException = False        Try            str1 = CallByName(oCa, "foo", 10, "val")        Catch e As ArgumentException            If Err.Number = 5 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "failed at sub test 1"        Return "success"
-
+        Dim caughtException As Boolean
+        '// Invalid UseCallType value; must be Method, Get, or Set.
+        caughtException = False
+        Try
+            str1 = CallByName(oCa, "foo", 10, "val")
+        Catch e As ArgumentException
+            If Err.Number = 5 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "failed at sub test 1"
+        Return "success"
     End Function
 End Class
 Public Class Ca

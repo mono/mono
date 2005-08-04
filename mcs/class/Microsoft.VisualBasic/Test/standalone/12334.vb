@@ -19,13 +19,10 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim str1 As String
-
         str1 = Partition(1, 0, 9, 5)
         str1 = str1 & Partition(1, 0, 9, 5)
         str1 = str1 & Partition(1, 20, 199, 10)

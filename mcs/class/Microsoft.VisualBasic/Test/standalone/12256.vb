@@ -19,17 +19,12 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As String
         Dim MyType As String
         Dim StrVar As String = "MyString"
-
         MyType = TypeName(StrVar)   ' Returns "String".
-
         Return MyType
-
     End Function
 End Class

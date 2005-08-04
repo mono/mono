@@ -19,24 +19,33 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Imports System.IO
 Imports System
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim caughtException As Boolean
-
-        '// Path is not specified or is empty.        caughtException = False        Try            MkDir("")
-        Catch e As ArgumentException            If Err.Number = 52 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 1 failed"
-
-        '// Directory already exists.        caughtException = False        Try            MkDir(System.IO.Directory.GetCurrentDirectory() + "\data")
-        Catch e As IOException            If Err.Number = 75 Then                caughtException = True            End If        End Try        If caughtException = False Then Return "sub test 2 failed"
-
+        '// Path is not specified or is empty.
+        caughtException = False
+        Try
+            MkDir("")
+        Catch e As ArgumentException
+            If Err.Number = 52 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 1 failed"
+        '// Directory already exists.
+        caughtException = False
+        Try
+            MkDir(System.IO.Directory.GetCurrentDirectory() + "\data")
+        Catch e As IOException
+            If Err.Number = 75 Then
+                caughtException = True
+            End If
+        End Try
+        If caughtException = False Then Return "sub test 2 failed"
         Return "success"
-
     End Function
 End Class

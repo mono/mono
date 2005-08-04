@@ -19,11 +19,8 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports System
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         On Error Resume Next
@@ -32,10 +29,8 @@ Public Class TestClass
         On Error Resume Next
         Dim zero As Integer
         Dim result As Integer
-
         zero = 0
         result = 8 / zero
-
         ' Assigns the exception from the Err object to myError.
         myError = Err.GetException()
         ' Displays the message associated with the exception.

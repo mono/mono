@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -34,7 +31,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
         'create and write into file
         fn = FreeFile()
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6956.txt", OpenMode.append, OpenAccess.Write)
@@ -44,7 +40,6 @@ Public Class TestClass
         Seek(fn, 15) 'move forward position 15 
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         FileClose(fn)
-
         'read from file and check the location
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6956.txt", OpenMode.Binary)
         location = 0
@@ -55,8 +50,6 @@ Public Class TestClass
         FileClose(fn)
         strbuffer = Strings.Replace(strbuffer, vbCr, "")
         strbuffer = Strings.Replace(strbuffer, vbLf, "")
-
         Return strbuffer
-
     End Function
 End Class

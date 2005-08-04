@@ -19,20 +19,15 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         ' Produce overflow error
         On Error Resume Next
         Dim zero As Integer = 0
         Dim result As Integer = 8 / zero
-
         Err.Clear()
         If Err.HelpContext <> 0 Then Return "faild to clear Err.HelpContext"
-
         Return "success"
     End Function
 End Class

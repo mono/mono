@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fput As Integer
@@ -30,8 +27,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         Dim oDT1_1(3) As String
         Dim oDT1_2(3) As String
         Dim oDT2_1 As Boolean = True
@@ -56,12 +51,10 @@ Public Class TestClass
         Dim oDT11_2 As String
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
-
         oDT1_1(0) = "abc"
         oDT1_1(1) = "def"
         oDT1_1(2) = "ghi"
         oDT1_1(3) = "jkl"
-
         fput = FreeFile()
         'output string array
         'record len = (2 + 8 * NumberOfDimensions) + (dim1 size * ... * dimN size * size of data)
@@ -80,12 +73,10 @@ Public Class TestClass
         FilePutObject(fput, oDT11_1)
         FilePutObject(fput, oDT12_1)
         FileClose(fput)
-
         oDT1_2(0) = "xxx"
         oDT1_2(1) = "xxx"
         oDT1_2(2) = "xxx"
         oDT1_2(3) = "xxx"
-
         fget = FreeFile()
         'input string array
         'record len = (2 + string size=2) * array size
@@ -103,12 +94,10 @@ Public Class TestClass
         FileGetObject(fget, oDT11_2)
         FileGetObject(fget, oDT12_2)
         FileClose(fget)
-
         If oDT1_1(0) <> oDT1_2(0) Then Return "failed"
         If oDT1_1(1) <> oDT1_2(1) Then Return "failed"
         If oDT1_1(2) <> oDT1_2(2) Then Return "failed"
         If oDT1_1(3) <> oDT1_2(3) Then Return "failed"
-
         If oDT2_1 <> oDT2_2 Then Return "failed"
         If oDT3_1 <> oDT3_2 Then Return "failed"
         If oDT4_1 <> oDT4_2 Then Return "failed"
@@ -120,8 +109,6 @@ Public Class TestClass
         If oDT10_1 <> oDT10_2 Then Return "failed"
         If oDT11_1 <> oDT11_2 Then Return "failed"
         If oDT12_1 <> oDT12_2 Then Return "failed"
-
         Return "success"
-
     End Function
 End Class

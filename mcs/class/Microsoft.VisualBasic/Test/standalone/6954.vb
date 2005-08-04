@@ -19,10 +19,7 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
-
 Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
@@ -31,8 +28,6 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-
-
         'create and write into file
         fn = FreeFile()
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6954.txt", OpenMode.Output)
@@ -40,14 +35,12 @@ Public Class TestClass
         WriteLine(fn, "0123456789")
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         FileClose(fn)
-
         'For files opened in modes other than Random mode, 
         'Seek sets the byte position at which the next operation takes place.
         FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6954.txt", OpenMode.input)
         Seek(fn, 3)   ' Move to the third character.
         Input(fn, strbuffer)
         FileClose(fn)
-
         Return strbuffer
     End Function
 End Class

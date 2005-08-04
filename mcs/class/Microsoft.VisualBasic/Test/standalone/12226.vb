@@ -19,18 +19,14 @@
   ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   ' DEALINGS IN THE SOFTWARE.
   '
-
-
 Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Decimal
         Dim i As Integer
         Dim d As Decimal
-
         For i = 0 To 15
             d = d + QBColor(i)
         Next i
-
         Return d
     End Function
 End Class
