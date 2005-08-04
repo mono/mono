@@ -1,4 +1,10 @@
 
+Thu Aug 4 19:47:24 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, mini-arch.h, inssel.brg, mini.c, mini.h,
+	jit-icalls.c, mini-codegen.c, Makefile.am: changes in
+	the generic code needed for the ARM port.
+
 Thu Aug 4 19:42:54 BST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-arm.c, tramp-arm.c, mini-arm.c, mini-arm.h, cpu-arm.md,
