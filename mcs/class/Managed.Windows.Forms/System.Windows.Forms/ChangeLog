@@ -1,6 +1,6 @@
 2005-08-04  Peter Dennis Bartok  <pbartok@novell.com> 
 
-	* Mime.cs: Compile Mono assemlby references only if compiling
+	* Mime.cs: Compile Mono assembly references only if compiling
 	  with Mono (Allows to build with VS.Net again)
 
 2005-07-28  Marek Safar  <marek.safar@seznam.cz>
