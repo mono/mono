@@ -214,6 +214,7 @@ namespace System.Windows.Forms
 		{
 			if ( ( platform == 4 ) || ( platform == 128 ) )
 			{
+#if __MonoCS__
 				// *nix platform
 				Mono.Unix.UnixFileInfo ufi = new Mono.Unix.UnixFileInfo( current_file_name );
 				
@@ -257,6 +258,7 @@ namespace System.Windows.Forms
 					global_result = "inode/fifo";
 					return true;
 				}
+#endif
 			}
 			else
 			{
