@@ -1199,6 +1199,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\MimeIcon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MonthCalendar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
