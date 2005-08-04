@@ -1,3 +1,6 @@
+2005-08-04 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* mb-parser.jay: Fix local static variables initialization
+	
 2005-07-29 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-parser.jay, expression.cs: Fixed concat operation with compound assign statements
 	* support.cs : Returning 'NullLiteral.Null', when a parameter default value is null

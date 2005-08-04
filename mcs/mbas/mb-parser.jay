@@ -3854,13 +3854,125 @@ declaration_statement
 							var.expression_or_array_initializer,
 							null, l);
 				
-				while (	!(block is MethodBlock) && (block.Parent != null) )
-					block = block.Parent;
+			   while ( !(block is MethodBlock) && (block.Parent != null) )
+			      block = block.Parent;
 					
-				field.Name = @"$STATIC$" + ((MethodBlock) block).MethodName + @"$" + ((Location) $2).Row + @"$" + field.Name;
-				CheckDef (current_container.AddField (field), field.Name, l);
-				var.Alias = field.Name;
-				var.Static = true;
+			   field.Name = @"$STATIC$" + ((MethodBlock) block).MethodName + @"$" + ((Location) $2).Row + @"$" + field.Name;
+			   CheckDef (current_container.AddField (field), field.Name, l);
+			   var.Alias = field.Name;
+			   var.Static = true;
+
+			   //To do initialization only once.
+			   if( var.expression_or_array_initializer != null ) { //Like: Static a as Integer = 10
+		
+			      //Declare StaticLocalInitFlag Field.
+			      Expression init = DecomposeQI ("Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag", l);
+			      init = (Expression) new New (init, null, l);
+			
+			      Field field_init = new Field ( ((New)init).RequestedType  , mod, var.identifier, init, null, l);
+			      field_init.Name = field.Name+@"$Init";
+			      CheckDef (current_container.AddField (field_init), field_init.Name, l);
+
+			      //Declare If statement, to verify if the static variable was initialized.
+			      //If( ((Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag) localStaticvar).State != 1)
+			      Expression left = DecomposeQI (field_init.Name + ".State", l);
+			      Expression right = (Expression) new IntLiteral (1);
+			      Expression boolean_expression = new Binary (Binary.Operator.Inequality, left, right, l);
+			      boolean_expression = SetValueRequiredFlag (boolean_expression);
+			      start_block();
+			        
+			         //Then
+			         left = DecomposeQI (field_init.Name, l);
+			         ArrayList list = new ArrayList ();
+			         list.Add ( new Argument (left, Argument.AType.Expression) );
+				
+			         left = DecomposeQI ("System.Threading.Monitor.Enter", l);
+			         StatementExpression stex = new StatementExpression (
+								(ExpressionStatement)new Invocation (left, list, l),
+								l);
+			         current_block.AddStatement ((Statement) stex );
+
+
+			         //Try
+				 start_block();
+
+  				    //IF ( localStaticvar$Init.State == 0 )
+				    left = DecomposeQI (field_init.Name + ".State", l);
+		                    right = (Expression) new IntLiteral (0);
+				    Expression boolean_expression2 = new Binary (Binary.Operator.Equality, left, right, l);
+				    boolean_expression2 = SetValueRequiredFlag (boolean_expression2);
+				    start_block();
+
+				       //  localStaticvar$Init.State = 1
+				       left = DecomposeQI (field_init.Name + ".State", l);
+			               right = (Expression) new IntLiteral (2);
+				       ExpressionStatement assign = (ExpressionStatement) new Assign (left, right, l);
+				       stex = new StatementExpression (assign, l);
+				       current_block.AddStatement ((Statement) stex );
+											
+				       // localStaticvar = initvalue
+				       left = DecomposeQI (field.Name, l);
+				       assign = (ExpressionStatement) new Assign (left, (Expression) var.expression_or_array_initializer , l);
+				       stex = new StatementExpression (assign, l);
+				       current_block.AddStatement ((Statement) stex );
+			
+				       var.expression_or_array_initializer = null;
+
+				    //Else
+				    tmp_block = end_block();
+				    start_block();
+  					
+				       //IF ( localStaticvar$Init.State == 2 )
+				       left = DecomposeQI (field_init.Name + ".State", l);
+		                           right = (Expression) new IntLiteral (2);
+				   	   Expression boolean_expression3 = new Binary (Binary.Operator.Equality, left, right, l);
+					   boolean_expression3 = SetValueRequiredFlag (boolean_expression3);
+					   start_block();
+					   
+					   //THROW New Microsoft.VisualBasic.CompilerServices.IncompleteInitialization()
+			                   left = DecomposeQI ("Microsoft.VisualBasic.CompilerServices.IncompleteInitialization", l);
+			                   left = (Expression) new New (left, null, l);
+					   Statement stmt = (Statement) new Throw (left, l);
+					    current_block.AddStatement (stmt);
+
+					//End If
+					stmt = (Statement) new If (boolean_expression3, (Statement) end_block(), l);
+					current_block.AddStatement (stmt);
+					
+				    //End If
+				    stmt = (Statement) new If (boolean_expression2, (Statement) tmp_block, (Statement) end_block(), l);
+			            current_block.AddStatement (stmt);
+
+			 	 //End Try
+				 tmp_block = end_block();
+
+				 //Finally
+				 start_block();
+				 // ((Microsoft.VisualBasic.CompilerServices.StaticLocalInitFlag) localStaticvar).State = 1
+				 left = DecomposeQI (field_init.Name + ".State", l);
+		                 right = (Expression) new IntLiteral (1);
+				 assign = (ExpressionStatement) new Assign (left, right, l);
+				 stex = new StatementExpression (assign, l);
+				 current_block.AddStatement ((Statement) stex );
+
+				    // System.Threading.Monitor.Exit( field$Init )
+				    left = DecomposeQI (field_init.Name, l);
+				    list.Clear();
+				    list.Add ( new Argument (left, Argument.AType.Expression) );
+				    left = DecomposeQI ("System.Threading.Monitor.Exit", l);
+				    stex = new StatementExpression (
+						(ExpressionStatement)new Invocation (left, list, l),
+						l);
+				    current_block.AddStatement ((Statement) stex );
+
+				 //End Finally
+				 stmt =  (Statement) new Try ((Block) tmp_block, new ArrayList(), null, (Block) end_block(), l);
+				 current_block.AddStatement (stmt);
+			
+			      //End If
+			      stmt = (Statement) new If (boolean_expression, (Statement) end_block(), l);
+			      current_block.AddStatement (stmt);
+			   }
 			}
 		
 			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, (Location) $2);
