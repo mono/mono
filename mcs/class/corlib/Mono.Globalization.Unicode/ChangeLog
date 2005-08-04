@@ -1,3 +1,10 @@
+2005-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-normalization-tests.cs,
+	  StringNormalizationTestSource.cs : new files for Unicode
+	  Normalization test generator.
+	* Makefile : added support for above.
+
 2005-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NormalizationTableUtil.cs : oops, it does not compile.

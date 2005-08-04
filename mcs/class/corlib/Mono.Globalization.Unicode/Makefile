@@ -1,5 +1,6 @@
 RUNTIME = mono --debug
 CSCOMPILE = mcs -debug+
+CS2COMPILE = gmcs -debug+
 
 UCD_TABLE = downloaded/UnicodeData.txt
 UCA_TABLE = downloaded/allkeys.txt
@@ -10,24 +11,32 @@ SCRIPTS_TABLE = downloaded/Scripts.txt
 CB_CLASS_TABLE = downloaded/DerivedCombiningClass.txt
 CP932_TABLE = downloaded/CP932.TXT
 UCA_DATA = downloaded/core.zip
+NORM_TEST = downloaded/NormalizationTest.txt
 
 NORMGEN_FILENAME = create-normalization-source
 COLL_ELEM_FILENAME = create-collation-element-table
 MSTABLEGEN = create-mscompat-collation-table
 MSCOMPAT_FILENAME = MSCompatUnicodeTableGenerated.cs
 NORM_FILENAME = NormalizationGenerated.cs
+NORM_TEST_CS = StringNormalizationTest.cs
+NORM_TESTGEN = create-normalization-tests
 
 all : collation normalization
+
+test : norm-test
 
 normalization: $(NORM_FILENAME)
 
 collation : $(MSCOMPAT_FILENAME)
 
+norm-test : $(NORM_TEST_CS)
+	$(CS2COMPILE) $(NORM_TEST_CS) -d:TEST_STANDALONE
+
 distclean :
 	make clean
-	rm $(UCA_TABLE) $(NORM_TABLE) $(CB_CLASS_TABLE) $(CP932_TABLE) $(DERIV_CORE_PROP_TABLE) $(SCRIPTS_TABLE)
+	rm $(UCA_TABLE) $(NORM_TABLE) $(CB_CLASS_TABLE) $(CP932_TABLE) $(DERIV_CORE_PROP_TABLE) $(SCRIPTS_TABLE) $(NORM_TEST)
 
-clean : clean-collation clean-normalization clean-mscompat
+clean : clean-collation clean-normalization clean-mscompat clean-normtest
 
 clean-collation :
 	rm -f CollationElementTable.cs $(COLL_ELEM_FILENAME).exe* ../collation.*.bin
@@ -38,6 +47,8 @@ clean-normalization :
 clean-mscompat :
 	rm -f $(MSCOMPAT_FILENAME) $(MSTABLEGEN).exe*
 
+clean-normtest :
+	rm -f $(NORM_TEST_CS) $(NORM_TESTGEN).exe*
 
 # collation element table
 CollationElementTable.cs : $(COLL_ELEM_FILENAME).exe CollationElementTable.template $(UCA_TABLE)
@@ -81,6 +92,8 @@ CREATE_MSCOMPAT_TABLE_SOURCES = \
 	CollationElementTable.cs \
 	CollationElementTableUtil.cs \
 	MSCompatUnicodeTableUtil.cs
+
+#wgets
 
 $(UCD_TABLE) :
 	wget www.unicode.org/Public/UNIDATA/UnicodeData.txt
@@ -133,6 +146,11 @@ $(UCA_DATA) :
 	mv core.zip common downloaded
 	touch core.zip
 
+$(NORM_TEST) :
+	wget wget http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
+	mv NormalizationTest.txt downloaded/
+	touch downloaded/NormalizationTest.txt
+
 
 #MSCompatUnicodeTableGenerated.cs
 
@@ -146,3 +164,10 @@ $(MSCOMPAT_FILENAME) : MSCompatUnicodeTable.cs CollationElementTable.cs $(MSTABL
 
 sample : 
 	$(CSCOMPILE) normtest.cs $(NORM_FILENAME) NormalizationTableUtil.cs CodePointIndexer.cs
+
+#StringNormalizationTest.cs
+
+$(NORM_TEST_CS) : StringNormalizationTestSource.cs $(NORM_TESTGEN).cs
+	$(CSCOMPILE) $(NORM_TESTGEN).cs
+	$(RUNTIME) ./$(NORM_TESTGEN).exe > $(NORM_TEST_CS)
+
