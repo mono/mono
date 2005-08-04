@@ -1,3 +1,9 @@
+
+Thu Aug 4 20:09:40 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: a real zombie is supposed to at least walk.
+	Compilation fix.
+
 2005-03-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* transform.c (generate): Add CEE_MONO_NOT_TAKEN.
