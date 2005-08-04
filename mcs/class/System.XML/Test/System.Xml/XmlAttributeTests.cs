@@ -331,5 +331,19 @@ namespace MonoTests.System.Xml
 			// it should not be tested.
 			// doc.Save (TextWriter.Null);
 		}
+
+		[Test]
+		public void SetValueAndEntityRefChild ()
+		{
+			string dtd = @"<!DOCTYPE root [
+				<!ELEMENT root EMPTY>
+				<!ATTLIST root foo CDATA #IMPLIED>
+				<!ENTITY ent 'entityyyy'>
+				]>";
+			string xml = dtd + "<root foo='&ent;' />";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			doc.DocumentElement.Attributes [0].Value = "replaced";
+		}
 	}
 }

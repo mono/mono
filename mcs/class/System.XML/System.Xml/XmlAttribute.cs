@@ -226,15 +226,17 @@ namespace System.Xml
 			set {
 				if (this.IsReadOnly)
 					throw new ArgumentException ("Attempt to modify a read-only node.");
-				XmlNode firstChild = FirstChild;
-				if (firstChild == null)
+				XmlNode textChild = FirstChild as XmlCharacterData;
+				if (textChild == null) {
+					this.RemoveAll ();
 					AppendChild (OwnerDocument.CreateTextNode (value));
+				}
 				else if (FirstChild.NextSibling != null) {
 					this.RemoveAll ();
 					AppendChild (OwnerDocument.CreateTextNode (value));
 				}
 				else
-					firstChild.Value = value;
+					textChild.Value = value;
 				isDefault = false;
 			}
 		}

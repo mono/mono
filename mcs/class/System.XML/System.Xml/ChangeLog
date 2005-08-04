@@ -1,3 +1,9 @@
+2005-08-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : When there was only one child in attribute
+	  and it was an entity reference, set_Value() tried to set text value
+	  and thus failed.
+
 2005-08-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlConvert.cs: Renamed RoundTripKind to RoundtripKind.

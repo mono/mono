@@ -1,3 +1,8 @@
+2005-08-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttributeTests.cs : Test if set_Value() works in such cases that
+	  there was only one child in attribute and it was an entity reference.
+
 2005-07-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReaderTests.cs : added test case for duplicating
