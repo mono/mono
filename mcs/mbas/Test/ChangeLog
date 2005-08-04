@@ -1,3 +1,7 @@
+2005-08-04 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* misc/RedimPreserve.vb : Refactored printing code and now test redimensioning 
+		multiple arrays in the same statement (previously not working)
+
 2005-07-08 Satya Sudha K <ksathyasudha@novell.com>
 	* Few testcases for Properties
 
