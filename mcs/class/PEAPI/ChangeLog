@@ -1,3 +1,14 @@
+2005-08-05  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (TypeAttr): Add HasSecurity.
+	  (MethAttr): Likewise.
+	  (SecurityAction): New enum.
+	  (DeclSecurity.ctor): Add 'byte []' as the third parameter.
+	  (DeclSecurity.BuildTables): Write the byte array to the blob.
+	  (MetaData.AddDeclSecurity): Add DeclSecurity to declsec_list.
+	  (MetaData.BuildMetaData): Call BuildTables for declsec_list members.
+	  (PEFile.AddDeclSecurity): New. Add DeclSecurity to metaData.
+
 2005-04-30  Ankit Jain  <ankit@corewars.org>
 
 	* PEAPI.cs (InterfaceImpl.SortKey): New.

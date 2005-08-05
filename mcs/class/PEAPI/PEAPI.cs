@@ -575,7 +575,7 @@ namespace PEAPI
     Abstract = 0x80, PublicAbstract = 0x81, Sealed = 0x100, 
     PublicSealed = 0x101, SpecialName = 0x400, RTSpecialName = 0x800, 
     Import = 0x1000, Serializable = 0x2000, UnicodeClass = 0x10000,
-    AutoClass = 0x20000, BeforeFieldInit = 0x100000 }
+    AutoClass = 0x20000, HasSecurity = 0x40000, BeforeFieldInit = 0x100000 }
 
   /// <summary>
   /// Attributes for a field
@@ -594,7 +594,7 @@ namespace PEAPI
     PrivateVirtual, PublicVirtual = 0x0046, HideBySig = 0x0080, 
     NewSlot = 0x0100, Abstract = 0x0400, SpecialName = 0x0800,
     RTSpecialName = 0x1000, SpecialRTSpecialName = 0x1800, 
-    RequireSecObject = 0x8000}
+    HasSecurity = 0x4000, RequireSecObject = 0x8000}
 
   /// <summary>
   /// Attributes for .pinvokeimpl method declarations
@@ -704,6 +704,28 @@ namespace PEAPI
     TypeOrMethodDef, MaxCIx }
 
   internal enum MapType { eventMap, propertyMap, nestedClass }
+
+  /* Taken from Mono.Cecil */
+  public enum SecurityAction : short {
+	Request = 1,
+	Demand = 2,
+	Assert = 3,
+	Deny = 4,
+	PermitOnly = 5,
+	LinkDemand = 6,
+	InheritDemand = 7,
+	RequestMinimum = 8,
+	RequestOptional = 9,
+	RequestRefuse = 10,
+	PreJitGrant = 11,
+	PreJitDeny = 12,
+	NonCasDemand = 13,
+	NonCasLinkDemand = 14,
+	NonCasInheritance = 15,
+	LinkDemandChoice = 16,
+	InheritDemandChoice = 17,
+	DemandChoice = 18
+ }
 
   /**************************************************************************/  
         /// <summary>
@@ -1758,7 +1780,6 @@ namespace PEAPI
         /// 
         public class ClassDef : Class
         {
-    private static readonly uint HasSecurity = 0x00040000;
     private static readonly byte ElementType_Class = 0x12;
 
     Class superType;
@@ -2772,7 +2793,7 @@ namespace PEAPI
   }
   /**************************************************************************/  
   /// <summary>
-  /// Descriptor for security permissions for a class or a method NOT YET IMPLEMENTED
+  /// Descriptor for security permissions for a class or a method
   /// </summary>
         
         public class DeclSecurity : MetaDataElement
@@ -2780,12 +2801,13 @@ namespace PEAPI
     ushort action;
     MetaDataElement parent;
     uint permissionIx;
+    byte [] byteVal;
 
-                internal DeclSecurity(MetaDataElement paren, ushort act)        {
+                internal DeclSecurity(MetaDataElement paren, ushort act, byte [] val)        {
       parent = paren;
       action = act;
       tabIx = MDTable.DeclSecurity;
-      throw(new NotYetImplementedException("Security "));
+      byteVal = val;
                 }
 
     internal override uint SortKey() {
@@ -2799,7 +2821,12 @@ namespace PEAPI
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
-// add permission to blob heap
+      BinaryWriter bw = new BinaryWriter (new MemoryStream ());
+      bw.Write (byteVal);
+      md.AddToTable (MDTable.DeclSecurity, this);
+      MemoryStream str = (MemoryStream)bw.BaseStream;
+      permissionIx = md.AddToBlobHeap(str.ToArray());
+
       done = true;
     }
 
@@ -4592,6 +4619,7 @@ if (rsrc != null)
     private TypeSpec[] systemTypeSpecs = new TypeSpec[PrimitiveType.NumSystemTypes];
     long mdStart;
                 private ArrayList cattr_list;
+                private ArrayList declsec_list;
     ArrayList resources;            
                 
     internal MetaData(FileImage file) {
@@ -4722,6 +4750,13 @@ if (rsrc != null)
                         if (cattr_list == null)
                                 cattr_list = new ArrayList ();
                         cattr_list.Add (cattr);
+                }
+		
+		internal void AddDeclSecurity (DeclSecurity decl_sec)
+                {
+                        if (declsec_list == null)
+                                declsec_list = new ArrayList ();
+                        declsec_list.Add (decl_sec);
                 }
 
     private ArrayList GetTable(MDTable tableIx) {
@@ -4971,6 +5006,11 @@ CalcHeapSizes ();
       if (cattr_list != null) {
               foreach (CustomAttribute cattr in cattr_list)
                       cattr.BuildTables (this);
+      }
+      
+      if (declsec_list != null) {
+              foreach (DeclSecurity decl_sec in declsec_list)
+                      decl_sec.BuildTables (this);
       }
 
 /*      for (int i=0; i < metaDataTables.Length; i++) {
@@ -6559,6 +6599,11 @@ CalcHeapSizes ();
     public void AddCustomAttribute (Method meth, byte [] data, MetaDataElement element)
     {
             metaData.AddCustomAttribute (new CustomAttribute (element, meth, data));
+    }
+    
+    public void AddDeclSecurity (SecurityAction sec_action, byte [] data, MetaDataElement element)
+    {
+            metaData.AddDeclSecurity (new DeclSecurity (element, (ushort) sec_action, data));
     }
 
     /// <summary>
