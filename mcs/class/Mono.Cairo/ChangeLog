@@ -1,3 +1,6 @@
+2005-08-5 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+        * Cleanup all old methods, remove deprecated classes
+	
 2005-07-12 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 	* General fixups, this is becoming ready for SVN
 

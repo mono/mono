@@ -67,15 +67,8 @@ namespace Cairo {
                 // Modify state
                 //
                 [DllImport (CairoImp)]
-                public static extern void cairo_set_target_surface (IntPtr cr, IntPtr surface);
-                                
-                [DllImport (CairoImp)]
-                public static extern void cairo_set_target_image (
-                        IntPtr cr, string data, Cairo.Format format, int width, int height, int stride);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_set_target_drawable (
-								     IntPtr ct, IntPtr display, IntPtr drawable);
+                public static extern IntPtr cairo_image_surface_create_for_data (
+                        IntPtr data, Cairo.Format format, int width, int height, int stride);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_operator (IntPtr cr, Cairo.Operator op);
@@ -88,6 +81,9 @@ namespace Cairo {
 				
                 [DllImport (CairoImp)]
                 public static extern void cairo_set_source (IntPtr cr, IntPtr pattern);
+		
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_get_source (IntPtr cr);
 
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_tolerance (IntPtr cr, double tolerance);
@@ -120,28 +116,25 @@ namespace Cairo {
                 public static extern void cairo_rotate (IntPtr cr, double angle);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_concat_matrix (IntPtr cr, IntPtr matrix);                
+                public static extern void cairo_transform (IntPtr cr, out Matrix_T matrix);
                 
                 [DllImport (CairoImp)]
                 public static extern void cairo_set_matrix (IntPtr cr, Matrix_T matrix);
                 
                 [DllImport (CairoImp)]
-                public static extern void cairo_default_matrix (IntPtr cr);
-
-                [DllImport (CairoImp)]
                 public static extern void cairo_identity_matrix (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_transform_point (IntPtr cr, out double x, out double y);
+                public static extern void cairo_user_to_device (IntPtr cr, out double x, out double y);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_transform_distance (IntPtr cr, out double dx, out double dy);
+                public static extern void cairo_user_to_device_distance (IntPtr cr, out double dx, out double dy);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_inverse_transform_point (IntPtr cr, out double x, out double y);
+                public static extern void cairo_device_to_user (IntPtr cr, out double x, out double y);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_inverse_transform_distance (IntPtr cr, out double dx, out double dy);		
+                public static extern void cairo_device_to_user_distance (IntPtr cr, out double dx, out double dy);
 		
                 //
                 // Path creation
@@ -285,13 +278,6 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_glyph_path (IntPtr ct, IntPtr glyphs, int num_glyphs);
-
-
-                // Cairo's font manipulation platform-specific Unix Fontconfig/Freetype interface
-
-                [DllImport (CairoImp)]
-                public static extern IntPtr cairo_ft_font_create (IntPtr ft_library, IntPtr ft_pattern);
-
         
                 //
                 // Image
@@ -311,8 +297,6 @@ namespace Cairo {
 		[DllImport (CairoImp)]
                 public static extern int cairo_image_surface_get_height (IntPtr surface);
 		
-
-
                 //
                 // query
                 //
@@ -329,32 +313,29 @@ namespace Cairo {
 		public static extern double cairo_get_tolerance (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern void cairo_current_point (
+		public static extern void cairo_get_current_point (
                         IntPtr cr, out double x, out double y);
 
 		[DllImport (CairoImp)]
 		public static extern Cairo.FillRule cairo_get_fill_rule (IntPtr cr);
 
                 [DllImport (CairoImp)]
-		public static extern double cairo_current_line_width (IntPtr cr);
+		public static extern double cairo_get_line_width (IntPtr cr);
 
                 [DllImport (CairoImp)]
 		public static extern LineCap cairo_current_line_cap (IntPtr cr);
 
        		[DllImport (CairoImp)]
-		public static extern LineJoin cairo_current_line_join (IntPtr cr);
+		public static extern LineJoin cairo_get_line_join (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_current_miter_limit (IntPtr cr);
+		public static extern double cairo_get_miter_limit (IntPtr cr);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_get_matrix (IntPtr cr, Matrix_T matrix);
 
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_get_target (IntPtr cr);
-
-		[DllImport (CairoImp)]
-                public static extern IntPtr cairo_current_pattern (IntPtr cr);		
 		
                 //
                 // Error status queries
@@ -386,7 +367,7 @@ namespace Cairo {
 								       double x, double y);
 
                 [DllImport (CairoImp)]                
-                public static extern IntPtr cairo_surface_create_for_image (
+                public static extern IntPtr cairo_image_surface_create_for_data (
                         string data, Cairo.Format format, int width, int height, int stride);
 
                 [DllImport (CairoImp)]
@@ -409,22 +390,6 @@ namespace Cairo {
                 [DllImport (CairoImp)]                
                 public static extern void cairo_surface_destroy (IntPtr surface);
 
-                [DllImport (CairoImp)]                
-                public static extern Cairo.Status cairo_surface_set_repeat (
-                        IntPtr surface, int repeat);
-
-                [DllImport (CairoImp)]                
-                public static extern Cairo.Status cairo_surface_set_matrix (
-                        IntPtr surface, IntPtr matrix);
-
-                [DllImport (CairoImp)]                
-                public static extern Cairo.Status cairo_surface_get_matrix (
-                        IntPtr surface, out IntPtr matrix);
-
-                [DllImport (CairoImp)]                
-                public static extern Cairo.Status cairo_surface_set_filter (
-                        IntPtr surface, Cairo.Filter filter);
-		
                 //
                 // Matrix
                 //
@@ -441,7 +406,7 @@ namespace Cairo {
                 public static extern void cairo_matrix_translate (ref Matrix_T matrix,
 							 double tx, double ty);
 		
-                [DllImport (CairoImp)]                
+                [DllImport (CairoImp)]
                 public static extern void cairo_matrix_init_identity (ref Matrix_T matrix);
 
                 [DllImport (CairoImp)]                
@@ -476,12 +441,6 @@ namespace Cairo {
                 [DllImport (CairoImp)]                                
                 public static extern void cairo_matrix_transform_point (
                         ref Matrix_T matrix, ref double x, ref double y);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_set_font (IntPtr ct, IntPtr font);
-
-                [DllImport (CairoImp)]
-                public static extern IntPtr cairo_current_font (IntPtr ct);
 
                 //
                 // Pattern functions
@@ -544,48 +503,6 @@ namespace Cairo {
                 public static extern Status cairo_pattern_status (IntPtr pattern);
 
         }
-
-        //
-        // Freetype interface need it by cairo_ft interface calls
-        //
-        public class FreeType
-        {
-                internal const string FreeTypeImp = "freetype";
-
-                [DllImport (FreeTypeImp)]
-                public static extern int FT_Init_FreeType (out IntPtr library);
-
-                [DllImport (FreeTypeImp)]
-                public static extern int FT_Set_Char_Size (IntPtr face, long width, long height, uint horz_res, uint vert_res);
-        }
-
-   
-        //
-        // Fontconfig interface need it by cairo_ft interface calls
-        //
-        public class FontConfig
-        {
-                internal const string FontConfigImp = "fontconfig";
-
-                public const string FC_FAMILY = "family";
-                public const string FC_STYLE = "style";
-                public const string FC_SLANT = "slant";
-                public const string FC_WEIGHT = "weight";
-
-                [DllImport (FontConfigImp)]
-                public static extern bool FcPatternAddString (IntPtr pattern, string obj, string value);
-
-                [DllImport (FontConfigImp)]
-                public static extern bool FcPatternAddInteger (IntPtr pattern, string obj, int value);
-
-                [DllImport (FontConfigImp)]
-                public static extern IntPtr FcPatternCreate ();
-
-                [DllImport (FontConfigImp)]
-                public static extern bool FcPatternDestroy (IntPtr pattern); 
-                
-        }
-
 
         //
         // Enumerations

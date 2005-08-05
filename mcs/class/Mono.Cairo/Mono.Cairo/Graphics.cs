@@ -216,7 +216,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_current_line_width (state);
+                                return CairoAPI.cairo_get_line_width (state);
                         }
                 }
 
@@ -236,7 +236,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_current_line_join (state);
+                                return CairoAPI.cairo_get_line_join (state);
                         }
                 }
 
@@ -244,16 +244,16 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_set_dash (state, dashes, ndash, offset);
                 }
-
+		
                 public Pattern Pattern {
                         set {
                                 CairoAPI.cairo_set_source (state, value.Pointer);
                         }
 			
 			get {
-				return new Pattern (CairoAPI.cairo_current_pattern (state));
+				return new Pattern (CairoAPI.cairo_get_source (state));
 			}
-                }
+                }		
 		
                 public Pattern Source {
                         set {
@@ -261,9 +261,9 @@ namespace Cairo {
                         }
 			
 			get {
-				return new Pattern (CairoAPI.cairo_current_pattern (state));
+				return new Pattern (CairoAPI.cairo_get_source (state));
 			}
-                }		
+                }
 
                 public double MiterLimit {
                         set {
@@ -271,14 +271,14 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_current_miter_limit (state);
+                                return CairoAPI.cairo_get_miter_limit (state);
                         }
                 }
 
                 public PointD CurrentPoint {
                         get {
                                 double x, y;
-                                CairoAPI.cairo_current_point (state, out x, out y);
+                                CairoAPI.cairo_get_current_point (state, out x, out y);
                                 return new PointD (x, y);
                         }
                 }
@@ -407,12 +407,12 @@ namespace Cairo {
                 public void SetTargetImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
-                        CairoAPI.cairo_set_target_image (state, data, format, width, height, stride);
+                        CairoAPI.cairo_image_surface_create_for_data (data, format, width, height, stride);
                 }
 
-		public void SetTargetDrawable (IntPtr dpy, IntPtr drawable)
+		public void SetTargetDrawable (IntPtr dpy, IntPtr drawable, IntPtr visual, int width, int height)
 		{
-			CairoAPI.cairo_set_target_drawable (state, dpy, drawable);
+			CairoAPI.cairo_xlib_surface_create (dpy, drawable, visual, width, height);
 		}
 #endregion
 
@@ -435,7 +435,7 @@ namespace Cairo {
                 {
 			get {
 				double x; double y;				
-				CairoAPI.cairo_transform_point (state, out x, out y);
+				CairoAPI.cairo_user_to_device (state, out x, out y);
 				return new PointD(x, y);
 			}
                 }
@@ -444,7 +444,7 @@ namespace Cairo {
                 {
 			get {
 				double dx; double dy;
-				CairoAPI.cairo_transform_distance (state, out dx, out dy);
+				CairoAPI.cairo_user_to_device_distance (state, out dx, out dy);
 				return new Distance(dx, dy);
 			}
                 }
@@ -453,7 +453,7 @@ namespace Cairo {
                 {
 			get {
 				double x; double y;
-				CairoAPI.cairo_inverse_transform_point (state, out x, out y);
+				CairoAPI.cairo_device_to_user (state, out x, out y);
 				return new PointD (x, y);
 			}
                 }
@@ -462,7 +462,7 @@ namespace Cairo {
                 {
 			get {
 				double dx; double dy;
-				CairoAPI.cairo_inverse_transform_distance (state, out dx, out dy);
+				CairoAPI.cairo_device_to_user_distance (state, out dx, out dy);
 				return new Distance (dx, dy);
 			}
                 }

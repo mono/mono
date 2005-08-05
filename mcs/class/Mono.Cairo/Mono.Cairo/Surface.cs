@@ -105,7 +105,7 @@ namespace Cairo {
                 public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
-                        IntPtr p = CairoAPI.cairo_surface_create_for_image (
+                        IntPtr p = CairoAPI.cairo_image_surface_create_for_data (
                                 data, format, width, height, stride);
                         
                         return new Cairo.Surface (p, true);
@@ -177,12 +177,6 @@ namespace Cairo {
                         get { return surface; }
                 }
 
-                public int Repeat {
-                        set {
-                                CairoAPI.cairo_surface_set_repeat (surface, value);
-                        } 
-                }
-		
 		public PointD DeviceOffset {
 			set { CairoAPI.cairo_surface_set_device_offset (surface,
 								    value.X,
@@ -190,12 +184,6 @@ namespace Cairo {
 			}
 		}
 		
-                public Cairo.Filter Filter {
-                        set {
-                                CairoAPI.cairo_surface_set_filter (surface, value);
-                        }
-                }
-
 		public void Destroy()
 		{
 			CairoAPI.cairo_surface_destroy (surface);
@@ -204,8 +192,6 @@ namespace Cairo {
                 public IntPtr Pointer {
                         get { return surface; }
                 }
-
-
 
         }
 }
