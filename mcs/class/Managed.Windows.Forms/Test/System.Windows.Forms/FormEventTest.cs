@@ -14,7 +14,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Globalization;
 
-namespace FormEvent
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class FormEvent
@@ -24,8 +24,8 @@ namespace FormEvent
 		{
 			eventhandled = true;
 		}
-	
-		[Test]
+
+		[Test, Ignore ("Manual Intervention")]
 		public void ActivatedTest ()
 		{
 			Form myform = new Form ();
@@ -35,7 +35,7 @@ namespace FormEvent
 			Assert.AreEqual (true, eventhandled, "#A1");
 		}
 
-		[Test]
+		[Test, Ignore ("Manual Intervention")]
 		public void ClosedTest ()
 		{
 			Form myform = new Form ();
@@ -45,7 +45,8 @@ namespace FormEvent
 			myform.ShowDialog ();
 			Assert.AreEqual (true, eventhandled, "#A2");
 		}
-		[Test, Ignore ("visual test")]
+
+		[Test, Ignore ("Manual Intervention")]
 		public void DeactivateTest ()
 		{
 			Form myform = new Form ();
@@ -57,7 +58,7 @@ namespace FormEvent
 			Assert.AreEqual (true, eventhandled, "#A3");
 		}
 
-		[Test]
+		[Test, Ignore ("Manual Intervention")]
 		public void LoadTest ()
 		{
 			Form myform = new Form ();
@@ -75,7 +76,7 @@ namespace FormEvent
 				this.MaximizedBounds = new Rectangle (10,10,100,100);
 			}
 		}
-			
+
 		[Test]
 		public void MaximizedBoundsChangedTest ()
 		{
@@ -93,12 +94,12 @@ namespace FormEvent
 			Form myform = new Form ();
 			myform.MaximumSizeChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
-			myform.MaximumSize = new System.Drawing.Size (500, 500);
+			myform.MaximumSize = new Size (500, 500);
 			Assert.AreEqual (true, eventhandled, "#A6");
 			myform.Dispose ();
 		}
 
-		[Test, Ignore ("visual test")]
+		[Test, Ignore ("Manual Intervention")]
 		public void MdiChildActivateTest ()
 		{
 			Form parent = new Form ();
@@ -125,7 +126,7 @@ namespace FormEvent
 			Form myform = new Form ();
 			myform.MinimumSizeChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
-			myform.MinimumSize = new System.Drawing.Size(100, 100);
+			myform.MinimumSize = new Size(100, 100);
 			Assert.AreEqual (true, eventhandled, "#A10");
 			myform.Dispose ();
 		}
@@ -141,7 +142,7 @@ namespace FormEvent
 			e.Cancel = cancel;
 			args = e;
 		}
-	
+
 		[Test, Ignore ("visual test")]
 		public void ClosingEventTest ()
 		{
@@ -168,7 +169,7 @@ namespace FormEvent
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void InputLanguageChangedEventTest ()
 		{
@@ -180,11 +181,11 @@ namespace FormEvent
 			{
 				if (InputLanguage.InstalledInputLanguages.Count > 1) 
 				{
-					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages [0];
+					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[0];
 					myform.InputLanguageChanged += new InputLanguageChangedEventHandler (InputLanguage_Handler);
 					Thread.CurrentThread.CurrentCulture = new CultureInfo ("ta-IN");
 					Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages [1];
+					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[1];
 					Assert.AreEqual (true, eventhandled, "#A15");
 				}
 			}
@@ -196,7 +197,7 @@ namespace FormEvent
 			}
 		}
 	}
-	
+
 	[TestFixture,Ignore ("Test Breaks")]
 	public class InputLanguageChangingdEvent
 	{	
@@ -205,7 +206,7 @@ namespace FormEvent
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void InputLanguageChangingEventTest ()		
 		{
@@ -217,11 +218,11 @@ namespace FormEvent
 			{
 				if (InputLanguage.InstalledInputLanguages.Count > 1) 
 				{
-					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages [0];
+					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[0];
 					myform.InputLanguageChanging += new InputLanguageChangingEventHandler (InputLangChanging_Handler);
 					Thread.CurrentThread.CurrentCulture = new CultureInfo ("ta-IN");
 					Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
-					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages [1];
+					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[1];
 					Assert.AreEqual (true, eventhandled, "#A16");
 				}
 			}
@@ -232,6 +233,5 @@ namespace FormEvent
 				InputLanguage.CurrentInputLanguage = oldil;
 			}
 		}
-		
 	}
 }

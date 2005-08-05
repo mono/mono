@@ -13,9 +13,9 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 
-namespace ListViewEvent
+namespace MonoTests.System.Windows.Forms
 {
-	[TestFixture]
+	[TestFixture, Ignore ("Needs Manual Intervention")]
 	public class ListViewEvent
 	{	
 		static bool eventhandled = false;
@@ -23,14 +23,14 @@ namespace ListViewEvent
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void AfterLabelEditTest ()
 		{
 			Form myform = new Form ();
 			ListView mylistview = new ListView ();
 			mylistview.LabelEdit = true ;
-			mylistview.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler (LabelEdit_EventHandler);
+			mylistview.AfterLabelEdit += new LabelEditEventHandler (LabelEdit_EventHandler);
 			mylistview.View = View.Details;
 			mylistview.SetBounds (10, 10, 200, 200, BoundsSpecified.All);
 			mylistview.Columns.Add ("A", -2, HorizontalAlignment.Center);
@@ -41,28 +41,28 @@ namespace ListViewEvent
 			myform.ShowDialog ();
 			Assert.AreEqual (true, eventhandled, "#A1");
 		}
-		
+
 		[Test]
 		public void BeforeLabelEditTest ()
-			{
-				Form myform = new Form ();
-				ListView mylistview = new ListView ();
-				mylistview.LabelEdit = true ;
-				mylistview.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler (LabelEdit_EventHandler);
-				eventhandled = false;
-				mylistview.View = View.Details;
-				mylistview.SetBounds (10, 10, 200, 200, BoundsSpecified.All);
-				mylistview.Columns.Add ("A", -2, HorizontalAlignment.Center);
-				mylistview.Columns.Add ("B", -2, HorizontalAlignment.Center);
-				ListViewItem item1 = new ListViewItem ("A", -1);
-				mylistview.Items.Add (item1);
-				myform.Controls.Add (mylistview);
-				myform.ShowDialog ();
-				Assert.AreEqual (true, eventhandled, "#A2");
-			}
+		{
+			Form myform = new Form ();
+			ListView mylistview = new ListView ();
+			mylistview.LabelEdit = true ;
+			mylistview.BeforeLabelEdit += new LabelEditEventHandler (LabelEdit_EventHandler);
+			eventhandled = false;
+			mylistview.View = View.Details;
+			mylistview.SetBounds (10, 10, 200, 200, BoundsSpecified.All);
+			mylistview.Columns.Add ("A", -2, HorizontalAlignment.Center);
+			mylistview.Columns.Add ("B", -2, HorizontalAlignment.Center);
+			ListViewItem item1 = new ListViewItem ("A", -1);
+			mylistview.Items.Add (item1);
+			myform.Controls.Add (mylistview);
+			myform.ShowDialog ();
+			Assert.AreEqual (true, eventhandled, "#A2");
+		}
 	}
 
-	[TestFixture]
+	[TestFixture, Ignore ("Needs Manual Intervention")]
 
 	public class ColumnClickEvent
 	{	
@@ -71,15 +71,15 @@ namespace ListViewEvent
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void ColumnClickTest ()
 		{
 			Form myform = new Form ();
 			ListView mylistview = new ListView ();
-			
+
 			mylistview.LabelEdit = true ;
-			mylistview.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler (ColumnClickEventHandler);		
+			mylistview.ColumnClick += new ColumnClickEventHandler (ColumnClickEventHandler);		
 			mylistview.View = View.Details;
 			mylistview.SetBounds (10, 10, 200, 200, BoundsSpecified.All);
 			mylistview.Columns.Add ("A", -2, HorizontalAlignment.Center);
@@ -90,10 +90,10 @@ namespace ListViewEvent
 			myform.ShowDialog ();
 			mylistview.Sort ();
 			Assert.AreEqual (true, eventhandled, "#A3");
- 		}
+		}
 	}
 
-	[TestFixture]
+	[TestFixture, Ignore ("Needs Manual Intervention")]
 
 	public class  MyEvent
 	{	
@@ -102,7 +102,7 @@ namespace ListViewEvent
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void ItemActivateTest ()
 		{
@@ -142,17 +142,17 @@ namespace ListViewEvent
 		}
 	}
 
-	[TestFixture]
+	[TestFixture, Ignore ("Needs Manual Intervention")]
 
 	public class ItemCheckEvent
 	{	
 		static bool eventhandled = false;
 		public void ItemCheckEventHandler (object sender, ItemCheckEventArgs e)
-			
+
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void ItemCheckTest ()
 		{
@@ -160,7 +160,7 @@ namespace ListViewEvent
 			ListView mylistview = new ListView ();
 			mylistview.CheckBoxes = true;
 			mylistview.LabelEdit = true ;
-			mylistview.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler (ItemCheckEventHandler);		
+			mylistview.ItemCheck += new ItemCheckEventHandler (ItemCheckEventHandler);		
 			mylistview.View = View.Details;
 			mylistview.SetBounds (10, 10, 200, 200, BoundsSpecified.All);
 			mylistview.Columns.Add ("A", -2, HorizontalAlignment.Center);
@@ -175,23 +175,23 @@ namespace ListViewEvent
 	}
 
 
-	[TestFixture]
+	[TestFixture, Ignore ("Needs Manual Intervention")]
 
 	public class ItemDragEvent
 	{	
 		static bool eventhandled = false;
 		public void ItemDragEventHandler (object sender, ItemDragEventArgs e)
-			
+
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
 		public void ItemDragTest ()
 		{
 			Form myform = new Form ();
 			ListView mylistview = new ListView ();
-			mylistview.ItemDrag += new System.Windows.Forms.ItemDragEventHandler (ItemDragEventHandler);
+			mylistview.ItemDrag += new ItemDragEventHandler (ItemDragEventHandler);
 			mylistview.View = View.Details;
 			mylistview.SetBounds (10, 10, 200, 200, BoundsSpecified.All);
 			mylistview.Columns.Add ("A", -2, HorizontalAlignment.Center);

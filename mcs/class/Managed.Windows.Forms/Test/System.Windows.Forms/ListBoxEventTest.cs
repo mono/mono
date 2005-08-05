@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2005 Novell, Inc.
+// Copyright  (c) 2005 Novell, Inc.
 //
 // Authors:
 //      Ritvik Mayank (mritvik@novell.com)
@@ -10,53 +10,53 @@ using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace ListBoxEvent
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class ListBoxDrawItemEvent
 	{	
 		static bool eventhandled = false;
-		public void DrawItem_EventHandler(object sender,DrawItemEventArgs e)
+		public void DrawItem_EventHandler (object sender,DrawItemEventArgs e)
 		{
 			eventhandled = true;
 		}
-	
+
 		[Test]
-		public void DrawItemTest()
+		public void DrawItemTest ()
 		{
 			Form myform = new Form ();
 			ListBox lb1 = new ListBox ();
-			lb1.Items.Add("A");
+			lb1.Items.Add ("A");
 			// Test DrawItem Event
-			lb1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(DrawItem_EventHandler);		
-			lb1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-			myform.Controls.Add(lb1);
+			lb1.DrawItem += new DrawItemEventHandler (DrawItem_EventHandler);		
+			lb1.DrawMode = DrawMode.OwnerDrawFixed;
+			myform.Controls.Add (lb1);
 			myform.Show ();
-			Assert.AreEqual(true, eventhandled, "#A1");
+			Assert.AreEqual (true, eventhandled, "#A1");
 		}
 
 		[TestFixture]
-			public class ListBoxMeasureItemEvent
+		public class ListBoxMeasureItemEvent
 		{
 			static bool eventhandled = false;
-			public void MeasureItem_EventHandler(object sender,MeasureItemEventArgs e)
+			public void MeasureItem_EventHandler (object sender,MeasureItemEventArgs e)
 			{
 				eventhandled = true;
 			}		
-			
+
 			[Test]
-			public void MeasureItemTest()
+			public void MeasureItemTest ()
 			{
 				Form myform = new Form ();
 				myform.Visible = true;
-				ListBox lb1 = new ListBox();
-				lb1.Items.Add("B");
+				ListBox lb1 = new ListBox ();
+				lb1.Items.Add ("B");
 				lb1.Visible = true;
-				myform.Controls.Add(lb1);
+				myform.Controls.Add (lb1);
 				// Test MeasureItem Event
-				lb1.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(MeasureItem_EventHandler);		
-				lb1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-				Assert.AreEqual(true, eventhandled, "#A2");
+				lb1.MeasureItem += new MeasureItemEventHandler (MeasureItem_EventHandler);		
+				lb1.DrawMode = DrawMode.OwnerDrawVariable;
+				Assert.AreEqual (true, eventhandled, "#A2");
 			}
 		}
 	}

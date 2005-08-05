@@ -13,25 +13,28 @@ using System.Drawing;
 using System.Reflection;
 using NUnit.Framework;
 
-[TestFixture]
-public class GroupBoxTest
+namespace MonoTests.System.Windows.Forms
 {
-	[Test]
-	public void GroupBoxPropertyTest ()
+	[TestFixture]
+	public class GroupBoxTest
 	{
-		Form myform = new Form();
-		GroupBox mygrpbox = new GroupBox ();
-		RadioButton myradiobutton1 = new RadioButton ();
-		RadioButton myradiobutton2 = new RadioButton ();
-		mygrpbox.Controls.Add (myradiobutton1);
-		mygrpbox.Controls.Add (myradiobutton2);
-		myform.Show ();
-		Assert.AreEqual (FlatStyle.Standard, mygrpbox.FlatStyle, "#1");
-		mygrpbox.FlatStyle = FlatStyle.Popup;
-		Assert.AreEqual (FlatStyle.Popup, mygrpbox.FlatStyle, "#2");
-		mygrpbox.FlatStyle = FlatStyle.Flat;
-		Assert.AreEqual (FlatStyle.Flat, mygrpbox.FlatStyle, "#3");
-		mygrpbox.FlatStyle = FlatStyle.System;
-		Assert.AreEqual (FlatStyle.System, mygrpbox.FlatStyle, "#4");
+		[Test]
+		public void GroupBoxPropertyTest ()
+		{
+			Form myform = new Form ();
+			GroupBox mygrpbox = new GroupBox ();
+			RadioButton myradiobutton1 = new RadioButton ();
+			RadioButton myradiobutton2 = new RadioButton ();
+			mygrpbox.Controls.Add (myradiobutton1);
+			mygrpbox.Controls.Add (myradiobutton2);
+			myform.Show ();
+			Assert.AreEqual (FlatStyle.Standard, mygrpbox.FlatStyle, "#1");
+			mygrpbox.FlatStyle = FlatStyle.Popup;
+			Assert.AreEqual (FlatStyle.Popup, mygrpbox.FlatStyle, "#2");
+			mygrpbox.FlatStyle = FlatStyle.Flat;
+			Assert.AreEqual (FlatStyle.Flat, mygrpbox.FlatStyle, "#3");
+			mygrpbox.FlatStyle = FlatStyle.System;
+			Assert.AreEqual (FlatStyle.System, mygrpbox.FlatStyle, "#4");
+		}
 	}
 }

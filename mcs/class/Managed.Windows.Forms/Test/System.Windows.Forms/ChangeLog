@@ -1,3 +1,14 @@
+2005-08-05  Ritvik Mayank  <mritvik@novell.com>
+
+	* ButtonTest.cs, ImageListTest.cs, ControlEventTest.cs,
+	  LabelPropertyTest.cs, CheckBoxTest.cs, ListBoxEventTest.cs,
+	  CheckBoxEventTest.cs, CheckedListBoxTest.cs, TextBoxTest.cs,
+	  CheckedListBoxEventTest.cs, FormTest.cs, MenuTest.cs,
+	  FormEventTest.cs, GroupBoxTest.cs, ListViewTest.cs,
+	  ListViewEventTest.cs :
+	              Cleanup, Ignored tests which need manual intervention,
+		      work still in progress.  
+	
 2005-08-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumnTest.cs: test fixes and enhancements
