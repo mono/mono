@@ -183,54 +183,45 @@ namespace Microsoft.VisualBasic
 
 			for (int i = 0; i < count; i++)
 			{
-				if (InStr(1, Source[i], Match, Compare) != 0)
-				{
-					//found one more
+				int result = InStr(1, Source[i], Match, Compare);
+				if (Include) {
+					if (result != 0) {
+						matches[i] = true;
+						matchesCount ++;
+					} else
+						matches[i] = false;
+				} else if (result == 0) {
 					matches[i] = true;
 					matchesCount ++;
-				}
-				else
-				{
+				} else
 					matches[i] = false;
-				}
 			}
 
-			if (matchesCount == 0)
+			if (matchesCount == count)
 			{
 				if (Include)
-					return new string[0];
-				else
 					return Source;
-			}
-			else
-			{
-				if (matchesCount == count)
-				{
-					if (Include)
-						return Source;
-					else
-						return new string[0];
-				}
 				else
-				{
-					string[] ret;
-					int j = 0;
-					if (Include)
-						ret = new string [matchesCount];
-					else
-						ret = new string [count - matchesCount];
+					return new string[0];
+			}
 
-					for (int i=0; i < count; i++)
-					{
-						if ((matches[i] && Include) || !(matches[i] || Include))
-						{
-							ret[j] = Source[i];
-							j++;
-						}
-					}
-					return ret;
+			string[] ret;
+			int cnt = 0;
+			for (int i = 0; i < count; i++) {
+				if (matches [i] && Source [i] != null)
+					cnt ++;
+			}
+			ret = new string [cnt];
+			cnt = 0;
+			for (int i=0; i < count; i++)
+			{
+				if (matches [i] && Source [i] != null)
+				{
+					ret[cnt] = Source[i];
+					cnt++;
 				}
 			}
+			return ret;
 		}
 
 		public static string Format(object expression, 
@@ -447,7 +438,7 @@ namespace Microsoft.VisualBasic
 			case DateFormat.LongTime:
 				return Expression.ToString("T");
 			case DateFormat.ShortTime:
-				return Expression.ToString("t");
+				return String.Format ("{0}:{1}", Expression.Hour, Expression.Minute);
 			default:
 				throw new ArgumentException("Argument 'NamedFormat' must be a member of DateFormat", "NamedFormat");
 			}
@@ -470,15 +461,35 @@ namespace Microsoft.VisualBasic
 											      
 			if (Expression == null)
 				return "";
-															     
+
+			if (Expression is string)
+				Expression = DoubleType.FromString ( (string) Expression);
+			if (Expression is bool)
+				Expression = - (Convert.ToDouble ((bool) Expression));
+
 			if (!(Expression is IFormattable))
 				throw new InvalidCastException(
 							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
 
-			String formatStr = "00";
+			CultureInfo currentCulture = Utils.GetCultureInfo ();
+			NumberFormatInfo ninfo = currentCulture.NumberFormat;
+
+			if (NumDigitsAfterDecimal == -1)
+				NumDigitsAfterDecimal = ninfo.NumberDecimalDigits;
+
+			String formatStr = "";
+			if (IncludeLeadingDigit == TriState.True)
+				formatStr = "0";
+
+			if (GroupDigits == TriState.UseDefault) {
+				if (ninfo.NumberGroupSizes == null || ninfo.NumberGroupSizes.Length == 0)
+					GroupDigits = TriState.False;
+				else
+					GroupDigits = TriState.True;
+			}
 
 			if (GroupDigits == TriState.True)
-				formatStr = formatStr + ",00";
+				formatStr = "0,0";
 
 			if (NumDigitsAfterDecimal > -1)	{
 				string decStr = ".";
@@ -504,7 +515,10 @@ namespace Microsoft.VisualBasic
 			case "System.Int16":	case "System.Int32":	case "System.Int64":
 			case "System.Double":	case "System.Single":	case "System.UInt16":
 			case "System.UInt32":	case "System.UInt64":
-				returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				if (formatStr != "")
+					returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				else
+					returnstr = Convert.ToDouble(Expression).ToString ();
 				break;
 			default:
 				throw new InvalidCastException(
@@ -531,15 +545,32 @@ namespace Microsoft.VisualBasic
 											      
 			if (Expression == null)
 				return "";
-															     
+
+			if (Expression is string)
+				Expression = DoubleType.FromString ((string) Expression);
+
 			if (!(Expression is IFormattable))
 				throw new InvalidCastException(
 							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
 
-			String formatStr = "00";
+			CultureInfo currentCulture = Utils.GetCultureInfo ();
+			NumberFormatInfo ninfo = currentCulture.NumberFormat;
+
+			if (NumDigitsAfterDecimal == -1)
+				NumDigitsAfterDecimal = ninfo.NumberDecimalDigits;
+
+			String formatStr = "";
+			if (IncludeLeadingDigit == TriState.True)
+				formatStr = "0";
+			if (GroupDigits == TriState.UseDefault) {
+				if (ninfo.NumberGroupSizes == null || ninfo.NumberGroupSizes.Length == 0)
+					GroupDigits = TriState.False;
+				else
+					GroupDigits = TriState.True;
+			}
 
 			if (GroupDigits == TriState.True)
-				formatStr = formatStr + ",00";
+				formatStr = "0,0";
 
 			if (NumDigitsAfterDecimal > -1) {
 				string decStr = ".";
@@ -556,7 +587,8 @@ namespace Microsoft.VisualBasic
 				formatStr = formatStr + ")";
 			}
 
-			formatStr = formatStr + "%";
+			if (formatStr != "")
+				formatStr = formatStr + "%";
 
 			string returnstr=null;
 			string expstring= Expression.GetType().ToString();
@@ -565,7 +597,10 @@ namespace Microsoft.VisualBasic
 			case "System.Int16":	case "System.Int32":	case "System.Int64":
 			case "System.Double":	case "System.Single":	case "System.UInt16":
 			case "System.UInt32":	case "System.UInt64":
-				returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				if (formatStr != "")
+					returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				else
+					returnstr = Convert.ToDouble(Expression).ToString ();
 				break;
 			default:
 				throw new InvalidCastException(
@@ -1017,7 +1052,7 @@ namespace Microsoft.VisualBasic
 			switch (Compare)
 			{
 			case CompareMethod.Binary:
-				return string.Compare(String2, String1, false);
+				return string.Compare(String1, String2, false);
 			case CompareMethod.Text:
 				CultureInfo curCulture = CultureInfo.CurrentCulture;
 				return curCulture.CompareInfo.Compare(String1.ToLower(curCulture), String2.ToLower(curCulture));

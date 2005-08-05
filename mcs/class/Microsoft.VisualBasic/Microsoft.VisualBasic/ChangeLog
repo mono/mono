@@ -1,3 +1,6 @@
+2005-08-05  Satya Sudha K  <ksathyasudha@novell.com>
+	* Strings.cs : Minor fixes to a few functions
+
 2005-08-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Strigns.cs: Correcting InStrRev function
 		- parameter name in message for first exception
