@@ -1,5 +1,10 @@
 2005-08-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ComboBox.cs: Fixes FindString methods and GetItemHeight
+	* ListBox.cs: Fixes FindString methods
+
+2005-08-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* DataGrid.cs: fixes bugs exposed by new tests
 
 2005-08-04  Peter Dennis Bartok  <pbartok@novell.com> 

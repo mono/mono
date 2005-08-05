@@ -621,11 +621,15 @@ namespace System.Windows.Forms
 
 		public int FindString (string s)
 		{
-			return FindString (s, 0);
+			return FindString (s, -1);
 		}
 
 		public int FindString (string s, int startIndex)
 		{
+			if (startIndex < -1 || startIndex >= Items.Count - 1)
+				throw new  ArgumentOutOfRangeException ("Index of out range");
+
+			startIndex++;
 			for (int i = startIndex; i < Items.Count; i++) {
 				if ((GetItemText (Items[i])).StartsWith (s))
 					return i;
@@ -636,11 +640,15 @@ namespace System.Windows.Forms
 
 		public int FindStringExact (string s)
 		{
-			return FindStringExact (s, 0);
+			return FindStringExact (s, -1);
 		}
 
 		public int FindStringExact (string s, int startIndex)
 		{
+			if (startIndex < -1 || startIndex >= Items.Count - 1)
+				throw new ArgumentOutOfRangeException ("Index of out range");
+
+			startIndex++;
 			for (int i = startIndex; i < Items.Count; i++) {
 				if ((GetItemText (Items[i])).Equals (s))
 					return i;
@@ -650,11 +658,11 @@ namespace System.Windows.Forms
 		}
 
 		public int GetItemHeight (int index)
-		{
-			if (index < 0 || index >= Items.Count )
-				throw new ArgumentOutOfRangeException ("The item height value is less than zero");
-				
+		{	
 			if (DrawMode == DrawMode.OwnerDrawVariable && IsHandleCreated == true) {
+
+				if (index < 0 || index >= Items.Count )
+					throw new ArgumentOutOfRangeException ("The item height value is less than zero");
 				
 				if ((Items.GetComboBoxItem (index)).ItemHeight != -1) {
 					return (Items.GetComboBoxItem (index)).ItemHeight;

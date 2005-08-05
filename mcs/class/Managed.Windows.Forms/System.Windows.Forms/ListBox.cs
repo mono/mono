@@ -673,11 +673,15 @@ namespace System.Windows.Forms
 
 		public int FindString (String s)
 		{
-			return FindString (s, 0);
+			return FindString (s, -1);
 		}
 
 		public int FindString (string s,  int startIndex)
 		{
+			if (startIndex < -1 || startIndex >= Items.Count - 1)
+				throw new ArgumentOutOfRangeException ("Index of out range");
+
+			startIndex++;
 			for (int i = startIndex; i < Items.Count; i++) {
 				if ((GetItemText (Items[i])).StartsWith (s))
 					return i;
@@ -688,11 +692,15 @@ namespace System.Windows.Forms
 
 		public int FindStringExact (string s)
 		{
-			return FindStringExact (s, 0);
+			return FindStringExact (s, -1);
 		}
 
 		public int FindStringExact (string s,  int startIndex)
 		{
+			if (startIndex < -1 || startIndex >= Items.Count - 1)
+				throw new ArgumentOutOfRangeException ("Index of out range");
+
+			startIndex++;
 			for (int i = startIndex; i < Items.Count; i++) {
 				if ((GetItemText (Items[i])).Equals (s))
 					return i;
