@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections;
 using System.IO;
@@ -171,7 +172,7 @@ namespace Mono.GetOptions.Useful
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Specifies the {name} of the Class or Module that contains Sub Main or inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (target=exe|winexe)",
+		[Option("Specifies the {name} of the Class or Module that contains Sub Main \tor inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (target=exe|winexe)",
 			'm', "main")]
 		public string MainClassName = null; 
 
@@ -181,7 +182,7 @@ namespace Mono.GetOptions.Useful
 
 		// input file options
 		//------------------------------------------------------------------
-		[Option(-1, "Imports all type information from files in the {module-list}. {module-list}:module,...", "addmodule")]
+		[Option(-1, "Imports all type information from files in the module-list. {module-list}:module,...", "addmodule")]
 		public string AddedModule { set { foreach(string module in value.Split(',')) NetModulesToAdd.Add(module); } }
 
 //		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
@@ -191,10 +192,10 @@ namespace Mono.GetOptions.Useful
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option(-1, "References metadata from the specified {assembly-list}. {assembly-list}:assembly,...", 'r', "reference")]
+		[Option(-1, "References metadata from the specified assembly-list. {assembly-list}:assembly,...", 'r', "reference")]
 		public string AddedReference { set { foreach (string assembly in value.Split(',')) AssembliesToReference.Add(assembly); } }
 		
-		[Option("List of directories to search for metadata AssembliesToReference. {path-list}:path,...", "libpath", "lib")]
+		[Option("List of directories to search for referenced assemblies. \t{path-list}:path,...", "libpath", "lib")]
 		public string AddedLibPath { set { foreach(string path in value.Split(',')) PathsToSearchForLibraries.Add(path); } }
 
 		// support for the Compact Framework
@@ -210,12 +211,12 @@ namespace Mono.GetOptions.Useful
 		public ArrayList EmbeddedResources = new ArrayList();
 		
 		//TODO: support -res:file[,id[,public|private]] what depends on changes at Mono.GetOptions
-		[Option(-1, "Adds the specified file as an embedded assembly resource. {details}:file[,id[,public|private]]", "resource", "res")]
+		[Option(-1, "Adds the specified file as an embedded assembly resource. \t{details}:file[,id[,public|private]]", "resource", "res")]
 		public string AddedResource { set { EmbeddedResources.Add(value); } }
 
 		public ArrayList LinkedResources = new ArrayList();
 		
-//		[Option(-1, "[NOT IMPLEMENTED YET]Adds the specified {file[,id]} as a linked assembly resource", "linkresource", "linkres")]
+		[Option(-1, "Adds the specified file as a linked assembly resource. \t{details}:file[,id[,public|private]]", "linkresource", "linkres")]
 		public string AddedLinkresource { set { LinkedResources.Add(value); } }
 
 		public ArrayList Win32Resources = new ArrayList();
@@ -421,7 +422,7 @@ namespace Mono.GetOptions.Useful
 			return true;
 		}		
 		
-				private bool printTimeStamps = false;
+		private bool printTimeStamps = false;
 		//
 		// Last time we took the time
 		//
