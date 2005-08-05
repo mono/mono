@@ -119,19 +119,37 @@ namespace Mono.Xml.Xsl
 			nav.MoveToRoot ();
 			XPathNavigator tmp = doc.Clone ();
 
+			bool matchesAttributes = false;
+			switch (key.Match.EvaluatedNodeType) {
+			case XPathNodeType.All:
+			case XPathNodeType.Attribute:
+				matchesAttributes = true;
+				break;
+			}
+
 			do {
 				if (key.Match.Matches (nav, ctx)) {
 					tmp.MoveTo (nav);
 					CollectIndex (nav, tmp);
 				}
-			} while (MoveNavigatorToNext (nav));
+			} while (MoveNavigatorToNext (nav, matchesAttributes));
 			if (map != null)
 				foreach (ArrayList list in map.Values)
 					list.Sort (XPathNavigatorComparer.Instance);
 		}
 
-		private bool MoveNavigatorToNext (XPathNavigator nav)
+		private bool MoveNavigatorToNext (XPathNavigator nav, bool matchesAttributes)
 		{
+			if (matchesAttributes) {
+				if (nav.NodeType != XPathNodeType.Attribute &&
+					nav.MoveToFirstAttribute ())
+					return true;
+				else if (nav.NodeType == XPathNodeType.Attribute) {
+					if (nav.MoveToNextAttribute ())
+						return true;
+					nav.MoveToParent ();
+				}
+			}
 			if (nav.MoveToFirstChild ())
 				return true;
 			do {

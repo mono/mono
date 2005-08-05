@@ -107,7 +107,11 @@ namespace Mono.Xml.XPath
 		}
 		
 		public virtual double DefaultPriority { get { return 0.5; }}
-		
+
+		public virtual XPathNodeType EvaluatedNodeType {
+			get { return XPathNodeType.All; }
+		}
+
 		public abstract bool Matches (XPathNavigator node, XsltContext ctx);
 	}
 }

@@ -46,6 +46,13 @@ namespace Mono.Xml.XPath {
 			this.p0 = p0;
 			this.p1 = p1;
 		}
+
+		public override XPathNodeType EvaluatedNodeType {
+			get {
+				return p0.EvaluatedNodeType == p1.EvaluatedNodeType ?
+					p0.EvaluatedNodeType : XPathNodeType.All;
+			}
+		}
 		
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{

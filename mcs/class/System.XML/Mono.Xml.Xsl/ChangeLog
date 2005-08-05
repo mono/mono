@@ -1,3 +1,9 @@
+2005-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslKey.cs : Fixed match pattern in xsl:key to check attribute nodes.
+	  To minimize attribute iteration, use Pattern.EvaluatedNodeType.
+	  Fixed bug #75709.
+
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslFunctions.cs : XslTransform recovers from errors on document

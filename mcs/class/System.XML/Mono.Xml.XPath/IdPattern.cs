@@ -47,7 +47,11 @@ namespace Mono.Xml.XPath {
 		{
 			ids = arg0.Split (XmlChar.WhitespaceChars);
 		}
-		
+
+		public override XPathNodeType EvaluatedNodeType {
+			get { return XPathNodeType.Element; }
+		}
+
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{
 			XPathNavigator tmp = ((XsltCompiledContext) ctx).GetNavCache (this, node);

@@ -82,6 +82,10 @@ namespace Mono.Xml.XPath {
 				return .5;
 			}
 		}
+
+		public override XPathNodeType EvaluatedNodeType {
+			get { return nodeTest.EvaluatedNodeType; }
+		}
 		
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{
