@@ -1,3 +1,7 @@
+2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tds70.cs: Reset (): remove exec.
+
 2005-07-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds70.cs: FormatParameter: For uniqueidentifier, pass the guid
