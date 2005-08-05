@@ -144,7 +144,7 @@ namespace Npgsql
         /// Port:          Port to connect to;
         /// Protocol:      Protocol version to use, instead of automatic; Integer 2 or 3;
         /// Database:      Database name. Defaults to user name if not specified;
-        /// User:          User name;
+        /// User Id:       User name;
         /// Password:      Password for clear text authentication;
         /// SSL:           True or False. Controls whether to attempt a secure connection. Default = False;
         /// Pooling:       True or False. Controls whether connection pooling is used. Default = True;

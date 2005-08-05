@@ -1,4 +1,7 @@
 
+2005-08-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* NpgsqlConnection.cs:  Fixed documentation about User Id connection string key. Thanks peyn at tlen dot pl for heads up. Fixes gborg 1388
 
 2005-07-29  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
