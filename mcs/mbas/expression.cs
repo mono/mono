@@ -4364,10 +4364,14 @@ namespace Mono.MonoBASIC {
 
 				bool IsDelegate = TypeManager.IsDelegateType (param_type);
 				if (a.ArgType == Argument.AType.NoArg) {
+					Expression pdvalue = pd.DefaultValue (i);
+					pdvalue.Resolve (ec);
+					if (pdvalue != NullLiteral.Null)
+						pdvalue = ConvertImplicit (ec, pdvalue, param_type, Location.Null);;
 					if (argNamesGiven)
-						a = new Argument (pd.ParameterName (i), pd.DefaultValue (i), Argument.AType.Expression);
+						a = new Argument (pd.ParameterName (i), pdvalue, Argument.AType.Expression);
 					else
-						a = new Argument (pd.DefaultValue (i), Argument.AType.Expression);
+						a = new Argument (pdvalue, Argument.AType.Expression);
 					a.Resolve (ec, Location.Null);
 				}
 
@@ -4397,7 +4401,11 @@ namespace Mono.MonoBASIC {
 				return newarglist;
 
 			for (int i = arg_count; i < pd.Count; i++) {
+				Type param_type = pd.ParameterType (i);
 				Expression e = pd.DefaultValue (i);
+				e.Resolve (ec);
+				if (e != NullLiteral.Null)
+					e = ConvertImplicit (ec, e, param_type, Location.Null);
 				Argument a = null;
 				if (argNamesGiven)
 					a = new Argument (e, Argument.AType.Expression);
@@ -4405,7 +4413,6 @@ namespace Mono.MonoBASIC {
 					a = new Argument (pd.ParameterName (i), e, Argument.AType.Expression);
 				if ((pd.ParameterModifier (i) & Parameter.Modifier.REF) != 0)
 					a.ArgType = Argument.AType.Ref;
-				e.Resolve (ec);
 				a.Resolve (ec, Location.Null);
 				newarglist.Add (a);
 			}

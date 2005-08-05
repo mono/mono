@@ -1,3 +1,8 @@
+2005-08-05 Satya Sudha K <ksathyasudha@novell.com>
+	* expression.cs :
+		'ConstructArgumentList': Converting the default value to the param type before
+					 appending to the arg list
+
 2005-08-04:2  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* statement.cs:  
 		Oops, line number on Redim errors as Aldo/Renato intended
