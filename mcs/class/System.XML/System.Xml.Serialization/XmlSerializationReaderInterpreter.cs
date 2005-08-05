@@ -284,8 +284,10 @@ namespace System.Xml.Serialization
 			if (!isValueList)
 			{
 				Reader.MoveToElement();
-				if (Reader.IsEmptyElement) 
+				if (Reader.IsEmptyElement) { 
+					SetListMembersDefaults (map, ob, isValueList);
 					return;
+				}
 
 				Reader.ReadStartElement();
 			}
@@ -316,7 +318,10 @@ namespace System.Xml.Serialization
 				indexes = new int[map.FlatLists.Count];
 				flatLists = new object[map.FlatLists.Count];
 				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
-					if (IsReadOnly (mem, mem.TypeData, ob, isValueList)) flatLists[mem.FlatArrayIndex] = mem.GetValue (ob);
+					if (IsReadOnly (mem, mem.TypeData, ob, isValueList))
+						flatLists [mem.FlatArrayIndex] = mem.GetValue (ob);
+					else
+						flatLists [mem.FlatArrayIndex] = InitializeList (mem.TypeData);
 			}
 			
 			if (_format == SerializationFormat.Encoded && map.ElementMembers != null)
@@ -459,7 +464,23 @@ namespace System.Xml.Serialization
 					if (!IsReadOnly (mem, mem.TypeData, ob, isValueList))
 						SetMemberValue (mem, ob, list, isValueList);
 				}
-			}		
+			}
+			SetListMembersDefaults (map, ob, isValueList);
+		}
+		
+		void SetListMembersDefaults (ClassMap map, object ob, bool isValueList)
+		{
+			if (map.ListMembers != null)
+			{
+				ArrayList members = map.ListMembers;
+				for (int n=0; n<members.Count; n++) {
+					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
+					if (IsReadOnly (mem, mem.TypeData, ob, isValueList))
+						continue;
+					if (GetMemberValue (mem, ob, isValueList) == null)
+						SetMemberValue (mem, ob, InitializeList (mem.TypeData), isValueList);
+				}
+			}
 		}
 
 		internal void FixupMembers (ClassMap map, object obfixup, bool isValueList)
@@ -661,6 +682,14 @@ namespace System.Xml.Serialization
 				return EnsureArrayIndex (null, 0, listType.GetElementType());
 			else
 				return Activator.CreateInstance (listType);
+		}
+		
+		object InitializeList (TypeData listType)
+		{
+			if (listType.Type.IsArray)
+				return null;
+			else
+				return Activator.CreateInstance (listType.Type);
 		}
 
 		void FillList (object list, object items)

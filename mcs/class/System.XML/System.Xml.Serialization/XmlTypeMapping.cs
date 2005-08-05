@@ -207,6 +207,7 @@ namespace System.Xml.Serialization
 		ArrayList _flatLists;
 		ArrayList _allMembers = new ArrayList ();
 		ArrayList _membersWithDefault;
+		ArrayList _listMembers;
 		XmlTypeMapMemberAnyElement _defaultAnyElement;
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
 		XmlTypeMapMemberNamespaces _namespaceDeclarations;
@@ -219,7 +220,7 @@ namespace System.Xml.Serialization
 		{
 			_allMembers.Add (member);
 			
-			if (!(member.DefaultValue is System.DBNull)) {
+			if (!(member.DefaultValue is System.DBNull) && member.DefaultValue != null) {
 				if (_membersWithDefault == null) _membersWithDefault = new ArrayList ();
 				_membersWithDefault.Add (member);
 			}
@@ -280,6 +281,11 @@ namespace System.Xml.Serialization
 				if (_elements.ContainsKey (key)) 
 					throw new InvalidOperationException ("The XML element named '" + elem.ElementName + "' from namespace '" + elem.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the element.");
 				_elements.Add (key, elem);
+			}
+			
+			if (member.TypeData.IsListType && !member.TypeData.Type.IsArray) {
+				if (_listMembers == null) _listMembers = new ArrayList ();
+				_listMembers.Add (member);
 			}
 		}
 
@@ -393,6 +399,11 @@ namespace System.Xml.Serialization
 		public ArrayList MembersWithDefault
 		{
 			get { return _membersWithDefault; }
+		}
+		
+		public ArrayList ListMembers
+		{
+			get { return _listMembers; }
 		}
 
 		public XmlTypeMapMember XmlTextCollector

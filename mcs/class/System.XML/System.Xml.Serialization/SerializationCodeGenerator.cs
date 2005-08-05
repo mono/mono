@@ -1584,6 +1584,7 @@ namespace System.Xml.Serialization
 				WriteLine ("Reader.MoveToElement();");
 				WriteLineInd ("if (Reader.IsEmptyElement) {"); 
 				WriteLine ("Reader.Skip ();");
+				GenerateSetListMembersDefaults (typeMap, map, ob, isValueList);
 				WriteLine ("return " + ob + ";");
 				WriteLineUni ("}");
 				WriteLine ("");
@@ -1629,8 +1630,11 @@ namespace System.Xml.Serialization
 						code += indexes[n] + "=0";
 						if (!MemberHasReadReplaceHook (xmlMapType, mem)) {
 							flatLists[n] = GetObTempVar ();
-							string rval = "null";
-							if (IsReadOnly (typeMap, mem, mem.TypeData, isValueList)) rval = ob + ".@" + mem.Name;
+							string rval;
+							if (IsReadOnly (typeMap, mem, mem.TypeData, isValueList))
+								rval = ob + ".@" + mem.Name;
+							else
+								rval = GenerateInitializeList (mem.TypeData);
 							WriteLine (mem.TypeData.FullTypeName + " " + flatLists[n] + " = " + rval + ";");
 						}
 					}
@@ -1875,6 +1879,9 @@ namespace System.Xml.Serialization
 							GenerateSetMemberValue (mem, ob, list, isValueList);
 					}
 				}
+				
+				GenerateSetListMembersDefaults (typeMap, map, ob, isValueList);
+				
 				GenerateEndHook ();
 			}			
 
@@ -1882,6 +1889,22 @@ namespace System.Xml.Serialization
 			{
 				WriteLine ("");
 				WriteLine ("ReadEndElement();");
+			}
+		}
+		
+		void GenerateSetListMembersDefaults (XmlTypeMapping typeMap, ClassMap map, string ob, bool isValueList)
+		{
+			if (map.ListMembers != null)
+			{
+				ArrayList members = map.ListMembers;
+				for (int n=0; n<members.Count; n++) {
+					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
+					if (IsReadOnly (typeMap, mem, mem.TypeData, isValueList))
+						continue;
+					WriteLineInd ("if (" + GenerateGetMemberValue (mem, ob, isValueList) + " == null) {");
+					GenerateSetMemberValue (mem, ob, GenerateInitializeList (mem.TypeData), isValueList);
+					WriteLineUni ("}");
+				}
 			}
 		}
 		
@@ -2096,6 +2119,14 @@ namespace System.Xml.Serialization
 				return "(" + listType.FullName + ") EnsureArrayIndex (null, 0, " + GetTypeOf(listType.GetElementType()) + ")";
 			else
 				return "new " + listType.FullName + "()";
+		}
+		
+		string GenerateInitializeList (TypeData listType)
+		{
+			if (listType.Type.IsArray)
+				return "null";
+			else
+				return "new " + listType.Type.FullName + "()";
 		}
 		
 		void GenerateFillerCallbacks ()

@@ -1,3 +1,11 @@
+2005-08-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapping.cs: Added ListMembers property that returns
+	members which are collections.
+	* SerializationCodeGenerator.cs:
+	* XmlSerializationReaderInterpreter.cs: Initialize collection
+	members to an empty collection by default. Fixes bug #75662.
+
 2005-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlMapping.cs: API compatibility fixes. Ctor is not protected
