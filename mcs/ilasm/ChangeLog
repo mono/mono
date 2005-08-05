@@ -1,3 +1,7 @@
+2005-08-05  Ankit Jain  <jankit@novell.com>
+
+	* ilasm.exe.sources: Add DeclSecurity.cs to the build.
+
 2005-05-12  Ankit Jain  <ankit@corewars.org>
 
 	* Makefile (LOCAL_MCS_FLAGS): Use the in-tree PEAPI.dll as its public

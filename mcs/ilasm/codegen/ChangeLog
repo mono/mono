@@ -1,3 +1,20 @@
+2005-08-05  Ankit Jain  <jankit@novell.com>
+
+	* DeclSecurity.cs: New File.
+	  (DeclSecurity): New class.
+	  (IDeclSecurityTarget): New interface.
+	* TypeDef.cs (TypeDef): Implement IDeclSecurityTarget.
+	  (TypeDef.DefineContents): Add DeclSecurity info.
+	* CodeGen.cs (CurrentDeclSecurityTarget): New. Property for current
+	  DeclSecurity target.
+	  (BeginTypeDef, BeginMethodDef, BeginAssemblyRef): Set current DeclSecurity
+	  target accordingly.
+	  (AddAssemblyDeclSecurity): New. Add DeclSecurity info to assembly.
+	* ExternTable.cs (ExternAssembly): Implement IDeclSecurityTarget.
+	  (Resolve): Add DeclSecurity info to AssemblyRef.
+	* MethodDef.cs (MethodDef): Implement IDeclSecurityTarget.
+	  (WriteCode): Add DeclSecurity info to MethodDef.
+
 2005-08-03  Ankit Jain  <jankit@novell.com>
 
 	* GlobalMethodRef.cs (GlobalMethodRef.Resolve): Use CreateVarargSignature

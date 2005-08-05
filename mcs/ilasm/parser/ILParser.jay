@@ -657,6 +657,9 @@ class_decl		: method_all
 			| field_decl
 			| data_decl
 			| sec_decl
+			  {
+				codegen.CurrentDeclSecurityTarget.AddDeclSecurity ((DeclSecurity) $1);
+			  }
 			| extsource_spec
 			| customattr_decl
                           {
@@ -1728,6 +1731,9 @@ method_decl		: D_EMITBYTE int32
 			| seh_block
 			| instr
 			| sec_decl
+			  {
+				codegen.CurrentDeclSecurityTarget.AddDeclSecurity ((DeclSecurity) $1);
+			  }
 			| extsource_spec
 			| language_decl
 			| customattr_decl
@@ -2353,6 +2359,9 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
 sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PARENS
 			| D_PERMISSION sec_action type_spec
 			| D_PERMISSIONSET sec_action ASSIGN bytes_list
+			  {
+				$$ = new DeclSecurity ((PEAPI.SecurityAction) $2, (byte []) $4);
+			  }
 			;
 
 nameval_pairs		: nameval_pair 
@@ -2373,20 +2382,66 @@ cavalue 		: truefalse
 			;
 
 sec_action		: K_REQUEST
+			  {
+				$$ = PEAPI.SecurityAction.Request;
+			  }
 			| K_DEMAND
+			  {
+				$$ = PEAPI.SecurityAction.Demand;
+			  }
 			| K_ASSERT
+			  {
+				$$ = PEAPI.SecurityAction.Assert;
+			  }
 			| K_DENY
+			  {
+				$$ = PEAPI.SecurityAction.Deny;
+			  }
 			| K_PERMITONLY
+			  {
+				$$ = PEAPI.SecurityAction.PermitOnly;
+			  }
 			| K_LINKCHECK
+			  {
+				$$ = PEAPI.SecurityAction.LinkDemand;
+			  }
 			| K_INHERITCHECK
+			  {
+				$$ = PEAPI.SecurityAction.InheritDemand;
+			  }
 			| K_REQMIN
+			  {
+				$$ = PEAPI.SecurityAction.RequestMinimum;
+			  }
 			| K_REQOPT
+			  {
+				$$ = PEAPI.SecurityAction.RequestOptional;
+			  }
 			| K_REQREFUSE
+			  {
+				$$ = PEAPI.SecurityAction.RequestRefuse;
+			  }
 			| K_PREJITGRANT
+			  {
+				$$ = PEAPI.SecurityAction.PreJitGrant;
+			  }
 			| K_PREJITDENY
+			  {
+				$$ = PEAPI.SecurityAction.PreJitDeny;
+			  }
 			| K_NONCASDEMAND
+			  {
+				$$ = PEAPI.SecurityAction.NonCasDemand;
+			  }
 			| K_NONCASLINKDEMAND
+			  {
+				$$ = PEAPI.SecurityAction.NonCasLinkDemand;
+			  }
 			| K_NONCASINHERITANCE
+			  {
+				$$ = PEAPI.SecurityAction.NonCasInheritance;
+			  }
+			/* FIXME: Should we have LinkDemandChoice, InheritDemandChoice and DemandChoice ? */  
 			;
 
 module_head		: D_MODULE
@@ -2475,6 +2530,9 @@ assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
 				codegen.AddAssemblyCustomAttribute ((CustomAttr) $1);
 			  }
 			| sec_decl
+			  {
+				codegen.AddAssemblyDeclSecurity ((DeclSecurity) $1);
+			  }
 			;
 
 asm_or_ref_decl		: D_PUBLICKEY ASSIGN bytes_list

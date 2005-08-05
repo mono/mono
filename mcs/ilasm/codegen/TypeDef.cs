@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class TypeDef : ICustomAttrTarget {
+        public class TypeDef : ICustomAttrTarget, IDeclSecurityTarget {
 
                 protected class GenericInfo {
                         public string Id;
@@ -32,6 +32,7 @@ namespace Mono.ILASM {
                 private ArrayList field_list;
                 private Hashtable method_table;
                 private ArrayList customattr_list;
+                private ArrayList declsecurity_list;
                 private ArrayList event_list;
                 private ArrayList property_list;
                 private ArrayList typar_list;
@@ -212,6 +213,14 @@ namespace Mono.ILASM {
                         customattr_list.Add (customattr);
                 }
 
+                public void AddDeclSecurity (DeclSecurity declsecurity)
+                {
+                        if (declsecurity_list == null)
+                                declsecurity_list = new ArrayList ();
+
+                        declsecurity_list.Add (declsecurity);
+                }
+
                 public void AddGenericParam (string id)
                 {
                         if (typar_list == null)
@@ -355,6 +364,14 @@ namespace Mono.ILASM {
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, classdef);
                         }
+                        
+                        /// Add declarative security to this method
+                        if (declsecurity_list != null) {
+                                foreach (DeclSecurity declsecurity in declsecurity_list)
+                                        declsecurity.AddTo (code_gen, classdef);
+
+                                classdef.AddAttribute (PEAPI.TypeAttr.HasSecurity);
+			}	
 
                         if (override_list != null) {
                                 foreach (DictionaryEntry entry in override_list) {

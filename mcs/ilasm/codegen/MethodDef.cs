@@ -15,7 +15,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class MethodDef : ICustomAttrTarget {
+        public class MethodDef : ICustomAttrTarget, IDeclSecurityTarget {
 
                 protected class GenericInfo {
                         public string Id;
@@ -33,6 +33,7 @@ namespace Mono.ILASM {
                 private ArrayList param_list;
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
+                private ArrayList declsecurity_list;
                 private Hashtable label_table;
                 private Hashtable labelref_table;
                 private ArrayList label_list;
@@ -183,6 +184,13 @@ namespace Mono.ILASM {
                         customattr_list.Add (customattr);
                 }
 
+                public void AddDeclSecurity (DeclSecurity declsecurity)
+                {
+                        if (declsecurity_list == null)
+                                declsecurity_list = new ArrayList ();
+
+                        declsecurity_list.Add (declsecurity);
+                }
 
                 public void AddLocals (ArrayList local_list)
                 {
@@ -416,6 +424,14 @@ namespace Mono.ILASM {
                         if (customattr_list != null)
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, methoddef);
+
+                        /// Add declarative security to this method
+                        if (declsecurity_list != null) {
+                                foreach (DeclSecurity declsecurity in declsecurity_list)
+                                        declsecurity.AddTo (code_gen, methoddef);
+
+                                methoddef.AddMethAttribute (PEAPI.MethAttr.HasSecurity);
+                        }        
 
                         if (pinvoke_info) {
                                 methoddef.AddPInvokeInfo (pinvoke_mod.ModuleRef,

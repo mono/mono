@@ -33,6 +33,7 @@ namespace Mono.ILASM {
 		private int typedef_stack_top;
 		private SymbolWriter symwriter;
                 private ICustomAttrTarget current_customattrtarget;
+                private IDeclSecurityTarget current_declsectarget;
 
                 private byte [] assembly_public_key;
                 private int assembly_major_version;
@@ -42,6 +43,7 @@ namespace Mono.ILASM {
                 private string assembly_locale;
                 private int assembly_hash_algorithm;
                 private ArrayList assembly_custom_attributes;
+                private ArrayList assembly_declsec;
                         
                 private TypeManager type_manager;
                 private ExternTable extern_table;
@@ -140,6 +142,11 @@ namespace Mono.ILASM {
                         set { current_customattrtarget = value; }
                 }
 
+                public IDeclSecurityTarget CurrentDeclSecurityTarget {
+                        get { return current_declsectarget; }
+                        set { current_declsectarget = value; }
+                }
+
                 public ExternTable ExternTable {
                         get { return extern_table; }
                 }
@@ -223,6 +230,7 @@ namespace Mono.ILASM {
                         if (typedef != null) {
                                 // Class head is allready defined, we are just reopening the class
                                 current_customattrtarget = current_typedef = typedef;
+                                current_declsectarget = typedef;
                                 typedef_stack.Add (current_typedef);
 				typedef_stack_top++;
                                 return;
@@ -236,6 +244,7 @@ namespace Mono.ILASM {
 
                         type_manager[cache_name] = typedef;
                         current_customattrtarget = current_typedef = typedef;
+                        current_declsectarget = typedef;
 			typedef_stack.Add (typedef);
 			typedef_stack_top++;
                 }
@@ -282,6 +291,7 @@ namespace Mono.ILASM {
                         }
 
                         current_customattrtarget = current_methoddef = methoddef;
+                        current_declsectarget = methoddef;
                 }
 
                 public void EndMethodDef (Location location)
@@ -307,6 +317,7 @@ namespace Mono.ILASM {
                 public void BeginAssemblyRef (string name, AssemblyName asmb_name)
                 {
                         current_customattrtarget = current_assemblyref = ExternTable.AddAssembly (name, asmb_name);
+                        current_declsectarget = current_assemblyref;
                 }
 
                 public void EndAssemblyRef ()
@@ -349,6 +360,13 @@ namespace Mono.ILASM {
                         assembly_custom_attributes.Add (attribute);
                 }
 
+                public void AddAssemblyDeclSecurity (DeclSecurity decl_sec)
+                {
+                        if (assembly_declsec == null)
+                                assembly_declsec = new ArrayList ();
+                        assembly_declsec.Add (decl_sec);
+                }
+
                 public void Write ()
                 {
                         FileStream out_stream = null;
@@ -384,6 +402,11 @@ namespace Mono.ILASM {
                                 if (assembly_custom_attributes != null) {
                                         foreach (CustomAttr cattr in assembly_custom_attributes)
                                                 cattr.AddTo (this, asmb);
+                                }
+                                
+                                if (assembly_declsec != null) {
+                                        foreach (DeclSecurity decl_sec in assembly_declsec)
+                                                decl_sec.AddTo (this, asmb);
                                 }
 
                                 if (sub_system != -1)

@@ -110,7 +110,7 @@ namespace Mono.ILASM {
                 }
         }
 
-        public class ExternAssembly : ExternRef {
+        public class ExternAssembly : ExternRef, IDeclSecurityTarget {
                         
                 public PEAPI.AssemblyRef AssemblyRef;
 
@@ -119,6 +119,7 @@ namespace Mono.ILASM {
                 private byte [] public_key_token;
                 private string locale;
                 private byte [] hash;
+                private ArrayList declsec_list;
 
                 public ExternAssembly (string name, AssemblyName asmb_name) : base (name)
                 {
@@ -143,6 +144,10 @@ namespace Mono.ILASM {
                         if (customattr_list != null)
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, AssemblyRef);
+                                        
+                        if (declsec_list != null)
+                                foreach (DeclSecurity decl_sec in declsec_list)
+                                        decl_sec.AddTo (code_gen, AssemblyRef);
 
                         class_table = new Hashtable ();
                 }
@@ -150,6 +155,14 @@ namespace Mono.ILASM {
                 public override PEAPI.IExternRef GetExternRef ()
                 {
                         return AssemblyRef;
+                }
+                
+                public void AddDeclSecurity (DeclSecurity decl_sec)
+                {
+                        if (declsec_list == null)
+                                declsec_list = new ArrayList ();
+
+                        declsec_list.Add (decl_sec);
                 }
 
                 public void SetVersion (int major, int minor, int build, int revision)

@@ -1,3 +1,13 @@
+2005-08-05  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (class_decl, method_decl | sec_decl): Use
+	  codegen.CurrentDeclSecurityTarget for adding DeclSecurity info.
+	  (assembly_decl | sec_decl): Use codegen.AddAssemblyDeclSecurity
+	  for adding DeclSecurity info.
+	  (sec_decl): Instantiate DeclSecurity object.
+	  (sec_action | K_REQUEST, K_DEMAND, .. etc): Use the corresponding
+	  value from PEAPI.SecurityAction enum.
+
 2005-05-12  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Handle lists of data items correctly.
